@@ -210,56 +210,16 @@ function question_context_has_any_questions($context) {
 /**
  * Returns list of 'allowed' grades for grade selection
  * formatted suitably for dropdown box function
+ *
+ * @deprecated since 2.1. Use {@link question_bank::fraction_options()} or
+ * {@link question_bank::fraction_options_full()} instead.
+ *
  * @return object ->gradeoptionsfull full array ->gradeoptions +ve only
  */
 function get_grade_options() {
-    // define basic array of grades. This list comprises all fractions of the form:
-    // a. p/q for q <= 6, 0 <= p <= q
-    // b. p/10 for 0 <= p <= 10
-    // c. 1/q for 1 <= q <= 10
-    // d. 1/20
-    $grades = array(
-        1.0000000,
-        0.9000000,
-        0.8333333,
-        0.8000000,
-        0.7500000,
-        0.7000000,
-        0.6666667,
-        0.6000000,
-        0.5000000,
-        0.4000000,
-        0.3333333,
-        0.3000000,
-        0.2500000,
-        0.2000000,
-        0.1666667,
-        0.1428571,
-        0.1250000,
-        0.1111111,
-        0.1000000,
-        0.0500000,
-        0.0000000);
-
-    // iterate through grades generating full range of options
-    $gradeoptionsfull = array();
-    $gradeoptions = array();
-    foreach ($grades as $grade) {
-        $percentage = 100 * $grade;
-        $gradeoptions["$grade"] = $percentage . '%';
-        $gradeoptionsfull["$grade"] = $percentage . '%';
-        $gradeoptionsfull['' . (-$grade)] = (-$percentage) . '%';
-    }
-    $gradeoptionsfull['0'] = $gradeoptions['0'] = get_string('none');
-
-    // sort lists
-    arsort($gradeoptions, SORT_NUMERIC);
-    arsort($gradeoptionsfull, SORT_NUMERIC);
-
-    // construct return object
     $grades = new stdClass();
-    $grades->gradeoptions = $gradeoptions;
-    $grades->gradeoptionsfull = $gradeoptionsfull;
+    $grades->gradeoptions = question_bank::fraction_options();
+    $grades->gradeoptionsfull = question_bank::fraction_options_full();
 
     return $grades;
 }

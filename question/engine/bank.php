@@ -57,6 +57,17 @@ abstract class question_bank {
     private static $questionconfig = null;
 
     /**
+     * @var array string => string The standard set of grade options (fractions)
+     * to use when editing questions, in the range 0 to 1 inclusive. Array keys
+     * are string becuase: a) we want grades to exactly 7 d.p., and b. you can't
+     * have float array keys in PHP.
+     * Initialised by {@link ensure_grade_options_initialised()}.
+     */
+    private static $fractionoptions = null;
+    /** @var array string => string The full standard set of (fractions) -1 to 1 inclusive. */
+    private static $fractionoptionsfull = null;
+
+    /**
      * @param string $qtypename a question type name, e.g. 'multichoice'.
      * @return bool whether that question type is installed in this Moodle.
      */
@@ -308,6 +319,81 @@ abstract class question_bank {
                     'not in test mode.');
         }
         self::$testdata[$question->id] = $question;
+    }
+
+    protected function ensure_fraction_options_initialised() {
+        if (!is_null(self::$fractionoptions)) {
+            return;
+        }
+
+        // define basic array of grades. This list comprises all fractions of the form:
+        // a. p/q for q <= 6, 0 <= p <= q
+        // b. p/10 for 0 <= p <= 10
+        // c. 1/q for 1 <= q <= 10
+        // d. 1/20
+        $rawfractions = array(
+            0.9000000,
+            0.8333333,
+            0.8000000,
+            0.7500000,
+            0.7000000,
+            0.6666667,
+            0.6000000,
+            0.5000000,
+            0.4000000,
+            0.3333333,
+            0.3000000,
+            0.2500000,
+            0.2000000,
+            0.1666667,
+            0.1428571,
+            0.1250000,
+            0.1111111,
+            0.1000000,
+            0.0500000,
+        );
+
+        // Put the None option at the top.
+        self::$fractionoptions = array(
+            '0.0' => get_string('none'),
+            '1.0' => '100%',
+        );
+        self::$fractionoptionsfull = array(
+            '0.0' => get_string('none'),
+            '1.0' => '100%',
+        );
+
+        // The the positive grades in descending order.
+        foreach ($rawfractions as $fraction) {
+            $percentage = (100 * $fraction) . '%';
+            self::$fractionoptions["$fraction"] = $percentage;
+            self::$fractionoptionsfull["$fraction"] = $percentage;
+        }
+
+        // The the negative grades in descending order.
+        foreach (array_reverse($rawfractions) as $fraction) {
+            self::$fractionoptionsfull['' . (-$fraction)] = (-100 * $fraction) . '%';
+        }
+
+        self::$fractionoptionsfull['-1.0'] = '-100%';
+    }
+
+    /**
+     * @return array string => string The standard set of grade options (fractions)
+     * to use when editing questions, in the range 0 to 1 inclusive. Array keys
+     * are string becuase: a) we want grades to exactly 7 d.p., and b. you can't
+     * have float array keys in PHP.
+     * Initialised by {@link ensure_grade_options_initialised()}.
+     */
+    public static function fraction_options() {
+        self::ensure_fraction_options_initialised();
+        return self::$fractionoptions;
+    }
+
+    /** @return array string => string The full standard set of (fractions) -1 to 1 inclusive. */
+    public static function fraction_options_full() {
+        self::ensure_fraction_options_initialised();
+        return self::$fractionoptionsfull;
     }
 }
 
