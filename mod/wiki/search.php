@@ -38,7 +38,7 @@ if (!$cm = get_coursemodule_from_id('wiki', $cmid)) {
     print_error('invalidcoursemodule');
 }
 
-require_course_login($course, true, $cm);
+require_login($course, true, $cm);
 
 // @TODO: Fix call to wiki_get_subwiki_by_group
 if (!$gid = groups_get_activity_group($cm)) {
