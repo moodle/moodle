@@ -824,7 +824,12 @@ function tag_compute_correlations($mincorrelation = 2) {
     rs_close($rs);
 
     // Remove any correlations that weren't just identified
-    delete_records_select('tag_correlation', 'id NOT IN ('.join(',', $correlations).')');
+    if (empty($correlations)) {
+        //there are no correlations so delete any in the database
+        delete_records('tag_correlation');
+    } else {
+        delete_records_select('tag_correlation', 'id NOT IN ('.join(',', $correlations).')');
+    }
 }
 
 /**
