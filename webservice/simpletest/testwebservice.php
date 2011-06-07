@@ -73,7 +73,8 @@ class webservice_test extends UnitTestCase {
             'moodle_user_get_users_by_id' => false,
             'moodle_enrol_get_enrolled_users' => false,
             'moodle_group_get_course_groups' => false,
-            'moodle_group_get_groupmembers' => false
+            'moodle_group_get_groupmembers' => false,
+            'moodle_webservice_get_siteinfo' => false
         );
 
         ////// WRITE DB tests ////
@@ -215,6 +216,18 @@ class webservice_test extends UnitTestCase {
         $params = array('groupids' => $groupids);
         $groups = $client->call($function, $params);
         $this->assertEqual(count($groups), count($groupids));
+    }
+
+    function moodle_webservice_get_siteinfo($client) {
+        global $SITE, $CFG;
+
+        $function = 'moodle_webservice_get_siteinfo';
+
+        $params = array();
+        $info = $client->call($function, $params);
+
+        $this->assertEqual($info['sitename'], $SITE->fullname);
+        $this->assertEqual($info['siteurl'],  $CFG->wwwroot);
     }
 
     function moodle_user_get_users_by_id($client) {

@@ -115,6 +115,7 @@ $string['missingcaps'] = 'Missing capabilities';
 $string['missingcaps_help'] = 'List of required capabilities for the service which the selected user does not have. Missing capabilities must be added to the user\'s role in order to use the service.';
 $string['missingpassword'] = 'Missing password';
 $string['missingusername'] = 'Missing username';
+$string['missingversionfile'] = 'Coding error: version.php file is missing for the component {$a}';
 $string['nofunctions'] = 'This service has no functions.';
 $string['norequiredcapability'] = 'No required capability';
 $string['notoken'] = 'The token list is empty.';
