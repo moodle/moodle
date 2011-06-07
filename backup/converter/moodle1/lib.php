@@ -561,6 +561,18 @@ class moodle1_converter extends base_converter {
     }
 
     /**
+     * Creates and returns new instance of the inforef manager
+     *
+     * @param string $name the name of the annotator (like course, section, activity, block)
+     * @param int $id the id of the annotator if required
+     * @return moodle1_inforef_manager
+     */
+    public function get_inforef_manager($name, $id = 0) {
+        return new moodle1_inforef_manager($this, $name, $id);
+    }
+
+
+    /**
      * Migrates all course files referenced from the hypertext using the given filemanager
      *
      * This is typically used to convert images embedded into the intro fields.
@@ -1398,5 +1410,103 @@ class moodle1_file_manager implements loggable {
     protected function stash_file(array $filerecord) {
         $this->converter->set_stash('files', $filerecord, $filerecord['id']);
         $this->fileids[] = $filerecord['id'];
+    }
+}
+
+
+/**
+ * Helper class that handles ids annotations for inforef.xml files
+ */
+class moodle1_inforef_manager {
+
+    /** @var string the name of the annotator we serve to (like course, section, activity, block) */
+    protected $annotator = null;
+
+    /** @var int the id of the annotator if it can have multiple instances */
+    protected $annotatorid = null;
+
+    /** @var array the actual storage of references, currently implemented as a in-memory structure */
+    private $refs = array();
+
+    /**
+     * Creates new instance of the manager for the given annotator
+     *
+     * The identification of the annotator we serve to may be important in the future
+     * when we move the actual storage of the references from memory to a persistent storage.
+     *
+     * @param moodle1_converter $converter
+     * @param string $name the name of the annotator (like course, section, activity, block)
+     * @param int $id the id of the annotator if required
+     */
+    public function __construct(moodle1_converter $converter, $name, $id = 0) {
+        $this->annotator   = $name;
+        $this->annotatorid = $id;
+    }
+
+    /**
+     * Adds a reference
+     *
+     * @param string $item the name of referenced item (like user, file, scale, outcome or grade_item)
+     * @param int $id the value of the reference
+     */
+    public function add_ref($item, $id) {
+        $this->validate_item($item);
+        $this->refs[$item][$id] = true;
+    }
+
+    /**
+     * Adds a bulk of references
+     *
+     * @param string $item the name of referenced item (like user, file, scale, outcome or grade_item)
+     * @param array $ids the list of referenced ids
+     */
+    public function add_refs($item, array $ids) {
+        $this->validate_item($item);
+        foreach ($ids as $id) {
+            $this->refs[$item][$id] = true;
+        }
+    }
+
+    /**
+     * Writes the current references using a given opened xml writer
+     *
+     * @param xml_writer $xmlwriter
+     */
+    public function write_refs(xml_writer $xmlwriter) {
+        $xmlwriter->begin_tag('inforef');
+        foreach ($this->refs as $item => $ids) {
+            $xmlwriter->begin_tag($item.'ref');
+            foreach (array_keys($ids) as $id) {
+                $xmlwriter->full_tag($item, $id);
+            }
+            $xmlwriter->end_tag($item.'ref');
+        }
+        $xmlwriter->end_tag('inforef');
+    }
+
+    /**
+     * Makes sure that the given name is a valid citizen of inforef.xml file
+     *
+     * @see backup_helper::get_inforef_itemnames()
+     * @param string $item the name of reference (like user, file, scale, outcome or grade_item)
+     * @throws coding_exception
+     */
+    protected function validate_item($item) {
+
+        $allowed = array(
+            'user'              => true,
+            'grouping'          => true,
+            'group'             => true,
+            'role'              => true,
+            'file'              => true,
+            'scale'             => true,
+            'outcome'           => true,
+            'grade_item'        => true,
+            'question_category' => true
+        );
+
+        if (!isset($allowed[$item])) {
+            throw new coding_exception('Invalid inforef item type');
+        }
     }
 }

@@ -418,4 +418,14 @@ as it is parsed from the backup file. <br /><br /><img border="0" width="110" vs
         $converter = convert_factory::get_converter('moodle1', $this->tempdir);
         $converter->convert();
     }
+
+    public function test_inforef_manager() {
+        $converter = convert_factory::get_converter('moodle1', $this->tempdir);
+        $inforef = $converter->get_inforef_manager('unittest');
+        $inforef->add_ref('file', 45);
+        $inforef->add_refs('file', array(46, 47));
+        // todo test the write_refs() via some dummy xml_writer
+        $this->expectException('coding_exception');
+        $inforef->add_ref('unknown_referenced_item_name', 76);
+    }
 }
