@@ -864,6 +864,9 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
 
     // Build the icon.
     if ($action) {
+        if ($returnurl instanceof moodle_url) {
+            $returnurl = str_replace($CFG->wwwroot, '', $returnurl->out(false));
+        }
         $questionparams = array('returnurl' => $returnurl, 'cmid' => $cmid, 'id' => $question->id);
         $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
         return '<a title="' . $action . '" href="' . $questionurl->out() . '"><img src="' .
