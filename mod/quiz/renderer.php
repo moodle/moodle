@@ -484,6 +484,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 $row[] = $attemptobj->get_question_mark($slot);
             }
             $table->data[] = $row;
+            $table->rowclasses[] = $attemptobj->get_question_state_class(
+                    $slot, $displayoptions->correctness);
         }
 
         // Print the summary table.

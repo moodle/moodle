@@ -247,6 +247,16 @@ class question_usage_by_activity {
     }
 
     /**
+     * @param int $slot the number used to identify this question within this usage.
+     * @param bool $showcorrectness Whether right/partial/wrong states should
+     * be distinguised.
+     * @return string a CSS class name for the current state.
+     */
+    public function get_question_state_class($slot, $showcorrectness) {
+        return $this->get_question_attempt($slot)->get_state_class($showcorrectness);
+    }
+
+    /**
      * Get the time of the most recent action performed on a question.
      * @param int $slot the number used to identify this question within this usage.
      * @return int timestamp.

@@ -757,6 +757,20 @@ class quiz_attempt {
     }
 
     /**
+     * Return the grade obtained on a particular question, if the user is permitted
+     * to see it. You must previously have called load_question_states to load the
+     * state data about this question.
+     *
+     * @param int $slot the number used to identify this question within this attempt.
+     * @param bool $showcorrectness Whether right/partial/wrong states should
+     * be distinguised.
+     * @return string class name for this state.
+     */
+    public function get_question_state_class($slot, $showcorrectness) {
+        return $this->quba->get_question_state_class($slot, $showcorrectness);
+    }
+
+    /**
      * Return the grade obtained on a particular question.
      * You must previously have called load_question_states to load the state
      * data about this question.
@@ -1167,7 +1181,7 @@ abstract class quiz_nav_panel_base {
             $button = new quiz_nav_question_button();
             $button->id          = 'quiznavbutton' . $slot;
             $button->number      = $qa->get_question()->_number;
-            $button->stateclass  = $qa->get_state()->get_state_class($showcorrectness);
+            $button->stateclass  = $qa->get_state_class($showcorrectness);
             if (!$showcorrectness && $button->stateclass == 'notanswered') {
                 $button->stateclass = 'complete';
             }
