@@ -38,7 +38,7 @@ class backup_glossary_activity_structure_step extends backup_activity_structure_
 
         // Define each element separated
         $glossary = new backup_nested_element('glossary', array('id'), array(
-            'name', 'intro', 'allowduplicatedentries', 'displayformat',
+            'name', 'intro', 'introformat', 'allowduplicatedentries', 'displayformat',
             'mainglossary', 'showspecial', 'showalphabet', 'showall',
             'allowcomments', 'allowprintview', 'usedynalink', 'defaultapproval',
             'globalglossary', 'entbypage', 'editalways', 'rsstype',
