@@ -162,14 +162,15 @@ $viewobj->unfinished = $unfinished;
 $viewobj->lastfinishedattempt = $lastfinishedattempt;
 
 // Display information about this quiz.
-$messages = $viewobj->accessmanager->describe_rules();
+$infomessages = $viewobj->accessmanager->describe_rules();
 if ($quiz->attempts != 1) {
-    $messages[] = get_string('gradingmethod', 'quiz',
+    $infomessages[] = get_string('gradingmethod', 'quiz',
             quiz_get_grading_option_name($quiz->grademethod));
 }
 
 // This will be set something if as start/continue attempt button should appear.
 $buttontext = '';
+$preventmessages = array();
 if (!quiz_clean_layout($quiz->questions, true)) {
     $buttontext = '';
 
@@ -183,10 +184,10 @@ if (!quiz_clean_layout($quiz->questions, true)) {
 
     } else {
         if ($viewobj->canattempt) {
-            $messages = $viewobj->accessmanager->prevent_new_attempt($viewobj->numattempts,
+            $preventmessages = $viewobj->accessmanager->prevent_new_attempt($viewobj->numattempts,
                     $viewobj->lastfinishedattempt);
-            if ($messages) {
-                $this->access_messages($messages);
+            if ($preventmessages) {
+                $buttontext = '';
             } else if ($viewobj->numattempts == 0) {
                 $buttontext = get_string('attemptquiznow', 'quiz');
             } else {
@@ -204,8 +205,7 @@ if (!quiz_clean_layout($quiz->questions, true)) {
         if (!$viewobj->moreattempts) {
             $buttontext = '';
         } else if ($viewobj->canattempt
-                && $messages = $viewobj->accessmanager->prevent_access()) {
-            $this->access_messages($messages);
+                && $preventmessages = $viewobj->accessmanager->prevent_access()) {
             $buttontext = '';
         }
     }
@@ -215,13 +215,14 @@ echo $OUTPUT->header();
 
 // Guests can't do a quiz, so offer them a choice of logging in or going back.
 if (isguestuser()) {
-    echo $output->view_page_guest($course, $quiz, $cm, $context, $messages, $viewobj);
+    echo $output->view_page_guest($course, $quiz, $cm, $context, $infomessages, $viewobj);
 } else if (!isguestuser() && !($viewobj->canattempt || $viewobj->canpreview
           || $viewobj->canreviewmine)) {
     // If they are not enrolled in this course in a good enough role, tell them to enrol.
-    echo $output->view_page_notenrolled($course, $quiz, $cm, $context, $messages, $viewobj);
+    echo $output->view_page_notenrolled($course, $quiz, $cm, $context, $infomessages, $viewobj);
 } else {
-    echo $output->view_page($course, $quiz, $cm, $context, $messages, $viewobj, $buttontext);
+    echo $output->view_page($course, $quiz, $cm, $context, $infomessages, $viewobj,
+            $buttontext, $preventmessages);
 }
 
 echo $OUTPUT->footer();

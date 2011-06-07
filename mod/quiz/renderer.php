@@ -352,7 +352,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
             return '';
         }
         return $this->box($this->heading(get_string('accessnoticesheader', 'quiz'), 3) .
-        $this->access_messages($messages), 'quizaccessnotices');
+                $this->access_messages($messages), 'quizaccessnotices');
     }
 
     /**
@@ -538,17 +538,22 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param array $quiz Array conting quiz data
      * @param int $cm Course Module ID
      * @param int $context The page context ID
-     * @param array $messages Array contining any maeeages
+     * @param array $infomessages information about this quiz
      * @param mod_quiz_view_object $viewobj
-     * @param string $buttontext
+     * @param string $buttontext text for the start/continue attempt button, if
+     *      it should be shown.
+     * @param array $infomessages further information about why the student cannot
+     *      attempt this quiz now, if appicable this quiz
      */
-    public function view_page($course, $quiz, $cm, $context, $messages, $viewobj, $buttontext) {
+    public function view_page($course, $quiz, $cm, $context, $infomessages, $viewobj,
+            $buttontext, $preventmessages) {
         $output = '';
-        $output .= $this->view_information($course, $quiz, $cm, $context, $messages);
+        $output .= $this->view_information($course, $quiz, $cm, $context, $infomessages);
         $output .= $this->view_table($quiz, $context, $viewobj);
         $output .= $this->view_best_score($viewobj);
         $output .= $this->view_result_info($quiz, $context, $cm, $viewobj);
-        $output .= $this->view_attempt_button($course, $quiz, $cm, $context, $viewobj, $buttontext);
+        $output .= $this->view_attempt_button($course, $quiz, $cm, $context, $viewobj,
+                $buttontext, $preventmessages);
         return $output;
     }
 
@@ -610,9 +615,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
                     'intro');
         }
 
-        $output .= $this->box_start('quizinfo');
-        $this->access_messages($messages);
-        $output .= $this->box_end();
+        $output .= $this->box($this->access_messages($messages), 'quizinfo');
 
         // Show number of attempts summary to those who can view reports.
         if (has_capability('mod/quiz:viewreports', $context)) {
@@ -855,7 +858,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param mod_quiz_view_object $viewobj
      * @param string $buttontext
      */
-    public function view_attempt_button($course, $quiz, $cm, $context, $viewobj, $buttontext) {
+    public function view_attempt_button($course, $quiz, $cm, $context, $viewobj,
+            $buttontext, $preventmessages) {
         $output = '';
         // Determine if we should be showing a start/continue attempt button,
         // or a button to go back to the course page.
@@ -864,6 +868,10 @@ class mod_quiz_renderer extends plugin_renderer_base {
         // Now actually print the appropriate button.
         if (!quiz_clean_layout($quiz->questions, true)) {
             $output .= quiz_no_questions_message($quiz, $cm, $context);
+        }
+
+        if ($preventmessages) {
+            $output .= $this->access_messages($preventmessages);
         }
 
         if ($buttontext) {
