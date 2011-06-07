@@ -304,8 +304,7 @@ class qformat_default {
         }
 
         // get list of valid answer grades
-        $grades = get_grade_options();
-        $gradeoptionsfull = $grades->gradeoptionsfull;
+        $gradeoptionsfull = question_bank::fraction_options_full();
 
         // check answer grades are valid
         // (now need to do this here because of 'stop on error': MDL-10689)

@@ -146,10 +146,8 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
         $mform->addElement('hidden', 'answernumbering', 'abc');
         $mform->setType('answernumbering', PARAM_SAFEDIR);
 
-        $creategrades = get_grade_options();
-
         $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculated', '{no}'),
-                $creategrades->gradeoptions, 1, 1);
+                question_bank::fraction_options(), 1, 1);
 
         $repeated = array();
 

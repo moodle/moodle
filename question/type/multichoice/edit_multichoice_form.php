@@ -58,9 +58,8 @@ class qtype_multichoice_edit_form extends question_edit_form {
                 qtype_multichoice::get_numbering_styles());
         $mform->setDefault('answernumbering', 'abc');
 
-        $creategrades = get_grade_options();
         $this->add_per_answer_fields($mform, get_string('choiceno', 'qtype_multichoice', '{no}'),
-                $creategrades->gradeoptionsfull, max(5, QUESTION_NUMANS_START));
+                question_bank::fraction_options_full(), max(5, QUESTION_NUMANS_START));
 
         $this->add_combined_feedback_fields(true);
         $mform->disabledIf('shownumcorrect', 'single', 'eq', 1);

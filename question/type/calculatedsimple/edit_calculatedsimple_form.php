@@ -331,9 +331,8 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
         $addstring = get_string("updatecategory", "qtype_calculated");
         $mform->registerNoSubmitButton($addfieldsname);
 
-        $creategrades = get_grade_options();
         $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculated', '{no}'),
-            $creategrades->gradeoptions, 1, 1);
+                question_bank::fraction_options(), 1, 1);
 
         $this->add_unit_options($mform, $this);
         $this->add_unit_fields($mform, $this);
