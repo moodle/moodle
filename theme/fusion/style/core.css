@@ -18,13 +18,13 @@ body {
 }
 
 body#page-site-index {
-	background-position:  left 200px;
+    background-position:  left 200px;
 }
 
 body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {
   font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, Sans, FreeSans, Jamrul, Garuda, Kalimati;
-	line-height: 1.5;
-	color: #333;
+    line-height: 1.5;
+    color: #333;
 }
 
 a {
@@ -37,28 +37,28 @@ a:hover{
 }
 
 #wrapper {
-	padding:0 100px;
-	min-width: 910px;
+    padding:0 100px;
+    min-width: 910px;
 }
 
 
 blockquote {
-	border-left:1px solid #eee;
-	padding-left:15px;
-	color:#666;
+    border-left:1px solid #eee;
+    padding-left:15px;
+    color:#666;
 }
 
 .mform fieldset {
-	border-color: #eee;
+    border-color: #eee;
 }
 
 .mform fieldset legend {
-	color: #444;
-	font-weight: normal;
-	font-size: 1.2em;
-	border: 1px solid #eee;
-	padding: 2px 5px;
-	background: #fff;
+    color: #444;
+    font-weight: normal;
+    font-size: 1.2em;
+    border: 1px solid #eee;
+    padding: 2px 5px;
+    background: #fff;
 }
 
 img{
@@ -113,21 +113,21 @@ h6{
   margin: .2em 0 .2em;
 }
 
-#page-site-index #page-wrap1 { 
-	background: transparent url([[pix:theme|header-bg]]) repeat-x left top; 
+#page-site-index #page-wrap1 {
+    background: transparent url([[pix:theme|header-bg]]) repeat-x left top;
 }
 
 #page-site-index #page-wrap2 {
-	background: transparent url([[pix:theme|header-center]]) no-repeat center top;
+    background: transparent url([[pix:theme|header-center]]) no-repeat center top;
 }
 
 
-#page-wrap1 { 
-	background: transparent url([[pix:theme|header-bg-sm]]) repeat-x left top; 
+#page-wrap1 {
+    background: transparent url([[pix:theme|header-bg-sm]]) repeat-x left top;
 }
 
 #page-wrap2 {
-	background: transparent url([[pix:theme|header-center-sm]]) no-repeat center top;
+    background: transparent url([[pix:theme|header-center-sm]]) no-repeat center top;
 }
 
 /* Header
@@ -135,58 +135,58 @@ h6{
 
 
 #page-header {
-	padding: 0;
+    padding: 0;
 }
 
 #page-site-index #region-header {
-	margin-bottom: 55px;
+    margin-bottom: 65px;
 }
 
 #region-header {
-	margin-bottom: 30px;
+    margin-bottom: 40px;
 }
 
 .headermain {
-	margin: 0;
-	float: none;
+    margin: 0;
+    float: none;
   font-family: "Trajan Pro", "Lucida Sans Unicode", Arial, Helvetica, Sans, FreeSans, Jamrul, Garuda, Kalimati;
-	float: none;
-	font-size: 3em;
-	line-height: 1;
-	text-shadow: -0.05em -0.05em 0 #000;	
-	color: #fff
+    float: none;
+    font-size: 3em;
+    line-height: 1;
+    text-shadow: -0.05em -0.05em 0 #000;
+    color: #fff
 }
 
 #region-header.inside .headermain {
-	font-size: 2.5em;
+    font-size: 2.5em;
 }
 
 .tagline {
-	color: #a2a3a6;
-	text-shadow: -0.1em -0.1em 0 #000;
+    color: #a2a3a6;
+    text-shadow: -0.1em -0.1em 0 #000;
 }
 
 .headermenu {
-	color: #fff;
-	float: none;
-	margin:5px 25px 0 0;
+    color: #fff;
+    float: none;
+    margin:5px 25px 0 0;
 }
 
 .headermenu a {
-	color: #a2a3a6;
+    color: #a2a3a6;
 }
 
 .headermenu a:hover {
-	color: #fff;
+    color: #fff;
 }
 
 #page-header .logininfo,
 #page-header .langmenu {
-	float: right;
+    float: right;
 }
 
 #page-header .logininfo {
-	padding: 2px 5px 0 0;
+    padding: 2px 5px 0 0;
 }
 
 /* Navbar
@@ -197,125 +197,125 @@ margin-bottom: 1em;
 }
 
 .breadcrumb .sep {
-	padding-left: 5px;
-	font-size: 0.9em;
+    padding-left: 5px;
+    font-size: 0.9em;
 }
 
 /* Blocks
 ----------------------------*/
 
 #region-post-wrap-1 {
-	background: url([[pix:theme|side-start]]) no-repeat 0 0;
-	padding-left: 28px;
+    background: url([[pix:theme|side-start]]) no-repeat 0 0;
+    padding-left: 28px;
 }
 
 #region-post-wrap-2 {
-	background: url([[pix:theme|side-bg]]) no-repeat 100% 0;
-	padding-right: 40px;
-	padding-top: 15px;
+    background: url([[pix:theme|side-bg]]) no-repeat 100% 0;
+    padding-right: 40px;
+    padding-top: 15px;
 }
 
 .block {
-	border: none;
+    border: none;
 }
 
 .block .header {
-	border-bottom: 1px solid #eee;
-	padding: 0;
+    border-bottom: 1px solid #eee;
+    padding: 0;
 }
 
 .block .header h2 {
   font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, Sans, FreeSans, Jamrul, Garuda, Kalimati;
   font-weight: normal;
   text-transform: uppercase;
-font-size: 1.2em;	
+font-size: 1.2em;
 color: #777;
 margin: 0;
 }
 
-/* Courses 
+/* Courses
 ----------------------------*/
 
 h2.headingblock {
-	font-weight: normal;
-	color:#999;
-	font-size: 1.5em;
-	border-bottom:1px dotted #eee;
+    font-weight: normal;
+    color:#999;
+    font-size: 1.5em;
+    border-bottom:1px dotted #eee;
 }
 
 .coursebox {
-	border-color: #eee;
+    border-color: #eee;
 }
 
 .coursebox .info {
-	width: 35%;
+    width: 35%;
 }
 
 .coursebox .info .name {
-	margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .coursebox .info .teachers {
-	font-size: 0.9em;
-	color: #888;
+    font-size: 0.9em;
+    color: #888;
 }
 
 .coursebox .summary {
-	width: 63%;
+    width: 63%;
 }
 
 .course-content .section.main {
-	border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #eee;
 }
 
 .course-content .section.main .content {
-	padding: 5px 5px 10px;
+    padding: 5px 5px 10px;
 }
 
 .course-content .weeks .section.main .content {
-	margin-left: 0;
+    margin-left: 0;
 }
 
 .course-content .weeks .section.main .left {
-	display: none;
+    display: none;
 }
 
 .course-content .section.main.current {
-	background:#fffcdc;
+    background:#fffcdc;
 }
 
 .course-content .weeks .section.main h3.weekdates {
-	color: #999;
+    color: #999;
 }
 
 .course-content .current .left,
 .course-content .current h3.weekdates {
-	color: #2d83d5 !important;
+    color: #2d83d5 !important;
 }
-/* Forum 
+/* Forum
 --------------------------*/
 
 .forumpost .topic {
-	background: #fff url([[pix:theme|grad]]) repeat-x 0 100%;
-	padding: 0 10px 0;
-	border: 1px solid #eee;
+    background: #fff url([[pix:theme|grad]]) repeat-x 0 100%;
+    padding: 0 10px 0;
+    border: 1px solid #eee;
 }
 
 .forumpost .subject {
-	font-size: 1.5em;
-  font-family: "Palatino Linotype", Georgia, "Tahoma", "Century Schoolbook L", Arial, Helvetica;	
+    font-size: 1.5em;
+  font-family: "Palatino Linotype", Georgia, "Tahoma", "Century Schoolbook L", Arial, Helvetica;
 }
 
 .forumpost .author {
-	font-size: 0.9em;
-	font-style: italic;	
+    font-size: 0.9em;
+    font-style: italic;
 }
 
 .forumpost .content {
-	border-width: 0 1px 1px;
-	border-style: solid;
-	border-color: #aaa #eee #eee;
-	padding: 5px 10px 10px;
+    border-width: 0 1px 1px;
+    border-style: solid;
+    border-color: #aaa #eee #eee;
+    padding: 5px 10px 10px;
 }
 
 
@@ -323,51 +323,51 @@ h2.headingblock {
 ----------------------*/
 
 #dock {
-	background: #eee;
-	border: none;
+    background: #eee;
+    border: none;
 }
 
 #dock .firstdockitem {
-	margin-top: 15px;
+    margin-top: 15px;
 }
 
 #dock .dockeditem {
-	background-color: #fff;
-	border: 1px solid #eee;
-	border-width: 0 1px 1px 0;
-	padding: 3px 0;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-width: 0 1px 1px 0;
+    padding: 3px 0;
 }
 
 #dock .dockeditem .dockedtitle {
-	border: none;
+    border: none;
 }
 
 #dock .dockeditem .dockedtitle h2 {
-	margin: 12px 0 12px 7px;
-	color: #666;
+    margin: 12px 0 12px 7px;
+    color: #666;
 }
 
 #dockeditempanel .dockeditempanel_content {
-	border-color: #eee;
+    border-color: #eee;
 }
 
 #dockeditempanel .dockeditempanel_hd {
-	border-bottom: none;
-	padding: 3px 5px;
-	background: #eee;
-	text-align: left;
+    border-bottom: none;
+    padding: 3px 5px;
+    background: #eee;
+    text-align: left;
 }
 
 #dockeditempanel .dockeditempanel_hd h2 {
-	color: #333;
-	text-align: right;
-	font-weight: normal;
-	font-size: 0.8em;
-	padding: 0 2px;
+    color: #333;
+    text-align: right;
+    font-weight: normal;
+    font-size: 0.8em;
+    padding: 0 2px;
 }
 
 #dockeditempanel .dockeditempanel_hd .commands {
-	float: right;
+    float: right;
 }
 
 .pagelayout-redirect {background-position:0 0;}
