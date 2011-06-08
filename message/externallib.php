@@ -111,7 +111,7 @@ class moodle_message_external extends external_api {
 
             // Check if the user is a contact
             //TODO: performance improvement - edit the function so we can pass an array instead userid
-            if ($success && empty($contact) && !empty(get_user_preferences('message_blocknoncontacts', NULL, $message['touserid']))) {
+            if ($success && empty($contact) && get_user_preferences('message_blocknoncontacts', NULL, $message['touserid']) == null) {
                 // The user isn't a contact and they have selected to block non contacts so this message won't be sent.
                 $success = false;
                 $errormessage = get_string('userisblockingyounoncontact', 'message');
