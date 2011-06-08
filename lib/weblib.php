@@ -6968,10 +6968,17 @@ function doc_link($path='', $text='', $iconpath='') {
 
     $lang = str_replace('_utf8', '', current_language());
 
-    //derive branch from the first three letters of version.php's $release with the period taken out.($CFG->release isn't populated yet during upgrade)
-    include($CFG->dirroot.'/version.php');
-    preg_match('/^(.)\.(.)/', $release, $matches);
-    $branch = $matches[1].$matches[2];
+    if (!empty($CFG->release)) {
+        $release = $CFG->release;
+    } else {
+        //derive branch from the first three letters of version.php's $release with the period taken out.($CFG->release isn't populated yet during upgrade)
+        include($CFG->dirroot.'/version.php');
+    }
+    if (preg_match('/^(.)\.(.)/', $release, $matches)) {
+        $branch = $matches[1].$matches[2];
+    } else {
+        $branch = '.';
+    }
 
     $str = '<a href="' .$CFG->docroot. '/' .$branch. '/' .$lang. '/' .$path. '"' .$target. '>';
 
