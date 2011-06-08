@@ -43,9 +43,9 @@ class moodle_enrol_external extends external_api {
         return new external_function_parameters(
             array(
                 'courseid'       => new external_value(PARAM_INT, 'Course id'),
-                'withcapability' => new external_value(PARAM_CAPABILITY, 'User should have this capability'),
-                'groupid'        => new external_value(PARAM_INT, 'Group id, null means all groups'),
-                'onlyactive'     => new external_value(PARAM_INT, 'True means only active, false means all participants'),
+                'withcapability' => new external_value(PARAM_CAPABILITY, 'User should have this capability', VALUE_DEFAULT, null),
+                'groupid'        => new external_value(PARAM_INT, 'Group id, null means all groups', VALUE_DEFAULT, null),
+                'onlyactive'     => new external_value(PARAM_INT, 'True means only active, false means all participants', VALUE_DEFAULT, 0),
             )
         );
     }
@@ -59,12 +59,17 @@ class moodle_enrol_external extends external_api {
      * @param bool $onlyactive
      * @return array of course participants
      */
-    public static function get_enrolled_users($courseid, $withcapability, $groupid, $onlyactive) {
-        global $DB;
+    public static function get_enrolled_users($courseid, $withcapability = null, $groupid = null, $onlyactive = false) {
+        global $DB, $CFG, $USER;
 
         // Do basic automatic PARAM checks on incoming data, using params description
         // If any problems are found then exceptions are thrown with helpful error messages
-        $params = self::validate_parameters(self::get_enrolled_users_parameters(), array('courseid'=>$courseid, 'withcapability'=>$withcapability, 'groupid'=>$groupid, 'onlyactive'=>$onlyactive));
+        $params = self::validate_parameters(self::get_enrolled_users_parameters(), array(
+            'courseid'=>$courseid,
+            'withcapability'=>$withcapability,
+            'groupid'=>$groupid,
+            'onlyactive'=>$onlyactive)
+        );
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $params['courseid']);
         if ($courseid == SITEID) {
@@ -76,11 +81,10 @@ class moodle_enrol_external extends external_api {
         try {
             self::validate_context($context);
         } catch (Exception $e) {
-                $exceptionparam = new stdClass();
-                $exceptionparam->message = $e->getMessage();
-                $exceptionparam->courseid = $params['courseid'];
-                throw new moodle_exception(
-                        get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
+            $exceptionparam = new stdClass();
+            $exceptionparam->message = $e->getMessage();
+            $exceptionparam->courseid = $params['courseid'];
+            throw new moodle_exception(get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
         }
 
         if ($courseid == SITEID) {
@@ -92,28 +96,46 @@ class moodle_enrol_external extends external_api {
         if ($withcapability) {
             require_capability('moodle/role:review', $coursecontext);
         }
-        if ($groupid) {
-            if (groups_is_member($groupid)) {
-                require_capability('moodle/site:accessallgroups', $coursecontext);
-            }
+        if ($groupid && groups_is_member($groupid)) {
+            require_capability('moodle/site:accessallgroups', $coursecontext);
         }
         if ($onlyactive) {
             require_capability('moodle/course:enrolreview', $coursecontext);
         }
 
-        list($sql, $params) =  get_enrolled_sql($coursecontext, $withcapability, $groupid, $onlyactive);
-        $sql = "SELECT DISTINCT ue.userid, e.courseid
+        list($sqlparams, $params) =  get_enrolled_sql($coursecontext, $withcapability, $groupid, $onlyactive);
+        $sql = "SELECT ue.userid, e.courseid, u.firstname, u.lastname, u.username, c.id as usercontextid
                   FROM {user_enrolments} ue
                   JOIN {enrol} e ON (e.id = ue.enrolid)
-                 WHERE e.courseid = :courseid AND ue.userid IN ($sql)";
+                  JOIN {user} u ON (ue.userid = u.id)
+                  JOIN {context} c ON (u.id = c.instanceid AND contextlevel = " . CONTEXT_USER . ")
+                  WHERE e.courseid = :courseid AND ue.userid IN ($sqlparams)
+                  GROUP BY ue.userid, e.courseid, u.firstname, u.lastname, u.username, c.id";
         $params['courseid'] = $courseid;
-
         $enrolledusers = $DB->get_records_sql($sql, $params);
-
         $result = array();
+        $isadmin = is_siteadmin($USER);
+        $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
         foreach ($enrolledusers as $enrolleduser) {
-            $result[] = array('courseid' => $enrolleduser->courseid,
-                'userid' => $enrolleduser->userid);
+            $profilimgurl = moodle_url::make_pluginfile_url($enrolleduser->usercontextid, 'user', 'icon', NULL, '/', 'f1');
+            $profilimgurlsmall = moodle_url::make_pluginfile_url($enrolleduser->usercontextid, 'user', 'icon', NULL, '/', 'f2');
+            $resultuser = array(
+                'courseid' => $enrolleduser->courseid,
+                'userid' => $enrolleduser->userid, 
+                'fullname' => fullname($enrolleduser),
+                'profileimgurl' => $profilimgurl->out(false),
+                'profileimgurlsmall' => $profilimgurlsmall->out(false)
+            );
+            // check if we can return username
+            if ($isadmin) {
+                $resultuser['username'] = $enrolleduser->username;
+            }
+            // check if we can return first and last name
+            if ($isadmin or $canviewfullnames) {
+                $resultuser['firstname'] = $enrolleduser->firstname;
+                $resultuser['lastname'] = $enrolleduser->lastname;
+            }
+            $result[] = $resultuser;
         }
 
         return $result;
@@ -129,11 +151,16 @@ class moodle_enrol_external extends external_api {
                 array(
                     'courseid' => new external_value(PARAM_INT, 'id of course'),
                     'userid' => new external_value(PARAM_INT, 'id of user'),
+                    'firstname' => new external_value(PARAM_RAW, 'first name of user', VALUE_OPTIONAL),
+                    'lastname' => new external_value(PARAM_RAW, 'last name of user', VALUE_OPTIONAL),
+                    'fullname' => new external_value(PARAM_RAW, 'fullname of user'),
+                    'username' => new external_value(PARAM_RAW, 'username of user', VALUE_OPTIONAL),
+                    'profileimgurl' => new external_value(PARAM_URL, 'url of the profile image'),
+                    'profileimgurlsmall' => new external_value(PARAM_URL, 'url of the profile image (small version)')
                 )
             )
         );
     }
-
 
     /**
      * Returns description of method parameters
