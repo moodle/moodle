@@ -89,7 +89,8 @@ class webservice_test extends UnitTestCase {
             'moodle_group_create_groups' => false,
             'moodle_group_delete_groups' => false,
             'moodle_enrol_manual_enrol_users' => false,
-            'moodle_message_send_messages' => false
+            'moodle_message_send_messages' => false,
+            'moodle_notes_create_notes' => false
         );
 
         //performance testing: number of time the web service are run
@@ -1500,6 +1501,37 @@ class webservice_test extends UnitTestCase {
         $params = array('messages' => array($message, $message2));
         $success = $client->call($function, $params);
         $this->assertEqual(count($success), 2);
+    }
+
+     function moodle_notes_create_notes($client) {
+        global $DB, $CFG;
+
+        $note1 = array();
+        $note1['userid'] = 2; //about who is the note
+        $note1['publishstate'] = 'personal'; //can be course, site, personal
+        $note1['courseid'] = 2; //in Moodle a notes is always created into a course, even a site note.
+        $note1['text'] = 'This is a personal note about the user';
+        $note1['clientnoteid'] = 'note_1';
+
+        $note2 = array();
+        $note2['userid'] = 40000; //mostl likely going to fail
+        $note2['publishstate'] = 'course';
+        $note2['courseid'] = 2;
+        $note2['text'] = 'This is a teacher note about the user';
+        $note2['clientnoteid'] = 'note_2';
+
+        $note3 = array();
+        $note3['userid'] = 2;
+        $note3['publishstate'] = 'site';
+        $note3['courseid'] = 30000; //most likely going to fail
+        $note3['text'] = 'This is a teacher site-wide note about the user';
+        $note3['clientnoteid'] = 'note_3';
+
+        $function = 'moodle_notes_create_notes';
+        $params = array('notes' => array($note1, $note2, $note3));
+        $notes = $client->call($function, $params);
+
+        $this->assertEqual(3, count($notes)); //1 info is a success, 2 others should be failed
     }
 
 }

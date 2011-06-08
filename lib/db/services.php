@@ -217,4 +217,15 @@ $functions = array(
         'capabilities'=> 'moodle/site:sendmessage',
     ),
 
+    // === notes related functions ===
+
+    'moodle_notes_create_notes' => array(
+        'classname'   => 'moodle_notes_external',
+        'methodname'  => 'create_notes',
+        'classpath'   => 'notes/externallib.php',
+        'description' => 'Create notes',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/notes:manage',
+    ),
+
 );
