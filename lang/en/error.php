@@ -277,6 +277,7 @@ $string['invalidcoursemodule'] = 'Invalid course module ID';
 $string['invalidcoursenameshort'] = 'Invalid short course name';
 $string['invaliddata'] = 'Data submitted is invalid';
 $string['invaliddatarootpermissions'] = 'Invalid permissions detected in $CFG->dataroot directory, administrator has to fix permissions.';
+$string['invaliddevicetype'] = 'Invalid device type';
 $string['invalidelementid'] = 'Incorrect element id!';
 $string['invalidentry'] = 'This is not valid entry!';
 $string['invalidevent'] = 'Invalid event';
