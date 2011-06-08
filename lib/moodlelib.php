@@ -424,6 +424,10 @@ define('HUB_HUBDIRECTORYURL', "http://hubdirectory.moodle.org");
  */
 define('HUB_MOODLEORGHUBURL', "http://hub.moodle.org");
 
+/**
+ * Moodle mobile app service name
+ */
+define('MOODLE_OFFICIAL_MOBILE_SERVICE', 'moodle_mobile_app');
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 

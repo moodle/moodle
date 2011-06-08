@@ -6381,6 +6381,162 @@ class admin_setting_managerepository extends admin_setting {
     }
 }
 
+/**
+ * Special checkbox for enable mobile web service
+ * If enable then we store the service id of the mobile service into config table
+ * If disable then we unstore the service id from the config table
+ */
+class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
+
+    private $xmlrpcuse; //boolean: true => capability 'webservice/xmlrpc:use' is set for authenticated user role
+
+    /**
+     * Return true if Authenticated user role has the capability 'webservice/xmlrpc:use', otherwise false
+     * @return boolean
+     */
+    private function is_xmlrpc_cap_allowed() {
+        global $DB, $CFG;
+
+        //if the $this->xmlrpcuse variable is not set, it needs to be set
+        if (empty($this->xmlrpcuse) and $this->xmlrpcuse!==false) {
+            $params = array();
+            $params['permission'] = CAP_ALLOW;
+            $params['roleid'] = $CFG->defaultuserroleid;
+            $params['capability'] = 'webservice/xmlrpc:use';
+            $this->xmlrpcuse = $DB->record_exists('role_capabilities', $params);
+        }
+
+        return $this->xmlrpcuse;
+    }
+
+    /**
+     * Set the 'webservice/xmlrpc:use' to the Authenticated user role (allow or not)
+     * @param type $status true to allow, false to not set
+     */
+    private function set_xmlrpc_cap($status) {
+        global $CFG;
+        if ($status and !$this->is_xmlrpc_cap_allowed()) {
+            //need to allow the cap
+            $permission = CAP_ALLOW;
+            $assign = true;
+        } else if (!$status and $this->is_xmlrpc_cap_allowed()){
+            //need to disallow the cap
+            $permission = CAP_INHERIT;
+            $assign = true;
+        }
+        if (!empty($assign)) {
+            $systemcontext = get_system_context();
+            assign_capability('webservice/xmlrpc:use', $permission, $CFG->defaultuserroleid, $systemcontext->id, true);
+        }
+    }
+
+    /**
+     * Builds XHTML to display the control.
+     * The main purpose of this overloading is to display a warning when https
+     * is not supported by the server
+     * @param string $data Unused
+     * @param string $query
+     * @return string XHTML
+     */
+    public function output_html($data, $query='') {
+        global $CFG, $OUTPUT;
+        $html = parent::output_html($data, $query);
+
+        if ((string)$data === $this->yes) {
+            require_once($CFG->dirroot . "/lib/filelib.php");
+            $curl = new curl();
+            $httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot); //force https url
+            $curl->head($httpswwwroot . "/login/index.php");
+            $info = $curl->get_info();
+            if (empty($info['http_code']) or ($info['http_code'] >= 400)) {
+               $html .= $OUTPUT->notification(get_string('nohttpsformobilewarning', 'admin'));
+            }
+        }
+
+        return $html;
+    }
+
+    /**
+     * Retrieves the current setting using the objects name
+     *
+     * @return string
+     */
+    public function get_setting() {
+        global $CFG;
+        $webservicesystem = $CFG->enablewebservices;
+        require_once($CFG->dirroot . '/webservice/lib.php');
+        $webservicemanager = new webservice();
+        $mobileservice = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
+        if ($mobileservice->enabled and !empty($webservicesystem) and $this->is_xmlrpc_cap_allowed()) {
+            return $this->config_read($this->name); //same as returning 1
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Save the selected setting
+     *
+     * @param string $data The selected site
+     * @return string empty string or error message
+     */
+    public function write_setting($data) {
+        global $DB, $CFG;
+        $servicename = MOODLE_OFFICIAL_MOBILE_SERVICE;
+
+        require_once($CFG->dirroot . '/webservice/lib.php');
+        $webservicemanager = new webservice();
+
+        if ((string)$data === $this->yes) {
+             //code run when enable mobile web service
+             //enable web service systeme if necessary
+             set_config('enablewebservices', true);
+
+             //enable mobile service
+             $mobileservice = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
+             $mobileservice->enabled = 1;
+             $webservicemanager->update_external_service($mobileservice);
+
+             //enable xml-rpc server
+             $active_protocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
+
+             if (!in_array('xmlrpc', $active_protocols)) {
+                 $active_protocols[] = 'xmlrpc';
+                 set_config('webserviceprotocols', implode(',', $active_protocols));
+             }
+
+             //allow xml-rpc:use capability for authenticated user
+             $this->set_xmlrpc_cap(true);
+
+         } else {
+             //disable web service system if no other services are enabled
+             $otherenabledservices = $DB->get_records_select('external_services',
+                     'enabled = :enabled AND (shortname != :shortname OR shortname IS NULL)', array('enabled' => 1,
+                         'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
+             if (empty($otherenabledservices)) {
+                 set_config('enablewebservices', false);
+
+                 //also disable xml-rpc server
+                 $active_protocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
+                 $protocolkey = array_search('xmlrpc', $active_protocols);
+                 if ($protocolkey !== false) {
+                    unset($active_protocols[$protocolkey]);
+                    set_config('webserviceprotocols', implode(',', $active_protocols));
+                 }
+
+                 //disallow xml-rpc:use capability for authenticated user
+                 $this->set_xmlrpc_cap(false);
+             }
+
+             //disable the mobile service
+             $mobileservice = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
+             $mobileservice->enabled = 0;
+             $webservicemanager->update_external_service($mobileservice);
+         }
+
+        return (parent::write_setting($data));
+    }
+}
 
 /**
  * Special class for management of external services

@@ -207,3 +207,13 @@ $functions = array(
     ),
 
 );
+
+$services = array(
+       'Moodle mobile web service'  => array(
+                'functions' => array ('moodle_enrol_get_users_courses', 'moodle_enrol_get_enrolled_users',
+                    'moodle_user_get_users_by_id'),
+                'enabled' => 0,
+                'restrictedusers' => 0,
+                'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE
+        ),
+);

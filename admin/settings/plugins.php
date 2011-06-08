@@ -324,6 +324,9 @@ if ($hassiteconfig) {
     $ADMIN->add('webservicesettings', $temp);
     /// manage service
     $temp = new admin_settingpage('externalservices', get_string('externalservices', 'webservice'));
+    $enablemobiledocurl = new moodle_url(get_docs_url('Enable_mobile_web_services'));
+    $enablemobiledoclink = html_writer::tag('a', get_string('documentation'),array('href'=>$enablemobiledocurl));
+    $temp->add(new admin_setting_enablemobileservice('enablemobilewebservice', get_string('enablemobilewebservice', 'admin'), get_string('configenablemobilewebservice', 'admin', $enablemobiledoclink), 0));
     $temp->add(new admin_setting_heading('manageserviceshelpexplaination', get_string('information', 'webservice'), get_string('servicehelpexplanation', 'webservice')));
     $temp->add(new admin_setting_manageexternalservices());
     $ADMIN->add('webservicesettings', $temp);

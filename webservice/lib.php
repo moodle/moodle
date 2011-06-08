@@ -395,6 +395,19 @@ class webservice {
     }
 
     /**
+     * Get a external service for a given shortname
+     * @param service shortname $shortname
+     * @param integer $strictness IGNORE_MISSING, MUST_EXIST...
+     * @return object external service
+     */
+    public function get_external_service_by_shortname($shortname, $strictness=IGNORE_MISSING) {
+        global $DB;
+        $service = $DB->get_record('external_services',
+                        array('shortname' => $shortname), '*', $strictness);
+        return $service;
+    }
+
+    /**
      * Get a external function for a given id
      * @param function id $functionid
      * @param integer $strictness IGNORE_MISSING, MUST_EXIST...
