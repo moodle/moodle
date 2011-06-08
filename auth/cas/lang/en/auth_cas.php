@@ -61,4 +61,5 @@ $string['auth_cas_text'] = 'Secure connection';
 $string['auth_cas_use_cas'] = 'Use CAS';
 $string['auth_cas_version'] = 'Version of CAS';
 $string['CASform'] = 'Authentication choice';
+$string['noldapserver'] = 'No LDAP server configured for CAS! Syncing disabled.';
 $string['pluginname'] = 'CAS server (SSO)';
