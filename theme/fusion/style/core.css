@@ -139,18 +139,17 @@ h6{
 }
 
 #page-site-index #region-header {
-    /* margin-bottom: 55px; */
     margin-bottom: 65px;
+}
 
 #region-header {
-    /* margin-bottom: 30px; */
     margin-bottom: 40px;
 }
 
 .headermain {
     margin: 0;
     float: none;
-  font-family: "Trajan Pro", "Lucida Sans Unicode", Arial, Helvetica, Sans, FreeSans, Jamrul, Garuda, Kalimati;
+    font-family: "Trajan Pro", "Lucida Sans Unicode", Arial, Helvetica, Sans, FreeSans, Jamrul, Garuda, Kalimati;
     float: none;
     font-size: 3em;
     line-height: 1;
