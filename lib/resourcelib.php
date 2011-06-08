@@ -487,10 +487,15 @@ function resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype) {
     }
 
     $iframe = false;
+
+    $param = '<param name="src" value="'.$fullurl.'" />';
+
     // IE can not embed stuff properly if stored on different server
     // that is why we use iframe instead, unfortunately this tag does not validate
     // in xhtml strict mode
     if ($mimetype === 'text/html' and check_browser_version('MSIE', 5)) {
+        // The param tag needs to be removed to avoid trouble in IE.
+        $param = '';
         if (preg_match('(^https?://[^/]*)', $fullurl, $matches)) {
             if (strpos($CFG->wwwroot, $matches[0]) !== 0) {
                 $iframe = true;
@@ -510,7 +515,7 @@ EOT;
         $code = <<<EOT
 <div class="resourcecontent resourcegeneral">
   <object id="resourceobject" data="$fullurl" type="$mimetype"  width="800" height="600">
-    <param name="src" value="$fullurl" />
+    $param
     $clicktoopen
   </object>
 </div>
