@@ -1034,21 +1034,6 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2011051223, 'quiz');
     }
 
-    if ($oldversion < 2011051224) {
-
-        // Define field hintformat to be added to question_hints table.
-        $table = new xmldb_table('question_hints');
-        $field = new xmldb_field('hintformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED,
-                XMLDB_NOTNULL, null, '0');
-
-        // Conditionally launch add field partiallycorrectfeedbackformat
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        upgrade_mod_savepoint(true, 2011051224, 'quiz');
-    }
-
     if ($oldversion < 2011051225) {
         // Define table quiz_report to be renamed to quiz_reports
         $table = new xmldb_table('quiz_report');
