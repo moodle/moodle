@@ -29,7 +29,7 @@ html, body {background-color:#C8C9C7;}
 .coursebox .info {width:35%;float:left;}
 .coursebox .summary {width:60%;float:right;}
 
-.course-content ul {margin:0;}
+.course-content ul.section {margin:0;}
 .course-content .headingblock.outline {margin-top:0;}
 .course-content .section.main {border:1px solid #E3E3E3;margin-bottom:10px;}
 .course-content .section.main .left.side {float:left;width:20px;padding:5px;}
