@@ -280,7 +280,7 @@ class moodle1_converter extends base_converter {
         $returned = null; // data returned by the processing method, if any
 
         if (empty($object)) {
-            throw new convert_exception('missing_processing_object', $object);
+            throw new convert_exception('missing_processing_object', null, $data['path']);
         }
 
         // release the lock if we aren't anymore within children of it
