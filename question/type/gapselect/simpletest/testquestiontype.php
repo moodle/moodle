@@ -129,15 +129,15 @@ class qtype_gapselect_test extends UnitTestCase {
 
         $this->assertEqual(array(
             1 => array(
-                1 => new question_possible_response('quick', 1),
+                1 => new question_possible_response('quick', 1/3),
                 2 => new question_possible_response('slow', 0),
                 null => question_possible_response::no_response()),
             2 => array(
-                1 => new question_possible_response('fox', 1),
+                1 => new question_possible_response('fox', 1/3),
                 2 => new question_possible_response('dog', 0),
                 null => question_possible_response::no_response()),
             3 => array(
-                1 => new question_possible_response('lazy', 1),
+                1 => new question_possible_response('lazy', 1/3),
                 2 => new question_possible_response('assiduous', 0),
                 null => question_possible_response::no_response()),
         ), $this->qtype->get_possible_responses($q));
