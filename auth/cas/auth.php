@@ -360,7 +360,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
      * @return boolean result
      */
     function iscreator($username) {
-        if ((empty($this->config->attrcreators) && empty($this->config->groupecreators)) or empty($this->config->memberattribute)) {
+        if (empty($this->config->host_url) or (empty($this->config->attrcreators) && empty($this->config->groupecreators)) or empty($this->config->memberattribute)) {
             return false;
         }
 
@@ -404,5 +404,40 @@ class auth_plugin_cas extends auth_plugin_ldap {
         }
 
         return false;
+    }
+
+    /**
+     * Reads user information from LDAP and returns it as array()
+     *
+     * If no LDAP servers are configured, user information has to be
+     * provided via other methods (CSV file, manually, etc.). Return
+     * an empty array so existing user info is not lost. Otherwise,
+     * calls parent class method to get user info.
+     *
+     * @param string $username username
+     * @return mixed array with no magic quotes or false on error
+     */
+    function get_userinfo($username) {
+        if (empty($this->config->host_url)) {
+            return array();
+        }
+        return parent::get_userinfo($username);
+    }
+
+    /**
+     * Syncronizes users from LDAP server to moodle user table.
+     *
+     * If no LDAP servers are configured, simply return. Otherwise,
+     * call parent class method to do the work.
+     *
+     * @param bool $do_updates will do pull in data updates from LDAP if relevant
+     * @return nothing
+     */
+    function sync_users($do_updates=true) {
+        if (empty($this->config->host_url)) {
+            error_log('[AUTH CAS] '.get_string('noldapserver', 'auth_cas'));
+            return;
+        }
+        parent::sync_users($do_updates);
     }
 }
