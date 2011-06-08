@@ -762,15 +762,23 @@ sup {vertical-align: super;}
 
 /** Fix TinyMCE editor right to left **/
 .dir-rtl .clearlooks2.ie9 .mceAlert .mceMiddle span,.dir-rtl .clearlooks2 .mceConfirm .mceMiddle span {top: 44px;}
-.dir-rtl .o2k7Skin table, 
-.dir-rtl .o2k7Skin tbody, 
-.dir-rtl .o2k7Skin a, 
-.dir-rtl .o2k7Skin img, 
-.dir-rtl .o2k7Skin tr, 
-.dir-rtl .o2k7Skin div, 
-.dir-rtl .o2k7Skin td, 
-.dir-rtl .o2k7Skin iframe, 
-.dir-rtl .o2k7Skin span, 
-.dir-rtl .o2k7Skin *, 
+.dir-rtl .o2k7Skin table,
+.dir-rtl .o2k7Skin tbody,
+.dir-rtl .o2k7Skin a,
+.dir-rtl .o2k7Skin img,
+.dir-rtl .o2k7Skin tr,
+.dir-rtl .o2k7Skin div,
+.dir-rtl .o2k7Skin td,
+.dir-rtl .o2k7Skin iframe,
+.dir-rtl .o2k7Skin span,
+.dir-rtl .o2k7Skin *,
 .dir-rtl .o2k7Skin .mceText,
 .dir-rtl .o2k7Skin .mceListBox .mceText {text-align:right;}
+
+/* Fix for ordered and unordered list in course topic summary & course weekly summary */
+ul li,
+.course-content ul.weeks .content .summary ul li,
+.course-content ul.topics .content .summary ul li {list-style: disc outside none;}
+ol li,
+.course-content ul.weeks .content .summary ol li,
+.course-content ul.topics .content .summary ol li {list-style: decimal outside none;}
