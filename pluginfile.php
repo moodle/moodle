@@ -305,7 +305,7 @@ if ($component === 'blog') {
         }
         if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'/.png')) {
             if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'/.jpg')) {
-                redirect($OUTPUT->pix_url('u/f1'));
+                redirect($OUTPUT->pix_url('u/'.$filename));
             }
         }
 
