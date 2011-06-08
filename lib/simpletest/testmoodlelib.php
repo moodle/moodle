@@ -515,7 +515,14 @@ class moodlelib_test extends UnitTestCase {
     }
 
     function test_usergetdate() {
-        global $USER;
+        global $USER, $CFG;
+
+        //Check if forcetimezone is set then save it and set it to use user timezone
+        $cfgforcetimezone = null;
+        if (isset($CFG->forcetimezone)) {
+            $cfgforcetimezone = $CFG->forcetimezone;
+            $CFG->forcetimezone = 99; //get user default timezone.
+        }
 
         $userstimezone = $USER->timezone;
         $USER->timezone = 2;//set the timezone to a known state
@@ -559,6 +566,12 @@ class moodlelib_test extends UnitTestCase {
 
         //set the timezone back to what it was
         $USER->timezone = $userstimezone;
+
+        //restore forcetimezone if changed.
+        if (!is_null($cfgforcetimezone)) {
+            $CFG->forcetimezone = $cfgforcetimezone;
+        }
+        
         setlocale(LC_TIME, $oldlocale);
     }
 
@@ -756,5 +769,287 @@ class moodlelib_test extends UnitTestCase {
         } catch (Exception $ex) {
             $this->assertTrue(true);
         }
+    }
+
+    public function test_userdate() {
+        global $USER, $CFG;
+
+        $testvalues = array(
+            array(
+                'time' => '1309514400',
+                'usertimezone' => 'America/Moncton',
+                'timezone' => '0.0', //no dst offset
+                'expectedoutput' => 'Friday, 1 July 2011, 10:00 AM'
+            ),
+            array(
+                'time' => '1309514400',
+                'usertimezone' => 'America/Moncton',
+                'timezone' => '99', //dst offset and timezone offset.
+                'expectedoutput' => 'Friday, 1 July 2011, 07:00 AM'
+            ),
+            array(
+                'time' => '1309514400',
+                'usertimezone' => 'America/Moncton',
+                'timezone' => 'America/Moncton', //dst offset and timezone offset.
+                'expectedoutput' => 'Friday, 1 July 2011, 07:00 AM'
+            ),
+            array(
+                'time' => '1293876000 ',
+                'usertimezone' => 'America/Moncton',
+                'timezone' => '0.0', //no dst offset
+                'expectedoutput' => 'Saturday, 1 January 2011, 10:00 AM'
+            ),
+            array(
+                'time' => '1293876000 ',
+                'usertimezone' => 'America/Moncton',
+                'timezone' => '99', //no dst offset in jan, so just timezone offset.
+                'expectedoutput' => 'Saturday, 1 January 2011, 06:00 AM'
+            ),
+            array(
+                'time' => '1293876000 ',
+                'usertimezone' => 'America/Moncton',
+                'timezone' => 'America/Moncton', //no dst offset in jan
+                'expectedoutput' => 'Saturday, 1 January 2011, 06:00 AM'
+            ),
+            array(
+                'time' => '1293876000 ',
+                'usertimezone' => '2',
+                'timezone' => '99', //take user timezone
+                'expectedoutput' => 'Saturday, 1 January 2011, 12:00 PM'
+            ),
+            array(
+                'time' => '1293876000 ',
+                'usertimezone' => '-2',
+                'timezone' => '99', //take user timezone
+                'expectedoutput' => 'Saturday, 1 January 2011, 08:00 AM'
+            ),
+            array(
+                'time' => '1293876000 ',
+                'usertimezone' => '-10',
+                'timezone' => '2', //take this timezone
+                'expectedoutput' => 'Saturday, 1 January 2011, 12:00 PM'
+            ),
+            array(
+                'time' => '1293876000 ',
+                'usertimezone' => '-10',
+                'timezone' => '-2', //take this timezone
+                'expectedoutput' => 'Saturday, 1 January 2011, 08:00 AM'
+            ),
+            array(
+                'time' => '1293876000 ',
+                'usertimezone' => '-10',
+                'timezone' => 'random/time', //this should show server time
+                'expectedoutput' => 'Saturday, 1 January 2011, 06:00 PM'
+            ),
+            array(
+                'time' => '1293876000 ',
+                'usertimezone' => '14', //server time zone
+                'timezone' => '99', //this should show user time
+                'expectedoutput' => 'Saturday, 1 January 2011, 06:00 PM'
+            ),
+        );
+
+        //Check if forcetimezone is set then save it and set it to use user timezone
+        $cfgforcetimezone = null;
+        if (isset($CFG->forcetimezone)) {
+            $cfgforcetimezone = $CFG->forcetimezone;
+            $CFG->forcetimezone = 99; //get user default timezone.
+        }
+        //store user default timezone to restore later
+        $userstimezone = $USER->timezone;
+
+        // The string version of date comes from server locale setting and does
+        // not respect user language, so it is necessary to reset that.
+        $oldlocale = setlocale(LC_TIME, '0');
+        setlocale(LC_TIME, 'en_AU.UTF-8');
+
+        foreach ($testvalues as $vals) {
+            $USER->timezone = $vals['usertimezone'];
+            $actualoutput = userdate($vals['time'], '%A, %d %B %Y, %I:%M %p', $vals['timezone']);
+            $this->assertEqual($vals['expectedoutput'], $actualoutput,
+                "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput},
+                Please check if timezones are updated (Site adminstration -> location -> update timezone)");
+        }
+
+        //restore user timezone back to what it was
+        $USER->timezone = $userstimezone;
+
+        //restore forcetimezone
+        if (!is_null($cfgforcetimezone)) {
+            $CFG->forcetimezone = $cfgforcetimezone;
+        }
+
+        setlocale(LC_TIME, $oldlocale);
+    }
+
+    public function test_make_timestamp() {
+        global $USER, $CFG;
+
+        $testvalues = array(
+            array(
+                'usertimezone' => 'America/Moncton',
+                'year' => '2011',
+                'month' => '7',
+                'day' => '1',
+                'hour' => '10',
+                'minutes' => '00',
+                'seconds' => '00',
+                'timezone' => '0.0', //no dst offset
+                'applydst' => false,
+                'expectedoutput' => '1309528800'
+            ),
+            array(
+                'usertimezone' => 'America/Moncton',
+                'year' => '2011',
+                'month' => '7',
+                'day' => '1',
+                'hour' => '10',
+                'minutes' => '00',
+                'seconds' => '00',
+                'timezone' => '99', //user default timezone
+                'applydst' => false, //don't apply dst
+                'expectedoutput' => '1309528800'
+            ),
+            array(
+                'usertimezone' => 'America/Moncton',
+                'year' => '2011',
+                'month' => '7',
+                'day' => '1',
+                'hour' => '10',
+                'minutes' => '00',
+                'seconds' => '00',
+                'timezone' => '99', //user default timezone
+                'applydst' => true, //apply dst
+                'expectedoutput' => '1309525200'
+            ),
+            array(
+                'usertimezone' => 'America/Moncton',
+                'year' => '2011',
+                'month' => '7',
+                'day' => '1',
+                'hour' => '10',
+                'minutes' => '00',
+                'seconds' => '00',
+                'timezone' => 'America/Moncton', //string timezone
+                'applydst' => true, //apply dst
+                'expectedoutput' => '1309525200'
+            ),
+            array(
+                'usertimezone' => '2',//no dst applyed
+                'year' => '2011',
+                'month' => '7',
+                'day' => '1',
+                'hour' => '10',
+                'minutes' => '00',
+                'seconds' => '00',
+                'timezone' => '99', //take user timezone
+                'applydst' => true, //apply dst
+                'expectedoutput' => '1309507200'
+            ),
+            array(
+                'usertimezone' => '-2',//no dst applyed
+                'year' => '2011',
+                'month' => '7',
+                'day' => '1',
+                'hour' => '10',
+                'minutes' => '00',
+                'seconds' => '00',
+                'timezone' => '99', //take usertimezone
+                'applydst' => true, //apply dst
+                'expectedoutput' => '1309521600'
+            ),
+            array(
+                'usertimezone' => '-10',//no dst applyed
+                'year' => '2011',
+                'month' => '7',
+                'day' => '1',
+                'hour' => '10',
+                'minutes' => '00',
+                'seconds' => '00',
+                'timezone' => '2', //take this timezone
+                'applydst' => true, //apply dst
+                'expectedoutput' => '1309507200'
+            ),
+            array(
+                'usertimezone' => '-10',//no dst applyed
+                'year' => '2011',
+                'month' => '7',
+                'day' => '1',
+                'hour' => '10',
+                'minutes' => '00',
+                'seconds' => '00',
+                'timezone' => '-2', //take this timezone
+                'applydst' => true, //apply dst,
+                'expectedoutput' => '1309521600'
+            ),
+            array(
+                'usertimezone' => '-10',//no dst applyed
+                'year' => '2011',
+                'month' => '7',
+                'day' => '1',
+                'hour' => '10',
+                'minutes' => '00',
+                'seconds' => '00',
+                'timezone' => 'random/time', //This should show server time
+                'applydst' => true, //apply dst,
+                'expectedoutput' => '1309485600'
+            ),
+            array(
+                'usertimezone' => '14',//server time
+                'year' => '2011',
+                'month' => '7',
+                'day' => '1',
+                'hour' => '10',
+                'minutes' => '00',
+                'seconds' => '00',
+                'timezone' => '99', //get user time
+                'applydst' => true, //apply dst,
+                'expectedoutput' => '1309485600'
+            )
+        );
+
+        //Check if forcetimezone is set then save it and set it to use user timezone
+        $cfgforcetimezone = null;
+        if (isset($CFG->forcetimezone)) {
+            $cfgforcetimezone = $CFG->forcetimezone;
+            $CFG->forcetimezone = 99; //get user default timezone.
+        }
+
+        //store user default timezone to restore later
+        $userstimezone = $USER->timezone;
+
+        // The string version of date comes from server locale setting and does
+        // not respect user language, so it is necessary to reset that.
+        $oldlocale = setlocale(LC_TIME, '0');
+        setlocale(LC_TIME, 'en_AU.UTF-8');
+
+        //Test make_timestamp with all testvals and assert if anything wrong.
+        foreach ($testvalues as $vals) {
+            $USER->timezone = $vals['usertimezone'];
+            $actualoutput = make_timestamp(
+                    $vals['year'],
+                    $vals['month'],
+                    $vals['day'],
+                    $vals['hour'],
+                    $vals['minutes'],
+                    $vals['seconds'],
+                    $vals['timezone'],
+                    $vals['applydst']
+                    );
+
+            $this->assertEqual($vals['expectedoutput'], $actualoutput,
+                "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput},
+                Please check if timezones are updated (Site adminstration -> location -> update timezone)");
+        }
+
+        //restore user timezone back to what it was
+        $USER->timezone = $userstimezone;
+
+        //restore forcetimezone
+        if (!is_null($cfgforcetimezone)) {
+            $CFG->forcetimezone = $cfgforcetimezone;
+        }
+
+        setlocale(LC_TIME, $oldlocale);
     }
 }
