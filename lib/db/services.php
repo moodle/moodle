@@ -228,6 +228,16 @@ $functions = array(
         'capabilities'=> 'moodle/notes:manage',
     ),
 
+    // === webservice related functions ===
+
+    'moodle_webservice_get_siteinfo' => array(
+        'classname'   => 'moodle_webservice_external',
+        'methodname'  => 'get_siteinfo',
+        'classpath'   => 'webservice/externallib.php',
+        'description' => 'Return some site info / user info / list web service functions',
+        'type'        => 'read',
+    ),
+
 );
 
 $services = array(

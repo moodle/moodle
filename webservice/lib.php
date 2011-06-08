@@ -272,6 +272,31 @@ class webservice {
     }
 
     /**
+     * Get the list of all functions for given service shortnames
+     * @param array $serviceshortnames
+     * @param $enabledonly if true then only return function for the service that has been enabled
+     * @return array functions
+     */
+    public function get_external_functions_by_enabled_services($serviceshortnames, $enabledonly = true) {
+        global $DB;
+        if (!empty($serviceshortnames)) {
+            $enabledonlysql = $enabledonly?' AND s.enabled = 1 ':'';
+            list($serviceshortnames, $params) = $DB->get_in_or_equal($serviceshortnames);
+            $sql = "SELECT f.*
+                      FROM {external_functions} f
+                     WHERE f.name IN (SELECT sf.functionname
+                                        FROM {external_services_functions} sf, {external_services} s
+                                       WHERE s.shortname $serviceshortnames
+                                             AND sf.externalserviceid = s.id
+                                             " . $enabledonlysql . ")";
+            $functions = $DB->get_records_sql($sql, $params);
+        } else {
+            $functions = array();
+        }
+        return $functions;
+    }
+
+    /**
      * Get the list of all functions not in the given service id
      * @param int $serviceid
      * @return array functions
