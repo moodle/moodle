@@ -1,6 +1,6 @@
 /** Path: theme pagelayout **/
 body {margin:auto 0px;width:auto; height: 100%}
-#page {width:100%;overflow:hidden; min-height: 100%;}
+#page {width:100%; min-height: 100%;}
 #page-content {
     clear: both;
     position: relative;
