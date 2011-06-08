@@ -1115,27 +1115,28 @@ function get_user_preferences($name=NULL, $default=NULL, $otheruserid=NULL) {
  * @param int $hour The hour part to create timestamp of
  * @param int $minute The minute part to create timestamp of
  * @param int $second The second part to create timestamp of
- * @param float $timezone ?
- * @param bool $applydst ?
+ * @param mixed $timezone Timezone modifier, if 99 then use default user's timezone
+ * @param bool $applydst Toggle Daylight Saving Time, default true, will be 
+ *             applied only if timezone is 99 or string.
  * @return int timestamp
  * @todo Finish documenting this function
  */
 function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99, $applydst=true) {
 
-    $strtimezone = NULL;
-    if (!is_numeric($timezone)) {
-        $strtimezone = $timezone;
-    }
+    //save input timezone, required for dst offset check.
+    $passedtimezone = $timezone;
 
     $timezone = get_user_timezone_offset($timezone);
 
-    if (abs($timezone) > 13) {
+    if (abs($timezone) > 13) {  //server time
         $time = mktime((int)$hour, (int)$minute, (int)$second, (int)$month, (int)$day, (int)$year);
     } else {
         $time = gmmktime((int)$hour, (int)$minute, (int)$second, (int)$month, (int)$day, (int)$year);
         $time = usertime($time, $timezone);
-        if($applydst) {
-            $time -= dst_offset_on($time, $strtimezone);
+
+        //Apply dst for string timezones or if 99 then try dst offset with user's default timezone
+        if ($applydst && ((99 == $passedtimezone) || !is_numeric($passedtimezone))) {
+            $time -= dst_offset_on($time, $passedtimezone);
         }
     }
 
@@ -1222,7 +1223,8 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * @uses HOURSECS
  * @param  int $date timestamp in GMT
  * @param string $format strftime format
- * @param float $timezone
+ * @param mixed $timezone by default, uses the user's time zone. if numeric and
+ *      not 99 then daylight saving will not be added.
  * @param bool $fixday If true (default) then the leading
  * zero from %d is removed. If false then the leading zero is mantained.
  * @return string
@@ -1230,11 +1232,6 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
 function userdate($date, $format='', $timezone=99, $fixday = true) {
 
     global $CFG;
-
-    $strtimezone = NULL;
-    if (!is_numeric($timezone)) {
-        $strtimezone = $timezone;
-    }
 
     if (empty($format)) {
         $format = get_string('strftimedaydatetime');
@@ -1247,7 +1244,11 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
         $fixday = ($formatnoday != $format);
     }
 
-    $date += dst_offset_on($date, $strtimezone);
+    //add daylight saving offset for string timezones only, as we can't get dst for
+    //float values. if timezone is 99 (user default timezone), then try update dst.
+    if ((99 == $timezone) || !is_numeric($timezone)) {
+        $date += dst_offset_on($date, $timezone);
+    }
 
     $timezone = get_user_timezone_offset($timezone);
 
@@ -1289,16 +1290,15 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
  *
  * @uses HOURSECS
  * @param int $time Timestamp in GMT
- * @param float $timezone ?
+ * @param mixed $timezone offset time with timezone, if float and not 99, then no
+ *        dst offset is applyed
  * @return array An array that represents the date in user time
  * @todo Finish documenting this function
  */
 function usergetdate($time, $timezone=99) {
 
-    $strtimezone = NULL;
-    if (!is_numeric($timezone)) {
-        $strtimezone = $timezone;
-    }
+    //save input timezone, required for dst offset check.
+    $passedtimezone = $timezone;
 
     $timezone = get_user_timezone_offset($timezone);
 
@@ -1306,8 +1306,12 @@ function usergetdate($time, $timezone=99) {
         return getdate($time);
     }
 
-    // There is no gmgetdate so we use gmdate instead
-    $time += dst_offset_on($time, $strtimezone);
+    //add daylight saving offset for string timezones only, as we can't get dst for
+    //float values. if timezone is 99 (user default timezone), then try update dst.
+    if ($passedtimezone == 99 || !is_numeric($passedtimezone)) {
+        $time += dst_offset_on($time, $passedtimezone);
+    }
+
     $time += intval((float)$timezone * HOURSECS);
 
     $datestring = gmstrftime('%B_%A_%j_%Y_%m_%w_%d_%H_%M_%S', $time);
@@ -1456,7 +1460,7 @@ function get_timezone_offset($tz) {
  *
  * @uses $USER
  * @uses $CFG
- * @param float $tz If this value is provided and not equal to 99, it will be returned as is and no other settings will be checked
+ * @param mixed $tz If this value is provided and not equal to 99, it will be returned as is and no other settings will be checked
  * @return mixed
  */
 function get_user_timezone($tz = 99) {
