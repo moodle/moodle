@@ -126,7 +126,7 @@ $functions = array(
         'classpath'   => 'user/externallib.php',
         'description' => 'Get users by id.',
         'type'        => 'read',
-        'capabilities'=> 'moodle/user:viewalldetails',
+        'capabilities'=> 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update',
     ),
 
     'moodle_user_delete_users' => array(
