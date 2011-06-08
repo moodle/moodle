@@ -6483,7 +6483,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     if ($oldversion < 2011060500) {
 
-         // Define index uniqueuserrating (not unique) to be dropped form rating
+         // Define index uniqueuserrating (not unique) to be dropped from rating
         $table = new xmldb_table('rating');
         $index = new xmldb_index('uniqueuserrating', XMLDB_INDEX_NOTUNIQUE,
                          array('component', 'ratingarea', 'contextid', 'itemid'));
