@@ -48,9 +48,8 @@ class qtype_shortanswer_edit_form extends question_edit_form {
                 get_string('filloutoneanswer', 'qtype_shortanswer'));
         $mform->closeHeaderBefore('answersinstruct');
 
-        $creategrades = get_grade_options();
         $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_shortanswer', '{no}'),
-                $creategrades->gradeoptions);
+                question_bank::fraction_options());
 
         $this->add_interactive_settings();
     }

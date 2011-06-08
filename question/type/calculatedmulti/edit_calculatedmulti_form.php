@@ -147,9 +147,8 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
                 get_string('answernumbering', 'qtype_multichoice'), $numberingoptions);
         $mform->setDefault('answernumbering', 'abc');
 
-        $creategrades = get_grade_options();
         $this->add_per_answer_fields($mform, get_string('choiceno', 'qtype_multichoice', '{no}'),
-                $creategrades->gradeoptionsfull, max(5, QUESTION_NUMANS_START));
+                question_bank::fraction_options_full(), max(5, QUESTION_NUMANS_START));
 
         $repeated = array();
         //   if ($this->editasmultichoice == 1) {

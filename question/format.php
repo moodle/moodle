@@ -54,8 +54,8 @@ class qformat_default {
 
     protected $importcontext = null;
 
-// functions to indicate import/export functionality
-// override to return true if implemented
+    // functions to indicate import/export functionality
+    // override to return true if implemented
 
     /** @return bool whether this plugin provides import functionality. */
     public function provide_import() {
@@ -80,7 +80,7 @@ class qformat_default {
         return '.txt';
     }
 
-// Accessor methods
+    // Accessor methods
 
     /**
      * set the category
@@ -196,9 +196,9 @@ class qformat_default {
         $this->canaccessbackupdata = $canaccess;
     }
 
-/***********************
- * IMPORTING FUNCTIONS
- ***********************/
+    /***********************
+     * IMPORTING FUNCTIONS
+     ***********************/
 
     /**
      * Handle parsing error
@@ -304,8 +304,7 @@ class qformat_default {
         }
 
         // get list of valid answer grades
-        $grades = get_grade_options();
-        $gradeoptionsfull = $grades->gradeoptionsfull;
+        $gradeoptionsfull = question_bank::fraction_options_full();
 
         // check answer grades are valid
         // (now need to do this here because of 'stop on error': MDL-10689)
@@ -316,11 +315,11 @@ class qformat_default {
                 $fractions = $question->fraction;
                 $answersvalid = true; // in case they are!
                 foreach ($fractions as $key => $fraction) {
-                    $newfraction = match_grade_options($gradeoptionsfull, $fraction, $this->matchgrades);
-                    if ($newfraction===false) {
+                    $newfraction = match_grade_options($gradeoptionsfull, $fraction,
+                            $this->matchgrades);
+                    if ($newfraction === false) {
                         $answersvalid = false;
-                    }
-                    else {
+                    } else {
                         $fractions[$key] = $newfraction;
                     }
                 }
@@ -328,8 +327,7 @@ class qformat_default {
                     echo $OUTPUT->notification(get_string('invalidgrade', 'question'));
                     ++$gradeerrors;
                     continue;
-                }
-                else {
+                } else {
                     $question->fraction = $fractions;
                 }
             }
@@ -338,7 +336,7 @@ class qformat_default {
         $questions = $goodquestions;
 
         // check for errors before we continue
-        if ($this->stoponerror and ($gradeerrors>0)) {
+        if ($this->stoponerror && $gradeerrors > 0) {
             return false;
         }
 
@@ -410,7 +408,8 @@ class qformat_default {
             }
 
             // Give the question a unique version stamp determined by question_hash()
-            $DB->set_field('question', 'version', question_hash($question), array('id'=>$question->id));
+            $DB->set_field('question', 'version', question_hash($question),
+                    array('id' => $question->id));
         }
         return true;
     }
@@ -428,7 +427,8 @@ class qformat_default {
             return $count;
         }
         foreach ($questions as $question) {
-            if (!is_object($question) || !isset($question->qtype) || ($question->qtype == 'category')) {
+            if (!is_object($question) || !isset($question->qtype) ||
+                    ($question->qtype == 'category')) {
                 continue;
             }
             $count++;
@@ -471,7 +471,8 @@ class qformat_default {
 
         // Now create any categories that need to be created.
         foreach ($catnames as $catname) {
-            if ($category = $DB->get_record('question_categories', array('name' => $catname, 'contextid' => $context->id, 'parent' => $parent))) {
+            if ($category = $DB->get_record('question_categories',
+                    array('name' => $catname, 'contextid' => $context->id, 'parent' => $parent))) {
                 $parent = $category->id;
             } else {
                 require_capability('moodle/question:managecategory', $context);
@@ -613,10 +614,9 @@ class qformat_default {
         return true;
     }
 
-
-/*******************
- * EXPORT FUNCTIONS
- *******************/
+    /*******************
+     * EXPORT FUNCTIONS
+     *******************/
 
     /**
      * Provide export functionality for plugin questiontypes
@@ -685,9 +685,10 @@ class qformat_default {
         $trackcategory = 0;
 
         // iterate through questions
-        foreach($questions as $question) {
+        foreach ($questions as $question) {
             // used by file api
-            $contextid = $DB->get_field('question_categories', 'contextid', array('id'=>$question->category));
+            $contextid = $DB->get_field('question_categories', 'contextid',
+                    array('id' => $question->category));
             $question->contextid = $contextid;
 
             // do not export hidden questions
@@ -748,7 +749,7 @@ class qformat_default {
     protected function get_category_path($id, $includecontext = true) {
         global $DB;
 
-        if (!$category = $DB->get_record('question_categories',array('id' =>$id))) {
+        if (!$category = $DB->get_record('question_categories', array('id' => $id))) {
             print_error('cannotfindcategory', 'error', '', $id);
         }
         $contextstring = $this->translator->context_to_string($category->contextid);

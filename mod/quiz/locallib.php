@@ -481,43 +481,38 @@ function quiz_set_grade($newgrade, $quiz) {
     // Use a transaction, so that on those databases that support it, this is safer.
     $transaction = $DB->start_delegated_transaction();
 
-    try {
-        // Update the quiz table.
-        $DB->set_field('quiz', 'grade', $newgrade, array('id' => $quiz->instance));
+    // Update the quiz table.
+    $DB->set_field('quiz', 'grade', $newgrade, array('id' => $quiz->instance));
 
-        // Rescaling the other data is only possible if the old grade was non-zero.
-        if ($quiz->grade > 1e-7) {
-            global $CFG;
+    // Rescaling the other data is only possible if the old grade was non-zero.
+    if ($quiz->grade > 1e-7) {
+        global $CFG;
 
-            $factor = $newgrade/$quiz->grade;
-            $quiz->grade = $newgrade;
+        $factor = $newgrade/$quiz->grade;
+        $quiz->grade = $newgrade;
 
-            // Update the quiz_grades table.
-            $timemodified = time();
-            $DB->execute("
-                    UPDATE {quiz_grades}
-                    SET grade = ? * grade, timemodified = ?
-                    WHERE quiz = ?
-            ", array($factor, $timemodified, $quiz->id));
+        // Update the quiz_grades table.
+        $timemodified = time();
+        $DB->execute("
+                UPDATE {quiz_grades}
+                SET grade = ? * grade, timemodified = ?
+                WHERE quiz = ?
+        ", array($factor, $timemodified, $quiz->id));
 
-            // Update the quiz_feedback table.
-            $DB->execute("
-                    UPDATE {quiz_feedback}
-                    SET mingrade = ? * mingrade, maxgrade = ? * maxgrade
-                    WHERE quizid = ?
-            ", array($factor, $factor, $quiz->id));
-        }
-
-        // update grade item and send all grades to gradebook
-        quiz_grade_item_update($quiz);
-        quiz_update_grades($quiz);
-
-        $transaction->allow_commit();
-        return true;
-
-    } catch (Exception $e) {
-        $transaction->rollback($e);
+        // Update the quiz_feedback table.
+        $DB->execute("
+                UPDATE {quiz_feedback}
+                SET mingrade = ? * mingrade, maxgrade = ? * maxgrade
+                WHERE quizid = ?
+        ", array($factor, $factor, $quiz->id));
     }
+
+    // update grade item and send all grades to gradebook
+    quiz_grade_item_update($quiz);
+    quiz_update_grades($quiz);
+
+    $transaction->allow_commit();
+    return true;
 }
 
 /**
@@ -869,6 +864,9 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
 
     // Build the icon.
     if ($action) {
+        if ($returnurl instanceof moodle_url) {
+            $returnurl = str_replace($CFG->wwwroot, '', $returnurl->out(false));
+        }
         $questionparams = array('returnurl' => $returnurl, 'cmid' => $cmid, 'id' => $question->id);
         $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
         return '<a title="' . $action . '" href="' . $questionurl->out() . '"><img src="' .

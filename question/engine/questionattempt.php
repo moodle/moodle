@@ -518,6 +518,15 @@ class question_attempt {
     }
 
     /**
+     * @param bool $showcorrectness Whether right/partial/wrong states should
+     * be distinguised.
+     * @return string a CSS class name for the current state.
+     */
+    public function get_state_class($showcorrectness) {
+        return $this->get_state()->get_state_class($showcorrectness);
+    }
+
+    /**
      * @return int the timestamp of the most recent step in this question attempt.
      */
     public function get_last_action_time() {

@@ -45,8 +45,7 @@ class qtype_essay_question_test extends UnitTestCase {
     public function test_summarise_response() {
         $longstring = str_repeat('0123456789', 50);
         $essay = test_question_maker::make_an_essay_question();
-        $summary = $essay->summarise_response(array('answer' => $longstring));
-        $this->assertTrue(strlen($summary) < 250);
-        $this->assertEqual(substr($longstring, 0, 100), substr($summary, 0, 100));
+        $this->assertEqual($longstring,
+                $essay->summarise_response(array('answer' => $longstring)));
     }
 }

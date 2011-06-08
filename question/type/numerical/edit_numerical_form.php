@@ -38,9 +38,8 @@ require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
 class qtype_numerical_edit_form extends question_edit_form {
 
     protected function definition_inner($mform) {
-        $creategrades = get_grade_options();
         $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_numerical', '{no}'),
-                $creategrades->gradeoptions);
+                question_bank::fraction_options());
 
         $this->add_unit_options($mform);
         $this->add_unit_fields($mform);

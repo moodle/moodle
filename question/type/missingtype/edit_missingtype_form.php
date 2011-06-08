@@ -45,9 +45,8 @@ class qtype_missingtype_edit_form extends question_edit_form {
      * @param object $mform the form being built.
      */
     protected function definition_inner($mform) {
-        $creategrades = get_grade_options();
         $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_missingtype', '{no}'),
-                $creategrades->gradeoptionsfull);
+                question_bank::fraction_options_full());
     }
 
     public function set_data($question) {

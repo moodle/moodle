@@ -58,4 +58,34 @@ class question_bank_test extends UnitTestCase {
             'frog' => 'toad',
         ));
     }
+
+    public function test_fraction_options() {
+        $fractions = question_bank::fraction_options();
+        $this->assertIdentical(get_string('none'), reset($fractions));
+        $this->assertIdentical('0.0', key($fractions));
+        $this->assertIdentical('5%', end($fractions));
+        $this->assertIdentical('0.05', key($fractions));
+        array_shift($fractions);
+        array_pop($fractions);
+        array_pop($fractions);
+        $this->assertIdentical('100%', reset($fractions));
+        $this->assertIdentical('1.0', key($fractions));
+        $this->assertIdentical('11.11111%', end($fractions));
+        $this->assertIdentical('0.1111111', key($fractions));
+    }
+
+    public function test_fraction_options_full() {
+        $fractions = question_bank::fraction_options_full();
+        $this->assertIdentical(get_string('none'), reset($fractions));
+        $this->assertIdentical('0.0', key($fractions));
+        $this->assertIdentical('-100%', end($fractions));
+        $this->assertIdentical('-1.0', key($fractions));
+        array_shift($fractions);
+        array_pop($fractions);
+        array_pop($fractions);
+        $this->assertIdentical('100%', reset($fractions));
+        $this->assertIdentical('1.0', key($fractions));
+        $this->assertIdentical('-83.33333%', end($fractions));
+        $this->assertIdentical('-0.8333333', key($fractions));
+    }
 }
