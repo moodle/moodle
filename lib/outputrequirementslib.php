@@ -445,6 +445,7 @@ class page_requirements_manager {
                     break;
                 case 'core_message':
                     $module = array('name'     => 'core_message',
+                                    'requires' => array('base', 'node', 'event', 'node-event-simulate'),
                                     'fullpath' => '/message/module.js');
                     break;
                 case 'core_flashdetect':

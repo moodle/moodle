@@ -645,3 +645,54 @@ function update_fix_automated_backup_config() {
     unset_config('backup_sche_gradebook_history');
     unset_config('disablescheduleddbackups');
 }
+
+/**
+ * This function is used to set default messaging preferences when the new
+ * admin-level messaging defaults settings have been introduced.
+ */
+function upgrade_populate_default_messaging_prefs() {
+    global $DB;
+
+    $providers = $DB->get_records('message_providers');
+    $processors = $DB->get_records('message_processors');
+    $defaultpreferences = (object)$DB->get_records_menu('config_plugins', array('plugin'=>'message'), '', 'name,value');
+
+    $transaction = $DB->start_delegated_transaction();
+
+    $setting = new stdClass();
+    $setting->plugin = 'message';
+
+    foreach ($providers as $provider) {
+        $componentproviderbase = $provider->component.'_'.$provider->name;
+        // set MESSAGE_PERMITTED to all combinations of message types
+        // (providers) and outputs (processors)
+        foreach ($processors as $processor) {
+            $preferencename = $processor->name.'_provider_'.$componentproviderbase.'_permitted';
+            if (!isset($defaultpreferences->{$preferencename})) {
+                $setting->name = $preferencename;
+                $setting->value = 'permitted';
+                $DB->insert_record('config_plugins', $setting);
+            }
+        }
+        // for email output we also have to set MESSAGE_DEFAULT_OFFLINE + MESSAGE_DEFAULT_ONLINE
+        foreach(array('loggedin', 'loggedoff') as $state) {
+            $preferencename = 'message_provider_'.$componentproviderbase.'_'.$state;
+            if (!isset($defaultpreferences->{$preferencename})) {
+                $setting->name = $preferencename;
+                $setting->value = 'email';
+                // except instant message where default for popup should be
+                // MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF and for email
+                // MESSAGE_DEFAULT_LOGGEDOFF.
+                if ($componentproviderbase == 'moodle_instantmessage') {
+                    if  ($state == 'loggedoff') {
+                        $setting->value = 'email,popup';
+                    } else {
+                        $setting->value = 'popup';
+                    }
+                }
+                $DB->insert_record('config_plugins', $setting);
+            }
+        }
+    }
+    $transaction->allow_commit();
+}

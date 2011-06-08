@@ -43,3 +43,48 @@ M.core_message.init_notification = function(Y, title, content, url) {
         }, o);
     });
 };
+
+M.core_message.init_defaultoutputs = function(Y) {
+    var defaultoutputs = {
+
+        init : function() {
+            Y.all('#defaultmessageoutputs select').each(function(node) {
+                // attach event listener
+                node.on('change', defaultoutputs.changeState);
+                // set initial layout
+                node.simulate("change");
+            }, this);
+        },
+
+        changeState : function(e) {
+            var value = e.target._node.options[e.target.get('selectedIndex')].value;
+            var parentnode = e.target.ancestor('td');
+            switch (value) {
+            case 'forced':
+                defaultoutputs.updateCheckboxes(parentnode, 1, 1);
+                break;
+            case 'disallowed':
+                defaultoutputs.updateCheckboxes(parentnode, 1, 0);
+                break;
+            case 'permitted':
+                defaultoutputs.updateCheckboxes(parentnode, 0, 0);
+                break;
+            }
+        },
+
+        updateCheckboxes : function(blocknode, disabled, checked) {
+            blocknode.all('input[type=checkbox]').each(function(node) {
+                node.removeAttribute('disabled');
+                if (disabled) {
+                    node.setAttribute('disabled', 1)
+                    node.removeAttribute('checked');
+                }
+                if (checked) {
+                    node.setAttribute('checked', 1)
+                }
+            }, this);
+        }
+    }
+
+    defaultoutputs.init();
+}

@@ -6514,6 +6514,23 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2011060500);
     }
 
+    if ($oldversion < 2011060800) {
+        // Add enabled field to message_processors
+        $table = new xmldb_table('message_processors');
+        $field = new xmldb_field('enabled');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'name');
+
+        // Launch add field addition
+        if (!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Populate default messaging settings
+        upgrade_populate_default_messaging_prefs();
+
+        upgrade_main_savepoint(true, 2011060800);
+    }
+
     return true;
 }
 

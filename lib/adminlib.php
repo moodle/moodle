@@ -107,6 +107,7 @@ defined('MOODLE_INTERNAL') || die();
 /// Add libraries
 require_once($CFG->libdir.'/ddllib.php');
 require_once($CFG->libdir.'/xmlize.php');
+require_once($CFG->libdir.'/messagelib.php');
 
 define('INSECURE_DATAROOT_WARNING', 1);
 define('INSECURE_DATAROOT_ERROR', 2);
@@ -259,6 +260,14 @@ function uninstall_plugin($type, $name) {
 
     // delete the module configuration records
     unset_all_config_for_plugin($pluginname);
+
+    // delete message provider
+    message_provider_uninstall($component);
+
+    // delete message processor
+    if ($type === 'message') {
+        message_processor_uninstall($name);
+    }
 
     // delete the plugin tables
     $xmldbfilepath = $plugindirectory . '/db/install.xml';
@@ -4938,6 +4947,75 @@ class admin_page_manageblocks extends admin_externalpage {
     }
 }
 
+/**
+ * Message outputs configuration
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_page_managemessageoutputs extends admin_externalpage {
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        global $CFG;
+        parent::__construct('managemessageoutputs', get_string('managemessageoutputs', 'message'), new moodle_url('/admin/message.php'));
+    }
+
+    /**
+     * Search for a specific message processor
+     *
+     * @param string $query The string to search for
+     * @return array
+     */
+    public function search($query) {
+        global $CFG, $DB;
+        if ($result = parent::search($query)) {
+            return $result;
+        }
+
+        $found = false;
+        if ($processors = get_message_processors()) {
+            $textlib = textlib_get_instance();
+            foreach ($processors as $processor) {
+                if (!$processor->available) {
+                    continue;
+                }
+                if (strpos($processor->name, $query) !== false) {
+                    $found = true;
+                    break;
+                }
+                $strprocessorname = get_string('pluginname', 'message_'.$processor->name);
+                if (strpos($textlib->strtolower($strprocessorname), $query) !== false) {
+                    $found = true;
+                    break;
+                }
+            }
+        }
+        if ($found) {
+            $result = new stdClass();
+            $result->page     = $this;
+            $result->settings = array();
+            return array($this->name => $result);
+        } else {
+            return array();
+        }
+    }
+}
+
+/**
+ * Default message outputs configuration
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_page_defaultmessageoutputs extends admin_page_managemessageoutputs {
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        global $CFG;
+        admin_externalpage::__construct('defaultmessageoutputs', get_string('defaultmessageoutputs', 'message'), new moodle_url('/message/defaultoutputs.php'));
+    }
+}
 
 /**
  * Question type manage page
