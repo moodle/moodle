@@ -30,6 +30,8 @@ defined('MOODLE_INTERNAL') || die();
  * Lesson conversion handler
  */
 class moodle1_mod_lesson_handler extends moodle1_mod_handler {
+    // @var array of answers, when there are more that 4 answers, we need to fix <jumpto>.
+    protected $answers;
 
     /** @var moodle1_file_manager */
     protected $fileman = null;
@@ -67,6 +69,9 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
                         'contentsformat' => FORMAT_MOODLE,
                     ),
                 )
+            ),
+            new convert_path(
+                'lesson_answers', '/MOODLE_BACKUP/COURSE/MODULES/MOD/LESSON/PAGES/PAGE/ANSWERS'
             ),
             new convert_path(
                 'lesson_answer', '/MOODLE_BACKUP/COURSE/MODULES/MOD/LESSON/PAGES/PAGE/ANSWERS/ANSWER',
@@ -146,8 +151,6 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
                 $this->xmlwriter->full_tag($field, $value);
             }
         }
-
-        $this->xmlwriter->begin_tag('answers');
     }
 
     /**
@@ -167,14 +170,37 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
             $data['responseformat'] = FORMAT_HTML;
         }
 
-        $this->write_xml('answer', $data, array('/answer/id'));
+        // buffer for conversion of <jumpto> in line with
+        // upgrade step 2010121400 from mod/lesson/db/upgrade.php
+        $this->answers[] = $data;
+    }
+
+    public function on_lesson_answers_end() {
+        $this->xmlwriter->begin_tag('answers');
+        if (count($this->answers) > 3) {
+            if ($this->answers[0]['jumpto'] !== '0' || $this->answers[1]['jumpto'] !== '0') {
+                if ($this->answers[2]['jumpto'] !== '0') {
+                    $this->answers[0]['jumpto'] = $this->answers[2]['jumpto'];
+                    $this->answers[2]['jumpto'] = '0';
+                }
+                if ($this->answers[3]['jumpto'] !== '0') {
+                    $this->answers[1]['jumpto'] = $this->answers[3]['jumpto'];
+                    $this->answers[3]['jumpto'] = '0';
+                }
+            }
+        }
+
+        foreach ($this->answers as $data) {
+            $this->write_xml('answer', $data, array('/answer/id'));
+        }
+        unset($this->answers);
+        $this->xmlwriter->end_tag('answers');
     }
 
     /**
      * This is executed when we reach the closing </pages>tag of our 'page' path
      */
     public function on_lesson_page_end(){
-        $this->xmlwriter->end_tag('answers');
         $this->xmlwriter->end_tag('page');
     }
 
