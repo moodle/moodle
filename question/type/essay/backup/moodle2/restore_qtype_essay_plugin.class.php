@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,11 +21,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * restore plugin class that provides the necessary information
  * needed to restore one essay qtype plugin
+ *
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_qtype_essay_plugin extends restore_qtype_plugin {
 
@@ -34,16 +38,39 @@ class restore_qtype_essay_plugin extends restore_qtype_plugin {
      * Returns the paths to be handled by the plugin at question level
      */
     protected function define_question_plugin_structure() {
+        return array(
+            new restore_path_element('essay', $this->get_pathfor('/essay'))
+        );
+    }
 
-        $paths = array();
+    /**
+     * Process the qtype/essay element
+     */
+    public function process_essay($data) {
+        global $DB;
 
-        // This qtype uses question_answers, add them
-        // Crazy we use answers to store feedback!
-        $this->add_question_question_answers($paths);
+        $data = (object)$data;
+        $oldid = $data->id;
 
-        // Add own qtype stuff
-        // essay qtype has not own structures (but the question_answers use above)
+        // Detect if the question is created or mapped
+        $questioncreated = $this->get_mappingid('question_created',
+                $this->get_old_parentid('question')) ? true : false;
 
-        return $paths; // And we return the interesting paths
+        // If the question has been created by restore, we need to create its
+        // qtype_essay too
+        if ($questioncreated) {
+            $data->questionid = $this->get_new_parentid('question');
+            $newitemid = $DB->insert_record('qtype_essay_options', $data);
+            $this->set_mapping('qtype_essay', $oldid, $newitemid);
+        }
+    }
+
+    /**
+     * Return the contents of this qtype to be processed by the links decoder
+     */
+    public static function define_decode_contents() {
+        return array(
+            new restore_decode_content('qtype_essay_options', 'graderinfo', 'qtype_essay'),
+        );
     }
 }

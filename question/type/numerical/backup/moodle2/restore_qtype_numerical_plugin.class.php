@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,11 +21,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * restore plugin class that provides the necessary information
  * needed to restore one numerical qtype plugin
+ *
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_qtype_numerical_plugin extends restore_qtype_plugin {
 
@@ -46,9 +50,8 @@ class restore_qtype_numerical_plugin extends restore_qtype_plugin {
 
         // Add own qtype stuff
         $elename = 'numerical';
-        $elepath = $this->get_pathfor('/numerical_records/numerical_record'); // we used get_recommended_name() so this works
+        $elepath = $this->get_pathfor('/numerical_records/numerical_record');
         $paths[] = new restore_path_element($elename, $elepath);
-
 
         return $paths; // And we return the interesting paths
     }
@@ -67,17 +70,14 @@ class restore_qtype_numerical_plugin extends restore_qtype_plugin {
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
-        // If the question has been created by restore, we need to create its question_numerical too
+        // If the question has been created by restore, we need to create its
+        // question_numerical too.
         if ($questioncreated) {
             // Adjust some columns
             $data->question = $newquestionid;
             $data->answer = $this->get_mappingid('question_answer', $data->answer);
             // Insert record
             $newitemid = $DB->insert_record('question_numerical', $data);
-            // Create mapping (not needed, no files nor childs nor states here)
-            //$this->set_mapping('question_numerical', $oldid, $newitemid);
-        } else {
-            // Nothing to remap if the question already existed
         }
     }
 }

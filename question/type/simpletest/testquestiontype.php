@@ -1,74 +1,40 @@
 <?php
-
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tests for some of ../questiontype.php
+ * Unit tests for the question type base class.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodlecore
+ * @package    moodlecore
+ * @subpackage questiontypes
+ * @copyright  2008 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/question/type/questiontypebase.php');
+
+
+/**
+ * Tests for some of ../questionbase.php
+ *
+ * @copyright  2008 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_type_test extends UnitTestCase {
+    public static $includecoverage = array('question/type/questiontypebase.php');
 }
-
-require_once($CFG->dirroot . '/question/type/questiontype.php');
-
-class default_questiontype_test extends UnitTestCase {
-    public static $includecoverage = array('question/type/questiontype.php');
-    protected $qtype;
-
-    public function setUp() {
-        $this->qtype = new default_questiontype();
-    }
-
-    public function tearDown() {
-        $this->qtype = null;
-    }
-
-    function test_compare_responses() {
-        $question = new stdClass;
-        $state = new stdClass;
-        $teststate = new stdClass;
-
-        $state->responses = array();
-        $teststate->responses = array();
-        $this->assertTrue($this->qtype->compare_responses($question, $state, $teststate));
-
-        $state->responses = array('' => 'frog');
-        $teststate->responses = array('' => 'toad');
-        $this->assertFalse($this->qtype->compare_responses($question, $state, $teststate));
-
-        $state->responses = array('x' => 'frog');
-        $teststate->responses = array('y' => 'frog');
-        $this->assertFalse($this->qtype->compare_responses($question, $state, $teststate));
-
-        $state->responses = array(1 => 1, 2 => 2);
-        $teststate->responses = array(2 => 2, 1 => 1);
-        $this->assertTrue($this->qtype->compare_responses($question, $state, $teststate));
-    }
-}
-
-

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,29 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/////////////////
-// CALCULATED ///
-/////////////////
+/**
+ * Question type class for the simple calculated question type.
+ *
+ * @package    qtype
+ * @subpackage calculatedsimple
+ * @copyright  2009 Pierre Pichet
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-/// QUESTION TYPE CLASS //////////////////
 
-class question_calculatedsimple_qtype extends question_calculated_qtype {
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
 
 
+/**
+ * The simple calculated question type.
+ *
+ * @copyright  2009 Pierre Pichet
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class qtype_calculatedsimple extends qtype_calculated {
 
     // Used by the function custom_generator_tools:
-    public $calcgenerateidhasbeenadded = false;
-    public $virtualqtype = false;
-    public $wizard_pages_number = 1 ;
+    public $wizard_pages_number = 1;
 
-    function name() {
-        return 'calculatedsimple';
-    }
-
-    function save_question_options($question) {
-        global $CFG, $DB , $QTYPES;
+    public function save_question_options($question) {
+        global $CFG, $DB;
         $context = $question->context;
-        //$options = $question->subtypeoptions;
         // Get old answers:
 
         if (isset($question->answer) && !isset($question->answers)) {
@@ -45,17 +50,19 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
         }
 
         // Get old versions of the objects
-        if (!$oldanswers = $DB->get_records('question_answers', array('question' => $question->id), 'id ASC')) {
+        if (!$oldanswers = $DB->get_records('question_answers',
+                array('question' => $question->id), 'id ASC')) {
             $oldanswers = array();
         }
 
-        if (!$oldoptions = $DB->get_records('question_calculated', array('question' => $question->id), 'answer ASC')) {
+        if (!$oldoptions = $DB->get_records('question_calculated',
+                array('question' => $question->id), 'answer ASC')) {
             $oldoptions = array();
         }
 
         // Save the units.
-        $virtualqtype = $this->get_virtual_qtype($question);
-        $result = $virtualqtype->save_numerical_units($question);
+        $virtualqtype = $this->get_virtual_qtype();
+        $result = $virtualqtype->save_units($question);
         if (isset($result->error)) {
             return $result;
         } else {
@@ -63,14 +70,14 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
         }
         // Insert all the new answers
         if (isset($question->answer) && !isset($question->answers)) {
-            $question->answers=$question->answer;
+            $question->answers = $question->answer;
         }
         foreach ($question->answers as $key => $dataanswer) {
             if (is_array($dataanswer)) {
                 $dataanswer = $dataanswer['text'];
             }
-            if ( trim($dataanswer) != '' ) {
-                $answer = new stdClass;
+            if (trim($dataanswer) != '') {
+                $answer = new stdClass();
                 $answer->question = $question->id;
                 $answer->answer = trim($dataanswer);
                 $answer->fraction = $question->fraction[$key];
@@ -79,26 +86,36 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
                     $files = $question->feedback[$key]['files'];
                 }
 
-                if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
+                if ($oldanswer = array_shift($oldanswers)) {
+                    // Existing answer, so reuse it
                     $answer->id = $oldanswer->id;
-                    $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, $this->fileoptionsa, trim($question->feedback[$key]['text']));
+                    $answer->feedback = file_save_draft_area_files(
+                            $question->feedback[$key]['itemid'], $context->id, 'question',
+                            'answerfeedback', $answer->id, $this->fileoptionsa,
+                            trim($question->feedback[$key]['text']));
                     $DB->update_record("question_answers", $answer);
-                } else { // This is a completely new answer
+                } else {
+                    // This is a completely new answer
                     $answer->feedback = trim($question->feedback[$key]['text']);
                     $answer->id = $DB->insert_record("question_answers", $answer);
                     if (isset($files)) {
                         foreach ($files as $file) {
-                            $this->import_file($context, 'question', 'answerfeedback', $answer->id, $file);
+                            $this->import_file($context, 'question', 'answerfeedback',
+                                $answer->id, $file);
                         }
                     } else {
-                        $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, $this->fileoptionsa, trim($question->feedback[$key]['text']));
+                        $answer->feedback = file_save_draft_area_files(
+                                $question->feedback[$key]['itemid'], $context->id, 'question',
+                                'answerfeedback', $answer->id, $this->fileoptionsa,
+                                trim($question->feedback[$key]['text']));
                     }
-                    $DB->set_field('question_answers', 'feedback', $answer->feedback, array('id'=>$answer->id));
+                    $DB->set_field('question_answers', 'feedback', $answer->feedback,
+                            array('id'=>$answer->id));
                 }
 
                 // Set up the options object
                 if (!$options = array_shift($oldoptions)) {
-                    $options = new stdClass;
+                    $options = new stdClass();
                 }
                 $options->question  = $question->id;
                 $options->answer    = $answer->id;
@@ -117,25 +134,24 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
         }
         // delete old answer records
         if (!empty($oldanswers)) {
-            foreach($oldanswers as $oa) {
+            foreach ($oldanswers as $oa) {
                 $DB->delete_records('question_answers', array('id' => $oa->id));
             }
         }
 
         // delete old answer records
         if (!empty($oldoptions)) {
-            foreach($oldoptions as $oo) {
+            foreach ($oldoptions as $oo) {
                 $DB->delete_records('question_calculated', array('id' => $oo->id));
             }
         }
 
-        if(isset($question->import_process)&&$question->import_process) {
+        if (isset($question->import_process)&&$question->import_process) {
             $this->import_datasets($question);
         } else {
             //save datasets and datatitems from form i.e in question
-            //  $datasetdefs = $this->get_dataset_definitions($question->id, array());
-            $question->dataset = $question->datasetdef ;
-            //       $this->save_dataset_definitions($question);
+            $question->dataset = $question->datasetdef;
+
             // Save datasets
             $datasetdefinitions = $this->get_dataset_definitions($question->id, $question->dataset);
             $tmpdatasets = array_flip($question->dataset);
@@ -146,11 +162,12 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
                 if (isset($datasetdef->id)) {
                     if (!isset($tmpdatasets[$defid])) {
                         // This dataset is not used any more, delete it
-                        $DB->delete_records('question_datasets', array('question' => $question->id, 'datasetdefinition' => $datasetdef->id));
-                        // if ($datasetdef->category == 0) { // Question local dataset
-                        $DB->delete_records('question_dataset_definitions', array('id' => $datasetdef->id));
-                        $DB->delete_records('question_dataset_items', array('definition' => $datasetdef->id));
-                        // }
+                        $DB->delete_records('question_datasets', array('question' => $question->id,
+                                'datasetdefinition' => $datasetdef->id));
+                        $DB->delete_records('question_dataset_definitions',
+                                array('id' => $datasetdef->id));
+                        $DB->delete_records('question_dataset_items',
+                                array('definition' => $datasetdef->id));
                     }
                     // This has already been saved or just got deleted
                     unset($datasetdefinitions[$defid]);
@@ -158,7 +175,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
                 }
                 $datasetdef->id = $DB->insert_record('question_dataset_definitions', $datasetdef);
                 $datasetdefs[]= clone($datasetdef);
-                $questiondataset = new stdClass;
+                $questiondataset = new stdClass();
                 $questiondataset->question = $question->id;
                 $questiondataset->datasetdefinition = $datasetdef->id;
                 $DB->insert_record('question_datasets', $questiondataset);
@@ -168,10 +185,13 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
             // to datasets in other categories:
             if (!empty($datasetdefinitions)) {
                 foreach ($datasetdefinitions as $def) {
-                    $DB->delete_records('question_datasets', array('question' => $question->id, 'datasetdefinition' => $def->id));
+                    $DB->delete_records('question_datasets', array('question' => $question->id,
+                            'datasetdefinition' => $def->id));
                     if ($def->category == 0) { // Question local dataset
-                        $DB->delete_records('question_dataset_definitions', array('id' => $def->id));
-                        $DB->delete_records('question_dataset_items', array('definition' => $def->id));
+                        $DB->delete_records('question_dataset_definitions',
+                                array('id' => $def->id));
+                        $DB->delete_records('question_dataset_items',
+                                array('definition' => $def->id));
                     }
                 }
             }
@@ -194,7 +214,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
                 $i++;
             }
             $maxnumber = -1;
-            if (isset($addeditem->itemnumber) && $maxnumber < $addeditem->itemnumber){
+            if (isset($addeditem->itemnumber) && $maxnumber < $addeditem->itemnumber) {
                 $maxnumber = $addeditem->itemnumber;
                 foreach ($datasetdefs as $key => $newdef) {
                     if (isset($newdef->id) && $newdef->itemcount <= $maxnumber) {
@@ -207,10 +227,11 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
         }
         // Report any problems.
         //convert to calculated
-        if(!empty($question->makecopy) && !empty($question->convert)) {
+        if (!empty($question->makecopy) && !empty($question->convert)) {
             $DB->set_field('question', 'qtype', 'calculated', array('id'=> $question->id));
         }
-        $result = $QTYPES['numerical']->save_numerical_options($question);
+
+        $result = $virtualqtype->save_unit_options($question);
         if (isset($result->error)) {
             return $result;
         }
@@ -218,67 +239,67 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
         if (!empty($result->notice)) {
             return $result;
         }
+
+        $this->save_hints($question);
+
         return true;
     }
-    function finished_edit_wizard(&$form) {
-        return true ; //isset($form->backtoquiz);
-    }
-    function wizard_pages_number() {
-        return 1 ;
+
+    public function finished_edit_wizard(&$form) {
+        return true;
     }
 
+    public function wizard_pages_number() {
+        return 1;
+    }
 
-    function custom_generator_tools_part(&$mform, $idx, $j){
+    public function custom_generator_tools_part($mform, $idx, $j) {
 
         $minmaxgrp = array();
-        $minmaxgrp[] =& $mform->createElement('text', "calcmin[$idx]", get_string('calcmin', 'qtype_calculated'));
-        $minmaxgrp[] =& $mform->createElement('text', "calcmax[$idx]", get_string('calcmax', 'qtype_calculated'));
-        $mform->addGroup($minmaxgrp, 'minmaxgrp', get_string('minmax', 'qtype_calculated'), ' - ', false);
+        $minmaxgrp[] = $mform->createElement('text', "calcmin[$idx]",
+                get_string('calcmin', 'qtype_calculated'));
+        $minmaxgrp[] = $mform->createElement('text', "calcmax[$idx]",
+                get_string('calcmax', 'qtype_calculated'));
+        $mform->addGroup($minmaxgrp, 'minmaxgrp',
+                get_string('minmax', 'qtype_calculated'), ' - ', false);
         $mform->setType("calcmin[$idx]", PARAM_NUMBER);
         $mform->setType("calcmax[$idx]", PARAM_NUMBER);
 
         $precisionoptions = range(0, 10);
-        $mform->addElement('select', "calclength[$idx]", get_string('calclength', 'qtype_calculated'), $precisionoptions);
+        $mform->addElement('select', "calclength[$idx]",
+                get_string('calclength', 'qtype_calculated'), $precisionoptions);
 
-        $distriboptions = array('uniform' => get_string('uniform', 'qtype_calculated'), 'loguniform' => get_string('loguniform', 'qtype_calculated'));
+        $distriboptions = array('uniform' => get_string('uniform', 'qtype_calculated'),
+                'loguniform' => get_string('loguniform', 'qtype_calculated'));
         $mform->addElement('hidden', "calcdistribution[$idx]", 'uniform');
         $mform->setType("calcdistribution[$idx]", PARAM_INT);
-
-
     }
 
-    function comment_header($answers) {
-        //$this->get_question_options($question);
+    public function comment_header($answers) {
         $strheader = "";
         $delimiter = '';
 
-        // $answers = $question->options->answers;
-
         foreach ($answers as $key => $answer) {
-         /*   if (is_string($answer)) {
-                $strheader .= $delimiter.$answer;
-         } else {*/
             $strheader .= $delimiter.$answer->answer;
-            // }
             $delimiter = '<br/><br/><br/>';
         }
         return $strheader;
     }
 
-    function tolerance_types() {
-        return array('1'  => get_string('relative', 'quiz'),
-            '2'  => get_string('nominal', 'quiz'),
-            //        '3'  => get_string('geometric', 'quiz')
+    public function tolerance_types() {
+        return array(
+            '1'  => get_string('relative', 'qtype_numerical'),
+            '2'  => get_string('nominal', 'qtype_numerical'),
         );
     }
 
-    function dataset_options($form, $name, $mandatory=true,$renameabledatasets=false) {
+    public function dataset_options($form, $name, $mandatory = true, $renameabledatasets = false) {
         // Takes datasets from the parent implementation but
         // filters options that are currently not accepted by calculated
         // It also determines a default selection...
         //$renameabledatasets not implemented anmywhere
-        list($options, $selected) = $this->dataset_options_from_database($form, $name,'','qtype_calculated');
-        //  list($options, $selected) = $this->dataset_optionsa($form, $name);
+        list($options, $selected) = $this->dataset_options_from_database(
+                $form, $name, '', 'qtype_calculated');
 
         foreach ($options as $key => $whatever) {
             if (!preg_match('~^1-~', $key) && $key != '0') {
@@ -286,119 +307,12 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
             }
         }
         if (!$selected) {
-            if ($mandatory){
+            if ($mandatory) {
                 $selected =  "1-0-$name"; // Default
-            }else {
+            } else {
                 $selected = "0"; // Default
             }
         }
         return array($options, $selected);
     }
-
-
-    /**
-     * Runs all the code required to set up and save an essay question for testing purposes.
-     * Alternate DB table prefix may be used to facilitate data deletion.
-     */
-    function generate_test($name, $courseid = null) {
-        global $DB;
-        list($form, $question) = parent::generate_test($name, $courseid);
-        $form->feedback = 1;
-        $form->multiplier = array(1, 1);
-        $form->shuffleanswers = 1;
-        $form->noanswers = 1;
-        $form->qtype ='calculatedsimple';
-        $question->qtype ='calculatedsimple';
-        $form->answers = array('{a} + {b}');
-        $form->fraction = array(1);
-        $form->tolerance = array(0.01);
-        $form->tolerancetype = array(1);
-        $form->correctanswerlength = array(2);
-        $form->correctanswerformat = array(1);
-        $form->questiontext = "What is {a} + {b}?";
-
-        if ($courseid) {
-            $course = $DB->get_record('course', array('id'=> $courseid));
-        }
-
-        $new_question = $this->save_question($question, $form);
-
-        $dataset_form = new stdClass();
-        $dataset_form->nextpageparam["forceregeneration"]= 1;
-        $dataset_form->calcmin = array(1 => 1.0, 2 => 1.0);
-        $dataset_form->calcmax = array(1 => 10.0, 2 => 10.0);
-        $dataset_form->calclength = array(1 => 1, 2 => 1);
-        $dataset_form->number = array(1 => 5.4 , 2 => 4.9);
-        $dataset_form->itemid = array(1 => '' , 2 => '');
-        $dataset_form->calcdistribution = array(1 => 'uniform', 2 => 'uniform');
-        $dataset_form->definition = array(1 => "1-0-a",
-            2 => "1-0-b");
-        $dataset_form->nextpageparam = array('forceregeneration' => false);
-        $dataset_form->addbutton = 1;
-        $dataset_form->selectadd = 1;
-        $dataset_form->courseid = $courseid;
-        $dataset_form->cmid = 0;
-        $dataset_form->id = $new_question->id;
-        $this->save_dataset_items($new_question, $dataset_form);
-
-        return $new_question;
-    }
-
-    function move_files($questionid, $oldcontextid, $newcontextid) {
-        $fs = get_file_storage();
-
-        parent::move_files($questionid, $oldcontextid, $newcontextid);
-        $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid);
-
-        $fs->move_area_files_to_new_context($oldcontextid,
-                $newcontextid, 'qtype_calculatedsimple', 'instruction', $questionid);
-    }
-
-    protected function delete_files($questionid, $contextid) {
-        $fs = get_file_storage();
-
-        parent::delete_files($questionid, $contextid);
-        $this->delete_files_in_answers($questionid, $contextid);
-        $fs->delete_area_files($contextid, 'qtype_calculatedsimple', 'instruction', $questionid);
-    }
-
-    function check_file_access($question, $state, $options, $contextid, $component,
-            $filearea, $args) {
-        $itemid = reset($args);
-        if ($component == 'question' && $filearea == 'answerfeedback') {
-
-            // check if answer id exists
-            $result = $options->feedback && array_key_exists($itemid, $question->options->answers);
-            if (!$result) {
-                return false;
-            }
-            // check response
-            if (!$this->check_response($question, $state)) {
-                return false;
-            }
-            return true;
-        } else if ($filearea == 'instruction') {
-            // TODO: should it be display all the time like questiontext?
-            // check if question id exists
-            if ($itemid != $question->id) {
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            return parent::check_file_access($question, $state, $options, $contextid, $component,
-                    $filearea, $args);
-        }
-        return true;
-    }
-}
-//// END OF CLASS ////
-
-//////////////////////////////////////////////////////////////////////////
-//// INITIATION - Without this line the question type is not in use... ///
-//////////////////////////////////////////////////////////////////////////
-question_register_questiontype(new question_calculatedsimple_qtype());
-
-if ( ! defined ("CALCULATEDSIMPLE")) {
-    define("CALCULATEDSIMPLE",    "calculatedsimple");
 }

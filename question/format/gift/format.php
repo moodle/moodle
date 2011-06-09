@@ -1,55 +1,80 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
 //
-///////////////////////////////////////////////////////////////
-// The GIFT import filter was designed as an easy to use method
-// for teachers writing questions as a text file. It supports most
-// question types and the missing word format.
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-// Multiple Choice / Missing Word
-//     Who's buried in Grant's tomb?{~Grant ~Jefferson =no one}
-//     Grant is {~buried =entombed ~living} in Grant's tomb.
-// True-False:
-//     Grant is buried in Grant's tomb.{FALSE}
-// Short-Answer.
-//     Who's buried in Grant's tomb?{=no one =nobody}
-// Numerical
-//     When was Ulysses S. Grant born?{#1822:5}
-// Matching
-//     Match the following countries with their corresponding
-//     capitals.{=Canada->Ottawa =Italy->Rome =Japan->Tokyo}
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-// Comment lines start with a double backslash (//).
-// Optional question names are enclosed in double colon(::).
-// Answer feedback is indicated with hash mark (#).
-// Percentage answer weights immediately follow the tilde (for
-// multiple choice) or equal sign (for short answer and numerical),
-// and are enclosed in percent signs (% %). See docs and examples.txt for more.
-//
-// This filter was written through the collaboration of numerous
-// members of the Moodle community. It was originally based on
-// the missingword format, which included code from Thomas Robb
-// and others. Paul Tsuchido Shew wrote this filter in December 2003.
-//////////////////////////////////////////////////////////////////////////
-// Based on default.php, included by ../import.php
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * @package questionbank
- * @subpackage importexport
+ * GIFT format question importer/exporter.
+ *
+ * @package    qformat
+ * @subpackage gift
+ * @copyright  2003 Paul Tsuchido Shew
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
+
+/**
+ * The GIFT import filter was designed as an easy to use method
+ * for teachers writing questions as a text file. It supports most
+ * question types and the missing word format.
+ *
+ * Multiple Choice / Missing Word
+ *     Who's buried in Grant's tomb?{~Grant ~Jefferson =no one}
+ *     Grant is {~buried =entombed ~living} in Grant's tomb.
+ * True-False:
+ *     Grant is buried in Grant's tomb.{FALSE}
+ * Short-Answer.
+ *     Who's buried in Grant's tomb?{=no one =nobody}
+ * Numerical
+ *     When was Ulysses S. Grant born?{#1822:5}
+ * Matching
+ *     Match the following countries with their corresponding
+ *     capitals.{=Canada->Ottawa =Italy->Rome =Japan->Tokyo}
+ *
+ * Comment lines start with a double backslash (//).
+ * Optional question names are enclosed in double colon(::).
+ * Answer feedback is indicated with hash mark (#).
+ * Percentage answer weights immediately follow the tilde (for
+ * multiple choice) or equal sign (for short answer and numerical),
+ * and are enclosed in percent signs (% %). See docs and examples.txt for more.
+ *
+ * This filter was written through the collaboration of numerous
+ * members of the Moodle community. It was originally based on
+ * the missingword format, which included code from Thomas Robb
+ * and others. Paul Tsuchido Shew wrote this filter in December 2003.
+ *
+ * @copyright  2003 Paul Tsuchido Shew
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qformat_gift extends qformat_default {
 
-    function provide_import() {
+    public function provide_import() {
         return true;
     }
 
-    function provide_export() {
+    public function provide_export() {
         return true;
     }
 
-    function export_file_extension() {
+    public function export_file_extension() {
         return '.txt';
     }
 
-    function answerweightparser(&$answer) {
+    protected function answerweightparser(&$answer) {
         $answer = substr($answer, 1);                        // removes initial %
         $end_position  = strpos($answer, "%");
         $answer_weight = substr($answer, 0, $end_position);  // gets weight as integer
@@ -58,7 +83,7 @@ class qformat_gift extends qformat_default {
         return $answer_weight;
     }
 
-    function commentparser($answer, $defaultformat) {
+    protected function commentparser($answer, $defaultformat) {
         $bits = explode('#', $answer, 2);
         $ans = $this->parse_text_with_format(trim($bits[0]), $defaultformat);
         if (count($bits) > 1) {
@@ -69,7 +94,7 @@ class qformat_gift extends qformat_default {
         return array($ans, $feedback);
     }
 
-    function split_truefalse_comment($answer, $defaultformat) {
+    protected function split_truefalse_comment($answer, $defaultformat) {
         $bits = explode('#', $answer, 3);
         $ans = $this->parse_text_with_format(trim($bits[0]), $defaultformat);
         if (count($bits) > 1) {
@@ -85,7 +110,7 @@ class qformat_gift extends qformat_default {
         return array($ans, $wrongfeedback, $rightfeedback);
     }
 
-    function escapedchar_pre($string) {
+    protected function escapedchar_pre($string) {
         //Replaces escaped control characters with a placeholder BEFORE processing
 
         $escapedcharacters = array("\\:",    "\\#",    "\\=",    "\\{",    "\\}",    "\\~",    "\\n"  );  //dlnsk
@@ -97,7 +122,7 @@ class qformat_gift extends qformat_default {
         return $string;
     }
 
-    function escapedchar_post($string) {
+    protected function escapedchar_post($string) {
         //Replaces placeholders with corresponding character AFTER processing is done
         $placeholders = array("&&058;", "&&035;", "&&061;", "&&123;", "&&125;", "&&126;", "&&010"); //dlnsk
         $characters   = array(":",     "#",      "=",      "{",      "}",      "~",      "\n"  ); //dlnsk
@@ -105,11 +130,10 @@ class qformat_gift extends qformat_default {
         return $string;
     }
 
-    function check_answer_count($min, $answers, $text) {
+    protected function check_answer_count($min, $answers, $text) {
         $countanswers = count($answers);
         if ($countanswers < $min) {
-            $importminerror = get_string('importminerror', 'quiz');
-            $this->error($importminerror, $text);
+            $this->error(get_string('importminerror', 'qformat_gift'), $text);
             return false;
         }
 
@@ -135,7 +159,7 @@ class qformat_gift extends qformat_default {
         return $result;
     }
 
-    function readquestion($lines) {
+    public function readquestion($lines) {
     // Given an array of lines known to define a question in this format, this function
     // converts it into a question object suitable for processing and insertion into Moodle.
 
@@ -201,7 +225,7 @@ class qformat_gift extends qformat_default {
             $answertext = '';
             $answerlength = 0;
         } else if (!(($answerstart !== false) and ($answerfinish !== false))) {
-            $this->error(get_string('braceerror', 'quiz'), $text);
+            $this->error(get_string('braceerror', 'qformat_gift'), $text);
             return false;
         } else {
             $answerlength = $answerfinish - $answerstart;
@@ -281,14 +305,14 @@ class qformat_gift extends qformat_default {
         }
 
         if (!isset($question->qtype)) {
-            $giftqtypenotset = get_string('giftqtypenotset', 'quiz');
+            $giftqtypenotset = get_string('giftqtypenotset', 'qformat_gift');
             $this->error($giftqtypenotset, $text);
             return false;
         }
 
         switch ($question->qtype) {
             case DESCRIPTION:
-                $question->defaultgrade = 0;
+                $question->defaultmark = 0;
                 $question->length = 0;
                 return $question;
                 break;
@@ -350,7 +374,7 @@ class qformat_gift extends qformat_default {
                     $question->fraction[$key] = $answer_weight;
                 }  // end foreach answer
 
-                //$question->defaultgrade = 1;
+                //$question->defaultmark = 1;
                 //$question->image = "";   // No images with this format
                 return $question;
                 break;
@@ -372,7 +396,7 @@ class qformat_gift extends qformat_default {
                 foreach ($answers as $key => $answer) {
                     $answer = trim($answer);
                     if (strpos($answer, "->") === false) {
-                        $giftmatchingformat = get_string('giftmatchingformat','quiz');
+                        $giftmatchingformat = get_string('giftmatchingformat','qformat_gift');
                         $this->error($giftmatchingformat, $answer);
                         return false;
                         break 2;
@@ -464,7 +488,7 @@ class qformat_gift extends qformat_default {
 
                 if (count($answers) == 0) {
                     // invalid question
-                    $giftnonumericalanswers = get_string('giftnonumericalanswers','quiz');
+                    $giftnonumericalanswers = get_string('giftnonumericalanswers','qformat_gift');
                     $this->error($giftnonumericalanswers, $text);
                     return false;
                     break;
@@ -526,7 +550,7 @@ class qformat_gift extends qformat_default {
                 break;
 
                 default:
-                    $this->error(get_string('giftnovalidquestion', 'quiz'), $text);
+                    $this->error(get_string('giftnovalidquestion', 'qformat_gift'), $text);
                 return fale;
                 break;
 
@@ -534,7 +558,7 @@ class qformat_gift extends qformat_default {
 
     }
 
-    function repchar($text, $notused = 0) {
+    protected function repchar($text, $notused = 0) {
         // Escapes 'reserved' characters # = ~ {) :
         // Removes new lines
         $reserved = array( '#', '=', '~', '{', '}', ':', "\n", "\r");
@@ -545,10 +569,10 @@ class qformat_gift extends qformat_default {
     }
 
     /**
-     * @param integer $format one of the FORMAT_ constants.
+     * @param int $format one of the FORMAT_ constants.
      * @return string the corresponding name.
      */
-    function format_const_to_name($format) {
+    protected function format_const_to_name($format) {
         if ($format == FORMAT_MOODLE) {
             return 'moodle';
         } else if ($format == FORMAT_HTML) {
@@ -563,10 +587,10 @@ class qformat_gift extends qformat_default {
     }
 
     /**
-     * @param integer $format one of the FORMAT_ constants.
+     * @param int $format one of the FORMAT_ constants.
      * @return string the corresponding name.
      */
-    function format_name_to_const($format) {
+    protected function format_name_to_const($format) {
         if ($format == 'moodle') {
             return FORMAT_MOODLE;
         } else if ($format == 'html') {
@@ -593,8 +617,8 @@ class qformat_gift extends qformat_default {
         return $output;
     }
 
-    function writequestion($question) {
-        global $QTYPES, $OUTPUT;
+    public function writequestion($question) {
+        global $OUTPUT;
 
         // Start with a comment
         $expout = "// question: $question->id  name: $question->name\n";
@@ -722,7 +746,7 @@ class qformat_gift extends qformat_default {
             } else {
                 $expout .= "Question type $question->qtype is not supported\n";
                 echo $OUTPUT->notification(get_string('nohandler', 'qformat_gift',
-                        $QTYPES[$question->qtype]->local_name()));
+                        question_bank::get_qtype_name($question->qtype)));
             }
         }
 
@@ -731,4 +755,3 @@ class qformat_gift extends qformat_default {
         return $expout;
     }
 }
-

@@ -22,12 +22,10 @@
     <TABLE NAME="question_numerical_options" COMMENT="Options for questions of type numerical This table is also used by the calculated question type" PREVIOUS="question_numerical" NEXT="question_numerical_units">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="question"/>
-        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="instructions"/>
-        <FIELD NAME="instructions" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Feedback shown for any incorrect response." PREVIOUS="question" NEXT="instructionsformat"/>
-        <FIELD NAME="instructionsformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="instructions" NEXT="showunits"/>
-        <FIELD NAME="showunits" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="display units as multichoice" PREVIOUS="instructionsformat" NEXT="unitsleft"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="showunits"/>
+        <FIELD NAME="showunits" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="display units as multichoice" PREVIOUS="question" NEXT="unitsleft"/>
         <FIELD NAME="unitsleft" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="display the unit at left as in $1.00" PREVIOUS="showunits" NEXT="unitgradingtype"/>
-        <FIELD NAME="unitgradingtype" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 no penalty, 1 total grade, 2 response grade" PREVIOUS="unitsleft" NEXT="unitpenalty"/>
+        <FIELD NAME="unitgradingtype" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 no penalty, 1 response grade, 2 total grade" PREVIOUS="unitsleft" NEXT="unitpenalty"/>
         <FIELD NAME="unitpenalty" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="true" DEFAULT="0.1" SEQUENCE="false" DECIMALS="7" PREVIOUS="unitgradingtype"/>
       </FIELDS>
       <KEYS>

@@ -1,11 +1,40 @@
-/** JavaScript for /mod/quiz/edit.php */
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * JavaScript library for the quiz module editing interface.
+ *
+ * @package    mod
+ * @subpackage quiz
+ * @copyright  2008 Olli Savolainen
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 
 // Initialise everything on the quiz edit/order and paging page.
 var quiz_edit = {};
-function quiz_edit_init() {
+function quiz_edit_init(Y) {
+    M.core_scroll_manager.scroll_to_saved_pos(Y);
+    Y.on('submit', function(e) {
+            M.core_scroll_manager.save_scroll_pos(Y, 'id_existingcategory');
+        }, '#mform1');
+    Y.on('submit', function(e) {
+            M.core_scroll_manager.save_scroll_pos(Y, e.target.get('firstChild'));
+        }, '.quizsavegradesform');
 
     // Add random question dialogue --------------------------------------------
-
     var randomquestiondialog = YAHOO.util.Dom.get('randomquestiondialog');
     if (randomquestiondialog) {
         YAHOO.util.Dom.get(document.body).appendChild(randomquestiondialog);
@@ -125,15 +154,3 @@ function quiz_settings_init() {
         }, 50);
     });
 }
-
-// Depending on which page this is, do the appropriate initialisation.
-function quiz_edit_generic_init() {
-    switch (document.body.id) {
-    case 'page-mod-quiz-edit':
-        quiz_edit_init();
-        break;
-    case 'page-mod-quiz-mod':
-        quiz_settings_init();
-    }
-}
-YAHOO.util.Event.onDOMReady(quiz_edit_generic_init);

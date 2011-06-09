@@ -1,92 +1,147 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.'); /// It must be included from a Moodle page.
-}
+/**
+ * This page is the entry page into the quiz UI. Displays information about the
+ * quiz to students and teachers, and lets students see their previous attempts.
+ *
+ * @package    mod
+ * @subpackage quiz
+ * @copyright  2008 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Quiz specific admin settings class.
+ *
+ * @copyright  2008 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_quiz_reviewoptions extends admin_setting {
-    private static $times = array(
-            QUIZ_REVIEW_IMMEDIATELY => 'reviewimmediately',
-            QUIZ_REVIEW_OPEN => 'reviewopen',
-            QUIZ_REVIEW_CLOSED => 'reviewclosed');
-    private static $things = array(
-            QUIZ_REVIEW_RESPONSES => 'responses',
-            QUIZ_REVIEW_ANSWERS => 'answers',
-            QUIZ_REVIEW_FEEDBACK => 'feedback',
-            QUIZ_REVIEW_GENERALFEEDBACK => 'generalfeedback',
-            QUIZ_REVIEW_SCORES => 'scores',
-            QUIZ_REVIEW_OVERALLFEEDBACK => 'overallfeedback');
+class mod_quiz_admin_review_setting extends admin_setting {
+    /**#@+
+     * @var integer should match the constants defined in {@link mod_quiz_display_options}.
+     * again, copied for performance reasons.
+     */
+    const DURING =            0x10000;
+    const IMMEDIATELY_AFTER = 0x01000;
+    const LATER_WHILE_OPEN =  0x00100;
+    const AFTER_CLOSE =       0x00010;
+    /**#@-*/
 
-    public function __construct($name, $visiblename, $description, $defaultsetting) {
-        $this->plugin = 'quiz';
+    /**
+     * @var boolean|null forced checked / disabled attributes for the during time.
+     */
+    protected $duringstate;
+
+    /**
+     * This should match {@link mod_quiz_mod_form::$reviewfields} but copied
+     * here becuase generating the admin tree needs to be fast.
+     * @return array
+     */
+    public static function fields() {
+        return array(
+            'attempt' => get_string('theattempt', 'quiz'),
+            'correctness' => get_string('whethercorrect', 'question'),
+            'marks' => get_string('marks', 'question'),
+            'specificfeedback' => get_string('specificfeedback', 'question'),
+            'generalfeedback' => get_string('generalfeedback', 'question'),
+            'rightanswer' => get_string('rightanswer', 'question'),
+            'overallfeedback' => get_string('overallfeedback', 'quiz'),
+        );
+    }
+
+    public function __construct($name, $visiblename, $description,
+            $defaultsetting, $duringstate = null) {
+        $this->duringstate = $duringstate;
         parent::__construct($name, $visiblename, $description, $defaultsetting);
     }
 
-    private function normalise_data($data) {
+    /**
+     * @return int all times.
+     */
+    public static function all_on() {
+        return self::DURING | self::IMMEDIATELY_AFTER | self::LATER_WHILE_OPEN |
+                self::AFTER_CLOSE;
+    }
+
+    protected static function times() {
+        return array(
+            self::DURING => get_string('reviewduring', 'quiz'),
+            self::IMMEDIATELY_AFTER => get_string('reviewimmediately', 'quiz'),
+            self::LATER_WHILE_OPEN => get_string('reviewopen', 'quiz'),
+            self::AFTER_CLOSE => get_string('reviewclosed', 'quiz'),
+        );
+    }
+
+    protected function normalise_data($data) {
+        $times = self::times();
         $value = 0;
-        foreach (admin_setting_quiz_reviewoptions::$times as $timemask => $timestring) {
-            foreach (admin_setting_quiz_reviewoptions::$things as $thingmask => $thingstring) {
-                if (!empty($data[$timemask][$thingmask])) {
-                    $value += $timemask & $thingmask;
+        foreach ($times as $timemask => $name) {
+            if ($timemask == self::DURING && !is_null($this->duringstate)) {
+                if ($this->duringstate) {
+                    $value += $timemask;
                 }
+            } else if (!empty($data[$timemask])) {
+                $value += $timemask;
             }
         }
         return $value;
     }
 
     public function get_setting() {
-        $value = $this->config_read($this->name);
-        $adv = $this->config_read($this->name.'_adv');
-        if (is_null($value) or is_null($adv)) {
-            return NULL;
-        }
-        return array('value' => $value, 'adv' => $adv);
+        return $this->config_read($this->name);
     }
 
     public function write_setting($data) {
-        if (!isset($data['value'])) {
-            $data['value'] = $this->normalise_data($data);
+        if (is_array($data) || empty($data)) {
+            $data = $this->normalise_data($data);
         }
-        $this->config_write($this->name, $data['value']);
-        $value = empty($data['adv']) ? 0 : 1;
-        $this->config_write($this->name.'_adv', $value);
+        $this->config_write($this->name, $data);
         return '';
     }
 
-    public function output_html($data, $query='') {
-        if (!isset($data['value'])) {
-            $data['value'] = $this->normalise_data($data);
+    public function output_html($data, $query = '') {
+        if (is_array($data) || empty($data)) {
+            $data = $this->normalise_data($data);
         }
 
-        $return = '<div id="adminquizreviewoptions" class="clearfix">' . "\n";
-        foreach (admin_setting_quiz_reviewoptions::$times as $timemask => $timestring) {
-            $return .= '<div class="group"><div class="fitemtitle">' . get_string($timestring, 'quiz') . "</div>\n";
-            $nameprefix = $this->get_full_name() . '[' . $timemask . ']';
-            $idprefix = $this->get_id(). '_' . $timemask . '_';
-            foreach (admin_setting_quiz_reviewoptions::$things as $thingmask => $thingstring) {
-                $id = $idprefix . $thingmask;
-                $state = '';
-                if ($data['value'] & $timemask & $thingmask) {
-                    $state = 'checked="checked" ';
-                }
-                $return .= '<span><input type="checkbox" name="' .
-                        $nameprefix . '[' . $thingmask . ']" value="1" id="' . $id .
-                        '" ' . $state . '/> <label for="' . $id . '">' .
-                        get_string($thingstring, 'quiz') . "</label></span>\n";
+        $return = '<div class="group"><input type="hidden" name="' .
+                    $this->get_full_name() . '[' . self::DURING . ']" value="0" />';
+        foreach (self::times() as $timemask => $namestring) {
+            $id = $this->get_id(). '_' . $timemask;
+            $state = '';
+            if ($data & $timemask) {
+                $state = 'checked="checked" ';
             }
-            $return .= "</div>\n";
+            if ($timemask == self::DURING && !is_null($this->duringstate)) {
+                $state = 'disabled="disabled" ';
+                if ($this->duringstate) {
+                    $state .= 'checked="checked" ';
+                }
+            }
+            $return .= '<span><input type="checkbox" name="' .
+                    $this->get_full_name() . '[' . $timemask . ']" value="1" id="' . $id .
+                    '" ' . $state . '/> <label for="' . $id . '">' .
+                    $namestring . "</label></span>\n";
         }
         $return .= "</div>\n";
-
-        $adv = !empty($data['adv']);
-        $return .= '<input type="checkbox" class="form-checkbox" id="' .
-                $this->get_id() . '_adv" name="' . $this->get_full_name() .
-                '[adv]" value="1" ' . ($adv ? 'checked="checked"' : '') . ' />' .
-                ' <label for="' . $this->get_id() . '_adv">' .
-                get_string('advanced') . '</label> ';
 
         return format_admin_setting($this, $this->visiblename, $return,
                 $this->description, true, '', get_string('everythingon', 'quiz'), $query);

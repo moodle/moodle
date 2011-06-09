@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,16 +17,26 @@
 /**
  * Strings for component 'quiz_responses', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   quiz_responses
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    quiz
+ * @subpackage responses
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 $string['cannotloadoptions'] = 'Could not load question options';
+$string['include'] = 'Include';
 $string['pagesize'] = 'Page size';
 $string['reportresponses'] = 'Responses';
 $string['responses'] = 'Responses';
 $string['responsesdownload'] = 'Responses download';
+$string['responsesfilename'] = 'responses';
 $string['responsesoptions'] = 'Responses options';
 $string['responsesreport'] = 'Responses report';
-$string['responsestitle'] = 'Detailed responses';
+$string['responsestitle'] = 'Responses';
+$string['responsex'] = 'Response {$a}';
+$string['rightanswerx'] = 'Right answer {$a}';
+$string['showattempts'] = 'Only show / download attempts';
+$string['summaryofquestiontext'] = 'Summary of the question';
+$string['summaryofresponse'] = 'Summary of the response given';
+$string['summaryofrightanswer'] = 'Summary of the right answer';

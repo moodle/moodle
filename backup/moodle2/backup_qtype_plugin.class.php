@@ -111,8 +111,7 @@ abstract class backup_qtype_plugin extends backup_plugin {
         // Define the elements
         $options = new backup_nested_element('numerical_options');
         $option = new backup_nested_element('numerical_option', array('id'), array(
-            'instructions', 'instructionsformat', 'showunits', 'unitsleft',
-            'unitgradingtype', 'unitpenalty'));
+            'showunits', 'unitsleft', 'unitgradingtype', 'unitpenalty'));
 
         // Build the tree
         $element->add_child($options);

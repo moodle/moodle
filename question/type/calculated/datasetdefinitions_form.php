@@ -1,9 +1,38 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * @package questionbank
- * @subpackage questiontypes
+ * Defines the editing form for the calculated question data set definitions.
+ *
+ * @package    qtype
+ * @subpackage calculated
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+defined('MOODLE_INTERNAL') || die();
+
+
+/**
+ * Calculated question data set definitions editing form definition.
+ *
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_dataset_dependent_definitions_form extends moodleform {
     /**
      * Question object with options and answers already loaded by get_question_options
@@ -12,41 +41,43 @@ class question_dataset_dependent_definitions_form extends moodleform {
      *
      * @var object
      */
-    var $question;
+    protected $question;
     /**
      * Reference to question type object
      *
      * @var question_dataset_dependent_questiontype
      */
-    var $qtypeobj;
+    protected $qtypeobj;
     /**
      * Add question-type specific form fields.
      *
      * @param MoodleQuickForm $mform the form being built.
      */
-    function question_dataset_dependent_definitions_form($submiturl, $question){
-        global $QTYPES, $DB;
+    public function __construct($submiturl, $question) {
+        global $DB;
         $this->question = $question;
-        $this->qtypeobj =& $QTYPES[$this->question->qtype];
+        $this->qtypeobj = question_bank::get_qtype($this->question->qtype);
         // Validate the question category.
-        if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
+        if (!$category = $DB->get_record('question_categories',
+                array('id' => $question->category))) {
             print_error('categorydoesnotexist', 'question', $returnurl);
         }
         $this->category = $category;
         $this->categorycontext = get_context_instance_by_id($category->contextid);
-        parent::moodleform($submiturl);
+        parent::__construct($submiturl);
     }
-    function definition() {
+
+    protected function definition() {
         global $SESSION;
-        $mform =& $this->_form;
+        $mform = $this->_form;
         $possibledatasets = $this->qtypeobj->find_dataset_names($this->question->questiontext);
         $mandatorydatasets = array();
-        if (isset($this->question->options->answers)){
+        if (isset($this->question->options->answers)) {
             foreach ($this->question->options->answers as $answer) {
                 $mandatorydatasets += $this->qtypeobj->find_dataset_names($answer->answer);
             }
-        }else{
-            foreach ($SESSION->calculated->questionform->answers as $answer){
+        } else {
+            foreach ($SESSION->calculated->questionform->answers as $answer) {
                 $mandatorydatasets += $this->qtypeobj->find_dataset_names($answer);
             }
         }
@@ -56,8 +87,10 @@ class question_dataset_dependent_definitions_form extends moodleform {
         $datadefscat  = $this->qtypeobj->get_dataset_definitions_category($this->question);
         $datasetmenus = array();
         $label = "<div class='mdl-align'>".get_string('datasetrole', 'qtype_calculated')."</div>";
-        $mform->addElement('html', $label);// explaining the role of datasets so other strings can be shortened
-        $mform->addElement('header', 'mandatoryhdr', get_string('mandatoryhdr', 'qtype_calculated'));
+        // explaining the role of datasets so other strings can be shortened
+        $mform->addElement('html', $label);
+        $mform->addElement('header', 'mandatoryhdr',
+                get_string('mandatoryhdr', 'qtype_calculated'));
         $labelsharedwildcard = get_string('sharedwildcard', 'qtype_calculated');
 
         foreach ($mandatorydatasets as $datasetname) {
@@ -65,52 +98,60 @@ class question_dataset_dependent_definitions_form extends moodleform {
                 list($options, $selected) =
                         $this->qtypeobj->dataset_options($this->question, $datasetname);
                 unset($options['0']); // Mandatory...
-                $label = get_string("wildcard", "quiz"). " <strong>$datasetname</strong> ";
+                $label = get_string('wildcard', 'qtype_calculated').
+                        " <strong>$datasetname</strong> ";
                 $mform->addElement('select', "dataset[$key]", $label, $options);
-             if (isset($datadefscat[$datasetname])){
-                  $mform->addElement('static', "there is a category", get_string('sharedwildcard', 'qtype_calculated',$datasetname ), get_string('dataitemdefined','qtype_calculated', $datadefscat[$datasetname]));
-            }
+                if (isset($datadefscat[$datasetname])) {
+                    $mform->addElement('static', "there is a category",
+                            get_string('sharedwildcard', 'qtype_calculated', $datasetname),
+                            get_string('dataitemdefined', 'qtype_calculated',
+                            $datadefscat[$datasetname]));
+                }
                 $mform->setDefault("dataset[$key]", $selected);
-                $datasetmenus[$datasetname]='';
+                $datasetmenus[$datasetname] = '';
                 $key++;
             }
         }
-                        $mform->addElement('header', 'possiblehdr', get_string('possiblehdr', 'qtype_calculated'));
-
+        $mform->addElement('header', 'possiblehdr', get_string('possiblehdr', 'qtype_calculated'));
 
         foreach ($possibledatasets as $datasetname) {
             if (!isset($datasetmenus[$datasetname])) {
-                list($options, $selected) =
-                        $this->qtypeobj->dataset_options($this->question, $datasetname,false);
-                $label = get_string("wildcard", "quiz"). " <strong>$datasetname</strong> ";
+                list($options, $selected) = $this->qtypeobj->dataset_options(
+                        $this->question, $datasetname, false);
+                $label = get_string('wildcard', 'qtype_calculated') .
+                        " <strong>$datasetname</strong> ";
                 $mform->addElement('select', "dataset[$key]", $label, $options);
-                 //       $mform->addRule("dataset[$key]", null, 'required', null, 'client');
-             if (isset($datadefscat[$datasetname])){
-                  $mform->addElement('static', "there is a category", get_string('sharedwildcard', 'qtype_calculated',$datasetname ), get_string('dataitemdefined',"qtype_calculated", $datadefscat[$datasetname]));
-            }
+                if (isset($datadefscat[$datasetname])) {
+                    $mform->addElement('static', "there is a category",
+                            get_string('sharedwildcard', 'qtype_calculated', $datasetname),
+                            get_string('dataitemdefined', 'qtype_calculated',
+                                    $datadefscat[$datasetname]));
+                }
 
-              //   $selected ="0";
                 $mform->setDefault("dataset[$key]", $selected);
-                $datasetmenus[$datasetname]='';
+                $datasetmenus[$datasetname] = '';
                 $key++;
             }
         }
         // temporary strings
-        // temporary strings
-        $mform->addElement('header', 'synchronizehdr', get_string('synchronize', 'qtype_calculated'));
-        $mform->addElement('radio', 'synchronize', '', get_string('synchronizeno', 'qtype_calculated'),0);
-        $mform->addElement('radio', 'synchronize', '', get_string('synchronizeyes', 'qtype_calculated'),1);
-        $mform->addElement('radio', 'synchronize', '', get_string('synchronizeyesdisplay', 'qtype_calculated'),2);
-        if (isset($this->question->options)&& isset($this->question->options->synchronize) ){
-            $mform->setDefault("synchronize", $this->question->options->synchronize);
+        $mform->addElement('header', 'synchronizehdr',
+                get_string('synchronize', 'qtype_calculated'));
+        $mform->addElement('radio', 'synchronize', '',
+                get_string('synchronizeno', 'qtype_calculated'), 0);
+        $mform->addElement('radio', 'synchronize', '',
+                get_string('synchronizeyes', 'qtype_calculated'), 1);
+        $mform->addElement('radio', 'synchronize', '',
+                get_string('synchronizeyesdisplay', 'qtype_calculated'), 2);
+        if (isset($this->question->options) &&
+                isset($this->question->options->synchronize)) {
+            $mform->setDefault('synchronize', $this->question->options->synchronize);
         } else {
-            $mform->setDefault("synchronize", 0 );
+            $mform->setDefault('synchronize', 0);
         }
 
         $this->add_action_buttons(false, get_string('nextpage', 'qtype_calculated'));
 
-
-        //hidden elements
+        // Hidden elements
         $mform->addElement('hidden', 'returnurl');
         $mform->setType('returnurl', PARAM_LOCALURL);
         $mform->setDefault('returnurl', 0);
@@ -133,28 +174,22 @@ class question_dataset_dependent_definitions_form extends moodleform {
         $mform->addElement('hidden', 'wizard', 'datasetitems');
         $mform->setType('wizard', PARAM_ALPHA);
     }
-/*    function set_data($question) {
-        $formdata = array();
-        $fromform = new stdClass();
-                  $default_values['synchronize'] = $question->options->synchronize ;
-        $question = (object)((array)$question + $default_values);
-    }*/
-    function validation($data, $files) {
+
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         $datasets = $data['dataset'];
-        $countvalid = 0 ;
-        foreach ($datasets as $key => $dataset){
-            if ($dataset !="0") {
+        $countvalid = 0;
+        foreach ($datasets as $key => $dataset) {
+            if ($dataset != '0') {
                 $countvalid++;
             }
         }
-        if (!$countvalid){
-            foreach ($datasets as $key => $dataset){
-                $errors['dataset['.$key.']'] = get_string('atleastonerealdataset', 'qtype_calculated');
+        if (!$countvalid) {
+            foreach ($datasets as $key => $dataset) {
+                $errors['dataset['.$key.']'] =
+                        get_string('atleastonerealdataset', 'qtype_calculated');
             }
-       }
+        }
         return $errors;
     }
-
 }
-

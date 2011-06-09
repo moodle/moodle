@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,21 +17,29 @@
 /**
  * Defines the editing form for the calculated question type.
  *
- * @copyright &copy; 2007 Jamie Pratt
- * @author Jamie Pratt me@jamiep.org
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questionbank
- * @subpackage questiontypes
+ * @package    qtype
+ * @subpackage calculated
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/question/type/numerical/edit_numerical_form.php');
+
+
 /**
- * calculated editing form definition.
+ * Calculated question type editing form definition.
+ *
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_edit_calculated_form extends question_edit_form {
+class qtype_calculated_edit_form extends qtype_numerical_edit_form {
     /**
      * Handle to the question type for this question.
      *
-     * @var question_calculated_qtype
+     * @var qtype_calculated
      */
     public $qtypeobj;
     public $questiondisplay;
@@ -41,37 +48,39 @@ class question_edit_calculated_form extends question_edit_form {
     public $initialname = '';
     public $reload = false;
 
-    function question_edit_calculated_form(&$submiturl, &$question, &$category, &$contexts, $formeditable = true){
-        global $QTYPES, $SESSION, $CFG, $DB;
+    public function __construct($submiturl, $question, $category, $contexts,
+            $formeditable = true) {
+        global $CFG, $DB;
         $this->question = $question;
-        $this->qtypeobj =& $QTYPES[$this->question->qtype];
-        if  (  "1" == optional_param('reload','', PARAM_INT )) {
-            $this->reload = true ;
-        }else {
-            $this->reload = false ;
+        if ('1' == optional_param('reload', '', PARAM_INT)) {
+            $this->reload = true;
+        } else {
+            $this->reload = false;
         }
 
-        if(!$this->reload ){ // use database data as this is first pass
-            if(isset($this->question->id )){
+        if (!$this->reload) { // use database data as this is first pass
+            if (isset($this->question->id)) {
                 // remove prefix #{..}# if exists
-                $this->initialname = $question->name ;
+                $this->initialname = $question->name;
                 $regs= array();
-                if(preg_match('~#\{([^[:space:]]*)#~',$question->name , $regs)){
+                if (preg_match('~#\{([^[:space:]]*)#~', $question->name , $regs)) {
                     $question->name = str_replace($regs[0], '', $question->name);
                 };
             }
-        }else {
         }
-        parent::question_edit_form($submiturl, $question, $category, $contexts, $formeditable);
+        parent::__construct($submiturl, $question, $category, $contexts, $formeditable);
     }
 
-    function get_per_answer_fields(&$mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
-        // $repeated = parent::get_per_answer_fields($mform, $label, $gradeoptions, $repeatedoptions, $answersoption);
+    public function get_per_answer_fields($mform, $label, $gradeoptions,
+            &$repeatedoptions, &$answersoption) {
         $repeated = array();
-        $repeated[] =& $mform->createElement('header', 'answerhdr', $label);
-        $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'), array('size' => 50));
-        $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
-        $repeated[] =& $mform->createElement('editor', 'feedback', get_string('feedback', 'quiz'), null, $this->editoroptions);
+        $repeated[] = $mform->createElement('header', 'answerhdr', $label);
+        $repeated[] = $mform->createElement('text', 'answer',
+                get_string('answer', 'question'), array('size' => 50));
+        $repeated[] = $mform->createElement('select', 'fraction',
+                get_string('grade'), $gradeoptions);
+        $repeated[] = $mform->createElement('editor', 'feedback',
+                get_string('feedback', 'question'), null, $this->editoroptions);
         $repeatedoptions['answer']['type'] = PARAM_RAW;
         $repeatedoptions['fraction']['default'] = 0;
         $answersoption = 'answers';
@@ -79,19 +88,26 @@ class question_edit_calculated_form extends question_edit_form {
         $mform->setType('answer', PARAM_NOTAGS);
 
         $addrepeated = array();
-        $addrepeated[] =& $mform->createElement('text', 'tolerance', get_string('tolerance', 'qtype_calculated'));
-        $addrepeated[] =& $mform->createElement('select', 'tolerancetype', get_string('tolerancetype', 'quiz'), $this->qtypeobj->tolerance_types());
+        $addrepeated[] = $mform->createElement('text', 'tolerance',
+                get_string('tolerance', 'qtype_calculated'));
+        $addrepeated[] = $mform->createElement('select', 'tolerancetype',
+                get_string('tolerancetype', 'qtype_numerical'),
+                $this->qtypeobj->tolerance_types());
         $repeatedoptions['tolerance']['type'] = PARAM_NUMBER;
         $repeatedoptions['tolerance']['default'] = 0.01;
 
-        $addrepeated[] =&  $mform->createElement('select', 'correctanswerlength', get_string('correctanswershows', 'qtype_calculated'), range(0, 9));
+        $addrepeated[] = $mform->createElement('select', 'correctanswerlength',
+                get_string('correctanswershows', 'qtype_calculated'), range(0, 9));
         $repeatedoptions['correctanswerlength']['default'] = 2;
 
-        $answerlengthformats = array('1' => get_string('decimalformat', 'quiz'), '2' => get_string('significantfiguresformat', 'quiz'));
-        $addrepeated[] =&  $mform->createElement('select', 'correctanswerformat', get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
+        $answerlengthformats = array(
+            '1' => get_string('decimalformat', 'qtype_numerical'),
+            '2' => get_string('significantfiguresformat', 'qtype_calculated')
+        );
+        $addrepeated[] = $mform->createElement('select', 'correctanswerformat',
+                get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
         array_splice($repeated, 3, 0, $addrepeated);
-        $repeated[1]->setLabel(get_string('correctanswerformula', 'quiz').'=');
-
+        $repeated[1]->setLabel(get_string('correctanswerformula', 'qtype_calculated') . ' = ');
         return $repeated;
     }
 
@@ -100,58 +116,59 @@ class question_edit_calculated_form extends question_edit_form {
      *
      * @param MoodleQuickForm $mform the form being built.
      */
-    function definition_inner(&$mform) {
-        global $QTYPES;
-        $this->qtypeobj =& $QTYPES[$this->qtype()];
+    protected function definition_inner($mform) {
+        $this->qtypeobj = question_bank::get_qtype($this->qtype());
         $label = get_string('sharedwildcards', 'qtype_calculated');
         $mform->addElement('hidden', 'initialcategory', 1);
         $mform->addElement('hidden', 'reload', 1);
         $mform->setType('initialcategory', PARAM_INT);
         $html2 = $this->qtypeobj->print_dataset_definitions_category($this->question);
-        $mform->insertElementBefore($mform->createElement('static','listcategory',$label,$html2),'name');
-        if(isset($this->question->id )){
-            $mform->insertElementBefore($mform->createElement('static','initialname',get_string('questionstoredname','qtype_calculated'),$this->initialname),'name');
+        $mform->insertElementBefore(
+                $mform->createElement('static', 'listcategory', $label, $html2), 'name');
+        if (isset($this->question->id)) {
+            $mform->insertElementBefore($mform->createElement('static', 'initialname',
+                    get_string('questionstoredname', 'qtype_calculated'),
+                    $this->initialname), 'name');
         };
-        $addfieldsname='updatecategory';
-        $addstring=get_string("updatecategory", "qtype_calculated");
+        $addfieldsname = 'updatecategory';
+        $addstring = get_string('updatecategory', 'qtype_calculated');
         $mform->registerNoSubmitButton($addfieldsname);
 
-        $mform->insertElementBefore(    $mform->createElement('submit', $addfieldsname, $addstring),'listcategory');
+        $mform->insertElementBefore(
+                $mform->createElement('submit', $addfieldsname, $addstring), 'listcategory');
         $mform->registerNoSubmitButton('createoptionbutton');
 
         //editing as regular
         $mform->setType('single', PARAM_INT);
 
-        $mform->addElement('hidden','shuffleanswers', '1');
+        $mform->addElement('hidden', 'shuffleanswers', '1');
         $mform->setType('shuffleanswers', PARAM_INT);
-        $mform->addElement('hidden','answernumbering', 'abc');
+        $mform->addElement('hidden', 'answernumbering', 'abc');
         $mform->setType('answernumbering', PARAM_SAFEDIR);
 
-        $creategrades = get_grade_options();
-
-        $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculated', '{no}'), $creategrades->gradeoptions, 1, 1);
+        $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculated', '{no}'),
+                question_bank::fraction_options(), 1, 1);
 
         $repeated = array();
 
-        $QTYPES['numerical']->add_units_options($mform,$this);
-        $QTYPES['numerical']->add_units_elements($mform,$this);
+        $this->add_unit_options($mform, $this);
+        $this->add_unit_fields($mform, $this);
+        $this->add_interactive_settings();
 
-        //hidden elements
+        // Hidden elements
         $mform->addElement('hidden', 'synchronize', '');
         $mform->setType('synchronize', PARAM_INT);
         $mform->addElement('hidden', 'wizard', 'datasetdefinitions');
         $mform->setType('wizard', PARAM_ALPHA);
     }
 
-    function data_preprocessing($question) {
-        global $QTYPES;
-
+    public function data_preprocessing($question) {
         $default_values = array();
-        if (isset($question->options)){
+        if (isset($question->options)) {
             $answers = $question->options->answers;
             if (count($answers)) {
                 $key = 0;
-                foreach ($answers as $answer){
+                foreach ($answers as $answer) {
                     $draftid = file_get_submitted_draft_itemid('feedback['.$key.']');
                     $default_values['answer['.$key.']'] = $answer->answer;
                     $default_values['fraction['.$key.']'] = $answer->fraction;
@@ -174,11 +191,9 @@ class question_edit_calculated_form extends question_edit_form {
                     $key++;
                 }
             }
-            $default_values['synchronize'] = $question->options->synchronize ;
-            // set unit data, prepare files in instruction area
-            $QTYPES['numerical']->set_numerical_unit_data($this, $question, $default_values);
+            $default_values['synchronize'] = $question->options->synchronize;
         }
-        if (isset($question->options->single)){
+        if (isset($question->options->single)) {
             $default_values['single'] =  $question->options->single;
             $default_values['answernumbering'] =  $question->options->answernumbering;
             $default_values['shuffleanswers'] =  $question->options->shuffleanswers;
@@ -186,159 +201,99 @@ class question_edit_calculated_form extends question_edit_form {
         }
         $default_values['submitbutton'] = get_string('nextpage', 'qtype_calculated');
         $default_values['makecopy'] = get_string('makecopynextpage', 'qtype_calculated');
-        $default_values['returnurl'] = '0' ;
-        /* set the wild cards category display given that on loading the category element is
-        unselected when processing this function but have a valid value when processing the
-        update category button. The value can be obtain by
-         $qu->category =$this->_form->_elements[$this->_form->_elementIndex['category']]->_values[0];
-         but is coded using existing functions
-         */
-        $qu = new stdClass;
-        $el = new stdClass;
+        $default_values['returnurl'] = '0';
+
+        $qu = new stdClass();
+        $el = new stdClass();
         /* no need to call elementExists() here */
-        if ($this->_form->elementExists('category')){
-            $el=$this->_form->getElement('category');
+        if ($this->_form->elementExists('category')) {
+            $el = $this->_form->getElement('category');
         } else {
-            $el=$this->_form->getElement('categorymoveto');
+            $el = $this->_form->getElement('categorymoveto');
         }
-        if($value =$el->getSelected()) {
-            $qu->category =$value[0];
-        }else {
-            $qu->category=$question->category;// on load  $question->category is set by question.php
+        if ($value = $el->getSelected()) {
+            $qu->category = $value[0];
+        } else {
+            // on load $question->category is set by question.php
+            $qu->category = $question->category;
         }
         $html2 = $this->qtypeobj->print_dataset_definitions_category($qu);
-        $this->_form->_elements[$this->_form->_elementIndex['listcategory']]->_text = $html2 ;
+        $this->_form->_elements[$this->_form->_elementIndex['listcategory']]->_text = $html2;
         $question = (object)((array)$question + $default_values);
+
+        $question = $this->data_preprocessing_hints($question);
+        $question = $this->data_preprocessing_units($question);
+        $question = $this->data_preprocessing_unit_options($question);
 
         return $question;
     }
 
-    function qtype() {
+    public function qtype() {
         return 'calculated';
     }
 
-    function validation($data, $files) {
-        global $QTYPES;
-        // echo code left for testing period
+    public function validation($data, $files) {
 
-        // echo "<p>question <pre>";print_r($this->question);echo "</pre></p>";
-        // echo "<p>data <pre>";print_r($data);echo "</pre></p>";
-
-        $errors = parent::validation($data, $files);
-        //verifying for errors in {=...} in question text;
+        // verifying for errors in {=...} in question text;
         $qtext = "";
         $qtextremaining = $data['questiontext']['text'];
         $possibledatasets = $this->qtypeobj->find_dataset_names($data['questiontext']['text']);
         foreach ($possibledatasets as $name => $value) {
             $qtextremaining = str_replace('{'.$name.'}', '1', $qtextremaining);
         }
-        // echo "numericalquestion qtextremaining <pre>";print_r($possibledatasets);
         while (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
             $qtextsplits = explode($regs1[0], $qtextremaining, 2);
-            $qtext =$qtext.$qtextsplits[0];
+            $qtext = $qtext.$qtextsplits[0];
             $qtextremaining = $qtextsplits[1];
-            if (!empty($regs1[1]) && $formulaerrors = qtype_calculated_find_formula_errors($regs1[1])) {
-                if(!isset($errors['questiontext'])){
-                    $errors['questiontext'] = $formulaerrors.':'.$regs1[1] ;
-                }else {
+            if (!empty($regs1[1]) && $formulaerrors =
+                    qtype_calculated_find_formula_errors($regs1[1])) {
+                if (!isset($errors['questiontext'])) {
+                    $errors['questiontext'] = $formulaerrors.':'.$regs1[1];
+                } else {
                     $errors['questiontext'] .= '<br/>'.$formulaerrors.':'.$regs1[1];
                 }
             }
         }
+
+        $errors = parent::validation($data, $files);
+
+        // Check that the answers use datasets.
         $answers = $data['answer'];
-        $answercount = 0;
-        $maxgrade = false;
-        $possibledatasets = $this->qtypeobj->find_dataset_names($data['questiontext']['text']);
         $mandatorydatasets = array();
-        foreach ($answers as $key => $answer){
+        foreach ($answers as $key => $answer) {
             $mandatorydatasets += $this->qtypeobj->find_dataset_names($answer);
         }
-        if ( count($mandatorydatasets )==0){
-            //  $errors['questiontext']=get_string('atleastonewildcard', 'qtype_datasetdependent');
-            foreach ($answers as $key => $answer){
-                $errors['answer['.$key.']'] = get_string('atleastonewildcard', 'qtype_datasetdependent');
+        if (empty($mandatorydatasets)) {
+            foreach ($answers as $key => $answer) {
+                $errors['answer['.$key.']'] =
+                        get_string('atleastonewildcard', 'qtype_calculated');
             }
         }
-        // regular calculated
-        foreach ($answers as $key => $answer){
-            //check no of choices
-            // the * for everykind of answer not actually implemented
+
+        // Validate the answer format.
+        foreach ($answers as $key => $answer) {
             $trimmedanswer = trim($answer);
-            if (($trimmedanswer!='')||$answercount==0){
-                $eqerror = qtype_calculated_find_formula_errors($trimmedanswer);
-                if (FALSE !== $eqerror){
-                    $errors['answer['.$key.']'] = $eqerror;
+            if (trim($answer)) {
+                if ($data['correctanswerformat'][$key] == 2 &&
+                        $data['correctanswerlength'][$key] == '0') {
+                    $errors['correctanswerlength['.$key.']'] =
+                            get_string('zerosignificantfiguresnotallowed', 'qtype_calculated');
                 }
             }
-            if ($trimmedanswer!=''){
-                if ('2' == $data['correctanswerformat'][$key]
-                    && '0' == $data['correctanswerlength'][$key]) {
-                        $errors['correctanswerlength['.$key.']'] = get_string('zerosignificantfiguresnotallowed','quiz');
-                    }
-                if (!is_numeric($data['tolerance'][$key])){
-                    $errors['tolerance['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');
-                }
-                if ($data['fraction'][$key] == 1) {
-                    $maxgrade = true;
-                }
-
-                $answercount++;
-            }
-            //check grades
-
-            //TODO how should grade checking work here??
-                /*if ($answer != '') {
-                    if ($data['fraction'][$key] > 0) {
-                        $totalfraction += $data['fraction'][$key];
-                    }
-                    if ($data['fraction'][$key] > $maxfraction) {
-                        $maxfraction = $data['fraction'][$key];
-                    }
-                }*/
         }
-
-        //grade checking :
-        /// Perform sanity checks on fractional grades
-            /*if ( ) {
-                if ($maxfraction != 1) {
-                    $maxfraction = $maxfraction * 100;
-                    $errors['fraction[0]'] = get_string('errfractionsnomax', 'qtype_multichoice', $maxfraction);
-                }
-            } else {
-                $totalfraction = round($totalfraction,2);
-                if ($totalfraction != 1) {
-                    $totalfraction = $totalfraction * 100;
-                    $errors['fraction[0]'] = get_string('errfractionsaddwrong', 'qtype_multichoice', $totalfraction);
-                }
-            }
-            $units = $data['unit'];
-            if (count($units)) {
-                foreach ($units as $key => $unit){
-                    if (is_numeric($unit)){
-                        $errors['unit['.$key.']'] = get_string('mustnotbenumeric', 'qtype_calculated');
-                    }
-                    $trimmedunit = trim($unit);
-                    $trimmedmultiplier = trim($data['multiplier'][$key]);
-                    if (!empty($trimmedunit)){
-                        if (empty($trimmedmultiplier)){
-                            $errors['multiplier['.$key.']'] = get_string('youmustenteramultiplierhere', 'qtype_calculated');
-                        }
-                        if (!is_numeric($trimmedmultiplier)){
-                            $errors['multiplier['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');
-                        }
-
-                    }
-                }
-            }*/
-        $QTYPES['numerical']->validate_numerical_options($data, $errors) ;
-        if ($answercount==0){
-            $errors['answer[0]'] = get_string('atleastoneanswer', 'qtype_calculated');
-        }
-        if ($maxgrade == false) {
-            $errors['fraction[0]'] = get_string('fractionsnomax', 'question');
-        }
-
 
         return $errors;
+    }
+
+    protected function is_valid_answer($answer, $data) {
+        return !qtype_calculated_find_formula_errors($answer);
+    }
+
+    protected function valid_answer_message($answer) {
+        if (!$answer) {
+            return get_string('mustenteraformulaorstar', 'qtype_numerical');
+        } else {
+            return qtype_calculated_find_formula_errors($answer);
+        }
     }
 }

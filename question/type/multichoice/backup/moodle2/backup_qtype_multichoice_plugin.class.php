@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,10 +20,16 @@
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
 defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Provides the information to backup multichoice questions
+ *
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_qtype_multichoice_plugin extends backup_qtype_plugin {
 
@@ -49,14 +54,16 @@ class backup_qtype_multichoice_plugin extends backup_qtype_plugin {
         // Now create the qtype own structures
         $multichoice = new backup_nested_element('multichoice', array('id'), array(
             'layout', 'answers', 'single', 'shuffleanswers',
-            'correctfeedback', 'correctfeedbackformat', 'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
-            'incorrectfeedback', 'incorrectfeedbackformat', 'answernumbering'));
+            'correctfeedback', 'correctfeedbackformat',
+            'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
+            'incorrectfeedback', 'incorrectfeedbackformat', 'answernumbering', 'shownumcorrect'));
 
         // Now the own qtype tree
         $pluginwrapper->add_child($multichoice);
 
         // set source to populate the data
-        $multichoice->set_source_table('question_multichoice', array('question' => backup::VAR_PARENTID));
+        $multichoice->set_source_table('question_multichoice',
+                array('question' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
 
@@ -70,14 +77,7 @@ class backup_qtype_multichoice_plugin extends backup_qtype_plugin {
      * files to be processed both in backup and restore.
      */
     public static function get_qtype_fileareas() {
-        // TODO: Discuss. Commented below are the "in theory" correct
-        // mappings for those fileareas. Instead we are using question for
-        // them, that will cause problems in the future if we want to change
-        // any of them to be 1..n (i.e. we should be always pointing to own id)
         return array(
-            //'correctfeedback' => 'question_multichoice',
-            //'partiallycorrectfeedback' => 'question_multichoice',
-            //'incorrectfeedback' => 'question_multichoice');
             'correctfeedback' => 'question_created',
             'partiallycorrectfeedback' => 'question_created',
             'incorrectfeedback' => 'question_created');

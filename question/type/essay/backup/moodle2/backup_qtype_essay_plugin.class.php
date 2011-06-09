@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,10 +20,16 @@
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
 defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Provides the information to backup essay questions
+ *
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_qtype_essay_plugin extends backup_qtype_plugin {
 
@@ -42,15 +47,32 @@ class backup_qtype_essay_plugin extends backup_qtype_plugin {
         // connect the visible container ASAP
         $plugin->add_child($pluginwrapper);
 
-        // This qtype uses standard question_answers, add them here
-        // to the tree before any other information that will use them
-        $this->add_question_question_answers($pluginwrapper);
-
         // Now create the qtype own structures
-        // No own structures!
+        $essay = new backup_nested_element('essay', array('id'), array(
+                'responseformat', 'responsefieldlines', 'attachments',
+                'graderinfo', 'graderinfoformat'));
+
+        // Now the own qtype tree
+        $pluginwrapper->add_child($essay);
+
+        // set source to populate the data
+        $essay->set_source_table('qtype_essay_options',
+                array('questionid' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
 
         return $plugin;
+    }
+
+    /**
+     * Returns one array with filearea => mappingname elements for the qtype
+     *
+     * Used by {@link get_components_and_fileareas} to know about all the qtype
+     * files to be processed both in backup and restore.
+     */
+    public static function get_qtype_fileareas() {
+        return array(
+            'graderinfo' => 'question_created',
+        );
     }
 }

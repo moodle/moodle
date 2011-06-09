@@ -1,140 +1,92 @@
 <?php
-define ('QUIZ_REPORT_RESPONSES_MAX_LEN_TO_DISPLAY', 150);
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-class quiz_report_responses_table extends table_sql {
+/**
+ * This file defines the quiz responses report class.
+ *
+ * @package    quiz
+ * @subpackage responses
+ * @copyright  2008 Jean-Michel Vedrine
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-    var $useridfield = 'userid';
 
-    var $reporturl;
-    var $displayoptions;
+defined('MOODLE_INTERNAL') || die();
 
-    function quiz_report_responses_table($quiz , $qmsubselect, $groupstudents,
-                $students, $questions, $candelete, $reporturl, $displayoptions, $context){
-        parent::__construct('mod-quiz-report-responses-report');
-        $this->quiz = $quiz;
-        $this->qmsubselect = $qmsubselect;
-        $this->groupstudents = $groupstudents;
-        $this->students = $students;
-        $this->questions = $questions;
-        $this->candelete = $candelete;
-        $this->reporturl = $reporturl;
-        $this->displayoptions = $displayoptions;
-        $this->context = $context;
+
+/**
+ * This is a table subclass for displaying the quiz responses report.
+ *
+ * @copyright  2008 Jean-Michel Vedrine
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class quiz_report_responses_table extends quiz_attempt_report_table {
+
+    public function __construct($quiz, $context, $qmsubselect, $groupstudents,
+            $students, $questions, $candelete, $reporturl, $displayoptions) {
+        parent::__construct('mod-quiz-report-responses-report', $quiz, $context,
+                $qmsubselect, $groupstudents, $students, $questions, $candelete,
+                $reporturl, $displayoptions);
     }
-    function build_table(){
+
+    public function build_table() {
         if ($this->rawdata) {
             $this->strtimeformat = str_replace(',', ' ', get_string('strftimedatetime'));
             parent::build_table();
         }
     }
 
-    function wrap_html_start(){
-        if (!$this->is_downloading()) {
-            if ($this->candelete) {
-                // Start form
-                $displayurl = new moodle_url($this->reporturl, $this->displayoptions);
-                $strreallydel  = addslashes_js(get_string('deleteattemptcheck','quiz'));
-                echo '<div id="tablecontainer">';
-                echo '<form id="attemptsform" method="post" action="' . $displayurl->out_omit_querystring() .
-                        '" onsubmit="confirm(\''.$strreallydel.'\');">';
-                echo '<div style="display: none;">';
-                echo html_writer::input_hidden_params($displayurl);
-                echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())) . "\n";
-                echo '</div>';
-                echo '<div>';
-            }
-        }
-    }
-    function wrap_html_finish(){
-        if (!$this->is_downloading()) {
-            // Print "Select all" etc.
-            if ($this->candelete) {
-                echo '<div id="commands">';
-                echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.
-                        get_string('selectall', 'quiz').'</a> / ';
-                echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.
-                        get_string('selectnone', 'quiz').'</a> ';
-                echo '&nbsp;&nbsp;';
-                echo '<input type="submit" value="'.get_string('deleteselected', 'quiz_overview').'"/>';
-                echo '</div>';
-                // Close form
-                echo '</div>';
-                echo '</form></div>';
-            }
-        }
-    }
-
-
-    function col_checkbox($attempt){
-        if ($attempt->attempt){
-            return '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />';
-        } else {
-            return '';
-        }
-    }
-
-    function col_picture($attempt){
-        global $COURSE, $OUTPUT;
-        $user = new stdClass();
-        $user->id = $attempt->userid;
-        $user->lastname = $attempt->lastname;
-        $user->firstname = $attempt->firstname;
-        $user->imagealt = $attempt->imagealt;
-        $user->picture = $attempt->picture;
-        $user->email = $attempt->email;
-        return $OUTPUT->user_picture($user);
-    }
-
-    function col_fullname($attempt){
-        $html = parent::col_fullname($attempt);
-        if ($this->is_downloading()) {
-            return $html;
+    public function wrap_html_start() {
+        global $PAGE;
+        if ($this->is_downloading() || !$this->candelete) {
+            return;
         }
 
-        return $html . '<br /><a class="reviewlink" href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.
-                '">'.get_string('reviewattempt', 'quiz').'</a>';
+        // Start form
+        $url = new moodle_url($this->reporturl, $this->displayoptions);
+        $url->param('sesskey', sesskey());
+
+        echo '<div id="tablecontainer">';
+        echo '<form id="attemptsform" method="post" action="' . $url->out_omit_querystring() . '>';
+        echo html_writer::input_hidden_params($url);
+        echo '<div>';
+        $PAGE->requires->event_handler('#attemptsform', 'submit', 'M.util.show_confirm_dialog',
+                array('message' => get_string('deleteattemptcheck', 'quiz')));
     }
 
-    function col_timestart($attempt){
-        if ($attempt->attempt) {
-            $startdate = userdate($attempt->timestart, $this->strtimeformat);
-            if (!$this->is_downloading()) {
-                return  '<a href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$startdate.'</a>';
-            } else {
-                return  $startdate;
-            }
-        } else {
-            return  '-';
+    public function wrap_html_finish() {
+        if ($this->is_downloading() || !$this->candelete) {
+            return;
         }
-    }
-    function col_timefinish($attempt){
-        if ($attempt->attempt) {
-            if ($attempt->timefinish) {
-                $timefinish = userdate($attempt->timefinish, $this->strtimeformat);
-                if (!$this->is_downloading()) {
-                    return '<a href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$timefinish.'</a>';
-                } else {
-                    return $timefinish;
-                }
-            } else {
-                return  '-';
-            }
-        } else {
-            return  '-';
-        }
+
+        // TODO add back are you sure, and convert to html_writer.
+        echo '<div id="commands">';
+        echo '<a href="javascript:select_all_in(\'DIV\', null, \'tablecontainer\');">'.
+                get_string('selectall', 'quiz').'</a> / ';
+        echo '<a href="javascript:deselect_all_in(\'DIV\', null, \'tablecontainer\');">'.
+                get_string('selectnone', 'quiz').'</a> ';
+        echo '&nbsp;&nbsp;';
+        echo '<input type="submit" value="'.get_string('deleteselected', 'quiz_overview').'"/>';
+        echo '</div>';
+        // Close form
+        echo '</div>';
+        echo '</form></div>';
     }
 
-    function col_duration($attempt){
-        if ($attempt->timefinish) {
-            return format_time($attempt->timefinish - $attempt->timestart);
-        } elseif ($attempt->timestart) {
-            return get_string('unfinished', 'quiz');
-        } else {
-            return '-';
-        }
-    }
-
-    function col_sumgrades($attempt){
+    public function col_sumgrades($attempt) {
         if (!$attempt->timefinish) {
             return '-';
         }
@@ -144,116 +96,72 @@ class quiz_report_responses_table extends table_sql {
             return $grade;
         }
 
-        $gradehtml = '<a href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.
-                '" title="'.get_string('reviewattempt', 'quiz').'">'.$grade.'</a>';
-        if ($this->qmsubselect && $attempt->gradedattempt){
-            $gradehtml = '<div class="highlight">'.$gradehtml.'</div>';
-        }
+        $gradehtml = '<a href="review.php?q=' . $this->quiz->id . '&amp;attempt=' .
+                $attempt->attempt . '">' . $grade . '</a>';
         return $gradehtml;
     }
 
-    function other_cols($colname, $attempt){
-        global $QTYPES, $OUTPUT;
-        static $states =array();
-        if (preg_match('/^qsanswer([0-9]+)$/', $colname, $matches)){
-            if ($attempt->uniqueid == 0) {
-                return '-';
-            }
-            $questionid = $matches[1];
-            if (isset($this->gradedstatesbyattempt[$attempt->uniqueid][$questionid])){
-                $stateforqinattempt = $this->gradedstatesbyattempt[$attempt->uniqueid][$questionid];
-            } else {
-                return '-';
-            }
+    public function data_col($slot, $field, $attempt) {
+        global $CFG;
 
-            $question = $this->questions[$questionid];
-            restore_question_state($question, $stateforqinattempt);
-
-            if (!$this->is_downloading() || $this->is_downloading() == 'xhtml'){
-                $formathtml = true;
-            } else {
-                $formathtml = false;
-            }
-
-            $summary =  $QTYPES[$question->qtype]->response_summary($question, $stateforqinattempt,
-                                                QUIZ_REPORT_RESPONSES_MAX_LEN_TO_DISPLAY, $formathtml);
-            if (!$this->is_downloading()) {
-                if ($summary){
-                    $link = new moodle_url("/mod/quiz/reviewquestion.php?attempt=$attempt->attempt&question=$question->id");
-                    $action = new popup_action('click', $link, 'reviewquestion', array('height' => 450, 'width' => 650));
-                    $summary = $OUTPUT->action_link($link, $summary, $action, array('title'=>get_string('reviewresponsetoq', 'quiz', $question->formattedname)));
-
-                    if (question_state_is_graded($stateforqinattempt)
-                                && ($question->maxgrade > 0)){
-                        $grade = $stateforqinattempt->grade
-                                        / $question->maxgrade;
-                        $qclass = question_get_feedback_class($grade);
-                        $feedbackimg = question_get_feedback_image($grade);
-                        $questionclass = "que";
-                        return "<span class=\"$questionclass\"><span class=\"$qclass\">".$summary."</span></span>$feedbackimg";
-                    } else {
-                        return $summary;
-                    }
-                } else {
-                    return '';
-                }
-
-            } else {
-                return $summary;
-            }
-        } else {
-            return NULL;
-        }
-    }
-
-    function col_feedbacktext($attempt){
-        if ($attempt->timefinish) {
-            if (!$this->is_downloading()) {
-                return quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz, false), $this->quiz->id, $this->context);
-            } else {
-                return strip_tags(quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz, false), $this->quiz->id, $this->context));
-            }
-        } else {
+        if ($attempt->usageid == 0) {
             return '-';
         }
 
+        $question = $this->questions[$slot];
+        if (!isset($this->lateststeps[$attempt->usageid][$slot])) {
+            return '-';
+        }
+
+        $stepdata = $this->lateststeps[$attempt->usageid][$slot];
+
+        if (is_null($stepdata->$field)) {
+            $summary = '-';
+        } else {
+            $summary = trim($stepdata->$field);
+        }
+
+        if ($this->is_downloading() || $field != 'responsesummary') {
+            return $summary;
+        }
+
+        return $this->make_review_link($summary, $attempt, $slot);
     }
 
-    function query_db($pagesize, $useinitialsbar=true){
-        // Add table joins so we can sort by question answer
-        // unfortunately can't join all tables necessary to fetch all answers
-        // to get the state for one question per attempt row we must join two tables
-        // and there is a limit to how many joins you can have in one query. In MySQL it
-        // is 61. This means that when having more than 29 questions the query will fail.
-        // So we join just the tables needed to sort the attempts.
-        if($sort = $this->get_sql_sort()) {
-                $this->sql->from .= ' ';
-                $sortparts    = explode(',', $sort);
-                $matches = array();
-                foreach($sortparts as $sortpart) {
-                    $sortpart = trim($sortpart);
-                    if (preg_match('/^qsanswer([0-9]+)/', $sortpart, $matches)){
-                        $qid = intval($matches[1]);
-                        $this->sql->fields .=  ", qs$qid.grade AS qsgrade$qid, qs$qid.answer AS qsanswer$qid, qs$qid.event AS qsevent$qid, qs$qid.id AS qsid$qid";
-                        $this->sql->from .= "LEFT JOIN {question_sessions} qns$qid ON qns$qid.attemptid = qa.uniqueid AND qns$qid.questionid = :qid$qid ";
-                        $this->sql->from .=  "LEFT JOIN  {question_states} qs$qid ON qs$qid.id = qns$qid.newgraded ";
-                        $this->sql->params['qid'.$qid] = $qid;
-                    }
-                }
-        }
-        parent::query_db($pagesize, $useinitialsbar);
-        $qsfields = 'qs.id, qs.grade, qs.event, qs.question, qs.answer, qs.attempt';
-        if (!$this->is_downloading()) {
-            $attemptids = array();
-            foreach ($this->rawdata as $attempt){
-                if ($attempt->uniqueid > 0){
-                    $attemptids[] = $attempt->uniqueid;
-                }
-            }
-            $this->gradedstatesbyattempt = quiz_get_newgraded_states($attemptids, true, $qsfields);
+    public function other_cols($colname, $attempt) {
+        if (preg_match('/^question(\d+)$/', $colname, $matches)) {
+            return $this->data_col($matches[1], 'questionsummary', $attempt);
+
+        } else if (preg_match('/^response(\d+)$/', $colname, $matches)) {
+            return $this->data_col($matches[1], 'responsesummary', $attempt);
+
+        } else if (preg_match('/^right(\d+)$/', $colname, $matches)) {
+            return $this->data_col($matches[1], 'rightanswer', $attempt);
+
         } else {
-            $this->gradedstatesbyattempt = quiz_get_newgraded_states($this->sql, true, $qsfields);
+            return null;
         }
+    }
+
+    protected function requires_latest_steps_loaded() {
+        return true;
+    }
+
+    protected function is_latest_step_column($column) {
+        if (preg_match('/^(?:question|response|right)([0-9]+)/', $column, $matches)) {
+            return $matches[1];
+        }
+        return false;
+    }
+
+    /**
+     * Get any fields that might be needed when sorting on date for a particular slot.
+     * @param int $slot the slot for the column we want.
+     * @param string $alias the table alias for latest state information relating to that slot.
+     */
+    protected function get_required_latest_state_fields($slot, $alias) {
+        return "$alias.questionsummary AS question$slot,
+                $alias.rightanswer AS right$slot,
+                $alias.responsesummary AS response$slot";
     }
 }
-

@@ -1,13 +1,30 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Fallback page of /mod/quiz/edit.php add random question dialog,
  * for users who do not use javascript.
  *
- * @author Olli Savolainen, as a part of the Quiz UI Redesign project in Summer 2008
- *         {@link http://docs.moodle.org/en/Development:Quiz_UI_redesign}.
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package quiz
+ * @package    mod
+ * @subpackage quiz
+ * @copyright  2008 Olli Savolainen
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
 require_once('../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/editlib.php');
 require_once($CFG->dirroot . '/mod/quiz/addrandomform.php');
@@ -21,6 +38,7 @@ list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $addonpage = optional_param('addonpage', 0, PARAM_INT);
 $category = optional_param('category', 0, PARAM_INT);
+$scrollpos = optional_param('scrollpos', 0, PARAM_INT);
 
 // Get the course object and related bits.
 if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
@@ -35,6 +53,9 @@ if ($returnurl) {
     $returnurl = new moodle_url($returnurl);
 } else {
     $returnurl = new moodle_url('/mod/quiz/edit.php', array('cmid' => $cmid));
+}
+if ($scrollpos) {
+    $returnurl->param('scrollpos', $scrollpos);
 }
 
 $defaultcategoryobj = question_make_default_categories($contexts->all());
@@ -70,7 +91,8 @@ if ($data = $mform->get_data()) {
         $returnurl->param('cat', $categoryid . ',' . $contextid);
 
     } else {
-        throw new coding_exception('It seems a form was submitted without any button being pressed???');
+        throw new coding_exception(
+                'It seems a form was submitted without any button being pressed???');
     }
 
     quiz_add_random_questions($quiz, $addonpage, $categoryid, 1, $includesubcategories);

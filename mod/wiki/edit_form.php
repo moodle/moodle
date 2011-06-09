@@ -31,8 +31,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-require_once($CFG->dirroot . "/mod/wiki/editors/wikieditor.php");
-require_once($CFG->dirroot . "/mod/wiki/editors/wikifiletable.php");
+require_once($CFG->dirroot . '/mod/wiki/editors/wikieditor.php');
 
 class mod_wiki_edit_form extends moodleform {
 
@@ -42,13 +41,12 @@ class mod_wiki_edit_form extends moodleform {
         $mform =& $this->_form;
 
         $version = $this->_customdata['version'];
-        $format = $this->_customdata['format'];
-        $tags = !isset($this->_customdata['tags'])?"":$this->_customdata['tags'];
-
+        $format  = $this->_customdata['format'];
+        $tags    = !isset($this->_customdata['tags'])?"":$this->_customdata['tags'];
 
         if ($format != 'html') {
-            $contextid = $this->_customdata['contextid'];
-            $filearea = $this->_customdata['filearea'];
+            $contextid  = $this->_customdata['contextid'];
+            $filearea   = $this->_customdata['filearea'];
             $fileitemid = $this->_customdata['fileitemid'];
         }
 
@@ -63,12 +61,25 @@ class mod_wiki_edit_form extends moodleform {
 
         $fieldname = get_string('format' . $format, 'wiki');
         if ($format != 'html') {
-            $mform->addElement('wikieditor', 'newcontent', $fieldname, array('cols' => 50, 'rows' => 20, 'wiki_format' => $format));
+            // Use wiki editor
+            $ft = new filetype_parser;
+            $extensions = $ft->get_extensions('image');
+            $fs = get_file_storage();
+            $tree = $fs->get_area_tree($contextid, 'mod_wiki', 'attachments', $fileitemid);
+            $files = array();
+            foreach ($tree['files'] as $file) {
+                $filename = $file->get_filename();
+                foreach ($extensions as $ext) {
+                    if (preg_match('#'.$ext.'$#', $filename)) {
+                        $files[] = $filename;
+                    }
+                }
+            }
+            $mform->addElement('wikieditor', 'newcontent', $fieldname, array('cols' => 100, 'rows' => 20, 'wiki_format' => $format, 'files'=>$files));
             $mform->addHelpButton('newcontent', 'format'.$format, 'wiki');
         } else {
             $mform->addElement('editor', 'newcontent_editor', $fieldname, null, page_wiki_edit::$attachmentoptions);
             $mform->addHelpButton('newcontent_editor', 'formathtml', 'wiki');
-
         }
 
         //hiddens
@@ -79,21 +90,6 @@ class mod_wiki_edit_form extends moodleform {
 
         $mform->addElement('hidden', 'contentformat');
         $mform->setDefault('contentformat', $format);
-
-//        if ($format != 'html') {
-//            //uploads
-//            $mform->addElement('header', 'attachments_tags', get_string('attachments', 'wiki'));
-//            $mform->addElement('filemanager', 'attachments', get_string('attachments', 'wiki'), null, page_wiki_edit::$attachmentoptions);
-//            $fileinfo = array(
-//                'contextid'=>$contextid,
-//                'component'=>'mod_wiki',
-//                'filearea'=>$filearea,
-//                'itemid'=>$fileitemid,
-//                );
-//
-//            $mform->addElement('wikifiletable', 'deleteuploads', get_string('wikifiletable', 'wiki'), null, $fileinfo, $format);
-//            $mform->addElement('submit', 'editoption', get_string('upload', 'wiki'), array('id' => 'tags'));
-//        }
 
         if (!empty($CFG->usetags)) {
             $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));

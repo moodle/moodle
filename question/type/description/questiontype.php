@@ -1,95 +1,70 @@
 <?php
-
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The description question type is not acutally a question, it is just a way
- * to add some static content in the middle of a quiz, or other place that
- * questions are used.
+ * Question type class for the description 'question' type.
  *
- * @package questionbank
- * @subpackage questiontypes
+ * @package    qtype
+ * @subpackage description
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class description_qtype extends default_questiontype {
 
-    function name() {
-        return 'description';
-    }
 
-    function is_real_question_type() {
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/questionlib.php');
+
+
+/**
+ * The description 'question' type.
+ *
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class qtype_description extends question_type {
+    public function is_real_question_type() {
         return false;
     }
 
-    function is_usable_by_random() {
+    public function is_usable_by_random() {
         return false;
     }
 
-    function save_question($question, $form) {
+    public function can_analyse_responses() {
+        return false;
+    }
+
+    public function save_question($question, $form) {
         // Make very sure that descriptions can'e be created with a grade of
         // anything other than 0.
-        $form->defaultgrade = 0;
+        $form->defaultmark = 0;
         return parent::save_question($question, $form);
     }
 
-    function get_question_options(&$question) {
-        return true;
-    }
-
-    function save_question_options($question) {
-        return true;
-    }
-
-    function print_question(&$question, &$state, $number, $cmoptions, $options) {
-        global $CFG;
-        $isfinished = question_state_is_graded($state->last_graded) || $state->event == QUESTION_EVENTCLOSE;
-
-        // For editing teachers print a link to an editing popup window
-        $editlink = $this->get_question_edit_link($question, $cmoptions, $options);
-
-        $context = $this->get_context_by_category_id($question->category);
-        $question->questiontext = quiz_rewrite_question_urls($question->questiontext, 'pluginfile.php', $context->id, 'question', 'questiontext', array($state->attempt, $state->question), $question->id);
-        $questiontext = $this->format_text($question->questiontext, $question->questiontextformat, $cmoptions);
-
-        $generalfeedback = '';
-        if ($isfinished && $options->generalfeedback) {
-            $question->generalfeedback = quiz_rewrite_question_urls($question->generalfeedback, 'pluginfile.php', $context->id, 'question', 'generalfeedback', array($state->attempt, $state->question), $question->id);
-            $generalfeedback = $this->format_text($question->generalfeedback,
-                    $question->generalfeedbackformat, $cmoptions);
-        }
-
-        include "$CFG->dirroot/question/type/description/question.html";
-    }
-
-    function actual_number_of_questions($question) {
+    public function actual_number_of_questions($question) {
+        /// Used for the feature number-of-questions-per-page
+        /// to determine the actual number of questions wrapped
+        /// by this question.
+        /// The question type description is not even a question
+        /// in itself so it will return ZERO!
         return 0;
     }
 
-    function grade_responses(&$question, &$state, $cmoptions) {
-        $state->raw_grade = 0;
-        $state->penalty = 0;
-        return true;
+    public function get_random_guess_score($questiondata) {
+        return null;
     }
 }
-// Register this question type with questionlib.php.
-question_register_questiontype(new description_qtype());

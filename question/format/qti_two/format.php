@@ -1,19 +1,44 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Attempt at a QTI 2 question exporter.
+ *
+ * @package    qformat
+ * @subpackage qti_two
+ * @copyright  2005 brian@mediagonal.ch
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->dirroot/question/format/qti_two/qt_common.php");
-////////////////////////////////////////////////////////////////////////////
-/// IMS QTI 2.0 FORMAT
-///
-/// HISTORY: created 28.01.2005      brian@mediagonal.ch
-////////////////////////////////////////////////////////////////////////////
 
-// Based on format.php, included by ../../import.php
-/**
- * @package questionbank
- * @subpackage importexport
- */
 define('CLOZE_TRAILING_TEXT_ID', 9999999);
 
+
+/**
+ * Attempt at a QTI 2 question exporter.
+ *
+ * Sadly, not very well maintained.
+ *
+ * @copyright  2005 brian@mediagonal.ch
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qformat_qti_two extends qformat_default {
 
     var $lang;
@@ -110,10 +135,10 @@ class qformat_qti_two extends qformat_default {
     function importpreprocess() {
         global $CFG;
 
-        print_error('cannotimportformat', 'question', "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
+        print_error('cannotimportformat', 'question');
     }
 
-    function exportpreprocess() {
+    public function exportpreprocess() {
         global $CFG;
 
         require_once("{$CFG->libdir}/smarty/Smarty.class.php");
@@ -225,24 +250,25 @@ function handle_questions_media(&$questions, $path, $courseid) {
     return empty($errors) ? true : $errors;
 }
 
-/**
- * exports the questions in a question category to the given location
- *
- * The parent class method was overridden because the IMS export consists of multiple files
- *
- * @param string $filename the directory name which will hold the exported files
- * @return boolean - or errors out
- */
-    function exportprocess() {
+    /**
+     * exports the questions in a question category to the given location
+     *
+     * The parent class method was overridden because the IMS export consists of multiple files
+     *
+     * @param string $filename the directory name which will hold the exported files
+     * @return bool - or errors out
+     */
+    public function exportprocess() {
 
-        global $CFG, $OUTPUT;
+        global $CFG, $OUTPUT, $USER;
         $courseid = $this->course->id;
 
+        $path = 'temp/qformat_qti_two/' . $USER->id . '/' . $this->filename;
         // create a directory for the exports (if not already existing)
-        if (!$export_dir = make_upload_directory($this->question_get_export_dir().'/'.$this->filename)) {
-              print_error('cannotcreatepath', 'quiz', '', $export_dir);
+        if (!make_upload_directory($path)) {
+              throw new moodle_exception('cannotcreatepath', 'question', '', $path);
         }
-        $path = $CFG->dataroot.'/'.$this->question_get_export_dir().'/'.$this->filename;
+        $path = $CFG->dataroot . '/' . $path;
 
         // get the questions (from database) in this category
         $questions = get_questions_category( $this->category );
@@ -328,13 +354,13 @@ function handle_questions_media(&$questions, $path, $courseid) {
         $this->xml_entitize($questions);
         $this->xml_entitize($result);
         $this->xml_entitize($submiturl);
-        if (! $this->exportpreprocess(0, $course)) {   // Do anything before that we need to
+        if (!$this->exportpreprocess(0, $course)) { // Do anything before that we need to
             print_error('errorpreprocess', 'question', $redirect);
         }
-        if (! $this->exportprocess_quiz($quiz, $questions, $result, $submiturl, $course)) {         // Process the export data
+        if (!$this->exportprocess_quiz($quiz, $questions, $result, $submiturl, $course)) {         // Process the export data
             print_error('errorprocess','question', $redirect);
         }
-        if (! $this->exportpostprocess()) {                    // In case anything needs to be done after
+        if (!$this->exportpostprocess()) { // In case anything needs to be done after
             print_error('errorpostprocess', 'question', $redirect);
         }
 
@@ -489,8 +515,8 @@ function xml_entitize(&$collection) {
  *
  * @todo handle in-line media (specified in the question/subquestion/answer text) for course-level exports
  * @param object $question
- * @param boolean $shuffleanswers whether or not to shuffle the answers
- * @param boolean $courselevel whether or not this is a course-level export
+ * @param bool $shuffleanswers whether or not to shuffle the answers
+ * @param bool $courselevel whether or not this is a course-level export
  * @param string $path provide the path to copy question media files to, if $courselevel == true
  * @return string containing export text
  */
@@ -535,9 +561,9 @@ function xml_entitize(&$collection) {
         case TRUEFALSE:
             $qanswers = $question->options->answers;
             $answers[0] = (array)$qanswers['true'];
-            $answers[0]['answer'] = get_string("true", "quiz");
+            $answers[0]['answer'] = get_string('true', 'qtype_truefalse');
             $answers[1] = (array)$qanswers['false'];
-            $answers[1]['answer'] = get_string("false", "quiz");
+            $answers[1]['answer'] = get_string('false', 'qtype_truefalse');
 
             if (!empty($shuffleanswers)) {
                 $answers = $this->shuffle_things($answers);
@@ -798,7 +824,7 @@ function xml_entitize(&$collection) {
  * returns whether or not a given question is scoreable
  *
  * @param object $question
- * @return boolean
+ * @return bool
  */
     function get_qti_scoreable($question) {
         switch ($question->qtype) {
@@ -815,7 +841,7 @@ function xml_entitize(&$collection) {
  * The results are based on whether or not Moodle stores answers for the given question type
  *
  * @param object $question
- * @return boolean
+ * @return bool
  */
     function get_qti_solution_available($question) {
         switch($question->qtype) {

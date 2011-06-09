@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,14 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Unit tests for the Moodle GIFT format.
  *
- * @package qformat_xml
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qformat
+ * @subpackage gift
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/question/format.php');
@@ -57,8 +59,8 @@ class qformat_gift_test extends UnitTestCase {
             'generalfeedback' => '',
             'generalfeedbackformat' => FORMAT_MOODLE,
             'qtype' => 'essay',
-            'defaultgrade' => 1,
-            'penalty' => 0.1,
+            'defaultmark' => 1,
+            'penalty' => 0.3333333,
             'length' => 1,
             'feedback' => array(
                 'text' => '',
@@ -78,8 +80,8 @@ class qformat_gift_test extends UnitTestCase {
             'questiontextformat' => FORMAT_MOODLE,
             'generalfeedback' => '',
             'generalfeedbackformat' => FORMAT_MOODLE,
-            'defaultgrade' => 1,
-            'penalty' => 0.1,
+            'defaultmark' => 1,
+            'penalty' => 0.3333333,
             'length' => 1,
             'qtype' => 'essay',
             'options' => (object) array(
@@ -129,8 +131,8 @@ class qformat_gift_test extends UnitTestCase {
             'generalfeedback' => '',
             'generalfeedbackformat' => FORMAT_HTML,
             'qtype' => 'match',
-            'defaultgrade' => 1,
-            'penalty' => 0.1,
+            'defaultmark' => 1,
+            'penalty' => 0.3333333,
             'length' => 1,
             'shuffleanswers' => '1',
             'subquestions' => array(
@@ -182,8 +184,8 @@ class qformat_gift_test extends UnitTestCase {
             'questiontextformat' => FORMAT_HTML,
             'generalfeedback' => '',
             'generalfeedbackformat' => FORMAT_HTML,
-            'defaultgrade' => 1,
-            'penalty' => 0.1,
+            'defaultmark' => 1,
+            'penalty' => 0.3333333,
             'length' => 1,
             'qtype' => 'match',
             'options' => (object) array(
@@ -273,8 +275,8 @@ class qformat_gift_test extends UnitTestCase {
             'generalfeedback' => '',
             'generalfeedbackformat' => FORMAT_MOODLE,
             'qtype' => 'multichoice',
-            'defaultgrade' => 1,
-            'penalty' => 0.1,
+            'defaultmark' => 1,
+            'penalty' => 0.3333333,
             'length' => 1,
             'single' => 1,
             'shuffleanswers' => '1',
@@ -359,8 +361,8 @@ class qformat_gift_test extends UnitTestCase {
             'generalfeedback' => '',
             'generalfeedbackformat' => FORMAT_MOODLE,
             'qtype' => 'multichoice',
-            'defaultgrade' => 1,
-            'penalty' => 0.1,
+            'defaultmark' => 1,
+            'penalty' => 0.3333333,
             'length' => 1,
             'single' => 0,
             'shuffleanswers' => '1',
@@ -441,8 +443,8 @@ class qformat_gift_test extends UnitTestCase {
             'questiontextformat' => FORMAT_MOODLE,
             'generalfeedback' => '',
             'generalfeedbackformat' => FORMAT_MOODLE,
-            'defaultgrade' => 1,
-            'penalty' => 0.1,
+            'defaultmark' => 1,
+            'penalty' => 0.3333333,
             'length' => 1,
             'qtype' => 'multichoice',
             'options' => (object) array(
@@ -515,8 +517,8 @@ class qformat_gift_test extends UnitTestCase {
             'generalfeedback' => '',
             'generalfeedbackformat' => FORMAT_MOODLE,
             'qtype' => 'numerical',
-            'defaultgrade' => 1,
-            'penalty' => 0.1,
+            'defaultmark' => 1,
+            'penalty' => 0.3333333,
             'length' => 1,
             'answer' => array(
                 '3',
@@ -553,15 +555,13 @@ class qformat_gift_test extends UnitTestCase {
             'questiontextformat' => FORMAT_MOODLE,
             'generalfeedback' => '',
             'generalfeedbackformat' => FORMAT_MOODLE,
-            'defaultgrade' => 1,
+            'defaultmark' => 1,
             'penalty' => 1,
             'length' => 1,
             'qtype' => 'numerical',
             'options' => (object) array(
                 'id' => 123,
                 'question' => 666,
-                'instructions' => '',
-                'instructionsformat' => FORMAT_MOODLE,
                 'showunits' => 0,
                 'unitsleft' => 0,
                 'showunits' => 2,
@@ -624,8 +624,8 @@ class qformat_gift_test extends UnitTestCase {
             'generalfeedback' => '',
             'generalfeedbackformat' => FORMAT_MOODLE,
             'qtype' => 'shortanswer',
-            'defaultgrade' => 1,
-            'penalty' => 0.1,
+            'defaultmark' => 1,
+            'penalty' => 0.3333333,
             'length' => 1,
             'answer' => array(
                 'Frog',
@@ -667,7 +667,7 @@ class qformat_gift_test extends UnitTestCase {
             'questiontextformat' => FORMAT_MOODLE,
             'generalfeedback' => '',
             'generalfeedbackformat' => FORMAT_MOODLE,
-            'defaultgrade' => 1,
+            'defaultmark' => 1,
             'penalty' => 1,
             'length' => 1,
             'qtype' => 'shortanswer',
@@ -736,7 +736,7 @@ FALSE#42 is the Ultimate Answer.#You gave the right answer.}";
             'generalfeedback' => '',
             'generalfeedbackformat' => FORMAT_MOODLE,
             'qtype' => 'truefalse',
-            'defaultgrade' => 1,
+            'defaultmark' => 1,
             'penalty' => 1,
             'length' => 1,
             'correctanswer' => 0,
@@ -770,7 +770,7 @@ FALSE#42 is the Ultimate Answer.#You gave the right answer.}";
             'generalfeedback' => '',
             'generalfeedbackformat' => FORMAT_MOODLE,
             'qtype' => 'truefalse',
-            'defaultgrade' => 1,
+            'defaultmark' => 1,
             'penalty' => 1,
             'length' => 1,
             'correctanswer' => 1,
@@ -804,7 +804,7 @@ FALSE#42 is the Ultimate Answer.#You gave the right answer.}";
             'generalfeedback' => '',
             'generalfeedbackformat' => FORMAT_MOODLE,
             'qtype' => 'truefalse',
-            'defaultgrade' => 1,
+            'defaultmark' => 1,
             'penalty' => 1,
             'length' => 1,
             'correctanswer' => 1,
@@ -831,7 +831,7 @@ FALSE#42 is the Ultimate Answer.#You gave the right answer.}";
             'questiontextformat' => FORMAT_MOODLE,
             'generalfeedback' => '',
             'generalfeedbackformat' => FORMAT_MOODLE,
-            'defaultgrade' => 1,
+            'defaultmark' => 1,
             'penalty' => 1,
             'length' => 1,
             'qtype' => 'truefalse',

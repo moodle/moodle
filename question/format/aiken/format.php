@@ -1,27 +1,31 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+/**
+ * Aiken format question importer.
+ *
+ * @package    qformat
+ * @subpackage aiken
+ * @copyright  2003 Tom Robb <tom@robb.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Aiken format - a simple format for creating multiple choice questions (with
@@ -44,14 +48,17 @@
  *
  * Be sure to word "All of the above" type choices like "All of these" in
  * case choices are being shuffled.
+ *
+ * @copyright  2003 Tom Robb <tom@robb.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qformat_aiken extends qformat_default {
 
-  function provide_import() {
-    return true;
-  }
+    public function provide_import() {
+        return true;
+    }
 
-    function readquestions($lines) {
+    public function readquestions($lines) {
         $questions = array();
         $question = $this->defaultquestion();
         $endchar = chr(13);
@@ -99,7 +106,7 @@ class qformat_aiken extends qformat_default {
         return $questions;
     }
 
-    function readquestion($lines) {
+    public function readquestion($lines) {
         //this is no longer needed but might still be called by default.php
         return;
     }

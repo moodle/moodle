@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,11 +21,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * restore plugin class that provides the necessary information
  * needed to restore one match qtype plugin
+ *
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_qtype_match_plugin extends restore_qtype_plugin {
 
@@ -39,13 +43,14 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
 
         // Add own qtype stuff
         $elename = 'matchoptions';
-        $elepath = $this->get_pathfor('/matchoptions'); // we used get_recommended_name() so this works
+        // We used get_recommended_name() so this works.
+        $elepath = $this->get_pathfor('/matchoptions');
         $paths[] = new restore_path_element($elename, $elepath);
 
         $elename = 'match';
-        $elepath = $this->get_pathfor('/matches/match'); // we used get_recommended_name() so this works
+        // We used get_recommended_name() so this works.
+        $elepath = $this->get_pathfor('/matches/match');
         $paths[] = new restore_path_element($elename, $elepath);
-
 
         return $paths; // And we return the interesting paths
     }
@@ -75,8 +80,6 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
             $newitemid = $DB->insert_record('question_match', $data);
             // Create mapping
             $this->set_mapping('question_match', $oldid, $newitemid);
-        } else {
-            // Nothing to remap if the question already existed
         }
     }
 
@@ -94,8 +97,10 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
-        // If the question has been created by restore, we need to create its question_match_sub too
         if ($questioncreated) {
+            // If the question has been created by restore, we need to create its
+            // question_match_sub too
+
             // Adjust some columns
             $data->question = $newquestionid;
             // Insert record
@@ -103,17 +108,20 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
             // Create mapping (there are files and states based on this)
             $this->set_mapping('question_match_sub', $oldid, $newitemid);
 
-        // match questions require mapping of question_match_sub, because
-        // they are used by question_states->answer
         } else {
+            // match questions require mapping of question_match_sub, because
+            // they are used by question_states->answer
+
             // Look for matching subquestion (by question, questiontext and answertext)
-            $sub = $DB->get_record_select('question_match_sub',
-                'question = ? AND '.$DB->sql_compare_text('questiontext').' = '.$DB->sql_compare_text('?').' AND answertext = ?',
-                array($newquestionid, $data->questiontext, $data->answertext), 'id', IGNORE_MULTIPLE);
+            $sub = $DB->get_record_select('question_match_sub', 'question = ? AND ' .
+                    $DB->sql_compare_text('questiontext') . ' = ' .
+                    $DB->sql_compare_text('?').' AND answertext = ?',
+                    array($newquestionid, $data->questiontext, $data->answertext),
+                    'id', IGNORE_MULTIPLE);
+
             // Found, let's create the mapping
             if ($sub) {
                 $this->set_mapping('question_match_sub', $oldid, $sub->id);
-            // Something went really wrong, cannot map subquestion for one match question
             } else {
                 throw new restore_step_exception('error_question_match_sub_missing_in_db', $data);
             }
@@ -133,50 +141,62 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
         global $DB;
         // Now that all the question_match_subs have been restored, let's process
         // the created question_match subquestions (list of question_match_sub ids)
-        $rs = $DB->get_recordset_sql("SELECT qm.id, qm.subquestions
-                                        FROM {question_match} qm
-                                        JOIN {backup_ids_temp} bi ON bi.newitemid = qm.question
-                                       WHERE bi.backupid = ?
-                                         AND bi.itemname = 'question_created'", array($this->get_restoreid()));
+        $rs = $DB->get_recordset_sql(
+                "SELECT qm.id, qm.subquestions
+                   FROM {question_match} qm
+                   JOIN {backup_ids_temp} bi ON bi.newitemid = qm.question
+                  WHERE bi.backupid = ?
+                    AND bi.itemname = 'question_created'", array($this->get_restoreid()));
         foreach ($rs as $rec) {
             $subquestionsarr = explode(',', $rec->subquestions);
             foreach ($subquestionsarr as $key => $subquestion) {
-                $subquestionsarr[$key] = $this->get_mappingid('question_match_sub', $subquestion);
+                $subquestionsarr[$key] = $this->get_mappingid(
+                        'question_match_sub', $subquestion);
             }
             $subquestions = implode(',', $subquestionsarr);
-            $DB->set_field('question_match', 'subquestions', $subquestions, array('id' => $rec->id));
+            $DB->set_field('question_match', 'subquestions', $subquestions,
+                    array('id' => $rec->id));
         }
         $rs->close();
     }
 
-    /**
-     * Given one question_states record, return the answer
-     * recoded pointing to all the restored stuff for match questions
-     *
-     * answer is one comma separated list of hypen separated pairs
-     * containing question_match_sub->id and question_match_sub->code
-     */
-    public function recode_state_answer($state) {
-        $answer = $state->answer;
-        $resultarr = array();
-        foreach (explode(',', $answer) as $pair) {
-            $pairarr = explode('-', $pair);
-            $id = $pairarr[0];
-            $code = $pairarr[1];
-            $newid = $this->get_mappingid('question_match_sub', $id);
-            $resultarr[] = implode('-', array($newid, $code));
+    public function recode_response($questionid, $sequencenumber, array $response) {
+        if (array_key_exists('_stemorder', $response)) {
+            $response['_stemorder'] = $this->recode_match_sub_order($response['_stemorder']);
         }
-        return implode(',', $resultarr);
+        if (array_key_exists('_choiceorder', $response)) {
+            $response['_choiceorder'] = $this->recode_match_sub_order($response['_choiceorder']);
+        }
+        return $response;
+    }
+
+    /**
+     * Recode the choice order as stored in the response.
+     * @param string $order the original order.
+     * @return string the recoded order.
+     */
+    protected function recode_match_sub_order($order) {
+        $neworder = array();
+        foreach (explode(',', $order) as $id) {
+            if ($newid = $this->get_mappingid('question_match_sub', $id)) {
+                $neworder[] = $newid;
+            }
+        }
+        return implode(',', $neworder);
     }
 
     /**
      * Return the contents of this qtype to be processed by the links decoder
      */
-    static public function define_decode_contents() {
+    public static function define_decode_contents() {
 
         $contents = array();
 
-        $contents[] = new restore_decode_content('question_match_sub', array('questiontext'), 'question_match_sub');
+        $contents[] = new restore_decode_content('question_match_sub',
+                array('questiontext'), 'question_match_sub');
+
+        $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
+        $contents[] = new restore_decode_content('question_match', $fields, 'question_match');
 
         return $contents;
     }

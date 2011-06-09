@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,57 +17,72 @@
 /**
  * Defines the editing form for the essay question type.
  *
- * @copyright &copy; 2007 Jamie Pratt
- * @author Jamie Pratt me@jamiep.org
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questionbank
- * @subpackage questiontypes
+ * @package    qtype
+ * @subpackage essay
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
+defined('MOODLE_INTERNAL') || die();
+
 
 /**
- * essay editing form definition.
+ * Essay question type editing form.
+ *
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_edit_essay_form extends question_edit_form {
-    /**
-     * Add question-type specific form fields.
-     *
-     * @param MoodleQuickForm $mform the form being built.
-     */
-    function definition_inner(&$mform) {
-        $mform->addElement('editor', 'feedback', get_string('feedback', 'quiz'), null, $this->editoroptions);
-        $mform->setType('feedback', PARAM_RAW);
+class qtype_essay_edit_form extends question_edit_form {
 
-        $mform->addElement('hidden', 'fraction', 0);
-        $mform->setType('fraction', PARAM_RAW);
+    protected function definition_inner($mform) {
+        $qtype = question_bank::get_qtype('essay');
 
-        //don't need this default element.
-        $mform->removeElement('penalty');
-        $mform->addElement('hidden', 'penalty', 0);
-        $mform->setType('penalty', PARAM_RAW);
+        $mform->addElement('select', 'responseformat',
+                get_string('responseformat', 'qtype_essay'), $qtype->response_formats());
+        $mform->setDefault('responseformat', 'editor');
+
+        $mform->addElement('select', 'responsefieldlines',
+                get_string('responsefieldlines', 'qtype_essay'), $qtype->response_sizes());
+        $mform->setDefault('responsefieldlines', 15);
+
+        $mform->addElement('select', 'attachments',
+                get_string('allowattachments', 'qtype_essay'), $qtype->attachment_options());
+        $mform->setDefault('attachments', 0);
+
+        $mform->addElement('editor', 'graderinfo', get_string('graderinfo', 'qtype_essay'),
+                array('rows' => 10), $this->editoroptions);
     }
 
-    function data_preprocessing($question) {
-        if (!empty($question->options) && !empty($question->options->answers)) {
-            $answer = reset($question->options->answers);
-            $question->feedback = array();
-            $draftid = file_get_submitted_draft_itemid('feedback');
-            $question->feedback['text'] = file_prepare_draft_area(
-                $draftid,       // draftid
-                $this->context->id,    // context
-                'question',   // component
-                'answerfeedback',             // filarea
-                !empty($answer->id)?(int)$answer->id:null, // itemid
-                $this->fileoptions,    // options
-                $answer->feedback      // text
-            );
-            $question->feedback['format'] = $answer->feedbackformat;
-            $question->feedback['itemid'] = $draftid;
+    protected function data_preprocessing($question) {
+        $question = parent::data_preprocessing($question);
+
+        if (empty($question->options)) {
+            return $question;
         }
-        $question->penalty = 0;
+
+        $question->responseformat = $question->options->responseformat;
+        $question->responsefieldlines = $question->options->responsefieldlines;
+        $question->attachments = $question->options->attachments;
+
+        $draftid = file_get_submitted_draft_itemid('graderinfo');
+        $question->graderinfo = array();
+        $question->graderinfo['text'] = file_prepare_draft_area(
+            $draftid,           // draftid
+            $this->context->id, // context
+            'qtype_essay',      // component
+            'graderinfo',       // filarea
+            !empty($question->id) ? (int) $question->id : null, // itemid
+            $this->fileoptions, // options
+            $question->options->graderinfo // text
+        );
+        $question->graderinfo['format'] = $question->options->graderinfoformat;
+        $question->graderinfo['itemid'] = $draftid;
+
         return $question;
     }
 
-    function qtype() {
+    public function qtype() {
         return 'essay';
     }
 }

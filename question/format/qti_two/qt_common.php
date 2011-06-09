@@ -1,10 +1,31 @@
 <?php
-
-//***********************************
-// qt_common.php
-//***********************************
-// This contains code common to mediagonal-modified questions
+// This file is part of Moodle - http://moodle.org/
 //
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This contains code common to mediagonal-modified questions.
+ *
+ * @package    qformat
+ * @subpackage qti_two
+ * @copyright  2005 brian@mediagonal.ch
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * gets a list of all the media files for the given course
@@ -12,12 +33,8 @@
  * @param int courseid
  * @return array containing filenames
  * @calledfrom type/<typename>/editquestion.php
- * @package questionbank
- * @subpackage importexport
  */
-function get_course_media_files($courseid)
-{
-// this code lifted from mod/quiz/question.php and modified
+function get_course_media_files($courseid) {
 throw new coding_exception('qti_two not converted to new fil api yet, sorry');
     /*global $CFG;
     $images = null;
@@ -36,7 +53,7 @@ throw new coding_exception('qti_two not converted to new fil api yet, sorry');
  * determines whether or not a file is an image, based on the file extension
  *
  * @param string $file the filename
- * @return boolean
+ * @return bool
  */
 function is_image_by_extension($file) {
     $extensionsregex = '/\.(gif|jpg|jpeg|jpe|png|tif|tiff|bmp|xbm|rgb|svf)$/';
@@ -51,7 +68,7 @@ function is_image_by_extension($file) {
  * determines whether or not a file is a media file, based on the file extension
  *
  * @param string $file the filename
- * @return boolean
+ * @return bool
  */
 function is_media_by_extension($file) {
     $extensionsregex = '/\.(gif|jpg|jpeg|jpe|png|tif|tiff|bmp|xbm|rgb|svf|swf|mov|mpg|mpeg|wmf|avi|mpe|flv|mp3|ra|ram)$/';
@@ -65,7 +82,7 @@ function is_media_by_extension($file) {
  * determines whether or not a file is a multimedia file, based on the file extension
  *
  * @param string $file the filename
- * @return boolean
+ * @return bool
  */
 function is_multimedia_by_extension($file) {
     $extensionsregex = '/\.(swf|mov|mpg|mpeg|wmf|avi|mpe|flv)$/';
@@ -79,7 +96,7 @@ function is_multimedia_by_extension($file) {
  * determines whether or not a file is a multimedia file of a type php can get the dimension for, based on the file extension
  *
  * @param string $file the filename
- * @return boolean
+ * @return bool
  */
 function is_sizable_multimedia($file) {
     $extensionsregex = '/\.(swf)$/';
@@ -127,7 +144,7 @@ function get_media_tag($file, $courseid = 0, $alt = 'media file', $width = 0, $h
         return "<img src=\"$media\" alt=\"$alt\" width=\"$width\" height=\"$height\" />";
     }
     else {
-        require_once("$CFG->dirroot/mod/quiz/format/qti/custommediafilter.php");
+        require_once("$CFG->dirroot/question/format/qti/custommediafilter.php");
         return custom_mediaplugin_filter('<a href="' . $media . '"></a>', $courseid, $width, $height);
     }
 }

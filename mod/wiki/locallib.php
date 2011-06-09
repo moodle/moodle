@@ -578,7 +578,22 @@ function wiki_parse_content($markup, $pagecontent, $options = array()) {
     $cm = get_coursemodule_from_instance("wiki", $subwiki->wikiid);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    $parser_options = array('link_callback' => '/mod/wiki/locallib.php:wiki_parser_link', 'link_callback_args' => array('swid' => $options['swid']), 'table_callback' => '/mod/wiki/locallib.php:wiki_parser_table', 'real_path_callback' => '/mod/wiki/locallib.php:wiki_parser_real_path', 'real_path_callback_args' => array('context' => $context, 'component' => 'mod_wiki', 'filearea' => 'attachments', 'pageid' => $options['pageid']), 'pageid' => $options['pageid'], 'pretty_print' => (isset($options['pretty_print']) && $options['pretty_print']), 'printable' => (isset($options['printable']) && $options['printable']));
+    $parser_options = array(
+        'link_callback' => '/mod/wiki/locallib.php:wiki_parser_link',
+        'link_callback_args' => array('swid' => $options['swid']),
+        'table_callback' => '/mod/wiki/locallib.php:wiki_parser_table',
+        'real_path_callback' => '/mod/wiki/locallib.php:wiki_parser_real_path',
+        'real_path_callback_args' => array(
+            'context' => $context,
+            'component' => 'mod_wiki',
+            'filearea' => 'attachments',
+            'subwikiid'=> $subwiki->id,
+            'pageid' => $options['pageid']
+        ),
+        'pageid' => $options['pageid'],
+        'pretty_print' => (isset($options['pretty_print']) && $options['pretty_print']),
+        'printable' => (isset($options['printable']) && $options['printable'])
+    );
 
     return wiki_parser_proxy::parse($pagecontent, $markup, $parser_options);
 }
@@ -661,21 +676,29 @@ function wiki_parser_table($table) {
 /**
  * Returns an absolute path link, unless there is no such link.
  *
- * @param string url Link's URL
- * @param stdClass context filearea params
- * @param string filearea
- * @param int fileareaid
+ * @param string $url Link's URL or filename
+ * @param stdClass $context filearea params
+ * @param string $component The component the file is associated with
+ * @param string $filearea The filearea the file is stored in
+ * @param int $swid Sub wiki id
  *
- * @return File full path
+ * @return string URL for files full path
  */
 
-function wiki_parser_real_path($url, $context, $filearea, $fileareaid) {
+function wiki_parser_real_path($url, $context, $component, $filearea, $swid) {
     global $CFG;
 
     if (preg_match("/^(?:http|ftp)s?\:\/\//", $url)) {
         return $url;
     } else {
-        return "{$CFG->wwwroot}/pluginfile.php/{$context->id}/$filearea/$fileareaid/$url";
+
+        $file = 'pluginfile.php';
+        if (!$CFG->slasharguments) {
+            $file = $file . '?file=';
+        }
+        $baseurl = "$CFG->wwwroot/$file/{$context->id}/$component/$filearea/$swid/";
+        // it is a file in current file area
+        return $baseurl . $url;
     }
 }
 
@@ -993,85 +1016,6 @@ function wiki_delete_old_locks() {
     global $DB;
 
     $DB->delete_records_select('wiki_locks', "lockedat < ?", array(time() - 3600));
-}
-
-/**
- * File processing
- */
-
-/**
- * Uploads files to permanent disk space.
- *
- * @param int draftitemid Draft space ID
- * @param int contextid
- *
- * @return array of files that have not been inserted.
- */
-
-function wiki_process_attachments($draftitemid, $deleteuploads, $contextid, $filearea, $itemid, $options = null) {
-    global $CFG, $USER;
-
-    if (empty($options)) {
-        $options = page_wiki_edit::$attachmentoptions;
-    }
-
-    $errors = array();
-
-    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-    $fs = get_file_storage();
-
-    $oldfiles = $fs->get_area_files($contextid, 'mod_wiki', 'attachments', $itemid, 'id');
-
-    foreach ($oldfiles as $file) {
-        if (in_array($file->get_pathnamehash(), $deleteuploads)) {
-            $file->delete();
-        }
-    }
-
-    $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id');
-    $oldfiles = $fs->get_area_files($contextid, 'mod_wiki', 'attachments', $itemid, 'id');
-
-    $file_record = array('contextid' => $contextid, 'component' => 'mod_wiki', 'filearea' => 'attachments', 'itemid' => $itemid);
-    //more or less a merge...
-    $newhashes = array();
-    foreach ($draftfiles as $file) {
-        $newhash = sha1("/$contextid/mod_wiki/attachments/$itemid" . $file->get_filepath() . $file->get_filename());
-        $newhashes[$newhash] = $file;
-    }
-
-    $filecount = 0;
-    foreach ($oldfiles as $file) {
-        $oldhash = $file->get_pathnamehash();
-        if (!$file->is_directory() && isset($newhashes[$oldhash])) {
-            //repeated file: ERROR!!!
-            unset($newhashes[$oldhash]);
-            $errors[] = $file;
-        }
-
-        if (!$file->is_directory()) {
-            $filecount++;
-        }
-    }
-
-    foreach ($newhashes as $file) {
-        if ($file->get_filepath() !== '/' or $file->is_directory()) {
-            continue;
-        }
-
-        if ($options['maxfiles'] and $options['maxfiles'] <= $filecount) {
-            break;
-        }
-
-        if (!$file->is_directory()) {
-            $filecount++;
-            $fs->create_file_from_storedfile($file_record, $file);
-        }
-    }
-
-    //delete all draft files
-    $fs->delete_area_files($usercontext->id, 'user', 'draft', $draftitemid);
-
-    return $errors;
 }
 
 function wiki_get_comment($commentid){

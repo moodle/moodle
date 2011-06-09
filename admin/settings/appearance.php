@@ -18,6 +18,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('allowuserblockhiding', get_string('allowuserblockhiding', 'admin'), get_string('configallowuserblockhiding', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('allowblockstodock', get_string('allowblockstodock', 'admin'), get_string('configallowblockstodock', 'admin'), 1));
     $temp->add(new admin_setting_configtextarea('custommenuitems', get_string('custommenuitems', 'admin'), get_string('configcustommenuitems', 'admin'), '', PARAM_TEXT, '50', '10'));
+    $temp->add(new admin_setting_configcheckbox('enabledevicedetection', get_string('enabledevicedetection', 'admin'), get_string('configenabledevicedetection', 'admin'), 1));
+    $temp->add(new admin_setting_devicedetectregex('devicedetectregex', get_string('devicedetectregex', 'admin'), get_string('devicedetectregex_desc', 'admin'), ''));
     $ADMIN->add('themes', $temp);
     $ADMIN->add('themes', new admin_externalpage('themeselector', get_string('themeselector','admin'), $CFG->wwwroot . '/theme/index.php'));
 

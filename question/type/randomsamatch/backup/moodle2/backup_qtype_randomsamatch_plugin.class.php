@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,10 +20,16 @@
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
 defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Provides the information to backup randomsamatch questions
+ *
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_qtype_randomsamatch_plugin extends backup_qtype_plugin {
 
@@ -50,9 +55,8 @@ class backup_qtype_randomsamatch_plugin extends backup_qtype_plugin {
         $pluginwrapper->add_child($randomsamatch);
 
         // set source to populate the data
-        $randomsamatch->set_source_table('question_randomsamatch', array('question' => backup::VAR_PARENTID));
-
-        // don't need to annotate ids nor files
+        $randomsamatch->set_source_table('question_randomsamatch',
+                array('question' => backup::VAR_PARENTID));
 
         return $plugin;
     }

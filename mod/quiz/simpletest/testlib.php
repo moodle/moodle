@@ -1,22 +1,42 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Unit tests for (some of) mod/quiz/locallib.php.
  *
- * @author T.J.Hunt@open.ac.uk
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package quiz
+ * @package    mod
+ * @subpackage quiz
+ * @copyright  2008 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.'); /// It must be included from a Moodle page.
-}
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
 
+
+/**
+ * @copyright  2008 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
+ */
 class quiz_lib_test extends UnitTestCase {
     public static $includecoverage = array('mod/quiz/lib.php');
-    function test_quiz_has_grades() {
-        $quiz = new stdClass;
+    public function test_quiz_has_grades() {
+        $quiz = new stdClass();
         $quiz->grade = '100.0000';
         $quiz->sumgrades = '100.0000';
         $this->assertTrue(quiz_has_grades($quiz));
@@ -28,8 +48,8 @@ class quiz_lib_test extends UnitTestCase {
         $this->assertFalse(quiz_has_grades($quiz));
     }
 
-    function test_quiz_format_grade() {
-        $quiz = new stdClass;
+    public function test_quiz_format_grade() {
+        $quiz = new stdClass();
         $quiz->decimalpoints = 2;
         $this->assertEqual(quiz_format_grade($quiz, 0.12345678), format_float(0.12, 2));
         $this->assertEqual(quiz_format_grade($quiz, 0), format_float(0, 2));
@@ -38,8 +58,8 @@ class quiz_lib_test extends UnitTestCase {
         $this->assertEqual(quiz_format_grade($quiz, 0.12345678), '0');
     }
 
-    function test_quiz_format_question_grade() {
-        $quiz = new stdClass;
+    public function test_quiz_format_question_grade() {
+        $quiz = new stdClass();
         $quiz->decimalpoints = 2;
         $quiz->questiondecimalpoints = 2;
         $this->assertEqual(quiz_format_question_grade($quiz, 0.12345678), format_float(0.12, 2));

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,10 +20,16 @@
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
 defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Provides the information to backup numerical questions
+ *
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_qtype_numerical_plugin extends backup_qtype_plugin {
 
@@ -62,26 +67,11 @@ class backup_qtype_numerical_plugin extends backup_qtype_plugin {
         $numericalrecords->add_child($numericalrecord);
 
         // set source to populate the data
-        $numericalrecord->set_source_table('question_numerical', array('question' => backup::VAR_PARENTID));
+        $numericalrecord->set_source_table('question_numerical',
+                array('question' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
 
         return $plugin;
-    }
-
-    /**
-     * Returns one array with filearea => mappingname elements for the qtype
-     *
-     * Used by {@link get_components_and_fileareas} to know about all the qtype
-     * files to be processed both in backup and restore.
-     */
-    public static function get_qtype_fileareas() {
-        // TODO: Discuss. Commented below are the "in theory" correct
-        // mappings for those fileareas. Instead we are using question for
-        // them, that will cause problems in the future if we want to change
-        // any of them to be 1..n (i.e. we should be always pointing to own id)
-        return array(
-            //'instruction' => 'question_numerical_option');
-            'instruction' => 'question_created');
     }
 }

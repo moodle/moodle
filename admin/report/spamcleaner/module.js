@@ -108,7 +108,7 @@ M.report_spamcleaner = {
             context.Y = Y;
             context.me = me;
             if (Y.one("#removeall_btn")) {
-            	Y.on("click", context.del_all, "#removeall_btn");
+                Y.on("click", context.del_all, "#removeall_btn");
             }
         });
     }

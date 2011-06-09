@@ -46,6 +46,27 @@ if ($hassiteconfig) {
         }
     }
 
+    // message outputs
+    $ADMIN->add('modules', new admin_category('messageoutputs', get_string('messageoutputs', 'message')));
+    $ADMIN->add('messageoutputs', new admin_page_managemessageoutputs());
+    $ADMIN->add('messageoutputs', new admin_page_defaultmessageoutputs());
+    require_once($CFG->dirroot.'/message/lib.php');
+    $processors = get_message_processors();
+    foreach ($processors as $processor) {
+        $processorname = $processor->name;
+        if (!$processor->available) {
+            continue;
+        }
+        if ($processor->hassettings) {
+            $strprocessorname = get_string('pluginname', 'message_'.$processorname);
+            $settings = new admin_settingpage('messagesetting'.$processorname, $strprocessorname, 'moodle/site:config', !$processor->enabled);
+            include($CFG->dirroot.'/message/output/'.$processor->name.'/settings.php');
+            if ($settings) {
+                $ADMIN->add('messageoutputs', $settings);
+            }
+        }
+    }
+
     // authentication plugins
     $ADMIN->add('modules', new admin_category('authsettings', get_string('authentication', 'admin')));
 
@@ -324,6 +345,9 @@ if ($hassiteconfig) {
     $ADMIN->add('webservicesettings', $temp);
     /// manage service
     $temp = new admin_settingpage('externalservices', get_string('externalservices', 'webservice'));
+    $enablemobiledocurl = new moodle_url(get_docs_url('Enable_mobile_web_services'));
+    $enablemobiledoclink = html_writer::link($enablemobiledocurl, get_string('documentation'));
+    $temp->add(new admin_setting_enablemobileservice('enablemobilewebservice', get_string('enablemobilewebservice', 'admin'), get_string('configenablemobilewebservice', 'admin', $enablemobiledoclink), 0));
     $temp->add(new admin_setting_heading('manageserviceshelpexplaination', get_string('information', 'webservice'), get_string('servicehelpexplanation', 'webservice')));
     $temp->add(new admin_setting_manageexternalservices());
     $ADMIN->add('webservicesettings', $temp);

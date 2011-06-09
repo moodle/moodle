@@ -1,37 +1,36 @@
 <?php
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// WebCT FORMAT                                                          //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Part of Moodle - Modular Object-Oriented Dynamic Learning Environment //
-//                  http://moodle.com                                    //
-//                                                                       //
-// Copyright (C) 2004 ASP Consulting   http://www.asp-consulting.net     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// Based on format.php, included by ../../import.php
 /**
- * @package questionbank
- * @subpackage importexport
+ * Web CT question importer.
+ *
+ * @package    qformat
+ * @subpackage webct
+ * @copyright  2004 ASP Consulting http://www.asp-consulting.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Manipulate HTML editites in a string. Used by WebCT import.
+ * @param string $string
+ * @return string
+ */
 function unhtmlentities($string){
     $search = array ("'<script[?>]*?>.*?</script>'si",  // remove javascript
                  "'<[\/\!]*?[^<?>]*?>'si",  // remove HTML tags
@@ -62,8 +61,10 @@ function unhtmlentities($string){
     return preg_replace ($search, $replace, $string);
 }
 
-
-
+/**
+ * Helper function for WebCT import.
+ * @param unknown_type $formula
+ */
 function qformat_webct_convert_formula($formula) {
 
     // Remove empty space, as it would cause problems otherwise:
@@ -158,6 +159,13 @@ function qformat_webct_convert_formula($formula) {
     return $formula;
 }
 
+
+/**
+ * Web CT question importer.
+ *
+ * @copyright  2004 ASP Consulting http://www.asp-consulting.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qformat_webct extends qformat_default {
 
     function provide_import() {
@@ -165,8 +173,6 @@ class qformat_webct extends qformat_default {
     }
 
     function readquestions ($lines) {
-        global $QTYPES ;
-        //  $qtypecalculated = new qformat_webct_modified_calculated_qtype();
         $webctnumberregex =
                 '[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)((e|E|\\*10\\*\\*)([+-]?[0-9]+|\\([+-]?[0-9]+\\)))?';
 
@@ -257,10 +263,10 @@ class qformat_webct extends qformat_default {
                     }
                     if (strlen($question->name) > 255) {
                         $question->name = substr($question->name,0,250)."...";
-                        $warnings[] = get_string("questionnametoolong", "quiz", $nQuestionStartLine);
+                        $warnings[] = get_string("questionnametoolong", "qformat_webct", $nQuestionStartLine);
                     }
-                    if (!isset($question->defaultgrade)) {
-                        $question->defaultgrade = 1;
+                    if (!isset($question->defaultmark)) {
+                        $question->defaultmark = 1;
                     }
                     if (!isset($question->image)) {
                         $question->image = "";
@@ -269,11 +275,11 @@ class qformat_webct extends qformat_default {
                     // Perform sanity checks
                     $QuestionOK = TRUE;
                     if (strlen($question->questiontext) == 0) {
-                        $warnings[] = get_string("missingquestion", "quiz", $nQuestionStartLine);
+                        $warnings[] = get_string("missingquestion", "qformat_webct", $nQuestionStartLine);
                         $QuestionOK = FALSE;
                     }
                     if (sizeof($question->answer) < 1) {  // a question must have at least 1 answer
-                       $errors[] = get_string("missinganswer", "quiz", $nQuestionStartLine);
+                       $errors[] = get_string("missinganswer", "qformat_webct", $nQuestionStartLine);
                        $QuestionOK = FALSE;
                     }
                     else {
@@ -311,7 +317,7 @@ class qformat_webct extends qformat_default {
                             case SHORTANSWER:
                                 if ($maxfraction != 1) {
                                     $maxfraction = $maxfraction * 100;
-                                    $errors[] = "'$question->name': ".get_string("wronggrade", "quiz", $nLineCounter).' '.get_string("fractionsnomax", "quiz", $maxfraction);
+                                    $errors[] = "'$question->name': ".get_string("wronggrade", "qformat_webct", $nLineCounter).' '.get_string("fractionsnomax", "question", $maxfraction);
                                     $QuestionOK = FALSE;
                                 }
                                 break;
@@ -320,14 +326,14 @@ class qformat_webct extends qformat_default {
                                 if ($question->single) {
                                     if ($maxfraction != 1) {
                                         $maxfraction = $maxfraction * 100;
-                                        $errors[] = "'$question->name': ".get_string("wronggrade", "quiz", $nLineCounter).' '.get_string("fractionsnomax", "quiz", $maxfraction);
+                                        $errors[] = "'$question->name': ".get_string("wronggrade", "qformat_webct", $nLineCounter).' '.get_string("fractionsnomax", "question", $maxfraction);
                                         $QuestionOK = FALSE;
                                     }
                                 } else {
                                     $totalfraction = round($totalfraction,2);
                                     if ($totalfraction != 1) {
                                         $totalfraction = $totalfraction * 100;
-                                        $errors[] = "'$question->name': ".get_string("wronggrade", "quiz", $nLineCounter).' '.get_string("fractionsaddwrong", "quiz", $totalfraction);
+                                        $errors[] = "'$question->name': ".get_string("wronggrade", "qformat_webct", $nLineCounter).' '.get_string("fractionsaddwrong", "question", $totalfraction);
                                         $QuestionOK = FALSE;
                                     }
                                 }
@@ -335,7 +341,7 @@ class qformat_webct extends qformat_default {
 
                             case CALCULATED:
                                 foreach ($question->answers as $answer) {
-                                    if ($formulaerror =qtype_calculated_find_formula_errors($answer)) { //$QTYPES['calculated']->
+                                    if ($formulaerror = qtype_calculated_find_formula_errors($answer)) {
                                         $warnings[] = "'$question->name': ". $formulaerror;
                                         $QuestionOK = FALSE;
                                     }
@@ -413,10 +419,6 @@ class qformat_webct extends qformat_default {
 
             if (preg_match("~^:TYPE:C~i",$line)) {
                 // Calculated Question
-           /*     $warnings[] = get_string("calculatedquestion", "quiz", $nLineCounter);
-                unset($question);
-                $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
-             */
                 $question = $this->defaultquestion();
                 $question->qtype = CALCULATED;
                 $question->answers = array(); // No problem as they go as :FORMULA: from webct
@@ -444,7 +446,7 @@ class qformat_webct extends qformat_default {
 
             if (preg_match("~^:TYPE:P~i",$line)) {
                 // Paragraph Question
-                $warnings[] = get_string("paragraphquestion", "quiz", $nLineCounter);
+                $warnings[] = get_string("paragraphquestion", "qformat_webct", $nLineCounter);
                 unset($question);
                 $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
                 continue;
@@ -452,7 +454,7 @@ class qformat_webct extends qformat_default {
 
             if (preg_match("~^:TYPE:~i",$line)) {
                 // Unknow Question
-                $warnings[] = get_string("unknowntype", "quiz", $nLineCounter);
+                $warnings[] = get_string("unknowntype", "qformat_webct", $nLineCounter);
                 unset($question);
                 $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
                 continue;
@@ -466,7 +468,7 @@ class qformat_webct extends qformat_default {
                 $name = trim($webct_options[1]);
                 if (strlen($name) > 255) {
                     $name = substr($name,0,250)."...";
-                    $warnings[] = get_string("questionnametoolong", "quiz", $nLineCounter);
+                    $warnings[] = get_string("questionnametoolong", "qformat_webct", $nLineCounter);
                 }
                 $question->name = $name;
                 continue;
@@ -544,7 +546,8 @@ class qformat_webct extends qformat_default {
                 $question->feedback[$currentchoice] = '';
                 $question->correctanswerlength[$currentchoice] = 4;
 
-                $datasetnames = $QTYPES[CALCULATED]->find_dataset_names($webct_options[1]);
+                $datasetnames = question_bank::get_qtype('calculated')->
+                        find_dataset_names($webct_options[1]);
                 foreach ($datasetnames as $datasetname) {
                     $question->dataset[$datasetname] = new stdClass();
                     $question->dataset[$datasetname]->datasetitem = array();
@@ -647,7 +650,7 @@ class qformat_webct extends qformat_default {
         }
 
         if (sizeof($errors) > 0) {
-            echo "<p>".get_string("errorsdetected", "quiz", sizeof($errors))."</p><ul>";
+            echo "<p>".get_string("errorsdetected", "qformat_webct", sizeof($errors))."</p><ul>";
             foreach($errors as $error) {
                 echo "<li>$error</li>";
             }
@@ -656,7 +659,7 @@ class qformat_webct extends qformat_default {
         }
 
         if (sizeof($warnings) > 0) {
-            echo "<p>".get_string("warningsdetected", "quiz", sizeof($warnings))."</p><ul>";
+            echo "<p>".get_string("warningsdetected", "qformat_webct", sizeof($warnings))."</p><ul>";
             foreach($warnings as $warning) {
                 echo "<li>$warning</li>";
             }

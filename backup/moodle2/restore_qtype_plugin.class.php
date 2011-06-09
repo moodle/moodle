@@ -115,6 +115,23 @@ abstract class restore_qtype_plugin extends restore_plugin {
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
+        // In the past, there were some sloppily rounded fractions around. Fix them up.
+        $changes = array(
+            '-0.66666'  => '-0.6666667',
+            '-0.33333'  => '-0.3333333',
+            '-0.16666'  => '-0.1666667',
+            '-0.142857' => '-0.1428571',
+             '0.11111'  =>  '0.1111111',
+             '0.142857' =>  '0.1428571',
+             '0.16666'  =>  '0.1666667',
+             '0.33333'  =>  '0.3333333',
+             '0.333333' =>  '0.3333333',
+             '0.66666'  =>  '0.6666667',
+        );
+        if (array_key_exists($data->fraction, $changes)) {
+            $data->fraction = $changes[$data->fraction];
+        }
+
         // If the question has been created by restore, we need to create its question_answers too
         if ($questioncreated) {
             // Adjust some columns
@@ -298,11 +315,14 @@ abstract class restore_qtype_plugin extends restore_plugin {
     }
 
     /**
-     * Decode one question_states for this qtype (default impl)
+     * Do any re-coding necessary in the student response.
+     * @param int $questionid the new id of the question
+     * @param int $sequencenumber of the step within the qusetion attempt.
+     * @param array the response data from the backup.
+     * @return array the recoded response.
      */
-    public function recode_state_answer($state) {
-        // By default, return answer unmodified, qtypes needing recode will override this
-        return $state->answer;
+    public function recode_response($questionid, $sequencenumber, array $response) {
+        return $response;
     }
 
     /**

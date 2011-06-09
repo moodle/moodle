@@ -1,33 +1,54 @@
 <?php
-/// Modified by Tom Robb 12 June 2003 to include percentage and comment insertion
-/// facility.
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-////////////////////////////////////////////////////////////////////////////
-/// MISSING WORD FORMAT
-///
-/// This Moodle class provides all functions necessary to import and export
-/// one-correct-answer multiple choice questions in this format:
-///
-///    As soon as we begin to explore our body parts as infants
-///    we become students of {=anatomy and physiology ~reflexology
-///    ~science ~experiment}, and in a sense we remain students for life.
-///
-/// Each answer is separated with a tilde ~, and the correct answer is
-/// prefixed with an equals sign =
-///
-/// Percentage weights can be included by following the tilde with the
-/// desired percent.  Comments can be included for each choice by following
-/// the comment with a hash mark ("#") and the comment.  Example:
-///
-///    This is {=the best answer#comment on the best answer ~75%a good
-///    answer#comment on the good answer ~a wrong one#comment on the bad answer}
-///
-////////////////////////////////////////////////////////////////////////////
-
-// Based on format.php, included by ../../import.php
 /**
- * @package questionbank
- * @subpackage importexport
+ * Missing word question importer.
+ *
+ * @package    qformat
+ * @subpackage missingword
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
+
+/**
+ * Missing word question importer.
+ *
+ * This Moodle class provides all functions necessary to import and export
+ * one-correct-answer multiple choice questions in this format:
+ *
+ *    As soon as we begin to explore our body parts as infants
+ *    we become students of {=anatomy and physiology ~reflexology
+ *    ~science ~experiment}, and in a sense we remain students for life.
+ *
+ * Each answer is separated with a tilde ~, and the correct answer is
+ * prefixed with an equals sign =
+ *
+ * Percentage weights can be included by following the tilde with the
+ * desired percent.  Comments can be included for each choice by following
+ * the comment with a hash mark ("#") and the comment.  Example:
+ *
+ *    This is {=the best answer#comment on the best answer ~75%a good
+ *    answer#comment on the good answer ~a wrong one#comment on the bad answer}
+ *
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qformat_missingword extends qformat_default {
 

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,10 +20,16 @@
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
 defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Provides the information to backup match questions
+ *
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_qtype_match_plugin extends backup_qtype_plugin {
 
@@ -44,7 +49,9 @@ class backup_qtype_match_plugin extends backup_qtype_plugin {
 
         // Now create the qtype own structures
         $matchoptions = new backup_nested_element('matchoptions', array('id'), array(
-            'subquestions', 'shuffleanswers'));
+            'subquestions', 'shuffleanswers', 'correctfeedback', 'correctfeedbackformat',
+            'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
+            'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect'));
 
         $matches = new backup_nested_element('matches');
 
@@ -57,7 +64,8 @@ class backup_qtype_match_plugin extends backup_qtype_plugin {
         $matches->add_child($match);
 
         // set source to populate the data
-        $matchoptions->set_source_table('question_match', array('question' => backup::VAR_PARENTID));
+        $matchoptions->set_source_table('question_match',
+                array('question' => backup::VAR_PARENTID));
         $match->set_source_sql('
                 SELECT *
                 FROM {question_match_sub}

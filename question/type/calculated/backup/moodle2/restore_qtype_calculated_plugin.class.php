@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,11 +21,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * restore plugin class that provides the necessary information
  * needed to restore one calculated qtype plugin
+ *
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_qtype_calculated_plugin extends restore_qtype_plugin {
 
@@ -49,11 +53,11 @@ class restore_qtype_calculated_plugin extends restore_qtype_plugin {
 
         // Add own qtype stuff
         $elename = 'calculated_record';
-        $elepath = $this->get_pathfor('/calculated_records/calculated_record'); // we used get_recommended_name() so this works
+        $elepath = $this->get_pathfor('/calculated_records/calculated_record');
         $paths[] = new restore_path_element($elename, $elepath);
 
         $elename = 'calculated_option';
-        $elepath = $this->get_pathfor('/calculated_options/calculated_option'); // we used get_recommended_name() so this works
+        $elepath = $this->get_pathfor('/calculated_options/calculated_option');
         $paths[] = new restore_path_element($elename, $elepath);
 
         return $paths; // And we return the interesting paths
@@ -71,19 +75,17 @@ class restore_qtype_calculated_plugin extends restore_qtype_plugin {
         // Detect if the question is created or mapped
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
-        $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
+        $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ?
+                true : false;
 
-        // If the question has been created by restore, we need to create its question_calculated too
+        // If the question has been created by restore, we need to create its
+        // question_calculated too
         if ($questioncreated) {
             // Adjust some columns
             $data->question = $newquestionid;
             $data->answer = $this->get_mappingid('question_answer', $data->answer);
             // Insert record
             $newitemid = $DB->insert_record('question_calculated', $data);
-            // Create mapping (not needed, no files nor childs nor states here)
-            //$this->set_mapping('question_calculated', $oldid, $newitemid);
-        } else {
-            // Nothing to remap if the question already existed
         }
     }
 
@@ -99,18 +101,16 @@ class restore_qtype_calculated_plugin extends restore_qtype_plugin {
         // Detect if the question is created or mapped
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
-        $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
+        $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ?
+                true : false;
 
-        // If the question has been created by restore, we need to create its question_calculated too
+        // If the question has been created by restore, we need to create its
+        // question_calculated too
         if ($questioncreated) {
             // Adjust some columns
             $data->question = $newquestionid;
             // Insert record
             $newitemid = $DB->insert_record('question_calculated_options', $data);
-            // Create mapping (not needed, no files nor childs nor states here)
-            // $this->set_mapping('question_calculated_option', $oldid, $newitemid);
-        } else {
-            // Nothing to remap if the question already existed
         }
     }
 }

@@ -1,15 +1,33 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * settingstree.php - Tells the admin menu that there are sub menu pages to
- * include for this activity.
+ * Administration settings definitions for the quiz module.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package quiz
+ * @package    mod
+ * @subpackage quiz
+ * @copyright  2010 Petr Skoda
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
+require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/mod/quiz/settingslib.php');
 
 // First get a list of quiz reports with there own settings pages. If there none,
@@ -85,25 +103,32 @@ $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/shufflea
         get_string('shufflewithin', 'quiz'), get_string('configshufflewithin', 'quiz'),
         array('value' => 1, 'adv' => false)));
 
-// Adaptive mode.
-$quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/optionflags',
-        get_string('adaptive', 'quiz'), get_string('configadaptive', 'quiz'),
-        array('value' => 1, 'adv' => false)));
-
-// Apply penalties.
-$quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/penaltyscheme',
-        get_string('penaltyscheme', 'quiz'), get_string('configpenaltyscheme', 'quiz'),
-        array('value' => 1, 'adv' => true)));
+// Preferred behaviour.
+$quizsettings->add(new admin_setting_question_behaviour('quiz/preferredbehaviour',
+        get_string('howquestionsbehave', 'question'), get_string('howquestionsbehave_desc', 'quiz'),
+        'deferredfeedback'));
 
 // Each attempt builds on last.
 $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/attemptonlast',
-        get_string('eachattemptbuildsonthelast', 'quiz'), get_string('configeachattemptbuildsonthelast', 'quiz'),
+        get_string('eachattemptbuildsonthelast', 'quiz'),
+        get_string('configeachattemptbuildsonthelast', 'quiz'),
         array('value' => 0, 'adv' => true)));
 
 // Review options.
-$quizsettings->add(new admin_setting_quiz_reviewoptions('quiz/review',
-        get_string('reviewoptions', 'quiz'), get_string('configreviewoptions', 'quiz'),
-        array('value' => QUIZ_REVIEW_IMMEDIATELY | QUIZ_REVIEW_OPEN | QUIZ_REVIEW_CLOSED, 'fix' => false)));
+$quizsettings->add(new admin_setting_heading('reviewheading',
+        get_string('reviewoptionsheading', 'quiz'), ''));
+foreach (mod_quiz_admin_review_setting::fields() as $field => $name) {
+    $default = mod_quiz_admin_review_setting::all_on();
+    $forceduring = null;
+    if ($field == 'attempt') {
+        $forceduring = true;
+    } else if ($field == 'overallfeedback') {
+        $default = $default ^ mod_quiz_admin_review_setting::DURING;
+        $forceduring = false;
+    }
+    $quizsettings->add(new mod_quiz_admin_review_setting('quiz/review' . $field,
+            $name, '', $default, $forceduring));
+}
 
 // Show the user's picture
 $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/showuserpicture',
@@ -125,7 +150,8 @@ for ($i = 0; $i <= QUIZ_MAX_Q_DECIMAL_OPTION; $i++) {
     $options[$i] = $i;
 }
 $quizsettings->add(new admin_setting_configselect_with_advanced('quiz/questiondecimalpoints',
-        get_string('decimalplacesquestion', 'quiz'), get_string('configdecimalplacesquestion', 'quiz'),
+        get_string('decimalplacesquestion', 'quiz'),
+        get_string('configdecimalplacesquestion', 'quiz'),
         array('value' => -1, 'fix' => true), $options));
 
 // Show blocks during quiz attempts
@@ -156,19 +182,21 @@ $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/popup',
         get_string('showinsecurepopup', 'quiz'), get_string('configpopup', 'quiz'),
         array('value' => 0, 'adv' => true)));
 
-/// Now, depending on whether any reports have their own settings page, add
-/// the quiz setting page to the appropriate place in the tree.
+// Now, depending on whether any reports have their own settings page, add
+// the quiz setting page to the appropriate place in the tree.
 if (empty($reportsbyname)) {
     $ADMIN->add('modsettings', $quizsettings);
 } else {
-    $ADMIN->add('modsettings', new admin_category('modsettingsquizcat', get_string('modulename', 'quiz'), !$module->visible));
+    $ADMIN->add('modsettings', new admin_category('modsettingsquizcat',
+            get_string('modulename', 'quiz'), !$module->visible));
     $ADMIN->add('modsettingsquizcat', $quizsettings);
 
-/// Add the report pages for the settings.php files in sub directories of mod/quiz/report
+    // Add the report pages for the settings.php files in sub directories of mod/quiz/report
     foreach ($reportsbyname as $strreportname => $report) {
         $reportname = $report;
 
-        $settings = new admin_settingpage('modsettingsquizcat'.$reportname, $strreportname, 'moodle/site:config', !$module->visible);
+        $settings = new admin_settingpage('modsettingsquizcat'.$reportname,
+                $strreportname, 'moodle/site:config', !$module->visible);
         if ($ADMIN->fulltree) {
             include($CFG->dirroot."/mod/quiz/report/$reportname/settings.php");
         }
@@ -176,4 +204,4 @@ if (empty($reportsbyname)) {
     }
 }
 
-$settings = NULL; // we do not want standard settings link
+$settings = null; // we do not want standard settings link

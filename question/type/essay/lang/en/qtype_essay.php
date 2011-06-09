@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,14 +17,24 @@
 /**
  * Strings for component 'qtype_essay', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   qtype_essay
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage essay
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['addingessay'] = 'Adding an Essay question';
 $string['addingessay_link'] = 'question/type/essay';
-$string['editingessay'] = 'Editing a Essay question';
+$string['allowattachments'] = 'Allow attachments';
+$string['editingessay'] = 'Editing an Essay question';
 $string['essay'] = 'Essay';
 $string['essay_help'] = 'In response to a question (that may include an image) the respondent writes an answer of a paragraph or two. The essay question will not be assigned a grade until it has been reviewed by a teacher and manually graded.';
 $string['essaysummary'] = 'Allows a response of a few sentences or paragraphs. This must then be graded manually.';
+$string['formateditor'] = 'HTML editor';
+$string['formateditorfilepicker'] = 'HTML editor with file picker';
+$string['formatmonospaced'] = 'Plain text, monospaced font';
+$string['formatplain'] = 'Plain text';
+$string['graderinfo'] = 'Information for graders';
+$string['nlines'] = '{$a} lines';
+$string['responsefieldlines'] = 'Input box size';
+$string['responseformat'] = 'Response format';

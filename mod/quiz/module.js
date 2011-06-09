@@ -1,7 +1,25 @@
-/*
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
  * JavaScript library for the quiz module.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package    mod
+ * @subpackage quiz
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 M.mod_quiz = M.mod_quiz || {};
@@ -131,7 +149,7 @@ M.mod_quiz.nav.init = function(Y) {
             } else {
                 pageno = 0;
             }
-            Y.one('#nextpagehiddeninput').set('value', pageno);
+            Y.one('#followingpage').set('value', pageno);
 
             var questionidmatch = this.get('href').match(/#q(\d+)/);
             if (questionidmatch) {
@@ -145,7 +163,7 @@ M.mod_quiz.nav.init = function(Y) {
     if (Y.one('a.endtestlink')) {
         Y.on('click', function(e) {
             e.preventDefault(e);
-            Y.one('#nextpagehiddeninput').set('value', -1);
+            Y.one('#followingpage').set('value', -1);
             Y.one('#responseform').submit();
         }, 'a.endtestlink');
     }
@@ -157,7 +175,7 @@ M.mod_quiz.nav.init = function(Y) {
 
 M.mod_quiz.secure_window = {
     init: function(Y) {
-        if (window.location.href.substring(0,4) == 'file') {
+        if (window.location.href.substring(0, 4) == 'file') {
             window.location = 'about:blank';
         }
         Y.delegate('contextmenu', M.mod_quiz.secure_window.prevent, document.body, '*');
@@ -196,6 +214,12 @@ M.mod_quiz.secure_window = {
             return;
         }
         e.halt();
+    },
+
+    init_close_button: function(Y, url) {
+        Y.on('click', function(e) {
+            M.mod_quiz.secure_window.close(url, 0)
+        }, '#secureclosebutton');
     },
 
     close: function(url, delay) {

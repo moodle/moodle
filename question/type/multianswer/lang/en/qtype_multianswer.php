@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,9 +17,10 @@
 /**
  * Strings for component 'qtype_multianswer', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   qtype_multianswer
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage multianswer
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['addingmultianswer'] = 'Adding an Embedded answers (Cloze) question';
@@ -44,7 +44,7 @@ $string['noquestions'] = 'The Cloze(multianswer) question "<strong>{$a}</strong>
 $string['qtypenotrecognized'] = 'questiontype {$a} not recognized';
 $string['questionnadded'] = 'Question added';
 $string['questiondefinition'] = 'Question definition';
-$string['questiondeleted'] = 'Question deleted' ;
+$string['questiondeleted'] = 'Question deleted';
 $string['questioninquiz'] = '
 
 <ul>
@@ -60,6 +60,7 @@ $string['questionsaveasedited'] = 'The question will be saved as edited';
 $string['questiontypechanged'] = 'Question type changed';
 $string['questiontypechangedcomment'] = 'At least one question type has been changed.<br \>Did you add, delete or move a question?<br \>Look ahead.';
 $string['questionusedinquiz'] = 'This question is used in {$a->nb_of_quiz} quiz(s), total attempt(s) : {$a->nb_of_attempts} ';
+$string['subqresponse'] = 'part {$a->i}: {$a->response}';
 $string['unknownquestiontypeofsubquestion'] = 'Unknown question type: {$a->type} of question part # {$a->sub}';
-$string['warningquestionmodified'] = '<b>WARNING</b>' ;
+$string['warningquestionmodified'] = '<b>WARNING</b>';
 $string['youshouldnot'] = '<b>YOU SHOULD NOT</b>';

@@ -1,19 +1,49 @@
 <?php
-// Alton College, Hampshire, UK - Tom Flannaghan, Andrew Walker
-// Imports learnwise multiple choice quizzes (single and multiple answers)
-// currently ignores the deduct attribute for multiple answer questions
-// deductions are currently simply found by dividing the award for the incorrect
-// answer by the total number of options
-// Based on format.php, included by ../../import.php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * @package questionbank
- * @subpackage importexport
+ * Examview question importer.
+ *
+ * @package    qformat
+ * @subpackage learnwise
+ * @copyright  2005 Alton College, Hampshire, UK
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+defined('MOODLE_INTERNAL') || die();
+
+
+/**
+ * Examview question importer.
+ *
+ * Alton College, Hampshire, UK - Tom Flannaghan, Andrew Walker
+ *
+ * Imports learnwise multiple choice questions (single and multiple answers)
+ * currently ignores the deduct attribute for multiple answer questions
+ * deductions are currently simply found by dividing the award for the incorrect
+ * answer by the total number of options
+ *
+ * @copyright  2005 Alton College, Hampshire, UK
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qformat_learnwise extends qformat_default {
 
     function provide_import() {
-      return true;
+        return true;
     }
 
     function readquestions($lines) {

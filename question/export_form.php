@@ -1,57 +1,83 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
-}
+/**
+ * Defines the export questions form.
+ *
+ * @package    moodlecore
+ * @subpackage questionbank
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-require_once($CFG->libdir.'/formslib.php');
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/formslib.php');
+
+
+/**
+ * Form to export questions from the question bank.
+ *
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_export_form extends moodleform {
 
-    function definition() {
-        $mform    =& $this->_form;
+    protected function definition() {
+        $mform = $this->_form;
 
-        $defaultcategory   = $this->_customdata['defaultcategory'];
-        $contexts   = $this->_customdata['contexts'];
-//--------------------------------------------------------------------------------
-        $mform->addElement('header','fileformat',get_string('fileformat','quiz'));
+        $defaultcategory = $this->_customdata['defaultcategory'];
+        $contexts = $this->_customdata['contexts'];
+
+        // Choice of format, with help.
+        $mform->addElement('header', 'fileformat', get_string('fileformat', 'question'));
         $fileformatnames = get_import_export_formats('export');
         $radioarray = array();
         $i = 0 ;
         foreach ($fileformatnames as $shortname => $fileformatname) {
             $currentgrp1 = array();
-            $currentgrp1[] = &$mform->createElement('radio','format','',$fileformatname,$shortname);
-            $mform->addGroup($currentgrp1,"formathelp[$i]",'',array('<br />'),false);
-            $mform->addHelpButton("formathelp[$i]", $shortname, 'qformat_'.$shortname);
+            $currentgrp1[] = $mform->createElement('radio', 'format', '', $fileformatname, $shortname);
+            $mform->addGroup($currentgrp1, "formathelp[$i]", '', array('<br />'), false);
+            $mform->addHelpButton("formathelp[$i]", $shortname, 'qformat_' . $shortname);
             $i++ ;
         }
-        $mform->addRule("formathelp[0]",null,'required',null,'client');
-//--------------------------------------------------------------------------------
-        $mform->addElement('header','general', get_string('general', 'form'));
+        $mform->addRule("formathelp[0]", null, 'required', null, 'client');
+
+        // Export options.
+        $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('questioncategory', 'category', get_string('exportcategory', 'question'), compact('contexts'));
         $mform->setDefault('category', $defaultcategory);
         $mform->addHelpButton('category', 'exportcategory', 'question');
 
         $categorygroup = array();
-        $categorygroup[] =& $mform->createElement('checkbox', 'cattofile', '', get_string('tofilecategory', 'question'));
-        $categorygroup[] =& $mform->createElement('checkbox', 'contexttofile', '', get_string('tofilecontext', 'question'));
+        $categorygroup[] = $mform->createElement('checkbox', 'cattofile', '', get_string('tofilecategory', 'question'));
+        $categorygroup[] = $mform->createElement('checkbox', 'contexttofile', '', get_string('tofilecontext', 'question'));
         $mform->addGroup($categorygroup, 'categorygroup', '', '', false);
         $mform->disabledIf('categorygroup', 'cattofile', 'notchecked');
         $mform->setDefault('cattofile', 1);
         $mform->setDefault('contexttofile', 1);
 
-//        $fileformatnames = get_import_export_formats('export');
-//        $mform->addElement('select', 'format', get_string('fileformat','quiz'), $fileformatnames);
-//        $mform->setDefault('format', 'gift');
-
-        // set a template for the format select elements
-        $renderer =& $mform->defaultRenderer();
+        // Set a template for the format select elements
+        $renderer = $mform->defaultRenderer();
         $template = "{help} {element}\n";
         $renderer->setGroupElementTemplate($template, 'format');
 
-//--------------------------------------------------------------------------------
-        $this->add_action_buttons(false, get_string('exportquestions', 'quiz'));
-//--------------------------------------------------------------------------------
+        // Submit buttons.
+        $this->add_action_buttons(false, get_string('exportquestions', 'question'));
     }
 }

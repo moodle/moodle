@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,14 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This page handles deleting quiz overrides
  *
- * @package mod_quiz
- * @copyright 2010 Matt Petro
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage quiz
+ * @copyright  2010 Matt Petro
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot.'/mod/quiz/lib.php');
@@ -85,11 +85,11 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 if ($override->groupid) {
-    $group = $DB->get_record('groups', array('id' => $override->groupid), 'id,name');
+    $group = $DB->get_record('groups', array('id' => $override->groupid), 'id, name');
     $confirmstr = get_string("overridedeletegroupsure", "quiz", $group->name);
-}
-else {
-    $user = $DB->get_record('user', array('id' => $override->userid), 'id,firstname,lastname');
+} else {
+    $user = $DB->get_record('user', array('id' => $override->userid),
+            'id, firstname, lastname');
     $confirmstr = get_string("overridedeleteusersure", "quiz", fullname($user));
 }
 

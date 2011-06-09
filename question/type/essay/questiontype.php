@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,183 +14,117 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-//////////////////
-///   ESSAY   ///
-/////////////////
-
-/// QUESTION TYPE CLASS //////////////////
 /**
- * @package questionbank
- * @subpackage questiontypes
+ * Question type class for the essay question type.
+ *
+ * @package    qtype
+ * @subpackage essay
+ * @copyright  2005 Mark Nielsen
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_essay_qtype extends default_questiontype {
 
-    function name() {
-        return 'essay';
-    }
 
-    function is_manual_graded() {
+defined('MOODLE_INTERNAL') || die();
+
+
+/**
+ * The essay question type.
+ *
+ * @copyright  2005 Mark Nielsen
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class qtype_essay extends question_type {
+    public function is_manual_graded() {
         return true;
     }
 
-    function save_question_options($question) {
+    public function response_file_areas() {
+        return array('attachments', 'answer');
+    }
+
+    public function get_question_options($question) {
         global $DB;
-        $context = $question->context;
-
-        $answer = $DB->get_record('question_answers', array('question' => $question->id));
-        if (!$answer) {
-            $answer = new stdClass;
-            $answer->question = $question->id;
-            $answer->answer = '';
-            $answer->feedback = '';
-            $answer->id = $DB->insert_record('question_answers', $answer);
-        }
-
-        $answer->feedback = $question->feedback['text'];
-        $answer->feedbackformat = $question->feedback['format'];
-        $answer->answer = $answer->feedback;
-        $answer->answerformat = $question->feedback['format'];
-        $answer->fraction = $question->fraction;
-
-        $answer->feedback = $this->import_or_save_files($question->feedback,
-                $context, 'question', 'answerfeedback', $answer->id);
-        $answer->answer = $answer->feedback;
-        $DB->update_record('question_answers', $answer);
-
-        return true;
+        $question->options = $DB->get_record('qtype_essay_options',
+                array('questionid' => $question->id), '*', MUST_EXIST);
+        parent::get_question_options($question);
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
-        global $CFG;
+    public function save_question_options($formdata) {
+        global $DB;
+        $context = $formdata->context;
 
-        $context = $this->get_context_by_category_id($question->category);
-
-        $answers  = &$question->options->answers;
-        $readonly = empty($options->readonly) ? '' : 'disabled="disabled"';
-
-        // Only use the rich text editor for the first essay question on a page.
-
-        $formatoptions = new stdClass;
-        $formatoptions->noclean = true;
-        $formatoptions->para    = false;
-
-        $inputname = $question->name_prefix;
-        $stranswer = get_string("answer", "quiz").': ';
-
-        /// set question text and media
-        $questiontext = format_text($question->questiontext,
-                                   $question->questiontextformat,
-                                   $formatoptions, $cmoptions->course);
-
-        // feedback handling
-        $feedback = '';
-        if ($options->feedback && !empty($answers)) {
-            foreach ($answers as $answer) {
-                $feedback = quiz_rewrite_question_urls($answer->feedback, 'pluginfile.php',
-                        $context->id, 'question', 'answerfeedback', array($state->attempt, $state->question), $answer->id);
-                $feedback = format_text($feedback, $answer->feedbackformat, $formatoptions, $cmoptions->course);
-            }
+        $options = $DB->get_record('qtype_essay_options', array('questionid' => $formdata->id));
+        if (!$options) {
+            $options = new stdClass();
+            $options->questionid = $formdata->id;
+            $options->id = $DB->insert_record('qtype_essay_options', $options);
         }
 
-        // get response value
-        if (isset($state->responses[''])) {
-            $value = $state->responses[''];
-        } else {
-            $value = '';
-        }
-
-        // answer
-        if (empty($options->readonly)) {
-            // the student needs to type in their answer so print out a text editor
-            $answer = print_textarea(can_use_html_editor(), 18, 80, 630, 400,
-                    $inputname, $value, $cmoptions->course, true);
-        } else {
-            // it is read only, so just format the students answer and output it
-            $safeformatoptions = new stdClass;
-            $safeformatoptions->para = false;
-            $answer = format_text($value, FORMAT_MOODLE,
-                                  $safeformatoptions, $cmoptions->course);
-            $answer = '<div class="answerreview">' . $answer . '</div>';
-        }
-
-        include("$CFG->dirroot/question/type/essay/display.html");
+        $options->responseformat = $formdata->responseformat;
+        $options->responsefieldlines = $formdata->responsefieldlines;
+        $options->attachments = $formdata->attachments;
+        $options->graderinfo = $this->import_or_save_files($formdata->graderinfo,
+                $context, 'qtype_essay', 'graderinfo', $formdata->id);
+        $options->graderinfoformat = $formdata->graderinfo['format'];
+        $DB->update_record('qtype_essay_options', $options);
     }
 
-    function grade_responses(&$question, &$state, $cmoptions) {
-        // All grading takes place in Manual Grading
-
-        $state->responses[''] = clean_param($state->responses[''], PARAM_CLEAN);
-
-        $state->raw_grade = 0;
-        $state->penalty = 0;
-
-        return true;
+    protected function initialise_question_instance(question_definition $question, $questiondata) {
+        parent::initialise_question_instance($question, $questiondata);
+        $question->responseformat = $questiondata->options->responseformat;
+        $question->responsefieldlines = $questiondata->options->responsefieldlines;
+        $question->attachments = $questiondata->options->attachments;
+        $question->graderinfo = $questiondata->options->graderinfo;
+        $question->graderinfoformat = $questiondata->options->graderinfoformat;
     }
 
     /**
-     * @param string response is a response.
-     * @return formatted response
+     * @return array the different response formats that the question type supports.
+     * internal name => human-readable name.
      */
-    function format_response($response, $format) {
-        $safeformatoptions = new stdClass();
-        $safeformatoptions->para = false;
-        return s(html_to_text(format_text($response, FORMAT_MOODLE, $safeformatoptions), 0, false));
+    public function response_formats() {
+        return array(
+            'editor' => get_string('formateditor', 'qtype_essay'),
+            'editorfilepicker' => get_string('formateditorfilepicker', 'qtype_essay'),
+            'plain' => get_string('formatplain', 'qtype_essay'),
+            'monospaced' => get_string('formatmonospaced', 'qtype_essay'),
+        );
     }
 
     /**
-     * Runs all the code required to set up and save an essay question for testing purposes.
-     * Alternate DB table prefix may be used to facilitate data deletion.
+     * @return array the choices that should be offered for the input box size.
      */
-    function generate_test($name, $courseid = null) {
-        global $DB;
-        list($form, $question) = parent::generate_test($name, $courseid);
-        $form->questiontext = "What is the purpose of life?";
-        $form->feedback = "feedback";
-        $form->generalfeedback = "General feedback";
-        $form->fraction = 0;
-        $form->penalty = 0;
-
-        if ($courseid) {
-            $course = $DB->get_record('course', array('id' => $courseid));
+    public function response_sizes() {
+        $choices = array();
+        for ($lines = 5; $lines <= 40; $lines += 5) {
+            $choices[$lines] = get_string('nlines', 'qtype_essay', $lines);
         }
-
-        return $this->save_question($question, $form);
+        return $choices;
     }
 
-    function move_files($questionid, $oldcontextid, $newcontextid) {
+    /**
+     * @return array the choices that should be offered for the number of attachments.
+     */
+    public function attachment_options() {
+        return array(
+            0 => get_string('no'),
+            1 => '1',
+            2 => '2',
+            3 => '3',
+            -1 => get_string('unlimited'),
+        );
+    }
+
+    public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
-        $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid);
+        $fs = get_file_storage();
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'qtype_essay', 'graderinfo', $questionid);
     }
 
     protected function delete_files($questionid, $contextid) {
         parent::delete_files($questionid, $contextid);
-        $this->delete_files_in_answers($questionid, $contextid);
+        $fs = get_file_storage();
+        $fs->delete_area_files($contextid, 'qtype_essay', 'graderinfo', $questionid);
     }
-
-    function check_file_access($question, $state, $options, $contextid, $component,
-            $filearea, $args) {
-        if ($component == 'question' && $filearea == 'answerfeedback') {
-
-            $answerid = reset($args); // itemid is answer id.
-            $answers = &$question->options->answers;
-            if (isset($state->responses[''])) {
-                $response = $state->responses[''];
-            } else {
-                $response = '';
-            }
-
-            return $options->feedback && !empty($response);
-
-        } else {
-            return parent::check_file_access($question, $state, $options, $contextid, $component,
-                    $filearea, $args);
-        }
-    }
-    // Restore method not needed.
 }
-//// END OF CLASS ////
-
-//////////////////////////////////////////////////////////////////////////
-//// INITIATION - Without this line the question type is not in use... ///
-//////////////////////////////////////////////////////////////////////////
-question_register_questiontype(new question_essay_qtype());

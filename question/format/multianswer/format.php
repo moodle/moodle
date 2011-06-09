@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,27 +17,30 @@
 /**
  * Embedded answer (Cloze) question importer.
  *
- * @package qformat
- * @subpackage qformat_multianswer
- * @copyright 2003 Henrik Kaipe
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qformat
+ * @subpackage multianswer
+ * @copyright  2003 Henrik Kaipe
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
+defined('MOODLE_INTERNAL') || die();
 
 
 /**
  * Importer that imports a text file containing a single Multianswer question
  * from a text file.
  *
- * @copyright 2003 Henrik Kaipe
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2003 Henrik Kaipe
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qformat_multianswer extends qformat_default {
 
-    function provide_import() {
+    public function provide_import() {
       return true;
     }
 
-    function readquestions($lines) {
+    protected function readquestions($lines) {
         // For this class the method has been simplified as
         // there can never be more than one question for a
         // multianswer import
@@ -47,7 +49,7 @@ class qformat_multianswer extends qformat_default {
         $questiontext = array();
         $questiontext['text'] = implode('', $lines);
         $questiontext['format'] = 0 ;
-        $questiontext['itemid'] = ''; 
+        $questiontext['itemid'] = '';
         $question = qtype_multianswer_extract_question($questiontext);
         $question->questiontext = $question->questiontext['text'] ;
         $question->questiontextformat = 0 ;

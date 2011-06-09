@@ -107,6 +107,7 @@ defined('MOODLE_INTERNAL') || die();
 /// Add libraries
 require_once($CFG->libdir.'/ddllib.php');
 require_once($CFG->libdir.'/xmlize.php');
+require_once($CFG->libdir.'/messagelib.php');
 
 define('INSECURE_DATAROOT_WARNING', 1);
 define('INSECURE_DATAROOT_ERROR', 2);
@@ -259,6 +260,14 @@ function uninstall_plugin($type, $name) {
 
     // delete the module configuration records
     unset_all_config_for_plugin($pluginname);
+
+    // delete message provider
+    message_provider_uninstall($component);
+
+    // delete message processor
+    if ($type === 'message') {
+        message_processor_uninstall($name);
+    }
 
     // delete the plugin tables
     $xmldbfilepath = $plugindirectory . '/db/install.xml';
@@ -3763,6 +3772,35 @@ class admin_setting_special_calendar_weekend extends admin_setting {
 
 
 /**
+ * Admin setting that allows a user to pick a behaviour.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_question_behaviour extends admin_setting_configselect {
+    /**
+     * @param string $name name of config variable
+     * @param string $visiblename display name
+     * @param string $description description
+     * @param string $default default.
+     */
+    public function __construct($name, $visiblename, $description, $default) {
+        parent::__construct($name, $visiblename, $description, $default, NULL);
+    }
+
+    /**
+     * Load list of behaviours as choices
+     * @return bool true => success, false => error.
+     */
+    public function load_choices() {
+        global $CFG;
+        require_once($CFG->dirroot . '/question/engine/lib.php');
+        $this->choices = question_engine::get_archetypal_behaviours();
+        return true;
+    }
+}
+
+
+/**
  * Admin setting that allows a user to pick appropriate roles for something.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -4909,6 +4947,75 @@ class admin_page_manageblocks extends admin_externalpage {
     }
 }
 
+/**
+ * Message outputs configuration
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_page_managemessageoutputs extends admin_externalpage {
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        global $CFG;
+        parent::__construct('managemessageoutputs', get_string('managemessageoutputs', 'message'), new moodle_url('/admin/message.php'));
+    }
+
+    /**
+     * Search for a specific message processor
+     *
+     * @param string $query The string to search for
+     * @return array
+     */
+    public function search($query) {
+        global $CFG, $DB;
+        if ($result = parent::search($query)) {
+            return $result;
+        }
+
+        $found = false;
+        if ($processors = get_message_processors()) {
+            $textlib = textlib_get_instance();
+            foreach ($processors as $processor) {
+                if (!$processor->available) {
+                    continue;
+                }
+                if (strpos($processor->name, $query) !== false) {
+                    $found = true;
+                    break;
+                }
+                $strprocessorname = get_string('pluginname', 'message_'.$processor->name);
+                if (strpos($textlib->strtolower($strprocessorname), $query) !== false) {
+                    $found = true;
+                    break;
+                }
+            }
+        }
+        if ($found) {
+            $result = new stdClass();
+            $result->page     = $this;
+            $result->settings = array();
+            return array($this->name => $result);
+        } else {
+            return array();
+        }
+    }
+}
+
+/**
+ * Default message outputs configuration
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_page_defaultmessageoutputs extends admin_page_managemessageoutputs {
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        global $CFG;
+        admin_externalpage::__construct('defaultmessageoutputs', get_string('defaultmessageoutputs', 'message'), new moodle_url('/message/defaultoutputs.php'));
+    }
+}
 
 /**
  * Question type manage page
@@ -4925,9 +5032,9 @@ class admin_page_manageqtypes extends admin_externalpage {
     }
 
     /**
-     * Search QTYPES for the specified string
+     * Search question types for the specified string
      *
-     * @param string $query The string to search for in QTYPES
+     * @param string $query The string to search for in question types
      * @return array
      */
     public function search($query) {
@@ -4938,9 +5045,8 @@ class admin_page_manageqtypes extends admin_externalpage {
 
         $found = false;
         $textlib = textlib_get_instance();
-        require_once($CFG->libdir . '/questionlib.php');
-        global $QTYPES;
-        foreach ($QTYPES as $qtype) {
+        require_once($CFG->dirroot . '/question/engine/bank.php');
+        foreach (question_bank::get_all_qtypes() as $qtype) {
             if (strpos($textlib->strtolower($qtype->local_name()), $query) !== false) {
                 $found = true;
                 break;
@@ -6381,6 +6487,162 @@ class admin_setting_managerepository extends admin_setting {
     }
 }
 
+/**
+ * Special checkbox for enable mobile web service
+ * If enable then we store the service id of the mobile service into config table
+ * If disable then we unstore the service id from the config table
+ */
+class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
+
+    private $xmlrpcuse; //boolean: true => capability 'webservice/xmlrpc:use' is set for authenticated user role
+
+    /**
+     * Return true if Authenticated user role has the capability 'webservice/xmlrpc:use', otherwise false
+     * @return boolean
+     */
+    private function is_xmlrpc_cap_allowed() {
+        global $DB, $CFG;
+
+        //if the $this->xmlrpcuse variable is not set, it needs to be set
+        if (empty($this->xmlrpcuse) and $this->xmlrpcuse!==false) {
+            $params = array();
+            $params['permission'] = CAP_ALLOW;
+            $params['roleid'] = $CFG->defaultuserroleid;
+            $params['capability'] = 'webservice/xmlrpc:use';
+            $this->xmlrpcuse = $DB->record_exists('role_capabilities', $params);
+        }
+
+        return $this->xmlrpcuse;
+    }
+
+    /**
+     * Set the 'webservice/xmlrpc:use' to the Authenticated user role (allow or not)
+     * @param type $status true to allow, false to not set
+     */
+    private function set_xmlrpc_cap($status) {
+        global $CFG;
+        if ($status and !$this->is_xmlrpc_cap_allowed()) {
+            //need to allow the cap
+            $permission = CAP_ALLOW;
+            $assign = true;
+        } else if (!$status and $this->is_xmlrpc_cap_allowed()){
+            //need to disallow the cap
+            $permission = CAP_INHERIT;
+            $assign = true;
+        }
+        if (!empty($assign)) {
+            $systemcontext = get_system_context();
+            assign_capability('webservice/xmlrpc:use', $permission, $CFG->defaultuserroleid, $systemcontext->id, true);
+        }
+    }
+
+    /**
+     * Builds XHTML to display the control.
+     * The main purpose of this overloading is to display a warning when https
+     * is not supported by the server
+     * @param string $data Unused
+     * @param string $query
+     * @return string XHTML
+     */
+    public function output_html($data, $query='') {
+        global $CFG, $OUTPUT;
+        $html = parent::output_html($data, $query);
+
+        if ((string)$data === $this->yes) {
+            require_once($CFG->dirroot . "/lib/filelib.php");
+            $curl = new curl();
+            $httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot); //force https url
+            $curl->head($httpswwwroot . "/login/index.php");
+            $info = $curl->get_info();
+            if (empty($info['http_code']) or ($info['http_code'] >= 400)) {
+               $html .= $OUTPUT->notification(get_string('nohttpsformobilewarning', 'admin'));
+            }
+        }
+
+        return $html;
+    }
+
+    /**
+     * Retrieves the current setting using the objects name
+     *
+     * @return string
+     */
+    public function get_setting() {
+        global $CFG;
+        $webservicesystem = $CFG->enablewebservices;
+        require_once($CFG->dirroot . '/webservice/lib.php');
+        $webservicemanager = new webservice();
+        $mobileservice = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
+        if ($mobileservice->enabled and !empty($webservicesystem) and $this->is_xmlrpc_cap_allowed()) {
+            return $this->config_read($this->name); //same as returning 1
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Save the selected setting
+     *
+     * @param string $data The selected site
+     * @return string empty string or error message
+     */
+    public function write_setting($data) {
+        global $DB, $CFG;
+        $servicename = MOODLE_OFFICIAL_MOBILE_SERVICE;
+
+        require_once($CFG->dirroot . '/webservice/lib.php');
+        $webservicemanager = new webservice();
+
+        if ((string)$data === $this->yes) {
+             //code run when enable mobile web service
+             //enable web service systeme if necessary
+             set_config('enablewebservices', true);
+
+             //enable mobile service
+             $mobileservice = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
+             $mobileservice->enabled = 1;
+             $webservicemanager->update_external_service($mobileservice);
+
+             //enable xml-rpc server
+             $activeprotocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
+
+             if (!in_array('xmlrpc', $activeprotocols)) {
+                 $activeprotocols[] = 'xmlrpc';
+                 set_config('webserviceprotocols', implode(',', $activeprotocols));
+             }
+
+             //allow xml-rpc:use capability for authenticated user
+             $this->set_xmlrpc_cap(true);
+
+         } else {
+             //disable web service system if no other services are enabled
+             $otherenabledservices = $DB->get_records_select('external_services',
+                     'enabled = :enabled AND (shortname != :shortname OR shortname IS NULL)', array('enabled' => 1,
+                         'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
+             if (empty($otherenabledservices)) {
+                 set_config('enablewebservices', false);
+
+                 //also disable xml-rpc server
+                 $activeprotocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
+                 $protocolkey = array_search('xmlrpc', $activeprotocols);
+                 if ($protocolkey !== false) {
+                    unset($activeprotocols[$protocolkey]);
+                    set_config('webserviceprotocols', implode(',', $activeprotocols));
+                 }
+
+                 //disallow xml-rpc:use capability for authenticated user
+                 $this->set_xmlrpc_cap(false);
+             }
+
+             //disable the mobile service
+             $mobileservice = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
+             $mobileservice->enabled = 0;
+             $webservicemanager->update_external_service($mobileservice);
+         }
+
+        return (parent::write_setting($data));
+    }
+}
 
 /**
  * Special class for management of external services
@@ -7307,9 +7569,199 @@ class admin_setting_configcolourpicker extends admin_setting {
         $content .= html_writer::end_tag('div');
         return format_admin_setting($this, $this->visiblename, $content, $this->description, false, '', $this->get_defaultsetting(), $query);
     }
-
 }
 
+/**
+ * Administration interface for user specified regular expressions for device detection.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_devicedetectregex extends admin_setting {
+
+    /**
+     * Calls parent::__construct with specific args
+     *
+     * @param string $name
+     * @param string $visiblename
+     * @param string $description
+     * @param mixed $defaultsetting
+     */
+    public function __construct($name, $visiblename, $description, $defaultsetting = '') {
+        global $CFG;
+        parent::__construct($name, $visiblename, $description, $defaultsetting);
+    }
+
+    /**
+     * Return the current setting(s)
+     *
+     * @return array Current settings array
+     */
+    public function get_setting() {
+        global $CFG;
+
+        $config = $this->config_read($this->name);
+        if (is_null($config)) {
+            return null;
+        }
+
+        return $this->prepare_form_data($config);
+    }
+
+    /**
+     * Save selected settings
+     *
+     * @param array $data Array of settings to save
+     * @return bool
+     */
+    public function write_setting($data) {
+        if (empty($data)) {
+            $data = array();
+        }
+
+        if ($this->config_write($this->name, $this->process_form_data($data))) {
+            return ''; // success
+        } else {
+            return get_string('errorsetting', 'admin') . $this->visiblename . html_writer::empty_tag('br');
+        }
+    }
+
+    /**
+     * Return XHTML field(s) for regexes
+     *
+     * @param array $data Array of options to set in HTML
+     * @return string XHTML string for the fields and wrapping div(s)
+     */
+    public function output_html($data, $query='') {
+        global $OUTPUT;
+
+        $out  = html_writer::start_tag('table', array('border' => 1, 'class' => 'generaltable'));
+        $out .= html_writer::start_tag('thead');
+        $out .= html_writer::start_tag('tr');
+        $out .= html_writer::tag('th', get_string('devicedetectregexexpression', 'admin'));
+        $out .= html_writer::tag('th', get_string('devicedetectregexvalue', 'admin'));
+        $out .= html_writer::end_tag('tr');
+        $out .= html_writer::end_tag('thead');
+        $out .= html_writer::start_tag('tbody');
+
+        if (empty($data)) {
+            $looplimit = 1;
+        } else {
+            $looplimit = (count($data)/2)+1;
+        }
+
+        for ($i=0; $i<$looplimit; $i++) {
+            $out .= html_writer::start_tag('tr');
+
+            $expressionname = 'expression'.$i;
+
+            if (!empty($data[$expressionname])){
+                $expression = $data[$expressionname];
+            } else {
+                $expression = '';
+            }
+
+            $out .= html_writer::tag('td',
+                html_writer::empty_tag('input',
+                    array(
+                        'type'  => 'text',
+                        'class' => 'form-text',
+                        'name'  => $this->get_full_name().'[expression'.$i.']',
+                        'value' => $expression,
+                    )
+                ), array('class' => 'c'.$i)
+            );
+
+            $valuename = 'value'.$i;
+
+            if (!empty($data[$valuename])){
+                $value = $data[$valuename];
+            } else {
+                $value= '';
+            }
+
+            $out .= html_writer::tag('td',
+                html_writer::empty_tag('input',
+                    array(
+                        'type'  => 'text',
+                        'class' => 'form-text',
+                        'name'  => $this->get_full_name().'[value'.$i.']',
+                        'value' => $value,
+                    )
+                ), array('class' => 'c'.$i)
+            );
+
+            $out .= html_writer::end_tag('tr');
+        }
+
+        $out .= html_writer::end_tag('tbody');
+        $out .= html_writer::end_tag('table');
+
+        return format_admin_setting($this, $this->visiblename, $out, $this->description, false, '', null, $query);
+    }
+
+    /**
+     * Converts the string of regexes
+     *
+     * @see self::process_form_data()
+     * @param $regexes string of regexes
+     * @return array of form fields and their values
+     */
+    protected function prepare_form_data($regexes) {
+
+        $regexes = json_decode($regexes);
+
+        $form = array();
+
+        $i = 0;
+
+        foreach ($regexes as $value => $regex) {
+            $expressionname  = 'expression'.$i;
+            $valuename = 'value'.$i;
+
+            $form[$expressionname] = $regex;
+            $form[$valuename] = $value;
+            $i++;
+        }
+
+        return $form;
+    }
+
+    /**
+     * Converts the data from admin settings form into a string of regexes
+     *
+     * @see self::prepare_form_data()
+     * @param array $data array of admin form fields and values
+     * @return false|string of regexes
+     */
+    protected function process_form_data(array $form) {
+
+        $count = count($form); // number of form field values
+
+        if ($count % 2) {
+            // we must get five fields per expression
+            return false;
+        }
+
+        $regexes = array();
+        for ($i = 0; $i < $count / 2; $i++) {
+            $expressionname  = "expression".$i;
+            $valuename       = "value".$i;
+
+            $expression = trim($form['expression'.$i]);
+            $value      = trim($form['value'.$i]);
+
+            if (empty($expression)){
+                continue;
+            }
+
+            $regexes[$value] = $expression;
+        }
+
+        $regexes = json_encode($regexes);
+
+        return $regexes;
+    }
+}
 
 /**
  * Multiselect for current modules

@@ -2,12 +2,9 @@
 
 .que {border-color: #DDD;}
 .que .correct {background-color: #afa;}
-.que .info h2 {font-size: 1.25em;font-weight: bold;}
-.que .grade {font-size: 0.8em;}
 .que .feedback {border-color: #DDD;}
-.que .history {font-size:75%;}
+.que .history {font-size:0.8em;}
 .que .incorrect {background-color: #faa;}
-.que.multianswer .incorrect {background-color: #faa;}
 .que .partiallycorrect {background-color: #ff9;}
 .que .r0 {background-color: #F5F5F5;}
 .que .r1 {background-color: #EEE;}

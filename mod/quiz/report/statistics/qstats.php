@@ -1,299 +1,406 @@
 <?php
-class qstats{
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Quiz statistics report calculations class.
+ *
+ * @package    quiz
+ * @subpackage statistics
+ * @copyright  2008 Jamie Pratt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
+
+/**
+ * This class has methods to compute the question statistics from the raw data.
+ *
+ * @copyright  2008 Jamie Pratt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class quiz_statistics_question_stats {
+    public $questions;
+    public $subquestions = array();
+
+    protected $s;
+    protected $summarksavg;
+    protected $allattempts;
+
+    /** @var mixed states from which to calculate stats - iteratable. */
+    protected $lateststeps;
+
+    protected $sumofmarkvariance = 0;
+    protected $randomselectors = array();
+
     /**
-     * @var mixed states from which to calculate stats - iteratable.
+     * Constructor.
+     * @param $questions the questions.
+     * @param $s the number of attempts included in the stats.
+     * @param $summarksavg the average attempt summarks.
      */
-    var $states;
-
-    var $sumofgradevariance = 0;
-    var $questions;
-    var $subquestions = array();
-    var $randomselectors = array();
-    var $responses = array();
-
-    function qstats($questions, $s, $sumgradesavg){
+    public function __construct($questions, $s, $summarksavg) {
         $this->s = $s;
-        $this->sumgradesavg = $sumgradesavg;
+        $this->summarksavg = $summarksavg;
 
-        foreach (array_keys($questions) as $qid){
-            $questions[$qid]->_stats = $this->stats_init_object();
+        foreach ($questions as $slot => $question) {
+            $question->_stats = $this->make_blank_question_stats();
+            $question->_stats->questionid = $question->id;
+            $question->_stats->slot = $slot;
         }
+
         $this->questions = $questions;
     }
-    function stats_init_object(){
-        $statsinit = new stdClass();
-        $statsinit->s = 0;
-        $statsinit->totalgrades = 0;
-        $statsinit->totalothergrades = 0;
-        $statsinit->gradevariancesum = 0;
-        $statsinit->othergradevariancesum = 0;
-        $statsinit->covariancesum = 0;
-        $statsinit->covariancemaxsum = 0;
-        $statsinit->subquestion = false;
-        $statsinit->subquestions = '';
-        $statsinit->covariancewithoverallgradesum = 0;
-        $statsinit->gradearray = array();
-        $statsinit->othergradesarray = array();
-        return $statsinit;
+
+    /**
+     * @return object ready to hold all the question statistics.
+     */
+    protected function make_blank_question_stats() {
+        $stats = new stdClass();
+        $stats->slot = null;
+        $stats->s = 0;
+        $stats->totalmarks = 0;
+        $stats->totalothermarks = 0;
+        $stats->markvariancesum = 0;
+        $stats->othermarkvariancesum = 0;
+        $stats->covariancesum = 0;
+        $stats->covariancemaxsum = 0;
+        $stats->subquestion = false;
+        $stats->subquestions = '';
+        $stats->covariancewithoverallmarksum = 0;
+        $stats->randomguessscore = null;
+        $stats->markarray = array();
+        $stats->othermarksarray = array();
+        return $stats;
     }
-    function get_records($quizid, $currentgroup, $groupstudents, $allattempts){
+
+    /**
+     * Load the data that will be needed to perform the calculations.
+     *
+     * @param int $quizid the quiz id.
+     * @param int $currentgroup the current group. 0 for none.
+     * @param array $groupstudents students in this group.
+     * @param bool $allattempts use all attempts, or just first attempts.
+     */
+    public function load_step_data($quizid, $currentgroup, $groupstudents, $allattempts) {
         global $DB;
-        list($qsql, $qparams) = $DB->get_in_or_equal(array_keys($this->questions), SQL_PARAMS_NAMED, 'q');
-        list($fromqa, $whereqa, $qaparams) = quiz_report_attempts_sql($quizid, $currentgroup, $groupstudents, $allattempts);
-        $sql = 'SELECT qs.id, ' .
-            'qs.question, ' .
-            'qa.sumgrades, ' .
-            'qs.grade, ' .
-            'qs.answer ' .
-            'FROM ' .
-            '{question_sessions} qns, ' .
-            '{question_states} qs, '.
-            $fromqa.' '.
-            'WHERE ' .$whereqa.
-            'AND qs.question '.$qsql.' '.
-            'AND qns.attemptid = qa.uniqueid '.
-            'AND qns.newgraded = qs.id';
-        $this->states = $DB->get_records_sql($sql, $qaparams + $qparams);
-        if ($this->states === false){
-            print_error('errorstatisticsquestions', 'quiz_statistics');
-        }
+
+        $this->allattempts = $allattempts;
+
+        list($qsql, $qparams) = $DB->get_in_or_equal(array_keys($this->questions),
+                SQL_PARAMS_NAMED, 'q');
+        list($fromqa, $whereqa, $qaparams) = quiz_statistics_attempts_sql(
+                $quizid, $currentgroup, $groupstudents, $allattempts, false);
+
+        $this->lateststeps = $DB->get_records_sql("
+                SELECT
+                    qas.id,
+                    quiza.sumgrades,
+                    qa.questionid,
+                    qa.slot,
+                    qa.maxmark,
+                    qas.fraction * qa.maxmark as mark
+
+                FROM $fromqa
+                JOIN {question_attempts} qa ON qa.questionusageid = quiza.uniqueid
+                JOIN (
+                    SELECT questionattemptid, MAX(id) AS latestid
+                      FROM {question_attempt_steps}
+                  GROUP BY questionattemptid
+                ) lateststepid ON lateststepid.questionattemptid = qa.id
+                JOIN {question_attempt_steps} qas ON qas.id = lateststepid.latestid
+
+                WHERE
+                    qa.slot $qsql AND
+                    $whereqa", $qparams + $qaparams);
     }
 
-    function _initial_states_walker($state, &$stats, $positionstat = true){
-        $stats->s++;
-        $stats->totalgrades += $state->grade;
-        if ($positionstat){
-            $stats->totalothergrades += $state->sumgrades - $state->grade;
-        } else {
-            $stats->totalothergrades += $state->sumgrades;
+    public function compute_statistics() {
+        set_time_limit(0);
+
+        $subquestionstats = array();
+
+        // Compute the statistics of position, and for random questions, work
+        // out which questions appear in which positions.
+        foreach ($this->lateststeps as $step) {
+            $this->initial_steps_walker($step, $this->questions[$step->slot]->_stats);
+
+            // If this is a random question what is the real item being used?
+            if ($step->questionid != $this->questions[$step->slot]->id) {
+                if (!isset($subquestionstats[$step->questionid])) {
+                    $subquestionstats[$step->questionid] = $this->make_blank_question_stats();
+                    $subquestionstats[$step->questionid]->questionid = $step->questionid;
+                    $subquestionstats[$step->questionid]->allattempts = $this->allattempts;
+                    $subquestionstats[$step->questionid]->usedin = array();
+                    $subquestionstats[$step->questionid]->subquestion = true;
+                    $subquestionstats[$step->questionid]->differentweights = false;
+                    $subquestionstats[$step->questionid]->maxmark = $step->maxmark;
+                } else if ($subquestionstats[$step->questionid]->maxmark != $step->maxmark) {
+                    $subquestionstats[$step->questionid]->differentweights = true;
+                }
+
+                $this->initial_steps_walker($step,
+                        $subquestionstats[$step->questionid], false);
+
+                $number = $this->questions[$step->slot]->number;
+                $subquestionstats[$step->questionid]->usedin[$number] = $number;
+
+                $randomselectorstring = $this->questions[$step->slot]->category .
+                        '/' . $this->questions[$step->slot]->questiontext;
+                if (!isset($this->randomselectors[$randomselectorstring])) {
+                    $this->randomselectors[$randomselectorstring] = array();
+                }
+                $this->randomselectors[$randomselectorstring][$step->questionid] =
+                        $step->questionid;
+            }
         }
-        //need to sort these to calculate max covariance :
-        $stats->gradearray[] = $state->grade;
-        if ($positionstat){
-            $stats->othergradesarray[] = $state->sumgrades - $state->grade;
-        } else {
-            $stats->othergradesarray[] = $state->sumgrades;
+
+        foreach ($this->randomselectors as $key => $notused) {
+            ksort($this->randomselectors[$key]);
         }
 
-    }
+        // Compute the statistics of question id, if we need any.
+        $this->subquestions = question_load_questions(array_keys($subquestionstats));
+        foreach ($this->subquestions as $qid => $subquestion) {
+            $subquestion->_stats = $subquestionstats[$qid];
+            $subquestion->maxmark = $subquestion->_stats->maxmark;
+            $subquestion->_stats->randomguessscore = $this->get_random_guess_score($subquestion);
 
-    function _secondary_states_walker($state, &$stats){
-        $gradedifference = ($state->grade - $stats->gradeaverage);
-        if ($stats->subquestion){
-            $othergradedifference = $state->sumgrades - $stats->othergradeaverage;
-        } else {
-            $othergradedifference = (($state->sumgrades - $state->grade) - $stats->othergradeaverage);
+            $this->initial_question_walker($subquestion->_stats);
+
+            if ($subquestionstats[$qid]->differentweights) {
+                // TODO output here really sucks, but throwing is too severe.
+                global $OUTPUT;
+                echo $OUTPUT->notification(
+                        get_string('erroritemappearsmorethanoncewithdifferentweight',
+                        'quiz_statistics', $this->subquestions[$qid]->name));
+            }
+
+            if ($subquestion->_stats->usedin) {
+                sort($subquestion->_stats->usedin, SORT_NUMERIC);
+                $subquestion->_stats->positions = implode(',', $subquestion->_stats->usedin);
+            } else {
+                $subquestion->_stats->positions = '';
+            }
         }
-        $overallgradedifference = $state->sumgrades - $this->sumgradesavg;
-        $sortedgradedifference = (array_shift($stats->gradearray) - $stats->gradeaverage);
-        $sortedothergradedifference = (array_shift($stats->othergradesarray) - $stats->othergradeaverage);
-        $stats->gradevariancesum += pow($gradedifference,2);
-        $stats->othergradevariancesum += pow($othergradedifference,2);
-        $stats->covariancesum += $gradedifference * $othergradedifference;
-        $stats->covariancemaxsum += $sortedgradedifference * $sortedothergradedifference;
-        $stats->covariancewithoverallgradesum += $gradedifference * $overallgradedifference;
 
-    }
+        // Finish computing the averages, and put the subquestion data into the
+        // corresponding questions.
 
-    function add_response_detail_to_array($responsedetail){
-        $responsedetail->rcount = 1;
-        if (isset($this->responses[$responsedetail->subqid])){
-            if (isset($this->responses[$responsedetail->subqid][$responsedetail->aid])){
-                if (isset($this->responses[$responsedetail->subqid][$responsedetail->aid][$responsedetail->response])){
-                    $this->responses[$responsedetail->subqid][$responsedetail->aid][$responsedetail->response]->rcount++;
+        // This cannot be a foreach loop because we need to have both
+        // $question and $nextquestion available, but apart from that it is
+        // foreach ($this->questions as $qid => $question) {
+        reset($this->questions);
+        while (list($slot, $question) = each($this->questions)) {
+            $nextquestion = current($this->questions);
+            $question->_stats->allattempts = $this->allattempts;
+            $question->_stats->positions = $question->number;
+            $question->_stats->maxmark = $question->maxmark;
+            $question->_stats->randomguessscore = $this->get_random_guess_score($question);
+
+            $this->initial_question_walker($question->_stats);
+
+            if ($question->qtype == 'random') {
+                $randomselectorstring = $question->category.'/'.$question->questiontext;
+                if ($nextquestion && $nextquestion->qtype == 'random') {
+                    $nextrandomselectorstring = $nextquestion->category . '/' .
+                            $nextquestion->questiontext;
+                    if ($randomselectorstring == $nextrandomselectorstring) {
+                        continue; // Next loop iteration
+                    }
+                }
+                if (isset($this->randomselectors[$randomselectorstring])) {
+                    $question->_stats->subquestions = implode(',',
+                            $this->randomselectors[$randomselectorstring]);
+                }
+            }
+        }
+
+        // Go through the records one more time
+        foreach ($this->lateststeps as $step) {
+            $this->secondary_steps_walker($step,
+                    $this->questions[$step->slot]->_stats);
+
+            if ($this->questions[$step->slot]->qtype == 'random') {
+                $this->secondary_steps_walker($step,
+                        $this->subquestions[$step->questionid]->_stats);
+            }
+        }
+
+        $sumofcovariancewithoverallmark = 0;
+        foreach ($this->questions as $slot => $question) {
+            $this->secondary_question_walker($question->_stats);
+
+            $this->sumofmarkvariance += $question->_stats->markvariance;
+
+            if ($question->_stats->covariancewithoverallmark >= 0) {
+                $sumofcovariancewithoverallmark +=
+                        sqrt($question->_stats->covariancewithoverallmark);
+                $question->_stats->negcovar = 0;
+            } else {
+                $question->_stats->negcovar = 1;
+            }
+        }
+
+        foreach ($this->subquestions as $subquestion) {
+            $this->secondary_question_walker($subquestion->_stats);
+        }
+
+        foreach ($this->questions as $question) {
+            if ($sumofcovariancewithoverallmark) {
+                if ($question->_stats->negcovar) {
+                    $question->_stats->effectiveweight = null;
                 } else {
-                    $this->responses[$responsedetail->subqid][$responsedetail->aid][$responsedetail->response] = $responsedetail;
+                    $question->_stats->effectiveweight = 100 *
+                            sqrt($question->_stats->covariancewithoverallmark) /
+                            $sumofcovariancewithoverallmark;
                 }
             } else {
-                $this->responses[$responsedetail->subqid][$responsedetail->aid] = array($responsedetail->response => $responsedetail);
+                $question->_stats->effectiveweight = null;
             }
-        } else {
-            $this->responses[$responsedetail->subqid] = array();
-            $this->responses[$responsedetail->subqid][$responsedetail->aid] = array($responsedetail->response => $responsedetail);
         }
     }
 
     /**
-     * Get the data for the individual question response analysis table.
+     * Update $stats->totalmarks, $stats->markarray, $stats->totalothermarks
+     * and $stats->othermarksarray to include another state.
+     *
+     * @param object $step the state to add to the statistics.
+     * @param object $stats the question statistics we are accumulating.
+     * @param bool $positionstat whether this is a statistic of position of question.
      */
-    function _process_actual_responses($question, $state){
-        global $QTYPES;
-        if ($question->qtype != 'random' &&
-                $QTYPES[$question->qtype]->show_analysis_of_responses()){
-            $restoredstate = clone($state);
-            restore_question_state($question, $restoredstate);
-            $responsedetails = $QTYPES[$question->qtype]->get_actual_response_details($question, $restoredstate);
-            foreach ($responsedetails as $responsedetail){
-                $responsedetail->questionid = $question->id;
-                $this->add_response_detail_to_array($responsedetail);
-            }
+    protected function initial_steps_walker($step, $stats, $positionstat = true) {
+        $stats->s++;
+        $stats->totalmarks += $step->mark;
+        $stats->markarray[] = $step->mark;
+
+        if ($positionstat) {
+            $stats->totalothermarks += $step->sumgrades - $step->mark;
+            $stats->othermarksarray[] = $step->sumgrades - $step->mark;
+
+        } else {
+            $stats->totalothermarks += $step->sumgrades;
+            $stats->othermarksarray[] = $step->sumgrades;
         }
     }
 
-    function _initial_question_walker(&$stats){
-        $stats->gradeaverage = $stats->totalgrades / $stats->s;
-        if ($stats->maxgrade!=0){
-            $stats->facility = $stats->gradeaverage / $stats->maxgrade;
+    /**
+     * Perform some computations on the per-question statistics calculations after
+     * we have been through all the states.
+     *
+     * @param object $stats quetsion stats to update.
+     */
+    protected function initial_question_walker($stats) {
+        $stats->markaverage = $stats->totalmarks / $stats->s;
+
+        if ($stats->maxmark != 0) {
+            $stats->facility = $stats->markaverage / $stats->maxmark;
         } else {
             $stats->facility = null;
         }
-        $stats->othergradeaverage = $stats->totalothergrades / $stats->s;
-        sort($stats->gradearray, SORT_NUMERIC);
-        sort($stats->othergradesarray, SORT_NUMERIC);
+
+        $stats->othermarkaverage = $stats->totalothermarks / $stats->s;
+
+        sort($stats->markarray, SORT_NUMERIC);
+        sort($stats->othermarksarray, SORT_NUMERIC);
     }
-    function _secondary_question_walker(&$stats){
-        if ($stats->s > 1){
-            $stats->gradevariance = $stats->gradevariancesum / ($stats->s -1);
-            $stats->othergradevariance = $stats->othergradevariancesum / ($stats->s -1);
-            $stats->covariance = $stats->covariancesum / ($stats->s -1);
-            $stats->covariancemax = $stats->covariancemaxsum / ($stats->s -1);
-            $stats->covariancewithoverallgrade = $stats->covariancewithoverallgradesum / ($stats->s-1);
-            $stats->sd = sqrt($stats->gradevariancesum / ($stats->s -1));
+
+    /**
+     * Now we know the averages, accumulate the date needed to compute the higher
+     * moments of the question scores.
+     *
+     * @param object $step the state to add to the statistics.
+     * @param object $stats the question statistics we are accumulating.
+     * @param bool $positionstat whether this is a statistic of position of question.
+     */
+    protected function secondary_steps_walker($step, $stats) {
+        $markdifference = $step->mark - $stats->markaverage;
+        if ($stats->subquestion) {
+            $othermarkdifference = $step->sumgrades - $stats->othermarkaverage;
         } else {
-            $stats->gradevariance = null;
-            $stats->othergradevariance = null;
+            $othermarkdifference = $step->sumgrades - $step->mark -
+                    $stats->othermarkaverage;
+        }
+        $overallmarkdifference = $step->sumgrades - $this->summarksavg;
+
+        $sortedmarkdifference = array_shift($stats->markarray) - $stats->markaverage;
+        $sortedothermarkdifference = array_shift($stats->othermarksarray) -
+                $stats->othermarkaverage;
+
+        $stats->markvariancesum += pow($markdifference, 2);
+        $stats->othermarkvariancesum += pow($othermarkdifference, 2);
+        $stats->covariancesum += $markdifference * $othermarkdifference;
+        $stats->covariancemaxsum += $sortedmarkdifference * $sortedothermarkdifference;
+        $stats->covariancewithoverallmarksum += $markdifference * $overallmarkdifference;
+    }
+
+    /**
+     * Perform more per-question statistics calculations.
+     *
+     * @param object $stats quetsion stats to update.
+     */
+    protected function secondary_question_walker($stats) {
+        if ($stats->s > 1) {
+            $stats->markvariance = $stats->markvariancesum / ($stats->s - 1);
+            $stats->othermarkvariance = $stats->othermarkvariancesum / ($stats->s - 1);
+            $stats->covariance = $stats->covariancesum / ($stats->s - 1);
+            $stats->covariancemax = $stats->covariancemaxsum / ($stats->s - 1);
+            $stats->covariancewithoverallmark = $stats->covariancewithoverallmarksum /
+                    ($stats->s - 1);
+            $stats->sd = sqrt($stats->markvariancesum / ($stats->s - 1));
+
+        } else {
+            $stats->markvariance = null;
+            $stats->othermarkvariance = null;
             $stats->covariance = null;
             $stats->covariancemax = null;
-            $stats->covariancewithoverallgrade = null;
+            $stats->covariancewithoverallmark = null;
             $stats->sd = null;
         }
-        //avoid divide by zero
-        if ($stats->gradevariance * $stats->othergradevariance){
-            $stats->discriminationindex = 100*$stats->covariance
-                        / sqrt($stats->gradevariance * $stats->othergradevariance);
+
+        if ($stats->markvariance * $stats->othermarkvariance) {
+            $stats->discriminationindex = 100 * $stats->covariance /
+                    sqrt($stats->markvariance * $stats->othermarkvariance);
         } else {
             $stats->discriminationindex = null;
         }
-        if ($stats->covariancemax){
-            $stats->discriminativeefficiency = 100*$stats->covariance / $stats->covariancemax;
+
+        if ($stats->covariancemax) {
+            $stats->discriminativeefficiency = 100 * $stats->covariance /
+                    $stats->covariancemax;
         } else {
             $stats->discriminativeefficiency = null;
         }
     }
 
-    function process_states(){
-        global $DB, $OUTPUT;
-        set_time_limit(0);
-        $subquestionstats = array();
-        foreach ($this->states as $state){
-            $this->_initial_states_walker($state, $this->questions[$state->question]->_stats);
-            //if this is a random question what is the real item being used?
-            if ($this->questions[$state->question]->qtype == 'random'){
-                if ($realstate = question_get_real_state($state)){
-                    if (!isset($subquestionstats[$realstate->question])){
-                        $subquestionstats[$realstate->question] = $this->stats_init_object();
-                        $subquestionstats[$realstate->question]->usedin = array();
-                        $subquestionstats[$realstate->question]->subquestion = true;
-                        $subquestionstats[$realstate->question]->differentweights = false;
-                        $subquestionstats[$realstate->question]->maxgrade = $this->questions[$state->question]->maxgrade;
-                    } else if ($subquestionstats[$realstate->question]->maxgrade != $this->questions[$state->question]->maxgrade){
-                        $subquestionstats[$realstate->question]->differentweights = true;
-                    }
-                    $this->_initial_states_walker($realstate, $subquestionstats[$realstate->question], false);
-                    $number = $this->questions[$state->question]->number;
-                    $subquestionstats[$realstate->question]->usedin[$number] = $number;
-                    $randomselectorstring = $this->questions[$state->question]->category.'/'.$this->questions[$state->question]->questiontext;
-                    if (!isset($this->randomselectors[$randomselectorstring])){
-                        $this->randomselectors[$randomselectorstring] = array();
-                    }
-                    $this->randomselectors[$randomselectorstring][$realstate->question] = $realstate->question;
-                }
-            }
-        }
-        foreach ($this->randomselectors as $key => $randomselector){
-            ksort($this->randomselectors[$key]);
-        }
-        $this->subquestions = question_load_questions(array_keys($subquestionstats));
-        foreach (array_keys($this->subquestions) as $qid){
-            $this->subquestions[$qid]->_stats = $subquestionstats[$qid];
-            $this->subquestions[$qid]->_stats->questionid = $qid;
-            $this->subquestions[$qid]->maxgrade = $this->subquestions[$qid]->_stats->maxgrade;
-            $this->_initial_question_walker($this->subquestions[$qid]->_stats);
-            if ($subquestionstats[$qid]->differentweights){
-                echo $OUTPUT->notification(get_string('erroritemappearsmorethanoncewithdifferentweight', 'quiz_statistics', $this->subquestions[$qid]->name));
-            }
-            if ($this->subquestions[$qid]->_stats->usedin){
-                sort($this->subquestions[$qid]->_stats->usedin, SORT_NUMERIC);
-                $this->subquestions[$qid]->_stats->positions = join($this->subquestions[$qid]->_stats->usedin, ',');
-            } else {
-                $this->subquestions[$qid]->_stats->positions = '';
-            }
-        }
-        reset($this->questions);
-        do{
-            list($qid, $question) = each($this->questions);
-            $nextquestion = current($this->questions);
-            $this->questions[$qid]->_stats->questionid = $qid;
-            $this->questions[$qid]->_stats->positions = $this->questions[$qid]->number;
-            $this->questions[$qid]->_stats->maxgrade = $question->maxgrade;
-            $this->_initial_question_walker($this->questions[$qid]->_stats);
-            if ($question->qtype == 'random'){
-                $randomselectorstring = $question->category.'/'.$question->questiontext;
-                if ($nextquestion){
-                    $nextrandomselectorstring = $nextquestion->category.'/'.$nextquestion->questiontext;
-                    if ($nextquestion->qtype == 'random' && $randomselectorstring == $nextrandomselectorstring){
-                        continue;//next loop iteration
-                    }
-                }
-                if (isset($this->randomselectors[$randomselectorstring])){
-                    $question->_stats->subquestions = join($this->randomselectors[$randomselectorstring], ',');
-                }
-            }
-        } while ($nextquestion);
-        //go through the records one more time
-        foreach ($this->states as $state){
-            $this->_secondary_states_walker($state, $this->questions[$state->question]->_stats);
-            if ($this->questions[$state->question]->qtype == 'random'){
-                if ($realstate = question_get_real_state($state)){
-                    $this->_secondary_states_walker($realstate, $this->subquestions[$realstate->question]->_stats);
-                }
-            }
-        }
-        $sumofcovariancewithoverallgrade = 0;
-        foreach (array_keys($this->questions) as $qid){
-            $this->_secondary_question_walker($this->questions[$qid]->_stats);
-            $this->sumofgradevariance += $this->questions[$qid]->_stats->gradevariance;
-            if ($this->questions[$qid]->_stats->covariancewithoverallgrade >= 0){
-                $sumofcovariancewithoverallgrade += sqrt($this->questions[$qid]->_stats->covariancewithoverallgrade);
-                $this->questions[$qid]->_stats->negcovar = 0;
-            } else {
-                $this->questions[$qid]->_stats->negcovar = 1;
-            }
-        }
-        foreach (array_keys($this->subquestions) as $qid){
-            $this->_secondary_question_walker($this->subquestions[$qid]->_stats);
-        }
-        foreach (array_keys($this->questions) as $qid){
-            if ($sumofcovariancewithoverallgrade){
-                if ($this->questions[$qid]->_stats->negcovar){
-                    $this->questions[$qid]->_stats->effectiveweight = null;
-                } else {
-                    $this->questions[$qid]->_stats->effectiveweight = 100 * sqrt($this->questions[$qid]->_stats->covariancewithoverallgrade)
-                                /   $sumofcovariancewithoverallgrade;
-                }
-            } else {
-                $this->questions[$qid]->_stats->effectiveweight = null;
-            }
-        }
+    /**
+     * @param object $questiondata
+     * @return number the random guess score for this question.
+     */
+    protected function get_random_guess_score($questiondata) {
+        return question_bank::get_qtype(
+                $questiondata->qtype, false)->get_random_guess_score($questiondata);
     }
 
-    function process_responses(){
-        foreach ($this->states as $state){
-            if ($this->questions[$state->question]->qtype == 'random'){
-                if ($realstate = question_get_real_state($state)){
-                    $this->_process_actual_responses($this->subquestions[$realstate->question], $realstate);
-                }
-            } else {
-                $this->_process_actual_responses($this->questions[$state->question], $state);
-            }
-        }
-        $this->responses = quiz_report_unindex($this->responses);
-    }
     /**
-     * Needed by quiz stats calculations.
+     * Used when computing CIC.
+     * @return number
      */
-    function sum_of_grade_variance(){
-        return $this->sumofgradevariance;
+    public function get_sum_of_mark_variance() {
+        return $this->sumofmarkvariance;
     }
 }
-

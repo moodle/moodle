@@ -3,18 +3,18 @@
  ***/
 
 /* quiz */
-#page-mod-quiz-edit div.quizpage .pagecontent {background-color:[[setting:blockcolumnbgc]];}
-.questionbankwindow h2 {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;border-top:1px #C6BDA8 solid;background-color:[[setting:blockcolumnbgc]];border-top:1px #C6BDA8 solid;}
+#page-mod-quiz-edit div.quizpage .pagecontent {background-color:[[setting:lblockcolumnbgc]];}
+.questionbankwindow h2 {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;border-top:1px #C6BDA8 solid;background-color:#E3DFD4;border-top:1px #C6BDA8 solid;}
 #page-mod-quiz-edit .questionbankwindow div.header {background-color:transparent;}
 #page-mod-quiz-edit .questionbankwindow div.header .title {color:#000;}
 #page-mod-quiz-edit .questionbankwindow div.header a:link,
 #page-mod-quiz-edit .questionbankwindow div.header a:visited {color:#0000EF}
-#page-mod-quiz-edit div.container div.generalbox {background-color:[[setting:blockcolumnbgc]];padding:1.5em;}
+#page-mod-quiz-edit div.container div.generalbox {background-color:[[setting:lblockcolumnbgc]];padding:1.5em;}
 #page-mod-quiz-edit div.questionbank .categoryquestionscontainer,
 #page-mod-quiz-edit div.questionbank .categorysortopotionscontainer,
 #page-mod-quiz-edit div.questionbank .categorypagingbarcontainer,
 #page-mod-quiz-edit div.questionbank .categoryselectallcontainer {padding:0 0 1.5em 0;}
-#page-mod-quiz-edit div.questionbank .categorypagingbarcontainer {padding:1em;background-color:[[setting:blockcolumnbgc]];margin:0 -1.2em;border-top:1px [[setting:blockcolumnbgc]] solid;border-bottom:1px [[setting:blockcolumnbgc]] solid;} /* spaziatura sopra e sotto alla tabella con le domande da spostare */
+#page-mod-quiz-edit div.questionbank .categorypagingbarcontainer {padding:1em;background-color:[[setting:lblockcolumnbgc]];margin:0 -1.2em;border-top:1px [[setting:lblockcolumnbgc]] solid;border-bottom:1px [[setting:lblockcolumnbgc]] solid;} /* spaziatura sopra e sotto alla tabella con le domande da spostare */
 #page-mod-quiz-edit div.questionbank .categoryquestionscontainer {margin:0 -1.2em -1em -1.2em;} /* tabella con le domande da spostare nel quiz*/
 
 #page-mod-quiz-edit div.editq div.question div.content {background-color:[[setting:blockcontentbgc]];} /* la signola domanda nel modello della pagina*/

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,9 +17,10 @@
 /**
  * Strings for component 'qtype_calculated', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   qtype_calculated
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage calculated
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['addingcalculated'] = 'Adding a calculated question';
@@ -30,6 +30,7 @@ $string['addmoreunitblanks'] = 'Blanks for {$a} more units';
 $string['addsets'] = 'Add set(s)';
 $string['answerhdr'] = 'Answer';
 $string['answerstoleranceparam'] = 'Answers tolerance parameters';
+$string['anyvalue'] = 'Any value';
 $string['atleastoneanswer'] = 'You need to provide at least one answer.';
 $string['atleastonerealdataset']='There should be at least one real dataset in question text';
 $string['atleastonewildcard']='There should be at least one wild card in answer formula or question text';
@@ -43,11 +44,13 @@ $string['calculated_link'] = 'question/type/calculated';
 $string['calculatedsummary'] = 'Calculated questions are like numerical questions but with the numbers used selected randomly from a set when the quiz is taken.';
 $string['choosedatasetproperties'] = 'Choose wildcards dataset properties';
 $string['choosedatasetproperties_help'] = 'A dataset is a set of values inserted in place of a wildcard. You can create a private dataset for a specific question, or a shared dataset that can be used for other calculated questions within the category.';
+$string['correctanswerformula'] = 'Correct answer formula';
 $string['correctanswershows'] = 'Correct answer shows';
 $string['correctanswershowsformat'] = 'Format';
 $string['correctfeedback'] = 'For any correct response';
 $string['dataitemdefined']='with {$a} numerical values already defined is available';
 $string['datasetrole']= ' The wild cards <strong>{x..}</strong> will be substituted by a numerical value from their dataset';
+$string['decimals'] = 'with {$a}';
 $string['deleteitem'] = 'Delete item';
 $string['deletelastitem'] = 'Delete last item';
 $string['editingcalculated'] = 'Editing a Calculated question';
@@ -60,8 +63,15 @@ $string['existingcategory3'] = 'a link from an already existing set of links tha
 $string['forceregeneration'] = 'force regeneration';
 $string['forceregenerationall'] = 'forceregeneration of all wildcards';
 $string['forceregenerationshared'] = 'forceregeneration of only non-shared wildcards';
+$string['functiontakesatleasttwo'] = 'The function {$a} must have at least two arguments';
+$string['functiontakesnoargs'] = 'The function {$a} does not take any arguments';
+$string['functiontakesonearg'] = 'The function {$a} must have exactly one argument';
+$string['functiontakesoneortwoargs'] = 'The function {$a} must have either one or two arguments';
+$string['functiontakestwoargs'] = 'The function {$a} must have exactly two arguments';
+$string['generatevalue'] = 'Generate a new value between';
 $string['getnextnow'] = 'Get new \'Item to Add\' now';
-$string['hexanotallowed'] = 'Dataset <strong>{$a->name}</strong> hexadecimal format value $a->value is not allowed' ;
+$string['hexanotallowed'] = 'Dataset <strong>{$a->name}</strong> hexadecimal format value $a->value is not allowed';
+$string['illegalformulasyntax'] = 'Illegal formula syntax starting with \'{$a}\'';
 $string['incorrectfeedback'] = 'For any incorrect response';
 $string['item(s)'] = 'item(s)';
 $string['itemno'] = 'Item {$a}';
@@ -75,10 +85,17 @@ $string['keptlocal2'] = 'a file from the same question private set of files as b
 $string['keptlocal3'] = 'a link from the same question private set of links as before';
 $string['lastitem(s)'] = 'last items(s)';
 $string['loguniform'] = 'Loguniform';
+$string['loguniformbit'] = 'digits, from a loguniform distribution';
 $string['makecopynextpage'] = 'Next page (new question)';
 $string['mandatoryhdr'] = 'Mandatory wild cards present in answers';
+$string['max'] = 'Max';
+$string['min'] = 'Min';
 $string['minmax'] = 'Range of Values';
+$string['missingformula'] = 'Missing formula';
+$string['missingname'] = 'Missing question name';
+$string['missingquestiontext'] = 'Missing question text';
 $string['mustbenumeric'] = 'You must enter a number here.';
+$string['mustenteraformulaorstar'] = 'You must enter a formula or \'*\'.';
 $string['mustnotbenumeric'] = 'This can\'t be a number.';
 $string['newcategory1'] = 'will use a new shared dataset';
 $string['newcategory2'] = 'a file from a new set of files that may also be used by other questions in this category';
@@ -89,10 +106,10 @@ $string['newlocal3'] = 'a link from a new set of links that will only be used by
 $string['nextitemtoadd'] = 'Next \'Item to Add\'';
 $string['nextpage'] = 'Next page';
 $string['nocoherencequestionsdatyasetcategory'] = 'For question id {$a->qid}, the category id {$a->qcat} is not identical with the shared wild card {$a->name} category id {$a->sharedcat}. Edit the question.';
-$string['nocommaallowed'] = 'The , cannot be used, use . as in 0.013 or 1.3e-2' ;
+$string['nocommaallowed'] = 'The , cannot be used, use . as in 0.013 or 1.3e-2';
 $string['nodataset'] = 'nothing - it is not a wild card';
 $string['nosharedwildcard'] = 'No shared wild card in this category';
-$string['notvalidnumber'] = 'Wild card value is not a valid number ' ;
+$string['notvalidnumber'] = 'Wild card value is not a valid number ';
 $string['oneanswertrueansweroutsidelimits'] = 'At least one correct answer outside the true value limits.<br />Modify the answers tolerance settings available as Advanced parameters';
 $string['param'] = 'Param {<strong>{$a}</strong>}';
 $string['partiallycorrectfeedback'] = 'For any partially correct response';
@@ -105,6 +122,8 @@ $string['reuseifpossible'] = 'reuse previous value if available';
 $string['sharedwildcard']='Shared wild card <strong>{$a}</strong>';
 $string['sharedwildcardname']='Shared wild card ';
 $string['sharedwildcards']='Shared wild cards';
+$string['significantfigures'] = 'with {$a}';
+$string['significantfiguresformat'] = 'significant figures';
 $string['synchronize']='Synchronize the data from shared datasets with other questions in a quiz';
 $string['synchronizeno']='Do not synchronize';
 $string['synchronizeyes']='Synchronize';
@@ -113,6 +132,7 @@ $string['tolerance'] = 'Tolerance &plusmn;';
 $string['trueanswerinsidelimits'] = 'Correct answer : {$a->correct} inside limits of true value {$a->true}';
 $string['trueansweroutsidelimits'] = '<span class="error">ERROR Correct answer : {$a->correct} outside limits of true value {$a->true}</span>';
 $string['uniform'] = 'Uniform';
+$string['uniformbit'] = 'decimals, from a uniform distribution';
 $string['updatecategory'] = 'Update the category';
 $string['updatedatasetparam'] = 'Update the datasets parameters';
 $string['updatetolerancesparam'] = 'Update the answers tolerance parameters';
@@ -125,6 +145,7 @@ $string['setno'] = 'Set {$a}';
 $string['setwildcardvalues'] = 'set(s) of wild card(s) values';
 $string['showitems'] = 'Display';
 $string['updatewildcardvalues'] = 'Update the wild card(s) values';
+$string['unsupportedformulafunction'] = 'The function {$a} is not supported';
 $string['useadvance'] = 'Use the advance button to see the errors';
 $string['wildcard'] = 'Wild card {<strong>{$a}</strong>}';
 $string['wildcardparam'] = 'Wild cards parameters used to generate the values';
@@ -132,4 +153,4 @@ $string['wildcardrole'] = 'The wild cards <strong>{x..}</strong> will be substit
 $string['wildcards'] = 'Wild cards {a}...{z}';
 $string['wildcardvalues'] = 'Wild card(s) values';
 $string['wildcardvaluesgenerated'] = 'Wild card(s) values generated';
-
+$string['zerosignificantfiguresnotallowed'] = 'The correct answer cannot have zero significant figures!';

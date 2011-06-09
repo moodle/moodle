@@ -1,78 +1,96 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-///////////////////
-/// missingtype ///
-///////////////////
+/**
+ * Question type class for the 'missingtype' type.
+ *
+ * @package    qtype
+ * @subpackage missingtype
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-/// QUESTION TYPE CLASS //////////////////
+
+defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Missing question type class
  *
- * When a question is encountered with a type that is not installed then its
- * type is changed to 'missingtype'. This questiontype just makes sure that the
- * necessary information is printed about the question.
- * @package questionbank
- * @subpackage questiontypes
+ * When we encounter a question of a type that is not currently installed, then
+ * we use this question type class instead so that some of the information about
+ * this question can be seen, and the rest of the system keeps working.
+ *
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_missingtype_qtype extends default_questiontype {
-
-    function name() {
-        return 'missingtype';
-    }
-
-    function menu_name() {
+class qtype_missingtype extends question_type {
+    public function menu_name() {
         return false;
     }
 
-    function is_usable_by_random() {
+    public function is_usable_by_random() {
         return false;
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
-        global $CFG;
-
-        $answers = &$question->options->answers;
-
-        $formatoptions = new stdClass;
-        $formatoptions->noclean = true;
-        $formatoptions->para = false;
-
-        // Print formulation
-        $questiontext = format_text($question->questiontext,
-                         $question->questiontextformat,
-                         $formatoptions, $cmoptions->course);
-
-        // Print each answer in a separate row if there are any
-        $anss = array();
-        if ($answers) {
-            foreach ($answers as $answer) {
-                $a = new stdClass;
-                $a->text = format_text($answer->answer, $answer->answerformat, $formatoptions, $cmoptions->course);
-
-                $anss[] = clone($a);
-            }
-        }
-        include("$CFG->dirroot/question/type/missingtype/display.html");
+    public function can_analyse_responses() {
+        return false;
     }
 
-    function grade_responses(&$question, &$state, $cmoptions) {
-        return true;
+    public function make_question($questiondata) {
+        $question = parent::make_question($questiondata);
+        $question->questiontext = html_writer::tag('div',
+                get_string('missingqtypewarning', 'qtype_missingtype'),
+                array('class' => 'warning missingqtypewarning')) .
+                $question->questiontext;
+        return $question;
     }
 
-    function display_question_editing_page(&$mform, $question, $wizardnow){
+    public function make_deleted_instance($questionid, $maxmark) {
+        question_bank::load_question_definition_classes('missingtype');
+        $question = new qtype_missingtype_question();
+        $question->id = $questionid;
+        $question->category = null;
+        $question->parent = 0;
+        $question->qtype = question_bank::get_qtype('missingtype');
+        $question->name = get_string('deletedquestion', 'qtype_missingtype');
+        $question->questiontext = get_string('deletedquestiontext', 'qtype_missingtype');
+        $question->questiontextformat = FORMAT_HTML;
+        $question->generalfeedback = '';
+        $question->defaultmark = $maxmark;
+        $question->length = 1;
+        $question->penalty = 0;
+        $question->stamp = '';
+        $question->version = 0;
+        $question->hidden = 0;
+        $question->timecreated = null;
+        $question->timemodified = null;
+        $question->createdby = null;
+        $question->modifiedby = null;
+        return $question;
+    }
+
+    public function get_random_guess_score($questiondata) {
+        return null;
+    }
+
+    public function display_question_editing_page(&$mform, $question, $wizardnow) {
         global $OUTPUT;
         echo $OUTPUT->heading(get_string('warningmissingtype', 'qtype_missingtype'));
 
         $mform->display();
-
     }
 }
-//// END OF CLASS ////
-
-//////////////////////////////////////////////////////////////////////////
-//// INITIATION - Without this line the question type is not in use... ///
-//////////////////////////////////////////////////////////////////////////
-question_register_questiontype(new question_missingtype_qtype());
-
-

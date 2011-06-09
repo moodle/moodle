@@ -272,6 +272,31 @@ class webservice {
     }
 
     /**
+     * Get the list of all functions for given service shortnames
+     * @param array $serviceshortnames
+     * @param $enabledonly if true then only return function for the service that has been enabled
+     * @return array functions
+     */
+    public function get_external_functions_by_enabled_services($serviceshortnames, $enabledonly = true) {
+        global $DB;
+        if (!empty($serviceshortnames)) {
+            $enabledonlysql = $enabledonly?' AND s.enabled = 1 ':'';
+            list($serviceshortnames, $params) = $DB->get_in_or_equal($serviceshortnames);
+            $sql = "SELECT f.*
+                      FROM {external_functions} f
+                     WHERE f.name IN (SELECT sf.functionname
+                                        FROM {external_services_functions} sf, {external_services} s
+                                       WHERE s.shortname $serviceshortnames
+                                             AND sf.externalserviceid = s.id
+                                             " . $enabledonlysql . ")";
+            $functions = $DB->get_records_sql($sql, $params);
+        } else {
+            $functions = array();
+        }
+        return $functions;
+    }
+
+    /**
      * Get the list of all functions not in the given service id
      * @param int $serviceid
      * @return array functions
@@ -391,6 +416,19 @@ class webservice {
         global $DB;
         $service = $DB->get_record('external_services',
                         array('id' => $serviceid), '*', $strictness);
+        return $service;
+    }
+
+    /**
+     * Get a external service for a given shortname
+     * @param service shortname $shortname
+     * @param integer $strictness IGNORE_MISSING, MUST_EXIST...
+     * @return object external service
+     */
+    public function get_external_service_by_shortname($shortname, $strictness=IGNORE_MISSING) {
+        global $DB;
+        $service = $DB->get_record('external_services',
+                        array('shortname' => $shortname), '*', $strictness);
         return $service;
     }
 

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,14 +17,17 @@
 /**
  * Strings for component 'quiz_statistics', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   quiz_statistics
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    quiz
+ * @subpackage statistics
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+$string['actualresponse'] = 'Actual response';
 $string['allattempts'] = 'all attempts';
 $string['allattemptsavg'] = 'Average grade of all attempts';
-$string['allattemptscount'] = 'Total number of attempts';
+$string['allattemptscount'] = 'Total number of complete graded attempts';
 $string['analysisofresponses'] = 'Analysis of responses';
 $string['analysisofresponsesfor'] = 'Analysis of responses for {$a}.';
 $string['attempts'] = 'Attempts';
@@ -34,6 +36,7 @@ $string['attemptsfirst'] = 'first attempt';
 $string['backtoquizreport'] = 'Back to main statistics report page.';
 $string['calculatefrom'] = 'Calculate statistics from';
 $string['cic'] = 'Coefficient of internal consistency (for {$a})';
+$string['completestatsfilename'] = 'completestats';
 $string['count'] = 'Count';
 $string['coursename'] = 'Course name';
 $string['detailedanalysis'] = 'More detailed analysis of the responses to this question';
@@ -53,12 +56,13 @@ $string['errorstatisticsquestions'] = 'Error fetching data to calculate statisti
 $string['facility'] = 'Facility index';
 $string['firstattempts'] = 'first attempts';
 $string['firstattemptsavg'] = 'Average grade of first attempts';
-$string['firstattemptscount'] = 'Number of first attempts';
+$string['firstattemptscount'] = 'Number of complete graded first attempts';
 $string['frequency'] = 'Frequency';
 $string['intended_weight'] = 'Intended weight';
 $string['kurtosis'] = 'Score distribution kurtosis (for {$a})';
 $string['lastcalculated'] = 'Last calculated {$a->lastcalculated} ago there have been {$a->count} attempts since then.';
 $string['median'] = 'Median grade (for {$a})';
+$string['modelresponse'] = 'Model response';
 $string['negcovar'] = 'Negative covariance of grade with total attempt grade';
 $string['negcovar_help'] = 'This question\'s grade for this set of attempts on the quiz varies in an opposite way to the overall attempt grade. This means overall attempt grade tends to be below average when the grade for this question is above average and vice-versa.
 
@@ -73,6 +77,7 @@ $string['questioninformation'] = 'Question information';
 $string['questionname'] = 'Question name';
 $string['questionnumber'] = 'Q#';
 $string['questionstatistics'] = 'Question statistics';
+$string['questionstatsfilename'] = 'questionstats';
 $string['questiontype'] = 'Question type';
 $string['quizinformation'] = 'Quiz information';
 $string['quizname'] = 'Quiz name';
@@ -80,7 +85,7 @@ $string['quizoverallstatistics'] = 'Quiz overall statistics';
 $string['quizstructureanalysis'] = 'Quiz structure analysis';
 $string['random_guess_score'] = 'Random guess score';
 $string['recalculatenow'] = 'Recalculate now';
-$string['response'] = 'Answer';
+$string['response'] = 'Response';
 $string['skewness'] = 'Score distribution skewness (for {$a})';
 $string['standarddeviation'] = 'Standard deviation (for {$a})';
 $string['standarddeviationq'] = 'Standard deviation';

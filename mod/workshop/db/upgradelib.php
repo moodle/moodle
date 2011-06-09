@@ -210,6 +210,14 @@ function workshop_upgrade_transform_instance(stdClass $old) {
         $new->strategy = 'rubric';
         break;
     }
+    if ($old->submissionstart < $old->submissionend) {
+        $new->submissionstart = $old->submissionstart;
+        $new->submissionend   = $old->submissionend;
+    }
+    if ($old->assessmentstart < $old->assessmentend) {
+        $new->assessmentstart = $old->assessmentstart;
+        $new->assessmentend   = $old->assessmentend;
+    }
 
     return $new;
 }
@@ -331,6 +339,9 @@ function workshop_upgrade_assessments() {
     // list of teachers in every workshop: array of (int)workshopid => array of (int)userid => notused
     $workshopteachers   = array();
 
+    // get the list of ids of the new example submissions
+    $examplesubmissions = $DB->get_records('workshop_submissions', array('example' => 1), '', 'id');
+
     $rs = $DB->get_recordset_select('workshop_assessments_old', 'newid IS NULL');
     foreach ($rs as $old) {
         if (!isset($workshopteachers[$old->workshopid])) {
@@ -338,8 +349,9 @@ function workshop_upgrade_assessments() {
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
             $workshopteachers[$old->workshopid] = get_users_by_capability($context, 'mod/workshop:manage', 'u.id');
         }
+        $ofexample = isset($examplesubmissions[$newsubmissionids[$old->submissionid]]);
         $new = workshop_upgrade_transform_assessment($old, $newsubmissionids[$old->submissionid],
-                                                     $workshopteachers[$old->workshopid], $teacherweights[$old->workshopid]);
+                                                     $workshopteachers[$old->workshopid], $teacherweights[$old->workshopid], $ofexample);
         $newid = $DB->insert_record('workshop_assessments', $new, true, true);
         $DB->set_field('workshop_assessments_old', 'newplugin', 'assessments', array('id' => $old->id));
         $DB->set_field('workshop_assessments_old', 'newid', $newid, array('id' => $old->id));
@@ -354,9 +366,10 @@ function workshop_upgrade_assessments() {
  * @param int      $newsubmissionid     new submission id
  * @param array    $legacyteachers      (int)userid => notused the list of legacy workshop teachers for the submission's workshop
  * @param int      $legacyteacherweight weight of teacher's assessment in legacy workshop
+ * @param bool     $ofexample           is this the assessment of an example submission?
  * @return stdClass
  */
-function workshop_upgrade_transform_assessment(stdClass $old, $newsubmissionid, array $legacyteachers, $legacyteacherweight) {
+function workshop_upgrade_transform_assessment(stdClass $old, $newsubmissionid, array $legacyteachers, $legacyteacherweight, $ofexample) {
     global $CFG;
     require_once($CFG->libdir . '/gradelib.php');
 
@@ -364,10 +377,21 @@ function workshop_upgrade_transform_assessment(stdClass $old, $newsubmissionid, 
     $new->submissionid              = $newsubmissionid;
     $new->reviewerid                = $old->userid;
 
-    if (isset($legacyteachers[$old->userid])) {
-        $new->weight                = $legacyteacherweight;
+    if ($ofexample) {
+        // this is the assessment of an example submission
+        if (isset($legacyteachers[$old->userid])) {
+            // this is probably the reference assessment of the example submission
+            $new->weight            = 1;
+        } else {
+            $new->weight            = 0;
+        }
+
     } else {
-        $new->weight                = 1;
+        if (isset($legacyteachers[$old->userid])) {
+            $new->weight            = $legacyteacherweight;
+        } else {
+            $new->weight            = 1;
+        }
     }
 
     if ($old->grade < 0) {

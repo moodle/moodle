@@ -1,19 +1,45 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Class representing question categories
+ * A class for representing question categories.
  *
- * @author Martin Dougiamas and many others. {@link http://moodle.org}
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questionbank
+ * @package    moodlecore
+ * @subpackage questionbank
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+defined('MOODLE_INTERNAL') || die();
+
 // number of categories to display on page
-define("QUESTION_PAGE_LENGTH", 25);
+define('QUESTION_PAGE_LENGTH', 25);
 
 require_once($CFG->libdir . '/listlib.php');
 require_once($CFG->dirroot . '/question/category_form.php');
-require_once('move_form.php');
+require_once($CFG->dirroot . '/question/move_form.php');
 
+
+/**
+ * Class representing a list of question categories
+ *
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_category_list extends moodle_list {
     public $table = "question_categories";
     public $listitemclassname = 'question_category_list_item';
@@ -39,6 +65,13 @@ class question_category_list extends moodle_list {
     }
 }
 
+
+/**
+ * An item in a list of question categories.
+ *
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_category_list_item extends list_item {
     public function set_icon_html($first, $last, &$lastitem){
         global $CFG;
@@ -64,7 +97,7 @@ class question_category_list_item extends list_item {
         $str = $extraargs['str'];
         $category = $this->item;
 
-        $editqestions = get_string('editquestions', 'quiz');
+        $editqestions = get_string('editquestions', 'question');
 
         /// Each section adds html to be displayed as part of this list item
         $questionbankurl = new moodle_url("/question/edit.php", ($this->parentlist->pageurl->params() + array('category'=>"$category->id,$category->contextid")));
@@ -85,9 +118,10 @@ class question_category_list_item extends list_item {
 
 
 /**
- * Class representing question categories
+ * Class representing q question category
  *
- * @package questionbank
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_category_object {
 
@@ -101,7 +135,7 @@ class question_category_object {
     var $newtable;
     var $tab;
     var $tabsize = 3;
-//------------------------------------------------------
+
     /**
      * @var moodle_url Object representing url for this page
      */
@@ -122,34 +156,30 @@ class question_category_object {
         $this->tab = str_repeat('&nbsp;', $this->tabsize);
 
         $this->str->course         = get_string('course');
-        $this->str->category       = get_string('category', 'quiz');
-        $this->str->categoryinfo   = get_string('categoryinfo', 'quiz');
-        $this->str->questions      = get_string('questions', 'quiz');
+        $this->str->category       = get_string('category', 'question');
+        $this->str->categoryinfo   = get_string('categoryinfo', 'question');
+        $this->str->questions      = get_string('questions', 'question');
         $this->str->add            = get_string('add');
         $this->str->delete         = get_string('delete');
         $this->str->moveup         = get_string('moveup');
         $this->str->movedown       = get_string('movedown');
         $this->str->edit           = get_string('editthiscategory', 'question');
         $this->str->hide           = get_string('hide');
-        $this->str->publish        = get_string('publish', 'quiz');
         $this->str->order          = get_string('order');
-        $this->str->parent         = get_string('parent', 'quiz');
+        $this->str->parent         = get_string('parent', 'question');
         $this->str->add            = get_string('add');
         $this->str->action         = get_string('action');
-        $this->str->top            = get_string('top', 'quiz');
-        $this->str->addcategory    = get_string('addcategory', 'quiz');
-        $this->str->editcategory   = get_string('editcategory', 'quiz');
+        $this->str->top            = get_string('top');
+        $this->str->addcategory    = get_string('addcategory', 'question');
+        $this->str->editcategory   = get_string('editcategory', 'question');
         $this->str->cancel         = get_string('cancel');
-        $this->str->editcategories = get_string('editcategories', 'quiz');
+        $this->str->editcategories = get_string('editcategories', 'question');
         $this->str->page           = get_string('page');
 
         $this->pageurl = $pageurl;
 
         $this->initialize($page, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts);
-
     }
-
-
 
     /**
      * Initializes this classes general category-related variables
@@ -175,6 +205,7 @@ class question_category_object {
             $this->catform->set_data(array('parent'=>$defaultcategory));
         }
     }
+
     /**
      * Displays the user interface
      *
@@ -222,8 +253,6 @@ class question_category_object {
         echo $list->display_page_numbers();
      }
 
-
-
     /**
      * gets all the courseids for the given categories
      *
@@ -241,8 +270,6 @@ class question_category_object {
         return $courseids;
     }
 
-
-
     public function edit_single_category($categoryid) {
     /// Interface for adding a new category
         global $COURSE, $DB;
@@ -258,7 +285,6 @@ class question_category_object {
             print_error('invalidcategory', '', '', $categoryid);
         }
     }
-
 
     /**
      * Sets the viable parents
@@ -323,10 +349,10 @@ class question_category_object {
 
     public function display_move_form($questionsincategory, $category){
         global $OUTPUT;
-        $vars = new stdClass;
+        $vars = new stdClass();
         $vars->name = $category->name;
         $vars->count = $questionsincategory;
-        echo $OUTPUT->box(get_string('categorymove', 'quiz', $vars), 'generalbox boxaligncenter');
+        echo $OUTPUT->box(get_string('categorymove', 'question', $vars), 'generalbox boxaligncenter');
         $this->moveform->display();
     }
 
@@ -343,7 +369,7 @@ class question_category_object {
     public function add_category($newparent, $newcategory, $newinfo, $return = false) {
         global $DB;
         if (empty($newcategory)) {
-            print_error('categorynamecantbeblank', 'quiz');
+            print_error('categorynamecantbeblank', 'question');
         }
         list($parentid, $contextid) = explode(',', $newparent);
         //moodle_form makes sure select element output is legal no need for further cleaning
@@ -374,9 +400,9 @@ class question_category_object {
      * Updates an existing category with given params
      */
     public function update_category($updateid, $newparent, $newname, $newinfo) {
-        global $CFG, $QTYPES, $DB;
+        global $CFG, $DB;
         if (empty($newname)) {
-            print_error('categorynamecantbeblank', 'quiz');
+            print_error('categorynamecantbeblank', 'question');
         }
 
         // Get the record we are updating.
@@ -401,7 +427,7 @@ class question_category_object {
         }
 
         // Update the category record.
-        $cat = NULL;
+        $cat = null;
         $cat->id = $updateid;
         $cat->name = $newname;
         $cat->info = $newinfo;
@@ -413,10 +439,11 @@ class question_category_object {
         if ($oldcat->name != $cat->name) {
             $where = "qtype = 'random' AND category = ? AND " . $DB->sql_compare_text('questiontext') . " = ?";
 
-            $randomqname = $QTYPES[RANDOM]->question_name($cat, false);
+            $randomqtype = question_bank::get_qtype('random');
+            $randomqname = $randomqtype->question_name($cat, false);
             $DB->set_field_select('question', 'name', $randomqname, $where, array($cat->id, '0'));
 
-            $randomqname = $QTYPES[RANDOM]->question_name($cat, true);
+            $randomqname = $randomqtype->question_name($cat, true);
             $DB->set_field_select('question', 'name', $randomqname, $where, array($cat->id, '1'));
         }
 

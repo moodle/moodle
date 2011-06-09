@@ -26,6 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(dirname(dirname(__FILE__)) . '/message/lib.php');
+
 /**
  * Called when a message provider wants to send a message.
  * This functions checks the user's processor configuration to send the given type of message,
@@ -34,8 +36,8 @@ defined('MOODLE_INTERNAL') || die();
  * Required parameter $eventdata structure:
  *  component string component name. must exist in message_providers
  *  name string message type name. must exist in message_providers
- *  userfrom object the user sending the message
- *  userto object the message recipient
+ *  userfrom object|int the user sending the message
+ *  userto object|int the message recipient
  *  subject string the message subject
  *  fullmessage - the full message in a given format
  *  fullmessageformat  - the format if the full message (FORMAT_MOODLE, FORMAT_HTML, ..)
@@ -57,12 +59,10 @@ function message_send($eventdata) {
     $DB->transactions_forbidden();
 
     if (is_int($eventdata->userto)) {
-        mtrace('message_send() userto is a user ID when it should be a user object');
-        $eventdata->userto = $DB->get_record('user', array('id' => $eventdata->useridto));
+        $eventdata->userto = $DB->get_record('user', array('id' => $eventdata->userto));
     }
     if (is_int($eventdata->userfrom)) {
-        mtrace('message_send() userfrom is a user ID when it should be a user object');
-        $eventdata->userfrom = $DB->get_record('user', array('id' => $message->userfrom));
+        $eventdata->userfrom = $DB->get_record('user', array('id' => $eventdata->userfrom));
     }
 
     //after how long inactive should the user be considered logged off?
@@ -109,25 +109,55 @@ function message_send($eventdata) {
 
     $savemessage->timecreated = time();
 
-    // Find out what processors are defined currently
-    // When a user doesn't have settings none gets return, if he doesn't want contact "" gets returned
-    $preferencename = 'message_provider_'.$eventdata->component.'_'.$eventdata->name.'_'.$userstate;
+    // Fetch enabled processors
+    $processors = get_message_processors(true);
+    // Fetch default (site) preferences
+    $defaultpreferences = get_message_output_default_preferences();
 
-    $processor = get_user_preferences($preferencename, null, $eventdata->userto->id);
-    if ($processor == NULL) { //this user never had a preference, save default
-        if (!message_set_default_message_preferences($eventdata->userto)) {
-            print_error('cannotsavemessageprefs', 'message');
-        }
-        $processor = get_user_preferences($preferencename, NULL, $eventdata->userto->id);
-        if (empty($processor)) {
+    // Preset variables
+    $processorlist = array();
+    $preferencebase = $eventdata->component.'_'.$eventdata->name;
+    // Fill in the array of processors to be used based on default and user preferences
+    foreach ($processors as $processor) {
+        // First find out permissions
+        $defaultpreference = $processor->name.'_provider_'.$preferencebase.'_permitted';
+        if (isset($defaultpreferences->{$defaultpreference})) {
+            $permitted = $defaultpreferences->{$defaultpreference};
+        } else {
             //MDL-25114 They supplied an $eventdata->component $eventdata->name combination which doesn't
-            //exist in the message_provider table
+            //exist in the message_provider table (thus there is no default settings for them)
             $preferrormsg = get_string('couldnotfindpreference', 'message', $preferencename);
             throw new coding_exception($preferrormsg,'blah');
         }
+
+        // Find out if user has configured this output
+        $userisconfigured = $processor->object->is_user_configured($eventdata->userto);
+
+        // DEBUG: noify if we are forcing unconfigured output
+        if ($permitted == 'forced' && !$userisconfigured) {
+            debugging('Attempt to force message delivery to user who has "'.$processor->name.'" output unconfigured', DEBUG_NORMAL);
+        }
+
+        // Populate the list of processors we will be using
+        if ($permitted == 'forced' && $userisconfigured) {
+            // We force messages for this processor, so use this processor unconditionally if user has configured it
+            $processorlist[] = $processor->name;
+        } else if ($permitted == 'permitted' && $userisconfigured) {
+            // User settings are permitted, see if user set any, otherwise use site default ones
+            $userpreferencename = 'message_provider_'.$preferencebase.'_'.$userstate;
+            if ($userpreference = get_user_preferences($userpreferencename, null, $eventdata->userto->id)) {
+                if (in_array($processor->name, explode(',', $userpreference))) {
+                    $processorlist[] = $processor->name;
+                }
+            } else if (isset($defaultpreferences->{$userpreferencename})) {
+                if (in_array($processor->name, explode(',', $defaultpreferences->{$userpreferencename}))) {
+                    $processorlist[] = $processor->name;
+                }
+            }
+        }
     }
 
-    if ($processor=='none' && $savemessage->notification) {
+    if (empty($processorlist) && $savemessage->notification) {
         //if they have deselected all processors and its a notification mark it read. The user doesnt want to be bothered
         $savemessage->timeread = time();
         $messageid = $DB->insert_record('message_read', $savemessage);
@@ -137,29 +167,14 @@ function message_send($eventdata) {
         $eventdata->savedmessageid = $savemessage->id;
 
         // Try to deliver the message to each processor
-        if ($processor!='none') {
-            $processorlist = explode(',', $processor);
+        if (!empty($processorlist)) {
             foreach ($processorlist as $procname) {
-                $processorfile = $CFG->dirroot. '/message/output/'.$procname.'/message_output_'.$procname.'.php';
-
-                if (is_readable($processorfile)) {
-                    include_once($processorfile);  // defines $module with version etc
-                    $processclass = 'message_output_' . $procname;
-
-                    if (class_exists($processclass)) {
-                        $pclass = new $processclass();
-
-                        if (!$pclass->send_message($eventdata)) {
-                            debugging('Error calling message processor '.$procname);
-                            $messageid = false;
-                        }
-                    }
-                } else {
-                    debugging('Error finding message processor '.$procname);
+                if (!$processors[$procname]->object->send_message($eventdata)) {
+                    debugging('Error calling message processor '.$procname);
                     $messageid = false;
                 }
             }
-            
+
             //if messaging is disabled and they previously had forum notifications handled by the popup processor
             //or any processor that puts a row in message_working then the notification will remain forever
             //unread. To prevent this mark the message read if messaging is disabled
@@ -180,6 +195,7 @@ function message_send($eventdata) {
 
 /**
  * This code updates the message_providers table with the current set of providers
+ *
  * @param $component - examples: 'moodle', 'mod_forum', 'block_quiz_results'
  * @return boolean
  */
@@ -195,7 +211,7 @@ function message_update_providers($component='moodle') {
     foreach ($fileproviders as $messagename => $fileprovider) {
 
         if (!empty($dbproviders[$messagename])) {   // Already exists in the database
-
+            // check if capability has changed
             if ($dbproviders[$messagename]->capability == $fileprovider['capability']) {  // Same, so ignore
                 // exact same message provider already present in db, ignore this entry
                 unset($dbproviders[$messagename]);
@@ -217,19 +233,128 @@ function message_update_providers($component='moodle') {
             $provider->component  = $component;
             $provider->capability = $fileprovider['capability'];
 
+            $transaction = $DB->start_delegated_transaction();
             $DB->insert_record('message_providers', $provider);
+            message_set_default_message_preference($component, $messagename, $fileprovider);
+            $transaction->allow_commit();
         }
     }
 
     foreach ($dbproviders as $dbprovider) {  // Delete old ones
         $DB->delete_records('message_providers', array('id' => $dbprovider->id));
+        $DB->delete_records_select('config_plugins', "plugin = 'message' AND ".$DB->sql_like('name', '?', false), array("%_provider_{$component}_{$dbprovider->name}_%"));
+        $DB->delete_records_select('user_preferences', $DB->sql_like('name', '?', false), array("message_provider_{$component}_{$dbprovider->name}_%"));
     }
 
     return true;
 }
 
 /**
+ * This function populates default message preferences for all existing providers
+ * when the new message processor is added.
+ *
+ * @param string $processorname The name of message processor plugin (e.g. 'email', 'jabber')
+ * @return void
+ * @throws invalid_parameter_exception if $processorname does not exist
+ */
+function message_update_processors($processorname) {
+    global $DB;
+
+    // validate if our processor exists
+    $processor = $DB->get_records('message_processors', array('name' => $processorname));
+    if (empty($processor)) {
+        throw new invalid_parameter_exception();
+    }
+
+    $providers = $DB->get_records_sql('SELECT DISTINCT component FROM {message_providers}');
+
+    $transaction = $DB->start_delegated_transaction();
+    foreach ($providers as $provider) {
+        // load message providers from files
+        $fileproviders = message_get_providers_from_file($provider->component);
+        foreach ($fileproviders as $messagename => $fileprovider) {
+            message_set_default_message_preference($provider->component, $messagename, $fileprovider, $processorname);
+        }
+    }
+    $transaction->allow_commit();
+}
+
+/**
+ * Setting default messaging preference for particular message provider
+ *
+ * @param  string $component   The name of component (e.g. moodle, mod_forum, etc.)
+ * @param  string $messagename The name of message provider
+ * @param  array  $fileprovider The value of $messagename key in the array defined in plugin messages.php
+ * @param  string $processorname The optinal name of message processor
+ * @return void
+ */
+function message_set_default_message_preference($component, $messagename, $fileprovider, $processorname='') {
+    global $DB;
+
+    // Fetch message processors
+    $condition = null;
+    // If we need to process a particular processor, set the select condition
+    if (!empty($processorname)) {
+       $condition = array('name' => $processorname);
+    }
+    $processors = $DB->get_records('message_processors', $condition);
+
+    // load default messaging preferences
+    $defaultpreferences = get_message_output_default_preferences();
+
+    // Setting default preference
+    $componentproviderbase = $component.'_'.$messagename;
+    $loggedinpref = array();
+    $loggedoffpref = array();
+    // set 'permitted' preference first for each messaging processor
+    foreach ($processors as $processor) {
+        $preferencename = $processor->name.'_provider_'.$componentproviderbase.'_permitted';
+        // if we do not have this setting yet, set it
+        if (!isset($defaultpreferences->{$preferencename})) {
+            // determine plugin default settings
+            $plugindefault = 0;
+            if (isset($fileprovider['defaults'][$processor->name])) {
+                $plugindefault = $fileprovider['defaults'][$processor->name];
+            }
+            // get string values of the settings
+            list($permitted, $loggedin, $loggedoff) = translate_message_default_setting($plugindefault, $processor->name);
+            // store default preferences for current processor
+            set_config($preferencename, $permitted, 'message');
+            // save loggedin/loggedoff settings
+            if ($loggedin) {
+                $loggedinpref[] = $processor->name;
+            }
+            if ($loggedoff) {
+                $loggedoffpref[] = $processor->name;
+            }
+        }
+    }
+    // now set loggedin/loggedoff preferences
+    if (!empty($loggedinpref)) {
+        $preferencename = 'message_provider_'.$componentproviderbase.'_loggedin';
+        if (isset($defaultpreferences->{$preferencename})) {
+            // We have the default preferences for this message provider, which
+            // likely means that we have been adding a new processor. Add defaults
+            // to exisitng preferences.
+            $loggedinpref = array_merge($loggedinpref, explode(',', $defaultpreferences->{$preferencename}));
+        }
+        set_config($preferencename, join(',', $loggedinpref), 'message');
+    }
+    if (!empty($loggedoffpref)) {
+        $preferencename = 'message_provider_'.$componentproviderbase.'_loggedoff';
+        if (isset($defaultpreferences->{$preferencename})) {
+            // We have the default preferences for this message provider, which
+            // likely means that we have been adding a new processor. Add defaults
+            // to exisitng preferences.
+            $loggedoffpref = array_merge($loggedoffpref, explode(',', $defaultpreferences->{$preferencename}));
+        }
+        set_config($preferencename, join(',', $loggedoffpref), 'message');
+    }
+}
+
+/**
  * Returns the active providers for the current user, based on capability
+ *
  * @return array of message providers
  */
 function message_get_my_providers() {
@@ -253,6 +378,7 @@ function message_get_my_providers() {
 
 /**
  * Gets the message providers that are in the database for this component.
+ *
  * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
  * @return array of message providers
  *
@@ -267,6 +393,7 @@ function message_get_providers_from_db($component) {
 /**
  * Loads the messages definitions for the component (from file). If no
  * messages are defined for the component, we simply return an empty array.
+ *
  * @param $component - examples: 'moodle', 'mod_forum', 'block_quiz_results'
  * @return array of message providerss or empty array if not exists
  *
@@ -285,64 +412,43 @@ function message_get_providers_from_file($component) {
         if (empty($messageprovider['capability'])) {
             $messageproviders[$name]['capability'] = NULL;
         }
+        if (empty($messageprovider['defaults'])) {
+            $messageproviders[$name]['defaults'] = array();
+        }
     }
 
     return $messageproviders;
 }
 
 /**
- * Remove all message providers
- * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
+ * Remove all message providers for particular plugin and corresponding settings
+ *
+ * @param string $component - examples: 'moodle', 'mod_forum', 'block_quiz_results'
+ * @return void
  */
-function message_uninstall($component) {
+function message_provider_uninstall($component) {
     global $DB;
-    return $DB->delete_records('message_providers', array('component' => $component));
+
+    $transaction = $DB->start_delegated_transaction();
+    $DB->delete_records('message_providers', array('component' => $component));
+    $DB->delete_records_select('config_plugins', "plugin = 'message' AND ".$DB->sql_like('name', '?', false), array("%_provider_{$component}_%"));
+    $DB->delete_records_select('user_preferences', $DB->sql_like('name', '?', false), array("message_provider_{$component}_%"));
+    $transaction->allow_commit();
 }
 
 /**
- * Set default message preferences.
- * @param $user - User to set message preferences
+ * Remove message processor
+ *
+ * @param string $name - examples: 'email', 'jabber'
+ * @return void
  */
-function message_set_default_message_preferences($user) {
+function message_processor_uninstall($name) {
     global $DB;
 
-    //check for the pre 2.0 disable email setting
-    $useemail = empty($user->emailstop);
-
-    //look for the pre-2.0 preference if it exists
-    $oldpreference = get_user_preferences('message_showmessagewindow', -1, $user->id);
-    //if they elected to see popups or the preference didnt exist
-    $usepopups = (intval($oldpreference)==1 || intval($oldpreference)==-1);
-
-    $defaultonlineprocessor = 'none';
-    $defaultofflineprocessor = 'none';
-    
-    if ($useemail) {
-        $defaultonlineprocessor = 'email';
-        $defaultofflineprocessor = 'email';
-    } else if ($usepopups) {
-        $defaultonlineprocessor = 'popup';
-        $defaultofflineprocessor = 'popup';
-    }
-
-    $offlineprocessortouse = $onlineprocessortouse = null;
-
-    $providers = $DB->get_records('message_providers');
-    $preferences = array();
-
-    foreach ($providers as $providerid => $provider) {
-
-        //force some specific defaults for IMs
-        if ($provider->name=='instantmessage' && $usepopups && $useemail) {
-            $onlineprocessortouse = 'popup';
-            $offlineprocessortouse = 'email,popup';
-        } else {
-            $onlineprocessortouse = $defaultonlineprocessor;
-            $offlineprocessortouse = $defaultofflineprocessor;
-        }
-        
-        $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_loggedin'] = $onlineprocessortouse;
-        $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_loggedoff'] = $offlineprocessortouse;
-    }
-    return set_user_preferences($preferences, $user->id);
+    $transaction = $DB->start_delegated_transaction();
+    $DB->delete_records('message_processors', array('name' => $name));
+    // delete permission preferences only, we do not care about loggedin/loggedoff
+    // defaults, they will be removed on the next attempt to update the preferences
+    $DB->delete_records_select('config_plugins', "plugin = 'message' AND ".$DB->sql_like('name', '?', false), array("{$name}_provider_%"));
+    $transaction->allow_commit();
 }

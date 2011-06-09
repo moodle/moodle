@@ -174,77 +174,75 @@ abstract class backup_questions_activity_structure_step extends backup_activity_
 
     /**
      * Attach to $element (usually attempts) the needed backup structures
-     * for question_states for a given question_attempt
+     * for question_usages and all the associated data.
      */
-    protected function add_question_attempts_states($element, $questionattemptname) {
+    protected function add_question_usages($element, $usageidname) {
+        global $CFG;
+        require_once($CFG->dirroot . '/question/engine/lib.php');
+
         // Check $element is one nested_backup_element
         if (! $element instanceof backup_nested_element) {
             throw new backup_step_exception('question_states_bad_parent_element', $element);
         }
-        // Check that the $questionattemptname is final element in $element
-        if (! $element->get_final_element($questionattemptname)) {
-            throw new backup_step_exception('question_states_bad_question_attempt_element', $questionattemptname);
+        if (! $element->get_final_element($usageidname)) {
+            throw new backup_step_exception('question_states_bad_question_attempt_element', $usageidname);
         }
 
-        // TODO: Some day we should stop these "encrypted" state->answers and
-        // TODO: delegate to qtypes plugin to proper XML writting the needed info on each question
+        $quba = new backup_nested_element('question_usage', array('id'),
+                array('component', 'preferredbehaviour'));
 
-        // TODO: Should be doing here some introspection in the "answer" element, based on qtype,
-        // TODO: to know which real questions are being used (for randoms and other qtypes...)
-        // TODO: Not needed if consistency is guaranteed, but it isn't right now :-(
+        $qas = new backup_nested_element('question_attempts');
+        $qa = new backup_nested_element('question_attempt', array('id'), array(
+                'slot', 'behaviour', 'questionid', 'maxmark', 'minfraction',
+                'flagged', 'questionsummary', 'rightanswer', 'responsesummary',
+                'timemodified'));
 
-        // Define the elements
-        $states = new backup_nested_element('states');
-        $state = new backup_nested_element('state', array('id'), array(
-            'question', 'seq_number', 'answer', 'timestamp',
-            'event', 'grade', 'raw_grade', 'penalty'));
+        $steps = new backup_nested_element('steps');
+        $step = new backup_nested_element('step', array('id'), array(
+                'sequencenumber', 'state', 'fraction', 'timecreated', 'userid'));
+
+        $response = new backup_nested_element('response');
+        $variable = new backup_nested_element('variable', null,  array('name', 'value'));
 
         // Build the tree
-        $element->add_child($states);
-        $states->add_child($state);
+        $element->add_child($quba);
+        $quba->add_child($qas);
+        $qas->add_child($qa);
+        $qa->add_child($steps);
+        $steps->add_child($step);
+        $step->add_child($response);
+        $response->add_child($variable);
 
         // Set the sources
-        $state->set_source_table('question_states', array('attempt' => '../../' . $questionattemptname));
+        $quba->set_source_table('question_usages',
+                array('id'                => '../' . $usageidname));
+        $qa->set_source_sql('
+                SELECT *
+                FROM {question_attempts}
+                WHERE questionusageid = :questionusageid
+                ORDER BY slot',
+                array('questionusageid'   => backup::VAR_PARENTID));
+        $step->set_source_sql('
+                SELECT *
+                FROM {question_attempt_steps}
+                WHERE questionattemptid = :questionattemptid
+                ORDER BY sequencenumber',
+                array('questionattemptid' => backup::VAR_PARENTID));
+        $variable->set_source_table('question_attempt_step_data',
+                array('attemptstepid'     => backup::VAR_PARENTID));
 
         // Annotate ids
-        $state->annotate_ids('question', 'question');
-    }
-
-    /**
-     * Attach to $element (usually attempts) the needed backup structures
-     * for question_sessions for a given question_attempt
-     */
-    protected function add_question_attempts_sessions($element, $questionattemptname) {
-        // Check $element is one nested_backup_element
-        if (! $element instanceof backup_nested_element) {
-            throw new backup_step_exception('question_sessions_bad_parent_element', $element);
-        }
-        // Check that the $questionattemptname is final element in $element
-        if (! $element->get_final_element($questionattemptname)) {
-            throw new backup_step_exception('question_sessions_bad_question_attempt_element', $questionattemptname);
-        }
-
-        // Define the elements
-        $sessions = new backup_nested_element('sessions');
-        $session = new backup_nested_element('session', array('id'), array(
-            'questionid', 'newest', 'newgraded', 'sumpenalty',
-            'manualcomment', 'manualcommentformat', 'flagged'));
-
-        // Build the tree
-        $element->add_child($sessions);
-        $sessions->add_child($session);
-
-        // Set the sources
-        $session->set_source_table('question_sessions', array('attemptid' => '../../' . $questionattemptname));
-
-        // Annotate ids
-        $session->annotate_ids('question', 'questionid');
+        $qa->annotate_ids('question', 'questionid');
+        $step->annotate_ids('user', 'userid');
 
         // Annotate files
-        // Note: question_sessions haven't files associated. On purpose manualcomment is lacking
-        // support for them, so we don't need to annotated them here.
+        $fileareas = question_engine::get_all_response_file_areas();
+        foreach ($fileareas as $filearea) {
+            $step->annotate_files('question', $filearea, 'id');
+        }
     }
 }
+
 
 /**
  * backup structure step in charge of calculating the categories to be
@@ -1670,19 +1668,25 @@ class backup_questions_structure_step extends backup_structure_step {
 
         $question = new backup_nested_element('question', array('id'), array(
             'parent', 'name', 'questiontext', 'questiontextformat',
-            'generalfeedback', 'generalfeedbackformat', 'defaultgrade', 'penalty',
+            'generalfeedback', 'generalfeedbackformat', 'defaultmark', 'penalty',
             'qtype', 'length', 'stamp', 'version',
             'hidden', 'timecreated', 'timemodified', 'createdby', 'modifiedby'));
 
         // attach qtype plugin structure to $question element, only one allowed
         $this->add_plugin_structure('qtype', $question, false);
 
+        $qhints = new backup_nested_element('question_hints');
+
+        $qhint = new backup_nested_element('question_hint', array('id'), array(
+            'hint', 'hintformat', 'shownumcorrect', 'clearwrong', 'options'));
+
         // Build the tree
 
         $qcategories->add_child($qcategory);
         $qcategory->add_child($questions);
-
         $questions->add_child($question);
+        $question->add_child($qhints);
+        $qhints->add_child($qhint);
 
         // Define the sources
 
@@ -1695,6 +1699,13 @@ class backup_questions_structure_step extends backup_structure_step {
                AND bi.itemname = 'question_categoryfinal'", array(backup::VAR_BACKUPID));
 
         $question->set_source_table('question', array('category' => backup::VAR_PARENTID));
+
+        $qhint->set_source_sql('
+                SELECT *
+                FROM {question_hints}
+                WHERE questionid = :questionid
+                ORDER BY id',
+                array('questionid' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
         // (already done by {@link backup_annotate_all_question_files}

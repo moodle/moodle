@@ -1,29 +1,45 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Import quiz questions into the given category
+ * Defines the import questions form.
  *
- * @author Martin Dougiamas, Howard Miller, and many others.
- *         {@link http://moodle.org}
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questionbank
- * @subpackage importexport
+ * @package    moodlecore
+ * @subpackage questionbank
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("../config.php");
-require_once("editlib.php"); // Includes lib/questionlib.php
-require_once("import_form.php");
+
+require_once(dirname(__FILE__) . '/../config.php');
+require_once($CFG->dirroot . '/question/editlib.php');
+require_once($CFG->dirroot . '/question/import_form.php');
+require_once($CFG->dirroot . '/question/format.php');
 
 list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
         question_edit_setup('import', '/question/import.php', false, false);
 
 // get display strings
 $txt = new stdClass();
-$txt->importerror = get_string('importerror','quiz');
+$txt->importerror = get_string('importerror', 'question');
 $txt->importquestions = get_string('importquestions', 'question');
 
 list($catid, $catcontext) = explode(',', $pagevars['cat']);
-if (!$category = $DB->get_record("question_categories", array("id" => $catid))) {
-    print_error('nocategory','quiz');
+if (!$category = $DB->get_record("question_categories", array('id' => $catid))) {
+    print_error('nocategory', 'question');
 }
 
 $PAGE->set_pagelayout('standard');
@@ -72,59 +88,50 @@ if ($form = $import_form->get_data()) {
     $importfile = "{$CFG->dataroot}/temp/questionimport/{$realfilename}";
     make_upload_directory('temp/questionimport');
     if (!$result = $import_form->save_file('newfile', $importfile, true)) {
-        print_error('uploadproblem', 'moodle');
-    }else {
-        $fileisgood = true;
+        throw new moodle_exception('uploadproblem');
     }
 
-    // process if we are happy file is ok
-    if ($fileisgood) {
-
-        if (! is_readable("format/$form->format/format.php")) {
-            print_error('formatnotfound','quiz', $form->format);
-        }
-
-        require_once("format.php");  // Parent class
-        require_once("format/$form->format/format.php");
-
-        $classname = "qformat_$form->format";
-        $qformat = new $classname();
-
-        // load data into class
-        $qformat->setCategory($category);
-        $qformat->setContexts($contexts->having_one_edit_tab_cap('import'));
-        $qformat->setCourse($COURSE);
-        $qformat->setFilename($importfile);
-        $qformat->setRealfilename($realfilename);
-        $qformat->setMatchgrades($form->matchgrades);
-        $qformat->setCatfromfile(!empty($form->catfromfile));
-        $qformat->setContextfromfile(!empty($form->contextfromfile));
-        $qformat->setStoponerror($form->stoponerror);
-
-        // Do anything before that we need to
-        if (! $qformat->importpreprocess()) {
-            //TODO: need more detailed error info
-            print_error('cannotimport', '', $thispageurl->out());
-        }
-
-        // Process the uploaded file
-        if (! $qformat->importprocess($category)) {
-            //TODO: need more detailed error info
-            print_error('cannotimport', '', $thispageurl->out());
-        }
-
-        // In case anything needs to be done after
-        if (! $qformat->importpostprocess()) {
-            //TODO: need more detailed error info
-            print_error('cannotimport', '', $thispageurl->out());
-        }
-
-        echo '<hr />';
-        $params = $thispageurl->params() + array('category'=>"{$qformat->category->id},{$qformat->category->contextid}");
-        echo $OUTPUT->continue_button(new moodle_url('edit.php', $params));
-        echo $OUTPUT->footer();
-        exit;
+    $formatfile = 'format/' . $form->format . '/format.php';
+    if (!is_readable($formatfile)) {
+        throw new moodle_exception('formatnotfound', 'question', '', $form->format);
     }
+
+    require_once($formatfile);
+
+    $classname = 'qformat_' . $form->format;
+    $qformat = new $classname();
+
+    // load data into class
+    $qformat->setCategory($category);
+    $qformat->setContexts($contexts->having_one_edit_tab_cap('import'));
+    $qformat->setCourse($COURSE);
+    $qformat->setFilename($importfile);
+    $qformat->setRealfilename($realfilename);
+    $qformat->setMatchgrades($form->matchgrades);
+    $qformat->setCatfromfile(!empty($form->catfromfile));
+    $qformat->setContextfromfile(!empty($form->contextfromfile));
+    $qformat->setStoponerror($form->stoponerror);
+
+    // Do anything before that we need to
+    if (!$qformat->importpreprocess()) {
+        print_error('cannotimport', '', $thispageurl->out());
+    }
+
+    // Process the uploaded file
+    if (!$qformat->importprocess($category)) {
+        print_error('cannotimport', '', $thispageurl->out());
+    }
+
+    // In case anything needs to be done after
+    if (!$qformat->importpostprocess()) {
+        print_error('cannotimport', '', $thispageurl->out());
+    }
+
+    $params = $thispageurl->params() + array(
+        'category' => $qformat->category->id . ',' . $qformat->category->contextid);
+    echo $OUTPUT->continue_button(new moodle_url('edit.php', $params));
+    echo $OUTPUT->footer();
+    exit;
 }
 
 echo $OUTPUT->heading_with_help($txt->importquestions, 'importquestions', 'question');

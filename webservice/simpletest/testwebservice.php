@@ -73,7 +73,8 @@ class webservice_test extends UnitTestCase {
             'moodle_user_get_users_by_id' => false,
             'moodle_enrol_get_enrolled_users' => false,
             'moodle_group_get_course_groups' => false,
-            'moodle_group_get_groupmembers' => false
+            'moodle_group_get_groupmembers' => false,
+            'moodle_webservice_get_siteinfo' => false
         );
 
         ////// WRITE DB tests ////
@@ -88,7 +89,9 @@ class webservice_test extends UnitTestCase {
             'moodle_group_delete_groupmembers' => false,
             'moodle_group_create_groups' => false,
             'moodle_group_delete_groups' => false,
-            'moodle_enrol_manual_enrol_users' => false
+            'moodle_enrol_manual_enrol_users' => false,
+            'moodle_message_send_messages' => false,
+            'moodle_notes_create_notes' => false
         );
 
         //performance testing: number of time the web service are run
@@ -215,6 +218,18 @@ class webservice_test extends UnitTestCase {
         $params = array('groupids' => $groupids);
         $groups = $client->call($function, $params);
         $this->assertEqual(count($groups), count($groupids));
+    }
+
+    function moodle_webservice_get_siteinfo($client) {
+        global $SITE, $CFG;
+
+        $function = 'moodle_webservice_get_siteinfo';
+
+        $params = array();
+        $info = $client->call($function, $params);
+
+        $this->assertEqual($info['sitename'], $SITE->fullname);
+        $this->assertEqual($info['siteurl'],  $CFG->wwwroot);
     }
 
     function moodle_user_get_users_by_id($client) {
@@ -1482,7 +1497,54 @@ class webservice_test extends UnitTestCase {
 
         //delete the category
         $DB->delete_records('course_categories', array('id' => $category->id));
+    }
 
+    function moodle_message_send_messages($client) {
+        global $DB;
+        $function = 'moodle_message_send_messages';
+        $message = array();
+        $message['text'] = 'this is a message with a link http://www.google.com';
+        $message['touserid'] = 2;  //replace by a existing user id
+        $message['clientmsgid'] = 'message_1';
+        $message2 = array();
+        $message2['text'] = 'this is a message with an image
+            http://moodle.org/pluginfile.php/51/mod_forum/post/713724/moodle2-logo.png';
+        $message2['touserid'] = 2;  //replace by a existing user id
+        $message2['clientmsgid'] = 'message_2';
+        $params = array('messages' => array($message, $message2));
+        $success = $client->call($function, $params);
+        $this->assertEqual(count($success), 2);
+    }
+
+     function moodle_notes_create_notes($client) {
+        global $DB, $CFG;
+
+        $note1 = array();
+        $note1['userid'] = 2; //about who is the note
+        $note1['publishstate'] = 'personal'; //can be course, site, personal
+        $note1['courseid'] = 2; //in Moodle a notes is always created into a course, even a site note.
+        $note1['text'] = 'This is a personal note about the user';
+        $note1['clientnoteid'] = 'note_1';
+
+        $note2 = array();
+        $note2['userid'] = 40000; //mostl likely going to fail
+        $note2['publishstate'] = 'course';
+        $note2['courseid'] = 2;
+        $note2['text'] = 'This is a teacher note about the user';
+        $note2['clientnoteid'] = 'note_2';
+
+        $note3 = array();
+        $note3['userid'] = 2;
+        $note3['publishstate'] = 'site';
+        $note3['courseid'] = 30000; //most likely going to fail
+        $note3['text'] = 'This is a teacher site-wide note about the user';
+        $note3['clientnoteid'] = 'note_3';
+
+        $function = 'moodle_notes_create_notes';
+        $params = array('notes' => array($note1, $note2, $note3));
+        $notes = $client->call($function, $params);
+
+        $this->assertEqual(3, count($notes)); //1 info is a success, 2 others should be failed
     }
 
 }

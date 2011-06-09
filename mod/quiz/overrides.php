@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,14 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This page handles listing of quiz overrides
  *
- * @package mod_quiz
- * @copyright 2010 Matt Petro
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage quiz
+ * @copyright  2010 Matt Petro
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot.'/mod/quiz/lib.php');
@@ -95,8 +95,7 @@ if ($groupmode) {
                 ON o.groupid = g.id
                 WHERE o.quiz = ?
                 ORDER BY g.name';
-}
-else {
+} else {
     $colname = get_string('user');
     $sql = 'SELECT o.*, u.firstname, u.lastname
                 FROM {quiz_overrides} o JOIN {user} u
@@ -110,8 +109,8 @@ $overrides = $DB->get_records_sql($sql, $params);
 
 // Initialise table
 $table = new html_table();
-$table->headspan = array(1,2,1);
-$table->colclasses = array('colname','colsetting','colvalue','colaction');
+$table->headspan = array(1, 2, 1);
+$table->colclasses = array('colname', 'colsetting', 'colvalue', 'colaction');
 $table->head = array(
         $colname,
         get_string('overrides', 'quiz'),
@@ -137,7 +136,8 @@ foreach ($overrides as $override) {
         if (!has_capability('mod/quiz:attempt', $context, $override->userid)) {
             // user not allowed to take the quiz
             $active = false;
-        } else if (!empty($CFG->enablegroupmembersonly) && $cm->groupmembersonly && !groups_has_membership($cm, $override->userid)) {
+        } else if (!empty($CFG->enablegroupmembersonly) && $cm->groupmembersonly &&
+                !groups_has_membership($cm, $override->userid)) {
             // user does not belong to the current grouping
             $active = false;
         }
@@ -146,31 +146,36 @@ foreach ($overrides as $override) {
     // Format timeopen
     if (isset($override->timeopen)) {
         $fields[] = get_string('quizopens', 'quiz');
-        $values[] = ($override->timeopen > 0)? userdate($override->timeopen) : get_string('noopen', 'quiz');
+        $values[] = $override->timeopen > 0 ?
+                userdate($override->timeopen) : get_string('noopen', 'quiz');
     }
 
     // Format timeclose
     if (isset($override->timeclose)) {
         $fields[] = get_string('quizcloses', 'quiz');
-        $values[] = ($override->timeclose > 0)? userdate($override->timeclose) : get_string('noclose', 'quiz');
+        $values[] = $override->timeclose > 0 ?
+                userdate($override->timeclose) : get_string('noclose', 'quiz');
     }
 
     // Format timelimit
     if (isset($override->timelimit)) {
         $fields[] = get_string('timelimit', 'quiz');
-        $values[] = ($override->timelimit > 0)? format_time($override->timelimit) : get_string('none', 'quiz');
+        $values[] = $override->timelimit > 0 ?
+                format_time($override->timelimit) : get_string('none', 'quiz');
     }
 
     // Format number of attempts
     if (isset($override->attempts)) {
         $fields[] = get_string('attempts', 'quiz');
-        $values[] = ($override->attempts > 0)? $override->attempts : get_string('unlimited');
+        $values[] = $override->attempts > 0 ?
+                $override->attempts : get_string('unlimited');
     }
 
     // Format password
     if (isset($override->password)) {
         $fields[] = get_string('requirepassword', 'quiz');
-        $values[] = ($override->password !== '')? get_string('enabled', 'quiz') : get_string('none', 'quiz');
+        $values[] = $override->password !== '' ?
+                get_string('enabled', 'quiz') : get_string('none', 'quiz');
     }
 
     // Icons:
@@ -181,22 +186,28 @@ foreach ($overrides as $override) {
         // edit
         $editurlstr = $overrideediturl->out(true, array('id' => $override->id));
         $iconstr = '<a title="' . get_string('edit') . '" href="'. $editurlstr . '">' .
-                '<img src="' . $OUTPUT->pix_url('t/edit') . '" class="iconsmall" alt="' . get_string('edit') . '" /></a> ';
+                '<img src="' . $OUTPUT->pix_url('t/edit') . '" class="iconsmall" alt="' .
+                get_string('edit') . '" /></a> ';
         // duplicate
-        $copyurlstr = $overrideediturl->out(true, array('id' => $override->id, 'action' => 'duplicate'));
+        $copyurlstr = $overrideediturl->out(true,
+                array('id' => $override->id, 'action' => 'duplicate'));
         $iconstr .= '<a title="' . get_string('copy') . '" href="' . $copyurlstr . '">' .
-                '<img src="' . $OUTPUT->pix_url('t/copy') . '" class="iconsmall" alt="' . get_string('copy') . '" /></a> ';
+                '<img src="' . $OUTPUT->pix_url('t/copy') . '" class="iconsmall" alt="' .
+                get_string('copy') . '" /></a> ';
     }
     // delete
-    $deleteurlstr = $overridedeleteurl->out(true, array('id' => $override->id, 'sesskey' => sesskey()));
+    $deleteurlstr = $overridedeleteurl->out(true,
+            array('id' => $override->id, 'sesskey' => sesskey()));
     $iconstr .= '<a title="' . get_string('delete') . '" href="' . $deleteurlstr . '">' .
-            '<img src="' . $OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt="' . get_string('delete') . '" /></a> ';
+            '<img src="' . $OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt="' .
+            get_string('delete') . '" /></a> ';
 
     if ($groupmode) {
-        $usergroupstr = '<a href="' . $groupurl->out(true, array('group' => $override->groupid)) . '" >' . $override->name . '</a>';
-    }
-    else {
-        $usergroupstr = '<a href="' . $userurl->out(true, array('id' => $override->userid)) . '" >' . fullname($override) . '</a>';
+        $usergroupstr = '<a href="' . $groupurl->out(true,
+                array('group' => $override->groupid)) . '" >' . $override->name . '</a>';
+    } else {
+        $usergroupstr = '<a href="' . $userurl->out(true,
+                array('id' => $override->userid)) . '" >' . fullname($override) . '</a>';
     }
 
     $class = '';
@@ -250,8 +261,9 @@ if ($groupmode) {
         echo $OUTPUT->notification(get_string('groupsnone', 'quiz'), 'error');
         $options['disabled'] = true;
     }
-    echo $OUTPUT->single_button($overrideediturl->out(true, array('action' => 'addgroup', 'cmid' => $cm->id)),
-                                    get_string('addnewgroupoverride', 'quiz'), 'post', $options);
+    echo $OUTPUT->single_button($overrideediturl->out(true,
+            array('action' => 'addgroup', 'cmid' => $cm->id)),
+            get_string('addnewgroupoverride', 'quiz'), 'post', $options);
 } else {
     $users = array();
     // See if there are any students in the quiz
@@ -259,12 +271,12 @@ if ($groupmode) {
         // restrict to grouping
         $limitgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid);
         if (!empty($limitgroups)) {
-            $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id', '', '', 1, array_keys($limitgroups)); // Limit to one user for speed
-        } else {
-            // empty grouping
+            $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id',
+                    '', '', 1, array_keys($limitgroups)); // Limit to one user for speed
         }
     } else {
-        $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id'); // Limit to one user for speed
+        // Limit to one user for speed.
+        $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id');
     }
 
     if (empty($users)) {
@@ -272,8 +284,9 @@ if ($groupmode) {
         echo $OUTPUT->notification(get_string('usersnone', 'quiz'), 'error');
         $options['disabled'] = true;
     }
-    echo $OUTPUT->single_button($overrideediturl->out(true, array('action' => 'adduser', 'cmid' => $cm->id)),
-                                    get_string('addnewuseroverride', 'quiz'), 'post', $options);
+    echo $OUTPUT->single_button($overrideediturl->out(true,
+            array('action' => 'adduser', 'cmid' => $cm->id)),
+            get_string('addnewuseroverride', 'quiz'), 'post', $options);
 }
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');

@@ -17,8 +17,8 @@ if (clientPC.indexOf('opera')!=-1) {
 // copied and adapted from phpBB
 function insertTags(tagOpen, tagClose, sampleText) {
 
-	tagOpen = unescape(tagOpen);
-	tagClose = unescape(tagClose);
+    tagOpen = unescape(tagOpen);
+    tagClose = unescape(tagClose);
 
     var txtarea = document.forms['mform1'].newcontent;
 

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,11 +21,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * restore plugin class that provides the necessary information
  * needed to restore one truefalse qtype plugin
+ *
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_qtype_truefalse_plugin extends restore_qtype_plugin {
 
@@ -44,7 +48,6 @@ class restore_qtype_truefalse_plugin extends restore_qtype_plugin {
         $elename = 'truefalse';
         $elepath = $this->get_pathfor('/truefalse'); // we used get_recommended_name() so this works
         $paths[] = new restore_path_element($elename, $elepath);
-
 
         return $paths; // And we return the interesting paths
     }
@@ -73,23 +76,6 @@ class restore_qtype_truefalse_plugin extends restore_qtype_plugin {
             $newitemid = $DB->insert_record('question_truefalse', $data);
             // Create mapping
             $this->set_mapping('question_truefalse', $oldid, $newitemid);
-        } else {
-            // Nothing to remap if the question already existed
         }
-    }
-
-    /**
-     * Given one question_states record, return the answer
-     * recoded pointing to all the restored stuff for truefalse questions
-     *
-     * if not empty, answer is one question_answers->id
-     */
-    public function recode_state_answer($state) {
-        $answer = $state->answer;
-        $result = '';
-        if ($answer) {
-            $result = $this->get_mappingid('question_answer', $answer);
-        }
-        return $result;
     }
 }

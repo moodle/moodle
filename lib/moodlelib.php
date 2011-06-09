@@ -424,6 +424,10 @@ define('HUB_HUBDIRECTORYURL', "http://hubdirectory.moodle.org");
  */
 define('HUB_MOODLEORGHUBURL', "http://hub.moodle.org");
 
+/**
+ * Moodle mobile app service name
+ */
+define('MOODLE_OFFICIAL_MOBILE_SERVICE', 'moodle_mobile_app');
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
@@ -1554,26 +1558,27 @@ function get_user_preferences($name = null, $default = null, $user = null) {
  * @param int $hour The hour part to create timestamp of
  * @param int $minute The minute part to create timestamp of
  * @param int $second The second part to create timestamp of
- * @param float $timezone Timezone modifier
- * @param bool $applydst Toggle Daylight Saving Time, default true
+ * @param mixed $timezone Timezone modifier, if 99 then use default user's timezone
+ * @param bool $applydst Toggle Daylight Saving Time, default true, will be
+ *             applied only if timezone is 99 or string.
  * @return int timestamp
  */
 function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99, $applydst=true) {
 
-    $strtimezone = NULL;
-    if (!is_numeric($timezone)) {
-        $strtimezone = $timezone;
-    }
+    //save input timezone, required for dst offset check.
+    $passedtimezone = $timezone;
 
     $timezone = get_user_timezone_offset($timezone);
 
-    if (abs($timezone) > 13) {
+    if (abs($timezone) > 13) {  //server time
         $time = mktime((int)$hour, (int)$minute, (int)$second, (int)$month, (int)$day, (int)$year);
     } else {
         $time = gmmktime((int)$hour, (int)$minute, (int)$second, (int)$month, (int)$day, (int)$year);
         $time = usertime($time, $timezone);
-        if($applydst) {
-            $time -= dst_offset_on($time, $strtimezone);
+
+        //Apply dst for string timezones or if 99 then try dst offset with user's default timezone
+        if ($applydst && ((99 == $passedtimezone) || !is_numeric($passedtimezone))) {
+            $time -= dst_offset_on($time, $passedtimezone);
         }
     }
 
@@ -1664,7 +1669,8 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * @param int $date the timestamp in UTC, as obtained from the database.
  * @param string $format strftime format. You should probably get this using
  *      get_string('strftime...', 'langconfig');
- * @param float $timezone by default, uses the user's time zone.
+ * @param mixed $timezone by default, uses the user's time zone. if numeric and
+ *      not 99 then daylight saving will not be added.
  * @param bool $fixday If true (default) then the leading zero from %d is removed.
  *      If false then the leading zero is maintained.
  * @return string the formatted date/time.
@@ -1672,11 +1678,6 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
 function userdate($date, $format = '', $timezone = 99, $fixday = true) {
 
     global $CFG;
-
-    $strtimezone = NULL;
-    if (!is_numeric($timezone)) {
-        $strtimezone = $timezone;
-    }
 
     if (empty($format)) {
         $format = get_string('strftimedaydatetime', 'langconfig');
@@ -1689,7 +1690,11 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true) {
         $fixday = ($formatnoday != $format);
     }
 
-    $date += dst_offset_on($date, $strtimezone);
+    //add daylight saving offset for string timezones only, as we can't get dst for
+    //float values. if timezone is 99 (user default timezone), then try update dst.
+    if ((99 == $timezone) || !is_numeric($timezone)) {
+        $date += dst_offset_on($date, $timezone);
+    }
 
     $timezone = get_user_timezone_offset($timezone);
 
@@ -1732,15 +1737,14 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true) {
  * @todo Finish documenting this function
  * @uses HOURSECS
  * @param int $time Timestamp in GMT
- * @param float $timezone ?
+ * @param mixed $timezone offset time with timezone, if float and not 99, then no
+ *        dst offset is applyed
  * @return array An array that represents the date in user time
  */
 function usergetdate($time, $timezone=99) {
 
-    $strtimezone = NULL;
-    if (!is_numeric($timezone)) {
-        $strtimezone = $timezone;
-    }
+    //save input timezone, required for dst offset check.
+    $passedtimezone = $timezone;
 
     $timezone = get_user_timezone_offset($timezone);
 
@@ -1748,8 +1752,12 @@ function usergetdate($time, $timezone=99) {
         return getdate($time);
     }
 
-    // There is no gmgetdate so we use gmdate instead
-    $time += dst_offset_on($time, $strtimezone);
+    //add daylight saving offset for string timezones only, as we can't get dst for
+    //float values. if timezone is 99 (user default timezone), then try update dst.
+    if ($passedtimezone == 99 || !is_numeric($passedtimezone)) {
+        $time += dst_offset_on($time, $passedtimezone);
+    }
+
     $time += intval((float)$timezone * HOURSECS);
 
     $datestring = gmstrftime('%B_%A_%j_%Y_%m_%w_%d_%H_%M_%S', $time);
@@ -1900,7 +1908,7 @@ function get_timezone_offset($tz) {
  *
  * @global object
  * @global object
- * @param float $tz If this value is provided and not equal to 99, it will be returned as is and no other settings will be checked
+ * @param mixed $tz If this value is provided and not equal to 99, it will be returned as is and no other settings will be checked
  * @return mixed
  */
 function get_user_timezone($tz = 99) {
@@ -1954,7 +1962,7 @@ function get_timezone_record($timezonename) {
  * @global object
  * @param mixed $from_year Start year for the table, defaults to 1971
  * @param mixed $to_year End year for the table, defaults to 2035
- * @param mixed $strtimezone
+ * @param mixed $strtimezone, if null or 99 then user's default timezone is used
  * @return bool
  */
 function calculate_user_dst_table($from_year = NULL, $to_year = NULL, $strtimezone = NULL) {
@@ -2115,9 +2123,12 @@ function dst_changes_for_year($year, $timezone) {
 
 /**
  * Calculates the Daylight Saving Offset for a given date/time (timestamp)
+ * - Note: Daylight saving only works for string timezones and not for float.
  *
  * @global object
  * @param int $time must NOT be compensated at all, it has to be a pure timestamp
+ * @param mixed $strtimezone timezone for which offset is expected, if 99 or null
+ *        then user's default timezone is used.
  * @return int
  */
 function dst_offset_on($time, $strtimezone = NULL) {
@@ -7067,7 +7078,8 @@ function get_plugin_types($fullpaths=true) {
     static $fullinfo = null;
 
     if (!$info) {
-        $info = array('mod'           => 'mod',
+        $info = array('qtype'         => 'question/type',
+                      'mod'           => 'mod',
                       'auth'          => 'auth',
                       'enrol'         => 'enrol',
                       'message'       => 'message/output',
@@ -7085,7 +7097,7 @@ function get_plugin_types($fullpaths=true) {
                       'webservice'    => 'webservice',
                       'repository'    => 'repository',
                       'portfolio'     => 'portfolio',
-                      'qtype'         => 'question/type',
+                      'qbehaviour'    => 'question/behaviour',
                       'qformat'       => 'question/format',
                       'plagiarism'    => 'plagiarism',
                       'theme'         => 'theme'); // this is a bit hacky, themes may be in $CFG->themedir too
@@ -7601,6 +7613,143 @@ function check_php_version($version='5.2.4') {
     }
 
     return false;
+}
+
+/**
+ * Returns whether a device/browser combination is mobile, tablet, legacy, default or the result of 
+ * an optional admin specified regular expression.  If enabledevicedetection is set to no or not set
+ * it returns default
+ * 
+ * @return string device type
+ */
+function get_device_type() {
+    global $CFG;
+
+    if (empty($CFG->enabledevicedetection) || empty($_SERVER['HTTP_USER_AGENT'])) {
+        return 'default';
+    }
+
+    $useragent = $_SERVER['HTTP_USER_AGENT'];
+
+    if (!empty($CFG->devicedetectregex)) {
+        $regexes = json_decode($CFG->devicedetectregex);
+
+        foreach ($regexes as $value=>$regex) {
+            if (preg_match($regex, $useragent)) {
+                return $value;
+            }
+        }
+    }
+
+    //mobile detection PHP direct copy from open source detectmobilebrowser.com
+    $phonesregex = '/android|avantgo|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i';
+    $modelsregex = '/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|e\-|e\/|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(di|rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|xda(\-|2|g)|yas\-|your|zeto|zte\-/i';
+    if (preg_match($phonesregex,$useragent) || preg_match($modelsregex,substr($useragent, 0, 4))){
+        return 'mobile';
+    }
+
+    $tabletregex = '/Tablet browser|iPad|iProd|GT-P1000|GT-I9000|SHW-M180S|SGH-T849|SCH-I800|Build\/ERE27|sholest/i';
+    if (preg_match($tabletregex, $useragent)) {
+         return 'tablet';
+    }
+
+    if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6.') !== false) {
+        return 'legacy';
+    }
+
+    return 'default';
+}
+
+/**
+ * Returns a list of the device types supporting by Moodle
+ *
+ * @param boolean $incusertypes includes types specified using the devicedetectregex admin setting
+ * @return array $types
+ */
+function get_device_type_list($incusertypes = true) {
+    global $CFG;
+
+    $types = array('default', 'legacy', 'mobile', 'tablet');
+
+    if ($incusertypes && !empty($CFG->devicedetectregex)) {
+        $regexes = json_decode($CFG->devicedetectregex);
+
+        foreach ($regexes as $value => $regex) {
+            $types[] = $value;
+        }
+    }
+
+    return $types;
+}
+
+/**
+ * Returns the theme selected for a particular device or false if none selected.
+ *
+ * @param string $devicetype
+ * @return string|false The name of the theme to use for the device or the false if not set
+ */
+function get_selected_theme_for_device_type($devicetype = null) {
+    global $CFG;
+
+    if (empty($devicetype)) {
+        $devicetype = get_user_device_type();
+    }
+
+    $themevarname = get_device_cfg_var_name($devicetype);
+    if (empty($CFG->$themevarname)) {
+        return false;
+    }
+
+    return $CFG->$themevarname;
+}
+
+/**
+ * Returns the name of the device type theme var in $CFG (because there is not a standard convention to allow backwards compatability
+ *
+ * @param string $devicetype
+ * @return string The config variable to use to determine the theme
+ */
+function get_device_cfg_var_name($devicetype = null) {
+    if ($devicetype == 'default' || empty($devicetype)) {
+        return 'theme';
+    }
+
+    return 'theme' . $devicetype;
+}
+
+/**
+ * Allows the user to switch the device they are seeing the theme for.
+ * This allows mobile users to switch back to the default theme, or theme for any other device.
+ *
+ * @param string $newdevice The device the user is currently using.
+ * @return string The device the user has switched to
+ */
+function set_user_device_type($newdevice) {
+    global $USER;
+
+    $devicetype = get_device_type();
+    $devicetypes = get_device_type_list();
+
+    if ($newdevice == $devicetype) {
+        unset_user_preference('switchdevice'.$devicetype);
+    } else if (in_array($newdevice, $devicetypes)) {
+        set_user_preference('switchdevice'.$devicetype, $newdevice);
+    }
+}
+
+/**
+ * Returns the device the user is currently using, or if the user has chosen to switch devices
+ * for the current device type the type they have switched to.
+ *
+ * @return string The device the user is currently using or wishes to use
+ */
+function get_user_device_type() {
+    $device = get_device_type();
+    $switched = get_user_preferences('switchdevice'.$device, false);
+    if ($switched != false) {
+        return $switched;
+    }
+    return $device;
 }
 
 /**

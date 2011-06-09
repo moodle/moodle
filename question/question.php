@@ -1,13 +1,29 @@
 <?php
-/**
- * Page for editing questions using the new form library.
- *
- * @author T.J.Hunt@open.ac.uk
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questionbank
- *//** */
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// Includes.
+/**
+ * Page for editing questions.
+ *
+ * @package    moodlecore
+ * @subpackage questionbank
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
 require_once(dirname(__FILE__) . '/../config.php');
 require_once(dirname(__FILE__) . '/editlib.php');
 require_once($CFG->libdir . '/filelib.php');
@@ -25,6 +41,7 @@ $movecontext = optional_param('movecontext', 0, PARAM_BOOL); // Switch to make
 $originalreturnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 $appendqnumstring = optional_param('appendqnumstring', '', PARAM_ALPHA);
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
+$scrollpos = optional_param('scrollpos', 0, PARAM_INT);
 
 $url = new moodle_url('/question/question.php');
 if ($id !== 0) {
@@ -57,6 +74,9 @@ if ($appendqnumstring !== '') {
 if ($inpopup !== 0) {
     $url->param('inpopup', $inpopup);
 }
+if ($scrollpos) {
+    $url->param('scrollpos', $scrollpos);
+}
 $PAGE->set_url($url);
 
 if ($originalreturnurl) {
@@ -68,6 +88,9 @@ if ($originalreturnurl) {
     $returnurl = new moodle_url('/question/edit.php', array('cmid' => $cmid));
 } else {
     $returnurl = new moodle_url('/question/edit.php', array('courseid' => $courseid));
+}
+if ($scrollpos) {
+    $returnurl->param('scrollpos', $scrollpos);
 }
 
 if ($movecontext && !$id){
@@ -100,13 +123,12 @@ if ($id) {
     get_question_options($question, true);
 
 } else if ($categoryid && $qtype) { // only for creating new questions
-    $question = new stdClass;
+    $question = new stdClass();
     $question->category = $categoryid;
     $question->qtype = $qtype;
 
     // Check that users are allowed to create this question type at the moment.
-    $allowedtypes = question_type_menu();
-    if (!isset($allowedtypes[$qtype])) {
+    if (!question_bank::qtype_enabled($qtype)) {
         print_error('cannotenable', 'question', $returnurl, $qtype);
     }
 
@@ -121,13 +143,15 @@ if ($id) {
     print_error('notenoughdatatoeditaquestion', 'question', $returnurl);
 }
 
+$qtypeobj = question_bank::get_qtype($question->qtype);
+
 // Validate the question category.
 if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
     print_error('categorydoesnotexist', 'question', $returnurl);
 }
 
 // Check permissions
-$question->formoptions = new stdClass;
+$question->formoptions = new stdClass();
 
 $categorycontext = get_context_instance_by_id($category->contextid);
 $addpermission = has_capability('moodle/question:add', $categorycontext);
@@ -164,26 +188,17 @@ if ($id) {
 }
 
 // Validate the question type.
-if (!isset($QTYPES[$question->qtype])) {
-    print_error('unknownquestiontype', 'question', $returnurl, $question->qtype);
-}
 $PAGE->set_pagetype('question-type-' . $question->qtype);
 
 // Create the question editing form.
-if ($wizardnow!=='' && !$movecontext){
-    if (!method_exists($QTYPES[$question->qtype], 'next_wizard_form')){
-        print_error('missingimportantcode', 'question', $returnurl, 'wizard form definition');
-    } else {
-        $mform = $QTYPES[$question->qtype]->next_wizard_form('question.php', $question, $wizardnow, $formeditable);
-    }
+if ($wizardnow !== '' && !$movecontext){
+    $mform = $qtypeobj->next_wizard_form('question.php', $question, $wizardnow, $formeditable);
 } else {
-    $mform = $QTYPES[$question->qtype]->create_editing_form('question.php', $question, $category, $contexts, $formeditable);
-}
-if ($mform === null) {
-    print_error('missingimportantcode', 'question', $returnurl, 'question editing form definition for "'.$question->qtype.'"');
+    $mform = $qtypeobj->create_editing_form('question.php', $question, $category, $contexts, $formeditable);
 }
 $toform = fullclone($question); // send the question object and a few more parameters to the form
 $toform->category = "$category->id,$category->contextid";
+$toform->scrollpos = $scrollpos;
 if ($formeditable && $id){
     $toform->categorymoveto = $toform->category;
 }
@@ -202,15 +217,13 @@ $toform->inpopup = $inpopup;
 
 $mform->set_data($toform);
 
-if ($mform->is_cancelled()){
+if ($mform->is_cancelled()) {
     if ($inpopup) {
         close_window();
     } else {
-        if (!empty($question->id)) {
-            $returnurl->param('lastchanged', $question->id);
-        }
-        redirect($returnurl->out(false));
+        redirect($returnurl);
     }
+
 } else if ($fromform = $mform->get_data()) {
     /// If we are saving as a copy, break the connection to the old question.
     if (!empty($fromform->makecopy)) {
@@ -248,7 +261,7 @@ if ($mform->is_cancelled()){
 
     } else {
         // We are acutally saving the question.
-        $question = $QTYPES[$question->qtype]->save_question($question, $fromform);
+        $question = $qtypeobj->save_question($question, $fromform);
         if (!empty($CFG->usetags) && isset($fromform->tags)) {
             // A wizardpage from multipe pages questiontype like calculated may not
             // allow editing the question tags, hence the isset($fromform->tags) test.
@@ -257,7 +270,7 @@ if ($mform->is_cancelled()){
         }
     }
 
-    if (($QTYPES[$question->qtype]->finished_edit_wizard($fromform)) || $movecontext) {
+    if (($qtypeobj->finished_edit_wizard($fromform)) || $movecontext) {
         if ($inpopup) {
             echo $OUTPUT->notification(get_string('changessaved'), '');
             close_window(3);
@@ -274,7 +287,8 @@ if ($mform->is_cancelled()){
     } else {
         $nexturlparams = array(
                 'returnurl' => $originalreturnurl,
-                'appendqnumstring' => $appendqnumstring);
+                'appendqnumstring' => $appendqnumstring,
+                'scrollpos' => $scrollpos);
         if (isset($fromform->nextpageparam) && is_array($fromform->nextpageparam)){
             //useful for passing data to the next page which is not saved in the database.
             $nexturlparams += $fromform->nextpageparam;
@@ -291,7 +305,7 @@ if ($mform->is_cancelled()){
     }
 
 } else {
-    $streditingquestion = $QTYPES[$question->qtype]->get_heading();
+    $streditingquestion = $qtypeobj->get_heading();
     $PAGE->set_title($streditingquestion);
     $PAGE->set_heading($COURSE->fullname);
     if ($cm !== null) {
@@ -307,15 +321,14 @@ if ($mform->is_cancelled()){
         echo $OUTPUT->header();
 
     } else {
-        $strediting = '<a href="edit.php?courseid='.$COURSE->id.'">'.get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
-        $PAGE->navbar->add(get_string('editquestions', 'quiz'), $returnurl);
+        $strediting = '<a href="edit.php?courseid='.$COURSE->id.'">'.get_string('editquestions', 'question').'</a> -> '.$streditingquestion;
+        $PAGE->navbar->add(get_string('editquestions', 'question'), $returnurl);
         $PAGE->navbar->add($streditingquestion);
         echo $OUTPUT->header();
     }
 
     // Display a heading, question editing form and possibly some extra content needed for
     // for this question type.
-    $QTYPES[$question->qtype]->display_question_editing_page($mform, $question, $wizardnow);
+    $qtypeobj->display_question_editing_page($mform, $question, $wizardnow);
     echo $OUTPUT->footer();
 }
-

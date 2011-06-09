@@ -1,6 +1,30 @@
-// This script is included by question_bank_view and other parts of question/editlib.php.
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// JavaScript belonging to question_bank_view.
+/**
+ * JavaScript belonging to question_bank_view.
+ *
+ * This script is included by question_bank_view and other parts of question/editlib.php.
+ *
+ * @package    moodlecore
+ * @subpackage questionbank
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
 question_bank = {
     strselectall: '',
     strdeselectall: '',
@@ -43,7 +67,7 @@ qtype_chooser = {
     container: null,
     submitbutton: null,
 
-    init: function(boxid) {
+    init: function(Y, boxid) {
         // Find the radio buttons.
         qtype_chooser.radiobuttons = YAHOO.util.Dom.getElementsBy(
                 function(el) { return el.type == 'radio'; }, 'input' , boxid);
@@ -57,9 +81,17 @@ qtype_chooser = {
         YAHOO.util.Event.addListener(boxid, 'click', qtype_chooser.enable_disable_submit);
         YAHOO.util.Event.addListener(boxid, 'key_down', qtype_chooser.enable_disable_submit);
         YAHOO.util.Event.addListener(boxid, 'key_up', qtype_chooser.enable_disable_submit);
-        YAHOO.util.Event.addListener(boxid, 'dblclick', qtype_chooser.double_click);
+        YAHOO.util.Event.addListener(boxid, 'dblclick', function(e) {
+                if (!qtype_chooser.submitbutton.disabled) {
+                    M.core_scroll_manager.save_scroll_pos(Y, Y.one(qtype_chooser.submitbutton));
+                    qtype_chooser.submitbutton.form.submit();
+                }
+            });
 
         YAHOO.util.Event.onDOMReady(qtype_chooser.init_container);
+        Y.on('submit', function(e) {
+            M.core_scroll_manager.save_scroll_pos(Y, Y.one(qtype_chooser.submitbutton));
+        }, qtype_chooser.submitbutton.form);
     },
 
     enable_disable_submit: function() {
@@ -73,12 +105,6 @@ qtype_chooser = {
             }
         }
         qtype_chooser.submitbutton.disabled = !ok;
-    },
-
-    double_click: function() {
-        if (!qtype_chooser.submitbutton.disabled) {
-            qtype_chooser.submitbutton.form.submit();
-        }
     },
 
     init_container: function() {

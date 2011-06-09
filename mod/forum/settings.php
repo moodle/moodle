@@ -65,14 +65,17 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('forum_usermarksread', get_string('usermarksread', 'forum'),
                        get_string('configusermarksread', 'forum'), 0));
 
-    // Default time (hour) to execute 'clean_read_records' cron
     $options = array();
-    for ($i=0; $i<24; $i++) {
-        $options[$i] = $i;
+    for ($i = 0; $i < 24; $i++) {
+        $options[$i] = sprintf("%02d",$i);
     }
+    // Default time (hour) to execute 'clean_read_records' cron
     $settings->add(new admin_setting_configselect('forum_cleanreadtime', get_string('cleanreadtime', 'forum'),
                        get_string('configcleanreadtime', 'forum'), 2, $options));
 
+    // Default time (hour) to send digest email
+    $settings->add(new admin_setting_configselect('digestmailtime', get_string('digestmailtime', 'forum'),
+                       get_string('configdigestmailtime', 'forum'), 17, $options));
 
     if (empty($CFG->enablerssfeeds)) {
         $options = array(0 => get_string('rssglobaldisabled', 'admin'));

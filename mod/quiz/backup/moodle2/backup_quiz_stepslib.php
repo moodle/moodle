@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,18 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
+ * @package    moodlecore
  * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
+defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Define all the backup steps that will be used by the backup_quiz_activity_task
- */
-
-/**
- * Define the complete quiz structure for backup, with file and id annotations
+ *
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_quiz_activity_structure_step extends backup_questions_activity_structure_step {
 
@@ -39,9 +41,12 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         // Define each element separated
         $quiz = new backup_nested_element('quiz', array('id'), array(
             'name', 'intro', 'introformat', 'timeopen',
-            'timeclose', 'optionflags', 'penaltyscheme', 'attempts_number',
+            'timeclose', 'preferredbehaviour', 'attempts_number',
             'attemptonlast', 'grademethod', 'decimalpoints', 'questiondecimalpoints',
-            'review', 'questionsperpage', 'shufflequestions', 'shuffleanswers',
+            'reviewattempt', 'reviewcorrectness', 'reviewmarks',
+            'reviewspecificfeedback', 'reviewgeneralfeedback',
+            'reviewrightanswer', 'reviewoverallfeedback',
+            'questionsperpage', 'shufflequestions', 'shuffleanswers',
             'questions', 'sumgrades', 'grade', 'timecreated',
             'timemodified', 'timelimit', 'password', 'subnet',
             'popup', 'delay1', 'delay2', 'showuserpicture',
@@ -77,8 +82,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
 
         // This module is using questions, so produce the related question states and sessions
         // attaching them to the $attempt element based in 'uniqueid' matching
-        $this->add_question_attempts_states($attempt, 'uniqueid');
-        $this->add_question_attempts_sessions($attempt, 'uniqueid');
+        $this->add_question_usages($attempt, 'uniqueid');
 
         // Build the tree
 
@@ -100,9 +104,11 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         // Define sources
         $quiz->set_source_table('quiz', array('id' => backup::VAR_ACTIVITYID));
 
-        $qinstance->set_source_table('quiz_question_instances', array('quiz' => backup::VAR_PARENTID));
+        $qinstance->set_source_table('quiz_question_instances',
+                array('quiz' => backup::VAR_PARENTID));
 
-        $feedback->set_source_table('quiz_feedback', array('quizid' => backup::VAR_PARENTID));
+        $feedback->set_source_table('quiz_feedback',
+                array('quizid' => backup::VAR_PARENTID));
 
         // Quiz overrides to backup are different depending of user info
         $overrideparams = array('quiz' => backup::VAR_PARENTID);
@@ -115,7 +121,11 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         // All the rest of elements only happen if we are including user info
         if ($userinfo) {
             $grade->set_source_table('quiz_grades', array('quiz' => backup::VAR_PARENTID));
-            $attempt->set_source_table('quiz_attempts', array('quiz' => backup::VAR_PARENTID));
+            $attempt->set_source_sql('
+                    SELECT *
+                    FROM {quiz_attempts}
+                    WHERE quiz = :quiz AND preview = 0',
+                    array('quiz' => backup::VAR_PARENTID));
         }
 
         // Define source alias

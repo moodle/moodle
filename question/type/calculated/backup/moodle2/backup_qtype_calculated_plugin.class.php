@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,10 +20,16 @@
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
 defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Provides the information to backup calculated questions
+ *
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_qtype_calculated_plugin extends backup_qtype_plugin {
 
@@ -66,8 +71,8 @@ class backup_qtype_calculated_plugin extends backup_qtype_plugin {
         $calculatedoptions = new backup_nested_element('calculated_options');
         $calculatedoption = new backup_nested_element('calculated_option', array('id'), array(
             'synchronize', 'single', 'shuffleanswers', 'correctfeedback',
-            'correctfeedbackformat', 'partiallycorrectfeedback', 'partiallycorrectfeedbackformat', 'incorrectfeedback',
-            'incorrectfeedbackformat', 'answernumbering'));
+            'correctfeedbackformat', 'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
+            'incorrectfeedback', 'incorrectfeedbackformat', 'answernumbering'));
 
         // Now the own qtype tree
         $pluginwrapper->add_child($calculatedrecords);
@@ -77,8 +82,10 @@ class backup_qtype_calculated_plugin extends backup_qtype_plugin {
         $calculatedoptions->add_child($calculatedoption);
 
         // set source to populate the data
-        $calculatedrecord->set_source_table('question_calculated', array('question' => backup::VAR_PARENTID));
-        $calculatedoption->set_source_table('question_calculated_options', array('question' => backup::VAR_PARENTID));
+        $calculatedrecord->set_source_table('question_calculated',
+                array('question' => backup::VAR_PARENTID));
+        $calculatedoption->set_source_table('question_calculated_options',
+                array('question' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
 
@@ -92,15 +99,7 @@ class backup_qtype_calculated_plugin extends backup_qtype_plugin {
      * files to be processed both in backup and restore.
      */
     public static function get_qtype_fileareas() {
-        // TODO: Discuss. Commented below are the "in theory" correct
-        // mappings for those fileareas. Instead we are using question for
-        // them, that will cause problems in the future if we want to change
-        // any of them to be 1..n (i.e. we should be always pointing to own id)
         return array(
-            //'instruction' => 'question_numerical_option',
-            //'correctfeedback' => 'question_calculated_option',
-            //'partiallycorrectfeedback' => 'question_calculated_option',
-            //'incorrectfeedback' => 'question_calculated_option');
             'instruction' => 'question_created',
             'correctfeedback' => 'question_created',
             'partiallycorrectfeedback' => 'question_created',

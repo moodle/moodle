@@ -1,36 +1,32 @@
 <?php
-
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas and others                //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Functions used to show question editing interface
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questionbank
- *//** */
+ * @package    moodlecore
+ * @subpackage questionbank
+ * @copyright  1999 onwards Martin Dougiamas and others {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-require_once($CFG->libdir.'/questionlib.php');
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/questionlib.php');
 
 define('DEFAULT_QUESTIONS_PER_PAGE', 20);
 
@@ -61,8 +57,7 @@ function get_module_from_cmid($cmid) {
 * @author added by Howard Miller June 2004
 */
 function get_questions_category( $category, $noparent=false, $recurse=true, $export=true ) {
-
-    global $QTYPES, $DB;
+    global $DB;
 
     // questions will be added to an array
     $qresults = array();
@@ -73,23 +68,21 @@ function get_questions_category( $category, $noparent=false, $recurse=true, $exp
       $npsql = " and parent='0' ";
     }
 
-    // get (list) of categories
+    // Get list of categories
     if ($recurse) {
         $categorylist = question_categorylist($category->id);
-    }
-    else {
-        $categorylist = $category->id;
+    } else {
+        $categorylist = array($category->id);
     }
 
     // get the list of questions for the category
-    list ($usql, $params) = $DB->get_in_or_equal(explode(',', $categorylist));
-    if ($questions = $DB->get_records_select("question","category $usql $npsql", $params, "qtype, name ASC")) {
+    list($usql, $params) = $DB->get_in_or_equal($categorylist);
+    if ($questions = $DB->get_records_select('question', "category $usql $npsql", $params, 'qtype, name')) {
 
         // iterate through questions, getting stuff we need
         foreach($questions as $question) {
-            $questiontype = $QTYPES[$question->qtype];
             $question->export_process = $export;
-            $questiontype->get_question_options($question);
+            question_bank::get_qtype($question->qtype)->get_question_options($question);
             $qresults[] = $question;
         }
     }
@@ -98,8 +91,8 @@ function get_questions_category( $category, $noparent=false, $recurse=true, $exp
 }
 
 /**
- * @param integer $categoryid a category id.
- * @return boolean whether this is the only top-level category in a context.
+ * @param int $categoryid a category id.
+ * @return bool whether this is the only top-level category in a context.
  */
 function question_is_only_toplevel_category_in_context($categoryid) {
     global $DB;
@@ -115,7 +108,7 @@ function question_is_only_toplevel_category_in_context($categoryid) {
 /**
  * Check whether this user is allowed to delete this category.
  *
- * @param integer $todelete a category id.
+ * @param int $todelete a category id.
  */
 function question_can_delete_cat($todelete) {
     global $DB;
@@ -127,6 +120,13 @@ function question_can_delete_cat($todelete) {
     }
 }
 
+
+/**
+ * Base class for representing a column in a {@link question_bank_view}.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 abstract class question_bank_column_base {
     /**
      * @var question_bank_view
@@ -155,7 +155,7 @@ abstract class question_bank_column_base {
 
     /**
      * Output the column header cell.
-     * @param integer $currentsort 0 for none. 1 for normal sort, -1 for reverse sort.
+     * @param int $currentsort 0 for none. 1 for normal sort, -1 for reverse sort.
      */
     public function display_header() {
         echo '<th class="header ' . $this->get_classes() . '" scope="col">';
@@ -192,7 +192,7 @@ abstract class question_bank_column_base {
      * @param object $question the row from the $question table, augmented with extra information.
      * @param string $rowclasses CSS class names that should be applied to this row of output.
      */
-    abstract protected function get_title();
+    protected abstract function get_title();
 
     /**
      * @return string a fuller version of the name. Use this when get_title() returns
@@ -276,7 +276,7 @@ abstract class question_bank_column_base {
      * @return string internal name for this column. Used as a CSS class name,
      *     and to store information about the current sort. Must match PARAM_ALPHA.
      */
-    abstract public function get_name();
+    public abstract function get_name();
 
     /**
      * @return array any extra class names you would like applied to every cell in this column.
@@ -290,7 +290,7 @@ abstract class question_bank_column_base {
      * @param object $question the row from the $question table, augmented with extra information.
      * @param string $rowclasses CSS class names that should be applied to this row of output.
      */
-    abstract protected function display_content($question, $rowclasses);
+    protected abstract function display_content($question, $rowclasses);
 
     protected function display_end($question, $rowclasses) {
         echo "</td>\n";
@@ -341,7 +341,7 @@ abstract class question_bank_column_base {
 
     /**
      * Helper method for building sort clauses.
-     * @param boolean $reverse whether the normal direction should be reversed.
+     * @param bool $reverse whether the normal direction should be reversed.
      * @param string $normaldir 'ASC' or 'DESC'
      * @return string 'ASC' or 'DESC'
      */
@@ -375,15 +375,19 @@ abstract class question_bank_column_base {
     }
 }
 
+
 /**
  * A column with a checkbox for each question with name q{questionid}.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_checkbox_column extends question_bank_column_base {
     protected $strselect;
     protected $firstrow = true;
 
     public function init() {
-        $this->strselect = get_string('select', 'quiz');
+        $this->strselect = get_string('select');
     }
 
     public function get_name() {
@@ -414,8 +418,12 @@ class question_bank_checkbox_column extends question_bank_column_base {
     }
 }
 
+
 /**
  * A column type for the name of the question type.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_question_type_column extends question_bank_column_base {
     public function get_name() {
@@ -443,8 +451,12 @@ class question_bank_question_type_column extends question_bank_column_base {
     }
 }
 
+
 /**
  * A column type for the name of the question name.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_question_name_column extends question_bank_column_base {
     protected $checkboxespresent = null;
@@ -488,8 +500,12 @@ class question_bank_question_name_column extends question_bank_column_base {
     }
 }
 
+
 /**
  * A column type for the name of the question creator.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_creator_name_column extends question_bank_column_base {
     public function get_name() {
@@ -502,7 +518,7 @@ class question_bank_creator_name_column extends question_bank_column_base {
 
     protected function display_content($question, $rowclasses) {
         if (!empty($question->creatorfirstname) && !empty($question->creatorlastname)) {
-            $u = new stdClass;
+            $u = new stdClass();
             $u->firstname = $question->creatorfirstname;
             $u->lastname = $question->creatorlastname;
             echo fullname($u);
@@ -525,8 +541,12 @@ class question_bank_creator_name_column extends question_bank_column_base {
     }
 }
 
+
 /**
  * A column type for the name of the question last modifier.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_modifier_name_column extends question_bank_column_base {
     public function get_name() {
@@ -539,7 +559,7 @@ class question_bank_modifier_name_column extends question_bank_column_base {
 
     protected function display_content($question, $rowclasses) {
         if (!empty($question->modifierfirstname) && !empty($question->modifierlastname)) {
-            $u = new stdClass;
+            $u = new stdClass();
             $u->firstname = $question->modifierfirstname;
             $u->lastname = $question->modifierlastname;
             echo fullname($u);
@@ -562,8 +582,12 @@ class question_bank_modifier_name_column extends question_bank_column_base {
     }
 }
 
+
 /**
  * A base class for actions that are an icon that lets you manipulate the question in some way.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class question_bank_action_column_base extends question_bank_column_base {
 
@@ -586,6 +610,13 @@ abstract class question_bank_action_column_base extends question_bank_column_bas
     }
 }
 
+
+/**
+ * Base class for question bank columns that just contain an action icon.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_bank_edit_action_column extends question_bank_action_column_base {
     protected $stredit;
     protected $strview;
@@ -610,6 +641,13 @@ class question_bank_edit_action_column extends question_bank_action_column_base 
     }
 }
 
+
+/**
+ * Question bank columns for the preview action icon.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_bank_preview_action_column extends question_bank_action_column_base {
     protected $strpreview;
 
@@ -628,9 +666,9 @@ class question_bank_preview_action_column extends question_bank_action_column_ba
             // Build the icon.
             $image = $OUTPUT->pix_icon('t/preview', $this->strpreview);
 
-            $link = new moodle_url($this->qbank->preview_question_url($question->id));
-            parse_str(QUESTION_PREVIEW_POPUP_OPTIONS, $options);
-            $action = new popup_action('click', $link, 'questionpreview', $options);
+            $link = $this->qbank->preview_question_url($question);
+            $action = new popup_action('click', $link, 'questionpreview',
+                    question_preview_popup_params());
 
             echo $OUTPUT->action_link($link, $image, $action, array('title' => $this->strpreview));
         }
@@ -641,6 +679,13 @@ class question_bank_preview_action_column extends question_bank_action_column_ba
     }
 }
 
+
+/**
+ * Question bank columns for the move action icon.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_bank_move_action_column extends question_bank_action_column_base {
     protected $strmove;
 
@@ -660,8 +705,12 @@ class question_bank_move_action_column extends question_bank_action_column_base 
     }
 }
 
+
 /**
  * action to delete (or hide) a question, or restore a previously hidden question.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_delete_action_column extends question_bank_action_column_base {
     protected $strdelete;
@@ -696,6 +745,9 @@ class question_bank_delete_action_column extends question_bank_action_column_bas
 
 /**
  * Base class for 'columns' that are actually displayed as a row following the main question row.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class question_bank_row_base extends question_bank_column_base {
     public function is_extra_row() {
@@ -718,12 +770,15 @@ abstract class question_bank_row_base extends question_bank_column_base {
 
 /**
  * A column type for the name of the question name.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_question_text_row extends question_bank_row_base {
     protected $formatoptions;
 
     protected function init() {
-        $this->formatoptions = new stdClass;
+        $this->formatoptions = new stdClass();
         $this->formatoptions->noclean = true;
         $this->formatoptions->para = false;
     }
@@ -766,6 +821,9 @@ class question_bank_question_text_row extends question_bank_row_base {
  *  + generating the right fragments of SQL to ensure the necessary data is present,
  *    and sorted in the right order.
  *  + outputting table headers.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_view {
     const MAX_SORTS = 3;
@@ -786,6 +844,13 @@ class question_bank_view {
     protected $loadsql;
     protected $sqlparams;
 
+    /**
+     * Constructor
+     * @param question_edit_contexts $contexts
+     * @param moodle_url $pageurl
+     * @param object $course course settings
+     * @param object $cm (optional) activity settings.
+     */
     public function __construct($contexts, $pageurl, $course, $cm = null) {
         global $CFG, $PAGE;
 
@@ -870,14 +935,14 @@ class question_bank_view {
 
     /**
      * @param string $colname a column internal name.
-     * @return boolean is this column included in the output?
+     * @return bool is this column included in the output?
      */
     public function has_column($colname) {
         return isset($this->visiblecolumns[$colname]);
     }
 
     /**
-     * @return integer The number of columns in the table.
+     * @return int The number of columns in the table.
      */
     public function get_column_count() {
         return count($this->visiblecolumns);
@@ -966,7 +1031,7 @@ class question_bank_view {
 
     /**
      * @param $sort a column or column_subsort name.
-     * @return integer the current sort order for this column -1, 0, 1
+     * @return int the current sort order for this column -1, 0, 1
      */
     public function get_primary_sort_order($sort) {
         $order = reset($this->sort);
@@ -981,7 +1046,7 @@ class question_bank_view {
     /**
      * Get a URL to redisplay the page with a new sort for the question bank.
      * @param string $sort the column, or column_subsort to sort on.
-     * @param boolean $newsortreverse whether to sort in reverse order.
+     * @param bool $newsortreverse whether to sort in reverse order.
      * @return string The new URL.
      */
     public function new_sort_url($sort, $newsortreverse) {
@@ -1043,7 +1108,7 @@ class question_bank_view {
         }
 
         if ($recurse) {
-            $categoryids = explode(',', question_categorylist($category->id));
+            $categoryids = question_categorylist($category->id);
         } else {
             $categoryids = array($category->id);
         }
@@ -1086,9 +1151,8 @@ class question_bank_view {
         return $this->editquestionurl->out(true, array('id' => $questionid, 'movecontext' => 1));
     }
 
-    public function preview_question_url($questionid) {
-        global $CFG;
-        return $CFG->wwwroot . '/question/preview.php?id=' . $questionid . '&amp;courseid=' . $this->course->id;
+    public function preview_question_url($question) {
+        return question_preview_url($question->id);
     }
 
     /**
@@ -1133,7 +1197,7 @@ class question_bank_view {
 
     protected function print_choose_category_message($categoryandcontext) {
         echo "<p style=\"text-align:center;\"><b>";
-        print_string("selectcategoryabove", "quiz");
+        print_string("selectcategoryabove", "question");
         echo "</b></p>";
     }
 
@@ -1157,11 +1221,11 @@ class question_bank_view {
     }
 
     protected function print_category_info($category) {
-        $formatoptions = new stdClass;
+        $formatoptions = new stdClass();
         $formatoptions->noclean = true;
         $formatoptions->overflowdiv = true;
         echo '<div class="boxaligncenter">';
-        echo format_text($category->info, FORMAT_MOODLE, $formatoptions, $this->course->id);
+        echo format_text($category->info, $category->infoformat, $formatoptions, $this->course->id);
         echo "</div>\n";
     }
 
@@ -1185,9 +1249,9 @@ class question_bank_view {
         echo '<form method="get" action="edit.php" id="displayoptions">';
         echo "<fieldset class='invisiblefieldset'>";
         echo html_writer::input_hidden_params($this->baseurl, array('recurse', 'showhidden', 'showquestiontext'));
-        $this->display_category_form_checkbox('recurse', get_string('recurse', 'quiz'));
-        $this->display_category_form_checkbox('showhidden', get_string('showhidden', 'quiz'));
-        $this->display_category_form_checkbox('qbshowtext', get_string('showquestiontext', 'quiz'));
+        $this->display_category_form_checkbox('recurse', get_string('includesubcategories', 'question'));
+        $this->display_category_form_checkbox('showhidden', get_string('showhidden', 'question'));
+        $this->display_category_form_checkbox('qbshowtext', get_string('showquestiontext', 'question'));
         echo '<noscript><div class="centerpara"><input type="submit" value="'. get_string('go') .'" />';
         echo '</div></noscript></fieldset></form>';
     }
@@ -1227,8 +1291,8 @@ class question_bank_view {
     * @param int $recurse     This is 1 if subcategories should be included, 0 otherwise
     * @param int $page        The number of the page to be displayed
     * @param int $perpage     Number of questions to show per page
-    * @param boolean $showhidden   True if also hidden questions should be displayed
-    * @param boolean $showquestiontext whether the text of each question should be shown in the list
+    * @param bool $showhidden   True if also hidden questions should be displayed
+    * @param bool $showquestiontext whether the text of each question should be shown in the list
     */
     protected function display_question_list($contexts, $pageurl, $categoryandcontext,
             $cm = null, $recurse=1, $page=0, $perpage=100, $showhidden=false,
@@ -1238,12 +1302,12 @@ class question_bank_view {
 
         $category = $this->get_current_category($categoryandcontext);
 
-        $cmoptions = new stdClass;
+        $cmoptions = new stdClass();
         $cmoptions->hasattempts = !empty($this->quizhasattempts);
 
-        $strselectall = get_string("selectall", "quiz");
-        $strselectnone = get_string("selectnone", "quiz");
-        $strdelete = get_string("delete");
+        $strselectall = get_string('selectall');
+        $strselectnone = get_string('deselectall');
+        $strdelete = get_string('delete');
 
         list($categoryid, $contextid) = explode(',', $categoryandcontext);
         $catcontext = get_context_instance_by_id($contextid);
@@ -1302,7 +1366,7 @@ class question_bank_view {
 
         echo '<div class="modulespecificbuttonscontainer">';
         if ($caneditall || $canmoveall || $canuseall){
-            echo '<strong>&nbsp;'.get_string('withselected', 'quiz').':</strong><br />';
+            echo '<strong>&nbsp;'.get_string('withselected', 'question').':</strong><br />';
 
             if (function_exists('module_specific_buttons')) {
                 echo module_specific_buttons($this->cm->id,$cmoptions);
@@ -1314,7 +1378,7 @@ class question_bank_view {
             }
 
             if ($canmoveall && count($addcontexts)) {
-                echo '<input type="submit" name="move" value="'.get_string('moveto', 'quiz')."\" />\n";
+                echo '<input type="submit" name="move" value="'.get_string('moveto', 'question')."\" />\n";
                 question_category_select_menu($addcontexts, false, 0, "$category->id,$category->contextid");
             }
 
@@ -1428,10 +1492,10 @@ class question_bank_view {
                         foreach ($questionlist as $questionid) {
                             $questionid = (int)$questionid;
                             question_require_capability_on($questionid, 'edit');
-                            if ($DB->record_exists('quiz_question_instances', array('question' => $questionid))) {
+                            if (questions_in_use(array($questionid))) {
                                 $DB->set_field('question', 'hidden', 1, array('id' => $questionid));
                             } else {
-                                delete_question($questionid);
+                                question_delete_question($questionid);
                             }
                         }
                     }
@@ -1464,7 +1528,7 @@ class question_bank_view {
                     $key = $matches[1];
                     $questionlist .= $key.',';
                     question_require_capability_on($key, 'edit');
-                    if ($DB->record_exists('quiz_question_instances', array('question' => $key))) {
+                    if (questions_in_use(array($key))) {
                         $questionnames .= '* ';
                         $inuse = true;
                     }
@@ -1478,12 +1542,12 @@ class question_bank_view {
 
             // Add an explanation about questions in use
             if ($inuse) {
-                $questionnames .= '<br />'.get_string('questionsinuse', 'quiz');
+                $questionnames .= '<br />'.get_string('questionsinuse', 'question');
             }
             $baseurl = new moodle_url('edit.php', $this->baseurl->params());
             $deleteurl = new moodle_url($baseurl, array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist), 'sesskey'=>sesskey()));
 
-            echo $OUTPUT->confirm(get_string("deletequestionscheck", "quiz", $questionnames), $deleteurl, $baseurl);
+            echo $OUTPUT->confirm(get_string('deletequestionscheck', 'question', $questionnames), $deleteurl, $baseurl);
 
             return true;
         }
@@ -1494,16 +1558,13 @@ class question_bank_view {
  * Common setup for all pages for editing questions.
  * @param string $baseurl the name of the script calling this funciton. For examle 'qusetion/edit.php'.
  * @param string $edittab code for this edit tab
- * @param boolean $requirecmid require cmid? default false
- * @param boolean $requirecourseid require courseid, if cmid is not given? default true
+ * @param bool $requirecmid require cmid? default false
+ * @param bool $requirecourseid require courseid, if cmid is not given? default true
  * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
 function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirecourseid = true) {
     global $DB, $PAGE;
 
-    //$thispageurl is used to construct urls for all question edit pages we link to from this page. It contains an array
-    //of parameters that are passed from page to page.
-//    $thispageurl = new moodle_url($PAGE->url); //TODO: this looks dumb, because this method is called BEFORE $PAGE->set_page() !!!!
     $thispageurl = new moodle_url($baseurl);
     $thispageurl->remove_all_params(); // We are going to explicity add back everything important - this avoids unwanted params from being retained.
 
@@ -1598,9 +1659,9 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
     $contextlist = join($contextlistarr, ' ,');
     if (!empty($pagevars['cat'])){
         $catparts = explode(',', $pagevars['cat']);
-        if (!$catparts[0] || (FALSE !== array_search($catparts[1], $contextlistarr)) ||
+        if (!$catparts[0] || (false !== array_search($catparts[1], $contextlistarr)) ||
                 !$DB->count_records_select("question_categories", "id = ? AND contextid = ?", array($catparts[0], $catparts[1]))) {
-            print_error('invalidcategory', 'quiz');
+            print_error('invalidcategory', 'question');
         }
     } else {
         $category = $defaultcategory;
@@ -1641,7 +1702,7 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
  * Required for legacy reasons. Was originally global then changed to class static
  * as of Moodle 2.0
  */
-$QUESTION_EDITTABCAPS = question_edit_contexts::$CAPS;
+$QUESTION_EDITTABCAPS = question_edit_contexts::$caps;
 
 /**
  * Make sure user is logged in as required in this context.
@@ -1682,7 +1743,7 @@ function require_login_in_context($contextorid = null){
  * the qtype radio buttons.
  */
 function print_choose_qtype_to_add_form($hiddenparams) {
-    global $CFG, $QTYPES, $PAGE, $OUTPUT;
+    global $CFG, $PAGE, $OUTPUT;
     $PAGE->requires->js('/question/qbank.js');
     echo '<div id="chooseqtypehead" class="hd">' . "\n";
     echo $OUTPUT->heading(get_string('chooseqtypetoadd', 'question'), 3);
@@ -1696,19 +1757,18 @@ function print_choose_qtype_to_add_form($hiddenparams) {
     echo '<div class="qtypes">' . "\n";
     echo '<div class="instruction">' . get_string('selectaqtypefordescription', 'question') . "</div>\n";
     echo '<div class="realqtypes">' . "\n";
-    $types = question_type_menu();
     $fakeqtypes = array();
-    foreach ($types as $qtype => $localizedname) {
-        if ($QTYPES[$qtype]->is_real_question_type()) {
-            print_qtype_to_add_option($qtype, $localizedname);
+    foreach (question_bank::get_creatable_qtypes() as $qtype) {
+        if ($qtype->is_real_question_type()) {
+            print_qtype_to_add_option($qtype);
         } else {
-            $fakeqtypes[$qtype] = $localizedname;
+            $fakeqtypes[] = $qtype;
         }
     }
     echo "</div>\n";
     echo '<div class="fakeqtypes">' . "\n";
-    foreach ($fakeqtypes as $qtype => $localizedname) {
-        print_qtype_to_add_option($qtype, $localizedname);
+    foreach ($fakeqtypes as $qtype) {
+        print_qtype_to_add_option($qtype);
     }
     echo "</div>\n";
     echo "</div>\n";
@@ -1717,24 +1777,23 @@ function print_choose_qtype_to_add_form($hiddenparams) {
     echo '<input type="submit" id="chooseqtypecancel" name="addcancel" value="' . get_string('cancel') . '" />' . "\n";
     echo "</div></form>\n";
     echo "</div>\n";
-    $PAGE->requires->js_function_call('qtype_chooser.init', array('chooseqtype'));
+    $PAGE->requires->js_init_call('qtype_chooser.init', array('chooseqtype'));
 }
 
 /**
  * Private function used by the preceding one.
  * @param $qtype the question type.
- * @param $localizedname the localized name of this question type.
  */
-function print_qtype_to_add_option($qtype, $localizedname) {
-    global $QTYPES;
+function print_qtype_to_add_option($qtype) {
     echo '<div class="qtypeoption">' . "\n";
-    echo '<label for="qtype_' . $qtype . '">';
-    echo '<input type="radio" name="qtype" id="qtype_' . $qtype . '" value="' . $qtype . '" />';
+    echo '<label for="qtype_' . $qtype->name() . '">';
+    echo '<input type="radio" name="qtype" id="qtype_' . $qtype->name() . '" value="' . $qtype->name() . '" />';
     echo '<span class="qtypename">';
-    $fakequestion = new stdClass;
-    $fakequestion->qtype = $qtype;
+    $fakequestion = new stdClass();
+    $fakequestion->qtype = $qtype->name();
     print_question_icon($fakequestion);
-    echo $localizedname . '</span><span class="qtypesummary">' . get_string($qtype . 'summary', 'qtype_' . $qtype);
+    echo $qtype->menu_name() . '</span><span class="qtypesummary">' .
+            get_string($qtype->name() . 'summary', 'qtype_' . $qtype->name());
     echo "</span></label>\n";
     echo "</div>\n";
 }
@@ -1744,12 +1803,12 @@ function print_qtype_to_add_option($qtype, $localizedname) {
  * which in turn goes to question/question.php before getting back to $params['returnurl']
  * (by default the question bank screen).
  *
- * @param integer $categoryid The id of the category that the new question should be added to.
+ * @param int $categoryid The id of the category that the new question should be added to.
  * @param array $params Other paramters to add to the URL. You need either $params['cmid'] or
  *      $params['courseid'], and you should probably set $params['returnurl']
  * @param string $caption the text to display on the button.
  * @param string $tooltip a tooltip to add to the button (optional).
- * @param boolean $disabled if true, the button will be disabled.
+ * @param bool $disabled if true, the button will be disabled.
  */
 function create_new_question_button($categoryid, $params, $caption, $tooltip = '', $disabled = false) {
     global $CFG, $PAGE, $OUTPUT;

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,18 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
+ * @package    moodlecore
  * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Define all the restore steps that will be used by the restore_quiz_activity_task
- */
+
+defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Structure step to restore one quiz activity
+ *
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_quiz_activity_structure_step extends restore_questions_activity_structure_step {
 
@@ -37,16 +39,17 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $userinfo = $this->get_setting_value('userinfo');
 
         $paths[] = new restore_path_element('quiz', '/activity/quiz');
-        $paths[] = new restore_path_element('quiz_question_instance', '/activity/quiz/question_instances/question_instance');
+        $paths[] = new restore_path_element('quiz_question_instance',
+                '/activity/quiz/question_instances/question_instance');
         $paths[] = new restore_path_element('quiz_feedback', '/activity/quiz/feedbacks/feedback');
         $paths[] = new restore_path_element('quiz_override', '/activity/quiz/overrides/override');
         if ($userinfo) {
             $paths[] = new restore_path_element('quiz_grade', '/activity/quiz/grades/grade');
-            $quizattempt = new restore_path_element('quiz_attempt', '/activity/quiz/attempts/attempt');
+            $quizattempt = new restore_path_element('quiz_attempt',
+                    '/activity/quiz/attempts/attempt');
             $paths[] = $quizattempt;
             // Add states and sessions
-            $this->add_question_attempts_states($quizattempt, $paths);
-            $this->add_question_attempts_sessions($quizattempt, $paths);
+            $this->add_question_usages($quizattempt, $paths);
         }
 
         // Return the paths wrapped into standard activity structure
@@ -54,7 +57,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
     }
 
     protected function process_quiz($data) {
-        global $DB;
+        global $CFG, $DB;
 
         $data = (object)$data;
         $oldid = $data->id;
@@ -72,6 +75,108 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         if (isset($data->attempts_number)) {
             $data->attempts = $data->attempts_number;
             unset($data->attempts_number);
+        }
+
+        // The old optionflags and penaltyscheme from 2.0 need to be mapped to
+        // the new preferredbehaviour. MDL-20636
+        if (!isset($data->preferredbehaviour)) {
+            if (empty($data->optionflags)) {
+                $data->preferredbehaviour = 'deferredfeedback';
+            } else if (empty($data->penaltyscheme)) {
+                $data->preferredbehaviour = 'adaptivenopenalty';
+            } else {
+                $data->preferredbehaviour = 'adaptive';
+            }
+            unset($data->optionflags);
+            unset($data->penaltyscheme);
+        }
+
+        // The old review column from 2.0 need to be split into the seven new
+        // review columns. MDL-20636
+        if (isset($data->review)) {
+            require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+
+            if (!defined('QUIZ_OLD_IMMEDIATELY')) {
+                define('QUIZ_OLD_IMMEDIATELY', 0x3c003f);
+                define('QUIZ_OLD_OPEN',        0x3c00fc0);
+                define('QUIZ_OLD_CLOSED',      0x3c03f000);
+
+                define('QUIZ_OLD_RESPONSES',        1*0x1041);
+                define('QUIZ_OLD_SCORES',           2*0x1041);
+                define('QUIZ_OLD_FEEDBACK',         4*0x1041);
+                define('QUIZ_OLD_ANSWERS',          8*0x1041);
+                define('QUIZ_OLD_SOLUTIONS',       16*0x1041);
+                define('QUIZ_OLD_GENERALFEEDBACK', 32*0x1041);
+                define('QUIZ_OLD_OVERALLFEEDBACK',  1*0x4440000);
+            }
+
+            $oldreview = $data->review;
+
+            $data->reviewattempt =
+                    mod_quiz_display_options::DURING |
+                    ($oldreview & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_RESPONSES ?
+                            mod_quiz_display_options::IMMEDIATELY_AFTER : 0) |
+                    ($oldreview & QUIZ_OLD_OPEN & QUIZ_OLD_RESPONSES ?
+                            mod_quiz_display_options::LATER_WHILE_OPEN : 0) |
+                    ($oldreview & QUIZ_OLD_CLOSED & QUIZ_OLD_RESPONSES ?
+                            mod_quiz_display_options::AFTER_CLOSE : 0);
+
+            $data->reviewcorrectness =
+                    mod_quiz_display_options::DURING |
+                    ($oldreview & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_SCORES ?
+                            mod_quiz_display_options::IMMEDIATELY_AFTER : 0) |
+                    ($oldreview & QUIZ_OLD_OPEN & QUIZ_OLD_SCORES ?
+                            mod_quiz_display_options::LATER_WHILE_OPEN : 0) |
+                    ($oldreview & QUIZ_OLD_CLOSED & QUIZ_OLD_SCORES ?
+                            mod_quiz_display_options::AFTER_CLOSE : 0);
+
+            $data->reviewmarks =
+                    mod_quiz_display_options::DURING |
+                    ($oldreview & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_SCORES ?
+                            mod_quiz_display_options::IMMEDIATELY_AFTER : 0) |
+                    ($oldreview & QUIZ_OLD_OPEN & QUIZ_OLD_SCORES ?
+                            mod_quiz_display_options::LATER_WHILE_OPEN : 0) |
+                    ($oldreview & QUIZ_OLD_CLOSED & QUIZ_OLD_SCORES ?
+                            mod_quiz_display_options::AFTER_CLOSE : 0);
+
+            $data->reviewspecificfeedback =
+                    ($oldreview & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_FEEDBACK ?
+                            mod_quiz_display_options::DURING : 0) |
+                    ($oldreview & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_FEEDBACK ?
+                            mod_quiz_display_options::IMMEDIATELY_AFTER : 0) |
+                    ($oldreview & QUIZ_OLD_OPEN & QUIZ_OLD_FEEDBACK ?
+                            mod_quiz_display_options::LATER_WHILE_OPEN : 0) |
+                    ($oldreview & QUIZ_OLD_CLOSED & QUIZ_OLD_FEEDBACK ?
+                            mod_quiz_display_options::AFTER_CLOSE : 0);
+
+            $data->reviewgeneralfeedback =
+                    ($oldreview & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_GENERALFEEDBACK ?
+                            mod_quiz_display_options::DURING : 0) |
+                    ($oldreview & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_GENERALFEEDBACK ?
+                            mod_quiz_display_options::IMMEDIATELY_AFTER : 0) |
+                    ($oldreview & QUIZ_OLD_OPEN & QUIZ_OLD_GENERALFEEDBACK ?
+                            mod_quiz_display_options::LATER_WHILE_OPEN : 0) |
+                    ($oldreview & QUIZ_OLD_CLOSED & QUIZ_OLD_GENERALFEEDBACK ?
+                            mod_quiz_display_options::AFTER_CLOSE : 0);
+
+            $data->reviewrightanswer =
+                    ($oldreview & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_ANSWERS ?
+                            mod_quiz_display_options::DURING : 0) |
+                    ($oldreview & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_ANSWERS ?
+                            mod_quiz_display_options::IMMEDIATELY_AFTER : 0) |
+                    ($oldreview & QUIZ_OLD_OPEN & QUIZ_OLD_ANSWERS ?
+                            mod_quiz_display_options::LATER_WHILE_OPEN : 0) |
+                    ($oldreview & QUIZ_OLD_CLOSED & QUIZ_OLD_ANSWERS ?
+                            mod_quiz_display_options::AFTER_CLOSE : 0);
+
+            $data->reviewoverallfeedback =
+                    0 |
+                    ($oldreview & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_OVERALLFEEDBACK ?
+                            mod_quiz_display_options::IMMEDIATELY_AFTER : 0) |
+                    ($oldreview & QUIZ_OLD_OPEN & QUIZ_OLD_OVERALLFEEDBACK ?
+                            mod_quiz_display_options::LATER_WHILE_OPEN : 0) |
+                    ($oldreview & QUIZ_OLD_CLOSED & QUIZ_OLD_OVERALLFEEDBACK ?
+                            mod_quiz_display_options::AFTER_CLOSE : 0);
         }
 
         // insert the quiz record
@@ -159,7 +264,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data->quiz = $this->get_new_parentid('quiz');
         $data->attempt = $data->attemptnum;
 
-        $data->uniqueid = question_new_attempt_uniqueid('quiz');
+        $data->uniqueid = 0; // filled in later by {@link inform_new_usage_id()}
 
         $data->userid = $this->get_mappingid('user', $data->userid);
 
@@ -167,18 +272,20 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data->timefinish = $this->apply_date_offset($data->timefinish);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-        $data->layout = $this->questions_recode_layout($data->layout);
-
         $newitemid = $DB->insert_record('quiz_attempts', $data);
 
-        // Save quiz_attempt->uniqueid as quiz_attempt mapping, both question_states and
-        // question_sessions have Fk to it and not to quiz_attempts->id at all.
-        $this->set_mapping('quiz_attempt', $olduniqueid, $data->uniqueid, false);
-        // Also save quiz_attempt->id mapping, because logs use it
-        $this->set_mapping('quiz_attempt_id', $oldid, $newitemid, false);
+        // Save quiz_attempt->id mapping, because logs use it
+        $this->set_mapping('quiz_attempt', $oldid, $newitemid, false);
+    }
+
+    protected function inform_new_usage_id($newusageid) {
+        global $DB;
+        $DB->set_field('quiz_attempts', 'uniqueid', $newusageid, array('id' =>
+                $this->get_new_parentid('quiz_attempt')));
     }
 
     protected function after_execute() {
+        parent::after_execute();
         // Add quiz related files, no need to match by itemname (just internally handled context)
         $this->add_related_files('mod_quiz', 'intro', null);
         // Add feedback related files, matching by itemname = 'quiz_feedback'
