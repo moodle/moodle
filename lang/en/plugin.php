@@ -18,7 +18,7 @@
  * Defines names of plugin types and some strings used at the plugin managment
  *
  * @package    core
- * @subpackage admin
+ * @subpackage plugin
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
