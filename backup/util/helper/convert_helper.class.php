@@ -179,17 +179,6 @@ abstract class convert_helper {
     public static function get_inforef($contextid) {
     }
 
-    /**
-     * Converts a plain old php object (popo?) into a string...
-     * Useful for debuging failed db inserts, or anything like that
-     */
-    public static function obj_to_readable($obj) {
-        $mapper = function($field, $value) { return "$field=$value"; };
-        $fields = get_object_vars($obj);
-
-        return implode(", ", array_map($mapper, array_keys($fields), array_values($fields)));
-    }
-
     /// end of public API //////////////////////////////////////////////////////
 
     /**
