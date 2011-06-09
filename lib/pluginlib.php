@@ -289,6 +289,7 @@ class plugin_manager {
             ),
 
             'local' => array(
+                'qeupgradehelper'
             ),
 
             'message' => array(
@@ -314,6 +315,13 @@ class plugin_manager {
 
             'profilefield' => array(
                 'checkbox', 'datetime', 'menu', 'text', 'textarea'
+            ),
+
+            'qbehaviour' => array(
+                'adaptive', 'adaptivenopenalty', 'deferredcbm',
+                'deferredfeedback', 'immediatecbm', 'immediatefeedback',
+                'informationitem', 'interactive', 'interactivecountback',
+                'manualgraded', 'missing'
             ),
 
             'qformat' => array(
