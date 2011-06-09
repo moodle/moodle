@@ -70,7 +70,7 @@ h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:200%;}
 .breadcrumb {margin-left:0.8em;}
 
 /* generalbox */
-.generalbox {border-color:#E3DFD4;}
+.generalbox {border-color:#E3DFD4;padding:1em;}
 
 /* generalbox */
 #page-admin-setting-manageauths .generalbox {border:none;}
@@ -88,6 +88,8 @@ h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:200%;}
 #page-admin-course-category .generalbox td,
 #attempts th,
 #attempts td,
+.plugincompattable th,
+.plugincompattable td,
 .environmenttable th,
 .environmenttable td,
 .forumheaderlist td,
