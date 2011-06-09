@@ -49,7 +49,7 @@ function quiz_upgrade_very_old_question_sessions($attempt) {
     // newgraded pointing to this state.
     // Actually we only do this for states whose question is actually listed in $attempt->layout.
     // We do not do it for states associated to wrapped questions like for example the questions
-    // used by a RANDOM question
+    // used by a random question
     $session = new stdClass();
     $session->attemptid = $attempt->uniqueid;
     $session->sumpenalty = 0;
