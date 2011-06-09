@@ -90,13 +90,14 @@ if ($user->id == $USER->id) {
     $PAGE->navigation->extend_for_user($user);
 }
 
+// Fetch message providers
+$providers = message_get_providers_for_user($user->id);
+
 /// Save new preferences if data was submitted
 
 if (($form = data_submitted()) && confirm_sesskey()) {
     $preferences = array();
 
-/// Set all the preferences for all the message providers
-    $providers = message_get_my_providers();
     $possiblestates = array('loggedin', 'loggedoff');
     foreach ( $providers as $providerid => $provider){
         foreach ($possiblestates as $state){
@@ -156,8 +157,6 @@ if (($form = data_submitted()) && confirm_sesskey()) {
 $preferences = new stdClass();
 $preferences->userdefaultemail = $user->email;//may be displayed by the email processor
 
-/// Get providers preferences
-$providers = message_get_my_providers();
 foreach ( $providers as $providerid => $provider){
     foreach (array('loggedin', 'loggedoff') as $state){
         $linepref = get_user_preferences('message_provider_'.$provider->component.'_'.$provider->name.'_'.$state, '', $user->id);
@@ -211,7 +210,6 @@ echo '<form class="mform" method="post" action="'.$PAGE->url.'">';
 /// Settings table...
 echo '<fieldset id="providers" class="clearfix">';
 echo '<legend class="ftoggler">'.get_string('providers_config', 'message').'</legend>';
-$providers = message_get_my_providers();
 $processors = $DB->get_records('message_processors', null, 'name DESC');
 $number_procs = count($processors);
 echo '<table cellpadding="2"><tr><td>&nbsp;</td>'."\n";
