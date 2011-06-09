@@ -30,8 +30,10 @@
 
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'j';
+$string['cliincorrectvalueerror'] = 'Villa, "{$a->value}" er ótækt gildi fyrir "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'Rangt gildi, vinsamlegast reyndu aftur';
 $string['clitypevalue'] = 'Sláðu inn gildi';
 $string['clitypevaluedefault'] = 'Sláðu inn gildi, sláðu á Enter hnappinn á lyklaborðinu til að nota sjálfgefið gildi ({$a})';
+$string['cliyesnoprompt'] = 'skráðu y (þýðir já) eða n (þýðir nei)';
 $string['environmentrequireinstall'] = 'verður að vera uppsett og virkjað';
 $string['environmentrequireversion'] = 'krafist er útgáfu {$a->needed} en þú notast við útgáfu {$a->current}';

@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'y';
 $string['cliincorrectvalueerror'] = 'Fout, verkeerde waarde "{$ a-> value}" vir "{$ a-> option}"';
 $string['cliincorrectvalueretry'] = 'Verkeerde waarde, probeer weer';
 $string['clitypevalue'] = 'Tiepe waarde';
