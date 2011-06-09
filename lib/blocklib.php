@@ -1629,6 +1629,8 @@ function default_pagetypelist($pagetype, $parentcontext = null, $currentcontext 
  * @return array
  */
 function plugin_pagetypelist($pagetype, $parentcontext = null, $currentcontext = null) {
+    global $CFG;
+
     // for modules
     $bits = explode('-', $pagetype);
     $plugintype = $bits[0];
@@ -1647,7 +1649,7 @@ function plugin_pagetypelist($pagetype, $parentcontext = null, $currentcontext =
     if ($parentcontext->contextlevel == CONTEXT_COURSE) {
         // including course page type
         require_once("$CFG->dirroot/course/lib.php");
-        $patterns = array_merge(course_pagetypelist($pagetype, $parentcontext, $currentcontext), $module_pagetype);
+        $patterns = array_merge(course_pagetypelist($pagetype, $parentcontext, $currentcontext), $patterns);
     }
     return $patterns;
 }
