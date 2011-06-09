@@ -120,6 +120,11 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
             $cminfo['modulename'] = $successor->get_modname();
             $this->converter->set_stash('cminfo_'.$cminfo['modulename'], $cminfo, $instanceid);
 
+            // rewrite the coursecontents stash
+            $coursecontents = $this->converter->get_stash('coursecontents');
+            $coursecontents[$cminfo['id']]['modulename'] = $successor->get_modname();
+            $this->converter->set_stash('coursecontents', $coursecontents);
+
             // delegate the processing to the successor handler
             return $successor->process_legacy_resource($data, $raw);
         }

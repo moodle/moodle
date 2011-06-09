@@ -373,35 +373,34 @@ class moodle1_root_handler extends moodle1_xml_handler {
         // moodle_backup/information/contents/activities
         $this->xmlwriter->begin_tag('activities');
         $activitysettings = array();
-        foreach ($this->converter->get_stash('modnameslist') as $modname) {
-            $modinfo = $this->converter->get_stash('modinfo_'.$modname);
-            foreach ($modinfo['instances'] as $modinstanceid => $modinstance) {
-                $cminfo = $this->converter->get_stash('cminfo_'.$modname, $modinstanceid);
-                $activitysettings[] = array(
-                    'level'     => 'activity',
-                    'activity'  => $cminfo['modulename'].'_'.$cminfo['id'],
-                    'name'      => $cminfo['modulename'].'_'.$cminfo['id'].'_included',
-                    'value'     => (($modinfo['included'] === 'true' and $modinstance['included'] === 'true') ? 1 : 0));
-                $activitysettings[] = array(
-                    'level'     => 'activity',
-                    'activity'  => $cminfo['modulename'].'_'.$cminfo['id'],
-                    'name'      => $cminfo['modulename'].'_'.$cminfo['id'].'_userinfo',
-                    'value'     => (($modinfo['userinfo'] === 'true' and $modinstance['userinfo'] === 'true') ? 1 : 0));
-                $this->write_xml('activity', array(
-                    'moduleid'      => $cminfo['id'],
-                    'sectionid'     => $cminfo['sectionid'],
-                    'modulename'    => $cminfo['modulename'],
-                    'title'         => $modinstance['name'],
-                    'directory'     => 'activities/'.$cminfo['modulename'].'_'.$cminfo['id']));
-
-            }
+        foreach ($this->converter->get_stash('coursecontents') as $activity) {
+            $modinfo = $this->converter->get_stash('modinfo_'.$activity['modulename']);
+            $modinstance = $modinfo['instances'][$activity['instanceid']];
+            $this->write_xml('activity', array(
+                'moduleid'      => $activity['cmid'],
+                'sectionid'     => $activity['sectionid'],
+                'modulename'    => $activity['modulename'],
+                'title'         => $modinstance['name'],
+                'directory'     => 'activities/'.$activity['modulename'].'_'.$activity['cmid']
+            ));
+            $activitysettings[] = array(
+                'level'     => 'activity',
+                'activity'  => $activity['modulename'].'_'.$activity['cmid'],
+                'name'      => $activity['modulename'].'_'.$activity['cmid'].'_included',
+                'value'     => (($modinfo['included'] === 'true' and $modinstance['included'] === 'true') ? 1 : 0));
+            $activitysettings[] = array(
+                'level'     => 'activity',
+                'activity'  => $activity['modulename'].'_'.$activity['cmid'],
+                'name'      => $activity['modulename'].'_'.$activity['cmid'].'_userinfo',
+                //'value'     => (($modinfo['userinfo'] === 'true' and $modinstance['userinfo'] === 'true') ? 1 : 0));
+                'value'     => 0); // todo hardcoded non-userinfo for now
         }
         $this->xmlwriter->end_tag('activities');
 
         // moodle_backup/information/contents/sections
         $this->xmlwriter->begin_tag('sections');
         $sectionsettings = array();
-        foreach ($this->converter->get_stash('sectionidslist') as $sectionid) {
+        foreach ($this->converter->get_stash_itemids('sectioninfo') as $sectionid) {
             $sectioninfo = $this->converter->get_stash('sectioninfo', $sectionid);
             $sectionsettings[] = array(
                 'level'     => 'section',
@@ -764,8 +763,8 @@ class moodle1_course_header_handler extends moodle1_xml_handler {
  */
 class moodle1_course_outline_handler extends moodle1_xml_handler {
 
-    /** @var array list of section ids */
-    protected $sectionids = array();
+    /** @var array ordered list of the course contents */
+    protected $coursecontents = array();
 
     /** @var array current section data */
     protected $currentsection;
@@ -817,7 +816,6 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
     }
 
     public function process_course_section($data) {
-        $this->sectionids[]   = $data['id'];
         $this->currentsection = $data;
     }
 
@@ -827,6 +825,15 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
      */
     public function process_course_module($data, $raw) {
         global $CFG;
+
+        // add the course module into the course contents list
+        $this->coursecontents[$data['id']] = array(
+            'cmid'       => $data['id'],
+            'instanceid' => $raw['INSTANCE'],
+            'sectionid'  => $this->currentsection['id'],
+            'modulename' => $data['modulename'],
+            'title'      => null
+        );
 
         // add the course module id into the section's sequence
         if (is_null($this->currentsection['sequence'])) {
@@ -892,11 +899,10 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
     }
 
     /**
-     * Stashes the list of section ids
+     * Stashes the course contents
      */
     public function on_course_sections_end() {
-        $this->converter->set_stash('sectionidslist', $this->sectionids);
-        unset($this->sectionids);
+        $this->converter->set_stash('coursecontents', $this->coursecontents);
     }
 
     /**
