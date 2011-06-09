@@ -907,10 +907,6 @@ function external_update_descriptions($component) {
         $service['shortname'] = !isset($service['shortname']) ? null : $service['shortname'];
 
         $update = false;
-        if ($dbservice->enabled != $service['enabled']) {
-            $dbservice->enabled = $service['enabled'];
-            $update = true;
-        }
         if ($dbservice->requiredcapability != $service['requiredcapability']) {
             $dbservice->requiredcapability = $service['requiredcapability'];
             $update = true;
