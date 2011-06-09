@@ -58,10 +58,23 @@ function xmldb_theme_formal_white_install() {
     // Remove alwayslangmenu
     unset_config('alwayslangmenu', 'theme_formal_white');
 
-    // Create a new config setting called lblockcolumnbgc and give it blockcolumnbgc's value.
-    set_config('lblockcolumnbgc', $currentsetting->blockcolumnbgc, 'theme_formal_white');
-    // Remove blockcolumnbgc
-    unset_config('blockcolumnbgc', 'theme_formal_white');
-
+    // previous releases of formal_white them were not equipped with version number
+    // so I can not know if a theme specific variable exists or not.
+    // This is the reason why I try to use them both.
+    if (isset($currentsetting->backgroundcolor)) {
+        // Create a new config setting called lblockcolumnbgc and give it backgroundcolor's value.
+        set_config('lblockcolumnbgc', $currentsetting->backgroundcolor, 'theme_formal_white');
+        // Remove backgroundcolor
+        unset_config('backgroundcolor', 'theme_formal_white');
+    } elseif (isset($currentsetting->blockcolumnbgc)) {
+		// Create a new config setting called lblockcolumnbgc and give it blockcolumnbgc's value.
+		set_config('lblockcolumnbgc', $currentsetting->blockcolumnbgc, 'theme_formal_white');
+		// Remove blockcolumnbgc
+		unset_config('blockcolumnbgc', 'theme_formal_white');
+    } else {
+		// Create a new config setting called lblockcolumnbgc and give it the default value.
+		set_config('lblockcolumnbgc', '#E3DFD4', 'theme_formal_white');
+    }
+    
     return true;
 }

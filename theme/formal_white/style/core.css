@@ -194,8 +194,8 @@ input[type="radio"] {
 -----------------------*/
 
 .userinfobox {
-border-color: #ddd;
-padding: 0
+    border-color: #ddd;
+    padding: 0
 }
 
 .userinfobox .content {
