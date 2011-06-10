@@ -91,6 +91,7 @@ $string['onlyfromme'] = 'Only messages from me';
 $string['onlymycourses'] = 'Only in my courses';
 $string['onlytome'] = 'Only messages to me';
 $string['pagerefreshes'] = 'This page refreshes automatically every {$a} seconds';
+$string['page-message-x'] = 'Any message pages';
 $string['private_config'] = 'Popup message window';
 $string['processortag'] = 'Destination';
 $string['providers_config'] = 'Configure notification methods for incoming messages';
