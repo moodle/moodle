@@ -826,6 +826,12 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
     public function process_course_module($data, $raw) {
         global $CFG;
 
+        // check that this type of module should be included in the mbz
+        $modinfo = $this->converter->get_stash_itemids('modinfo_'.$data['modulename']);
+        if (empty($modinfo)) {
+            return;
+        }
+
         // add the course module into the course contents list
         $this->coursecontents[$data['id']] = array(
             'cmid'       => $data['id'],
