@@ -1141,20 +1141,6 @@ class assignment_base {
         //hook to allow plagiarism plugins to update status/print links.
         plagiarism_update_status($this->course, $this->cm);
 
-        /// Print quickgrade form around the table
-        if ($quickgrade) {
-            $formattrs = array();
-            $formattrs['action'] = new moodle_url('/mod/assignment/submissions.php');
-            $formattrs['id'] = 'fastg';
-            $formattrs['method'] = 'post';
-
-            echo html_writer::start_tag('form', $formattrs);
-            echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'id',      'value'=> $this->cm->id));
-            echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'mode',    'value'=> 'fastgrade'));
-            echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'page',    'value'=> $page));
-            echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=> sesskey()));
-        }
-
         $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
         if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
             echo '<div class="allcoursegrades"><a href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' . $course->id . '">'
@@ -1173,6 +1159,20 @@ class assignment_base {
         $groupmode = groups_get_activity_groupmode($cm);
         $currentgroup = groups_get_activity_group($cm, true);
         groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/assignment/submissions.php?id=' . $this->cm->id);
+
+        /// Print quickgrade form around the table
+        if ($quickgrade) {
+            $formattrs = array();
+            $formattrs['action'] = new moodle_url('/mod/assignment/submissions.php');
+            $formattrs['id'] = 'fastg';
+            $formattrs['method'] = 'post';
+
+            echo html_writer::start_tag('form', $formattrs);
+            echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'id',      'value'=> $this->cm->id));
+            echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'mode',    'value'=> 'fastgrade'));
+            echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'page',    'value'=> $page));
+            echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=> sesskey()));
+        }
 
         /// Get all ppl that are allowed to submit assignments
         list($esql, $params) = get_enrolled_sql($context, 'mod/assignment:view', $currentgroup);
