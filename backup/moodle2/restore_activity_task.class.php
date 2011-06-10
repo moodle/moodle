@@ -34,6 +34,7 @@ abstract class restore_activity_task extends restore_task {
     protected $modulename;  // name of the module
     protected $moduleid;    // new (target) id of the course module
     protected $oldmoduleid; // old (original) id of the course module
+    protected $oldmoduleversion; // old (original) version of the module
     protected $contextid;   // new (target) context of the activity
     protected $oldcontextid;// old (original) context of the activity
     protected $activityid;  // new (target) id of the activity
@@ -43,11 +44,11 @@ abstract class restore_activity_task extends restore_task {
      * Constructor - instantiates one object of this class
      */
     public function __construct($name, $info, $plan = null) {
-
         $this->info = $info;
         $this->modulename = $this->info->modulename;
         $this->moduleid = 0;
         $this->oldmoduleid = $this->info->moduleid;
+        $this->oldmoduleversion = 0;
         $this->contextid = 0;
         $this->oldcontextid = 0;
         $this->activityid = 0;
@@ -64,6 +65,10 @@ abstract class restore_activity_task extends restore_task {
 
     public function set_moduleid($moduleid) {
         $this->moduleid = $moduleid;
+    }
+
+    public function set_old_module_version($oldmoduleversion) {
+        $this->oldmoduleversion = $oldmoduleversion;
     }
 
     public function set_activityid($activityid) {
@@ -88,6 +93,10 @@ abstract class restore_activity_task extends restore_task {
 
     public function get_moduleid() {
         return $this->moduleid;
+    }
+
+    public function get_old_module_version() {
+        return $this->oldmoduleversion;
     }
 
     public function get_activityid() {
