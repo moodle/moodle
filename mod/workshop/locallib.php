@@ -1115,19 +1115,22 @@ class workshop {
     }
 
     /**
-     * Are users allowed to create their submissions?
+     * Is the given user allowed to create their submission?
      *
+     * @param int $userid
      * @return bool
      */
-    public function creating_submission_allowed() {
+    public function creating_submission_allowed($userid) {
+
         $now = time();
+        $ignoredeadlines = has_capability('mod/workshop:ignoredeadlines', $this->context, $userid);
 
         if ($this->latesubmissions) {
             if ($this->phase != self::PHASE_SUBMISSION and $this->phase != self::PHASE_ASSESSMENT) {
                 // late submissions are allowed in the submission and assessment phase only
                 return false;
             }
-            if (!empty($this->submissionstart) and $this->submissionstart > $now) {
+            if (!$ignoredeadlines and !empty($this->submissionstart) and $this->submissionstart > $now) {
                 // late submissions are not allowed before the submission start
                 return false;
             }
@@ -1138,11 +1141,11 @@ class workshop {
                 // submissions are allowed during the submission phase only
                 return false;
             }
-            if (!empty($this->submissionstart) and $this->submissionstart > $now) {
+            if (!$ignoredeadlines and !empty($this->submissionstart) and $this->submissionstart > $now) {
                 // if enabled, submitting is not allowed before the date/time defined in the mod_form
                 return false;
             }
-            if (!empty($this->submissionend) and $now > $this->submissionend ) {
+            if (!$ignoredeadlines and !empty($this->submissionend) and $now > $this->submissionend ) {
                 // if enabled, submitting is not allowed after the date/time defined in the mod_form unless late submission is allowed
                 return false;
             }
@@ -1151,22 +1154,25 @@ class workshop {
     }
 
     /**
-     * Are users allowed to modify their existing submission?
+     * Is the given user allowed to modify their existing submission?
      *
+     * @param int $userid
      * @return bool
      */
-    public function modifying_submission_allowed() {
+    public function modifying_submission_allowed($userid) {
+
         $now = time();
+        $ignoredeadlines = has_capability('mod/workshop:ignoredeadlines', $this->context, $userid);
 
         if ($this->phase != self::PHASE_SUBMISSION) {
             // submissions can be edited during the submission phase only
             return false;
         }
-        if (!empty($this->submissionstart) and $this->submissionstart > $now) {
+        if (!$ignoredeadlines and !empty($this->submissionstart) and $this->submissionstart > $now) {
             // if enabled, submitting is not allowed before the date/time defined in the mod_form
             return false;
         }
-        if (!empty($this->submissionend) and $now > $this->submissionend) {
+        if (!$ignoredeadlines and !$this->latesubmissions and !empty($this->submissionend) and $now > $this->submissionend) {
             // if enabled, submitting is not allowed after the date/time defined in the mod_form unless late submission is allowed
             return false;
         }
@@ -1174,21 +1180,26 @@ class workshop {
     }
 
     /**
-     * Are reviewers allowed to create/edit their assessments?
+     * Is the given reviewer allowed to create/edit their assessments?
      *
+     * @param int $userid
      * @return bool
      */
-    public function assessing_allowed() {
+    public function assessing_allowed($userid) {
+
         if ($this->phase != self::PHASE_ASSESSMENT) {
             // assessing is not allowed but in the assessment phase
             return false;
         }
+
         $now = time();
-        if (!empty($this->assessmentstart) and $this->assessmentstart > $now) {
+        $ignoredeadlines = has_capability('mod/workshop:ignoredeadlines', $this->context, $userid);
+
+        if (!$ignoredeadlines and !empty($this->assessmentstart) and $this->assessmentstart > $now) {
             // if enabled, assessing is not allowed before the date/time defined in the mod_form
             return false;
         }
-        if (!empty($this->assessmentend) and $now > $this->assessmentend ) {
+        if (!$ignoredeadlines and !empty($this->assessmentend) and $now > $this->assessmentend) {
             // if enabled, assessing is not allowed after the date/time defined in the mod_form
             return false;
         }
@@ -2193,6 +2204,14 @@ class workshop_user_plan implements renderable {
             $task->completed = 'info';
             $phase->tasks['latesubmissionsallowed'] = $task;
         }
+        if (isset($phase->tasks['submissionstartdatetime']) or isset($phase->tasks['submissionenddatetime'])) {
+            if (has_capability('mod/workshop:ignoredeadlines', $workshop->context, $userid)) {
+                $task = new stdclass();
+                $task->title = get_string('deadlinesignored', 'workshop');
+                $task->completed = 'info';
+                $phase->tasks['deadlinesignored'] = $task;
+            }
+        }
         $this->phases[workshop::PHASE_SUBMISSION] = $phase;
 
         //---------------------------------------------------------
@@ -2280,6 +2299,14 @@ class workshop_user_plan implements renderable {
             $task->title = get_string('assessmentenddatetime', 'workshop', workshop::timestamp_formats($workshop->assessmentend));
             $task->completed = 'info';
             $phase->tasks['assessmentenddatetime'] = $task;
+        }
+        if (isset($phase->tasks['assessmentstartdatetime']) or isset($phase->tasks['assessmentenddatetime'])) {
+            if (has_capability('mod/workshop:ignoredeadlines', $workshop->context, $userid)) {
+                $task = new stdclass();
+                $task->title = get_string('deadlinesignored', 'workshop');
+                $task->completed = 'info';
+                $phase->tasks['deadlinesignored'] = $task;
+            }
         }
         $this->phases[workshop::PHASE_ASSESSMENT] = $phase;
 

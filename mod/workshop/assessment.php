@@ -75,7 +75,7 @@ if ($isauthor and !$isreviewer and !$canviewallassessments and $workshop->phase 
 }
 
 // only the reviewer is allowed to modify the assessment
-if ($isreviewer and $workshop->assessing_allowed()) {
+if ($isreviewer and $workshop->assessing_allowed($USER->id)) {
     $assessmenteditable = true;
 } else {
     $assessmenteditable = false;
