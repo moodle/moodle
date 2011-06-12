@@ -1,6 +1,28 @@
 <?php
 
-// Includes and parameters from old scorm report file
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This page displays the user data from a single attempt
+ * 
+ * @package    mod
+ * @subpackage scorm
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once("../../config.php");
 require_once($CFG->dirroot.'/mod/scorm/locallib.php');
@@ -12,7 +34,6 @@ $a = optional_param('a', '', PARAM_INT); // SCORM ID
 $b = optional_param('b', '', PARAM_INT); // SCO ID
 $attempt = optional_param('attempt', '1', PARAM_INT); // attempt number
 
-
 // Building the url to use for links.+ data details buildup
 $url = new moodle_url('/mod/scorm/userreport.php');
 $url->param('user', $user);
@@ -20,7 +41,6 @@ $url->param('user', $user);
 if ($attempt !== '1') {
     $url->param('attempt', $attempt);
 }
-
 
 if (!empty($id)) {
     $url->param('id', $id);
@@ -45,15 +65,15 @@ $PAGE->set_url($url);
 
 // checking login +logging +getting context
 require_login($course->id, false, $cm);
-$contextmodule= get_context_instance(CONTEXT_MODULE, $cm->id);
+$contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('mod/scorm:viewreport', $contextmodule);
+
 add_to_log($course->id, 'scorm', 'userreport', 'userreport.php?id='.$cm->id, $scorm->id, $cm->id);
 $userdata = scorm_get_user_data($user);
-// END of checking login +logging +getting context
 
 // Print the page header
 $strreport = get_string('report', 'scorm');
 $strattempt = get_string('attempt', 'scorm');
-
 
 $PAGE->set_title("$course->shortname: ".format_string($scorm->name));
 $PAGE->set_heading($course->fullname);
@@ -71,11 +91,10 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($scorm->name));
 // End of Print the page header
 
-//Parameter Checking +Capabality Check
+//Parameter Checking
 if (empty ($userdata)) {
     print_error('missingparameter');
 }
-require_capability('mod/scorm:viewreport', $contextmodule);
 
 //printing user details
 echo $OUTPUT->box_start('generalbox boxaligncenter');
@@ -86,8 +105,6 @@ echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id\">".
 echo get_string('attempt', 'scorm').': '.$attempt;
 echo '</div>'."\n";
 echo $OUTPUT->box_end();
-
-// User SCORM report
 
 if ($scoes = $DB->get_records_select('scorm_scoes', "scorm=? ORDER BY id", array($scorm->id))) {
     // Print general score data
@@ -137,7 +154,6 @@ if ($scoes = $DB->get_records_select('scorm_scoes', "scorm=? ORDER BY id", array
 
 if (!empty($b)) {
     echo $OUTPUT->box_start('generalbox boxaligncenter');
-    //print_heading(format_string($sco->title));
     echo $OUTPUT->heading('<a href="'.$CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;mode=browse&amp;scoid='.$sco->id.'" target="_new">'.format_string($sco->title).'</a>');
     echo '<div class="mdl-align">'."\n";
     $scoreview = '';

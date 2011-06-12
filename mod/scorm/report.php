@@ -427,7 +427,7 @@ $countsql .= ' AND '.$twhere;
                 $row[] = '-';
                 $row[] = '-';
             } else {
-                if (!$download) $row[] = '<a href="reportuser.php?a='.$scorm->id.'&amp;user='.$scouser->userid.'&amp;attempt='.$scouser->attempt.'">'.$scouser->attempt.'</a>';
+                if (!$download) $row[] = '<a href="userreport.php?a='.$scorm->id.'&amp;user='.$scouser->userid.'&amp;attempt='.$scouser->attempt.'">'.$scouser->attempt.'</a>';
                 else $row[] = $scouser->attempt;
                 if ($download =='ODS' || $download =='Excel' ) $row[] = userdate($timetracks->start, get_string("strftimedatetime", "langconfig"));
                 else $row[] = userdate($timetracks->start);
@@ -463,7 +463,7 @@ $countsql .= ' AND '.$twhere;
                             }
                             if (!$download) {
                                 $row[] = '<img src="'.$OUTPUT->pix_url($trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.$strstatus.'" /><br/>
-                                        <a href="reportuser.php?b='.$sco->id.'&amp;user='.$scouser->userid.'&amp;attempt='.$scouser->attempt.
+                                        <a href="userreport.php?b='.$sco->id.'&amp;user='.$scouser->userid.'&amp;attempt='.$scouser->attempt.
                                         '" title="'.get_string('details', 'scorm').'">'.$score.'</a>';
                             } else {
                                 $row[] = $score;
