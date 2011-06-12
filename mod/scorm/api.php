@@ -10,8 +10,10 @@
     $attempt = required_param('attempt', PARAM_INT); // new attempt
 
     //IE 6 Bug workaround
-    if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6') !== false && ini_get('zlib.output_compression') == 'On') {
-        ini_set('zlib.output_compression', 'Off');
+    if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6') !== false) {
+        @ini_set('zlib.output_compression', 'Off');
+        @apache_setenv('no-gzip', 1);
+        header( 'Content-Type: application/javascript' );
     }
 
     if (!empty($id)) {
