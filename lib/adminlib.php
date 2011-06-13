@@ -6569,11 +6569,17 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
      */
     public function get_setting() {
         global $CFG;
-        $webservicesystem = $CFG->enablewebservices;
+
+        // For install cli script, $CFG->defaultuserroleid is not set so return 0
+        // Or if web services aren't enabled this can't be,
+        if (empty($CFG->defaultuserroleid) || empty($CFG->enablewebservices)) {
+            return 0;
+        }
+
         require_once($CFG->dirroot . '/webservice/lib.php');
         $webservicemanager = new webservice();
         $mobileservice = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
-        if ($mobileservice->enabled and !empty($webservicesystem) and $this->is_xmlrpc_cap_allowed()) {
+        if ($mobileservice->enabled and $this->is_xmlrpc_cap_allowed()) {
             return $this->config_read($this->name); //same as returning 1
         } else {
             return 0;
@@ -6588,6 +6594,12 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
      */
     public function write_setting($data) {
         global $DB, $CFG;
+
+        //for install cli script, $CFG->defaultuserroleid is not set so do nothing
+        if (empty($CFG->defaultuserroleid)) {
+            return '';
+        }
+
         $servicename = MOODLE_OFFICIAL_MOBILE_SERVICE;
 
         require_once($CFG->dirroot . '/webservice/lib.php');
