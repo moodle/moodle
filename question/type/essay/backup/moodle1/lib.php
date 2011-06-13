@@ -33,18 +33,21 @@ class moodle1_qtype_essay_handler extends moodle1_qtype_handler {
      * @return array
      */
     public function get_question_subpaths() {
-        return array(
-            'ANSWERS/ANSWER',
-        );
+        return array();
     }
 
     /**
      * Appends the essay specific information to the question
      */
     public function process_question(array $data, array $raw) {
-        // convert and write the answers
-        if (isset($data['answers'])) {
-            $this->write_answers($data['answers'], $this->pluginname);
-        }
+        // data added on the upgrade step 2011031000
+        $this->write_xml('essay', array(
+            'id'                 => $this->converter->get_nextid(),
+            'responseformat'     => 'editor',
+            'responsefieldlines' => 15,
+            'attachments'        => 0,
+            'graderinfo'         => '',
+            'graderinfoformat'   => FORMAT_MOODLE
+        ), array('/essay/id'));
     }
 }
