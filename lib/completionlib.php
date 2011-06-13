@@ -185,11 +185,16 @@ class completion_info {
      *   for a course-module.
      */
     public function is_enabled($cm=null) {
-        global $CFG;
+        global $CFG, $DB;
 
         // First check global completion
         if (!isset($CFG->enablecompletion) || $CFG->enablecompletion == COMPLETION_DISABLED) {
             return COMPLETION_DISABLED;
+        }
+
+        // Load data if we do not have enough
+        if (!isset($this->course->enablecompletion)) {
+            $this->course->enablecompletion = $DB->get_field('course', 'enablecompletion', array('id' => $this->course->id));
         }
 
         // Check course completion
