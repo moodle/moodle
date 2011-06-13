@@ -31,5 +31,7 @@ $string['foldercontent'] = 'Files and subfolders';
 $string['modulename'] = 'Folder';
 $string['modulenameplural'] = 'Folders';
 $string['neverseen'] = 'Never seen';
+$string['page-mod-folder-x'] = 'Any folder module page';
+$string['page-mod-folder-view'] = 'Folder module main page';
 $string['pluginadministration'] = 'Folder administration';
 $string['pluginname'] = 'Folder';

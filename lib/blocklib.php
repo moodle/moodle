@@ -53,6 +53,13 @@ define('BLOCKS_PINNED_FALSE',1);
 define('BLOCKS_PINNED_BOTH',2);
 /**#@-*/
 
+define('BUI_CONTEXTS_FRONTPAGE_ONLY', 0);
+define('BUI_CONTEXTS_FRONTPAGE_SUBS', 1);
+define('BUI_CONTEXTS_ENTIRE_SITE', 2);
+
+define('BUI_CONTEXTS_CURRENT', 0);
+define('BUI_CONTEXTS_CURRENT_SUBS', 1);
+
 /**
  * Exception thrown when someone tried to do something with a block that does
  * not exist on a page.
@@ -1152,7 +1159,8 @@ class block_manager {
         $editpage = new moodle_page();
         $editpage->set_pagelayout('admin');
         $editpage->set_course($this->page->course);
-        $editpage->set_context($block->context);
+        //$editpage->set_context($block->context);
+        $editpage->set_context($this->page->context);
         if ($this->page->cm) {
             $editpage->set_cm($this->page->cm);
         }
@@ -1204,8 +1212,9 @@ class block_manager {
                 $bi->showinsubcontexts = (int)(!empty($data->bui_contexts));
 
                 // If the block wants to be system-wide, then explicitly set that
-                if ($data->bui_contexts == 2) {   // Only possible on a frontpage or system page
+                if ($data->bui_contexts == BUI_CONTEXTS_ENTIRE_SITE) {   // Only possible on a frontpage or system page
                     $bi->parentcontextid = $systemcontext->id;
+                    $bi->showinsubcontexts = 1;
 
                 } else { // The block doesn't want to be system-wide, so let's ensure that
                     if ($parentcontext->id == $systemcontext->id) {  // We need to move it to the front page
@@ -1213,6 +1222,25 @@ class block_manager {
                         $bi->parentcontextid = $frontpagecontext->id;
                         $bi->pagetypepattern = '*';  // Just in case
                     }
+                }
+            }
+
+            $bits = explode('-', $bi->pagetypepattern);
+            // hacks for some contexts
+            if (($parentcontext->contextlevel == CONTEXT_COURSE) && ($parentcontext->instanceid != SITEID)) {
+                // For course context
+                // is page type pattern is mod-*, change showinsubcontext to 1
+                if ($bits[0] == 'mod' || $bi->pagetypepattern == '*') {
+                    $bi->showinsubcontexts = 1;
+                } else {
+                    $bi->showinsubcontexts = 0;
+                }
+            } else  if ($parentcontext->contextlevel == CONTEXT_USER) {
+                // for user context
+                // subpagepattern should be null
+                if ($bits[0] == 'user' or $bits[0] == 'my') {
+                    // we don't need subpagepattern in usercontext
+                    $bi->subpagepattern = null;
                 }
             }
 
@@ -1266,7 +1294,18 @@ class block_manager {
             $strheading = get_string('blockconfiga', 'moodle', $block->get_title());
             $editpage->set_title($strheading);
             $editpage->set_heading($strheading);
-            $editpage->navbar->add($strheading);
+            $bits = explode('-', $this->page->pagetype);
+            if ($bits[0] == 'tag' && !empty($this->page->subpage)) {
+                // better navbar for tag pages
+                $editpage->navbar->add(get_string('tags'), new moodle_url('/tag/'));
+                $tag = tag_get('id', $this->page->subpage, '*');
+                // tag search page doesn't have subpageid
+                if ($tag) {
+                    $editpage->navbar->add($tag->name, new moodle_url('/tag/index.php', array('id'=>$tag->id)));
+                }
+            }
+            $editpage->navbar->add($block->get_title());
+            $editpage->navbar->add(get_string('configuration'));
             $output = $editpage->get_renderer('core');
             echo $output->header();
             echo $output->heading($strheading, 2);
@@ -1508,6 +1547,137 @@ function matching_page_type_patterns($pagetype) {
     return $patterns;
 }
 
+/**
+ * Given a specific page type, parent context and currect context, return all the page type patterns
+ * that might be used by this block.
+ *
+ * @param string $pagetype for example 'course-view-weeks' or 'mod-quiz-view'.
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ * @return array an array of all the page type patterns that might match this page type.
+ */
+function generate_page_type_patterns($pagetype, $parentcontext = null, $currentcontext = null) {
+    global $CFG;
+
+    $bits = explode('-', $pagetype);
+
+    $component = clean_param(reset($bits), PARAM_ALPHANUMEXT);
+    $function = 'default_pagetypelist';
+
+    $core = get_core_subsystems();
+    $plugins = get_plugin_types();
+
+    // First check to see if the initial component is a core component
+    // if its not check to see if it is a plugin component.
+    if (array_key_exists($component, $core) && !empty($core[$component])) {
+        $libfile = $CFG->dirroot.'/'.$core[$component].'/lib.php';
+        if (file_exists($libfile)) {
+            require_once($libfile);
+            if (function_exists($component.'_pagetypelist')) {
+                $function = $component.'_pagetypelist';
+            }
+        }
+    } else if (array_key_exists($component, $plugins) && !empty($plugins[$component])) {
+        $function = 'plugin_pagetypelist';
+        if (function_exists($component.'_pagetypelist')) {
+            $function = $component.'_pagetypelist';
+        }
+    }
+    // Call the most appropriate function we could determine
+    $patterns = $function($pagetype, $parentcontext, $currentcontext);
+    if (empty($patterns)) {
+        // If there are no patterns default to just the current pattern.
+        $patterns = array($pagetype => $pagetype);
+    }
+    return $patterns;
+}
+
+/**
+ * Generates a default page type list when a more appropriate callback cannot be decided upon.
+ *
+ * @param string $pagetype
+ * @param stdClass $parentcontext
+ * @param stdClass $currentcontext
+ * @return array
+ */
+function default_pagetypelist($pagetype, $parentcontext = null, $currentcontext = null) {
+    // Generate page type patterns based on current page type if
+    // callbacks haven't been defined
+    $patterns = array($pagetype => $pagetype);
+    $bits = explode('-', $pagetype);
+    while (count($bits) > 0) {
+        $pattern = implode('-', $bits) . '-*';
+        $pagetypestringname = 'page-'.str_replace('*', 'x', $pattern);
+        // guessing page type description
+        if (get_string_manager()->string_exists($pagetypestringname, 'pagetype')) {
+            $patterns[$pattern] = get_string($pagetypestringname, 'pagetype');
+        } else {
+            $patterns[$pattern] = $pattern;
+        }
+        array_pop($bits);
+    }
+    $patterns['*'] = get_string('page-x', 'pagetype');
+    return $patterns;
+}
+
+/**
+ * Generates a page type list for plugins
+ *
+ * @param string $pagetype
+ * @param stdClass $parentcontext
+ * @param stdClass $currentcontext
+ * @return array
+ */
+function plugin_pagetypelist($pagetype, $parentcontext = null, $currentcontext = null) {
+    global $CFG;
+
+    // for modules
+    $bits = explode('-', $pagetype);
+    $plugintype = $bits[0];
+    $pluginname = $bits[1];
+    $directory = get_plugin_directory($plugintype, $pluginname);
+    if (empty($directory)) {
+        return array();
+    }
+    $libfile = $directory.'/lib.php';
+    require_once($libfile);
+    $function = $pluginname.'_pagetypelist';
+    if (!function_exists($function)) {
+        return array();
+    }
+    $patterns = $function($pagetype, $parentcontext, $currentcontext);
+    if ($parentcontext->contextlevel == CONTEXT_COURSE) {
+        // including course page type
+        require_once("$CFG->dirroot/course/lib.php");
+        $patterns = array_merge(course_pagetypelist($pagetype, $parentcontext, $currentcontext), $patterns);
+    }
+    return $patterns;
+}
+
+/**
+ * Generates the page type list for a module by either locating and using the modules callback
+ * or by generating a default list.
+ *
+ * @param string $pagetype
+ * @param stdClass $parentcontext
+ * @param stdClass $currentcontext
+ * @return array
+ */
+function mod_pagetypelist($pagetype, $parentcontext = null, $currentcontext = null) {
+    $patterns = plugin_pagetypelist($pagetype, $parentcontext, $currentcontext);
+    if (empty($patterns)) {
+        // if modules don't have callbacks
+        // generate two default page type patterns for modules only
+        $bits = explode('-', $pagetype);
+        $patterns = array($pagetype => $pagetype);
+        if ($bits[2] == 'view') {
+            $patterns['mod-*-view'] = get_string('page-mod-x-view', 'pagetype');
+        } else if ($bits[2] == 'index') {
+            $patterns['mod-*-index'] = get_string('page-mod-x-index', 'pagetype');
+        }
+    }
+    return $patterns;
+}
 /// Functions update the blocks if required by the request parameters ==========
 
 /**

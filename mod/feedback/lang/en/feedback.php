@@ -201,6 +201,7 @@ $string['oldvalueswillbedeleted'] = 'The current questions and all your user\'s 
 $string['only_one_captcha_allowed'] = 'Only one captcha is allowed in a feedback';
 $string['overview'] = 'Overview';
 $string['page'] = 'Page';
+$string['page-mod-feedback-x'] = 'Any feedback module page';
 $string['page_after_submit'] = 'Page after submit';
 $string['pagebreak'] = 'Page break';
 $string['parameters_missing'] = 'Parameters missing from';

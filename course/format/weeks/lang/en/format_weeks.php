@@ -26,3 +26,5 @@
 $string['sectionname'] = 'Week';
 $string['pluginname'] = 'Weekly format';
 $string['section0name'] = 'General';
+$string['page-course-view-weeks'] = 'Any course main page in weeks format';
+$string['page-course-view-weeks-x'] = 'Any course page in weeks format';

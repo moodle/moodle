@@ -252,6 +252,7 @@ $string['other'] = 'Other';
 $string['overwrite'] = 'Overwrite';
 $string['overrwritedesc'] = 'Overwrite the preset if it already exists';
 $string['overwritesettings'] = 'Overwrite current settings';
+$string['page-mod-data-x'] = 'Any data module page';
 $string['pagesize'] = 'Entries per page';
 $string['participants'] = 'Participants';
 $string['picture'] = 'Picture';

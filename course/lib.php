@@ -4211,3 +4211,23 @@ class course_request {
         message_send($eventdata);
     }
 }
+
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function course_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+    // if above course context ,display all course fomats
+    list($currentcontext, $course, $cm) = get_context_info_array($currentcontext->id);
+    if ($course->id == SITEID) {
+        return array('*'=>get_string('page-x', 'pagetype'));
+    } else {
+        return array('*'=>get_string('page-x', 'pagetype'),
+            'course-*'=>get_string('page-course-x', 'pagetype'),
+            'course-view-*'=>get_string('page-course-view-x', 'pagetype'),
+            'mod-*'=>get_string('page-mod-x', 'pagetype')
+        );
+    }
+}

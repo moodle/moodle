@@ -214,6 +214,7 @@ $string['nobodyyet'] = 'Nobody has yet completed this survey';
 $string['notdone'] = 'Not done yet';
 $string['notes'] = 'Your private analysis and notes';
 $string['othercomments'] = 'Do you have any other comments?';
+$string['page-mod-survey-x'] = 'Any survey module page';
 $string['peoplecompleted'] = '{$a} people have completed this survey so far';
 $string['pluginadministration'] = 'Survey administration';
 $string['pluginname'] = 'Survey';

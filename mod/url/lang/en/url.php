@@ -49,6 +49,7 @@ $string['modulename'] = 'URL';
 $string['modulenameplural'] = 'URLs';
 $string['neverseen'] = 'Never seen';
 $string['optionsheader'] = 'Options';
+$string['page-mod-url-x'] = 'Any url module page';
 $string['parameterinfo'] = 'parameter=variable';
 $string['parametersheader'] = 'Parameters';
 $string['pluginadministration'] = 'URL module administration';

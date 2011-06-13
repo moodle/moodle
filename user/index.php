@@ -40,7 +40,7 @@
         }
         $course = $DB->get_record('course', array('id'=>$context->instanceid), '*', MUST_EXIST);
     } else {
-        $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+        $course = $DB->get_record('course', array('id'=>SITEID), '*', MUST_EXIST);
         $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
     }
     // not needed anymore

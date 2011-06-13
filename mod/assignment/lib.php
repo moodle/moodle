@@ -3714,3 +3714,17 @@ function assignment_get_file_areas($course, $cm, $context) {
     return $areas;
 }
 
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function assignment_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+    $module_pagetype = array(
+        'mod-assignment-*'=>get_string('page-mod-assignment-x', 'assignment'),
+        'mod-assignment-view'=>get_string('page-mod-assignment-view', 'assignment'),
+        'mod-assignment-submissions'=>get_string('page-mod-assignment-submissions', 'assignment')
+    );
+    return $module_pagetype;
+}

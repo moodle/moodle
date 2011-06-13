@@ -277,3 +277,13 @@ function note_delete_all($courseid) {
 
     return $DB->delete_records('post', array('module'=>'notes', 'courseid'=>$courseid));
 }
+
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function note_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+    return array('notes-*'=>get_string('page-notes-x', 'notes'));
+}

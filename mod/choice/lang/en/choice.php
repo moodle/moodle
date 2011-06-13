@@ -65,6 +65,7 @@ $string['notanswered'] = 'Not answered yet';
 $string['notenrolledchoose'] = 'Sorry, only enrolled users are allowed to make choices.';
 $string['notopenyet'] = 'Sorry, this activity is not available until {$a}';
 $string['option'] = 'Option';
+$string['page-mod-choice-x'] = 'Any choice module page';
 $string['pluginadministration'] = 'Choice administration';
 $string['pluginname'] = 'Choice';
 $string['privacy'] = 'Privacy of results';

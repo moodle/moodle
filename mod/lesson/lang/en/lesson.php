@@ -307,6 +307,7 @@ $string['outof'] = 'Out of {$a}';
 $string['overview'] = 'Overview';
 $string['overview_help'] = 'A lesson is made up of a number of pages and optionally content pages. A page contains some content and usually ends with a question. Associated with each answer to the question is a jump. The jump can be relative, such as this page or next page, or absolute, specifying any one of the pages in the lesson. A content page is a page containing a set of links to other pages in the lesson, for example a Table of Contents.';
 $string['page'] = 'Page: {$a}';
+$string['page-mod-lesson-x'] = 'Any lesson module page';
 $string['pagecontents'] = 'Page contents';
 $string['pages'] = 'Pages';
 $string['pagetitle'] = 'Page title';

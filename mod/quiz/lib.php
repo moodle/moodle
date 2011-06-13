@@ -1686,3 +1686,14 @@ function mod_quiz_question_pluginfile($course, $context, $component,
 
     send_stored_file($file, 0, 0, $forcedownload);
 }
+
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function quiz_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+    $module_pagetype = array('mod-quiz-*'=>get_string('page-mod-quiz-x', 'quiz'));
+    return $module_pagetype;
+}

@@ -404,3 +404,14 @@ function page_extend_navigation($navigation, $course, $module, $cm) {
      */
     $navigation->nodetype = navigation_node::NODETYPE_LEAF;
 }
+
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function page_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+    $module_pagetype = array('mod-page-*'=>get_string('page-mod-page-x', 'page'));
+    return $module_pagetype;
+}

@@ -219,6 +219,7 @@ $string['notcategorised'] = 'Not categorised';
 $string['notapproved'] = 'glossary entry is not approved yet.';
 $string['numberofentries'] = 'Number of entries';
 $string['onebyline'] = '(one per line)';
+$string['page-mod-glossary-x'] = 'Any glossary module page';
 $string['pluginadministration'] = 'Glossary administration';
 $string['pluginname'] = 'Glossary';
 $string['popupformat'] = 'Popup format';

@@ -68,6 +68,7 @@ $string['modulenameplural'] = 'Files';
 $string['neverseen'] = 'Never seen';
 $string['notmigrated'] = 'This legacy resource type ({$a}) was not yet migrated, sorry.';
 $string['optionsheader'] = 'Options';
+$string['page-mod-resource-x'] = 'Any resource module page';
 $string['pluginadministration'] = 'File module administration';
 $string['pluginname'] = 'File';
 $string['popupheight'] = 'Popup height (in pixels)';

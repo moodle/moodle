@@ -658,3 +658,20 @@ function wiki_comment_validate($comment_param) {
     }
     return true;
 }
+
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function wiki_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+    $module_pagetype = array(
+        'mod-wiki-*'=>get_string('page-mod-wiki-x', 'wiki'),
+        'mod-wiki-view'=>get_string('page-mod-wiki-view', 'wiki'),
+        'mod-wiki-comments'=>get_string('page-mod-wiki-comments', 'wiki'),
+        'mod-wiki-history'=>get_string('page-mod-wiki-history', 'wiki'),
+        'mod-wiki-map'=>get_string('page-mod-wiki-map', 'wiki')
+    );
+    return $module_pagetype;
+}

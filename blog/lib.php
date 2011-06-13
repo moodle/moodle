@@ -1028,3 +1028,18 @@ function blog_comment_validate($comment_param) {
     }
     return true;
 }
+
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function blog_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+    return array(
+        '*'=>get_string('page-x', 'pagetype'),
+        'blog-*'=>get_string('page-blog-x', 'blog'),
+        'blog-index'=>get_string('page-blog-index', 'blog'),
+        'blog-edit'=>get_string('page-blog-edit', 'blog')
+    );
+}

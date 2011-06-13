@@ -988,3 +988,15 @@ function lesson_get_file_info($browser, $areas, $course, $cm, $context, $fileare
     }
     return new file_info_stored($browser, $context, $storedfile, $urlbase, $filearea, $itemid, true, true, false);
 }
+
+
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function lesson_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+    $module_pagetype = array('mod-lesson-*'=>get_string('page-mod-lesson-x', 'lesson'));
+    return $module_pagetype;
+}

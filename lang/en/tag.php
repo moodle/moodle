@@ -26,6 +26,7 @@
 $string['addedotag'] = '"{$a}" was added as an official tag.';
 $string['addotags'] = 'Add official tags';
 $string['addtagtomyinterests'] = 'Add "{$a}" to my interests';
+$string['alltagpages'] = 'All tag pages';
 $string['count'] = 'Count';
 $string['delete'] = 'Delete';
 $string['deleted'] = 'Deleted';
@@ -82,3 +83,7 @@ $string['typechanged'] = 'Tag type changed';
 $string['updated'] = 'Updated';
 $string['updatetag'] = 'Update';
 $string['withselectedtags'] = 'With selected tags...';
+$string['page-tag-x'] = 'All tag pages';
+$string['page-tag-index'] = 'Single tag page';
+$string['page-tag-search'] = 'Tag search page';
+$string['page-tag-manage'] = 'Tag manage page';

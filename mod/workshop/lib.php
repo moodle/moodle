@@ -1342,3 +1342,14 @@ function workshop_extend_settings_navigation(settings_navigation $settingsnav, n
         $workshopnode->add(get_string('allocate', 'workshop'), $url, settings_navigation::TYPE_SETTING);
     }
 }
+
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function workshop_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+    $module_pagetype = array('mod-workshop-*'=>get_string('page-mod-workshop-x', 'workshop'));
+    return $module_pagetype;
+}

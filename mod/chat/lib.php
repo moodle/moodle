@@ -1305,3 +1305,14 @@ function chat_user_logout($user) {
     global $DB;
     $DB->delete_records('chat_users', array('userid'=>$user->id));
 }
+
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function chat_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+    $module_pagetype = array('mod-chat-*'=>get_string('page-mod-chat-x', 'chat'));
+    return $module_pagetype;
+}
