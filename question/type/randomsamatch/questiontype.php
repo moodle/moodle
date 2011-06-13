@@ -116,7 +116,7 @@ class qtype_randomsamatch extends question_type {
                 available for this question, therefore it is not available in  this
                 quiz. Please inform your teacher.";
             // Treat this as a description from this point on
-            $question->qtype = DESCRIPTION;
+            $question->qtype = 'description';
             return true;
         }
 
@@ -174,7 +174,7 @@ class qtype_randomsamatch extends question_type {
              available for this question, therefore it is not available in  this
              quiz. Please inform your teacher.";
             // Treat this as a description from this point on
-            $question->qtype = DESCRIPTION;
+            $question->qtype = 'description';
         } else {
             $responses = explode(',', $state->responses['']);
             $responses = array_map(create_function('$val',

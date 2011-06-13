@@ -41,22 +41,6 @@ require_once($CFG->dirroot . '/question/type/questiontypebase.php');
 
 /// CONSTANTS ///////////////////////////////////
 
-/**#@+
- * The core question types.
- */
-define("SHORTANSWER",   "shortanswer");
-define("TRUEFALSE",     "truefalse");
-define("MULTICHOICE",   "multichoice");
-define("RANDOM",        "random");
-define("MATCH",         "match");
-define("RANDOMSAMATCH", "randomsamatch");
-define("DESCRIPTION",   "description");
-define("NUMERICAL",     "numerical");
-define("MULTIANSWER",   "multianswer");
-define("CALCULATED",    "calculated");
-define("ESSAY",         "essay");
-/**#@-*/
-
 /**
  * Constant determines the number of answer boxes supplied in the editing
  * form for multiple choice and similar question types.
