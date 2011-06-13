@@ -67,7 +67,7 @@ abstract class restore_activity_task extends restore_task {
         $this->moduleid = $moduleid;
     }
 
-    public function set_old_module_version($oldmoduleversion) {
+    public function set_old_moduleversion($oldmoduleversion) {
         $this->oldmoduleversion = $oldmoduleversion;
     }
 
@@ -95,7 +95,7 @@ abstract class restore_activity_task extends restore_task {
         return $this->moduleid;
     }
 
-    public function get_old_module_version() {
+    public function get_old_moduleversion() {
         return $this->oldmoduleversion;
     }
 
