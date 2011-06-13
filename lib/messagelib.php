@@ -354,10 +354,25 @@ function message_set_default_message_preference($component, $messagename, $filep
 
 /**
  * Returns the active providers for the current user, based on capability
+ * 
+ * This function has been deprecated please use {@see message_get_providers_for_user()} instead.
  *
+ * @deprecated since 2.1
+ * @todo Remove in 2.2
  * @return array of message providers
  */
 function message_get_my_providers() {
+    global $USER;
+    return message_get_providers_for_user($USER->id);
+}
+
+/**
+ * Returns the active providers for the user specified, based on capability
+ *
+ * @param int $userid id of user
+ * @return array of message providers
+ */
+function message_get_providers_for_user($userid) {
     global $DB;
 
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
@@ -367,7 +382,7 @@ function message_get_my_providers() {
     // Remove all the providers we aren't allowed to see now
     foreach ($providers as $providerid => $provider) {
         if (!empty($provider->capability)) {
-            if (!has_capability($provider->capability, $systemcontext)) {
+            if (!has_capability($provider->capability, $systemcontext, $userid)) {
                 unset($providers[$providerid]);   // Not allowed to see this
             }
         }

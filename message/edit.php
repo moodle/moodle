@@ -91,13 +91,14 @@ if ($user->id == $USER->id) {
     $PAGE->navigation->extend_for_user($user);
 }
 
+// Fetch message providers
+$providers = message_get_providers_for_user($user->id);
+
 /// Save new preferences if data was submitted
 
 if (($form = data_submitted()) && confirm_sesskey()) {
     $preferences = array();
 
-/// Set all the preferences for all the message providers
-    $providers = message_get_my_providers();
     foreach ($providers as $provider) {
         $componentproviderbase = $provider->component.'_'.$provider->name;
         foreach (array('loggedin', 'loggedoff') as $state) {
@@ -142,7 +143,6 @@ $preferences = new stdClass();
 $preferences->userdefaultemail = $user->email;//may be displayed by the email processor
 
 /// Get providers preferences
-$providers = message_get_my_providers();
 foreach ($providers as $provider) {
     foreach (array('loggedin', 'loggedoff') as $state) {
         $linepref = get_user_preferences('message_provider_'.$provider->component.'_'.$provider->name.'_'.$state, '', $user->id);
@@ -182,8 +182,6 @@ if ($course->id != SITEID) {
 
 // Grab the renderer
 $renderer = $PAGE->get_renderer('core', 'message');
-// Fetch message providers
-$providers = message_get_my_providers();
 // Fetch default (site) preferences
 $defaultpreferences = get_message_output_default_preferences();
 
