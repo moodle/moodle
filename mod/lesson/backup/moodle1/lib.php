@@ -33,6 +33,11 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
     // @var array of answers, when there are more that 4 answers, we need to fix <jumpto>.
     protected $answers;
 
+    // @var stdClass a page object of the current page
+    protected $page;
+    // @var array of page objects to store entire pages, to help generate nextpageid and prevpageid in data
+    protected $pages;
+
     /** @var moodle1_file_manager */
     protected $fileman = null;
 
@@ -67,11 +72,13 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
                 array(
                     'newfields' => array(
                         'contentsformat' => FORMAT_MOODLE,
+                        'nextpageid' => 0, //set to default to the next sequencial page in process_lesson_page()
+                        'prevpageid' => 0
                     ),
                 )
             ),
             new convert_path(
-                'lesson_answers', '/MOODLE_BACKUP/COURSE/MODULES/MOD/LESSON/PAGES/PAGE/ANSWERS'
+                'lesson_pages', '/MOODLE_BACKUP/COURSE/MODULES/MOD/LESSON/PAGES'
             ),
             new convert_path(
                 'lesson_answer', '/MOODLE_BACKUP/COURSE/MODULES/MOD/LESSON/PAGES/PAGE/ANSWERS/ANSWER',
@@ -121,15 +128,16 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
             'modulename' => 'lesson', 'contextid' => $contextid));
         $this->xmlwriter->begin_tag('lesson', array('id' => $instanceid));
 
+        unset($data['id']);
         foreach ($data as $field => $value) {
-            if ($field <> 'id') {
-                $this->xmlwriter->full_tag($field, $value);
-            }
+            $this->xmlwriter->full_tag($field, $value);
         }
 
-        $this->xmlwriter->begin_tag('pages');
-
         return $data;
+    }
+
+    public function on_lesson_pages_start() {
+        $this->xmlwriter->begin_tag('pages');
     }
 
     /**
@@ -145,12 +153,11 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
             $data['contentsformat'] = FORMAT_HTML;
         }
 
-        $this->xmlwriter->begin_tag('page', array('id' => $data['pageid']));
-        foreach ($data as $field => $value) {
-            if ($field <> 'id') {
-                $this->xmlwriter->full_tag($field, $value);
-            }
-        }
+        // store page in pages
+        $this->page = new stdClass();
+        $this->page->id = $data['pageid'];
+        unset($data['pageid']);
+        $this->page->data = $data;
     }
 
     /**
@@ -175,33 +182,68 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
         $this->answers[] = $data;
     }
 
-    public function on_lesson_answers_end() {
-        $this->xmlwriter->begin_tag('answers');
-        if (count($this->answers) > 3) {
-            if ($this->answers[0]['jumpto'] !== '0' || $this->answers[1]['jumpto'] !== '0') {
-                if ($this->answers[2]['jumpto'] !== '0') {
-                    $this->answers[0]['jumpto'] = $this->answers[2]['jumpto'];
-                    $this->answers[2]['jumpto'] = '0';
-                }
-                if ($this->answers[3]['jumpto'] !== '0') {
-                    $this->answers[1]['jumpto'] = $this->answers[3]['jumpto'];
-                    $this->answers[3]['jumpto'] = '0';
-                }
-            }
-        }
-
-        foreach ($this->answers as $data) {
-            $this->write_xml('answer', $data, array('/answer/id'));
-        }
+    public function on_lesson_page_end() {
+        $this->page->answers = $this->answers;
         unset($this->answers);
-        $this->xmlwriter->end_tag('answers');
+        $this->pages[] = $this->page;
+        unset($this->page);
     }
 
-    /**
-     * This is executed when we reach the closing </pages>tag of our 'page' path
-     */
-    public function on_lesson_page_end(){
-        $this->xmlwriter->end_tag('page');
+    public function on_lesson_pages_end() {
+        $prevpageid = 0;
+
+        foreach ($this->pages as $page) {
+            $curpageid = $page->id;
+            // if there are more pages, set nextpageid
+            if (isset($this->pages[1])) {
+                $nextpage = $this->pages[1];
+                $nextpageid = $nextpage->id;
+            } else {
+                //theres only one page left
+                $nextpageid = 0;
+            }
+            //mince nextpageid and prevpageid
+            $page->data['nextpageid'] = $nextpageid;
+            $page->data['prevpageid'] = $prevpageid;
+
+            array_shift($this->pages);
+
+            // write out each page data
+            $this->xmlwriter->begin_tag('page', array('id' => $page->id));
+
+            foreach ($page->data as $field => $value) {
+                $this->xmlwriter->full_tag($field, $value);
+            }
+
+            //effectively on_lesson_answers_end(), where we write out answers for current page.
+            $answers = $page->answers;
+
+            $this->xmlwriter->begin_tag('answers');
+            if (count($answers) > 3) {
+                if ($answers[0]['jumpto'] !== '0' || $answers[1]['jumpto'] !== '0') {
+                    if ($answers[2]['jumpto'] !== '0') {
+                        $answers[0]['jumpto'] = $answers[2]['jumpto'];
+                        $answers[2]['jumpto'] = '0';
+                    }
+                    if ($answers[3]['jumpto'] !== '0') {
+                        $answers[1]['jumpto'] = $answers[3]['jumpto'];
+                        $answers[3]['jumpto'] = '0';
+                    }
+                }
+            }
+
+            foreach ($answers as $data) {
+                $this->write_xml('answer', $data, array('/answer/id'));
+            }
+            $this->xmlwriter->end_tag('answers');
+
+            // answers is now closed for current page. Ending the page.
+            $this->xmlwriter->end_tag('page');
+
+            // set prevpageid
+            $prevpageid = $curpageid;
+        }
+        $this->xmlwriter->end_tag('pages');
     }
 
     /**
@@ -209,7 +251,6 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
      */
     public function on_lesson_end() {
         // finish writing lesson.xml
-        $this->xmlwriter->end_tag('pages');
         $this->xmlwriter->end_tag('lesson');
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();
