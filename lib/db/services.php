@@ -245,7 +245,10 @@ $services = array(
         'functions' => array (
             'moodle_enrol_get_users_courses',
             'moodle_enrol_get_enrolled_users',
-            'moodle_user_get_users_by_id'),
+            'moodle_user_get_users_by_id',
+            'moodle_webservice_get_siteinfo',
+            'moodle_notes_create_notes',
+            'moodle_message_send_messages'),
         'enabled' => 0,
         'restrictedusers' => 0,
         'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE
