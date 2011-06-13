@@ -183,12 +183,19 @@ input[type="radio"] {
     margin-left: 21%;
 }
 
+/* Admin management
+-----------------------*/
+.plugincompattable {
+    font-size: 100%;
+    text-align: left;
+}
+
 /* User
 -----------------------*/
 
 .userinfobox {
-border-color: #ddd;
-padding: 0
+    border-color: #ddd;
+    padding: 0
 }
 
 .userinfobox .content {
