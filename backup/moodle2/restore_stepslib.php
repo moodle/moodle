@@ -2025,7 +2025,7 @@ class restore_module_structure_step extends restore_structure_step {
         $data = (object)$data;
         $oldid = $data->id;
 
-        $this->task->set_old_module_version($data->version);
+        $this->task->set_old_moduleversion($data->version);
 
         $data->course = $this->task->get_courseid();
         $data->module = $DB->get_field('modules', 'id', array('name' => $data->modulename));
