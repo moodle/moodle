@@ -153,13 +153,13 @@ case workshop::PHASE_SUBMISSION:
         echo $output->box_start('generalbox ownsubmission');
         if ($submission = $workshop->get_submission_by_author($USER->id)) {
             echo $output->render($workshop->prepare_submission_summary($submission, true));
-            if ($workshop->modifying_submission_allowed()) {
+            if ($workshop->modifying_submission_allowed($USER->id)) {
                 $btnurl = new moodle_url($workshop->submission_url(), array('edit' => 'on'));
                 $btntxt = get_string('editsubmission', 'workshop');
             }
         } else {
             echo $output->container(get_string('noyoursubmission', 'workshop'));
-            if ($workshop->creating_submission_allowed()) {
+            if ($workshop->creating_submission_allowed($USER->id)) {
                 $btnurl = new moodle_url($workshop->submission_url(), array('edit' => 'on'));
                 $btntxt = get_string('createsubmission', 'workshop');
             }
@@ -201,7 +201,7 @@ case workshop::PHASE_ASSESSMENT:
             echo $output->box_start('generalbox ownsubmission');
             echo $output->container(get_string('noyoursubmission', 'workshop'));
             $ownsubmissionexists = false;
-            if ($workshop->creating_submission_allowed()) {
+            if ($workshop->creating_submission_allowed($USER->id)) {
                 $btnurl = new moodle_url($workshop->submission_url(), array('edit' => 'on'));
                 $btntxt = get_string('createsubmission', 'workshop');
             }

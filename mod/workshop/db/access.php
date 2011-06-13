@@ -206,4 +206,15 @@ $capabilities = array(
         )
     ),
 
+    // Ability to ignore time restrictions (submission start/end time and assessment
+    // start/end time) if they are defined
+    'mod/workshop:ignoredeadlines' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
 );

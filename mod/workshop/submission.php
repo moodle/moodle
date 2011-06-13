@@ -76,10 +76,10 @@ $ispublished    = ($workshop->phase == workshop::PHASE_CLOSED
                     and $submission->published == 1
                     and has_capability('mod/workshop:viewpublishedsubmissions', $workshop->context));
 
-if (empty($submission->id) and !$workshop->creating_submission_allowed()) {
+if (empty($submission->id) and !$workshop->creating_submission_allowed($USER->id)) {
     $editable = false;
 }
-if ($submission->id and !$workshop->modifying_submission_allowed()) {
+if ($submission->id and !$workshop->modifying_submission_allowed($USER->id)) {
     $editable = false;
 }
 
@@ -109,7 +109,7 @@ if ($submission->id and ($ownsubmission or $canviewall or $isreviewer)) {
     print_error('nopermissions', 'error', $workshop->view_url(), 'view or create submission');
 }
 
-if ($assess and $submission->id and !$isreviewer and $canallocate and $workshop->assessing_allowed()) {
+if ($assess and $submission->id and !$isreviewer and $canallocate and $workshop->assessing_allowed($USER->id)) {
     require_sesskey();
     $assessmentid = $workshop->add_allocation($submission, $USER->id);
     redirect($workshop->assess_url($assessmentid));
@@ -267,7 +267,7 @@ if ($editable) {
     echo $output->single_button($btnurl, $btntxt, 'get');
 }
 
-if ($submission->id and !$edit and !$isreviewer and $canallocate and $workshop->assessing_allowed()) {
+if ($submission->id and !$edit and !$isreviewer and $canallocate and $workshop->assessing_allowed($USER->id)) {
     $url = new moodle_url($PAGE->url, array('assess' => 1));
     echo $output->single_button($url, get_string('assess', 'workshop'), 'post');
 }
@@ -281,7 +281,7 @@ if ($isreviewer) {
     // reviewers can always see the grades they gave even they are not available yet
     if (is_null($userassessment->grade)) {
         echo $output->heading(get_string('notassessed', 'workshop'), 3);
-        if ($workshop->assessing_allowed()) {
+        if ($workshop->assessing_allowed($USER->id)) {
             echo $output->container($output->single_button($workshop->assess_url($userassessment->id), get_string('assess', 'workshop'), 'get'),
                     array('class' => 'buttonsbar'));
         }
@@ -293,7 +293,7 @@ if ($isreviewer) {
         if ($userassessment->weight != 1) {
             echo $output->heading(get_string('weightinfo', 'workshop', $userassessment->weight), 3);
         }
-        if ($workshop->assessing_allowed()) {
+        if ($workshop->assessing_allowed($USER->id)) {
             echo $output->container($output->single_button($workshop->assess_url($userassessment->id), get_string('reassess', 'workshop'), 'get'),
                     array('class' => 'buttonsbar'));
         }
