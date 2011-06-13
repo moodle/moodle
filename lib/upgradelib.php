@@ -897,10 +897,6 @@ function external_update_descriptions($component) {
         $service['restrictedusers'] = !isset($service['restrictedusers']) ? 1 : $service['restrictedusers'];
 
         $update = false;
-        if ($dbservice->enabled != $service['enabled']) {
-            $dbservice->enabled = $service['enabled'];
-            $update = true;
-        }
         if ($dbservice->requiredcapability != $service['requiredcapability']) {
             $dbservice->requiredcapability = $service['requiredcapability'];
             $update = true;
