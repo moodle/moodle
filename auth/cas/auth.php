@@ -405,7 +405,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
 
         return false;
     }
-    
+
     /**
      * Reads user information from LDAP and returns it as array()
      *
@@ -423,7 +423,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
         }
         return parent::get_userinfo($username);
     }
-    
+
     /**
      * Syncronizes users from LDAP server to moodle user table.
      *

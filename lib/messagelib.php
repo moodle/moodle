@@ -230,7 +230,7 @@ function message_update_providers($component='moodle') {
 
 /**
  * Returns the active providers for the current user, based on capability
- * 
+ *
  * @deprecated since 2.1
  * @todo Remove in 2.2
  * @return array of message providers
