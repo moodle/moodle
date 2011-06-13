@@ -34,16 +34,30 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
 
+/**
+ * Module settings form for Workshop instances
+ */
 class mod_workshop_mod_form extends moodleform_mod {
+
+    /** @var object the course this instance is part of */
+    protected $course = null;
+
+    /**
+     * Constructor
+     */
+    public function __construct($current, $section, $cm, $course) {
+        $this->course = $course;
+        parent::__construct($current, $section, $cm, $course);
+    }
 
     /**
      * Defines the workshop instance configuration form
      *
      * @return void
      */
-    function definition() {
+    public function definition() {
+        global $CFG;
 
-        global $CFG, $COURSE;
         $workshopconfig = get_config('workshop');
         $mform = $this->_form;
 
@@ -86,16 +100,23 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('header', 'gradingsettings', get_string('gradingsettings', 'workshop'));
 
         $grades = workshop::available_maxgrades_list();
+        $gradecategories = grade_get_categories_menu($this->course->id);
 
         $label = get_string('submissiongrade', 'workshop');
-        $mform->addElement('select', 'grade', $label, $grades);
+        $mform->addGroup(array(
+            $mform->createElement('select', 'grade', '', $grades),
+            $mform->createElement('select', 'gradecategory', '', $gradecategories),
+            ), 'submissiongradegroup', $label, ' ', false);
         $mform->setDefault('grade', $workshopconfig->grade);
-        $mform->addHelpButton('grade', 'submissiongrade', 'workshop');
+        $mform->addHelpButton('submissiongradegroup', 'submissiongrade', 'workshop');
 
         $label = get_string('gradinggrade', 'workshop');
-        $mform->addElement('select', 'gradinggrade', $label , $grades);
+        $mform->addGroup(array(
+            $mform->createElement('select', 'gradinggrade', '', $grades),
+            $mform->createElement('select', 'gradinggradecategory', '', $gradecategories),
+            ), 'gradinggradegroup', $label, ' ', false);
         $mform->setDefault('gradinggrade', $workshopconfig->gradinggrade);
-        $mform->addHelpButton('gradinggrade', 'gradinggrade', 'workshop');
+        $mform->addHelpButton('gradinggradegroup', 'gradinggrade', 'workshop');
 
         $label = get_string('strategy', 'workshop');
         $mform->addElement('select', 'strategy', $label, workshop::available_strategies_list());
@@ -126,8 +147,8 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('select', 'nattachments', $label, $options);
         $mform->setDefault('nattachments', 1);
 
-        $options = get_max_upload_sizes($CFG->maxbytes, $COURSE->maxbytes);
-        $options[0] = get_string('courseuploadlimit') . ' ('.display_size($COURSE->maxbytes).')';
+        $options = get_max_upload_sizes($CFG->maxbytes, $this->course->maxbytes);
+        $options[0] = get_string('courseuploadlimit') . ' ('.display_size($this->course->maxbytes).')';
         $mform->addElement('select', 'maxbytes', get_string('maxbytes', 'workshop'), $options);
         $mform->setDefault('maxbytes', $workshopconfig->maxbytes);
 
@@ -183,12 +204,13 @@ class mod_workshop_mod_form extends moodleform_mod {
     /**
      * Prepares the form before data are set
      *
-     * Additional wysiwyg editor are prepared here, the introeditor is prepared automatically by core
+     * Additional wysiwyg editor are prepared here, the introeditor is prepared automatically by core.
+     * Grade items are set here because the core modedit supports single grade item only.
      *
      * @param array $data to be set
      * @return void
      */
-    function data_preprocessing(&$data) {
+    public function data_preprocessing(&$data) {
         if ($this->current->instance) {
             // editing an existing workshop - let us prepare the added editor elements (intro done automatically)
             $draftitemid = file_get_submitted_draft_itemid('instructauthors');
@@ -216,5 +238,49 @@ class mod_workshop_mod_form extends moodleform_mod {
             file_prepare_draft_area($draftitemid, null, 'mod_workshop', 'instructreviewers', 0);    // no context yet, itemid not used
             $data['instructreviewerseditor'] = array('text' => '', 'format' => editors_get_preferred_format(), 'itemid' => $draftitemid);
         }
+    }
+
+    /**
+     * Set the grade item categories when editing an instance
+     */
+    public function definition_after_data() {
+
+        $mform =& $this->_form;
+
+        if ($id = $mform->getElementValue('update')) {
+            $instance   = $mform->getElementValue('instance');
+
+            $gradeitems = grade_item::fetch_all(array(
+                'itemtype'      => 'mod',
+                'itemmodule'    => 'workshop',
+                'iteminstance'  => $instance,
+                'courseid'      => $this->course->id));
+
+            if (!empty($gradeitems)) {
+                foreach ($gradeitems as $gradeitem) {
+                    // here comes really crappy way how to set the value of the fields
+                    // gradecategory and gradinggradecategory - grrr QuickForms
+                    if ($gradeitem->itemnumber == 0) {
+                        $group = $mform->getElement('submissiongradegroup');
+                        $elements = $group->getElements();
+                        foreach ($elements as $element) {
+                            if ($element->getName() == 'gradecategory') {
+                                $element->setValue($gradeitem->categoryid);
+                            }
+                        }
+                    } else if ($gradeitem->itemnumber == 1) {
+                        $group = $mform->getElement('gradinggradegroup');
+                        $elements = $group->getElements();
+                        foreach ($elements as $element) {
+                            if ($element->getName() == 'gradinggradecategory') {
+                                $element->setValue($gradeitem->categoryid);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        parent::definition_after_data();
     }
 }
