@@ -48,20 +48,33 @@
 defined('MOODLE_INTERNAL') || die();
 
 function xmldb_theme_formal_white_install() {
+
+    // We need here to check whether or not the theme has been installed.
+    // If it has been installed then we need to change the name of the settings to the new names.
+    // If it is not installed it won't have any settings yet and we won't need to worry about this.
     $currentsetting = get_config('theme_formal_white');
+    if (!empty($currentsetting)) {
+        // Remove the settings that are no longer used by this theme
+        // Remove regionwidth
+        unset_config('regionwidth', 'theme_formal_white');
+        // Remove alwayslangmenu
+        unset_config('alwayslangmenu', 'theme_formal_white');
 
-    // Remove all the useless settings of the first pre-release
-    // Remove backgroundcolor
-    unset_config('backgroundcolor', 'theme_formal_white');
-    // Remove regionwidth
-    unset_config('regionwidth', 'theme_formal_white');
-    // Remove alwayslangmenu
-    unset_config('alwayslangmenu', 'theme_formal_white');
-
-    // Create a new config setting called lblockcolumnbgc and give it blockcolumnbgc's value.
-    set_config('lblockcolumnbgc', $currentsetting->blockcolumnbgc, 'theme_formal_white');
-    // Remove blockcolumnbgc
-    unset_config('blockcolumnbgc', 'theme_formal_white');
+        // previous releases of formal_white them were not equipped with version number
+        // so I can not know if a theme specific variable exists or not.
+        // This is the reason why I try to use them both.
+        if (!empty($currentsetting->backgroundcolor)) {
+            // Create a new config setting called lblockcolumnbgc and give it backgroundcolor's value.
+            set_config('lblockcolumnbgc', $currentsetting->backgroundcolor, 'theme_formal_white');
+            // Remove backgroundcolor
+            unset_config('backgroundcolor', 'theme_formal_white');
+        } elseif (!empty($currentsetting->blockcolumnbgc)) {
+            // Create a new config setting called lblockcolumnbgc and give it blockcolumnbgc's value.
+            set_config('lblockcolumnbgc', $currentsetting->blockcolumnbgc, 'theme_formal_white');
+            // Remove blockcolumnbgc
+            unset_config('blockcolumnbgc', 'theme_formal_white');
+        }
+    }
 
     return true;
 }
