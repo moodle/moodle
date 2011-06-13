@@ -17,7 +17,7 @@
 
 /**
  * This page displays the user data from a single attempt
- * 
+ *
  * @package    mod
  * @subpackage scorm
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
@@ -110,10 +110,10 @@ if ($scoes = $DB->get_records_select('scorm_scoes', "scorm=? ORDER BY id", array
     // Print general score data
     $table = new html_table();
     $table->head = array(
-            get_string('title', 'scorm'), 
-            get_string('status', 'scorm'), 
-            get_string('time', 'scorm'), 
-            get_string('score', 'scorm'), 
+            get_string('title', 'scorm'),
+            get_string('status', 'scorm'),
+            get_string('time', 'scorm'),
+            get_string('score', 'scorm'),
             '');
     $table->align = array('left', 'center', 'center', 'right', 'left');
     $table->wrap = array('nowrap', 'nowrap', 'nowrap', 'nowrap', 'nowrap');
@@ -183,17 +183,17 @@ if (!empty($b)) {
     $existelements = false;
     if ($scorm->version == 'SCORM_1.3') {
         $elements = array(
-                'raw' => 'cmi.score.raw', 
-                'min' => 'cmi.score.min', 
-                'max' => 'cmi.score.max', 
-                'status' => 'cmi.completion_status', 
+                'raw' => 'cmi.score.raw',
+                'min' => 'cmi.score.min',
+                'max' => 'cmi.score.max',
+                'status' => 'cmi.completion_status',
                 'time' => 'cmi.total_time');
     } else {
         $elements = array(
-                'raw' => 'cmi.core.score.raw', 
-                'min' => 'cmi.core.score.min', 
-                'max' => 'cmi.core.score.max', 
-                'status' => 'cmi.core.lesson_status', 
+                'raw' => 'cmi.core.score.raw',
+                'min' => 'cmi.core.score.min',
+                'max' => 'cmi.core.score.max',
+                'status' => 'cmi.core.lesson_status',
                 'time' => 'cmi.core.total_time');
     }
     $printedelements = array();
@@ -224,9 +224,9 @@ if (!empty($b)) {
     // Print Interactions data
     $table = new html_table();
     $table->head = array(
-            get_string('identifier', 'scorm'), 
-            get_string('type', 'scorm'), 
-            get_string('result', 'scorm'), 
+            get_string('identifier', 'scorm'),
+            get_string('type', 'scorm'),
+            get_string('result', 'scorm'),
             get_string('student_response', 'scorm'));
     $table->align = array('center', 'center', 'center', 'center');
     $table->wrap = array('nowrap', 'nowrap', 'nowrap', 'nowrap');
@@ -240,9 +240,9 @@ if (!empty($b)) {
         $existinteraction = true;
         $printedelements[]=$interactionid;
         $elements = array(
-                $interactionid, 
-                'cmi.interactions.'.$i.'.type', 
-                'cmi.interactions.'.$i.'.result', 
+                $interactionid,
+                'cmi.interactions.'.$i.'.type',
+                'cmi.interactions.'.$i.'.result',
                 'cmi.interactions.'.$i.'.learner_response');
         $row = array();
         foreach ($elements as $element) {
@@ -265,10 +265,10 @@ if (!empty($b)) {
     // Print Objectives data
     $table = new html_table();
     $table->head = array(
-            get_string('identifier', 'scorm'), 
-            get_string('status', 'scorm'), 
-            get_string('raw', 'scorm'), 
-            get_string('min', 'scorm'), 
+            get_string('identifier', 'scorm'),
+            get_string('status', 'scorm'),
+            get_string('raw', 'scorm'),
+            get_string('min', 'scorm'),
             get_string('max', 'scorm'));
     $table->align = array('center', 'center', 'center', 'center', 'center');
     $table->wrap = array('nowrap', 'nowrap', 'nowrap', 'nowrap', 'nowrap');
@@ -283,9 +283,9 @@ if (!empty($b)) {
         $existobjective = true;
         $printedelements[]=$objectiveid;
         $elements = array(
-                $objectiveid, 
-                'cmi.objectives.'.$i.'.status', 
-                'cmi.objectives.'.$i.'.score.raw', 
+                $objectiveid,
+                'cmi.objectives.'.$i.'.status',
+                'cmi.objectives.'.$i.'.score.raw',
                 'cmi.objectives.'.$i.'.score.min',
                 'cmi.objectives.'.$i.'.score.max');
         $row = array();

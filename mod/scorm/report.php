@@ -28,7 +28,7 @@ $url->param('id', $id);
 $cm = get_coursemodule_from_id('scorm', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 $scorm = $DB->get_record('scorm', array('id'=>$cm->instance), '*', MUST_EXIST);
-    
+
 $PAGE->set_url($url);
 
 require_login($course->id, false, $cm);
@@ -370,7 +370,7 @@ $countsql .= ' AND '.$twhere;
 
     // Fetch the attempts
     if (!$download) {
-        $attempts = $DB->get_records_sql($select.$from.$where.$sort, $params, 
+        $attempts = $DB->get_records_sql($select.$from.$where.$sort, $params,
         $table->get_page_start(), $table->get_page_size());
         echo '<div id="scormtablecontainer">';
         if ($candelete) {
@@ -405,11 +405,11 @@ $countsql .= ' AND '.$twhere;
             }
             if (in_array('picture', $columns)) {
                 $user = (object)array(
-                        'id'=>$scouser->userid, 
-                        'picture'=>$scouser->picture, 
-                        'imagealt'=>$scouser->imagealt, 
-                        'email'=>$scouser->email, 
-                        'firstname'=>$scouser->firstname, 
+                        'id'=>$scouser->userid,
+                        'picture'=>$scouser->picture,
+                        'imagealt'=>$scouser->imagealt,
+                        'email'=>$scouser->email,
+                        'firstname'=>$scouser->firstname,
                         'lastname'=>$scouser->lastname);
                 $row[] = $OUTPUT->user_picture($user, array('courseid'=>$course->id));
             }
