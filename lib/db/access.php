@@ -1692,6 +1692,15 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
+    'moodle/webservice:createmobiletoken' => array(
+
+        'riskbitmask' => RISK_CONFIG | RISK_DATALOSS | RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        )
+    ),
     'moodle/rating:view' => array(
 
         'captype' => 'read',
