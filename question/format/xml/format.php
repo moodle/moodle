@@ -1053,23 +1053,17 @@ class qformat_xml extends qformat_default {
             // for all question types except Close
             $name_text = $this->writetext($question->name, 3);
 
-            $question_text = $this->writetext($question->questiontext, 3);
-            $question_text_files = $this->writefiles($question->questiontextfiles);
-
-            $generalfeedback = $this->writetext($question->generalfeedback, 3);
-            $generalfeedback_files = $this->writefiles($question->generalfeedbackfiles);
-
             $expout .= "  <question type=\"$questiontype\">\n";
             $expout .= "    <name>\n";
             $expout .= $name_text;
             $expout .= "    </name>\n";
             $expout .= "    <questiontext {$this->format($question->questiontextformat)}>\n";
-            $expout .= $question_text;
-            $expout .= $question_text_files;
+            $expout .= $this->writetext($question->questiontext, 3);
+            $expout .= $this->writefiles($question->questiontextfiles);
             $expout .= "    </questiontext>\n";
             $expout .= "    <generalfeedback {$this->format($question->generalfeedbackformat)}>\n";
-            $expout .= $generalfeedback;
-            $expout .= $generalfeedback_files;
+            $expout .= $this->writetext($question->generalfeedback, 3);
+            $expout .= $this->writefiles($question->generalfeedbackfiles);
             $expout .= "    </generalfeedback>\n";
             $expout .= "    <defaultgrade>{$question->defaultmark}</defaultgrade>\n";
             $expout .= "    <penalty>{$question->penalty}</penalty>\n";
@@ -1080,13 +1074,17 @@ class qformat_xml extends qformat_default {
             $name_text = $this->writetext( $question->name );
             $question_text = $this->writetext( $question->questiontext );
             $generalfeedback = $this->writetext( $question->generalfeedback );
-            $expout .= "  <question type=\"$question_type\">\n";
-            $expout .= "    <name>$name_text</name>\n";
+            $expout .= "  <question type=\"$questiontype\">\n";
+            $expout .= "    <name>\n";
+            $expout .= $name_text;
+            $expout .= "    </name>\n";
             $expout .= "    <questiontext>\n";
-            $expout .= $question_text;
+            $expout .= $this->writetext($question->questiontext, 3);
+            $expout .= $this->writefiles($question->questiontextfiles);
             $expout .= "    </questiontext>\n";
             $expout .= "    <generalfeedback>\n";
-            $expout .= $generalfeedback;
+            $expout .= $this->writetext($question->generalfeedback, 3);
+            $expout .= $this->writefiles($question->generalfeedbackfiles);
             $expout .= "    </generalfeedback>\n";
         }
 
@@ -1218,19 +1216,16 @@ class qformat_xml extends qformat_default {
             $expout .= "    </incorrectfeedback>\n";
 
             foreach ($question->options->answers as $answer) {
-                $tolerance = $answer->tolerance;
-                $tolerancetype = $answer->tolerancetype;
-                $correctanswerlength= $answer->correctanswerlength ;
                 $percent = 100 * $answer->fraction;
                 $expout .= "<answer fraction=\"$percent\">\n";
                 // "<text/>" tags are an added feature, old files won't have them
                 $expout .= "    <text>{$answer->answer}</text>\n";
-                $expout .= "    <tolerance>$tolerance</tolerance>\n";
-                $expout .= "    <tolerancetype>$tolerancetype</tolerancetype>\n";
-                $expout .= "    <correctanswerformat>$correctanswerformat</correctanswerformat>\n";
-                $expout .= "    <correctanswerlength>$correctanswerlength</correctanswerlength>\n";
-                $feedbackformat = $this->get_format($answer->feedbackformat);
-                $expout .= "    <feedback {$this->format($answer->correctanswerformat)}>\n";
+                $expout .= "    <tolerance>{$answer->tolerance}</tolerance>\n";
+                $expout .= "    <tolerancetype>{$answer->tolerancetype}</tolerancetype>\n";
+                $expout .= "    <correctanswerformat>{$answer->correctanswerformat}</correctanswerformat>\n";
+                $expout .= "    <correctanswerlength>{$answer->correctanswerlength}</correctanswerlength>\n";
+                $expout .= "    <feedback {$this->format($answer->feedbackformat)}>\n";
+                $files = $fs->get_area_files($contextid, $component, 'instruction', $question->id);
                 $expout .= $this->writetext($answer->feedback);
                 $expout .= $this->writefiles($answer->feedbackfiles);
                 $expout .= "    </feedback>\n";
