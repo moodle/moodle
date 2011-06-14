@@ -272,7 +272,7 @@ END;
         $this->assert_same_xml($expectedxml, $xml);
     }
 
-    public function test_import_essay() {
+    public function test_import_essay_20() {
         $xml = '  <question type="essay">
     <name>
       <text>An essay</text>
@@ -301,6 +301,55 @@ END;
         $expectedq->defaultmark = 1;
         $expectedq->length = 1;
         $expectedq->penalty = 0;
+        $expectedq->responseformat = 'editor';
+        $expectedq->responsefieldlines = 15;
+        $expectedq->attachments = 0;
+        $expectedq->graderinfo['text'] = '';
+        $expectedq->graderinfo['format'] = FORMAT_MOODLE;
+
+        $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
+    }
+
+    public function test_import_essay_21() {
+        $xml = '  <question type="essay">
+    <name>
+      <text>An essay</text>
+    </name>
+    <questiontext format="moodle_auto_format">
+      <text>Write something.</text>
+    </questiontext>
+    <generalfeedback>
+      <text>I hope you wrote something interesting.</text>
+    </generalfeedback>
+    <defaultgrade>1</defaultgrade>
+    <penalty>0</penalty>
+    <hidden>0</hidden>
+    <responseformat>monospaced</responseformat>
+    <responsefieldlines>42</responsefieldlines>
+    <attachments>-1</attachments>
+    <graderinfo format="html">
+        <text><![CDATA[<p>Grade <b>generously</b>!</p>]]></text>
+    </graderinfo>
+  </question>';
+        $xmldata = xmlize($xml);
+
+        $importer = new qformat_xml();
+        $q = $importer->import_essay($xmldata['question']);
+
+        $expectedq = new stdClass();
+        $expectedq->qtype = 'essay';
+        $expectedq->name = 'An essay';
+        $expectedq->questiontext = 'Write something.';
+        $expectedq->questiontextformat = FORMAT_MOODLE;
+        $expectedq->generalfeedback = 'I hope you wrote something interesting.';
+        $expectedq->defaultmark = 1;
+        $expectedq->length = 1;
+        $expectedq->penalty = 0;
+        $expectedq->responseformat = 'monospaced';
+        $expectedq->responsefieldlines = 42;
+        $expectedq->attachments = -1;
+        $expectedq->graderinfo['text'] = '<p>Grade <b>generously</b>!</p>';
+        $expectedq->graderinfo['format'] = FORMAT_HTML;
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
     }
@@ -319,6 +368,13 @@ END;
         $qdata->length = 1;
         $qdata->penalty = 0;
         $qdata->hidden = 0;
+        $qdata->options->id = 456;
+        $qdata->options->questionid = 123;
+        $qdata->options->responseformat = 'monospaced';
+        $qdata->options->responsefieldlines = 42;
+        $qdata->options->attachments = -1;
+        $qdata->options->graderinfo = '<p>Grade <b>generously</b>!</p>';
+        $qdata->options->graderinfoformat = FORMAT_HTML;
 
         $exporter = new qformat_xml();
         $xml = $exporter->writequestion($qdata);
@@ -337,6 +393,12 @@ END;
     <defaultgrade>1</defaultgrade>
     <penalty>0</penalty>
     <hidden>0</hidden>
+    <responseformat>monospaced</responseformat>
+    <responsefieldlines>42</responsefieldlines>
+    <attachments>-1</attachments>
+    <graderinfo format="html">
+      <text><![CDATA[<p>Grade <b>generously</b>!</p>]]></text>
+    </graderinfo>
   </question>
 ';
 

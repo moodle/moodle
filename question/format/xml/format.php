@@ -680,19 +680,16 @@ class qformat_xml extends qformat_default {
         // header parts particular to essay
         $qo->qtype = ESSAY;
 
-        $answers = $this->getpath($question, array('#', 'answer'), null);
-        if ($answers) {
-            $answer = array_pop($answers);
-            $answer = $this->import_answer($answer);
-            // get feedback
-            $qo->feedback = $answer->feedback;
-        } else {
-            $qo->feedback = array('text' => '', 'format' => FORMAT_MOODLE, 'files' => array());
-        }
-
-        // get fraction - <fraction> tag is deprecated
-        $qo->fraction = $this->getpath($question, array('@', 'fraction'), 0) / 100;
-        $qo->fraction = $this->getpath($question, array('#', 'fraction', 0, '#'), $qo->fraction);
+        $qo->responseformat = $this->getpath($question,
+                array('#', 'responseformat', 0, '#'), 'editor');
+        $qo->responsefieldlines = $this->getpath($question,
+                array('#', 'responsefieldlines', 0, '#'), 15);
+        $qo->attachments = $this->getpath($question,
+                array('#', 'attachments', 0, '#'), 0);
+        $qo->graderinfo['text'] = $this->getpath($question,
+                array('#', 'graderinfo', 0, '#', 'text', 0, '#'), '', true);
+        $qo->graderinfo['format'] = $this->trans_format($this->getpath($question,
+                array('#', 'graderinfo', 0, '@', 'format'), 'moodle_auto_format'));
 
         return $qo;
     }
@@ -720,7 +717,7 @@ class qformat_xml extends qformat_default {
         $qo->correctfeedback['text'] = $this->getpath(
                 $question, array('#', 'correctfeedback', 0, '#', 'text', 0, '#'), '', true);
         $qo->correctfeedback['format'] = $this->trans_format($this->getpath(
-                $question, array('#', 'correctfeedback', 0, '@', 'formath'), 'moodle_auto_format'));
+                $question, array('#', 'correctfeedback', 0, '@', 'format'), 'moodle_auto_format'));
         $qo->correctfeedback['files'] = $this->import_files($this->getpath(
                 $question, array('#', 'correctfeedback', '0', '#', 'file'), array()));
 
@@ -1234,7 +1231,16 @@ class qformat_xml extends qformat_default {
                 break;
 
             case 'essay':
-                // Nothing else to do.
+                $expout .= "    <responseformat>" . $question->options->responseformat .
+                        "</responseformat>\n";
+                $expout .= "    <responsefieldlines>" . $question->options->responsefieldlines .
+                        "</responsefieldlines>\n";
+                $expout .= "    <attachments>" . $question->options->attachments .
+                        "</attachments>\n";
+                $expout .= "    <graderinfo " .
+                        $this->format($question->options->graderinfoformat) . ">\n";
+                $expout .= $this->writetext($question->options->graderinfo, 3);
+                $expout .= "    </graderinfo>\n";
                 break;
 
             case 'calculated':
