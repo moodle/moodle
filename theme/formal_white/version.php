@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version  = 2011052000;  // The current module version (Date: YYYYMMDDXX)
+$plugin->version  = 2011061301;  // The current module version (Date: YYYYMMDDXX)
 $plugin->component = 'theme_formal_white';
 $plugin->requires = 2010080300;  // Requires this Moodle version
 $plugin->maturity  = MATURITY_STABLE;
