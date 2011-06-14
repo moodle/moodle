@@ -273,6 +273,13 @@ define('PARAM_FORMAT',   'alphanumext');
 define('PARAM_MULTILANG',  'text');
 
 /**
+ * PARAM_TIMEZONE - expected timezone. Timezone can be int +-(0-13) or float +-(0.5-12.5) or
+ * string seperated by '/' and can have '-' &/ '_' (eg. America/North_Dakota/New_Salem 
+ * America/Port-au-Prince)
+ */
+define('PARAM_TIMEZONE', 'timezone');
+
+/**
  * PARAM_CLEANFILE - deprecated alias of PARAM_FILE; originally was removing regional chars too
  */
 define('PARAM_CLEANFILE', 'file');
@@ -883,6 +890,14 @@ function clean_param($param, $type) {
 
         case PARAM_STRINGID:
             if (preg_match('|^[a-zA-Z][a-zA-Z0-9\.:/_-]*$|', $param)) {
+                return $param;
+            } else {
+                return '';
+            }
+
+        case PARAM_TIMEZONE:    //can be int, float(with .5 or .0) or string seperated by '/' and can have '-_'
+            $timezonepattern = '/^(([+-]?(0?[0-9](\.[5|0])?|1[0-3]|1[0-2]\.5))|(99)|[[:alnum:]]+(\/?[[:alpha:]_-])+)$/';
+            if (preg_match($timezonepattern, $param)) {
                 return $param;
             } else {
                 return '';
