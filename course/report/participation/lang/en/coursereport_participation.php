@@ -24,4 +24,5 @@
  */
 
 $string['participation:view'] = 'View course participation report';
+$string['pluginpagetype'] = 'Any participation course report';
 $string['pluginname'] = 'Course participation';

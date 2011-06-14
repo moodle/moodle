@@ -24,4 +24,5 @@
  */
 
 $string['outline:view'] = 'View course activity report';
+$string['pluginpagetype'] = 'Any outline course report';
 $string['pluginname'] = 'Course activity';

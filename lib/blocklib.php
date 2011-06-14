@@ -1563,28 +1563,51 @@ function generate_page_type_patterns($pagetype, $parentcontext = null, $currentc
 
     $bits = explode('-', $pagetype);
 
-    $component = clean_param(reset($bits), PARAM_ALPHANUMEXT);
     $function = 'default_pagetypelist';
 
     $core = get_core_subsystems();
     $plugins = get_plugin_types();
 
-    // First check to see if the initial component is a core component
-    // if its not check to see if it is a plugin component.
-    if (array_key_exists($component, $core) && !empty($core[$component])) {
-        $libfile = $CFG->dirroot.'/'.$core[$component].'/lib.php';
+    //progressively strip pieces off the page type looking for a match
+    //eg: for pagetype "course-report-outline-index" try coursereportoutlineindex
+    // then coursereportoutline then coursereport then course
+    $componentarray = null;
+    for($i = count($bits); $i > 0; $i--) {
+        $componentarray = array_slice($bits, 0, $i);
+        $component = implode($componentarray);
+
+        // Look for special case components like course reports        
+        $libfile = $CFG->dirroot.'/'.implode('/', $componentarray).'/lib.php';
         if (file_exists($libfile)) {
             require_once($libfile);
             if (function_exists($component.'_pagetypelist')) {
                 $function = $component.'_pagetypelist';
+                break;
             }
         }
-    } else if (array_key_exists($component, $plugins) && !empty($plugins[$component])) {
-        $function = 'plugin_pagetypelist';
-        if (function_exists($component.'_pagetypelist')) {
-            $function = $component.'_pagetypelist';
+
+        // Then check to see if the component is a core component
+        if (array_key_exists($component, $core) && !empty($core[$component])) {
+            $libfile = $CFG->dirroot.'/'.$core[$component].'/lib.php';
+            if (file_exists($libfile)) {
+                require_once($libfile);
+                if (function_exists($component.'_pagetypelist')) {
+                    $function = $component.'_pagetypelist';
+                    break;
+                }
+            }
+        }
+
+        // If its not a special or core component check to see if it is a plugin component
+        if (array_key_exists($component, $plugins) && !empty($plugins[$component])) {
+            $function = 'plugin_pagetypelist';
+            if (function_exists($component.'_pagetypelist')) {
+                $function = $component.'_pagetypelist';
+                break;
+            }
         }
     }
+
     // Call the most appropriate function we could determine
     $patterns = $function($pagetype, $parentcontext, $currentcontext);
     if (empty($patterns)) {
