@@ -268,9 +268,14 @@ var ddwtos_currentzindex = 10;
     }
 
     function set_xy_after_resize(e, slotsandplayerobj){
+        var timeout = 0;
+        if (navigator.appVersion.indexOf('MSIE 7') != -1) {
+          timeout = 1000;
+        }
+
         setTimeout(function() {
             set_xy_after_resize_actual(e,slotsandplayerobj);
-        }, 0);
+        }, timeout);
     }
 
     function set_xy_after_resize_actual(e, slotsandplayerobj) {
