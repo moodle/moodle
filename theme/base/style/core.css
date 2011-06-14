@@ -651,6 +651,7 @@ body.tag .managelink {padding: 5px;}
  */
 .backup-restore .backup-section {clear:both;border:1px solid #ddd;background-color:#f6f6f6;margin-bottom:1em;}
 .backup-restore .backup-section > h2.header {padding:5px 6px;margin:0;border-bottom:1px solid #ddd;}
+.backup-restore .backup-section .noticebox {margin:1em auto;width:60%;text-align:center;}
 .backup-restore .backup-section .backup-sub-section {margin:0 25px;background-color:#f9f9f9;border:1px solid #f3f3f3;margin-bottom:1em;}
 .backup-restore .backup-section .backup-sub-section h3 {text-align:right;border-bottom:1px solid #DDD;padding:5px 86% 5px 6px;margin:0;background-color:#e9e9e9;}
 .backup-restore .backup-section.settings-section .detail-pair {margin:0;padding:0;width:50%;display:inline-block;}

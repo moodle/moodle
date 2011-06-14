@@ -5,7 +5,7 @@ require_once('../config.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
 $contextid   = required_param('contextid', PARAM_INT);
-$stage      = optional_param('stage', restore_ui::STAGE_CONFIRM, PARAM_INT);
+$stage       = optional_param('stage', restore_ui::STAGE_CONFIRM, PARAM_INT);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
@@ -30,9 +30,15 @@ if ($stage & restore_ui::STAGE_CONFIRM + restore_ui::STAGE_DESTINATION) {
         }
     }
     if ($rc) {
+        // check if the format conversion must happen first
+        if ($rc->get_status() == backup::STATUS_REQUIRE_CONV) {
+            $rc->convert();
+        }
+
         $restore = new restore_ui($rc, array('contextid'=>$context->id));
     }
 }
+
 $outcome = $restore->process();
 if (!$restore->is_independent()) {
     if ($restore->get_stage() == restore_ui::STAGE_PROCESS && !$restore->requires_substage()) {

@@ -252,13 +252,15 @@ class restore_ui extends base_ui {
     }
     /**
      * Displays this stage
+     *
      * @param core_backup_renderer $renderer
+     * @return string HTML code to echo
      */
     public function display($renderer) {
         if ($this->progress < self::PROGRESS_SAVED) {
             throw new base_ui_exception('backupsavebeforedisplay');
         }
-        $this->stage->display($renderer);
+        return $this->stage->display($renderer);
     }
 }
 

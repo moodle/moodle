@@ -140,16 +140,14 @@ abstract class base_ui {
     /**
      * Displays the UI for the backup!
      *
-     * Note: The UI makes use of mforms (ewww!) thus it will automatically print
-     * out the result rather than returning a string of HTML like other parts of Moodle
-     *
-     * @return bool
+     * @throws base_ui_exception
+     * @return string HTML code
      */
     public function display() {
         if ($this->progress < self::PROGRESS_SAVED) {
             throw new base_ui_exception('backupsavebeforedisplay');
         }
-        $this->stage->display();
+        return $this->stage->display();
     }
     /**
      * Gets all backup tasks from the controller

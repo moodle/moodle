@@ -158,16 +158,59 @@ class core_backup_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Displays the general information about a backup file with non-standard format
+     *
+     * @param moodle_url $nextstageurl URL to send user to
+     * @param array $details basic info about the file (format, type)
+     * @return string HTML code to display
+     */
+    public function backup_details_nonstandard($nextstageurl, array $details) {
+
+        $html  = html_writer::start_tag('div', array('class' => 'backup-restore nonstandardformat'));
+        $html .= html_writer::start_tag('div', array('class' => 'backup-section'));
+        $html .= $this->output->heading(get_string('backupdetails', 'backup'), 2, 'header');
+        $html .= $this->output->box(get_string('backupdetailsnonstandardinfo', 'backup'), 'noticebox');
+        $html .= $this->backup_detail_pair(
+            get_string('backupformat', 'backup'),
+            get_string('backupformat'.$details['format'], 'backup'));
+        $html .= $this->backup_detail_pair(
+            get_string('backuptype', 'backup'),
+            get_string('backuptype'.$details['type'], 'backup'));
+        $html .= html_writer::end_tag('div');
+        $html .= $this->output->single_button($nextstageurl, get_string('continue'), 'post');
+        $html .= html_writer::end_tag('div');
+
+        return $html;
+    }
+
+    /**
+     * Displays the general information about a backup file with unknown format
+     *
+     * @param moodle_url $nextstageurl URL to send user to
+     * @return string HTML code to display
+     */
+    public function backup_details_unknown(moodle_url $nextstageurl) {
+
+        $html  = html_writer::start_tag('div', array('class' => 'unknownformat'));
+        $html .= $this->output->heading(get_string('errorinvalidformat', 'backup'), 2, 'notifyproblem');
+        $html .= html_writer::tag('div', get_string('errorinvalidformatinfo', 'backup'), array('class' => 'notifyproblem'));
+        $html .= $this->output->single_button($nextstageurl, get_string('continue'), 'post');
+        $html .= html_writer::end_tag('div');
+
+        return $html;
+    }
+
+    /**
      * Displays a course selector for restore
      *
      * @param moodle_url $nextstageurl
-     * @param stdClass $details
+     * @param bool $wholecourse true if we are restoring whole course (as with backup::TYPE_1COURSE), false otherwise
      * @param restore_category_search $categories
      * @param restore_course_search $courses
      * @param int $currentcourse
      * @return string
      */
-    public function course_selector(moodle_url $nextstageurl, $details, restore_category_search $categories = null, restore_course_search $courses=null, $currentcourse = null) {
+    public function course_selector(moodle_url $nextstageurl, $wholecourse = true, restore_category_search $categories = null, restore_course_search $courses=null, $currentcourse = null) {
         global $CFG;
         require_once($CFG->dirroot.'/course/lib.php');
 
@@ -181,7 +224,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $hasrestoreoption = false;
 
         $html  = html_writer::start_tag('div', array('class'=>'backup-course-selector backup-restore'));
-        if ($details->type == backup::TYPE_1COURSE && !empty($categories) && ($categories->get_count() > 0 || $categories->get_search())) {
+        if ($wholecourse && !empty($categories) && ($categories->get_count() > 0 || $categories->get_search())) {
             // New course
             $hasrestoreoption = true;
             $html .= $form;
@@ -194,7 +237,7 @@ class core_backup_renderer extends plugin_renderer_base {
             $html .= html_writer::end_tag('form');
         }
 
-        if ($details->type == backup::TYPE_1COURSE && !empty($currentcourse)) {
+        if ($wholecourse && !empty($currentcourse)) {
             // Current course
             $hasrestoreoption = true;
             $html .= $form;
@@ -214,7 +257,7 @@ class core_backup_renderer extends plugin_renderer_base {
             $html .= $form;
             $html .= html_writer::start_tag('div', array('class'=>'bcs-existing-course backup-section'));
             $html .= $this->output->heading(get_string('restoretoexistingcourse', 'backup'), 2, array('class'=>'header'));
-            if ($details->type == backup::TYPE_1COURSE) {
+            if ($wholecourse) {
                 $html .= $this->backup_detail_input(get_string('restoretoexistingcourseadding', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_ADDING, array('checked'=>'checked'));
                 $html .= $this->backup_detail_input(get_string('restoretoexistingcoursedeleting', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_DELETING);
                 $html .= $this->backup_detail_pair(get_string('selectacourse', 'backup'), $this->render($courses));
@@ -617,23 +660,6 @@ class core_backup_renderer extends plugin_renderer_base {
 
         $output .= html_writer::end_tag('div');
         return $output;
-    }
-
-    public function invalid_format($format) {
-        $html  = html_writer::start_tag('div', array('class'=>'invalidformat'));
-        $html .= html_writer::tag('h2', get_string('errorinvalidformat', 'backup'), array('class'=>'notifyproblem'));
-        if ($format == 'moodle1') {
-            // Moodle 1.x backups
-            $icon = $this->output->help_icon('errormoodle1format', 'backup');
-            $message = get_string('errormoodle1formatdesc', 'backup').' '.$icon;
-            
-        } else {
-            // Totally unknown format
-            $message = get_string('errorinvalidformatdesc', 'backup');
-        }
-        $html .= html_writer::tag('div', $message, array('class'=>'notifyproblem'));
-        $html .= html_writer::end_tag('div');
-        return $html;
     }
 }
 
