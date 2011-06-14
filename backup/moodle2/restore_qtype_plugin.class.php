@@ -326,6 +326,15 @@ abstract class restore_qtype_plugin extends restore_plugin {
     }
 
     /**
+     * Decode legacy question_states.answer for this qtype. Used when restoring
+     * 2.0 attempt data.
+     */
+    public function recode_legacy_state_answer($state) {
+        // By default, return answer unmodified, qtypes needing recode will override this
+        return $state->answer;
+    }
+
+    /**
      * Return the contents of the questions stuff that must be processed by the links decoder
      *
      * Only common stuff to all plugins, in this case:

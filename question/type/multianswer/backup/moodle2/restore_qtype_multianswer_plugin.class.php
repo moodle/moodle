@@ -122,7 +122,7 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
      * and mixed answers. We'll delegate
      * the recoding of answers to the proper qtype
      */
-    public function recode_state_answer($state) {
+    public function recode_legacy_state_answer($state) {
         global $DB;
         $answer = $state->answer;
         $resultarr = array();
@@ -144,7 +144,7 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
             $substate = new stdClass();
             $substate->question = $questionid;
             $substate->answer = $subanswer;
-            $newanswer = $this->step->restore_recode_answer($substate, $questionqtype);
+            $newanswer = $this->step->restore_recode_legacy_answer($substate, $questionqtype);
             $resultarr[] = implode('-', array($sequenceid, $newanswer));
         }
         return implode(',', $resultarr);

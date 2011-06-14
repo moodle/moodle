@@ -189,6 +189,26 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
     }
 
     /**
+     * Given one question_states record, return the answer
+     * recoded pointing to all the restored stuff for match questions
+     *
+     * answer is one comma separated list of hypen separated pairs
+     * containing question_match_sub->id and question_match_sub->code
+     */
+    public function recode_legacy_state_answer($state) {
+        $answer = $state->answer;
+        $resultarr = array();
+        foreach (explode(',', $answer) as $pair) {
+            $pairarr = explode('-', $pair);
+            $id = $pairarr[0];
+            $code = $pairarr[1];
+            $newid = $this->get_mappingid('question_match_sub', $id);
+            $resultarr[] = implode('-', array($newid, $code));
+        }
+        return implode(',', $resultarr);
+    }
+
+    /**
      * Recode the choice order as stored in the response.
      * @param string $order the original order.
      * @return string the recoded order.

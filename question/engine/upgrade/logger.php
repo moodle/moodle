@@ -73,3 +73,23 @@ class question_engine_assumption_logger {
         fclose($this->handle);
     }
 }
+
+
+/**
+ * Subclass of question_engine_assumption_logger that does nothing, for testing.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class dummy_question_engine_assumption_logger extends question_engine_assumption_logger {
+    protected $attemptid;
+
+    public function __construct() {
+    }
+
+    public function log_assumption($description, $quizattemptid = null) {
+    }
+
+    public function __destruct() {
+    }
+}

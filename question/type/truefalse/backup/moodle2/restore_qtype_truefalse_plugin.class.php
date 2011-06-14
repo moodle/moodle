@@ -78,4 +78,19 @@ class restore_qtype_truefalse_plugin extends restore_qtype_plugin {
             $this->set_mapping('question_truefalse', $oldid, $newitemid);
         }
     }
+
+    /**
+     * Given one question_states record, return the answer
+     * recoded pointing to all the restored stuff for truefalse questions
+     *
+     * if not empty, answer is one question_answers->id
+     */
+    public function recode_legacy_state_answer($state) {
+        $answer = $state->answer;
+        $result = '';
+        if ($answer) {
+            $result = $this->get_mappingid('question_answer', $answer);
+        }
+        return $result;
+    }
 }

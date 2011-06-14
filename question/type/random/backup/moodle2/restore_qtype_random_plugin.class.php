@@ -33,4 +33,40 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_qtype_random_plugin extends restore_qtype_plugin {
+    /**
+     * Given one question_states record, return the answer
+     * recoded pointing to all the restored stuff for random questions
+     *
+     * answer format is randomxx-yy, with xx being question->id and
+     * yy the actual response to the question. We'll delegate the recode
+     * to the corresponding qtype
+     *
+     * also, some old states can contain, simply, one question->id,
+     * support them, just in case
+     */
+    public function recode_legacy_state_answer($state) {
+        global $DB;
+
+        $answer = $state->answer;
+        $result = '';
+        // randomxx-yy answer format
+        if (preg_match('~^random([0-9]+)-(.*)$~', $answer, $matches)) {
+            $questionid = $matches[1];
+            $subanswer  = $matches[2];
+            $newquestionid = $this->get_mappingid('question', $questionid);
+            $questionqtype = $DB->get_field('question', 'qtype', array('id' => $newquestionid));
+            // Delegate subanswer recode to proper qtype, faking one question_states record
+            $substate = new stdClass();
+            $substate->question = $newquestionid;
+            $substate->answer = $subanswer;
+            $newanswer = $this->step->restore_recode_legacy_answer($substate, $questionqtype);
+            $result = 'random' . $newquestionid . '-' . $newanswer;
+
+        // simple question id format
+        } else {
+            $newquestionid = $this->get_mappingid('question', $answer);
+            $result = $newquestionid;
+        }
+        return $result;
+    }
 }

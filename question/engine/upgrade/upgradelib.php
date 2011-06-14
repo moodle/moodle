@@ -49,6 +49,8 @@ class question_engine_attempt_upgrader {
     protected $dotcounter = 0;
     /** @var progress_bar */
     protected $progressbar = null;
+    /** @var boolean */
+    protected $doingbackup = false;
 
     /**
      * Called before starting to upgrade all the attempts at a particular quiz.
@@ -71,6 +73,9 @@ class question_engine_attempt_upgrader {
 
     protected function prevent_timeout() {
         set_time_limit(300);
+        if ($this->doingbackup) {
+            return;
+        }
         echo '.';
         $this->dotcounter += 1;
         if ($this->dotcounter % 100 == 0) {
@@ -214,7 +219,7 @@ class question_engine_attempt_upgrader {
         return $this->save_usage($quiz->preferredbehaviour, $attempt, $qas, $quiz->questions);
     }
 
-    protected function save_usage($preferredbehaviour, $attempt, $qas, $quizlayout) {
+    public function save_usage($preferredbehaviour, $attempt, $qas, $quizlayout) {
         $missing = array();
 
         $layout = explode(',', $attempt->layout);
@@ -412,6 +417,12 @@ class question_engine_attempt_upgrader {
         $newquestion = $this->load_question($newquestionid);
         $newquestion->maxmark = $maxmark;
         return array($newquestion, $qstates);
+    }
+
+    public function prepare_to_restore() {
+        $this->doingbackup = true; // Prevent printing of dots to stop timeout on upgrade.
+        $this->logger = new dummy_question_engine_assumption_logger();
+        $this->questionloader = new question_engine_upgrade_question_loader($this->logger);
     }
 }
 
