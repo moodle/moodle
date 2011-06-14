@@ -56,13 +56,23 @@ class repository_recent extends repository {
     private function get_recent_files($limitfrom = 0, $limit = DEFAULT_RECENT_FILES_NUM) {
         // XXX: get current itemid
         global $USER, $DB, $itemid;
-        $sql = 'SELECT * FROM {files} files1
-                JOIN (SELECT contenthash, filename, MAX(id) AS id
-                FROM {files}
-                WHERE userid = ? AND filename != ? AND ((filearea = ? AND itemid = ?) OR filearea != ?)
-                GROUP BY contenthash, filename) files2 ON files1.id = files2.id
+        $sql = 'SELECT files1.*
+                  FROM {files} files1
+                  JOIN (
+                      SELECT contenthash, filename, MAX(id) AS id
+                        FROM {files}
+                       WHERE userid = :userid
+                         AND filename != :filename
+                         AND ((filearea = :filearea1 AND itemid = :itemid) OR filearea != :filearea2)
+                    GROUP BY contenthash, filename
+                  ) files2 ON files1.id = files2.id
                 ORDER BY files1.timemodified DESC';
-        $params = array('userid'=>$USER->id, 'filename'=>'.', 'filearea'=>'draft', 'itemid'=>$itemid, 'draft');
+        $params = array(
+            'userid' => $USER->id,
+            'filename' => '.',
+            'filearea1' => 'draft',
+            'itemid' => $itemid,
+            'filearea2' => 'draft');
         $rs = $DB->get_recordset_sql($sql, $params, $limitfrom, $limit);
         $result = array();
         foreach ($rs as $file_record) {
