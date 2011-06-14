@@ -95,7 +95,7 @@ foreach ($themes as $themename => $themedir) {
         //obsoleted or broken theme, just skip for now
         continue;
     }
-    if (!$CFG->themedesignermode && $theme->hidefromselector) {
+    if (empty($CFG->themedesignermode) && $theme->hidefromselector) {
         // The theme doesn't want to be shown in the theme selector and as theme
         // designer mode is switched off we will respect that decision.
         continue;
