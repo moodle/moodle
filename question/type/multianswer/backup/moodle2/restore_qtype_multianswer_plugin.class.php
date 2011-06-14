@@ -113,6 +113,32 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
         $rs->close();
     }
 
+    public function recode_response($questionid, $sequencenumber, array $response) {
+        global $DB;
+
+        $qtypes = $DB->get_records_menu('question', array('parent' => $questionid),
+                '', 'id, qtype');
+
+        $sequence = $DB->get_field('question_multianswer', 'sequence',
+                array('question' => $questionid));
+
+        $fakestep = new question_attempt_step_read_only($response);
+
+        foreach (explode(',', $sequence) as $key => $subqid) {
+            $i = $key + 1;
+
+            $substep = new question_attempt_step_subquestion_adapter($fakestep, 'sub' . $i . '_');
+            $recodedresponse = $this->step->questions_recode_response_data($qtypes[$subqid],
+                    $subqid, $sequencenumber, $substep->get_all_data());
+
+            foreach ($recodedresponse as $name => $value) {
+                $response[$substep->add_prefix($name)] = $value;
+            }
+        }
+
+        return $response;
+    }
+
     /**
      * Given one question_states record, return the answer
      * recoded pointing to all the restored stuff for multianswer questions

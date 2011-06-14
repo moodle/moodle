@@ -38,25 +38,8 @@ require_once($CFG->dirroot .
 class restore_qtype_calculatedmulti_plugin extends restore_qtype_calculated_plugin {
 
     public function recode_response($questionid, $sequencenumber, array $response) {
-        if (array_key_exists('_order', $response)) {
-            $response['_order'] = $this->recode_choice_order($response['_order']);
-        }
-        return $response;
-    }
-
-    /**
-     * Recode the choice order as stored in the response.
-     * @param string $order the original order.
-     * @return string the recoded order.
-     */
-    protected function recode_choice_order($order) {
-        $neworder = array();
-        foreach (explode(',', $order) as $id) {
-            if ($newid = $this->get_mappingid('question_answer', $id)) {
-                $neworder[] = $newid;
-            }
-        }
-        return implode(',', $neworder);
+        return $this->step->questions_recode_response_data('multichoice',
+                $questionid, $sequencenumber, $response);
     }
 
     /**

@@ -2647,12 +2647,10 @@ abstract class restore_questions_activity_structure_step extends restore_activit
         $this->set_mapping('question_attempt_step', $oldid, $newitemid, true);
 
         // Now process the response data.
-        $qtyperestorer = $this->get_qtype_restorer($this->qtypes[$data->questionattemptid]);
-        if ($qtyperestorer) {
-            $response = $qtyperestorer->recode_response(
-                    $this->newquestionids[$data->questionattemptid],
-                    $data->sequencenumber, $response);
-        }
+        $response = $this->questions_recode_response_data(
+                $this->qtypes[$data->questionattemptid],
+                $this->newquestionids[$data->questionattemptid],
+                $data->sequencenumber, $response);
         foreach ($response as $name => $value) {
             $row = new stdClass();
             $row->attemptstepid = $newitemid;
@@ -2660,6 +2658,22 @@ abstract class restore_questions_activity_structure_step extends restore_activit
             $row->value = $value;
             $DB->insert_record('question_attempt_step_data', $row, false);
         }
+    }
+
+    /**
+     * Recode the respones data for a particular step of an attempt at at particular question.
+     * @param string $qtype the question type.
+     * @param int $newquestionid the question id.
+     * @param int $sequencenumber the sequence number.
+     * @param array $response the response data to recode.
+     */
+    public function questions_recode_response_data(
+            $qtype, $newquestionid, $sequencenumber, array $response) {
+        $qtyperestorer = $this->get_qtype_restorer($qtype);
+        if ($qtyperestorer) {
+            $response = $qtyperestorer->recode_response($newquestionid, $sequencenumber, $response);
+        }
+        return $response;
     }
 
     /**
