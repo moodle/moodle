@@ -274,7 +274,7 @@ define('PARAM_MULTILANG',  'text');
 
 /**
  * PARAM_TIMEZONE - expected timezone. Timezone can be int +-(0-13) or float +-(0.5-12.5) or
- * string seperated by '/' and can have '-' &/ '_' (eg. America/North_Dakota/New_Salem 
+ * string seperated by '/' and can have '-' &/ '_' (eg. America/North_Dakota/New_Salem
  * America/Port-au-Prince)
  */
 define('PARAM_TIMEZONE', 'timezone');
