@@ -97,6 +97,7 @@ h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:200%;}
     border: 1px solid #E3DFD4;
     border-collapse: collapse;
 }
+
 th.header,
 .formtable tbody th,
 .generalbox th,
@@ -161,5 +162,31 @@ table td.cell p {margin:0;}
 pre, code, tt {
     font: 1em/1.3 monospace;
 }
+
+/* colors in XMLDB editor section are important */
+#listdirectories,
+#listtables,
+#listfields {
+    color:grey;
+}
+
+#listdirectories tr.r0,
+#listtables tr.r0,
+#listfields tr.r0 {
+    background: none repeat scroll 0 0 #F0F0F0;
+}
+
+#listdirectories tr.r1,
+#listtables tr.r1,
+#listfields tr.r1 {
+    background: none repeat scroll 0 0 #FAFAFA;
+}
+
+#listdirectories .highlight,
+#listtables .highlight
+#listfields .highlight {
+    background: none repeat scroll 0 0 [[setting:lblockcolumnbgc]];
+}
+
 /** Custom CSS **/
 [[setting:customcss]]
