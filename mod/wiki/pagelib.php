@@ -1913,7 +1913,7 @@ class page_wiki_save extends page_wiki_edit {
 
         if ($this->format != 'html') {
             $params['fileitemid'] = $this->page->id;
-            $params['contextid']  = $context->id;
+            $params['contextid']  = $this->modcontext->id;
             $params['component']  = 'mod_wiki';
             $params['filearea']   = 'attachments';
         }
