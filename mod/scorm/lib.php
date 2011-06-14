@@ -1054,7 +1054,7 @@ function scorm_print_overview($courses, &$htmlarray) {
         $str = '<div class="scorm overview"><div class="name">'.$strscorm. ': '.
                '<a '.($scorm->visible ? '':' class="dimmed"').
                'title="'.$strscorm.'" href="'.$CFG->wwwroot.
-               '/mod/assignment/view.php?id='.$scorm->coursemodule.'">'.
+               '/mod/scorm/view.php?id='.$scorm->coursemodule.'">'.
                $scorm->name.'</a></div>';
         if ($scorm->timeclose) {
             $str .= '<div class="info">'.$strduedate.': '.userdate($scorm->timeclose).'</div>';
