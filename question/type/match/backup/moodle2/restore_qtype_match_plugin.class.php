@@ -71,6 +71,24 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
 
         // If the question has been created by restore, we need to create its question_match too
         if ($questioncreated) {
+            // Fill in some field that were added in 2.1, and so which may be missing
+            // from backups made in older versions of Moodle.
+            if (!isset($data->correctfeedback)) {
+                $data->correctfeedback = '';
+                $data->correctfeedbackformat = FORMAT_HTML;
+            }
+            if (!isset($data->partiallycorrectfeedback)) {
+                $data->partiallycorrectfeedback = '';
+                $data->partiallycorrectfeedbackformat = FORMAT_HTML;
+            }
+            if (!isset($data->incorrectfeedback)) {
+                $data->incorrectfeedback = '';
+                $data->incorrectfeedbackformat = FORMAT_HTML;
+            }
+            if (!isset($data->shownumcorrect)) {
+                $data->shownumcorrect = 0;
+            }
+
             // Adjust some columns
             $data->question = $newquestionid;
             // Keep question_match->subquestions unmodified
@@ -168,6 +186,26 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
             $response['_choiceorder'] = $this->recode_match_sub_order($response['_choiceorder']);
         }
         return $response;
+    }
+
+    /**
+     * Given one question_states record, return the answer
+     * recoded pointing to all the restored stuff for match questions
+     *
+     * answer is one comma separated list of hypen separated pairs
+     * containing question_match_sub->id and question_match_sub->code
+     */
+    public function recode_legacy_state_answer($state) {
+        $answer = $state->answer;
+        $resultarr = array();
+        foreach (explode(',', $answer) as $pair) {
+            $pairarr = explode('-', $pair);
+            $id = $pairarr[0];
+            $code = $pairarr[1];
+            $newid = $this->get_mappingid('question_match_sub', $id);
+            $resultarr[] = implode('-', array($newid, $code));
+        }
+        return implode(',', $resultarr);
     }
 
     /**

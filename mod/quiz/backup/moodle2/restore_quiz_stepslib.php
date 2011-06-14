@@ -45,11 +45,25 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $paths[] = new restore_path_element('quiz_override', '/activity/quiz/overrides/override');
         if ($userinfo) {
             $paths[] = new restore_path_element('quiz_grade', '/activity/quiz/grades/grade');
-            $quizattempt = new restore_path_element('quiz_attempt',
-                    '/activity/quiz/attempts/attempt');
-            $paths[] = $quizattempt;
-            // Add states and sessions
-            $this->add_question_usages($quizattempt, $paths);
+
+            if ($this->task->get_old_moduleversion() > 2011010100) {
+                // Restoring from a version 2.1 dev or later.
+                // Process the new-style attempt data.
+                $quizattempt = new restore_path_element('quiz_attempt',
+                        '/activity/quiz/attempts/attempt');
+                $paths[] = $quizattempt;
+                // Add states and sessions
+                $this->add_question_usages($quizattempt, $paths);
+
+            } else {
+                // Restoring from a version 2.0.x+ or earlier.
+                // Upgrade the legacy attempt data.
+                $quizattempt = new restore_path_element('quiz_attempt_legacy',
+                        '/activity/quiz/attempts/attempt',
+                        true);
+                $paths[] = $quizattempt;
+                $this->add_legacy_question_attempt_data($quizattempt, $paths);
+            }
         }
 
         // Return the paths wrapped into standard activity structure
@@ -68,6 +82,8 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
+        // Needed by {@link process_quiz_attempt_legacy}
+        $this->oldquizlayout = $data->questions;
         $data->questions = $this->questions_recode_layout($data->questions);
 
         // quiz->attempts can come both in data->attempts and
@@ -276,6 +292,16 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
         // Save quiz_attempt->id mapping, because logs use it
         $this->set_mapping('quiz_attempt', $oldid, $newitemid, false);
+    }
+
+    protected function process_quiz_attempt_legacy($data) {
+        global $DB;
+
+        $this->process_quiz_attempt($data);
+
+        $quiz = $DB->get_record('quiz', array('id' => $this->get_new_parentid('quiz')));
+        $quiz->oldquestions = $this->oldquizlayout;
+        $this->process_legacy_quiz_attempt_data($data, $quiz);
     }
 
     protected function inform_new_usage_id($newusageid) {

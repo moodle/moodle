@@ -49,26 +49,6 @@ class test_question_engine_attempt_upgrader extends question_engine_attempt_upgr
 
 
 /**
- * Subclass of question_engine_assumption_logger that does nothing, for testing.
- *
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class dummy_question_engine_assumption_logger extends question_engine_assumption_logger {
-    protected $attemptid;
-
-    public function __construct() {
-    }
-
-    public function log_assumption($description, $quizattemptid = null) {
-    }
-
-    public function __destruct() {
-    }
-}
-
-
-/**
  * Subclass of question_engine_upgrade_question_loader for unit testing.
  *
  * @copyright  2009 The Open University

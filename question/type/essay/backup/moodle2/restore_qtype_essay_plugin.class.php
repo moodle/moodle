@@ -73,4 +73,34 @@ class restore_qtype_essay_plugin extends restore_qtype_plugin {
             new restore_decode_content('qtype_essay_options', 'graderinfo', 'qtype_essay'),
         );
     }
+
+    /**
+     * When restoring old data, that does not have the essay options information
+     * in the XML, supply defaults.
+     */
+    protected function after_execute_question() {
+        global $DB;
+
+        $essayswithoutoptions = $DB->get_records_sql("
+                    SELECT *
+                      FROM {question} q
+                     WHERE q.qtype = ?
+                       AND NOT EXISTS (
+                        SELECT 1
+                          FROM {qtype_essay_options}
+                         WHERE questionid = q.id
+                     )
+                ", array('essay'));
+
+        foreach ($essayswithoutoptions as $q) {
+            $defaultoptions = new stdClass();
+            $defaultoptions->questionid = $q->id;
+            $defaultoptions->responseformat = 'editor';
+            $defaultoptions->responsefieldlines = 15;
+            $defaultoptions->attachments = 0;
+            $defaultoptions->graderinfo = '';
+            $defaultoptions->graderinfoformat = FORMAT_HTML;
+            $DB->insert_record('qtype_essay_options', $defaultoptions);
+        }
+    }
 }
