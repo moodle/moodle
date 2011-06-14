@@ -151,8 +151,8 @@ class qformat_xml extends qformat_default {
         global $CFG;
 
         // get some error strings
-        $error_noname = get_string('xmlimportnoname','qformat_xml');
-        $error_noquestion = get_string('xmlimportnoquestion','qformat_xml');
+        $error_noname = get_string('xmlimportnoname', 'qformat_xml');
+        $error_noquestion = get_string('xmlimportnoquestion', 'qformat_xml');
 
         // this routine initialises the question object
         $qo = $this->defaultquestion();
@@ -185,13 +185,15 @@ class qformat_xml extends qformat_default {
         $qo->generalfeedback = $this->getpath($question,
                 array('#', 'generalfeedback', 0, '#', 'text', 0, '#'), $qo->generalfeedback, true);
         $qo->generalfeedbackfiles = array();
-        $qo->generalfeedbackformat = $this->trans_format(
-                $this->getpath($question, array('#', 'generalfeedback', 0, '@', 'format'), 'moodle_auto_format'));
+        $qo->generalfeedbackformat = $this->trans_format($this->getpath($question,
+                array('#', 'generalfeedback', 0, '@', 'format'), 'moodle_auto_format'));
         $qo->generalfeedbackfiles = $this->import_files($this->getpath($question,
                 array('#', 'generalfeedback', 0, '#', 'file'), array(), false));
 
-        $qo->defaultmark = $this->getpath($question, array('#', 'defaultgrade', 0, '#'), $qo->defaultmark);
-        $qo->penalty = $this->getpath($question, array('#', 'penalty', 0, '#'), $qo->penalty);
+        $qo->defaultmark = $this->getpath($question,
+                array('#', 'defaultgrade', 0, '#'), $qo->defaultmark);
+        $qo->penalty = $this->getpath($question,
+                array('#', 'penalty', 0, '#'), $qo->penalty);
 
         // Fix problematic rounding from old files:
         if (abs($qo->penalty - 0.3333333) < 0.005) {
@@ -224,7 +226,8 @@ class qformat_xml extends qformat_default {
         $answerfiles = $this->import_files($this->getpath($answer,
                 array('#', 'file'), array()));
 
-        $feedbacktext = $this->getpath($answer, array('#', 'feedback', 0, '#', 'text', 0, '#'), '', true);
+        $feedbacktext = $this->getpath($answer,
+                array('#', 'feedback', 0, '#', 'text', 0, '#'), '', true);
         $feedbackformat = $this->trans_format($this->getpath($answer,
                 array('#', 'feedback', 0, '@', 'format'), 'moodle_auto_format'));
         $feedbackfiles = $this->import_files($this->getpath($answer,
@@ -253,7 +256,8 @@ class qformat_xml extends qformat_default {
      * @param bool $withshownumpartscorrect include the shownumcorrect field.
      */
     public function import_combined_feedback($qo, $questionxml, $withshownumpartscorrect = false) {
-        foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $field) {
+        $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
+        foreach ($fields as $field) {
             $text = array();
             $text['text'] = $this->getpath($questionxml,
                     array('#', $field, 0, '#', 'text', 0, '#'), '', true);
@@ -288,7 +292,7 @@ class qformat_xml extends qformat_default {
             $hint = new stdClass();
             $hint->hint = array('format' => FORMAT_HTML, 'files' => array());
             $hint->hint['text'] = $this->getpath($hintxml,
-                    array('#', 'hintcontent', 0, '#', 'text' ,0, '#'), '', true);
+                    array('#', 'hintcontent', 0, '#', 'text', 0, '#'), '', true);
             $hint->shownumcorrect = $this->getpath($hintxml,
                     array('#', 'statenumberofcorrectresponses', 0, '#'), 0);
             $hint->clearwrong = $this->getpath($hintxml,
@@ -314,7 +318,7 @@ class qformat_xml extends qformat_default {
         $hint->hint = $hinttext;
         $hint->shownumcorrect = array_key_exists('shownumcorrect', $hintxml['#']);
         $hint->clearwrong = array_key_exists('clearwrong', $hintxml['#']);
-        $hint->options = $this->getpath($hintxml, array('#', 'options', 0 , '#'), '', true);
+        $hint->options = $this->getpath($hintxml, array('#', 'options', 0, '#'), '', true);
 
         return $hint;
     }
@@ -375,11 +379,14 @@ class qformat_xml extends qformat_default {
         $qo->qtype = MULTICHOICE;
         $single = $this->getpath($question, array('#', 'single', 0, '#'), 'true');
         $qo->single = $this->trans_single($single);
-        $shuffleanswers = $this->getpath($question, array('#', 'shuffleanswers', 0, '#'), 'false');
-        $qo->answernumbering = $this->getpath($question, array('#', 'answernumbering', 0, '#'), 'abc');
+        $shuffleanswers = $this->getpath($question,
+                array('#', 'shuffleanswers', 0, '#'), 'false');
+        $qo->answernumbering = $this->getpath($question,
+                array('#', 'answernumbering', 0, '#'), 'abc');
         $qo->shuffleanswers = $this->trans_single($shuffleanswers);
 
-        // There was a time on the 1.8 branch when it could output an empty answernumbering tag, so fix up any found.
+        // There was a time on the 1.8 branch when it could output an empty
+        // answernumbering tag, so fix up any found.
         if (empty($qo->answernumbering)) {
             $qo->answernumbering = 'abc';
         }
@@ -406,7 +413,7 @@ class qformat_xml extends qformat_default {
      * @param array question question array from xml tree
      * @return object question object
      */
-    public function import_multianswer( $questions ) {
+    public function import_multianswer($questions) {
         $questiontext = array();
         $questiontext['text'] = $this->import_text($questions['#']['questiontext'][0]['#']['text']);
         $questiontext['format'] = '1';
@@ -416,19 +423,20 @@ class qformat_xml extends qformat_default {
         // 'header' parts particular to multianswer
         $qo->qtype = MULTIANSWER;
         $qo->course = $this->course;
-        $qo->generalfeedback = '' ;
+        $qo->generalfeedback = '';
         // restore files in generalfeedback
-        $qo->generalfeedback = $this->getpath($questions, array('#','generalfeedback',0,'#','text',0,'#'), $qo->generalfeedback, true);
-        $qo->generalfeedbackformat = $this->trans_format(
-                $this->getpath($questions, array('#', 'generalfeedback', 0, '@', 'format'), 'moodle_auto_format'));
+        $qo->generalfeedback = $this->getpath($questions,
+                array('#', 'generalfeedback', 0, '#', 'text', 0, '#'), $qo->generalfeedback, true);
+        $qo->generalfeedbackformat = $this->trans_format($this->getpath($questions,
+                array('#', 'generalfeedback', 0, '@', 'format'), 'moodle_auto_format'));
         $qo->generalfeedbackfiles = $this->import_files($this->getpath($questions,
                 array('#', 'generalfeedback', 0, '#', 'file'), array(), false));
 
         if (!empty($questions)) {
             $qo->name = $this->import_text($questions['#']['name'][0]['#']['text']);
         }
-        $qo->questiontext =  $qo->questiontext['text'] ;
-        $qo->questiontextformat = '' ;
+        $qo->questiontext =  $qo->questiontext['text'];
+        $qo->questiontextformat = '';
 
         $this->import_hints($qo, $question, true);
 
@@ -455,10 +463,14 @@ class qformat_xml extends qformat_default {
         $first = true;
         $warning = false;
         foreach ($question['#']['answer'] as $answer) {
-            $answertext = $this->getpath($answer, array('#', 'text', 0, '#'), '', true);
-            $feedback = $this->getpath($answer, array('#', 'feedback', 0, '#', 'text', 0, '#'), '', true);
-            $feedbackformat = $this->getpath($answer, array('#', 'feedback',0, '@', 'format'), 'moodle_auto_format');
-            $feedbackfiles = $this->getpath($answer, array('#', 'feedback', 0, '#', 'file'), array());
+            $answertext = $this->getpath($answer,
+                    array('#', 'text', 0, '#'), '', true);
+            $feedback = $this->getpath($answer,
+                    array('#', 'feedback', 0, '#', 'text', 0, '#'), '', true);
+            $feedbackformat = $this->getpath($answer,
+                    array('#', 'feedback', 0, '@', 'format'), 'moodle_auto_format');
+            $feedbackfiles = $this->getpath($answer,
+                    array('#', 'feedback', 0, '#', 'file'), array());
             $files = array();
             foreach ($feedbackfiles as $file) {
                 $data = new stdClass();
@@ -583,7 +595,8 @@ class qformat_xml extends qformat_default {
 
             // fraction as a tag is deprecated
             $fraction = $this->getpath($answer, array('@', 'fraction'), 0) / 100;
-            $qo->fraction[] = $this->getpath($answer, array('#', 'fraction', 0, '#'), $fraction); // deprecated
+            $qo->fraction[] = $this->getpath($answer,
+                    array('#', 'fraction', 0, '#'), $fraction); // deprecated
         }
 
         // Get the units array
@@ -592,14 +605,14 @@ class qformat_xml extends qformat_default {
         if (!empty($units)) {
             $qo->multiplier = array();
             foreach ($units as $unit) {
-                $qo->multiplier[] = $this->getpath( $unit, array('#','multiplier',0,'#'), 1 );
-                $qo->unit[] = $this->getpath( $unit, array('#','unit_name',0,'#'), '', true );
+                $qo->multiplier[] = $this->getpath($unit, array('#', 'multiplier', 0, '#'), 1);
+                $qo->unit[] = $this->getpath($unit, array('#', 'unit_name', 0, '#'), '', true);
             }
         }
-        $qo->unitgradingtype = $this->getpath( $question, array('#','unitgradingtype',0,'#'), 0 );
-        $qo->unitpenalty = $this->getpath( $question, array('#','unitpenalty',0,'#'), 0 );
-        $qo->showunits = $this->getpath( $question, array('#','showunits',0,'#'), 0 );
-        $qo->unitsleft = $this->getpath( $question, array('#','unitsleft',0,'#'), 0 );
+        $qo->unitgradingtype = $this->getpath($question, array('#', 'unitgradingtype', 0, '#'), 0);
+        $qo->unitpenalty = $this->getpath($question, array('#', 'unitpenalty', 0, '#'), 0);
+        $qo->showunits = $this->getpath($question, array('#', 'showunits', 0, '#'), 0);
+        $qo->unitsleft = $this->getpath($question, array('#', 'unitsleft', 0, '#'), 0);
         $qo->instructions['text'] = '';
         $qo->instructions['format'] = FORMAT_HTML;
         $instructions = $this->getpath($question, array('#', 'instructions'), array());
@@ -638,14 +651,15 @@ class qformat_xml extends qformat_default {
         foreach ($question['#']['subquestion'] as $subqxml) {
             $subquestion = array();
             $subquestion['text'] = $this->getpath($subqxml, array('#', 'text', 0, '#'), '', true);
-            $subquestion['format'] = $this->trans_format(
-                    $this->getpath($subqxml, array('@', 'format'), 'moodle_auto_format'));
+            $subquestion['format'] = $this->trans_format($this->getpath($subqxml,
+                    array('@', 'format'), 'moodle_auto_format'));
             $subquestion['files'] = $this->import_files($this->getpath($subqxml,
                     array('#', 'file'), array()));
 
             $qo->subquestions[] = $subquestion;
             $answers = $this->getpath($subqxml, array('#', 'answer'), array());
-            $qo->subanswers[] = $this->getpath($subqxml, array('#','answer',0,'#','text',0,'#'), '', true);
+            $qo->subanswers[] = $this->getpath($subqxml,
+                    array('#', 'answer', 0, '#', 'text', 0, '#'), '', true);
         }
 
         $this->import_combined_feedback($qo, $question, true);
@@ -683,47 +697,57 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
-    public function import_calculated($question, $qtype) {
-    // import calculated question
+    /**
+     * Import a calculated question
+     * @param object $question the imported XML data.
+     */
+    public function import_calculated($question) {
 
         // get common parts
         $qo = $this->import_headers($question);
 
         // header parts particular to calculated
-        $qo->qtype = CALCULATED ;//CALCULATED;
-        $qo->synchronize = $this->getpath( $question, array( '#','synchronize',0,'#' ), 0 );
-        $single = $this->getpath( $question, array('#','single',0,'#'), 'true' );
-        $qo->single = $this->trans_single( $single );
-        $shuffleanswers = $this->getpath( $question, array('#','shuffleanswers',0,'#'), 'false' );
-        $qo->answernumbering = $this->getpath( $question, array('#','answernumbering',0,'#'), 'abc' );
+        $qo->qtype = CALCULATED;
+        $qo->synchronize = $this->getpath($question, array('#', 'synchronize', 0, '#'), 0);
+        $single = $this->getpath($question, array('#', 'single', 0, '#'), 'true');
+        $qo->single = $this->trans_single($single);
+        $shuffleanswers = $this->getpath($question, array('#', 'shuffleanswers', 0, '#'), 'false');
+        $qo->answernumbering = $this->getpath($question,
+                array('#', 'answernumbering', 0, '#'), 'abc');
         $qo->shuffleanswers = $this->trans_single($shuffleanswers);
 
         $qo->correctfeedback = array();
-        $qo->correctfeedback['text'] = $this->getpath($question, array('#','correctfeedback',0,'#','text',0,'#'), '', true );
+        $qo->correctfeedback['text'] = $this->getpath(
+                $question, array('#', 'correctfeedback', 0, '#', 'text', 0, '#'), '', true);
         $qo->correctfeedback['format'] = $this->trans_format($this->getpath(
                 $question, array('#', 'correctfeedback', 0, '@', 'formath'), 'moodle_auto_format'));
         $qo->correctfeedback['files'] = $this->import_files($this->getpath(
                 $question, array('#', 'correctfeedback', '0', '#', 'file'), array()));
 
         $qo->partiallycorrectfeedback = array();
-        $qo->partiallycorrectfeedback['text'] = $this->getpath( $question, array('#','partiallycorrectfeedback',0,'#','text',0,'#'), '', true );
+        $qo->partiallycorrectfeedback['text'] = $this->getpath($question,
+                array('#', 'partiallycorrectfeedback', 0, '#', 'text', 0, '#'), '', true);
         $qo->partiallycorrectfeedback['format'] = $this->trans_format(
-                $this->getpath($question, array('#','partiallycorrectfeedback', 0, '@','format'), 'moodle_auto_format'));
+                $this->getpath($question, array('#', 'partiallycorrectfeedback', 0, '@', 'format'),
+                'moodle_auto_format'));
         $qo->partiallycorrectfeedback['files'] = $this->import_files($this->getpath(
                 $question, array('#', 'partiallycorrectfeedback', '0', '#', 'file'), array()));
 
         $qo->incorrectfeedback = array();
-        $qo->incorrectfeedback['text'] = $this->getpath( $question, array('#','incorrectfeedback',0,'#','text',0,'#'), '', true );
-        $qo->incorrectfeedback['format'] = $this->trans_format($this->getpath(
-                $question, array('#','incorrectfeedback', 0, '@','format'), 'moodle_auto_format'));
-        $qo->incorrectfeedback['files'] = $this->import_files($this->getpath(
-                $question, array('#', 'incorrectfeedback', '0', '#', 'file'), array()));
+        $qo->incorrectfeedback['text'] = $this->getpath($question,
+                array('#', 'incorrectfeedback', 0, '#', 'text', 0, '#'), '', true);
+        $qo->incorrectfeedback['format'] = $this->trans_format($this->getpath($question,
+                array('#', 'incorrectfeedback', 0, '@', 'format'), 'moodle_auto_format'));
+        $qo->incorrectfeedback['files'] = $this->import_files($this->getpath($question,
+                array('#', 'incorrectfeedback', '0', '#', 'file'), array()));
 
-        $qo->unitgradingtype = $this->getpath($question, array('#','unitgradingtype',0,'#'), 0 );
-        $qo->unitpenalty = $this->getpath($question, array('#','unitpenalty',0,'#'), 0 );
-        $qo->showunits = $this->getpath($question, array('#','showunits',0,'#'), 0 );
-        $qo->unitsleft = $this->getpath($question, array('#','unitsleft',0,'#'), 0 );
-        $qo->instructions = $this->getpath( $question, array('#','instructions',0,'#','text',0,'#'), '', true );
+        $qo->unitgradingtype = $this->getpath($question,
+                array('#', 'unitgradingtype', 0, '#'), 0);
+        $qo->unitpenalty = $this->getpath($question, array('#', 'unitpenalty', 0, '#'), 0);
+        $qo->showunits = $this->getpath($question, array('#', 'showunits', 0, '#'), 0);
+        $qo->unitsleft = $this->getpath($question, array('#', 'unitsleft', 0, '#'), 0);
+        $qo->instructions = $this->getpath($question,
+                array('#', 'instructions', 0, '#', 'text', 0, '#'), '', true);
         if (!empty($instructions)) {
             $qo->instructions = array();
             $qo->instructions['text'] = $this->getpath($instructions,
@@ -780,33 +804,47 @@ class qformat_xml extends qformat_default {
                     array('0', '#', 'text', '0', '#'), '', true);
             $qo->instructions['format'] = $this->trans_format($this->getpath($instructions,
                     array('0', '@', 'format'), 'moodle_auto_format'));
-            $qo->instructions['files'] = $this->import_files($this->getpath(instructions,
+            $qo->instructions['files'] = $this->import_files($this->getpath($instructions,
                     array('0', '#', 'file'), array()));
         }
         $datasets = $question['#']['dataset_definitions'][0]['#']['dataset_definition'];
         $qo->dataset = array();
-        $qo->datasetindex= 0 ;
+        $qo->datasetindex= 0;
         foreach ($datasets as $dataset) {
             $qo->datasetindex++;
             $qo->dataset[$qo->datasetindex] = new stdClass();
-            $qo->dataset[$qo->datasetindex]->status = $this->import_text( $dataset['#']['status'][0]['#']['text']);
-            $qo->dataset[$qo->datasetindex]->name = $this->import_text( $dataset['#']['name'][0]['#']['text']);
-            $qo->dataset[$qo->datasetindex]->type =  $dataset['#']['type'][0]['#'];
-            $qo->dataset[$qo->datasetindex]->distribution = $this->import_text( $dataset['#']['distribution'][0]['#']['text']);
-            $qo->dataset[$qo->datasetindex]->max = $this->import_text( $dataset['#']['maximum'][0]['#']['text']);
-            $qo->dataset[$qo->datasetindex]->min = $this->import_text( $dataset['#']['minimum'][0]['#']['text']);
-            $qo->dataset[$qo->datasetindex]->length = $this->import_text( $dataset['#']['decimals'][0]['#']['text']);
-            $qo->dataset[$qo->datasetindex]->distribution = $this->import_text( $dataset['#']['distribution'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->status =
+                    $this->import_text($dataset['#']['status'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->name =
+                    $this->import_text($dataset['#']['name'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->type =
+                    $dataset['#']['type'][0]['#'];
+            $qo->dataset[$qo->datasetindex]->distribution =
+                    $this->import_text($dataset['#']['distribution'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->max =
+                    $this->import_text($dataset['#']['maximum'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->min =
+                    $this->import_text($dataset['#']['minimum'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->length =
+                    $this->import_text($dataset['#']['decimals'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->distribution =
+                    $this->import_text($dataset['#']['distribution'][0]['#']['text']);
             $qo->dataset[$qo->datasetindex]->itemcount = $dataset['#']['itemcount'][0]['#'];
             $qo->dataset[$qo->datasetindex]->datasetitem = array();
             $qo->dataset[$qo->datasetindex]->itemindex = 0;
-            $qo->dataset[$qo->datasetindex]->number_of_items=$dataset['#']['number_of_items'][0]['#'];
+            $qo->dataset[$qo->datasetindex]->number_of_items =
+                    $dataset['#']['number_of_items'][0]['#'];
             $datasetitems = $dataset['#']['dataset_items'][0]['#']['dataset_item'];
             foreach ($datasetitems as $datasetitem) {
                 $qo->dataset[$qo->datasetindex]->itemindex++;
-                $qo->dataset[$qo->datasetindex]->datasetitem[$qo->dataset[$qo->datasetindex]->itemindex] = new stdClass();
-                $qo->dataset[$qo->datasetindex]->datasetitem[$qo->dataset[$qo->datasetindex]->itemindex]->itemnumber =  $datasetitem['#']['number'][0]['#']; //[0]['#']['number'][0]['#'] ; // [0]['numberitems'] ;//['#']['number'][0]['#'];// $datasetitems['#']['number'][0]['#'];
-                $qo->dataset[$qo->datasetindex]->datasetitem[$qo->dataset[$qo->datasetindex]->itemindex]->value = $datasetitem['#']['value'][0]['#'] ;//$datasetitem['#']['value'][0]['#'];
+                $qo->dataset[$qo->datasetindex]->datasetitem[
+                        $qo->dataset[$qo->datasetindex]->itemindex] = new stdClass();
+                $qo->dataset[$qo->datasetindex]->datasetitem[
+                        $qo->dataset[$qo->datasetindex]->itemindex]->itemnumber =
+                                $datasetitem['#']['number'][0]['#'];
+                $qo->dataset[$qo->datasetindex]->datasetitem[
+                        $qo->dataset[$qo->datasetindex]->itemindex]->value =
+                                $datasetitem['#']['value'][0]['#'];
             }
         }
 
@@ -845,7 +883,7 @@ class qformat_xml extends qformat_default {
         // the 0 means keep white space as it is (important for markdown format)
         try {
             $xml = xmlize($text, 0, 'UTF-8', true);
-        } catch (xml_format_exception $e){
+        } catch (xml_format_exception $e) {
             $this->error($e->getMessage(), '');
             return false;
         }
@@ -1071,9 +1109,9 @@ class qformat_xml extends qformat_default {
 
         } else {
             // for Cloze type only
-            $name_text = $this->writetext( $question->name );
-            $question_text = $this->writetext( $question->questiontext );
-            $generalfeedback = $this->writetext( $question->generalfeedback );
+            $name_text = $this->writetext($question->name);
+            $question_text = $this->writetext($question->questiontext);
+            $generalfeedback = $this->writetext($question->generalfeedback);
             $expout .= "  <question type=\"$questiontype\">\n";
             $expout .= "    <name>\n";
             $expout .= $name_text;
@@ -1090,169 +1128,43 @@ class qformat_xml extends qformat_default {
 
         // output depends on question type
         switch($question->qtype) {
-        case 'category':
-            // not a qtype really - dummy used for category switching
-            break;
+            case 'category':
+                // not a qtype really - dummy used for category switching
+                break;
 
-        case 'truefalse':
-            $trueanswer = $question->options->answers[$question->options->trueanswer];
-            $trueanswer->answer = 'true';
-            $expout .= $this->write_answer($trueanswer);
+            case 'truefalse':
+                $trueanswer = $question->options->answers[$question->options->trueanswer];
+                $trueanswer->answer = 'true';
+                $expout .= $this->write_answer($trueanswer);
 
-            $falseanswer = $question->options->answers[$question->options->falseanswer];
-            $falseanswer->answer = 'false';
-            $expout .= $this->write_answer($falseanswer);
-            break;
+                $falseanswer = $question->options->answers[$question->options->falseanswer];
+                $falseanswer->answer = 'false';
+                $expout .= $this->write_answer($falseanswer);
+                break;
 
-        case 'multichoice':
-            $expout .= "    <single>" . $this->get_single($question->options->single) . "</single>\n";
-            $expout .= "    <shuffleanswers>" . $this->get_single($question->options->shuffleanswers) . "</shuffleanswers>\n";
-            $expout .= "    <answernumbering>{$question->options->answernumbering}</answernumbering>\n";
-            $expout .= $this->write_combined_feedback($question->options);
-            $expout .= $this->write_answers($question->options->answers);
-            break;
+            case 'multichoice':
+                $expout .= "    <single>" . $this->get_single($question->options->single) .
+                        "</single>\n";
+                $expout .= "    <shuffleanswers>" .
+                        $this->get_single($question->options->shuffleanswers) .
+                        "</shuffleanswers>\n";
+                $expout .= "    <answernumbering>" . $question->options->answernumbering .
+                        "</answernumbering>\n";
+                $expout .= $this->write_combined_feedback($question->options);
+                $expout .= $this->write_answers($question->options->answers);
+                break;
 
-        case 'shortanswer':
-            $expout .= "    <usecase>{$question->options->usecase}</usecase>\n";
-            $expout .= $this->write_answers($question->options->answers);
-            break;
+            case 'shortanswer':
+                $expout .= "    <usecase>{$question->options->usecase}</usecase>\n";
+                $expout .= $this->write_answers($question->options->answers);
+                break;
 
-        case 'numerical':
-            foreach ($question->options->answers as $answer) {
-                $expout .= $this->write_answer($answer,
-                        "      <tolerance>$answer->tolerance</tolerance>\n");
-            }
-
-            $units = $question->options->units;
-            if (count($units)) {
-                $expout .= "<units>\n";
-                foreach ($units as $unit) {
-                    $expout .= "  <unit>\n";
-                    $expout .= "    <multiplier>{$unit->multiplier}</multiplier>\n";
-                    $expout .= "    <unit_name>{$unit->unit}</unit_name>\n";
-                    $expout .= "  </unit>\n";
+            case 'numerical':
+                foreach ($question->options->answers as $answer) {
+                    $expout .= $this->write_answer($answer,
+                            "      <tolerance>$answer->tolerance</tolerance>\n");
                 }
-                $expout .= "</units>\n";
-            }
-            if (isset($question->options->unitgradingtype)) {
-                $expout .= "    <unitgradingtype>{$question->options->unitgradingtype}</unitgradingtype>\n";
-            }
-            if (isset($question->options->unitpenalty)) {
-                $expout .= "    <unitpenalty>{$question->options->unitpenalty}</unitpenalty>\n";
-            }
-            if (isset($question->options->showunits)) {
-                $expout .= "    <showunits>{$question->options->showunits}</showunits>\n";
-            }
-            if (isset($question->options->unitsleft)) {
-                $expout .= "    <unitsleft>{$question->options->unitsleft}</unitsleft>\n";
-            }
-            if (!empty($question->options->instructionsformat)) {
-                $files = $fs->get_area_files($contextid, 'qtype_numerical', 'instruction', $question->id);
-                $expout .= "    <instructions {$this->format($question->options->instructionsformat)}>\n";
-                $expout .= $this->writetext($question->options->instructions, 3);
-                $expout .= $this->writefiles($files);
-                $expout .= "    </instructions>\n";
-            }
-            break;
 
-        case 'match':
-            $expout .= "    <shuffleanswers>" . $this->get_single($question->options->shuffleanswers) . "</shuffleanswers>\n";
-            $expout .= $this->write_combined_feedback($question->options);
-            foreach ($question->options->subquestions as $subquestion) {
-                $files = $fs->get_area_files($contextid, 'qtype_match', 'subquestion', $subquestion->id);
-                $expout .= "    <subquestion {$this->format($subquestion->questiontextformat)}>\n";
-                $expout .= $this->writetext($subquestion->questiontext, 3);
-                $expout .= $this->writefiles($files);
-                $expout .= "      <answer>\n";
-                $expout .= $this->writetext($subquestion->answertext, 4);
-                $expout .= "      </answer>\n";
-                $expout .= "    </subquestion>\n";
-            }
-            break;
-
-        case 'description':
-            // Nothing else to do.
-            break;
-
-        case 'multianswer':
-            $acount = 1;
-            foreach ($question->options->questions as $question) {
-                $thispattern = "{#".$acount."}";
-                $thisreplace = $question->questiontext;
-                $expout = preg_replace("~$thispattern~", $thisreplace, $expout );
-                $acount++;
-            }
-            break;
-
-        case 'essay':
-            // Nothing else to do.
-            break;
-
-        case 'calculated':
-        case 'calculatedsimple':
-        case 'calculatedmulti':
-            $expout .= "    <synchronize>{$question->options->synchronize}</synchronize>\n";
-            $expout .= "    <single>{$question->options->single}</single>\n";
-            $expout .= "    <answernumbering>{$question->options->answernumbering}</answernumbering>\n";
-            $expout .= "    <shuffleanswers>".$this->writetext($question->options->shuffleanswers, 3)."</shuffleanswers>\n";
-
-            $component = 'qtype_' . $question->qtype;
-            $files = $fs->get_area_files($contextid, $component, 'correctfeedback', $question->id);
-            $expout .= "    <correctfeedback>\n";
-            $expout .= $this->writetext($question->options->correctfeedback, 3);
-            $expout .= $this->writefiles($files);
-            $expout .= "    </correctfeedback>\n";
-
-            $files = $fs->get_area_files($contextid, $component, 'partiallycorrectfeedback', $question->id);
-            $expout .= "    <partiallycorrectfeedback>\n";
-            $expout .= $this->writetext($question->options->partiallycorrectfeedback, 3);
-            $expout .= $this->writefiles($files);
-            $expout .= "    </partiallycorrectfeedback>\n";
-
-            $files = $fs->get_area_files($contextid, $component, 'incorrectfeedback', $question->id);
-            $expout .= "    <incorrectfeedback>\n";
-            $expout .= $this->writetext($question->options->incorrectfeedback, 3);
-            $expout .= $this->writefiles($files);
-            $expout .= "    </incorrectfeedback>\n";
-
-            foreach ($question->options->answers as $answer) {
-                $percent = 100 * $answer->fraction;
-                $expout .= "<answer fraction=\"$percent\">\n";
-                // "<text/>" tags are an added feature, old files won't have them
-                $expout .= "    <text>{$answer->answer}</text>\n";
-                $expout .= "    <tolerance>{$answer->tolerance}</tolerance>\n";
-                $expout .= "    <tolerancetype>{$answer->tolerancetype}</tolerancetype>\n";
-                $expout .= "    <correctanswerformat>{$answer->correctanswerformat}</correctanswerformat>\n";
-                $expout .= "    <correctanswerlength>{$answer->correctanswerlength}</correctanswerlength>\n";
-                $expout .= "    <feedback {$this->format($answer->feedbackformat)}>\n";
-                $files = $fs->get_area_files($contextid, $component, 'instruction', $question->id);
-                $expout .= $this->writetext($answer->feedback);
-                $expout .= $this->writefiles($answer->feedbackfiles);
-                $expout .= "    </feedback>\n";
-                $expout .= "</answer>\n";
-            }
-            if (isset($question->options->unitgradingtype)) {
-                $expout .= "    <unitgradingtype>{$question->options->unitgradingtype}</unitgradingtype>\n";
-            }
-            if (isset($question->options->unitpenalty)) {
-                $expout .= "    <unitpenalty>{$question->options->unitpenalty}</unitpenalty>\n";
-            }
-            if (isset($question->options->showunits)) {
-                $expout .= "    <showunits>{$question->options->showunits}</showunits>\n";
-            }
-            if (isset($question->options->unitsleft)) {
-                $expout .= "    <unitsleft>{$question->options->unitsleft}</unitsleft>\n";
-            }
-
-            if (isset($question->options->instructionsformat)) {
-                $files = $fs->get_area_files($contextid, $component, 'instruction', $question->id);
-                $expout .= "    <instructions {$this->format($question->options->instructionsformat)}>\n";
-                $expout .= $this->writetext($question->options->instructions, 3);
-                $expout .= $this->writefiles($files);
-                $expout .= "    </instructions>\n";
-            }
-
-            if (isset($question->options->units)) {
                 $units = $question->options->units;
                 if (count($units)) {
                     $expout .= "<units>\n";
@@ -1264,51 +1176,206 @@ class qformat_xml extends qformat_default {
                     }
                     $expout .= "</units>\n";
                 }
-            }
-
-            // The tag $question->export_process has been set so we get all the
-            // data items in the database from the function
-            // qtype_calculated::get_question_options calculatedsimple defaults
-            // to calculated
-            if( isset($question->options->datasets)&&count($question->options->datasets)){// there should be
-                $expout .= "<dataset_definitions>\n";
-                foreach ($question->options->datasets as $def) {
-                    $expout .= "<dataset_definition>\n";
-                    $expout .= "    <status>".$this->writetext($def->status)."</status>\n";
-                    $expout .= "    <name>".$this->writetext($def->name)."</name>\n";
-                    if ( $question->qtype == CALCULATED){
-                        $expout .= "    <type>calculated</type>\n";
-                    }else {
-                        $expout .= "    <type>calculatedsimple</type>\n";
-                    }
-                    $expout .= "    <distribution>".$this->writetext($def->distribution)."</distribution>\n";
-                    $expout .= "    <minimum>".$this->writetext($def->minimum)."</minimum>\n";
-                    $expout .= "    <maximum>".$this->writetext($def->maximum)."</maximum>\n";
-                    $expout .= "    <decimals>".$this->writetext($def->decimals)."</decimals>\n";
-                    $expout .= "    <itemcount>$def->itemcount</itemcount>\n";
-                    if ($def->itemcount > 0) {
-                        $expout .= "    <dataset_items>\n";
-                        foreach ($def->items as $item) {
-                              $expout .= "        <dataset_item>\n";
-                              $expout .= "           <number>".$item->itemnumber."</number>\n";
-                              $expout .= "           <value>".$item->value."</value>\n";
-                              $expout .= "        </dataset_item>\n";
-                        }
-                        $expout .= "    </dataset_items>\n";
-                        $expout .= "    <number_of_items>".$def-> number_of_items."</number_of_items>\n";
-                     }
-                    $expout .= "</dataset_definition>\n";
+                if (isset($question->options->unitgradingtype)) {
+                    $expout .= "    <unitgradingtype>" . $question->options->unitgradingtype .
+                            "</unitgradingtype>\n";
                 }
-                $expout .= "</dataset_definitions>\n";
-            }
-            break;
+                if (isset($question->options->unitpenalty)) {
+                    $expout .= "    <unitpenalty>{$question->options->unitpenalty}</unitpenalty>\n";
+                }
+                if (isset($question->options->showunits)) {
+                    $expout .= "    <showunits>{$question->options->showunits}</showunits>\n";
+                }
+                if (isset($question->options->unitsleft)) {
+                    $expout .= "    <unitsleft>{$question->options->unitsleft}</unitsleft>\n";
+                }
+                if (!empty($question->options->instructionsformat)) {
+                    $files = $fs->get_area_files($contextid, 'qtype_numerical',
+                            'instruction', $question->id);
+                    $expout .= "    <instructions " .
+                            $this->format($question->options->instructionsformat) . ">\n";
+                    $expout .= $this->writetext($question->options->instructions, 3);
+                    $expout .= $this->writefiles($files);
+                    $expout .= "    </instructions>\n";
+                }
+                break;
 
-        default:
-            // try support by optional plugin
-            if (!$data = $this->try_exporting_using_qtypes($question->qtype, $question)) {
-                notify(get_string('unsupportedexport', 'qformat_xml', $question->qtype));
-            }
-            $expout .= $data;
+            case 'match':
+                $expout .= "    <shuffleanswers>" .
+                        $this->get_single($question->options->shuffleanswers) .
+                        "</shuffleanswers>\n";
+                $expout .= $this->write_combined_feedback($question->options);
+                foreach ($question->options->subquestions as $subquestion) {
+                    $files = $fs->get_area_files($contextid, 'qtype_match',
+                            'subquestion', $subquestion->id);
+                    $expout .= "    <subquestion " .
+                            $this->format($subquestion->questiontextformat) . ">\n";
+                    $expout .= $this->writetext($subquestion->questiontext, 3);
+                    $expout .= $this->writefiles($files);
+                    $expout .= "      <answer>\n";
+                    $expout .= $this->writetext($subquestion->answertext, 4);
+                    $expout .= "      </answer>\n";
+                    $expout .= "    </subquestion>\n";
+                }
+                break;
+
+            case 'description':
+                // Nothing else to do.
+                break;
+
+            case 'multianswer':
+                $acount = 1;
+                foreach ($question->options->questions as $question) {
+                    $thispattern = "{#".$acount."}";
+                    $thisreplace = $question->questiontext;
+                    $expout = preg_replace("~$thispattern~", $thisreplace, $expout);
+                    $acount++;
+                }
+                break;
+
+            case 'essay':
+                // Nothing else to do.
+                break;
+
+            case 'calculated':
+            case 'calculatedsimple':
+            case 'calculatedmulti':
+                $expout .= "    <synchronize>{$question->options->synchronize}</synchronize>\n";
+                $expout .= "    <single>{$question->options->single}</single>\n";
+                $expout .= "    <answernumbering>" . $question->options->answernumbering .
+                        "</answernumbering>\n";
+                $expout .= "    <shuffleanswers>" .
+                        $this->writetext($question->options->shuffleanswers, 3) .
+                        "</shuffleanswers>\n";
+
+                $component = 'qtype_' . $question->qtype;
+                $files = $fs->get_area_files($contextid, $component,
+                        'correctfeedback', $question->id);
+                $expout .= "    <correctfeedback>\n";
+                $expout .= $this->writetext($question->options->correctfeedback, 3);
+                $expout .= $this->writefiles($files);
+                $expout .= "    </correctfeedback>\n";
+
+                $files = $fs->get_area_files($contextid, $component,
+                        'partiallycorrectfeedback', $question->id);
+                $expout .= "    <partiallycorrectfeedback>\n";
+                $expout .= $this->writetext($question->options->partiallycorrectfeedback, 3);
+                $expout .= $this->writefiles($files);
+                $expout .= "    </partiallycorrectfeedback>\n";
+
+                $files = $fs->get_area_files($contextid, $component,
+                        'incorrectfeedback', $question->id);
+                $expout .= "    <incorrectfeedback>\n";
+                $expout .= $this->writetext($question->options->incorrectfeedback, 3);
+                $expout .= $this->writefiles($files);
+                $expout .= "    </incorrectfeedback>\n";
+
+                foreach ($question->options->answers as $answer) {
+                    $percent = 100 * $answer->fraction;
+                    $expout .= "<answer fraction=\"$percent\">\n";
+                    // "<text/>" tags are an added feature, old files won't have them
+                    $expout .= "    <text>{$answer->answer}</text>\n";
+                    $expout .= "    <tolerance>{$answer->tolerance}</tolerance>\n";
+                    $expout .= "    <tolerancetype>{$answer->tolerancetype}</tolerancetype>\n";
+                    $expout .= "    <correctanswerformat>" .
+                            $answer->correctanswerformat . "</correctanswerformat>\n";
+                    $expout .= "    <correctanswerlength>" .
+                            $answer->correctanswerlength . "</correctanswerlength>\n";
+                    $expout .= "    <feedback {$this->format($answer->feedbackformat)}>\n";
+                    $files = $fs->get_area_files($contextid, $component,
+                            'instruction', $question->id);
+                    $expout .= $this->writetext($answer->feedback);
+                    $expout .= $this->writefiles($answer->feedbackfiles);
+                    $expout .= "    </feedback>\n";
+                    $expout .= "</answer>\n";
+                }
+                if (isset($question->options->unitgradingtype)) {
+                    $expout .= "    <unitgradingtype>" .
+                            $question->options->unitgradingtype . "</unitgradingtype>\n";
+                }
+                if (isset($question->options->unitpenalty)) {
+                    $expout .= "    <unitpenalty>" .
+                            $question->options->unitpenalty . "</unitpenalty>\n";
+                }
+                if (isset($question->options->showunits)) {
+                    $expout .= "    <showunits>{$question->options->showunits}</showunits>\n";
+                }
+                if (isset($question->options->unitsleft)) {
+                    $expout .= "    <unitsleft>{$question->options->unitsleft}</unitsleft>\n";
+                }
+
+                if (isset($question->options->instructionsformat)) {
+                    $files = $fs->get_area_files($contextid, $component,
+                            'instruction', $question->id);
+                    $expout .= "    <instructions " .
+                            $this->format($question->options->instructionsformat) . ">\n";
+                    $expout .= $this->writetext($question->options->instructions, 3);
+                    $expout .= $this->writefiles($files);
+                    $expout .= "    </instructions>\n";
+                }
+
+                if (isset($question->options->units)) {
+                    $units = $question->options->units;
+                    if (count($units)) {
+                        $expout .= "<units>\n";
+                        foreach ($units as $unit) {
+                            $expout .= "  <unit>\n";
+                            $expout .= "    <multiplier>{$unit->multiplier}</multiplier>\n";
+                            $expout .= "    <unit_name>{$unit->unit}</unit_name>\n";
+                            $expout .= "  </unit>\n";
+                        }
+                        $expout .= "</units>\n";
+                    }
+                }
+
+                // The tag $question->export_process has been set so we get all the
+                // data items in the database from the function
+                // qtype_calculated::get_question_options calculatedsimple defaults
+                // to calculated
+                if (isset($question->options->datasets) && count($question->options->datasets)) {
+                    $expout .= "<dataset_definitions>\n";
+                    foreach ($question->options->datasets as $def) {
+                        $expout .= "<dataset_definition>\n";
+                        $expout .= "    <status>".$this->writetext($def->status)."</status>\n";
+                        $expout .= "    <name>".$this->writetext($def->name)."</name>\n";
+                        if ($question->qtype == CALCULATED) {
+                            $expout .= "    <type>calculated</type>\n";
+                        } else {
+                            $expout .= "    <type>calculatedsimple</type>\n";
+                        }
+                        $expout .= "    <distribution>" . $this->writetext($def->distribution) .
+                                "</distribution>\n";
+                        $expout .= "    <minimum>" . $this->writetext($def->minimum) .
+                                "</minimum>\n";
+                        $expout .= "    <maximum>" . $this->writetext($def->maximum) .
+                                "</maximum>\n";
+                        $expout .= "    <decimals>" . $this->writetext($def->decimals) .
+                                "</decimals>\n";
+                        $expout .= "    <itemcount>$def->itemcount</itemcount>\n";
+                        if ($def->itemcount > 0) {
+                            $expout .= "    <dataset_items>\n";
+                            foreach ($def->items as $item) {
+                                  $expout .= "        <dataset_item>\n";
+                                  $expout .= "           <number>".$item->itemnumber."</number>\n";
+                                  $expout .= "           <value>".$item->value."</value>\n";
+                                  $expout .= "        </dataset_item>\n";
+                            }
+                            $expout .= "    </dataset_items>\n";
+                            $expout .= "    <number_of_items>" . $def->number_of_items .
+                                    "</number_of_items>\n";
+                        }
+                        $expout .= "</dataset_definition>\n";
+                    }
+                    $expout .= "</dataset_definitions>\n";
+                }
+                break;
+
+            default:
+                // try support by optional plugin
+                if (!$data = $this->try_exporting_using_qtypes($question->qtype, $question)) {
+                    notify(get_string('unsupportedexport', 'qformat_xml', $question->qtype));
+                }
+                $expout .= $data;
         }
 
         // Output any hints.
