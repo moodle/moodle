@@ -451,22 +451,22 @@ class moodlelib_test extends UnitTestCase {
             'America/Argentina/Cordoba' => 'America/Argentina/Cordoba',
             'America/Port-au-Prince' => 'America/Port-au-Prince',
             'America/Argentina/Buenos_Aires' => 'America/Argentina/Buenos_Aires',
-            'Wrong.Value' => '',
-            'Wrong/.Value' => '',
-            'Wrong(Value)' => '',
-            '0' => '0',
-            '0.0' => '0.0',
-            '0.5' => '0.5',
-            '-12.5' => '-12.5',
-            '+12.5' => '+12.5',
-            '13.5' => '',
-            '-13.5' => '',
-            '0.2' => '');
+            'PST8PDT'                        => 'PST8PDT',
+            'Wrong.Value'                    => '',
+            'Wrong/.Value'                   => '',
+            'Wrong(Value)'                   => '',
+            '0'                              => '0',
+            '0.0'                            => '0.0',
+            '0.5'                            => '0.5',
+            '-12.5'                          => '-12.5',
+            '+12.5'                          => '+12.5',
+            '13.5'                           => '',
+            '-13.5'                          => '',
+            '0.2'                            => '');
 
         foreach ($testvalues as $testvalue => $expectedvalue) {
             $actualvalue = clean_param($testvalue, PARAM_TIMEZONE);
-            $this->assertEqual($actualvalue, $expectedvalue,
-                "Expected value: {$expectedvalue} => Actual value: {$actualvalue}");
+            $this->assertEqual($actualvalue, $expectedvalue);
         }
     }
 
