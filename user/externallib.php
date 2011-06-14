@@ -356,6 +356,7 @@ class moodle_user_external extends external_api {
         global $CFG, $USER, $DB;
         require_once($CFG->dirroot . "/user/lib.php");
         require_once($CFG->dirroot . "/user/profile/lib.php"); //custom field library
+        require_once($CFG->dirroot . "/lib/filelib.php"); // file handling on description and friends
 
         $isadmin = is_siteadmin($USER);
 
