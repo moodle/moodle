@@ -556,7 +556,7 @@ class webservice_test extends UnitTestCase {
         $user1->idnumber = 'testidnumber1';
         $user1->lang = 'en';
         $user1->theme = 'standard';
-        $user1->timezone = 99;
+        $user1->timezone = '-12.5';
         $user1->mailformat = 0;
         $user1->description = 'Hello World!';
         $user1->city = 'testcity1';
@@ -578,6 +578,7 @@ class webservice_test extends UnitTestCase {
         $user2->firstname = 'testfirstname2';
         $user2->lastname = 'testlastname2';
         $user2->email = 'testemail1@moodle.com';
+        $user2->timezone = 'Pacific/Port_Moresby';
 
         $users = array($user1, $user2);
 
@@ -653,6 +654,7 @@ class webservice_test extends UnitTestCase {
                 hash_internal_user_password($user2->password));
         $this->assertEqual($dbuser2->lastname, $user2->lastname);
         $this->assertEqual($dbuser2->email, $user2->email);
+        $this->assertEqual($dbuser2->timezone, $user2->timezone);
 
         //unset preferences
         $DB->delete_records('user_preferences', array('userid' => $dbuser1->id));
