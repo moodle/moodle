@@ -444,6 +444,32 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual(clean_param(' ', PARAM_STRINGID), '');
     }
 
+    function test_clean_param_timezone() {
+        // Test timezone validation
+        $testvalues = array (
+            'America/Jamaica'                => 'America/Jamaica',
+            'America/Argentina/Cordoba'      => 'America/Argentina/Cordoba',
+            'America/Port-au-Prince'         => 'America/Port-au-Prince',
+            'America/Argentina/Buenos_Aires' => 'America/Argentina/Buenos_Aires',
+            'PST8PDT'                        => 'PST8PDT',
+            'Wrong.Value'                    => '',
+            'Wrong/.Value'                   => '',
+            'Wrong(Value)'                   => '',
+            '0'                              => '0',
+            '0.0'                            => '0.0',
+            '0.5'                            => '0.5',
+            '-12.5'                          => '-12.5',
+            '+12.5'                          => '+12.5',
+            '13.5'                           => '',
+            '-13.5'                          => '',
+            '0.2'                            => '');
+
+        foreach ($testvalues as $testvalue => $expectedvalue) {
+            $actualvalue = clean_param($testvalue, PARAM_TIMEZONE);
+            $this->assertEqual($actualvalue, $expectedvalue);
+        }
+    }
+
     function test_validate_param() {
         try {
             $param = validate_param('11a', PARAM_INT);
