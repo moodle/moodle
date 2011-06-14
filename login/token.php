@@ -26,7 +26,7 @@ define('NO_MOODLE_COOKIES', true);
 
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 
-$username = required_param('username', PARAM_USERNAME); 
+$username = required_param('username', PARAM_USERNAME);
 $password = required_param('password', PARAM_RAW);
 $service  = required_param('service',  PARAM_ALPHANUMEXT);
 
@@ -95,7 +95,7 @@ if (!empty($user)) {
         // create token if not exists
         if (!$token) {
             // This is an exception for Moodle Mobiel App
-            // if user doesn't have token, we will create one on the fly 
+            // if user doesn't have token, we will create one on the fly
             // even user doesn't have createtoken permission
             if ($service == MOODLE_OFFICIAL_MOBILE_SERVICE) {
                 if (has_capability('moodle/webservice:createmobiletoken', get_system_context())) {
