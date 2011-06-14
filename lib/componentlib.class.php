@@ -592,7 +592,7 @@ class lang_installer {
         global $CFG;
 
         $this->set_queue($langcode);
-        $this->version = '2.0';
+        $this->version = '2.1';
 
         if (!empty($CFG->langotherroot) and $CFG->langotherroot !== $CFG->dataroot . '/lang') {
             debugging('The in-built language pack installer does not support alternative location ' .
@@ -665,12 +665,10 @@ class lang_installer {
      */
     public function lang_pack_url($langcode = '') {
 
-        $baseurl = 'http://download.moodle.org/langpack/' . $this->version . '/';
-
         if (empty($langcode)) {
-            return $baseurl;
+            return 'http://download.moodle.org/langpack/'.$this->version.'/';
         } else {
-            return $baseurl . $langcode . '.zip';
+            return 'http://download.moodle.org/download.php/langpack/'.$this->version.'/'.$langcode.'.zip';
         }
     }
 
@@ -772,7 +770,7 @@ class lang_installer {
     protected function install_language_pack($langcode) {
 
         // initialise new component installer to process this language
-        $installer = new component_installer('http://download.moodle.org', 'langpack/' . $this->version,
+        $installer = new component_installer('http://download.moodle.org', 'download.php/direct/langpack/' . $this->version,
             $langcode . '.zip', 'languages.md5', 'lang');
 
         if (!$installer->requisitesok) {
