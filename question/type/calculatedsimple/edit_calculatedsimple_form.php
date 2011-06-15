@@ -658,6 +658,10 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
+        if (empty($data['definition'])) {
+            $errors['selectadd'] = get_string('youmustaddatleastonevalue', 'qtype_calculatedsimple');
+        }
+
         return $errors;
     }
 }
