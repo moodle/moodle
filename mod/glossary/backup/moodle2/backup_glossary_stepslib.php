@@ -103,8 +103,8 @@ class backup_glossary_activity_structure_step extends backup_activity_structure_
 
             $rating->set_source_table('rating', array('contextid'  => backup::VAR_CONTEXTID,
                                                       'itemid'     => backup::VAR_PARENTID,
-                                                      'component'  => 'mod_glossary',
-                                                      'ratingarea' => 'entry'));
+                                                      'component'  => backup_helper::is_sqlparam('mod_glossary'),
+                                                      'ratingarea' => backup_helper::is_sqlparam('entry')));
             $rating->set_source_alias('rating', 'value');
 
             $categoryentry->set_source_table('glossary_entries_categories', array('categoryid' => backup::VAR_PARENTID));
