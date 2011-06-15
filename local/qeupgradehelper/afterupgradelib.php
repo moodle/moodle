@@ -40,7 +40,7 @@ class local_qeupgradehelper_attempt_upgrader extends question_engine_attempt_upg
     }
 
     protected function get_quiz_ids() {
-        return array($this->quizid => 1);
+        return array($this->quizid);
     }
 
     protected function print_progress($done, $outof, $quizid) {
