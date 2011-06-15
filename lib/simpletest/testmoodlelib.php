@@ -371,19 +371,7 @@ class moodlelib_test extends UnitTestCase {
                 'usertimezone' => '-10',
                 'timezone' => '-2', //take this timezone
                 'expectedoutput' => 'Saturday, 1 January 2011, 08:00 AM'
-            ),
-            array(
-                'time' => '1293876000 ',
-                'usertimezone' => '-10',
-                'timezone' => 'random/time', //this should show server time
-                'expectedoutput' => 'Saturday, 1 January 2011, 06:00 PM'
-            ),
-            array(
-                'time' => '1293876000 ',
-                'usertimezone' => '14', //server time zone
-                'timezone' => '99', //this should show user time
-                'expectedoutput' => 'Saturday, 1 January 2011, 06:00 PM'
-            ),
+            )
         );
 
         //Check if forcetimezone is set then save it and set it to use user timezone
@@ -400,9 +388,16 @@ class moodlelib_test extends UnitTestCase {
         $oldlocale = setlocale(LC_TIME, '0');
         setlocale(LC_TIME, 'en_AU.UTF-8');
 
+        //get instance of textlib for strtolower
+        $textlib = textlib_get_instance();
         foreach ($testvalues as $vals) {
             $USER->timezone = $vals['usertimezone'];
             $actualoutput = userdate($vals['time'], '%A, %d %B %Y, %I:%M %p', $vals['timezone']);
+
+            //On different systems case of AM PM changes so compare case insenitive
+            $vals['expectedoutput'] = $textlib->strtolower($vals['expectedoutput']);
+            $actualoutput = $textlib->strtolower($actualoutput);
+
             $this->assertEqual($vals['expectedoutput'], $actualoutput,
                 "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput},
                 Please check if timezones are updated (Site adminstration -> location -> update timezone)");
@@ -416,6 +411,7 @@ class moodlelib_test extends UnitTestCase {
             $CFG->forcetimezone = $cfgforcetimezone;
         }
 
+        //restore system default values.
         setlocale(LC_TIME, $oldlocale);
     }
 
@@ -518,30 +514,6 @@ class moodlelib_test extends UnitTestCase {
                 'timezone' => '-2', //take this timezone
                 'applydst' => true, //apply dst,
                 'expectedoutput' => '1309521600'
-            ),
-            array(
-                'usertimezone' => '-10',//no dst applyed
-                'year' => '2011',
-                'month' => '7',
-                'day' => '1',
-                'hour' => '10',
-                'minutes' => '00',
-                'seconds' => '00',
-                'timezone' => 'random/time', //This should show server time
-                'applydst' => true, //apply dst,
-                'expectedoutput' => '1309485600'
-            ),
-            array(
-                'usertimezone' => '14',//server time
-                'year' => '2011',
-                'month' => '7',
-                'day' => '1',
-                'hour' => '10',
-                'minutes' => '00',
-                'seconds' => '00',
-                'timezone' => '99', //get user time
-                'applydst' => true, //apply dst,
-                'expectedoutput' => '1309485600'
             )
         );
 
@@ -560,6 +532,8 @@ class moodlelib_test extends UnitTestCase {
         $oldlocale = setlocale(LC_TIME, '0');
         setlocale(LC_TIME, 'en_AU.UTF-8');
 
+        //get instance of textlib for strtolower
+        $textlib = textlib_get_instance();
         //Test make_timestamp with all testvals and assert if anything wrong.
         foreach ($testvalues as $vals) {
             $USER->timezone = $vals['usertimezone'];
@@ -574,6 +548,10 @@ class moodlelib_test extends UnitTestCase {
                     $vals['applydst']
                     );
 
+            //On different systems case of AM PM changes so compare case insenitive
+            $vals['expectedoutput'] = $textlib->strtolower($vals['expectedoutput']);
+            $actualoutput = $textlib->strtolower($actualoutput);
+
             $this->assertEqual($vals['expectedoutput'], $actualoutput,
                 "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput},
                 Please check if timezones are updated (Site adminstration -> location -> update timezone)");
@@ -587,6 +565,7 @@ class moodlelib_test extends UnitTestCase {
             $CFG->forcetimezone = $cfgforcetimezone;
         }
 
+        //restore system default values.
         setlocale(LC_TIME, $oldlocale);
     }
 }
