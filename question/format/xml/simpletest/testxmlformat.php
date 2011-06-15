@@ -83,7 +83,8 @@ class qformat_xml_test extends UnitTestCase {
         $exporter = new qformat_xml();
         $xml = $exporter->writequestion($q);
 
-        $this->assertPattern('|<hint format=\"moodle_auto_format\">\s*<text>\s*This is the first hint\.\s*</text>\s*</hint>|', $xml);
+        $this->assertPattern('|<hint format=\"moodle_auto_format\">\s*<text>\s*' .
+                'This is the first hint\.\s*</text>\s*</hint>|', $xml);
         $this->assertNoPattern('|<shownumcorrect/>|', $xml);
         $this->assertNoPattern('|<clearwrong/>|', $xml);
         $this->assertNoPattern('|<options>|', $xml);
@@ -113,8 +114,10 @@ class qformat_xml_test extends UnitTestCase {
         $exporter = new qformat_xml();
         $xml = $exporter->writequestion($q);
 
-        $this->assertPattern('|<hint format=\"html\">\s*<text>\s*This is the first hint\.\s*</text>|', $xml);
-        $this->assertPattern('|<hint format=\"html\">\s*<text>\s*This is the second hint\.\s*</text>|', $xml);
+        $this->assertPattern(
+                '|<hint format=\"html\">\s*<text>\s*This is the first hint\.\s*</text>|', $xml);
+        $this->assertPattern(
+                '|<hint format=\"html\">\s*<text>\s*This is the second hint\.\s*</text>|', $xml);
         list($ignored, $hint1, $hint2) = explode('<hint', $xml);
         $this->assertNoPattern('|<shownumcorrect/>|', $hint1);
         $this->assertPattern('|<clearwrong/>|', $hint1);
@@ -144,8 +147,10 @@ END;
         $importer->import_hints($qo, $questionxml['question']);
 
         $this->assertEqual(array(
-                array('text' => 'This is the first hint', 'format' => FORMAT_MOODLE, 'files' => array()),
-                array('text' => 'This is the second hint', 'format' => FORMAT_MOODLE, 'files' => array()),
+                array('text' => 'This is the first hint',
+                        'format' => FORMAT_MOODLE, 'files' => array()),
+                array('text' => 'This is the second hint',
+                        'format' => FORMAT_MOODLE, 'files' => array()),
                 ), $qo->hint);
         $this->assertFalse(isset($qo->hintclearwrong));
         $this->assertFalse(isset($qo->hintshownumcorrect));
@@ -172,8 +177,10 @@ END;
         $importer->import_hints($qo, $questionxml['question'], true, true);
 
         $this->assertEqual(array(
-                array('text' => 'This is the first hint', 'format' => FORMAT_MOODLE, 'files' => array()),
-                array('text' => 'This is the second hint', 'format' => FORMAT_MOODLE, 'files' => array()),
+                array('text' => 'This is the first hint',
+                        'format' => FORMAT_MOODLE, 'files' => array()),
+                array('text' => 'This is the second hint',
+                        'format' => FORMAT_MOODLE, 'files' => array()),
                 ), $qo->hint);
         $this->assertEqual(array(1, 0), $qo->hintclearwrong);
         $this->assertEqual(array(0, 1), $qo->hintshownumcorrect);
@@ -265,7 +272,7 @@ END;
         $this->assert_same_xml($expectedxml, $xml);
     }
 
-    public function test_import_essay() {
+    public function test_import_essay_20() {
         $xml = '  <question type="essay">
     <name>
       <text>An essay</text>
@@ -294,6 +301,55 @@ END;
         $expectedq->defaultmark = 1;
         $expectedq->length = 1;
         $expectedq->penalty = 0;
+        $expectedq->responseformat = 'editor';
+        $expectedq->responsefieldlines = 15;
+        $expectedq->attachments = 0;
+        $expectedq->graderinfo['text'] = '';
+        $expectedq->graderinfo['format'] = FORMAT_MOODLE;
+
+        $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
+    }
+
+    public function test_import_essay_21() {
+        $xml = '  <question type="essay">
+    <name>
+      <text>An essay</text>
+    </name>
+    <questiontext format="moodle_auto_format">
+      <text>Write something.</text>
+    </questiontext>
+    <generalfeedback>
+      <text>I hope you wrote something interesting.</text>
+    </generalfeedback>
+    <defaultgrade>1</defaultgrade>
+    <penalty>0</penalty>
+    <hidden>0</hidden>
+    <responseformat>monospaced</responseformat>
+    <responsefieldlines>42</responsefieldlines>
+    <attachments>-1</attachments>
+    <graderinfo format="html">
+        <text><![CDATA[<p>Grade <b>generously</b>!</p>]]></text>
+    </graderinfo>
+  </question>';
+        $xmldata = xmlize($xml);
+
+        $importer = new qformat_xml();
+        $q = $importer->import_essay($xmldata['question']);
+
+        $expectedq = new stdClass();
+        $expectedq->qtype = 'essay';
+        $expectedq->name = 'An essay';
+        $expectedq->questiontext = 'Write something.';
+        $expectedq->questiontextformat = FORMAT_MOODLE;
+        $expectedq->generalfeedback = 'I hope you wrote something interesting.';
+        $expectedq->defaultmark = 1;
+        $expectedq->length = 1;
+        $expectedq->penalty = 0;
+        $expectedq->responseformat = 'monospaced';
+        $expectedq->responsefieldlines = 42;
+        $expectedq->attachments = -1;
+        $expectedq->graderinfo['text'] = '<p>Grade <b>generously</b>!</p>';
+        $expectedq->graderinfo['format'] = FORMAT_HTML;
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
     }
@@ -312,6 +368,13 @@ END;
         $qdata->length = 1;
         $qdata->penalty = 0;
         $qdata->hidden = 0;
+        $qdata->options->id = 456;
+        $qdata->options->questionid = 123;
+        $qdata->options->responseformat = 'monospaced';
+        $qdata->options->responsefieldlines = 42;
+        $qdata->options->attachments = -1;
+        $qdata->options->graderinfo = '<p>Grade <b>generously</b>!</p>';
+        $qdata->options->graderinfoformat = FORMAT_HTML;
 
         $exporter = new qformat_xml();
         $xml = $exporter->writequestion($qdata);
@@ -330,6 +393,12 @@ END;
     <defaultgrade>1</defaultgrade>
     <penalty>0</penalty>
     <hidden>0</hidden>
+    <responseformat>monospaced</responseformat>
+    <responsefieldlines>42</responsefieldlines>
+    <attachments>-1</attachments>
+    <graderinfo format="html">
+      <text><![CDATA[<p>Grade <b>generously</b>!</p>]]></text>
+    </graderinfo>
   </question>
 ';
 
@@ -404,10 +473,13 @@ END;
         $expectedq->name = 'Matching question';
         $expectedq->questiontext = 'Match the upper and lower case letters.';
         $expectedq->questiontextformat = FORMAT_HTML;
-        $expectedq->correctfeedback = array('text' => 'Well done.', 'format' => FORMAT_MOODLE, 'files' => array());
-        $expectedq->partiallycorrectfeedback = array('text' => 'Not entirely.', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->correctfeedback = array('text' => 'Well done.',
+                'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->partiallycorrectfeedback = array('text' => 'Not entirely.',
+                'format' => FORMAT_MOODLE, 'files' => array());
         $expectedq->shownumcorrect = false;
-        $expectedq->incorrectfeedback = array('text' => 'Completely wrong!', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->incorrectfeedback = array('text' => 'Completely wrong!',
+                'format' => FORMAT_MOODLE, 'files' => array());
         $expectedq->generalfeedback = 'The answer is A -> a, B -> b and C -> c.';
         $expectedq->generalfeedbackformat = FORMAT_MOODLE;
         $expectedq->defaultmark = 1;
@@ -621,11 +693,20 @@ END;
         $expectedq->name = 'Multiple choice question';
         $expectedq->questiontext = 'Which are the even numbers?';
         $expectedq->questiontextformat = FORMAT_HTML;
-        $expectedq->correctfeedback = array('text' => '<p>Your answer is correct.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->correctfeedback = array(
+                'text'   => '<p>Your answer is correct.</p>',
+                'format' => FORMAT_MOODLE,
+                'files'  => array());
         $expectedq->shownumcorrect = false;
-        $expectedq->partiallycorrectfeedback = array('text' => '<p>Your answer is partially correct.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->partiallycorrectfeedback = array(
+                'text'   => '<p>Your answer is partially correct.</p>',
+                'format' => FORMAT_MOODLE,
+                'files'  => array());
         $expectedq->shownumcorrect = true;
-        $expectedq->incorrectfeedback = array('text' => '<p>Your answer is incorrect.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->incorrectfeedback = array(
+                'text'   => '<p>Your answer is incorrect.</p>',
+                'format' => FORMAT_MOODLE,
+                'files'  => array());
         $expectedq->generalfeedback = 'The even numbers are 2 and 4.';
         $expectedq->defaultmark = 2;
         $expectedq->length = 1;
@@ -815,9 +896,12 @@ END;
         $expectedq->answer = array('42', '13', '*');
         $expectedq->fraction = array(1, 0, 0);
         $expectedq->feedback = array(
-            array('text' => 'Well done!', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => 'What were you thinking?!', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => 'Completely wrong.', 'format' => FORMAT_MOODLE, 'files' => array()));
+            array('text' => 'Well done!',
+                    'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => 'What were you thinking?!',
+                    'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => 'Completely wrong.',
+                    'format' => FORMAT_MOODLE, 'files' => array()));
         $expectedq->tolerance = array(0.001, 1, 0);
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
@@ -841,9 +925,12 @@ END;
         $qdata->hidden = 0;
 
         $qdata->options->answers = array(
-            13 => new qtype_numerical_answer(13, '42', 1, 'Well done!', FORMAT_HTML, 0.001),
-            14 => new qtype_numerical_answer(14, '13', 0, 'What were you thinking?!', FORMAT_HTML, 1),
-            15 => new qtype_numerical_answer(15, '*', 0, 'Completely wrong.', FORMAT_HTML, ''),
+            13 => new qtype_numerical_answer(13, '42', 1, 'Well done!',
+                    FORMAT_HTML, 0.001),
+            14 => new qtype_numerical_answer(14, '13', 0, 'What were you thinking?!',
+                    FORMAT_HTML, 1),
+            15 => new qtype_numerical_answer(15, '*', 0, 'Completely wrong.',
+                    FORMAT_HTML, ''),
         );
 
         $qdata->options->units = array();
@@ -1062,8 +1149,10 @@ END;
         $expectedq->length = 1;
         $expectedq->penalty = 1;
 
-        $expectedq->feedbacktrue = array('text' => 'Well done!', 'format' => FORMAT_MOODLE, 'files' => array());
-        $expectedq->feedbackfalse = array('text' => 'Doh!', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->feedbacktrue = array('text' => 'Well done!',
+                'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->feedbackfalse = array('text' => 'Doh!',
+                'format' => FORMAT_MOODLE, 'files' => array());
         $expectedq->correctanswer = true;
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
