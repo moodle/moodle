@@ -37,6 +37,8 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
     protected $page;
     // @var array of page objects to store entire pages, to help generate nextpageid and prevpageid in data
     protected $pages;
+    // @var int a page id (previous)
+    protected $prevpageid = 0;
 
     /** @var moodle1_file_manager */
     protected $fileman = null;
@@ -128,9 +130,10 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
             'modulename' => 'lesson', 'contextid' => $contextid));
         $this->xmlwriter->begin_tag('lesson', array('id' => $instanceid));
 
-        unset($data['id']);
         foreach ($data as $field => $value) {
-            $this->xmlwriter->full_tag($field, $value);
+            if ($field <> 'id') {
+                $this->xmlwriter->full_tag($field, $value);
+            }
         }
 
         return $data;
@@ -184,66 +187,46 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
 
     public function on_lesson_page_end() {
         $this->page->answers = $this->answers;
-        unset($this->answers);
         $this->pages[] = $this->page;
-        unset($this->page);
+
+        $firstbatch = count($this->pages) > 2;
+        $nextbatch = count($this->pages) > 1 && $this->prevpageid != 0;
+
+        if ( $firstbatch || $nextbatch ) { //we can write out 1 page atleast
+            if ($this->prevpageid == 0) {
+                // start writing with n-2 page (relative to this on_lesson_page_end() call)
+                $pg1 = $this->pages[1];
+                $pg0 = $this->pages[0];
+                $this->write_single_page_xml($pg0, 0, $pg1->id);
+                $this->prevpageid = $pg0->id;
+                array_shift($this->pages); //bye bye page0
+            }
+
+            $pg1 = $this->pages[0];
+            // write pg1 referencing prevpageid and pg2
+            $pg2 = $this->pages[1];
+            $this->write_single_page_xml($pg1, $this->prevpageid, $pg2->id);
+            $this->prevpageid = $pg1->id;
+            array_shift($this->pages); //throw written n-1th page
+        }
     }
 
     public function on_lesson_pages_end() {
-        $prevpageid = 0;
-
-        foreach ($this->pages as $page) {
-            $curpageid = $page->id;
-            // if there are more pages, set nextpageid
-            if (isset($this->pages[1])) {
-                $nextpage = $this->pages[1];
-                $nextpageid = $nextpage->id;
-            } else {
-                //theres only one page left
-                $nextpageid = 0;
+        if ($this->pages) {
+            if (isset($this->pages[1])) { // write the case of only 2 pages.
+                $this->write_single_page_xml($this->pages[0], $this->prevpageid, $this->pages[1]->id);
+                $this->prevpageid = $this->pages[0]->id;
+                array_shift($this->pages);
             }
-            //mince nextpageid and prevpageid
-            $page->data['nextpageid'] = $nextpageid;
-            $page->data['prevpageid'] = $prevpageid;
-
-            array_shift($this->pages);
-
-            // write out each page data
-            $this->xmlwriter->begin_tag('page', array('id' => $page->id));
-
-            foreach ($page->data as $field => $value) {
-                $this->xmlwriter->full_tag($field, $value);
-            }
-
-            //effectively on_lesson_answers_end(), where we write out answers for current page.
-            $answers = $page->answers;
-
-            $this->xmlwriter->begin_tag('answers');
-            if (count($answers) > 3) {
-                if ($answers[0]['jumpto'] !== '0' || $answers[1]['jumpto'] !== '0') {
-                    if ($answers[2]['jumpto'] !== '0') {
-                        $answers[0]['jumpto'] = $answers[2]['jumpto'];
-                        $answers[2]['jumpto'] = '0';
-                    }
-                    if ($answers[3]['jumpto'] !== '0') {
-                        $answers[1]['jumpto'] = $answers[3]['jumpto'];
-                        $answers[3]['jumpto'] = '0';
-                    }
-                }
-            }
-
-            foreach ($answers as $data) {
-                $this->write_xml('answer', $data, array('/answer/id'));
-            }
-            $this->xmlwriter->end_tag('answers');
-
-            // answers is now closed for current page. Ending the page.
-            $this->xmlwriter->end_tag('page');
-
-            // set prevpageid
-            $prevpageid = $curpageid;
+            //write the remaining (first/last) single page
+            $this->write_single_page_xml($this->pages[0], $this->prevpageid, 0);
         }
         $this->xmlwriter->end_tag('pages');
+        //reset
+        unset($this->pages);
+        $this->prevpageid = 0;
+        unset($this->answers);
+        unset($this->page);
     }
 
     /**
@@ -265,5 +248,49 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
         $this->xmlwriter->end_tag('fileref');
         $this->xmlwriter->end_tag('inforef');
         $this->close_xml_writer();
+    }
+
+    /**
+     *  writes out the given page into the open xml handle
+     * @param type $page
+     * @param type $prevpageid
+     * @param type $nextpageid
+     */
+    protected function write_single_page_xml($page, $prevpageid=0, $nextpageid=0) {
+        //mince nextpageid and prevpageid
+        $page->data['nextpageid'] = $nextpageid;
+        $page->data['prevpageid'] = $prevpageid;
+
+        // write out each page data
+        $this->xmlwriter->begin_tag('page', array('id' => $page->id));
+
+        foreach ($page->data as $field => $value) {
+            $this->xmlwriter->full_tag($field, $value);
+        }
+
+        //effectively on_lesson_answers_end(), where we write out answers for current page.
+        $answers = $page->answers;
+
+        $this->xmlwriter->begin_tag('answers');
+        if (count($answers) > 3) {
+            if ($answers[0]['jumpto'] !== '0' || $answers[1]['jumpto'] !== '0') {
+                if ($answers[2]['jumpto'] !== '0') {
+                    $answers[0]['jumpto'] = $answers[2]['jumpto'];
+                    $answers[2]['jumpto'] = '0';
+                }
+                if ($answers[3]['jumpto'] !== '0') {
+                    $answers[1]['jumpto'] = $answers[3]['jumpto'];
+                    $answers[3]['jumpto'] = '0';
+                }
+            }
+        }
+
+        foreach ($answers as $data) {
+            $this->write_xml('answer', $data, array('/answer/id'));
+        }
+        $this->xmlwriter->end_tag('answers');
+
+        // answers is now closed for current page. Ending the page.
+        $this->xmlwriter->end_tag('page');
     }
 }
