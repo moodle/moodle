@@ -414,6 +414,8 @@ class qformat_xml extends qformat_default {
      * @return object question object
      */
     public function import_multianswer($questions) {
+        question_bank::get_qtype('multianswer');
+
         $questiontext = array();
         $questiontext['text'] = $this->import_text($questions['#']['questiontext'][0]['#']['text']);
         $questiontext['format'] = '1';
@@ -438,7 +440,7 @@ class qformat_xml extends qformat_default {
         $qo->questiontext =  $qo->questiontext['text'];
         $qo->questiontextformat = '';
 
-        $this->import_hints($qo, $question, true);
+        $this->import_hints($qo, $questions, true);
 
         return $qo;
     }
@@ -909,6 +911,12 @@ class qformat_xml extends qformat_default {
                 $qo = $this->import_essay($question);
             } else if ($questiontype == 'calculated') {
                 $qo = $this->import_calculated($question);
+            } else if ($questiontype == 'calculatedsimple') {
+                $qo = $this->import_calculated($question);
+                $qo->qtype = 'calculatedsimple';
+            } else if ($questiontype == 'calculatedmulti') {
+                $qo = $this->import_calculated($question);
+                $qo->qtype = 'calculatedmulti';
             } else if ($questiontype == 'category') {
                 $qo = $this->import_category($question);
 
@@ -1250,8 +1258,7 @@ class qformat_xml extends qformat_default {
                 $expout .= "    <single>{$question->options->single}</single>\n";
                 $expout .= "    <answernumbering>" . $question->options->answernumbering .
                         "</answernumbering>\n";
-                $expout .= "    <shuffleanswers>" .
-                        $this->writetext($question->options->shuffleanswers, 3) .
+                $expout .= "    <shuffleanswers>" . $question->options->shuffleanswers .
                         "</shuffleanswers>\n";
 
                 $component = 'qtype_' . $question->qtype;
