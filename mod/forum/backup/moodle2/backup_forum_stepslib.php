@@ -126,8 +126,8 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
             $track->set_source_table('forum_track_prefs', array('forumid' => backup::VAR_PARENTID));
 
             $rating->set_source_table('rating', array('contextid'  => backup::VAR_CONTEXTID,
-                                                      'component'  => 'mod_forum',
-                                                      'ratingarea' => 'post',
+                                                      'component'  => backup_helper::is_sqlparam('mod_forum'),
+                                                      'ratingarea' => backup_helper::is_sqlparam('post'),
                                                       'itemid'     => backup::VAR_PARENTID));
             $rating->set_source_alias('rating', 'value');
         }

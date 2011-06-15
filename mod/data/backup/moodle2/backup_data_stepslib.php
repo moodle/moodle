@@ -101,8 +101,8 @@ class backup_data_activity_structure_step extends backup_activity_structure_step
 
             $rating->set_source_table('rating', array('contextid'  => backup::VAR_CONTEXTID,
                                                       'itemid'     => backup::VAR_PARENTID,
-                                                      'component'  => 'mod_data',
-                                                      'ratingarea' => 'entry'));
+                                                      'component'  => backup_helper::is_sqlparam('mod_data'),
+                                                      'ratingarea' => backup_helper::is_sqlparam('entry')));
             $rating->set_source_alias('rating', 'value');
         }
 
