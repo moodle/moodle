@@ -863,9 +863,21 @@ class moodlelib_test extends UnitTestCase {
         $oldlocale = setlocale(LC_TIME, '0');
         setlocale(LC_TIME, 'en_AU.UTF-8');
 
+        //set default timezone to Australia/Perth, else time calulated
+        //will not match expected values. Before that save system defaults.
+        $systemdefaulttimezone = date_default_timezone_get();
+        date_default_timezone_set('Australia/Perth');
+
+        //get instance of textlib for strtolower
+        $textlib = textlib_get_instance();
         foreach ($testvalues as $vals) {
             $USER->timezone = $vals['usertimezone'];
             $actualoutput = userdate($vals['time'], '%A, %d %B %Y, %I:%M %p', $vals['timezone']);
+
+            //On different systems case of AM PM changes so compare case insenitive
+            $vals['expectedoutput'] = $textlib->strtolower($vals['expectedoutput']);
+            $actualoutput = $textlib->strtolower($actualoutput);
+
             $this->assertEqual($vals['expectedoutput'], $actualoutput,
                 "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput},
                 Please check if timezones are updated (Site adminstration -> location -> update timezone)");
@@ -879,6 +891,8 @@ class moodlelib_test extends UnitTestCase {
             $CFG->forcetimezone = $cfgforcetimezone;
         }
 
+        //restore system default values.
+        date_default_timezone_set($systemdefaulttimezone);
         setlocale(LC_TIME, $oldlocale);
     }
 
@@ -1023,6 +1037,13 @@ class moodlelib_test extends UnitTestCase {
         $oldlocale = setlocale(LC_TIME, '0');
         setlocale(LC_TIME, 'en_AU.UTF-8');
 
+        //set default timezone to Australia/Perth, else time calulated
+        //will not match expected values. Before that save system defaults.
+        $systemdefaulttimezone = date_default_timezone_get();
+        date_default_timezone_set('Australia/Perth');
+
+        //get instance of textlib for strtolower
+        $textlib = textlib_get_instance();
         //Test make_timestamp with all testvals and assert if anything wrong.
         foreach ($testvalues as $vals) {
             $USER->timezone = $vals['usertimezone'];
@@ -1037,6 +1058,10 @@ class moodlelib_test extends UnitTestCase {
                     $vals['applydst']
                     );
 
+            //On different systems case of AM PM changes so compare case insenitive
+            $vals['expectedoutput'] = $textlib->strtolower($vals['expectedoutput']);
+            $actualoutput = $textlib->strtolower($actualoutput);
+
             $this->assertEqual($vals['expectedoutput'], $actualoutput,
                 "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput},
                 Please check if timezones are updated (Site adminstration -> location -> update timezone)");
@@ -1050,6 +1075,8 @@ class moodlelib_test extends UnitTestCase {
             $CFG->forcetimezone = $cfgforcetimezone;
         }
 
+        //restore system default values.
+        date_default_timezone_set($systemdefaulttimezone);
         setlocale(LC_TIME, $oldlocale);
     }
 }
