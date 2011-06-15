@@ -188,64 +188,53 @@ class qtype_calculated extends question_type {
         if (isset($question->answer) && !isset($question->answers)) {
             $question->answers = $question->answer;
         }
-        foreach ($question->answers as $key => $dataanswer) {
-            if (is_array($dataanswer)) {
-                $dataanswer = $dataanswer['text'];
+        foreach ($question->answers as $key => $answerdata) {
+            if (is_array($answerdata)) {
+                $answerdata = $answerdata['text'];
             }
-            if (trim($dataanswer) != '') {
+            if (trim($answerdata) == '') {
+                continue;
+            }
+
+            // Update an existing answer if possible.
+            $answer = array_shift($oldanswers);
+            if (!$answer) {
                 $answer = new stdClass();
                 $answer->question = $question->id;
-                $answer->answer = trim($dataanswer);
-                $answer->fraction = $question->fraction[$key];
-                $answer->feedbackformat = $question->feedback[$key]['format'];
-                if (isset($question->feedback[$key]['files'])) {
-                    $files = $question->feedback[$key]['files'];
-                }
+                $answer->answer   = '';
+                $answer->feedback = '';
+                $answer->id       = $DB->insert_record('question_answers', $answer);
+            }
 
-                if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
-                    $answer->id = $oldanswer->id;
-                    $answer->feedback = file_save_draft_area_files(
-                            $question->feedback[$key]['itemid'], $context->id, 'question',
-                            'answerfeedback', $oldanswer->id, $this->fileoptionsa,
-                            trim($question->feedback[$key]['text']));
-                    $DB->update_record('question_answers', $answer);
-                } else { // This is a completely new answer
-                    $answer->feedback = trim($question->feedback[$key]['text']);
-                    $answer->id = $DB->insert_record('question_answers', $answer);
-                    if (isset($files)) {
-                        foreach ($files as $file) {
-                            $this->import_file($context, 'question', 'answerfeedback',
-                                    $answer->id, $file);
-                        }
-                    } else {
-                        $answer->feedback = file_save_draft_area_files(
-                                $question->feedback[$key]['itemid'], $context->id, 'question',
-                                'answerfeedback', $answer->id, $this->fileoptionsa ,
-                                trim($question->feedback[$key]['text']));
-                    }
-                    $DB->set_field('question_answers', 'feedback', $answer->feedback,
-                            array('id' => $answer->id));
-                }
+            $answer->answer   = trim($answerdata);
+            $answer->fraction = $question->fraction[$key];
+            $answer->feedback = $this->import_or_save_files($question->feedback[$key],
+                    $context, 'question', 'answerfeedback', $answer->id);
+            $answer->feedbackformat = $question->feedback[$key]['format'];
 
-                // Set up the options object
-                if (!$options = array_shift($oldoptions)) {
-                    $options = new stdClass();
-                }
-                $options->question            = $question->id;
-                $options->answer              = $answer->id;
-                $options->tolerance           = trim($question->tolerance[$key]);
-                $options->tolerancetype       = trim($question->tolerancetype[$key]);
-                $options->correctanswerlength = trim($question->correctanswerlength[$key]);
-                $options->correctanswerformat = trim($question->correctanswerformat[$key]);
+            $DB->update_record("question_answers", $answer);
 
-                // Save options
-                if (isset($options->id)) { // reusing existing record
-                    $DB->update_record('question_calculated', $options);
-                } else { // new options
-                    $DB->insert_record('question_calculated', $options);
-                }
+            // Set up the options object
+            if (!$options = array_shift($oldoptions)) {
+                $options = new stdClass();
+            }
+            $options->question            = $question->id;
+            $options->answer              = $answer->id;
+            $options->tolerance           = trim($question->tolerance[$key]);
+            $options->tolerancetype       = trim($question->tolerancetype[$key]);
+            $options->correctanswerlength = trim($question->correctanswerlength[$key]);
+            $options->correctanswerformat = trim($question->correctanswerformat[$key]);
+
+            // Save options
+            if (isset($options->id)) {
+                // reusing existing record
+                $DB->update_record('question_calculated', $options);
+            } else {
+                // new options
+                $DB->insert_record('question_calculated', $options);
             }
         }
+
         // delete old answer records
         if (!empty($oldanswers)) {
             foreach ($oldanswers as $oa) {
@@ -1268,7 +1257,8 @@ class qtype_calculated extends question_type {
             global $CFG;
             $sql = "SELECT i.*
                       FROM {question_datasets} d, {question_dataset_definitions} i
-                     WHERE d.question = ? AND d.datasetdefinition = i.id";
+                     WHERE d.question = ? AND d.datasetdefinition = i.id
+                  ORDER BY i.id";
             if ($records = $DB->get_records_sql($sql, array($questionid))) {
                 foreach ($records as $r) {
                     $datasetdefs["$r->type-$r->category-$r->name"] = $r;

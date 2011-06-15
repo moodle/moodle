@@ -135,7 +135,7 @@ class qtype_multichoice extends question_type {
 
         $this->save_hints($question, true);
 
-        /// Perform sanity checks on fractional grades
+        // Perform sanity checks on fractional grades
         if ($options->single) {
             if ($maxfraction != 1) {
                 $result->noticeyesno = get_string('fractionsnomax', 'qtype_multichoice',
