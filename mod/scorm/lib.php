@@ -1036,7 +1036,7 @@ function scorm_print_overview($courses, &$htmlarray) {
         if ($scorm->timeopen) {
             $isopen = ($scorm->timeopen <= $time && $time <= $scorm->timeclose);
         }
-        if (empty($isopen) || empty($scorm->timeclose)) {
+        if (empty($scorm->displayattemptstatus) && (empty($isopen) || empty($scorm->timeclose))) {
             unset($scorms[$key]);
         }else{
             $scormids[] = $scorm->id;
