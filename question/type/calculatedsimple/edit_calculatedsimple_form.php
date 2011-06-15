@@ -607,46 +607,14 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
     }
 
     public function data_preprocessing($question) {
-        $answer = $this->answer;
-        $default_values = array();
-        if (count($answer)) {
-            $key = 0;
-            foreach ($answer as $answer) {
-                $default_values['answer['.$key.']'] = $answer->answer;
-                $default_values['fraction['.$key.']'] = $answer->fraction;
-                $default_values['tolerance['.$key.']'] = $answer->tolerance;
-                $default_values['tolerancetype['.$key.']'] = $answer->tolerancetype;
-                $default_values['correctanswerlength['.$key.']'] = $answer->correctanswerlength;
-                $default_values['correctanswerformat['.$key.']'] = $answer->correctanswerformat;
-
-                // prepare draft files
-                $draftid = file_get_submitted_draft_itemid('feedback['.$key.']');
-                $default_values['feedback['.$key.']']['text'] = file_prepare_draft_area(
-                    $draftid,       // draftid
-                    $this->context->id,    // context
-                    'question', // component
-                    'answerfeedback',             // filarea
-                    !empty($answer->id)?(int)$answer->id:null, // itemid
-                    $this->fileoptions,    // options
-                    !empty($answer->feedback)?$answer->feedback:''      // text
-                );
-                $default_values['feedback['.$key.']']['format'] = !empty($answer->feedbackformat) ?
-                        $answer->feedbackformat : editors_get_preferred_format();
-                $default_values['feedback['.$key.']']['itemid'] = $draftid;
-
-                $key++;
-            }
-        }
-        $default_values['synchronize'] = 0;
-
-        $formdata = array();
-        $fromform = new stdClass();
-        //this should be done before the elements are created and stored as $this->formdata;
-        //fill out all data sets and also the fields for the next item to add.
-        $question = (object)((array)$question + $default_values+$this->formdata);
-
+        $question = parent::data_preprocessing($question);
+        $question = $this->data_preprocessing_answers($question);
+        $question = $this->data_preprocessing_hints($question);
         $question = $this->data_preprocessing_units($question);
         $question = $this->data_preprocessing_unit_options($question);
+
+        // This is a bit ugly, but it loads all the dataset values.
+        $question = (object)((array)$question + $this->formdata);
 
         return $question;
     }

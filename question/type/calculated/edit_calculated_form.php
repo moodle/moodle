@@ -163,67 +163,37 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
     }
 
     public function data_preprocessing($question) {
-        $default_values = array();
-        if (isset($question->options)) {
-            $answers = $question->options->answers;
-            if (count($answers)) {
-                $key = 0;
-                foreach ($answers as $answer) {
-                    $draftid = file_get_submitted_draft_itemid('feedback['.$key.']');
-                    $default_values['answer['.$key.']'] = $answer->answer;
-                    $default_values['fraction['.$key.']'] = $answer->fraction;
-                    $default_values['tolerance['.$key.']'] = $answer->tolerance;
-                    $default_values['tolerancetype['.$key.']'] = $answer->tolerancetype;
-                    $default_values['correctanswerlength['.$key.']'] = $answer->correctanswerlength;
-                    $default_values['correctanswerformat['.$key.']'] = $answer->correctanswerformat;
-                    $default_values['feedback['.$key.']'] = array();
-                    $default_values['feedback['.$key.']']['text'] = file_prepare_draft_area(
-                        $draftid,           // draftid
-                        $this->context->id, // context
-                        'question', // component
-                        'answerfeedback',         // filarea
-                        !empty($answer->id)?(int)$answer->id:null, // itemid
-                        $this->fileoptions, // options
-                        $answer->feedback   // text
-                    );
-                    $default_values['feedback['.$key.']']['format'] = $answer->feedbackformat;
-                    $default_values['feedback['.$key.']']['itemid'] = $draftid;
-                    $key++;
-                }
-            }
-            $default_values['synchronize'] = $question->options->synchronize;
-        }
-        if (isset($question->options->single)) {
-            $default_values['single'] =  $question->options->single;
-            $default_values['answernumbering'] =  $question->options->answernumbering;
-            $default_values['shuffleanswers'] =  $question->options->shuffleanswers;
-            // prepare feedback editor to display files in draft area
-        }
-        $default_values['submitbutton'] = get_string('nextpage', 'qtype_calculated');
-        $default_values['makecopy'] = get_string('makecopynextpage', 'qtype_calculated');
-        $default_values['returnurl'] = '0';
-
-        $qu = new stdClass();
-        $el = new stdClass();
-        /* no need to call elementExists() here */
-        if ($this->_form->elementExists('category')) {
-            $el = $this->_form->getElement('category');
-        } else {
-            $el = $this->_form->getElement('categorymoveto');
-        }
-        if ($value = $el->getSelected()) {
-            $qu->category = $value[0];
-        } else {
-            // on load $question->category is set by question.php
-            $qu->category = $question->category;
-        }
-        $html2 = $this->qtypeobj->print_dataset_definitions_category($qu);
-        $this->_form->_elements[$this->_form->_elementIndex['listcategory']]->_text = $html2;
-        $question = (object)((array)$question + $default_values);
-
+        $question = parent::data_preprocessing($question);
+        $question = $this->data_preprocessing_answers($question);
         $question = $this->data_preprocessing_hints($question);
         $question = $this->data_preprocessing_units($question);
         $question = $this->data_preprocessing_unit_options($question);
+
+        if (isset($question->options->synchronize)) {
+            $question->synchronize = $question->options->synchronize;
+        }
+
+        return $question;
+    }
+
+    protected function data_preprocessing_answers($question) {
+        $question = parent::data_preprocessing_answers($question);
+        if (empty($question->options->answers)) {
+            return $question;
+        }
+
+        $key = 0;
+        foreach ($question->options->answers as $answer) {
+            // See comment in the parent method about this hack.
+            unset($this->_form->_defaultValues["tolerancetype[$key]"]);
+            unset($this->_form->_defaultValues["correctanswerlength[$key]"]);
+            unset($this->_form->_defaultValues["correctanswerformat[$key]"]);
+
+            $question->tolerancetype[$key]       = $answer->tolerancetype;
+            $question->correctanswerlength[$key] = $answer->correctanswerlength;
+            $question->correctanswerformat[$key] = $answer->correctanswerformat;
+            $key++;
+        }
 
         return $question;
     }
