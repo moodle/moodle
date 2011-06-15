@@ -245,6 +245,22 @@ class qtype_multianswer_question extends question_graded_automatically {
     }
 
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
-        // TODO
+        if ($component == 'question' && $filearea == 'answer') {
+            return true;
+
+        } else if ($component == 'question' && $filearea == 'answerfeedback') {
+            // Full logic to control which feedbacks a student can see is too complex.
+            // Just allow access to all images. There is a theoretical chance the
+            // students could see files they are not meant to see by guessing URLs,
+            // but it is remote.
+            return $options->feedback;
+
+        } else if ($component == 'question' && $filearea == 'hint') {
+            return $this->check_hint_file_access($qa, $options, $args);
+
+        } else {
+            return parent::check_file_access($qa, $options, $component, $filearea,
+                    $args, $forcedownload);
+        }
     }
 }
