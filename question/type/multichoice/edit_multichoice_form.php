@@ -67,6 +67,22 @@ class qtype_multichoice_edit_form extends question_edit_form {
         $this->add_interactive_settings(true, true);
     }
 
+    protected function get_per_answer_fields($mform, $label, $gradeoptions,
+            &$repeatedoptions, &$answersoption) {
+        $repeated = array();
+        $repeated[] = $mform->createElement('header', 'answerhdr', $label);
+        $repeated[] = $mform->createElement('editor', 'answer',
+                get_string('answer', 'question'), array('rows' => 1), $this->editoroptions);
+        $repeated[] = $mform->createElement('select', 'fraction',
+                get_string('grade'), $gradeoptions);
+        $repeated[] = $mform->createElement('editor', 'feedback',
+                get_string('feedback', 'question'), array('rows' => 1), $this->editoroptions);
+        $repeatedoptions['answer']['type'] = PARAM_RAW;
+        $repeatedoptions['fraction']['default'] = 0;
+        $answersoption = 'answers';
+        return $repeated;
+    }
+
     protected function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
         $question = $this->data_preprocessing_answers($question, true);
@@ -92,7 +108,7 @@ class qtype_multichoice_edit_form extends question_edit_form {
 
         foreach ($answers as $key => $answer) {
             //check no of choices
-            $trimmedanswer = trim($answer);
+            $trimmedanswer = trim($answer['text']);
             if (empty($trimmedanswer)) {
                 continue;
             }

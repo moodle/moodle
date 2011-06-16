@@ -66,7 +66,7 @@ class qtype_multichoice extends question_type {
         $maxfraction = -1;
         $answers = array();
         foreach ($question->answer as $key => $answerdata) {
-            if ($answerdata == '') {
+            if (trim($answerdata['text']) == '') {
                 continue;
             }
 
@@ -80,16 +80,10 @@ class qtype_multichoice extends question_type {
                 $answer->id = $DB->insert_record('question_answers', $answer);
             }
 
-            if (is_array($answerdata)) {
-                // Doing an import
-                $answer->answer = $this->import_or_save_files($answerdata,
-                        $context, 'question', 'answer', $answer->id);
-                $answer->answerformat = $answerdata['format'];
-            } else {
-                // Saving the form
-                $answer->answer = $answerdata;
-                $answer->answerformat = FORMAT_HTML;
-            }
+            // Doing an import
+            $answer->answer = $this->import_or_save_files($answerdata,
+                    $context, 'question', 'answer', $answer->id);
+            $answer->answerformat = $answerdata['format'];
             $answer->fraction = $question->fraction[$key];
             $answer->feedback = $this->import_or_save_files($question->feedback[$key],
                     $context, 'question', 'answerfeedback', $answer->id);
