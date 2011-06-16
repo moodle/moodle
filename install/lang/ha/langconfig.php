@@ -28,7 +28,4 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['language'] = 'ភាសា';
-$string['next'] = 'បន្ទាប់';
-$string['previous'] = 'មុន​';
-$string['reload'] = 'ផ្ទុក​ឡើង​វិញ';
+$string['thislanguage'] = 'Hausa';
