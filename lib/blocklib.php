@@ -1140,7 +1140,7 @@ class block_manager {
      *      return if the editing form was displayed. False otherwise.
      */
     public function process_url_edit() {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $DB, $PAGE, $OUTPUT;
 
         $blockid = optional_param('bui_editid', null, PARAM_INTEGER);
         if (!$blockid) {
@@ -1172,6 +1172,9 @@ class block_manager {
         // At this point we are either going to redirect, or display the form, so
         // overwrite global $PAGE ready for this. (Formslib refers to it.)
         $PAGE = $editpage;
+        //some functions like MoodleQuickForm::addHelpButton use $OUTPUT so we need to replace that to
+        $output = $editpage->get_renderer('core');
+        $OUTPUT = $output;
 
         $formfile = $CFG->dirroot . '/blocks/' . $block->name() . '/edit_form.php';
         if (is_readable($formfile)) {
@@ -1306,7 +1309,6 @@ class block_manager {
             }
             $editpage->navbar->add($block->get_title());
             $editpage->navbar->add(get_string('configuration'));
-            $output = $editpage->get_renderer('core');
             echo $output->header();
             echo $output->heading($strheading, 2);
             $mform->display();
