@@ -250,6 +250,7 @@ function tag_get($field, $value, $returnfields='id, name, rawname') {
 /**
  * Get the array of db record of tags associated to a record (instances).  Use
  * tag_get_tags_csv to get the same information in a comma-separated string.
+ * This should really be called tag_get_tag_instances()
  *
  * @param string $record_type the record type for which we want to get the tags
  * @param int $record_id the record id for which we want to get the tags
@@ -277,13 +278,14 @@ function tag_get_tags($record_type, $record_id, $type=null, $userid=0) {
     }
 
     $sql = "SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering
-              FROM {tag_instance} ti JOIN {tag} tg ON tg.id = ti.tagid
+              FROM {tag_instance} ti
+              JOIN {tag} tg ON tg.id = ti.tagid
               WHERE ti.itemtype = :recordtype AND ti.itemid = :recordid $u $sql_type
            ORDER BY ti.ordering ASC";
     $params['recordtype'] = $record_type;
     $params['recordid']   = $record_id;
 
-    // if the fields in this query are changed, you need to do the same changes in tag_get_correlated_tags
+    // if the fields in this query are changed, you need to do the same changes in tag_get_correlated
     return $DB->get_records_sql($sql, $params);
     // This version of the query, reversing the ON clause, "correctly" returns
     // a row with NULL values for instances that are still in the DB even though
@@ -536,14 +538,14 @@ function tag_delete($tagids) {
 
     $success = true;
     $context = get_context_instance(CONTEXT_SYSTEM);
-    foreach( $tagids as $tagid ) {
+    foreach ($tagids as $tagid) {
         if (is_null($tagid)) { // can happen if tag doesn't exists
             continue;
         }
         // only delete the main entry if there were no problems deleting all the
         // instances - that (and the fact we won't often delete lots of tags)
         // is the reason for not using $DB->delete_records_select()
-        if ($DB->delete_records('tag_instance', array('tagid'=>$tagid)) ) {
+        if ($DB->delete_records('tag_instance', array('tagid'=>$tagid)) && $DB->delete_records('tag_correlation', array('tagid' => $tagid))) {
             $success &= (bool) $DB->delete_records('tag', array('id'=>$tagid));
             // Delete all files associated with this tag
             $fs = get_file_storage();
@@ -831,8 +833,7 @@ function tag_compute_correlations($mincorrelation = 2) {
     //   correlationid : This is the id of the row in the tag_correlation table that
     //                   relates to the tagid field and will be NULL if there are no
     //                   existing correlations
-    $sql = 'SELECT pairs.tagid, pairs.correlation, pairs.ocurrences,
-                   co.id AS correlationid, co.correlatedtags
+    $sql = 'SELECT pairs.tagid, pairs.correlation, pairs.ocurrences, co.id AS correlationid
               FROM (
                        SELECT ta.tagid, tb.tagid AS correlation, COUNT(*) AS ocurrences
                          FROM {tag_instance} ta
@@ -850,12 +851,20 @@ function tag_compute_correlations($mincorrelation = 2) {
     $tagcorrelation->tagid = null;
     $tagcorrelation->correlatedtags = array();
 
+    // We store each correlation id in this array so we can remove any correlations
+    // that no longer exist.
+    $correlations = array();
+
     // Iterate each row of the result set and build them into tag correlations.
+    // We add all of a tag's correlations to $tagcorrelation->correlatedtags[]
+    // then save the $tagcorrelation object
     foreach ($rs as $row) {
         if ($row->tagid != $tagcorrelation->tagid) {
-            // The tag id has changed so its now time to process the tag
-            // correlation information we have.
-            tag_process_computed_correlation($tagcorrelation);
+            // The tag id has changed so we have all of the correlations for this tag
+            $tagcorrelationid = tag_process_computed_correlation($tagcorrelation);
+            if ($tagcorrelationid) {
+                $correlations[] = $tagcorrelationid;
+            }
             // Now we reset the tag correlation object so we can reuse it and set it
             // up for the current record.
             $tagcorrelation = new stdClass;
@@ -863,13 +872,27 @@ function tag_compute_correlations($mincorrelation = 2) {
             $tagcorrelation->tagid = $row->tagid;
             $tagcorrelation->correlatedtags = array();
         }
+        //Save the correlation on the tag correlation object
         $tagcorrelation->correlatedtags[] = $row->correlation;
     }
     // Update the current correlation after the last record.
-    tag_process_computed_correlation($tagcorrelation);
+    $tagcorrelationid = tag_process_computed_correlation($tagcorrelation);
+    if ($tagcorrelationid) {
+        $correlations[] = $tagcorrelationid;
+    }
+
 
     // Close the recordset
     $rs->close();
+
+    // Remove any correlations that weren't just identified
+    if (empty($correlations)) {
+        //there are no tag correlations
+        $DB->delete_records('tag_correlation');
+    } else {
+        list($sql, $params) = $DB->get_in_or_equal($correlations, SQL_PARAMS_NAMED, 'param0000', false);
+        $DB->delete_records_select('tag_correlation', 'id '.$sql, $params);
+    }
 }
 
 /**
@@ -880,7 +903,7 @@ function tag_compute_correlations($mincorrelation = 2) {
  * property that is an array.
  *
  * @param stdClass $tagcorrelation
- * @return bool True if the function completed, false if something was wrong.
+ * @return int The id of the tag correlation that was just processed.
  */
 function tag_process_computed_correlation(stdClass $tagcorrelation) {
     global $DB;
@@ -890,18 +913,15 @@ function tag_process_computed_correlation(stdClass $tagcorrelation) {
         return false;
     }
 
-    // The row tagid doesn't match the current tag id which means we are onto
-    // the next tag. Before we switch over we need to either insert or update
-    // the correlation.
     $tagcorrelation->correlatedtags = join(',', $tagcorrelation->correlatedtags);
     if (!empty($tagcorrelation->id)) {
         // The tag correlation already exists so update it
         $DB->update_record('tag_correlation', $tagcorrelation);
     } else {
         // This is a new correlation to insert
-        $DB->insert_record('tag_correlation', $tagcorrelation);
+        $tagcorrelation->id = $DB->insert_record('tag_correlation', $tagcorrelation);
     }
-    return true;
+    return $tagcorrelation->id;
 }
 
 /**
@@ -983,9 +1003,12 @@ function tag_get_correlated($tag_id, $limitnum=null) {
     }
 
     // this is (and has to) return the same fields as the query in tag_get_tags
-    if ( !$result = $DB->get_records_sql("SELECT DISTINCT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering
-                                            FROM {tag} tg INNER JOIN {tag_instance} ti ON tg.id = ti.tagid
-                                           WHERE tg.id IN ({$tag_correlation->correlatedtags})") ) {
+    $sql = "SELECT DISTINCT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering
+              FROM {tag} tg
+        INNER JOIN {tag_instance} ti ON tg.id = ti.tagid
+             WHERE tg.id IN ({$tag_correlation->correlatedtags})";
+    $result = $DB->get_records_sql($sql);
+    if (!$result) {
         return array();
     }
 
