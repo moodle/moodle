@@ -6225,8 +6225,9 @@ function forum_tp_mark_posts_read($user, $postids) {
 
     if ($new) {
         list($usql, $new_params) = $DB->get_in_or_equal($new);
-        $params = array($user->id, $now, $now, $user->id, $cutoffdate);
+        $params = array($user->id, $now, $now, $user->id);
         $params = array_merge($params, $new_params);
+        $params[] = $cutoffdate;
 
         $sql = "INSERT INTO {forum_read} (userid, postid, discussionid, forumid, firstread, lastread)
 
