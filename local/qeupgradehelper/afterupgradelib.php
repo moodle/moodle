@@ -54,6 +54,7 @@ class local_qeupgradehelper_attempt_upgrader extends question_engine_attempt_upg
     protected function reset_progress($done, $outof) {
         if (is_null($this->progressbar)) {
             $this->progressbar = new progress_bar('qe2reset');
+            $this->progressbar->create();
         }
 
         gc_collect_cycles(); // This was really helpful in PHP 5.2. Perhaps remove.
