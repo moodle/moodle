@@ -276,7 +276,7 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
 
         $numanswers = count($answers);
         if ($numanswers) { //if there are any answers (possible there are none!)
-            if ($numanswers > 3) {
+            if ($numanswers > 3 && $page->data['qtype'] == 5) { //fix only jumpto only for matching question types.
                 if ($answers[0]['jumpto'] !== '0' || $answers[1]['jumpto'] !== '0') {
                     if ($answers[2]['jumpto'] !== '0') {
                         $answers[0]['jumpto'] = $answers[2]['jumpto'];
