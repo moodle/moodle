@@ -1655,6 +1655,18 @@ function plugin_pagetypelist($pagetype, $parentcontext = null, $currentcontext =
 }
 
 /**
+ * Generates the page type list for the my moodle page
+ *
+ * @param string $pagetype
+ * @param stdClass $parentcontext
+ * @param stdClass $currentcontext
+ * @return array
+ */
+function my_pagetypelist($pagetype, $parentcontext = null, $currentcontext = null) {
+    return array('my-index' => 'my-index');
+}
+
+/**
  * Generates the page type list for a module by either locating and using the modules callback
  * or by generating a default list.
  *
