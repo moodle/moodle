@@ -209,6 +209,8 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
             $this->prevpageid = $pg1->id;
             array_shift($this->pages); //throw written n-1th page
         }
+        $this->answers = array(); //clear answers for the page ending. do not unset, object property will be missing.
+        $this->page = null;
     }
 
     public function on_lesson_pages_end() {
@@ -225,8 +227,7 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
         //reset
         unset($this->pages);
         $this->prevpageid = 0;
-        unset($this->answers);
-        unset($this->page);
+
     }
 
     /**
@@ -272,22 +273,26 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
         $answers = $page->answers;
 
         $this->xmlwriter->begin_tag('answers');
-        if (count($answers) > 3) {
-            if ($answers[0]['jumpto'] !== '0' || $answers[1]['jumpto'] !== '0') {
-                if ($answers[2]['jumpto'] !== '0') {
-                    $answers[0]['jumpto'] = $answers[2]['jumpto'];
-                    $answers[2]['jumpto'] = '0';
+
+        $numanswers = count($answers);
+        if ($numanswers) { //if there are any answers (possible there are none!)
+            if ($numanswers > 3) {
+                if ($answers[0]['jumpto'] !== '0' || $answers[1]['jumpto'] !== '0') {
+                    if ($answers[2]['jumpto'] !== '0') {
+                        $answers[0]['jumpto'] = $answers[2]['jumpto'];
+                        $answers[2]['jumpto'] = '0';
+                    }
+                    if ($answers[3]['jumpto'] !== '0') {
+                        $answers[1]['jumpto'] = $answers[3]['jumpto'];
+                        $answers[3]['jumpto'] = '0';
+                    }
                 }
-                if ($answers[3]['jumpto'] !== '0') {
-                    $answers[1]['jumpto'] = $answers[3]['jumpto'];
-                    $answers[3]['jumpto'] = '0';
-                }
+            }
+            foreach ($answers as $data) {
+                $this->write_xml('answer', $data, array('/answer/id'));
             }
         }
 
-        foreach ($answers as $data) {
-            $this->write_xml('answer', $data, array('/answer/id'));
-        }
         $this->xmlwriter->end_tag('answers');
 
         // answers is now closed for current page. Ending the page.
