@@ -121,6 +121,8 @@ abstract class moodle_database {
 
     /** @var int internal temporary variable */
     private $fix_sql_params_i;
+    /** @var int internal temporary variable used by {@link get_in_or_equal()}. */
+    private $inorequaluniqueindex = 1; // guarantees unique parameters in each request
 
     /**
      * Constructor - instantiates the database, specifying if it's external (connect to other systems) or no (Moodle DB)
@@ -574,7 +576,6 @@ abstract class moodle_database {
      * @return array - $sql and $params
      */
     public function get_in_or_equal($items, $type=SQL_PARAMS_QM, $prefix='param', $equal=true, $onemptyitems=false) {
-        static $counter = 1; // guarantees unique parameters in each request
 
         // default behavior, throw exception on empty array
         if (is_array($items) and empty($items) and $onemptyitems === false) {
@@ -610,11 +611,11 @@ abstract class moodle_database {
             }
 
             if (!is_array($items)){
-                $param = $prefix.$counter++;
+                $param = $prefix.$this->inorequaluniqueindex++;
                 $sql = $equal ? "= :$param" : "<> :$param";
                 $params = array($param=>$items);
             } else if (count($items) == 1) {
-                $param = $prefix.$counter++;
+                $param = $prefix.$this->inorequaluniqueindex++;
                 $sql = $equal ? "= :$param" : "<> :$param";
                 $item = reset($items);
                 $params = array($param=>$item);
@@ -622,7 +623,7 @@ abstract class moodle_database {
                 $params = array();
                 $sql = array();
                 foreach ($items as $item) {
-                    $param = $prefix.$counter++;
+                    $param = $prefix.$this->inorequaluniqueindex++;
                     $params[$param] = $item;
                     $sql[] = ':'.$param;
                 }
