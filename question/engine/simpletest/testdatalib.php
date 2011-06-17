@@ -35,7 +35,17 @@ require_once(dirname(__FILE__) . '/../lib.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qubaid_condition_test extends UnitTestCase {
+class qubaid_condition_test extends UnitTestCaseUsingDatabase {
+
+    public function setUp() {
+        parent::setUp();
+        $this->switch_to_test_db();
+    }
+
+    public function tearDown() {
+        $this->revert_to_real_db();
+        parent::tearDown();
+    }
 
     protected function check_typical_question_attempts_query(
             qubaid_condition $qubaids, $expectedsql, $expectedparams) {
@@ -64,8 +74,8 @@ class qubaid_condition_test extends UnitTestCase {
         $this->check_typical_question_attempts_query($qubaids,
                 "SELECT qa.id, qa.maxmark
             FROM {question_attempts} qa
-            WHERE qa.questionusageid = :qubaid8 AND qa.slot = :slot",
-            array('qubaid8' => 1, 'slot' => 1));
+            WHERE qa.questionusageid = :qubaid1 AND qa.slot = :slot",
+            array('qubaid1' => 1, 'slot' => 1));
     }
 
     public function test_qubaid_list_several_join() {
@@ -73,8 +83,8 @@ class qubaid_condition_test extends UnitTestCase {
         $this->check_typical_question_attempts_query($qubaids,
                 "SELECT qa.id, qa.maxmark
             FROM {question_attempts} qa
-            WHERE qa.questionusageid IN (:qubaid12,:qubaid13,:qubaid14) AND qa.slot = :slot",
-            array('qubaid12' => 1, 'qubaid13' => 3, 'qubaid14' => 7, 'slot' => 1));
+            WHERE qa.questionusageid IN (:qubaid2,:qubaid3,:qubaid4) AND qa.slot = :slot",
+            array('qubaid2' => 1, 'qubaid3' => 3, 'qubaid4' => 7, 'slot' => 1));
     }
 
     public function test_qubaid_join() {
@@ -103,7 +113,7 @@ class qubaid_condition_test extends UnitTestCase {
         $this->check_typical_in_query($qubaids,
                 "SELECT qa.id, qa.maxmark
             FROM {question_attempts} qa
-            WHERE qa.questionusageid = :qubaid15", array('qubaid15' => 1));
+            WHERE qa.questionusageid = :qubaid5", array('qubaid5' => 1));
     }
 
     public function test_qubaid_list_several_in() {
@@ -112,8 +122,8 @@ class qubaid_condition_test extends UnitTestCase {
         $this->check_typical_in_query($qubaids,
                 "SELECT qa.id, qa.maxmark
             FROM {question_attempts} qa
-            WHERE qa.questionusageid IN (:qubaid16,:qubaid17,:qubaid18)",
-                array('qubaid16' => 1, 'qubaid17' => 2, 'qubaid18' => 3));
+            WHERE qa.questionusageid IN (:qubaid6,:qubaid7,:qubaid8)",
+                array('qubaid6' => 1, 'qubaid7' => 2, 'qubaid8' => 3));
     }
 
     public function test_qubaid_join_in() {

@@ -1159,8 +1159,6 @@ class qubaid_list extends qubaid_condition {
             $this->params = array();
             return '1 = 0';
         }
-        list($where, $this->params) = $DB->get_in_or_equal(
-                $this->qubaids, SQL_PARAMS_NAMED, 'qubaid');
 
         return $this->columntotest . ' ' . $this->usage_id_in();
     }
@@ -1173,6 +1171,7 @@ class qubaid_list extends qubaid_condition {
         global $DB;
 
         if (empty($this->qubaids)) {
+            $this->params = array();
             return '= 0';
         }
         list($where, $this->params) = $DB->get_in_or_equal(
