@@ -1201,7 +1201,7 @@ abstract class quiz_nav_panel_base {
         $content .= '<div class="othernav">' . "\n" . $this->get_end_bits() . "\n</div>\n";
 
         $bc = new block_contents();
-        $bc->id = 'quiznavigation';
+        $bc->attributes['id'] = 'mod_quiz_navblock';
         $bc->title = get_string('quiznavigation', 'quiz');
         $bc->content = $content;
         return $bc;
