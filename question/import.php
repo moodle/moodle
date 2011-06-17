@@ -60,7 +60,7 @@ if ($contexts === null) { // need to get the course from the chosen category
     $contexts->require_one_edit_tab_cap($edittab);
 }
 
-$PAGE->set_url($thispageurl->out());
+$PAGE->set_url($thispageurl);
 
 $import_form = new question_import_form($thispageurl, array('contexts'=>$contexts->having_one_edit_tab_cap('import'),
                                                     'defaultcategory'=>$pagevars['cat']));
