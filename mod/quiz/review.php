@@ -135,9 +135,7 @@ if ($attempt->timefinish) {
     $timetaken = get_string('unfinished', 'quiz');
 }
 
-// Print summary table about the whole attempt.
-// First we assemble all the rows that are appopriate to the current situation in
-// an array, then later we only output the table if there are any rows to show.
+// Prepare summary informat about the whole attempt.
 $summarydata = array();
 if (!$attemptobj->get_quiz()->showuserpicture && $attemptobj->get_userid() != $USER->id) {
     // If showuserpicture is true, the picture is shown elsewhere, so don't repeat it.

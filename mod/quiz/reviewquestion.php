@@ -39,7 +39,6 @@ if ($seq !== 0) {
     $currenturl->param('step', $seq);
 }
 $PAGE->set_url($currenturl);
-$PAGE->set_pagelayout('popup');
 
 $attemptobj = quiz_attempt::create($attemptid);
 
@@ -47,21 +46,18 @@ $attemptobj = quiz_attempt::create($attemptid);
 require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
 $attemptobj->check_review_capability();
 
-echo $OUTPUT->header();
+$PAGE->set_pagelayout('popup');
+$output = $PAGE->get_renderer('mod_quiz');
 
 // Check permissions.
 if ($attemptobj->is_own_attempt()) {
     if (!$attemptobj->is_finished()) {
-        echo $OUTPUT->notification(get_string('cannotreviewopen', 'quiz'));
-        echo $OUTPUT->close_window_button();
-        echo $OUTPUT->footer();
+        echo $output->review_question_not_allowed(get_string('cannotreviewopen', 'quiz'));
         die();
     } else if (!$options->responses) {
         $accessmanager = $attemptobj->get_access_manager(time());
-        echo $OUTPUT->notification($accessmanager->cannot_review_message(
-                $attemptobj->get_review_options()));
-        echo $OUTPUT->close_window_button();
-        echo $OUTPUT->footer();
+        echo $output->review_question_not_allowed(
+                $accessmanager->cannot_review_message($attemptobj->get_review_options()));
         die();
     }
 
@@ -69,44 +65,40 @@ if ($attemptobj->is_own_attempt()) {
     throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noreviewattempt');
 }
 
+// Prepare summary informat about this question attempt.
+$summarydata = array();
+
 // Quiz name.
-$rows[] = '<tr><th scope="row" class="cell">' . get_string('modulename', 'quiz') .
-        '</th><td class="cell">' . format_string($attemptobj->get_quiz_name()) . '</td></tr>';
+$summarydata['quizname'] = array(
+    'title'   => get_string('modulename', 'quiz'),
+    'content' => format_string($attemptobj->get_quiz_name()),
+);
 
 // Question name.
-$rows[] = '<tr><th scope="row" class="cell">' . get_string('question', 'quiz') .
-        '</th><td class="cell">' . format_string(
-        $attemptobj->get_question_name($slot)) . '</td></tr>';
+$summarydata['questionname'] = array(
+    'title'   => get_string('question', 'quiz'),
+    'content' => $attemptobj->get_question_name($slot),
+);
 
 // Other attempts at the quiz.
 if ($attemptobj->has_capability('mod/quiz:viewreports')) {
     $attemptlist = $attemptobj->links_to_other_attempts($baseurl);
     if ($attemptlist) {
-        $rows[] = '<tr><th scope="row" class="cell">' . get_string('attempts', 'quiz') .
-                '</th><td class="cell">' . $attemptlist . '</td></tr>';
+        $summarydata['attemptlist'] = array(
+            'title'   => get_string('attempts', 'quiz'),
+            'content' => $attemptlist,
+        );
     }
 }
 
 // Timestamp of this action.
 $timestamp = $attemptobj->get_question_action_time($slot);
 if ($timestamp) {
-    $rows[] = '<tr><th scope="row" class="cell">' . get_string('completedon', 'quiz') .
-            '</th><td class="cell">' . userdate($timestamp) . '</td></tr>';
+    $summarydata['timestamp'] = array(
+        'title'   => get_string('completedon', 'quiz'),
+        'content' => userdate($timestamp),
+    );
 }
 
-// Now output the summary table, if there are any rows to be shown.
-if (!empty($rows)) {
-    echo '<table class="generaltable generalbox quizreviewsummary"><tbody>', "\n";
-    echo implode("\n", $rows);
-    echo "\n</tbody></table>\n";
-}
-
-// Print the question in the requested state.
-if (!is_null($seq)) {
-    echo $attemptobj->render_question_at_step($slot, $seq, true, $currenturl);
-} else {
-    echo $attemptobj->render_question($slot, true, $currenturl);
-}
-
-// Finish the page
-echo $OUTPUT->footer();
+echo $output->review_question_page($attemptobj, $slot, $seq,
+        $attemptobj->get_display_options(true), $summarydata);
