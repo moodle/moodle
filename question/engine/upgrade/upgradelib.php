@@ -61,6 +61,7 @@ class question_engine_attempt_upgrader {
     protected function print_progress($done, $outof, $quizid) {
         if (is_null($this->progressbar)) {
             $this->progressbar = new progress_bar('qe2upgrade');
+            $this->progressbar->create();
         }
 
         gc_collect_cycles(); // This was really helpful in PHP 5.2. Perhaps remove.

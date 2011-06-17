@@ -563,6 +563,7 @@ function xmldb_quiz_upgrade($oldversion) {
 
             if ($oldattempts) {
                 $pbar = new progress_bar('q15upgrade');
+                $pbar->create();
                 $a = new stdClass();
                 $a->todo = count($oldattempts);
                 $a->done = 0;
