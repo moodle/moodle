@@ -1382,7 +1382,7 @@ function workshop_extend_settings_navigation(settings_navigation $settingsnav, n
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function workshop_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function workshop_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-workshop-*'=>get_string('page-mod-workshop-x', 'workshop'));
     return $module_pagetype;
 }

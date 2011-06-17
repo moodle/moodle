@@ -996,7 +996,7 @@ function lesson_get_file_info($browser, $areas, $course, $cm, $context, $fileare
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function lesson_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function lesson_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-lesson-*'=>get_string('page-mod-lesson-x', 'lesson'));
     return $module_pagetype;
 }

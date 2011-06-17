@@ -7961,7 +7961,7 @@ function forum_cm_info_view(cm_info $cm) {
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function forum_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function forum_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $forum_pagetype = array(
         'mod-forum-*'=>get_string('page-mod-forum-x', 'forum'),
         'mod-forum-view'=>get_string('page-mod-forum-view', 'forum'),

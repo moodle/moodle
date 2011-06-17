@@ -2369,6 +2369,6 @@ function translate_message_default_setting($plugindefault, $processorname) {
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function message_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function message_page_type_list($pagetype, $parentcontext, $currentcontext) {
     return array('messages-*'=>get_string('page-message-x', 'message'));
 }

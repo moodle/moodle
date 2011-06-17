@@ -1078,7 +1078,7 @@ function scorm_print_overview($courses, &$htmlarray) {
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function scorm_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function scorm_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-scorm-*'=>get_string('page-mod-scorm-x', 'scorm'));
     return $module_pagetype;
 }

@@ -1124,7 +1124,7 @@ function tag_unset_flag($tagids) {
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function tag_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function tag_page_type_list($pagetype, $parentcontext, $currentcontext) {
     return array(
         'tag-*'=>get_string('page-tag-x', 'tag'),
         'tag-index'=>get_string('page-tag-index', 'tag'),

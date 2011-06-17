@@ -1822,7 +1822,7 @@ function question_make_export_url($contextid, $categoryid, $format, $withcategor
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function question_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function question_page_type_list($pagetype, $parentcontext, $currentcontext) {
     global $CFG;
     $types = array(
         'question-*'=>get_string('page-question-x', 'question'),
@@ -1833,7 +1833,7 @@ function question_pagetypelist($pagetype, $parentcontext, $currentcontext) {
     );
     if ($currentcontext->contextlevel == CONTEXT_COURSE) {
         require_once($CFG->dirroot . '/course/lib.php');
-        return array_merge(course_pagetypelist($pagetype, $parentcontext, $currentcontext), $types);
+        return array_merge(course_page_type_list($pagetype, $parentcontext, $currentcontext), $types);
     } else {
         return $types;
     }

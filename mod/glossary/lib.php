@@ -2863,7 +2863,7 @@ function glossary_comment_validate($comment_param) {
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function glossary_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function glossary_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-glossary-*'=>get_string('page-mod-glossary-x', 'glossary'));
     return $module_pagetype;
 }

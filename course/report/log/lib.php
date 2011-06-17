@@ -537,3 +537,18 @@ function log_report_extend_navigation($navigation, $course, $context) {
         $navigation->add(get_string('pluginname', 'coursereport_log'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
     }
 }
+
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function log_page_type_list($pagetype, $parentcontext, $currentcontext) {
+    $array = array(
+        '*' => get_string('page-x', 'pagetype'),
+        'course-report-*' => get_string('page-course-report-x', 'pagetype'),
+        'course-report-log-*' => get_string('pluginpagetype',  'coursereport_log')
+    );
+    return $array;
+}

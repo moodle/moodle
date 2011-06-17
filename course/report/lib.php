@@ -16,31 +16,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains functions used by the outline report
+ * This file contains functions used by course reports
  *
  * @since 2.1
  * @package course-report
  * @copyright 2011 Andrew Davis
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 /**
  * Return a list of page types
  * @param string $pagetype current page type
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function coursereport_pagetypelist($pagetype, $parentcontext, $currentcontext) {
-    $array = array('*'=>get_string('page-x', 'pagetype'),
-            'course-report-*'=>get_string('page-course-report-x', 'pagetype')
-        );
-
-    //extract course-report-outline from course-report-outline-index
-    $bits = explode('-', $pagetype);
-    if (count($bits >= 3)) {
-        $report = array_slice($bits, 2, 1);
-        $array['course-report-'.$report[0].'-*'] = get_string('pluginpagetype',  'coursereport_'.$report);
-    }
-
+function coursereport_page_type_list($pagetype, $parentcontext, $currentcontext) {
+    $array = array(
+        '*' => get_string('page-x', 'pagetype'),
+        'course-report-*' => get_string('page-course-report-x', 'pagetype')
+    );
     return $array;
 }

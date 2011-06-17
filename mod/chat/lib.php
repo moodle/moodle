@@ -1312,7 +1312,7 @@ function chat_user_logout($user) {
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function chat_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function chat_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-chat-*'=>get_string('page-mod-chat-x', 'chat'));
     return $module_pagetype;
 }

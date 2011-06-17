@@ -318,7 +318,7 @@ function url_extend_navigation($navigation, $course, $module, $cm) {
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function url_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function url_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-url-*'=>get_string('page-mod-url-x', 'url'));
     return $module_pagetype;
 }
