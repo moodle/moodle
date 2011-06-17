@@ -3060,8 +3060,9 @@ EOT;
      * @return void Echo's output
      */
     private function _update($percent, $msg) {
-        if (empty($this->time_start)){
-            $this->time_start = microtime(true);
+        if (empty($this->time_start)) {
+            throw new coding_exception('You must call create() (or use the $autostart ' .
+                    'argument to the constructor) before you try updating the progress bar.');
         }
 
         if (CLI_SCRIPT) {
