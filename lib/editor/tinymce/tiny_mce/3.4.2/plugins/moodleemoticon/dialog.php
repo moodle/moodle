@@ -39,8 +39,8 @@ $stringmanager = get_string_manager();
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title><?php print_string('moodleemoticon:desc', 'editor_tinymce'); ?></title>
-    <script type="text/javascript" src="../../tiny_mce_popup.js?v=3.3.9.2"></script>
-    <script type="text/javascript" src="js/rev2/dialog.js?v=3.3.9.2"></script>
+    <script type="text/javascript" src="../../tiny_mce_popup.js?v=3.4.2"></script>
+    <script type="text/javascript" src="js/rev2/dialog.js?v=3.4.2"></script>
 </head>
 <body>
 
