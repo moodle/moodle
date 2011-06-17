@@ -47,10 +47,20 @@
 #page-admin-report-capability-index .rolecaps th {text-align: left;}
 #page-admin-report-capability-index #settingsform #capabilitysearch {width: 30em;}
 
+#page-admin-qbehaviours .disabled {color: gray;}
+#page-admin-qbehaviours th {white-space: normal;}
+#page-admin-qbehaviours .cell.c1,
+#page-admin-qbehaviours .cell.c2 {text-align: right;}
+#page-admin-qbehaviours .cell.c3 {font-size: 0.7em;}
+#page-admin-qbehaviours #qbehaviours div,
+#page-admin-qbehaviours #qbehaviours form {display: inline;}
+#page-admin-qbehaviours #qbehaviours img.spacer {width: 16px;}
+
 #page-admin-qtypes .disabled {color: gray;}
 #page-admin-qtypes th {white-space: normal;}
 #page-admin-qtypes .cell.c1,
 #page-admin-qtypes .cell.c2 {text-align: right;}
+#page-admin-qtypes .cell.c3 {font-size: 0.7em;}
 #page-admin-qtypes #qtypes div,
 #page-admin-qtypes #qtypes form {display: inline;}
 #page-admin-qtypes #qtypes img.spacer {width: 16px;}

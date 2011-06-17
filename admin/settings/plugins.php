@@ -394,6 +394,10 @@ if ($hassiteconfig) {
 
 // Question type settings
 if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) {
+    // Question behaviour settings.
+    $ADMIN->add('modules', new admin_category('qbehavioursettings', get_string('questionbehaviours', 'admin')));
+    $ADMIN->add('qbehavioursettings', new admin_page_manageqbehaviours());
+
     // Question type settings.
     $ADMIN->add('modules', new admin_category('qtypesettings', get_string('questiontypes', 'admin')));
     $ADMIN->add('qtypesettings', new admin_page_manageqtypes());

@@ -99,7 +99,6 @@ abstract class question_engine {
      * @param int $qubaid the id of the usage to delete.
      */
     public static function delete_questions_usage_by_activity($qubaid) {
-        global $CFG;
         self::delete_questions_usage_by_activities(new qubaid_list(array($qubaid)));
     }
 
@@ -224,12 +223,9 @@ abstract class question_engine {
      */
     public static function get_archetypal_behaviours() {
         $archetypes = array();
-        $behaviours = get_list_of_plugins('question/behaviour');
-        foreach ($behaviours as $path) {
-            $behaviour = basename($path);
-            self::load_behaviour_class($behaviour);
-            $plugin = 'qbehaviour_' . $behaviour;
-            if (constant($plugin . '::IS_ARCHETYPAL')) {
+        $behaviours = get_plugin_list('qbehaviour');
+        foreach ($behaviours as $behaviour => $notused) {
+            if (self::is_behaviour_archetypal($behaviour)) {
                 $archetypes[$behaviour] = self::get_behaviour_name($behaviour);
             }
         }
@@ -238,75 +234,89 @@ abstract class question_engine {
     }
 
     /**
-     * Return an array where the keys are the internal names of the behaviours
-     * in preferred order and the values are a human-readable name.
-     *
-     * @param array $archetypes, array of behaviours
-     * @param string $questionbehavioursorder, a comma separated list of behaviour names
-     * @param string $questionbehavioursdisabled, a comma separated list of behaviour names
-     * @param string $currentbahaviour, current behaviour name
-     * @return array model name => lang string for this behaviour name.
+     * @param string $behaviour the name of a behaviour. E.g. 'deferredfeedback'.
+     * @return bool whether this is an archetypal behaviour.
      */
-    public static function sort_behaviours($archetypes, $questionbehavioursorder,
-            $questionbehavioursdisabled, $currentbahaviour) {
-        $behaviourorder = array();
-        $behaviourdisabled = array();
-
-        // Get disabled behaviours
-        if ($questionbehavioursdisabled) {
-            $behaviourdisabledtemp = preg_split('/[\s,;]+/', $questionbehavioursdisabled);
-        } else {
-            $behaviourdisabledtemp = array();
-        }
-
-        if ($questionbehavioursorder) {
-            $behaviourordertemp = preg_split('/[\s,;]+/', $questionbehavioursorder);
-        } else {
-            $behaviourordertemp = array();
-        }
-
-        foreach ($behaviourdisabledtemp as $key) {
-            if (array_key_exists($key, $archetypes)) {
-                // Do not disable the current behaviour
-                if ($key != $currentbahaviour) {
-                    $behaviourdisabled[$key] = $archetypes[$key];
-                }
-            }
-        }
-
-        // Get behaviours in preferred order
-        foreach ($behaviourordertemp as $key) {
-            if (array_key_exists($key, $archetypes)) {
-                $behaviourorder[$key] = $archetypes[$key];
-            }
-        }
-        // Get the rest of behaviours and sort them alphabetically
-        $leftover = array_diff_key($archetypes, $behaviourdisabled, $behaviourorder);
-        asort($leftover, SORT_LOCALE_STRING);
-
-        // Set up the final order to be displayed
-        $finalorder = $behaviourorder + $leftover;
-        return $finalorder;
+    public static function is_behaviour_archetypal($behaviour) {
+        self::load_behaviour_class($behaviour);
+        $plugin = 'qbehaviour_' . $behaviour;
+        return constant($plugin . '::IS_ARCHETYPAL');
     }
 
     /**
      * Return an array where the keys are the internal names of the behaviours
      * in preferred order and the values are a human-readable name.
      *
-     * @param string $currentbahaviour
+     * @param array $archetypes, array of behaviours
+     * @param string $orderlist, a comma separated list of behaviour names
+     * @param string $disabledlist, a comma separated list of behaviour names
+     * @param string $current, current behaviour name
      * @return array model name => lang string for this behaviour name.
      */
-    public static function get_behaviour_options($currentbahaviour) {
-        global $CFG;
+    public static function sort_behaviours($archetypes, $orderlist, $disabledlist, $current=null) {
+
+        // Get disabled behaviours
+        if ($disabledlist) {
+            $disabled = explode(',', $disabledlist);
+        } else {
+            $disabled = array();
+        }
+
+        if ($orderlist) {
+            $order = explode(',', $orderlist);
+        } else {
+            $order = array();
+        }
+
+        foreach ($disabled as $behaviour) {
+            if (array_key_exists($behaviour, $archetypes) && $behaviour != $current) {
+                unset($archetypes[$behaviour]);
+            }
+        }
+
+        // Get behaviours in preferred order
+        $behaviourorder = array();
+        foreach ($order as $behaviour) {
+            if (array_key_exists($behaviour, $archetypes)) {
+                $behaviourorder[$behaviour] = $archetypes[$behaviour];
+            }
+        }
+        // Get the rest of behaviours and sort them alphabetically
+        $leftover = array_diff_key($archetypes, $behaviourorder);
+        asort($leftover, SORT_LOCALE_STRING);
+
+        // Set up the final order to be displayed
+        return $behaviourorder + $leftover;
+    }
+
+    /**
+     * Return an array where the keys are the internal names of the behaviours
+     * in preferred order and the values are a human-readable name.
+     *
+     * @param string $currentbehaviour
+     * @return array model name => lang string for this behaviour name.
+     */
+    public static function get_behaviour_options($currentbehaviour) {
+        $config = question_bank::get_config();
         $archetypes = self::get_archetypal_behaviours();
 
         // If no admin setting return all behavious
-        if (empty($CFG->questionbehavioursdisabled) && empty($CFG->questionbehavioursorder)) {
+        if (empty($config->disabledbehaviours) && empty($config->behavioursortorder)) {
             return $archetypes;
         }
 
-        return self::sort_behaviours($archetypes, $CFG->questionbehavioursorder,
-                $CFG->questionbehavioursdisabled, $currentbahaviour);
+        if (empty($config->behavioursortorder)) {
+            $order = '';
+        } else {
+            $order = $config->behavioursortorder;
+        }
+        if (empty($config->disabledbehaviours)) {
+            $disabled = '';
+        } else {
+            $disabled = $config->disabledbehaviours;
+        }
+
+        return self::sort_behaviours($archetypes, $order, $disabled, $currentbehaviour);
     }
 
     /**
@@ -316,6 +326,16 @@ abstract class question_engine {
      */
     public static function get_behaviour_name($behaviour) {
         return get_string('pluginname', 'qbehaviour_' . $behaviour);
+    }
+
+    /**
+     * Get the translated name of an behaviour, for display in the UI.
+     * @param string $behaviour the internal name of the model.
+     * @return string name from the current language pack.
+     */
+    public static function get_behaviour_required_behaviours($behaviour) {
+        $class = 'qbehaviour_' . $behaviour;
+        return $class::get_required_behaviours();
     }
 
     /**

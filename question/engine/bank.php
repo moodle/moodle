@@ -109,11 +109,11 @@ abstract class question_bank {
      * Load the question configuration data from config_plugins.
      * @return object get_config('question') with caching.
      */
-    protected static function get_config() {
+    public static function get_config() {
         if (is_null(self::$questionconfig)) {
-            $questionconfig = get_config('question');
+            self::$questionconfig = get_config('question');
         }
-        return $questionconfig;
+        return self::$questionconfig;
     }
 
     /**
