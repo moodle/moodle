@@ -183,104 +183,42 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
     }
 
     public function data_preprocessing($question) {
-        $default_values['multichoice']= $this->editasmultichoice;
+        $question = parent::data_preprocessing($question);
+        $question = $this->data_preprocessing_answers($question, true);
+        $question = $this->data_preprocessing_combined_feedback($question, true);
+        $question = $this->data_preprocessing_hints($question, true, true);
+
         if (isset($question->options)) {
-            $answers = $question->options->answers;
-            if (count($answers)) {
-                $key = 0;
-                foreach ($answers as $answer) {
-                    $draftid = file_get_submitted_draft_itemid('feedback['.$key.']');
-                    $default_values['answer['.$key.']'] = $answer->answer;
-                    $default_values['fraction['.$key.']'] = $answer->fraction;
-                    $default_values['tolerance['.$key.']'] = $answer->tolerance;
-                    $default_values['tolerancetype['.$key.']'] = $answer->tolerancetype;
-                    $default_values['correctanswerlength['.$key.']'] = $answer->correctanswerlength;
-                    $default_values['correctanswerformat['.$key.']'] = $answer->correctanswerformat;
-                    $default_values['feedback['.$key.']'] = array();
-                    // prepare draftarea
-                    $default_values['feedback['.$key.']']['text'] = file_prepare_draft_area(
-                            $draftid, $this->context->id, 'question', 'answerfeedback',
-                            empty($answer->id) ? null : (int) $answer->id,
-                            $this->fileoptions, $answer->feedback);
-                    $default_values['feedback['.$key.']']['format'] = $answer->feedbackformat;
-                    $default_values['feedback['.$key.']']['itemid'] = $draftid;
-                    $key++;
-                }
-            }
-            $default_values['synchronize'] = $question->options->synchronize;
+            $question->synchronize     = $question->options->synchronize;
+            $question->single          = $question->options->single;
+            $question->answernumbering = $question->options->answernumbering;
+            $question->shuffleanswers  = $question->options->shuffleanswers;
+        }
 
-            if (isset($question->options->units)) {
-                $units  = array_values($question->options->units);
-                // make sure the default unit is at index 0
-                usort($units, create_function('$a, $b',
-                    'if (1.0 === (float)$a->multiplier) { return -1; } else '.
-                    'if (1.0 === (float)$b->multiplier) { return 1; } else { return 0; }'));
-                if (count($units)) {
-                    $key = 0;
-                    foreach ($units as $unit) {
-                        $default_values['unit['.$key.']'] = $unit->unit;
-                        $default_values['multiplier['.$key.']'] = $unit->multiplier;
-                        $key++;
-                    }
-                }
-            }
-        }
-        if (isset($question->options->single)) {
-            $default_values['single'] =  $question->options->single;
-            $default_values['answernumbering'] =  $question->options->answernumbering;
-            $default_values['shuffleanswers'] =  $question->options->shuffleanswers;
-        }
-        $default_values['submitbutton'] = get_string('nextpage', 'qtype_calculated');
-        $default_values['makecopy'] = get_string('makecopynextpage', 'qtype_calculated');
+        return $question;
+    }
 
-        // prepare draft files
-        foreach (array('correctfeedback', 'partiallycorrectfeedback',
-                'incorrectfeedback') as $feedbackname) {
-            if (!isset($question->options->$feedbackname)) {
-                continue;
-            }
-            $text = $question->options->$feedbackname;
-            $draftid = file_get_submitted_draft_itemid($feedbackname);
-            $feedbackformat = $feedbackname . 'format';
-            $format = $question->options->$feedbackformat;
-            $default_values[$feedbackname] = array();
-            $default_values[$feedbackname]['text'] = file_prepare_draft_area(
-                $draftid,                // draftid
-                $this->context->id,      // context
-                'qtype_calculatedmulti', // component
-                $feedbackname,           // filarea
-                !empty($question->id)?(int)$question->id:null, // itemid
-                $this->fileoptions,      // options
-                $text                    // text
-            );
-            $default_values[$feedbackname]['format'] = $format;
-            $default_values[$feedbackname]['itemid'] = $draftid;
+    protected function data_preprocessing_answers($question) {
+        $question = parent::data_preprocessing_answers($question);
+        if (empty($question->options->answers)) {
+            return $question;
         }
-        /**
-         * set the wild cards category display given that on loading the category element is
-         * unselected when processing this function but have a valid value when processing the
-         * update category button. The value can be obtain by
-         * $qu->category = $this->_form->_elements[$this->_form->
-         *      _elementIndex['category']]->_values[0];
-         * but is coded using existing functions
-         */
-        $qu = new stdClass();
-        $el = new stdClass();
-        // no need to call elementExists() here.
-        if ($this->_form->elementExists('category')) {
-            $el = $this->_form->getElement('category');
-        } else {
-            $el = $this->_form->getElement('categorymoveto');
+
+        $key = 0;
+        foreach ($question->options->answers as $answer) {
+            // See comment in the parent method about this hack.
+            unset($this->_form->_defaultValues["tolerance[$key]"]);
+            unset($this->_form->_defaultValues["tolerancetype[$key]"]);
+            unset($this->_form->_defaultValues["correctanswerlength[$key]"]);
+            unset($this->_form->_defaultValues["correctanswerformat[$key]"]);
+
+            $question->tolerance[$key]           = $answer->tolerance;
+            $question->tolerancetype[$key]       = $answer->tolerancetype;
+            $question->correctanswerlength[$key] = $answer->correctanswerlength;
+            $question->correctanswerformat[$key] = $answer->correctanswerformat;
+            $key++;
         }
-        if ($value = $el->getSelected()) {
-            $qu->category = $value[0];
-        } else {
-            // on load  $question->category is set by question.php
-            $qu->category = $question->category;
-        }
-        $html2 = $this->qtypeobj->print_dataset_definitions_category($qu);
-        $this->_form->_elements[$this->_form->_elementIndex['listcategory']]->_text = $html2;
-        $question = (object)((array)$question + $default_values);
+
         return $question;
     }
 
