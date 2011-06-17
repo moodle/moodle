@@ -240,8 +240,8 @@ class qtype_numerical_question extends question_graded_automatically {
                 $this->apply_unit_penalty($ans->fraction, $unit)));
     }
 
-    public function check_file_access($question, $state, $options, $contextid, $component,
-            $filearea, $args) {
+    public function check_file_access($qa, $options, $component, $filearea, $args,
+            $forcedownload) {
         if ($component == 'question' && $filearea == 'answerfeedback') {
             $currentanswer = $qa->get_last_qt_var('answer');
             $answer = $qa->get_question()->get_matching_answer(array('answer' => $currentanswer));
