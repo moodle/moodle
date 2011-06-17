@@ -92,5 +92,3 @@ define('MOODLE_QUIZ_MULTIPLE_RESPONSE', 'multichoice');
 define('MOODLE_QUIZ_MACHT', 'match');
 define('MOODLE_QUIZ_ESSAY', 'essay');
 define('MOODLE_QUIZ_SHORTANSWER', 'shortanswer');
-
-?>
