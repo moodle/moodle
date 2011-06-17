@@ -171,7 +171,7 @@ class qtype_multichoice extends question_type {
         }
         $this->initialise_combined_feedback($question, $questiondata, true);
 
-        $this->initialise_question_answers($question, $questiondata);
+        $this->initialise_question_answers($question, $questiondata, false);
     }
 
     public function delete_question($questionid, $contextid) {
@@ -194,8 +194,9 @@ class qtype_multichoice extends question_type {
             $responses = array();
 
             foreach ($questiondata->options->answers as $aid => $answer) {
-                $responses[$aid] = new question_possible_response($answer->answer,
-                        $answer->fraction);
+                $responses[$aid] = new question_possible_response(html_to_text(format_text(
+                        $answer->answer, $answer->answerformat, array('noclean' => true)),
+                        0, false), $answer->fraction);
             }
 
             $responses[null] = question_possible_response::no_response();
@@ -205,7 +206,9 @@ class qtype_multichoice extends question_type {
 
             foreach ($questiondata->options->answers as $aid => $answer) {
                 $parts[$aid] = array($aid =>
-                        new question_possible_response($answer->answer, $answer->fraction));
+                        new question_possible_response(html_to_text(format_text(
+                        $answer->answer, $answer->answerformat, array('noclean' => true)),
+                        0, false), $answer->fraction));
             }
 
             return $parts;

@@ -135,6 +135,18 @@ class qtype_multichoice_single_question_test extends UnitTestCase {
                 $mc->id => question_classified_response::no_response(),
             ), $mc->classify_response(array()));
     }
+
+    public function test_make_html_inline() {
+        $mc = test_question_maker::make_a_multichoice_single_question();
+        $this->assertEqual('Frog', $mc->make_html_inline('<p>Frog</p>'));
+        $this->assertEqual('Frog<br />Toad', $mc->make_html_inline("<p>Frog</p>\n<p>Toad</p>"));
+        $this->assertEqual('<img src="http://example.com/pic.png" alt="Graph" />',
+                $mc->make_html_inline(
+                    '<p><img src="http://example.com/pic.png" alt="Graph" /></p>'));
+        $this->assertEqual("Frog<br />XXX <img src='http://example.com/pic.png' alt='Graph' />",
+                $mc->make_html_inline(" <p> Frog </p> \n\r
+                    <p> XXX <img src='http://example.com/pic.png' alt='Graph' /> </p> "));
+    }
 }
 
 

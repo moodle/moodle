@@ -124,6 +124,13 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
                     $args, $forcedownload);
         }
     }
+
+    public function make_html_inline($html) {
+        $html = preg_replace('~\s*<p>\s*~', '', $html);
+        $html = preg_replace('~\s*</p>\s*~', '<br />', $html);
+        $html = preg_replace('~<br />$~', '', $html);
+        return $html;
+    }
 }
 
 
