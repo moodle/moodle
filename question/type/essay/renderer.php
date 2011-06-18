@@ -189,8 +189,8 @@ class qtype_essay_format_editor_renderer extends plugin_renderer_base {
     }
 
     public function response_area_input($name, $qa, $step, $lines, $context) {
-        global $CFG, $PAGE;
-        require_once($CFG->dirroot.'/repository/lib.php');
+        global $CFG;
+        require_once($CFG->dirroot . '/repository/lib.php');
 
         $inputname = $qa->get_qt_field_name($name);
         $responseformat = $step->get_qt_var($name . 'format');
