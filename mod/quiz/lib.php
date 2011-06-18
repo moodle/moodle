@@ -1568,28 +1568,46 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
      */
     require_once($CFG->libdir . '/questionlib.php');
 
+    // We want to add these new nodes after the Edit settings node, and before the
+    // Locally assigned roles node. Of course, both of those are controlled by capabilities.
+    $keys = $quiznode->get_children_key_list();
+    $i = array_search('modedit', $keys);
+    if ($i === false) {
+        $beforekey = $keys[0];
+    } else if (array_key_exists($i + 1, $keys)) {
+        $beforekey = $keys[$i + 1];
+    } else {
+        $beforekey = null;
+    }
+
     if (has_capability('mod/quiz:manageoverrides', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$PAGE->cm->id));
-        $quiznode->add(get_string('groupoverrides', 'quiz'),
+        $node = navigation_node::create(get_string('groupoverrides', 'quiz'),
                 new moodle_url($url, array('mode'=>'group')),
-                navigation_node::TYPE_SETTING, null, 'groupoverrides');
-        $quiznode->add(get_string('useroverrides', 'quiz'),
+                navigation_node::TYPE_SETTING, null, 'mod_quiz_groupoverrides');
+        $quiznode->add_node($node, $beforekey);
+
+        $node = navigation_node::create(get_string('useroverrides', 'quiz'),
                 new moodle_url($url, array('mode'=>'user')),
-                navigation_node::TYPE_SETTING, null, 'useroverrides');
+                navigation_node::TYPE_SETTING, null, 'mod_quiz_useroverrides');
+        $quiznode->add_node($node, $beforekey);
     }
 
     if (has_capability('mod/quiz:manage', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/quiz/edit.php', array('cmid'=>$PAGE->cm->id));
-        $text = get_string('editquiz', 'quiz');
-        $quiznode->add($text, $url, navigation_node::TYPE_SETTING, null,
-                'mod_quiz_edit', new pix_icon('t/edit', ''));
+        $node = navigation_node::create(get_string('editquiz', 'quiz'),
+                new moodle_url('/mod/quiz/edit.php', array('cmid'=>$PAGE->cm->id)),
+                navigation_node::TYPE_SETTING, null, 'mod_quiz_edit',
+                new pix_icon('t/edit', ''));
+        $quiznode->add_node($node, $beforekey);
     }
 
     if (has_capability('mod/quiz:preview', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/quiz/startattempt.php',
                 array('cmid'=>$PAGE->cm->id, 'sesskey'=>sesskey()));
-        $quiznode->add(get_string('preview', 'quiz'), $url, navigation_node::TYPE_SETTING,
-                null, 'mod_quiz_preview', new pix_icon('t/preview', ''));
+        $node = navigation_node::create(get_string('preview', 'quiz'), $url,
+                navigation_node::TYPE_SETTING, null, 'mod_quiz_preview',
+                new pix_icon('t/preview', ''));
+        $quiznode->add_node($node, $beforekey);
     }
 
     question_extend_settings_navigation($quiznode, $PAGE->cm->context)->trim_if_empty();
