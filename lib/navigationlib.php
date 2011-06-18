@@ -3260,46 +3260,46 @@ class settings_navigation extends navigation_node {
         // Settings for the module
         if (has_capability('moodle/course:manageactivities', $this->page->cm->context)) {
             $url = new moodle_url('/course/modedit.php', array('update' => $this->page->cm->id, 'return' => true, 'sesskey' => sesskey()));
-            $modulenode->add(get_string('editsettings'), $url, navigation_node::TYPE_SETTING);
+            $modulenode->add(get_string('editsettings'), $url, navigation_node::TYPE_SETTING, null, 'modedit');
         }
         // Assign local roles
         if (count(get_assignable_roles($this->page->cm->context))>0) {
             $url = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid'=>$this->page->cm->context->id));
-            $modulenode->add(get_string('localroles', 'role'), $url, self::TYPE_SETTING);
+            $modulenode->add(get_string('localroles', 'role'), $url, self::TYPE_SETTING, null, 'roleassign');
         }
         // Override roles
         if (has_capability('moodle/role:review', $this->page->cm->context) or count(get_overridable_roles($this->page->cm->context))>0) {
             $url = new moodle_url('/'.$CFG->admin.'/roles/permissions.php', array('contextid'=>$this->page->cm->context->id));
-            $modulenode->add(get_string('permissions', 'role'), $url, self::TYPE_SETTING);
+            $modulenode->add(get_string('permissions', 'role'), $url, self::TYPE_SETTING, null, 'roleoverride');
         }
         // Check role permissions
         if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride','moodle/role:override', 'moodle/role:assign'), $this->page->cm->context)) {
             $url = new moodle_url('/'.$CFG->admin.'/roles/check.php', array('contextid'=>$this->page->cm->context->id));
-            $modulenode->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING);
+            $modulenode->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING, null, 'rolecheck');
         }
         // Manage filters
         if (has_capability('moodle/filter:manage', $this->page->cm->context) && count(filter_get_available_in_context($this->page->cm->context))>0) {
             $url = new moodle_url('/filter/manage.php', array('contextid'=>$this->page->cm->context->id));
-            $modulenode->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING);
+            $modulenode->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING, null, 'filtermanage');
         }
 
         if (has_capability('coursereport/log:view', get_context_instance(CONTEXT_COURSE, $this->page->cm->course))) {
             $url = new moodle_url('/course/report/log/index.php', array('chooselog'=>'1','id'=>$this->page->cm->course,'modid'=>$this->page->cm->id));
-            $modulenode->add(get_string('logs'), $url, self::TYPE_SETTING);
+            $modulenode->add(get_string('logs'), $url, self::TYPE_SETTING, null, 'logreport');
         }
 
         // Add a backup link
         $featuresfunc = $this->page->activityname.'_supports';
         if (function_exists($featuresfunc) && $featuresfunc(FEATURE_BACKUP_MOODLE2) && has_capability('moodle/backup:backupactivity', $this->page->cm->context)) {
             $url = new moodle_url('/backup/backup.php', array('id'=>$this->page->cm->course, 'cm'=>$this->page->cm->id));
-            $modulenode->add(get_string('backup'), $url, self::TYPE_SETTING);
+            $modulenode->add(get_string('backup'), $url, self::TYPE_SETTING, null, 'backup');
         }
 
         // Restore this activity
         $featuresfunc = $this->page->activityname.'_supports';
         if (function_exists($featuresfunc) && $featuresfunc(FEATURE_BACKUP_MOODLE2) && has_capability('moodle/restore:restoreactivity', $this->page->cm->context)) {
             $url = new moodle_url('/backup/restorefile.php', array('contextid'=>$this->page->cm->context->id));
-            $modulenode->add(get_string('restore'), $url, self::TYPE_SETTING);
+            $modulenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, 'restore');
         }
 
         $function = $this->page->activityname.'_extend_settings_navigation';
