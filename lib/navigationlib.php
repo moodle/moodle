@@ -330,6 +330,14 @@ class navigation_node implements renderable {
     }
 
     /**
+     * Return a list of all the keys of all the child nodes.
+     * @return array the keys.
+     */
+    public function get_children_key_list() {
+        return $this->children->get_key_list();
+    }
+
+    /**
      * Searches for a node of the given type with the given key.
      *
      * This searches this node plus all of its children, and their children....
@@ -681,6 +689,7 @@ class navigation_node_collection implements IteratorAggregate {
      * @var int
      */
     protected $count = 0;
+
     /**
      * Adds a navigation node to the collection
      *
@@ -715,12 +724,8 @@ class navigation_node_collection implements IteratorAggregate {
                 }
             }
             if ($newindex === $this->count) {
-                $allkeys = '';
-                foreach ($this->collection as $othernode) {
-                    $allkeys .= ' ' . $othernode->key;
-                }
                 debugging('Navigation node add_before: Reference node not found ' . $beforekey .
-                        ', options: ' . $allkeys, DEBUG_DEVELOPER);
+                        ', options: ' . implode(' ', $this->get_key_list()), DEBUG_DEVELOPER);
             }
         }
 
@@ -749,6 +754,18 @@ class navigation_node_collection implements IteratorAggregate {
     }
 
     /**
+     * Return a list of all the keys of all the nodes.
+     * @return array the keys.
+     */
+    public function get_key_list() {
+        $keys = array();
+        foreach ($this->collection as $node) {
+            $keys[] = $node->key;
+        }
+        return $keys;
+    }
+
+    /**
      * Fetches a node from this collection.
      *
      * @param string|int $key The key of the node we want to find.
@@ -771,6 +788,7 @@ class navigation_node_collection implements IteratorAggregate {
         }
         return false;
     }
+
     /**
      * Searches for a node with matching key and type.
      *
@@ -813,6 +831,7 @@ class navigation_node_collection implements IteratorAggregate {
     public function last() {
         return $this->last;
     }
+
     /**
      * Fetches all nodes of a given type from this collection
      */
