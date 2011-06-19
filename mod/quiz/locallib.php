@@ -634,7 +634,7 @@ function quiz_update_all_final_grades($quiz) {
                 MIN(attempt) AS firstattempt,
                 MAX(attempt) AS lastattempt
 
-            FROM {quiz_attempts iquiza}
+            FROM {quiz_attempts} iquiza
 
             WHERE
                 iquiza.timefinish <> 0 AND
