@@ -758,7 +758,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
             if ($viewobj->feedbackcolumn && $attempt->timefinish > 0) {
                 if ($attemptoptions->overallfeedback) {
-                    $row[] = quiz_feedback_for_grade($attemptgrade, $quiz, $context, $cm);
+                    $row[] = quiz_feedback_for_grade($attemptgrade, $quiz, $context);
                 } else {
                     $row[] = '';
                 }
@@ -838,7 +838,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         if ($viewobj->feedbackcolumn) {
             $resultinfo .= $this->heading(get_string('overallfeedback', 'quiz'), 3, 'main');
             $resultinfo .= html_writer::tag('p',
-                    quiz_feedback_for_grade($viewobj->mygrade, $quiz, $context, $cm),
+                    quiz_feedback_for_grade($viewobj->mygrade, $quiz, $context),
                     array('class' => 'quizgradefeedback')).'\n';
         }
 
