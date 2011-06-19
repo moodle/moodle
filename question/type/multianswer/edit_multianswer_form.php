@@ -155,10 +155,10 @@ class qtype_multianswer_edit_form extends question_edit_form {
                         $this->savedquestiondisplay->options->questions[$sub]->qtype !=
                                 $this->questiondisplay->options->questions[$sub]->qtype) {
                     $this->qtype_change = true;
-                    $storemess = ' <span class="error">STORED QTYPE ' .
-                            question_bank::get_qtype_name(
-                            $this->savedquestiondisplay->options->questions[$sub]->qtype).
-                            '</span>';
+                    $storemess = ' ' . html_writer::tag('span', get_string(
+                            'storedqtype', 'qtype_multianswer', question_bank::get_qtype_name(
+                                    $this->savedquestiondisplay->options->questions[$sub]->qtype)),
+                            array('class' => 'error'));
                 }
 
                 $mform->addElement('header', 'subhdr'.$sub, get_string('questionno', 'question',
