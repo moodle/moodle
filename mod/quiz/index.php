@@ -177,7 +177,7 @@ foreach ($quizzes as $quiz) {
                 $grade = get_string('outofshort', 'quiz', $a);
             }
             if ($alloptions->overallfeedback) {
-                $feedback = quiz_feedback_for_grade($grades[$quiz->id], $quiz, $context, $cm);
+                $feedback = quiz_feedback_for_grade($grades[$quiz->id], $quiz, $context);
             }
         }
         $data[] = $grade;
