@@ -62,6 +62,7 @@ $string['categorycurrent'] = 'Current category';
 $string['categorycurrentuse'] = 'Use this category';
 $string['categorydoesnotexist'] = 'This category does not exist';
 $string['categoryinfo'] = 'Category info';
+$string['categorymove'] = 'The category \'{$a->name}\' contains {$a->count} questions (some of them may be old, hidden, questions that are still in use in some existing quizzes). Please choose another category to move them to.';
 $string['categorymoveto'] = 'Save in category';
 $string['categorynamecantbeblank'] = 'The category name cannot be blank.';
 $string['clicktoflag'] = 'Click to flag this question';
