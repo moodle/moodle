@@ -286,34 +286,6 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
         parent::__construct($submiturl, $question, $category, $contexts, $formeditable);
     }
 
-    public function get_per_answer_fields($mform, $label, $gradeoptions,
-            &$repeatedoptions, &$answersoption) {
-        $repeated = parent::get_per_answer_fields($mform, $label, $gradeoptions,
-                $repeatedoptions, $answersoption);
-        $mform->setType('answer', PARAM_NOTAGS);
-        $addrepeated = array();
-        $addrepeated[] = $mform->createElement('text', 'tolerance',
-                get_string('tolerance', 'qtype_calculated'));
-        $repeatedoptions['tolerance']['type'] = PARAM_NUMBER;
-        $repeatedoptions['tolerance']['default'] = 0.01;
-        $addrepeated[] = $mform->createElement('select', 'tolerancetype',
-                get_string('tolerancetype', 'qtype_numerical'), $this->qtypeobj->tolerance_types());
-        $addrepeated[] = $mform->createElement('select', 'correctanswerlength',
-                get_string('correctanswershows', 'qtype_calculated'), range(0, 9));
-        $repeatedoptions['correctanswerlength']['default'] = 2;
-
-        $answerlengthformats = array(
-            '1' => get_string('decimalformat', 'qtype_numerical'),
-            '2' => get_string('significantfiguresformat', 'qtype_calculated')
-        );
-        $addrepeated[] = $mform->createElement('select', 'correctanswerformat',
-                get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
-        array_splice($repeated, 3, 0, $addrepeated);
-        $repeated[1]->setLabel(get_string('correctanswerformula', 'qtype_calculated').'=');
-
-        return $repeated;
-    }
-
     /**
      * Add question-type specific form fields.
      *
