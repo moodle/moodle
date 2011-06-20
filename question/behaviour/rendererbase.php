@@ -69,16 +69,40 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
     }
 
     public function manual_comment_fields(question_attempt $qa, question_display_options $options) {
-
-        $commentfield = $qa->get_behaviour_field_name('comment');
-
+        $inputname = $qa->get_behaviour_field_name('comment');
+        $id = $inputname . '_id';
         list($commenttext, $commentformat) = $qa->get_manual_comment();
-        $comment = print_textarea(can_use_html_editor(), 10, 80, null, null,
-                $commentfield, $commenttext, 0, true);
+
+        $editor = editors_get_preferred_editor($commentformat);
+        $strformats = format_text_menu();
+        $formats = $editor->get_supported_formats();
+        foreach ($formats as $fid) {
+            $formats[$fid] = $strformats[$fid];
+        }
+
+        $commenttext = format_text($commenttext, $commentformat, array('para' => false));
+
+        $editor->use_editor($id, array('context' => $options->context));
+
+        $commenteditor = html_writer::tag('div', html_writer::tag('textarea', s($commenttext),
+                array('id' => $id, 'name' => $inputname, 'rows' => 10, 'cols' => 60)));
+
+        $commenteditor .= html_writer::start_tag('div');
+        if (count($formats == 1)) {
+            reset($formats);
+            $commenteditor .= html_writer::empty_tag('input', array('type' => 'hidden',
+                    'name' => $inputname . 'format', 'value' => key($formats)));
+
+        } else {
+            $commenteditor .= html_writer::select(
+                    $formats, $inputname . 'format', $commentformat, '');
+        }
+        $commenteditor .= html_writer::end_tag('div');
+
         $comment = html_writer::tag('div', html_writer::tag('div',
                 html_writer::tag('label', get_string('comment', 'question'),
-                array('for' => $commentfield)), array('class' => 'fitemtitle')) .
-                html_writer::tag('div', $comment, array('class' => 'felement fhtmleditor')),
+                array('for' => $id)), array('class' => 'fitemtitle')) .
+                html_writer::tag('div', $commenteditor, array('class' => 'felement fhtmleditor')),
                 array('class' => 'fitem'));
 
         $mark = '';
