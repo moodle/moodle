@@ -363,13 +363,21 @@ class moodle_user_external extends external_api {
         $params = self::validate_parameters(self::get_users_by_id_parameters(),
                 array('userids'=>$userids));
 
-        $userscontexts = get_context_instance(CONTEXT_USER, $params['userids']);
+        list($uselect, $ujoin) = context_instance_preload_sql('u.id', CONTEXT_USER, 'ctx');
+        list($sqluserids, $params) = $DB->get_in_or_equal($userids);
+        $usersql = "SELECT u.* $uselect
+                      FROM {user} u $ujoin
+                     WHERE u.id $sqluserids";
+        $users = $DB->get_recordset_sql($usersql, $params);
 
-        $users = user_get_users_by_id($params['userids']);
         $result = array();
         foreach ($users as $user) {
-
-            $context = $userscontexts[$user->id];
+            if (!empty($user->deleted)) {
+                continue;
+            }
+            context_instance_preload($user);
+            // cached
+            $context = get_context_instance(CONTEXT_USER, $user->id);
             $hasviewdetailscap = has_capability('moodle/user:viewdetails', $context);
             $hasuserupdatecap = has_capability('moodle/user:update', get_system_context());
 
@@ -377,197 +385,193 @@ class moodle_user_external extends external_api {
 
             $currentuser = ($user->id == $USER->id);
 
-            if (empty($user->deleted)) {
+            if (!$currentuser && !$hasviewdetailscap && !has_coursecontact_role($user->id)) {
+                throw new moodle_exception('usernotavailable', 'error');
+            }
 
-                if (!$currentuser && !$hasviewdetailscap && !has_coursecontact_role($user->id)) {
-                    throw new moodle_exception('usernotavailable', 'error');
-                }
+            $userarray = array();
 
-                $userarray = array();
+            //basic fields
+            $userarray['id'] = $user->id;
+            if ($isadmin) {
+                $userarray['username'] = $user->username;
+            }
+            if ($isadmin or has_capability('moodle/site:viewfullnames', $context)) {
+                $userarray['firstname'] = $user->firstname;
+                $userarray['lastname'] = $user->lastname;
+            }
+            $userarray['fullname'] = fullname($user);
 
-                //basic fields
-                $userarray['id'] = $user->id;
-                if ($isadmin) {
-                    $userarray['username'] = $user->username;
-                }
-                if ($isadmin or has_capability('moodle/site:viewfullnames', $context)) {
-                    $userarray['firstname'] = $user->firstname;
-                    $userarray['lastname'] = $user->lastname;
-                }
-                $userarray['fullname'] = fullname($user);
+            //fields matching permissions from /user/editadvanced.php
+            if ($currentuser or $hasuserupdatecap) {
+                $userarray['auth'] = $user->auth;
+                $userarray['confirmed'] = $user->confirmed;
+                $userarray['idnumber'] = $user->idnumber;
+                $userarray['lang'] = $user->lang;
+                $userarray['theme'] = $user->theme;
+                $userarray['timezone'] = $user->timezone;
+                $userarray['mailformat'] = $user->mailformat;
+            }
 
-                //fields matching permissions from /user/editadvanced.php
-                if ($currentuser or $hasuserupdatecap) {
-                    $userarray['auth'] = $user->auth;
-                    $userarray['confirmed'] = $user->confirmed;
-                    $userarray['idnumber'] = $user->idnumber;
-                    $userarray['lang'] = $user->lang;
-                    $userarray['theme'] = $user->theme;
-                    $userarray['timezone'] = $user->timezone;
-                    $userarray['mailformat'] = $user->mailformat;
+            //Custom fields (matching /user/profil/lib.php - profile_display_fields code logic)
+            $fields = $DB->get_recordset_sql("SELECT f.*
+                                                FROM {user_info_field} f
+                                                JOIN {user_info_category} c
+                                                     ON f.categoryid=c.id
+                                            ORDER BY c.sortorder ASC, f.sortorder ASC");
+            foreach ($fields as $field) {
+                require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+                $newfield = 'profile_field_'.$field->datatype;
+                $formfield = new $newfield($field->id, $user->id);
+                if ($formfield->is_visible() and !$formfield->is_empty()) {
+                    $userarray['customfields'][] =
+                        array('name' => $formfield->field->name, 'value' => $formfield->data,
+                            'type' => $field->datatype, 'shortname' => $formfield->field->shortname);
                 }
+            }
+            $fields->close();
 
-                //Custom fields (matching /user/profil/lib.php - profile_display_fields code logic)
-                $userarray['customfields'] = array();
-                if ($categories = $DB->get_records('user_info_category', null, 'sortorder ASC')) {
-                    foreach ($categories as $category) {
-                        if ($fields = $DB->get_records('user_info_field', array('categoryid'=>$category->id), 'sortorder ASC')) {
-                            foreach ($fields as $field) {
-                                require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-                                $newfield = 'profile_field_'.$field->datatype;
-                                $formfield = new $newfield($field->id, $user->id);
-                                if ($formfield->is_visible() and !$formfield->is_empty()) {
-                                    $userarray['customfields'][] =
-                                        array('name' => $formfield->field->name, 'value' => $formfield->data,
-                                            'type' => $field->datatype, 'shortname' => $formfield->field->shortname);
-                                }
-                            }
-                        }
-                    }
-                }
+            //image profiles urls (public, no permission required in fact)
+            $profileimageurl = moodle_url::make_pluginfile_url($context->id, 'user', 'icon', NULL, '/', 'f1');
+            $userarray['profileimageurl'] = $profileimageurl->out(false);
+            $profileimageurlsmall = moodle_url::make_pluginfile_url($context->id, 'user', 'icon', NULL, '/', 'f2');
+            $userarray['profileimageurlsmall'] = $profileimageurlsmall->out(false);
 
-                //image profiles urls (public, no permission required in fact)
-                $profileimageurl = moodle_url::make_pluginfile_url($context->id, 'user', 'icon', NULL, '/', 'f1');
-                $userarray['profileimageurl'] = $profileimageurl->out(false);
-                $profileimageurlsmall = moodle_url::make_pluginfile_url($context->id, 'user', 'icon', NULL, '/', 'f2');
-                $userarray['profileimageurlsmall'] = $profileimageurlsmall->out(false);
+            //hidden user field
+            if (has_capability('moodle/user:viewhiddendetails', $context)) {
+                $hiddenfields = array();
+            } else {
+                $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+            }
 
-                //hidden user field
-                if (has_capability('moodle/user:viewhiddendetails', $context)) {
-                    $hiddenfields = array();
-                } else {
-                    $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
-                }
-
-                if (isset($user->description) && (!isset($hiddenfields['description']) or $isadmin)) {
-                    if (empty($CFG->profilesforenrolledusersonly) || $currentuser) {
-                        $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $context->id, 'user', 'profile', null);
-                        $userarray['description'] = $user->description;
-                        $userarray['descriptionformat'] = $user->descriptionformat;
-                    }
-                }
-
-                if ((! isset($hiddenfields['country']) or $isadmin) && $user->country) {
-                    $userarray['country'] = $user->country;
-                }
-
-                if ((! isset($hiddenfields['city']) or $isadmin) && $user->city) {
-                    $userarray['city'] = $user->city;
-                }
-
-                if (has_capability('moodle/user:viewhiddendetails', $context)) {
-                    if ($user->address) {
-                        $userarray['address'] = $user->address;
-                    }
-                    if ($user->phone1) {
-                        $userarray['phone1'] = $user->phone1;
-                    }
-                    if ($user->phone2) {
-                        $userarray['phone2'] = $user->phone2;
-                    }
-                }
-
-                if ($currentuser
-                  or $user->maildisplay == 1
-                  or has_capability('moodle/course:useremail', $context)
-                  or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER))) {
-                    $userarray['email'] = $user->email;;
-                }
-
-                if ($user->url && (!isset($hiddenfields['webpage']) or $isadmin)) {
-                    $url = $user->url;
-                    if (strpos($user->url, '://') === false) {
-                        $url = 'http://'. $url;
-                    }
-                    $user->url = clean_param($user->url, PARAM_URL);
-                    $userarray['url'] = $user->url;
-                }
-
-                if ($user->icq && (!isset($hiddenfields['icqnumber']) or $isadmin)) {
-                    $userarray['icq'] = $user->icq;
-                }
-
-                if ($user->skype && (!isset($hiddenfields['skypeid']) or $isadmin)) {
-                    $userarray['skype'] = $user->skype;
-                }
-                if ($user->yahoo && (!isset($hiddenfields['yahooid']) or $isadmin)) {
-                    $userarray['yahoo'] = $user->yahoo;
-                }
-                if ($user->aim && (!isset($hiddenfields['aimid']) or $isadmin)) {
-                    $userarray['aim'] = $user->aim;
-                }
-                if ($user->msn && (!isset($hiddenfields['msnid']) or $isadmin)) {
-                    $userarray['msn'] = $user->msn;
-                }
-
-                if ((!isset($hiddenfields['firstaccess'])) or $isadmin) {
-                    if ($user->firstaccess) {
-                        $userarray['firstaccess'] = $user->firstaccess;
-                    } else {
-                        $userarray['firstaccess'] = 0;
-                    }
-                }
-                if ((!isset($hiddenfields['lastaccess'])) or $isadmin) {
-                    if ($user->lastaccess) {
-                        $userarray['lastaccess'] = $user->lastaccess;
-                    } else {
-                        $userarray['lastaccess'] = 0;
-                    }
-                }
-                /// Printing tagged interests
-                if (!empty($CFG->usetags)) {
-                    require_once($CFG->dirroot . '/tag/lib.php');
-                    if ($interests = tag_get_tags_csv('user', $user->id, TAG_RETURN_TEXT) ) {
-                        $userarray['interests'] = $interests;
-                    }
-                }
-
-                //Departement/Institution are not displayed on any profile, however you can get them from editing profile.
-                if ($isadmin or $currentuser) {
-                    if ($user->institution) {
-                        $userarray['institution'] = $user->institution;
-                    }
-                    if (isset($user->department)) { //isset because it's ok to have department 0
-                        $userarray['department'] = $user->department;
-                    }
-                }
-
-                //list of courses where the user is enrolled
-                $enrolledcourses = array();
-                if (!isset($hiddenfields['mycourses'])) {
-                    if ($mycourses = enrol_get_users_courses($user->id, true, NULL, 'visible DESC,sortorder ASC')) {
-                        $courselisting = '';
-                        foreach ($mycourses as $mycourse) {
-                            if ($mycourse->category) {
-                                if ($mycourse->visible == 0) {
-                                    $ccontext = get_context_instance(CONTEXT_COURSE, $mycourse->id);
-                                    if (!has_capability('moodle/course:viewhiddencourses', $ccontext)) {
-                                        continue;
-                                    }
-                                }
-                                $enrolledcourse = array();
-                                $enrolledcourse['id'] = $mycourse->id;
-                                $enrolledcourse['fullname'] = $mycourse->fullname;
-                                $enrolledcourses[] = $enrolledcourse;
-                            }
-                        }
-                        $userarray['enrolledcourses'] = $enrolledcourses;
-                    }
-                }
-
-                //user preferences
-                if ($currentuser) {
-                    $preferences = array();
-                    $userpreferences = get_user_preferences();
-                     foreach($userpreferences as $prefname => $prefvalue) {
-                        $preferences[] = array('name' => $prefname, 'value' => $prefvalue);
-                     }
-                     $userarray['preferences'] = $preferences;
+            if (isset($user->description) && (!isset($hiddenfields['description']) or $isadmin)) {
+                if (empty($CFG->profilesforenrolledusersonly) || $currentuser) {
+                    $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $context->id, 'user', 'profile', null);
+                    $userarray['description'] = $user->description;
+                    $userarray['descriptionformat'] = $user->descriptionformat;
                 }
             }
 
+            if ((! isset($hiddenfields['country']) or $isadmin) && $user->country) {
+                $userarray['country'] = $user->country;
+            }
+
+            if ((! isset($hiddenfields['city']) or $isadmin) && $user->city) {
+                $userarray['city'] = $user->city;
+            }
+
+            if (has_capability('moodle/user:viewhiddendetails', $context)) {
+                if ($user->address) {
+                    $userarray['address'] = $user->address;
+                }
+                if ($user->phone1) {
+                    $userarray['phone1'] = $user->phone1;
+                }
+                if ($user->phone2) {
+                    $userarray['phone2'] = $user->phone2;
+                }
+            }
+
+            if ($currentuser
+              or $user->maildisplay == 1
+              or has_capability('moodle/course:useremail', $context)
+              or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER))) {
+                $userarray['email'] = $user->email;;
+            }
+
+            if ($user->url && (!isset($hiddenfields['webpage']) or $isadmin)) {
+                $url = $user->url;
+                if (strpos($user->url, '://') === false) {
+                    $url = 'http://'. $url;
+                }
+                $user->url = clean_param($user->url, PARAM_URL);
+                $userarray['url'] = $user->url;
+            }
+
+            if ($user->icq && (!isset($hiddenfields['icqnumber']) or $isadmin)) {
+                $userarray['icq'] = $user->icq;
+            }
+
+            if ($user->skype && (!isset($hiddenfields['skypeid']) or $isadmin)) {
+                $userarray['skype'] = $user->skype;
+            }
+            if ($user->yahoo && (!isset($hiddenfields['yahooid']) or $isadmin)) {
+                $userarray['yahoo'] = $user->yahoo;
+            }
+            if ($user->aim && (!isset($hiddenfields['aimid']) or $isadmin)) {
+                $userarray['aim'] = $user->aim;
+            }
+            if ($user->msn && (!isset($hiddenfields['msnid']) or $isadmin)) {
+                $userarray['msn'] = $user->msn;
+            }
+
+            if ((!isset($hiddenfields['firstaccess'])) or $isadmin) {
+                if ($user->firstaccess) {
+                    $userarray['firstaccess'] = $user->firstaccess;
+                } else {
+                    $userarray['firstaccess'] = 0;
+                }
+            }
+            if ((!isset($hiddenfields['lastaccess'])) or $isadmin) {
+                if ($user->lastaccess) {
+                    $userarray['lastaccess'] = $user->lastaccess;
+                } else {
+                    $userarray['lastaccess'] = 0;
+                }
+            }
+            /// Printing tagged interests
+            if (!empty($CFG->usetags)) {
+                require_once($CFG->dirroot . '/tag/lib.php');
+                if ($interests = tag_get_tags_csv('user', $user->id, TAG_RETURN_TEXT) ) {
+                    $userarray['interests'] = $interests;
+                }
+            }
+
+            //Departement/Institution are not displayed on any profile, however you can get them from editing profile.
+            if ($isadmin or $currentuser) {
+                if ($user->institution) {
+                    $userarray['institution'] = $user->institution;
+                }
+                if (isset($user->department)) { //isset because it's ok to have department 0
+                    $userarray['department'] = $user->department;
+                }
+            }
+
+            //list of courses where the user is enrolled
+            $enrolledcourses = array();
+            if (!isset($hiddenfields['mycourses'])) {
+                if ($mycourses = enrol_get_users_courses($user->id, true, NULL, 'visible DESC,sortorder ASC')) {
+                    $courselisting = '';
+                    foreach ($mycourses as $mycourse) {
+                        if ($mycourse->category) {
+                            if ($mycourse->visible == 0) {
+                                $ccontext = get_context_instance(CONTEXT_COURSE, $mycourse->id);
+                                if (!has_capability('moodle/course:viewhiddencourses', $ccontext)) {
+                                    continue;
+                                }
+                            }
+                            $enrolledcourse = array();
+                            $enrolledcourse['id'] = $mycourse->id;
+                            $enrolledcourse['fullname'] = $mycourse->fullname;
+                            $enrolledcourses[] = $enrolledcourse;
+                        }
+                    }
+                    $userarray['enrolledcourses'] = $enrolledcourses;
+                }
+            }
+
+            //user preferences
+            if ($currentuser) {
+                $preferences = array();
+                $userpreferences = get_user_preferences();
+                 foreach($userpreferences as $prefname => $prefvalue) {
+                    $preferences[] = array('name' => $prefname, 'value' => $prefvalue);
+                 }
+                 $userarray['preferences'] = $preferences;
+            }
             $result[] = $userarray;
         }
+        $users->close();
 
         return $result;
     }
@@ -578,8 +582,8 @@ class moodle_user_external extends external_api {
      */
     public static function get_users_by_id_returns() {
         return new external_multiple_structure(
-                new external_single_structure(
-                        array(
+            new external_single_structure(
+                array(
                     'id'    => new external_value(PARAM_NUMBER, 'ID of the user'),
                     'username'    => new external_value(PARAM_RAW, 'Username policy is defined in Moodle security config', VALUE_OPTIONAL),
                     'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
@@ -614,30 +618,342 @@ class moodle_user_external extends external_api {
                     'profileimageurlsmall' => new external_value(PARAM_URL, 'User image profile URL - small version'),
                     'profileimageurl' => new external_value(PARAM_URL, 'User image profile URL - big version'),
                     'customfields' => new external_multiple_structure(
-                                    new external_single_structure(
-                                            array(
-                                                'type'  => new external_value(PARAM_ALPHANUMEXT, 'The type of the custom field - text field, checkbox...'),
-                                                'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
-                                                'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
-                                                'shortname' => new external_value(PARAM_RAW, 'The shortname of the custom field - to be able to build the field class in the code'),
-                                            )
-                                    ), 'User custom fields (also known as user profil fields)', VALUE_OPTIONAL),
+                        new external_single_structure(
+                            array(
+                                'type'  => new external_value(PARAM_ALPHANUMEXT, 'The type of the custom field - text field, checkbox...'),
+                                'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
+                                'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
+                                'shortname' => new external_value(PARAM_RAW, 'The shortname of the custom field - to be able to build the field class in the code'),
+                            )
+                    ), 'User custom fields (also known as user profil fields)', VALUE_OPTIONAL),
                     'preferences' => new external_multiple_structure(
-                            new external_single_structure(
-                                    array(
-                                        'name'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preferences'),
-                                        'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
-                                    )
-                            ), 'User preferences', VALUE_OPTIONAL),
+                        new external_single_structure(
+                            array(
+                                'name'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preferences'),
+                                'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
+                            )
+                    ), 'User preferences', VALUE_OPTIONAL),
                     'enrolledcourses' => new external_multiple_structure(
-                            new external_single_structure(
-                                    array(
-                                        'id'  => new external_value(PARAM_INT, 'Id of the course'),
-                                        'fullname' => new external_value(PARAM_RAW, 'Fullname of the course')
-                                    )
-                            ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL)
-                        )
+                        new external_single_structure(
+                            array(
+                                'id'  => new external_value(PARAM_INT, 'Id of the course'),
+                                'fullname' => new external_value(PARAM_RAW, 'Fullname of the course')
+                            )
+                    ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL)
                 )
+            )
+        );
+    }
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function get_course_participants_by_id_parameters() {
+        return new external_function_parameters(
+            array(
+                'userlist' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'userid'    => new external_value(PARAM_INT, 'userid'),
+                            'courseid'    => new external_value(PARAM_INT, 'courseid'),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Get course participant's details
+     * @param array $userlist  array of user ids and according course ids
+     * @return array An array of arrays describing course participants
+     */
+    public static function get_course_participants_by_id($userlist) {
+        global $CFG, $USER, $DB;
+        require_once($CFG->dirroot . "/user/lib.php");
+        require_once($CFG->dirroot . "/user/profile/lib.php"); //custom field library
+        require_once($CFG->dirroot . "/lib/filelib.php");      // file handling on description and friends
+
+        $isadmin = is_siteadmin($USER);
+
+        $params = self::validate_parameters(self::get_course_participants_by_id_parameters(), array('userlist'=>$userlist));
+
+        $userids = array();
+        $courseids = array();
+        foreach ($params['userlist'] as $value) {
+            $userids[] = $value['userid'];
+            $courseids[$value['userid']] = $value['courseid'];
+        }
+
+        // cache all courses
+        $courses = array();
+        list($cselect, $cjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+        list($sqlcourseids, $params) = $DB->get_in_or_equal(array_unique($courseids));
+        $coursesql = "SELECT c.* $uselect
+                        FROM {course} c $cjoin
+                       WHERE c.id $sqlcourseids";
+        $rs = $DB->get_recordset_sql($coursesql, $params);
+        foreach ($rs as $course) {
+            // adding course contexts to cache
+            context_instance_preload($course);
+            // cache courses
+            $courses[$course->id] = $course;
+        }
+        $rs->close();
+
+        list($uselect, $ujoin) = context_instance_preload_sql('u.id', CONTEXT_USER, 'ctx');
+        list($sqluserids, $params) = $DB->get_in_or_equal($userids);
+        $usersql = "SELECT u.* $uselect
+                      FROM {user} u $ujoin
+                     WHERE u.id $sqluserids";
+        $users = $DB->get_recordset_sql($usersql, $params);
+        $result = array();
+        foreach ($users as $user) {
+            if (!empty($user->deleted)) {
+                continue;
+            }
+            context_instance_preload($user);
+            $usercontext = get_context_instance(CONTEXT_USER, $user->id);
+            $course = $courses[$courseids[$user->id]];
+            $context = get_context_instance(CONTEXT_COURSE, $courseids[$user->id]);
+            $hasviewdetailscap = has_capability('moodle/user:viewdetails', $context) || has_capability('moodle/user:viewdetails', $usercontext);
+
+            self::validate_context($context);
+
+            $currentuser = ($user->id == $USER->id);
+
+            if (!$currentuser && !$hasviewdetailscap && !has_coursecontact_role($user->id)) {
+                throw new moodle_exception('usernotavailable', 'error');
+            }
+            $userarray = array();
+
+            //basic fields
+            $userarray['id'] = $user->id;
+            if ($isadmin) {
+                $userarray['username'] = $user->username;
+            }
+            if ($isadmin or has_capability('moodle/site:viewfullnames', $context)) {
+                $userarray['firstname'] = $user->firstname;
+                $userarray['lastname'] = $user->lastname;
+            }
+            $userarray['fullname'] = fullname($user);
+
+            //Custom fields (matching /user/profile/lib.php - profile_display_fields code logic)
+            $userarray['customfields'] = array();
+
+            $fields = $DB->get_recordset_sql("SELECT f.*
+                                                FROM {user_info_field} f
+                                                JOIN {user_info_category} c
+                                                     ON f.categoryid=c.id
+                                            ORDER BY c.sortorder ASC, f.sortorder ASC");
+            foreach ($fields as $field) {
+                require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+                $newfield = 'profile_field_'.$field->datatype;
+                $formfield = new $newfield($field->id, $user->id);
+                if ($formfield->is_visible() and !$formfield->is_empty()) {
+                    $userarray['customfields'][] =
+                        array('name' => $formfield->field->name, 'value' => $formfield->data,
+                            'type' => $field->datatype, 'shortname' => $formfield->field->shortname);
+                }
+            }
+            $fields->close();
+
+            //image profiles urls (public, no permission required in fact)
+            $profileimageurl = moodle_url::make_pluginfile_url($usercontext->id, 'user', 'icon', NULL, '/', 'f1');
+            $userarray['profileimageurl'] = $profileimageurl->out(false);
+            $profileimageurlsmall = moodle_url::make_pluginfile_url($usercontext->id, 'user', 'icon', NULL, '/', 'f2');
+            $userarray['profileimageurlsmall'] = $profileimageurlsmall->out(false);
+
+            //hidden user field
+            if (has_capability('moodle/course:viewhiddenuserfields', $context)) {
+                $hiddenfields = array();
+            } else {
+                $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+            }
+
+            if (isset($user->description) && (!isset($hiddenfields['description']) or $isadmin)) {
+                if (empty($CFG->profilesforenrolledusersonly) || $currentuser) {
+                    $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $context->id, 'user', 'profile', null);
+                    $userarray['description'] = $user->description;
+                    $userarray['descriptionformat'] = $user->descriptionformat;
+                }
+            }
+
+            if ((! isset($hiddenfields['country']) or $isadmin) && $user->country) {
+                $userarray['country'] = $user->country;
+            }
+
+            if ((! isset($hiddenfields['city']) or $isadmin) && $user->city) {
+                $userarray['city'] = $user->city;
+            }
+
+            if (has_capability('moodle/course:viewhiddenuserfields', $context)) {
+                if ($user->address) {
+                    $userarray['address'] = $user->address;
+                }
+                if ($user->phone1) {
+                    $userarray['phone1'] = $user->phone1;
+                }
+                if ($user->phone2) {
+                    $userarray['phone2'] = $user->phone2;
+                }
+            }
+
+            if ($currentuser
+              or $user->maildisplay == 1
+              or has_capability('moodle/course:useremail', $context)
+              or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER))) {
+                $userarray['email'] = $user->email;;
+            }
+
+            if ($user->url && (!isset($hiddenfields['webpage']) or $isadmin)) {
+                $url = $user->url;
+                if (strpos($user->url, '://') === false) {
+                    $url = 'http://'. $url;
+                }
+                $user->url = clean_param($user->url, PARAM_URL);
+                $userarray['url'] = $user->url;
+            }
+
+            if ($user->icq && (!isset($hiddenfields['icqnumber']) or $isadmin)) {
+                $userarray['icq'] = $user->icq;
+            }
+
+            if ($user->skype && (!isset($hiddenfields['skypeid']) or $isadmin)) {
+                $userarray['skype'] = $user->skype;
+            }
+            if ($user->yahoo && (!isset($hiddenfields['yahooid']) or $isadmin)) {
+                $userarray['yahoo'] = $user->yahoo;
+            }
+            if ($user->aim && (!isset($hiddenfields['aimid']) or $isadmin)) {
+                $userarray['aim'] = $user->aim;
+            }
+            if ($user->msn && (!isset($hiddenfields['msnid']) or $isadmin)) {
+                $userarray['msn'] = $user->msn;
+            }
+
+            if ((!isset($hiddenfields['firstaccess'])) or $isadmin) {
+                if ($user->firstaccess) {
+                    $userarray['firstaccess'] = $user->firstaccess;
+                } else {
+                    $userarray['firstaccess'] = 0;
+                }
+            }
+            if ((!isset($hiddenfields['lastaccess'])) or $isadmin) {
+                if ($user->lastaccess) {
+                    $userarray['lastaccess'] = $user->lastaccess;
+                } else {
+                    $userarray['lastaccess'] = 0;
+                }
+            }
+            /// Printing tagged interests
+            if (!empty($CFG->usetags)) {
+                require_once($CFG->dirroot . '/tag/lib.php');
+                if ($interests = tag_get_tags_csv('user', $user->id, TAG_RETURN_TEXT) ) {
+                    $userarray['interests'] = $interests;
+                }
+            }
+
+            //Departement/Institution are not displayed on any profile, however you can get them from editing profile.
+            if ($isadmin or $currentuser) {
+                if ($user->institution) {
+                    $userarray['institution'] = $user->institution;
+                }
+                if (isset($user->department)) { //isset because it's ok to have department 0
+                    $userarray['department'] = $user->department;
+                }
+            }
+
+            // not a big secret
+            $userarray['roles'] = array();
+            $roles = get_user_roles($context, $user->id, false);
+            foreach ($roles as $role) {
+                $userarray['roles'][] = array(
+                    'roleid'       => $role->roleid,
+                    'name'         => $role->name,
+                    'shortname'    => $role->shortname,
+                    'sortorder'    => $role->sortorder
+                );
+            }
+
+            // If groups are in use and enforced throughout the course, then make sure we can meet in at least one course level group
+            if (has_capability('moodle/site:accessallgroups', $context)) {
+                $usergroups = groups_get_all_groups($course->id, $user->id, $course->defaultgroupingid, 'g.id, g.name,g.description');
+                foreach ($usergroups as $group) {
+                    $group->description = file_rewrite_pluginfile_urls($group->description, 'pluginfile.php', $context->id, 'group', 'description', $group->id);
+                    $userarray['groups'][] = array('id'=>$group->id, 'name'=>$group->name, 'description'=>$group->description);
+                }
+            }
+            $result[] = $userarray;
+        }
+
+        $users->close();
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function get_course_participants_by_id_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id'    => new external_value(PARAM_NUMBER, 'ID of the user'),
+                    'username'    => new external_value(PARAM_RAW, 'Username policy is defined in Moodle security config', VALUE_OPTIONAL),
+                    'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
+                    'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
+                    'fullname'    => new external_value(PARAM_NOTAGS, 'The fullname of the user'),
+                    'email'       => new external_value(PARAM_TEXT, 'An email address - allow email as root@localhost', VALUE_OPTIONAL),
+                    'address'     => new external_value(PARAM_MULTILANG, 'Postal address', VALUE_OPTIONAL),
+                    'phone1'      => new external_value(PARAM_NOTAGS, 'Phone 1', VALUE_OPTIONAL),
+                    'phone2'      => new external_value(PARAM_NOTAGS, 'Phone 2', VALUE_OPTIONAL),
+                    'icq'         => new external_value(PARAM_NOTAGS, 'icq number', VALUE_OPTIONAL),
+                    'skype'       => new external_value(PARAM_NOTAGS, 'skype id', VALUE_OPTIONAL),
+                    'yahoo'       => new external_value(PARAM_NOTAGS, 'yahoo id', VALUE_OPTIONAL),
+                    'aim'         => new external_value(PARAM_NOTAGS, 'aim id', VALUE_OPTIONAL),
+                    'msn'         => new external_value(PARAM_NOTAGS, 'msn number', VALUE_OPTIONAL),
+                    'department'  => new external_value(PARAM_TEXT, 'department', VALUE_OPTIONAL),
+                    'institution' => new external_value(PARAM_TEXT, 'institution', VALUE_OPTIONAL),
+                    'interests'   => new external_value(PARAM_TEXT, 'user interests (separated by commas)', VALUE_OPTIONAL),
+                    'firstaccess' => new external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
+                    'lastaccess'  => new external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),
+                    'description' => new external_value(PARAM_RAW, 'User profile description', VALUE_OPTIONAL),
+                    'descriptionformat' => new external_value(PARAM_INT, 'User profile description format', VALUE_OPTIONAL),
+                    'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
+                    'url'         => new external_value(PARAM_URL, 'URL of the user', VALUE_OPTIONAL),
+                    'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
+                    'profileimageurlsmall' => new external_value(PARAM_URL, 'User image profile URL - small version'),
+                    'profileimageurl' => new external_value(PARAM_URL, 'User image profile URL - big version'),
+                    'customfields' => new external_multiple_structure(
+                        new external_single_structure(
+                            array(
+                                'type'  => new external_value(PARAM_ALPHANUMEXT, 'The type of the custom field - text field, checkbox...'),
+                                'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
+                                'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
+                                'shortname' => new external_value(PARAM_RAW, 'The shortname of the custom field - to be able to build the field class in the code'),
+                            )
+                        ), 'User custom fields (also known as user profil fields)', VALUE_OPTIONAL),
+                    'groups' => new external_multiple_structure(
+                        new external_single_structure(
+                            array(
+                                'id'  => new external_value(PARAM_INT, 'group id'),
+                                'name' => new external_value(PARAM_RAW, 'group name'),
+                                'description' => new external_value(PARAM_RAW, 'group description'),
+                            )
+                        ), 'user groups', VALUE_OPTIONAL),
+                    'roles' => new external_multiple_structure(
+                        new external_single_structure(
+                            array(
+                                'roleid'       => new external_value(PARAM_INT, 'role id'),
+                                'name'         => new external_value(PARAM_RAW, 'role name'),
+                                'shortname'    => new external_value(PARAM_ALPHANUMEXT, 'role shortname'),
+                                'sortorder'    => new external_value(PARAM_INT, 'role sortorder')
+                            )
+                        ), 'user roles', VALUE_OPTIONAL),
+                )
+            )
         );
     }
 }
