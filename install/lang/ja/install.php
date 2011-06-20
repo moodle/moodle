@@ -75,7 +75,7 @@ $string['phpversionhelp'] = '<p>Moodleには、少なくとも 4.3.0 または 5
 (5.0.x の場合、バージョン 4.4.x にダウングレードすることもできます。)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'インストールが正常に完了したため、このページをご覧いただいています。あなたのコンピュータで <strong>{$a->packname} {$a->packversion}</strong> パッケージを起動してください。おめでとうございます!';
-$string['welcomep30'] = 'このリリース <strong>{$a->installername}</strong> には、<strong>Moodle</strong> で環境を作成するアプリケーションが含まれています。すなわち:';
+$string['welcomep30'] = 'このリリース <strong>{$a->installername}</strong> には、<strong>Moodle</strong> で環境を作成する次のアプリケーションが含まれています:';
 $string['welcomep40'] = 'パッケージには <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong> も含まれています。';
 $string['welcomep50'] = 'このパッケージ内のすべてのアプリケーションの使用は個々のライセンスによって規定されています。全体の <strong>{$a->installername}</strong> パッケージは <a href="http://www.opensource.org/docs/definition_plain.html">オープンソース</a> であり、<a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>ライセンスの下で配布されています。';
 $string['welcomep60'] = '次からのページは、あなたのコンピュータに <strong>Moodle</strong> を簡単に設定およびセットアップする手順にしたがって進みます。デフォルトの設定を使用することも、必要に応じて任意で設定を変更することもできます。';
