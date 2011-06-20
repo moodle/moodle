@@ -49,6 +49,22 @@ class qbehaviour_adaptive extends question_behaviour_with_save {
         return parent::get_expected_data();
     }
 
+    public function get_state_string($showcorrectness) {
+        $laststep = $this->qa->get_last_step();
+        if ($laststep->has_behaviour_var('_try')) {
+            $state = question_state::graded_state_for_fraction(
+                    $laststep->get_behaviour_var('_rawfraction'));
+            return $state->default_string(true);
+        }
+
+        $state = $this->qa->get_state();
+        if ($state == question_state::$todo) {
+            return get_string('notcomplete', 'qbehaviour_adaptive');
+        } else {
+            return parent::get_state_string($showcorrectness);
+        }
+    }
+
     public function get_right_answer_summary() {
         return $this->question->get_right_answer_summary();
     }
@@ -59,18 +75,6 @@ class qbehaviour_adaptive extends question_behaviour_with_save {
                 $this->qa->get_last_behaviour_var('_try')) {
             $options->feedback = true;
         }
-    }
-
-    public function get_state_string($showcorrectness) {
-        $state = $this->qa->get_state();
-
-        $laststep = $this->qa->get_last_step();
-        if ($laststep->has_behaviour_var('_try')) {
-            $state = question_state::graded_state_for_fraction(
-                    $laststep->get_behaviour_var('_rawfraction'));
-        }
-
-        return $state->default_string($showcorrectness);
     }
 
     public function process_action(question_attempt_pending_step $pendingstep) {

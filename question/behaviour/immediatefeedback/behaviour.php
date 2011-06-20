@@ -59,6 +59,15 @@ class qbehaviour_immediatefeedback extends question_behaviour_with_save {
         return parent::get_expected_data();
     }
 
+    public function get_state_string($showcorrectness) {
+        $state = $this->qa->get_state();
+        if ($state == question_state::$todo) {
+            return get_string('notcomplete', 'qbehaviour_immediatefeedback');
+        } else {
+            return parent::get_state_string($showcorrectness);
+        }
+    }
+
     public function get_right_answer_summary() {
         return $this->question->get_right_answer_summary();
     }
