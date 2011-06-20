@@ -652,9 +652,6 @@ if (isset($_SERVER['PHP_SELF'])) {
     unset($phppos);
 }
 
-// initialise ME's
-initialise_fullme();
-
 // init session prevention flag - this is defined on pages that do not want session
 if (CLI_SCRIPT) {
     // no sessions in CLI scripts possible
@@ -676,6 +673,10 @@ if (CLI_SCRIPT) {
 session_get_instance();
 $SESSION = &$_SESSION['SESSION'];
 $USER    = &$_SESSION['USER'];
+
+// initialise ME's
+// This must presently come AFTER $USER has been set up.
+initialise_fullme();
 
 // Late profiling, only happening if early one wasn't started
 if (!empty($CFG->profilingenabled)) {
