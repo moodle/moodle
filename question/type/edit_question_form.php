@@ -282,7 +282,7 @@ abstract class question_edit_form extends moodleform {
      *      field holding an array of answers
      * @return array of form fields.
      */
-    protected function get_per_answer_fields(&$mform, $label, $gradeoptions,
+    protected function get_per_answer_fields($mform, $label, $gradeoptions,
             &$repeatedoptions, &$answersoption) {
         $repeated = array();
         $repeated[] = $mform->createElement('header', 'answerhdr', $label);
@@ -498,14 +498,31 @@ abstract class question_edit_form extends moodleform {
      * @param object $question the data being passed to the form.
      * @return object $question the modified data.
      */
-    protected function data_preprocessing_answers($question) {
+    protected function data_preprocessing_answers($question, $withanswerfiles = false) {
         if (empty($question->options->answers)) {
             return $question;
         }
 
         $key = 0;
         foreach ($question->options->answers as $answer) {
-            $question->answer[$key] = $answer->answer;
+            if ($withanswerfiles) {
+                // Prepare the feedback editor to display files in draft area
+                $draftitemid = file_get_submitted_draft_itemid('answer['.$key.']');
+                $question->answer[$key]['text'] = file_prepare_draft_area(
+                    $draftitemid,          // draftid
+                    $this->context->id,    // context
+                    'question',            // component
+                    'answer',              // filarea
+                    !empty($answer->id) ? (int) $answer->id : null, // itemid
+                    $this->fileoptions,    // options
+                    $answer->answer        // text
+                );
+                $question->answer[$key]['itemid'] = $draftitemid;
+                $question->answer[$key]['format'] = $answer->answerformat;
+            } else {
+                $question->answer[$key] = $answer->answer;
+            }
+
             $question->fraction[$key] = 0 + $answer->fraction;
             $question->feedback[$key] = array();
 

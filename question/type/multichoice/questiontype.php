@@ -66,7 +66,7 @@ class qtype_multichoice extends question_type {
         $maxfraction = -1;
         $answers = array();
         foreach ($question->answer as $key => $answerdata) {
-            if ($answerdata == '') {
+            if (trim($answerdata['text']) == '') {
                 continue;
             }
 
@@ -80,16 +80,10 @@ class qtype_multichoice extends question_type {
                 $answer->id = $DB->insert_record('question_answers', $answer);
             }
 
-            if (is_array($answerdata)) {
-                // Doing an import
-                $answer->answer = $this->import_or_save_files($answerdata,
-                        $context, 'question', 'answer', $answer->id);
-                $answer->answerformat = $answerdata['format'];
-            } else {
-                // Saving the form
-                $answer->answer = $answerdata;
-                $answer->answerformat = FORMAT_HTML;
-            }
+            // Doing an import
+            $answer->answer = $this->import_or_save_files($answerdata,
+                    $context, 'question', 'answer', $answer->id);
+            $answer->answerformat = $answerdata['format'];
             $answer->fraction = $question->fraction[$key];
             $answer->feedback = $this->import_or_save_files($question->feedback[$key],
                     $context, 'question', 'answerfeedback', $answer->id);
@@ -177,7 +171,7 @@ class qtype_multichoice extends question_type {
         }
         $this->initialise_combined_feedback($question, $questiondata, true);
 
-        $this->initialise_question_answers($question, $questiondata);
+        $this->initialise_question_answers($question, $questiondata, false);
     }
 
     public function delete_question($questionid, $contextid) {
@@ -200,8 +194,9 @@ class qtype_multichoice extends question_type {
             $responses = array();
 
             foreach ($questiondata->options->answers as $aid => $answer) {
-                $responses[$aid] = new question_possible_response($answer->answer,
-                        $answer->fraction);
+                $responses[$aid] = new question_possible_response(html_to_text(format_text(
+                        $answer->answer, $answer->answerformat, array('noclean' => true)),
+                        0, false), $answer->fraction);
             }
 
             $responses[null] = question_possible_response::no_response();
@@ -211,7 +206,9 @@ class qtype_multichoice extends question_type {
 
             foreach ($questiondata->options->answers as $aid => $answer) {
                 $parts[$aid] = array($aid =>
-                        new question_possible_response($answer->answer, $answer->fraction));
+                        new question_possible_response(html_to_text(format_text(
+                        $answer->answer, $answer->answerformat, array('noclean' => true)),
+                        0, false), $answer->fraction));
             }
 
             return $parts;

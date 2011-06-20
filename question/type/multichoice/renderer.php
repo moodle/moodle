@@ -94,8 +94,9 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
             $radiobuttons[] = $hidden . html_writer::empty_tag('input', $inputattributes) .
                     html_writer::tag('label',
                         $this->number_in_style($value, $question->answernumbering) .
-                        $question->format_text($ans->answer, $ans->answerformat,
-                                $qa, 'question', 'answer', $ansid),
+                        $question->make_html_inline($question->format_text(
+                                $ans->answer, $ans->answerformat,
+                                $qa, 'question', 'answer', $ansid)),
                     array('for' => $inputattributes['id']));
 
             // $options->suppresschoicefeedback is a hack specific to the
@@ -104,8 +105,9 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
             if ($options->feedback && empty($options->suppresschoicefeedback) &&
                     $isselected && trim($ans->feedback)) {
                 $feedback[] = html_writer::tag('div',
-                        $question->format_text($ans->feedback, $ans->feedbackformat,
-                                $qa, 'question', 'answerfeedback', $ansid),
+                        $question->make_html_inline($question->format_text(
+                                $ans->feedback, $ans->feedbackformat,
+                                $qa, 'question', 'answerfeedback', $ansid)),
                         array('class' => 'specificfeedback'));
             } else {
                 $feedback[] = '';

@@ -96,6 +96,10 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
                 array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback'))) {
             return $this->check_combined_feedback_file_access($qa, $options, $filearea);
 
+        } else if ($component == 'question' && $filearea == 'answer') {
+            $answerid = reset($args); // itemid is answer id.
+            return  in_array($answerid, $this->order);
+
         } else if ($component == 'question' && $filearea == 'answerfeedback') {
             $answerid = reset($args); // itemid is answer id.
             $response = $this->get_response($qa);
@@ -119,6 +123,13 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
             return parent::check_file_access($qa, $options, $component, $filearea,
                     $args, $forcedownload);
         }
+    }
+
+    public function make_html_inline($html) {
+        $html = preg_replace('~\s*<p>\s*~', '', $html);
+        $html = preg_replace('~\s*</p>\s*~', '<br />', $html);
+        $html = preg_replace('~<br />$~', '', $html);
+        return $html;
     }
 }
 

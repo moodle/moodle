@@ -218,34 +218,28 @@ class qformat_xml extends qformat_default {
      * @param array answer xml tree for single answer
      * @return object answer object
      */
-    public function import_answer($answer) {
-        $fraction = $this->getpath($answer, array('@', 'fraction'), 0);
-        $answertext = $this->getpath($answer, array('#', 'text', 0, '#'), '', true);
-        $answerformat = $this->trans_format($this->getpath($answer,
-                array('@', 'format'), 'moodle_auto_format'));
-        $answerfiles = $this->import_files($this->getpath($answer,
-                array('#', 'file'), array()));
-
-        $feedbacktext = $this->getpath($answer,
-                array('#', 'feedback', 0, '#', 'text', 0, '#'), '', true);
-        $feedbackformat = $this->trans_format($this->getpath($answer,
-                array('#', 'feedback', 0, '@', 'format'), 'moodle_auto_format'));
-        $feedbackfiles = $this->import_files($this->getpath($answer,
-                array('#', 'feedback', 0, '#', 'file'), array()));
-
+    public function import_answer($answer, $withanswerfiles = false) {
         $ans = new stdClass();
 
         $ans->answer = array();
-        $ans->answer['text']   = $answertext;
-        $ans->answer['format'] = $answerformat;
-        $ans->answer['files']  = $answerfiles;
+        $ans->answer['text']   = $this->getpath($answer, array('#', 'text', 0, '#'), '', true);
+        $ans->answer['format'] = $this->trans_format($this->getpath($answer,
+                array('@', 'format'), 'moodle_auto_format'));
+        if ($withanswerfiles) {
+            $ans->answer['files']  = $this->import_files($this->getpath($answer,
+                    array('#', 'file'), array()));
+        }
 
         $ans->feedback = array();
-        $ans->feedback['text']   = $feedbacktext;
-        $ans->feedback['format'] = $feedbackformat;
-        $ans->feedback['files']  = $feedbackfiles;
+        $ans->feedback['text']   = $this->getpath($answer,
+                array('#', 'feedback', 0, '#', 'text', 0, '#'), '', true);
+        $ans->feedback['format'] = $this->trans_format($this->getpath($answer,
+                array('#', 'feedback', 0, '@', 'format'), 'moodle_auto_format'));
+        $ans->feedback['files']  = $this->import_files($this->getpath($answer,
+                array('#', 'feedback', 0, '#', 'file'), array()));
 
-        $ans->fraction = $fraction / 100;
+        $ans->fraction = $this->getpath($answer, array('@', 'fraction'), 0) / 100;
+
         return $ans;
     }
 
@@ -303,19 +297,13 @@ class qformat_xml extends qformat_default {
             return $hint;
         }
 
-        $hint->hint = $this->getpath($hintxml,
-                array('#', 'text', 0, '#'), '', true);
-        $hinttext = array();
-        $hinttext['text'] = $this->getpath($hintxml,
-                array('#', 'text', 0, '#'), '', true);
-        $hinttext['format'] = $this->trans_format($this->getpath($hintxml,
-                array('@', 'format'), 'moodle_auto_format'));
-
-        $hinttext['files'] = $this->import_files($this->getpath($hintxml,
-                array('#', 'file'), array(), false));
-
         $hint = new stdClass();
-        $hint->hint = $hinttext;
+        $hint->hint['text'] = $this->getpath($hintxml,
+                array('#', 'text', 0, '#'), '', true);
+        $hint->hint['format'] = $this->trans_format($this->getpath($hintxml,
+                array('@', 'format'), 'moodle_auto_format'));
+        $hint->hint['files'] = $this->import_files($this->getpath($hintxml,
+                array('#', 'file'), array(), false));
         $hint->shownumcorrect = array_key_exists('shownumcorrect', $hintxml['#']);
         $hint->clearwrong = array_key_exists('clearwrong', $hintxml['#']);
         $hint->options = $this->getpath($hintxml, array('#', 'options', 0, '#'), '', true);
@@ -395,7 +383,7 @@ class qformat_xml extends qformat_default {
         $answers = $question['#']['answer'];
         $acount = 0;
         foreach ($answers as $answer) {
-            $ans = $this->import_answer($answer);
+            $ans = $this->import_answer($answer, true);
             $qo->answer[$acount] = $ans->answer;
             $qo->fraction[$acount] = $ans->fraction;
             $qo->feedback[$acount] = $ans->feedback;
@@ -768,7 +756,7 @@ class qformat_xml extends qformat_default {
         $qo->correctanswerlength = array();
         $qo->feedback = array();
         foreach ($answers as $answer) {
-            $ans = $this->import_answer($answer);
+            $ans = $this->import_answer($answer, true);
             // answer outside of <text> is deprecated
             if (empty($ans->answer['text'])) {
                 $ans->answer['text'] = '*';
@@ -1065,6 +1053,8 @@ class qformat_xml extends qformat_default {
                 $contextid, 'question', 'generalfeedback', $question->id);
         if (!empty($question->options->answers)) {
             foreach ($question->options->answers as $answer) {
+                $answer->answerfiles = $fs->get_area_files(
+                        $contextid, 'question', 'answer', $answer->id);
                 $answer->feedbackfiles = $fs->get_area_files(
                         $contextid, 'question', 'answerfeedback', $answer->id);
             }
@@ -1429,6 +1419,7 @@ class qformat_xml extends qformat_default {
         $output = '';
         $output .= "    <answer fraction=\"$percent\" {$this->format($answer->answerformat)}>\n";
         $output .= $this->writetext($answer->answer, 3);
+        $output .= $this->writefiles($answer->answerfiles);
         $output .= "      <feedback {$this->format($answer->feedbackformat)}>\n";
         $output .= $this->writetext($answer->feedback, 4);
         $output .= $this->writefiles($answer->feedbackfiles);

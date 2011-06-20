@@ -751,8 +751,14 @@ class question_type {
      * Initialise question_definition::answers field.
      * @param question_definition $question the question_definition we are creating.
      * @param object $questiondata the question data loaded from the database.
+     * @param bool $forceplaintextanswers most qtypes assume that answers are
+     *      FORMAT_PLAIN, and dont use the answerformat DB column (it contains
+     *      the default 0 = FORMAT_MOODLE). Therefore, by default this method
+     *      ingores answerformat. Pass false here to use answerformat. For example
+     *      multichoice does this.
      */
-    protected function initialise_question_answers(question_definition $question, $questiondata) {
+    protected function initialise_question_answers(question_definition $question,
+            $questiondata, $forceplaintextanswers = true) {
         $question->answers = array();
         if (empty($questiondata->options->answers)) {
             return;
@@ -760,6 +766,9 @@ class question_type {
         foreach ($questiondata->options->answers as $a) {
             $question->answers[$a->id] = new question_answer($a->id, $a->answer,
                     $a->fraction, $a->feedback, $a->feedbackformat);
+            if (!$forceplaintextanswers) {
+                $question->answers[$a->id]->answerformat = $a->answerformat;
+            }
         }
     }
 
