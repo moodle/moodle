@@ -1571,13 +1571,12 @@ function quiz_extend_settings_navigation($settings, $quiznode) {
     // We want to add these new nodes after the Edit settings node, and before the
     // Locally assigned roles node. Of course, both of those are controlled by capabilities.
     $keys = $quiznode->get_children_key_list();
+    $beforekey = null;
     $i = array_search('modedit', $keys);
-    if ($i === false) {
+    if ($i === false and array_key_exists(0, $keys)) {
         $beforekey = $keys[0];
     } else if (array_key_exists($i + 1, $keys)) {
         $beforekey = $keys[$i + 1];
-    } else {
-        $beforekey = null;
     }
 
     if (has_capability('mod/quiz:manageoverrides', $PAGE->cm->context)) {
