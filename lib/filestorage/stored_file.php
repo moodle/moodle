@@ -125,7 +125,7 @@ class stored_file {
         $path = $this->get_content_file_location();
         if (!is_readable($path)) {
             if (!$this->fs->try_content_recovery($this) or !is_readable($path)) {
-                throw new file_exception('storedfilecannotread');
+                throw new file_exception('storedfilecannotread', '', $path);
             }
         }
         return fopen($path, 'rb'); //binary reading only!!
@@ -140,7 +140,7 @@ class stored_file {
         $path = $this->get_content_file_location();
         if (!is_readable($path)) {
             if (!$this->fs->try_content_recovery($this) or !is_readable($path)) {
-                throw new file_exception('storedfilecannotread');
+                throw new file_exception('storedfilecannotread', '', $path);
             }
         }
         readfile($path);
@@ -155,7 +155,7 @@ class stored_file {
         $path = $this->get_content_file_location();
         if (!is_readable($path)) {
             if (!$this->fs->try_content_recovery($this) or !is_readable($path)) {
-                throw new file_exception('storedfilecannotread');
+                throw new file_exception('storedfilecannotread', '', $path);
             }
         }
         return file_get_contents($this->get_content_file_location());
@@ -171,7 +171,7 @@ class stored_file {
         $path = $this->get_content_file_location();
         if (!is_readable($path)) {
             if (!$this->fs->try_content_recovery($this) or !is_readable($path)) {
-                throw new file_exception('storedfilecannotread');
+                throw new file_exception('storedfilecannotread', '', $path);
             }
         }
         return copy($path, $pathname);

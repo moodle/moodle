@@ -1045,7 +1045,7 @@ class file_storage {
      */
     public function add_file_to_pool($pathname, $contenthash = NULL) {
         if (!is_readable($pathname)) {
-            throw new file_exception('storedfilecannotread');
+            throw new file_exception('storedfilecannotread', '', $pathname);
         }
 
         if (is_null($contenthash)) {
@@ -1072,7 +1072,7 @@ class file_storage {
             $newfile = true;
 
             if (!copy($pathname, $hashfile)) {
-                throw new file_exception('storedfilecannotread');
+                throw new file_exception('storedfilecannotread', '', $pathname);
             }
 
             if (filesize($hashfile) !== $filesize) {
