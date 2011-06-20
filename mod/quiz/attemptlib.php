@@ -1213,6 +1213,11 @@ abstract class quiz_nav_panel_base {
 
     public function user_picture() {
         global $DB;
+
+        if (!$this->attemptobj->get_quiz()->showuserpicture) {
+            return null;
+        }
+
         $user = $DB->get_record('user', array('id' => $this->attemptobj->get_userid()));
         $userpicture = new user_picture($user);
         $userpicture->courseid = $this->attemptobj->get_courseid();

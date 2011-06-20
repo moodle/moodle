@@ -247,7 +247,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         }
         $output .= $panel->render_before_button_bits($this);
 
-        $output = html_writer::start_tag('div', array('class' => 'qn_buttons'));
+        $output .= html_writer::start_tag('div', array('class' => 'qn_buttons'));
         foreach ($panel->get_question_buttons() as $button) {
             $output .= $this->render($button);
         }
