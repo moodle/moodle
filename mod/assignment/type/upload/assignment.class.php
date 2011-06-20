@@ -525,7 +525,6 @@ class assignment_upload extends assignment_base {
 
         $returnurl  = new moodle_url('/mod/assignment/view.php', array('id'=>$this->cm->id));
         $submission = $this->get_submission($USER->id);
-        $filecount = $this->count_user_files($submission->id);
 
         if (!$this->can_upload_file($submission)) {
             $this->view_header(get_string('upload'));
