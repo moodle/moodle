@@ -141,8 +141,6 @@ class qtype_multianswer_edit_form extends question_edit_form {
                 get_string('decodeverifyquestiontext', 'qtype_multianswer'));
         $mform->registerNoSubmitButton('analyzequestion');
         if ($this->reload) {
-            $mform->addElement('html', '<div class="ablock clearfix">');
-            $mform->addElement('html', '<div class=" clearfix">');
             for ($sub = 1; $sub <= $countsubquestions; $sub++) {
 
                 $this->editas[$sub] = 'unknown type';
@@ -151,15 +149,16 @@ class qtype_multianswer_edit_form extends question_edit_form {
                 } else if (optional_param('sub_'.$sub."_".'qtype', '', PARAM_RAW) != '') {
                     $this->editas[$sub] = optional_param('sub_'.$sub."_".'qtype', '', PARAM_RAW);
                 }
+
                 $storemess = '';
                 if (isset($this->savedquestiondisplay->options->questions[$sub]->qtype) &&
                         $this->savedquestiondisplay->options->questions[$sub]->qtype !=
                                 $this->questiondisplay->options->questions[$sub]->qtype) {
                     $this->qtype_change = true;
-                    $storemess = "<font class=\"error\"> STORED QTYPE " .
-                            question_bank::get_qtype_name(
-                            $this->savedquestiondisplay->options->questions[$sub]->qtype).
-                            "</font >";
+                    $storemess = ' ' . html_writer::tag('span', get_string(
+                            'storedqtype', 'qtype_multianswer', question_bank::get_qtype_name(
+                                    $this->savedquestiondisplay->options->questions[$sub]->qtype)),
+                            array('class' => 'error'));
                 }
 
                 $mform->addElement('header', 'subhdr'.$sub, get_string('questionno', 'question',
@@ -167,8 +166,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
                         $this->questiondisplay->options->questions[$sub]->qtype).$storemess);
 
                 $mform->addElement('static', 'sub_'.$sub."_".'questiontext',
-                        get_string('questiondefinition', 'qtype_multianswer'),
-                        array('cols' => 60, 'rows' => 3));
+                        get_string('questiondefinition', 'qtype_multianswer'));
 
                 if (isset ($this->questiondisplay->options->questions[$sub]->questiontext)) {
                     $mform->setDefault('sub_'.$sub."_".'questiontext',
@@ -187,13 +185,12 @@ class qtype_multianswer_edit_form extends question_edit_form {
 
                 if ($this->questiondisplay->options->questions[$sub]->qtype == 'multichoice') {
                     $mform->addElement('static', 'sub_'.$sub."_".'layout',
-                            get_string('layout', 'qtype_multianswer'),
-                            array('cols' => 60, 'rows' => 1));
+                            get_string('layout', 'qtype_multianswer'));
                 }
-                foreach ($this->questiondisplay->options->questions[$sub]->answer as $key => $ans) {
 
+                foreach ($this->questiondisplay->options->questions[$sub]->answer as $key => $ans) {
                     $mform->addElement('static', 'sub_'.$sub."_".'answer['.$key.']',
-                            get_string('answer', 'question'), array('cols' => 60, 'rows' => 1));
+                            get_string('answer', 'question'));
 
                     if ($this->questiondisplay->options->questions[$sub]->qtype == 'numerical' &&
                             $key == 0) {
@@ -207,9 +204,8 @@ class qtype_multianswer_edit_form extends question_edit_form {
                     $mform->addElement('static', 'sub_'.$sub."_".'feedback['.$key.']',
                             get_string('feedback', 'question'));
                 }
-
             }
-            $mform->addElement('html', '</div>');
+
             $this->negative_diff = $countsavedsubquestions - $countsubquestions;
             if (($this->negative_diff > 0) ||$this->qtype_change ||
                     ($this->used_in_quiz && $this->negative_diff != 0)) {
@@ -226,7 +222,6 @@ class qtype_multianswer_edit_form extends question_edit_form {
                         get_string('questiontypechanged', 'qtype_multianswer')."</strong>",
                         get_string('questiontypechangedcomment', 'qtype_multianswer'));
             }
-            $mform->addElement('html', '</div>');
         }
         if ($this->used_in_quiz) {
             if ($this->negative_diff < 0) {
