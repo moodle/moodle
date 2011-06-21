@@ -26,7 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/format.php');
 require_once($CFG->libdir . '/xmlize.php');
 
 

@@ -876,14 +876,7 @@ function lesson_get_import_export_formats($type) {
             $provided = $format_class->provide_export();
         }
         if ($provided) {
-            //TODO: do NOT rely on [[]] any more!!
-            $formatname = get_string($fileformat, 'quiz');
-            if ($formatname == "[[$fileformat]]") {
-                $formatname = get_string($fileformat, 'qformat_'.$fileformat);
-                if ($formatname == "[[$fileformat]]") {
-                    $formatname = $fileformat;  // Just use the raw folder name
-                }
-            }
+            $formatname = get_string($fileformat, 'qformat_'.$fileformat);
             $fileformatnames[$fileformat] = $formatname;
         }
     }
