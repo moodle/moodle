@@ -1866,23 +1866,25 @@ class assignment_base {
 
         $output = '';
 
-        $fs = get_file_storage();
-
-        $found = false;
-
         $submission = $this->get_submission($userid);
+        if (!$submission) {
+            return $output;
+        }
 
-        if (($submission) && $files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id, "timemodified", false)) {
-            require_once($CFG->libdir.'/portfoliolib.php');
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id, "timemodified", false);
+        if (!empty($files)) {
             require_once($CFG->dirroot . '/mod/assignment/locallib.php');
-            $button = new portfolio_add_button();
+            if ($CFG->enableportfolios) {
+                require_once($CFG->libdir.'/portfoliolib.php');
+                $button = new portfolio_add_button();
+            }
             foreach ($files as $file) {
                 $filename = $file->get_filename();
-                $found = true;
                 $mimetype = $file->get_mimetype();
                 $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/mod_assignment/submission/'.$submission->id.'/'.$filename);
                 $output .= '<a href="'.$path.'" ><img src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />'.s($filename).'</a>';
-                if ($this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
+                if ($CFG->enableportfolios && $this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                     $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'fileid' => $file->get_id()), '/mod/assignment/locallib.php');
                     $button->set_format_by_file($file);
                     $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);

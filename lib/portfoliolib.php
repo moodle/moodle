@@ -102,6 +102,11 @@ class portfolio_add_button {
     */
     public function __construct($options=null) {
         global $SESSION, $CFG;
+
+        if (empty($CFG->enableportfolios)) {
+            debugging('Building portfolio add button while portfolios is disabled. This code can be optimised.', DEBUG_DEVELOPER);
+        }
+
         $this->instances = portfolio_instances();
         if (empty($options)) {
             return true;

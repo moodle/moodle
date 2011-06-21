@@ -1291,7 +1291,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
 
         $patterns[]='##export##';
 
-        if ($CFG->enableportfolios && ($template == 'singletemplate' || $template == 'listtemplate')
+        if (!empty($CFG->enableportfolios) && ($template == 'singletemplate' || $template == 'listtemplate')
             && ((has_capability('mod/data:exportentry', $context)
                 || (data_isowner($record->id) && has_capability('mod/data:exportownentry', $context))))) {
             require_once($CFG->libdir . '/portfoliolib.php');
