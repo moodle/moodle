@@ -56,6 +56,8 @@
 
     $navlinks = array();
 
+    $canexportsess = has_capability('mod/chat:exportsession', $context);
+
 /// Print a session if one has been specified
 
     if ($start and $end and !$confirmdelete) {   // Show a full transcript
@@ -101,8 +103,8 @@
                     echo $formatmessage->html;
                 }
             }
-            $participated_cap = array_key_exists($USER->id, $participates) && has_capability('mod/chat:exportparticipatedsession', $context);
-            if (has_capability('mod/chat:exportsession', $context) || $participated_cap) {
+            $participatedcap = array_key_exists($USER->id, $participates) && has_capability('mod/chat:exportparticipatedsession', $context);
+            if (!empty($CFG->enableportfolios) && ($canexportsess || $participatedcap)) {
                 require_once($CFG->libdir . '/portfoliolib.php');
                 $buttonoptions  = array(
                     'id'    => $cm->id,
@@ -227,9 +229,8 @@
 
                 echo '<p align="right">';
                 echo "<a href=\"report.php?id=$cm->id&amp;start=$sessionstart&amp;end=$sessionend\">$strseesession</a>";
-                if (has_capability('mod/chat:exportsession', $context)
-                    || (array_key_exists($USER->id, $sessionusers)
-                        && has_capability('mod/chat:exportparticipatedsession', $context))) {
+                $participatedcap = (array_key_exists($USER->id, $sessionusers) && has_capability('mod/chat:exportparticipatedsession', $context));
+                if (!empty($CFG->enableportfolios) && ($canexportsess || $participatedcap)) {
                     require_once($CFG->libdir . '/portfoliolib.php');
                     $buttonoptions  = array(
                         'id'    => $cm->id,
@@ -257,7 +258,7 @@
         $lasttime = $message->timestamp;
     }
 
-    if (has_capability('mod/chat:exportsession', $context)) {
+    if (!empty($CFG->enableportfolios) && $canexportsess) {
         require_once($CFG->libdir . '/portfoliolib.php');
         $button = new portfolio_add_button();
         $button->set_callback_options('chat_portfolio_caller', array('id' => $cm->id), '/mod/chat/locallib.php');
