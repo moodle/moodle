@@ -28,9 +28,5 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['availablelangs'] = 'Списък на наличните езици';
-$string['chooselanguagehead'] = 'Изберете език';
-$string['chooselanguagesub'] = 'Моля, изберете език за инсталацията. Този език ще бъде, също така, език по подразбиране на сайта, но може да бъде променен и по-късно след инсталирането.';
-$string['installation'] = 'Инсталиране';
-$string['paths'] = 'Пътища';
-$string['pathshead'] = 'Потвърждаване на пътищата';
+$string['cannotcreatetempdir'] = 'Не може да създаде временна директория';
+$string['cannotfindcomponent'] = 'Не можа да намери компонент';

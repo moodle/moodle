@@ -46,16 +46,18 @@ $string['errorsinenvironment'] = 'Ci sono problemi nel vostro ambiente';
 $string['installation'] = 'Installazione';
 $string['langdownloaderror'] = 'Purtroppo non è stato possibile scaricare la lingua "{$a}". L\'installazione proseguirà in lingua Inglese.';
 $string['memorylimithelp'] = '<p>Il limite della memoria assegnata al PHP attualmente è {$a}.</p>
+
 <p>Questo limite potrà causare problemi nel funzionamento di Moodle, specialmente se usate molti moduli di attività con molti utenti.</p>
-<p>Vi raccomandiamo di impostare il PHP con un limite più alto se possibile, ad esempio 40M.
-Ci sono diversi modi che potete provare:
+
+<p>Ti raccomandiamo di impostare il PHP con un limite più alto se possibile, ad esempio 40M.
+Ci sono diversi modi che puoi provare:
 <ol>
-<li>Se possibile, ricompilate il PHP con l\'opzione <i>--enable-memory-limit</i>.
+<li>Se possibile, ricompila il PHP con l\'opzione <i>--enable-memory-limit</i>.
 Questo permetterà  a Moodle di impostare il limite di memoria da solo.</li>
-<li>Se avete accesso al file php.ini, è possibile modificare la variabile <b>memory_limit</b> a un valore più alto, ad esempio 40M. Se non avete accesso, potete chiedere al vostro amministratore di sistema di farlo.</li>
-<li>Su alcuni server PHP è possibile creare un file .htaccess nella Cartella di Moodle che contenga questa linea:
+<li>Se hai accesso al file php.ini, è possibile modificare la variabile <b>memory_limit</b> a un valore più alto, ad esempio 40M. Se non hai accesso, potete chiedere al vostro amministratore di sistema di farlo.</li>
+<li>Su alcuni server con il PHP è possibile creare un file .htaccess nella cartella di Moodle contenente questa linea:
 <blockquote>php_value memory_limit 40M</blockquote>
-<p>Tuttavia, su alcuni server questo impedirà  a <b>tutte</b> le pagine PHP di funzionare (vedrete degli errori quando visualizzerete le pagine) cosi dovrete rimuovere il file .htaccess.</li></ol>';
+<p>Tuttavia, su alcuni server la direttiva potrebbe impedire  a <b>tutte</b> le pagine PHP di funzionare (apapriranno degli erorri durante la visualizzazione delle pagine), in tal caso dovrai rimuovere il file .htaccess.</li></ol>';
 $string['paths'] = 'Percorsi';
 $string['pathserrcreatedataroot'] = 'Lo script di installazione non ha potuto creare la Cartella dei dati ({$a->dataroot}).';
 $string['pathshead'] = 'Conferma percorsi';
@@ -77,10 +79,10 @@ $string['phpversionhelp'] = '<p>Moodle necessita come minimo della versione 4.3.
 <p>Dovete aggiornare la versione del PHP oppure spostarsi su un host che abbia una versione più aggiornata del PHP!<br>
 (Se avete la 5.0.x, potete fare il downgrade alla versione 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Se vedete questa pagina avete installato correttamente e lanciato il pacchetto <strong>{$a->packname} {$a->packversion}</strong>. Complimenti!';
-$string['welcomep30'] = 'La release di <strong>{$a->installername}</strong> include un applicazione per creare l\'ambiente dive girerà <strong>Moodle</strong>:';
+$string['welcomep20'] = 'Se vedi questa pagina hai installato correttamente e lanciato il pacchetto <strong>{$a->packname} {$a->packversion}</strong>. Complimenti!';
+$string['welcomep30'] = 'La release di <strong>{$a->installername}</strong> include l\'applicazione per creare l\'ambiente necessario a far girare <strong>Moodle</strong>:';
 $string['welcomep40'] = 'Il pacchetto include anche <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'L\'utilizzo delle applicazioni incluse in questo pacchetto è regolato dalle rispettive licenze. L\'intero pacchetto <strong>{$a->installername}</strong> è <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> ed è distribuito in accordo alla licenza <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
-$string['welcomep60'] = 'Le prossime pagine vi guideranno attraverso semplici passi per installare e configurare <strong>Moodle</strong> nel vostro computer. Potete utilizzare le impostazioni di default oppure modificarle per adeguarle alle vostre esigenze.';
+$string['welcomep60'] = 'Le prossime pagine ti guideranno attraverso semplici passi per installare e configurare <strong>Moodle</strong> nel tuo computer. Puoi utilizzare le impostazioni di default oppure modificarle per adeguarle alle tue esigenze.';
 $string['welcomep70'] = 'Fate click sul pulsante "Avanti" per continuare l\'installazione di <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Indirizzo web';
