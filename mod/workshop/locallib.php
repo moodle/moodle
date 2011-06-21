@@ -1169,11 +1169,11 @@ class workshop {
             return false;
         }
         if (!$ignoredeadlines and !empty($this->submissionstart) and $this->submissionstart > $now) {
-            // if enabled, submitting is not allowed before the date/time defined in the mod_form
+            // if enabled, re-submitting is not allowed before the date/time defined in the mod_form
             return false;
         }
-        if (!$ignoredeadlines and !$this->latesubmissions and !empty($this->submissionend) and $now > $this->submissionend) {
-            // if enabled, submitting is not allowed after the date/time defined in the mod_form unless late submission is allowed
+        if (!$ignoredeadlines and !empty($this->submissionend) and $now > $this->submissionend) {
+            // if enabled, re-submitting is not allowed after the date/time defined in the mod_form even if late submission is allowed
             return false;
         }
         return true;
