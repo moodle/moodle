@@ -205,14 +205,14 @@ class mod_choice_renderer extends plugin_renderer_base {
             $selecturl = new moodle_url('#');
 
             $selectallactions = new component_action('click',"select_all_in", array('div',null,'tablecontainer'));
-            $selectall = new action_link($selecturl, get_string('selectall', 'quiz'), $selectallactions);
+            $selectall = new action_link($selecturl, get_string('selectall'), $selectallactions);
             $actiondata .= $this->output->render($selectall) . ' / ';
 
             $deselectallactions = new component_action('click',"deselect_all_in", array('div',null,'tablecontainer'));
-            $deselectall = new action_link($selecturl, get_string('selectnone', 'quiz'), $deselectallactions);
+            $deselectall = new action_link($selecturl, get_string('deselectall'), $deselectallactions);
             $actiondata .= $this->output->render($deselectall);
 
-            $actiondata .= html_writer::tag('label', ' ' . get_string('withselected', 'quiz') . ' ', array('for'=>'menuaction'));
+            $actiondata .= html_writer::tag('label', ' ' . get_string('withselected', 'choice') . ' ', array('for'=>'menuaction'));
 
             $actionurl = new moodle_url($PAGE->url, array('sesskey'=>sesskey(), 'action'=>'delete_confirmation()'));
             $select = new single_select($actionurl, 'action', array('delete'=>get_string('delete')), null, array(''=>get_string('chooseaction', 'choice')), 'attemptsform');
