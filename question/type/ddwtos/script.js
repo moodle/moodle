@@ -142,7 +142,6 @@ var ddwtos_currentzindex = 10;
             }
 
             show_element(this.getEl());
-
             if (target.player) { // there's a player already there
                 var oldplayer = target.player;
                 oldplayer.startDrag(0,0);
@@ -152,6 +151,7 @@ var ddwtos_currentzindex = 10;
             YAHOO.util.DragDropMgr.moveToEl(dragged, target.getEl());
             this.slot = target;
             target.player = this;
+
             YAHOO.util.Dom.setXY(target.player.getEl(), YAHOO.util.Dom.getXY(target.getEl()));
             YAHOO.util.Dom.addClass(this.getEl(), 'placed');
             if (YAHOO.util.Dom.hasClass(target.getEl(), 'readonly')) {
@@ -217,7 +217,7 @@ var ddwtos_currentzindex = 10;
         var height = region.bottom - region.top;
         var width = region.right - region.left;
 
-        // -2 is becuase get_region includes the border, but style.width/height does not.
+        // -2 is because get_region includes the border, but style.width/height does not.
         newNode.style.height = (height - 2) + "px";
         newNode.style.width = (width - 2) + "px";
 
@@ -301,6 +301,9 @@ var ddwtos_currentzindex = 10;
 
         for (var i = 0; i < slots.length; i++) {
             var slot = slots[i];
+
+            height = YAHOO.util.Dom.getStyle(players[0], 'height');
+            YAHOO.util.Dom.setStyle(slot.id, 'height', height);
 
             var hiddenElement = document.getElementById(slot.id + '_hidden');
             if (!hiddenElement) {

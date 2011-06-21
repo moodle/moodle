@@ -31,6 +31,7 @@
 }
 .que.ddwtos .player.placed { /* Lets the focus rectangle be visible in IE. */
     background: transparent;
+    border: 0;
 }
 
 .que.ddwtos .readonly {
