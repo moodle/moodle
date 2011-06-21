@@ -1625,7 +1625,7 @@ class core_renderer extends renderer_base {
         $title = get_string($helpicon->identifier, $helpicon->component);
 
         if (empty($helpicon->linktext)) {
-            $alt = $title;
+            $alt = get_string('helpprefix2', '', trim($title, ". \t"));
         } else {
             $alt = get_string('helpwiththis');
         }
