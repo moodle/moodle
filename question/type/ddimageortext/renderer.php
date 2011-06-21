@@ -18,7 +18,7 @@
  * Drag-and-drop words into sentences question renderer class.
  *
  * @package    qtype
- * @subpackage ddwtos
+ * @subpackage ddimagetoimage
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,10 +35,10 @@ require_once($CFG->dirroot . '/question/type/gapselect/rendererbase.php');
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_renderer {
+class qtype_ddimagetoimage_renderer extends qtype_elements_embedded_in_question_text_renderer {
 
     protected function qtext_classname() {
-        return 'qtext ddwtos_questionid_for_javascript';
+        return 'qtext ddimagetoimage_questionid_for_javascript';
     }
 
     protected function post_qtext_elements(question_attempt $qa,

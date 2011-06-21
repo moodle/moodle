@@ -27,12 +27,12 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * restore plugin class that provides the necessary information
- * needed to restore one ddwtos qtype plugin
+ * needed to restore one ddimagetoimage qtype plugin
  *
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_qtype_ddwtos_plugin extends restore_qtype_plugin {
+class restore_qtype_ddimagetoimage_plugin extends restore_qtype_plugin {
 
     /**
      * Returns the paths to be handled by the plugin at question level
@@ -45,17 +45,17 @@ class restore_qtype_ddwtos_plugin extends restore_qtype_plugin {
         $this->add_question_question_answers($paths);
 
         // Add own qtype stuff
-        $elename = 'ddwtos';
-        $elepath = $this->get_pathfor('/ddwtos'); // we used get_recommended_name() so this works
+        $elename = 'ddimagetoimage';
+        $elepath = $this->get_pathfor('/ddimagetoimage'); // we used get_recommended_name() so this works
         $paths[] = new restore_path_element($elename, $elepath);
 
         return $paths; // And we return the interesting paths
     }
 
     /**
-     * Process the qtype/ddwtos element
+     * Process the qtype/ddimagetoimage element
      */
-    public function process_ddwtos($data) {
+    public function process_ddimagetoimage($data) {
         global $DB;
 
         $data = (object)$data;
@@ -66,14 +66,14 @@ class restore_qtype_ddwtos_plugin extends restore_qtype_plugin {
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
-        // If the question has been created by restore, we need to create its question_ddwtos too
+        // If the question has been created by restore, we need to create its question_ddimagetoimage too
         if ($questioncreated) {
             // Adjust some columns
             $data->questionid = $newquestionid;
             // Insert record
-            $newitemid = $DB->insert_record('question_ddwtos', $data);
+            $newitemid = $DB->insert_record('question_ddimagetoimage', $data);
             // Create mapping (needed for decoding links)
-            $this->set_mapping('question_ddwtos', $oldid, $newitemid);
+            $this->set_mapping('question_ddimagetoimage', $oldid, $newitemid);
         }
     }
 
@@ -85,7 +85,7 @@ class restore_qtype_ddwtos_plugin extends restore_qtype_plugin {
         $contents = array();
 
         $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
-        $contents[] = new restore_decode_content('question_ddwtos', $fields, 'question_ddwtos');
+        $contents[] = new restore_decode_content('question_ddimagetoimage', $fields, 'question_ddimagetoimage');
 
         return $contents;
     }

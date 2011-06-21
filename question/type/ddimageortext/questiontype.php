@@ -18,7 +18,7 @@
  * Question type class for the drag-and-drop words into sentences question type.
  *
  * @package    qtype
- * @subpackage ddwtos
+ * @subpackage ddimagetoimage
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/question/type/gapselect/questiontypebase.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddwtos extends qtype_gapselect_base {
+class qtype_ddimagetoimage extends qtype_gapselect_base {
     protected function choice_group_key() {
         return 'draggroup';
     }
@@ -61,17 +61,17 @@ class qtype_ddwtos extends qtype_gapselect_base {
 
     protected function make_choice($choicedata) {
         $options = unserialize($choicedata->feedback);
-        return new qtype_ddwtos_choice(
+        return new qtype_ddimagetoimage_choice(
                 $choicedata->answer, $options->draggroup, $options->infinite);
     }
 
     public function import_from_xml($data, $question, $format, $extra=null) {
-        if (!isset($data['@']['type']) || $data['@']['type'] != 'ddwtos') {
+        if (!isset($data['@']['type']) || $data['@']['type'] != 'ddimagetoimage') {
             return false;
         }
 
         $question = $format->import_headers($data);
-        $question->qtype = 'ddwtos';
+        $question->qtype = 'ddimagetoimage';
 
         $question->shuffleanswers = $format->trans_single(
                 $format->getpath($data, array('#', 'shuffleanswers', 0, '#'), 1));

@@ -18,7 +18,7 @@
  * Test helpers for the drag-and-drop words into sentences question type.
  *
  * @package    qtype
- * @subpackage ddwtos
+ * @subpackage ddimagetoimage
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,24 +33,24 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddwtos_test_helper extends question_test_helper {
+class qtype_ddimagetoimage_test_helper extends question_test_helper {
     public function get_test_questions() {
         return array('fox', 'maths');
     }
 
     /**
-     * @return qtype_ddwtos_question
+     * @return qtype_ddimagetoimage_question
      */
-    public function make_ddwtos_question_fox() {
-        question_bank::load_question_definition_classes('ddwtos');
-        $dd = new qtype_ddwtos_question();
+    public function make_ddimagetoimage_question_fox() {
+        question_bank::load_question_definition_classes('ddimagetoimage');
+        $dd = new qtype_ddimagetoimage_question();
 
         test_question_maker::initialise_a_question($dd);
 
         $dd->name = 'Drag-and-drop words into sentences question';
         $dd->questiontext = 'The [[1]] brown [[2]] jumped over the [[3]] dog.';
         $dd->generalfeedback = 'This sentence uses each letter of the alphabet.';
-        $dd->qtype = question_bank::get_qtype('ddwtos');
+        $dd->qtype = question_bank::get_qtype('ddimagetoimage');
 
         $dd->shufflechoices = true;
 
@@ -58,14 +58,14 @@ class qtype_ddwtos_test_helper extends question_test_helper {
 
         $dd->choices = array(
             1 => array(
-                1 => new qtype_ddwtos_choice('quick', 1),
-                2 => new qtype_ddwtos_choice('slow', 1)),
+                1 => new qtype_ddimagetoimage_choice('quick', 1),
+                2 => new qtype_ddimagetoimage_choice('slow', 1)),
             2 => array(
-                1 => new qtype_ddwtos_choice('fox', 2),
-                2 => new qtype_ddwtos_choice('dog', 2)),
+                1 => new qtype_ddimagetoimage_choice('fox', 2),
+                2 => new qtype_ddimagetoimage_choice('dog', 2)),
             3 => array(
-                1 => new qtype_ddwtos_choice('lazy', 3),
-                2 => new qtype_ddwtos_choice('assiduous', 3)),
+                1 => new qtype_ddimagetoimage_choice('lazy', 3),
+                2 => new qtype_ddimagetoimage_choice('assiduous', 3)),
         );
 
         $dd->places = array(1 => 1, 2 => 2, 3 => 3);
@@ -76,11 +76,11 @@ class qtype_ddwtos_test_helper extends question_test_helper {
     }
 
     /**
-     * @return qtype_ddwtos_question
+     * @return qtype_ddimagetoimage_question
      */
-    public function make_ddwtos_question_maths() {
-        question_bank::load_question_definition_classes('ddwtos');
-        $dd = new qtype_ddwtos_question();
+    public function make_ddimagetoimage_question_maths() {
+        question_bank::load_question_definition_classes('ddimagetoimage');
+        $dd = new qtype_ddimagetoimage_question();
 
         test_question_maker::initialise_a_question($dd);
 
@@ -88,7 +88,7 @@ class qtype_ddwtos_test_helper extends question_test_helper {
         $dd->questiontext = 'Fill in the operators to make this equation work: ' .
                 '7 [[1]] 11 [[2]] 13 [[1]] 17 [[2]] 19 = 3';
         $dd->generalfeedback = 'This sentence uses each letter of the alphabet.';
-        $dd->qtype = question_bank::get_qtype('ddwtos');
+        $dd->qtype = question_bank::get_qtype('ddimagetoimage');
 
         $dd->shufflechoices = true;
 
@@ -96,10 +96,10 @@ class qtype_ddwtos_test_helper extends question_test_helper {
 
         $dd->choices = array(
             1 => array(
-                1 => new qtype_ddwtos_choice('+', 1, true),
-                2 => new qtype_ddwtos_choice('-', 1, true),
-                3 => new qtype_ddwtos_choice('*', 1, true),
-                4 => new qtype_ddwtos_choice('/', 1, true),
+                1 => new qtype_ddimagetoimage_choice('+', 1, true),
+                2 => new qtype_ddimagetoimage_choice('-', 1, true),
+                3 => new qtype_ddimagetoimage_choice('*', 1, true),
+                4 => new qtype_ddimagetoimage_choice('/', 1, true),
             ));
 
         $dd->places = array(1 => 1, 2 => 1, 3 => 1, 4 => 1);

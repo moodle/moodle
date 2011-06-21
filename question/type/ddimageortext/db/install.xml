@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/ddwtos/db" VERSION="20080909" COMMENT="XMLDB file for Moodle question/type/ddwtos"
+<XMLDB PATH="question/type/ddimagetoimage/db" VERSION="20080909" COMMENT="XMLDB file for Moodle question/type/ddimagetoimage"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="question_ddwtos" COMMENT="Defines drag and drop (words into sentences) questions">
+    <TABLE NAME="question_ddimagetoimage" COMMENT="Defines drag and drop (words into sentences) questions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="questionid"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="shuffleanswers"/>

@@ -18,7 +18,7 @@
  * Unit tests for the drag-and-drop words into sentences question definition class.
  *
  * @package    qtype
- * @subpackage ddwtos
+ * @subpackage ddimagetoimage
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
-require_once($CFG->dirroot . '/question/type/ddwtos/simpletest/helper.php');
+require_once($CFG->dirroot . '/question/type/ddimagetoimage/simpletest/helper.php');
 
 
 /**
@@ -36,12 +36,12 @@ require_once($CFG->dirroot . '/question/type/ddwtos/simpletest/helper.php');
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddwtos_test extends UnitTestCase {
-    /** @var qtype_ddwtos instance of the question type class to test. */
+class qtype_ddimagetoimage_test extends UnitTestCase {
+    /** @var qtype_ddimagetoimage instance of the question type class to test. */
     protected $qtype;
 
     public function setUp() {
-        $this->qtype = question_bank::get_qtype('ddwtos');;
+        $this->qtype = question_bank::get_qtype('ddimagetoimage');;
     }
 
     public function tearDown() {
@@ -55,7 +55,7 @@ class qtype_ddwtos_test extends UnitTestCase {
 
     /**
      * @return object the data to construct a question like
-     * {@link qtype_ddwtos_test_helper::make_ddwtos_question_fox()}.
+     * {@link qtype_ddimagetoimage_test_helper::make_ddimagetoimage_question_fox()}.
      */
     protected function get_test_question_data() {
         global $USER;
@@ -81,7 +81,7 @@ class qtype_ddwtos_test extends UnitTestCase {
         $dd->name = 'Drag-and-drop words into sentences question';
         $dd->questiontext = 'The [[1]] brown [[2]] jumped over the [[3]] dog.';
         $dd->generalfeedback = 'This sentence uses each letter of the alphabet.';
-        $dd->qtype = 'ddwtos';
+        $dd->qtype = 'ddimagetoimage';
 
         $dd->options->shuffleanswers = true;
 
@@ -106,7 +106,7 @@ class qtype_ddwtos_test extends UnitTestCase {
     }
 
     public function test_name() {
-        $this->assertEqual($this->qtype->name(), 'ddwtos');
+        $this->assertEqual($this->qtype->name(), 'ddimagetoimage');
     }
 
     public function test_can_analyse_responses() {
@@ -116,7 +116,7 @@ class qtype_ddwtos_test extends UnitTestCase {
     public function test_initialise_question_instance() {
         $qdata = $this->get_test_question_data();
 
-        $expected = test_question_maker::make_question('ddwtos');
+        $expected = test_question_maker::make_question('ddimagetoimage');
         $expected->stamp = $qdata->stamp;
         $expected->version = $qdata->version;
 
@@ -150,7 +150,7 @@ class qtype_ddwtos_test extends UnitTestCase {
     }
 
     public function test_xml_import() {
-        $xml = '  <question type="ddwtos">
+        $xml = '  <question type="ddimagetoimage">
     <name>
       <text>A drag-and-drop question</text>
     </name>
@@ -201,10 +201,10 @@ class qtype_ddwtos_test extends UnitTestCase {
 
         $importer = new qformat_xml();
         $q = $importer->try_importing_using_qtypes(
-                $xmldata['question'], null, null, 'ddwtos');
+                $xmldata['question'], null, null, 'ddimagetoimage');
 
         $expectedq = new stdClass();
-        $expectedq->qtype = 'ddwtos';
+        $expectedq->qtype = 'ddimagetoimage';
         $expectedq->name = 'A drag-and-drop question';
         $expectedq->questiontext = 'Put these in order: [[1]], [[2]], [[3]].';
         $expectedq->questiontextformat = FORMAT_MOODLE;
@@ -240,7 +240,7 @@ class qtype_ddwtos_test extends UnitTestCase {
     }
 
     public function test_xml_import_legacy() {
-        $xml = '  <question type="ddwtos">
+        $xml = '  <question type="ddimagetoimage">
     <name>
       <text>QDandD1 Base definition</text>
     </name>
@@ -366,10 +366,10 @@ class qtype_ddwtos_test extends UnitTestCase {
 
         $importer = new qformat_xml();
         $q = $importer->try_importing_using_qtypes(
-                $xmldata['question'], null, null, 'ddwtos');
+                $xmldata['question'], null, null, 'ddimagetoimage');
 
         $expectedq = new stdClass();
-        $expectedq->qtype = 'ddwtos';
+        $expectedq->qtype = 'ddimagetoimage';
         $expectedq->name = 'QDandD1 Base definition';
         $expectedq->questiontext = '<p>Drag and drop the words from the list below ' .
                 'to fill the blank spaces and correctly complete the sentence.</p>' .
@@ -435,7 +435,7 @@ class qtype_ddwtos_test extends UnitTestCase {
         $qdata = new stdClass();
         $qdata->id = 123;
         $qdata->contextid = 0;
-        $qdata->qtype = 'ddwtos';
+        $qdata->qtype = 'ddimagetoimage';
         $qdata->name = 'A drag-and-drop question';
         $qdata->questiontext = 'Put these in order: [[1]], [[2]], [[3]].';
         $qdata->questiontextformat = FORMAT_MOODLE;
@@ -478,7 +478,7 @@ class qtype_ddwtos_test extends UnitTestCase {
         $xml = $exporter->writequestion($qdata);
 
         $expectedxml = '<!-- question: 123  -->
-  <question type="ddwtos">
+  <question type="ddimagetoimage">
     <name>
       <text>A drag-and-drop question</text>
     </name>

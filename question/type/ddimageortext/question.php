@@ -18,7 +18,7 @@
  * Drag-and-drop words into sentences question definition class.
  *
  * @package    qtype
- * @subpackage ddwtos
+ * @subpackage ddimagetoimage
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/question/type/gapselect/questionbase.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddwtos_question extends qtype_gapselect_question_base {
+class qtype_ddimagetoimage_question extends qtype_gapselect_question_base {
     // Is actually exactly the same.
 }
 
@@ -46,7 +46,7 @@ class qtype_ddwtos_question extends qtype_gapselect_question_base {
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddwtos_choice {
+class qtype_ddimagetoimage_choice {
     public $text;
     public $draggroup;
     public $isinfinite;

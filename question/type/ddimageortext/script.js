@@ -16,16 +16,16 @@
 /**
  * JavaScript objects, functions as well as usage of some YUI library for
  * enabling drag and drop interaction for dran-anddrop words into sentences
- * (ddwtos)
+ * (ddimagetoimage)
  *
  * @package    qtype
- * @subpackage ddwtos
+ * @subpackage ddimagetoimage
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 //global variables
-var ddwtos_currentzindex = 10;
+var ddimagetoimage_currentzindex = 10;
 
 
 /*
@@ -38,7 +38,7 @@ var ddwtos_currentzindex = 10;
     // start of App object by all questions of this type on a page.
     YAHOO.example.DDApp = {
         init : function() {
-            var questionspans = YAHOO.util.Dom.getElementsByClassName("ddwtos_questionid_for_javascript");
+            var questionspans = YAHOO.util.Dom.getElementsByClassName("ddimagetoimage_questionid_for_javascript");
 
             // we need this loop in case of more than one of this qtype on one page
             for (var i = 0; i < questionspans.length; i++) {
@@ -108,7 +108,7 @@ var ddwtos_currentzindex = 10;
 
         //Abstract method called after a drag/drop object is clicked and the drag or mousedown time thresholds have beeen met.
         startDrag : function(x, y) {
-            YAHOO.util.Dom.setStyle(this.getEl(), "zIndex", ddwtos_currentzindex++);
+            YAHOO.util.Dom.setStyle(this.getEl(), "zIndex", ddimagetoimage_currentzindex++);
             YAHOO.util.Dom.removeClass(this.getEl(), 'placed');
 
             if (is_infinite(this.getEl()) && !this.slot){

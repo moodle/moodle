@@ -18,7 +18,7 @@
  * Unit tests for the drag-and-drop words into sentences question definition class.
  *
  * @package    qtype
- * @subpackage ddwtos
+ * @subpackage ddimagetoimage
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
-require_once($CFG->dirroot . '/question/type/ddwtos/simpletest/helper.php');
+require_once($CFG->dirroot . '/question/type/ddimagetoimage/simpletest/helper.php');
 
 
 /**
@@ -36,24 +36,24 @@ require_once($CFG->dirroot . '/question/type/ddwtos/simpletest/helper.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddwtos_question_test extends UnitTestCase {
+class qtype_ddimagetoimage_question_test extends UnitTestCase {
 
     public function test_get_question_summary() {
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = test_question_maker::make_question('ddimagetoimage');
         $this->assertEqual('The [[1]] brown [[2]] jumped over the [[3]] dog.; ' .
                 '[[1]] -> {quick / slow}; [[2]] -> {fox / dog}; [[3]] -> {lazy / assiduous}',
                 $dd->get_question_summary());
     }
 
     public function test_get_question_summary_maths() {
-        $dd = test_question_maker::make_question('ddwtos', 'maths');
+        $dd = test_question_maker::make_question('ddimagetoimage', 'maths');
         $this->assertEqual('Fill in the operators to make this equation work: ' .
                 '7 [[1]] 11 [[2]] 13 [[1]] 17 [[2]] 19 = 3; [[1]] -> {+ / - / * / /}',
                 $dd->get_question_summary());
     }
 
     public function test_summarise_response() {
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = test_question_maker::make_question('ddimagetoimage');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -62,7 +62,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
     }
 
     public function test_summarise_response_maths() {
-        $dd = test_question_maker::make_question('ddwtos', 'maths');
+        $dd = test_question_maker::make_question('ddimagetoimage', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -71,17 +71,17 @@ class qtype_ddwtos_question_test extends UnitTestCase {
     }
 
     public function test_get_random_guess_score() {
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = test_question_maker::make_question('ddimagetoimage');
         $this->assertEqual(0.5, $dd->get_random_guess_score());
     }
 
     public function test_get_random_guess_score_maths() {
-        $dd = test_question_maker::make_question('ddwtos', 'maths');
+        $dd = test_question_maker::make_question('ddimagetoimage', 'maths');
         $this->assertEqual(0.25, $dd->get_random_guess_score());
     }
 
     public function test_get_right_choice_for() {
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = test_question_maker::make_question('ddimagetoimage');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -90,7 +90,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
     }
 
     public function test_get_right_choice_for_maths() {
-        $dd = test_question_maker::make_question('ddwtos', 'maths');
+        $dd = test_question_maker::make_question('ddimagetoimage', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -99,7 +99,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
     }
 
     public function test_clear_wrong_from_response() {
-        $dd = test_question_maker::make_question('ddwtos', 'maths');
+        $dd = test_question_maker::make_question('ddimagetoimage', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -109,7 +109,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
     }
 
     public function test_get_num_parts_right() {
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = test_question_maker::make_question('ddimagetoimage');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -120,7 +120,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
     }
 
     public function test_get_num_parts_right_maths() {
-        $dd = test_question_maker::make_question('ddwtos', 'maths');
+        $dd = test_question_maker::make_question('ddimagetoimage', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -130,7 +130,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
     }
 
     public function test_get_expected_data() {
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = test_question_maker::make_question('ddimagetoimage');
         $dd->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEqual(array('p1' => PARAM_INT, 'p2' => PARAM_INT, 'p3' => PARAM_INT),
@@ -138,7 +138,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
     }
 
     public function test_get_correct_response() {
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = test_question_maker::make_question('ddimagetoimage');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -147,7 +147,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
     }
 
     public function test_get_correct_response_maths() {
-        $dd = test_question_maker::make_question('ddwtos', 'maths');
+        $dd = test_question_maker::make_question('ddimagetoimage', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -156,7 +156,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
     }
 
     public function test_is_same_response() {
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = test_question_maker::make_question('ddimagetoimage');
         $dd->start_attempt(new question_attempt_step(), 1);
 
         $this->assertTrue($dd->is_same_response(
@@ -180,7 +180,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
                 array('p1' => '1', 'p2' => '2', 'p3' => '2')));
     }
     public function test_is_complete_response() {
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = test_question_maker::make_question('ddimagetoimage');
         $dd->start_attempt(new question_attempt_step(), 1);
 
         $this->assertFalse($dd->is_complete_response(array()));
@@ -192,7 +192,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
     }
 
     public function test_is_gradable_response() {
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = test_question_maker::make_question('ddimagetoimage');
         $dd->start_attempt(new question_attempt_step(), 1);
 
         $this->assertFalse($dd->is_gradable_response(array()));
@@ -206,7 +206,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
     }
 
     public function test_grading() {
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = test_question_maker::make_question('ddimagetoimage');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -219,7 +219,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
     }
 
     public function test_grading_maths() {
-        $dd = test_question_maker::make_question('ddwtos', 'maths');
+        $dd = test_question_maker::make_question('ddimagetoimage', 'maths');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 
@@ -232,7 +232,7 @@ class qtype_ddwtos_question_test extends UnitTestCase {
     }
 
     public function test_classify_response() {
-        $dd = test_question_maker::make_question('ddwtos');
+        $dd = test_question_maker::make_question('ddimagetoimage');
         $dd->shufflechoices = false;
         $dd->start_attempt(new question_attempt_step(), 1);
 

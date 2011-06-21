@@ -26,12 +26,12 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Provides the information to backup ddwtos questions
+ * Provides the information to backup ddimagetoimage questions
  *
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_qtype_ddwtos_plugin extends backup_qtype_plugin {
+class backup_qtype_ddimagetoimage_plugin extends backup_qtype_plugin {
 
     /**
      * Returns the qtype information to attach to question element
@@ -39,7 +39,7 @@ class backup_qtype_ddwtos_plugin extends backup_qtype_plugin {
     protected function define_question_plugin_structure() {
 
         // Define the virtual plugin element with the condition to fulfill
-        $plugin = $this->get_plugin_element(null, '../../qtype', 'ddwtos');
+        $plugin = $this->get_plugin_element(null, '../../qtype', 'ddimagetoimage');
 
         // Create one standard named plugin element (the visible container)
         $pluginwrapper = new backup_nested_element($this->get_recommended_name());
@@ -52,16 +52,16 @@ class backup_qtype_ddwtos_plugin extends backup_qtype_plugin {
         $this->add_question_question_answers($pluginwrapper);
 
         // Now create the qtype own structures
-        $ddwtos = new backup_nested_element('ddwtos', array('id'), array(
+        $ddimagetoimage = new backup_nested_element('ddimagetoimage', array('id'), array(
             'shuffleanswers', 'correctfeedback', 'correctfeedbackformat',
             'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
             'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect'));
 
         // Now the own qtype tree
-        $pluginwrapper->add_child($ddwtos);
+        $pluginwrapper->add_child($ddimagetoimage);
 
         // set source to populate the data
-        $ddwtos->set_source_table('question_ddwtos', array('questionid' => backup::VAR_PARENTID));
+        $ddimagetoimage->set_source_table('question_ddimagetoimage', array('questionid' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
 

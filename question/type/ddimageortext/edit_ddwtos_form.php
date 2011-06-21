@@ -18,7 +18,7 @@
  * Defines the editing form for the drag-and-drop words into sentences question type.
  *
  * @package    qtype
- * @subpackage ddwtos
+ * @subpackage ddimagetoimage
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,9 +35,9 @@ require_once($CFG->dirroot . '/question/type/gapselect/edit_form_base.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddwtos_edit_form extends qtype_gapselect_edit_form_base {
+class qtype_ddimagetoimage_edit_form extends qtype_gapselect_edit_form_base {
     public function qtype() {
-        return 'ddwtos';
+        return 'ddimagetoimage';
     }
 
     protected function data_preprocessing_choice($question, $answer, $key) {
@@ -51,7 +51,7 @@ class qtype_ddwtos_edit_form extends qtype_gapselect_edit_form_base {
     protected function choice_group($mform) {
         $grouparray = parent::choice_group($mform);
         $grouparray[] = $mform->createElement('checkbox', 'infinite', ' ',
-                get_string('infinite', 'qtype_ddwtos'), null,
+                get_string('infinite', 'qtype_ddimagetoimage'), null,
                 array('size' => 1, 'class' => 'tweakcss'));
         return $grouparray;
     }
