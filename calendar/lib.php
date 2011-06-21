@@ -1887,7 +1887,7 @@ class calendar_event {
             $context =  get_context_instance(CONTEXT_USER);
         } else if (isset($data->userid) && $data->userid > 0 && $data->userid != $USER->id &&
                    isset($data->instance) && $data->instance > 0) {
-            $cm = get_coursemodule_from_id('', $data->instance, 0, false, MUST_EXIST);
+            $cm = get_coursemodule_from_instance($data->modulename, $data->instance, 0, false, MUST_EXIST);
             $context =  get_context_instance(CONTEXT_COURSE, $cm->course);
         } else {
             $context =  get_context_instance(CONTEXT_USER);
