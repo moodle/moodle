@@ -688,6 +688,7 @@ function olson_parse_at ($at, $set = 'set', $gmtoffset) {
         $at  = substr($at, 0, strlen($at)-1); // chop
     }
 
+    $at = (strpos($at, ':') === false) ? $at . ':0' : $at;
     list($hours, $mins) = explode(':', $at);
 
     // GMT -- return as is!
