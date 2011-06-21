@@ -235,7 +235,6 @@ class graded_users_iterator {
         $result->user      = $user;
         $result->grades    = $grades;
         $result->feedbacks = $feedbacks;
-
         return $result;
     }
 
@@ -271,7 +270,7 @@ class graded_users_iterator {
     /**
      * _pop
      *
-     * @return void
+     * @return object current grade object
      */
     function _pop() {
         global $DB;
@@ -280,11 +279,11 @@ class graded_users_iterator {
                 return null; // no grades present
             }
 
-            if ($this->grades_rs->next()) {
-                return null; // no more grades
-            }
+            $current = $this->grades_rs->current();
 
-            return $this->grades_rs->current();
+            $this->grades_rs->next();
+
+            return $current;
         } else {
             return array_pop($this->gradestack);
         }

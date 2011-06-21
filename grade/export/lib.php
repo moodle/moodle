@@ -230,7 +230,7 @@ abstract class grade_export {
             }
             $user = $userdata->user;
             if ($require_user_idnumber and empty($user->idnumber)) {
-                // some exports require user idnumber
+                // some exports require user idnumber so we can match up students when importing the data
                 continue;
             }
 
