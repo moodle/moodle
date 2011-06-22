@@ -76,7 +76,7 @@ abstract class backup_cron_automated_helper {
         } else if ($state === backup_cron_automated_helper::STATE_RUNNING) {
             mtrace('RUNNING');
             if ($rundirective == self::RUN_IMMEDIATELY) {
-                mtrace('automated backups are already. If this script is being run by cron this constitues an error. You will need to increase the time between executions within cron.');
+                mtrace('Automated backups are already running. If this script is being run by cron this constitues an error. You will need to increase the time between executions within cron.');
             } else {
                 mtrace("automated backup are already running. Execution delayed");
             }
@@ -401,10 +401,19 @@ abstract class backup_cron_automated_helper {
         if ($active === self::AUTO_BACKUP_DISABLED || ($rundirective == self::RUN_ON_SCHEDULE && $active === self::AUTO_BACKUP_MANUAL)) {
             return self::STATE_DISABLED;
         } else if (!empty($config->backup_auto_running)) {
-            // TODO: We should find some way of checking whether the automated
-            // backup has infact finished. In 1.9 this was being done by checking
-            // the log entries.
-            return self::STATE_RUNNING;
+            // Detect if the backup_auto_running semaphore is a valid one
+            // by looking for recent activity in the backup_controllers table
+            // for backups of type backup::MODE_AUTOMATED
+            $timetosee = 60 * 90; // Time to consider in order to clean the semaphore
+            $params = array( 'purpose'   => backup::MODE_AUTOMATED, 'timetolook' => (time() - $timetosee));
+            if ($DB->record_exists_select('backup_controllers',
+                "operation = 'backup' AND type = 'course' AND purpose = :purpose AND timemodified > :timetolook", $params)) {
+                return self::STATE_RUNNING; // Recent activity found, still running
+            } else {
+                // No recent activity found, let's clean the semaphore
+                mtrace('Automated backups activity not found in last ' . (int)$timetosee/60 . ' minutes. Cleaning running status');
+                backup_cron_automated_helper::set_state_running(false);
+            }
         }
         return self::STATE_OK;
     }
