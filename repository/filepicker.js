@@ -1122,7 +1122,7 @@ M.core_filepicker.init = function(Y, options) {
             this.print_header();
             var id = data.upload.id+'_'+client_id;
             var str = '<div id="'+id+'_div" class="fp-upload-form mdl-align">';
-            str += '<form id="'+id+'" method="POST">';
+            str += '<form id="'+id+'" enctype="multipart/form-data" method="POST">';
             str += '<table width="100%">';
             str += '<tr><td class="mdl-right">';
             str += '<label for="'+id+'_file">'+data.upload.label+': </label></td>';
