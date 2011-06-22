@@ -76,7 +76,9 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
         $repeated = parent::get_per_answer_fields($mform, $label, $gradeoptions,
                 $repeatedoptions, $answersoption);
 
+        // 1 is the answer. 3 is tolerance.
         $repeated[1]->setLabel(get_string('correctanswerformula', 'qtype_calculated') . '=');
+        $repeated[3]->setLabel(get_string('tolerance', 'qtype_calculated') . '=');
         $repeatedoptions['tolerance']['default'] = 0.01;
 
         $addrepeated = array();
