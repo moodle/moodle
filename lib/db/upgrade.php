@@ -6545,6 +6545,19 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2011060800.01);
     }
 
+    if ($oldversion < 2011062000.01) {
+        // Changing sign of field minfraction on table question_attempts to signed
+        $table = new xmldb_table('question_attempts');
+        $field = new xmldb_field('minfraction', XMLDB_TYPE_NUMBER, '12, 7', null,
+                XMLDB_NOTNULL, null, null, 'maxmark');
+
+        // Launch change of sign for field minfraction
+        $dbman->change_field_unsigned($table, $field);
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011062000.01);
+    }
+
     return true;
 }
 
