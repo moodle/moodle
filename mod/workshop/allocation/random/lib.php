@@ -118,11 +118,34 @@ class workshop_random_allocator implements workshop_allocator {
                 $newnonexistingallocations = $newallocations;
                 $this->filter_current_assessments($newnonexistingallocations, $assessments);
                 $this->add_new_allocations($newnonexistingallocations, $authors, $reviewers);
+                $allreviewers = $reviewers[0];
+                $allreviewersreloaded = false;
                 foreach ($newallocations as $newallocation) {
                     list($reviewerid, $authorid) = each($newallocation);
-                    $a                  = new stdclass();
-                    $a->reviewername    = fullname($reviewers[0][$reviewerid]);
-                    $a->authorname      = fullname($authors[0][$authorid]);
+                    $a = new stdClass();
+                    if (isset($allreviewers[$reviewerid])) {
+                        $a->reviewername = fullname($allreviewers[$reviewerid]);
+                    } else {
+                        // this may happen if $musthavesubmission is true but the reviewer
+                        // of the re-used assessment has not submitted anything. let us reload
+                        // the list of reviewers name including those without their submission
+                        if (!$allreviewersreloaded) {
+                            $allreviewers = $this->workshop->get_potential_reviewers(false);
+                            $allreviewersreloaded = true;
+                        }
+                        if (isset($allreviewers[$reviewerid])) {
+                            $a->reviewername = fullname($allreviewers[$reviewerid]);
+                        } else {
+                            // this should not happen usually unless the list of participants was changed
+                            // in between two cycles of allocations
+                            $a->reviewername = '#'.$reviewerid;
+                        }
+                    }
+                    if (isset($authors[0][$authorid])) {
+                        $a->authorname = fullname($authors[0][$authorid]);
+                    } else {
+                        $a->authorname = '#'.$authorid;
+                    }
                     if (in_array($newallocation, $newnonexistingallocations)) {
                         $o[] = 'ok::indent::' . get_string('allocationaddeddetail', 'workshopallocation_random', $a);
                     } else {
