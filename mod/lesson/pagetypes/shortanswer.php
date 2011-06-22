@@ -73,7 +73,6 @@ class lesson_page_type_shortanswer extends lesson_page {
             $result->noanswer = true;
             return $result;
         }
-        $studentanswer = s($studentanswer);
 
         $i=0;
         $answers = $this->get_answers();
@@ -163,7 +162,9 @@ class lesson_page_type_shortanswer extends lesson_page {
                 break; // quit answer analysis immediately after a match has been found
             }
         }
-        $result->studentanswer = $result->userresponse = $studentanswer;
+        $result->userresponse = $studentanswer;
+        //clean student answer as it goes to output.
+        $result->studentanswer = s($studentanswer);
         return $result;
     }
 
