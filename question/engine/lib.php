@@ -506,6 +506,20 @@ class question_display_options {
     public $history = self::HIDDEN;
 
     /**
+     * If not empty, then a link to edit the question will be included in
+     * the info box for the question.
+     *
+     * If used, this array must contain an element courseid or cmid.
+     *
+     * It shoudl also contain a parameter returnurl => moodle_url giving a
+     * sensible URL to go back to when the editing form is submitted or cancelled.
+     *
+     * @var array url parameter for the edit link. id => questiosnid will be
+     * added automatically.
+     */
+    public $editquestionparams = array();
+
+    /**
      * @var int the context the attempt being output belongs to.
      */
     public $context;

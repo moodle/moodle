@@ -31,8 +31,9 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 // Get submitted parameters.
-$id = required_param('cmid', PARAM_INT); // Course Module ID
+$id = required_param('cmid', PARAM_INT); // Course module id
 $forcenew = optional_param('forcenew', false, PARAM_BOOL); // Used to force a new preview
+$page = optional_param('page', 0, PARAM_INT); // Page to jump to in the attempt.
 
 if (!$cm = get_coursemodule_from_id('quiz', $id)) {
     print_error('invalidcoursemodule');
@@ -83,7 +84,7 @@ $lastattempt = quiz_get_latest_attempt_by_user($quiz->id, $USER->id);
 if ($lastattempt && !$lastattempt->timefinish) {
     // Continuation of an attempt - check password then redirect.
     $accessmanager->do_password_check($quizobj->is_preview_user());
-    redirect($quizobj->attempt_url($lastattempt->id));
+    redirect($quizobj->attempt_url($lastattempt->id, $page));
 }
 
 // Get number for the next or unfinished attempt
@@ -219,4 +220,4 @@ events_trigger('quiz_attempt_started', $eventdata);
 $transaction->allow_commit();
 
 // Redirect to the attempt page.
-redirect($quizobj->attempt_url($attempt->id));
+redirect($quizobj->attempt_url($attempt->id, $page));

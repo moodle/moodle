@@ -113,6 +113,7 @@ class core_question_renderer extends plugin_renderer_base {
         $output .= $this->status($qa, $behaviouroutput, $options);
         $output .= $this->mark_summary($qa, $options);
         $output .= $this->question_flag($qa, $options->flags);
+        $output .= $this->edit_question_link($qa, $options);
         return $output;
     }
 
@@ -252,6 +253,28 @@ class core_question_renderer extends plugin_renderer_base {
         }
         return '<img ' . $id . 'src="' . $this->pix_url('/i/' . $img) .
                 '" alt="' . get_string('flagthisquestion', 'question') . '" />';
+    }
+
+    protected function edit_question_link(question_attempt $qa,
+            question_display_options $options) {
+        global $CFG;
+
+        if (empty($options->editquestionparams)) {
+            return '';
+        }
+
+        $params = $options->editquestionparams;
+        if ($params['returnurl'] instanceof moodle_url) {
+            $params['returnurl'] = str_replace($CFG->wwwroot, '',
+                    $params['returnurl']->out(false));
+        }
+        $params['id'] = $qa->get_question()->id;
+        $editurl = new moodle_url('/question/question.php', $params);
+
+        return html_writer::tag('div', html_writer::link(
+                $editurl, $this->pix_icon('i/edit', get_string('edit')) .
+                get_string('editquestion', 'question')),
+                array('class' => 'editquestion'));
     }
 
     /**
