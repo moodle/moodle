@@ -137,9 +137,8 @@ class question_engine_data_mapper {
      * @param question_attempt_step the step that was loaded.
      */
     public function load_question_attempt_step($stepid) {
-        $records = $this->db->get_records_sql("
+        $records = $this->db->get_recordset_sql("
 SELECT
-    COALESCE(qasd.id, -1 * qas.id) AS id,
     qas.id AS attemptstepid,
     qas.questionattemptid,
     qas.sequencenumber,
@@ -157,11 +156,14 @@ WHERE
     qas.id = :stepid
         ", array('stepid' => $stepid));
 
-        if (!$records) {
+        if (!$records->valid()) {
             throw new coding_exception('Failed to load question_attempt_step ' . $stepid);
         }
 
-        return question_attempt_step::load_from_records($records, $stepid);
+        $step = question_attempt_step::load_from_records($records, $stepid);
+        $records->close();
+
+        return $step;
     }
 
     /**
@@ -171,9 +173,8 @@ WHERE
      * @param question_attempt the question attempt that was loaded.
      */
     public function load_question_attempt($questionattemptid) {
-        $records = $this->db->get_records_sql("
+        $records = $this->db->get_recordset_sql("
 SELECT
-    COALESCE(qasd.id, -1 * qas.id) AS id,
     quba.contextid,
     quba.preferredbehaviour,
     qa.id AS questionattemptid,
@@ -210,13 +211,16 @@ ORDER BY
     qas.sequencenumber
         ", array('questionattemptid' => $questionattemptid));
 
-        if (!$records) {
+        if (!$records->valid()) {
             throw new coding_exception('Failed to load question_attempt ' . $questionattemptid);
         }
 
         $record = current($records);
-        return question_attempt::load_from_records($records, $questionattemptid,
+        $qa = question_attempt::load_from_records($records, $questionattemptid,
                 new question_usage_null_observer(), $record->preferredbehaviour);
+        $records->close();
+
+        return $qa;
     }
 
     /**
@@ -226,9 +230,8 @@ ORDER BY
      * @param question_usage_by_activity the usage that was loaded.
      */
     public function load_questions_usage_by_activity($qubaid) {
-        $records = $this->db->get_records_sql("
+        $records = $this->db->get_recordset_sql("
 SELECT
-    COALESCE(qasd.id, -1 * qas.id) AS id,
     quba.id AS qubaid,
     quba.contextid,
     quba.component,
@@ -268,11 +271,14 @@ ORDER BY
     qas.sequencenumber
     ", array('qubaid' => $qubaid));
 
-        if (!$records) {
+        if (!$records->valid()) {
             throw new coding_exception('Failed to load questions_usage_by_activity ' . $qubaid);
         }
 
-        return question_usage_by_activity::load_from_records($records, $qubaid);
+        $quba = question_usage_by_activity::load_from_records($records, $qubaid);
+        $records->close();
+
+        return $quba;
     }
 
     /**
@@ -543,9 +549,8 @@ ORDER BY qa.slot
         $params = $qubaids->from_where_params();
         $params['questionid'] = $questionid;
 
-        $records = $DB->get_records_sql("
+        $records = $DB->get_recordset_sql("
 SELECT
-    COALESCE(qasd.id, -1 * qas.id) AS id,
     quba.contextid,
     quba.preferredbehaviour,
     qa.id AS questionattemptid,
@@ -585,19 +590,16 @@ ORDER BY
     qas.sequencenumber
         ", $params);
 
-        if (!$records) {
-            return array();
-        }
-
         $questionattempts = array();
-        $record = current($records);
-        while ($record) {
+        while ($records->valid()) {
+            $record = $records->current();
             $questionattempts[$record->questionattemptid] =
                     question_attempt::load_from_records($records,
                     $record->questionattemptid, new question_usage_null_observer(),
                     $record->preferredbehaviour);
-            $record = current($records);
         }
+        $records->close();
+
         return $questionattempts;
     }
 

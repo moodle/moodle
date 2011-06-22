@@ -555,6 +555,71 @@ class ContainsEmptyTag extends XMLStructureExpectation {
 
 
 /**
+ * Simple class that implements the {@link moodle_recordset} API based on an
+ * array of test data.
+ *
+ *  See the {@link question_attempt_step_db_test} class in
+ *  question/engine/simpletest/testquestionattemptstep.php for an example of how
+ *  this is used.
+ *
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class test_recordset extends moodle_recordset {
+    protected $records;
+
+    /**
+     * Constructor
+     * @param $table as for {@link testing_db_record_builder::build_db_records()}
+     *      but does not need a unique first column.
+     */
+    public function __construct(array $table) {
+        $columns = array_shift($table);
+        $this->records = array();
+        foreach ($table as $row) {
+            if (count($row) != count($columns)) {
+                throw new coding_exception("Row contains the wrong number of fields.");
+            }
+            $rec = array();
+            foreach ($columns as $i => $name) {
+                $rec[$name] = $row[$i];
+            }
+            $this->records[] = $rec;
+        }
+        reset($this->records);
+    }
+
+    public function __destruct() {
+        $this->close();
+    }
+
+    public function current() {
+        return (object) current($this->records);
+    }
+
+    public function key() {
+        if (is_null(key($this->records))) {
+            return false;
+        }
+        $current = current($this->records);
+        return reset($current);
+    }
+
+    public function next() {
+        next($this->records);
+    }
+
+    public function valid() {
+        return !is_null(key($this->records));
+    }
+
+    public function close() {
+        $this->records = null;
+    }
+}
+
+
+/**
  * This class lets you write unit tests that access a separate set of test
  * tables with a different prefix. Only those tables you explicitly ask to
  * be created will be.
