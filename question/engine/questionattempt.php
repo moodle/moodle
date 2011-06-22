@@ -1117,18 +1117,19 @@ class question_attempt {
      *
      * For internal use only.
      *
-     * @param array $records Raw records loaded from the database.
+     * @param Iterator $records Raw records loaded from the database.
      * @param int $questionattemptid The id of the question_attempt to extract.
      * @return question_attempt The newly constructed question_attempt_step.
      */
-    public static function load_from_records(&$records, $questionattemptid,
+    public static function load_from_records($records, $questionattemptid,
             question_usage_observer $observer, $preferredbehaviour) {
-        $record = current($records);
+        $record = $records->current();
         while ($record->questionattemptid != $questionattemptid) {
-            $record = next($records);
-            if (!$record) {
+            $record = $records->next();
+            if (!$records->valid()) {
                 throw new coding_exception("Question attempt $questionattemptid not found in the database.");
             }
+            $record = $records->current();
         }
 
         try {
@@ -1162,7 +1163,11 @@ class question_attempt {
                 $question->apply_attempt_state($qa->steps[0]);
             }
             $i++;
-            $record = current($records);
+            if ($records->valid()) {
+                $record = $records->current();
+            } else {
+                $record = false;
+            }
         }
 
         $qa->observer = $observer;

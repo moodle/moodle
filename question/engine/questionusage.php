@@ -673,17 +673,18 @@ class question_usage_by_activity {
      *
      * For internal use only.
      *
-     * @param array $records Raw records loaded from the database.
+     * @param Iterator $records Raw records loaded from the database.
      * @param int $questionattemptid The id of the question_attempt to extract.
      * @return question_attempt The newly constructed question_attempt_step.
      */
-    public static function load_from_records(&$records, $qubaid) {
-        $record = current($records);
+    public static function load_from_records($records, $qubaid) {
+        $record = $records->current();
         while ($record->qubaid != $qubaid) {
-            $record = next($records);
-            if (!$record) {
+            $records->next();
+            if (!$records->valid()) {
                 throw new coding_exception("Question usage $qubaid not found in the database.");
             }
+            $record = $records->current();
         }
 
         $quba = new question_usage_by_activity($record->component,
@@ -698,7 +699,11 @@ class question_usage_by_activity {
                     question_attempt::load_from_records($records,
                     $record->questionattemptid, $quba->observer,
                     $quba->get_preferred_behaviour());
-            $record = current($records);
+            if ($records->valid()) {
+                $record = $records->current();
+            } else {
+                $record = false;
+            }
         }
 
         return $quba;

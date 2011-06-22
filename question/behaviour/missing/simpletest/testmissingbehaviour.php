@@ -60,17 +60,17 @@ class qbehaviour_missing_test extends UnitTestCase {
     }
 
     public function test_render_missing() {
-        $records = testing_db_record_builder::build_db_records(array(
-            array('id', 'questionattemptid', 'contextid', 'questionusageid', 'slot',
+        $records = new test_recordset(array(
+            array('questionattemptid', 'contextid', 'questionusageid', 'slot',
                                    'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'flagged',
                                             'questionsummary', 'rightanswer', 'responsesummary',
                     'timemodified', 'attemptstepid', 'sequencenumber', 'state', 'fraction',
                                                        'timecreated', 'userid', 'name', 'value'),
-            array(1, 1, 123, 1, 1, 'strangeunknown', -1, 1, 2.0000000, 0.0000000, 0, '', '', '',
+            array(1, 123, 1, 1, 'strangeunknown', -1, 1, 2.0000000, 0.0000000, 0, '', '', '',
                     1256233790, 1, 0, 'todo',     null, 1256233700, 1,   '_order', '1,2,3'),
-            array(2, 1, 123, 1, 1, 'strangeunknown', -1, 1, 2.0000000, 0.0000000, 0, '', '', '',
+            array(1, 123, 1, 1, 'strangeunknown', -1, 1, 2.0000000, 0.0000000, 0, '', '', '',
                     1256233790, 2, 1, 'complete', 0.50, 1256233705, 1,  '-submit',  '1'),
-            array(3, 1, 123, 1, 1, 'strangeunknown', -1, 1, 2.0000000, 0.0000000, 0, '', '', '',
+            array(1, 123, 1, 1, 'strangeunknown', -1, 1, 2.0000000, 0.0000000, 0, '', '', '',
                     1256233790, 2, 1, 'complete', 0.50, 1256233705, 1,  'choice0',  '1'),
         ));
 

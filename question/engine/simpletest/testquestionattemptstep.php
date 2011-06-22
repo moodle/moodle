@@ -138,14 +138,14 @@ class question_attempt_step_test extends UnitTestCase {
  */
 class question_attempt_step_db_test extends data_loading_method_test_base {
     public function test_load_with_data() {
-        $records = $this->build_db_records(array(
-            array('id', 'attemptstepid', 'questionattemptid', 'sequencenumber', 'state', 'fraction', 'timecreated', 'userid', 'name', 'value'),
-            array(  1,               1,                   1,                0,  'todo',       null,    1256228502,       13,   null,    null),
-            array(  2,               2,                   1,                1,  'complete',   null,    1256228505,       13,    'x',     'a'),
-            array(  3,               2,                   1,                1,  'complete',   null,    1256228505,       13,   '_y',    '_b'),
-            array(  4,               2,                   1,                1,  'complete',   null,    1256228505,       13,   '-z',    '!c'),
-            array(  5,               2,                   1,                1,  'complete',   null,    1256228505,       13, '-_t',    '!_d'),
-            array(  6,               3,                   1,                2,  'gradedright', 1.0,    1256228515,       13, '-finish',  '1'),
+        $records = new test_recordset(array(
+            array('attemptstepid', 'questionattemptid', 'sequencenumber', 'state', 'fraction', 'timecreated', 'userid', 'name', 'value'),
+            array(             1,                   1,                0,  'todo',       null,    1256228502,       13,   null,    null),
+            array(             2,                   1,                1,  'complete',   null,    1256228505,       13,    'x',     'a'),
+            array(             2,                   1,                1,  'complete',   null,    1256228505,       13,   '_y',    '_b'),
+            array(             2,                   1,                1,  'complete',   null,    1256228505,       13,   '-z',    '!c'),
+            array(             2,                   1,                1,  'complete',   null,    1256228505,       13, '-_t',    '!_d'),
+            array(             3,                   1,                2,  'gradedright', 1.0,    1256228515,       13, '-finish',  '1'),
         ));
 
         $step = question_attempt_step::load_from_records($records, 2);
@@ -157,9 +157,9 @@ class question_attempt_step_db_test extends data_loading_method_test_base {
     }
 
     public function test_load_without_data() {
-        $records = $this->build_db_records(array(
-            array('id', 'attemptstepid', 'questionattemptid', 'sequencenumber', 'state', 'fraction', 'timecreated', 'userid', 'name', 'value'),
-            array(  2,               2,                   1,                1,  'complete',   null,    1256228505,       13,   null,    null),
+        $records = new test_recordset(array(
+            array('attemptstepid', 'questionattemptid', 'sequencenumber', 'state', 'fraction', 'timecreated', 'userid', 'name', 'value'),
+            array(             2,                   1,                1,  'complete',   null,    1256228505,       13,   null,    null),
         ));
 
         $step = question_attempt_step::load_from_records($records, 2);
@@ -171,10 +171,10 @@ class question_attempt_step_db_test extends data_loading_method_test_base {
     }
 
     public function test_load_dont_be_too_greedy() {
-        $records = $this->build_db_records(array(
-            array('id', 'attemptstepid', 'questionattemptid', 'sequencenumber', 'state', 'fraction', 'timecreated', 'userid', 'name', 'value'),
-            array(  1,               1,                   1,                0,  'todo',       null,    1256228502,       13,    'x',     'right'),
-            array(  2,               2,                   2,                0,  'complete',   null,    1256228505,       13,    'x',     'wrong'),
+        $records = new test_recordset(array(
+            array('attemptstepid', 'questionattemptid', 'sequencenumber', 'state', 'fraction', 'timecreated', 'userid', 'name', 'value'),
+            array(             1,                   1,                0,  'todo',       null,    1256228502,       13,    'x',     'right'),
+            array(             2,                   2,                0,  'complete',   null,    1256228505,       13,    'x',     'wrong'),
         ));
 
         $step = question_attempt_step::load_from_records($records, 1);

@@ -353,18 +353,19 @@ class question_attempt_step {
 
     /**
      * Create a question_attempt_step from records loaded from the database.
-     * @param array $records Raw records loaded from the database.
+     * @param Iterator $records Raw records loaded from the database.
      * @param int $stepid The id of the records to extract.
      * @return question_attempt_step The newly constructed question_attempt_step.
      */
-    public static function load_from_records(&$records, $attemptstepid) {
-        $currentrec = current($records);
+    public static function load_from_records($records, $attemptstepid) {
+        $currentrec = $records->current();
         while ($currentrec->attemptstepid != $attemptstepid) {
-            $currentrec = next($records);
-            if (!$currentrec) {
+            $records->next();
+            if (!$records->valid()) {
                 throw new coding_exception('Question attempt step ' . $attemptstepid .
                         ' not found in the database.');
             }
+            $currentrec = $records->current();
         }
 
         $record = $currentrec;
@@ -373,7 +374,12 @@ class question_attempt_step {
             if ($currentrec->name) {
                 $data[$currentrec->name] = $currentrec->value;
             }
-            $currentrec = next($records);
+            $records->next();
+            if ($records->valid()) {
+                $currentrec = $records->current();
+            } else {
+                $currentrec = false;
+            }
         }
 
         $step = new question_attempt_step_read_only($data, $record->timecreated, $record->userid);

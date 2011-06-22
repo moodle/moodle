@@ -261,20 +261,20 @@ class question_attempt_with_steps_test extends UnitTestCase {
  */
 class question_attempt_db_test extends data_loading_method_test_base {
     public function test_load() {
-        $records = testing_db_record_builder::build_db_records(array(
-            array('id', 'questionattemptid', 'contextid', 'questionusageid', 'slot',
+        $records = new test_recordset(array(
+            array('questionattemptid', 'contextid', 'questionusageid', 'slot',
                                    'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'flagged',
                                                                                        'questionsummary', 'rightanswer', 'responsesummary', 'timemodified',
                                                                                                                'attemptstepid', 'sequencenumber', 'state', 'fraction',
                                                                                                                                                 'timecreated', 'userid', 'name', 'value'),
-            array(1, 1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 1, 0, 'todo',              null, 1256233700, 1,       null, null),
-            array(2, 1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 2, 1, 'complete',          null, 1256233705, 1,   'answer',  '1'),
-            array(3, 1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 1, '', '', '', 1256233790, 3, 2, 'complete',          null, 1256233710, 1,   'answer',  '0'),
-            array(4, 1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 4, 3, 'complete',          null, 1256233715, 1,   'answer',  '1'),
-            array(5, 1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 5, 4, 'gradedright',  1.0000000, 1256233720, 1,  '-finish',  '1'),
-            array(6, 1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 6, 5, 'mangrpartial', 0.5000000, 1256233790, 1, '-comment', 'Not good enough!'),
-            array(7, 1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 6, 5, 'mangrpartial', 0.5000000, 1256233790, 1,    '-mark',  '1'),
-            array(8, 1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 6, 5, 'mangrpartial', 0.5000000, 1256233790, 1, '-maxmark',  '2'),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 1, 0, 'todo',              null, 1256233700, 1,       null, null),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 2, 1, 'complete',          null, 1256233705, 1,   'answer',  '1'),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 1, '', '', '', 1256233790, 3, 2, 'complete',          null, 1256233710, 1,   'answer',  '0'),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 4, 3, 'complete',          null, 1256233715, 1,   'answer',  '1'),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 5, 4, 'gradedright',  1.0000000, 1256233720, 1,  '-finish',  '1'),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 6, 5, 'mangrpartial', 0.5000000, 1256233790, 1, '-comment', 'Not good enough!'),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 6, 5, 'mangrpartial', 0.5000000, 1256233790, 1,    '-mark',  '1'),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 6, 5, 'mangrpartial', 0.5000000, 1256233790, 1, '-maxmark',  '2'),
         ));
 
         $question = test_question_maker::make_question('truefalse', 'true');
@@ -334,13 +334,13 @@ class question_attempt_db_test extends data_loading_method_test_base {
     }
 
     public function test_load_missing_question() {
-        $records = testing_db_record_builder::build_db_records(array(
-            array('id', 'questionattemptid', 'contextid', 'questionusageid', 'slot',
+        $records = new test_recordset(array(
+            array('questionattemptid', 'contextid', 'questionusageid', 'slot',
                                    'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'flagged',
                                                                                        'questionsummary', 'rightanswer', 'responsesummary', 'timemodified',
                                                                                                                'attemptstepid', 'sequencenumber', 'state', 'fraction',
                                                                                                                                                 'timecreated', 'userid', 'name', 'value'),
-            array(1, 1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 1, 0, 'todo',              null, 1256233700, 1,       null, null),
+            array(1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 1, 0, 'todo',              null, 1256233700, 1,       null, null),
         ));
 
         question_bank::start_unit_test();
