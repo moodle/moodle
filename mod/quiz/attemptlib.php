@@ -971,7 +971,7 @@ class quiz_attempt {
         $panel = new $panelclass($this, $this->get_display_options(true), $page, $showall);
 
         $bc = new block_contents();
-        $bc->id = 'quiznavigation';
+        $bc->attributes['id'] = 'mod_quiz_navblock';
         $bc->title = get_string('quiznavigation', 'quiz');
         $bc->content = $output->navigation_panel($panel);
         return $bc;
