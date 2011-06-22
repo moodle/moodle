@@ -315,29 +315,21 @@ class qformat_gift extends qformat_default {
                 $question->defaultmark = 0;
                 $question->length = 0;
                 return $question;
-                break;
+
             case ESSAY:
                 $question->fraction = 0;
                 $question->feedback['text'] = '';
                 $question->feedback['format'] = $question->questiontextformat;
                 $question->feedback['files'] = array();
                 return $question;
-                break;
+
             case MULTICHOICE:
                 if (strpos($answertext,"=") === false) {
                     $question->single = 0; // multiple answers are enabled if no single answer is 100% correct
                 } else {
                     $question->single = 1; // only one answer allowed (the default)
                 }
-                $question->correctfeedback['text'] = '';
-                $question->correctfeedback['format'] = $question->questiontextformat;
-                $question->correctfeedback['files'] = array();
-                $question->partiallycorrectfeedback['text'] = '';
-                $question->partiallycorrectfeedback['format'] = $question->questiontextformat;
-                $question->partiallycorrectfeedback['files'] = array();
-                $question->incorrectfeedback['text'] = '';
-                $question->incorrectfeedback['format'] = $question->questiontextformat;
-                $question->incorrectfeedback['files'] = array();
+                $question = $this->add_blank_combined_feedback($question);
 
                 $answertext = str_replace("=", "~=", $answertext);
                 $answers = explode("~", $answertext);
@@ -352,7 +344,6 @@ class qformat_gift extends qformat_default {
 
                 if (!$this->check_answer_count(2, $answers, $text)) {
                     return false;
-                    break;
                 }
 
                 foreach ($answers as $key => $answer) {
@@ -374,12 +365,11 @@ class qformat_gift extends qformat_default {
                     $question->fraction[$key] = $answer_weight;
                 }  // end foreach answer
 
-                //$question->defaultmark = 1;
-                //$question->image = "";   // No images with this format
                 return $question;
-                break;
 
             case MATCH:
+                $question = $this->add_blank_combined_feedback($question);
+
                 $answers = explode('=', $answertext);
                 if (isset($answers[0])) {
                     $answers[0] = trim($answers[0]);
@@ -390,16 +380,13 @@ class qformat_gift extends qformat_default {
 
                 if (!$this->check_answer_count(2,$answers,$text)) {
                     return false;
-                    break;
                 }
 
                 foreach ($answers as $key => $answer) {
                     $answer = trim($answer);
                     if (strpos($answer, "->") === false) {
-                        $giftmatchingformat = get_string('giftmatchingformat','qformat_gift');
-                        $this->error($giftmatchingformat, $answer);
+                        $this->error(get_string('giftmatchingformat','qformat_gift'), $answer);
                         return false;
-                        break 2;
                     }
 
                     $marker = strpos($answer, '->');
@@ -410,7 +397,6 @@ class qformat_gift extends qformat_default {
                 }
 
                 return $question;
-                break;
 
             case TRUEFALSE:
                 list($answer, $wrongfeedback, $rightfeedback) =
@@ -429,7 +415,6 @@ class qformat_gift extends qformat_default {
                 $question->penalty = 1;
 
                 return $question;
-                break;
 
             case SHORTANSWER:
                 // SHORTANSWER Question
@@ -443,7 +428,6 @@ class qformat_gift extends qformat_default {
 
                 if (!$this->check_answer_count(1, $answers, $text)) {
                     return false;
-                    break;
                 }
 
                 foreach ($answers as $key => $answer) {
@@ -464,7 +448,6 @@ class qformat_gift extends qformat_default {
                 }
 
                 return $question;
-                break;
 
             case NUMERICAL:
                 // Note similarities to ShortAnswer
@@ -491,7 +474,6 @@ class qformat_gift extends qformat_default {
                     $giftnonumericalanswers = get_string('giftnonumericalanswers','qformat_gift');
                     $this->error($giftnonumericalanswers, $text);
                     return false;
-                    break;
                 }
 
                 foreach ($answers as $key => $answer) {
@@ -529,7 +511,6 @@ class qformat_gift extends qformat_default {
                             $errornotnumbers = get_string('errornotnumbers');
                             $this->error($errornotnumbers, $text);
                         return false;
-                        break;
                     }
 
                     // store results
@@ -547,15 +528,25 @@ class qformat_gift extends qformat_default {
                 }
 
                 return $question;
-                break;
 
-                default:
-                    $this->error(get_string('giftnovalidquestion', 'qformat_gift'), $text);
-                return fale;
-                break;
+            default:
+                $this->error(get_string('giftnovalidquestion', 'qformat_gift'), $text);
+                return false;
 
         }
+    }
 
+    protected function add_blank_combined_feedback($question) {
+        $question->correctfeedback['text'] = '';
+        $question->correctfeedback['format'] = $question->questiontextformat;
+        $question->correctfeedback['files'] = array();
+        $question->partiallycorrectfeedback['text'] = '';
+        $question->partiallycorrectfeedback['format'] = $question->questiontextformat;
+        $question->partiallycorrectfeedback['files'] = array();
+        $question->incorrectfeedback['text'] = '';
+        $question->incorrectfeedback['format'] = $question->questiontextformat;
+        $question->incorrectfeedback['files'] = array();
+        return $question;
     }
 
     protected function repchar($text, $notused = 0) {
@@ -733,7 +724,8 @@ class qformat_gift extends qformat_default {
             $expout .= $this->write_questiontext($question->questiontext, $question->questiontextformat);
             $expout .= "{\n";
             foreach($question->options->subquestions as $subquestion) {
-                $expout .= "\t=" . $this->repchar($this->write_questiontext($subquestion->questiontext, $subquestion->questiontextformat, $question->questiontextformat)) .
+                $expout .= "\t=" . $this->write_questiontext($subquestion->questiontext,
+                        $subquestion->questiontextformat, $question->questiontextformat) .
                         ' -> ' . $this->repchar($subquestion->answertext) . "\n";
             }
             $expout .= "}\n";

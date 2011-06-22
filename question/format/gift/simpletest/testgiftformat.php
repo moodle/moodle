@@ -135,6 +135,21 @@ class qformat_gift_test extends UnitTestCase {
             'penalty' => 0.3333333,
             'length' => 1,
             'shuffleanswers' => '1',
+            'correctfeedback' => array(
+                'text' => '',
+                'format' => FORMAT_HTML,
+                'files' => array(),
+            ),
+            'partiallycorrectfeedback' => array(
+                'text' => '',
+                'format' => FORMAT_HTML,
+                'files' => array(),
+            ),
+            'incorrectfeedback' => array(
+                'text' => '',
+                'format' => FORMAT_HTML,
+                'files' => array(),
+            ),
             'subquestions' => array(
                 0 => array(
                     'text' => 'An activity supporting asynchronous discussions.',
@@ -197,7 +212,7 @@ class qformat_gift_test extends UnitTestCase {
                         'id' => 1234,
                         'code' => 12341234,
                         'question' => 666,
-                        'questiontext' => 'An activity supporting asynchronous discussions.',
+                        'questiontext' => '<div class="frog">An activity supporting asynchronous discussions.</div>',
                         'questiontextformat' => FORMAT_HTML,
                         'answertext' => 'Forum',
                     ),
@@ -242,7 +257,7 @@ class qformat_gift_test extends UnitTestCase {
 
         $expectedgift = "// question: 666  name: Moodle activities
 ::Moodle activities::[html]Match the <b>activity</b> to the description.{
-\t=An activity supporting asynchronous discussions. -> Forum
+\t=<div class\\=\"frog\">An activity supporting asynchronous discussions.</div> -> Forum
 \t=[moodle]A teacher asks a question and specifies a choice of multiple responses. -> Choice
 \t=[plain]A bank of record entries which participants can add to. -> Database
 \t=[markdown]A collection of web pages that anyone can add to or edit. -> Wiki
