@@ -449,14 +449,14 @@ class workshop_random_allocator implements workshop_allocator {
 
         if (self::USERTYPE_AUTHOR == $numper) {
             // circles are authors, squares are reviewers
-            $o[] = 'info::Trying to allocate ' . $numofreviews . ' review(s) per author'; // todo translate
+            $o[] = 'info::'.get_string('resultnumperauthor', 'workshopallocation_random', $numofreviews);
             $allcircles = $authors;
             $allsquares = $reviewers;
             // get current workload
             list($circlelinks, $squarelinks) = $this->convert_assessments_to_links($assessments);
         } elseif (self::USERTYPE_REVIEWER == $numper) {
             // circles are reviewers, squares are authors
-            $o[] = 'info::trying to allocate ' . $numofreviews . ' review(s) per reviewer'; // todo translate
+            $o[] = 'info::'.get_string('resultnumperreviewer', 'workshopallocation_random', $numofreviews);
             $allcircles = $reviewers;
             $allsquares = $authors;
             // get current workload
@@ -536,14 +536,14 @@ class workshop_random_allocator implements workshop_allocator {
                         if (NOGROUPS == $gmode) {
                             if (in_array(0, $failedgroups)) {
                                 $keeptrying = false;
-                                $o[] = 'error::indent::No more peers available'; // todo translate
+                                $o[] = 'error::indent::'.get_string('resultnomorepeers', 'workshopallocation_random');
                                 break;
                             }
                             $targetgroup = 0;
                         } elseif (SEPARATEGROUPS == $gmode) {
                             if (in_array($circlegroupid, $failedgroups)) {
                                 $keeptrying = false;
-                                $o[] = 'error::indent::No more peers available in this separate group'; // todo translate
+                                $o[] = 'error::indent::'.get_string('resultnomorepeersingroup', 'workshopallocation_random');
                                 break;
                             }
                             $targetgroup = $circlegroupid;
@@ -564,7 +564,7 @@ class workshop_random_allocator implements workshop_allocator {
                         }
                         if ($targetgroup === false) {
                             $keeptrying = false;
-                            $o[] = 'error::indent::Not enough peers available'; // todo translate
+                            $o[] = 'error::indent::'.get_string('resultnotenoughpeers', 'workshopallocation_random');
                             break;
                         }
                         $o[] = 'debug::indent::next square should be from group id ' . $targetgroup;
