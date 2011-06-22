@@ -319,7 +319,7 @@ class lesson_display_answer_form_truefalse extends moodleform {
             $mform->addElement('radio', 'answerid', null, format_text($answer->answer, $answer->answerformat, $options), $answer->id);
             $mform->setType('answerid', PARAM_INT);
             if (isset($USER->modattempts[$lessonid]) && $answer->id == $attempt->answerid) {
-                $mform->setDefault('answerid', true);
+                $mform->setDefault('answerid', $attempt->answerid);
             }
             $mform->addElement('html', '</div>');
             $i++;

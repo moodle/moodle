@@ -506,7 +506,7 @@ class lesson_display_answer_form_multichoice_singleanswer extends moodleform {
             $mform->addElement('radio','answerid',null,format_text($answer->answer, $answer->answerformat, $options),$answer->id);
             $mform->setType('answer'.$i, PARAM_INT);
             if (isset($USER->modattempts[$lessonid]) && $answer->id == $USER->modattempts[$lessonid]->answerid) {
-                $mform->setDefault('answerid', true);
+                $mform->setDefault('answerid', $USER->modattempts[$lessonid]->answerid);
             }
             $mform->addElement('html', '</div>');
             $i++;

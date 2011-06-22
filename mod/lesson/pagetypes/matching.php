@@ -61,7 +61,14 @@ class lesson_page_type_matching extends lesson_page {
     protected function make_answer_form($attempt=null) {
         global $USER, $CFG;
         // don't shuffle answers (could be an option??)
-        $answers = array_slice($this->get_answers(), 2);
+        $getanswers = array_slice($this->get_answers(), 2);
+
+        //reassing array keys for answers
+        $answers = array();
+        foreach ($getanswers as $getanswer) {
+            $answers[$getanswer->id] = $getanswer;
+        }
+
         $responses = array();
         foreach ($answers as $answer) {
             // get all the response
@@ -503,7 +510,7 @@ class lesson_display_answer_form_matching extends moodleform {
             if ($answer->response != NULL) {
                 $mform->addElement('select', 'response['.$answer->id.']', format_text($answer->answer,$answer->answerformat,$options), $responseoptions);
                 $mform->setType('response['.$answer->id.']', PARAM_TEXT);
-                if (isset($USER->modattempts[$lessonid])) {
+                if (isset($useranswers) && !empty($useranswers)) {
                     $mform->setDefault('response['.$answer->id.']', htmlspecialchars(trim($answers[$useranswers[$i]]->response))); //TODO: this is suspicious
                 } else {
                     $mform->setDefault('response['.$answer->id.']', 'answeroption');

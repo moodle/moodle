@@ -359,6 +359,7 @@ if ($pageid != LESSON_EOL) {
         } else {
             $attempt = false;
         }
+        $USER->modattempts[$lesson->id] = $attempt;
         $lessoncontent = $lessonoutput->display_page($lesson, $page, $attempt);
     } else {
         $data = new stdClass;

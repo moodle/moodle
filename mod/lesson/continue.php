@@ -180,12 +180,12 @@ echo $result->feedback;
 // User is modifying attempts - save button and some instructions
 if (isset($USER->modattempts[$lesson->id])) {
     $url = $CFG->wwwroot.'/mod/lesson/view.php';
-    $content = $OUTPUT->box(get_string("savechangesandeol", "lesson"), 'center');
+    $content = $OUTPUT->box(get_string("gotoendoflesson", "lesson"), 'center');
     $content .= $OUTPUT->box(get_string("or", "lesson"), 'center');
-    $content .= $OUTPUT->box(get_string("continuetoanswer", "lesson"), 'center');
+    $content .= $OUTPUT->box(get_string("continuetonextpage", "lesson"), 'center');
     $content .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'id', 'value'=>$cm->id));
     $content .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'pageid', 'value'=>LESSON_EOL));
-    $content .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'submit', 'value'=>get_string('savechanges', 'lesson')));
+    $content .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'submit', 'value'=>get_string('finish', 'lesson')));
     echo html_writer::tag('form', "<div>$content</div>", array('method'=>'post', 'action'=>$url));
 }
 
