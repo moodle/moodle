@@ -2370,6 +2370,10 @@ class custom_menu extends custom_menu_item {
      * @return array
      */
     public static function convert_text_to_menu_nodes($text) {
+        $text = format_text($text, FORMAT_MOODLE, array(
+            'para'     => false,
+            'newlines' => false,
+            'context'  => get_system_context()));
         $lines = explode("\n", $text);
         $children = array();
         $lastchild = null;
