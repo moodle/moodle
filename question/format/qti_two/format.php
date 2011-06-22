@@ -273,16 +273,13 @@ function handle_questions_media(&$questions, $path, $courseid) {
         // get the questions (from database) in this category
         $questions = get_questions_category( $this->category );
 
-        echo $OUTPUT->notification("Exporting ".count($questions)." questions.");
-        $count = 0;
-
         // create the imsmanifest file
         $smarty =& $this->init_smarty();
         $this->add_qti_info($questions);
         // copy files used by the main questions to the export directory
         $result = $this->handle_questions_media($questions, $path, $courseid);
         if ($result !== true) {
-            echo $OUTPUT->notification(implode("<br />", $result));
+            throw new coding_exception(implode("<br />", $result));
         }
 
         $manifestquestions = $this->objects_to_array($questions);
@@ -311,8 +308,6 @@ function handle_questions_media(&$questions, $path, $courseid) {
         foreach($questions as $question) {
 
             // results are first written into string (and then to a file)
-            $count++;
-            echo "<hr /><p><b>$count</b>. ".$question->questiontext."</p>";
             $expout = $this->writequestion( $question , null, true, $path) . "\n";
             $expout = $this->presave_process( $expout );
 
@@ -380,14 +375,16 @@ function handle_questions_media(&$questions, $path, $courseid) {
         global $USER;
         global $CFG;
 
-        $gradingmethod = array (1 => 'GRADEHIGHEST',
-                                2 => 'GRADEAVERAGE',
-                                3 => 'ATTEMPTFIRST' ,
-                                4 => 'ATTEMPTLAST');
+        $gradingmethod = array(
+            1 => 'GRADEHIGHEST',
+            2 => 'GRADEAVERAGE',
+            3 => 'ATTEMPTFIRST',
+            4 => 'ATTEMPTLAST'
+        );
 
         $questions = $this->quiz_export_prepare_questions($questions, $quiz->id, $course->id, $quiz->shuffleanswers);
 
-        $smarty =& $this->init_smarty();
+        $smarty = $this->init_smarty();
         $smarty->assign('questions', $questions);
 
         // quiz level smarty variables
@@ -409,22 +406,19 @@ function handle_questions_media(&$questions, $path, $courseid) {
         return true;
     }
 
-
-
-
-/**
- * Prepares questions for quiz export
- *
- * The questions are changed as follows:
- *   - the question answers atached to the questions
- *   - image set to an http reference instead of a file path
- *   - qti specific info added
- *   - exporttext added, which contains an xml-formatted qti assesmentItem
- *
- * @param array $questions - an array of question objects
- * @param int $quizid
- * @return an array of question arrays
- */
+    /**
+     * Prepares questions for quiz export
+     *
+     * The questions are changed as follows:
+     *   - the question answers atached to the questions
+     *   - image set to an http reference instead of a file path
+     *   - qti specific info added
+     *   - exporttext added, which contains an xml-formatted qti assesmentItem
+     *
+     * @param array $questions - an array of question objects
+     * @param int $quizid
+     * @return an array of question arrays
+     */
     function quiz_export_prepare_questions($questions, $quizid, $courseid, $shuffleanswers = null) {
         global $CFG;
         // add the answers to the questions and format the image property
@@ -510,16 +504,16 @@ function xml_entitize(&$collection) {
         return $exportquestions;
     }
 
-/**
- * Creates the export text for a question
- *
- * @todo handle in-line media (specified in the question/subquestion/answer text) for course-level exports
- * @param object $question
- * @param bool $shuffleanswers whether or not to shuffle the answers
- * @param bool $courselevel whether or not this is a course-level export
- * @param string $path provide the path to copy question media files to, if $courselevel == true
- * @return string containing export text
- */
+    /**
+     * Creates the export text for a question
+     *
+     * @todo handle in-line media (specified in the question/subquestion/answer text) for course-level exports
+     * @param object $question
+     * @param bool $shuffleanswers whether or not to shuffle the answers
+     * @param bool $courselevel whether or not this is a course-level export
+     * @param string $path provide the path to copy question media files to, if $courselevel == true
+     * @return string containing export text
+     */
     function writequestion($question, $shuffleanswers = null, $courselevel = false, $path = '') {
         // turns question into string
         // question reflects database fields for general question and specific to type
@@ -560,9 +554,9 @@ function xml_entitize(&$collection) {
         switch($question->qtype) {
         case TRUEFALSE:
             $qanswers = $question->options->answers;
-            $answers[0] = (array)$qanswers['true'];
+            $answers[0] = (array)$qanswers[$question->options->trueanswer];
             $answers[0]['answer'] = get_string('true', 'qtype_truefalse');
-            $answers[1] = (array)$qanswers['false'];
+            $answers[1] = (array)$qanswers[$question->options->falseanswer];
             $answers[1]['answer'] = get_string('false', 'qtype_truefalse');
 
             if (!empty($shuffleanswers)) {
@@ -570,21 +564,21 @@ function xml_entitize(&$collection) {
             }
 
             if (isset($question->response)) {
-              $correctresponseid = $question->response[$questionid];
-              if ($answers[0]['id'] == $correctresponseid) {
-                  $correctresponse = $answers[0];
-              } else {
-                  $correctresponse = $answers[1];
-              }
-            }
-            else {
-              $correctresponse = '';
+                $correctresponseid = $question->response[$questionid];
+                if ($answers[0]['id'] == $correctresponseid) {
+                    $correctresponse = $answers[0];
+                } else {
+                    $correctresponse = $answers[1];
+                }
+            } else {
+                $correctresponse = '';
             }
 
             $smarty->assign('correctresponse', $correctresponse);
             $smarty->assign('answers', $answers);
             $expout = $smarty->fetch('choice.tpl');
             break;
+
         case MULTICHOICE:
             $answers = $this->objects_to_array($question->options->answers);
             $correctresponses = $this->get_correct_answers($answers);
