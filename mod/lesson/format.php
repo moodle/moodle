@@ -453,7 +453,7 @@ class qformat_default {
         return false;
     }
 
-    function readquestions($lines) {
+    protected function readquestions($lines) {
     /// Parses an array of lines into an array of questions,
     /// where each item is a question object as defined by
     /// readquestion().   Questions are defined as anything
