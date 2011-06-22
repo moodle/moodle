@@ -77,9 +77,9 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= $this->review_summary_table($summarydata, 0);
 
         if (!is_null($seq)) {
-            $output .= $attemptobj->render_question_at_step($slot, $seq, true, $this->page->url);
+            $output .= $attemptobj->render_question_at_step($slot, $seq, true);
         } else {
-            $output .= $attemptobj->render_question($slot, true, $this->page->url);
+            $output .= $attemptobj->render_question($slot, true);
         }
 
         $output .= $this->close_window_button();

@@ -283,19 +283,27 @@ class quiz {
 
     /**
      * @param int $attemptid the id of an attempt.
+     * @param int $page optional page number to go to in the attempt.
      * @return string the URL of that attempt.
      */
-    public function attempt_url($attemptid) {
+    public function attempt_url($attemptid, $page = 0) {
         global $CFG;
-        return $CFG->wwwroot . '/mod/quiz/attempt.php?attempt=' . $attemptid;
+        $url = $CFG->wwwroot . '/mod/quiz/attempt.php?attempt=' . $attemptid;
+        if ($page) {
+            $url .= '&page=' . $page;
+        }
+        return $url;
     }
 
     /**
      * @return string the URL of this quiz's edit page. Needs to be POSTed to with a cmid parameter.
      */
-    public function start_attempt_url() {
-        return new moodle_url('/mod/quiz/startattempt.php',
-                array('cmid' => $this->cm->id, 'sesskey' => sesskey()));
+    public function start_attempt_url($page = 0) {
+        $params = array('cmid' => $this->cm->id, 'sesskey' => sesskey());
+        if ($page) {
+            $params['page'] = $page;
+        }
+        return new moodle_url('/mod/quiz/startattempt.php', $params);
     }
 
     /**
@@ -662,6 +670,40 @@ class quiz_attempt {
     }
 
     /**
+     * Wrapper that the correct mod_quiz_display_options for this quiz at the
+     * moment.
+     *
+     * @param bool $reviewing true for review page, else attempt page.
+     * @param int $slot which question is being displayed.
+     * @param moodle_url $thispageurl to return to after the editing form is
+     *      submitted or cancelled. If null, no edit link will be generated.
+     *
+     * @return question_display_options the render options for this user on this
+     *      attempt, with extra info to generate an edit link, if applicable.
+     */
+    public function get_display_options_with_edit_link($reviewing, $slot, $thispageurl) {
+        $options = clone($this->get_display_options($reviewing));
+
+        if (!$thispageurl) {
+            return $options;
+        }
+
+        if (!($reviewing || $this->is_preview())) {
+            return $options;
+        }
+
+        $question = $this->quba->get_question($slot);
+        if (!question_has_capability_on($question, 'edit', $question->category)) {
+            return $options;
+        }
+
+        $options->editquestionparams['cmid'] = $this->get_cmid();
+        $options->editquestionparams['returnurl'] = $thispageurl;
+
+        return $options;
+    }
+
+    /**
      * @param int $page page number
      * @return bool true if this is the last page of the quiz.
      */
@@ -802,8 +844,13 @@ class quiz_attempt {
     /**
      * @return string the URL of this quiz's edit page. Needs to be POSTed to with a cmid parameter.
      */
-    public function start_attempt_url() {
-        return $this->quizobj->start_attempt_url();
+    public function start_attempt_url($slot = null, $page = -1) {
+        if ($page == -1 && !is_null($slot)) {
+            $page = $this->quba->get_question($slot)->_page;
+        } else {
+            $page = 0;
+        }
+        return $this->quizobj->start_attempt_url($page);
     }
 
     /**
@@ -896,12 +943,12 @@ class quiz_attempt {
      *
      * @param int $id the id of a question in this quiz attempt.
      * @param bool $reviewing is the being printed on an attempt or a review page.
-     * @param string $thispageurl the URL of the page this question is being printed on.
+     * @param moodle_url $thispageurl the URL of the page this question is being printed on.
      * @return string HTML for the question in its current state.
      */
-    public function render_question($slot, $reviewing, $thispageurl = '') {
+    public function render_question($slot, $reviewing, $thispageurl = null) {
         return $this->quba->render_question($slot,
-                $this->get_display_options($reviewing),
+                $this->get_display_options_with_edit_link($reviewing, $slot, $thispageurl),
                 $this->quba->get_question($slot)->_number);
     }
 
@@ -925,8 +972,6 @@ class quiz_attempt {
      * Wrapper round print_question from lib/questionlib.php.
      *
      * @param int $id the id of a question in this quiz attempt.
-     * @param bool $reviewing is the being printed on an attempt or a review page.
-     * @param string $thispageurl the URL of the page this question is being printed on.
      */
     public function render_question_for_commenting($slot) {
         $options = $this->get_display_options(true);

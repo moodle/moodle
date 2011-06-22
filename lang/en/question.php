@@ -114,6 +114,7 @@ $string['editcategories_link'] = 'question/category';
 $string['editcategory'] = 'Edit category';
 $string['editingcategory'] = 'Editing a category';
 $string['editingquestion'] = 'Editing a question';
+$string['editquestion'] = 'Edit question';
 $string['editthiscategory'] = 'Edit this category';
 $string['emptyxml'] = 'Unkown error - empty imsmanifest.xml';
 $string['enabled'] = 'Enabled';

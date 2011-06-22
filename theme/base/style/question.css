@@ -42,7 +42,8 @@ body.jsenabled #qtypechoicecontainer {display: block;}
 .que h2.no {margin: 0;font-size: 0.8em;line-height: 1;}
 .que span.qno {font-size: 1.5em;font-weight:bold;}
 .que .state,
-.que .grade {font-size: 0.8em; margin-top: 0.7em;}
+.que .grade,
+.que .editquestion {font-size: 0.8em; margin-top: 0.7em;}
 .que .info .questionflag {margin-top: 1em;margin-right: 1em;text-align: center;}
 
 .que .content {margin: 0 0 0 7.5em;}
