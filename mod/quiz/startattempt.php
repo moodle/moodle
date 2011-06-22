@@ -78,10 +78,11 @@ if ($quizobj->is_preview_user() && $forcenew) {
 }
 
 // Look for an existing attempt.
-$lastattempt = quiz_get_latest_attempt_by_user($quiz->id, $USER->id);
+$attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'all');
+$lastattempt = end($attempts);
 
+// If an in-progress attempt exists, check password then redirect to it.
 if ($lastattempt && !$lastattempt->timefinish) {
-    // Continuation of an attempt - check password then redirect.
     $accessmanager->do_password_check($quizobj->is_preview_user());
     redirect($quizobj->attempt_url($lastattempt->id));
 }
@@ -96,9 +97,9 @@ if ($lastattempt && !$lastattempt->preview && !$quizobj->is_preview_user()) {
 
 // Check access.
 $messages = $accessmanager->prevent_access() +
-$accessmanager->prevent_new_attempt($attemptnumber - 1, $lastattempt);
-$output = $PAGE->get_renderer('mod_quiz');
+        $accessmanager->prevent_new_attempt(count($attempts), $lastattempt);
 if (!$quizobj->is_preview_user() && $messages) {
+    $output = $PAGE->get_renderer('mod_quiz');
     print_error('attempterror', 'quiz', $quizobj->view_url(),
             $output->print_messages($messages));
 }
