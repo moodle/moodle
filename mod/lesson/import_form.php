@@ -32,8 +32,8 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class lesson_import_form extends moodleform {
+
     public function definition() {
-        global $COURSE;
 
         $mform = $this->_form;
 
@@ -84,14 +84,6 @@ class lesson_import_form extends moodleform {
 
         $classname = 'qformat_' . $data['format'];
         $qformat = new $classname();
-
-        $file = reset($files);
-        if ($file->get_mimetype() != $qformat->mime_type()) {
-            $a = new stdClass();
-            $a->actualtype = $file->get_mimetype();
-            $a->expectedtype = $qformat->mime_type();
-            $errors['newfile'] = get_string('importwrongfiletype', 'lesson', $a);
-        }
 
         return $errors;
     }
