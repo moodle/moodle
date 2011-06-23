@@ -66,7 +66,6 @@ if (!empty($edit) || !empty($new)) {
         if ($edit) {
             $settings = array();
             $settings['name'] = $fromform->name;
-            var_dump($fromform);
             if (!$instance->readonly) {
                 foreach($configs as $config) {
                     if (isset($fromform->$config)) {
