@@ -1381,7 +1381,11 @@ abstract class repository {
             $configs = call_user_func($classname . '::get_instance_option_names');
             if (!empty($configs)) {
                 foreach ($configs as $config) {
-                    $options[$config] = $params[$config];
+                    if (isset($params[$config])) {
+                        $options[$config] = $params[$config];
+                    } else {
+                        $options[$config] = null;
+                    }
                 }
             }
 
