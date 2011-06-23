@@ -58,8 +58,7 @@ if ($data = $mform->get_data()) {
     $export->process_form($data);
     $export->print_continue();
 
-    $require_user_idnumber = true; //skip users without idnumber as they cannot be identified when importing
-    $export->display_preview($require_user_idnumber);
+    $export->display_preview(true); //true == skip users without idnumber as they cannot be identified when importing
     echo $OUTPUT->container(get_string('useridnumberwarning','gradeexport_xml'), 'useridnumberwarning mdl-align');
 
     echo $OUTPUT->footer();
