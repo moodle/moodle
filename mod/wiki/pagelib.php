@@ -1013,7 +1013,7 @@ class page_wiki_preview extends page_wiki_edit {
             $parseroutput = wiki_parse_content($data->contentformat, $text, $options);
             $this->set_newcontent($text);
             echo $OUTPUT->notification(get_string('previewwarning', 'wiki'), 'notifyproblem wiki_info');
-            $content = format_text($parseroutput['parsed_text'], FORMAT_HTML, array('overflowdiv'=>true));
+            $content = format_text($parseroutput['parsed_text'], FORMAT_HTML, array('overflowdiv'=>true, 'filter'=>false));
             echo $OUTPUT->box($content, 'generalbox wiki_previewbox');
             $content = $this->newcontent;
         }
