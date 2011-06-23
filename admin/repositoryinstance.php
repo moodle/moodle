@@ -66,9 +66,14 @@ if (!empty($edit) || !empty($new)) {
         if ($edit) {
             $settings = array();
             $settings['name'] = $fromform->name;
+            var_dump($fromform);
             if (!$instance->readonly) {
                 foreach($configs as $config) {
-                    $settings[$config] = $fromform->$config;
+                    if (isset($fromform->$config)) {
+                        $settings[$config] = $fromform->$config;
+                    } else {
+                        $settings[$config] = null;
+                    }
                 }
             }
             $success = $instance->set_option($settings);

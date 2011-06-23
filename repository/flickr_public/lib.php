@@ -456,7 +456,7 @@ class repository_flickr_public extends repository {
     public function instance_config_form($mform) {
         $mform->addElement('text', 'email_address', get_string('emailaddress', 'repository_flickr_public'));
         $mform->addElement('checkbox', 'usewatermarks', get_string('watermark', 'repository_flickr_public'));
-        //$mform->addRule('email_address', get_string('required'), 'required', null, 'client');
+        $mform->setDefault('usewatermarks', 0);
     }
 
     /**
@@ -498,7 +498,7 @@ class repository_flickr_public extends repository {
     public static function plugin_init() {
         //here we create a default instance for this type
 
-        $id = repository::static_function('flickr_public','create', 'flickr_public', 0, get_system_context(), array('name'=>'', 'email_address' => null), 0);
+        $id = repository::static_function('flickr_public','create', 'flickr_public', 0, get_system_context(), array('name'=>'', 'email_address' => null, 'usewatermarks' => false), 0);
         if (empty($id)) {
             return false;
         } else {
