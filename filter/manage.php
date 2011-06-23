@@ -34,6 +34,7 @@ list($context, $course, $cm) = get_context_info_array($contextid);
 /// Check login and permissions.
 require_login($course, false, $cm);
 require_capability('moodle/filter:manage', $context);
+$PAGE->set_context($context);
 
 $args = array('contextid'=>$contextid);
 $baseurl = new moodle_url('/filter/manage.php', $args);
