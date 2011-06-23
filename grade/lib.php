@@ -275,7 +275,7 @@ class graded_users_iterator {
     function _pop() {
         global $DB;
         if (empty($this->gradestack)) {
-            if (!$this->grades_rs) {
+            if (empty($this->grades_rs) || !$this->grades_rs->valid()) {
                 return null; // no grades present
             }
 
