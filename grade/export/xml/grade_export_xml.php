@@ -58,7 +58,7 @@ class grade_export_xml extends grade_export {
             $user = $userdata->user;
 
             if (empty($user->idnumber)) {
-                //id number must exist
+                //id number must exist otherwise we cant match up students when importing
                 continue;
             }
 
