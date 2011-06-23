@@ -429,7 +429,7 @@ class flexible_table {
                 isset($this->columns[$showcol])) {
             $this->sess->collapse[$showcol] = false;
 
-        } else if (($hidecol = optional_param($this->request[TABLE_VAR_SHOW], '', PARAM_ALPHANUMEXT)) &&
+        } else if (($hidecol = optional_param($this->request[TABLE_VAR_HIDE], '', PARAM_ALPHANUMEXT)) &&
                 isset($this->columns[$hidecol])) {
             $this->sess->collapse[$hidecol] = true;
             if (array_key_exists($hidecol, $this->sess->sortby)) {
