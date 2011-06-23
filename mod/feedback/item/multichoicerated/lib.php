@@ -184,11 +184,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
             $pixnr = 0;
             $avg = 0.0;
             foreach($analysedVals as $val) {
-                if( function_exists("bcmod")) {
-                    $intvalue = bcmod($pixnr, 10);
-                }else {
-                    $intvalue = 0;
-                }
+                $intvalue = $pixnr % 10;
                 $pix = "pics/$intvalue.gif";
                 $pixnr++;
                 $pixwidth = intval($val->quotient * FEEDBACK_MAX_PIX_LENGTH);
