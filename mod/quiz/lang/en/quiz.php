@@ -555,6 +555,7 @@ $string['quiz:grade'] = 'Grade quizzes manually';
 $string['quiz:ignoretimelimits'] = 'Ignores time limit on quizzes';
 $string['quizisclosed'] = 'This quiz is closed';
 $string['quizisopen'] = 'This quiz is open';
+$string['quizisclosedwillopen'] = 'Quiz closed (opens {$a})';
 $string['quizisopenwillclose'] = 'Quiz open (closes {$a})';
 $string['quiz:manage'] = 'Manage quizzes';
 $string['quiz:manageoverrides'] = 'Manage quiz overrides';

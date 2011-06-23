@@ -1237,44 +1237,55 @@ function quiz_print_grading_form($quiz, $pageurl, $tabindex) {
  */
 function quiz_print_status_bar($quiz) {
     global $CFG;
-    $numberofquestions = quiz_number_of_questions_in_quiz($quiz->questions);
-    ?><div class="statusbar"><span class="totalpoints">
-    <?php echo get_string('totalpointsx', 'quiz',
-            quiz_format_grade($quiz, $quiz->sumgrades)) ?></span>
-    | <span class="numberofquestions">
-    <?php
-    echo get_string('numquestionsx', 'quiz', $numberofquestions);
-    ?></span>
-    <?php
-    // Current status of the quiz, with open an close dates as a tool tip.
-    $currentstatus = get_string('quizisopen', 'quiz');
-    $dates = array();
+
+    $bits = array();
+
+    $bits[] = html_writer::tag('span',
+            get_string('totalpointsx', 'quiz', quiz_format_grade($quiz, $quiz->sumgrades)),
+            array('class' => 'totalpoints'));
+
+    $bits[] = html_writer::tag('span',
+            get_string('numquestionsx', 'quiz', quiz_number_of_questions_in_quiz($quiz->questions)),
+            array('class' => 'numberofquestions'));
+
     $timenow = time();
+
+    // Exact open and close dates for the tool-tip.
+    $dates = array();
     if ($quiz->timeopen > 0) {
         if ($timenow > $quiz->timeopen) {
             $dates[] = get_string('quizopenedon', 'quiz', userdate($quiz->timeopen));
         } else {
             $dates[] = get_string('quizwillopen', 'quiz', userdate($quiz->timeopen));
-            print_string('quizisclosed', 'quiz');
         }
     }
     if ($quiz->timeclose > 0) {
         if ($timenow > $quiz->timeclose) {
             $dates[] = get_string('quizclosed', 'quiz', userdate($quiz->timeclose));
-            print_string('quizisclosed', 'quiz');
         } else {
             $dates[] = get_string('quizcloseson', 'quiz', userdate($quiz->timeclose));
-            $currentstatus = get_string('quizisopenwillclose', 'quiz',
-                    userdate($quiz->timeclose, get_string('strftimedatetimeshort', 'langconfig')));
         }
     }
     if (empty($dates)) {
         $dates[] = get_string('alwaysavailable', 'quiz');
     }
-    $dates = implode(', ', $dates);
-    echo ' | <span class="quizopeningstatus" title="' . $dates . '">' . $currentstatus . '</span>';
+    $tooltip = implode(', ', $dates);;
 
-    ?>
-    </div>
-    <?php
+    // Brief summary on the page.
+    if ($timenow < $quiz->timeopen) {
+        $currentstatus = get_string('quizisclosedwillopen', 'quiz',
+                userdate($quiz->timeclose, get_string('strftimedatetimeshort', 'langconfig')));
+    } else if ($quiz->timeclose && $timenow <= $quiz->timeclose) {
+        $currentstatus = get_string('quizisopenwillclose', 'quiz',
+                userdate($quiz->timeclose, get_string('strftimedatetimeshort', 'langconfig')));
+    } else if ($quiz->timeclose && $timenow > $quiz->timeclose) {
+        $currentstatus = get_string('quizisclosed', 'quiz');
+    } else {
+        $currentstatus = get_string('quizisopen', 'quiz');
+    }
+
+    $bits[] = html_writer::tag('span', $currentstatus,
+            array('class' => 'quizopeningstatus', 'title' => implode(', ', $dates)));
+
+    echo html_writer::tag('div', implode(' | ', $bits), array('class' => 'statusbar'));
 }
