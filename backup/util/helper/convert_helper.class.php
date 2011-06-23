@@ -89,7 +89,7 @@ abstract class convert_helper {
         $filepath   = $dirpath . '/moodle_backup.xml';
 
         if (!is_dir($dirpath)) {
-            throw new converter_helper_exception('tmp_backup_directory_not_found', $dirpath);
+            throw new convert_helper_exception('tmp_backup_directory_not_found', $dirpath);
         }
 
         if (!file_exists($filepath)) {
