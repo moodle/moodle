@@ -117,7 +117,7 @@ class navigation_node implements renderable {
     public $mainnavonly = false;
     /** @var bool If set to true a title will be added to the action no matter what */
     public $forcetitle = false;
-    /** @var navigation_node A reference to the node parent */
+    /** @var navigation_node A reference to the node parent, you should never set this directly you should always call set_parent */
     public $parent = null;
     /** @var bool Override to not display the icon even if one is provided **/
     public $hideicon = false;
@@ -169,9 +169,6 @@ class navigation_node implements renderable {
             if (array_key_exists('key', $properties)) {
                 $this->key = $properties['key'];
             }
-            if (array_key_exists('parent', $properties)) {
-                $this->parent = $properties['parent'];
-            }
             // This needs to happen last because of the check_if_active call that occurs
             if (array_key_exists('action', $properties)) {
                 $this->action = $properties['action'];
@@ -181,6 +178,9 @@ class navigation_node implements renderable {
                 if (self::$autofindactive) {
                     $this->check_if_active();
                 }
+            }
+            if (array_key_exists('parent', $properties)) {
+                $this->set_parent($properties['parent']);
             }
         } else if (is_string($properties)) {
             $this->text = $properties;
@@ -305,7 +305,7 @@ class navigation_node implements renderable {
             $this->nodetype = self::NODETYPE_BRANCH;
         }
         // Set the parent to this node
-        $childnode->parent = $this;
+        $childnode->set_parent($this);
 
         // Default the key to the number of children if not provided
         if ($childnode->key === null) {
@@ -647,6 +647,24 @@ class navigation_node implements renderable {
             }
         }
         return array(array($tabs, $rows), $selected, $inactive, $activated, $return);
+    }
+
+    /**
+     * Sets the parent for this node and if this node is active ensures that the tree is properly
+     * adjusted as well.
+     *
+     * @param navigation_node $parent
+     */
+    public function set_parent(navigation_node $parent) {
+        // Set the parent (thats the easy part)
+        $this->parent = $parent;
+        // Check if this node is active (this is checked during construction)
+        if ($this->isactive) {
+            // Force all of the parent nodes open so you can see this node
+            $this->parent->force_open();
+            // Make all parents inactive so that its clear where we are.
+            $this->parent->make_inactive();
+        }
     }
 }
 
