@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'y';
 $string['cliincorrectvalueerror'] = 'Ошибка, некорректное значение "{$a->value}" для "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'Некорректное значение, пожалуйста повторите';
 $string['clitypevalue'] = 'тип значения';
