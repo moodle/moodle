@@ -39,6 +39,7 @@ if (!empty($CFG->gradepublishing)) {
     $CFG->gradepublishing = has_capability('gradeexport/xml:publish', $context);
 }
 
+//'idnumberrequired'=>true excludes grade items that dont have an ID to use during import
 $mform = new grade_export_form(null, array('idnumberrequired'=>true, 'publishing'=>true, 'updategradesonly'=>true));
 
 $groupmode    = groups_get_course_groupmode($course);   // Groups are being used
@@ -56,7 +57,10 @@ if ($data = $mform->get_data()) {
     // print the grades on screen for feedbacks
     $export->process_form($data);
     $export->print_continue();
-    $export->display_preview(true);
+
+    $export->display_preview(true); //true == skip users without idnumber as they cannot be identified when importing
+    echo $OUTPUT->container(get_string('useridnumberwarning','gradeexport_xml'), 'useridnumberwarning mdl-align');
+
     echo $OUTPUT->footer();
     exit;
 }
