@@ -90,8 +90,8 @@ $string['emailteachers_help'] = 'If enabled, teachers receive email notification
 
 Only teachers who are able to grade the particular assignment are notified. So, for example, if the course uses separate groups, teachers restricted to particular groups won\'t receive notification about students in other groups.';
 $string['emptysubmission'] = 'You have not submitted anything yet';
-$string['enableemailnotification'] = 'Send notification emails';
-$string['enableemailnotification_help'] = 'If enabled, students will receive email notification when their assignment submissions are graded.';
+$string['enablenotification'] = 'Send notifications';
+$string['enablenotification_help'] = 'If enabled, students will be notified when their assignment submissions are graded.';
 $string['errornosubmissions'] = 'There are no submissions to download';
 $string['existingfiledeleted'] = 'Existing file has been deleted: {$a}';
 $string['failedupdatefeedback'] = 'Failed to update submission feedback for user {$a}';

@@ -133,7 +133,7 @@ function message_send($eventdata) {
         // Find out if user has configured this output
         $userisconfigured = $processor->object->is_user_configured($eventdata->userto);
 
-        // DEBUG: noify if we are forcing unconfigured output
+        // DEBUG: notify if we are forcing unconfigured output
         if ($permitted == 'forced' && !$userisconfigured) {
             debugging('Attempt to force message delivery to user who has "'.$processor->name.'" output unconfigured', DEBUG_NORMAL);
         }
