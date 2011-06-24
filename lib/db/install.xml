@@ -367,8 +367,8 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="coursemoduleid" UNIQUE="false" FIELDS="coursemoduleid" COMMENT="For quick access via course-module (e.g. when displaying course module settings page and we need to determine whether anyone has completed it)." NEXT="userid"/>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" COMMENT="Index on user ID. Used when obtaining completion information for normal course page view." PREVIOUS="coursemoduleid"/>
+        <INDEX NAME="coursemoduleid" UNIQUE="false" FIELDS="coursemoduleid" COMMENT="For quick access via course-module (e.g. when displaying course module settings page and we need to determine whether anyone has completed it)." NEXT="userid-coursemoduleid"/>
+        <INDEX NAME="userid-coursemoduleid" UNIQUE="true" FIELDS="userid, coursemoduleid" PREVIOUS="coursemoduleid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="course_sections" COMMENT="to define the sections for each course" PREVIOUS="course_modules_completion" NEXT="course_request">

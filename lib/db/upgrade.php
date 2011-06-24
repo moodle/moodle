@@ -6062,6 +6062,60 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2011022100.01);
     }
 
+    if ($oldversion < 2011033003.09) {
+        // Completion system has issue in which possible duplicate rows are
+        // added to the course_modules_completion table. This change deletes
+        // the older version of duplicate rows and replaces an index with a
+        // unique one so it won't happen again.
+
+        // This would have been a single query but because MySQL is a PoS
+        // and can't do subqueries in DELETE, I have made it into two. The
+        // system is unlikely to run out of memory as only IDs are stored in
+        // the array.
+
+        // Find all rows cmc1 where there is another row cmc2 with the
+        // same user id and the same coursemoduleid, but a higher id (=> newer,
+        // meaning that cmc1 is an older row).
+        $rs = $DB->get_recordset_sql("
+SELECT DISTINCT
+    cmc1.id
+FROM
+    {course_modules_completion} cmc1
+    JOIN {course_modules_completion} cmc2
+        ON cmc2.userid = cmc1.userid
+        AND cmc2.coursemoduleid = cmc1.coursemoduleid
+        AND cmc2.id > cmc1.id");
+        $deleteids = array();
+        foreach ($rs as $row) {
+            $deleteids[] = $row->id;
+        }
+        $rs->close();
+        // Note: SELECT part performance tested on table with ~7m
+        // rows of which ~15k match, only took 30 seconds so probably okay.
+
+        // Delete all those rows
+        $DB->delete_records_list('course_modules_completion', 'id', $deleteids);
+
+        // Define index userid (not unique) to be dropped form course_modules_completion
+        $table = new xmldb_table('course_modules_completion');
+        $index = new xmldb_index('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
+
+        // Conditionally launch drop index userid
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Define index userid-coursemoduleid (unique) to be added to course_modules_completion
+        $index = new xmldb_index('userid-coursemoduleid', XMLDB_INDEX_UNIQUE,
+                array('userid', 'coursemoduleid'));
+
+        // Conditionally launch add index userid-coursemoduleid
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_main_savepoint(true, 2011033003.09);
+    }
 
     return true;
 }
