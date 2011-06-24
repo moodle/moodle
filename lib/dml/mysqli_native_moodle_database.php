@@ -499,7 +499,7 @@ class mysqli_native_moodle_database extends moodle_database {
                 $info->has_default   = is_null($info->default_value) ? false : true;
                 $info->primary_key   = ($rawcolumn->key === 'PRI');
                 $info->binary        = false;
-                $info->unsigned      = null;
+                $info->unsigned      = (stripos($rawcolumn->type, 'unsigned') !== false);
                 $info->auto_increment= false;
                 $info->unique        = null;
 
