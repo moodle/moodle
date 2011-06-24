@@ -1280,7 +1280,7 @@ class lesson extends lesson_base {
                 $instancename = $DB->get_field($modname, 'name', array('id' => $module->instance));
                 if ($instancename) {
                     return html_writer::link(new moodle_url('/mod/'.$modname.'/view.php', array('id'=>$this->properties->activitylink)),
-                        get_string('returnto', 'lesson', get_string('activitylinkname', 'lesson', $instancename)),
+                        get_string('activitylinkname', 'lesson', $instancename),
                         array('class'=>'centerpadded lessonbutton standardbutton'));
                 }
             }
