@@ -493,6 +493,20 @@ function feedback_scale_used_anywhere($scaleid) {
 }
 
 /**
+ * @return array
+ */
+function feedback_get_view_actions() {
+    return array('view','view all');
+}
+
+/**
+ * @return array
+ */
+function feedback_get_post_actions() {
+    return array('submit');
+}
+
+/**
  * This function is used by the reset_course_userdata function in moodlelib.
  * This function will remove all responses from the specified feedback
  * and clean up any related data.
