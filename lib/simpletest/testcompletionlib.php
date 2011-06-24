@@ -6,6 +6,7 @@ require_once($CFG->libdir.'/completionlib.php');
 
 global $DB;
 Mock::generate(get_class($DB), 'mock_database');
+Mock::generate('moodle_transaction', 'mock_transaction');
 
 Mock::generatePartial('completion_info','completion_cutdown',
     array('delete_all_state','get_tracked_users','update_state',
@@ -452,23 +453,39 @@ WHERE
     function test_internal_set_data() {
         global $DB,$SESSION;
 
-        $cm=(object)array('course'=>42,'id'=>13);
-        $c=new completion_info((object)array('id'=>42));
+        $cm = (object)array('course' => 42,'id' => 13);
+        $c = new completion_info((object)array('id' => 42));
 
         // 1) Test with new data
-        $data=(object)array('id'=>0,'userid'=>314159);
-        $DB->setReturnValueAt(0,'insert_record',4);
-        $DB->expectAt(0,'insert_record',array('course_modules_completion',$data));
-        $c->internal_set_data($cm,$data);
-        $this->assertEqual(4,$data->id);
-        $this->assertEqual(array(42=>array(13=>$data)),$SESSION->completioncache);
+        $data = (object)array('id'=>0, 'userid' => 314159, 'coursemoduleid' => 99);
+        $DB->setReturnValueAt(0, 'start_delegated_transaction', new mock_transaction());
+        $DB->setReturnValueAt(0, 'insert_record', 4);
+        $DB->expectAt(0, 'get_field', array('course_modules_completion', 'id',
+                array('coursemoduleid' => 99, 'userid' => 314159)));
+        $DB->expectAt(0, 'insert_record', array('course_modules_completion', $data));
+        $c->internal_set_data($cm, $data);
+        $this->assertEqual(4, $data->id);
+        $this->assertEqual(array(42 => array(13 => $data)), $SESSION->completioncache);
 
         // 2) Test with existing data and for different user (not cached)
         unset($SESSION->completioncache);
-        $d2=(object)array('id'=>7,'userid'=>17);
-        $DB->expectAt(0,'update_record',array('course_modules_completion',$d2));
-        $c->internal_set_data($cm,$d2);
+        $d2 = (object)array('id' => 7, 'userid' => 17, 'coursemoduleid' => 66);
+        $DB->setReturnValueAt(1, 'start_delegated_transaction', new mock_transaction());
+        $DB->expectAt(0,'update_record', array('course_modules_completion', $d2));
+        $c->internal_set_data($cm, $d2);
         $this->assertFalse(isset($SESSION->completioncache));
+
+        // 3) Test where it THINKS the data is new (from cache) but actually
+        // in the database it has been set since
+        // 1) Test with new data
+        $data = (object)array('id'=>0, 'userid' => 314159, 'coursemoduleid' => 99);
+        $DB->setReturnValueAt(2, 'start_delegated_transaction', new mock_transaction());
+        $DB->setReturnValueAt(1, 'get_field', 13);
+        $DB->expectAt(1, 'get_field', array('course_modules_completion', 'id',
+                array('coursemoduleid' => 99, 'userid' => 314159)));
+        $d3 = (object)array('id' => 13, 'userid' => 314159, 'coursemoduleid' => 99);
+        $DB->expectAt(1,'update_record', array('course_modules_completion', $d3));
+        $c->internal_set_data($cm, $data);
 
         $DB->tally();
     }
