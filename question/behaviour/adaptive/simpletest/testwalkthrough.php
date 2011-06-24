@@ -101,7 +101,10 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
                 $this->get_contains_mc_radio_expectation($rightindex, true, true),
                 $this->get_contains_mc_radio_expectation(($rightindex + 1) % 3, true, false),
                 $this->get_contains_mc_radio_expectation(($rightindex + 2) % 3, true, false),
-                $this->get_contains_correct_expectation());
+                $this->get_contains_correct_expectation(),
+                new PatternExpectation('/' . preg_quote(
+                        get_string('gradingdetailspenalty', 'qbehaviour_adaptive',
+                            format_float($mc->penalty, $this->displayoptions->markdp))) . '/'));
         $this->assertEqual('A',
                 $this->quba->get_response_summary($this->slot));
 
