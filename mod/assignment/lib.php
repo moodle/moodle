@@ -1746,7 +1746,7 @@ class assignment_base {
                 $eventdata->fullmessage      = $posttext;
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml  = $posthtml;
-                $eventdata->smallmessage     = '';
+                $eventdata->smallmessage     = $postsubject;
 
                 $eventdata->name            = 'assignment_updates';
                 $eventdata->component       = 'mod_assignment';
@@ -2616,7 +2616,7 @@ function assignment_cron () {
             $eventdata->fullmessage      = $posttext;
             $eventdata->fullmessageformat = FORMAT_PLAIN;
             $eventdata->fullmessagehtml  = $posthtml;
-            $eventdata->smallmessage     = '';
+            $eventdata->smallmessage     = $postsubject;
 
             $eventdata->name            = 'assignment_updates';
             $eventdata->component       = 'mod_assignment';
