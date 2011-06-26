@@ -380,6 +380,20 @@ function xmldb_quiz_statistics_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2011021500, 'quiz', 'statistics');
     }
 
+    // Signed fixes - MDL-28032
+    if ($oldversion < 2011062600) {
+
+        // Changing sign of field maxmark on table quiz_question_statistics to signed
+        $table = new xmldb_table('quiz_question_statistics');
+        $field = new xmldb_field('maxmark', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'subquestions');
+
+        // Launch change of sign for field maxmark
+        $dbman->change_field_unsigned($table, $field);
+
+        // statistics savepoint reached
+        upgrade_plugin_savepoint(true, 2011062600, 'quiz', 'statistics');
+    }
+
     return true;
 }
 

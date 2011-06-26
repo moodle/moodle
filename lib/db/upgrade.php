@@ -6558,6 +6558,20 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2011062000.01);
     }
 
+    // Signed fixes - MDL-28032
+    if ($oldversion < 2011062400.01) {
+
+        // Changing sign of field defaultmark on table question to unsigned
+        $table = new xmldb_table('question');
+        $field = new xmldb_field('defaultmark', XMLDB_TYPE_NUMBER, '12, 7', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'generalfeedbackformat');
+
+        // Launch change of sign for field defaultmark
+        $dbman->change_field_unsigned($table, $field);
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011062400.01);
+    }
+
     return true;
 }
 
