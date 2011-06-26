@@ -77,7 +77,7 @@ class qbehaviour_adaptive_renderer extends qbehaviour_renderer {
 
         $gradingdetails = get_string('gradingdetails', 'qbehaviour_adaptive', $mark);
 
-        $gradingdetails .= $this->penalty_info($qa, $mark);
+        $gradingdetails .= $this->penalty_info($qa, $mark, $options);
 
         $output = '';
         $output .= html_writer::tag('div', get_string($class, 'question'),
@@ -87,7 +87,14 @@ class qbehaviour_adaptive_renderer extends qbehaviour_renderer {
         return $output;
     }
 
-    protected function penalty_info($qa, $mark) {
+    /**
+     * Display the information about the penalty calculations.
+     * @param question_attempt $qa the question attempt.
+     * @param object $mark contains information about the current mark.
+     * @param question_display_options $options display options.
+     */
+    protected function penalty_info(question_attempt $qa, $mark,
+            question_display_options $options) {
         if (!$qa->get_question()->penalty) {
             return '';
         }
@@ -102,7 +109,7 @@ class qbehaviour_adaptive_renderer extends qbehaviour_renderer {
         // penalty is relevant only if the answer is not correct and further attempts are possible
         if (!$qa->get_state()->is_finished()) {
             $output .= ' ' . get_string('gradingdetailspenalty', 'qbehaviour_adaptive',
-                    $qa->get_question()->penalty);
+                    format_float($qa->get_question()->penalty, $options->markdp));
         }
 
         return $output;
