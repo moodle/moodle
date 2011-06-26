@@ -66,6 +66,7 @@ $string['inprogress'] = 'In progress';
 $string['noquestionsfound'] = 'No manually graded questions found';
 $string['options'] = 'Options';
 $string['orderattempts'] = 'Order attempts';
+$string['pluginname'] = 'Manual grading';
 $string['qno'] = 'Q #';
 $string['questionname'] = 'Question name';
 $string['questionsperpage'] = 'Questions per page';
