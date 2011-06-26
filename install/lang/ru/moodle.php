@@ -29,6 +29,6 @@
  */
 
 $string['language'] = 'Язык';
-$string['next'] = 'Далее';
-$string['previous'] = 'Назад';
+$string['next'] = 'Следующая';
+$string['previous'] = 'Предыдущая';
 $string['reload'] = 'Обновить';
