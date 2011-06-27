@@ -2827,8 +2827,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
         $usage->preferredbehaviour = $quiz->preferredbehaviour;
         $usage->id = $DB->insert_record('question_usages', $usage);
 
-        $DB->set_field('quiz_attempts', 'uniqueid', $usage->id,
-                array('id' => $this->get_mappingid('quiz_attempt', $data->id)));
+        $this->inform_new_usage_id($usage->id);
 
         $data->uniqueid = $usage->id;
         $upgrader->save_usage($quiz->preferredbehaviour, $data, $qas, $quiz->questions);
