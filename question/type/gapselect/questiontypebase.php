@@ -84,7 +84,7 @@ abstract class qtype_gapselect_base extends question_type {
 
         // Delete old answer records
         foreach ($oldanswers as $oa) {
-            delete_records('question_answers', 'id', $oa->id);
+            $DB->delete_records('question_answers', array('id' => $oa->id));
         }
 
         $options = $DB->get_record('question_' . $this->name(),
