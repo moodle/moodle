@@ -125,8 +125,6 @@ $PAGE->set_heading(format_string($course->fullname));
 
 book_add_fake_block($chapters, $chapter, $book, $cm, $edit);
 
-echo $OUTPUT->header();
-
 /// prepare chapter navigation icons
 $previd = null;
 $nextid = null;
@@ -168,6 +166,8 @@ if ($nextid) {
 // =====================================================
 // Book display HTML code
 // =====================================================
+
+echo $OUTPUT->header();
 
 // upper nav
 echo '<div class="navtop">'.$chnavigation.'</div>';
