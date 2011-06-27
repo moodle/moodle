@@ -1354,13 +1354,6 @@ class global_navigation extends navigation_node {
             $categoryselect = '';
         }
 
-        if (count($this->addedcategories) > 0) {
-            list($courseselect, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses), SQL_PARAMS_NAMED, 'course', false);
-            $params += $courseparams;
-        } else {
-            $courseselect = '';
-        }
-
         list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
         list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses) + array(SITEID), SQL_PARAMS_NAMED, 'lcourse', false);
         $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category, cat.path AS categorypath $ccselect
@@ -1430,7 +1423,7 @@ class global_navigation extends navigation_node {
         } else {
             // This category hasn't been loaded yet so we need to fetch it, work out its category path
             // and load this category plus all its parents and subcategories
-            $category = $DB->get_record('course_categories', array('id'=>$categoryid), 'path', MUST_EXIST);
+            $category = $DB->get_record('course_categories', array('id' => $categoryid), 'path', MUST_EXIST);
             $coursestoload = explode('/', trim($category->path, '/'));
             list($select, $params) = $DB->get_in_or_equal($coursestoload);
             $select = 'id '.$select.' OR parent '.$select;
@@ -1963,9 +1956,7 @@ class global_navigation extends navigation_node {
 
             // Check the number of nodes in the report node... if there are none remove
             // the node
-            if (count($reporttab->children)===0) {
-                $usernode->remove_child($reporttab);
-            }
+            $reporttab->trim_if_empty();
         }
 
         // If the user is the current user add the repositories for the current user
@@ -2128,13 +2119,17 @@ class global_navigation extends navigation_node {
             $url = new moodle_url('/course/view.php', array('id'=>$course->id));
         }
 
-        if (!$ismycourse && !$issite && !empty($CFG->navshowcategories) && !empty($course->category)) {
-            // We need to load the category structure for this course
-            $this->load_all_categories($course->category);
-            $parent = $this->addedcategories[$course->category];
-            // This could lead to the course being created so we should check whether it is the case again
-            if (!$forcegeneric && array_key_exists($course->id, $this->addedcourses)) {
-                return $this->addedcourses[$course->id];
+        if (!$ismycourse && !$issite && !empty($course->category)) {
+            if (!empty($CFG->navshowcategories)) {
+                // We need to load the category structure for this course
+                $this->load_all_categories($course->category);
+            }
+            if (array_key_exists($course->category, $this->addedcategories)) {
+                $parent = $this->addedcategories[$course->category];
+                // This could lead to the course being created so we should check whether it is the case again
+                if (!$forcegeneric && array_key_exists($course->id, $this->addedcourses)) {
+                    return $this->addedcourses[$course->id];
+                }
             }
         }
 
@@ -3990,7 +3985,7 @@ class navigation_json {
         $attributes['hidden'] = ($child->hidden);
         $attributes['haschildren'] = ($child->children->count()>0 || $child->type == navigation_node::TYPE_CATEGORY);
 
-        if (count($child->children)>0) {
+        if ($child->children->count() > 0) {
             $attributes['children'] = array();
             foreach ($child->children as $subchild) {
                 $attributes['children'][] = $this->convert_child($subchild, $depth+1);
