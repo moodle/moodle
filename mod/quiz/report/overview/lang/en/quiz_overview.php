@@ -52,6 +52,7 @@ $string['overviewreport'] = 'Grades report';
 $string['overviewreportgraph'] = 'Overall number of students achieving grade ranges';
 $string['overviewreportgraphgroup'] = 'Number of students in group \'{$a}\' achieving grade ranges';
 $string['pagesize'] = 'Page size';
+$string['pluginname'] = 'Grades';
 $string['preferencespage'] = 'Preferences just for this page';
 $string['preferencessave'] = 'Show report';
 $string['preferencesuser'] = 'Your preferences for this report';
