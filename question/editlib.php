@@ -1595,9 +1595,6 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
             $thiscontext = null;
         }
     }
-    if (strpos($baseurl, '/question/') === 0) {
-        navigation_node::override_active_url($thispageurl);
-    }
 
     if ($thiscontext){
         $contexts = new question_edit_contexts($thiscontext);
@@ -1607,16 +1604,14 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
         $contexts = null;
     }
 
-
-
     $pagevars['qpage'] = optional_param('qpage', -1, PARAM_INT);
 
     //pass 'cat' from page to page and when 'category' comes from a drop down menu
     //then we also reset the qpage so we go to page 1 of
     //a new cat.
-    $pagevars['cat'] = optional_param('cat', 0, PARAM_SEQUENCE);// if empty will be set up later
-    if  ($category = optional_param('category', 0, PARAM_SEQUENCE)){
-        if ($pagevars['cat'] != $category){ // is this a move to a new category?
+    $pagevars['cat'] = optional_param('cat', 0, PARAM_SEQUENCE); // if empty will be set up later
+    if ($category = optional_param('category', 0, PARAM_SEQUENCE)) {
+        if ($pagevars['cat'] != $category) { // is this a move to a new category?
             $pagevars['cat'] = $category;
             $pagevars['qpage'] = 0;
         }
@@ -1624,6 +1619,10 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
     if ($pagevars['cat']){
         $thispageurl->param('cat', $pagevars['cat']);
     }
+    if (strpos($baseurl, '/question/') === 0) {
+        navigation_node::override_active_url($thispageurl);
+    }
+
     if ($pagevars['qpage'] > -1) {
         $thispageurl->param('qpage', $pagevars['qpage']);
     } else {

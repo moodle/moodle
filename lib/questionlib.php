@@ -1434,6 +1434,10 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
         return;
     }
 
+    if (($cat = $PAGE->url->param('cat')) && preg_match('~\d+,\d+~', $cat)) {
+        $params['cat'] = $cat;
+    }
+
     $questionnode = $navigationnode->add(get_string('questionbank', 'question'),
             new moodle_url('/question/edit.php', $params), navigation_node::TYPE_CONTAINER);
 

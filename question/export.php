@@ -36,16 +36,11 @@ list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
 // get display strings
 $strexportquestions = get_string('exportquestions', 'question');
 
-// make sure we are using the user's most recent category choice
-if (empty($categoryid)) {
-    $categoryid = $pagevars['cat'];
-}
-
 list($catid, $catcontext) = explode(',', $pagevars['cat']);
 $category = $DB->get_record('question_categories', array("id" => $catid, 'contextid' => $catcontext), '*', MUST_EXIST);
 
 /// Header
-$PAGE->set_url($thispageurl->out());
+$PAGE->set_url($thispageurl);
 $PAGE->set_title($strexportquestions);
 $PAGE->set_heading($COURSE->fullname);
 echo $OUTPUT->header();
