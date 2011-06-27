@@ -531,7 +531,7 @@ function local_qeupgradehelper_generate_unit_test($questionsessionid, $namesuffi
     if (!local_qeupgradehelper_is_upgraded()) {
         if (!$quiz->optionflags) {
             $quiz->preferredbehaviour = 'deferredfeedback';
-        } else if (!$quiz->penaltyscheme) {
+        } else if ($quiz->penaltyscheme) {
             $quiz->preferredbehaviour = 'adaptive';
         } else {
             $quiz->preferredbehaviour = 'adaptivenopenalty';

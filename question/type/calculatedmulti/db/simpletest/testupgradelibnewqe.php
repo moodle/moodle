@@ -242,8 +242,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
                     'fraction' => null,
                     'timecreated' => 1305830650,
                     'userid' => 4,
-                    'data' => array('-_try' => 1,
-                            '_order' => '24,26,27,25', '_var_a' => '4.3', '_var_b' => '5.4'),
+                    'data' => array('_order' => '24,26,27,25', '_var_a' => '4.3', '_var_b' => '5.4'),
                 ),
                 1 => (object) array(
                     'sequencenumber' => 1,
@@ -476,8 +475,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
                     'fraction' => null,
                     'timecreated' => 1305830661,
                     'userid' => 4,
-                    'data' => array('-_try' => 1,
-                            '_order' => '25,24,27,26', '_var_a' => '3.7', '_var_b' => '6.0'),
+                    'data' => array('_order' => '25,24,27,26', '_var_a' => '3.7', '_var_b' => '6.0'),
                 ),
                 1 => (object) array(
                     'sequencenumber' => 1,
@@ -485,7 +483,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
                     'fraction' => 1,
                     'timecreated' => 1305830699,
                     'userid' => 4,
-                    'data' => array('answer' => '0', '-submit' => 1, '-_try' => 2, '-_rawfraction' => 1),
+                    'data' => array('answer' => '0', '-submit' => 1, '-_try' => 1, '-_rawfraction' => 1),
                 ),
                 2 => (object) array(
                     'sequencenumber' => 2,
@@ -493,7 +491,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
                     'fraction' => 1,
                     'timecreated' => 1305830699,
                     'userid' => 4,
-                    'data' => array('answer' => '0', '-finish' => 1, '-_try' => 2, '-_rawfraction' => 1),
+                    'data' => array('answer' => '0', '-finish' => 1, '-_try' => 1, '-_rawfraction' => 1),
                 ),
             ),
         );
@@ -754,8 +752,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
                     'fraction' => null,
                     'timecreated' => 1305830744,
                     'userid' => 3,
-                    'data' => array('-_try' => 1,
-                            '_order' => '26,24,25,27', '_var_a' => '4.4', '_var_b' => '8.2'),
+                    'data' => array('_order' => '26,24,25,27', '_var_a' => '4.4', '_var_b' => '8.2'),
                 ),
                 1 => (object) array(
                     'sequencenumber' => 1,
@@ -763,7 +760,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
                     'fraction' => 0,
                     'timecreated' => 1305830759,
                     'userid' => 3,
-                    'data' => array('answer' => '3', '-submit' => 1, '-_try' => 2, '-_rawfraction' => 0),
+                    'data' => array('answer' => '3', '-submit' => 1, '-_try' => 1, '-_rawfraction' => 0),
                 ),
                 2 => (object) array(
                     'sequencenumber' => 2,
@@ -771,7 +768,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
                     'fraction' => 0,
                     'timecreated' => 1305830761,
                     'userid' => 3,
-                    'data' => array('answer' => '1', '-submit' => 1, '-_try' => 3, '-_rawfraction' => 0),
+                    'data' => array('answer' => '1', '-submit' => 1, '-_try' => 2, '-_rawfraction' => 0),
                 ),
                 3 => (object) array(
                     'sequencenumber' => 3,
@@ -779,7 +776,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
                     'fraction' => 0,
                     'timecreated' => 1305830764,
                     'userid' => 3,
-                    'data' => array('answer' => '0', '-submit' => 1, '-_try' => 4, '-_rawfraction' => 0),
+                    'data' => array('answer' => '0', '-submit' => 1, '-_try' => 3, '-_rawfraction' => 0),
                 ),
                 4 => (object) array(
                     'sequencenumber' => 4,
@@ -787,7 +784,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
                     'fraction' => 0.7,
                     'timecreated' => 1305830766,
                     'userid' => 3,
-                    'data' => array('answer' => '2', '-submit' => 1, '-_try' => 5, '-_rawfraction' => 1),
+                    'data' => array('answer' => '2', '-submit' => 1, '-_try' => 4, '-_rawfraction' => 1),
                 ),
                 5 => (object) array(
                     'sequencenumber' => 5,
@@ -795,7 +792,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
                     'fraction' => 0.7,
                     'timecreated' => 1305830768,
                     'userid' => 3,
-                    'data' => array('answer' => '1', '-submit' => 1, '-_try' => 6, '-_rawfraction' => 0),
+                    'data' => array('answer' => '1', '-submit' => 1, '-_try' => 5, '-_rawfraction' => 0),
                 ),
             ),
         );
