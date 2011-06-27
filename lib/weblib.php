@@ -5842,11 +5842,13 @@ function print_error($errorcode, $module='error', $link='', $a=NULL, $extralocat
     }
 
     if (!empty($CFG->errordocroot)) {
-        $errordocroot = $CFG->errordocroot;
-    } else if (!empty($CFG->docroot)) {
-        $errordocroot = $CFG->docroot;
+        $errordoclink = $CFG->errordocroot.'/en';
     } else {
-        $errordocroot = 'http://docs.moodle.org';
+        $errordoclink = get_doc_root();
+        if (is_null($errordoclink)) {
+            $lang = current_language();
+            $errordoclink = 'http://docs.moodle.org/19/'.$lang; //no doc links set. point to default.
+        }
     }
 
     if (defined('FULLME') && FULLME == 'cron') {
@@ -5863,7 +5865,7 @@ function print_error($errorcode, $module='error', $link='', $a=NULL, $extralocat
 
     $message = clean_text('<p class="errormessage">'.$message.'</p>'.
                '<p class="errorcode">'.
-               '<a href="'.$errordocroot.'/en/error/'.$modulelink.'/'.$errorcode.'">'.
+               '<a href="'.$errordoclink.'/error/'.$modulelink.'/'.$errorcode.'">'.
                  get_string('moreinformation').'</a></p>');
 
     if (! defined('HEADER_PRINTED')) {
@@ -6957,17 +6959,39 @@ function page_doc_link($text='', $iconpath='') {
 function doc_link($path='', $text='', $iconpath='') {
     global $CFG;
 
-    if (empty($CFG->docroot)) {
-        return '';
-    }
-
     $target = '';
     if (!empty($CFG->doctonewwindow)) {
         $target = ' target="_blank"';
     }
 
-    $lang = str_replace('_utf8', '', current_language());
+    if (is_null($docroot = get_doc_root())) {
+        return '';
+    }
 
+    $str = '<a href="' .$docroot. '/' .$path. '"' .$target. '>';
+
+    if (empty($iconpath)) {
+        $iconpath = $CFG->httpswwwroot . '/pix/docs.gif';
+    }
+
+    // alt left blank intentionally to prevent repetition in screenreaders
+    $str .= '<img class="iconhelp" src="' .$iconpath. '" alt="" />' .$text. '</a>';
+
+    return $str;
+}
+
+/**
+ * A function that checks if docroot is set, builds and returns the docs root url according to version release.
+ * @return string documentation url, null if doc root isn't set (ie:during installation perhaps).
+ */
+function get_doc_root() {
+    global $CFG;
+
+    if (empty($CFG->docroot)) {
+        return null;
+    }
+
+    $lang = str_replace('_utf8', '', current_language());
     if (!empty($CFG->release)) {
         $release = $CFG->release;
     } else {
@@ -6980,18 +7004,8 @@ function doc_link($path='', $text='', $iconpath='') {
         $branch = '.';
     }
 
-    $str = '<a href="' .$CFG->docroot. '/' .$branch. '/' .$lang. '/' .$path. '"' .$target. '>';
-
-    if (empty($iconpath)) {
-        $iconpath = $CFG->httpswwwroot . '/pix/docs.gif';
-    }
-
-    // alt left blank intentionally to prevent repetition in screenreaders
-    $str .= '<img class="iconhelp" src="' .$iconpath. '" alt="" />' .$text. '</a>';
-
-    return $str;
+    return $CFG->docroot. '/' .$branch. '/' .$lang;
 }
-
 
 /**
  * Returns true if the current site debugging settings are equal or above specified level.
