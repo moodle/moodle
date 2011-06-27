@@ -2621,6 +2621,8 @@ function assignment_cron () {
             $eventdata->name            = 'assignment_updates';
             $eventdata->component       = 'mod_assignment';
             $eventdata->notification    = 1;
+            $eventdata->contexturl      = $assignmentinfo->url;
+            $eventdata->contexturlname  = $assignmentinfo->assignment;
 
             message_send($eventdata);
         }
