@@ -6191,6 +6191,13 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                 )
             ");
 
+            // It seems that it is possible, in old versions of Moodle, for a
+            // quiz_attempt to be deleted while the question_attempt remains.
+            // In that situation we still get NULLs left in the table, which
+            // causes the upgrade to break at the next step. To avoid breakage,
+            // without risking dataloss, we just replace all NULLs with 0 here.
+            $DB->set_field_select('question_usages', 'contextid', 0, 'contextid IS NULL');
+
             // Then make it NOT NULL.
             $field = new xmldb_field('contextid');
             $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
