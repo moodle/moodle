@@ -931,7 +931,7 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
                 // write grades.xml
                 $this->open_xml_writer($directory.'/grades.xml');
                 $this->xmlwriter->begin_tag('activity_gradebook');
-                $gradeitems = $this->converter->get_stash_or_default('modgradeitem_'.$modname, $modinstanceid, array());
+                $gradeitems = $this->converter->get_stash_or_default('gradebook_modgradeitem_'.$modname, $modinstanceid, array());
                 if (!empty($gradeitems)) {
                     $this->xmlwriter->begin_tag('grade_items');
                     foreach ($gradeitems as $gradeitem) {
@@ -1390,13 +1390,54 @@ class moodle1_scales_handler extends moodle1_handler {
  */
 class moodle1_gradebook_handler extends moodle1_xml_handler {
 
+    /** @var array of (int)gradecategoryid => (int|null)parentcategoryid */
+    protected $categoryparent = array();
+
     /**
      * Registers paths
      */
     public function get_paths() {
         return array(
+            new convert_path('gradebook', '/MOODLE_BACKUP/COURSE/GRADEBOOK'),
+            new convert_path(
+                'gradebook_grade_category', '/MOODLE_BACKUP/COURSE/GRADEBOOK/GRADE_CATEGORIES/GRADE_CATEGORY',
+                array(
+                    'addfields' => array(
+                        'hidden' => 0,  // upgrade step 2010011200
+                    ),
+                )
+            ),
             new convert_path('gradebook_grade_item', '/MOODLE_BACKUP/COURSE/GRADEBOOK/GRADE_ITEMS/GRADE_ITEM'),
         );
+    }
+
+    /**
+     * Initializes the in-memory structures
+     *
+     * This should not be needed actually as the moodle.xml contains just one GRADEBOOK
+     * element. But who knows - maybe someone will want to write a mass conversion
+     * tool in the future (not me definitely ;-)
+     */
+    public function on_gradebook_start() {
+        $this->categoryparent = array();
+    }
+
+    /**
+     * Processes one GRADE_LETTER data
+     *
+     * In Moodle 1.9, all grade_letters are from course context only. Therefore
+     * we put them here.
+     */
+    public function process_gradebook_grade_letter(array $data, array $raw) {
+        $this->converter->set_stash('gradebook_gradeletter', $data, $data['id']);
+    }
+
+    /**
+     * Processes one GRADE_CATEGORY data
+     */
+    public function process_gradebook_grade_category(array $data, array $raw) {
+        $this->categoryparent[$data['id']] = $data['parent'];
+        $this->converter->set_stash('gradebook_gradecategory', $data, $data['id']);
     }
 
     /**
@@ -1409,6 +1450,12 @@ class moodle1_gradebook_handler extends moodle1_xml_handler {
 
         if ($data['itemtype'] === 'mod') {
             return $this->process_mod_grade_item($data, $raw);
+
+        } else if (in_array($data['itemtype'], array('manual', 'course', 'category'))) {
+            return $this->process_nonmod_grade_item($data, $raw);
+
+        } else {
+            $this->log('unsupported grade_item type', backup::LOG_ERROR, $data['itemtype']);
         }
     }
 
@@ -1417,7 +1464,7 @@ class moodle1_gradebook_handler extends moodle1_xml_handler {
      */
     protected function process_mod_grade_item(array $data, array $raw) {
 
-        $stashname   = 'modgradeitem_'.$data['itemmodule'];
+        $stashname   = 'gradebook_modgradeitem_'.$data['itemmodule'];
         $stashitemid = $data['iteminstance'];
         $gradeitems  = $this->converter->get_stash_or_default($stashname, $stashitemid, array());
 
@@ -1425,6 +1472,106 @@ class moodle1_gradebook_handler extends moodle1_xml_handler {
         $gradeitems[$data['itemnumber']] = $data;
 
         $this->converter->set_stash($stashname, $gradeitems, $stashitemid);
+
+        return $data;
+    }
+
+    /**
+     * Processes one GRADE_ITEM of te type 'manual' or 'course' or 'category'
+     */
+    protected function process_nonmod_grade_item(array $data, array $raw) {
+
+        $stashname   = 'gradebook_nonmodgradeitem';
+        $stashitemid = $data['id'];
+        $this->converter->set_stash($stashname, $data, $stashitemid);
+
+        return $data;
+    }
+
+    /**
+     * Writes the collected information into gradebook.xml
+     */
+    public function on_gradebook_end() {
+
+        $this->open_xml_writer('gradebook.xml');
+        $this->xmlwriter->begin_tag('gradebook');
+        $this->write_grade_categories();
+        $this->write_grade_items();
+        $this->write_grade_letters();
+        $this->write_grade_settings();
+        $this->xmlwriter->end_tag('gradebook');
+        $this->close_xml_writer();
+    }
+
+    /**
+     * Writes grade_categories
+     */
+    protected function write_grade_categories() {
+
+        $this->xmlwriter->begin_tag('grade_categories');
+        foreach ($this->converter->get_stash_itemids('gradebook_gradecategory') as $gradecategoryid) {
+            $gradecategory = $this->converter->get_stash('gradebook_gradecategory', $gradecategoryid);
+            $path = $this->calculate_category_path($gradecategoryid);
+            $gradecategory['depth'] = count($path);
+            $gradecategory['path']  = '/'.implode('/', $path).'/';
+            $this->write_xml('grade_category', $gradecategory, array('/grade_category/id'));
+        }
+        $this->xmlwriter->end_tag('grade_categories');
+    }
+
+    /**
+     * Calculates the path to the grade_category
+     *
+     * Moodle 1.9 backup does not store the grade_category's depth and path. This method is used
+     * to repopulate this information using the $this->categoryparent values.
+     *
+     * @param int $categoryid
+     * @return array of ids including the categoryid
+     */
+    protected function calculate_category_path($categoryid) {
+
+        if (!array_key_exists($categoryid, $this->categoryparent)) {
+            throw new moodle1_convert_exception('gradebook_unknown_categoryid', null, $categoryid);
+        }
+
+        $path = array($categoryid);
+        $parent = $this->categoryparent[$categoryid];
+        while (!is_null($parent)) {
+            array_unshift($path, $parent);
+            $parent = $this->categoryparent[$parent];
+            if (in_array($parent, $path)) {
+                throw new moodle1_convert_exception('circular_reference_in_categories_tree');
+            }
+        }
+
+        return $path;
+    }
+
+    /**
+     * Writes grade_items
+     */
+    protected function write_grade_items() {
+
+        $this->xmlwriter->begin_tag('grade_items');
+        foreach ($this->converter->get_stash_itemids('gradebook_nonmodgradeitem') as $gradeitemid) {
+            $gradeitem = $this->converter->get_stash('gradebook_nonmodgradeitem', $gradeitemid);
+            $this->write_xml('grade_item', $gradeitem, array('/grade_item/id'));
+        }
+        $this->xmlwriter->end_tag('grade_items');
+    }
+
+    /**
+     * Writes grade_letters
+     */
+    protected function write_grade_letters() {
+        // todo
+    }
+
+    /**
+     * Writes grade_settings
+     */
+    protected function write_grade_settings() {
+        // todo
     }
 }
 
