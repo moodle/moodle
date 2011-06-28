@@ -26,6 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+
 
 /**
  * Upgrade states for an attempt to Moodle 1.5 model
