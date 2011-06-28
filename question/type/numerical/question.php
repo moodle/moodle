@@ -153,7 +153,7 @@ class qtype_numerical_question extends question_graded_automatically {
             return array();
         }
 
-        $response = array('answer' => $answer->answer);
+        $response = array('answer' => str_replace('.', $this->ap->get_point(), $answer->answer));
 
         if ($this->has_separate_unit_field()) {
             $response['unit'] = $this->ap->get_default_unit();

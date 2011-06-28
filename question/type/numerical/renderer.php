@@ -165,7 +165,7 @@ class qtype_numerical_renderer extends qtype_renderer {
             return '';
         }
 
-        $response = $answer->answer;
+        $response = str_replace('.', $question->ap->get_point(), $answer->answer);
         if ($question->unitdisplay != qtype_numerical::UNITNONE) {
             $response = $question->ap->add_unit($response);
         }
