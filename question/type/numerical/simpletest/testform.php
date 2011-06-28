@@ -71,10 +71,10 @@ class qtype_numerical_form_test extends UnitTestCase {
 
     public function test_is_valid_number() {
         $this->assertTrue($this->form->is_valid_number('1,001'));
-        $this->assertFalse($this->form->is_valid_number('1.001'));
+        $this->assertTrue($this->form->is_valid_number('1.001'));
         $this->assertTrue($this->form->is_valid_number('1'));
         $this->assertTrue($this->form->is_valid_number('1,e8'));
         $this->assertFalse($this->form->is_valid_number('1001 xxx'));
-        $this->assertFalse($this->form->is_valid_number('1.e8'));
+        $this->assertTrue($this->form->is_valid_number('1.e8'));
     }
 }

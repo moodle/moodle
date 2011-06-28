@@ -110,17 +110,17 @@ class qtype_numerical_question_test extends UnitTestCase {
         $this->assertEqual(array(1, question_state::$gradedright),
                 $question->grade_response(array('answer' => '$1332')));
         $this->assertEqual(array(1, question_state::$gradedright),
-                $question->grade_response(array('answer' => '$ 1,332')));
+                $question->grade_response(array('answer' => '$ 1332')));
         $this->assertEqual(array(0.8, question_state::$gradedpartial),
                 $question->grade_response(array('answer' => 'frog 1332')));
         $this->assertEqual(array(0.8, question_state::$gradedpartial),
                 $question->grade_response(array('answer' => '1332')));
         $this->assertEqual(array(0.8, question_state::$gradedpartial),
-                $question->grade_response(array('answer' => ' 1,332')));
+                $question->grade_response(array('answer' => ' 1332')));
         $this->assertEqual(array(0, question_state::$gradedwrong),
                 $question->grade_response(array('answer' => '1332 $')));
         $this->assertEqual(array(0, question_state::$gradedwrong),
-                $question->grade_response(array('answer' => '1,332 frogs')));
+                $question->grade_response(array('answer' => '1332 frogs')));
         $this->assertEqual(array(0, question_state::$gradedwrong),
                 $question->grade_response(array('answer' => '$1')));
     }
@@ -225,7 +225,7 @@ class qtype_numerical_question_test extends UnitTestCase {
                 new question_classified_response(14, '$100', 0)),
                 $num->classify_response(array('answer' => '$100')));
         $this->assertEqual(array(
-                new question_classified_response(13, '1,332', 0.8)),
-                $num->classify_response(array('answer' => '1,332')));
+                new question_classified_response(13, '1 332', 0.8)),
+                $num->classify_response(array('answer' => '1 332')));
     }
 }
