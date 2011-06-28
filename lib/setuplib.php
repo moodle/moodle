@@ -480,18 +480,17 @@ function get_exception_info($ex) {
     }
 
     if (!empty($CFG->errordocroot)) {
-        $errordocroot = $CFG->errordocroot;
-    } else if (!empty($CFG->docroot)) {
-        $errordocroot = $CFG->docroot;
+        $errordoclink = $CFG->errordocroot . '/en/';
     } else {
-        $errordocroot = 'http://docs.moodle.org';
+        $errordoclink = get_docs_url();
     }
+
     if ($module === 'error') {
         $modulelink = 'moodle';
     } else {
         $modulelink = $module;
     }
-    $moreinfourl = $errordocroot . '/en/error/' . $modulelink . '/' . $errorcode;
+    $moreinfourl = $errordoclink . 'error/' . $modulelink . '/' . $errorcode;
 
     if (empty($link)) {
         if (!empty($SESSION->fromurl)) {
@@ -512,6 +511,41 @@ function get_exception_info($ex) {
     $info->debuginfo   = $debuginfo;
 
     return $info;
+}
+
+/**
+ * Returns the Moodle Docs URL in the users language
+ *
+ * @global object
+ * @param string $path the end of the URL.
+ * @return string The MoodleDocs URL in the user's language. for example {@link http://docs.moodle.org/en/ http://docs.moodle.org/en/$path}
+ */
+function get_docs_url($path=null) {
+    global $CFG;
+    // Check that $CFG->release has been set up, during installation it won't be.
+    if (empty($CFG->release)) {
+        // It's not there yet so look at version.php
+        include($CFG->dirroot.'/version.php');
+    } else {
+        // We can use $CFG->release and avoid having to include version.php
+        $release = $CFG->release;
+    }
+    // Attempt to match the branch from the release
+    if (preg_match('/^(.)\.(.)/', $release, $matches)) {
+        // We should ALWAYS get here
+        $branch = $matches[1].$matches[2];
+    } else {
+        // We should never get here but in case we do lets set $branch to .
+        // the smart one's will know that this is the current directory
+        // and the smarter ones will know that there is some smart matching
+        // that will ensure people end up at the latest version of the docs.
+        $branch = '.';
+    }
+    if (!empty($CFG->docroot)) {
+        return $CFG->docroot . '/' . $branch . '/' . current_language() . '/' . $path;
+    } else {
+        return 'http://docs.moodle.org/'. $branch . '/en/' . $path;
+    }
 }
 
 /**
