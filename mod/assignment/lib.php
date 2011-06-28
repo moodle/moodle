@@ -2302,12 +2302,10 @@ class mod_assignment_grading_form extends moodleform {
                 default :
                     break;
             }
-            $lastmailinfo = get_user_preferences('assignment_mailinfo', 1) ? array('checked'=>'checked') : array();
             $mform->addElement('hidden', 'mailinfo_h', "0");
             $mform->setType('mailinfo_h', PARAM_INT);
             $mform->addElement('checkbox', 'mailinfo',get_string('enablenotification','assignment').
             $OUTPUT->help_icon('enablenotification', 'assignment') .':' );
-            $mform->updateElementAttr('mailinfo', $lastmailinfo);
             $mform->setType('mailinfo', PARAM_INT);
         }
     }
