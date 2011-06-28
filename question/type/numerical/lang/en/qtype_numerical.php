@@ -64,6 +64,7 @@ $string['nominal'] = 'Nominal';
 $string['onlynumerical'] = 'Units are not used at all. Only the numerical value is graded.';
 $string['oneunitshown'] = 'Unit 1 is automatically displayed beside the answer box.';
 $string['pleaseenterananswer'] = 'Please enter an answer.';
+$string['pleaseenteranswerwithoutthousandssep'] = 'Please enter your answer without using the thousand separator ({$a}).';
 $string['relative'] = 'Relative';
 $string['rightexample'] = 'on the right, for example 1.00cm or 1.00km';
 $string['selectunits'] = 'Select units';

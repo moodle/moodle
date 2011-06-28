@@ -525,6 +525,19 @@ class qtype_numerical_answer_processor {
     }
 
     /**
+     * @return book If the student's response contains a '.' or a ',' that
+     * matches the thousands separator in the current locale. In this case, the
+     * parsing in apply_unit can give a result that the student did not expect.
+     */
+    public function contains_thousands_seaparator($value) {
+        if (!in_array($this->thousandssep, array('.', ','))) {
+            return false;
+        }
+
+        return strpos($value, $this->thousandssep) !== false;
+    }
+
+    /**
      * Create the regular expression that {@link parse_response()} requires.
      * @return string
      */
