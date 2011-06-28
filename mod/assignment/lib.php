@@ -1021,6 +1021,7 @@ class assignment_base {
         $mformdata->submissioncommentformat= FORMAT_HTML;
         $mformdata->submission_content= $this->print_user_files($user->id,true);
         $mformdata->filter = $filter;
+        $mformdata->mailinfo = get_user_preferences('assignment_mailinfo', 0);
          if ($assignment->assignmenttype == 'upload') {
             $mformdata->fileui_options = array('subdirs'=>1, 'maxbytes'=>$assignment->maxbytes, 'maxfiles'=>$assignment->var1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
         } elseif ($assignment->assignmenttype == 'uploadsingle') {
@@ -1470,9 +1471,9 @@ class assignment_base {
             if (get_user_preferences('assignment_mailinfo', 1)) {
                 $mailinfopref = true;
             }
-            $emailnotification =  html_writer::checkbox('mailinfo', 1, $mailinfopref, get_string('enableemailnotification','assignment'));
+            $emailnotification =  html_writer::checkbox('mailinfo', 1, $mailinfopref, get_string('enablenotification','assignment'));
 
-            $emailnotification .= $OUTPUT->help_icon('enableemailnotification', 'assignment');
+            $emailnotification .= $OUTPUT->help_icon('enablenotification', 'assignment');
             echo html_writer::tag('div', $emailnotification, array('class'=>'emailnotification'));
 
             $savefeedback = html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'fastg', 'value'=>get_string('saveallfeedback', 'assignment')));
@@ -2303,12 +2304,10 @@ class mod_assignment_grading_form extends moodleform {
                 default :
                     break;
             }
-            $lastmailinfo = get_user_preferences('assignment_mailinfo', 1) ? array('checked'=>'checked') : array();
             $mform->addElement('hidden', 'mailinfo_h', "0");
             $mform->setType('mailinfo_h', PARAM_INT);
-            $mform->addElement('checkbox', 'mailinfo',get_string('enableemailnotification','assignment').
-            $OUTPUT->help_icon('enableemailnotification', 'assignment') .':' );
-            $mform->updateElementAttr('mailinfo', $lastmailinfo);
+            $mform->addElement('checkbox', 'mailinfo',get_string('enablenotification','assignment').
+            $OUTPUT->help_icon('enablenotification', 'assignment') .':' );
             $mform->setType('mailinfo', PARAM_INT);
         }
     }
