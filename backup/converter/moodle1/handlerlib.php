@@ -52,6 +52,7 @@ abstract class moodle1_handlers_factory {
             new moodle1_roles_definition_handler($converter),
             new moodle1_question_bank_handler($converter),
             new moodle1_scales_handler($converter),
+            new moodle1_gradebook_handler($converter),
         );
 
         $handlers = array_merge($handlers, self::get_plugin_handlers('mod', $converter));
@@ -927,10 +928,22 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
                 $this->write_xml('module', $cminfo, array('/module/id', '/module/version'));
                 $this->close_xml_writer();
 
-                // todo: write proper grades.xml and roles.xml, for now we just make
-                // sure that those files are present
+                // write grades.xml
+                $this->open_xml_writer($directory.'/grades.xml');
+                $this->xmlwriter->begin_tag('activity_gradebook');
+                $gradeitems = $this->converter->get_stash_or_default('modgradeitem_'.$modname, $modinstanceid, array());
+                if (!empty($gradeitems)) {
+                    $this->xmlwriter->begin_tag('grade_items');
+                    foreach ($gradeitems as $gradeitem) {
+                        $this->write_xml('grade_item', $gradeitem, array('/grade_item/id'));
+                    }
+                    $this->xmlwriter->end_tag('grade_items');
+                }
+                $this->xmlwriter->end_tag('activity_gradebook');
+                $this->close_xml_writer();
+
+                // todo: write proper roles.xml, for now we just make sure the file is present
                 $this->make_sure_xml_exists($directory.'/roles.xml', 'roles');
-                $this->make_sure_xml_exists($directory.'/grades.xml', 'activity_gradebook');
             }
         }
     }
@@ -1319,7 +1332,7 @@ class moodle1_scales_handler extends moodle1_handler {
     protected $fileman = null;
 
     /**
-     * Registers path that are not qtype-specific
+     * Registers paths
      */
     public function get_paths() {
         return array(
@@ -1368,6 +1381,50 @@ class moodle1_scales_handler extends moodle1_handler {
 
         // stash the scale
         $this->converter->set_stash('scales', $data, $data['id']);
+    }
+}
+
+
+/**
+ * Handles the conversion of the gradebook structures in the moodle.xml file
+ */
+class moodle1_gradebook_handler extends moodle1_xml_handler {
+
+    /**
+     * Registers paths
+     */
+    public function get_paths() {
+        return array(
+            new convert_path('gradebook_grade_item', '/MOODLE_BACKUP/COURSE/GRADEBOOK/GRADE_ITEMS/GRADE_ITEM'),
+        );
+    }
+
+    /**
+     * Processes one GRADE_ITEM data
+     */
+    public function process_gradebook_grade_item(array $data, array $raw) {
+
+        // here we use get_nextid() to get a nondecreasing sequence
+        $data['sortorder'] = $this->converter->get_nextid();
+
+        if ($data['itemtype'] === 'mod') {
+            return $this->process_mod_grade_item($data, $raw);
+        }
+    }
+
+    /**
+     * Processes one GRADE_ITEM of the type 'mod'
+     */
+    protected function process_mod_grade_item(array $data, array $raw) {
+
+        $stashname   = 'modgradeitem_'.$data['itemmodule'];
+        $stashitemid = $data['iteminstance'];
+        $gradeitems  = $this->converter->get_stash_or_default($stashname, $stashitemid, array());
+
+        // typically there will be single item with itemnumber 0
+        $gradeitems[$data['itemnumber']] = $data;
+
+        $this->converter->set_stash($stashname, $gradeitems, $stashitemid);
     }
 }
 
