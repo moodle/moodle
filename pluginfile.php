@@ -294,6 +294,9 @@ if ($component === 'blog') {
 // ========================================================================================================================
 } else if ($component === 'user') {
     if ($filearea === 'icon' and $context->contextlevel == CONTEXT_USER) {
+        // XXX: pix_url will initialize $PAGE, so we have to set up context here
+        // this temp hack should be fixed by better solution
+        $PAGE->set_context(get_system_context());
         if (!empty($CFG->forcelogin) and !isloggedin()) {
             // protect images if login required and not logged in;
             // do not use require_login() because it is expensive and not suitable here anyway
