@@ -939,6 +939,7 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
                     }
                     $this->xmlwriter->end_tag('grade_items');
                 }
+                $this->write_xml('grade_letters', array()); // no grade_letters in module context in Moodle 1.9
                 $this->xmlwriter->end_tag('activity_gradebook');
                 $this->close_xml_writer();
 
@@ -1399,6 +1400,7 @@ class moodle1_gradebook_handler extends moodle1_xml_handler {
     public function get_paths() {
         return array(
             new convert_path('gradebook', '/MOODLE_BACKUP/COURSE/GRADEBOOK'),
+            new convert_path('gradebook_grade_letter', '/MOODLE_BACKUP/COURSE/GRADEBOOK/GRADE_LETTERS/GRADE_LETTER'),
             new convert_path(
                 'gradebook_grade_category', '/MOODLE_BACKUP/COURSE/GRADEBOOK/GRADE_CATEGORIES/GRADE_CATEGORY',
                 array(
@@ -1564,7 +1566,13 @@ class moodle1_gradebook_handler extends moodle1_xml_handler {
      * Writes grade_letters
      */
     protected function write_grade_letters() {
-        // todo
+
+        $this->xmlwriter->begin_tag('grade_letters');
+        foreach ($this->converter->get_stash_itemids('gradebook_gradeletter') as $gradeletterid) {
+            $gradeletter = $this->converter->get_stash('gradebook_gradeletter', $gradeletterid);
+            $this->write_xml('grade_letter', $gradeletter, array('/grade_letter/id'));
+        }
+        $this->xmlwriter->end_tag('grade_letters');
     }
 
     /**
