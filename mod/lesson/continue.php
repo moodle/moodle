@@ -67,6 +67,13 @@ if (!$canmanage) {
 
 // record answer (if necessary) and show response (if none say if answer is correct or not)
 $page = $lesson->load_page(required_param('pageid', PARAM_INT));
+
+$userhasgrade = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
+$reviewmode = false;
+if ($userhasgrade && !$lesson->retake) {
+    $reviewmode = true;
+}
+
 // Check the page has answers [MDL-25632]
 if (count($page->answers) > 0) {
     $result = $page->record_attempt($context);
@@ -80,7 +87,7 @@ if (count($page->answers) > 0) {
 
 if (isset($USER->modattempts[$lesson->id])) {
     // make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time
-    if ($USER->modattempts[$lesson->id] == $page->id && $page->nextpageid == 0) {  // remember, this session variable holds the pageid of the last page that the user saw
+    if ($USER->modattempts[$lesson->id]->pageid == $page->id && $page->nextpageid == 0) {  // remember, this session variable holds the pageid of the last page that the user saw
         $result->newpageid = LESSON_EOL;
     } else {
         $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
@@ -153,11 +160,11 @@ if ($canmanage) {
     }
 }
 // Report attempts remaining
-if ($result->attemptsremaining != 0 && !$lesson->review) {
+if ($result->attemptsremaining != 0 && !$lesson->review && !$reviewmode) {
     $lesson->add_message(get_string('attemptsremaining', 'lesson', $result->attemptsremaining));
 }
 // Report if max attempts reached
-if ($result->maxattemptsreached != 0 && !$lesson->review) {
+if ($result->maxattemptsreached != 0 && !$lesson->review && !$reviewmode) {
     $lesson->add_message('('.get_string("maximumnumberofattemptsreached", "lesson").')');
 }
 
@@ -172,7 +179,7 @@ if ($lesson->displayleft) {
     echo '<a name="maincontent" id="maincontent" title="'.get_string('anchortitle', 'lesson').'"></a>';
 }
 // This calculates and prints the ongoing score message
-if ($lesson->ongoing) {
+if ($lesson->ongoing && !$reviewmode) {
     echo $lessonoutput->ongoing_score($lesson);
 }
 echo $result->feedback;
@@ -180,17 +187,17 @@ echo $result->feedback;
 // User is modifying attempts - save button and some instructions
 if (isset($USER->modattempts[$lesson->id])) {
     $url = $CFG->wwwroot.'/mod/lesson/view.php';
-    $content = $OUTPUT->box(get_string("savechangesandeol", "lesson"), 'center');
+    $content = $OUTPUT->box(get_string("gotoendoflesson", "lesson"), 'center');
     $content .= $OUTPUT->box(get_string("or", "lesson"), 'center');
-    $content .= $OUTPUT->box(get_string("continuetoanswer", "lesson"), 'center');
+    $content .= $OUTPUT->box(get_string("continuetonextpage", "lesson"), 'center');
     $content .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'id', 'value'=>$cm->id));
     $content .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'pageid', 'value'=>LESSON_EOL));
-    $content .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'submit', 'value'=>get_string('savechanges', 'lesson')));
+    $content .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'submit', 'value'=>get_string('finish', 'lesson')));
     echo html_writer::tag('form', "<div>$content</div>", array('method'=>'post', 'action'=>$url));
 }
 
 // Review button back
-if ($lesson->review && !$result->correctanswer && !$result->noanswer && !$result->isessayquestion) {
+if (!$result->correctanswer && !$result->noanswer && !$result->isessayquestion && !$reviewmode) {
     $url = $CFG->wwwroot.'/mod/lesson/view.php';
     $content = html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'id', 'value'=>$cm->id));
     $content .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'pageid', 'value'=>$page->id));

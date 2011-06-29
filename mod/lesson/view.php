@@ -60,6 +60,12 @@ $canmanage = has_capability('mod/lesson:manage', $context);
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
+$reviewmode = false;
+$userhasgrade = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
+if ($userhasgrade && !$lesson->retake) {
+    $reviewmode = true;
+}
+
 /// Check these for students only TODO: Find a better method for doing this!
 ///     Check lesson availability
 ///     Check for password
@@ -316,11 +322,14 @@ if ($pageid != LESSON_EOL) {
                     $a->minquestions = $lesson->minquestions;
                     $lesson->add_message(get_string('numberofpagesviewednotice', 'lesson', $a));
                 }
-                $lesson->add_message(get_string("numberofcorrectanswers", "lesson", $gradeinfo->earned), 'notify');
+
                 $a = new stdClass;
                 $a->grade = number_format($gradeinfo->grade * $lesson->grade / 100, 1);
                 $a->total = $lesson->grade;
-                $lesson->add_message(get_string('yourcurrentgradeisoutof', 'lesson', $a), 'notify');
+                if (!$reviewmode && !$lesson->retake){
+                    $lesson->add_message(get_string("numberofcorrectanswers", "lesson", $gradeinfo->earned), 'notify');
+                    $lesson->add_message(get_string('yourcurrentgradeisoutof', 'lesson', $a), 'notify');
+                }
             }
         }
     } else {
@@ -356,6 +365,7 @@ if ($pageid != LESSON_EOL) {
                 print_error('cannotfindpreattempt', 'lesson');
             }
             $attempt = end($attempts);
+            $USER->modattempts[$lesson->id] = $attempt;
         } else {
             $attempt = false;
         }
@@ -387,7 +397,7 @@ if ($pageid != LESSON_EOL) {
         echo $OUTPUT->heading(get_string('attempt', 'lesson', $retries));
     }
     /// This calculates and prints the ongoing score
-    if ($lesson->ongoing && !empty($pageid)) {
+    if ($lesson->ongoing && !empty($pageid) && !$reviewmode) {
         echo $lessonoutput->ongoing_score($lesson);
     }
     if ($lesson->displayleft) {
@@ -538,17 +548,18 @@ if ($pageid != LESSON_EOL) {
         // $ntries is decremented above
         if (!$attempts = $lesson->get_attempts($ntries)) {
             $attempts = array();
+            $url = new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id));
+        } else {
+            $firstattempt = current($attempts);
+            $pageid = $firstattempt->pageid;
+            // IF the student wishes to review, need to know the last question page that the student answered.  This will help to make
+            // sure that the student can leave the lesson via pushing the continue button.
+            $lastattempt = end($attempts);
+            $USER->modattempts[$lesson->id] = $lastattempt->pageid;
+
+            $url = new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id, 'pageid'=>$pageid));
         }
-        $firstattempt = current($attempts);
-        $pageid = $firstattempt->pageid;
-        // IF the student wishes to review, need to know the last question page that the student answered.  This will help to make
-        // sure that the student can leave the lesson via pushing the continue button.
-        $lastattempt = end($attempts);
-        $USER->modattempts[$lesson->id] = $lastattempt->pageid;
-
-        $url = new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id, 'pageid'=>$pageid));
         $lessoncontent .= html_writer::link($url, get_string('reviewlesson', 'lesson'), array('class' => 'centerpadded lessonbutton standardbutton'));
-
     } elseif ($lesson->modattempts && $canmanage) {
         $lessoncontent .= $lessonoutput->paragraph(get_string("modattemptsnoteacher", "lesson"), 'centerpadded');
     }
