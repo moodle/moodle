@@ -41,7 +41,7 @@
 require_once('../config.php');
 require_once($CFG->dirroot.'/calendar/lib.php');
 
-$from = required_param('return', PARAM_ALPHA);
+$return = required_param('return', PARAM_URL);
 $var = required_param('var', PARAM_ALPHA);
 
 $url = new moodle_url('/calendar/set.php', array('return'=>$return,'var'=>$var));
