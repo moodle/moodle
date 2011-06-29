@@ -44,16 +44,14 @@ require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/calendar/lib.php');
 
-$courseid = optional_param('course', 0, PARAM_INT);
+$courseid = optional_param('course', SITEID, PARAM_INT);
 $view = optional_param('view', 'upcoming', PARAM_ALPHA);
 $day  = optional_param('cal_d', 0, PARAM_INT);
 $mon  = optional_param('cal_m', 0, PARAM_INT);
 $yr   = optional_param('cal_y', 0, PARAM_INT);
 
-$site = get_site();
-
 $url = new moodle_url('/calendar/view.php');
-if ($courseid !== 0) {
+if ($courseid != SITEID) {
     $url->param('course', $courseid);
 }
 if ($view !== 'upcoming') {
@@ -70,34 +68,27 @@ if ($yr !== 0) {
 }
 $PAGE->set_url($url);
 
-//TODO: the courseid handling in /calendar/ is a bloody mess!!!
-
-if ($courseid && $courseid != SITEID) {
-    require_login($courseid);
-} else if ($CFG->forcelogin) {
-    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM)); //TODO: wrong
-    require_login();
+if ($courseid != SITEID && !empty($courseid)) {
+    $course = $DB->get_record('course', array('id' => $courseid));
+    $courses = array($course->id => $course);
+    $issite = false;
+    navigation_node::override_active_url(new moodle_url('/course/view.php', array('id' => $course->id)));
 } else {
-    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM)); //TODO: wrong
+    $course = get_site();
+    $courses = calendar_get_default_courses();
+    $issite = true;
 }
+require_course_login($course);
 
 $calendar = new calendar_information($day, $mon, $yr);
-$calendar->courseid = $courseid;
+$calendar->prepare_for_view($course, $courses);
 
-// Initialize the session variables
-calendar_session_vars();
-
-//add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
 $now = usergetdate(time());
 $pagetitle = '';
 
 $strcalendar = get_string('calendar', 'calendar');
 
-$link = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', array('view'=>'upcoming', 'course'=>$courseid)),
-                               $now['mday'], $now['mon'], $now['year']);
-$PAGE->navbar->add($strcalendar, $link);
-
-if(!checkdate($mon, $day, $yr)) {
+if (!checkdate($mon, $day, $yr)) {
     $day = intval($now['mday']);
     $mon = intval($now['mon']);
     $yr = intval($now['year']);
@@ -117,47 +108,12 @@ switch($view) {
         $pagetitle = get_string('upcomingevents', 'calendar');
     break;
 }
-// If a course has been supplied in the URL, change the filters to show that one
-if (!empty($courseid)) {
-    if ($course = $DB->get_record('course', array('id'=>$courseid))) {
-        if ($course->id == SITEID) {
-            // If coming from the home page, show all courses
-            $SESSION->cal_courses_shown = calendar_get_default_courses(true);
-            calendar_set_referring_course(0);
-
-        } else {
-            // Otherwise show just this one
-            $SESSION->cal_courses_shown = $course->id;
-            calendar_set_referring_course($SESSION->cal_courses_shown);
-        }
-    }
-} else {
-    $course = null;
-}
-if (!isloggedin() or isguestuser()) {
-    $defaultcourses = calendar_get_default_courses();
-    calendar_set_filters($calendar->courses, $calendar->groups, $calendar->users, $defaultcourses, $defaultcourses);
-} else {
-    calendar_set_filters($calendar->courses, $calendar->groups, $calendar->users);
-}
-// Let's see if we are supposed to provide a referring course link
-// but NOT for the "main page" course
-if ($SESSION->cal_course_referer != SITEID &&
-   ($shortname = $DB->get_field('course', 'shortname', array('id'=>$SESSION->cal_course_referer))) !== false) {
-    require_login(); //TODO: very wrong!!
-    if (empty($course)) {
-        $course = $DB->get_record('course', array('id'=>$SESSION->cal_course_referer)); // Useful to have around
-    }
-}
-
-$strcalendar = get_string('calendar', 'calendar');
-$prefsbutton = calendar_preferences_button();
 
 // Print title and header
-$PAGE->set_title("$site->shortname: $strcalendar: $pagetitle");
-$PAGE->set_heading($COURSE->fullname);
-$PAGE->set_button($prefsbutton);
 $PAGE->set_pagelayout('standard');
+$PAGE->set_title("$course->shortname: $strcalendar: $pagetitle");
+$PAGE->set_heading($COURSE->fullname);
+$PAGE->set_button(calendar_preferences_button($course));
 
 $renderer = $PAGE->get_renderer('core_calendar');
 $calendar->add_sidecalendar_blocks($renderer, true, $view);
@@ -174,7 +130,18 @@ switch($view) {
         echo $renderer->show_month_detailed($calendar);
     break;
     case 'upcoming':
-        echo $renderer->show_upcoming_events($calendar, get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS), get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS));
+        $defaultlookahead = CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD;
+        if (isset($CFG->calendar_lookahead)) {
+            $defaultlookahead = intval($CFG->calendar_lookahead);
+        }
+        $lookahead = get_user_preferences('calendar_lookahead', $defaultlookahead);
+
+        $defaultmaxevents = CALENDAR_DEFAULT_UPCOMING_MAXEVENTS;
+        if (isset($CFG->calendar_maxevents)) {
+            $defaultmaxevents = intval($CFG->calendar_maxevents);
+        }
+        $maxevents = get_user_preferences('calendar_maxevents', $defaultmaxevents);
+        echo $renderer->show_upcoming_events($calendar, $lookahead, $maxevents);
     break;
 }
 
@@ -189,6 +156,7 @@ if (!empty($CFG->enablecalendarexport)) {
         echo html_writer::tag('a', $icon, array('href'=>$link));
     }
 }
+
 echo $OUTPUT->container_end();
 echo html_writer::end_tag('div');
 echo $renderer->complete_layout();
