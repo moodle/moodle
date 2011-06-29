@@ -271,16 +271,10 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
     }
 
     protected function process_quiz_attempt($data) {
-        global $DB;
-
         $data = (object)$data;
-        $oldid = $data->id;
-        $olduniqueid = $data->uniqueid;
 
         $data->quiz = $this->get_new_parentid('quiz');
         $data->attempt = $data->attemptnum;
-
-        $data->uniqueid = 0; // filled in later by {@link inform_new_usage_id()}
 
         $data->userid = $this->get_mappingid('user', $data->userid);
 
@@ -288,10 +282,8 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data->timefinish = $this->apply_date_offset($data->timefinish);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-        $newitemid = $DB->insert_record('quiz_attempts', $data);
-
-        // Save quiz_attempt->id mapping, because logs use it
-        $this->set_mapping('quiz_attempt', $oldid, $newitemid, false);
+        // The data is actually inserted into the database later in inform_new_usage_id.
+        $this->currentquizattempt = clone($data);
     }
 
     protected function process_quiz_attempt_legacy($data) {
@@ -306,8 +298,16 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
     protected function inform_new_usage_id($newusageid) {
         global $DB;
-        $DB->set_field('quiz_attempts', 'uniqueid', $newusageid, array('id' =>
-                $this->get_new_parentid('quiz_attempt')));
+
+        $data = $this->currentquizattempt;
+
+        $oldid = $data->id;
+        $data->uniqueid = $newusageid;
+
+        $newitemid = $DB->insert_record('quiz_attempts', $data);
+
+        // Save quiz_attempt->id mapping, because logs use it
+        $this->set_mapping('quiz_attempt', $oldid, $newitemid, false);
     }
 
     protected function after_execute() {
