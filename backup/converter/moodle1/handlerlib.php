@@ -52,6 +52,7 @@ abstract class moodle1_handlers_factory {
             new moodle1_roles_definition_handler($converter),
             new moodle1_question_bank_handler($converter),
             new moodle1_scales_handler($converter),
+            new moodle1_outcomes_handler($converter),
             new moodle1_gradebook_handler($converter),
         );
 
@@ -1382,6 +1383,75 @@ class moodle1_scales_handler extends moodle1_handler {
 
         // stash the scale
         $this->converter->set_stash('scales', $data, $data['id']);
+    }
+}
+
+
+/**
+ * Handles the conversion of the outcomes
+ */
+class moodle1_outcomes_handler extends moodle1_xml_handler {
+
+    /** @var moodle1_file_manager instance used to convert images embedded into outcome descriptions */
+    protected $fileman = null;
+
+    /**
+     * Registers paths
+     */
+    public function get_paths() {
+        return array(
+            new convert_path('gradebook_grade_outcomes', '/MOODLE_BACKUP/COURSE/GRADEBOOK/GRADE_OUTCOMES'),
+            new convert_path(
+                'gradebook_grade_outcome', '/MOODLE_BACKUP/COURSE/GRADEBOOK/GRADE_OUTCOMES/GRADE_OUTCOME',
+                array(
+                    'addfields' => array(
+                        'descriptionformat' => FORMAT_MOODLE,
+                    ),
+                )
+            ),
+        );
+    }
+
+    /**
+     * Prepares the file manager and starts writing outcomes.xml
+     */
+    public function on_gradebook_grade_outcomes_start() {
+
+        $syscontextid  = $this->converter->get_contextid(CONTEXT_SYSTEM);
+        $this->fileman = $this->converter->get_file_manager($syscontextid, 'grade', 'outcome');
+
+        $this->open_xml_writer('outcomes.xml');
+        $this->xmlwriter->begin_tag('outcomes_definition');
+    }
+
+    /**
+     * Processes GRADE_OUTCOME tags progressively
+     */
+    public function process_gradebook_grade_outcome(array $data, array $raw) {
+        global $CFG;
+
+        // replay the upgrade step 2009110400
+        if ($CFG->texteditors !== 'textarea') {
+            $data['description']       = text_to_html($data['description'], false, false, true);
+            $data['descriptionformat'] = FORMAT_HTML;
+        }
+
+        // convert course files embedded into the outcome description field
+        $this->fileman->itemid = $data['id'];
+        $data['description'] = moodle1_converter::migrate_referenced_files($data['description'], $this->fileman);
+
+        // write the outcome data
+        $this->write_xml('outcome', $data, array('/outcome/id'));
+
+        return $data;
+    }
+
+    /**
+     * Closes outcomes.xml
+     */
+    public function on_gradebook_grade_outcomes_end() {
+        $this->xmlwriter->end_tag('outcomes_definition');
+        $this->close_xml_writer();
     }
 }
 
