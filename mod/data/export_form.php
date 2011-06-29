@@ -31,7 +31,8 @@ class mod_data_export_form extends moodleform {
         $typesarray = array();
         $typesarray[] = &MoodleQuickForm::createElement('radio', 'exporttype', null, get_string('csvwithselecteddelimiter', 'data') . '&nbsp;', 'csv');
         $typesarray[] = &MoodleQuickForm::createElement('select', 'delimiter_name', null, $choices);
-        $typesarray[] = &MoodleQuickForm::createElement('radio', 'exporttype', null, get_string('excel', 'data'), 'xls');
+        //temporarily commenting out Excel export option. See MDL-19864
+        //$typesarray[] = &MoodleQuickForm::createElement('radio', 'exporttype', null, get_string('excel', 'data'), 'xls');
         $typesarray[] = &MoodleQuickForm::createElement('radio', 'exporttype', null, get_string('ods', 'data'), 'ods');
         $mform->addGroup($typesarray, 'exportar', '', array(''), false);
         $mform->addRule('exportar', null, 'required');
