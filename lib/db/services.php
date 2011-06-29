@@ -129,6 +129,15 @@ $functions = array(
         'capabilities'=> 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update',
     ),
 
+    'moodle_user_get_users_by_courseid' => array(
+        'classname'   => 'moodle_user_external',
+        'methodname'  => 'get_users_by_courseid',
+        'classpath'   => 'user/externallib.php',
+        'description' => 'Get enrolled users by course id.',
+        'type'        => 'read',
+        'capabilities'=> 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update, moodle/site:accessallgroups',
+    ),
+
     'moodle_user_get_course_participants_by_id' => array(
         'classname'   => 'moodle_user_external',
         'methodname'  => 'get_course_participants_by_id',
@@ -258,6 +267,7 @@ $services = array(
             'moodle_webservice_get_siteinfo',
             'moodle_notes_create_notes',
             'moodle_user_get_course_participants_by_id',
+            'moodle_user_get_users_by_courseid',
             'moodle_message_send_messages'),
         'enabled' => 0,
         'restrictedusers' => 0,
