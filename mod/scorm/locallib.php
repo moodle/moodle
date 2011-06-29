@@ -696,7 +696,8 @@ function scorm_course_format_display($user,$course) {
     } else {
         if (has_capability('moodle/course:update', $context)) {
             // Create a new activity
-            redirect($CFG->wwwroot.'/course/mod.php?id='.$course->id.'&amp;section=0&sesskey='.sesskey().'&amp;add=scorm');
+            $url = new moodle_url('/course/mod.php', array('id'=>$course->id, 'section'=>'0', 'sesskey'=>sesskey(),'add'=>'scorm'));
+            redirect($url);
         } else {
             echo $OUTPUT->notification('Could not find a scorm course here');
         }
