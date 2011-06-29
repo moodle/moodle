@@ -125,6 +125,7 @@
             $reportrow->cells[] = $numviewscell;
 
             if ($CFG->useblogassociations) {
+                require_once($CFG->dirroot.'/blog/lib.php');
                 $blogcell = new html_table_cell();
                 $blogcell->attributes['class'] = 'blog';
                 if ($blogcount = blog_get_associated_count($course->id, $cm->id)) {
