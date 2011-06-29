@@ -63,7 +63,6 @@ class lesson_page_type_matching extends lesson_page {
         // don't shuffle answers (could be an option??)
         $getanswers = array_slice($this->get_answers(), 2);
 
-        //reassing array keys for answers
         $answers = array();
         foreach ($getanswers as $getanswer) {
             $answers[$getanswer->id] = $getanswer;
@@ -494,6 +493,13 @@ class lesson_display_answer_form_matching extends moodleform {
 
         $mform->addElement('html', $OUTPUT->container($contents, 'contents'));
 
+        $hasattempt = false;
+        $disabled = '';
+        if (isset($useranswers) && !empty($useranswers)) {
+            $hasattempt = true;
+            $disabled = array('disabled' => 'disabled');
+        }
+
         $options = new stdClass;
         $options->para = false;
         $options->noclean = true;
@@ -508,19 +514,28 @@ class lesson_display_answer_form_matching extends moodleform {
         foreach ($answers as $answer) {
             $mform->addElement('html', '<div class="answeroption">');
             if ($answer->response != NULL) {
-                $mform->addElement('select', 'response['.$answer->id.']', format_text($answer->answer,$answer->answerformat,$options), $responseoptions);
-                $mform->setType('response['.$answer->id.']', PARAM_TEXT);
-                if (isset($useranswers) && !empty($useranswers)) {
-                    $mform->setDefault('response['.$answer->id.']', htmlspecialchars(trim($answers[$useranswers[$i]]->response))); //TODO: this is suspicious
+                $responseid = 'response['.$answer->id.']';
+                if ($hasattempt) {
+                    $responseid = 'response_'.$answer->id;
+                    $mform->addElement('hidden', 'response['.$answer->id.']', htmlspecialchars(trim($answers[$useranswers[$i]]->response)));
+                    $mform->setType('response['.$answer->id.']', PARAM_TEXT);
+                }
+                $mform->addElement('select', $responseid, format_text($answer->answer,$answer->answerformat,$options), $responseoptions, $disabled);
+                $mform->setType($responseid, PARAM_TEXT);
+                if ($hasattempt) {
+                    $mform->setDefault($responseid, htmlspecialchars(trim($answers[$useranswers[$i]]->response))); //TODO: this is suspicious
                 } else {
-                    $mform->setDefault('response['.$answer->id.']', 'answeroption');
+                    $mform->setDefault($responseid, 'answeroption');
                 }
             }
             $mform->addElement('html', '</div>');
             $i++;
         }
-
-        $this->add_action_buttons(null, get_string("pleasematchtheabovepairs", "lesson"));
+        if ($hasattempt) {
+            $this->add_action_buttons(null, get_string("nextpage", "lesson"));
+        } else {
+            $this->add_action_buttons(null, get_string("submit", "lesson"));
+        }
     }
 
 }
