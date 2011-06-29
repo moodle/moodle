@@ -340,7 +340,9 @@ class moodle_page {
                 // cli scripts work in system context, do not annoy devs with debug info
                 // very few scripts do not use cookies, we can safely use system as default context there
             } else {
-                debugging('Coding problem: this page does not set $PAGE->context properly.');
+                debugging('Coding problem: $PAGE->context was not set. You may have forgotten '
+                    .'to call require_login() or $PAGE->set_context(). The page may not display '
+                    .'correctly as a result');
             }
             $this->_context = get_context_instance(CONTEXT_SYSTEM);
         }
