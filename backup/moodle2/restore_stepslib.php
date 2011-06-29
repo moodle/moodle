@@ -2922,10 +2922,15 @@ abstract class restore_questions_activity_structure_step extends restore_activit
         $qstates = array();
         foreach ($data->states['state'] as $state) {
             if ($state['question'] == $questionid) {
-                $qstates[$state['seq_number']] = (object) $state;
+                // It would be natural to use $state['seq_number'] as the array-key
+                // here, but it seems that buggy behaviour in 2.0 and early can
+                // mean that that is not unique, so we use id, which is guaranteed
+                // to be unique.
+                $qstates[$state['id']] = (object) $state;
             }
         }
         ksort($qstates);
+        $qstates = array_values($qstates);
 
         return array($qsession, $qstates);
     }

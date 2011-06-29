@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the true/fales question type.
+ * Version information for the true/false question type.
  *
  * @package    qtype
  * @subpackage truefalse

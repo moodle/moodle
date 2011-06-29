@@ -435,6 +435,7 @@ class qbehaviour_informationitem_converter extends question_behaviour_attempt_up
 
 class qbehaviour_adaptive_converter extends question_behaviour_attempt_updater {
     protected $try;
+    protected $laststepwasatry = false;
     protected $finished = false;
     protected $bestrawgrade = 0;
 
@@ -455,7 +456,7 @@ class qbehaviour_adaptive_converter extends question_behaviour_attempt_updater {
 
     protected function process0($step, $state) {
         $this->try = 1;
-        $step->data['-_try'] = $this->try;
+        $this->laststepwasatry = false;
         parent::process0($step, $state);
     }
 
@@ -471,6 +472,7 @@ class qbehaviour_adaptive_converter extends question_behaviour_attempt_updater {
             $step->fraction = $state->grade / $this->question->maxmark;
         }
 
+        $this->laststepwasatry = false;
         parent::process2($step, $state);
     }
 
@@ -488,8 +490,9 @@ class qbehaviour_adaptive_converter extends question_behaviour_attempt_updater {
 
         $this->bestrawgrade = max($state->raw_grade, $this->bestrawgrade);
 
-        $this->try += 1;
         $step->data['-_try'] = $this->try;
+        $this->try += 1;
+        $this->laststepwasatry = true;
         if ($this->question->maxmark > 0) {
             $step->data['-_rawfraction'] = $state->raw_grade / $this->question->maxmark;
         } else {
@@ -524,6 +527,9 @@ class qbehaviour_adaptive_converter extends question_behaviour_attempt_updater {
         }
 
         $step->data['-finish'] = 1;
+        if ($this->laststepwasatry) {
+            $this->try -= 1;
+        }
         $step->data['-_try'] = $this->try;
         if ($this->question->maxmark > 0) {
             $step->data['-_rawfraction'] = $state->raw_grade / $this->question->maxmark;
