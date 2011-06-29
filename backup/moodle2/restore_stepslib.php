@@ -273,7 +273,9 @@ class restore_gradebook_structure_step extends restore_structure_step {
         //$this->set_mapping('grade_setting', $oldid, $newitemid);
     }
 
-    //put all activity grade items in the correct grade category and mark all for recalculation
+    /**
+     * put all activity grade items in the correct grade category and mark all for recalculation
+     */
     protected function after_execute() {
         global $DB;
 
@@ -284,8 +286,15 @@ class restore_gradebook_structure_step extends restore_structure_step {
         );
         $rs = $DB->get_recordset('backup_ids_temp', $conditions);
 
+        // We need this for calculation magic later on.
+        $mappings = array();
+
         if (!empty($rs)) {
             foreach($rs as $grade_item_backup) {
+
+                // Store the oldid with the new id.
+                $mappings[$grade_item_backup->itemid] = $grade_item_backup->newitemid;
+
                 $updateobj = new stdclass();
                 $updateobj->id = $grade_item_backup->newitemid;
 
@@ -298,6 +307,55 @@ class restore_gradebook_structure_step extends restore_structure_step {
                 }
                 $DB->update_record('grade_items', $updateobj);
             }
+        }
+        $rs->close();
+
+        // We need to update the calculations for calculated grade items that may reference old
+        // grade item ids using ##gi\d+##.
+        list($sql, $params) = $DB->get_in_or_equal(array_values($mappings), SQL_PARAMS_NAMED);
+        $sql = "SELECT gi.id, gi.calculation
+                  FROM {grade_items} gi
+                 WHERE gi.id {$sql} AND
+                       calculation IS NOT NULL";
+        $rs = $DB->get_recordset_sql($sql, $params);
+        foreach ($rs as $gradeitem) {
+            // Collect all of the used grade item id references
+            if (preg_match_all('/##gi(\d+)##/', $gradeitem->calculation, $matches) < 1) {
+                // This calculation doesn't reference any other grade items... EASY!
+                continue;
+            }
+            // For this next bit we are going to do the replacement of id's in two steps:
+            // 1. We will replace all old id references with a special mapping reference.
+            // 2. We will replace all mapping references with id's
+            // Why do we do this?
+            // Because there potentially there will be an overlap of ids within the query and we
+            // we substitute the wrong id.. safest way around this is the two step system
+            $calculationmap = array();
+            $mapcount = 0;
+            foreach ($matches[1] as $match) {
+                // Check that the old id is known to us, if not it was broken to begin with and will
+                // continue to be broken.
+                if (!array_key_exists($match, $mappings)) {
+                    continue;
+                }
+                // Our special mapping key
+                $mapping = '##MAPPING'.$mapcount.'##';
+                // The old id that exists within the calculation now
+                $oldid = '##gi'.$match.'##';
+                // The new id that we want to replace the old one with.
+                $newid = '##gi'.$mappings[$match].'##';
+                // Replace in the special mapping key
+                $gradeitem->calculation = str_replace($oldid, $mapping, $gradeitem->calculation);
+                // And record the mapping
+                $calculationmap[$mapping] = $newid;
+                $mapcount++;
+            }
+            // Iterate all special mappings for this calculation and replace in the new id's
+            foreach ($calculationmap as $mapping => $newid) {
+                $gradeitem->calculation = str_replace($mapping, $newid, $gradeitem->calculation);
+            }
+            // Update the calculation now that its being remapped
+            $DB->update_record('grade_items', $gradeitem);
         }
         $rs->close();
 
@@ -1800,28 +1858,47 @@ class restore_activity_grades_structure_step extends restore_structure_step {
     }
 
     protected function process_grade_item($data) {
+        global $DB;
 
         $data = (object)($data);
         $oldid       = $data->id;        // We'll need these later
         $oldparentid = $data->categoryid;
+        $courseid = $this->get_courseid();
 
         // make sure top course category exists, all grade items will be associated
         // to it. Later, if restoring the whole gradebook, categories will be introduced
-        $coursecat = grade_category::fetch_course_category($this->get_courseid());
+        $coursecat = grade_category::fetch_course_category($courseid);
         $coursecatid = $coursecat->id; // Get the categoryid to be used
+
+        $idnumber = null;
+        if (!empty($data->idnumber)) {
+            // Don't get any idnumber from course module. Keep them as they are in grade_item->idnumber
+            // Reason: it's not clear what happens with outcomes->idnumber or activities with multiple items (workshop)
+            // so the best is to keep the ones already in the gradebook
+            // Potential problem: duplicates if same items are restored more than once. :-(
+            // This needs to be fixed in some way (outcomes & activities with multiple items)
+            // $data->idnumber     = get_coursemodule_from_instance($data->itemmodule, $data->iteminstance)->idnumber;
+            // In any case, verify always for uniqueness
+            $sql = "SELECT cm.id
+                      FROM {course_modules} cm
+                     WHERE cm.course = :courseid AND
+                           cm.idnumber = :idnumber AND
+                           cm.id <> :cmid";
+            $params = array(
+                'courseid' => $courseid,
+                'idnumber' => $data->idnumber,
+                'cmid' => $this->task->get_moduleid()
+            );
+            if (!$DB->record_exists_sql($sql, $params) && !$DB->record_exists('grade_items', array('courseid' => $courseid, 'idnumber' => $data->idnumber))) {
+                $idnumber = $data->idnumber;
+            }
+        }
 
         unset($data->id);
         $data->categoryid   = $coursecatid;
         $data->courseid     = $this->get_courseid();
         $data->iteminstance = $this->task->get_activityid();
-        // Don't get any idnumber from course module. Keep them as they are in grade_item->idnumber
-        // Reason: it's not clear what happens with outcomes->idnumber or activities with multiple items (workshop)
-        // so the best is to keep the ones already in the gradebook
-        // Potential problem: duplicates if same items are restored more than once. :-(
-        // This needs to be fixed in some way (outcomes & activities with multiple items)
-        // $data->idnumber     = get_coursemodule_from_instance($data->itemmodule, $data->iteminstance)->idnumber;
-        // In any case, verify always for uniqueness
-        $data->idnumber = grade_verify_idnumber($data->idnumber, $this->get_courseid()) ? $data->idnumber : null;
+        $data->idnumber     = $idnumber;
         $data->scaleid      = $this->get_mappingid('scale', $data->scaleid);
         $data->outcomeid    = $this->get_mappingid('outcome', $data->outcomeid);
         $data->timecreated  = $this->apply_date_offset($data->timecreated);
