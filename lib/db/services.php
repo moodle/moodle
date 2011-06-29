@@ -226,11 +226,11 @@ $functions = array(
 
     // === message related functions ===
 
-    'moodle_message_send_messages' => array(
+    'moodle_message_send_instantmessages' => array(
         'classname'   => 'moodle_message_external',
-        'methodname'  => 'send_messages',
+        'methodname'  => 'send_instantmessages',
         'classpath'   => 'message/externallib.php',
-        'description' => 'Send messages',
+        'description' => 'Send instant messages',
         'type'        => 'write',
         'capabilities'=> 'moodle/site:sendmessage',
     ),
@@ -268,7 +268,7 @@ $services = array(
             'moodle_notes_create_notes',
             'moodle_user_get_course_participants_by_id',
             'moodle_user_get_users_by_courseid',
-            'moodle_message_send_messages'),
+            'moodle_message_send_instantmessages'),
         'enabled' => 0,
         'restrictedusers' => 0,
         'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE

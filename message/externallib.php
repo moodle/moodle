@@ -31,7 +31,7 @@ class moodle_message_external extends external_api {
      * Returns description of method parameters
      * @return external_function_parameters
      */
-    public static function send_messages_parameters() {
+    public static function send_instantmessages_parameters() {
         return new external_function_parameters(
             array(
                 'messages' => new external_multiple_structure(
@@ -53,7 +53,7 @@ class moodle_message_external extends external_api {
      * @param $messages  An array of message to send.
      * @return boolean
      */
-    public static function send_messages($messages = array()) {
+    public static function send_instantmessages($messages = array()) {
         global $CFG, $USER, $DB;
         require_once($CFG->dirroot . "/message/lib.php");
 
@@ -67,24 +67,32 @@ class moodle_message_external extends external_api {
         self::validate_context($context);
         require_capability('moodle/site:sendmessage', $context);
 
-        $params = self::validate_parameters(self::send_messages_parameters(), array('messages' => $messages));
+        $params = self::validate_parameters(self::send_instantmessages_parameters(), array('messages' => $messages));
 
         //retrieve all tousers of the messages
-        $touserids = array();
+        $receivers = array();
         foreach($params['messages'] as $message) {
-            $touserids[] = $message['touserid'];
+            $receivers[] = $message['touserid'];
         }
-        list($sqluserids, $sqlparams) = $DB->get_in_or_equal($touserids, SQL_PARAMS_NAMED, 'userid_');
+        list($sqluserids, $sqlparams) = $DB->get_in_or_equal($receivers, SQL_PARAMS_NAMED, 'userid_');
         $tousers = $DB->get_records_select("user", "id " . $sqluserids . " AND deleted = 0", $sqlparams);
-
-        //retrieve the tousers who are blocking the $USER
+        $blocklist   = array();
+        $contactlist = array();
         $sqlparams['contactid'] = $USER->id;
-        $sqlparams['blocked'] = 1;
-        //Note: return userid field should be unique for the below request,
-        //so we'll use this field as key of $blockingcontacts
-        $blockingcontacts = $DB->get_records_select("message_contacts",
-                "userid " . $sqluserids . " AND contactid = :contactid AND blocked = :blocked",
-                $sqlparams, '', "userid");
+        $rs = $DB->get_recordset_sql("SELECT *
+                                        FROM {message_contacts}
+                                       WHERE userid $sqluserids
+                                             AND contactid = :contactid", $sqlparams);
+        foreach ($rs as $record) {
+            if ($record->blocked) {
+                // $record->userid is blocking current user
+                $blocklist[$record->userid] = true;
+            } else {
+                // $record->userid have current user as contact
+                $contactlist[$record->userid] = true;
+            }
+        }
+        $rs->close();
 
         $canreadallmessages = has_capability('moodle/site:readallmessages', $context);
 
@@ -104,14 +112,16 @@ class moodle_message_external extends external_api {
             }
 
             //check that the touser is not blocking the current user
-            if ($success and isset($blockingcontacts[$message['touserid']]) and !$canreadallmessages) {
+            if ($success and !empty($blocklist[$message['touserid']]) and !$canreadallmessages) {
                 $success = false;
                 $errormessage = get_string('userisblockingyou', 'message');
             }
 
             // Check if the user is a contact
             //TODO: performance improvement - edit the function so we can pass an array instead userid
-            if ($success && empty($contact) && get_user_preferences('message_blocknoncontacts', NULL, $message['touserid']) == null) {
+            $blocknoncontacts = get_user_preferences('message_blocknoncontacts', NULL, $message['touserid']);
+            // message_blocknoncontacts option is on and current user is not in contact list
+            if ($success && empty($contactlist[$message['touserid']]) && !empty($blocknoncontacts)) {
                 // The user isn't a contact and they have selected to block non contacts so this message won't be sent.
                 $success = false;
                 $errormessage = get_string('userisblockingyounoncontact', 'message');
@@ -144,12 +154,12 @@ class moodle_message_external extends external_api {
      * Returns description of method result value
      * @return external_description
      */
-    public static function send_messages_returns() {
+    public static function send_instantmessages_returns() {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
-                    'clientmsgid' => new external_value(PARAM_ALPHANUMEXT, 'your own id for the message', VALUE_OPTIONAL),
                     'msgid' => new external_value(PARAM_INT, 'test this to know if it succeeds:  id of the created message if it succeeded, -1 when failed'),
+                    'clientmsgid' => new external_value(PARAM_ALPHANUMEXT, 'your own id for the message', VALUE_OPTIONAL),
                     'errormessage' => new external_value(PARAM_TEXT, 'error message - if it failed', VALUE_OPTIONAL)
                 )
             )
