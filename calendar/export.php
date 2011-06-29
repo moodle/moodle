@@ -49,17 +49,27 @@
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/calendar/lib.php');
-//require_once($CFG->libdir.'/bennu/bennu.inc.php');
 
+if (empty($CFG->enablecalendarexport)) {
+    die('no export');
+}
+
+$courseid = optional_param('course', SITEID, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
 $day  = optional_param('cal_d', 0, PARAM_INT);
 $mon  = optional_param('cal_m', 0, PARAM_INT);
 $yr   = optional_param('cal_y', 0, PARAM_INT);
-if ($courseid = optional_param('course', 0, PARAM_INT)) {
-    $course = $DB->get_record('course', array('id'=>$courseid));
+
+if ($courseid != SITEID && !empty($courseid)) {
+    $course = $DB->get_record('course', array('id' => $courseid));
+    $courses = array($course->id => $course);
+    $issite = false;
 } else {
-    $course = NULL;
+    $course = get_site();
+    $courses = calendar_get_default_courses();
+    $issite = true;
 }
+require_course_login($course);
 
 $url = new moodle_url('/calendar/export.php');
 if ($action !== '') {
@@ -79,57 +89,22 @@ if ($course !== NULL) {
 }
 $PAGE->set_url($url);
 
-require_login($course);
-if (!$course) {
-    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM)); //TODO: wrong
-}
-
-if (empty($CFG->enablecalendarexport)) {
-    die('no export');
-}
-
-$site = get_site();
-
-// Initialize the session variables
-calendar_session_vars();
+$calendar = new calendar_information($day, $mon, $yr);
+$calendar->prepare_for_view($course, $courses);
 
 $pagetitle = get_string('export', 'calendar');
-$navlinks = array();
-$now = usergetdate(time());
-
-if (!empty($courseid) && $course->id != SITEID) {
-    $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
-}
-
-$calendar = new calendar_information($day, $mon, $yr);
-$calendar->courseid = $courseid;
-
-
-if(!checkdate($mon, $day, $yr)) {
-    $day = intval($now['mday']);
-    $mon = intval($now['mon']);
-    $yr = intval($now['year']);
-}
-$time = make_timestamp($yr, $mon, $day);
-
-if (!isloggedin() or isguestuser()) {
-    $defaultcourses = calendar_get_default_courses();
-    calendar_set_filters($calendar->courses, $calendar->groups, $calendar->users, $defaultcourses, $defaultcourses);
-} else {
-    calendar_set_filters($calendar->courses, $calendar->groups, $calendar->users);
-}
-
-$strcalendar = get_string('calendar', 'calendar');
-$prefsbutton = calendar_preferences_button();
 
 // Print title and header
+if ($issite) {
+    $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
+}
 $link = new moodle_url(CALENDAR_URL.'view.php', array('view'=>'upcoming', 'course'=>$calendar->courseid));
 $PAGE->navbar->add(get_string('calendar', 'calendar'), calendar_get_link_href($link, $now['mday'], $now['mon'], $now['year']));
 $PAGE->navbar->add($pagetitle);
 
-$PAGE->set_title($site->shortname.': '.$strcalendar.': '.$pagetitle);
-$PAGE->set_heading($COURSE->fullname);
-$PAGE->set_button($prefsbutton);
+$PAGE->set_title($course->shortname.': '.get_string('calendar', 'calendar').': '.$pagetitle);
+$PAGE->set_heading($course->fullname);
+$PAGE->set_button(calendar_preferences_button($course));
 $PAGE->set_pagelayout('standard');
 
 $renderer = $PAGE->get_renderer('core_calendar');
@@ -139,19 +114,26 @@ echo $OUTPUT->header();
 echo $renderer->start_layout();
 switch($action) {
     case 'advanced':
-    break;
+        // Why nothing?
+        break;
     case '':
     default:
+        $weekend = CALENDAR_DEFAULT_WEEKEND;
+        if (isset($CFG->calendar_weekend)) {
+            $weekend = intval($CFG->calendar_weekend);
+        }
         $username = $USER->username;
         $authtoken = sha1($USER->username . $USER->password . $CFG->calendar_exportsalt);
         // Let's populate some vars to let "common tasks" be somewhat smart...
         // If today it's weekend, give the "next week" option
-        $allownextweek  = CALENDAR_WEEKEND & (1 << $now['wday']);
+        $allownextweek  = $weekend & (1 << $now['wday']);
         // If it's the last week of the month, give the "next month" option
         $allownextmonth = calendar_days_in_month($now['mon'], $now['year']) - $now['mday'] < 7;
         // If today it's weekend but tomorrow it isn't, do NOT give the "this week" option
-        $allowthisweek  = !((CALENDAR_WEEKEND & (1 << $now['wday'])) && !(CALENDAR_WEEKEND & (1 << (($now['wday'] + 1) % 7))));
+        $allowthisweek  = !(($weekend & (1 << $now['wday'])) && !($weekend & (1 << (($now['wday'] + 1) % 7))));
         echo $renderer->basic_export_form($allowthisweek, $allownextweek, $allownextmonth, $username, $authtoken);
+        break;
 }
+
 echo $renderer->complete_layout();
 echo $OUTPUT->footer();

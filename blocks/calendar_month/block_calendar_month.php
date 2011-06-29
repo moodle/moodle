@@ -19,8 +19,6 @@ class block_calendar_month extends block_base {
         if ($this->content !== NULL) {
             return $this->content;
         }
-        // Reset the session variables
-        calendar_session_vars($this->page->course);
 
         $this->content = new stdClass;
         $this->content->text = '';
@@ -29,52 +27,30 @@ class block_calendar_month extends block_base {
         // [pj] To me it looks like this if would never be needed, but Penny added it
         // when committing the /my/ stuff. Reminder to discuss and learn what it's about.
         // It definitely needs SOME comment here!
-        $courseshown = $this->page->course->id;
+        $courseid = $this->page->course->id;
+        $issite = ($courseid == SITEID);
 
-        if ($courseshown == SITEID) {
+        if ($issite) {
             // Being displayed at site level. This will cause the filter to fall back to auto-detecting
             // the list of courses it will be grabbing events from.
-            $filtercourse    = NULL;
-            $groupeventsfrom = NULL;
-            $SESSION->cal_courses_shown = calendar_get_default_courses(true);
-            calendar_set_referring_course(0);
-
+            $filtercourse = calendar_get_default_courses();
         } else {
             // Forcibly filter events to include only those from the particular course we are in.
-            $filtercourse    = array($courseshown => $this->page->course);
-            $groupeventsfrom = array($courseshown => 1);
+            $filtercourse = array($courseid => $this->page->course);
         }
 
-        // We 'll need this later
-        calendar_set_referring_course($courseshown);
-
-        // MDL-9059, set to show this course when admins go into a course, then unset it.
-        if ($this->page->course->id != SITEID && !isset($SESSION->cal_courses_shown[$this->page->course->id]) && has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM))) {
-            $courseset = true;
-            $SESSION->cal_courses_shown[$this->page->course->id] = $this->page->course;
-        }
-
-        // Be VERY careful with the format for default courses arguments!
-        // Correct formatting is [courseid] => 1 to be concise with moodlelib.php functions.
-        calendar_set_filters($courses, $group, $user, $filtercourse, $groupeventsfrom, false);
-        if ($courseshown == SITEID) {
+        list($courses, $group, $user) = calendar_set_filters($filtercourse);
+        if ($issite) {
             // For the front page
-            $this->content->text .= calendar_top_controls('frontpage', array('id' => $courseshown, 'm' => $cal_m, 'y' => $cal_y));
+            $this->content->text .= calendar_top_controls('frontpage', array('id' => $courseid, 'm' => $cal_m, 'y' => $cal_y));
             $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y);
             // No filters for now
-
         } else {
             // For any other course
-            $this->content->text .= calendar_top_controls('course', array('id' => $courseshown, 'm' => $cal_m, 'y' => $cal_y));
+            $this->content->text .= calendar_top_controls('course', array('id' => $courseid, 'm' => $cal_m, 'y' => $cal_y));
             $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y);
             $this->content->text .= '<h3 class="eventskey">'.get_string('eventskey', 'calendar').'</h3>';
-            $this->content->text .= '<div class="filters">'.calendar_filter_controls('course', '', $this->page->course).'</div>';
-
-        }
-
-        // MDL-9059, unset this so that it doesn't stay in session
-        if (!empty($courseset)) {
-            unset($SESSION->cal_courses_shown[$this->page->course->id]);
+            $this->content->text .= '<div class="filters">'.calendar_filter_controls($this->page->url).'</div>';
         }
 
         return $this->content;

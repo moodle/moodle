@@ -2935,7 +2935,6 @@ class admin_setting_special_adminseesall extends admin_setting_configcheckbox {
      */
     public function write_setting($data) {
         global $SESSION;
-        unset($SESSION->cal_courses_shown);
         return parent::write_setting($data);
     }
 }
