@@ -303,6 +303,13 @@ class lesson_display_answer_form_truefalse extends moodleform {
 
         $mform->addElement('html', $OUTPUT->container($contents, 'contents'));
 
+        $hasattempt = false;
+        $disabled = '';
+        if (isset($USER->modattempts[$lessonid]) && !empty($USER->modattempts[$lessonid])) {
+            $hasattempt = true;
+            $disabled = array('disabled' => 'disabled');
+        }
+
         $options = new stdClass();
         $options->para = false;
         $options->noclean = true;
@@ -316,16 +323,28 @@ class lesson_display_answer_form_truefalse extends moodleform {
         $i = 0;
         foreach ($answers as $answer) {
             $mform->addElement('html', '<div class="answeroption">');
-            $mform->addElement('radio', 'answerid', null, format_text($answer->answer, $answer->answerformat, $options), $answer->id);
-            $mform->setType('answerid', PARAM_INT);
-            if (isset($USER->modattempts[$lessonid]) && $answer->id == $attempt->answerid) {
-                $mform->setDefault('answerid', true);
+            $ansid = 'answerid';
+            if ($hasattempt) {
+                $ansid = 'answer_id';
+            }
+
+            $mform->addElement('radio', $ansid, null, format_text($answer->answer, $answer->answerformat, $options), $answer->id, $disabled);
+            $mform->setType($ansid, PARAM_INT);
+            if ($hasattempt && $answer->id == $USER->modattempts[$lessonid]->answerid) {
+                $mform->setDefault($ansid, $attempt->answerid);
+                $mform->addElement('hidden', 'answerid', $answer->id);
+                $mform->setType('answerid', PARAM_INT);
             }
             $mform->addElement('html', '</div>');
             $i++;
         }
 
-        $this->add_action_buttons(null, get_string("pleasecheckoneanswer", "lesson"));
+        if ($hasattempt) {
+            $this->add_action_buttons(null, get_string("nextpage", "lesson"));
+        } else {
+            $this->add_action_buttons(null, get_string("submit", "lesson"));
+        }
+
     }
 
 }
