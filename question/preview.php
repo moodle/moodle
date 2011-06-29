@@ -37,19 +37,36 @@ require_once(dirname(__FILE__) . '/previewlib.php');
 // Get and validate question id.
 $id = required_param('id', PARAM_INT);
 $question = question_bank::load_question($id);
-require_login();
-$category = $DB->get_record('question_categories',
-        array('id' => $question->category), '*', MUST_EXIST);
-question_require_capability_on($question, 'use');
 $PAGE->set_pagelayout('popup');
-$PAGE->set_context(get_context_instance_by_id($category->contextid));
+
+// Were we given a particular context to run the question in?
+// This affects things like filter settings, or forced theme or language.
+if ($cmid = optional_param('cmid', 0, PARAM_INT)) {
+    $cm = get_coursemodule_from_id(false, $cmid);
+    require_login($cm->course, false, $cm);
+    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+
+} else if ($courseid = optional_param('courseid', 0, PARAM_INT)) {
+    require_login($courseid);
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
+
+} else {
+    require_login();
+    $category = $DB->get_record('question_categories',
+            array('id' => $question->category), '*', MUST_EXIST);
+    $context = get_context_instance_by_id($category->contextid);
+    $PAGE->set_context($context);
+    // Note that in the other cases, require_login will set the correct page context.
+}
+question_require_capability_on($question, 'use');
 
 // Get and validate display options.
 $maxvariant = $question->get_num_variants();
 $options = new question_preview_options($question);
 $options->load_user_defaults();
 $options->set_from_request();
-$PAGE->set_url(question_preview_url($id, $options->behaviour, $options->maxmark, $options));
+$PAGE->set_url(question_preview_url($id, $options->behaviour, $options->maxmark,
+        $options, $options->variant, $context));
 
 // Get and validate exitsing preview, or start a new one.
 $previewid = optional_param('previewid', 0, PARAM_INT);
@@ -63,7 +80,7 @@ if ($previewid) {
     } catch (Exception $e) {
         print_error('submissionoutofsequencefriendlymessage', 'question',
                 question_preview_url($question->id, $options->behaviour,
-                $options->maxmark, $options), null, $e);
+                $options->maxmark, $options, $options->variant, $context), null, $e);
     }
     $slot = $quba->get_first_question_number();
     $usedquestion = $quba->get_question($slot);
@@ -74,8 +91,8 @@ if ($previewid) {
     $options->variant = $quba->get_variant($slot);
 
 } else {
-    $quba = question_engine::make_questions_usage_by_activity('core_question_preview',
-            get_context_instance_by_id($category->contextid));
+    $quba = question_engine::make_questions_usage_by_activity(
+            'core_question_preview', $context);
     $quba->set_preferred_behaviour($options->behaviour);
     $slot = $quba->add_question($question, $options->maxmark);
 
@@ -97,8 +114,8 @@ $options->behaviour = $quba->get_preferred_behaviour();
 $options->maxmark = $quba->get_question_max_mark($slot);
 
 // Create the settings form, and initialise the fields.
-$optionsform = new preview_options_form(new moodle_url('/question/preview.php',
-        array('id' => $question->id)), array('quba' => $quba, 'maxvariant' => $maxvariant));
+$optionsform = new preview_options_form(question_preview_form_url($question->id, $context),
+        array('quba' => $quba, 'maxvariant' => $maxvariant));
 $optionsform->set_data($options);
 
 // Process change of settings, if that was requested.
@@ -108,16 +125,16 @@ if ($newoptions = $optionsform->get_submitted_data()) {
     if (!isset($newoptions->variant)) {
         $newoptions->variant = $options->variant;
     }
-    restart_preview($previewid, $question->id, $newoptions);
+    restart_preview($previewid, $question->id, $newoptions, $context);
 }
 
 // Prepare a URL that is used in various places.
-$actionurl = question_preview_action_url($question->id, $quba->get_id(), $options);
+$actionurl = question_preview_action_url($question->id, $quba->get_id(), $options, $context);
 
 // Process any actions from the buttons at the bottom of the form.
 if (data_submitted() && confirm_sesskey()) {
     if (optional_param('restart', false, PARAM_BOOL)) {
-        restart_preview($previewid, $question->id, $options);
+        restart_preview($previewid, $question->id, $options, $context);
 
     } else if (optional_param('fill', null, PARAM_BOOL)) {
         $correctresponse = $quba->get_correct_response($slot);
