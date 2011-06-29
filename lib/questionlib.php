@@ -640,12 +640,24 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
  * @param question_display_options $displayoptions the display options to use.
  * @param int $variant the variant of the question to preview. If null, one will
  *      be picked randomly.
+ * @param object $context context to run the preview in (affects things like
+ *      filter settings, theme, lang, etc.) Defaults to $PAGE->context.
  * @return string the URL.
  */
 function question_preview_url($questionid, $preferredbehaviour = null,
-        $maxmark = null, $displayoptions = null, $variant = null) {
+        $maxmark = null, $displayoptions = null, $variant = null, $context = null) {
 
     $params = array('id' => $questionid);
+
+    if (is_null($context)) {
+        global $PAGE;
+        $context = $PAGE->context;
+    }
+    if ($context->contextlevel == CONTEXT_MODULE) {
+        $params['cmid'] = $context->instanceid;
+    } else if ($context->contextlevel == CONTEXT_COURSE) {
+        $params['courseid'] = $context->instanceid;
+    }
 
     if (!is_null($preferredbehaviour)) {
         $params['behaviour'] = $preferredbehaviour;

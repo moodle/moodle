@@ -880,7 +880,7 @@ function quiz_question_preview_url($quiz, $question) {
  * @return the HTML for a preview question icon.
  */
 function quiz_question_preview_button($quiz, $question, $label = false) {
-    global $CFG, $COURSE, $OUTPUT;
+    global $CFG, $OUTPUT;
     if (!question_has_capability_on($question, 'use', $question->category)) {
         return '';
     }

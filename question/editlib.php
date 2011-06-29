@@ -1152,7 +1152,8 @@ class question_bank_view {
     }
 
     public function preview_question_url($question) {
-        return question_preview_url($question->id);
+        return question_preview_url($question->id, null, null, null, null,
+                $this->contexts->lowest());
     }
 
     /**

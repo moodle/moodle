@@ -230,10 +230,6 @@ function question_preview_question_pluginfile($course, $context, $component,
 
     $quba = question_engine::load_questions_usage_by_activity($qubaid);
 
-    if ($quba->get_owning_context()->id != $context->id) {
-        send_file_not_found();
-    }
-
     if (!question_has_capability_on($quba->get_question($slot), 'use')) {
         send_file_not_found();
     }
@@ -267,12 +263,35 @@ function question_preview_question_pluginfile($course, $context, $component,
  * @param question_preview_options $options the options in use.
  */
 function question_preview_action_url($questionid, $qubaid,
-        question_preview_options $options) {
+        question_preview_options $options, $context) {
     $params = array(
         'id' => $questionid,
         'previewid' => $qubaid,
     );
+    if ($context->contextlevel == CONTEXT_MODULE) {
+        $params['cmid'] = $context->instanceid;
+    } else if ($context->contextlevel == CONTEXT_COURSE) {
+        $params['courseid'] = $context->instanceid;
+    }
     $params = array_merge($params, $options->get_url_params());
+    return new moodle_url('/question/preview.php', $params);
+}
+
+/**
+ * The the URL to use for actions relating to this preview.
+ * @param int $questionid the question being previewed.
+ * @param int $qubaid the id of the question usage for this preview.
+ * @param question_preview_options $options the options in use.
+ */
+function question_preview_form_url($questionid, $context) {
+    $params = array(
+        'id' => $questionid,
+    );
+    if ($context->contextlevel == CONTEXT_MODULE) {
+        $params['cmid'] = $context->instanceid;
+    } else if ($context->contextlevel == CONTEXT_COURSE) {
+        $params['courseid'] = $context->instanceid;
+    }
     return new moodle_url('/question/preview.php', $params);
 }
 
@@ -281,8 +300,9 @@ function question_preview_action_url($questionid, $qubaid,
  * @param int $previewid
  * @param int $questionid
  * @param object $displayoptions
+ * @param object $context
  */
-function restart_preview($previewid, $questionid, $displayoptions) {
+function restart_preview($previewid, $questionid, $displayoptions, $context) {
     global $DB;
 
     if ($previewid) {
@@ -291,5 +311,5 @@ function restart_preview($previewid, $questionid, $displayoptions) {
         $transaction->allow_commit();
     }
     redirect(question_preview_url($questionid, $displayoptions->behaviour,
-            $displayoptions->maxmark, $displayoptions, $displayoptions->variant));
+            $displayoptions->maxmark, $displayoptions, $displayoptions->variant, $context));
 }
