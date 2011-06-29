@@ -1570,7 +1570,6 @@ class moodle1_gradebook_handler extends moodle1_xml_handler {
         $this->write_grade_categories();
         $this->write_grade_items();
         $this->write_grade_letters();
-        $this->write_grade_settings();
         $this->xmlwriter->end_tag('gradebook');
         $this->close_xml_writer();
     }
@@ -1643,13 +1642,6 @@ class moodle1_gradebook_handler extends moodle1_xml_handler {
             $this->write_xml('grade_letter', $gradeletter, array('/grade_letter/id'));
         }
         $this->xmlwriter->end_tag('grade_letters');
-    }
-
-    /**
-     * Writes grade_settings
-     */
-    protected function write_grade_settings() {
-        // todo
     }
 }
 
