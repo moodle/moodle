@@ -168,6 +168,8 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
         $response = $qa->get_last_qt_var($fieldname);
         if ($subq->qtype->name() == 'shortanswer') {
             $matchinganswer = $subq->get_matching_answer(array('answer' => $response));
+        } else if ($subq->qtype->name() == 'numerical') {
+            $matchinganswer = $subq->get_matching_answer($response, 1);
         } else {
             $matchinganswer = $subq->get_matching_answer($response);
         }

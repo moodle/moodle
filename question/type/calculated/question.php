@@ -310,7 +310,7 @@ class qtype_calculated_variable_substituter {
      * @param $x
      */
     public function format_float($x, $length = null, $format = null) {
-        if (!is_null($format) && !is_null($format)) {
+        if (!is_null($length) && !is_null($format)) {
             if ($format == 1) {
                 // Decimal places.
                 $x = sprintf('%.' . $length . 'F', $x);

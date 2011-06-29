@@ -64,6 +64,7 @@ class qtype_numerical_question_test extends UnitTestCase {
 
     public function test_grading_with_units() {
         $question = test_question_maker::make_question('numerical');
+        $question->unitgradingtype = qtype_numerical::UNITOPTIONAL;
         $question->ap = new qtype_numerical_answer_processor(
                 array('m' => 1, 'cm' => 100), false, '.', ',');
 
@@ -77,6 +78,28 @@ class qtype_numerical_question_test extends UnitTestCase {
                 $question->grade_response(array('answer' => '314cm')));
         $this->assertEqual(array(1, question_state::$gradedright),
                 $question->grade_response(array('answer' => '314000000x10^-8m')));
+    }
+
+    public function test_grading_with_units_graded() {
+        $question = test_question_maker::make_question('numerical');
+        $question->unitgradingtype = qtype_numerical::UNITGRADED;
+        $question->ap = new qtype_numerical_answer_processor(
+                array('m' => 1, 'cm' => 100), false, '.', ',');
+
+        $this->assertEqual(array(0.8, question_state::$gradedpartial),
+                $question->grade_response(array('answer' => '3.14 frogs')));
+        $this->assertEqual(array(0.8, question_state::$gradedpartial),
+                $question->grade_response(array('answer' => '3.14')));
+        $this->assertEqual(array(1, question_state::$gradedright),
+                $question->grade_response(array('answer' => '3.14 m')));
+        $this->assertEqual(array(1, question_state::$gradedright),
+                $question->grade_response(array('answer' => '314cm')));
+        $this->assertEqual(array(1, question_state::$gradedright),
+                $question->grade_response(array('answer' => '314000000x10^-8m')));
+        $this->assertEqual(array(0.8, question_state::$gradedpartial),
+                $question->grade_response(array('answer' => '3.14 cm')));
+        $this->assertEqual(array(0, question_state::$gradedwrong),
+                $question->grade_response(array('answer' => '314 m')));
     }
 
     public function test_grading_unit() {
@@ -110,17 +133,17 @@ class qtype_numerical_question_test extends UnitTestCase {
         $this->assertEqual(array(1, question_state::$gradedright),
                 $question->grade_response(array('answer' => '$1332')));
         $this->assertEqual(array(1, question_state::$gradedright),
-                $question->grade_response(array('answer' => '$ 1,332')));
+                $question->grade_response(array('answer' => '$ 1332')));
         $this->assertEqual(array(0.8, question_state::$gradedpartial),
                 $question->grade_response(array('answer' => 'frog 1332')));
         $this->assertEqual(array(0.8, question_state::$gradedpartial),
                 $question->grade_response(array('answer' => '1332')));
         $this->assertEqual(array(0.8, question_state::$gradedpartial),
-                $question->grade_response(array('answer' => ' 1,332')));
+                $question->grade_response(array('answer' => ' 1332')));
         $this->assertEqual(array(0, question_state::$gradedwrong),
                 $question->grade_response(array('answer' => '1332 $')));
         $this->assertEqual(array(0, question_state::$gradedwrong),
-                $question->grade_response(array('answer' => '1,332 frogs')));
+                $question->grade_response(array('answer' => '1332 frogs')));
         $this->assertEqual(array(0, question_state::$gradedwrong),
                 $question->grade_response(array('answer' => '$1')));
     }
@@ -225,7 +248,7 @@ class qtype_numerical_question_test extends UnitTestCase {
                 new question_classified_response(14, '$100', 0)),
                 $num->classify_response(array('answer' => '$100')));
         $this->assertEqual(array(
-                new question_classified_response(13, '1,332', 0.8)),
-                $num->classify_response(array('answer' => '1,332')));
+                new question_classified_response(13, '1 332', 0.8)),
+                $num->classify_response(array('answer' => '1 332')));
     }
 }

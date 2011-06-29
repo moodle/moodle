@@ -449,7 +449,10 @@ class qtype_numerical extends question_type {
      */
     public function apply_unit($rawresponse, $units, $unitsleft) {
         $ap = $this->make_answer_processor($units, $unitsleft);
-        list($value, $unit) = $ap->apply_units($rawresponse);
+        list($value, $unit, $multiplier) = $ap->apply_units($rawresponse);
+        if (!is_null($multiplier)) {
+            $value *= $multiplier;
+        }
         return $value;
     }
 
@@ -525,6 +528,19 @@ class qtype_numerical_answer_processor {
     }
 
     /**
+     * @return book If the student's response contains a '.' or a ',' that
+     * matches the thousands separator in the current locale. In this case, the
+     * parsing in apply_unit can give a result that the student did not expect.
+     */
+    public function contains_thousands_seaparator($value) {
+        if (!in_array($this->thousandssep, array('.', ','))) {
+            return false;
+        }
+
+        return strpos($value, $this->thousandssep) !== false;
+    }
+
+    /**
      * Create the regular expression that {@link parse_response()} requires.
      * @return string
      */
@@ -550,6 +566,11 @@ class qtype_numerical_answer_processor {
     }
 
     /**
+     * This method can be used for more locale-strict parsing of repsonses. At the
+     * moment we don't use it, and instead use the more lax parsing in apply_units.
+     * This is just a note that this funciton was used in the past, so if you are
+     * intersted, look through version control history.
+     *
      * Take a string which is a number with or without a decimal point and exponent,
      * and possibly followed by one of the units, and split it into bits.
      * @param string $response a value, optionally with a unit.
@@ -585,25 +606,44 @@ class qtype_numerical_answer_processor {
     }
 
     /**
-     * Takes a number in localised form, that is, using the decsep and thousandssep
-     * defined in the lanuage pack, and possibly with a unit after it. It separates
-     * off the unit, if present, and converts to the default unit, by using the
-     * given unit multiplier.
+     * Takes a number in almost any localised form, and possibly with a unit
+     * after it. It separates off the unit, if present, and converts to the
+     * default unit, by using the given unit multiplier.
      *
      * @param string $response a value, optionally with a unit.
      * @return array(numeric, sting) the value with the unit stripped, and normalised
      *      by the unit multiplier, if any, and the unit string, for reference.
      */
     public function apply_units($response, $separateunit = null) {
-        list($beforepoint, $decimals, $exponent, $unit) = $this->parse_response($response);
+        // Strip spaces (which may be thousands separators) and change other forms
+        // of writing e to e.
+        $response = str_replace(' ', '', $response);
+        $response = preg_replace('~(?:e|E|(?:x|\*|×)10(?:\^|\*\*))([+-]?\d+)~', 'e$1', $response);
 
-        if (is_null($beforepoint)) {
-            return array(null, null);
+        // If a . is present or there are multiple , (i.e. 2,456,789 ) assume ,
+        // is a thouseands separator, and strip it, else assume it is a decimal
+        // separator, and change it to ..
+        if (strpos($response, '.') !== false || substr_count($response, ',') > 1) {
+            $response = str_replace(',', '', $response);
+        } else {
+            $response = str_replace(',', '.', $response);
         }
 
-        $numberstring = $beforepoint . '.' . $decimals;
-        if ($exponent) {
-            $numberstring .= 'e' . $exponent;
+        $regex = '[+-]?(?:\d+(?:\\.\d*)?|\\.\d+)(?:e[-+]?\d+)?';
+        if ($this->unitsbefore) {
+            $regex = "/$regex$/";
+        } else {
+            $regex = "/^$regex/";
+        }
+        if (!preg_match($regex, $response, $matches)) {
+            return array(null, null, null);
+        }
+
+        $numberstring = $matches[0];
+        if ($this->unitsbefore) {
+            $unit = substr($response, 0, -strlen($numberstring));
+        } else {
+            $unit = substr($response, strlen($numberstring));
         }
 
         if (!is_null($separateunit)) {
@@ -611,12 +651,12 @@ class qtype_numerical_answer_processor {
         }
 
         if ($unit && $this->is_known_unit($unit)) {
-            $value = $numberstring / $this->units[$unit];
+            $multiplier = 1 / $this->units[$unit];
         } else {
-            $value = $numberstring * 1;
+            $multiplier = null;
         }
 
-        return array($value, $unit);
+        return array($numberstring + 0, $unit, $multiplier); // + 0 to convert to number.
     }
 
     /**

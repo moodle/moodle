@@ -26,6 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/edit_question_form.php');
 require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
 
 
@@ -36,6 +37,7 @@ require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_numerical_edit_form extends question_edit_form {
+    protected $ap = null;
 
     protected function definition_inner($mform) {
         $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_numerical', '{no}'),
@@ -54,6 +56,7 @@ class qtype_numerical_edit_form extends question_edit_form {
         $tolerance = $mform->createElement('text', 'tolerance',
                 get_string('acceptederror', 'qtype_numerical'));
         $repeatedoptions['tolerance']['type'] = PARAM_NUMBER;
+        $repeatedoptions['tolerance']['default'] = 0;
         array_splice($repeated, 3, 0, array($tolerance));
         $repeated[1]->setSize(10);
 
@@ -256,7 +259,7 @@ class qtype_numerical_edit_form extends question_edit_form {
             if ($trimmedanswer != '') {
                 $answercount++;
                 if (!$this->is_valid_answer($trimmedanswer, $data)) {
-                    $errors['answer[' . $key . ']'] = $this->valid_answer_message();
+                    $errors['answer[' . $key . ']'] = $this->valid_answer_message($trimmedanswer);
                 }
                 if ($data['fraction'][$key] == 1) {
                     $maxgrade = true;
@@ -267,7 +270,7 @@ class qtype_numerical_edit_form extends question_edit_form {
                 }
             } else if ($data['fraction'][$key] != 0 ||
                     !html_is_blank($data['feedback'][$key]['text'])) {
-                $errors['answer[' . $key . ']'] = $this->valid_answer_message();
+                $errors['answer[' . $key . ']'] = $this->valid_answer_message($trimmedanswer);
                 $answercount++;
             }
         }
@@ -277,6 +280,8 @@ class qtype_numerical_edit_form extends question_edit_form {
         if ($maxgrade == false) {
             $errors['fraction[0]'] = get_string('fractionsnomax', 'question');
         }
+
+        return $errors;
     }
 
     /**
@@ -286,7 +291,22 @@ class qtype_numerical_edit_form extends question_edit_form {
      * @return bool whether this is a valid answer.
      */
     protected function is_valid_answer($answer, $data) {
-        return $answer == '*' || is_numeric($answer);
+        return $answer == '*' || $this->is_valid_number($x);
+    }
+
+    /**
+     * Validate that a string is a nubmer formatted correctly for the current locale.
+     * @param string $x a string
+     * @return bool whether $x is a number that the numerical question type can interpret.
+     */
+    protected function is_valid_number($x) {
+        if (is_null($this->ap)) {
+            $this->ap = new qtype_numerical_answer_processor(array());
+        }
+
+        list($value, $unit) = $this->ap->apply_units($x);
+
+        return !is_null($value) && !$unit;
     }
 
     /**

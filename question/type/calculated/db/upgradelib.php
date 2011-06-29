@@ -207,7 +207,7 @@ class qtype_calculated_qe2_attempt_updater extends question_qtype_attempt_update
      * @param $x
      */
     public function format_float($x, $length = null, $format = null) {
-        if (!is_null($format) && !is_null($format)) {
+        if (!is_null($length) && !is_null($format)) {
             if ($format == 1) {
                 // Decimal places.
                 $x = sprintf('%.' . $length . 'F', $x);

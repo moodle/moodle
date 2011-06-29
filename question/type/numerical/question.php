@@ -109,6 +109,10 @@ class qtype_numerical_question extends question_graded_automatically {
             return false;
         }
 
+        if ($this->ap->contains_thousands_seaparator($response['answer'])) {
+            return false;
+        }
+
         return true;
     }
 
@@ -128,6 +132,11 @@ class qtype_numerical_question extends question_graded_automatically {
 
         if ($this->has_separate_unit_field() && empty($response['unit'])) {
             return get_string('unitnotselected', 'qtype_numerical');
+        }
+
+        if ($this->ap->contains_thousands_seaparator($response['answer'])) {
+            return get_string('pleaseenteranswerwithoutthousandssep', 'qtype_numerical',
+                    $this->ap->get_separator());
         }
 
         return '';
@@ -153,7 +162,7 @@ class qtype_numerical_question extends question_graded_automatically {
             return array();
         }
 
-        $response = array('answer' => $answer->answer);
+        $response = array('answer' => str_replace('.', $this->ap->get_point(), $answer->answer));
 
         if ($this->has_separate_unit_field()) {
             $response['unit'] = $this->ap->get_default_unit();
@@ -168,12 +177,22 @@ class qtype_numerical_question extends question_graded_automatically {
      * Get an answer that contains the feedback and fraction that should be
      * awarded for this resonse.
      * @param number $value the numerical value of a response.
+     * @param number $multiplier for the unit the student gave, if any. When no
+     *      unit was given, or an unrecognised unit was given, $multiplier will be null.
      * @return question_answer the matching answer.
      */
-    public function get_matching_answer($value) {
+    public function get_matching_answer($value, $multiplier) {
+        if (!is_null($multiplier)) {
+            $scaledvalue = $value * $multiplier;
+        } else {
+            $scaledvalue = $value;
+        }
         foreach ($this->answers as $aid => $answer) {
-            if ($answer->within_tolerance($value)) {
-                $answer->id = $aid;
+            if ($answer->within_tolerance($scaledvalue)) {
+                $answer->unitisright = !is_null($multiplier);
+                return $answer;
+            } else if ($answer->within_tolerance($value)) {
+                $answer->unitisright = false;
                 return $answer;
             }
         }
@@ -190,8 +209,14 @@ class qtype_numerical_question extends question_graded_automatically {
         return null;
     }
 
-    public function apply_unit_penalty($fraction, $unit) {
-        if (!empty($unit) && $this->ap->is_known_unit($unit)) {
+    /**
+     * Adjust the fraction based on whether the unit was correct.
+     * @param number $fraction
+     * @param bool $unitisright
+     * @return number
+     */
+    public function apply_unit_penalty($fraction, $unitisright) {
+        if ($unitisright) {
             return $fraction;
         }
 
@@ -209,13 +234,15 @@ class qtype_numerical_question extends question_graded_automatically {
         } else {
             $selectedunit = null;
         }
-        list($value, $unit) = $this->ap->apply_units($response['answer'], $selectedunit);
-        $answer = $this->get_matching_answer($value);
+        list($value, $unit, $multiplier) = $this->ap->apply_units(
+                $response['answer'], $selectedunit);
+        
+        $answer = $this->get_matching_answer($value, $multiplier);
         if (!$answer) {
             return array(0, question_state::$gradedwrong);
         }
 
-        $fraction = $this->apply_unit_penalty($answer->fraction, $unit);
+        $fraction = $this->apply_unit_penalty($answer->fraction, $answer->unitisright);
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
 
@@ -229,8 +256,8 @@ class qtype_numerical_question extends question_graded_automatically {
         } else {
             $selectedunit = null;
         }
-        list($value, $unit) = $this->ap->apply_units($response['answer'], $selectedunit);
-        $ans = $this->get_matching_answer($value);
+        list($value, $unit, $multiplier) = $this->ap->apply_units($response['answer'], $selectedunit);
+        $ans = $this->get_matching_answer($value, $multiplier);
         if (!$ans) {
             return array($this->id => question_classified_response::no_response());
         }
@@ -242,14 +269,22 @@ class qtype_numerical_question extends question_graded_automatically {
 
         return array($this->id => new question_classified_response($ans->id,
                 $resp,
-                $this->apply_unit_penalty($ans->fraction, $unit)));
+                $this->apply_unit_penalty($ans->fraction, $ans->unitisright)));
     }
 
     public function check_file_access($qa, $options, $component, $filearea, $args,
             $forcedownload) {
         if ($component == 'question' && $filearea == 'answerfeedback') {
+            $question = $qa->get_question();
             $currentanswer = $qa->get_last_qt_var('answer');
-            $answer = $qa->get_question()->get_matching_answer(array('answer' => $currentanswer));
+            if ($this->has_separate_unit_field()) {
+                $selectedunit = $qa->get_last_qt_var('unit');
+            } else {
+                $selectedunit = null;
+            }
+            list($value, $unit, $multiplier) = $question->ap->apply_units(
+                    $currentanswer, $selectedunit);
+            $answer = $question->get_matching_answer($value, $multiplier);
             $answerid = reset($args); // itemid is answer id.
             return $options->feedback && $answerid == $answer->id;
 

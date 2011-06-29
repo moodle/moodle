@@ -57,10 +57,11 @@ class qtype_numerical_renderer extends qtype_renderer {
 
         $feedbackimg = '';
         if ($options->correctness) {
-            list($value, $unit) = $question->ap->apply_units($currentanswer, $selectedunit);
-            $answer = $question->get_matching_answer($value);
+            list($value, $unit, $multiplier) = $question->ap->apply_units(
+                    $currentanswer, $selectedunit);
+            $answer = $question->get_matching_answer($value, $multiplier);
             if ($answer) {
-                $fraction = $question->apply_unit_penalty($answer->fraction, $unit);
+                $fraction = $question->apply_unit_penalty($answer->fraction, $answer->unitisright);
             } else {
                 $fraction = 0;
             }
@@ -140,9 +141,9 @@ class qtype_numerical_renderer extends qtype_renderer {
         } else {
             $selectedunit = null;
         }
-        list($value, $unit) = $question->ap->apply_units(
+        list($value, $unit, $multiplier) = $question->ap->apply_units(
                 $qa->get_last_qt_var('answer'), $selectedunit);
-        $answer = $question->get_matching_answer($value);
+        $answer = $question->get_matching_answer($value, $multiplier);
 
         if ($answer && $answer->feedback) {
             $feedback = $question->format_text($answer->feedback, $answer->feedbackformat,
@@ -165,7 +166,7 @@ class qtype_numerical_renderer extends qtype_renderer {
             return '';
         }
 
-        $response = $answer->answer;
+        $response = str_replace('.', $question->ap->get_point(), $answer->answer);
         if ($question->unitdisplay != qtype_numerical::UNITNONE) {
             $response = $question->ap->add_unit($response);
         }
