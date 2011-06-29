@@ -263,6 +263,12 @@ abstract class question_behaviour_attempt_updater {
      */
     protected function make_qtype_updater() {
         global $CFG;
+
+        if ($this->question->qtype == 'deleted') {
+            return new question_deleted_question_attempt_updater(
+                    $this, $this->question, $this->logger, $this->qeupdater);
+        }
+
         $path = $CFG->dirroot . '/question/type/' . $this->question->qtype . '/db/upgradelib.php';
         if (!is_readable($path)) {
             throw new coding_exception("Question type {$this->question->qtype}
