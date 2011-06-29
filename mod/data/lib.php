@@ -3344,7 +3344,7 @@ function data_comment_validate($comment_param) {
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function data_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function data_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-data-*'=>get_string('page-mod-data-x', 'data'));
     return $module_pagetype;
 }

@@ -284,6 +284,6 @@ function note_delete_all($courseid) {
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function note_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function note_page_type_list($pagetype, $parentcontext, $currentcontext) {
     return array('notes-*'=>get_string('page-notes-x', 'notes'));
 }

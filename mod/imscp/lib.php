@@ -407,7 +407,7 @@ function imscp_extend_navigation($navigation, $course, $module, $cm) {
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function imscp_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function imscp_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-imscp-*'=>get_string('page-mod-imscp-x', 'imscp'));
     return $module_pagetype;
 }

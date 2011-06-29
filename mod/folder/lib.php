@@ -343,7 +343,7 @@ function folder_extend_navigation($navigation, $course, $module, $cm) {
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function folder_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function folder_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-folder-*'=>get_string('page-mod-folder-x', 'folder'));
     return $module_pagetype;
 }

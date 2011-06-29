@@ -665,7 +665,7 @@ function wiki_comment_validate($comment_param) {
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function wiki_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function wiki_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array(
         'mod-wiki-*'=>get_string('page-mod-wiki-x', 'wiki'),
         'mod-wiki-view'=>get_string('page-mod-wiki-view', 'wiki'),

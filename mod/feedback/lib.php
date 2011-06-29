@@ -2788,7 +2788,7 @@ function feedback_init_feedback_session() {
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function feedback_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function feedback_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-feedback-*'=>get_string('page-mod-feedback-x', 'feedback'));
     return $module_pagetype;
 }

@@ -1710,7 +1710,7 @@ function mod_quiz_question_pluginfile($course, $context, $component,
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function quiz_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function quiz_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-quiz-*'=>get_string('page-mod-quiz-x', 'quiz'));
     return $module_pagetype;
 }

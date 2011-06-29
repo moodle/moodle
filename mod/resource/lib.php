@@ -436,7 +436,7 @@ function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function resource_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function resource_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-resource-*'=>get_string('page-mod-resource-x', 'resource'));
     return $module_pagetype;
 }

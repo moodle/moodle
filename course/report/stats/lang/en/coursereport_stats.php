@@ -24,4 +24,5 @@
  */
 
 $string['pluginname'] = 'Course statistics';
+$string['pluginpagetype'] = 'Statistics course report';
 $string['stats:view'] = 'View course statistics report';

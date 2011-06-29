@@ -16,13 +16,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'coursereport_participation', language 'en', branch 'MOODLE_20_STABLE'
+ * This file contains functions used by course reports
  *
- * @package   coursereport_participation
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @since 2.1
+ * @package course-report
+ * @copyright 2011 Andrew Davis
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-$string['participation:view'] = 'View course participation report';
-$string['pluginpagetype'] = 'Participation course report';
-$string['pluginname'] = 'Course participation';
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function coursereport_page_type_list($pagetype, $parentcontext, $currentcontext) {
+    $array = array(
+        '*' => get_string('page-x', 'pagetype'),
+        'course-report-*' => get_string('page-course-report-x', 'pagetype')
+    );
+    return $array;
+}

@@ -25,6 +25,7 @@
 
 $string['page-course-view-x'] = 'Any type of course main page';
 $string['page-course-x'] = 'Any course page';
+$string['page-course-report-x'] = 'Any course report';
 $string['page-mod-x'] = 'Any activity module page';
 $string['page-mod-x-view'] = 'Any main activity module page';
 $string['page-my-index'] = 'My home page';

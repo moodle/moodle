@@ -1035,7 +1035,7 @@ function blog_comment_validate($comment_param) {
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  */
-function blog_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+function blog_page_type_list($pagetype, $parentcontext, $currentcontext) {
     return array(
         '*'=>get_string('page-x', 'pagetype'),
         'blog-*'=>get_string('page-blog-x', 'blog'),
