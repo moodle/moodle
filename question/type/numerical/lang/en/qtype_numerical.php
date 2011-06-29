@@ -71,9 +71,11 @@ $string['selectunit'] = 'Select one unit';
 $string['studentunitanswer'] = 'Units are input using';
 $string['tolerancetype'] = 'Tolerance type';
 $string['unit'] = 'Unit';
+$string['unitappliedpenalty'] = 'These marks include a penalty of {$a} for bad unit.';
 $string['unitchoice'] = 'a multiple choice selection';
 $string['unitedit'] = 'Edit unit';
 $string['unitgraded'] = 'The unit must be given, and will be graded.';
+$string['unithandling'] = 'Unit handling';
 $string['unithdr'] = 'Unit {$a}';
 $string['unitincorrect'] = 'You did not give the correct unit.';
 $string['unitmandatory'] = 'Mandatory';
@@ -84,6 +86,7 @@ $string['unitmandatory_help'] = '
 * The unit penalty will be applied if the unit field is empty
 
 ';
+$string['unitnotselected'] = 'You must select a unit.';
 $string['unitonerequired'] = 'You must enter at least one unit';
 $string['unitoptional'] = 'Optional unit';
 $string['unitoptional_help'] = '
@@ -91,15 +94,13 @@ $string['unitoptional_help'] = '
 
 * If the unit is badly written or unknown, the response will be considered as non valid.
 ';
-$string['unitnotselected'] = 'You must select a unit.';
 $string['unitpenalty'] = 'Unit penalty';
 $string['unitpenalty_help'] = 'The penalty is applied if
 
 * the wrong unit name is entered into the unit input, or
 * a unit is entered into the value input box';
-$string['unitappliedpenalty'] = 'These marks include a penalty of {$a} for bad unit.';
 $string['unitposition'] = 'Units go';
-$string['unithandling'] = 'Unit handling';
+$string['unitselect'] = 'a drop-down menu';
 $string['validnumberformats'] = 'Valid number formats';
 $string['validnumberformats_help'] = '
 * regular numbers 13500.67, 13 500.67, 13500,67 or 13 500,67

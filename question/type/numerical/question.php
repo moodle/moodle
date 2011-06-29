@@ -39,7 +39,7 @@ class qtype_numerical_question extends question_graded_automatically {
     /** @var array of question_answer. */
     public $answers = array();
 
-    /** @var int one of the constants UNITNONE, UNITSELECT or UNITINPUT. */
+    /** @var int one of the constants UNITNONE, UNITRADIO, UNITSELECT or UNITINPUT. */
     public $unitdisplay;
     /** @var int one of the constants UNITGRADEDOUTOFMARK or UNITGRADEDOUTOFMAX. */
     public $unitgradingtype;
@@ -51,10 +51,15 @@ class qtype_numerical_question extends question_graded_automatically {
 
     public function get_expected_data() {
         $expected = array('answer' => PARAM_RAW_TRIMMED);
-        if ($this->unitdisplay == qtype_numerical::UNITSELECT) {
+        if ($this->has_separate_unit_field()) {
             $expected['unit'] = PARAM_RAW_TRIMMED;
         }
         return $expected;
+    }
+
+    public function has_separate_unit_field() {
+        return $this->unitdisplay == qtype_numerical::UNITRADIO ||
+                $this->unitdisplay == qtype_numerical::UNITSELECT;
     }
 
     public function start_attempt(question_attempt_step $step, $variant) {
@@ -74,7 +79,7 @@ class qtype_numerical_question extends question_graded_automatically {
             $resp = null;
         }
 
-        if ($this->unitdisplay == qtype_numerical::UNITSELECT && !empty($response['unit'])) {
+        if ($this->has_separate_unit_field() && !empty($response['unit'])) {
             $resp = $this->ap->add_unit($resp, $response['unit']);
         }
 
@@ -100,7 +105,7 @@ class qtype_numerical_question extends question_graded_automatically {
             return false;
         }
 
-        if ($this->unitdisplay == qtype_numerical::UNITSELECT && empty($response['unit'])) {
+        if ($this->has_separate_unit_field() && empty($response['unit'])) {
             return false;
         }
 
@@ -121,7 +126,7 @@ class qtype_numerical_question extends question_graded_automatically {
             return get_string('invalidnumbernounit', 'qtype_numerical');
         }
 
-        if ($this->unitdisplay == qtype_numerical::UNITSELECT && empty($response['unit'])) {
+        if ($this->has_separate_unit_field() && empty($response['unit'])) {
             return get_string('unitnotselected', 'qtype_numerical');
         }
 
@@ -134,7 +139,7 @@ class qtype_numerical_question extends question_graded_automatically {
             return false;
         }
 
-        if ($this->unitdisplay == qtype_numerical::UNITSELECT) {
+        if ($this->has_separate_unit_field()) {
             return question_utils::arrays_same_at_key_missing_is_blank(
                 $prevresponse, $newresponse, 'unit');
         }
@@ -150,7 +155,7 @@ class qtype_numerical_question extends question_graded_automatically {
 
         $response = array('answer' => $answer->answer);
 
-        if ($this->unitdisplay == qtype_numerical::UNITSELECT) {
+        if ($this->has_separate_unit_field()) {
             $response['unit'] = $this->ap->get_default_unit();
         } else if ($this->unitdisplay == qtype_numerical::UNITINPUT) {
             $response['answer'] = $this->ap->add_unit($answer->answer);
@@ -199,7 +204,7 @@ class qtype_numerical_question extends question_graded_automatically {
     }
 
     public function grade_response(array $response) {
-        if ($this->unitdisplay == qtype_numerical::UNITSELECT) {
+        if ($this->has_separate_unit_field()) {
             $selectedunit = $response['unit'];
         } else {
             $selectedunit = null;
@@ -219,7 +224,7 @@ class qtype_numerical_question extends question_graded_automatically {
             return array($this->id => question_classified_response::no_response());
         }
 
-        if ($this->unitdisplay == qtype_numerical::UNITSELECT) {
+        if ($this->has_separate_unit_field()) {
             $selectedunit = $response['unit'];
         } else {
             $selectedunit = null;
@@ -231,7 +236,7 @@ class qtype_numerical_question extends question_graded_automatically {
         }
 
         $resp = $response['answer'];
-        if ($this->unitdisplay == qtype_numerical::UNITSELECT) {
+        if ($this->has_separate_unit_field()) {
             $resp = $this->ap->add_unit($resp, $unit);
         }
 

@@ -98,7 +98,8 @@ class qtype_numerical_edit_form extends question_edit_form {
 
         $unitinputoptions = array(
             qtype_numerical::UNITINPUT => get_string('editableunittext', 'qtype_numerical'),
-            qtype_numerical::UNITSELECT => get_string('unitchoice', 'qtype_numerical'),
+            qtype_numerical::UNITRADIO => get_string('unitchoice', 'qtype_numerical'),
+            qtype_numerical::UNITSELECT => get_string('unitselect', 'qtype_numerical'),
         );
         $mform->addElement('select', 'multichoicedisplay',
                 get_string('studentunitanswer', 'qtype_numerical'), $unitinputoptions);

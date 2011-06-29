@@ -41,7 +41,8 @@ require_once($CFG->dirroot . '/question/type/numerical/question.php');
  */
 class qtype_numerical extends question_type {
     const UNITINPUT = 0;
-    const UNITSELECT = 1;
+    const UNITRADIO = 1;
+    const UNITSELECT = 2;
 
     const UNITNONE = 3;
     const UNITGRADED = 1;
