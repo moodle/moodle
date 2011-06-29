@@ -562,6 +562,8 @@ function xmldb_quiz_upgrade($oldversion) {
             ');
 
             if ($oldattempts) {
+                require_once($CFG->dirroot . '/mod/quiz/db/upgradelib.php');
+
                 $pbar = new progress_bar('q15upgrade');
                 $pbar->create();
                 $a = new stdClass();
