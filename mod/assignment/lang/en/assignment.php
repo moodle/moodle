@@ -45,6 +45,8 @@ You can see it appended to your assignment submission:
 $string['assignmentmailhtml'] = '{$a->teacher} has posted some feedback on your
 assignment submission for \'<i>{$a->assignment}</i>\'<br /><br />
 You can see it appended to your <a href="{$a->url}">assignment submission</a>.';
+$string['assignmentmailsmall'] = '{$a->teacher} has posted some feedback on your
+assignment submission for \'{$a->assignment}\' You can see it appended to your submission';
 $string['assignmentname'] = 'Assignment name';
 $string['assignment:submit'] = 'Submit assignment';
 $string['assignmentsubmission'] = 'Assignment submissions';
