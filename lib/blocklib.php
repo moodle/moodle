@@ -1217,13 +1217,14 @@ class block_manager {
                 // If the block wants to be system-wide, then explicitly set that
                 if ($data->bui_contexts == BUI_CONTEXTS_ENTIRE_SITE) {   // Only possible on a frontpage or system page
                     $bi->parentcontextid = $systemcontext->id;
-                    $bi->showinsubcontexts = 1;
+                    $bi->showinsubcontexts = BUI_CONTEXTS_CURRENT_SUBS; //show in current and sub contexts
+                    $bi->pagetypepattern = '*';
 
                 } else { // The block doesn't want to be system-wide, so let's ensure that
                     if ($parentcontext->id == $systemcontext->id) {  // We need to move it to the front page
                         $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
                         $bi->parentcontextid = $frontpagecontext->id;
-                        $bi->pagetypepattern = '*';  // Just in case
+                        $bi->pagetypepattern = 'site-index';
                     }
                 }
             }
