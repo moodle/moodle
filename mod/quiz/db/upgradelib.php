@@ -59,7 +59,7 @@ function quiz_upgrade_very_old_question_sessions($attempt) {
     $session->manualcommentformat = FORMAT_HTML;
     $session->flagged = 0;
 
-    $questionlist = str_replace(',0', '', quiz_clean_layout($layout, true));
+    $questionlist = str_replace(',0', '', quiz_clean_layout($attempt->layout, true));
     if (!$questionlist) {
         return;
     }
