@@ -236,7 +236,7 @@ class qtype_numerical_question extends question_graded_automatically {
         }
         list($value, $unit, $multiplier) = $this->ap->apply_units(
                 $response['answer'], $selectedunit);
-        
+
         $answer = $this->get_matching_answer($value, $multiplier);
         if (!$answer) {
             return array(0, question_state::$gradedwrong);
