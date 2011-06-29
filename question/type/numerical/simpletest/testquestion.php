@@ -98,7 +98,7 @@ class qtype_numerical_question_test extends UnitTestCase {
                 $question->grade_response(array('answer' => '314000000x10^-8m')));
         $this->assertEqual(array(0.8, question_state::$gradedpartial),
                 $question->grade_response(array('answer' => '3.14 cm')));
-        $this->assertEqual(array(0.8, question_state::$gradedpartial),
+        $this->assertEqual(array(0, question_state::$gradedwrong),
                 $question->grade_response(array('answer' => '314 m')));
     }
 

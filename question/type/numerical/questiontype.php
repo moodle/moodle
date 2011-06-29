@@ -449,7 +449,10 @@ class qtype_numerical extends question_type {
      */
     public function apply_unit($rawresponse, $units, $unitsleft) {
         $ap = $this->make_answer_processor($units, $unitsleft);
-        list($value, $unit) = $ap->apply_units($rawresponse);
+        list($value, $unit, $multiplier) = $ap->apply_units($rawresponse);
+        if (!is_null($multiplier)) {
+            $value *= $multiplier;
+        }
         return $value;
     }
 
@@ -633,7 +636,7 @@ class qtype_numerical_answer_processor {
             $regex = "/^$regex/";
         }
         if (!preg_match($regex, $response, $matches)) {
-            return array(null, null);
+            return array(null, null, null);
         }
 
         $numberstring = $matches[0];
@@ -648,12 +651,12 @@ class qtype_numerical_answer_processor {
         }
 
         if ($unit && $this->is_known_unit($unit)) {
-            $value = $numberstring / $this->units[$unit];
+            $multiplier = 1 / $this->units[$unit];
         } else {
-            $value = $numberstring * 1;
+            $multiplier = null;
         }
 
-        return array($value, $unit);
+        return array($numberstring + 0, $unit, $multiplier); // + 0 to convert to number.
     }
 
     /**
