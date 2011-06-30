@@ -99,8 +99,9 @@ class block_edit_form extends moodleform {
         $contextoptions = array();
         if ( ($parentcontext->contextlevel == CONTEXT_COURSE && $parentcontext->instanceid == SITEID) ||
             ($parentcontext->contextlevel == CONTEXT_SYSTEM)) {        // Home page
-            if ($bits[0] == 'tag') {
-                // tag always use system context, the contexts options don't make differences, so we use
+            if ($bits[0] == 'tag' || ($bits[0] == 'admin' && $bits[1] == 'setting')) {
+                // tag and admin settings always use system context
+                // the contexts options don't make differences, so we use
                 // page type patterns only
                 $mform->addElement('hidden', 'bui_contexts', BUI_CONTEXTS_ENTIRE_SITE);
             } else {

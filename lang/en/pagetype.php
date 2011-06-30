@@ -23,6 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['page-admin-setting'] = 'The current admin setting page';
+$string['page-admin-setting-x'] = 'Any admin setting page';
 $string['page-course-view-x'] = 'Any type of course main page';
 $string['page-course-x'] = 'Any course page';
 $string['page-course-report-x'] = 'Any course report';
