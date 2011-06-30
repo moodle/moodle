@@ -135,7 +135,10 @@ class block_edit_form extends moodleform {
                 // Pushing block's existing page type pattern
                 $pagetypestringname = 'page-'.str_replace('*', 'x', $this->block->instance->pagetypepattern);
                 if (get_string_manager()->string_exists($pagetypestringname, 'pagetype')) {
-                    $pagetyelist[$this->block->instance->pagetypepattern] = get_string($pagetypestringname, 'pagetype');
+                    $pagetypelist[$this->block->instance->pagetypepattern] = get_string($pagetypestringname, 'pagetype');
+                } else {
+                    //as a last resort we could put the page type pattern in the select box
+                    //however this causes mod-data-view to be added if the only option available is mod-data-*
                 }
             }
         }

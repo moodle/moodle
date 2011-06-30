@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'pagetype', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'pagetype', language 'en'
  *
  * @package   pagetype
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
