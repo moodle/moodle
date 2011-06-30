@@ -290,6 +290,9 @@ class backup_controller extends backup implements loggable {
      * @return void Throws and exception of completes
      */
     public function execute_plan() {
+        // Basic/initial prevention against time/memory limits
+        set_time_limit(1 * 60 * 60); // 1 hour for 1 course initially granted
+        raise_memory_limit(MEMORY_EXTRA);
         return $this->plan->execute();
     }
 
