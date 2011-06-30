@@ -1480,6 +1480,7 @@ class moodle1_gradebook_handler extends moodle1_xml_handler {
                 )
             ),
             new convert_path('gradebook_grade_item', '/MOODLE_BACKUP/COURSE/GRADEBOOK/GRADE_ITEMS/GRADE_ITEM'),
+            new convert_path('gradebook_grade_item_grades', '/MOODLE_BACKUP/COURSE/GRADEBOOK/GRADE_ITEMS/GRADE_ITEM/GRADE_GRADES'),
         );
     }
 
@@ -1558,6 +1559,12 @@ class moodle1_gradebook_handler extends moodle1_xml_handler {
         $this->converter->set_stash($stashname, $data, $stashitemid);
 
         return $data;
+    }
+
+    /**
+     * @todo
+     */
+    public function on_gradebook_grade_item_grades_start() {
     }
 
     /**
