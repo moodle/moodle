@@ -160,6 +160,38 @@ class moodle1_converter_test extends UnitTestCase {
         $converter->drop_stash_storage();
     }
 
+   public function test_get_stash_or_default() {
+        $converter = convert_factory::get_converter('moodle1', $this->tempdir);
+        $converter->create_stash_storage();
+
+        $this->assertTrue(is_null($converter->get_stash_or_default('stashname')));
+        $this->assertTrue(is_null($converter->get_stash_or_default('stashname', 7)));
+        $this->assertTrue('default' === $converter->get_stash_or_default('stashname', 0, 'default'));
+        $this->assertTrue(array('foo', 'bar') === $converter->get_stash_or_default('stashname', 42, array('foo', 'bar')));
+
+        //$converter->set_stash('stashname', 0);
+        //$this->assertFalse(is_null($converter->get_stash_or_default('stashname'))); // todo returns true now, this needs MDL-27713 to be fixed
+
+        //$converter->set_stash('stashname', '');
+        //$this->assertFalse(is_null($converter->get_stash_or_default('stashname'))); // todo returns true now, this needs MDL-27713 to be fixed
+
+        //$converter->set_stash('stashname', array());
+        //$this->assertFalse(is_null($converter->get_stash_or_default('stashname'))); // todo returns true now, this needs MDL-27713 to be fixed
+
+        $converter->set_stash('stashname', 42);
+        $this->assertTrue(42 === $converter->get_stash_or_default('stashname'));
+        $this->assertTrue(is_null($converter->get_stash_or_default('stashname', 1)));
+        $this->assertTrue(42 === $converter->get_stash_or_default('stashname', 0, 61));
+
+        $converter->set_stash('stashname', array(42 => (object)array('id' => 42)), 18);
+        $stashed = $converter->get_stash_or_default('stashname', 18, 1984);
+        $this->assertIsA($stashed, 'array');
+        $this->assertTrue(is_object($stashed[42]));
+        $this->assertTrue($stashed[42]->id === 42);
+
+        $converter->drop_stash_storage();
+    }
+
     public function test_get_contextid() {
         $converter = convert_factory::get_converter('moodle1', $this->tempdir);
 

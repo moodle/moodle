@@ -471,6 +471,22 @@ class moodle1_converter extends base_converter {
     }
 
     /**
+     * Restores a given stash or returns the given default if there is no such stash
+     *
+     * @param string $stashname name of the stash
+     * @param int $itemid optional id for multiple infos within the same stashname
+     * @param mixed $default information to return if the info has not been stashed previously
+     * @return mixed stashed data or the default value
+     */
+    public function get_stash_or_default($stashname, $itemid = 0, $default = null) {
+        try {
+            return $this->get_stash($stashname, $itemid);
+        } catch (moodle1_convert_empty_storage_exception $e) {
+            return $default;
+        }
+    }
+
+    /**
      * Returns the list of existing stashes
      *
      * @return array
