@@ -133,6 +133,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
                 }
             }
         }
-        return $this->_prepareValue($draftitemid, $assoc);
+
+        return $this->_prepareValue($draftitemid, true);
     }
 }
