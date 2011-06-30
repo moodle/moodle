@@ -296,6 +296,9 @@ class restore_controller extends backup implements loggable {
     }
 
     public function execute_plan() {
+        // Basic/initial prevention against time/memory limits
+        set_time_limit(1 * 60 * 60); // 1 hour for 1 course initially granted
+        raise_memory_limit(MEMORY_EXTRA);
         return $this->plan->execute();
     }
 
@@ -382,6 +385,10 @@ class restore_controller extends backup implements loggable {
     public function convert() {
         global $CFG;
         require_once($CFG->dirroot . '/backup/util/helper/convert_helper.class.php');
+
+        // Basic/initial prevention against time/memory limits
+        set_time_limit(1 * 60 * 60); // 1 hour for 1 course initially granted
+        raise_memory_limit(MEMORY_EXTRA);
 
         if ($this->status != backup::STATUS_REQUIRE_CONV) {
             throw new restore_controller_exception('cannot_convert_not_required_status');
