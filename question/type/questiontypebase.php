@@ -493,7 +493,8 @@ class question_type {
         global $DB;
         $context = $formdata->context;
 
-        $oldhints = $DB->get_records('question_hints', array('questionid' => $formdata->id));
+        $oldhints = $DB->get_records('question_hints',
+                array('questionid' => $formdata->id), 'id ASC');
 
         if (!empty($formdata->hint)) {
             $numhints = max(array_keys($formdata->hint)) + 1;
@@ -628,8 +629,8 @@ class question_type {
             $answer_extension_table = array_shift($extraanswerfields);
             $question->options->answers = $DB->get_records_sql("
                     SELECT qa.*, qax." . implode(', qax.', $extraanswerfields) . "
-                    FROM {question_answers} qa, {$answer_extension_table} qax
-                    WHERE qa.questionid = ? AND qax.answerid = qa.id", array($question->id));
+                    FROM {question_answers} qa, {{$answer_extension_table}} qax
+                    WHERE qa.question = ? AND qax.answerid = qa.id", array($question->id));
             if (!$question->options->answers) {
                 echo $OUTPUT->notification('Failed to load question answers from the table ' .
                         $answer_extension_table . 'for questionid ' . $question->id);
