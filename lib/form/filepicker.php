@@ -112,9 +112,13 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
     function exportValue(&$submitValues, $assoc = false) {
         global $USER;
 
+        $draftitemid = $this->_findValue($submitValues);
+        if (null === $draftitemid) {
+            $draftitemid = $this->getValue();
+        }
+
         // make sure max one file is present and it is not too big
-        if (!empty($submitValues[$this->_attributes['name']])) {
-            $draftitemid = $submitValues[$this->_attributes['name']];
+        if (!is_null($draftitemid)) {
             $fs = get_file_storage();
             $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
             if ($files = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id DESC', false)) {
@@ -128,10 +132,8 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
                     $file->delete();
                 }
             }
-            return array($this->_attributes['name'] => $submitValues[$this->_attributes['name']]);
-        } else {
-            return null;
         }
 
+        return $this->_prepareValue($draftitemid, true);
     }
 }
