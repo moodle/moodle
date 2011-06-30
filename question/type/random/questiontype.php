@@ -114,7 +114,7 @@ class random_qtype extends default_questiontype {
         } else {
             $string = 'randomqname';
         }
-        return get_string($string, 'qtype_random', $category->name);
+        return get_string($string, 'qtype_random', shorten_text($category->name, 100));
     }
 
     function save_question($question, $form) {
