@@ -67,7 +67,7 @@ class question_engine_attempt_upgrader {
         gc_collect_cycles(); // This was really helpful in PHP 5.2. Perhaps remove.
         $a = new stdClass();
         $a->done = $done;
-        $a->todo = $outof;
+        $a->outof = $outof;
         $a->info = $quizid;
         $this->progressbar->update($done, $outof, get_string('upgradingquizattempts', 'quiz', $a));
     }
@@ -333,7 +333,7 @@ class question_engine_attempt_upgrader {
             }
 
             // Add the new state to the array, and advance.
-            $qstates[$state->seq_number] = $state;
+            $qstates[] = $state;
             $questionsstatesrs->next();
         }
 
