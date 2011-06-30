@@ -146,12 +146,18 @@ class restore_gradebook_structure_step extends restore_structure_step {
 
         $data->courseid = $this->get_courseid();
 
-        //manual grade items store category id in categoryid
         if ($data->itemtype=='manual') {
+            // manual grade items store category id in categoryid
             $data->categoryid = $this->get_mappingid('grade_category', $data->categoryid, NULL);
-        } //course and category grade items store their category id in iteminstance
-        else if ($data->itemtype=='course' || $data->itemtype=='category') {
+        } else if ($data->itemtype=='course') {
+            // course grade item stores their category id in iteminstance
+            $coursecat = grade_category::fetch_course_category($this->get_courseid());
+            $data->iteminstance = $coursecat->id;
+        } else if ($data->itemtype=='category') {
+            // category grade items store their category id in iteminstance
             $data->iteminstance = $this->get_mappingid('grade_category', $data->iteminstance, NULL);
+        } else {
+            throw new restore_step_exception('unexpected_grade_item_type', $data->itemtype);
         }
 
         $data->scaleid   = $this->get_mappingid('scale', $data->scaleid, NULL);
@@ -291,12 +297,16 @@ class restore_gradebook_structure_step extends restore_structure_step {
 
                 //if this is an activity grade item that needs to be put back in its correct category
                 if (!empty($grade_item_backup->parentitemid)) {
-                    $updateobj->categoryid = $this->get_mappingid('grade_category', $grade_item_backup->parentitemid);
+                    $oldcategoryid = $this->get_mappingid('grade_category', $grade_item_backup->parentitemid, null);
+                    if (!is_null($oldcategoryid)) {
+                        $updateobj->categoryid = $oldcategoryid;
+                        $DB->update_record('grade_items', $updateobj);
+                    }
                 } else {
                     //mark course and category items as needing to be recalculated
                     $updateobj->needsupdate=1;
+                    $DB->update_record('grade_items', $updateobj);
                 }
-                $DB->update_record('grade_items', $updateobj);
             }
         }
         $rs->close();
