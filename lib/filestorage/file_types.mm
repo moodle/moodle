@@ -19,6 +19,7 @@
 <node ID="_Freemind_Link_313976796" TEXT=".ra"/>
 <node ID="_Freemind_Link_709595453" TEXT=".wma"/>
 <node TEXT=".ogg"/>
+<node ID="ID_421461117" TEXT=".aac"/>
 </node>
 <node ID="_Freemind_Link_1800832653" TEXT="non_web_audio">
 <node ID="_Freemind_Link_1772266185" TEXT=".ape"/>

@@ -30,11 +30,11 @@ $string['flashanimation_help'] = 'Files with extension *.swf. For security reaso
 $string['flashvideo'] = 'Flash video';
 $string['flashvideo_help'] = 'Files with extension *.flv and *.f4v. Plays video clips using Flowplayer, requires Flash plugin and javascript. Uses HTML 5 video fallback if multiple sources psecified.';
 $string['html5audio'] = 'HTML 5 audio';
-$string['html5audio_help'] = 'Audio files with extension *.ogg, *.acc and others. It is compatible with latest web browsers only, unfortunately there is no format that is supported by all browsers.
-Workaround is to specify fallbacks separated with # (ex: http://example.org/audio.acc#http://example.org/audio.acc#http://example.org/audio.mp3#), QuickTime player is used as a fallback for old browsers, fallback can be any audio type.';
+$string['html5audio_help'] = 'Audio files with extension *.ogg, *.aac and others. It is compatible with latest web browsers only, unfortunately there is no format that is supported by all browsers.
+Workaround is to specify fallbacks separated with # (ex: http://example.org/audio.aac#http://example.org/audio.aac#http://example.org/audio.mp3#), QuickTime player is used as a fallback for old browsers, fallback can be any audio type.';
 $string['html5video'] = 'HTML 5 video';
 $string['html5video_help'] = 'Video files with extension *.webm, *.m4v, *.ogv, *.mp4 and others. It is compatible with latest web browsers only, unfortunately there is no format that is supported by all browsers.
-Workaround is to specify fallbacks sources separated with # (ex: http://example.org/video.m4v#http://example.org/video.acc#http://example.org/video.ogv#d=640x480), QuickTime player is used as a fallback for old browsers.';
+Workaround is to specify fallbacks sources separated with # (ex: http://example.org/video.m4v#http://example.org/video.aac#http://example.org/video.ogv#d=640x480), QuickTime player is used as a fallback for old browsers.';
 $string['mp3audio'] = 'MP3 audio';
 $string['mp3audio_help'] = 'Files with extension *.mp3. Plays audio using Flowplayer, requires Flash plugin.';
 $string['legacyquicktime'] = 'QuickTime player';
