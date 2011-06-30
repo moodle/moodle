@@ -126,6 +126,7 @@ class block_edit_form extends moodleform {
             $mform->addElement('select', 'bui_contexts', get_string('contexts', 'block'), $contextoptions);
         }
 
+        $displaypagetypewarning = false;
         if ($this->page->pagetype == 'site-index') {   // No need for pagetype list on home page
             $pagetypelist = array('*'=>get_string('page-x', 'pagetype'));
         } else {
@@ -139,12 +140,21 @@ class block_edit_form extends moodleform {
                 } else {
                     //as a last resort we could put the page type pattern in the select box
                     //however this causes mod-data-view to be added if the only option available is mod-data-*
+
+                    //as a last resort we could put the page type pattern in the select box
+                    //however this causes mod-data-view to be added if the only option available is mod-data-*
+                    // so we are just showing a warning to users about their prev setting being reset
+                    $displaypagetypewarning = true;
                 }
             }
         }
 
         // hide page type pattern select box if there is only one choice
         if (count($pagetypelist) > 1) {
+            if ($displaypagetypewarning) {
+                $mform->addElement('static', 'pagetypewarning', '', get_string('pagetypewarning','block'));
+            }
+
             $mform->addElement('select', 'bui_pagetypepattern', get_string('restrictpagetypes', 'block'), $pagetypelist);
         } else {
             $value = array_pop(array_keys($pagetypelist));
