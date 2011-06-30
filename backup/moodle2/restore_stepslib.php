@@ -2114,6 +2114,7 @@ class restore_module_structure_step extends restore_structure_step {
  *  - Activity includes completion info (file_exists)
  */
 class restore_userscompletion_structure_step extends restore_structure_step {
+    private $done = array();
 
     /**
      * To conditionally decide if this step must be executed
@@ -2158,7 +2159,33 @@ class restore_userscompletion_structure_step extends restore_structure_step {
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-        $DB->insert_record('course_modules_completion', $data);
+        // Check we didn't already insert one for this cmid and userid
+        // (there aren't supposed to be duplicates in that field, but
+        // it was possible until MDL-28021 was fixed).
+        $key = $data->coursemoduleid . ',' . $data->userid;
+        if (array_key_exists($key, $this->done)) {
+            // Find the existing record
+            $existing = $DB->get_record('course_modules_completion', array(
+                    'coursemoduleid' => $data->coursemoduleid,
+                    'userid' => $data->userid), 'id, timemodified');
+            // Update it to these new values, but only if the time is newer
+            if ($existing->timemodified < $data->timemodified) {
+                $data->id = $existing->id;
+                $DB->update_record('course_modules_completion', $data);
+            }
+        } else {
+            // Normal entry where it doesn't exist already
+            $DB->insert_record('course_modules_completion', $data);
+            // Remember this entry
+            $this->done[$key] = true;
+        }
+    }
+
+    protected function after_execute() {
+        // This gets called once per activity (according to my testing).
+        // Clearing the array isn't strictly required, but avoids using
+        // unnecessary memory.
+        $this->done = array();
     }
 }
 
