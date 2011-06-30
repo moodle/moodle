@@ -1,4 +1,18 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -7,24 +21,24 @@ if ($ADMIN->fulltree) {
     $yesno = array(0 => get_string('no'),
                    1 => get_string('yes'));
 
-    $settings->add(new admin_setting_configselect('scorm/grademethod', get_string('grademethod', 'scorm'),get_string('grademethoddesc', 'scorm'), GRADEHIGHEST, scorm_get_grade_method_array()));
+    $settings->add(new admin_setting_configselect('scorm/grademethod', get_string('grademethod', 'scorm'), get_string('grademethoddesc', 'scorm'), GRADEHIGHEST, scorm_get_grade_method_array()));
 
     for ($i=0; $i<=100; $i++) {
-      $grades[$i] = "$i";
+        $grades[$i] = "$i";
     }
-    $settings->add(new admin_setting_configselect('scorm/maxgrade', get_string('maximumgrade'),get_string('maximumgradedesc','scorm'), 100, $grades));
+    $settings->add(new admin_setting_configselect('scorm/maxgrade', get_string('maximumgrade'), get_string('maximumgradedesc', 'scorm'), 100, $grades));
 
     $settings->add(new admin_setting_configtext('scorm/maxattempts', get_string('maximumattempts', 'scorm'), '', 0, PARAM_INT));
 
-    $settings->add(new admin_setting_configselect('scorm/displayattemptstatus', get_string('displayattemptstatus', 'scorm'),get_string('displayattemptstatusdesc', 'scorm'),0,$yesno));
+    $settings->add(new admin_setting_configselect('scorm/displayattemptstatus', get_string('displayattemptstatus', 'scorm'), get_string('displayattemptstatusdesc', 'scorm'), 0, $yesno));
 
-    $settings->add(new admin_setting_configselect('scorm/displaycoursestructure', get_string('displaycoursestructure', 'scorm'),get_string('displaycoursestructuredesc', 'scorm'),0,$yesno));
+    $settings->add(new admin_setting_configselect('scorm/displaycoursestructure', get_string('displaycoursestructure', 'scorm'), get_string('displaycoursestructuredesc', 'scorm'), 0, $yesno));
 
-    $settings->add(new admin_setting_configselect('scorm/forcecompleted', get_string('forcecompleted', 'scorm'),get_string('forcecompleteddesc', 'scorm'),0,$yesno));
+    $settings->add(new admin_setting_configselect('scorm/forcecompleted', get_string('forcecompleted', 'scorm'), get_string('forcecompleteddesc', 'scorm'), 0, $yesno));
 
-    $settings->add(new admin_setting_configselect('scorm/forcenewattempt', get_string('forcenewattempt', 'scorm'),get_string('forcenewattemptdesc', 'scorm'),0,$yesno));
+    $settings->add(new admin_setting_configselect('scorm/forcenewattempt', get_string('forcenewattempt', 'scorm'), get_string('forcenewattemptdesc', 'scorm'), 0, $yesno));
 
-    $settings->add(new admin_setting_configselect('scorm/lastattemptlock', get_string('lastattemptlock', 'scorm'),get_string('lastattemptlockdesc', 'scorm'),0,$yesno));
+    $settings->add(new admin_setting_configselect('scorm/lastattemptlock', get_string('lastattemptlock', 'scorm'), get_string('lastattemptlockdesc', 'scorm'), 0, $yesno));
 
     $settings->add(new admin_setting_configselect('scorm/whatgrade', get_string('whatgrade', 'scorm'), get_string('whatgradedesc', 'scorm'), HIGHESTATTEMPT, scorm_get_what_grade_array()));
 
@@ -32,10 +46,10 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configtext('scorm/frameheight', get_string('height', 'scorm'), get_string('frameheight', 'scorm'), 500));
 
-    $settings->add(new admin_setting_configselect('scorm/popup', get_string('display','scorm'), get_string('displaydesc','scorm'), 0, scorm_get_popup_display_array()));
+    $settings->add(new admin_setting_configselect('scorm/popup', get_string('display', 'scorm'), get_string('displaydesc', 'scorm'), 0, scorm_get_popup_display_array()));
 
-    foreach(scorm_get_popup_options_array() as $key => $value){
-        $settings->add(new admin_setting_configcheckbox('scorm/'.$key, get_string($key, 'scorm'),'',$value));
+    foreach (scorm_get_popup_options_array() as $key => $value) {
+        $settings->add(new admin_setting_configcheckbox('scorm/'.$key, get_string($key, 'scorm'), '', $value));
     }
 
     $settings->add(new admin_setting_configselect('scorm/skipview', get_string('skipview', 'scorm'), get_string('skipviewdesc', 'scorm'), 0, scorm_get_skip_view_array()));

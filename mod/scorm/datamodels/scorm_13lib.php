@@ -1,6 +1,22 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$scoid='',$mode='normal',$attempt='',$play=false, $tocheader=false) {
+
+function scorm_get_toc($user, $scorm, $cmid, $toclink=TOCJSLINK, $currentorg='',
+                       $scoid='', $mode='normal', $attempt='', $play=false, $tocheader=false) {
     global $CFG, $DB, $PAGE, $OUTPUT;
 
     $modestr = '';
@@ -23,11 +39,12 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
     // Get the current organization infos
     //
     if (!empty($currentorg)) {
-        if (($organizationtitle = $DB->get_field('scorm_scoes', 'title', array('scorm'=>$scorm->id,'identifier'=>$currentorg))) != '') {
+        if (($organizationtitle = $DB->get_field('scorm_scoes', 'title',
+                                                 array('scorm'=>$scorm->id,
+                                                       'identifier'=>$currentorg))) != '') {
             if ($play) {
-            $result->toctitle = "$organizationtitle";
-            }
-            else {
+                $result->toctitle = "$organizationtitle";
+            } else {
                 $result->toc .= "\t<li>$organizationtitle</li>\n";
             }
             $tocmenus[] = $organizationtitle;
@@ -40,7 +57,7 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
         $attempt = scorm_get_last_attempt($scorm->id, $user->id);
     }
     $result->attemptleft = $scorm->maxattempt - $attempt;
-    if ($scoes = scorm_get_scoes($scorm->id, $currentorg)){
+    if ($scoes = scorm_get_scoes($scorm->id, $currentorg)) {
         //
         // Retrieve user tracking data for each learning object
         //
@@ -48,7 +65,7 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
         $usertracks = array();
         foreach ($scoes as $sco) {
             if (!empty($sco->launch)) {
-                if ($usertrack = scorm_get_tracks($sco->id,$user->id,$attempt)) {
+                if ($usertrack = scorm_get_tracks($sco->id, $user->id, $attempt)) {
                     if ($usertrack->status == '') {
                         $usertrack->status = 'notattempted';
                     }
@@ -70,7 +87,7 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                 $isvisible = true;
             }
             if ($parents[$level]!=$sco->parent) {
-                if ($newlevel = array_search($sco->parent,$parents)) {
+                if ($newlevel = array_search($sco->parent, $parents)) {
                     for ($i=0; $i<($level-$newlevel); $i++) {
                         $result->toc .= "\t\t</li></ul></li>\n";
                     }
@@ -119,11 +136,11 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                     }
                     if (isset($usertracks[$sco->identifier])) {
                         $usertrack = $usertracks[$sco->identifier];
-                        $strstatus = get_string($usertrack->status,'scorm');
+                        $strstatus = get_string($usertrack->status, 'scorm');
                         if ($sco->scormtype == 'sco') {
                             $statusicon = '<img src="'.$OUTPUT->pix_url($usertrack->status, 'scorm').'" alt="'.$strstatus.'" title="'.$strstatus.'" />';
                         } else {
-                            $statusicon = '<img src="'.$OUTPUT->pix_url('assetc', 'scorm').'" alt="'.get_string('assetlaunched','scorm').'" title="'.get_string('assetlaunched','scorm').'" />';
+                            $statusicon = '<img src="'.$OUTPUT->pix_url('assetc', 'scorm').'" alt="'.get_string('assetlaunched', 'scorm').'" title="'.get_string('assetlaunched', 'scorm').'" />';
                         }
 
                         if (($usertrack->status == 'notattempted') || ($usertrack->status == 'incomplete') || ($usertrack->status == 'browsed')) {
@@ -132,10 +149,10 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                                 $scoid = $sco->id;
                             }
                         }
-                        if ($usertrack->score_raw != '' && has_capability('mod/scorm:viewscores', get_context_instance(CONTEXT_MODULE,$cmid))) {
-                            $score = '('.get_string('score','scorm').':&nbsp;'.$usertrack->score_raw.')';
+                        if ($usertrack->score_raw != '' && has_capability('mod/scorm:viewscores', get_context_instance(CONTEXT_MODULE, $cmid))) {
+                            $score = '('.get_string('score', 'scorm').':&nbsp;'.$usertrack->score_raw.')';
                         }
-                        $strsuspended = get_string('suspended','scorm');
+                        $strsuspended = get_string('suspended', 'scorm');
                         if ($incomplete && isset($usertrack->{'cmi.exit'}) && ($usertrack->{'cmi.exit'} == 'suspend')) {
                             $statusicon = '<img src="'.$OUTPUT->pix_url('suspend', 'scorm').'" alt="'.$strstatus.' - '.$strsuspended.'" title="'.$strstatus.' - '.$strsuspended.'" />';
                         }
@@ -144,10 +161,10 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                             $scoid = $sco->id;
                         }
                         if ($sco->scormtype == 'sco') {
-                            $statusicon = '<img src="'.$OUTPUT->pix_url('notattempted', 'scorm').'" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
+                            $statusicon = '<img src="'.$OUTPUT->pix_url('notattempted', 'scorm').'" alt="'.get_string('notattempted', 'scorm').'" title="'.get_string('notattempted', 'scorm').'" />';
                             $incomplete = true;
                         } else {
-                            $statusicon = '<img src="'.$OUTPUT->pix_url('asset', 'scorm').'" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
+                            $statusicon = '<img src="'.$OUTPUT->pix_url('asset', 'scorm').'" alt="'.get_string('asset', 'scorm').'" title="'.get_string('asset', 'scorm').'" />';
                         }
                     }
 
@@ -155,13 +172,13 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                         $findnext = true;
                     }
 
-                    if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1) && ($nextsco!==false) && (!$findnext)) {
+                    if (($nextid == 0) && (scorm_count_launchable($scorm->id, $currentorg) > 1) && ($nextsco!==false) && (!$findnext)) {
                         if (!empty($sco->launch)) {
                             $previd = $sco->id;
                         }
                     }
                     require_once($CFG->dirroot.'/mod/scorm/datamodels/sequencinglib.php');
-                    if (scorm_seq_evaluate($sco->id,$usertracks)) {
+                    if (scorm_seq_evaluate($sco->id, $usertracks)) {
                         if ($sco->id == $scoid) {
                             $result->prerequisites = true;
                         }
@@ -177,7 +194,7 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                                 $result->toc .= '<span>'.$statusicon.'&nbsp;'.format_string($sco->title).'</span>';
                             }
                         }
-                        $tocmenus[$sco->id] = scorm_repeater('&minus;',$level) . '&gt;' . format_string($sco->title);
+                        $tocmenus[$sco->id] = scorm_repeater('&minus;', $level) . '&gt;' . format_string($sco->title);
                     } else {
                         if ($sco->id == $scoid) {
                             $result->prerequisites = false;
@@ -202,7 +219,7 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                 }
             }
         }
-        for ($i=0;$i<$level;$i++) {
+        for ($i=0; $i<$level; $i++) {
             $result->toc .= "\t\t</ul></li>\n";
         }
 
@@ -221,13 +238,11 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
     }
     $result->toc .= '</ul>';
 
-
     // NEW IMS TOC
     if ($tocheader) {
         $result->toc .= '</div></div></div>';
         $result->toc .= '<div id="scorm_navpanel"></div>';
     }
-
 
     if ($scorm->hidetoc == 0) {
         $PAGE->requires->data_for_js('scormdata', array(

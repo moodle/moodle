@@ -1,20 +1,35 @@
 <?php
-    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-    if (isset($userdata->status)) {
-        if (!isset($userdata->{'cmi.exit'}) || (($userdata->{'cmi.exit'} == 'time-out') || ($userdata->{'cmi.exit'} == 'normal'))) {
-                $userdata->entry = 'ab-initio';
+require_once($CFG->dirroot.'/mod/scorm/locallib.php');
+
+if (isset($userdata->status)) {
+    if (!isset($userdata->{'cmi.exit'}) || (($userdata->{'cmi.exit'} == 'time-out') || ($userdata->{'cmi.exit'} == 'normal'))) {
+            $userdata->entry = 'ab-initio';
+    } else {
+        if (isset($userdata->{'cmi.exit'}) && (($userdata->{'cmi.exit'} == 'suspend') || ($userdata->{'cmi.exit'} == 'logout'))) {
+            $userdata->entry = 'resume';
         } else {
-            if (isset($userdata->{'cmi.exit'}) && (($userdata->{'cmi.exit'} == 'suspend') || ($userdata->{'cmi.exit'} == 'logout'))) {
-                $userdata->entry = 'resume';
-            } else {
-                $userdata->entry = '';
-            }
+            $userdata->entry = '';
         }
     }
-    if (!isset($currentorg)) {
-        $currentorg = '';
-    }
+}
+if (!isset($currentorg)) {
+    $currentorg = '';
+}
 ?>
 
 // Used need to debug cmi content (if you uncomment this, you must comment the definition inside SCORMapi1_3)
@@ -1283,4 +1298,3 @@ if (scorm_debugging($scorm)) {
     include_once($CFG->dirroot.'/mod/scorm/datamodels/debug.js.php');
     echo 'AppendToLog("Moodle SCORM 1.3 API Loaded, Activity: '.$scorm->name.', SCO: '.$sco->identifier.'", 0);';
 }
- ?>

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -75,13 +74,13 @@ function scorm_add_instance($scorm, $mform=null) {
 
     $id = $DB->insert_record('scorm', $scorm);
 
-/// update course module record - from now on this instance properly exists and all function may be used
+    /// update course module record - from now on this instance properly exists and all function may be used
     $DB->set_field('course_modules', 'instance', $id, array('id'=>$cmid));
 
-/// reload scorm instance
+    /// reload scorm instance
     $record = $DB->get_record('scorm', array('id'=>$id));
 
-/// store the package and verify
+    /// store the package and verify
     if ($record->scormtype === SCORM_TYPE_LOCAL) {
         if ($mform) {
             $filename = $mform->get_new_filename('packagefile');
@@ -109,8 +108,7 @@ function scorm_add_instance($scorm, $mform=null) {
     // save reference
     $DB->update_record('scorm', $record);
 
-
-/// extra fields required in grade related functions
+    /// extra fields required in grade related functions
     $record->course     = $courseid;
     $record->cmidnumber = $cmidnumber;
     $record->cmid       = $cmid;
@@ -183,8 +181,8 @@ function scorm_update_instance($scorm, $mform=null) {
     }
 
     $scorm = scorm_option2text($scorm);
-    $scorm->width        = (int)str_replace('%','',$scorm->width);
-    $scorm->height       = (int)str_replace('%','',$scorm->height);
+    $scorm->width        = (int)str_replace('%', '', $scorm->width);
+    $scorm->height       = (int)str_replace('%', '', $scorm->height);
     $scorm->timemodified = time();
 
     if (!isset($scorm->whatgrade)) {
@@ -195,7 +193,7 @@ function scorm_update_instance($scorm, $mform=null) {
 
     $scorm = $DB->get_record('scorm', array('id'=>$scorm->id));
 
-/// extra fields required in grade related functions
+    /// extra fields required in grade related functions
     $scorm->course   = $courseid;
     $scorm->idnumber = $cmidnumber;
     $scorm->cmid     = $cmid;
@@ -350,7 +348,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
     if ($orgs = $DB->get_records_select('scorm_scoes', 'scorm = ? AND '.
                                          $DB->sql_isempty('scorm_scoes', 'launch', false, true).' AND '.
                                          $DB->sql_isempty('scorm_scoes', 'organization', false, false),
-                                         array($scorm->id),'id','id,identifier,title')) {
+                                         array($scorm->id), 'id', 'id,identifier,title')) {
         if (count($orgs) <= 1) {
             unset($orgs);
             $orgs[]->identifier = '';
@@ -366,13 +364,13 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
             }
             $report .= "<ul id='0' class='$liststyle'>";
                 $conditions['scorm'] = $scorm->id;
-            if ($scoes = $DB->get_records('scorm_scoes', $conditions, "id ASC")){
+            if ($scoes = $DB->get_records('scorm_scoes', $conditions, "id ASC")) {
                 // drop keys so that we can access array sequentially
                 $scoes = array_values($scoes);
                 $level=0;
                 $sublist=1;
                 $parents[$level]='/';
-                foreach ($scoes as $pos=>$sco) {
+                foreach ($scoes as $pos => $sco) {
                     if ($parents[$level]!=$sco->parent) {
                         if ($level>0 && $parents[$level-1]==$sco->parent) {
                             $report .= "\t\t</ul></li>\n";
@@ -409,25 +407,25 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                     if ($sco->launch) {
                         $score = '';
                         $totaltime = '';
-                        if ($usertrack=scorm_get_tracks($sco->id,$user->id)) {
+                        if ($usertrack=scorm_get_tracks($sco->id, $user->id)) {
                             if ($usertrack->status == '') {
                                 $usertrack->status = 'notattempted';
                             }
-                            $strstatus = get_string($usertrack->status,'scorm');
+                            $strstatus = get_string($usertrack->status, 'scorm');
                             $report .= "<img src='".$OUTPUT->pix_url($usertrack->status, 'scorm')."' alt='$strstatus' title='$strstatus' />";
                         } else {
                             if ($sco->scormtype == 'sco') {
-                                $report .= '<img src="'.$OUTPUT->pix_url('notattempted', 'scorm').'" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
+                                $report .= '<img src="'.$OUTPUT->pix_url('notattempted', 'scorm').'" alt="'.get_string('notattempted', 'scorm').'" title="'.get_string('notattempted', 'scorm').'" />';
                             } else {
-                                $report .= '<img src="'.$OUTPUT->pix_url('asset', 'scorm').'" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
+                                $report .= '<img src="'.$OUTPUT->pix_url('asset', 'scorm').'" alt="'.get_string('asset', 'scorm').'" title="'.get_string('asset', 'scorm').'" />';
                             }
                         }
                         $report .= "&nbsp;$sco->title $score$totaltime</li>\n";
                         if ($usertrack !== false) {
                             $sometoreport = true;
                             $report .= "\t\t\t<li><ul class='$liststyle'>\n";
-                            foreach($usertrack as $element => $value) {
-                                if (substr($element,0,3) == 'cmi') {
+                            foreach ($usertrack as $element => $value) {
+                                if (substr($element, 0, 3) == 'cmi') {
                                     $report .= '<li>'.$element.' => '.s($value).'</li>';
                                 }
                             }
@@ -437,7 +435,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                         $report .= "&nbsp;$sco->title</li>\n";
                     }
                 }
-                for ($i=0;$i<$level;$i++) {
+                for ($i=0; $i<$level; $i++) {
                     $report .= "\t\t</ul></li>\n";
                 }
             }
@@ -448,16 +446,16 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
     if ($sometoreport) {
         if ($firstmodify < $now) {
             $timeago = format_time($now - $firstmodify);
-            echo get_string('firstaccess','scorm').': '.userdate($firstmodify).' ('.$timeago.")<br />\n";
+            echo get_string('firstaccess', 'scorm').': '.userdate($firstmodify).' ('.$timeago.")<br />\n";
         }
         if ($lastmodify > 0) {
             $timeago = format_time($now - $lastmodify);
-            echo get_string('lastaccess','scorm').': '.userdate($lastmodify).' ('.$timeago.")<br />\n";
+            echo get_string('lastaccess', 'scorm').': '.userdate($lastmodify).' ('.$timeago.")<br />\n";
         }
-        echo get_string('report','scorm').":<br />\n";
+        echo get_string('report', 'scorm').":<br />\n";
         echo $report;
     } else {
-        print_string('noactivity','scorm');
+        print_string('noactivity', 'scorm');
     }
 
     return true;
@@ -494,7 +492,7 @@ function scorm_cron () {
         mtrace('Updating scorm packages which require daily update');//We are updating
 
         $scormsupdate = $DB->get_records('scorm', array('updatefreq'=>UPDATE_EVERYDAY));
-        foreach($scormsupdate as $scormupdate) {
+        foreach ($scormsupdate as $scormupdate) {
             scorm_parse($scormupdate, true);
         }
     }
@@ -560,7 +558,7 @@ function scorm_update_grades($scorm, $userid=0, $nullifnone=true) {
     } else if ($userid and $nullifnone) {
         $grade = new stdClass();
         $grade->userid   = $userid;
-        $grade->rawgrade = NULL;
+        $grade->rawgrade = null;
         scorm_grade_item_update($scorm, $grade);
 
     } else {
@@ -609,7 +607,7 @@ function scorm_upgrade_grades() {
  * @param mixed $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return object grade_item
  */
-function scorm_grade_item_update($scorm, $grades=NULL) {
+function scorm_grade_item_update($scorm, $grades=null) {
     global $CFG, $DB;
     require_once($CFG->dirroot.'/mod/scorm/locallib.php');
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
@@ -637,7 +635,7 @@ function scorm_grade_item_update($scorm, $grades=NULL) {
 
     if ($grades  === 'reset') {
         $params['reset'] = true;
-        $grades = NULL;
+        $grades = null;
     }
 
     return grade_update('mod/scorm', $scorm->course, 'mod', 'scorm', $scorm->id, 0, $grades, $params);
@@ -654,14 +652,14 @@ function scorm_grade_item_delete($scorm) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
 
-    return grade_update('mod/scorm', $scorm->course, 'mod', 'scorm', $scorm->id, 0, NULL, array('deleted'=>1));
+    return grade_update('mod/scorm', $scorm->course, 'mod', 'scorm', $scorm->id, 0, null, array('deleted'=>1));
 }
 
 /**
  * @return array
  */
 function scorm_get_view_actions() {
-    return array('pre-view','view','view all','report');
+    return array('pre-view', 'view', 'view all', 'report');
 }
 
 /**
@@ -707,7 +705,7 @@ function scorm_option2text($scorm) {
  */
 function scorm_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'scormheader', get_string('modulenameplural', 'scorm'));
-    $mform->addElement('advcheckbox', 'reset_scorm', get_string('deleteallattempts','scorm'));
+    $mform->addElement('advcheckbox', 'reset_scorm', get_string('deleteallattempts', 'scorm'));
 }
 
 /**
@@ -964,7 +962,7 @@ function scorm_extend_navigation($navigation, $course, $module, $cm) {
  * @param string $type - type of log(aicc,scorm12,scorm13) used as prefix for filename
  * @param integer $scoid - scoid of object this log entry is for
  * @return string The filename as an absolute path
-*/
+ */
 function scorm_debug_log_filename($type, $scoid) {
     global $CFG, $USER;
 
@@ -984,7 +982,7 @@ function scorm_debug_log_write($type, $text, $scoid) {
 
     $debugenablelog = get_config('scorm', 'allowapidebug');
     if (!$debugenablelog || empty($text)) {
-        return ;
+        return;
     }
     if (make_upload_directory('temp/scormlogs/')) {
         $logfile = scorm_debug_log_filename($type, $scoid);
@@ -992,7 +990,7 @@ function scorm_debug_log_write($type, $text, $scoid) {
     }
 }
 
- /**
+/**
  * Remove debug log file
  *
  * @param string $type - type of log(aicc,scorm12,scorm13) used as prefix for filename
@@ -1024,7 +1022,7 @@ function scorm_print_overview($courses, &$htmlarray) {
         return array();
     }
 
-    if (!$scorms = get_all_instances_in_courses('scorm',$courses)) {
+    if (!$scorms = get_all_instances_in_courses('scorm', $courses)) {
         return;
     }
 
@@ -1038,12 +1036,12 @@ function scorm_print_overview($courses, &$htmlarray) {
         }
         if (empty($scorm->displayattemptstatus) && (empty($isopen) || empty($scorm->timeclose))) {
             unset($scorms[$key]);
-        }else{
+        } else {
             $scormids[] = $scorm->id;
         }
     }
 
-    if(empty($scormids)){
+    if (empty($scormids)) {
         // no scorms to look at - we're done
         return true;
     }
