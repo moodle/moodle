@@ -22,13 +22,22 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addingddimagetoimage'] = 'Adding drag and drop: words in text';
-$string['addmorechoiceblanks'] = 'Blanks for {no} More Choices';
+$string['addingddimagetoimage'] = 'Adding drag and drop: images onto images';
+$string['addmoredropzones'] = 'Blanks for {no} More Drop Zones';
+$string['addmoreimages'] = 'Blanks for {no} More Draggable Images';
 $string['answer'] = 'Answer';
+$string['bgimage'] = 'Background Image';
 $string['correctansweris'] = 'The correct answer is: {$a}';
-$string['ddimagetoimage'] = 'Drag and drop: words in text';
-$string['ddimagetoimage_help'] = 'Type in some question text like "The [[1]] jumped over the [[2]]", then enter the possible words to go in gaps 1 and 2 underneath.';
-$string['ddimagetoimagesummary'] = 'Missing words in some text are filled in using drag-and-drop.';
-$string['editingddimagetoimage'] = 'Editing drag and drop: words in text';
+$string['ddimagetoimage'] = 'Drag and drop: images onto images';
+$string['ddimagetoimage_help'] = 'Select a background image file, select a number of draggable images and define the drop zones on the background image to which they must be dragged.';
+$string['ddimagetoimagesummary'] = 'Images are dragged and dropped into drop zones on a background image.';
+$string['draggableimage'] = 'Draggable image';
+$string['draggableimageheader'] = 'Draggable image {$a}';
+$string['dropzone'] = 'Drop zone {$a}';
+$string['dropzoneheader'] = 'Drop zones';
+$string['editingddimagetoimage'] = 'Editing drag and drop: images onto images';
 $string['infinite'] = 'Infinite';
-$string['pleaseputananswerineachbox'] = 'Please put an answer in each box.';
+$string['label'] = 'Label';
+$string['shuffleimages'] = 'Shuffle Draggable Images';
+$string['xleft'] = 'Left';
+$string['ytop'] = 'Top';

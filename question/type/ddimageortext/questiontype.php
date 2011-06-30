@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/question/type/gapselect/questiontypebase.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddimagetoimage extends qtype_gapselect_base {
+class qtype_ddimagetoimage extends question_type {
     protected function choice_group_key() {
         return 'draggroup';
     }
@@ -47,89 +47,75 @@ class qtype_ddimagetoimage extends qtype_gapselect_base {
         return array('gapselect');
     }
 
-    protected function choice_options_to_feedback($choice) {
-        $output = new stdClass();
-        $output->draggroup = $choice['choicegroup'];
-        $output->infinite = !empty($choice['infinite']);
-        return serialize($output);
+    public function get_question_options($question) {
+        global $DB;
+        $question->options = $DB->get_record('qtype_ddimagetoimage',
+                array('questionid' => $question->id), '*', MUST_EXIST);
+        $question->options->drags = $DB->get_records('qtype_ddimagetoimage_drags',
+                array('questionid' => $question->id), 'no ASC', '*');
+        $question->options->drops = $DB->get_records('qtype_ddimagetoimage_drops',
+                array('questionid' => $question->id), 'no ASC', '*');
+        parent::get_question_options($question);
     }
 
-    protected function feedback_to_choice_options($feedback) {
-        $feedbackobj = unserialize($feedback);
-        return array('draggroup' => $feedbackobj->draggroup, 'infinite' => $feedbackobj->infinite);
-    }
+    public function save_question_options($formdata) {
+        global $DB;
+        $context = $formdata->context;
 
-    protected function make_choice($choicedata) {
-        $options = unserialize($choicedata->feedback);
-        return new qtype_ddimagetoimage_choice(
-                $choicedata->answer, $options->draggroup, $options->infinite);
-    }
-
-    public function import_from_xml($data, $question, $format, $extra=null) {
-        if (!isset($data['@']['type']) || $data['@']['type'] != 'ddimagetoimage') {
-            return false;
+        $options = $DB->get_record('qtype_ddimagetoimage', array('questionid' => $formdata->id));
+        if (!$options) {
+            $options = new stdClass();
+            $options->questionid = $formdata->id;
+            $options->correctfeedback = '';
+            $options->partiallycorrectfeedback = '';
+            $options->incorrectfeedback = '';
+            $options->id = $DB->insert_record('qtype_ddimagetoimage', $options);
         }
 
-        $question = $format->import_headers($data);
-        $question->qtype = 'ddimagetoimage';
-
-        $question->shuffleanswers = $format->trans_single(
-                $format->getpath($data, array('#', 'shuffleanswers', 0, '#'), 1));
-
-        if (!empty($data['#']['dragbox'])) {
-            // Modern XML format.
-            $dragboxes = $data['#']['dragbox'];
-            $question->answer = array();
-            $question->draggroup = array();
-            $question->infinite = array();
-
-            foreach ($data['#']['dragbox'] as $dragboxxml) {
-                $question->choices[] = array(
-                    'answer' => $format->getpath($dragboxxml, array('#', 'text', 0, '#'), '', true),
-                    'choicegroup' => $format->getpath($dragboxxml, array('#', 'group', 0, '#'), 1),
-                    'infinite' => array_key_exists('infinite', $dragboxxml['#']),
-                );
+        $options->shuffleanswers = !empty($formdata->shuffleanswers);
+        $options = $this->save_combined_feedback_helper($options, $formdata, $context, true);
+        $this->save_hints($formdata, true);
+        $DB->update_record('qtype_ddimagetoimage', $options);
+        $DB->delete_records('qtype_ddimagetoimage_drops', array('questionid' => $formdata->id));
+        foreach (array_keys($formdata->drops) as $dropno){
+            if ($formdata->drops[$dropno]['xleft'] == ''){
+                continue;
             }
+            $drop = new stdClass();
+            $drop->questionid = $formdata->id;
+            $drop->no = $dropno + 1;
+            $drop->xleft = $formdata->drops[$dropno]['xleft'];
+            $drop->ytop = $formdata->drops[$dropno]['ytop'];
+            $drop->choice = $formdata->drops[$dropno]['choice'];
+            $drop->label = $formdata->drops[$dropno]['droplabel'];
 
-        } else {
-            // Legacy format containing PHP serialisation.
-            foreach ($data['#']['answer'] as $answerxml) {
-                $ans = $format->import_answer($answerxml);
-                $options = unserialize(stripslashes($ans->feedback['text']));
-                $question->choices[] = array(
-                    'answer' => $ans->answer,
-                    'choicegroup' => $options->draggroup,
-                    'infinite' => $options->infinite,
-                );
+            $DB->insert_record('qtype_ddimagetoimage_drops', $drop);
+        }
+
+        $DB->delete_records('qtype_ddimagetoimage_drags', array('questionid' => $formdata->id));
+        foreach (array_keys($formdata->drags) as $dragno){
+            $info = file_get_draft_area_info($formdata->dragitem[$dragno]);
+            if ($info['filecount'] > 0) {
+                //numbers not allowed in filearea name
+                $filearea = str_replace(range('0', '9'), range('a', 'j'), "drag_$dragno");
+                file_save_draft_area_files($formdata->dragitem[$dragno], $formdata->context->id,
+                                        'qtype_ddimagetoimage', $filearea, $formdata->id,
+                                        array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1));
+                $drag = new stdClass();
+                $drag->questionid = $formdata->id;
+                $drag->no = $dragno + 1;
+                $drag->draggroup = $formdata->drags[$dragno]['draggroup'];
+                $drag->infinite = empty($formdata->drags[$dragno]['infinite'])? 0 : 1;
+                $drag->label = $formdata->drags[$dragno]['draglabel'];
+
+                $DB->insert_record('qtype_ddimagetoimage_drags', $drag);
             }
         }
 
-        $format->import_combined_feedback($question, $data, true);
-        $format->import_hints($question, $data, true);
-
-        return $question;
+        file_save_draft_area_files($formdata->bgimage, $formdata->context->id,
+                                    'qtype_ddimagetoimage', 'bgimage', $formdata->id,
+                                    array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1));
     }
 
-    public function export_to_xml($question, $format, $extra = null) {
-        $output = '';
 
-        $output .= '    <shuffleanswers>' . $question->options->shuffleanswers .
-                "</shuffleanswers>\n";
-
-        $output .= $format->write_combined_feedback($question->options);
-
-        foreach ($question->options->answers as $answer) {
-            $options = unserialize($answer->feedback);
-
-            $output .= "    <dragbox>\n";
-            $output .= $format->writetext($answer->answer, 3);
-            $output .= "      <group>{$options->draggroup}</group>\n";
-            if ($options->infinite) {
-                $output .= "      <infinite/>\n";
-            }
-            $output .= "    </dragbox>\n";
-        }
-
-        return $output;
-    }
 }

@@ -8,6 +8,9 @@ This question type was written by Jamie Pratt (http://jamiep.org/).
 
 This question type is compatible with Moodle 2.1+.
 
+Requires this fix : MDL-28099
+filepicker form element does not work with element names with an index such as image[0]
+
 To install using git, type this command in the root of your Moodle install
     git clone git://github.com/jamiepratt/moodle-qtype_ddimagetoimage.git question/type/ddimagetoimage
 Then add question/type/ddimagetoimage to your git ignore.
