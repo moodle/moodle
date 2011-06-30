@@ -41,6 +41,7 @@ $string['moveblockhere'] = 'Move block here';
 $string['movingthisblockcancel'] = 'Moving this block ({$a})';
 $string['onthispage'] = 'On this page';
 $string['pagetypes'] = 'Page types';
+$string['pagetypewarning'] = 'The previously specified page type is no longer selectable. Please choose the most appropriate page type below.';
 $string['region'] = 'Region';
 $string['showoncontextandsubs'] = 'Display on \'{$a}\' and any pages within it';
 $string['showoncontextonly'] = 'Display on \'{$a}\' only';

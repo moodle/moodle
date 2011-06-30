@@ -4226,8 +4226,7 @@ function course_page_type_list($pagetype, $parentcontext, $currentcontext) {
     } else {
         return array('*'=>get_string('page-x', 'pagetype'),
             'course-*'=>get_string('page-course-x', 'pagetype'),
-            'course-view-*'=>get_string('page-course-view-x', 'pagetype'),
-            'mod-*'=>get_string('page-mod-x', 'pagetype')
+            'course-view-*'=>get_string('page-course-view-x', 'pagetype')
         );
     }
 }

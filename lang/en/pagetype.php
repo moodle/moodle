@@ -16,13 +16,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'pagetype', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'pagetype', language 'en'
  *
  * @package   pagetype
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['page-admin-setting'] = 'The current admin setting page';
+$string['page-admin-setting-x'] = 'Any admin setting page';
 $string['page-course-view-x'] = 'Any type of course main page';
 $string['page-course-x'] = 'Any course page';
 $string['page-course-report-x'] = 'Any course report';
