@@ -135,7 +135,7 @@ class EvalMath {
         if (substr($expr, -1, 1) == ';') $expr = substr($expr, 0, strlen($expr)-1); // strip semicolons at the end
         //===============
         // is it a variable assignment?
-        if (preg_match('/^\s*([a-z][a-z0-9]*)\s*=\s*(.+)$/', $expr, $matches)) {
+        if (preg_match('/^\s*('.self::$namepat.')\s*=\s*(.+)$/', $expr, $matches)) {
             if (in_array($matches[1], $this->vb)) { // make sure we're not assigning to a constant
                 return $this->trigger(get_string('cannotassigntoconstant', 'mathslib', $matches[1]));
             }
@@ -144,7 +144,7 @@ class EvalMath {
             return $this->v[$matches[1]]; // and return the resulting value
         //===============
         // is it a function assignment?
-        } elseif (preg_match('/^\s*([a-z][a-z0-9]*)\s*\(\s*([a-z][a-z0-9]*(?:\s*,\s*[a-z][a-z0-9]*)*)\s*\)\s*=\s*(.+)$/', $expr, $matches)) {
+        } elseif (preg_match('/^\s*('.self::$namepat.')\s*\(\s*('.self::$namepat.'(?:\s*,\s*'.self::$namepat.')*)\s*\)\s*=\s*(.+)$/', $expr, $matches)) {
             $fnn = $matches[1]; // get the function name
             if (in_array($matches[1], $this->fb)) { // make sure it isn't built in
                 return $this->trigger(get_string('cannotredefinebuiltinfunction', 'mathslib', $matches[1]));
@@ -153,7 +153,7 @@ class EvalMath {
             if (($stack = $this->nfx($matches[3])) === false) return false; // see if it can be converted to postfix
             for ($i = 0; $i<count($stack); $i++) { // freeze the state of the non-argument variables
                 $token = $stack[$i];
-                if (preg_match('/^[a-z][a-z0-9]*$/', $token) and !in_array($token, $args)) {
+                if (preg_match('/^'.self::$namepat.'$/', $token) and !in_array($token, $args)) {
                     if (array_key_exists($token, $this->v)) {
                         $stack[$i] = $this->v[$token];
                     } else {
@@ -212,7 +212,7 @@ class EvalMath {
         while(1) { // 1 Infinite Loop ;)
             $op = substr($expr, $index, 1); // get the first character at the current index
             // find out if we're currently at the beginning of a number/variable/function/parenthesis/operand
-            $ex = preg_match('/^([a-z][a-z0-9]*\(?|\d+(?:\.\d*)?|\.\d+|\()/', substr($expr, $index), $match);
+            $ex = preg_match('/^('.self::$namepat.'\(?|\d+(?:\.\d*)?(?:(e[+-]?)\d*)?|\.\d+|\()/', substr($expr, $index), $match);
             //===============
             if ($op == '-' and !$expecting_op) { // is it a negation instead of a minus?
                 $stack->push('_'); // put a negation on the stack
@@ -243,7 +243,7 @@ class EvalMath {
                     if (is_null($o2)) return $this->trigger(get_string('unexpectedclosingbracket', 'mathslib'));
                     else $output[] = $o2;
                 }
-                if (preg_match("/^([a-z][a-z0-9]*)\($/", $stack->last(2), $matches)) { // did we just close a function?
+                if (preg_match('/^('.self::$namepat.')\($/', $stack->last(2), $matches)) { // did we just close a function?
                     $fnn = $matches[1]; // get the function name
                     $arg_count = $stack->pop(); // see how many arguments there were (cleverly stored on the stack, thank you)
                     $fn = $stack->pop();
@@ -283,7 +283,7 @@ class EvalMath {
                     else $output[] = $o2; // pop the argument expression stuff and push onto the output
                 }
                 // make sure there was a function
-                if (!preg_match("/^([a-z][a-z0-9]*)\($/", $stack->last(2), $matches))
+                if (!preg_match('/^('.self::$namepat.')\($/', $stack->last(2), $matches))
                     return $this->trigger(get_string('unexpectedcomma', 'mathslib'));
                 $stack->push($stack->pop()+1); // increment the argument count
                 $stack->push('('); // put the ( back on, we'll need to pop back to it again
@@ -298,7 +298,7 @@ class EvalMath {
             } elseif ($ex and !$expecting_op) { // do we now have a function/variable/number?
                 $expecting_op = true;
                 $val = $match[1];
-                if (preg_match("/^([a-z][a-z0-9]*)\($/", $val, $matches)) { // may be func, or variable w/ implicit multiplication against parentheses...
+                if (preg_match('/^('.self::$namepat.')\($/', $val, $matches)) { // may be func, or variable w/ implicit multiplication against parentheses...
                     if (in_array($matches[1], $this->fb) or array_key_exists($matches[1], $this->f) or array_key_exists($matches[1], $this->fc)) { // it's a func
                         $stack->push($val);
                         $stack->push(1);
@@ -316,7 +316,7 @@ class EvalMath {
             } elseif ($op == ')') {
                 //it could be only custom function with no params or general error
                 if ($stack->last() != '(' or $stack->last(2) != 1) return $this->trigger(get_string('unexpectedclosingbracket', 'mathslib'));
-                if (preg_match("/^([a-z][a-z0-9]*)\($/", $stack->last(3), $matches)) { // did we just close a function?
+                if (preg_match('/^('.self::$namepat.')\($/', $stack->last(3), $matches)) { // did we just close a function?
                     $stack->pop();// (
                     $stack->pop();// 1
                     $fn = $stack->pop();
@@ -383,8 +383,7 @@ class EvalMath {
                     for ($i = $count-1; $i >= 0; $i--) {
                         if (is_null($args[] = $stack->pop())) return $this->trigger(get_string('internalerror', 'mathslib'));
                     }
-                    $classname = 'EvalMathCalcEmul_'.$fnn;
-                    $res = call_user_func(array($classname, 'calculate'), $args);
+                    $res = call_user_func_array(array('EvalMathFuncs', $fnn), array_reverse($args));
                     if ($res === FALSE) {
                         return $this->trigger(get_string('internalerror', 'mathslib'));
                     }
@@ -473,16 +472,15 @@ class EvalMathStack {
 
 
 // spreadsheet functions emulation
-// watch out for reversed args!!
-class EvalMathCalcEmul_average {
+class EvalMathFuncs {
 
-    static function calculate($args) {
-        return (EvalMathCalcEmul_sum::calculate($args)/count($args));
+    static function average() {
+        $args = func_get_args();
+        return (call_user_func_array(array('self', 'sum'), $args) / count($args));
     }
-}
 
-class EvalMathCalcEmul_max  {
-    static function calculate($args) {
+    static function max() {
+        $args = func_get_args();
         $res = array_pop($args);
         foreach($args as $a) {
             if ($res < $a) {
@@ -491,10 +489,9 @@ class EvalMathCalcEmul_max  {
         }
         return $res;
     }
-}
 
-class EvalMathCalcEmul_min  {
-    static function calculate($args) {
+    static function min() {
+        $args = func_get_args();
         $res = array_pop($args);
         foreach($args as $a) {
             if ($res > $a) {
@@ -503,42 +500,32 @@ class EvalMathCalcEmul_min  {
         }
         return $res;
     }
-}
-class EvalMathCalcEmul_mod {
-    static function calculate($args) {
-        return $args[1] % $args[0];
+
+    static function mod($op1, $op2) {
+        return $op1 % $op2;
     }
-}
-class EvalMathCalcEmul_pi {
-    static function calculate($args) {
+
+    static function pi() {
         return pi();
     }
-}
-class EvalMathCalcEmul_power {
-    static function calculate($args) {
-        return $args[1]^$args[0];
-    }
-}
 
-class EvalMathCalcEmul_round {
-    static function calculate($args) {
-        if (count($args)==1) {
-            return round($args[0]);
-        } else {
-            return round($args[1], $args[0]);
-        }
+    static function power($op1, $op2) {
+        return pow($op1, $op2);
     }
-}
-class EvalMathCalcEmul_sum {
-    static function calculate($args) {
+
+    static function round($val, $precision = 0) {
+        return round($val, $precision);
+    }
+
+    static function sum() {
+        $args = func_get_args();
         $res = 0;
         foreach($args as $a) {
            $res += $a;
         }
         return $res;
     }
-}
-class EvalMathCalcEmul_randomised {
+
     protected static $randomseed = null;
 
     static function set_random_seed($randomseed) {
@@ -553,12 +540,7 @@ class EvalMathCalcEmul_randomised {
         }
     }
 
-}
-
-class EvalMathCalcEmul_rand_int extends EvalMathCalcEmul_randomised {
-    static function calculate($args){
-        $min = $args[1];
-        $max = $args[0];
+    static function rand_int($min, $max){
         if ($min >= $max) {
             return false; //error
         }
@@ -574,9 +556,8 @@ class EvalMathCalcEmul_rand_int extends EvalMathCalcEmul_randomised {
         } while (($min + $randomno) > $max);
         return $min + $randomno;
     }
-}
-class EvalMathCalcEmul_rand_float extends EvalMathCalcEmul_randomised {
-    static function calculate(){
+
+    static function rand_float(){
         $randomvalue = array_shift(unpack('v', md5(self::get_random_seed(), true)));
         return $randomvalue / 65536;
     }
