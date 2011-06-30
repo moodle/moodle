@@ -139,7 +139,7 @@ class qtype_random extends question_type {
         } else {
             $string = 'randomqname';
         }
-        return get_string($string, 'qtype_random', $category->name);
+        return get_string($string, 'qtype_random', shorten_text($category->name, 100));
     }
 
     protected function set_selected_question_name($question, $randomname) {
