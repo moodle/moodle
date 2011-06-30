@@ -333,7 +333,7 @@ class question_engine_attempt_upgrader {
             }
 
             // Add the new state to the array, and advance.
-            $qstates[$state->seq_number] = $state;
+            $qstates[] = $state;
             $questionsstatesrs->next();
         }
 
