@@ -49,7 +49,7 @@ function outline_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $array = array(
         '*' => get_string('page-x', 'pagetype'),
         'course-report-*' => get_string('page-course-report-x', 'pagetype'),
-        'course-report-outline-*' => get_string('pluginpagetype',  'coursereport_outline')
+        'course-report-outline-index' => get_string('pluginpagetype',  'coursereport_outline')
     );
     return $array;
 }

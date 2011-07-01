@@ -102,7 +102,7 @@ function stats_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $array = array(
         '*' => get_string('page-x', 'pagetype'),
         'course-report-*' => get_string('page-course-report-x', 'pagetype'),
-        'course-report-stats-*' => get_string('pluginpagetype',  'coursereport_stats')
+        'course-report-stats-index' => get_string('pluginpagetype',  'coursereport_stats')
     );
     return $array;
 }

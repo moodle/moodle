@@ -548,7 +548,8 @@ function log_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $array = array(
         '*' => get_string('page-x', 'pagetype'),
         'course-report-*' => get_string('page-course-report-x', 'pagetype'),
-        'course-report-log-*' => get_string('pluginpagetype',  'coursereport_log')
+        'course-report-log-index' => get_string('pluginpagetype',  'coursereport_log')
+        //course-report-log-live not included as theres no blocks on the live log page
     );
     return $array;
 }
