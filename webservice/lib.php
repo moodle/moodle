@@ -315,7 +315,7 @@ class webservice {
         $functions = $this->get_external_functions(array($serviceid));
         $requiredusercaps = array();
         foreach ($functions as $function) {
-            $functioncaps = split(',', $function->capabilities);
+            $functioncaps = explode(',', $function->capabilities);
             if (!empty($functioncaps) and !empty($functioncaps[0])) {
                 foreach ($functioncaps as $functioncap) {
                     $requiredusercaps[$function->name][] = trim($functioncap);
