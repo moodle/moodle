@@ -55,7 +55,7 @@ function completion_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $array = array(
         '*' => get_string('page-x', 'pagetype'),
         'course-report-*' => get_string('page-course-report-x', 'pagetype'),
-        'course-report-completion-*' => get_string('pluginpagetype',  'coursereport_completion')
+        'course-report-completion-index' => get_string('pluginpagetype',  'coursereport_completion')
     );
     return $array;
 }

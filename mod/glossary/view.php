@@ -62,7 +62,6 @@ if ($tab == GLOSSARY_ADDENTRY_VIEW ) {
 }
 
 /// setting the defaut number of entries per page if not set
-
 if ( !$entriesbypage = $glossary->entbypage ) {
     $entriesbypage = $CFG->glossary_entbypage;
 }

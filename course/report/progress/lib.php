@@ -60,7 +60,7 @@ function progress_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $array = array(
         '*' => get_string('page-x', 'pagetype'),
         'course-report-*' => get_string('page-course-report-x', 'pagetype'),
-        'course-report-progress-*' => get_string('pluginpagetype',  'coursereport_progress')
+        'course-report-progress-index' => get_string('pluginpagetype',  'coursereport_progress')
     );
     return $array;
 }

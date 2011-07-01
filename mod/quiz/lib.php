@@ -1711,6 +1711,8 @@ function mod_quiz_question_pluginfile($course, $context, $component,
  * @param stdClass $currentcontext Current context of block
  */
 function quiz_page_type_list($pagetype, $parentcontext, $currentcontext) {
-    $module_pagetype = array('mod-quiz-*'=>get_string('page-mod-quiz-x', 'quiz'));
+    $module_pagetype = array(
+        'mod-quiz-*'=>get_string('page-mod-quiz-x', 'quiz'),
+        'mod-quiz-edit'=>get_string('page-mod-quiz-edit', 'quiz'));
     return $module_pagetype;
 }

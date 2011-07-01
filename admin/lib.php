@@ -32,8 +32,8 @@
  */
 function admin_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $array = array(
-        'admin-setting-*' => get_string('page-admin-setting-x', 'pagetype'),
-        $pagetype => get_string('page-admin-setting', 'pagetype')
+        'admin-*' => get_string('page-admin-x', 'pagetype'),
+        $pagetype => get_string('page-admin-current', 'pagetype')
     );
     return $array;
 }

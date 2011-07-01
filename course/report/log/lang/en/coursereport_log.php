@@ -27,5 +27,5 @@ $string['loglive'] = 'Live logs';
 $string['log:view'] = 'View course logs';
 $string['log:viewlive'] = 'View live logs';
 $string['log:viewtoday'] = 'View today\'s logs';
-$string['pluginpagetype'] = 'Log course report';
+$string['pluginpagetype'] = 'Logs course report';
 $string['pluginname'] = 'Logs';

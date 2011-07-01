@@ -489,6 +489,7 @@ $string['overrides'] = 'Overrides';
 $string['overrideuser'] = 'Override user';
 $string['overrideusereventname'] = '{$a->quiz} - Override';
 $string['page-mod-quiz-x'] = 'Any quiz module page';
+$string['page-mod-quiz-edit'] = 'Edit quiz page';
 $string['pagesize'] = 'Attempts shown per page:';
 $string['parent'] = 'Parent';
 $string['parentcategory'] = 'Parent category';

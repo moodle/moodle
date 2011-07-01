@@ -2862,6 +2862,9 @@ function glossary_comment_validate($comment_param) {
  * @param stdClass $currentcontext Current context of block
  */
 function glossary_page_type_list($pagetype, $parentcontext, $currentcontext) {
-    $module_pagetype = array('mod-glossary-*'=>get_string('page-mod-glossary-x', 'glossary'));
+    $module_pagetype = array(
+        'mod-glossary-*'=>get_string('page-mod-glossary-x', 'glossary'),
+        'mod-glossary-view'=>get_string('page-mod-glossary-view', 'glossary'),
+        'mod-glossary-edit'=>get_string('page-mod-glossary-edit', 'glossary'));
     return $module_pagetype;
 }
