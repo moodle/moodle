@@ -28,15 +28,4 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['clianswerno'] = 'n';
-$string['cliansweryes'] = 'y';
-$string['cliincorrectvalueerror'] = 'Səhv, "{$a->option}" üçün səhv "{$a->value}" qiyməti';
-$string['cliincorrectvalueretry'] = 'Qiymət səhvdir, zəhmət olmasa yenidən cəhd edin';
-$string['clitypevalue'] = 'Qiyməti daxil edin';
-$string['clitypevaluedefault'] = 'Qiyməti daxil edin,  ({$a}) qiymətindən avtomatik olaraq istifadə etmək üçün Enter düyməsini basın';
-$string['cliunknowoption'] = 'Təyin olunmayan parametrlər: 
-  {$a}
-Zəhmət olmasa help parametrindən istifadə edin';
-$string['cliyesnoprompt'] = 'y (bəli) və n (xeyr) düyməsini basın';
-$string['environmentrequireinstall'] = 'quraşdırılıb işə salınmalıdır';
-$string['environmentrequireversion'] = '{$a->needed}  versiyası tövsiyyə olunur. Siz {$a->current} versiyasından istifadə edirsiniz.';
+$string['thislanguage'] = 'Aranés';
