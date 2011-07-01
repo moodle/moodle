@@ -114,10 +114,11 @@ function user_get_user_details($user, $course = null) {
     if (!empty($course)) {
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         $usercontext = get_context_instance(CONTEXT_USER, $user->id);
-        $canviewdetailscap = has_capability('moodle/user:viewdetails', $usercontext);
+        $canviewdetailscap = (has_capability('moodle/user:viewdetails', $context) || has_capability('moodle/user:viewdetails', $usercontext));
     } else {
         $context = get_context_instance(CONTEXT_USER, $user->id);
         $usercontext = $context;
+        $canviewdetailscap = has_capability('moodle/user:viewdetails', $usercontext);
     }
 
     $currentuser = ($user->id == $USER->id);
@@ -128,7 +129,6 @@ function user_get_user_details($user, $course = null) {
     } else {
         $canviewhiddenuserfields = has_capability('moodle/user:viewhiddendetails', $context);
     }
-    $canviewdetailscap       = ($canviewdetailscap || has_capability('moodle/user:viewdetails', $context));
     $canviewfullnames        = has_capability('moodle/site:viewfullnames', $context);
     if (!empty($course)) {
         $canviewuseremail = has_capability('moodle/course:useremail', $context);
