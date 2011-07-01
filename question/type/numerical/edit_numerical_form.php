@@ -291,7 +291,7 @@ class qtype_numerical_edit_form extends question_edit_form {
      * @return bool whether this is a valid answer.
      */
     protected function is_valid_answer($answer, $data) {
-        return $answer == '*' || $this->is_valid_number($x);
+        return $answer == '*' || $this->is_valid_number($answer);
     }
 
     /**
