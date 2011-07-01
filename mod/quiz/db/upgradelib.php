@@ -69,10 +69,26 @@ function quiz_upgrade_very_old_question_sessions($attempt) {
     if ($states = $DB->get_records_select('question_states',
             "attempt = ? AND question $usql", $params)) {
         foreach ($states as $state) {
+            if ($DB->record_exists('question_sessions',
+                    array('attemptid' => $attempt->uniqueid, 'questionid' => $state->question))) {
+                // It was possible for the code to get here when some of the necessary
+                // question_sessions were already in the database. That lead to a
+                // unique key violation, so we manually detect and avoid that.
+                continue;
+            }
             $session->newgraded = $state->id;
             $session->newest = $state->id;
             $session->questionid = $state->question;
             $DB->insert_record('question_sessions', $session, false);
         }
     }
+
+    // It was possible to have old question_states records for this attempt but
+    // pointing to questionids that were no longer in quiz_attempt->layout.
+    // That makes no sense, and will break things later in the upgrade, so delete
+    // those now.
+    list($qidsql, $params) = $DB->get_in_or_equal(explode(',', $questionlist),
+            SQL_PARAMS_QM, 'param', false);
+    $params[] = $attempt->uniqueid;
+    $DB->delete_records_select('question_states', "question $usql AND attempt = ?", $params);
 }
