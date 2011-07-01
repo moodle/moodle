@@ -38,6 +38,12 @@ class moodle1_mod_assignment_handler extends moodle1_mod_handler {
     /** @var int cmid */
     protected $moduleid = null;
 
+    /** @var string current subplugin being processed*/
+    private $currentsubpluginname = null;
+
+    /** @var array of a moodle1_assignment_[subplugin_name]_handler instances */
+    private $subpluginhandlers = null;
+
     /**
      * Declare the paths in moodle.xml we are able to convert
      *
@@ -78,6 +84,9 @@ class moodle1_mod_assignment_handler extends moodle1_mod_handler {
         $this->moduleid = $cminfo['id'];
         $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
 
+        //store assignment type for possible subplugin conversions.
+        $this->currentsubpluginname = $data['assignmenttype'];
+
         // get a fresh new file manager for this instance
         $this->fileman = $this->converter->get_file_manager($contextid, 'mod_assignment');
 
@@ -98,6 +107,9 @@ class moodle1_mod_assignment_handler extends moodle1_mod_handler {
             }
         }
 
+        //after writing the assignment type element, let the subplugin add on whatever it wants.
+        $this->handle_assignment_subplugin($data);
+
         $this->xmlwriter->begin_tag('submissions');
 
         return $data;
@@ -110,6 +122,19 @@ class moodle1_mod_assignment_handler extends moodle1_mod_handler {
     public function process_assignment_submission($data) {
         //@todo process user data
         //$this->write_xml('submission', $data, array('/submission/id'));
+    }
+
+    /**
+     * This handles calls to subplugin conversion classes.
+     * called from <ASSIGNMENTTYPE> within process_assignment()
+     */
+    public function handle_assignment_subplugin($data) {
+        $handler = $this->get_subplugin_handler($this->currentsubpluginname);
+        $this->log('Instantiated assignment subplugin handler for '.$this->currentsubpluginname.'.', backup::LOG_DEBUG);
+        $handler->use_xml_writer($this->xmlwriter);
+
+        $this->log('Processing assignment subplugin handler callback for '.$this->currentsubpluginname.'.', backup::LOG_DEBUG);
+        $handler->append_subplugin_data($data);
     }
 
     /**
@@ -132,5 +157,83 @@ class moodle1_mod_assignment_handler extends moodle1_mod_handler {
         $this->xmlwriter->end_tag('fileref');
         $this->xmlwriter->end_tag('inforef');
         $this->close_xml_writer();
+    }
+
+    /// internal implementation details follow /////////////////////////////////
+
+    /**
+     * Factory method returning the handler of the given assignment subplugin
+     *
+     * @param string $subplugin the name of the subplugin
+     * @throws moodle1_convert_exception
+     * @return moodle1_assignment_subplugin_handler the instance of the handler
+     */
+    protected function get_subplugin_handler($subplugin) {
+        global $CFG; // we include other files here
+
+        if (is_null($this->subpluginhandlers)) {
+            $this->subpluginhandlers = array();
+            $subplugins = get_plugin_list('assignment');
+            foreach ($subplugins as $name => $dir) {
+                $handlerfile  = $dir.'/backup/moodle1/lib.php';
+                $handlerclass = "moodle1_mod_assignment_{$name}_subplugin_handler";
+                if (!file_exists($handlerfile)) {
+                    continue;
+                }
+                require_once($handlerfile);
+
+                if (!class_exists($handlerclass)) {
+                    throw new moodle1_convert_exception('missing_handler_class', $handlerclass);
+                }
+                $this->log('preparing assignment subplugin handler', backup::LOG_DEBUG, $handlerclass);
+                $this->subpluginhandlers[$name] = new $handlerclass($this, $name);
+                if (!$this->subpluginhandlers[$name] instanceof moodle1_assignment_subplugin_handler) {
+                    throw new moodle1_convert_exception('wrong_handler_class', get_class($this->subpluginhandlers[$name]));
+                }
+            }
+        }
+
+        if (!isset($this->subpluginhandlers[$subplugin])) {
+            throw new moodle1_convert_exception('unsupported_subplugin', 'assignment_'.$subplugin);
+        }
+
+        return $this->subpluginhandlers[$subplugin];
+    }
+}
+
+
+/**
+ * Base class for the assignment subplugin handler
+ * Extend this for your own subplugin conversion handling purposes.
+ */
+abstract class moodle1_assignment_subplugin_handler extends moodle1_submod_handler {
+
+    /**
+     * @param moodle1_mod_handler $assignmenthandler the handler of a module we are subplugin of
+     * @param string $subpluginname the name of the subplugin
+     */
+    public function __construct(moodle1_mod_handler $assignmenthandler, $subpluginname) {
+        parent::__construct($assignmenthandler, 'assignment', $subpluginname);
+    }
+
+    /**
+     * Provides a xml_writer instance to this assignment subplugin type handler
+     *
+     * @param xml_writer $xmlwriter
+     */
+    public function use_xml_writer(xml_writer $xmlwriter) {
+        $this->xmlwriter = $xmlwriter;
+    }
+
+    /**
+     * a call back (entry point) to the subplugin conversion handler class.
+     * $data are the elements of <assignment>, any (@todo sub paths containing subplugindata isn't handed through).
+     */
+
+    public function append_subplugin_data($data) {
+        // an example that does nothing - you'll do nothing if you don't overide it
+        return false;
+
+        //you will probably want to do stuff with $this->xmlwriter here (within your overridden method) to write plugin specific data.
     }
 }
