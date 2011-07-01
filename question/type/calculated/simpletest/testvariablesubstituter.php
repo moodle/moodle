@@ -90,4 +90,28 @@ class qtype_calculated_variable_substituter_test extends UnitTestCase {
         $this->assertEqual('phi (1,61803399) + pi (3,14159265) = 4,75962664',
                 $vs->replace_expressions_in_text('phi ({phi}) + pi ({pi}) = {={phi} + {pi}}'));
     }
+
+    public function test_format_float_dot() {
+        $vs = new qtype_calculated_variable_substituter(array('a' => -1, 'b' => 2), '.');
+        $this->assertIdentical('0.12345', $vs->format_float(0.12345));
+
+        $this->assertIdentical('0', $vs->format_float(0.12345, 0, 1));
+        $this->assertIdentical('0.12', $vs->format_float(0.12345, 2, 1));
+        $this->assertIdentical('0.1235', $vs->format_float(0.12345, 4, 1));
+
+        $this->assertIdentical('0.12', $vs->format_float(0.12345, 2, 2));
+        $this->assertIdentical('0.0012', $vs->format_float(0.0012345, 4, 1));
+    }
+
+    public function test_format_float_comma() {
+        $vs = new qtype_calculated_variable_substituter(array('a' => -1, 'b' => 2), ',');
+        $this->assertIdentical('0,12345', $vs->format_float(0.12345));
+
+        $this->assertIdentical('0', $vs->format_float(0.12345, 0, 1));
+        $this->assertIdentical('0,12', $vs->format_float(0.12345, 2, 1));
+        $this->assertIdentical('0,1235', $vs->format_float(0.12345, 4, 1));
+
+        $this->assertIdentical('0,12', $vs->format_float(0.12345, 2, 2));
+        $this->assertIdentical('0,0012', $vs->format_float(0.0012345, 4, 1));
+    }
 }
