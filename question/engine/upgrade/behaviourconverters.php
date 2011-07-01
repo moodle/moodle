@@ -320,7 +320,7 @@ abstract class question_behaviour_attempt_updater {
         }
 
         $step->fraction = null;
-        $step->timecreated = $state->timestamp;
+        $step->timecreated = $state->timestamp ? $state->timestamp : time();
         $step->userid = $this->attempt->userid;
 
         $summary = $this->qtypeupdater->response_summary($state);
