@@ -112,7 +112,7 @@ abstract class question_behaviour_attempt_updater {
         $step->state = 'todo';
         $step->data = array();
         $step->fraction = null;
-        $step->timecreated = $this->attempt->timestart;
+        $step->timecreated = $this->attempt->timestart ? $this->attempt->timestart : time();
         $step->userid = $this->attempt->userid;
         $this->qtypeupdater->supply_missing_first_step_data($step->data);
         return $step;
