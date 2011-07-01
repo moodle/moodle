@@ -203,18 +203,29 @@ class qtype_calculated_qe2_attempt_updater extends question_qtype_attempt_update
     }
 
     /**
+     * This function should be identical to
+     * {@link qtype_calculated_variable_substituter::format_float()}. Except that
+     * we do not try to do locale-aware replacement of the decimal point.
+     *
+     * Having to copy it here is a pain, but it is the standard rule about not
+     * using library code (which may change in future) in upgrade code, which
+     * exists at a point in time.
+     *
      * Display a float properly formatted with a certain number of decimal places.
-     * @param $x
+     * @param number $x the number to format
+     * @param int $length restrict to this many decimal places or significant
+     *      figures. If null, the number is not rounded.
+     * @param int format 1 => decimalformat, 2 => significantfigures.
+     * @return string formtted number.
      */
     public function format_float($x, $length = null, $format = null) {
         if (!is_null($length) && !is_null($format)) {
             if ($format == 1) {
                 // Decimal places.
                 $x = sprintf('%.' . $length . 'F', $x);
-            } else if ($format == 1) {
+            } else if ($format == 2) {
                 // Significant figures.
                 $x = sprintf('%.' . $length . 'g', $x);
-                $x = str_replace(',', '.', $x);
             }
         }
         return $x;
