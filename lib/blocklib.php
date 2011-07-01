@@ -679,6 +679,24 @@ class block_manager {
             $pagetypepattern = 'course-view-*';
         }
 
+        // We should end using this for ALL the blocks, making always the 1st option
+        // the default one to be used. Until then, this is one hack to avoid the
+        // 'pagetypewarning' message on blocks initial edition (MDL-27829) caused by
+        // non-existing $pagetypepattern set. This way at least we guarantee one "valid"
+        // (the FIRST $pagetypepattern will be set)
+
+        // We are applying it to all blocks created in mod pages for now and only if the
+        // default pagetype is not one of the available options
+        if (preg_match('/^mod-.*-/', $pagetypepattern)) {
+            $pagetypelist = generate_page_type_patterns($this->page->pagetype, null, $this->page->context);
+            // Only go for the first if the pagetype is not a valid option
+            if (is_array($pagetypelist) && !array_key_exists($pagetypepattern, $pagetypelist)) {
+                $pagetypepattern = key($pagetypelist);
+            }
+        }
+        // Surely other pages like course-report will need this too, they just are not important
+        // enough now. This will be decided in the coming days. (MDL-27829, MDL-28150)
+
         $this->add_block($blockname, $defaulregion, $weight, false, $pagetypepattern, $subpage);
     }
 
