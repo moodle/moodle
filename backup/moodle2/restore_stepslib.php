@@ -236,6 +236,7 @@ class restore_gradebook_structure_step extends restore_structure_step {
             //get the already created course level grade category
             $category = new stdclass();
             $category->courseid = $this->get_courseid();
+            $category->parent = null;
 
             $coursecategory = $DB->get_record('grade_categories', (array)$category);
             if (!empty($coursecategory)) {
