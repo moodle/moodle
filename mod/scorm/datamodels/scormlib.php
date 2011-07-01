@@ -930,6 +930,7 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                         require_once($CFG->dirroot.'/mod/scorm/datamodels/sequencinglib.php');
                         $prereq = scorm_seq_evaluate($sco->id,$usertracks);
                     } else {
+                        //TODO: split check for sco->prerequisites only for AICC as I think that's the only case it's set.
                         $prereq = empty($sco->prerequisites) || scorm_eval_prerequisites($sco->prerequisites,$usertracks);
                     }
                     if ($prereq) {
