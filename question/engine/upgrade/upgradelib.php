@@ -209,6 +209,7 @@ class question_engine_attempt_upgrader {
                         question {$questionid} in attempt {$attempt->id} at quiz
                         {$attempt->quiz}, since the session was missing.", $attempt->id);
                 try {
+                    $question = $this->load_question($questionid, $quiz->id);
                     $qas[$questionid] = $this->supply_missing_question_attempt(
                             $quiz, $attempt, $question);
                 } catch (Exception $e) {
