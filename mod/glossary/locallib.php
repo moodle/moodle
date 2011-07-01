@@ -303,19 +303,34 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
      */
     public function prepare_package() {
         global $DB;
+
         $format = $this->exporter->get('format');
         $content = self::entry_content($this->course, $this->cm, $this->glossary, $this->entry, $this->aliases, $format);
-        $filename = clean_filename($this->entry->concept) . '.html';
-        if ($this->exporter->get('formatclass') == PORTFOLIO_FORMAT_LEAP2A) {
-            global $USER;
-            $writer = $this->get('exporter')->get('format')->leap2a_writer($USER);
-            $filename = $this->get('exporter')->get('format')->manifest_name();
+
+        if ($this->exporter->get('formatclass') === PORTFOLIO_FORMAT_PLAINHTML) {
+            $filename = clean_filename($this->entry->concept) . '.html';
+            $this->exporter->write_new_file($content, $filename);
+
+        } else if ($this->exporter->get('formatclass') === PORTFOLIO_FORMAT_RICHHTML) {
+            if ($this->multifiles) {
+                foreach ($this->multifiles as $file) {
+                    $this->exporter->copy_existing_file($file);
+                }
+            }
+            $filename = clean_filename($this->entry->concept) . '.html';
+            $this->exporter->write_new_file($content, $filename);
+
+        } else if ($this->exporter->get('formatclass') === PORTFOLIO_FORMAT_LEAP2A) {
+            $writer = $this->get('exporter')->get('format')->leap2a_writer();
             $entry = new portfolio_format_leap2a_entry('glossaryentry' . $this->entry->id, $this->entry->concept, 'entry', $content);
             $entry->author = $DB->get_record('user', array('id' => $this->entry->userid), 'id,firstname,lastname,email');
             $entry->published = $this->entry->timecreated;
             $entry->updated = $this->entry->timemodified;
             if ($this->multifiles) {
-                $writer->link_files($entry, $this->multifiles, 'glossaryentry' . $this->entry->id . 'file');
+                $writer->link_files($entry, $this->multifiles);
+                foreach ($this->multifiles as $file) {
+                    $this->exporter->copy_existing_file($file);
+                }
             }
             if ($this->categories) {
                 foreach ($this->categories as $cat) {
@@ -327,13 +342,12 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
             }
             $writer->add_entry($entry);
             $content = $writer->to_xml();
+            $filename = $this->get('exporter')->get('format')->manifest_name();
+            $this->exporter->write_new_file($content, $filename);
+
+        } else {
+            throw new portfolio_caller_exception('unexpected_format_class', 'glossary');
         }
-        if ($this->multifiles) {
-            foreach ($this->multifiles as $file) {
-                $this->exporter->copy_existing_file($file);
-            }
-        }
-        return $this->exporter->write_new_file($content, $filename, !empty($this->multifiles));
     }
 
     /**
