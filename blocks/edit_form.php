@@ -140,9 +140,6 @@ class block_edit_form extends moodleform {
                 } else {
                     //as a last resort we could put the page type pattern in the select box
                     //however this causes mod-data-view to be added if the only option available is mod-data-*
-
-                    //as a last resort we could put the page type pattern in the select box
-                    //however this causes mod-data-view to be added if the only option available is mod-data-*
                     // so we are just showing a warning to users about their prev setting being reset
                     $displaypagetypewarning = true;
                 }
