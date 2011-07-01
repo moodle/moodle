@@ -86,4 +86,4 @@ $string['withselectedtags'] = 'With selected tags...';
 $string['page-tag-x'] = 'All tag pages';
 $string['page-tag-index'] = 'Single tag page';
 $string['page-tag-search'] = 'Tag search page';
-$string['page-tag-manage'] = 'Tag manage page';
+$string['page-tag-manage'] = 'Manage tags page';
