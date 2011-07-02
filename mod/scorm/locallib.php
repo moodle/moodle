@@ -1310,7 +1310,7 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                     $i = $level;
                     $closelist = '';
                     while (($i > 0) && ($parents[$level] != $sco->parent)) {
-                        if ($i === 1) {
+                        if ($i === 1 && $level > 1) {
                             $closelist .= "\t\t</ul></li>\n";
                         } else {
                             $closelist .= "\t</li></ul></li>\n";
