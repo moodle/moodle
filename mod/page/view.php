@@ -92,8 +92,11 @@ if (!empty($options['printintro'])) {
 }
 
 $content = file_rewrite_pluginfile_urls($page->content, 'pluginfile.php', $context->id, 'mod_page', 'content', $page->revision);
-$formatoptions = array('noclean'=>true, 'overflowdiv'=>true);
-$content = format_text($content, $page->contentformat, $formatoptions, $course->id);
+$formatoptions = new stdClass;
+$formatoptions->noclean = true;
+$formatoptions->overflowdiv = true;
+$formatoptions->context = $context;
+$content = format_text($content, $page->contentformat, $formatoptions);
 echo $OUTPUT->box($content, "generalbox center clearfix");
 
 $strlastmodified = get_string("lastmodified");
