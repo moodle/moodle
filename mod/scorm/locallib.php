@@ -1294,7 +1294,6 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
         $nextid = 0;
         $findnext = false;
         $parents[$level]='/';
-
         foreach ($scoes as $pos => $sco) {
             $isvisible = false;
             $sco->title = $sco->title;
@@ -1311,11 +1310,15 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                     $i = $level;
                     $closelist = '';
                     while (($i > 0) && ($parents[$level] != $sco->parent)) {
-                        $closelist .= "\t\t</li></ul></li>\n";
+                        if ($i === 1) {
+                            $closelist .= "\t\t</ul></li>\n";
+                        } else {
+                            $closelist .= "\t</li></ul></li>\n";
+                        }
                         $i--;
                     }
                     if (($i == 0) && ($sco->parent != $currentorg)) {
-                        $result->toc .= "\t\t<ul>\n";
+                        $result->toc .= "\n\t<ul>\n";
                         $level++;
                     } else {
                         $result->toc .= $closelist;
@@ -1343,8 +1346,8 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
             if (empty($sco->title)) {
                 $sco->title = $sco->identifier;
             }
-            if (!empty($sco->launch)) {
-                if ($isvisible) {
+            if ($isvisible) {
+                if (!empty($sco->launch)) {
                     $score = '';
                     if (empty($scoid) && ($mode != 'normal')) {
                         $scoid = $sco->id;
@@ -1431,12 +1434,12 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                             $result->toc .= $statusicon.'&nbsp;'.format_string($sco->title)."\n";
                         }
                     }
-                    if (($nextsco === false) || $nextsco->parent == $sco->parent) {
-                        $result->toc .= '</li>';
-                    }
+                } else {
+                    $result->toc .= '&nbsp;'.format_string($sco->title);
                 }
-            } else {
-                $result->toc .= '&nbsp;'.format_string($sco->title)."\n";
+                if (($nextsco === false) || $nextsco->parent == $sco->parent) {
+                    $result->toc .= "</li>\n";
+                }
             }
             if (($nextsco !== false) && ($nextid == 0) && ($findnext)) {
                 if (!empty($nextsco->launch)) {
