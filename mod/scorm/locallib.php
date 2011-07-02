@@ -1452,6 +1452,9 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
         }
 
         if ($play) {
+            if (empty($scoid)) {
+                $scoid = reset($scoes)->id;
+            }
             $sco = scorm_get_sco($scoid);
             $sco->previd = $previd;
             $sco->nextid = $nextid;
