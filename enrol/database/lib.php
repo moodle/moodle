@@ -111,6 +111,7 @@ class enrol_database_plugin extends enrol_plugin {
         if ($rs = $extdb->Execute($sql)) {
             if (!$rs->EOF) {
                 while ($fields = $rs->FetchRow()) {
+                    $fields = array_change_key_case($fields, CASE_LOWER);
                     $fields = $this->db_decode($fields);
 
                     if (empty($fields[$coursefield])) {
