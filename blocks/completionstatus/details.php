@@ -237,7 +237,7 @@ foreach ($rows as $row) {
 
     // Is complete
     echo '<td class="c4">';
-    echo ($row['status'] === 'Yes') ? 'Yes' : 'No';
+    echo ($row['status'] === get_string('yes')) ? get_string('yes') : get_string('no');
     echo '</td>';
 
     // Completion data
