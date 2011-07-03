@@ -152,7 +152,10 @@ class block_completionstatus extends block_base {
             $shtml .= '<tr><td>';
             $shtml .= get_string('activitiescompleted', 'completion');
             $shtml .= '</td><td style="text-align: right">';
-            $shtml .= $activities_complete.' of '.count($activities);
+            $a = new stdClass();
+            $a->first = $activities_complete;
+            $a->second = count($activities);
+            $shtml .= get_string('firstofsecond', 'block_completionstatus', $a);
             $shtml .= '</td></tr>';
         }
 
@@ -162,7 +165,10 @@ class block_completionstatus extends block_base {
             $phtml  = '<tr><td>';
             $phtml .= get_string('prerequisitescompleted', 'completion');
             $phtml .= '</td><td style="text-align: right">';
-            $phtml .= $prerequisites_complete.' of '.count($prerequisites);
+            $a = new stdClass();
+            $a->first = $prerequisites_complete;
+            $a->second = count($prerequisites);
+            $shtml .= get_string('firstofsecond', 'block_completionstatus', $a);
             $phtml .= '</td></tr>';
 
             $shtml = $phtml . $shtml;
