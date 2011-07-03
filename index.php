@@ -88,8 +88,11 @@
     $PAGE->set_heading($SITE->fullname);
     echo $OUTPUT->header();
 
-/// Print Section
-    if ($SITE->numsections > 0) {
+/// Print Section or custom info
+    if (!empty($CFG->customfrontpageinclude)) {
+        include($CFG->customfrontpageinclude);
+
+    } else if ($SITE->numsections > 0) {
 
         if (!$section = $DB->get_record('course_sections', array('course'=>$SITE->id, 'section'=>1))) {
             $DB->delete_records('course_sections', array('course'=>$SITE->id, 'section'=>1)); // Just in case
