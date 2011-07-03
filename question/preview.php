@@ -37,7 +37,6 @@ require_once(dirname(__FILE__) . '/previewlib.php');
 // Get and validate question id.
 $id = required_param('id', PARAM_INT);
 $question = question_bank::load_question($id);
-$PAGE->set_pagelayout('popup');
 
 // Were we given a particular context to run the question in?
 // This affects things like filter settings, or forced theme or language.
@@ -59,6 +58,7 @@ if ($cmid = optional_param('cmid', 0, PARAM_INT)) {
     // Note that in the other cases, require_login will set the correct page context.
 }
 question_require_capability_on($question, 'use');
+$PAGE->set_pagelayout('popup');
 
 // Get and validate display options.
 $maxvariant = $question->get_num_variants();
