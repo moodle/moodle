@@ -347,7 +347,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     $table->head = array(
         get_string('time'),
         get_string('ip_address'),
-        get_string('fullnamecourse'),
+        get_string('fullnameuser'),
         get_string('action'),
         get_string('info')
     );
@@ -462,7 +462,7 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
     }
     echo "<th class=\"c1 header\">".get_string('time')."</th>\n";
     echo "<th class=\"c2 header\">".get_string('ip_address')."</th>\n";
-    echo "<th class=\"c3 header\">".get_string('fullnamecourse')."</th>\n";
+    echo "<th class=\"c3 header\">".get_string('fullnameuser')."</th>\n";
     echo "<th class=\"c4 header\">".get_string('action')."</th>\n";
     echo "<th class=\"c5 header\">".get_string('info')."</th>\n";
     echo "</tr>\n";
@@ -529,7 +529,7 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
     global $DB;
 
     $text = get_string('course')."\t".get_string('time')."\t".get_string('ip_address')."\t".
-            get_string('fullnamecourse')."\t".get_string('action')."\t".get_string('info');
+            get_string('fullnameuser')."\t".get_string('action')."\t".get_string('info');
 
     if (!$logs = build_logs_array($course, $user, $date, $order, '', '',
                        $modname, $modid, $modaction, $groupid)) {
@@ -642,7 +642,7 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
 
     $worksheet = array();
     $headers = array(get_string('course'), get_string('time'), get_string('ip_address'),
-                        get_string('fullnamecourse'),    get_string('action'), get_string('info'));
+                        get_string('fullnameuser'),    get_string('action'), get_string('info'));
 
     // Creating worksheets
     for ($wsnumber = 1; $wsnumber <= $nroPages; $wsnumber++) {
@@ -753,7 +753,7 @@ function print_log_ods($course, $user, $date, $order='l.time DESC', $modname,
 
     $worksheet = array();
     $headers = array(get_string('course'), get_string('time'), get_string('ip_address'),
-                        get_string('fullnamecourse'),    get_string('action'), get_string('info'));
+                        get_string('fullnameuser'),    get_string('action'), get_string('info'));
 
     // Creating worksheets
     for ($wsnumber = 1; $wsnumber <= $nroPages; $wsnumber++) {
