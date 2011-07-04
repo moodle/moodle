@@ -17,7 +17,7 @@
 
 /**
  * Provides support for the conversion of moodle1 backup to the moodle2 format
- * Based off of a template @ http://docs.moodle.org/en/Development:Backup_1.9_conversion_for_developers
+ * Based off of a template @ http://docs.moodle.org/dev/Backup_1.9_conversion_for_developers
  *
  * @package    mod
  * @subpackage quiz

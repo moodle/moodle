@@ -611,7 +611,7 @@ EOF;
 EOF;
         /// Some general information
         $docinfo = new stdClass();
-        $docurl = new moodle_url('http://docs.moodle.org/en/Development:Creating_a_web_service_client');
+        $docurl = new moodle_url('http://docs.moodle.org/dev/Creating_a_web_service_client');
         $docinfo->doclink = html_writer::tag('a',
                         get_string('wsclientdoc', 'webservice'), array('href' => $docurl));
         $documentationhtml .= html_writer::start_tag('table',

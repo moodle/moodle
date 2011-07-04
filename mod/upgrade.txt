@@ -7,9 +7,9 @@ WORK IN PROGRESS...
 
 required changes in code:
 * use new DML syntax everywhere
-  (http://docs.moodle.org/en/Development:DML_functions)
+  (http://docs.moodle.org/dev/DML_functions)
 * use new DDL syntax in db/upgrade.php
-  (http://docs.moodle.org/en/Development:DDL_functions)
+  (http://docs.moodle.org/dev/DDL_functions)
 * replace defaults.php by settings.php and db/install.php
 * replace STATEMENTS section in db/install.xml with PHP code db/install.php or db/log.php
 * move post installation code from lib.php into db/install.php
@@ -17,7 +17,7 @@ required changes in code:
 * new mandatory naming of intro and introformat table fields in module tables,
   the presence of these fields is indicated in xxx_plugin_supports()
 * completely rewrite file handling
-  (http://docs.moodle.org/en/Development:File_API)
+  (http://docs.moodle.org/dev/File_API)
 * rewrite backup/restore
   (not finished yet)
 * rewrite trusttext support - new db table columns needed
@@ -31,9 +31,9 @@ required changes in code:
                  move module icon to mod/xxx/pix/icon.gif
                  old global $THEME is fully replaced by $OUTPUT
                  create plugin renderers
-  (http://docs.moodle.org/en/Development:Theme_changes_in_2.0)
+  (http://docs.moodle.org/dev/Theme_changes_in_2.0)
 * migrate all javascript new coding style using YUI3+YUI2
-  (http://docs.moodle.org/en/Development:JavaScript_usage_guide)
+  (http://docs.moodle.org/dev/JavaScript_usage_guide)
 * remove '_utf8' from lang pack names, use new {a} syntax
 * replace helps with new 'xxx_hlp' strings
 * please note the $plugin->requires in version.php has to be bigger than 2010000000,
@@ -44,11 +44,11 @@ optional - no changes needed in older code:
 * support for new mforms editor element and embedded files
   (not finished yet)
 * portfolio support
-  (http://docs.moodle.org/en/Development:Portfolio_API)
+  (http://docs.moodle.org/dev/Portfolio_API)
 * course completion tracking support
 * new navigation features
 * new comments API
-  (http://docs.moodle.org/en/Development:Comments_2.0)
+  (http://docs.moodle.org/dev/Comments_2.0)
 * new ratings API
-  (http://docs.moodle.org/en/Development:Ratings_2.0)
+  (http://docs.moodle.org/dev/Ratings_2.0)
 

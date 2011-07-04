@@ -38,8 +38,8 @@ require_once ($CFG->libdir.'/formslib.php');
 * Plugins and callers don't get to define their own class
 * as we have to handle form elements from both places
 * See the docs here for more information:
-* http://docs.moodle.org/en/Development:Writing_a_Portfolio_Plugin#has_export_config
-* http://docs.moodle.org/en/Development:Adding_a_Portfolio_Button_to_a_page#has_export_config
+* http://docs.moodle.org/dev/Writing_a_Portfolio_Plugin#has_export_config
+* http://docs.moodle.org/dev/Adding_a_Portfolio_Button_to_a_page#has_export_config
 */
 final class portfolio_export_form extends moodleform {
 
@@ -121,7 +121,7 @@ final class portfolio_export_form extends moodleform {
 *
 * This form is extendable by plugins who want the admin to be able to configure more than just the name of the instance.
 * This is NOT done by subclassing this class, see the docs for portfolio_plugin_base for more information:
-* http://docs.moodle.org/en/Development:Writing_a_Portfolio_Plugin#has_admin_config
+* http://docs.moodle.org/dev/Writing_a_Portfolio_Plugin#has_admin_config
 */
 final class portfolio_admin_form extends moodleform {
 
@@ -222,7 +222,7 @@ final class portfolio_admin_form extends moodleform {
 * This is the form for letting the user configure an instance of a plugin.
 * In order to extend this, you don't subclass this in the plugin..
 * see the docs in portfolio_plugin_base for more information:
-* http://docs.moodle.org/en/Development:Writing_a_Portfolio_Plugin#has_user_config
+* http://docs.moodle.org/dev/Writing_a_Portfolio_Plugin#has_user_config
 */
 final class portfolio_user_form extends moodleform {
 
