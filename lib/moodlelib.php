@@ -1188,6 +1188,10 @@ function purge_all_caches() {
     // make sure cache dir is writable, throws exception if not
     make_upload_directory('cache');
 
+    // hack: this script may get called after the purifier was initialised,
+    // but we do not want to verify repeatedly this exists in each call
+    make_upload_directory('cache/htmlpurifier');
+
     clearstatcache();
 }
 
