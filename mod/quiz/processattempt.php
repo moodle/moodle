@@ -112,20 +112,6 @@ add_to_log($attemptobj->get_courseid(), 'quiz', 'close attempt',
 // Update the quiz attempt record.
 $attemptobj->finish_attempt($timenow);
 
-// Trigger event
-$eventdata = new stdClass();
-$eventdata->component  = 'mod_quiz';
-$eventdata->course     = $attemptobj->get_courseid();
-$eventdata->quiz       = $attemptobj->get_quizid();
-$eventdata->cm         = $attemptobj->get_cmid();
-$eventdata->user       = $USER;
-$eventdata->attempt    = $attemptobj->get_attemptid();
-events_trigger('quiz_attempt_processed', $eventdata);
-
-// Clear the password check flag in the session.
-$accessmanager = $attemptobj->get_access_manager($timenow);
-$accessmanager->clear_password_access();
-
 // Send the user to the review page.
 $transaction->allow_commit();
 redirect($attemptobj->review_url());

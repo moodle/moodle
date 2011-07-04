@@ -210,12 +210,13 @@ if ($attempt->preview) {
 
 // Trigger event
 $eventdata = new stdClass();
-$eventdata->component  = 'mod_quiz';
-$eventdata->course     = $quizobj->get_courseid();
-$eventdata->quiz       = $quizobj->get_quizid();
-$eventdata->cm         = $quizobj->get_cmid();
-$eventdata->user       = $USER;
-$eventdata->attempt    = $attempt->id;
+$eventdata->component = 'mod_quiz';
+$eventdata->attemptid = $attempt->id;
+$eventdata->timestart = $attempt->timestart;
+$eventdata->userid    = $attempt->userid;
+$eventdata->quizid    = $quizobj->get_quizid();
+$eventdata->cmid      = $quizobj->get_cmid();
+$eventdata->courseid  = $quizobj->get_courseid();
 events_trigger('quiz_attempt_started', $eventdata);
 
 $transaction->allow_commit();

@@ -149,14 +149,14 @@ $capabilities = array(
         'archetypes' => array()
     ),
 
-    // Receive email confirmation of own quiz submission
+    // Receive a confirmation message of own quiz submission.
     'mod/quiz:emailconfirmsubmission' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array()
     ),
 
-    // Receive email notification of other peoples quiz submissions
+    // Receive a notification message of other peoples' quiz submissions.
     'mod/quiz:emailnotifysubmission' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
