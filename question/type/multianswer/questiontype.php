@@ -324,6 +324,7 @@ class embedded_cloze_qtype extends default_questiontype {
             $feedback = '' ;
             $correctanswer = '';
             $strfeedbackwrapped  = $strfeedback;
+            $strclosewindow =  get_string('close', 'editor');
                 $testedstate = clone($state);
                 if ($correctanswers =  $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $state)) {
                     if ($options->readonly && $options->correct_responses) {
@@ -390,7 +391,7 @@ class embedded_cloze_qtype extends default_questiontype {
                     }else {
                         $strfeedbackwrapped = get_string('feedback', 'quiz');
                     }
-                    $popup = " onmouseover=\"return overlib('$feedback', STICKY, MOUSEOFF, CAPTION, '$strfeedbackwrapped', FGCOLOR, '#FFFFFF');\" ".
+                    $popup = " onmouseover=\"return overlib('$feedback', STICKY, MOUSEOFF, CAPTION, '$strfeedbackwrapped', FGCOLOR, '#FFFFFF', CLOSETEXT, '$strclosewindow');\" ".
                              " onmouseout=\"return nd();\" ";
                 }
 
@@ -406,7 +407,7 @@ class embedded_cloze_qtype extends default_questiontype {
             if ($feedback !='' && $popup == ''){
                 $strfeedbackwrapped = get_string('correctanswer', 'qtype_multianswer');
                     $feedback = s(str_replace(array("\\", "'"), array("\\\\", "\\'"), $feedback));
-                    $popup = " onmouseover=\"return overlib('$feedback', STICKY, MOUSEOFF, CAPTION, '$strfeedbackwrapped', FGCOLOR, '#FFFFFF');\" ".
+                    $popup = " onmouseover=\"return overlib('$feedback', STICKY, MOUSEOFF, CAPTION, '$strfeedbackwrapped', FGCOLOR, '#FFFFFF', CLOSETEXT, '$strclosewindow');\" ".
                              " onmouseout=\"return nd();\" ";
             }
 
