@@ -995,7 +995,7 @@ class global_navigation extends navigation_node {
      * is an issue explaining why this is a REALLY UGLY HACK thats not
      * for you to use!
      *
-     * @param int $userid userid of profile page that parent wants to navigate around. 
+     * @param int $userid userid of profile page that parent wants to navigate around.
      */
     public function set_userid_for_parent_checks($userid) {
         $this->useridtouseforparentchecks = $userid;
@@ -1459,7 +1459,7 @@ class global_navigation extends navigation_node {
                         } else {
                             // We should never ever arrive here - if we have then there is a bigger
                             // problem at hand.
-                            throw coding_exception('Category path order is incorrect and/or there are missing categories');
+                            throw new coding_exception('Category path order is incorrect and/or there are missing categories');
                         }
                     }
                 }
