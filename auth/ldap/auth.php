@@ -1385,7 +1385,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 }
             }
         }
-        $moodleattributes['username'] = $this->config->user_attribute;
+        $moodleattributes['username'] = moodle_strtolower(trim($this->config->user_attribute));
         return $moodleattributes;
     }
 
