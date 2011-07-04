@@ -3930,51 +3930,54 @@ function forum_print_attachments($post, $cm, $type) {
     $imagereturn = '';
     $output = '';
 
-    $canexport = (has_capability('mod/forum:exportpost', $context) || ($post->userid == $USER->id && has_capability('mod/forum:exportownpost', $context)));
+    $canexport = !empty($CFG->enableportfolios) && (has_capability('mod/forum:exportpost', $context) || ($post->userid == $USER->id && has_capability('mod/forum:exportownpost', $context)));
 
-    if (!empty($CFG->enableportfolios)) {
+    if ($canexport) {
         require_once($CFG->libdir.'/portfoliolib.php');
-        $files = $fs->get_area_files($context->id, 'mod_forum', 'attachment', $post->id, "timemodified", false);
-        if ($files) {
-            $button = new portfolio_add_button();
-            foreach ($files as $file) {
-                $filename = $file->get_filename();
-                $mimetype = $file->get_mimetype();
-                $iconimage = '<img src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />';
-                $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/mod_forum/attachment/'.$post->id.'/'.$filename);
+    }
 
-                if ($type == 'html') {
+    $files = $fs->get_area_files($context->id, 'mod_forum', 'attachment', $post->id, "timemodified", false);
+    if ($files) {
+        if ($canexport) {
+            $button = new portfolio_add_button();
+        }
+        foreach ($files as $file) {
+            $filename = $file->get_filename();
+            $mimetype = $file->get_mimetype();
+            $iconimage = '<img src="'.$OUTPUT->pix_url(file_mimetype_icon($mimetype)).'" class="icon" alt="'.$mimetype.'" />';
+            $path = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/mod_forum/attachment/'.$post->id.'/'.$filename);
+
+            if ($type == 'html') {
+                $output .= "<a href=\"$path\">$iconimage</a> ";
+                $output .= "<a href=\"$path\">".s($filename)."</a>";
+                if ($canexport) {
+                    $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()), '/mod/forum/locallib.php');
+                    $button->set_format_by_file($file);
+                    $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
+                }
+                $output .= "<br />";
+
+            } else if ($type == 'text') {
+                $output .= "$strattachment ".s($filename).":\n$path\n";
+
+            } else { //'returnimages'
+                if (in_array($mimetype, array('image/gif', 'image/jpeg', 'image/png'))) {
+                    // Image attachments don't get printed as links
+                    $imagereturn .= "<br /><img src=\"$path\" alt=\"\" />";
+                    if ($canexport) {
+                        $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()), '/mod/forum/locallib.php');
+                        $button->set_format_by_file($file);
+                        $imagereturn .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
+                    }
+                } else {
                     $output .= "<a href=\"$path\">$iconimage</a> ";
-                    $output .= "<a href=\"$path\">".s($filename)."</a>";
+                    $output .= format_text("<a href=\"$path\">".s($filename)."</a>", FORMAT_HTML, array('context'=>$context));
                     if ($canexport) {
                         $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()), '/mod/forum/locallib.php');
                         $button->set_format_by_file($file);
                         $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                     }
-                    $output .= "<br />";
-
-                } else if ($type == 'text') {
-                    $output .= "$strattachment ".s($filename).":\n$path\n";
-
-                } else { //'returnimages'
-                    if (in_array($mimetype, array('image/gif', 'image/jpeg', 'image/png'))) {
-                        // Image attachments don't get printed as links
-                        $imagereturn .= "<br /><img src=\"$path\" alt=\"\" />";
-                        if ($canexport) {
-                            $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()), '/mod/forum/locallib.php');
-                            $button->set_format_by_file($file);
-                            $imagereturn .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
-                        }
-                    } else {
-                        $output .= "<a href=\"$path\">$iconimage</a> ";
-                        $output .= format_text("<a href=\"$path\">".s($filename)."</a>", FORMAT_HTML, array('context'=>$context));
-                        if ($canexport) {
-                            $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()), '/mod/forum/locallib.php');
-                            $button->set_format_by_file($file);
-                            $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
-                        }
-                        $output .= '<br />';
-                    }
+                    $output .= '<br />';
                 }
             }
         }
