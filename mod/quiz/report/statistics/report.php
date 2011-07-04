@@ -452,7 +452,7 @@ class quiz_statistics_report extends quiz_default_report {
         global $CFG, $DB;
         if (!$nostudentsingroup){
             //Calculating_MEAN_of_grades_for_all_attempts_by_students
-            //http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#Calculating_MEAN_of_grades_for_all_attempts_by_students
+            //http://docs.moodle.org/dev/Quiz_item_analysis_calculations_in_practise#Calculating_MEAN_of_grades_for_all_attempts_by_students
 
             list($fromqa, $whereqa, $qaparams) = quiz_report_attempts_sql($quizid, $currentgroup, $groupstudents);
 
@@ -535,7 +535,7 @@ class quiz_statistics_report extends quiz_default_report {
                 }
 
                 //Standard_Deviation
-                //see http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#Standard_Deviation
+                //see http://docs.moodle.org/dev/Quiz_item_analysis_calculations_in_practise#Standard_Deviation
 
                 $quizstats->standarddeviation = sqrt($powers->power2 / ($s -1));
 
@@ -543,7 +543,7 @@ class quiz_statistics_report extends quiz_default_report {
 
                 //Skewness_and_Kurtosis
                 if ($s>2){
-                    //see http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#Skewness_and_Kurtosis
+                    //see http://docs.moodle.org/dev/Quiz_item_analysis_calculations_in_practise#Skewness_and_Kurtosis
                     $m2= $powers->power2 / $s;
                     $m3= $powers->power3 / $s;
                     $m4= $powers->power4 / $s;

@@ -18,9 +18,9 @@
 /**
  * Check that, as in the coding guidelines, every to-do comment links to a tracker issue.
  *
- * As required by http://docs.moodle.org/en/Development:Coding_style.
+ * As required by http://docs.moodle.org/dev/Coding_style.
  *
- * http://docs.moodle.org/en/Development:Coding_style
+ * http://docs.moodle.org/dev/Coding_style
  * @package   moodlecore
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

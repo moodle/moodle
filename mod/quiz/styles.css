@@ -303,7 +303,7 @@ by default. This prevents that. */width:100%;}
 
 /*this color might need to be theme-specific,
 but in terms of usability, as testing showed,
-http://docs.moodle.org/en/Development:Quiz_UI_redesign/usability_testing_of_August_2008/Issues#Question_bank_.2F_question_adding_controls_visibility
+http://docs.moodle.org/dev/Quiz_UI_redesign/usability_testing_of_August_2008/Issues#Question_bank_.2F_question_adding_controls_visibility
 it must be ensured that the question
 bank window's title is prominent enough*/
 #page-mod-quiz-edit .questionbankwindow div.header {background-color:#009;color:#fff;background-image:none;padding-top:0.2em;font-weight:bold;}

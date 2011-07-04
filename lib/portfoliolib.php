@@ -71,7 +71,7 @@ require_once($CFG->libdir . '/portfolio/caller.php');
  * $somehtml .= $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
  * </code>
  *
- * See {@link http://docs.moodle.org/en/Development:Adding_a_Portfolio_Button_to_a_page} for more information
+ * See {@link http://docs.moodle.org/dev/Adding_a_Portfolio_Button_to_a_page} for more information
  *
  * @package    moodlecore
  * @subpackage portfolio

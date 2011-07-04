@@ -820,7 +820,7 @@ function filter_get_active_in_context($context) {
     $contextids = str_replace('/', ',', trim($context->path, '/'));
 
     // The following SQL is tricky. It is explained on
-    // http://docs.moodle.org/en/Development:Filter_enable/disable_by_context
+    // http://docs.moodle.org/dev/Filter_enable/disable_by_context
     $sql = "SELECT active.filter, fc.name, fc.value
          FROM (SELECT f.filter, MAX(f.sortorder) AS sortorder
              FROM {filter_active} f
