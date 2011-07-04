@@ -456,7 +456,7 @@ if (!empty($CFG->maintenance_enabled)) {
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO HIDE, REMOVE OR MODIFY THIS COPYRIGHT NOTICE ///
 $copyrighttext = '<a href="http://moodle.org/">Moodle</a> '.
-                 '<a href="http://docs.moodle.org/en/Release" title="'.$CFG->version.'">'.$CFG->release.'</a><br />'.
+                 '<a href="http://docs.moodle.org/dev/Releases" title="'.$CFG->version.'">'.$CFG->release.'</a><br />'.
                  'Copyright &copy; 1999 onwards, Martin Dougiamas<br />'.
                  'and <a href="http://docs.moodle.org/en/Credits">many other contributors</a>.<br />'.
                  '<a href="http://docs.moodle.org/en/License">GNU Public License</a>';
