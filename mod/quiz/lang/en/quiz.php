@@ -256,7 +256,7 @@ Thank you for submitting your answers to
 in course \'{$a->coursename}\'
 at {$a->submissiontime}.
 
-This email confirms that we have safely received your answers.
+This message confirms that we have safely received your answers.
 
 You can access this quiz at {$a->quizurl}.';
 $string['emailconfirmsmall'] = 'Thank you for submitting your answers to \'{$a->quizname}\'';
@@ -550,8 +550,8 @@ $string['quizclosed'] = 'This quiz closed on {$a}';
 $string['quizcloses'] = 'Quiz closes';
 $string['quizcloseson'] = 'This quiz will close at {$a}';
 $string['quiz:deleteattempts'] = 'Delete quiz attempts';
-$string['quiz:emailconfirmsubmission'] = 'Get email confirmation when submitting';
-$string['quiz:emailnotifysubmission'] = 'Get email notification of submissions';
+$string['quiz:emailconfirmsubmission'] = 'Get a confirmation message when submitting';
+$string['quiz:emailnotifysubmission'] = 'Get a notification message when an attempt is submitted';
 $string['quiz:grade'] = 'Grade quizzes manually';
 $string['quiz:ignoretimelimits'] = 'Ignores time limit on quizzes';
 $string['quizisclosed'] = 'This quiz is closed';
