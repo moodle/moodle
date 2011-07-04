@@ -160,7 +160,8 @@ function minify($files) {
     if (0 === stripos(PHP_OS, 'win')) {
         Minify::setDocRoot(); // IIS may need help
     }
-    Minify::setCache('', true);
+    // disable all caching, we do it in moodle
+    Minify::setCache(null, false);
 
     $options = array(
         'bubbleCssImports' => false,
