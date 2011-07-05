@@ -85,8 +85,10 @@ class component_action {
  * Confirm action
  */
 class confirm_action extends component_action {
-    public function __construct($message, $callback=null) {
-        parent::__construct('click', 'M.util.show_confirm_dialog', array('message' => $message, 'callback' => $callback));
+    public function __construct($message, $callback = null, $continuelabel = null, $cancellabel = null) {
+        parent::__construct('click', 'M.util.show_confirm_dialog', array(
+                'message' => $message, 'callback' => $callback,
+                'continuelabel' => $continuelabel, 'cancellabel' => $cancellabel));
     }
 }
 

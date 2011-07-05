@@ -481,7 +481,7 @@ class single_button implements renderable {
      * @return void
      */
     public function add_confirm_action($confirmmessage) {
-        $this->add_action(new component_action('click', 'M.util.show_confirm_dialog', array('message' => $confirmmessage)));
+        $this->add_action(new confirm_action($confirmmessage));
     }
 
     /**
