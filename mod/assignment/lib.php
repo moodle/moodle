@@ -376,7 +376,10 @@ class assignment_base {
             } else {
                 $group = groups_get_activity_group($this->cm);
             }
-            if ($count = $this->count_real_submissions($group)) {
+            if ($this->type == 'offline') {
+                $submitted = '<a href="'.$urlbase.'submissions.php?id='.$this->cm->id.'">'.
+                             get_string('viewfeedback', 'assignment').'</a>';
+            } else if ($count = $this->count_real_submissions($group)) {
                 $submitted = '<a href="'.$urlbase.'submissions.php?id='.$this->cm->id.'">'.
                              get_string('viewsubmissions', 'assignment', $count).'</a>';
             } else {
@@ -945,6 +948,10 @@ class assignment_base {
         $cm         = $this->cm;
         $context    = get_context_instance(CONTEXT_MODULE, $cm->id);
 
+        //reset filter to all for offline assignment
+        if ($assignment->assignmenttype == 'offline' && $filter == self::FILTER_SUBMITTED) {
+            $filter = self::FILTER_ALL;
+        }
         /// Get all ppl that can submit assignments
 
         $currentgroup = groups_get_activity_group($cm);
@@ -961,9 +968,9 @@ class assignment_base {
 
         $nextid = 0;
         $where = '';
-        if($filter == 'submitted') {
+        if($filter == self::FILTER_SUBMITTED) {
             $where .= 's.timemodified > 0 AND ';
-        } else if($filter == 'requiregrading') {
+        } else if($filter == self::FILTER_REQUIRE_GRADING) {
             $where .= 's.timemarked < s.timemodified AND ';
         }
 
@@ -1091,12 +1098,10 @@ class assignment_base {
          */
 
        $filters = array(self::FILTER_ALL             => get_string('all'),
-                        self::FILTER_SUBMITTED       => get_string('submitted', 'assignment'),
                         self::FILTER_REQUIRE_GRADING => get_string('requiregrading', 'assignment'));
 
-        $updatepref = optional_param('updatepref', 0, PARAM_INT);
-
-        if (isset($_POST['updatepref'])){
+        $updatepref = optional_param('updatepref', 0, PARAM_BOOL);
+        if ($updatepref) {
             $perpage = optional_param('perpage', 10, PARAM_INT);
             $perpage = ($perpage <= 0) ? 10 : $perpage ;
             $filter = optional_param('filter', 0, PARAM_INT);
@@ -1128,6 +1133,15 @@ class assignment_base {
         $assignment = $this->assignment;
         $cm         = $this->cm;
         $hassubmission = false;
+
+        // reset filter to all for offline assignment only.
+        if ($assignment->assignmenttype == 'offline') {
+            if ($filter == self::FILTER_SUBMITTED) {
+                $filter = self::FILTER_ALL;
+            }
+        } else {
+            $filters[self::FILTER_SUBMITTED] = get_string('submitted', 'assignment');
+        }
 
         $tabindex = 1; //tabindex for quick grading tabbing; Not working for dropdowns yet
         add_to_log($course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->cm->id, $this->assignment->id, $this->cm->id);
@@ -1182,23 +1196,34 @@ class assignment_base {
                    "LEFT JOIN ($esql) eu ON eu.id=u.id ".
                    "WHERE u.deleted = 0 AND eu.id=u.id ";
         } else {
-            $wherefilter = '';
+            $wherefilter = ' AND s.assignment = '. $this->assignment->id;
+            $assignmentsubmission = "LEFT JOIN {assignment_submissions} s ON (u.id = s.userid) ";
             if($filter == self::FILTER_SUBMITTED) {
-               $wherefilter = ' AND s.timemodified > 0';
-            } else if($filter == self::FILTER_REQUIRE_GRADING) {
-                $wherefilter = ' AND s.timemarked < s.timemodified ';
+                $wherefilter .= ' AND s.timemodified > 0 ';
+            } else if($filter == self::FILTER_REQUIRE_GRADING && $assignment->assignmenttype != 'offline') {
+                $wherefilter .= ' AND s.timemarked < s.timemodified ';
+            } else { // require grading for offline assignment
+                $assignmentsubmission = "";
+                $wherefilter = "";
             }
 
             $sql = "SELECT u.id FROM {user} u ".
                    "LEFT JOIN ($esql) eu ON eu.id=u.id ".
-                   "LEFT JOIN {assignment_submissions} s ON (u.id = s.userid) " .
+                   $assignmentsubmission.
                    "WHERE u.deleted = 0 AND eu.id=u.id ".
-                   'AND s.assignment = '. $this->assignment->id .
-                    $wherefilter;
+                   $wherefilter;
         }
 
         $users = $DB->get_records_sql($sql, $params);
         if (!empty($users)) {
+            if($assignment->assignmenttype == 'offline' && $filter == self::FILTER_REQUIRE_GRADING) {
+                //remove users who has submitted their assignment
+                foreach ($this->get_submissions() as $submission) {
+                    if (array_key_exists($submission->userid, $users)) {
+                        unset($users[$submission->userid]);
+                    }
+                }
+            }
             $users = array_keys($users);
         }
 
@@ -1256,7 +1281,6 @@ class assignment_base {
         $table->set_attribute('id', 'attempts');
         $table->set_attribute('class', 'submissions');
         $table->set_attribute('width', '100%');
-        //$table->set_attribute('align', 'center');
 
         $table->no_sorting('finalgrade');
         $table->no_sorting('outcome');
@@ -1264,7 +1288,7 @@ class assignment_base {
         // Start working -- this is necessary as soon as the niceties are over
         $table->setup();
 
-    /// Construct the SQL
+        /// Construct the SQL
         list($where, $params) = $table->get_sql_where();
         if ($where) {
             $where .= ' AND ';
@@ -1273,7 +1297,10 @@ class assignment_base {
         if ($filter == self::FILTER_SUBMITTED) {
            $where .= 's.timemodified > 0 AND ';
         } else if($filter == self::FILTER_REQUIRE_GRADING) {
-           $where .= 's.timemarked < s.timemodified AND ';
+            $where = '';
+            if ($assignment->assignmenttype != 'offline') {
+               $where .= 's.timemarked < s.timemodified AND ';
+            }
         }
 
         if ($sort = $table->get_sql_sort()) {
@@ -1449,18 +1476,18 @@ class assignment_base {
                     }
                     $currentposition++;
                 }
-            }
-            if ($hassubmission && ($this->assignment->assignmenttype=='upload' || $this->assignment->assignmenttype=='online' || $this->assignment->assignmenttype=='uploadsingle')) { //TODO: this is an ugly hack, where is the plugin spirit? (skodak)
-                echo html_writer::start_tag('div', array('class' => 'mod-assignment-download-link'));
-                echo html_writer::link(new moodle_url('/mod/assignment/submissions.php', array('id' => $this->cm->id, 'download' => 'zip')), get_string('downloadall', 'assignment'));
-                echo html_writer::end_tag('div');
-            }
-            $table->print_html();  /// Print the whole table
-        } else {
-            if ($filter == self::FILTER_SUBMITTED) {
-                echo html_writer::tag('div', get_string('nosubmisson', 'assignment'), array('class'=>'nosubmisson'));
-            } else if ($filter == self::FILTER_REQUIRE_GRADING) {
-                echo html_writer::tag('div', get_string('norequiregrading', 'assignment'), array('class'=>'norequiregrading'));
+                if ($hassubmission && ($this->assignment->assignmenttype=='upload' || $this->assignment->assignmenttype=='online' || $this->assignment->assignmenttype=='uploadsingle')) { //TODO: this is an ugly hack, where is the plugin spirit? (skodak)
+                    echo html_writer::start_tag('div', array('class' => 'mod-assignment-download-link'));
+                    echo html_writer::link(new moodle_url('/mod/assignment/submissions.php', array('id' => $this->cm->id, 'download' => 'zip')), get_string('downloadall', 'assignment'));
+                    echo html_writer::end_tag('div');
+                }
+                $table->print_html();  /// Print the whole table
+            } else {
+                if ($filter == self::FILTER_SUBMITTED) {
+                    echo html_writer::tag('div', get_string('nosubmisson', 'assignment'), array('class'=>'nosubmisson'));
+                } else if ($filter == self::FILTER_REQUIRE_GRADING) {
+                    echo html_writer::tag('div', get_string('norequiregrading', 'assignment'), array('class'=>'norequiregrading'));
+                }
             }
         }
 
@@ -1753,7 +1780,7 @@ class assignment_base {
                 $eventdata->notification    = 1;
                 $eventdata->contexturl      = $info->url;
                 $eventdata->contexturlname  = $info->assignment;
-                
+
                 message_send($eventdata);
             }
         }
@@ -3668,7 +3695,9 @@ function assignment_extend_settings_navigation(settings_navigation $settings, na
             $group = groups_get_activity_group($PAGE->cm);
         }
         $link = new moodle_url('/mod/assignment/submissions.php', array('id'=>$PAGE->cm->id));
-        if ($count = $assignmentinstance->count_real_submissions($group)) {
+        if ($assignmentrow->assignmenttype == 'offline') {
+            $string = get_string('viewfeedback', 'assignment');
+        } else if ($count = $assignmentinstance->count_real_submissions($group)) {
             $string = get_string('viewsubmissions', 'assignment', $count);
         } else {
             $string = get_string('noattempts', 'assignment');
