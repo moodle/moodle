@@ -79,13 +79,12 @@
                            $param->extras
                   ORDER BY $param->orderby";
         }
-        //error_log($sql);
 
         $courses = $DB->get_records_sql($sql, $param->params, 0, $numcourses);
 
         if (empty($courses)) {
             echo $OUTPUT->notification(get_string('statsnodata'));
-            echo '</td></tr></table>';echo '<p>after notify</p>';
+            echo '</td></tr></table>';
 
         } else {
             if (empty($CFG->gdversion)) {
