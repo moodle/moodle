@@ -72,5 +72,8 @@ function xmldb_block_navigation_upgrade($oldversion, $block) {
         upgrade_block_savepoint(true, 2010091400, 'navigation');
     }
 
+    // Moodle v2.1.0 release upgrade line
+    // Put any upgrade step following this
+
     return true;
 }

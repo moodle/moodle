@@ -63,5 +63,8 @@ function xmldb_block_html_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2010071900, 'html');
     }
 
+    // Moodle v2.1.0 release upgrade line
+    // Put any upgrade step following this
+
     return true;
 }
