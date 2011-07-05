@@ -509,7 +509,7 @@ class quiz_overview_report extends quiz_attempt_report {
         $usertest = '';
         $params = array();
         if ($groupstudents) {
-            list($usql, $params) = get_in_or_equal($groupstudents);
+            list($usql, $params) = $DB->get_in_or_equal($groupstudents);
             $usertest = "quiza.userid $usql AND ";
         }
 
