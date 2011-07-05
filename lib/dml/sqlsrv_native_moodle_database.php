@@ -117,7 +117,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
     public function get_configuration_hints() {
         $str = get_string('databasesettingssub_sqlsrv', 'install');
         $str .= "<p style='text-align:right'><a href=\"javascript:void(0)\" ";
-        $str .= "onclick=\"return window.open('http://docs.moodle.org/en/Installing_sqlsrv_for_PHP')\"";
+        $str .= "onclick=\"return window.open('http://docs.moodle.org/en/Using_the_Microsoft_SQL_Server_Driver_for_PHP')\"";
         $str .= ">";
         $str .= '<img src="pix/docs.gif'.'" alt="Docs" class="iconhelp" />';
         $str .= get_string('moodledocslink', 'install').'</a></p>';
