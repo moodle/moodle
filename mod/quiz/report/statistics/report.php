@@ -1047,7 +1047,7 @@ function quiz_statistics_attempts_sql($quizid, $currentgroup, $groupstudents,
     $qaparams = array('quizid' => $quizid);
 
     if (!empty($currentgroup) && $groupstudents) {
-        list($grpsql, $grpparams) = get_in_or_equal(array_keys($groupstudents),
+        list($grpsql, $grpparams) = $DB->get_in_or_equal(array_keys($groupstudents),
                 SQL_PARAMS_NAMED, 'u');
         $whereqa .= " AND quiza.userid $grpsql";
         $qaparams += $grpparams;

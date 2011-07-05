@@ -75,7 +75,7 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
                         $namekey => get_string('groupavg', 'grades'),
                         'sumgrades' => $this->format_average($record),
                         'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade(
-                                                    $record->grade, $this->quiz->id)));
+                                            $record->grade, $this->quiz->id, $this->context)));
                 if ($this->detailedmarks && ($this->quiz->attempts == 1 || $this->qmsubselect)) {
                     $avggradebyq = $this->load_average_question_grades($this->groupstudents);
                     $groupaveragerow += $this->format_average_grade_for_questions($avggradebyq);
