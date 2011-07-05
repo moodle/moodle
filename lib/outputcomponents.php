@@ -2324,16 +2324,21 @@ class custom_menu_item implements renderable {
  */
 class custom_menu extends custom_menu_item {
 
+    /** @var string the language we should render for, null disables multilang support */
+    protected $currentlanguage = null;
+
     /**
      * Creates the custom menu
      *
      * @param string $definition the menu items definition in syntax required by {@link convert_text_to_menu_nodes()}
+     * @param string $language the current language code, null disables multilang support
      */
-    public function __construct($definition = '') {
+    public function __construct($definition = '', $currentlanguage = null) {
 
+        $this->currentlanguage = $currentlanguage;
         parent::__construct('root'); // create virtual root element of the menu
         if (!empty($definition)) {
-            $this->override_children(self::convert_text_to_menu_nodes($definition));
+            $this->override_children(self::convert_text_to_menu_nodes($definition, $currentlanguage));
         }
     }
 
@@ -2355,8 +2360,9 @@ class custom_menu extends custom_menu_item {
      * then be added to a custom menu.
      *
      * Structure:
-     *     text|url|title
-     * The number of hyphens at the start determines the depth of the item
+     *     text|url|title|langs
+     * The number of hyphens at the start determines the depth of the item. The
+     * languages are optional, comma separated list of languages the line is for.
      *
      * Example structure:
      *     First level first item|http://www.moodle.com/
@@ -2366,12 +2372,16 @@ class custom_menu extends custom_menu_item {
      *     -Second level third item|http://www.moodle.com/development/
      *     First level second item|http://www.moodle.com/feedback/
      *     First level third item
+     *     English only|http://moodle.com|English only item|en
+     *     German only|http://moodle.de|Deutsch|de,de_du,de_kids
+     *
      *
      * @static
-     * @param string $text
+     * @param string $text the menu items definition
+     * @param string $language the language code, null disables multilang support
      * @return array
      */
-    public static function convert_text_to_menu_nodes($text) {
+    public static function convert_text_to_menu_nodes($text, $language = null) {
         $lines = explode("\n", $text);
         $children = array();
         $lastchild = null;
@@ -2379,27 +2389,38 @@ class custom_menu extends custom_menu_item {
         $lastsort = 0;
         foreach ($lines as $line) {
             $line = trim($line);
-            $bits = explode('|', $line ,4);    // name|url|title|sort
-            if (!array_key_exists(0, $bits) || empty($bits[0])) {
+            $bits = explode('|', $line, 4);    // name|url|title|langs
+            if (!array_key_exists(0, $bits) or empty($bits[0])) {
                 // Every item must have a name to be valid
                 continue;
             } else {
                 $bits[0] = ltrim($bits[0],'-');
             }
-            if (!array_key_exists(1, $bits)) {
+            if (!array_key_exists(1, $bits) or empty($bits[1])) {
                 // Set the url to null
                 $bits[1] = null;
             } else {
                 // Make sure the url is a moodle url
                 $bits[1] = new moodle_url(trim($bits[1]));
             }
-            if (!array_key_exists(2, $bits)) {
+            if (!array_key_exists(2, $bits) or empty($bits[2])) {
                 // Set the title to null seeing as there isn't one
                 $bits[2] = $bits[0];
             }
+            if (!array_key_exists(3, $bits) or empty($bits[3])) {
+                // The item is valid for all languages
+                $itemlangs = null;
+            } else {
+                $itemlangs = array_map('trim', explode(',', $bits[3]));
+            }
+            if (!empty($language) and !empty($itemlangs)) {
+                // check that the item is intended for the current language
+                if (!in_array($language, $itemlangs)) {
+                    continue;
+                }
+            }
             // Set an incremental sort order to keep it simple.
-            $bits[3] = $lastsort;
-            $lastsort = $bits[3]+1;
+            $lastsort++;
             if (preg_match('/^(\-*)/', $line, $match) && $lastchild != null && $lastdepth !== null) {
                 $depth = strlen($match[1]);
                 if ($depth < $lastdepth) {
@@ -2409,26 +2430,26 @@ class custom_menu extends custom_menu_item {
                         for ($i =0; $i < $difference; $i++) {
                             $tempchild = $tempchild->get_parent();
                         }
-                        $lastchild = $tempchild->add($bits[0], $bits[1], $bits[2], $bits[3]);
+                        $lastchild = $tempchild->add($bits[0], $bits[1], $bits[2], $lastsort);
                     } else {
                         $depth = 0;
-                        $lastchild = new custom_menu_item($bits[0], $bits[1], $bits[2], $bits[3]);
+                        $lastchild = new custom_menu_item($bits[0], $bits[1], $bits[2], $lastsort);
                         $children[] = $lastchild;
                     }
                 } else if ($depth > $lastdepth) {
                     $depth = $lastdepth + 1;
-                    $lastchild = $lastchild->add($bits[0], $bits[1], $bits[2], $bits[3]);
+                    $lastchild = $lastchild->add($bits[0], $bits[1], $bits[2], $lastsort);
                 } else {
                     if ($depth == 0) {
-                        $lastchild = new custom_menu_item($bits[0], $bits[1], $bits[2], $bits[3]);
+                        $lastchild = new custom_menu_item($bits[0], $bits[1], $bits[2], $lastsort);
                         $children[] = $lastchild;
                     } else {
-                        $lastchild = $lastchild->get_parent()->add($bits[0], $bits[1], $bits[2], $bits[3]);
+                        $lastchild = $lastchild->get_parent()->add($bits[0], $bits[1], $bits[2], $lastsort);
                     }
                 }
             } else {
                 $depth = 0;
-                $lastchild = new custom_menu_item($bits[0], $bits[1], $bits[2], $bits[3]);
+                $lastchild = new custom_menu_item($bits[0], $bits[1], $bits[2], $lastsort);
                 $children[] = $lastchild;
             }
             $lastdepth = $depth;
