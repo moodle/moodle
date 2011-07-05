@@ -3671,8 +3671,7 @@ class settings_navigation extends navigation_node {
         // Messaging
         if (($currentuser && has_capability('moodle/user:editownmessageprofile', $systemcontext)) || (!isguestuser($user) && has_capability('moodle/user:editmessageprofile', $usercontext) && !is_primary_admin($user->id))) {
             $url = new moodle_url('/message/edit.php', array('id'=>$user->id, 'course'=>$course->id));
-            // Hide the node if messaging disabled
-            $usersetting->add(get_string('editmymessage', 'message'), $url, self::TYPE_SETTING)->display = !empty($CFG->messaging);
+            $usersetting->add(get_string('editmymessage', 'message'), $url, self::TYPE_SETTING);
         }
 
         // Blogs
