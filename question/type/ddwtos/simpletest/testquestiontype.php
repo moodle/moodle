@@ -396,26 +396,26 @@ class qtype_ddwtos_test extends UnitTestCase {
                 'format' => FORMAT_MOODLE, 'files' => array());
 
         $expectedq->choices = array(
-            array('answer' => array('text' => 'hydrogen',        'format' => FORMAT_MOODLE,
-                    'files' => array()), 'choicegroup' => 1, 'infinite' => false),
-            array('answer' => array('text' => 'positive',        'format' => FORMAT_MOODLE,
-                    'files' => array()), 'choicegroup' => 1, 'infinite' => false),
-            array('answer' => array('text' => 'hydroxide',       'format' => FORMAT_MOODLE,
-                    'files' => array()), 'choicegroup' => 1, 'infinite' => false),
-            array('answer' => array('text' => 'negative',        'format' => FORMAT_MOODLE,
-                    'files' => array()), 'choicegroup' => 1, 'infinite' => false),
-            array('answer' => array('text' => '10<sup>7</sup>',  'format' => FORMAT_MOODLE,
-                    'files' => array()), 'choicegroup' => 2, 'infinite' => false),
-            array('answer' => array('text' => '7',               'format' => FORMAT_MOODLE,
-                    'files' => array()), 'choicegroup' => 2, 'infinite' => false),
-            array('answer' => array('text' => '1',               'format' => FORMAT_MOODLE,
-                    'files' => array()), 'choicegroup' => 2, 'infinite' => false),
-            array('answer' => array('text' => '10<sup>-7</sup>', 'format' => FORMAT_MOODLE,
-                    'files' => array()), 'choicegroup' => 2, 'infinite' => false),
-            array('answer' => array('text' => 'greater',         'format' => FORMAT_MOODLE,
-                    'files' => array()), 'choicegroup' => 3, 'infinite' => false),
-            array('answer' => array('text' => 'less',            'format' => FORMAT_MOODLE,
-                    'files' => array()), 'choicegroup' => 3, 'infinite' => false),
+            array('answer' => array('text' => 'hydrogen',        'format' => FORMAT_MOODLE),
+                    'choicegroup' => 1, 'infinite' => false),
+            array('answer' => array('text' => 'positive',        'format' => FORMAT_MOODLE),
+                    'choicegroup' => 1, 'infinite' => false),
+            array('answer' => array('text' => 'hydroxide',       'format' => FORMAT_MOODLE),
+                    'choicegroup' => 1, 'infinite' => false),
+            array('answer' => array('text' => 'negative',        'format' => FORMAT_MOODLE),
+                    'choicegroup' => 1, 'infinite' => false),
+            array('answer' => array('text' => '10<sup>7</sup>',  'format' => FORMAT_MOODLE),
+                    'choicegroup' => 2, 'infinite' => false),
+            array('answer' => array('text' => '7',               'format' => FORMAT_MOODLE),
+                    'choicegroup' => 2, 'infinite' => false),
+            array('answer' => array('text' => '1',               'format' => FORMAT_MOODLE),
+                    'choicegroup' => 2, 'infinite' => false),
+            array('answer' => array('text' => '10<sup>-7</sup>', 'format' => FORMAT_MOODLE),
+                    'choicegroup' => 2, 'infinite' => false),
+            array('answer' => array('text' => 'greater',         'format' => FORMAT_MOODLE),
+                    'choicegroup' => 3, 'infinite' => false),
+            array('answer' => array('text' => 'less',            'format' => FORMAT_MOODLE),
+                    'choicegroup' => 3, 'infinite' => false),
         );
 
         $expectedq->hint = array(array('text' => 'You may wish to read Section 9 of ' .
@@ -428,6 +428,7 @@ class qtype_ddwtos_test extends UnitTestCase {
         $expectedq->hintclearwrong = array(false, true);
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
+        $this->assertEqual($expectedq->choices, $q->choices);
         $this->assertEqual($expectedq->hint, $q->hint);
     }
 
