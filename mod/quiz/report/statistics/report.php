@@ -1039,7 +1039,7 @@ class quiz_statistics_report extends quiz_default_report {
 
 function quiz_statistics_attempts_sql($quizid, $currentgroup, $groupstudents,
         $allattempts = true, $includeungraded = false) {
-    global $CFG;
+    global $DB;
 
     $fromqa = '{quiz_attempts} quiza ';
 
