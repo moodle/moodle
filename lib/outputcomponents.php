@@ -2323,15 +2323,17 @@ class custom_menu_item implements renderable {
  * @since     Moodle 2.0
  */
 class custom_menu extends custom_menu_item {
+
     /**
      * Creates the custom menu
-     * @param string $text Sets the text for this custom menu, never gets used and is optional
+     *
+     * @param string $definition the menu items definition in syntax required by {@link convert_text_to_menu_nodes()}
      */
-    public function __construct($text='base') {
-        global $CFG;
-        parent::__construct($text);
-        if (!empty($CFG->custommenuitems)) {
-            $this->override_children(self::convert_text_to_menu_nodes($CFG->custommenuitems));
+    public function __construct($definition = '') {
+
+        parent::__construct('root'); // create virtual root element of the menu
+        if (!empty($definition)) {
+            $this->override_children(self::convert_text_to_menu_nodes($definition));
         }
     }
 
