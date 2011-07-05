@@ -103,4 +103,3 @@ echo $output->summary_page($attemptobj, $displayoptions);
 // Finish the page
 $accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time());
 echo $OUTPUT->footer();
-
