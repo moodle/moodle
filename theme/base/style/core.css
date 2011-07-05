@@ -187,12 +187,13 @@ a.skip:active {position: static;display: block;}
 .mform fieldset div div {margin:0;}
 .mform fieldset .advancedbutton {text-align:right;}
 .mform fieldset.hidden {border-width:0;}
+.mform fieldset.group {margin-bottom: 0}
 .mform fieldset.error {border: 1px solid #A00;}
 .mform .fitem {width:100%;overflow:hidden;margin-top:5px;margin-bottom:1px;clear:right;}
 .mform .fitem .fitemtitle {width:15%;text-align:right;float:left;}
 .mform .fitem .fitemtitle div {display: inline;}
 .mform .fitem .felement {border-width: 0;width:80%;margin-left:16%;}
-.mform .fitem fieldset.felement {margin-left:0;padding-left:1%;}
+.mform .fitem fieldset.felement {margin-left:0;padding-left:1%;margin-bottom:0}
 .mform .error,
 .mform .required {color:#A00;}
 .mform .required .fgroup span label {color:#000;}
