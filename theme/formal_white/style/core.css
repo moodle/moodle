@@ -445,6 +445,7 @@ input[type="radio"] {
 /* needed to vertically align label of mform groups containing, for instance, select and text */
 .mform .fitem {
     line-height:2.0em;
+    margin-top:0;
 }
 
 .path-backup .mform .hidden .fitem .fgroup {
