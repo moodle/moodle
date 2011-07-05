@@ -99,6 +99,10 @@ function xmldb_chat_upgrade($oldversion) {
     /// chat savepoint reached
         upgrade_mod_savepoint(true, 2010050102, 'chat');
     }
+
+    // Moodle v2.1.0 release upgrade line
+    // Put any upgrade step following this
+
     return true;
 }
 

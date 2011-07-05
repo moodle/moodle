@@ -289,6 +289,9 @@ function xmldb_lesson_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010121400, 'lesson');
     }
 
+    // Moodle v2.1.0 release upgrade line
+    // Put any upgrade step following this
+
     return true;
 }
 

@@ -43,5 +43,8 @@ function xmldb_filter_mediaplugin_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2011030900, 'filter', 'mediaplugin');
     }
 
+    // Moodle v2.1.0 release upgrade line
+    // Put any upgrade step following this
+
     return true;
 }

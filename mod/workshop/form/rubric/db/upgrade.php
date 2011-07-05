@@ -60,5 +60,8 @@ function xmldb_workshopform_rubric_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2010091700, 'workshopform', 'rubric');
     }
 
+    // Moodle v2.1.0 release upgrade line
+    // Put any upgrade step following this
+
     return true;
 }

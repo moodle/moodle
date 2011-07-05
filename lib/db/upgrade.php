@@ -6634,6 +6634,9 @@ FROM
         upgrade_main_savepoint(true, 2011062400.03);
     }
 
+    // Moodle v2.1.0 release upgrade line
+    // Put any upgrade step following this
+
     return true;
 }
 
