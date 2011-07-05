@@ -1854,7 +1854,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                                   WHERE ctx.id = bi.contextid)
                            ELSE bi.pagetypepattern END,
                        CASE WHEN bi.subpagepattern IS NULL
-                           THEN ''
+                           THEN '" . $DB->sql_empty() . "'
                            ELSE bi.subpagepattern END,
                        0, bi.defaultregion, bi.defaultweight
                   FROM {block_instances} bi
