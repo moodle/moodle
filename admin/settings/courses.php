@@ -21,10 +21,11 @@ if ($hassiteconfig
         $formcourseformats[$courseformat] = get_string('pluginname', "format_$courseformat");
     }
     $temp->add(new admin_setting_configselect('moodlecourse/format', get_string('format'), get_string('coursehelpformat'), 'weeks',$formcourseformats));
-    for ($i=1; $i<=52; $i++) {
-        $sectionmenu[$i] = "$i";
-    }
-    $temp->add(new admin_setting_configselect('moodlecourse/numsections', get_string('numberweeks'), get_string('coursehelpnumberweeks'), 10,$sectionmenu));
+
+    $temp->add(new admin_setting_configtext('moodlecourse/maxsections', get_string('maxnumberweeks'), get_string('maxnumberweeks_desc'), 52));
+
+    $temp->add(new admin_settings_num_course_sections('moodlecourse/numsections', get_string('numberweeks'), get_string('coursehelpnumberweeks'), 10));
+
     $choices = array();
     $choices['0'] = get_string('hiddensectionscollapsed');
     $choices['1'] = get_string('hiddensectionsinvisible');
@@ -33,14 +34,13 @@ if ($hassiteconfig
     $temp->add(new admin_setting_configselect('moodlecourse/newsitems', get_string('newsitemsnumber'), get_string('coursehelpnewsitemsnumber'), 5,$options));
     $temp->add(new admin_setting_configselect('moodlecourse/showgrades', get_string('showgrades'), get_string('coursehelpshowgrades'), 1,array(0 => get_string('no'), 1 => get_string('yes'))));
     $temp->add(new admin_setting_configselect('moodlecourse/showreports', get_string('showreports'), '', 0,array(0 => get_string('no'), 1 => get_string('yes'))));
+
     if (isset($CFG->maxbytes)) {
         $choices = get_max_upload_sizes($CFG->maxbytes);
     } else {
         $choices = get_max_upload_sizes();
     }
-
     $temp->add(new admin_setting_configselect('moodlecourse/maxbytes', get_string('maximumupload'), get_string('coursehelpmaximumupload'), key($choices), $choices));
-
 
     if (!empty($CFG->legacyfilesinnewcourses)) {
         $choices = array('0'=>get_string('no'), '2'=>get_string('yes'));
