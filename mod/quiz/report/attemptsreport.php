@@ -469,15 +469,15 @@ abstract class quiz_attempt_report_table extends table_sql {
             return '-';
         }
 
-        if (!$this->is_downloading()) {
-            return quiz_report_feedback_for_grade(
-                    quiz_rescale_grade($attempt->sumgrades, $this->quiz, false),
-                    $this->quiz->id, $this->context);
-        } else {
-            return strip_tags(quiz_report_feedback_for_grade(
-                    quiz_rescale_grade($attempt->sumgrades, $this->quiz, false),
-                    $this->quiz->id));
+        $feedback = quiz_report_feedback_for_grade(
+                quiz_rescale_grade($attempt->sumgrades, $this->quiz, false),
+                $this->quiz->id, $this->context);
+
+        if ($this->is_downloading()) {
+            $feedback = strip_tags($feedback);
         }
+
+        return $feedback;
     }
 
     public function get_row_class($attempt) {
