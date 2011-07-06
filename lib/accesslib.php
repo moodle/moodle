@@ -5007,7 +5007,11 @@ function get_users_by_capability($context, $capability, $fields = '', $sort = ''
 
         if ($useviewallgroups) {
             $viewallgroupsusers = get_users_by_capability($context, 'moodle/site:accessallgroups', 'u.id, u.id', '', '', '', '', $exceptions);
-            $wherecond[] =  "($grouptest OR u.id IN (" . implode(',', array_keys($viewallgroupsusers)) . '))';
+            if (!empty($viewallgroupsusers)) {
+                $wherecond[] =  "($grouptest OR u.id IN (" . implode(',', array_keys($viewallgroupsusers)) . '))';
+            } else {
+                $wherecond[] =  "($grouptest)";
+            }
         } else {
             $wherecond[] =  "($grouptest)";
         }
