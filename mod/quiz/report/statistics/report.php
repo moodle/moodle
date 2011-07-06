@@ -604,7 +604,7 @@ class quiz_statistics_report extends quiz_default_report {
         global $DB;
 
         // Calculating MEAN of marks for all attempts by students
-        // http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise
+        // http://docs.moodle.org/dev/Quiz_item_analysis_calculations_in_practise
         //        #Calculating_MEAN_of_grades_for_all_attempts_by_students
         if ($nostudentsingroup) {
             return $this->get_emtpy_stats($questions);
@@ -703,14 +703,14 @@ class quiz_statistics_report extends quiz_default_report {
             $powers = $DB->get_record_sql($sql, $params, MUST_EXIST);
 
             // Standard_Deviation
-            // see http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise
+            // see http://docs.moodle.org/dev/Quiz_item_analysis_calculations_in_practise
             //         #Standard_Deviation
 
             $quizstats->standarddeviation = sqrt($powers->power2 / ($s - 1));
 
             // Skewness
             if ($s > 2) {
-                // see http://docs.moodle.org/en/Development:
+                // see http://docs.moodle.org/dev/
                 //      Quiz_item_analysis_calculations_in_practise#Skewness_and_Kurtosis
                 $m2= $powers->power2 / $s;
                 $m3= $powers->power3 / $s;

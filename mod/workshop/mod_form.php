@@ -20,7 +20,7 @@
  *
  * The UI mockup has been proposed in MDL-18688
  * It uses the standard core Moodle formslib. For more info about them, please
- * visit: http://docs.moodle.org/en/Development:lib/formslib.php
+ * visit: http://docs.moodle.org/dev/lib/formslib.php
  *
  * @package    mod
  * @subpackage workshop

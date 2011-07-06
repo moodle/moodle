@@ -290,7 +290,7 @@ class main_view extends XMLDBAction {
                                                 $o .= ' that seems to be active (true). ENUMs support has been dropped in Moodle 2.0, '  .
                                                       ' the XMLDB Editor will delete any ENUM reference next time you save this file' .
                                                       ' and you MUST provide  one upgrade block in your code to drop them from DB. See' .
-                                                      ' <a href="http://docs.moodle.org/en/Development:DB_layer_2.0_migration_docs#The_changes">' .
+                                                      ' <a href="http://docs.moodle.org/dev/DB_layer_2.0_migration_docs#The_changes">' .
                                                       ' Moodle Docs</a> for more info and examples.';
                                             } else {
                                                 $o .= ' that seem to be inactive (false). ENUMs support has been dropped in Moodle 2.0,' .

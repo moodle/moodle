@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Defines the complete workshop structure for backup, with file and id annotations
  *
- * @see http://docs.moodle.org/en/Development:Workshop for XML structure diagram
+ * @see http://docs.moodle.org/dev/Workshop for XML structure diagram
  */
 class backup_workshop_activity_structure_step extends backup_activity_structure_step {
 
