@@ -1192,6 +1192,10 @@ function purge_all_caches() {
     // make sure cache dir is writable, throws exception if not
     make_upload_directory('cache');
 
+    // hack: this script may get called after the purifier was initialised,
+    // but we do not want to verify repeatedly this exists in each call
+    make_upload_directory('cache/htmlpurifier');
+
     clearstatcache();
 }
 
@@ -7628,10 +7632,10 @@ function check_php_version($version='5.2.4') {
 }
 
 /**
- * Returns whether a device/browser combination is mobile, tablet, legacy, default or the result of 
+ * Returns whether a device/browser combination is mobile, tablet, legacy, default or the result of
  * an optional admin specified regular expression.  If enabledevicedetection is set to no or not set
  * it returns default
- * 
+ *
  * @return string device type
  */
 function get_device_type() {
