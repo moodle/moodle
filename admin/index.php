@@ -147,7 +147,7 @@ if (!core_tables_exist()) {
             }
         }
 
-        $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes');
+        $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/dev/Releases');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
         echo $OUTPUT->box($releasenoteslink, 'generalbox releasenoteslink');
 
@@ -229,7 +229,7 @@ if ($version > $CFG->version) {  // upgrade
         $PAGE->set_cacheable(false);
         echo $OUTPUT->header();
         echo $OUTPUT->heading("Moodle $release");
-        $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes');
+        $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/dev/Releases');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
         echo $OUTPUT->box($releasenoteslink);
 
@@ -440,7 +440,7 @@ if (!empty($CFG->maintenance_enabled)) {
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO HIDE, REMOVE OR MODIFY THIS COPYRIGHT NOTICE ///
 $copyrighttext = '<a href="http://moodle.org/">Moodle</a> '.
-                 '<a href="http://docs.moodle.org/en/Release" title="'.$CFG->version.'">'.$CFG->release.'</a><br />'.
+                 '<a href="http://docs.moodle.org/dev/Releases" title="'.$CFG->version.'">'.$CFG->release.'</a><br />'.
                  'Copyright &copy; 1999 onwards, Martin Dougiamas<br />'.
                  'and <a href="http://docs.moodle.org/en/Credits">many other contributors</a>.<br />'.
                  '<a href="http://docs.moodle.org/en/License">GNU Public License</a>';

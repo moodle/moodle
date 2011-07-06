@@ -1870,7 +1870,7 @@ class page_course extends page_base {
 class page_generic_activity extends page_base {
     // Although this function is deprecated, it should be left here because
     // people upgrading legacy code need to copy it. See
-    // http://docs.moodle.org/en/Development:Migrating_your_code_code_to_the_2.0_rendering_API
+    // http://docs.moodle.org/dev/Migrating_your_code_to_the_2.0_rendering_API
     function print_header($title, $morenavlinks = NULL, $bodytags = '', $meta = '') {
         global $USER, $CFG, $PAGE, $OUTPUT;
 

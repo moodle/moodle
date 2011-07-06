@@ -26,7 +26,7 @@
  * Start with another theme, like "standard".
  *
  * For full information about creating Moodle themes, see:
- *  http://docs.moodle.org/en/Development:Themes_2.0
+ *  http://docs.moodle.org/dev/Themes_2.0
  *
  * @package   moodlecore
  * @copyright 2009 Tim Hunt
