@@ -616,7 +616,8 @@ class quiz_overview_report extends quiz_default_report {
             //not just those that have changed.
             $sql = "SELECT qa2.* FROM {quiz_attempts} qa2 WHERE " .
                     "qa2.userid IN (SELECT DISTINCT userid FROM {quiz_attempts} WHERE $attemptsql) " .
-                    "AND qa2.timefinish > 0";
+                    "AND qa2.timefinish > 0 AND qa2.quiz = ?";
+            $params[] = $quiz->id;
         } else {
             $sql = "SELECT * FROM {quiz_attempts} WHERE $attemptsql AND timefinish > 0";
         }
