@@ -622,7 +622,7 @@ function quiz_update_all_final_grades($quiz) {
 
     switch ($quiz->grademethod) {
         case QUIZ_ATTEMPTFIRST:
-            // Becuase of the where clause, there will only be one row, but we
+            // Because of the where clause, there will only be one row, but we
             // must still use an aggregate function.
             $select = 'MAX(quiza.sumgrades)';
             $join = $firstlastattemptjoin;
@@ -630,7 +630,7 @@ function quiz_update_all_final_grades($quiz) {
             break;
 
         case QUIZ_ATTEMPTLAST:
-            // Becuase of the where clause, there will only be one row, but we
+            // Because of the where clause, there will only be one row, but we
             // must still use an aggregate function.
             $select = 'MAX(quiza.sumgrades)';
             $join = $firstlastattemptjoin;
