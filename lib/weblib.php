@@ -248,7 +248,7 @@ function qualified_me() {
  *     - output the url without any get params
  *     - and output the params as hidden fields to be output within a form
  *
- * @link http://docs.moodle.org/en/Development:lib/weblib.php_moodle_url See short write up here
+ * @link http://docs.moodle.org/dev/lib/weblib.php_moodle_url See short write up here
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package moodlecore
  */

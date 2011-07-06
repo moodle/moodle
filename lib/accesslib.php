@@ -148,17 +148,17 @@ define('CONTEXT_MODULE', 70);
 /** context definitions */
 define('CONTEXT_BLOCK', 80);
 
-/** capability risks - see {@link http://docs.moodle.org/en/Development:Hardening_new_Roles_system} */
+/** capability risks - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
 define('RISK_MANAGETRUST', 0x0001);
-/** capability risks - see {@link http://docs.moodle.org/en/Development:Hardening_new_Roles_system} */
+/** capability risks - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
 define('RISK_CONFIG',      0x0002);
-/** capability risks - see {@link http://docs.moodle.org/en/Development:Hardening_new_Roles_system} */
+/** capability risks - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
 define('RISK_XSS',         0x0004);
-/** capability risks - see {@link http://docs.moodle.org/en/Development:Hardening_new_Roles_system} */
+/** capability risks - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
 define('RISK_PERSONAL',    0x0008);
-/** capability risks - see {@link http://docs.moodle.org/en/Development:Hardening_new_Roles_system} */
+/** capability risks - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
 define('RISK_SPAM',        0x0010);
-/** capability risks - see {@link http://docs.moodle.org/en/Development:Hardening_new_Roles_system} */
+/** capability risks - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
 define('RISK_DATALOSS',    0x0020);
 
 /** rolename displays - the name as defined in the role definition */

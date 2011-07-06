@@ -25,7 +25,7 @@
  *
  * This file contains the base classes for places in moodle that want to
  * add export functionality to subclass from.
- * See http://docs.moodle.org/en/Development:Adding_a_Portfolio_Button_to_a_page
+ * See http://docs.moodle.org/dev/Adding_a_Portfolio_Button_to_a_page
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
 * base class for callers
 *
-* See http://docs.moodle.org/en/Development:Adding_a_Portfolio_Button_to_a_page
+* See http://docs.moodle.org/dev/Adding_a_Portfolio_Button_to_a_page
 * {@see also portfolio_module_caller_base}
 */
 abstract class portfolio_caller_base {
@@ -498,7 +498,7 @@ abstract class portfolio_caller_base {
 * from portfolio_caller_base so that caller authors
 * don't need to.
 *
-* See http://docs.moodle.org/en/Development:Adding_a_Portfolio_Button_to_a_page
+* See http://docs.moodle.org/dev/Adding_a_Portfolio_Button_to_a_page
 * {@see also portfolio_caller_base}
 */
 abstract class portfolio_module_caller_base extends portfolio_caller_base {

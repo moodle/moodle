@@ -26,7 +26,7 @@
  * This file contains the base classes for portfolio plugins to inherit from:
  * portfolio_plugin_pull_base and portfolio_plugin_push_base
  * which both in turn inherit from portfolio_plugin_base.
- * See http://docs.moodle.org/en/Development:Writing_a_Portfolio_Plugin
+ * See http://docs.moodle.org/dev/Writing_a_Portfolio_Plugin
  */
 
 defined('MOODLE_INTERNAL') || die();
