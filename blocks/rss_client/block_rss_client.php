@@ -55,14 +55,6 @@
             return $this->content;
         }
 
-        if (!$CFG->enablerssfeeds) {
-            $this->content->text = '';
-            if ($this->page->user_is_editing()) {
-                $this->content->text = get_string('disabledrssfeeds', 'block_rss_client');
-            }
-            return $this->content;
-        }
-
         // initalise block content object
         $this->content = new stdClass;
         $this->content->text   = '';
