@@ -630,7 +630,8 @@ class question_type {
             $question->options->answers = $DB->get_records_sql("
                     SELECT qa.*, qax." . implode(', qax.', $extraanswerfields) . "
                     FROM {question_answers} qa, {{$answer_extension_table}} qax
-                    WHERE qa.question = ? AND qax.answerid = qa.id", array($question->id));
+                    WHERE qa.question = ? AND qax.answerid = qa.id
+                    ORDER BY qa.id", array($question->id));
             if (!$question->options->answers) {
                 echo $OUTPUT->notification('Failed to load question answers from the table ' .
                         $answer_extension_table . 'for questionid ' . $question->id);
