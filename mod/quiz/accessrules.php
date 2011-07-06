@@ -490,7 +490,7 @@ abstract class quiz_access_rule_base {
     }
 
     /**
-     * If, becuase of this rule, the user has to finish their attempt by a certain time,
+     * If, because of this rule, the user has to finish their attempt by a certain time,
      * you should override this method to return the amount of time left in seconds.
      * @param object $attempt the current attempt
      * @param int $timenow the time now. We don't use $this->_timenow, so we can

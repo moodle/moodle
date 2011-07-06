@@ -338,7 +338,7 @@ class mod_quiz_mod_form extends moodleform_mod {
                 'boundary_add_fields');
 
         // Add the disabledif rules. We cannot do this using the $repeatoptions parameter to
-        // repeat_elements becuase we don't want to dissable the first feedbacktext.
+        // repeat_elements because we don't want to dissable the first feedbacktext.
         for ($i = 0; $i < $nextel; $i++) {
             $mform->disabledIf('feedbackboundaries[' . $i . ']', 'grade', 'eq', 0);
             $mform->disabledIf('feedbacktext[' . ($i + 1) . ']', 'grade', 'eq', 0);

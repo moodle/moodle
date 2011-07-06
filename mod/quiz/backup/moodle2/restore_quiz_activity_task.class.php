@@ -122,7 +122,7 @@ class restore_quiz_activity_task extends restore_activity_task {
         // All the ones calling to review.php have two rules to handle both old and new urls
         // in any case they are always converted to new urls on restore
         // TODO: In Moodle 2.x (x >= 5) kill the old rules
-        // Note we are using the 'quiz_attempt_id' mapping becuase that is the
+        // Note we are using the 'quiz_attempt_id' mapping because that is the
         // one containing the quiz_attempt->ids old an new for quiz-attempt
         $rules[] = new restore_log_rule('quiz', 'attempt',
                 'review.php?id={course_module}&attempt={quiz_attempt}', '{quiz}',

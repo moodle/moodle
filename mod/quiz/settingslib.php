@@ -52,7 +52,7 @@ class mod_quiz_admin_review_setting extends admin_setting {
 
     /**
      * This should match {@link mod_quiz_mod_form::$reviewfields} but copied
-     * here becuase generating the admin tree needs to be fast.
+     * here because generating the admin tree needs to be fast.
      * @return array
      */
     public static function fields() {
