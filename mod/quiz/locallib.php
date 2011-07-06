@@ -622,7 +622,7 @@ function quiz_update_all_final_grades($quiz) {
 
     switch ($quiz->grademethod) {
         case QUIZ_ATTEMPTFIRST:
-            // Becuase of the where clause, there will only be one row, but we
+            // Because of the where clause, there will only be one row, but we
             // must still use an aggregate function.
             $select = 'MAX(quiza.sumgrades)';
             $join = $firstlastattemptjoin;
@@ -630,7 +630,7 @@ function quiz_update_all_final_grades($quiz) {
             break;
 
         case QUIZ_ATTEMPTLAST:
-            // Becuase of the where clause, there will only be one row, but we
+            // Because of the where clause, there will only be one row, but we
             // must still use an aggregate function.
             $select = 'MAX(quiza.sumgrades)';
             $join = $firstlastattemptjoin;
@@ -1092,38 +1092,33 @@ function quiz_get_slot_for_question($quiz, $questionid) {
     return null;
 }
 
-/// FUNCTIONS FOR SENDING NOTIFICATION EMAILS ///////////////////////////////
+/// FUNCTIONS FOR SENDING NOTIFICATION MESSAGES ///////////////////////////////
 
 /**
- * Sends confirmation email to the student taking the course
+ * Sends a confirmation message to the student confirming that the attempt was processed.
  *
- * @param object $a associative array of replaceable fields for the templates
+ * @param object $a lots of useful information that can be used in the message
+ *      subject and body.
  *
- * @return bool
+ * @return int|false as for {@link message_send()}.
  */
-function quiz_send_confirmation($a) {
+function quiz_send_confirmation($recipient, $a) {
 
-    global $USER;
+    // Add information about the recipient to $a
+    // Don't do idnumber. we want idnumber to be the submitter's idnumber.
+    $a->username     = fullname($recipient);
+    $a->userusername = $recipient->username;
 
-    // recipient is self
-    $a->useridnumber = $USER->idnumber;
-    $a->username = fullname($USER);
-    $a->userusername = $USER->username;
-
-    // fetch the subject and body from strings
-    $subject = get_string('emailconfirmsubject', 'quiz', $a);
-    $body = get_string('emailconfirmbody', 'quiz', $a);
-
-    // send email and analyse result
+    // Prepare message
     $eventdata = new stdClass();
-    $eventdata->component        = 'mod_quiz';
-    $eventdata->name             = 'confirmation';
+    $eventdata->component         = 'mod_quiz';
+    $eventdata->name              = 'confirmation';
     $eventdata->notification      = 1;
 
     $eventdata->userfrom          = get_admin();
-    $eventdata->userto            = $USER;
-    $eventdata->subject           = $subject;
-    $eventdata->fullmessage       = $body;
+    $eventdata->userto            = $recipient;
+    $eventdata->subject           = get_string('emailconfirmsubject', 'quiz', $a);
+    $eventdata->fullmessage       = get_string('emailconfirmbody', 'quiz', $a);
     $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessagehtml   = '';
 
@@ -1131,7 +1126,8 @@ function quiz_send_confirmation($a) {
     $eventdata->contexturl        = $a->quizurl;
     $eventdata->contexturlname    = $a->quizname;
 
-    return (bool)message_send($eventdata); // returns message id or false
+    // ... and send it.
+    return message_send($eventdata);
 }
 
 /**
@@ -1140,30 +1136,27 @@ function quiz_send_confirmation($a) {
  * @param object $recipient user object of the intended recipient
  * @param object $a associative array of replaceable fields for the templates
  *
- * @return bool
+ * @return int|false as for {@link message_send()}.
  */
-function quiz_send_notification($recipient, $a) {
+function quiz_send_notification($recipient, $submitter, $a) {
 
     global $USER;
 
-    // recipient info for template
-    $a->username = fullname($recipient);
+    // Recipient info for template
+    $a->useridnumber = $recipient->idnumber;
+    $a->username     = fullname($recipient);
     $a->userusername = $recipient->username;
 
-    // fetch the subject and body from strings
-    $subject = get_string('emailnotifysubject', 'quiz', $a);
-    $body = get_string('emailnotifybody', 'quiz', $a);
-
-    // send email and analyse result
+    // Prepare message
     $eventdata = new stdClass();
-    $eventdata->component        = 'mod_quiz';
-    $eventdata->name             = 'submission';
+    $eventdata->component         = 'mod_quiz';
+    $eventdata->name              = 'submission';
     $eventdata->notification      = 1;
 
-    $eventdata->userfrom          = $USER;
+    $eventdata->userfrom          = $submitter;
     $eventdata->userto            = $recipient;
-    $eventdata->subject           = $subject;
-    $eventdata->fullmessage       = $body;
+    $eventdata->subject           = get_string('emailnotifysubject', 'quiz', $a);
+    $eventdata->fullmessage       = get_string('emailnotifybody', 'quiz', $a);
     $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessagehtml   = '';
 
@@ -1171,12 +1164,12 @@ function quiz_send_notification($recipient, $a) {
     $eventdata->contexturl        = $a->quizreviewurl;
     $eventdata->contexturlname    = $a->quizname;
 
-    return (bool)message_send($eventdata);
+    // ... and send it.
+    return message_send($eventdata);
 }
 
 /**
- * Takes a bunch of information to format into an email and send
- * to the specified recipient.
+ * Send all the requried messages when a quiz attempt is submitted.
  *
  * @param object $course the course
  * @param object $quiz the quiz
@@ -1184,39 +1177,35 @@ function quiz_send_notification($recipient, $a) {
  * @param object $context the quiz context
  * @param object $cm the coursemodule for this quiz
  *
- * @return int number of emails sent
+ * @return bool true if all necessary messages were sent successfully, else false.
  */
-function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) {
-    global $CFG, $USER;
-    // we will count goods and bads for error logging
-    $emailresult = array('good' => 0, 'fail' => 0);
+function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm) {
+    global $CFG, $DB;
 
-    // do nothing if required objects not present
+    // Do nothing if required objects not present
     if (empty($course) or empty($quiz) or empty($attempt) or empty($context)) {
-        debugging('quiz_send_notification_emails: Email(s) not sent due to program error.',
-                DEBUG_DEVELOPER);
-        return $emailresult['fail'];
+        throw new coding_exception('$course, $quiz, $attempt, $context and $cm must all be set.');
     }
 
-    // check for confirmation required
+    $submitter = $DB->get_record('user', array('id' => $attempt->userid), '*', MUST_EXIST);
+
+    // Check for confirmation required
     $sendconfirm = false;
     $notifyexcludeusers = '';
-    if (has_capability('mod/quiz:emailconfirmsubmission', $context, null, false)) {
-        // exclude from notify emails later
-        $notifyexcludeusers = $USER->id;
-        // send the email
+    if (has_capability('mod/quiz:emailconfirmsubmission', $context, $submitter, false)) {
+        $notifyexcludeusers = $submitter->id;
         $sendconfirm = true;
     }
 
     // check for notifications required
-    $notifyfields = 'u.id, u.username, u.firstname, u.lastname, u.email, u.lang, ' .
-            'u.timezone, u.mailformat, u.maildisplay';
-    $groups = groups_get_all_groups($course->id, $USER->id);
+    $notifyfields = 'u.id, u.username, u.firstname, u.lastname, u.idnumber, u.email, ' .
+            'u.lang, u.timezone, u.mailformat, u.maildisplay';
+    $groups = groups_get_all_groups($course->id, $submitter->id);
     if (is_array($groups) && count($groups) > 0) {
         $groups = array_keys($groups);
     } else if (groups_get_activity_groupmode($cm, $course) != NOGROUPS) {
         // If the user is not in a group, and the quiz is set to group mode,
-        // then set $gropus to a non-existant id so that only users with
+        // then set $groups to a non-existant id so that only users with
         // 'moodle/site:accessallgroups' get notified.
         $groups = -1;
     } else {
@@ -1225,67 +1214,75 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
     $userstonotify = get_users_by_capability($context, 'mod/quiz:emailnotifysubmission',
             $notifyfields, '', '', '', $groups, $notifyexcludeusers, false, false, true);
 
-    // if something to send, then build $a
-    if (! empty($userstonotify) or $sendconfirm) {
-        $a = new stdClass();
-        // course info
-        $a->coursename = $course->fullname;
-        $a->courseshortname = $course->shortname;
-        // quiz info
-        $a->quizname = $quiz->name;
-        $a->quizreporturl = $CFG->wwwroot . '/mod/quiz/report.php?id=' . $cm->id;
-        $a->quizreportlink = '<a href="' . $a->quizreporturl . '">' .
-                format_string($quiz->name) . ' report</a>';
-        $a->quizreviewurl = $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $attempt->id;
-        $a->quizreviewlink = '<a href="' . $a->quizreviewurl . '">' .
-                format_string($quiz->name) . ' review</a>';
-        $a->quizurl = $CFG->wwwroot . '/mod/quiz/view.php?id=' . $cm->id;
-        $a->quizlink = '<a href="' . $a->quizurl . '">' . format_string($quiz->name) . '</a>';
-        // attempt info
-        $a->submissiontime = userdate($attempt->timefinish);
-        $a->timetaken = format_time($attempt->timefinish - $attempt->timestart);
-        // student who sat the quiz info
-        $a->studentidnumber = $USER->idnumber;
-        $a->studentname = fullname($USER);
-        $a->studentusername = $USER->username;
+    if (empty($userstonotify) && !$sendconfirm) {
+        return true; // Nothing to do.
     }
 
-    // send confirmation if required
-    if ($sendconfirm) {
-        // send the email and update stats
-        switch (quiz_send_confirmation($a)) {
-            case true:
-                $emailresult['good']++;
-                break;
-            case false:
-                $emailresult['fail']++;
-                break;
-        }
-    }
+    $a = new stdClass();
+    // Course info
+    $a->coursename      = $course->fullname;
+    $a->courseshortname = $course->shortname;
+    // Quiz info
+    $a->quizname        = $quiz->name;
+    $a->quizreporturl   = $CFG->wwwroot . '/mod/quiz/report.php?id=' . $cm->id;
+    $a->quizreportlink  = '<a href="' . $a->quizreporturl . '">' .
+            format_string($quiz->name) . ' report</a>';
+    $a->quizreviewurl   = $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $attempt->id;
+    $a->quizreviewlink  = '<a href="' . $a->quizreviewurl . '">' .
+            format_string($quiz->name) . ' review</a>';
+    $a->quizurl         = $CFG->wwwroot . '/mod/quiz/view.php?id=' . $cm->id;
+    $a->quizlink        = '<a href="' . $a->quizurl . '">' . format_string($quiz->name) . '</a>';
+    // Attempt info
+    $a->submissiontime  = userdate($attempt->timefinish);
+    $a->timetaken       = format_time($attempt->timefinish - $attempt->timestart);
+    // Student who sat the quiz info
+    $a->studentidnumber = $submitter->idnumber;
+    $a->studentname     = fullname($submitter);
+    $a->studentusername = $submitter->username;
 
-    // send notifications if required
+    $allok = true;
+
+    // Send notifications if required
     if (!empty($userstonotify)) {
-        // loop through recipients and send an email to each and update stats
         foreach ($userstonotify as $recipient) {
-            switch (quiz_send_notification($recipient, $a)) {
-                case true:
-                    $emailresult['good']++;
-                    break;
-                case false:
-                    $emailresult['fail']++;
-                    break;
-            }
+            $allok = $allok && quiz_send_notification($recipient, $submitter, $a);
         }
     }
 
-    // log errors sending emails if any
-    if (! empty($emailresult['fail'])) {
-        debugging('quiz_send_notification_emails:: ' . $emailresult['fail'] .
-                ' email(s) failed to be sent.', DEBUG_DEVELOPER);
+    // Send confirmation if required. We send the student confirmation last, so
+    // that if message sending is being intermittently buggy, which means we send
+    // some but not all messages, and then try again later, then teachers may get
+    // duplicate messages, but the student will always get exactly one.
+    if ($sendconfirm) {
+        $allok = $allok && quiz_send_confirmation($submitter, $a);
     }
 
-    // return the number of successfully sent emails
-    return $emailresult['good'];
+    return $allok;
+}
+
+/**
+ * Handle the quiz_attempt_submitted event.
+ *
+ * This sends the confirmation and notification messages, if required.
+ *
+ * @param object $event the event object.
+ */
+function quiz_attempt_submitted_handler($event) {
+    global $DB;
+
+    $course  = $DB->get_record('course', array('id' => $event->courseid));
+    $quiz    = $DB->get_record('quiz', array('id' => $event->quizid));
+    $cm      = get_coursemodule_from_id('quiz', $event->cmid, $event->courseid);
+    $attempt = $DB->get_record('quiz_attempts', array('id' => $event->attemptid));
+
+    if (!($course && $quiz && $cm && $attempt)) {
+        // Something has been deleted since the event was raised. Therefore, the
+        // event is no longer relevant.
+        return true;
+    }
+
+    return quiz_send_notification_messages($course, $quiz, $attempt,
+            get_context_instance(CONTEXT_MODULE, $cm->id), $cm);
 }
 
 /**

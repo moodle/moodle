@@ -996,14 +996,6 @@ class quiz_attempt {
     }
 
     /**
-     * Triggers the sending of the notification emails at the end of this attempt.
-     */
-    public function quiz_send_notification_emails() {
-        quiz_send_notification_emails($this->get_course(), $this->get_quiz(), $this->attempt,
-                $this->quizobj->get_context(), $this->get_cm());
-    }
-
-    /**
      * Get the navigation panel object for this attempt.
      *
      * @param $panelclass The type of panel, quiz_attempt_nav_panel or quiz_review_nav_panel
@@ -1080,7 +1072,7 @@ class quiz_attempt {
     }
 
     public function finish_attempt($timestamp) {
-        global $DB;
+        global $DB, $USER;
         $this->quba->process_all_actions($timestamp);
         $this->quba->finish_all_questions($timestamp);
 
@@ -1093,7 +1085,21 @@ class quiz_attempt {
 
         if (!$this->is_preview()) {
             quiz_save_best_grade($this->get_quiz());
-            $this->quiz_send_notification_emails();
+
+            // Trigger event
+            $eventdata = new stdClass();
+            $eventdata->component   = 'mod_quiz';
+            $eventdata->attemptid   = $this->attempt->id;
+            $eventdata->timefinish  = $this->attempt->timefinish;
+            $eventdata->userid      = $this->attempt->userid;
+            $eventdata->submitterid = $USER->id;
+            $eventdata->quizid      = $this->get_quizid();
+            $eventdata->cmid        = $this->get_cmid();
+            $eventdata->courseid    = $this->get_courseid();
+            events_trigger('quiz_attempt_submitted', $eventdata);
+
+            // Clear the password check flag in the session.
+            $this->get_access_manager($timestamp)->clear_password_access();
         }
     }
 
