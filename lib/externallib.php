@@ -89,6 +89,9 @@ function external_function_info($function, $strictness=MUST_EXIST) {
         if (isset($functions[$function->name]['description'])) {
             $function->description = $functions[$function->name]['description'];
         }
+        if (isset($functions[$function->name]['testclientpath'])) {
+            $function->testclientpath = $functions[$function->name]['testclientpath'];
+        }
     }
 
     return $function;
