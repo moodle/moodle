@@ -2410,7 +2410,7 @@ EOD;
         if (empty($CFG->custommenuitems)) {
             return '';
         }
-        $custommenu = new custom_menu();
+        $custommenu = new custom_menu($CFG->custommenuitems, current_language());
         return $this->render_custom_menu($custommenu);
     }
 
