@@ -94,8 +94,8 @@ h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:200%;}
 .environmenttable td,
 .forumheaderlist td,
 .forumheaderlist th {
-	border: 1px solid #E3DFD4;
-	border-collapse: collapse;
+    border: 1px solid #E3DFD4;
+    border-collapse: collapse;
 }
 
 th.header,
