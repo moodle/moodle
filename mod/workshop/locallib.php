@@ -1331,7 +1331,12 @@ class workshop {
             list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
             $params['workshopid1'] = $this->id;
             $params['workshopid2'] = $this->id;
-            $sqlsort = $sortby . ' ' . $sorthow . ',u.lastname,u.firstname,u.id';
+            $sqlsort = array();
+            $sqlsortfields = array($sortby => $sorthow) + array('lastname' => 'ASC', 'firstname' => 'ASC', 'u.id' => 'ASC');
+            foreach ($sqlsortfields as $sqlsortfieldname => $sqlsortfieldhow) {
+                $sqlsort[] = $sqlsortfieldname . ' ' . $sqlsortfieldhow;
+            }
+            $sqlsort = implode(',', $sqlsort);
             $sql = "SELECT u.id AS userid,u.firstname,u.lastname,u.picture,u.imagealt,u.email,
                            s.title AS submissiontitle, s.grade AS submissiongrade, ag.gradinggrade
                       FROM {user} u
