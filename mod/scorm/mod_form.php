@@ -1,9 +1,24 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-require_once ($CFG->dirroot.'/course/moodleform_mod.php');
+require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
 class mod_scorm_mod_form extends moodleform_mod {
@@ -15,16 +30,16 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform = $this->_form;
 
         if (!$CFG->slasharguments) {
-            $mform->addElement('static', '', '',$OUTPUT->notification(get_string('slashargs', 'scorm'), 'notifyproblem'));
+            $mform->addElement('static', '', '', $OUTPUT->notification(get_string('slashargs', 'scorm'), 'notifyproblem'));
         }
         $zlib = ini_get('zlib.output_compression'); //check for zlib compression - if used, throw error because of IE bug. - SEE MDL-16185
         if (isset($zlib) && $zlib) {
-            $mform->addElement('static', '', '',$OUTPUT->notification(get_string('zlibwarning', 'scorm'), 'notifyproblem'));
+            $mform->addElement('static', '', '', $OUTPUT->notification(get_string('zlibwarning', 'scorm'), 'notifyproblem'));
         }
-//-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-// Name
+        // Name
         $mform->addElement('text', 'name', get_string('name'));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
@@ -33,10 +48,10 @@ class mod_scorm_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
 
-// Summary
+        // Summary
         $this->add_intro_editor(true);
 
-// Scorm types
+        // Scorm types
         $options = array(SCORM_TYPE_LOCAL => get_string('typelocal', 'scorm'));
 
         if ($cfg_scorm->allowtypeexternal) {
@@ -51,7 +66,7 @@ class mod_scorm_mod_form extends moodleform_mod {
             $options[SCORM_TYPE_IMSREPOSITORY] = get_string('typeimsrepository', 'scorm');
         }
 
-// Reference
+        // Reference
         if (count($options) > 1) {
             $mform->addElement('select', 'scormtype', get_string('scormtype', 'scorm'), $options);
             $mform->addHelpButton('scormtype', 'scormtype', 'scorm');
@@ -63,75 +78,75 @@ class mod_scorm_mod_form extends moodleform_mod {
             $mform->addElement('hidden', 'scormtype', SCORM_TYPE_LOCAL);
         }
 
-// New local package upload
+        // New local package upload
         $maxbytes = get_max_upload_file_size($CFG->maxbytes, $COURSE->maxbytes);
         $mform->setMaxFileSize($maxbytes);
-        $mform->addElement('filepicker', 'packagefile', get_string('package','scorm'));
+        $mform->addElement('filepicker', 'packagefile', get_string('package', 'scorm'));
         $mform->addHelpButton('packagefile', 'package', 'scorm');
         $mform->disabledIf('packagefile', 'scormtype', 'noteq', SCORM_TYPE_LOCAL);
 
-//-------------------------------------------------------------------------------
-// Time restrictions
+        //-------------------------------------------------------------------------------
+        // Time restrictions
         $mform->addElement('header', 'timerestricthdr', get_string('timerestrict', 'scorm'));
 
-        $mform->addElement('date_time_selector', 'timeopen', get_string("scormopen", "scorm"),array('optional' => true));
-        $mform->addElement('date_time_selector', 'timeclose', get_string("scormclose", "scorm"),array('optional' => true));
-//-------------------------------------------------------------------------------
-// Other Settings
+        $mform->addElement('date_time_selector', 'timeopen', get_string("scormopen", "scorm"), array('optional' => true));
+        $mform->addElement('date_time_selector', 'timeclose', get_string("scormclose", "scorm"), array('optional' => true));
+        //-------------------------------------------------------------------------------
+        // Other Settings
         $mform->addElement('header', 'advanced', get_string('othersettings', 'form'));
 
-// Grade Method
+        // Grade Method
         $mform->addElement('select', 'grademethod', get_string('grademethod', 'scorm'), scorm_get_grade_method_array());
         $mform->addHelpButton('grademethod', 'grademethod', 'scorm');
         $mform->setDefault('grademethod', $cfg_scorm->grademethod);
 
-// Maximum Grade
+        // Maximum Grade
         for ($i=0; $i<=100; $i++) {
-          $grades[$i] = "$i";
+            $grades[$i] = "$i";
         }
         $mform->addElement('select', 'maxgrade', get_string('maximumgrade'), $grades);
         $mform->setDefault('maxgrade', $cfg_scorm->maxgrade);
-        $mform->disabledIf('maxgrade', 'grademethod','eq', GRADESCOES);
+        $mform->disabledIf('maxgrade', 'grademethod', 'eq', GRADESCOES);
 
-// Attempts
-        $mform->addElement('static', '', '' ,'<hr />');
+        // Attempts
+        $mform->addElement('static', '', '' , '<hr />');
 
-// Max Attempts
+        // Max Attempts
         $mform->addElement('select', 'maxattempt', get_string('maximumattempts', 'scorm'), scorm_get_attempts_array());
         $mform->addHelpButton('maxattempt', 'maximumattempts', 'scorm');
         $mform->setDefault('maxattempt', $cfg_scorm->maxattempts);
 
-// What Grade
+        // What Grade
         $mform->addElement('select', 'whatgrade', get_string('whatgrade', 'scorm'),  scorm_get_what_grade_array());
-        $mform->disabledIf('whatgrade', 'maxattempt','eq',1);
+        $mform->disabledIf('whatgrade', 'maxattempt', 'eq', 1);
         $mform->addHelpButton('whatgrade', 'whatgrade', 'scorm');
         $mform->setDefault('whatgrade', $cfg_scorm->whatgrade);
         $mform->setAdvanced('whatgrade');
 
-// Display attempt status
+        // Display attempt status
         $mform->addElement('selectyesno', 'displayattemptstatus', get_string('displayattemptstatus', 'scorm'));
         $mform->addHelpButton('displayattemptstatus', 'displayattemptstatus', 'scorm');
         $mform->setDefault('displayattemptstatus', $cfg_scorm->displayattemptstatus);
 
-// Force completed
+        // Force completed
         $mform->addElement('selectyesno', 'forcecompleted', get_string('forcecompleted', 'scorm'));
         $mform->addHelpButton('forcecompleted', 'forcecompleted', 'scorm');
         $mform->setDefault('forcecompleted', $cfg_scorm->forcecompleted);
         $mform->setAdvanced('forcecompleted');
 
-// Force new attempt
+        // Force new attempt
         $mform->addElement('selectyesno', 'forcenewattempt', get_string('forcenewattempt', 'scorm'));
         $mform->addHelpButton('forcenewattempt', 'forcenewattempt', 'scorm');
         $mform->setDefault('forcenewattempt', $cfg_scorm->forcenewattempt);
         $mform->setAdvanced('forcenewattempt');
 
-// Last attempt lock - lock the enter button after the last available attempt has been made
+        // Last attempt lock - lock the enter button after the last available attempt has been made
         $mform->addElement('selectyesno', 'lastattemptlock', get_string('lastattemptlock', 'scorm'));
         $mform->addHelpButton('lastattemptlock', 'lastattemptlock', 'scorm');
         $mform->setDefault('lastattemptlock', $cfg_scorm->lastattemptlock);
         $mform->setAdvanced('lastattemptlock');
 
-// Activation period
+        // Activation period
 /*        $mform->addElement('static', '', '' ,'<hr />');
         $mform->addElement('static', 'activation', get_string('activation','scorm'));
         $datestartgrp = array();
@@ -151,77 +166,77 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->disabledIf('dateendgrp', 'enddisabled', 'checked');
 */
 
-// Framed / Popup Window
+        // Framed / Popup Window
         $mform->addElement('select', 'popup', get_string('display', 'scorm'), scorm_get_popup_display_array());
         $mform->setDefault('popup', $cfg_scorm->popup);
         $mform->setAdvanced('popup');
 
-// Width
-        $mform->addElement('text', 'width', get_string('width','scorm'), 'maxlength="5" size="5"');
+        // Width
+        $mform->addElement('text', 'width', get_string('width', 'scorm'), 'maxlength="5" size="5"');
         $mform->setDefault('width', $cfg_scorm->framewidth);
         $mform->setType('width', PARAM_INT);
         $mform->setAdvanced('width');
         $mform->disabledIf('width', 'popup', 'eq', 0);
 
-// Height
-        $mform->addElement('text', 'height', get_string('height','scorm'), 'maxlength="5" size="5"');
+        // Height
+        $mform->addElement('text', 'height', get_string('height', 'scorm'), 'maxlength="5" size="5"');
         $mform->setDefault('height', $cfg_scorm->frameheight);
         $mform->setType('height', PARAM_INT);
         $mform->setAdvanced('height');
         $mform->disabledIf('height', 'popup', 'eq', 0);
 
-// Window Options
+        // Window Options
         $winoptgrp = array();
-        foreach(scorm_get_popup_options_array() as $key => $value){
+        foreach (scorm_get_popup_options_array() as $key => $value) {
             $winoptgrp[] = &$mform->createElement('checkbox', $key, '', get_string($key, 'scorm'));
             $mform->setDefault($key, $value);
         }
-        $mform->addGroup($winoptgrp, 'winoptgrp', get_string('options','scorm'), '<br />', false);
+        $mform->addGroup($winoptgrp, 'winoptgrp', get_string('options', 'scorm'), '<br />', false);
         $mform->setAdvanced('winoptgrp');
         $mform->disabledIf('winoptgrp', 'popup', 'eq', 0);
 
-// Skip view page
-        $mform->addElement('select', 'skipview', get_string('skipview', 'scorm'),scorm_get_skip_view_array());
+        // Skip view page
+        $mform->addElement('select', 'skipview', get_string('skipview', 'scorm'), scorm_get_skip_view_array());
         $mform->addHelpButton('skipview', 'skipview', 'scorm');
         $mform->setDefault('skipview', $cfg_scorm->skipview);
         $mform->setAdvanced('skipview');
 
-// Hide Browse
+        // Hide Browse
         $mform->addElement('selectyesno', 'hidebrowse', get_string('hidebrowse', 'scorm'));
         $mform->addHelpButton('hidebrowse', 'hidebrowse', 'scorm');
         $mform->setDefault('hidebrowse', $cfg_scorm->hidebrowse);
         $mform->setAdvanced('hidebrowse');
 
-// Display course structure
+        // Display course structure
         $mform->addElement('selectyesno', 'displaycoursestructure', get_string('displaycoursestructure', 'scorm'));
         $mform->addHelpButton('displaycoursestructure', 'displaycoursestructure', 'scorm');
         $mform->setDefault('displaycoursestructure', $cfg_scorm->displaycoursestructure);
         $mform->setAdvanced('displaycoursestructure');
 
-// Toc display
+        // Toc display
         $mform->addElement('select', 'hidetoc', get_string('hidetoc', 'scorm'), scorm_get_hidetoc_array());
         $mform->addHelpButton('hidetoc', 'hidetoc', 'scorm');
         $mform->setDefault('hidetoc', $cfg_scorm->hidetoc);
         $mform->setAdvanced('hidetoc');
 
-// Hide Navigation panel
+        // Hide Navigation panel
         $mform->addElement('selectyesno', 'hidenav', get_string('hidenav', 'scorm'));
         $mform->setDefault('hidenav', $cfg_scorm->hidenav);
         $mform->setAdvanced('hidenav');
 
-// Autocontinue
+        // Autocontinue
         $mform->addElement('selectyesno', 'auto', get_string('autocontinue', 'scorm'));
         $mform->addHelpButton('auto', 'autocontinue', 'scorm');
         $mform->setDefault('auto', $cfg_scorm->auto);
         $mform->setAdvanced('auto');
 
-// Update packages timing
+        // Update packages timing
         $mform->addElement('select', 'updatefreq', get_string('updatefreq', 'scorm'), scorm_get_updatefreq_array());
         $mform->setDefault('updatefreq', $cfg_scorm->updatefreq);
         $mform->setAdvanced('updatefreq');
 
-//-------------------------------------------------------------------------------
-// Hidden Settings
+        //-------------------------------------------------------------------------------
+        // Hidden Settings
         $mform->addElement('hidden', 'datadir', null);
         $mform->setType('datadir', PARAM_RAW);
         $mform->addElement('hidden', 'pkgtype', null);
@@ -233,13 +248,11 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addElement('hidden', 'redirecturl', null);
         $mform->setType('redirecturl', PARAM_RAW);
 
-
-//-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
         $this->standard_coursemodule_elements();
-//-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons();
-
     }
 
     function data_preprocessing(&$default_values) {
@@ -247,9 +260,9 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         if (isset($default_values['popup']) && ($default_values['popup'] == 1) && isset($default_values['options'])) {
             if (!empty($default_values['options'])) {
-                $options = explode(',',$default_values['options']);
+                $options = explode(',', $default_values['options']);
                 foreach ($options as $option) {
-                    list($element,$value) = explode('=',$option);
+                    list($element, $value) = explode('=', $option);
                     $element = trim($element);
                     $default_values[$element] = trim($value);
                 }
@@ -258,10 +271,10 @@ class mod_scorm_mod_form extends moodleform_mod {
         if (isset($default_values['grademethod'])) {
             $default_values['grademethod'] = intval($default_values['grademethod']);
         }
-        if (isset($default_values['width']) && (strpos($default_values['width'],'%') === false) && ($default_values['width'] <= 100)) {
+        if (isset($default_values['width']) && (strpos($default_values['width'], '%') === false) && ($default_values['width'] <= 100)) {
             $default_values['width'] .= '%';
         }
-        if (isset($default_values['width']) && (strpos($default_values['height'],'%') === false) && ($default_values['height'] <= 100)) {
+        if (isset($default_values['width']) && (strpos($default_values['height'], '%') === false) && ($default_values['height'] <= 100)) {
             $default_values['height'] .= '%';
         }
         $scorms = get_all_instances_in_course('scorm', $COURSE);
@@ -279,7 +292,7 @@ class mod_scorm_mod_form extends moodleform_mod {
             $default_values['redirecturl'] = '../mod/scorm/view.php?id='.$default_values['coursemodule'];
         }
         if (isset($default_values['version'])) {
-            $default_values['pkgtype'] = (substr($default_values['version'],0,5) == 'SCORM') ? 'scorm':'aicc';
+            $default_values['pkgtype'] = (substr($default_values['version'], 0, 5) == 'SCORM') ? 'scorm':'aicc';
         }
         if (isset($default_values['instance'])) {
             $default_values['datadir'] = $default_values['instance'];
@@ -391,4 +404,3 @@ class mod_scorm_mod_form extends moodleform_mod {
         parent::set_data($default_values);
     }
 }
-

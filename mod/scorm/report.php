@@ -1,4 +1,18 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 // This script uses installed report plugins to print quiz reports
 
@@ -141,7 +155,7 @@ if ( !$nostudents ) {
     $headers = array();
     if (!$download && $candelete) {
         $columns[]= 'checkbox';
-        $headers[]= NULL;
+        $headers[]= null;
     }
     if (!$download && $CFG->grade_report_showuserimage) {
         $columns[]= 'picture';
@@ -170,7 +184,7 @@ if ( !$nostudents ) {
             }
         }
     } else {
-        $scoes = NULL;
+        $scoes = null;
     }
 
     if (!$download) {
@@ -326,8 +340,7 @@ if ( !$nostudents ) {
 
     if (!$download) {
         $sort = $table->get_sql_sort();
-    }
-    else {
+    } else {
         $sort = '';
     }
     // Fix some wired sorting
@@ -349,7 +362,7 @@ if ( !$nostudents ) {
             $count = $DB->get_record_sql($countsql);
             $totalinitials = $count->nbresults;
             if ($twhere) {
-$countsql .= ' AND '.$twhere;
+                $countsql .= ' AND '.$twhere;
             }
             $count = $DB->get_record_sql($countsql, $params);
             $total  = $count->nbresults;
@@ -377,7 +390,7 @@ $countsql .= ' AND '.$twhere;
             // Start form
             $strreallydel  = addslashes_js(get_string('deleteattemptcheck', 'scorm'));
             echo '<form id="attemptsform" method="post" action="' . $reporturlwithdisplayoptions->out(true) .
-    '" onsubmit="return confirm(\''.$strreallydel.'\');">';
+                 '" onsubmit="return confirm(\''.$strreallydel.'\');">';
             echo '<input type="hidden" name="action" value="delete"/>';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '<div style="display: none;">';
@@ -457,8 +470,7 @@ $countsql .= ' AND '.$twhere;
                                 if (isset($trackdata->$maxkey)) {
                                     $score .= '/'.$trackdata->$maxkey;
                                 }
-                            // else print out status
-                            } else {
+                            } else { // else print out status
                                 $score = $strstatus;
                             }
                             if (!$download) {

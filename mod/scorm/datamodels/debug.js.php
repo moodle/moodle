@@ -1,3 +1,21 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+?>
+
 <!--// hopefully fool ie IE proof way of getting DOM element
 function safeGetElement(doc, el) {
     return doc.ids ? doc.ids[el] : doc.getElementById ? doc.getElementById(el) : doc.all[el];
@@ -52,11 +70,11 @@ function toggleLog () {
     if (getLoggingActive() == "A") {
         AppendToLog("Moodle Logging Deactivated", 0);
         setLoggingActive('N');
-        logButton.innerHTML = '--><?php print_string('scormloggingoff','scorm') ?>';
+        logButton.innerHTML = '--><?php print_string('scormloggingoff', 'scorm') ?>';
     } else {
         setLoggingActive('A');
         AppendToLog("Moodle Logging Activated", 0);
-        logButton.innerHTML = '<?php print_string('scormloggingon','scorm') ?>';
+        logButton.innerHTML = '<?php print_string('scormloggingon', 'scorm') ?>';
         logPopUpWindow.focus();
     }
 }
@@ -729,9 +747,9 @@ logButton.id = 'mod-scorm-log-toggle';
 logButton.name = 'logToggle';
 logButton.href = 'javascript:toggleLog();';
 if (getLoggingActive() == "A") {
-    logButton.innerHTML = '<?php print_string('scormloggingon','scorm') ?>';
+    logButton.innerHTML = '<?php print_string('scormloggingon', 'scorm') ?>';
 } else {
-    logButton.innerHTML = '<?php print_string('scormloggingoff','scorm') ?>';
+    logButton.innerHTML = '<?php print_string('scormloggingoff', 'scorm') ?>';
 }
 var content = safeGetElement(document, 'scormpage');
 content.insertBefore(logButton, content.firstChild);

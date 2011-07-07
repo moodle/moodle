@@ -48,9 +48,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
     var scorm_bloody_labelclick = false;
     var scorm_nav_panel;
 
-
     Y.use('yui2-resize', 'yui2-dragdrop', 'yui2-container', 'yui2-button', 'yui2-layout', 'yui2-treeview', 'yui2-json', 'yui2-event', function(Y) {
-
 
         var scorm_activate_item = function(node) {
             if (!node) {
@@ -122,14 +120,13 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
             }
             var old = YAHOO.util.Dom.get('scorm_object');
             if (old) {
-                if(window_name) { 
+                if(window_name) {
                     var cwidth = scormplayerdata.cwidth;
                     var cheight = scormplayerdata.cheight;
                     var poptions = scormplayerdata.popupoptions;
                     scorm_openpopup("loadSCO.php?" + node.title, window_name, poptions, cwidth, cheight);
-                }
-                else { 
-                    content.replaceChild(obj, old); 
+                } else {
+                    content.replaceChild(obj, old);
                 }
             } else {
                 content.appendChild(obj);
@@ -230,7 +227,6 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
             }
         };
 
-
         var scorm_up = function(node) {
             var node = scorm_tree_node.getHighlightedNode();
             if (node.depth > 0) {
@@ -284,7 +280,6 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
 
         mod_scorm_next = scorm_next;
         mod_scorm_prev = scorm_prev;
-
 
         // layout
         YAHOO.widget.LayoutUnit.prototype.STR_COLLAPSE = M.str.moodle.hide;

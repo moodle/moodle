@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -246,7 +245,7 @@ if (!empty($b)) {
                 'cmi.interactions.'.$i.'.learner_response');
         $row = array();
         foreach ($elements as $element) {
-           if (isset($trackdata->$element)) {
+            if (isset($trackdata->$element)) {
                 $row[] = s($trackdata->$element);
                 $printedelements[]=$element;
             } else {
@@ -315,7 +314,7 @@ if (!empty($b)) {
 
     $existelements = false;
 
-    foreach ( $trackdata as $element => $value) {
+    foreach ($trackdata as $element => $value) {
         if (substr($element, 0, 3) == 'cmi') {
             if (!(in_array ($element, $printedelements))) {
                 $existelements = true;
