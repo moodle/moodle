@@ -665,7 +665,7 @@ if ($formdata = $mform->is_cancelled()) {
                     $newgroupdata = new object();
                     $newgroupdata->name = $addgroup;
                     $newgroupdata->courseid = $ccache[$shortname]->id;
-                    if ($ccache[$shortname]->groups[$addgroup]->id = groups_create_group($newgroupdata)){
+                    if ($ccache[$shortname]->groups[$addgroup]->id = groups_create_group(addslashes_recursive($newgroupdata))){
                         $ccache[$shortname]->groups[$addgroup]->name = $newgroupdata->name;
                     } else {
                         $upt->track('enrolments', get_string('unknowngroup', 'error', $addgroup), 'error');
