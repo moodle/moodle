@@ -72,7 +72,7 @@ abstract class restore_search_base implements renderable {
      */
     public function __construct(array $config=array()) {
 
-        $this->search = optional_param($this->get_varsearch(), self::DEFAULT_SEARCH, PARAM_ALPHANUMEXT);
+        $this->search = optional_param($this->get_varsearch(), self::DEFAULT_SEARCH, PARAM_NOTAGS);
 
         foreach ($config as $name=>$value) {
             $method = 'set_'.$name;
