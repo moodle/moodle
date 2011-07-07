@@ -439,7 +439,7 @@ input[type="radio"] {
 /* do not push the field far from the label more than all the other mform elements */
 .mform .fitem input[type="text"],
 .mform .fitem input[type="password"] {
-	margin: 0.3em 0 0.3em 0;
+    margin: 0.3em 0 0.3em 0;
 }
 
 /* needed to vertically align label of mform groups containing, for instance, select and text */
