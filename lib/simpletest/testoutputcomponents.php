@@ -112,3 +112,111 @@ class user_picture_test extends UnitTestCase {
         $this->assertEqual($returned->custom1, 'Value of custom1');
     }
 }
+
+
+/**
+ * Unit tests for the custom_menu class
+ */
+class custom_menu_test extends UnitTestCase {
+
+    public function test_empty_menu() {
+        $emptymenu = new custom_menu();
+        $this->assertTrue($emptymenu instanceof custom_menu);
+        $this->assertFalse($emptymenu->has_children());
+    }
+
+    public function test_basic_syntax() {
+        $definition = <<<EOF
+Moodle community|http://moodle.org
+-Moodle free support|http://moodle.org/support
+-Moodle development|http://moodle.org/development
+--Moodle Tracker|http://tracker.moodle.org
+--Moodle Docs|http://docs.moodle.org
+-Moodle News|http://moodle.org/news
+Moodle company
+-Hosting|http://moodle.com/hosting|Commercial hosting
+-Support|http://moodle.com/support|Commercial support
+EOF;
+
+        $menu = new custom_menu($definition);
+        $this->assertTrue($menu instanceof custom_menu);
+        $this->assertTrue($menu->has_children());
+        $firstlevel = $menu->get_children();
+        $this->assertIsA($firstlevel, 'array');
+        $this->assertEqual(2, count($firstlevel));
+
+        $item = array_shift($firstlevel);
+        $this->assertTrue($item instanceof custom_menu_item);
+        $this->assertTrue($item->has_children());
+        $this->assertEqual(3, count($item->get_children()));
+        $this->assertEqual('Moodle community', $item->get_text());
+        $itemurl = $item->get_url();
+        $this->assertTrue($itemurl instanceof moodle_url);
+        $this->assertEqual('http://moodle.org', $itemurl->out());
+        $this->assertEqual($item->get_text(), $item->get_title()); // implicit title
+
+        $item = array_shift($firstlevel);
+        $this->assertTrue($item->has_children());
+        $this->assertEqual(2, count($item->get_children()));
+        $this->assertEqual('Moodle company', $item->get_text());
+        $this->assertTrue(is_null($item->get_url()));
+
+        $subitem = array_shift($item->get_children());
+        $this->assertFalse($subitem->has_children());
+        $this->assertEqual('Hosting', $subitem->get_text());
+        $this->assertEqual('Commercial hosting', $subitem->get_title());
+    }
+
+    public function test_multilang_support() {
+        $definition = <<<EOF
+Start|http://school.info
+Info
+-English|http://school.info/en|Information in English|en
+-Deutsch|http://school.info/de|Informationen in deutscher Sprache|de,de_du,de_kids
+EOF;
+
+        // the menu without multilang support
+        $menu = new custom_menu($definition);
+        $this->assertTrue($menu->has_children());
+        $this->assertEqual(2, count($menu->get_children()));
+
+        $infomenu = array_pop($menu->get_children());
+        $this->assertTrue($infomenu->has_children());
+        $this->assertEqual(2, count($infomenu->get_children()));
+
+        $langspecinfo = array_shift($infomenu->get_children());
+        $this->assertEqual('Information in English', $langspecinfo->get_title());
+
+        // same menu for English language selected
+        $menu = new custom_menu($definition, 'en');
+        $this->assertTrue($menu->has_children());
+        $this->assertEqual(2, count($menu->get_children()));
+
+        $infomenu = array_pop($menu->get_children());
+        $this->assertTrue($infomenu->has_children());
+        $this->assertEqual(1, count($infomenu->get_children()));
+
+        $langspecinfo = array_shift($infomenu->get_children());
+        $this->assertEqual('Information in English', $langspecinfo->get_title());
+
+        // same menu for German (de_du) language selected
+        $menu = new custom_menu($definition, 'de_du');
+        $this->assertTrue($menu->has_children());
+        $this->assertEqual(2, count($menu->get_children()));
+
+        $infomenu = array_pop($menu->get_children());
+        $this->assertTrue($infomenu->has_children());
+        $this->assertEqual(1, count($infomenu->get_children()));
+
+        $langspecinfo = array_shift($infomenu->get_children());
+        $this->assertEqual('Informationen in deutscher Sprache', $langspecinfo->get_title());
+
+        // same menu for Czech language selected
+        $menu = new custom_menu($definition, 'cs');
+        $this->assertTrue($menu->has_children());
+        $this->assertEqual(2, count($menu->get_children()));
+
+        $infomenu = array_pop($menu->get_children());
+        $this->assertFalse($infomenu->has_children());
+    }
+}
