@@ -47,6 +47,9 @@ function xmldb_message_popup_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2008072401, 'message', 'popup');
     }
 
+    // Moodle v2.1.0 release upgrade line
+    // Put any upgrade step following this
+
     return true;
 }
 
