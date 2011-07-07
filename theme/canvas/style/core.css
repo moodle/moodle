@@ -175,7 +175,7 @@ input[type="radio"] {
     margin-left: 21%;
 }
 
-/* Calendar 
+/* Calendar
 -----------------------*/
 
 .calendarlayout .sidecalendar {
@@ -450,7 +450,7 @@ input[type="radio"] {
     text-align: center;
 }
 
-/* Blogs 
+/* Blogs
 ------------------------*/
 
 .blog_entry .audience {
@@ -463,7 +463,7 @@ input[type="radio"] {
     margin-bottom: 0.5em;
 }
 
-/* Tags 
+/* Tags
 ------------------------*/
 
 #big-tag-cloud-box {
@@ -556,7 +556,7 @@ input[type="radio"] {
     padding-top: 30px;
 }
 
-/* Forms 
+/* Forms
 -----------------------*/
 
 .mform .fsubmit {
@@ -572,12 +572,6 @@ input[type="radio"] {
 .form-description {
     font-size: 0.95em;
     color: #444;
-}
-
-.mform .hidden .fitem .fgroup {
-    width: 100%;
-    text-align: center;
-    margin: 1em 0;
 }
 
 .path-backup .mform .hidden .fitem .fgroup {

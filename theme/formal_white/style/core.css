@@ -116,9 +116,11 @@ input[type="radio"] {
     margin: 0 auto;
     text-align: left;
 }
+
 .dir-rtl .loginbox .loginform .form-label {
     text-align: right;
 }
+
 .loginbox .loginform .form-input {
     float: none;
     width: 100%;
@@ -434,10 +436,16 @@ input[type="radio"] {
     color: #444;
 }
 
-.mform .hidden .fitem .fgroup {
-    width: 100%;
-    text-align: center;
-    margin: 1em 0;
+/* do not push the field far from the label more than all the other mform elements */
+.mform .fitem input[type="text"],
+.mform .fitem input[type="password"] {
+	margin: 0.3em 0 0.3em 0;
+}
+
+/* needed to vertically align label of mform groups containing, for instance, select and text */
+.mform .fitem {
+    line-height:2.0em;
+    margin-top:0;
 }
 
 .path-backup .mform .hidden .fitem .fgroup {
