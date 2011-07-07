@@ -98,6 +98,7 @@ $string['forcenewattempt'] = 'Force new attempt';
 $string['forcenewattempt_help'] = 'If enabled, each time a SCORM package is accessed will be counted as a new attempt.';
 $string['forcenewattemptdesc'] = 'This preference sets the default value for the force new attempt setting';
 $string['forcejavascript'] = 'Force users to enable JavaScript';
+$string['forcejavascript_desc'] = 'If enabled(recommended) this prevents access to SCORM objects when JavaScript is not supported/enabled in a users browser. If disabled the user may view the SCORM but API communication will fail and no grade information will be saved.';
 $string['forcejavascriptmessage'] = 'JavaScript is required to view this object, please enable JavaScript in your browser and try again.';
 $string['found'] = 'Manifest found';
 $string['frameheight'] = 'This preference set the default height for stage frame or window';
