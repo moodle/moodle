@@ -534,23 +534,20 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                     $reordercheckboxlabel = '<label for="s' . $question->id . '">';
                     $reordercheckboxlabelclose = '</label>';
                 }
-                if (!$quiz->shufflequestions) {
-                    // Print and increment question number
-                    $questioncountstring = '';
-                    if ($questioncount>999 || ($reordertool && $questioncount>99)) {
-                        $questioncountstring =
-                                "$reordercheckboxlabel<small>$questioncount</small>" .
-                                $reordercheckboxlabelclose . $reordercheckbox;
-                    } else {
-                        $questioncountstring = $reordercheckboxlabel . $questioncount .
-                                $reordercheckboxlabelclose . $reordercheckbox;
-                    }
-                    echo $questioncountstring;
-                    $qno += $question->length;
+                if ($question->length == 0) {
+                    $qnodisplay = get_string('infoshort', 'quiz');
+                } else if ($quiz->shufflequestions) {
+                    $qnodisplay = '?';
                 } else {
-                    echo "$reordercheckboxlabel ? $reordercheckboxlabelclose" .
-                            " $reordercheckbox";
+                    if ($qno > 999 || ($reordertool && $qno > 99)) {
+                        $qnodisplay = html_writer::tag('small', $qno);
+                    } else {
+                        $qnodisplay = $qno;
+                    }
+                    $qno += $question->length;
                 }
+                echo $reordercheckboxlabel . $qnodisplay . $reordercheckboxlabelclose .
+                        $reordercheckbox;
 
                 ?>
         </div>
