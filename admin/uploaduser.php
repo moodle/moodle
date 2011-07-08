@@ -558,7 +558,7 @@ if ($formdata = $mform->is_cancelled()) {
                 continue;
             }
             // save custom profile fields data
-            profile_save_data($user);
+            profile_save_data(addslashes_recursive($user));
 
             // make sure user context exists
             get_context_instance(CONTEXT_USER, $user->id);
