@@ -31,6 +31,16 @@ require_once("$CFG->libdir/formslib.php");
 class enrol_self_enrol_form extends moodleform {
     protected $instance;
 
+    /**
+     * Overriding this function to get unique form id for multiple self enrolments
+     *
+     * @return string form identifier
+     */
+    protected function get_form_identifier() {
+        $formid = $this->_customdata->id.'_'.get_class($this);
+        return $formid;
+    }
+
     public function definition() {
         $mform = $this->_form;
         $instance = $this->_customdata;
@@ -40,7 +50,9 @@ class enrol_self_enrol_form extends moodleform {
         if ($instance->password) {
             $heading = $plugin->get_instance_name($instance);
             $mform->addElement('header', 'selfheader', $heading);
-            $mform->addElement('passwordunmask', 'enrolpassword', get_string('password', 'enrol_self'));
+            //change the id of self enrolment key input as there can be multiple self enrolment methods
+            $mform->addElement('passwordunmask', 'enrolpassword', get_string('password', 'enrol_self'),
+                    array('id' => $instance->id."_enrolpassword"));
         } else {
             // nothing?
         }

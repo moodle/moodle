@@ -141,9 +141,10 @@ abstract class moodleform {
         if (empty($action)){
             $action = strip_querystring(qualified_me());
         }
-
-        $this->_formname = get_class($this); // '_form' suffix kept in order to prevent collisions of form id and other element
+        // Assign custom data first, so that get_form_identifier can use it.
         $this->_customdata = $customdata;
+        $this->_formname = $this->get_form_identifier();
+
         $this->_form = new MoodleQuickForm($this->_formname, $method, $action, $target, $attributes);
         if (!$editable){
             $this->_form->hardFreeze();
@@ -161,6 +162,18 @@ abstract class moodleform {
 
         // we have to know all input types before processing submission ;-)
         $this->_process_submission($method);
+    }
+
+    /**
+     * It should returns unique identifier for the form.
+     * Currently it will return class name, but in case two same forms have to be
+     * rendered on same page then override function to get unique form identifier.
+     * e.g This is used on multiple self enrollments page.
+     *
+     * @return string form identifier.
+     */
+    protected function get_form_identifier() {
+        return get_class($this);
     }
 
     /**
