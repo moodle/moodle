@@ -28,6 +28,7 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/csvlib.class.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
 require_once($CFG->dirroot.'/group/lib.php');
+require_once($CFG->dirroot.'/cohort/lib.php');
 require_once('uploaduserlib.php');
 require_once('uploaduser_form.php');
 
@@ -172,6 +173,7 @@ if ($formdata = $mform2->is_cancelled()) {
 
     // caches
     $ccache         = array(); // course cache - do not fetch all courses here, we  will not probably use them all anyway!
+    $cohorts        = array();
     $rolecache      = uu_allowed_roles_cache(); // roles lookup cache
     $manualcache    = array(); // cache of used manual enrol plugins in each course
     $supportedauths = uu_supported_auths(); // officially supported plugins that are enabled
@@ -698,6 +700,48 @@ if ($formdata = $mform2->is_cancelled()) {
                 }
             }
         }
+
+
+        // add to cohort first, it might trigger enrolments indirectly - do NOT create cohorts here!
+        foreach ($filecolumns as $column) {
+            if (!preg_match('/^cohort\d+$/', $column)) {
+                continue;
+            }
+
+            if (!empty($user->$column)) {
+                $addcohort = $user->$column;
+                if (!isset($cohorts[$addcohort])) {
+                    if (is_number($addcohort)) {
+                        // only non-numeric idnumbers!
+                        $cohort = $DB->get_record('cohort', array('id'=>$addcohort));
+                    } else {
+                        $cohort = $DB->get_record('cohort', array('idnumber'=>$addcohort));
+                    }
+
+                    if (empty($cohort)) {
+                        $cohorts[$addcohort] = get_string('unknowncohort', 'core_cohort', s($addcohort));
+                    } else if (!empty($cohort->component)) {
+                        // cohorts synchronised with external sources must not be modified!
+                        $cohorts[$addcohort] = get_string('external', 'core_cohort');
+                    } else {
+                        $cohorts[$addcohort] = $cohort;
+                    }
+                }
+
+                if (is_object($cohorts[$addcohort])) {
+                    $cohort = $cohorts[$addcohort];
+                    if (!$DB->record_exists('cohort_members', array('cohortid'=>$cohort->id, 'userid'=>$user->id))) {
+                        cohort_add_member($cohort->id, $user->id);
+                        // we might add special column later, for now let's abuse enrolments
+                        $upt->track('enrolments', get_string('useradded', 'core_cohort', s($cohort->name)));
+                    }
+                } else {
+                    // error message
+                    $upt->track('enrolments', $cohorts[$addcohort], 'error');
+                }
+            }
+        }
+
 
         // find course enrolments, groups, roles/types and enrol periods
         // this is again a special case, we always do this for any updated or created users
