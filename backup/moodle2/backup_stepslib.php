@@ -1565,6 +1565,32 @@ class backup_activity_grade_items_to_ids extends backup_execution_step {
 }
 
 /**
+ * This step will annotate all the groups and groupings belonging to the course
+ */
+class backup_annotate_course_groups_and_groupings extends backup_execution_step {
+
+    protected function define_execution() {
+        global $DB;
+
+        // Get all the course groups
+        if ($groups = $DB->get_records('groups', array(
+                'courseid' => $this->task->get_courseid()))) {
+            foreach ($groups as $group) {
+                backup_structure_dbops::insert_backup_ids_record($this->get_backupid(), 'group', $group->id);
+            }
+        }
+
+        // Get all the course groupings
+        if ($groupings = $DB->get_records('groupings', array(
+                'courseid' => $this->task->get_courseid()))) {
+            foreach ($groupings as $grouping) {
+                backup_structure_dbops::insert_backup_ids_record($this->get_backupid(), 'grouping', $grouping->id);
+            }
+        }
+    }
+}
+
+/**
  * This step will annotate all the groups belonging to already annotated groupings
  */
 class backup_annotate_groups_from_groupings extends backup_execution_step {
