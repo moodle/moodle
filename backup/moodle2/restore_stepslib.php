@@ -312,6 +312,8 @@ class restore_gradebook_structure_step extends restore_structure_step {
 
         // We need to update the calculations for calculated grade items that may reference old
         // grade item ids using ##gi\d+##.
+        // $mappings can be empty, use 0 if so (won't match ever)
+        $mappings = !empty($mappings) ? $mappings : array(0);
         list($sql, $params) = $DB->get_in_or_equal(array_values($mappings), SQL_PARAMS_NAMED);
         $sql = "SELECT gi.id, gi.calculation
                   FROM {grade_items} gi
