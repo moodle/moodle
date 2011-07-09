@@ -68,9 +68,13 @@ $PAGE->set_context($context);
 
 if ($context->contextlevel == CONTEXT_COURSECAT) {
     $category = $DB->get_record('course_categories', array('id'=>$context->instanceid), '*', MUST_EXIST);
-    $PAGE->navbar->add($category->name, new moodle_url('/course/index.php', array('categoryedit'=>'1')));
+    navigation_node::override_active_url(new moodle_url('/cohort/index.php', array('contextid'=>$cohort->contextid)));
+    $PAGE->set_pagelayout('report');
+
+} else {
+    navigation_node::override_active_url(new moodle_url('/cohort/index.php', array()));
+    $PAGE->set_pagelayout('admin');
 }
-$PAGE->navbar->add(get_string('cohorts', 'cohort'), new moodle_url('/cohort/', array('contextid'=>$context->id)));
 
 if ($delete and $cohort->id) {
     $PAGE->url->param('delete', 1);
