@@ -21,49 +21,94 @@ if ($ADMIN->fulltree) {
     $yesno = array(0 => get_string('no'),
                    1 => get_string('yes'));
 
-    $settings->add(new admin_setting_configselect('scorm/grademethod', get_string('grademethod', 'scorm'), get_string('grademethoddesc', 'scorm'), GRADEHIGHEST, scorm_get_grade_method_array()));
+    //default grade settings
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/grademethod',
+        get_string('grademethod', 'scorm'), get_string('grademethoddesc', 'scorm'),
+        array('value' => GRADEHIGHEST, 'adv' => false), scorm_get_grade_method_array()));
 
     for ($i=0; $i<=100; $i++) {
         $grades[$i] = "$i";
     }
-    $settings->add(new admin_setting_configselect('scorm/maxgrade', get_string('maximumgrade'), get_string('maximumgradedesc', 'scorm'), 100, $grades));
 
-    $settings->add(new admin_setting_configtext('scorm/maxattempts', get_string('maximumattempts', 'scorm'), '', 0, PARAM_INT));
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/maxgrade',
+        get_string('maximumgrade'), get_string('maximumgradedesc', 'scorm'),
+        array('value' => 100, 'adv' => false), $grades));
 
-    $settings->add(new admin_setting_configselect('scorm/displayattemptstatus', get_string('displayattemptstatus', 'scorm'), get_string('displayattemptstatusdesc', 'scorm'), 0, $yesno));
+    //default attempts settings.
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/maxattempts',
+        get_string('maximumattempts', 'scorm'), '',
+        array('value' => '0', 'adv' => false), scorm_get_attempts_array()));
 
-    $settings->add(new admin_setting_configselect('scorm/displaycoursestructure', get_string('displaycoursestructure', 'scorm'), get_string('displaycoursestructuredesc', 'scorm'), 0, $yesno));
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/whatgrade',
+        get_string('whatgrade', 'scorm'), get_string('whatgradedesc', 'scorm'),
+        array('value' => HIGHESTATTEMPT, 'adv' => false), scorm_get_what_grade_array()));
 
-    $settings->add(new admin_setting_configselect('scorm/forcecompleted', get_string('forcecompleted', 'scorm'), get_string('forcecompleteddesc', 'scorm'), 0, $yesno));
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/displayattemptstatus',
+        get_string('displayattemptstatus', 'scorm'), get_string('displayattemptstatusdesc', 'scorm'),
+        array('value' => 1, 'adv' => false), $yesno));
 
-    $settings->add(new admin_setting_configselect('scorm/forcenewattempt', get_string('forcenewattempt', 'scorm'), get_string('forcenewattemptdesc', 'scorm'), 0, $yesno));
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/forcecompleted',
+        get_string('forcecompleted', 'scorm'), get_string('forcecompleteddesc', 'scorm'),
+        array('value' => 0, 'adv' => true), $yesno));
 
-    $settings->add(new admin_setting_configselect('scorm/lastattemptlock', get_string('lastattemptlock', 'scorm'), get_string('lastattemptlockdesc', 'scorm'), 0, $yesno));
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/forcenewattempt',
+        get_string('forcenewattempt', 'scorm'), get_string('forcenewattemptdesc', 'scorm'),
+        array('value' => 0, 'adv' => true), $yesno));
 
-    $settings->add(new admin_setting_configselect('scorm/whatgrade', get_string('whatgrade', 'scorm'), get_string('whatgradedesc', 'scorm'), HIGHESTATTEMPT, scorm_get_what_grade_array()));
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/lastattemptlock',
+        get_string('lastattemptlock', 'scorm'), get_string('lastattemptlockdesc', 'scorm'),
+        array('value' => 0, 'adv' => true), $yesno));
 
-    $settings->add(new admin_setting_configtext('scorm/framewidth', get_string('width', 'scorm'), get_string('framewidth', 'scorm'), 100));
+    //default display settings
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/displaycoursestructure',
+        get_string('displaycoursestructure', 'scorm'), get_string('displaycoursestructuredesc', 'scorm'),
+        array('value' => 0, 'adv' => false), $yesno));
 
-    $settings->add(new admin_setting_configtext('scorm/frameheight', get_string('height', 'scorm'), get_string('frameheight', 'scorm'), 500));
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/popup',
+        get_string('display', 'scorm'), get_string('displaydesc', 'scorm'),
+        array('value' => 0, 'adv' => false), scorm_get_popup_display_array()));
 
-    $settings->add(new admin_setting_configselect('scorm/popup', get_string('display', 'scorm'), get_string('displaydesc', 'scorm'), 0, scorm_get_popup_display_array()));
+    $settings->add(new admin_setting_configtext_with_advanced('scorm/framewidth',
+        get_string('width', 'scorm'), get_string('framewidth', 'scorm'),
+        array('value' => '100', 'adv' => true)));
+
+    $settings->add(new admin_setting_configtext_with_advanced('scorm/frameheight',
+        get_string('height', 'scorm'), get_string('frameheight', 'scorm'),
+        array('value' => '500', 'adv' => true)));
+
+    $settings->add(new admin_setting_configcheckbox('scorm/winoptgrp_adv',
+         get_string('optionsadv', 'scorm'), get_string('optionsadv_desc', 'scorm'), 1));
 
     foreach (scorm_get_popup_options_array() as $key => $value) {
-        $settings->add(new admin_setting_configcheckbox('scorm/'.$key, get_string($key, 'scorm'), '', $value));
+        $settings->add(new admin_setting_configcheckbox('scorm/'.$key,
+            get_string($key, 'scorm'), '', $value));
     }
 
-    $settings->add(new admin_setting_configselect('scorm/skipview', get_string('skipview', 'scorm'), get_string('skipviewdesc', 'scorm'), 0, scorm_get_skip_view_array()));
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/skipview',
+        get_string('skipview', 'scorm'), get_string('skipviewdesc', 'scorm'),
+        array('value' => 0, 'adv' => true), scorm_get_skip_view_array()));
 
-    $settings->add(new admin_setting_configselect('scorm/hidebrowse', get_string('hidebrowse', 'scorm'), get_string('hidebrowsedesc', 'scorm'), 0, $yesno));
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/hidebrowse',
+        get_string('hidebrowse', 'scorm'), get_string('hidebrowsedesc', 'scorm'),
+        array('value' => 0, 'adv' => true), $yesno));
 
-    $settings->add(new admin_setting_configselect('scorm/hidetoc', get_string('hidetoc', 'scorm'), get_string('hidetocdesc', 'scorm'), 0, scorm_get_hidetoc_array()));
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/hidetoc',
+        get_string('hidetoc', 'scorm'), get_string('hidetocdesc', 'scorm'),
+        array('value' => 0, 'adv' => true), scorm_get_hidetoc_array()));
 
-    $settings->add(new admin_setting_configselect('scorm/hidenav', get_string('hidenav', 'scorm'), get_string('hidenavdesc', 'scorm'), 0, $yesno));
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/hidenav',
+        get_string('hidenav', 'scorm'), get_string('hidenavdesc', 'scorm'),
+        array('value' => 0, 'adv' => false), $yesno));
 
-    $settings->add(new admin_setting_configselect('scorm/auto', get_string('autocontinue', 'scorm'), get_string('autocontinuedesc', 'scorm'), 0, $yesno));
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/auto',
+        get_string('autocontinue', 'scorm'), get_string('autocontinuedesc', 'scorm'),
+        array('value' => 0, 'adv' => true), $yesno));
 
-    $settings->add(new admin_setting_configselect('scorm/updatefreq', get_string('updatefreq', 'scorm'), get_string('updatefreqdesc', 'scorm'), 0, scorm_get_updatefreq_array()));
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/updatefreq',
+        get_string('updatefreq', 'scorm'), get_string('updatefreqdesc', 'scorm'),
+        array('value' => 0, 'adv' => true), scorm_get_updatefreq_array()));
 
+    //admin level settings.
     $settings->add(new admin_setting_configtext('scorm/updatetime', get_string('updatetime', 'scorm'), '', 2, PARAM_INT));
 
     $settings->add(new admin_setting_configcheckbox('scorm/allowtypeexternal', get_string('allowtypeexternal', 'scorm'), '', 0));
