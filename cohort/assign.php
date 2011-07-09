@@ -62,6 +62,8 @@ $PAGE->set_heading($COURSE->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('assignto', 'cohort', format_string($cohort->name)));
 
+echo $OUTPUT->notification(get_string('removeuserwarning', 'core_cohort'));
+
 // Get the user_selector we will need.
 $potentialuserselector = new cohort_candidate_selector('addselect', array('cohortid'=>$cohort->id));
 $existinguserselector = new cohort_existing_selector('removeselect', array('cohortid'=>$cohort->id));
