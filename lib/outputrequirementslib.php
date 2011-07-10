@@ -448,11 +448,6 @@ class page_requirements_manager {
                                     'requires' => array('base', 'node', 'event', 'node-event-simulate'),
                                     'fullpath' => '/message/module.js');
                     break;
-                case 'core_flashdetect':
-                    $module = array('name'     => 'core_flashdetect',
-                                    'fullpath' => '/lib/flashdetect/flashdetect.js',
-                                    'requires' => array('io'));
-                    break;
                 case 'core_group':
                     $module = array('name'     => 'core_group',
                                     'fullpath' => '/group/module.js',

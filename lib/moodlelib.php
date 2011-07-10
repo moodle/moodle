@@ -7035,7 +7035,6 @@ function get_core_subsystems() {
             'filepicker'  => NULL,
             'files'       => 'files',
             'filters'     => NULL,
-            'flashdetect' => NULL,
             'fonts'       => NULL,
             'form'        => 'lib/form',
             'grades'      => 'grade',
