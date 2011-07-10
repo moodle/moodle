@@ -327,6 +327,8 @@ if (isloggedin() and !isguestuser()) {
     echo $OUTPUT->box_end();
 } else {
     include("index_form.html");
+    //focus username or password
+    $PAGE->requires->js_init_call('M.util.focus_login_form', null, true);
 }
 
 echo $OUTPUT->footer();
