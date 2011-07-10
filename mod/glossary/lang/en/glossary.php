@@ -123,6 +123,7 @@ $string['displayformatfullwithauthor'] = 'Full with author';
 $string['displayformatfullwithoutauthor'] = 'Full without author';
 $string['displayformats'] = 'Display formats';
 $string['displayformatssetup'] = 'Display formats setup';
+$string['duplicatecategory'] = 'Duplicate category';
 $string['duplicateentry'] = 'Duplicate entry';
 $string['editalways'] = 'Edit always';
 $string['editalways_help'] = 'This setting specifies whether entries are always editable or whether students can only edit their entries during a configured editing time (usually 30 minutes).';
