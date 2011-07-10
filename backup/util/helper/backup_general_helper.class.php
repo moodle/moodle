@@ -153,7 +153,9 @@ abstract class backup_general_helper extends backup_helper {
         $rolemappings->modified = false;
         $rolemappings->mappings = array();
         $info->role_mappings = $rolemappings;
-
+        // Some initially empty containers
+        $info->sections = array();
+        $info->activities = array();
 
         // Now the contents
         $contentsarr = $infoarr['contents'];
@@ -164,7 +166,6 @@ abstract class backup_general_helper extends backup_helper {
         }
         if (isset($contentsarr['sections']) && isset($contentsarr['sections']['section'])) {
             $sectionarr = $contentsarr['sections']['section'];
-            $sections = array();
             foreach ($sectionarr as $section) {
                 $section = (object)$section;
                 $section->settings = array();
@@ -174,7 +175,6 @@ abstract class backup_general_helper extends backup_helper {
         }
         if (isset($contentsarr['activities']) && isset($contentsarr['activities']['activity'])) {
             $activityarr = $contentsarr['activities']['activity'];
-            $activities = array();
             foreach ($activityarr as $activity) {
                 $activity = (object)$activity;
                 $activity->settings = array();
