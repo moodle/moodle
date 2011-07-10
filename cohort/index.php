@@ -88,9 +88,9 @@ foreach($cohorts as $cohort) {
 
     if ($manager) {
         if (empty($cohort->component)) {
-            $buttons = html_writer::link(new moodle_url('/cohort/edit.php', array('id'=>$cohort->id)), get_string('edit'));
-            $buttons .= ' '.html_writer::link(new moodle_url('/cohort/edit.php', array('id'=>$cohort->id, 'delete'=>1)), get_string('delete'));
-            $buttons .= ' '.html_writer::link(new moodle_url('/cohort/assign.php', array('id'=>$cohort->id)), get_string('assign', 'cohort'));
+            $buttons = html_writer::link(new moodle_url('/cohort/edit.php', array('id'=>$cohort->id, 'delete'=>1)), html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/delete'), 'alt'=>get_string('delete'), 'class'=>'iconsmall')));
+            $buttons .= ' ' . html_writer::link(new moodle_url('/cohort/edit.php', array('id'=>$cohort->id)), html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/edit'), 'alt'=>get_string('edit'), 'class'=>'iconsmall')));
+            $buttons .= ' ' . html_writer::link(new moodle_url('/cohort/assign.php', array('id'=>$cohort->id)), html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('i/users'), 'alt'=>get_string('assign', 'core_cohort'), 'class'=>'iconsmall')));
         } else {
             $buttons = '';
         }
