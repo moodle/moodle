@@ -166,10 +166,10 @@ if ( $hook >0 ) {
         echo "<h3 class=\"main\">" . get_string("add"). " " . get_string("category","glossary"). "</h3>";
 
             echo $OUTPUT->box_start('generalbox boxaligncenter errorboxcontent boxwidthnarrow');
-            echo "<div>" . get_string("duplicatedcategory","glossary") ."</div>";
+            echo "<div>" . get_string("duplicatecategory","glossary") ."</div>";
             echo $OUTPUT->box_end();
 
-            redirect("editcategories.php?id=$cm->id&amp;action=add&&amp;name=$name");
+            redirect("editcategories.php?id=$cm->id&amp;action=add&amp;name=$name");
 
         } else {
             $action = "";
