@@ -93,7 +93,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', 'timeclose', get_string("scormclose", "scorm"), array('optional' => true));
         //-------------------------------------------------------------------------------
         // display Settings
-        $mform->addElement('header', 'advanced', get_string('displaysettings', 'scorm'));
+        $mform->addElement('header', 'displaysettings', get_string('displaysettings', 'scorm'));
         // Framed / Popup Window
         $mform->addElement('select', 'popup', get_string('display', 'scorm'), scorm_get_popup_display_array());
         $mform->setDefault('popup', $cfg_scorm->popup);
@@ -154,7 +154,7 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------------------------------
         // grade Settings
-        $mform->addElement('header', 'advanced', get_string('gradesettings', 'scorm'));
+        $mform->addElement('header', 'gradesettings', get_string('gradesettings', 'scorm'));
 
         // Grade Method
         $mform->addElement('select', 'grademethod', get_string('grademethod', 'scorm'), scorm_get_grade_method_array());
@@ -171,7 +171,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->disabledIf('maxgrade', 'grademethod', 'eq', GRADESCOES);
         $mform->setAdvanced('maxgrade', $cfg_scorm->maxgrade_adv);
 
-        $mform->addElement('header', 'advanced', get_string('othersettings', 'scorm'));
+        $mform->addElement('header', 'othersettings', get_string('othersettings', 'scorm'));
 
         // Max Attempts
         $mform->addElement('select', 'maxattempt', get_string('maximumattempts', 'scorm'), scorm_get_attempts_array());

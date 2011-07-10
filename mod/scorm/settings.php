@@ -21,45 +21,9 @@ if ($ADMIN->fulltree) {
     $yesno = array(0 => get_string('no'),
                    1 => get_string('yes'));
 
-    //default grade settings
-    $settings->add(new admin_setting_configselect_with_advanced('scorm/grademethod',
-        get_string('grademethod', 'scorm'), get_string('grademethoddesc', 'scorm'),
-        array('value' => GRADEHIGHEST, 'adv' => false), scorm_get_grade_method_array()));
-
-    for ($i=0; $i<=100; $i++) {
-        $grades[$i] = "$i";
-    }
-
-    $settings->add(new admin_setting_configselect_with_advanced('scorm/maxgrade',
-        get_string('maximumgrade'), get_string('maximumgradedesc', 'scorm'),
-        array('value' => 100, 'adv' => false), $grades));
-
-    //default attempts settings.
-    $settings->add(new admin_setting_configselect_with_advanced('scorm/maxattempts',
-        get_string('maximumattempts', 'scorm'), '',
-        array('value' => '0', 'adv' => false), scorm_get_attempts_array()));
-
-    $settings->add(new admin_setting_configselect_with_advanced('scorm/whatgrade',
-        get_string('whatgrade', 'scorm'), get_string('whatgradedesc', 'scorm'),
-        array('value' => HIGHESTATTEMPT, 'adv' => false), scorm_get_what_grade_array()));
-
-    $settings->add(new admin_setting_configselect_with_advanced('scorm/displayattemptstatus',
-        get_string('displayattemptstatus', 'scorm'), get_string('displayattemptstatusdesc', 'scorm'),
-        array('value' => 1, 'adv' => false), $yesno));
-
-    $settings->add(new admin_setting_configselect_with_advanced('scorm/forcecompleted',
-        get_string('forcecompleted', 'scorm'), get_string('forcecompleteddesc', 'scorm'),
-        array('value' => 0, 'adv' => true), $yesno));
-
-    $settings->add(new admin_setting_configselect_with_advanced('scorm/forcenewattempt',
-        get_string('forcenewattempt', 'scorm'), get_string('forcenewattemptdesc', 'scorm'),
-        array('value' => 0, 'adv' => true), $yesno));
-
-    $settings->add(new admin_setting_configselect_with_advanced('scorm/lastattemptlock',
-        get_string('lastattemptlock', 'scorm'), get_string('lastattemptlockdesc', 'scorm'),
-        array('value' => 0, 'adv' => true), $yesno));
-
     //default display settings
+    $settings->add(new admin_setting_heading('scorm/displaysettings', get_string('defaultdisplaysettings', 'scorm'), ''));
+
     $settings->add(new admin_setting_configselect_with_advanced('scorm/displaycoursestructure',
         get_string('displaycoursestructure', 'scorm'), get_string('displaycoursestructuredesc', 'scorm'),
         array('value' => 0, 'adv' => false), $yesno));
@@ -100,6 +64,48 @@ if ($ADMIN->fulltree) {
         get_string('hidenav', 'scorm'), get_string('hidenavdesc', 'scorm'),
         array('value' => 0, 'adv' => false), $yesno));
 
+
+    //default grade settings
+    $settings->add(new admin_setting_heading('scorm/gradesettings', get_string('defaultgradesettings', 'scorm'), ''));
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/grademethod',
+        get_string('grademethod', 'scorm'), get_string('grademethoddesc', 'scorm'),
+        array('value' => GRADEHIGHEST, 'adv' => false), scorm_get_grade_method_array()));
+
+    for ($i=0; $i<=100; $i++) {
+        $grades[$i] = "$i";
+    }
+
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/maxgrade',
+        get_string('maximumgrade'), get_string('maximumgradedesc', 'scorm'),
+        array('value' => 100, 'adv' => false), $grades));
+
+    $settings->add(new admin_setting_heading('scorm/othersettings', get_string('defaultothersettings', 'scorm'), ''));
+
+    //default attempts settings.
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/maxattempts',
+        get_string('maximumattempts', 'scorm'), '',
+        array('value' => '0', 'adv' => false), scorm_get_attempts_array()));
+
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/whatgrade',
+        get_string('whatgrade', 'scorm'), get_string('whatgradedesc', 'scorm'),
+        array('value' => HIGHESTATTEMPT, 'adv' => false), scorm_get_what_grade_array()));
+
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/displayattemptstatus',
+        get_string('displayattemptstatus', 'scorm'), get_string('displayattemptstatusdesc', 'scorm'),
+        array('value' => 1, 'adv' => false), $yesno));
+
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/forcecompleted',
+        get_string('forcecompleted', 'scorm'), get_string('forcecompleteddesc', 'scorm'),
+        array('value' => 0, 'adv' => true), $yesno));
+
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/forcenewattempt',
+        get_string('forcenewattempt', 'scorm'), get_string('forcenewattemptdesc', 'scorm'),
+        array('value' => 0, 'adv' => true), $yesno));
+
+    $settings->add(new admin_setting_configselect_with_advanced('scorm/lastattemptlock',
+        get_string('lastattemptlock', 'scorm'), get_string('lastattemptlockdesc', 'scorm'),
+        array('value' => 0, 'adv' => true), $yesno));
+
     $settings->add(new admin_setting_configselect_with_advanced('scorm/auto',
         get_string('autocontinue', 'scorm'), get_string('autocontinuedesc', 'scorm'),
         array('value' => 0, 'adv' => true), $yesno));
@@ -109,6 +115,8 @@ if ($ADMIN->fulltree) {
         array('value' => 0, 'adv' => true), scorm_get_updatefreq_array()));
 
     //admin level settings.
+    $settings->add(new admin_setting_heading('scorm/adminsettings', get_string('adminsettings', 'scorm'), ''));
+
     $settings->add(new admin_setting_configtext('scorm/updatetime', get_string('updatetime', 'scorm'), '', 2, PARAM_INT));
 
     $settings->add(new admin_setting_configcheckbox('scorm/allowtypeexternal', get_string('allowtypeexternal', 'scorm'), '', 0));
