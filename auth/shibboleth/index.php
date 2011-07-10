@@ -47,7 +47,6 @@
             update_user_login_times();
 
             // Don't show previous shibboleth username on login page
-            set_moodle_cookie('');
 
             set_login_session_preferences();
 

@@ -50,6 +50,12 @@ class block_login extends block_base {
             $this->content->text .= '<div class="c1 fld password"><label for="login_password">'.get_string('password').'</label>';
             $this->content->text .= '<input type="password" name="password" id="login_password" value="" /></div>';
 
+            if (isset($CFG->rememberusername) and $CFG->rememberusername == 2) {
+                $checked = $username ? 'checked="checked"' : '';
+                $this->content->text .= '<div class="c1 rememberusername"><input type="checkbox" name="rememberusername" id="rememberusername" value="1" '.$checked.'/>';
+                $this->content->text .= ' <label for="rememberusername">'.get_string('rememberusername', 'admin').'</label></div>';
+            }
+
             $this->content->text .= '<div class="c1 btn"><input type="submit" value="'.get_string('login').'" /></div>';
 
             $this->content->text .= "</form>\n";

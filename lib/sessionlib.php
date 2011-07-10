@@ -819,6 +819,11 @@ function set_moodle_cookie($username) {
         return;
     }
 
+    if (empty($CFG->rememberusername)) {
+        // erase current and do not store permanent cookies
+        $username = '';
+    }
+
     if ($username === 'guest') {
         // keep previous cookie in case of guest account login
         return;
@@ -844,6 +849,10 @@ function get_moodle_cookie() {
     global $CFG;
 
     if (NO_MOODLE_COOKIES) {
+        return '';
+    }
+
+    if (empty($CFG->rememberusername)) {
         return '';
     }
 

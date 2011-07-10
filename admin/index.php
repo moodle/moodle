@@ -355,7 +355,7 @@ if (during_initial_install()) {
         }
         // login user and let him set password and admin details
         $adminuser->newadminuser = 1;
-        complete_user_login($adminuser, false);
+        complete_user_login($adminuser);
         redirect("$CFG->wwwroot/user/editadvanced.php?id=$adminuser->id"); // Edit thyself
 
     } else {
