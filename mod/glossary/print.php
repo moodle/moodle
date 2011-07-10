@@ -54,6 +54,10 @@ if ( !$entriesbypage = $glossary->entbypage ) {
 require_course_login($course, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
+// Prepare format_string/text options
+$fmtoptions = array(
+    'context' => $context);
+
 $PAGE->set_pagelayout('print');
 $PAGE->set_title(get_string("modulenameplural", "glossary"));
 $PAGE->set_heading($course->fullname);
@@ -178,9 +182,11 @@ if ( $allentries ) {
         // Setting the pivot for the current entry
         $pivot = $entry->glossarypivot;
         $upperpivot = $textlib->strtoupper($pivot);
+        $pivottoshow = $textlib->strtoupper(format_string($pivot, true, $fmtoptions));
         // Reduce pivot to 1cc if necessary
         if ( !$fullpivot ) {
             $upperpivot = $textlib->substr($upperpivot, 0, 1);
+            $pivottoshow = $textlib->substr($pivottoshow, 0, 1);
         }
 
         // If there's  group break
@@ -190,7 +196,6 @@ if ( $allentries ) {
             if ( $printpivot )  {
                 $currentpivot = $upperpivot;
 
-                $pivottoshow = $currentpivot;
                 if ( isset($entry->userispivot) ) {
                     // printing the user icon if defined (only when browsing authors)
                     $user = $DB->get_record("user", array("id"=>$entry->userid));
