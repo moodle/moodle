@@ -30,6 +30,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Unsupported session id rewriting.
+ * @deprecated
+ * @param string $buffer
+ */
+function sid_ob_rewrite($buffer) {
+    throw new coding_exception('$CFG->usesid support was removed completely and can not be used.');
+}
 
 /**
  * Insert or update log display entry. Entry may already exist.
