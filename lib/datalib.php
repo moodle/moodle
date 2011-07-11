@@ -717,7 +717,7 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
     $params     = array();
     $i = 0;
 
-    $concat = $DB->sql_concat('c.summary', "' '", 'c.fullname');
+    $concat = $DB->sql_concat('c.summary', "' '", 'c.fullname', "' '", 'c.idnumber', "' '", 'c.shortname');
 
     foreach ($searchterms as $searchterm) {
         $i++;
