@@ -18,6 +18,11 @@ class mod_glossary_entry_form extends moodleform {
         $definitionoptions = $this->_customdata['definitionoptions'];
         $attachmentoptions = $this->_customdata['attachmentoptions'];
 
+        $context  = get_context_instance(CONTEXT_MODULE, $cm->id);
+        // Prepare format_string/text options
+        $fmtoptions = array(
+            'context' => $context);
+
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
@@ -30,6 +35,9 @@ class mod_glossary_entry_form extends moodleform {
         $mform->addRule('definition_editor', get_string('required'), 'required', null, 'client');
 
         if ($categories = $DB->get_records_menu('glossary_categories', array('glossaryid'=>$glossary->id), 'name ASC', 'id, name')){
+            foreach ($categories as $id => $name) {
+                $categories[$id] = format_string($name, true, $fmtoptions);
+            }
             $categories = array(0 => get_string('notcategorised', 'glossary')) + $categories;
             $categoriesEl = $mform->addElement('select', 'categories', get_string('categories', 'glossary'), $categories);
             $categoriesEl->setMultiple(true);
