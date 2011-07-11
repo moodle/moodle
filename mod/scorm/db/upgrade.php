@@ -535,6 +535,11 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2011011400, 'scorm');
     }
 
+    if ($oldversion < 2011021402) {
+        unset_config('updatetime', 'scorm');
+        upgrade_mod_savepoint(true, 2011021402, 'scorm');
+    }
+
     return true;
 }
 
