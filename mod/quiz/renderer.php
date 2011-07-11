@@ -547,7 +547,6 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= $this->countdown_timer();
 
         // Finish attempt button.
-        $output .= $this->container_start('submitbtns mdl-align');
         $options = array(
             'attempt' => $attemptobj->get_attemptid(),
             'finishattempt' => 1,
@@ -560,12 +559,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 new moodle_url($attemptobj->processattempt_url(), $options),
                 get_string('submitallandfinish', 'quiz'));
         $button->id = 'responseform';
-        $button->add_confirm_action(get_string('confirmclose', 'quiz'));
+        $button->add_action(new confirm_action(get_string('confirmclose', 'quiz'), null,
+                get_string('submitallandfinish', 'quiz')));
 
-        $output .= $this->container_start('controls');
-        $output .= $this->render($button);
-        $output .= $this->container_end();
-        $output .= $this->container_end();
+        $output .= $this->container($this->container($this->render($button),
+                'controls'), 'submitbtns mdl-align');
 
         return $output;
     }

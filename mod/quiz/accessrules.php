@@ -231,7 +231,8 @@ class quiz_access_manager {
         if (!$unfinished) {
             $strconfirmstartattempt = $this->confirm_start_attempt_message();
             if ($strconfirmstartattempt) {
-                $button->add_confirm_action($strconfirmstartattempt);
+                $button->add_action(new confirm_action($strconfirmstartattempt, null,
+                        get_string('startattempt', 'quiz')));
             }
         }
 
