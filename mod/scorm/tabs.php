@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* Sets up the tabs used by the scorm pages based on the users capabilities.
-*
-* @author Dan Marsden and others.
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package scorm
-*/
+ * Sets up the tabs used by the scorm pages based on the users capabilities.
+ *
+ * @author Dan Marsden and others.
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package scorm
+ */
 
 if (empty($scorm)) {
     error('You cannot call this script in that way');
@@ -31,7 +31,6 @@ if (!isset($currenttab)) {
 if (!isset($cm)) {
     $cm = get_coursemodule_from_instance('scorm', $scorm->id);
 }
-
 
 $contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -51,6 +50,14 @@ if ($currenttab == 'info' && count($row) == 1) {
     // Don't show only an info tab (e.g. to students).
 } else {
     $tabs[] = $row;
+}
+
+if ($currenttab == 'reports' && !empty($reportlist) && count($reportlist) > 1) {
+    $row2 = array();
+    foreach ($reportlist as $rep) {
+        $row2[] = new tabobject('scorm_'.$rep, $CFG->wwwroot."/mod/scorm/report.php?id=$cm->id&mode=$rep", get_string('pluginname', 'scorm_'.$rep));
+    }
+    $tabs[] = $row2;
 }
 
 print_tabs($tabs, $currenttab, $inactive, $activated);

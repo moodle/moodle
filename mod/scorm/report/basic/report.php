@@ -20,29 +20,35 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');//  It must be included from a Moodle page
-}
+defined('MOODLE_INTERNAL') || die();
+
 class scorm_basic_report extends scorm_default_report {
     /**
-     * Displays the report.
+     * displays the full report
+     * @param stdClass $scorm full SCORM object
+     * @param stdClass $cm - full course_module object
+     * @param stdClass $course - full course object
+     * @param string $download - type of download being requested
      */
-    function display($scorm, $cm, $course, $attemptids, $action, $download) {
-        global $CFG, $DB, $OUTPUT;
+    function display($scorm, $cm, $course, $download) {
+        global $CFG, $DB, $OUTPUT, $PAGE;
         $contextmodule= get_context_instance(CONTEXT_MODULE, $cm->id);
+        $action = optional_param('action', '', PARAM_ALPHA);
+        $attemptids = optional_param('attemptid', array(), PARAM_RAW);
 
-        // No options, show the global scorm report
-        $pageoptions = array();
-        $pageoptions['id'] = $cm->id;
-        $pageoptions['mode'] = "basic";
-        $reporturl = new moodle_url($CFG->wwwroot.'/mod/scorm/report.php', $pageoptions);
+        if ($action == 'delete' && has_capability('mod/scorm:deleteresponses', $contextmodule) && confirm_sesskey()) {
+            if (scorm_delete_responses($attemptids, $scorm)) { //delete responses.
+                add_to_log($course->id, 'scorm', 'delete attempts', 'report.php?id=' . $cm->id, implode(",", $attemptids), $cm->id);
+                echo $OUTPUT->notification(get_string('scormresponsedeleted', 'scorm'), 'notifysuccess');
+            }
+        }
 
         // detailed report
-        $mform = new mod_scorm_report_settings( $reporturl, compact('currentgroup') );
+        $mform = new mod_scorm_report_settings($PAGE->url, compact('currentgroup'));
         if ($fromform = $mform->get_data()) {
             $detailedrep = $fromform->detailedrep;
             $pagesize = $fromform->pagesize;
-            $attemptsmode = $fromform->attemptsmode;
+            $attemptsmode = !empty($fromform->attemptsmode) ? $fromform->attemptsmode : SCORM_REPORT_ATTEMPTS_ALL_STUDENTS;
             set_user_preference('scorm_report_detailed', $detailedrep);
             set_user_preference('scorm_report_pagesize', $pagesize);
         } else {
@@ -55,15 +61,10 @@ class scorm_basic_report extends scorm_default_report {
         }
 
         // select group menu
-        $displayoptions = array();
-        $displayoptions['id'] = $cm->id;
-        $displayoptions['mode'] = "basic";
-        $displayoptions['attemptsmode'] = $attemptsmode;
-        $reporturlwithdisplayoptions = new moodle_url($CFG->wwwroot.'/mod/scorm/report.php', $displayoptions);
-
+        $PAGE->url->param('attemptsmode', $attemptsmode);
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
             if (!$download) {
-                groups_print_activity_menu($cm, $reporturlwithdisplayoptions->out());
+                groups_print_activity_menu($cm, $PAGE->url);
             }
         }
 
@@ -141,7 +142,7 @@ class scorm_basic_report extends scorm_default_report {
 
                 $table->define_columns($columns);
                 $table->define_headers($headers);
-                $table->define_baseurl($reporturlwithdisplayoptions->out());
+                $table->define_baseurl($PAGE->url);
 
                 $table->sortable(true);
                 $table->collapsible(true);
@@ -338,12 +339,12 @@ class scorm_basic_report extends scorm_default_report {
                 if ($candelete) {
                     // Start form
                     $strreallydel  = addslashes_js(get_string('deleteattemptcheck', 'scorm'));
-                    echo '<form id="attemptsform" method="post" action="' . $reporturlwithdisplayoptions->out(true) .
-            '" onsubmit="return confirm(\''.$strreallydel.'\');">';
+                    echo '<form id="attemptsform" method="post" action="' . $PAGE->url .
+                         '" onsubmit="return confirm(\''.$strreallydel.'\');">';
                     echo '<input type="hidden" name="action" value="delete"/>';
                     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
                     echo '<div style="display: none;">';
-                    echo html_writer::input_hidden_params($reporturlwithdisplayoptions);
+                    echo html_writer::input_hidden_params($PAGE->url);
                     echo '</div>';
                     echo '<div>';
                 }
@@ -485,13 +486,17 @@ class scorm_basic_report extends scorm_default_report {
                     if (!empty($attempts)) {
                         echo '<table class="boxaligncenter"><tr>';
                         echo '<td>';
-                        echo $OUTPUT->single_button(new moodle_url('/mod/scorm/report.php', $pageoptions + $displayoptions + array('download' => 'ODS')), get_string('downloadods'));
+                        $PAGE->url->param('download', 'ODS');
+                        echo $OUTPUT->single_button($PAGE->url, get_string('downloadods'));
                         echo "</td>\n";
                         echo '<td>';
-                        echo $OUTPUT->single_button(new moodle_url('/mod/scorm/report.php', $pageoptions + $displayoptions + array('download' => 'Excel')), get_string('downloadexcel'));
+                        $PAGE->url->param('download', 'Excel');
+                        echo $OUTPUT->single_button($PAGE->url, get_string('downloadexcel'));
                         echo "</td>\n";
                         echo '<td>';
-                        echo $OUTPUT->single_button(new moodle_url('/mod/scorm/report.php', $pageoptions + $displayoptions + array('download' => 'CSV')), get_string('downloadtext'));
+                        $PAGE->url->param('download', 'CSV');
+                        echo $OUTPUT->single_button($PAGE->url, get_string('downloadtext'));
+                        $PAGE->url->param('download', '');
                         echo "</td>\n";
                         echo "<td>";
                         echo "</td>\n";
@@ -499,7 +504,7 @@ class scorm_basic_report extends scorm_default_report {
                     }
                 }
                 if (!$download) {
-                    $mform->set_data($displayoptions + compact('detailedrep', 'pagesize'));
+                    $mform->set_data(compact('detailedrep', 'pagesize'));
                     $mform->display();
                 }
             } else {
@@ -514,15 +519,16 @@ class scorm_basic_report extends scorm_default_report {
         } else {
             echo $OUTPUT->notification(get_string('noactivity', 'scorm'));
         }
-        return 1;
     }// function ends
-    function canview($id, $contextmodule) {
-        global $CFG;
-        if (has_capability('mod/scorm:viewreport', $contextmodule)) {
-            $return = '<p>';
-            $return.= '<a href="'.$CFG->wwwroot.'/mod/scorm/report.php?mode=basic&id='.$id.'">'.get_string('pluginname', 'scorm_basic').'</a>';
-            $return.= '</p>';
-            return $return;
+
+    /**
+     * only users with mod/scorm:viewreport can see this plugin.
+     * @param stdclass $context - context object
+     * @return boolean
+     */
+    function canview($context) {
+        if (has_capability('mod/scorm:viewreport', $context)) {
+            return true;
         }
         return false;
     }

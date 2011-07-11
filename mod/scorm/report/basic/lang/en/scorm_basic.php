@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'scorm_basic', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'scorm_basic' report plugin
  *
  * @package   scorm_basic
  * @author    Ankit Kumar Agarwal
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Basic Reporting';
+$string['pluginname'] = 'Basic Report';
 

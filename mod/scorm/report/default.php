@@ -30,18 +30,25 @@
 /// to itself - all these will also be globally available.
 ////////////////////////////////////////////////////////////////////
 
-class scorm_default_report {
+defined('MOODLE_INTERNAL') || die();
 
-    function display($scorm, $cm, $course, $attemptids, $action, $download) {
+class scorm_default_report {
+    /**
+     * displays the full report
+     * @param stdClass $scorm full SCORM object
+     * @param stdClass $cm - full course_module object
+     * @param stdClass $course - full course object
+     * @param string $download - type of download being requested
+     */
+    function display($scorm, $cm, $course, $download) {
         /// This function just displays the report
         return true;
     }
-    function settings($cm, $course, $quiz) {
-        /// This function just displays the settings
+    /**
+     * allows the plugin to control who can see this plugin.
+     * @return boolean
+     */
+    function canview($contextmodule) {
         return true;
-    }
-    function canview($id, $contextmodule) {
-        /// This function just displays the settings
-        return false;
     }
 }

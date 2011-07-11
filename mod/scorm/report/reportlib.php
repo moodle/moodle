@@ -16,28 +16,33 @@
 
 /**
  * Returns an array of reports to which are currently readable.
- * @package   scorm_basic
+ * @package   scorm
  * @author    Ankit Kumar Agarwal
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 function scorm_report_list($context) {
-    global $DB;
-    static $reportlist = null;
-    if (!is_null($reportlist)) {
+    global $CFG;
+    static $reportlist;
+    if (!empty($reportlist)) {
         return $reportlist;
     }
     $reportdirs = get_plugin_list('scorm');
-    $reportcaps = array();
     foreach ($reportdirs as $reportname => $notused) {
-        $pluginfile = 'report/'.$reportname.'/report.php';
+        $pluginfile = $CFG->dirroot.'/mod/scorm/report/'.$reportname.'/report.php';
         if (is_readable($pluginfile)) {
             include_once($pluginfile);
             $reportclassname = "scorm_{$reportname}_report";
             if (class_exists($reportclassname)) {
-                $reportcaps[] = $reportname;
+                $report = new $reportclassname();
+
+                if ($report->canview($context)) {
+                    $reportlist[] = $reportname;
+                }
             }
         }
     }
-    return $reportcaps;
+    return $reportlist;
 }
