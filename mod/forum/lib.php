@@ -4605,7 +4605,7 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
         return $messages['cantaccessgroup'];
     } else {
         if (!is_enrolled($context, $USER, '', true)) {
-            return get_string('no');
+            return '';
         }
         if (is_null($subscribed_forums)) {
             $subscribed = forum_is_subscribed($USER->id, $forum);
