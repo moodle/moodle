@@ -6637,6 +6637,13 @@ FROM
     // Moodle v2.1.0 release upgrade line
     // Put any upgrade step following this
 
+    if ($oldversion < 2011070800.01) {
+        // remove unused config options
+        unset_config('excludeoldflashclients');
+        upgrade_main_savepoint(true, 2011070800.01);
+    }
+
+
     return true;
 }
 

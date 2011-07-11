@@ -56,21 +56,6 @@ list($context, $course, $cm) = get_context_info_array($contextid);
 
 $fs = get_file_storage();
 
-// If the file is a Flash file and that the user flash player is outdated return a flash upgrader MDL-20841
-$mimetype = mimeinfo('type', $args[count($args)-1]);
-if (!empty($CFG->excludeoldflashclients) && $mimetype == 'application/x-shockwave-flash'&& !empty($SESSION->flashversion)) {
-    $userplayerversion = explode('.', $SESSION->flashversion);
-    $requiredplayerversion = explode('.', $CFG->excludeoldflashclients);
-    if (($userplayerversion[0] <  $requiredplayerversion[0]) ||
-        ($userplayerversion[0] == $requiredplayerversion[0] && $userplayerversion[1] < $requiredplayerversion[1]) ||
-        ($userplayerversion[0] == $requiredplayerversion[0] && $userplayerversion[1] == $requiredplayerversion[1]
-         && $userplayerversion[2] < $requiredplayerversion[2])) {
-        $path = $CFG->dirroot."/lib/flashdetect/flashupgrade.swf";  // Alternate content asking user to upgrade Flash
-        $filename = "flashupgrade.swf";
-        send_file($path, $filename, O, 0, false, false, 'application/x-shockwave-flash'); // Do not cache
-    }
-}
-
 // ========================================================================================================================
 if ($component === 'blog') {
     // Blog file serving

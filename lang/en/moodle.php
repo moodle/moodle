@@ -663,10 +663,6 @@ $string['findmorecourses'] = 'Find more courses...';
 $string['firstaccess'] = 'First access';
 $string['firstname'] = 'First name';
 $string['firsttime'] = 'Is this your first time here?';
-$string['flashlinkmessage'] = 'Please upgrade your Flash player now:';
-$string['flashupgrademessage'] = 'The Flash plugin is required to play this content, but the version you have is too old.
-
-  You may need to log out and log in back after upgrade.';
 $string['folder'] = 'Folder';
 $string['folderclosed'] = 'Closed folder';
 $string['folderopened'] = 'Opened folder';
