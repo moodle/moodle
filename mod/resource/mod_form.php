@@ -22,7 +22,7 @@ class mod_resource_mod_form extends moodleform_mod {
         $mform->setType('type', PARAM_ALPHA);
         $mform->setDefault('type', $type);
 
-        require($CFG->dirroot.'/mod/resource/type/'.$type.'/resource.class.php');
+        require_once($CFG->dirroot.'/mod/resource/type/'.$type.'/resource.class.php');
         $resclass = 'resource_'.$type;
         $this->_resinstance = new $resclass();
 
