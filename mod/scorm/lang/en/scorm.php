@@ -270,7 +270,6 @@ $string['typelocalsync'] = 'Downloaded package';
 $string['unziperror'] = 'An error occurs during package unzip';
 $string['updatefreq'] = 'Auto-update frequency';
 $string['updatefreqdesc'] = 'This preference sets the default auto-update frequency of an activity';
-$string['updatetime'] = 'Synchronisation time';
 $string['validateascorm'] = 'Validate a package';
 $string['validation'] = 'Validation result';
 $string['validationtype'] = 'This preference set the DOMXML library used for validating SCORM Manifest. If you don\'t know leave the selected choice.';
