@@ -345,7 +345,11 @@ function resource_print_filenotfound($resource, $cm, $course) {
     resource_print_header($resource, $cm, $course);
     resource_print_heading($resource, $cm, $course);
     resource_print_intro($resource, $cm, $course);
-    echo $OUTPUT->notification(get_string('notmigrated', 'resource', $resource_old->type));
+    if ($resource_old) {
+        echo $OUTPUT->notification(get_string('notmigrated', 'resource', $resource_old->type));
+    } else {
+        echo $OUTPUT->notification(get_string('filenotfound', 'resource'));
+    }
     echo $OUTPUT->footer();
     die;
 }
