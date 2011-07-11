@@ -821,13 +821,21 @@ function scorm_simple_play($scorm, $user, $context) {
     $scoes = $DB->get_records_select('scorm_scoes', 'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true), array($scorm->id), 'id', 'id');
 
     if ($scoes) {
+        $orgidentifier = '';
+        if ($sco = scorm_get_sco($scorm->launch, SCO_ONLY)) {
+            if (($sco->organization == '') && ($sco->launch == '')) {
+                $orgidentifier = $sco->identifier;
+            } else {
+                $orgidentifier = $sco->organization;
+            }
+        }
         if ($scorm->skipview >= 1) {
             $sco = current($scoes);
             if (scorm_get_tracks($sco->id, $user->id) === false) {
-                header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
+                header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id.'&currentorg='.$orgidentifier);
                 $result = true;
             } else if ($scorm->skipview == 2) {
-                header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id);
+                header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id.'&currentorg='.$orgidentifier);
                 $result = true;
             }
         }
