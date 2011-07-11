@@ -92,13 +92,75 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', 'timeopen', get_string("scormopen", "scorm"), array('optional' => true));
         $mform->addElement('date_time_selector', 'timeclose', get_string("scormclose", "scorm"), array('optional' => true));
         //-------------------------------------------------------------------------------
-        // Other Settings
-        $mform->addElement('header', 'advanced', get_string('othersettings', 'form'));
+        // display Settings
+        $mform->addElement('header', 'displaysettings', get_string('displaysettings', 'scorm'));
+        // Framed / Popup Window
+        $mform->addElement('select', 'popup', get_string('display', 'scorm'), scorm_get_popup_display_array());
+        $mform->setDefault('popup', $cfg_scorm->popup);
+        $mform->setAdvanced('popup', $cfg_scorm->popup_adv);
+
+        // Width
+        $mform->addElement('text', 'width', get_string('width', 'scorm'), 'maxlength="5" size="5"');
+        $mform->setDefault('width', $cfg_scorm->framewidth);
+        $mform->setType('width', PARAM_INT);
+        $mform->setAdvanced('width', $cfg_scorm->framewidth_adv);
+        $mform->disabledIf('width', 'popup', 'eq', 0);
+
+        // Height
+        $mform->addElement('text', 'height', get_string('height', 'scorm'), 'maxlength="5" size="5"');
+        $mform->setDefault('height', $cfg_scorm->frameheight);
+        $mform->setType('height', PARAM_INT);
+        $mform->setAdvanced('height', $cfg_scorm->frameheight_adv);
+        $mform->disabledIf('height', 'popup', 'eq', 0);
+
+        // Window Options
+        $winoptgrp = array();
+        foreach (scorm_get_popup_options_array() as $key => $value) {
+            $winoptgrp[] = &$mform->createElement('checkbox', $key, '', get_string($key, 'scorm'));
+            $mform->setDefault($key, $value);
+        }
+        $mform->addGroup($winoptgrp, 'winoptgrp', get_string('options', 'scorm'), '<br />', false);
+        $mform->disabledIf('winoptgrp', 'popup', 'eq', 0);
+        $mform->setAdvanced('winoptgrp', $cfg_scorm->winoptgrp_adv);
+
+        // Skip view page
+        $mform->addElement('select', 'skipview', get_string('skipview', 'scorm'), scorm_get_skip_view_array());
+        $mform->addHelpButton('skipview', 'skipview', 'scorm');
+        $mform->setDefault('skipview', $cfg_scorm->skipview);
+        $mform->setAdvanced('skipview', $cfg_scorm->skipview_adv);
+
+        // Hide Browse
+        $mform->addElement('selectyesno', 'hidebrowse', get_string('hidebrowse', 'scorm'));
+        $mform->addHelpButton('hidebrowse', 'hidebrowse', 'scorm');
+        $mform->setDefault('hidebrowse', $cfg_scorm->hidebrowse);
+        $mform->setAdvanced('hidebrowse', $cfg_scorm->hidebrowse_adv);
+
+        // Display course structure
+        $mform->addElement('selectyesno', 'displaycoursestructure', get_string('displaycoursestructure', 'scorm'));
+        $mform->addHelpButton('displaycoursestructure', 'displaycoursestructure', 'scorm');
+        $mform->setDefault('displaycoursestructure', $cfg_scorm->displaycoursestructure);
+        $mform->setAdvanced('displaycoursestructure', $cfg_scorm->displaycoursestructure_adv);
+
+        // Toc display
+        $mform->addElement('select', 'hidetoc', get_string('hidetoc', 'scorm'), scorm_get_hidetoc_array());
+        $mform->addHelpButton('hidetoc', 'hidetoc', 'scorm');
+        $mform->setDefault('hidetoc', $cfg_scorm->hidetoc);
+        $mform->setAdvanced('hidetoc', $cfg_scorm->hidetoc_adv);
+
+        // Hide Navigation panel
+        $mform->addElement('selectyesno', 'hidenav', get_string('hidenav', 'scorm'));
+        $mform->setDefault('hidenav', $cfg_scorm->hidenav);
+        $mform->setAdvanced('hidenav', $cfg_scorm->hidenav_adv);
+
+        //-------------------------------------------------------------------------------
+        // grade Settings
+        $mform->addElement('header', 'gradesettings', get_string('gradesettings', 'scorm'));
 
         // Grade Method
         $mform->addElement('select', 'grademethod', get_string('grademethod', 'scorm'), scorm_get_grade_method_array());
         $mform->addHelpButton('grademethod', 'grademethod', 'scorm');
         $mform->setDefault('grademethod', $cfg_scorm->grademethod);
+        $mform->setAdvanced('grademethod', $cfg_scorm->grademethod_adv);
 
         // Maximum Grade
         for ($i=0; $i<=100; $i++) {
@@ -107,44 +169,46 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addElement('select', 'maxgrade', get_string('maximumgrade'), $grades);
         $mform->setDefault('maxgrade', $cfg_scorm->maxgrade);
         $mform->disabledIf('maxgrade', 'grademethod', 'eq', GRADESCOES);
+        $mform->setAdvanced('maxgrade', $cfg_scorm->maxgrade_adv);
 
-        // Attempts
-        $mform->addElement('static', '', '' , '<hr />');
+        $mform->addElement('header', 'othersettings', get_string('othersettings', 'scorm'));
 
         // Max Attempts
         $mform->addElement('select', 'maxattempt', get_string('maximumattempts', 'scorm'), scorm_get_attempts_array());
         $mform->addHelpButton('maxattempt', 'maximumattempts', 'scorm');
         $mform->setDefault('maxattempt', $cfg_scorm->maxattempts);
+        $mform->setAdvanced('maxattempt', $cfg_scorm->maxattempts_adv);
 
         // What Grade
         $mform->addElement('select', 'whatgrade', get_string('whatgrade', 'scorm'),  scorm_get_what_grade_array());
         $mform->disabledIf('whatgrade', 'maxattempt', 'eq', 1);
         $mform->addHelpButton('whatgrade', 'whatgrade', 'scorm');
         $mform->setDefault('whatgrade', $cfg_scorm->whatgrade);
-        $mform->setAdvanced('whatgrade');
+        $mform->setAdvanced('whatgrade', $cfg_scorm->whatgrade_adv);
 
         // Display attempt status
         $mform->addElement('selectyesno', 'displayattemptstatus', get_string('displayattemptstatus', 'scorm'));
         $mform->addHelpButton('displayattemptstatus', 'displayattemptstatus', 'scorm');
         $mform->setDefault('displayattemptstatus', $cfg_scorm->displayattemptstatus);
+        $mform->setAdvanced('displayattemptstatus', $cfg_scorm->displayattemptstatus_adv);
 
         // Force completed
         $mform->addElement('selectyesno', 'forcecompleted', get_string('forcecompleted', 'scorm'));
         $mform->addHelpButton('forcecompleted', 'forcecompleted', 'scorm');
         $mform->setDefault('forcecompleted', $cfg_scorm->forcecompleted);
-        $mform->setAdvanced('forcecompleted');
+        $mform->setAdvanced('forcecompleted', $cfg_scorm->forcecompleted_adv);
 
         // Force new attempt
         $mform->addElement('selectyesno', 'forcenewattempt', get_string('forcenewattempt', 'scorm'));
         $mform->addHelpButton('forcenewattempt', 'forcenewattempt', 'scorm');
         $mform->setDefault('forcenewattempt', $cfg_scorm->forcenewattempt);
-        $mform->setAdvanced('forcenewattempt');
+        $mform->setAdvanced('forcenewattempt', $cfg_scorm->forcenewattempt_adv);
 
         // Last attempt lock - lock the enter button after the last available attempt has been made
         $mform->addElement('selectyesno', 'lastattemptlock', get_string('lastattemptlock', 'scorm'));
         $mform->addHelpButton('lastattemptlock', 'lastattemptlock', 'scorm');
         $mform->setDefault('lastattemptlock', $cfg_scorm->lastattemptlock);
-        $mform->setAdvanced('lastattemptlock');
+        $mform->setAdvanced('lastattemptlock', $cfg_scorm->lastattemptlock_adv);
 
         // Activation period
 /*        $mform->addElement('static', '', '' ,'<hr />');
@@ -166,74 +230,16 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->disabledIf('dateendgrp', 'enddisabled', 'checked');
 */
 
-        // Framed / Popup Window
-        $mform->addElement('select', 'popup', get_string('display', 'scorm'), scorm_get_popup_display_array());
-        $mform->setDefault('popup', $cfg_scorm->popup);
-        $mform->setAdvanced('popup');
-
-        // Width
-        $mform->addElement('text', 'width', get_string('width', 'scorm'), 'maxlength="5" size="5"');
-        $mform->setDefault('width', $cfg_scorm->framewidth);
-        $mform->setType('width', PARAM_INT);
-        $mform->setAdvanced('width');
-        $mform->disabledIf('width', 'popup', 'eq', 0);
-
-        // Height
-        $mform->addElement('text', 'height', get_string('height', 'scorm'), 'maxlength="5" size="5"');
-        $mform->setDefault('height', $cfg_scorm->frameheight);
-        $mform->setType('height', PARAM_INT);
-        $mform->setAdvanced('height');
-        $mform->disabledIf('height', 'popup', 'eq', 0);
-
-        // Window Options
-        $winoptgrp = array();
-        foreach (scorm_get_popup_options_array() as $key => $value) {
-            $winoptgrp[] = &$mform->createElement('checkbox', $key, '', get_string($key, 'scorm'));
-            $mform->setDefault($key, $value);
-        }
-        $mform->addGroup($winoptgrp, 'winoptgrp', get_string('options', 'scorm'), '<br />', false);
-        $mform->setAdvanced('winoptgrp');
-        $mform->disabledIf('winoptgrp', 'popup', 'eq', 0);
-
-        // Skip view page
-        $mform->addElement('select', 'skipview', get_string('skipview', 'scorm'), scorm_get_skip_view_array());
-        $mform->addHelpButton('skipview', 'skipview', 'scorm');
-        $mform->setDefault('skipview', $cfg_scorm->skipview);
-        $mform->setAdvanced('skipview');
-
-        // Hide Browse
-        $mform->addElement('selectyesno', 'hidebrowse', get_string('hidebrowse', 'scorm'));
-        $mform->addHelpButton('hidebrowse', 'hidebrowse', 'scorm');
-        $mform->setDefault('hidebrowse', $cfg_scorm->hidebrowse);
-        $mform->setAdvanced('hidebrowse');
-
-        // Display course structure
-        $mform->addElement('selectyesno', 'displaycoursestructure', get_string('displaycoursestructure', 'scorm'));
-        $mform->addHelpButton('displaycoursestructure', 'displaycoursestructure', 'scorm');
-        $mform->setDefault('displaycoursestructure', $cfg_scorm->displaycoursestructure);
-        $mform->setAdvanced('displaycoursestructure');
-
-        // Toc display
-        $mform->addElement('select', 'hidetoc', get_string('hidetoc', 'scorm'), scorm_get_hidetoc_array());
-        $mform->addHelpButton('hidetoc', 'hidetoc', 'scorm');
-        $mform->setDefault('hidetoc', $cfg_scorm->hidetoc);
-        $mform->setAdvanced('hidetoc');
-
-        // Hide Navigation panel
-        $mform->addElement('selectyesno', 'hidenav', get_string('hidenav', 'scorm'));
-        $mform->setDefault('hidenav', $cfg_scorm->hidenav);
-        $mform->setAdvanced('hidenav');
-
         // Autocontinue
         $mform->addElement('selectyesno', 'auto', get_string('autocontinue', 'scorm'));
         $mform->addHelpButton('auto', 'autocontinue', 'scorm');
         $mform->setDefault('auto', $cfg_scorm->auto);
-        $mform->setAdvanced('auto');
+        $mform->setAdvanced('auto', $cfg_scorm->auto_adv);
 
         // Update packages timing
         $mform->addElement('select', 'updatefreq', get_string('updatefreq', 'scorm'), scorm_get_updatefreq_array());
         $mform->setDefault('updatefreq', $cfg_scorm->updatefreq);
-        $mform->setAdvanced('updatefreq');
+        $mform->setAdvanced('updatefreq', $cfg_scorm->updatefreq_adv);
 
         //-------------------------------------------------------------------------------
         // Hidden Settings
