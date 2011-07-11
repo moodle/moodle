@@ -84,7 +84,18 @@ function xmldb_book_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        $DB->set_field('book', 'introformat', FORMAT_HTML, array());
+        // conditionally migrate to html format in intro
+        if ($CFG->texteditors !== 'textarea') {
+            $rs = $DB->get_recordset('book', array('introformat'=>FORMAT_MOODLE), '', 'id,intro,introformat');
+            foreach ($rs as $b) {
+                $b->intro       = text_to_html($b->intro, false, false, true);
+                $b->introformat = FORMAT_HTML;
+                $DB->update_record('book', $b);
+                upgrade_set_timeout();
+            }
+            unset($b);
+            $rs->close();
+        }
 
         // book savepoint reached
         upgrade_mod_savepoint(true, 2010120803, 'book');
