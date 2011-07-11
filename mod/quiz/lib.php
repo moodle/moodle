@@ -101,7 +101,8 @@ function quiz_update_instance($quiz, $mform) {
     // Repaginate, if asked to.
     if (!$quiz->shufflequestions && !empty($quiz->repaginatenow)) {
         require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-        $quiz->questions = quiz_repaginate($oldquiz->questions, $quiz->questionsperpage);
+        $quiz->questions = quiz_repaginate(quiz_clean_layout($oldquiz->questions, true),
+                $quiz->questionsperpage);
     }
     unset($quiz->repaginatenow);
 

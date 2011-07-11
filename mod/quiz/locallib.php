@@ -84,11 +84,9 @@ function quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $isp
         $attempt->quiz = $quiz->id;
         $attempt->userid = $USER->id;
         $attempt->preview = 0;
+        $attempt->layout = quiz_clean_layout($quiz->questions, true);
         if ($quiz->shufflequestions) {
-            $attempt->layout = quiz_clean_layout(quiz_repaginate(
-                    $quiz->questions, $quiz->questionsperpage, true), true);
-        } else {
-            $attempt->layout = quiz_clean_layout($quiz->questions, true);
+            $attempt->layout = quiz_repaginate($attempt->layout, $quiz->questionsperpage, true);
         }
     } else {
         // Build on last attempt.
@@ -240,7 +238,9 @@ function quiz_number_of_questions_in_quiz($layout) {
 /**
  * Re-paginates the quiz layout
  *
- * @param string $layout  The string representing the quiz layout.
+ * @param string $layout  The string representing the quiz layout. If there is
+ *      if there is any doubt about the quality of the input data, call
+ *      quiz_clean_layout before you call this function.
  * @param int $perpage The number of questions per page
  * @param bool $shuffle Should the questions be reordered randomly?
  * @return string the new layout string
