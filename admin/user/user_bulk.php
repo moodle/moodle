@@ -26,6 +26,7 @@ if ($data = $action_form->get_data()) {
         case 5: redirect($CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk_download.php');
         //case 6: redirect($CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk_enrol.php'); //TODO: MDL-24064
         case 7: redirect($CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk_forcepasswordchange.php');
+        case 8: redirect($CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk_cohortadd.php');
     }
 }
 
@@ -80,6 +81,7 @@ $ufiltering->display_add();
 $ufiltering->display_active();
 
 $user_bulk_form->display();
+
 $action_form->display();
 
 echo $OUTPUT->footer();
