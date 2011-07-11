@@ -30,8 +30,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 class moodle1_mod_book_handler extends moodle1_mod_handler {
 
-    /** @var array in-memory cache for the course module information for the current book  */
-    protected $currentcminfo = null;
+    /** @var moodle1_file_manager */
+    protected $fileman = null;
+
+    /** @var int cmid */
+    protected $moduleid = null;
 
     /**
      * Declare the paths in moodle.xml we are able to convert
@@ -55,7 +58,7 @@ class moodle1_mod_book_handler extends moodle1_mod_handler {
                             'summary' => 'intro',
                         ),
                         'newfields' => array(
-                            'introformat' => 0,
+                            'introformat' => FORMAT_MOODLE,
                         ),
                         'dropfields' => array(
                             'disableprinting'
@@ -65,7 +68,7 @@ class moodle1_mod_book_handler extends moodle1_mod_handler {
             new convert_path('book_chapters', '/MOODLE_BACKUP/COURSE/MODULES/MOD/BOOK/CHAPTERS/CHAPTER',
                     array(
                         'newfields' => array(
-                            'contentformat' => 1,
+                            'contentformat' => FORMAT_HTML,
                         ),
                     )
                 ),
@@ -77,24 +80,39 @@ class moodle1_mod_book_handler extends moodle1_mod_handler {
      * data available
      */
     public function process_book($data) {
+        global $CFG;
 
         // get the course module id and context id
-        $instanceid = $data['id'];
-        $this->currentcminfo = $this->get_cminfo($instanceid);
-        $moduleid   = $this->currentcminfo['id'];
-        $contextid  = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
+        $instanceid     = $data['id'];
+        $cminfo         = $this->get_cminfo($instanceid);
+        $this->moduleid = $cminfo['id'];
+        $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
 
-        // we now have all information needed to start writing into the file
-        $this->open_xml_writer("activities/book_{$moduleid}/book.xml");
-        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $moduleid,
+        // replay the upgrade step 2009042006
+        if ($CFG->texteditors !== 'textarea') {
+            $data['intro']       = text_to_html($data['intro'], false, false, true);
+            $data['introformat'] = FORMAT_HTML;
+        }
+
+        // get a fresh new file manager for this instance
+        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_book');
+
+        // convert course files embedded into the intro
+        $this->fileman->filearea = 'intro';
+        $this->fileman->itemid   = 0;
+        $data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $this->fileman);
+
+        // start writing book.xml
+        $this->open_xml_writer("activities/book_{$this->moduleid}/book.xml");
+        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $this->moduleid,
             'modulename' => 'book', 'contextid' => $contextid));
         $this->xmlwriter->begin_tag('book', array('id' => $instanceid));
 
-        unset($data['id']); // we already write it as attribute, do not repeat it as child element
         foreach ($data as $field => $value) {
-            $this->xmlwriter->full_tag($field, $value);
+            if ($field <> 'id') {
+                $this->xmlwriter->full_tag($field, $value);
+            }
         }
-
     }
 
     /**
@@ -102,39 +120,42 @@ class moodle1_mod_book_handler extends moodle1_mod_handler {
      * data available
      */
     public function process_book_chapters($data) {
-
         $this->write_xml('chapter', $data, array('/chapter/id'));
-
+        //TODO: convert chapter files
     }
 
     /**
      * This is executed when the parser reaches the <OPTIONS> opening element
      */
     public function on_book_chapters_start() {
-
         $this->xmlwriter->begin_tag('chapters');
-
     }
 
     /**
      * This is executed when the parser reaches the closing </OPTIONS> element
      */
     public function on_book_chapters_end() {
-
         $this->xmlwriter->end_tag('chapters');
-
     }
 
     /**
      * This is executed when we reach the closing </MOD> tag of our 'book' path
      */
     public function on_book_end() {
-
-        // close book.xml
+        // finalize book.xml
         $this->xmlwriter->end_tag('book');
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();
 
+        // write inforef.xml
+        $this->open_xml_writer("activities/book_{$this->moduleid}/inforef.xml");
+        $this->xmlwriter->begin_tag('inforef');
+        $this->xmlwriter->begin_tag('fileref');
+        foreach ($this->fileman->get_fileids() as $fileid) {
+            $this->write_xml('file', array('id' => $fileid));
+        }
+        $this->xmlwriter->end_tag('fileref');
+        $this->xmlwriter->end_tag('inforef');
+        $this->close_xml_writer();
     }
-
 }
