@@ -324,7 +324,7 @@ function quiz_repaginate($layout, $perpage, $shuffle = false) {
     $layout = str_replace(',0', '', $layout); // remove existing page breaks
     $questions = explode(',', $layout);
     //remove empty pages from beginning
-    while (reset($questions) == '0') {
+    while (reset($questions) === '0') {
         array_shift($questions);
     }
     if ($shuffle) {
