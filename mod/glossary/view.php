@@ -329,12 +329,12 @@
 
 /// Search box
     if ($showcommonelements ) {
-        echo '<form method="post" action="view.php">';
+        echo '<form method="get" action="view.php">';
 
         echo '<table class="boxaligncenter" width="70%" border="0">';
         echo '<tr><td align="center" class="glossarysearchbox">';
 
-        echo '<input type="submit" value="'.$strsearch.'" name="searchbutton" /> ';
+        echo '<input type="submit" value="'.$strsearch.'" /> ';
         if ($mode == 'search') {
             echo '<input type="text" name="hook" size="20" value="'.s($hook).'" alt="'.$strsearch.'" /> ';
         } else {
