@@ -61,10 +61,11 @@ class scorm_basic_report extends scorm_default_report {
         }
 
         // select group menu
-        $PAGE->url->param('attemptsmode', $attemptsmode);
+        $displayoptions = array();
+        $displayoptions['attemptsmode'] = $attemptsmode;
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
             if (!$download) {
-                groups_print_activity_menu($cm, $PAGE->url);
+                groups_print_activity_menu($cm, new moodle_url($PAGE->url, $displayoptions));
             }
         }
 
@@ -339,7 +340,7 @@ class scorm_basic_report extends scorm_default_report {
                 if ($candelete) {
                     // Start form
                     $strreallydel  = addslashes_js(get_string('deleteattemptcheck', 'scorm'));
-                    echo '<form id="attemptsform" method="post" action="' . $PAGE->url .
+                    echo '<form id="attemptsform" method="post" action="' . $PAGE->url->out(false) .
                          '" onsubmit="return confirm(\''.$strreallydel.'\');">';
                     echo '<input type="hidden" name="action" value="delete"/>';
                     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
@@ -486,17 +487,19 @@ class scorm_basic_report extends scorm_default_report {
                     if (!empty($attempts)) {
                         echo '<table class="boxaligncenter"><tr>';
                         echo '<td>';
-                        $PAGE->url->param('download', 'ODS');
-                        echo $OUTPUT->single_button($PAGE->url, get_string('downloadods'));
+                        echo $OUTPUT->single_button(new moodle_url($PAGE->url,
+                                                                   array('download'=>'ODS') + $displayoptions),
+                                                                   get_string('downloadods'));
                         echo "</td>\n";
                         echo '<td>';
-                        $PAGE->url->param('download', 'Excel');
-                        echo $OUTPUT->single_button($PAGE->url, get_string('downloadexcel'));
+                        echo $OUTPUT->single_button(new moodle_url($PAGE->url,
+                                                                   array('download'=>'Excel') + $displayoptions),
+                                                                   get_string('downloadexcel'));
                         echo "</td>\n";
                         echo '<td>';
-                        $PAGE->url->param('download', 'CSV');
-                        echo $OUTPUT->single_button($PAGE->url, get_string('downloadtext'));
-                        $PAGE->url->param('download', '');
+                        echo $OUTPUT->single_button(new moodle_url($PAGE->url,
+                                                                   array('download'=>'CSV') + $displayoptions),
+                                                                   get_string('downloadtext'));
                         echo "</td>\n";
                         echo "<td>";
                         echo "</td>\n";

@@ -32,26 +32,29 @@ $id = required_param('id', PARAM_INT);// Course Module ID, or
 $download = optional_param('download', '', PARAM_RAW);
 $mode = optional_param('mode', '', PARAM_ALPHA); // Report mode
 
-$url = new moodle_url('/mod/scorm/report.php');
-
-if ($mode !== '') {
-    $url->param('mode', $mode);
-}
-
-$url->param('id', $id);
 $cm = get_coursemodule_from_id('scorm', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 $scorm = $DB->get_record('scorm', array('id'=>$cm->instance), '*', MUST_EXIST);
+
+$contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
+$reportlist = scorm_report_list($contextmodule);
+
+$url = new moodle_url('/mod/scorm/report.php');
+
+$url->param('id', $id);
+if (empty($mode)) {
+    $mode = reset($reportlist);
+} else if (!in_array($mode, $reportlist)) {
+    print_error('erroraccessingreport', 'scorm');
+}
+$url->param('mode', $mode);
 
 $PAGE->set_url($url);
 
 require_login($course->id, false, $cm);
 
-$contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
-
 require_capability('mod/scorm:viewreport', $contextmodule);
 
-$reportlist = scorm_report_list($contextmodule);
 if (count($reportlist) < 1) {
     print_error('erroraccessingreport', 'scorm');
 }
@@ -74,12 +77,6 @@ if (empty($noheader)) {
     $currenttab = 'reports';
     require($CFG->dirroot . '/mod/scorm/tabs.php');
     echo $OUTPUT->heading(format_string($scorm->name));
-}
-
-if (empty($mode)) {
-    $mode = reset($reportlist);
-} else if (!in_array($mode, $reportlist)) {
-    print_error('erroraccessingreport', 'scorm');
 }
 
 // Open the selected Scorm report and display it
