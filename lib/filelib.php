@@ -915,10 +915,10 @@ function format_postdata_for_curlcall($postdata) {
  * @param int $connecttimeout timeout for connection to server; this is the timeout that
  *   usually happens if the remote server is completely down (default 20 seconds);
  *   may not work when using proxy
- * @param bool $skipcertverify If true, the peer's SSL certificate will not be checked. 
+ * @param bool $skipcertverify If true, the peer's SSL certificate will not be checked.
  *   Only use this when already in a trusted location.
  * @param string $tofile store the downloaded content to file instead of returning it.
- * @param bool $calctimeout false by default, true enables an extra head request to try and determine 
+ * @param bool $calctimeout false by default, true enables an extra head request to try and determine
  *   filesize and appropriately larger timeout based on $CFG->curltimeoutkbitrate
  * @return mixed false if request failed or content of the file as string if ok. True if file downloaded into $tofile successfully.
  */
@@ -1788,14 +1788,7 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
     }
 
     if (empty($filter)) {
-        if ($mimetype == 'text/html' && !empty($CFG->usesid)) {
-            //cookieless mode - rewrite links
-            header('Content-Type: text/html');
-            $path = $pathisstring ? $path : implode('', file($path));
-            $path = sid_ob_rewrite($path);
-            $filesize = strlen($path);
-            $pathisstring = true;
-        } else if ($mimetype == 'text/plain') {
+        if ($mimetype == 'text/plain') {
             header('Content-Type: Text/plain; charset=utf-8'); //add encoding
         } else {
             header('Content-Type: '.$mimetype);
@@ -1822,10 +1815,6 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
 
             $text = file_modify_html_header($text);
             $output = format_text($text, FORMAT_HTML, $options, $COURSE->id);
-            if (!empty($CFG->usesid)) {
-                //cookieless mode - rewrite links
-                $output = sid_ob_rewrite($output);
-            }
 
             header('Content-Length: '.strlen($output));
             header('Content-Type: text/html');
@@ -1843,10 +1832,6 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
             $options->noclean = true;
             $text = htmlentities($pathisstring ? $path : implode('', file($path)));
             $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $COURSE->id) .'</pre>';
-            if (!empty($CFG->usesid)) {
-                //cookieless mode - rewrite links
-                $output = sid_ob_rewrite($output);
-            }
 
             header('Content-Length: '.strlen($output));
             header('Content-Type: text/html; charset=utf-8'); //add encoding
@@ -2004,14 +1989,7 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
 
     if (empty($filter)) {
         $filtered = false;
-        if ($mimetype == 'text/html' && !empty($CFG->usesid)) {
-            //cookieless mode - rewrite links
-            header('Content-Type: text/html');
-            $text = $stored_file->get_content();
-            $text = sid_ob_rewrite($text);
-            $filesize = strlen($text);
-            $filtered = true;
-        } else if ($mimetype == 'text/plain') {
+        if ($mimetype == 'text/plain') {
             header('Content-Type: Text/plain; charset=utf-8'); //add encoding
         } else {
             header('Content-Type: '.$mimetype);
@@ -2037,10 +2015,6 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
             $text = $stored_file->get_content();
             $text = file_modify_html_header($text);
             $output = format_text($text, FORMAT_HTML, $options, $COURSE->id);
-            if (!empty($CFG->usesid)) {
-                //cookieless mode - rewrite links
-                $output = sid_ob_rewrite($output);
-            }
 
             header('Content-Length: '.strlen($output));
             header('Content-Type: text/html');
@@ -2059,10 +2033,6 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
             $options->noclean = true;
             $text = $stored_file->get_content();
             $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $COURSE->id) .'</pre>';
-            if (!empty($CFG->usesid)) {
-                //cookieless mode - rewrite links
-                $output = sid_ob_rewrite($output);
-            }
 
             header('Content-Length: '.strlen($output));
             header('Content-Type: text/html; charset=utf-8'); //add encoding

@@ -2395,10 +2395,6 @@ function redirect($url, $message='', $delay=-1) {
         $url = $url->out(false);
     }
 
-    if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
-       $url = $SESSION->sid_process_url($url);
-    }
-
     $debugdisableredirect = false;
     do {
         if (defined('DEBUGGING_PRINTED')) {

@@ -17,11 +17,9 @@ if ($show_instructions) {
         <div class="desc">
           <?php
             print_string("loginusing");
-            if (empty($CFG->usesid)) {
-                echo '<br/>';
-                echo '('.get_string("cookiesenabled").')';
-                echo $OUTPUT->help_icon('cookiesenabled');
-            }
+            echo '<br/>';
+            echo '('.get_string("cookiesenabled").')';
+            echo $OUTPUT->help_icon('cookiesenabled');
            ?>
         </div>
         <?php
