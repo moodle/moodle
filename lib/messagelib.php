@@ -373,7 +373,7 @@ function message_get_my_providers() {
  * @return array of message providers
  */
 function message_get_providers_for_user($userid) {
-    global $DB;
+    global $DB, $CFG;
 
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
@@ -385,6 +385,10 @@ function message_get_providers_for_user($userid) {
             if (!has_capability($provider->capability, $systemcontext, $userid)) {
                 unset($providers[$providerid]);   // Not allowed to see this
             }
+        }
+        // Ensure user is not allowed to configure instantmessage if it is globally disabled.
+        if (!$CFG->messaging && $provider->name == 'instantmessage') {
+            unset($providers[$providerid]);
         }
     }
 
