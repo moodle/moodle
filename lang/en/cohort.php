@@ -49,4 +49,5 @@ $string['name'] = 'Name';
 $string['nocomponent'] = 'Created manually';
 $string['potusers'] = 'Potential users';
 $string['potusersmatching'] = 'Potential matching users';
+$string['removeuserwarning'] = 'Removing users from a cohort may result in unenrolling of users from multiple courses which includes deleting of user settings, grades, group membership and other user information from affected courses.';
 $string['selectfromcohort'] = 'Select members from cohort';
