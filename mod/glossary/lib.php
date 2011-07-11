@@ -1645,6 +1645,10 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
 
      $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
+    // Prepare format_string/text options
+    $fmtoptions = array(
+        'context' => $context);
+
      echo '<table border="0" width="100%">';
      echo '<tr>';
 
@@ -1674,7 +1678,7 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
                          $selected = $url;
                      }
                  }
-                 $menu[$url] = clean_text($currentcategory->name); //Only clean, not filters
+                 $menu[$url] = format_string($currentcategory->name, true, $fmtoptions);
           }
      }
      if ( !$selected ) {
@@ -1682,7 +1686,7 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
      }
 
      if ( $category ) {
-        echo format_text($category->name, FORMAT_PLAIN);
+        echo format_string($category->name, true, $fmtoptions);
      } else {
         if ( $hook == GLOSSARY_SHOW_NOT_CATEGORISED ) {
 
