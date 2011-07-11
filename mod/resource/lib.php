@@ -82,7 +82,7 @@ function resource_get_post_actions() {
  * Add resource instance.
  * @param object $data
  * @param object $mform
- * @return int new resoruce instance id
+ * @return int new resource instance id
  */
 function resource_add_instance($data, $mform) {
     global $CFG, $DB;
