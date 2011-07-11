@@ -2375,7 +2375,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
                 exit; // never reached
             }
             $lang = isset($SESSION->lang) ? $SESSION->lang : $CFG->lang;
-            complete_user_login($guest, false);
+            complete_user_login($guest);
             $USER->autologinguest = true;
             $SESSION->lang = $lang;
         } else {
@@ -3623,12 +3623,12 @@ function authenticate_user_login($username, $password) {
  *
  * NOTE:
  * - It will NOT log anything -- up to the caller to decide what to log.
+ * - this function does not set any cookies any more!
  *
  * @param object $user
- * @param bool $setcookie
  * @return object A {@link $USER} object - BC only, do not use
  */
-function complete_user_login($user, $setcookie=true) {
+function complete_user_login($user) {
     global $CFG, $USER;
 
     // regenerate session id and delete old session,
@@ -3651,17 +3651,6 @@ function complete_user_login($user, $setcookie=true) {
     if (isguestuser()) {
         // no need to continue when user is THE guest
         return $USER;
-    }
-
-    if ($setcookie) {
-        if (empty($CFG->nolastloggedin)) {
-            set_moodle_cookie($USER->username);
-        } else {
-            // do not store last logged in user in cookie
-            // auth plugins can temporarily override this from loginpage_hook()
-            // do not save $CFG->nolastloggedin in database!
-            set_moodle_cookie('');
-        }
     }
 
     /// Select password change url
