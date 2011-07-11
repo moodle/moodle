@@ -264,6 +264,7 @@ class admin_uploaduser_form2 extends moodleform {
         } else {
             $mform->setDefault('city', $CFG->defaultcity);
         }
+        $mform->addRule('city', get_string('required'), 'required');
 
         $mform->addElement('select', 'country', get_string('selectacountry'), get_string_manager()->get_list_of_countries());
         if (empty($CFG->country)) {
@@ -407,10 +408,6 @@ class admin_uploaduser_form2 extends moodleform {
 
             if (!in_array('email', $columns) and empty($data['email'])) {
                 $errors['email'] = get_string('requiredtemplate', 'admin');
-            }
-
-            if (!in_array('city', $columns) and empty($data['city'])) {
-                $errors['city'] = get_string('required');
             }
         }
 
