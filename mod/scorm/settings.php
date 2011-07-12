@@ -117,8 +117,6 @@ if ($ADMIN->fulltree) {
     //admin level settings.
     $settings->add(new admin_setting_heading('scorm/adminsettings', get_string('adminsettings', 'scorm'), ''));
 
-    $settings->add(new admin_setting_configtext('scorm/updatetime', get_string('updatetime', 'scorm'), '', 2, PARAM_INT));
-
     $settings->add(new admin_setting_configcheckbox('scorm/allowtypeexternal', get_string('allowtypeexternal', 'scorm'), '', 0));
 
     $settings->add(new admin_setting_configcheckbox('scorm/allowtypelocalsync', get_string('allowtypelocalsync', 'scorm'), '', 0));
