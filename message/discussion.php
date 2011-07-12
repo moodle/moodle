@@ -25,7 +25,7 @@
  */
 
     require(dirname(dirname(__FILE__)) . '/config.php');
-    require_once(dirname(__FILE__) . '/lib.php');
+    require_once($CFG->dirroot . '/message/lib.php');
 
     //the same URL params as in 1.9
     $userid     = required_param('id', PARAM_INT);
