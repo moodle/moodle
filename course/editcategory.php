@@ -49,7 +49,12 @@ if ($id) {
 
 $PAGE->set_pagelayout('admin');
 
-$editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>true);
+$editoroptions = array(
+    'maxfiles'  => EDITOR_UNLIMITED_FILES,
+    'maxbytes'  => $CFG->maxbytes,
+    'trusttext' => true,
+    'context'   => $editorcontext
+);
 $category = file_prepare_standard_editor($category, 'description', $editoroptions, $editorcontext, 'coursecat', 'description', 0);
 
 $mform = new editcategory_form('editcategory.php', compact('category', 'editoroptions'));
