@@ -49,6 +49,10 @@ class feedback_item_label extends feedback_item_base {
         //preparing the editor for new file-api
         $item->presentationformat = FORMAT_HTML;
         $item->presentationtrust = 1;
+
+        // Append editor context to presentation options, giving preference to existing context.
+        $this->presentationoptions = array_merge(array('context' => $this->context), $this->presentationoptions);
+
         $item = file_prepare_standard_editor($item,
                                             'presentation', //name of the form element
                                             $this->presentationoptions,

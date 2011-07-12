@@ -126,6 +126,9 @@ class workshop_rubric_strategy implements workshop_strategy {
             $norepeats += self::ADDDIMS;
         }
 
+        // Append editor context to editor options, giving preference to existing context.
+        $this->descriptionopts = array_merge(array('context' => $this->workshop->context), $this->descriptionopts);
+
         // prepare the embeded files
         for ($i = 0; $i < $nodimensions; $i++) {
             // prepare all editor elements
