@@ -523,16 +523,4 @@ class scorm_basic_report extends scorm_default_report {
             echo $OUTPUT->notification(get_string('noactivity', 'scorm'));
         }
     }// function ends
-
-    /**
-     * only users with mod/scorm:viewreport can see this plugin.
-     * @param stdclass $context - context object
-     * @return boolean
-     */
-    function canview($context) {
-        if (has_capability('mod/scorm:viewreport', $context)) {
-            return true;
-        }
-        return false;
-    }
 }

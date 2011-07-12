@@ -29,7 +29,7 @@ function scorm_report_list($context) {
     if (!empty($reportlist)) {
         return $reportlist;
     }
-    $reportdirs = get_plugin_list('scorm');
+    $reportdirs = get_plugin_list('scormreport');
     foreach ($reportdirs as $reportname => $notused) {
         $pluginfile = $CFG->dirroot.'/mod/scorm/report/'.$reportname.'/report.php';
         if (is_readable($pluginfile)) {

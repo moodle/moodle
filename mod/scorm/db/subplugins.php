@@ -1,3 +1,3 @@
 <?php
 
-$subplugins = array('scorm'=>'mod/scorm/report');
+$subplugins = array('scormreport'=>'mod/scorm/report');
