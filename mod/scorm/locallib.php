@@ -1101,7 +1101,7 @@ function scorm_get_attempt_count($userid, $scorm, $attempts_only=false) {
     if ($scorm->grademethod == GRADESCOES) {
         $element = 'cmi.core.lesson_status';
     }
-    if ($scorm->version == 'scorm1_3') {
+    if ($scorm->version == 'scorm_13' || $scorm->version == 'SCORM_1.3') {
         $element = 'cmi.score.raw';
     }
     $attempts = $DB->get_records_select('scorm_scoes_track',"element=? AND userid=? AND scormid=?", array($element, $userid, $scorm->id),'attempt','DISTINCT attempt AS attemptnumber');
