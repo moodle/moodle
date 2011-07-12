@@ -185,13 +185,17 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
         $resource['intro'] = moodle1_converter::migrate_referenced_files($resource['intro'], $this->fileman);
 
         // convert the referenced file itself as a main file in the content area
+        $reference = $data['reference'];
+        if (strpos($reference, '$@FILEPHP@$') === 0) {
+            $reference = str_replace(array('$@FILEPHP@$', '$@SLASH@$', '$@FORCEDOWNLOAD@$'), array('', '/', ''), $reference);
+        }
         $this->fileman->filearea = 'content';
         $this->fileman->itemid   = 0;
         try {
-            $this->fileman->migrate_file('course_files/'.$data['reference'], '/', null, 1);
+            $this->fileman->migrate_file('course_files/'.$reference, '/', null, 1);
         } catch (moodle1_convert_exception $e) {
             // the file probably does not exist
-            $this->log('error migrating the resource main file', backup::LOG_WARNING, 'course_files/'.$data['reference']);
+            $this->log('error migrating the resource main file', backup::LOG_WARNING, 'course_files/'.$reference);
         }
 
         // write resource.xml
@@ -247,6 +251,12 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
                 $name = 'imscp';
                 break;
             case 'file':
+                // if starts with $@FILEPHP@$ then it is URL link to a local course file
+                // to be migrated to the new resource module
+                if (strpos($reference, '$@FILEPHP@$') === 0) {
+                    $name = null;
+                    break;
+                }
                 // if http:// https:// ftp:// OR starts with slash need to be converted to URL
                 if (strpos($reference, '://') or strpos($reference, '/') === 0) {
                     $name = 'url';

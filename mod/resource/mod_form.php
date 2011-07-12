@@ -39,8 +39,8 @@ class mod_resource_mod_form extends moodleform_mod {
 
         if ($this->current->instance and $this->current->tobemigrated) {
             // resource not migrated yet
-            $resoruce_old = $DB->get_record('resource_old', array('oldid'=>$this->current->instance));
-            $mform->addElement('static', 'warning', '', get_string('notmigrated', 'resource', $resoruce_old->type));
+            $resource_old = $DB->get_record('resource_old', array('oldid'=>$this->current->instance));
+            $mform->addElement('static', 'warning', '', get_string('notmigrated', 'resource', $resource_old->type));
             $mform->addElement('cancel');
             $this->standard_hidden_coursemodule_elements();
             return;

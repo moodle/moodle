@@ -322,11 +322,11 @@ function resource_print_intro($resource, $cm, $course, $ignoresettings=false) {
 function resource_print_tobemigrated($resource, $cm, $course) {
     global $DB, $OUTPUT;
 
-    $resoruce_old = $DB->get_record('resource_old', array('oldid'=>$resource->id));
+    $resource_old = $DB->get_record('resource_old', array('oldid'=>$resource->id));
     resource_print_header($resource, $cm, $course);
     resource_print_heading($resource, $cm, $course);
     resource_print_intro($resource, $cm, $course);
-    echo $OUTPUT->notification(get_string('notmigrated', 'resource', $resoruce_old->type));
+    echo $OUTPUT->notification(get_string('notmigrated', 'resource', $resource_old->type));
     echo $OUTPUT->footer();
     die;
 }
@@ -341,11 +341,15 @@ function resource_print_tobemigrated($resource, $cm, $course) {
 function resource_print_filenotfound($resource, $cm, $course) {
     global $DB, $OUTPUT;
 
-    $resoruce_old = $DB->get_record('resource_old', array('oldid'=>$resource->id));
+    $resource_old = $DB->get_record('resource_old', array('oldid'=>$resource->id));
     resource_print_header($resource, $cm, $course);
     resource_print_heading($resource, $cm, $course);
     resource_print_intro($resource, $cm, $course);
-    echo $OUTPUT->notification(get_string('notmigrated', 'resource', $resoruce_old->type));
+    if ($resource_old) {
+        echo $OUTPUT->notification(get_string('notmigrated', 'resource', $resource_old->type));
+    } else {
+        echo $OUTPUT->notification(get_string('filenotfound', 'resource'));
+    }
     echo $OUTPUT->footer();
     die;
 }
