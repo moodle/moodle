@@ -88,7 +88,13 @@ if (!$courseid) {
 // default return url
 $gpr = new grade_plugin_return();
 $returnurl = $gpr->get_return_url('index.php?id='.$courseid);
-$editoroptions = array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
+$editoroptions = array(
+    'maxfiles'  => EDITOR_UNLIMITED_FILES,
+    'maxbytes'  => $CFG->maxbytes,
+    'trusttext' => false,
+    'noclean'   => true,
+    'context'   => $systemcontext
+);
 
 if (!empty($scale_rec->id)) {
     $scale_rec = file_prepare_standard_editor($scale_rec, 'description', $editoroptions, $systemcontext, 'grade', 'scale', $scale_rec->id);

@@ -77,7 +77,12 @@ if (can_use_html_editor()) {
 
 $errorstring = '';
 
-$editoroptions = array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false);
+$editoroptions = array(
+    'maxfiles'  => EDITOR_UNLIMITED_FILES,
+    'maxbytes'  => $CFG->maxbytes,
+    'trusttext' => false,
+    'context'   => $systemcontext
+);
 $tag = file_prepare_standard_editor($tag, 'description', $editoroptions, $systemcontext, 'tag', 'description', $tag->id);
 
 $tagform = new tag_edit_form(null, compact('editoroptions'));

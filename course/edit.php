@@ -77,6 +77,8 @@ if (!empty($course)) {
         }
     }
     $course->allowedmods = $allowedmods;
+    //add context for editor
+    $editoroptions['context'] = $coursecontext;
     $course = file_prepare_standard_editor($course, 'summary', $editoroptions, $coursecontext, 'course', 'summary', 0);
 
 } else {
