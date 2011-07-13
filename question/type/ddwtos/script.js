@@ -111,7 +111,7 @@ var ddwtos_currentzindex = 10;
             YAHOO.util.Dom.setStyle(this.getEl(), "zIndex", ddwtos_currentzindex++);
             YAHOO.util.Dom.removeClass(this.getEl(), 'placed');
 
-            if (is_infinite(this.getEl()) && !this.slot){
+            if (is_infinite(this.getEl()) && !this.slot) {
                 var currentplayer = this.getEl().id.replace(/_clone[0-9]+$/, '');
                 var ddplayer = YAHOO.util.DragDropMgr.getDDById(currentplayer);
                 clone_player(ddplayer);
@@ -134,7 +134,7 @@ var ddwtos_currentzindex = 10;
             //get the question-prefix of slot and player and check whether they belong to the same question
             var slotprefix = target.id.split("_")[0] + "_";
             var playerprefix = dragged.id.split("_")[0] + "_";
-            if (slotprefix != playerprefix){
+            if (slotprefix != playerprefix) {
                 var p = YAHOO.util.DragDropMgr.getDDById(dragged.id);
                 p.startDrag(0,0);
                 p.onInvalidDrop(null);
@@ -239,26 +239,26 @@ var ddwtos_currentzindex = 10;
         return p2;
     }
 
-    function clone_players(players){
+    function clone_players(players) {
         for (var i = 0; i < players.length; i++) {
             var p = YAHOO.util.DragDropMgr.getDDById(players[i].id);
             clone_player(p);
         }
     }
 
-    function is_readonly(el){
+    function is_readonly(el) {
         return YAHOO.util.Dom.hasClass(el, 'readonly');
     }
 
-    function is_infinite(el){
+    function is_infinite(el) {
         return YAHOO.util.Dom.hasClass(el, 'infinite');
     }
 
-    function show_element(el){
+    function show_element(el) {
         YAHOO.util.Dom.setStyle(el, 'visibility', 'visible');
     }
 
-    function hide_element(el){
+    function hide_element(el) {
         YAHOO.util.Dom.setStyle(el, 'visibility', 'hidden');
     }
 
@@ -267,15 +267,33 @@ var ddwtos_currentzindex = 10;
         this.players = players;
     }
 
-    function set_xy_after_resize(e, slotsandplayerobj){
-        var timeout = 0;
-        if (navigator.appVersion.indexOf('MSIE 7') != -1) {
-          timeout = 1000;
+    function set_xy_after_resize(e, slotsandplayerobj, refreshes) {
+        if (refreshes == null) {
+            if (navigator.appVersion.indexOf('MSIE 7') != -1) {
+                // IE7 can't trap onload properly. Refresh until loaded
+                refreshes = 10;
+            } else {
+                refreshes = 0;
+            }
         }
 
-        setTimeout(function() {
-            set_xy_after_resize_actual(e,slotsandplayerobj);
-        }, timeout);
+        set_xy_after_resize_actual(e,slotsandplayerobj);
+
+        if (refreshes) {
+            setTimeout(function() {
+                set_xy_after_resize(e, slotsandplayerobj, refreshes - 1);
+            }, 100);
+        }
+    }
+
+    /**
+     * Wrapper function for calling set_xy_after_resize function
+     */
+    function set_xy_after_resize_wrapper(listofslotsandplayers) {
+        if (arguments.length > 2) {
+            listofslotsandplayers = arguments[2];
+        }
+        set_xy_after_resize(null, listofslotsandplayers);
     }
 
     function set_xy_after_resize_actual(e, slotsandplayerobj) {
@@ -344,6 +362,11 @@ var ddwtos_currentzindex = 10;
         var listofslotsandplayers = new list_of_slots_and_players(slots, players);
         YAHOO.util.Event.addListener(window, "resize", set_xy_after_resize, listofslotsandplayers);
         YAHOO.util.Event.addListener(window, "load", set_xy_after_resize, listofslotsandplayers);
+
+        // IE7 detects onDomReady instead of onload
+        if (navigator.appVersion.indexOf('MSIE 7') != -1) {
+            YAHOO.util.Event.onDOMReady(set_xy_after_resize_wrapper, listofslotsandplayers);
+        }
     }
 
     function getValuesForThisSlot(slotid, players) {
@@ -516,7 +539,7 @@ var ddwtos_currentzindex = 10;
         }
     }
 
-    function call_YUI_startDrag_onInvalidDrop(slotobj){
+    function call_YUI_startDrag_onInvalidDrop(slotobj) {
         var target = YAHOO.util.DragDropMgr.getDDById(slotobj.id);
         if (!target.player) {
             return;
@@ -544,12 +567,11 @@ var ddwtos_currentzindex = 10;
         YAHOO.util.Dom.removeClass(this, 'focussed');
     }
 
-    function ie7_zoom_message (){
-        var browser = navigator.appVersion;
-        if (browser.indexOf('MSIE 7') > -1){
+    function ie7_zoom_message () {
+        if (navigator.appVersion.indexOf('MSIE 7') > -1) {
             var b = document.body.getBoundingClientRect();
             var magnifactor = (b.right - b.left)/document.body.clientWidth;
-            if (magnifactor < 0.9  || magnifactor > 1.1){
+            if (magnifactor < 0.9  || magnifactor > 1.1) {
 
                 var answers = YAHOO.util.Dom.getElementsByClassName("answercontainer", "div");
                 for(var i=0; i<answers.length; i++) {
