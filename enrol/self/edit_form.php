@@ -68,12 +68,15 @@ class enrol_self_edit_form extends moodleform {
 
         $mform->addElement('duration', 'enrolperiod', get_string('enrolperiod', 'enrol_self'), array('optional' => true, 'defaultunit' => 86400));
         $mform->setDefault('enrolperiod', $plugin->get_config('enrolperiod'));
+        $mform->addHelpButton('enrolperiod', 'enrolperiod', 'enrol_self');
 
         $mform->addElement('date_selector', 'enrolstartdate', get_string('enrolstartdate', 'enrol_self'), array('optional' => true));
         $mform->setDefault('enrolstartdate', 0);
+        $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_self');
 
         $mform->addElement('date_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_self'), array('optional' => true));
         $mform->setDefault('enrolenddate', 0);
+        $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_self');
 
         $options = array(0 => get_string('never'),
                  1800 * 3600 * 24 => get_string('numdays', '', 1800),
