@@ -14,8 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 function scorm_openpopup(url,name,options,width,height) {
-    fullurl = M.cfg.wwwroot + '/mod/scorm/' + url;
-    windowobj = window.open(fullurl,name,options);
+    windowobj = window.open(url,name,options);
     if (!windowobj) {
         return;
     }
