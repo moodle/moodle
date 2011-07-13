@@ -6960,7 +6960,7 @@ function forum_discussion_update_last_post($discussionid) {
  * @return array
  */
 function forum_get_view_actions() {
-    return array('view discussion','search','forum','forums','subscribers');
+    return array('view discussion', 'search', 'forum', 'forums', 'subscribers', 'view forum');
 }
 
 /**
