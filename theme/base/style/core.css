@@ -3,6 +3,9 @@
  */
 input[type=text],input[type=password],textarea{width:auto;}
 
+/* Fix for YUI overriding styles */
+strong{font-style:inherit;}em{font-weight:inherit;}
+
 /**
  * General
  */
