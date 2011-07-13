@@ -1159,13 +1159,17 @@ class global_navigation extends navigation_node {
                 // Load the course associated with the page into the navigation
                 $coursenode = $this->load_course($course);
 
+                // If the course wasn't added then don't try going any further.
+                if (!$coursenode) {
+                    $canviewcourseprofile = false;
+                    break;
+                }
+
                 // If the user is not enrolled then we only want to show the
                 // course node and not populate it.
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                 if (!can_access_course($coursecontext)) {
-                    if ($coursenode) {
-                        $coursenode->make_active();
-                    }
+                    $coursenode->make_active();
                     $canviewcourseprofile = false;
                     break;
                 }
@@ -1222,6 +1226,13 @@ class global_navigation extends navigation_node {
                     }
                     // Load the course associated with the user into the navigation
                     $coursenode = $this->load_course($course);
+
+                    // If the course wasn't added then don't try going any further.
+                    if (!$coursenode) {
+                        $canviewcourseprofile = false;
+                        break;
+                    }
+
                     // If the user is not enrolled then we only want to show the
                     // course node and not populate it.
                     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -2170,14 +2181,14 @@ class global_navigation extends navigation_node {
      * @param stdClass $course
      * @return bool
      */
-    public function add_course_essentials(navigation_node $coursenode, stdClass $course) {
+    public function add_course_essentials($coursenode, stdClass $course) {
         global $CFG;
 
         if ($course->id == SITEID) {
             return $this->add_front_page_course_essentials($coursenode, $course);
         }
 
-        if ($coursenode == false || $coursenode->get('participants', navigation_node::TYPE_CONTAINER)) {
+        if ($coursenode == false || !($coursenode instanceof navigation_node) || $coursenode->get('participants', navigation_node::TYPE_CONTAINER)) {
             return true;
         }
 
