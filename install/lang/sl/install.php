@@ -31,13 +31,17 @@
 $string['admindirname'] = 'Skrbniški imenik';
 $string['availablelangs'] = 'Jezikovni paketi na voljo';
 $string['chooselanguagehead'] = 'Izberite jezik';
-$string['chooselanguagesub'] = 'Izberite jezika SAMO za namestitev. Pozneje boste lahko izbrali tudi jezike strani in uporabniške jezike.';
+$string['chooselanguagesub'] = 'Izberite jezik za namestitev. Ta jezik bo uporabljen kot privzeti za spletno mesto, lahko pa se spremeni tudi kasneje.';
+$string['databasehost'] = 'Gostitelj baze podatkov';
+$string['databasename'] = 'Ime baze podatkov';
+$string['databasetypehead'] = 'Izberi gonilnik baze podatkov';
 $string['dataroot'] = 'Imenik za podatke';
 $string['dbprefix'] = 'Predpona tabel';
 $string['dirroot'] = 'Imenik Moodle';
 $string['environmenthead'] = 'Preverjanje vašega okolja ...';
+$string['errorsinenvironment'] = 'Preverjanje okolja neuspešno!';
 $string['installation'] = 'Namestitev';
-$string['langdownloaderror'] = 'Žal jezik "{$a}" ni bil nameščen. Postopek namestitve se bo nadaljeval v angleščini.';
+$string['langdownloaderror'] = 'Jezika "{$a}" ni mogoče namestiti. Postopek namestitve se bo nadaljeval v angleščini.';
 $string['memorylimithelp'] = '<p>Omejitev pomnilnika PHP je trenutno na vašem strežniku nastavljena na {$a}.</p>
 
 <p>To lahko povzroči, da bo imel Moodle pozneje težave s pomnilnikom. Še posebej,
@@ -57,6 +61,11 @@ $string['memorylimithelp'] = '<p>Omejitev pomnilnika PHP je trenutno na vašem s
     <p>Vendar lahko to prepreči delovanje <b>vseh</b> PHP strani 
     (ob prikazu strani boste videli napake) in boste morali odstraniti datoteko .htaccess.</p></li>
 </ol>';
+$string['paths'] = 'Poti';
+$string['pathserrcreatedataroot'] = 'Imenika podatkov ({$a->dataroot}) ni mogoče ustvariti.';
+$string['pathshead'] = 'Potrdi poti';
+$string['pathsrodataroot'] = 'Root imenik za podatke ni zapisljiv.';
+$string['phpextension'] = '{$a} PHP razširitev';
 $string['phpversion'] = 'Različica PHP';
 $string['phpversionhelp'] = '<p>Moodle zahteva različico PHP vsaj 4.3.0 ali 5.1.0 (5.0.x ima vrsto znanih težav).</p>
 <p>Vaša trenutna različica je {$a}</p>

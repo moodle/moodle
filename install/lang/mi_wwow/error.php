@@ -28,19 +28,19 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['cannotcreatelangdir'] = 'Kāore i taea te whaiaronga reo.';
-$string['cannotcreatetempdir'] = 'Kāore i taea te whaiaronga rangitaki.';
-$string['cannotdownloadcomponents'] = 'Kāore i taea ngā wae te tikiake.';
-$string['cannotdownloadzipfile'] = 'Kāore i taea te kōnae KŌTUI te tikiake.';
-$string['cannotfindcomponent'] = 'Kāore i taea te wae te kite.';
-$string['cannotsavemd5file'] = 'Kāore i taea te kōnae md5 te tiaki.';
-$string['cannotsavezipfile'] = 'Kāore i taea te kōnae KŌTUI te tiaki.';
-$string['cannotunzipfile'] = 'Kāore i taea te kōnae te whewhera.';
-$string['componentisuptodate'] = 'Tika tonu te wae ki te rā';
-$string['downloadedfilecheckfailed'] = 'I rahua te takinga o te kōnae i tikina ake';
-$string['invalidmd5'] = 'md5 muhu';
-$string['missingrequiredfield'] = 'E ngaro ana tētahi āpure e hiahiatia ana';
-$string['remotedownloaderror'] = 'Tiki ake o to mōtete ki te tūmau i hinga, manatoko koa i ō tautuhinga takawaenga, PHP cURL  toronga kei te tino tutohua.<br /><br /> Me tiki ake koe i te <a href="{$a->url}">{$a->url}</a> kōnae ā-ringa, tāruangia ki te  "{$a->dest}"  i tō tūmau me te pōutāpeta ki reira.';
-$string['wrongdestpath'] = 'Ehara tēnei ara ūnga i te tika';
-$string['wrongsourcebase'] = 'Ehara tēnei tumu URL pūtake i te tika';
-$string['wrongzipfilename'] = 'Ehara tēnei ingoakōnae ZIP i te tika';
+$string['cannotcreatelangdir'] = 'Kāore e taea te waihanga whaiaronga reo';
+$string['cannotcreatetempdir'] = 'Kāore e taea te waihanga whaiaronga rangitahi';
+$string['cannotdownloadcomponents'] = 'Kāore e taea te tikiake i ngā mōtete';
+$string['cannotdownloadzipfile'] = 'Kāore e taea te tikiake i te kōnae KŌTUI';
+$string['cannotfindcomponent'] = 'Kāore e taea te kite mōtete';
+$string['cannotsavemd5file'] = 'Kāore e taea te tiaki kōnae md5';
+$string['cannotsavezipfile'] = 'Kāore e taea te tiaki kōnae KŌTUI';
+$string['cannotunzipfile'] = 'kāore e taea te wetekōtui i te kōnae';
+$string['componentisuptodate'] = 'Kei te tika te wae ki tēnei wā';
+$string['downloadedfilecheckfailed'] = 'I rahua te taki kōnae i tikiake';
+$string['invalidmd5'] = 'I hē te taki tāupe - ngana anō';
+$string['missingrequiredfield'] = 'E ngaro ana ētehi āpure e hiahiatia ana';
+$string['remotedownloaderror'] = 'I rahua te tikiake o te mōtete ki tō tūmau, tēnā whakamanahia ngā tautuhinga takawaenga, ka tūtohua rawatia te toronga PHP cURL.<br /><br />Tikiake ā-ringatia e koe te kōnae <a href="{$a->url}">{$a->url}</a>, tāruatia ki te "{$a->dest}" i tō tūmau, ā, whewhera ai ki reira.';
+$string['wrongdestpath'] = 'Ara whakaūnga hē';
+$string['wrongsourcebase'] = 'I hē te take URL pūtake';
+$string['wrongzipfilename'] = 'Ingoa kōnae KŌTUI hē';
