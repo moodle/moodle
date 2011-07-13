@@ -106,10 +106,11 @@ function scorm_get_skip_view_array(){
  *
  * @return array an array of hide table of contents options
  */
-function scorm_get_hidetoc_array(){
-     return array(0 =>get_string('sided','scorm'),
-                  1 => get_string('hidden','scorm'),
-                  2 => get_string('popupmenu','scorm'));
+function scorm_get_hidetoc_array() {
+     return array(SCORM_TOC_SIDE =>get_string('sided', 'scorm'),
+                  SCORM_TOC_HIDDEN => get_string('hidden', 'scorm'),
+                  SCORM_TOC_POPUP => get_string('popupmenu', 'scorm'),
+                  SCORM_TOC_DISABLED => get_string('disabled', 'scorm'));
 }
 
 /**

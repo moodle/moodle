@@ -202,9 +202,9 @@
         <?php echo $mode == 'review' ? '<div id="scormmode" class="scorm-left">'.get_string('reviewmode','scorm')."</div>\n" : ''; ?>
             <div id="scormnav" class="scorm-right">
 <?php
-        if ($scorm->hidetoc == 2) {
-             echo $result->tocmenu;
-        }
+if ($scorm->hidetoc == SCORM_TOC_POPUP) {
+    echo $result->tocmenu;
+}
 ?>
             </div> <!-- Scormnav -->
         </div> <!-- Scormtop -->
