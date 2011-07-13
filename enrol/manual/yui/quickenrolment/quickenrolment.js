@@ -281,6 +281,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                 this.set(UEP.PAGE, this.get(UEP.PAGE)+1);
             } else {
                 this.set(UEP.USERCOUNT, 0);
+                this.set(UEP.PAGE, 0);
             }
             params = this.get(UEP.PARAMS);
             params['sesskey'] = M.cfg.sesskey;
