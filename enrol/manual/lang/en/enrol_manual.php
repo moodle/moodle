@@ -24,9 +24,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['assignrole'] = 'Assignrole';
-$string['defaultperiod'] = 'Default enrolment period';
-$string['defaultperiod_desc'] = 'Default length of the default enrolment period setting (in seconds).'; //TODO: fixme
+$string['assignrole'] = 'Assign role';
+$string['defaultperiod'] = 'Default enrolment duration';
+$string['defaultperiod_desc'] = 'Default length of time that the enrolment is valid (in seconds). If set to zero, the enrolment duration will be unlimited by default.';
+$string['defaultperiod_help'] = 'Default length of time that the enrolment is valid, starting with the moment the user is enrolled. If disabled, the enrolment duration will be unlimited by default.';
 $string['enrolledincourserole'] = 'Enrolled in "{$a->course}" as "{$a->role}"';
 $string['enrolusers'] = 'Enrol users';
 $string['manual:config'] = 'Configure manual enrol instances';
