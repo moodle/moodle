@@ -16,7 +16,7 @@
 /**
  * Core Report class of basic reporting plugin
  * @package   scorm_basic
- * @author    Ankit Kumar Agarwal
+ * @author    Dan Marsden and Ankit Kumar Agarwal
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
