@@ -23,7 +23,7 @@
 #page-mod-scorm-view .structurelist  {list-style-type: none;white-space: nowrap;}
 #page-mod-scorm-view .structurelist  {list-style-type: none;white-space: nowrap;}
 
-#page-mod-scorm-player #altfinishlink {float: right; border: 0px; padding: 0px; }
+#page-mod-scorm-player #altfinishlink {font-size: 140%;border: 0px; padding: 0px; }
 #page-mod-scorm-player #altpopuplink  {position: left; padding: 5px; border: 0px; }
 #page-mod-scorm-player #scormmode  {float: left; border: 0px; }
 
