@@ -85,7 +85,6 @@ $ADMIN->add('server', $temp);
 
 // "http" settingpage
 $temp = new admin_settingpage('http', get_string('http', 'admin'));
-$temp->add(new admin_setting_configtext('framename', get_string('framename', 'admin'), get_string('configframename', 'admin'), '_top', PARAM_ALPHAEXT));
 $temp->add(new admin_setting_configcheckbox('slasharguments', get_string('slasharguments', 'admin'), get_string('configslasharguments', 'admin'), 1));
 $temp->add(new admin_setting_heading('reverseproxy', get_string('reverseproxy', 'admin'), '', ''));
 $options = array(

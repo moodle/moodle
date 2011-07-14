@@ -75,9 +75,6 @@ if (is_float_problem()) {
 }
 
 // Set some necessary variables during set-up to avoid PHP warnings later on this page
-if (!isset($CFG->framename)) {
-    $CFG->framename = '_top';
-}
 if (!isset($CFG->release)) {
     $CFG->release = '';
 }
