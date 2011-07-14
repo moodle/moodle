@@ -6643,6 +6643,12 @@ FROM
         upgrade_main_savepoint(true, 2011070800.01);
     }
 
+    if ($oldversion < 2011071300.01) {
+        // remove unused config option
+        unset_config('framename');
+        upgrade_main_savepoint(true, 2011071300.01);
+    }
+
 
     return true;
 }
