@@ -55,7 +55,7 @@ if ($currenttab == 'info' && count($row) == 1) {
 if ($currenttab == 'reports' && !empty($reportlist) && count($reportlist) > 1) {
     $row2 = array();
     foreach ($reportlist as $rep) {
-        $row2[] = new tabobject('scorm_'.$rep, $CFG->wwwroot."/mod/scorm/report.php?id=$cm->id&mode=$rep", get_string('pluginname', 'scorm_'.$rep));
+        $row2[] = new tabobject('scorm_'.$rep, $CFG->wwwroot."/mod/scorm/report.php?id=$cm->id&mode=$rep", get_string('pluginname', 'scormreport_'.$rep));
     }
     $tabs[] = $row2;
 }
