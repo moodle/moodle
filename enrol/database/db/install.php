@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -62,9 +61,9 @@ function xmldb_enrol_database_install() {
         set_config('localuserfield', $CFG->enrol_localuserfield, 'enrol_database');
         unset_config('enrol_localuserfield');
     }
-    if (isset($CFG->enrol_localrolefield)) {
-        set_config('localrolefield', $CFG->enrol_localrolefield, 'enrol_database');
-        unset_config('enrol_localrolefield');
+    if (isset($CFG->enrol_db_localrolefield)) {
+        set_config('localrolefield', $CFG->enrol_db_localrolefield, 'enrol_database');
+        unset_config('enrol_db_localrolefield');
     }
     if (isset($CFG->enrol_remotecoursefield)) {
         set_config('remotecoursefield', $CFG->enrol_remotecoursefield, 'enrol_database');
@@ -74,9 +73,9 @@ function xmldb_enrol_database_install() {
         set_config('remoteuserfield', $CFG->enrol_remoteuserfield, 'enrol_database');
         unset_config('enrol_remoteuserfield');
     }
-    if (isset($CFG->enrol_remoterolefield)) {
-        set_config('remoterolefield', $CFG->enrol_remoterolefield, 'enrol_database');
-        unset_config('enrol_remoterolefield');
+    if (isset($CFG->enrol_db_remoterolefield)) {
+        set_config('remoterolefield', $CFG->enrol_db_remoterolefield, 'enrol_database');
+        unset_config('enrol_db_remoterolefield');
     }
     if (isset($CFG->enrol_db_defaultcourseroleid)) {
         set_config('defaultrole', $CFG->enrol_db_defaultcourseroleid, 'enrol_database');
@@ -96,6 +95,7 @@ function xmldb_enrol_database_install() {
         unset_config('enrol_db_ignorehiddencourse');
     }
 
+    unset_config('enrol_db_disableunenrol');
 
 
 
