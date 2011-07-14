@@ -383,7 +383,8 @@
                         //get the value
                         $frmvaluename = $feedbackitem->typ . '_'. $feedbackitem->id;
                         if(isset($savereturn)) {
-                            $value =  isset($formdata->{$frmvaluename})?$formdata->{$frmvaluename}:NULL;
+                            $value = isset($formdata->{$frmvaluename})?$formdata->{$frmvaluename}:NULL;
+                            $value = feedback_clean_input_value($feedbackitem, $value);
                         }else {
                             if(isset($feedbackcompletedtmp->id)) {
                                 $value = feedback_get_item_value($feedbackcompletedtmp->id, $feedbackitem->id, sesskey());
