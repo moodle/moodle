@@ -19,7 +19,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once("$CFG->libdir/formslib.php");
-class mod_scorm_report_settings extends moodleform {
+class mod_scorm_report_interactions_settings extends moodleform {
 
     function definition() {
         global $COURSE;
