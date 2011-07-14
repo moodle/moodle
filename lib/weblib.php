@@ -1860,6 +1860,8 @@ function get_html_lang($dir = false) {
  * @param $cacheable Can this page be cached on back?
  */
 function send_headers($contenttype, $cacheable = true) {
+    global $CFG;
+
     @header('Content-Type: ' . $contenttype);
     @header('Content-Script-Type: text/javascript');
     @header('Content-Style-Type: text/css');
@@ -1878,6 +1880,10 @@ function send_headers($contenttype, $cacheable = true) {
         @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
     }
     @header('Accept-Ranges: none');
+
+    if (empty($CFG->allowframembedding)) {
+        @header('X-Frame-Options: sameorigin');
+    }
 }
 
 /**
