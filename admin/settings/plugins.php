@@ -74,6 +74,7 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_manageauths());
     $temp->add(new admin_setting_heading('manageauthscommonheading', get_string('commonsettings', 'admin'), ''));
     $temp->add(new admin_setting_special_registerauth());
+    $temp->add(new admin_setting_configcheckbox('loginpageautofocus', get_string('loginpageautofocus', 'admin'), get_string('loginpageautofocus_help', 'admin'), 0));
     $temp->add(new admin_setting_configselect('guestloginbutton', get_string('guestloginbutton', 'auth'),
                                               get_string('showguestlogin', 'auth'), '1', array('0'=>get_string('hide'), '1'=>get_string('show'))));
     $temp->add(new admin_setting_configtext('alternateloginurl', get_string('alternateloginurl', 'auth'),
