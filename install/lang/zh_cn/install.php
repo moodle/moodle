@@ -82,5 +82,5 @@ $string['welcomep30'] = '<strong>{$a->installername}</strong>包含了可以创�
 $string['welcomep40'] = '这个软件包还包含了<strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>。';
 $string['welcomep50'] = '使用本软件包中包含的应用程序时应遵循它们各自的授权协议。整个<strong>{$a->installername}</strong>软件包都是<a href="http://www.opensource.org/docs/definition_plain.html">开源</a>的，并且遵循<a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>授权协议发布。';
 $string['welcomep60'] = '接下来的页面会引导您通过一系列步骤在您的计算机上安装配置好<strong>Moodle</strong>。您可以接受缺省的设置后，或者根据需要修改它们。';
-$string['welcomep70'] = '点击“下一步”按钮以继续<strong>Moodle</strong>的安装过程。';
+$string['welcomep70'] = '点击“向后”按钮以继续<strong>Moodle</strong>的安装过程。';
 $string['wwwroot'] = '网站地址';
