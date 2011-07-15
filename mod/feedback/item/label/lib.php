@@ -270,4 +270,7 @@ class feedback_item_label extends feedback_item_base {
     }
     public function get_analysed($item, $groupid = false, $courseid = false) {
     }
+    public function clean_input_value($value) {
+        return '';
+    }
 }
