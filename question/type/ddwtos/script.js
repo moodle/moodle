@@ -427,11 +427,13 @@ var ddwtos_currentzindex = 10;
         case 40: // arrow down (forwards)
         case 32: // space (forwards)
             changeObject(slotobj, 1);
+            YAHOO.util.Event.preventDefault(e); 
             return false; //this has to return false because of IE
 
         case 37: // arrow left (backwards)
         case 38: // arrow up (backwards)
             changeObject(slotobj, -1);
+            YAHOO.util.Event.preventDefault(e); 
             return false; //this has to return false because of IE
 
         case 66: // B (backwards)
@@ -441,7 +443,7 @@ var ddwtos_currentzindex = 10;
             changeObject(slotobj, -1);
             break;
 
-        case 13: // cariage return (forwards)
+        case 13: // carriage return (forwards)
         case 70: // F (forwards)
         case 102: // f (forwards)
         case 78: // N (next)
