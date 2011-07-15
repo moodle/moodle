@@ -2472,7 +2472,7 @@ function print_course($course, $highlightterms = '') {
         $course->summaryformat = FORMAT_MOODLE;
     }
     echo highlight($highlightterms, format_text($course->summary, $course->summaryformat, $options,  $course->id));
-    if ((!isloggedin() || is_siteadmin()) && $icons = enrol_get_course_info_icons($course)) {
+    if ($icons = enrol_get_course_info_icons($course)) {
         echo html_writer::start_tag('div', array('class'=>'enrolmenticons'));
         foreach ($icons as $icon) {
             echo $OUTPUT->render($icon);
