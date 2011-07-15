@@ -468,6 +468,7 @@ if ($formdata = $mform2->is_cancelled()) {
                     if (!isset($supportedauths[$user->auth])) {
                         $upt->track('auth', $struserauthunsupported, 'warning');
                     }
+                    $doupdate = true;
                 }
                 $allcolumns = array_merge($STD_FIELDS, $PRF_FIELDS);
                 foreach ($allcolumns as $column) {
