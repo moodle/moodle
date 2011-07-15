@@ -58,7 +58,8 @@ function min_optional_param($name, $default, $type) {
  */
 function min_clean_param($value, $type) {
     switch($type) {
-        case 'RAW':      break;
+        case 'RAW':      $value = iconv('UTF-8', 'UTF-8//IGNORE', $value);
+                         break;
         case 'INT':      $value = (int)$value;
                          break;
         case 'SAFEDIR':  $value = preg_replace('/[^a-zA-Z0-9_-]/', '', $value);
