@@ -158,7 +158,7 @@ class enrol_meta_handler {
                   JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid)
                   JOIN {enrol} pe ON (pe.courseid = e.customint1 AND pe.enrol <> 'meta' AND pe.courseid = :courseid)
              LEFT JOIN {user_enrolments} pue ON (pue.enrolid = pe.id AND pue.userid = ue.userid)
-                 WHERE pue.id IS NULL";
+                 WHERE pue.id IS NULL AND e.enrol = 'meta'";
         $params = array('courseid'=>$ue->courseid, 'userid'=>$ue->userid);
 
         $rs = $DB->get_recordset_sql($sql, $params);
