@@ -128,6 +128,11 @@ class enrol_meta_handler {
             return true;
         }
 
+        if ($ue->enrol === 'meta') {
+            // prevent circular dependencies - we can not sync meta enrolments recursively
+            return true;
+        }
+
         // does anything want to sync with this parent?
         if (!$enrols = $DB->get_records('enrol', array('customint1'=>$ue->courseid, 'enrol'=>'meta'), 'id ASC')) {
             return true;
