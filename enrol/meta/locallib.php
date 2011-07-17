@@ -115,7 +115,7 @@ class enrol_meta_handler {
             }
 
             // unassing role, there is no other role assignment in parent course
-            role_unassign($ra->roleid, $ra->userid, $ra->contextid, 'enrol_meta', $enrol->id);
+            role_unassign($ra->roleid, $ra->userid, $context->id, 'enrol_meta', $enrol->id);
         }
 
         return true;
