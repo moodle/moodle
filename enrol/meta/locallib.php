@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -45,7 +44,7 @@ class enrol_meta_handler {
             return true;
         }
 
-        //only course level roles are interesting
+        // only course level roles are interesting
         $parentcontext = get_context_instance_by_id($ra->contextid);
         if ($parentcontext->contextlevel != CONTEXT_COURSE) {
             return true;
@@ -81,7 +80,7 @@ class enrol_meta_handler {
     public function role_unassigned($ra) {
         global $DB;
 
-        //note: do not test if plugin enabled, we want to keep removing previous roles
+        // note: do not test if plugin enabled, we want to keep removing previous roles
 
         // prevent circular dependencies - we can not sync meta roles recursively
         if ($ra->component === 'enrol_meta') {
@@ -99,7 +98,7 @@ class enrol_meta_handler {
             return true;
         }
 
-        //note: do not check 'nosyncroleids', somebody might have just enabled it, we want to get rid of nosync roles gradually
+        // note: do not check 'nosyncroleids', somebody might have just enabled it, we want to get rid of nosync roles gradually
 
         foreach ($enrols as $enrol) {
             // Is the user enrolled? We want to sync only really enrolled users
@@ -114,7 +113,7 @@ class enrol_meta_handler {
                 continue;
             }
 
-            // unassing role, there is no other role assignment in parent course
+            // unassign role, there is no other role assignment in parent course
             role_unassign($ra->roleid, $ra->userid, $context->id, 'enrol_meta', $enrol->id);
         }
 
@@ -175,7 +174,7 @@ class enrol_meta_handler {
     public function course_deleted($course) {
         global $DB;
 
-        //note: do not test if plugin enabled, we want to keep removing previously linked courses
+        // note: do not test if plugin enabled, we want to keep removing previously linked courses
 
         // does anything want to sync with this parent?
         if (!$enrols = $DB->get_records('enrol', array('customint1'=>$course->id, 'enrol'=>'meta'), 'id ASC')) {
@@ -184,7 +183,7 @@ class enrol_meta_handler {
 
         $plugin = enrol_get_plugin('meta');
         foreach ($enrols as $enrol) {
-            //unenrol all users
+            // unenrol all users
             $ues = $DB->get_recordset('user_enrolments', array('enrolid'=>$enrol->id));
             foreach ($ues as $ue) {
                 $plugin->unenrol_user($enrol, $ue->userid);
@@ -195,6 +194,7 @@ class enrol_meta_handler {
         return true;
     }
 }
+
 
 /**
  * Sync all meta course links.
