@@ -15,14 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * scorm version information.
+ * Strings for component 'scorm_basic' report plugin
  *
- * @package    mod
- * @subpackage scorm
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   scorm_basic
+ * @author    Ankit Kumar Agarwal
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$module->version  = 2011060500;   // The (date) version of this module
-$module->requires = 2010080300;   // The version of Moodle that is required
-$module->cron     = 300;            // How often should cron check this module (seconds)?
+$string['pluginname'] = 'Basic Report';
+

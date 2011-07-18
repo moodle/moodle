@@ -14,15 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
- * scorm version information.
+ * Defines the version of scorm_basic
  *
- * @package    mod
- * @subpackage scorm
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   scorm_basic
+ * @author    Ankit Kumar Agarwal
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$module->version  = 2011060500;   // The (date) version of this module
-$module->requires = 2010080300;   // The version of Moodle that is required
-$module->cron     = 300;            // How often should cron check this module (seconds)?
+defined('MOODLE_INTERNAL') || die();
+
+$plugin->version  = 2011071100;
+$plugin->requires = 2011070800;

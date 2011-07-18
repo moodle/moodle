@@ -28,7 +28,7 @@ class mod_scorm_report_settings extends moodleform {
         $mform->addElement('header', 'preferencespage', get_string('preferencespage', 'scorm'));
 
         $options = array();
-        if ($this->_customdata['currentgroup'] || $COURSE->id != SITEID) {
+        if ($COURSE->id != SITEID) {
             $options[SCORM_REPORT_ATTEMPTS_ALL_STUDENTS] = get_string('optallstudents', 'scorm');
             $options[SCORM_REPORT_ATTEMPTS_STUDENTS_WITH] = get_string('optattemptsonly', 'scorm');
             $options[SCORM_REPORT_ATTEMPTS_STUDENTS_WITH_NO] = get_string('optnoattemptsonly', 'scorm');

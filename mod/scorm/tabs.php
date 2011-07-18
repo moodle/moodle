@@ -32,11 +32,10 @@ if (!isset($cm)) {
     $cm = get_coursemodule_from_instance('scorm', $scorm->id);
 }
 
-
 $contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 $tabs = array();
-$row  = array();
+$row = array();
 $inactive = array();
 $activated = array();
 
@@ -44,13 +43,21 @@ if (has_capability('mod/scorm:savetrack', $contextmodule)) {
     $row[] = new tabobject('info', "$CFG->wwwroot/mod/scorm/view.php?id=$cm->id", get_string('info', 'scorm'));
 }
 if (has_capability('mod/scorm:viewreport', $contextmodule)) {
-    $row[] = new tabobject('reports', "$CFG->wwwroot/mod/scorm/report.php?id=$cm->id", get_string('results', 'scorm'));
+    $row[] = new tabobject('reports', "$CFG->wwwroot/mod/scorm/report.php?id=$cm->id", get_string('reports', 'scorm'));
 }
 
 if ($currenttab == 'info' && count($row) == 1) {
     // Don't show only an info tab (e.g. to students).
 } else {
     $tabs[] = $row;
+}
+
+if ($currenttab == 'reports' && !empty($reportlist) && count($reportlist) > 1) {
+    $row2 = array();
+    foreach ($reportlist as $rep) {
+        $row2[] = new tabobject('scorm_'.$rep, $CFG->wwwroot."/mod/scorm/report.php?id=$cm->id&mode=$rep", get_string('pluginname', 'scormreport_'.$rep));
+    }
+    $tabs[] = $row2;
 }
 
 print_tabs($tabs, $currenttab, $inactive, $activated);
