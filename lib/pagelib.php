@@ -544,7 +544,7 @@ class moodle_page {
      * @return bool
      */
     protected function magic_get_legacythemeinuse() {
-        debugging('$PAGE->legacythemeinuse is a deprecated property - please use $PAGE->devicetypeinuse and check if it is equal to legacy.', DEVELOPER_DEBUG);
+        debugging('$PAGE->legacythemeinuse is a deprecated property - please use $PAGE->devicetypeinuse and check if it is equal to legacy.', DEBUG_DEVELOPER);
         return ($this->devicetypeinuse == 'legacy');
     }
 
