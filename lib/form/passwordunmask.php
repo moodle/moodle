@@ -19,15 +19,17 @@ class MoodleQuickForm_passwordunmask extends MoodleQuickForm_password {
     }
 
     function toHtml() {
-        global $CFG;
+        global $PAGE;
+
         if ($this->_flagFrozen) {
             return $this->getFrozenHtml();
         } else {
-            $id = $this->getAttribute('id');
             $unmask = get_string('unmaskpassword', 'form');
-            $unmaskjs = html_writer::script(js_writer::set_variable('punmask', array('id'=>$id, 'unmaskstr'=>$unmask)));
-            $unmaskjs .= html_writer::script('', $CFG->httpswwwroot.'/lib/form/passwordunmask.js');
-            return $this->_getTabs() . '<input' . $this->_getAttrString($this->_attributes) . ' /><div class="unmask" id="'.$id.'unmaskdiv"></div>'.$unmaskjs;
+            $this->updateAttributes(array('autocomplete' => 'off'));
+            //Pass id of the element, so that unmask checkbox can be attached.
+            $PAGE->requires->yui_module('moodle-form-passwordunmask', 'M.form.passwordunmask',
+                    array(array('formid' => $this->getAttribute('id'), 'checkboxname' => $unmask)));
+            return $this->_getTabs() . '<input' . $this->_getAttrString($this->_attributes) . ' />';
         }
     } //end func toHtml
 
