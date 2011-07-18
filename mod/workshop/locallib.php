@@ -216,10 +216,11 @@ class workshop {
      * Returns an array of options for the editors that are used for submitting and assessing instructions
      *
      * @param stdClass $context
+     * @uses EDITOR_UNLIMITED_FILES hard-coded value for the 'maxfiles' option
      * @return array
      */
     public static function instruction_editors_options(stdclass $context) {
-        return array('subdirs' => 1, 'maxbytes' => 0, 'maxfiles' => EDITOR_UNLIMITED_FILES,
+        return array('subdirs' => 1, 'maxbytes' => 0, 'maxfiles' => -1,
                      'changeformat' => 1, 'context' => $context, 'noclean' => 1, 'trusttext' => 0);
     }
 
