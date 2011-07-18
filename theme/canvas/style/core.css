@@ -200,7 +200,7 @@ input[type="radio"] {
 
 .maincalendar .calendarmonth th,
 .minicalendar th {
-    background: url([[pix:theme|gradient-sb]]) repeat-x 0 0;
+    background: none;
 }
 
 .maincalendar .calendar-controls {
