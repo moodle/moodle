@@ -159,13 +159,28 @@ class moodle_block_manager_test extends UnitTestCase {
  */
 class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase {
 
+    protected $isediting = null;
+
     public function setUp() {
+        global $USER;
+        if (!empty($USER->editing)) {
+            // We want to avoid the capability checks associated with
+            // checking the user is editing.
+            $this->isediting = $USER->editing;
+            unset($USER->editing);
+        }
         parent::setUp();
         $this->create_test_tables(array('block', 'block_instances', 'block_positions', 'context'), 'lib');
         $this->switch_to_test_db();
     }
 
     public function tearDown() {
+        global $USER;
+        if (!empty($this->isediting)) {
+            // Replace $USER->editing as it was there at setup.
+            $USER->editing = $this->isediting;
+            $this->isediting = null;
+        }
         parent::tearDown();
     }
 
