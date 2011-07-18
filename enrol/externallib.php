@@ -121,7 +121,7 @@ class moodle_enrol_external extends external_api {
             $profilimgurlsmall = moodle_url::make_pluginfile_url($enrolleduser->usercontextid, 'user', 'icon', NULL, '/', 'f2');
             $resultuser = array(
                 'courseid' => $enrolleduser->courseid,
-                'userid' => $enrolleduser->userid, 
+                'userid' => $enrolleduser->userid,
                 'fullname' => fullname($enrolleduser),
                 'profileimgurl' => $profilimgurl->out(false),
                 'profileimgurlsmall' => $profilimgurlsmall->out(false)
@@ -271,6 +271,12 @@ class moodle_enrol_external extends external_api {
             self::validate_context($context);
             require_capability('moodle/role:assign', $context);
 
+            // throw an exception if user is not able to assign the role in this context
+            $roles = get_assignable_roles($context, ROLENAME_SHORT);
+            if (!key_exists($assignment['roleid'], $roles)) {
+                throw new invalid_parameter_exception('Can not assign roleid='.$assignment['roleid'].' in contextid='.$assignment['contextid']);
+            }
+
             role_assign($assignment['roleid'], $assignment['userid'], $assignment['contextid']);
         }
 
@@ -326,6 +332,12 @@ class moodle_enrol_external extends external_api {
             $context = get_context_instance_by_id($unassignment['contextid']);
             self::validate_context($context);
             require_capability('moodle/role:assign', $context);
+
+            // throw an exception if user is not able to unassign the role in this context
+            $roles = get_assignable_roles($context, ROLENAME_SHORT);
+            if (!key_exists($unassignment['roleid'], $roles)) {
+                throw new invalid_parameter_exception('Can not unassign roleid='.$unassignment['roleid'].' in contextid='.$unassignment['contextid']);
+            }
 
             role_unassign($unassignment['roleid'], $unassignment['userid'], $unassignment['contextid']);
         }
