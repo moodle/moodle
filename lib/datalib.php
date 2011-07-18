@@ -1844,13 +1844,15 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
         $params['courseid'] = $courseid;
     }
     $params['userid'] = $userid;
-    $params['coursestart'] = $coursestart;
+    $params['coursestart1'] = $coursestart;
+    $params['coursestart2'] = $coursestart;
+    $params['coursestart3'] = $coursestart;
 
-    return $DB->get_records_sql("SELECT FLOOR((time - :coursestart)/". DAYSECS .") AS day, COUNT(*) AS num
+    return $DB->get_records_sql("SELECT FLOOR((time - :coursestart1)/". DAYSECS .") AS day, COUNT(*) AS num
                                    FROM {log}
                                   WHERE userid = :userid
-                                        AND time > :coursestart $courseselect
-                               GROUP BY FLOOR((time - :coursestart)/". DAYSECS .")", $params);
+                                        AND time > :coursestart2 $courseselect
+                               GROUP BY FLOOR((time - :coursestart3)/". DAYSECS .")", $params);
 }
 
 /**
