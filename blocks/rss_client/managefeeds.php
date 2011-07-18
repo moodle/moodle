@@ -59,7 +59,8 @@ if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
     $extraparams = '&returnurl=' . $returnurl;
 }
-$PAGE->set_url('/blocks/rss_client/managefeeds.php', $urlparams);
+$baseurl = new moodle_url('/blocks/rss_client/managefeeds.php', $urlparams);
+$PAGE->set_url($baseurl);
 
 // Process any actions
 if ($deleterssid && confirm_sesskey()) {
@@ -78,7 +79,7 @@ $feeds = $DB->get_records_select('block_rss_client', $select, null, $DB->sql_ord
 
 $strmanage = get_string('managefeeds', 'block_rss_client');
 
-$PAGE->set_pagelayout('base');
+$PAGE->set_pagelayout('standard');
 $PAGE->set_title($strmanage);
 $PAGE->set_heading($strmanage);
 
@@ -93,6 +94,7 @@ $table = new flexible_table('rss-display-feeds');
 
 $table->define_columns(array('feed', 'actions'));
 $table->define_headers(array(get_string('feed', 'block_rss_client'), get_string('actions', 'moodle')));
+$table->define_baseurl($baseurl);
 
 $table->set_attribute('cellspacing', '0');
 $table->set_attribute('id', 'rssfeeds');
