@@ -76,8 +76,6 @@ if (!empty($courseid)) {
     $strglossaries = get_string('modulenameplural', 'glossary');
     $strsearch = get_string('search');
 
-    $CFG->framename = 'newwindow';
-
     $PAGE->navbar->add($strglossaries);
     $PAGE->navbar->add($strsearch);
     $PAGE->set_title(strip_tags("$course->shortname: $strglossaries $strsearch"));

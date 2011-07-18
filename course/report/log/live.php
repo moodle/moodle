@@ -20,12 +20,6 @@
 
     session_get_instance()->write_close();
 
-    // we override the default framename so header/footer
-    // links open in a new window
-    if (empty($CFG->framename) || $CFG->framename==='_top') {
-        $CFG->framename = '_blank';
-    }
-
     $strlivelogs = get_string("livelogs");
     $strupdatesevery = get_string("updatesevery", "moodle", COURSE_LIVELOG_REFRESH);
 
