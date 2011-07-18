@@ -523,7 +523,7 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
     header("Pragma: public");
 
     echo get_string('savedat').userdate(time(), $strftimedatetime)."\n";
-    echo $text;
+    echo $text."\n";
 
     if (empty($logs['logs'])) {
         return true;
