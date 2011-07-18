@@ -46,6 +46,7 @@ class enrol_manual_edit_form extends moodleform {
 
         $mform->addElement('duration', 'enrolperiod', get_string('defaultperiod', 'enrol_manual'), array('optional' => true, 'defaultunit' => 86400));
         $mform->setDefault('enrolperiod', $plugin->get_config('enrolperiod'));
+        $mform->addHelpButton('enrolperiod', 'defaultperiod', 'enrol_manual');
 
         if ($instance->id) {
             $roles = get_default_enrol_roles($context, $instance->roleid);
