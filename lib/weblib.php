@@ -757,7 +757,7 @@ function data_submitted() {
     if (empty($_POST)) {
         return false;
     } else {
-        return (object)$_POST;
+        return (object)fix_utf8($_POST);
     }
 }
 

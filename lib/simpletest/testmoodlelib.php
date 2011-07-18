@@ -296,6 +296,27 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual(array('gecko', 'gecko19'), get_browser_version_classes());
     }
 
+    function test_fix_utf8() {
+        // make sure valid data including other types is not changed
+        $this->assertidentical(null, fix_utf8(null));
+        $this->assertidentical(1, fix_utf8(1));
+        $this->assertidentical(1.1, fix_utf8(1.1));
+        $this->assertidentical(true, fix_utf8(true));
+        $this->assertidentical('', fix_utf8(''));
+        $array = array('do', 're', 'mi');
+        $this->assertidentical($array, fix_utf8($array));
+        $object = new stdClass();
+        $object->a = 'aa';
+        $object->b = 'bb';
+        $this->assertidentical($object, fix_utf8($object));
+
+        // valid utf8 string
+        $this->assertidentical("žlutý koníček přeskočil potůček \n\t\r\0", fix_utf8("žlutý koníček přeskočil potůček \n\t\r\0"));
+
+        // invalid utf8 string
+        $this->assertidentical('aaabbb', fix_utf8('aaa'.chr(130).'bbb'));
+    }
+
     function test_optional_param() {
         $_POST['username'] = 'post_user';
         $_GET['username'] = 'get_user';

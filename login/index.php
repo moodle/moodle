@@ -301,7 +301,7 @@ $PAGE->verify_https_required();
 
 if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 5184
     if (!empty($_GET["username"])) {
-        $frm->username = $_GET["username"];
+        $frm->username = clean_param($_GET["username"], PARAM_RAW); // we do not want data from _POST here
     } else {
         $frm->username = get_moodle_cookie();
     }
