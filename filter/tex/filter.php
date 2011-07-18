@@ -168,7 +168,7 @@ class filter_tex extends moodle_text_filter {
             $texexp = html_entity_decode($texexp, ENT_QUOTES, 'UTF-8');
 
             if ($texexp === '') {
-                contninue;
+                continue;
             }
 
             $md5 = md5($texexp);
