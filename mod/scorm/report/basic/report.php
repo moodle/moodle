@@ -15,9 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * Core Report class of basic reporting plugin
- * @package   scorm_basic
- * @author    Dan Marsden and Ankit Kumar Agarwal
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    scormreport
+ * @subpackage basic
+ * @author     Dan Marsden and Ankit Kumar Agarwal
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();

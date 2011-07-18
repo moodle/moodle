@@ -17,9 +17,10 @@
 /**
  * Strings for component 'scorm_basic' report plugin
  *
- * @package   scorm_basic
- * @author    Ankit Kumar Agarwal
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    scormreport
+ * @subpackage basic
+ * @author     Ankit Kumar Agarwal
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['pluginname'] = 'Basic Report';

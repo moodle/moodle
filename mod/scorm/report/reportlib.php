@@ -16,9 +16,10 @@
 
 /**
  * Returns an array of reports to which are currently readable.
- * @package   scorm
- * @author    Ankit Kumar Agarwal
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage scorm
+ * @author     Ankit Kumar Agarwal
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();

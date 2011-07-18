@@ -18,9 +18,10 @@
 /**
  * Defines the version of scorm_basic
  *
- * @package   scorm_basic
- * @author    Ankit Kumar Agarwal
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    scormreport
+ * @subpackage basic
+ * @author     Ankit Kumar Agarwal
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
