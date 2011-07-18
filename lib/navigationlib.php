@@ -1406,7 +1406,7 @@ class global_navigation extends navigation_node {
         $coursestoload = array();
         if (empty($categoryid)) { // can be 0
             // We are going to load all of the first level categories (categories without parents)
-            $categories = $DB->get_records('course_categories', array('parent'=>'0'), 'sortorder');
+            $categories = $DB->get_records('course_categories', array('parent'=>'0'), 'sortorder ASC, id ASC');
         } else if (array_key_exists($categoryid, $this->addedcategories)) {
             // The category itself has been loaded already so we just need to ensure its subcategories
             // have been loaded
@@ -1417,13 +1417,13 @@ class global_navigation extends navigation_node {
                           FROM {course_categories} cc
                          WHERE (parent = :categoryid OR parent = 0) AND
                                parent {$sql}
-                      ORDER BY sortorder";
+                      ORDER BY depth DESC, sortorder ASC, id ASC";
             } else {
                 $sql = "SELECT *
                           FROM {course_categories} cc
                          WHERE parent = :categoryid AND
                                parent {$sql}
-                      ORDER BY sortorder";
+                      ORDER BY depth DESC, sortorder ASC, id ASC";
             }
             $params['categoryid'] = $categoryid;
             $categories = $DB->get_records_sql($sql, $params);
@@ -1462,7 +1462,11 @@ class global_navigation extends navigation_node {
                     if (!array_key_exists($catid, $this->addedcategories)) {
                         // This category isn't in the navigation yet so add it.
                         $subcategory = $categories[$catid];
-                        if (array_key_exists($subcategory->parent, $this->addedcategories)) {
+                        if ($subcategory->parent == '0') {
+                            // Yay we have a root category - this likely means we will now be able
+                            // to add categories without problems.
+                            $this->add_category($subcategory, $this->rootnodes['courses']);
+                        } else if (array_key_exists($subcategory->parent, $this->addedcategories)) {
                             // The parent is in the category (as we'd expect) so add it now.
                             $this->add_category($subcategory, $this->addedcategories[$subcategory->parent]);
                             // Remove the category from the categories array.
