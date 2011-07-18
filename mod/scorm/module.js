@@ -31,10 +31,8 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
     var scorm_disable_toc = false;
     var scorm_hide_nav = true;
     var scorm_hide_toc = true;
-    if (hide_nav == 0) {
-        scorm_hide_nav = false;
-    }
     if (hide_toc == 0) {
+        scorm_hide_nav = false;
         scorm_hide_toc = false;
     } else if (hide_toc == 3) {
         scorm_disable_toc = true;
