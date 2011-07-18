@@ -30,6 +30,10 @@ define('SCORM_TYPE_EXTERNAL', 'external');
 /** SCORM_TYPE_IMSREPOSITORY = imsrepository */
 define('SCORM_TYPE_IMSREPOSITORY', 'imsrepository');
 
+define('SCORM_TOC_SIDE', 0);
+define('SCORM_TOC_HIDDEN', 1);
+define('SCORM_TOC_POPUP', 2);
+define('SCORM_TOC_DISABLED', 3);
 
 /**
  * Given an object containing all the necessary data,

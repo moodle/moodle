@@ -65,6 +65,7 @@ $string['deleteattemptcheck'] = 'Are you absolutely sure you want to completely 
 $string['deleteallattempts'] = 'Delete all SCORM attempts';
 $string['details'] = 'Track details';
 $string['directories'] = 'Show the directory links';
+$string['disabled'] = 'Disabled';
 $string['display'] = 'Display package';
 $string['displayattemptstatus'] = 'Display attempt status';
 $string['displayattemptstatus_help'] = 'If enabled, scores and grades for attempts are displayed on the SCORM outline page.';
