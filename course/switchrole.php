@@ -33,9 +33,9 @@
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
-$id          = required_param('id', PARAM_INT);
-$switchrole  = optional_param('switchrole',-1, PARAM_INT);
-$returnurlkey = optional_param('returnurl', false, PARAM_INT);
+$id         = required_param('id', PARAM_INT);
+$switchrole = optional_param('switchrole',-1, PARAM_INT);
+$returnurl  = optional_param('returnurl', false, PARAM_URL);
 
 $PAGE->set_url('/course/switchrole.php', array('id'=>$id));
 
@@ -69,17 +69,21 @@ if ($switchrole > 0 && has_capability('moodle/role:switchroles', $context)) {
     }
 }
 
-$returnurl = false;
-if ($returnurlkey && !empty($SESSION->returnurl) && strpos($SESSION->returnurl, 'moodle_url')!==false) {
-    $returnurl = @unserialize($SESSION->returnurl);
-    if (!($returnurl instanceof moodle_url)) {
-        $returnurl = false;
+// TODO: Using SESSION->returnurl is deprecated and should be removed in the future.
+// Till then this code remains to support any external applications calling this script.
+if (!empty($returnurl) && is_numeric($returnurl)) {
+    $returnurl = false;
+    if (!empty($SESSION->returnurl) && strpos($SESSION->returnurl, 'moodle_url')!==false) {
+        debugging('Code calling switchrole should be passing a URL as a param.', DEBUG_DEVELOPER);
+        $returnurl = @unserialize($SESSION->returnurl);
+        if (!($returnurl instanceof moodle_url)) {
+            $returnurl = false;
+        }
     }
-    unset($SESSION->returnurl);
 }
 
-if ($returnurl===false) {
-    $returnurl = new moodle_url('/course/view.php', array('id'=>$course->id));
+if ($returnurl === false) {
+    $returnurl = new moodle_url('/course/view.php', array('id' => $course->id));
 }
+
 redirect($returnurl);
-
