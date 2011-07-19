@@ -1844,15 +1844,13 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
         $params['courseid'] = $courseid;
     }
     $params['userid'] = $userid;
-    $params['coursestart1'] = $coursestart;
-    $params['coursestart2'] = $coursestart;
-    $params['coursestart3'] = $coursestart;
+    $$coursestart = (int)$coursestart; // note: unfortunately pg complains if you use name parameter or column alias in GROUP BY
 
-    return $DB->get_records_sql("SELECT FLOOR((time - :coursestart1)/". DAYSECS .") AS day, COUNT(*) AS num
+    return $DB->get_records_sql("SELECT FLOOR((time - $coursestart)/". DAYSECS .") AS day, COUNT(*) AS num
                                    FROM {log}
                                   WHERE userid = :userid
-                                        AND time > :coursestart2 $courseselect
-                               GROUP BY FLOOR((time - :coursestart3)/". DAYSECS .")", $params);
+                                        AND time > $coursestart $courseselect
+                               GROUP BY FLOOR((time - $coursestart)/". DAYSECS .")", $params);
 }
 
 /**
@@ -1868,20 +1866,20 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
 function get_logs_userday($userid, $courseid, $daystart) {
     global $DB;
 
-    $params = array($daystart, $userid, $daystart);
+    $params = array('userid'=>$userid);
 
     $courseselect = '';
     if ($courseid) {
-        $courseselect = "AND course = ?";
-        $params[] = $courseid;
+        $courseselect = "AND course = :courseid";
+        $params['courseid'] = $courseid;
     }
-    $params[] = $daystart;
+    $daystart = (int)$daystart; // note: unfortunately pg complains if you use name parameter or column alias in GROUP BY
 
-    return $DB->get_records_sql("SELECT FLOOR((time - ?)/". HOURSECS .") AS hour, COUNT(*) AS num
+    return $DB->get_records_sql("SELECT FLOOR((time - $daystart)/". HOURSECS .") AS hour, COUNT(*) AS num
                                    FROM {log}
-                                  WHERE userid = ?
-                                        AND time > ? $courseselect
-                               GROUP BY FLOOR((time - ?)/". HOURSECS .") ", $params);
+                                  WHERE userid = :userid
+                                        AND time > $daystart $courseselect
+                               GROUP BY FLOOR((time - $daystart)/". HOURSECS .") ", $params);
 }
 
 /**
