@@ -30,13 +30,13 @@
 
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';
-$string['cliincorrectvalueerror'] = 'Грешка, неисправна вредност "{$a->value}" за "{$a->option}"';
-$string['cliincorrectvalueretry'] = 'Неисправна вреднос, молим покушајте поново';
-$string['clitypevalue'] = 'откуцај вредност';
-$string['clitypevaluedefault'] = 'откуцај вредност, притисни Ентер да бисте употребили подразумевану вредност ({$a})';
-$string['cliunknowoption'] = 'Непрепознате опције:
-{$a}
-Молимо искористите опцију за помоћ.';
-$string['cliyesnoprompt'] = 'унеси y (значи да) или n (значи не)';
-$string['environmentrequireinstall'] = 'је неопходно инсталирати/омогућити';
-$string['environmentrequireversion'] = 'неопходна верзија је {$a->needed} а Ви тренутно користите верзију {$a->current}';
+$string['cliincorrectvalueerror'] = 'Səhv, "{$a->option}" üçün səhv "{$a->value}" qiyməti';
+$string['cliincorrectvalueretry'] = 'Səhv, "{$a->option}" üçün səhv "{$a->value}" qiyməti';
+$string['clitypevalue'] = 'Qiyməti daxil edin';
+$string['clitypevaluedefault'] = 'Qiyməti daxil edin, ({$a}) qiymətindən avtomatik olaraq istifadə etmək üçün Enter düyməsini basın';
+$string['cliunknowoption'] = 'Təyin olunmayan parametrlər: 
+  {$a}
+Zəhmət olmasa help parametrindən istifadə edin';
+$string['cliyesnoprompt'] = 'y (bəli) və n (xeyr) düyməsini basın';
+$string['environmentrequireinstall'] = 'quraşdırılıb işə salınmalıdır';
+$string['environmentrequireversion'] = '{$a->needed}  versiyası tövsiyyə olunur. Siz {$a->current} versiyasından istifadə edirsiniz.';
