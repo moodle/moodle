@@ -94,6 +94,7 @@ switch ($type) {
        $reducedays = 0;
    }
 
+   $days = array();
    $i = 0;
    while ($timestart < $timenow) {
        $timefinish = $timestart + 86400;
@@ -167,6 +168,7 @@ switch ($type) {
    }
    $dayfinish = $daystart + 86400;
 
+   $hours = array();
    for ($i=0; $i<=23; $i++) {
        $logs[$i] = 0;
        $hour = $daystart + $i * 3600;
