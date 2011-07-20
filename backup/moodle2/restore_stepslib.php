@@ -2164,6 +2164,12 @@ class restore_module_structure_step extends restore_structure_step {
             $data->availablefrom = $this->apply_date_offset($data->availablefrom);
             $data->availableuntil= $this->apply_date_offset($data->availableuntil);
         }
+        // Backups that did not include showdescription, set it to default 0
+        // (this is not totally necessary as it has a db default, but just to
+        // be explicit).
+        if (!isset($data->showdescription)) {
+            $data->showdescription = 0;
+        }
         $data->instance = 0; // Set to 0 for now, going to create it soon (next step)
 
         // course_module record ready, insert it

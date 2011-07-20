@@ -135,6 +135,7 @@ if (!empty($add)) {
     $data->completionview     = $cm->completionview;
     $data->completionexpected = $cm->completionexpected;
     $data->completionusegrade = is_null($cm->completiongradeitemnumber) ? 0 : 1;
+    $data->showdescription    = $cm->showdescription;
     if (!empty($CFG->enableavailability)) {
         $data->availablefrom      = $cm->availablefrom;
         $data->availableuntil     = $cm->availableuntil;
@@ -310,6 +311,11 @@ if ($mform->is_cancelled()) {
             $cm->showavailability          = $fromform->showavailability;
             condition_info::update_cm_from_form($cm,$fromform,true);
         }
+        if (isset($fromform->showdescription)) {
+            $cm->showdescription = $fromform->showdescription;
+        } else {
+            $cm->showdescription = 0;
+        }
 
         $DB->update_record('course_modules', $cm);
 
@@ -394,6 +400,11 @@ if ($mform->is_cancelled()) {
                     $newcm->availableuntil);
             }
             $newcm->showavailability          = $fromform->showavailability;
+        }
+        if (isset($fromform->showdescription)) {
+            $newcm->showdescription = $fromform->showdescription;
+        } else {
+            $newcm->showdescription = 0;
         }
 
         if (!$fromform->coursemodule = add_course_module($newcm)) {

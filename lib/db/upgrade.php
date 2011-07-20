@@ -6675,6 +6675,20 @@ FROM
         upgrade_main_savepoint(true, 2011081700.02);
     }
 
+    if ($oldversion < 2011083100.01) {
+        // Define field showdescription to be added to course_modules
+        $table = new xmldb_table('course_modules');
+        $field = new xmldb_field('showdescription', XMLDB_TYPE_INTEGER, '1',
+                XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'showavailability');
+
+        // Conditionally launch add field showdescription
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011083100.01);
+    }
 
     return true;
 }

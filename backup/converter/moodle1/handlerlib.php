@@ -800,6 +800,7 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
                         'showavailability'          => 0,
                         'availability_info'         => array(),
                         'visibleold'                => 1,
+                        'showdescription'           => 0,
                     ),
                     'dropfields' => array(
                         'instance',

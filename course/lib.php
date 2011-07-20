@@ -1106,6 +1106,7 @@ function get_array_of_activities($courseid) {
                    $mod[$seq]->availablefrom    = $rawmods[$seq]->availablefrom;
                    $mod[$seq]->availableuntil   = $rawmods[$seq]->availableuntil;
                    $mod[$seq]->showavailability = $rawmods[$seq]->showavailability;
+                   $mod[$seq]->showdescription  = $rawmods[$seq]->showdescription;
                    if (!empty($CFG->enableavailability)) {
                        condition_info::fill_availability_conditions($rawmods[$seq]);
                        $mod[$seq]->conditionscompletion = $rawmods[$seq]->conditionscompletion;
@@ -1162,11 +1163,12 @@ function get_array_of_activities($courseid) {
 
                    // Minimise the database size by unsetting default options when they are
                    // 'empty'. This list corresponds to code in the cm_info constructor.
-                   foreach(array('idnumber', 'groupmode', 'groupingid', 'groupmembersonly',
+                   foreach (array('idnumber', 'groupmode', 'groupingid', 'groupmembersonly',
                            'indent', 'completion', 'extra', 'extraclasses', 'onclick', 'content',
                            'icon', 'iconcomponent', 'customdata', 'showavailability', 'availablefrom',
                            'availableuntil', 'conditionscompletion', 'conditionsgrade',
-                           'completionview', 'completionexpected', 'score') as $property) {
+                           'completionview', 'completionexpected', 'score', 'showdescription')
+                           as $property) {
                        if (property_exists($mod[$seq], $property) &&
                                empty($mod[$seq]->{$property})) {
                            unset($mod[$seq]->{$property});
