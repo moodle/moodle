@@ -1122,7 +1122,7 @@ function get_array_of_activities($courseid) {
 
                    include_once("$CFG->dirroot/mod/$modname/lib.php");
 
-                   if (function_exists($functionname)) {
+                   if ($hasfunction = function_exists($functionname)) {
                        if ($info = $functionname($rawmods[$seq])) {
                            if (!empty($info->icon)) {
                                $mod[$seq]->icon = $info->icon;
@@ -1155,6 +1155,21 @@ function get_array_of_activities($courseid) {
                                    $mod[$seq]->extra = $info->extra;
                                }
                            }
+                       }
+                   }
+                   // When there is no modname_get_coursemodule_info function,
+                   // but showdescriptions is enabled, then we use the 'intro'
+                   // and 'introformat' fields in the module table
+                   if (!$hasfunction && $rawmods[$seq]->showdescription) {
+                       if ($modvalues = $DB->get_record($rawmods[$seq]->modname,
+                               array('id' => $rawmods[$seq]->instance), 'name, intro, introformat')) {
+                           // Set content from intro and introformat. Filters are disabled
+                           // because we  filter it with format_text at display time
+                           $mod[$seq]->content = format_module_intro($rawmods[$seq]->modname,
+                                   $modvalues, $rawmods[$seq]->id, false);
+
+                           // To save making another query just below, put name in here
+                           $mod[$seq]->name = $modvalues->name;
                        }
                    }
                    if (!isset($mod[$seq]->name)) {
