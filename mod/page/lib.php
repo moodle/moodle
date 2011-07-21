@@ -40,6 +40,7 @@ function page_supports($feature) {
         case FEATURE_GRADE_HAS_GRADE:         return false;
         case FEATURE_GRADE_OUTCOMES:          return false;
         case FEATURE_BACKUP_MOODLE2:          return true;
+        case FEATURE_SHOW_DESCRIPTION:        return true;
 
         default: return null;
     }
@@ -247,19 +248,25 @@ function page_get_participants($pageid) {
  *
  * See {@link get_array_of_activities()} in course/lib.php
  *
- * @param object $coursemodule
- * @return object info
+ * @param cm_info $coursemodule
+ * @return cached_cm_info Info to customise main page display
  */
 function page_get_coursemodule_info($coursemodule) {
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
 
-    if (!$page = $DB->get_record('page', array('id'=>$coursemodule->instance), 'id, name, display, displayoptions')) {
+    if (!$page = $DB->get_record('page', array('id'=>$coursemodule->instance),
+            'id, name, display, displayoptions, intro, introformat')) {
         return NULL;
     }
 
-    $info = new stdClass();
+    $info = new cached_cm_info();
     $info->name = $page->name;
+
+    if ($coursemodule->showdescription) {
+        // Convert intro to html. Do not filter cached version, filters run at display time.
+        $info->content = format_module_intro('page', $page, $coursemodule->id, false);
+    }
 
     if ($page->display != RESOURCELIB_DISPLAY_POPUP) {
         return $info;
@@ -270,7 +277,7 @@ function page_get_coursemodule_info($coursemodule) {
     $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
     $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
     $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
-    $info->extra = "onclick=\"window.open('$fullurl', '', '$wh'); return false;\"";
+    $info->onclick = "window.open('$fullurl', '', '$wh'); return false;";
 
     return $info;
 }
