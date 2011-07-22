@@ -747,6 +747,11 @@ abstract class moodle_database {
                 if (!array_key_exists($key, $params)) {
                     throw new dml_exception('missingkeyinsql', $key, '');
                 }
+                if (strlen($key) > 30) {
+                    throw new coding_exception(
+                            "Placeholder names must be 30 characters or shorter. '" .
+                            $key . "' is too long.", $sql);
+                }
                 $finalparams[$key] = $params[$key];
             }
             if ($count != count($finalparams)) {
