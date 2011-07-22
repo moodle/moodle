@@ -68,3 +68,34 @@
 .que.ddimagetoimage .group8 {
     background-color: #F0E68C;
 }
+
+form.mform fieldset#previewareaheader .drag {
+    border: 1px solid black;
+    background-color: #004C6D;
+    cursor: move;
+    margin: 5px;
+    z-index: 3;
+}
+form.mform fieldset#previewareaheader .dragitems {
+    clear:left;
+}
+
+
+form.mform fieldset#previewareaheader {
+    text-align : center;
+}
+form.mform fieldset#previewareaheader .dropbackground {
+    margin:0 auto;
+    background-color: #8DD5E7;
+    z-index: 1;
+}
+form.mform fieldset#previewareaheader .droptarget {
+    border: 1px solid black;
+    position: absolute;
+    background-color: #FFA928;
+    z-index: 2;
+}
+
+form.mform fieldset#previewareaheader .droptarget.yui3-dd-drop-over {
+    background-color: #FFA928;
+}

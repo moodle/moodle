@@ -46,7 +46,8 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
      */
     public static function file_picker_options() {
         $filepickeroptions = array();
-        $filepickeroptions['accepted_types'] = array('web_image');
+        //$filepickeroptions['accepted_types'] = array('web_image');
+        $filepickeroptions['accepted_types'] = array('*');
         $filepickeroptions['maxbytes'] = 0;
         $filepickeroptions['maxfiles'] = 1;
         $filepickeroptions['subdirs'] = 0;
@@ -78,8 +79,15 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
      * @param object $mform (the form being built).
      */
     protected function definition_inner($mform) {
-        $mform->addElement('filepicker', 'bgimage', get_string('bgimage', 'qtype_ddimagetoimage'),
-                                                               null, self::file_picker_options());
+
+        $previewareaheaderelement = $mform->createElement('header', 'previewareaheader',
+                            get_string('previewareaheader', 'qtype_ddimagetoimage'));
+        $mform->insertElementBefore($previewareaheaderelement, 'generalheader');
+        $previewareaelement = $mform->createElement('static', 'previewarea',
+                            get_string('previewarea', 'qtype_ddimagetoimage'),
+                            get_string('previewareamessage', 'qtype_ddimagetoimage'));
+        $mform->insertElementBefore($previewareaelement, 'generalheader');
+
 
         list($imagerepeatsatstart, $imagerepeats) = $this->get_drag_image_repeats();
         $this->definition_drop_zones($mform, $imagerepeats);
@@ -97,6 +105,10 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
     protected function definition_drop_zones($mform, $imagerepeats) {
         $mform->addElement('header', 'dropzoneheader',
                                     get_string('dropzoneheader', 'qtype_ddimagetoimage'));
+
+        $mform->addElement('filepicker', 'bgimage', get_string('bgimage', 'qtype_ddimagetoimage'),
+                                                               null, self::file_picker_options());
+
 
         $countdropzones = 0;
         if (isset($this->question->id)) {
@@ -136,6 +148,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
         $mform->setType('ytop', PARAM_NOTAGS);
         $options = array();
 
+        $options[0] = '';
         for ($i = 1; $i <= $imagerepeats; $i += 1) {
             $options[$i] = $i;
         }
@@ -156,7 +169,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
 
     protected function drop_zones_repeated_options() {
         $repeatedoptions = array();
-        $repeatedoptions['choicegroup']['default'] = '1';
+        $repeatedoptions['choice']['default'] = '0';
         return $repeatedoptions;
     }
 
@@ -204,6 +217,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
     }
 
     public function data_preprocessing($question) {
+        global $PAGE;
 
         $question = parent::data_preprocessing($question);
         $question = $this->data_preprocessing_combined_feedback($question, true);
@@ -225,8 +239,8 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
                 //numbers not allowed in filearea name
                 $filearea = str_replace(range('0', '9'), range('a', 'j'), "drag_$imageindex");
                 file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddimagetoimage',
-                                        $filearea, !empty($question->id) ? (int) $question->id : null,
-                                        self::file_picker_options());
+                                    $filearea, !empty($question->id) ? (int) $question->id : null,
+                                    self::file_picker_options());
                 $question->dragitem[$imageindex] = $draftitemid;
             }
             $question->drops = array();
@@ -237,17 +251,33 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
                 $question->drops[$drop->no -1]['xleft'] = $drop->xleft;
                 $question->drops[$drop->no -1]['ytop'] = $drop->ytop;
             }
+            $draftitemid = file_get_submitted_draft_itemid('bgimage');
+            file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddimagetoimage',
+                                    'bgimage', !empty($question->id) ? (int) $question->id : null,
+                                    self::file_picker_options());
+            $question->bgimage = $draftitemid;
         }
 
-        $draftitemid = file_get_submitted_draft_itemid('bgimage');
-        file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddimagetoimage',
-                                'bgimage', !empty($question->id) ? (int) $question->id : null,
-                                self::file_picker_options());
-        $question->bgimage = $draftitemid;
-        error_log(print_r(array('mform' => $this), true));
-        error_log(print_r(compact('question'), true));
+        $jsmodule = array(
+            'name'     => 'qtype_ddimagetoimage',
+            'fullpath' => '/question/type/ddimagetoimage/module.js',
+            'requires' => array('node', 'dd-drop', 'dd-constrain', 'form_filepicker')
+        );
+        $PAGE->requires->js_init_call('M.qtype_ddimagetoimage.init_form',
+                                                                null, true, $jsmodule);
+
         return $question;
     }
+
+    public static function file_get_draft_area_files($draftitemid) {
+        $toreturn = new stdClass();
+        $toreturn->draftitemid = $draftitemid;
+        $draftareafiles = file_get_drafarea_files($draftitemid);
+        $draftareafile = reset($draftareafiles->list);
+        $toreturn->url = $draftareafile->url;
+        return $toreturn;
+    }
+
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);

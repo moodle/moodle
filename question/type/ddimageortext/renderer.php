@@ -44,20 +44,7 @@ class qtype_ddimagetoimage_renderer extends qtype_elements_embedded_in_question_
     protected function post_qtext_elements(question_attempt $qa,
             question_display_options $options) {
         $result = '';
-        $question = $qa->get_question();
-        $dragboxs = '';
-        foreach ($question->choices as $group => $choices) {
-            $dragboxs .= $this->drag_boxes($qa, $group,
-                    $question->get_ordered_choices($group), $options);
-        }
-        $result .= html_writer::tag('div', $dragboxs,
-                array('class' => 'answercontainer'));
-        // We abuse the clear_wrong method to output the hidden form fields we
-        // want irrespective of whether we are actually clearing the wrong
-        // bits of the response.
-        if (!$options->clearwrong) {
-            $result .= $this->clear_wrong($qa, false);
-        }
+
         return $result;
     }
 
