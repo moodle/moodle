@@ -108,7 +108,8 @@ class mod_url_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------
         $mform->addElement('header', 'parameterssection', get_string('parametersheader', 'url'));
-
+        $mform->addElement('static', 'parametersinfo', '', get_string('parametersheader_help', 'url'));
+        $mform->setAdvanced('parametersinfo');
 
         if (empty($this->current->parameters)) {
             $parcount = 5;
