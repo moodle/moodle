@@ -689,7 +689,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         // Find users in DB that aren't in ldap -- to be removed!
         // this is still not as scalable (but how often do we mass delete?)
         if ($this->config->removeuser !== AUTH_REMOVEUSER_KEEP) {
-            $sql = 'SELECT u.id, u.username, u.email, u.auth
+            $sql = 'SELECT u.*
                       FROM {user} u
                       LEFT JOIN {tmp_extuser} e ON (u.username = e.username AND u.mnethostid = e.mnethostid)
                      WHERE u.auth = ?
