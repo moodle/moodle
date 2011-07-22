@@ -68,7 +68,7 @@ if ($reset and confirm_sesskey()) {
     echo $output->box_start();
     echo format_text(get_string('choosereadme', 'theme_'.$theme->name), FORMAT_MOODLE);
     echo $output->box_end();
-    echo $output->continue_button($CFG->wwwroot . '/' . $CFG->admin . '/index.php');
+    echo $output->continue_button($CFG->wwwroot . '/theme/index.php');
     echo $output->footer();
     exit;
 }
