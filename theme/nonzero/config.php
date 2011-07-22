@@ -244,7 +244,7 @@ $THEME->csspostprocess = 'nonzero_process_css';
 // include.
 ////////////////////////////////////////////////////
 
-// $THEME->renderfactory
+// $THEME->rendererfactory
 
 ////////////////////////////////////////////////////
 // Sets a custom render factory to use with the

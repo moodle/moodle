@@ -243,7 +243,7 @@ $THEME->csspostprocess = 'sky_high_process_css';
 // include.
 ////////////////////////////////////////////////////
 
-// $THEME->renderfactory
+// $THEME->rendererfactory
 
 ////////////////////////////////////////////////////
 // Sets a custom render factory to use with the
