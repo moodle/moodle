@@ -230,11 +230,11 @@ class auth_plugin_db extends auth_plugin_base {
             if (count($userlist)) {
                 list($notin_sql, $params) = $DB->get_in_or_equal($userlist, SQL_PARAMS_NAMED, 'u', false);
                 $params['authtype'] = $this->authtype;
-                $sql = "SELECT u.id, u.username, u.email, u.auth
+                $sql = "SELECT u.*
                           FROM {user} u
                          WHERE u.auth=:authtype AND u.deleted=0 AND u.username $notin_sql";
             } else {
-                $sql = "SELECT u.id, u.username, u.email, u.auth
+                $sql = "SELECT u.*
                           FROM {user} u
                          WHERE u.auth=:authtype AND u.deleted=0";
                 $params = array();

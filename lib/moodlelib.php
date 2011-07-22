@@ -3406,7 +3406,7 @@ function truncate_userinfo($info) {
  *
  * Any plugin that needs to purge user data should register the 'user_deleted' event.
  *
- * @param object $user User object before delete
+ * @param stdClass $user full user object before delete
  * @return boolean always true
  */
 function delete_user($user) {
