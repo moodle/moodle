@@ -314,7 +314,9 @@ function upgrade_migrate_files_course($context, $path, $delete) {
 
         if ($item->isFile()) {
             if (!$item->isReadable()) {
-                echo $OUTPUT->notification(" File not readable, skipping: ".$fullpathname.$item->getFilename());
+                $notification = "File not readable, skipping: ".$fullpathname.$item->getFilename();
+                echo $OUTPUT->notification($notification);
+                upgrade_log(UPGRADE_LOG_NOTICE, null, $notification);
                 continue;
             }
 
@@ -327,8 +329,31 @@ function upgrade_migrate_files_course($context, $path, $delete) {
             }
 
             if ($textlib->strlen($filepath) > 255) {
-                echo $OUTPUT->notification(" File path longer than 255 chars, skipping: ".$fullpathname.$item->getFilename());
-                continue;
+                // we need something unique and reproducible, sorry no shortening possible
+                $filepath = '/directory_over_255_chars/'.md5($filepath).'/';
+                $oldfile = $fullpathname.$item->getFilename();
+                $newfile = $filepath.$item->getFilename();
+                $notification = "File path longer than 255 chars '$oldfile', file path truncated to '$newfile'";
+                echo $OUTPUT->notification($notification);
+                upgrade_log(UPGRADE_LOG_NOTICE, null, $notification);
+            }
+
+            if ($textlib->strlen($filename) > 255) {
+                //try to shorten, but look for collisions
+                $oldfile = $fullpathname.$item->getFilename();
+                $parts = explode('.', $filename);
+                $ext = array_pop($parts);
+                $name = implode('.', $parts);
+                $name = $textlib->substr($name, 0, 254-$textlib->strlen($ext));
+                $newfilename = $name . '.' . $ext;
+                if (file_exists($fullpathname.$newfilename) or $fs->file_exists($context->id, $component, $filearea, '0', $filepath, $newfilename)) {
+                    $filename = 'file_name_over_255_chars'.md5($filename).$ext; // bad luck, file with shortened name exists
+                } else {
+                    $filename = $newfilename; // shortened name should not cause collisions
+                }
+                $notification = "File name longer than 255 chars '$oldfile', file name truncated to '$filename'";
+                echo $OUTPUT->notification($notification);
+                upgrade_log(UPGRADE_LOG_NOTICE, null, $notification);
             }
 
             if (!$fs->file_exists($context->id, $component, $filearea, '0', $filepath, $filename)) {
@@ -352,7 +377,7 @@ function upgrade_migrate_files_course($context, $path, $delete) {
                 continue;
             }
             $filepath = ($filepath.$dirname.'/');
-            if ($filepath !== '/backupdata/') {
+            if ($filepath !== '/backupdata/' and $textlib->strlen($filepath) <= 255) {
                 $fs->create_directory($context->id, $component, $filearea, 0, $filepath);
             }
 
