@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * Core Report class of basic reporting plugin
- * @package   scorm_basic
+ * @package   scorm_interactions
  * @author    Dan Marsden and Ankit Kumar Agarwal
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -77,6 +77,8 @@ class scorm_interactions_report extends scorm_default_report {
         $displayoptions['qtext'] = $includeqtext;
         $displayoptions['resp'] = $includeresp;
         $displayoptions['right'] = $includeright;
+        
+        $mform->set_data($displayoptions + array('pagesize' => $pagesize));
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
             if (!$download) {
                 groups_print_activity_menu($cm, new moodle_url($PAGE->url, $displayoptions));
@@ -146,12 +148,21 @@ class scorm_interactions_report extends scorm_default_report {
                         $columns[]= 'scograde'.$sco->id;
                         $headers[]= format_string($sco->title);
                         $table->head[]= format_string($sco->title);
+                        if ($trackdata = scorm_get_tracks($sco->id, $scouser->userid, $scouser->attempt)) {
+                            $i=0;
+                            $element='cmi.interactions_'.$i.'.id';
+                            $question=array();
+                            while(isset($trackdata->$element)) {
+                                $questions[]=$trackdata->$element;
+                                $i++;
+                                $element='cmi.interactions_'.$i.'.id';
+                            }
+                        }
                     }
                 }
             } else {
                 $scoes = null;
             }
-            $questions=array(1,2,3);
             foreach ($questions as $id => $question) {
                 if ($displayoptions['qtext']) {
                     $columns[] = 'question' . $id;
@@ -469,6 +480,48 @@ class scorm_interactions_report extends scorm_default_report {
                                     } else {
                                         $row[] = $score;
                                     }
+                                    // interaction data
+                                    $i=0;
+                                    $element='cmi.interactions_'.$i.'.id';
+                                    while(isset($trackdata->$element)) {
+                                        if ($displayoptions['qtext']) {
+                                            $element='cmi.interactions_'.$i.'.id';
+                                            if (isset($trackdata->$element)) {
+                                                $row[] = s($trackdata->$element);
+                                            } else {
+                                                $row[] = '&nbsp;';
+                                            }
+                                        }
+                                        if ($displayoptions['resp']) {
+                                            $element='cmi.interactions_'.$i.'.student_response';
+                                            if (isset($trackdata->$element)) {
+                                                $row[] = s($trackdata->$element);
+                                            } else {
+                                                $row[] = '&nbsp;';
+                                            }
+                                        }
+                                        if ($displayoptions['right']) {
+                                            $j=0;
+                                            $element='cmi.interactions_'.$i.'.correct_responses_'.$j.'.pattern';
+                                            $rightans='';
+                                            if (isset($trackdata->$element)) {
+                                                while(isset($trackdata->$element)) {
+                                                    if($j>0) {
+                                                        $rightans.=',';
+                                                    }
+                                                    $rightans.=s($trackdata->$element);
+                                                    $j++;
+                                                    $element='cmi.interactions_'.$i.'.correct_responses_'.$j.'.pattern';
+                                                }
+                                                $row[]=$rightans;
+                                            } else {
+                                                $row[] = '&nbsp;';
+                                            }
+                                        }
+                                        $i++;
+                                        $element='cmi.interactions_'.$i.'.id';
+                                    }
+                                    //---end of interaction data*/                           
                                 } else {
                                     // if we don't have track data, we haven't attempted yet
                                     $strstatus = get_string('notattempted', 'scorm');
