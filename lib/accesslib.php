@@ -569,9 +569,9 @@ function has_capability($capability, $context, $user = null, $doanything = true)
 
     // make sure there is a real user specified
     if ($user === null) {
-        $userid = !empty($USER->id) ? $USER->id : 0;
+        $userid = isset($USER->id) ? $USER->id : 0;
     } else {
-        $userid = !empty($user->id) ? $user->id : $user;
+        $userid = is_object($user) ? $user->id : $user;
     }
 
     // capability must exist
@@ -2841,9 +2841,9 @@ function is_guest($context, $user = null) {
 
     // make sure there is a real user specified
     if ($user === null) {
-        $userid = !empty($USER->id) ? $USER->id : 0;
+        $userid = isset($USER->id) ? $USER->id : 0;
     } else {
-        $userid = !empty($user->id) ? $user->id : $user;
+        $userid = is_object($user) ? $user->id : $user;
     }
 
     if (isguestuser($userid)) {
@@ -2914,9 +2914,9 @@ function is_enrolled($context, $user = null, $withcapability = '', $onlyactive =
 
     // make sure there is a real user specified
     if ($user === null) {
-        $userid = !empty($USER->id) ? $USER->id : 0;
+        $userid = isset($USER->id) ? $USER->id : 0;
     } else {
-        $userid = !empty($user->id) ? $user->id : $user;
+        $userid = is_object($user) ? $user->id : $user;
     }
 
     if (empty($userid)) {
@@ -4518,9 +4518,9 @@ function get_assignable_roles($context, $rolenamedisplay = ROLENAME_ALIAS, $with
 
     // make sure there is a real user specified
     if ($user === null) {
-        $userid = !empty($USER->id) ? $USER->id : 0;
+        $userid = isset($USER->id) ? $USER->id : 0;
     } else {
-        $userid = !empty($user->id) ? $user->id : $user;
+        $userid = is_object($user) ? $user->id : $user;
     }
 
     if (!has_capability('moodle/role:assign', $context, $userid)) {
