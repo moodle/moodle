@@ -157,13 +157,13 @@ function get_access_icons($course) {
                         continue;
                     }
 
-                    if (! $user = get_record("user", "idnumber", $fields[2]) ) {
+                    if (! $user = get_record("user", "idnumber", addslashes($fields[2])) ) {
                         $this->log .= "Unknown user idnumber in field 3 - ignoring line\n";
                         continue;
                     }
 
 
-                    if (! $course = get_record("course", "idnumber", $fields[3]) ) {
+                    if (! $course = get_record("course", "idnumber", addslashes($fields[3])) ) {
                         $this->log .= "Unknown course idnumber in field 4 - ignoring line\n";
                         continue;
                     }
