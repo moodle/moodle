@@ -141,7 +141,6 @@ if ($quiz_reordertool > -1) {
 $quizhasattempts = quiz_has_attempts($quiz->id);
 
 $PAGE->set_url($thispageurl);
-$PAGE->set_pagelayout('admin');
 
 $pagetitle = get_string('editingquiz', 'quiz');
 if ($quiz_reordertool) {

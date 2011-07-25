@@ -103,7 +103,6 @@ if ($cmid){
     $thiscontext = get_context_instance(CONTEXT_MODULE, $cmid);
 } elseif ($courseid) {
     require_login($courseid, false);
-    $PAGE->set_pagelayout('course');
     $thiscontext = get_context_instance(CONTEXT_COURSE, $courseid);
     $module = null;
     $cm = null;
@@ -111,6 +110,7 @@ if ($cmid){
     print_error('missingcourseorcmid', 'question');
 }
 $contexts = new question_edit_contexts($thiscontext);
+$PAGE->set_pagelayout('admin');
 
 if (optional_param('addcancel', false, PARAM_BOOL)) {
     redirect($returnurl);
