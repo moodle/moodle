@@ -163,7 +163,7 @@ class enrol_cohort_plugin extends enrol_plugin {
         $button->strings_for_js('users', 'moodle');
 
         // No point showing this at all if the user cant manually enrol users
-        $hasmanualinstance = has_capability('enrol/manual:manage', $manager->get_context()) && $manager->has_instance('manual');
+        $hasmanualinstance = has_capability('enrol/manual:enrol', $manager->get_context()) && $manager->has_instance('manual');
 
         $modules = array('moodle-enrol_cohort-quickenrolment', 'moodle-enrol_cohort-quickenrolment-skin');
         $function = 'M.enrol_cohort.quickenrolment.init';

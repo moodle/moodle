@@ -35,6 +35,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
 
 require_login($course);
 require_capability('moodle/course:enrolconfig', $context);
+require_capability('enrol/cohort:config', $context);
 
 $PAGE->set_url('/enrol/cohort/addinstance.php', array('id'=>$course->id));
 $PAGE->set_pagelayout('admin');
