@@ -13,8 +13,6 @@
     require_once("editlib.php");
     require_once("export_form.php");
 
-    $PAGE->set_pagelayout('standard');
-
     list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
             question_edit_setup('export', '/question/export.php');
 
