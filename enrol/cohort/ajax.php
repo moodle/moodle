@@ -74,6 +74,7 @@ switch ($action) {
         break;
     case 'enrolcohort':
         require_capability('moodle/course:enrolconfig', $context);
+        require_capability('enrol/cohort:config', $context);
         $roleid = required_param('roleid', PARAM_INT);
         $cohortid = required_param('cohortid', PARAM_INT);
         
@@ -87,10 +88,16 @@ switch ($action) {
         enrol_cohort_sync($manager->get_course()->id);
         break;
     case 'enrolcohortusers':
-        require_capability('moodle/course:enrolconfig', $context);
+        require_capability('enrol/manual:enrol', $context);
         $roleid = required_param('roleid', PARAM_INT);
         $cohortid = required_param('cohortid', PARAM_INT);
         $result = enrol_cohort_enrol_all_users($manager, $cohortid, $roleid);
+
+        $roles = $manager->get_assignable_roles();
+        $cohorts = enrol_cohort_get_cohorts($manager);
+        if (!array_key_exists($cohortid, $cohorts) || !array_key_exists($roleid, $roles)) {
+            throw new enrol_ajax_exception('errorenrolcohort');
+        }
         if ($result === false) {
             throw new enrol_ajax_exception('errorenrolcohortusers');
         }
