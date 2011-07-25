@@ -199,7 +199,7 @@ $THEME->layouts = array(
 // include.
 ////////////////////////////////////////////////////
 
-// $THEME->renderfactory
+// $THEME->rendererfactory
 //$THEME->rendererfactory = 'theme_simplespace_renderer_factory';
 ////////////////////////////////////////////////////
 // Sets a custom render factory to use with the
