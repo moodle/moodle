@@ -52,7 +52,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= $this->review_summary_table($summarydata, $page);
         $output .= $this->review_form($page, $showall, $displayoptions,
                 $this->questions($attemptobj, true, $slots, $page, $showall, $displayoptions),
-                $attemptobj, $showall);
+                $attemptobj);
 
         $output .= $this->review_next_navigation($attemptobj, $page, $lastpage);
         $output .= $this->footer();
@@ -194,8 +194,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param quiz_attempt $attemptobj instance of quiz_attempt
      * @param bool $showall if true display attempt on one page
      */
-    public function review_form($summarydata, $page, $displayoptions, $content, $attemptobj,
-                                $showall) {
+    public function review_form($page, $showall, $displayoptions, $content, $attemptobj) {
         if ($displayoptions->flags != question_display_options::EDITABLE) {
             return $content;
         }
