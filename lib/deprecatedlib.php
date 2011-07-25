@@ -1677,6 +1677,12 @@ function error ($message, $link='') {
         }
     }
 
+    // when printing an error the continue button should never link offsite
+    if (stripos($link, $CFG->wwwroot) === false &&
+        stripos($link, $CFG->httpswwwroot) === false) {
+        $link = $CFG->wwwroot.'/';
+    }
+
     if (!empty($link)) {
         print_continue($link);
     }
