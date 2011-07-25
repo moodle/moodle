@@ -1340,7 +1340,8 @@ abstract class restore_dbops {
         $course->sortorder = 0;
         $course->timecreated  = time();
         $course->timemodified = $course->timecreated;
-        $course->visible = $category->visible;
+        // forcing skeleton courses to be hidden instead of going by $category->visible , until MDL-27790 is resolved.
+        $course->visible = 0;
 
         $courseid = $DB->insert_record('course', $course);
 
