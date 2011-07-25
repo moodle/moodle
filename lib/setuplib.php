@@ -701,7 +701,9 @@ function initialise_fullme() {
     // Used in load balancing scenarios.
     // Do not abuse this to try to solve lan/wan access problems!!!!!
     if (empty($CFG->reverseproxy)) {
-        if (($rurl['host'] != $wwwroot['host']) or
+        if (empty($rurl['host'])) {
+            // missing host in request header, probably not a real browser, let's ignore them
+        } else if (($rurl['host'] !== $wwwroot['host']) or
                 (!empty($wwwroot['port']) and $rurl['port'] != $wwwroot['port'])) {
             // Explain the problem and redirect them to the right URL
             if (!defined('NO_MOODLE_COOKIES')) {
@@ -713,7 +715,7 @@ function initialise_fullme() {
 
     // hopefully this will stop all those "clever" admins trying to set up moodle
     // with two different addresses in intranet and Internet
-    if (!empty($CFG->reverseproxy) && $rurl['host'] == $wwwroot['host']) {
+    if (!empty($CFG->reverseproxy) && $rurl['host'] === $wwwroot['host']) {
         print_error('reverseproxyabused', 'error');
     }
 
@@ -759,7 +761,11 @@ function initialise_fullme_cli() {
  */
 function setup_get_remote_url() {
     $rurl = array();
-    list($rurl['host']) = explode(':', $_SERVER['HTTP_HOST']);
+    if (isset($_SERVER['HTTP_HOST'])) {
+        list($rurl['host']) = explode(':', $_SERVER['HTTP_HOST']);
+    } else {
+        $rurl['host'] = null;
+    }
     $rurl['port'] = $_SERVER['SERVER_PORT'];
     $rurl['path'] = $_SERVER['SCRIPT_NAME']; // Script path without slash arguments
     $rurl['scheme'] = (empty($_SERVER['HTTPS']) or $_SERVER['HTTPS'] === 'off' or $_SERVER['HTTPS'] === 'Off' or $_SERVER['HTTPS'] === 'OFF') ? 'http' : 'https';
