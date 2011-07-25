@@ -3395,6 +3395,12 @@ function update_capabilities($component = 'moodle') {
     $storedcaps = array();
 
     $filecaps = load_capability_def($component);
+    foreach($filecaps as $capname=>$unused) {
+        if (!preg_match('|^[a-z]+/[a-z_0-9]+:[a-z_0-9]+$|', $capname)) {
+            debugging("Coding problem: Invalid capability name '$capname', use 'clonepermissionsfrom' field for migration.");
+        }
+    }
+
     $cachedcaps = get_cached_capabilities($component);
     if ($cachedcaps) {
         foreach ($cachedcaps as $cachedcap) {
