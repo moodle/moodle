@@ -2371,11 +2371,13 @@ class restore_create_categories_and_questions extends restore_structure_step {
 
         $category = new restore_path_element('question_category', '/question_categories/question_category');
         $question = new restore_path_element('question', '/question_categories/question_category/questions/question');
+        $hint = new restore_path_element('question_hint',
+                '/question_categories/question_category/questions/question/question_hints/question_hint');
 
         // Apply for 'qtype' plugins optional paths at question level
         $this->add_plugin_structure('qtype', $question);
 
-        return array($category, $question);
+        return array($category, $question, $hint);
     }
 
     protected function process_question_category($data) {
@@ -2484,11 +2486,11 @@ class restore_create_categories_and_questions extends restore_structure_step {
             // Adjust some columns
             $data->questionid = $newquestionid;
             // Insert record
-            $newitemid = $DB->insert_record('question_answers', $data);
+            $newitemid = $DB->insert_record('question_hints', $data);
 
-        // The question existed, we need to map the existing question_answers
+        // The question existed, we need to map the existing question_hints
         } else {
-            // Look in question_answers by answertext matching
+            // Look in question_hints by hint text matching
             $sql = 'SELECT id
                       FROM {question_hints}
                      WHERE questionid = ?
@@ -2496,7 +2498,7 @@ class restore_create_categories_and_questions extends restore_structure_step {
             $params = array($newquestionid, $data->hint);
             $newitemid = $DB->get_field_sql($sql, $params);
             // If we haven't found the newitemid, something has gone really wrong, question in DB
-            // is missing answers, exception
+            // is missing hints, exception
             if (!$newitemid) {
                 $info = new stdClass();
                 $info->filequestionid = $oldquestionid;
@@ -2505,7 +2507,7 @@ class restore_create_categories_and_questions extends restore_structure_step {
                 throw new restore_step_exception('error_question_hint_missing_in_db', $info);
             }
         }
-        // Create mapping (we'll use this intensively when restoring question_states. And also answerfeedback files)
+        // Create mapping (I'm not sure if this is really needed?)
         $this->set_mapping('question_hint', $oldid, $newitemid);
     }
 
