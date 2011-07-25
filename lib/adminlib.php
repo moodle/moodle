@@ -7863,9 +7863,10 @@ class admin_setting_configmultiselect_modules extends admin_setting_configmultis
      * @param string $name setting name
      * @param string $visiblename localised setting name
      * @param string $description setting description
+     * @param array $defaultsetting a plain array of default module ids
      */
-    public function __construct($name, $visiblename, $description) {
-        parent::__construct($name, $visiblename, $description, array(), null);
+    public function __construct($name, $visiblename, $description, $defaultsetting = array()) {
+        parent::__construct($name, $visiblename, $description, $defaultsetting, null);
     }
 
     /**
