@@ -354,6 +354,10 @@ class plugin_manager {
                 'wikimedia', 'youtube'
             ),
 
+            'scormreport' => array(
+                'basic'
+            ),
+
             'theme' => array(
                 'afterburner', 'anomaly', 'arialist', 'base', 'binarius',
                 'boxxie', 'brick', 'canvas', 'formal_white', 'formfactor',
