@@ -1605,6 +1605,8 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
         $contexts = null;
     }
 
+    $PAGE->set_pagelayout('admin');
+
     $pagevars['qpage'] = optional_param('qpage', -1, PARAM_INT);
 
     //pass 'cat' from page to page and when 'category' comes from a drop down menu

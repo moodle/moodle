@@ -28,8 +28,6 @@ require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/question/export_form.php');
 
-$PAGE->set_pagelayout('standard');
-
 list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
         question_edit_setup('export', '/question/export.php');
 

@@ -42,8 +42,6 @@ if (!$category = $DB->get_record("question_categories", array('id' => $catid))) 
     print_error('nocategory', 'question');
 }
 
-$PAGE->set_pagelayout('standard');
-
 $categorycontext = get_context_instance_by_id($category->contextid);
 $category->context = $categorycontext;
 //this page can be called without courseid or cmid in which case
