@@ -73,7 +73,7 @@ $string['indexes'] = 'Indexes';
 $string['integerincorrectlength'] = 'Incorrect length for integer field';
 $string['key'] = 'Key';
 $string['keys'] = 'Keys';
-$string['listreservedwords'] = 'List of Reserved Words<br />(used to keep <a href=\"http://docs.moodle.org/en/XMLDB_reserved_words\" target=\"_blank\">XMLDB_reserved_words</a> updated)';
+$string['listreservedwords'] = 'List of Reserved Words<br />(used to keep <a href=\"http://docs.moodle.org/19/en/XMLDB_reserved_words\" target=\"_blank\">XMLDB_reserved_words</a> updated)';
 $string['load'] = 'Load';
 $string['missing'] = 'Missing';
 $string['missingindexes'] = 'Missing Indexes Found';

@@ -27,7 +27,7 @@
  *
  * These are similar to the module interface, however, not all the the
  * facilities that are available to modules are available to local code (yet).
- * See also http://docs.moodle.org/en/Development:Local_customisation for more
+ * See also http://docs.moodle.org/dev/Local_customisation for more
  * information.
  *
  *
@@ -81,7 +81,7 @@
  * lang/en_utf8_local/moodle.php containing
  *   $strings['login'] = 'Sign in';
  * and that will change the string 'Login' to 'Sign in'. (See also
- * http://docs.moodle.org/en/Language_editing for another way to achieve this.)
+ * http://docs.moodle.org/19/en/Language_editing for another way to achieve this.)
  *
  * This mechanism can also be used to create completely new language files. For
  * example, suppose you have created some code in local/myfeature.php that needs

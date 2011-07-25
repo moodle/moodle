@@ -161,7 +161,7 @@ $string['backupmetacoursehelp'] = 'If enabled, then metacourse info (inherited e
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupmissinguserinfoperms'] = 'Note: This backup contains no user data. Exercise and Workshop activities will not be included in the backup, since these modules are not compatible with this type of backup.';
 $string['backupnoneusersinfo'] = 'Note: This backup contains no users and so all activities have been switched to \"without user data\" mode. Exercise and Workshop activities will not be included in the backup, since these modules are not compatible with this type of backup.';
-$string['backupnonisowarning'] = 'Warning: this backup is from a non-Unicode version of Moodle (pre 1.6).  If this backup contains any non-ISO-8859-1 texts then they may be CORRUPTED if you try to restore them to this Unicode version of Moodle.  See the <a href=\"http://docs.moodle.org/en/Backup_FAQ\">Backup FAQ</a> for more information about how to recover this backup correctly.';
+$string['backupnonisowarning'] = 'Warning: this backup is from a non-Unicode version of Moodle (pre 1.6).  If this backup contains any non-ISO-8859-1 texts then they may be CORRUPTED if you try to restore them to this Unicode version of Moodle.  See the <a href=\"http://docs.moodle.org/19/en/Backup_FAQ\">Backup FAQ</a> for more information about how to recover this backup correctly.';
 $string['backupnext'] = 'Next backup';
 $string['backuporiginalname'] = 'Backup Name';
 $string['backuproleassignments'] = 'Backup role assignments for these roles';
@@ -732,7 +732,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the Moodle License information page for full details:
-http://docs.moodle.org/en/License';
+http://docs.moodle.org/19/en/License';
 $string['grade'] = 'Grade';
 $string['grades'] = 'Grades';
 $string['group'] = 'Group';

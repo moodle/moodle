@@ -36,7 +36,7 @@
 // This library should be used, exclusively, by the installation and
 // upgrade process of Moodle.
 //
-// For further documentation, visit http://docs.moodle.org/en/DDL_functions
+// For further documentation, visit http://docs.moodle.org/19/en/DDL_functions
 
 /// Add required XMLDB constants
     require_once($CFG->libdir . '/xmldb/classes/XMLDBConstants.php');
@@ -67,7 +67,7 @@
  * Add a new field to a table, or modify an existing one (if oldfield is defined).
  *
  * WARNING: This function is deprecated and will be removed in future versions.
- * Please use XMLDB (see http://docs.moodle.org/en/Development:DDL_functions ).
+ * Please use XMLDB (see http://docs.moodle.org/dev/DDL_functions ).
  *
  * Warning: Please be careful on primary keys, as this function will eat auto_increments
  *

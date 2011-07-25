@@ -96,7 +96,7 @@ function wiki_get_latest_page(&$entry, $pagename, $version = 0) {
     $select = "(pagename=$pagename) AND wiki=".$entry->id." $version ";
     $sort   = 'version DESC';
     
-    //change this to recordset_select, as per http://docs.moodle.org/en/Datalib_Notes
+    //change this to recordset_select, as per http://docs.moodle.org/19/en/Datalib_Notes
     if ($result_arr = get_records_select('wiki_pages', $select, $sort, '*', 0, 1)) {
         foreach ($result_arr as $obj) {
             $result_obj = $obj;

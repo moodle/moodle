@@ -2,7 +2,7 @@ XMLDB - Base classes and edition interface.
 
 Complete Documentation:
 
-  http://docs.moodle.org/en/XMLDB_Defining_one_XML_structure
+  http://docs.moodle.org/19/en/XMLDB_Defining_one_XML_structure
 
 Ciao, Eloy Lafuente (stronk7)
 
@@ -70,7 +70,7 @@ Once the XMLDB format was approved, we'll be able to build all the
 for each RDBMS flavour.
 
 Once the interface was finished (2-3 days from now) related documentation
-will be sent to http://docs.moodle.org/en/XML_database_schema in order
+will be sent to http://docs.moodle.org/19/en/XML_database_schema in order
 to comment/modify/approve the final XML format.
 
 All the code is, obviously GPL, with its copyrights and so on...
