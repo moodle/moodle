@@ -719,7 +719,7 @@ class page_requirements_manager {
             // Set Y's config.gallery to the version
             $jscode = 'Y.config.gallery='.json_encode($galleryversion).';';
         }
-        $jscode .= 'Y.use('.join(',', array_map('json_encode', $modules)).',function() {'.js_writer::function_call($function, $arguments).'})';
+        $jscode .= 'Y.use('.join(',', array_map('json_encode', $modules)).',function() {'.js_writer::function_call($function, $arguments).'});';
         if ($ondomready) {
             $jscode = "Y.on('domready', function() { $jscode });";
         }
