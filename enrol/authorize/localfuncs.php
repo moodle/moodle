@@ -12,10 +12,11 @@ function get_course_cost($course)
     if (!empty($course->cost)) {
         $cost = (float)(((float)$course->cost) < 0) ? $CFG->enrol_cost : $course->cost;
     }
-
-    $cost = format_float($cost, 2);
+    $costlocalizeddisplay = format_float($cost, 2);
+    $cost = format_float($cost, 2, false);
     $ret = array(
         'cost' => $cost,
+        'localizedcost' => $costlocalizeddisplay,
         'currency' => $currency
     );
 
