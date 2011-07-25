@@ -54,7 +54,6 @@ foreach ((array)$param as $key=>$value) {
     }
 }
 $PAGE->set_url($url);
-$PAGE->set_pagelayout('standard');
 
 $qcobject = new question_category_object($pagevars['cpage'], $thispageurl, $contexts->having_one_edit_tab_cap('categories'), $param->edit, $pagevars['cat'], $param->delete,
                             $contexts->having_cap('moodle/question:add'));
