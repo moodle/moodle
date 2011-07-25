@@ -259,7 +259,7 @@ $THEME->hidefromselector = true;
 // include.
 ////////////////////////////////////////////////////
 
-// $THEME->renderfactory
+// $THEME->rendererfactory
 
 ////////////////////////////////////////////////////
 // Sets a custom render factory to use with the
