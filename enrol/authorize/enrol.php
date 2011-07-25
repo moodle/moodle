@@ -71,7 +71,7 @@ class enrolment_plugin_authorize
             $curcost = get_course_cost($course);
             echo '<div class="mdl-align">';
             echo '<p>'.get_string('paymentrequired').'</p>';
-            echo '<p><b>'.get_string('cost').": $curcost[currency] $curcost[cost]".'</b></p>';
+            echo '<p><b>'.get_string('cost').': '. $curcost['currency'] . $curcost['localizedcost'] .'</b></p>';
             echo '<p><a href="'.$CFG->httpswwwroot.'/login/">'.get_string('loginsite').'</a></p>';
             echo '</div>';
         }
@@ -387,7 +387,7 @@ class enrolment_plugin_authorize
             }
 
             $str .= '<div class="cost" title="'.$strrequirespayment.'">'.$strcost.': ';
-            $str .= $currency . ' ' . $curcost['cost'].'</div>';
+            $str .= $currency . ' ' . $curcost['localizedcost'].'</div>';
         }
 
         return $str;
