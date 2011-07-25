@@ -217,11 +217,6 @@ if (isset($_GET['help'])) {
     install_print_help_page($_GET['help']);
 }
 
-// send css?
-if (isset($_GET['css'])) {
-    install_css_styles();
-}
-
 //first time here? find out suitable dataroot
 if (is_null($CFG->dataroot)) {
     $CFG->dataroot = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'moodledata';

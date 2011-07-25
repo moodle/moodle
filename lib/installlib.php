@@ -243,7 +243,7 @@ function install_print_help_page($help) {
     echo '<html dir="'.(right_to_left() ? 'rtl' : 'ltr').'">
           <head>
           <link rel="shortcut icon" href="theme/standard/pix/favicon.ico" />
-          <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/install.php?css=1" />
+          <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/install/css.php" />
           <title>'.get_string('installation','install').'</title>
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           <meta http-equiv="pragma" content="no-cache" />
@@ -290,20 +290,7 @@ function install_print_header($config, $stagename, $heading, $stagetext) {
           <head>
           <link rel="shortcut icon" href="theme/standard/pix/favicon.ico" />';
 
-    $sheets = array('pagelayout','core');
-    $csss = array();
-    foreach ($sheets as $sheet) {
-        $csss[] = $CFG->wwwroot.'/theme/base/style/'.$sheet.'.css';
-    }
-    $sheets = array('core', 'css3');
-    foreach ($sheets as $sheet) {
-        $csss[] = $CFG->wwwroot.'/theme/standard/style/'.$sheet.'.css';
-    }
-    foreach ($csss as $css) {
-        echo '<link rel="stylesheet" type="text/css" href="'.$css.'" />'."\n";
-    }
-
-    echo '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/install.php?css=1" />
+    echo '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/install/css.php" />
           <title>'.get_string('installation','install').' - Moodle '.$CFG->target_release.'</title>
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           <meta http-equiv="pragma" content="no-cache" />
@@ -379,118 +366,6 @@ function install_print_footer($config, $reload=false) {
     echo '</form></div>';
     echo '<div id="footer"><hr />'.$homelink.'</div>';
     echo '</div></body></html>';
-}
-
-
-/**
- * Prints css needed on installation page, tries to look like the rest of installation.
- * Does not return.
- *
- * @global object
- */
-function install_css_styles() {
-    global $CFG;
-
-    @header('Content-type: text/css');  // Correct MIME type
-    @header('Cache-Control: no-store, no-cache, must-revalidate');
-    @header('Cache-Control: post-check=0, pre-check=0', false);
-    @header('Pragma: no-cache');
-    @header('Expires: Mon, 20 Aug 1969 09:23:00 GMT');
-    @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-
-//TODO: add rtl support here, make it match new default theme MDL-21149
-
-    echo '
-
-h2 {
-  text-align:center;
-}
-
-#installdiv {
-  width: 800px;
-  margin-left:auto;
-  margin-right:auto;
-}
-
-#installdiv dt {
-  font-weight: bold;
-}
-
-#installdiv dd {
-  padding-bottom: 0.5em;
-}
-
-.stage {
-  margin-top: 2em;
-  margin-bottom: 2em;
-  width: 100%;
-  padding:25px;
-}
-
-#installform {
-  width: 100%;
-}
-
-#nav_buttons input {
-  margin: 5px;
-}
-
-#envresult {
-  text-align:left;
-  width: auto;
-  margin-left:10em;
-}
-
-#envresult dd {
-  color: red;
-}
-
-.formrow {
-  clear:both;
-  text-align:left;
-  padding: 8px;
-}
-
-.formrow label.formlabel {
-  display:block;
-  float:left;
-  width: 260px;
-  margin-right:5px;
-  text-align:right;
-}
-
-.formrow .forminput {
-  display:block;
-  float:left;
-}
-
-fieldset {
-  text-align:center;
-  border:none;
-}
-
-.hint {
-  display:block;
-  clear:both;
-  padding-left: 265px;
-  color: red;
-}
-
-.configphp {
-  text-align:left;
-  background-color:white;
-  padding:1em;
-  width:95%;
-}
-
-.stage6 .stage {
-  font-weight: bold;
-  color: red;
-}
-
-';
-
-    die;
 }
 
 /**
