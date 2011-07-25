@@ -148,22 +148,41 @@ class scorm_interactions_report extends scorm_default_report {
                         $columns[]= 'scograde'.$sco->id;
                         $headers[]= format_string($sco->title);
                         $table->head[]= format_string($sco->title);
-                        if ($trackdata = scorm_get_tracks($sco->id, $scouser->userid, $scouser->attempt)) {
-                            $i=0;
-                            $element='cmi.interactions_'.$i.'.id';
-                            $question=array();
-                            while(isset($trackdata->$element)) {
-                                $questions[]=$trackdata->$element;
-                                $i++;
-                                $element='cmi.interactions_'.$i.'.id';
-                            }
-                        }
                     }
                 }
             } else {
                 $scoes = null;
             }
-            foreach ($questions as $id => $question) {
+                                    // Construct the SQL
+            $select = 'SELECT DISTINCT '.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').' AS uniqueid, ';
+            $select .= 'st.scormid AS scormid, st.attempt AS attempt, ' .
+                    'u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, u.imagealt, u.email ';
+
+            // This part is the same for all cases - join users and scorm_scoes_track tables
+            $from = 'FROM {user} u ';
+            $from .= 'LEFT JOIN {scorm_scoes_track} st ON st.userid = u.id AND st.scormid = '.$scorm->id;
+            switch ($attemptsmode) {
+                case SCORM_REPORT_ATTEMPTS_STUDENTS_WITH:
+                    // Show only students with attempts
+                    $where = ' WHERE u.id IN (' .$allowedlist. ') AND st.userid IS NOT NULL';
+                    break;
+                case SCORM_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
+                    // Show only students without attempts
+                    $where = ' WHERE u.id IN (' .$allowedlist. ') AND st.userid IS NULL';
+                    break;
+                case SCORM_REPORT_ATTEMPTS_ALL_STUDENTS:
+                    // Show all students with or without attempts
+                    $where = ' WHERE u.id IN (' .$allowedlist. ') AND (st.userid IS NOT NULL OR st.userid IS NULL)';
+                    break;
+            }
+
+            $countsql = 'SELECT COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').')) AS nbresults, ';
+            $countsql .= 'COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'', 'st.attempt').')) AS nbattempts, ';
+            $countsql .= 'COUNT(DISTINCT(u.id)) AS nbusers ';
+            $countsql .= $from.$where;
+            $attempts = $DB->get_records_sql($select.$from.$where, null);
+            $questioncount=get_scorm_question_count($scoes,$attempts);
+            for($id=0;$id<$questioncount;$id++) {
                 if ($displayoptions['qtext']) {
                     $columns[] = 'question' . $id;
                     $headers[] = get_string('questionx', 'scormreport_interactions', $id);
@@ -299,34 +318,6 @@ class scorm_interactions_report extends scorm_default_report {
                 header("Pragma: public");
                 echo implode("\t", $headers)." \n";
             }
-
-                            // Construct the SQL
-            $select = 'SELECT DISTINCT '.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').' AS uniqueid, ';
-            $select .= 'st.scormid AS scormid, st.attempt AS attempt, ' .
-                    'u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, u.imagealt, u.email ';
-
-            // This part is the same for all cases - join users and scorm_scoes_track tables
-            $from = 'FROM {user} u ';
-            $from .= 'LEFT JOIN {scorm_scoes_track} st ON st.userid = u.id AND st.scormid = '.$scorm->id;
-            switch ($attemptsmode) {
-                case SCORM_REPORT_ATTEMPTS_STUDENTS_WITH:
-                    // Show only students with attempts
-                    $where = ' WHERE u.id IN (' .$allowedlist. ') AND st.userid IS NOT NULL';
-                    break;
-                case SCORM_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
-                    // Show only students without attempts
-                    $where = ' WHERE u.id IN (' .$allowedlist. ') AND st.userid IS NULL';
-                    break;
-                case SCORM_REPORT_ATTEMPTS_ALL_STUDENTS:
-                    // Show all students with or without attempts
-                    $where = ' WHERE u.id IN (' .$allowedlist. ') AND (st.userid IS NOT NULL OR st.userid IS NULL)';
-                    break;
-            }
-
-            $countsql = 'SELECT COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').')) AS nbresults, ';
-            $countsql .= 'COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'', 'st.attempt').')) AS nbattempts, ';
-            $countsql .= 'COUNT(DISTINCT(u.id)) AS nbusers ';
-            $countsql .= $from.$where;
             $params = array();
 
             if (!$download) {
@@ -393,7 +384,6 @@ class scorm_interactions_report extends scorm_default_report {
             } else {
                 $attempts = $DB->get_records_sql($select.$from.$where.$sort, $params);
             }
-
             if ($attempts) {
                 foreach ($attempts as $scouser) {
                     $row = array();

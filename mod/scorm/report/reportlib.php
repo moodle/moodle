@@ -47,3 +47,23 @@ function scorm_report_list($context) {
     }
     return $reportlist;
 }
+function get_scorm_question_count($scoes,$attempts)
+{
+    $count=0;
+    foreach($attempts as $scouser){
+        foreach($scoes as $sco) {
+            if ($trackdata = scorm_get_tracks($sco->id, $scouser->userid, $scouser->attempt)) {
+                $i=0;
+                $element='cmi.interactions_'.$i.'.id';
+                while(isset($trackdata->$element)) {
+                    $i++;
+                    $element='cmi.interactions_'.$i.'.id';
+                }
+            }
+            if($i>$count)
+            $count=$i;
+        }
+    }
+    return $count;
+}
+
