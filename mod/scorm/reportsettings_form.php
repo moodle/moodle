@@ -34,9 +34,6 @@ class mod_scorm_report_settings extends moodleform {
             $options[SCORM_REPORT_ATTEMPTS_STUDENTS_WITH_NO] = get_string('optnoattemptsonly', 'scorm');
         }
         $mform->addElement('select', 'attemptsmode', get_string('show', 'scorm'), $options);
-        $mform->addElement('advcheckbox', 'qtext', '',get_string('summaryofquestiontext', 'scormreport_interactions'));
-        $mform->addElement('advcheckbox', 'resp', '',get_string('summaryofresponse', 'scormreport_interactions'));
-        $mform->addElement('advcheckbox', 'right', '',get_string('summaryofrightanswer', 'scormreport_interactions'));
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'preferencesuser', get_string('preferencesuser', 'scorm'));
