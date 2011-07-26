@@ -200,8 +200,10 @@ if ($hasfooter) {
     } ?>
             <div class="moodledocsleft">
             <?php
-                //echo $OUTPUT->login_info();
-                //echo $OUTPUT->home_link();
+                echo $OUTPUT->login_info();
+                if ($PAGE->theme->settings->creditstomoodleorg) {
+                    echo $OUTPUT->home_link();
+                }
                 echo $OUTPUT->standard_footer_html();
             ?>
             </div>

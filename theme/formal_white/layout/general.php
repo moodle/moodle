@@ -198,13 +198,28 @@ if ($hasfooter) {
     } ?>
             <div class="moodledocsleft">
             <?php
-                //echo $OUTPUT->login_info();
+                echo $OUTPUT->login_info();
                 //echo $OUTPUT->home_link();
+            ?>
+                <div class="moodledocs">
+                    <?php echo page_doc_link(get_string('moodledocslink')); ?>
+                </div>
+            <?php
+                if ($PAGE->theme->settings->creditstomoodleorg == 2) {
+                    // can not use $OUTPUT->home_link() here because whether $OUTPUT->page->pagetype != 'site-index'
+                    // the output of the function is not the classic nice moodle logo $this->pix_url('moodlelogo')
+            ?>
+                    <div class="sitelink">
+                        <a title="Moodle" href="http://moodle.org/">
+                            <img style="width:100px;height:30px" src="<?php echo $this->pix_url('moodlelogo') ?>" alt="moodlelogo" />
+                        </a>
+                    </div>
+            <?php
+                }
+            ?>
+            <?php                   
                 echo $OUTPUT->standard_footer_html();
             ?>
-            </div>
-            <div class="moodledocs">
-                <?php echo page_doc_link(get_string('moodledocslink')); ?>
             </div>
         </div> <!-- end of page-footer or page-footer_noframe -->
 <?php   //the waiting div has been closed

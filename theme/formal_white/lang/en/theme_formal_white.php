@@ -56,7 +56,12 @@ $string['choosereadme'] = '
         <p>This, and all other themes included in the Moodle core, are licensed under the <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a>.
     </div>
 </div>';
+$string['creditstomoodleorg'] = 'Display credits to moodle.org';
+$string['creditstomoodleorgdesc'] = 'Display the usual small moodle logo at the bottom of the page';
 $string['configtitle'] = 'Formal white theme';
+$string['ctmo_no'] = 'never'; // ctmo == credits to moodle org
+$string['ctmo_onfrontpageonly'] = 'in the front page only'; // ctmo == credits to moodle org
+$string['ctmo_ineverypage'] = 'in every page'; // ctmo == credits to moodle org
 $string['customcss'] = 'Custom CSS';
 $string['customcssdesc'] = 'Any CSS you enter here will be added to every page allowing your to easily customise this theme.';
 $string['displaylogo'] = 'Pages header content';
