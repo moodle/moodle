@@ -30,5 +30,5 @@
 
 $string['language'] = 'Tungumál';
 $string['next'] = 'Áfram';
-$string['previous'] = 'Til baka';
+$string['previous'] = 'Fyrra';
 $string['reload'] = 'Endurhlaða';
