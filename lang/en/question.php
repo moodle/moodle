@@ -399,3 +399,5 @@ $string['whethercorrect'] = 'Whether correct';
 $string['withselected'] = 'With selected';
 $string['xoutofmax'] = '{$a->mark} out of {$a->max}';
 $string['yougotnright'] = 'You have correctly selected {$a->num}.';
+$string['clickflag'] = 'Flag question';
+$string['clickunflag'] = 'Unflag question';

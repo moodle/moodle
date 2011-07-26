@@ -28,11 +28,13 @@
 M.core_question_flags = {
     flagattributes: null,
     actionurl: null,
+    fltext: null,
     listeners: [],
 
-    init: function(Y, actionurl, flagattributes) {
+    init: function(Y, actionurl, flagattributes, fltext) {
         M.core_question_flags.flagattributes = flagattributes;
         M.core_question_flags.actionurl = actionurl;
+        M.core_question_flags.fltext = fltext;
 
         Y.all('div.questionflag').each(function(flagdiv, i) {
             var checkbox = flagdiv.one('input[type=checkbox]');
@@ -49,10 +51,18 @@ M.core_question_flags = {
             var image = Y.Node.create('<input type="image" class="questionflagimage" />');
             M.core_question_flags.update_flag(input, image);
 
+            // Create flag text
+            var flstatus = input.get('value');
+            var txt = M.core_question_flags.fltext[flstatus];
+            var flagtext = Y.Node.create('<span class="flag-text">');
+            flagtext.addClass(txt);
+            flagtext.append(txt);
+
             checkbox.remove();
             flagdiv.one('label').remove();
             flagdiv.append(input);
             flagdiv.append(image);
+            flagdiv.append(flagtext);
         });
 
         Y.delegate('click', function(e) {
@@ -69,7 +79,17 @@ M.core_question_flags = {
     },
 
     update_flag: function(input, image) {
-        image.setAttrs(M.core_question_flags.flagattributes[input.get('value')]);
+
+        YUI().use('node', function (Y) {
+            image.setAttrs(M.core_question_flags.flagattributes[input.get('value')]);
+            // get flag text which is next to image element
+            var element = image.next();
+           // if element update its text
+           if(element){
+              element.set('innerText', M.core_question_flags.fltext[input.get('value')]);
+          }
+      });
+
     },
 
     add_listener: function(listener) {
