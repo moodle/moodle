@@ -56,9 +56,10 @@ $string['memorylimithelp'] = '<p>현재 서버의 PHP 메모리 사용량은 {$a
 
 <li>만약 php.ini 파일에 접근 가능하다면 당신은 <b>memory_limit 40M</b> 처럼 값을 바꿀 수 있을것입니다. 만약 여러분이 직접 접근 할 수 없다면 서버 관리자에게 요청하여 처리하실 수 있습니다.</li>
 
-<li>또 도저히 php.ini 안에 있는 값을 바꿀 수가 없다면 무들 디렉토리에 아래와 같은 내용을 포함하는 .htaccess 를 넣어두면 됩니다.
-<P><blockquote>php_value memory_limit 40M<blockquote></p>
-<p>그러나 어떤 서버에서는 이러한 기능이 모든 PHP페이지에 적용되어 버릴 수도 있게 되는 데 (당신이 페이지를 살펴보았을때 문제를 찾을 것이다) 이 때에는 .htaccess 를 제거해야 하고 다른 방안을 찾아봐야 할 것입니다.</p></li></ol>';
+<li>어떤 PHP 서버에서는  .htaccess  파일을 무들 디렉토리에 만들고 다음 내용을 포함하는 줄을 입력하면 됩니다.
+
+<P><blockquote><div>php_value memory_limit 40M</div><blockquote></p>
+<p>그러나 어떤 서버에서는 이러한 기능이 모든 PHP페이지에 적용되지 않을  수 있는데 (페이지에 오류가 나타날 것입니다) .htaccess 를 제거해야만 할 수도 있습니다.</p></li></ol>';
 $string['paths'] = '경로';
 $string['pathserrcreatedataroot'] = '데이터 디렉토리 ({$a->dataroot})가 설치스크립트에 의해 생성될 수 없습니다.';
 $string['pathshead'] = '경로 확인';
@@ -79,8 +80,8 @@ $string['phpversionhelp'] = '<p>무들은 적어도 PHP4.3.0 혹은 5.1.0. 이�
 <p>현재 구동되고 있는 PHP버전은 {$a} 입니다.</p>
 <p>PHP를 업그레이드 하시거나 새버전을 제공하는 웹호스팅 업체로 이전하기를 권합니다!<br />(만일 5.0.x버전을 사용 중이라면 4.4.x 버전으로 다운그레이드 할 수 있습니다)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = '당신의 컴퓨터에 <strong>{$a->packname} {$a->packversion}</strong> 패키지를 성공적으로 설치한 것을 축하합니다!';
-$string['welcomep30'] = '<strong>{$a->installername}</strong> 의 이 릴리스는 <strong>무들</strong>이 그 속에서 동작하는 환경을 생성하기 위한 어플리케이션을 포함하고 있습니다.';
+$string['welcomep20'] = '컴퓨터에 <strong>{$a->packname} {$a->packversion}</strong> 패키지를 성공적으로 설치하고 기동하였습니다. 축하합니다!';
+$string['welcomep30'] = '<strong>{$a->installername}</strong> 릴리스는 <strong>무들</strong>이 동작하는 환경을 생성하기 위한 다음 어플리케이션을 포함하고 있습니다:';
 $string['welcomep40'] = '이 패키지는 <strong>무들 {$a->moodlerelease} ({$a->moodleversion})</strong> 을 포함하고 있습니다.';
 $string['welcomep50'] = '이 패키지에 있는 모든 어플리케이션을 사용하는 것은 각각의 라이센스에의해 지배받습니다. 완전한<strong>{$a->installername}</strong> 패키지는
 <a href="http://www.opensource.org/docs/definition_plain.html">공개 소스이며 </a> <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> 라이선스에 의해 배포됩니다.';
