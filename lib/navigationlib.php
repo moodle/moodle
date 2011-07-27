@@ -2155,7 +2155,9 @@ class global_navigation extends navigation_node {
         if ($issite) {
             $parent = $this;
             $url = null;
-            $shortname = get_string('sitepages');
+            if (empty($CFG->usesitenameforsitepages)) {
+                $shortname = get_string('sitepages');
+            }
         } else if ($ismycourse) {
             $parent = $this->rootnodes['mycourses'];
             $url = new moodle_url('/course/view.php', array('id'=>$course->id));
