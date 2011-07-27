@@ -272,6 +272,12 @@ if ($submission->id and !$edit and !$isreviewer and $canallocate and $workshop->
     echo $output->single_button($url, get_string('assess', 'workshop'), 'post');
 }
 
+if (($workshop->phase == workshop::PHASE_CLOSED) and ($ownsubmission or $canviewall)) {
+    if (!empty($submission->gradeoverby) and strlen(trim($submission->feedbackauthor)) > 0) {
+        echo $output->render(new workshop_feedback_author($submission));
+    }
+}
+
 // and possibly display the submission's review(s)
 
 if ($isreviewer) {

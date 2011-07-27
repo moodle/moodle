@@ -489,16 +489,15 @@ class workshop {
     public function get_submissions($authorid='all') {
         global $DB;
 
-        $sql = 'SELECT s.id, s.workshopid, s.example, s.authorid, s.timecreated, s.timemodified,
+        $authorfields      = user_picture::fields('u', null, 'authoridx', 'author');
+        $gradeoverbyfields = user_picture::fields('t', null, 'gradeoverbyx', 'over');
+        $sql = "SELECT s.id, s.workshopid, s.example, s.authorid, s.timecreated, s.timemodified,
                        s.title, s.grade, s.gradeover, s.gradeoverby, s.published,
-                       u.lastname AS authorlastname, u.firstname AS authorfirstname,
-                       u.picture AS authorpicture, u.imagealt AS authorimagealt, u.email AS authoremail,
-                       t.lastname AS overlastname, t.firstname AS overfirstname,
-                       t.picture AS overpicture, t.imagealt AS overimagealt, t.email AS overemail
+                       $authorfields, $gradeoverbyfields
                   FROM {workshop_submissions} s
             INNER JOIN {user} u ON (s.authorid = u.id)
              LEFT JOIN {user} t ON (s.gradeoverby = t.id)
-                 WHERE s.example = 0 AND s.workshopid = :workshopid';
+                 WHERE s.example = 0 AND s.workshopid = :workshopid";
         $params = array('workshopid' => $this->id);
 
         if ('all' === $authorid) {
@@ -511,7 +510,7 @@ class workshop {
             // $authorid is empty
             return array();
         }
-        $sql .= ' ORDER BY u.lastname, u.firstname';
+        $sql .= " ORDER BY u.lastname, u.firstname";
 
         return $DB->get_records_sql($sql, $params);
     }
@@ -527,12 +526,13 @@ class workshop {
 
         // we intentionally check the workshopid here, too, so the workshop can't touch submissions
         // from other instances
-        $sql = 'SELECT s.*,
-                       u.lastname AS authorlastname, u.firstname AS authorfirstname, u.id AS authorid,
-                       u.picture AS authorpicture, u.imagealt AS authorimagealt, u.email AS authoremail
+        $authorfields      = user_picture::fields('u', null, 'authoridx', 'author');
+        $gradeoverbyfields = user_picture::fields('g', null, 'gradeoverbyx', 'gradeoverby');
+        $sql = "SELECT s.*, $authorfields, $gradeoverbyfields
                   FROM {workshop_submissions} s
             INNER JOIN {user} u ON (s.authorid = u.id)
-                 WHERE s.example = 0 AND s.workshopid = :workshopid AND s.id = :id';
+             LEFT JOIN {user} g ON (s.gradeoverby = g.id)
+                 WHERE s.example = 0 AND s.workshopid = :workshopid AND s.id = :id";
         $params = array('workshopid' => $this->id, 'id' => $id);
         return $DB->get_record_sql($sql, $params, MUST_EXIST);
     }
@@ -549,12 +549,13 @@ class workshop {
         if (empty($authorid)) {
             return false;
         }
-        $sql = 'SELECT s.*,
-                       u.lastname AS authorlastname, u.firstname AS authorfirstname, u.id AS authorid,
-                       u.picture AS authorpicture, u.imagealt AS authorimagealt, u.email AS authoremail
+        $authorfields      = user_picture::fields('u', null, 'authoridx', 'author');
+        $gradeoverbyfields = user_picture::fields('g', null, 'gradeoverbyx', 'gradeoverby');
+        $sql = "SELECT s.*, $authorfields, $gradeoverbyfields
                   FROM {workshop_submissions} s
             INNER JOIN {user} u ON (s.authorid = u.id)
-                 WHERE s.example = 0 AND s.workshopid = :workshopid AND s.authorid = :authorid';
+             LEFT JOIN {user} g ON (s.gradeoverby = g.id)
+                 WHERE s.example = 0 AND s.workshopid = :workshopid AND s.authorid = :authorid";
         $params = array('workshopid' => $this->id, 'authorid' => $authorid);
         return $DB->get_record_sql($sql, $params);
     }
@@ -567,10 +568,10 @@ class workshop {
     public function get_published_submissions($orderby='finalgrade DESC') {
         global $DB;
 
+        $authorfields = user_picture::fields('u', null, 'authoridx', 'author');
         $sql = "SELECT s.id, s.authorid, s.timecreated, s.timemodified,
                        s.title, s.grade, s.gradeover, COALESCE(s.gradeover,s.grade) AS finalgrade,
-                       u.lastname AS authorlastname, u.firstname AS authorfirstname, u.id AS authorid,
-                       u.picture AS authorpicture, u.imagealt AS authorimagealt, u.email AS authoremail
+                       $authorfields
                   FROM {workshop_submissions} s
             INNER JOIN {user} u ON (s.authorid = u.id)
                  WHERE s.example = 0 AND s.workshopid = :workshopid AND s.published = 1
@@ -2811,5 +2812,76 @@ class workshop_grading_report implements renderable {
      */
     public function get_options() {
         return $this->options;
+    }
+}
+
+
+/**
+ * Base class for renderable feedback for author and feedback for reviewer
+ */
+abstract class workshop_feedback {
+
+    /** @var stdClass the user info */
+    protected $provider = null;
+
+    /** @var string the feedback text */
+    protected $content = null;
+
+    /** @var int format of the feedback text */
+    protected $format = null;
+
+    /**
+     * @return stdClass the user info
+     */
+    public function get_provider() {
+
+        if (is_null($this->provider)) {
+            throw new coding_exception('Feedback provider not set');
+        }
+
+        return $this->provider;
+    }
+
+    /**
+     * @return string the feedback text
+     */
+    public function get_content() {
+
+        if (is_null($this->content)) {
+            throw new coding_exception('Feedback content not set');
+        }
+
+        return $this->content;
+    }
+
+    /**
+     * @return int format of the feedback text
+     */
+    public function get_format() {
+
+        if (is_null($this->format)) {
+            throw new coding_exception('Feedback text format not set');
+        }
+
+        return $this->format;
+    }
+}
+
+
+/**
+ * Renderable feedback for the author of submission
+ */
+class workshop_feedback_author extends workshop_feedback implements renderable {
+
+    /**
+     * Extracts feedback from the given submission record
+     *
+     * @param stdClass $submission record as returned by {@see self::get_submission_by_id()}
+     */
+    public function __construct(stdClass $submission) {
+
+        $this->provider = user_picture::unalias($submission, null, 'gradeoverbyx', 'gradeoverby');
+        $this->content  = $submission->feedbackauthor;
+        $this->format   = $submission->feedbackauthorformat;
     }
 }

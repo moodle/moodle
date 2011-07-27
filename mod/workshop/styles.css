@@ -45,7 +45,8 @@
 
 .path-mod-workshop .submission-summary.anonymous .title,
 .path-mod-workshop .submission-summary.anonymous .author,
-.path-mod-workshop .submission-summary.anonymous .userdate {
+.path-mod-workshop .submission-summary.anonymous .userdate,
+.path-mod-workshop .submission-summary.anonymous .grade-status {
     margin: 0px 0px 0px 5px;
 }
 
@@ -393,6 +394,36 @@
  */
 #mod-workshop-editform fieldset.fgroup * {
     vertical-align: top;
+}
+
+/**
+ * Feedback
+ */
+.path-mod-workshop .feedback {
+    border: 1px solid #ddd;
+    margin: 0px auto 1em auto;
+    width: 80%;
+}
+
+.path-mod-workshop .feedback .header {
+    position: relative;
+    background-color: #ddd;
+    padding: 3px;
+    min-height: 35px;
+}
+
+.path-mod-workshop .feedback .header .title {
+    margin: 0px 0px 0px 40px;
+}
+
+.path-mod-workshop .feedback .header .picture {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+}
+
+.path-mod-workshop .feedback .content {
+    padding: 5px 10px;
 }
 
 /**

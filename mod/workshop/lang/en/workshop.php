@@ -114,6 +114,7 @@ $string['examplesmode'] = 'Mode of examples assessment';
 $string['examplesubmissions'] = 'Example submissions';
 $string['examplesvoluntary'] = 'Assessment of example submission is voluntary';
 $string['feedbackauthor'] = 'Feedback for the author';
+$string['feedbackby'] = 'Feedback by {$a}';
 $string['feedbackreviewer'] = 'Feedback for the reviewer';
 $string['formataggregatedgrade'] = '{$a->grade}';
 $string['formataggregatedgradeover'] = '<del>{$a->grade}</del><br /><ins>{$a->over}</ins>';
