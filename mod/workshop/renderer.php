@@ -490,6 +490,30 @@ class mod_workshop_renderer extends plugin_renderer_base {
         return html_writer::table($table);
     }
 
+    /**
+     * Renders the feedback for the author of the submission
+     *
+     * @param workshop_feedback_author $feedback
+     * @return string HTML
+     */
+    protected function render_workshop_feedback_author(workshop_feedback_author $feedback) {
+
+        $o  = '';    // output HTML code
+        $o .= $this->output->container_start('feedback feedbackforauthor');
+        $o .= $this->output->container_start('header');
+        $o .= $this->output->heading(get_string('feedbackby', 'workshop', s(fullname($feedback->get_provider()))), 3, 'title');
+
+        $userpic = $this->output->user_picture($feedback->get_provider(), array('courseid' => $this->page->course->id, 'size' => 32));
+        $o .= $this->output->container($userpic, 'picture');
+        $o .= $this->output->container_end(); // end of header
+
+        $content = format_text($feedback->get_content(), $feedback->get_format(), array('overflowdiv' => true));
+        $o .= $this->output->container($content, 'content');
+
+        $o .= $this->output->container_end(); // end of submission-full
+
+        return $o;
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // Internal rendering helper methods

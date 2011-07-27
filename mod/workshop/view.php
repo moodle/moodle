@@ -493,6 +493,11 @@ case workshop::PHASE_CLOSED:
             echo $output->container(get_string('noyoursubmission', 'workshop'));
         }
         echo $output->box_end();
+
+        if (!empty($submission->gradeoverby) and strlen(trim($submission->feedbackauthor)) > 0) {
+            echo $output->render(new workshop_feedback_author($submission));
+        }
+
         print_collapsible_region_end();
     }
     if (has_capability('mod/workshop:viewpublishedsubmissions', $workshop->context)) {
