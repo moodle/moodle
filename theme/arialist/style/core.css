@@ -245,78 +245,57 @@ h2.headingblock {
     margin-top:30px;
 }
 
-/*YUI Reset */
-/*full menu bar */
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-content {
-    background: none !important;
-}
-/*single items */
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label {
-    background: none !important;
-}
-/*active items */
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label-active, .yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-active .yui3-menuitem-content, .yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label-menuvisible {
-    background: #f9f9f9 !important;
-    border-color:inherit;
-}
-
-#custommenu .yui3-menu-horizontal,
-#custommenu .yui3-menu-horizontal.javascript-disabled {
-    padding-left:100px;
-    border-bottom:1px solid #DDD;
-    background-color:#EEE;
-}
-
 .has-custom-menu #wrapper,
 #custommenu .yui3-menu-horizontal .yui3-menu-content,
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content,
 #custommenu .yui3-menu-horizontal .yui3-menu-content ul,
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content ul,
-#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content li li:hover > a {
-    border-width:0;
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content li li:hover > a,
+#custommenu .yui3-menu-horizontal .yui3-menu-label,
+#custommenu .yui3-menuitem,
+#custommenu .yui3-menuitem .yui3-menuitem-content {
+    border-width: 0;
 }
 
-#custommenu .yui3-menu-horizontal .yui3-menu-content ul ul,
-#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content ul ul {
-    background-color:#F9F9F9;
-    border:1px solid #DDD;
-    border-top-width:0;
+#custommenu {
+    padding-left:100px;
+    border-bottom:1px solid #DDD;
+    background-color:#EEE;
 }
 
-#custommenu .yui3-menu-horizontal .yui3-menu-content li a {
-    display:block;
-    height:24px;
-    vertical-align: bottom;
-    padding:5px 10px 0 10px;
-    cursor:pointer;
+#custommenu .yui3-menu-content {
+    background-color: transparent;
 }
 
-#custommenu .yui3-menu-horizontal .yui3-menu-content li:hover,
-#custommenu .yui3-menu-horizontal .yui3-menu-content .yui3-menu-label-active {
-    background-color:#F9F9F9;
+#custommenu .yui3-menu .yui3-menu-label,
+#custommenu .yui3-menu .yui3-menuitem-content {
+    color:#F25F0F;
+    line-height:24px;
+    padding: 5px 10px;
 }
 
-#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content li:hover > a {
+#custommenu .custom_menu_submenu .yui3-menu-label,
+#custommenu .custom_menu_submenu .yui3-menuitem-content {
+    padding: 5px 20px;
+}
+
+#custommenu .custom_menu_submenu .yui3-menu-content,
+#custommenu .yui3-menu-label-active,
+#custommenu .yui3-menu-label-menuvisible {
+    background-color: #f9f9f9;
+}
+
+#custommenu .custom_menu_submenu .yui3-menu-label-active,
+#custommenu .custom_menu_submenu .yui3-menu-label-menuvisible,
+#custommenu .yui3-menu .yui3-menu .yui3-menuitem-active .yui3-menuitem-content {
+    background-color: #fefefe;
+}
+
+#custommenu .custom_menu_submenu .yui3-menu-content {
     border-left:1px solid #DDD;
     border-right:1px solid #DDD;
-    padding:5px 9px 0 9px;
+    border-bottom:1px solid #DDD;
 }
-
-.yui3-skin-sam #custommenu .yui3-menu-label,
-.yui3-skin-sam #custommenu .yui3-menu .yui3-menu .yui3-menu-label,
-.yui3-skin-sam #custommenu  .yui3-menuitem-content,
-.yui3-skin-sam #custommenu .yui3-menu .yui3-menu .yui3-menuitem-content {
-    color:#F25F0F;
-    border-width:0;
-    padding-right: 25px;
-}
-
-.yui3-skin-sam #custommenu .yui3-menu-content,
-.yui3-skin-sam #custommenu .yui3-menu .yui3-menu .yui3-menu-content {
-    padding:0;
-}
-
-#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content li li:hover,
-.yui3-skin-sam #custommenu .yui3-menu .custom_menu_submenu .yui3-menuitem.yui3-menuitem-active .yui3-menuitem-content, #custommenu .yui3-menu-horizontal .custom_menu_submenu .yui3-menu-content .yui3-menu-label-active {
-    background-color:#FFF !important;
+#custommenu .custom_menu_submenu .custom_menu_submenu .yui3-menu-content {
+    border-top:1px solid #DDD;
 }

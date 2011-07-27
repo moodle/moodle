@@ -1,8 +1,6 @@
 a:link,
 a:visited { color: #bf3503; }
 
-a.yui3-menu-label, div.yui3-menu-content .yui3-menu-content .yui3-menuitem-content { color: #bf3503 !important; }
-
 a:hover,
 a:active { 	color:#3f5c10; }
 

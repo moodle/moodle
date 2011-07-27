@@ -2429,8 +2429,10 @@ EOD;
         // Increment the menu count. This is used for ID's that get worked with
         // in JavaScript as is essential
         $menucount++;
-        // Initialise this custom menu
-        $this->page->requires->js_init_call('M.core_custom_menu.init', array('custom_menu_'.$menucount));
+        // Initialise this custom menu (the custom menu object is contained in javascript-static
+        $jscode = js_writer::function_call_with_Y('M.core_custom_menu.init', array('custom_menu_'.$menucount));
+        $jscode = "(function(){{$jscode}})";
+        $this->page->requires->yui_module('node-menunav', $jscode);
         // Build the root nodes as required by YUI
         $content = html_writer::start_tag('div', array('id'=>'custom_menu_'.$menucount, 'class'=>'yui3-menu yui3-menu-horizontal javascript-disabled'));
         $content .= html_writer::start_tag('div', array('class'=>'yui3-menu-content'));

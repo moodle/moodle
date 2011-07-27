@@ -459,105 +459,106 @@ div.yui3-widget-bd h1.helpheading {
     height: 45px;
 }
 
-div.yui3-menu.yui3-menu-horizontal {
-    background: #fafafa url([[pix:theme|menubarback]]) repeat-x !important;
-    border-bottom: 1px solid #cccccc !important;
-    border-top: 1px solid #dadada !important;
+#custommenu .yui3-menu.yui3-menu-horizontal {
+    background: #fafafa url([[pix:theme|menubarback]]) repeat-x;
+    border-bottom: 1px solid #cccccc;
+    border-top: 1px solid #dadada;
     border-left: none;
     border-right: 1px solid #cccccc;
     float: right;
 }
 
-div.yui3-menu-content {
-    border: none !important;
+#custommenu .yui3-menu-content {
+    border-width: 0;
 }
 
-.yui3-menu-content li a {
+#custommenu .yui3-menu-content li a {
     font-size: 12px;
     font-weight: 600;
     text-transform: lowercase;
     line-height: 45px;
     cursor: pointer;
-    border-right: none !important;
-    border-top: none !important;
-    border-bottom: none !important;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
 }
 
-.yui3-menu-horizontal .yui3-menu-label {
+#custommenu .yui3-menu-label {
     padding-left: 16px !important;
-    background: url([[pix:theme|yuiarrows]]) no-repeat 7px 17px !important;
-    }
-
-.yui3-menu-horizontal .yui3-menu-label-menuvisible {
-    background-position: 5px -23px !important;
+    background: url([[pix:theme|yuiarrows]]) no-repeat 7px 17px;
 }
 
-.yui3-menu-content li {
+#custommenu .yui3-menu-label-menuvisible {
+    background-position: 5px -23px;
+}
+
+#custommenu .yui3-menu-content li {
     border-left: 1px solid #dadada;
-    border-top: none !important;
+    border-top-width: 0;
 }
 
-.yui3-menu-content li:hover {
+#custommenu .yui3-menu-content li:hover {
     background: #eee;
 }
 
-div.yui3-menu.custom_menu_submenu {
+#custommenu .yui3-menu.custom_menu_submenu {
     background: url([[pix:theme|yuiarrow]]) no-repeat 40px 0;
     border: none;
     min-width: 100px;
     z-index: 99998;
 }
 
-div.yui3-menu.custom_menu_submenu div.yui3-menu.custom_menu_submenu {
-    background: none !important;
+#custommenu .yui3-menu.custom_menu_submenu .yui3-menu.custom_menu_submenu {
+    background-image: none;
+    background-color: transparent;
     min-width: 100px;
 }
 
-div.yui3-menu.custom_menu_submenu div.yui3-menu-content {
+#custommenu .yui3-menu.custom_menu_submenu .yui3-menu-content {
     background: #fff;
     z-index: 99999;
     min-width: 200px;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
+    padding-top: 0;
+    padding-bottom: 0;
     margin: 20px 0px 0px -40px;
 }
 
 /** below style to move sub subs to the left to keep from going off the page **/
 
-div.yui3-menu.custom_menu_submenu div.yui3-menu-content div.yui3-menu.custom_menu_submenu div.yui3-menu-content {
+#custommenu .yui3-menu.custom_menu_submenu .yui3-menu-content .yui3-menu.custom_menu_submenu .yui3-menu-content {
     margin-left: -400px !important;
     /** double the width of the menu item **/
     position: absolute;
     top: -15px;
 }
 
-div.yui3-menu.custom_menu_submenu .yui3-menu-content li {
+#custommenu .yui3-menu.custom_menu_submenu .yui3-menu-content li {
     border-left: none;
 }
 
-div.yui3-menu.custom_menu_submenu .yui3-menu-content li a {
+#custommenu .yui3-menu.custom_menu_submenu .yui3-menu-content li a {
     font-size: 11px;
-    border-bottom: 1px solid #cccccc !important;
-    border-top: 0px solid #fff !important;
+    border-bottom: 1px solid #cccccc;
+    border-top-width: 0;
     text-transform: none;
-    background: #eee !important;
-    text-decoration: none !important;
+    background: #eee;
+    text-decoration: none;
     text-transform: lowercase;
 }
 
-div.yui3-menu.custom_menu_submenu .yui3-menu-content li a:hover {
-    background: #cccccc !important;
+#custommenu .yui3-menu.custom_menu_submenu .yui3-menu-content li a:hover {
+    background: #cccccc;
     cursor: pointer;
-    color: black !important;
-    text-decoration: none !important;
+    color: #000;
+    text-decoration: none;
 }
 
-div.yui3-menu.custom_menu_submenu li a.yui3-menu-label {
-    background: #eee url([[pix:theme|yuiarrows]]) no-repeat 7px -72px !important;
+#custommenu .yui3-menu.custom_menu_submenu li a.yui3-menu-label {
+    background: #eee url([[pix:theme|yuiarrows]]) no-repeat 7px -72px;
 }
 
-div.yui3-menu.custom_menu_submenu li a.yui3-menu-label:hover {
-    background: #ccc url([[pix:theme|yuiarrows]]) no-repeat !important 7px -72px;
+#custommenu .yui3-menu.custom_menu_submenu li a.yui3-menu-label:hover {
+    background: #ccc url([[pix:theme|yuiarrows]]) no-repeat 7px -72px;
 }
 
 /** yui moodle dock bar **/
