@@ -28,7 +28,7 @@ $string['filtername'] = 'Multimedia plugins';
 $string['flashanimation'] = 'Flash animation';
 $string['flashanimation_help'] = 'Files with extension *.swf. For security reasons this filter is used only in trusted texts.';
 $string['flashvideo'] = 'Flash video';
-$string['flashvideo_help'] = 'Files with extension *.flv and *.f4v. Plays video clips using Flowplayer, requires Flash plugin and javascript. Uses HTML 5 video fallback if multiple sources psecified.';
+$string['flashvideo_help'] = 'Files with extension *.flv and *.f4v. Plays video clips using Flowplayer, requires Flash plugin and javascript. Uses HTML 5 video fallback if multiple sources specified.';
 $string['html5audio'] = 'HTML 5 audio';
 $string['html5audio_help'] = 'Audio files with extension *.ogg, *.aac and others. It is compatible with latest web browsers only, unfortunately there is no format that is supported by all browsers.
 Workaround is to specify fallbacks separated with # (ex: http://example.org/audio.aac#http://example.org/audio.aac#http://example.org/audio.mp3#), QuickTime player is used as a fallback for old browsers, fallback can be any audio type.';
