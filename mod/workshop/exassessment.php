@@ -56,7 +56,7 @@ if ($isreviewer or $canmanage) {
 }
 
 // only the reviewer is allowed to modify the assessment
-if ($canmanage or ($isreviewer and $workshop->assessing_examples_allowed())) {
+if (($canmanage and $assessment->weight == 1) or ($isreviewer and $workshop->assessing_examples_allowed())) {
     $assessmenteditable = true;
 } else {
     $assessmenteditable = false;
@@ -119,17 +119,40 @@ if (trim($workshop->instructreviewers)) {
     print_collapsible_region_end();
 }
 
-if ($canmanage) {
-    echo $output->heading(get_string('assessmentreference', 'workshop'), 2);
-} elseif ($isreviewer) {
-    echo $output->heading(get_string('assessmentbyyourself', 'workshop'), 2);
-} else {
-    $assessment = $workshop->get_assessment_by_id($assessment->id); // extend the current record with user details
-    $reviewer   = new stdclass();
-    $reviewer->firstname = $assessment->reviewerfirstname;
-    $reviewer->lastname = $assessment->reviewerlastname;
-    echo $output->heading(get_string('assessmentbyknown', 'workshop', fullname($reviewer)), 2);
+// extend the current assessment record with user details
+$assessment = $workshop->get_assessment_by_id($assessment->id);
+
+if ($canmanage and $assessment->weight == 1) {
+    $options = array(
+        'showreviewer'  => false,
+        'showauthor'    => false,
+        'showform'      => true,
+        'showweight'    => false,
+    );
+    $assessment = $workshop->prepare_assessment($assessment, $mform, $options);
+    $assessment->title = get_string('assessmentreference', 'workshop');
+    echo $output->render($assessment);
+
+} else if ($isreviewer) {
+    $options = array(
+        'showreviewer'  => true,
+        'showauthor'    => false,
+        'showform'      => true,
+        'showweight'    => false,
+    );
+    $assessment = $workshop->prepare_assessment($assessment, $mform, $options);
+    $assessment->title = get_string('assessmentbyyourself', 'workshop');
+    echo $output->render($assessment);
+
+} else if ($canmanage) {
+    $options = array(
+        'showreviewer'  => true,
+        'showauthor'    => false,
+        'showform'      => true,
+        'showweight'    => false,
+    );
+    $assessment = $workshop->prepare_assessment($assessment, $mform, $options);
+    echo $output->render($assessment);
 }
 
-$mform->display();
 echo $output->footer();
