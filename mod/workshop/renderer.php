@@ -497,6 +497,26 @@ class mod_workshop_renderer extends plugin_renderer_base {
      * @return string HTML
      */
     protected function render_workshop_feedback_author(workshop_feedback_author $feedback) {
+        return $this->helper_render_feedback($feedback);
+    }
+
+    /**
+     * Renders the feedback for the reviewer of the submission
+     *
+     * @param workshop_feedback_reviewer $feedback
+     * @return string HTML
+     */
+    protected function render_workshop_feedback_reviewer(workshop_feedback_reviewer $feedback) {
+        return $this->helper_render_feedback($feedback);
+    }
+
+    /**
+     * Helper method to rendering feedback
+     *
+     * @param workshop_feedback_author|workshop_feedback_reviewer $feedback
+     * @return string HTML
+     */
+    private function helper_render_feedback($feedback) {
 
         $o  = '';    // output HTML code
         $o .= $this->output->container_start('feedback feedbackforauthor');
@@ -510,7 +530,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $content = format_text($feedback->get_content(), $feedback->get_format(), array('overflowdiv' => true));
         $o .= $this->output->container($content, 'content');
 
-        $o .= $this->output->container_end(); // end of submission-full
+        $o .= $this->output->container_end();
 
         return $o;
     }
