@@ -111,6 +111,20 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
         $options['noclean'] = false;
     }
 
+    //sanity check for passed context. This function doesn't expect $option['context'] to be set
+    //But this function is called before creating editor hence, this is one of the best places to check
+    //if context is used properly. This check notify developer that they missed passing context to editor.
+    if (isset($context) && !isset($options['context'])) {
+        //if $context is not null then make sure $option['context'] is also set.
+        debugging('Context for editor is not set in editoroptions. Hence editor will not respect editor filters', DEBUG_DEVELOPER);
+    } else if (isset($options['context']) && isset($context)) {
+        //If both are passed then they should be equal.
+        if ($options['context']->id != $context->id) {
+            $exceptionmsg = 'Editor context ['.$options['context']->id.'] is not equal to passed context ['.$context->id.']';
+            throw new coding_exception($exceptionmsg);
+        }
+    }
+    
     if (is_null($itemid) or is_null($context)) {
         $contextid = null;
         $itemid = null;
