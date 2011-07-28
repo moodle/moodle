@@ -91,7 +91,14 @@ class mod_workshop_renderer extends plugin_renderer_base {
         }
         $o .= $this->output->container_start($classes);
         $o .= $this->output->container_start('header');
-        $o .= $this->output->heading(format_string($submission->title), 3, 'title');
+
+        $title = $this->output->heading(format_string($submission->title), 3, 'title');
+
+        if ($this->page->url != $submission->url) {
+            $o .= html_writer::link($submission->url, $title);
+        } else {
+            $o .= $title;
+        }
 
         if (!$anonymous) {
             $author             = new stdclass();
@@ -554,9 +561,14 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $o .= $this->output->container_start('header');
 
         if (!empty($assessment->title)) {
-            $o .= $this->output->container(s($assessment->title), 'title');
+            $title = s($assessment->title);
         } else {
-            $o .= $this->output->container(get_string('assessment', 'workshop'), 'title');
+            $title = get_string('assessment', 'workshop');
+        }
+        if ($this->page->url != $assessment->url) {
+            $o .= $this->output->container(html_writer::link($assessment->url, $title), 'title');
+        } else {
+            $o .= $this->output->container($title, 'title');
         }
 
         if (!$anonymous) {
