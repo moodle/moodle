@@ -182,24 +182,33 @@ if (trim($workshop->instructreviewers)) {
     print_collapsible_region_end();
 }
 
+// extend the current assessment record with user details
+$assessment = $workshop->get_assessment_by_id($assessment->id);
+
 if ($isreviewer) {
-    echo $output->heading(get_string('assessmentbyyourself', 'workshop'), 2);
-} elseif (has_capability('mod/workshop:viewreviewernames', $workshop->context)) {
-    $assessment = $workshop->get_assessment_by_id($assessment->id); // extend the current record with user details
-    $reviewer   = new stdclass();
-    $reviewer->firstname = $assessment->reviewerfirstname;
-    $reviewer->lastname = $assessment->reviewerlastname;
-    echo $output->heading(get_string('assessmentbyknown', 'workshop', fullname($reviewer)), 2);
+    $options    = array(
+        'showreviewer'  => true,
+        'showauthor'    => has_capability('mod/workshop:viewauthornames', $workshop->context),
+        'showform'      => $assessmenteditable or !is_null($assessment->grade),
+        'showweight'    => true,
+    );
+    $assessment = $workshop->prepare_assessment($assessment, $mform, $options);
+    $assessment->title = get_string('assessmentbyyourself', 'workshop');
+    echo $output->render($assessment);
+
 } else {
-    echo $output->heading(get_string('assessmentbyunknown', 'workshop'), 2);
+    $options    = array(
+        'showreviewer'  => has_capability('mod/workshop:viewreviewernames', $workshop->context),
+        'showauthor'    => has_capability('mod/workshop:viewauthornames', $workshop->context),
+        'showform'      => $assessmenteditable or !is_null($assessment->grade),
+        'showweight'    => true,
+    );
+    $assessment = $workshop->prepare_assessment($assessment, $mform, $options);
+    echo $output->render($assessment);
 }
 
-if ($mform) {
-    $mform->display();
-} else {
-    echo $output->heading(get_string('notassessed', 'workshop'));
-}
-if ($canoverridegrades) {
+if (!$assessmenteditable and $canoverridegrades) {
     $feedbackform->display();
 }
+
 echo $output->footer();

@@ -707,6 +707,44 @@ class workshop {
     }
 
     /**
+     * Prepares renderable assessment component
+     *
+     * The $options array supports the following keys:
+     * showauthor - should the author user info be available for the renderer
+     * showreviewer - should the reviewer user info be available for the renderer
+     * showform - show the assessment form if it is available
+     *
+     * @param stdClass $record as returned by eg {@link self::get_assessment_by_id()}
+     * @param workshop_assessment_form|null $form as returned by {@link workshop_strategy::get_assessment_form()}
+     * @param array $options
+     * @return workshop_assessment
+     */
+    public function prepare_assessment(stdClass $record, $form, array $options = array()) {
+
+        $assessment             = new workshop_assessment($record, $options);
+        $assessment->url        = $this->assess_url($record->id);
+        $assessment->maxgrade   = $this->real_grade(100);
+
+        if (!empty($options['showform']) and !($form instanceof workshop_assessment_form)) {
+            debugging('Not a valid instance of workshop_assessment_form supplied', DEBUG_DEVELOPER);
+        }
+
+        if (!empty($options['showform']) and ($form instanceof workshop_assessment_form)) {
+            $assessment->form = $form;
+        }
+
+        if (empty($options['showweight'])) {
+            $assessment->weight = null;
+        }
+
+        if (!is_null($record->grade)) {
+            $assessment->realgrade = $this->real_grade($record->grade);
+        }
+
+        return $assessment;
+    }
+
+    /**
      * Removes the submission and all relevant data
      *
      * @param stdClass $submission record to delete
@@ -731,17 +769,18 @@ class workshop {
     public function get_all_assessments() {
         global $DB;
 
-        $sql = 'SELECT a.id, a.submissionid, a.reviewerid, a.timecreated, a.timemodified,
+        $reviewerfields = user_picture::fields('reviewer', null, 'revieweridx', 'reviewer');
+        $authorfields   = user_picture::fields('author', null, 'authorid', 'author');
+        $sql = "SELECT a.id, a.submissionid, a.reviewerid, a.timecreated, a.timemodified,
                        a.grade, a.gradinggrade, a.gradinggradeover, a.gradinggradeoverby,
-                       reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname as reviewerlastname,
-                       s.title,
-                       author.id AS authorid, author.firstname AS authorfirstname,author.lastname AS authorlastname
+                       $reviewerfields, $authorfields,
+                       s.title
                   FROM {workshop_assessments} a
             INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
             INNER JOIN {user} author ON (s.authorid = author.id)
                  WHERE s.workshopid = :workshopid AND s.example = 0
-              ORDER BY reviewer.lastname, reviewer.firstname';
+              ORDER BY reviewer.lastname, reviewer.firstname";
         $params = array('workshopid' => $this->id);
 
         return $DB->get_records_sql($sql, $params);
@@ -756,15 +795,14 @@ class workshop {
     public function get_assessment_by_id($id) {
         global $DB;
 
-        $sql = 'SELECT a.*,
-                       reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname as reviewerlastname,
-                       s.title,
-                       author.id AS authorid, author.firstname AS authorfirstname,author.lastname as authorlastname
+        $reviewerfields = user_picture::fields('reviewer', null, 'revieweridx', 'reviewer');
+        $authorfields   = user_picture::fields('author', null, 'authorid', 'author');
+        $sql = "SELECT a.*, s.title, $reviewerfields, $authorfields
                   FROM {workshop_assessments} a
             INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
             INNER JOIN {user} author ON (s.authorid = author.id)
-                 WHERE a.id = :id AND s.workshopid = :workshopid';
+                 WHERE a.id = :id AND s.workshopid = :workshopid";
         $params = array('id' => $id, 'workshopid' => $this->id);
 
         return $DB->get_record_sql($sql, $params, MUST_EXIST);
@@ -780,15 +818,14 @@ class workshop {
     public function get_assessment_of_submission_by_user($submissionid, $reviewerid) {
         global $DB;
 
-        $sql = 'SELECT a.*,
-                       reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname as reviewerlastname,
-                       s.title,
-                       author.id AS authorid, author.firstname AS authorfirstname,author.lastname as authorlastname
+        $reviewerfields = user_picture::fields('reviewer', null, 'revieweridx', 'reviewer');
+        $authorfields   = user_picture::fields('author', null, 'authorid', 'author');
+        $sql = "SELECT a.*, s.title, $reviewerfields, $authorfields
                   FROM {workshop_assessments} a
             INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id AND s.example = 0)
             INNER JOIN {user} author ON (s.authorid = author.id)
-                 WHERE s.id = :sid AND reviewer.id = :rid AND s.workshopid = :workshopid';
+                 WHERE s.id = :sid AND reviewer.id = :rid AND s.workshopid = :workshopid";
         $params = array('sid' => $submissionid, 'rid' => $reviewerid, 'workshopid' => $this->id);
 
         return $DB->get_record_sql($sql, $params, IGNORE_MISSING);
@@ -803,12 +840,13 @@ class workshop {
     public function get_assessments_of_submission($submissionid) {
         global $DB;
 
-        $sql = 'SELECT a.*,
-                       reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname AS reviewerlastname
+        $reviewerfields = user_picture::fields('reviewer', null, 'revieweridx', 'reviewer');
+        $sql = "SELECT a.*, s.title, $reviewerfields
                   FROM {workshop_assessments} a
             INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
-                 WHERE s.example = 0 AND s.id = :submissionid AND s.workshopid = :workshopid';
+                 WHERE s.example = 0 AND s.id = :submissionid AND s.workshopid = :workshopid
+              ORDER BY reviewer.lastname, reviewer.firstname, reviewer.id";
         $params = array('submissionid' => $submissionid, 'workshopid' => $this->id);
 
         return $DB->get_records_sql($sql, $params);
@@ -823,17 +861,16 @@ class workshop {
     public function get_assessments_by_reviewer($reviewerid) {
         global $DB;
 
-        $sql = 'SELECT a.*,
-                       reviewer.id AS reviewerid,reviewer.firstname AS reviewerfirstname,reviewer.lastname AS reviewerlastname,
+        $reviewerfields = user_picture::fields('reviewer', null, 'revieweridx', 'reviewer');
+        $authorfields   = user_picture::fields('author', null, 'authorid', 'author');
+        $sql = "SELECT a.*, $reviewerfields, $authorfields,
                        s.id AS submissionid, s.title AS submissiontitle, s.timecreated AS submissioncreated,
-                       s.timemodified AS submissionmodified,
-                       author.id AS authorid, author.firstname AS authorfirstname,author.lastname AS authorlastname,
-                       author.picture AS authorpicture, author.imagealt AS authorimagealt, author.email AS authoremail
+                       s.timemodified AS submissionmodified
                   FROM {workshop_assessments} a
             INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
             INNER JOIN {user} author ON (s.authorid = author.id)
-                 WHERE s.example = 0 AND reviewer.id = :reviewerid AND s.workshopid = :workshopid';
+                 WHERE s.example = 0 AND reviewer.id = :reviewerid AND s.workshopid = :workshopid";
         $params = array('reviewerid' => $reviewerid, 'workshopid' => $this->id);
 
         return $DB->get_records_sql($sql, $params);
@@ -2618,6 +2655,124 @@ class workshop_example_submission extends workshop_example_submission_summary im
      * of instances of this class
      */
     protected $fields = array('id', 'title', 'content', 'contentformat', 'contenttrust', 'attachment');
+}
+
+
+/**
+ * Common base class for assessments rendering
+ *
+ * Subclasses of this class convert raw assessment record from
+ * workshop_assessments table (as returned by {@see workshop::get_assessment_by_id()}
+ * for example) into renderable objects.
+ */
+abstract class workshop_assessment_base {
+
+    /** @var string the optional title of the assessment */
+    public $title = '';
+
+    /** @var workshop_assessment_form $form as returned by {@link workshop_strategy::get_assessment_form()} */
+    public $form;
+
+    /** @var moodle_url */
+    public $url;
+
+    /** @var float|null the real received grade */
+    public $realgrade = null;
+
+    /** @var float the real maximum grade */
+    public $maxgrade;
+
+    /** @var stdClass|null reviewer user info */
+    public $reviewer = null;
+
+    /** @var stdClass|null assessed submission's author user info */
+    public $author = null;
+
+    /** @var array of actions */
+    public $actions = array();
+
+    /* @var array of columns that are assigned as properties */
+    protected $fields = array();
+
+    /**
+     * Copies the properties of the given database record into properties of $this instance
+     *
+     * The $options keys are: showreviewer, showauthor
+     * @param stdClass $assessment full record
+     * @param array $options additional properties
+     */
+    public function __construct(stdClass $record, array $options = array()) {
+
+        foreach ($this->fields as $field) {
+            if (!property_exists($record, $field)) {
+                throw new coding_exception('Assessment record must provide public property ' . $field);
+            }
+            if (!property_exists($this, $field)) {
+                throw new coding_exception('Renderable component must accept public property ' . $field);
+            }
+            $this->{$field} = $record->{$field};
+        }
+
+        if (!empty($options['showreviewer'])) {
+            $this->reviewer = user_picture::unalias($record, null, 'revieweridx', 'reviewer');
+        }
+
+        if (!empty($options['showauthor'])) {
+            $this->author = user_picture::unalias($record, null, 'authorid', 'author');
+        }
+    }
+
+    /**
+     * Adds a new action
+     *
+     * @param moodle_url $url action URL
+     * @param string $label action label
+     * @param string $method get|post
+     */
+    public function add_action(moodle_url $url, $label, $method = 'get') {
+
+        $action = new stdClass();
+        $action->url = $url;
+        $action->label = $label;
+        $action->method = $method;
+
+        $this->actions[] = $action;
+    }
+}
+
+
+/**
+ * Represents a rendarable full assessment
+ */
+class workshop_assessment extends workshop_assessment_base implements renderable {
+
+    /** @var int */
+    public $id;
+
+    /** @var int */
+    public $submissionid;
+
+    /** @var int */
+    public $weight;
+
+    /** @var int */
+    public $timecreated;
+
+    /** @var int */
+    public $timemodified;
+
+    /** @var float */
+    public $grade;
+
+    /** @var float */
+    public $gradinggrade;
+
+    /** @var float */
+    public $gradinggradeover;
+
+    /** @var array */
+    protected $fields = array('id', 'submissionid', 'weight', 'timecreated',
+        'timemodified', 'grade', 'gradinggrade', 'gradinggradeover');
 }
 
 /**
