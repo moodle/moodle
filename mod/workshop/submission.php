@@ -323,6 +323,10 @@ if (has_capability('mod/workshop:viewallassessments', $workshop->context) or ($o
             // own assessment has been displayed already
             continue;
         }
+        if (is_null($assessment->grade) and !has_capability('mod/workshop:viewallassessments', $workshop->context)) {
+            // students do not see peer-assessment that are not graded yet
+            continue;
+        }
         $mform      = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, false);
         $options    = array(
             'showreviewer'  => $showreviewer,
