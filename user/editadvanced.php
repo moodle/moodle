@@ -125,7 +125,13 @@ if ($user->id !== -1) {
 } else {
     $usercontext = null;
     // This is a new user, we don't want to add files here
-    $editoroptions = array('maxfiles'=>0, 'maxbytes'=>0, 'trusttext'=>false, 'forcehttps'=>false);
+    $editoroptions = array(
+        'maxfiles'=>0,
+        'maxbytes'=>0,
+        'trusttext'=>false,
+        'forcehttps'=>false,
+        'context' => $coursecontext
+    );
 }
 
 //create form
