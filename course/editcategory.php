@@ -42,7 +42,7 @@ if ($id) {
     $category->parent = $parent;
     require_capability('moodle/category:manage', $context);
     $strtitle = get_string("addnewcategory");
-    $editorcontext = null;
+    $editorcontext = $context;
     $title = "$SITE->shortname: ".get_string('addnewcategory');
     $fullname = $SITE->fullname;
 }
