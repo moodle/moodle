@@ -43,6 +43,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once 'HTML/QuickForm.php';
 require_once 'HTML/QuickForm/DHTMLRulesTableless.php';
 require_once 'HTML/QuickForm/Renderer/Tableless.php';
+require_once 'HTML/QuickForm/Rule.php';
 
 require_once $CFG->libdir.'/filelib.php';
 
@@ -2343,6 +2344,57 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
 }
 
 /**
+ * Required elements validation
+ * This class overrides QuickForm validation since it allowed space or empty tag as a value
+ */
+class MoodleQuickForm_Rule_Required extends HTML_QuickForm_Rule {
+    /**
+     * Checks if an element is not empty.
+     * This is a server-side validation, it works for both text fields and editor fields
+     *
+     * @param     string    $value      Value to check
+     * @param     mixed     $options    Not used yet
+     * @return    boolean   true if value is not empty
+     */
+    function validate($value, $options = null) {
+        global $CFG;
+        if (is_array($value) && array_key_exists('text', $value)) {
+            $value = $value['text'];
+        }
+        $stripvalues = array(
+            '#</?(?!img|canvas|hr).*?>#im', // all tags except img, canvas and hr
+            '#(\xc2|\xa0|\s|&nbsp;)#', //any whitespaces actually
+        );
+        if (!empty($CFG->strictformsrequired)) {
+            $value = preg_replace($stripvalues, '', (string)$value);
+        }
+        if ((string)$value == '') {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * This function returns Javascript code used to build client-side validation.
+     * It checks if an element is not empty.
+     * Note, that QuickForm does not know how to work with editor text field and builds not correct
+     * JS code for validation. If client check is enabled for editor field it will not be validated
+     * on client side no matter what this function returns.
+     *
+     * @param     mixed     $options    Not used yet
+     * @return array
+     */
+    function getValidationScript($options = null) {
+        global $CFG;
+        if (!empty($CFG->strictformsrequired)) {
+            return array('', "{jsVar}.replace(/^\s+$/g, '') == ''");
+        } else {
+            return array('', "{jsVar} == ''");
+        }
+    }
+}
+
+/**
  * @global object $GLOBALS['_HTML_QuickForm_default_renderer']
  * @name $_HTML_QuickForm_default_renderer
  */
@@ -2385,3 +2437,5 @@ MoodleQuickForm::registerElementType('text', "$CFG->libdir/form/text.php", 'Mood
 MoodleQuickForm::registerElementType('textarea', "$CFG->libdir/form/textarea.php", 'MoodleQuickForm_textarea');
 MoodleQuickForm::registerElementType('url', "$CFG->libdir/form/url.php", 'MoodleQuickForm_url');
 MoodleQuickForm::registerElementType('warning', "$CFG->libdir/form/warning.php", 'MoodleQuickForm_warning');
+
+MoodleQuickForm::registerRule('required', null, 'MoodleQuickForm_Rule_Required', "$CFG->libdir/formslib.php");

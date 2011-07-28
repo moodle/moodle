@@ -71,6 +71,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('groupenrolmentkeypolicy', get_string('groupenrolmentkeypolicy', 'admin'), get_string('groupenrolmentkeypolicy_desc', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('disableuserimages', get_string('disableuserimages', 'admin'), get_string('configdisableuserimages', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('emailchangeconfirmation', get_string('emailchangeconfirmation', 'admin'), get_string('configemailchangeconfirmation', 'admin'), 1));
+    $temp->add(new admin_setting_configcheckbox('strictformsrequired', get_string('strictformsrequired', 'admin'), get_string('configstrictformsrequired', 'admin'), 0));
     $ADMIN->add('security', $temp);
 
 
