@@ -57,7 +57,7 @@ class repository_youtube extends repository {
         foreach ($xml->entry as $entry) {
             $media = $entry->children('http://search.yahoo.com/mrss/');
             $title = $media->group->title;
-            $attrs = $media->group->thumbnail->attributes();
+            $attrs = $media->group->thumbnail[2]->attributes();
             $thumbnail = $attrs['url'];
             $arr = explode('/', $entry->id);
             $id = $arr[count($arr)-1];
