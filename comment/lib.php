@@ -126,15 +126,6 @@ class comment {
      * @var int
      */
     protected $totalcommentcount = null;
-    /**
-     * When set to true any user to the system is able to view comments.
-     *
-     * This can be set to true by a plugin by implementing a allow_anonymous_access callback.
-     * By default it is false except on the front page.
-     *
-     * @var bool
-     */
-    protected $allowanonymousaccess = false;
 
     /**#@+
      * static variable will be used by non-js comments UI
@@ -239,18 +230,6 @@ class comment {
         $this->comment_param->cm          = $this->cm;
         $this->comment_param->commentarea = $this->commentarea;
         $this->comment_param->itemid      = $this->itemid;
-
-        $this->allowanonymousaccess = false;
-        // By default everyone can view comments on the front page
-        if ($this->context->contextlevel == CONTEXT_COURSE && $this->context->instanceid == SITEID) {
-            $this->allowanonymousaccess = true;
-        } else if ($this->context->contextlevel == CONTEXT_MODULE && $this->courseid == SITEID) {
-            $this->allowanonymousaccess = true;
-        }
-        if (!empty($this->plugintype) && !empty($this->pluginname)) {
-            // Plugins can override this if they wish.
-            $this->allowanonymousaccess = plugin_callback($this->plugintype, $this->pluginname, 'comment', 'allow_anonymous_access', array($this), $this->allowanonymousaccess);
-        }
 
         // setup notoggle
         if (!empty($options->notoggle)) {
@@ -361,13 +340,8 @@ class comment {
         $this->viewcap = has_capability('moodle/comment:view', $this->context);
         if (!empty($this->plugintype)) {
             $permissions = plugin_callback($this->plugintype, $this->pluginname, 'comment', 'permissions', array($this->comment_param), array('post'=>false, 'view'=>false));
-            if ($this->allowanonymousaccess) {
-                $this->postcap = $permissions['post'];
-                $this->viewcap = $permissions['view'];
-            } else {
-                $this->postcap = $this->postcap && $permissions['post'];
-                $this->viewcap = $this->viewcap && $permissions['view'];
-            }
+            $this->postcap = $this->postcap && $permissions['post'];
+            $this->viewcap = $this->viewcap && $permissions['view'];
         }
     }
 
