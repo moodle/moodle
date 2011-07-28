@@ -1635,8 +1635,19 @@ class global_navigation extends navigation_node {
 
         $namingfunction = 'callback_'.$courseformat.'_get_section_name';
         $namingfunctionexists = (function_exists($namingfunction));
-        $activesection = course_get_display($course->id);
+
         $viewhiddensections = has_capability('moodle/course:viewhiddensections', $this->page->context);
+
+        $urlfunction = 'callback_'.$courseformat.'_get_section_url';
+        if (empty($CFG->navlinkcoursesections) || !function_exists($urlfunction)) {
+            $urlfunction = null;
+        }
+
+        $keyfunction = 'callback_'.$courseformat.'_request_key';
+        $key = course_get_display($course->id);
+        if (defined('AJAX_SCRIPT') && AJAX_SCRIPT == '0' && function_exists($keyfunction) && $this->page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
+            $key = optional_param($keyfunction(), $key, PARAM_INT);
+        }
 
         $navigationsections = array();
         foreach ($sections as $sectionid => $section) {
@@ -1652,13 +1663,16 @@ class global_navigation extends navigation_node {
                 } else {
                     $sectionname = get_string('section').' '.$section->section;
                 }
-                //$url = new moodle_url('/course/view.php', array('id'=>$course->id));
+
                 $url = null;
+                if (!empty($urlfunction)) {
+                    $url = $urlfunction($course->id, $section->section);
+                }
                 $sectionnode = $coursenode->add($sectionname, $url, navigation_node::TYPE_SECTION, null, $section->id);
                 $sectionnode->nodetype = navigation_node::NODETYPE_BRANCH;
                 $sectionnode->hidden = (!$section->visible);
-                if ($this->page->context->contextlevel != CONTEXT_MODULE && $section->hasactivites && ($sectionnode->isactive || ($activesection && $section->section == $activesection))) {
-                    $sectionnode->force_open();
+                if ($key != '0' && $section->section != '0' && $section->section == $key && $this->page->context->contextlevel != CONTEXT_MODULE && $section->hasactivites) {
+                    $sectionnode->make_active();
                     $this->load_section_activities($sectionnode, $section->section, $activities);
                 }
                 $section->sectionnode = $sectionnode;
