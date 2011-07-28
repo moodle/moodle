@@ -46,6 +46,8 @@ Options:
 --adminuser=USERNAME  Username for the moodle admin account. Default is admin.
 --adminpass=PASSWORD  Password for the moodle admin account.
 --agree-license       Indicates agreement with software license.
+--fullname            Name of the site
+--shortname           Name of the site
 -h, --help            Print out this help
 
 Example:
@@ -93,6 +95,8 @@ list($options, $unrecognized) = cli_get_params(
         'lang'              => 'en',
         'adminuser'         => 'admin',
         'adminpass'         => '',
+        'fullname'          => '',
+        'shortname'         => '',
         'agree-license'     => false,
         'help'              => false
     ),
