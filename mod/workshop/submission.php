@@ -305,6 +305,12 @@ if ($isreviewer) {
     }
 
     echo $output->render($assessment);
+
+    if ($workshop->phase == workshop::PHASE_CLOSED) {
+        if (strlen(trim($userassessment->feedbackreviewer)) > 0) {
+            echo $output->render(new workshop_feedback_reviewer($userassessment));
+        }
+    }
 }
 
 if (has_capability('mod/workshop:viewallassessments', $workshop->context) or ($ownsubmission and $workshop->assessments_available())) {
@@ -324,11 +330,17 @@ if (has_capability('mod/workshop:viewallassessments', $workshop->context) or ($o
             'showform'      => !is_null($assessment->grade),
             'showweight'    => true,
         );
-        $assessment = $workshop->prepare_assessment($assessment, $mform, $options);
+        $displayassessment = $workshop->prepare_assessment($assessment, $mform, $options);
         if ($canoverride) {
-            $assessment->add_action($workshop->assess_url($assessment->id), get_string('assessmentsettings', 'workshop'));
+            $displayassessment->add_action($workshop->assess_url($assessment->id), get_string('assessmentsettings', 'workshop'));
         }
-        echo $output->render($assessment);
+        echo $output->render($displayassessment);
+
+        if ($workshop->phase == workshop::PHASE_CLOSED and has_capability('mod/workshop:viewallassessments', $workshop->context)) {
+            if (strlen(trim($assessment->feedbackreviewer)) > 0) {
+                echo $output->render(new workshop_feedback_reviewer($assessment));
+            }
+        }
     }
 }
 

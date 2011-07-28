@@ -771,14 +771,16 @@ class workshop {
 
         $reviewerfields = user_picture::fields('reviewer', null, 'revieweridx', 'reviewer');
         $authorfields   = user_picture::fields('author', null, 'authorid', 'author');
+        $overbyfields   = user_picture::fields('overby', null, 'gradinggradeoverbyx', 'overby');
         $sql = "SELECT a.id, a.submissionid, a.reviewerid, a.timecreated, a.timemodified,
                        a.grade, a.gradinggrade, a.gradinggradeover, a.gradinggradeoverby,
-                       $reviewerfields, $authorfields,
+                       $reviewerfields, $authorfields, $overbyfields,
                        s.title
                   FROM {workshop_assessments} a
             INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
             INNER JOIN {user} author ON (s.authorid = author.id)
+             LEFT JOIN {user} overby ON (a.gradinggradeoverby = overby.id)
                  WHERE s.workshopid = :workshopid AND s.example = 0
               ORDER BY reviewer.lastname, reviewer.firstname";
         $params = array('workshopid' => $this->id);
@@ -797,11 +799,13 @@ class workshop {
 
         $reviewerfields = user_picture::fields('reviewer', null, 'revieweridx', 'reviewer');
         $authorfields   = user_picture::fields('author', null, 'authorid', 'author');
-        $sql = "SELECT a.*, s.title, $reviewerfields, $authorfields
+        $overbyfields   = user_picture::fields('overby', null, 'gradinggradeoverbyx', 'overby');
+        $sql = "SELECT a.*, s.title, $reviewerfields, $authorfields, $overbyfields
                   FROM {workshop_assessments} a
             INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
             INNER JOIN {user} author ON (s.authorid = author.id)
+             LEFT JOIN {user} overby ON (a.gradinggradeoverby = overby.id)
                  WHERE a.id = :id AND s.workshopid = :workshopid";
         $params = array('id' => $id, 'workshopid' => $this->id);
 
@@ -820,11 +824,13 @@ class workshop {
 
         $reviewerfields = user_picture::fields('reviewer', null, 'revieweridx', 'reviewer');
         $authorfields   = user_picture::fields('author', null, 'authorid', 'author');
-        $sql = "SELECT a.*, s.title, $reviewerfields, $authorfields
+        $overbyfields   = user_picture::fields('overby', null, 'gradinggradeoverbyx', 'overby');
+        $sql = "SELECT a.*, s.title, $reviewerfields, $authorfields, $overbyfields
                   FROM {workshop_assessments} a
             INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id AND s.example = 0)
             INNER JOIN {user} author ON (s.authorid = author.id)
+             LEFT JOIN {user} overby ON (a.gradinggradeoverby = overby.id)
                  WHERE s.id = :sid AND reviewer.id = :rid AND s.workshopid = :workshopid";
         $params = array('sid' => $submissionid, 'rid' => $reviewerid, 'workshopid' => $this->id);
 
@@ -841,10 +847,12 @@ class workshop {
         global $DB;
 
         $reviewerfields = user_picture::fields('reviewer', null, 'revieweridx', 'reviewer');
-        $sql = "SELECT a.*, s.title, $reviewerfields
+        $overbyfields   = user_picture::fields('overby', null, 'gradinggradeoverbyx', 'overby');
+        $sql = "SELECT a.*, s.title, $reviewerfields, $overbyfields
                   FROM {workshop_assessments} a
             INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
+             LEFT JOIN {user} overby ON (a.gradinggradeoverby = overby.id)
                  WHERE s.example = 0 AND s.id = :submissionid AND s.workshopid = :workshopid
               ORDER BY reviewer.lastname, reviewer.firstname, reviewer.id";
         $params = array('submissionid' => $submissionid, 'workshopid' => $this->id);
@@ -863,13 +871,15 @@ class workshop {
 
         $reviewerfields = user_picture::fields('reviewer', null, 'revieweridx', 'reviewer');
         $authorfields   = user_picture::fields('author', null, 'authorid', 'author');
-        $sql = "SELECT a.*, $reviewerfields, $authorfields,
+        $overbyfields   = user_picture::fields('overby', null, 'gradinggradeoverbyx', 'overby');
+        $sql = "SELECT a.*, $reviewerfields, $authorfields, $overbyfields,
                        s.id AS submissionid, s.title AS submissiontitle, s.timecreated AS submissioncreated,
                        s.timemodified AS submissionmodified
                   FROM {workshop_assessments} a
             INNER JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
             INNER JOIN {workshop_submissions} s ON (a.submissionid = s.id)
             INNER JOIN {user} author ON (s.authorid = author.id)
+             LEFT JOIN {user} overby ON (a.gradinggradeoverby = overby.id)
                  WHERE s.example = 0 AND reviewer.id = :reviewerid AND s.workshopid = :workshopid";
         $params = array('reviewerid' => $reviewerid, 'workshopid' => $this->id);
 
@@ -3038,5 +3048,24 @@ class workshop_feedback_author extends workshop_feedback implements renderable {
         $this->provider = user_picture::unalias($submission, null, 'gradeoverbyx', 'gradeoverby');
         $this->content  = $submission->feedbackauthor;
         $this->format   = $submission->feedbackauthorformat;
+    }
+}
+
+
+/**
+ * Renderable feedback for the reviewer
+ */
+class workshop_feedback_reviewer extends workshop_feedback implements renderable {
+
+    /**
+     * Extracts feedback from the given assessment record
+     *
+     * @param stdClass $assessment record as returned by eg {@see self::get_assessment_by_id()}
+     */
+    public function __construct(stdClass $assessment) {
+
+        $this->provider = user_picture::unalias($assessment, null, 'gradinggradeoverbyx', 'overby');
+        $this->content  = $assessment->feedbackreviewer;
+        $this->format   = $assessment->feedbackreviewerformat;
     }
 }
