@@ -1658,6 +1658,18 @@ abstract class repository {
     }
 
     /**
+     * Validate Admin Settings Moodle form
+     * @param object $mform Moodle form (passed by reference)
+     * @param array array of ("fieldname"=>value) of submitted data
+     * @param array array of ("fieldname"=>errormessage) of errors
+     * @return array array of errors
+     */
+    public static function type_form_validation($mform, $data, $errors) {
+        return $errors;
+    }
+
+
+    /**
      * Edit/Create Instance Settings Moodle form
      * @param object $mform Moodle form (passed by reference)
      */
@@ -1940,6 +1952,21 @@ final class repository_type_form extends moodleform {
         }
 
         $this->add_action_buttons(true, get_string('save','repository'));
+    }
+
+    public function validation($data) {
+        $errors = array();
+        $plugin = $this->_customdata['plugin'];
+        $instance = (isset($this->_customdata['instance'])
+                && is_subclass_of($this->_customdata['instance'], 'repository'))
+            ? $this->_customdata['instance'] : null;
+        if (!$instance) {
+            $errors = repository::static_function($plugin, 'type_form_validation', $this, $data, $errors);
+        } else {
+            $errors = $instance->type_form_validation($this, $data, $errors);
+        }
+
+        return $errors;
     }
 }
 
