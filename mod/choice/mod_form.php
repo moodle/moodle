@@ -127,11 +127,7 @@ class mod_choice_mod_form extends moodleform_mod {
         }
 
         if ($choices < 1) {
-           $errors['option[0]'] = get_string('fillinatleastoneoption', 'choice');
-        }
-
-        if ($choices < 2) {
-           $errors['option[1]'] = get_string('fillinatleastoneoption', 'choice');
+           $errors['option[0]'] = get_string('atleastoneoption', 'choice');
         }
 
         return $errors;
