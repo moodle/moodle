@@ -300,4 +300,3 @@ Handling of Multiple Attempts
 $string['whatgradedesc'] = 'This preference sets the default attempts grading';
 $string['width'] = 'Width';
 $string['window'] = 'Window';
-$string['zlibwarning'] = 'Warning: PHP Zlib compression has been enabled on this site, some users may experience issues loading SCORM objects in certain web browsers.';
