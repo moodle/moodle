@@ -30,10 +30,13 @@ $prefs->maxevents  = get_user_preferences('calendar_maxevents', CALENDAR_UPCOMIN
 $prefs->lookahead  = get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS);
 $prefs->persistflt = get_user_preferences('calendar_persistflt', 0);
 
-$form = new calendar_preferences_form();
+$form = new calendar_preferences_form($PAGE->url);
 $form->set_data($prefs);
 
-if ($data = $form->get_data() && confirm_sesskey()) {
+if ($form->is_cancelled()) {
+    redirect($viewurl);
+} else if ($form->is_submitted() && $form->is_validated() && confirm_sesskey()) {
+    $data = $form->get_data();
     if ($data->timeformat != CALENDAR_TF_12 && $data->timeformat != CALENDAR_TF_24) {
         $data->timeformat = '';
     }
@@ -61,7 +64,7 @@ if ($data = $form->get_data() && confirm_sesskey()) {
 $strcalendar = get_string('calendar', 'calendar');
 $strpreferences = get_string('calendarpreferences', 'calendar');
 
-$PAGE->navbar->add($strpreferences, new moodle_url('/calendar/view.php'));
+$PAGE->navbar->add($strpreferences);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title("$site->shortname: $strcalendar: $strpreferences");
 $PAGE->set_heading($COURSE->fullname);
