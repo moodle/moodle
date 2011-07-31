@@ -579,16 +579,17 @@ class auth_plugin_ldap extends auth_plugin_base {
         $sr = ldap_read($ldapconnection, $user_dn, '(objectClass=*)', $search_attribs);
         if ($sr)  {
             $info = ldap_get_entries_moodle($ldapconnection, $sr);
-            $info = array_change_key_case($info, CASE_LOWER);
-            if (!empty ($info) and !empty($info[0][$this->config->expireattr][0])) {
-                $expiretime = $this->ldap_expirationtime2unix($info[0][$this->config->expireattr][0], $ldapconnection, $user_dn);
-                if ($expiretime != 0) {
-                    $now = time();
-                    if ($expiretime > $now) {
-                        $result = ceil(($expiretime - $now) / DAYSECS);
-                    }
-                    else {
-                        $result = floor(($expiretime - $now) / DAYSECS);
+            if (!empty ($info)) {
+                $info = array_change_key_case($info[0], CASE_LOWER);
+                if (!empty($info[$this->config->expireattr][0])) {
+                    $expiretime = $this->ldap_expirationtime2unix($info[$this->config->expireattr][0], $ldapconnection, $user_dn);
+                    if ($expiretime != 0) {
+                        $now = time();
+                        if ($expiretime > $now) {
+                            $result = ceil(($expiretime - $now) / DAYSECS);
+                        } else {
+                            $result = floor(($expiretime - $now) / DAYSECS);
+                        }
                     }
                 }
             }
