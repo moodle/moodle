@@ -678,6 +678,10 @@ function scorm_course_format_display($user, $course) {
         if (! $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id)) {
             print_error('invalidcoursemodule');
         }
+        $contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
+        if ((has_capability('mod/scorm:skipview', $contextmodule)) && scorm_simple_play($scorm, $user, $contextmodule)) {
+            exit;
+        }
         $colspan = '';
         $headertext = '<table width="100%"><tr><td class="title">'.get_string('name').': <b>'.format_string($scorm->name).'</b>';
         if (has_capability('moodle/course:manageactivities', $context)) {
@@ -832,12 +836,11 @@ function scorm_simple_play($scorm, $user, $context) {
         }
         if ($scorm->skipview >= 1) {
             $sco = current($scoes);
-            if (scorm_get_tracks($sco->id, $user->id) === false) {
-                header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id.'&currentorg='.$orgidentifier);
-                $result = true;
-            } else if ($scorm->skipview == 2) {
-                header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id.'&currentorg='.$orgidentifier);
-                $result = true;
+            $url = new moodle_url('/mod/scorm/player.php', array('a' => $scorm->id,
+                                                                'currentorg'=>$orgidentifier,
+                                                                'scoid'=>$sco->id));
+            if ($scorm->skipview == 2 || scorm_get_tracks($sco->id, $user->id) === false) {
+                redirect($url);
             }
         }
     }
