@@ -1,16 +1,12 @@
-Question authoring form fields 2 hours
-Display Image in authoring form
-Calculation of size of drop zones
-Calculate size of images, server side and save the sizes upon image upload
-Display of drop zones on authoring form 4 hours
+Question authoring form fields
+* correct sizing of borders and margins
+
 Question instance saving 2 hours
 Question instance loading 2 hours
 Question rendering code 6 hours
-- correctly position images
-- make images draggable
-- react to drop of images
-- write position that images where dropped to in hidden fields
+- repurpose and extend authoring form code for question rendering
+- make sure code works with multiple questions on the page
+- get position that images where dropped to from hidden fields
 - grade question parts based on where images dragged to
-- have position of images at start respond to saved state
 
 Testing and debugging for cross browser compatibility 4 hours

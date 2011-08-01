@@ -80,18 +80,16 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
      */
     protected function definition_inner($mform) {
 
-        $previewareaheaderelement = $mform->createElement('header', 'previewareaheader',
+        $mform->addElement('header', 'previewareaheader',
                             get_string('previewareaheader', 'qtype_ddimagetoimage'));
-        $mform->insertElementBefore($previewareaheaderelement, 'generalheader');
-        $previewareaelement = $mform->createElement('static', 'previewarea',
+        $mform->addElement('static', 'previewarea',
                             get_string('previewarea', 'qtype_ddimagetoimage'),
                             get_string('previewareamessage', 'qtype_ddimagetoimage'));
-        $mform->insertElementBefore($previewareaelement, 'generalheader');
 
 
         list($imagerepeatsatstart, $imagerepeats) = $this->get_drag_image_repeats();
         $this->definition_drop_zones($mform, $imagerepeats);
-        $mform->addElement('checkbox', 'shuffleanswers', ' ',
+        $mform->addElement('advcheckbox', 'shuffleanswers', ' ',
                                         get_string('shuffleimages', 'qtype_ddimagetoimage'));
         $mform->setDefault('shuffleanswers', 0);
         $mform->closeHeaderBefore('shuffleanswers');
@@ -202,9 +200,8 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
                 get_string('group', 'qtype_gapselect').' ');
         $grouparray[] = $mform->createElement('select', 'draggroup',
                                                 get_string('group', 'qtype_gapselect'), $options);
-        $grouparray[] = $mform->createElement('checkbox', 'infinite', ' ',
-                get_string('infinite', 'qtype_ddimagetoimage'), null,
-                array('size' => 1, 'class' => 'tweakcss'));
+        $grouparray[] = $mform->createElement('advcheckbox', 'infinite', ' ',
+                get_string('infinite', 'qtype_ddimagetoimage'));
         $draggableimageitem[] = $mform->createElement('group', 'drags',
                 get_string('label', 'qtype_ddimagetoimage'), $grouparray);
         return $draggableimageitem;
@@ -261,7 +258,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
         $jsmodule = array(
             'name'     => 'qtype_ddimagetoimage',
             'fullpath' => '/question/type/ddimagetoimage/module.js',
-            'requires' => array('node', 'dd-drop', 'dd-constrain', 'form_filepicker')
+            'requires' => array('node', 'dd', 'dd-drop', 'dd-constrain', 'form_filepicker')
         );
         $PAGE->requires->js_init_call('M.qtype_ddimagetoimage.init_form',
                                                                 null, true, $jsmodule);
@@ -269,19 +266,78 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
         return $question;
     }
 
-    public static function file_get_draft_area_files($draftitemid) {
-        $toreturn = new stdClass();
-        $toreturn->draftitemid = $draftitemid;
+
+    public static function file_uploaded($draftitemid) {
         $draftareafiles = file_get_drafarea_files($draftitemid);
-        $draftareafile = reset($draftareafiles->list);
-        $toreturn->url = $draftareafile->url;
-        return $toreturn;
+        do {
+            $draftareafile = array_shift($draftareafiles->list);
+        } while ($draftareafile !== null && $draftareafile->filename == '.');
+        if ($draftareafile === null) {
+            return false;
+        }
+        return true;
     }
 
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+        if (!self::file_uploaded($data['bgimage'])){
+            $errors["bgimage"] = get_string('formerror_nobgimage', 'qtype_ddimagetoimage');
+        }
 
+        $allchoices = array();
+        for ($i=0; $i < $data['nodropzone']; $i++) {
+            $ytoppresent = (trim($data['drops'][$i]['ytop']) !== '');
+            $xleftpresent = (trim($data['drops'][$i]['ytop']) !== '');
+            $labelpresent = (trim($data['drops'][$i]['droplabel']) !== '');
+            $choice = $data['drops'][$i]['choice'];
+            $imagechoicepresent = ($choice !== '0');
+
+            if ($imagechoicepresent) {
+                if (!$ytoppresent) {
+                    $errors["drops[$i]"] =
+                                    get_string('formerror_noytop', 'qtype_ddimagetoimage');
+                }
+                if (!$xleftpresent) {
+                    $errors["drops[$i]"] =
+                                get_string('formerror_noxleft', 'qtype_ddimagetoimage');
+                }
+                if (!self::file_uploaded($data['dragitem'][$choice - 1])) {
+                    $errors["drops[$i]"] =
+                                    get_string('formerror_nofile', 'qtype_ddimagetoimage', $choice);
+                    $errors['dragitem['.($choice - 1).']'] =
+                                    get_string('formerror_nofile2', 'qtype_ddimagetoimage', $i);
+                }
+                if (isset($allchoices[$choice]) && !$data['drags'][$choice-1]['infinite']) {
+                    $errors["drops[$i]"] =
+                     get_string('formerror_multipledraginstance', 'qtype_ddimagetoimage', $choice);
+                    $errors['drops['.($allchoices[$choice]).']'] =
+                     get_string('formerror_multipledraginstance', 'qtype_ddimagetoimage', $choice);
+                    $errors['drags['.($choice-1).']'] =
+                     get_string('formerror_multipledraginstance2', 'qtype_ddimagetoimage', $choice);
+                }
+                $allchoices[$choice] = $i;
+            } else {
+                if ($ytoppresent || $xleftpresent || $labelpresent) {
+                    echo '<pre>';
+                    var_dump(compact('ytoppresent', 'xleftpresent', 'labelpresent', 'choice'));
+                    echo '</pre>';
+                    $errors["drops[$i]"] =
+                        get_string('formerror_noimageselected', 'qtype_ddimagetoimage');
+                }
+            }
+
+        }
+        for ($i=0; $i < $data['noimages']; $i++) {
+            $labelpresent = (trim($data['drags'][$i]['draglabel']) !== '');
+            $infinitechecked = (trim($data['drags'][$i]['infinite']) === '1');
+            if (!self::file_uploaded($data['dragitem'][$i])) {
+                if ($infinitechecked || $labelpresent) {
+                    $errors['dragitem['.($i).']'] =
+                                    get_string('formerror_nofile3', 'qtype_ddimagetoimage');
+                }
+            }
+        }
         return $errors;
     }
 

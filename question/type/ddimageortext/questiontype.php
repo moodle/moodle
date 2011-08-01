@@ -78,7 +78,7 @@ class qtype_ddimagetoimage extends question_type {
         $DB->update_record('qtype_ddimagetoimage', $options);
         $DB->delete_records('qtype_ddimagetoimage_drops', array('questionid' => $formdata->id));
         foreach (array_keys($formdata->drops) as $dropno){
-            if ($formdata->drops[$dropno]['xleft'] == ''){
+            if ($formdata->drops[$dropno]['choice'] == 0){
                 continue;
             }
             $drop = new stdClass();
