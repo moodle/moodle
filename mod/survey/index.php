@@ -34,13 +34,10 @@
 
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname, $strstatus);
-        $table->align = array ("CENTER", "LEFT", "LEFT");
     } else if ($course->format == "topics") {
         $table->head  = array ($strtopic, $strname, $strstatus);
-        $table->align = array ("CENTER", "LEFT", "LEFT");
     } else {
         $table->head  = array ($strname, $strstatus);
-        $table->align = array ("LEFT", "LEFT");
     }
 
     $currentsection = '';
