@@ -38,13 +38,12 @@
     }
 
     $table = new html_table();
+    $table->width = '100%';
 
     if ($usesections) {
-        $table->head  = array ($strsectionname, $strname, $strintro);
-        $table->align = array ('CENTER', 'LEFT', 'LEFT');
+        $table->head  = array ($strsectionname, $strname, $strstatus);
     } else {
-        $table->head  = array ($strname, $strintro);
-        $table->align = array ('LEFT', 'LEFT');
+        $table->head  = array ($strname, $strstatus);
     }
 
     $currentsection = '';
