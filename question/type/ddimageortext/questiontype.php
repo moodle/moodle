@@ -31,6 +31,10 @@ require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/question/format/xml/format.php');
 require_once($CFG->dirroot . '/question/type/gapselect/questiontypebase.php');
 
+define('QTYPE_DDIMAGETOIMAGE_BGIMAGE_MAXWIDTH', 600);
+define('QTYPE_DDIMAGETOIMAGE_BGIMAGE_MAXHEIGHT', 400);
+define('QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXWIDTH', 150);
+define('QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXHEIGHT', 100);
 
 /**
  * The drag-and-drop words into sentences question type class.

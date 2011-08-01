@@ -260,8 +260,16 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
             'fullpath' => '/question/type/ddimagetoimage/module.js',
             'requires' => array('node', 'dd', 'dd-drop', 'dd-constrain', 'form_filepicker')
         );
-        $PAGE->requires->js_init_call('M.qtype_ddimagetoimage.init_form',
-                                                                null, true, $jsmodule);
+        $maxsizes =new stdClass();
+        $maxsizes->bg_image = new stdClass();
+        $maxsizes->bg_image->width = QTYPE_DDIMAGETOIMAGE_BGIMAGE_MAXWIDTH;
+        $maxsizes->bg_image->height = QTYPE_DDIMAGETOIMAGE_BGIMAGE_MAXHEIGHT;
+        $maxsizes->drag_image = new stdClass();
+        $maxsizes->drag_image->width = QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXWIDTH;
+        $maxsizes->drag_image->height = QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXHEIGHT;
+
+        $PAGE->requires->js_init_call('M.qtype_ddimagetoimage.init_form', $maxsizes,
+                                                                true, $jsmodule);
 
         return $question;
     }
