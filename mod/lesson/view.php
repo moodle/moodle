@@ -563,7 +563,7 @@
                 echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\" />";
                 echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
                 print_simple_box_start("center");
-                echo '<table width="100%">';
+                echo '<table>';
             }
             // default format text options
             $options = new stdClass;
