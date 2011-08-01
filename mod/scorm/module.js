@@ -186,6 +186,16 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
             }
 
             scorm_layout_widget.setStyle('height', '100%');
+            var center = scorm_layout_widget.getUnitByPosition('center');
+            center.setStyle('height', '100%');
+
+            // calculate the rough new height
+            newheight = YAHOO.util.Dom.getViewportHeight() *.82;
+            if (newheight < 600) {
+                newheight = 600;
+            }
+            scorm_layout_widget.set('height', newheight);
+
             scorm_layout_widget.render();
             scorm_resize_frame();
 
