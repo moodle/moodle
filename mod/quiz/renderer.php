@@ -610,7 +610,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= $this->view_information($course, $quiz, $cm, $context, $messages);
         $guestno = html_writer::tag('p', get_string('guestsno', 'quiz'));
         $liketologin = html_writer::tag('p', get_string('liketologin'));
-        $output .= $this->confirm($guestno.'\n\n'.$liketologin.'\n', get_login_url(),
+        $output .= $this->confirm($guestno."\n\n".$liketologin."\n", get_login_url(),
                 get_referer(false));
         return $output;
     }
@@ -631,7 +631,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $youneedtoenrol = html_writer::tag('p', get_string('youneedtoenrol', 'quiz'));
         $button = html_writer::tag('p',
                 $this->continue_button($CFG->wwwroot . '/course/view.php?id=' . $course->id));
-        $output .= $this->box($youneedtoenrol.'\n\n'.$button.'\n', 'generalbox', 'notice');
+        $output .= $this->box($youneedtoenrol."\n\n".$button."\n", 'generalbox', 'notice');
         return $output;
     }
 
@@ -867,7 +867,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         if ($viewobj->mygradeoverridden) {
 
             $resultinfo .= html_writer::tag('p', get_string('overriddennotice', 'grades'),
-                    array('class' => 'overriddennotice')).'\n';
+                    array('class' => 'overriddennotice'))."\n";
         }
         if ($viewobj->gradebookfeedback) {
             $resultinfo .= $this->heading(get_string('comment', 'quiz'), 3, 'main');
@@ -878,7 +878,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
             $resultinfo .= $this->heading(get_string('overallfeedback', 'quiz'), 3, 'main');
             $resultinfo .= html_writer::tag('p',
                     quiz_feedback_for_grade($viewobj->mygrade, $quiz, $context),
-                    array('class' => 'quizgradefeedback')).'\n';
+                    array('class' => 'quizgradefeedback'))."\n";
         }
 
         if ($resultinfo) {
