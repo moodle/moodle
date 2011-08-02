@@ -26,7 +26,6 @@
 $string['allattempts'] = 'Show all attempts';
 $string['allattemptscontributetograde'] = 'All attempts contribute to final grade for user.';
 $string['allstudents'] = 'Show all {$a}';
-$string['attemptprogress'] = 'Attempt {$a->done} of {$a->todo}';
 $string['attemptsonly'] = 'Show {$a} with attempts only';
 $string['attemptsprepage'] = 'Attempts shown per page';
 $string['deleteselected'] = 'Delete selected attempts';
@@ -56,7 +55,6 @@ $string['pluginname'] = 'Grades';
 $string['preferencespage'] = 'Preferences just for this page';
 $string['preferencessave'] = 'Show report';
 $string['preferencesuser'] = 'Your preferences for this report';
-$string['qprogress'] = 'Question {$a->done} of {$a->todo}';
 $string['regrade'] = 'Regrade';
 $string['regradeall'] = 'Regrade all';
 $string['regradealldry'] = 'Dry run a full regrade';

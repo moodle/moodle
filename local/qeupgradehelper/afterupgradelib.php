@@ -60,7 +60,7 @@ class local_qeupgradehelper_attempt_upgrader extends question_engine_attempt_upg
         gc_collect_cycles(); // This was really helpful in PHP 5.2. Perhaps remove.
         $a = new stdClass();
         $a->done = $done;
-        $a->todo = $outof;
+        $a->outof = $outof;
         $this->progressbar->update($done, $outof,
                 get_string('resettingquizattemptsprogress', 'local_qeupgradehelper', $a));
     }
