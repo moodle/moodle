@@ -23,6 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$module->version  = 2011060500;   // The (date) version of this module
+$module->version  = 2011073100;   // The (date) version of this module
 $module->requires = 2010080300;   // The version of Moodle that is required
 $module->cron     = 300;            // How often should cron check this module (seconds)?

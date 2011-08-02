@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/scorm/db" VERSION="20090420" COMMENT="XMLDB file for Moodle mod/scorm"
+<XMLDB PATH="mod/scorm/db" VERSION="20110731" COMMENT="XMLDB file for Moodle mod/scorm"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -104,7 +104,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="scoid"/>
         <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="primaryobj"/>
         <FIELD NAME="primaryobj" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="scoid" NEXT="objectiveid"/>
-        <FIELD NAME="objectiveid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="primaryobj" NEXT="satisfiedbymeasure"/>
+        <FIELD NAME="objectiveid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="primaryobj" NEXT="satisfiedbymeasure"/>
         <FIELD NAME="satisfiedbymeasure" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="objectiveid" NEXT="minnormalizedmeasure"/>
         <FIELD NAME="minnormalizedmeasure" TYPE="float" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0.0000" SEQUENCE="false" DECIMALS="4" PREVIOUS="satisfiedbymeasure"/>
       </FIELDS>
