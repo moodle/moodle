@@ -16,7 +16,7 @@ To add more languages to Moodle, you can either:
 
 For more information, see the Moodle Documentation:
 
-   http://docs.moodle.org/en/Translation
+   http://docs.moodle.org/19/en/Translation
 
 
 Cheers,

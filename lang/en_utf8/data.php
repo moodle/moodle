@@ -215,7 +215,7 @@ $string['recordsnotsaved'] = 'No entry was saved. Please check the format of the
 $string['recordssaved'] = 'entries saved';
 $string['requireapproval'] = 'Require approval?';
 $string['requiredentries'] = 'Required entries';
-$string['requiredentrieschanged'] = '<p><strong>IMPORTANT - PLEASE READ </strong></p><p>Due to a bug fix, the behaviour of database activities using the \'Required entries\' and \'Required entries before viewing settings\' settings will change. A more detailed explaination of the changes can be read on <a href=\"http://moodle.org/mod/forum/discuss.php?d=110928\" target=\"_blank\">the database module forum</a>. The expected behavior of these settings can also be read on <a href=\"http://docs.moodle.org/en/Adding/editing_a_database#Required_entries\" target=\"_blank\">Moodle Docs</a>.
+$string['requiredentrieschanged'] = '<p><strong>IMPORTANT - PLEASE READ </strong></p><p>Due to a bug fix, the behaviour of database activities using the \'Required entries\' and \'Required entries before viewing settings\' settings will change. A more detailed explaination of the changes can be read on <a href=\"http://moodle.org/mod/forum/discuss.php?d=110928\" target=\"_blank\">the database module forum</a>. The expected behavior of these settings can also be read on <a href=\"http://docs.moodle.org/19/en/Adding/editing_a_database#Required_entries\" target=\"_blank\">Moodle Docs</a>.
 </p><p>This change affects the following databases in your system: (Please save this list now, and after the upgrade, check that these activities still work the way that the teacher intends.)</p><strong style=\"color:red\">$a->text</strong><br/>';
 $string['requiredentriestoview'] = 'Entries required before viewing';
 $string['resettemplate'] = 'Reset template';

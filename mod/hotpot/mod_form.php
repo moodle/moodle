@@ -11,7 +11,7 @@ $HOTPOT_TEXTSOURCE = array(
 
 class mod_hotpot_mod_form extends moodleform_mod {
     // documentation on formslib.php here:
-    // http://docs.moodle.org/en/Development:lib/formslib.php_Form_Definition
+    // http://docs.moodle.org/dev/lib/formslib.php_Form_Definition
 
     function definition() {
         // TO DO
@@ -286,7 +286,7 @@ class mod_hotpot_mod_form extends moodleform_mod {
     }
 
     function validation(&$data) {
-        // http://docs.moodle.org/en/Development:lib/formslib.php_Validation
+        // http://docs.moodle.org/dev/lib/formslib.php_Validation
         global $CFG, $COURSE;
         $errors = array();
 

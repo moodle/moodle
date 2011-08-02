@@ -47,7 +47,7 @@
 
 /// Check some PHP server settings
 
-    $documentationlink = '<a href="http://docs.moodle.org/en/Installation">Installation docs</a>';
+    $documentationlink = '<a href="http://docs.moodle.org/19/en/Installation">Installation docs</a>';
 
     if (ini_get_bool('session.auto_start')) {
         error("The PHP server variable 'session.auto_start' should be Off - $documentationlink");
@@ -143,7 +143,7 @@
             print_box(text_to_html(get_string('gpl')), 'copyrightnotice');
             echo "<br />";
             notice_yesno(get_string('doyouagree'), "index.php?agreelicense=1",
-                                                   "http://docs.moodle.org/en/License");
+                                                   "http://docs.moodle.org/19/en/License");
             print_footer('none');
             exit;
         }
@@ -152,7 +152,7 @@
             $navigation = build_navigation(array(array('name'=>$strcurrentrelease, 'link'=>null, 'type'=>'misc')));
             print_header($strcurrentrelease, $strcurrentrelease, $navigation, "", "", false, "&nbsp;", "&nbsp;");
             print_heading("Moodle $release");
-            print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'), 'generalbox boxaligncenter boxwidthwide');
+            print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/19/en/Release_Notes'), 'generalbox boxaligncenter boxwidthwide');
             echo '<form action="index.php"><div>';
             echo '<input type="hidden" name="agreelicense" value="1" />';
             echo '<input type="hidden" name="confirmrelease" value="1" />';
@@ -286,7 +286,7 @@
                 $navigation = build_navigation(array(array('name'=>$strcurrentrelease, 'link'=>null, 'type'=>'misc')));
                 print_header($strcurrentrelease, $strcurrentrelease, $navigation, "", "", false, "&nbsp;", "&nbsp;");
                 print_heading("Moodle $release");
-                print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'));
+                print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/19/en/Release_Notes'));
 
                 require_once($CFG->libdir.'/environmentlib.php');
                 print_heading(get_string('environment', 'admin'));
@@ -687,7 +687,7 @@
     //////////////////////////////////////////////////////////////////////////////////////////////////
     ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO HIDE, REMOVE OR MODIFY THIS COPYRIGHT NOTICE ///
     $copyrighttext = '<a href="http://moodle.org/">Moodle</a> '.
-                     '<a href="http://docs.moodle.org/en/Release" title="'.$CFG->version.'">'.$CFG->release.'</a><br />'.
+                     '<a href="http://docs.moodle.org/dev/Releases" title="'.$CFG->version.'">'.$CFG->release.'</a><br />'.
                      'Copyright &copy; 1999 onwards, Martin Dougiamas<br />'.
                      'and <a href="http://docs.moodle.org/en/Credits">many other contributors</a>.<br />'.
                      '<a href="http://docs.moodle.org/en/License">GNU Public License</a>';

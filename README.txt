@@ -24,7 +24,7 @@ a few minutes:
 
 For more information, see the INSTALL DOCUMENTATION:
 
-   http://docs.moodle.org/en/Installing_Moodle 
+   http://docs.moodle.org/19/en/Installing_Moodle
 
 A local copy can also be found in 
 

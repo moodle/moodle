@@ -32,7 +32,7 @@
 /// include it yourself.
 
 /// For more info about the functions available in this library, please visit:
-///     http://docs.moodle.org/en/DML_functions
+///     http://docs.moodle.org/19/en/DML_functions
 /// (feel free to modify, improve and document such page, thanks!)
 
 /// GLOBAL CONSTANTS /////////////////////////////////////////////////////////
@@ -710,7 +710,7 @@ function recordset_to_array($rs) {
         $objects = array();
     /// First of all, we are going to get the name of the first column
     /// to introduce it back after transforming the recordset to assoc array
-    /// See http://docs.moodle.org/en/XMLDB_Problems, fetch mode problem.
+    /// See http://docs.moodle.org/19/en/XMLDB_Problems, fetch mode problem.
         $firstcolumn = $rs->FetchField(0);
     /// Get the whole associative array
         if ($records = $rs->GetAssoc(true)) {
@@ -1755,7 +1755,7 @@ function sql_paging_limit($page, $recordsperpage) {
  *
  * Note the LIKE are case sensitive for Oracle. Oracle 10g is required to use
  * the caseinsensitive search using regexp_like() or NLS_COMP=LINGUISTIC :-(
- * See http://docs.moodle.org/en/XMLDB_Problems#Case-insensitive_searches
+ * See http://docs.moodle.org/19/en/XMLDB_Problems#Case-insensitive_searches
  *
  * @uses $CFG
  * @return string
