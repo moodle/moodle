@@ -679,8 +679,8 @@ function scorm_course_format_display($user, $course) {
             print_error('invalidcoursemodule');
         }
         $contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
-        if ((has_capability('mod/scorm:skipview', $contextmodule)) && scorm_simple_play($scorm, $user, $contextmodule)) {
-            exit;
+        if ((has_capability('mod/scorm:skipview', $contextmodule))) {
+            scorm_simple_play($scorm, $user, $contextmodule);
         }
         $colspan = '';
         $headertext = '<table width="100%"><tr><td class="title">'.get_string('name').': <b>'.format_string($scorm->name).'</b>';
