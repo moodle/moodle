@@ -63,7 +63,7 @@ class qtype_ddimagetoimage extends question_type {
     }
 
     public function save_question_options($formdata) {
-        global $DB;
+        global $DB, $USER;
         $context = $formdata->context;
 
         $options = $DB->get_record('qtype_ddimagetoimage', array('questionid' => $formdata->id));
@@ -100,9 +100,14 @@ class qtype_ddimagetoimage extends question_type {
         foreach (array_keys($formdata->drags) as $dragno){
             $info = file_get_draft_area_info($formdata->dragitem[$dragno]);
             if ($info['filecount'] > 0) {
+                $draftitemid = $formdata->dragitem[$dragno];
+
                 //numbers not allowed in filearea name
                 $filearea = str_replace(range('0', '9'), range('a', 'j'), "drag_$dragno");
-                file_save_draft_area_files($formdata->dragitem[$dragno], $formdata->context->id,
+                self::constrain_image_size_in_draft_area($draftitemid,
+                                        QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXWIDTH,
+                                        QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXHEIGHT);
+                file_save_draft_area_files($draftitemid, $formdata->context->id,
                                         'qtype_ddimagetoimage', $filearea, $formdata->id,
                                         array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1));
                 $drag = new stdClass();
@@ -116,9 +121,56 @@ class qtype_ddimagetoimage extends question_type {
             }
         }
 
+        self::constrain_image_size_in_draft_area($formdata->bgimage,
+                                                    QTYPE_DDIMAGETOIMAGE_BGIMAGE_MAXWIDTH,
+                                                    QTYPE_DDIMAGETOIMAGE_BGIMAGE_MAXHEIGHT);
         file_save_draft_area_files($formdata->bgimage, $formdata->context->id,
                                     'qtype_ddimagetoimage', 'bgimage', $formdata->id,
                                     array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1));
+    }
+
+    public static function constrain_image_size_in_draft_area($draftitemid, $maxwidth, $maxheight) {
+        global $USER;
+        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+        $fs = get_file_storage();
+        $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id');
+        if ($draftfiles) {
+            foreach ($draftfiles as $file) {
+                if ($file->is_directory()) {
+                    continue;
+                }
+                $imageinfo = $file->get_imageinfo();
+                $width    = $imageinfo['width'];
+                $height   = $imageinfo['height'];
+                $mimetype = $imageinfo['mimetype'];
+                switch ($mimetype) {
+                    case 'image/jpeg' :
+                        $quality = 80;
+                        break;
+                    case 'image/png' :
+                        $quality = 8;
+                        break;
+                    default :
+                        $quality = NULL;
+                }
+                $newwidth = min($maxwidth, $width);
+                $newheight = min($maxheight, $height);
+                if ($newwidth != $width || $newheight != $height) {
+                    $newimagefilename = $file->get_filename();
+                    $newimagefilename =
+                        preg_replace('!\.!', "_{$newwidth}x{$newheight}.", $newimagefilename, 1);
+                    $newrecord = new stdClass();
+                    $newrecord->contextid = $usercontext->id;
+                    $newrecord->component = 'user';
+                    $newrecord->filearea  = 'draft';
+                    $newrecord->itemid    = $draftitemid;
+                    $newrecord->filepath  = '/';
+                    $newrecord->filename  = $newimagefilename;
+                    $fs->convert_image($newrecord, $file, $newwidth, $newheight, true, $quality);
+                    $file->delete();
+                }
+            }
+        }
     }
 
 

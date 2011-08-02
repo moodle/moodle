@@ -268,7 +268,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
         $maxsizes->drag_image->width = QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXWIDTH;
         $maxsizes->drag_image->height = QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXHEIGHT;
 
-        $PAGE->requires->js_init_call('M.qtype_ddimagetoimage.init_form', $maxsizes,
+        $PAGE->requires->js_init_call('M.qtype_ddimagetoimage.init_form', array($maxsizes),
                                                                 true, $jsmodule);
 
         return $question;
