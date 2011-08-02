@@ -205,7 +205,7 @@ function SCORMapi1_3() {
         'cmi.learner_preference.delivery_speed':{'defaultvalue':'1', 'format':CMIDecimal, 'range':speed_range, 'mod':'rw'},
         'cmi.learner_preference.audio_captioning':{'defaultvalue':'0', 'format':CMISInteger, 'range':text_range, 'mod':'rw'},
         'cmi.location':{'defaultvalue':<?php echo isset($userdata->{'cmi.location'})?'\''.$userdata->{'cmi.location'}.'\'':'null' ?>, 'format':CMIString1000, 'mod':'rw'},
-        'cmi.max_time_allowed':{'defaultvalue':<?php echo isset($userdata->maxtimeallowed)?'\''.$userdata->maxtimeallowed.'\'':'null' ?>, 'mod':'r'},
+        'cmi.max_time_allowed':{'defaultvalue':<?php echo isset($userdata->attemptAbsoluteDurationLimit)?'\''.$userdata->attemptAbsoluteDurationLimit.'\'':'null' ?>, 'mod':'r'},
         'cmi.mode':{'defaultvalue':'<?php echo $userdata->mode ?>', 'mod':'r'},
         'cmi.objectives._children':{'defaultvalue':objectives_children, 'mod':'r'},
         'cmi.objectives._count':{'mod':'r', 'defaultvalue':'0'},
