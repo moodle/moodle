@@ -1000,14 +1000,14 @@ function message_get_contact($contactid) {
  *
  * @param mixed $frm submitted form data
  * @param bool $showicontext show text next to action icons?
- * @param object $user1 the current user
+ * @param object $currentuser the current user
  * @return void
  */
-function message_print_search_results($frm, $showicontext=false, $user1=null) {
+function message_print_search_results($frm, $showicontext=false, $currentuser=null) {
     global $USER, $DB, $OUTPUT;
 
-    if (empty($user1)) {
-        $user1 = $USER;
+    if (empty($currentuser)) {
+        $currentuser = $USER;
     }
 
     echo html_writer::start_tag('div', array('class' => 'mdl-left'));
@@ -1227,14 +1227,17 @@ function message_print_search_results($frm, $showicontext=false, $user1=null) {
                 echo message_get_fragment($message->fullmessage, $keywords);
                 echo html_writer::start_tag('div', array('class' => 'link'));
 
-                //find the user involved that isn't the current user
-                $user2id = null;
-                if ($user1->id == $message->useridto) {
-                    $user2id = $message->useridfrom;
+                //If the user clicks the context link display message sender on the left
+                //EXCEPT if the current user is in the conversation. Current user == always on the left
+                $leftsideuserid = $rightsideuserid = null;
+                if ($currentuser->id == $message->useridto) {
+                    $leftsideuserid = $message->useridto;
+                    $rightsideuserid = $message->useridfrom;
                 } else {
-                    $user2id = $message->useridto;
+                    $leftsideuserid = $message->useridfrom;
+                    $rightsideuserid = $message->useridto;
                 }
-                message_history_link($user1->id, $user2id, false,
+                message_history_link($leftsideuserid, $rightsideuserid, false,
                                      $messagesearchstring, 'm'.$message->id, $strcontext);
                 echo html_writer::end_tag('div');
                 echo html_writer::end_tag('td');
@@ -1393,7 +1396,7 @@ function message_contact_link($userid, $linktype='add', $return=false, $script=n
  * echo or return a link to take the user to the full message history between themselves and another user
  *
  * @staticvar type $strmessagehistory
- * @param int $userid1 the ID of the current user
+ * @param int $userid1 the ID of the user displayed on the left (usually the current user)
  * @param int $userid2 the ID of the other user
  * @param bool $return true to return the link as a string. False to echo the link.
  * @param string $keywords any keywords to highlight in the message history
@@ -1403,7 +1406,6 @@ function message_contact_link($userid, $linktype='add', $return=false, $script=n
  */
 function message_history_link($userid1, $userid2, $return=false, $keywords='', $position='', $linktext='') {
     global $OUTPUT;
-
     static $strmessagehistory;
 
     if (empty($strmessagehistory)) {
@@ -1437,7 +1439,7 @@ function message_history_link($userid1, $userid2, $return=false, $keywords='', $
             'scrollbars' => true,
             'resizable' => true);
 
-    $link = new moodle_url('/message/index.php?history='.MESSAGE_HISTORY_ALL."&user=$userid1&id=$userid2$keywords$position");
+    $link = new moodle_url('/message/index.php?history='.MESSAGE_HISTORY_ALL."&user1=$userid1&user2=$userid2$keywords$position");
     $action = null;
     $str = $OUTPUT->action_link($link, $fulllink, $action, array('title' => $strmessagehistory));
 
