@@ -1731,6 +1731,12 @@ var skipClientValidation = false;
 
 function qf_errorHandler(element, _qfMsg) {
   div = element.parentNode;
+
+  if ((div == undefined) || (element.name == undefined)) {
+    //no checking can be done for undefined elements so let server handle it.
+    return true;
+  }
+
   if (_qfMsg != \'\') {
     var errorSpan = document.getElementById(\'id_error_\'+element.name);
     if (!errorSpan) {
@@ -1780,16 +1786,25 @@ function qf_errorHandler(element, _qfMsg) {
                 $elementName);
             $js .= '
 function validate_' . $this->_formName . '_' . $escapedElementName . '(element) {
+  if (undefined == element) {
+     //required element was not found, then let form be submitted without client side validation
+     return true;
+  }
   var value = \'\';
   var errFlag = new Array();
   var _qfGroups = {};
   var _qfMsg = \'\';
   var frm = element.parentNode;
-  while (frm && frm.nodeName.toUpperCase() != "FORM") {
-    frm = frm.parentNode;
+  if ((undefined != element.name) && (frm != undefined)) {
+      while (frm && frm.nodeName.toUpperCase() != "FORM") {
+        frm = frm.parentNode;
+      }
+    ' . join("\n", $jsArr) . '
+      return qf_errorHandler(element, _qfMsg);
+  } else {
+    //element name should be defined else error msg will not be displayed.
+    return true;
   }
-' . join("\n", $jsArr) . '
-  return qf_errorHandler(element, _qfMsg);
 }
 ';
             $validateJS .= '
