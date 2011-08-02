@@ -208,11 +208,6 @@ $CFG->admin = 'admin';
 // These blocks are used when no other default setting is found.
 //      $CFG->defaultblocks = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
 //
-// The blocks in this list will be protected from deletion, and this is primarily
-// used to protect the navigation and settings blocks which can be very hard to
-// get back if accidentally delete.
-//      $CFG->undeletableblocktypes = 'navigation,settings';
-//
 // You can specify a different class to be created for the $PAGE global, and to
 // compute which blocks appear on each page. However, I cannot think of any good
 // reason why you would need to change that. It just felt wrong to hard-code the
