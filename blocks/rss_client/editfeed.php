@@ -140,7 +140,9 @@ class feed_edit_form extends moodleform {
                 return $url;
             }
 
-            return $rss->subscribe_url();
+            // return URL without quoting..
+            $discoveredurl = new moodle_url($rss->subscribe_url());
+            return $discoveredurl->out(false);
     }
 }
 
