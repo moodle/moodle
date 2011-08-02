@@ -38,15 +38,17 @@ body.jsenabled #qtypechoicecontainer {display: block;}
 .que {clear: left;text-align: left;margin: 0 auto 1.8em auto;}
 .dir-rtl .que {text-align: right;}
 
-.que .info {float: left;width: 6em;padding:0.5em;margin-bottom: 1.8em;background: #eee;}
+.que .info {float: left;width: 7em;padding:0.5em;margin-bottom: 1.8em;background: #eee;}
 .que h2.no {margin: 0;font-size: 0.8em;line-height: 1;}
 .que span.qno {font-size: 1.5em;font-weight:bold;}
-.que .state,
-.que .grade,
-.que .editquestion {font-size: 0.8em; margin-top: 0.7em;}
-.que .info .questionflag {margin-top: 1em;margin-right: 1em;text-align: center;}
+.que .info * {font-size: 0.8em;}
+.que .info .state,
+.que .info .grade,
+.que .info .editquestion,
+.que .info .questionflag {margin-top: 0.7em;}
+.que .info .questionflag {cursor:pointer;}
 
-.que .content {margin: 0 0 0 7.5em;}
+.que .content {margin: 0 0 0 8.5em;}
 
 .que .formulation,
 .que .outcome,
