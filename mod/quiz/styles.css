@@ -374,6 +374,7 @@ bank window's title is prominent enough*/
 .ie6#page-mod-quiz-edit div.question div.content .questionname {width:20%;}
 .ie6#page-mod-quiz-edit .editq div.question div.content .randomquestioncategory a{width:40%;}
 .ie6#page-mod-quiz-edit .reorder .questioncontentcontainer .randomquestioncategory label{width: 35%;}
+.qnum label {padding-right: 0.25em;}
 
 /** settings.php */
 #adminquizreviewoptions {margin-bottom: 0.5em;}
