@@ -1838,6 +1838,9 @@ class global_navigation extends navigation_node {
         if ($iscurrentuser && !$forceforcontext) {
             // If it's the current user the information will go under the profile root node
             $usernode = $this->rootnodes['myprofile'];
+            $course = get_site();
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            $issitecourse = true;
         } else {
             if (!$issitecourse) {
                 // Not the current user so add it to the participants node for the current course
