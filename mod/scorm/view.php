@@ -71,8 +71,8 @@ $pagetitle = strip_tags($course->shortname.': '.format_string($scorm->name));
 
 add_to_log($course->id, 'scorm', 'pre-view', 'view.php?id='.$cm->id, "$scorm->id", $cm->id);
 
-if ((has_capability('mod/scorm:skipview', $contextmodule)) && scorm_simple_play($scorm, $USER, $contextmodule)) {
-    exit;
+if ((has_capability('mod/scorm:skipview', $contextmodule))) {
+    scorm_simple_play($scorm, $USER, $contextmodule);
 }
 
 //
