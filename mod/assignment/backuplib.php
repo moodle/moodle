@@ -44,11 +44,22 @@
     function assignment_backup_one_mod($bf,$preferences,$assignment) {
         
         global $CFG;
-    
+
+        if ($assignment === 0) { //no active instances of assignment to be backed up - skip backup
+            return false;
+        }
+
         if (is_numeric($assignment)) {
             $assignment = get_record('assignment','id',$assignment);
         }
-    
+
+        if (empty($assignment->assignmenttype)) {
+            // No assignment type will cause fatal error below in require_once so bail out now
+            // Probably ended up here by restoring a course into
+            // a moodle without this assignmenttype
+            return false;
+        }
+
         $status = true;
 
         //Start mod
