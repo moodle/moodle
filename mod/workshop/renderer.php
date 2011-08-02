@@ -92,13 +92,13 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $o .= $this->output->container_start($classes);
         $o .= $this->output->container_start('header');
 
-        $title = $this->output->heading(format_string($submission->title), 3, 'title');
+        $title = format_string($submission->title);
 
         if ($this->page->url != $submission->url) {
-            $o .= html_writer::link($submission->url, $title);
-        } else {
-            $o .= $title;
+            $title = html_writer::link($submission->url, $title);
         }
+
+        $o .= $this->output->heading($title, 3, 'title');
 
         if (!$anonymous) {
             $author             = new stdclass();
