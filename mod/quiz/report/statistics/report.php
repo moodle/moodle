@@ -209,7 +209,7 @@ class quiz_statistics_report extends quiz_default_report {
             // Back to overview link.
             echo $OUTPUT->box('<a href="' . $reporturl->out() . '">' .
                     get_string('backtoquizreport', 'quiz_statistics') . '</a>',
-                    'boxaligncenter generalbox boxwidthnormal mdl-align');
+                    'backtomainstats boxaligncenter generalbox boxwidthnormal mdl-align');
 
         } else if ($qid) {
             // Report on an individual sub-question indexed questionid.
@@ -313,7 +313,7 @@ class quiz_statistics_report extends quiz_default_report {
 
         echo $OUTPUT->box(format_text($question->questiontext, $question->questiontextformat,
                 array('overflowdiv' => true)) . $actions,
-                'boxaligncenter generalbox boxwidthnormal mdl-align');
+                'questiontext boxaligncenter generalbox boxwidthnormal mdl-align');
 
         echo $OUTPUT->heading(get_string('questionstatistics', 'quiz_statistics'));
         echo html_writer::table($questionstatstable);
