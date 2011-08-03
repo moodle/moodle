@@ -30,4 +30,4 @@
 
 $string['parentlanguage'] = '';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'English';
+$string['thislanguage'] = 'বাংলা';
