@@ -114,6 +114,12 @@ class plugin_defective_exception extends moodle_exception {
 function upgrade_main_savepoint($result, $version, $allowabort=true) {
     global $CFG;
 
+    //sanity check to avoid confusion with upgrade_mod_savepoint usage.
+    if (!is_bool($allowabort)) {
+        $errormessage = 'Parameter type mismatch. Are you mixing up upgrade_main_savepoint() and upgrade_mod_savepoint()?';
+        throw new coding_exception($errormessage);
+    }
+
     if (!$result) {
         throw new upgrade_exception(null, $version);
     }
