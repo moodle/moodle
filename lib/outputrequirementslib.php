@@ -198,6 +198,7 @@ class page_requirements_manager {
             )
         );
         $this->add_yui2_modules(); // adds loading info for all YUI2 modules
+        $this->js_module($this->find_module('core_filepicker'));
         $this->js_module($this->find_module('core_dock'));
 
         // YUI3 init code
