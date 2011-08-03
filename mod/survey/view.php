@@ -55,6 +55,11 @@
         print_error('invalidtmptid', 'survey');
     }
 
+// Update 'viewed' state if required by completion system
+require_once($CFG->libdir . '/completionlib.php');
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
+
     $showscales = ($template->name != 'ciqname');
 
     $strsurvey = get_string("modulename", "survey");
