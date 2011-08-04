@@ -84,6 +84,7 @@ class scorm_interactions_report extends scorm_default_report {
                 groups_print_activity_menu($cm, new moodle_url($PAGE->url, $displayoptions));
             }
         }
+        $formattextoptions = array('context'=>get_context_instance(CONTEXT_COURSE, $course->id));
 
         // We only want to show the checkbox to delete attempts
         // if the user has permissions and if the report mode is showing attempts.
@@ -113,7 +114,7 @@ class scorm_interactions_report extends scorm_default_report {
         if ( !$nostudents ) {
             // Now check if asked download of data
             if ($download) {
-                $filename = clean_filename("$course->shortname ".format_string($scorm->name, true));
+                $filename = clean_filename("$course->shortname ".format_string($scorm->name, true,$formattextoptions));
             }
 
             // Define table columns
@@ -145,8 +146,8 @@ class scorm_interactions_report extends scorm_default_report {
                 foreach ($scoes as $sco) {
                     if ($sco->launch!='') {
                         $columns[]= 'scograde'.$sco->id;
-                        $headers[]= format_string($sco->title);
-                        $table->head[]= format_string($sco->title);
+                        $headers[]= format_string($sco->title,'',$formattextoptions);
+                        $table->head[]= format_string($sco->title,'',$formattextoptions);
                     }
                 }
             } else {
