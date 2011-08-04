@@ -173,7 +173,7 @@ if ($attempt->timefinish) {
     );
     $summarydata['timetaken'] = array(
         'title'   => get_string('timetaken', 'quiz'),
-        'content' => format_time($timetaken),
+        'content' => $timetaken,
     );
 }
 
