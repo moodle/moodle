@@ -93,6 +93,9 @@ if ($scodatas = scorm_get_sco($scoid, SCO_DATA)) {
 if (!$sco = scorm_get_sco($scoid)) {
     print_error('cannotfindsco', 'scorm');
 }
+if ($scorm->version == "SCORM_1.3") {
+    $userdata->{'cmi.scaled_passing_score'} = $DB->get_field('scorm_seq_objective', 'minnormalizedmeasure', array('scoid'=>$scoid));
+}
 $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe
 if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php')) {
     include_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php');
