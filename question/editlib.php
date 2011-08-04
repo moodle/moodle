@@ -155,7 +155,6 @@ abstract class question_bank_column_base {
 
     /**
      * Output the column header cell.
-     * @param integer $currentsort 0 for none. 1 for normal sort, -1 for reverse sort.
      */
     public function display_header() {
         echo '<th class="header ' . $this->get_classes() . '" scope="col">';
@@ -1103,8 +1102,8 @@ class question_bank_view {
      * category      Chooses the category
      * displayoptions Sets display options
      */
-    public function display($tabname, $page, $perpage, $sortorder,
-            $sortorderdecoded, $cat, $recurse, $showhidden, $showquestiontext){
+    public function display($tabname, $page, $perpage, $cat,
+            $recurse, $showhidden, $showquestiontext) {
         global $PAGE, $OUTPUT;
 
         if ($this->process_actions_needing_ui()) {
@@ -1126,8 +1125,9 @@ class question_bank_view {
         $this->print_category_info($category);
 
         // continues with list of questions
-        $this->display_question_list($this->contexts->having_one_edit_tab_cap($tabname), $this->baseurl, $cat, $this->cm,
-                $recurse, $page, $perpage, $showhidden, $sortorder, $sortorderdecoded, $showquestiontext,
+        $this->display_question_list($this->contexts->having_one_edit_tab_cap($tabname),
+                $this->baseurl, $cat, $this->cm,
+                $recurse, $page, $perpage, $showhidden, $showquestiontext,
                 $this->contexts->having_cap('moodle/question:add'));
     }
 
@@ -1232,7 +1232,6 @@ class question_bank_view {
     */
     protected function display_question_list($contexts, $pageurl, $categoryandcontext,
             $cm = null, $recurse=1, $page=0, $perpage=100, $showhidden=false,
-            $sortorder='typename', $sortorderdecoded='qtype, name ASC',
             $showquestiontext = false, $addcontexts = array()) {
         global $CFG, $DB, $OUTPUT;
 
@@ -1576,17 +1575,12 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
         $pagevars['qperpage'] = DEFAULT_QUESTIONS_PER_PAGE;
     }
 
-    $sortoptions = array('alpha' => 'name, qtype ASC',
-                          'typealpha' => 'qtype, name ASC',
-                          'age' => 'id ASC');
-
-    if ($sortorder = optional_param('qsortorder', '', PARAM_ALPHA)) {
-        $pagevars['qsortorderdecoded'] = $sortoptions[$sortorder];
-        $pagevars['qsortorder'] = $sortorder;
-        $thispageurl->param('qsortorder', $sortorder);
-    } else {
-        $pagevars['qsortorderdecoded'] = $sortoptions['typealpha'];
-        $pagevars['qsortorder'] = 'typealpha';
+    for ($i = 1; $i <= question_bank_view::MAX_SORTS; $i++) {
+        $param = 'qbs' . $i;
+        if (!$sort = optional_param($param, '', PARAM_ALPHAEXT)) {
+            break;
+        }
+        $thispageurl->param($param, $sort);
     }
 
     $defaultcategory = question_make_default_categories($contexts->all());
