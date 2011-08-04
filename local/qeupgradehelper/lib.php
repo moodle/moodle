@@ -25,9 +25,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once (dirname(__FILE__) . '/locallib.php');
-
-
 /**
  * Standard cron function
  */
@@ -51,10 +48,15 @@ function local_qeupgradehelper_cron() {
  * This function does the cron process within the time range according to settings.
  */
 function local_qeupgradehelper_process($settings) {
+    global $CFG;
+    require_once(dirname(__FILE__) . '/locallib.php');
+
     if (!local_qeupgradehelper_is_upgraded()) {
         mtrace('qeupgradehelper: site not yet upgraded. Doing nothing.');
         return;
     }
+
+    require_once(dirname(__FILE__) . '/afterupgradelib.php');
 
     $hour = (int) date('H');
     if ($hour < $settings->starthour || $hour >= $settings->stophour) {
@@ -64,11 +66,27 @@ function local_qeupgradehelper_process($settings) {
     }
 
     $stoptime = time() + $settings->procesingtime;
-    while (time() < $stoptime) {
-        mtrace('qeupgradehelper: processing ...');
 
-        // TODO
-        mtrace('qeupgradehelper: sorry, not implemented yet.');
-        return;
+    mtrace('qeupgradehelper: processing ...');
+    while (time() < $stoptime) {
+
+        $quiz = local_qeupgradehelper_get_quiz_for_upgrade();
+        if (!$quiz) {
+            mtrace('qeupgradehelper: No more quizzes to process. You should probably disable the qeupgradehelper cron settings now.');
+            break; // No more to do;
+        }
+
+        $quizid = $quiz->id;
+        $quizsummary = local_qeupgradehelper_get_quiz($quizid);
+        if ($quizsummary) {
+            mtrace('  starting upgrade of attempts at quiz ' . $quizid);
+            $upgrader = new local_qeupgradehelper_attempt_upgrader(
+                    $quizsummary->id, $quizsummary->numtoconvert);
+            $upgrader->convert_all_quiz_attempts();
+            mtrace('  upgrade of quiz ' . $quizid . ' complete.');
+        }
     }
+
+    mtrace('qeupgradehelper: Done.');
+    return;
 }
