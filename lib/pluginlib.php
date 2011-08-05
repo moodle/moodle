@@ -1563,6 +1563,17 @@ class plugintype_message extends plugintype_base implements plugin_information {
             return parent::is_enabled();
         }
     }
+
+    /**
+     * @see plugintype_interface::get_uninstall_url()
+     */
+    public function get_uninstall_url() {
+        if (isset($this->processors[$this->name])) {
+            return new moodle_url('message.php', array('uninstall' => $this->processors[$this->name]->id, 'sesskey' => sesskey()));
+        } else {
+            return parent::get_uninstall_url();
+        }
+    }
 }
 
 /**
