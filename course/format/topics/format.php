@@ -128,7 +128,6 @@ if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing())
 /// Now all the normal modules by topic
 /// Everything below uses "section" terminology - each "section" is a topic.
 
-$timenow = time();
 $section = 1;
 $sectionmenu = array();
 
