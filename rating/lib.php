@@ -288,7 +288,7 @@ class rating_manager {
         $params['userid'] = $userid;
         $params['contextid'] = $options->context->id;
 
-        $sql = "SELECT r.itemid, r.id, r.userid, r.scaleid, r.rating AS usersrating
+        $sql = "SELECT r.id, r.itemid, r.userid, r.scaleid, r.rating AS usersrating
                   FROM {rating} r
                  WHERE r.userid = :userid AND
                        r.contextid = :contextid AND
