@@ -231,30 +231,14 @@ class qtype_multichoice extends question_type {
     }
 
     public function move_files($questionid, $oldcontextid, $newcontextid) {
-        $fs = get_file_storage();
-
         parent::move_files($questionid, $oldcontextid, $newcontextid);
         $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid, true);
-
-        $fs->move_area_files_to_new_context($oldcontextid,
-                $newcontextid, 'qtype_multichoice', 'correctfeedback', $questionid);
-        $fs->move_area_files_to_new_context($oldcontextid,
-                $newcontextid, 'qtype_multichoice', 'partiallycorrectfeedback', $questionid);
-        $fs->move_area_files_to_new_context($oldcontextid,
-                $newcontextid, 'qtype_multichoice', 'incorrectfeedback', $questionid);
+        $this->move_files_in_combined_feedback($questionid, $oldcontextid, $newcontextid);
     }
 
     protected function delete_files($questionid, $contextid) {
-        $fs = get_file_storage();
-
         parent::delete_files($questionid, $contextid);
         $this->delete_files_in_answers($questionid, $contextid, true);
-
-        $fs->delete_area_files($contextid,
-                'qtype_multichoice', 'correctfeedback', $questionid);
-        $fs->delete_area_files($contextid,
-                'qtype_multichoice', 'partiallycorrectfeedback', $questionid);
-        $fs->delete_area_files($contextid,
-                'qtype_multichoice', 'incorrectfeedback', $questionid);
+        $this->delete_files_in_combined_feedback($questionid, $contextid);
     }
 }
