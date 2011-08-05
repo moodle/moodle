@@ -2121,7 +2121,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                 $instanceids[] = $blockinstance->id;
                 // If we have more than 1000 block instances now remove all block positions
                 // and empty the array
-                if (count($contextids) > 1000) {
+                if (count($instanceids) > 1000) {
                     $instanceidstring = join(',',$instanceids);
                     $DB->delete_records_select('block_positions', 'blockinstanceid IN ('.$instanceidstring.')');
                     $instanceids = array();
@@ -2131,8 +2131,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
         upgrade_cleanup_unwanted_block_contexts($contextids);
 
-        $instanceidstring = join(',',$instanceids);
-        $DB->delete_records_select('block_positions', 'blockinstanceid IN ('.$instanceidstring.')');
+        if ($instanceids) {
+            $instanceidstring = join(',',$instanceids);
+            $DB->delete_records_select('block_positions', 'blockinstanceid IN ('.$instanceidstring.')');
+        }
 
         unset($allblockinstances);
         unset($contextids);
