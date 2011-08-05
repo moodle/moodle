@@ -567,7 +567,7 @@ class rating_manager {
         $params['component']    = $options->component;
         $params['ratingarea'] = $options->ratingarea;
 
-        $sql = "SELECT r.itemid, r.id, r.userid, r.scaleid, r.rating AS usersrating
+        $sql = "SELECT r.id, r.itemid, r.userid, r.scaleid, r.rating AS usersrating
                   FROM {rating} r
                  WHERE r.userid = :userid AND
                        r.contextid = :contextid AND
@@ -593,20 +593,28 @@ class rating_manager {
         $ratingoptions->ratingarea = $options->ratingarea;
         $ratingoptions->settings = $this->generate_rating_settings_object($options);
         foreach ($options->items as $item) {
-            if (array_key_exists($item->{$itemidcol}, $userratings)) {
-                // Note: rec->scaleid = the id of scale at the time the rating was submitted
-                // may be different from the current scale id
-                $rec = $userratings[$item->{$itemidcol}];
-                $ratingoptions->scaleid = $rec->scaleid;
-                $ratingoptions->userid = $rec->userid;
-                $ratingoptions->id = $rec->id;
-                $ratingoptions->rating = min($rec->usersrating, $ratingoptions->settings->scale->max);
-            } else {
+            $founduserrating = false;
+            foreach($userratings as $userrating) {
+                //look for an existing rating from this user of this item
+                if ($item->{$itemidcol} == $userrating->itemid) {
+                    // Note: rec->scaleid = the id of scale at the time the rating was submitted
+                    // may be different from the current scale id
+                    $ratingoptions->scaleid = $userrating->scaleid;
+                    $ratingoptions->userid = $userrating->userid;
+                    $ratingoptions->id = $userrating->id;
+                    $ratingoptions->rating = min($userrating->usersrating, $ratingoptions->settings->scale->max);
+
+                    $founduserrating = true;
+                    break;
+                }
+            }
+            if (!$founduserrating) {
                 $ratingoptions->scaleid = null;
                 $ratingoptions->userid = null;
                 $ratingoptions->id = null;
                 $ratingoptions->rating =  null;
             }
+
             if (array_key_exists($item->{$itemidcol}, $aggregateratings)) {
                 $rec = $aggregateratings[$item->{$itemidcol}];
                 $ratingoptions->itemid = $item->{$itemidcol};
