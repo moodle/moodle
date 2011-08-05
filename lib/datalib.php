@@ -847,7 +847,7 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
                   FROM {course_categories} cc
                $ccjoin
                   JOIN {course_categories} ccp
-                       ON (cc.path LIKE ".$DB->sql_concat('ccp.path',"'%'").")
+                       ON ((cc.parent = ccp.id) OR (cc.path LIKE ".$DB->sql_concat('ccp.path',"'/%'")."))
                  WHERE ccp.id=?
                 $sort";
         $params = array($parent);
