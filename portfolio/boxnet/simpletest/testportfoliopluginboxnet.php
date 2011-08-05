@@ -1,7 +1,6 @@
 <?php
 require_once("$CFG->libdir/simpletest/testportfoliolib.php");
 require_once("$CFG->dirroot/portfolio/boxnet/lib.php");
-require_once("$CFG->dirroot/$CFG->admin/generator.php");
 
 /*
  * TODO: The portfolio unit tests were obselete and did not work.
