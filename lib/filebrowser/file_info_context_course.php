@@ -53,7 +53,17 @@ class file_info_context_course extends file_info {
      * @param $filename
      */
     public function get_file_info($component, $filearea, $itemid, $filepath, $filename) {
+        // try to emulate require_login() tests here
+        if (!isloggedin()) {
+            return null;
+        }
+
         if (!$this->course->visible and !has_capability('moodle/course:viewhiddencourses', $this->context)) {
+            return null;
+        }
+
+        if (!is_viewing($this->context) and !is_enrolled($this->context)) {
+            // no peaking here if not enrolled or inspector
             return null;
         }
 
