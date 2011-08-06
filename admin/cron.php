@@ -36,6 +36,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+if (defined('STDIN')) {
+    fwrite(STDERR, "ERROR: This script no longer supports CLI, please use admin/cli/cron.php instead\n");
+    exit(1);
+}
+
 // This is a fake CLI script, it is a really ugly hack which emulates
 // CLI via web interface, please do not use this hack elsewhere
 define('CLI_SCRIPT', true);
