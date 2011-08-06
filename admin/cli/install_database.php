@@ -55,12 +55,12 @@ Example:
 ";
 
 // Check that PHP is of a sufficient version
-if (version_compare(phpversion(), "5.2.8") < 0) {
+if (version_compare(phpversion(), "5.3.2") < 0) {
     $phpversion = phpversion();
     // do NOT localise - lang strings would not work here and we CAN NOT move it after installib
-    fwrite(STDERR, "Sorry, Moodle 2.0 requires PHP 5.2.8 or later (currently using version $phpversion).\n");
-    fwrite(STDERR, "Please upgrade your server software or install latest Moodle 1.9.x instead.\n");
-    die(1);
+    fwrite(STDERR, "Moodle 2.1 or later requires at least PHP 5.3.2 (currently using version $phpversion).\n");
+    fwrite(STDERR, "Please upgrade your server software or install older Moodle version.\n");
+    exit(1);
 }
 
 // Nothing to do if config.php does not exist
@@ -68,7 +68,7 @@ $configfile = dirname(dirname(dirname(__FILE__))).'/config.php';
 if (!file_exists($configfile)) {
     fwrite(STDERR, 'config.php does not exist, can not continue'); // do not localize
     fwrite(STDERR, "\n");
-    die(1);
+    exit(1);
 }
 
 // Include necessary libs
