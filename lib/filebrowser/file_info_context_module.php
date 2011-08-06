@@ -75,8 +75,25 @@ class file_info_context_module extends file_info {
      * @param $filename
      */
     public function get_file_info($component, $filearea, $itemid, $filepath, $filename) {
-        if (!is_enrolled($this->context) and !is_viewing($this->context)) {
+        // try to emulate require_login() tests here
+        if (!isloggedin()) {
+            return null;
+        }
+
+        $coursecontext = get_course_context($this->context);
+        if (!$this->course->visible and !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+            return null;
+        }
+
+        if (!is_viewing($this->context) and !is_enrolled($this->context)) {
             // no peaking here if not enrolled or inspector
+            return null;
+        }
+
+        $modinfo = get_fast_modinfo($this->course);
+        $cminfo = $modinfo->get_cm($this->cm->id);
+        if (!$cminfo->uservisible) {
+            // activity hidden sorry
             return null;
         }
 
