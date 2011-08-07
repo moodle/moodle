@@ -161,23 +161,27 @@ function combo_send_uncached($content, $mimetype) {
     die;
 }
 
-function combo_not_found() {
+function combo_not_found($message = '') {
     header('HTTP/1.0 404 not found');
-    die('Combo resource not found, sorry.');
+    if ($message) {
+        echo $message;
+    } else {
+        echo 'Combo resource not found, sorry.';
+    }
+    die;
 }
 
 function combo_params() {
-    if (!empty($_SERVER['REQUEST_URI'])) {
-        $parts = explode('?', $_SERVER['REQUEST_URI']);
-        if (count($parts) != 2) {
-            return '';
-        }
+    // note: buggy or misconfigured IIS does return the query string in REQUEST_URL
+    if (isset($_SERVER['REQUEST_URI']) and strpos($_SERVER['REQUEST_URI'], '?') !== false) {
+        $parts = explode('?', $_SERVER['REQUEST_URI'], 2);
         return $parts[1];
 
-    } else if (!empty($_SERVER['QUERY_STRING'])) {
+    } else if (isset($_SERVER['QUERY_STRING'])) {
         return $_SERVER['QUERY_STRING'];
 
     } else {
-        return '';
+        // unsupported server, sorry!
+        combo_not_found('Unsupported server - query string can not be determined, try disabling YUI combo loading in admin settings.');
     }
 }
