@@ -717,7 +717,7 @@ function groups_course_module_visible($cm, $userid=null) {
  * @return void
  */
 function _group_verify_activegroup($courseid, $groupmode, $groupingid, array $allowedgroups) {
-    global $SESSION;
+    global $SESSION, $USER;
 
     // init activegroup array if necessary
     if (!isset($SESSION->activegroup)) {
@@ -742,7 +742,11 @@ function _group_verify_activegroup($courseid, $groupmode, $groupingid, array $al
             $SESSION->activegroup[$courseid][$groupmode][$groupingid] = 0; // all groups by default if user has accessallgroups
 
         } else if ($allowedgroups) {
-            $firstgroup = reset($allowedgroups);
+            if ($groupmode != SEPARATEGROUPS and $mygroups = groups_get_all_groups($courseid, $USER->id, $groupingid)) {
+                $firstgroup = reset($mygroups);
+            } else {
+                $firstgroup = reset($allowedgroups);
+            }
             $SESSION->activegroup[$courseid][$groupmode][$groupingid] = $firstgroup->id;
 
         } else {
