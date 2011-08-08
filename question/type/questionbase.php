@@ -454,7 +454,7 @@ class question_classified_response {
     }
 
     public static function no_response() {
-        return new question_classified_response(null, null, null);
+        return new question_classified_response(null, get_string('noresponse', 'question'), null);
     }
 }
 
