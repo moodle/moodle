@@ -732,7 +732,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the Moodle License information page for full details:
-http://docs.moodle.org/19/en/License';
+http://docs.moodle.org/dev/License';
 $string['grade'] = 'Grade';
 $string['grades'] = 'Grades';
 $string['group'] = 'Group';
