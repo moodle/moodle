@@ -279,11 +279,40 @@ abstract class session_stub implements moodle_session {
         if (!isset($CFG->sessioncookie)) {
             $CFG->sessioncookie = '';
         }
+
+        // make sure cookie domain makes sense for this wwwroot
         if (!isset($CFG->sessioncookiedomain)) {
             $CFG->sessioncookiedomain = '';
+        } else if ($CFG->sessioncookiedomain !== '') {
+            $host = parse_url($CFG->wwwroot, PHP_URL_HOST);
+            if ($CFG->sessioncookiedomain !== $host) {
+                if (substr($CFG->sessioncookiedomain, 0, 1) === '.') {
+                    if (!preg_match('|^.*'.preg_quote($CFG->sessioncookiedomain, '|').'$|', $host)) {
+                        // invalid domain - it must be end part of host
+                        $CFG->sessioncookiedomain = '';
+                    }
+                } else {
+                    if (!preg_match('|^.*\.'.preg_quote($CFG->sessioncookiedomain, '|').'$|', $host)) {
+                        // invalid domain - it must be end part of host
+                        $CFG->sessioncookiedomain = '';
+                    }
+                }
+            }
         }
+
+        // make sure the cookiepath is valid for this wwwroot or autodetect if not specified
         if (!isset($CFG->sessioncookiepath)) {
-            $CFG->sessioncookiepath = '/';
+            $CFG->sessioncookiepath = '';
+        }
+        if ($CFG->sessioncookiepath !== '/') {
+            $path = parse_url($CFG->wwwroot, PHP_URL_PATH).'/';
+            if ($CFG->sessioncookiepath === '') {
+                $CFG->sessioncookiepath = $path;
+            } else {
+                if (strpos($path, $CFG->sessioncookiepath) !== 0 or substr($CFG->sessioncookiepath, -1) !== '/') {
+                    $CFG->sessioncookiepath = $path;
+                }
+            }
         }
 
         //discard session ID from POST, GET and globals to tighten security,
