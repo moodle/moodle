@@ -1108,6 +1108,28 @@ class question_type {
     }
 
     /**
+     * Move all the files belonging to this question's answers when the question
+     * is moved from one context to another.
+     * @param int $questionid the question being moved.
+     * @param int $oldcontextid the context it is moving from.
+     * @param int $newcontextid the context it is moving to.
+     * @param bool $answerstoo whether there is an 'answer' question area,
+     *      as well as an 'answerfeedback' one. Default false.
+     */
+    protected function move_files_in_combined_feedback($questionid, $oldcontextid,
+            $newcontextid) {
+        global $DB;
+        $fs = get_file_storage();
+
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'question', 'correctfeedback', $questionid);
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'question', 'partiallycorrectfeedback', $questionid);
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'question', 'incorrectfeedback', $questionid);
+    }
+
+    /**
      * Delete all the files belonging to this question.
      * @param int $questionid the question being deleted.
      * @param int $contextid the context the question is in.
@@ -1137,6 +1159,25 @@ class question_type {
             }
             $fs->delete_area_files($contextid, 'question', 'answerfeedback', $answerid);
         }
+    }
+
+    /**
+     * Delete all the files belonging to this question's answers.
+     * @param int $questionid the question being deleted.
+     * @param int $contextid the context the question is in.
+     * @param bool $answerstoo whether there is an 'answer' question area,
+     *      as well as an 'answerfeedback' one. Default false.
+     */
+    protected function delete_files_in_combined_feedback($questionid, $contextid) {
+        global $DB;
+        $fs = get_file_storage();
+
+        $fs->delete_area_files($contextid,
+                'question', 'correctfeedback', $questionid);
+        $fs->delete_area_files($contextid,
+                'question', 'partiallycorrectfeedback', $questionid);
+        $fs->delete_area_files($contextid,
+                'question', 'incorrectfeedback', $questionid);
     }
 
     public function import_file($context, $component, $filearea, $itemid, $file) {

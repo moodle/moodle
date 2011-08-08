@@ -2637,6 +2637,12 @@ class restore_create_question_files extends restore_execution_step {
                                               $oldctxid, $this->task->get_userid(), 'question_answer', null, $newctxid, true);
             restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'hint',
                                               $oldctxid, $this->task->get_userid(), 'question_hint', null, $newctxid, true);
+            restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'correctfeedback',
+                                              $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true);
+            restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'partiallycorrectfeedback',
+                                              $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true);
+            restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'incorrectfeedback',
+                                              $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true);
             // Add qtype dependent files
             $components = backup_qtype_plugin::get_components_and_fileareas($question->qtype);
             foreach ($components as $component => $fileareas) {
