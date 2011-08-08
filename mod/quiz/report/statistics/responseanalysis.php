@@ -98,12 +98,18 @@ class quiz_statistics_response_analyser {
 
     /**
      * @return bool whether this analysis has a response class more than one
-     *      different acutal response.
+     *      different acutal response, or if the actual response is different from
+     *      the model response.
      */
     public function has_actual_responses() {
         foreach ($this->responseclasses as $subpartid => $partclasses) {
-            foreach ($partclasses as $responseclassid => $notused) {
-                if (count($this->responses[$subpartid][$responseclassid]) > 1) {
+            foreach ($partclasses as $responseclassid => $modelresponse) {
+                $numresponses = count($this->responses[$subpartid][$responseclassid]);
+                if ($numresponses > 1) {
+                    return true;
+                }
+                $actualresponse = key($this->responses[$subpartid][$responseclassid]);
+                if ($numresponses == 1 && $actualresponse != $modelresponse->responseclass) {
                     return true;
                 }
             }
