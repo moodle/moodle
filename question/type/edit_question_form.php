@@ -355,7 +355,7 @@ abstract class question_edit_form extends moodleform {
         $mform = $this->_form;
 
         $repeated = array();
-        $repeated[] = $mform->createElement('header', 'answerhdr', get_string('hintn', 'question'));
+        $repeated[] = $mform->createElement('header', 'hinthdr', get_string('hintn', 'question'));
         $repeated[] = $mform->createElement('editor', 'hint', get_string('hinttext', 'question'),
                 array('rows' => 5), $this->editoroptions);
         $repeatedoptions['hint']['type'] = PARAM_RAW;
