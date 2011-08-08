@@ -546,7 +546,7 @@ function xmldb_scorm_upgrade($oldversion) {
         unset_config('updatetime', 'scorm');
         upgrade_mod_savepoint(true, 2011021402, 'scorm');
     }
-    
+
     if ($oldversion < 2011073100) {
         // change field type of objectiveid
         $table = new xmldb_table('scorm_seq_objective');
