@@ -79,6 +79,19 @@ h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:200%;}
 #page-enrol-instances .generalbox {border:none;}
 #page-enrol-instances .select.menujump {margin-left:0.5em;}
 
+/* environmenttable */
+.environmenttable .error {
+    background-color: red;
+}
+
+.environmenttable .warn {
+    background-color: yellow;
+}
+
+.environmenttable .ok {
+    background-color: lime;
+}
+
 /* tables */
 .editcourse th,
 .editcourse td,
