@@ -38,6 +38,18 @@ if (version_compare(phpversion(), '5.3.2') < 0) {
     die;
 }
 
+// make sure iconv is available and actually works
+if (!function_exists('iconv')) {
+    // this should not happen, this must be very borked install
+    echo 'Moodle requires the iconv PHP extension. Please install or enable the iconv extension.';
+    die();
+}
+if (iconv('UTF-8', 'UTF-8//IGNORE', 'abc') !== 'abc') {
+    // known to be broken in mid-2011 MAMP installations
+    echo 'Broken iconv PHP extension detected, installation/upgrade can not continue.';
+    die;
+}
+
 define('NO_OUTPUT_BUFFERING', true);
 
 require('../config.php');
