@@ -2,7 +2,6 @@
 require_once("$CFG->libdir/simpletest/portfolio_testclass.php");
 require_once("$CFG->dirroot/mod/glossary/lib.php");
 require_once("$CFG->dirroot/mod/glossary/locallib.php");
-require_once("$CFG->dirroot/$CFG->admin/generator.php");
 
 /*
  * TODO: The portfolio unit tests were obselete and did not work.
