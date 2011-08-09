@@ -794,10 +794,16 @@ class grade_grade extends grade_object {
         // Get course-module
         $cm = get_coursemodule_from_instance($this->grade_item->itemmodule,
               $this->grade_item->iteminstance, $this->grade_item->courseid);
+        // If the course-module doesn't exist, display a warning...
         if (!$cm) {
-            debugging("Couldn't find course-module for module
-                '{$this->grade_item->itemmodule}', instance '{$this->grade_item->iteminstance}',
-                course '{$this->grade_item->courseid}'");
+            // ...unless the grade is being deleted in which case it's likely
+            // that the course-module was just deleted too, so that's okay.
+            if (!$deleted) {
+                debugging("Couldn't find course-module for module '" .
+                        $this->grade_item->itemmodule . "', instance '" .
+                        $this->grade_item->iteminstance . "', course '" .
+                        $this->grade_item->courseid . "'");
+            }
             return;
         }
 
