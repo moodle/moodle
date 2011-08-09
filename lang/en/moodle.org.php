@@ -76,7 +76,7 @@ $string['downloadcore'] = 'Our main method of distribution is via these standard
 $string['downloadcoretitle'] = 'Standard Moodle packages';
 $string['downloadcvs'] = 'Another way to get the core source code is by using CVS to connect directly to one of our mirrors of the code repository used by Moodle developers.  This makes upgrading very easy, even if you have made local changes to the source code.';
 $string['downloadcvstitle'] = 'Moodle via CVS';
-$string['downloadintro'] = 'Moodle is open source under the <a href="http://docs.moodle.org/en/License">GPL licence</a>.  Everything we produce is available for you to download and use for free.';
+$string['downloadintro'] = 'Moodle is open source under the <a href="http://docs.moodle.org/dev/License">GPL licence</a>.  Everything we produce is available for you to download and use for free.';
 $string['downloadlang'] = 'In current versions of Moodle, adding support for new languages has been automated from the administration menu within your site.  However, for some older versions of Moodle, new language packs need to be downloaded manually.';
 $string['downloadlangtitle'] = 'Language packs';
 $string['downloadlogotitle'] = 'Moodle logos';
