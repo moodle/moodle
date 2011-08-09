@@ -65,9 +65,9 @@ $PAGE->set_heading($COURSE->fullname);
 echo $OUTPUT->header();
 
 echo '<div class="questionbankwindow boxwidthwide boxaligncenter">';
-$questionbank->display('questions', $pagevars['qpage'],
-        $pagevars['qperpage'], $pagevars['qsortorder'], $pagevars['qsortorderdecoded'],
-        $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'], $pagevars['showquestiontext']);
+$questionbank->display('questions', $pagevars['qpage'], $pagevars['qperpage'],
+        $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'],
+        $pagevars['showquestiontext']);
 echo "</div>\n";
 
 echo $OUTPUT->footer();
