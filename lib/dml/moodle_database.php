@@ -502,19 +502,24 @@ abstract class moodle_database {
         $where = array();
         $params = array();
 
-        $columns = $this->get_columns($table);
+        if (debugging()) {
+            $columns = $this->get_columns($table);
+            foreach ($conditions as $key=>$value) {
+                if (!isset($columns[$key])) {
+                    $a = new stdClass();
+                    $a->fieldname = $key;
+                    $a->tablename = $table;
+                    throw new dml_exception('ddlfieldnotexist', $a);
+                }
+                $column = $columns[$key];
+                if ($column->meta_type == 'X') {
+                    //ok so the column is a text column. sorry no text columns in the where clause conditions
+                    throw new dml_exception('textconditionsnotallowed', $conditions);
+                }
+            }
+        }
+
         foreach ($conditions as $key=>$value) {
-            if (!isset($columns[$key])) {
-                $a = new stdClass();
-                $a->fieldname = $key;
-                $a->tablename = $table;
-                throw new dml_exception('ddlfieldnotexist', $a);
-            }
-            $column = $columns[$key];
-            if ($column->meta_type == 'X') {
-                //ok so the column is a text column. sorry no text columns in the where clause conditions
-                throw new dml_exception('textconditionsnotallowed', $conditions);
-            }
             if (is_int($key)) {
                 throw new dml_exception('invalidnumkey');
             }
