@@ -91,7 +91,14 @@ class mod_workshop_renderer extends plugin_renderer_base {
         }
         $o .= $this->output->container_start($classes);
         $o .= $this->output->container_start('header');
-        $o .= $this->output->heading(format_string($submission->title), 3, 'title');
+
+        $title = format_string($submission->title);
+
+        if ($this->page->url != $submission->url) {
+            $title = html_writer::link($submission->url, $title);
+        }
+
+        $o .= $this->output->heading($title, 3, 'title');
 
         if (!$anonymous) {
             $author             = new stdclass();
@@ -490,6 +497,137 @@ class mod_workshop_renderer extends plugin_renderer_base {
         return html_writer::table($table);
     }
 
+    /**
+     * Renders the feedback for the author of the submission
+     *
+     * @param workshop_feedback_author $feedback
+     * @return string HTML
+     */
+    protected function render_workshop_feedback_author(workshop_feedback_author $feedback) {
+        return $this->helper_render_feedback($feedback);
+    }
+
+    /**
+     * Renders the feedback for the reviewer of the submission
+     *
+     * @param workshop_feedback_reviewer $feedback
+     * @return string HTML
+     */
+    protected function render_workshop_feedback_reviewer(workshop_feedback_reviewer $feedback) {
+        return $this->helper_render_feedback($feedback);
+    }
+
+    /**
+     * Helper method to rendering feedback
+     *
+     * @param workshop_feedback_author|workshop_feedback_reviewer $feedback
+     * @return string HTML
+     */
+    private function helper_render_feedback($feedback) {
+
+        $o  = '';    // output HTML code
+        $o .= $this->output->container_start('feedback feedbackforauthor');
+        $o .= $this->output->container_start('header');
+        $o .= $this->output->heading(get_string('feedbackby', 'workshop', s(fullname($feedback->get_provider()))), 3, 'title');
+
+        $userpic = $this->output->user_picture($feedback->get_provider(), array('courseid' => $this->page->course->id, 'size' => 32));
+        $o .= $this->output->container($userpic, 'picture');
+        $o .= $this->output->container_end(); // end of header
+
+        $content = format_text($feedback->get_content(), $feedback->get_format(), array('overflowdiv' => true));
+        $o .= $this->output->container($content, 'content');
+
+        $o .= $this->output->container_end();
+
+        return $o;
+    }
+
+    /**
+     * Renders the full assessment
+     *
+     * @param workshop_assessment $assessment
+     * @return string HTML
+     */
+    protected function render_workshop_assessment(workshop_assessment $assessment) {
+
+        $o = ''; // output HTML code
+        $anonymous = is_null($assessment->reviewer);
+        $classes = 'assessment-full';
+        if ($anonymous) {
+            $classes .= ' anonymous';
+        }
+
+        $o .= $this->output->container_start($classes);
+        $o .= $this->output->container_start('header');
+
+        if (!empty($assessment->title)) {
+            $title = s($assessment->title);
+        } else {
+            $title = get_string('assessment', 'workshop');
+        }
+        if ($this->page->url != $assessment->url) {
+            $o .= $this->output->container(html_writer::link($assessment->url, $title), 'title');
+        } else {
+            $o .= $this->output->container($title, 'title');
+        }
+
+        if (!$anonymous) {
+            $reviewer   = $assessment->reviewer;
+            $userpic    = $this->output->user_picture($reviewer, array('courseid' => $this->page->course->id, 'size' => 32));
+
+            $userurl    = new moodle_url('/user/view.php',
+                                       array('id' => $reviewer->id, 'course' => $this->page->course->id));
+            $a          = new stdClass();
+            $a->name    = fullname($reviewer);
+            $a->url     = $userurl->out();
+            $byfullname = get_string('assessmentby', 'workshop', $a);
+            $oo         = $this->output->container($userpic, 'picture');
+            $oo        .= $this->output->container($byfullname, 'fullname');
+
+            $o .= $this->output->container($oo, 'reviewer');
+        }
+
+        if (is_null($assessment->realgrade)) {
+            $o .= $this->output->container(
+                get_string('notassessed', 'workshop'),
+                'grade nograde'
+            );
+        } else {
+            $a              = new stdClass();
+            $a->max         = $assessment->maxgrade;
+            $a->received    = $assessment->realgrade;
+            $o .= $this->output->container(
+                get_string('gradeinfo', 'workshop', $a),
+                'grade'
+            );
+
+            if (!is_null($assessment->weight) and $assessment->weight != 1) {
+                $o .= $this->output->container(
+                    get_string('weightinfo', 'workshop', $assessment->weight),
+                    'weight'
+                );
+            }
+        }
+
+        $o .= $this->output->container_start('actions');
+        foreach ($assessment->actions as $action) {
+            $o .= $this->output->single_button($action->url, $action->label, $action->method);
+        }
+        $o .= $this->output->container_end(); // actions
+
+        $o .= $this->output->container_end(); // header
+
+        if (!is_null($assessment->form)) {
+            $o .= print_collapsible_region_start('assessment-form-wrapper', uniqid('workshop-assessment'),
+                    get_string('assessmentform', 'workshop'), '', false, true);
+            $o .= $this->output->container(self::moodleform($assessment->form), 'assessment-form');
+            $o .= print_collapsible_region_end(true);
+        }
+
+        $o .= $this->output->container_end(); // main wrapper
+
+        return $o;
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // Internal rendering helper methods
@@ -725,6 +863,22 @@ class mod_workshop_renderer extends plugin_renderer_base {
     ////////////////////////////////////////////////////////////////////////////
     // Static helpers
     ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Helper method dealing with the fact we can not just fetch the output of moodleforms
+     *
+     * @param moodleform $mform
+     * @return string HTML
+     */
+    protected static function moodleform(moodleform $mform) {
+
+        ob_start();
+        $mform->display();
+        $o = ob_get_contents();
+        ob_end_clean();
+
+        return $o;
+    }
 
     /**
      * Helper function returning the n-th item of the array
