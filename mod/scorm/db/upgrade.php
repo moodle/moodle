@@ -543,6 +543,22 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2011021402, 'scorm');
     }
 
+    if ($oldversion < 2011021403) {
+        //MDL-28295 the behaviour of pop-up windows has now changed - it now loads the full Player in the window
+        //because of this, pop-up windows now include the TOC and the nav bar - disabling these for existing SCORMS
+        //as it is a change that most users won't expect.
+        //get all SCORMS that use a new window.
+        require_once($CFG->dirroot."/mod/scorm/lib.php");
+        $rs = $DB->get_recordset('scorm', array('popup' => 1), '', 'id,hidetoc,hidenav');
+        foreach ($rs as $scorm) {
+            $scorm->hidetoc = SCORM_TOC_DISABLED;
+            $scorm->hidenav = 1;
+            $DB->update_record('scorm', $scorm);
+        }
+        $rs->close();
+
+        upgrade_mod_savepoint(true, 2011021403, 'scorm');
+    }
     return true;
 }
 
