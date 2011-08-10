@@ -78,33 +78,45 @@ echo $output->heading(get_string('assessedexample', 'workshop'), 2);
 
 echo $output->render($workshop->prepare_example_submission($example));
 
+// if the reference assessment is available, display it
 if (!empty($mformreference)) {
-    echo $output->heading(get_string('assessmentreference', 'workshop'), 2);
-    $a = new stdclass();
-    $a->received = $workshop->real_grade($reference->grade);
-    $a->max = $workshop->real_grade(100);
-    echo $output->heading(get_string('gradeinfo', 'workshop' , $a), 3);
-    $mformreference->display();
+    $options = array(
+        'showreviewer'  => false,
+        'showauthor'    => false,
+        'showform'      => true,
+        'showweight'    => false,
+    );
+    $reference = $workshop->prepare_assessment($reference, $mformreference, $options);
+    $reference->title = get_string('assessmentreference', 'workshop');
+    echo $output->render($reference);
 }
 
 if ($isreviewer) {
-    echo $output->heading(get_string('assessmentbyyourself', 'workshop'), 2);
+    $options = array(
+        'showreviewer'  => true,
+        'showauthor'    => false,
+        'showform'      => true,
+        'showweight'    => false,
+    );
+    $assessment = $workshop->prepare_assessment($assessment, $mformassessment, $options);
+    $assessment->title = get_string('assessmentbyyourself', 'workshop');
+    if ($workshop->assessing_examples_allowed()) {
+        $assessment->add_action(
+            new moodle_url($workshop->exsubmission_url($example->id), array('assess' => 'on', 'sesskey' => sesskey())),
+            get_string('reassess', 'workshop')
+        );
+    }
+    echo $output->render($assessment);
+
 } elseif ($canmanage) {
-    $reviewer   = new stdclass();
-    $reviewer->firstname = $assessment->reviewerfirstname;
-    $reviewer->lastname = $assessment->reviewerlastname;
-    echo $output->heading(get_string('assessmentbyknown', 'workshop', fullname($reviewer)), 2);
+    $options = array(
+        'showreviewer'  => true,
+        'showauthor'    => false,
+        'showform'      => true,
+        'showweight'    => false,
+    );
+    $assessment = $workshop->prepare_assessment($assessment, $mformassessment, $options);
+    echo $output->render($assessment);
 }
-$a = new stdclass();
-$a->received = $workshop->real_grade($assessment->grade);
-$a->max = $workshop->real_grade(100);
-echo $output->heading(get_string('gradeinfo', 'workshop' , $a), 3);
-$mformassessment->display();
-echo $output->container_start('buttonsbar');
-if ($isreviewer and $workshop->assessing_examples_allowed()) {
-    $aurl = new moodle_url($workshop->exsubmission_url($example->id), array('assess' => 'on', 'sesskey' => sesskey()));
-    echo $output->single_button($aurl, get_string('reassess', 'workshop'), 'get');
-}
-echo $output->container_end(); // buttonsbar
 
 echo $output->footer();

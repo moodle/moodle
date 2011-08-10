@@ -864,12 +864,12 @@ function workshop_print_recent_mod_activity($activity, $courseid, $detail, $modn
             $url = new moodle_url('/user/view.php', array('id'=>$activity->user->id, 'course'=>$courseid));
             $name = fullname($activity->user);
             $link = html_writer::link($url, $name);
-            echo get_string('assessmentbyknown', 'workshop', $link);
+            echo get_string('assessmentbyfullname', 'workshop', $link);
             echo ' - '.userdate($activity->timestamp);
             echo html_writer::end_tag('div');
         } else {
             echo html_writer::start_tag('div', array('class'=>'anonymous'));
-            echo get_string('assessmentbyunknown', 'workshop');
+            echo get_string('assessment', 'workshop');
             echo ' - '.userdate($activity->timestamp);
             echo html_writer::end_tag('div');
         }

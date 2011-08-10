@@ -45,7 +45,8 @@
 
 .path-mod-workshop .submission-summary.anonymous .title,
 .path-mod-workshop .submission-summary.anonymous .author,
-.path-mod-workshop .submission-summary.anonymous .userdate {
+.path-mod-workshop .submission-summary.anonymous .userdate,
+.path-mod-workshop .submission-summary.anonymous .grade-status {
     margin: 0px 0px 0px 5px;
 }
 
@@ -309,16 +310,75 @@
 }
 
 /**
- * Assessment
+ * Assessment - full display
  */
-.path-mod-workshop .assessment-summary.graded {
+.path-mod-workshop .assessment-full {
+    border: 1px solid #ddd;
+    margin: 0px auto 1em auto;
+}
+
+.path-mod-workshop .assessment-full .header {
+    position: relative;
+    background-color: #ddd;
+    padding: 3px;
+    min-height: 35px;
+}
+
+.path-mod-workshop .assessment-full .header .title {
+    font-weight: bold;
+}
+
+.path-mod-workshop .assessment-full .header .title,
+.path-mod-workshop .assessment-full .header .reviewer,
+.path-mod-workshop .assessment-full .header .grade,
+.path-mod-workshop .assessment-full .header .weight {
+    margin: 0px 0px 0px 40px;
+}
+
+.path-mod-workshop .assessment-full.anonymous .header .title,
+.path-mod-workshop .assessment-full.anonymous .header .reviewer,
+.path-mod-workshop .assessment-full.anonymous .header .grade,
+.path-mod-workshop .assessment-full.anonymous .header .weight {
+    margin: 0px 0px 0px 5px;
+}
+
+.path-mod-workshop .assessment-full .header .reviewer .picture {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+}
+
+.path-mod-workshop .assessment-full .header .actions {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    text-align: right;
+}
+
+.path-mod-workshop .assessment-full .header .actions .singlebutton,
+.path-mod-workshop .assessment-full .header .actions .singlebutton form,
+.path-mod-workshop .assessment-full .header .actions .singlebutton form div {
+    display: inline;
+}
+
+.path-mod-workshop .assessment-full .assessment-form-wrapper {
+    margin-top: 0.5em;
+    padding: 0px 1em;
+}
+
+.path-mod-workshop .assessment-summary.graded .singlebutton input[type="submit"],
+.path-mod-workshop .example-summary.graded .singlebutton input[type="submit"] {
     background-color: #e7f1c3;
 }
 
-.path-mod-workshop .example-summary.notgraded {
+.path-mod-workshop .assessment-summary.notgraded .singlebutton input[type="submit"],
+.path-mod-workshop .example-summary.notgraded .singlebutton input[type="submit"] {
     background-color: #ffd3d9;
 }
 
+/**
+ * Assessment form
+ */
 .path-mod-workshop .assessmentform .description {
     margin: 0px 1em;
 }
@@ -393,6 +453,36 @@
  */
 #mod-workshop-editform fieldset.fgroup * {
     vertical-align: top;
+}
+
+/**
+ * Feedback
+ */
+.path-mod-workshop .feedback {
+    border: 1px solid #ddd;
+    margin: 0px auto 1em auto;
+    width: 80%;
+}
+
+.path-mod-workshop .feedback .header {
+    position: relative;
+    background-color: #ddd;
+    padding: 3px;
+    min-height: 35px;
+}
+
+.path-mod-workshop .feedback .header .title {
+    margin: 0px 0px 0px 40px;
+}
+
+.path-mod-workshop .feedback .header .picture {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+}
+
+.path-mod-workshop .feedback .content {
+    padding: 5px 10px;
 }
 
 /**
