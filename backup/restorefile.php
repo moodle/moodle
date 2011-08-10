@@ -64,7 +64,7 @@ require_capability('moodle/restore:restorecourse', $context);
 $browser = get_file_browser();
 
 // check if tmp dir exists
-$tmpdir = $CFG->dataroot . '/temp/backup';
+$tmpdir = $CFG->tempdir . '/backup';
 if (!check_dir_exists($tmpdir, true, true)) {
     throw new restore_controller_exception('cannot_create_backup_temp_dir');
 }

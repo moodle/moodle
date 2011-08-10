@@ -2463,7 +2463,7 @@ function data_preset_path($course, $userid, $shortname) {
     } else if ($userid == 0) {
         $path = $CFG->dirroot.'/mod/data/preset/'.$shortname;
     } else if ($userid < 0) {
-        $path = $CFG->dataroot.'/temp/data/'.-$userid.'/'.$shortname;
+        $path = $CFG->tempdir.'/data/'.-$userid.'/'.$shortname;
     }
 
     return $path;

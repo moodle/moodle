@@ -32,7 +32,7 @@
  */
 class restore_controller extends backup implements loggable {
 
-    protected $tempdir;   // Directory under dataroot/temp/backup awaiting restore
+    protected $tempdir;   // Directory under tempdir/backup awaiting restore
     protected $restoreid; // Unique identificator for this restore
 
     protected $courseid; // courseid where restore is going to happen
@@ -61,7 +61,7 @@ class restore_controller extends backup implements loggable {
 
     /**
      *
-     * @param string $tempdir Directory under dataroot/temp/backup awaiting restore
+     * @param string $tempdir Directory under tempdir/backup awaiting restore
      * @param int $courseid Course id where restore is going to happen
      * @param bool $interactive backup::INTERACTIVE_YES[true] or backup::INTERACTIVE_NO[false]
      * @param int $mode backup::MODE_[ GENERAL | HUB | IMPORT | SAMESITE ]

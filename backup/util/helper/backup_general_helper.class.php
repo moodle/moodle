@@ -114,7 +114,7 @@ abstract class backup_general_helper extends backup_helper {
 
         $info = new stdclass(); // Final information goes here
 
-        $moodlefile = $CFG->dataroot . '/temp/backup/' . $tempdir . '/moodle_backup.xml';
+        $moodlefile = $CFG->tempdir . '/backup/' . $tempdir . '/moodle_backup.xml';
         if (!file_exists($moodlefile)) { // Shouldn't happen ever, but...
             throw new backup_helper_exception('missing_moodle_backup_xml_file', $moodlefile);
         }

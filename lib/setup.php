@@ -97,9 +97,9 @@ if (!isset($CFG->admin)) {   // Just in case it isn't defined in config.php
 // Set up some paths.
 $CFG->libdir = $CFG->dirroot .'/lib';
 
-// Allow overriding of tempdir but be backwards compatible with dataroot/temp
+// Allow overriding of tempdir but be backwards compatible with tempdir
 if (!isset($CFG->tempdir)) {
-    $CFG->tempdir = "$CFG->dataroot/temp";
+    $CFG->tempdir = "$CFG->tempdir";
 }
 
 // The current directory in PHP version 4.3.0 and above isn't necessarily the

@@ -19,7 +19,7 @@
             global $CFG;
 
             // construct directory structure
-            $this->temp_dir = $CFG->dataroot . "/temp/latex";
+            $this->temp_dir = $CFG->tempdir . "/latex";
             make_upload_directory('temp/latex');
         }
 

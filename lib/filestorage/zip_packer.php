@@ -57,8 +57,8 @@ class zip_packer extends file_packer {
 
         $fs = get_file_storage();
 
-        check_dir_exists($CFG->dataroot.'/temp/zip');
-        $tmpfile = tempnam($CFG->dataroot.'/temp/zip', 'zipstor');
+        check_dir_exists($CFG->tempdir.'/zip');
+        $tmpfile = tempnam($CFG->tempdir.'/zip', 'zipstor');
 
         if ($result = $this->archive_to_pathname($files, $tmpfile)) {
             if ($file = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename)) {
@@ -282,7 +282,7 @@ class zip_packer extends file_packer {
             return $archivefile->extract_to_pathname($this, $contextid, $component, $filearea, $itemid, $pathbase, $userid);
         }
 
-        check_dir_exists($CFG->dataroot.'/temp/zip');
+        check_dir_exists($CFG->tempdir.'/zip');
 
         $pathbase = trim($pathbase, '/');
         $pathbase = ($pathbase === '') ? '/' : '/'.$pathbase.'/';
@@ -360,7 +360,7 @@ class zip_packer extends file_packer {
 
             } else {
                 // large file, would not fit into memory :-(
-                $tmpfile = tempnam($CFG->dataroot.'/temp/zip', 'unzip');
+                $tmpfile = tempnam($CFG->tempdir.'/zip', 'unzip');
                 if (!$fp = fopen($tmpfile, 'wb')) {
                     @unlink($tmpfile);
                     $processed[$name] = 'Can not write temp file'; // TODO: localise

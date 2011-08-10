@@ -1319,7 +1319,7 @@ function upgrade_language_pack($lang='') {
     upgrade_started(false);
     echo $OUTPUT->heading(get_string('langimport', 'admin').': '.$lang);
 
-    @mkdir ($CFG->dataroot.'/temp/');    //make it in case it's a fresh install, it might not be there
+    @mkdir ($CFG->tempdir.'/');    //make it in case it's a fresh install, it might not be there
     @mkdir ($CFG->dataroot.'/lang/');
 
     require_once($CFG->libdir.'/componentlib.class.php');

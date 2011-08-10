@@ -195,7 +195,7 @@ class backup_step_test extends UnitTestCase {
     function test_backup_structure_step() {
         global $CFG;
 
-        $file = $CFG->dataroot . '/temp/test/test_backup_structure_step.txt';
+        $file = $CFG->tempdir . '/test/test_backup_structure_step.txt';
         // Remove the test dir and any content
         @remove_dir(dirname($file));
         // Recreate test dir
@@ -295,7 +295,7 @@ class mock_backup_task_basepath extends backup_task {
 
     public function get_taskbasepath() {
         global $CFG;
-        return $CFG->dataroot . '/temp/test';
+        return $CFG->tempdir . '/test';
     }
 }
 

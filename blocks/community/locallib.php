@@ -91,7 +91,7 @@ class block_community_manager {
         $filename = md5(time() . '-' . $course->id . '-'. $USER->id . '-'. random_string(20));
 
         $url  = new moodle_url($course->huburl.'/local/hub/webservice/download.php', $params);
-        $path = $CFG->dataroot.'/temp/backup/'.$filename.".mbz";
+        $path = $CFG->tempdir.'/backup/'.$filename.".mbz";
         $fp = fopen($path, 'w');
         $curlurl = $course->huburl.'/local/hub/webservice/download.php?filetype='
                 .HUB_BACKUP_FILE_TYPE.'&courseid='.$course->id;
@@ -122,7 +122,7 @@ class block_community_manager {
         if (!$fs->file_exists($record->contextid, $record->component,
                 $record->filearea, 0, $record->filepath, $record->filename)) {
             $fs->create_file_from_pathname($record,
-                    $CFG->dataroot.'/temp/backup/'.$filename.".mbz");
+                    $CFG->tempdir.'/backup/'.$filename.".mbz");
         }
 
         $filenames = array();

@@ -22,8 +22,8 @@
 
     if (!$ok or !confirm_sesskey()) {
         $message = '<br /><br />';
-        $message .= $CFG->dataroot.'/temp/olson.txt<br />';
-        $message .= $CFG->dataroot.'/temp/timezone.txt<br />';
+        $message .= $CFG->tempdir.'/olson.txt<br />';
+        $message .= $CFG->tempdir.'/timezone.txt<br />';
         $message .= '<a href="http://download.moodle.org/timezone/">http://download.moodle.org/timezone/</a><br />';
         $message .= '<a href="'.$CFG->wwwroot.'/lib/timezone.txt">'.$CFG->dirroot.'/lib/timezone.txt</a><br />';
         $message .= '<br />';
@@ -43,7 +43,7 @@
 
 /// First, look for an Olson file locally
 
-    $source = $CFG->dataroot.'/temp/olson.txt';
+    $source = $CFG->tempdir.'/olson.txt';
     if (!$importdone and is_readable($source)) {
         if ($timezones = olson_to_timezones($source)) {
             update_timezone_records($timezones);
@@ -53,7 +53,7 @@
 
 /// Next, look for a CSV file locally
 
-    $source = $CFG->dataroot.'/temp/timezone.txt';
+    $source = $CFG->tempdir.'/timezone.txt';
     if (!$importdone and is_readable($source)) {
         if ($timezones = get_records_csv($source, 'timezone')) {
             update_timezone_records($timezones);
@@ -64,14 +64,14 @@
 /// Otherwise, let's try moodle.org's copy
     $source = 'http://download.moodle.org/timezone/';
     if (!$importdone && ($content=download_file_content($source))) {
-        if ($file = fopen($CFG->dataroot.'/temp/timezone.txt', 'w')) {            // Make local copy
+        if ($file = fopen($CFG->tempdir.'/timezone.txt', 'w')) {            // Make local copy
             fwrite($file, $content);
             fclose($file);
-            if ($timezones = get_records_csv($CFG->dataroot.'/temp/timezone.txt', 'timezone')) {  // Parse it
+            if ($timezones = get_records_csv($CFG->tempdir.'/timezone.txt', 'timezone')) {  // Parse it
                 update_timezone_records($timezones);
                 $importdone = $source;
             }
-            unlink($CFG->dataroot.'/temp/timezone.txt');
+            unlink($CFG->tempdir.'/timezone.txt');
         }
     }
 

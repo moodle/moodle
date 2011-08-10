@@ -976,7 +976,7 @@ function scorm_extend_navigation($navigation, $course, $module, $cm) {
 function scorm_debug_log_filename($type, $scoid) {
     global $CFG, $USER;
 
-    $logpath = $CFG->dataroot.'/temp/scormlogs';
+    $logpath = $CFG->tempdir.'/scormlogs';
     $logfile = $logpath.'/'.$type.'debug_'.$USER->id.'_'.$scoid.'.log';
     return $logfile;
 }

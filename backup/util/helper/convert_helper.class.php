@@ -85,7 +85,7 @@ abstract class convert_helper {
     public static function detect_moodle2_format($tempdir) {
         global $CFG;
 
-        $dirpath    = $CFG->dataroot . '/temp/backup/' . $tempdir;
+        $dirpath    = $CFG->tempdir . '/backup/' . $tempdir;
         $filepath   = $dirpath . '/moodle_backup.xml';
 
         if (!is_dir($dirpath)) {

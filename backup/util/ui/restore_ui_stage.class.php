@@ -153,7 +153,7 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage {
     }
     public function process() {
         global $CFG;
-        if (!file_exists("$CFG->dataroot/temp/backup/".$this->filename)) {
+        if (!file_exists("$CFG->tempdir/backup/".$this->filename)) {
             throw new restore_ui_exception('invalidrestorefile');
         }
         $outcome = $this->extract_file_to_dir();
@@ -168,7 +168,7 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage {
         $this->filepath = restore_controller::get_tempdir_name($this->contextid, $USER->id);
 
         $fb = get_file_packer();
-        return ($fb->extract_to_pathname("$CFG->dataroot/temp/backup/".$this->filename, "$CFG->dataroot/temp/backup/$this->filepath/"));
+        return ($fb->extract_to_pathname("$CFG->tempdir/backup/".$this->filename, "$CFG->tempdir/backup/$this->filepath/"));
     }
 
     /**
@@ -236,7 +236,7 @@ class restore_ui_stage_destination extends restore_ui_independent_stage {
     }
     public function process() {
         global $CFG, $DB;
-        if (!file_exists("$CFG->dataroot/temp/backup/".$this->filepath) || !is_dir("$CFG->dataroot/temp/backup/".$this->filepath)) {
+        if (!file_exists("$CFG->tempdir/backup/".$this->filepath) || !is_dir("$CFG->tempdir/backup/".$this->filepath)) {
             throw new restore_ui_exception('invalidrestorepath');
         }
         if (optional_param('searchcourses', false, PARAM_BOOL)) {

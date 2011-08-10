@@ -91,7 +91,7 @@ if ($id) {
 }
 
 if ($importcode = optional_param('importcode', '', PARAM_FILE)) {
-    $filename = $CFG->dataroot.'/temp/gradeimport/cvs/'.$USER->id.'/'.$importcode;
+    $filename = $CFG->tempdir.'/gradeimport/cvs/'.$USER->id.'/'.$importcode;
     $fp = fopen($filename, "r");
     $headers = fgets($fp, GRADE_CSV_LINE_LENGTH);
     $header = explode($csv_delimiter, $headers);
@@ -164,7 +164,7 @@ if ($formdata = $mform->get_data()) {
 } else if ($formdata = $mform2->get_data()) {
 
     $importcode = clean_param($formdata->importcode, PARAM_FILE);
-    $filename = $CFG->dataroot.'/temp/gradeimport/cvs/'.$USER->id.'/'.$importcode;
+    $filename = $CFG->tempdir.'/gradeimport/cvs/'.$USER->id.'/'.$importcode;
 
     if (!file_exists($filename)) {
         print_error('cannotuploadfile');

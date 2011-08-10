@@ -219,7 +219,7 @@ class xml_output_test extends UnitTestCase {
     function test_file_xml_output() {
         global $CFG;
 
-        $file = $CFG->dataroot . '/temp/test/test_file_xml_output.txt';
+        $file = $CFG->tempdir . '/test/test_file_xml_output.txt';
         // Remove the test dir and any content
         @remove_dir(dirname($file));
         // Recreate test dir
@@ -232,7 +232,7 @@ class xml_output_test extends UnitTestCase {
         $this->assertTrue($xo instanceof xml_output);
 
         // Try to init file in (near) impossible path
-        $file = $CFG->dataroot . '/temp/test_azby/test_file_xml_output.txt';
+        $file = $CFG->tempdir . '/test_azby/test_file_xml_output.txt';
         $xo = new file_xml_output($file);
         try {
             $xo->start();
@@ -243,7 +243,7 @@ class xml_output_test extends UnitTestCase {
         }
 
         // Try to init file already existing
-        $file = $CFG->dataroot . '/temp/test/test_file_xml_output.txt';
+        $file = $CFG->tempdir . '/test/test_file_xml_output.txt';
         file_put_contents($file, 'createdtobedeleted'); // create file manually
         $xo = new file_xml_output($file);
         try {
@@ -256,7 +256,7 @@ class xml_output_test extends UnitTestCase {
         unlink($file); // delete file
 
         // Send some output and check
-        $file = $CFG->dataroot . '/temp/test/test_file_xml_output.txt';
+        $file = $CFG->tempdir . '/test/test_file_xml_output.txt';
         $xo = new file_xml_output($file);
         $xo->start();
         $xo->write('first text');
@@ -266,7 +266,7 @@ class xml_output_test extends UnitTestCase {
 
         // With buffer of 4 bytes, send 3 contents of 3 bytes each
         // so we force both buffering and last write on stop
-        $file = $CFG->dataroot . '/temp/test/test_file_xml_output.txt';
+        $file = $CFG->tempdir . '/test/test_file_xml_output.txt';
         $xo = new file_xml_output($file);
         $xo->set_buffersize(5);
         $xo->start();
@@ -278,7 +278,7 @@ class xml_output_test extends UnitTestCase {
         unlink($file); // delete file
 
         // Write some line feeds, tabs and friends
-        $file = $CFG->dataroot . '/temp/test/test_file_xml_output.txt';
+        $file = $CFG->tempdir . '/test/test_file_xml_output.txt';
         $string = "\n\r\tcrazy test\n\r\t";
         $xo = new file_xml_output($file);
         $xo->start();
@@ -288,7 +288,7 @@ class xml_output_test extends UnitTestCase {
         unlink($file); // delete file
 
         // Write some UTF-8 chars
-        $file = $CFG->dataroot . '/temp/test/test_file_xml_output.txt';
+        $file = $CFG->tempdir . '/test/test_file_xml_output.txt';
         $string = 'áéíóú';
         $xo = new file_xml_output($file);
         $xo->start();

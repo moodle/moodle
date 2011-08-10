@@ -95,7 +95,7 @@ class textlib {
         // to forward slashed because Typo3 requires it.
         define ('PATH_t3lib', str_replace('\\','/',$CFG->libdir.'/typo3/'));
         define ('PATH_typo3', str_replace('\\','/',$CFG->libdir.'/typo3/'));
-        define ('PATH_site', str_replace('\\','/',$CFG->dataroot.'/temp/'));
+        define ('PATH_site', str_replace('\\','/',$CFG->tempdir.'/'));
         define ('TYPO3_OS', stristr(PHP_OS,'win')&&!stristr(PHP_OS,'darwin')?'WIN':'');
 
         $typo3cs = new t3lib_cs();
