@@ -283,7 +283,7 @@ class site_registration_form extends moodleform {
         $mform->addHelpButton('urlstring', 'siteurl', 'hub');
 
         $languages = get_string_manager()->get_list_of_languages();
-        textlib_get_instance()->asort($languages);
+        collatorlib::asort($languages);
         $mform->addElement('select', 'language', get_string('sitelang', 'hub'),
                 $languages);
         $mform->setType('language', PARAM_ALPHANUMEXT);

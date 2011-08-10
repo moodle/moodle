@@ -250,7 +250,7 @@
         $tablerows[] = array(strip_tags($strblockname), $row); // first element will be used for sorting
     }
 
-    textlib_get_instance()->asort($tablerows);
+    collatorlib::asort($tablerows);
     foreach ($tablerows as $row) {
         $table->add_data($row[1]);
     }

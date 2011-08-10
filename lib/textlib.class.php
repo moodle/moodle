@@ -550,18 +550,243 @@ class textlib {
     /**
      * Locale aware sorting, the key associations are kept, values are sorted alphabetically.
      *
-     * Note: this function is using current moodle locale.
-     *
-     * @param array $arr array to be sorted
-     * @return void, modifies parameter
+     * @param array $arr array to be sorted (reference)
+     * @param int $sortflag One of Collator::SORT_REGULAR, Collator::SORT_NUMERIC, Collator::SORT_STRING
+     * @return void modifies parameter
      */
-    public static function asort(array &$arr) {
-        if (function_exists('collator_asort')) {
-            if ($coll = collator_create(get_string('locale', 'langconfig'))) {
-                collator_asort($coll, $arr);
-                return;
+    public static function asort(array &$arr, $sortflag = null) {
+        debugging('textlib::asort has been superseeded by collatorlib::asort please upgrade your code to use that', DEBUG_DEVELOPER);
+        collatorlib::asort($arr, $sortflag);
+    }
+}
+
+/**
+ * A collator class with static methods that can be used for sorting.
+ *
+ * @package    core
+ * @subpackage lib
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class collatorlib {
+
+    /** @var Collator|false|null **/
+    protected static $collator = null;
+
+    /** @var string|null The locale that was used in instantiating the current collator **/
+    protected static $locale = null;
+
+    /**
+     * Ensures that a collator is available and created
+     *
+     * @return bool Returns true if collation is available and ready
+     */
+    protected static function ensure_collator_available() {
+        global $CFG;
+
+        $locale = get_string('locale', 'langconfig');
+        if (is_null(self::$collator) || $locale != self::$locale) {
+            self::$collator = false;
+            self::$locale = $locale;
+            if (class_exists('Collator', false)) {
+                $collator = new Collator($locale);
+                if (!empty($collator) && $collator instanceof Collator) {
+                    // Check for non fatal error messages. This has to be done immediately
+                    // after instantiation as any futher calls to collation will cause
+                    // it to reset to 0 again (or another error code if one occured)
+                    $errorcode = $collator->getErrorCode();
+                    // Check for an error code, 0 means no error occured
+                    if ($errorcode !== 0) {
+                        // Get the actual locale being used, e.g. en, he, zh
+                        $localeinuse = $collator->getLocale(Locale::ACTUAL_LOCALE);
+                        // Check for the common fallback wardning error code. If this occured
+                        // there is normally little to worry about. (U_USING_FALLBACK_WARNING)
+                        if ($errorcode === -128) {
+                            // Check if the local in use is anything like the locale we asked for
+                            if (strpos($locale, $localeinuse) !== 0) {
+                                // The locale we asked for is completely different to the locale
+                                // we have recieved, let the user know via debugging
+                                debugging('Invalid locale, falling back to the system default locale "'.$collator->getLocale(Locale::VALID_LOCALE).'"');
+                            } else {
+                                // Nothing to do here, this is expected!
+                                // The Moodle locale setting isn't what the collator expected but
+                                // it is smart enough to match the first characters of our locale
+                                // to find the correct locale
+                                // debugging('Invalid locale, falling back to closest match "'.$localeinuse.'" which may not be the exact locale');
+                            }
+                        } else {
+                            // We've recieved some other sort of non fatal warning - let the
+                            // user know about it via debugging.
+                            debugging('Locale collator generated warnings (not fatal) "'.$collator->getErrorMessage().'" falling back to '.$collator->getLocale(Locale::VALID_LOCALE));
+                        }
+                    }
+                    // Store the collator object now that we can be sure it is in a workable condition.
+                    self::$collator = $collator;
+                } else {
+                    // Fatal error while trying to instantiate the collator... who know what went wrong.
+                    debugging('Error instantiating collator: ['.collator_get_error_code($collator).']'.collator_get_error_message($collator));
+                }
             }
         }
+        return (self::$collator instanceof Collator);
+    }
+
+    /**
+     * Locale aware sorting, the key associations are kept, values are sorted alphabetically.
+     *
+     * @param array $arr array to be sorted (reference)
+     * @param int $sortflag One of Collator::SORT_REGULAR, Collator::SORT_NUMERIC, Collator::SORT_STRING
+     * @return void modifies parameter
+     */
+    public static function asort(array &$arr, $sortflag = null) {
+        if (self::ensure_collator_available()) {
+            if (!isset($sortflag)) {
+                $sortflag = Collator::SORT_REGULAR;
+            }
+            self::$collator->asort($arr, $sortflag);
+            return;
+        }
         asort($arr, SORT_LOCALE_STRING);
+    }
+
+    /**
+     * Locale aware comparison of two strings.
+     *
+     * Returns:
+     *   1 if str1 is greater than str2
+     *   0 if str1 is equal to str2
+     *  -1 if str1 is less than str2
+     *
+     * @return int
+     */
+    public static function compare($str1, $str2) {
+        if (self::ensure_collator_available()) {
+            return self::$collator->compare($str1, $str2);
+        }
+        return strcmp($str1, $str2);
+    }
+
+    /**
+     * Locale aware sort of objects by a property in common to all objects
+     *
+     * @param array $objects An array of objects to sort (handled by reference)
+     * @param string $property The property to use for comparison
+     * @return bool True on success
+     */
+    public static function asort_objects_by_property(array &$objects, $property) {
+        $comparison = new collatorlib_property_comparison($property);
+        return uasort($objects, array($comparison, 'compare'));
+    }
+
+    /**
+     * Locale aware sort of objects by a method in common to all objects
+     *
+     * @param array $objects An array of objects to sort (handled by reference)
+     * @param string $method The method to call to generate a value for comparison
+     * @return bool True on success
+     */
+    public static function asort_objects_by_method(array &$objects, $method) {
+        $comparison = new collatorlib_method_comparison($method);
+        return uasort($objects, array($comparison, 'compare'));
+    }
+}
+
+/**
+ * Abstract class to aid the sorting of objects with respect to proper language
+ * comparison using collator
+ *
+ * @package    core
+ * @subpackage lib
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class collatorlib_comparison {
+    /**
+     * This function will perform the actual comparison of values
+     * It must be overridden by the deriving class.
+     *
+     * Returns:
+     *   1 if str1 is greater than str2
+     *   0 if str1 is equal to str2
+     *  -1 if str1 is less than str2
+     *
+     * @param mixed $a The first something to compare
+     * @param mixed $b The second something to compare
+     * @return int
+     */
+    public abstract function compare($a, $b);
+}
+
+/**
+ * A comparison helper for comparing properties of two objects
+ *
+ * @package    core
+ * @subpackage lib
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class collatorlib_property_comparison extends collatorlib_comparison {
+
+    /** @var string The property to sort by **/
+    protected $property;
+
+    /**
+     * @param string $property
+     */
+    public function __construct($property) {
+        $this->property = $property;
+    }
+
+    /**
+     * Returns:
+     *   1 if str1 is greater than str2
+     *   0 if str1 is equal to str2
+     *  -1 if str1 is less than str2
+     *
+     * @param mixed $obja The first object to compare
+     * @param mixed $objb The second object to compare
+     * @return int
+     */
+    public function compare($obja, $objb) {
+        $resulta = $obja->{$this->property};
+        $resultb = $objb->{$this->property};
+        return collatorlib::compare($resulta, $resultb);
+    }
+}
+
+/**
+ * A comparison helper for comparing the result of a method on two objects
+ *
+ * @package    core
+ * @subpackage lib
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class collatorlib_method_comparison extends collatorlib_comparison {
+
+    /** @var string The method to use for comparison **/
+    protected $method;
+
+    /**
+     * @param string $method The method to call against each object
+     */
+    public function __construct($method) {
+        $this->method = $method;
+    }
+
+    /**
+     * Returns:
+     *   1 if str1 is greater than str2
+     *   0 if str1 is equal to str2
+     *  -1 if str1 is less than str2
+     *
+     * @param mixed $obja The first object to compare
+     * @param mixed $objb The second object to compare
+     * @return int
+     */
+    public function compare($obja, $objb) {
+        $resulta = $obja->{$this->method}();
+        $resultb = $objb->{$this->method}();
+        return collatorlib::compare($resulta, $resultb);
     }
 }

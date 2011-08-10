@@ -1228,7 +1228,7 @@ function get_import_export_formats($type) {
         }
     }
 
-    textlib_get_instance()->asort($fileformatnames);
+    collatorlib::asort($fileformatnames);
     return $fileformatnames;
 }
 
