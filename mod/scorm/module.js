@@ -120,7 +120,7 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
                     var cwidth = scormplayerdata.cwidth;
                     var cheight = scormplayerdata.cheight;
                     var poptions = scormplayerdata.popupoptions;
-                    scorm_openpopup("loadSCO.php?" + node.title, window_name, poptions, cwidth, cheight);
+                    scorm_openpopup(M.cfg.wwwroot + "/mod/scorm/loadSCO.php?" + node.title, window_name, poptions, cwidth, cheight);
                 } else {
                     content.replaceChild(obj, old);
                 }
