@@ -1246,13 +1246,13 @@ class question_bank_view {
         echo "</div>\n";
     }
 
-    protected function display_options($recurse = 1, $showhidden = false, $showquestiontext = false) {
+    protected function display_options($recurse, $showhidden, $showquestiontext) {
         echo '<form method="get" action="edit.php" id="displayoptions">';
         echo "<fieldset class='invisiblefieldset'>";
         echo html_writer::input_hidden_params($this->baseurl, array('recurse', 'showhidden', 'showquestiontext'));
-        $this->display_category_form_checkbox('recurse', get_string('includesubcategories', 'question'));
-        $this->display_category_form_checkbox('showhidden', get_string('showhidden', 'question'));
-        $this->display_category_form_checkbox('qbshowtext', get_string('showquestiontext', 'question'));
+        $this->display_category_form_checkbox('recurse', $recurse, get_string('includesubcategories', 'question'));
+        $this->display_category_form_checkbox('showhidden', $showhidden, get_string('showhidden', 'question'));
+        $this->display_category_form_checkbox('qbshowtext', $showquestiontext, get_string('showquestiontext', 'question'));
         echo '<noscript><div class="centerpara"><input type="submit" value="'. get_string('go') .'" />';
         echo '</div></noscript></fieldset></form>';
     }
@@ -1260,10 +1260,10 @@ class question_bank_view {
     /**
      * Print a single option checkbox. Used by the preceeding.
      */
-    protected function display_category_form_checkbox($name, $label) {
+    protected function display_category_form_checkbox($name, $value, $label) {
         echo '<div><input type="hidden" id="' . $name . '_off" name="' . $name . '" value="0" />';
         echo '<input type="checkbox" id="' . $name . '_on" name="' . $name . '" value="1"';
-        if (optional_param($name, false, PARAM_BOOL)) {
+        if ($value) {
             echo ' checked="checked"';
         }
         echo ' onchange="getElementById(\'displayoptions\').submit(); return true;" />';
