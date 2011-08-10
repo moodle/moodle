@@ -45,7 +45,7 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
     image_not_found();
 }
 
-$candidatelocation = "$CFG->dataroot/cache/theme/$themename/pix/$component";
+$candidatelocation = "$CFG->cachedir/theme/$themename/pix/$component";
 
 if ($rev > -1) {
     if (file_exists("$candidatelocation/$image.error")) {

@@ -92,7 +92,7 @@ function rss_print_link($contextid, $userid, $componentname, $id, $tooltiptext='
 function rss_delete_file($componentname, $instance) {
     global $CFG;
 
-    $dirpath = "$CFG->dataroot/cache/rss/$componentname";
+    $dirpath = "$CFG->cachedir/rss/$componentname";
     if (is_dir($dirpath)) {
         $dh  = opendir($dirpath);
         while (false !== ($filename = readdir($dh))) {
@@ -170,7 +170,7 @@ function rss_save_file($componentname, $filename, $contents, $expandfilename=tru
 
 function rss_get_file_full_name($componentname, $filename) {
     global $CFG;
-    return "$CFG->dataroot/cache/rss/$componentname/$filename.xml";
+    return "$CFG->cachedir/rss/$componentname/$filename.xml";
 }
 
 function rss_get_file_name($instance, $sql) {

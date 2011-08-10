@@ -1370,7 +1370,7 @@ function purge_all_caches() {
     get_string_manager()->reset_caches();
 
     // purge all other caches: rss, simplepie, etc.
-    remove_dir($CFG->dataroot.'/cache', true);
+    remove_dir($CFG->cachedir.'', true);
 
     // make sure cache dir is writable, throws exception if not
     make_upload_directory('cache');
@@ -5685,7 +5685,7 @@ function get_string_manager($forcereload=false) {
         if (empty($CFG->early_install_lang)) {
 
             if (empty($CFG->langcacheroot)) {
-                $langcacheroot = $CFG->dataroot . '/cache/lang';
+                $langcacheroot = $CFG->cachedir . '/lang';
             } else {
                 $langcacheroot = $CFG->langcacheroot;
             }
@@ -5697,7 +5697,7 @@ function get_string_manager($forcereload=false) {
             }
 
             if (empty($CFG->langmenucachefile)) {
-                $langmenucache = $CFG->dataroot . '/cache/languages';
+                $langmenucache = $CFG->cachedir . '/languages';
             } else {
                 $langmenucache = $CFG->langmenucachefile;
             }

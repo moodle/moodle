@@ -88,7 +88,7 @@ class moodle_simplepie extends SimplePie
     private static function get_cache_directory() {
         global $CFG;
 
-        return $CFG->dataroot.'/cache/simplepie/';
+        return $CFG->cachedir.'/simplepie/';
     }
 
     /**

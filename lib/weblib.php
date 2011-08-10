@@ -1187,7 +1187,7 @@ function reset_text_filters_cache() {
     global $CFG, $DB;
 
     $DB->delete_records('cache_text');
-    $purifdir = $CFG->dataroot.'/cache/htmlpurifier';
+    $purifdir = $CFG->cachedir.'/htmlpurifier';
     remove_dir($purifdir, true);
 }
 
@@ -1514,7 +1514,7 @@ function purify_html($text, $options = array()) {
     if (empty($purifiers[$type])) {
 
         // make sure the serializer dir exists, it should be fine if it disappears later during cache reset
-        $cachedir = $CFG->dataroot.'/cache/htmlpurifier';
+        $cachedir = $CFG->cachedir.'/htmlpurifier';
         check_dir_exists($cachedir);
 
         require_once $CFG->libdir.'/htmlpurifier/HTMLPurifier.safe-includes.php';

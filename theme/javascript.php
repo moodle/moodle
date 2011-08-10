@@ -46,7 +46,7 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
     die('Theme was not found, sorry.');
 }
 
-$candidate = "$CFG->dataroot/cache/theme/$themename/javascript_$type.js";
+$candidate = "$CFG->cachedir/theme/$themename/javascript_$type.js";
 
 if ($rev > -1 and file_exists($candidate)) {
     if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {

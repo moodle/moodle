@@ -350,7 +350,7 @@ $CFG->admin = 'admin';
 // If $CFG->langstringcache is enabled (which should always be in production
 // environment), Moodle keeps aggregated strings in its own internal format
 // optimised for performance. By default, this on-disk cache is created in
-// $CFG->dataroot/cache/lang. In cluster environment, you may wish to specify
+// $CFG->cachedir/lang. In cluster environment, you may wish to specify
 // an alternative location of this cache so that each web server in the cluster
 // uses its own local cache and does not need to access the shared dataroot.
 // Make sure that the web server process has write permission to this location
