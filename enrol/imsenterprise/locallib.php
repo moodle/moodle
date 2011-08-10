@@ -82,3 +82,46 @@ class imsenterprise_roles {
 
 
 }  // class
+
+class imsenterprise_names {
+    private $imsnames;
+    private $coursenames;
+
+    function __construct() {
+        $this->imsnames = array(
+        'long'=>'long', 
+        'short'=>'short', 
+        'full'=>'full', 
+        'coursecode'=>'coursecode',
+	);
+        $this->coursenames = array('fullname', 'shortname', 'summary');
+    }
+
+    function get_imsnames() {
+        return $this->imsnames;
+    }
+
+    function get_coursenames() {
+        return $this->coursenames;
+    }
+
+    /**
+    * This function is only used when first setting up the plugin, to
+    * decide which name assignments to recommend by default.
+    */
+    function determine_default_namemapping($coursename) {
+        switch($coursename) {
+            case 'fullname':
+                $imsname = 'short';
+                break;
+            case 'shortname':
+                $imsname = 'coursecode';
+                break;
+            default:
+                return 'ignore'; // Zero for no match
+        }
+        return $imsname;
+    }
+
+
+}  // class

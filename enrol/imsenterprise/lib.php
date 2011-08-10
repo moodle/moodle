@@ -97,6 +97,8 @@ function cron() {
 
         // Make sure we understand how to map the IMS-E roles to Moodle roles
         $this->load_role_mappings();
+        // Make sure we understand how to map the IMS-E course names to Moodle course names
+        $this->load_course_mappings();
 
         $md5 = md5_file($filename); // NB We'll write this value back to the database at the end of the cron
         $filemtime = filemtime($filename);
@@ -377,13 +379,13 @@ function process_group_tag($tagcontents) {
                         // If long and ID exist, then map long to long, then give short the ID's value.
                         $group->shortname = $coursecode;
                     }
+                    $group->full = format_text($group->full, FORMAT_HTML);
+
                     // Create the (hidden) course(s) if not found
                     $courseconfig = get_config('moodlecourse'); // Load Moodle Course shell defaults
                     $course = new stdClass();
-                    $course->fullname = $group->longname;
-                    $course->shortname = $group->shortname;
-                    if (!empty($group->full)) {
-                        $course->summary = format_text($group->full, FORMAT_HTML);
+                    foreach ($this->coursemappings as $coursename => $imsname) {
+                        $course->$coursename = $group->$imsname;
                     }
                     $course->idnumber = $coursecode;
                     $course->format = $courseconfig->format;
@@ -792,6 +794,23 @@ function load_role_mappings() {
 }
 
     /**
+     * Load the name mappings (from the config), so we can easily refer to
+     * how an IMS-E course properties corresponds to a Moodle course properties 
+     */
+    function load_course_mappings() {
+        require_once('locallib.php');
+
+        $imsnames = new imsenterprise_names();
+        $coursenames = $imsnames->get_coursenames();
+        $imsnames = $imsnames->get_imsnames();
+
+        $this->coursemappings = array();
+        foreach($coursenames as $coursename) {
+            $this->coursemappings[$coursename] = $this->get_config('imsrolemap' . $coursename);
+        }
+    }
+
+    /**
      * Called whenever anybody tries (from the normal interface) to remove a group
      * member which is registered as being created by this component. (Not called
      * when deleting an entire group or course at once.)
@@ -803,6 +822,7 @@ function load_role_mappings() {
     function enrol_imsenterprise_allow_group_member_remove($itemid, $groupid, $userid) {
         return false;
     }
+
 
 } // end of class
 
