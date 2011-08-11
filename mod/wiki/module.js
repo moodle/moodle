@@ -77,6 +77,42 @@ M.mod_wiki.history = function(Y, args) {
     }
 }
 
+M.mod_wiki.deleteversion = function(Y, args) {
+    var fromversion = false;
+    var toversion = false;
+    var radio  = document.getElementsByName('fromversion');
+    var radio2 = document.getElementsByName('toversion');
+    var length = radio.length;
+    //version to should be more then version from
+    for (var i = 0; i < radio.length; i++) {
+        //if from-version is selected then disable all to-version options after that.
+        if (fromversion) {
+            radio2[i].disabled = true;
+        } else {
+            radio2[i].disabled = false;
+        }
+        //check when to-version option is selected
+        if (radio2[i].checked) {
+            toversion = true;
+        }
+        //make sure to-version should be >= from-version
+        if (radio[i].checked) {
+            fromversion = true;
+            if (!toversion) {
+                radio2[i].checked = true;
+            }
+        }
+    }
+    //avoid selecting first and last version
+    if (radio[0].checked && radio2[length-1].checked) {
+        radio2[length - 2].checked = true;
+    } else if(radio[length - 1].checked && radio2[0].checked) {
+        radio2[1].checked = true;
+        radio2[0].disabled = true;
+        toversion = true;
+    }
+}
+
 M.mod_wiki.init_tree = function(Y, expand_all, htmlid) {
     Y.use('yui2-treeview', function(Y) {
         var tree = new YAHOO.widget.TreeView(htmlid);
