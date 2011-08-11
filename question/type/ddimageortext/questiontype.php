@@ -72,6 +72,10 @@ class qtype_ddimagetoimage extends question_type {
                                                     $dropzonedata->xleft, $dropzonedata->ytop);
     }
 
+    protected function make_hint($hint) {
+        return question_hint_with_parts::load_from_record($hint);
+    }
+
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
         $question->shufflechoices = $questiondata->options->shuffleanswers;

@@ -30,12 +30,22 @@ require_once($CFG->dirroot . '/question/type/gapselect/questionbase.php');
 
 
 /**
- * Represents a drag-and-drop words into sentences question.
+ * Represents a drag-and-drop images to image question.
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddimagetoimage_question extends qtype_gapselect_question_base {
+    public function clear_wrong_from_response(array $response) {
+        foreach ($this->places as $place => $notused) {
+            if (array_key_exists($this->field($place), $response) &&
+                    $response[$this->field($place)] != $this->get_right_choice_for($place)) {
+                $response[$this->field($place)] = '0';
+            }
+        }
+        return $response;
+    }
+
     public function get_right_choice_for($placeno) {
         $place = $this->places[$placeno];
         foreach ($this->choiceorder[$place->group] as $choicekey => $choiceid) {

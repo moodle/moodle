@@ -38,15 +38,21 @@ require_once($CFG->dirroot . '/question/type/gapselect/rendererbase.php');
 class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_renderer {
 
 
-    public function clear_wrong(question_attempt $qa, $reallyclear = true) {
+    public function clear_wrong(question_attempt $qa) {
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
 
-        if (!empty($response) && $reallyclear) {
+        if (!empty($response)) {
             $cleanresponse = $question->clear_wrong_from_response($response);
         } else {
             $cleanresponse = $response;
         }
+        $cleanresponsehtml = '';
+        foreach ($cleanresponse as $fieldname => $value) {
+            list (, $html) = $this->hidden_field_for_qt_var($qa, $fieldname, $value);
+            $cleanresponsehtml .= $html;
+        }
+        return $cleanresponsehtml;
     }
 
     public function formulation_and_controls(question_attempt $qa,
@@ -130,10 +136,12 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
         throw new coding_exception('File not found in filearea '.$filearea);
     }
 
-    protected function hidden_field_for_qt_var(question_attempt $qa, $varname) {
-        $value = $qa->get_last_qt_var($varname);
+    protected function hidden_field_for_qt_var(question_attempt $qa, $varname, $value = null) {
+        if ($value === null) {
+            $value = $qa->get_last_qt_var($varname);
+        }
         $fieldname = $qa->get_qt_field_name($varname);
-        $attributes = array('type'=>'text',
+        $attributes = array('type'=>'hidden',
                                 'id' => str_replace(':', '_', $fieldname),
                                 'name'=> $fieldname,
                                 'value'=> $value);
@@ -148,14 +156,14 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
         $question = $qa->get_question();
 
         $correctanswer = '';
-        foreach ($question->textfragments as $i => $fragment) {
-            if ($i > 0) {
-                $group = $question->places[$i];
-                $choice = $question->choices[$group][$question->rightchoices[$i]];
-                $correctanswer .= '[' . str_replace('-', '&#x2011;',
-                        $choice->text) . ']';
+        foreach ($question->places as $i => $place) {
+            $choice = $question->choices[$place->group][$question->rightchoices[$i]];
+            if ($choice->text != '') {
+                $text = $choice->text;
+            } else {
+                $text = get_string('nolabel', 'qtype_ddimagetoimage');
             }
-            $correctanswer .= $fragment;
+            $correctanswer .= '[' . str_replace('-', '&#x2011;', $text) . ']';
         }
 
         if (!empty($correctanswer)) {
