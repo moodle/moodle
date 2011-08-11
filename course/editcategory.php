@@ -13,6 +13,8 @@ require_once('editcategory_form.php');
 require_login();
 
 $id = optional_param('id', 0, PARAM_INT);
+$itemid = 0; //initalise itemid, as all files in category description has item id 0
+
 if ($id) {
     if (!$category = $DB->get_record('course_categories', array('id' => $id))) {
         print_error('unknowcategory');
@@ -43,6 +45,7 @@ if ($id) {
     require_capability('moodle/category:manage', $context);
     $strtitle = get_string("addnewcategory");
     $editorcontext = $context;
+    $itemid = null; //set this explicitly, so files for parent category should not get loaded in draft area.
     $title = "$SITE->shortname: ".get_string('addnewcategory');
     $fullname = $SITE->fullname;
 }
@@ -55,7 +58,7 @@ $editoroptions = array(
     'trusttext' => true,
     'context'   => $editorcontext
 );
-$category = file_prepare_standard_editor($category, 'description', $editoroptions, $editorcontext, 'coursecat', 'description', 0);
+$category = file_prepare_standard_editor($category, 'description', $editoroptions, $editorcontext, 'coursecat', 'description', $itemid);
 
 $mform = new editcategory_form('editcategory.php', compact('category', 'editoroptions'));
 $mform->set_data($category);
