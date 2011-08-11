@@ -327,9 +327,6 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
                 $allchoices[$choice] = $i;
             } else {
                 if ($ytoppresent || $xleftpresent || $labelpresent) {
-                    echo '<pre>';
-                    var_dump(compact('ytoppresent', 'xleftpresent', 'labelpresent', 'choice'));
-                    echo '</pre>';
                     $errors["drops[$i]"] =
                         get_string('formerror_noimageselected', 'qtype_ddimagetoimage');
                 }

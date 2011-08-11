@@ -35,100 +35,9 @@ require_once($CFG->dirroot . '/question/type/gapselect/rendererbase.php');
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddimagetoimage_renderer extends qtype_elements_embedded_in_question_text_renderer {
-
-    protected function qtext_classname() {
-        return 'qtext ddimagetoimage_questionid_for_javascript';
-    }
-
-    protected function post_qtext_elements(question_attempt $qa,
-            question_display_options $options) {
-        $result = '';
-
-        return $result;
-    }
-
-    /**
-     * Modify the contents of a drag/drop box to fix some IE-related problem.
-     * Unfortunately I don't have more details than that.
-     * @param string $string the box contents.
-     * @return string the box contents modified.
-     */
-    protected function dodgy_ie_fix($string) {
-        return '<sub>&#160;</sub>' . $string . '<sup>&#160;</sup>';
-    }
-
-    protected function embedded_element(question_attempt $qa, $place,
-            question_display_options $options) {
-        $question = $qa->get_question();
-        $group = $question->places[$place];
-        $boxcontents = $this->dodgy_ie_fix('&#160;');
-
-        $value = $qa->get_last_qt_var($question->field($place));
-
-        $attributes = array(
-            'id' => $this->box_id($qa, 'p' . $place, $group),
-            'class' => 'slot group' . $group
-        );
-
-        if ($options->readonly) {
-            $attributes['class'] .= ' readonly';
-        } else {
-            $attributes['tabindex'] = '0';
-        }
-
-        $feedbackimage = '';
-        if ($options->correctness) {
-            $response = $qa->get_last_qt_data();
-            $fieldname = $question->field($place);
-            if (array_key_exists($fieldname, $response)) {
-                $fraction = (int) ($response[$fieldname] ==
-                        $question->get_right_choice_for($place));
-                $attributes['class'] .= ' ' . $this->feedback_class($fraction);
-                $feedbackimage = $this->feedback_image($fraction);
-            }
-        }
-
-        return html_writer::tag('span', $boxcontents, $attributes) . ' ' . $feedbackimage;
-    }
-
-    protected function drag_boxes($qa, $group, $choices, question_display_options $options) {
-        $readonly = '';
-        if ($options->readonly) {
-            $readonly = ' readonly';
-        }
-
-        $boxes = '';
-        foreach ($choices as $key => $choice) {
-            //Bug 8632 -  long text entry causes bug in drag and drop field in IE
-            $content = str_replace('-', '&#x2011;', $choice->text);
-            $content = $this->dodgy_ie_fix(str_replace(' ', '&#160;', $content));
-
-            $infinite = '';
-            if ($choice->isinfinite) {
-                $infinite = ' infinite';
-            }
-
-            $boxes .= html_writer::tag('span', $content, array(
-                    'id' => $this->box_id($qa, $key, $choice->draggroup),
-                    'class' => 'player group' . $choice->draggroup . $infinite . $readonly)) . ' ';
-        }
-
-        return html_writer::nonempty_tag('div', $boxes, array('class' => 'answertext'));
-    }
+class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_renderer {
 
 
-    public function head_code(question_attempt $qa) {
-        $this->page->requires->yui2_lib('dom');
-        $this->page->requires->yui2_lib('event');
-        $this->page->requires->yui2_lib('dragdrop');
-        return parent::head_code($qa);
-    }
-
-    /**
-     * Actually, this question type abuses this method to always ouptut the
-     * hidden fields it needs.
-     */
     public function clear_wrong(question_attempt $qa, $reallyclear = true) {
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
@@ -138,38 +47,119 @@ class qtype_ddimagetoimage_renderer extends qtype_elements_embedded_in_question_
         } else {
             $cleanresponse = $response;
         }
+    }
+
+    public function formulation_and_controls(question_attempt $qa,
+            question_display_options $options) {
+        global $PAGE;
+
+        $question = $qa->get_question();
+        $response = $qa->get_last_qt_data();
 
         $output = '';
-        foreach ($question->places as $place => $group) {
-            $fieldname = $question->field($place);
-            if (array_key_exists($fieldname, $response)) {
-                $value = $response[$fieldname];
-            } else {
-                $value = '0';
+        $bgimage = self::get_url_for_image($qa, 'bgimage');
+
+        $img = html_writer::empty_tag('img', array('src'=>$bgimage, 'class'=>'dropbackground'));
+        $droparea = html_writer::tag('div', $img, array('class'=>'droparea'));
+
+        $dragimagehomes = '';
+        foreach ($question->choices as $groupno => $group) {
+            $dragimagehomesgroup = '';
+            foreach ($group as $choiceno => $dragimage) {
+                $filearea = qtype_ddimagetoimage::drag_image_file_area($dragimage->no - 1);
+                $dragimageurl = self::get_url_for_image($qa, $filearea);
+                $classes = array("group{$groupno}",
+                                 'draghome',
+                                 "dragimagehomes{$dragimage->no}",
+                                 "choice{$choiceno}");
+                if ($dragimage->isinfinite) {
+                    $classes[] = 'infinite';
+                }
+                $dragimagehomesgroup .= html_writer::empty_tag('img',
+                                            array('src'=>$dragimageurl,
+                                                'class'=>join(' ', $classes)));
             }
-            if (array_key_exists($fieldname, $cleanresponse)) {
-                $cleanvalue = $cleanresponse[$fieldname];
-            } else {
-                $cleanvalue = '0';
-            }
-            if ($cleanvalue != $value) {
-                $output .= html_writer::empty_tag('input', array(
-                        'type' => 'hidden',
-                        'id' => $this->box_id($qa, 'p' . $place, $group) . '_hidden',
-                        'value' => s($value))) .
-                        html_writer::empty_tag('input', array(
-                        'type' => 'hidden',
-                        'name' => $qa->get_qt_field_name($fieldname),
-                        'value' => s($cleanvalue)));
-            } else {
-                $output .= html_writer::empty_tag('input', array(
-                        'type' => 'hidden',
-                        'id' => $this->box_id($qa, 'p' . $place, $group) . '_hidden',
-                        'name' => $qa->get_qt_field_name($fieldname),
-                        'value' => s($value)));
-            }
+            $dragimagehomes .= html_writer::tag('div', $dragimagehomesgroup,
+                                            array('class'=>'dragitemgroup'.$groupno));
         }
+
+        $dragitems = html_writer::tag('div', $dragimagehomes, array('class'=>'dragitems'));
+        $dropzones = html_writer::empty_tag('div', array('class'=>'dropzones'));
+        $output .= html_writer::tag('div', $droparea.$dragitems.$dropzones,
+                                                                        array('class'=>'ddarea'));
+        foreach ($question->places as $placeno => $place){
+            $varname = $question->field($placeno);
+            list($fieldname, $html) = $this->hidden_field_for_qt_var($qa, $varname);
+            $output .= $html;
+            $question->places[$placeno]->fieldname = $fieldname;
+        }
+        $jsmodule = array(
+            'name'     => 'qtype_ddimagetoimage',
+            'fullpath' => '/question/type/ddimagetoimage/module.js',
+            'requires' => array('node', 'dd', 'dd-drop', 'dd-constrain')
+        );
+
+        $topnode = 'div#q'.$qa->get_slot().' div.ddarea';
+        $sendtojs = array($question->places, $topnode, $options->readonly);
+
+        $PAGE->requires->js_init_call('M.qtype_ddimagetoimage.init_question',
+                                        $sendtojs,
+                                        true,
+                                        $jsmodule);
         return $output;
     }
 
+    protected static function get_url_for_image(question_attempt $qa, $filearea) {
+        $question = $qa->get_question();
+        $qubaid = $qa->get_usage_id();
+        $slot = $qa->get_slot();
+        $fs = get_file_storage();
+        $draftfiles = $fs->get_area_files($question->contextid, 'qtype_ddimagetoimage',
+                                                                    $filearea, $question->id, 'id');
+        if ($draftfiles) {
+            foreach ($draftfiles as $file) {
+                if ($file->is_directory()) {
+                    continue;
+                }
+                $url = moodle_url::make_pluginfile_url($question->contextid, 'qtype_ddimagetoimage',
+                                            $filearea, "$qubaid/$slot/{$question->id}", '/',
+                                            $file->get_filename());
+                return $url->out();
+            }
+        }
+        throw new coding_exception('File not found in filearea '.$filearea);
+    }
+
+    protected function hidden_field_for_qt_var(question_attempt $qa, $varname) {
+        $value = $qa->get_last_qt_var($varname);
+        $fieldname = $qa->get_qt_field_name($varname);
+        $attributes = array('type'=>'text',
+                                'id' => str_replace(':', '_', $fieldname),
+                                'name'=> $fieldname,
+                                'value'=> $value);
+        return array($fieldname, html_writer::empty_tag('input', $attributes)."\n");
+    }
+
+    public function specific_feedback(question_attempt $qa) {
+        return $this->combined_feedback($qa);
+    }
+
+    public function correct_response(question_attempt $qa) {
+        $question = $qa->get_question();
+
+        $correctanswer = '';
+        foreach ($question->textfragments as $i => $fragment) {
+            if ($i > 0) {
+                $group = $question->places[$i];
+                $choice = $question->choices[$group][$question->rightchoices[$i]];
+                $correctanswer .= '[' . str_replace('-', '&#x2011;',
+                        $choice->text) . ']';
+            }
+            $correctanswer .= $fragment;
+        }
+
+        if (!empty($correctanswer)) {
+            return get_string('correctansweris', 'qtype_gapselect', $correctanswer);
+        }
+    }
 }

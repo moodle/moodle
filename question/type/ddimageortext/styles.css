@@ -8,35 +8,14 @@
     line-height: 2em;
 }
 
-.que.ddimagetoimage .answercontainer {
-    line-height: 2em;
-    margin-bottom: 1em;
-    display: block;
-}
-
-.que.ddimagetoimage .answertext {
-    padding-bottom: 0.5em;
-}
-
-.que.ddimagetoimage .slot {
-    display: inline-block;
-    text-align: center;
+.que.ddimagetoimage div.droparea img {
     border: 1px solid #000000;
 }
-.que.ddimagetoimage .player {
-    display: inline-block;
-    text-align: center;
-    cursor: move;
-    border: 1px solid #000000;
-}
-.que.ddimagetoimage .player.placed { /* Lets the focus rectangle be visible in IE. */
-    background: transparent;
-}
 
-.que.ddimagetoimage .readonly {
-    cursor: default;
+.que.ddimagetoimage img.draghome {
+    margin: 5px;
+    visibility : hidden;
 }
-
 .que.ddimagetoimage span.incorrect {
     background-color: #faa;
 }
@@ -68,6 +47,27 @@
 .que.ddimagetoimage .group8 {
     background-color: #F0E68C;
 }
+.que.ddimagetoimage .drag {
+    border: 1px solid black;
+    cursor: move;
+    z-index: 2;
+}
+.que.ddimagetoimage div.ddarea {
+    text-align : center;
+}
+.que.ddimagetoimage .dropbackground {
+    margin:0 auto;
+}
+.que.ddimagetoimage .dropzone {
+    border: 1px solid black;
+    position: absolute;
+    z-index: 1;
+}
+
+.que.ddimagetoimage .droptarget.yui3-dd-drop-over {
+    background-color: #FFA928;
+}
+
 form.mform fieldset#previewareaheader .group1 {
     background-color: #FFFFFF;
 }

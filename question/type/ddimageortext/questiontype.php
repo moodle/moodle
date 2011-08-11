@@ -62,6 +62,55 @@ class qtype_ddimagetoimage extends question_type {
         parent::get_question_options($question);
     }
 
+    protected function make_choice($dragdata) {
+        return new qtype_ddimagetoimage_drag_item($dragdata->label, $dragdata->no,
+                                                    $dragdata->draggroup, $dragdata->infinite);
+    }
+
+    protected function make_place($dropzonedata) {
+        return new qtype_ddimagetoimage_drop_zone($dropzonedata->label, $dropzonedata->group,
+                                                    $dropzonedata->xleft, $dropzonedata->ytop);
+    }
+
+    protected function initialise_question_instance(question_definition $question, $questiondata) {
+        parent::initialise_question_instance($question, $questiondata);
+        $question->shufflechoices = $questiondata->options->shuffleanswers;
+
+        $this->initialise_combined_feedback($question, $questiondata, true);
+
+        $question->choices = array();
+        $choiceindexmap= array();
+
+        // Store the choices in arrays by group.
+        foreach ($questiondata->options->drags as $dragdata) {
+            $filearea = self::drag_image_file_area($dragdata->no - 1);
+
+            $choice = $this->make_choice($dragdata);
+
+            if (array_key_exists($choice->choice_group(), $question->choices)) {
+                $question->choices[$choice->choice_group()][$dragdata->no] = $choice;
+            } else {
+                $question->choices[$choice->choice_group()][1] = $choice;
+            }
+
+            end($question->choices[$choice->choice_group()]);
+            $choiceindexmap[$dragdata->no] = array($choice->choice_group(),
+                    key($question->choices[$choice->choice_group()]));
+        }
+
+        $question->places = array();
+        $question->rightchoices = array();
+
+        $i = 1;
+
+        foreach ($questiondata->options->drops as $dropdata) {
+            list($group, $choiceindex) = $choiceindexmap[$dropdata->choice];
+            $dropdata->group = $group;
+            $question->places[$dropdata->no] = $this->make_place($dropdata);
+            $question->rightchoices[$dropdata->no] = $choiceindex;
+        }
+    }
+
     public function save_question_options($formdata) {
         global $DB, $USER;
         $context = $formdata->context;
@@ -102,8 +151,7 @@ class qtype_ddimagetoimage extends question_type {
             if ($info['filecount'] > 0) {
                 $draftitemid = $formdata->dragitem[$dragno];
 
-                //numbers not allowed in filearea name
-                $filearea = str_replace(range('0', '9'), range('a', 'j'), "drag_$dragno");
+                $filearea = self::drag_image_file_area($dragno);
                 self::constrain_image_size_in_draft_area($draftitemid,
                                         QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXWIDTH,
                                         QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXHEIGHT);
@@ -128,6 +176,12 @@ class qtype_ddimagetoimage extends question_type {
                                     'qtype_ddimagetoimage', 'bgimage', $formdata->id,
                                     array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1));
     }
+
+    public static function drag_image_file_area($dragno) {
+        //numbers not allowed in filearea name
+        return str_replace(range('0', '9'), range('a', 'j'), "drag_$dragno");
+    }
+
 
     public static function constrain_image_size_in_draft_area($draftitemid, $maxwidth, $maxheight) {
         global $USER;
