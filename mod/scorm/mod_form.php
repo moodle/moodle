@@ -204,6 +204,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'hidenav', get_string('hidenav', 'scorm'));
         $mform->setDefault('hidenav', $cfg_scorm->hidenav);
         $mform->setAdvanced('hidenav');
+        $mform->disabledIf('hidenav', 'hidetoc', 'noteq', 0);
 
 // Autocontinue
         $mform->addElement('selectyesno', 'auto', get_string('autocontinue', 'scorm'));
