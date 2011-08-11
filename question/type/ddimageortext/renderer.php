@@ -62,14 +62,16 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
 
-        $output = '';
+        $questiontext = $question->format_questiontext($qa);
+
+        $output = html_writer::tag('div', $questiontext, array('class' => 'qtext'));
+
         $bgimage = self::get_url_for_image($qa, 'bgimage');
 
         $img = html_writer::empty_tag('img', array('src'=>$bgimage, 'class'=>'dropbackground'));
         $droparea = html_writer::tag('div', $img, array('class'=>'droparea'));
 
         $dragimagehomes = '';
-        dbg($question);
         foreach ($question->choices as $groupno => $group) {
             $dragimagehomesgroup = '';
             $orderedgroup = $question->get_ordered_choices($groupno);
