@@ -89,7 +89,11 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
                                             array('class'=>'dragitemgroup'.$groupno));
         }
 
-        $dragitems = html_writer::tag('div', $dragimagehomes, array('class'=>'dragitems'));
+        $dragitemsclass = 'dragitems';
+        if ($options->readonly) {
+            $dragitemsclass .= ' readonly';
+        }
+        $dragitems = html_writer::tag('div', $dragimagehomes, array('class'=> $dragitemsclass));
         $dropzones = html_writer::empty_tag('div', array('class'=>'dropzones'));
         $output .= html_writer::tag('div', $droparea.$dragitems.$dropzones,
                                                                         array('class'=>'ddarea'));

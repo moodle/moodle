@@ -52,6 +52,9 @@
     cursor: move;
     z-index: 2;
 }
+.que.ddimagetoimage .dragitems.readonly .drag {
+    cursor: auto;
+}
 .que.ddimagetoimage div.ddarea {
     text-align : center;
 }
