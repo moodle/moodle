@@ -1728,6 +1728,21 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
     //try to disable automatic sid rewrite in cookieless mode
     @ini_set("session.use_trans_sid", "false");
 
+    if ($lifetime > 0 && !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+        // get unixtime of request header; clip extra junk off first
+        $since = strtotime(preg_replace('/;.*$/','',$_SERVER["HTTP_IF_MODIFIED_SINCE"]));
+        if ($since && $since >= $lastmodified) {
+            header('HTTP/1.1 304 Not Modified');
+            header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+            header('Cache-Control: max-age='.$lifetime);
+            header('Content-Type: '.$mimetype);
+            if ($dontdie) {
+                return;
+            }
+            die;
+        }
+    }
+
     //do not put '@' before the next header to detect incorrect moodle configurations,
     //error should be better than "weird" empty lines for admins/users
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
@@ -1942,6 +1957,21 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
 
     //try to disable automatic sid rewrite in cookieless mode
     @ini_set("session.use_trans_sid", "false");
+
+    if ($lifetime > 0 && !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+        // get unixtime of request header; clip extra junk off first
+        $since = strtotime(preg_replace('/;.*$/','',$_SERVER["HTTP_IF_MODIFIED_SINCE"]));
+        if ($since && $since >= $lastmodified) {
+            header('HTTP/1.1 304 Not Modified');
+            header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+            header('Cache-Control: max-age='.$lifetime);
+            header('Content-Type: '.$mimetype);
+            if ($dontdie) {
+                return;
+            }
+            die;
+        }
+    }
 
     //do not put '@' before the next header to detect incorrect moodle configurations,
     //error should be better than "weird" empty lines for admins/users
