@@ -62,7 +62,14 @@ class block_html extends block_base {
         if (isset($this->config->text)) {
             // rewrite url
             $this->config->text = file_rewrite_pluginfile_urls($this->config->text, 'pluginfile.php', $this->context->id, 'block_html', 'content', NULL);
-            $this->content->text = format_text($this->config->text, $this->config->format, $filteropt);
+            // Default to FORMAT_HTML which is what will have been used before the
+            // editor was properly implemented for the block.
+            $format = FORMAT_HTML;
+            // Check to see if the format has been properly set on the config
+            if (isset($this->config->format)) {
+                $format = $this->config->format;
+            }
+            $this->content->text = format_text($this->config->text, $format, $filteropt);
         } else {
             $this->content->text = '';
         }
