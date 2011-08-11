@@ -69,9 +69,11 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
         $droparea = html_writer::tag('div', $img, array('class'=>'droparea'));
 
         $dragimagehomes = '';
+        dbg($question);
         foreach ($question->choices as $groupno => $group) {
             $dragimagehomesgroup = '';
-            foreach ($group as $choiceno => $dragimage) {
+            $orderedgroup = $question->get_ordered_choices($groupno);
+            foreach ($orderedgroup as $choiceno => $dragimage) {
                 $filearea = qtype_ddimagetoimage::drag_image_file_area($dragimage->no - 1);
                 $dragimageurl = self::get_url_for_image($qa, $filearea);
                 $classes = array("group{$groupno}",
@@ -145,10 +147,10 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
             $value = $qa->get_last_qt_var($varname);
         }
         $fieldname = $qa->get_qt_field_name($varname);
-        $attributes = array('type'=>'hidden',
+        $attributes = array('type' => 'hidden',
                                 'id' => str_replace(':', '_', $fieldname),
-                                'name'=> $fieldname,
-                                'value'=> $value);
+                                'name' => $fieldname,
+                                'value' => $value);
         return array($fieldname, html_writer::empty_tag('input', $attributes)."\n");
     }
 

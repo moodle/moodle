@@ -57,6 +57,11 @@ M.qtype_ddimagetoimage={
     },
     redraw : function(e) {
         this.doc.drag_items().removeClass('placed');
+        this.doc.drag_items().each (function (dragitem) {
+            if (dragitem.dd !== undefined) {
+                dragitem.dd.detachAll('drag:start');
+            }
+        }, this);
         this.doc.drop_zones().each(function(dropzone) {
             var relativexy = dropzone.getData('xy');
             dropzone.setXY(this.convert_to_window_xy(relativexy));
@@ -70,6 +75,12 @@ M.qtype_ddimagetoimage={
                 if (dragitem !== null) {
                     dragitem.setXY(dropzone.getXY());
                     dragitem.addClass('placed');
+                    if (dragitem.dd !== undefined) {
+                        dragitem.dd.once('drag:start', function (e, input) {
+                            input.set('value', '');
+                            e.target.get('node').removeClass('placed');
+                        },this, input);
+                    }
                 }
             }
         }, this);
@@ -97,6 +108,7 @@ M.qtype_ddimagetoimage={
             groupnodes[drops[dropno].group].append(dropnode);
             dropnode.setStyles({'opacity': 0.5});
             dropnode.setData('xy', drops[dropno].xy);
+            dropnode.setData('place', dropno);
             dropnode.setData('inputid', drops[dropno].fieldname.replace(':', '_'));
             dropnode.setData('group', drops[dropno].group);
             var dropdd = new this.Y.DD.Drop({
@@ -218,6 +230,18 @@ M.qtype_ddimagetoimage={
                     node: drag,
                     dragMode: 'intersect'
                 }).plug(Y.Plugin.DDConstrained, {constrain2node: topnode});
+                
+//                dd.on('drag:start', function(e) {
+//                    var drag = e.target.get('node');
+//                    var inputid = drag.getData('placedonid');
+//                    if (inputid !== undefined || inputid !== null) {
+//                        var inputnode = this.Y.one('input#'+inputid);
+//                        if (inputnode !== null) {
+//                            inputnode.set('value', '');
+//                        }
+//                    }
+//                    drag.setData('placedonid', '');
+//                }, this);
                 dd.on('drag:end', function(e) {
                     mainobj.redraw();
                 }, this);

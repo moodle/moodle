@@ -40,7 +40,7 @@ class qtype_ddimagetoimage_question extends qtype_gapselect_question_base {
         foreach ($this->places as $place => $notused) {
             if (array_key_exists($this->field($place), $response) &&
                     $response[$this->field($place)] != $this->get_right_choice_for($place)) {
-                $response[$this->field($place)] = '0';
+                $response[$this->field($place)] = '';
             }
         }
         return $response;
