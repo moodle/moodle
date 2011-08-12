@@ -57,7 +57,7 @@
 
     add_to_log($course->id, 'scorm', 'pre-view', 'view.php?id='.$cm->id, "$scorm->id", $cm->id);
 
-    if ((has_capability('mod/scorm:skipview', $contextmodule)) && scorm_simple_play($scorm,$USER, $contextmodule)) {
+    if ((has_capability('mod/scorm:skipview', $contextmodule)) && scorm_simple_play($scorm,$USER, $contextmodule,$cm->id)) {
         exit;
     }
 
