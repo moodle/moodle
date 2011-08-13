@@ -600,7 +600,7 @@ function scorm_parse_scorm($scorm, $manifest) {
                             $obj->primaryobj = $objective->primaryobj;
                             $obj->satisfiedbumeasure = $objective->satisfiedbymeasure;
                             $obj->objectiveid = $objective->objectiveid;
-                            $obj->minnormalizedmeasure = $objective->minnormalizedmeasure;
+                            $obj->minnormalizedmeasure = trim($objective->minnormalizedmeasure);
                             $objectiveid = $DB->insert_record('scorm_seq_objective', $obj);
                             if (isset($objective->mapinfos)) {
                                 foreach ($objective->mapinfos as $objmapinfo) {
