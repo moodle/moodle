@@ -1,20 +1,6 @@
 M.qtype_ddimagetoimage={
     Y : null,
     doc : null,
-    fp : null,
-    /**
-     * Entry point when called from question editing form
-     */
-    init_form : function(Y, maxsizes) {
-        this.Y = Y;
-        this.fp = this.file_pickers();
-        topnode = Y.one('fieldset#previewareaheader');
-        topnode.append('<div class="ddarea"><div class="droparea"></div>'+
-                '<div class="dragitems"></div>'+
-                '<div class="dropzones"></div></div>');
-        this.doc = this.doc_structure(Y, topnode, this, maxsizes);
-        this.init_dd_area();
-    },
     /**
      * Entry point when called from question renderer
      */
@@ -231,17 +217,6 @@ M.qtype_ddimagetoimage={
                     dragMode: 'intersect'
                 }).plug(Y.Plugin.DDConstrained, {constrain2node: topnode});
                 
-//                dd.on('drag:start', function(e) {
-//                    var drag = e.target.get('node');
-//                    var inputid = drag.getData('placedonid');
-//                    if (inputid !== undefined || inputid !== null) {
-//                        var inputnode = this.Y.one('input#'+inputid);
-//                        if (inputnode !== null) {
-//                            inputnode.set('value', '');
-//                        }
-//                    }
-//                    drag.setData('placedonid', '');
-//                }, this);
                 dd.on('drag:end', function(e) {
                     mainobj.redraw();
                 }, this);
@@ -276,88 +251,73 @@ M.qtype_ddimagetoimage={
 
         }
     },
-    
-    file_pickers : function () {
-        var draftitemidstoname;
-        var nametoparentnode;
-        if (draftitemidstoname === undefined) {
-            draftitemidstoname = {};
-            nametoparentnode = {};
-            var filepickers = this.Y.all('form.mform input.filepickerhidden');
-            filepickers.each(function(filepicker, k, items) {
-                draftitemidstoname[filepicker.get('value')] = filepicker.get('name');
-                nametoparentnode[filepicker.get('name')] = filepicker.get('parentNode');
-            }, this);
+
+    update_padding_sizes_all : function () {
+        for (var groupno = 1; groupno <= 8; groupno++) {
+            this.update_padding_size_for_group(groupno);
         }
-        var toreturn = {
-            file : function (name) {
-                var parentnode = nametoparentnode[name];
-                var fileanchor = parentnode.one('div.filepicker-filelist a');
-                if (fileanchor) {
-                    return fileanchor.get('href');
-                } else {
-                    return null;
-                }
-            },
-            name : function (draftitemid) {
-                return draftitemidstoname[draftitemid];
-            }
-        }
-        return toreturn;
     },
+    update_padding_size_for_group : function (groupno) {
+        var groupimages = this.doc.top_node().all('img.group'+groupno);
+        var maxwidth = 0;
+        var maxheight = 0;
+        groupimages.each(function(image){
+            maxwidth = Math.max(maxwidth, image.get('width'));
+            maxheight = Math.max(maxheight, image.get('height'));
+        }, this);
+        groupimages.each(function(image) {
+            var margintopbottom = Math.round((10 + maxheight - image.get('height')) / 2);
+            var marginleftright = Math.round((10 + maxwidth - image.get('width')) / 2);
+            image.setStyle('padding', margintopbottom+'px '+marginleftright+'px');
+        }, this);
+        this.doc.drop_zone_group(groupno).setStyles({'width': maxwidth + 10,
+                                                        'height': maxheight + 10});
+    },
+    convert_to_window_xy : function (bgimgxy) {
+        return [+bgimgxy[0] + this.doc.bg_img().getX() + 1,
+                +bgimgxy[1] + this.doc.bg_img().getY() + 1];
+    },
+    
+    //---------- stuff below this line only used in question editing form ---------------
+    
+    fp : null,
     /**
-     * Low level operations on form.
+     * Entry point when called from question editing form
      */
-    form : {
-        to_name_with_index : function(name, indexes) {
-            indexes = indexes || [];
-            var indexstring = name;
-            for (var i=0; i < indexes.length; i++) {
-                indexstring = indexstring + '[' + indexes[i] + ']';
-            }
-            return indexstring;
-        },
-        get_form_value : function(name, indexes) {
-            var el = document.forms[0].elements[this.to_name_with_index(name, indexes)];
-            if (el.type === 'checkbox') {
-                return el.checked;
-            } else {
-                return el.value;
-            }
-        },
-        set_form_value : function(name, indexes, value) {
-            var el = document.forms[0].elements[this.to_name_with_index(name, indexes)];
-            if (el.type === 'checkbox') {
-                el.checked = value;
-            } else {
-                el.value = value;
-            }
-        },
-        from_name_with_index : function(name) {
-            var toreturn = {};
-            toreturn.indexes = [];
-            var bracket = name.indexOf('[');
-            toreturn.name = name.substring(0, bracket);
-            while (bracket !== -1) {
-                var end = name.indexOf(']', bracket + 1);
-                toreturn.indexes.push(name.substring(bracket + 1, end));
-                bracket = name.indexOf('[', end + 1);
-            }
-            return toreturn;
-        }
+    init_form : function(Y, maxsizes) {
+        this.Y = Y;
+        this.fp = this.file_pickers();
+        topnode = Y.one('fieldset#previewareaheader');
+        topnode.append('<div class="ddarea"><div class="droparea"></div>'+
+                '<div class="dragitems"></div>'+
+                '<div class="dropzones"></div></div>');
+        this.doc = this.doc_structure(Y, topnode, this, maxsizes);
+        this.init_dd_area();
     },
 
     init_dd_area : function() {
         //set up drag items homes
+        var dragimagesoptions = {0: ''}; 
         for (var i=0; i < this.form.get_form_value('noimages'); i++) {
-            var url = this.fp.file(this.form.to_name_with_index('dragitem', [i]));
-            this.doc.add_or_update_drag_item_home(i, url,
+            var file = this.fp.file(this.form.to_name_with_index('dragitem', [i]));
+            if (file.name !== null) {
+                dragimagesoptions[i+1] = (i+1)+'. '+file.name;
+            }
+            this.doc.add_or_update_drag_item_home(i, file.href,
                                 this.form.get_form_value('drags', [i, 'draglabel']),
                                 this.form.get_form_value('drags', [i, 'draggroup']));
         }
 
         //set up drop zones
         for (var i=0; i < this.form.get_form_value('nodropzone'); i++) {
+            var options = this.Y.one('#id_drops_'+i+'_choice').get('options');
+            options.each(function (option, k, options) {
+                if (dragimagesoptions[option.get('value')] === undefined) {
+                    option.remove(true);
+                } else {
+                    option.set('text', dragimagesoptions[option.get('value')]);
+                }
+            }, this);
             var dragimageno = this.form.get_form_value('drops', [i, 'choice']);
             if (dragimageno !== '0') {
                 var drag = this.doc.clone_new_drag_item(i, dragimageno - 1);
@@ -369,7 +329,7 @@ M.qtype_ddimagetoimage={
         
         this.setup_form_events();
 
-        this.doc.load_bg_img(this.fp.file(this.form.to_name_with_index('bgimage')));
+        this.doc.load_bg_img(this.fp.file(this.form.to_name_with_index('bgimage')).href);
         
         var drop = new this.Y.DD.Drop({
             node: this.doc.bg_img()
@@ -431,39 +391,34 @@ M.qtype_ddimagetoimage={
         var itemnameparts = this.form.from_name_with_index(itemname);
         if (itemnameparts.name === 'dragitem') {
             var dragimageno = itemnameparts.indexes[0];
-            this.update_drag_image_home(dragimageno);
+            this.load_drag_item_home(dragimageno, url);
+            this.doc.drag_items_cloned_from(dragimageno).remove(true);
+            this.Y.all('fieldset#dropzoneheader option[value="'+(+dragimageno+1)+'"]')
+                .remove(true);
+            var selects = this.Y.all('fieldset#dropzoneheader select');
+            selects.each(function (select, k, selects){
+                var name =
+                        this.fp.file(this.form.to_name_with_index('dragitem', [dragimageno])).name;
+                select.append('<option value="'+(+dragimageno+1)+'">'
+                        +(+dragimageno+1)+'. '+name+'</option>');
+            }, this);
+            this.doc.get_drag_image_home(dragimageno).after('load', function (e, dragimageno) {
+                this.update_drag_image_home(dragimageno);
+            }, this, dragimageno);
         } else {
             this.doc.load_bg_img(url);
             this.doc.bg_img().after('load', this.reposition_drags, this);
         }
     },
-    update_padding_sizes_all : function () {
-        for (var groupno = 1; groupno <= 8; groupno++) {
-            this.update_padding_size_for_group(groupno);
-        }
-    },
-    update_padding_size_for_group : function (groupno) {
-        var groupimages = this.doc.top_node().all('img.group'+groupno);
-        var maxwidth = 0;
-        var maxheight = 0;
-        groupimages.each(function(image){
-            maxwidth = Math.max(maxwidth, image.get('width'));
-            maxheight = Math.max(maxheight, image.get('height'));
-        }, this);
-        groupimages.each(function(image) {
-            var margintopbottom = Math.round((10 + maxheight - image.get('height')) / 2);
-            var marginleftright = Math.round((10 + maxwidth - image.get('width')) / 2);
-            image.setStyle('padding', margintopbottom+'px '+marginleftright+'px');
-        }, this);
-        this.doc.drop_zone_group(groupno).setStyles({'width': maxwidth + 10,
-                                                        'height': maxheight + 10});
-    },
-    update_drag_image_home : function (dragimageno) {
-        dragimageno = +dragimageno;
-        var url = this.fp.file(this.form.to_name_with_index('dragitem', [dragimageno]));
+    load_drag_item_home : function (dragimageno, url) {
         this.doc.add_or_update_drag_item_home(dragimageno, url, 
                 this.form.get_form_value('drags', [dragimageno, 'draglabel']),
                 this.form.get_form_value('drags', [dragimageno, 'draggroup']));
+    },
+    update_drag_image_home : function (dragimageno) {
+        dragimageno = +dragimageno;
+        var url = this.fp.file(this.form.to_name_with_index('dragitem', [dragimageno])).href;
+        this.load_drag_item_home(dragimageno, url);
         for (var i=0; i < this.form.get_form_value('nodropzone'); i++) {
             var dropdragimageno = this.form.get_form_value('drops', [i, 'choice']) - 1;
             if (dropdragimageno === dragimageno) {
@@ -532,9 +487,76 @@ M.qtype_ddimagetoimage={
         return [windowxy[0] - this.doc.bg_img().getX(),
                 windowxy[1] - this.doc.bg_img().getY()];
     },
-    convert_to_window_xy : function (bgimgxy) {
-        return [+bgimgxy[0] + this.doc.bg_img().getX() + 1,
-                +bgimgxy[1] + this.doc.bg_img().getY() + 1];
+    
+    /**
+     * Low level operations on form.
+     */
+    form : {
+        to_name_with_index : function(name, indexes) {
+            indexes = indexes || [];
+            var indexstring = name;
+            for (var i=0; i < indexes.length; i++) {
+                indexstring = indexstring + '[' + indexes[i] + ']';
+            }
+            return indexstring;
+        },
+        get_form_value : function(name, indexes) {
+            var el = document.forms[0].elements[this.to_name_with_index(name, indexes)];
+            if (el.type === 'checkbox') {
+                return el.checked;
+            } else {
+                return el.value;
+            }
+        },
+        set_form_value : function(name, indexes, value) {
+            var el = document.forms[0].elements[this.to_name_with_index(name, indexes)];
+            if (el.type === 'checkbox') {
+                el.checked = value;
+            } else {
+                el.value = value;
+            }
+        },
+        from_name_with_index : function(name) {
+            var toreturn = {};
+            toreturn.indexes = [];
+            var bracket = name.indexOf('[');
+            toreturn.name = name.substring(0, bracket);
+            while (bracket !== -1) {
+                var end = name.indexOf(']', bracket + 1);
+                toreturn.indexes.push(name.substring(bracket + 1, end));
+                bracket = name.indexOf('[', end + 1);
+            }
+            return toreturn;
+        }
+    },
+    
+    file_pickers : function () {
+        var draftitemidstoname;
+        var nametoparentnode;
+        if (draftitemidstoname === undefined) {
+            draftitemidstoname = {};
+            nametoparentnode = {};
+            var filepickers = this.Y.all('form.mform input.filepickerhidden');
+            filepickers.each(function(filepicker, k, items) {
+                draftitemidstoname[filepicker.get('value')] = filepicker.get('name');
+                nametoparentnode[filepicker.get('name')] = filepicker.get('parentNode');
+            }, this);
+        }
+        var toreturn = {
+            file : function (name) {
+                var parentnode = nametoparentnode[name];
+                var fileanchor = parentnode.one('div.filepicker-filelist a');
+                if (fileanchor) {
+                    return {href : fileanchor.get('href'), name : fileanchor.get('innerHTML')};
+                } else {
+                    return {href : null, name : null};
+                }
+            },
+            name : function (draftitemid) {
+                return draftitemidstoname[draftitemid];
+            }
+        }
+        return toreturn;
     }
 
 }
