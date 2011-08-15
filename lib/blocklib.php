@@ -1007,29 +1007,10 @@ class block_manager {
         $controls = array();
         $actionurl = $this->page->url->out(false, array('sesskey'=> sesskey()));
 
-        // Assign roles icon.
-        if (has_capability('moodle/role:assign', $block->context)) {
-            //TODO: please note it is sloppy to pass urls through page parameters!!
-            //      it is shortened because some web servers (e.g. IIS by default) give
-            //      a 'security' error if you try to pass a full URL as a GET parameter in another URL.
-
-            $return = $this->page->url->out(false);
-            $return = str_replace($CFG->wwwroot . '/', '', $return);
-
-            $controls[] = array('url' => $CFG->wwwroot . '/' . $CFG->admin .
-                    '/roles/assign.php?contextid=' . $block->context->id . '&returnurl=' . urlencode($return),
-                    'icon' => 'i/roles', 'caption' => get_string('assignroles', 'role'));
-        }
-
-        if ($this->page->user_can_edit_blocks() && $block->instance_can_be_hidden()) {
-            // Show/hide icon.
-            if ($block->instance->visible) {
-                $controls[] = array('url' => $actionurl . '&bui_hideid=' . $block->instance->id,
-                        'icon' => 't/hide', 'caption' => get_string('hide'));
-            } else {
-                $controls[] = array('url' => $actionurl . '&bui_showid=' . $block->instance->id,
-                        'icon' => 't/show', 'caption' => get_string('show'));
-            }
+        if ($this->page->user_can_edit_blocks()) {
+            // Move icon.
+            $controls[] = array('url' => $actionurl . '&bui_moveid=' . $block->instance->id,
+                    'icon' => 't/move', 'caption' => get_string('move'));
         }
 
         if ($this->page->user_can_edit_blocks() || $block->user_can_edit()) {
@@ -1048,10 +1029,28 @@ class block_manager {
             }
         }
 
-        if ($this->page->user_can_edit_blocks()) {
-            // Move icon.
-            $controls[] = array('url' => $actionurl . '&bui_moveid=' . $block->instance->id,
-                    'icon' => 't/move', 'caption' => get_string('move'));
+        if ($this->page->user_can_edit_blocks() && $block->instance_can_be_hidden()) {
+            // Show/hide icon.
+            if ($block->instance->visible) {
+                $controls[] = array('url' => $actionurl . '&bui_hideid=' . $block->instance->id,
+                        'icon' => 't/hide', 'caption' => get_string('hide'));
+            } else {
+                $controls[] = array('url' => $actionurl . '&bui_showid=' . $block->instance->id,
+                        'icon' => 't/show', 'caption' => get_string('show'));
+            }
+        }
+
+        // Assign roles icon.
+        if (has_capability('moodle/role:assign', $block->context)) {
+            //TODO: please note it is sloppy to pass urls through page parameters!!
+            //      it is shortened because some web servers (e.g. IIS by default) give
+            //      a 'security' error if you try to pass a full URL as a GET parameter in another URL.
+            $return = $this->page->url->out(false);
+            $return = str_replace($CFG->wwwroot . '/', '', $return);
+
+            $controls[] = array('url' => $CFG->wwwroot . '/' . $CFG->admin .
+                    '/roles/assign.php?contextid=' . $block->context->id . '&returnurl=' . urlencode($return),
+                    'icon' => 'i/roles', 'caption' => get_string('assignroles', 'role'));
         }
 
         return $controls;
