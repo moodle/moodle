@@ -285,26 +285,24 @@ class rating_manager {
         list($itemidtest, $params) = $DB->get_in_or_equal(
                 $itemids, SQL_PARAMS_NAMED, 'itemid0000');
 
-	//note: all the group bys arent really necessary but PostgreSQL complains
-	//about selecting a mixture of grouped and non-grouped columns
-        $sql = "SELECT r.itemid, ur.id, ur.userid, ur.scaleid,
-        $aggregatestr(r.rating) AS aggrrating,
-        COUNT(r.rating) AS numratings,
-        ur.rating AS usersrating
-    FROM {rating} r
-    LEFT JOIN {rating} ur ON ur.contextid = r.contextid AND
-            ur.itemid = r.itemid AND
-            ur.userid = :userid
-    WHERE
-        r.contextid = :contextid AND
-        r.itemid $itemidtest
-    GROUP BY r.itemid, ur.rating, ur.id, ur.userid, ur.scaleid
-    ORDER BY r.itemid";
-
         $params['userid'] = $userid;
         $params['contextid'] = $options->context->id;
 
-        $ratingsrecords = $DB->get_records_sql($sql, $params);
+        $sql = "SELECT r.id, r.itemid, r.userid, r.scaleid, r.rating AS usersrating
+                  FROM {rating} r
+                 WHERE r.userid = :userid AND
+                       r.contextid = :contextid AND
+                       r.itemid $itemidtest
+              ORDER BY r.itemid";
+        $userratings = $DB->get_records_sql($sql, $params);
+
+        $sql = "SELECT r.itemid, $aggregatestr(r.rating) AS aggrrating, COUNT(r.rating) AS numratings
+                  FROM {rating} r
+                 WHERE r.contextid = :contextid AND
+                       r.itemid $itemidtest
+              GROUP BY r.itemid
+              ORDER BY r.itemid";
+        $aggregateratings = $DB->get_records_sql($sql, $params);
 
         //now create the rating sub objects
         $scaleobj = new stdClass();
@@ -380,43 +378,48 @@ class rating_manager {
         $ratingoptions->component = $options->component;
         foreach($options->items as $item) {
             $rating = null;
+            $founduserrating = $foundaggregaterating = false;
+            $ratingoptions->itemid = $item->id;
             //match the item with its corresponding rating
-            foreach($ratingsrecords as $rec) {
+            foreach($userratings as $rec) {
                 if( $item->id==$rec->itemid ) {
+                    $founduserrating = true;
                     //Note: rec->scaleid = the id of scale at the time the rating was submitted
                     //may be different from the current scale id
-                    $ratingoptions->itemid = $item->id;
                     $ratingoptions->scaleid = $rec->scaleid;
                     $ratingoptions->userid = $rec->userid;
 
                     $rating = new rating($ratingoptions);
-                    $rating->id         = $rec->id;    //unset($rec->id);
-                    $rating->aggregate  = $rec->aggrrating; //unset($rec->aggrrating);
-                    $rating->count      = $rec->numratings; //unset($rec->numratings);
-                    $rating->rating     = $rec->usersrating; //unset($rec->usersrating);
-                    $rating->itemtimecreated = $this->get_item_time_created($item);
-
+                    $rating->id         = $rec->id;
+                    $rating->rating     = $rec->usersrating;
                     break;
                 }
             }
-            //if there are no ratings for this item
-            if( !$rating ) {
-                $ratingoptions->itemid = $item->id;
+            if (!$founduserrating) {
                 $ratingoptions->scaleid = null;
                 $ratingoptions->userid = null;
 
                 $rating = new rating($ratingoptions);
-                $rating->id         = null;
-                $rating->aggregate  = null;
-                $rating->count      = 0;
-                $rating->rating     = null;
-
-                $rating->itemid     = $item->id;
-                $rating->userid     = null;
-                $rating->scaleid     = null;
-                $rating->itemtimecreated = $this->get_item_time_created($item);
+                $rating->id = null;
+                $rating->rating = null;
             }
 
+            foreach($aggregateratings as $rec) {
+                if( $item->id == $rec->itemid ) {
+                    $foundaggregaterating = true;
+
+                    $rating->aggregate  = $rec->aggrrating;
+                    $rating->count      = $rec->numratings;
+                    break;
+                }
+            }
+            if (!$foundaggregaterating) {
+                $rating->aggregate  = null;
+                $rating->count      = 0;
+
+            }
+
+            $rating->itemtimecreated = $this->get_item_time_created($item);
             if( !empty($item->userid) ) {
                 $rating->itemuserid = $item->userid;
             } else {
