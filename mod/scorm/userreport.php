@@ -180,7 +180,7 @@ if (!empty($b)) {
     $table->width = '100%';
     $table->size = array('*', '*');
     $existelements = false;
-    if ($scorm->version == 'SCORM_1.3') {
+    if (scorm_version_check($scorm->version, SCORM_13)) {
         $elements = array(
                 'raw' => 'cmi.score.raw',
                 'min' => 'cmi.score.min',

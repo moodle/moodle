@@ -886,7 +886,7 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
     $count = 0;
     $count_sub = 0;
     $scormseperator = '_';
-    if ($sversion == 'scorm_13') { //scorm 1.3 elements use a . instead of an _
+    if (scorm_version_check($sversion, SCORM_13)) { //scorm 1.3 elements use a . instead of an _
         $scormseperator = '.';
     }
     // filter out the ones we want
@@ -902,7 +902,7 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
 
     // generate JavaScript
     foreach ($element_list as $element => $value) {
-        if ($sversion == 'scorm_13') {
+        if (scorm_version_check($sversion, SCORM_13)) {
             $element = preg_replace('/\.(\d+)\./', ".N\$1.", $element);
             preg_match('/\.(N\d+)\./', $element, $matches);
         } else {
@@ -929,7 +929,7 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
         }
 
         // now - flesh out the second level elements if there are any
-        if ($sversion == 'scorm_13') {
+        if (scorm_version_check($sversion, SCORM_13)) {
             $element = preg_replace('/(.*?\.N\d+\..*?)\.(\d+)\./', "\$1.N\$2.", $element);
             preg_match('/.*?\.N\d+\.(.*?)\.(N\d+)\./', $element, $matches);
         } else {
@@ -1113,7 +1113,7 @@ function scorm_get_attempt_count($userid, $scorm, $attempts_only=false) {
     if ($scorm->grademethod == GRADESCOES) {
         $element = 'cmi.core.lesson_status';
     }
-    if ($scorm->version == 'scorm_13' || $scorm->version == 'SCORM_1.3') {
+    if (scorm_version_check($scorm->version, SCORM_13)) {
         $element = 'cmi.score.raw';
     }
     $attempts = $DB->get_records_select('scorm_scoes_track', "element=? AND userid=? AND scormid=?", array($element, $userid, $scorm->id), 'attempt', 'DISTINCT attempt AS attemptnumber');
@@ -1381,7 +1381,7 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                         }
                         $strsuspended = get_string('suspended','scorm');
                         $exitvar = 'cmi.core.exit';
-                        if ($scorm->version == 'SCORM_1.3') {
+                        if (scorm_version_check($scorm->version, SCORM_13)) {
                             $exitvar = 'cmi.exit';
                         }
                         if ($incomplete && isset($usertrack->{$exitvar}) && ($usertrack->{$exitvar} == 'suspend')) {
@@ -1407,8 +1407,7 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                             $previd = $sco->id;
                         }
                     }
-
-                    if ($scorm->version == 'SCORM_1.3') {
+                    if (scorm_version_check($scorm->version, SCORM_13)) {
                         require_once($CFG->dirroot.'/mod/scorm/datamodels/sequencinglib.php');
                         $prereq = scorm_seq_evaluate($sco->id,$usertracks);
                     } else {

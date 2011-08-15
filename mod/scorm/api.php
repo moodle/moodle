@@ -60,7 +60,7 @@ require_login($course->id, false, $cm);
 
 if ($usertrack = scorm_get_tracks($scoid, $USER->id, $attempt)) {
     //according to SCORM 2004 spec(RTE V1, 4.2.8), only cmi.exit==suspend should allow previous datamodel elements on re-launch
-    if ($scorm->version != "SCORM_1.3" || (isset($usertrack->{'cmi.exit'}) && ($usertrack->{'cmi.exit'} == 'suspend'))) {
+    if (!scorm_version_check($scorm->version, SCORM_13) || (isset($usertrack->{'cmi.exit'}) && ($usertrack->{'cmi.exit'} == 'suspend'))) {
         foreach ($usertrack as $key => $value) {
             $userdata->$key = addslashes_js($value);
         }
@@ -93,7 +93,7 @@ if ($scodatas = scorm_get_sco($scoid, SCO_DATA)) {
 if (!$sco = scorm_get_sco($scoid)) {
     print_error('cannotfindsco', 'scorm');
 }
-if ($scorm->version == "SCORM_1.3") {
+if (scorm_version_check($scorm->version, SCORM_13)) {
     $userdata->{'cmi.scaled_passing_score'} = $DB->get_field('scorm_seq_objective', 'minnormalizedmeasure', array('scoid'=>$scoid));
 }
 $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe

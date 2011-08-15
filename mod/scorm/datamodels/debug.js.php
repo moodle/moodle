@@ -85,11 +85,11 @@ var logRow = 0;
 var logPopUpWindow = "N";
 var debugSCORMVersion = '<?php echo $scorm->version; ?>';
 <?php
-   $LMS_prefix = ($scorm->version == 'scorm_12' || $scorm->version == 'SCORM_1.2' || empty($scorm->version)) ? 'LMS' : '';
-   $LMS_api = ($scorm->version == 'scorm_12' || $scorm->version == 'SCORM_1.2' || empty($scorm->version)) ? 'API' : 'API_1484_11';
+   $LMS_prefix = (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) ? 'LMS' : '';
+   $LMS_api = (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) ? 'API' : 'API_1484_11';
 
    $LMS_elements = array();
-   if ($scorm->version == 'scorm_12' || $scorm->version == 'SCORM_1.2' || empty($scorm->version)) {
+   if (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) {
        $LMS_elements = array(   'cmi.core._children',
                                 'cmi.core.student_id',
                                 'cmi.core.student_name',
@@ -653,8 +653,8 @@ function UpdateLog(s) {
         + '             id="commitButton"'
         + '             name="commitButton">'
         + '            <input type="button"'
-        + '             value="<?php echo $scorm->version == 'scorm_12' ? 'LMSFinish' : 'Terminate'; ?>()  "'
-        + '             onclick="try<?php echo $scorm->version == 'scorm_12' ? 'LMSFinish' : 'LMSTerminate'; ?>();"'
+        + '             value="<?php echo scorm_version_check($scorm->version, SCORM_12) ? 'LMSFinish' : 'Terminate'; ?>()  "'
+        + '             onclick="try<?php echo scorm_version_check($scorm->version, SCORM_12) ? 'LMSFinish' : 'LMSTerminate'; ?>();"'
         + '             id="finishButton"'
         + '             name="finishButton">'
         + '         </td>'

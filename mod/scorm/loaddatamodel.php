@@ -61,7 +61,7 @@ $PAGE->set_url($url);
 require_login($course, false, $cm);
 
 if ($usertrack = scorm_get_tracks($scoid, $USER->id, $attempt)) {
-    if ((isset($usertrack->{'cmi.exit'}) && ($usertrack->{'cmi.exit'} != 'time-out')) || ($scorm->version != "SCORM_1.3")) {
+    if ((isset($usertrack->{'cmi.exit'}) && ($usertrack->{'cmi.exit'} != 'time-out')) || (!scorm_version_check($scorm->version, SCORM_13))) {
         foreach ($usertrack as $key => $value) {
             $userdata->$key = addslashes_js($value);
         }
