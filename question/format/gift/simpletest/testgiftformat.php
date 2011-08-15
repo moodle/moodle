@@ -62,11 +62,13 @@ class qformat_gift_test extends UnitTestCase {
             'defaultmark' => 1,
             'penalty' => 0.3333333,
             'length' => 1,
-            'feedback' => array(
+            'responseformat' => 'editor',
+            'responsefieldlines' => 15,
+            'attachments' => 0,
+            'graderinfo' => array(
                 'text' => '',
-                'format' => FORMAT_MOODLE,
-                'files' => array(),
-            ),
+                'format' => FORMAT_HTML,
+                'files' => array()),
         );
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
@@ -85,16 +87,11 @@ class qformat_gift_test extends UnitTestCase {
             'length' => 1,
             'qtype' => 'essay',
             'options' => (object) array(
-                'answers' => array(
-                    123 => (object) array(
-                        'id' => 123,
-                        'answer' => 666,
-                        'answerformat' => FORMAT_MOODLE,
-                        'fraction' => 0,
-                        'feedback' => '',
-                        'feedbackformat' => FORMAT_MOODLE,
-                    ),
-                ),
+                'responseformat' => 'editor',
+                'responsefieldlines' => 15,
+                'attachments' => 0,
+                'graderinfo' => '',
+                'graderinfoformat' => FORMAT_HTML,
             ),
         );
 
