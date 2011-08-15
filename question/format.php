@@ -595,7 +595,9 @@ class qformat_default {
         $question->image = "";
         $question->usecase = 0;
         $question->multiplier = array();
+        $question->questiontextformat = FORMAT_MOODLE;
         $question->generalfeedback = '';
+        $question->generalfeedbackformat = FORMAT_MOODLE;
         $question->correctfeedback = '';
         $question->partiallycorrectfeedback = '';
         $question->incorrectfeedback = '';
