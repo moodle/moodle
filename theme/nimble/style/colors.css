@@ -1,40 +1,31 @@
 #page-header-wrapper {
-	background: [[setting:backgroundcolor]];
+    background: [[setting:backgroundcolor]];
 }
 
 a {
-	color: [[setting:linkcolor]];
+    color: [[setting:linkcolor]];
 }
 
 a:hover {
-	color: #000;
+    color: #000;
 }
 
-.yui3-skin-sam .yui3-menu-label-active,
-.yui3-skin-sam .yui3-menu-label-menuvisible {
-	color: #fff;
-	background: [[setting:linkhover]] !important;
-}
-
-.yui3-skin-sam .yui3-menu .yui3-menu {
-	padding-top: 5px;
-	background: [[setting:linkhover]];
-	
+#custommenu .yui3-menu-content .yui3-menu-content,
+#custommenu .yui3-menu-label.yui3-menu-label-active,
+#custommenu .yui3-menuitem.yui3-menuitem-active .yui3-menuitem-content,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label,
+#custommenu .yui3-menu .yui3-menu .yui3-menuitem .yui3-menuitem-content {
+    background-color: [[setting:linkhover]];
+    background-image:none;
 }
 
 
-
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu .yui3-menu-label-active,
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu .yui3-menu-label-menuvisible {
- color: #fff;
-	background-color: [[setting:linkhover]] !important;
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label-active,
+#custommenu .yui3-menu .yui3-menu .yui3-menuitem-active .yui3-menuitem-content {
+    background-color:#333;
+    background-image:none;
 }
 
-
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-content {
-	background: [[setting:linkhover]];
-}
-
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu .yui3-menu-content {
-	background: [[setting:linkhover]];
+#custommenu .yui3-menu-horizontal.javascript-disabled li:hover a {
+    background-color: [[setting:linkhover]];
 }
