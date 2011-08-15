@@ -317,10 +317,11 @@ class qformat_gift extends qformat_default {
                 return $question;
 
             case ESSAY:
-                $question->fraction = 0;
-                $question->feedback['text'] = '';
-                $question->feedback['format'] = $question->questiontextformat;
-                $question->feedback['files'] = array();
+                $question->responseformat = 'editor';
+                $question->responsefieldlines = 15;
+                $question->attachments = 0;
+                $question->graderinfo = array(
+                        'text' => '', 'format' => FORMAT_HTML, 'files' => array());
                 return $question;
 
             case MULTICHOICE:
