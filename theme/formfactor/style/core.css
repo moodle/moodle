@@ -59,8 +59,8 @@ body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea { font-family: "Trebuchet MS", 
     margin:0 50px;
 }
 
-#custommenu, 
-#custommenu .yui3-menu, 
+#custommenu,
+#custommenu .yui3-menu,
 #custommenu .yui3-menu-content {
     border-width:0;
 }

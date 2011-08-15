@@ -276,7 +276,7 @@ body.has_dock {
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content ul,
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content li li:hover > a,
 #custommenu .yui3-menu-horizontal .yui3-menu-label,
-#custommenu .yui3-menuitem, 
+#custommenu .yui3-menuitem,
 #custommenu .yui3-menuitem .yui3-menuitem-content {
     border-width: 0;
 }

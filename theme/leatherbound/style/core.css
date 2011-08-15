@@ -306,26 +306,26 @@ h2.headingblock {
 }
 
 /*YUI Reset */
-#custommenu .yui3-menu-label, 
+#custommenu .yui3-menu-label,
 #custommenu .yui3-menuitem-content {
     color: #35251B;
     font-weight: 400;
     border-width: 0;
 }
 
-#custommenu .custom_menu_submenu .yui3-menu-label, 
+#custommenu .custom_menu_submenu .yui3-menu-label,
 #custommenu .custom_menu_submenu .yui3-menuitem-content {
     color: #35251B;
 }
 
-#custommenu .yui3-menu-label.yui3-menu-label-active, 
+#custommenu .yui3-menu-label.yui3-menu-label-active,
 #custommenu .yui3-menuitem-active .yui3-menuitem-content {
     color: #DA5013;
 }
 
-#custommenu .yui3-menu-content, 
-#custommenu .yui3-menu .yui3-menu .yui3-menu-content, 
-#custommenu .yui3-menu-horizontal .yui3-menu-label, 
+#custommenu .yui3-menu-content,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-content,
+#custommenu .yui3-menu-horizontal .yui3-menu-label,
 #custommenu .yui3-menu-horizontal .yui3-menuitem-content  {
     border-width: 0;
 }

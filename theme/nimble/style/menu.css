@@ -16,7 +16,7 @@
     padding: 0 20px;
 }
 
-#custommenu .yui3-menu-label, 
+#custommenu .yui3-menu-label,
 #custommenu .yui3-menuitem-content {
     border: 1px solid #555;
     border-bottom-width: 0;
@@ -27,7 +27,7 @@
     -webkit-border-radius: 10px 10px 0 0;
 }
 
-#custommenu .yui3-menu .yui3-menu .yui3-menu-label, 
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label,
 #custommenu .yui3-menu .yui3-menu .yui3-menuitem-content {
     margin-right:0;
     border-width:0;
@@ -58,7 +58,7 @@
     padding:3px 20px 4px;
 }
 
-#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content, 
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content,
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content .ul {
     border-width:0;
 }

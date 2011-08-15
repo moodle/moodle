@@ -2,7 +2,7 @@
 #custommenu .yui3-menu-content,
 #custommenu .yui3-menu-label,
 #custommenu .yui3-menuitem-content {
-	border-width: 0;
+    border-width: 0;
 }
 
 #custommenu .yui3-menu ul{
@@ -27,8 +27,8 @@
 }
 
 #custommenu ul.first-of-type li a {
-	border-top-width: 0;
-	border-bottom-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
 }
 
 #custommenu ul.first-of-type li a:hover {

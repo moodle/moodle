@@ -190,13 +190,13 @@ a:active {
     text-shadow: none;
 }
 
-#custommenu .yui3-menu-label-active, 
+#custommenu .yui3-menu-label-active,
 #custommenu .yui3-menuitem-active .yui3-menuitem-content {
     color: #ccc;
 }
 
-#custommenu .yui3-menu-content, 
-#custommenu .yui3-menu-label, 
+#custommenu .yui3-menu-content,
+#custommenu .yui3-menu-label,
 #custommenu .yui3-menuitem-content  {
     border-width: 0;
 }

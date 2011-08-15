@@ -286,7 +286,7 @@ a:active {
     text-decoration:none;
 }
 
-#custommenu .yui3-menu-label-active, 
+#custommenu .yui3-menu-label-active,
 #custommenu .yui3-menu-label-menuvisible,
 #custommenu .yui3-menuitem-active .yui3-menuitem-content {
     text-decoration:underline;
@@ -316,7 +316,7 @@ a:active {
     border-width:0;
 }
 
-#custommenu .yui3-menu-label-active, 
+#custommenu .yui3-menu-label-active,
 #custommenu .yui3-menu-label-menuvisible,
 #custommenu .yui3-menuitem-active .yui3-menuitem-content {
     background-color: #605f5f;
