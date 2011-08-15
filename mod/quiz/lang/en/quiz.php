@@ -121,7 +121,6 @@ $string['cannotinsertrandomquestion'] = 'Could not insert new random question!';
 $string['cannotloadquestion'] = 'Could not load question options';
 $string['cannotloadtypeinfo'] = 'Unable to load questiontype specific question information';
 $string['cannotopen'] = 'Cannot open export file ({$a})';
-$string['cannotread'] = 'Cannot read import file (or file is empty)';
 $string['cannotrestore'] = 'Could not restore question sessions';
 $string['cannotreviewopen'] = 'You cannot review this attempt, it is still open.';
 $string['cannotsavelayout'] = 'Could not save layout';
