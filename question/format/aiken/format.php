@@ -76,12 +76,11 @@ class qformat_aiken extends qformat_default {
                 }
                 if (preg_match('/^[A-Z][).][ \t]/', $nowline)) {
                     // A choice. Trim off the label and space, then save
-                    $question->answer[] = htmlspecialchars(trim(substr($nowline, 2)), ENT_NOQUOTES);
+                    $question->answer[] = $this->text_field(
+                            htmlspecialchars(trim(substr($nowline, 2)), ENT_NOQUOTES));
                     $question->fraction[] = 0;
-                    $question->feedback[] = '';
-                    continue;
-                }
-                if (preg_match('/^ANSWER:/', $nowline)) {
+                    $question->feedback[] = $this->text_field('');
+                } else if (preg_match('/^ANSWER:/', $nowline)) {
                     // The line that indicates the correct answer. This question is finised.
                     $ans = trim(substr($nowline, strpos($nowline, ':') + 1));
                     $ans = substr($ans, 0, 1);
@@ -97,13 +96,29 @@ class qformat_aiken extends qformat_default {
                     // Must be the first line of a new question, since no recognised prefix.
                     $question->qtype = MULTICHOICE;
                     $question->name = shorten_text(s($nowline), 50);
-                    $question->questiontext = s($nowline);
+                    $question->questiontext = htmlspecialchars(trim($nowline), ENT_NOQUOTES);
+                    $question->questiontextformat = FORMAT_HTML;
+                    $question->generalfeedback = '';
+                    $question->generalfeedbackformat = FORMAT_HTML;
                     $question->single = 1;
-                    $question->feedback[] = '';
+                    $question->answer = array();
+                    $question->fraction = array();
+                    $question->feedback = array();
+                    $question->correctfeedback = $this->text_field('');
+                    $question->partiallycorrectfeedback = $this->text_field('');
+                    $question->incorrectfeedback = $this->text_field('');
                 }
             }
         }
         return $questions;
+    }
+
+    protected function text_field($text) {
+        return array(
+            'text' => htmlspecialchars(trim($text), ENT_NOQUOTES),
+            'format' => FORMAT_HTML,
+            'files' => array(),
+        );
     }
 
     public function readquestion($lines) {
