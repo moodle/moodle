@@ -1303,6 +1303,7 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
         $nextid = 0;
         $findnext = false;
         $parents[$level]='/';
+        $prevsco = '';
         foreach ($scoes as $pos => $sco) {
             $isvisible = false;
             $sco->title = $sco->title;
@@ -1418,8 +1419,9 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                         if ($sco->id == $scoid) {
                             $result->prerequisites = true;
                         }
-
-                        if ($toclink == TOCFULLURL) { //display toc with urls for structure page
+                        if (!empty($prevsco) && scorm_version_check($scorm->version, SCORM_13) && !empty($prevsco->hidecontinue)) {
+                            $result->toc .= '<span>'.$statusicon.'&nbsp;'.format_string($sco->title).'</span>';
+                        } else if ($toclink == TOCFULLURL) { //display toc with urls for structure page
                             $url = $CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;currentorg='.$currentorg.$modestr.'&amp;scoid='.$sco->id;
                             $result->toc .= $statusicon.'&nbsp;<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score."\n";
                         } else { //display toc for inside scorm player
@@ -1454,6 +1456,7 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
                     $nextid = $nextsco->id;
                 }
             }
+            $prevsco = $sco;
         }
         for ($i=0;$i<$level;$i++) {
             $result->toc .= "\t\t</ul></li>\n";
