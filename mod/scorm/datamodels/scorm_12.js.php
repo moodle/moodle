@@ -586,7 +586,6 @@ function SCORMapi1_2() {
                                 }
                             } else {
                                 datastring += elementstring;
-                                eval('datamodel["'+elementmodel+'"].defaultvalue=data[property];');
                             }
                         }
                     }
