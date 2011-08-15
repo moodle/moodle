@@ -567,22 +567,25 @@ class rating_manager {
         $params['component']    = $options->component;
         $params['ratingarea'] = $options->ratingarea;
 
-        $sql = "SELECT r.itemid, r.component, r.ratingarea, r.contextid,
-                       $aggregatestr(r.rating) AS aggrrating, COUNT(r.rating) AS numratings,
-                       ur.id, ur.userid, ur.scaleid, ur.rating AS usersrating
+        $sql = "SELECT r.id, r.itemid, r.userid, r.scaleid, r.rating AS usersrating
                   FROM {rating} r
-             LEFT JOIN {rating} ur ON ur.contextid = r.contextid AND
-                                      ur.itemid = r.itemid AND
-                                      ur.component = r.component AND
-                                      ur.ratingarea = r.ratingarea AND
-                                      ur.userid = :userid
+                 WHERE r.userid = :userid AND
+                       r.contextid = :contextid AND
+                       r.itemid {$itemidtest} AND
+                       r.component = :component AND
+                       r.ratingarea = :ratingarea
+              ORDER BY r.itemid";
+        $userratings = $DB->get_records_sql($sql, $params);
+
+        $sql = "SELECT r.itemid, $aggregatestr(r.rating) AS aggrrating, COUNT(r.rating) AS numratings
+                  FROM {rating} r
                  WHERE r.contextid = :contextid AND
                        r.itemid {$itemidtest} AND
                        r.component = :component AND
                        r.ratingarea = :ratingarea
-              GROUP BY r.itemid, r.component, r.ratingarea, r.contextid, ur.id, ur.userid, ur.scaleid
+              GROUP BY r.itemid, r.component, r.ratingarea, r.contextid
               ORDER BY r.itemid";
-        $ratingsrecords = $DB->get_records_sql($sql, $params);
+        $aggregateratings = $DB->get_records_sql($sql, $params);
 
         $ratingoptions = new stdClass;
         $ratingoptions->context = $options->context;
@@ -590,25 +593,37 @@ class rating_manager {
         $ratingoptions->ratingarea = $options->ratingarea;
         $ratingoptions->settings = $this->generate_rating_settings_object($options);
         foreach ($options->items as $item) {
-            if (array_key_exists($item->{$itemidcol}, $ratingsrecords)) {
-                // Note: rec->scaleid = the id of scale at the time the rating was submitted
-                // may be different from the current scale id
-                $rec = $ratingsrecords[$item->{$itemidcol}];
-                $ratingoptions->itemid = $item->{$itemidcol};
-                $ratingoptions->scaleid = $rec->scaleid;
-                $ratingoptions->userid = $rec->userid;
-                $ratingoptions->id = $rec->id;
-                $ratingoptions->aggregate = min($rec->aggrrating, $ratingoptions->settings->scale->max);
-                $ratingoptions->count = $rec->numratings;
-                $ratingoptions->rating = min($rec->usersrating, $ratingoptions->settings->scale->max);
-            } else {
-                $ratingoptions->itemid = $item->{$itemidcol};
+            $founduserrating = false;
+            foreach($userratings as $userrating) {
+                //look for an existing rating from this user of this item
+                if ($item->{$itemidcol} == $userrating->itemid) {
+                    // Note: rec->scaleid = the id of scale at the time the rating was submitted
+                    // may be different from the current scale id
+                    $ratingoptions->scaleid = $userrating->scaleid;
+                    $ratingoptions->userid = $userrating->userid;
+                    $ratingoptions->id = $userrating->id;
+                    $ratingoptions->rating = min($userrating->usersrating, $ratingoptions->settings->scale->max);
+
+                    $founduserrating = true;
+                    break;
+                }
+            }
+            if (!$founduserrating) {
                 $ratingoptions->scaleid = null;
                 $ratingoptions->userid = null;
                 $ratingoptions->id = null;
+                $ratingoptions->rating =  null;
+            }
+
+            if (array_key_exists($item->{$itemidcol}, $aggregateratings)) {
+                $rec = $aggregateratings[$item->{$itemidcol}];
+                $ratingoptions->itemid = $item->{$itemidcol};
+                $ratingoptions->aggregate = min($rec->aggrrating, $ratingoptions->settings->scale->max);
+                $ratingoptions->count = $rec->numratings;
+            } else {
+                $ratingoptions->itemid = $item->{$itemidcol};
                 $ratingoptions->aggregate = null;
                 $ratingoptions->count = 0;
-                $ratingoptions->rating =  null;
             }
 
             $rating = new rating($ratingoptions);
