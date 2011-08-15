@@ -86,7 +86,7 @@ if (!isset($sco)) {
 
 if ($sco->scormtype == 'asset') {
     $attempt = scorm_get_last_attempt($scorm->id, $USER->id);
-    $element = ($scorm->version == 'scorm_13' || $scorm->version == 'SCORM_1.3') ? 'cmi.completion_status':'cmi.core.lesson_status';
+    $element = (scorm_version_check($scorm->version, SCORM_13)) ? 'cmi.completion_status':'cmi.core.lesson_status';
     $value = 'completed';
     $result = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
 }
@@ -137,7 +137,7 @@ if (scorm_external_link($sco->launch)) {
 }
 
 // which API are we looking for
-$LMS_api = ($scorm->version == 'scorm_12' || $scorm->version == 'SCORM_1.2' || empty($scorm->version)) ? 'API' : 'API_1484_11';
+$LMS_api = (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) ? 'API' : 'API_1484_11';
 ?>
 <html>
     <head>
