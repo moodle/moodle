@@ -481,7 +481,7 @@ if ($formdata = $mform->get_data()) {
         fclose($fp);
         unlink($filename);
     } else {
-        print_error('cannotreadfil');
+        print_error('cannotreadfile');
     }
 
 } else {
