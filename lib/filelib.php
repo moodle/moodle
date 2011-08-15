@@ -124,7 +124,7 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
             throw new coding_exception($exceptionmsg);
         }
     }
-    
+
     if (is_null($itemid) or is_null($context)) {
         $contextid = null;
         $itemid = null;
