@@ -84,6 +84,7 @@ if ($edit) {
     $data = $editpage->properties();
     $data->pageid = $editpage->id;
     $data->id = $cm->id;
+    $editoroptions['context'] = $context;
     $data = file_prepare_standard_editor($data, 'contents', $editoroptions, $context, 'mod_lesson', 'page_contents',  $editpage->id);
     $mform->set_data($data);
     $PAGE->navbar->add(get_string('edit'), new moodle_url('/mod/lesson/edit.php', array('id'=>$id)));

@@ -535,6 +535,8 @@ class page_wiki_edit extends page_wiki {
         switch ($format) {
         case 'html':
             $data->newcontentformat = FORMAT_HTML;
+            // Append editor context to editor options, giving preference to existing context.
+            page_wiki_edit::$attachmentoptions = array_merge(array('context' => $this->modcontext), page_wiki_edit::$attachmentoptions);
             $data = file_prepare_standard_editor($data, 'newcontent', page_wiki_edit::$attachmentoptions, $this->modcontext, 'mod_wiki', 'attachments', $this->subwiki->id);
             break;
         default:

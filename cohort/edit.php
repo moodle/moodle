@@ -98,12 +98,12 @@ if ($delete and $cohort->id) {
 $editoroptions = array('maxfiles'=>0, 'context'=>$context);
 if ($cohort->id) {
     // edit existing
-    $cohort = file_prepare_standard_editor($cohort, 'description', $editoroptions);
+    $cohort = file_prepare_standard_editor($cohort, 'description', $editoroptions, $context);
     $strheading = get_string('editcohort', 'cohort');
 
 } else {
     // add new
-    $cohort = file_prepare_standard_editor($cohort, 'description', $editoroptions);
+    $cohort = file_prepare_standard_editor($cohort, 'description', $editoroptions, $context);
     $strheading = get_string('addcohort', 'cohort');
 }
 
