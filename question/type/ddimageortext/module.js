@@ -9,13 +9,13 @@ M.qtype_ddimagetoimage={
         this.doc = this.doc_structure(Y, Y.one(topnodestr), this, null);
         this.init_drops(drops);
         var i = 0;
-        this.doc.drag_item_homes().each(function(dragitemhome){
+        this.doc.drag_image_homes().each(function(dragimagehome){
             var dragimageno = 
-                +this.doc.get_classname_numeric_suffix(dragitemhome, 'dragimagehomes');
-            var choice = +this.doc.get_classname_numeric_suffix(dragitemhome, 'choice');
-            var group = +this.doc.get_classname_numeric_suffix(dragitemhome, 'group')
+                +this.doc.get_classname_numeric_suffix(dragimagehome, 'dragimagehomes');
+            var choice = +this.doc.get_classname_numeric_suffix(dragimagehome, 'choice');
+            var group = +this.doc.get_classname_numeric_suffix(dragimagehome, 'group')
             var groupsize = this.doc.drop_zone_group(group).size();
-            var dragnode = this.doc.clone_new_drag_item(i, dragimageno);
+            var dragnode = this.doc.clone_new_drag_image(i, dragimageno);
             i++;
             if (!readonly) {
                 this.doc.draggable_for_question(dragnode, group, choice);
@@ -23,7 +23,7 @@ M.qtype_ddimagetoimage={
             if (dragnode.hasClass('infinite')) {
                 var dragstocreate = groupsize - 1;
                 while (dragstocreate > 0) {
-                    dragnode = this.doc.clone_new_drag_item(i, dragimageno);
+                    dragnode = this.doc.clone_new_drag_image(i, dragimageno);
                     i++;
                     if (!readonly) {
                         this.doc.draggable_for_question(dragnode, group, choice);
@@ -34,7 +34,7 @@ M.qtype_ddimagetoimage={
             //put these here for easy refernece later
         }, this);
         this.doc.bg_img().on('load', this.delayed_redraw, this);
-        this.doc.drag_item_homes().on('load', this.delayed_redraw, this);
+        this.doc.drag_image_homes().on('load', this.delayed_redraw, this);
         Y.on('windowresize', this.redraw, this);
     },
     delayed_redraw : function (e) {
@@ -42,10 +42,10 @@ M.qtype_ddimagetoimage={
         this.Y.later(2000, this, this.redraw);
     },
     redraw : function(e) {
-        this.doc.drag_items().removeClass('placed');
-        this.doc.drag_items().each (function (dragitem) {
-            if (dragitem.dd !== undefined) {
-                dragitem.dd.detachAll('drag:start');
+        this.doc.drag_images().removeClass('placed');
+        this.doc.drag_images().each (function (dragimage) {
+            if (dragimage.dd !== undefined) {
+                dragimage.dd.detachAll('drag:start');
             }
         }, this);
         this.doc.drop_zones().each(function(dropzone) {
@@ -56,13 +56,13 @@ M.qtype_ddimagetoimage={
             var choice = input.get('value');
             if (choice !== "") {
                 var group = dropzone.getData('group');
-                var dragitem = this.doc.top_node()
+                var dragimage = this.doc.top_node()
                         .one('div.dragitemgroup'+group+' img.choice'+choice+'.drag:not(.placed)');
-                if (dragitem !== null) {
-                    dragitem.setXY(dropzone.getXY());
-                    dragitem.addClass('placed');
-                    if (dragitem.dd !== undefined) {
-                        dragitem.dd.once('drag:start', function (e, input) {
+                if (dragimage !== null) {
+                    dragimage.setXY(dropzone.getXY());
+                    dragimage.addClass('placed');
+                    if (dragimage.dd !== undefined) {
+                        dragimage.dd.once('drag:start', function (e, input) {
                             input.set('value', '');
                             e.target.get('node').removeClass('placed');
                         },this, input);
@@ -70,10 +70,10 @@ M.qtype_ddimagetoimage={
                 }
             }
         }, this);
-        this.doc.drag_items().each(function(dragitem) {
-            if (!dragitem.hasClass('placed')) {
-                var dragitemhome = this.doc.get_drag_image_home(dragitem.getData('dragimageno'));
-                dragitem.setXY(dragitemhome.getXY());
+        this.doc.drag_images().each(function(dragimage) {
+            if (!dragimage.hasClass('placed')) {
+                var dragimagehome = this.doc.drag_image_home(dragimage.getData('dragimageno'));
+                dragimage.setXY(dragimagehome.getXY());
             }
         }, this);
         this.update_padding_sizes_all();
@@ -114,14 +114,14 @@ M.qtype_ddimagetoimage={
      * Object to encapsulate operations on dd area.
      */
     doc_structure : function (Y, topnode, mainobj, maxsizes) {
-        var dragitemsarea = topnode.one('div.dragitems');
+        var dragimagesarea = topnode.one('div.dragitems');
         var dropbgarea = topnode.one('div.droparea');
         return {
             top_node : function() {
                 return topnode;
             },
-            drag_items : function() {
-                return dragitemsarea.all('img.drag');
+            drag_images : function() {
+                return dragimagesarea.all('img.drag');
             },
             drop_zones : function() {
                 return topnode.all('div.dropzones div.dropzone');
@@ -129,14 +129,14 @@ M.qtype_ddimagetoimage={
             drop_zone_group : function(groupno) {
                 return topnode.all('div.dropzones div.group' + groupno);
             },
-            drag_items_cloned_from : function(dragimageno) {
-                return dragitemsarea.all('img.dragimages'+dragimageno);
+            drag_images_cloned_from : function(dragimageno) {
+                return dragimagesarea.all('img.dragimages'+dragimageno);
             },
-            drag_item : function(draginstanceno) {
-                return dragitemsarea.one('img.draginstance' + draginstanceno);
+            drag_image : function(draginstanceno) {
+                return dragimagesarea.one('img.draginstance' + draginstanceno);
             },
-            drag_item_homes : function() {
-                return dragitemsarea.all('img.draghome');
+            drag_image_homes : function() {
+                return dragimagesarea.all('img.draghome');
             },
             bg_img : function() {
                 return topnode.one('img.dropbackground');
@@ -145,39 +145,28 @@ M.qtype_ddimagetoimage={
                 dropbgarea.setContent('<img class="dropbackground" src="'+ url +'"/>');
                 this.bg_img().on('load', this.on_image_load, this, 'bg_image');
             },
-            add_or_update_drag_item_home : function (dragimageno, url, alt, group) {
-                var oldhome = dragitemsarea.one('img.dragimagehomes'+dragimageno);
+            add_or_update_drag_image_home : function (dragimageno, url, alt, group) {
+                var oldhome = this.drag_image_home(dragimageno);
                 var classes = 'draghome dragimagehomes'+dragimageno+' group'+group;
                 var imghtml = '<img class="'+classes+'" src="'+url+'" alt="'+alt+'" />';
                 if (oldhome === null) {
                     if (url) {
-                        dragitemsarea.append(imghtml);
+                        dragimagesarea.append(imghtml);
                     }
                 } else {
                     if (url) {
-                        dragitemsarea.insert(imghtml, oldhome);
+                        dragimagesarea.insert(imghtml, oldhome);
                     }
                     oldhome.remove(true);
                 }
-                var newlycreated = dragitemsarea.one('img.dragimagehomes'+dragimageno);
+                var newlycreated = dragimagesarea.one('img.dragimagehomes'+dragimageno);
                 if (newlycreated !== null) {
                     newlycreated.setData('groupno', group);
                     newlycreated.setData('dragimageno', dragimageno);
-                    newlycreated.on('load', this.on_image_load, this, 'drag_image');
                 }
             },
-            on_image_load : function (e, imagetype) {
-                if (maxsizes !== null) {
-                    var maxsize = maxsizes[imagetype];
-                    var reduceby = Math.max(e.target.get('width') / maxsize.width,
-                                            e.target.get('height') / maxsize.height);
-                    if (reduceby > 1) {
-                        e.target.set('width', Math.floor(e.target.get('width') / reduceby));
-                    }
-                }
-            },
-            get_drag_image_home : function (dragimageno) {
-                return dragitemsarea.one('img.dragimagehomes' + dragimageno);
+            drag_image_home : function (dragimageno) {
+                return dragimagesarea.one('img.dragimagehomes' + dragimageno);
             },
             get_classname_numeric_suffix : function(node, prefix) {
                 var classes = node.getAttribute('class');
@@ -194,8 +183,8 @@ M.qtype_ddimagetoimage={
                 }
                 throw 'Prefix "'+prefix+'" not found in class names.';
             },
-            clone_new_drag_item : function (draginstanceno, dragimageno) {
-                var draghome = this.get_drag_image_home(dragimageno);
+            clone_new_drag_image : function (draginstanceno, dragimageno) {
+                var draghome = this.drag_image_home(dragimageno);
                 if (draghome === null) {
                     return null;
                 }
@@ -281,6 +270,7 @@ M.qtype_ddimagetoimage={
     //---------- stuff below this line only used in question editing form ---------------
     
     fp : null,
+    maxsizes : null,
     /**
      * Entry point when called from question editing form
      */
@@ -291,64 +281,139 @@ M.qtype_ddimagetoimage={
         topnode.append('<div class="ddarea"><div class="droparea"></div>'+
                 '<div class="dragitems"></div>'+
                 '<div class="dropzones"></div></div>');
-        this.doc = this.doc_structure(Y, topnode, this, maxsizes);
-        this.init_dd_area();
+        this.doc = this.doc_structure(Y, topnode, this);
+        this.maxsizes = maxsizes;
+        this.draw_dd_area();
     },
 
-    init_dd_area : function() {
+    draw_dd_area : function() {
+        var bgimageurl = this.fp.file(this.form.to_name_with_index('bgimage')).href
+        if (bgimageurl !== null) {
+            this.doc.load_bg_img(bgimageurl);
+            this.doc.bg_img().on('load', this.constrain_image_size, this, 'bgimage')
+            this.load_drag_homes();
+            this.setup_form_events();
+            
+            var drop = new this.Y.DD.Drop({
+                node: this.doc.bg_img()
+            });
+            //Listen for a drop:hit on the background image
+            drop.on('drop:hit', function(e) {
+                e.drag.get('node').setData('gooddrop', true);
+            });
+    
+            this.Y.on('windowresize', this.reposition_drags, this);
+            
+            this.doc.bg_img().after('load', this.wait_for_all_images, this);
+            this.doc.drag_image_homes().after('load', this.wait_for_all_images, this);
+            this.doc.drag_image_homes().on('load', this.constrain_image_size, this, 'dragimage');
+        }
+    },
+    wait_for_all_images : function (wait) {
+        if (wait === undefined) {
+            wait = 0;
+        }
+        var allimgsloaded;
+        if (allimgsloaded === true) {
+            return;
+        }
+        if (!this.doc.bg_img().get('complete')){
+            return;
+        } else {
+            var allimgsloaded = !this.doc.drag_image_homes().some(function(dragimagehome){
+                //search for one node which is not 'complete'
+                return !dragimagehome.get('complete');
+            }, this);
+            if (allimgsloaded) {
+                this.doc.drag_image_homes().detach('load', this.wait_for_all_images);
+                this.doc.bg_img().detach('load', this.wait_for_all_images);
+                if (wait === 0) {
+                    this.after_all_images_loaded();
+                } else {
+                    this.Y.later(wait, this, function (e) {
+                        this.after_all_images_loaded();
+                    }, this);
+                }
+            }
+        }
+    },
+    
+    after_all_images_loaded : function () {
+        this.doc.drag_images().remove(true);
+        this.copy_drag_instances();
+        this.update_padding_sizes_all();
+        this.reposition_drags();
+        this.set_options_for_drag_image_selectors();
+    },
+    
+    constrain_image_size : function (e, imagetype) {
+        var maxsize = this.maxsizes[imagetype];
+        var reduceby = Math.max(e.target.get('width') / maxsize.width,
+                                e.target.get('height') / maxsize.height);
+        if (reduceby > 1) {
+            e.target.set('width', Math.floor(e.target.get('width') / reduceby));
+        }
+    },
+
+    load_drag_homes : function () {
         //set up drag items homes
+        var dragimagesoptions = {0: ''}; 
+        for (var i=0; i < this.form.get_form_value('noimages'); i++) {
+            this.load_drag_image_home(i);
+        }
+    },
+
+    load_drag_image_home : function (dragimageno) {
+        var url = this.fp.file(this.form.to_name_with_index('dragitem', [dragimageno])).href;
+        this.doc.add_or_update_drag_image_home(dragimageno, url, 
+                this.form.get_form_value('drags', [dragimageno, 'draglabel']),
+                this.form.get_form_value('drags', [dragimageno, 'draggroup']));
+    },
+
+    copy_drag_instances : function () {
+        //set up drop zones
+        for (var i=0; i < this.form.get_form_value('nodropzone'); i++) {
+            var dragimageno = this.form.get_form_value('drops', [i, 'choice']);
+            if (dragimageno !== '0') {
+                var drag = this.doc.clone_new_drag_image(i, dragimageno - 1);
+                if (drag !== null) {
+                    this.doc.draggable_for_form(drag);
+                }
+            }
+        }
+    },
+    set_options_for_drag_image_selectors : function () {
         var dragimagesoptions = {0: ''}; 
         for (var i=0; i < this.form.get_form_value('noimages'); i++) {
             var file = this.fp.file(this.form.to_name_with_index('dragitem', [i]));
             if (file.name !== null) {
                 dragimagesoptions[i+1] = (i+1)+'. '+file.name;
             }
-            this.doc.add_or_update_drag_item_home(i, file.href,
-                                this.form.get_form_value('drags', [i, 'draglabel']),
-                                this.form.get_form_value('drags', [i, 'draggroup']));
         }
-
-        //set up drop zones
         for (var i=0; i < this.form.get_form_value('nodropzone'); i++) {
-            var options = this.Y.one('#id_drops_'+i+'_choice').get('options');
-            options.each(function (option, k, options) {
-                if (dragimagesoptions[option.get('value')] === undefined) {
-                    option.remove(true);
+            var selector = this.Y.one('#id_drops_'+i+'_choice');
+            var selectedvalue = selector.get('value');
+            var options = selector.get('options');
+            options.remove(true);
+            for (var value in dragimagesoptions) {
+                if (value === selectedvalue) {
+                    var option = new Option(dragimagesoptions[value], value, true, true);
                 } else {
-                    option.set('text', dragimagesoptions[option.get('value')]);
+                    var option = new Option(dragimagesoptions[value], value, false, false);
+                    if (+value !== 0) { // no image option is always selectable
+                        var cbsel = 'fieldset#draggableimageheader_'+(+value-1)+' input[type="checkbox"]';
+                        var cbel = this.Y.one(cbsel);
+                        var infinite = cbel.get('checked');
+                        if (!infinite && (this.doc.drag_images_cloned_from(+value).size !== 0)) {
+                            option.disabled = true;
+                        }
+                    }
                 }
-            }, this);
-            var dragimageno = this.form.get_form_value('drops', [i, 'choice']);
-            if (dragimageno !== '0') {
-                var drag = this.doc.clone_new_drag_item(i, dragimageno - 1);
-                if (drag !== null) {
-                    this.doc.draggable_for_form(drag);
-                }
+                selector.append(option);
             }
         }
-        
-        this.setup_form_events();
-
-        this.doc.load_bg_img(this.fp.file(this.form.to_name_with_index('bgimage')).href);
-        
-        var drop = new this.Y.DD.Drop({
-            node: this.doc.bg_img()
-        });
-        //Listen for a drop:hit on this target
-        drop.on('drop:hit', function(e) {
-            e.drag.get('node').setData('gooddrop', true);
-        });
-
-        this.Y.on('windowresize', this.reposition_drags, this);
-        
-        this.doc.bg_img().after('load', function(e) {
-            this.Y.later(3000, this, function (e) {
-                this.reposition_drags();
-                this.update_padding_sizes_all();
-            }, this);
-        }, this);
-
     },
+
     setup_form_events : function () {
         //events triggered by changes to form data
         this.Y.all('fieldset#dropzoneheader input').on('blur', function (e){
@@ -357,104 +422,34 @@ M.qtype_ddimagetoimage={
             this.reposition_drag(nameparts.indexes[0]);
         }, this);
 
-        this.Y.all('fieldset#dropzoneheader select').on('change', function (e){
-            var name = e.target.getAttribute('name');
-            var nameparts = this.form.from_name_with_index(name);
-            var draginstanceno = nameparts.indexes[0];
-            this.update_drag_instance(draginstanceno);
-        }, this);
-        
-        this.Y.all('fieldset#dropzoneheader select').on('change', function (e){
-            var name = e.target.getAttribute('name');
-            var nameparts = this.form.from_name_with_index(name);
-            var draginstanceno = nameparts.indexes[0];
-            this.update_drag_instance(draginstanceno);
-        }, this);
+        this.Y.all('fieldset#dropzoneheader select').on('change', this.draw_dd_area, this);
         
         for (var i=0; i < this.form.get_form_value('noimages'); i++) {
             this.Y.all('fieldset#draggableimageheader_'+i+' select')
-                                                .on('change', this.on_drag_group_change, this);
+                                                .on('change', this.draw_dd_area, this);
+            this.Y.all('fieldset#draggableimageheader_'+i+' input[type="checkbox"]')
+                                    .on('change', this.set_options_for_drag_image_selectors, this);
         }
-        
-        this.Y.after(this.after_image_upload, M.form_filepicker, 'callback', this);
+        //event on file picker new file selection
+        this.Y.after(this.draw_dd_area, M.form_filepicker, 'callback', this);
+    },
 
-    },
-    on_drag_group_change : function (e){
-        var name = e.target.getAttribute('name');
-        var nameparts = this.form.from_name_with_index(name);
-        var dragimageno = nameparts.indexes[0];
-        this.update_drag_image_home(dragimageno);
-    },
-    after_image_upload : function (params) {
-        var url = params['url'];
-        var itemname = this.fp.name(params.id);
-        var itemnameparts = this.form.from_name_with_index(itemname);
-        if (itemnameparts.name === 'dragitem') {
-            var dragimageno = itemnameparts.indexes[0];
-            this.load_drag_item_home(dragimageno, url);
-            this.doc.drag_items_cloned_from(dragimageno).remove(true);
-            this.Y.all('fieldset#dropzoneheader option[value="'+(+dragimageno+1)+'"]')
-                .remove(true);
-            var selects = this.Y.all('fieldset#dropzoneheader select');
-            selects.each(function (select, k, selects){
-                var name =
-                        this.fp.file(this.form.to_name_with_index('dragitem', [dragimageno])).name;
-                select.append('<option value="'+(+dragimageno+1)+'">'
-                        +(+dragimageno+1)+'. '+name+'</option>');
-            }, this);
-            this.doc.get_drag_image_home(dragimageno).after('load', function (e, dragimageno) {
-                this.update_drag_image_home(dragimageno);
-            }, this, dragimageno);
-        } else {
-            this.doc.load_bg_img(url);
-            this.doc.bg_img().after('load', this.reposition_drags, this);
-        }
-    },
-    load_drag_item_home : function (dragimageno, url) {
-        this.doc.add_or_update_drag_item_home(dragimageno, url, 
-                this.form.get_form_value('drags', [dragimageno, 'draglabel']),
-                this.form.get_form_value('drags', [dragimageno, 'draggroup']));
-    },
-    update_drag_image_home : function (dragimageno) {
-        dragimageno = +dragimageno;
-        var url = this.fp.file(this.form.to_name_with_index('dragitem', [dragimageno])).href;
-        this.load_drag_item_home(dragimageno, url);
-        for (var i=0; i < this.form.get_form_value('nodropzone'); i++) {
-            var dropdragimageno = this.form.get_form_value('drops', [i, 'choice']) - 1;
-            if (dropdragimageno === dragimageno) {
-                this.update_drag_instance(i);
-            }
-        }
-    },
-    update_drag_instance : function(draginstanceno) {
-        var drag = this.doc.drag_item(draginstanceno);
-        var dragimageno = this.form.get_form_value('drops', [draginstanceno, 'choice']) - 1;
-        if (drag !== null) {
-            drag.remove(true);
-        }
-        drag = this.doc.clone_new_drag_item(draginstanceno, dragimageno);
-        this.doc.draggable_for_form(drag);
-        if (drag !== null) {
-            drag.on('load', function(e){
-                this.reposition_drag(draginstanceno);
-            }, this);
-        }
-    },
+
     reposition_drags : function() {
-        this.doc.drag_items().each(function (drag) {
+        this.doc.drag_images().each(function (drag) {
             var draginstanceno = drag.getData('draginstanceno');
             this.reposition_drag(draginstanceno);
         }, this);
     },
     reposition_drag : function (draginstanceno) {
         this.update_padding_sizes_all();
-        var drag = this.doc.drag_item(draginstanceno);
+        var drag = this.doc.drag_image(draginstanceno);
         if (null !== drag) {
             var fromform = [this.form.get_form_value('drops', [draginstanceno, 'xleft']),
                             this.form.get_form_value('drops', [draginstanceno, 'ytop'])];
             if (fromform[0] == '' && fromform[1] == '') {
                 var dragimageno = drag.getData('dragimageno'); 
-                drag.setXY(this.doc.get_drag_image_home(dragimageno).getXY());
+                drag.setXY(this.doc.drag_image_home(dragimageno).getXY());
             } else {
                 drag.setXY(this.convert_to_window_xy(this.constrain_xy(draginstanceno, fromform)));
             }
@@ -474,7 +469,7 @@ M.qtype_ddimagetoimage={
 
     //make sure xy value is not out of bounds of bg image
     constrain_xy : function (draginstanceno, bgimgxy) {
-        var drag = this.doc.drag_item(draginstanceno);
+        var drag = this.doc.drag_image(draginstanceno);
         var xleftconstrained =
             Math.min(bgimgxy[0], this.doc.bg_img().get('width') - drag.get('offsetWidth'));
         var ytopconstrained =
