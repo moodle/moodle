@@ -414,7 +414,9 @@ function quiz_update_sumgrades($quiz) {
             WHERE id = ?';
     $DB->execute($sql, array($quiz->id));
     $quiz->sumgrades = $DB->get_field('quiz', 'sumgrades', array('id' => $quiz->id));
-    if ($quiz->sumgrades < 0.000005) {
+    if ($quiz->sumgrades < 0.000005 && quiz_clean_layout($quiz->questions, true)) {
+        // If there is at least one question in the quiz, and the sumgrades has been
+        // set to 0, then also set the maximum possible grade to 0.
         quiz_set_grade(0, $quiz);
     }
 }
