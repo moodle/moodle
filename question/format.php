@@ -348,6 +348,8 @@ class qformat_default {
 
             $question->createdby = $USER->id;
             $question->timecreated = time();
+            $question->modifiedby = $USER->id;
+            $question->timemodified = time();
 
             $question->id = $DB->insert_record('question', $question);
             if (isset($question->questiontextfiles)) {
