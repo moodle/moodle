@@ -135,7 +135,7 @@ case 'update':
                 $send_user_list = true;
                 $users = chat_format_userlist(chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid), $course);
             }
-            if ($html = chat_format_message_theme($message, $chatuser->course, $USER, $theme)) {
+            if ($html = chat_format_message_theme($message, $chatuser, $USER, $cm->groupingid, $theme)) {
                 $message->mymessage = ($USER->id == $message->userid);
                 $message->message  = $html->html;
                 if (!empty($html->type)) {
