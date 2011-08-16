@@ -154,6 +154,7 @@
     $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/blocks.php');
     $table->set_attribute('class', 'compatibleblockstable blockstable generaltable');
     $table->setup();
+    $tablerows = array();
 
     foreach ($blocks as $blockid=>$block) {
         $blockname = $block->name;
@@ -237,7 +238,7 @@
                        '<img src="'.$OUTPUT->pix_url('t/unlock_gray') . '" class="icon" alt="'.$strprotect.'" /></a>';
         }
 
-        $table->add_data(array(
+        $row = array(
             '<span'.$class.'>'.$strblockname.'</span>',
             $blocklist,
             '<span'.$class.'>'.$version.'</span>',
@@ -245,7 +246,13 @@
             $undeletable,
             $delete,
             $settings
-        ));
+        );
+        $tablerows[] = array(strip_tags($strblockname), $row); // first element will be used for sorting
+    }
+
+    textlib_get_instance()->asort($tablerows);
+    foreach ($tablerows as $row) {
+        $table->add_data($row[1]);
     }
 
     $table->print_html();
