@@ -655,10 +655,13 @@ if ($showactivity) {
                 echo $OUTPUT->notification(get_string('foundrecords', 'data', $a), 'notifysuccess');
             }
 
-            if ($mode == 'single') {                  // Single template
-                $baseurl = 'view.php?d=' . $data->id . '&amp;mode=single&amp;';
+            if ($mode == 'single') { // Single template
+                $baseurl = 'view.php?d=' . $data->id . '&mode=single&';
                 if (!empty($search)) {
-                    $baseurl .= 'filter=1&amp;';
+                    $baseurl .= 'filter=1&';
+                }
+                if (!empty($page)) {
+                    $baseurl .= 'page=' . $page;
                 }
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
 
