@@ -72,7 +72,7 @@
     $straction = get_string('assignroles', 'role');
     $strroletoassign = get_string('roletoassign', 'role');
     $strsearch = get_string('search');
-    $strshowall = get_string('showall');
+    $strshowall = get_string('showallusers');
     $strparticipants = get_string('participants');
     $strsearchresults = get_string('searchresults');
 
