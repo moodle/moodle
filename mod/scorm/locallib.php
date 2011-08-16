@@ -680,7 +680,7 @@ function scorm_course_format_display($user, $course) {
         }
         $contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
         if ((has_capability('mod/scorm:skipview', $contextmodule))) {
-            scorm_simple_play($scorm, $user, $contextmodule);
+            scorm_simple_play($scorm, $user, $contextmodule, $cm->id);
         }
         $colspan = '';
         $headertext = '<table width="100%"><tr><td class="title">'.get_string('name').': <b>'.format_string($scorm->name).'</b>';
@@ -811,7 +811,7 @@ function scorm_view_display ($user, $scorm, $action, $cm) {
     }
 }
 
-function scorm_simple_play($scorm, $user, $context) {
+function scorm_simple_play($scorm, $user, $context, $cmid) {
     global $DB;
 
     $result = false;
@@ -840,6 +840,12 @@ function scorm_simple_play($scorm, $user, $context) {
                                                                 'currentorg'=>$orgidentifier,
                                                                 'scoid'=>$sco->id));
             if ($scorm->skipview == 2 || scorm_get_tracks($sco->id, $user->id) === false) {
+                if (!empty($scorm->forcenewattempt)) {
+                    $result = scorm_get_toc($user, $scorm, $cmid, TOCFULLURL, $orgidentifier);
+                    if ($result->incomplete === false) {
+                        $url->param('newattempt','on');
+                    }
+                }
                 redirect($url);
             }
         }
