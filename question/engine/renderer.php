@@ -62,8 +62,12 @@ class core_question_renderer extends plugin_renderer_base {
         $output = '';
         $output .= html_writer::start_tag('div', array(
             'id' => 'q' . $qa->get_slot(),
-            'class' => 'que ' . $qa->get_question()->qtype->name() . ' ' .
-                    $qa->get_behaviour_name(),
+            'class' => implode(' ', array(
+                'que',
+                $qa->get_question()->qtype->name(),
+                $qa->get_behaviour_name(),
+                $qa->get_state_class($options->correctness && $qa->has_marks()),
+            ))
         ));
 
         $output .= html_writer::tag('div',
