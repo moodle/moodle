@@ -2372,6 +2372,7 @@ class mod_assignment_grading_form extends moodleform {
         $editoroptions['noclean'] = false;
         $editoroptions['maxfiles'] = 0; //TODO: no files for now, we need to first implement assignment_feedback area, integration with gradebook, files support in quickgrading, etc. (skodak)
         $editoroptions['maxbytes'] = $this->_customdata->maxbytes;
+        $editoroptions['context'] = $this->_customdata->context;
         return $editoroptions;
     }
 

@@ -143,7 +143,14 @@ profile_load_data($user);
 
 
 // Prepare the editor and create form
-$editoroptions = array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'forcehttps'=>false);
+$editoroptions = array(
+    'maxfiles'   => EDITOR_UNLIMITED_FILES,
+    'maxbytes'   => $CFG->maxbytes,
+    'trusttext'  => false,
+    'forcehttps' => false,
+    'context'    => $personalcontext
+);
+
 $user = file_prepare_standard_editor($user, 'description', $editoroptions, $personalcontext, 'user', 'profile', 0);
 $userform = new user_edit_form(null, array('editoroptions'=>$editoroptions));
 if (empty($user->country)) {

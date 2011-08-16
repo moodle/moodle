@@ -38,7 +38,12 @@ class assignment_online extends assignment_base {
 
         if ($editmode) {
             // prepare form and process submitted data
-            $editoroptions = array('noclean'=>false, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$this->course->maxbytes);
+            $editoroptions = array(
+                'noclean'  => false,
+                'maxfiles' => EDITOR_UNLIMITED_FILES,
+                'maxbytes' => $this->course->maxbytes,
+                'context'  => $this->context
+            );
 
             $data = new stdClass();
             $data->id         = $this->cm->id;
