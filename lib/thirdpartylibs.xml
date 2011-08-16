@@ -29,7 +29,7 @@
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>editor</location>
+    <location>editor/tinymce/tiny_mce</location>
     <name>TinyMCE</name>
     <license>LGPL</license>
     <version>3.4.2</version>
