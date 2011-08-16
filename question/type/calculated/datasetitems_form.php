@@ -131,7 +131,7 @@ class question_dataset_dependent_items_form extends moodleform {
         $j = (($this->noofitems) * count($this->datasetdefs))+1;
         foreach ($this->datasetdefs as $defkey => $datasetdef) {
             if ($datasetdef->category |= 0 ) {
-                $name = get_string('sharedwildcardname', 'qtype_calculated', $datasetdef->name);
+                $name = get_string('sharedwildcard', 'qtype_calculated', $datasetdef->name);
             } else {
                 $name = get_string('wildcard', 'qtype_calculated', $datasetdef->name);
             }
@@ -283,7 +283,7 @@ class question_dataset_dependent_items_form extends moodleform {
                                 get_string('wildcard', 'qtype_calculated', $datasetdef->name));
                     } else {
                         $mform->addElement('text', "number[$j]", get_string(
-                                'sharedwildcardname', 'qtype_calculated', $datasetdef->name));
+                                'sharedwildcard', 'qtype_calculated', $datasetdef->name));
                     }
 
                 } else {
