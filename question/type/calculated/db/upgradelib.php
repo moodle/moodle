@@ -98,7 +98,7 @@ class qtype_calculated_qe2_attempt_updater extends question_qtype_attempt_update
         }
 
         if (!$realanswer) {
-            return '';
+            return array('', '');
         }
 
         if (strpos($realanswer, '|||||') === false) {
