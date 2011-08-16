@@ -191,7 +191,7 @@ abstract class question_behaviour_attempt_updater {
                 $this->logger->log_assumption("Ignoring bogus state in attempt at question {$state->question}");
                 $this->sequencenumber = 0;
                 $this->qa->steps = array();
-            } else if ($state->answer == '') {
+            } else if ($this->qtypeupdater->is_blank_answer($state)) {
                 $this->logger->log_assumption("Ignoring second start state with blank answer in attempt at question {$state->question}");
                 return;
             } else {
