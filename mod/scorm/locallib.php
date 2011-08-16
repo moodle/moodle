@@ -798,7 +798,7 @@ function scorm_view_display ($user, $scorm, $action, $cm) {
     }
 }
 
-function scorm_simple_play($scorm,$user, $context) {
+function scorm_simple_play($scorm,$user, $context, $cmid) {
     global $DB;
 
     $result = false;
@@ -824,12 +824,17 @@ function scorm_simple_play($scorm,$user, $context) {
 
         if ($scorm->skipview >= 1) {
             $sco = current($scoes);
-            if (scorm_get_tracks($sco->id,$user->id) === false) {
-                header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id.'&currentorg='.$orgidentifier);
-                $result = true;
-            } else if ($scorm->skipview == 2) {
-                header('Location: player.php?a='.$scorm->id.'&scoid='.$sco->id.'&currentorg='.$orgidentifier);
-                $result = true;
+            $url = new moodle_url('/mod/scorm/player.php', array('a' => $scorm->id,
+                                                                'currentorg'=>$orgidentifier,
+                                                                'scoid'=>$sco->id));
+            if ($scorm->skipview == 2 || scorm_get_tracks($sco->id, $user->id) === false) {
+                if (!empty($scorm->forcenewattempt)) {
+                    $result = scorm_get_toc($user, $scorm, $cmid, TOCFULLURL, $orgidentifier);
+                    if ($result->incomplete === false) {
+                        $url->param('newattempt','on');
+                    }
+                }
+                redirect($url);
             }
         }
     }
