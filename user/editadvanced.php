@@ -113,12 +113,25 @@ if (!empty($CFG->usetags)) {
 
 if ($user->id !== -1) {
     $usercontext = get_context_instance(CONTEXT_USER, $user->id);
-    $editoroptions = array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'forcehttps'=>false);
+    $editoroptions = array(
+        'maxfiles'   => EDITOR_UNLIMITED_FILES,
+        'maxbytes'   => $CFG->maxbytes,
+        'trusttext'  => false,
+        'forcehttps' => false,
+        'context'    => $usercontext
+    );
+
     $user = file_prepare_standard_editor($user, 'description', $editoroptions, $usercontext, 'user', 'profile', 0);
 } else {
     $usercontext = null;
     // This is a new user, we don't want to add files here
-    $editoroptions = array('maxfiles'=>0, 'maxbytes'=>0, 'trusttext'=>false, 'forcehttps'=>false);
+    $editoroptions = array(
+        'maxfiles'=>0,
+        'maxbytes'=>0,
+        'trusttext'=>false,
+        'forcehttps'=>false,
+        'context' => $coursecontext
+    );
 }
 
 //create form

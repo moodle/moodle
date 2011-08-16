@@ -116,6 +116,9 @@ class workshop_comments_strategy implements workshop_strategy {
             $norepeats += self::ADDDIMS;
         }
 
+        // Append editor context to editor options, giving preference to existing context.
+        $this->descriptionopts = array_merge(array('context' => $PAGE->context), $this->descriptionopts);
+
         // prepare the embedded files
         for ($i = 0; $i < $nodimensions; $i++) {
             // prepare all editor elements

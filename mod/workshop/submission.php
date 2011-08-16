@@ -124,7 +124,14 @@ if ($edit) {
 
     $maxfiles       = $workshop->nattachments;
     $maxbytes       = $workshop->maxbytes;
-    $contentopts    = array('trusttext' => true, 'subdirs' => false, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes);
+    $contentopts    = array(
+                        'trusttext' => true,
+                        'subdirs'   => false,
+                        'maxfiles'  => $maxfiles,
+                        'maxbytes'  => $maxbytes,
+                        'context'   => $workshop->context
+                      );
+
     $attachmentopts = array('subdirs' => true, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes);
     $submission     = file_prepare_standard_editor($submission, 'content', $contentopts, $workshop->context,
                                         'mod_workshop', 'submission_content', $submission->id);
