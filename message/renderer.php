@@ -210,9 +210,11 @@ class core_message_renderer extends plugin_renderer_base {
      * @param   mixed   $providers          array of objects containing message providers
      * @param   mixed   $preferences        array of objects containing current preferences
      * @param   mixed   $defaultpreferences array of objects containing site default preferences
+     * $param   boolean $notificationsdisabled indicates whether the user's "emailstop" flag is
+     *                                      set so shouldn't receive any non-forced notifications
      * @return  string                      The text to render
      */
-    public function manage_messagingoptions($processors, $providers, $preferences, $defaultpreferences) {
+    public function manage_messagingoptions($processors, $providers, $preferences, $defaultpreferences, $notificationsdisabled = false) {
         // Filter out enabled, available system_configured and user_configured processors only.
         $readyprocessors = array_filter($processors, create_function('$a', 'return $a->enabled && $a->configured && $a->object->is_user_configured();'));
 
@@ -281,7 +283,10 @@ class core_message_renderer extends plugin_renderer_base {
                             $disabled['disabled'] = 1;
                         } else {
                             $checked = false;
-                            // See if hser has touched this preference
+                            if ($notificationsdisabled) {
+                                $disabled['disabled'] = 1;
+                            }
+                            // See if user has touched this preference
                             if (isset($preferences->{$preferencebase.'_'.$state})) {
                                 // User have some preferneces for this state in the database, use them
                                 $checked = isset($preferences->{$preferencebase.'_'.$state}[$processor->name]);
@@ -304,7 +309,7 @@ class core_message_renderer extends plugin_renderer_base {
                         );
                         $label = get_string('sendingviawhen', 'message', $labelparams);
                         $cellcontent = html_writer::label($label, $elementname, true, array('class' => 'accesshide'));
-                        $cellcontent .= html_writer::checkbox($elementname, 1, $checked, '', array_merge(array('id' => $elementname), $disabled));
+                        $cellcontent .= html_writer::checkbox($elementname, 1, $checked, '', array_merge(array('id' => $elementname, 'class' => 'notificationpreference'), $disabled));
                         $optioncell = new html_table_cell($cellcontent);
                         $optioncell->attributes['class'] = 'mdl-align';
                     }
@@ -316,6 +321,10 @@ class core_message_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('div');
         $output .= html_writer::table($table);
         $output .= html_writer::end_tag('div');
+
+        $disableallcheckbox = $this->output->help_icon('disableall', 'message') . get_string('disableall', 'message') . html_writer::checkbox('disableall', 1, $notificationsdisabled, '', array('class'=>'disableallcheckbox'));
+        $output .= html_writer::nonempty_tag('div', $disableallcheckbox, array('class'=>'disableall'));
+
         $output .= html_writer::end_tag('fieldset');
 
         foreach ($processors as $processor) {

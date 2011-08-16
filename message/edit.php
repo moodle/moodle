@@ -28,6 +28,7 @@ require_once($CFG->dirroot . '/message/lib.php');
 
 $userid = optional_param('id', $USER->id, PARAM_INT);    // user id
 $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
+$disableall = optional_param('disableall', 0, PARAM_BOOL); //disable all of this user's notifications
 
 $url = new moodle_url('/message/edit.php');
 if ($userid !== $USER->id) {
@@ -68,6 +69,7 @@ $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
 
 $PAGE->set_context($personalcontext);
 $PAGE->set_pagelayout('course');
+$PAGE->requires->js_init_call('M.core_message.init_editsettings');
 
 // check access control
 if ($user->id == $USER->id) {
@@ -99,13 +101,20 @@ $providers = message_get_providers_for_user($user->id);
 if (($form = data_submitted()) && confirm_sesskey()) {
     $preferences = array();
 
+    //only update the user's "emailstop" if its actually changed
+    if ( $user->emailstop != $disableall ) {
+        $user->emailstop = $disableall;
+        $DB->set_field('user', 'emailstop', $user->emailstop, array("id"=>$user->id));
+    }
+
+
     foreach ($providers as $provider) {
         $componentproviderbase = $provider->component.'_'.$provider->name;
         foreach (array('loggedin', 'loggedoff') as $state) {
             $linepref = '';
             $componentproviderstate = $componentproviderbase.'_'.$state;
             if (array_key_exists($componentproviderstate, $form)) {
-                foreach (array_keys($form->{$componentproviderstate}) as $process){
+                foreach (array_keys($form->{$componentproviderstate}) as $process) {
                     if ($linepref == ''){
                         $linepref = $process;
                     } else {
@@ -185,7 +194,7 @@ $renderer = $PAGE->get_renderer('core', 'message');
 // Fetch default (site) preferences
 $defaultpreferences = get_message_output_default_preferences();
 
-$messagingoptions = $renderer->manage_messagingoptions($processors, $providers, $preferences, $defaultpreferences);
+$messagingoptions = $renderer->manage_messagingoptions($processors, $providers, $preferences, $defaultpreferences, $user->emailstop);
 
 echo $OUTPUT->header();
 echo $messagingoptions;
