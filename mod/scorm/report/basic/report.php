@@ -512,6 +512,11 @@ class scorm_basic_report extends scorm_default_report {
                     $mform->display();
                 }
             } else {
+                if ($candelete && !$download) {
+                    echo '</div>';
+                    echo '</form>';
+                }
+                echo '</div>';
                 echo $OUTPUT->notification(get_string('noactivity', 'scorm'));
             }
             if ($download == 'Excel' or $download == 'ODS') {
