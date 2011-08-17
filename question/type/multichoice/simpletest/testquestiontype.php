@@ -71,6 +71,12 @@ class qtype_multichoice_test extends UnitTestCase {
         $this->assertEqual(0.5, $this->qtype->get_random_guess_score($q));
     }
 
+    public function test_get_random_guess_score_multi() {
+        $q = $this->get_test_question_data();
+        $q->options->single = false;
+        $this->assertNull($this->qtype->get_random_guess_score($q));
+    }
+
     public function test_get_possible_responses_single() {
         $q = $this->get_test_question_data();
         $responses = $this->qtype->get_possible_responses($q);
