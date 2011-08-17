@@ -993,15 +993,6 @@ abstract class moodleform {
         $mform->setType("checkbox_controller$groupid", PARAM_INT);
         $mform->setConstants(array("checkbox_controller$groupid" => $new_select_value));
 
-        // Locate all checkboxes for this group and set their value, IF the optional param was given
-        if (!is_null($select_value)) {
-            foreach ($this->_form->_elements as $element) {
-                if ($element->getAttribute('class') == "checkboxgroup$groupid") {
-                    $mform->setConstants(array($element->getAttribute('name') => $select_value));
-                }
-            }
-        }
-
         $checkbox_controller_name = 'nosubmit_checkbox_controller' . $groupid;
         $mform->registerNoSubmitButton($checkbox_controller_name);
 
@@ -1010,7 +1001,7 @@ abstract class moodleform {
         if (!defined('HTML_QUICKFORM_CHECKBOXCONTROLLER_EXISTS')) {
             $js .= <<<EOS
 function html_quickform_toggle_checkboxes(group) {
-    var checkboxes = getElementsByClassName(document, 'input', 'checkboxgroup' + group);
+    var checkboxes = document.getElementsByClassName('checkboxgroup' + group);
     var newvalue = false;
     var global = eval('html_quickform_checkboxgroup' + group + ';');
     if (global == 1) {
