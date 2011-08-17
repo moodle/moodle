@@ -548,7 +548,7 @@ function xmldb_scorm_upgrade($oldversion) {
         require_once($CFG->dirroot."/mod/scorm/lib.php");
         $rs = $DB->get_recordset('scorm', array('popup' => 1), '', 'id,hidetoc,hidenav');
         foreach ($rs as $scorm) {
-            $scorm->hidetoc = SCORM_TOC_DISABLED;
+            $scorm->hidetoc = 1;
             $scorm->hidenav = 1;
             $DB->update_record('scorm', $scorm);
         }
