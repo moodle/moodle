@@ -353,7 +353,7 @@ abstract class user_selector_base {
      */
     protected function load_selected_users() {
         // See if we got anything.
-        $userids = optional_param($this->name, array(), PARAM_INTEGER);
+        $userids = optional_param_array($this->name, array(), PARAM_INTEGER);
         if (empty($userids)) {
             return array();
         }

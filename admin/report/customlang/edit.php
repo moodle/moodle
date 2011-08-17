@@ -59,8 +59,8 @@ if ($filter->is_cancelled()) {
 }
 
 if ($translatorsubmitted) {
-    $strings = optional_param('cust', array(), PARAM_RAW);
-    $updates = optional_param('updates', array(), PARAM_INT);
+    $strings = optional_param_array('cust', array(), PARAM_RAW);
+    $updates = optional_param_array('updates', array(), PARAM_INT);
     $checkin = optional_param('savecheckin', false, PARAM_RAW);
 
     if ($checkin === false) {

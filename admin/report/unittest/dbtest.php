@@ -14,7 +14,7 @@ require_once('ex_reporter.php');
 
 $showpasses   = optional_param('showpasses', false, PARAM_BOOL);
 $codecoverage = optional_param('codecoverage', false, PARAM_BOOL);
-$selected     = optional_param('selected', array(), PARAM_INT);
+$selected     = optional_param_array('selected', array(), PARAM_INT);
 
 // Print the header and check access.
 admin_externalpage_setup('reportdbtest');

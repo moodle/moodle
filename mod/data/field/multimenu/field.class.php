@@ -122,7 +122,7 @@ class data_field_multimenu extends data_field_base {
     }
 
     function parse_search_field() {
-        $selected    = optional_param('f_'.$this->field->id, array(), PARAM_NOTAGS);
+        $selected    = optional_param_array('f_'.$this->field->id, array(), PARAM_NOTAGS);
         $allrequired = optional_param('f_'.$this->field->id.'_allreq', 0, PARAM_BOOL);
         if (empty($selected)) {
             // no searching

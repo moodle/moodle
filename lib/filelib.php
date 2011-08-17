@@ -588,18 +588,27 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
  * @return integer the itemid, or 0 if there is not one yet.
  */
 function file_get_submitted_draft_itemid($elname) {
-    $param = optional_param($elname, 0, PARAM_INT);
-    if ($param) {
-        require_sesskey();
+    // this is a nasty hack, ideally all new elements should use arrays here or there should be a new parameter
+    if (!isset($_REQUEST[$elname])) {
+        return 0;
     }
-    if (is_array($param)) {
+    if (is_array($_REQUEST[$elname])) {
+        $param = optional_param_array($elname, 0, PARAM_INT);
         if (!empty($param['itemid'])) {
             $param = $param['itemid'];
         } else {
             debugging('Missing itemid, maybe caused by unset maxfiles option', DEBUG_DEVELOPER);
             return false;
         }
+
+    } else {
+        $param = optional_param($elname, 0, PARAM_INT);
     }
+
+    if ($param) {
+        require_sesskey();
+    }
+
     return $param;
 }
 

@@ -1384,9 +1384,14 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         } else {
             foreach ($submission as $key=>$s) {
                 if (array_key_exists($key, $this->_types)) {
-                    $submission[$key] = clean_param($s, $this->_types[$key]);
+                    $type = $this->_types[$key];
                 } else {
-                    $submission[$key] = clean_param($s, PARAM_RAW);
+                    $type = PARAM_RAW;
+                }
+                if (is_array($s)) {
+                    $submission[$key] = clean_param_array($s, $type, true);
+                } else {
+                    $submission[$key] = clean_param($s, $type);
                 }
             }
             $this->_submitValues = $submission;

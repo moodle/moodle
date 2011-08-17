@@ -18,7 +18,7 @@ require_capability('moodle/role:manage', $systemcontext);
 
 // Get URL parameters.
 $capability = optional_param('capability', '', PARAM_CAPABILITY);
-$roleids = optional_param('roles', array('0'), PARAM_INTEGER);
+$roleids = optional_param_array('roles', array('0'), PARAM_INTEGER);
 
 // Clean the passed in list of role ids. If 'All' selected as an option, or
 // if none were selected, do all roles.

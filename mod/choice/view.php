@@ -6,7 +6,7 @@
 
     $id         = required_param('id', PARAM_INT);                 // Course Module ID
     $action     = optional_param('action', '', PARAM_ALPHA);
-    $attemptids = optional_param('attemptid', array(), PARAM_INT); // array of attempt ids for delete action
+    $attemptids = optional_param_array('attemptid', array(), PARAM_INT); // array of attempt ids for delete action
 
     $url = new moodle_url('/mod/choice/view.php', array('id'=>$id));
     if ($action !== '') {

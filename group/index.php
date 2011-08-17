@@ -19,7 +19,7 @@ $action   = groups_param_action();
 if ($groupid) {
     $groupids = array($groupid);
 } else {
-    $groupids = optional_param('groups', array(), PARAM_INT);
+    $groupids = optional_param_array('groups', array(), PARAM_INT);
 }
 $singlegroup = (count($groupids) == 1);
 

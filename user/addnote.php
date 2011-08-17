@@ -27,9 +27,9 @@ require_once("../config.php");
 require_once($CFG->dirroot .'/notes/lib.php');
 
 $id    = required_param('id', PARAM_INT);              // course id
-$users = optional_param('userid', array(), PARAM_INT); // array of user id
-$contents = optional_param('contents', array(), PARAM_RAW); // array of user notes
-$states = optional_param('states', array(), PARAM_ALPHA); // array of notes states
+$users = optional_param_array('userid', array(), PARAM_INT); // array of user id
+$contents = optional_param_array('contents', array(), PARAM_RAW); // array of user notes
+$states = optional_param_array('states', array(), PARAM_ALPHA); // array of notes states
 
 $PAGE->set_url('/user/addnote.php', array('id'=>$id));
 
