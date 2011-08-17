@@ -77,7 +77,7 @@ class qtype_multianswer_test extends UnitTestCase {
         $sadata->id = 1;
         $sadata->qtype = 'shortanswer';
         $sadata->defaultmark = 1;
-        $sadata->options->single = true;
+        $sadata->options->usecase = true;
         $sadata->options->answers[1] = (object) array('answer' => 'Bow-wow', 'fraction' => 0);
         $sadata->options->answers[2] = (object) array('answer' => 'Wiggly worm', 'fraction' => 0);
         $sadata->options->answers[3] = (object) array('answer' => 'Pussy-cat', 'fraction' => 1);
@@ -86,7 +86,7 @@ class qtype_multianswer_test extends UnitTestCase {
         $mcdata->id = 1;
         $mcdata->qtype = 'multichoice';
         $mcdata->defaultmark = 1;
-        $mcdata->options->usecase = true;
+        $mcdata->options->single = true;
         $mcdata->options->answers[1] = (object) array('answer' => 'Dog', 'fraction' => 0);
         $mcdata->options->answers[2] = (object) array('answer' => 'Owl', 'fraction' => 1);
         $mcdata->options->answers[3] = (object) array('answer' => '*', 'fraction' => 0);

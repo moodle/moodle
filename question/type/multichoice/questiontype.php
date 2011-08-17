@@ -182,6 +182,12 @@ class qtype_multichoice extends question_type {
     }
 
     public function get_random_guess_score($questiondata) {
+        if (!$questiondata->options->single) {
+            // Pretty much impossible to compute for _multi questions. Don't try.
+            return null;
+        }
+
+        // Single choice questions - average choice fraction.
         $totalfraction = 0;
         foreach ($questiondata->options->answers as $answer) {
             $totalfraction += $answer->fraction;
