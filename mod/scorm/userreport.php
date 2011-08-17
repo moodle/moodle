@@ -320,38 +320,38 @@ if (!empty($b)) {
                 $existelements = true;
                 $row = array();
                 $string=false;
-                if (stristr($element, '.id')!=null) {
+                if (stristr($element, '.id') !== false) {
                     $string="interactionsid";
-                } else if (stristr($element, '.result')!=null) {
+                } else if (stristr($element, '.result') !== false) {
                     $string="interactionsresult";
-                } else if (stristr($element, '.student_response')!=null) {
+                } else if (stristr($element, '.student_response') !== false) {
                     $string="interactionsresponse";
-                } else if (stristr($element, '.type')!=null) {
+                } else if (stristr($element, '.type') !== false) {
                     $string="interactionstype";
-                } else if (stristr($element, '.weighting')!=null) {
+                } else if (stristr($element, '.weighting') !== false) {
                     $string="interactionsweight";
-                } else if (stristr($element, '.time')!=null) {
+                } else if (stristr($element, '.time') !== false) {
                     $string="interactionstime";
-                } else if (stristr($element, '.correct_responses._count')!=null) {
+                } else if (stristr($element, '.correct_responses._count') !== false) {
                     $string="interactionscorrectcount";
-                } else if (stristr($element, '.learner_response')!=null) {
+                } else if (stristr($element, '.learner_response') !== false) {
                     $string="interactionslearnerresponse";
-                } else if (stristr($element, '.score.min')!=null) {
+                } else if (stristr($element, '.score.min') !== false) {
                     $string="interactionslscoremin";
-                } else if (stristr($element, '.score.max')!=null) {
+                } else if (stristr($element, '.score.max') !== false) {
                     $string="interactionsscoremax";
-                } else if (stristr($element, '.score.raw')!=null) {
+                } else if (stristr($element, '.score.raw') !== false) {
                     $string="interactionsscoreraw";
-                } else if (stristr($element, '.latency')!=null) {
+                } else if (stristr($element, '.latency') !== false) {
                     $string="interactionslatency";
-                } else if (stristr($element, '.pattern')!=null) {
+                } else if (stristr($element, '.pattern') !== false) {
                     $string="interactionspattern";
-                } else if (stristr($element, '.suspend_data')!=null) {
+                } else if (stristr($element, '.suspend_data') !== false) {
                     $string="interactionssuspenddata";
                 }
                 $row[]=$element;
                 if (empty($string)) {
-                    $row[]=$element;
+                    $row[]=null;
                 } else {
                     $row[] = get_string($string, 'scorm');
                 }
