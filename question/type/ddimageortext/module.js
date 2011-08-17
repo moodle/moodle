@@ -295,7 +295,8 @@ M.qtype_ddimagetoimage={
         groupimages.each(function(image) {
             var margintopbottom = Math.round((10 + maxheight - image.get('height')) / 2);
             var marginleftright = Math.round((10 + maxwidth - image.get('width')) / 2);
-            image.setStyle('padding', margintopbottom+'px '+marginleftright+'px');
+            image.setStyle('padding', margintopbottom+'px '+marginleftright+'px '
+                                    +margintopbottom+'px '+marginleftright+'px');
         }, this);
         this.doc.drop_zone_group(groupno).setStyles({'width': maxwidth + 10,
                                                         'height': maxheight + 10});
@@ -500,17 +501,19 @@ M.qtype_ddimagetoimage={
                 var dragimageno = drag.getData('dragimageno'); 
                 drag.setXY(this.doc.drag_image_home(dragimageno).getXY());
             } else {
-                drag.setXY(this.convert_to_window_xy(this.constrain_xy(draginstanceno, fromform)));
-                var dragxy = this.convert_to_bg_img_xy(drag.getXY());
-                this.form.set_form_value('drops', [draginstanceno, 'xleft'], dragxy[0]);
-                this.form.set_form_value('drops', [draginstanceno, 'ytop'], dragxy[1])
+                var constrainedxy = this.constrain_xy(draginstanceno, fromform);
+                drag.setXY(this.convert_to_window_xy(constrainedxy));
+                if (constrainedxy[0] !== +fromform[0] || constrainedxy[1] !== +fromform[1]){
+                    this.form.set_form_value('drops', [draginstanceno, 'xleft'], constrainedxy[0]);
+                    this.form.set_form_value('drops', [draginstanceno, 'ytop'], constrainedxy[1]);
+                }
             }
         }
     },
     set_drag_xy : function (draginstanceno, xy) {
         xy = this.constrain_xy(draginstanceno, this.convert_to_bg_img_xy(xy));
-        this.form.set_form_value('drops', [draginstanceno, 'xleft'], Math.round(xy[0]));
-        this.form.set_form_value('drops', [draginstanceno, 'ytop'], Math.round(xy[1]));
+        this.form.set_form_value('drops', [draginstanceno, 'xleft'], Math.floor(xy[0]));
+        this.form.set_form_value('drops', [draginstanceno, 'ytop'], Math.floor(xy[1]));
         this.reposition_drag(draginstanceno);
     },
     reset_drag_xy : function (draginstanceno) {

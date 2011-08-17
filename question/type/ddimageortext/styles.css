@@ -120,7 +120,7 @@ form.mform fieldset#previewareaheader .droptarget {
     position: absolute;
     z-index: 1;
 }
-
-form.mform fieldset#previewareaheader .droptarget.yui3-dd-drop-over {
-    background-color: #FFA928;
+form.mform fieldset#previewareaheader div.droparea img {
+    border: 1px solid #000000;
 }
+
