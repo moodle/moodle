@@ -161,6 +161,7 @@
         $PAGE->set_button($exitlink);
     }
 
+    $PAGE->requires->yui2_lib('connection');
     $PAGE->requires->data_for_js('scormplayerdata', Array('cwidth'=>$scorm->width,'cheight'=>$scorm->height,
                                                           'popupoptions' => $scorm->options), true);
     $PAGE->requires->js('/mod/scorm/request.js', true);
