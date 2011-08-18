@@ -171,6 +171,7 @@ if (empty($scorm->popup) || $displaymode=='popup') {
     $PAGE->set_button($exitlink);
 }
 
+$PAGE->requires->yui2_lib('connection');
 $PAGE->requires->data_for_js('scormplayerdata', Array('cwidth'=>$scorm->width,
                                                       'cheight'=>$scorm->height,
                                                       'popupoptions' => $scorm->options), true);
