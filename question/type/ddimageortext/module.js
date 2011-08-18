@@ -335,9 +335,7 @@ M.qtype_ddimagetoimage={
         var bgimageurl = this.fp.file(this.form.to_name_with_index('bgimage')).href;
         if (bgimageurl !== null) {
             this.doc.load_bg_img(bgimageurl);
-            this.doc.bg_img().addClass('loading');
             this.load_drag_homes();
-            this.doc.drag_image_homes().addClass('loading');
             this.setup_form_events();
             
             var drop = new this.Y.DD.Drop({
@@ -352,35 +350,11 @@ M.qtype_ddimagetoimage={
             
             this.doc.bg_img().on('load', this.constrain_image_size, this, 'bgimage')
             this.doc.drag_image_homes().on('load', this.constrain_image_size, this, 'dragimage');
+            this.poll_for_image_load(null, 1000, this.after_all_images_loaded);
             this.doc.bg_img()
-                .after('load', this.wait_for_all_images, this, this.after_all_images_loaded, 1000);
+                .after('load', this.poll_for_image_load, this, 1000, this.after_all_images_loaded);
             this.doc.drag_image_homes()
-                .after('load', this.wait_for_all_images, this, this.after_all_images_loaded, 1000);
-        }
-    },
-    wait_for_all_images : function (e, doafterwards, wait) {
-        if (wait === undefined) {
-            wait = 0;
-        }
-        e.target.removeClass('loading');
-        if (this.doc.bg_img().hasClass('loading')){
-            return;
-        }
-        var dragimagesstillloading = this.doc.drag_image_homes().filter('.loading');
-        if (dragimagesstillloading.size() !== 0){
-            return;
-        }
-
-        //if we get here everything has loaded
-        this.doc.drag_image_homes().detach('load', this.wait_for_all_images);
-        this.doc.bg_img().detach('load', this.wait_for_all_images);
-        
-        if (wait === 0) {
-            doafterwards.call(this);
-        } else {
-            this.Y.later(wait, this, function (e) {
-                doafterwards.call(this);
-            }, this);
+                .after('load', this.poll_for_image_load, this, 1000, this.after_all_images_loaded);
         }
     },
     
@@ -405,11 +379,11 @@ M.qtype_ddimagetoimage={
         //set up drag items homes
         var dragimagesoptions = {0: ''}; 
         for (var i=0; i < this.form.get_form_value('noimages'); i++) {
-            this.load_drag_image_home(i);
+            this.load_drag_home(i);
         }
     },
 
-    load_drag_image_home : function (dragimageno) {
+    load_drag_home : function (dragimageno) {
         var url = this.fp.file(this.form.to_name_with_index('dragitem', [dragimageno])).href;
         this.doc.add_or_update_drag_image_home(dragimageno, url, 
                 this.form.get_form_value('drags', [dragimageno, 'draglabel']),
