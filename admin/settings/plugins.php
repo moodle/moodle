@@ -344,6 +344,8 @@ if ($hassiteconfig) {
     $temp = new admin_settingpage('webservicesoverview', get_string('webservicesoverview', 'webservice'));
     $temp->add(new admin_setting_webservicesoverview());
     $ADMIN->add('webservicesettings', $temp);
+    //API documentation
+    $ADMIN->add('webservicesettings', new admin_externalpage('webservicedocumentation', get_string('wsdocapi', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/documentation.php", 'moodle/site:config', false));
     /// manage service
     $temp = new admin_settingpage('externalservices', get_string('externalservices', 'webservice'));
     $enablemobiledocurl = new moodle_url(get_docs_url('Enable_mobile_web_services'));
