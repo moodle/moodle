@@ -188,6 +188,7 @@ $string['wrongusernamepassword'] = 'Wrong username or password';
 $string['wsauthmissing'] = 'The web service authentication plugin is missing.';
 $string['wsauthnotenabled'] = 'The web service authentication plugin is disabled.';
 $string['wsclientdoc'] = 'Moodle web service client documentation';
+$string['wsdocapi'] = 'API Documentation';
 $string['wsdocumentation'] = 'Web service documentation';
 $string['wsdocumentationdisable'] = 'Web service documentation is disabled.';
 $string['wsdocumentationintro'] = 'To create a client we advise you to read the {$a->doclink}';
