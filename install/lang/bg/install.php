@@ -31,7 +31,11 @@
 $string['availablelangs'] = 'Списък на наличните езици';
 $string['chooselanguagehead'] = 'Изберете език';
 $string['chooselanguagesub'] = 'Моля, изберете език за инсталацията. Този език ще бъде, също така, език по подразбиране на сайта, но може да бъде променен и по-късно след инсталирането.';
+$string['databasehost'] = 'Хост на базата данни';
+$string['databasename'] = 'Име на базата данни';
+$string['databasetypehead'] = 'Избиране на драйвер за база данни';
 $string['dataroot'] = 'Директория за данни';
+$string['dbprefix'] = 'Представка на таблиците';
 $string['dirroot'] = 'Директория на Moodle';
 $string['installation'] = 'Инсталиране';
 $string['paths'] = 'Пътища';
