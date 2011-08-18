@@ -292,16 +292,11 @@ M.qtype_ddimagetoimage={
                 maxwidth = Math.max(maxwidth, image.get('width'));
                 maxheight = Math.max(maxheight, image.get('height'));
             }, this);
-            console.log('groupno : '+groupno);
-            console.log('maxwidth : '+maxwidth);
-            console.log('maxheight : '+maxheight);
             groupimages.each(function(image) {
                 var margintopbottom = Math.round((10 + maxheight - image.get('height')) / 2);
                 var marginleftright = Math.round((10 + maxwidth - image.get('width')) / 2);
                 image.setStyle('padding', margintopbottom+'px '+marginleftright+'px '
                                         +margintopbottom+'px '+marginleftright+'px');
-                console.log(margintopbottom+'px '+marginleftright+'px '
-                        +margintopbottom+'px '+marginleftright+'px');
             }, this);
             this.doc.drop_zone_group(groupno).setStyles({'width': maxwidth + 10,
                                                             'height': maxheight + 10});
@@ -373,6 +368,7 @@ M.qtype_ddimagetoimage={
         if (reduceby > 1) {
             e.target.set('width', Math.floor(e.target.get('width') / reduceby));
         }
+        e.target.detach('load', this.constrain_image_size);
     },
 
     load_drag_homes : function () {
