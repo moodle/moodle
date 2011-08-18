@@ -113,8 +113,15 @@ switch ($action) {
 case 'upload':
     // The uploaded file has been processed in plugin construct function
     // redirect to default page
-    $repo->upload('', $maxbytes);
-    redirect($home_url, get_string('uploadsucc','repository'));
+    try {
+        $repo->upload('', $maxbytes);
+        redirect($home_url, get_string('uploadsucc','repository'));
+    } catch (moodle_exception $e) {
+        // inject target URL
+        $e->link = $PAGE->url->out();
+        echo $OUTPUT->header(); // hack: we need the embedded header here, standard error printing would not use it
+        throw $e;
+    }
     break;
 
 case 'search':
@@ -262,8 +269,15 @@ case 'download':
         $record->license  = '';
         $record->author   = '';
         $record->source   = $thefile['url'];
-        $info = repository::move_to_filepool($thefile['path'], $record);
-        redirect($home_url, get_string('downloadsucc', 'repository'));
+        try {
+            $info = repository::move_to_filepool($thefile['path'], $record);
+            redirect($home_url, get_string('downloadsucc', 'repository'));
+        } catch (moodle_exception $e) {
+            // inject target URL
+            $e->link = $PAGE->url->out();
+            echo $OUTPUT->header(); // hack: we need the embedded header here, standard error printing would not use it
+            throw $e;
+        }
     } else {
         print_error('cannotdownload', 'repository');
     }
