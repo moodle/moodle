@@ -11,7 +11,6 @@ M.qtype_ddimagetoimage={
         this.drops = drops;
         this.readonly = readonly;
         this.doc = this.doc_structure(Y, Y.one(topnodestr), this, null);
-        this.update_padding_sizes_all();
         this.poll_for_image_load(null, 1000, this.create_all_drag_and_drops);
         this.doc.bg_img()
             .after('load', this.poll_for_image_load, this, 1000, this.create_all_drag_and_drops);
@@ -286,20 +285,27 @@ M.qtype_ddimagetoimage={
     },
     update_padding_size_for_group : function (groupno) {
         var groupimages = this.doc.top_node().all('img.group'+groupno);
-        var maxwidth = 0;
-        var maxheight = 0;
-        groupimages.each(function(image){
-            maxwidth = Math.max(maxwidth, image.get('width'));
-            maxheight = Math.max(maxheight, image.get('height'));
-        }, this);
-        groupimages.each(function(image) {
-            var margintopbottom = Math.round((10 + maxheight - image.get('height')) / 2);
-            var marginleftright = Math.round((10 + maxwidth - image.get('width')) / 2);
-            image.setStyle('padding', margintopbottom+'px '+marginleftright+'px '
-                                    +margintopbottom+'px '+marginleftright+'px');
-        }, this);
-        this.doc.drop_zone_group(groupno).setStyles({'width': maxwidth + 10,
-                                                        'height': maxheight + 10});
+        if (groupimages.size() !== 0) {
+            var maxwidth = 0;
+            var maxheight = 0;
+            groupimages.each(function(image){
+                maxwidth = Math.max(maxwidth, image.get('width'));
+                maxheight = Math.max(maxheight, image.get('height'));
+            }, this);
+            console.log('groupno : '+groupno);
+            console.log('maxwidth : '+maxwidth);
+            console.log('maxheight : '+maxheight);
+            groupimages.each(function(image) {
+                var margintopbottom = Math.round((10 + maxheight - image.get('height')) / 2);
+                var marginleftright = Math.round((10 + maxwidth - image.get('width')) / 2);
+                image.setStyle('padding', margintopbottom+'px '+marginleftright+'px '
+                                        +margintopbottom+'px '+marginleftright+'px');
+                console.log(margintopbottom+'px '+marginleftright+'px '
+                        +margintopbottom+'px '+marginleftright+'px');
+            }, this);
+            this.doc.drop_zone_group(groupno).setStyles({'width': maxwidth + 10,
+                                                            'height': maxheight + 10});
+        }
     },
     convert_to_window_xy : function (bgimgxy) {
         return [+bgimgxy[0] + this.doc.bg_img().getX() + 1,
@@ -380,8 +386,8 @@ M.qtype_ddimagetoimage={
     
     after_all_images_loaded : function () {
         this.doc.drag_images().remove(true);
-        this.update_padding_sizes_all();
         this.copy_drag_instances();
+        this.update_padding_sizes_all();
         this.reposition_drags();
         this.set_options_for_drag_image_selectors();
     },
