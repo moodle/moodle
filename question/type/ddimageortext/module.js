@@ -328,10 +328,11 @@ M.qtype_ddimagetoimage={
 
     draw_dd_area : function() {
         var bgimageurl = this.fp.file(this.form.to_name_with_index('bgimage')).href;
+        this.stop_selector_events();
+        this.set_options_for_drag_image_selectors();
         if (bgimageurl !== null) {
             this.doc.load_bg_img(bgimageurl);
             this.load_drag_homes();
-            this.setup_form_events();
             
             var drop = new this.Y.DD.Drop({
                 node: this.doc.bg_img()
@@ -350,15 +351,17 @@ M.qtype_ddimagetoimage={
                 .after('load', this.poll_for_image_load, this, 1000, this.after_all_images_loaded);
             this.doc.drag_image_homes()
                 .after('load', this.poll_for_image_load, this, 1000, this.after_all_images_loaded);
+        } else {
+            this.setup_form_events();
         }
     },
     
     after_all_images_loaded : function () {
-        this.doc.drag_images().remove(true);
-        this.copy_drag_instances();
+        this.update_drag_instances();
         this.update_padding_sizes_all();
         this.reposition_drags();
         this.set_options_for_drag_image_selectors();
+        this.setup_form_events();
     },
     
     constrain_image_size : function (e, imagetype) {
@@ -386,11 +389,11 @@ M.qtype_ddimagetoimage={
                 this.form.get_form_value('drags', [dragimageno, 'draggroup']));
     },
 
-    copy_drag_instances : function () {
+    update_drag_instances : function () {
         //set up drop zones
         for (var i=0; i < this.form.get_form_value('nodropzone'); i++) {
             var dragimageno = this.form.get_form_value('drops', [i, 'choice']);
-            if (dragimageno !== '0') {
+            if (dragimageno !== '0' && (this.doc.drag_image(i) === null)) {
                 var drag = this.doc.clone_new_drag_image(i, dragimageno - 1);
                 if (drag !== null) {
                     this.doc.draggable_for_form(drag);
@@ -434,6 +437,10 @@ M.qtype_ddimagetoimage={
             }
         }
     },
+    
+    stop_selector_events : function () {
+        this.Y.all('fieldset#dropzoneheader select').detachAll();
+    },
 
     setup_form_events : function () {
         //events triggered by changes to form data
@@ -441,23 +448,40 @@ M.qtype_ddimagetoimage={
         //x and y coordinates
         this.Y.all('fieldset#dropzoneheader input').on('blur', function (e){
             var name = e.target.getAttribute('name');
-            var nameparts = this.form.from_name_with_index(name);
-            this.reposition_drag(nameparts.indexes[0]);
+            var draginstanceno = this.form.from_name_with_index(name).indexes[0];
+            this.reposition_drag(draginstanceno);
         }, this);
 
         //change in selected image
-        this.Y.all('fieldset#dropzoneheader select').on('change', this.draw_dd_area, this);
+        this.Y.all('fieldset#dropzoneheader select').on('change', function (e){
+            var name = e.target.getAttribute('name');
+            var draginstanceno = this.form.from_name_with_index(name).indexes[0];
+            var old = this.doc.drag_image(draginstanceno);
+            if (old !== null) {
+                old.remove(true);
+            }
+            this.draw_dd_area();
+        }, this);
         
         for (var i=0; i < this.form.get_form_value('noimages'); i++) {
             //change to group selector
-            this.Y.all('fieldset#draggableimageheader_'+i+' select')
-                                                .on('change', this.draw_dd_area, this);
+            this.Y.all('fieldset#draggableimageheader_'+i+' select').on('change', function (e, i){
+                this.doc.drag_images_cloned_from(i).remove(true);
+                this.draw_dd_area();
+            }, this, i);
             //change to infinite checkbox
             this.Y.all('fieldset#draggableimageheader_'+i+' input[type="checkbox"]')
                                     .on('change', this.set_options_for_drag_image_selectors, this);
         }
         //event on file picker new file selection
-        this.Y.after(this.draw_dd_area, M.form_filepicker, 'callback', this);
+        this.Y.after(function (e){
+            var name = this.fp.name(e.id);
+            if (name !== 'bgimage') {
+                var dragimageeno = this.form.from_name_with_index(name).indexes[0];
+                this.doc.drag_images_cloned_from(dragimageeno).remove(true);
+            }            
+            this.draw_dd_area();
+        }, M.form_filepicker, 'callback', this);
     },
 
 
