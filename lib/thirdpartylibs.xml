@@ -228,7 +228,7 @@
     <location>yui</location>
     <name>YUI</name>
     <license>BSD</license>
-    <version>3.3.2</version>
+    <version>3.4.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
