@@ -24,33 +24,31 @@ M.qtype_ddimagetoimage={
         if (waitforimageconstrain) {
             bgdone = bgdone && this.doc.bg_img().hasClass('constrained');
         }
-        if (bgdone) {
-            var alldragsloaded = !this.doc.drag_image_homes().some(function(dragimagehome){
-                //in 'some' loop returning true breaks the loop and is passed as return value from 
-                //'some' else returns false. Can be though of as equivalent to ||.
-                var done = (dragimagehome.get('complete'));
-                if (waitforimageconstrain) {
-                    done = done && dragimagehome.hasClass('constrained');
-                }
-                return !done;
-            });
-            if (alldragsloaded) {
-                if (this.polltimer !== null) {
-                    this.polltimer.cancel();
-                    this.polltimer = null;
-                }
-                this.doc.drag_image_homes().detach('load', this.poll_for_image_load);
-                this.doc.bg_img().detach('load', this.poll_for_image_load);
-                if (pause !== 0) {
-                    this.Y.later(pause, this, doafterwords);
-                } else {
-                    doafterwords.call(this);
-                }
-            } else if (this.polltimer === null) {
-                var pollarguments = [null, waitforimageconstrain, pause, doafterwords];
-                this.polltimer =
-                            this.Y.later(500, this, this.poll_for_image_load, pollarguments, true);
+        var alldragsloaded = !this.doc.drag_image_homes().some(function(dragimagehome){
+            //in 'some' loop returning true breaks the loop and is passed as return value from 
+            //'some' else returns false. Can be though of as equivalent to ||.
+            var done = (dragimagehome.get('complete'));
+            if (waitforimageconstrain) {
+                done = done && dragimagehome.hasClass('constrained');
             }
+            return !done;
+        });
+        if (alldragsloaded && alldragsloaded) {
+            if (this.polltimer !== null) {
+                this.polltimer.cancel();
+                this.polltimer = null;
+            }
+            this.doc.drag_image_homes().detach('load', this.poll_for_image_load);
+            this.doc.bg_img().detach('load', this.poll_for_image_load);
+            if (pause !== 0) {
+                this.Y.later(pause, this, doafterwords);
+            } else {
+                doafterwords.call(this);
+            }
+        } else if (this.polltimer === null) {
+            var pollarguments = [null, waitforimageconstrain, pause, doafterwords];
+            this.polltimer =
+                        this.Y.later(500, this, this.poll_for_image_load, pollarguments, true);
         }
     },
     create_all_drag_and_drops : function () {
@@ -296,7 +294,7 @@ M.qtype_ddimagetoimage={
         }
     },
     update_padding_size_for_group : function (groupno) {
-        var groupimages = this.doc.top_node().all('img.group'+groupno);
+        var groupimages = this.doc.top_node().all('img.draghome.group'+groupno);
         if (groupimages.size() !== 0) {
             var maxwidth = 0;
             var maxheight = 0;
@@ -368,8 +366,8 @@ M.qtype_ddimagetoimage={
     },
     
     after_all_images_loaded : function () {
-        this.update_drag_instances();
         this.update_padding_sizes_all();
+        this.update_drag_instances();
         this.reposition_drags_for_form();
         this.set_options_for_drag_image_selectors();
         this.setup_form_events();
