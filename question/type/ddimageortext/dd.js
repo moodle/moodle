@@ -476,7 +476,7 @@ M.qtype_ddimagetoimage={
         for (var i=0; i < this.form.get_form_value('noimages', []); i++) {
             //change to group selector
             this.Y.all('fieldset#draggableimageheader_'+i+' select').on('change', function (e, i){
-                this.doc.drag_images_cloned_from(i).remove(true);
+                this.doc.drag_images().remove(true);
                 this.draw_dd_area();
             }, this, i);
             //change to infinite checkbox
