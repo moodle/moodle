@@ -1712,6 +1712,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                     }
                     // Fix for bug displaying errors for elements in a group
                     //$test[$elementName][] = $registry->getValidationScript($element, $elementName, $rule);
+                    if ($element->_type == 'editor') {
+                        $elementName .= '[text]';
+                    }
                     $test[$elementName][0][] = $registry->getValidationScript($element, $elementName, $rule);
                     $test[$elementName][1]=$element;
                     //end of fix
@@ -1784,6 +1787,13 @@ function qf_errorHandler(element, _qfMsg) {
                 '/[_\[\]]/',
                 create_function('$matches', 'return sprintf("_%2x",ord($matches[0]));'),
                 $elementName);
+            if ($element->_type == 'editor') {
+                $tinyjs = "
+  if (tinyMCE.get('id_{$element->getName()}')) {
+    tinyMCE.get('id_{$element->getName()}').save();
+  }";
+                array_unshift($jsArr, $tinyjs);
+            }
             $js .= '
 function validate_' . $this->_formName . '_' . $escapedElementName . '(element) {
   if (undefined == element) {

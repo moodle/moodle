@@ -204,7 +204,12 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         $rows = empty($this->_attributes['rows']) ? 15 : $this->_attributes['rows'];
         $cols = empty($this->_attributes['cols']) ? 80 : $this->_attributes['cols'];
 
-        $str .= '<div><textarea id="'.$id.'" name="'.$elname.'[text]" rows="'.$rows.'" cols="'.$cols.'">';
+        //Apply editor rules is required
+        $editorrules = '';
+        if (!is_null($this->getAttribute('onblur')) && !is_null($this->getAttribute('onchange'))) {
+                $editorrules = 'onblur="'.$this->getAttribute('onblur').'" onchange="'.$this->getAttribute('onchange').'"';
+        }
+        $str .= '<div><textarea id="'.$id.'" name="'.$elname.'[text]" rows="'.$rows.'" cols="'.$cols.'"'.$editorrules.'>';
         $str .= s($text);
         $str .= '</textarea></div>';
 
