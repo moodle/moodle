@@ -53,6 +53,7 @@ M.qtype_ddimagetoimage={
     },
     create_all_drag_and_drops : function () {
         this.init_drops();
+        this.update_padding_sizes_all();
         var i = 0;
         this.doc.drag_image_homes().each(function(dragimagehome){
             var dragimageno = 
@@ -77,7 +78,6 @@ M.qtype_ddimagetoimage={
                 }
             }
         }, this);
-        this.update_padding_sizes_all();
         this.reposition_drags_for_question();
     },
     reposition_drags_for_question : function() {
