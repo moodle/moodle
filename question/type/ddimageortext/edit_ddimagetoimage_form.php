@@ -46,8 +46,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
      */
     public static function file_picker_options() {
         $filepickeroptions = array();
-        //$filepickeroptions['accepted_types'] = array('web_image');
-        $filepickeroptions['accepted_types'] = array('*');
+        $filepickeroptions['accepted_types'] = array('web_image');
         $filepickeroptions['maxbytes'] = 0;
         $filepickeroptions['maxfiles'] = 1;
         $filepickeroptions['subdirs'] = 0;
@@ -234,10 +233,10 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
             for ($imageindex = 0; $imageindex < $imagerepeats; $imageindex++) {
                 $draftitemid = file_get_submitted_draft_itemid("dragitem[$imageindex]");
                 //numbers not allowed in filearea name
-                $filearea = str_replace(range('0', '9'), range('a', 'j'), "drag_$imageindex");
+                $itemid = !empty($question->drags[$imageindex]['id']) ?
+                                    (int) $question->options->drags['id'] : null;
                 file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddimagetoimage',
-                                    $filearea, !empty($question->id) ? (int) $question->id : null,
-                                    self::file_picker_options());
+                                    'dragimage', $itemid, self::file_picker_options());
                 $question->dragitem[$imageindex] = $draftitemid;
             }
             $question->drops = array();

@@ -87,7 +87,6 @@ class qtype_ddimagetoimage extends question_type {
 
         // Store the choices in arrays by group.
         foreach ($questiondata->options->drags as $dragdata) {
-            $filearea = self::drag_image_file_area($dragdata->no - 1);
 
             $choice = $this->make_choice($dragdata);
 
@@ -149,19 +148,15 @@ class qtype_ddimagetoimage extends question_type {
             $DB->insert_record('qtype_ddimagetoimage_drops', $drop);
         }
 
-        $DB->delete_records('qtype_ddimagetoimage_drags', array('questionid' => $formdata->id));
+        //an array of drag no -> drag id
+        $olddragids = $DB->get_records_menu('qtype_ddimagetoimage_drags',
+                                    array('questionid' => $formdata->id),
+                                    '', 'no, id');
         foreach (array_keys($formdata->drags) as $dragno){
             $info = file_get_draft_area_info($formdata->dragitem[$dragno]);
             if ($info['filecount'] > 0) {
-                $draftitemid = $formdata->dragitem[$dragno];
+                $draftitemid = file_get_submitted_draft_itemid("dragitem[$dragno]");
 
-                $filearea = self::drag_image_file_area($dragno);
-                self::constrain_image_size_in_draft_area($draftitemid,
-                                        QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXWIDTH,
-                                        QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXHEIGHT);
-                file_save_draft_area_files($draftitemid, $formdata->context->id,
-                                        'qtype_ddimagetoimage', $filearea, $formdata->id,
-                                        array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1));
                 $drag = new stdClass();
                 $drag->questionid = $formdata->id;
                 $drag->no = $dragno + 1;
@@ -169,8 +164,27 @@ class qtype_ddimagetoimage extends question_type {
                 $drag->infinite = empty($formdata->drags[$dragno]['infinite'])? 0 : 1;
                 $drag->label = $formdata->drags[$dragno]['draglabel'];
 
-                $DB->insert_record('qtype_ddimagetoimage_drags', $drag);
+                if (isset($olddragids[$dragno +1])) {
+                    $drag->id = $olddragids[$dragno +1];
+                    unset($olddragids[$dragno +1]);
+                    $DB->update_record('qtype_ddimagetoimage_drags', $drag);
+                } else {
+                    $drag->id = $DB->insert_record('qtype_ddimagetoimage_drags', $drag);
+                }
+
+
+
+                self::constrain_image_size_in_draft_area($draftitemid,
+                                        QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXWIDTH,
+                                        QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXHEIGHT);
+                file_save_draft_area_files($draftitemid, $formdata->context->id,
+                                        'qtype_ddimagetoimage', 'dragimage', $drag->id,
+                                        array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1));
             }
+        }
+        if (!empty($olddragids)) {
+            list($sql, $params) = $DB->get_in_or_equal(array_values($olddragids));
+            $DB->delete_records_select('qtype_ddimagetoimage_drags', "id $sql", $params);
         }
 
         self::constrain_image_size_in_draft_area($formdata->bgimage,
