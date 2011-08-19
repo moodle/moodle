@@ -475,10 +475,10 @@ M.qtype_ddimagetoimage={
         
         for (var i=0; i < this.form.get_form_value('noimages', []); i++) {
             //change to group selector
-            this.Y.all('fieldset#draggableimageheader_'+i+' select').on('change', function (e, i){
+            this.Y.all('fieldset#draggableimageheader_'+i+' select').on('change', function (e){
                 this.doc.drag_images().remove(true);
                 this.draw_dd_area();
-            }, this, i);
+            }, this);
             //change to infinite checkbox
             this.Y.all('fieldset#draggableimageheader_'+i+' input[type="checkbox"]')
                                     .on('change', this.set_options_for_drag_image_selectors, this);
@@ -487,8 +487,7 @@ M.qtype_ddimagetoimage={
         this.Y.after(function (e){
             var name = this.fp.name(e.id);
             if (name !== 'bgimage') {
-                var dragimageeno = this.form.from_name_with_index(name).indexes[0];
-                this.doc.drag_images_cloned_from(dragimageeno).remove(true);
+                this.doc.drag_images().remove(true);
             }            
             this.draw_dd_area();
         }, M.form_filepicker, 'callback', this);
