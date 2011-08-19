@@ -199,7 +199,7 @@ if (empty($CFG->filepermissions)) {
 umask(0000);
 
 // exact version of currently used yui2 and 3 library
-$CFG->yui2version = '2.8.2';
+$CFG->yui2version = '2.9.0';
 $CFG->yui3version = '3.2.0';
 
 
