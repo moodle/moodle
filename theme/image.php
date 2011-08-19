@@ -71,13 +71,12 @@ if ($rev > -1) {
         $ext = 'ico';
     }
     if ($cacheimage) {
-        if (!empty($_SERVER['HTTP_IF_NONE_MATCH'])) {
+        if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
             // we do not actually need to verify the etag value because our files
             // never change in cache because we increment the rev parameter
-            header('HTTP/1.1 304 Not Modified');
-
             $lifetime = 60*60*24*30; // 30 days
             $mimetype = get_contenttype_from_ext($ext);
+            header('HTTP/1.1 304 Not Modified');
             header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
             header('Cache-Control: max-age='.$lifetime);
             header('Content-Type: '.$mimetype);
