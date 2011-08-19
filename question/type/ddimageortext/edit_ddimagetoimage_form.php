@@ -257,7 +257,8 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
 
         $jsmodule = array(
             'name'     => 'qtype_ddimagetoimage',
-            'fullpath' => '/question/type/ddimagetoimage/module.js',
+            'fullpath' => '/question/type/ddimagetoimage/dd.js',
+            //we can make sure that file picker is loaded first by including it here
             'requires' => array('node', 'dd', 'dd-drop', 'dd-constrain', 'form_filepicker')
         );
         $maxsizes =new stdClass();

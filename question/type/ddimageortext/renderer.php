@@ -109,7 +109,7 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
         }
         $jsmodule = array(
             'name'     => 'qtype_ddimagetoimage',
-            'fullpath' => '/question/type/ddimagetoimage/module.js',
+            'fullpath' => '/question/type/ddimagetoimage/dd.js',
             'requires' => array('node', 'dd', 'dd-drop', 'dd-constrain')
         );
 
