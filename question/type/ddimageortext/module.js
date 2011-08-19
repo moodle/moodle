@@ -13,18 +13,28 @@ M.qtype_ddimagetoimage={
         this.doc = this.doc_structure(Y, Y.one(topnodestr), this, null);
         this.poll_for_image_load(null, 1000, this.create_all_drag_and_drops);
         this.doc.bg_img()
-            .after('load', this.poll_for_image_load, this, 1000, this.create_all_drag_and_drops);
+            .after('load', this.poll_for_image_load, this, false, 1000, this.create_all_drag_and_drops);
         this.doc.drag_image_homes()
-            .after('load', this.poll_for_image_load, this, 1000, this.create_all_drag_and_drops);
-        this.Y.on('windowresize', this.redraw, this);
+            .after('load', this.poll_for_image_load, this, false, 1000, this.create_all_drag_and_drops);
+        this.Y.on('windowresize', this.reposition_drags_for_question, this);
     },
     polltimer : null,
-    poll_for_image_load : function (e, pause, doafterwords) {
-        if (this.doc.bg_img().get('complete')) {
-            var notalldragsloaded = this.doc.drag_image_homes().some(function(dragimagehome){
-                !dragimagehome.get('complete');
+    poll_for_image_load : function (e, waitforimageconstrain, pause, doafterwords) {
+        var bgdone = this.doc.bg_img().get('complete');
+        if (waitforimageconstrain) {
+            bgdone = bgdone && this.doc.bg_img().hasClass('constrained');
+        }
+        if (bgdone) {
+            var alldragsloaded = !this.doc.drag_image_homes().some(function(dragimagehome){
+                //in 'some' loop returning true breaks the loop and is passed as return value from 
+                //'some' else returns false. Can be though of as equivalent to ||.
+                var done = (dragimagehome.get('complete'));
+                if (waitforimageconstrain) {
+                    done = done && dragimagehome.hasClass('constrained');
+                }
+                return !done;
             });
-            if (!notalldragsloaded) {
+            if (alldragsloaded) {
                 if (this.polltimer !== null) {
                     this.polltimer.cancel();
                     this.polltimer = null;
@@ -37,7 +47,9 @@ M.qtype_ddimagetoimage={
                     doafterwords.call(this);
                 }
             } else if (this.polltimer === null) {
-                this.polltimer = this.Y.later(500, this.poll_for_image_load, this, true);
+                var pollarguments = [null, waitforimageconstrain, pause, doafterwords];
+                this.polltimer =
+                            this.Y.later(500, this, this.poll_for_image_load, pollarguments, true);
             }
         }
     },
@@ -68,9 +80,9 @@ M.qtype_ddimagetoimage={
             }
         }, this);
         this.update_padding_sizes_all();
-        this.redraw();
+        this.reposition_drags_for_question();
     },
-    redraw : function() {
+    reposition_drags_for_question : function() {
         this.doc.drag_images().removeClass('placed');
         this.doc.drag_images().each (function (dragimage) {
             if (dragimage.dd !== undefined) {
@@ -244,7 +256,7 @@ M.qtype_ddimagetoimage={
                 }).plug(Y.Plugin.DDConstrained, {constrain2node: topnode});
                 
                 dd.on('drag:end', function(e) {
-                    mainobj.redraw();
+                    mainobj.reposition_drags_for_question();
                 }, this);
                 drag.setData('group', group);
                 drag.setData('choice', choice);
@@ -327,7 +339,7 @@ M.qtype_ddimagetoimage={
     },
 
     draw_dd_area : function() {
-        var bgimageurl = this.fp.file(this.form.to_name_with_index('bgimage')).href;
+        var bgimageurl = this.fp.file('bgimage').href;
         this.stop_selector_events();
         this.set_options_for_drag_image_selectors();
         if (bgimageurl !== null) {
@@ -342,15 +354,14 @@ M.qtype_ddimagetoimage={
                 e.drag.get('node').setData('gooddrop', true);
             });
     
-            this.Y.on('windowresize', this.reposition_drags, this);
+            this.Y.on('windowresize', this.reposition_drags_for_form, this);
             
             this.doc.bg_img().on('load', this.constrain_image_size, this, 'bgimage')
             this.doc.drag_image_homes().on('load', this.constrain_image_size, this, 'dragimage');
-            this.poll_for_image_load(null, 1000, this.after_all_images_loaded);
             this.doc.bg_img()
-                .after('load', this.poll_for_image_load, this, 1000, this.after_all_images_loaded);
+                .after('load', this.poll_for_image_load, this, true, 1000, this.after_all_images_loaded);
             this.doc.drag_image_homes()
-                .after('load', this.poll_for_image_load, this, 1000, this.after_all_images_loaded);
+                .after('load', this.poll_for_image_load, this, true, 1000, this.after_all_images_loaded);
         } else {
             this.setup_form_events();
         }
@@ -359,7 +370,7 @@ M.qtype_ddimagetoimage={
     after_all_images_loaded : function () {
         this.update_drag_instances();
         this.update_padding_sizes_all();
-        this.reposition_drags();
+        this.reposition_drags_for_form();
         this.set_options_for_drag_image_selectors();
         this.setup_form_events();
     },
@@ -371,13 +382,14 @@ M.qtype_ddimagetoimage={
         if (reduceby > 1) {
             e.target.set('width', Math.floor(e.target.get('width') / reduceby));
         }
+        e.target.addClass('constrained');
         e.target.detach('load', this.constrain_image_size);
     },
 
     load_drag_homes : function () {
         //set up drag items homes
         var dragimagesoptions = {0: ''}; 
-        for (var i=0; i < this.form.get_form_value('noimages'); i++) {
+        for (var i=0; i < this.form.get_form_value('noimages', []); i++) {
             this.load_drag_home(i);
         }
     },
@@ -391,7 +403,7 @@ M.qtype_ddimagetoimage={
 
     update_drag_instances : function () {
         //set up drop zones
-        for (var i=0; i < this.form.get_form_value('nodropzone'); i++) {
+        for (var i=0; i < this.form.get_form_value('nodropzone', []); i++) {
             var dragimageno = this.form.get_form_value('drops', [i, 'choice']);
             if (dragimageno !== '0' && (this.doc.drag_image(i) === null)) {
                 var drag = this.doc.clone_new_drag_image(i, dragimageno - 1);
@@ -403,13 +415,13 @@ M.qtype_ddimagetoimage={
     },
     set_options_for_drag_image_selectors : function () {
         var dragimagesoptions = {0: ''}; 
-        for (var i=0; i < this.form.get_form_value('noimages'); i++) {
+        for (var i=0; i < this.form.get_form_value('noimages', []); i++) {
             var file = this.fp.file(this.form.to_name_with_index('dragitem', [i]));
             if (file.name !== null) {
                 dragimagesoptions[i+1] = (i+1)+'. '+file.name;
             }
         }
-        for (var i=0; i < this.form.get_form_value('nodropzone'); i++) {
+        for (var i=0; i < this.form.get_form_value('nodropzone', []); i++) {
             var selector = this.Y.one('#id_drops_'+i+'_choice');
             var selectedvalue = selector.get('value');
             selector.all('option').remove(true);
@@ -449,7 +461,7 @@ M.qtype_ddimagetoimage={
         this.Y.all('fieldset#dropzoneheader input').on('blur', function (e){
             var name = e.target.getAttribute('name');
             var draginstanceno = this.form.from_name_with_index(name).indexes[0];
-            this.reposition_drag(draginstanceno);
+            this.reposition_drag_for_form(draginstanceno);
         }, this);
 
         //change in selected image
@@ -463,7 +475,7 @@ M.qtype_ddimagetoimage={
             this.draw_dd_area();
         }, this);
         
-        for (var i=0; i < this.form.get_form_value('noimages'); i++) {
+        for (var i=0; i < this.form.get_form_value('noimages', []); i++) {
             //change to group selector
             this.Y.all('fieldset#draggableimageheader_'+i+' select').on('change', function (e, i){
                 this.doc.drag_images_cloned_from(i).remove(true);
@@ -485,14 +497,14 @@ M.qtype_ddimagetoimage={
     },
 
 
-    reposition_drags : function() {
+    reposition_drags_for_form : function() {
         this.doc.drag_images().each(function (drag) {
             var draginstanceno = drag.getData('draginstanceno');
-            this.reposition_drag(draginstanceno);
+            this.reposition_drag_for_form(draginstanceno);
         }, this);
     },
     
-    reposition_drag : function (draginstanceno) {
+    reposition_drag_for_form : function (draginstanceno) {
         var drag = this.doc.drag_image(draginstanceno);
         if (null !== drag) {
             var fromform = [this.form.get_form_value('drops', [draginstanceno, 'xleft']),
@@ -514,12 +526,12 @@ M.qtype_ddimagetoimage={
         xy = this.constrain_xy(draginstanceno, this.convert_to_bg_img_xy(xy));
         this.form.set_form_value('drops', [draginstanceno, 'xleft'], Math.floor(xy[0]));
         this.form.set_form_value('drops', [draginstanceno, 'ytop'], Math.floor(xy[1]));
-        this.reposition_drag(draginstanceno);
+        this.reposition_drag_for_form(draginstanceno);
     },
     reset_drag_xy : function (draginstanceno) {
         this.form.set_form_value('drops', [draginstanceno, 'xleft'], '');
         this.form.set_form_value('drops', [draginstanceno, 'ytop'], '');
-        this.reposition_drag(draginstanceno);
+        this.reposition_drag_for_form(draginstanceno);
     },
 
     //make sure xy value is not out of bounds of bg image
@@ -543,7 +555,6 @@ M.qtype_ddimagetoimage={
      */
     form : {
         to_name_with_index : function(name, indexes) {
-            indexes = indexes || [];
             var indexstring = name;
             for (var i=0; i < indexes.length; i++) {
                 indexstring = indexstring + '[' + indexes[i] + ']';
