@@ -1944,9 +1944,15 @@ function message_format_message($message, $format='', $keywords='', $class='othe
 
     //if supplied display small messages as fullmessage may contain boilerplate text that shouldnt appear in the messaging UI
     if (!empty($message->smallmessage)) {
-        $messagetext = format_text(s($message->smallmessage), FORMAT_MOODLE, $options);
+        $messagetext = $message->smallmessage;
     } else {
-        $messagetext = format_text(s($message->fullmessage), $message->fullmessageformat, $options);
+        $messagetext = $message->fullmessage;
+    }
+    if ($message->fullmessageformat == FORMAT_HTML) {
+        //dont escape html tags by calling s() if html format or they will display in the UI
+        $messagetext = html_to_text(format_text($messagetext, $message->fullmessageformat, $options));
+    } else {
+        $messagetext = format_text(s($messagetext), $message->fullmessageformat, $options);
     }
 
     $messagetext .= message_format_contexturl($message);
