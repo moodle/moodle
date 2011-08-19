@@ -1725,9 +1725,6 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
     }
 */
 
-    //try to disable automatic sid rewrite in cookieless mode
-    @ini_set("session.use_trans_sid", "false");
-
     if ($lifetime > 0 && !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
         // get unixtime of request header; clip extra junk off first
         $since = strtotime(preg_replace('/;.*$/','',$_SERVER["HTTP_IF_MODIFIED_SINCE"]));
@@ -1940,9 +1937,6 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
     $lastmodified = $stored_file->get_timemodified();
     $filesize     = $stored_file->get_filesize();
 
-    //try to disable automatic sid rewrite in cookieless mode
-    @ini_set("session.use_trans_sid", "false");
-
     if ($lifetime > 0 && !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
         // get unixtime of request header; clip extra junk off first
         $since = strtotime(preg_replace('/;.*$/','',$_SERVER["HTTP_IF_MODIFIED_SINCE"]));
@@ -1960,7 +1954,6 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
 
     //do not put '@' before the next header to detect incorrect moodle configurations,
     //error should be better than "weird" empty lines for admins/users
-    //TODO: should we remove all those @ before the header()? Are all of the values supported on all servers?
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
 
     // if user is using IE, urlencode the filename so that multibyte file name will show up correctly on popup
@@ -2032,7 +2025,6 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
     }
 
     if (empty($filter)) {
-        $filtered = false;
         if ($mimetype == 'text/plain') {
             header('Content-Type: Text/plain; charset=utf-8'); //add encoding
         } else {
@@ -2045,11 +2037,7 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
         prepare_file_content_sending();
 
         // send the contents
-        if ($filtered) {
-            echo $text;
-        } else {
-            $stored_file->readfile();
-        }
+        $stored_file->readfile();
 
     } else {     // Try to put the file through filters
         if ($mimetype == 'text/html') {
