@@ -65,7 +65,13 @@ if ($p_secret !== false) {
 
     update_login_count();
 
-    $user = get_complete_user_data('username', $p_username);
+    $user = $DB->get_record('user', array('username'=>$p_username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0, 'suspended'=>0));
+
+    if ($user and ($user->auth === 'nologin' or !is_enabled_auth($user->auth))) {
+        // bad luck - user is not able to login, do not let them reset password
+        $user = false;
+    }
+
     if (!empty($user) and $user->secret === '') {
         echo $OUTPUT->header();
         print_error('secretalreadyused');
@@ -120,10 +126,17 @@ if ($mform->is_cancelled()) {
 
     // first try the username
     if (!empty($data->username)) {
-        $user = get_complete_user_data('username', $data->username);
-    } else {
+        $username = textlib_get_instance()->strtolower($data->username); // mimic the login page process, if they forget username they need to use email for reset
+        $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0, 'suspended'=>0));
 
-        $user = get_complete_user_data('email', $data->email);
+    } else {
+        // this is tricky because
+        // 1/ the email is not guaranteed to be unique - TODO: send email with all usernames to select the correct account for pw reset
+        // 2/ mailbox may be case sensitive, the email domain is case insensitive - let's pretend it is all case-insensitive
+
+        $select = $DB->sql_like('email', ':email', false, true, false, '|'). " AND mnethostid = :mnethostid AND deleted=0 AND suspended=0";
+        $params = array('email'=>$DB->sql_like_escape($data->email, '|'), 'mnethostid'=>$CFG->mnet_localhost_id);
+        $user = $DB->get_record_select('user', $select, $params, '*', IGNORE_MULTIPLE);
     }
 
     if ($user and !empty($user->confirmed)) {
