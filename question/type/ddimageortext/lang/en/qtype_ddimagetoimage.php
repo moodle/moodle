@@ -48,6 +48,7 @@ $string['formerror_nobgimage'] = 'You need to select an image to use as the back
 $string['infinite'] = 'Infinite';
 $string['label'] = 'Label';
 $string['nolabel'] = 'No label text';
+$string['pleasedraganimagetoeachdropregion'] = 'Your answer is not complete, please drag an image to each drop region.';
 $string['previewarea'] = 'Preview area -';
 $string['previewareaheader'] = 'Preview';
 $string['previewareamessage'] = '<ul><li>Select a background image file.</li><li>Select draggable images.</li><li>And define drop zones by selecting an image that the student must drag to the drop zone and drag it to where the student should drag it too.</li></ul>';

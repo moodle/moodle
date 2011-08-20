@@ -99,6 +99,12 @@ class qtype_ddimagetoimage_question extends qtype_gapselect_question_base {
                                                                 $filearea, $args, $forcedownload);
         }
     }
+    public function get_validation_error(array $response) {
+        if ($this->is_complete_response($response)) {
+            return '';
+        }
+        return get_string('pleasedraganimagetoeachdropregion', 'qtype_ddimagetoimage');
+    }
 }
 
 
