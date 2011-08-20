@@ -432,8 +432,6 @@ class core_calendar_renderer extends plugin_renderer_base {
         $week = 1;
         $dayweek = $startwday;
 
-        $row = new html_table_row(array());
-
         // Create an array of all the week days.
         $wdays = array(0 => '<strong>'. get_string('sunday', 'calendar'). '</strong>',
                        1 => '<strong>'. get_string('monday', 'calendar'). '</strong>',
@@ -452,9 +450,8 @@ class core_calendar_renderer extends plugin_renderer_base {
             array_push($wdays, $wdays_end);
         }
 
-        // Now we set the (modified) array to the table cells to be displayed.
-        $row->cells = $wdays;
-        $table->data[] = $row;
+        // Now we set the (modified) array to the table header to be displayed.
+        $table->head = $wdays;
 
         $row = new html_table_row(array());
 
