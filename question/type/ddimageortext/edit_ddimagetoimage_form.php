@@ -242,6 +242,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
         }
         //initialise file picker for bgimage
         $draftitemid = file_get_submitted_draft_itemid('bgimage');
+
         file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddimagetoimage',
                                 'bgimage', !empty($question->id) ? (int) $question->id : null,
                                 self::file_picker_options());

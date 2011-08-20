@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Question type class for the drag-and-drop words into sentences question type.
+ * Question type class for the drag-and-drop images onto images question type.
  *
  * @package    qtype
  * @subpackage ddimagetoimage
@@ -274,5 +274,146 @@ class qtype_ddimagetoimage extends question_type {
         }
 
         $this->delete_files_in_combined_feedback($questionid, $contextid);
+    }
+
+    public function export_to_xml($question, $format, $extra = null) {
+        $fs = get_file_storage();
+        $contextid = $question->contextid;
+        $output = '';
+
+        $output .= '    <shuffleanswers>' . $question->options->shuffleanswers .
+                "</shuffleanswers>\n";
+
+        $output .= $format->write_combined_feedback($question->options);
+        $output .= $format->write_hints($question);
+        $files = $fs->get_area_files($contextid, 'qtype_ddimagetoimage', 'bgimage', $question->id);
+        $output .= "    ".$this->write_files($files, 2)."\n";;
+
+        foreach ($question->options->drags as $drag) {
+            $files = $fs->get_area_files($contextid, 'qtype_ddimagetoimage', 'dragimage', $drag->id);
+            $output .= "    <drag>\n";
+            $output .= "      <no>{$drag->no}</no>\n";
+            $output .= $format->writetext($drag->label, 3)."\n";
+            $output .= "      <draggroup>{$drag->draggroup}</draggroup>\n";
+            if ($drag->infinite) {
+                $output .= "      <infinite/>\n";
+            }
+            $output .= $this->write_files($files, 3);
+            $output .= "    </drag>\n";
+        }
+        foreach ($question->options->drops as $drop) {
+            $output .= "    <drop>\n";
+            $output .= $format->writetext($drop->label, 3);
+            $output .= "      <no>{$drop->no}</no>\n";
+            $output .= "      <choice>{$drop->choice}</choice>\n";
+            $output .= "      <xleft>{$drop->xleft}</xleft>\n";
+            $output .= "      <ytop>{$drop->ytop}</ytop>\n";
+            $output .= "    </drop>\n";
+        }
+
+        return $output;
+    }
+
+    public function import_from_xml($data, $question, $format, $extra=null) {
+        if (!isset($data['@']['type']) || $data['@']['type'] != 'ddimagetoimage') {
+            return false;
+        }
+
+        $question = $format->import_headers($data);
+        $question->qtype = 'ddimagetoimage';
+
+        $question->shuffleanswers = $format->trans_single(
+                $format->getpath($data, array('#', 'shuffleanswers', 0, '#'), 1));
+        $filexml = $format->getpath($data, array('#', 'file'), array());
+        $question->bgimage = $this->import_files_to_draft_file_area($format, $filexml);
+        $drags = $data['#']['drag'];
+        $question->drags = array();
+
+        foreach ($drags as $dragxml) {
+            $dragno = $format->getpath($dragxml, array('#', 'no', 0, '#'), 0);
+            $dragindex = $dragno -1;
+            $question->drags[$dragindex] = array();
+            $question->drags[$dragindex]['draglabel'] =
+                        $format->getpath($dragxml, array('#', 'text', 0, '#'), '', true);
+            $question->drags[$dragindex]['infinite'] =
+                        $format->getpath($dragxml, array('#', 'infinite', 0, '#'), 0);
+            $question->drags[$dragindex]['draggroup'] =
+                        $format->getpath($dragxml, array('#', 'draggroup', 0, '#'), 1);
+            $filexml = $format->getpath($dragxml, array('#', 'file'), array());
+            $question->dragitem[$dragindex] =
+                                        $this->import_files_to_draft_file_area($format, $filexml);
+        }
+
+        $drops = $data['#']['drop'];
+        $question->drops = array();
+        foreach ($drops as $dropxml) {
+            $dropno = $format->getpath($dropxml, array('#', 'no', 0, '#'), 0);
+            $dropindex = $dropno -1;
+            $question->drops[$dropindex] = array();
+            $question->drops[$dropindex]['choice'] =
+                        $format->getpath($dropxml, array('#', 'choice', 0, '#'), 0);
+            $question->drops[$dropindex]['droplabel'] =
+                        $format->getpath($dropxml, array('#', 'text', 0, '#'), '', true);
+            $question->drops[$dropindex]['xleft'] =
+                        $format->getpath($dropxml, array('#', 'xleft', 0, '#'), '');
+            $question->drops[$dropindex]['ytop'] =
+                        $format->getpath($dropxml, array('#', 'ytop', 0, '#'), '');
+        }
+
+        $format->import_combined_feedback($question, $data, true);
+        $format->import_hints($question, $data, true);
+
+        return $question;
+    }
+
+
+    /**
+     * Create a draft files area, import files into it and return the draft item id.
+     * @param qformat_xml $format
+     * @param array $xml an array of <file> nodes from the the parsed XML.
+     * @return integer draftitemid
+     */
+    public function import_files_to_draft_file_area($format, $xml) {
+        global $USER;
+        $fs = get_file_storage();
+        $files = $format->import_files($xml);
+        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+        $draftitemid = file_get_unused_draft_itemid();
+        foreach ($files as $file) {
+            $record = new stdClass();
+            $record->contextid = $usercontext->id;
+            $record->component = 'user';
+            $record->filearea  = 'draft';
+            $record->itemid    = $draftitemid;
+            $record->filename  = $file->name;
+            $record->filepath  = '/';
+            $fs->create_file_from_string($record, $this->decode_file($file));
+        }
+        return $draftitemid;
+    }
+
+    /**
+     * Convert files into text output in the given format.
+     * This method is copied from qformat_default as a quick fix, as the method there is
+     * protected.
+     * @param array
+     * @param string encoding method
+     * @return string $string
+     */
+    public function write_files($files, $indent) {
+        if (empty($files)) {
+            return '';
+        }
+        $string = '';
+        foreach ($files as $file) {
+            if ($file->is_directory()) {
+                continue;
+            }
+            $string .= str_repeat('  ', $indent);
+            $string .= '<file name="' . $file->get_filename() . '" encoding="base64">';
+            $string .= base64_encode($file->get_content());
+            $string .= '</file>';
+        }
+        return $string;
     }
 }
