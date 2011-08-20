@@ -1190,7 +1190,7 @@ class assignment_base {
         }
 
         /// Get all ppl that are allowed to submit assignments
-        list($esql, $params) = get_enrolled_sql($context, 'mod/assignment:view', $currentgroup);
+        list($esql, $params) = get_enrolled_sql($context, 'mod/assignment:submit', $currentgroup);
 
         if ($filter == self::FILTER_ALL) {
             $sql = "SELECT u.id FROM {user} u ".
