@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -39,12 +38,107 @@ class textlib_test extends UnitTestCase {
 
     public static $includecoverage = array('lib/textlib.class.php');
 
+    public function test_parse_charset() {
+        $this->assertIdentical(textlib::parse_charset('Cp1250'), 'windows-1250');
+        // does typo3 work? some encoding moodle does not use
+        $this->assertIdentical(textlib::parse_charset('ms-ansi'), 'windows-1252');
+    }
+
+    public function test_convert() {
+        $utf8 = "Žluťoučký koníček";
+        $iso2 = pack("H*", "ae6c75bb6f75e86bfd206b6f6eede8656b");
+        $win  = pack("H*", "8e6c759d6f75e86bfd206b6f6eede8656b");
+        $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'iso-8859-2'), $iso2);
+        $this->assertIdentical(textlib::convert($iso2, 'iso-8859-2', 'utf-8'), $utf8);
+        $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'win-1250'), $win);
+        $this->assertIdentical(textlib::convert($win, 'win-1250', 'utf-8'), $utf8);
+        $this->assertIdentical(textlib::convert($win, 'win-1250', 'iso-8859-2'), $iso2);
+        $this->assertIdentical(textlib::convert($iso2, 'iso-8859-2', 'win-1250'), $win);
+    }
+
+    public function test_substr() {
+        $str = "Žluťoučký koníček";
+        $this->assertIdentical(textlib::substr($str, 1, 3), 'luť');
+        $this->assertIdentical(textlib::substr($str, 0, 100), $str);
+        $this->assertIdentical(textlib::substr($str, -3, 2), 'če');
+    }
+
+    public function test_strlen() {
+        $str = "Žluťoučký koníček";
+        $this->assertIdentical(textlib::strlen($str), 17);
+    }
+
+    public function test_strtolower() {
+        $str = "Žluťoučký koníček";
+        $this->assertIdentical(textlib::strtolower($str), 'žluťoučký koníček');
+    }
+
+    public function test_strtoupper() {
+        $str = "Žluťoučký koníček";
+        $this->assertIdentical(textlib::strtoupper($str), 'ŽLUŤOUČKÝ KONÍČEK');
+    }
+
+    public function test_strpos() {
+        $str = "Žluťoučký koníček";
+        $this->assertIdentical(textlib::strpos($str, 'koníč'), 10);
+    }
+
+    public function test_strrpos() {
+        $str = "Žluťoučký koníček";
+        $this->assertIdentical(textlib::strrpos($str, 'o'), 11);
+    }
+
+    public function test_specialtoascii() {
+        $str = "Žluťoučký koníček";
+        $this->assertIdentical(textlib::specialtoascii($str), 'Zlutoucky konicek');
+    }
+
+    public function test_encode_mimeheader() {
+        $str = "Žluťoučký koníček";
+        $this->assertIdentical(textlib::encode_mimeheader($str), '=?utf-8?B?xb1sdcWlb3XEjWvDvSBrb27DrcSNZWs=?=');
+    }
+
+    public function test_entities_to_utf8() {
+        $str = "&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&#237;&#269;ek";
+        $this->assertIdentical(textlib::entities_to_utf8($str), "Žluťoučký koníček");
+
+    }
+
+    public function test_utf8_to_entities() {
+        $str = "Žluťoučký koníček";
+        $this->assertIdentical(textlib::utf8_to_entities($str), "&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&#xed;&#x10d;ek");
+        $this->assertIdentical(textlib::utf8_to_entities($str, true), "&#381;lu&#357;ou&#269;k&#253; kon&#237;&#269;ek");
+
+    }
+
+    public function test_trim_utf8_bom() {
+        $bom = "\xef\xbb\xbf";
+        $str = "Žluťoučký koníček";
+        $this->assertIdentical(textlib::trim_utf8_bom($bom.$str.$bom), $str.$bom);
+    }
+
+    public function test_get_encodings() {
+        $encodings = textlib::get_encodings();
+        $this->assertTrue(is_array($encodings));
+        $this->assertTrue(count($encodings) > 1);
+        $this->assertTrue(isset($encodings['UTF-8']));
+    }
+
+    public function test_code2utf8() {
+        $this->assertIdentical(textlib::code2utf8(381), 'Ž');
+    }
+
+    public function test_strtotitle() {
+        $str = "žluťoučký koníček";
+        $this->assertIdentical(textlib::strtotitle($str), "Žluťoučký Koníček");
+    }
+
     public function test_asort() {
         global $SESSION;
         $SESSION->lang = 'en'; // make sure we test en language to get consistent results, hopefully all systems have this locale
 
         $arr = array('b'=>'ab', 1=>'aa', 0=>'cc');
-        textlib_get_instance()->asort($arr);
+        textlib::asort($arr);
         $this->assertIdentical(array_keys($arr), array(1, 'b', 0));
         $this->assertIdentical(array_values($arr), array('aa', 'ab', 'cc'));
 
@@ -55,10 +149,22 @@ class textlib_test extends UnitTestCase {
         }
 
         $arr = array('a'=>'áb', 'b'=>'ab', 1=>'aa', 0=>'cc');
-        textlib_get_instance()->asort($arr);
+        textlib::asort($arr);
         $this->assertIdentical(array_keys($arr), array(1, 'b', 'a', 0), $error);
 
         unset($SESSION->lang);
     }
 
+    public function test_deprecated_textlib_get_instance() {
+        $textlib = textlib_get_instance();
+        $this->assertIdentical($textlib->substr('abc', 1, 1), 'b');
+        $this->assertIdentical($textlib->strlen('abc'), 3);
+        $this->assertIdentical($textlib->strtoupper('Abc'), 'ABC');
+        $this->assertIdentical($textlib->strtolower('Abc'), 'abc');
+        $this->assertIdentical($textlib->strpos('abc', 'a'), 0);
+        $this->assertIdentical($textlib->strpos('abc', 'd'), false);
+        $this->assertIdentical($textlib->strrpos('abcabc', 'a'), 3);
+        $this->assertIdentical($textlib->specialtoascii('ábc'), 'abc');
+        $this->assertIdentical($textlib->strtotitle('abc ABC'), 'Abc Abc');
+    }
 }
