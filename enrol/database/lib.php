@@ -546,8 +546,8 @@ class enrol_database_plugin extends enrol_plugin {
                         // already exists
                         continue;
                     }
-                    if ($idnumber and $DB->record_exists('course', array('idnumber'=>$fields[$idnumber]))) {
-                        // idnumber duplicates are not allowed
+                    // allow empty idnumber but not duplicates
+                    if ($idnumber and $fields[$idnumber] !== '' and $fields[$idnumber] !== null and $DB->record_exists('course', array('idnumber'=>$fields[$idnumber]))) {
                         continue;
                     }
                     if ($category and !$DB->record_exists('course_categories', array('id'=>$fields[$category]))) {
