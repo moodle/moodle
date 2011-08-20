@@ -169,7 +169,7 @@ $CFG->admin                = $config->admin;
 $CFG->docroot              = 'http://docs.moodle.org';
 $CFG->langotherroot        = $CFG->dataroot.'/lang';
 $CFG->langlocalroot        = $CFG->dataroot.'/lang';
-$CFG->directorypermissions = 00777;
+$CFG->directorypermissions = isset($distro->directorypermissions) ? $distro->directorypermissions : 00777; // let distros set dir permissions
 $CFG->running_installer    = true;
 $CFG->early_install_lang   = true;
 
