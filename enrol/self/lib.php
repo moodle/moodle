@@ -153,7 +153,7 @@ class enrol_self_plugin extends enrol_plugin {
     public function get_newinstance_link($courseid) {
         $context = get_context_instance(CONTEXT_COURSE, $courseid, MUST_EXIST);
 
-        if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/manual:config', $context)) {
+        if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/self:config', $context)) {
             return NULL;
         }
         // multiple instances supported - different roles with different password
