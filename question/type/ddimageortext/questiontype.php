@@ -281,9 +281,9 @@ class qtype_ddimagetoimage extends question_type {
         $contextid = $question->contextid;
         $output = '';
 
-        $output .= '    <shuffleanswers>' . $question->options->shuffleanswers .
-                "</shuffleanswers>\n";
-
+        if ($question->options->shuffleanswers) {
+            $output .= "    <shuffleanswers/>\n";
+        }
         $output .= $format->write_combined_feedback($question->options);
         $output .= $format->write_hints($question);
         $files = $fs->get_area_files($contextid, 'qtype_ddimagetoimage', 'bgimage', $question->id);
@@ -322,8 +322,9 @@ class qtype_ddimagetoimage extends question_type {
         $question = $format->import_headers($data);
         $question->qtype = 'ddimagetoimage';
 
-        $question->shuffleanswers = $format->trans_single(
-                $format->getpath($data, array('#', 'shuffleanswers', 0, '#'), 1));
+        $question->shuffleanswers = array_key_exists('shuffleanswers',
+                                                    $format->getpath($data, array('#'), array()));
+
         $filexml = $format->getpath($data, array('#', 'file'), array());
         $question->bgimage = $this->import_files_to_draft_file_area($format, $filexml);
         $drags = $data['#']['drag'];
@@ -335,8 +336,7 @@ class qtype_ddimagetoimage extends question_type {
             $question->drags[$dragindex] = array();
             $question->drags[$dragindex]['draglabel'] =
                         $format->getpath($dragxml, array('#', 'text', 0, '#'), '', true);
-            $question->drags[$dragindex]['infinite'] =
-                        $format->getpath($dragxml, array('#', 'infinite', 0, '#'), 0);
+            $question->drags[$dragindex]['infinite'] = array_key_exists('infinite', $dragxml['#']);
             $question->drags[$dragindex]['draggroup'] =
                         $format->getpath($dragxml, array('#', 'draggroup', 0, '#'), 1);
             $filexml = $format->getpath($dragxml, array('#', 'file'), array());
@@ -412,7 +412,7 @@ class qtype_ddimagetoimage extends question_type {
             $string .= str_repeat('  ', $indent);
             $string .= '<file name="' . $file->get_filename() . '" encoding="base64">';
             $string .= base64_encode($file->get_content());
-            $string .= '</file>';
+            $string .= "</file>\n";
         }
         return $string;
     }
