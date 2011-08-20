@@ -72,7 +72,7 @@ class qtype_calculatedmulti_single_question extends qtype_multichoice_single_que
 
     public function get_variants_selection_seed() {
         if (!empty($this->synchronised) &&
-                $this->datasetloader->datasets_are_synchronised($question->category)) {
+                $this->datasetloader->datasets_are_synchronised($this->category)) {
             return 'category' . $this->category;
         } else {
             return parent::get_variants_selection_seed();
