@@ -238,6 +238,41 @@ class qtype_ddimagetoimage extends question_type {
             }
         }
     }
+    public function move_files($questionid, $oldcontextid, $newcontextid) {
+        global $DB;
+        $fs = get_file_storage();
 
+        parent::move_files($questionid, $oldcontextid, $newcontextid);
+        $fs->move_area_files_to_new_context($oldcontextid,
+                                    $newcontextid, 'qtype_ddimagetoimage', 'bgimage', $questionid);
+        $dragids = $DB->get_records_menu('qtype_ddimagetoimage_drags',
+                                                array('questionid' => $questionid), 'id', 'id,1');
+        foreach ($dragids as $dragid => $notused) {
+            $fs->move_area_files_to_new_context($oldcontextid,
+                                    $newcontextid, 'qtype_ddimagetoimage', 'dragimage', $dragid);
+        }
 
+        $this->move_files_in_combined_feedback($questionid, $oldcontextid, $newcontextid);
+    }
+
+    /**
+     * Delete all the files belonging to this question.
+     * @param int $questionid the question being deleted.
+     * @param int $contextid the context the question is in.
+     */
+
+    protected function delete_files($questionid, $contextid) {
+        global $DB;
+        $fs = get_file_storage();
+
+        parent::delete_files($questionid, $contextid);
+
+        $dragids = $DB->get_records_menu('qtype_ddimagetoimage_drags',
+                                                array('questionid' => $questionid), 'id', 'id,1');
+        foreach ($dragids as $dragid => $notused) {
+            $fs->delete_area_files($contextid, 'qtype_ddimagetoimage', 'dragimage', $dragid);
+        }
+
+        $this->delete_files_in_combined_feedback($questionid, $contextid);
+    }
 }
