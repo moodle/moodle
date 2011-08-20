@@ -76,8 +76,7 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
             $dragimagehomesgroup = '';
             $orderedgroup = $question->get_ordered_choices($groupno);
             foreach ($orderedgroup as $choiceno => $dragimage) {
-                $filearea = qtype_ddimagetoimage::drag_image_file_area($dragimage->no - 1);
-                $dragimageurl = self::get_url_for_image($qa, $filearea);
+                $dragimageurl = self::get_url_for_image($qa, 'dragimage', $dragimage->id);
                 $classes = array("group{$groupno}",
                                  'draghome',
                                  "dragimagehomes{$dragimage->no}",
@@ -123,20 +122,23 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
         return $output;
     }
 
-    protected static function get_url_for_image(question_attempt $qa, $filearea) {
+    protected static function get_url_for_image(question_attempt $qa, $filearea, $itemid = 0) {
         $question = $qa->get_question();
         $qubaid = $qa->get_usage_id();
         $slot = $qa->get_slot();
         $fs = get_file_storage();
+        if ($filearea == 'bgimage') {
+            $itemid = $question->id;
+        }
         $draftfiles = $fs->get_area_files($question->contextid, 'qtype_ddimagetoimage',
-                                                                    $filearea, $question->id, 'id');
+                                                                    $filearea, $itemid, 'id');
         if ($draftfiles) {
             foreach ($draftfiles as $file) {
                 if ($file->is_directory()) {
                     continue;
                 }
                 $url = moodle_url::make_pluginfile_url($question->contextid, 'qtype_ddimagetoimage',
-                                            $filearea, "$qubaid/$slot/{$question->id}", '/',
+                                            $filearea, "$qubaid/$slot/{$itemid}", '/',
                                             $file->get_filename());
                 return $url->out();
             }

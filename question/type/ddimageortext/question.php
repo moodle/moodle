@@ -74,15 +74,26 @@ class qtype_ddimagetoimage_question extends qtype_gapselect_question_base {
     }
 
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
-        if ($filearea == 'bgimage' || preg_match('!drag\_[a-j]+$!A', $filearea)) {
+        if ($filearea == 'bgimage' || $filearea == 'dragimage') {
             $validfilearea = true;
         } else {
             $validfilearea = false;
         }
         if ($component == 'qtype_ddimagetoimage' && $validfilearea) {
             $question = $qa->get_question();
-            $questionid = reset($args); // itemid is answer id.
-            return $questionid == $question->id;
+            $itemid = reset($args);
+            if ($filearea == 'bgimage') {
+                return $itemid == $question->id;
+            } else if ($filearea == 'dragimage') {
+                foreach ($question->choices as $group) {
+                    foreach ($group as $drag) {
+                        if ($drag->id == $itemid) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
         } else {
             return parent::check_file_access($qa, $options, $component,
                                                                 $filearea, $args, $forcedownload);
@@ -98,12 +109,14 @@ class qtype_ddimagetoimage_question extends qtype_gapselect_question_base {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddimagetoimage_drag_item {
+    public $id;
     public $alttextlabel;
     public $no;
     public $group;
     public $isinfinite;
 
-    public function __construct($alttextlabel, $no, $group = 1, $isinfinite = false) {
+    public function __construct($alttextlabel, $no, $group = 1, $isinfinite = false, $id = 0) {
+        $this->id = $id;
         $this->text = $alttextlabel;
         $this->no = $no;
         $this->group = $group;

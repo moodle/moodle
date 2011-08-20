@@ -64,7 +64,7 @@ class qtype_ddimagetoimage extends question_type {
 
     protected function make_choice($dragdata) {
         return new qtype_ddimagetoimage_drag_item($dragdata->label, $dragdata->no,
-                                                    $dragdata->draggroup, $dragdata->infinite);
+                                        $dragdata->draggroup, $dragdata->infinite, $dragdata->id);
     }
 
     protected function make_place($dropzonedata) {
@@ -155,7 +155,7 @@ class qtype_ddimagetoimage extends question_type {
         foreach (array_keys($formdata->drags) as $dragno){
             $info = file_get_draft_area_info($formdata->dragitem[$dragno]);
             if ($info['filecount'] > 0) {
-                $draftitemid = file_get_submitted_draft_itemid("dragitem[$dragno]");
+                $draftitemid = $formdata->dragitem[$dragno];
 
                 $drag = new stdClass();
                 $drag->questionid = $formdata->id;
@@ -194,12 +194,6 @@ class qtype_ddimagetoimage extends question_type {
                                     'qtype_ddimagetoimage', 'bgimage', $formdata->id,
                                     array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1));
     }
-
-    public static function drag_image_file_area($dragno) {
-        //numbers not allowed in filearea name
-        return str_replace(range('0', '9'), range('a', 'j'), "drag_$dragno");
-    }
-
 
     public static function constrain_image_size_in_draft_area($draftitemid, $maxwidth, $maxheight) {
         global $USER;

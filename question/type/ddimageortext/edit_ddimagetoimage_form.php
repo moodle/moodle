@@ -219,6 +219,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
         $question = $this->data_preprocessing_combined_feedback($question, true);
         $question = $this->data_preprocessing_hints($question, true, true);
 
+        $dragids = array(); // drag no -> dragid
         if (!empty($question->options)) {
             $question->shuffleanswers = $question->options->shuffleanswers;
             $question->drags = array();
@@ -228,16 +229,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
                 $question->drags[$dragindex]['draglabel'] = $drag->label;
                 $question->drags[$dragindex]['infinite'] = $drag->infinite;
                 $question->drags[$dragindex]['draggroup'] = $drag->draggroup;
-            }
-            list(, $imagerepeats) = $this->get_drag_image_repeats();
-            for ($imageindex = 0; $imageindex < $imagerepeats; $imageindex++) {
-                $draftitemid = file_get_submitted_draft_itemid("dragitem[$imageindex]");
-                //numbers not allowed in filearea name
-                $itemid = !empty($question->drags[$imageindex]['id']) ?
-                                    (int) $question->options->drags['id'] : null;
-                file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddimagetoimage',
-                                    'dragimage', $itemid, self::file_picker_options());
-                $question->dragitem[$imageindex] = $draftitemid;
+                $dragids[$dragindex] = $drag->id;
             }
             $question->drops = array();
             foreach ($question->options->drops as $drop) {
@@ -247,11 +239,24 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
                 $question->drops[$drop->no -1]['xleft'] = $drop->xleft;
                 $question->drops[$drop->no -1]['ytop'] = $drop->ytop;
             }
-            $draftitemid = file_get_submitted_draft_itemid('bgimage');
+        }
+        //initialise file picker for bgimage
+        $draftitemid = file_get_submitted_draft_itemid('bgimage');
+        file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddimagetoimage',
+                                'bgimage', !empty($question->id) ? (int) $question->id : null,
+                                self::file_picker_options());
+        $question->bgimage = $draftitemid;
+
+        //initialise file picker for dragimages
+        list(, $imagerepeats) = $this->get_drag_image_repeats();
+        $draftitemids = optional_param('dragitem', array(), PARAM_INT);
+        for ($imageindex = 0; $imageindex < $imagerepeats; $imageindex++) {
+            $draftitemid = isset($draftitemids[$imageindex]) ? $draftitemids[$imageindex] :0;
+            //numbers not allowed in filearea name
+            $itemid = isset($dragids[$imageindex]) ? $dragids[$imageindex] : null;
             file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddimagetoimage',
-                                    'bgimage', !empty($question->id) ? (int) $question->id : null,
-                                    self::file_picker_options());
-            $question->bgimage = $draftitemid;
+                                'dragimage', $itemid, self::file_picker_options());
+            $question->dragitem[$imageindex] = $draftitemid;
         }
 
         $jsmodule = array(
