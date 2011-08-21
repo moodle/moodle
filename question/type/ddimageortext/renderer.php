@@ -106,19 +106,16 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
             $output .= $html;
             $question->places[$placeno]->fieldname = $fieldname;
         }
-        $jsmodule = array(
-            'name'     => 'qtype_ddimagetoimage',
-            'fullpath' => '/question/type/ddimagetoimage/dd.js',
-            'requires' => array('node', 'dd', 'dd-drop', 'dd-constrain')
-        );
-
         $topnode = 'div#q'.$qa->get_slot().' div.ddarea';
-        $sendtojs = array($question->places, $topnode, $options->readonly);
+        $params = array('drops' => $question->places,
+                        'topnode' => $topnode,
+                        'readonly' => $options->readonly);
 
-        $PAGE->requires->js_init_call('M.qtype_ddimagetoimage.init_question',
-                                        $sendtojs,
-                                        true,
-                                        $jsmodule);
+        $PAGE->requires->yui_module('moodle-qtype_ddimagetoimage-question',
+                                        'M.qtype_ddimagetoimage.init_question',
+                                        array($params));
+
+
         if ($qa->get_state() == question_state::$invalid) {
             $output .= html_writer::nonempty_tag('div',
                                         $question->get_validation_error($qa->get_last_qt_data()),

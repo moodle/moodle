@@ -260,12 +260,6 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
             $question->dragitem[$imageindex] = $draftitemid;
         }
 
-        $jsmodule = array(
-            'name'     => 'qtype_ddimagetoimage',
-            'fullpath' => '/question/type/ddimagetoimage/dd.js',
-            //we can make sure that file picker is loaded first by including it here
-            'requires' => array('node', 'dd', 'dd-drop', 'dd-constrain', 'form_filepicker')
-        );
         $maxsizes =new stdClass();
         $maxsizes->bgimage = new stdClass();
         $maxsizes->bgimage->width = QTYPE_DDIMAGETOIMAGE_BGIMAGE_MAXWIDTH;
@@ -274,8 +268,12 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
         $maxsizes->dragimage->width = QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXWIDTH;
         $maxsizes->dragimage->height = QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXHEIGHT;
 
-        $PAGE->requires->js_init_call('M.qtype_ddimagetoimage.init_form', array($maxsizes),
-                                                                true, $jsmodule);
+        $params = array('maxsizes' => $maxsizes,
+                        'topnode' => 'fieldset#previewareaheader');
+
+        $PAGE->requires->yui_module('moodle-qtype_ddimagetoimage-form',
+                                        'M.qtype_ddimagetoimage.init_form',
+                                        array($params));
 
         return $question;
     }
