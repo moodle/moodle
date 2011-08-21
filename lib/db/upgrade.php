@@ -3292,6 +3292,15 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2007101571.01) {
+        // Remove category_sortorder index that was supposed to be removed long time ago
+        $table = new XMLDBTable('course');
+        $index = new XMLDBIndex('category_sortorder');
+        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('category', 'sortorder'));
+
+        if (index_exists($table, $index)) {
+            drop_index($table, $index);
+        }
+
         // MDL-21011 bring down course sort orders away from maximum values
         $sql = "SELECT id, category, sortorder from {$CFG->prefix}course
                 ORDER BY sortorder ASC;";
@@ -3367,6 +3376,19 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2007101591.01);
     }
+
+    if ($result && $oldversion < 2007101591.05) {
+        // Remove category_sortorder index that was supposed to be removed long time ago
+        $table = new XMLDBTable('course');
+        $index = new XMLDBIndex('category_sortorder');
+        $index->setAttributes(XMLDB_INDEX_UNIQUE, array('category', 'sortorder'));
+
+        if (index_exists($table, $index)) {
+            drop_index($table, $index);
+        }
+        upgrade_main_savepoint($result, 2007101591.05);
+    }
+
 
     return $result;
 }
