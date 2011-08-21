@@ -40,11 +40,11 @@ echo $OUTPUT->doctype() ?>
             }
             echo $PAGE->headingmenu
         ?></div><?php } ?>
-        
+
         <?php if ($hascustommenu) { ?>
  	<div id="custommenu"><?php echo $custommenu; ?></div>
 		<?php } ?>
-        
+
         <?php if ($hasnavbar) { ?>
             <div class="navbar clearfix">
                 <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
@@ -58,7 +58,7 @@ echo $OUTPUT->doctype() ?>
     <div id="page-content" class="clearfix">
         <div id="report-main-content">
             <div class="region-content">
-                <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
+                <?php echo $OUTPUT->main_content() ?>
             </div>
         </div>
         <?php if ($hassidepre) { ?>
