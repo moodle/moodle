@@ -202,16 +202,38 @@ class plugin_renderer_base extends renderer_base {
  * @since     Moodle 2.0
  */
 class core_renderer extends renderer_base {
-    /** @var string used in {@link header()}. */
-    const PERFORMANCE_INFO_TOKEN = '%%PERFORMANCEINFO%%';
-    /** @var string used in {@link header()}. */
-    const END_HTML_TOKEN = '%%ENDHTML%%';
-    /** @var string used in {@link header()}. */
+    /**
+     * Do NOT use, please use <?php echo $OUTPUT->main_content() ?>
+     * in layout files instead.
+     * @var string used in {@link header()}.
+     * @deprecated
+     */
     const MAIN_CONTENT_TOKEN = '[MAIN CONTENT GOES HERE]';
     /** @var string used to pass information from {@link doctype()} to {@link standard_head_html()}. */
     protected $contenttype;
     /** @var string used by {@link redirect_message()} method to communicate with {@link header()}. */
     protected $metarefreshtag = '';
+    /** @var string unique token */
+    protected $unique_end_html_token;
+    /** @var string unique token */
+    protected $unique_performance_info_token;
+    /** @var string unique token */
+    protected $unique_main_content_token;
+
+    /**
+     * Constructor
+     * @param moodle_page $page the page we are doing output for.
+     * @param string $target one of rendering target constants
+     */
+    public function __construct(moodle_page $page, $target) {
+        $this->opencontainers = $page->opencontainers;
+        $this->page = $page;
+        $this->target = $target;
+
+        $this->unique_end_html_token = '%%ENDHTML-'.sesskey().'%%';
+        $this->unique_performance_info_token = '%%PERFORMANCEINFO-'.sesskey().'%%';
+        $this->unique_main_content_token = '[MAIN CONTENT GOES HERE - '.sesskey().']';
+    }
 
     /**
      * Get the DOCTYPE declaration that should be used with this page. Designed to
@@ -355,7 +377,7 @@ class core_renderer extends renderer_base {
         // This function is normally called from a layout.php file in {@link header()}
         // but some of the content won't be known until later, so we return a placeholder
         // for now. This will be replaced with the real content in {@link footer()}.
-        $output = self::PERFORMANCE_INFO_TOKEN;
+        $output = $this->unique_performance_info_token;
         if ($this->page->devicetypeinuse == 'legacy') {
             // The legacy theme is in use print the notification
             $output .= html_writer::tag('div', get_string('legacythemeinuse'), array('class'=>'legacythemeinuse'));
@@ -392,6 +414,15 @@ class core_renderer extends renderer_base {
     }
 
     /**
+     * Returns standard main content placeholder.
+     * Designed to be called in theme layout.php files.
+     * @return string HTML fragment.
+     */
+    public function main_content() {
+        return $this->unique_main_content_token;
+    }
+
+    /**
      * The standard tags (typically script tags that are not needed earlier) that
      * should be output after everything else, . Designed to be called in theme layout.php files.
      * @return string HTML fragment.
@@ -400,7 +431,7 @@ class core_renderer extends renderer_base {
         // This function is normally called from a layout.php file in {@link header()}
         // but some of the content won't be known until later, so we return a placeholder
         // for now. This will be replaced with the real content in {@link footer()}.
-        return self::END_HTML_TOKEN;
+        return $this->unique_end_html_token;
     }
 
     /**
@@ -606,13 +637,19 @@ class core_renderer extends renderer_base {
         $rendered = $this->render_page_layout($layoutfile);
 
         // Slice the rendered output into header and footer.
-        $cutpos = strpos($rendered, self::MAIN_CONTENT_TOKEN);
+        $cutpos = strpos($rendered, $this->unique_main_content_token);
         if ($cutpos === false) {
-            throw new coding_exception('page layout file ' . $layoutfile .
-                    ' does not contain the string "' . self::MAIN_CONTENT_TOKEN . '".');
+            $cutpos = strpos($rendered, self::MAIN_CONTENT_TOKEN);
+            $token = self::MAIN_CONTENT_TOKEN;
+        } else {
+            $token = $this->unique_main_content_token;
+        }
+
+        if ($cutpos === false) {
+            throw new coding_exception('page layout file ' . $layoutfile . ' does not contain the main content placeholder, please include "<?php echo $OUTPUT->main_content() ?>" in theme layout file.');
         }
         $header = substr($rendered, 0, $cutpos);
-        $footer = substr($rendered, $cutpos + strlen(self::MAIN_CONTENT_TOKEN));
+        $footer = substr($rendered, $cutpos + strlen($token));
 
         if (empty($this->contenttype)) {
             debugging('The page layout file did not call $OUTPUT->doctype()');
@@ -677,9 +714,9 @@ class core_renderer extends renderer_base {
                 $performanceinfo = $perf['html'];
             }
         }
-        $footer = str_replace(self::PERFORMANCE_INFO_TOKEN, $performanceinfo, $footer);
+        $footer = str_replace($this->unique_performance_info_token, $performanceinfo, $footer);
 
-        $footer = str_replace(self::END_HTML_TOKEN, $this->page->requires->get_end_code(), $footer);
+        $footer = str_replace($this->unique_end_html_token, $this->page->requires->get_end_code(), $footer);
 
         $this->page->set_state(moodle_page::STATE_DONE);
 
