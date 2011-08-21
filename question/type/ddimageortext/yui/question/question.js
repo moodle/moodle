@@ -6,7 +6,7 @@ YUI.add('moodle-qtype_ddimagetoimage-question', function(Y) {
     Y.extend(DDIMAGETOIMAGE_QUESTION, M.qtype_ddimagetoimage.dd_base_class, {
         initializer : function(params) {
             this.doc = this.doc_structure(this);
-            this.poll_for_image_load(null, 1000, this.create_all_drag_and_drops);
+            this.poll_for_image_load(null, false, 1000, this.create_all_drag_and_drops);
             this.doc.bg_img().after('load', this.poll_for_image_load, this,
                                                     false, 1000, this.create_all_drag_and_drops);
             this.doc.drag_image_homes().after('load', this.poll_for_image_load, this,
