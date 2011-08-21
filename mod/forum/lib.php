@@ -1060,7 +1060,7 @@ function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfro
     }
 
     if (!isset($userto->canpost[$discussion->id])) {
-        $canreply = forum_user_can_post($forum, $discussion, $userto);
+        $canreply = forum_user_can_post($forum, $discussion, $userto, $cm, $course);
     } else {
         $canreply = $userto->canpost[$discussion->id];
     }
