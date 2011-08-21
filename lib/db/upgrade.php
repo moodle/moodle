@@ -6119,6 +6119,18 @@ FROM
         upgrade_main_savepoint(true, 2011033003.09);
     }
 
+    if ($oldversion < 2011033004.04) {
+        // Remove category_sortorder index that was supposed to be removed long time ago
+        $table = new xmldb_table('course');
+        $index = new xmldb_index('category_sortorder', XMLDB_INDEX_UNIQUE, array('category', 'sortorder'));
+
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+        upgrade_main_savepoint(true, 2011033004.04);
+    }
+
+
     return true;
 }
 
