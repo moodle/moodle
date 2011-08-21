@@ -416,4 +416,39 @@ class qtype_ddimagetoimage extends question_type {
         }
         return $string;
     }
+
+    public function get_possible_responses($questiondata) {
+        $question = $this->make_question($questiondata);
+
+        $parts = array();
+        foreach ($question->places as $placeno => $place) {
+            $group = $place->group;
+            $choices = array();
+
+            foreach ($question->choices[$group] as $i => $choice) {
+                if (trim($choice->text) !='') {
+                    $summarisechoice =
+                                get_string('summarisechoice', 'qtype_ddimagetoimage', $choice);
+                } else {
+                    $summarisechoice =
+                            get_string('summarisechoiceno', 'qtype_ddimagetoimage', $choice->no);
+                }
+                $correct = $question->rightchoices[$placeno] == $i;
+                $choices[$choice->no] = new question_possible_response(
+                                                    $summarisechoice,
+                                                    $correct?1:0);
+            }
+            $choices[null] = question_possible_response::no_response();
+
+            $parts[$placeno] = $choices;
+        }
+
+        return $parts;
+    }
+
+    public function get_random_guess_score($questiondata) {
+        $question = $this->make_question($questiondata);
+        return $question->get_random_guess_score();
+    }
+
 }

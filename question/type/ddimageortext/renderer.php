@@ -165,21 +165,6 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
     }
 
     public function correct_response(question_attempt $qa) {
-        $question = $qa->get_question();
-
-        $correctanswer = '';
-        foreach ($question->places as $i => $place) {
-            $choice = $question->choices[$place->group][$question->rightchoices[$i]];
-            if ($choice->text != '') {
-                $text = $choice->text;
-            } else {
-                $text = get_string('nolabel', 'qtype_ddimagetoimage');
-            }
-            $correctanswer .= '[' . str_replace('-', '&#x2011;', $text) . ']';
-        }
-
-        if (!empty($correctanswer)) {
-            return get_string('correctansweris', 'qtype_gapselect', $correctanswer);
-        }
+        return '';
     }
 }
