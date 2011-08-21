@@ -111,7 +111,7 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
                         'topnode' => $topnode,
                         'readonly' => $options->readonly);
 
-        $PAGE->requires->yui_module('moodle-qtype_ddimagetoimage-question',
+        $PAGE->requires->yui_module('moodle-qtype_ddimagetoimage-dd',
                                         'M.qtype_ddimagetoimage.init_question',
                                         array($params));
 
