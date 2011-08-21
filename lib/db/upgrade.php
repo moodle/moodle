@@ -6639,6 +6639,18 @@ FROM
     // Moodle v2.1.0 release upgrade line
     // Put any upgrade step following this
 
+    if ($oldversion < 2011070101.04) {
+        // Remove category_sortorder index that was supposed to be removed long time ago
+        $table = new xmldb_table('course');
+        $index = new xmldb_index('category_sortorder', XMLDB_INDEX_UNIQUE, array('category', 'sortorder'));
+
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+        upgrade_main_savepoint(true, 2011070101.04);
+    }
+
+
     return true;
 }
 
