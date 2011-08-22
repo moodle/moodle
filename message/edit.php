@@ -27,6 +27,7 @@ require_once('../config.php');
 
 $userid = optional_param('id', $USER->id, PARAM_INT);    // user id
 $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
+$disableall = optional_param('disableall', 0, PARAM_BOOL); //disable all of this user's notifications
 
 $url = new moodle_url('/message/edit.php');
 if ($userid !== $USER->id) {
@@ -96,6 +97,17 @@ $providers = message_get_providers_for_user($user->id);
 /// Save new preferences if data was submitted
 
 if (($form = data_submitted()) && confirm_sesskey()) {
+    //only update the user's "emailstop" if its actually changed
+    if ( $user->emailstop != $disableall ) {
+        $user->emailstop = $disableall;
+        //create a new user object just in case any other changes have been
+        //made to the user object that we don't want to save
+        $usertoupdate = new stdClass();
+        $usertoupdate->id = $user->id;
+        $usertoupdate->emailstop = $user->emailstop;
+        $DB->update_record('user', $usertoupdate);
+    }
+
     $preferences = array();
 
     $possiblestates = array('loggedin', 'loggedoff');
@@ -239,6 +251,10 @@ foreach ( $providers as $providerid => $provider){
     }
 }
 echo '</table>';
+
+$disableallcheckbox = $OUTPUT->help_icon('disableall', 'message') . get_string('disableall', 'message') . html_writer::checkbox('disableall', 1, $user->emailstop, '', array('class'=>'disableallcheckbox'));
+echo html_writer::nonempty_tag('div', $disableallcheckbox, array('class'=>'disableall'));
+
 echo '</fieldset>';
 
 /// Show all the message processors
