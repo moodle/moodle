@@ -68,6 +68,9 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                 drag_image : function(draginstanceno) {
                     return dragimagesarea.one('img.draginstance' + draginstanceno);
                 },
+                drag_images_in_group : function(groupno) {
+                    return dragimagesarea.all('img.drag.group' + groupno);
+                },
                 drag_image_homes : function() {
                     return dragimagesarea.all('img.draghome');
                 },
@@ -258,6 +261,80 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                 }
             }, this);
             this.reposition_drags_for_question();
+            if (!this.get('readonly')) {
+                this.doc.drop_zones().set('tabIndex', 0);
+                this.doc.drop_zones().each(
+                    function(v){
+                        v.on('dragchange', this.drop_zone_key_press, this);
+                    }
+                , this);
+            }
+        },
+        drop_zone_key_press : function (e) {
+            switch (e.direction) {
+                case 'next' : 
+                    this.place_next_drag_in(e.target);
+                    break;
+                case 'previous' :
+                    this.place_previous_drag_in(e.target);
+                    break;
+                case 'remove' :
+                    this.remove_drag_from_drop(e.target);
+                    break;
+            }
+            e.preventDefault();
+            this.reposition_drags_for_question();
+        },
+        place_next_drag_in : function (drop) {
+            this.search_for_unplaced_drop_choice(drop, 1);
+        },
+        place_previous_drag_in : function (drop) {
+            this.search_for_unplaced_drop_choice(drop, -1);
+        },
+        search_for_unplaced_drop_choice : function (drop, direction) {
+            var next;
+            var current = this.current_drag_in_drop(drop);
+            if ('' === current) {
+                if (direction == 1) {
+                    next = 1;
+                } else {
+                    next = 1;
+                    var groupno = drop.getData('group');
+                    this.doc.drag_images_in_group(groupno).each(function(drag) {
+                        next = Math.max(next, drag.getData('choice'));
+                    }, this);
+                }
+            } else {
+                next = + current + direction;
+            }
+            var drag;
+            do {
+                if (this.get_choices_for_drop(next, drop).size() === 0){
+                    this.remove_drag_from_drop(drop);
+                    return;
+                } else {
+                    drag = this.get_unplaced_choice_for_drop(next, drop);
+                }
+                next = next + direction;
+            } while (drag === null);
+            this.place_drag_in_drop(drag, drop);
+        },
+        current_drag_in_drop : function (drop) {
+            var inputid = drop.getData('inputid');
+            var inputnode = Y.one('input#'+inputid);
+            return inputnode.get('value');
+        },
+        remove_drag_from_drop : function (drop) {
+            this.place_drag_in_drop(null, drop);
+        },
+        place_drag_in_drop : function (drag, drop) {
+            var inputid = drop.getData('inputid');
+            var inputnode = Y.one('input#'+inputid);
+            if (drag !== null) {
+                inputnode.set('value', drag.getData('choice'));
+            } else {
+                inputnode.set('value', '');
+            }
         },
         reposition_drags_for_question : function() {
             this.doc.drag_images().removeClass('placed');
@@ -273,18 +350,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                 var input = this.doc.top_node().one(inputcss);
                 var choice = input.get('value');
                 if (choice !== "") {
-                    var group = dropzone.getData('group');
-                    var dragimage = null;
-                    var dragimages = this.doc.top_node()
-                                        .all('div.dragitemgroup'+group+' img.choice'+choice+'.drag');
-                    dragimages.some(function (d) {
-                        if (!d.hasClass('placed')) {
-                            dragimage = d;
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    });
+                    var dragimage = this.get_unplaced_choice_for_drop(choice, dropzone);
                     if (dragimage !== null) {
                         dragimage.setXY(dropzone.getXY());
                         dragimage.addClass('placed');
@@ -303,6 +369,28 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                     dragimage.setXY(dragimagehome.getXY());
                 }
             }, this);
+        },
+        get_choices_for_drop : function(choice, drop) { 
+            var group = drop.getData('group');
+            var dragimage = null;
+            var dragimages = this.doc.top_node()
+                                .all('div.dragitemgroup'+group+' img.choice'+choice+'.drag');
+            return dragimages;
+        },
+        get_unplaced_choice_for_drop : function(choice, drop) {
+            var dragimages = this.get_choices_for_drop(choice, drop);
+            if (dragimages.some(function (d) {
+                if (!d.hasClass('placed')) {
+                    dragimage = d;
+                    return true;
+                } else {
+                    return false;
+                }
+            })) {
+                return dragimage;
+            } else {
+                return null;
+            }
         },
         init_drops : function () {
             var dropareas = this.doc.top_node().one('div.dropzones');
@@ -330,15 +418,41 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                     var drag = e.drag.get('node');
                     var drop = e.drop.get('node');
                     if (+drop.getData('group') === drag.getData('group')){
-                        var inputid = drop.getData('inputid');
-                        var inputnode = Y.one('input#'+inputid);
-                        inputnode.set('value', drag.getData('choice'));
+                        this.place_drag_in_drop(drag, drop);
                     }
                 }, this);
             };
         }
     }, {NAME : DDIMAGETOIMAGEQUESTIONNAME, ATTRS : {}});
     
+    Y.Event.define('dragchange', {
+        // Webkit and IE repeat keydown when you hold down arrow keys.
+        // Opera links keypress to page scroll; others keydown.
+        // Firefox prevents page scroll via preventDefault() on either
+        // keydown or keypress.
+        _event: (Y.UA.webkit || Y.UA.ie) ? 'keydown' : 'keypress',
+
+        _keys: {
+            '32': 'next',
+            '37': 'previous',
+            '38': 'previous',
+            '39': 'next',
+            '40': 'next',
+            '27': 'remove'
+        },
+
+        _keyHandler: function (e, notifier) {
+            if (this._keys[e.keyCode]) {
+                e.direction = this._keys[e.keyCode];
+                notifier.fire(e);
+            }
+        },
+
+        on: function (node, sub, notifier) {
+            sub._detacher = node.on(this._event, this._keyHandler,
+                                    this, notifier);
+        }
+    });
     M.qtype_ddimagetoimage.init_question = function(config) { 
         return new DDIMAGETOIMAGE_QUESTION(config);
     }
