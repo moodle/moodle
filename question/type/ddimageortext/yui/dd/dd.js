@@ -1,8 +1,12 @@
+
 YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
     var DDIMAGETOIMAGEDDNAME = 'ddimagetoimage_dd';
     var DDIMAGETOIMAGE_DD = function() {
         DDIMAGETOIMAGE_DD.superclass.constructor.apply(this, arguments);
     }
+    /**
+     * This is the base class for the question rendering and question editing form code.
+     */
     Y.extend(DDIMAGETOIMAGE_DD, Y.Base, {
         doc : null,
         polltimer : null,
@@ -213,6 +217,9 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
     var DDIMAGETOIMAGE_QUESTION = function() {
         DDIMAGETOIMAGE_QUESTION.superclass.constructor.apply(this, arguments);
     };
+    /**
+     * This is the code for question rendering.
+     */
     Y.extend(DDIMAGETOIMAGE_QUESTION, M.qtype_ddimagetoimage.dd_base_class, {
         initializer : function(params) {
             this.doc = this.doc_structure(this);

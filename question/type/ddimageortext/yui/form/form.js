@@ -1,3 +1,6 @@
+/**
+ * This is the question editing form code.
+ */
 YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
     var DDIMAGETOIMAGEFORMNAME = 'ddimagetoimage_form';
     var DDIMAGETOIMAGE_FORM = function() {
