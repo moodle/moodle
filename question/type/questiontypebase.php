@@ -986,7 +986,7 @@ class question_type {
         array_shift($extraquestionfields);
         $expout='';
         foreach ($extraquestionfields as $field) {
-            $exportedvalue = self::wrap_html_special_chars($question->options->$field);
+            $exportedvalue = $format->xml_escape($question->options->$field);
             $expout .= "    <$field>{$exportedvalue}</$field>\n";
         }
 
@@ -1003,21 +1003,14 @@ class question_type {
             $expout .= "      </feedback>\n";
             if (is_array($extraanswersfields)) {
                 foreach ($extraanswersfields as $field) {
-                    $exportedvalue = self::wrap_html_special_chars($answer->$field);
-                    $expout .= "      <$field>{$exportedvalue}</$field>\n";
+                    $exportedvalue = $format->xml_escape($answer->$field);
+                    $expout .= "      <{$field}>{$exportedvalue}</{$field}>\n";
                 }
             }
-
 
             $expout .= "    </answer>\n";
         }
         return $expout;
-    }
-    protected static function wrap_html_special_chars($text) {
-        if (!empty($text) && htmlspecialchars($text) != $text) {
-            $text = '<![CDATA[' . $text . ']]>';
-        }
-        return $text;
     }
 
     /**
