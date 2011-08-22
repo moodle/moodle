@@ -284,7 +284,11 @@ class qtype_multianswer_edit_form extends question_edit_form {
                         foreach ($wrapped->options->answers as $subanswer) {
                             $parsableanswerdef .= $separator
                                 . '%' . round(100*$subanswer->fraction) . '%';
-                            $parsableanswerdef .= $subanswer->answer;
+                            if (is_array($subanswer->answer)) {
+                                $parsableanswerdef .= $subanswer->answer['text'];
+                            } else {
+                                $parsableanswerdef .= $subanswer->answer;
+                            }
                             if (!empty($wrapped->options->tolerance)) {
                                 // Special for numerical answers:
                                 $parsableanswerdef .= ":{$wrapped->options->tolerance}";
@@ -360,6 +364,9 @@ class qtype_multianswer_edit_form extends question_edit_form {
                             if ($subquestion->qtype == 'numerical' && $key == 0) {
                                 $default_values[$prefix.'tolerance['.$key.']'] =
                                         $subquestion->tolerance[0];
+                            }
+                            if (is_array($answer)) {
+                                $answer = $answer['text'];
                             }
                             $trimmedanswer = trim($answer);
                             if ($trimmedanswer !== '') {
@@ -438,6 +445,9 @@ class qtype_multianswer_edit_form extends question_edit_form {
                                 $this->savedquestiondisplay->options->questions[$sub]->qtype);
                     }
                     foreach ($subquestion->answer as $key => $answer) {
+                        if (is_array($answer)) {
+                            $answer = $answer['text'];
+                        }
                         $trimmedanswer = trim($answer);
                         if ($trimmedanswer !== '') {
                             $answercount++;
