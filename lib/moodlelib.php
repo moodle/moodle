@@ -9368,9 +9368,10 @@ WHERE m.useridto = :userid AND p.name='popup'";
             $smallmessage = null;
             if (!empty($message_users->smallmessage)) {
                 //display the first 200 chars of the message in the popup
+                $textlib = textlib_get_instance();
                 $smallmessage = null;
-                if (strlen($message_users->smallmessage>200)) {
-                    $smallmessage = substr($message_users->smallmessage,0,200).'...';
+                if ($textlib->strlen($message_users->smallmessage) > 200) {
+                    $smallmessage = $textlib->substr($message_users->smallmessage,0,200).'...';
                 } else {
                     $smallmessage = $message_users->smallmessage;
                 }
