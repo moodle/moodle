@@ -405,6 +405,8 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
 
     $a = '<input name="moveselectedonpagetop" type="text" size="2" ' .
         $pagingdisabled . ' />';
+    $b = '<input name="moveselectedonpagebottom" type="text" size="2" ' .
+        $pagingdisabled . ' />';
 
     $reordercontrols2top = '<div class="moveselectedonpage">' .
         get_string('moveselectedonpage', 'quiz', $a) .
@@ -415,7 +417,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
     $reordercontrols2bottom = '<div class="moveselectedonpage">' .
         '<input type="submit" name="savechanges" value="' .
         $strreorderquestions . '" /><br />' .
-        get_string('moveselectedonpage', 'quiz', $a) .
+        get_string('moveselectedonpage', 'quiz', $b) .
         '<input type="submit" name="savechanges" value="' .
         $strmove . '"  ' . $pagingdisabled . ' /> ' . '</div>';
 
