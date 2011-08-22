@@ -581,25 +581,21 @@ function quiz_save_best_grade($quiz, $userid = null, $attempts = array()) {
 /**
  * Calculate the overall grade for a quiz given a number of attempts by a particular user.
  *
- * @return float          The overall grade
- * @param object $quiz    The quiz for which the best grade is to be calculated
- * @param array $attempts An array of all the attempts of the user at the quiz
+ * @param object $quiz    the quiz settings object.
+ * @param array $attempts an array of all the user's attempts at this quiz in order.
+ * @return float          the overall grade
  */
 function quiz_calculate_best_grade($quiz, $attempts) {
 
     switch ($quiz->grademethod) {
 
         case QUIZ_ATTEMPTFIRST:
-            foreach ($attempts as $attempt) {
-                return $attempt->sumgrades;
-            }
-            break;
+            $firstattempt = reset($attempts);
+            return $firstattempt->sumgrades;
 
         case QUIZ_ATTEMPTLAST:
-            foreach ($attempts as $attempt) {
-                $final = $attempt->sumgrades;
-            }
-            return $final;
+            $lastattempt = end($attempts);
+            return $lastattempt->sumgrades;
 
         case QUIZ_GRADEAVERAGE:
             $sum = 0;
@@ -608,10 +604,10 @@ function quiz_calculate_best_grade($quiz, $attempts) {
                 $sum += $attempt->sumgrades;
                 $count++;
             }
-            return (float)$sum/$count;
+            return (float) $sum/$count;
 
-        default:
         case QUIZ_GRADEHIGHEST:
+        default:
             $max = 0;
             foreach ($attempts as $attempt) {
                 if ($attempt->sumgrades > $max) {

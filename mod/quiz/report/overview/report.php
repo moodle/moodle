@@ -596,7 +596,7 @@ class quiz_overview_report extends quiz_default_report {
             } else {
                 $params = array();
             }
-            $attemptsql .= "{quiz_attempts}.quiz =? AND preview = 0";
+            $attemptsql .= "{quiz_attempts}.quiz = ? AND preview = 0";
             $params[] = $quiz->id;
         } else {
             list($asql, $params) = $DB->get_in_or_equal($attemptids);
@@ -613,10 +613,10 @@ class quiz_overview_report extends quiz_default_report {
             //not just those that have changed.
             $sql = "SELECT qa2.* FROM {quiz_attempts} qa2 WHERE " .
                     "qa2.userid IN (SELECT DISTINCT userid FROM {quiz_attempts} WHERE $attemptsql) " .
-                    "AND qa2.timefinish > 0 AND qa2.quiz = ?";
+                    "AND qa2.timefinish > 0 AND qa2.quiz = ? ORDER BY qa2.userid, qa2.attempt";
             $params[] = $quiz->id;
         } else {
-            $sql = "SELECT * FROM {quiz_attempts} WHERE $attemptsql AND timefinish > 0";
+            $sql = "SELECT * FROM {quiz_attempts} WHERE $attemptsql AND timefinish > 0 ORDER BY userid, attempt";
         }
         if ($attempts = $DB->get_records_sql($sql, $params)) {
             $attemptsbyuser = quiz_report_index_by_keys($attempts, array('userid', 'id'));
