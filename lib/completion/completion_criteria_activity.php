@@ -269,7 +269,7 @@ class completion_criteria_activity extends completion_criteria {
                 $details['requirement'][] = get_string('viewingactivity', 'completion', $this->module);
             }
 
-            if ($module->completiongradeitemnumber) {
+            if (!is_null($module->completiongradeitemnumber)) {
                 $details['requirement'][] = get_string('achievinggrade', 'completion');
             }
         }
