@@ -78,6 +78,16 @@ Example:
 "; //TODO: localize, mark as needed in install - to be translated later when everything is finished
 
 
+// distro specific customisation
+$distrolibfile = dirname(dirname(dirname(__FILE__))).'/install/distrolib.php';
+$distro = null;
+if (file_exists($distrolibfile)) {
+    require_once($distrolibfile);
+    if (function_exists('distro_get_config')) {
+        $distro = distro_get_config();
+    }
+}
+
 // Nothing to do if config.php exists
 $configfile = dirname(dirname(dirname(__FILE__))).'/config.php';
 if (file_exists($configfile)) {
@@ -180,14 +190,14 @@ if (empty($databases)) {
 // now get cli options
 list($options, $unrecognized) = cli_get_params(
     array(
-        'chmod'             => '2777',
+        'chmod'             => isset($distro->directorypermissions) ? sprintf('%04o',$distro->directorypermissions) : '2777', // let distros set dir permissions
         'lang'              => $CFG->lang,
         'wwwroot'           => '',
-        'dataroot'          => str_replace('\\', '/', dirname(dirname(dirname(dirname(__FILE__)))).'/moodledata'),
-        'dbtype'            => $defaultdb,
-        'dbhost'            => 'localhost',
+        'dataroot'          => empty($distro->dataroot) ? str_replace('\\', '/', dirname(dirname(dirname(dirname(__FILE__)))).'/moodledata'): $distro->dataroot, // initialised later after including libs or by distro
+        'dbtype'            => empty($distro->dbtype) ? $defaultdb : $distro->dbtype, // let distro skip dbtype selection
+        'dbhost'            => empty($distro->dbhost) ? 'localhost' : $distro->dbhost, // let distros set dbhost
         'dbname'            => 'moodle',
-        'dbuser'            => 'root',
+        'dbuser'            => empty($distro->dbuser) ? 'root' : $distro->dbuser, // let distros set dbuser
         'dbpass'            => '',
         'dbsocket'          => false,
         'prefix'            => 'mdl_',
@@ -523,6 +533,9 @@ if ($interactive) {
         }
 
         $CFG->dbpass = cli_input($prompt, $options['dbpass']);
+        if (function_exists('distro_pre_create_db')) { // Hook for distros needing to do something before DB creation
+            $distro = distro_pre_create_db($database, $CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, array('dbpersist'=>0, 'dbsocket'=>$options['dbsocket']), $distro);
+        }
         $hint_database = install_db_validate($database, $CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, array('dbpersist'=>0, 'dbsocket'=>$options['dbsocket']));
     } while ($hint_database !== '');
 
