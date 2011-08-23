@@ -68,6 +68,7 @@ class qtype_calculated_test_helper extends question_test_helper {
         $q->unitgradingtype = 0;
         $q->unitpenalty = 0;
         $q->ap = new qtype_numerical_answer_processor(array());
+        $q->synchronised = false;
 
         $q->datasetloader = new qtype_calculated_test_dataset_loader(0, array(
             array('a' => 1, 'b' => 5),
@@ -88,6 +89,7 @@ class qtype_calculated_test_helper extends question_test_helper {
  */
 class qtype_calculated_test_dataset_loader extends qtype_calculated_dataset_loader{
     protected $valuesets;
+    protected $aresynchronised = array();
 
     public function __construct($questionid, array $valuesets) {
         parent::__construct($questionid);
@@ -100,5 +102,18 @@ class qtype_calculated_test_dataset_loader extends qtype_calculated_dataset_load
 
     public function load_values($itemnumber) {
         return $this->valuesets[$itemnumber - 1];
+    }
+
+    public function datasets_are_synchronised($category) {
+        return !empty($this->aresynchronised[$category]);
+    }
+
+    /**
+     * Allows the test to mock the return value of {@link datasets_are_synchronised()}.
+     * @param int $category
+     * @param bool $aresychronised
+     */
+    public function set_are_synchronised($category, $aresychronised) {
+        $this->aresynchronised[$category] = $aresychronised;
     }
 }

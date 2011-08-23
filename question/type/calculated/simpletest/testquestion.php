@@ -108,4 +108,23 @@ class qtype_calculated_question_test extends UnitTestCase {
                 question_classified_response::no_response()),
                 $question->classify_response(array('answer' => '')));
     }
+
+    public function test_get_variants_selection_seed_q_not_synchronised() {
+        $question = test_question_maker::make_question('calculated');
+        $this->assertEqual($question->stamp, $question->get_variants_selection_seed());
+    }
+
+    public function test_get_variants_selection_seed_q_synchronised_datasets_not() {
+        $question = test_question_maker::make_question('calculated');
+        $question->synchronised = true;
+        $this->assertEqual($question->stamp, $question->get_variants_selection_seed());
+    }
+
+    public function test_get_variants_selection_seed_q_synchronised() {
+        $question = test_question_maker::make_question('calculated');
+        $question->synchronised = true;
+        $question->datasetloader->set_are_synchronised($question->category, true);
+        $this->assertEqual('category' . $question->category,
+                $question->get_variants_selection_seed());
+    }
 }
