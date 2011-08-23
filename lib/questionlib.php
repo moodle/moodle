@@ -1343,6 +1343,11 @@ function question_has_capability_on($question, $cap, $cachecat = -1) {
         }
         $question = $questions[$question];
     }
+    if (empty($question->category)) {
+        // This can happen when we have created a fake 'missingtype' question to
+        // take the place of a deleted question.
+        return false;
+    }
     if (!isset($categories[$question->category])) {
         if (!$categories[$question->category] = $DB->get_record('question_categories',
                 array('id'=>$question->category))) {
