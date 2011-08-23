@@ -198,7 +198,11 @@ class enrol_manual_plugin extends enrol_plugin {
             return false;
         }
 
-        $button = new enrol_user_button($this->get_manual_enrol_link($instance), get_string('enrolusers', 'enrol_manual'), 'get');
+        if (!$manuallink = $this->get_manual_enrol_link($instance)) {
+            return false;
+        }
+
+        $button = new enrol_user_button($manuallink, get_string('enrolusers', 'enrol_manual'), 'get');
         $button->class .= ' enrol_manual_plugin';
 
         $startdate = $manager->get_course()->startdate;
