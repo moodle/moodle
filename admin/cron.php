@@ -245,8 +245,8 @@
                                         FROM {$CFG->prefix}user_lastaccess la
                                         JOIN {$CFG->prefix}course c
                                           ON c.id = la.courseid
-                                       WHERE courseid != ".SITEID."
-                                         AND timeaccess < $cuttime
+                                       WHERE la.courseid != ".SITEID."
+                                         AND la.timeaccess < $cuttime
                                          AND c.metacourse = 0 ");
             while ($assign = rs_fetch_next_record($rs)) {
                 if ($context = get_context_instance(CONTEXT_COURSE, $assign->courseid)) {
