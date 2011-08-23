@@ -645,7 +645,7 @@ function process_membership_tag($tagcontents){
                         if(isset($groupids[$member->groupname])) {
                             $member->groupid = $groupids[$member->groupname]; // Recall the group ID from cache if available
                         } else {
-                            if($groupid = $DB->get_field('groups', 'id', 'name', $member->groupname, array('courseid'=>$ship->courseid))){
+                            if($groupid = $DB->get_field('groups', 'id', array('courseid'=>$ship->courseid, 'name'=>$member->groupname))){ 
                                 $member->groupid = $groupid;
                                 $groupids[$member->groupname] = $groupid; // Store ID in cache
                             } else {
