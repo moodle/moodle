@@ -92,7 +92,7 @@ M.core_scroll_manager.scroll_to_saved_pos = function(Y) {
         // And the following horror is necessary to make it work in IE 8.
         // Note that the class ie8 on body is only there in Moodle 2.0 and OU Moodle.
         if (Y.one('body').hasClass('ie')) {
-            M.core_scroll_manager.force_ie_to_scroll(matches[1])
+            M.core_scroll_manager.force_ie_to_scroll(Y, matches[1])
         }
     }
 }
@@ -101,7 +101,7 @@ M.core_scroll_manager.scroll_to_saved_pos = function(Y) {
  * Beat IE into submission.
  * @param targetpos the target scroll position.
  */
-M.core_scroll_manager.force_ie_to_scroll = function(targetpos) {
+M.core_scroll_manager.force_ie_to_scroll = function(Y, targetpos) {
     var hackcount = 25;
     function do_scroll() {
         window.scrollTo(0, targetpos);
