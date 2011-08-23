@@ -158,4 +158,13 @@ class import_ui_stage_final extends backup_ui_stage_final {}
 /**
  * Extends the restore course search to search for import courses.
  */
-class import_course_search extends restore_course_search {}
+class import_course_search extends restore_course_search {
+    /**
+     * Sets up any access restrictions for the courses to be displayed in the search.
+     * 
+     * This will typically call $this->require_capability().
+     */
+    protected function setup_restrictions() {
+        $this->require_capability('moodle/backup:backuptargetimport');
+    }
+}
