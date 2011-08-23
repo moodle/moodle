@@ -842,7 +842,7 @@ function tag_compute_correlations($mincorrelation = 2) {
  * @param stdClass $tagcorrelation
  * @return int The id of the tag correlation that was just processed.
  */
-function tag_process_computed_correlation(stdClass $tagcorrelation) {
+function tag_process_computed_correlation($tagcorrelation) {
 
     // You must provide a tagid and correlatedtags must be set and be an array
     if (empty($tagcorrelation->tagid) || !isset($tagcorrelation->correlatedtags) || !is_array($tagcorrelation->correlatedtags)) {
