@@ -49,10 +49,14 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
 $candidate = "$CFG->dataroot/cache/theme/$themename/javascript_$type.js";
 
 if ($rev > -1 and file_exists($candidate)) {
-    if (!empty($_SERVER['HTTP_IF_NONE_MATCH'])) {
+    if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
         // we do not actually need to verify the etag value because our files
         // never change in cache because we increment the rev parameter
+        $lifetime = 60*60*24*30; // 30 days
         header('HTTP/1.1 304 Not Modified');
+        header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+        header('Cache-Control: max-age='.$lifetime);
+        header('Content-Type: application/javascript; charset=utf-8');
         die;
     }
     send_cached_js($candidate, $rev);
@@ -88,12 +92,13 @@ if ($rev > -1) {
 // parameters to get the best performance.
 
 function send_cached_js($jspath) {
-    $lifetime = 60*60*24*20;
+    $lifetime = 60*60*24*30; // 30 days
 
     header('Content-Disposition: inline; filename="javascript.php"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($jspath)) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
+    header('Cache-Control: max-age='.$lifetime);
     header('Accept-Ranges: none');
     header('Content-Type: application/javascript; charset=utf-8');
     if (!min_enable_zlib_compression()) {
