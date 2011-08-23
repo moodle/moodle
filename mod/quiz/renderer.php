@@ -761,8 +761,9 @@ class mod_quiz_renderer extends plugin_renderer_base {
             }
             $row[] = $datecompleted;
 
-            if ($viewobj->markcolumn && $attempt->timefinish > 0) {
-                if ($attemptoptions->marks >= question_display_options::MARK_AND_MAX) {
+            if ($viewobj->markcolumn) {
+                if ($attemptoptions->marks >= question_display_options::MARK_AND_MAX &&
+                        $attempt->timefinish > 0) {
                     $row[] = quiz_format_grade($quiz, $attempt->sumgrades);
                 } else {
                     $row[] = '';
