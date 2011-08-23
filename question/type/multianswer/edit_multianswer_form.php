@@ -87,6 +87,9 @@ class qtype_multianswer_edit_form extends question_edit_form {
         $mform->removeElement('defaultmark');
         $this->confirm = optional_param('confirm', '0', PARAM_RAW);
 
+        // Make questiontext a required field for this question type.
+        $mform->addRule('questiontext', null, 'required', null, 'client');
+
         // display the questions from questiontext;
         if ("" != optional_param('questiontext', '', PARAM_RAW)) {
             $this->questiondisplay = fullclone(qtype_multianswer_extract_question(
