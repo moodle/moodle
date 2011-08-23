@@ -473,7 +473,7 @@ function required_param($parname, $type) {
         return required_param_array($parname, $type);
     }
 
-    return clean_param($param, $type, false);
+    return clean_param($param, $type);
 }
 
 /**
@@ -513,7 +513,7 @@ function required_param_array($parname, $type) {
             debugging('Invalid key name in required_param_array() detected: '.$key.', parameter: '.$parname);
             continue;
         }
-        $result[$key] = clean_param($value, $type, false);
+        $result[$key] = clean_param($value, $type);
     }
 
     return $result;
@@ -558,7 +558,7 @@ function optional_param($parname, $default, $type) {
         return optional_param_array($parname, $default, $type);
     }
 
-    return clean_param($param, $type, false);
+    return clean_param($param, $type);
 }
 
 /**
@@ -600,7 +600,7 @@ function optional_param_array($parname, $default, $type) {
             debugging('Invalid key name in optional_param_array() detected: '.$key.', parameter: '.$parname);
             continue;
         }
-        $result[$key] = clean_param($value, $type, false);
+        $result[$key] = clean_param($value, $type);
     }
 
     return $result;
@@ -631,7 +631,7 @@ function validate_param($param, $type, $allownull=NULL_NOT_ALLOWED, $debuginfo='
         throw new invalid_parameter_exception($debuginfo);
     }
 
-    $cleaned = clean_param($param, $type, false);
+    $cleaned = clean_param($param, $type);
     if ((string)$param !== (string)$cleaned) {
         // conversion to string is usually lossless
         throw new invalid_parameter_exception($debuginfo);
