@@ -15,13 +15,13 @@
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* This page displays the user data from a single attempt
-*
-* @package mod
-* @subpackage scorm
-* @copyright 1999 onwards Martin Dougiamas {@link http://moodle.com}
-* @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * This page displays the user data from a single attempt
+ *
+ * @package mod
+ * @subpackage scorm
+ * @copyright 1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once("../../config.php");
 require_once($CFG->dirroot.'/mod/scorm/locallib.php');
@@ -289,7 +289,7 @@ if (!empty($b)) {
                 'cmi.objectives.'.$i.'.score.max');
         $row = array();
         foreach ($elements as $element) {
-           if (isset($trackdata->$element)) {
+            if (isset($trackdata->$element)) {
                 $row[] = s($trackdata->$element);
                 $printedelements[]=$element;
             } else {
@@ -306,7 +306,7 @@ if (!empty($b)) {
         echo html_writer::table($table);
     }
     $table = new html_table();
-    $table->head = array(get_string('element', 'scorm'), get_string('value', 'scorm'));
+    $table->head = array(get_string('element', 'scorm'), get_string('elementdefinition', 'scorm'), get_string('value', 'scorm'));
     $table->align = array('left', 'left');
     $table->wrap = array('nowrap', 'wrap');
     $table->width = '100%';
@@ -319,7 +319,42 @@ if (!empty($b)) {
             if (!(in_array ($element, $printedelements))) {
                 $existelements = true;
                 $row = array();
-                $row[] = get_string($element, 'scorm') != '[['.$element.']]' ? get_string($element, 'scorm') : $element;
+                $string=false;
+                if (stristr($element, '.id') !== false) {
+                    $string="interactionsid";
+                } else if (stristr($element, '.result') !== false) {
+                    $string="interactionsresult";
+                } else if (stristr($element, '.student_response') !== false) {
+                    $string="interactionsresponse";
+                } else if (stristr($element, '.type') !== false) {
+                    $string="interactionstype";
+                } else if (stristr($element, '.weighting') !== false) {
+                    $string="interactionsweight";
+                } else if (stristr($element, '.time') !== false) {
+                    $string="interactionstime";
+                } else if (stristr($element, '.correct_responses._count') !== false) {
+                    $string="interactionscorrectcount";
+                } else if (stristr($element, '.learner_response') !== false) {
+                    $string="interactionslearnerresponse";
+                } else if (stristr($element, '.score.min') !== false) {
+                    $string="interactionslscoremin";
+                } else if (stristr($element, '.score.max') !== false) {
+                    $string="interactionsscoremax";
+                } else if (stristr($element, '.score.raw') !== false) {
+                    $string="interactionsscoreraw";
+                } else if (stristr($element, '.latency') !== false) {
+                    $string="interactionslatency";
+                } else if (stristr($element, '.pattern') !== false) {
+                    $string="interactionspattern";
+                } else if (stristr($element, '.suspend_data') !== false) {
+                    $string="interactionssuspenddata";
+                }
+                $row[]=$element;
+                if (empty($string)) {
+                    $row[]=null;
+                } else {
+                    $row[] = get_string($string, 'scorm');
+                }
                 if (strpos($element, '_time') === false) {
                     $row[] = s($value);
                 } else {
