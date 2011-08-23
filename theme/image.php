@@ -56,20 +56,30 @@ if ($rev > -1) {
     $cacheimage = false;
     if (file_exists("$candidatelocation/$image.gif")) {
         $cacheimage = "$candidatelocation/$image.gif";
+        $ext = 'gif';
     } else if (file_exists("$candidatelocation/$image.png")) {
         $cacheimage = "$candidatelocation/$image.png";
+        $ext = 'png';
     } else if (file_exists("$candidatelocation/$image.jpg")) {
         $cacheimage = "$candidatelocation/$image.jpg";
+        $ext = 'jpg';
     } else if (file_exists("$candidatelocation/$image.jpeg")) {
         $cacheimage = "$candidatelocation/$image.jpeg";
+        $ext = 'jpeg';
     } else if (file_exists("$candidatelocation/$image.ico")) {
         $cacheimage = "$candidatelocation/$image.ico";
+        $ext = 'ico';
     }
     if ($cacheimage) {
-        if (!empty($_SERVER['HTTP_IF_NONE_MATCH'])) {
+        if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
             // we do not actually need to verify the etag value because our files
             // never change in cache because we increment the rev parameter
+            $lifetime = 60*60*24*30; // 30 days
+            $mimetype = get_contenttype_from_ext($ext);
             header('HTTP/1.1 304 Not Modified');
+            header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+            header('Cache-Control: max-age='.$lifetime);
+            header('Content-Type: '.$mimetype);
             die;
         }
         send_cached_image($cacheimage, $rev);
@@ -125,14 +135,7 @@ function send_cached_image($imagepath, $rev) {
     $pathinfo = pathinfo($imagepath);
     $imagename = $pathinfo['filename'].'.'.$pathinfo['extension'];
 
-    switch($pathinfo['extension']) {
-        case 'gif'  : $mimetype = 'image/gif'; break;
-        case 'png'  : $mimetype = 'image/png'; break;
-        case 'jpg'  : $mimetype = 'image/jpeg'; break;
-        case 'jpeg' : $mimetype = 'image/jpeg'; break;
-        case 'ico'  : $mimetype = 'image/vnd.microsoft.icon'; break;
-        default: $mimetype = 'document/unknown';
-    }
+    $mimetype = get_contenttype_from_ext($pathinfo['extension']);
 
     header('Etag: '.md5("$rev/$imagepath"));
     header('Content-Disposition: inline; filename="'.$imagename.'"');
@@ -154,14 +157,7 @@ function send_uncached_image($imagepath) {
     $pathinfo = pathinfo($imagepath);
     $imagename = $pathinfo['filename'].'.'.$pathinfo['extension'];
 
-    switch($pathinfo['extension']) {
-        case 'gif'  : $mimetype = 'image/gif'; break;
-        case 'png'  : $mimetype = 'image/png'; break;
-        case 'jpg'  : $mimetype = 'image/jpeg'; break;
-        case 'jpeg' : $mimetype = 'image/jpeg'; break;
-        case 'ico'  : $mimetype = 'image/vnd.microsoft.icon'; break;
-        default: $mimetype = 'document/unknown';
-    }
+    $mimetype = get_contenttype_from_ext($pathinfo['extension']);
 
     header('Content-Disposition: inline; filename="'.$imagename.'"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
@@ -178,4 +174,19 @@ function send_uncached_image($imagepath) {
 function image_not_found() {
     header('HTTP/1.0 404 not found');
     die('Image was not found, sorry.');
+}
+
+function get_contenttype_from_ext($ext) {
+    switch ($ext) {
+        case 'gif':
+            return 'image/gif';
+        case 'png':
+            return 'image/png';
+        case 'jpg':
+        case 'jpeg':
+            return 'image/jpeg';
+        case 'ico':
+            return 'image/vnd.microsoft.icon';
+    }
+    return 'document/unknown';
 }

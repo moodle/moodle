@@ -45,6 +45,18 @@ if (substr($parts, -3) === '.js') {
     combo_not_found();
 }
 
+// if they are requesting a revision that's not -1, and they have supplied an
+// If-Modified-Since header, we can send back a 304 Not Modified since the
+// content never changes (the rev number is increased any time the content changes)
+if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+    $lifetime = 60*60*24*30; // 30 days
+    header('HTTP/1.1 304 Not Modified');
+    header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+    header('Cache-Control: max-age='.$lifetime);
+    header('Content-Type: '.$mimetype);
+    die;
+}
+
 $parts = explode('&', $parts);
 $cache = true;
 
@@ -124,13 +136,13 @@ if ($cache) {
  * @param string $mimetype
  */
 function combo_send_cached($content, $mimetype) {
-    $lifetime = 60*60*24*300; // 300 days === forever
+    $lifetime = 60*60*24*30; // 30 days
 
     header('Content-Disposition: inline; filename="combo"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
-    header('Cache-Control: max-age=315360000');
+    header('Cache-Control: max-age='.$lifetime);
     header('Accept-Ranges: none');
     header('Content-Type: '.$mimetype);
     if (!min_enable_zlib_compression()) {

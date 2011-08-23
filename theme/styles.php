@@ -53,10 +53,14 @@ if ($type === 'ie') {
 $candidatesheet = "$CFG->dataroot/cache/theme/$themename/css/$type.css";
 
 if (file_exists($candidatesheet)) {
-    if (!empty($_SERVER['HTTP_IF_NONE_MATCH'])) {
+    if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
         // we do not actually need to verify the etag value because our files
         // never change in cache because we increment the rev parameter
+        $lifetime = 60*60*24*30; // 30 days
         header('HTTP/1.1 304 Not Modified');
+        header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+        header('Cache-Control: max-age='.$lifetime);
+        header('Content-Type: text/css; charset=utf-8');
         die;
     }
     send_cached_css($candidatesheet, $rev);
@@ -116,7 +120,7 @@ function store_css(theme_config $theme, $csspath, $cssfiles) {
 }
 
 function send_ie_css($themename, $rev) {
-    $lifetime = 60*60*24*3;
+    $lifetime = 60*60*24*30; // 30 days
 
     $css = <<<EOF
 /** Unfortunately IE6/7 does not support more than 4096 selectors in one CSS file, which means we have to use some ugly hacks :-( **/
@@ -131,6 +135,7 @@ EOF;
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
+    header('Cache-Control: max-age='.$lifetime);
     header('Accept-Ranges: none');
     header('Content-Type: text/css; charset=utf-8');
     header('Content-Length: '.strlen($css));
@@ -140,12 +145,13 @@ EOF;
 }
 
 function send_cached_css($csspath, $rev) {
-    $lifetime = 60*60*24*20;
+    $lifetime = 60*60*24*30; // 30 days
 
     header('Content-Disposition: inline; filename="styles.php"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', filemtime($csspath)) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
+    header('Cache-Control: max-age='.$lifetime);
     header('Accept-Ranges: none');
     header('Content-Type: text/css; charset=utf-8');
     if (!min_enable_zlib_compression()) {
