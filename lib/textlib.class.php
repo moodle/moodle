@@ -129,37 +129,20 @@ class textlib {
      * @return string normalised lowercase charset name
      */
     public static function parse_charset($charset) {
-        // shortcuts so that we do not have to load typo on every page
         $charset = strtolower($charset);
-        switch ($charset) {
-            case 'utf8':
-            case 'utf-8':
-                return 'utf-8';
 
-            case 'cp1250':
-            case 'win-1250':
-            case 'windowns-1250':
-                return 'windows-1250';
+        // shortcuts so that we do not have to load typo3 on every page
 
-            case 'cp1252':
-            case 'win-1252':
-            case 'windowns-1252':
-                return 'windows-1252';
+        if ($charset === 'utf8' or $charset === 'utf-8') {
+            return 'utf-8';
+        }
 
-            case 'l1':
-            case 'latin1':
-            case 'iso-8859-1':
-            case 'iso-8859-1':
-                return 'iso-8859-1';
+        if (preg_match('/^(cp|win|windows)-?(12[0-9]{2})$/', $charset, $matches)) {
+            return 'windows-'.$matches[2];
+        }
 
-            case 'l2':
-            case 'latin2':
-            case 'iso-8859-2':
-            case 'iso-8859-2':
-                return 'iso-8859-2';
-
-            //TODO: add more common charsets here - all win and unix encodings from our lang packs
-
+        if (preg_match('/^iso-8859-[0-9]+$/', $charset, $matches)) {
+            return $charset;
         }
 
         // fallback to typo3
@@ -167,23 +150,41 @@ class textlib {
     }
 
     /**
-     * Converts the text between different encodings. It uses iconv extension with //TRANSLIT parameter.
+     * Converts the text between different encodings. It uses iconv extension with //TRANSLIT parameter
+     * or mb_string if iconv conversion fails.
      * Returns false if fails.
      *
      * @param string $text
      * @param string $fromCS source encoding
      * @param string $toCS result encoding
-     * @return string|bool
+     * @return string|bool converted string or false on error
      */
     public static function convert($text, $fromCS, $toCS='utf-8') {
         $fromCS = self::parse_charset($fromCS);
         $toCS   = self::parse_charset($toCS);
 
-        return iconv($fromCS, $toCS.'//TRANSLIT', $text);
+        $text = (string)$text; // we can work only with strings
+
+        if ($text === '') {
+            return '';
+        }
+
+        $result = iconv($fromCS, $toCS.'//TRANSLIT', $text);
+
+        if ($result === false or $result === '') {
+            // note: iconv is prone to return empty string when invalid char encountered,
+            //       mbstring ignores invalid chars completely, mbstring may support more encodings too
+            if (function_exists('mb_convert_encoding')) {
+                $result = mb_convert_encoding($text, $toCS, $fromCS);
+            }
+        }
+
+        return $result;
     }
 
     /**
-     * Multibyte safe substr() function, uses mbstring if available.
+     * Multibyte safe substr() function, uses iconv,
+     * falls back on error to mbstring if available.
      *
      * @param string $text
      * @param int $start negative value means from end
@@ -195,10 +196,19 @@ class textlib {
         $charset = self::parse_charset($charset);
 
         return iconv_substr($text, $start, $len, $charset);
+
+        if ($result === false) {
+            if (function_exists('mb_substr')) {
+                $result = mb_substr($text, $start, $len, $charset);
+            }
+        }
+
+        return $result;
     }
 
     /**
-     * Multibyte safe strlen() function, uses mbstring if available.
+     * Multibyte safe strlen() function, uses iconv,
+     * falls back on error to mbstring if available.
      *
      * @param string $text
      * @param string $charset encoding of the text
@@ -207,7 +217,15 @@ class textlib {
     public static function strlen($text, $charset='utf-8') {
         $charset = self::parse_charset($charset);
 
-        return iconv_strlen($text, $charset);
+        $result = iconv_strlen($text, $charset);
+
+        if ($result === false) {
+            if (function_exists('mb_strlen')) {
+                $result = mb_strlen($text, $charset);
+            }
+        }
+
+        return $result;
     }
 
     /**
