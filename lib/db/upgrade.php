@@ -6662,12 +6662,22 @@ FROM
         upgrade_main_savepoint(true, 2011081700.01);
     }
 
+    if ($oldversion < 2011081700.02) {
+        // remove safety block backup from 2.0 upgrade
+        $table = new xmldb_table('block_pinned_old');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+        $table = new xmldb_table('block_instance_old');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+        upgrade_main_savepoint(true, 2011081700.02);
+    }
+
 
     return true;
 }
 
-//TODO: Cleanup before the 2.0 release - we do not want to drag along these dev machine fixes forever
-// 1/ drop block_pinned_old table here and in install.xml
-// 2/ drop block_instance_old table here and in install.xml
 
 //TODO: AFTER 2.0 remove the column user->emailstop and the user preference "message_showmessagewindow"
