@@ -568,6 +568,10 @@ abstract class question_qtype_attempt_updater {
         return $answer1 == $answer2;
     }
 
+    public function is_blank_answer($state) {
+        return $state->answer == '';
+    }
+    
     public abstract function right_answer();
     public abstract function response_summary($state);
     public abstract function was_answered($state);
