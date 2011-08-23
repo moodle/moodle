@@ -1,0 +1,13 @@
+/*
+YUI 3.4.0 (build 3928)
+Copyright 2011 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
+*/
+.yui3-calendarnav-prevmonth, .yui3-calendarnav-nextmonth {
+  color: #000000;
+}
+
+.yui3-calendarnav-prevmonth:hover, .yui3-calendarnav-nextmonth:hover {
+  color: #0066CC;
+}
