@@ -1373,11 +1373,11 @@ function purge_all_caches() {
     remove_dir($CFG->cachedir.'', true);
 
     // make sure cache dir is writable, throws exception if not
-    make_upload_directory('cache');
+    make_cache_directory('');
 
     // hack: this script may get called after the purifier was initialised,
     // but we do not want to verify repeatedly this exists in each call
-    make_upload_directory('cache/htmlpurifier');
+    make_cache_directory('htmlpurifier');
 
     clearstatcache();
 }
