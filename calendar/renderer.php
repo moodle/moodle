@@ -432,7 +432,29 @@ class core_calendar_renderer extends plugin_renderer_base {
         $week = 1;
         $dayweek = $startwday;
 
+        // Create an array of all the week days.
+        $wdays = array(0 => '<strong>'. get_string('sunday', 'calendar'). '</strong>',
+                       1 => '<strong>'. get_string('monday', 'calendar'). '</strong>',
+                       2 => '<strong>'. get_string('tuesday', 'calendar'). '</strong>',
+                       3 => '<strong>'. get_string('wednesday', 'calendar'). '</strong>',
+                       4 => '<strong>'. get_string('thursday', 'calendar'). '</strong>',
+                       5 => '<strong>'. get_string('friday', 'calendar'). '</strong>',
+                       6 => '<strong>'. get_string('saturday', 'calendar'). '</strong>');
+
+        // Loop only if the day offset is greater than 0.
+        // This loop involves shifting the days around until the desired start day
+        // is at the start of the array.
+        $daycount = 0;
+        while ($display->minwday > $daycount++) {
+            $wdays_end = array_shift($wdays);
+            array_push($wdays, $wdays_end);
+        }
+
+        // Now we set the (modified) array to the table header to be displayed.
+        $table->head = $wdays;
+
         $row = new html_table_row(array());
+
         // Paddding (the first week may have blank days in the beginning)
         for($i = $display->minwday; $i < $startwday; ++$i) {
             $cell = new html_table_cell('&nbsp;');
