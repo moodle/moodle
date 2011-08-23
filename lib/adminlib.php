@@ -6200,13 +6200,16 @@ function print_plugin_tables() {
     $installed_mods = $DB->get_records('modules', null, 'name');
     $installed_blocks = $DB->get_records('block', null, 'name');
 
+    $plugins_installed['mod'] = array();
     foreach($installed_mods as $mod) {
         $plugins_installed['mod'][] = $mod->name;
     }
 
+    $plugins_installed['blocks'] = array();
     foreach($installed_blocks as $block) {
         $plugins_installed['blocks'][] = $block->name;
     }
+
     $plugins_installed['filter'] = array();
 
     $plugins_ondisk = array();
