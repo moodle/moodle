@@ -68,7 +68,8 @@ class qtype_ddimagetoimage extends question_type {
     }
 
     protected function make_place($dropzonedata) {
-        return new qtype_ddimagetoimage_drop_zone($dropzonedata->label, $dropzonedata->group,
+        return new qtype_ddimagetoimage_drop_zone($dropzonedata->label, $dropzonedata->no,
+                                                    $dropzonedata->group,
                                                     $dropzonedata->xleft, $dropzonedata->ytop);
     }
 
@@ -426,13 +427,8 @@ class qtype_ddimagetoimage extends question_type {
             $choices = array();
 
             foreach ($question->choices[$group] as $i => $choice) {
-                if (trim($choice->text) !='') {
-                    $summarisechoice =
-                                get_string('summarisechoice', 'qtype_ddimagetoimage', $choice);
-                } else {
-                    $summarisechoice =
-                            get_string('summarisechoiceno', 'qtype_ddimagetoimage', $choice->no);
-                }
+                $summarisechoice = $choice->summarise();
+
                 $correct = $question->rightchoices[$placeno] == $i;
                 $choices[$choice->no] = new question_possible_response(
                                                     $summarisechoice,

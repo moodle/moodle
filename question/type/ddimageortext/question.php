@@ -55,33 +55,19 @@ class qtype_ddimagetoimage_question extends qtype_gapselect_question_base {
         }
     }
     public function summarise_response(array $response) {
-        $matches = array();
         $allblank = true;
         foreach ($this->places as $placeno => $place) {
+            $summariseplace = $place->summarise();
             if (array_key_exists($this->field($placeno), $response) &&
                                                                 $response[$this->field($placeno)]) {
                 $selected = $this->get_selected_choice($place->group,
                                                                 $response[$this->field($placeno)]);
-                if (trim($selected->text) !='') {
-                    $summarisechoice =
-                                get_string('summarisechoice', 'qtype_ddimagetoimage', $selected);
-                } else {
-                    $summarisechoice =
-                            get_string('summarisechoiceno', 'qtype_ddimagetoimage', $selected->no);
-                }
-                $place->no = $placeno;
-                if (trim($place->text) !='') {
-                    $summariseplace =
-                                get_string('summariseplace', 'qtype_ddimagetoimage', $place);
-                } else {
-                    $summariseplace =
-                            get_string('summariseplaceno', 'qtype_ddimagetoimage', $place->no);
-                }
-                $choices[] = "$summariseplace -> {{$summarisechoice}}";
+                $summarisechoice = $selected->summarise();
                 $allblank = false;
             } else {
-                $choices[] = '{}';
+                $summarisechoice = '';
             }
+            $choices[] = "$summariseplace -> {{$summarisechoice}}";
         }
         if ($allblank) {
             return null;
@@ -135,16 +121,10 @@ class qtype_ddimagetoimage_question extends qtype_gapselect_question_base {
             $fieldname = $this->field($placeno);
             $choiceno = $this->choiceorder[$group][$response[$fieldname]];
             $choice = $this->choices[$group][$choiceno];
-            if (trim($choice->text) !='') {
-                $summarisechoice =
-                            get_string('summarisechoice', 'qtype_ddimagetoimage', $choice);
-            } else {
-                $summarisechoice =
-                        get_string('summarisechoiceno', 'qtype_ddimagetoimage', $choice->no);
-            }
+
             $correct = $this->get_right_choice_for($placeno) == $response[$fieldname];
             $parts[$placeno] = new question_classified_response(
-                    $choiceno, $summarisechoice, $correct?1:0);
+                    $choiceno, $choice->summarise(), $correct?1:0);
         }
         return $parts;
     }
@@ -157,6 +137,25 @@ class qtype_ddimagetoimage_question extends qtype_gapselect_question_base {
         }
 
         return $accum / count($this->places);
+    }
+
+
+    public function get_question_summary() {
+        $summary = '';
+        if (!html_is_blank($this->questiontext)) {
+            $question = $this->html_to_text($this->questiontext, $this->questiontextformat);
+            $summary .= $question . '; ';
+        }
+        $places = array();
+        foreach ($this->places as $place) {
+            $cs = array();
+            foreach ($this->choices[$place->group] as $choice) {
+                $cs[] = $choice->summarise();
+            }
+            $places[] = '[[' . $place->summarise() . ']] -> {' . implode(' / ', $cs) . '}';
+        }
+        $summary .= implode('; ', $places);
+        return $summary;
     }
 }
 
@@ -184,6 +183,14 @@ class qtype_ddimagetoimage_drag_item {
     public function choice_group() {
         return $this->group;
     }
+
+    public function summarise() {
+        if (trim($this->text) != '') {
+            return get_string('summarisechoice', 'qtype_ddimagetoimage', $this);
+        } else {
+            return get_string('summarisechoiceno', 'qtype_ddimagetoimage', $this->no);
+        }
+    }
 }
 /**
  * Represents one of the places (drop zones).
@@ -192,13 +199,26 @@ class qtype_ddimagetoimage_drag_item {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddimagetoimage_drop_zone {
-    public $alttextlabel;
+    public $no;
+    public $text;
     public $group;
     public $xy;
 
-    public function __construct($alttextlabel, $group = 1, $x = '', $y = '') {
+    public function __construct($alttextlabel, $no, $group = 1, $x = '', $y = '') {
+        $this->no = $no;
         $this->text = $alttextlabel;
         $this->group = $group;
         $this->xy = array($x, $y);
+    }
+
+    public function summarise() {
+        if (trim($this->text) != '') {
+            $summariseplace =
+                        get_string('summariseplace', 'qtype_ddimagetoimage', $this);
+        } else {
+            $summariseplace =
+                    get_string('summariseplaceno', 'qtype_ddimagetoimage', $this->no);
+        }
+        return $summariseplace;
     }
 }
