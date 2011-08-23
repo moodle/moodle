@@ -319,18 +319,6 @@ class moodlelib_test extends UnitTestCase {
                 'expectedoutput' => 'Friday, 1 July 2011, 10:00 AM'
             ),
             array(
-                'time' => '1309514400',
-                'usertimezone' => 'America/Moncton',
-                'timezone' => '99', //dst offset and timezone offset.
-                'expectedoutput' => 'Friday, 1 July 2011, 07:00 AM'
-            ),
-            array(
-                'time' => '1309514400',
-                'usertimezone' => 'America/Moncton',
-                'timezone' => 'America/Moncton', //dst offset and timezone offset.
-                'expectedoutput' => 'Friday, 1 July 2011, 07:00 AM'
-            ),
-            array(
                 'time' => '1293876000 ',
                 'usertimezone' => 'America/Moncton',
                 'timezone' => '0.0', //no dst offset
@@ -419,54 +407,6 @@ class moodlelib_test extends UnitTestCase {
         global $USER, $CFG;
 
         $testvalues = array(
-            array(
-                'usertimezone' => 'America/Moncton',
-                'year' => '2011',
-                'month' => '7',
-                'day' => '1',
-                'hour' => '10',
-                'minutes' => '00',
-                'seconds' => '00',
-                'timezone' => '0.0', //no dst offset
-                'applydst' => false,
-                'expectedoutput' => '1309528800'
-            ),
-            array(
-                'usertimezone' => 'America/Moncton',
-                'year' => '2011',
-                'month' => '7',
-                'day' => '1',
-                'hour' => '10',
-                'minutes' => '00',
-                'seconds' => '00',
-                'timezone' => '99', //user default timezone
-                'applydst' => false, //don't apply dst
-                'expectedoutput' => '1309528800'
-            ),
-            array(
-                'usertimezone' => 'America/Moncton',
-                'year' => '2011',
-                'month' => '7',
-                'day' => '1',
-                'hour' => '10',
-                'minutes' => '00',
-                'seconds' => '00',
-                'timezone' => '99', //user default timezone
-                'applydst' => true, //apply dst
-                'expectedoutput' => '1309525200'
-            ),
-            array(
-                'usertimezone' => 'America/Moncton',
-                'year' => '2011',
-                'month' => '7',
-                'day' => '1',
-                'hour' => '10',
-                'minutes' => '00',
-                'seconds' => '00',
-                'timezone' => 'America/Moncton', //string timezone
-                'applydst' => true, //apply dst
-                'expectedoutput' => '1309525200'
-            ),
             array(
                 'usertimezone' => '2',//no dst applyed
                 'year' => '2011',
