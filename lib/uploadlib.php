@@ -697,7 +697,8 @@ function clam_message_admins($notice) {
     $admins = get_admins();
     foreach ($admins as $admin) {
         $eventdata = new stdClass();
-        $eventdata->modulename        = 'moodle';
+        $eventdata->component         = 'moodle';
+        $eventdata->name              = 'errors';
         $eventdata->userfrom          = get_admin();
         $eventdata->userto            = $admin;
         $eventdata->subject           = $subject;

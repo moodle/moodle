@@ -249,17 +249,8 @@ switch ($action) {
         }
         break;
     case 'upload':
-        // handle exception here instead moodle default exception handler
-        // see MDL-23407
-        try {
-            // TODO: add file scanning MDL-19380 into each plugin
-            $result = $repo->upload($saveas_filename, $maxbytes);
-            echo json_encode($result);
-        } catch (Exception $e) {
-            $err->error = $e->getMessage();
-            echo json_encode($err);
-            die;
-        }
+        $result = $repo->upload($saveas_filename, $maxbytes);
+        echo json_encode($result);
         break;
 
     case 'overwrite':
