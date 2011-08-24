@@ -144,7 +144,7 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
                 return $url->out();
             }
         }
-        throw new coding_exception('File not found in filearea '.$filearea);
+        return null;
     }
 
     protected function hidden_field_for_qt_var(question_attempt $qa, $varname, $value = null) {
