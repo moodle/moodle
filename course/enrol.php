@@ -53,7 +53,7 @@
     }
 
 /// Check if the course is a meta course  (bug 5734)
-    if ($course->metacourse) {
+    if ($course->metacourse && !($course->guest == 2 && isguestuser())) {
         print_header_simple();
         notice(get_string('coursenotaccessible'), "$CFG->wwwroot/index.php");
     }
