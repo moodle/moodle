@@ -41,9 +41,7 @@ class qtype_multichoice_qe2_attempt_updater extends question_qtype_attempt_updat
 
     public function is_blank_answer($state) {
         // blank multichoice answers are not empty strings, they rather end in a colon
-        $a = $state->answer;
-        $empty = (substr($a, strlen($a) - 1) == ':');
-        return $empty;
+        return empty($state->answer) || substr($a, -1) == ':';
     }
 
     public function right_answer() {
