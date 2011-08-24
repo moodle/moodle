@@ -685,8 +685,14 @@ function clean_param($param, $type) {
 
     global $CFG;
 
-    if (is_object($param) or is_array($param)) {
-        throw new coding_exception('clean_param() can not process objects or arrays, please use clean_param_array() instead.');
+    if (is_array($param)) {
+        throw new coding_exception('clean_param() can not process arrays, please use clean_param_array() instead.');
+    } else if (is_object($param)) {
+        if (method_exists($param, '__toString')) {
+            $param = $param->__toString();
+        } else {
+            throw new coding_exception('clean_param() can not process objects, please use clean_param_array() instead.');
+        }
     }
 
     switch ($type) {
