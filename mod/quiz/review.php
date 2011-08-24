@@ -57,7 +57,7 @@ $options = $attemptobj->get_display_options(true);
 // Check permissions.
 if ($attemptobj->is_own_attempt()) {
     if (!$attemptobj->is_finished()) {
-        redirect($attemptobj->attempt_url(0, $page));
+        redirect($attemptobj->attempt_url(null, $page));
     } else if (!$options->attempt) {
         $accessmanager->back_to_view_page($attemptobj->is_preview_user(),
                 $accessmanager->cannot_review_message($attemptobj->get_attempt_state()));
