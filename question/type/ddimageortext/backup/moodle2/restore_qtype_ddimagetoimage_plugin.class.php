@@ -21,9 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * restore plugin class that provides the necessary information
@@ -71,7 +69,8 @@ class restore_qtype_ddimagetoimage_plugin extends restore_qtype_plugin {
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
-        // If the question has been created by restore, we need to create its qtype_ddimagetoimage too
+        // If the question has been created by restore,
+        // we need to create its qtype_ddimagetoimage too
         if ($questioncreated) {
             // Adjust some columns
             $data->questionid = $newquestionid;
@@ -137,7 +136,8 @@ class restore_qtype_ddimagetoimage_plugin extends restore_qtype_plugin {
         $contents = array();
 
         $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
-        $contents[] = new restore_decode_content('qtype_ddimagetoimage', $fields, 'question_ddimagetoimage');
+        $contents[] =
+            new restore_decode_content('qtype_ddimagetoimage', $fields, 'question_ddimagetoimage');
 
         return $contents;
     }

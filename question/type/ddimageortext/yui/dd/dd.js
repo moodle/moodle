@@ -1,4 +1,3 @@
-
 YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
     var DDIMAGETOIMAGEDDNAME = 'ddimagetoimage_dd';
     var DDIMAGETOIMAGE_DD = function() {
@@ -16,7 +15,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                 bgdone = bgdone && this.doc.bg_img().hasClass('constrained');
             }
             var alldragsloaded = !this.doc.drag_image_homes().some(function(dragimagehome){
-                //in 'some' loop returning true breaks the loop and is passed as return value from 
+                //in 'some' loop returning true breaks the loop and is passed as return value from
                 //'some' else returns false. Can be though of as equivalent to ||.
                 var done = (dragimagehome.get('complete'));
                 if (waitforimageconstrain) {
@@ -141,13 +140,13 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                         node: drag,
                         dragMode: 'intersect'
                     }).plug(Y.Plugin.DDConstrained, {constrain2node: topnode});
-                    
+
                     dd.on('drag:end', function(e) {
                         mainobj.reposition_drags_for_question();
                     }, this);
                     drag.setData('group', group);
                     drag.setData('choice', choice);
-    
+
                 },
                 draggable_for_form : function (drag) {
                     var dd = new Y.DD.Drag({
@@ -159,7 +158,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                         var draginstanceno = dragnode.getData('draginstanceno');
                         var gooddrop = dragnode.getData('gooddrop');
                         var endxy;
-                        
+
                         if (!gooddrop) {
                             mainobj.reset_drag_xy(draginstanceno);
                         } else {
@@ -171,12 +170,12 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                         var drag = e.target;
                         drag.get('node').setData('gooddrop', false);
                     }, this);
-                    
+
                 }
-    
+
             }
         },
-    
+
         update_padding_sizes_all : function () {
             for (var groupno = 1; groupno <= 8; groupno++) {
                 this.update_padding_size_for_group(groupno);
@@ -238,7 +237,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
             this.update_padding_sizes_all();
             var i = 0;
             this.doc.drag_image_homes().each(function(dragimagehome){
-                var dragimageno = 
+                var dragimageno =
                     +this.doc.get_classname_numeric_suffix(dragimagehome, 'dragimagehomes');
                 var choice = +this.doc.get_classname_numeric_suffix(dragimagehome, 'choice');
                 var group = +this.doc.get_classname_numeric_suffix(dragimagehome, 'group')
@@ -272,7 +271,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
         },
         drop_zone_key_press : function (e) {
             switch (e.direction) {
-                case 'next' : 
+                case 'next' :
                     this.place_next_drag_in(e.target);
                     break;
                 case 'previous' :
@@ -370,7 +369,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                 }
             }, this);
         },
-        get_choices_for_drop : function(choice, drop) { 
+        get_choices_for_drop : function(choice, drop) {
             var group = drop.getData('group');
             var dragimage = null;
             var dragimages = this.doc.top_node()
@@ -379,6 +378,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
         },
         get_unplaced_choice_for_drop : function(choice, drop) {
             var dragimages = this.get_choices_for_drop(choice, drop);
+            var dragimage = null;
             if (dragimages.some(function (d) {
                 if (!d.hasClass('placed')) {
                     dragimage = d;
@@ -386,11 +386,8 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                 } else {
                     return false;
                 }
-            })) {
-                return dragimage;
-            } else {
-                return null;
-            }
+            }));
+            return dragimage;
         },
         init_drops : function () {
             var dropareas = this.doc.top_node().one('div.dropzones');
@@ -424,7 +421,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
             };
         }
     }, {NAME : DDIMAGETOIMAGEQUESTIONNAME, ATTRS : {}});
-    
+
     Y.Event.define('dragchange', {
         // Webkit and IE repeat keydown when you hold down arrow keys.
         // Opera links keypress to page scroll; others keydown.
@@ -453,7 +450,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                                     this, notifier);
         }
     });
-    M.qtype_ddimagetoimage.init_question = function(config) { 
+    M.qtype_ddimagetoimage.init_question = function(config) {
         return new DDIMAGETOIMAGE_QUESTION(config);
     }
 }, '@VERSION@', {

@@ -134,8 +134,8 @@ class qtype_ddimagetoimage extends question_type {
         $this->save_hints($formdata, true);
         $DB->update_record('qtype_ddimagetoimage', $options);
         $DB->delete_records('qtype_ddimagetoimage_drops', array('questionid' => $formdata->id));
-        foreach (array_keys($formdata->drops) as $dropno){
-            if ($formdata->drops[$dropno]['choice'] == 0){
+        foreach (array_keys($formdata->drops) as $dropno) {
+            if ($formdata->drops[$dropno]['choice'] == 0) {
                 continue;
             }
             $drop = new stdClass();
@@ -153,7 +153,7 @@ class qtype_ddimagetoimage extends question_type {
         $olddragids = $DB->get_records_menu('qtype_ddimagetoimage_drags',
                                     array('questionid' => $formdata->id),
                                     '', 'no, id');
-        foreach (array_keys($formdata->drags) as $dragno){
+        foreach (array_keys($formdata->drags) as $dragno) {
             $info = file_get_draft_area_info($formdata->dragitem[$dragno]);
             if ($info['filecount'] > 0) {
                 $draftitemid = $formdata->dragitem[$dragno];
@@ -172,8 +172,6 @@ class qtype_ddimagetoimage extends question_type {
                 } else {
                     $drag->id = $DB->insert_record('qtype_ddimagetoimage_drags', $drag);
                 }
-
-
 
                 self::constrain_image_size_in_draft_area($draftitemid,
                                         QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXWIDTH,
@@ -218,7 +216,7 @@ class qtype_ddimagetoimage extends question_type {
                         $quality = 8;
                         break;
                     default :
-                        $quality = NULL;
+                        $quality = null;
                 }
                 $newwidth = min($maxwidth, $width);
                 $newheight = min($maxheight, $height);
@@ -291,7 +289,8 @@ class qtype_ddimagetoimage extends question_type {
         $output .= "    ".$this->write_files($files, 2)."\n";;
 
         foreach ($question->options->drags as $drag) {
-            $files = $fs->get_area_files($contextid, 'qtype_ddimagetoimage', 'dragimage', $drag->id);
+            $files =
+                    $fs->get_area_files($contextid, 'qtype_ddimagetoimage', 'dragimage', $drag->id);
             $output .= "    <drag>\n";
             $output .= "      <no>{$drag->no}</no>\n";
             $output .= $format->writetext($drag->label, 3)."\n";

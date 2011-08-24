@@ -57,7 +57,6 @@ class backup_qtype_ddimagetoimage_plugin extends backup_qtype_plugin {
         $drop = new backup_nested_element('drop', array('id'),
                                                 array('no', 'xleft', 'ytop', 'choice', 'label'));
 
-
         $ddimagetoimages->set_source_table('qtype_ddimagetoimage',
                                                 array('questionid' => backup::VAR_PARENTID));
 
@@ -68,7 +67,6 @@ class backup_qtype_ddimagetoimage_plugin extends backup_qtype_plugin {
 
         $drag->set_source_table('qtype_ddimagetoimage_drags',
                                                     array('questionid' => backup::VAR_PARENTID));
-
 
         $drop->set_source_table('qtype_ddimagetoimage_drops',
                                                     array('questionid' => backup::VAR_PARENTID));

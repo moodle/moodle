@@ -67,7 +67,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
         }
         $imagerepeats = optional_param('noimages', $imagerepeatsatstart, PARAM_INT);
         $addfields = optional_param('addimages', '', PARAM_TEXT);
-        if (!empty($addfields)){
+        if (!empty($addfields)) {
             $imagerepeats += self::ADD_NUM_IMAGES;
         }
         return array($imagerepeatsatstart, $imagerepeats);
@@ -84,7 +84,6 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
         $mform->addElement('static', 'previewarea',
                             get_string('previewarea', 'qtype_ddimagetoimage'),
                             get_string('previewareamessage', 'qtype_ddimagetoimage'));
-
 
         list($imagerepeatsatstart, $imagerepeats) = $this->get_drag_image_repeats();
         $this->definition_drop_zones($mform, $imagerepeats);
@@ -105,7 +104,6 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
 
         $mform->addElement('filepicker', 'bgimage', get_string('bgimage', 'qtype_ddimagetoimage'),
                                                                null, self::file_picker_options());
-
 
         $countdropzones = 0;
         if (isset($this->question->id)) {
@@ -128,7 +126,6 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
 
     protected function drop_zone($mform, $imagerepeats) {
         $dropzoneitem = array();
-
 
         $grouparray = array();
         $grouparray[] = $mform->createElement('static', 'xleftlabel', '',
@@ -293,7 +290,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        if (!self::file_uploaded($data['bgimage'])){
+        if (!self::file_uploaded($data['bgimage'])) {
             $errors["bgimage"] = get_string('formerror_nobgimage', 'qtype_ddimagetoimage');
         }
 

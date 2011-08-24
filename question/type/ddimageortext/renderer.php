@@ -100,7 +100,7 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
         $dropzones = html_writer::empty_tag('div', array('class'=>'dropzones'));
         $output .= html_writer::tag('div', $droparea.$dragitems.$dropzones,
                                                                         array('class'=>'ddarea'));
-        foreach ($question->places as $placeno => $place){
+        foreach ($question->places as $placeno => $place) {
             $varname = $question->field($placeno);
             list($fieldname, $html) = $this->hidden_field_for_qt_var($qa, $varname);
             $output .= $html;
@@ -114,7 +114,6 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
         $PAGE->requires->yui_module('moodle-qtype_ddimagetoimage-dd',
                                         'M.qtype_ddimagetoimage.init_question',
                                         array($params));
-
 
         if ($qa->get_state() == question_state::$invalid) {
             $output .= html_writer::nonempty_tag('div',
