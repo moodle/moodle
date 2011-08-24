@@ -29,9 +29,9 @@ require_once('lib.php');
 define('SHOW_ALL_PAGE_SIZE', 50000);
 define('DEFAULT_PAGE_SIZE', 30);
 
-$tagschecked = optional_param('tagschecked', array(), PARAM_INT);
-$newnames    = optional_param('newname', array(), PARAM_TAG);
-$tagtypes    = optional_param('tagtypes', array(), PARAM_ALPHA);
+$tagschecked = optional_param_array('tagschecked', array(), PARAM_INT);
+$newnames    = optional_param_array('newname', array(), PARAM_TAG);
+$tagtypes    = optional_param_array('tagtypes', array(), PARAM_ALPHA);
 $action      = optional_param('action', '', PARAM_ALPHA);
 $perpage     = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);
 

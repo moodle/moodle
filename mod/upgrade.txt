@@ -52,3 +52,9 @@ optional - no changes needed in older code:
 * new ratings API
   (http://docs.moodle.org/dev/Ratings_2.0)
 
+
+=== 2.2 ===
+
+required changes in code:
+* fix missing parameter types in optional_param() and required_param()
+* use new optional_param_array(), required_param_array() or clean_param_array() when dealing with array parameters

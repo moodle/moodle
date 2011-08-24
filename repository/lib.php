@@ -1575,7 +1575,7 @@ abstract class repository {
 
     public function filter(&$value) {
         $pass = false;
-        $accepted_types = optional_param('accepted_types', '', PARAM_RAW);
+        $accepted_types = optional_param_array('accepted_types', '', PARAM_RAW);
         $ft = new filetype_parser;
         //$ext = $ft->get_extensions($this->supported_filetypes());
         if (isset($value['children'])) {

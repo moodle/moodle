@@ -44,7 +44,7 @@ class repository_upload extends repository {
     public function upload($saveas_filename, $maxbytes) {
         global $USER, $CFG;
 
-        $types = optional_param('accepted_types', '*', PARAM_RAW);
+        $types = optional_param_array('accepted_types', '*', PARAM_RAW);
         if ((is_array($types) and in_array('*', $types)) or $types == '*') {
             $this->mimetypes = '*';
         } else {

@@ -439,7 +439,7 @@ class quiz_grading_report extends quiz_default_report {
         if (!$qubaids) {
             return false;
         }
-        $qubaids = clean_param(explode(',', $qubaids), PARAM_INT);
+        $qubaids = clean_param_array(explode(',', $qubaids), PARAM_INT);
 
         $slots = optional_param('slots', '', PARAM_SEQUENCE);
         if (!$slots) {
@@ -471,7 +471,7 @@ class quiz_grading_report extends quiz_default_report {
             return;
         }
 
-        $qubaids = clean_param(explode(',', $qubaids), PARAM_INT);
+        $qubaids = clean_param_array(explode(',', $qubaids), PARAM_INT);
         $attempts = $this->load_attempts_by_usage_ids($qubaids);
 
         $transaction = $DB->start_delegated_transaction();

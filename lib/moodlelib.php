@@ -448,17 +448,15 @@ define('MOODLE_OFFICIAL_MOBILE_SERVICE', 'moodle_mobile_app');
  * used like this:
  *    $id = required_param('id', PARAM_INT);
  *
- * Please note the $type parameter is now required,
- * for now PARAM_CLEAN is used for backwards compatibility only.
+ * Please note the $type parameter is now required and the value can not be array.
  *
  * @param string $parname the name of the page parameter we want
  * @param string $type expected type of parameter
  * @return mixed
  */
 function required_param($parname, $type) {
-    if (!isset($type)) {
-        debugging('required_param() requires $type to be specified.');
-        $type = PARAM_CLEAN; // for now let's use this deprecated type
+    if (func_num_args() != 2 or empty($parname) or empty($type)) {
+        throw new coding_exception('required_param() requires $parname and $type to be specified (parameter: '.$parname.')');
     }
     if (isset($_POST[$parname])) {       // POST has precedence
         $param = $_POST[$parname];
@@ -468,7 +466,57 @@ function required_param($parname, $type) {
         print_error('missingparam', '', '', $parname);
     }
 
+    if (is_array($param)) {
+        debugging('Invalid array parameter detected in required_param(): '.$parname);
+        // TODO: switch to fatal error in Moodle 2.3
+        //print_error('missingparam', '', '', $parname);
+        return required_param_array($parname, $type);
+    }
+
     return clean_param($param, $type);
+}
+
+/**
+ * Returns a particular array value for the named variable, taken from
+ * POST or GET.  If the parameter doesn't exist then an error is
+ * thrown because we require this variable.
+ *
+ * This function should be used to initialise all required values
+ * in a script that are based on parameters.  Usually it will be
+ * used like this:
+ *    $ids = required_param_array('ids', PARAM_INT);
+ *
+ *  Note: arrays of arrays are not supported, only alphanumeric keys with _ and - are supported
+ *
+ * @param string $parname the name of the page parameter we want
+ * @param string $type expected type of parameter
+ * @return array
+ */
+function required_param_array($parname, $type) {
+    if (func_num_args() != 2 or empty($parname) or empty($type)) {
+        throw new coding_exception('required_param_array() requires $parname and $type to be specified (parameter: '.$parname.')');
+    }
+    if (isset($_POST[$parname])) {       // POST has precedence
+        $param = $_POST[$parname];
+    } else if (isset($_GET[$parname])) {
+        $param = $_GET[$parname];
+    } else {
+        print_error('missingparam', '', '', $parname);
+    }
+    if (!is_array($param)) {
+        print_error('missingparam', '', '', $parname);
+    }
+
+    $result = array();
+    foreach($param as $key=>$value) {
+        if (!preg_match('/^[a-z0-9_-]+$/i', $key)) {
+            debugging('Invalid key name in required_param_array() detected: '.$key.', parameter: '.$parname);
+            continue;
+        }
+        $result[$key] = clean_param($value, $type);
+    }
+
+    return $result;
 }
 
 /**
@@ -480,8 +528,7 @@ function required_param($parname, $type) {
  * used like this:
  *    $name = optional_param('name', 'Fred', PARAM_TEXT);
  *
- * Please note $default and $type parameters are now required,
- * for now PARAM_CLEAN is used for backwards compatibility only.
+ * Please note the $type parameter is now required and the value can not be array.
  *
  * @param string $parname the name of the page parameter we want
  * @param mixed  $default the default value to return if nothing is found
@@ -489,9 +536,8 @@ function required_param($parname, $type) {
  * @return mixed
  */
 function optional_param($parname, $default, $type) {
-    if (!isset($type)) {
-        debugging('optional_param() requires $default and $type to be specified.');
-        $type = PARAM_CLEAN; // for now let's use this deprecated type
+    if (func_num_args() != 3 or empty($parname) or empty($type)) {
+        throw new coding_exception('optional_param() requires $parname, $default and $type to be specified (parameter: '.$parname.')');
     }
     if (!isset($default)) {
         $default = null;
@@ -505,7 +551,59 @@ function optional_param($parname, $default, $type) {
         return $default;
     }
 
+    if (is_array($param)) {
+        debugging('Invalid array parameter detected in required_param(): '.$parname);
+        // TODO: switch to $default in Moodle 2.3
+        //return $default;
+        return optional_param_array($parname, $default, $type);
+    }
+
     return clean_param($param, $type);
+}
+
+/**
+ * Returns a particular array value for the named variable, taken from
+ * POST or GET, otherwise returning a given default.
+ *
+ * This function should be used to initialise all optional values
+ * in a script that are based on parameters.  Usually it will be
+ * used like this:
+ *    $ids = optional_param('id', array(), PARAM_INT);
+ *
+ *  Note: arrays of arrays are not supported, only alphanumeric keys with _ and - are supported
+ *
+ * @param string $parname the name of the page parameter we want
+ * @param mixed  $default the default value to return if nothing is found
+ * @param string $type expected type of parameter
+ * @return array
+ */
+function optional_param_array($parname, $default, $type) {
+    if (func_num_args() != 3 or empty($parname) or empty($type)) {
+        throw new coding_exception('optional_param_array() requires $parname, $default and $type to be specified (parameter: '.$parname.')');
+    }
+
+    if (isset($_POST[$parname])) {       // POST has precedence
+        $param = $_POST[$parname];
+    } else if (isset($_GET[$parname])) {
+        $param = $_GET[$parname];
+    } else {
+        return $default;
+    }
+    if (!is_array($param)) {
+        debugging('optional_param_array() expects array parameters only: '.$parname);
+        return $default;
+    }
+
+    $result = array();
+    foreach($param as $key=>$value) {
+        if (!preg_match('/^[a-z0-9_-]+$/i', $key)) {
+            debugging('Invalid key name in optional_param_array() detected: '.$key.', parameter: '.$parname);
+            continue;
+        }
+        $result[$key] = clean_param($value, $type);
+    }
+
+    return $result;
 }
 
 /**
@@ -516,7 +614,7 @@ function optional_param($parname, $default, $type) {
  * Objects and classes are not accepted.
  *
  * @param mixed $param
- * @param int $type PARAM_ constant
+ * @param string $type PARAM_ constant
  * @param bool $allownull are nulls valid value?
  * @param string $debuginfo optional debug information
  * @return mixed the $param value converted to PHP type or invalid_parameter_exception
@@ -543,6 +641,34 @@ function validate_param($param, $type, $allownull=NULL_NOT_ALLOWED, $debuginfo='
 }
 
 /**
+ * Makes sure array contains only the allowed types,
+ * this function does not validate array key names!
+ * <code>
+ * $options = clean_param($options, PARAM_INT);
+ * </code>
+ *
+ * @param array $param the variable array we are cleaning
+ * @param string $type expected format of param after cleaning.
+ * @param bool $recursive clean recursive arrays
+ * @return array
+ */
+function clean_param_array(array $param = null, $type, $recursive = false) {
+    $param = (array)$param; // convert null to empty array
+    foreach ($param as $key => $value) {
+        if (is_array($value)) {
+            if ($recursive) {
+                $param[$key] = clean_param_array($value, $type, true);
+            } else {
+                throw new coding_exception('clean_param_array() can not process multidimensional arrays when $recursive is false.');
+            }
+        } else {
+            $param[$key] = clean_param($value, $type);
+        }
+    }
+    return $param;
+}
+
+/**
  * Used by {@link optional_param()} and {@link required_param()} to
  * clean the variables and/or cast to specific types, based on
  * an options field.
@@ -552,19 +678,15 @@ function validate_param($param, $type, $allownull=NULL_NOT_ALLOWED, $debuginfo='
  * </code>
  *
  * @param mixed $param the variable we are cleaning
- * @param int $type expected format of param after cleaning.
+ * @param string $type expected format of param after cleaning.
  * @return mixed
  */
 function clean_param($param, $type) {
 
     global $CFG;
 
-    if (is_array($param)) {              // Let's loop
-        $newparam = array();
-        foreach ($param as $key => $value) {
-            $newparam[$key] = clean_param($value, $type);
-        }
-        return $newparam;
+    if (is_object($param) or is_array($param)) {
+        throw new coding_exception('clean_param() can not process objects or arrays, please use clean_param_array() instead.');
     }
 
     switch ($type) {

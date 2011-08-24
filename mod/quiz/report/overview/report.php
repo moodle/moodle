@@ -133,14 +133,14 @@ class quiz_overview_report extends quiz_attempt_report {
         // Process actions.
         if (empty($currentgroup) || $groupstudents) {
             if (optional_param('delete', 0, PARAM_BOOL) && confirm_sesskey()) {
-                if ($attemptids = optional_param('attemptid', array(), PARAM_INT)) {
+                if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
                     require_capability('mod/quiz:deleteattempts', $this->context);
                     $this->delete_selected_attempts($quiz, $cm, $attemptids, $allowed);
                     redirect($reporturl->out(false, $displayoptions));
                 }
 
             } else if (optional_param('regrade', 0, PARAM_BOOL) && confirm_sesskey()) {
-                if ($attemptids = optional_param('attemptid', array(), PARAM_INT)) {
+                if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
                     require_capability('mod/quiz:regrade', $this->context);
                     $this->regrade_attempts($quiz, false, $groupstudents, $attemptids);
                     redirect($reporturl->out(false, $displayoptions));

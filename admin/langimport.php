@@ -43,7 +43,7 @@ if (!empty($CFG->skiplangupgrade)) {
 }
 
 $mode          = optional_param('mode', 0, PARAM_INT);              // action
-$pack          = optional_param('pack', array(), PARAM_SAFEDIR);    // pack to install
+$pack          = optional_param_array('pack', array(), PARAM_SAFEDIR);    // pack to install
 $uninstalllang = optional_param('uninstalllang', '', PARAM_LANG);   // installed pack to uninstall
 $confirm       = optional_param('confirm', 0, PARAM_BOOL);          // uninstallation confirmation
 
