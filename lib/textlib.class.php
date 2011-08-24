@@ -74,25 +74,9 @@ class textlib {
         require_once($CFG->libdir.'/typo3/class.t3lib_cs.php');
         require_once($CFG->libdir.'/typo3/class.t3lib_div.php');
 
-        // If ICONV is available, lets Typo3 library use it for convert
-        if (extension_loaded('iconv')) {
-            $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_convMethod'] = 'iconv';
-        // Else if mbstring is available, lets Typo3 library use it
-        } else if (extension_loaded('mbstring')) {
-            $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_convMethod'] = 'mbstring';
-        // Else if recode is available, lets Typo3 library use it
-        } else if (extension_loaded('recode')) {
-            $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_convMethod'] = 'recode';
-        } else {
-            $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_convMethod'] = '';
-        }
-
-        // If mbstring is available, lets Typo3 library use it for functions
-        if (extension_loaded('mbstring')) {
-            $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] = 'mbstring';
-        } else {
-            $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] = '';
-        }
+        // do not use mbstring, iconv or recode because it may return invalid results in some corner cases
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_convMethod'] = '';
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] = '';
 
         // Tell Typo3 we are curl enabled always (mandatory since 2.0)
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['curlUse'] = '1';
@@ -150,8 +134,8 @@ class textlib {
     }
 
     /**
-     * Converts the text between different encodings. It uses iconv extension with //TRANSLIT parameter
-     * or mb_string if iconv conversion fails.
+     * Converts the text between different encodings. It uses iconv extension with //TRANSLIT parameter,
+     * falls back to typo3.
      * Returns false if fails.
      *
      * @param string $text
@@ -172,19 +156,17 @@ class textlib {
         $result = iconv($fromCS, $toCS.'//TRANSLIT', $text);
 
         if ($result === false or $result === '') {
-            // note: iconv is prone to return empty string when invalid char encountered,
-            //       mbstring ignores invalid chars completely, mbstring may support more encodings too
-            if (function_exists('mb_convert_encoding')) {
-                $result = mb_convert_encoding($text, $toCS, $fromCS);
-            }
+            // note: iconv is prone to return empty string when invalid char encountered, or false if encoding unsupported
+            $oldlevel = error_reporting(E_PARSE);
+            $result = self::typo3()->conv($text, $fromCS, $toCS);
+            error_reporting($oldlevel);
         }
 
         return $result;
     }
 
     /**
-     * Multibyte safe substr() function, uses iconv,
-     * falls back on error to mbstring if available.
+     * Multibyte safe substr() function, uses iconv for utf-8, falls back to typo3.
      *
      * @param string $text
      * @param int $start negative value means from end
@@ -195,20 +177,19 @@ class textlib {
     public static function substr($text, $start, $len=null, $charset='utf-8') {
         $charset = self::parse_charset($charset);
 
-        return iconv_substr($text, $start, $len, $charset);
-
-        if ($result === false) {
-            if (function_exists('mb_substr')) {
-                $result = mb_substr($text, $start, $len, $charset);
-            }
+        if ($charset === 'utf-8') {
+            return iconv_substr($text, $start, $len, $charset);
         }
+
+        $oldlevel = error_reporting(E_PARSE);
+        $result = self::typo3()->substr($charset, $text, $start, $len);
+        error_reporting($oldlevel);
 
         return $result;
     }
 
     /**
-     * Multibyte safe strlen() function, uses iconv,
-     * falls back on error to mbstring if available.
+     * Multibyte safe strlen() function, uses iconv for utf-8, falls back to typo3.
      *
      * @param string $text
      * @param string $charset encoding of the text
@@ -217,19 +198,19 @@ class textlib {
     public static function strlen($text, $charset='utf-8') {
         $charset = self::parse_charset($charset);
 
-        $result = iconv_strlen($text, $charset);
-
-        if ($result === false) {
-            if (function_exists('mb_strlen')) {
-                $result = mb_strlen($text, $charset);
-            }
+        if ($charset === 'utf-8') {
+            return iconv_strlen($text, $charset);
         }
+
+        $oldlevel = error_reporting(E_PARSE);
+        $result = self::typo3()->strlen($charset, $text);
+        error_reporting($oldlevel);
 
         return $result;
     }
 
     /**
-     * Multibyte safe strtolower() function, uses mbstring if available.
+     * Multibyte safe strtolower() function, uses mbstring, falls back to typo3.
      *
      * @param string $text
      * @param string $charset encoding of the text (may not work for all encodings)
@@ -238,21 +219,19 @@ class textlib {
     public static function strtolower($text, $charset='utf-8') {
         $charset = self::parse_charset($charset);
 
-        if (function_exists('mb_strtolower')) {
+        if ($charset === 'utf-8' and function_exists('mb_strtolower')) {
             return mb_strtolower($text, $charset);
         }
 
-        // Avoid some notices from Typo3 code
         $oldlevel = error_reporting(E_PARSE);
-        // Call Typo3 conv_case() function. It will do all the work
         $result = self::typo3()->conv_case($charset, $text, 'toLower');
-        // Restore original debug level
         error_reporting($oldlevel);
+
         return $result;
     }
 
     /**
-     * Multibyte safe strtoupper() function, uses mbstring if available.
+     * Multibyte safe strtoupper() function, uses mbstring, falls back to typo3.
      *
      * @param string $text
      * @param string $charset encoding of the text (may not work for all encodings)
@@ -261,21 +240,19 @@ class textlib {
     public static function strtoupper($text, $charset='utf-8') {
         $charset = self::parse_charset($charset);
 
-        if (function_exists('mb_strtoupper')) {
+        if ($charset === 'utf-8' and function_exists('mb_strtoupper')) {
             return mb_strtoupper($text, $charset);
         }
 
-        // Avoid some notices from Typo3 code
         $oldlevel = error_reporting(E_PARSE);
-        // Call Typo3 conv_case() function. It will do all the work
         $result = self::typo3()->conv_case($charset, $text, 'toUpper');
-        // Restore original debug level
         error_reporting($oldlevel);
+
         return $result;
     }
 
     /**
-     * UTF-8 ONLY safe strpos().
+     * UTF-8 ONLY safe strpos(), uses iconv..
      *
      * @param string $haystack
      * @param string $needle
@@ -287,7 +264,7 @@ class textlib {
     }
 
     /**
-     * UTF-8 ONLY safe strrpos().
+     * UTF-8 ONLY safe strrpos(), uses iconv.
      *
      * @param string $haystack
      * @param string $needle
@@ -307,10 +284,8 @@ class textlib {
      */
     public static function specialtoascii($text, $charset='utf-8') {
         $charset = self::parse_charset($charset);
-        // Avoid some notices from Typo3 code
         $oldlevel = error_reporting(E_PARSE);
         $result = self::typo3()->specCharsToASCII($charset, $text);
-        // Restore original debug level
         error_reporting($oldlevel);
         return $result;
     }

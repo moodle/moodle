@@ -54,6 +54,8 @@ class textlib_test extends UnitTestCase {
         $this->assertIdentical(textlib::convert($win, 'win-1250', 'utf-8'), $utf8);
         $this->assertIdentical(textlib::convert($win, 'win-1250', 'iso-8859-2'), $iso2);
         $this->assertIdentical(textlib::convert($iso2, 'iso-8859-2', 'win-1250'), $win);
+        $this->assertIdentical(textlib::convert($iso2, 'iso-8859-2', 'iso-8859-2'), $iso2);
+        $this->assertIdentical(textlib::convert($win, 'win-1250', 'cp1250'), $win);
     }
 
     public function test_substr() {
@@ -61,21 +63,51 @@ class textlib_test extends UnitTestCase {
         $this->assertIdentical(textlib::substr($str, 1, 3), 'luť');
         $this->assertIdentical(textlib::substr($str, 0, 100), $str);
         $this->assertIdentical(textlib::substr($str, -3, 2), 'če');
+
+        $iso2 = pack("H*", "ae6c75bb6f75e86bfd206b6f6eede8656b");
+        $this->assertIdentical(textlib::substr($iso2, 1, 3, 'iso-8859-2'), textlib::convert('luť', 'utf-8', 'iso-8859-2'));
+        $this->assertIdentical(textlib::substr($iso2, 0, 100, 'iso-8859-2'), textlib::convert($str, 'utf-8', 'iso-8859-2'));
+        $this->assertIdentical(textlib::substr($iso2, -3, 2, 'iso-8859-2'), textlib::convert('če', 'utf-8', 'iso-8859-2'));
+
+        $win  = pack("H*", "8e6c759d6f75e86bfd206b6f6eede8656b");
+        $this->assertIdentical(textlib::substr($win, 1, 3, 'cp1250'), textlib::convert('luť', 'utf-8', 'cp1250'));
+        $this->assertIdentical(textlib::substr($win, 0, 100, 'cp1250'), textlib::convert($str, 'utf-8', 'cp1250'));
+        $this->assertIdentical(textlib::substr($win, -3, 2, 'cp1250'), textlib::convert('če', 'utf-8', 'cp1250'));
     }
 
     public function test_strlen() {
         $str = "Žluťoučký koníček";
         $this->assertIdentical(textlib::strlen($str), 17);
+
+        $iso2 = pack("H*", "ae6c75bb6f75e86bfd206b6f6eede8656b");
+        $this->assertIdentical(textlib::strlen($iso2, 'iso-8859-2'), 17);
+
+        $win  = pack("H*", "8e6c759d6f75e86bfd206b6f6eede8656b");
+        $this->assertIdentical(textlib::strlen($win, 'cp1250'), 17);
     }
 
     public function test_strtolower() {
         $str = "Žluťoučký koníček";
-        $this->assertIdentical(textlib::strtolower($str), 'žluťoučký koníček');
+        $low = 'žluťoučký koníček';
+        $this->assertIdentical(textlib::strtolower($str), $low);
+
+        $iso2 = pack("H*", "ae6c75bb6f75e86bfd206b6f6eede8656b");
+        $this->assertIdentical(textlib::strtolower($iso2, 'iso-8859-2'), textlib::convert($low, 'utf-8', 'iso-8859-2'));
+
+        $win  = pack("H*", "8e6c759d6f75e86bfd206b6f6eede8656b");
+        $this->assertIdentical(textlib::strtolower($win, 'cp1250'), textlib::convert($low, 'utf-8', 'cp1250'));
     }
 
     public function test_strtoupper() {
         $str = "Žluťoučký koníček";
-        $this->assertIdentical(textlib::strtoupper($str), 'ŽLUŤOUČKÝ KONÍČEK');
+        $up  = 'ŽLUŤOUČKÝ KONÍČEK';
+        $this->assertIdentical(textlib::strtoupper($str), $up);
+
+        $iso2 = pack("H*", "ae6c75bb6f75e86bfd206b6f6eede8656b");
+        $this->assertIdentical(textlib::strtoupper($iso2, 'iso-8859-2'), textlib::convert($up, 'utf-8', 'iso-8859-2'));
+
+        $win  = pack("H*", "8e6c759d6f75e86bfd206b6f6eede8656b");
+        $this->assertIdentical(textlib::strtoupper($win, 'cp1250'), textlib::convert($up, 'utf-8', 'cp1250'));
     }
 
     public function test_strpos() {
