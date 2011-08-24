@@ -598,11 +598,14 @@ EOF;
      * @param array $authparam keys contains 'tokenid'
      * @param boolean $printableformat true if we want to display the documentation in a printable format
      * @param array $activatedprotocol
+     * @param string $parenturl url of the calling page - needed for the print button url:
+     *               '/admin/documentation.php' or '/webservice/wsdoc.php' (default)
      * @return string the html to diplay
      */
-    public function documentation_html($functions, $printableformat, $activatedprotocol, $authparams) {
+    public function documentation_html($functions, $printableformat, $activatedprotocol,
+            $authparams, $parenturl = '/webservice/wsdoc.php') {
 
-        $documentationhtml = $this->output->heading(get_string('documentation', 'webservice'));
+        $documentationhtml = $this->output->heading(get_string('wsdocapi', 'webservice'));
 
         $br = html_writer::empty_tag('br', array());
         $brakeline = <<<EOF
@@ -625,7 +628,7 @@ EOF;
         /// Print button
         $authparams['print'] = true;
         //$parameters = array ('token' => $token, 'wsusername' => $username, 'wspassword' => $password, 'print' => true);
-        $url = new moodle_url('/webservice/wsdoc.php', $authparams); // Required
+        $url = new moodle_url($parenturl, $authparams); // Required
         $documentationhtml .= $this->output->single_button($url, get_string('print', 'webservice'));
         $documentationhtml .= $br;
 
