@@ -236,13 +236,13 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEqual(array(
-                    1 => new question_classified_response(1, 'quick', 1),
+                    1 => new question_classified_response(1, 'quick', 1/3),
                     2 => new question_classified_response(2, 'dog', 0),
-                    3 => new question_classified_response(1, 'lazy', 1),
+                    3 => new question_classified_response(1, 'lazy', 1/3),
                 ), $gapselect->classify_response(array('p1' => '1', 'p2' => '2', 'p3' => '1')));
         $this->assertEqual(array(
                     1 => question_classified_response::no_response(),
-                    2 => new question_classified_response(1, 'fox', 1),
+                    2 => new question_classified_response(1, 'fox', 1/3),
                     3 => new question_classified_response(2, 'assiduous', 0),
                 ), $gapselect->classify_response(array('p1' => '0', 'p2' => '1', 'p3' => '2')));
     }
