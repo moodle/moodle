@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Label module version info
+ * Theme version info
  *
  * @package    theme
- * @subpackage formal_white
- * @copyright  Mediatouch 2000 (http://mediatouch.it/)
+ * @subpackage magazine
+ * @copyright  2010 John Stabinger (http://newschoollearning.com/)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,5 +27,4 @@ defined('MOODLE_INTERNAL') || die;
 
 $plugin->version   = 2011082400; // The current module version (Date: YYYYMMDDXX)
 $plugin->requires  = 2011081700; // Requires this Moodle version
-$plugin->component = 'theme_formal_white';
-$plugin->maturity  = MATURITY_STABLE;
+$plugin->component = 'theme_magazine'; // Full name of the plugin (used for diagnostics)
