@@ -14,7 +14,7 @@
 <!-- END OF HEADER -->
 
     <div id="content" class="clearfix">
-        <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
+        <?php echo $OUTPUT->main_content() ?>
     </div>
 
 <!-- START OF FOOTER -->

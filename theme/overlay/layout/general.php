@@ -93,7 +93,7 @@ echo $OUTPUT->doctype() ?>
 
 
 
-                        	    <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
+                        	    <?php echo $OUTPUT->main_content() ?>
 	                        </div>
     	                </div>
         	        </div>
