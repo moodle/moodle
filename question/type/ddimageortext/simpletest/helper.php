@@ -48,7 +48,7 @@ class qtype_ddimagetoimage_test_helper extends question_test_helper {
         test_question_maker::initialise_a_question($dd);
 
         $dd->name = 'Drag-and-drop words into sentences question';
-        $dd->questiontext = 'The [[1]] brown [[2]] jumped over the [[3]] dog.';
+        $dd->questiontext = 'The quick brown fox jumped over the lazy dog.';
         $dd->generalfeedback = 'This sentence uses each letter of the alphabet.';
         $dd->qtype = question_bank::get_qtype('ddimagetoimage');
 
@@ -56,23 +56,42 @@ class qtype_ddimagetoimage_test_helper extends question_test_helper {
 
         test_question_maker::set_standard_combined_feedback_fields($dd);
 
-        $dd->choices = array(
-            1 => array(
-                1 => new qtype_ddimagetoimage_choice('quick', 1),
-                2 => new qtype_ddimagetoimage_choice('slow', 1)),
-            2 => array(
-                1 => new qtype_ddimagetoimage_choice('fox', 2),
-                2 => new qtype_ddimagetoimage_choice('dog', 2)),
-            3 => array(
-                1 => new qtype_ddimagetoimage_choice('lazy', 3),
-                2 => new qtype_ddimagetoimage_choice('assiduous', 3)),
-        );
+        $dd->choices = $this->make_choice_structure(array(
+                    new qtype_ddimagetoimage_drag_item('quick', 1, 1),
+                    new qtype_ddimagetoimage_drag_item('fox', 2, 1),
+                    new qtype_ddimagetoimage_drag_item('lazy', 1, 2),
+                    new qtype_ddimagetoimage_drag_item('dog', 2, 2)
 
-        $dd->places = array(1 => 1, 2 => 2, 3 => 3);
-        $dd->rightchoices = array(1 => 1, 2 => 1, 3 => 1);
-        $dd->textfragments = array('The ', ' brown ', ' jumped over the ', ' dog.');
+        ));
+
+        $dd->places = $this->make_place_structure(array(
+                            new qtype_ddimagetoimage_drop_zone('', 1, 1),
+                            new qtype_ddimagetoimage_drop_zone('', 2, 1),
+                            new qtype_ddimagetoimage_drop_zone('', 3, 2),
+                            new qtype_ddimagetoimage_drop_zone('', 4, 2)
+        ));
+        $dd->rightchoices = array(1 => 1, 2 => 2, 3 => 1, 4 => 2);
 
         return $dd;
+    }
+
+    protected function make_choice_structure($choices) {
+        $choicestructure = array();
+        foreach ($choices as $choice) {
+            if (!isset($choicestructure[$choice->group])) {
+                $choicestructure[$choice->group] = array();
+            }
+            $choicestructure[$choice->group][$choice->no] = $choice;
+        }
+        return $choicestructure;
+    }
+
+    protected function make_place_structure($places) {
+        $placestructure = array();
+        foreach ($places as $place) {
+            $placestructure[$place->no] = $place;
+        }
+        return $placestructure;
     }
 
     /**
@@ -94,17 +113,18 @@ class qtype_ddimagetoimage_test_helper extends question_test_helper {
 
         test_question_maker::set_standard_combined_feedback_fields($dd);
 
-        $dd->choices = array(
-            1 => array(
-                1 => new qtype_ddimagetoimage_choice('+', 1, true),
-                2 => new qtype_ddimagetoimage_choice('-', 1, true),
-                3 => new qtype_ddimagetoimage_choice('*', 1, true),
-                4 => new qtype_ddimagetoimage_choice('/', 1, true),
-            ));
+        $dd->choices = $this->make_choice_structure(array(
+                new qtype_ddimagetoimage_drag_item('+', 1, 1),
+                new qtype_ddimagetoimage_drag_item('-', 2, 1)
+        ));
 
-        $dd->places = array(1 => 1, 2 => 1, 3 => 1, 4 => 1);
+        $dd->places = $this->make_place_structure(array(
+                            new qtype_ddimagetoimage_drop_zone('', 1, 1),
+                            new qtype_ddimagetoimage_drop_zone('', 2, 1),
+                            new qtype_ddimagetoimage_drop_zone('', 3, 1),
+                            new qtype_ddimagetoimage_drop_zone('', 4, 1)
+        ));
         $dd->rightchoices = array(1 => 1, 2 => 2, 3 => 1, 4 => 2);
-        $dd->textfragments = array('7 ', ' 11 ', ' 13 ', ' 17 ', ' 19 = 3');
 
         return $dd;
     }

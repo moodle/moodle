@@ -73,6 +73,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
                 $this->get_contains_drop_box_expectation('p2', 2, false),
@@ -83,6 +84,8 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
                         $this->quba->get_field_prefix($this->slot) . 'p2', '0'),
                 $this->get_contains_hidden_expectation(
                         $this->quba->get_field_prefix($this->slot) . 'p3', '0'),
+                $this->get_contains_hidden_expectation(
+                        $this->quba->get_field_prefix($this->slot) . 'p4', '0'),
                 $this->get_contains_submit_button_expectation(true),
                 $this->get_does_not_contain_feedback_expectation(),
                 $this->get_tries_remaining_expectation(3),
@@ -94,6 +97,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
                 $this->get_contains_drop_box_expectation('p2', 2, false),
@@ -116,6 +120,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, true),
                 $this->get_contains_drop_box_expectation('p2', 2, true),
@@ -133,6 +138,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
                 $this->get_contains_drop_box_expectation('p2', 2, false),
@@ -155,6 +161,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$gradedright);
         $this->check_current_mark(2);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, true, 'correct'),
                 $this->get_contains_drop_box_expectation('p2', 2, true, 'correct'),
@@ -181,6 +188,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
                 $this->get_contains_drop_box_expectation('p2', 2, false),
@@ -199,6 +207,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$invalid);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
                 $this->get_contains_drop_box_expectation('p2', 2, false),
@@ -218,6 +227,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$complete);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
                 $this->get_contains_drop_box_expectation('p2', 2, false),
@@ -264,6 +274,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
                 $this->get_contains_drop_box_expectation('p2', 2, false),
@@ -284,6 +295,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
                 $this->get_contains_drop_box_expectation('p2', 2, false),
@@ -304,6 +316,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$gaveup);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, true),
                 $this->get_contains_drop_box_expectation('p2', 2, true),
@@ -320,6 +333,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
                 $this->get_contains_drop_box_expectation('p2', 2, false),
@@ -339,6 +353,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$invalid);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
                 $this->get_contains_drop_box_expectation('p2', 2, false),
@@ -358,6 +373,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$gradedpartial);
         $this->check_current_mark(1);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, true, 'correct'),
                 $this->get_contains_drop_box_expectation('p2', 2, true, 'incorrect'),
@@ -383,6 +399,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         $this->check_current_mark(null);
         $this->assertEqual('interactivecountback',
                 $this->quba->get_question_attempt($this->slot)->get_behaviour_name());
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
                 $this->get_contains_drop_box_expectation('p2', 2, false),
@@ -405,6 +422,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, true),
                 $this->get_contains_drop_box_expectation('p2', 2, true),
@@ -436,6 +454,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
                 $this->get_contains_drop_box_expectation('p2', 2, false),
@@ -459,6 +478,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, true),
                 $this->get_contains_drop_box_expectation('p2', 2, true),
@@ -484,6 +504,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
                 $this->get_contains_drop_box_expectation('p2', 2, false),
@@ -507,6 +528,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$gradedright);
         $this->check_current_mark(6);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, true, 'correct'),
                 $this->get_contains_drop_box_expectation('p2', 2, true, 'correct'),
@@ -541,6 +563,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
                 $this->get_contains_drop_box_expectation('p2', 2, false),
@@ -565,6 +588,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$gradedright);
         $this->check_current_mark(3);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, true, 'correct'),
                 $this->get_contains_drop_box_expectation('p2', 2, true, 'correct'),
@@ -597,6 +621,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
                 $this->get_contains_drop_box_expectation('p2', 2, false),
@@ -621,6 +646,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Verify.
         $this->check_current_state(question_state::$gradedpartial);
         $this->check_current_mark(1);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, true, 'correct'),
                 $this->get_contains_drop_box_expectation('p2', 2, true, 'incorrect'),
@@ -651,6 +677,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_marked_out_of_summary(),
                 $this->get_contains_drop_box_expectation('p1', 1, false),
@@ -713,6 +740,7 @@ class qtype_ddimagetoimage_walkthrough_test extends qbehaviour_walkthrough_test_
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
+        $this->expectException(new coding_exception('File not found in filearea bgimage'));
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
                 $this->get_contains_drop_box_expectation('p2', 2, false),
