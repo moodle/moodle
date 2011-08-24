@@ -1,0 +1,8 @@
+This files describes API changes in /theme/* themes,
+information provided here is intended especially for theme designer.
+
+=== 2.2 ===
+
+required changes:
+* use new page content placeholder "echo $OUTPUT->main_content()" instead of "echo core_renderer::MAIN_CONTENT_TOKEN"
+  see git commit: 3b3f302855d7621405a8b93e49bd399d67a998d7
