@@ -73,10 +73,7 @@ $activatedprotocol['rest'] = webservice_protocol_is_enabled('rest');
 $activatedprotocol['xmlrpc'] = webservice_protocol_is_enabled('xmlrpc');
 
 /// Check if we are in printable mode
-$printableformat = false;
-if (isset($_REQUEST['print'])) {
-    $printableformat = $_REQUEST['print'];
-}
+$printableformat = optional_param('print', false, PARAM_BOOL);
 
 /// OUTPUT
 echo $OUTPUT->header();
