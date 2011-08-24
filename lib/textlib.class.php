@@ -74,9 +74,9 @@ class textlib {
         require_once($CFG->libdir.'/typo3/class.t3lib_cs.php');
         require_once($CFG->libdir.'/typo3/class.t3lib_div.php');
 
-        // do not use mbstring, iconv or recode because it may return invalid results in some corner cases
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_convMethod'] = '';
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] = '';
+        // do not use mbstring or recode because it may return invalid results in some corner cases
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_convMethod'] = 'iconv';
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] = 'iconv';
 
         // Tell Typo3 we are curl enabled always (mandatory since 2.0)
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['curlUse'] = '1';
@@ -127,6 +127,22 @@ class textlib {
 
         if (preg_match('/^iso-8859-[0-9]+$/', $charset, $matches)) {
             return $charset;
+        }
+
+        if ($charset === 'euc-jp') {
+            return 'euc-jp';
+        }
+        if ($charset === 'iso-2022-jp') {
+            return 'iso-2022-jp';
+        }
+        if ($charset === 'shift-jis' or $charset === 'shift_jis') {
+            return 'shift_jis';
+        }
+        if ($charset === 'gb2312') {
+            return 'gb2312';
+        }
+        if ($charset === 'gb18030') {
+            return 'gb18030';
         }
 
         // fallback to typo3

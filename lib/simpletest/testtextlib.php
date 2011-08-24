@@ -56,6 +56,29 @@ class textlib_test extends UnitTestCase {
         $this->assertIdentical(textlib::convert($iso2, 'iso-8859-2', 'win-1250'), $win);
         $this->assertIdentical(textlib::convert($iso2, 'iso-8859-2', 'iso-8859-2'), $iso2);
         $this->assertIdentical(textlib::convert($win, 'win-1250', 'cp1250'), $win);
+
+        $utf8 = '言語設定';
+        $str = pack("H*", "b8c0b8ecc0dfc4ea"); //EUC-JP
+        $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'EUC-JP'), $str);
+        $this->assertIdentical(textlib::convert($str, 'EUC-JP', 'utf-8'), $utf8);
+
+        $str = pack("H*", "1b24423840386c405f446a1b2842"); //ISO-2022-JP
+        $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'ISO-2022-JP'), $str);
+        $this->assertIdentical(textlib::convert($str, 'ISO-2022-JP', 'utf-8'), $utf8);
+
+        $str = pack("H*", "8cbe8cea90dd92e8"); //SHIFT-JIS
+        $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'SHIFT-JIS'), $str);
+        $this->assertIdentical(textlib::convert($str, 'SHIFT-JIS', 'utf-8'), $utf8);
+
+        $utf8 = '简体中文';
+        $str = pack("H*", "bcf2cce5d6d0cec4"); //GB2312
+        $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'GB2312'), $str);
+        $this->assertIdentical(textlib::convert($str, 'GB2312', 'utf-8'), $utf8);
+
+        $str = pack("H*", "bcf2cce5d6d0cec4"); //GB18030
+        $this->assertIdentical(textlib::convert($utf8, 'utf-8', 'GB18030'), $str);
+        $this->assertIdentical(textlib::convert($str, 'GB18030', 'utf-8'), $utf8);
+
     }
 
     public function test_substr() {
@@ -73,6 +96,27 @@ class textlib_test extends UnitTestCase {
         $this->assertIdentical(textlib::substr($win, 1, 3, 'cp1250'), textlib::convert('luť', 'utf-8', 'cp1250'));
         $this->assertIdentical(textlib::substr($win, 0, 100, 'cp1250'), textlib::convert($str, 'utf-8', 'cp1250'));
         $this->assertIdentical(textlib::substr($win, -3, 2, 'cp1250'), textlib::convert('če', 'utf-8', 'cp1250'));
+
+        
+        $str = pack("H*", "b8c0b8ecc0dfc4ea"); //EUC-JP
+        $s = pack("H*", "b8ec"); //EUC-JP
+        $this->assertIdentical(textlib::substr($str, 1, 1, 'EUC-JP'), $s);
+
+        $str = pack("H*", "1b24423840386c405f446a1b2842"); //ISO-2022-JP
+        $s = pack("H*", "1b2442386c1b2842"); //ISO-2022-JP
+        $this->assertIdentical(textlib::substr($str, 1, 1, 'ISO-2022-JP'), $s);
+
+        $str = pack("H*", "8cbe8cea90dd92e8"); //SHIFT-JIS
+        $s = pack("H*", "8cea"); //SHIFT-JIS
+        $this->assertIdentical(textlib::substr($str, 1, 1, 'SHIFT-JIS'), $s);
+
+        $str = pack("H*", "bcf2cce5d6d0cec4"); //GB2312
+        $s = pack("H*", "cce5"); //GB2312
+        $this->assertIdentical(textlib::substr($str, 1, 1, 'GB2312'), $s);
+
+        $str = pack("H*", "bcf2cce5d6d0cec4"); //GB18030
+        $s = pack("H*", "cce5"); //GB18030
+        $this->assertIdentical(textlib::substr($str, 1, 1, 'GB18030'), $s);
     }
 
     public function test_strlen() {
@@ -84,6 +128,34 @@ class textlib_test extends UnitTestCase {
 
         $win  = pack("H*", "8e6c759d6f75e86bfd206b6f6eede8656b");
         $this->assertIdentical(textlib::strlen($win, 'cp1250'), 17);
+
+
+        $str = pack("H*", "b8ec"); //EUC-JP
+        $this->assertIdentical(textlib::strlen($str, 'EUC-JP'), 1);
+        $str = pack("H*", "b8c0b8ecc0dfc4ea"); //EUC-JP
+        $this->assertIdentical(textlib::strlen($str, 'EUC-JP'), 4);
+
+
+        $str = pack("H*", "1b2442386c1b2842"); //ISO-2022-JP
+        $this->assertIdentical(textlib::strlen($str, 'ISO-2022-JP'), 1);
+        $str = pack("H*", "1b24423840386c405f446a1b2842"); //ISO-2022-JP
+        $this->assertIdentical(textlib::strlen($str, 'ISO-2022-JP'), 4);
+
+        $str = pack("H*", "8cea"); //SHIFT-JIS
+        $this->assertIdentical(textlib::strlen($str, 'SHIFT-JIS'), 1);
+        $str = pack("H*", "8cbe8cea90dd92e8"); //SHIFT-JIS
+        $this->assertIdentical(textlib::strlen($str, 'SHIFT-JIS'), 4);
+
+        $str = pack("H*", "cce5"); //GB2312
+        $this->assertIdentical(textlib::strlen($str, 'GB2312'), 1);
+        $str = pack("H*", "bcf2cce5d6d0cec4"); //GB2312
+        $this->assertIdentical(textlib::strlen($str, 'GB2312'), 4);
+
+        $str = pack("H*", "cce5"); //GB18030
+        $this->assertIdentical(textlib::strlen($str, 'GB18030'), 1);
+        $str = pack("H*", "bcf2cce5d6d0cec4"); //GB18030
+        $this->assertIdentical(textlib::strlen($str, 'GB18030'), 4);
+
     }
 
     public function test_strtolower() {
