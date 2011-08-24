@@ -453,7 +453,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
 
     $pageopen = false;
 
-    $returnurl = str_replace($CFG->wwwroot, '', $pageurl->out(false));
+    $returnurl = $pageurl->out_as_local_url(false);
     $questiontotalcount = count($order);
 
     foreach ($order as $count => $qnum) {
@@ -728,7 +728,7 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts, $defaultc
     $returnurladdtoquiz = new moodle_url($pageurl, array('addonpage' => $page));
 
     // Print a button linking to the choose question type page.
-    $returnurladdtoquiz = str_replace($CFG->wwwroot, '', $returnurladdtoquiz->out(false));
+    $returnurladdtoquiz = $returnurladdtoquiz->out_as_local_url(false);
     $newquestionparams = array('returnurl' => $returnurladdtoquiz,
             'cmid' => $quiz->cmid, 'appendqnumstring' => 'addquestion');
     create_new_question_button($defaultcategoryid, $newquestionparams,

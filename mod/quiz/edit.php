@@ -559,7 +559,7 @@ if (!$quiz_reordertool) {
     $randomform = new quiz_add_random_form(new moodle_url('/mod/quiz/addrandom.php'), $contexts);
     $randomform->set_data(array(
         'category' => $pagevars['cat'],
-        'returnurl' => str_replace($CFG->wwwroot, '', $thispageurl->out(false)),
+        'returnurl' => $thispageurl->out_as_local_url(false),
         'cmid' => $cm->id,
     ));
     ?>
