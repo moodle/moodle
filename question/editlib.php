@@ -871,7 +871,7 @@ class question_bank_view {
         }
 
         // Create the url of the new question page to forward to.
-        $returnurl = str_replace($CFG->wwwroot, '', $pageurl->out(false));
+        $returnurl = $pageurl->out_as_local_url(false);
         $this->editquestionurl = new moodle_url('/question/question.php',
                 array('returnurl' => $returnurl));
         if ($cm !== null){
