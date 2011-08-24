@@ -57,7 +57,7 @@ if ($next) {
 if ($page == -1) {
     $nexturl = $attemptobj->summary_url();
 } else {
-    $nexturl = $attemptobj->attempt_url(0, $page);
+    $nexturl = $attemptobj->attempt_url(null, $page);
     if ($scrollpos !== '') {
         $nexturl->param('scrollpos', $scrollpos);
     }
@@ -96,7 +96,7 @@ if (!$finishattempt) {
         $attemptobj->process_all_actions($timenow);
     } catch (question_out_of_sequence_exception $e) {
         print_error('submissionoutofsequencefriendlymessage', 'question',
-                $attemptobj->attempt_url(0, $thispage));
+                $attemptobj->attempt_url(null, $thispage));
     }
     $transaction->allow_commit();
     redirect($nexturl);
