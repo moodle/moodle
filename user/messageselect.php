@@ -91,12 +91,14 @@ $messagebody = $SESSION->emailselect[$id]['messagebody'];
 
 $count = 0;
 
-foreach ($_POST as $k => $v) {
-    if (preg_match('/^(user|teacher)(\d+)$/',$k,$m)) {
-        if (!array_key_exists($m[2],$SESSION->emailto[$id])) {
-            if ($user = $DB->get_record_select('user', "id = ?", array($m[2]), 'id,firstname,lastname,idnumber,email,mailformat,lastaccess, lang')) {
-                $SESSION->emailto[$id][$m[2]] = $user;
-                $count++;
+if ($data = data_submitted()) {
+    foreach ($data as $k => $v) {
+        if (preg_match('/^(user|teacher)(\d+)$/',$k,$m)) {
+            if (!array_key_exists($m[2],$SESSION->emailto[$id])) {
+                if ($user = $DB->get_record_select('user', "id = ?", array($m[2]), 'id,firstname,lastname,idnumber,email,mailformat,lastaccess, lang')) {
+                    $SESSION->emailto[$id][$m[2]] = $user;
+                    $count++;
+                }
             }
         }
     }
