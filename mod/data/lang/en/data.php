@@ -280,7 +280,6 @@ $string['resettemplate'] = 'Reset template';
 $string['resizingimages'] = 'Resizing image thumbnails...';
 $string['rows'] = 'rows';
 $string['rssglobaldisabled'] = 'Disabled. See site configuration variables.';
-$string['rsshowmany'] = '(number of latest entries to show, 0 to disable RSS)';
 $string['rsstemplate'] = 'RSS template';
 $string['rsstitletemplate'] = 'RSS title template';
 $string['save'] = 'Save';
