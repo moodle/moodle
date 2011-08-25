@@ -9463,11 +9463,13 @@ function message_popup_window() {
     }
 
     //got unread messages so now do another query that joins with the user table
-    $messagesql = "SELECT m.id, m.smallmessage, m.notification, u.firstname, u.lastname FROM {message} m
-JOIN {message_working} mw ON m.id=mw.unreadmessageid
-JOIN {message_processors} p ON mw.processorid=p.id
-JOIN {user} u ON m.useridfrom=u.id
-WHERE m.useridto = :userid AND p.name='popup'";
+    $messagesql = "SELECT m.id, m.smallmessage, m.fullmessageformat, m.notification, u.firstname, u.lastname
+                     FROM {message} m
+                     JOIN {message_working} mw ON m.id=mw.unreadmessageid
+                     JOIN {message_processors} p ON mw.processorid=p.id
+                     JOIN {user} u ON m.useridfrom=u.id
+                    WHERE m.useridto = :userid
+                      AND p.name='popup'";
 
     //if the user was last notified over an hour ago we can renotify them of old messages
     //so don't worry about when the new message was sent
@@ -9502,6 +9504,13 @@ WHERE m.useridto = :userid AND p.name='popup'";
                     $smallmessage = $textlib->substr($message_users->smallmessage,0,200).'...';
                 } else {
                     $smallmessage = $message_users->smallmessage;
+                }
+
+                //prevent html symbols being displayed
+                if ($message_users->fullmessageformat == FORMAT_HTML) {
+                    $smallmessage = html_to_text($smallmessage);
+                } else {
+                    $smallmessage = s($smallmessage);
                 }
             } else if ($message_users->notification) {
                 //its a notification with no smallmessage so just say they have a notification
