@@ -967,10 +967,16 @@ class core_renderer extends renderer_base {
     protected function render_action_link(action_link $link) {
         global $CFG;
 
+        if ($link->text instanceof renderable) {
+            $text = $this->render($link->text);
+        } else {
+            $text = $link->text;
+        }
+
         // A disabled link is rendered as formatted text
         if (!empty($link->attributes['disabled'])) {
             // do not use div here due to nesting restriction in xhtml strict
-            return html_writer::tag('span', $link->text, array('class'=>'currentlink'));
+            return html_writer::tag('span', $text, array('class'=>'currentlink'));
         }
 
         $attributes = $link->attributes;
@@ -989,7 +995,7 @@ class core_renderer extends renderer_base {
             }
         }
 
-        return html_writer::tag('a', $link->text, $attributes);
+        return html_writer::tag('a', $text, $attributes);
     }
 
 

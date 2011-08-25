@@ -373,6 +373,7 @@ class pix_icon implements renderable {
     /**
      * Constructor
      * @param string $pix short icon name
+     * @param string $alt The alt text to use for the icon
      * @param string $component component name
      * @param array $attributes html attributes
      */
