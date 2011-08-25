@@ -240,8 +240,12 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
                 }
                 return indexstring;
             },
+            get_el : function (name, indexes) {
+                var form = document.getElementById('mform1');
+                return form.elements[this.to_name_with_index(name, indexes)]
+            },
             get_form_value : function(name, indexes) {
-                var el = document.forms[0].elements[this.to_name_with_index(name, indexes)];
+                var el = this.get_el(name, indexes);
                 if (el.type === 'checkbox') {
                     return el.checked;
                 } else {
@@ -249,7 +253,7 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
                 }
             },
             set_form_value : function(name, indexes, value) {
-                var el = document.forms[0].elements[this.to_name_with_index(name, indexes)];
+                var el = this.get_el(name, indexes);
                 if (el.type === 'checkbox') {
                     el.checked = value;
                 } else {
