@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/blti/db" VERSION="20080912" COMMENT="XMLDB file for Moodle mod/blti"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="blti" COMMENT="This table contains Basic LTI activities instances" NEXT="blti_types">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Course basiclti activity belongs to" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="name field for moodle instances" PREVIOUS="course" NEXT="intro"/>
+        <FIELD NAME="intro" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="General introduction of the basiclti activity" PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Format of the intro field (MOODLE, HTML, MARKDOWN...)" PREVIOUS="intro" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="typeid"/>
+        <FIELD NAME="typeid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Basic LTI type" PREVIOUS="timemodified" NEXT="toolurl"/>
+        <FIELD NAME="toolurl" TYPE="char" LENGTH="1023" NOTNULL="true" SEQUENCE="false" COMMENT="Remote tool url" PREVIOUS="typeid" NEXT="preferheight"/>
+        <FIELD NAME="preferheight" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="400" SEQUENCE="false" COMMENT="Peferred widget height" PREVIOUS="toolurl" NEXT="instructorchoicesendname"/>
+        <FIELD NAME="instructorchoicesendname" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Send user's name" PREVIOUS="preferheight" NEXT="instructorchoicesendemailaddr"/>
+        <FIELD NAME="instructorchoicesendemailaddr" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Send user's email" PREVIOUS="instructorchoicesendname" NEXT="instructorchoiceallowroster"/>
+        <FIELD NAME="instructorchoiceallowroster" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allow the roster to be retrieved" PREVIOUS="instructorchoicesendemailaddr" NEXT="instructorchoiceallowsetting"/>
+        <FIELD NAME="instructorchoiceallowsetting" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allow a tool to store a setting" PREVIOUS="instructorchoiceallowroster" NEXT="setting"/>
+        <FIELD NAME="setting" TYPE="char" LENGTH="8192" NOTNULL="false" UNSIGNED="false"  SEQUENCE="false" COMMENT="The setting value from the tool" PREVIOUS="instructorchoiceallowsetting" NEXT="instructorcustomparameters"/>
+        <FIELD NAME="instructorcustomparameters" TYPE="char" LENGTH="255" NOTNULL="false" UNSIGNED="false"  SEQUENCE="false" COMMENT="Additional custom parameters provided by the instructor" PREVIOUS="setting" NEXT="instructorchoiceacceptgrades"/>
+        <FIELD NAME="instructorchoiceacceptgrades" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Accept grades from tool" PREVIOUS="instructorcustomparameters" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="100" SEQUENCE="false" COMMENT="Grade scale" PREVIOUS="instructorchoiceacceptgrades" NEXT="placementsecret"/>
+        <FIELD NAME="placementsecret" TYPE="char" LENGTH="1023" NOTNULL="false" SEQUENCE="false" COMMENT="Remote tool grade secret" PREVIOUS="grade" NEXT="timeplacementsecret"/>
+        <FIELD NAME="timeplacementsecret" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT='When placementsecret was set' PREVIOUS="placementsecret" NEXT="oldplacementsecret"/>
+        <FIELD NAME="oldplacementsecret" TYPE="char" LENGTH="1023" NOTNULL="false" SEQUENCE="false" COMMENT="Previous remote tool grade secret" PREVIOUS="timeplacementsecret" NEXT="organizationid"/>
+        <FIELD NAME="organizationid" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="Organization ID" PREVIOUS="oldplacementsecret" NEXT="organizationurl"/>
+        <FIELD NAME="organizationurl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Organization URL" PREVIOUS="organizationid" NEXT="organizationdescr"/>
+        <FIELD NAME="organizationdescr" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Organization description" PREVIOUS="organizationurl" NEXT="launchinpopup"/>
+        <FIELD NAME="launchinpopup" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Launch external tool in a pop-up" PREVIOUS="organizationdescr" NEXT="debuglaunch"/>
+        <FIELD NAME="debuglaunch" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Enable the debug-style launch which pauses before auto-submit" PREVIOUS="launchinpopup" NEXT="moodle_course_field"/>
+        <FIELD NAME="moodle_course_field" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Chose which id field to use for setting up the tool" PREVIOUS="debuglaunch" NEXT="module_class_type"/>
+        <FIELD NAME="module_class_type" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Tool can be an activity or a resource" PREVIOUS="moodle_course_field"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="blti_types" COMMENT="Basic LTI pre-configured activities" PREVIOUS="blti" NEXT="blti_types_config">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="basiclti Activity" SEQUENCE="false" COMMENT="Activity name" PREVIOUS="id" NEXT="rawname"/>
+        <FIELD NAME="rawname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+
+    </TABLE>
+    <TABLE NAME="blti_types_config" COMMENT="Basic LTI types configuration" PREVIOUS="blti_types">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="typeid"/>
+        <FIELD NAME="typeid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Basic LTI type id" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Basic LTI param" PREVIOUS="typeid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Param value" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
