@@ -555,4 +555,4 @@ M.block_navigation = M.block_navigation || {
     }
 };
 
-}, '@VERSION@', {requires:['base', 'core_dock', 'io', 'node', 'dom', 'event-custom', 'event-delegate', 'json-parse']});
+}, '@VERSION@', {requires:['base', 'core_dock', 'io-base', 'node', 'dom', 'event-custom', 'event-delegate', 'json-parse']});

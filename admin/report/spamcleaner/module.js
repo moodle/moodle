@@ -104,7 +104,7 @@ M.report_spamcleaner = {
     init: function(Y, me) {
         var context = M.report_spamcleaner;
 
-        Y.use('json', 'io', function (Y) {
+        Y.use('json', 'io-base', function (Y) {
             context.Y = Y;
             context.me = me;
             if (Y.one("#removeall_btn")) {
