@@ -209,6 +209,14 @@ switch($requestmethod) {
                     error_log("Ajax rest.php: Could not delete the $cm->modname $cm->name from section");
                 }
 
+                // Trigger a mod_deleted event with information about this module.
+                $eventdata = new stdClass();
+                $eventdata->modulename = $cm->modname;
+                $eventdata->cmid       = $cm->id;
+                $eventdata->courseid   = $course->id;
+                $eventdata->userid     = $USER->id;
+                events_trigger('mod_deleted', $eventdata);
+
                 rebuild_course_cache($course->id);
 
                 add_to_log($courseid, "course", "delete mod",
