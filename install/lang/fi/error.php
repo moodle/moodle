@@ -39,6 +39,6 @@ $string['cannotunzipfile'] = 'Zip-tiedostoa ei voitu purkaa';
 $string['componentisuptodate'] = 'Komponentti on ajan tasalla';
 $string['downloadedfilecheckfailed'] = 'Ladatun tiedoston tarkistus epäonnistui';
 $string['invalidmd5'] = 'Virheellinen MD5';
-$string['missingrequiredfield'] = 'JOitakin vaadituista kentistä puuttuu';
+$string['missingrequiredfield'] = 'Joitakin vaadituista kentistä puuttuu';
 $string['wrongdestpath'] = 'Virheellinen kohdekansio';
 $string['wrongzipfilename'] = 'Virheellinen zip-tiedoston nimi';

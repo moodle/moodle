@@ -28,5 +28,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['cliincorrectvalueerror'] = 'Virhe, epäkelpo arvo "{$a->value}" "{$a->option}":ssa';
+$string['cliincorrectvalueretry'] = 'Epäkelpo arvo, syötä uudelleen';
+$string['clitypevalue'] = 'syötä arvo';
+$string['clitypevaluedefault'] = 'syötä arvo, paina Enteriä käyttääksesi oletusarvoa ({$a})';
+$string['cliyesnoprompt'] = 'syötä y (kyllä) tai n (ei)';
 $string['environmentrequireinstall'] = 'vaaditaan asennettavaksi/käyttöönotettavaksi';
 $string['environmentrequireversion'] = 'versio {$a->needed} vaaditaan ja käytössä on versio {$a->current}';
