@@ -1249,7 +1249,7 @@ class question_bank_view {
     protected function display_options($recurse, $showhidden, $showquestiontext) {
         echo '<form method="get" action="edit.php" id="displayoptions">';
         echo "<fieldset class='invisiblefieldset'>";
-        echo html_writer::input_hidden_params($this->baseurl, array('recurse', 'showhidden', 'showquestiontext'));
+        echo html_writer::input_hidden_params($this->baseurl, array('recurse', 'showhidden', 'qbshowtext'));
         $this->display_category_form_checkbox('recurse', $recurse, get_string('includesubcategories', 'question'));
         $this->display_category_form_checkbox('showhidden', $showhidden, get_string('showhidden', 'question'));
         $this->display_category_form_checkbox('qbshowtext', $showquestiontext, get_string('showquestiontext', 'question'));
@@ -1678,11 +1678,11 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
         $pagevars['showhidden'] = 0;
     }
 
-    if(($showquestiontext = optional_param('showquestiontext', -1, PARAM_BOOL)) != -1) {
-        $pagevars['showquestiontext'] = $showquestiontext;
-        $thispageurl->param('showquestiontext', $showquestiontext);
+    if(($showquestiontext = optional_param('qbshowtext', -1, PARAM_BOOL)) != -1) {
+        $pagevars['qbshowtext'] = $showquestiontext;
+        $thispageurl->param('qbshowtext', $showquestiontext);
     } else {
-        $pagevars['showquestiontext'] = 0;
+        $pagevars['qbshowtext'] = 0;
     }
 
     //category list page
