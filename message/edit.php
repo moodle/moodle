@@ -100,12 +100,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
     //only update the user's "emailstop" if its actually changed
     if ( $user->emailstop != $disableall ) {
         $user->emailstop = $disableall;
-        //create a new user object just in case any other changes have been
-        //made to the user object that we don't want to save
-        $usertoupdate = new stdClass();
-        $usertoupdate->id = $user->id;
-        $usertoupdate->emailstop = $user->emailstop;
-        $DB->update_record('user', $usertoupdate);
+        $DB->set_field('user', 'emailstop', $user->emailstop, array("id"=>$user->id));
     }
 
     $preferences = array();
