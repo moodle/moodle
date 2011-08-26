@@ -428,7 +428,7 @@ $questionbank->display('editq',
         $pagevars['qpage'],
         $pagevars['qperpage'],
         $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'],
-        $pagevars['showquestiontext']);
+        $pagevars['qbshowtext']);
 echo '</div>';
 echo '</div>';
 echo '</div>';

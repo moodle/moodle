@@ -1615,11 +1615,11 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
         $pagevars['showhidden'] = 0;
     }
 
-    if(($showquestiontext = optional_param('showquestiontext', -1, PARAM_BOOL)) != -1) {
-        $pagevars['showquestiontext'] = $showquestiontext;
-        $thispageurl->param('showquestiontext', $showquestiontext);
+    if(($showquestiontext = optional_param('qbshowtext', -1, PARAM_BOOL)) != -1) {
+        $pagevars['qbshowtext'] = $showquestiontext;
+        $thispageurl->param('qbshowtext', $showquestiontext);
     } else {
-        $pagevars['showquestiontext'] = 0;
+        $pagevars['qbshowtext'] = 0;
     }
 
     //category list page
