@@ -27,3 +27,6 @@
 #page-mod-blti-submissions .submissions .outcome,
 #page-mod-blti-submissions .submissions .finalgrade {text-align: right;}
 #page-mod-blti-submissions .qgprefs #optiontable {text-align:right;margin-left:auto;}
+
+/* Styles for admin */
+.path-admin-mod-blti .mform .fitem .fitemtitle { min-width:15em;padding-right:1em } /* Prevent setting titles from wrapping */

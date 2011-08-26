@@ -57,8 +57,8 @@ class mod_blti_edit_types_form extends moodleform{
 
 //-------------------------------------------------------------------------------
         // Add basiclti elements
-        $mform->addElement('header', 'setup', get_string('modstandardels', 'form'));
-
+        $mform->addElement('header', 'setup', get_string('tool_settings', 'blti'));
+        
         $mform->addElement('text', 'lti_typename', get_string('typename', 'blti'));
         $mform->setType('lti_typename', PARAM_INT);
 //        $mform->addHelpButton('lti_typename', 'typename','blti');
@@ -78,96 +78,66 @@ class mod_blti_edit_types_form extends moodleform{
         $mform->addElement('passwordunmask', 'lti_password', get_string('password', 'blti'));
         $mform->setType('lti_password', PARAM_TEXT);
 
-//-------------------------------------------------------------------------------
-        // Add size parameters
-        $mform->addElement('header', 'size', get_string('size', 'blti'));
-
-        $mform->addElement('text', 'lti_preferheight', get_string('preferheight', 'blti'));
-        $mform->setType('lti_preferheight', PARAM_INT);
-//        $mform->addHelpButton('lti_preferheight', 'preferheight', 'blti');
-
-
-//-------------------------------------------------------------------------------
+        $mform->addElement('textarea', 'lti_customparameters', get_string('custom', 'blti'), array('rows'=>4, 'cols'=>60));
+        $mform->setType('lti_customparameters', PARAM_TEXT);
+        
+        $mform->addElement('checkbox', 'lti_coursevisible', '&nbsp;', ' ' . get_string('show_in_course', 'blti'));
+        
         // Add privacy preferences fieldset where users choose whether to send their data
         $mform->addElement('header', 'privacy', get_string('privacy', 'blti'));
 
         $options=array();
         $options[0] = get_string('never', 'blti');
         $options[1] = get_string('always', 'blti');
-        $options[2] = get_string('delegate', 'blti');
-
-        $defaults=array();
-        $defaults[0] = get_string('donot', 'blti');
-        $defaults[1] = get_string('send', 'blti');
+        $options[2] = get_string('delegate_yes', 'blti');
+        $options[3] = get_string('delegate_no', 'blti');
 
         $mform->addElement('select', 'lti_sendname', get_string('sendname', 'blti'), $options);
-        $mform->setDefault('lti_sendname', '0');
+        $mform->setDefault('lti_sendname', '2');
 //        $mform->addHelpButton('lti_sendname', 'sendname', 'blti');
 
-        $mform->addElement('select', 'lti_instructorchoicesendname', get_string('setdefault', 'blti'), $defaults);
-        $mform->setDefault('lti_instructorchoicesendname', '0');
-        $mform->disabledIf('lti_instructorchoicesendname', 'lti_sendname', 'neq', 2);
-
         $mform->addElement('select', 'lti_sendemailaddr', get_string('sendemailaddr', 'blti'), $options);
-        $mform->setDefault('lti_sendemailaddr', '0');
+        $mform->setDefault('lti_sendemailaddr', '2');
 //        $mform->addHelpButton('lti_sendemailaddr', 'sendemailaddr', 'blti');
-
-        $mform->addElement('select', 'lti_instructorchoicesendemailaddr', get_string('setdefault', 'blti'), $defaults);
-        $mform->setDefault('lti_instructorchoicesendemailaddr', '0');
-        $mform->disabledIf('lti_instructorchoicesendemailaddr', 'lti_sendemailaddr', 'neq', 2);
 
 //-------------------------------------------------------------------------------
         // BLTI Extensions
-        $mform->addElement('header', 'extensions', get_string('extensions', 'blti'));
-
-        $defaults_accept=array();
-        $defaults_accept[0] = get_string('donotaccept', 'blti');
-        $defaults_accept[1] = get_string('accept', 'blti');
-
-        $defaults_allow=array();
-        $defaults_allow[0] = get_string('donotallow', 'blti');
-        $defaults_allow[1] = get_string('allow', 'blti');
 
         // Add grading preferences fieldset where the tool is allowed to return grades
         $mform->addElement('select', 'lti_acceptgrades', get_string('acceptgrades', 'blti'), $options);
-        $mform->setDefault('lti_acceptgrades', '0');
+        $mform->setDefault('lti_acceptgrades', '2');
 //        $mform->addHelpButton('lti_acceptgrades', 'acceptgrades', 'blti');
-
-        $mform->addElement('select', 'lti_instructorchoiceacceptgrades', get_string('setdefault', 'blti'), $defaults_accept);
-        $mform->setDefault('lti_instructorchoiceacceptgrades', '0');
-        $mform->disabledIf('lti_instructorchoiceacceptgrades', 'lti_acceptgrades', 'neq', 2);
 
         // Add grading preferences fieldset where the tool is allowed to retrieve rosters
         $mform->addElement('select', 'lti_allowroster', get_string('allowroster', 'blti'), $options);
-        $mform->setDefault('lti_allowroster', '0');
+        $mform->setDefault('lti_allowroster', '2');
 //        $mform->addHelpButton('lti_allowroster', 'allowroster', 'blti');
 
-        $mform->addElement('select', 'lti_instructorchoiceallowroster', get_string('setdefault', 'blti'), $defaults_allow);
-        $mform->setDefault('lti_instructorchoiceallowroster', '0');
-        $mform->disabledIf('lti_instructorchoiceallowroster', 'lti_allowroster', 'neq', 2);
-
+        /*
         // Add grading preferences fieldset where the tool is allowed to update settings
         $mform->addElement('select', 'lti_allowsetting', get_string('allowsetting', 'blti'), $options);
         $mform->setDefault('lti_allowsetting', '0');
 //        $mform->addHelpButton('lti_allowsetting', 'allowsetting', 'blti');
-
-        $mform->addElement('select', 'lti_instructorchoiceallowsetting', get_string('setdefault', 'blti'), $defaults_allow);
-        $mform->setDefault('lti_instructorchoiceallowsetting', '0');
-        $mform->disabledIf('lti_instructorchoiceallowsetting', 'lti_allowsetting', 'neq', 2);
+         */
 
 //-------------------------------------------------------------------------------
-        // Add custom parameters fieldset
-        $mform->addElement('header', 'custom', get_string('custom', 'blti'));
+        // Add launch parameters fieldset
+        $mform->addElement('header', 'launchoptions', get_string('launchoptions', 'blti'));
 
-        $mform->addElement('textarea', 'lti_customparameters', '', array('rows'=>15, 'cols'=>60));
-        $mform->setType('lti_customparameters', PARAM_TEXT);
+        $launchoptions=array();
+        $launchoptions[0] = get_string('embed', 'blti');
+        $launchoptions[1] = get_string('embed_no_blocks', 'blti');
+        $launchoptions[2] = get_string('popup_window', 'blti');
+        $launchoptions[3] = get_string('new_window', 'blti');
 
-        $mform->addElement('select', 'lti_allowinstructorcustom', get_string('allowinstructorcustom', 'blti'), $defaults_allow);
-        $mform->setDefault('lti_allowinstructorcustom', '0');
+        $mform->addElement('select', 'lti_launchinpopup', get_string('launchinpopup', 'blti'), $launchoptions);
+        $mform->setDefault('lti_launchinpopup', '0');
+//        $mform->addHelpButton('lti_launchinpopup', 'launchinpopup', 'blti');
 
+                
 //-------------------------------------------------------------------------------
         // Add setup parameters fieldset
-        $mform->addElement('header', 'setupoptions', get_string('setupoptions', 'blti'));
+        $mform->addElement('header', 'setupoptions', get_string('miscellaneous', 'blti'));
 
         // Adding option to change id that is placed in context_id
         $idoptions = array();
@@ -176,18 +146,7 @@ class mod_blti_edit_types_form extends moodleform{
 
         $mform->addElement('select', 'lti_moodle_course_field', get_string('moodle_course_field', 'blti'), $idoptions);
         $mform->setDefault('lti_moodle_course_field', '0');
-
-        // Added option to allow user to specify if this is a resource or activity type
-        $classoptions = array();
-        $classoptions[0] = get_string('activity', 'blti');
-        $classoptions[1] = get_string('resource', 'blti');
-
-        $mform->addElement('select', 'lti_module_class_type', get_string('module_class_type', 'blti'), $classoptions);
-        $mform->setDefault('lti_module_class_type', '0');
-
-//-------------------------------------------------------------------------------
-        // Add organization parameters fieldset
-        $mform->addElement('header', 'organization', get_string('organization', 'blti'));
+        
 
         $mform->addElement('text', 'lti_organizationid', get_string('organizationid', 'blti'));
         $mform->setType('lti_organizationid', PARAM_TEXT);
@@ -202,18 +161,6 @@ class mod_blti_edit_types_form extends moodleform{
         $mform->setType('lti_organizationdescr', PARAM_TEXT);
         $mform->addHelpButton('lti_organizationdescr', 'organizationdescr', 'blti');
         */
-
-//-------------------------------------------------------------------------------
-        // Add launch parameters fieldset
-        $mform->addElement('header', 'launchoptions', get_string('launchoptions', 'blti'));
-
-        $launchoptions=array();
-        $launchoptions[0] = get_string('launch_in_moodle', 'blti');
-        $launchoptions[1] = get_string('launch_in_popup', 'blti');
-
-        $mform->addElement('select', 'lti_launchinpopup', get_string('launchinpopup', 'blti'), $launchoptions);
-        $mform->setDefault('lti_launchinpopup', '0');
-//        $mform->addHelpButton('lti_launchinpopup', 'launchinpopup', 'blti');
 
 //-------------------------------------------------------------------------------
         // Add a hidden element to signal a tool fixing operation after a problematic backup - restore process

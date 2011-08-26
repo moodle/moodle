@@ -79,18 +79,19 @@ function blti_supports($feature) {
  * @param object $instance An object from the form in mod.html
  * @return int The id of the newly inserted basiclti record
  **/
-function blti_add_instance($basiclti) {
+function blti_add_instance($formdata) {
     global $DB;
-    $basiclti->timecreated = time();
-    $basiclti->timemodified = $basiclti->timecreated;
-    $basiclti->placementsecret = uniqid('', true);
-    $basiclti->timeplacementsecret = time();
+    $formdata->timecreated = time();
+    $formdata->timemodified = $formdata->timecreated;
+    //$basiclti->placementsecret = uniqid('', true);
+    //$basiclti->timeplacementsecret = time();
 
-    $id = $DB->insert_record("blti", $basiclti);
+    $id = $DB->insert_record("blti", $formdata);
 
-    $basiclti = $DB->get_record('blti', array('id'=>$id));
-
-    if ($basiclti->instructorchoiceacceptgrades == 1) {
+    if ($formdata->instructorchoiceacceptgrades == 1) {
+        $basiclti = $DB->get_record('blti', array('id'=>$id));
+        $basiclti->cmidnumber = $formdata->cmidnumber;
+        
         blti_grade_item_update($basiclti);
     }
 
@@ -105,26 +106,22 @@ function blti_add_instance($basiclti) {
  * @param object $instance An object from the form in mod.html
  * @return boolean Success/Fail
  **/
-function blti_update_instance($basiclti) {
+function blti_update_instance($formdata) {
     global $DB;
 
-    $basiclti->timemodified = time();
-    $basiclti->id = $basiclti->instance;
+    $formdata->timemodified = time();
+    $formdata->id = $formdata->instance;
 
-    $basicltirec = $DB->get_record("blti", array("id" => $basiclti->id));
-    $basiclti->grade = $basicltirec->grade;
-
-    if (empty($basiclti->preferwidget)) {
-        $basiclti->preferwidget = 0;
-    }
-
-    if ($basiclti->instructorchoiceacceptgrades == 1) {
-        blti_grade_item_update($basiclti);
+    if ($formdata->instructorchoiceacceptgrades == 1) {
+        $basicltirec = $DB->get_record("blti", array("id" => $formdata->id));
+        $basicltirec->cmidnumber = $formdata->cmidnumber;
+        
+        blti_grade_item_update($basicltirec);
     } else {
-        blti_grade_item_delete($basiclti);
+        blti_grade_item_delete($formdata);
     }
 
-    return $DB->update_record("blti", $basiclti);
+    return $DB->update_record("blti", $formdata);
 }
 
 /**
@@ -312,7 +309,7 @@ function blti_get_blti_types() {
  *
  * @return array of basicLTI types
  */
-function blti_get_types() {
+/*function blti_get_types() {
     $types = array();
 
     $basicltitypes = blti_get_blti_types();
@@ -336,7 +333,7 @@ function blti_get_types() {
     }
 
     return $types;
-}
+}*/
 
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other basiclti functions go here.  Each of them must have a name that
@@ -964,10 +961,6 @@ function blti_grade_item_update($basiclti, $grades=null) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
 
-    if (!isset($basiclti->courseid)) {
-        $basiclti->courseid = $basiclti->course;
-    }
-
     $params = array('itemname'=>$basiclti->name, 'idnumber'=>$basiclti->cmidnumber);
 
     if ($basiclti->grade > 0) {
@@ -988,7 +981,7 @@ function blti_grade_item_update($basiclti, $grades=null) {
         $grades = null;
     }
 
-    return grade_update('mod/blti', $basiclti->courseid, 'mod', 'blti', $basiclti->id, 0, $grades, $params);
+    return grade_update('mod/blti', $basiclti->course, 'mod', 'blti', $basiclti->id, 0, $grades, $params);
 }
 
 /**
@@ -1001,10 +994,6 @@ function blti_grade_item_delete($basiclti) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
 
-    if (!isset($basiclti->courseid)) {
-        $basiclti->courseid = $basiclti->course;
-    }
-
-    return grade_update('mod/blti', $basiclti->courseid, 'mod', 'blti', $basiclti->id, 0, null, array('deleted'=>1));
+    return grade_update('mod/blti', $basiclti->course, 'mod', 'blti', $basiclti->id, 0, null, array('deleted'=>1));
 }
 

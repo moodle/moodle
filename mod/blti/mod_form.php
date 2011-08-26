@@ -87,113 +87,65 @@ class mod_blti_mod_form extends moodleform_mod {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
     /// Adding the optional "intro" and "introformat" pair of fields
-        $this->add_intro_editor(true, get_string('basicltiintro', 'blti'));
+        $this->add_intro_editor(false, get_string('basicltiintro', 'blti'));
+        $mform->setAdvanced('introeditor');
 
+        $mform->addElement('checkbox', 'showtitle', '&nbsp;', ' ' . get_string('display_name', 'blti'));
+        $mform->setAdvanced('showtitle');
+        
+        $mform->addElement('checkbox', 'showdescription', '&nbsp;', ' ' . get_string('display_description', 'blti'));
+        $mform->setAdvanced('showdescription');
+        
+        //Tool settings
+        $mform->addElement('select', 'typeid', get_string('external_tool_type', 'blti'), blti_get_types_for_add_instance());
+        //$mform->setDefault('typeid', '0');
+        
+        $mform->addElement('text', 'toolurl', get_string('launch_url', 'blti'), array('size'=>'64'));
+        $mform->setType('toolurl', PARAM_TEXT);
+        
+        $mform->addElement('text', 'resourcekey', get_string('resourcekey', 'blti'));
+        $mform->setType('resourcekey', PARAM_TEXT);
+        $mform->setAdvanced('resourcekey');
+
+        $mform->addElement('passwordunmask', 'password', get_string('password', 'blti'));
+        $mform->setType('password', PARAM_TEXT);
+        $mform->setAdvanced('password');
+        
+        $mform->addElement('textarea', 'instructorcustomparameters', get_string('custom', 'blti'), array('rows'=>4, 'cols'=>60));
+        $mform->setType('instructorcustomparameters', PARAM_TEXT);
+        $mform->setAdvanced('instructorcustomparameters');
+        
 //-------------------------------------------------------------------------------
-        $mform->addElement('hidden', 'typeid', $this->typeid);
-        $mform->addElement('hidden', 'toolurl', $this->typeconfig['toolurl']);
+        //$mform->addElement('hidden', 'typeid', $this->typeid);
+        //$mform->addElement('hidden', 'toolurl', $this->typeconfig['toolurl']);
         $mform->addElement('hidden', 'type', $typename);
 
 //-------------------------------------------------------------------------------
         // Add privacy preferences fieldset where users choose whether to send their data
         $mform->addElement('header', 'privacy', get_string('privacy', 'blti'));
 
-        $privacyoptions=array();
-        $privacyoptions[0] = get_string('donot', 'blti');
-        $privacyoptions[1] = get_string('send', 'blti');
-
-        $mform->addElement('select', 'instructorchoicesendname', get_string('sendname', 'blti'), $privacyoptions);
-
-        if (isset($this->typeconfig['instructorchoicesendname'])) {
-            if ($this->typeconfig['instructorchoicesendname'] == 0) {
-                $mform->setDefault('instructorchoicesendname', '0');
-            } else if ($this->typeconfig['instructorchoicesendname'] == 1) {
-                $mform->setDefault('instructorchoicesendname', '1');
-            }
-        }
-//        $mform->addHelpButton('instructorchoicesendname', 'sendname', 'blti');
-
-          $mform->addElement('select', 'instructorchoicesendemailaddr', get_string('sendemailaddr', 'blti'), $privacyoptions);
-
-        if (isset($this->typeconfig['instructorchoicesendemailaddr'])) {
-            if ($this->typeconfig['instructorchoicesendemailaddr'] == 0) {
-                $mform->setDefault('instructorchoicesendemailaddr', '0');
-            } else if ($this->typeconfig['instructorchoicesendemailaddr'] == 1) {
-                $mform->setDefault('instructorchoicesendemailaddr', '1');
-            }
-        }
-    //            $mform->addHelpButton('instructorchoicesendemailaddr', 'sendemailaddr', 'blti');
+        $mform->addElement('checkbox', 'instructorchoicesendname', '&nbsp;', ' ' . get_string('share_name', 'blti'));
+        $mform->setDefault('instructorchoicesendname', '1');
+        
+        $mform->addElement('checkbox', 'instructorchoicesendemailaddr', '&nbsp;', ' ' . get_string('share_email', 'blti'));
+        $mform->setDefault('instructorchoicesendemailaddr', '1');
+        
+        $mform->addElement('checkbox', 'instructorchoiceacceptgrades', '&nbsp;', ' ' . get_string('accept_grades', 'blti'));
+        $mform->setDefault('instructorchoiceacceptgrades', '1');
+        
+        $mform->addElement('checkbox', 'instructorchoiceallowroster', '&nbsp;', ' ' . get_string('share_roster', 'blti'));
+        $mform->setDefault('instructorchoiceallowroster', '1');
 
 //-------------------------------------------------------------------------------
-        // Add grading preferences fieldset where the instructor determines whether to accept grades
-        $mform->addElement('header', 'extensions', get_string('extensions', 'blti'));
 
-        $extensionoptions=array();
-        $extensionoptions[0] = get_string('donotaccept', 'blti');
-        $extensionoptions[1] = get_string('accept', 'blti');
-
-        $mform->addElement('select', 'instructorchoiceacceptgrades', get_string('acceptgrades', 'blti'), $extensionoptions);
-        if (isset($this->typeconfig['instructorchoiceacceptgrades'])) {
-            if ($this->typeconfig['instructorchoiceacceptgrades'] == 0) {
-                $mform->setDefault('instructorchoiceacceptgrades', '0');
-            } else if ($this->typeconfig['instructorchoiceacceptgrades'] == 1) {
-                $mform->setDefault('instructorchoiceacceptgrades', '1');
-            }
-        }
-    //        $mform->addHelpButton('instructorchoiceacceptgrades', 'acceptgrades', 'blti');
-
-        $extensionoptions=array();
-        $extensionoptions[0] = get_string('donotallow', 'blti');
-        $extensionoptions[1] = get_string('allow', 'blti');
-
-        $mform->addElement('select', 'instructorchoiceallowroster', get_string('allowroster', 'blti'), $extensionoptions);
-        if (isset($this->typeconfig['instructorchoiceallowroster'])) {
-            if ($this->typeconfig['instructorchoiceallowroster'] == 0) {
-                $mform->setDefault('instructorchoiceallowroster', '0');
-            } else if ($this->typeconfig['instructorchoiceallowroster'] == 1) {
-                $mform->setDefault('instructorchoiceallowroster', '1');
-            }
-        }
-    //        $mform->addHelpButton('instructorchoiceallowroster', 'allowroster', 'blti');
-        $mform->setAdvanced('instructorchoiceallowroster');
-
-        $mform->addElement('select', 'instructorchoiceallowsetting', get_string('allowsetting', 'blti'), $extensionoptions);
-
-        if (isset($this->typeconfig['instructorchoiceallowsetting'])) {
-            if ($this->typeconfig['instructorchoiceallowsetting'] == 0) {
-                $mform->setDefault('instructorchoiceallowsetting', '0');
-            } else if ($this->typeconfig['instructorchoiceallowsetting'] == 1) {
-                $mform->setDefault('instructorchoiceallowsetting', '1');
-            }
-        }
-//        $mform->addHelpButton('instructorchoiceallowsetting', 'allowsetting', 'blti');
-        $mform->setAdvanced('instructorchoiceallowsetting');
-
-//-------------------------------------------------------------------------------
-        if (isset($this->typeconfig['allowinstructorcustom'])) {
-            if ($this->typeconfig['allowinstructorcustom'] == 1) {
-                // Add custom parameters fieldset
-                $mform->addElement('header', 'launchoptions', get_string('custominstr', 'blti'));
-
-                $mform->addElement('textarea', 'instructorcustomparameters', '', array('rows'=>15, 'cols'=>60));
-                $mform->setType('instructorcustomparameters', PARAM_TEXT);
-                $mform->setAdvanced('instructorcustomparameters');
-            }
-        }
-
-//-------------------------------------------------------------------------------
         // Add launch parameters fieldset
         $mform->addElement('header', 'launchoptions', get_string('launchoptions', 'blti'));
 
-        // Size parameters
-        $mform->addElement('text', 'preferheight', get_string('preferheight', 'blti'));
-        if (isset($this->typeconfig['preferheight'])) {
-            $mform->setDefault('preferheight', $this->typeconfig['preferheight']);
-        }
-
         $launchoptions=array();
-        $launchoptions[0] = get_string('launch_in_moodle', 'blti');
-        $launchoptions[1] = get_string('launch_in_popup', 'blti');
+        $launchoptions[0] = get_string('embed', 'blti');
+        $launchoptions[1] = get_string('embed_no_blocks', 'blti');
+        $launchoptions[2] = get_string('popup_window', 'blti');
+        $launchoptions[3] = get_string('new_window', 'blti');
 
         $mform->addElement('select', 'launchinpopup', get_string('launchinpopup', 'blti'), $launchoptions);
 
@@ -205,7 +157,7 @@ class mod_blti_mod_form extends moodleform_mod {
             }
         }
 
-        $debugoptions=array();
+/*        $debugoptions=array();
         $debugoptions[0] = get_string('debuglaunchoff', 'blti');
         $debugoptions[1] = get_string('debuglaunchon', 'blti');
 
@@ -218,16 +170,7 @@ class mod_blti_mod_form extends moodleform_mod {
                 $mform->setDefault('debuglaunch', '1');
             }
         }
-
-//-------------------------------------------------------------------------------
-        // Organization parameters
-        if (isset($this->typeconfig['organizationid'])) {
-            $mform->addElement('hidden', 'organizationid', $this->typeconfig['organizationid']);
-        }
-        if (isset($this->typeconfig['organizationurl'])) {
-            $mform->addElement('hidden', 'organizationurl', $this->typeconfig['organizationurl']);
-        }
-//       $mform->addElement('hidden', 'organizationdescr', $this->typeconfig['organizationdescr']);
+*/
 
 //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
@@ -243,7 +186,7 @@ class mod_blti_mod_form extends moodleform_mod {
      */
     function definition_after_data() {
         parent::definition_after_data();
-        $mform     =& $this->_form;
+       /* $mform     =& $this->_form;
         $typeid      =& $mform->getElement('typeid');
         $typeidvalue = $mform->getElementValue('typeid');
 
@@ -283,7 +226,7 @@ class mod_blti_mod_form extends moodleform_mod {
                 $field->freeze();
                 $field->setPersistantFreeze(true);
             }
-        }
+        }*/
     }
 
     /**
@@ -293,7 +236,7 @@ class mod_blti_mod_form extends moodleform_mod {
      * @param array $default_values passed by reference
      */
     function data_preprocessing(&$default_values) {
-        global $CFG;
+/*        global $CFG;
         $default_values['typeid'] = $this->typeid;
 
         if (!isset($default_values['toolurl'])) {
@@ -475,7 +418,7 @@ class mod_blti_mod_form extends moodleform_mod {
                 $default_values['launchinpopup'] = $CFG->blti_launchinpopup;
             }
         }
-
+*/
     }
 }
 

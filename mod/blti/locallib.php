@@ -321,6 +321,19 @@ function blti_filter_get_types() {
     return $DB->get_records('blti_types');
 }
 
+function blti_get_types_for_add_instance(){
+    $admintypes = blti_filter_get_types();
+    
+    $types = array();
+    $types[0] = get_string('automatic', 'blti');
+    
+    foreach($admintypes as $type) {
+        $types[$type->id] = $type->name;
+    }
+    
+    return $types;
+}
+
 /**
  * Prints the various configured tool types
  *

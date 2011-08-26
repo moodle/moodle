@@ -74,11 +74,16 @@ $errormsg  = '';
 $focus = '';
 
 if ($data = data_submitted() and confirm_sesskey() and isset($data->submitbutton)) {
+    $type = new StdClass();
+    $type->name = $data->lti_typename;
+    $type->baseurl = $data->lti_toolurl;
+    $type->course = $SITE->id;
+    $type->coursevisible = 1;
+    $type->timemodified = time();
+    
     if (isset($id)) {
-        $type = new StdClass();
         $type->id = $id;
-        $type->name = $data->lti_typename;
-        $type->rawname = preg_replace('/[^a-zA-Z]/', '', $type->name);
+        
         if ($DB->update_record('blti_types', $type)) {
             unset ($data->lti_typename);
             //@TODO: update work
@@ -95,23 +100,13 @@ if ($data = data_submitted() and confirm_sesskey() and isset($data->submitbutton
                     }
                 }
             }
-
-            // Update toolurl for all existing instances - it is the only common parameter
-            // between configurations and instances
-            $instances = $DB->get_records('blti', array('typeid' => $id));
-            foreach ($instances as $instance) {
-                if ($instance->toolurl != $data->lti_toolurl) {
-                    $instance->toolurl = $data->lti_toolurl;
-                    $DB->update_record('blti', $instance);
-                }
-            }
         }
         redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=modsettingblti");
         die;
     } else {
-        $type = new StdClass();
-        $type->name = $data->lti_typename;
-        $type->rawname = preg_replace('/[^a-zA-Z]/', '', $type->name);
+        $type->createdby = $USER->id;
+        $type->timecreated = time();
+        
         if ($id = $DB->insert_record('blti_types', $type)) {
             if (!empty($data->lti_fix)) {
                 $instance = $DB->get_record('blti', array('id' => $data->lti_fix));
