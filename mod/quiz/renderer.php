@@ -317,8 +317,6 @@ class mod_quiz_renderer extends plugin_renderer_base {
             $attributes[] = get_string('onthispage', 'quiz');
         }
 
-        $attributes[] = $button->statestring;
-
         // Flagged?
         if ($button->flagged) {
             $classes[] = 'flagged';
