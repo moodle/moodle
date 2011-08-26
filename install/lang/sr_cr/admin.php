@@ -39,4 +39,4 @@ $string['cliunknowoption'] = 'Непрепознате опције:
 Молимо искористите опцију за помоћ.';
 $string['cliyesnoprompt'] = 'унеси y (значи да) или n (значи не)';
 $string['environmentrequireinstall'] = 'је неопходно инсталирати и омогућити';
-$string['environmentrequireversion'] = 'неопходна верзија је {$a->needed} а Ви тренутно користите верзију {$a->current}';
+$string['environmentrequireversion'] = 'неопходна верзија је {$a->needed} а ви тренутно користите верзију {$a->current}';
