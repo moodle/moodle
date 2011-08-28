@@ -25,9 +25,9 @@ h2.main, h3.main, h4.main {margin:0;padding:0;text-align: center;}
 h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:200%;}
 
 /* headermenu */
-#page-header{line-height:0;}
+#page-header{line-height:0;overflow:hidden;}
 /*#headerlogo img {margin:7px;}*/
-.headermenu {position:relative;line-height:1.7em;font-size:90%;margin:0.3em 0.3em 0 0;right:0.3em;margin-bottom:0.3em;}
+.headermenu {position:relative;line-height:1.7em;font-size:90%;margin:0.3em 0.3em 0.3em 0;right:0.3em;}
 
 #dock {background-color:[[setting:blockcontentbgc]];border-right:1px #000 dashed;}
 #dock .dockeditem_container {margin-top: 10px;}
@@ -45,16 +45,16 @@ h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:200%;}
 .navbutton table td {padding:0;}
 
 /*.block_navigation .block_tree li.type_category.contains_branch>p span {
-	padding-left: 20px;
-	background-image: url([[pix:theme|folderopen]]);
-	background-repeat: no-repeat;
-	background-position: 0 -1px;
+    padding-left: 20px;
+    background-image: url([[pix:theme|folderopen]]);
+    background-repeat: no-repeat;
+    background-position: 0 -1px;
 }
 .block_navigation .block_tree li.type_category.contains_branch.collapsed>p span {
-	padding-left: 20px;
-	background-image: url([[pix:theme|folderclose]]);
-	background-repeat: no-repeat;
-	background-position: 0 -1px;
+    padding-left: 20px;
+    background-image: url([[pix:theme|folderclose]]);
+    background-repeat: no-repeat;
+    background-position: 0 -1px;
 }*/
 
 .block_settings .block_tree .tree_item a:link,

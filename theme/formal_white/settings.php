@@ -29,14 +29,22 @@ if ($ADMIN->fulltree) {
     $title = get_string('displaylogo','theme_formal_white');
     $description = get_string('displaylogodesc', 'theme_formal_white');
     $default = '1';
-    $choices = array(1=>get_string('moodlelogo', 'theme_formal_white'),0=>get_string('heading', 'theme_formal_white'));
+    $choices = array(1=>get_string('moodlelogo', 'theme_formal_white'), 0=>get_string('heading', 'theme_formal_white'));
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $settings->add($setting);
 
-    // Logo file setting
+    // Custom site logo setting
     $name = 'theme_formal_white/logo';
     $title = get_string('logo','theme_formal_white');
     $description = get_string('logodesc', 'theme_formal_white');
+    $default = '';
+    $setting = new admin_setting_configtext($name, $title, $description, $default, PARAM_URL);
+    $settings->add($setting);
+
+    // Custom front page site logo setting
+    $name = 'theme_formal_white/frontpagelogo';
+    $title = get_string('frontpagelogo','theme_formal_white');
+    $description = get_string('frontpagelogodesc', 'theme_formal_white');
     $default = '';
     $setting = new admin_setting_configtext($name, $title, $description, $default, PARAM_URL);
     $settings->add($setting);
@@ -48,6 +56,15 @@ if ($ADMIN->fulltree) {
     $default = '#E3DFD4';
     $previewconfig = array('selector'=>'#page-header', 'style'=>'backgroundColor');
     $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+    $settings->add($setting);
+
+    // Block region width
+    $name = 'theme_formal_white/blockcolumnwidth';
+    $title = get_string('blockcolumnwidth','theme_formal_white');
+    $description = get_string('blockcolumnwidthdesc', 'theme_formal_white');
+    $default = '200';
+    $choices = array(150=>'150px', 170=>'170px', 200=>'200px', 240=>'240px', 290=>'290px', 350=>'350px', 420=>'420px');
+    $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $settings->add($setting);
 
     // Block content background colour setting
@@ -75,15 +92,6 @@ if ($ADMIN->fulltree) {
     $default = '';
     $previewconfig = array('selector'=>'#page-content #region-post-box, #page-content #region-post', 'style'=>'backgroundColor');
     $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
-    $settings->add($setting);
-
-    // Block region width
-    $name = 'theme_formal_white/blockcolumnwidth';
-    $title = get_string('blockcolumnwidth','theme_formal_white');
-    $description = get_string('blockcolumnwidthdesc', 'theme_formal_white');
-    $default = '200';
-    $choices = array(150=>'150px', 170=>'170px', 200=>'200px', 240=>'240px', 290=>'290px', 350=>'350px', 420=>'420px');
-    $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $settings->add($setting);
 
     // Foot note setting
