@@ -87,6 +87,14 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->disabledIf('grademethod', 'attempts', 'eq', 1);
 
 //-------------------------------------------------------------------------------
+        // Grade settings
+        $this->standard_grading_coursemodule_elements();
+
+        $mform->removeElement('grade');
+        $mform->addElement('hidden', 'grade', $quizconfig->maximumgrade);
+        $mform->setType('grade', PARAM_NUMBER);
+
+//-------------------------------------------------------------------------------
         $mform->addElement('header', 'layouthdr', get_string('layout', 'quiz'));
 
     /// Shuffle questions.
@@ -281,8 +289,6 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addElement('header', 'overallfeedbackhdr', get_string('overallfeedback', 'quiz'));
         $mform->addHelpButton('overallfeedbackhdr', 'overallfeedback', 'quiz');
 
-        $mform->addElement('hidden', 'grade', $quizconfig->maximumgrade);
-        $mform->setType('grade', PARAM_RAW);
         if (empty($this->_cm)) {
             $needwarning = $quizconfig->maximumgrade == 0;
         } else {
