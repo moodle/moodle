@@ -151,11 +151,16 @@ function search_shorten_url($url, $length=30) {
 * @return the escaped string
 */
 function search_escape_string($str) {
-    global $CFG;
+    global $CFG, $db;
 
     switch ($CFG->dbfamily) {
         case 'mysql':
-            $s = mysql_real_escape_string($str);
+            if ($CFG->dbtype == 'mysqli') {
+                //ugly hack for 1.9 stable ONLY to get it to work for mysqli.
+                $s = mysqli_real_escape_string($db->_connectionID, $str);
+            } else {
+                $s = mysql_real_escape_string($str);
+            }
             break;
         case 'postgres':
             $s = pg_escape_string($str);
