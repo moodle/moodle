@@ -620,7 +620,7 @@ class quiz_statistics_report extends quiz_default_report {
                     SUM(sumgrades) AS total
                 FROM $fromqa
                 WHERE $whereqa
-                GROUP BY attempt = 1", $qaparams);
+                GROUP BY CASE WHEN attempt = 1 THEN 1 ELSE 0 END", $qaparams);
 
         if (!$attempttotals) {
             return $this->get_emtpy_stats($questions);
