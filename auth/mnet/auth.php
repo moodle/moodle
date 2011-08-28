@@ -276,6 +276,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             */
             $remoteuser->mnethostid = $remotehost->id;
             $remoteuser->firstaccess = time(); // First time user in this server, grab it here
+            $remoteuser->confirmed = 1;
 
             $remoteuser->id = $DB->insert_record('user', $remoteuser);
             $firsttime = true;

@@ -586,6 +586,7 @@ function mnet_profile_field_options() {
         'timemodified',    // will be set to relative to the host anyway
         'auth',            // going to be set to 'mnet'
         'deleted',         // we should never get deleted users sent over, but don't send this anyway
+        'confirmed',       // unconfirmed users can't log in to their home site, all remote users considered confirmed
         'password',        // no password for mnet users
         'theme',           // handled separately
         'lastip',          // will be set to relative to the host anyway
@@ -610,7 +611,6 @@ function mnet_profile_field_options() {
         'username',
         'email',
         'auth',
-        'confirmed',
         'deleted',
         'firstname',
         'lastname',
