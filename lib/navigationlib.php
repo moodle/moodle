@@ -937,6 +937,8 @@ class global_navigation extends navigation_node {
     protected $rootnodes = array();
     /** @var bool */
     protected $showemptysections = false;
+    /** @var bool */
+    protected $showcategories = null;
     /** @var array */
     protected $extendforuser = array();
     /** @var navigation_cache */
@@ -1055,14 +1057,9 @@ class global_navigation extends navigation_node {
             $limit = $CFG->navcourselimit;
         }
 
-        if (!empty($CFG->navshowcategories) && $DB->count_records('course_categories') == 1) {
-            // There is only one category so we don't want to show categories
-            $CFG->navshowcategories = false;
-        }
-
         $mycourses = enrol_get_my_courses(NULL, 'visible DESC,sortorder ASC', $limit);
         $showallcourses = (count($mycourses) == 0 || !empty($CFG->navshowallcourses));
-        $showcategories = ($showallcourses && !empty($CFG->navshowcategories));
+        $showcategories = ($showallcourses && $this->show_categories());
         $issite = ($this->page->course->id != SITEID);
         $ismycourse = (array_key_exists($this->page->course->id, $mycourses));
 
@@ -1315,6 +1312,20 @@ class global_navigation extends navigation_node {
         }
         return true;
     }
+
+    /**
+     * Returns true is courses should be shown within categories on the navigation.
+     *
+     * @return bool
+     */
+    protected function show_categories() {
+        global $CFG, $DB;
+        if ($this->showcategories === null) {
+            $this->showcategories = !empty($CFG->navshowcategories) && $DB->count_records('course_categories') > 1;
+        }
+        return $this->showcategories;
+    }
+
     /**
      * Checks the course format to see whether it wants the navigation to load
      * additional information for the course.
@@ -2137,7 +2148,7 @@ class global_navigation extends navigation_node {
         }
 
         if (!$ismycourse && !$issite && !empty($course->category)) {
-            if (!empty($CFG->navshowcategories)) {
+            if ($this->show_categories()) {
                 // We need to load the category structure for this course
                 $this->load_all_categories($course->category);
             }
