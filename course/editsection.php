@@ -54,7 +54,7 @@
     } else {
         $sectionname  = get_section_name($course->format);
         $stredit      = get_string('edit', '', " $sectionname $section->section");
-        $strsummaryof = get_string('summaryof', '', " $sectionname $form->section");
+        $strsummaryof = get_string('summaryof', '', " $sectionname $section->section");
     }
 
     print_header_simple($stredit, '', build_navigation(array(array('name' => $stredit, 'link' => null, 'type' => 'misc'))), 'theform.summary' );
