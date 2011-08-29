@@ -1189,7 +1189,7 @@ class quiz_question_bank_view extends question_bank_view {
         echo '<form method="get" action="edit.php" id="displayoptions">';
         echo "<fieldset class='invisiblefieldset'>";
         echo html_writer::input_hidden_params($this->baseurl,
-                array('recurse', 'showhidden', 'showquestiontext'));
+                array('recurse', 'showhidden', 'qbshowtext'));
         $this->display_category_form_checkbox('recurse', $recurse,
                 get_string('includesubcategories', 'question'));
         $this->display_category_form_checkbox('showhidden', $showhidden,
