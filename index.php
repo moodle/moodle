@@ -153,7 +153,13 @@
                     if (! $newsforum = forum_get_course_forum($SITE->id, 'news')) {
                         print_error('cannotfindorcreateforum', 'forum');
                     }
-                    echo html_writer::tag('a', get_string('skipa', 'access', moodle_strtolower($newsforum->name)), array('href'=>'#skipsitenews', 'class'=>'skip-block'));
+
+                    // fetch news forum context for proper filtering to happen
+                    $newsforumcm = get_coursemodule_from_instance('forum', $newsforum->id, $SITE->id, false, MUST_EXIST);
+                    $newsforumcontext = get_context_instance(CONTEXT_MODULE, $newsforumcm->id, MUST_EXIST);
+
+                    $forumname = format_string($newsforum->name, true, array('context' => $newsforumcontext));
+                    echo html_writer::tag('a', get_string('skipa', 'access', moodle_strtolower(strip_tags($forumname))), array('href'=>'#skipsitenews', 'class'=>'skip-block'));
 
                     if (isloggedin()) {
                         $SESSION->fromdiscussion = $CFG->wwwroot;
@@ -165,11 +171,11 @@
                         } else {
                             $subtext = get_string('subscribe', 'forum');
                         }
-                        echo $OUTPUT->heading($newsforum->name, 2, 'headingblock header');
+                        echo $OUTPUT->heading($forumname, 2, 'headingblock header');
                         $suburl = new moodle_url('/mod/forum/subscribe.php', array('id' => $newsforum->id, 'sesskey' => sesskey()));
                         echo html_writer::tag('div', html_writer::link($suburl, $subtext), array('class' => 'subscribelink'));
                     } else {
-                        echo $OUTPUT->heading($newsforum->name, 2, 'headingblock header');
+                        echo $OUTPUT->heading($forumname, 2, 'headingblock header');
                     }
 
                     forum_print_latest_discussions($SITE, $newsforum, $SITE->newsitems, 'plain', 'p.modified DESC');
