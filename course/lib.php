@@ -3027,19 +3027,33 @@ function moveto_module($mod, $section, $beforemod=NULL) {
     return true;
 }
 
-function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-1, $section=-1) {
-    global $CFG, $USER, $DB, $OUTPUT;
+/**
+ * Produces the editing buttons for a module
+ *
+ * @global core_renderer $OUTPUT
+ * @staticvar type $str
+ * @param stdClass $mod The module to produce editing buttons for
+ * @param bool $absolute If true an absolute link is produced (default true)
+ * @param bool $moveselect If true a move seleciton process is used (default true)
+ * @param int $indent The current indenting
+ * @param int $section The section to link back to
+ * @return string XHTML for the editing buttons
+ */
+function make_editing_buttons(stdClass $mod, $absolute = true, $moveselect = true, $indent=-1, $section=-1) {
+    global $CFG, $OUTPUT;
 
     static $str;
-    static $sesskey;
 
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $mod->course);
     $modcontext = get_context_instance(CONTEXT_MODULE, $mod->id);
+
     // no permission to edit
     if (!has_capability('moodle/course:manageactivities', $modcontext)) {
         return false;
     }
 
     if (!isset($str)) {
+        $str = new stdClass;
         $str->assign         = get_string("assignroles", 'role');
         $str->delete         = get_string("delete");
         $str->move           = get_string("move");
@@ -3056,89 +3070,21 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
         $str->groupsnone     = get_string("groupsnone");
         $str->groupsseparate = get_string("groupsseparate");
         $str->groupsvisible  = get_string("groupsvisible");
-        $sesskey = sesskey();
-    }
-
-    if ($section >= 0) {
-        $section = '&amp;sr='.$section;   // Section return
-    } else {
-        $section = '';
     }
 
     if ($absolute) {
-        $path = $CFG->wwwroot.'/course';
+        $baseurl = new moodle_url('/course/mod.php', array('sesskey' => sesskey()));
     } else {
-        $path = '.';
-    }
-    if (has_capability('moodle/course:activityvisibility', $modcontext)) {
-        if ($mod->visible) {
-            $hideshow = '<a class="editing_hide" title="'.$str->hide.'" href="'.$path.'/mod.php?hide='.$mod->id.
-                        '&amp;sesskey='.$sesskey.$section.'"><img'.
-                        ' src="'.$OUTPUT->pix_url('t/hide') . '" class="iconsmall" '.
-                        ' alt="'.$str->hide.'" /></a>'."\n";
-        } else {
-            $hideshow = '<a class="editing_show" title="'.$str->show.'" href="'.$path.'/mod.php?show='.$mod->id.
-                        '&amp;sesskey='.$sesskey.$section.'"><img'.
-                        ' src="'.$OUTPUT->pix_url('t/show') . '" class="iconsmall" '.
-                        ' alt="'.$str->show.'" /></a>'."\n";
-        }
-    } else {
-        $hideshow = '';
+        $baseurl = new moodle_url('mod.php', array('sesskey' => sesskey()));
     }
 
-    if ($mod->groupmode !== false) {
-        if ($mod->groupmode == SEPARATEGROUPS) {
-            $grouptitle = $str->groupsseparate;
-            $groupclass = 'editing_groupsseparate';
-            $groupimage = $OUTPUT->pix_url('t/groups') . '';
-            $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=0&amp;sesskey='.$sesskey;
-        } else if ($mod->groupmode == VISIBLEGROUPS) {
-            $grouptitle = $str->groupsvisible;
-            $groupclass = 'editing_groupsvisible';
-            $groupimage = $OUTPUT->pix_url('t/groupv') . '';
-            $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=1&amp;sesskey='.$sesskey;
-        } else {
-            $grouptitle = $str->groupsnone;
-            $groupclass = 'editing_groupsnone';
-            $groupimage = $OUTPUT->pix_url('t/groupn') . '';
-            $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=2&amp;sesskey='.$sesskey;
-        }
-        if ($mod->groupmodelink) {
-            $groupmode = '<a class="'.$groupclass.'" title="'.$grouptitle.' ('.$str->clicktochange.')" href="'.$grouplink.'">'.
-                         '<img src="'.$groupimage.'" class="iconsmall" '.
-                         'alt="'.$grouptitle.'" /></a>';
-        } else {
-            $groupmode = '<img title="'.$grouptitle.' ('.$str->forcedmode.')" '.
-                         ' src="'.$groupimage.'" class="iconsmall" '.
-                         'alt="'.$grouptitle.'" />';
-        }
-    } else {
-        $groupmode = "";
+    if ($section >= 0) {
+        $baseurl->param('sr', $section);
     }
+    $actions = array();
 
-    if (has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $mod->course))) {
-        if ($moveselect) {
-            $move =     '<a class="editing_move" title="'.$str->move.'" href="'.$path.'/mod.php?copy='.$mod->id.
-                        '&amp;sesskey='.$sesskey.$section.'"><img'.
-                        ' src="'.$OUTPUT->pix_url('t/move') . '" class="iconsmall" '.
-                        ' alt="'.$str->move.'" /></a>'."\n";
-        } else {
-            $move =     '<a class="editing_moveup" title="'.$str->moveup.'" href="'.$path.'/mod.php?id='.$mod->id.
-                        '&amp;move=-1&amp;sesskey='.$sesskey.$section.'"><img'.
-                        ' src="'.$OUTPUT->pix_url('t/up') . '" class="iconsmall" '.
-                        ' alt="'.$str->moveup.'" /></a>'."\n".
-                        '<a class="editing_movedown" title="'.$str->movedown.'" href="'.$path.'/mod.php?id='.$mod->id.
-                        '&amp;move=1&amp;sesskey='.$sesskey.$section.'"><img'.
-                        ' src="'.$OUTPUT->pix_url('t/down') . '" class="iconsmall" '.
-                        ' alt="'.$str->movedown.'" /></a>'."\n";
-        }
-    } else {
-        $move = '';
-    }
-
-    $leftright = '';
-    if (has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $mod->course))) {
-
+    // leftright
+    if (has_capability('moodle/course:update', $coursecontext)) {
         if (right_to_left()) {   // Exchange arrows on RTL
             $rightarrow = 't/left';
             $leftarrow  = 't/right';
@@ -3148,39 +3094,141 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
         }
 
         if ($indent > 0) {
-            $leftright .= '<a class="editing_moveleft" title="'.$str->moveleft.'" href="'.$path.'/mod.php?id='.$mod->id.
-                        '&amp;indent=-1&amp;sesskey='.$sesskey.$section.'"><img'.
-                        ' src="'.$OUTPUT->pix_url($leftarrow).'" class="iconsmall" '.
-                        ' alt="'.$str->moveleft.'" /></a>'."\n";
+            $actions[] = new action_link(
+                new moodle_url($baseurl, array('id' => $mod->id, 'indent' => '-1')),
+                new pix_icon($leftarrow, $str->moveleft, 'moodle', array('class' => 'iconsmall')),
+                null,
+                array('class' => 'editing_moveleft', 'title' => $str->moveleft)
+            );
         }
         if ($indent >= 0) {
-            $leftright .= '<a class="editing_moveright" title="'.$str->moveright.'" href="'.$path.'/mod.php?id='.$mod->id.
-                        '&amp;indent=1&amp;sesskey='.$sesskey.$section.'"><img'.
-                        ' src="'.$OUTPUT->pix_url($rightarrow).'" class="iconsmall" '.
-                        ' alt="'.$str->moveright.'" /></a>'."\n";
+            $actions[] = new action_link(
+                new moodle_url($baseurl, array('id' => $mod->id, 'indent' => '1')),
+                new pix_icon($rightarrow, $str->moveright, 'moodle', array('class' => 'iconsmall')),
+                null,
+                array('class' => 'editing_moveright', 'title' => $str->moveright)
+            );
         }
     }
-    if (has_capability('moodle/course:managegroups', $modcontext)){
-        $context = get_context_instance(CONTEXT_MODULE, $mod->id);
-        $assign = '<a class="editing_assign" title="'.$str->assign.'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.
-            $context->id.'"><img src="'.$OUTPUT->pix_url('i/roles') . '" alt="'.$str->assign.'" class="iconsmall"/></a>';
-    } else {
-        $assign = '';
+
+    // move
+    if (has_capability('moodle/course:update', $coursecontext)) {
+        if ($moveselect) {
+            $actions[] = new action_link(
+                new moodle_url($baseurl, array('copy' => $mod->id)),
+                new pix_icon('t/move', $str->move, 'moodle', array('class' => 'iconsmall')),
+                null,
+                array('class' => 'editing_move', 'title' => $str->move)
+            );
+        } else {
+            $actions[] = new action_link(
+                new moodle_url($baseurl, array('id' => $mod->id, 'move' => '-1')),
+                new pix_icon('t/up', $str->moveup, 'moodle', array('class' => 'iconsmall')),
+                null,
+                array('class' => 'editing_moveup', 'title' => $str->moveup)
+            );
+            $actions[] = new action_link(
+                new moodle_url($baseurl, array('id' => $mod->id, 'move' => '1')),
+                new pix_icon('t/down', $str->movedown, 'moodle', array('class' => 'iconsmall')),
+                null,
+                array('class' => 'editing_movedown', 'title' => $str->movedown)
+            );
+        }
     }
 
-    return '<span class="commands">'."\n".$leftright.$move.
-           '<a class="editing_update" title="'.$str->update.'" href="'.$path.'/mod.php?update='.$mod->id.
-           '&amp;sesskey='.$sesskey.$section.'"><img'.
-           ' src="'.$OUTPUT->pix_url('t/edit') . '" class="iconsmall" '.
-           ' alt="'.$str->update.'" /></a>'."\n".
-           '<a class="editing_duplicate" title="'.$str->duplicate.'" href="'.$path.'/mod.php?duplicate='.$mod->id.
-           '&amp;sesskey='.$sesskey.$section.'"><img'.
-           ' src="'.$OUTPUT->pix_url('t/copy') . '" class="iconsmall" '.
-           ' alt="'.$str->duplicate.'" /></a>'."\n".
-           '<a class="editing_delete" title="'.$str->delete.'" href="'.$path.'/mod.php?delete='.$mod->id.
-           '&amp;sesskey='.$sesskey.$section.'"><img'.
-           ' src="'.$OUTPUT->pix_url('t/delete') . '" class="iconsmall" '.
-           ' alt="'.$str->delete.'" /></a>'."\n".$hideshow.$groupmode."\n".$assign.'</span>';
+    // Update
+    $actions[] = new action_link(
+        new moodle_url($baseurl, array('update' => $mod->id)),
+        new pix_icon('t/edit', $str->update, 'moodle', array('class' => 'iconsmall')),
+        null,
+        array('class' => 'editing_update', 'title' => $str->update)
+    );
+
+    // Duplicate
+    $actions[] = new action_link(
+        new moodle_url($baseurl, array('duplicate' => $mod->id)),
+        new pix_icon('t/copy', $str->duplicate, 'moodle', array('class' => 'iconsmall')),
+        null,
+        array('class' => 'editing_duplicate', 'title' => $str->duplicate)
+    );
+
+    // Delete
+    $actions[] = new action_link(
+        new moodle_url($baseurl, array('delete' => $mod->id)),
+        new pix_icon('t/delete', $str->delete, 'moodle', array('class' => 'iconsmall')),
+        null,
+        array('class' => 'editing_delete', 'title' => $str->delete)
+    );
+
+    // hideshow
+    if (has_capability('moodle/course:activityvisibility', $modcontext)) {
+        if ($mod->visible) {
+            $actions[] = new action_link(
+                new moodle_url($baseurl, array('hide' => $mod->id)),
+                new pix_icon('t/hide', $str->hide, 'moodle', array('class' => 'iconsmall')),
+                null,
+                array('class' => 'editing_hide', 'title' => $str->hide)
+            );
+        } else {
+            $actions[] = new action_link(
+                new moodle_url($baseurl, array('show' => $mod->id)),
+                new pix_icon('t/show', $str->show, 'moodle', array('class' => 'iconsmall')),
+                null,
+                array('class' => 'editing_show', 'title' => $str->show)
+            );
+        }
+    }
+
+    // groupmode
+    if ($mod->groupmode !== false) {
+        if ($mod->groupmode == SEPARATEGROUPS) {
+            $groupmode = 0;
+            $grouptitle = $str->groupsseparate;
+            $groupclass = 'editing_groupsseparate';
+            $groupimage = 't/groups';
+        } else if ($mod->groupmode == VISIBLEGROUPS) {
+            $groupmode = 1;
+            $grouptitle = $str->groupsvisible;
+            $groupclass = 'editing_groupsvisible';
+            $groupimage = 't/groupv';
+        } else {
+            $groupmode = 2;
+            $grouptitle = $str->groupsnone;
+            $groupclass = 'editing_groupsnone';
+            $groupimage = 't/groupn';
+        }
+        if ($mod->groupmodelink) {
+            $actions[] = new action_link(
+                new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $groupmode)),
+                new pix_icon($groupimage, $grouptitle, 'moodle', array('class' => 'iconsmall')),
+                null,
+                array('class' => $groupclass, 'title' => $grouptitle.' ('.$str->clicktochange.')')
+            );
+        } else {
+            $actions[] = new pix_icon($groupimage, $grouptitle, 'moodle', array('title' => $grouptitle.' ('.$str->forcedmode.')', 'class' => 'iconsmall'));
+        }
+    }
+
+    // Assign
+    if (has_capability('moodle/course:managegroups', $modcontext)){
+        $actions[] = new action_link(
+            new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid' => $modcontext->id)),
+            new pix_icon('i/roles', $str->assign, 'moodle', array('class' => 'iconsmall')),
+            null,
+            array('class' => 'editing_assign', 'title' => $str->assign)
+        );
+    }
+
+    $output = html_writer::start_tag('span', array('class' => 'commands'));
+    foreach ($actions as $action) {
+        if ($action instanceof renderable) {
+            $output .= $OUTPUT->render($action);
+        } else {
+            $output .= $action;
+        }
+    }
+    $output .= html_writer::end_tag('span');
+    return $output;
 }
 
 /**
