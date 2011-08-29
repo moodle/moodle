@@ -21,7 +21,7 @@ function formal_white_user_settings($css, $theme) {
 
     // Set the page header background color
     if (empty($theme->settings->headerbgc)) {
-        $headerbgc = '#E3DFD4'; // default 
+        $headerbgc = '#E3DFD4'; // default
     } else {
         $headerbgc = $theme->settings->headerbgc;
     }
@@ -125,4 +125,3 @@ function formal_white_set_customcss($css, $customcss) {
     $css = str_replace($tag, $customcss, $css);
     return $css;
 }
-

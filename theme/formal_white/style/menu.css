@@ -101,11 +101,11 @@ div.yui3-menu-content {
 
 /* cancellazione della bordatura superiore alla lista delle voci di menu */
 .yui3-skin-sam .yui3-menu .yui3-menu {
-	border-top:none;
-	padding-left:-1px;
-	border-right:1px #CCC solid;
-	border-bottom:1px #CCC solid;
-	border-left:1px #CCC solid;
+    border-top:none;
+    padding-left:-1px;
+    border-right:1px #CCC solid;
+    border-bottom:1px #CCC solid;
+    border-left:1px #CCC solid;
 }
 
 /* color of selected item in FF */
