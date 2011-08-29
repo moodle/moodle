@@ -142,7 +142,7 @@ global $CFG;
            `visible` tinyint(1) not null default '0',
            `configdata` text not null default '',
            PRIMARY KEY(`id`)
-          ) TYPE=MyISAM;");
+          ) ENGINE=MyISAM;");
     }
     
     if ($oldversion < 2005090200) {

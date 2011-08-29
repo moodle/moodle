@@ -563,7 +563,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         switch (strtolower($CFG->dbfamily)) {
             case 'mysql':
                 $droptablesql[] = 'DROP TEMPORARY TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)
-                $createtemptablesql = 'CREATE TEMPORARY TABLE ' . $temptable . ' (username VARCHAR(64), PRIMARY KEY (username)) TYPE=MyISAM';
+                $createtemptablesql = 'CREATE TEMPORARY TABLE ' . $temptable . ' (username VARCHAR(64), PRIMARY KEY (username)) ENGINE=MyISAM';
                 break;
             case 'postgres':
                 $droptablesql[] = 'DROP TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)

@@ -66,7 +66,7 @@ function backup_upgrade($oldversion=0) {
                       `value` varchar(255) NOT NULL default '',
                       PRIMARY KEY  (`id`),
                       UNIQUE KEY `name` (`name`)
-                  ) TYPE=MyISAM COMMENT='To store backup configuration variables'");
+                  ) ENGINE=MyISAM COMMENT='To store backup configuration variables'");
     }
 
     if ($oldversion < 2003120800 and $result) {
@@ -79,7 +79,7 @@ function backup_upgrade($oldversion=0) {
                       `nextstarttime` int(10) unsigned NOT NULL default '0',
                       PRIMARY KEY  (`id`),
                       UNIQUE KEY `courseid` (`courseid`)
-                  ) TYPE=MyISAM COMMENT='To store every course backup status'");
+                  ) ENGINE=MyISAM COMMENT='To store every course backup status'");
 
         if ($result) {
             $result = execute_sql("CREATE TABLE `{$CFG->prefix}backup_log` (    
@@ -89,7 +89,7 @@ function backup_upgrade($oldversion=0) {
                           `laststarttime` int(10) unsigned NOT NULL default '0',
                           `info` varchar(255) NOT NULL default '',
                           PRIMARY KEY  (`id`)
-                      ) TYPE=MyISAM COMMENT='To store every course backup log info'");
+                      ) ENGINE=MyISAM COMMENT='To store every course backup log info'");
         }
     }
 
@@ -105,7 +105,7 @@ function backup_upgrade($oldversion=0) {
                           `new_id` int(10) unsigned NOT NULL default '0',
                           PRIMARY KEY  (`id`),
                           UNIQUE KEY `{$CFG->prefix}backup_files_uk` (`backup_code`,`file_type`,`path`)
-                      ) TYPE=MyISAM COMMENT='To store and recode ids to user and course files.'");
+                      ) ENGINE=MyISAM COMMENT='To store and recode ids to user and course files.'");
         }
         if ($result) {
             $result = execute_sql("DROP TABLE {$CFG->prefix}backup_ids");
@@ -120,7 +120,7 @@ function backup_upgrade($oldversion=0) {
                           `info` mediumtext,
                           PRIMARY KEY  (`id`),
                           UNIQUE KEY `{$CFG->prefix}backup_ids_uk` (`backup_code` ,`table_name`,`old_id`)
-                      ) TYPE=MyISAM COMMENT='To store and convert ids in backup/restore'");
+                      ) ENGINE=MyISAM COMMENT='To store and convert ids in backup/restore'");
         }
     }
 

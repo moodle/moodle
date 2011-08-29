@@ -129,7 +129,7 @@ function forum_upgrade($oldversion) {
                                 PRIMARY KEY  (`id`),
                                 KEY `user` (userid),
                                 KEY `post` (postid)
-                              ) TYPE=MyISAM COMMENT='For keeping track of posts that will be mailed in digest form';");
+                              ) ENGINE=MyISAM COMMENT='For keeping track of posts that will be mailed in digest form';");
   }
 
   if ($oldversion < 2004070700) {    // This may be redoing it from STABLE but that's OK

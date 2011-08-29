@@ -110,7 +110,7 @@ function quiz_upgrade($oldversion) {
                                `max` varchar(255) NOT NULL default '',
                                PRIMARY KEY  (`id`),
                                KEY `answer` (`answer`)
-                             ) TYPE=MyISAM COMMENT='Options for numerical questions'; ");
+                             ) ENGINE=MyISAM COMMENT='Options for numerical questions'; ");
     }
 
     if ($success && $oldversion < 2003072400) {
@@ -127,7 +127,7 @@ function quiz_upgrade($oldversion) {
                                 `norm` int(10) unsigned NOT NULL default '1',
                                 PRIMARY KEY  (`id`),
                                 KEY `question` (`question`)
-                              ) TYPE=MyISAM COMMENT='Options for multianswer questions'; ");
+                              ) ENGINE=MyISAM COMMENT='Options for multianswer questions'; ");
     }
 
     if ($success && $oldversion < 2003080301) {
@@ -224,7 +224,7 @@ function quiz_upgrade($oldversion) {
                                `multiplier` decimal(40,20) NOT NULL default '1.00000000000000000000',
                                `unit` varchar(50) NOT NULL default '',
                                PRIMARY KEY  (`id`)
-                ) TYPE=MyISAM COMMENT='Optional unit options for numerical questions'; ");
+                ) ENGINE=MyISAM COMMENT='Optional unit options for numerical questions'; ");
 
         // Four tables for handling distribution and storage of
         // individual data for dataset dependent question types
@@ -235,7 +235,7 @@ function quiz_upgrade($oldversion) {
                                `datasetnumber` int(10) unsigned NOT NULL default '0',
                                PRIMARY KEY  (`id`),
                                UNIQUE KEY `category` (`category`,`userid`)
-            ) TYPE=MyISAM COMMENT='Dataset number for attemptonlast attempts per user'; ");
+            ) ENGINE=MyISAM COMMENT='Dataset number for attemptonlast attempts per user'; ");
         $success = $success && modify_database ("", " CREATE TABLE `prefix_quiz_dataset_definitions` (
                                `id` int(10) unsigned NOT NULL auto_increment,
                                `category` int(10) unsigned NOT NULL default '0',
@@ -244,7 +244,7 @@ function quiz_upgrade($oldversion) {
                                `options` varchar(255) NOT NULL default '',
                                `itemcount` int(10) unsigned NOT NULL default '0',
                                PRIMARY KEY  (`id`)
-            ) TYPE=MyISAM COMMENT='Organises and stores properties for dataset items'; ");
+            ) ENGINE=MyISAM COMMENT='Organises and stores properties for dataset items'; ");
         $success = $success && modify_database ("", " CREATE TABLE `prefix_quiz_dataset_items` (
                                `id` int(10) unsigned NOT NULL auto_increment,
                                `definition` int(10) unsigned NOT NULL default '0',
@@ -252,14 +252,14 @@ function quiz_upgrade($oldversion) {
                                `value` varchar(255) NOT NULL default '',
                                PRIMARY KEY  (`id`),
                                KEY `definition` (`definition`)
-                             ) TYPE=MyISAM COMMENT='Individual dataset items'; ");
+                             ) ENGINE=MyISAM COMMENT='Individual dataset items'; ");
         $success = $success && modify_database ("", " CREATE TABLE `prefix_quiz_question_datasets` (
                                `id` int(10) unsigned NOT NULL auto_increment,
                                `question` int(10) unsigned NOT NULL default '0',
                                `datasetdefinition` int(10) unsigned NOT NULL default '0',
                                PRIMARY KEY  (`id`),
                                KEY `question` (`question`,`datasetdefinition`)
-            ) TYPE=MyISAM COMMENT='Many-many relation between questions and dataset definitions'; ");
+            ) ENGINE=MyISAM COMMENT='Many-many relation between questions and dataset definitions'; ");
 
         // One table for new question type calculated
         //  - the first dataset dependent question type
@@ -272,7 +272,7 @@ function quiz_upgrade($oldversion) {
                                `correctanswerlength` int(10) NOT NULL default '2',
                                PRIMARY KEY  (`id`),
                                KEY `question` (`question`)
-                ) TYPE=MyISAM COMMENT='Options for questions of type calculated'; ");
+                ) ENGINE=MyISAM COMMENT='Options for questions of type calculated'; ");
     }
 
     if ($success && $oldversion < 2004111400) {
@@ -333,7 +333,7 @@ function quiz_upgrade($oldversion) {
                               `userid` int(10) unsigned NOT NULL default '0',
                               `timestamp` int(10) unsigned NOT NULL default '0',
                               PRIMARY KEY  (`id`)
-                            ) TYPE=MyISAM COMMENT='The mapping between old and new versions of a question';");
+                            ) ENGINE=MyISAM COMMENT='The mapping between old and new versions of a question';");
     }
 
     if ($success && $oldversion < 2005032000) {
@@ -471,7 +471,7 @@ function quiz_upgrade($oldversion) {
                              `sumpenalty` varchar(10) NOT NULL default '0.0',
                              PRIMARY KEY  (`id`),
                              UNIQUE KEY `attemptid` (`attemptid`,`questionid`)
-                           ) TYPE=MyISAM COMMENT='Gives ids of the newest open and newest graded states';");
+                           ) ENGINE=MyISAM COMMENT='Gives ids of the newest open and newest graded states';");
 
     /// Now upgrade some fields in states and newest_states tables where necessary
         // to save time on large sites only do this for attempts that have not yet been finished.
@@ -525,7 +525,7 @@ function quiz_upgrade($oldversion) {
                               `maxscore` int(10) unsigned NOT NULL default '1',
                               PRIMARY KEY  (`id`),
                               KEY `question` (`question`)
-                              ) TYPE=MyISAM COMMENT='Options for RQP questions';");
+                              ) ENGINE=MyISAM COMMENT='Options for RQP questions';");
 
         $success = $success && modify_database ('', "CREATE TABLE `prefix_quiz_rqp_type` (
                               `id` int(10) unsigned NOT NULL auto_increment,
@@ -535,7 +535,7 @@ function quiz_upgrade($oldversion) {
                               `flags` tinyint(3) NOT NULL default '0',
                               PRIMARY KEY  (`id`),
                               UNIQUE KEY `name` (`name`)
-                              ) TYPE=MyISAM COMMENT='RQP question types and the servers to be used to process them';");
+                              ) ENGINE=MyISAM COMMENT='RQP question types and the servers to be used to process them';");
 
         $success = $success && modify_database ('', "CREATE TABLE `prefix_quiz_rqp_states` (
                               `id` int(10) unsigned NOT NULL auto_increment,
@@ -544,7 +544,7 @@ function quiz_upgrade($oldversion) {
                               `persistent_data` text NOT NULL default '',
                               `template_vars` text NOT NULL default '',
                               PRIMARY KEY  (`id`)
-                              ) TYPE=MyISAM COMMENT='RQP question type specific state information';");
+                              ) ENGINE=MyISAM COMMENT='RQP question type specific state information';");
     }
 
     if ($success && $oldversion < 2005050300) {
@@ -568,7 +568,7 @@ function quiz_upgrade($oldversion) {
                       can_render tinyint(2) unsigned NOT NULL default '0',
                       can_author tinyint(2) unsigned NOT NULL default '0',
                       PRIMARY KEY  (id)
-                    ) TYPE=MyISAM COMMENT='Information about RQP servers';");
+                    ) ENGINE=MyISAM COMMENT='Information about RQP servers';");
         if ($types = get_records('quiz_rqp_types')) {
             foreach($types as $type) {
                 $server = new stdClass;
@@ -859,7 +859,7 @@ function quiz_upgrade($oldversion) {
                 `answer` varchar(255) NOT NULL default '',
                 PRIMARY KEY  (`id`),
                 KEY `question` (`question`)
-           ) TYPE=MyISAM COMMENT='Options for essay questions'");
+           ) ENGINE=MyISAM COMMENT='Options for essay questions'");
     
         $success = $success && modify_database ('', "
             CREATE TABLE `prefix_quiz_essay_states` (
@@ -869,7 +869,7 @@ function quiz_upgrade($oldversion) {
               `fraction` varchar(10) NOT NULL default '0.0',
               `response` text NOT NULL,
               PRIMARY KEY  (`id`)
-            ) TYPE=MyISAM COMMENT='essay question type specific state information'");
+            ) ENGINE=MyISAM COMMENT='essay question type specific state information'");
     }
 
     if ($success && $oldversion < 2005070202) {
@@ -1058,7 +1058,7 @@ function quiz_upgrade($oldversion) {
                                       id int(10) unsigned NOT NULL auto_increment,
                                       modulename varchar(20) NOT NULL default 'quiz',
                                       PRIMARY KEY  (id)
-                                    ) TYPE=MyISAM COMMENT='Student attempts. This table gets extended by the modules';");
+                                    ) ENGINE=MyISAM COMMENT='Student attempts. This table gets extended by the modules';");
             // create one entry for all the existing quiz attempts
             $success = $success && modify_database ("", "INSERT INTO prefix_question_attempts (id)
                                        SELECT uniqueid
@@ -1134,7 +1134,7 @@ function quiz_upgrade($oldversion) {
                 maxgrade double NOT NULL default '0',
                 PRIMARY KEY (id),
                 KEY quizid (quizid)
-            ) TYPE=MyISAM COMMENT='Feedback given to students based on their overall score on the test';
+            ) ENGINE=MyISAM COMMENT='Feedback given to students based on their overall score on the test';
         ");
     
         $success = $success && execute_sql("

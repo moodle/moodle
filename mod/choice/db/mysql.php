@@ -70,7 +70,7 @@ function choice_upgrade($oldversion) {
                              PRIMARY KEY  (id), 
                              UNIQUE KEY id (id), 
                              KEY choiceid (choiceid)
-                         ) TYPE=MyISAM;")) {
+                         ) ENGINE=MyISAM;")) {
     
             table_column('choice_answers', 'choice', 'choiceid', 'integer', '10', 'unsigned', 0, 'not null');
             table_column('choice_answers', 'answer', 'optionid', 'integer', '10', 'unsigned', 0, 'not null');

@@ -254,7 +254,7 @@ function main_upgrade($oldversion=0) {
                              `userid` int(10) unsigned NOT NULL default '0',
                              PRIMARY KEY  (`id`),
                              UNIQUE KEY `id` (`id`)
-                             ) TYPE=MyISAM COMMENT='One record per course creator';");
+                             ) ENGINE=MyISAM COMMENT='One record per course creator';");
     }
     if ($oldversion < 2003032602) {
         // Redoing it because of no prefix last time
@@ -362,7 +362,7 @@ function main_upgrade($oldversion=0) {
                         PRIMARY KEY  (`id`),
                         UNIQUE KEY `id` (`id`),
                         KEY `courseuserid` (course,userid)
-                     ) TYPE=MyISAM COMMENT='Stores info about how to display the course'");
+                     ) ENGINE=MyISAM COMMENT='Stores info about how to display the course'");
     }
 
     if ($oldversion < 2003050400) {
@@ -458,7 +458,7 @@ function main_upgrade($oldversion=0) {
                          `description` text NOT NULL,
                          `timemodified` int(10) unsigned NOT NULL default '0',
                          PRIMARY KEY  (id)
-                       ) TYPE=MyISAM COMMENT='Defines grading scales'");
+                       ) ENGINE=MyISAM COMMENT='Defines grading scales'");
 
     }
 
@@ -558,7 +558,7 @@ function main_upgrade($oldversion=0) {
                                 `timemodified` int(10) unsigned NOT NULL default '0',
                                 PRIMARY KEY  (`id`),
                                 KEY `courseid` (`courseid`)
-                              ) TYPE=MyISAM COMMENT='Each record is a group in a course.'; ");
+                              ) ENGINE=MyISAM COMMENT='Each record is a group in a course.'; ");
 
         modify_database("", "CREATE TABLE `prefix_groups_members` (
                                 `id` int(10) unsigned NOT NULL auto_increment,
@@ -567,7 +567,7 @@ function main_upgrade($oldversion=0) {
                                 `timeadded` int(10) unsigned NOT NULL default '0',
                                 PRIMARY KEY  (`id`),
                                 KEY `groupid` (`groupid`)
-                              ) TYPE=MyISAM COMMENT='Lists memberships of users in groups'; ");
+                              ) ENGINE=MyISAM COMMENT='Lists memberships of users in groups'; ");
     }
 
     if ($oldversion < 2003121800) {
@@ -601,7 +601,7 @@ function main_upgrade($oldversion=0) {
                               UNIQUE KEY `id` (`id`),
                               KEY `courseid` (`courseid`),
                               KEY `userid` (`userid`)
-                            ) TYPE=MyISAM COMMENT='For everything with a time associated to it'; ");
+                            ) ENGINE=MyISAM COMMENT='For everything with a time associated to it'; ");
     }
 
     if ($oldversion < 2004012800) {
@@ -613,7 +613,7 @@ function main_upgrade($oldversion=0) {
                               PRIMARY KEY  (`id`),
                               UNIQUE KEY `id` (`id`),
                               KEY `useridname` (userid,name)
-                            ) TYPE=MyISAM COMMENT='Allows modules to store arbitrary user preferences'; ");
+                            ) ENGINE=MyISAM COMMENT='Allows modules to store arbitrary user preferences'; ");
     }
 
     if ($oldversion < 2004012900) {
@@ -637,7 +637,7 @@ function main_upgrade($oldversion=0) {
                                 `timemodified` int(10) unsigned NOT NULL default '0',
                                 PRIMARY KEY  (`id`),
                                 KEY `md5key` (`md5key`)
-                             ) TYPE=MyISAM COMMENT='For storing temporary copies of processed texts';");
+                             ) ENGINE=MyISAM COMMENT='For storing temporary copies of processed texts';");
     }
 
     if ($oldversion < 2004021000) {
@@ -667,7 +667,7 @@ function main_upgrade($oldversion=0) {
                                 `timemodified` int(10) unsigned NOT NULL default '0',
                                 PRIMARY KEY  (`id`),
                                 KEY `filtermd5key` (filter,md5key)
-                              ) TYPE=MyISAM COMMENT='For keeping information about cached data';");
+                              ) ENGINE=MyISAM COMMENT='For keeping information about cached data';");
     }
 
     if ($oldversion < 2004021500) {
@@ -865,7 +865,7 @@ function main_upgrade($oldversion=0) {
                           `data` text NOT null,
                           PRIMARY KEY (`sesskey`), 
                           KEY (`expiry`) 
-                      ) TYPE=MyISAM COMMENT='Optional database session storage, not used by default';");
+                      ) ENGINE=MyISAM COMMENT='Optional database session storage, not used by default';");
     }
 
     if ($oldversion < 2004111500) {  // Update any users/courses using wrongly-named lang pack
@@ -1043,7 +1043,7 @@ function main_upgrade($oldversion=0) {
                                PRIMARY KEY  (`id`),
                                KEY `useridfrom` (`useridfrom`),
                                KEY `useridto` (`useridto`)
-                             ) TYPE=MyISAM COMMENT='Stores all unread messages';");
+                             ) ENGINE=MyISAM COMMENT='Stores all unread messages';");
 
         modify_database('',"CREATE TABLE `prefix_message_read` (
                                `id` int(10) unsigned NOT NULL auto_increment,
@@ -1057,7 +1057,7 @@ function main_upgrade($oldversion=0) {
                                PRIMARY KEY  (`id`),
                                KEY `useridfrom` (`useridfrom`),
                                KEY `useridto` (`useridto`)
-                             ) TYPE=MyISAM COMMENT='Stores all messages that have been read';");
+                             ) ENGINE=MyISAM COMMENT='Stores all messages that have been read';");
 
         modify_database('',"CREATE TABLE `prefix_message_contacts` (
                                `id` int(10) unsigned NOT NULL auto_increment,
@@ -1066,7 +1066,7 @@ function main_upgrade($oldversion=0) {
                                `blocked` tinyint(1) unsigned NOT NULL default '0',
                                PRIMARY KEY  (`id`),
                                UNIQUE KEY `usercontact` (`userid`,`contactid`)
-                             ) TYPE=MyISAM COMMENT='Maintains lists of relationships between users';");
+                             ) ENGINE=MyISAM COMMENT='Maintains lists of relationships between users';");
 
         modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'write', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
         modify_database('', "INSERT INTO prefix_log_display (module, action, mtable, field) VALUES ('message', 'read', 'user', 'CONCAT(firstname,\" \",lastname)'); ");
@@ -1243,7 +1243,7 @@ function main_upgrade($oldversion=0) {
                               `std_skipweeks` tinyint(3) NOT NULL default '0',
                               `std_time` varchar(5) NOT NULL default '00:00',
                               PRIMARY KEY (`id`)
-                            ) TYPE=MyISAM COMMENT='Rules for calculating local wall clock time for users';");
+                            ) ENGINE=MyISAM COMMENT='Rules for calculating local wall clock time for users';");
     }
 
     if ($oldversion < 2005032800) {
@@ -1257,7 +1257,7 @@ function main_upgrade($oldversion=0) {
             `weight` decimal(4,2) NOT NULL default '0.00',
             PRIMARY KEY  (`id`),
             KEY `courseid` (`courseid`)
-          ) TYPE=MyISAM ;");
+          ) ENGINE=MyISAM ;");
 
         execute_sql("CREATE TABLE `{$CFG->prefix}grade_exceptions` (
             `id` int(10) unsigned NOT NULL auto_increment,
@@ -1266,7 +1266,7 @@ function main_upgrade($oldversion=0) {
             `userid` int(10) unsigned NOT NULL default '0',
             PRIMARY KEY  (`id`),
             KEY `courseid` (`courseid`)
-          ) TYPE=MyISAM ;");
+          ) ENGINE=MyISAM ;");
 
 
         execute_sql("CREATE TABLE `{$CFG->prefix}grade_item` (
@@ -1280,7 +1280,7 @@ function main_upgrade($oldversion=0) {
             `sort_order` int(10) unsigned NOT NULL default '0',
             PRIMARY KEY  (`id`),
             KEY `courseid` (`courseid`)
-          ) TYPE=MyISAM ;");
+          ) ENGINE=MyISAM ;");
 
 
         execute_sql("CREATE TABLE `{$CFG->prefix}grade_letter` (
@@ -1291,7 +1291,7 @@ function main_upgrade($oldversion=0) {
             `grade_low` decimal(4,2) NOT NULL default '0.00',
             PRIMARY KEY  (`id`),
             KEY `courseid` (`courseid`)
-          ) TYPE=MyISAM ;");
+          ) ENGINE=MyISAM ;");
           
 
         execute_sql("CREATE TABLE `{$CFG->prefix}grade_preferences` (
@@ -1301,7 +1301,7 @@ function main_upgrade($oldversion=0) {
             `value` int(10) NOT NULL default '0',
             PRIMARY KEY  (`id`),
             UNIQUE KEY `courseidpreference` (`courseid`,`preference`)
-          ) TYPE=MyISAM ;");
+          ) ENGINE=MyISAM ;");
           
     }
 
@@ -1372,7 +1372,7 @@ function main_upgrade($oldversion=0) {
                                   `value`      text NOT NULL default '',
                                   PRIMARY KEY  (`id`),
                                            UNIQUE KEY `plugin_name` (`plugin`, `name`)
-                                  ) TYPE=MyISAM 
+                                  ) ENGINE=MyISAM
                                   COMMENT='Moodle modules and plugins configuration variables';");
     }
 
@@ -1493,7 +1493,7 @@ function main_upgrade($oldversion=0) {
           `requester` int(10) NOT NULL default 0,
           PRIMARY KEY (`id`),
           KEY `shortname` (`shortname`)
-        ) TYPE=MyISAM;");
+        ) ENGINE=MyISAM;");
         
         table_column('course','','requested');
     }
@@ -1506,7 +1506,7 @@ function main_upgrade($oldversion=0) {
          PRIMARY KEY (`id`),
          KEY `course` (`course`),
          KEY `module` (`module`)
-      ) TYPE=MyISAM;");
+      ) ENGINE=MyISAM;");
         
         table_column('course','','restrictmodules','int','1','','0','not null');
     }
@@ -1692,7 +1692,7 @@ function main_upgrade($oldversion=0) {
           UNIQUE KEY `id_user_idx` (`id`, `userid`),
           KEY `post_lastmodified_idx` (`lastmodified`),
           KEY `post_subject_idx` (`subject`)
-        ) TYPE=MyISAM  COMMENT='New moodle post table. Holds data posts such as forum entries or blog entries.';");
+        ) ENGINE=MyISAM  COMMENT='New moodle post table. Holds data posts such as forum entries or blog entries.';");
 
         modify_database("","CREATE TABLE prefix_tags (
           `id` int(10) unsigned NOT NULL auto_increment,
@@ -1700,7 +1700,7 @@ function main_upgrade($oldversion=0) {
           `userid` int(10) unsigned NOT NULL default'0',
           `text` varchar(255) NOT NULL default '',
           PRIMARY KEY  (`id`)
-        ) TYPE=MyISAM COMMENT ='tags structure for moodle.';");
+        ) ENGINE=MyISAM COMMENT ='tags structure for moodle.';");
 
         modify_database("","CREATE TABLE prefix_blog_tag_instance (
           `id` int(10) unsigned NOT NULL auto_increment,
@@ -1710,7 +1710,7 @@ function main_upgrade($oldversion=0) {
           `courseid` int(10) unsigned NOT NULL default'0',
           `userid` int(10) unsigned NOT NULL default'0',
           PRIMARY KEY  (`id`)
-          ) TYPE=MyISAM COMMENT ='tag instance for blogs.';");
+          ) ENGINE=MyISAM COMMENT ='tag instance for blogs.';");
     }
 
     if ($oldversion < 2006031400) {
@@ -1799,7 +1799,7 @@ function main_upgrade($oldversion=0) {
                                `mtable` varchar(30),
                                `field` varchar(50),
                                PRIMARY KEY (`id`)
-                               ) TYPE=MyISAM");
+                               ) ENGINE=MyISAM");
         
         // Add index to ensure that module and action combination is unique.
         modify_database('', "ALTER TABLE prefix_log_display ADD UNIQUE `moduleaction`(`module` , `action`)");
@@ -2193,7 +2193,7 @@ function main_upgrade($oldversion=0) {
                     KEY `courseid` (`courseid`),
                     UNIQUE KEY `userid-courseid` (`userid`, `courseid`),
                     PRIMARY KEY (`id`) 
-                    )TYPE=MYISAM COMMENT ='time user last accessed any page in a course';", true);
+                    )ENGINE=MyISAM COMMENT ='time user last accessed any page in a course';", true);
     }
 
     if (!empty($CFG->rolesactive) and $oldversion < 2006091212) {   // Reload the guest roles completely with new defaults
