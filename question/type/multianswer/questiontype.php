@@ -141,14 +141,14 @@ class qtype_multianswer extends question_type {
             if ($previousid != 0 && $previousid != $wrapped->id) {
                 // for some reasons a new question has been created
                 // so delete the old one
-                delete_question($previousid);
+                question_delete_question($previousid);
             }
         }
 
         // Delete redundant wrapped questions
         if (is_array($oldwrappedquestions) && count($oldwrappedquestions)) {
             foreach ($oldwrappedquestions as $oldwrappedquestion) {
-                delete_question($oldwrappedquestion->id);
+                question_delete_question($oldwrappedquestion->id);
             }
         }
 
