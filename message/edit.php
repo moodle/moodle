@@ -68,6 +68,7 @@ $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
 
 $PAGE->set_context($personalcontext);
 $PAGE->set_pagelayout('course');
+$PAGE->requires->js_init_call('M.core_message.init_editsettings');
 
 // check access control
 if ($user->id == $USER->id) {
@@ -229,6 +230,10 @@ foreach ( $providers as $providerid => $provider){
     $providername = get_string('messageprovider:'.$provider->name, $provider->component);
 
     echo '<tr><th align="right">'.$providername.'</th><td colspan="'.$number_procs.'"></td></tr>'."\n";
+    $disabled = '';
+    if ($user->emailstop) {
+        $disabled = 'disabled="disabled"';
+    }
     foreach (array('loggedin', 'loggedoff') as $state){
         $state_res = get_string($state.'description', 'message');
         echo '<tr><td align="right">'.$state_res.'</td>'."\n";
@@ -240,7 +245,7 @@ foreach ( $providers as $providerid => $provider){
             } else {
                 $checked = $preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$processor->name]==1?" checked=\"checked\"":"";
             }
-            echo '<td align="center"><input type="checkbox" name="'.$provider->component.'_'.$provider->name.'_'.$state.'['.$processor->name.']" '.$checked.' /></td>'."\n";
+            echo '<td align="center"><input type="checkbox" '.$disabled.' class="notificationpreference" name="'.$provider->component.'_'.$provider->name.'_'.$state.'['.$processor->name.']" '.$checked.' /></td>'."\n";
         }
         echo '</tr>'."\n";
     }
