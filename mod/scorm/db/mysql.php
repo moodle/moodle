@@ -73,8 +73,8 @@ function scorm_upgrade($oldversion) {
                         UNIQUE (userid, scormid, scoid, element),
                         KEY userdata (userid, scormid, scoid),
                         KEY id (id)
-                    ) ENGINE=MyISAM;",false); 
-    
+                    ) ENGINE=MyISAM;",false);
+
         $oldtrackingdata = get_records_select("scorm_sco_users","1","id ASC");
         $oldelements = array ('cmi_core_lesson_location',
                               'cmi_core_lesson_status',
