@@ -58,6 +58,15 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
     $settings->add($setting);
 
+    // creditstomoodleorg: ctmo
+    $name = 'theme_formal_white/creditstomoodleorg';
+    $title = get_string('creditstomoodleorg','theme_formal_white');
+    $description = get_string('creditstomoodleorgdesc', 'theme_formal_white');
+    $default = '2';
+    $choices = array(2 => get_string('ctmo_ineverypage', 'theme_formal_white'), 1 => get_string('ctmo_onfrontpageonly', 'theme_formal_white'), 0 => get_string('ctmo_no', 'theme_formal_white'));
+    $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
+    $settings->add($setting);
+
     // Block region width
     $name = 'theme_formal_white/blockcolumnwidth';
     $title = get_string('blockcolumnwidth','theme_formal_white');
