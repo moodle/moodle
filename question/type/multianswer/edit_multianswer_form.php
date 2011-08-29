@@ -64,6 +64,9 @@ class question_edit_multianswer_form extends question_edit_form {
         $mform->removeElement('defaultgrade');
         $this->confirm = optional_param('confirm','0', PARAM_RAW);
 
+        // Make questiontext a required field for this question type.
+        $mform->addRule('questiontext', null, 'required', null, 'client');
+
         // display the questions from questiontext;
         if  (  "" != optional_param('questiontext','', PARAM_RAW)) {
                 //   echo "<p> optional_param('questiontext' <pre>";print_r(optional_param('questiontext','', PARAM_RAW));echo "</pre></p>";
