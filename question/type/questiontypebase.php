@@ -940,23 +940,32 @@ class question_type {
         $qo->qtype = $question_type;
 
         foreach ($extraquestionfields as $field) {
-            $qo->$field = $format->getpath($data, array('#', $field, 0, '#'), $qo->$field);
+            $qo->$field = $format->getpath($data, array('#', $field, 0, '#'), '');
         }
 
         // run through the answers
         $answers = $data['#']['answer'];
         $a_count = 0;
-        $extraasnwersfields = $this->extra_answer_fields();
-        if (is_array($extraasnwersfields)) {
-            // TODO import the answers, with any extra data.
-        } else {
-            foreach ($answers as $answer) {
-                $ans = $format->import_answer($answer);
+        $extraanswersfields = $this->extra_answer_fields();
+        if (is_array($extraanswersfields)) {
+            array_shift($extraanswersfields);
+        }
+        foreach ($answers as $answer) {
+            $ans = $format->import_answer($answer);
+            if (!$this->has_html_answers()) {
+                $qo->answer[$a_count] = $ans->answer['text'];
+            } else {
                 $qo->answer[$a_count] = $ans->answer;
-                $qo->fraction[$a_count] = $ans->fraction;
-                $qo->feedback[$a_count] = $ans->feedback;
-                ++$a_count;
             }
+            $qo->fraction[$a_count] = $ans->fraction;
+            $qo->feedback[$a_count] = $ans->feedback;
+            if (is_array($extraanswersfields)) {
+                foreach ($extraanswersfields as $field) {
+                    $qo->{$field}[$a_count] =
+                        $format->getpath($answer, array('#', $field, 0, '#'), '');
+                }
+            }
+            ++$a_count;
         }
         return $qo;
     }
@@ -977,26 +986,29 @@ class question_type {
         array_shift($extraquestionfields);
         $expout='';
         foreach ($extraquestionfields as $field) {
-            $exportedvalue = $question->options->$field;
-            if (!empty($exportedvalue) && htmlspecialchars($exportedvalue) != $exportedvalue) {
-                $exportedvalue = '<![CDATA[' . $exportedvalue . ']]>';
-            }
+            $exportedvalue = $format->xml_escape($question->options->$field);
             $expout .= "    <$field>{$exportedvalue}</$field>\n";
         }
 
-        $extraasnwersfields = $this->extra_answer_fields();
-        if (is_array($extraasnwersfields)) {
-            // TODO export answers with any extra data
-        } else {
-            foreach ($question->options->answers as $answer) {
-                $percent = 100 * $answer->fraction;
-                $expout .= "    <answer fraction=\"$percent\">\n";
-                $expout .= $format->writetext($answer->answer, 3, false);
-                $expout .= "      <feedback>\n";
-                $expout .= $format->writetext($answer->feedback, 4, false);
-                $expout .= "      </feedback>\n";
-                $expout .= "    </answer>\n";
+        $extraanswersfields = $this->extra_answer_fields();
+        if (is_array($extraanswersfields)) {
+            array_shift($extraanswersfields);
+        }
+        foreach ($question->options->answers as $answer) {
+            $percent = 100 * $answer->fraction;
+            $expout .= "    <answer fraction=\"$percent\">\n";
+            $expout .= $format->writetext($answer->answer, 3, false);
+            $expout .= "      <feedback>\n";
+            $expout .= $format->writetext($answer->feedback, 4, false);
+            $expout .= "      </feedback>\n";
+            if (is_array($extraanswersfields)) {
+                foreach ($extraanswersfields as $field) {
+                    $exportedvalue = $format->xml_escape($answer->$field);
+                    $expout .= "      <{$field}>{$exportedvalue}</{$field}>\n";
+                }
             }
+
+            $expout .= "    </answer>\n";
         }
         return $expout;
     }
