@@ -50,7 +50,7 @@ require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 // Check that this attempt belongs to this user.
 if ($attemptobj->get_userid() != $USER->id) {
     if ($attemptobj->has_capability('mod/quiz:viewreports')) {
-        redirect($attemptobj->review_url(0, $page));
+        redirect($attemptobj->review_url(null, $page));
     } else {
         throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
     }
@@ -69,7 +69,7 @@ if (!$attemptobj->is_preview_user()) {
 
 // If the attempt is already closed, send them to the review page.
 if ($attemptobj->is_finished()) {
-    redirect($attemptobj->review_url(0, $page));
+    redirect($attemptobj->review_url(null, $page));
 }
 
 // Check the access rules.
