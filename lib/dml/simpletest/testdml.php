@@ -3497,6 +3497,23 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('course' => 5, 'content' => 'hello', 'name'=>'def'));
         $DB->insert_record($tablename, array('course' => 2, 'content' => 'universe', 'name'=>'abc'));
 
+        // test grouping by expressions in the query. MDL-26819. Note that there are 4 ways:
+        // - By column position (GROUP by 1) - Not supported by mssql & oracle
+        // - By column name (GROUP by course) - Supported by all, but leading to wrong results
+        // - By column alias (GROUP by casecol) - Not supported by mssql & oracle
+        // - By complete expression (GROUP BY CASE ...) - 100% cross-db, this test checks it
+        $sql = "SELECT (CASE WHEN course = 3 THEN 1 ELSE 0 END) AS casecol,
+                       COUNT(1) AS countrecs,
+                       MAX(name) AS maxname
+                  FROM {{$tablename}}
+              GROUP BY CASE WHEN course = 3 THEN 1 ELSE 0 END
+              ORDER BY casecol DESC";
+        $result = array(
+                1 => (object)array('casecol' => 1, 'countrecs' => 2, 'maxname' => 'xyz'),
+                0 => (object)array('casecol' => 0, 'countrecs' => 2, 'maxname' => 'def'));
+        $records = $DB->get_records_sql($sql, null);
+        $this->assertEqual($result, $records);
+
         // test limits in queries with DISTINCT/ALL clauses and multiple whitespace. MDL-25268
         $sql = "SELECT   DISTINCT   course
                   FROM {{$tablename}}
