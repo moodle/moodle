@@ -29,67 +29,55 @@ require_once($CFG->libdir.'/boxlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class repository_boxnet extends repository {
-    private $box;
+    private $boxclient;
 
     /**
      * Constructor
-     * @global object $SESSION
      * @param int $repositoryid
      * @param object $context
      * @param array $options
      */
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
-        global $SESSION;
-        $options['username']   = optional_param('boxusername', '', PARAM_RAW);
-        $options['password']   = optional_param('boxpassword', '', PARAM_RAW);
-        $options['ticket']     = optional_param('ticket', '', PARAM_RAW);
-        $sess_name = 'box_token'.$this->id;
-        $this->sess_name = 'box_token'.$this->id;
         parent::__construct($repositoryid, $context, $options);
         $this->api_key = $this->get_option('api_key');
-        // do login
-        if(!empty($options['username']) && !empty($options['password']) && !empty($options['ticket']) ) {
-            $this->box = new boxclient($this->api_key);
-            try {
-                $SESSION->$sess_name = $this->box->getAuthToken($options['ticket'],
-                    $options['username'], $options['password']);
-            } catch (repository_exception $e) {
-                throw $e;
-            }
+        $this->setting_prefix = 'boxnet_';
+
+        $this->auth_token = get_user_preferences($this->setting_prefix.'_auth_token', '');
+        $this->logged = false;
+        if (!empty($this->auth_token)) {
+            $this->logged = true;
         }
         // already logged
-        if(!empty($SESSION->$sess_name)) {
-            if(empty($this->box)) {
-                $this->box = new boxclient($this->api_key, $SESSION->$sess_name);
+        if(!empty($this->logged)) {
+            if(empty($this->boxclient)) {
+                $this->boxclient = new boxclient($this->api_key, $this->auth_token);
             }
-            $this->auth_token = $SESSION->$sess_name;
         } else {
-            $this->box = new boxclient($this->api_key);
+            $this->boxclient = new boxclient($this->api_key);
         }
     }
 
     /**
-     *
-     * @global object $SESSION
+     * check if user logged
      * @return boolean
      */
     public function check_login() {
-        global $SESSION;
-        return !empty($SESSION->{$this->sess_name});
+        return $this->logged;
     }
 
     /**
+     * reset auth token
      *
-     * @global object $SESSION
      * @return string
      */
     public function logout() {
-        global $SESSION;
-        unset($SESSION->{$this->sess_name});
+        // reset auth token
+        set_user_preference($this->setting_prefix . '_auth_token', '');
         return $this->print_login();
     }
 
     /**
+     * Save settings
      *
      * @param array $options
      * @return mixed
@@ -104,6 +92,7 @@ class repository_boxnet extends repository {
     }
 
     /**
+     * Get settings
      *
      * @param string $config
      * @return mixed
@@ -119,47 +108,17 @@ class repository_boxnet extends repository {
     }
 
     /**
+     * Search files from box.net
      *
-     * @global object $SESSION
-     * @return boolean
-     */
-    public function global_search() {
-        global $SESSION;
-        if (empty($SESSION->{$this->sess_name})) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     *
-     * @global object $DB
-     * @return object
-     */
-    public function get_login() {
-        global $DB;
-        if ($entry = $DB->get_record('repository_instances', array('id'=>$this->id))) {
-            $ret->username = $entry->username;
-            $ret->password = $entry->password;
-        } else {
-            $ret->username = '';
-            $ret->password = '';
-        }
-        return $ret;
-    }
-
-    /**
-     *
-     * @global object $CFG
+     * @global object $OUTPUT
      * @param string $search_text
      * @return mixed
      */
     public function search($search_text) {
-        global $CFG, $OUTPUT;
+        global $OUTPUT;
         $list = array();
         $ret  = array();
-        $tree = $this->box->getAccountTree();
+        $tree = $this->boxclient->getAccountTree();
         if (!empty($tree)) {
             $filenames = $tree['file_name'];
             $fileids   = $tree['file_id'];
@@ -182,17 +141,16 @@ class repository_boxnet extends repository {
     }
 
     /**
+     * Get file listing
      *
-     * @global object $CFG
      * @param string $path
      * @return mixed
      */
     public function get_listing($path = '/', $page = ''){
-        global $CFG;
         $list = array();
         $ret  = array();
         $ret['list'] = array();
-        $tree = $this->box->getfiletree($path);
+        $tree = $this->boxclient->getfiletree($path);
         $ret['manage'] = 'http://www.box.net/files';
         $ret['path'] = array(array('name'=>'Root', 'path'=>0));
         if(!empty($tree)) {
@@ -202,30 +160,19 @@ class repository_boxnet extends repository {
     }
 
     /**
+     * Return login form
      *
      * @return array
      */
     public function print_login(){
-        $t = $this->box->getTicket();
-        $ret = $this->get_login();
+        $t = $this->boxclient->getTicket();
         if ($this->options['ajax']) {
-            $ticket_field->type = 'hidden';
-            $ticket_field->name = 'ticket';
-            $ticket_field->value = $t['ticket'];
-
-            $user_field->label = get_string('username', 'repository_boxnet').': ';
-            $user_field->id    = 'box_username';
-            $user_field->type  = 'text';
-            $user_field->name  = 'boxusername';
-            $user_field->value = $ret->username;
-
-            $passwd_field->label = get_string('password', 'repository_boxnet').': ';
-            $passwd_field->id    = 'box_password';
-            $passwd_field->type  = 'password';
-            $passwd_field->name  = 'boxpassword';
+            $popup_btn = new stdClass();
+            $popup_btn->type = 'popup';
+            $popup_btn->url = ' https://www.box.net/api/1.0/auth/' . $t['ticket'];
 
             $ret = array();
-            $ret['login'] = array($ticket_field, $user_field, $passwd_field);
+            $ret['login'] = array($popup_btn);
             return $ret;
         } else {
             echo '<table>';
@@ -248,10 +195,19 @@ class repository_boxnet extends repository {
     }
 
     /**
+     * Store the auth token returned by box.net
+     */
+    public function callback() {
+        $this->auth_token  = optional_param('auth_token', '', PARAM_TEXT);
+        set_user_preference($this->setting_prefix . '_auth_token',    $this->auth_token);
+    }
+
+    /**
      * Add Plugin settings input to Moodle form
      * @param object $mform
      */
     public function type_config_form($mform) {
+        global $CFG;
         parent::type_config_form($mform);
         $public_account = get_config('boxnet', 'public_account');
         $api_key = get_config('boxnet', 'api_key');
@@ -262,7 +218,27 @@ class repository_boxnet extends repository {
         $mform->addElement('text', 'api_key', get_string('apikey', 'repository_boxnet'), array('value'=>$api_key,'size' => '40'));
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
         $mform->addElement('static', null, '',  get_string('information','repository_boxnet'));
+
+        //retrieve the flickr instances
+        $params = array();
+        $params['context'] = array();
+        //$params['currentcontext'] = $this->context;
+        $params['onlyvisible'] = false;
+        $params['type'] = 'boxnet';
+        $instances = repository::get_instances($params);
+        if (empty($instances)) {
+            $callbackurl = get_string('callbackwarning', 'repository_boxnet');
+            $mform->addElement('static', null, '',  $callbackurl);
+        } else {
+            $instance = array_shift($instances);
+            $callbackurl = $CFG->wwwroot.'/repository/repository_callback.php?repo_id='.$instance->id;
+            $mform->addElement('static', 'callbackurl', '', get_string('callbackurltext', 'repository_boxnet', $callbackurl));
+        }
     }
+    /**
+     * Box.net supports file linking and copying
+     * @return string
+     */
     public function supported_returntypes() {
         return FILE_INTERNAL | FILE_EXTERNAL;
     }
