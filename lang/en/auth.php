@@ -115,7 +115,7 @@ $string['passwordhandling'] = 'Password field handling';
 $string['plaintext'] = 'Plain text';
 $string['pluginnotenabled'] = 'Authentication plugin \'{$a}\' is not enabled.';
 $string['pluginnotinstalled'] = 'Authentication plugin \'{$a}\' is not installed.';
-$string['potentialidps'] = 'Do you usually log in somewhere else before arriving here?<br />Choose from the following list to log in at your usual place:';
+$string['potentialidps'] = 'Log in using your account on:';
 $string['recaptcha'] = 'reCAPTCHA';
 $string['recaptcha_help'] = 'The CAPTCHA is for preventing abuse from automated programs. Simply enter the words in the box, in order and separated by a space.
 
