@@ -1012,6 +1012,20 @@ class qformat_xml extends qformat_default {
     }
 
     /**
+     * Take a string, and wrap it in a CDATA secion, if that is required to make
+     * the output XML valid.
+     * @param string $string a string
+     * @return string the string, wrapped in CDATA if necessary.
+     */
+    public function xml_escape($string) {
+        if (!empty($string) && htmlspecialchars($string) != $string) {
+            return "<![CDATA[{$string}]]>";
+        } else {
+            return $string;
+        }
+    }
+
+    /**
      * Generates <text></text> tags, processing raw text therein
      * @param string $raw the content to output.
      * @param int $indent the current indent level.
@@ -1020,11 +1034,7 @@ class qformat_xml extends qformat_default {
      */
     public function writetext($raw, $indent = 0, $short = true) {
         $indent = str_repeat('  ', $indent);
-
-        // if required add CDATA tags
-        if (!empty($raw) && htmlspecialchars($raw) != $raw) {
-            $raw = "<![CDATA[$raw]]>";
-        }
+        $raw = $this->xml_escape($raw);
 
         if ($short) {
             $xml = "$indent<text>$raw</text>\n";
@@ -1467,7 +1477,7 @@ class qformat_xml extends qformat_default {
             $output .= "      <clearwrong/>\n";
         }
         if (!empty($hint->options)) {
-            $output .= '      <options>' . htmlspecialchars($hint->options) . "</options>\n";
+            $output .= '      <options>' . $this->xml_escape($hint->options) . "</options>\n";
         }
         $output .= "    </hint>\n";
         return $output;
