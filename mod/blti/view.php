@@ -99,10 +99,6 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($basiclti->name));
 echo $OUTPUT->box($basiclti->intro, 'generalbox description', 'intro');
 
-if ($basiclti->typeid == 0) {
-    print_error('errormisconfig', 'blti');
-}
-
 if ($basiclti->instructorchoiceacceptgrades == 1) {
     echo '<div class="reportlink">'.submittedlink($cm).'</div>';
 }
@@ -110,7 +106,7 @@ if ($basiclti->instructorchoiceacceptgrades == 1) {
 echo $OUTPUT->box_start('generalbox activity');
 
 
-if ( $basiclti->launchinpopup > 0 ) {
+if ( false /*$basiclti->launchinpopup > 0*/ ) {
     print "<script language=\"javascript\">//<![CDATA[\n";
     print "window.open('launch.php?id=".$cm->id."','window name');";
     print "//]]\n";
@@ -118,10 +114,11 @@ if ( $basiclti->launchinpopup > 0 ) {
     print "<p>".get_string("basiclti_in_new_window", "blti")."</p>\n";
 } else {
     // Request the launch content with an object tag
-    $height = $basiclti->preferheight;
+    /*$height = $basiclti->preferheight;
     if ((!$height) || ($height == 0)) {
         $height = 400;
-    }
+    }*/
+    $height=600;
     print '<object height="'.$height.'" width="100%" data="launch.php?id='.$cm->id.'&amp;withobject=true"></object>';
 
 }

@@ -79,22 +79,5 @@ if ($ADMIN->fulltree) {
 
 
     $settings->add(new admin_setting_heading('blti_types', get_string('configuredtools', 'blti'), $str));
-
-    $unconfigured = blti_get_unconfigured_tools();
-    if (!empty($unconfigured)) {
-        $newstr = '<table>';
-        $newstr .= '<tr> <th>Course</th> <th>Tool Name</th> </tr>';
-
-        foreach ($unconfigured as $unconf) {
-            $coursename = $DB->get_field('course', 'shortname', array('id' => $unconf->course));
-            $newstr .= '<tr>'.
-                       '<td>'.$coursename.'</td><td>'.$unconf->name.'</td>'.
-                       '<td align="center"><a class="editing_update" href="'.$CFG->wwwroot.'/mod/blti/typessettings.php?action=fix&amp;id='.$unconf->id.'&amp;sesskey='.$USER->sesskey.'" title="Fix">'.
-                       '<img class="iconsmall" alt="Update" src="'.$CFG->wwwroot.'/pix/t/edit.gif"/></a>'.'&nbsp;&nbsp;'.'</td>'.
-                       '</tr>';
-        }
-        $newstr .= '</table>';
-
-        $settings->add(new admin_setting_heading('blti_mis_types', get_string('misconfiguredtools', 'blti'), $newstr));
-    }
+    
 }

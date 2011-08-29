@@ -77,6 +77,7 @@ if ($data = data_submitted() and confirm_sesskey() and isset($data->submitbutton
     $type = new StdClass();
     $type->name = $data->lti_typename;
     $type->baseurl = $data->lti_toolurl;
+    $type->tooldomain = blti_get_domain_from_url($data->lti_toolurl);
     $type->course = $SITE->id;
     $type->coursevisible = 1;
     $type->timemodified = time();
@@ -86,7 +87,7 @@ if ($data = data_submitted() and confirm_sesskey() and isset($data->submitbutton
         
         if ($DB->update_record('blti_types', $type)) {
             unset ($data->lti_typename);
-            //@TODO: update work
+            
             foreach ($data as $key => $value) {
                 if (substr($key, 0, 4)=='lti_' && !is_null($value)) {
                     $record = new StdClass();
@@ -107,14 +108,12 @@ if ($data = data_submitted() and confirm_sesskey() and isset($data->submitbutton
         $type->createdby = $USER->id;
         $type->timecreated = time();
         
-        if ($id = $DB->insert_record('blti_types', $type)) {
-            if (!empty($data->lti_fix)) {
-                $instance = $DB->get_record('blti', array('id' => $data->lti_fix));
-                $instance->typeid = $id;
-                $DB->update_record('blti', $instance);
-            }
-            unset ($data->lti_fix);
-
+        //Create a salt value to be used for signing passed data to extension services
+        $data->lti_servicesalt = uniqid('', true);
+        
+        $id = $DB->insert_record('blti_types', $type);
+        
+        if ($id) {
             unset ($data->lti_typename);
             foreach ($data as $key => $value) {
                 if (substr($key, 0, 4)=='lti_' && !is_null($value)) {
@@ -135,18 +134,6 @@ if ($data = data_submitted() and confirm_sesskey() and isset($data->submitbutton
         redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=modsettingblti");
         die;
     }
-    if (empty($adminroot->errors)) {
-        switch ($return) {
-            case 'site':  redirect("$CFG->wwwroot/");
-            case 'admin': redirect("$CFG->wwwroot/$CFG->admin/");
-        }
-    } else {
-        $errormsg = get_string('errorwithsettings', 'admin');
-        $firsterror = reset($adminroot->errors);
-        $focus = $firsterror->id;
-    }
-    $adminroot =& admin_get_root(true); //reload tree
-    $page      =& $adminroot->locate($section);
 }
 
 if ($action == 'delete') {
@@ -236,15 +223,6 @@ if (empty($SITE->fullname)) {
         $type = blti_get_type_type_config($id);
         $form->set_data($type);
         $form->display();
-    } else if ($action == 'fix') {
-        if (!isset($definenew) && !isset($useexisting)) {
-            blti_fix_misconfigured_choice($id);
-        } else if (isset($definenew)) {
-            $form = new mod_blti_edit_types_form();
-            $type = blti_get_type_config_from_instance($id);
-            $form->set_data($type);
-            $form->display();
-        }
     }
 
     echo $OUTPUT->box_end();

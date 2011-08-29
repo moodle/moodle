@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/blti/db" VERSION="20110826" COMMENT="XMLDB file for Moodle mod/blti"
+<XMLDB PATH="mod/blti/db" VERSION="20110829" COMMENT="XMLDB file for Moodle mod/blti"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -38,8 +38,9 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="basiclti Activity" SEQUENCE="false" COMMENT="Activity name" PREVIOUS="id" NEXT="baseurl"/>
-        <FIELD NAME="baseurl" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="state"/>
-        <FIELD NAME="state" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="2" SEQUENCE="false" COMMENT="Active = 1, Pending = 2, Rejected = 3" PREVIOUS="baseurl" NEXT="course"/>
+        <FIELD NAME="baseurl" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="tooldomain"/>
+        <FIELD NAME="tooldomain" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="baseurl" NEXT="state"/>
+        <FIELD NAME="state" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="2" SEQUENCE="false" COMMENT="Active = 1, Pending = 2, Rejected = 3" PREVIOUS="tooldomain" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="state" NEXT="coursevisible"/>
         <FIELD NAME="coursevisible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="course" NEXT="createdby"/>
         <FIELD NAME="createdby" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="coursevisible" NEXT="timecreated"/>
@@ -50,7 +51,8 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course" NEXT="tooldomain"/>
+        <INDEX NAME="tooldomain" UNIQUE="false" FIELDS="tooldomain" PREVIOUS="course"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="blti_types_config" COMMENT="Basic LTI types configuration" PREVIOUS="blti_types">

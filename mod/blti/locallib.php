@@ -49,6 +49,8 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot.'/mod/blti/OAuth.php');
 
+define('BLTI_URL_DOMAIN_REGEX', '/(?:https?:\/\/)?(?:www\.)?([^\/]+)(?:\/|$)/i');
+
 /**
  * Prints a Basic LTI activity
  *
@@ -57,10 +59,21 @@ require_once($CFG->dirroot.'/mod/blti/OAuth.php');
 function blti_view($instance, $makeobject=false) {
     global $PAGE;
 
-    $typeconfig = blti_get_type_config($instance->typeid);
-    $endpoint = $typeconfig['toolurl'];
-    $key = $typeconfig['resourcekey'];
-    $secret = $typeconfig['password'];
+    if(empty($instance->typeid)){
+        $tool = blti_get_tool_by_url_match($instance->toolurl);
+        if($tool){
+            $typeid = $tool->id;
+        } else {
+            //Tool not found
+        }
+    } else {
+        $typeid = $instance->typeid;
+    }
+    
+    $typeconfig = blti_get_type_config($typeid);
+    $endpoint = !empty($instance->toolurl) ? $instance->toolurl : $typeconfig['toolurl'];
+    $key = !empty($instance->resourcekey) ? $instance->resourcekey : $typeconfig['resourcekey'];
+    $secret = !empty($instance->password) ? $instance->password : $typeconfig['password'];
     $orgid = $typeconfig['organizationid'];
     /* Suppress this for now - Chuck
     $orgdesc = $typeconfig['organizationdescr'];
@@ -80,11 +93,8 @@ function blti_view($instance, $makeobject=false) {
 
     $debuglaunch = ( $instance->debuglaunch == 1 );
     if ( $makeobject ) {
-        // TODO: Need frame height
-        $height = $instance->preferheight;
-        if ((!$height) || ($height == 0)) {
-            $height = 400;
-        }
+        $height = 600;
+        
         $content = post_launch_html($parms, $endpoint, $debuglaunch, $height);
     } else {
         $content = post_launch_html($parms, $endpoint, $debuglaunch, false);
@@ -126,7 +136,7 @@ function blti_build_request($instance, $typeconfig, $course) {
         "launch_presentation_locale" => $locale,
     );
 
-    $placementsecret = $instance->placementsecret;
+    $placementsecret = $typeconfig['servicesalt'];
     if ( isset($placementsecret) ) {
         $suffix = ':::' . $USER->id . ':::' . $instance->id;
         $plaintext = $placementsecret . $suffix;
@@ -146,17 +156,6 @@ function blti_build_request($instance, $typeconfig, $course) {
          ( $typeconfig['allowroster'] == 2 && $instance->instructorchoiceallowroster == 1 ) ) ) {
         $requestparams["ext_ims_lis_memberships_id"] = $sourcedid;
         $requestparams["ext_ims_lis_memberships_url"] = $CFG->wwwroot.'/mod/blti/service.php';
-    }
-
-    if ( isset($placementsecret) &&
-         ( $typeconfig['allowsetting'] == 1 ||
-         ( $typeconfig['allowsetting'] == 2 && $instance->instructorchoiceallowsetting == 1 ) ) ) {
-        $requestparams["ext_ims_lti_tool_setting_id"] = $sourcedid;
-        $requestparams["ext_ims_lti_tool_setting_url"] = $CFG->wwwroot.'/mod/blti/service.php';
-        $setting = $instance->setting;
-        if ( isset($setting) ) {
-             $requestparams["ext_ims_lti_tool_setting"] = $setting;
-        }
     }
 
     // Send user's name and email data if appropriate
@@ -299,16 +298,10 @@ function blti_get_type_config($typeid) {
     return $typeconfig;
 }
 
-/**
- * Returns all tool instances with a typeid of 0 that
- * marks them as unconfigured. These tools usually proceed from a
- * backup - restore process.
- *
- */
-function blti_get_unconfigured_tools() {
+function blti_get_tools_by_domain($domain){
     global $DB;
-
-    return $DB->get_records('blti', array('typeid' => 0));
+    
+    return $DB->get_records('blti_types', array('tooldomain' => $domain));
 }
 
 /**
@@ -332,6 +325,53 @@ function blti_get_types_for_add_instance(){
     }
     
     return $types;
+}
+
+function blti_get_domain_from_url($url){
+    $matches = array();
+    
+    if(preg_match(BLTI_URL_DOMAIN_REGEX, $url, $matches)){
+        return $matches[1];
+    }
+}
+
+function blti_get_tool_by_url_match($url){
+    $domain = blti_get_domain_from_url($url);
+    
+    $possibletools = blti_get_tools_by_domain($domain);
+    
+    return blti_get_best_tool_by_url($url, $possibletools);
+}
+
+function blti_get_best_tool_by_url($url, $tools){
+    if(count($tools) === 0){
+        return null;
+    }
+    
+    $urllower = strtolower($url);
+    
+    foreach($tools as $tool){
+        $tool->_matchscore = 0;
+        
+        $toolbaseurllower = strtolower($tool->baseurl);
+        
+        if($urllower === $toolbaseurllower){
+            $tool->_matchscore += 100;
+        } else if(strstr($urllower, $toolbaseurllower) >= 0){
+            $tool->_matchscore += 50;
+        }
+    }
+    
+    $bestmatch = array_reduce($tools, function($value, $tool){
+        if($tool->_matchscore > $value->_matchscore){
+            return $tool;
+        } else {
+            return $value;
+        }
+        
+    }, (object)array('_matchscore' => -1));
+    
+    return $bestmatch;
 }
 
 /**
@@ -554,7 +594,9 @@ function blti_update_config($config) {
     global $DB;
 
     $return = true;
-    if ($old = $DB->get_record('blti_types_config', array('typeid' => $config->typeid, 'name' => $config->name))) {
+    $old = $DB->get_record('blti_types_config', array('typeid' => $config->typeid, 'name' => $config->name));
+    
+    if ($old) {
         $config->id = $old->id;
         $return = $DB->update_record('blti_types_config', $config);
     } else {
@@ -562,52 +604,6 @@ function blti_update_config($config) {
     }
     return $return;
 }
-
-/**
- * Prints the screen that handles misconfigured objects due to
- * an incomplete backup - restore process
- *
- * @param int $id ID of the misconfigured tool
- *
- */
-function blti_fix_misconfigured_choice($id) {
-    global $CFG, $USER, $OUTPUT;
-
-    echo $OUTPUT->box_start('generalbox');
-    echo '<div>';
-    $types = blti_filter_get_types();
-    if (!empty($types)) {
-        echo '<h4 class="main">'.get_string('fixexistingconf', 'blti').'</h4></br>';
-        echo '<form action='.$CFG->wwwroot.'/mod/blti/typessettings.php?action=fix&amp;sesskey='.$USER->sesskey.' method="post">';
-
-        foreach ($types as $type) {
-            echo '<input type="radio" name="useexisting" value="'.$type->id.'" />'.$type->name.'<br />';
-        }
-        echo '<input type="hidden" name="id" value="'.$id.'"/>';
-        echo '<br />';
-        echo '<div class="message"><input type="submit" value="'.get_string('fixold', 'blti').'"></div>';
-        echo '</form>';
-    } else {
-        echo '<div class="message">';
-        echo get_string('notypes', 'blti');
-        echo '</div>';
-    }
-    echo '</div>';
-    echo $OUTPUT->box_end();
-
-    echo $OUTPUT->box_start("generalbox");
-    echo '<div>';
-    echo '<h4 class="main">'.get_string('fixnewconf', 'blti').'</h4></br>';
-    echo '<form action='.$CFG->wwwroot.'/mod/blti/typessettings.php?action=fix&amp;sesskey='.$USER->sesskey.' method="post">';
-    echo '<input type="hidden" name="id" value="'.$id.'"/>';
-    echo '<input type="hidden" name="definenew" value="1"/>';
-    echo '<div class="message"><input type="submit" value="'.get_string('fixnew', 'blti').'"></div>';
-    echo '</form>';
-    echo '</div>';
-    echo $OUTPUT->box_end();
-
-}
-
 
 /**
  * Signs the petition to launch the external tool using OAuth
