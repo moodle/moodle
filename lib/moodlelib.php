@@ -3769,8 +3769,12 @@ function authenticate_user_login($username, $password) {
                 $user = update_user_record($username);
             }
         } else {
-            // if user not found, create him
-            $user = create_user_record($username, $password, $auth);
+            // if user not found and user creation is not disabled, create it
+            if (empty($CFG->authonly)) {
+                $user = create_user_record($username, $password, $auth);
+            } else {
+                continue;
+            }
         }
 
         $authplugin->sync_roles($user);
