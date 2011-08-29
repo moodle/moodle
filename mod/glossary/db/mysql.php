@@ -45,13 +45,13 @@ function glossary_upgrade($oldversion) {
                     `glossaryid` INT(10) UNSIGNED NOT NULL default '0',
                     `name` VARCHAR(255) NOT NULL default '',
                     PRIMARY KEY  (`id`)
-                    ) TYPE=MyISAM COMMENT='all categories for glossary entries'");
+                    ) ENGINE=MyISAM COMMENT='all categories for glossary entries'");
 
         execute_sql("CREATE TABLE `{$CFG->prefix}glossary_entries_categories` (
                     `categoryid` INT(10) UNSIGNED NOT NULL default '1',
                     `entryid` INT(10) UNSIGNED NOT NULL default '0',
                     PRIMARY KEY  (`categoryid`, `entryid`)
-                    ) TYPE=MyISAM COMMENT='categories of each glossary entry'");
+                    ) ENGINE=MyISAM COMMENT='categories of each glossary entry'");
      }
      
      if ( $oldversion < 2003092100 ) {
@@ -87,7 +87,7 @@ function glossary_upgrade($oldversion) {
                     `timemodified` INT(10) UNSIGNED NOT NULL default '0',
                     `format` TINYINT(2) UNSIGNED NOT NULL default '0',
                     PRIMARY KEY  (`id`)
-                    ) TYPE=MyISAM COMMENT='comments on glossary entries'");
+                    ) ENGINE=MyISAM COMMENT='comments on glossary entries'");
 
         execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('glossary', 'add comment', 'glossary', 'name') ");
         execute_sql(" INSERT INTO {$CFG->prefix}log_display (module, action, mtable, field) VALUES ('glossary', 'update comment', 'glossary', 'name') ");
@@ -166,7 +166,7 @@ function glossary_upgrade($oldversion) {
                     `entryid` INT(10) UNSIGNED NOT NULL default '0',
                     `alias` TEXT NOT NULL default '',
                     PRIMARY KEY  (`id`)
-                    ) TYPE=MyISAM COMMENT='entries alias'");
+                    ) ENGINE=MyISAM COMMENT='entries alias'");
     }
     
     if ( $oldversion < 2003111500 ) {
@@ -190,7 +190,7 @@ function glossary_upgrade($oldversion) {
                     `sortkey` VARCHAR(50) NOT NULL default '',
                     `sortorder` VARCHAR(50) NOT NULL default '',
                     PRIMARY KEY  (`id`)
-                    ) TYPE=MyISAM COMMENT='Setting of the display formats'");
+                    ) ENGINE=MyISAM COMMENT='Setting of the display formats'");
 
         // Default format
         execute_sql(" INSERT INTO {$CFG->prefix}glossary_displayformats 
@@ -292,7 +292,7 @@ function glossary_upgrade($oldversion) {
                        `sortkey` VARCHAR(50) NOT NULL default '',
                        `sortorder` VARCHAR(50) NOT NULL default '',
                    PRIMARY KEY  (`id`)                    
-                   ) TYPE=MyISAM COMMENT='Setting of the display formats'");
+                   ) ENGINE=MyISAM COMMENT='Setting of the display formats'");
 
       //Define current 0-6 format names
       $formatnames = array('dictionary','continuous','fullwithauthor','encyclopedia',

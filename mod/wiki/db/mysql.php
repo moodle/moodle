@@ -139,7 +139,7 @@ function wiki_upgrade($oldversion) {
             `wiki` INT(10) UNSIGNED NOT NULL,
             PRIMARY KEY (`id`),
             UNIQUE KEY `wiki_pages_uk` (`pagename`,`version`,`wiki`))
-            TYPE=MyISAM COMMENT='Holds the Wiki-Pages';");
+            ENGINE=MyISAM COMMENT='Holds the Wiki-Pages';");
         
         if (!empty($insertafter)) {
             execute_sql("INSERT INTO {$CFG->prefix}wiki_pages (pagename, version, flags, content,

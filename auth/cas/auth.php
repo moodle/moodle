@@ -675,7 +675,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
                 $droptablesql[] = 'DROP TEMPORARY TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)
                 execute_sql_arr($droptablesql, true, false); /// Drop temp table to avoid persistence problems later
                 echo "Creating temp table $temptable\n";
-                execute_sql('CREATE TEMPORARY TABLE ' . $temptable . ' (username VARCHAR(64), PRIMARY KEY (username)) TYPE=MyISAM', false);
+                execute_sql('CREATE TEMPORARY TABLE ' . $temptable . ' (username VARCHAR(64), PRIMARY KEY (username)) ENGINE=MyISAM', false);
                 break;
             case 'postgres':
                 $temptable = $CFG->prefix . 'extuser';
