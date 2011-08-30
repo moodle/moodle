@@ -96,7 +96,7 @@ if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing())
     echo '<div class="right side" >&nbsp;</div>';
     echo '<div class="content">';
     if (!is_null($thissection->name)) {
-        echo $OUTPUT->heading($thissection->name, 3, 'sectionname');
+        echo $OUTPUT->heading(format_string($thissection->name, true, array('context' => $context)), 3, 'sectionname');
     }
     echo '<div class="summary">';
 
@@ -219,7 +219,7 @@ while ($section <= $course->numsections) {
             echo get_string('notavailable');
         } else {
             if (!is_null($thissection->name)) {
-                echo $OUTPUT->heading($thissection->name, 3, 'sectionname');
+                echo $OUTPUT->heading(format_string($thissection->name, true, array('context' => $context)), 3, 'sectionname');
             }
             echo '<div class="summary">';
             if ($thissection->summary) {
