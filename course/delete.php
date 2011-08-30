@@ -30,10 +30,11 @@
     }
 
     $category = $DB->get_record("course_categories", array("id"=>$course->category));
+    $categoryname = format_string($category->name, true, array('context' => get_context_instance(CONTEXT_COURSECAT, $category->id)));
 
     $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php/'));
     $PAGE->navbar->add($strcategories, new moodle_url('/course/index.php'));
-    $PAGE->navbar->add($category->name, new moodle_url('/course/category.php', array('id'=>$course->category)));
+    $PAGE->navbar->add($categoryname, new moodle_url('/course/category.php', array('id'=>$course->category)));
     if (! $delete) {
         $strdeletecheck = get_string("deletecheck", "", $course->shortname);
         $strdeletecoursecheck = get_string("deletecoursecheck");

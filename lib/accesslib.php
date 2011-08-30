@@ -3584,7 +3584,7 @@ function print_context_name($context, $withprefix = true, $short = false) {
                 if ($withprefix){
                     $name = get_string('category').': ';
                 }
-                $name .=format_string($category->name);
+                $name .= format_string($category->name, true, array('context' => $context));
             }
             break;
 

@@ -78,11 +78,11 @@ class delete_category_form extends moodleform {
         }
 
     /// Now build the form.
-        $mform->addElement('header','general', get_string('categorycurrentcontents', '', format_string($category->name)));
+        $mform->addElement('header','general', get_string('categorycurrentcontents', '', format_string($category->name, true, array('context' => $categorycontext))));
 
         if ($containscourses || $containscategories || $containsquestions) {
             if (empty($options)) {
-                print_error('youcannotdeletecategory', 'error', 'index.php', format_string($category->name));
+                print_error('youcannotdeletecategory', 'error', 'index.php', format_string($category->name, true, array('context' => $categorycontext)));
             }
 
         /// Describe the contents of this category.

@@ -56,8 +56,9 @@ class block_course_list extends block_list {
         if ($categories) {   //Check we have categories
             if (count($categories) > 1 || (count($categories) == 1 && $DB->count_records('course') > 200)) {     // Just print top level category links
                 foreach ($categories as $category) {
+                    $categoryname = format_string($category->name, true, array('context' => get_context_instance(CONTEXT_COURSECAT, $category->id)));
                     $linkcss = $category->visible ? "" : " class=\"dimmed\" ";
-                    $this->content->items[]="<a $linkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">".$icon . format_string($category->name) . "</a>";
+                    $this->content->items[]="<a $linkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">".$icon . $categoryname . "</a>";
                 }
             /// If we can update any course of the view all isn't hidden, show the view all courses link
                 if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM)) || empty($CFG->block_course_list_hideallcourseslink)) {
@@ -75,7 +76,7 @@ class block_course_list extends block_list {
                         $this->content->items[]="<a $linkcss title=\""
                                    . format_string($course->shortname)."\" ".
                                    "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">"
-                                   .$icon. format_string($course->fullname) . "</a>";
+                                   .$icon. format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id))) . "</a>";
                     }
                 /// If we can update any course of the view all isn't hidden, show the view all courses link
                     if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM)) || empty($CFG->block_course_list_hideallcourseslink)) {
