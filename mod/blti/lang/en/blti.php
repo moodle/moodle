@@ -170,8 +170,8 @@ $string['tool_settings'] = 'Tool Settings';
 $string['miscellaneous'] = 'Miscellaneous';
 $string['embed'] = 'Embed';
 $string['embed_no_blocks'] = 'Embed, without blocks';
-$string['popup_window'] = 'Popup window';
-$string['new_window'] = 'New browser window / tab';
+$string['new_window'] = 'New window';
+$string['default_launch_container'] = 'Default Launch Container';
 
 //New instructor strings
 $string['display_name'] = 'Display activity name when launched';
@@ -183,3 +183,4 @@ $string['share_email'] = 'Share launcher\'s email with the tool';
 $string['accept_grades'] = 'Accept grades from the tool';
 $string['share_roster'] = 'Allow the tool to access this course\'s roster';
 $string['automatic'] = 'Automatic, based on Launch URL';
+$string['default'] = 'Default';

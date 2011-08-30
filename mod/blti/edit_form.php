@@ -83,6 +83,15 @@ class mod_blti_edit_types_form extends moodleform{
         
         $mform->addElement('checkbox', 'lti_coursevisible', '&nbsp;', ' ' . get_string('show_in_course', 'blti'));
         
+        $launchoptions=array();
+        $launchoptions[BLTI_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'blti');
+        $launchoptions[BLTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS] = get_string('embed_no_blocks', 'blti');
+        $launchoptions[BLTI_LAUNCH_CONTAINER_WINDOW] = get_string('new_window', 'blti');
+
+        $mform->addElement('select', 'lti_launchcontainer', get_string('default_launch_container', 'blti'), $launchoptions);
+        $mform->setDefault('lti_launchcontainer', BLTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS);
+//        $mform->addHelpButton('lti_launchinpopup', 'launchinpopup', 'blti');
+        
         // Add privacy preferences fieldset where users choose whether to send their data
         $mform->addElement('header', 'privacy', get_string('privacy', 'blti'));
 
@@ -112,27 +121,6 @@ class mod_blti_edit_types_form extends moodleform{
         $mform->addElement('select', 'lti_allowroster', get_string('allowroster', 'blti'), $options);
         $mform->setDefault('lti_allowroster', '2');
 //        $mform->addHelpButton('lti_allowroster', 'allowroster', 'blti');
-
-        /*
-        // Add grading preferences fieldset where the tool is allowed to update settings
-        $mform->addElement('select', 'lti_allowsetting', get_string('allowsetting', 'blti'), $options);
-        $mform->setDefault('lti_allowsetting', '0');
-//        $mform->addHelpButton('lti_allowsetting', 'allowsetting', 'blti');
-         */
-
-//-------------------------------------------------------------------------------
-        // Add launch parameters fieldset
-        $mform->addElement('header', 'launchoptions', get_string('launchoptions', 'blti'));
-
-        $launchoptions=array();
-        $launchoptions[0] = get_string('embed', 'blti');
-        $launchoptions[1] = get_string('embed_no_blocks', 'blti');
-        $launchoptions[2] = get_string('popup_window', 'blti');
-        $launchoptions[3] = get_string('new_window', 'blti');
-
-        $mform->addElement('select', 'lti_launchinpopup', get_string('launchinpopup', 'blti'), $launchoptions);
-        $mform->setDefault('lti_launchinpopup', '0');
-//        $mform->addHelpButton('lti_launchinpopup', 'launchinpopup', 'blti');
 
                 
 //-------------------------------------------------------------------------------

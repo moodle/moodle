@@ -115,6 +115,16 @@ class mod_blti_mod_form extends moodleform_mod {
         $mform->setType('instructorcustomparameters', PARAM_TEXT);
         $mform->setAdvanced('instructorcustomparameters');
         
+        $launchoptions=array();
+        $launchoptions[BLTI_LAUNCH_CONTAINER_DEFAULT] = get_string('default', 'blti');
+        $launchoptions[BLTI_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'blti');
+        $launchoptions[BLTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS] = get_string('embed_no_blocks', 'blti');
+        $launchoptions[BLTI_LAUNCH_CONTAINER_WINDOW] = get_string('new_window', 'blti');
+
+        $mform->addElement('select', 'launchcontainer', get_string('launchinpopup', 'blti'), $launchoptions);
+
+        $mform->setDefault('launchcontainer', BLTI_LAUNCH_CONTAINER_DEFAULT);
+        
 //-------------------------------------------------------------------------------
         //$mform->addElement('hidden', 'typeid', $this->typeid);
         //$mform->addElement('hidden', 'toolurl', $this->typeconfig['toolurl']);
@@ -137,25 +147,6 @@ class mod_blti_mod_form extends moodleform_mod {
         $mform->setDefault('instructorchoiceallowroster', '1');
 
 //-------------------------------------------------------------------------------
-
-        // Add launch parameters fieldset
-        $mform->addElement('header', 'launchoptions', get_string('launchoptions', 'blti'));
-
-        $launchoptions=array();
-        $launchoptions[0] = get_string('embed', 'blti');
-        $launchoptions[1] = get_string('embed_no_blocks', 'blti');
-        $launchoptions[2] = get_string('popup_window', 'blti');
-        $launchoptions[3] = get_string('new_window', 'blti');
-
-        $mform->addElement('select', 'launchinpopup', get_string('launchinpopup', 'blti'), $launchoptions);
-
-        if (isset($this->typeconfig['launchinpopup'])) {
-            if ($this->typeconfig['launchinpopup'] == 0) {
-                $mform->setDefault('launchinpopup', '0');
-            } else if ($this->typeconfig['launchinpopup'] == 1) {
-                $mform->setDefault('launchinpopup', '1');
-            }
-        }
 
 /*        $debugoptions=array();
         $debugoptions[0] = get_string('debuglaunchoff', 'blti');

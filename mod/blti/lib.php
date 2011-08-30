@@ -112,6 +112,14 @@ function blti_update_instance($formdata) {
     $formdata->timemodified = time();
     $formdata->id = $formdata->instance;
 
+    if(!isset($formdata->showtitle)){
+        $formdata->showtitle = 0;
+    }
+    
+    if(!isset($formdata->showdescription)){
+        $formdata->showdescription = 0;
+    }
+    
     if ($formdata->instructorchoiceacceptgrades == 1) {
         $basicltirec = $DB->get_record("blti", array("id" => $formdata->id));
         $basicltirec->cmidnumber = $formdata->cmidnumber;

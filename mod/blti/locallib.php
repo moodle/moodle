@@ -51,6 +51,11 @@ require_once($CFG->dirroot.'/mod/blti/OAuth.php');
 
 define('BLTI_URL_DOMAIN_REGEX', '/(?:https?:\/\/)?(?:www\.)?([^\/]+)(?:\/|$)/i');
 
+define('BLTI_LAUNCH_CONTAINER_DEFAULT', 1);
+define('BLTI_LAUNCH_CONTAINER_EMBED', 2);
+define('BLTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS', 3);
+define('BLTI_LAUNCH_CONTAINER_WINDOW', 4);
+
 /**
  * Prints a Basic LTI activity
  *
@@ -459,9 +464,6 @@ function blti_get_type_config_from_instance($id) {
     if (isset($config['toolurl'])) {
         $type->lti_toolurl = $config['toolurl'];
     }
-    if (isset($config['preferheight'])) {
-        $type->lti_preferheight = $config['preferheight'];
-    }
     if (isset($config['instructorchoicesendname'])) {
         $type->lti_sendname = $config['instructorchoicesendname'];
     }
@@ -474,9 +476,7 @@ function blti_get_type_config_from_instance($id) {
     if (isset($config['instructorchoiceallowroster'])) {
         $type->lti_allowroster = $config['instructorchoiceallowroster'];
     }
-    if (isset($config['instructorchoiceallowsetting'])) {
-        $type->lti_allowsetting = $config['instructorchoiceallowsetting'];
-    }
+
     if (isset($config['instructorcustomparameters'])) {
         $type->lti_allowsetting = $config['instructorcustomparameters'];
     }
@@ -506,9 +506,7 @@ function blti_get_type_type_config($id) {
     if (isset($config['password'])) {
         $type->lti_password = $config['password'];
     }
-    if (isset($config['preferheight'])) {
-        $type->lti_preferheight = $config['preferheight'];
-    }
+
     if (isset($config['sendname'])) {
         $type->lti_sendname = $config['sendname'];
     }
@@ -533,18 +531,11 @@ function blti_get_type_type_config($id) {
     if (isset($config['instructorchoiceallowroster'])){
         $type->lti_instructorchoiceallowroster = $config['instructorchoiceallowroster'];
     }
-    if (isset($config['allowsetting'])){
-        $type->lti_allowsetting = $config['allowsetting'];
-    }
-    if (isset($config['instructorchoiceallowsetting'])){
-        $type->lti_instructorchoiceallowsetting = $config['instructorchoiceallowsetting'];
-    }
+
     if (isset($config['customparameters'])) {
         $type->lti_customparameters = $config['customparameters'];
     }
-    if (isset($config['allowinstructorcustom'])) {
-        $type->lti_allowinstructorcustom = $config['allowinstructorcustom'];
-    }
+
     if (isset($config['organizationid'])) {
         $type->lti_organizationid = $config['organizationid'];
     }
@@ -554,8 +545,8 @@ function blti_get_type_type_config($id) {
     if (isset($config['organizationdescr'])) {
         $type->lti_organizationdescr = $config['organizationdescr'];
     }
-    if (isset($config['launchinpopup'])) {
-        $type->lti_launchinpopup = $config['launchinpopup'];
+    if (isset($config['launchcontainer'])) {
+        $type->lti_launchcontainer = $config['launchcontainer'];
     }
     if (isset($config['debuglaunch'])) {
         $type->lti_debuglaunch = $config['debuglaunch'];
@@ -655,11 +646,9 @@ function sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $oaut
  */
 function post_launch_html($newparms, $endpoint, $debug=false, $height=false) {
     global $lastbasestring;
-    if ($height) {
-        $r = "<form action=\"".$endpoint."\" name=\"ltiLaunchForm\" id=\"ltiLaunchForm\" method=\"post\" encType=\"application/x-www-form-urlencoded\">\n";
-    } else {
-        $r = "<form action=\"".$endpoint."\" name=\"ltiLaunchForm\" id=\"ltiLaunchForm\" method=\"post\" encType=\"application/x-www-form-urlencoded\">\n";
-    }
+    
+    $r = "<form action=\"".$endpoint."\" name=\"ltiLaunchForm\" id=\"ltiLaunchForm\" method=\"post\" encType=\"application/x-www-form-urlencoded\">\n";
+    
     $submittext = $newparms['ext_submit'];
 
     // Contruct html for the launch parameters

@@ -77,13 +77,27 @@ if ($id) {
     }
 }
 
+$tool = blti_get_tool_by_url_match($basiclti->toolurl);
+$toolconfig = blti_get_type_config($tool->id);
+
 $PAGE->set_cm($cm, $course); // set's up global $COURSE
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 $PAGE->set_context($context);
 
 $url = new moodle_url('/mod/blti/view.php', array('id'=>$cm->id));
 $PAGE->set_url($url);
-$PAGE->set_pagelayout('incourse');
+
+$launchcontainer = $basiclti->launchcontainer == BLTI_LAUNCH_CONTAINER_DEFAULT ? 
+                        $toolconfig['launchcontainer'] :
+                        $basiclti->launchcontainer;
+
+if($launchcontainer == BLTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS){
+    $PAGE->set_pagelayout('frametop'); //Use the frametop layout to get the navbar, but no footer
+    $PAGE->blocks->show_only_fake_blocks(); //Disable blocks
+} else {
+    $PAGE->set_pagelayout('incourse');
+}
+
 require_login($course);
 
 add_to_log($course->id, "blti", "view", "view.php?id=$cm->id", "$basiclti->id");
@@ -95,35 +109,63 @@ $PAGE->set_heading($course->fullname);
 /// Print the page header
 echo $OUTPUT->header();
 
-/// Print the main part of the page
-echo $OUTPUT->heading(format_string($basiclti->name));
-echo $OUTPUT->box($basiclti->intro, 'generalbox description', 'intro');
+if($basiclti->showtitle) {
+    /// Print the main part of the page
+    echo $OUTPUT->heading(format_string($basiclti->name));
+}
+
+if($basiclti->showdescription && $basiclti->intro){
+    echo $OUTPUT->box($basiclti->intro, 'generalbox description', 'intro');
+}
 
 if ($basiclti->instructorchoiceacceptgrades == 1) {
     echo '<div class="reportlink">'.submittedlink($cm).'</div>';
 }
 
-echo $OUTPUT->box_start('generalbox activity');
-
-
-if ( false /*$basiclti->launchinpopup > 0*/ ) {
-    print "<script language=\"javascript\">//<![CDATA[\n";
-    print "window.open('launch.php?id=".$cm->id."','window name');";
-    print "//]]\n";
-    print "</script>\n";
-    print "<p>".get_string("basiclti_in_new_window", "blti")."</p>\n";
+if ( $launchcontainer == BLTI_LAUNCH_CONTAINER_WINDOW ) {
+    echo "<script language=\"javascript\">//<![CDATA[\n";
+    echo "window.open('launch.php?id=".$cm->id."','blti');";
+    echo "//]]\n";
+    echo "</script>\n";
+    echo "<p>".get_string("basiclti_in_new_window", "blti")."</p>\n";
 } else {
     // Request the launch content with an object tag
-    /*$height = $basiclti->preferheight;
-    if ((!$height) || ($height == 0)) {
-        $height = 400;
-    }*/
-    $height=600;
-    print '<object height="'.$height.'" width="100%" data="launch.php?id='.$cm->id.'&amp;withobject=true"></object>';
+    echo '<object id="contentframe" height="600px" width="100%" type="text/html" data="launch.php?id='.$cm->id.'&amp;withobject=true"></object>';
+    
+    //Output script to make the object tag be as large as possible
+    $resize = <<<'SCRIPT'
+        <script type='text/javascript'>
+        //<![CDATA[
+            (function(){
+                //Take scrollbars off the outer document to prevent double scroll bar effect
+                document.body.style.overflow = 'hidden';
 
+                var dom = YAHOO.util.Dom;
+                var frame = document.getElementById('contentframe');
+
+                var lastHeight;
+
+                var resize = function(){
+                    var viewportHeight = dom.getViewportHeight();
+
+                    if(lastHeight !== Math.min(dom.getDocumentHeight(), viewportHeight)){
+                        frame.style.height = viewportHeight - dom.getY(frame) + 'px';
+
+                        lastHeight = Math.min(dom.getDocumentHeight(), dom.getViewportHeight());
+                    }
+                };
+
+                resize();
+
+                setInterval(resize, 250);
+            })();
+        //]]    
+        </script>
+SCRIPT;
+    
+    echo $resize;
 }
 
-echo $OUTPUT->box_end();
 
 /// Finish the page
 echo $OUTPUT->footer();
