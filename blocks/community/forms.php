@@ -155,7 +155,7 @@ class community_hub_search_form extends moodleform {
                                     array('class' => 'hubscreenshot'));
                     $hubdescriptiontext = html_writer::tag('span', format_text($hub['description'], FORMAT_PLAIN),
                                     array('class' => 'hubdescription'));
-                    if (isset($hub['enrollablecourses'])) { //needed for Moodle version < 2011081700
+                    if (isset($hub['enrollablecourses'])) { //check needed to avoid warnings for Moodle version < 2011081700
                         $additionaldesc = get_string('enrollablecourses', 'block_community') . ': ' . $hub['enrollablecourses'] . ' - ' .
                                 get_string('downloadablecourses', 'block_community') . ': ' . $hub['downloadablecourses'];
                         $hubdescriptiontext .= html_writer::tag('span', $additionaldesc,
