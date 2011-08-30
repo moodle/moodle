@@ -49,6 +49,7 @@ $string['donotrestore'] = 'No';
 $string['dorestore'] = 'Yes';
 $string['download'] = 'Download';
 $string['downloadable'] = 'courses I can download';
+$string['downloadablecourses'] = 'Downloadable courses';
 $string['downloadconfirmed'] = 'The backup has been saved in your private files {$a}';
 $string['downloaded'] = '...finished.';
 $string['downloadingcourse'] = 'Downloading course';
@@ -61,6 +62,7 @@ $string['enroldownload_help'] = 'Some courses listed in the selected hub are bei
 
 Others are course templates provided for you to download and use on your own Moodle site.';
 $string['enrollable'] = 'courses I can enrol in';
+$string['enrollablecourses'] = 'Enrollable courses';
 $string['errorcourselisting'] = 'An error occured when retrieving the course listing from the selected hub, please try again later. ({$a})';
 $string['errorhublisting'] = 'An error occured when retrieving the hub listing from Moodle.org, please try again later. ({$a})';
 $string['fileinfo'] = 'Language: {$a->lang} - License: {$a->license} -  Time updated: {$a->timeupdated}';
