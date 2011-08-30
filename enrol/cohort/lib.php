@@ -157,7 +157,16 @@ class enrol_cohort_plugin extends enrol_plugin {
         $button = new enrol_user_button($cohorturl, get_string('enrolcohort', 'enrol'), 'get');
         $button->class .= ' enrol_cohort_plugin';
 
-        $button->strings_for_js(array('enrol','synced','enrolcohort','enrolcohortusers'), 'enrol');
+        $button->strings_for_js(array(
+            'enrol',
+            'synced',
+            'enrolcohort',
+            'enrolcohortusers',
+            ), 'enrol');
+        $button->strings_for_js(array(
+            'ajaxmore',
+            'cohortsearch',
+            ), 'enrol_cohort');
         $button->strings_for_js('assignroles', 'role');
         $button->strings_for_js('cohort', 'cohort');
         $button->strings_for_js('users', 'moodle');

@@ -244,6 +244,7 @@ function enrol_cohort_enrol_all_users(course_enrolment_manager $manager, $cohort
  * Gets all the cohorts the user is able to view.
  *
  * @global moodle_database $DB
+ * @param course_enrolment_manager $manager
  * @return array
  */
 function enrol_cohort_get_cohorts(course_enrolment_manager $manager) {
@@ -277,4 +278,101 @@ function enrol_cohort_get_cohorts(course_enrolment_manager $manager) {
     }
     $rs->close();
     return $cohorts;
+}
+
+/**
+ * Check if cohort exists and user is allowed to enrol it
+ *
+ * @global moodle_database $DB
+ * @param int $cohortid Cohort ID
+ * @return boolean
+ */
+function enrol_cohort_can_view_cohort($cohortid) {
+    global $DB;
+    $cohort = $DB->get_record_select('cohort', 'id = ?', array($cohortid));
+
+    if ($cohort) {
+        $context = get_context_instance_by_id($cohort->contextid);
+        if (has_capability('moodle/cohort:view', $context)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Gets cohorts the user is able to view.
+ *
+ * @global moodle_database $DB
+ * @param course_enrolment_manager $manager
+ * @param int $offset limit output from
+ * @param int $limit items to output per load
+ * @param string $search search string
+ * @return array    Array(more => bool, offset => int, cohorts => array)
+ */
+function enrol_cohort_search_cohorts(course_enrolment_manager $manager, $offset = 0, $limit = 25, $search = '') {
+    global $DB;
+    $context = $manager->get_context();
+    $cohorts = array();
+    $instances = $manager->get_enrolment_instances();
+    $enrolled = array();
+    foreach ($instances as $instance) {
+        if ($instance->enrol == 'cohort') {
+            $enrolled[] = $instance->customint1;
+        }
+    }
+
+    list($sqlparents, $params) = $DB->get_in_or_equal(get_parent_contexts($context));
+
+    // Add some additional sensible conditions
+    $tests = array('contextid ' . $sqlparents);
+
+    // Modify the quesry to perform the search if requred
+    if (!empty($search)) {
+        $conditions = array(
+            'name',
+            'idnumber',
+            'description'
+        );
+        $searchparam = '%' . $search . '%';
+        foreach ($conditions as $key=>$condition) {
+            $conditions[$key] = $DB->sql_like($condition,"?", false);
+            $params[] = $searchparam;
+        }
+        $tests[] = '(' . implode(' OR ', $conditions) . ')';
+    }
+    $wherecondition = implode(' AND ', $tests);
+
+    $fields = 'SELECT id, name, contextid, description';
+    $countfields = 'SELECT COUNT(1)';
+    $sql = " FROM {cohort}
+             WHERE $wherecondition";
+    $order = ' ORDER BY name ASC';
+    $rs = $DB->get_recordset_sql($fields . $sql . $order, $params, $offset);
+
+    // Produce the output respecting parameters
+    foreach ($rs as $c) {
+        // Track offset
+        $offset++;
+        // Check capabilities
+        $context = get_context_instance_by_id($c->contextid);
+        if (!has_capability('moodle/cohort:view', $context)) {
+            continue;
+        }
+        if ($limit === 0) {
+            // we have reached the required number of items and know that there are more, exit now
+            $offset--;
+            break;
+        }
+        $cohorts[$c->id] = array(
+            'cohortid'=>$c->id,
+            'name'=>  shorten_text(format_string($c->name), 35),
+            'users'=>$DB->count_records('cohort_members', array('cohortid'=>$c->id)),
+            'enrolled'=>in_array($c->id, $enrolled)
+        );
+        // Count items
+        $limit--;
+    }
+    $rs->close();
+    return array('more' => !(bool)$limit, 'offset' => $offset, 'cohorts' => $cohorts);
 }

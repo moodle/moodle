@@ -10,7 +10,12 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
         ASSIGNABLEROLES = 'assignableRoles',
         DEFAULTCOHORTROLE = 'defaultCohortRole',
         COHORTS = 'cohorts',
+        MORERESULTS = 'moreresults',
+        FIRSTPAGE = 'firstpage',
+        OFFSET = 'offset',
         PANELID = 'qce-panel-',
+        REQUIREREFRESH = 'requiresRefresh',
+        SEARCH = 'search',
         URL = 'url',
         AJAXURL = 'ajaxurl',
         MANUALENROLMENT = 'manualEnrolment',
@@ -21,12 +26,18 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
             COHORTENROLLED : 'qce-cohort-enrolled',
             COHORTNAME : 'qce-cohort-name',
             COHORTUSERS : 'qce-cohort-users',
+            ENROLUSERS : 'canenrolusers',
+            FOOTER : 'qce-footer',
+            HIDDEN : 'hidden',
+            LIGHTBOX : 'qce-loading-lightbox',
+            LOADINGICON : 'loading-icon',
+            MORERESULTS : 'qce-more-results',
             PANEL : 'qce-panel',
             PANELCONTENT : 'qce-panel-content',
             PANELCOHORTS : 'qce-enrollable-cohorts',
             PANELROLES : 'qce-assignable-roles',
             PANELCONTROLS : 'qce-panel-controls',
-            ENROLUSERS : 'canenrolusers'
+            SEARCH : 'qce-search'
         },
         COUNT = 0;
 
@@ -35,24 +46,47 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
         CONTROLLER.superclass.constructor.apply(this, arguments);
     };
     CONTROLLER.prototype = {
-        _preformingAction : false,
         initializer : function(config) {
             COUNT ++;
             this.publish('assignablerolesloaded', {fireOnce:true});
             this.publish('cohortsloaded');
-            this.publish('performingaction');
-            this.publish('actioncomplete');
             this.publish('defaultcohortroleloaded', {fireOnce:true});
+
+            var base = Y.Node.create('<div class="'+CSS.PANELCONTENT+'"></div>')
+                .append(Y.Node.create('<div class="'+CSS.PANELROLES+'"></div>'))
+                .append(Y.Node.create('<div class="'+CSS.PANELCOHORTS+'"></div>'))
+                .append(Y.Node.create('<div class="'+CSS.FOOTER+'"></div>')
+                    .append(Y.Node.create('<div class="'+CSS.SEARCH+'"><label>'+M.str.enrol_cohort.cohortsearch+':</label></div>')
+                        .append(Y.Node.create('<input type="text" id="enrolcohortsearch" value="" />'))
+                    )
+                )
+                .append(Y.Node.create('<div class="'+CSS.LIGHTBOX+' '+CSS.HIDDEN+'"></div>')
+                    .append(Y.Node.create('<img alt="loading" class="'+CSS.LOADINGICON+'" />')
+                        .setAttribute('src', M.util.image_url('i/loading', 'moodle')))
+                    .setStyle('opacity', 0.5)
+                );
 
             var close = Y.Node.create('<div class="close"></div>');
             var panel = new Y.Overlay({
                 headerContent : Y.Node.create('<div></div>').append(Y.Node.create('<h2>'+M.str.enrol.enrolcohort+'</h2>')).append(close),
-                bodyContent : Y.Node.create('<div class="loading"></div>').append(Y.Node.create('<img alt="loading" />').setAttribute('src', M.cfg.loadingicon)),
+                bodyContent : base,
                 constrain : true,
                 centered : true,
                 id : PANELID+COUNT,
                 visible : false
             });
+
+            // display the wheel on ajax events
+            Y.on('io:start', function() {
+                base.one('.'+CSS.LIGHTBOX).removeClass(CSS.HIDDEN);
+            }, this);
+            Y.on('io:end', function() {
+                base.one('.'+CSS.LIGHTBOX).addClass(CSS.HIDDEN);
+            }, this);
+
+            this.set(SEARCH, base.one('#enrolcohortsearch'));
+            Y.on('key', this.getCohorts, this.get(SEARCH), 'down:13', this, false);
+
             panel.get('boundingBox').addClass(CSS.PANEL);
             panel.render(Y.one(document.body));
             this.on('show', function(){
@@ -60,15 +94,10 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
                 this.show();
             }, panel);
             this.on('hide', panel.hide, panel);
-            this.on('performingaction', function(){
-                this.get('boundingBox').append(Y.Node.create('<div class="performing-action"></div>').append(Y.Node.create('<img alt="loading" />').setAttribute('src', M.cfg.loadingicon)).setStyle('opacity', 0.5));
-            }, panel);
-            this.on('actioncomplete', function(){
-                this.get('boundingBox').one('.performing-action').remove();
-            }, panel);
             this.on('assignablerolesloaded', this.updateContent, this, panel);
             this.on('cohortsloaded', this.updateContent, this, panel);
             this.on('defaultcohortroleloaded', this.updateContent, this, panel);
+            Y.on('key', this.hide, document.body, 'down:27', this);
             close.on('click', this.hide, this);
 
             Y.all('.enrol_cohort_plugin input').each(function(node){
@@ -77,38 +106,51 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
                 }
             }, this);
 
-            var base = panel.get('boundingBox');
+            base = panel.get('boundingBox');
             base.plug(Y.Plugin.Drag);
             base.dd.addHandle('.yui3-widget-hd h2');
             base.one('.yui3-widget-hd h2').setStyle('cursor', 'move');
         },
         show : function(e) {
             e.preventDefault();
-            this.getCohorts();
+            // prepare the data and display the window
+            this.getCohorts(e, false);
             this.getAssignableRoles();
             this.fire('show');
         },
         updateContent : function(e, panel) {
-            if (panel.get('contentBox').one('.loading')) {
-                panel.set('bodyContent', Y.Node.create('<div class="'+CSS.PANELCONTENT+'"></div>')
-                    .append(Y.Node.create('<div class="'+CSS.PANELCOHORTS+'"><div class="'+CSS.COHORT+' headings"><div class="'+CSS.COHORTBUTTON+'"></div><div class="'+CSS.COHORTNAME+'">'+M.str.cohort.cohort+'</div><div class="'+CSS.COHORTUSERS+'">'+M.str.moodle.users+'</div></div></div>'))
-                    .append(Y.Node.create('<div class="'+CSS.PANELROLES+'"></div>')));
-            }
             var content, i, roles, cohorts, count=0, supportmanual = this.get(MANUALENROLMENT), defaultrole;
             switch (e.type.replace(/^[^:]+:/, '')) {
                 case 'cohortsloaded' :
-                    cohorts = this.get(COHORTS);
-                    content = Y.Node.create('<div class="'+CSS.COHORTS+'"></div>');
-                    if (supportmanual) {
-                        content.addClass(CSS.ENROLUSERS);
+                    if (this.get(FIRSTPAGE)) {
+                        // we are on the page 0, create new element for cohorts list
+                        content = Y.Node.create('<div class="'+CSS.COHORTS+'"></div>');
+                        if (supportmanual) {
+                            content.addClass(CSS.ENROLUSERS);
+                        }
+                    } else {
+                        // we are adding cohorts to existing list
+                        content = Y.Node.one('.'+CSS.PANELCOHORTS+' .'+CSS.COHORTS);
+                        content.one('.'+CSS.MORERESULTS).remove();
                     }
+                    // add cohorts items to the content
+                    cohorts = this.get(COHORTS);
                     for (i in cohorts) {
                         count++;
                         cohorts[i].on('enrolchort', this.enrolCohort, this, cohorts[i], panel.get('contentBox'), false);
                         cohorts[i].on('enrolusers', this.enrolCohort, this, cohorts[i], panel.get('contentBox'), true);
                         content.append(cohorts[i].toHTML(supportmanual).addClass((count%2)?'even':'odd'));
                     }
-                    panel.get('contentBox').one('.'+CSS.PANELCOHORTS).setContent(content);
+                    // add the next link if there are more items expected
+                    if (this.get(MORERESULTS)) {
+                        var fetchmore = Y.Node.create('<div class="'+CSS.MORERESULTS+'"><a href="#">'+M.str.enrol_cohort.ajaxmore+'</a></div>');
+                        fetchmore.on('click', this.getCohorts, this, true);
+                        content.append(fetchmore);
+                    }
+                    // finally assing the content to the block
+                    if (this.get(FIRSTPAGE)) {
+                        panel.get('contentBox').one('.'+CSS.PANELCOHORTS).setContent(content);
+                    }
                     break;
                 case 'assignablerolesloaded':
                     roles = this.get(ASSIGNABLEROLES);
@@ -116,7 +158,7 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
                     for (i in roles) {
                         content.append(Y.Node.create('<option value="'+i+'">'+roles[i]+'</option>'));
                     }
-                    panel.get('contentBox').one('.'+CSS.PANELROLES).setContent(Y.Node.create('<div>'+M.str.role.assignroles+': </div>').append(content));
+                    panel.get('contentBox').one('.'+CSS.PANELROLES).setContent(Y.Node.create('<div><label>'+M.str.role.assignroles+':</label></div>').append(content));
 
                     this.getDefaultCohortRole();
                     break;
@@ -127,12 +169,31 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
             }
         },
         hide : function() {
+            if (this.get(REQUIREREFRESH)) {
+                window.location = this.get(URL);
+            }
             this.fire('hide');
         },
-        getCohorts : function() {
+        getCohorts : function(e, append) {
+            if (e) {
+                e.preventDefault();
+            }
+            if (append) {
+                this.set(FIRSTPAGE, false);
+            } else {
+                this.set(FIRSTPAGE, true);
+                this.set(OFFSET, 0);
+            }
+            var params = [];
+            params['id'] = this.get(COURSEID);
+            params['offset'] = this.get(OFFSET);
+            params['search'] = this.get(SEARCH).get('value');
+            params['action'] = 'getcohorts';
+            params['sesskey'] = M.cfg.sesskey;
+
             Y.io(M.cfg.wwwroot+this.get(AJAXURL), {
                 method:'POST',
-                data:'id='+this.get(COURSEID)+'&action=getcohorts&sesskey='+M.cfg.sesskey,
+                data:build_querystring(params),
                 on: {
                     complete: function(tid, outcome, args) {
                         try {
@@ -145,16 +206,16 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
                         } catch (e) {
                             return new M.core.exception(e);
                         }
-                        this.getCohorts = function() {
-                            this.fire('cohortsloaded');
-                        };
-                        this.getCohorts();
+                        this.fire('cohortsloaded');
                     }
                 },
                 context:this
             });
         },
-        setCohorts : function(rawcohorts) {
+        setCohorts : function(response) {
+            this.set(MORERESULTS, response.more);
+            this.set(OFFSET, response.offset);
+            var rawcohorts = response.cohorts;
             var cohorts = [], i=0;
             for (i in rawcohorts) {
                 cohorts[rawcohorts[i].cohortid] = new COHORT(rawcohorts[i]);
@@ -201,11 +262,6 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
             });
         },
         enrolCohort : function(e, cohort, node, usersonly) {
-            if (this._preformingAction) {
-                return true;
-            }
-            this._preformingAction = true;
-            this.fire('performingaction');
             var params = {
                 id : this.get(COURSEID),
                 roleid : node.one('.'+CSS.PANELROLES+' select').get('value'),
@@ -223,24 +279,13 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
                             if (result.error) {
                                 new M.core.ajaxException(result);
                             } else {
-                                var redirecturl = this.get(URL), redirect = function() {
-                                    if (!usersonly || result.response.users) {
-                                        Y.one(document.body).append(
-                                            Y.Node.create('<div class="corelightbox"></div>')
-                                                .setStyle('height', Y.one(document.body).get('docHeight')+'px')
-                                                .setStyle('opacity', '0.4')
-                                                .append(Y.Node.create('<img alt="loading" />').setAttribute('src', M.cfg.loadingicon)));
-                                        window.location.href = redirecturl;
-                                    }
-                                };
                                 if (result.response && result.response.message) {
-                                    new M.core.alert(result.response).on('complete', redirect, this);
-                                } else {
-                                    redirect();
+                                    new M.core.alert(result.response);
                                 }
+                                var enrolled = Y.Node.create('<div class="'+CSS.COHORTBUTTON+' alreadyenrolled">'+M.str.enrol.synced+'</div>');
+                                node.one('.'+CSS.COHORT+' #cohortid_'+cohort.get(COHORTID)).replace(enrolled);
+                                this.set(REQUIREREFRESH, true);
                             }
-                            this._preformingAction = false;
-                            this.fire('actioncomplete');
                         } catch (e) {
                             new M.core.exception(e);
                         }
@@ -275,6 +320,10 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
             },
             defaultCohortRole : {
                 value : null
+            },
+            requiresRefresh : {
+                value : false,
+                validator : Y.Lang.isBool
             }
         }
     });
@@ -290,7 +339,7 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
             if (this.get(ENROLLED)) {
                 button = Y.Node.create('<div class="'+CSS.COHORTBUTTON+' alreadyenrolled">'+M.str.enrol.synced+'</div>');
             } else {
-                button = Y.Node.create('<div></div>');
+                button = Y.Node.create('<div id="cohortid_'+this.get(COHORTID)+'"></div>');
 
                 syncbutton = Y.Node.create('<a class="'+CSS.COHORTBUTTON+' notenrolled enrolcohort">'+M.str.enrol.enrolcohort+'</a>');
                 syncbutton.on('click', function(){this.fire('enrolchort');}, this);
@@ -304,9 +353,6 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
             }
             name = Y.Node.create('<div class="'+CSS.COHORTNAME+'">'+this.get(NAME)+'</div>');
             users = Y.Node.create('<div class="'+CSS.COHORTUSERS+'">'+this.get(USERS)+'</div>');
-            if (this.get(ENROLLED)) {
-                button.one(CSS.COHORTENROLLED);
-            }
             return result.append(button).append(name).append(users);
         }
     }, {
