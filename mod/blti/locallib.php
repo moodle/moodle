@@ -97,16 +97,12 @@ function blti_view($instance, $makeobject=false) {
     $parms = sign_parameters($requestparams, $endpoint, "POST", $key, $secret, $submittext, $orgid /*, $orgdesc*/);
 
     $debuglaunch = ( $instance->debuglaunch == 1 );
-    if ( $makeobject ) {
-        $height = 600;
-        
-        $content = post_launch_html($parms, $endpoint, $debuglaunch, $height);
-    } else {
-        $content = post_launch_html($parms, $endpoint, $debuglaunch, false);
-    }
+    
+    $content = post_launch_html($parms, $endpoint, $debuglaunch);
+    
 //    $cm = get_coursemodule_from_instance("blti", $instance->id);
 //    print '<object height='.$height.' width="80%" data="launch.php?id='.$cm->id.'">'.$content.'</object>';
-    print $content;
+    echo $content;
 }
 
 /**
@@ -320,7 +316,8 @@ function blti_filter_get_types() {
 }
 
 function blti_get_types_for_add_instance(){
-    $admintypes = blti_filter_get_types();
+    global $DB;
+    $admintypes = $DB->get_records('blti_types', array('coursevisible' => 1));
     
     $types = array();
     $types[0] = get_string('automatic', 'blti');
@@ -548,12 +545,15 @@ function blti_get_type_type_config($id) {
     if (isset($config['launchcontainer'])) {
         $type->lti_launchcontainer = $config['launchcontainer'];
     }
+    
+    if (isset($config['coursevisible'])) {
+        $type->lti_coursevisible = $config['coursevisible'];
+    }
+    
     if (isset($config['debuglaunch'])) {
         $type->lti_debuglaunch = $config['debuglaunch'];
     }
-    if (isset($config['moodle_course_field'])) {
-            $type->lti_moodle_course_field = $config['moodle_course_field'];
-    }
+    
     if (isset($config['module_class_type'])) {
             $type->lti_module_class_type = $config['module_class_type'];
     }
@@ -644,7 +644,7 @@ function sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $oaut
  * @param $endpoint     URL of the external tool
  * @param $debug        Debug (true/false)
  */
-function post_launch_html($newparms, $endpoint, $debug=false, $height=false) {
+function post_launch_html($newparms, $endpoint, $debug=false) {
     global $lastbasestring;
     
     $r = "<form action=\"".$endpoint."\" name=\"ltiLaunchForm\" id=\"ltiLaunchForm\" method=\"post\" encType=\"application/x-www-form-urlencoded\">\n";

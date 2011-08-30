@@ -42,7 +42,7 @@
         <FIELD NAME="tooldomain" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="baseurl" NEXT="state"/>
         <FIELD NAME="state" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="2" SEQUENCE="false" COMMENT="Active = 1, Pending = 2, Rejected = 3" PREVIOUS="tooldomain" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="state" NEXT="coursevisible"/>
-        <FIELD NAME="coursevisible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="course" NEXT="createdby"/>
+        <FIELD NAME="coursevisible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" PREVIOUS="course" NEXT="createdby"/>
         <FIELD NAME="createdby" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="coursevisible" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="createdby" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="timecreated"/>

@@ -118,7 +118,6 @@ $string['module_class_type'] = 'Moodle module type';
 $string['modulename'] = 'External Tool';
 $string['modulenameplural'] = 'basicltis';
 $string['modulenamepluralformatted'] = 'Basic LTI Instances';
-$string['moodle_course_field'] = 'Course identification field';
 $string['never'] = 'Never';
 $string['noattempts'] = 'No attempts have been made on this tool instance';
 $string['noservers'] = 'No servers found';

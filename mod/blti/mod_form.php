@@ -103,6 +103,15 @@ class mod_blti_mod_form extends moodleform_mod {
         $mform->addElement('text', 'toolurl', get_string('launch_url', 'blti'), array('size'=>'64'));
         $mform->setType('toolurl', PARAM_TEXT);
         
+        $launchoptions=array();
+        $launchoptions[BLTI_LAUNCH_CONTAINER_DEFAULT] = get_string('default', 'blti');
+        $launchoptions[BLTI_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'blti');
+        $launchoptions[BLTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS] = get_string('embed_no_blocks', 'blti');
+        $launchoptions[BLTI_LAUNCH_CONTAINER_WINDOW] = get_string('new_window', 'blti');
+
+        $mform->addElement('select', 'launchcontainer', get_string('launchinpopup', 'blti'), $launchoptions);
+        $mform->setDefault('launchcontainer', BLTI_LAUNCH_CONTAINER_DEFAULT);
+        
         $mform->addElement('text', 'resourcekey', get_string('resourcekey', 'blti'));
         $mform->setType('resourcekey', PARAM_TEXT);
         $mform->setAdvanced('resourcekey');
@@ -114,16 +123,6 @@ class mod_blti_mod_form extends moodleform_mod {
         $mform->addElement('textarea', 'instructorcustomparameters', get_string('custom', 'blti'), array('rows'=>4, 'cols'=>60));
         $mform->setType('instructorcustomparameters', PARAM_TEXT);
         $mform->setAdvanced('instructorcustomparameters');
-        
-        $launchoptions=array();
-        $launchoptions[BLTI_LAUNCH_CONTAINER_DEFAULT] = get_string('default', 'blti');
-        $launchoptions[BLTI_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'blti');
-        $launchoptions[BLTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS] = get_string('embed_no_blocks', 'blti');
-        $launchoptions[BLTI_LAUNCH_CONTAINER_WINDOW] = get_string('new_window', 'blti');
-
-        $mform->addElement('select', 'launchcontainer', get_string('launchinpopup', 'blti'), $launchoptions);
-
-        $mform->setDefault('launchcontainer', BLTI_LAUNCH_CONTAINER_DEFAULT);
         
 //-------------------------------------------------------------------------------
         //$mform->addElement('hidden', 'typeid', $this->typeid);
@@ -166,6 +165,8 @@ class mod_blti_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
         $this->standard_coursemodule_elements();
+        
+        $mform->setAdvanced('cmidnumber');
 //-------------------------------------------------------------------------------
         // add standard buttons, common to all modules
         $this->add_action_buttons();

@@ -79,8 +79,10 @@ if ($data = data_submitted() and confirm_sesskey() and isset($data->submitbutton
     $type->baseurl = $data->lti_toolurl;
     $type->tooldomain = blti_get_domain_from_url($data->lti_toolurl);
     $type->course = $SITE->id;
-    $type->coursevisible = 1;
+    $type->coursevisible = !empty($data->lti_coursevisible) ? $data->lti_coursevisible : 0;
     $type->timemodified = time();
+    
+    $data->lti_coursevisible = $type->coursevisible;//When not checked, it does not appear in data array. Set it manually.
     
     if (isset($id)) {
         $type->id = $id;

@@ -132,10 +132,6 @@ class mod_blti_edit_types_form extends moodleform{
         $idoptions[0] = get_string('id', 'blti');
         $idoptions[1] = get_string('courseid', 'blti');
 
-        $mform->addElement('select', 'lti_moodle_course_field', get_string('moodle_course_field', 'blti'), $idoptions);
-        $mform->setDefault('lti_moodle_course_field', '0');
-        
-
         $mform->addElement('text', 'lti_organizationid', get_string('organizationid', 'blti'));
         $mform->setType('lti_organizationid', PARAM_TEXT);
 //        $mform->addHelpButton('lti_organizationid', 'organizationid', 'blti');
