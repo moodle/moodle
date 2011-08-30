@@ -107,9 +107,11 @@ class core_course_renderer extends plugin_renderer_base {
                 $classes[] = 'collapsed';
             }
         }
+        $categoryname = format_string($category->name, true, array('context' => get_context_instance(CONTEXT_COURSECAT, $category->id)));
+
         $content .= html_writer::start_tag('div', array('class'=>join(' ', $classes)));
         $content .= html_writer::start_tag('div', array('class'=>'category_label'));
-        $content .= html_writer::link(new moodle_url('/course/category.php', array('id'=>$category->id)), $category->name, array('class'=>'category_link'));
+        $content .= html_writer::link(new moodle_url('/course/category.php', array('id'=>$category->id)), $categoryname, array('class'=>'category_link'));
         $content .= html_writer::end_tag('div');
         if ($hassubcategories) {
             $content .= html_writer::start_tag('div', array('class'=>'subcategories'));

@@ -232,7 +232,7 @@
                 }
                 $catlinkcss = $subcategory->visible ? '' : ' class="dimmed" ';
                 echo '<a '.$catlinkcss.' href="category.php?id='.$subcategory->id.'">'.
-                     format_string($subcategory->name).'</a><br />';
+                     format_string($subcategory->name, true, array('context' => get_context_instance(CONTEXT_COURSECAT, $subcategory->id))).'</a><br />';
             }
         }
         if (!$firstentry) {
