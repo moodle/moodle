@@ -155,10 +155,12 @@ class community_hub_search_form extends moodleform {
                                     array('class' => 'hubscreenshot'));
                     $hubdescriptiontext = html_writer::tag('span', format_text($hub['description'], FORMAT_PLAIN),
                                     array('class' => 'hubdescription'));
-                    $additionaldesc = get_string('sites', 'block_community') . ': ' . $hub['sites'] . ' - ' .
-                            get_string('courses', 'block_community') . ': ' . $hub['courses'];
-                    $hubdescriptiontext .= html_writer::tag('span', $additionaldesc,
-                                    array('class' => 'hubadditionaldesc'));
+                    if (isset($hub['enrollablecourses'])) { //needed for Moodle version < 2011081700
+                        $additionaldesc = get_string('enrollablecourses', 'block_community') . ': ' . $hub['enrollablecourses'] . ' - ' .
+                                get_string('downloadablecourses', 'block_community') . ': ' . $hub['downloadablecourses'];
+                        $hubdescriptiontext .= html_writer::tag('span', $additionaldesc,
+                                        array('class' => 'hubadditionaldesc'));
+                    }
                     if ($hub['trusted']) {
                     $hubtrusted =  get_string('hubtrusted', 'block_community');
                     $hubdescriptiontext .= html_writer::tag('span',
