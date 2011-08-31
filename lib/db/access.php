@@ -1687,7 +1687,7 @@ $capabilities = array(
     ),
     'moodle/webservice:createmobiletoken' => array(
 
-        'riskbitmask' => RISK_CONFIG | RISK_DATALOSS | RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL,
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
