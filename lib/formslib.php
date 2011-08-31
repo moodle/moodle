@@ -1787,12 +1787,9 @@ function qf_errorHandler(element, _qfMsg) {
                 '/[_\[\]]/',
                 create_function('$matches', 'return sprintf("_%2x",ord($matches[0]));'),
                 $elementName);
-            if ($element->_type == 'editor') {
-                $tinyjs = "
-  if (tinyMCE.get('id_{$element->getName()}')) {
-    tinyMCE.get('id_{$element->getName()}').save();
-  }";
-                array_unshift($jsArr, $tinyjs);
+            //If editor is tinymce then tinymce should save contents before textarea can be validated.
+            if (($element->_type == 'editor') && $element->isRequiredTinymce()) {
+                array_unshift($jsArr, "tinyMCE.get('{$element->getAttribute('id')}').save();");
             }
             $js .= '
 function validate_' . $this->_formName . '_' . $escapedElementName . '(element) {
