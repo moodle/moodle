@@ -56,6 +56,10 @@ define('LTI_LAUNCH_CONTAINER_EMBED', 2);
 define('LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS', 3);
 define('LTI_LAUNCH_CONTAINER_WINDOW', 4);
 
+define('LTI_TOOL_STATE_CONFIGURED', 1);
+define('LTI_TOOL_STATE_PENDING', 2);
+define('LTI_TOOL_STATE_REJECTED', 3);
+
 /**
  * Prints a Basic LTI activity
  *
@@ -302,7 +306,7 @@ function lti_get_type_config($typeid) {
 function lti_get_tools_by_domain($domain){
     global $DB;
     
-    return $DB->get_records('lti_types', array('tooldomain' => $domain));
+    return $DB->get_records('lti_types', array('tooldomain' => $domain, 'state' => LTI_TOOL_STATE_CONFIGURED));
 }
 
 /**
@@ -416,14 +420,22 @@ function lti_filter_print_types() {
 function lti_delete_type($id) {
     global $DB;
 
+    //We should probably just copy the launch URL to the tool instances in this case... using a single query
+    /*
     $instances = $DB->get_records('lti', array('typeid' => $id));
     foreach ($instances as $instance) {
         $instance->typeid = 0;
         $DB->update_record('lti', $instance);
-    }
+    }*/
 
     $DB->delete_records('lti_types', array('id' => $id));
     $DB->delete_records('lti_types_config', array('typeid' => $id));
+}
+
+function lti_set_state_for_type($id, $state){
+    global $DB;
+    
+    $DB->update_record('lti_types', array('id' => $id, 'state' => $state));
 }
 
 /**
@@ -494,9 +506,9 @@ function lti_get_type_type_config($id) {
     $config = lti_get_type_config($id);
 
     $type->lti_typename = $basicltitype->name;
-    if (isset($config['toolurl'])) {
-        $type->lti_toolurl = $config['toolurl'];
-    }
+    
+    $type->lti_toolurl = $basicltitype->baseurl;
+    
     if (isset($config['resourcekey'])) {
         $type->lti_resourcekey = $config['resourcekey'];
     }

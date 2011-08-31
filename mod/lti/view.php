@@ -92,8 +92,8 @@ $launchcontainer = $basiclti->launchcontainer == LTI_LAUNCH_CONTAINER_DEFAULT ?
                         $basiclti->launchcontainer;
 
 if($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS){
-    $PAGE->set_pagelayout('frametop'); //Use the frametop layout to get the navbar, but no footer
-    $PAGE->blocks->show_only_fake_blocks(); //Disable blocks
+    $PAGE->set_pagelayout('frametop'); //Most frametops don't include footer, and pre-post blocks
+    $PAGE->blocks->show_only_fake_blocks(); //Disable blocks for layouts which do include pre-post blocks
 } else {
     $PAGE->set_pagelayout('incourse');
 }
@@ -159,7 +159,7 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
 
                 setInterval(resize, 250);
             })();
-        //]]    
+        //]]
         </script>
 SCRIPT;
     

@@ -67,13 +67,18 @@ $PAGE->set_url($url);
 
 admin_externalpage_setup('managemodules'); // Hacky solution for printing the admin page
 
+$tab = optional_param('tab', '', PARAM_ALPHAEXT);
+$redirect = "$CFG->wwwroot/$CFG->admin/settings.php?section=modsettinglti&tab={$tab}";
+
 /// WRITING SUBMITTED DATA (IF ANY) -------------------------------------------------------------------------------
 
 $statusmsg = '';
 $errormsg  = '';
 $focus = '';
 
-if ($data = data_submitted() and confirm_sesskey() and isset($data->submitbutton)) {
+$data = data_submitted();
+
+if (confirm_sesskey() && isset($data->submitbutton)) {
     $type = new StdClass();
     $type->name = $data->lti_typename;
     $type->baseurl = $data->lti_toolurl;
@@ -104,11 +109,12 @@ if ($data = data_submitted() and confirm_sesskey() and isset($data->submitbutton
                 }
             }
         }
-        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=modsettinglti");
+        redirect($redirect);
         die;
     } else {
         $type->createdby = $USER->id;
         $type->timecreated = time();
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
         
         //Create a salt value to be used for signing passed data to extension services
         $data->lti_servicesalt = uniqid('', true);
@@ -133,22 +139,29 @@ if ($data = data_submitted() and confirm_sesskey() and isset($data->submitbutton
         } else {
             $errormsg = get_string('errorwithsettings', 'admin');
         }
-        redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=modsettinglti");
+        redirect($redirect);
         die;
     }
+} else if(isset($data->cancel)){
+    redirect($redirect);
+    die;
+}
+
+if ($action == 'accept') {
+    lti_set_state_for_type($id, LTI_TOOL_STATE_CONFIGURED);
+    redirect($redirect);
+    die;
+}
+
+if ($action == 'reject') {
+    lti_set_state_for_type($id, LTI_TOOL_STATE_REJECTED);
+    redirect($redirect);
+    die;
 }
 
 if ($action == 'delete') {
     lti_delete_type($id);
-    redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=modsettinglti");
-    die;
-}
-
-if (($action == 'fix') && isset($useexisting)) {
-    $instance = $DB->get_record('lti', array('id' => $id));
-    $instance->typeid = $useexisting;
-    $DB->update_record('lti', $instance);
-    redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=modsettinglti");
+    redirect($redirect);
     die;
 }
 

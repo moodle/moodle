@@ -149,6 +149,10 @@ class mod_lti_edit_types_form extends moodleform{
 //-------------------------------------------------------------------------------
         // Add a hidden element to signal a tool fixing operation after a problematic backup - restore process
         $mform->addElement('hidden', 'lti_fix');
+        
+        $tab = optional_param('tab', '', PARAM_ALPHAEXT);
+        $mform->addElement('hidden', 'tab', $tab);
+        
 
 //-------------------------------------------------------------------------------
         // Add standard buttons, common to all modules

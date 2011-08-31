@@ -47,37 +47,224 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+global $PAGE, $CFG;
+
+require_once($CFG->dirroot.'/mod/lti/locallib.php');
+
+function blti_get_tool_table($tools, $id){
+    global $CFG, $USER;
+    $html = '';
+    
+    $typename = get_string('typename', 'lti');
+    $baseurl = get_string('baseurl', 'lti');
+    $action = get_string('action', 'lti');
+    $createdon = get_string('createdon', 'lti');
+    
+    if (!empty($tools)) {
+        if($id == 'lti_configured'){
+            $html .= '<a style="margin-top:.25em" href="'.$CFG->wwwroot.'/mod/lti/typessettings.php?action=add&amp;sesskey='.$USER->sesskey.'">'.get_string('addtype', 'lti').'</a>';
+        }
+        
+        $html .= <<<HTML
+        <div id="{$id}_container" style="margin-top:.5em;margin-bottom:.5em">
+            <table id="{$id}_tools">
+                <thead>
+                    <tr>
+                        <th>$typename</th>
+                        <th>$baseurl</th>
+                        <th>$createdon</th>
+                        <th>$action</th>
+                    </tr>
+                </thead>
+HTML;
+        
+        foreach ($tools as $type) {
+            $date = userdate($type->timecreated);
+            $accept = get_string('accept', 'lti');
+            $update = get_string('update', 'lti');
+            $delete = get_string('delete', 'lti');
+            
+            $accepthtml = <<<HTML
+                <a class="editing_accept" href="{$CFG->wwwroot}/mod/lti/typessettings.php?action=accept&amp;id={$type->id}&amp;sesskey={$USER->sesskey}&amp;tab={$id}" title="{$accept}">
+                    <img class="iconsmall" alt="{$accept}" src="{$CFG->wwwroot}/pix/t/clear.gif"/>
+                </a>
+HTML;
+
+            $deleteaction = 'delete';
+                    
+            if($type->state == LTI_TOOL_STATE_CONFIGURED){
+                $accepthtml = '';
+            }
+            
+            if($type->state != LTI_TOOL_STATE_REJECTED) {
+                $deleteaction = 'reject';
+                $delete = get_string('reject', 'lti');
+            }
+                    
+            $html .= <<<HTML
+            <tr>
+                <td>
+                    {$type->name}
+                </td>
+                <td>
+                    {$type->baseurl}
+                </td>
+                <td>
+                    {$date}
+                </td>
+                <td align="center">
+                    {$accepthtml}
+                    <a class="editing_update" href="{$CFG->wwwroot}/mod/lti/typessettings.php?action=update&amp;id={$type->id}&amp;sesskey={$USER->sesskey}&amp;tab={$id}" title="{$update}">
+                        <img class="iconsmall" alt="{$update}" src="{$CFG->wwwroot}/pix/t/edit.gif"/>
+                    </a>
+                    <a class="editing_delete" href="{$CFG->wwwroot}/mod/lti/typessettings.php?action={$deleteaction}&amp;id={$type->id}&amp;sesskey={$USER->sesskey}&amp;tab={$id}" title="{$delete}">
+                        <img class="iconsmall" alt="{$delete}" src="{$CFG->wwwroot}/pix/t/delete.gif"/>
+                    </a>
+                </td>
+            </tr>
+HTML;
+        }
+        $html .= '</table></div>';
+    } else {
+        $html .= get_string('no_' . $id, 'lti');
+    }
+    
+    return $html;
+}
+
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
-    $str = '';
+    $configuredtoolshtml = '';
+    $pendingtoolshtml = '';
+    $rejectedtoolshtml = '';
 
-    $types = lti_filter_get_types();
-    if (!empty($types)) {
-        $str .= '<h4 class="main"><a href="'.$CFG->wwwroot.'/mod/lti/typessettings.php?action=add&amp;sesskey='.$USER->sesskey.'">'.get_string('addtype', 'lti').'</a></h4>';
-        $str .= '<table>';
-
-        foreach ($types as $type) {
-            $str .= '<tr>'.
-            '<td>'.$type->name.'</td>'.
-            '<td align="center"><a class="editing_update" href="'.$CFG->wwwroot.'/mod/lti/typessettings.php?action=update&amp;id='.$type->id.'&amp;sesskey='.$USER->sesskey.'" title="Update">'.
-            '<img class="iconsmall" alt="Update" src="'.$CFG->wwwroot.'/pix/t/edit.gif"/></a>'.'&nbsp;&nbsp;'.
-            '<a class="editing_delete" href="'.$CFG->wwwroot.'/mod/lti/typessettings.php?action=delete&amp;id='.$type->id.'&amp;sesskey='.$USER->sesskey.'" title="Delete">'.
-            '<img class="iconsmall" alt="Delete" src="'.$CFG->wwwroot.'/pix/t/delete.gif"/>'.
-            '</a>'.
-            '</td>'.
-            '</tr>';
-
-        }
-        $str .= '</table>';
-    } else {
-        $str .= '<center>';
-        $str .= '<h4 class="main"><a href="'.$CFG->wwwroot.'/mod/lti/typessettings.php?action=add&amp;sesskey='.$USER->sesskey.'">'.get_string('addtype', 'lti').'</a></h4>';
-        $str .= get_string('notypes', 'lti');
-        $str .= '</center>';
-    }
-
-
-    $settings->add(new admin_setting_heading('lti_types', get_string('configuredtools', 'lti'), $str));
+    $active = get_string('active', 'lti');
+    $pending = get_string('pending', 'lti');
+    $rejected = get_string('rejected', 'lti');
+    $typename = get_string('typename', 'lti');
+    $baseurl = get_string('baseurl', 'lti');
+    $action = get_string('action', 'lti');
+    $createdon = get_string('createdon', 'lti');
     
+    $types = lti_filter_get_types();
+    
+    $configuredtools = array_filter($types, function($value){
+        return $value->state == LTI_TOOL_STATE_CONFIGURED;
+    });
+    
+    $configuredtoolshtml = blti_get_tool_table($configuredtools, 'lti_configured');
+
+    $pendingtools = array_filter($types, function($value){
+        return $value->state == LTI_TOOL_STATE_PENDING;
+    });
+    
+    $pendingtoolshtml = blti_get_tool_table($pendingtools, 'lti_pending');
+    
+    $rejectedtools = array_filter($types, function($value){
+        return $value->state == LTI_TOOL_STATE_REJECTED;
+    });
+    
+    $rejectedtoolshtml = blti_get_tool_table($rejectedtools, 'lti_rejected');
+    
+    $tab = optional_param('tab', '', PARAM_ALPHAEXT);
+    $activeselected = '';
+    $pendingselected = '';
+    $rejectedselected = '';
+    switch($tab){
+        case 'lti_pending':
+            $pendingselected = 'class="selected"';
+            break;
+        case 'lti_rejected':
+            $rejectedselected = 'class="selected"';
+            break;
+        default:
+            $activeselected = 'class="selected"';
+            break;
+    }
+    
+    $template = <<<HTML
+<div id="lti_tabs" class="yui-navset">
+    <ul id="lti_tab_heading" class="yui-nav" style="display:none">
+        <li {$activeselected}>
+            <a href="#tab1">
+                <em>$active</em>
+            </a>
+        </li>
+        <li {$pendingselected}>
+            <a href="#tab2">
+                <em>$pending</em>
+            </a>
+        </li>
+        <li {$rejectedselected}>
+            <a href="#tab3">
+                <em>$rejected</em>
+            </a>
+        </li>
+    </ul>
+    <div class="yui-content">
+        <div>
+            $configuredtoolshtml
+        </div>
+        <div>
+            $pendingtoolshtml
+        </div>
+        <div>
+            $rejectedtoolshtml
+        </div>
+    </div>
+</div>
+
+<script type='text/javascript'>
+//<![CDATA[
+    (function(){
+        //If javascript is disabled, they will just see the three tabs one after another
+        var lti_tab_heading = document.getElementById('lti_tab_heading');
+        lti_tab_heading.style.display = '';
+
+        new YAHOO.widget.TabView('lti_tabs');
+    
+        var setupTools = function(id, sort){
+            var lti_tools = YAHOO.util.Dom.get(id + "_tools");
+    
+            if(lti_tools){
+                var dataSource = new YAHOO.util.DataSource(lti_tools);
+    
+                var configuredColumns = [
+                    {key:"name", label:"$typename", sortable:true},
+                    {key:"baseURL", label:"$baseurl", sortable:true},
+                    {key:"timecreated", label:"$createdon", sortable:true, formatter:YAHOO.widget.DataTable.formatDate},
+                    {key:"action", label:"$action"}
+                ];
+
+                dataSource.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE;
+                dataSource.responseSchema = {
+                    fields: [
+                        {key:"name"},
+                        {key:"baseURL"},
+                        {key:"timecreated", parser:"date"},
+                        {key:"action"}
+                    ]
+                };
+
+                new YAHOO.widget.DataTable(id + "_container", configuredColumns, dataSource,
+                    {
+                        sortedBy: sort
+                    }
+                );
+            }
+        };
+
+        setupTools('lti_configured', {key:"name", dir:"asc"});
+        setupTools('lti_pending', {key:"timecreated", dir:"desc"});
+        setupTools('lti_rejected', {key:"timecreated", dir:"desc"});
+    })();
+//]]
+</script>
+HTML;
+    
+    $PAGE->requires->yui2_lib('tabview');
+    $PAGE->requires->yui2_lib('datatable');
+   
+    $settings->add(new admin_setting_heading('lti_types', get_string('external_tool_types', 'lti'), $template /*  $str*/));
 }
