@@ -218,8 +218,6 @@ if (empty($SITE->fullname)) {
 
     echo $OUTPUT->header();
 
-
-
     if ($errormsg !== '') {
         echo $OUTPUT->notification($errormsg);
 

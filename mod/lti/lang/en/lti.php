@@ -183,7 +183,7 @@ $string['reject'] = 'Reject';
 $string['external_tool_types'] = 'External Tool Types';
 $string['no_lti_configured'] = 'There are no active External Tools configured.';
 $string['no_lti_pending'] = 'There are no pending External Tools.';
-$string['no_lti_external'] = 'There are no rejected External Tools.';
+$string['no_lti_rejected'] = 'There are no rejected External Tools.';
 
 //New instructor strings
 $string['display_name'] = 'Display activity name when launched';
