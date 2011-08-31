@@ -86,6 +86,15 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         $this->_options['subdirs'] = $allow;
     }
 
+    /**
+     * Checks if editor used is tinymce and is required field
+     *
+     * @return true if required field.
+     */
+    function isRequiredTinymce() {
+        return (isset($this->_options['required_tinymce']) && $this->_options['required_tinymce']);
+    }
+
     function setHelpButton($_helpbuttonargs, $function='_helpbutton') {
         if (!is_array($_helpbuttonargs)) {
             $_helpbuttonargs = array($_helpbuttonargs);
@@ -198,16 +207,21 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $fpoptions['link'] = $link_options;
         }
 
+        //If editor is required and tinymce, then set required_tinymce option to initalize tinymce validation.
+        if (($editor instanceof tinymce_texteditor)  && !is_null($this->getAttribute('onchange'))) {
+            $this->_options['required_tinymce'] = true;
+        }
+
     /// print text area - TODO: add on-the-fly switching, size configuration, etc.
         $editor->use_editor($id, $this->_options, $fpoptions);
 
         $rows = empty($this->_attributes['rows']) ? 15 : $this->_attributes['rows'];
         $cols = empty($this->_attributes['cols']) ? 80 : $this->_attributes['cols'];
 
-        //Apply editor rules is required
+        //Apply editor validation if required field
         $editorrules = '';
         if (!is_null($this->getAttribute('onblur')) && !is_null($this->getAttribute('onchange'))) {
-                $editorrules = 'onblur="'.$this->getAttribute('onblur').'" onchange="'.$this->getAttribute('onchange').'"';
+            $editorrules = 'onblur="'.$this->getAttribute('onblur').'" onchange="'.$this->getAttribute('onchange').'"';
         }
         $str .= '<div><textarea id="'.$id.'" name="'.$elname.'[text]" rows="'.$rows.'" cols="'.$cols.'"'.$editorrules.'>';
         $str .= s($text);
