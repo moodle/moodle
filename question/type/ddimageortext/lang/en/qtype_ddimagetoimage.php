@@ -22,20 +22,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addingddimagetoimage'] = 'Adding drag and drop: images onto images';
+$string['addingddimagetoimage'] = 'Adding drag and drop: images onto image';
 $string['addmoredropzones'] = 'Blanks for {no} More Drop Zones';
 $string['addmoreimages'] = 'Blanks for {no} More Draggable Images';
 $string['answer'] = 'Answer';
 $string['bgimage'] = 'Background Image';
 $string['correctansweris'] = 'The correct answer is: {$a}';
-$string['ddimagetoimage'] = 'Drag and drop: images onto images';
+$string['ddimagetoimage'] = 'Drag and drop: images onto image';
 $string['ddimagetoimage_help'] = 'Select a background image file, select draggable images and define the drop zones on the background image to which they must be dragged.';
 $string['ddimagetoimagesummary'] = 'Images are dragged and dropped into drop zones on a background image.';
 $string['draggableimage'] = 'Draggable image';
 $string['draggableimageheader'] = 'Draggable image {$a}';
 $string['dropzone'] = 'Drop zone {$a}';
 $string['dropzoneheader'] = 'Drop zones';
-$string['editingddimagetoimage'] = 'Editing drag and drop: images onto images';
+$string['editingddimagetoimage'] = 'Editing drag and drop: images onto image';
 $string['formerror_noytop'] = 'You must provide a value for the y coords for the top left corner of this drop area. You can drag and drop the drop area above to set the coordinates or enter them manually here.';
 $string['formerror_noxleft'] = 'You must provide a value for the y coords for the top left corner of this drop area. You can drag and drop the drop area above to set the coordinates or enter them manually here.';
 $string['formerror_nofile'] = 'Although you selected drag image {$a} as the correct choice for this drop zone you have not selected an image for drag image {$a}.';
