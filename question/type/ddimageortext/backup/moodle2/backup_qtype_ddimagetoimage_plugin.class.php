@@ -31,23 +31,25 @@ defined('MOODLE_INTERNAL') || die();
  */
 class backup_qtype_ddimagetoimage_plugin extends backup_qtype_plugin {
 
+    protected $qtype = "ddimagetoimage";
+
     /**
      * Returns the qtype information to attach to question element
      */
     protected function define_question_plugin_structure() {
 
-        $plugin = $this->get_plugin_element(null, '../../qtype', 'ddimagetoimage');
+        $plugin = $this->get_plugin_element(null, '../../qtype', $this->qtype);
 
         $pluginwrapper = new backup_nested_element($this->get_recommended_name());
 
         $plugin->add_child($pluginwrapper);
 
-        $ddimagetoimages = new backup_nested_element('ddimagetoimage', array('id'), array(
+        $dds = new backup_nested_element($this->qtype, array('id'), array(
             'shuffleanswers', 'correctfeedback', 'correctfeedbackformat',
             'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
             'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect'));
 
-        $pluginwrapper->add_child($ddimagetoimages);
+        $pluginwrapper->add_child($dds);
         $drags = new backup_nested_element('drags');
 
         $drag = new backup_nested_element('drag', array('id'),
@@ -57,7 +59,7 @@ class backup_qtype_ddimagetoimage_plugin extends backup_qtype_plugin {
         $drop = new backup_nested_element('drop', array('id'),
                                                 array('no', 'xleft', 'ytop', 'choice', 'label'));
 
-        $ddimagetoimages->set_source_table('qtype_ddimagetoimage',
+        $dds->set_source_table("qtype_{$this->qtype}",
                                                 array('questionid' => backup::VAR_PARENTID));
 
         $pluginwrapper->add_child($drags);
@@ -65,10 +67,10 @@ class backup_qtype_ddimagetoimage_plugin extends backup_qtype_plugin {
         $pluginwrapper->add_child($drops);
         $drops->add_child($drop);
 
-        $drag->set_source_table('qtype_ddimagetoimage_drags',
+        $drag->set_source_table("qtype_{$this->qtype}_drags",
                                                     array('questionid' => backup::VAR_PARENTID));
 
-        $drop->set_source_table('qtype_ddimagetoimage_drops',
+        $drop->set_source_table("qtype_{$this->qtype}_drops",
                                                     array('questionid' => backup::VAR_PARENTID));
 
         return $plugin;
@@ -87,6 +89,6 @@ class backup_qtype_ddimagetoimage_plugin extends backup_qtype_plugin {
             'incorrectfeedback' => 'question_created',
 
             'bgimage' => 'question_created',
-            'dragimage' => 'qtype_ddimagetoimage_drags');
+            'dragimage' => "qtype_{$this->qtype}_drags");
     }
 }
