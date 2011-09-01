@@ -56,6 +56,7 @@ define('LTI_LAUNCH_CONTAINER_EMBED', 2);
 define('LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS', 3);
 define('LTI_LAUNCH_CONTAINER_WINDOW', 4);
 
+define('LTI_TOOL_STATE_ANY', 0);
 define('LTI_TOOL_STATE_CONFIGURED', 1);
 define('LTI_TOOL_STATE_PENDING', 2);
 define('LTI_TOOL_STATE_REJECTED', 3);
@@ -392,8 +393,8 @@ function lti_get_domain_from_url($url){
     }
 }
 
-function lti_get_tool_by_url_match($url, $courseid = null){
-    $possibletools = lti_get_tools_by_url($url, LTI_TOOL_STATE_CONFIGURED, $courseid);
+function lti_get_tool_by_url_match($url, $courseid = null, $state = LTI_TOOL_STATE_CONFIGURED){
+    $possibletools = lti_get_tools_by_url($url, $state, $courseid);
     
     return lti_get_best_tool_by_url($url, $possibletools);
 }
@@ -640,6 +641,79 @@ function lti_get_type_type_config($id) {
     }
 
     return $type;
+}
+
+function lti_prepare_type_for_save($type, $config){
+    $type->baseurl = $config->lti_toolurl;
+    $type->tooldomain = lti_get_domain_from_url($config->lti_toolurl);
+    $type->name = $config->lti_typename;
+    
+    $type->coursevisible = !empty($config->lti_coursevisible) ? $config->lti_coursevisible : 0;
+    $config->lti_coursevisible = $type->coursevisible;
+    
+    $type->timemodified = time();
+    
+    unset ($config->lti_typename);
+    unset ($config->lti_toolurl);
+}
+
+function lti_update_type($type, $config){
+    global $DB;
+    
+    lti_prepare_type_for_save($type, $config);
+    
+    if ($DB->update_record('lti_types', $type)) {
+        foreach ($config as $key => $value) {
+            if (substr($key, 0, 4)=='lti_' && !is_null($value)) {
+                $record = new StdClass();
+                $record->typeid = $type->id;
+                $record->name = substr($key, 4);
+                $record->value = $value;
+                
+                lti_update_config($record);
+            }
+        }
+    }
+}
+
+function lti_add_type($type, $config){
+    global $USER, $SITE, $DB;
+    
+    lti_prepare_type_for_save($type, $config);
+    
+    if(!isset($type->state)){
+        $type->state = LTI_TOOL_STATE_PENDING;
+    }
+    
+    if(!isset($type->timecreated)){
+        $type->timecreated = time();
+    }
+    
+    if(!isset($type->createdby)){
+        $type->createdby = $USER->id;
+    }
+    
+    if(!isset($type->course)){
+        $type->course = $SITE->id;
+    }
+    
+    //Create a salt value to be used for signing passed data to extension services
+    $config->lti_servicesalt = uniqid('', true);
+
+    $id = $DB->insert_record('lti_types', $type);
+
+    if ($id) {
+        foreach ($config as $key => $value) {
+            if (substr($key, 0, 4)=='lti_' && !is_null($value)) {
+                $record = new StdClass();
+                $record->typeid = $id;
+                $record->name = substr($key, 4);
+                $record->value = $value;
+
+                lti_add_config($record);
+            }
+        }
+    }
 }
 
 /**

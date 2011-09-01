@@ -80,65 +80,19 @@ $data = data_submitted();
 
 if (confirm_sesskey() && isset($data->submitbutton)) {
     $type = new StdClass();
-    $type->name = $data->lti_typename;
-    $type->baseurl = $data->lti_toolurl;
-    $type->tooldomain = lti_get_domain_from_url($data->lti_toolurl);
-    $type->course = $SITE->id;
-    $type->coursevisible = !empty($data->lti_coursevisible) ? $data->lti_coursevisible : 0;
-    $type->timemodified = time();
-    
-    $data->lti_coursevisible = $type->coursevisible;//When not checked, it does not appear in data array. Set it manually.
     
     if (isset($id)) {
         $type->id = $id;
+
+        lti_update_type($type, $data);
         
-        if ($DB->update_record('lti_types', $type)) {
-            unset ($data->lti_typename);
-            
-            foreach ($data as $key => $value) {
-                if (substr($key, 0, 4)=='lti_' && !is_null($value)) {
-                    $record = new StdClass();
-                    $record->typeid = $id;
-                    $record->name = substr($key, 4);
-                    $record->value = $value;
-                    if (lti_update_config($record)) {
-                        $statusmsg = get_string('changessaved');
-                    } else {
-                        $errormsg = get_string('errorwithsettings', 'admin');
-                    }
-                }
-            }
-        }
         redirect($redirect);
         die;
     } else {
-        $type->createdby = $USER->id;
-        $type->timecreated = time();
         $type->state = LTI_TOOL_STATE_CONFIGURED;
+       
+        lti_add_type($type, $data);
         
-        //Create a salt value to be used for signing passed data to extension services
-        $data->lti_servicesalt = uniqid('', true);
-        
-        $id = $DB->insert_record('lti_types', $type);
-        
-        if ($id) {
-            unset ($data->lti_typename);
-            foreach ($data as $key => $value) {
-                if (substr($key, 0, 4)=='lti_' && !is_null($value)) {
-                    $record = new StdClass();
-                    $record->typeid = $id;
-                    $record->name = substr($key, 4);
-                    $record->value = $value;
-                    if (lti_add_config($record)) {
-                        $statusmsg = get_string('changessaved');
-                    } else {
-                        $errormsg = get_string('errorwithsettings', 'admin');
-                    }
-                }
-            }
-        } else {
-            $errormsg = get_string('errorwithsettings', 'admin');
-        }
         redirect($redirect);
         die;
     }
