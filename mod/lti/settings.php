@@ -61,7 +61,7 @@ function blti_get_tool_table($tools, $id){
     $createdon = get_string('createdon', 'lti');
     
     if($id == 'lti_configured'){
-        $html .= '<a style="margin-top:.25em" href="'.$CFG->wwwroot.'/mod/lti/typessettings.php?action=add&amp;sesskey='.$USER->sesskey.'">'.get_string('addtype', 'lti').'</a>';
+        $html .= '<div><a style="margin-top:.25em" href="'.$CFG->wwwroot.'/mod/lti/typessettings.php?action=add&amp;sesskey='.$USER->sesskey.'">'.get_string('addtype', 'lti').'</a></div>';
     }
     
     if (!empty($tools)) {
