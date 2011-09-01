@@ -40,9 +40,9 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
                 this.doc.drag_image_homes()
                                         .on('load', this.constrain_image_size, this, 'dragimage');
                 this.doc.bg_img().after('load', this.poll_for_image_load, this,
-                                                        true, 1000, this.after_all_images_loaded);
+                                                        true, 3000, this.after_all_images_loaded);
                 this.doc.drag_image_homes() .after('load', this.poll_for_image_load, this,
-                                                        true, 1000, this.after_all_images_loaded);
+                                                        true, 3000, this.after_all_images_loaded);
             } else {
                 this.setup_form_events();
             }

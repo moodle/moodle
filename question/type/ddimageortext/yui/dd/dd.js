@@ -38,7 +38,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
             } else if (this.polltimer === null) {
                 var pollarguments = [null, waitforimageconstrain, pause, doafterwords];
                 this.polltimer =
-                            Y.later(500, this, this.poll_for_image_load, pollarguments, true);
+                            Y.later(1000, this, this.poll_for_image_load, pollarguments, true);
             }
         },
         /**
