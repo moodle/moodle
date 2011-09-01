@@ -60,11 +60,11 @@ function blti_get_tool_table($tools, $id){
     $action = get_string('action', 'lti');
     $createdon = get_string('createdon', 'lti');
     
+    if($id == 'lti_configured'){
+        $html .= '<a style="margin-top:.25em" href="'.$CFG->wwwroot.'/mod/lti/typessettings.php?action=add&amp;sesskey='.$USER->sesskey.'">'.get_string('addtype', 'lti').'</a>';
+    }
+    
     if (!empty($tools)) {
-        if($id == 'lti_configured'){
-            $html .= '<a style="margin-top:.25em" href="'.$CFG->wwwroot.'/mod/lti/typessettings.php?action=add&amp;sesskey='.$USER->sesskey.'">'.get_string('addtype', 'lti').'</a>';
-        }
-        
         $html .= <<<HTML
         <div id="{$id}_container" style="margin-top:.5em;margin-bottom:.5em">
             <table id="{$id}_tools">
