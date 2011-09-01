@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/lti/db" VERSION="20110829" COMMENT="XMLDB file for Moodle mod/lti"
+<XMLDB PATH="mod/lti/db" VERSION="20110901" COMMENT="XMLDB file for Moodle mod/lti"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -22,10 +22,13 @@
         <FIELD NAME="instructorcustomparameters" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Additional custom parameters provided by the instructor" PREVIOUS="instructorchoiceallowsetting" NEXT="instructorchoiceacceptgrades"/>
         <FIELD NAME="instructorchoiceacceptgrades" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Accept grades from tool" PREVIOUS="instructorcustomparameters" NEXT="grade"/>
         <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="100" SEQUENCE="false" DECIMALS="5" COMMENT="Grade scale" PREVIOUS="instructorchoiceacceptgrades" NEXT="launchcontainer"/>
-        <FIELD NAME="launchcontainer" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="Launch external tool in a pop-up" PREVIOUS="grade" NEXT="debuglaunch"/>
-        <FIELD NAME="debuglaunch" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Enable the debug-style launch which pauses before auto-submit" PREVIOUS="launchcontainer" NEXT="showtitle"/>
+        <FIELD NAME="launchcontainer" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="Launch external tool in a pop-up" PREVIOUS="grade" NEXT="resourcekey"/>
+        <FIELD NAME="resourcekey" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="launchcontainer" NEXT="password"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="resourcekey" NEXT="debuglaunch"/>
+        <FIELD NAME="debuglaunch" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Enable the debug-style launch which pauses before auto-submit" PREVIOUS="password" NEXT="showtitle"/>
         <FIELD NAME="showtitle" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="debuglaunch" NEXT="showdescription"/>
-        <FIELD NAME="showdescription" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="showtitle"/>
+        <FIELD NAME="showdescription" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="showtitle" NEXT="servicesalt"/>
+        <FIELD NAME="servicesalt" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" PREVIOUS="showdescription"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -42,7 +45,7 @@
         <FIELD NAME="tooldomain" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="baseurl" NEXT="state"/>
         <FIELD NAME="state" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="2" SEQUENCE="false" COMMENT="Active = 1, Pending = 2, Rejected = 3" PREVIOUS="tooldomain" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="state" NEXT="coursevisible"/>
-        <FIELD NAME="coursevisible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" PREVIOUS="course" NEXT="createdby"/>
+        <FIELD NAME="coursevisible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course" NEXT="createdby"/>
         <FIELD NAME="createdby" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="coursevisible" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="createdby" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="timecreated"/>

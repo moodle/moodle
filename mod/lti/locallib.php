@@ -60,26 +60,47 @@ define('LTI_TOOL_STATE_CONFIGURED', 1);
 define('LTI_TOOL_STATE_PENDING', 2);
 define('LTI_TOOL_STATE_REJECTED', 3);
 
+define('LTI_SETTING_NEVER', 0);
+define('LTI_SETTING_ALWAYS', 1);
+define('LTI_SETTING_DEFAULT', 2);
+
 /**
  * Prints a Basic LTI activity
  *
  * $param int $basicltiid       Basic LTI activity id
  */
 function lti_view($instance, $makeobject=false) {
-    global $PAGE;
+    global $PAGE, $CFG;
 
     if(empty($instance->typeid)){
         $tool = lti_get_tool_by_url_match($instance->toolurl);
         if($tool){
             $typeid = $tool->id;
         } else {
-            //Tool not found
+            $typeid = null;
         }
     } else {
         $typeid = $instance->typeid;
     }
     
-    $typeconfig = lti_get_type_config($typeid);
+    if($typeid){
+        $typeconfig = lti_get_type_config($typeid);
+    } else {
+        //There is no admin configuration for this tool. Use configuration in the lti instance record plus some defaults.
+        $typeconfig = (array)$instance;
+        
+        $typeconfig['sendname'] = $instance->instructorchoicesendname;
+        $typeconfig['sendemailaddr'] = $instance->instructorchoicesendemailaddr;
+        $typeconfig['customparameters'] = $instance->instructorcustomparameters;
+    }
+    
+    //Default the organizationid if not specified
+    if(empty($typeconfig['organizationid'])){
+        $urlparts = parse_url($CFG->wwwroot);
+        
+        $typeconfig['organizationid'] = $urlparts['host'];
+    }
+    
     $endpoint = !empty($instance->toolurl) ? $instance->toolurl : $typeconfig['toolurl'];
     $key = !empty($instance->resourcekey) ? $instance->resourcekey : $typeconfig['resourcekey'];
     $secret = !empty($instance->password) ? $instance->password : $typeconfig['password'];
@@ -104,8 +125,6 @@ function lti_view($instance, $makeobject=false) {
     
     $content = post_launch_html($parms, $endpoint, $debuglaunch);
     
-//    $cm = get_coursemodule_from_instance("lti", $instance->id);
-//    print '<object height='.$height.' width="80%" data="launch.php?id='.$cm->id.'">'.$content.'</object>';
     echo $content;
 }
 
@@ -303,10 +322,42 @@ function lti_get_type_config($typeid) {
     return $typeconfig;
 }
 
-function lti_get_tools_by_domain($domain){
-    global $DB;
+function lti_get_tools_by_url($url, $state){
+    $domain = lti_get_domain_from_url($url);
     
-    return $DB->get_records('lti_types', array('tooldomain' => $domain, 'state' => LTI_TOOL_STATE_CONFIGURED));
+    return lti_get_tools_by_domain($domain, $state);
+}
+
+function lti_get_tools_by_domain($domain, $state = null, $courseid = null){
+    global $DB, $SITE;
+    
+    $filters = array('tooldomain' => $domain);
+    
+    $statefilter = '';
+    $coursefilter = '';
+    
+    if($state){
+        $statefilter = 'AND state = :state';
+    }
+  
+    if($courseid && $courseid != $SITE->id){
+        $coursefilter = 'OR course = :courseid';
+    }
+    
+    $query = <<<QUERY
+        SELECT * FROM {lti_types}
+        WHERE
+            tooldomain = :tooldomain
+        AND (course = :siteid $coursefilter)
+        $statefilter
+QUERY;
+    
+    return $DB->get_records_sql($query, array(
+        'courseid' => $courseid, 
+        'siteid' => $SITE->id, 
+        'tooldomain' => $domain, 
+        'state' => $state
+    ));
 }
 
 /**
@@ -341,12 +392,23 @@ function lti_get_domain_from_url($url){
     }
 }
 
-function lti_get_tool_by_url_match($url){
-    $domain = lti_get_domain_from_url($url);
-    
-    $possibletools = lti_get_tools_by_domain($domain);
+function lti_get_tool_by_url_match($url, $courseid = null){
+    $possibletools = lti_get_tools_by_url($url, LTI_TOOL_STATE_CONFIGURED, $courseid);
     
     return lti_get_best_tool_by_url($url, $possibletools);
+}
+
+function lti_get_url_thumbprint($url){
+    $urlparts = parse_url(strtolower($url));
+    if(!isset($urlparts['path'])){
+        $urlparts['path'] = '';
+    }
+    
+    if(substr($urlparts['host'], 0, 3) === 'www'){
+        $urllparts['host'] = substr(3);
+    }
+    
+    return $urllower = $urlparts['host'] . '/' . $urlparts['path'];
 }
 
 function lti_get_best_tool_by_url($url, $tools){
@@ -354,16 +416,18 @@ function lti_get_best_tool_by_url($url, $tools){
         return null;
     }
     
-    $urllower = strtolower($url);
+    $urllower = lti_get_url_thumbprint($url);
     
     foreach($tools as $tool){
         $tool->_matchscore = 0;
-        
-        $toolbaseurllower = strtolower($tool->baseurl);
+         
+        $toolbaseurllower = lti_get_url_thumbprint($tool->baseurl);
         
         if($urllower === $toolbaseurllower){
+            //100 points for exact match
             $tool->_matchscore += 100;
-        } else if(strstr($urllower, $toolbaseurllower) >= 0){
+        } else if(substr($urllower, 0, strlen($toolbaseurllower)) === $toolbaseurllower){
+            //50 points if it starts with the base URL
             $tool->_matchscore += 50;
         }
     }
@@ -376,6 +440,11 @@ function lti_get_best_tool_by_url($url, $tools){
         }
         
     }, (object)array('_matchscore' => -1));
+    
+    //None of the tools are suitable for this URL
+    if($bestmatch->_matchscore <= 0){
+        return null;
+    }
     
     return $bestmatch;
 }
