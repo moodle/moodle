@@ -64,12 +64,9 @@ class mod_lti_edit_types_form extends moodleform{
 //        $mform->addHelpButton('lti_typename', 'typename','lti');
         $mform->addRule('lti_typename', null, 'required', null, 'client');
 
-        $regex = '/^(http|https):\/\/([a-z0-9-]\.+)*/i';
-
         $mform->addElement('text', 'lti_toolurl', get_string('toolurl', 'lti'), array('size'=>'64'));
         $mform->setType('lti_toolurl', PARAM_TEXT);
 //        $mform->addHelpButton('lti_toolurl', 'toolurl', 'lti');
-        $mform->addRule('lti_toolurl', get_string('validurl', 'lti'), 'regex', $regex, 'client');
         $mform->addRule('lti_toolurl', null, 'required', null, 'client');
 
         $mform->addElement('text', 'lti_resourcekey', get_string('resourcekey', 'lti'));
