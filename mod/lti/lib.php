@@ -83,9 +83,12 @@ function lti_add_instance($formdata) {
     global $DB;
     $formdata->timecreated = time();
     $formdata->timemodified = $formdata->timecreated;
-    //$basiclti->placementsecret = uniqid('', true);
-    //$basiclti->timeplacementsecret = time();
-
+    $formdata->servicesalt = uniqid('', true);
+    
+    if(!isset($formdata->grade)){
+        $formdata->grade = 100;
+    }
+    
     $id = $DB->insert_record("lti", $formdata);
 
     if ($formdata->instructorchoiceacceptgrades == 1) {
