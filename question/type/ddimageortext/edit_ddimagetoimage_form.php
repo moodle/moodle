@@ -85,6 +85,11 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
                             get_string('previewarea', 'qtype_ddimagetoimage'),
                             get_string('previewareamessage', 'qtype_ddimagetoimage'));
 
+        $mform->registerNoSubmitButton('refresh');
+        $mform->addElement('submit', 'refresh', get_string('refresh', 'qtype_ddimagetoimage'));
+        $mform->addHelpButton('refresh', 'refresh', 'qtype_ddimagetoimage');
+        $mform->closeHeaderBefore('refresh');
+
         list($imagerepeatsatstart, $imagerepeats) = $this->get_drag_image_repeats();
         $this->definition_drop_zones($mform, $imagerepeats);
         $mform->addElement('advcheckbox', 'shuffleanswers', ' ',
