@@ -141,9 +141,6 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                         dragMode: 'intersect'
                     }).plug(Y.Plugin.DDConstrained, {constrain2node: topnode});
 
-                    dd.on('drag:end', function(e) {
-                        mainobj.reposition_drags_for_question();
-                    }, this);
                     drag.setData('group', group);
                     drag.setData('choice', choice);
 
@@ -225,12 +222,12 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
     Y.extend(DDIMAGETOIMAGE_QUESTION, M.qtype_ddimagetoimage.dd_base_class, {
         initializer : function(params) {
             this.doc = this.doc_structure(this);
-            this.poll_for_image_load(null, false, 1000, this.create_all_drag_and_drops);
+            this.poll_for_image_load(null, false, 0, this.create_all_drag_and_drops);
             this.doc.bg_img().after('load', this.poll_for_image_load, this,
-                                                    false, 1000, this.create_all_drag_and_drops);
+                                                    false, 0, this.create_all_drag_and_drops);
             this.doc.drag_image_homes().after('load', this.poll_for_image_load, this,
-                                                    false, 1000, this.create_all_drag_and_drops);
-            Y.on('windowresize', this.reposition_drags_for_question, this);
+                                                    false, 0, this.create_all_drag_and_drops);
+            Y.later(500, this, this.reposition_drags_for_question, [], true);
         },
         create_all_drag_and_drops : function () {
             this.init_drops();
@@ -363,7 +360,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                 }
             }, this);
             this.doc.drag_images().each(function(dragimage) {
-                if (!dragimage.hasClass('placed')) {
+                if (!dragimage.hasClass('placed') && !dragimage.hasClass('yui3-dd-dragging')) {
                     var dragimagehome = this.doc.drag_image_home(dragimage.getData('dragimageno'));
                     dragimage.setXY(dragimagehome.getXY());
                 }
@@ -380,7 +377,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
             var dragimages = this.get_choices_for_drop(choice, drop);
             var dragimage = null;
             if (dragimages.some(function (d) {
-                if (!d.hasClass('placed')) {
+                if (!d.hasClass('placed') && !d.hasClass('yui3-dd-dragging')) {
                     dragimage = d;
                     return true;
                 } else {
