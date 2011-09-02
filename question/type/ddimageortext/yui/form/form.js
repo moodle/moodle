@@ -10,11 +10,6 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
         fp : null,
 
         initializer : function(params) {
-            /*Y.before(function(Y, editorid, options) {
-                console.log('editor id' + editorid);
-                options['oninit'] = 
-                return Y.Do.AlterArgs(message, [Y, editorid, options])
-            }, M.editor_tinymce, 'init_editor', this);*/
             this.fp = this.file_pickers();
             Y.one(this.get('topnode')).append('<div class="ddarea"><div class="droparea"></div>'+
                     '<div class="dragitems"></div>'+
@@ -39,7 +34,6 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
                     e.drag.get('node').setData('gooddrop', true);
                 });
 
-                //Y.on('windowresize', this.reposition_drags_for_form, this);
                 Y.later(500, this, this.reposition_drags_for_form, [], true);
 
                 this.doc.bg_img().on('load', this.constrain_image_size, this, 'bgimage');
