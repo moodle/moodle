@@ -93,6 +93,7 @@ $string['insertimage'] = 'Insert an image...';
 $string['insertimage_help'] = 'This drop-down list will insert an image to the wiki editor. If you need to add more images to the wiki, please use "Files" tab.';
 $string['invalidlock'] = 'This page is already locked by another user.';
 $string['invalidparameters'] = 'Invalid parameters have been given.';
+$string['invalidsection'] = 'Invalid section.';
 $string['invalidsesskey'] = 'The given sesskey is not valid. Please resend data again';
 $string['individualpagedoesnotexist'] = 'Individual wiki page doesn\'t exist';
 $string['javascriptdisabledlocks'] = 'Javascript is disabled on your browser and locks are not working. The changes you make may not be saved correctly.';
