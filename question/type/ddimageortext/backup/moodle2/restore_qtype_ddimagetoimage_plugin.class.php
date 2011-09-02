@@ -32,7 +32,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class restore_qtype_ddimagetoimage_plugin extends restore_qtype_plugin {
 
-    protected $qtype = "ddimagetoimage";
+    protected static function qtype_name() {
+        return 'ddimagetoimage';
+    }
 
     /**
      * Returns the paths to be handled by the plugin at question level
@@ -43,7 +45,7 @@ class restore_qtype_ddimagetoimage_plugin extends restore_qtype_plugin {
 
         // Add own qtype stuff
         $elename = dds;
-        $elepath = $this->get_pathfor('/'.$this->qtype);
+        $elepath = $this->get_pathfor('/'.self::qtype_name());
         $paths[] = new restore_path_element($elename, $elepath);
 
         $elename = 'drag';
@@ -63,6 +65,8 @@ class restore_qtype_ddimagetoimage_plugin extends restore_qtype_plugin {
     public function process_dds($data) {
         global $DB;
 
+        $prefix = 'qtype_'.self::qtype_name();
+
         $data = (object)$data;
         $oldid = $data->id;
 
@@ -77,9 +81,9 @@ class restore_qtype_ddimagetoimage_plugin extends restore_qtype_plugin {
             // Adjust some columns
             $data->questionid = $newquestionid;
             // Insert record
-            $newitemid = $DB->insert_record('qtype_'.$this->qtype, $data);
+            $newitemid = $DB->insert_record($prefix, $data);
             // Create mapping (needed for decoding links)
-            $this->set_mapping('qtype_'.$this->qtype, $oldid, $newitemid);
+            $this->set_mapping($prefix, $oldid, $newitemid);
         }
     }
 
@@ -88,6 +92,8 @@ class restore_qtype_ddimagetoimage_plugin extends restore_qtype_plugin {
      */
     public function process_drag($data) {
         global $DB;
+
+        $prefix = 'qtype_'.self::qtype_name();
 
         $data = (object)$data;
         $oldid = $data->id;
@@ -100,9 +106,9 @@ class restore_qtype_ddimagetoimage_plugin extends restore_qtype_plugin {
         if ($questioncreated) {
             $data->questionid = $newquestionid;
             // Insert record
-            $newitemid = $DB->insert_record("qtype_{$this->qtype}_drags", $data);
+            $newitemid = $DB->insert_record("{$prefix}_drags", $data);
             // Create mapping (there are files and states based on this)
-            $this->set_mapping("qtype_{$this->qtype}_drags", $oldid, $newitemid);
+            $this->set_mapping("{$prefix}_drags", $oldid, $newitemid);
 
         }
     }
@@ -113,6 +119,8 @@ class restore_qtype_ddimagetoimage_plugin extends restore_qtype_plugin {
     public function process_drop($data) {
         global $DB;
 
+        $prefix = 'qtype_'.self::qtype_name();
+
         $data = (object)$data;
         $oldid = $data->id;
 
@@ -124,9 +132,9 @@ class restore_qtype_ddimagetoimage_plugin extends restore_qtype_plugin {
         if ($questioncreated) {
             $data->questionid = $newquestionid;
             // Insert record
-            $newitemid = $DB->insert_record("qtype_{$this->qtype}_drops", $data);
+            $newitemid = $DB->insert_record("{$prefix}_drops", $data);
             // Create mapping (there are files and states based on this)
-            $this->set_mapping("qtype_{$this->qtype}_drops", $oldid, $newitemid);
+            $this->set_mapping("{$prefix}_drops", $oldid, $newitemid);
         }
     }
     /**
@@ -134,11 +142,13 @@ class restore_qtype_ddimagetoimage_plugin extends restore_qtype_plugin {
      */
     public static function define_decode_contents() {
 
+        $prefix = 'qtype_'.self::qtype_name();
+
         $contents = array();
 
         $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
         $contents[] =
-            new restore_decode_content('qtype_'.$this->qtype, $fields, 'qtype_'.$this->qtype);
+            new restore_decode_content($prefix, $fields, $prefix);
 
         return $contents;
     }
