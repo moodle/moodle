@@ -10,6 +10,11 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
         fp : null,
 
         initializer : function(params) {
+            /*Y.before(function(Y, editorid, options) {
+                console.log('editor id' + editorid);
+                options['oninit'] = 
+                return Y.Do.AlterArgs(message, [Y, editorid, options])
+            }, M.editor_tinymce, 'init_editor', this);*/
             this.fp = this.file_pickers();
             Y.one(this.get('topnode')).append('<div class="ddarea"><div class="droparea"></div>'+
                     '<div class="dragitems"></div>'+
@@ -34,15 +39,16 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
                     e.drag.get('node').setData('gooddrop', true);
                 });
 
-                Y.on('windowresize', this.reposition_drags_for_form, this);
+                //Y.on('windowresize', this.reposition_drags_for_form, this);
+                Y.later(500, this, this.reposition_drags_for_form, [], true);
 
                 this.doc.bg_img().on('load', this.constrain_image_size, this, 'bgimage');
                 this.doc.drag_image_homes()
                                         .on('load', this.constrain_image_size, this, 'dragimage');
                 this.doc.bg_img().after('load', this.poll_for_image_load, this,
-                                                        true, 3000, this.after_all_images_loaded);
+                                                        true, 0, this.after_all_images_loaded);
                 this.doc.drag_image_homes() .after('load', this.poll_for_image_load, this,
-                                                        true, 3000, this.after_all_images_loaded);
+                                                        true, 0, this.after_all_images_loaded);
             } else {
                 this.setup_form_events();
             }
@@ -142,7 +148,6 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
             Y.all('fieldset#dropzoneheader input').on('blur', function (e){
                 var name = e.target.getAttribute('name');
                 var draginstanceno = this.form.from_name_with_index(name).indexes[0];
-                this.reposition_drag_for_form(draginstanceno);
             }, this);
 
             //change in selected image
@@ -164,7 +169,7 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
                 }, this);
                 //change to infinite checkbox
                 Y.all('fieldset#draggableimageheader_'+i+' input[type="checkbox"]')
-                                        .on('change', this.set_options_for_drag_image_selectors, this);
+                                    .on('change', this.set_options_for_drag_image_selectors, this);
             }
             //event on file picker new file selection
             Y.after(function (e){
@@ -185,7 +190,7 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
 
         reposition_drag_for_form : function (draginstanceno) {
             var drag = this.doc.drag_image(draginstanceno);
-            if (null !== drag) {
+            if (null !== drag && !drag.hasClass('yui3-dd-dragging')) {
                 var fromform = [this.form.get_form_value('drops', [draginstanceno, 'xleft']),
                                 this.form.get_form_value('drops', [draginstanceno, 'ytop'])];
                 if (fromform[0] == '' && fromform[1] == '') {
@@ -205,12 +210,10 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
             xy = this.constrain_xy(draginstanceno, this.convert_to_bg_img_xy(xy));
             this.form.set_form_value('drops', [draginstanceno, 'xleft'], Math.floor(xy[0]));
             this.form.set_form_value('drops', [draginstanceno, 'ytop'], Math.floor(xy[1]));
-            this.reposition_drag_for_form(draginstanceno);
         },
         reset_drag_xy : function (draginstanceno) {
             this.form.set_form_value('drops', [draginstanceno, 'xleft'], '');
             this.form.set_form_value('drops', [draginstanceno, 'ytop'], '');
-            this.reposition_drag_for_form(draginstanceno);
         },
 
         //make sure xy value is not out of bounds of bg image
@@ -308,5 +311,5 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
         return new DDIMAGETOIMAGE_FORM(config);
     }
 }, '@VERSION@', {
-    requires:['moodle-qtype_ddimagetoimage-dd', 'form_filepicker']
+    requires:['moodle-qtype_ddimagetoimage-dd', 'form_filepicker', 'editor_tinymce']
 });
