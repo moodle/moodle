@@ -201,8 +201,8 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
             }
         },
         convert_to_window_xy : function (bgimgxy) {
-            return [+bgimgxy[0] + this.doc.bg_img().getX() + 1,
-                    +bgimgxy[1] + this.doc.bg_img().getY() + 1];
+            return [+bgimgxy[0] + this.doc.bg_img().getX(),
+                    +bgimgxy[1] + this.doc.bg_img().getY()];
         }
     }, {
         NAME : DDIMAGETOIMAGEDDNAME,
