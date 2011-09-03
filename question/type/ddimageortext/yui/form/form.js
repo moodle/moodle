@@ -34,8 +34,6 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
                     e.drag.get('node').setData('gooddrop', true);
                 });
 
-                Y.later(500, this, this.reposition_drags_for_form, [], true);
-
                 this.doc.bg_img().on('load', this.constrain_image_size, this, 'bgimage');
                 this.doc.drag_image_homes()
                                         .on('load', this.constrain_image_size, this, 'dragimage');
@@ -54,6 +52,7 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
             this.reposition_drags_for_form();
             this.set_options_for_drag_image_selectors();
             this.setup_form_events();
+            Y.later(500, this, this.reposition_drags_for_form, [], true);
         },
 
         constrain_image_size : function (e, imagetype) {
@@ -193,10 +192,6 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
                 } else {
                     var constrainedxy = this.constrain_xy(draginstanceno, fromform);
                     drag.setXY(this.convert_to_window_xy(constrainedxy));
-                    if (constrainedxy[0] !== +fromform[0] || constrainedxy[1] !== +fromform[1]){
-                        this.form.set_form_value('drops', [draginstanceno, 'xleft'], constrainedxy[0]);
-                        this.form.set_form_value('drops', [draginstanceno, 'ytop'], constrainedxy[1]);
-                    }
                 }
             }
         },
