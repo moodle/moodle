@@ -3994,6 +3994,25 @@ class dml_test extends UnitTestCase {
         $transaction->allow_commit();
         $this->assertEqual(2, $DB2->count_records($tablename));
 
+        // let's try delete all is also working on (this checks MDL-29198)
+        // initially both connections see all the records in the table (2)
+        $this->assertEqual(2, $DB->count_records($tablename));
+        $this->assertEqual(2, $DB2->count_records($tablename));
+        $transaction = $DB->start_delegated_transaction();
+
+        // delete all from within transaction
+        $DB->delete_records($tablename);
+
+        // transactional $DB, sees 0 records now
+        $this->assertEqual(0, $DB->count_records($tablename));
+
+        // others ($DB2) get no changes yet
+        $this->assertEqual(2, $DB2->count_records($tablename));
+
+        // now commit and we should see changes
+        $transaction->allow_commit();
+        $this->assertEqual(0, $DB2->count_records($tablename));
+
         $DB2->dispose();
     }
 
