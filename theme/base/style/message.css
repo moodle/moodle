@@ -55,6 +55,8 @@ table.message .searchresults td {padding:5px;}
 .message .hiddenelement  {display:none;} /** not just using hidden as mform adds that class to its fieldset */
 .message .visible {display:inline;}
 
+.message #usergroupselector.fieldset, .message #viewing {width: 100%;}
+
 .messagesearchresults {margin-bottom:40px;}
 .messagesearchresults td {padding:0px 10px 0px 20px;}
 .messagesearchresults td span {white-space:nowrap;}
