@@ -1018,6 +1018,136 @@ function wiki_delete_old_locks() {
     $DB->delete_records_select('wiki_locks', "lockedat < ?", array(time() - 3600));
 }
 
+/**
+ * Deletes wiki_links. It can be sepecific link or links attached in subwiki
+ *
+ * @global mixed $DB database object
+ * @param int $linkid id of the link to be deleted
+ * @param int $topageid links to the specific page
+ * @param int $frompageid links from specific page
+ * @param int $subwikiid links to subwiki
+ */
+function wiki_delete_links($linkid = null, $topageid = null, $frompageid = null, $subwikiid = null) {
+    global $DB;
+    $params = array();
+
+    // if link id is givien then don't check for anything else
+    if (!empty($linkid)) {
+        $params['id'] = $linkid;
+    } else {
+        if (!empty($topageid)) {
+            $params['topageid'] = $topageid;
+        }
+        if (!empty($frompageid)) {
+            $params['frompageid'] = $frompageid;
+        }
+        if (!empty($subwikiid)) {
+            $params['subwikiid'] = $subwikiid;
+        }
+    }
+
+    //Delete links if any params are passed, else nothing to delete.
+    if (!empty($params)) {
+        $DB->delete_records('wiki_links', $params);
+    }
+}
+
+/**
+ * Delete wiki synonyms related to subwikiid or page
+ *
+ * @param int $subwikiid id of sunbwiki
+ * @param int $pageid id of page
+ */
+function wiki_delete_synonym($subwikiid, $pageid = null) {
+    global $DB;
+
+    $params = array('subwikiid' => $subwikiid);
+    if (!is_null($pageid)) {
+        $params['pageid'] = $pageid;
+    }
+    $DB->delete_records('wiki_synonyms', $params, IGNORE_MISSING);
+}
+
+/**
+ * Delete pages and all related data
+ *
+ * @param mixed $context context in which page needs to be deleted.
+ * @param mixed $pageids id's of pages to be deleted
+ * @param int $subwikiid id of the subwiki for which all pages should be deleted
+ */
+function wiki_delete_pages($context, $pageids = null, $subwikiid = null) {
+    global $DB;
+
+    if (!empty($pageids) && is_int($pageids)) {
+       $pageids = array($pageids);
+    } else if (!empty($subwikiid)) {
+        $pageids = wiki_get_page_list($subwikiid);
+    }
+
+    //If there is no pageid then return as we can't delete anything.
+    if (empty($pageids)) {
+        return;
+    }
+
+    /// Delete page and all it's relevent data
+    foreach ($pageids as $pageid) {
+        if (is_object($pageid)) {
+            $pageid = $pageid->id;
+        }
+
+        //Delete page comments
+        $comments = wiki_get_comments($context->id, $pageid);
+        foreach ($comments as $commentid => $commentvalue) {
+            wiki_delete_comment($commentid, $context, $pageid);
+        }
+
+        //Delete page tags
+        $tags = tag_get_tags_array('wiki_pages', $pageid);
+        foreach ($tags as $tagid => $tagvalue) {
+            tag_delete_instance('wiki_pages', $pageid, $tagid);
+        }
+
+        //Delete Synonym
+        wiki_delete_synonym($subwikiid, $pageid);
+
+        //Delete all page versions
+        wiki_delete_page_versions(array($pageid=>array(0)));
+
+        //Delete all page locks
+        wiki_delete_locks($pageid);
+
+        //Delete all page links
+        wiki_delete_links(null, $pageid);
+
+        //Delete page
+        $params = array('id' => $pageid);
+        $DB->delete_records('wiki_pages', $params);
+    }
+}
+
+/**
+ * Delete specificed versions of a page or versions created by users
+ * if version is 0 then it will remove all versions of the page
+ *
+ * @param array $deleteversions delete versions for a page
+ */
+function wiki_delete_page_versions($deleteversions) {
+    global $DB;
+
+    /// delete page-versions
+    foreach ($deleteversions as $id => $versions) {
+        foreach ($versions as $version) {
+            $params = array('pageid' => $id);
+            //If version = 0, then remove all versions of this page, else remove
+            //specified version
+            if ($version != 0) {
+                $params['version'] = $version;
+            }
+            $DB->delete_records('wiki_versions', $params, IGNORE_MISSING);
+        }
+    }
+}
+
 function wiki_get_comment($commentid){
     global $DB;
     return $DB->get_record('comments', array('id' => $commentid));
