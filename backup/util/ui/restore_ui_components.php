@@ -229,10 +229,10 @@ class restore_course_search extends restore_search_base {
         $this->setup_restrictions();
         $this->currentcourseid = $currentcouseid;
         $this->includecurrentcourse = false;
-    }   
+    }
     /**
      * Sets up any access restrictions for the courses to be displayed in the search.
-     * 
+     *
      * This will typically call $this->require_capability().
      */
     protected function setup_restrictions() {
