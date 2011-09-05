@@ -226,9 +226,17 @@ class restore_course_search extends restore_search_base {
      */
     public function __construct(array $config=array(), $currentcouseid = null) {
         parent::__construct($config);
-        $this->require_capability('moodle/restore:restorecourse');
+        $this->setup_restrictions();
         $this->currentcourseid = $currentcouseid;
         $this->includecurrentcourse = false;
+    }   
+    /**
+     * Sets up any access restrictions for the courses to be displayed in the search.
+     * 
+     * This will typically call $this->require_capability().
+     */
+    protected function setup_restrictions() {
+        $this->require_capability('moodle/restore:restorecourse');
     }
     /**
      *
