@@ -172,7 +172,10 @@ class tinymce_texteditor extends texteditor {
                 $params['file_browser_callback'] = "M.editor_tinymce.filepicker";
             }
         }
-
+        //Add onblur event for client side text validation
+        if (!empty($options['required'])) {
+            $params['init_instance_callback'] = 'M.editor_tinymce.onblur_event';
+        }
         return $params;
     }
 }

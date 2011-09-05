@@ -1703,8 +1703,16 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                             }
                         }
                     }
+                    //for editor element, [text] is appended to the name.
+                    if ($element->getType() == 'editor') {
+                        $elementName .= '[text]';
+                        //Add format to rule as moodleform check which format is supported by browser
+                        //it is not set anywhere... So small hack to make sure we pass it down to quickform
+                        if (is_null($rule['format'])) {
+                            $rule['format'] = $element->getFormat();
+                        }
+                    }
                     // Fix for bug displaying errors for elements in a group
-                    //$test[$elementName][] = $registry->getValidationScript($element, $elementName, $rule);
                     $test[$elementName][0][] = $registry->getValidationScript($element, $elementName, $rule);
                     $test[$elementName][1]=$element;
                     //end of fix
@@ -2387,17 +2395,18 @@ class MoodleQuickForm_Rule_Required extends HTML_QuickForm_Rule {
     /**
      * This function returns Javascript code used to build client-side validation.
      * It checks if an element is not empty.
-     * Note, that QuickForm does not know how to work with editor text field and builds not correct
-     * JS code for validation. If client check is enabled for editor field it will not be validated
-     * on client side no matter what this function returns.
      *
-     * @param     mixed     $options    Not used yet
+     * @param int $format
      * @return array
      */
-    function getValidationScript($options = null) {
+    function getValidationScript($format = null) {
         global $CFG;
         if (!empty($CFG->strictformsrequired)) {
-            return array('', "{jsVar}.replace(/^\s+$/g, '') == ''");
+            if (!empty($format) && $format == FORMAT_HTML) {
+                return array('', "{jsVar}.replace(/(<[^img|hr|canvas]+>)|&nbsp;|\s+/ig, '') == ''");
+            } else {
+                return array('', "{jsVar}.replace(/^\s+$/g, '') == ''");
+            }
         } else {
             return array('', "{jsVar} == ''");
         }
