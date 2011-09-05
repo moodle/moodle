@@ -278,6 +278,9 @@ class mod_wiki_renderer extends plugin_renderer_base {
             if (($tab == 'view' || $tab == 'map' || $tab == 'history') && !has_capability('mod/wiki:viewpage', $context)) {
                 continue;
             }
+            if ($tab == 'admin' && !has_capability('mod/wiki:managewiki', $context)) {
+                continue;
+            }
             $link = $baseurl . $tab . '.php?pageid=' . $pageid;
             if ($linked == $tab) {
                 $tabs[] = new tabobject($tab, $link, get_string($tab, 'wiki'), '', true);
@@ -492,6 +495,21 @@ class mod_wiki_renderer extends plugin_renderer_base {
             $html .= '</div>';
         }
         return $html;
+    }
+
+    function menu_admin($pageid, $currentselect) {
+        $options = array('removepages', 'deleteversions');
+        $items = array();
+        foreach ($options as $opt) {
+            $items[] = get_string($opt, 'wiki');
+        }
+        $selectoptions = array();
+        foreach ($items as $key => $item) {
+            $selectoptions[$key + 1] = $item;
+        }
+        $select = new single_select(new moodle_url('/mod/wiki/admin.php', array('pageid' => $pageid)), 'option', $selectoptions, $currentselect);
+        $select->label = get_string('adminmenu', 'wiki') . ': ';
+        return $this->output->container($this->output->render($select), 'midpad');
     }
 
     /**
