@@ -1230,8 +1230,14 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $field = new xmldb_field('backuptype', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, 'info');
     /// Conditionally Launch add field backuptype and set all old records as 'scheduledbackup' records.
         if (!$dbman->field_exists($table, $field)) {
+            // Set the default we want applied to any existing records
+            $field->setDefault('scheduledbackup');
+            // Add the field to the database
             $dbman->add_field($table, $field);
-            $DB->execute("UPDATE {backup_log} SET backuptype='scheduledbackup'");
+            // Remove the default
+            $field->setDefault(null);
+            // Update the database to remove the default
+            $dbman->change_field_default($table, $field);
         }
 
     /// Main savepoint reached
