@@ -91,7 +91,7 @@ function imscp_parse_structure($imscp, $context) {
         return null;
     }
 
-    imscp_parse_manifestfile($manifestfile->get_content());
+    return imscp_parse_manifestfile($manifestfile->get_content());
 }
 
 /**
