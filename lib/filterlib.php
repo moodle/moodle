@@ -977,9 +977,11 @@ function filter_context_may_have_filter_settings($context) {
  * @param array $link_array       an array of filterobjects
  * @param array $ignoretagsopen   an array of opening tags that we should ignore while filtering
  * @param array $ignoretagsclose  an array of corresponding closing tags
+ * @param bool $overridedefaultignore True to only use tags provided by arguments
  * @return string
  **/
-function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsclose=NULL) {
+function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsclose=NULL,
+        $overridedefaultignore=false) {
 
     global $CFG;
 
@@ -988,30 +990,36 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
     $ignoretags = array();  //To store all the enclosig tags to be completely ignored
     $tags = array();        //To store all the simple tags to be ignored
 
-/// A list of open/close tags that we should not replace within
-/// No reason why you can't put full preg expressions in here too
-/// eg '<script(.+?)>' to match any type of script tag
-    $filterignoretagsopen  = array('<head>' , '<nolink>' , '<span class="nolink">');
-    $filterignoretagsclose = array('</head>', '</nolink>', '</span>');
+    if (!$overridedefaultignore) {
+        // A list of open/close tags that we should not replace within
+        // Extended to include <script>, <textarea>, <select> and <a> tags
+        // Regular expression allows tags with or without attributes
+        $filterignoretagsopen  = array('<head>' , '<nolink>' , '<span class="nolink">',
+                '<script(\s[^>]*?)?>', '<textarea(\s[^>]*?)?>',
+                '<select(\s[^>]*?)?>', '<a(\s[^>]*?)?>');
+        $filterignoretagsclose = array('</head>', '</nolink>', '</span>',
+                 '</script>', '</textarea>', '</select>','</a>');
+    } else {
+        // Set an empty default list
+        $filterignoretagsopen = array();
+        $filterignoretagsclose = array();
+    }
+ 
+    // Add the user defined ignore tags to the default list
+    if ( is_array($ignoretagsopen) ) {
+        foreach ($ignoretagsopen as $open) {
+            $filterignoretagsopen[] = $open;
+        }
+        foreach ($ignoretagsclose as $close) {
+            $filterignoretagsclose[] = $close;
+        }
+    }
 
 /// Invalid prefixes and suffixes for the fullmatch searches
 /// Every "word" character, but the underscore, is a invalid suffix or prefix.
 /// (nice to use this because it includes national characters (accents...) as word characters.
     $filterinvalidprefixes = '([^\W_])';
     $filterinvalidsuffixes = '([^\W_])';
-
-/// Add the user defined ignore tags to the default list
-/// Unless specified otherwise, we will not replace within <a></a> tags
-    if ( $ignoretagsopen === NULL ) {
-        //$ignoretagsopen  = array('<a(.+?)>');
-        $ignoretagsopen  = array('<a\s[^>]+?>');
-        $ignoretagsclose = array('</a>');
-    }
-
-    if ( is_array($ignoretagsopen) ) {
-        foreach ($ignoretagsopen as $open) $filterignoretagsopen[] = $open;
-        foreach ($ignoretagsclose as $close) $filterignoretagsclose[] = $close;
-    }
 
     //// Double up some magic chars to avoid "accidental matches"
     $text = preg_replace('/([#*%])/','\1\1',$text);
