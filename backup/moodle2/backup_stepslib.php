@@ -310,7 +310,7 @@ class backup_module_structure_step extends backup_structure_step {
             'added', 'score', 'indent', 'visible',
             'visibleold', 'groupmode', 'groupingid', 'groupmembersonly',
             'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected',
-            'availablefrom', 'availableuntil', 'showavailability'));
+            'availablefrom', 'availableuntil', 'showavailability', 'showdescription'));
 
         $availinfo = new backup_nested_element('availability_info');
         $availability = new backup_nested_element('availability', array('id'), array(

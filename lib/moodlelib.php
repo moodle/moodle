@@ -383,6 +383,9 @@ define('FEATURE_RATE', 'rate');
 /** True if module supports backup/restore of moodle2 format */
 define('FEATURE_BACKUP_MOODLE2', 'backup_moodle2');
 
+/** True if module can show description on course main page */
+define('FEATURE_SHOW_DESCRIPTION', 'showdescription');
+
 /** Unspecified module archetype */
 define('MOD_ARCHETYPE_OTHER', 0);
 /** Resource-like type module */

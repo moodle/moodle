@@ -1106,6 +1106,7 @@ function get_array_of_activities($courseid) {
                    $mod[$seq]->availablefrom    = $rawmods[$seq]->availablefrom;
                    $mod[$seq]->availableuntil   = $rawmods[$seq]->availableuntil;
                    $mod[$seq]->showavailability = $rawmods[$seq]->showavailability;
+                   $mod[$seq]->showdescription  = $rawmods[$seq]->showdescription;
                    if (!empty($CFG->enableavailability)) {
                        condition_info::fill_availability_conditions($rawmods[$seq]);
                        $mod[$seq]->conditionscompletion = $rawmods[$seq]->conditionscompletion;
@@ -1121,7 +1122,7 @@ function get_array_of_activities($courseid) {
 
                    include_once("$CFG->dirroot/mod/$modname/lib.php");
 
-                   if (function_exists($functionname)) {
+                   if ($hasfunction = function_exists($functionname)) {
                        if ($info = $functionname($rawmods[$seq])) {
                            if (!empty($info->icon)) {
                                $mod[$seq]->icon = $info->icon;
@@ -1156,17 +1157,33 @@ function get_array_of_activities($courseid) {
                            }
                        }
                    }
+                   // When there is no modname_get_coursemodule_info function,
+                   // but showdescriptions is enabled, then we use the 'intro'
+                   // and 'introformat' fields in the module table
+                   if (!$hasfunction && $rawmods[$seq]->showdescription) {
+                       if ($modvalues = $DB->get_record($rawmods[$seq]->modname,
+                               array('id' => $rawmods[$seq]->instance), 'name, intro, introformat')) {
+                           // Set content from intro and introformat. Filters are disabled
+                           // because we  filter it with format_text at display time
+                           $mod[$seq]->content = format_module_intro($rawmods[$seq]->modname,
+                                   $modvalues, $rawmods[$seq]->id, false);
+
+                           // To save making another query just below, put name in here
+                           $mod[$seq]->name = $modvalues->name;
+                       }
+                   }
                    if (!isset($mod[$seq]->name)) {
                        $mod[$seq]->name = $DB->get_field($rawmods[$seq]->modname, "name", array("id"=>$rawmods[$seq]->instance));
                    }
 
                    // Minimise the database size by unsetting default options when they are
                    // 'empty'. This list corresponds to code in the cm_info constructor.
-                   foreach(array('idnumber', 'groupmode', 'groupingid', 'groupmembersonly',
+                   foreach (array('idnumber', 'groupmode', 'groupingid', 'groupmembersonly',
                            'indent', 'completion', 'extra', 'extraclasses', 'onclick', 'content',
                            'icon', 'iconcomponent', 'customdata', 'showavailability', 'availablefrom',
                            'availableuntil', 'conditionscompletion', 'conditionsgrade',
-                           'completionview', 'completionexpected', 'score') as $property) {
+                           'completionview', 'completionexpected', 'score', 'showdescription')
+                           as $property) {
                        if (property_exists($mod[$seq], $property) &&
                                empty($mod[$seq]->{$property})) {
                            unset($mod[$seq]->{$property});

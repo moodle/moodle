@@ -446,6 +446,14 @@ class cm_info extends stdClass  {
     public $showavailability;
 
     /**
+     * Controls whether the description of the activity displays on the course main page (in
+     * addition to anywhere it might display within the activity itself). 0 = do not show
+     * on main page, 1 = show on main page.
+     * @var int
+     */
+    public $showdescription;
+
+    /**
      * Extra HTML that is put in an unhelpful part of the HTML when displaying this module in
      * course page - from cached data in modinfo field
      * @deprecated This is crazy, don't use it. Replaced by ->extraclasses and ->onclick
@@ -854,6 +862,7 @@ class cm_info extends stdClass  {
         $this->iconcomponent    = isset($mod->iconcomponent) ? $mod->iconcomponent : '';
         $this->customdata       = isset($mod->customdata) ? $mod->customdata : '';
         $this->context          = get_context_instance(CONTEXT_MODULE, $mod->cm);
+        $this->showdescription  = isset($mod->showdescription) ? $mod->showdescription : 0;
         $this->state = self::STATE_BASIC;
 
         // This special case handles old label data. Labels used to use the 'name' field for

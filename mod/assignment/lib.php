@@ -2070,11 +2070,10 @@ class assignment_base {
      * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
      *
      * @param $coursemodule object The coursemodule object (record).
-     * @return object An object on information that the courses will know about (most noticeably, an icon).
-     *
+     * @return cached_cm_info Object used to customise appearance on course page
      */
     function get_coursemodule_info($coursemodule) {
-        return false;
+        return null;
     }
 
     /**
@@ -3341,13 +3340,13 @@ function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
  * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
  *
  * @param $coursemodule object The coursemodule object (record).
- * @return object An object on information that the courses will know about (most noticeably, an icon).
- *
+ * @return cached_cm_info An object on information that the courses will know about (most noticeably, an icon).
  */
 function assignment_get_coursemodule_info($coursemodule) {
     global $CFG, $DB;
 
-    if (! $assignment = $DB->get_record('assignment', array('id'=>$coursemodule->instance), 'id, assignmenttype, name')) {
+    if (! $assignment = $DB->get_record('assignment', array('id'=>$coursemodule->instance),
+            'id, assignmenttype, name, intro, introformat')) {
         return false;
     }
 
@@ -3357,14 +3356,15 @@ function assignment_get_coursemodule_info($coursemodule) {
         require_once($libfile);
         $assignmentclass = "assignment_$assignment->assignmenttype";
         $ass = new $assignmentclass('staticonly');
-        if ($result = $ass->get_coursemodule_info($coursemodule)) {
-            return $result;
-        } else {
-            $info = new stdClass();
-            $info->name = $assignment->name;
-            return $info;
+        if (!($result = $ass->get_coursemodule_info($coursemodule))) {
+            $result = new cached_cm_info();
+            $result->name = $assignment->name;
         }
-
+        if ($coursemodule->showdescription) {
+            // Convert intro to html. Do not filter cached version, filters run at display time.
+            $info->content = format_module_intro('assignment', $assignment, $coursemodule->id, false);
+        }
+        return $result;
     } else {
         debugging('Incorrect assignment type: '.$assignment->assignmenttype);
         return false;
@@ -3669,6 +3669,7 @@ function assignment_supports($feature) {
         case FEATURE_GRADE_OUTCOMES:          return true;
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_BACKUP_MOODLE2:          return true;
+        case FEATURE_SHOW_DESCRIPTION:        return true;
 
         default: return null;
     }

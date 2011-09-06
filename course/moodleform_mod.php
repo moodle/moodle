@@ -84,6 +84,7 @@ abstract class moodleform_mod extends moodleform {
         $this->_features->introeditor       = plugin_supports('mod', $this->_modname, FEATURE_MOD_INTRO, true);
         $this->_features->defaultcompletion = plugin_supports('mod', $this->_modname, FEATURE_MODEDIT_DEFAULT_COMPLETION, true);
         $this->_features->rating            = plugin_supports('mod', $this->_modname, FEATURE_RATE, false);
+        $this->_features->showdescription   = plugin_supports('mod', $this->_modname, FEATURE_SHOW_DESCRIPTION, false);
 
         $this->_features->gradecat          = ($this->_features->outcomes or $this->_features->hasgrades);
     }
@@ -673,6 +674,13 @@ abstract class moodleform_mod extends moodleform {
         $mform->setType('introeditor', PARAM_RAW); // no XSS prevention here, users must be trusted
         if ($required) {
             $mform->addRule('introeditor', get_string('required'), 'required', null, 'client');
+        }
+
+        // If the 'show description' feature is enabled, this checkbox appears
+        // below the intro.
+        if ($this->_features->showdescription) {
+            $mform->addElement('checkbox', 'showdescription', get_string('showdescription'));
+            $mform->addHelpButton('showdescription', 'showdescription');
         }
     }
 
