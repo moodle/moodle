@@ -816,7 +816,15 @@ function filter_get_all_local_settings($contextid) {
  *      array('filter/tex' => array(), 'mod/glossary' => array('glossaryid', 123))
  */
 function filter_get_active_in_context($context) {
-    global $DB;
+    global $DB, $FILTERLIB_PRIVATE;
+
+    // Use cache (this is a within-request cache only) if available. See
+    // function filter_preload_activities.
+    if (isset($FILTERLIB_PRIVATE->active) &&
+            array_key_exists($context->id, $FILTERLIB_PRIVATE->active)) {
+        return $FILTERLIB_PRIVATE->active[$context->id];
+    }
+
     $contextids = str_replace('/', ',', trim($context->path, '/'));
 
     // The following SQL is tricky. It is explained on
@@ -848,6 +856,129 @@ function filter_get_active_in_context($context) {
     $rs->close();
 
     return $filters;
+}
+
+/**
+ * Preloads the list of active filters for all activities (modules) on the course
+ * using two database queries.
+ * @param course_modinfo $modinfo Course object from get_fast_modinfo
+ */
+function filter_preload_activities(course_modinfo $modinfo) {
+    global $DB, $FILTERLIB_PRIVATE;
+
+    // Don't repeat preload
+    if (!isset($FILTERLIB_PRIVATE->preloaded)) {
+        $FILTERLIB_PRIVATE->preloaded = array();
+    }
+    if (!empty($FILTERLIB_PRIVATE->preloaded[$modinfo->get_course_id()])) {
+        return;
+    }
+    $FILTERLIB_PRIVATE->preloaded[$modinfo->get_course_id()] = true;
+
+    // Get contexts for all CMs
+    $cmcontexts = array();
+    $cmcontextids = array();
+    foreach ($modinfo->get_cms() as $cm) {
+        $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $cmcontextids[] = $modulecontext->id;
+        $cmcontexts[] = $modulecontext;
+    }
+
+    // Get course context and all other parents...
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $modinfo->get_course_id());
+    $parentcontextids = explode('/', substr($coursecontext->path, 1));
+    $allcontextids = array_merge($cmcontextids, $parentcontextids);
+
+    // Get all filter_active rows relating to all these contexts
+    list ($sql, $params) = $DB->get_in_or_equal($allcontextids);
+    $filteractives = $DB->get_records_select('filter_active', "contextid $sql", $params);
+
+    // Get all filter_config only for the cm contexts
+    list ($sql, $params) = $DB->get_in_or_equal($cmcontextids);
+    $filterconfigs = $DB->get_records_select('filter_config', "contextid $sql", $params);
+
+    // Note: I was a bit surprised that filter_config only works for the
+    // most specific context (i.e. it does not need to be checked for course
+    // context if we only care about CMs) however basede on code in
+    // filter_get_active_in_context, this does seem to be correct.
+
+    // Build course default active list. Initially this will be an array of
+    // filter name => active score (where an active score >0 means it's active)
+    $courseactive = array();
+
+    // Also build list of filter_active rows below course level, by contextid
+    $remainingactives = array();
+
+    // Array lists filters that are banned at top level
+    $banned = array();
+
+    // Add any active filters in parent contexts to the array
+    foreach ($filteractives as $row) {
+        $depth = array_search($row->contextid, $parentcontextids);
+        if ($depth !== false) {
+            // Find entry
+            if (!array_key_exists($row->filter, $courseactive)) {
+                $courseactive[$row->filter] = 0;
+            }
+            // This maths copes with reading rows in any order. Turning on/off
+            // at site level counts 1, at next level down 4, at next level 9,
+            // then 16, etc. This means the deepest level always wins, except
+            // against the -9999 at top level.
+            $courseactive[$row->filter] +=
+                ($depth + 1) * ($depth + 1) * $row->active;
+
+            if ($row->active == TEXTFILTER_DISABLED) {
+                $banned[$row->filter] = true;
+            }
+        } else {
+            // Build list of other rows indexed by contextid
+            if (!array_key_exists($row->contextid, $remainingactives)) {
+                $remainingactives[$row->contextid] = array();
+            }
+            $remainingactives[$row->contextid][] = $row;
+        }
+    }
+
+    // Chuck away the ones that aren't active
+    foreach ($courseactive as $filter=>$score) {
+        if ($score <= 0) {
+            unset($courseactive[$filter]);
+        } else {
+            $courseactive[$filter] = array();
+        }
+    }
+
+    // Loop through the contexts to reconstruct filter_active lists for each
+    // cm on the course
+    if (!isset($FILTERLIB_PRIVATE->active)) {
+        $FILTERLIB_PRIVATE->active = array();
+    }
+    foreach ($cmcontextids as $contextid) {
+        // Copy course list
+        $FILTERLIB_PRIVATE->active[$contextid] = $courseactive;
+
+        // Are there any changes to the active list?
+        if (array_key_exists($contextid, $remainingactives)) {
+            foreach ($remainingactives[$contextid] as $row) {
+                if ($row->active > 0 && empty($banned[$row->filter])) {
+                    // If it's marked active for specific context, add entry
+                    // (doesn't matter if one exists already)
+                    $FILTERLIB_PRIVATE->active[$contextid][$row->filter] = array();
+                } else {
+                    // If it's marked inactive, remove entry (doesn't matter
+                    // if it doesn't exist)
+                    unset($FILTERLIB_PRIVATE->active[$contextid][$row->filter]);
+                }
+            }
+        }
+    }
+
+    // Process all config rows to add config data to these entries
+    foreach ($filterconfigs as $row) {
+        if (isset($FILTERLIB_PRIVATE->active[$row->contextid][$row->filter])) {
+            $FILTERLIB_PRIVATE->active[$row->contextid][$row->filter][$row->name] = $row->value;
+        }
+    }
 }
 
 /**
