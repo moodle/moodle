@@ -224,7 +224,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
         $themes = get_list_of_themes();
         foreach ($themes as $key=>$theme) {
             if (empty($theme->hidefromselector)) {
-                $choices[$key] = $theme->name;
+                $choices[$key] = get_string('pluginname', 'theme_'.$theme->name);
             }
         }
         $mform->addElement('select', 'theme', get_string('preferredtheme'), $choices);

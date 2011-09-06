@@ -798,7 +798,7 @@ function grade_get_categories_menu($courseid, $includenew=false) {
     foreach ($categories as $category) {
         $cats[$category->id] = $category->get_name();
     }
-    textlib_get_instance()->asort($cats);
+    collatorlib::asort($cats);
 
     return ($result+$cats);
 }

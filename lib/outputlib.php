@@ -1179,6 +1179,15 @@ class theme_config {
         }
         return $regions;
     }
+
+    /**
+     * Returns the human readable name of the theme
+     *
+     * @return string
+     */
+    public function get_theme_name() {
+        return get_string('pluginname', 'theme_'.$this->name);
+    }
 }
 
 

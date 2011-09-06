@@ -259,7 +259,7 @@ class community_hub_search_form extends moodleform {
             $mform->setDefault('licence', $licence);
 
             $languages = get_string_manager()->get_list_of_languages();
-            textlib_get_instance()->asort($languages);
+            collatorlib::asort($languages);
             $languages = array_merge(array('all' => get_string('any')), $languages);
             $mform->addElement('select', 'language', get_string('language'), $languages);
             $mform->setDefault('language', $language);

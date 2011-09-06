@@ -519,7 +519,7 @@ function filter_get_all_installed() {
             }
         }
     }
-    textlib_get_instance()->asort($filternames);
+    collatorlib::asort($filternames);
     return $filternames;
 }
 

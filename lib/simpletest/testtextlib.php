@@ -272,28 +272,6 @@ class textlib_test extends UnitTestCase {
         $this->assertIdentical(textlib::strtotitle($str), "Žluťoučký Koníček");
     }
 
-    public function test_asort() {
-        global $SESSION;
-        $SESSION->lang = 'en'; // make sure we test en language to get consistent results, hopefully all systems have this locale
-
-        $arr = array('b'=>'ab', 1=>'aa', 0=>'cc');
-        textlib::asort($arr);
-        $this->assertIdentical(array_keys($arr), array(1, 'b', 0));
-        $this->assertIdentical(array_values($arr), array('aa', 'ab', 'cc'));
-
-        if (extension_loaded('intl')) {
-            $error = 'Collation aware sorting not supported';
-        } else {
-            $error = 'Collation aware sorting not supported, PHP extension "intl" is not available.';
-        }
-
-        $arr = array('a'=>'áb', 'b'=>'ab', 1=>'aa', 0=>'cc');
-        textlib::asort($arr);
-        $this->assertIdentical(array_keys($arr), array(1, 'b', 'a', 0), $error);
-
-        unset($SESSION->lang);
-    }
-
     public function test_deprecated_textlib_get_instance() {
         $textlib = textlib_get_instance();
         $this->assertIdentical($textlib->substr('abc', 1, 1), 'b');
@@ -305,5 +283,131 @@ class textlib_test extends UnitTestCase {
         $this->assertIdentical($textlib->strrpos('abcabc', 'a'), 3);
         $this->assertIdentical($textlib->specialtoascii('ábc'), 'abc');
         $this->assertIdentical($textlib->strtotitle('abc ABC'), 'Abc Abc');
+    }
+}
+
+/**
+ * Unit tests for our utf-8 aware collator.
+ *
+ * Used for sorting.
+ *
+ * @package    core
+ * @subpackage lib
+ * @copyright  2011 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class collatorlib_test extends UnitTestCase {
+
+    protected $initiallang = null;
+    protected $error = null;
+
+    public function setUp() {
+        global $SESSION;
+        if (isset($SESSION->lang)) {
+            $this->initiallang = $SESSION->lang;
+        }
+        $SESSION->lang = 'en'; // make sure we test en language to get consistent results, hopefully all systems have this locale
+        if (extension_loaded('intl')) {
+            $this->error = 'Collation aware sorting not supported';
+        } else {
+            $this->error = 'Collation aware sorting not supported, PHP extension "intl" is not available.';
+        }
+        parent::setUp();
+    }
+    public function tearDown() {
+        global $SESSION;
+        parent::tearDown();
+        if ($this->initiallang !== null) {
+            $SESSION->lang = $this->initiallang;
+            $this->initiallang = null;
+        } else {
+            unset($SESSION->lang);
+        }
+    }
+    function test_asort() {
+        $arr = array('b' => 'ab', 1 => 'aa', 0 => 'cc');
+        collatorlib::asort($arr);
+        $this->assertIdentical(array_keys($arr), array(1, 'b', 0));
+        $this->assertIdentical(array_values($arr), array('aa', 'ab', 'cc'));
+
+        $arr = array('a' => 'áb', 'b' => 'ab', 1 => 'aa', 0=>'cc');
+        collatorlib::asort($arr);
+        $this->assertIdentical(array_keys($arr), array(1, 'b', 'a', 0), $this->error);
+        $this->assertIdentical(array_values($arr), array('aa', 'ab', 'áb', 'cc'), $this->error);
+    }
+    function test_asort_objects_by_method() {
+        $objects = array(
+            'b' => new string_test_class('ab'),
+            1 => new string_test_class('aa'),
+            0 => new string_test_class('cc')
+        );
+        collatorlib::asort_objects_by_method($objects, 'get_protected_name');
+        $this->assertIdentical(array_keys($objects), array(1, 'b', 0));
+        $this->assertIdentical($this->get_ordered_names($objects, 'get_protected_name'), array('aa', 'ab', 'cc'));
+
+        $objects = array(
+            'a' => new string_test_class('áb'),
+            'b' => new string_test_class('ab'),
+            1 => new string_test_class('aa'),
+            0 => new string_test_class('cc')
+        );
+        collatorlib::asort_objects_by_method($objects, 'get_private_name');
+        $this->assertIdentical(array_keys($objects), array(1, 'b', 'a', 0), $this->error);
+        $this->assertIdentical($this->get_ordered_names($objects, 'get_private_name'), array('aa', 'ab', 'áb', 'cc'), $this->error);
+    }
+    function test_asort_objects_by_property() {
+        $objects = array(
+            'b' => new string_test_class('ab'),
+            1 => new string_test_class('aa'),
+            0 => new string_test_class('cc')
+        );
+        collatorlib::asort_objects_by_property($objects, 'publicname');
+        $this->assertIdentical(array_keys($objects), array(1, 'b', 0));
+        $this->assertIdentical($this->get_ordered_names($objects, 'publicname'), array('aa', 'ab', 'cc'));
+
+        $objects = array(
+            'a' => new string_test_class('áb'),
+            'b' => new string_test_class('ab'),
+            1 => new string_test_class('aa'),
+            0 => new string_test_class('cc')
+        );
+        collatorlib::asort_objects_by_property($objects, 'publicname');
+        $this->assertIdentical(array_keys($objects), array(1, 'b', 'a', 0), $this->error);
+        $this->assertIdentical($this->get_ordered_names($objects, 'publicname'), array('aa', 'ab', 'áb', 'cc'), $this->error);
+    }
+    protected function get_ordered_names($objects, $methodproperty = 'get_protected_name') {
+        $return = array();
+        foreach ($objects as $object) {
+            if ($methodproperty == 'publicname') {
+                $return[] = $object->publicname;
+            } else {
+                $return[] = $object->$methodproperty();
+            }
+        }
+        return $return;
+    }
+}
+/**
+ * Simple class used to work with the unit test.
+ *
+ * @package    core
+ * @subpackage lib
+ * @copyright  2011 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class string_test_class extends stdClass {
+    public $publicname;
+    protected $protectedname;
+    private $privatename;
+    public function __construct($name) {
+        $this->publicname = $name;
+        $this->protectedname = $name;
+        $this->privatename = $name;
+    }
+    public function get_protected_name() {
+        return $this->protectedname;
+    }
+    public function get_private_name() {
+        return $this->publicname;
     }
 }
