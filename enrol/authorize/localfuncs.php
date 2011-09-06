@@ -232,6 +232,7 @@ function send_welcome_messages($orderdata) {
                 $a->profileurl = "$CFG->wwwroot/user/view.php?id=$lastuserid";
                 $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$lastuserid";
                 $emailmessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
+                $subject = get_string("enrolmentnew", '', format_string($SITE->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, SITEID))));
 
                 $eventdata = new stdClass();
                 $eventdata->modulename        = 'moodle';
@@ -239,7 +240,7 @@ function send_welcome_messages($orderdata) {
                 $eventdata->name              = 'authorize_enrolment';
                 $eventdata->userfrom          = $sender;
                 $eventdata->userto            = $user;
-                $eventdata->subject           = get_string("enrolmentnew", '', $SITE->shortname);
+                $eventdata->subject           = $subject;
                 $eventdata->fullmessage       = $emailmessage;
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml   = '';
@@ -267,6 +268,7 @@ function authorize_verify_account() {
 
     $original_antest = $plugin->get_config('an_test');
     $plugin->set_config('an_test', 1); // Test mode
+    $shortname = format_string($SITE->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, SITEID)));
 
     $order = new stdClass();
     $order->id = -1;
@@ -293,7 +295,7 @@ function authorize_verify_account() {
     $extra->x_country = $USER->country;
 
     $extra->x_invoice_num = $order->id;
-    $extra->x_description = $SITE->shortname . ' - Authorize.net Merchant Account Verification Test';
+    $extra->x_description = $shortname . ' - Authorize.net Merchant Account Verification Test';
 
     $ret = '';
     $message = '';

@@ -36,8 +36,9 @@ class block_course_list extends block_list {
           !(has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM)) and $adminseesall)) {    // Just print My Courses
             if ($courses = enrol_get_my_courses(NULL, 'visible DESC, fullname ASC')) {
                 foreach ($courses as $course) {
+                    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                     $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
-                    $this->content->items[]="<a $linkcss title=\"" . format_string($course->shortname) . "\" ".
+                    $this->content->items[]="<a $linkcss title=\"" . format_string($course->shortname, true, array('context' => $coursecontext)) . "\" ".
                                "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">".$icon.format_string($course->fullname). "</a>";
                 }
                 $this->title = get_string('mycourses');
@@ -70,10 +71,11 @@ class block_course_list extends block_list {
 
                 if ($courses) {
                     foreach ($courses as $course) {
+                        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                         $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
 
                         $this->content->items[]="<a $linkcss title=\""
-                                   . format_string($course->shortname)."\" ".
+                                   . format_string($course->shortname, true, array('context' => $coursecontext))."\" ".
                                    "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">"
                                    .$icon. format_string($course->fullname) . "</a>";
                     }
@@ -117,7 +119,8 @@ class block_course_list extends block_list {
             $this->content->items[] = get_string('remotecourses','mnet');
             $this->content->icons[] = '';
             foreach ($courses as $course) {
-                $this->content->items[]="<a title=\"" . format_string($course->shortname) . "\" ".
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                $this->content->items[]="<a title=\"" . format_string($course->shortname, true, array('context' => $coursecontext)) . "\" ".
                     "href=\"{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$course->hostid}&amp;wantsurl=/course/view.php?id={$course->remoteid}\">"
                     .$icon. format_string($course->fullname) . "</a>";
             }

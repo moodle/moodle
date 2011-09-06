@@ -143,8 +143,10 @@ if (!$csv) {
  * Setup page header
  */
 if ($csv) {
+    $shortname = format_string($course->shortname, true, array('context' => $context));
+    $textlib = textlib_get_instance();
     header('Content-Disposition: attachment; filename=progress.'.
-        preg_replace('/[^a-z0-9-]/','_',strtolower($course->shortname)).'.csv');
+        preg_replace('/[^a-z0-9-]/','_',$textlib->strtolower(strip_tags($shortname))).'.csv');
     // Unicode byte-order mark for Excel
     if($excel) {
         header('Content-Type: text/csv; charset=UTF-16LE');
@@ -486,7 +488,7 @@ if(!$csv) {
                 // Display icon
                 $iconlink = $CFG->wwwroot.'/course/view.php?id='.$criterion->courseinstance;
                 $icontitle = $crs->fullname;
-                $iconalt = $crs->shortname;
+                $iconalt = format_string($crs->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $crs->id)));
                 break;
 
             case COMPLETION_CRITERIA_TYPE_ROLE:

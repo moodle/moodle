@@ -276,10 +276,12 @@
         $USER->editing = $edit;
     }
 
+    $courseshortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+
 /// RSS and CSS and JS meta
     $meta = '';
     if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
-        $rsstitle = format_string($course->shortname) . ': %fullname%';
+        $rsstitle = $courseshortname . ': %fullname%';
         rss_add_http_header($context, 'mod_data', $data, $rsstitle);
     }
     if ($data->csstemplate) {
@@ -296,7 +298,7 @@
 /// Print the page header
     // Note: MDL-19010 there will be further changes to printing header and blocks.
     // The code will be much nicer than this eventually.
-    $title = $course->shortname.': ' . format_string($data->name);
+    $title = $courseshortname.': ' . format_string($data->name);
 
     if ($PAGE->user_allowed_editing()) {
         $buttons = '<table><tr><td><form method="get" action="view.php"><div>'.

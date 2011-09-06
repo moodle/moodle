@@ -78,11 +78,13 @@
                 array_push($items, $item);
             }
             $course = $DB->get_record('course', array('id'=>$data->course));
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
 
             // First all rss feeds common headers.
-            $header = rss_standard_header($course->shortname.': '.format_string($data->name,true),
+            $header = rss_standard_header($courseshortname . ': ' . format_string($data->name, true, array('context' => $context)),
                                           $CFG->wwwroot."/mod/data/view.php?d=".$data->id,
-                                          format_string($data->intro,true)); //TODO: fix format
+                                          format_text($data->intro, $data->introformat, array('context' => $context)));
 
             if (!empty($header)) {
                 $articles = rss_add_items($items);

@@ -37,6 +37,8 @@ $huburl = optional_param('huburl', 0, PARAM_URL);
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 
 require_login($course);
+$context = get_context_instance(CONTEXT_COURSE, $course->id);
+$shortname = format_string($course->shortname, true, array('context' => $context));
 
 $PAGE->set_url('/course/publish/index.php', array('id' => $course->id));
 $PAGE->set_pagelayout('course');
@@ -48,7 +50,7 @@ if (!extension_loaded('xmlrpc')) {
     $notificationerror = $OUTPUT->doc_link('admin/environment/php_extension/xmlrpc', '');
     $notificationerror .= get_string('xmlrpcdisabledpublish', 'hub');
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('publishcourse', 'hub', $course->shortname), 3, 'main');
+    echo $OUTPUT->heading(get_string('publishcourse', 'hub', $shortname), 3, 'main');
     echo $OUTPUT->notification($notificationerror);
     echo $OUTPUT->footer();
     die();
@@ -144,9 +146,9 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
 
         } else {
             //display confirmation page for unpublishing
-           
+
             echo $OUTPUT->header();
-            echo $OUTPUT->heading(get_string('unpublishcourse', 'hub', $course->shortname), 3, 'main');
+            echo $OUTPUT->heading(get_string('unpublishcourse', 'hub', $shortname), 3, 'main');
             echo $renderer->confirmunpublishing($publication);
             echo $OUTPUT->footer();
             die();
@@ -164,7 +166,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
     echo $OUTPUT->header();
     echo $confirmmessage;
 
-    echo $OUTPUT->heading(get_string('publishcourse', 'hub', $course->shortname), 3, 'main');
+    echo $OUTPUT->heading(get_string('publishcourse', 'hub', $shortname), 3, 'main');
     echo $renderer->publicationselector($course->id);
 
     $publications = $publicationmanager->get_course_publications($course->id);

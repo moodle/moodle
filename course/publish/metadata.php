@@ -53,8 +53,10 @@ $PAGE->set_heading($course->fullname);
 if (!extension_loaded('xmlrpc')) {
     $errornotification = $OUTPUT->doc_link('admin/environment/php_extension/xmlrpc', '');
     $errornotification .= get_string('xmlrpcdisabledpublish', 'hub');
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $shortname = format_string($course->shortname, true, array('context' => $context));
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('publishcourse', 'hub', $course->shortname), 3, 'main');
+    echo $OUTPUT->heading(get_string('publishcourse', 'hub', $shortname), 3, 'main');
     echo $OUTPUT->notification($errornotification);
     echo $OUTPUT->footer();
     die();
