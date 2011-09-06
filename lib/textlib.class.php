@@ -595,6 +595,7 @@ abstract class collatorlib {
                     // after instantiation as any futher calls to collation will cause
                     // it to reset to 0 again (or another error code if one occured)
                     $errorcode = $collator->getErrorCode();
+                    $errormessage = $collator->getErrorMessage();
                     // Check for an error code, 0 means no error occured
                     if ($errorcode !== 0) {
                         // Get the actual locale being used, e.g. en, he, zh
@@ -617,7 +618,7 @@ abstract class collatorlib {
                         } else {
                             // We've recieved some other sort of non fatal warning - let the
                             // user know about it via debugging.
-                            debugging('Locale collator generated warnings (not fatal) "'.$collator->getErrorMessage().'" falling back to '.$collator->getLocale(Locale::VALID_LOCALE));
+                            debugging('Locale collator generated warnings (not fatal) "'.$errormessage.'" falling back to '.$collator->getLocale(Locale::VALID_LOCALE));
                         }
                     }
                     // Store the collator object now that we can be sure it is in a workable condition.
