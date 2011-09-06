@@ -25,6 +25,8 @@
         print_error("invalidcourseid", 'error', '', $id);
     }
 
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+
     if (!can_delete_course($id)) {
         print_error('cannotdeletecourse');
     }
@@ -43,7 +45,7 @@
         $PAGE->set_heading($site->fullname);
         echo $OUTPUT->header();
 
-        $message = "$strdeletecoursecheck<br /><br />" . format_string($course->fullname) .  " (" . format_string($course->shortname) . ")";
+        $message = "$strdeletecoursecheck<br /><br />" . format_string($course->fullname, true, array('context' => $coursecontext)) .  " (" . format_string($course->shortname) . ")";
         echo $OUTPUT->confirm($message, "delete.php?id=$course->id&delete=".md5($course->timemodified), "category.php?id=$course->category");
 
         echo $OUTPUT->footer();

@@ -650,7 +650,7 @@ function clam_scan_moodle_file(&$file, $course) {
     case 1:  // bad wicked evil, we have a virus.
         $info = new stdClass();
         if (!empty($course)) {
-            $info->course = $course->fullname;
+            $info->course = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
         }
         else {
             $info->course = 'No course';

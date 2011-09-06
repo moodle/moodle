@@ -217,7 +217,8 @@ function send_welcome_messages($orderdata) {
             $lastuserid = $ei->userid;
 
             while ($ei && $ei->userid == $lastuserid) {
-                $usercourses[] = $ei->fullname;
+                $context = get_context_instance(CONTEXT_COURSE, $ei->courseid);
+                $usercourses[] = format_string($ei->fullname, true, array('context' => $context));
                 if (!$rs->valid()) {
                     break;
                 }

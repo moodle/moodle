@@ -51,9 +51,11 @@ if (isguestuser()) {
 }
 $instance = new assignment_uploadsingle($cm->id, $assignment, $cm, $course);
 
+$fullname = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+
 $PAGE->set_url($url);
 $PAGE->set_context($context);
-$title = strip_tags($course->fullname.': '.get_string('modulename', 'assignment').': '.format_string($assignment->name,true));
+$title = strip_tags($fullname.': '.get_string('modulename', 'assignment').': '.format_string($assignment->name,true));
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
