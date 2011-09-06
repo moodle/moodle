@@ -229,7 +229,7 @@ if ($usernew = $userform->get_data()) {
 
         $a = new stdClass();
         $a->url = $CFG->wwwroot . '/user/emailupdate.php?key=' . $usernew->preference_newemailkey . '&id=' . $user->id;
-        $a->site = $SITE->fullname;
+        $a->site = format_string($SITE->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, SITEID)));
         $a->fullname = fullname($user, true);
 
         $emailupdatemessage = get_string('emailupdatemessage', 'auth', $a);

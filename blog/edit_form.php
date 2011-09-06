@@ -76,7 +76,7 @@ class blog_edit_form extends moodleform {
                     $mform->addElement('header', 'assochdr', get_string('associations', 'blog'));
                     $context = get_context_instance(CONTEXT_COURSE, $courseid);
                     $a = new stdClass();
-                    $a->coursename = $course->fullname;
+                    $a->coursename = format_string($course->fullname, true, array('context' => $context));
                     $contextid = $context->id;
                 } else {
                     $sql = 'SELECT fullname FROM {course} cr LEFT JOIN {context} ct ON ct.instanceid = cr.id WHERE ct.id = ?';

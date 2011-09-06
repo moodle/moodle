@@ -274,7 +274,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
             if (!empty($mailstudents)) {
                 // Send mail to students
                 $a = new stdClass();
-                $a->coursename = "$course->fullname";
+                $a->coursename = format_string($course->fullname, true, array('context' => $context));
                 $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id";
 
                 $eventdata = new stdClass();
@@ -296,7 +296,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
                 // Send mail to teachers
                 foreach($teachers as $teacher) {
                     $a = new stdClass();
-                    $a->course = "$course->fullname";
+                    $a->course = format_string($course->fullname, true, array('context' => $context));
                     $a->user = fullname($user);
 
                     $eventdata = new stdClass();

@@ -33,7 +33,7 @@ require_login($course);
 require_capability('moodle/course:managefiles', $context);
 
 $PAGE->set_url($url);
-$heading = get_string('coursefiles') . ': ' . $course->fullname;
+$heading = get_string('coursefiles') . ': ' . format_string($course->fullname, true, array('context' => $context));
 $strfiles = get_string("files");
 if ($node = $PAGE->settingsnav->find('coursefiles', navigation_node::TYPE_SETTING)) {
     $node->make_active();

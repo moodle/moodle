@@ -111,8 +111,9 @@ if ($courseid != SITEID) {
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
     $addid = has_capability('moodle/notes:manage', $context) ? $courseid : 0;
     $view = has_capability('moodle/notes:view', $context);
+    $fullname = format_string($course->fullname, true, array('context' => $context));
     note_print_notes('<a name="sitenotes"></a>' . $strsitenotes, $addid, $view, 0, $userid, NOTES_STATE_SITE, 0);
-    note_print_notes('<a name="coursenotes"></a>' . $strcoursenotes. ' ('.$course->fullname.')', $addid, $view, $courseid, $userid, NOTES_STATE_PUBLIC, 0);
+    note_print_notes('<a name="coursenotes"></a>' . $strcoursenotes. ' ('.$fullname.')', $addid, $view, $courseid, $userid, NOTES_STATE_PUBLIC, 0);
     note_print_notes('<a name="personalnotes"></a>' . $strpersonalnotes, $addid, $view, $courseid, $userid, NOTES_STATE_DRAFT, $USER->id);
 
 } else {  // Normal course
@@ -124,7 +125,9 @@ if ($courseid != SITEID) {
     if (!empty($userid)) {
         $courses = enrol_get_users_courses($userid);
         foreach($courses as $c) {
-            $header = '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $c->id . '">' . $c->fullname . '</a>';
+            $ccontext = get_context_instance(CONTEXT_COURSE, $c->id);
+            $cfullname = format_string($c->fullname, true, array('context' => $ccontext));
+            $header = '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $c->id . '">' . $cfullname . '</a>';
             if (has_capability('moodle/notes:manage', get_context_instance(CONTEXT_COURSE, $c->id))) {
                 $addid = $c->id;
             } else {

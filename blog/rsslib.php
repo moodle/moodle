@@ -186,9 +186,10 @@ function blog_rss_get_feed($context, $args) {
             break;
         case 'course':
             $info = $DB->get_field('course', 'fullname', array('id'=>$id));
+            $info = format_string($info, true, array('context' => get_context_instance(CONTEXT_COURSE, $id)));
             break;
         case 'site':
-            $info = $SITE->fullname;
+            $info = format_string($SITE->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, SITEID)));
             break;
         case 'group':
             $group = groups_get_group($id);
