@@ -38,7 +38,8 @@ class grade_export_xml extends grade_export {
         $strgrades = get_string('grades');
 
         /// Calculate file name
-        $downloadfilename = clean_filename("{$this->course->shortname} $strgrades.xml");
+        $shortname = format_string($this->course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $this->course->id)));
+        $downloadfilename = clean_filename("$shortname $strgrades.xml");
 
         make_upload_directory('temp/gradeexport');
         $tempfilename = $CFG->dataroot .'/temp/gradeexport/'. md5(sesskey().microtime().$downloadfilename);

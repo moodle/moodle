@@ -316,10 +316,11 @@ function user_get_user_details($user, $course = null) {
         if ($mycourses = enrol_get_users_courses($user->id, true)) {
             foreach ($mycourses as $mycourse) {
                 if ($mycourse->category) {
+                    $coursecontext = get_context_instance(CONTEXT_COURSE, $mycourse->id);
                     $enrolledcourse = array();
                     $enrolledcourse['id'] = $mycourse->id;
                     $enrolledcourse['fullname'] = $mycourse->fullname;
-                    $enrolledcourse['shortname'] = $mycourse->shortname;
+                    $enrolledcourse['shortname'] = format_string($mycourse->shortname, true, array('context' => $coursecontext));
                     $enrolledcourses[] = $enrolledcourse;
                 }
             }

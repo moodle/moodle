@@ -203,11 +203,12 @@
         $courselist = array();
         $popupurl = new moodle_url('/user/index.php?roleid='.$roleid.'&sifirst=&silast=');
         foreach ($mycourses as $mycourse) {
-            $courselist[$mycourse->id] = format_string($mycourse->shortname);
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $mycourse->id);
+            $courselist[$mycourse->id] = format_string($mycourse->shortname, true, array('context' => $coursecontext));
         }
         if (has_capability('moodle/site:viewparticipants', $systemcontext)) {
             unset($courselist[SITEID]);
-            $courselist = array(SITEID => format_string($SITE->shortname)) + $courselist;
+            $courselist = array(SITEID => format_string($SITE->shortname, true, array('context' => $systemcontext))) + $courselist;
         }
         $select = new single_select($popupurl, 'id', $courselist, $course->id, array(''=>'choosedots'), 'courseform');
         $select->set_label(get_string('mycourses'));

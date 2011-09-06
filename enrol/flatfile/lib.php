@@ -276,6 +276,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
                 $a = new stdClass();
                 $a->coursename = "$course->fullname";
                 $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id";
+                $subject = get_string("enrolmentnew", 'enrol', format_string($course->shortname, true, array('context' => $context)));
 
                 $eventdata = new stdClass();
                 $eventdata->modulename        = 'moodle';
@@ -283,7 +284,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
                 $eventdata->name              = 'flatfile_enrolment';
                 $eventdata->userfrom          = $teacher;
                 $eventdata->userto            = $user;
-                $eventdata->subject           = get_string("enrolmentnew", 'enrol', $course->shortname);
+                $eventdata->subject           = $subject;
                 $eventdata->fullmessage       = get_string('welcometocoursetext', '', $a);
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml   = '';
@@ -298,6 +299,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
                     $a = new stdClass();
                     $a->course = "$course->fullname";
                     $a->user = fullname($user);
+                    $subject = get_string("enrolmentnew", 'enrol', format_string($course->shortname, true, array('context' => $context)));
 
                     $eventdata = new stdClass();
                     $eventdata->modulename        = 'moodle';
@@ -305,7 +307,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
                     $eventdata->name              = 'flatfile_enrolment';
                     $eventdata->userfrom          = $user;
                     $eventdata->userto            = $teacher;
-                    $eventdata->subject           = get_string("enrolmentnew", 'enrol', $course->shortname);
+                    $eventdata->subject           = $subject;
                     $eventdata->fullmessage       = get_string('enrolmentnewuser', 'enrol', $a);
                     $eventdata->fullmessageformat = FORMAT_PLAIN;
                     $eventdata->fullmessagehtml   = '';

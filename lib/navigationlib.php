@@ -2030,7 +2030,8 @@ class global_navigation extends navigation_node {
 
             foreach ($userscourses as $usercourse) {
                 $usercoursecontext = get_context_instance(CONTEXT_COURSE, $usercourse->id);
-                $usercoursenode = $userscoursesnode->add($usercourse->shortname, new moodle_url('/user/view.php', array('id'=>$user->id, 'course'=>$usercourse->id)), self::TYPE_CONTAINER);
+                $usercourseshortname = format_string($usercourse->shortname, true, array('context' => $usercoursecontext));
+                $usercoursenode = $userscoursesnode->add($usercourseshortname, new moodle_url('/user/view.php', array('id'=>$user->id, 'course'=>$usercourse->id)), self::TYPE_CONTAINER);
 
                 $gradeavailable = has_capability('moodle/grade:viewall', $usercoursecontext);
                 if (!$gradeavailable && !empty($usercourse->showgrades) && is_array($reports) && !empty($reports)) {
@@ -2140,17 +2141,19 @@ class global_navigation extends navigation_node {
             return $this->addedcourses[$course->id];
         }
 
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+
         if ($course->id != SITEID && !$course->visible) {
             if (is_role_switched($course->id)) {
                 // user has to be able to access course in order to switch, let's skip the visibility test here
-            } else if (!has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+            } else if (!has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
                 return false;
             }
         }
 
         $issite = ($course->id == SITEID);
         $ismycourse = ($ismycourse && !$forcegeneric);
-        $shortname = $course->shortname;
+        $shortname = format_string($course->shortname, true, array('context' => $coursecontext));
 
         if ($issite) {
             $parent = $this;

@@ -133,12 +133,18 @@ class quiz_responses_report extends quiz_attempt_report {
         // Load the required questions.
         $questions = quiz_report_get_significant_questions($quiz);
 
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
+
+        $displaycoursecontext = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+        $displaycourseshortname = format_string($COURSE->shortname, true, array('context' => $displaycoursecontext));
+
         $table = new quiz_report_responses_table($quiz, $this->context, $qmsubselect,
                 $groupstudents, $students, $questions, $candelete, $reporturl, $displayoptions);
         $filename = quiz_report_download_filename(get_string('responsesfilename', 'quiz_responses'),
-                $course->shortname, $quiz->name);
+                $courseshortname, $quiz->name);
         $table->is_downloading($download, $filename,
-                $COURSE->shortname . ' ' . format_string($quiz->name, true));
+                $displaycourseshortname . ' ' . format_string($quiz->name, true));
         if ($table->is_downloading()) {
             raise_memory_limit(MEMORY_EXTRA);
         }

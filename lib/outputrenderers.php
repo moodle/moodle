@@ -545,7 +545,7 @@ class core_renderer extends renderer_base {
 
         } else {
             return '<div class="homelink"><a href="' . $CFG->wwwroot . '/course/view.php?id=' . $this->page->course->id . '">' .
-                    format_string($this->page->course->shortname) . '</a></div>';
+                    format_string($this->page->course->shortname, true, array('context' => $this->page->context)) . '</a></div>';
         }
     }
 

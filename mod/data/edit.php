@@ -107,8 +107,8 @@ if ($cancel) {
 /// RSS and CSS and JS meta
 if (!empty($CFG->enablerssfeeds) && !empty($CFG->data_enablerssfeeds) && $data->rssarticles > 0) {
     $rsspath = rss_get_url($context->id, $USER->id, 'mod_data', $data->id);
-    $PAGE->add_alternate_version(format_string($course->shortname) . ': %fullname%',
-            $rsspath, 'application/rss+xml');
+    $courseshortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+    $PAGE->add_alternate_version($courseshortname . ': %fullname%', $rsspath, 'application/rss+xml');
 }
 if ($data->csstemplate) {
     $PAGE->requires->css('/mod/data/css.php?d='.$data->id);

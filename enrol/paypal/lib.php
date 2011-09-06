@@ -151,11 +151,12 @@ class enrol_paypal_plugin extends enrol_plugin {
         }
 
         $course = $DB->get_record('course', array('id'=>$instance->courseid));
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-        $strloginto = get_string("loginto", "", $course->shortname);
+        $shortname = format_string($course->shortname, true, array('context' => $context));
+        $strloginto = get_string("loginto", "", $shortname);
         $strcourses = get_string("courses");
 
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
         // Pass $view=true to filter hidden caps if the user cannot see them
         if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'u.id ASC',
                                              '', '', '', '', false, true)) {
@@ -190,7 +191,7 @@ class enrol_paypal_plugin extends enrol_plugin {
             } else {
                 //Sanitise some fields before building the PayPal form
                 $coursefullname  = format_string($course->fullname, true, array('context'=>$context));
-                $courseshortname = $course->shortname;
+                $courseshortname = $shortname;
                 $userfullname    = fullname($USER);
                 $userfirstname   = $USER->firstname;
                 $userlastname    = $USER->lastname;

@@ -96,7 +96,7 @@ echo $OUTPUT->header();
 if ($userid) {
     echo $OUTPUT->heading(fullname($user).': '.$strnotes);
 } else {
-    echo $OUTPUT->heading($course->shortname.': '.$strnotes);
+    echo $OUTPUT->heading(format_string($course->shortname, true, array('context' => $coursecontext)).': '.$strnotes);
 }
 
 $strsitenotes = get_string('sitenotes', 'notes');

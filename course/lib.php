@@ -498,8 +498,9 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
 
         echo '<tr class="r'.$row.'">';
         if ($course->id == SITEID) {
+            $courseshortname = format_string($courses[$log->course], true, array('context' => get_context_instance(CONTEXT_COURSE, SITEID)));
             echo "<td class=\"r$row c0\" >\n";
-            echo "    <a href=\"{$CFG->wwwroot}/course/view.php?id={$log->course}\">".$courses[$log->course]."</a>\n";
+            echo "    <a href=\"{$CFG->wwwroot}/course/view.php?id={$log->course}\">".$courseshortname."</a>\n";
             echo "</td>\n";
         }
         echo "<td class=\"r$row c1\" align=\"right\">".userdate($log->time, '%a').
@@ -591,8 +592,9 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
         $log->info = format_string($log->info);
         $log->info = strip_tags(urldecode($log->info));    // Some XSS protection
 
-        $firstField = $courses[$log->course];
-        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $firstField = format_string($courses[$log->course], true, array('context' => $coursecontext));
+        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', $coursecontext));
         $row = array($firstField, userdate($log->time, $strftimedatetime), $log->ip, $fullname, $log->module.' '.$log->action, $log->info);
         $text = implode("\t", $row);
         echo $text." \n";
@@ -697,10 +699,12 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
             }
         }
 
-        $myxls->write($row, 0, $courses[$log->course], '');
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+
+        $myxls->write($row, 0, format_string($courses[$log->course], true, array('context' => $coursecontext)), '');
         $myxls->write_date($row, 1, $log->time, $formatDate); // write_date() does conversion/timezone support. MDL-14934
         $myxls->write($row, 2, $log->ip, '');
-        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
+        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', $coursecontext));
         $myxls->write($row, 3, $fullname, '');
         $myxls->write($row, 4, $log->module.' '.$log->action, '');
         $myxls->write($row, 5, $log->info, '');
@@ -808,10 +812,12 @@ function print_log_ods($course, $user, $date, $order='l.time DESC', $modname,
             }
         }
 
-        $myxls->write_string($row, 0, $courses[$log->course]);
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+
+        $myxls->write_string($row, 0, format_string($courses[$log->course], true, array('context' => $context)));
         $myxls->write_date($row, 1, $log->time);
         $myxls->write_string($row, 2, $log->ip);
-        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
+        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', $coursecontext));
         $myxls->write_string($row, 3, $fullname);
         $myxls->write_string($row, 4, $log->module.' '.$log->action);
         $myxls->write_string($row, 5, $log->info);
@@ -3254,7 +3260,10 @@ function make_editing_buttons(stdClass $mod, $absolute = true, $moveselect = tru
  */
 function course_format_name ($course,$max=100) {
 
-    $str = $course->shortname.': '. $course->fullname;
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $shortname = format_string($course->shortname, true, array('context' => $context));
+
+    $str = $shortname.': '. $course->fullname;
     if (strlen($str) <= $max) {
         return $str;
     }
