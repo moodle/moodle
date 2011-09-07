@@ -6696,6 +6696,33 @@ FROM
         upgrade_main_savepoint(true, 2011083100.02);
     }
 
+    if ($oldversion < 2011090800) {
+        // Increase the length of the of the course shortname field as it is now going
+        // to be consistently filtered and 100 characters if practically useless for
+        // things like the multilang filter.
+
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('shortname', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'fullname');
+        $index = new xmldb_index('shortname', XMLDB_INDEX_NOTUNIQUE, array('shortname'));
+
+        // First check the shortname field exists... pretty heavy mod if it doesnt!
+        if ($dbman->field_exists($table, $field)) {
+            // Conditionally launch drop index shortname, this is required to happen
+            // before we can edit the field.
+            if ($dbman->index_exists($table, $index)) {
+                $dbman->drop_index($table, $index);
+            }
+
+            // Launch change of precision for field shortname
+            $dbman->change_field_precision($table, $field);
+            // Add the index back to the table now that we're finished our mods
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011090800);
+    }
+
     return true;
 }
 
