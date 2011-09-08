@@ -193,11 +193,11 @@ class auth_plugin_shibboleth extends auth_plugin_base {
      *
      */
     function logoutpage_hook() {
-        global $redirect;
+        global $SESSION, $redirect;
 
-        // Only do this if logout handler is defined
-        if (
-              isset($this->config->logout_handler)
+        // Only do this if logout handler is defined, and if the user is actually logged in via Shibboleth
+        if (  isset($SESSION->shibboleth_session_id)
+              && isset($this->config->logout_handler)
               && !empty($this->config->logout_handler)
            ){
             // Check if there is an alternative logout return url defined
