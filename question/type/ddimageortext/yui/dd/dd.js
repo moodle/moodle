@@ -87,7 +87,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                     var oldhome = this.drag_image_home(dragimageno);
                     var classes = 'draghome dragimagehomes'+dragimageno+' group'+group;
                     var imghtml = '<img class="'+classes+'" src="'+url+'" alt="'+alt+'" />';
-                    var divhtml = '<div class="'+classes+'">'+alt+'</div>';
+                    var divhtml = '<div class="yui3-cssfonts '+classes+'">'+alt+'</div>';
                     if (oldhome === null) {
                         if (url) {
                             dragimagesarea.append(imghtml);

@@ -14,8 +14,8 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
             Y.one(this.get('topnode')).append('<div class="ddarea"><div class="droparea"></div>'+
                     '<div class="dragitems"></div>'+
                     '<div class="dropzones"></div></div>');
-            this.doc = this.doc_structure(this);
-            this.draw_dd_area();
+            //this.doc = this.doc_structure(this);
+            //this.draw_dd_area();
         },
 
         draw_dd_area : function() {

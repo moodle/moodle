@@ -37,7 +37,12 @@ require_once($CFG->dirroot . '/question/type/gapselect/rendererbase.php');
  */
 class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_renderer {
 
-
+    public function head_code(question_attempt $qa) {
+        $this->page->requires->css('/lib/yui/3.4.0/build/csscssfonts/fonts-context-min.css');
+        $this->page->requires->yui2_lib('event');
+        $this->page->requires->yui2_lib('dragdrop');
+        return parent::head_code($qa);
+    }
     public function clear_wrong(question_attempt $qa) {
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
@@ -84,9 +89,18 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
                 if ($dragimage->isinfinite) {
                     $classes[] = 'infinite';
                 }
-                $dragimagehomesgroup .= html_writer::empty_tag('img',
-                                            array('src'=>$dragimageurl,
-                                                'class'=>join(' ', $classes)));
+                if ($dragimageurl === null) {
+                    $classes[] = 'yui3-cssfonts';
+                    $dragimagehomesgroup .= html_writer::tag('div',
+                                                $dragimage->text,
+                                                array('src'=>$dragimageurl,
+                                                    'class'=>join(' ', $classes)));
+                } else {
+                    $dragimagehomesgroup .= html_writer::empty_tag('img',
+                                                array('src'=>$dragimageurl,
+                                                    'alt' => $dragimage->text,
+                                                    'class'=>join(' ', $classes)));
+                }
             }
             $dragimagehomes .= html_writer::tag('div', $dragimagehomesgroup,
                                             array('class'=>'dragitemgroup'.$groupno));

@@ -276,6 +276,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
         $PAGE->requires->yui_module('moodle-qtype_ddimagetoimage-form',
                                         'M.qtype_ddimagetoimage.init_form',
                                         array($params));
+        //$PAGE->requires->css('/lib/yui/3.4.0/build/csscssfonts/fonts-context-min.css');
 
         return $question;
     }
@@ -316,12 +317,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
                     $errors["drops[$i]"] =
                                 get_string('formerror_noxleft', 'qtype_ddimagetoimage');
                 }
-                if (!self::file_uploaded($data['dragitem'][$choice - 1])) {
-                    $errors["drops[$i]"] =
-                                    get_string('formerror_nofile', 'qtype_ddimagetoimage', $choice);
-                    $errors['dragitem['.($choice - 1).']'] =
-                                    get_string('formerror_nofile2', 'qtype_ddimagetoimage', $i);
-                }
+
                 if (isset($allchoices[$choice]) && !$data['drags'][$choice-1]['infinite']) {
                     $errors["drops[$i]"] =
                      get_string('formerror_multipledraginstance', 'qtype_ddimagetoimage', $choice);
