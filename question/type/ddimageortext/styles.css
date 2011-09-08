@@ -8,46 +8,53 @@
     line-height: 2em;
 }
 
-.que.ddimagetoimage div.droparea img {
+.que.ddimagetoimage div.droparea img, form.mform fieldset#previewareaheader div.droparea img  {
     border: 1px solid #000000;
 }
 
-.que.ddimagetoimage img.draghome {
+.que.ddimagetoimage .draghome, form.mform fieldset#previewareaheader .draghome {
+    vertical-align: top;
     margin: 5px;
     visibility : hidden;
 }
-.que.ddimagetoimage span.incorrect {
-    background-color: #faa;
-}
-.que.ddimagetoimage span.correct {
-    background-color: #afa;
+
+.que.ddimagetoimage div.draghome, form.mform fieldset#previewareaheader div.draghome {
+    border: 1px solid black;
+    cursor: move;
+    background-color: #B0C4DE;
+    display: -moz-inline-stack;
+    display:inline-block;
+    height: auto;
+    width: auto;
+    zoom: 1;
+    *display: inline;
 }
 
-.que.ddimagetoimage .group1 {
+.que.ddimagetoimage .group1, form.mform fieldset#previewareaheader .group1 {
     background-color: #FFFFFF;
 }
-.que.ddimagetoimage .group2 {
+.que.ddimagetoimage .group2, form.mform fieldset#previewareaheader .group2 {
     background-color: #B0C4DE;
 }
-.que.ddimagetoimage .group3 {
+.que.ddimagetoimage .group3, form.mform fieldset#previewareaheader .group3 {
     background-color: #DCDCDC;
 }
-.que.ddimagetoimage .group4 {
+.que.ddimagetoimage .group4, form.mform fieldset#previewareaheader .group4 {
     background-color: #D8BFD8;
 }
-.que.ddimagetoimage .group5 {
+.que.ddimagetoimage .group5, form.mform fieldset#previewareaheader .group5 {
     background-color: #87CEFA;
 }
-.que.ddimagetoimage .group6 {
+.que.ddimagetoimage .group6, form.mform fieldset#previewareaheader .group6 {
     background-color: #DAA520;
 }
-.que.ddimagetoimage .group7 {
+.que.ddimagetoimage .group7, form.mform fieldset#previewareaheader .group7 {
     background-color: #FFD700;
 }
-.que.ddimagetoimage .group8 {
+.que.ddimagetoimage .group8, form.mform fieldset#previewareaheader .group8 {
     background-color: #F0E68C;
 }
-.que.ddimagetoimage .drag {
+.que.ddimagetoimage .drag, form.mform fieldset#previewareaheader .drag {
     border: 1px solid black;
     cursor: move;
     z-index: 2;
@@ -55,10 +62,10 @@
 .que.ddimagetoimage .dragitems.readonly .drag {
     cursor: auto;
 }
-.que.ddimagetoimage div.ddarea {
+.que.ddimagetoimage div.ddarea, form.mform fieldset#previewareaheader div.ddarea {
     text-align : center;
 }
-.que.ddimagetoimage .dropbackground {
+.que.ddimagetoimage .dropbackground, form.mform fieldset#previewareaheader .dropbackground {
     margin:0 auto;
 }
 .que.ddimagetoimage .dropzone {
@@ -67,59 +74,3 @@
     z-index: 1;
 }
 
-.que.ddimagetoimage .droptarget.yui3-dd-drop-over {
-    background-color: #FFA928;
-}
-
-form.mform fieldset#previewareaheader .group1 {
-    background-color: #FFFFFF;
-}
-form.mform fieldset#previewareaheader .group2 {
-    background-color: #B0C4DE;
-}
-form.mform fieldset#previewareaheader .group3 {
-    background-color: #DCDCDC;
-}
-form.mform fieldset#previewareaheader .group4 {
-    background-color: #D8BFD8;
-}
-form.mform fieldset#previewareaheader .group5 {
-    background-color: #87CEFA;
-}
-form.mform fieldset#previewareaheader .group6 {
-    background-color: #DAA520;
-}
-form.mform fieldset#previewareaheader .group7 {
-    background-color: #FFD700;
-}
-form.mform fieldset#previewareaheader .group8 {
-    background-color: #F0E68C;
-}
-form.mform fieldset#previewareaheader img.draghome {
-    margin: 5px;
-    visibility : hidden;
-}
-form.mform fieldset#previewareaheader .drag {
-    border: 1px solid black;
-    cursor: move;
-    z-index: 2;
-}
-form.mform fieldset#previewareaheader .dragitems {
-    clear:left;
-}
-
-
-form.mform fieldset#previewareaheader div.ddarea {
-    text-align : center;
-}
-form.mform fieldset#previewareaheader .dropbackground {
-    margin:0 auto;
-}
-form.mform fieldset#previewareaheader .droptarget {
-    border: 1px solid black;
-    position: absolute;
-    z-index: 1;
-}
-form.mform fieldset#previewareaheader div.droparea img {
-    border: 1px solid #000000;
-}

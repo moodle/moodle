@@ -155,7 +155,7 @@ class qtype_ddimagetoimage extends question_type {
                                     '', 'no, id');
         foreach (array_keys($formdata->drags) as $dragno) {
             $info = file_get_draft_area_info($formdata->dragitem[$dragno]);
-            if ($info['filecount'] > 0) {
+            if ($info['filecount'] > 0 || !empty($formdata->drags[$dragno]['draglabel'])) {
                 $draftitemid = $formdata->dragitem[$dragno];
 
                 $drag = new stdClass();

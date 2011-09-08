@@ -337,17 +337,6 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
                         get_string('formerror_noimageselected', 'qtype_ddimagetoimage');
                 }
             }
-
-        }
-        for ($i=0; $i < $data['noimages']; $i++) {
-            $labelpresent = (trim($data['drags'][$i]['draglabel']) !== '');
-            $infinitechecked = (trim($data['drags'][$i]['infinite']) === '1');
-            if (!self::file_uploaded($data['dragitem'][$i])) {
-                if ($infinitechecked || $labelpresent) {
-                    $errors['dragitem['.($i).']'] =
-                                    get_string('formerror_nofile3', 'qtype_ddimagetoimage');
-                }
-            }
         }
         return $errors;
     }

@@ -17,6 +17,9 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
             var alldragsloaded = !this.doc.drag_image_homes().some(function(dragimagehome){
                 //in 'some' loop returning true breaks the loop and is passed as return value from
                 //'some' else returns false. Can be though of as equivalent to ||.
+                if (dragimagehome.get('tagName') !== 'IMG'){
+                    return false;
+                }
                 var done = (dragimagehome.get('complete'));
                 if (waitforimageconstrain) {
                     done = done && dragimagehome.hasClass('constrained');
@@ -53,7 +56,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                     return topnode;
                 },
                 drag_images : function() {
-                    return dragimagesarea.all('img.drag');
+                    return dragimagesarea.all('.drag');
                 },
                 drop_zones : function() {
                     return topnode.all('div.dropzones div.dropzone');
@@ -62,19 +65,19 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                     return topnode.all('div.dropzones div.group' + groupno);
                 },
                 drag_images_cloned_from : function(dragimageno) {
-                    return dragimagesarea.all('img.dragimages'+dragimageno);
+                    return dragimagesarea.all('.dragimages'+dragimageno);
                 },
                 drag_image : function(draginstanceno) {
-                    return dragimagesarea.one('img.draginstance' + draginstanceno);
+                    return dragimagesarea.one('.draginstance' + draginstanceno);
                 },
                 drag_images_in_group : function(groupno) {
-                    return dragimagesarea.all('img.drag.group' + groupno);
+                    return dragimagesarea.all('.drag.group' + groupno);
                 },
                 drag_image_homes : function() {
-                    return dragimagesarea.all('img.draghome');
+                    return dragimagesarea.all('.draghome');
                 },
                 bg_img : function() {
-                    return topnode.one('img.dropbackground');
+                    return topnode.one('.dropbackground');
                 },
                 load_bg_img : function (url) {
                     dropbgarea.setContent('<img class="dropbackground" src="'+ url +'"/>');
@@ -84,24 +87,29 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                     var oldhome = this.drag_image_home(dragimageno);
                     var classes = 'draghome dragimagehomes'+dragimageno+' group'+group;
                     var imghtml = '<img class="'+classes+'" src="'+url+'" alt="'+alt+'" />';
+                    var divhtml = '<div class="'+classes+'">'+alt+'</div>';
                     if (oldhome === null) {
                         if (url) {
                             dragimagesarea.append(imghtml);
+                        } else if (alt !== '') {
+                            dragimagesarea.append(divhtml);
                         }
                     } else {
                         if (url) {
                             dragimagesarea.insert(imghtml, oldhome);
+                        } else if (alt !== '') {
+                            dragimagesarea.insert(divhtml, oldhome);
                         }
                         oldhome.remove(true);
                     }
-                    var newlycreated = dragimagesarea.one('img.dragimagehomes'+dragimageno);
+                    var newlycreated = dragimagesarea.one('.dragimagehomes'+dragimageno);
                     if (newlycreated !== null) {
                         newlycreated.setData('groupno', group);
                         newlycreated.setData('dragimageno', dragimageno);
                     }
                 },
                 drag_image_home : function (dragimageno) {
-                    return dragimagesarea.one('img.dragimagehomes' + dragimageno);
+                    return dragimagesarea.one('.dragimagehomes' + dragimageno);
                 },
                 get_classname_numeric_suffix : function(node, prefix) {
                     var classes = node.getAttribute('class');
@@ -179,17 +187,17 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
             }
         },
         update_padding_size_for_group : function (groupno) {
-            var groupimages = this.doc.top_node().all('img.draghome.group'+groupno);
+            var groupimages = this.doc.top_node().all('.draghome.group'+groupno);
             if (groupimages.size() !== 0) {
                 var maxwidth = 0;
                 var maxheight = 0;
                 groupimages.each(function(image){
-                    maxwidth = Math.max(maxwidth, image.get('width'));
-                    maxheight = Math.max(maxheight, image.get('height'));
+                    maxwidth = Math.max(maxwidth, image.get('clientWidth'));
+                    maxheight = Math.max(maxheight, image.get('clientHeight'));
                 }, this);
                 groupimages.each(function(image) {
-                    var margintopbottom = Math.round((10 + maxheight - image.get('height')) / 2);
-                    var marginleftright = Math.round((10 + maxwidth - image.get('width')) / 2);
+                    var margintopbottom = Math.round((10 + maxheight - image.get('clientHeight')) / 2);
+                    var marginleftright = Math.round((10 + maxwidth - image.get('clientWidth')) / 2);
                     image.setStyle('padding', margintopbottom+'px '+marginleftright+'px '
                                             +margintopbottom+'px '+marginleftright+'px');
                 }, this);
@@ -370,7 +378,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
             var group = drop.getData('group');
             var dragimage = null;
             var dragimages = this.doc.top_node()
-                                .all('div.dragitemgroup'+group+' img.choice'+choice+'.drag');
+                                .all('div.dragitemgroup'+group+' .choice'+choice+'.drag');
             return dragimages;
         },
         get_unplaced_choice_for_drop : function(choice, drop) {

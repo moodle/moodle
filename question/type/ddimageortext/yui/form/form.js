@@ -68,7 +68,6 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
 
         load_drag_homes : function () {
             //set up drag items homes
-            var dragimagesoptions = {0: ''};
             for (var i=0; i < this.form.get_form_value('noimages', []); i++) {
                 this.load_drag_home(i);
             }
@@ -97,8 +96,11 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
             var dragimagesoptions = {0: ''};
             for (var i=0; i < this.form.get_form_value('noimages', []); i++) {
                 var file = this.fp.file(this.form.to_name_with_index('dragitem', [i]));
+                var label = this.form.get_form_value('drags', [i, 'draglabel']);
                 if (file.name !== null) {
-                    dragimagesoptions[i+1] = (i+1)+'. '+file.name;
+                    dragimagesoptions[i+1] = (i+1)+'. '+label+' ('+file.name+')';
+                } else if (label != '') {
+                    dragimagesoptions[i+1] = (i+1)+'. '+label;
                 }
             }
             for (var i=0; i < this.form.get_form_value('nodropzone', []); i++) {
@@ -157,6 +159,11 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
             for (var i=0; i < this.form.get_form_value('noimages', []); i++) {
                 //change to group selector
                 Y.all('fieldset#draggableimageheader_'+i+' select').on('change', function (e){
+                    this.doc.drag_images().remove(true);
+                    this.draw_dd_area();
+                }, this);
+                Y.all('fieldset#draggableimageheader_'+i+' input[type="text"]')
+                                                                    .on('blur', function (e){
                     this.doc.drag_images().remove(true);
                     this.draw_dd_area();
                 }, this);
@@ -300,5 +307,5 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
         return new DDIMAGETOIMAGE_FORM(config);
     }
 }, '@VERSION@', {
-    requires:['moodle-qtype_ddimagetoimage-dd', 'form_filepicker', 'editor_tinymce']
+    requires:['moodle-qtype_ddimagetoimage-dd', 'form_filepicker']
 });
