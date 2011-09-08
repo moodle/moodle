@@ -31,3 +31,4 @@
 $string['language'] = 'Kalba';
 $string['next'] = 'Toliau';
 $string['previous'] = 'Ankstesnis';
+$string['reload'] = 'Įkelti iš naujo';
