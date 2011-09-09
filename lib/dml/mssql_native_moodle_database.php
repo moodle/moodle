@@ -615,7 +615,8 @@ class mssql_native_moodle_database extends moodle_database {
             return $sql;
         }
         /// ok, we have verified sql statement with ? and correct number of params
-        $return = strtok($sql, '?');
+        $parts = explode('?', $sql);
+        $return = array_shift($parts);
         foreach ($params as $param) {
             if (is_bool($param)) {
                 $return .= (int)$param;
@@ -640,7 +641,7 @@ class mssql_native_moodle_database extends moodle_database {
                 $return .= "N'$param'";
             }
 
-            $return .= strtok('?');
+            $return .= array_shift($parts);
         }
         return $return;
     }

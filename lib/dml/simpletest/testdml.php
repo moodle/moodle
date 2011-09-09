@@ -503,6 +503,28 @@ class dml_test extends UnitTestCase {
         $this->assertIdentical(array_values($params), array_values($inparams));
     }
 
+    public function test_strtok() {
+        // strtok was previously used by bound emulation, make sure it is not used any more
+        $DB = $this->tdb;
+        $dbman = $this->tdb->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, 'lala');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $str = 'a?b?c?d';
+        $this->assertIdentical(strtok($str, '?'), 'a');
+
+        $DB->get_records($tablename, array('id'=>1));
+
+        $this->assertIdentical(strtok('?'), 'b');
+    }
+
     public function test_tweak_param_names() {
         // Note the tweak_param_names() method is only available in the oracle driver,
         // hence we look for expected results indirectly, by testing various DML methods
