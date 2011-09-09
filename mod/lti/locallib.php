@@ -161,12 +161,27 @@ function lti_build_request($instance, $typeconfig, $course) {
         "launch_presentation_locale" => $locale,
     );
 
-    $placementsecret = $typeconfig['servicesalt'];
+    //$placementsecret = $typeconfig['servicesalt'];
+    
+    //Always use the servicesalt on the instance.
+    //TODO: Remove from type settings
+    $placementsecret = $instance->servicesalt;
+        
     if ( isset($placementsecret) ) {
-        $suffix = ':::' . $USER->id . ':::' . $instance->id;
-        $plaintext = $placementsecret . $suffix;
-        $hashsig = hash('sha256', $plaintext, false);
-        $sourcedid = $hashsig . $suffix;
+        $data = new stdClass();
+        
+        $data->instanceid = $instance->id;
+        $data->userid = $USER->id;
+        
+        $json = json_encode($data);
+        
+        $hash = hash('sha256', $json . $placementsecret, false);
+        
+        $container = new stdClass();
+        $container->data = $data;
+        $container->hash = $hash;
+        
+        $sourcedid = json_encode($container);
     }
 
     if ( isset($placementsecret) &&
