@@ -2082,7 +2082,9 @@ EOD;
             }
         }
 
-        if (!empty($link)) {
+        if (empty($CFG->rolesactive)) {
+            // continue does not make much sense if moodle is not installed yet because error is most probably not recoverable
+        } else if (!empty($link)) {
             $output .= $this->continue_button($link);
         }
 
