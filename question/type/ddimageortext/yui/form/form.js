@@ -45,6 +45,7 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
             } else {
                 this.setup_form_events();
             }
+            this.update_visibility_of_file_pickers();
         },
 
         after_all_images_loaded : function () {
@@ -119,7 +120,7 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
                         optionnode.set('selected', true);
                     } else {
                         if (value !== 0) { // no image option is always selectable
-                            var cbselector = 'fieldset#draggableimageheader_'+(value-1)
+                            var cbselector = 'fieldset#draggableitemheader_'+(value-1)
                                                                         +' input[type="checkbox"]';
                             var cbel = Y.one(cbselector);
                             var infinite = cbel.get('checked');
@@ -159,17 +160,22 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
 
             for (var i=0; i < this.form.get_form_value('noimages', []); i++) {
                 //change to group selector
-                Y.all('fieldset#draggableimageheader_'+i+' select').on('change', function (e){
+                Y.all('fieldset#draggableitemheader_'+i+' select.draggroup')
+                                                                    .on('change', function (e){
                     this.doc.drag_images().remove(true);
                     this.draw_dd_area();
                 }, this);
-                Y.all('fieldset#draggableimageheader_'+i+' input[type="text"]')
+                Y.all('fieldset#draggableitemheader_'+i+' select.dragitemtype')
+                                                                    .on('change', function (e){
+                    this.update_visibility_of_file_pickers();
+                }, this);
+                Y.all('fieldset#draggableitemheader_'+i+' input[type="text"]')
                                                                     .on('blur', function (e){
                     this.doc.drag_images().remove(true);
                     this.draw_dd_area();
                 }, this);
                 //change to infinite checkbox
-                Y.all('fieldset#draggableimageheader_'+i+' input[type="checkbox"]')
+                Y.all('fieldset#draggableitemheader_'+i+' input[type="checkbox"]')
                                     .on('change', this.set_options_for_drag_image_selectors, this);
             }
             //event on file picker new file selection
@@ -180,6 +186,18 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
                 }
                 this.draw_dd_area();
             }, M.form_filepicker, 'callback', this);
+        },
+
+        update_visibility_of_file_pickers : function() {
+            for (var i=0; i < this.form.get_form_value('noimages', []); i++) {
+                if ('0' === this.form.get_form_value('dragitemtype', [i])) {
+                    Y.one('input#id_dragitem_'+i).get('parentNode').get('parentNode')
+                                .setStyle('display', 'block');
+                } else {
+                    Y.one('input#id_dragitem_'+i).get('parentNode').get('parentNode')
+                                .setStyle('display', 'none');
+                }
+            }
         },
 
         reposition_drags_for_form : function() {
