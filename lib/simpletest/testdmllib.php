@@ -356,6 +356,23 @@ class dmllib_test extends prefix_changing_test_case {
 
 
     }
+
+    function test_magic_hack() {
+        // test hacky sql injection protection - the resulting DB data is not really important,
+        // we only want to prevent SQL injections/DB errors
+
+        $obj = new stdClass();
+        $obj->textfield = 'lala\'';
+        $obj->id = insert_record($this->table, $obj);
+        $this->assertFalse(empty($obj->id));
+
+        $obj->textfield = 'lala\\';
+        $res = update_record($this->table, $obj);
+        $this->assertTrue($res);
+
+        $obj = get_record($this->table, 'textfield', 'lala\\');
+        $this->assertFalse(empty($obj));
+    }
 }
 
 ?>
