@@ -87,7 +87,6 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
 
         $mform->registerNoSubmitButton('refresh');
         $mform->addElement('submit', 'refresh', get_string('refresh', 'qtype_ddimagetoimage'));
-        $mform->addHelpButton('refresh', 'refresh', 'qtype_ddimagetoimage');
         $mform->closeHeaderBefore('refresh');
 
         list($imagerepeatsatstart, $imagerepeats) = $this->get_drag_image_repeats();

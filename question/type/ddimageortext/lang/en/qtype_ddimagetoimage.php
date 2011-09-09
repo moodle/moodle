@@ -53,7 +53,6 @@ $string['previewarea'] = 'Preview area -';
 $string['previewareaheader'] = 'Preview';
 $string['previewareamessage'] = 'Select a background image file and select draggable images or just enter text that will be made draggable. Then choose a drag item for each \'drop zone\', and drag the drag item to where the student should drag it to.';
 $string['refresh'] = 'Refresh Preview';
-$string['refresh_help'] = 'You may need to refresh the preview display if you upload a file with the same name as an existing file and choose to overwrite the existing file.';
 $string['shuffleimages'] = 'Shuffle Draggable Images';
 $string['summarisechoice'] = '{$a->no}. {$a->text}';
 $string['summariseplace'] = '{$a->no}. {$a->text}';
