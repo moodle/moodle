@@ -9,7 +9,11 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
     Y.extend(DDIMAGETOIMAGE_DD, Y.Base, {
         doc : null,
         polltimer : null,
+        afterimageloaddone : false,
         poll_for_image_load : function (e, waitforimageconstrain, pause, doafterwords) {
+            if (this.afterimageloaddone) {
+                return;
+            }
             var bgdone = this.doc.bg_img().get('complete');
             if (waitforimageconstrain) {
                 bgdone = bgdone && this.doc.bg_img().hasClass('constrained');
@@ -26,7 +30,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                 }
                 return !done;
             });
-            if (alldragsloaded && alldragsloaded) {
+            if (bgdone && alldragsloaded) {
                 if (this.polltimer !== null) {
                     this.polltimer.cancel();
                     this.polltimer = null;
@@ -38,6 +42,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                 } else {
                     doafterwords.call(this);
                 }
+                this.afterimageloaddone = true;
             } else if (this.polltimer === null) {
                 var pollarguments = [null, waitforimageconstrain, pause, doafterwords];
                 this.polltimer =

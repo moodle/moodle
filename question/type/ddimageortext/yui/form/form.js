@@ -14,8 +14,8 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
             Y.one(this.get('topnode')).append('<div class="ddarea"><div class="droparea"></div>'+
                     '<div class="dragitems"></div>'+
                     '<div class="dropzones"></div></div>');
-            //this.doc = this.doc_structure(this);
-            //this.draw_dd_area();
+            this.doc = this.doc_structure(this);
+            this.draw_dd_area();
         },
 
         draw_dd_area : function() {
@@ -34,6 +34,7 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
                     e.drag.get('node').setData('gooddrop', true);
                 });
 
+                this.afterimageloaddone = false;
                 this.doc.bg_img().on('load', this.constrain_image_size, this, 'bgimage');
                 this.doc.drag_image_homes()
                                         .on('load', this.constrain_image_size, this, 'dragimage');
