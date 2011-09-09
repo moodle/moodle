@@ -666,7 +666,8 @@ class mysqli_native_moodle_database extends moodle_database {
             return $sql;
         }
         /// ok, we have verified sql statement with ? and correct number of params
-        $return = strtok($sql, '?');
+        $parts = explode('?', $sql);
+        $return = array_shift($parts);
         foreach ($params as $param) {
             if (is_bool($param)) {
                 $return .= (int)$param;
@@ -680,7 +681,7 @@ class mysqli_native_moodle_database extends moodle_database {
                 $param = $this->mysqli->real_escape_string($param);
                 $return .= "'$param'";
             }
-            $return .= strtok('?');
+            $return .= array_shift($parts);
         }
         return $return;
     }

@@ -298,7 +298,7 @@ class mssql_sql_generator extends sql_generator {
         $oldlength = $metac->max_length;
         $olddecimals = empty($metac->scale) ? null : $metac->scale;
         $oldnotnull = empty($metac->not_null) ? false : $metac->not_null;
-        $olddefault = empty($metac->has_default) ? null : strtok($metac->default_value, ':');
+        //$olddefault = empty($metac->has_default) ? null : strtok($metac->default_value, ':');
 
         $typechanged = true;  //By default, assume that the column type has changed
         $lengthchanged = true;  //By default, assume that the column length has changed
