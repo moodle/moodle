@@ -3161,13 +3161,16 @@ function make_editing_buttons(stdClass $mod, $absolute = true, $moveselect = tru
         array('class' => 'editing_update', 'title' => $str->update)
     );
 
-    // Duplicate
-    $actions[] = new action_link(
-        new moodle_url($baseurl, array('duplicate' => $mod->id)),
-        new pix_icon('t/copy', $str->duplicate, 'moodle', array('class' => 'iconsmall')),
-        null,
-        array('class' => 'editing_duplicate', 'title' => $str->duplicate)
-    );
+    // Duplicate (require both target import caps to be able to duplicate, see modduplicate.php)
+    $dupecaps = array('moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport');
+    if (has_all_capabilities($dupecaps, $coursecontext)) {
+        $actions[] = new action_link(
+            new moodle_url($baseurl, array('duplicate' => $mod->id)),
+            new pix_icon('t/copy', $str->duplicate, 'moodle', array('class' => 'iconsmall')),
+            null,
+            array('class' => 'editing_duplicate', 'title' => $str->duplicate)
+        );
+    }
 
     // Delete
     $actions[] = new action_link(
