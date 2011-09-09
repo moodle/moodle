@@ -102,45 +102,31 @@ abstract class backup_check {
         // Note: all the checks along the function MUST be performed for $userid, that
         // is the user who "requested" the course backup, not current $USER at all!!
 
-        // First of all, check the main backup[course|section|activity] principal caps
-        // Lacking the corresponding one makes this to break with exception always
+        // First of all, decide which caps/contexts are we going to check
+        // for common backups (general, automated...) based exclusively
+        // in the type (course, section, activity). And store them into
+        // one capability => context array structure
+        $typecapstocheck = array();
         switch ($type) {
             case backup::TYPE_1COURSE :
                 $DB->get_record('course', array('id' => $id), '*', MUST_EXIST); // course exists
-                if (!has_capability('moodle/backup:backupcourse', $coursectx, $userid)) {
-                    $a = new stdclass();
-                    $a->userid = $userid;
-                    $a->courseid = $courseid;
-                    $a->capability = 'moodle/backup:backupcourse';
-                    throw new backup_controller_exception('backup_user_missing_capability', $a);
-                }
+                $typecapstocheck['moodle/backup:backupcourse'] = $coursectx;
                 break;
             case backup::TYPE_1SECTION :
                 $DB->get_record('course_sections', array('course' => $courseid, 'id' => $id), '*', MUST_EXIST); // sec exists
-                if (!has_capability('moodle/backup:backupsection', $coursectx, $userid)) {
-                    $a = new stdclass();
-                    $a->userid = $userid;
-                    $a->courseid = $courseid;
-                    $a->capability = 'moodle/backup:backupsection';
-                    throw new backup_controller_exception('backup_user_missing_capability', $a);
-                }
+                $typecapstocheck['moodle/backup:backupsection'] = $coursectx;
                 break;
             case backup::TYPE_1ACTIVITY :
                 get_coursemodule_from_id(null, $id, $courseid, false, MUST_EXIST); // cm exists
                 $modulectx = get_context_instance(CONTEXT_MODULE, $id);
-                if (!has_capability('moodle/backup:backupactivity', $modulectx, $userid)) {
-                    $a = new stdclass();
-                    $a->userid = $userid;
-                    $a->cmid = $id;
-                    $a->capability = 'moodle/backup:backupactivity';
-                    throw new backup_controller_exception('backup_user_missing_capability', $a);
-                }
+                $typecapstocheck['moodle/backup:backupactivity'] = $modulectx;
                 break;
             default :
-                print_error('unknownbackuptype');
+                throw new backup_controller_exception('backup_unknown_backup_type', $type);
         }
 
         // Now, if backup mode is hub or import, check userid has permissions for those modes
+        // other modes will perform common checks only (backupxxxx capabilities in $typecapstocheck)
         switch ($mode) {
             case backup::MODE_HUB:
                 if (!has_capability('moodle/backup:backuptargethub', $coursectx, $userid)) {
@@ -160,6 +146,18 @@ abstract class backup_check {
                     throw new backup_controller_exception('backup_user_missing_capability', $a);
                 }
                 break;
+            // Common backup (general, automated...), let's check all the $typecapstocheck
+            // capability => context pairs
+            default:
+                foreach ($typecapstocheck as $capability => $context) {
+                    if (!has_capability($capability, $context, $userid)) {
+                        $a = new stdclass();
+                        $a->userid = $userid;
+                        $a->courseid = $courseid;
+                        $a->capability = $capability;
+                        throw new backup_controller_exception('backup_user_missing_capability', $a);
+                    }
+                }
         }
 
         // Now, enforce 'moodle/backup:userinfo' to 'users' setting, applying changes if allowed,
