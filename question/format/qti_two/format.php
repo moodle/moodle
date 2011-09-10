@@ -263,9 +263,9 @@ function handle_questions_media(&$questions, $path, $courseid) {
         global $CFG, $OUTPUT, $USER;
         $courseid = $this->course->id;
 
-        $path = 'temp/qformat_qti_two/' . $USER->id . '/' . $this->filename;
+        $path = 'qformat_qti_two/' . $USER->id . '/' . $this->filename;
         // create a directory for the exports (if not already existing)
-        if (!make_upload_directory($path)) {
+        if (!make_temp_directory($path)) {
               throw new moodle_exception('cannotcreatepath', 'question', '', $path);
         }
         $path = $CFG->dataroot . '/' . $path;

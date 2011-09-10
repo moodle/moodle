@@ -74,10 +74,10 @@ class MoodleODSWorkbook {
         global $CFG;
         require_once($CFG->libdir.'/filelib.php');
 
-        $dir = 'temp/ods/'.time();
-        make_upload_directory($dir);
-        make_upload_directory($dir.'/META-INF');
-        $dir = "$CFG->dataroot/$dir";
+        $dir = 'ods/'.time();
+        make_temp_directory($dir);
+        make_temp_directory($dir.'/META-INF');
+        $dir = "$CFG->tempdir/$dir";
         $files = array();
 
         $handle = fopen("$dir/mimetype", 'w');

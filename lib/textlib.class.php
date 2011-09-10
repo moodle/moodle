@@ -83,7 +83,7 @@ class textlib {
 
         // And this directory must exist to allow Typo to cache conversion
         // tables when using internal functions
-        make_upload_directory('temp/typo3temp/cs');
+        make_temp_directory('typo3temp/cs');
 
         // Make sure typo is using our dir permissions
         $GLOBALS['TYPO3_CONF_VARS']['BE']['folderCreateMask'] = decoct($CFG->directorypermissions);

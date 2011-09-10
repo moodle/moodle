@@ -281,7 +281,7 @@ class component_installer {
             return COMPONENT_UPTODATE;
         }
     /// Create temp directory if necesary
-        if (!make_upload_directory('temp', false)) {
+        if (!make_temp_directory('', false)) {
              $this->errorstring='cannotcreatetempdir';
              return COMPONENT_ERROR;
         }

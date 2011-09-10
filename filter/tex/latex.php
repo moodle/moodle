@@ -20,7 +20,7 @@
 
             // construct directory structure
             $this->temp_dir = $CFG->tempdir . "/latex";
-            make_upload_directory('temp/latex');
+            make_temp_directory('latex');
         }
 
         /**

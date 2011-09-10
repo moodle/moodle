@@ -55,7 +55,7 @@ if (!$form->get_data()) {
     $form->display();
 } else {
     $filename = $CFG->tempdir . '/enrolauthorize/importedfile_'.time().'.csv';
-    make_upload_directory('temp/enrolauthorize');
+    make_temp_directory('enrolauthorize');
     // Fix mac/dos newlines
     $text = $form->get_file_content('csvfile');
     $text = preg_replace('!\r\n?!', "\n", $text);

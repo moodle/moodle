@@ -310,7 +310,7 @@ class csv_import_reader {
     function get_new_iid($type) {
         global $USER;
 
-        $filename = make_upload_directory('temp/csvimport/'.$type.'/'.$USER->id);
+        $filename = make_temp_directory('csvimport/'.$type.'/'.$USER->id);
 
         // use current (non-conflicting) time stamp
         $iiid = time();
