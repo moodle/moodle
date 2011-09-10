@@ -347,6 +347,12 @@ $CFG->admin = 'admin';
 //
 //     $CFG->themedir = '/location/of/extra/themes';
 //
+// It is possible to specify different cache and temp directories, use local fast filesystem.
+// The directories must not be accessible via web.
+//
+//     $CFG->tempdir = '/var/www/moodle/temp';
+//     $CFG->cachedir = '/var/www/moodle/cache';
+//
 // If $CFG->langstringcache is enabled (which should always be in production
 // environment), Moodle keeps aggregated strings in its own internal format
 // optimised for performance. By default, this on-disk cache is created in

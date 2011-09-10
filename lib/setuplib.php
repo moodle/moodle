@@ -1107,6 +1107,7 @@ function check_dir_exists($dir, $create = true, $recursive = true) {
 /**
  * Create a directory and make sure it is writable.
  *
+ * @private
  * @param string $dir  the full path of the directory to be created
  * @param bool $exceptiononerror throw exception if error encountered
  * @return string|false Returns full path to directory if successful, false if not; may throw exception
@@ -1149,6 +1150,7 @@ function make_writable_directory($dir, $exceptiononerror = true) {
  * Protect a directory from web access.
  * Could be extended in the future to support other mechanisms (e.g. other webservers).
  *
+ * @private
  * @param string $dir  the full path of the directory to be protected
  */
 function protect_directory($dir) {
@@ -1163,6 +1165,7 @@ function protect_directory($dir) {
 
 /**
  * Create a directory under dataroot and make sure it is writable.
+ * Do not use for temporary and cache files - see make_temp_directory() and make_cache_directory().
  *
  * @param string $directory  the full path of the directory to be created under $CFG->dataroot
  * @param bool $exceptiononerror throw exception if error encountered
@@ -1170,12 +1173,21 @@ function protect_directory($dir) {
  */
 function make_upload_directory($directory, $exceptiononerror = true) {
     global $CFG;
+
+    if (strpos($directory, 'temp/') === 0 or $directory === 'temp') {
+        debugging('Use make_temp_directory() for creation of temporary directory and $CFG->tempdir to get the location.');
+
+    } else if (strpos($directory, 'cache/') === 0 or $directory === 'cache') {
+        debugging('Use make_cache_directory() for creation of chache directory and $CFG->cachedir to get the location.');
+    }
+
     protect_directory($CFG->dataroot);
     return make_writable_directory("$CFG->dataroot/$directory", $exceptiononerror);
 }
 
 /**
  * Create a directory under tempdir and make sure it is writable.
+ * Temporary files should be used during the current request only!
  *
  * @param string $directory  the full path of the directory to be created under $CFG->tempdir
  * @param bool $exceptiononerror throw exception if error encountered
