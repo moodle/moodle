@@ -3255,11 +3255,11 @@ function make_editing_buttons(stdClass $mod, $absolute = true, $moveselect = tru
 function course_format_name ($course,$max=100) {
 
     $str = $course->shortname.': '. $course->fullname;
-    if (strlen($str) <= $max) {
+    if (textlib::strlen($str) <= $max) {
         return $str;
     }
     else {
-        return substr($str,0,$max-3).'...';
+        return textlib::substr($str,0,$max-3).'...';
     }
 }
 

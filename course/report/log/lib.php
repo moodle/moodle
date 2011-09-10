@@ -181,8 +181,8 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
             }
             $section = $mod->section;
             $mod->name = strip_tags(format_string($mod->name, true));
-            if (strlen($mod->name) > 55) {
-                $mod->name = substr($mod->name, 0, 50)."...";
+            if (textlib::strlen($mod->name) > 55) {
+                $mod->name = textlib::substr($mod->name, 0, 50)."...";
             }
             if (!$mod->visible) {
                 $mod->name = "(".$mod->name.")";
@@ -394,8 +394,8 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
             }
             $section = $mod->section;
             $mod->name = strip_tags(format_string($mod->name, true));
-            if (strlen($mod->name) > 55) {
-                $mod->name = substr($mod->name, 0, 50)."...";
+            if (textlib::strlen($mod->name) > 55) {
+                $mod->name = textlib::substr($mod->name, 0, 50)."...";
             }
             if (!$mod->visible) {
                 $mod->name = "(".$mod->name.")";
