@@ -145,7 +145,7 @@ function rss_save_file($componentname, $filename, $contents, $expandfilename=tru
 
     $status = true;
 
-    if (! $basedir = make_upload_directory ('cache/rss/'. $componentname)) {
+    if (! $basedir = make_cache_directory ('rss/'. $componentname)) {
         //Cannot be created, so error
         $status = false;
     }
