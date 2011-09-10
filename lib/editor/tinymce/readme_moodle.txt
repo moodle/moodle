@@ -1,7 +1,7 @@
-Description of TinyMCE v3.3.9.1 library integration in Moodle
+Description of TinyMCE v3.4.5 library integration in Moodle
 =========================================================================================
 
-Copyright: (c) 2004-2010, Moxiecode Systems AB, All rights reserved.
+Copyright: (c) 2004-2011, Moxiecode Systems AB, All rights reserved.
 License: GNU LESSER GENERAL PUBLIC LICENSE Version 2.1, February 1999
 
 Moodle maintainer: Petr Skoda (skodak)
