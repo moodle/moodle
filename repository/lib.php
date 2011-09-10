@@ -1317,7 +1317,7 @@ abstract class repository {
             $dir = $CFG->dataroot.'/temp/download/';
         }
         if (empty($filename)) {
-            $filename = uniqid('repo').'_'.time().'.tmp';
+            $filename = uniqid('repo', true).'_'.time().'.tmp';
         }
         if (file_exists($dir.$filename)) {
             $filename = uniqid('m').$filename;
