@@ -3168,15 +3168,23 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
         $assign = '';
     }
 
+    // Duplicate (require both target import caps to be able to duplicate, see modduplicate.php)
+    $dupecaps = array('moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport');
+    if (has_all_capabilities($dupecaps, get_context_instance(CONTEXT_COURSE, $mod->course))) {
+        $duplicatemodule = '<a class="editing_duplicate" title="'.$str->duplicate.'" href="'.$path.'/mod.php?duplicate='.$mod->id.
+            '&amp;sesskey='.$sesskey.$section.'"><img'.
+            ' src="'.$OUTPUT->pix_url('t/copy') . '" class="iconsmall" '.
+            ' alt="'.$str->duplicate.'" /></a>'."\n";
+    } else {
+        $duplicatemodule = '';
+    }
+
     return '<span class="commands">'."\n".$leftright.$move.
            '<a class="editing_update" title="'.$str->update.'" href="'.$path.'/mod.php?update='.$mod->id.
            '&amp;sesskey='.$sesskey.$section.'"><img'.
            ' src="'.$OUTPUT->pix_url('t/edit') . '" class="iconsmall" '.
            ' alt="'.$str->update.'" /></a>'."\n".
-           '<a class="editing_duplicate" title="'.$str->duplicate.'" href="'.$path.'/mod.php?duplicate='.$mod->id.
-           '&amp;sesskey='.$sesskey.$section.'"><img'.
-           ' src="'.$OUTPUT->pix_url('t/copy') . '" class="iconsmall" '.
-           ' alt="'.$str->duplicate.'" /></a>'."\n".
+           $duplicatemodule.
            '<a class="editing_delete" title="'.$str->delete.'" href="'.$path.'/mod.php?delete='.$mod->id.
            '&amp;sesskey='.$sesskey.$section.'"><img'.
            ' src="'.$OUTPUT->pix_url('t/delete') . '" class="iconsmall" '.
