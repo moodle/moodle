@@ -1600,11 +1600,6 @@ class ddl_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $maxstr = '';
-        for($i=0; $i<xmldb_field::CHAR_MAX_LENGTH; $i++) {
-            $maxstr .= '言'; // random long string that should fix exactly the limit for one char column
-        }
-
         $table = new xmldb_table('testtable');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('name', XMLDB_TYPE_CHAR, xmldb_field::CHAR_MAX_LENGTH, null, XMLDB_NOTNULL, null);
@@ -1618,6 +1613,12 @@ class ddl_test extends UnitTestCase {
         $tablename = $table->getName();
         $this->tables[$tablename] = $table;
 
+        // this has to work in all DBs
+        $maxstr = '';
+        for($i=0; $i<xmldb_field::CHAR_MAX_LENGTH; $i++) {
+            $maxstr .= 'a'; // ascii only
+        }
+
         $rec = new stdClass();
         $rec->name = $maxstr;
 
@@ -1626,6 +1627,30 @@ class ddl_test extends UnitTestCase {
 
         $rec = $DB->get_record($tablename, array('id'=>$id));
         $this->assertIdentical($rec->name, $maxstr);
+
+
+        // Following test is supposed to fail in oracle
+        $maxstr = '';
+        for($i=0; $i<xmldb_field::CHAR_MAX_LENGTH; $i++) {
+            $maxstr .= '言'; // random long string that should fix exactly the limit for one char column
+        }
+
+        $rec = new stdClass();
+        $rec->name = $maxstr;
+
+        try {
+            $id = $DB->insert_record($tablename, $rec);
+            $this->assertTrue(!empty($id));
+
+            $rec = $DB->get_record($tablename, array('id'=>$id));
+            $this->assertIdentical($rec->name, $maxstr);
+        } catch (dml_write_exception $e) {
+            if ($DB->get_dbfamily() === 'oracle') {
+                $this->fail('Oracle does not support text fields larger than 4000 bytes, this is not a big problem for mostly ascii based languages');
+            } else {
+                throw $e;
+            }
+        }
 
 
         $table = new xmldb_table('testtable');
@@ -1637,6 +1662,8 @@ class ddl_test extends UnitTestCase {
         if ($dbman->table_exists($table)) {
             $dbman->drop_table($table);
         }
+        $tablename = $table->getName();
+        $this->tables[$tablename] = $table;
 
         try {
             $dbman->create_table($table);
