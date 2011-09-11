@@ -178,7 +178,6 @@ $string['backupincludemoduleuserdatahelp'] = 'Choose whether you want to include
 $string['backupkeephelp'] = 'How many recent backups for each course do you want to keep? (older ones will be deleted automatically)';
 $string['backuplogdetailed'] = 'Detailed execution log';
 $string['backuploglaststatus'] = 'Last execution log';
-$string['backuplogshelp'] = 'If enabled, then course logs will be included in automated backups';
 $string['backupmissinguserinfoperms'] = 'Note: This backup contains no user data. Exercise and Workshop activities will not be included in the backup, since these modules are not compatible with this type of backup.';
 $string['backupnext'] = 'Next backup';
 $string['backupnonisowarning'] = 'Warning: this backup is from a non-Unicode version of Moodle (pre 1.6).  If this backup contains any non-ISO-8859-1 texts then they may be CORRUPTED if you try to restore them to this Unicode version of Moodle.  See the <a href="http://docs.moodle.org/en/Backup_FAQ">Backup FAQ</a> for more information about how to recover this backup correctly.';
@@ -189,7 +188,6 @@ $string['backupsitefileshelp'] = 'If enabled then site files used in courses wil
 $string['backuptakealook'] = 'Please take a look at your backup logs in:
   {$a}';
 $string['backupuserfileshelp'] = 'Choose whether user files (eg profile images) should be included in automated backups';
-$string['backupusershelp'] = 'Select whether you want to include all the users in the server or only the needed users for each course';
 $string['backupversion'] = 'Backup version';
 $string['block'] = 'Block';
 $string['blockconfiga'] = 'Configuring a {$a} block';
