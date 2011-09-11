@@ -142,7 +142,7 @@ if ($hassiteconfig
 
 
     $temp->add(new admin_setting_heading('automatedsettings', get_string('automatedsettings','backup'), ''));
-    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_users', get_string('users'), get_string('backupusershelp'), 1));
+    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_users', get_string('generalusers', 'backup'), get_string('configgeneralusers', 'backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_role_assignments', get_string('generalroleassignments','backup'), get_string('configgeneralroleassignments','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_user_files', get_string('generaluserfiles', 'backup'), get_string('configgeneraluserfiles','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_activities', get_string('generalactivities','backup'), get_string('configgeneralactivities','backup'), 1));
@@ -150,7 +150,7 @@ if ($hassiteconfig
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_filters', get_string('generalfilters','backup'), get_string('configgeneralfilters','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_comments', get_string('generalcomments','backup'), get_string('configgeneralcomments','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_userscompletion', get_string('generaluserscompletion','backup'), get_string('configgeneraluserscompletion','backup'), 1));
-    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_logs', get_string('logs'), get_string('backuplogshelp'), 0));
+    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_logs', get_string('generallogs', 'backup'), get_string('configgenerallogs', 'backup'), 0));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_histories', get_string('generalhistories','backup'), get_string('configgeneralhistories','backup'), 0));
 
 
