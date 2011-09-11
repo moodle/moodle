@@ -192,7 +192,7 @@ class edit_field_save extends XMLDBAction {
     /// Char checks
         if ($type == XMLDB_TYPE_CHAR) {
             if (!(is_numeric($length) && !empty($length) && intval($length)==floatval($length) &&
-                  $length > 0 && $length <= 255)) {
+                  $length > 0 && $length <= xmldb_field::CHAR_MAX_LENGTH)) {
                 $errors[] = $this->str['charincorrectlength'];
             }
             if ($default !== NULL && $default !== '') {

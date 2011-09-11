@@ -1596,6 +1596,56 @@ class ddl_test extends UnitTestCase {
         }
     }
 
+    public function test_char_size_limit() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $maxstr = '';
+        for($i=0; $i<xmldb_field::CHAR_MAX_LENGTH; $i++) {
+            $maxstr .= '言'; // random long string that should fix exactly the limit for one char column
+        }
+
+        $table = new xmldb_table('testtable');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, xmldb_field::CHAR_MAX_LENGTH, null, XMLDB_NOTNULL, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Drop if exists
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+        $dbman->create_table($table);
+        $tablename = $table->getName();
+        $this->tables[$tablename] = $table;
+
+        $rec = new stdClass();
+        $rec->name = $maxstr;
+
+        $id = $DB->insert_record($tablename, $rec);
+        $this->assertTrue(!empty($id));
+
+        $rec = $DB->get_record($tablename, array('id'=>$id));
+        $this->assertIdentical($rec->name, $maxstr);
+
+
+        $table = new xmldb_table('testtable');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, xmldb_field::CHAR_MAX_LENGTH+1, null, XMLDB_NOTNULL, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Drop if exists
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        try {
+            $dbman->create_table($table);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+    }
+
  // Following methods are not supported == Do not test
 /*
     public function testRenameIndex() {

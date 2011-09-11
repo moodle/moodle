@@ -37,6 +37,17 @@ class xmldb_field extends xmldb_object {
     var $decimals;
 
     /**
+     * Note:
+     *  - Oracle: VARCHAR2 has a limit of 4000 bytes
+     *  - SQL Server: NVARCHAR has a limit of 40000 chars
+     *  - MySQL: VARCHAR 65,535 chars
+     *  - PostgreSQL: no limit
+     *
+     * @const maximum length of text field
+     */
+    const CHAR_MAX_LENGTH = 255; //TODO: bump up to 1333
+
+    /**
      * Creates one new xmldb_field
      */
     function __construct($name, $type=null, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $default=null, $previous=null) {
@@ -784,6 +795,53 @@ class xmldb_field extends xmldb_object {
         }
 
         return $o;
+    }
+
+    /**
+     * Validates the field restrictions.
+     *
+     * The error message should not be localised because it is intended for developers,
+     * end users and admins should never see these problems!
+     *
+     * @param xmldb_table $xmldb_table optional when object is table
+     * @return string null if ok, error message if problem found
+     */
+    function validateDefinition(xmldb_table $xmldb_table=null) {
+        if (!$xmldb_table) {
+            return 'Invalid xmldb_field->validateDefinition() call, $xmldb_table si required.';
+        }
+
+        switch ($this->getType()) {
+            case XMLDB_TYPE_INTEGER:
+            break;
+
+            case XMLDB_TYPE_NUMBER:
+            break;
+
+            case XMLDB_TYPE_FLOAT:
+            break;
+
+            case XMLDB_TYPE_CHAR:
+                if ($this->getLength() > self::CHAR_MAX_LENGTH) {
+                    return 'Invalid field definition in table {'.$xmldb_table->getName(). '}: XMLDB_TYPE_CHAR field "'.$this->getName().'" is too long.'
+                           .' Limit is '.self::CHAR_MAX_LENGTH.' chars.';
+                }
+            break;
+
+            case XMLDB_TYPE_TEXT:
+            break;
+
+            case XMLDB_TYPE_BINARY:
+            break;
+
+            case XMLDB_TYPE_DATETIME:
+            break;
+
+            case XMLDB_TYPE_TIMESTAMP:
+            break;
+        }
+
+        return null;
     }
 }
 

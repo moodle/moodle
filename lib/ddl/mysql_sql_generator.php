@@ -281,7 +281,7 @@ class mysql_sql_generator extends sql_generator {
     /// Change the name of the field to perform the change
         $xmldb_field_clone->setName($xmldb_field_clone->getName() . ' ' . $newname);
 
-        $fieldsql = $this->getFieldSQL($xmldb_field_clone);
+        $fieldsql = $this->getFieldSQL($xmldb_table, $xmldb_field_clone);
 
         $sql = 'ALTER TABLE ' . $this->getTableName($xmldb_table) . ' CHANGE ' . $fieldsql;
 

@@ -99,7 +99,7 @@ function transformForm(event) {
             decimalsTip.innerHTML = ' 0...length or empty';
             break;
         case '4':  // XMLDB_TYPE_CHAR
-            lengthTip.innerHTML = ' 1...255';
+            lengthTip.innerHTML = ' 1...'.xmldb_field::CHAR_MAX_LENGTH;
             decimalsTip.innerHTML = '';
             decimalsField.disabled = true;
             decimalsField.value = '';

@@ -240,7 +240,7 @@ abstract class sql_generator {
             if ($xmldb_field->getSequence()) {
                 $sequencefield = $xmldb_field->getName();
             }
-            $table .= "\n    " . $this->getFieldSQL($xmldb_field);
+            $table .= "\n    " . $this->getFieldSQL($xmldb_table, $xmldb_field);
             $table .= ',';
         }
     /// Add the keys, separated by commas
@@ -370,7 +370,10 @@ abstract class sql_generator {
     /**
      * Given one correct xmldb_field, returns the complete SQL line to create it
      */
-    public function getFieldSQL($xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL, $specify_nulls_clause = NULL, $specify_field_name = true)  {
+    public function getFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL, $specify_nulls_clause = NULL, $specify_field_name = true)  {
+        if ($error = $xmldb_field->validateDefinition($xmldb_table)) {
+            throw new coding_exception($error);
+        }
 
         $skip_type_clause = is_null($skip_type_clause) ? $this->alter_column_skip_type : $skip_type_clause;
         $skip_default_clause = is_null($skip_default_clause) ? $this->alter_column_skip_default : $skip_default_clause;
@@ -595,7 +598,7 @@ abstract class sql_generator {
         $tablename = $this->getTableName($xmldb_table);
 
     /// Build the standard alter table add
-        $sql = $this->getFieldSQL($xmldb_field, $skip_type_clause,
+        $sql = $this->getFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause,
                                   $skip_default_clause,
                                   $skip_notnull_clause);
         $altertable = 'ALTER TABLE ' . $tablename . ' ADD ' . $sql;
@@ -642,7 +645,7 @@ abstract class sql_generator {
 
     /// Build de alter sentence using the alter_column_sql template
         $alter = str_replace('TABLENAME', $this->getTableName($xmldb_table), $this->alter_column_sql);
-        $colspec = $this->getFieldSQL($xmldb_field, $skip_type_clause,
+        $colspec = $this->getFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause,
                                       $skip_default_clause,
                                       $skip_notnull_clause,
                                       true);
