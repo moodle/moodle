@@ -402,11 +402,39 @@ abstract class backup_controller_dbops extends backup_dbops {
     }
 
     /**
+     * Sets the default values for the settings in a backup operation
+     *
+     * Based on the mode of the backup it will delegate the process to
+     * other methods like {@link apply_general_config_defaults} ...
+     * to get proper defaults loaded
+     *
+     * @param backup_controller $controller
+     */
+    public static function apply_config_defaults(backup_controller $controller) {
+        // Based on the mode of the backup (general, automated, import, hub...)
+        // decide the action to perform to get defaults loaded
+        $mode = $controller->get_mode();
+
+        switch ($mode) {
+            case backup::MODE_GENERAL:
+                // Load the general defaults
+                self::apply_general_config_defaults($controller);
+                break;
+            case backup::MODE_AUTOMATED:
+                // TODO: Move the loading from automatic stuff to here
+                break;
+            default:
+                // Nothing to do for other modes (IMPORT/HUB...). Some day we
+                // can define defaults (admin UI...) for them if we want to
+        }
+    }
+
+    /**
      * Sets the controller settings default values from the backup config.
      *
      * @param backup_controller $controller
      */
-    public static function apply_general_config_defaults(backup_controller $controller) {
+    private static function apply_general_config_defaults(backup_controller $controller) {
         $settings = array(
             // Config name                      => Setting name
             'backup_general_users'              => 'users',
