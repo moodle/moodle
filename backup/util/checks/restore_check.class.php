@@ -156,12 +156,16 @@ abstract class restore_check {
         }
 
         // Check the user has the ability to configure the restore. If not then we need
-        // to lock all settings by permission so that no changes can be made.
-        $hasconfigcap = has_capability('moodle/restore:configure', $coursectx, $userid);
-        if (!$hasconfigcap) {
-            $settings = $restore_controller->get_plan()->get_settings();
-            foreach ($settings as $setting) {
-                $setting->set_status(base_setting::LOCKED_BY_PERMISSION);
+        // to lock all settings by permission so that no changes can be made. This does
+        // not apply to the import facility, where all the activities (picked on backup)
+        // are restored automatically without restore UI
+        if ($mode != backup::MODE_IMPORT) {
+            $hasconfigcap = has_capability('moodle/restore:configure', $coursectx, $userid);
+            if (!$hasconfigcap) {
+                $settings = $restore_controller->get_plan()->get_settings();
+                foreach ($settings as $setting) {
+                    $setting->set_status(base_setting::LOCKED_BY_PERMISSION);
+                }
             }
         }
 
