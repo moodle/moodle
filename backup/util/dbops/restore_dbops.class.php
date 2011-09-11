@@ -951,7 +951,7 @@ abstract class restore_dbops {
                                                AND mnethostid = ?
                                                AND deleted = 1
                                                AND (
-                                                       username LIKE ?
+                                                       UPPER(username) LIKE UPPER(?)
                                                     OR (
                                                            ".$DB->sql_isnotempty('user', 'email', false, false)."
                                                        AND email = ?
@@ -973,7 +973,7 @@ abstract class restore_dbops {
                                                   FROM {user} u
                                                  WHERE id = ?
                                                    AND mnethostid = ?
-                                                   AND email = ?",
+                                                   AND UPPER(email) = UPPER(?)",
                                                array($user->id, $user->mnethostid, $trimemail))) {
                     return $rec; // Matching user, deleted in backup file found, return it
                 }
@@ -996,7 +996,7 @@ abstract class restore_dbops {
                                              WHERE username = ?
                                                AND mnethostid = ?
                                                AND (
-                                                       email = ?
+                                                       UPPER(email) = UPPER(?)
                                                     OR (
                                                            firstaccess != 0
                                                        AND firstaccess = ?
@@ -1020,7 +1020,7 @@ abstract class restore_dbops {
                                                AND ".$DB->sql_isnotempty('user', 'email', false, false)."
                                                AND email = ?
                                                AND (
-                                                       username LIKE ?
+                                                       UPPER(username) LIKE UPPER(?)
                                                     OR (
                                                            firstaccess != 0
                                                        AND firstaccess = ?
@@ -1038,7 +1038,7 @@ abstract class restore_dbops {
                                               FROM {user} u
                                              WHERE mnethostid = ?
                                                AND deleted = 1
-                                               AND username LIKE ?
+                                               AND UPPER(username) LIKE UPPER(?)
                                                AND firstaccess != 0
                                                AND firstaccess = ?",
                                            array($user->mnethostid, $user->email.'.%', $user->firstaccess))) {
@@ -1056,7 +1056,7 @@ abstract class restore_dbops {
                 if ($rec = $DB->get_record_sql("SELECT *
                                                   FROM {user} u
                                                  WHERE mnethostid = ?
-                                                   AND email = ?
+                                                   AND UPPER(email) = UPPER(?)
                                                    AND firstaccess != 0
                                                    AND firstaccess = ?",
                                                array($user->mnethostid, $trimemail, $user->firstaccess))) {
@@ -1070,7 +1070,7 @@ abstract class restore_dbops {
                                              WHERE username = ?
                                                AND mnethostid = ?
                                            AND NOT (
-                                                       email = ?
+                                                       UPPER(email) = UPPER(?)
                                                     OR (
                                                            firstaccess != 0
                                                        AND firstaccess = ?
