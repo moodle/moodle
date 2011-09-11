@@ -890,8 +890,6 @@ class auth_plugin_mnet extends auth_plugin_base {
         global $CFG, $DB;
         $remoteclient = get_mnet_remote_client();
 
-        $CFG->usesid = true;
-
         // We don't want to output anything to the client machine
         $start = ob_start();
 
