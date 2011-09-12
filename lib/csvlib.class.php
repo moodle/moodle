@@ -121,7 +121,7 @@ class csv_import_reader {
         $this->_columns = $columns; // cached columns
 
         // open file for writing
-        $filename = $CFG->dataroot.'/temp/csvimport/'.$this->_type.'/'.$USER->id.'/'.$this->_iid;
+        $filename = $CFG->tempdir.'/csvimport/'.$this->_type.'/'.$USER->id.'/'.$this->_iid;
         $fp = fopen($filename, "w");
         fwrite($fp, serialize($columns)."\n");
 
@@ -161,7 +161,7 @@ class csv_import_reader {
 
         global $USER, $CFG;
 
-        $filename = $CFG->dataroot.'/temp/csvimport/'.$this->_type.'/'.$USER->id.'/'.$this->_iid;
+        $filename = $CFG->tempdir.'/csvimport/'.$this->_type.'/'.$USER->id.'/'.$this->_iid;
         if (!file_exists($filename)) {
             return false;
         }
@@ -188,7 +188,7 @@ class csv_import_reader {
         if (!empty($this->_fp)) {
             $this->close();
         }
-        $filename = $CFG->dataroot.'/temp/csvimport/'.$this->_type.'/'.$USER->id.'/'.$this->_iid;
+        $filename = $CFG->tempdir.'/csvimport/'.$this->_type.'/'.$USER->id.'/'.$this->_iid;
         if (!file_exists($filename)) {
             return false;
         }
@@ -247,9 +247,9 @@ class csv_import_reader {
         global $USER, $CFG;
 
         if ($full) {
-            @remove_dir($CFG->dataroot.'/temp/csvimport/'.$this->_type.'/'.$USER->id);
+            @remove_dir($CFG->tempdir.'/csvimport/'.$this->_type.'/'.$USER->id);
         } else {
-            @unlink($CFG->dataroot.'/temp/csvimport/'.$this->_type.'/'.$USER->id.'/'.$this->_iid);
+            @unlink($CFG->tempdir.'/csvimport/'.$this->_type.'/'.$USER->id.'/'.$this->_iid);
         }
     }
 
@@ -310,7 +310,7 @@ class csv_import_reader {
     function get_new_iid($type) {
         global $USER;
 
-        $filename = make_upload_directory('temp/csvimport/'.$type.'/'.$USER->id);
+        $filename = make_temp_directory('csvimport/'.$type.'/'.$USER->id);
 
         // use current (non-conflicting) time stamp
         $iiid = time();

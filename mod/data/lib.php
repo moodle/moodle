@@ -2463,7 +2463,7 @@ function data_preset_path($course, $userid, $shortname) {
     } else if ($userid == 0) {
         $path = $CFG->dirroot.'/mod/data/preset/'.$shortname;
     } else if ($userid < 0) {
-        $path = $CFG->dataroot.'/temp/data/'.-$userid.'/'.$shortname;
+        $path = $CFG->tempdir.'/data/'.-$userid.'/'.$shortname;
     }
 
     return $path;
@@ -3142,8 +3142,8 @@ function data_presets_export($course, $cm, $data, $tostorage=false) {
     global $CFG, $DB;
 
     $presetname = clean_filename($data->name) . '-preset-' . gmdate("Ymd_Hi");
-    $exportsubdir = "temp/mod_data/presetexport/$presetname";
-    make_upload_directory($exportsubdir);
+    $exportsubdir = "mod_data/presetexport/$presetname";
+    make_temp_directory($exportsubdir);
     $exportdir = "$CFG->dataroot/$exportsubdir";
 
     // Assemble "preset.xml":

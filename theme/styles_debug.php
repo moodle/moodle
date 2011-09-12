@@ -46,7 +46,7 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
 
 // no gzip compression when debugging
 
-$candidatesheet = "$CFG->dataroot/cache/theme/$themename/designer.ser";
+$candidatesheet = "$CFG->cachedir/theme/$themename/designer.ser";
 
 if (!file_exists($candidatesheet)) {
     css_not_found();

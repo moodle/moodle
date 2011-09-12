@@ -230,7 +230,7 @@ class logger_test extends UnitTestCase {
     function test_file_logger() {
         global $CFG;
 
-        $file = $CFG->dataroot . '/temp/test/test_file_logger.txt';
+        $file = $CFG->tempdir . '/test/test_file_logger.txt';
         // Remove the test dir and any content
         @remove_dir(dirname($file));
         // Recreate test dir
@@ -272,7 +272,7 @@ class logger_test extends UnitTestCase {
         unlink($file); // delete file
 
         // Try one html file
-        $file = $CFG->dataroot . '/temp/test/test_file_logger.html';
+        $file = $CFG->tempdir . '/test/test_file_logger.html';
         $options = array('depth' => 1);
         $lo = new file_logger(backup::LOG_ERROR, true, true, $file);
         $this->assertTrue($lo instanceof file_logger);
@@ -289,7 +289,7 @@ class logger_test extends UnitTestCase {
         unlink($file); // delete file
 
         // Instantiate, write something, force deletion, try to write again
-        $file = $CFG->dataroot . '/temp/test/test_file_logger.html';
+        $file = $CFG->tempdir . '/test/test_file_logger.html';
         $lo = new mock_file_logger(backup::LOG_ERROR, true, true, $file);
         $this->assertTrue(file_exists($file));
         $message = 'testing file_logger';
@@ -313,7 +313,7 @@ class logger_test extends UnitTestCase {
         }
 
         // Instantiate in (near) impossible path
-        $file =  $CFG->dataroot . '/temp/test_azby/test_file_logger.txt';
+        $file =  $CFG->tempdir . '/test_azby/test_file_logger.txt';
         try {
             $lo = new file_logger(backup::LOG_WARNING, true, true, $file);
             $this->assertTrue(false, 'base_logger_exception expected');
@@ -324,7 +324,7 @@ class logger_test extends UnitTestCase {
         }
 
         // Instatiate one file logger with level = backup::LOG_NONE
-        $file =  $CFG->dataroot . '/temp/test/test_file_logger.txt';
+        $file =  $CFG->tempdir . '/test/test_file_logger.txt';
         $lo = new file_logger(backup::LOG_NONE, true, true, $file);
         $this->assertTrue($lo instanceof file_logger);
         $this->assertFalse(file_exists($file));

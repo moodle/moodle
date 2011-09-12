@@ -65,7 +65,7 @@ class filter_manager_test extends UnitTestCase {
         global $CFG;
         $this->filtermanager = new testable_filter_manager();
         $this->olddirroot = $CFG->dirroot;
-        $CFG->dirroot = $CFG->dataroot . '/temp';
+        $CFG->dirroot = $CFG->tempdir . '';
     }
 
     public function tearDown() {

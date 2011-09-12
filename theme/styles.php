@@ -50,7 +50,7 @@ if ($type === 'ie') {
     send_ie_css($themename, $rev);
 }
 
-$candidatesheet = "$CFG->dataroot/cache/theme/$themename/css/$type.css";
+$candidatesheet = "$CFG->cachedir/theme/$themename/css/$type.css";
 
 if (file_exists($candidatesheet)) {
     if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
@@ -97,11 +97,11 @@ if ($type === 'editor') {
                 $cssfiles[] = $val;
             }
         }
-        $cssfile = "$CFG->dataroot/cache/theme/$themename/css/$key.css";
+        $cssfile = "$CFG->cachedir/theme/$themename/css/$key.css";
         store_css($theme, $cssfile, $cssfiles);
         $allfiles = array_merge($allfiles, $cssfiles);
     }
-    $cssfile = "$CFG->dataroot/cache/theme/$themename/css/all.css";
+    $cssfile = "$CFG->cachedir/theme/$themename/css/all.css";
     store_css($theme, $cssfile, $allfiles);
 }
 send_cached_css($candidatesheet, $rev);

@@ -328,8 +328,8 @@ class mod_scorm_mod_form extends moodleform_mod {
                     return $errors;
                 }
                 $file = reset($files);
-                $filename = $CFG->dataroot.'/temp/scormimport/scrom_'.time();
-                make_upload_directory('temp/scormimport');
+                $filename = $CFG->tempdir.'/scormimport/scrom_'.time();
+                make_temp_directory('scormimport');
                 $file->copy_content_to($filename);
 
                 $packer = get_file_packer('application/zip');

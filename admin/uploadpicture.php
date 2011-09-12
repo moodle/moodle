@@ -72,7 +72,7 @@ if ($formdata = $mform->get_data()) {
 
         // Create a unique temporary directory, to process the zip file
         // contents.
-        $zipdir = my_mktempdir($CFG->dataroot.'/temp/', 'usrpic');
+        $zipdir = my_mktempdir($CFG->tempdir.'/', 'usrpic');
         $dstfile = $zipdir.'/images.zip';
 
         if (!$mform->save_file('userpicturesfile', $dstfile, true)) {

@@ -54,9 +54,9 @@
 
         $status = true;
         //Get files and directories in the temp backup dir witout descend
-        $list = get_directory_list($CFG->dataroot."/temp/backup", "", false, true, true);
+        $list = get_directory_list($CFG->tempdir."/backup", "", false, true, true);
         foreach ($list as $file) {
-            $file_path = $CFG->dataroot."/temp/backup/".$file;
+            $file_path = $CFG->tempdir."/backup/".$file;
             $moddate = filemtime($file_path);
             if ($status && $moddate < $delete_from) {
                 //If directory, recurse
@@ -81,12 +81,12 @@
     function check_and_create_backup_dir($backup_unique_code) {
         global $CFG;
 
-        $status = check_dir_exists($CFG->dataroot."/temp",true);
+        $status = check_dir_exists($CFG->tempdir."",true);
         if ($status) {
-            $status = check_dir_exists($CFG->dataroot."/temp/backup",true);
+            $status = check_dir_exists($CFG->tempdir."/backup",true);
         }
         if ($status) {
-            $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code,true);
+            $status = check_dir_exists($CFG->tempdir."/backup/".$backup_unique_code,true);
         }
 
         return $status;
@@ -162,7 +162,7 @@
     function clear_backup_dir($backup_unique_code) {
         global $CFG;
 
-        $rootdir = $CFG->dataroot."/temp/backup/".$backup_unique_code;
+        $rootdir = $CFG->tempdir."/backup/".$backup_unique_code;
 
         //Delete recursively
         $status = delete_dir_contents($rootdir);
@@ -237,7 +237,7 @@
                    && $DB->delete_records('backup_files', array('backup_code'=>$preferences->backup_unique_code));
 
             //Now, delete temp directory (if exists)
-            $file_path = $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code;
+            $file_path = $CFG->tempdir."/backup/".$preferences->backup_unique_code;
             if (is_dir($file_path)) {
                 $status = delete_dir_contents($file_path);
                 //There is nothing, delete the directory itself
@@ -348,7 +348,7 @@
 
         if (strlen($info_ser) > $max_db_storage) {
             //Calculate filename (in current_backup_dir, $backup_unique_code_$table_$old_id.info)
-            $filename = $CFG->dataroot."/temp/backup/".$backup_unique_code."/".$backup_unique_code."_".$table."_".$old_id.".info";
+            $filename = $CFG->tempdir."/backup/".$backup_unique_code."/".$backup_unique_code."_".$table."_".$old_id.".info";
             //Save data to file
             $status = backup_data2file($filename,$info_ser);
             //Set info_to save
@@ -394,7 +394,7 @@
 
         //If info field = "infile", get file contents
         if (!empty($status->info) && $status->info == "infile") {
-            $filename = $CFG->dataroot."/temp/backup/".$backup_unique_code."/".$backup_unique_code."_".$table."_".$old_id.".info";
+            $filename = $CFG->tempdir."/backup/".$backup_unique_code."/".$backup_unique_code."_".$table."_".$old_id.".info";
             //Read data from file
             $status2 = backup_file2data($filename,$info);
             if ($status2) {

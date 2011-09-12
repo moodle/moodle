@@ -40,7 +40,7 @@ $min_enableBuilder = false;
  * For best performance, specify your temp directory here. Otherwise Minify
  * will have to load extra code to guess. Some examples below:
  */
-$min_cachePath = $CFG->dataroot.'/temp';
+$min_cachePath = $CFG->tempdir.'';
 
 
 /**

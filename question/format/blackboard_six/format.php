@@ -46,12 +46,12 @@ class qformat_blackboard_six extends qformat_default {
 
         global $CFG;
 
-        $status = $this->check_dir_exists($CFG->dataroot."/temp",true);
+        $status = $this->check_dir_exists($CFG->tempdir."",true);
         if ($status) {
-            $status = $this->check_dir_exists($CFG->dataroot."/temp/bbquiz_import",true);
+            $status = $this->check_dir_exists($CFG->tempdir."/bbquiz_import",true);
         }
         if ($status) {
-            $status = $this->check_dir_exists($CFG->dataroot."/temp/bbquiz_import/".$unique_code,true);
+            $status = $this->check_dir_exists($CFG->tempdir."/bbquiz_import/".$unique_code,true);
         }
 
         return $status;
@@ -61,7 +61,7 @@ class qformat_blackboard_six extends qformat_default {
         global $CFG;
 
         // for now we will just say everything happened okay note
-        // that a mess may be piling up in $CFG->dataroot/temp/bbquiz_import
+        // that a mess may be piling up in $CFG->tempdir/bbquiz_import
         // TODO return true at top of the function renders all the following code useless
         return true;
 
@@ -189,7 +189,7 @@ class qformat_blackboard_six extends qformat_default {
         }
 
         $unique_code = time();
-        $temp_dir = $CFG->dataroot."/temp/bbquiz_import/".$unique_code;
+        $temp_dir = $CFG->tempdir."/bbquiz_import/".$unique_code;
         $this->temp_dir = $temp_dir;
         if ($this->check_and_create_import_dir($unique_code)) {
             if(is_readable($filename)) {

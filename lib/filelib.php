@@ -2176,7 +2176,7 @@ function put_records_csv($file, $records, $table = NULL) {
 
     echo "x";
 
-    if(!($fp = @fopen($CFG->dataroot.'/temp/'.$file, 'w'))) {
+    if(!($fp = @fopen($CFG->tempdir.'/'.$file, 'w'))) {
         print_error('put_records_csv failed to open '.$file);
     }
 
@@ -2935,9 +2935,9 @@ class curl_cache {
     function __construct($module = 'repository'){
         global $CFG;
         if (!empty($module)) {
-            $this->dir = $CFG->dataroot.'/cache/'.$module.'/';
+            $this->dir = $CFG->cachedir.'/'.$module.'/';
         } else {
-            $this->dir = $CFG->dataroot.'/cache/misc/';
+            $this->dir = $CFG->cachedir.'/misc/';
         }
         if (!file_exists($this->dir)) {
             mkdir($this->dir, $CFG->directorypermissions, true);

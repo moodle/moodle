@@ -39,38 +39,38 @@ class moodle1_converter_test extends UnitTestCase {
         global $CFG;
 
         $this->tempdir = convert_helper::generate_id('simpletest');
-        check_dir_exists("$CFG->dataroot/temp/backup/$this->tempdir/course_files/sub1");
-        check_dir_exists("$CFG->dataroot/temp/backup/$this->tempdir/moddata/unittest/4/7");
+        check_dir_exists("$CFG->tempdir/backup/$this->tempdir/course_files/sub1");
+        check_dir_exists("$CFG->tempdir/backup/$this->tempdir/moddata/unittest/4/7");
         copy(
             "$CFG->dirroot/backup/converter/moodle1/simpletest/files/moodle.xml",
-            "$CFG->dataroot/temp/backup/$this->tempdir/moodle.xml"
+            "$CFG->tempdir/backup/$this->tempdir/moodle.xml"
         );
         copy(
             "$CFG->dirroot/backup/converter/moodle1/simpletest/files/icon.gif",
-            "$CFG->dataroot/temp/backup/$this->tempdir/course_files/file1.gif"
+            "$CFG->tempdir/backup/$this->tempdir/course_files/file1.gif"
         );
         copy(
             "$CFG->dirroot/backup/converter/moodle1/simpletest/files/icon.gif",
-            "$CFG->dataroot/temp/backup/$this->tempdir/course_files/sub1/file2.gif"
+            "$CFG->tempdir/backup/$this->tempdir/course_files/sub1/file2.gif"
         );
         copy(
             "$CFG->dirroot/backup/converter/moodle1/simpletest/files/icon.gif",
-            "$CFG->dataroot/temp/backup/$this->tempdir/moddata/unittest/4/file1.gif"
+            "$CFG->tempdir/backup/$this->tempdir/moddata/unittest/4/file1.gif"
         );
         copy(
             "$CFG->dirroot/backup/converter/moodle1/simpletest/files/icon.gif",
-            "$CFG->dataroot/temp/backup/$this->tempdir/moddata/unittest/4/icon.gif"
+            "$CFG->tempdir/backup/$this->tempdir/moddata/unittest/4/icon.gif"
         );
         copy(
             "$CFG->dirroot/backup/converter/moodle1/simpletest/files/icon.gif",
-            "$CFG->dataroot/temp/backup/$this->tempdir/moddata/unittest/4/7/icon.gif"
+            "$CFG->tempdir/backup/$this->tempdir/moddata/unittest/4/7/icon.gif"
         );
     }
 
     public function tearDown() {
         global $CFG;
         if (empty($CFG->keeptempdirectoriesonbackup)) {
-            fulldelete("$CFG->dataroot/temp/backup/$this->tempdir");
+            fulldelete("$CFG->tempdir/backup/$this->tempdir");
         }
     }
 
@@ -440,7 +440,7 @@ as it is parsed from the backup file. <br /><br /><img border="0" width="110" vs
 
         copy(
             "$CFG->dirroot/backup/converter/moodle1/simpletest/files/questions.xml",
-            "$CFG->dataroot/temp/backup/$this->tempdir/moodle.xml"
+            "$CFG->tempdir/backup/$this->tempdir/moodle.xml"
         );
         $converter = convert_factory::get_converter('moodle1', $this->tempdir);
         $converter->convert();

@@ -34,7 +34,7 @@ abstract class backup_helper {
      */
     static public function check_and_create_backup_dir($backupid) {
         global $CFG;
-        if (!check_dir_exists($CFG->dataroot . '/temp/backup/' . $backupid, true, true)) {
+        if (!check_dir_exists($CFG->tempdir . '/backup/' . $backupid, true, true)) {
             throw new backup_helper_exception('cannot_create_backup_temp_dir');
         }
     }
@@ -44,7 +44,7 @@ abstract class backup_helper {
      */
     static public function clear_backup_dir($backupid) {
         global $CFG;
-        if (!self::delete_dir_contents($CFG->dataroot . '/temp/backup/' . $backupid)) {
+        if (!self::delete_dir_contents($CFG->tempdir . '/backup/' . $backupid)) {
             throw new backup_helper_exception('cannot_empty_backup_temp_dir');
         }
         return true;
@@ -56,7 +56,7 @@ abstract class backup_helper {
      static public function delete_backup_dir($backupid) {
          global $CFG;
          self::clear_backup_dir($backupid);
-         return rmdir($CFG->dataroot . '/temp/backup/' . $backupid);
+         return rmdir($CFG->tempdir . '/backup/' . $backupid);
      }
 
      /**
@@ -132,9 +132,9 @@ abstract class backup_helper {
 
         $status = true;
         // Get files and directories in the temp backup dir witout descend
-        $list = get_directory_list($CFG->dataroot . '/temp/backup', '', false, true, true);
+        $list = get_directory_list($CFG->tempdir . '/backup', '', false, true, true);
         foreach ($list as $file) {
-            $file_path = $CFG->dataroot . '/temp/backup/' . $file;
+            $file_path = $CFG->tempdir . '/backup/' . $file;
             $moddate = filemtime($file_path);
             if ($status && $moddate < $deletefrom) {
                 //If directory, recurse

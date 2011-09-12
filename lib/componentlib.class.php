@@ -281,13 +281,13 @@ class component_installer {
             return COMPONENT_UPTODATE;
         }
     /// Create temp directory if necesary
-        if (!make_upload_directory('temp', false)) {
+        if (!make_temp_directory('', false)) {
              $this->errorstring='cannotcreatetempdir';
              return COMPONENT_ERROR;
         }
     /// Download zip file and save it to temp
         $source = $this->sourcebase.'/'.$this->zippath.'/'.$this->zipfilename;
-        $zipfile= $CFG->dataroot.'/temp/'.$this->zipfilename;
+        $zipfile= $CFG->tempdir.'/'.$this->zipfilename;
 
         if($contents = download_file_content($source)) {
             if ($file = fopen($zipfile, 'w')) {

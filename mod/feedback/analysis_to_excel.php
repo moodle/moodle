@@ -79,7 +79,7 @@ $mygroupid = groups_get_activity_group($cm);
 // Creating a workbook
 // $workbook = new EasyWorkbook("-");
 $workbook = new MoodleExcelWorkbook('-');
-// $workbook->setTempDir($CFG->dataroot.'/temp');
+// $workbook->setTempDir($CFG->tempdir.'');
 $workbook->send($filename);
 // $workbook->setVersion(8);
 

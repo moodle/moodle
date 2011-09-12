@@ -652,7 +652,7 @@ abstract class moodleform {
         if (!$this->get_new_filename($elname)) {
             return false;
         }
-        if (!$dir = make_upload_directory('temp/forms')) {
+        if (!$dir = make_temp_directory('forms')) {
             return false;
         }
         if (!$tempfile = tempnam($dir, 'tempup_')) {

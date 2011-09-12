@@ -860,7 +860,7 @@ function init_performance_info() {
     if (function_exists('apd_set_pprof_trace')) {
         // APD profiling
         if ($USER->id > 0 && $CFG->perfdebug >= 15) {
-            $tempdir = $CFG->dataroot . '/temp/profile/' . $USER->id;
+            $tempdir = $CFG->tempdir . '/profile/' . $USER->id;
             mkdir($tempdir);
             apd_set_pprof_trace($tempdir);
             $PERF->profiling = true;
@@ -1105,24 +1105,15 @@ function check_dir_exists($dir, $create = true, $recursive = true) {
 }
 
 /**
- * Create a directory in dataroot and make sure it is writable.
+ * Create a directory and make sure it is writable.
  *
- * @param string $directory  a string of directory names under $CFG->dataroot eg  temp/something
+ * @private
+ * @param string $dir  the full path of the directory to be created
  * @param bool $exceptiononerror throw exception if error encountered
  * @return string|false Returns full path to directory if successful, false if not; may throw exception
  */
-function make_upload_directory($directory, $exceptiononerror = true) {
+function make_writable_directory($dir, $exceptiononerror = true) {
     global $CFG;
-
-    // Make sure a .htaccess file is here, JUST IN CASE the files area is in the open and .htaccess is supported
-    if (!file_exists("$CFG->dataroot/.htaccess")) {
-        if ($handle = fopen("$CFG->dataroot/.htaccess", 'w')) {   // For safety
-            @fwrite($handle, "deny from all\r\nAllowOverride None\r\nNote: this file is broken intentionally, we do not want anybody to undo it in subdirectory!\r\n");
-            @fclose($handle);
-        }
-    }
-
-    $dir = "$CFG->dataroot/$directory";
 
     if (file_exists($dir) and !is_dir($dir)) {
         if ($exceptiononerror) {
@@ -1154,6 +1145,73 @@ function make_upload_directory($directory, $exceptiononerror = true) {
 
     return $dir;
 }
+
+/**
+ * Protect a directory from web access.
+ * Could be extended in the future to support other mechanisms (e.g. other webservers).
+ *
+ * @private
+ * @param string $dir  the full path of the directory to be protected
+ */
+function protect_directory($dir) {
+    // Make sure a .htaccess file is here, JUST IN CASE the files area is in the open and .htaccess is supported
+    if (!file_exists("$dir/.htaccess")) {
+        if ($handle = fopen("$dir/.htaccess", 'w')) {   // For safety
+            @fwrite($handle, "deny from all\r\nAllowOverride None\r\nNote: this file is broken intentionally, we do not want anybody to undo it in subdirectory!\r\n");
+            @fclose($handle);
+        }
+    }
+}
+
+/**
+ * Create a directory under dataroot and make sure it is writable.
+ * Do not use for temporary and cache files - see make_temp_directory() and make_cache_directory().
+ *
+ * @param string $directory  the full path of the directory to be created under $CFG->dataroot
+ * @param bool $exceptiononerror throw exception if error encountered
+ * @return string|false Returns full path to directory if successful, false if not; may throw exception
+ */
+function make_upload_directory($directory, $exceptiononerror = true) {
+    global $CFG;
+
+    if (strpos($directory, 'temp/') === 0 or $directory === 'temp') {
+        debugging('Use make_temp_directory() for creation of temporary directory and $CFG->tempdir to get the location.');
+
+    } else if (strpos($directory, 'cache/') === 0 or $directory === 'cache') {
+        debugging('Use make_cache_directory() for creation of chache directory and $CFG->cachedir to get the location.');
+    }
+
+    protect_directory($CFG->dataroot);
+    return make_writable_directory("$CFG->dataroot/$directory", $exceptiononerror);
+}
+
+/**
+ * Create a directory under tempdir and make sure it is writable.
+ * Temporary files should be used during the current request only!
+ *
+ * @param string $directory  the full path of the directory to be created under $CFG->tempdir
+ * @param bool $exceptiononerror throw exception if error encountered
+ * @return string|false Returns full path to directory if successful, false if not; may throw exception
+ */
+function make_temp_directory($directory, $exceptiononerror = true) {
+    global $CFG;
+    protect_directory($CFG->tempdir);
+    return make_writable_directory("$CFG->tempdir/$directory", $exceptiononerror);
+}
+
+/**
+ * Create a directory under cachedir and make sure it is writable.
+ *
+ * @param string $directory  the full path of the directory to be created under $CFG->cachedir
+ * @param bool $exceptiononerror throw exception if error encountered
+ * @return string|false Returns full path to directory if successful, false if not; may throw exception
+ */
+function make_cache_directory($directory, $exceptiononerror = true) {
+    global $CFG;
+    protect_directory($CFG->cachedir);
+    return make_writable_directory("$CFG->cachedir/$directory", $exceptiononerror);
+}
+
 
 function init_memcached() {
     global $CFG, $MCACHE;

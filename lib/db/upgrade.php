@@ -124,7 +124,7 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2008030602) {
-        @unlink($CFG->dataroot.'/cache/languages');
+        @unlink($CFG->cachedir.'/languages');
 
         if (file_exists("$CFG->dataroot/lang")) {
             // rename old lang directory so that the new and old langs do not mix

@@ -3723,7 +3723,7 @@ function assignment_extend_settings_navigation(settings_navigation $settings, na
 function assignment_pack_files($filesforzipping) {
         global $CFG;
         //create path for new zip file.
-        $tempzip = tempnam($CFG->dataroot.'/temp/', 'assignment_');
+        $tempzip = tempnam($CFG->tempdir.'/', 'assignment_');
         //zip files
         $zipper = new zip_packer();
         if ($zipper->archive_to_pathname($filesforzipping, $tempzip)) {

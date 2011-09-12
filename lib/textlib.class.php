@@ -83,7 +83,7 @@ class textlib {
 
         // And this directory must exist to allow Typo to cache conversion
         // tables when using internal functions
-        make_upload_directory('temp/typo3temp/cs');
+        make_temp_directory('typo3temp/cs');
 
         // Make sure typo is using our dir permissions
         $GLOBALS['TYPO3_CONF_VARS']['BE']['folderCreateMask'] = decoct($CFG->directorypermissions);
@@ -95,7 +95,7 @@ class textlib {
         // to forward slashed because Typo3 requires it.
         define ('PATH_t3lib', str_replace('\\','/',$CFG->libdir.'/typo3/'));
         define ('PATH_typo3', str_replace('\\','/',$CFG->libdir.'/typo3/'));
-        define ('PATH_site', str_replace('\\','/',$CFG->dataroot.'/temp/'));
+        define ('PATH_site', str_replace('\\','/',$CFG->tempdir.'/'));
         define ('TYPO3_OS', stristr(PHP_OS,'win')&&!stristr(PHP_OS,'darwin')?'WIN':'');
 
         $typo3cs = new t3lib_cs();

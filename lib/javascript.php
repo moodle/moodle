@@ -67,7 +67,7 @@ minify($jsfiles);
 function minify($files) {
     global $CFG;
 
-    $cachedir = $CFG->dataroot.'/cache/js';
+    $cachedir = $CFG->cachedir.'/js';
     // make sure the cache dir exist
     if (!file_exists($cachedir)) {
         @mkdir($cachedir, $CFG->directorypermissions, true);

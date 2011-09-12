@@ -40,8 +40,8 @@ class grade_export_xml extends grade_export {
         /// Calculate file name
         $downloadfilename = clean_filename("{$this->course->shortname} $strgrades.xml");
 
-        make_upload_directory('temp/gradeexport');
-        $tempfilename = $CFG->dataroot .'/temp/gradeexport/'. md5(sesskey().microtime().$downloadfilename);
+        make_temp_directory('gradeexport');
+        $tempfilename = $CFG->tempdir .'/gradeexport/'. md5(sesskey().microtime().$downloadfilename);
         if (!$handle = fopen($tempfilename, 'w+b')) {
             print_error('cannotcreatetempdir');
         }

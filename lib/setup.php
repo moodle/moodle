@@ -36,6 +36,8 @@
  *  - $CFG->dataroot - Path to moodle data files directory on server's filesystem.
  *  - $CFG->dirroot  - Path to moodle's library folder on server's filesystem.
  *  - $CFG->libdir   - Path to moodle's library folder on server's filesystem.
+ *  - $CFG->tempdir  - Path to moodle's temp file directory on server's filesystem.
+ *  - $CFG->cachedir - Path to moodle's cache directory on server's filesystem.
  *
  * @global object $CFG
  * @name $CFG
@@ -95,6 +97,16 @@ if (!isset($CFG->admin)) {   // Just in case it isn't defined in config.php
 
 // Set up some paths.
 $CFG->libdir = $CFG->dirroot .'/lib';
+
+// Allow overriding of tempdir but be backwards compatible
+if (!isset($CFG->tempdir)) {
+    $CFG->tempdir = "$CFG->dataroot/temp";
+}
+
+// Allow overriding of cachedir but be backwards compatible
+if (!isset($CFG->cachedir)) {
+    $CFG->cachedir = "$CFG->dataroot/cache";
+}
 
 // The current directory in PHP version 4.3.0 and above isn't necessarily the
 // directory of the script when run from the command line. The require_once()

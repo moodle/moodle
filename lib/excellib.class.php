@@ -64,8 +64,8 @@ class MoodleExcelWorkbook {
             $this->latin_output = true;
         }
     /// Choose our temporary directory - see MDL-7176, found by paulo.matos
-        make_upload_directory('temp/excel');
-        $this->pear_excel_workbook->setTempDir($CFG->dataroot.'/temp/excel');
+        make_temp_directory('excel');
+        $this->pear_excel_workbook->setTempDir($CFG->tempdir.'/excel');
     }
 
     /**

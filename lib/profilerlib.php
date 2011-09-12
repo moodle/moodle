@@ -64,7 +64,7 @@ class Profiler
     {
         global $CFG, $USER;
         // List all files under our temporary directory
-        $tempdir = $CFG->dataroot . '/temp/profile/' . $USER->id;
+        $tempdir = $CFG->tempdir . '/profile/' . $USER->id;
         if ($files = scandir($tempdir)) {
             // Concatenate the files
             print_r($files);

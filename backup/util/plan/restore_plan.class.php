@@ -50,7 +50,7 @@ class restore_plan extends base_plan implements loggable {
             throw new restore_plan_exception('wrong_restore_controller_specified');
         }
         $this->controller = $controller;
-        $this->basepath   = $CFG->dataroot . '/temp/backup/' . $controller->get_tempdir();
+        $this->basepath   = $CFG->tempdir . '/backup/' . $controller->get_tempdir();
         $this->preloaded  = false;
         $this->decoder    = new restore_decode_processor($this->get_restoreid(), $this->get_info()->original_wwwroot, $CFG->wwwroot);
         $this->missingmodules = false;

@@ -67,7 +67,7 @@ define('K_PATH_URL', $CFG->wwwroot . '/lib/tcpdf/');
 define('K_PATH_FONTS', K_PATH_MAIN . 'fonts/');
 
 /** cache directory for temporary files (full path) */
-define('K_PATH_CACHE', $CFG->dataroot . '/cache/');
+define('K_PATH_CACHE', $CFG->cachedir . '/');
 
 /** images directory */
 define('K_PATH_IMAGES', $CFG->dirroot . '/');

@@ -104,8 +104,8 @@ function filter_tex_updatedcallback($name) {
     if (file_exists("$CFG->dataroot/filter/algebra")) {
         remove_dir("$CFG->dataroot/filter/algebra");
     }
-    if (file_exists("$CFG->dataroot/temp/latex")) {
-        remove_dir("$CFG->dataroot/temp/latex");
+    if (file_exists("$CFG->tempdir/latex")) {
+        remove_dir("$CFG->tempdir/latex");
     }
 
     $DB->delete_records('cache_filters', array('filter'=>'tex'));

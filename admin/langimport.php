@@ -58,7 +58,7 @@ $notice_error = array();
 
 if (($mode == INSTALLATION_OF_SELECTED_LANG) and confirm_sesskey() and !empty($pack)) {
     set_time_limit(0);
-    make_upload_directory('temp');
+    make_temp_directory('');
     make_upload_directory('lang');
 
     $installer = new lang_installer($pack);
@@ -149,7 +149,7 @@ if ($mode == UPDATE_ALL_LANG) {
         }
     }
 
-    make_upload_directory('temp');
+    make_temp_directory('');
     make_upload_directory('lang');
 
     // clean-up currently installed versions of the packs
