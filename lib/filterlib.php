@@ -1004,7 +1004,7 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
         $filterignoretagsopen = array();
         $filterignoretagsclose = array();
     }
- 
+
     // Add the user defined ignore tags to the default list
     if ( is_array($ignoretagsopen) ) {
         foreach ($ignoretagsopen as $open) {
