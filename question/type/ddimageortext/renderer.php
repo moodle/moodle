@@ -39,8 +39,6 @@ class qtype_ddimageortext_renderer extends qtype_with_combined_feedback_renderer
 
     public function head_code(question_attempt $qa) {
         $this->page->requires->css('/lib/yui/3.4.0/build/csscssfonts/fonts-context-min.css');
-        $this->page->requires->yui2_lib('event');
-        $this->page->requires->yui2_lib('dragdrop');
         return parent::head_code($qa);
     }
     public function clear_wrong(question_attempt $qa) {
