@@ -91,9 +91,8 @@ class qtype_multianswer_edit_form extends question_edit_form {
         $mform->addRule('questiontext', null, 'required', null, 'client');
 
         // display the questions from questiontext;
-        if ("" != optional_param('questiontext', '', PARAM_RAW)) {
-            $this->questiondisplay = fullclone(qtype_multianswer_extract_question(
-                    optional_param('questiontext', '', PARAM_RAW)));
+        if ($questiontext = optional_param_array('questiontext', false, PARAM_RAW)) {
+            $this->questiondisplay = fullclone(qtype_multianswer_extract_question($questiontext));
 
         } else {
             if (!$this->reload && !empty($this->savedquestiondisplay->id)) {
