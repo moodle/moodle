@@ -163,11 +163,14 @@ class oracle_sql_generator extends sql_generator {
                 }
                 break;
             case XMLDB_TYPE_CHAR:
+                // Do not use NVARCHAR2 here because it has hardcoded 1333 char limit,
+                // VARCHAR2 allows us to create larger fields that error out later during runtime
+                // only when too many non-ascii utf-8 chars present.
                 $dbtype = 'VARCHAR2';
                 if (empty($xmldb_length)) {
                     $xmldb_length='255';
                 }
-                $dbtype .= '(' . $xmldb_length . ')';
+                $dbtype .= '(' . $xmldb_length . ' CHAR)'; // CHAR is required because BYTE is the default
                 break;
             case XMLDB_TYPE_TEXT:
                 $dbtype = 'CLOB';
@@ -670,8 +673,8 @@ class oracle_sql_generator extends sql_generator {
             'increment', 'index', 'initial', 'insert',
             'integer', 'intersect', 'into', 'is', 'level',
             'like', 'lock', 'long', 'maxextents', 'minus',
-            'mlslabel', 'mode', 'modify', 'noaudit',
-            'nocompress', 'not', 'nowait', 'null', 'number',
+            'mlslabel', 'mode', 'modify', 'nchar', 'nclob', 'noaudit',
+            'nocompress', 'not', 'nowait', 'null', 'number', 'nvarchar2',
             'of', 'offline', 'on', 'online', 'option', 'or',
             'order', 'pctfree', 'prior', 'privileges',
             'public', 'raw', 'rename', 'resource', 'revoke',
