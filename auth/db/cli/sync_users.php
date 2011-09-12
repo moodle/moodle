@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -48,12 +47,46 @@ define('CLI_SCRIPT', true);
 
 require(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
 require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->libdir.'/clilib.php');
 
-if (!is_enabled_auth('db')) {
-    echo "Plugin not enabled!";
+// now get cli options
+list($options, $unrecognized) = cli_get_params(array('noupdate'=>false, 'verbose'=>false, 'help'=>false), array('n'=>'noupdate', 'v'=>'verbose', 'h'=>'help'));
+
+if ($unrecognized) {
+    $unrecognized = implode("\n  ", $unrecognized);
+    cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
+}
+
+if ($options['help']) {
+    $help =
+"Execute user account sync with external database.
+The auth_db plugin must be enabled and properly configured.
+
+Options:
+-n, --noupdate        Skip update of existing users
+-v, --verbose         Print verbose progess information
+-h, --help            Print out this help
+
+Example:
+\$sudo -u www-data /usr/bin/php auth/db/cli/sync_users.php
+
+Sample cron entry:
+# 5 minutes past 4am
+5 4 * * * $sudo -u www-data /usr/bin/php /var/www/moodle/auth/db/cli/sync_users.php
+";
+
+    echo $help;
     die;
 }
 
+if (!is_enabled_auth('db')) {
+    echo "Plugin not enabled!";
+    exit(1);
+}
+
+$verbose = !empty($options['verbose']);
+$update = empty($options['noupdate']);
+
 $dbauth = get_auth_plugin('db');
-$dbauth->sync_users(true);
+return $dbauth->sync_users($update, $verbose);
 
