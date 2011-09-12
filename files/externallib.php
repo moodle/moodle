@@ -210,7 +210,7 @@ class moodle_file_external extends external_api {
         $dir = make_upload_directory('temp/wsupload');
 
         if (empty($fileinfo['filename'])) {
-            $filename = uniqid('wsupload').'_'.time().'.tmp';
+            $filename = uniqid('wsupload', true).'_'.time().'.tmp';
         } else {
             $filename = $fileinfo['filename'];
         }

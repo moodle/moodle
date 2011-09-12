@@ -999,7 +999,15 @@ class html_writer {
      * @return string
      */
     public static function random_id($base='random') {
-        return uniqid($base);
+        static $counter = 0;
+        static $uniq;
+
+        if (!isset($uniq)) {
+            $uniq = uniqid();
+        }
+
+        $counter++;
+        return $base.$uniq.$counter;
     }
 
     /**
