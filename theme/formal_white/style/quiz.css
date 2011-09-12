@@ -1,8 +1,7 @@
-/***
- *** Core
- ***/
+/**********************************************************
+ * This file contains style information for quiz module   *
+ **********************************************************/
 
-/* quiz */
 #page-mod-quiz-edit div.quizpage .pagecontent {background-color:[[setting:lblockcolumnbgc]];}
 .questionbankwindow h2 {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;border-top:1px #C6BDA8 solid;background-color:#E3DFD4;border-top:1px #C6BDA8 solid;}
 #page-mod-quiz-edit .questionbankwindow div.header {background-color:transparent;}

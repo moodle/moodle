@@ -1,0 +1,33 @@
+/**********************************************************
+ * This file contains style information for forum module  *
+ **********************************************************/
+
+.forumpost {border: 1px solid #CACACA;}
+.forumpost .row {background-color:#FFF;}
+.forumpost .row.header {background-color:[[setting:blockcontentbgc]];background-image:none;}
+.forumpost.firstpost .row.header {background-color:[[setting:lblockcolumnbgc]];}
+.forumpost .topic .author {font-size: 0.8em;padding:4px;}
+.forumpost .topic .subject {font-weight: bold;padding:4px 4px 0;}
+.forumpost .options div {border-top: 1px dotted #DBDBDB;}
+.forumpost .content div,
+.forumpost .options div {padding:4px;}
+.forumpost.unread {background: #9EBEFF;}
+.forumpost.unread .content {border:2px solid #DBDBDB;} /** inside border of unread posts in nested format in */
+
+#page-mod-forum-view .forummode,
+.path-mod-forum .forumheaderlist .replies {text-align: center;}
+.path-mod-forum .forumheaderlist .discussion .lastpost {font-size: 0.7em;}
+.path-mod-forum .forumnodiscuss {font-weight:bold;text-align:center;}
+#page-mod-forum-subscribers .subscriberdiv,
+#page-mod-forum-subscribers .subscribertable {background-color:#EEEEEE;border:1px solid #BBBBBB;}
+#page-mod-forum-subscribers .subscriberdiv,
+#page-mod-forum-subscribers .subscribertable tr td {padding:0.2em 0.3em;}
+#page-mod-forum-discuss .ratingsubmit {text-align:center;padding:10px;}
+#page-mod-forum-view .forumheaderlist .discussion .starter, /** Discussion column background in */
+#page-mod-forum-view .forumaddnew {margin-bottom: 20px;}
+#page-mod-forum-view .forumheaderlist td {border-color: #FFFFFF;} /** wire frame around cells in */
+#page-mod-forum-view .unread {padding: 0 3px;} /** unread column background on */
+#page-mod-forum-view .forumheaderlist  {border-color:#DDDDDD;} /** border around posts in */
+#email .unsubscribelink {border-width: 0px 1px 0px 0px;border-style: solid;text-align:center;}
+#page-mod-forum-view .highlight2 {color:#AA0000;}
+#page-mod-forum-view.dir-rtl .forumheaderlist .discussion .starter {text-align:right;}
