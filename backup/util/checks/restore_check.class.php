@@ -68,41 +68,27 @@ abstract class restore_check {
         // Note: all the checks along the function MUST be performed for $userid, that
         // is the user who "requested" the course restore, not current $USER at all!!
 
-        // First of all, check the main restore[course|section|activity] principal caps
-        // Lacking the corresponding one makes this to break with exception always
+        // First of all, decide which caps/contexts are we going to check
+        // for common backups (general, automated...) based exclusively
+        // in the type (course, section, activity). And store them into
+        // one capability => context array structure
+        $typecapstocheck = array();
         switch ($type) {
             case backup::TYPE_1COURSE :
-                if (!has_capability('moodle/restore:restorecourse', $coursectx, $userid)) {
-                    $a = new stdclass();
-                    $a->userid = $userid;
-                    $a->courseid = $courseid;
-                    $a->capability = 'moodle/restore:restorecourse';
-                    throw new restore_controller_exception('restore_user_missing_capability', $a);
-                }
+                $typecapstocheck['moodle/restore:restorecourse'] = $coursectx;
                 break;
             case backup::TYPE_1SECTION :
-                if (!has_capability('moodle/restore:restoresection', $coursectx, $userid)) {
-                    $a = new stdclass();
-                    $a->userid = $userid;
-                    $a->courseid = $courseid;
-                    $a->capability = 'moodle/restore:restoresection';
-                    throw new restore_controller_exception('restore_user_missing_capability', $a);
-                }
+                $typecapstocheck['moodle/restore:restoresection'] = $coursectx;
                 break;
             case backup::TYPE_1ACTIVITY :
-                if (!has_capability('moodle/restore:restoreactivity', $coursectx, $userid)) {
-                    $a = new stdclass();
-                    $a->userid = $userid;
-                    $a->courseid = $courseid;
-                    $a->capability = 'moodle/restore:restoreactivity';
-                    throw new restore_controller_exception('restore_user_missing_capability', $a);
-                }
+                $typecapstocheck['moodle/restore:restoreactivity'] = $coursectx;
                 break;
             default :
-                print_error('unknownrestoretype');
+                throw new restore_controller_exception('restore_unknown_restore_type', $type);
         }
 
         // Now, if restore mode is hub or import, check userid has permissions for those modes
+        // other modes will perform common checks only (restorexxxx capabilities in $typecapstocheck)
         switch ($mode) {
             case backup::MODE_HUB:
                 if (!has_capability('moodle/restore:restoretargethub', $coursectx, $userid)) {
@@ -122,6 +108,18 @@ abstract class restore_check {
                     throw new restore_controller_exception('restore_user_missing_capability', $a);
                 }
                 break;
+            // Common backup (general, automated...), let's check all the $typecapstocheck
+            // capability => context pairs
+            default:
+                foreach ($typecapstocheck as $capability => $context) {
+                    if (!has_capability($capability, $context, $userid)) {
+                        $a = new stdclass();
+                        $a->userid = $userid;
+                        $a->courseid = $courseid;
+                        $a->capability = $capability;
+                        throw new restore_controller_exception('restore_user_missing_capability', $a);
+                    }
+                }
         }
 
         // Now, enforce 'moodle/restore:userinfo' to 'users' setting, applying changes if allowed,
@@ -158,12 +156,16 @@ abstract class restore_check {
         }
 
         // Check the user has the ability to configure the restore. If not then we need
-        // to lock all settings by permission so that no changes can be made.
-        $hasconfigcap = has_capability('moodle/restore:configure', $coursectx, $userid);
-        if (!$hasconfigcap) {
-            $settings = $restore_controller->get_plan()->get_settings();
-            foreach ($settings as $setting) {
-                $setting->set_status(base_setting::LOCKED_BY_PERMISSION);
+        // to lock all settings by permission so that no changes can be made. This does
+        // not apply to the import facility, where all the activities (picked on backup)
+        // are restored automatically without restore UI
+        if ($mode != backup::MODE_IMPORT) {
+            $hasconfigcap = has_capability('moodle/restore:configure', $coursectx, $userid);
+            if (!$hasconfigcap) {
+                $settings = $restore_controller->get_plan()->get_settings();
+                foreach ($settings as $setting) {
+                    $setting->set_status(base_setting::LOCKED_BY_PERMISSION);
+                }
             }
         }
 
