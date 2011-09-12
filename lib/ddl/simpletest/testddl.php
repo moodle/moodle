@@ -1487,6 +1487,115 @@ class ddl_test extends UnitTestCase {
         $this->assertTrue(count($reserved) > 1);
     }
 
+    public function test_index_max_bytes() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $maxstr = '';
+        for($i=0; $i<255; $i++) {
+            $maxstr .= '言'; // random long string that should fix exactly the limit for one char column
+        }
+
+        $table = new xmldb_table('testtable');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, 255, null, XMLDB_NOTNULL, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('name', XMLDB_INDEX_NOTUNIQUE, array('name'));
+
+        // Drop if exists
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+        $dbman->create_table($table);
+        $tablename = $table->getName();
+        $this->tables[$tablename] = $table;
+
+        $rec = new stdClass();
+        $rec->name = $maxstr;
+
+        $id = $DB->insert_record($tablename, $rec);
+        $this->assertTrue(!empty($id));
+
+        $rec = $DB->get_record($tablename, array('id'=>$id));
+        $this->assertIdentical($rec->name, $maxstr);
+
+        $dbman->drop_table($table);
+
+
+        $table = new xmldb_table('testtable');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, 255+1, null, XMLDB_NOTNULL, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('name', XMLDB_INDEX_NOTUNIQUE, array('name'));
+
+        try {
+            $dbman->create_table($table);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+    }
+
+    public function test_index_composed_max_bytes() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $maxstr = '';
+        for($i=0; $i<200; $i++) {
+            $maxstr .= '言';
+        }
+        $reststr = '';
+        for($i=0; $i<133; $i++) {
+            $reststr .= '言';
+        }
+
+        $table = new xmldb_table('testtable');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name1', XMLDB_TYPE_CHAR, 200, null, XMLDB_NOTNULL, null);
+        $table->add_field('name2', XMLDB_TYPE_CHAR, 133, null, XMLDB_NOTNULL, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('name1-name2', XMLDB_INDEX_NOTUNIQUE, array('name1','name2'));
+
+        // Drop if exists
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+        $dbman->create_table($table);
+        $tablename = $table->getName();
+        $this->tables[$tablename] = $table;
+
+        $rec = new stdClass();
+        $rec->name1 = $maxstr;
+        $rec->name2 = $reststr;
+
+        $id = $DB->insert_record($tablename, $rec);
+        $this->assertTrue(!empty($id));
+
+        $rec = $DB->get_record($tablename, array('id'=>$id));
+        $this->assertIdentical($rec->name1, $maxstr);
+        $this->assertIdentical($rec->name2, $reststr);
+
+
+        $table = new xmldb_table('testtable');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name1', XMLDB_TYPE_CHAR, 201, null, XMLDB_NOTNULL, null);
+        $table->add_field('name2', XMLDB_TYPE_CHAR, 133, null, XMLDB_NOTNULL, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('name1-name2', XMLDB_INDEX_NOTUNIQUE, array('name1','name2'));
+
+        // Drop if exists
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        try {
+            $dbman->create_table($table);
+            $this->assertTrue(false);
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+    }
+
  // Following methods are not supported == Do not test
 /*
     public function testRenameIndex() {

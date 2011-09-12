@@ -478,4 +478,17 @@ class xmldb_object {
 
         return $arr;
     }
+
+    /**
+     * Validates the definition of objects and returns error message.
+     *
+     * The error message should not be localised because it is intended for developers,
+     * end users and admins should never see these problems!
+     *
+     * @param xmldb_table $xmldb_table optional when object is table
+     * @return string null if ok, error message if problem found
+     */
+    function validateDefinition(xmldb_table $xmldb_table=null) {
+        return null;
+    }
 }

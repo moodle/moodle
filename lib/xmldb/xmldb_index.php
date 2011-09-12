@@ -32,6 +32,22 @@ class xmldb_index extends xmldb_object {
     var $fields;
 
     /**
+     * Note:
+     *  - MySQL: MyISAM has a limit of 1000 bytes for any key including composed, InnoDB has limit 3500 bytes.
+     *
+     * @const max length of composed indexes, one utf-8 char is 3 bytes in the worst case
+     */
+    const INDEX_COMPOSED_MAX_BYTES = 999;
+
+    /**
+     * Note:
+     *  - MySQL: InnoDB limits size of index on single column to 767bytes (256 chars)
+     *
+     * @const single column index length limit, one utf-8 char is 3 bytes in the worst case
+     */
+    const INDEX_MAX_BYTES = 765;
+
+    /**
      * Creates one new xmldb_index
      */
     function __construct($name, $type=null, $fields=array()) {
@@ -270,6 +286,75 @@ class xmldb_index extends xmldb_object {
 
         return $o;
     }
+
+    /**
+     * Validates the index restrictions.
+     *
+     * The error message should not be localised because it is intended for developers,
+     * end users and admins should never see these problems!
+     *
+     * @param xmldb_table $xmldb_table optional when object is table
+     * @return string null if ok, error message if problem found
+     */
+    function validateDefinition(xmldb_table $xmldb_table=null) {
+        if (!$xmldb_table) {
+            return 'Invalid xmldb_index->validateDefinition() call, $xmldb_table si required.';
+        }
+
+        $total = 0;
+        foreach ($this->getFields() as $fieldname) {
+            if (!$field = $xmldb_table->getField($fieldname)) {
+                // argh, we do not have the fields loaded yet, this should not happen during install
+                continue;
+            }
+
+            switch ($field->getType()) {
+                case XMLDB_TYPE_INTEGER:
+                    $total += 8; // big int
+                break;
+
+                case XMLDB_TYPE_NUMBER:
+                    $total += 12; // this is just a guess
+                break;
+
+                case XMLDB_TYPE_FLOAT:
+                    $total += 8; // double precision
+                break;
+
+                case XMLDB_TYPE_CHAR:
+                    if ($field->getLength() > self::INDEX_MAX_BYTES / 3) {
+                        return 'Invalid index definition in table {'.$xmldb_table->getName(). '}: XMLDB_TYPE_CHAR field "'.$field->getName().'" can not be indexed because it is too long.'
+                                .' Limit is '.(self::INDEX_MAX_BYTES/3).' chars.';
+                    }
+                    $total += ($field->getLength() * 3); // the most complex utf-8 chars have 3 bytes
+                break;
+
+                case XMLDB_TYPE_TEXT:
+                    return 'Invalid index definition in table {'.$xmldb_table->getName(). '}: XMLDB_TYPE_TEXT field "'.$field->getName().'" can not be indexed';
+                break;
+
+                case XMLDB_TYPE_BINARY:
+                    return 'Invalid index definition in table {'.$xmldb_table->getName(). '}: XMLDB_TYPE_BINARY field "'.$field->getName().'" can not be indexed';
+                break;
+
+                case XMLDB_TYPE_DATETIME:
+                    $total += 8; // this is just a guess
+                break;
+
+                case XMLDB_TYPE_TIMESTAMP:
+                    $total += 8; // this is just a guess
+                break;
+            }
+        }
+
+        if ($total > self::INDEX_COMPOSED_MAX_BYTES) {
+            return 'Invalid index definition in table {'.$xmldb_table->getName(). '}: the composed index on fields "'.implode(',', $this->getFields()).'" is too long.'
+                    .' Limit is '.self::INDEX_COMPOSED_MAX_BYTES.' bytes / '.(self::INDEX_COMPOSED_MAX_BYTES/3).' chars.';
+        }
+
+        return null;
+    }
+
 }
 
 /// TODO: Delete for 2.1 (deprecated in 2.0).

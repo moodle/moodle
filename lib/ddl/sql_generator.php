@@ -348,6 +348,9 @@ abstract class sql_generator {
      * needed to create it (in array)
      */
     public function getCreateIndexSQL($xmldb_table, $xmldb_index) {
+        if ($error = $xmldb_index->validateDefinition($xmldb_table)) {
+            throw new coding_exception($error);
+        }
 
         $unique = '';
         $suffix = 'ix';
