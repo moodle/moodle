@@ -155,7 +155,7 @@ class qtype_ddimagetoimage extends question_type {
                                     '', 'no, id');
         foreach (array_keys($formdata->drags) as $dragno) {
             $info = file_get_draft_area_info($formdata->dragitem[$dragno]);
-            if ($info['filecount'] > 0 || !empty($formdata->drags[$dragno]['draglabel'])) {
+            if ($info['filecount'] > 1 || !empty($formdata->drags[$dragno]['draglabel'])) {
                 $draftitemid = $formdata->dragitem[$dragno];
 
                 $drag = new stdClass();
@@ -173,13 +173,22 @@ class qtype_ddimagetoimage extends question_type {
                     $drag->id = $DB->insert_record('qtype_ddimagetoimage_drags', $drag);
                 }
 
-                self::constrain_image_size_in_draft_area($draftitemid,
+                if ($formdata->dragitemtype[$dragno] == 'image') {
+                    self::constrain_image_size_in_draft_area($draftitemid,
                                         QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXWIDTH,
                                         QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXHEIGHT);
-                file_save_draft_area_files($draftitemid, $formdata->context->id,
+                    file_save_draft_area_files($draftitemid, $formdata->context->id,
                                         'qtype_ddimagetoimage', 'dragimage', $drag->id,
                                         array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1));
+                } else {
+                    //delete any existing files for draggable text item type
+                    $fs = get_file_storage();
+                    $fs->delete_area_files($formdata->context->id, 'qtype_ddimagetoimage',
+                                                                        'dragimage', $drag->id);
+                }
+
             }
+
         }
         if (!empty($olddragids)) {
             list($sql, $params) = $DB->get_in_or_equal(array_values($olddragids));
@@ -193,6 +202,7 @@ class qtype_ddimagetoimage extends question_type {
                                     'qtype_ddimagetoimage', 'bgimage', $formdata->id,
                                     array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1));
     }
+
 
     public static function constrain_image_size_in_draft_area($draftitemid, $maxwidth, $maxheight) {
         global $USER;

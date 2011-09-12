@@ -33,8 +33,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_ddimagetoimage_edit_form extends question_edit_form {
     const MAX_GROUPS = 8;
-    const START_NUM_IMAGES = 6;
-    const ADD_NUM_IMAGES = 3;
+    const START_NUM_ITEMS = 6;
+    const ADD_NUM_ITEMS = 3;
 
     public function qtype() {
         return 'ddimagetoimage';
@@ -61,14 +61,14 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
             }
         }
         if ($this->question->formoptions->repeatelements) {
-            $imagerepeatsatstart = max(self::START_NUM_IMAGES, $countimages + self::ADD_NUM_IMAGES);
+            $imagerepeatsatstart = max(self::START_NUM_ITEMS, $countimages + self::ADD_NUM_ITEMS);
         } else {
             $imagerepeatsatstart = $countimages;
         }
         $imagerepeats = optional_param('noimages', $imagerepeatsatstart, PARAM_INT);
         $addfields = optional_param('addimages', '', PARAM_TEXT);
         if (!empty($addfields)) {
-            $imagerepeats += self::ADD_NUM_IMAGES;
+            $imagerepeats += self::ADD_NUM_ITEMS;
         }
         return array($imagerepeatsatstart, $imagerepeats);
     }
@@ -116,15 +116,15 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
             }
         }
         if ($this->question->formoptions->repeatelements) {
-            $dropzonerepeatsatstart = max(self::START_NUM_IMAGES,
-                                                    $countdropzones + self::ADD_NUM_IMAGES);
+            $dropzonerepeatsatstart = max(self::START_NUM_ITEMS,
+                                                    $countdropzones + self::ADD_NUM_ITEMS);
         } else {
             $dropzonerepeatsatstart = $countdropzones;
         }
 
         $this->repeat_elements($this->drop_zone($mform, $imagerepeats), $dropzonerepeatsatstart,
                 $this->drop_zones_repeated_options(),
-                'nodropzone', 'adddropzone', self::ADD_NUM_IMAGES,
+                'nodropzone', 'adddropzone', self::ADD_NUM_ITEMS,
                 get_string('addmoredropzones', 'qtype_ddimagetoimage'));
     }
 
@@ -175,7 +175,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
 
         $this->repeat_elements($this->draggable_image($mform), $imagerepeatsatstart,
                 $this->draggable_images_repeated_options(),
-                'noimages', 'addimages', self::ADD_NUM_IMAGES,
+                'noitems', 'additems', self::ADD_NUM_ITEMS,
                 get_string('addmoreimages', 'qtype_ddimagetoimage'));
     }
 
@@ -184,8 +184,8 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
 
         $draggableimageitem[] = $mform->createElement('header', 'draggableitemheader',
                                 get_string('draggableitemheader', 'qtype_ddimagetoimage', '{no}'));
-        $dragitemtypes = array(0 => get_string('draggableimage', 'qtype_ddimagetoimage'),
-                            1 => get_string('draggableword', 'qtype_ddimagetoimage'));
+        $dragitemtypes = array('image' => get_string('draggableimage', 'qtype_ddimagetoimage'),
+                                'word' => get_string('draggableword', 'qtype_ddimagetoimage'));
         $draggableimageitem[] = $mform->createElement('select', 'dragitemtype',
                                             get_string('draggableitemtype', 'qtype_ddimagetoimage'),
                                             $dragitemtypes,
@@ -271,16 +271,16 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
         if (!empty($question->options)) {
             foreach ($question->options->drags as $drag) {
                 $dragindex = $drag->no -1;
-                if (!isset($draftitemids[$dragindex])) {
+                if (!isset($question->dragitem[$dragindex])) {
                     $fileexists = false;
                 } else {
-                    $fileexists = self::file_uploaded($draftitemids[$dragindex]);
+                    $fileexists = self::file_uploaded($question->dragitem[$dragindex]);
                 }
                 $labelexists = $question->drags[$dragindex]['draglabel'];
                 if ($labelexists && !$fileexists) {
-                    $question->dragitemtype[$dragindex] = 1;
+                    $question->dragitemtype[$dragindex] = 'word';
                 } else {
-                    $question->dragitemtype[$dragindex] = 0;
+                    $question->dragitemtype[$dragindex] = 'image';
                 }
             }
         }
@@ -315,7 +315,6 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
         return true;
     }
 
-
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         if (!self::file_uploaded($data['bgimage'])) {
@@ -340,6 +339,13 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
                                 get_string('formerror_noxleft', 'qtype_ddimagetoimage');
                 }
 
+                if ($data['dragitemtype'][$choice - 1] != 'word' &&
+                                        !self::file_uploaded($data['dragitem'][$choice - 1])) {
+                    $errors['dragitem['.($choice - 1).']'] =
+                                    get_string('formerror_nofile', 'qtype_ddimagetoimage', $i);
+                }
+
+
                 if (isset($allchoices[$choice]) && !$data['drags'][$choice-1]['infinite']) {
                     $errors["drops[$i]"] =
                      get_string('formerror_multipledraginstance', 'qtype_ddimagetoimage', $choice);
@@ -355,6 +361,20 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
                         get_string('formerror_noimageselected', 'qtype_ddimagetoimage');
                 }
             }
+        }
+        for ($dragindex=0; $dragindex < $data['noitems']; $dragindex++) {
+            $label = $data['drags'][$dragindex]['draglabel'];
+            if ($data['dragitemtype'][$dragindex] == 'word') {
+                $allowedtags = '<br><sub><sup><b><i><strong><em>';
+                $errormessage = get_string('formerror_disallowedtags', 'qtype_ddimagetoimage');
+            } else {
+                $allowedtags = '';
+                $errormessage = get_string('formerror_noallowedtags', 'qtype_ddimagetoimage');
+            }
+            if ($label != strip_tags($label, $allowedtags)){
+                $errors["drags[{$dragindex}]"] = $errormessage;
+            }
+
         }
         return $errors;
     }

@@ -84,7 +84,7 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
                 $dragimageurl = self::get_url_for_image($qa, 'dragimage', $dragimage->id);
                 $classes = array("group{$groupno}",
                                  'draghome',
-                                 "dragimagehomes{$dragimage->no}",
+                                 "dragitemhomes{$dragimage->no}",
                                  "choice{$choiceno}");
                 if ($dragimage->isinfinite) {
                     $classes[] = 'infinite';
