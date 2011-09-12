@@ -761,6 +761,10 @@ class page_wiki_editcomment extends page_wiki {
         $pageid = $this->page->id;
 
         if ($this->format == 'html') {
+            $com = new stdClass();
+            $com->action = 'add';
+            $com->commentoptions = array('trusttext' => true, 'maxfiles' => 0);
+            $this->form->set_data($com);
             $this->form->display();
         } else {
             wiki_print_editor_wiki($this->page->id, null, $this->format, -1, null, false, null, 'addcomments');
@@ -773,18 +777,14 @@ class page_wiki_editcomment extends page_wiki {
         require_once($CFG->dirroot . '/mod/wiki/editors/wiki_editor.php');
 
         if ($this->format == 'html') {
-            $commentoptions = array('trusttext' => true, 'maxfiles' => 0);
             $com->action = 'edit';
             $com->entrycomment_editor['text'] = $com->content;
+            $com->commentoptions = array('trusttext' => true, 'maxfiles' => 0);
 
-            $this->form->set_data($com, $commentoptions);
+            $this->form->set_data($com);
             $this->form->display();
         } else {
-            $action = 'edit';
-            $commentid = $com->id;
-            $pageid = $this->page->id;
-            $destination = $CFG->wwwroot . '/mod/wiki/instancecomments.php?pageid=' . $pageid . '&id=' . $commentid . '&action=' . $action;
-            wiki_print_editor_wiki($this->page->id, $com->content, $this->format, -1, null, false, array(), 'editcomments', $commentid);
+            wiki_print_editor_wiki($this->page->id, $com->content, $this->format, -1, null, false, array(), 'editcomments', $com->id);
         }
 
     }
@@ -1859,16 +1859,88 @@ class page_wiki_restoreversion extends page_wiki {
      *     If true, restores the old version and redirects the user to the 'view' tab.
      */
     private function print_restoreversion() {
-        global $CFG, $OUTPUT;
+        global $OUTPUT;
 
         $version = wiki_get_version($this->version->id);
 
+        $optionsyes = array('confirm'=>1, 'pageid'=>$this->page->id, 'versionid'=>$version->id, 'sesskey'=>sesskey());
+        $restoreurl = new moodle_url('/mod/wiki/restoreversion.php', $optionsyes);
+        $return = new moodle_url('/mod/wiki/viewversion.php', array('pageid'=>$this->page->id, 'versionid'=>$version->id));
+
         echo $OUTPUT->heading(get_string('restoreconfirm', 'wiki', $version->version), 2);
         print_container_start(false, 'wiki_restoreform');
-        echo '<form class="wiki_restore_yes" action="' . $CFG->wwwroot . '/mod/wiki/restoreversion.php?pageid=' . $this->page->id . '&amp;versionid=' . $version->id . '" method="post" id="restoreversion">';
+        echo '<form class="wiki_restore_yes" action="' . $restoreurl . '" method="post" id="restoreversion">';
         echo '<div><input type="submit" name="confirm" value="' . get_string('yes') . '" /></div>';
         echo '</form>';
-        echo '<form class="wiki_restore_no" action="' . $CFG->wwwroot . '/mod/wiki/viewversion.php?pageid=' . $this->page->id . '&amp;versionid=' . $version->id . '" method="post">';
+        echo '<form class="wiki_restore_no" action="' . $return . '" method="post">';
+        echo '<div><input type="submit" name="norestore" value="' . get_string('no') . '" /></div>';
+        echo '</form>';
+        print_container_end();
+    }
+}
+/**
+ * Class that models the behavior of wiki's delete comment confirmation page
+ *
+ */
+class page_wiki_deletecomment extends page_wiki {
+    private $commentid;
+
+    function print_header() {
+        parent::print_header();
+        $this->print_pagetitle();
+    }
+
+    function print_content() {
+        $this->printconfirmdelete();
+    }
+
+    function set_url() {
+        global $PAGE;
+        $PAGE->set_url('/mod/wiki/instancecomments.php', array('pageid' => $this->page->id, 'commentid' => $this->commentid));
+    }
+
+    public function set_action($action, $commentid, $content) {
+        $this->action = $action;
+        $this->commentid = $commentid;
+        $this->content = $content;
+    }
+
+    protected function create_navbar() {
+        global $PAGE;
+
+        parent::create_navbar();
+        $PAGE->navbar->add(get_string('deletecommentcheck', 'wiki'));
+    }
+
+    protected function setup_tabs() {
+        parent::setup_tabs(array('linkedwhenactive' => 'comments', 'activetab' => 'comments'));
+    }
+
+    /**
+     * Prints the comment deletion confirmation form
+     *
+     * @param page $page The page whose version will be restored
+     * @param int  $versionid The version to be restored
+     * @param bool $confirm If false, shows a yes/no confirmation page.
+     *     If true, restores the old version and redirects the user to the 'view' tab.
+     */
+    private function printconfirmdelete() {
+        global $OUTPUT;
+
+        $strdeletecheck = get_string('deletecommentcheck', 'wiki');
+        $strdeletecheckfull = get_string('deletecommentcheckfull', 'wiki');
+
+        //ask confirmation
+        $optionsyes = array('confirm'=>1, 'pageid'=>$this->page->id, 'action'=>'delete', 'commentid'=>$this->commentid, 'sesskey'=>sesskey());
+        $deleteurl = new moodle_url('/mod/wiki/instancecomments.php', $optionsyes);
+        $return = new moodle_url('/mod/wiki/comments.php', array('pageid'=>$this->page->id));
+
+        echo $OUTPUT->heading($strdeletecheckfull);
+        print_container_start(false, 'wiki_deletecommentform');
+        echo '<form class="wiki_deletecomment_yes" action="' . $deleteurl . '" method="post" id="deletecomment">';
+        echo '<div><input type="submit" name="confirmdeletecomment" value="' . get_string('yes') . '" /></div>';
+        echo '</form>';
+        echo '<form class="wiki_deletecomment_no" action="' . $return . '" method="post">';
         echo '<div><input type="submit" name="norestore" value="' . get_string('no') . '" /></div>';
         echo '</form>';
         print_container_end();
@@ -1876,7 +1948,6 @@ class page_wiki_restoreversion extends page_wiki {
 }
 
 /**
- *
  * Class that models the behavior of wiki's
  * save page
  *
