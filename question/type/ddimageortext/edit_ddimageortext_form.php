@@ -298,7 +298,7 @@ class qtype_ddimageortext_edit_form extends question_edit_form {
         $PAGE->requires->yui_module('moodle-qtype_ddimageortext-form',
                                         'M.qtype_ddimageortext.init_form',
                                         array($params));
-        $PAGE->requires->css('/lib/yui/3.2.0/build/cssfonts/fonts-context-min.css');
+        $PAGE->requires->css('/lib/yui/3.4.0/build/cssfonts/fonts-context-min.css');
 
         return $question;
     }
