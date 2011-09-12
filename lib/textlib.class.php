@@ -592,40 +592,46 @@ abstract class collatorlib {
                 $collator = new Collator($locale);
                 if (!empty($collator) && $collator instanceof Collator) {
                     // Check for non fatal error messages. This has to be done immediately
-                    // after instantiation as any futher calls to collation will cause
-                    // it to reset to 0 again (or another error code if one occured)
+                    // after instantiation as any further calls to collation will cause
+                    // it to reset to 0 again (or another error code if one occurred)
                     $errorcode = $collator->getErrorCode();
                     $errormessage = $collator->getErrorMessage();
-                    // Check for an error code, 0 means no error occured
+                    // Check for an error code, 0 means no error occurred
                     if ($errorcode !== 0) {
                         // Get the actual locale being used, e.g. en, he, zh
                         $localeinuse = $collator->getLocale(Locale::ACTUAL_LOCALE);
-                        // Check for the common fallback wardning error code. If this occured
-                        // there is normally little to worry about. (U_USING_FALLBACK_WARNING)
-                        if ($errorcode === -128) {
-                            // Check if the local in use is anything like the locale we asked for
-                            if (strpos($locale, $localeinuse) !== 0) {
+                        // Check for the common fallback warning error codes. If this occurred
+                        // there is normally little to worry about:
+                        // - U_USING_DEFAULT_WARNING (127)  - default fallback locale used (pt => UCA)
+                        // - U_USING_FALLBACK_WARNING (128) - fallback locale used (de_CH => de)
+                        // (UCA: Unicode Collation Algorithm http://unicode.org/reports/tr10/)
+                        if ($errorcode === -127 || $errorcode === -128) {
+                            // Check if the locale in use is UCA default one ('root') or
+                            // if it is anything like the locale we asked for
+                            if ($localeinuse !== 'root' && strpos($locale, $localeinuse) !== 0) {
                                 // The locale we asked for is completely different to the locale
-                                // we have recieved, let the user know via debugging
-                                debugging('Invalid locale, falling back to the system default locale "'.$collator->getLocale(Locale::VALID_LOCALE).'"');
+                                // we have received, let the user know via debugging
+                                debugging('Invalid locale: "' . $locale . '", with warning (not fatal) "' . $errormessage .
+                                    '", falling back to "' . $collator->getLocale(Locale::VALID_LOCALE) . '"');
                             } else {
                                 // Nothing to do here, this is expected!
                                 // The Moodle locale setting isn't what the collator expected but
                                 // it is smart enough to match the first characters of our locale
-                                // to find the correct locale
-                                // debugging('Invalid locale, falling back to closest match "'.$localeinuse.'" which may not be the exact locale');
+                                // to find the correct locale or to use UCA collation
                             }
                         } else {
                             // We've recieved some other sort of non fatal warning - let the
                             // user know about it via debugging.
-                            debugging('Locale collator generated warnings (not fatal) "'.$errormessage.'" falling back to '.$collator->getLocale(Locale::VALID_LOCALE));
+                            debugging('Problem with locale: "' . $locale . '", with message "' . $errormessage .
+                                '", falling back to "' . $collator->getLocale(Locale::VALID_LOCALE) . '"');
                         }
                     }
-                    // Store the collator object now that we can be sure it is in a workable condition.
+                    // Store the collator object now that we can be sure it is in a workable condition
                     self::$collator = $collator;
                 } else {
-                    // Fatal error while trying to instantiate the collator... who know what went wrong.
-                    debugging('Error instantiating collator: ['.collator_get_error_code($collator).']'.collator_get_error_message($collator));
+                    // Fatal error while trying to instantiate the collator... something went wrong
+                    debugging('Error instantiating collator for locale: "' . $locale . '", with error [' .
+                        intl_get_error_code() . '] ' . intl_get_error_message($collator));
                 }
             }
         }
