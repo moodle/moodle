@@ -54,7 +54,7 @@ function authorize_print_orders($courseid, $userid) {
     $searchtype = optional_param('searchtype', 'orderid', PARAM_ALPHA);
     $status = optional_param('status', AN_STATUS_NONE, PARAM_INT);
 
-    $coursecontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
 
     $searchmenu = array('orderid' => $authstrs->orderid, 'transid' => $authstrs->transid, 'cclastfour' => $authstrs->cclastfour);
     $buttons = "<form method='post' action='index.php' autocomplete='off'><div>";
@@ -63,7 +63,7 @@ function authorize_print_orders($courseid, $userid) {
     $buttons .= "<input type='submit' value='$strs->search' />";
     $buttons .= "</div></form>";
 
-    if (has_capability('enrol/authorize:uploadcsv', $coursecontext)) {
+    if (has_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_USER, $USER->id))) {
         $buttons .= "<form method='get' action='uploadcsv.php'><div><input type='submit' value='".get_string('uploadcsv', 'enrol_authorize')."' /></div></form>";
     }
 

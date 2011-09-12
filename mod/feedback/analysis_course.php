@@ -128,7 +128,7 @@ if ($courseitemfilter > 0) {
         $sep_thous = get_string('separator_thousand', 'feedback');
 
         foreach ($courses as $c) {
-            $shortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $c->course_id)));
+            $shortname = format_string($c->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $c->course_id)));
             echo '<tr><td>'.$shortname.'</td><td align="right">'.number_format(($c->avgvalue), 2, $sep_dec, $sep_thous).'</td></tr>';
         }
          echo '</table></td></tr>';

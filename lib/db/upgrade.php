@@ -6698,7 +6698,7 @@ FROM
 
     if ($oldversion < 2011090800) {
         // Increase the length of the of the course shortname field as it is now going
-        // to be consistently filtered and 100 characters if practically useless for
+        // to be consistently filtered and 100 characters is practically useless for
         // things like the multilang filter.
 
         $table = new xmldb_table('course');
