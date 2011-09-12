@@ -122,7 +122,7 @@ class assignment_base {
             print_error('invalidid', 'assignment');
         }
         $this->coursecontext = get_context_instance(CONTEXT_COURSE, $this->course->id);
-        $courseshortname = format_text($this->course->shortname, true, array('context' => $coursecontext));
+        $courseshortname = format_text($this->course->shortname, true, array('context' => $this->coursecontext));
 
         if ($assignment) {
             $this->assignment = $assignment;
