@@ -92,6 +92,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('navshowallcourses', get_string('navshowallcourses', 'admin'), get_string('confignavshowallcourses', 'admin'), 0));
     $temp->add(new admin_setting_configtext('navcourselimit',get_string('navcourselimit','admin'),get_string('confignavcourselimit', 'admin'),20,PARAM_INT));
     $temp->add(new admin_setting_configcheckbox('navlinkcoursesections', get_string('navlinkcoursesections', 'admin'), get_string('navlinkcoursesections_help', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('usesitenameforsitepages', get_string('usesitenameforsitepages', 'admin'), get_string('configusesitenameforsitepages', 'admin'), 0));
 
     $ADMIN->add('appearance', $temp);
 
