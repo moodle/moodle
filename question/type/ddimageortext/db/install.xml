@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/ddimagetoimage/db" VERSION="20110627" COMMENT="XMLDB file for Moodle question/type/ddimagetoimage"
+<XMLDB PATH="question/type/ddimageortext/db" VERSION="20110627" COMMENT="XMLDB file for Moodle question/type/ddimageortext"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="qtype_ddimagetoimage" COMMENT="Defines drag and drop (words into sentences) questions" NEXT="qtype_ddimagetoimage_drops">
+    <TABLE NAME="qtype_ddimageortext" COMMENT="Defines drag and drop (text or images onto a background image) questions" NEXT="qtype_ddimageortext_drops">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="questionid"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="shuffleanswers"/>
@@ -22,7 +22,7 @@
         <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="qtype_ddimagetoimage_drops" COMMENT="Drop boxes" PREVIOUS="qtype_ddimagetoimage" NEXT="qtype_ddimagetoimage_drags">
+    <TABLE NAME="qtype_ddimageortext_drops" COMMENT="Drop boxes" PREVIOUS="qtype_ddimageortext" NEXT="qtype_ddimageortext_drags">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="questionid"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="no"/>
@@ -37,7 +37,7 @@
         <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="qtype_ddimagetoimage_drags" COMMENT="Images to drag. Actual file names are not stored here we use the file names as found in the file storage area." PREVIOUS="qtype_ddimagetoimage_drops">
+    <TABLE NAME="qtype_ddimageortext_drags" COMMENT="Images to drag. Actual file names are not stored here we use the file names as found in the file storage area." PREVIOUS="qtype_ddimageortext_drops">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="questionid"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="no"/>

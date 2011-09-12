@@ -18,7 +18,7 @@
  * Unit tests for the drag-and-drop words into sentences question definition class.
  *
  * @package    qtype
- * @subpackage ddimagetoimage
+ * @subpackage ddimageortext
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
-require_once($CFG->dirroot . '/question/type/ddimagetoimage/simpletest/helper.php');
+require_once($CFG->dirroot . '/question/type/ddimageortext/simpletest/helper.php');
 
 
 /**
@@ -36,12 +36,12 @@ require_once($CFG->dirroot . '/question/type/ddimagetoimage/simpletest/helper.ph
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddimagetoimage_test extends UnitTestCase {
-    /** @var qtype_ddimagetoimage instance of the question type class to test. */
+class qtype_ddimageortext_test extends UnitTestCase {
+    /** @var qtype_ddimageortext instance of the question type class to test. */
     protected $qtype;
 
     public function setUp() {
-        $this->qtype = question_bank::get_qtype('ddimagetoimage');;
+        $this->qtype = question_bank::get_qtype('ddimageortext');;
     }
 
     public function tearDown() {
@@ -49,7 +49,7 @@ class qtype_ddimagetoimage_test extends UnitTestCase {
     }
 
     public function test_name() {
-        $this->assertEqual($this->qtype->name(), 'ddimagetoimage');
+        $this->assertEqual($this->qtype->name(), 'ddimageortext');
     }
 
     public function test_can_analyse_responses() {

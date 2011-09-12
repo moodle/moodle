@@ -18,7 +18,7 @@
  * Test helpers for the drag-and-drop words into sentences question type.
  *
  * @package    qtype
- * @subpackage ddimagetoimage
+ * @subpackage ddimageortext
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,42 +33,42 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddimagetoimage_test_helper extends question_test_helper {
+class qtype_ddimageortext_test_helper extends question_test_helper {
     public function get_test_questions() {
         return array('fox', 'maths');
     }
 
     /**
-     * @return qtype_ddimagetoimage_question
+     * @return qtype_ddimageortext_question
      */
-    public function make_ddimagetoimage_question_fox() {
-        question_bank::load_question_definition_classes('ddimagetoimage');
-        $dd = new qtype_ddimagetoimage_question();
+    public function make_ddimageortext_question_fox() {
+        question_bank::load_question_definition_classes('ddimageortext');
+        $dd = new qtype_ddimageortext_question();
 
         test_question_maker::initialise_a_question($dd);
 
         $dd->name = 'Drag-and-drop words into sentences question';
         $dd->questiontext = 'The quick brown fox jumped over the lazy dog.';
         $dd->generalfeedback = 'This sentence uses each letter of the alphabet.';
-        $dd->qtype = question_bank::get_qtype('ddimagetoimage');
+        $dd->qtype = question_bank::get_qtype('ddimageortext');
 
         $dd->shufflechoices = true;
 
         test_question_maker::set_standard_combined_feedback_fields($dd);
 
         $dd->choices = $this->make_choice_structure(array(
-                    new qtype_ddimagetoimage_drag_item('quick', 1, 1),
-                    new qtype_ddimagetoimage_drag_item('fox', 2, 1),
-                    new qtype_ddimagetoimage_drag_item('lazy', 1, 2),
-                    new qtype_ddimagetoimage_drag_item('dog', 2, 2)
+                    new qtype_ddimageortext_drag_item('quick', 1, 1),
+                    new qtype_ddimageortext_drag_item('fox', 2, 1),
+                    new qtype_ddimageortext_drag_item('lazy', 1, 2),
+                    new qtype_ddimageortext_drag_item('dog', 2, 2)
 
         ));
 
         $dd->places = $this->make_place_structure(array(
-                            new qtype_ddimagetoimage_drop_zone('', 1, 1),
-                            new qtype_ddimagetoimage_drop_zone('', 2, 1),
-                            new qtype_ddimagetoimage_drop_zone('', 3, 2),
-                            new qtype_ddimagetoimage_drop_zone('', 4, 2)
+                            new qtype_ddimageortext_drop_zone('', 1, 1),
+                            new qtype_ddimageortext_drop_zone('', 2, 1),
+                            new qtype_ddimageortext_drop_zone('', 3, 2),
+                            new qtype_ddimageortext_drop_zone('', 4, 2)
         ));
         $dd->rightchoices = array(1 => 1, 2 => 2, 3 => 1, 4 => 2);
 
@@ -95,11 +95,11 @@ class qtype_ddimagetoimage_test_helper extends question_test_helper {
     }
 
     /**
-     * @return qtype_ddimagetoimage_question
+     * @return qtype_ddimageortext_question
      */
-    public function make_ddimagetoimage_question_maths() {
-        question_bank::load_question_definition_classes('ddimagetoimage');
-        $dd = new qtype_ddimagetoimage_question();
+    public function make_ddimageortext_question_maths() {
+        question_bank::load_question_definition_classes('ddimageortext');
+        $dd = new qtype_ddimageortext_question();
 
         test_question_maker::initialise_a_question($dd);
 
@@ -107,22 +107,22 @@ class qtype_ddimagetoimage_test_helper extends question_test_helper {
         $dd->questiontext = 'Fill in the operators to make this equation work: ' .
                 '7 [[1]] 11 [[2]] 13 [[1]] 17 [[2]] 19 = 3';
         $dd->generalfeedback = 'This sentence uses each letter of the alphabet.';
-        $dd->qtype = question_bank::get_qtype('ddimagetoimage');
+        $dd->qtype = question_bank::get_qtype('ddimageortext');
 
         $dd->shufflechoices = true;
 
         test_question_maker::set_standard_combined_feedback_fields($dd);
 
         $dd->choices = $this->make_choice_structure(array(
-                new qtype_ddimagetoimage_drag_item('+', 1, 1),
-                new qtype_ddimagetoimage_drag_item('-', 2, 1)
+                new qtype_ddimageortext_drag_item('+', 1, 1),
+                new qtype_ddimageortext_drag_item('-', 2, 1)
         ));
 
         $dd->places = $this->make_place_structure(array(
-                            new qtype_ddimagetoimage_drop_zone('', 1, 1),
-                            new qtype_ddimagetoimage_drop_zone('', 2, 1),
-                            new qtype_ddimagetoimage_drop_zone('', 3, 1),
-                            new qtype_ddimagetoimage_drop_zone('', 4, 1)
+                            new qtype_ddimageortext_drop_zone('', 1, 1),
+                            new qtype_ddimageortext_drop_zone('', 2, 1),
+                            new qtype_ddimageortext_drop_zone('', 3, 1),
+                            new qtype_ddimageortext_drop_zone('', 4, 1)
         ));
         $dd->rightchoices = array(1 => 1, 2 => 2, 3 => 1, 4 => 2);
 

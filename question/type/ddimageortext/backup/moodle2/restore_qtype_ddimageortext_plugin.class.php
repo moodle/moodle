@@ -25,15 +25,15 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * restore plugin class that provides the necessary information
- * needed to restore one ddimagetoimage qtype plugin
+ * needed to restore one ddimageortext qtype plugin
  *
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_qtype_ddimagetoimage_plugin extends restore_qtype_plugin {
+class restore_qtype_ddimageortext_plugin extends restore_qtype_plugin {
 
     protected static function qtype_name() {
-        return 'ddimagetoimage';
+        return 'ddimageortext';
     }
 
     /**
@@ -76,7 +76,7 @@ class restore_qtype_ddimagetoimage_plugin extends restore_qtype_plugin {
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
         // If the question has been created by restore,
-        // we need to create its qtype_ddimagetoimage too
+        // we need to create its qtype_ddimageortext too
         if ($questioncreated) {
             // Adjust some columns
             $data->questionid = $newquestionid;

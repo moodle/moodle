@@ -24,15 +24,15 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Provides the information to backup ddimagetoimage questions
+ * Provides the information to backup ddimageortext questions
  *
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_qtype_ddimagetoimage_plugin extends backup_qtype_plugin {
+class backup_qtype_ddimageortext_plugin extends backup_qtype_plugin {
 
     protected static function qtype_name() {
-        return 'ddimagetoimage';
+        return 'ddimageortext';
     }
 
     /**

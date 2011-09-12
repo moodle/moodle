@@ -18,7 +18,7 @@
  * Drag-and-drop words into sentences question definition class.
  *
  * @package    qtype
- * @subpackage ddimagetoimage
+ * @subpackage ddimageortext
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/question/type/gapselect/questionbase.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddimagetoimage_question extends qtype_gapselect_question_base {
+class qtype_ddimageortext_question extends qtype_gapselect_question_base {
     public function clear_wrong_from_response(array $response) {
         foreach ($this->places as $place => $notused) {
             if (array_key_exists($this->field($place), $response) &&
@@ -81,7 +81,7 @@ class qtype_ddimagetoimage_question extends qtype_gapselect_question_base {
         } else {
             $validfilearea = false;
         }
-        if ($component == 'qtype_ddimagetoimage' && $validfilearea) {
+        if ($component == 'qtype_ddimageortext' && $validfilearea) {
             $question = $qa->get_question();
             $itemid = reset($args);
             if ($filearea == 'bgimage') {
@@ -105,7 +105,7 @@ class qtype_ddimagetoimage_question extends qtype_gapselect_question_base {
         if ($this->is_complete_response($response)) {
             return '';
         }
-        return get_string('pleasedraganimagetoeachdropregion', 'qtype_ddimagetoimage');
+        return get_string('pleasedraganimagetoeachdropregion', 'qtype_ddimageortext');
     }
 
     public function classify_response(array $response) {
@@ -166,7 +166,7 @@ class qtype_ddimagetoimage_question extends qtype_gapselect_question_base {
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddimagetoimage_drag_item {
+class qtype_ddimageortext_drag_item {
     public $id;
     public $text;
     public $no;
@@ -186,9 +186,9 @@ class qtype_ddimagetoimage_drag_item {
 
     public function summarise() {
         if (trim($this->text) != '') {
-            return get_string('summarisechoice', 'qtype_ddimagetoimage', $this);
+            return get_string('summarisechoice', 'qtype_ddimageortext', $this);
         } else {
-            return get_string('summarisechoiceno', 'qtype_ddimagetoimage', $this->no);
+            return get_string('summarisechoiceno', 'qtype_ddimageortext', $this->no);
         }
     }
 }
@@ -198,7 +198,7 @@ class qtype_ddimagetoimage_drag_item {
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddimagetoimage_drop_zone {
+class qtype_ddimageortext_drop_zone {
     public $no;
     public $text;
     public $group;
@@ -214,10 +214,10 @@ class qtype_ddimagetoimage_drop_zone {
     public function summarise() {
         if (trim($this->text) != '') {
             $summariseplace =
-                        get_string('summariseplace', 'qtype_ddimagetoimage', $this);
+                        get_string('summariseplace', 'qtype_ddimageortext', $this);
         } else {
             $summariseplace =
-                    get_string('summariseplaceno', 'qtype_ddimagetoimage', $this->no);
+                    get_string('summariseplaceno', 'qtype_ddimageortext', $this->no);
         }
         return $summariseplace;
     }

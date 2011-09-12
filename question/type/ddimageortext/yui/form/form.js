@@ -1,12 +1,12 @@
 /**
  * This is the question editing form code.
  */
-YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
-    var DDIMAGETOIMAGEFORMNAME = 'ddimagetoimage_form';
-    var DDIMAGETOIMAGE_FORM = function() {
-        DDIMAGETOIMAGE_FORM.superclass.constructor.apply(this, arguments);
+YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
+    var DDIMAGEORTEXTFORMNAME = 'ddimageortext_form';
+    var DDIMAGEORTEXT_FORM = function() {
+        DDIMAGEORTEXT_FORM.superclass.constructor.apply(this, arguments);
     };
-    Y.extend(DDIMAGETOIMAGE_FORM, M.qtype_ddimagetoimage.dd_base_class, {
+    Y.extend(DDIMAGEORTEXT_FORM, M.qtype_ddimageortext.dd_base_class, {
         fp : null,
 
         initializer : function(params) {
@@ -327,11 +327,11 @@ YUI.add('moodle-qtype_ddimagetoimage-form', function(Y) {
             }
             return toreturn;
         }
-    }, {NAME : DDIMAGETOIMAGEFORMNAME, ATTRS : {maxsizes:{value:null}}});
-    M.qtype_ddimagetoimage = M.qtype_ddimagetoimage || {};
-    M.qtype_ddimagetoimage.init_form = function(config) {
-        return new DDIMAGETOIMAGE_FORM(config);
+    }, {NAME : DDIMAGEORTEXTFORMNAME, ATTRS : {maxsizes:{value:null}}});
+    M.qtype_ddimageortext = M.qtype_ddimageortext || {};
+    M.qtype_ddimageortext.init_form = function(config) {
+        return new DDIMAGEORTEXT_FORM(config);
     }
 }, '@VERSION@', {
-    requires:['node', 'dd', 'dd-drop', 'dd-constrain', 'moodle-qtype_ddimagetoimage-dd', 'form_filepicker']
+    requires:['node', 'dd', 'dd-drop', 'dd-constrain', 'moodle-qtype_ddimageortext-dd', 'form_filepicker']
 });

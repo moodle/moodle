@@ -18,7 +18,7 @@
  * Question type class for the drag-and-drop images onto images question type.
  *
  * @package    qtype
- * @subpackage ddimagetoimage
+ * @subpackage ddimageortext
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,10 +31,10 @@ require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/question/format/xml/format.php');
 require_once($CFG->dirroot . '/question/type/gapselect/questiontypebase.php');
 
-define('QTYPE_DDIMAGETOIMAGE_BGIMAGE_MAXWIDTH', 600);
-define('QTYPE_DDIMAGETOIMAGE_BGIMAGE_MAXHEIGHT', 400);
-define('QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXWIDTH', 150);
-define('QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXHEIGHT', 100);
+define('QTYPE_DDIMAGEORTEXT_BGIMAGE_MAXWIDTH', 600);
+define('QTYPE_DDIMAGEORTEXT_BGIMAGE_MAXHEIGHT', 400);
+define('QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXWIDTH', 150);
+define('QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXHEIGHT', 100);
 
 /**
  * The drag-and-drop words into sentences question type class.
@@ -42,7 +42,7 @@ define('QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXHEIGHT', 100);
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddimagetoimage extends question_type {
+class qtype_ddimageortext extends question_type {
     protected function choice_group_key() {
         return 'draggroup';
     }
@@ -53,22 +53,22 @@ class qtype_ddimagetoimage extends question_type {
 
     public function get_question_options($question) {
         global $DB;
-        $question->options = $DB->get_record('qtype_ddimagetoimage',
+        $question->options = $DB->get_record('qtype_ddimageortext',
                 array('questionid' => $question->id), '*', MUST_EXIST);
-        $question->options->drags = $DB->get_records('qtype_ddimagetoimage_drags',
+        $question->options->drags = $DB->get_records('qtype_ddimageortext_drags',
                 array('questionid' => $question->id), 'no ASC', '*');
-        $question->options->drops = $DB->get_records('qtype_ddimagetoimage_drops',
+        $question->options->drops = $DB->get_records('qtype_ddimageortext_drops',
                 array('questionid' => $question->id), 'no ASC', '*');
         parent::get_question_options($question);
     }
 
     protected function make_choice($dragdata) {
-        return new qtype_ddimagetoimage_drag_item($dragdata->label, $dragdata->no,
+        return new qtype_ddimageortext_drag_item($dragdata->label, $dragdata->no,
                                         $dragdata->draggroup, $dragdata->infinite, $dragdata->id);
     }
 
     protected function make_place($dropzonedata) {
-        return new qtype_ddimagetoimage_drop_zone($dropzonedata->label, $dropzonedata->no,
+        return new qtype_ddimageortext_drop_zone($dropzonedata->label, $dropzonedata->no,
                                                     $dropzonedata->group,
                                                     $dropzonedata->xleft, $dropzonedata->ytop);
     }
@@ -119,21 +119,21 @@ class qtype_ddimagetoimage extends question_type {
         global $DB, $USER;
         $context = $formdata->context;
 
-        $options = $DB->get_record('qtype_ddimagetoimage', array('questionid' => $formdata->id));
+        $options = $DB->get_record('qtype_ddimageortext', array('questionid' => $formdata->id));
         if (!$options) {
             $options = new stdClass();
             $options->questionid = $formdata->id;
             $options->correctfeedback = '';
             $options->partiallycorrectfeedback = '';
             $options->incorrectfeedback = '';
-            $options->id = $DB->insert_record('qtype_ddimagetoimage', $options);
+            $options->id = $DB->insert_record('qtype_ddimageortext', $options);
         }
 
         $options->shuffleanswers = !empty($formdata->shuffleanswers);
         $options = $this->save_combined_feedback_helper($options, $formdata, $context, true);
         $this->save_hints($formdata, true);
-        $DB->update_record('qtype_ddimagetoimage', $options);
-        $DB->delete_records('qtype_ddimagetoimage_drops', array('questionid' => $formdata->id));
+        $DB->update_record('qtype_ddimageortext', $options);
+        $DB->delete_records('qtype_ddimageortext_drops', array('questionid' => $formdata->id));
         foreach (array_keys($formdata->drops) as $dropno) {
             if ($formdata->drops[$dropno]['choice'] == 0) {
                 continue;
@@ -146,11 +146,11 @@ class qtype_ddimagetoimage extends question_type {
             $drop->choice = $formdata->drops[$dropno]['choice'];
             $drop->label = $formdata->drops[$dropno]['droplabel'];
 
-            $DB->insert_record('qtype_ddimagetoimage_drops', $drop);
+            $DB->insert_record('qtype_ddimageortext_drops', $drop);
         }
 
         //an array of drag no -> drag id
-        $olddragids = $DB->get_records_menu('qtype_ddimagetoimage_drags',
+        $olddragids = $DB->get_records_menu('qtype_ddimageortext_drags',
                                     array('questionid' => $formdata->id),
                                     '', 'no, id');
         foreach (array_keys($formdata->drags) as $dragno) {
@@ -168,22 +168,22 @@ class qtype_ddimagetoimage extends question_type {
                 if (isset($olddragids[$dragno +1])) {
                     $drag->id = $olddragids[$dragno +1];
                     unset($olddragids[$dragno +1]);
-                    $DB->update_record('qtype_ddimagetoimage_drags', $drag);
+                    $DB->update_record('qtype_ddimageortext_drags', $drag);
                 } else {
-                    $drag->id = $DB->insert_record('qtype_ddimagetoimage_drags', $drag);
+                    $drag->id = $DB->insert_record('qtype_ddimageortext_drags', $drag);
                 }
 
                 if ($formdata->dragitemtype[$dragno] == 'image') {
                     self::constrain_image_size_in_draft_area($draftitemid,
-                                        QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXWIDTH,
-                                        QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXHEIGHT);
+                                        QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXWIDTH,
+                                        QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXHEIGHT);
                     file_save_draft_area_files($draftitemid, $formdata->context->id,
-                                        'qtype_ddimagetoimage', 'dragimage', $drag->id,
+                                        'qtype_ddimageortext', 'dragimage', $drag->id,
                                         array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1));
                 } else {
                     //delete any existing files for draggable text item type
                     $fs = get_file_storage();
-                    $fs->delete_area_files($formdata->context->id, 'qtype_ddimagetoimage',
+                    $fs->delete_area_files($formdata->context->id, 'qtype_ddimageortext',
                                                                         'dragimage', $drag->id);
                 }
 
@@ -192,14 +192,14 @@ class qtype_ddimagetoimage extends question_type {
         }
         if (!empty($olddragids)) {
             list($sql, $params) = $DB->get_in_or_equal(array_values($olddragids));
-            $DB->delete_records_select('qtype_ddimagetoimage_drags', "id $sql", $params);
+            $DB->delete_records_select('qtype_ddimageortext_drags', "id $sql", $params);
         }
 
         self::constrain_image_size_in_draft_area($formdata->bgimage,
-                                                    QTYPE_DDIMAGETOIMAGE_BGIMAGE_MAXWIDTH,
-                                                    QTYPE_DDIMAGETOIMAGE_BGIMAGE_MAXHEIGHT);
+                                                    QTYPE_DDIMAGEORTEXT_BGIMAGE_MAXWIDTH,
+                                                    QTYPE_DDIMAGEORTEXT_BGIMAGE_MAXHEIGHT);
         file_save_draft_area_files($formdata->bgimage, $formdata->context->id,
-                                    'qtype_ddimagetoimage', 'bgimage', $formdata->id,
+                                    'qtype_ddimageortext', 'bgimage', $formdata->id,
                                     array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1));
     }
 
@@ -253,12 +253,12 @@ class qtype_ddimagetoimage extends question_type {
 
         parent::move_files($questionid, $oldcontextid, $newcontextid);
         $fs->move_area_files_to_new_context($oldcontextid,
-                                    $newcontextid, 'qtype_ddimagetoimage', 'bgimage', $questionid);
-        $dragids = $DB->get_records_menu('qtype_ddimagetoimage_drags',
+                                    $newcontextid, 'qtype_ddimageortext', 'bgimage', $questionid);
+        $dragids = $DB->get_records_menu('qtype_ddimageortext_drags',
                                                 array('questionid' => $questionid), 'id', 'id,1');
         foreach ($dragids as $dragid => $notused) {
             $fs->move_area_files_to_new_context($oldcontextid,
-                                    $newcontextid, 'qtype_ddimagetoimage', 'dragimage', $dragid);
+                                    $newcontextid, 'qtype_ddimageortext', 'dragimage', $dragid);
         }
 
         $this->move_files_in_combined_feedback($questionid, $oldcontextid, $newcontextid);
@@ -276,10 +276,10 @@ class qtype_ddimagetoimage extends question_type {
 
         parent::delete_files($questionid, $contextid);
 
-        $dragids = $DB->get_records_menu('qtype_ddimagetoimage_drags',
+        $dragids = $DB->get_records_menu('qtype_ddimageortext_drags',
                                                 array('questionid' => $questionid), 'id', 'id,1');
         foreach ($dragids as $dragid => $notused) {
-            $fs->delete_area_files($contextid, 'qtype_ddimagetoimage', 'dragimage', $dragid);
+            $fs->delete_area_files($contextid, 'qtype_ddimageortext', 'dragimage', $dragid);
         }
 
         $this->delete_files_in_combined_feedback($questionid, $contextid);
@@ -295,12 +295,12 @@ class qtype_ddimagetoimage extends question_type {
         }
         $output .= $format->write_combined_feedback($question->options);
         $output .= $format->write_hints($question);
-        $files = $fs->get_area_files($contextid, 'qtype_ddimagetoimage', 'bgimage', $question->id);
+        $files = $fs->get_area_files($contextid, 'qtype_ddimageortext', 'bgimage', $question->id);
         $output .= "    ".$this->write_files($files, 2)."\n";;
 
         foreach ($question->options->drags as $drag) {
             $files =
-                    $fs->get_area_files($contextid, 'qtype_ddimagetoimage', 'dragimage', $drag->id);
+                    $fs->get_area_files($contextid, 'qtype_ddimageortext', 'dragimage', $drag->id);
             $output .= "    <drag>\n";
             $output .= "      <no>{$drag->no}</no>\n";
             $output .= $format->writetext($drag->label, 3)."\n";
@@ -325,12 +325,12 @@ class qtype_ddimagetoimage extends question_type {
     }
 
     public function import_from_xml($data, $question, $format, $extra=null) {
-        if (!isset($data['@']['type']) || $data['@']['type'] != 'ddimagetoimage') {
+        if (!isset($data['@']['type']) || $data['@']['type'] != 'ddimageortext') {
             return false;
         }
 
         $question = $format->import_headers($data);
-        $question->qtype = 'ddimagetoimage';
+        $question->qtype = 'ddimageortext';
 
         $question->shuffleanswers = array_key_exists('shuffleanswers',
                                                     $format->getpath($data, array('#'), array()));

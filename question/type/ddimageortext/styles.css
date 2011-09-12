@@ -1,24 +1,24 @@
-.que.ddimagetoimage .qtext {
+.que.ddimageortext .qtext {
     line-height: 2em;
     margin-bottom: 0.5em;
     display: block;
 }
 
-.que.ddimagetoimage .qtext * {
+.que.ddimageortext .qtext * {
     line-height: 2em;
 }
 
-.que.ddimagetoimage div.droparea img, form.mform fieldset#previewareaheader div.droparea img  {
+.que.ddimageortext div.droparea img, form.mform fieldset#previewareaheader div.droparea img  {
     border: 1px solid #000000;
 }
 
-.que.ddimagetoimage .draghome, form.mform fieldset#previewareaheader .draghome {
+.que.ddimageortext .draghome, form.mform fieldset#previewareaheader .draghome {
     vertical-align: top;
     margin: 5px;
     visibility : hidden;
 }
 
-.que.ddimagetoimage div.draghome, form.mform fieldset#previewareaheader div.draghome {
+.que.ddimageortext div.draghome, form.mform fieldset#previewareaheader div.draghome {
     border: 1px solid black;
     cursor: move;
     background-color: #B0C4DE;
@@ -30,45 +30,45 @@
     *display: inline;
 }
 
-.que.ddimagetoimage .group1, form.mform fieldset#previewareaheader .group1 {
+.que.ddimageortext .group1, form.mform fieldset#previewareaheader .group1 {
     background-color: #FFFFFF;
 }
-.que.ddimagetoimage .group2, form.mform fieldset#previewareaheader .group2 {
+.que.ddimageortext .group2, form.mform fieldset#previewareaheader .group2 {
     background-color: #B0C4DE;
 }
-.que.ddimagetoimage .group3, form.mform fieldset#previewareaheader .group3 {
+.que.ddimageortext .group3, form.mform fieldset#previewareaheader .group3 {
     background-color: #DCDCDC;
 }
-.que.ddimagetoimage .group4, form.mform fieldset#previewareaheader .group4 {
+.que.ddimageortext .group4, form.mform fieldset#previewareaheader .group4 {
     background-color: #D8BFD8;
 }
-.que.ddimagetoimage .group5, form.mform fieldset#previewareaheader .group5 {
+.que.ddimageortext .group5, form.mform fieldset#previewareaheader .group5 {
     background-color: #87CEFA;
 }
-.que.ddimagetoimage .group6, form.mform fieldset#previewareaheader .group6 {
+.que.ddimageortext .group6, form.mform fieldset#previewareaheader .group6 {
     background-color: #DAA520;
 }
-.que.ddimagetoimage .group7, form.mform fieldset#previewareaheader .group7 {
+.que.ddimageortext .group7, form.mform fieldset#previewareaheader .group7 {
     background-color: #FFD700;
 }
-.que.ddimagetoimage .group8, form.mform fieldset#previewareaheader .group8 {
+.que.ddimageortext .group8, form.mform fieldset#previewareaheader .group8 {
     background-color: #F0E68C;
 }
-.que.ddimagetoimage .drag, form.mform fieldset#previewareaheader .drag {
+.que.ddimageortext .drag, form.mform fieldset#previewareaheader .drag {
     border: 1px solid black;
     cursor: move;
     z-index: 2;
 }
-.que.ddimagetoimage .dragitems.readonly .drag {
+.que.ddimageortext .dragitems.readonly .drag {
     cursor: auto;
 }
-.que.ddimagetoimage div.ddarea, form.mform fieldset#previewareaheader div.ddarea {
+.que.ddimageortext div.ddarea, form.mform fieldset#previewareaheader div.ddarea {
     text-align : center;
 }
-.que.ddimagetoimage .dropbackground, form.mform fieldset#previewareaheader .dropbackground {
+.que.ddimageortext .dropbackground, form.mform fieldset#previewareaheader .dropbackground {
     margin:0 auto;
 }
-.que.ddimagetoimage .dropzone {
+.que.ddimageortext .dropzone {
     border: 1px solid black;
     position: absolute;
     z-index: 1;

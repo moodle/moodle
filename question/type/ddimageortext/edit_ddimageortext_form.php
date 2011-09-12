@@ -18,7 +18,7 @@
  * Defines the editing form for the drag-and-drop images onto images question type.
  *
  * @package    qtype
- * @subpackage ddimagetoimage
+ * @subpackage ddimageortext
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,13 +31,13 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddimagetoimage_edit_form extends question_edit_form {
+class qtype_ddimageortext_edit_form extends question_edit_form {
     const MAX_GROUPS = 8;
     const START_NUM_ITEMS = 6;
     const ADD_NUM_ITEMS = 3;
 
     public function qtype() {
-        return 'ddimagetoimage';
+        return 'ddimageortext';
     }
 
     /**
@@ -80,19 +80,19 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
     protected function definition_inner($mform) {
 
         $mform->addElement('header', 'previewareaheader',
-                            get_string('previewareaheader', 'qtype_ddimagetoimage'));
+                            get_string('previewareaheader', 'qtype_ddimageortext'));
         $mform->addElement('static', 'previewarea',
-                            get_string('previewarea', 'qtype_ddimagetoimage'),
-                            get_string('previewareamessage', 'qtype_ddimagetoimage'));
+                            get_string('previewarea', 'qtype_ddimageortext'),
+                            get_string('previewareamessage', 'qtype_ddimageortext'));
 
         $mform->registerNoSubmitButton('refresh');
-        $mform->addElement('submit', 'refresh', get_string('refresh', 'qtype_ddimagetoimage'));
+        $mform->addElement('submit', 'refresh', get_string('refresh', 'qtype_ddimageortext'));
         $mform->closeHeaderBefore('refresh');
 
         list($imagerepeatsatstart, $imagerepeats) = $this->get_drag_image_repeats();
         $this->definition_drop_zones($mform, $imagerepeats);
         $mform->addElement('advcheckbox', 'shuffleanswers', ' ',
-                                        get_string('shuffleimages', 'qtype_ddimagetoimage'));
+                                        get_string('shuffleimages', 'qtype_ddimageortext'));
         $mform->setDefault('shuffleanswers', 0);
         $mform->closeHeaderBefore('shuffleanswers');
         //add the draggable image fields to the form
@@ -104,9 +104,9 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
 
     protected function definition_drop_zones($mform, $imagerepeats) {
         $mform->addElement('header', 'dropzoneheader',
-                                    get_string('dropzoneheader', 'qtype_ddimagetoimage'));
+                                    get_string('dropzoneheader', 'qtype_ddimageortext'));
 
-        $mform->addElement('filepicker', 'bgimage', get_string('bgimage', 'qtype_ddimagetoimage'),
+        $mform->addElement('filepicker', 'bgimage', get_string('bgimage', 'qtype_ddimageortext'),
                                                                null, self::file_picker_options());
 
         $countdropzones = 0;
@@ -125,7 +125,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
         $this->repeat_elements($this->drop_zone($mform, $imagerepeats), $dropzonerepeatsatstart,
                 $this->drop_zones_repeated_options(),
                 'nodropzone', 'adddropzone', self::ADD_NUM_ITEMS,
-                get_string('addmoredropzones', 'qtype_ddimagetoimage'));
+                get_string('addmoredropzones', 'qtype_ddimageortext'));
     }
 
     protected function drop_zone($mform, $imagerepeats) {
@@ -133,15 +133,15 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
 
         $grouparray = array();
         $grouparray[] = $mform->createElement('static', 'xleftlabel', '',
-                ' '.get_string('xleft', 'qtype_ddimagetoimage').' ');
+                ' '.get_string('xleft', 'qtype_ddimageortext').' ');
         $grouparray[] = $mform->createElement('text', 'xleft',
-                                                get_string('xleft', 'qtype_ddimagetoimage'),
+                                                get_string('xleft', 'qtype_ddimageortext'),
                                                 array('size'=>5, 'class'=>'tweakcss'));
         $mform->setType('xleft', PARAM_NOTAGS);
         $grouparray[] = $mform->createElement('static', 'ytoplabel', '',
-                ' '.get_string('ytop', 'qtype_ddimagetoimage').' ');
+                ' '.get_string('ytop', 'qtype_ddimageortext').' ');
         $grouparray[] = $mform->createElement('text', 'ytop',
-                                                get_string('ytop', 'qtype_ddimagetoimage'),
+                                                get_string('ytop', 'qtype_ddimageortext'),
                                                 array('size'=>5, 'class'=>'tweakcss'));
         $mform->setType('ytop', PARAM_NOTAGS);
         $options = array();
@@ -151,17 +151,17 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
             $options[$i] = $i;
         }
         $grouparray[] = $mform->createElement('static', '', '', ' ' .
-                                        get_string('draggableitem', 'qtype_ddimagetoimage').' ');
+                                        get_string('draggableitem', 'qtype_ddimageortext').' ');
         $grouparray[] = $mform->createElement('select', 'choice',
-                                    get_string('draggableitem', 'qtype_ddimagetoimage'), $options);
+                                    get_string('draggableitem', 'qtype_ddimageortext'), $options);
         $grouparray[] = $mform->createElement('static', '', '', ' ' .
-                                        get_string('label', 'qtype_ddimagetoimage').' ');
+                                        get_string('label', 'qtype_ddimageortext').' ');
         $grouparray[] = $mform->createElement('text', 'droplabel',
-                                                get_string('label', 'qtype_ddimagetoimage'),
+                                                get_string('label', 'qtype_ddimageortext'),
                                                 array('size'=>10, 'class'=>'tweakcss'));
         $mform->setType('droplabel', PARAM_NOTAGS);
         $dropzone = $mform->createElement('group', 'drops',
-                get_string('dropzone', 'qtype_ddimagetoimage', '{no}'), $grouparray);
+                get_string('dropzone', 'qtype_ddimageortext', '{no}'), $grouparray);
         return array($dropzone);
     }
 
@@ -176,18 +176,18 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
         $this->repeat_elements($this->draggable_image($mform), $imagerepeatsatstart,
                 $this->draggable_images_repeated_options(),
                 'noitems', 'additems', self::ADD_NUM_ITEMS,
-                get_string('addmoreimages', 'qtype_ddimagetoimage'));
+                get_string('addmoreimages', 'qtype_ddimageortext'));
     }
 
     protected function draggable_image($mform) {
         $draggableimageitem = array();
 
         $draggableimageitem[] = $mform->createElement('header', 'draggableitemheader',
-                                get_string('draggableitemheader', 'qtype_ddimagetoimage', '{no}'));
-        $dragitemtypes = array('image' => get_string('draggableimage', 'qtype_ddimagetoimage'),
-                                'word' => get_string('draggableword', 'qtype_ddimagetoimage'));
+                                get_string('draggableitemheader', 'qtype_ddimageortext', '{no}'));
+        $dragitemtypes = array('image' => get_string('draggableimage', 'qtype_ddimageortext'),
+                                'word' => get_string('draggableword', 'qtype_ddimageortext'));
         $draggableimageitem[] = $mform->createElement('select', 'dragitemtype',
-                                            get_string('draggableitemtype', 'qtype_ddimagetoimage'),
+                                            get_string('draggableitemtype', 'qtype_ddimageortext'),
                                             $dragitemtypes,
                                             array('class' => 'dragitemtype'));
         $draggableimageitem[] = $mform->createElement('filepicker', 'dragitem', '', null,
@@ -195,7 +195,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
 
         $grouparray = array();
         $grouparray[] = $mform->createElement('text', 'draglabel',
-                                                get_string('label', 'qtype_ddimagetoimage'),
+                                                get_string('label', 'qtype_ddimageortext'),
                                                 array('size'=>30, 'class'=>'tweakcss'));
         $mform->setType('draglabel', PARAM_NOTAGS);
         $options = array();
@@ -209,9 +209,9 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
                                                 $options,
                                                 array('class' => 'draggroup'));
         $grouparray[] = $mform->createElement('advcheckbox', 'infinite', ' ',
-                get_string('infinite', 'qtype_ddimagetoimage'));
+                get_string('infinite', 'qtype_ddimageortext'));
         $draggableimageitem[] = $mform->createElement('group', 'drags',
-                get_string('label', 'qtype_ddimagetoimage'), $grouparray);
+                get_string('label', 'qtype_ddimageortext'), $grouparray);
         return $draggableimageitem;
     }
 
@@ -252,7 +252,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
         //initialise file picker for bgimage
         $draftitemid = file_get_submitted_draft_itemid('bgimage');
 
-        file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddimagetoimage',
+        file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddimageortext',
                                 'bgimage', !empty($question->id) ? (int) $question->id : null,
                                 self::file_picker_options());
         $question->bgimage = $draftitemid;
@@ -264,7 +264,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
             $draftitemid = isset($draftitemids[$imageindex]) ? $draftitemids[$imageindex] :0;
             //numbers not allowed in filearea name
             $itemid = isset($dragids[$imageindex]) ? $dragids[$imageindex] : null;
-            file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddimagetoimage',
+            file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddimageortext',
                                 'dragimage', $itemid, self::file_picker_options());
             $question->dragitem[$imageindex] = $draftitemid;
         }
@@ -286,17 +286,17 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
         }
         $maxsizes =new stdClass();
         $maxsizes->bgimage = new stdClass();
-        $maxsizes->bgimage->width = QTYPE_DDIMAGETOIMAGE_BGIMAGE_MAXWIDTH;
-        $maxsizes->bgimage->height = QTYPE_DDIMAGETOIMAGE_BGIMAGE_MAXHEIGHT;
+        $maxsizes->bgimage->width = QTYPE_DDIMAGEORTEXT_BGIMAGE_MAXWIDTH;
+        $maxsizes->bgimage->height = QTYPE_DDIMAGEORTEXT_BGIMAGE_MAXHEIGHT;
         $maxsizes->dragimage = new stdClass();
-        $maxsizes->dragimage->width = QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXWIDTH;
-        $maxsizes->dragimage->height = QTYPE_DDIMAGETOIMAGE_DRAGIMAGE_MAXHEIGHT;
+        $maxsizes->dragimage->width = QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXWIDTH;
+        $maxsizes->dragimage->height = QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXHEIGHT;
 
         $params = array('maxsizes' => $maxsizes,
                         'topnode' => 'fieldset#previewareaheader');
 
-        $PAGE->requires->yui_module('moodle-qtype_ddimagetoimage-form',
-                                        'M.qtype_ddimagetoimage.init_form',
+        $PAGE->requires->yui_module('moodle-qtype_ddimageortext-form',
+                                        'M.qtype_ddimageortext.init_form',
                                         array($params));
         $PAGE->requires->css('/lib/yui/3.2.0/build/cssfonts/fonts-context-min.css');
 
@@ -318,7 +318,7 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         if (!self::file_uploaded($data['bgimage'])) {
-            $errors["bgimage"] = get_string('formerror_nobgimage', 'qtype_ddimagetoimage');
+            $errors["bgimage"] = get_string('formerror_nobgimage', 'qtype_ddimageortext');
         }
 
         $allchoices = array();
@@ -332,33 +332,33 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
             if ($imagechoicepresent) {
                 if (!$ytoppresent) {
                     $errors["drops[$i]"] =
-                                    get_string('formerror_noytop', 'qtype_ddimagetoimage');
+                                    get_string('formerror_noytop', 'qtype_ddimageortext');
                 }
                 if (!$xleftpresent) {
                     $errors["drops[$i]"] =
-                                get_string('formerror_noxleft', 'qtype_ddimagetoimage');
+                                get_string('formerror_noxleft', 'qtype_ddimageortext');
                 }
 
                 if ($data['dragitemtype'][$choice - 1] != 'word' &&
                                         !self::file_uploaded($data['dragitem'][$choice - 1])) {
                     $errors['dragitem['.($choice - 1).']'] =
-                                    get_string('formerror_nofile', 'qtype_ddimagetoimage', $i);
+                                    get_string('formerror_nofile', 'qtype_ddimageortext', $i);
                 }
 
 
                 if (isset($allchoices[$choice]) && !$data['drags'][$choice-1]['infinite']) {
                     $errors["drops[$i]"] =
-                     get_string('formerror_multipledraginstance', 'qtype_ddimagetoimage', $choice);
+                     get_string('formerror_multipledraginstance', 'qtype_ddimageortext', $choice);
                     $errors['drops['.($allchoices[$choice]).']'] =
-                     get_string('formerror_multipledraginstance', 'qtype_ddimagetoimage', $choice);
+                     get_string('formerror_multipledraginstance', 'qtype_ddimageortext', $choice);
                     $errors['drags['.($choice-1).']'] =
-                     get_string('formerror_multipledraginstance2', 'qtype_ddimagetoimage', $choice);
+                     get_string('formerror_multipledraginstance2', 'qtype_ddimageortext', $choice);
                 }
                 $allchoices[$choice] = $i;
             } else {
                 if ($ytoppresent || $xleftpresent || $labelpresent) {
                     $errors["drops[$i]"] =
-                        get_string('formerror_noimageselected', 'qtype_ddimagetoimage');
+                        get_string('formerror_noimageselected', 'qtype_ddimageortext');
                 }
             }
         }
@@ -366,10 +366,10 @@ class qtype_ddimagetoimage_edit_form extends question_edit_form {
             $label = $data['drags'][$dragindex]['draglabel'];
             if ($data['dragitemtype'][$dragindex] == 'word') {
                 $allowedtags = '<br><sub><sup><b><i><strong><em>';
-                $errormessage = get_string('formerror_disallowedtags', 'qtype_ddimagetoimage');
+                $errormessage = get_string('formerror_disallowedtags', 'qtype_ddimageortext');
             } else {
                 $allowedtags = '';
-                $errormessage = get_string('formerror_noallowedtags', 'qtype_ddimagetoimage');
+                $errormessage = get_string('formerror_noallowedtags', 'qtype_ddimageortext');
             }
             if ($label != strip_tags($label, $allowedtags)){
                 $errors["drags[{$dragindex}]"] = $errormessage;

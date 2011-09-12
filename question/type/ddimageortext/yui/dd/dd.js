@@ -1,12 +1,12 @@
-YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
-    var DDIMAGETOIMAGEDDNAME = 'ddimagetoimage_dd';
-    var DDIMAGETOIMAGE_DD = function() {
-        DDIMAGETOIMAGE_DD.superclass.constructor.apply(this, arguments);
+YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
+    var DDIMAGEORTEXTDDNAME = 'ddimageortext_dd';
+    var DDIMAGEORTEXT_DD = function() {
+        DDIMAGEORTEXT_DD.superclass.constructor.apply(this, arguments);
     }
     /**
      * This is the base class for the question rendering and question editing form code.
      */
-    Y.extend(DDIMAGETOIMAGE_DD, Y.Base, {
+    Y.extend(DDIMAGEORTEXT_DD, Y.Base, {
         doc : null,
         polltimer : null,
         afterimageloaddone : false,
@@ -215,24 +215,24 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                     +bgimgxy[1] + this.doc.bg_img().getY()];
         }
     }, {
-        NAME : DDIMAGETOIMAGEDDNAME,
+        NAME : DDIMAGEORTEXTDDNAME,
         ATTRS : {
             drops : {value : null},
             readonly : {value : false},
             topnode : {value : null}
         }
     });
-    M.qtype_ddimagetoimage = M.qtype_ddimagetoimage || {};
-    M.qtype_ddimagetoimage.dd_base_class = DDIMAGETOIMAGE_DD;
+    M.qtype_ddimageortext = M.qtype_ddimageortext || {};
+    M.qtype_ddimageortext.dd_base_class = DDIMAGEORTEXT_DD;
 
-    var DDIMAGETOIMAGEQUESTIONNAME = 'ddimagetoimage_question';
-    var DDIMAGETOIMAGE_QUESTION = function() {
-        DDIMAGETOIMAGE_QUESTION.superclass.constructor.apply(this, arguments);
+    var DDIMAGEORTEXTQUESTIONNAME = 'ddimageortext_question';
+    var DDIMAGEORTEXT_QUESTION = function() {
+        DDIMAGEORTEXT_QUESTION.superclass.constructor.apply(this, arguments);
     };
     /**
      * This is the code for question rendering.
      */
-    Y.extend(DDIMAGETOIMAGE_QUESTION, M.qtype_ddimagetoimage.dd_base_class, {
+    Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
         initializer : function(params) {
             this.doc = this.doc_structure(this);
             this.poll_for_image_load(null, false, 0, this.create_all_drag_and_drops);
@@ -430,7 +430,7 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                 }, this);
             };
         }
-    }, {NAME : DDIMAGETOIMAGEQUESTIONNAME, ATTRS : {}});
+    }, {NAME : DDIMAGEORTEXTQUESTIONNAME, ATTRS : {}});
 
     Y.Event.define('dragchange', {
         // Webkit and IE repeat keydown when you hold down arrow keys.
@@ -460,8 +460,8 @@ YUI.add('moodle-qtype_ddimagetoimage-dd', function(Y) {
                                     this, notifier);
         }
     });
-    M.qtype_ddimagetoimage.init_question = function(config) {
-        return new DDIMAGETOIMAGE_QUESTION(config);
+    M.qtype_ddimageortext.init_question = function(config) {
+        return new DDIMAGEORTEXT_QUESTION(config);
     }
 }, '@VERSION@', {
       requires:['node', 'dd', 'dd-drop', 'dd-constrain']

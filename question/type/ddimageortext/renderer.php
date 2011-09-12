@@ -18,7 +18,7 @@
  * Drag-and-drop words into sentences question renderer class.
  *
  * @package    qtype
- * @subpackage ddimagetoimage
+ * @subpackage ddimageortext
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/question/type/gapselect/rendererbase.php');
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_renderer {
+class qtype_ddimageortext_renderer extends qtype_with_combined_feedback_renderer {
 
     public function head_code(question_attempt $qa) {
         $this->page->requires->css('/lib/yui/3.4.0/build/csscssfonts/fonts-context-min.css');
@@ -125,8 +125,8 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
                         'topnode' => $topnode,
                         'readonly' => $options->readonly);
 
-        $PAGE->requires->yui_module('moodle-qtype_ddimagetoimage-dd',
-                                        'M.qtype_ddimagetoimage.init_question',
+        $PAGE->requires->yui_module('moodle-qtype_ddimageortext-dd',
+                                        'M.qtype_ddimageortext.init_question',
                                         array($params));
 
         if ($qa->get_state() == question_state::$invalid) {
@@ -145,14 +145,14 @@ class qtype_ddimagetoimage_renderer extends qtype_with_combined_feedback_rendere
         if ($filearea == 'bgimage') {
             $itemid = $question->id;
         }
-        $draftfiles = $fs->get_area_files($question->contextid, 'qtype_ddimagetoimage',
+        $draftfiles = $fs->get_area_files($question->contextid, 'qtype_ddimageortext',
                                                                     $filearea, $itemid, 'id');
         if ($draftfiles) {
             foreach ($draftfiles as $file) {
                 if ($file->is_directory()) {
                     continue;
                 }
-                $url = moodle_url::make_pluginfile_url($question->contextid, 'qtype_ddimagetoimage',
+                $url = moodle_url::make_pluginfile_url($question->contextid, 'qtype_ddimageortext',
                                             $filearea, "$qubaid/$slot/{$itemid}", '/',
                                             $file->get_filename());
                 return $url->out();
