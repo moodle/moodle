@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/mod/wiki/pagelib.php');
 
 $pageid = required_param('pageid', PARAM_INT);
 $versionid = required_param('versionid', PARAM_INT);
-$confirm = optional_param('confirm', '', PARAM_ALPHA);
+$confirm = optional_param('confirm', 0, PARAM_BOOL);
 
 if (!$page = wiki_get_page($pageid)) {
     print_error('incorrectpageid', 'wiki');
@@ -63,7 +63,9 @@ require_login($course->id, true, $cm);
 add_to_log($course->id, "restore", "restore", "view.php?id=$cm->id", "$wiki->id");
 
 if ($confirm) {
-
+    if (!confirm_sesskey()) {
+        print_error(get_string('invalidsesskey', 'wiki'));
+    }
     $wikipage = new page_wiki_confirmrestore($wiki, $subwiki, $cm);
     $wikipage->set_page($page);
     $wikipage->set_versionid($versionid);
