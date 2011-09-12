@@ -446,6 +446,14 @@ class enrol_database_plugin extends enrol_plugin {
                     }
                 }
 
+                // assign extra roles
+                foreach ($userroles as $roleid) {
+                    if (empty($current_roles[$userid][$roleid])) {
+                        role_assign($roleid, $userid, $context->id, 'enrol_database', $instance->id);
+                        $current_roles[$userid][$roleid] = $roleid;
+                    }
+                }
+
                 // unassign removed roles
                 foreach($current_roles[$userid] as $cr) {
                     if (empty($userroles[$cr])) {
