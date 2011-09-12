@@ -6709,8 +6709,16 @@ FROM
         upgrade_main_savepoint(true, 2011090700.01);
     }
 
+    if ($oldversion < 2011091200.00) {
+        //preference not required since 2.0
+        $DB->delete_records('user_preferences', array('name'=>'message_showmessagewindow'));
+
+        //re-introducing emailstop. check that its turned off so people dont suddenly stop getting notifications
+        $DB->set_field('user', 'emailstop', 0, array('emailstop' => 1));
+
+        upgrade_main_savepoint(true, 2011091200.00);
+    }
+
     return true;
 }
 
-
-//TODO: AFTER 2.0 remove the column user->emailstop and the user preference "message_showmessagewindow"

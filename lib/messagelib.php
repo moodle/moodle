@@ -131,6 +131,7 @@ function message_send($eventdata) {
         }
 
         // Find out if user has configured this output
+        // Some processors cannot function without settings from the user
         $userisconfigured = $processor->object->is_user_configured($eventdata->userto);
 
         // DEBUG: notify if we are forcing unconfigured output
@@ -142,7 +143,7 @@ function message_send($eventdata) {
         if ($permitted == 'forced' && $userisconfigured) {
             // We force messages for this processor, so use this processor unconditionally if user has configured it
             $processorlist[] = $processor->name;
-        } else if ($permitted == 'permitted' && $userisconfigured) {
+        } else if ($permitted == 'permitted' && $userisconfigured && !$eventdata->userto->emailstop) {
             // User settings are permitted, see if user set any, otherwise use site default ones
             $userpreferencename = 'message_provider_'.$preferencebase.'_'.$userstate;
             if ($userpreference = get_user_preferences($userpreferencename, null, $eventdata->userto->id)) {
