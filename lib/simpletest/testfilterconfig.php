@@ -548,6 +548,180 @@ class filter_get_active_available_in_context_test extends UnitTestCaseUsingDatab
     }
 }
 
+class filter_preload_activities_test extends UnitTestCaseUsingDatabase {
+    private $syscontext, $catcontext, $coursecontext, $activity1context, $activity2context;
+
+    public function setUp() {
+        parent::setUp();
+
+        // Make sure accesslib has cached a sensible system context object
+        // before we switch to the test DB.
+        $this->syscontext = get_context_instance(CONTEXT_SYSTEM);
+
+        // Create the table we need and switch to test DB.
+        $this->create_test_tables(array('filter_active', 'filter_config', 'context',
+            'course', 'course_modules', 'modules', 'course_sections',
+            'course_modules_availability', 'grade_items'), 'lib');
+        $this->create_test_tables(array('label'), 'mod/label');
+        $this->switch_to_test_db();
+
+        // Set up systcontext in the test database.
+        $this->syscontext->id = $this->testdb->insert_record('context', $this->syscontext);
+
+        // Make the course
+        $course = (object)array(
+            'shortname' => 'TEST101');
+        $course->id = $this->testdb->insert_record('course', $course);
+
+        // Set up category and course contexts
+        $this->catcontext = (object)array(
+            'contextlevel' => CONTEXT_COURSECAT,
+            'instanceid' => 1,
+            'depth' => 2,
+            'path' => '/1/2');
+        $this->catcontext->id = $this->testdb->insert_record('context', $this->catcontext);
+        $this->coursecontext = (object)array(
+            'contextlevel' => CONTEXT_COURSE,
+            'instanceid' => $course->id,
+            'depth' => 3,
+            'path' => '/1/2/3');
+        $this->coursecontext->id = $this->testdb->insert_record('context', $this->coursecontext);
+
+        // Set up section
+        $section = (object)array(
+            'course' => $course->id);
+        $section->id = $this->testdb->insert_record('course_sections', $section);
+
+        // Make course-modules
+        $mod = (object)array(
+            'name' => 'label',
+            'visible' => 1);
+        $mod->id = $this->testdb->insert_record('modules', $mod);
+        $label1 = (object)array(
+            'course' => $course->id,
+            'intro' => 'Intro 1',
+            'name' => 'Label 1');
+        $label1->id = $this->testdb->insert_record('label', $label1);
+        $cm1 = (object)array(
+            'course' => $course->id,
+            'section' => $section->id,
+            'module' => $mod->id,
+            'instance' => $label1->id);
+        $cm1->id = $this->testdb->insert_record('course_modules', $cm1);
+        $label2 = (object)array(
+            'course' => $course->id,
+            'intro' => 'Intro 2',
+            'name' => 'Label 2');
+        $label2->id = $this->testdb->insert_record('label', $label2);
+        $cm2 = (object)array(
+            'course' => $course->id,
+            'section' => $section->id,
+            'module' => $mod->id,
+            'instance' => $label2->id);
+        $cm2->id = $this->testdb->insert_record('course_modules', $cm2);
+        $this->testdb->set_field('course_sections', 'sequence',
+            "$cm1->id,$cm2->id", array('id' => $section->id));
+
+        // Set up activity contexts
+        $this->activity1context = (object)array(
+            'contextlevel' => CONTEXT_MODULE,
+            'instanceid' => $cm1->id,
+            'depth' => 4,
+            'path' => '/1/2/3/4');
+        $this->activity1context->id =
+                $this->testdb->insert_record('context', $this->activity1context);
+        $this->activity2context = (object)array(
+                'contextlevel' => CONTEXT_MODULE,
+                'instanceid' => $cm2->id,
+                'depth' => 4,
+                'path' => '/1/2/3/5');
+        $this->activity2context->id =
+                $this->testdb->insert_record('context', $this->activity2context);
+    }
+
+    private function assert_matches($modinfo) {
+        global $FILTERLIB_PRIVATE;
+
+        // Use preload cache...
+        $FILTERLIB_PRIVATE = new stdClass;
+        filter_preload_activities($modinfo);
+
+        // Get data and check no queries are made
+        $before = $this->testdb->perf_get_reads();
+        $plfilters1 = filter_get_active_in_context($this->activity1context);
+        $plfilters2 = filter_get_active_in_context($this->activity2context);
+        $after = $this->testdb->perf_get_reads();
+        $this->assertEqual($before, $after);
+
+        // Repeat without cache and check it makes queries now
+        $FILTERLIB_PRIVATE = new stdClass;
+        $before = $this->testdb->perf_get_reads();
+        $filters1 = filter_get_active_in_context($this->activity1context);
+        $filters2 = filter_get_active_in_context($this->activity2context);
+        $after = $this->testdb->perf_get_reads();
+        $this->assertTrue($after > $before);
+
+        // Check they match
+        $this->assertEqual($plfilters1, $filters1);
+        $this->assertEqual($plfilters2, $filters2);
+    }
+
+    public function test_preload() {
+        global $FILTERLIB_PRIVATE;
+
+        // Get course and modinfo
+        $course = $this->testdb->get_record('course', array('id'=>1));
+        $modinfo = new course_modinfo($course, 1);
+
+        // Note: All the tests in this function check that the result from the
+        // preloaded cache is the same as the result from calling the standard
+        // function without preloading.
+
+        // Initially, check with no filters enabled
+        $this->assert_matches($modinfo);
+
+        // Enable filter globally, check
+        filter_set_global_state('filter/name', TEXTFILTER_ON);
+        $this->assert_matches($modinfo);
+
+        // Disable for activity 2
+        filter_set_local_state('filter/name', $this->activity2context->id, TEXTFILTER_OFF);
+        $this->assert_matches($modinfo);
+
+        // Disable at category
+        filter_set_local_state('filter/name', $this->catcontext->id, TEXTFILTER_OFF);
+        $this->assert_matches($modinfo);
+
+        // Enable for activity 1
+        filter_set_local_state('filter/name', $this->activity1context->id, TEXTFILTER_ON);
+        $this->assert_matches($modinfo);
+
+        // Disable globally
+        filter_set_global_state('filter/name', TEXTFILTER_DISABLED);
+        $this->assert_matches($modinfo);
+
+        // Add another 2 filters
+        filter_set_global_state('filter/frog', TEXTFILTER_ON);
+        filter_set_global_state('filter/zombie', TEXTFILTER_ON);
+        $this->assert_matches($modinfo);
+
+        // Disable random one of these in each context
+        filter_set_local_state('filter/zombie', $this->activity1context->id, TEXTFILTER_OFF);
+        filter_set_local_state('filter/frog', $this->activity2context->id, TEXTFILTER_OFF);
+        $this->assert_matches($modinfo);
+
+        // Now do some filter options
+        filter_set_local_config('filter/name', $this->activity1context->id, 'a', 'x');
+        filter_set_local_config('filter/zombie', $this->activity1context->id, 'a', 'y');
+        filter_set_local_config('filter/frog', $this->activity1context->id, 'a', 'z');
+        // These last two don't do anything as they are not at final level but I
+        // thought it would be good to have that verified in test
+        filter_set_local_config('filter/frog', $this->coursecontext->id, 'q', 'x');
+        filter_set_local_config('filter/frog', $this->catcontext->id, 'q', 'z');
+        $this->assert_matches($modinfo);
+    }
+}
+
 class filter_delete_config_test extends UnitTestCaseUsingDatabase {
     protected $syscontext;
 
@@ -659,4 +833,3 @@ class filter_filter_set_applies_to_strings extends UnitTestCaseUsingDatabase {
         $this->assertTrue($CFG->filterall);
     }
 }
-

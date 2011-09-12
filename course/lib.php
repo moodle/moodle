@@ -1376,22 +1376,28 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
 function get_print_section_cm_text(cm_info $cm, $course) {
     global $OUTPUT;
 
-    // Get course context
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-
     // Get content from modinfo if specified. Content displays either
     // in addition to the standard link (below), or replaces it if
     // the link is turned off by setting ->url to null.
     if (($content = $cm->get_content()) !== '') {
+        // Improve filter performance by preloading filter setttings for all
+        // activities on the course (this does nothing if called multiple
+        // times)
+        filter_preload_activities($cm->get_modinfo());
+
+        // Get module context
+        $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         $labelformatoptions = new stdClass();
         $labelformatoptions->noclean = true;
         $labelformatoptions->overflowdiv = true;
-        $labelformatoptions->context = $coursecontext;
+        $labelformatoptions->context = $modulecontext;
         $content = format_text($content, FORMAT_HTML, $labelformatoptions);
     } else {
         $content = '';
     }
 
+    // Get course context
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
     $stringoptions = new stdClass;
     $stringoptions->context = $coursecontext;
     $instancename = format_string($cm->name, true,  $stringoptions);
