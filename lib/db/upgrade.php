@@ -6051,11 +6051,12 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
          // Define field secret to be added to registration_hubs
         $table = new xmldb_table('registration_hubs');
         $field = new xmldb_field('secret', XMLDB_TYPE_CHAR, '255', null, null, null,
-                $CFG->siteidentifier, 'confirmed');
+                null, 'confirmed');
 
-        // Conditionally launch add field secret
+        // Conditionally launch add field secret and set its value
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
+            $DB->set_field('registration_hubs', 'secret', $CFG->siteidentifier);
         }
 
         // Main savepoint reached
@@ -6694,6 +6695,18 @@ FROM
 
         // Main savepoint reached
         upgrade_main_savepoint(true, 2011083100.02);
+    }
+
+    if ($oldversion < 2011090700.01) {
+        // Changing the default of field secret on table registration_hubs to NULL
+        $table = new xmldb_table('registration_hubs');
+        $field = new xmldb_field('secret', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'confirmed');
+
+        // Launch change of default for field secret
+        $dbman->change_field_default($table, $field);
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011090700.01);
     }
 
     return true;
