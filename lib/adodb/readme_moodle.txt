@@ -1,4 +1,4 @@
-Description of ADODB V5.11 library import into Moodle
+Description of ADODB V5.14 library import into Moodle
 
 This library will be probably removed in Moodle 2.1,
 it is now used only in enrol and auth db plugins.

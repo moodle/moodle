@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V5.11 5 May 2010  (c) 2000-2010 John Lim. All rights reserved.
+  version V5.14 8 Sept 2011 (c) 2000-2011 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -72,8 +72,15 @@ class ADODB_oci8 extends ADOConnection {
   where owner='%s' and table_name='%s' order by column_id"; // when there is a schema
 	var $_bindInputArray = true;
 	var $hasGenID = true;
-	var $_genIDSQL = "SELECT (%s.nextval) FROM DUAL";
-	var $_genSeqSQL = "CREATE SEQUENCE %s START WITH %s";
+	var $_genIDSQL = "SELECT (%s.nextval) FROM DUAL";	
+	var $_genSeqSQL = "
+DECLARE
+  PRAGMA AUTONOMOUS_TRANSACTION;
+BEGIN
+	execute immediate 'CREATE SEQUENCE %s START WITH %s';
+END;
+";
+
 	var $_dropSeqSQL = "DROP SEQUENCE %s";
 	var $hasAffectedRows = true;
 	var $random = "abs(mod(DBMS_RANDOM.RANDOM,10000001)/10000000)";
@@ -326,9 +333,9 @@ NATSOFT.DOMAIN =
 		if (empty($ts) && $ts !== 0) return 'null';
 		if ($isfld) return 'TO_DATE(substr('.$ts.",1,19),'RRRR-MM-DD, HH24:MI:SS')";
 		if (is_string($ts)) $ts = ADORecordSet::UnixTimeStamp($ts);
-		
+	
 		if (is_object($ts)) $tss = $ts->format("'Y-m-d H:i:s'");
-		else $tss = adodb_date("'Y-m-d H:i:s'",$ts);
+		else $tss = date("'Y-m-d H:i:s'",$ts);
 		
 		return 'TO_DATE('.$tss.",'RRRR-MM-DD, HH24:MI:SS')";
 	}
@@ -598,10 +605,13 @@ NATSOFT.DOMAIN =
 	{
 		// seems that oracle only supports 1 hint comment in 8i
 		if ($this->firstrows) {
+			if ($nrows > 500 && $nrows < 1000) $hint = "FIRST_ROWS($nrows)";
+			else $hint = 'FIRST_ROWS';
+			
 			if (strpos($sql,'/*+') !== false)
-				$sql = str_replace('/*+ ','/*+FIRST_ROWS ',$sql);
+				$sql = str_replace('/*+ ',"/*+$hint ",$sql);
 			else
-				$sql = preg_replace('/^[ \t\n]*select/i','SELECT /*+FIRST_ROWS*/',$sql);
+				$sql = preg_replace('/^[ \t\n]*select/i',"SELECT /*+$hint*/",$sql);
 		}
 		
 		if ($offset == -1 || ($offset < $this->selectOffsetAlg1 && 0 < $nrows && $nrows < 1000)) {
@@ -788,11 +798,14 @@ NATSOFT.DOMAIN =
 		if ($inputarr) {
 			#if (!is_array($inputarr)) $inputarr = array($inputarr);
 			
-			$element0 = reset($inputarr);
+			$element0 = reset($inputarr); 
+			$array2d =  $this->bulkBind && is_array($element0) && !is_object(reset($element0));
 			
-			if (!$this->_bindInputArray) {
+			# see http://phplens.com/lens/lensforum/msgs.php?id=18786
+			if ($array2d || !$this->_bindInputArray) {
+			
 			# is_object check because oci8 descriptors can be passed in
-			if (is_array($element0) && !is_object(reset($element0))) {
+			if ($array2d && $this->_bindInputArray) {
 				if (is_string($sql))
 					$stmt = $this->Prepare($sql);
 				else
@@ -802,6 +815,7 @@ NATSOFT.DOMAIN =
 					$ret = $this->_Execute($stmt,$arr);
 					if (!$ret) return $ret;
 				}
+				return $ret;
 			} else {
 				$sqlarr = explode(':',$sql);
 				$sql = '';

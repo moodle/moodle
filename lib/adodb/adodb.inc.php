@@ -14,7 +14,7 @@
 /**
 	\mainpage
 	
-	 @version V5.11 5 May 2010   (c) 2000-2010 John Lim (jlim#natsoft.com). All rights reserved.
+	 @version V5.14 8 Sept 2011   (c) 2000-2011 John Lim (jlim#natsoft.com). All rights reserved.
 
 	Released under both BSD license and Lesser GPL library license. You can choose which license
 	you prefer.
@@ -177,7 +177,7 @@
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'V5.11 5 May 2010  (c) 2000-2010 John Lim (jlim#natsoft.com). All rights reserved. Released BSD & LGPL.';
+		$ADODB_vers = 'V5.14 8 Sept 2011  (c) 2000-2011 John Lim (jlim#natsoft.com). All rights reserved. Released BSD & LGPL.';
 	
 		/**
 		 * Determines whether recordset->RecordCount() is used. 
@@ -954,6 +954,7 @@
 			$element0 = reset($inputarr);
 			# is_object check because oci8 descriptors can be passed in
 			$array_2d = $this->bulkBind && is_array($element0) && !is_object(reset($element0));
+		
 			//remove extra memory copy of input -mikefedyk
 			unset($element0);
 			
@@ -961,6 +962,7 @@
 				$sqlarr = explode('?',$sql);
 				$nparams = sizeof($sqlarr)-1;
 				if (!$array_2d) $inputarr = array($inputarr);
+	
 				foreach($inputarr as $arr) {
 					$sql = ''; $i = 0;
 					//Use each() instead of foreach to reduce memory usage -mikefedyk
@@ -1002,7 +1004,7 @@
 						$stmt = $this->Prepare($sql);
 					else
 						$stmt = $sql;
-						
+					
 					foreach($inputarr as $arr) {
 						$ret = $this->_Execute($stmt,$arr);
 						if (!$ret) return $ret;
@@ -1799,7 +1801,7 @@
 				if (get_magic_quotes_runtime() && !$this->memCache) {
 					ADOConnection::outp("Please disable magic_quotes_runtime - it corrupts cache files :(");
 				}
-				if ($this->debug !== -1) ADOConnection::outp( " $md5file cache failure: $err (see sql below)");
+				if ($this->debug !== -1) ADOConnection::outp( " $md5file cache failure: $err (this is a notice and not an error)");
 			}
 			
 			$rs = $this->Execute($sqlparam,$inputarr);
@@ -4153,7 +4155,7 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 				$fakedsn = str_replace('@/','@adodb-fakehost/',$fakedsn);
 			}
 			
-			 if ((strpos($origdsn, 'sqlite')) !== FALSE) {
+			 if ((strpos($origdsn, 'sqlite')) !== FALSE && stripos($origdsn, '%2F') === FALSE) {
              // special handling for SQLite, it only might have the path to the database file.
              // If you try to connect to a SQLite database using a dsn like 'sqlite:///path/to/database', the 'parse_url' php function
              // will throw you an exception with a message such as "unable to parse url"
