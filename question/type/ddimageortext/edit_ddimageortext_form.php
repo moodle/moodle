@@ -65,8 +65,8 @@ class qtype_ddimageortext_edit_form extends question_edit_form {
         } else {
             $imagerepeatsatstart = $countimages;
         }
-        $imagerepeats = optional_param('noimages', $imagerepeatsatstart, PARAM_INT);
-        $addfields = optional_param('addimages', '', PARAM_TEXT);
+        $imagerepeats = optional_param('noitems', $imagerepeatsatstart, PARAM_INT);
+        $addfields = optional_param('additems', '', PARAM_TEXT);
         if (!empty($addfields)) {
             $imagerepeats += self::ADD_NUM_ITEMS;
         }
@@ -259,7 +259,7 @@ class qtype_ddimageortext_edit_form extends question_edit_form {
 
         //initialise file picker for dragimages
         list(, $imagerepeats) = $this->get_drag_image_repeats();
-        $draftitemids = optional_param('dragitem', array(), PARAM_INT);
+        $draftitemids = optional_param_array('dragitem', array(), PARAM_INT);
         for ($imageindex = 0; $imageindex < $imagerepeats; $imageindex++) {
             $draftitemid = isset($draftitemids[$imageindex]) ? $draftitemids[$imageindex] :0;
             //numbers not allowed in filearea name

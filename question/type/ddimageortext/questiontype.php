@@ -155,7 +155,7 @@ class qtype_ddimageortext extends question_type {
                                     '', 'no, id');
         foreach (array_keys($formdata->drags) as $dragno) {
             $info = file_get_draft_area_info($formdata->dragitem[$dragno]);
-            if ($info['filecount'] > 1 || !empty($formdata->drags[$dragno]['draglabel'])) {
+            if ($info['filecount'] > 0 || !empty($formdata->drags[$dragno]['draglabel'])) {
                 $draftitemid = $formdata->dragitem[$dragno];
 
                 $drag = new stdClass();
@@ -184,7 +184,7 @@ class qtype_ddimageortext extends question_type {
                     //delete any existing files for draggable text item type
                     $fs = get_file_storage();
                     $fs->delete_area_files($formdata->context->id, 'qtype_ddimageortext',
-                                                                        'dragimage', $drag->id);
+                                                                'dragimage', $drag->id);
                 }
 
             }
