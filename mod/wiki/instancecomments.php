@@ -42,6 +42,7 @@ $action = optional_param('action', '', PARAM_ACTION);
 $id = optional_param('id', 0, PARAM_INT);
 $commentid = optional_param('commentid', 0, PARAM_INT);
 $newcontent = optional_param('newcontent', '', PARAM_CLEANHTML);
+$confirm = optional_param('confirm', 0, PARAM_BOOL);
 
 if (!$page = wiki_get_page($pageid)) {
     print_error('incorrectpageid', 'wiki');
@@ -59,8 +60,26 @@ if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
 }
 require_login($course->id, true, $cm);
 
-$comm = new page_wiki_handlecomments($wiki, $subwiki, $cm);
-$comm->set_page($page);
+if ($action == 'add' || $action == 'edit') {
+    //just check sesskey
+    if (!confirm_sesskey()) {
+        print_error(get_string('invalidsesskey', 'wiki'));
+    }
+    $comm = new page_wiki_handlecomments($wiki, $subwiki, $cm);
+    $comm->set_page($page);
+} else {
+    if(!$confirm) {
+        $comm = new page_wiki_deletecomment($wiki, $subwiki, $cm);
+        $comm->set_page($page);
+        $comm->set_url();
+    } else {
+        $comm = new page_wiki_handlecomments($wiki, $subwiki, $cm);
+        $comm->set_page($page);
+        if (!confirm_sesskey()) {
+            print_error(get_string('invalidsesskey', 'wiki'));
+        }
+    }
+}
 
 if ($action == 'delete') {
     $comm->set_action($action, $commentid, 0);
