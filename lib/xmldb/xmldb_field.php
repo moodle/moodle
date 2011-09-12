@@ -45,7 +45,7 @@ class xmldb_field extends xmldb_object {
      *
      * @const maximum length of text field
      */
-    const CHAR_MAX_LENGTH = 255; //TODO: bump up to 1333
+    const CHAR_MAX_LENGTH = 1333;
 
     /**
      * Creates one new xmldb_field
