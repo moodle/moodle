@@ -27,6 +27,7 @@ require_once('../config.php');
 
 $userid = optional_param('id', $USER->id, PARAM_INT);    // user id
 $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
+$disableall = optional_param('disableall', 0, PARAM_BOOL); //disable all of this user's notifications
 
 $url = new moodle_url('/message/edit.php');
 if ($userid !== $USER->id) {
@@ -67,6 +68,7 @@ $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
 
 $PAGE->set_context($personalcontext);
 $PAGE->set_pagelayout('course');
+$PAGE->requires->js_init_call('M.core_message.init_editsettings');
 
 // check access control
 if ($user->id == $USER->id) {
@@ -96,6 +98,12 @@ $providers = message_get_providers_for_user($user->id);
 /// Save new preferences if data was submitted
 
 if (($form = data_submitted()) && confirm_sesskey()) {
+    //only update the user's "emailstop" if its actually changed
+    if ( $user->emailstop != $disableall ) {
+        $user->emailstop = $disableall;
+        $DB->set_field('user', 'emailstop', $user->emailstop, array("id"=>$user->id));
+    }
+
     $preferences = array();
 
     $possiblestates = array('loggedin', 'loggedoff');
@@ -222,6 +230,10 @@ foreach ( $providers as $providerid => $provider){
     $providername = get_string('messageprovider:'.$provider->name, $provider->component);
 
     echo '<tr><th align="right">'.$providername.'</th><td colspan="'.$number_procs.'"></td></tr>'."\n";
+    $disabled = '';
+    if ($user->emailstop) {
+        $disabled = 'disabled="disabled"';
+    }
     foreach (array('loggedin', 'loggedoff') as $state){
         $state_res = get_string($state.'description', 'message');
         echo '<tr><td align="right">'.$state_res.'</td>'."\n";
@@ -233,12 +245,16 @@ foreach ( $providers as $providerid => $provider){
             } else {
                 $checked = $preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$processor->name]==1?" checked=\"checked\"":"";
             }
-            echo '<td align="center"><input type="checkbox" name="'.$provider->component.'_'.$provider->name.'_'.$state.'['.$processor->name.']" '.$checked.' /></td>'."\n";
+            echo '<td align="center"><input type="checkbox" '.$disabled.' class="notificationpreference" name="'.$provider->component.'_'.$provider->name.'_'.$state.'['.$processor->name.']" '.$checked.' /></td>'."\n";
         }
         echo '</tr>'."\n";
     }
 }
 echo '</table>';
+
+$disableallcheckbox = $OUTPUT->help_icon('disableall', 'message') . get_string('disableall', 'message') . html_writer::checkbox('disableall', 1, $user->emailstop, '', array('class'=>'disableallcheckbox'));
+echo html_writer::nonempty_tag('div', $disableallcheckbox, array('class'=>'disableall'));
+
 echo '</fieldset>';
 
 /// Show all the message processors

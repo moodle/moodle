@@ -43,3 +43,27 @@ M.core_message.init_notification = function(Y, title, content, url) {
         }, o);
     });
 };
+
+M.core_message.init_editsettings = function(Y) {
+    var editsettings = {
+
+        init : function() {
+            var disableall = Y.one(".disableallcheckbox");
+            disableall.on('change', editsettings.changeState);
+            //disableall.simulate("change"); simulate() not available in this version of YUI
+        },
+
+        changeState : function(e) {
+            Y.all('.notificationpreference').each(function(node) {
+                var disabled = e.target.get('checked');
+
+                node.removeAttribute('disabled');
+                if (disabled) {
+                    node.setAttribute('disabled', 1)
+                }
+            }, this);
+        }
+    }
+
+    editsettings.init();
+}

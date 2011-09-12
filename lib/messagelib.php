@@ -109,21 +109,25 @@ function message_send($eventdata) {
 
     $savemessage->timecreated = time();
 
-    // Find out what processors are defined currently
-    // When a user doesn't have settings none gets return, if he doesn't want contact "" gets returned
-    $preferencename = 'message_provider_'.$eventdata->component.'_'.$eventdata->name.'_'.$userstate;
+    //only look for their preference if notifications are not disabled
+    $processor = 'none';
+    if (!$eventdata->userto->emailstop) {
+        // Find out what processors are defined currently
+        // When a user doesn't have settings none gets return, if he doesn't want contact "" gets returned
+        $preferencename = 'message_provider_'.$eventdata->component.'_'.$eventdata->name.'_'.$userstate;
 
-    $processor = get_user_preferences($preferencename, null, $eventdata->userto->id);
-    if ($processor == NULL) { //this user never had a preference, save default
-        if (!message_set_default_message_preferences($eventdata->userto)) {
-            print_error('cannotsavemessageprefs', 'message');
-        }
-        $processor = get_user_preferences($preferencename, NULL, $eventdata->userto->id);
-        if (empty($processor)) {
-            //MDL-25114 They supplied an $eventdata->component $eventdata->name combination which doesn't
-            //exist in the message_provider table
-            $preferrormsg = get_string('couldnotfindpreference', 'message', $preferencename);
-            throw new coding_exception($preferrormsg,'blah');
+        $processor = get_user_preferences($preferencename, null, $eventdata->userto->id);
+        if ($processor == NULL) { //this user never had a preference, save default
+            if (!message_set_default_message_preferences($eventdata->userto)) {
+                print_error('cannotsavemessageprefs', 'message');
+            }
+            $processor = get_user_preferences($preferencename, NULL, $eventdata->userto->id);
+            if (empty($processor)) {
+                //MDL-25114 They supplied an $eventdata->component $eventdata->name combination which doesn't
+                //exist in the message_provider table
+                $preferrormsg = get_string('couldnotfindpreference', 'message', $preferencename);
+                throw new coding_exception($preferrormsg,'blah');
+            }
         }
     }
 
