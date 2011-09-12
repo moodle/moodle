@@ -42,6 +42,8 @@ $string['defaultformat_help'] = 'This setting determines the default format used
 * Creole - A common wiki markup language for which a small edit toolbar is available
 * Nwiki - Mediawiki-like markup language used in the contributed Nwiki module';
 $string['deletecomment'] = 'Deleting comment';
+$string['deletecommentcheck'] = 'Delete comment';
+$string['deletecommentcheckfull'] = 'Are you sure you want to delete the comment?';
 $string['deleteupload'] = 'Delete';
 $string['deletedbegins'] = 'Deleted begins';
 $string['deletedends'] = 'Deleted ends';
