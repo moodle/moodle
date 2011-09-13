@@ -537,9 +537,12 @@ function calendar_add_event_metadata($event) {
         }
         $icon = $OUTPUT->pix_url('icon', $event->modulename) . '';
 
+        $context = get_context_instance(CONTEXT_COURSE, $module->course);
+        $fullname = format_string($coursecache[$module->course]->fullname, true, array('context' => $context));
+
         $event->icon = '<img height="16" width="16" src="'.$icon.'" alt="'.$eventtype.'" title="'.$modulename.'" style="vertical-align: middle;" />';
         $event->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$event->name.'</a>';
-        $event->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$module->course.'">'.$coursecache[$module->course]->fullname.'</a>';
+        $event->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$module->course.'">'.$fullname.'</a>';
         $event->cmid = $module->id;
 
 
@@ -548,8 +551,12 @@ function calendar_add_event_metadata($event) {
         $event->cssclass = 'calendar_event_global';
     } else if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {          // Course event
         calendar_get_course_cached($coursecache, $event->courseid);
+
+        $context = get_context_instance(CONTEXT_COURSE, $event->courseid);
+        $fullname = format_string($coursecache[$event->courseid]->fullname, true, array('context' => $context));
+
         $event->icon = '<img height="16" width="16" src="'.$OUTPUT->pix_url('c/course') . '" alt="'.get_string('courseevent', 'calendar').'" style="vertical-align: middle;" />';
-        $event->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$event->courseid.'">'.$coursecache[$event->courseid]->fullname.'</a>';
+        $event->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$event->courseid.'">'.$fullname.'</a>';
         $event->cssclass = 'calendar_event_course';
     } else if ($event->groupid) {                                    // Group event
         $event->icon = '<img height="16" width="16" src="'.$OUTPUT->pix_url('c/group') . '" alt="'.get_string('groupevent', 'calendar').'" style="vertical-align: middle;" />';

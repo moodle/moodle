@@ -861,13 +861,14 @@ function print_overview($courses, array $remote_courses=array()) {
         }
     }
     foreach ($courses as $course) {
+        $fullname = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
         echo $OUTPUT->box_start('coursebox');
-        $attributes = array('title' => s($course->fullname));
+        $attributes = array('title' => s($fullname));
         if (empty($course->visible)) {
             $attributes['class'] = 'dimmed';
         }
         echo $OUTPUT->heading(html_writer::link(
-            new moodle_url('/course/view.php', array('id' => $course->id)), format_string($course->fullname), $attributes), 3);
+            new moodle_url('/course/view.php', array('id' => $course->id)), $fullname, $attributes), 3);
         if (array_key_exists($course->id,$htmlarray)) {
             foreach ($htmlarray[$course->id] as $modname => $html) {
                 echo $html;
@@ -3276,8 +3277,8 @@ function course_format_name ($course,$max=100) {
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     $shortname = format_string($course->shortname, true, array('context' => $context));
-
-    $str = $shortname.': '. $course->fullname;
+    $fullname = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+    $str = $shortname.': '. $fullname;
     if (textlib::strlen($str) <= $max) {
         return $str;
     }
@@ -4247,7 +4248,7 @@ class course_request {
         $this->delete();
 
         $a = new stdClass();
-        $a->name = $course->fullname;
+        $a->name = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
         $a->url = $CFG->wwwroot.'/course/view.php?id=' . $course->id;
         $this->notify($user, $USER, 'courserequestapproved', get_string('courseapprovedsubject'), get_string('courseapprovedemail2', 'moodle', $a));
 
