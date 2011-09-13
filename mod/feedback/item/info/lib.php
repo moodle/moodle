@@ -188,7 +188,7 @@ class feedback_item_info extends feedback_item_base {
                 $itemshowvalue = $itemvalue;
                 break;
             case 3:
-                $itemvalue = $coursecategory->name;
+                $itemvalue = format_string($coursecategory->name, true, array('context' => get_context_instance(CONTEXT_COURSECAT, $coursecategory->id)));
                 $itemshowvalue = $itemvalue;
                 break;
         }
@@ -245,7 +245,7 @@ class feedback_item_info extends feedback_item_base {
                 $itemshowvalue = $itemvalue;
                 break;
             case 3:
-                $itemvalue = $coursecategory->name;
+                $itemvalue = format_string($coursecategory->name, true, array('context' => get_context_instance(CONTEXT_COURSECAT, $coursecategory->id)));
                 $itemshowvalue = $itemvalue;
                 break;
         }
