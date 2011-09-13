@@ -346,7 +346,6 @@ class qtype_ddimageortext_edit_form extends question_edit_form {
                                     get_string('formerror_nofile', 'qtype_ddimageortext', $i);
                 }
 
-
                 if (isset($allchoices[$choice]) && !$data['drags'][$choice-1]['infinite']) {
                     $errors["drops[$i]"] =
                      get_string('formerror_multipledraginstance', 'qtype_ddimageortext', $choice);
@@ -372,7 +371,7 @@ class qtype_ddimageortext_edit_form extends question_edit_form {
                 $allowedtags = '';
                 $errormessage = get_string('formerror_noallowedtags', 'qtype_ddimageortext');
             }
-            if ($label != strip_tags($label, $allowedtags)){
+            if ($label != strip_tags($label, $allowedtags)) {
                 $errors["drags[{$dragindex}]"] = $errormessage;
             }
 

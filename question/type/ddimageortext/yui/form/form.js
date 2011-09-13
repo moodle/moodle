@@ -77,7 +77,7 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
 
         load_drag_home : function (dragitemno) {
             if ('image' === this.form.get_form_value('dragitemtype', [dragitemno])) {
-                var url = 
+                var url =
                     this.fp.file(this.form.to_name_with_index('dragitem', [dragitemno])).href;
             } else {
                 var url = null;
