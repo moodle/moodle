@@ -250,6 +250,7 @@ $string['headersent'] = 'Headers already sent';
 $string['idnumbertaken'] = 'ID number is already used for another course';
 $string['importformatnotimplement'] = 'Sorry, importing this format is not yet implemented!';
 $string['incorrectext'] = 'File has an incorrect extension';
+$string['installproblem'] = 'It is usually not possible to recover from errors triggered during installation, you may need to create a new database or use a different database prefix if you want to retry the installation.';
 $string['internalauthpassworderror'] = 'Missing password or invalid password policy for internal authentication';
 $string['invalidaccess'] = 'This page was not accessed correctly';
 $string['invalidaccessparameter'] = 'Invalid access parameter';
