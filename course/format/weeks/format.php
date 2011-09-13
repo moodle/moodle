@@ -88,7 +88,7 @@ defined('MOODLE_INTERNAL') || die();
         echo '<div class="content">';
 
         if (!empty($thissection->name)) {
-            echo $OUTPUT->heading($thissection->name, 3, 'sectionname');
+            echo $OUTPUT->heading(format_string($thissection->name, true, array('context' => $context)), 3, 'sectionname');
         }
 
         echo '<div class="summary">';
@@ -220,7 +220,7 @@ defined('MOODLE_INTERNAL') || die();
 
             } else {
                 if (isset($thissection->name) && ($thissection->name !== NULL)) {  // empty string is ok
-                    echo $OUTPUT->heading($thissection->name, 3, 'weekdates');
+                    echo $OUTPUT->heading(format_string($thissection->name, true, array('context' => $context)), 3, 'weekdates');
                 } else {
                     echo $OUTPUT->heading($currenttext.$weekperiod, 3, 'weekdates');
                 }
