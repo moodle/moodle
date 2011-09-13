@@ -60,12 +60,10 @@ switch ($type) {
         $heading = get_string('backupcourse', 'backup', $course->shortname);
         break;
     case backup::TYPE_1SECTION :
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-        require_capability('moodle/backup:backupsection', $coursecontext);
+        require_capability('moodle/backup:backupsection', get_context_instance(CONTEXT_COURSE, $course->id));
         if (!empty($section->name)) {
-            $sectionname = format_string($section->name, true, array('context' => $coursecontext));
-            $heading = get_string('backupsection', 'backup', $sectionname);
-            $PAGE->navbar->add($sectionname);
+            $heading = get_string('backupsection', 'backup', $section->name);
+            $PAGE->navbar->add($section->name);
         } else {
             $heading = get_string('backupsection', 'backup', $section->section);
             $PAGE->navbar->add(get_string('section').' '.$section->section);
