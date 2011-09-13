@@ -223,7 +223,7 @@
 
         if(empty($title)){
             // no title present, use portion of description
-            $title = substr(strip_tags($description), 0, 20) . '...';
+            $title = textlib::substr(strip_tags($description), 0, 20) . '...';
         }else{
             $title = break_up_long_words($title, 30);
         }

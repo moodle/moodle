@@ -1606,7 +1606,7 @@ class page_wiki_map extends page_wiki {
         $strspecial = get_string('special', 'wiki');
 
         foreach ($pages as $page) {
-            $letter = strtoupper(substr($page->title, 0, 1));
+            $letter = textlib::strtoupper(textlib::substr($page->title, 0, 1));
             if (preg_match('/[A-Z]/', $letter)) {
                 $stdaux->{
                     $letter}

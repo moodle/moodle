@@ -252,7 +252,7 @@ class block_navigation extends block_base {
                     // Truncate the text to $long characters
                     $node->text = $this->trim_left($textlib, $node->text, $long);
                 }
-                if (is_string($node->shorttext) && strlen($node->shorttext)>($short+3)) {
+                if (is_string($node->shorttext) && $textlib->strlen($node->shorttext)>($short+3)) {
                     // Truncate the shorttext
                     $node->shorttext = $this->trim_left($textlib, $node->shorttext, $short);
                 }
@@ -262,7 +262,7 @@ class block_navigation extends block_base {
                     // Truncate the text to $long characters
                     $node->text = $this->trim_center($textlib, $node->text, $long);
                 }
-                if (is_string($node->shorttext) && strlen($node->shorttext)>($short+3)) {
+                if (is_string($node->shorttext) && $textlib->strlen($node->shorttext)>($short+3)) {
                     // Truncate the shorttext
                     $node->shorttext = $this->trim_center($textlib, $node->shorttext, $short);
                 }

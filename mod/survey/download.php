@@ -157,7 +157,7 @@ if ($type == "ods") {
 /// Sending HTTP headers
     $workbook->send($downloadfilename);
 /// Creating the first worksheet
-    $myxls =& $workbook->add_worksheet(substr(strip_tags(format_string($survey->name,true)), 0, 31));
+    $myxls =& $workbook->add_worksheet(textlib::substr(strip_tags(format_string($survey->name,true)), 0, 31));
 
     $header = array("surveyid","surveyname","userid","firstname","lastname","email","idnumber","time", "notes");
     $col=0;
@@ -232,7 +232,7 @@ if ($type == "xls") {
 /// Sending HTTP headers
     $workbook->send($downloadfilename);
 /// Creating the first worksheet
-    $myxls =& $workbook->add_worksheet(substr(strip_tags(format_string($survey->name,true)), 0, 31));
+    $myxls =& $workbook->add_worksheet(textlib::substr(strip_tags(format_string($survey->name,true)), 0, 31));
 
     $header = array("surveyid","surveyname","userid","firstname","lastname","email","idnumber","time", "notes");
     $col=0;

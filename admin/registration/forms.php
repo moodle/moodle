@@ -136,8 +136,8 @@ class hub_selector_form extends moodleform {
         $options = array();
         foreach ($hubs as $hub) {
             //to not display a name longer than 100 character (too big)
-            if (strlen($hub['name']) > 100) {
-                $hubname = substr($hub['name'], 0, 100);
+            if (textlib::strlen($hub['name']) > 100) {
+                $hubname = textlib::substr($hub['name'], 0, 100);
                 $hubname = $hubname . "...";
             } else {
                 $hubname = $hub['name'];

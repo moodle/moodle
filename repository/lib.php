@@ -1773,8 +1773,8 @@ abstract class repository {
     }
 
     public function get_short_filename($str, $maxlength) {
-        if (strlen($str) >= $maxlength) {
-            return trim(substr($str, 0, $maxlength)).'...';
+        if (textlib::strlen($str) >= $maxlength) {
+            return trim(textlib::substr($str, 0, $maxlength)).'...';
         } else {
             return $str;
         }
