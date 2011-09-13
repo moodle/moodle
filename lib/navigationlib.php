@@ -1510,7 +1510,9 @@ class global_navigation extends navigation_node {
             continue;
         }
         $url = new moodle_url('/course/category.php', array('id' => $category->id));
-        $categorynode = $parent->add($category->name, $url, self::TYPE_CATEGORY, $category->name, $category->id);
+        $context = get_context_instance(CONTEXT_COURSECAT, $category->id);
+        $categoryname = format_string($category->name, true, array('context' => $context));
+        $categorynode = $parent->add($categoryname, $url, self::TYPE_CATEGORY, $categoryname, $category->id);
         if (empty($category->visible)) {
             if (has_capability('moodle/category:viewhiddencategories', get_system_context())) {
                 $categorynode->hidden = true;
