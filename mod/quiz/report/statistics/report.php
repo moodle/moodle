@@ -115,7 +115,9 @@ class quiz_statistics_report extends quiz_default_report {
         } else {
             $report = get_string('questionstatsfilename', 'quiz_statistics');
         }
-        $filename = quiz_report_download_filename($report, $course->shortname, $quiz->name);
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
+        $filename = quiz_report_download_filename($report, $courseshortname, $quiz->name);
         $this->table->is_downloading($download, $filename,
                 get_string('quizstructureanalysis', 'quiz_statistics'));
 

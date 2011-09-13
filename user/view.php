@@ -174,7 +174,7 @@ echo $OUTPUT->header();
 
 echo '<div class="userprofile">';
 
-echo $OUTPUT->heading(fullname($user).' ('.$course->shortname.')');
+echo $OUTPUT->heading(fullname($user).' ('.format_string($course->shortname, true, array('context' => $coursecontext)).')');
 
 if ($user->deleted) {
     echo $OUTPUT->heading(get_string('userdeleted'));

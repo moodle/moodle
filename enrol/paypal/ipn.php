@@ -228,6 +228,8 @@ while (!feof($fp)) {
         $mailstudents = $plugin->get_config('mailstudents');
         $mailteachers = $plugin->get_config('mailteachers');
         $mailadmins   = $plugin->get_config('mailadmins');
+        $shortname = format_string($course->shortname, true, array('context' => $context));
+
 
         if (!empty($mailstudents)) {
             $a->coursename = $course->fullname;
@@ -239,7 +241,7 @@ while (!feof($fp)) {
             $eventdata->name              = 'paypal_enrolment';
             $eventdata->userfrom          = $teacher;
             $eventdata->userto            = $user;
-            $eventdata->subject           = get_string("enrolmentnew", '', $course->shortname);
+            $eventdata->subject           = get_string("enrolmentnew", '', $shortname);
             $eventdata->fullmessage       = get_string('welcometocoursetext', '', $a);
             $eventdata->fullmessageformat = FORMAT_PLAIN;
             $eventdata->fullmessagehtml   = '';
@@ -258,7 +260,7 @@ while (!feof($fp)) {
             $eventdata->name              = 'paypal_enrolment';
             $eventdata->userfrom          = $user;
             $eventdata->userto            = $teacher;
-            $eventdata->subject           = get_string("enrolmentnew", '', $course->shortname);
+            $eventdata->subject           = get_string("enrolmentnew", '', $shortname);
             $eventdata->fullmessage       = get_string('enrolmentnewuser', '', $a);
             $eventdata->fullmessageformat = FORMAT_PLAIN;
             $eventdata->fullmessagehtml   = '';
@@ -277,7 +279,7 @@ while (!feof($fp)) {
                 $eventdata->name              = 'paypal_enrolment';
                 $eventdata->userfrom          = $user;
                 $eventdata->userto            = $admin;
-                $eventdata->subject           = get_string("enrolmentnew", '', $course->shortname);
+                $eventdata->subject           = get_string("enrolmentnew", '', $shortname);
                 $eventdata->fullmessage       = get_string('enrolmentnewuser', '', $a);
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml   = '';

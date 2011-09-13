@@ -487,10 +487,11 @@ function message_print_usergroup_selector($viewing, $courses, $coursecontexts, $
         foreach($courses as $course) {
             if (has_capability('moodle/course:viewparticipants', $coursecontexts[$course->id])) {
                 //Not using short_text() as we want the end of the course name. Not the beginning.
-                if ($textlib->strlen($course->shortname) > MESSAGE_MAX_COURSE_NAME_LENGTH) {
-                    $courses_options[MESSAGE_VIEW_COURSE.$course->id] = '...'.$textlib->substr($course->shortname, -MESSAGE_MAX_COURSE_NAME_LENGTH);
+                $shortname = format_string($course->shortname, true, array('context' => $coursecontexts[$course->id]));
+                if ($textlib->strlen($shortname) > MESSAGE_MAX_COURSE_NAME_LENGTH) {
+                    $courses_options[MESSAGE_VIEW_COURSE.$course->id] = '...'.$textlib->substr($shortname, -MESSAGE_MAX_COURSE_NAME_LENGTH);
                 } else {
-                    $courses_options[MESSAGE_VIEW_COURSE.$course->id] = $course->shortname;
+                    $courses_options[MESSAGE_VIEW_COURSE.$course->id] = $shortname;
                 }
             }
         }
@@ -2021,7 +2022,7 @@ function message_post_message($userfrom, $userto, $message, $format) {
     $eventdata->smallmessage     = $message;//store the message unfiltered. Clean up on output.
 
     $s = new stdClass();
-    $s->sitename = $SITE->shortname;
+    $s->sitename = format_string($SITE->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, SITEID)));
     $s->url = $CFG->wwwroot.'/message/index.php?user='.$userto->id.'&id='.$userfrom->id;
 
     $emailtagline = get_string_manager()->get_string('emailtagline', 'message', $s, $userto->lang);

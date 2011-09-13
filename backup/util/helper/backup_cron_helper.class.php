@@ -197,7 +197,7 @@ abstract class backup_cron_automated_helper {
 
             //Build the message subject
             $site = get_site();
-            $prefix = $site->shortname.": ";
+            $prefix = format_string($site->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, SITEID))).": ";
             if ($haserrors) {
                 $prefix .= "[".strtoupper(get_string('error'))."] ";
             }

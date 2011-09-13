@@ -144,10 +144,13 @@
             $SESSION->wantsurl = $FULLME;
             $SESSION->enrolcancel = (!empty($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : '';
 
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
+
             echo $OUTPUT->box_start('generalbox', 'notice');
             echo '<p align="center">'. get_string('notenrolledchoose', 'choice') .'</p>';
             echo $OUTPUT->container_start('continuebutton');
-            echo $OUTPUT->single_button(new moodle_url('/enrol/index.php?', array('id'=>$course->id)), get_string('enrolme', 'core_enrol', format_string($course->shortname)));
+            echo $OUTPUT->single_button(new moodle_url('/enrol/index.php?', array('id'=>$course->id)), get_string('enrolme', 'core_enrol', $courseshortname));
             echo $OUTPUT->container_end();
             echo $OUTPUT->box_end();
 

@@ -99,7 +99,9 @@ class scorm_basic_report extends scorm_default_report {
         if ( !$nostudents ) {
             // Now check if asked download of data
             if ($download) {
-                $filename = clean_filename("$course->shortname ".format_string($scorm->name, true));
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                $shortname = format_string($course->shortname, true, array('context' => $coursecontext));
+                $filename = clean_filename("$shortname ".format_string($scorm->name, true));
             }
 
             // Define table columns

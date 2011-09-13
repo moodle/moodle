@@ -194,7 +194,7 @@ function schedule_backup_cron() {
 
         //Build the message subject
         $site = get_site();
-        $prefix = $site->shortname.": ";
+        $prefix = format_string($site->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, SITEID))).": ";
         if ($count_error != 0 || $count_unfinished != 0) {
             $prefix .= "[".strtoupper(get_string('error'))."] ";
         }

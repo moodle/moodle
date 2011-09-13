@@ -11,7 +11,7 @@
         $context = get_context_instance(CONTEXT_COURSE, $c->id);
 
         if (has_capability('coursereport/stats:view', $context)) {
-            $courseoptions[$c->id] = $c->shortname;
+            $courseoptions[$c->id] = format_string($c->shortname, true, array('context' => $context));
         }
     }
 

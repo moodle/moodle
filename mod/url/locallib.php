@@ -152,7 +152,9 @@ function url_display_frame($url, $cm, $course) {
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         $exteurl = url_get_full_url($url, $cm, $course, $config);
         $navurl = "$CFG->wwwroot/mod/url/view.php?id=$cm->id&amp;frameset=top";
-        $title = strip_tags(format_string($course->shortname.': '.$url->name));
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
+        $title = strip_tags($courseshortname.': '.format_string($url->name));
         $framesize = $config->framesize;
         $modulename = s(get_string('modulename','url'));
         $dir = get_string('thisdirection', 'langconfig');
@@ -405,10 +407,12 @@ function url_get_variable_values($url, $cm, $course, $config) {
 
     $site = get_site();
 
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+
     $values = array (
         'courseid'        => $course->id,
         'coursefullname'  => format_string($course->fullname),
-        'courseshortname' => $course->shortname,
+        'courseshortname' => format_string($course->shortname, true, array('context' => $coursecontext)),
         'courseidnumber'  => $course->idnumber,
         'coursesummary'   => $course->summary,
         'courseformat'    => $course->format,

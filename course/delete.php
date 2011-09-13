@@ -30,12 +30,13 @@
     }
 
     $category = $DB->get_record("course_categories", array("id"=>$course->category));
+    $courseshortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
 
     $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php/'));
     $PAGE->navbar->add($strcategories, new moodle_url('/course/index.php'));
     $PAGE->navbar->add($category->name, new moodle_url('/course/category.php', array('id'=>$course->category)));
     if (! $delete) {
-        $strdeletecheck = get_string("deletecheck", "", $course->shortname);
+        $strdeletecheck = get_string("deletecheck", "", $courseshortname);
         $strdeletecoursecheck = get_string("deletecoursecheck");
 
         $PAGE->navbar->add($strdeletecheck);
@@ -43,7 +44,7 @@
         $PAGE->set_heading($site->fullname);
         echo $OUTPUT->header();
 
-        $message = "$strdeletecoursecheck<br /><br />" . format_string($course->fullname) .  " (" . format_string($course->shortname) . ")";
+        $message = "$strdeletecoursecheck<br /><br />" . format_string($course->fullname) .  " (" . $courseshortname . ")";
         echo $OUTPUT->confirm($message, "delete.php?id=$course->id&delete=".md5($course->timemodified), "category.php?id=$course->category");
 
         echo $OUTPUT->footer();
@@ -62,7 +63,7 @@
 
     add_to_log(SITEID, "course", "delete", "view.php?id=$course->id", "$course->fullname (ID $course->id)");
 
-    $strdeletingcourse = get_string("deletingcourse", "", format_string($course->shortname));
+    $strdeletingcourse = get_string("deletingcourse", "", $courseshortname);
 
     $PAGE->navbar->add($strdeletingcourse);
     $PAGE->set_title("$site->shortname: $strdeletingcourse");
@@ -73,7 +74,7 @@
     delete_course($course);
     fix_course_sortorder(); //update course count in catagories
 
-    echo $OUTPUT->heading( get_string("deletedcourse", "", format_string($course->shortname)) );
+    echo $OUTPUT->heading( get_string("deletedcourse", "", $courseshortname) );
 
     echo $OUTPUT->continue_button("category.php?id=$course->category");
 

@@ -448,19 +448,20 @@ class enrol_ldap_plugin extends enrol_plugin {
                                  JOIN {enrol} e ON (e.id = ue.enrolid)
                                 WHERE u.deleted = 0 AND e.courseid = :courseid ";
                         $params = array('roleid'=>$role->id, 'courseid'=>$course_obj->id);
+                        $context = get_context_instance(CONTEXT_COURSE, $course_obj->id);
                         if (!empty($ldapmembers)) {
                             list($ldapml, $params2) = $DB->get_in_or_equal($ldapmembers, SQL_PARAMS_NAMED, 'm', false);
                             $sql .= "AND u.idnumber $ldapml";
                             $params = array_merge($params, $params2);
                             unset($params2);
                         } else {
+                            $shortname = format_string($course_obj->shortname, true, array('context' => $context));
                             print_string('emptyenrolment', 'enrol_ldap',
                                          array('role_shortname'=> $role->shortname,
-                                               'course_shortname'=>$course_obj->shortname));
+                                               'course_shortname' => $shortname));
                         }
                         $todelete = $DB->get_records_sql($sql, $params);
 
-                        $context = get_context_instance(CONTEXT_COURSE, $course_obj->id);
                         if (!empty($todelete)) {
                             $transaction = $DB->start_delegated_transaction();
                             foreach ($todelete as $row) {

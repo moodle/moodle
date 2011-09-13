@@ -67,7 +67,8 @@ $welcome = get_string('morewelcome', $tagslang);
 
 // The title and breadcrumb
 if ($courseid) {
-    $PAGE->navbar->add(format_string($course->shortname), new moodle_url('/course/view.php', array('id'=>$courseid)));
+    $courseshortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $courseid)));
+    $PAGE->navbar->add($courseshortname, new moodle_url('/course/view.php', array('id'=>$courseid)));
 }
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);

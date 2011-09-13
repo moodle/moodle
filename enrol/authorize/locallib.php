@@ -54,6 +54,8 @@ function authorize_print_orders($courseid, $userid) {
     $searchtype = optional_param('searchtype', 'orderid', PARAM_ALPHA);
     $status = optional_param('status', AN_STATUS_NONE, PARAM_INT);
 
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+
     $searchmenu = array('orderid' => $authstrs->orderid, 'transid' => $authstrs->transid, 'cclastfour' => $authstrs->cclastfour);
     $buttons = "<form method='post' action='index.php' autocomplete='off'><div>";
     $buttons .= html_writer::select($searchmenu, 'searchtype', $searchtype, false);
@@ -65,7 +67,7 @@ function authorize_print_orders($courseid, $userid) {
         $buttons .= "<form method='get' action='uploadcsv.php'><div><input type='submit' value='".get_string('uploadcsv', 'enrol_authorize')."' /></div></form>";
     }
 
-    $canmanagepayments = has_capability('enrol/authorize:managepayments', get_context_instance(CONTEXT_COURSE, $courseid));
+    $canmanagepayments = has_capability('enrol/authorize:managepayments', $coursecontext);
     if ($showonlymy || !$canmanagepayments) {
         $userid = $USER->id;
     }
@@ -104,7 +106,8 @@ function authorize_print_orders($courseid, $userid) {
     }
 
     if (SITEID != $courseid) {
-        $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
+        $shortname = format_string($course->shortname, true, array('context' => $coursecontext));
+        $PAGE->navbar->add($shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
     }
     $PAGE->navbar->add($authstrs->paymentmanagement, 'index.php');
     $PAGE->set_title("$course->shortname: $authstrs->paymentmanagement");
@@ -297,7 +300,8 @@ function authorize_print_order($orderid)
     }
 
     if (SITEID != $course->id) {
-        $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
+        $shortname = format_string($course->shortname, true, array('context' => $coursecontext));
+        $PAGE->navbar->add($shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
     }
     $PAGE->navbar->add($authstrs->paymentmanagement, 'index.php?course='.$course->id);
     $PAGE->navbar->add($authstrs->orderid . ': ' . $orderid, 'index.php');
@@ -343,7 +347,8 @@ function authorize_print_order($orderid)
                         redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
                     }
                     else {
-                        redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", "Error while trying to enrol ".fullname($user)." in '" . format_string($course->shortname) . "'", 20);
+                        $shortname = format_string($course->shortname, true, array('context' => $coursecontext));
+                        redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", "Error while trying to enrol ".fullname($user)." in '" . $shortname . "'", 20);
                     }
                 }
                 else {

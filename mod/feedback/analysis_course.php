@@ -120,16 +120,17 @@ if ($courseitemfilter > 0) {
                                         GROUP BY course_id, shortname
                                         ORDER BY avgvalue desc",
                                           array($courseitemfiltertyp, $courseitemfilter))) {
-         $item = $DB->get_record('feedback_item', array('id'=>$courseitemfilter));
-         echo '<tr><th colspan="2">'.$item->name.'</th></tr>';
-         echo '<tr><td><table align="left">';
-         echo '<tr><th>Course</th><th>Average</th></tr>';
-         $sep_dec = get_string('separator_decimal', 'feedback');
-         $sep_thous = get_string('separator_thousand', 'feedback');
+        $item = $DB->get_record('feedback_item', array('id'=>$courseitemfilter));
+        echo '<tr><th colspan="2">'.$item->name.'</th></tr>';
+        echo '<tr><td><table align="left">';
+        echo '<tr><th>Course</th><th>Average</th></tr>';
+        $sep_dec = get_string('separator_decimal', 'feedback');
+        $sep_thous = get_string('separator_thousand', 'feedback');
 
-         foreach ($courses as $c) {
-              echo '<tr><td>'.$c->shortname.'</td><td align="right">'.number_format(($c->avgvalue), 2, $sep_dec, $sep_thous).'</td></tr>';
-         }
+        foreach ($courses as $c) {
+            $shortname = format_string($c->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $c->course_id)));
+            echo '<tr><td>'.$shortname.'</td><td align="right">'.number_format(($c->avgvalue), 2, $sep_dec, $sep_thous).'</td></tr>';
+        }
          echo '</table></td></tr>';
     } else {
          echo '<tr><td>'.get_string('noresults').'</td></tr>';

@@ -214,6 +214,8 @@ abstract class backup_plan_dbops extends backup_dbops {
             switch ($type) {
                 case backup::TYPE_1COURSE:
                     $shortname = $DB->get_field('course', 'shortname', array('id' => $id));
+                    $context = get_context_instance(CONTEXT_COURSE, $id);
+                    $shortname = format_string($shortname, true, array('context' => $context));
                     break;
                 case backup::TYPE_1SECTION:
                     if (!$shortname = $DB->get_field('course_sections', 'name', array('id' => $id))) {
