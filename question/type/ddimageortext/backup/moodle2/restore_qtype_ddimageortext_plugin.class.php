@@ -44,7 +44,7 @@ class restore_qtype_ddimageortext_plugin extends restore_qtype_plugin {
         $paths = array();
 
         // Add own qtype stuff
-        $elename = dds;
+        $elename = 'dds';
         $elepath = $this->get_pathfor('/'.self::qtype_name());
         $paths[] = new restore_path_element($elename, $elepath);
 
