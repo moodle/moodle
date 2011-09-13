@@ -54,7 +54,7 @@ class enrol_meta_addinstance_form extends moodleform {
             if (!has_capability('enrol/meta:selectaslinked', $coursecontext)) {
                 continue;
             }
-            $courses[$c->id] = format_string($c->fullname). ' ['.$c->shortname.']';
+            $courses[$c->id] = format_string($c->fullname). ' ['.format_string($c->shortname, true, array('context' => $coursecontext)).']';
         }
         $rs->close();
 

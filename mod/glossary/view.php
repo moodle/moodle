@@ -248,7 +248,7 @@ $PAGE->set_url($url);
 if (!empty($CFG->enablerssfeeds) && !empty($CFG->glossary_enablerssfeeds)
     && $glossary->rsstype && $glossary->rssarticles) {
 
-    $rsstitle = format_string($course->shortname) . ': %fullname%';
+    $rsstitle = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id))) . ': %fullname%';
     rss_add_http_header($context, 'mod_glossary', $glossary, $rsstitle);
 }
 

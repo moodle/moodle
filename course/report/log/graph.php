@@ -120,7 +120,7 @@ switch ($type) {
 
    $graph = new graph(750, 400);
 
-   $a->coursename = $course->shortname;
+   $a->coursename = format_string($course->shortname, true, array('context' => $context));
    $a->username = fullname($user, true);
    $graph->parameter['title'] = get_string("hitsoncourse", "", $a);
 
@@ -183,7 +183,7 @@ switch ($type) {
 
    $graph = new graph(750, 400);
 
-   $a->coursename = $course->shortname;
+   $a->coursename = format_string($course->shortname, true, array('context' => $context));
    $a->username = fullname($user, true);
    $graph->parameter['title'] = get_string("hitsoncoursetoday", "", $a);
 

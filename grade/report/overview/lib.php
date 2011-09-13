@@ -119,8 +119,10 @@ class grade_report_overview extends grade_report {
                 if (!$course->showgrades) {
                     continue;
                 }
-                $courselink = '<a href="'.$CFG->wwwroot.'/grade/report/user/index.php?id='.$course->id.'&userid='.$this->user->id.'">'.$course->shortname.'</a>';
-                $canviewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $course->id));
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
+                $courselink = html_writer::link(new moodle_url('/grade/report/user/index.php', array('id' => $course->id, 'userid' => $this->user->id)), $courseshortname);
+                $canviewhidden = has_capability('moodle/grade:viewhidden', $coursecontext);
 
                 // Get course grade_item
                 $course_item = grade_item::fetch_course_item($course->id);

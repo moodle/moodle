@@ -54,6 +54,8 @@ class assignment_base {
     var $cm;
     /** @var object */
     var $course;
+    /** @var stdClass */
+    var $coursecontext;
     /** @var object */
     var $assignment;
     /** @var string */
@@ -119,6 +121,8 @@ class assignment_base {
         } else if (! $this->course = $DB->get_record('course', array('id'=>$this->cm->course))) {
             print_error('invalidid', 'assignment');
         }
+        $this->coursecontext = get_context_instance(CONTEXT_COURSE, $this->course->id);
+        $courseshortname = format_text($this->course->shortname, true, array('context' => $this->coursecontext));
 
         if ($assignment) {
             $this->assignment = $assignment;
@@ -133,7 +137,7 @@ class assignment_base {
         $this->strassignments = get_string('modulenameplural', 'assignment');
         $this->strsubmissions = get_string('submissions', 'assignment');
         $this->strlastmodified = get_string('lastmodified');
-        $this->pagetitle = strip_tags($this->course->shortname.': '.$this->strassignment.': '.format_string($this->assignment->name,true));
+        $this->pagetitle = strip_tags($courseshortname.': '.$this->strassignment.': '.format_string($this->assignment->name, true, array('context' => $this->context)));
 
         // visibility handled by require_login() with $cm parameter
         // get current group only when really needed
@@ -1849,8 +1853,9 @@ class assignment_base {
      * @return string
      */
     function email_teachers_text($info) {
-        $posttext  = format_string($this->course->shortname).' -> '.$this->strassignments.' -> '.
-                     format_string($this->assignment->name)."\n";
+        $posttext  = format_string($this->course->shortname, true, array('context' => $this->coursecontext)).' -> '.
+                     $this->strassignments.' -> '.
+                     format_string($this->assignment->name, true, array('context' => $this->context))."\n";
         $posttext .= '---------------------------------------------------------------------'."\n";
         $posttext .= get_string("emailteachermail", "assignment", $info)."\n";
         $posttext .= "\n---------------------------------------------------------------------\n";
@@ -1866,9 +1871,9 @@ class assignment_base {
     function email_teachers_html($info) {
         global $CFG;
         $posthtml  = '<p><font face="sans-serif">'.
-                     '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.format_string($this->course->shortname).'</a> ->'.
+                     '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.format_string($this->course->shortname, true, array('context' => $this->coursecontext)).'</a> ->'.
                      '<a href="'.$CFG->wwwroot.'/mod/assignment/index.php?id='.$this->course->id.'">'.$this->strassignments.'</a> ->'.
-                     '<a href="'.$CFG->wwwroot.'/mod/assignment/view.php?id='.$this->cm->id.'">'.format_string($this->assignment->name).'</a></font></p>';
+                     '<a href="'.$CFG->wwwroot.'/mod/assignment/view.php?id='.$this->cm->id.'">'.format_string($this->assignment->name, true, array('context' => $this->context)).'</a></font></p>';
         $posthtml .= '<hr /><font face="sans-serif">';
         $posthtml .= '<p>'.get_string('emailteachermailhtml', 'assignment', $info).'</p>';
         $posthtml .= '</font><hr />';
@@ -2590,8 +2595,10 @@ function assignment_cron () {
             /// mail is customised for the receiver.
             cron_setup_user($user, $course);
 
-            if (!is_enrolled(get_context_instance(CONTEXT_COURSE, $submission->course), $user->id)) {
-                echo fullname($user)." not an active participant in " . format_string($course->shortname) . "\n";
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $submission->course);
+            $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
+            if (!is_enrolled($coursecontext, $user->id)) {
+                echo fullname($user)." not an active participant in " . $courseshortname . "\n";
                 continue;
             }
 
@@ -2617,15 +2624,15 @@ function assignment_cron () {
             $assignmentinfo->assignment = format_string($submission->name,true);
             $assignmentinfo->url = "$CFG->wwwroot/mod/assignment/view.php?id=$mod->id";
 
-            $postsubject = "$course->shortname: $strassignments: ".format_string($submission->name,true);
-            $posttext  = "$course->shortname -> $strassignments -> ".format_string($submission->name,true)."\n";
+            $postsubject = "$courseshortname: $strassignments: ".format_string($submission->name,true);
+            $posttext  = "$courseshortname -> $strassignments -> ".format_string($submission->name,true)."\n";
             $posttext .= "---------------------------------------------------------------------\n";
             $posttext .= get_string("assignmentmail", "assignment", $assignmentinfo)."\n";
             $posttext .= "---------------------------------------------------------------------\n";
 
             if ($user->mailformat == 1) {  // HTML
                 $posthtml = "<p><font face=\"sans-serif\">".
-                "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
+                "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$courseshortname</a> ->".
                 "<a href=\"$CFG->wwwroot/mod/assignment/index.php?id=$course->id\">$strassignments</a> ->".
                 "<a href=\"$CFG->wwwroot/mod/assignment/view.php?id=$mod->id\">".format_string($submission->name,true)."</a></font></p>";
                 $posthtml .= "<hr /><font face=\"sans-serif\">";

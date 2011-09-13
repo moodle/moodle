@@ -609,7 +609,9 @@ function forum_cron() {
                     $userfrom->customheaders[] = 'References: <moodlepost'.$post->parent.'@'.$hostname.'>';
                 }
 
-                $postsubject = "$course->shortname: ".format_string($post->subject,true);
+                $shortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+
+                $postsubject = "$shortname: ".format_string($post->subject,true);
                 $posttext = forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto);
                 $posthtml = forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfrom, $userto);
 
@@ -630,7 +632,7 @@ function forum_cron() {
 
                 $smallmessagestrings = new stdClass();
                 $smallmessagestrings->user = fullname($userfrom);
-                $smallmessagestrings->forumname = "{$course->shortname}: ".format_string($forum->name,true).": ".$discussion->name;
+                $smallmessagestrings->forumname = "$shortname: ".format_string($forum->name,true).": ".$discussion->name;
                 $smallmessagestrings->message = $post->message;
                 //make sure strings are in message recipients language
                 $eventdata->smallmessage = get_string_manager()->get_string('smallmessage', 'forum', $smallmessagestrings, $userto->lang);
@@ -832,18 +834,19 @@ function forum_cron() {
                     $strforums      = get_string('forums', 'forum');
                     $canunsubscribe = ! forum_is_forcesubscribed($forum);
                     $canreply       = $userto->canpost[$discussion->id];
+                    $shortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
 
                     $posttext .= "\n \n";
                     $posttext .= '=====================================================================';
                     $posttext .= "\n \n";
-                    $posttext .= "$course->shortname -> $strforums -> ".format_string($forum->name,true);
+                    $posttext .= "$shortname -> $strforums -> ".format_string($forum->name,true);
                     if ($discussion->name != $forum->name) {
                         $posttext  .= " -> ".format_string($discussion->name,true);
                     }
                     $posttext .= "\n";
 
                     $posthtml .= "<p><font face=\"sans-serif\">".
-                    "<a target=\"_blank\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> ".
+                    "<a target=\"_blank\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$shortname</a> -> ".
                     "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</a> -> ".
                     "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
                     if ($discussion->name == $forum->name) {
@@ -1004,7 +1007,8 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
     $posttext = '';
 
     if (!$bare) {
-        $posttext  = "$course->shortname -> $strforums -> ".format_string($forum->name,true);
+        $shortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+        $posttext  = "$shortname -> $strforums -> ".format_string($forum->name,true);
 
         if ($discussion->name != $forum->name) {
             $posttext  .= " -> ".format_string($discussion->name,true);
@@ -1027,7 +1031,7 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
 
     if (!$bare && $canreply) {
         $posttext .= "---------------------------------------------------------------------\n";
-        $posttext .= get_string("postmailinfo", "forum", $course->shortname)."\n";
+        $posttext .= get_string("postmailinfo", "forum", $shortname)."\n";
         $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id\n";
     }
     if (!$bare && $canunsubscribe) {
@@ -1067,6 +1071,7 @@ function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfro
 
     $strforums = get_string('forums', 'forum');
     $canunsubscribe = ! forum_is_forcesubscribed($forum);
+    $shortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
 
     $posthtml = '<head>';
 /*    foreach ($CFG->stylesheets as $stylesheet) {
@@ -1077,7 +1082,7 @@ function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfro
     $posthtml .= "\n<body id=\"email\">\n\n";
 
     $posthtml .= '<div class="navbar">'.
-    '<a target="_blank" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> &raquo; '.
+    '<a target="_blank" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$shortname.'</a> &raquo; '.
     '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/index.php?id='.$course->id.'">'.$strforums.'</a> &raquo; '.
     '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id.'">'.format_string($forum->name,true).'</a>';
     if ($discussion->name == $forum->name) {

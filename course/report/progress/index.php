@@ -108,8 +108,11 @@ if ($total) {
 }
 
 if($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are some users/actvs
+
+    $shortname = format_string($course->shortname, true, array('context' => $context));
+    $textlib = textlib_get_instance();
     header('Content-Disposition: attachment; filename=progress.'.
-        preg_replace('/[^a-z0-9-]/','_',strtolower($course->shortname)).'.csv');
+        preg_replace('/[^a-z0-9-]/','_',$textlib->strtolower(strip_tags($shortname))).'.csv');
     // Unicode byte-order mark for Excel
     if($excel) {
         header('Content-Type: text/csv; charset=UTF-16LE');

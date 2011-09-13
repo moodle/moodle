@@ -692,7 +692,8 @@ class core_calendar_renderer extends plugin_renderer_base {
         $courseoptions = array();
         $courseoptions[SITEID] = get_string('fulllistofcourses');
         foreach ($courses as $course) {
-            $courseoptions[$course->id] = format_string($course->shortname);
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+            $courseoptions[$course->id] = format_string($course->shortname, true, array('context' => $coursecontext));
         }
 
         if ($this->page->course->id !== SITEID) {
