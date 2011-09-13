@@ -151,6 +151,11 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
             Y.all('fieldset#dropzoneheader input').on('blur', function (e){
                 var name = e.target.getAttribute('name');
                 var draginstanceno = this.form.from_name_with_index(name).indexes[0];
+                var fromform = [this.form.get_form_value('drops', [draginstanceno, 'xleft']),
+                                this.form.get_form_value('drops', [draginstanceno, 'ytop'])];
+                var constrainedxy = this.constrain_xy(draginstanceno, fromform);
+                this.form.set_form_value('drops', [draginstanceno, 'xleft'], constrainedxy[0]);
+                this.form.set_form_value('drops', [draginstanceno, 'ytop'], constrainedxy[1]);
             }, this);
 
             //change in selected item
@@ -177,10 +182,10 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
                     this.draw_dd_area();
                 }, this);
                 Y.all('fieldset#draggableitemheader_'+i+' input[type="text"]')
-                                                                    .on('blur', function (e){
-                    this.doc.drag_items().remove(true);
+                                                        .on('blur', function (e, draginstanceno){
+                    this.doc.drag_item(draginstanceno).remove(true);
                     this.draw_dd_area();
-                }, this);
+                }, this, i);
                 //change to infinite checkbox
                 Y.all('fieldset#draggableitemheader_'+i+' input[type="checkbox"]')
                                     .on('change', this.set_options_for_drag_item_selectors, this);
@@ -223,8 +228,7 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
                     var dragitemno = drag.getData('dragitemno');
                     drag.setXY(this.doc.drag_item_home(dragitemno).getXY());
                 } else {
-                    var constrainedxy = this.constrain_xy(draginstanceno, fromform);
-                    drag.setXY(this.convert_to_window_xy(constrainedxy));
+                    drag.setXY(this.convert_to_window_xy(fromform));
                 }
             }
         },

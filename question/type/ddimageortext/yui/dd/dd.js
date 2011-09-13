@@ -92,7 +92,8 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                     var oldhome = this.drag_item_home(dragitemno);
                     var classes = 'draghome dragitemhomes'+dragitemno+' group'+group;
                     var imghtml = '<img class="'+classes+'" src="'+url+'" alt="'+alt+'" />';
-                    var divhtml = '<div class="yui3-cssfonts '+classes+'">'+alt+'</div>';
+                    var divhtml = '<div class="yui3-cssfonts yui3-cssreset '
+                                                                    +classes+'">'+alt+'</div>';
                     if (oldhome === null) {
                         if (url) {
                             dragitemsarea.append(imghtml);
@@ -211,8 +212,8 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
             }
         },
         convert_to_window_xy : function (bgimgxy) {
-            return [+bgimgxy[0] + this.doc.bg_img().getX(),
-                    +bgimgxy[1] + this.doc.bg_img().getY()];
+            return [+bgimgxy[0] + this.doc.bg_img().getX() + 1,
+                    +bgimgxy[1] + this.doc.bg_img().getY() + 1];
         }
     }, {
         NAME : DDIMAGEORTEXTDDNAME,
