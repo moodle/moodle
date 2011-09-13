@@ -78,7 +78,7 @@ function callback_weeks_get_section_name($course, $section) {
     // We can't add a node without text
     if (!empty($section->name)) {
         // Return the name the user set
-        return $section->name;
+        return format_string($section->name, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
     } else if ($section->section == 0) {
         // Return the section0name
         return get_string('section0name', 'format_weeks');
