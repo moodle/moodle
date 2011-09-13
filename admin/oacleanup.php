@@ -42,12 +42,20 @@ function online_assignment_cleanup($output=false) {
 
 
     /// get a list of all courses on this site
-    $courses = $DB->get_records('course');
+    list($ctxselect, $ctxjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+    $sql = "SELECT c.* $ctxselect FROM {course} c $ctxjoin";
+    $courses = $DB->get_records_sql($sql);
 
     /// cycle through each course
     foreach ($courses as $course) {
+        context_instance_preload($course);
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
-        $fullname = empty($course->fullname) ? 'Course: '.$course->id : $course->fullname;
+        if (empty($course->fullname)) {
+            $fullname = get_string('course').': '.$course->id;
+        } else {
+            $fullname = format_string($course->fullname, true, array('context' => $context));
+        }
         if ($output) echo $OUTPUT->heading($fullname);
 
         /// retrieve a list of sections beyond what is currently being shown
@@ -96,7 +104,9 @@ function online_assignment_cleanup($output=false) {
 
                         /// grab the section record
                         if (!($section = $DB->get_record('course_sections', array('id'=>$newsection)))) {
-                            if ($output) echo 'Serious error: Cannot retrieve section: '.$newsection.' for course: '. format_string($course->fullname) .'<br />';
+                            if ($output) {
+                                echo 'Serious error: Cannot retrieve section: '.$newsection.' for course: '. $fullname .'<br />';
+                            }
                             continue;
                         }
 
@@ -117,7 +127,7 @@ function online_assignment_cleanup($output=false) {
 
                         /// grab the old section record
                         if (!($section = $DB->get_record('course_sections', array('id'=>$xsection->id)))) {
-                            if ($output) echo 'Serious error: Cannot retrieve old section: '.$xsection->id.' for course: '.$course->fullname.'<br />';
+                            if ($output) echo 'Serious error: Cannot retrieve old section: '.$xsection->id.' for course: '.$fullname.'<br />';
                             continue;
                         }
 

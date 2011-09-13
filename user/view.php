@@ -292,20 +292,21 @@ if (!isset($hiddenfields['mycourses'])) {
         $courselisting = '';
         foreach ($mycourses as $mycourse) {
             if ($mycourse->category) {
+                $ccontext = get_context_instance(CONTEXT_COURSE, $mycourse->id);;
+                $cfullname = format_string($mycourse->fullname, true, array('context' => $ccontext));
                 if ($mycourse->id != $course->id){
                     $class = '';
                     if ($mycourse->visible == 0) {
-                        $ccontext = get_context_instance(CONTEXT_COURSE, $mycourse->id);
                         if (!has_capability('moodle/course:viewhiddencourses', $ccontext)) {
                             continue;
                         }
                         $class = 'class="dimmed"';
                     }
                     $courselisting .= "<a href=\"{$CFG->wwwroot}/user/view.php?id={$user->id}&amp;course={$mycourse->id}\" $class >"
-                        . format_string($mycourse->fullname) . "</a>, ";
+                        . $cfullname . "</a>, ";
                 } else {
-                    $courselisting .= format_string($mycourse->fullname) . ", ";
-                    $PAGE->navbar->add($mycourse->fullname);
+                    $courselisting .= $cfullname . ", ";
+                    $PAGE->navbar->add($cfullname);
                 }
             }
             $shown++;

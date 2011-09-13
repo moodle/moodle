@@ -524,7 +524,7 @@ class core_backup_renderer extends plugin_renderer_base {
                 $row->cells = array(
                     html_writer::empty_tag('input', array('type'=>'radio', 'name'=>'targetid', 'value'=>$course->id)),
                     format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id))),
-                    $course->fullname
+                    format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)))
                 );
                 $table->data[] = $row;
             }
@@ -588,7 +588,7 @@ class core_backup_renderer extends plugin_renderer_base {
             $row->cells = array(
                 html_writer::empty_tag('input', array('type'=>'radio', 'name'=>'importid', 'value'=>$course->id)),
                 format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id))),
-                $course->fullname
+                format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)))
             );
             $table->data[] = $row;
         }

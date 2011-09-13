@@ -164,10 +164,11 @@ if ($loggedin) {
     }
 }
 if ($courseid) {
+    $fullname = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
     if ($show == 'course') {
-        $link1 .= ' | <b>'.get_string('moreshowcoursetags', $tagslang, $course->fullname).'</b>';
+        $link1 .= ' | <b>'.get_string('moreshowcoursetags', $tagslang, $fullname).'</b>';
     } else {
-        $link1 .= ' | <a href="'.$myurl.'?show=course'.$courselink.'">'.get_string('moreshowcoursetags', $tagslang, $course->fullname).'</a>';
+        $link1 .= ' | <a href="'.$myurl.'?show=course'.$courselink.'">'.get_string('moreshowcoursetags', $tagslang, $fullname).'</a>';
     }
 }
 if ($sort == 'alpha') {

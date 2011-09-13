@@ -248,7 +248,7 @@ function authorize_process_csv($filename) {
         $eventdata->name              = 'authorize_enrolment';
         $eventdata->userfrom          = $admin;
         $eventdata->userto            = $admin;
-        $eventdata->subject           = "$SITE->fullname: Authorize.net CSV ERROR LOG";
+        $eventdata->subject           = format_string($SITE->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, SITEID))).': Authorize.net CSV ERROR LOG';
         $eventdata->fullmessage       = $ignoredlines;
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
