@@ -352,6 +352,11 @@ class qtype_ddimageortext extends question_type {
             $filexml = $format->getpath($dragxml, array('#', 'file'), array());
             $question->dragitem[$dragindex] =
                                         $this->import_files_to_draft_file_area($format, $filexml);
+            if (count($filexml)) {
+                $question->dragitemtype[$dragindex] = 'image';
+            } else {
+                $question->dragitemtype[$dragindex] = 'word';
+            }
         }
 
         $drops = $data['#']['drop'];
