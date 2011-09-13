@@ -3770,7 +3770,7 @@ function authenticate_user_login($username, $password) {
             }
         } else {
             // if user not found and user creation is not disabled, create it
-            if (empty($CFG->authonly)) {
+            if (empty($CFG->authpreventaccountcreation)) {
                 $user = create_user_record($username, $password, $auth);
             } else {
                 continue;
