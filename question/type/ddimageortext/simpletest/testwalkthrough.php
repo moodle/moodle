@@ -38,14 +38,14 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/simpletest/helper.php
  */
 class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
-    protected function get_contains_drag_image_home_expectation($dragimageno, $choice, $group) {
+    protected function get_contains_drag_image_home_expectation($dragitemno, $choice, $group) {
         $class = 'group' . $group;
-        $class .= ' draghome dragimagehomes' . $dragimageno. ' choice'.$choice;
+        $class .= ' draghome dragitemhomes' . $dragitemno. ' choice'.$choice.' yui3-cssfonts';
 
         $expectedattrs = array();
         $expectedattrs['class'] = $class;
 
-        return new ContainsTagWithAttributes('img', $expectedattrs);
+        return new ContainsTagWithAttributes('div', $expectedattrs);
     }
 
     public function test_interactive_behaviour() {
