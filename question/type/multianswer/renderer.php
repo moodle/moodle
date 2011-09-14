@@ -132,6 +132,10 @@ abstract class qtype_multianswer_subq_renderer_base extends qtype_renderer {
             $feedback[] = $state->default_string(true);
         }
 
+        if ($feedbacktext) { // Note $options->feedback is already checked above.
+            $feedback[] = $feedbacktext;
+        }
+
         if ($options->rightanswer) {
             $feedback[] = get_string('correctansweris', 'qtype_shortanswer', $rightanswer);
         }
@@ -142,6 +146,10 @@ abstract class qtype_multianswer_subq_renderer_base extends qtype_renderer {
             $a->mark = format_float($fraction * $subq->maxmark, $options->markdp);
             $a->max =  format_float($subq->maxmark, $options->markdp);
             $feedback[] = get_string('markoutofmax', 'question', $a);
+        }
+
+        if (!$feedback) {
+            return '';
         }
 
         return html_writer::tag('span', implode('<br />', $feedback),
