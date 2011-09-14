@@ -197,7 +197,7 @@ class auth_plugin_shibboleth extends auth_plugin_base {
 
         // Only do this if logout handler is defined, and if the user is actually logged in via Shibboleth
         $logouthandlervalid = isset($this->config->logout_handler) && !empty($this->config->logout_handler);
-        if ( isset($SESSION->shibboleth_session_id) && $logouthandlervalid)) {
+        if ( isset($SESSION->shibboleth_session_id) && $logouthandlervalid) {
             // Check if there is an alternative logout return url defined
             if (isset($this->config->logout_return_url) && !empty($this->config->logout_return_url)) {
                 // Set temp_redirect to alternative return url
