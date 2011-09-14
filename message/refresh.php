@@ -19,6 +19,12 @@
     $userfullname = strip_tags(required_param('name', PARAM_RAW));
     $wait         = optional_param('wait', MESSAGE_DEFAULT_REFRESH, PARAM_INT);
 
+    if ($wait < 1) {
+        //this should not happen unless someone is manually constructing URLs
+        //allowing a wait of 0 causes continuous GET requests
+        $wait = MESSAGE_DEFAULT_REFRESH;
+    }
+
     $stylesheetshtml = '';
     foreach ($CFG->stylesheets as $stylesheet) {
         $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />';
