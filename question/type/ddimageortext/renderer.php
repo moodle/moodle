@@ -38,9 +38,8 @@ require_once($CFG->dirroot . '/question/type/gapselect/rendererbase.php');
 class qtype_ddimageortext_renderer extends qtype_with_combined_feedback_renderer {
 
     public function head_code(question_attempt $qa) {
-        $this->page->requires->css('/lib/yui/3.4.0/build/cssfonts-context/fonts-context-min.css');
-        $this->page->requires->css(
-                                '/lib/yui/3.4.0/build/cssreset-context/cssreset-context-min.css');
+        $this->page->requires->css('/lib/yui/3.2.0/build/cssfonts/fonts-context-min.css');
+        $this->page->requires->css('/lib/yui/3.2.0/build/cssreset/reset-context-min.css');
         return parent::head_code($qa);
     }
     public function clear_wrong(question_attempt $qa) {
