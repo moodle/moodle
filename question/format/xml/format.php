@@ -687,6 +687,8 @@ class qformat_xml extends qformat_default {
                 array('#', 'graderinfo', 0, '#', 'text', 0, '#'), '', true);
         $qo->graderinfo['format'] = $this->trans_format($this->getpath($question,
                 array('#', 'graderinfo', 0, '@', 'format'), 'moodle_auto_format'));
+        $qo->graderinfo['files'] = $this->import_files($this->getpath($question,
+                array('#', 'graderinfo', '0', '#', 'file'), array()));
 
         return $qo;
     }
@@ -1255,6 +1257,8 @@ class qformat_xml extends qformat_default {
                 $expout .= "    <graderinfo " .
                         $this->format($question->options->graderinfoformat) . ">\n";
                 $expout .= $this->writetext($question->options->graderinfo, 3);
+                $expout .= $this->writefiles($fs->get_area_files($contextid, 'qtype_essay',
+                        'graderinfo', $question->id));
                 $expout .= "    </graderinfo>\n";
                 break;
 
