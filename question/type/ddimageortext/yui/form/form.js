@@ -337,5 +337,5 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
         return new DDIMAGEORTEXT_FORM(config);
     }
 }, '@VERSION@', {
-    requires:['node', 'dd', 'dd-drop', 'dd-constrain', 'moodle-qtype_ddimageortext-dd', 'form_filepicker']
+    requires:['moodle-qtype_ddimageortext-dd', 'form_filepicker']
 });
