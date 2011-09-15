@@ -28,7 +28,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['language'] = 'Kalba';
-$string['next'] = 'Toliau';
-$string['previous'] = 'Ankstesnis';
-$string['reload'] = 'Įkelti iš naujo';
+$string['wrongdestpath'] = 'Səhv təyinat yolu';
+$string['wrongsourcebase'] = 'Baza URL-in səhv mənbəyi';
+$string['wrongzipfilename'] = 'ZİP faylın səhv adı';
