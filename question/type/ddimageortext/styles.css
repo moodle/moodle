@@ -73,3 +73,9 @@
     position: absolute;
     z-index: 1;
 }
+.que.ddimageortext div.dragitems div.draghome, .que.ddimageortext div.dragitems div.drag,
+form.mform fieldset#previewareaheader div.draghome, form.mform fieldset#previewareaheader div.drag {
+    font:13px/1.231 arial,helvetica,clean,sans-serif;
+    *font-size:small; /* for IE */
+    *font:x-small; /* for IE in quirks mode */
+}
