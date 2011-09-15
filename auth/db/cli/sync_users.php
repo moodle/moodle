@@ -72,7 +72,7 @@ Example:
 
 Sample cron entry:
 # 5 minutes past 4am
-5 4 * * * $sudo -u www-data /usr/bin/php /var/www/moodle/auth/db/cli/sync_users.php
+5 4 * * * \$sudo -u www-data /usr/bin/php /var/www/moodle/auth/db/cli/sync_users.php
 ";
 
     echo $help;
