@@ -14,10 +14,6 @@ require_once(dirname(dirname(dirname(dirname(dirname(dirname(dirname(dirname(__F
 	//$config['general.engine'] = 'PSpellShell';
 	//$config['general.remote_rpc_url'] = 'http://some.other.site/some/url/rpc.php';
 
-	// GoogleSpell settings
-	$config['GoogleSpell.proxy'] = isset($CFG->proxyhost) ? $CFG->proxyhost : '';
-    $config['GoogleSpell.proxyport'] = isset($CFG->proxyport) ? $CFG->proxyport : '';
-
     if ($config['general.engine'] === 'PSpell' or $config['general.engine'] === 'PSpellShell') {
         // PSpell settings
         $config['PSpell.mode'] = PSPELL_FAST;
