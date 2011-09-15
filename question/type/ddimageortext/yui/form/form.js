@@ -234,8 +234,8 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
         },
         set_drag_xy : function (draginstanceno, xy) {
             xy = this.constrain_xy(draginstanceno, this.convert_to_bg_img_xy(xy));
-            this.form.set_form_value('drops', [draginstanceno, 'xleft'], Math.floor(xy[0]));
-            this.form.set_form_value('drops', [draginstanceno, 'ytop'], Math.floor(xy[1]));
+            this.form.set_form_value('drops', [draginstanceno, 'xleft'], Math.round(xy[0]));
+            this.form.set_form_value('drops', [draginstanceno, 'ytop'], Math.round(xy[1]));
         },
         reset_drag_xy : function (draginstanceno) {
             this.form.set_form_value('drops', [draginstanceno, 'xleft'], '');
@@ -254,8 +254,8 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
             return [xleftconstrained, ytopconstrained];
         },
         convert_to_bg_img_xy : function (windowxy) {
-            return [windowxy[0] - this.doc.bg_img().getX(),
-                    windowxy[1] - this.doc.bg_img().getY()];
+            return [+windowxy[0] - this.doc.bg_img().getX()-1,
+                    +windowxy[1] - this.doc.bg_img().getY()-1];
         },
 
         /**

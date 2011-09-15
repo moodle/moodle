@@ -173,8 +173,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                         if (!gooddrop) {
                             mainobj.reset_drag_xy(draginstanceno);
                         } else {
-                            endxy = [Math.round(e.pageX), Math.round(e.pageY)];
-                            mainobj.set_drag_xy(draginstanceno, endxy);
+                            mainobj.set_drag_xy(draginstanceno, [e.pageX, e.pageY]);
                         }
                     }, this);
                     dd.on('drag:start', function(e) {
