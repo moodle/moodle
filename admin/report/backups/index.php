@@ -1,128 +1,111 @@
 <?php
-      // index.php - scheduled backup logs
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-    require_once('../../../config.php');
-    require_once($CFG->libdir.'/adminlib.php');
-    require_once($CFG->dirroot.'/backup/lib.php');
+/**
+ * A report to display the outcome of scheduled backups
+ *
+ * @package    report
+ * @subpackage backups
+ * @copyright  2007 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-    $courseid = optional_param('courseid', 0, PARAM_INT);
+require_once('../../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->dirroot.'/backup/lib.php');
 
-    admin_externalpage_setup('reportbackups');
-    echo $OUTPUT->header();
+admin_externalpage_setup('reportbackups');
 
-/// Automated backups aren't active by the site admin
-    $backup_config = backup_get_config();
-    if (empty($backup_config->backup_auto_active)) {
-        echo $OUTPUT->notification(get_string('automatedbackupsinactive', 'backup'));
-    }
+$table = new html_table;
+$table->head = array(
+    get_string("course"),
+    get_string("timetaken", "quiz"),
+    get_string("status"),
+    get_string("backupnext")
+);
+$table->headspan = array(1, 3, 1, 1);
+$table->attributes = array('class' => 'generaltable backup-report');
+$table->data = array();
 
-/// Get needed strings
-    $backuploglaststatus = get_string("backuploglaststatus");
-    $backuplogdetailed = get_string("backuplogdetailed");
-    $stradmin = get_string("administration");
-    $strconfiguration = get_string("configuration");
-    $strbackup = get_string("backup");
-    $strbackupdetails = get_string("backupdetails");
-    $strlogs = get_string("logs");
-    $strftimedatetime = get_string("strftimerecent");
-    $strftimetime = get_string("strftimetime").":%S";
-    $strerror = get_string("error");
-    $strok = get_string("ok");
-    $strunfinished = get_string("unfinished");
-    $strskipped = get_string("skipped");
-    $strcourse = get_string("course");
-    $strtimetaken = get_string("timetaken","quiz");
-    $strstatus = get_string("status");
-    $strnext = get_string("backupnext");
+$strftimedatetime = get_string("strftimerecent");
+$strerror = get_string("error");
+$strok = get_string("ok");
+$strunfinished = get_string("unfinished");
+$strskipped = get_string("skipped");
 
-/// Decide when to show last execution logs or detailed logs
-/// Lastlog view
-    if (!$courseid) {
-        echo $OUTPUT->heading($backuploglaststatus);
-        echo $OUTPUT->box_start();
-    /// Now, get every record from backup_courses
-        $courses = $DB->get_records("backup_courses");
+list($select, $join) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+$sql = "SELECT bc.*, c.fullname $select
+          FROM {backup_courses} bc
+          JOIN {course} c ON c.id = bc.courseid
+               $join";
+$rs = $DB->get_recordset_sql($sql);
+foreach ($rs as $backuprow) {
 
-        if (!$courses) {
-            echo $OUTPUT->notification(get_string('nologsfound'));
-        } else {
-            echo "<table border=\"0\" align=\"center\" cellpadding=\"3\" cellspacing=\"3\">";
-            //Print table header
-            echo "<tr>";
-            echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"3\">$strcourse</font></td>";
-            echo "<td nowrap=\"nowrap\" align=\"center\" colspan=\"3\"><font size=\"3\">$strtimetaken</font></td>";
-            echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"3\">$strstatus</font></td>";
-            echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"3\">$strnext</font></td></tr>";
-            foreach ($courses as $course) {
-            /// Get the course shortname
-                $coursename = $DB->get_field ("course", "fullname", array("id"=>$course->courseid));
-                if ($coursename) {
-                    echo "<tr>";
-                    echo "<td nowrap=\"nowrap\"><font size=\"2\"><a href=\"index.php?courseid=$course->courseid\">".$coursename."</a></font></td>";
-                    echo "<td nowrap=\"nowrap\"><font size=\"2\">".userdate($course->laststarttime,$strftimedatetime)."</font></td>";
-                    echo "<td nowrap=\"nowrap\"><font size=\"2\"> - </font></td>";
-                    echo "<td nowrap=\"nowrap\"><font size=\"2\">".userdate($course->lastendtime,$strftimedatetime)."</font></td>";
-                    if ($course->laststatus == 1) {
-                        echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"2\" color=\"green\">".$strok."</font></td>";
-                    } else if ($course->laststatus == 2) {
-                        echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"2\" color=\"red\">".$strunfinished."</font></td>";
-                    } else if ($course->laststatus == 3) {
-                        echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"2\" color=\"green\">".$strskipped."</font></td>";
-                    } else {
-                        echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"2\" color=\"red\">".$strerror."</font></td>";
-                    }
-                    echo "<td nowrap=\"nowrap\"><font size=\"2\">".userdate($course->nextstarttime,$strftimedatetime)."</font></td>";
-                    echo "</tr>";
-                }
-            }
-            echo "</table>";
-        }
-        echo $OUTPUT->box_end();
-/// Detailed View !!
+    // Cache the course context
+    context_instance_preload($backuprow);
+
+    // Prepare a cell to display the status of the entry
+    if ($backuprow->laststatus == 1) {
+        $status = $strok;
+        $statusclass = 'backup-ok'; // Green
+    } else if ($backuprow->laststatus == 2) {
+        $status = $strunfinished;
+        $statusclass = 'backup-unfinished'; // Red
+    } else if ($backuprow->laststatus == 3) {
+        $status = $strskipped;
+        $statusclass = 'backup-skipped'; // Green
     } else {
-        echo $OUTPUT->heading($backuplogdetailed);
-
-        $coursename = $DB->get_field("course", "fullname", array("id"=>"$courseid"));
-        echo $OUTPUT->heading("$strcourse: $coursename");
-
-        echo $OUTPUT->box_start();
-
-    /// First, me get all the distinct backups for that course in backup_log
-        $executions = $DB->get_records_sql("SELECT DISTINCT laststarttime
-                                              FROM {backup_log}
-                                             WHERE courseid = ? AND backuptype = ?
-                                          ORDER BY laststarttime DESC", array($courseid,'scheduledbackup'));
-
-    /// Iterate over backup executions
-        if (!$executions) {
-            echo $OUTPUT->notification(get_string('nologsfound'));
-        } else {
-            echo "<table border=\"0\" align=\"center\" cellpadding=\"3\" cellspacing=\"3\">";
-            foreach($executions as $execution) {
-                echo "<tr>";
-                echo "<td nowrap=\"nowrap\" align=\"center\" colspan=\"3\">";
-                echo $OUTPUT->box(userdate($execution->laststarttime));
-                echo "</td>";
-                echo "</tr>";
-                $logs = $DB->get_records_sql("SELECT *
-                                                FROM {backup_log}
-                                               WHERE courseid = ? AND laststarttime = ? AND backuptype = ?
-                                            ORDER BY id", array($courseid, $execution->laststarttime,'scheduledbackup'));
-                if ($logs) {
-                    foreach ($logs as $log) {
-                        echo "<tr>";
-                        echo "<td nowrap=\"nowrap\"><font size=\"2\">".userdate($log->time,$strftimetime)."</font></td>";
-                        $log->info = str_replace("- ERROR!!","- <font color=\"red\">ERROR!!</font>",$log->info);
-                        $log->info = str_replace("- OK","- <font color=\"green\">OK</font>",$log->info);
-                        echo "<td nowrap=\"nowrap\"><font size=\"2\">".str_replace("  ","&nbsp;&nbsp;&nbsp;&nbsp;",$log->info)."</font></td>";
-                        echo "</tr>";
-                    }
-                }
-            }
-            echo "</table>";
-        }
-        echo $OUTPUT->box_end();
+        $status = $strerror;
+        $statusclass = 'backup-error'; // Red
     }
+    $status = new html_table_cell($status);
+    $status->attributes = array('class' => $statusclass);
 
-    echo $OUTPUT->footer();
+    // Create the row and add it to the table
+    $cells = array(
+        format_string($backuprow->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $backuprow->courseid))),
+        userdate($backuprow->laststarttime, $strftimedatetime),
+        '-',
+        userdate($backuprow->lastendtime, $strftimedatetime),
+        $status,
+        userdate($backuprow->nextstarttime, $strftimedatetime)
+    );
+    $table->data[] = new html_table_row($cells);
+}
+$rs->close();
 
+// Check if we have any results and if not add a no records notification
+if (empty($table->data)) {
+    $cell = new html_table_cell($OUTPUT->notification(get_string('nologsfound')));
+    $cell->colspan = 6;
+    $table->data[] = new html_table_row(array($cell));
+}
+
+$automatedbackupsenabled = get_config('backup', 'backup_auto_active');
+
+// Display the backup report
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string("backuploglaststatus"));
+echo $OUTPUT->box_start();
+if (empty($automatedbackupsenabled)) {
+    // Automated backups aren't active, display a notification.
+    // Not we don't stop because of this as perhaps scheduled backups are being run
+    // automatically, or were enabled in the page.
+    echo $OUTPUT->notification(get_string('automatedbackupsinactive', 'backup'));
+}
+echo html_writer::table($table);
+echo $OUTPUT->box_end();
+echo $OUTPUT->footer();
