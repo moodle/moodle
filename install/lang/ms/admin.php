@@ -28,15 +28,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['clianswerno'] = 'n';
+$string['clianswerno'] = 't';
 $string['cliansweryes'] = 'y';
-$string['cliincorrectvalueerror'] = 'Ошибка, некорректное значение "{$a->value}" для "{$a->option}"';
-$string['cliincorrectvalueretry'] = 'Некорректное значение, пожалуйста, попробуйте заново';
-$string['clitypevalue'] = 'введите значение';
-$string['clitypevaluedefault'] = 'введите значение, нажмите Enter для использования значения по умолчанию ({$a})';
-$string['cliunknowoption'] = 'Нераспознанные параметры:
+$string['cliincorrectvalueerror'] = 'Ralat, nilai tidak betul "{$a->value}" untuk "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Nilai yang salah, sila cuba lagi';
+$string['clitypevalue'] = 'taip nilai';
+$string['clitypevaluedefault'] = 'taip nilai, tekan Enter untuk gunakan nilai lalai ({$a})';
+$string['cliunknowoption'] = 'Pilihan yang tidak diiktiraf:
   {$a}
-Пожалуйста, воспользуйтесь параметром --help';
-$string['cliyesnoprompt'] = 'Введите y (обозначает Да) или n (обозначает Нет)';
-$string['environmentrequireinstall'] = 'необходимо установить и включить';
-$string['environmentrequireversion'] = 'требуется версия {$a->needed}, у Вас используется версия {$a->current}';
+Sila gunakan pilihan --help';
+$string['cliyesnoprompt'] = 'tapi y (ya) atau t (tidak)';
