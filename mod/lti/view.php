@@ -123,7 +123,7 @@ if($basiclti->showdescription && $basiclti->intro){
 }
 
 if ($basiclti->instructorchoiceacceptgrades == 1) {
-    echo '<div class="reportlink">'.submittedlink($cm).'</div>';
+    echo '<div class="reportlink">'.lti_submittedlink($cm).'</div>';
 }
 
 if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {

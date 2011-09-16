@@ -120,11 +120,11 @@ function lti_view($instance, $makeobject=false) {
     $requestparams["oauth_callback"] = "about:blank";
 
     $submittext = get_string('press_to_submit', 'lti');
-    $parms = sign_parameters($requestparams, $endpoint, "POST", $key, $secret, $submittext, $orgid /*, $orgdesc*/);
+    $parms = lti_sign_parameters($requestparams, $endpoint, "POST", $key, $secret, $submittext, $orgid /*, $orgdesc*/);
 
     $debuglaunch = ( $instance->debuglaunch == 1 );
     
-    $content = post_launch_html($parms, $endpoint, $debuglaunch);
+    $content = lti_post_launch_html($parms, $endpoint, $debuglaunch);
     
     echo $content;
 }
@@ -219,13 +219,13 @@ function lti_build_request($instance, $typeconfig, $course) {
     $custom = array();
     $instructorcustom = array();
     if ($customstr) {
-        $custom = split_custom_parameters($customstr);
+        $custom = lti_split_custom_parameters($customstr);
     }
     if (!isset($typeconfig['allowinstructorcustom']) || $typeconfig['allowinstructorcustom'] == 0) {
         $requestparams = array_merge($custom, $requestparams);
     } else {
         if ($instructorcustomstr) {
-            $instructorcustom = split_custom_parameters($instructorcustomstr);
+            $instructorcustom = lti_split_custom_parameters($instructorcustomstr);
         }
         foreach ($instructorcustom as $key => $val) {
             if (array_key_exists($key, $custom)) {
@@ -247,7 +247,7 @@ function lti_build_request($instance, $typeconfig, $course) {
  *
  * @return Array of custom parameters
  */
-function split_custom_parameters($customstr) {
+function lti_split_custom_parameters($customstr) {
     $textlib = textlib_get_instance();
 
     $lines = preg_split("/[\n;]/", $customstr);
@@ -259,7 +259,7 @@ function split_custom_parameters($customstr) {
         }
         $key = trim($textlib->substr($line, 0, $pos));
         $val = trim($textlib->substr($line, $pos+1));
-        $key = map_keyname($key);
+        $key = lti_map_keyname($key);
         $retval['custom_'.$key] = $val;
     }
     return $retval;
@@ -272,7 +272,7 @@ function split_custom_parameters($customstr) {
  *
  * @return string       Processed name
  */
-function map_keyname($key) {
+function lti_map_keyname($key) {
     $textlib = textlib_get_instance();
 
     $newkey = "";
@@ -778,7 +778,7 @@ function lti_update_config($config) {
  * @param $orgid       LMS name
  * @param $orgdesc     LMS key
  */
-function sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $oauthconsumersecret, $submittext, $orgid /*, $orgdesc*/) {
+function lti_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $oauthconsumersecret, $submittext, $orgid /*, $orgdesc*/) {
     global $lastbasestring;
     $parms = $oldparms;
     $parms["lti_version"] = "LTI-1p0";
@@ -814,7 +814,7 @@ function sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $oaut
  * @param $endpoint     URL of the external tool
  * @param $debug        Debug (true/false)
  */
-function post_launch_html($newparms, $endpoint, $debug=false) {
+function lti_post_launch_html($newparms, $endpoint, $debug=false) {
     global $lastbasestring;
     
     $r = "<form action=\"".$endpoint."\" name=\"ltiLaunchForm\" id=\"ltiLaunchForm\" method=\"post\" encType=\"application/x-www-form-urlencoded\">\n";
@@ -898,7 +898,7 @@ function post_launch_html($newparms, $endpoint, $debug=false) {
  * @param bool $allgroup print all groups info if user can access all groups, suitable for index.php
  * @return string
  */
-function submittedlink($cm, $allgroups=false) {
+function lti_submittedlink($cm, $allgroups=false) {
     global $CFG;
 
     $submitted = '';

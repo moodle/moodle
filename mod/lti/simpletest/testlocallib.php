@@ -55,13 +55,13 @@ require_once($CFG->dirroot . '/mod/lti/locallib.php');
 class lti_locallib_test extends UnitTestCase {
     public static $includecoverage = array('mod/lti/locallib.php');
     function test_split_custom_parameters() {
-    $this->assertEqual(split_custom_parameters("x=1\ny=2"),
+    $this->assertEqual(lti_split_custom_parameters("x=1\ny=2"),
             array('custom_x' => '1', 'custom_y'=> '2'));
-    $this->assertEqual(split_custom_parameters('x=1;y=2'),
+    $this->assertEqual(lti_split_custom_parameters('x=1;y=2'),
             array('custom_x' => '1', 'custom_y'=> '2'));
-    $this->assertEqual(split_custom_parameters('Review:Chapter=1.2.56'),
+    $this->assertEqual(lti_split_custom_parameters('Review:Chapter=1.2.56'),
             array('custom_review_chapter' => '1.2.56'));
-    $this->assertEqual(split_custom_parameters('Complex!@#$^*(){}[]KEY=Complex!@#$^*(){}[]Value'),
+    $this->assertEqual(lti_split_custom_parameters('Complex!@#$^*(){}[]KEY=Complex!@#$^*(){}[]Value'),
             array('custom_complex____________key' => 'Complex!@#$^*(){}[]Value'));
         $this->assertEqual(5, 5);
     }
@@ -71,7 +71,7 @@ class lti_locallib_test extends UnitTestCase {
 
         $requestparams = array('resource_link_id' => '123', 'resource_link_title' => 'Weekly Blog', 'user_id' => '789', 'roles' => 'Learner', 'context_id' => '12345', 'context_label' => 'SI124', 'context_title' => 'Social Computing');
 
-        $parms = sign_parameters($requestparams, 'http://www.imsglobal.org/developer/LTI/tool.php', 'POST',
+        $parms = lti_sign_parameters($requestparams, 'http://www.imsglobal.org/developer/LTI/tool.php', 'POST',
             'lmsng.school.edu', 'secret', 'Click Me', 'lmsng.school.edu' /*, $org_desc*/);
         $this->assertTrue(isset($parms['oauth_nonce']));
         $this->assertTrue(isset($parms['oauth_signature']));
