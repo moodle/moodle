@@ -51,19 +51,23 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->dirroot . '/mod/lti/locallib.php');
+require_once($CFG->dirroot . '/mod/lti/servicelib.php');
 
 class lti_locallib_test extends UnitTestCase {
     public static $includecoverage = array('mod/lti/locallib.php');
+    
     function test_split_custom_parameters() {
-    $this->assertEqual(lti_split_custom_parameters("x=1\ny=2"),
-            array('custom_x' => '1', 'custom_y'=> '2'));
-    $this->assertEqual(lti_split_custom_parameters('x=1;y=2'),
-            array('custom_x' => '1', 'custom_y'=> '2'));
-    $this->assertEqual(lti_split_custom_parameters('Review:Chapter=1.2.56'),
-            array('custom_review_chapter' => '1.2.56'));
-    $this->assertEqual(lti_split_custom_parameters('Complex!@#$^*(){}[]KEY=Complex!@#$^*(){}[]Value'),
-            array('custom_complex____________key' => 'Complex!@#$^*(){}[]Value'));
-        $this->assertEqual(5, 5);
+        $this->assertEqual(lti_split_custom_parameters("x=1\ny=2"),
+                array('custom_x' => '1', 'custom_y'=> '2'));
+        
+        $this->assertEqual(lti_split_custom_parameters('x=1;y=2'),
+                array('custom_x' => '1', 'custom_y'=> '2'));
+        
+        $this->assertEqual(lti_split_custom_parameters('Review:Chapter=1.2.56'),
+                array('custom_review_chapter' => '1.2.56'));
+        
+        $this->assertEqual(lti_split_custom_parameters('Complex!@#$^*(){}[]KEY=Complex!@#$^*(){}[]Value'),
+                array('custom_complex____________key' => 'Complex!@#$^*(){}[]Value'));
     }
 
     function test_sign_parameters() {
@@ -86,4 +90,41 @@ class lti_locallib_test extends UnitTestCase {
         $this->assertEqual($parms, $correct);
     }
 
+    function test_parse_grade_replace_message(){
+        $message = <<<XML
+            <imsx_POXEnvelopeRequest xmlns = "http://www.imsglobal.org/lis/oms1p0/pox">
+              <imsx_POXHeader>
+                <imsx_POXRequestHeaderInfo>
+                  <imsx_version>V1.0</imsx_version>
+                  <imsx_messageIdentifier>999998123</imsx_messageIdentifier>
+                </imsx_POXRequestHeaderInfo>
+              </imsx_POXHeader>
+              <imsx_POXBody>
+                <replaceResultRequest>
+                  <resultRecord>
+                    <sourcedGUID>
+                      <sourcedId>{&quot;data&quot;:{&quot;instanceid&quot;:&quot;2&quot;,&quot;userid&quot;:&quot;2&quot;},&quot;hash&quot;:&quot;0b5078feab59b9938c333ceaae21d8e003a7b295e43cdf55338445254421076b&quot;}</sourcedId>
+                    </sourcedGUID>
+                    <result>
+                      <resultScore>
+                        <language>en-us</language>
+                        <textString>0.92</textString>
+                      </resultScore>
+                    </result>
+                  </resultRecord>
+                </replaceResultRequest>
+              </imsx_POXBody>
+            </imsx_POXEnvelopeRequest>
+XML;
+        
+        $parsed = lti_parse_grade_replace_message(new SimpleXMLElement($message));
+        
+        $this->assertEqual($parsed->userid, '2');
+        $this->assertEqual($parsed->instanceid, '2');
+        $this->assertEqual($parsed->sourcedidhash, '0b5078feab59b9938c333ceaae21d8e003a7b295e43cdf55338445254421076b');
+        
+        $ltiinstance = (object)array('servicesalt' => '4e5fcc06de1d58.44963230');
+        
+        lti_verify_sourcedid($ltiinstance, $parsed);
+    }
 }

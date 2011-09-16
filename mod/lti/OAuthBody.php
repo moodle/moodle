@@ -72,10 +72,11 @@ function getOAuthKeyFromHeaders()
     return false;
 }
  
-function handleOAuthBodyPOST($oauth_consumer_key, $oauth_consumer_secret) 
+function handleOAuthBodyPOST($oauth_consumer_key, $oauth_consumer_secret, $body, $request_headers = null) 
 {
-    $request_headers = OAuthUtil::get_headers();
-    // print_r($request_headers);
+    if($request_headers == null){
+        $request_headers = OAuthUtil::get_headers();
+    }
 
     // Must reject application/x-www-form-urlencoded
     if ($request_headers['Content-type'] == 'application/x-www-form-urlencoded' ) {
@@ -112,7 +113,7 @@ function handleOAuthBodyPOST($oauth_consumer_key, $oauth_consumer_secret)
         throw new Exception("OAuth signature failed: " . $message);
     }
 
-    $postdata = file_get_contents('php://input');
+    $postdata = $body;
     // echo($postdata);
 
     $hash = base64_encode(sha1($postdata, TRUE));

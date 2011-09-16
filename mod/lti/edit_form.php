@@ -49,9 +49,9 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 class mod_lti_edit_types_form extends moodleform{
-
     function definition() {
         $mform    =& $this->_form;
 
@@ -78,7 +78,11 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->addElement('textarea', 'lti_customparameters', get_string('custom', 'lti'), array('rows'=>4, 'cols'=>60));
         $mform->setType('lti_customparameters', PARAM_TEXT);
         
-        $mform->addElement('checkbox', 'lti_coursevisible', '&nbsp;', ' ' . get_string('show_in_course', 'lti'));
+        if(!empty($this->_customdata->isadmin)){
+            $mform->addElement('checkbox', 'lti_coursevisible', '&nbsp;', ' ' . get_string('show_in_course', 'lti'));
+        } else {
+            $mform->addElement('hidden', 'lti_coursevisible', '1');
+        }
         
         $launchoptions=array();
         $launchoptions[LTI_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'lti');
@@ -95,8 +99,7 @@ class mod_lti_edit_types_form extends moodleform{
         $options=array();
         $options[0] = get_string('never', 'lti');
         $options[1] = get_string('always', 'lti');
-        $options[2] = get_string('delegate_yes', 'lti');
-        $options[3] = get_string('delegate_no', 'lti');
+        $options[2] = get_string('delegate', 'lti');
 
         $mform->addElement('select', 'lti_sendname', get_string('sendname', 'lti'), $options);
         $mform->setDefault('lti_sendname', '2');
@@ -119,24 +122,26 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->setDefault('lti_allowroster', '2');
 //        $mform->addHelpButton('lti_allowroster', 'allowroster', 'lti');
 
-                
-//-------------------------------------------------------------------------------
-        // Add setup parameters fieldset
-        $mform->addElement('header', 'setupoptions', get_string('miscellaneous', 'lti'));
+          
+        if(!empty($this->_customdata->isadmin)){
+            //-------------------------------------------------------------------------------
+            // Add setup parameters fieldset
+            $mform->addElement('header', 'setupoptions', get_string('miscellaneous', 'lti'));
 
-        // Adding option to change id that is placed in context_id
-        $idoptions = array();
-        $idoptions[0] = get_string('id', 'lti');
-        $idoptions[1] = get_string('courseid', 'lti');
+            // Adding option to change id that is placed in context_id
+            $idoptions = array();
+            $idoptions[0] = get_string('id', 'lti');
+            $idoptions[1] = get_string('courseid', 'lti');
 
-        $mform->addElement('text', 'lti_organizationid', get_string('organizationid', 'lti'));
-        $mform->setType('lti_organizationid', PARAM_TEXT);
-//        $mform->addHelpButton('lti_organizationid', 'organizationid', 'lti');
+            $mform->addElement('text', 'lti_organizationid', get_string('organizationid', 'lti'));
+            $mform->setType('lti_organizationid', PARAM_TEXT);
+    //        $mform->addHelpButton('lti_organizationid', 'organizationid', 'lti');
 
-        $mform->addElement('text', 'lti_organizationurl', get_string('organizationurl', 'lti'));
-        $mform->setType('lti_organizationurl', PARAM_TEXT);
-//        $mform->addHelpButton('lti_organizationurl', 'organizationurl', 'lti');
-
+            $mform->addElement('text', 'lti_organizationurl', get_string('organizationurl', 'lti'));
+            $mform->setType('lti_organizationurl', PARAM_TEXT);
+    //        $mform->addHelpButton('lti_organizationurl', 'organizationurl', 'lti');
+        }
+        
         /* Suppress this for now - Chuck
         $mform->addElement('text', 'lti_organizationdescr', get_string('organizationdescr', 'lti'));
         $mform->setType('lti_organizationdescr', PARAM_TEXT);
@@ -145,12 +150,14 @@ class mod_lti_edit_types_form extends moodleform{
 
 //-------------------------------------------------------------------------------
         // Add a hidden element to signal a tool fixing operation after a problematic backup - restore process
-        $mform->addElement('hidden', 'lti_fix');
+        //$mform->addElement('hidden', 'lti_fix');
         
         $tab = optional_param('tab', '', PARAM_ALPHAEXT);
         $mform->addElement('hidden', 'tab', $tab);
         
-
+        $courseid = optional_param('course', 1, PARAM_INT);
+        $mform->addElement('hidden', 'course', $courseid);
+        
 //-------------------------------------------------------------------------------
         // Add standard buttons, common to all modules
         $this->add_action_buttons();

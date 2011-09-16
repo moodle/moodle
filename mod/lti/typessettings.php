@@ -79,7 +79,7 @@ $focus = '';
 $data = data_submitted();
 
 if (confirm_sesskey() && isset($data->submitbutton)) {
-    $type = new StdClass();
+    $type = new stdClass();
     
     if (isset($id)) {
         $type->id = $id;
@@ -183,10 +183,10 @@ if (empty($SITE->fullname)) {
     echo $OUTPUT->heading(get_string('toolsetup', 'lti'));
     echo $OUTPUT->box_start('generalbox');
     if ($action == 'add') {
-        $form = new mod_lti_edit_types_form();
+        $form = new mod_lti_edit_types_form(null, (object)array('isadmin' => true));
         $form->display();
     } else if ($action == 'update') {
-        $form = new mod_lti_edit_types_form('typessettings.php?id='.$id);
+        $form = new mod_lti_edit_types_form('typessettings.php?id='.$id, (object)array('isadmin' => true));
         $type = lti_get_type_type_config($id);
         $form->set_data($type);
         $form->display();

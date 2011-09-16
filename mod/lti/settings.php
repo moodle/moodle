@@ -51,7 +51,7 @@ global $PAGE, $CFG;
 
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
-function blti_get_tool_table($tools, $id){
+function lti_get_tool_table($tools, $id){
     global $CFG, $USER;
     $html = '';
     
@@ -153,19 +153,19 @@ if ($ADMIN->fulltree) {
         return $value->state == LTI_TOOL_STATE_CONFIGURED;
     });
     
-    $configuredtoolshtml = blti_get_tool_table($configuredtools, 'lti_configured');
+    $configuredtoolshtml = lti_get_tool_table($configuredtools, 'lti_configured');
 
     $pendingtools = array_filter($types, function($value){
         return $value->state == LTI_TOOL_STATE_PENDING;
     });
     
-    $pendingtoolshtml = blti_get_tool_table($pendingtools, 'lti_pending');
+    $pendingtoolshtml = lti_get_tool_table($pendingtools, 'lti_pending');
     
     $rejectedtools = array_filter($types, function($value){
         return $value->state == LTI_TOOL_STATE_REJECTED;
     });
     
-    $rejectedtoolshtml = blti_get_tool_table($rejectedtools, 'lti_rejected');
+    $rejectedtoolshtml = lti_get_tool_table($rejectedtools, 'lti_rejected');
     
     $tab = optional_param('tab', '', PARAM_ALPHAEXT);
     $activeselected = '';
@@ -266,5 +266,5 @@ HTML;
     $PAGE->requires->yui2_lib('tabview');
     $PAGE->requires->yui2_lib('datatable');
    
-    $settings->add(new admin_setting_heading('lti_types', get_string('external_tool_types', 'lti'), $template /*  $str*/));
+    $settings->add(new admin_setting_heading('lti_types', get_string('external_tool_types', 'lti'), $template));
 }

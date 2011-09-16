@@ -129,6 +129,23 @@ function lti_view($instance, $makeobject=false) {
     echo $content;
 }
 
+function lti_build_sourcedid($instanceid, $userid, $servicesalt){
+    $data = new stdClass();
+        
+    $data->instanceid = $instanceid;
+    $data->userid = $userid;
+
+    $json = json_encode($data);
+
+    $hash = hash('sha256', $json . $servicesalt, false);
+
+    $container = new stdClass();
+    $container->data = $data;
+    $container->hash = $hash;
+
+    return $container;
+}
+
 /**
  * This function builds the request that must be sent to the tool producer
  *
@@ -168,20 +185,7 @@ function lti_build_request($instance, $typeconfig, $course) {
     $placementsecret = $instance->servicesalt;
         
     if ( isset($placementsecret) ) {
-        $data = new stdClass();
-        
-        $data->instanceid = $instance->id;
-        $data->userid = $USER->id;
-        
-        $json = json_encode($data);
-        
-        $hash = hash('sha256', $json . $placementsecret, false);
-        
-        $container = new stdClass();
-        $container->data = $data;
-        $container->hash = $hash;
-        
-        $sourcedid = json_encode($container);
+        $sourcedid = json_encode(lti_build_sourcedid($instance->id, $USER->id, $placementsecret));
     }
 
     if ( isset($placementsecret) &&
@@ -338,10 +342,10 @@ function lti_get_type_config($typeid) {
     return $typeconfig;
 }
 
-function lti_get_tools_by_url($url, $state){
+function lti_get_tools_by_url($url, $state, $courseid = null){
     $domain = lti_get_domain_from_url($url);
     
-    return lti_get_tools_by_domain($domain, $state);
+    return lti_get_tools_by_domain($domain, $state, $courseid);
 }
 
 function lti_get_tools_by_domain($domain, $state = null, $courseid = null){
@@ -387,14 +391,23 @@ function lti_filter_get_types() {
 }
 
 function lti_get_types_for_add_instance(){
-    global $DB;
-    $admintypes = $DB->get_records('lti_types', array('coursevisible' => 1));
+    global $DB, $SITE, $COURSE;
+    
+    $query = <<<QUERY
+            SELECT *
+            FROM {lti_types}
+            WHERE
+                coursevisible = 1
+            AND (course = :siteid OR course = :courseid)
+QUERY;
+    
+    $admintypes = $DB->get_records_sql($query, array('siteid' => $SITE->id, 'courseid' => $COURSE->id));
     
     $types = array();
-    $types[0] = get_string('automatic', 'lti');
+    $types[0] = (object)array('name' => get_string('automatic', 'lti'), 'course' => $SITE->id);
     
     foreach($admintypes as $type) {
-        $types[$type->id] = $type->name;
+        $types[$type->id] = (object)array('name' => $type->name, 'course' => $type->course);
     }
     
     return $types;
@@ -409,7 +422,7 @@ function lti_get_domain_from_url($url){
 }
 
 function lti_get_tool_by_url_match($url, $courseid = null, $state = LTI_TOOL_STATE_CONFIGURED){
-    $possibletools = lti_get_tools_by_url($url, $state, $courseid);
+    $possibletools = lti_get_tools_by_url($url, $courseid, $state);
     
     return lti_get_best_tool_by_url($url, $possibletools);
 }
@@ -729,6 +742,8 @@ function lti_add_type($type, $config){
             }
         }
     }
+    
+    return $id;
 }
 
 /**
@@ -923,3 +938,8 @@ function lti_submittedlink($cm, $allgroups=false) {
     return $submitted;
 }
 
+function lti_get_type($typeid){
+    global $DB;
+    
+    return $DB->get_record('lti_types', array('id' => $typeid));
+}

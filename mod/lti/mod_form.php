@@ -53,31 +53,10 @@ require_once($CFG->dirroot.'/mod/lti/locallib.php');
 class mod_lti_mod_form extends moodleform_mod {
 
     function definition() {
-        global $DB;
+        global $DB, $PAGE, $OUTPUT, $USER, $COURSE;
 
-        $typename = optional_param('type', false, PARAM_ALPHA);
-
-        if (empty($typename)) {
-            //Updating instance
-            if (!empty($this->_instance)) {
-                $basiclti = $DB->get_record('lti', array('id' => $this->_instance));
-                $this->typeid = $basiclti->typeid;
-
-                $typeconfig = lti_get_config($basiclti);
-                $this->typeconfig = $typeconfig;
-
-            } else { // New not pre-configured instance
-                $this->typeid = 0;
-            }
-        } else {
-            // New pre-configured instance
-            $basicltitype = $DB->get_record('lti_types', array('rawname' => $typename));
-            $this->typeid = $basicltitype->id;
-
-            $typeconfig = lti_get_type_config($this->typeid);
-            $this->typeconfig = $typeconfig;
-        }
-
+        $this->typeid = 0;
+        
         $mform =& $this->_form;
 //-------------------------------------------------------------------------------
     /// Adding the "general" fieldset, where all the common settings are shown
@@ -97,8 +76,17 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setAdvanced('showdescription');
         
         //Tool settings
-        $mform->addElement('select', 'typeid', get_string('external_tool_type', 'lti'), lti_get_types_for_add_instance());
-        //$mform->setDefault('typeid', '0');
+        $tooltypes = $mform->addElement('select', 'typeid', get_string('external_tool_type', 'lti'), array());
+        
+        foreach(lti_get_types_for_add_instance() as $id => $type){
+            if($type->course == $COURSE->id) {
+                $attributes = array( 'editable' => 1 );
+            } else {
+                $attributes = array();
+            }
+            
+            $tooltypes->addOption($type->name, $id, $attributes);
+        }
         
         $mform->addElement('text', 'toolurl', get_string('launch_url', 'lti'), array('size'=>'64'));
         $mform->setType('toolurl', PARAM_TEXT);
@@ -127,7 +115,7 @@ class mod_lti_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
         //$mform->addElement('hidden', 'typeid', $this->typeid);
         //$mform->addElement('hidden', 'toolurl', $this->typeconfig['toolurl']);
-        $mform->addElement('hidden', 'type', $typename);
+        //$mform->addElement('hidden', 'type', $typename);
 
 //-------------------------------------------------------------------------------
         // Add privacy preferences fieldset where users choose whether to send their data
@@ -170,6 +158,23 @@ class mod_lti_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
         // add standard buttons, common to all modules
         $this->add_action_buttons();
+
+        $url = new moodle_url("/mod/lti/instructor_edit_tool_type.php?sesskey={$USER->sesskey}&course={$COURSE->id}");
+        $jsinfo = (object)array(
+                        'edit_icon_url' => (string)$OUTPUT->pix_url('t/edit'),
+                        'add_icon_url' => (string)$OUTPUT->pix_url('t/add'),
+                        'delete_icon_url' => (string)$OUTPUT->pix_url('t/delete'),
+                        'instructor_tool_type_edit_url' => $url->out(false)
+                  );
+        
+        $module = array(
+            'name'      => 'mod_lti_edit',
+            'fullpath'  => '/mod/lti/mod_form.js',
+            'requires'  => array('base', 'io', 'node', 'event', 'json-parse'),
+            'strings'   => array(),
+        );
+        
+        $PAGE->requires->js_init_call('M.mod_lti.editor.init', array(json_encode($jsinfo)), true, $module);
     }
 
     /**
@@ -178,47 +183,7 @@ class mod_lti_mod_form extends moodleform_mod {
      */
     function definition_after_data() {
         parent::definition_after_data();
-       /* $mform     =& $this->_form;
-        $typeid      =& $mform->getElement('typeid');
-        $typeidvalue = $mform->getElementValue('typeid');
-
-        //Depending on the selection of the administrator
-        //we don't want to have these appear as possible selections in the form but
-        //we want the form to display them if they are set.
-        if (!empty($typeidvalue)) {
-            $typeconfig = lti_get_type_config($typeidvalue);
-
-            if ($typeconfig["sendname"] != 2) {
-                $field =& $mform->getElement('instructorchoicesendname');
-                $mform->setDefault('instructorchoicesendname', $typeconfig["sendname"]);
-                $field->freeze();
-                $field->setPersistantFreeze(true);
-            }
-            if ($typeconfig["sendemailaddr"] != 2) {
-                $field =& $mform->getElement('instructorchoicesendemailaddr');
-                $mform->setDefault('instructorchoicesendemailaddr', $typeconfig["sendemailaddr"]);
-                $field->freeze();
-                $field->setPersistantFreeze(true);
-            }
-            if ($typeconfig["acceptgrades"] != 2) {
-                $field =& $mform->getElement('instructorchoiceacceptgrades');
-                $mform->setDefault('instructorchoiceacceptgrades', $typeconfig["acceptgrades"]);
-                $field->freeze();
-                $field->setPersistantFreeze(true);
-            }
-            if ($typeconfig["allowroster"] != 2) {
-                $field =& $mform->getElement('instructorchoiceallowroster');
-                $mform->setDefault('instructorchoiceallowroster', $typeconfig["allowroster"]);
-                $field->freeze();
-                $field->setPersistantFreeze(true);
-            }
-            if ($typeconfig["allowsetting"] != 2) {
-                $field =& $mform->getElement('instructorchoiceallowsetting');
-                $mform->setDefault('instructorchoiceallowsetting', $typeconfig["allowsetting"]);
-                $field->freeze();
-                $field->setPersistantFreeze(true);
-            }
-        }*/
+       
     }
 
     /**
@@ -228,189 +193,7 @@ class mod_lti_mod_form extends moodleform_mod {
      * @param array $default_values passed by reference
      */
     function data_preprocessing(&$default_values) {
-/*        global $CFG;
-        $default_values['typeid'] = $this->typeid;
 
-        if (!isset($default_values['toolurl'])) {
-            if (isset($this->typeconfig['toolurl'])) {
-                $default_values['toolurl'] = $this->typeconfig['toolurl'];
-            } else if (isset($CFG->lti_toolurl)) {
-                $default_values['toolurl'] = $CFG->lti_toolurl;
-            }
-        }
-
-        if (!isset($default_values['resourcekey'])) {
-            if (isset($this->typeconfig['resourcekey'])) {
-                $default_values['resourcekey'] = $this->typeconfig['resourcekey'];
-            } else if (isset($CFG->lti_resourcekey)) {
-                $default_values['resourcekey'] = $CFG->lti_resourcekey;
-            }
-        }
-
-        if (!isset($default_values['password'])) {
-            if (isset($this->typeconfig['password'])) {
-                $default_values['password'] = $this->typeconfig['password'];
-            } else if (isset($CFG->lti_password)) {
-                $default_values['password'] = $CFG->lti_password;
-            }
-        }
-
-        if (!isset($default_values['preferheight'])) {
-            if (isset($this->typeconfig['preferheight'])) {
-                $default_values['preferheight'] = $this->typeconfig['preferheight'];
-            } else if (isset($CFG->lti_preferheight)) {
-                $default_values['preferheight'] = $CFG->lti_preferheight;
-            }
-        }
-
-        if (!isset($default_values['sendname'])) {
-            if (isset($this->typeconfig['sendname'])) {
-                $default_values['sendname'] = $this->typeconfig['sendname'];
-            } else if (isset($CFG->lti_sendname)) {
-                $default_values['sendname'] = $CFG->lti_sendname;
-            }
-        }
-
-        if (!isset($default_values['instructorchoicesendname'])) {
-            if (isset($this->typeconfig['instructorchoicesendname'])) {
-                $default_values['instructorchoicesendname'] = $this->typeconfig['instructorchoicesendname'];
-            } else {
-                if ($this->typeconfig['sendname'] == 2) {
-                    $default_values['instructorchoicesendname'] = $CFG->lti_instructorchoicesendname;
-                } else {
-                      $default_values['instructorchoicesendname'] = $this->typeconfig['sendname'];
-                }
-            }
-        }
-
-        if (!isset($default_values['sendemailaddr'])) {
-            if (isset($this->typeconfig['sendemailaddr'])) {
-                $default_values['sendemailaddr'] = $this->typeconfig['sendemailaddr'];
-            } else if (isset($CFG->lti_sendemailaddr)) {
-                $default_values['sendemailaddr'] = $CFG->lti_sendemailaddr;
-            }
-        }
-
-        if (!isset($default_values['instructorchoicesendemailaddr'])) {
-            if (isset($this->typeconfig['instructorchoicesendemailaddr'])) {
-                $default_values['instructorchoicesendemailaddr'] = $this->typeconfig['instructorchoicesendemailaddr'];
-            } else {
-                if ($this->typeconfig['sendemailaddr'] == 2) {
-                    $default_values['instructorchoicesendemailaddr'] = $CFG->lti_instructorchoicesendemailaddr;
-                } else {
-                      $default_values['instructorchoicesendemailaddr'] = $this->typeconfig['sendemailaddr'];
-                }
-            }
-        }
-
-        if (!isset($default_values['acceptgrades'])) {
-            if (isset($this->typeconfig['acceptgrades'])) {
-                $default_values['acceptgrades'] = $this->typeconfig['acceptgrades'];
-            } else if (isset($CFG->lti_acceptgrades)) {
-                $default_values['acceptgrades'] = $CFG->lti_acceptgrades;
-            }
-        }
-
-        if (!isset($default_values['instructorchoiceacceptgrades'])) {
-            if (isset($this->typeconfig['instructorchoiceacceptgrades'])) {
-                $default_values['instructorchoiceacceptgrades'] = $this->typeconfig['instructorchoiceacceptgrades'];
-            } else {
-                if ($this->typeconfig['acceptgrades'] == 2) {
-                    $default_values['instructorchoiceacceptgrades'] = $CFG->lti_instructorchoiceacceptgrades;
-                } else {
-                      $default_values['instructorchoiceacceptgrades'] = $this->typeconfig['acceptgrades'];
-                }
-            }
-        }
-
-        if (!isset($default_values['allowroster'])) {
-            if (isset($this->typeconfig['allowroster'])) {
-                $default_values['allowroster'] = $this->typeconfig['allowroster'];
-            } else if (isset($CFG->lti_allowroster)) {
-                $default_values['allowroster'] = $CFG->lti_allowroster;
-            }
-        }
-
-        if (!isset($default_values['instructorchoiceallowroster'])) {
-            if (isset($this->typeconfig['instructorchoiceallowroster'])) {
-                $default_values['instructorchoiceallowroster'] = $this->typeconfig['instructorchoiceallowroster'];
-            } else {
-                if ($this->typeconfig['allowroster'] == 2) {
-                    $default_values['instructorchoiceallowroster'] = $CFG->lti_instructorchoiceallowroster;
-                } else {
-                      $default_values['instructorchoiceallowroster'] = $this->typeconfig['allowroster'];
-                }
-            }
-        }
-
-        if (!isset($default_values['allowsetting'])) {
-            if (isset($this->typeconfig['allowsetting'])) {
-                $default_values['allowsetting'] = $this->typeconfig['allowsetting'];
-            } else if (isset($CFG->lti_allowsetting)) {
-                $default_values['allowsetting'] = $CFG->lti_allowsetting;
-            }
-        }
-
-        if (!isset($default_values['instructorchoiceallowsetting'])) {
-            if (isset($this->typeconfig['instructorchoiceallowsetting'])) {
-                $default_values['instructorchoiceallowsetting'] = $this->typeconfig['instructorchoiceallowsetting'];
-            } else {
-                if ($this->typeconfig['allowsetting'] == 2) {
-                    $default_values['instructorchoiceallowsetting'] = $CFG->lti_instructorchoiceallowsetting;
-                } else {
-                      $default_values['instructorchoiceallowsetting'] = $this->typeconfig['allowsetting'];
-                }
-            }
-        }
-
-        if (!isset($default_values['customparameters'])) {
-            if (isset($this->typeconfig['customparameters'])) {
-                $default_values['customparameters'] = $this->typeconfig['customparameters'];
-            } else if (isset($CFG->lti_customparameters)) {
-                $default_values['customparameters'] = $CFG->lti_customparameters;
-            }
-        }
-
-        if (!isset($default_values['allowinstructorcustom'])) {
-            if (isset($this->typeconfig['allowinstructorcustom'])) {
-                $default_values['allowinstructorcustom'] = $this->typeconfig['allowinstructorcustom'];
-            } else if (isset($CFG->lti_allowinstructorcustom)) {
-                $default_values['allowinstructorcustom'] = $CFG->lti_allowinstructorcustom;
-            }
-        }
-
-        if (!isset($default_values['organizationid'])) {
-            if (isset($this->typeconfig['organizationid'])) {
-                $default_values['organizationid'] = $this->typeconfig['organizationid'];
-            } else if (isset($CFG->lti_organizationid)) {
-                $default_values['organizationid'] = $CFG->lti_organizationid;
-            }
-        }
-
-        if (!isset($default_values['organizationurl'])) {
-            if (isset($this->typeconfig['organizationurl'])) {
-                $default_values['organizationurl'] = $this->typeconfig['organizationurl'];
-            } else if (isset($CFG->lti_organizationurl)) {
-                $default_values['organizationurl'] = $CFG->lti_organizationurl;
-            }
-        }
-
-        if (!isset($default_values['organizationdescr'])) {
-            if (isset($this->typeconfig['organizationdescr'])) {
-                $default_values['organizationdescr'] = $this->typeconfig['organizationdescr'];
-            } else if (isset($CFG->lti_organizationdescr)) {
-                $default_values['organizationdescr'] = $CFG->lti_organizationdescr;
-            }
-        }
-
-        if (!isset($default_values['launchinpopup'])) {
-            if (isset($this->typeconfig['launchinpopup'])) {
-                $default_values['launchinpopup'] = $this->typeconfig['launchinpopup'];
-            } else if (isset($CFG->lti_launchinpopup)) {
-                $default_values['launchinpopup'] = $CFG->lti_launchinpopup;
-            }
-        }
-*/
     }
 }
 

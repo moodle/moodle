@@ -83,7 +83,6 @@ $string['custominstr'] = 'Custom parameters';
 $string['debuglaunch'] = 'Debug Option';
 $string['debuglaunchoff'] = 'Normal launch';
 $string['debuglaunchon'] = 'Debug launch';
-$string['delegate'] = 'Delegate to Professor';
 $string['donot'] = 'Do not send';
 $string['donotaccept'] = 'Do not accept';
 $string['donotallow'] = 'Do not allow';
@@ -152,7 +151,7 @@ $string['setupoptions'] = 'Setup Options';
 $string['size'] = 'Size parameters';
 $string['submission'] = 'Submission';
 $string['toggle_debug_data'] = 'Toggle Debug Data';
-$string['toolsetup'] = 'Basic LTI Tool Setup';
+$string['toolsetup'] = 'External Tool Configuration';
 $string['toolurl'] = 'Tool Base URL';
 $string['typename'] = 'Tool Name';
 $string['types'] = 'Types';
@@ -162,8 +161,7 @@ $string['viewsubmissions'] = 'View submissions and grading screen';
 //New admin strings
 
 $string['show_in_course'] = 'Show tool type when creating tool instances';
-$string['delegate_yes'] = 'Delegate to Instructor (Default: Yes)';
-$string['delegate_no'] = 'Delegate to Instructor (Default: No)';
+$string['delegate'] = 'Delegate to Instructor';
 $string['tool_settings'] = 'Tool Settings';
 $string['miscellaneous'] = 'Miscellaneous';
 $string['embed'] = 'Embed';

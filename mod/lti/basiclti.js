@@ -54,5 +54,3 @@ function basicltiDebugToggle() {
         ele.style.display = 'block';
     }
 }
-
-alert('a');
