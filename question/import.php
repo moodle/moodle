@@ -100,10 +100,13 @@
         } else {
             // must be upload file
             $realfilename = $import_form->get_importfile_realname();
-            if (!$importfile = $import_form->get_importfile_name()) {
-                print_error('uploadproblem', 'moodle');
-            }else {
+
+            // move the file into the dataroot
+            $importfile = $CFG->dataroot . '/temp/' . $realfilename;
+            if (move_uploaded_file($import_form->get_importfile_name(), $importfile)) {
                 $fileisgood = true;
+            } else {
+                print_error('uploadproblem', 'moodle');
             }
         }
 
