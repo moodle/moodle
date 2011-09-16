@@ -422,7 +422,7 @@ function lti_get_domain_from_url($url){
 }
 
 function lti_get_tool_by_url_match($url, $courseid = null, $state = LTI_TOOL_STATE_CONFIGURED){
-    $possibletools = lti_get_tools_by_url($url, $courseid, $state);
+    $possibletools = lti_get_tools_by_url($url, $state, $courseid);
     
     return lti_get_best_tool_by_url($url, $possibletools);
 }

@@ -82,8 +82,8 @@ switch($messagetype){
 }
 
 
-echo print_r(apache_request_headers(), true);
+//echo print_r(apache_request_headers(), true);
 
-echo '<br />';
+//echo '<br />';
 
-echo file_get_contents("php://input");
+//echo file_get_contents("php://input");
