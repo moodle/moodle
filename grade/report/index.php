@@ -38,7 +38,7 @@ foreach ($reports as $plugin => $plugindir) {                      // Remove one
 }
 
 if (empty($reports)) {
-    print_error('noreports', 'debug', $CFG->wwwroot.'/course/view.php?id='.$course->id); // TODO: localize
+    print_error('noreports', 'debug', $CFG->wwwroot.'/course/view.php?id='.$course->id);
 }
 
 if (!isset($USER->grade_last_report)) {
@@ -59,11 +59,12 @@ if (empty($last)) {
     if (array_key_exists('grader', $reports)) {
         $last = 'grader';
 
-    } else if (array_key_exists('user', $reports)) {
-        $last = 'user';
+    } else if (array_key_exists($CFG->grade_profilereport, $reports)) {
+        $last = $CFG->grade_profilereport;
 
     } else {
-        $last = key(reset($reports));
+        reset($reports);
+        $last = key($reports);
     }
 }
 
