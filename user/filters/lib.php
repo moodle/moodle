@@ -9,7 +9,7 @@ require_once($CFG->dirroot.'/user/filters/globalrole.php');
 require_once($CFG->dirroot.'/user/filters/profilefield.php');
 require_once($CFG->dirroot.'/user/filters/yesno.php');
 require_once($CFG->dirroot.'/user/filters/user_filter_forms.php');
-
+require_once($CFG->dirroot.'/user/filters/checkbox.php');
 
 /**
  * User filtering wrapper class.
@@ -35,7 +35,8 @@ class user_filtering {
         if (empty($fieldnames)) {
             $fieldnames = array('realname'=>0, 'lastname'=>1, 'firstname'=>1, 'email'=>1, 'city'=>1, 'country'=>1,
                                 'confirmed'=>1, 'profile'=>1, 'courserole'=>1, 'systemrole'=>1,
-                                'firstaccess'=>1, 'lastaccess'=>1, 'lastlogin'=>1, 'timemodified'=>1, 'username'=>1, 'auth'=>1, 'mnethostid'=>1);
+                                'firstaccess'=>1, 'lastaccess'=>1, 'neveraccessed'=>1, 'timemodified'=>1,
+                                'nevermodified'=>1, 'username'=>1, 'auth'=>1, 'mnethostid'=>1);
         }
 
         $this->_fields  = array();
@@ -113,8 +114,9 @@ class user_filtering {
             case 'systemrole':  return new user_filter_globalrole('systemrole', get_string('globalrole', 'role'), $advanced);
             case 'firstaccess': return new user_filter_date('firstaccess', get_string('firstaccess', 'filters'), $advanced, 'firstaccess');
             case 'lastaccess':  return new user_filter_date('lastaccess', get_string('lastaccess'), $advanced, 'lastaccess');
-            case 'lastlogin':   return new user_filter_date('lastlogin', get_string('lastlogin'), $advanced, 'lastlogin');
+            case 'neveraccessed': return new user_filter_checkbox('neveraccessed', get_string('neveraccessed', 'filters'), $advanced, 'firstaccess', array('lastaccess_sck', 'lastaccess_eck', 'firstaccess_eck', 'firstaccess_sck'));
             case 'timemodified': return new user_filter_date('timemodified', get_string('lastmodified'), $advanced, 'timemodified');
+            case 'nevermodified': return new user_filter_checkbox('nevermodified', get_string('nevermodified', 'filters'), $advanced, array('timemodified', 'timecreated'), array('timemodified_sck', 'timemodified_eck'));
             case 'auth':
                 $plugins = get_plugin_list('auth');
                 $choices = array();
