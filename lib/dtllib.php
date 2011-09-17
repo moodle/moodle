@@ -17,7 +17,7 @@
 
 
 /**
- * DTL == Dtatabase Transfer Library
+ * DTL == Database Transfer Library
  *
  * This library includes all the required functions used to handle
  * transfer of data from one database to another.
@@ -68,7 +68,7 @@ class dbtransfer_exception extends moodle_exception {
         if (empty($link)) {
             $link = "$CFG->wwwroot/$CFG->admin/";
         }
-        parent::__construct($errorcode, 'dbtransfer', $link, $a, $debuginfo);
+        parent::__construct($errorcode, 'core_dbtransfer', $link, $a, $debuginfo);
     }
 }
 

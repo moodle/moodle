@@ -19,10 +19,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     $ADMIN->add('experimental', $temp);
 
-    // DB transfer related pages
-    $ADMIN->add('experimental', new admin_externalpage('dbtransfer', get_string('dbtransfer', 'dbtransfer'), $CFG->wwwroot.'/'.$CFG->admin.'/dbtransfer/index.php', 'moodle/site:config', true));
-    $ADMIN->add('experimental', new admin_externalpage('dbexport', get_string('dbexport', 'dbtransfer'), $CFG->wwwroot.'/'.$CFG->admin.'/dbtransfer/dbexport.php', 'moodle/site:config', true));
-
     // "debugging" settingpage
     $temp = new admin_settingpage('debugging', get_string('debugging', 'admin'));
     $temp->add(new admin_setting_special_debug());
