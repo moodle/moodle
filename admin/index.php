@@ -249,7 +249,7 @@ if ($version > $CFG->version) {  // upgrade
             print_upgrade_reload('index.php?confirmupgrade=1');
         } else {
             echo $OUTPUT->notification(get_string('environmentok', 'admin'), 'notifysuccess');
-            if (empty($CFG->skiplangupgrade)) {
+            if (empty($CFG->skiplangupgrade) and current_language() !== 'en') {
                 echo $OUTPUT->box_start('generalbox', 'notice');
                 print_string('langpackwillbeupdated', 'admin');
                 echo $OUTPUT->box_end();

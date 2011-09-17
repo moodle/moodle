@@ -1303,42 +1303,36 @@ function upgrade_init_javascript() {
  *
  * @param string $lang the code of the language to update, defaults to the current language
  */
-function upgrade_language_pack($lang='') {
-    global $CFG, $OUTPUT;
+function upgrade_language_pack($lang = null) {
+    global $CFG;
 
-    get_string_manager()->reset_caches();
+    if (!empty($CFG->skiplangupgrade)) {
+        return;
+    }
 
-    if (empty($lang)) {
+    if (!file_exists("$CFG->dirroot/$CFG->admin/tool/langimport/lib.php")) {
+        // weird, somebody uninstalled the import utility
+        return;
+    }
+
+    if (!$lang) {
         $lang = current_language();
     }
 
-    if ($lang == 'en') {
-        return true;  // Nothing to do
+    if (!get_string_manager()->translation_exists($lang)) {
+        return;
+    }
+
+    get_string_manager()->reset_caches();
+
+    if ($lang === 'en') {
+        return;  // Nothing to do
     }
 
     upgrade_started(false);
-    echo $OUTPUT->heading(get_string('langimport', 'admin').': '.$lang);
 
-    @mkdir ($CFG->tempdir.'/');    //make it in case it's a fresh install, it might not be there
-    @mkdir ($CFG->dataroot.'/lang/');
-
-    require_once($CFG->libdir.'/componentlib.class.php');
-
-    $installer = new lang_installer($lang);
-    $results = $installer->run();
-    foreach ($results as $langcode => $langstatus) {
-        switch ($langstatus) {
-        case lang_installer::RESULT_DOWNLOADERROR:
-            echo $OUTPUT->notification($langcode . '.zip');
-            break;
-        case lang_installer::RESULT_INSTALLED:
-            echo $OUTPUT->notification(get_string('langpackinstalled', 'admin', $langcode), 'notifysuccess');
-            break;
-        case lang_installer::RESULT_UPTODATE:
-            echo $OUTPUT->notification(get_string('langpackuptodate', 'admin', $langcode), 'notifysuccess');
-            break;
-        }
-    }
+    require_once("$CFG->dirroot/$CFG->admin/tool/langimport/lib.php");
+    tool_langimport_preupgrade_update($lang);
 
     get_string_manager()->reset_caches();
 
@@ -1401,11 +1395,7 @@ function upgrade_core($version, $verbose) {
         purge_all_caches();
 
         // Upgrade current language pack if we can
-        if (empty($CFG->skiplangupgrade)) {
-            if (get_string_manager()->translation_exists(current_language())) {
-                upgrade_language_pack(false);
-            }
-        }
+        upgrade_language_pack();
 
         print_upgrade_part_start('moodle', false, $verbose);
 

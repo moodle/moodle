@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,21 +22,22 @@
  * and meta info.
  * Locally, language packs are saved into $CFG->dataroot/lang/
  *
- * @package   core
- * @copyright 2005 Yu Zhang
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tool
+ * @subpackage langimport
+ * @copyright  2005 Yu Zhang
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(__FILE__)).'/config.php');
+require(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/componentlib.class.php');
 
-admin_externalpage_setup('langimport');
+admin_externalpage_setup('toollangimport');
 
 if (!empty($CFG->skiplangupgrade)) {
     echo $OUTPUT->header();
-    echo $OUTPUT->box(get_string('langimportdisabled', 'admin'));
+    echo $OUTPUT->box(get_string('langimportdisabled', 'tool_langimport'));
     echo $OUTPUT->footer();
     die;
 }
@@ -69,13 +69,13 @@ if (($mode == INSTALLATION_OF_SELECTED_LANG) and confirm_sesskey() and !empty($p
             $a       = new stdClass();
             $a->url  = $installer->lang_pack_url($langcode);
             $a->dest = $CFG->dataroot.'/lang';
-            print_error('remotedownloaderror', 'error', 'langimport.php', $a);
+            print_error('remotedownloaderror', 'error', 'index.php', $a);
             break;
         case lang_installer::RESULT_INSTALLED:
-            $notice_ok[] = get_string('langpackinstalled', 'admin', $langcode);
+            $notice_ok[] = get_string('langpackinstalled', 'tool_langimport', $langcode);
             break;
         case lang_installer::RESULT_UPTODATE:
-            $notice_ok[] = get_string('langpackuptodate', 'admin', $langcode);
+            $notice_ok[] = get_string('langpackuptodate', 'tool_langimport', $langcode);
             break;
         }
     }
@@ -87,9 +87,9 @@ if ($mode == DELETION_OF_SELECTED_LANG and !empty($uninstalllang)) {
 
     } else if (!$confirm and confirm_sesskey()) {
         echo $OUTPUT->header();
-        echo $OUTPUT->confirm(get_string('uninstallconfirm', 'admin', $uninstalllang),
-                     'langimport.php?mode='.DELETION_OF_SELECTED_LANG.'&uninstalllang='.$uninstalllang.'&confirm=1',
-                     'langimport.php');
+        echo $OUTPUT->confirm(get_string('uninstallconfirm', 'tool_langimport', $uninstalllang),
+                     'index.php?mode='.DELETION_OF_SELECTED_LANG.'&uninstalllang='.$uninstalllang.'&confirm=1',
+                     'index.php');
         echo $OUTPUT->footer();
         die;
 
@@ -105,7 +105,7 @@ if ($mode == DELETION_OF_SELECTED_LANG and !empty($uninstalllang)) {
             $rm2 = remove_dir($dest2);
         }
         if ($rm1 or $rm2) {
-            $notice_ok[] = get_string('langpackremoved','admin');
+            $notice_ok[] = get_string('langpackremoved', 'tool_langimport');
         } else {    //nothing deleted, possibly due to permission error
             $notice_error[] = 'An error has occurred, language pack is not completely uninstalled, please check file permissions';
         }
@@ -130,7 +130,7 @@ if ($mode == UPDATE_ALL_LANG) {
     $updateablelangs = array();
     foreach ($currentlangs as $clang) {
         if (!array_key_exists($clang, $md5array)) {
-            $notice_ok[] = get_string('langpackupdateskipped', 'admin', $clang);
+            $notice_ok[] = get_string('langpackupdateskipped', 'tool_langimport', $clang);
             continue;
         }
         $dest1 = $CFG->dataroot.'/lang/'.$clang;
@@ -189,22 +189,22 @@ if ($mode == UPDATE_ALL_LANG) {
             $a       = new stdClass();
             $a->url  = $installer->lang_pack_url($langcode);
             $a->dest = $CFG->dataroot.'/lang';
-            print_error('remotedownloaderror', 'error', 'langimport.php', $a);
+            print_error('remotedownloaderror', 'error', 'index.php', $a);
             break;
         case lang_installer::RESULT_INSTALLED:
             $updated = true;
-            $notice_ok[] = get_string('langpackinstalled', 'admin', $langcode);
+            $notice_ok[] = get_string('langpackinstalled', 'tool_langimport', $langcode);
             break;
         case lang_installer::RESULT_UPTODATE:
-            $notice_ok[] = get_string('langpackuptodate', 'admin', $langcode);
+            $notice_ok[] = get_string('langpackuptodate', 'tool_langimport', $langcode);
             break;
         }
     }
 
     if ($updated) {
-        $notice_ok[] = get_string('langupdatecomplete','admin');
+        $notice_ok[] = get_string('langupdatecomplete', 'tool_langimport');
     } else {
-        $notice_ok[] = get_string('nolangupdateneeded','admin');
+        $notice_ok[] = get_string('nolangupdateneeded', 'tool_langimport');
     }
 
     unset($installer);
@@ -212,7 +212,7 @@ if ($mode == UPDATE_ALL_LANG) {
 get_string_manager()->reset_caches();
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('langimport', 'admin'));
+echo $OUTPUT->heading(get_string('langimport', 'tool_langimport'));
 
 $installedlangs = get_string_manager()->get_list_of_translations(true);
 
@@ -235,7 +235,7 @@ if ($availablelangs = $installer->get_remote_list_of_languages()) {
     $remote = false;
     $availablelangs = array();
     echo $OUTPUT->box_start();
-    print_string('remotelangnotavailable', 'admin', $CFG->dataroot.'/lang/');
+    print_string('remotelangnotavailable', 'tool_langimport', $CFG->dataroot.'/lang/');
     echo $OUTPUT->box_end();
 }
 
@@ -260,7 +260,7 @@ if ($missingparents) {
                 $a->parent = $alang[2].' ('.$shortlang.')';
             }
         }
-        $info = get_string('missinglangparent', 'admin', $a);
+        $info = get_string('missinglangparent', 'tool_langimport', $a);
         echo $OUTPUT->notification($info, 'notifyproblem');
     }
 }
@@ -271,22 +271,22 @@ echo html_writer::start_tag('table');
 echo html_writer::start_tag('tr');
 
 // list of installed languages
-$url = new moodle_url('/admin/langimport.php', array('mode' => DELETION_OF_SELECTED_LANG));
+$url = new moodle_url('/admin/tool/langimport/index.php', array('mode' => DELETION_OF_SELECTED_LANG));
 echo html_writer::start_tag('td', array('valign' => 'top'));
 echo html_writer::start_tag('form', array('id' => 'uninstallform', 'action' => $url->out(), 'method' => 'post'));
 echo html_writer::start_tag('fieldset');
-echo html_writer::label(get_string('installedlangs','admin'), 'uninstalllang');
+echo html_writer::label(get_string('installedlangs', 'tool_langimport'), 'uninstalllang');
 echo html_writer::empty_tag('br');
 echo html_writer::select($installedlangs, 'uninstalllang', '', false, array('size' => 15));
 echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
 echo html_writer::empty_tag('br');
-echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('uninstall','admin')));
+echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('uninstall', 'tool_langimport')));
 echo html_writer::end_tag('fieldset');
 echo html_writer::end_tag('form');
 if ($remote) {
-    $url = new moodle_url('/admin/langimport.php', array('mode' => UPDATE_ALL_LANG));
+    $url = new moodle_url('/admin/tool/langimport/index.php', array('mode' => UPDATE_ALL_LANG));
     echo html_writer::start_tag('form', array('id' => 'updateform', 'action' => $url->out(), 'method' => 'post'));
-    echo html_writer::tag('fieldset', html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('updatelangs','admin'))));
+    echo html_writer::tag('fieldset', html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('updatelangs','tool_langimport'))));
     echo html_writer::end_tag('form');
 }
 echo html_writer::end_tag('td');
@@ -300,7 +300,7 @@ foreach ($availablelangs as $alang) {
 }
 if (!empty($options)) {
     echo html_writer::start_tag('td', array('valign' => 'top'));
-    $url = new moodle_url('/admin/langimport.php', array('mode' => INSTALLATION_OF_SELECTED_LANG));
+    $url = new moodle_url('/admin/tool/langimport/index.php', array('mode' => INSTALLATION_OF_SELECTED_LANG));
     echo html_writer::start_tag('form', array('id' => 'installform', 'action' => $url->out(), 'method' => 'post'));
     echo html_writer::start_tag('fieldset');
     echo html_writer::label(get_string('availablelangs','install'), 'pack');
@@ -308,7 +308,7 @@ if (!empty($options)) {
     echo html_writer::select($options, 'pack[]', '', false, array('size' => 15, 'multiple' => 'multiple'));
     echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
     echo html_writer::empty_tag('br');
-    echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('install','admin')));
+    echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('install','tool_langimport')));
     echo html_writer::end_tag('fieldset');
     echo html_writer::end_tag('form');
     echo html_writer::end_tag('td');
