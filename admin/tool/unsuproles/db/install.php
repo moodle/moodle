@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,16 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'report_unsuproles', language 'en', branch 'MOODLE_20_STABLE'
+ * Post installation and migration code.
  *
- * @package    report
+ * @package    tool
  * @subpackage unsuproles
- * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['contextlevel'] = 'Context level';
-$string['count'] = 'Count';
-$string['confirmdelete'] = 'Do you really want to delete all unsupported role assignments for role "{$a->role}" in context level "{$a->level}"?';
-$string['noprolbems'] = 'No unsupported role assignments found.';
-$string['pluginname'] = 'Unsupported role assignments';
+defined('MOODLE_INTERNAL') || die;
+
+function xmldb_tool_unsuproles_install() {
+    global $CFG;
+
+    // this is a hack - this plugin used to live in admin/report/unsuproles,
+    // we want to remove the orphaned version info unless there is a new
+    // report type with the same name
+
+    if (!file_exists("$CFG->dirroot/report/report_unsuproles")) {
+        unset_all_config_for_plugin('report_unsuproles');
+    }
+}

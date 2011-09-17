@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,13 +18,13 @@
  * Report of unsupported role assignments,
  * unsupported role assignments can be dropped from here.
  *
- * @package    report
+ * @package    tool
  * @subpackage unsuproles
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__).'/../../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $action = optional_param('action', '', PARAM_ACTION);
@@ -33,7 +32,7 @@ $action = optional_param('action', '', PARAM_ACTION);
 $syscontext = get_context_instance(CONTEXT_SYSTEM);
 
 require_login();
-admin_externalpage_setup('reportunsuproles'); // checks permissions specified in settings.php
+admin_externalpage_setup('toolunsuproles'); // checks permissions specified in settings.php
 
 if ($action === 'delete') {
     $contextlevel = required_param('contextlevel', PARAM_INT);
@@ -64,7 +63,7 @@ if ($action === 'delete') {
     $yesurl = new moodle_url($PAGE->url, array('roleid'=>$roleid, 'contextlevel'=>$contextlevel, 'action'=>'delete', 'confirm'=>1, 'sesskey'=>sesskey()));
     $levelname = get_contextlevel_name($contextlevel);
     $rolename = format_string($role->name);
-    $message = get_string('confirmdelete', 'report_unsuproles', array('level'=>$levelname, 'role'=>$rolename));
+    $message = get_string('confirmdelete', 'tool_unsuproles', array('level'=>$levelname, 'role'=>$rolename));
     echo $OUTPUT->confirm($message, $yesurl, $PAGE->url);
     echo $OUTPUT->footer();
     die();
@@ -72,7 +71,7 @@ if ($action === 'delete') {
 
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('pluginname', 'report_unsuproles'));
+echo $OUTPUT->heading(get_string('pluginname', 'tool_unsuproles'));
 
 $sql = "SELECT r.id AS roleid, c.contextlevel, r.sortorder, COUNT(ra.id) AS racount
           FROM {role} r
@@ -92,7 +91,7 @@ foreach ($rs as $problem) {
 $rs->close();
 
 if (!$problems) {
-    echo $OUTPUT->notification(get_string('noprolbems', 'report_unsuproles'), 'notifysuccess');
+    echo $OUTPUT->notification(get_string('noprolbems', 'tool_unsuproles'), 'notifysuccess');
 } else {
     $roles = get_all_roles();
     $data = array();
@@ -109,7 +108,7 @@ if (!$problems) {
         $data[] = array($levelname, $rolename, $count, implode('&nbsp;', $edit));
     }
     $table = new html_table();
-    $table->head  = array(get_string('contextlevel', 'report_unsuproles'), get_string('role'), get_string('count', 'report_unsuproles'), get_string('edit'));
+    $table->head  = array(get_string('contextlevel', 'tool_unsuproles'), get_string('role'), get_string('count', 'tool_unsuproles'), get_string('edit'));
     $table->size  = array('40%', '40%', '10%', '10%');
     $table->align = array('left', 'left', 'center', 'center');
     $table->width = '90%';
