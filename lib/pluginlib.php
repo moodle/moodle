@@ -366,6 +366,9 @@ class plugin_manager {
                 'standardold'
             ),
 
+            'tool' => array(
+            ),
+
             'webservice' => array(
                 'amf', 'rest', 'soap', 'xmlrpc'
             ),

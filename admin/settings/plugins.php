@@ -474,6 +474,13 @@ foreach (get_plugin_list('report') as $plugin => $plugindir) {
     $ADMIN->add('reports', new admin_externalpage('report'.$plugin, $reportname, $www_path, 'moodle/site:viewreports'));
 }
 
+// Now add various admin tools
+foreach (get_plugin_list('tool') as $plugin => $plugindir) {
+    $settings_path = "$plugindir/settings.php";
+    if (file_exists($settings_path)) {
+        include($settings_path);
+    }
+}
 
 /// Add all local plugins - must be always last!
 if ($hassiteconfig) {
