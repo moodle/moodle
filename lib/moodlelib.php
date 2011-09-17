@@ -1125,7 +1125,9 @@ function unset_config($name, $plugin=NULL) {
 function unset_all_config_for_plugin($plugin) {
     global $DB;
     $DB->delete_records('config_plugins', array('plugin' => $plugin));
-    $DB->delete_records_select('config', 'name LIKE ?', array($plugin . '_%'));
+    $like = $DB->sql_like('name', '?', true, true, false, '|');
+    $params = array($DB->sql_like_escape($plugin.'_', '|') . '%');
+    $DB->delete_records_select('config', $like, $params);
     return true;
 }
 
