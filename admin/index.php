@@ -445,12 +445,6 @@ if (time() - $lastcron > 3600 * 24) {
     echo $OUTPUT->box(get_string('cronwarning', 'admin').'&nbsp;'.$helpbutton, 'generalbox adminwarning');
 }
 
-// Hidden bloglevel upgrade
-$showbloglevelupgrade = ($CFG->bloglevel == BLOG_COURSE_LEVEL || $CFG->bloglevel == BLOG_GROUP_LEVEL) && empty($CFG->bloglevel_upgrade_complete);
-if ($showbloglevelupgrade) {
-    echo $OUTPUT->box(get_string('bloglevelupgradenotice', 'admin'), 'generalbox adminwarning');
-}
-
 // diagnose DB, especially the sloppy MyISAM tables
 $diagnose = $DB->diagnose();
 if ($diagnose !== NULL) {

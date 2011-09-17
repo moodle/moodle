@@ -2338,22 +2338,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
         $dbman->create_table($table);
 
-        // now inform admins that some settings require attention after upgrade
-        if (($CFG->bloglevel == BLOG_COURSE_LEVEL || $CFG->bloglevel == BLOG_GROUP_LEVEL) && empty($CFG->bloglevel_upgrade_complete)) {
-            echo $OUTPUT->notification(get_string('bloglevelupgradenotice', 'admin'));
+       // upgrade notice is now in admin/tool/bloglevelupgrade/
 
-            $site = get_site();
-
-            $a = new StdClass;
-            $a->sitename = $site->fullname;
-            $a->fixurl   = "$CFG->wwwroot/$CFG->admin/bloglevelupgrade.php";
-
-            $subject = get_string('bloglevelupgrade', 'admin');
-            $description = get_string('bloglevelupgradedescription', 'admin', $a);
-
-            // can not use messaging here because it is not configured yet!
-            upgrade_log(UPGRADE_LOG_NOTICE, null, $subject, $description);
-        }
     /// Main savepoint reached
         upgrade_main_savepoint(true, 2009103000);
     }

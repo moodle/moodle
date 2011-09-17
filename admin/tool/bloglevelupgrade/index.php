@@ -1,27 +1,49 @@
 <?php
-      /// Create "blog" forums in each course and copy blog entries from these courses' participants in these forums
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Create "blog" forums in each course and copy blog entries from these courses' participants in these forums
+ *
+ * @package    tool
+ * @subpackage bloglevelupgrade
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 define('NO_OUTPUT_BUFFERING', true);
 
-require_once('../config.php');
+require('../../../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/blog/lib.php');
 require_once($CFG->dirroot.'/mod/forum/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-admin_externalpage_setup('bloglevelupgrade');
+admin_externalpage_setup('toolbloglevelupgrade');
 $PAGE->set_pagelayout('maintenance');
 
 $go = optional_param('go', 0, PARAM_BOOL);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('bloglevelupgrade', 'admin'));
+echo $OUTPUT->heading(get_string('pluginname', 'tool_bloglevelupgrade'));
 
-$strbloglevelupgrade = get_string('bloglevelupgradeinfo', 'admin');
+$strbloglevelupgrade = get_string('bloglevelupgradeinfo', 'tool_bloglevelupgrade');
 
 if (!$go or !data_submitted() or !confirm_sesskey()) {   /// Print a form
     $optionsyes = array('go'=>1, 'sesskey'=>sesskey());
-    echo $OUTPUT->confirm($strbloglevelupgrade, new moodle_url('bloglevelupgrade.php', $optionsyes), 'index.php');
+    echo $OUTPUT->confirm($strbloglevelupgrade, new moodle_url('/admin/tool/bloglevelupgrade/index.php', $optionsyes), new moodle_url('/admin/index.php'));
     echo $OUTPUT->footer();
     die;
 }
@@ -38,7 +60,7 @@ $i = 0;
 // whose enrolled students have written blog entries, copy these entries in that forum and switch off blogs at site level
 
 if ($CFG->bloglevel == BLOG_COURSE_LEVEL || $CFG->bloglevel == BLOG_GROUP_LEVEL) {
-    $pbar = new progress_bar('bloglevelupgrade', 500, true);
+    $pbar = new progress_bar('toolbloglevelupgrade', 500, true);
 
     $bloggers = $DB->get_records_sql("SELECT userid FROM {post} WHERE module = 'blog' GROUP BY userid");
     require_once($CFG->dirroot.'/mod/forum/lib.php');
@@ -72,7 +94,7 @@ if ($CFG->bloglevel == BLOG_COURSE_LEVEL || $CFG->bloglevel == BLOG_GROUP_LEVEL)
         }
 
         $a->userscount = $i . '/' .  count($bloggers);
-        $pbar->update($i, count($bloggers), get_string('bloglevelupgradeprogress', 'admin', $a));
+        $pbar->update($i, count($bloggers), get_string('bloglevelupgradeprogress', 'tool_bloglevelupgrade', $a));
         $i++;
     }
 }
@@ -135,7 +157,7 @@ function bloglevelupgrade_entries($blogentries, $forum, $cm, $groupid=-1) {
 // END OF LOOP
 
 // set conversion flag - switches to new plugin automatically
-set_config('bloglevel_upgrade_complete', 1);
+unset_config('tool_bloglevelupgrade_pending');
 // Finally switch bloglevel to 0 (disabled)
 set_config('bloglevel', 0);
 
@@ -146,7 +168,7 @@ echo $OUTPUT->notification('Rebuilding course cache...', 'notifysuccess');
 rebuild_course_cache();
 echo $OUTPUT->notification('...finished', 'notifysuccess');
 
-echo $OUTPUT->continue_button('index.php');
+echo $OUTPUT->continue_button(new moodle_url('/admin/index.php'));
 
 echo $OUTPUT->footer();
 die;
