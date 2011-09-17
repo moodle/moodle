@@ -1,7 +1,30 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Strings for component 'tool_health', language 'en', branch 'MOODLE_22_STABLE'
+ *
+ * @package    tool
+ * @subpackage health
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
     ob_start(); //for whitespace test
-    require_once('../config.php');
+    require('../../../config.php');
 
     // extra whitespace test - intentionally breaks cookieless mode
     $extraws = '';
@@ -12,7 +35,7 @@
 
     require_once($CFG->libdir.'/adminlib.php');
 
-    admin_externalpage_setup('healthcenter');
+    admin_externalpage_setup('toolhealth');
 
     define('SEVERITY_NOTICE',      'notice');
     define('SEVERITY_ANNOYANCE',   'annoyance');
@@ -28,68 +51,6 @@
 
     echo $OUTPUT->header();
 
-echo <<<STYLES
-<style type="text/css">
-div#healthnoproblemsfound {
-    width: 60%;
-    margin: auto;
-    padding: 1em;
-    border: 1px black solid;
-    -moz-border-radius: 6px;
-}
-dl.healthissues {
-    width: 60%;
-    margin: auto;
-}
-dl.critical dt, dl.critical dd {
-    background-color: #a71501;
-}
-dl.significant dt, dl.significant dd {
-    background-color: #d36707;
-}
-dl.annoyance dt, dl.annoyance dd {
-    background-color: #dba707;
-}
-dl.notice dt, dl.notice dd {
-    background-color: #e5db36;
-}
-dt.solution, dd.solution, div#healthnoproblemsfound {
-    background-color: #5BB83E !important;
-}
-dl.healthissues dt, dl.healthissues dd {
-    margin: 0px;
-    padding: 1em;
-    border: 1px black solid;
-}
-dl.healthissues dt {
-    font-weight: bold;
-    border-bottom: none;
-    padding-bottom: 0.5em;
-}
-dl.healthissues dd {
-    border-top: none;
-    padding-top: 0.5em;
-    margin-bottom: 10px;
-}
-dl.healthissues dd form {
-    margin-top: 0.5em;
-    text-align: right;
-}
-form#healthformreturn {
-    text-align: center;
-    margin: 2em;
-}
-dd.solution p {
-    padding: 0px;
-    margin: 1em 0px;
-}
-dd.solution li {
-    margin-top: 1em;
-}
-
-</style>
-STYLES;
-
     if(strpos($solution, 'problem_') === 0 && class_exists($solution)) {
         health_print_solution($solution);
     }
@@ -104,7 +65,7 @@ STYLES;
 function health_find_problems() {
     global $OUTPUT;
 
-    echo $OUTPUT->heading(get_string('healthcenter'));
+    echo $OUTPUT->heading(get_string('pluginname', 'tool_health'));
 
     $issues   = array(
         SEVERITY_CRITICAL    => array(),
@@ -117,9 +78,10 @@ function health_find_problems() {
     for($i = 1; $i < 1000000; ++$i) {
         $classname = sprintf('problem_%06d', $i);
         if(!class_exists($classname)) {
-            break;
+            continue;
         }
         $problem = new $classname;
+
         if($problem->exists()) {
             $severity = $problem->severity();
             $issues[$severity][$classname] = array(
@@ -134,11 +96,11 @@ function health_find_problems() {
 
     if($problems == 0) {
         echo '<div id="healthnoproblemsfound">';
-        echo get_string('healthnoproblemsfound');
+        echo get_string('healthnoproblemsfound', 'tool_health');
         echo '</div>';
     }
     else {
-        echo $OUTPUT->heading(get_string('healthproblemsdetected'));
+        echo $OUTPUT->heading(get_string('healthproblemsdetected', 'tool_health'));
         $severities = array(SEVERITY_CRITICAL, SEVERITY_SIGNIFICANT, SEVERITY_ANNOYANCE, SEVERITY_NOTICE);
         foreach($severities as $severity) {
             if(!empty($issues[$severity])) {
@@ -146,7 +108,7 @@ function health_find_problems() {
                 foreach($issues[$severity] as $classname => $data) {
                     echo '<dt id="'.$classname.'">'.$data['title'].'</dt>';
                     echo '<dd>'.$data['description'];
-                    echo '<form action="health.php#solution" method="get">';
+                    echo '<form action="index.php#solution" method="get">';
                     echo '<input type="hidden" name="solution" value="'.$classname.'" /><input type="submit" value="'.get_string('viewsolution').'" />';
                     echo '</form></dd>';
                 }
@@ -166,15 +128,15 @@ function health_print_solution($classname) {
         'solution'    => $problem->solution()
     );
 
-    echo $OUTPUT->heading(get_string('healthcenter'));
-    echo $OUTPUT->heading(get_string('healthproblemsolution'));
+    echo $OUTPUT->heading(get_string('pluginname', 'tool_health'));
+    echo $OUTPUT->heading(get_string('healthproblemsolution', 'tool_health'));
     echo '<dl class="healthissues '.$data['severity'].'">';
     echo '<dt>'.$data['title'].'</dt>';
     echo '<dd>'.$data['description'].'</dd>';
-    echo '<dt id="solution" class="solution">'.get_string('healthsolution').'</dt>';
+    echo '<dt id="solution" class="solution">'.get_string('healthsolution', 'tool_health').'</dt>';
     echo '<dd class="solution">'.$data['solution'].'</dd></dl>';
-    echo '<form id="healthformreturn" action="health.php#'.$classname.'" method="get">';
-    echo '<input type="submit" value="'.get_string('healthreturntomain').'" />';
+    echo '<form id="healthformreturn" action="index.php#'.$classname.'" method="get">';
+    echo '<input type="submit" value="'.get_string('healthreturntomain', 'tool_health').'" />';
     echo '</form>';
 }
 
@@ -786,5 +748,3 @@ TODO:
     detect unsupported characters in $CFG->wwwroot - see bug Bug #6091 - relative vs absolute path during backup/restore process
 
 */
-
-
