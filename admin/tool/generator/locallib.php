@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,14 +17,14 @@
 /**
  * Random course generator. By Nicolas Connault and friends.
  *
- * To use go to .../admin/generator.php?web_interface=1 in your browser.
- *
- * @package generator
- * @copyright 2009 Nicolas Connault
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tool
+ * @subpackage generator
+ * @copyright  2009 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__).'/../config.php');
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot .'/course/lib.php');
 require_once($CFG->libdir .'/filelib.php');
@@ -1120,7 +1119,7 @@ class generator_cli extends generator {
             $help .= "  -{$argument->short},$paddingstr1--{$argument->long}$equal$paddingstr2{$argument->help}\n";
         }
 
-        $help .= "\nEmail nicolas@moodle.com for any suggestions or bug reports.\n";
+        $help .= "\nUse http://tracker.moodle.org for any suggestions or bug reports.\n";
 
         if ($argc == 1 || in_array($settings[1], array('--help', '-help', '-h', '-?'))) {
             echo $help;
@@ -1176,14 +1175,12 @@ class generator_cli extends generator {
                 echo "Invalid username or password!{$this->eolchar}";
                 die();
             }
-            complete_user_login($user);
-            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-
-            if (!is_siteadmin($user->id)) {//TODO: add some proper access control check here!!
+            if (!is_siteadmin($user)) {//TODO: add some proper access control check here!!
                 echo "You do not have administration privileges on this Moodle site. "
                     ."These are required for running the generation script.{$this->eolchar}";
                 die();
             }
+            complete_user_login($user);
         }
 
         parent::generate_data();
@@ -1215,14 +1212,15 @@ class generator_web extends generator {
         global $CFG;
         $this->mform = new generator_form();
 
-        $this->do_generation = optional_param('do_generation', false, PARAM_BOOL);
-
         if ($data = $this->mform->get_data(false)) {
+            $this->do_generation = optional_param('do_generation', false, PARAM_BOOL);
             foreach ($this->settings as $setting) {
                 if (isset($data->{$setting->long})) {
                     $this->set($setting->long, $data->{$setting->long});
                 }
             }
+        } else {
+            $this->do_generation = false;
         }
     }
 
@@ -1314,23 +1312,4 @@ class generator_form extends moodleform {
     function definition_after_data() {
 
     }
-}
-
-if (CLI_SCRIPT) {
-    $generator = new generator_cli($argv, $argc);
-    $generator->generate_data();
-} elseif (strstr($_SERVER['REQUEST_URI'], 'generator.php')) {
-    require_login();
-    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-    require_capability('moodle/site:config', $systemcontext);
-
-    $PAGE->set_url('/admin/generator.php');
-    $PAGE->set_pagelayout('base');
-    $generator = new generator_web();
-    $generator->setup();
-    $generator->display();
-    $generator->generate_data();
-    $generator->complete();
-} else {
-    $generator = new generator_silent();
 }

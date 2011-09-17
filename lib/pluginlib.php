@@ -367,7 +367,7 @@ class plugin_manager {
             ),
 
             'tool' => array(
-                'capability', 'profiling', 'unittest', 'unsuproles'
+                'capability', 'generator', 'profiling', 'unittest', 'unsuproles'
             ),
 
             'webservice' => array(
