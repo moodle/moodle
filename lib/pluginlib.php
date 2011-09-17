@@ -342,7 +342,7 @@ class plugin_manager {
             ),
 
             'report' => array(
-                'backups', 'capability', 'configlog', 'courseoverview',
+                'backups', 'configlog', 'courseoverview',
                 'customlang', 'log', 'profiling', 'questioninstances',
                 'security', 'spamcleaner', 'stats', 'unittest', 'unsuproles'
             ),
@@ -367,6 +367,7 @@ class plugin_manager {
             ),
 
             'tool' => array(
+                'capability'
             ),
 
             'webservice' => array(

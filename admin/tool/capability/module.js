@@ -1,11 +1,11 @@
 
-M.report_capability = {
+M.tool_capability = {
     select: null,
     input: null,
     button: null,
 
     init: function(Y, strsearch) {
-        var context = M.report_capability;
+        var context = M.tool_capability;
 
         // Find the form controls.
         context.select = document.getElementById('menucapability');
@@ -37,7 +37,7 @@ M.report_capability = {
     },
 
     typed: function() {
-        var context = M.report_capability;
+        var context = M.tool_capability;
 
         var filtertext = context.input.value;
         var options = context.select.options;
@@ -69,7 +69,7 @@ M.report_capability = {
     },
 
     validate: function() {
-        var context = M.report_capability;
+        var context = M.tool_capability;
         context.button.disabled = (context.select.value == '');
     }
 }
