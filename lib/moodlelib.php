@@ -7252,7 +7252,6 @@ function get_core_subsystems() {
             'user'        => 'user',
             'userkey'     => NULL,
             'webservice'  => 'webservice',
-            'xmldb'       => NULL,
         );
     }
 

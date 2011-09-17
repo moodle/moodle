@@ -70,10 +70,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     }
 
 
-    // XMLDB editor
-    $ADMIN->add('development', new admin_externalpage('xmldbeditor', get_string('xmldbeditor'), "$CFG->wwwroot/$CFG->admin/xmldb/"));
-
-
      // Web service test clients DO NOT COMMIT : THE EXTERNAL WEB PAGE IS NOT AN ADMIN PAGE !!!!!
     $ADMIN->add('development', new admin_externalpage('testclient', get_string('testclient', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/testclient.php"));
 

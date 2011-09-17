@@ -1793,7 +1793,6 @@ $string['writingmoduleinfo'] = 'Writing modules info';
 $string['writingscalesinfo'] = 'Writing scales info';
 $string['writinguserinfo'] = 'Writing users info';
 $string['wrongpassword'] = 'Incorrect password for this username';
-$string['xmldbeditor'] = 'XMLDB editor';
 $string['yahooid'] = 'Yahoo ID';
 $string['year'] = 'year';
 $string['years'] = 'years';
