@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,19 +19,20 @@
  *
  * As required by http://docs.moodle.org/dev/Coding_style.
  *
- * http://docs.moodle.org/dev/Coding_style
- * @package   moodlecore
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tool
+ * @subpackage unittest
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->libdir . '/simpletestlib.php');
+
+require(dirname(__FILE__) . '/../../../../config.php');
+require_once('../simpletestlib.php');
 
 require_login();
 $context = get_context_instance(CONTEXT_SYSTEM);
-require_capability('moodle/site:config', $context);
+require_capability('tool/unittest:execute', $context);
 
-$PAGE->set_url('/lib/simpletest/todochecker.php');
+$PAGE->set_url('/admin/tool/todochecker.php');
 $PAGE->set_context($context);
 $PAGE->set_title('To-do checker');
 $PAGE->set_heading('To-do checker');

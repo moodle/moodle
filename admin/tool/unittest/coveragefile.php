@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,8 +20,8 @@
  * Syntax:      coveragefile.php/path/to/file/file.html
  *              coveragefile.php?file=path/to/file/file.html
  *
- * @package    moodlecore
- * @subpackage simpletestcoverage
+ * @package    tool
+ * @subpackage unittest
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,12 +29,12 @@
 // disable moodle specific debug messages and any errors in output
 define('NO_DEBUG_DISPLAY', true);
 
-require_once(dirname(__FILE__) . '/../../../config.php');
+require(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir . '/filelib.php');
 
 // basic security, require login + require site config cap
 require_login();
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+require_capability('tool/unittest:execute', get_context_instance(CONTEXT_SYSTEM));
 
 // get file requested
 $relativepath  = get_file_argument();

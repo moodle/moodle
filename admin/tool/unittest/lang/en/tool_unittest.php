@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,11 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'simpletest', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'tool_unittest', language 'en', branch 'MOODLE_22_STABLE'
  *
- * @package   simpletest
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * This file contains strings that were previously located in lang/en/simpletest.php
+ *
+ * @package    tool
+ * @subpackage unittest
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['addconfigprefix'] = 'Add prefix to config file';
@@ -34,6 +36,7 @@ $string['confignonwritable'] = 'The file config.php is not writeable by the web 
 $CFG->unittestprefix = \'tst_\' // Change tst_ to a prefix of your choice, different from $CFG->prefix';
 $string['coveredlines'] = 'Covered lines';
 $string['coveredpercentage'] = 'Overall code coverage';
+$string['dbtest'] = 'Functional DB tests';
 $string['deletingnoninsertedrecord'] = 'Trying to delete a record that was not inserted by these unit tests (id {$a->id} in table {$a->table}).';
 $string['deletingnoninsertedrecords'] = 'Trying to delete records that were not inserted by these unit tests (from table {$a->table}).';
 $string['droptesttables'] = 'Drop test tables';
@@ -46,8 +49,10 @@ $string['installtesttables'] = 'Install test tables';
 $string['moodleunittests'] = 'Moodle unit tests: {$a}';
 $string['notice'] = 'Notice';
 $string['onlytest'] = 'Only run tests in';
+$string['othertestpages'] = 'Other test pages';
 $string['pass'] = 'Pass';
 $string['pathdoesnotexist'] = 'The path \'{$a}\' does not exist.';
+$string['pluginname'] = 'Unit tests';
 $string['prefix'] = 'Unit test tables prefix';
 $string['prefixnotset'] = 'The unit test database table prefix is not configured. Fill and submit this form to add it to config.php.';
 $string['reinstalltesttables'] = 'Reinstall test tables';
@@ -74,6 +79,7 @@ $string['timetakes'] = 'Time taken: {$a}.';
 $string['totallines'] = 'Total lines';
 $string['uncaughtexception'] = 'Uncaught exception [{$a->getMessage()}] in [{$a->getFile()}:{$a->getLine()}] TESTS ABORTED.';
 $string['uncoveredlines'] = 'Uncovered lines';
+$string['unittest:execute'] = 'Execute unit tests';
 $string['unittestprefixsetting'] = 'Unit test prefix: <strong>{$a->unittestprefix}</strong> (Edit config.php to modify this).';
 $string['unittests'] = 'Unit tests';
 $string['updatingnoninsertedrecord'] = 'Trying to update a record that was not inserted by these unit tests (id {$a->id} in table {$a->table}).';

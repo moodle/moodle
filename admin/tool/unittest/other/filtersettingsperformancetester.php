@@ -1,47 +1,42 @@
 <?php
-
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Run the unit tests.
+ *
  * A simple test script that sets up test data in the database then
  * measures performance of filter_get_active_in_context.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodlecore
- *//** */
+ * @copyright  2009 Tim Hunt
+ * @author     N.D.Freear@open.ac.uk, T.J.Hunt@open.ac.uk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require(dirname(__FILE__) . '/../../../../config.php');
 require_once($CFG->libdir . '/ddllib.php');
 
 require_login();
 $syscontext = get_context_instance(CONTEXT_SYSTEM);
-require_capability('moodle/site:config', $syscontext);
+require_capability('tool/unittest:execute', $syscontext);
 
-$baseurl = $CFG->wwwroot . '/lib/simpletest/filtersettingsperformancetester.php';
+$baseurl = new moodle_url('/admin/tool/unittest/other/filtersettingsperformancetester.php');
 
 $title = 'filter_get_active_in_context performance test';
-$PAGE->set_url('/lib/simpletest/filtersettingsperformancetester.php');
+$PAGE->set_url($baseurl);
+$PAGE->set_context($syscontext);
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
@@ -67,6 +62,7 @@ foreach ($requiredtables as $table) {
 
 switch (optional_param('action', '', PARAM_ACTION)) {
     case 'setup':
+        require_sesskey();
         if ($issetup == 0) {
             foreach ($requiredtables as $table) {
                 $dbman->install_one_table_from_xmldb_file($CFG->dirroot . '/lib/db/install.xml', $table);
@@ -83,6 +79,7 @@ switch (optional_param('action', '', PARAM_ACTION)) {
         break;
 
     case 'teardown':
+        require_sesskey();
         foreach ($requiredtables as $tablename) {
             $table = new xmldb_table($tablename);
             if ($dbman->table_exists($table)) {
@@ -94,6 +91,7 @@ switch (optional_param('action', '', PARAM_ACTION)) {
         break;
 
     case 'test':
+        require_sesskey();
         if ($issetup != count($requiredtables)) {
             echo $OUTPUT->notification('Something is wrong, please delete the test tables and try again.');
         } else {
@@ -116,13 +114,13 @@ $DB = $realdb;
 
 echo $OUTPUT->container_start();
 
-$aurl = new moodle_url($baseurl, array('action' => 'setup'));
+$aurl = new moodle_url($baseurl, array('action' => 'setup', 'sesskey'=>sesskey()));
 echo $OUTPUT->single_button($aurl, 'Set up test tables', 'get', array('disabled'=>($issetup > 0)));
 
-$aurl = new moodle_url($baseurl, array('action' => 'teardown'));
+$aurl = new moodle_url($baseurl, array('action' => 'teardown', 'sesskey'=>sesskey()));
 echo $OUTPUT->single_button($aurl, 'Drop test tables', 'get', array('disabled'=>($issetup == 0)));
 
-$aurl = new moodle_url($baseurl, array('action' => 'test'));
+$aurl = new moodle_url($baseurl, array('action' => 'test', 'sesskey'=>sesskey()));
 echo $OUTPUT->single_button($aurl, 'Run tests', 'get', array('disabled'=>($issetup != count($requiredtables))));
 
 echo $OUTPUT->container_end();

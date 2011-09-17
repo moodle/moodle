@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,12 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'report_unittest', language 'en', branch 'MOODLE_20_STABLE'
+ * Post installation and migration code.
  *
- * @package   report_unittest
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tool
+ * @subpackage unittest
+ * @copyright  2011 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Unit tests';
-$string['unittest:view'] = 'Execute unit tests';
+defined('MOODLE_INTERNAL') || die;
+
+function xmldb_tool_unittest_install() {
+    global $CFG;
+
+    // this is a hack - this plugin used to live in admin/tool/unittest,
+    // we want to remove the orphaned version info and capability
+    // unless there is a new report type with the same name
+
+    if (!file_exists("$CFG->dirroot/report/unittest")) {
+        unset_all_config_for_plugin('report_unittest');
+        capabilities_cleanup('report_unittest');
+    }
+}

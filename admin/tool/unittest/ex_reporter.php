@@ -1,11 +1,27 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * A SimpleTest report format for Moodle.
  *
- * @copyright &copy; 2006 The Open University
- * @author N.D.Freear@open.ac.uk, T.J.Hunt@open.ac.uk
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package SimpleTestEx
+ * @package    tool
+ * @subpackage unittest
+ * @copyright  &copy; 2006 The Open University
+ * @author     N.D.Freear@open.ac.uk, T.J.Hunt@open.ac.uk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (!defined('MOODLE_INTERNAL')) {
@@ -164,7 +180,7 @@ class ExHtmlReporter extends HtmlReporter {
             foreach ($stacktrace as $frame) {
                 if (empty($frame['file']) || (strpos($frame['file'], 'simpletestlib') === false &&
                         strpos($frame['file'], 'simpletestcoveragelib') === false
-                        && strpos($frame['file'], 'report/unittest') === false)) {
+                        && strpos($frame['file'], 'tool/unittest') === false)) {
                     $filteredstacktrace[] = $frame;
                     $interestinglines += 1;
                     $dotsadded = false;
@@ -271,6 +287,6 @@ class ExHtmlReporter extends HtmlReporter {
      * Look up a lang string in the appropriate file.
      */
     function get_string($identifier, $a = NULL) {
-        return get_string($identifier, 'simpletest', $a);
+        return get_string($identifier, 'tool_unittest', $a);
     }
 }

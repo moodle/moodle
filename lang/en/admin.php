@@ -407,7 +407,6 @@ $string['dbmigratewarning2'] = '<b>Warning: You are about to start the database 
 $string['dbmigrationdeprecateddb'] = '<font color="#ff0000">This database is migrated to a new UTF8 database and deprecated. Please edit your config.php and use the new database for this moodle.</font>';
 $string['dbmigrationdupfailed'] = 'Database duplication failed with possible error:<font color="#ff0000"><pre>{$a}</pre></font>';
 $string['dbsessions'] = 'Use database for session information';
-$string['dbtest'] = 'Functional DB tests';
 $string['debug'] = 'Debug messages';
 $string['debugall'] = 'ALL: Show all reasonable PHP debug messages';
 $string['debugdeveloper'] = 'DEVELOPER: extra Moodle debug messages for developers';
@@ -936,7 +935,6 @@ $string['settingmemorylimit'] = 'Insufficient memory detected, please set higher
 $string['settingsafemode'] = 'Moodle is not fully compatible with safe mode, please ask server administrator to turn it off. Running Moodle under safe mode is not supported, please expect various problems if you do so.';
 $string['showcommentscount'] = 'Show comments count';
 $string['showdetails'] = 'Show details';
-$string['simpletest'] = 'Unit tests';
 $string['simplexmlrequired'] = 'The SimpleXML PHP extension is now required by Moodle.';
 $string['sitelangchanged'] = 'Site language setting changed successfully';
 $string['sitemaintenance'] = 'The site is undergoing maintenance and is currently not available';

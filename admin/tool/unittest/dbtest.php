@@ -1,14 +1,34 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Run database functional tests.
- * @package SimpleTestEx
+ *
+ * @package    tool
+ * @subpackage unittest
+ * @copyright  2008 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define('NO_OUTPUT_BUFFERING', true);
 
-require_once(dirname(__FILE__).'/../../../config.php');
+require(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/simpletestcoveragelib.php');
+require_once('simpletestlib.php');
+require_once('simpletestcoveragelib.php');
 require_once('ex_simple_test.php');
 require_once('ex_reporter.php');
 
@@ -17,7 +37,7 @@ $codecoverage = optional_param('codecoverage', false, PARAM_BOOL);
 $selected     = optional_param_array('selected', array(), PARAM_INT);
 
 // Print the header and check access.
-admin_externalpage_setup('reportdbtest');
+admin_externalpage_setup('tooldbtest');
 echo $OUTPUT->header();
 
 global $UNITTEST;
@@ -108,11 +128,11 @@ echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
 echo '<form method="post" action="dbtest.php">';
 echo '<div>';
 echo $OUTPUT->heading("Run functional database tests"); // TODO: localise
-echo '<p>'.html_writer::checkbox('showpasses', 1, $showpasses, get_string('showpasses', 'simpletest')).'</p>';
+echo '<p>'.html_writer::checkbox('showpasses', 1, $showpasses, get_string('showpasses', 'tool_unittest')).'</p>';
 if (moodle_coverage_recorder::can_run_codecoverage()) {
-    echo '<p>'.html_writer::checkbox('codecoverage', 1, $codecoverage, get_string('codecoverageanalysis', 'simpletest')).'</p>';
+    echo '<p>'.html_writer::checkbox('codecoverage', 1, $codecoverage, get_string('codecoverageanalysis', 'tool_unittest')).'</p>';
 } else {
-    echo '<p>'; print_string('codecoveragedisabled', 'simpletest'); echo '<input type="hidden" name="codecoverage" value="0" /></p>';
+    echo '<p>'; print_string('codecoveragedisabled', 'tool_unittest'); echo '<input type="hidden" name="codecoverage" value="0" /></p>';
 }
 echo '<p><strong>'."Databases:".'</strong></p>';
 echo '<ul>';
@@ -134,7 +154,7 @@ $CFG->func_test_db_1 = array("native", "pgsql", "localhost", "moodleuser", "pass
 $CFG->func_test_db_2 = array("native", "mssql", "localhost", "moodleuser", "password", "moodle", "test", null);
 </pre>
 <p>where order of parameters is: dblibrary, dbtype, dbhost, dbuser, dbpass, dbname, prefix, dboptions</p>';
-echo '<p><input type="submit" value="' . get_string('runtests', 'simpletest') . '" /></p>';
+echo '<p><input type="submit" value="' . get_string('runtests', 'tool_unittest') . '" /></p>';
 echo '</div>';
 echo '</form>';
 echo $OUTPUT->box_end();

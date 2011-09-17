@@ -11,7 +11,7 @@ die;die;die;
     // extra security
     session_write_close();
 
-    $return_url = "$CFG->wwwroot/$CFG->admin/report/unittest/test_tables.php";
+    $return_url = "$CFG->wwwroot/$CFG->admin/tool/unittest/test_tables.php";
 
     // Temporarily override $DB and $CFG for a fresh install on the unit test prefix
 

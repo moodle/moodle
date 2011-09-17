@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,8 +21,8 @@
  * ones, provide code coverage analysis to already existing tests. Also there are some
  * utility functions designed to make the coverage control easier.
  *
- * @package    core
- * @subpackage simpletestcoverage
+ * @package    tool
+ * @subpackage unittest
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,11 +32,10 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Includes
  */
-require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir.'/tablelib.php');
 
-require_once($CFG->libdir . '/simpletestlib.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/report/unittest/ex_simple_test.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/unittest/simpletestlib.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/unittest/ex_simple_test.php');
 
 require_once($CFG->libdir . '/spikephpcoverage/src/CoverageRecorder.php');
 require_once($CFG->libdir . '/spikephpcoverage/src/reporter/HtmlCoverageReporter.php');
@@ -439,19 +437,19 @@ class moodle_coverage_reporter extends HtmlCoverageReporter {
                 $table->id = 'codecoveragetable_' . $type;
                 $table->rowclasses = array('label', 'value');
                 $table->data = array(
-                        array(get_string('date')                           , userdate($data->time)),
-                        array(get_string('files')                          , format_float($data->totalfiles, 0)),
-                        array(get_string('totallines', 'simpletest')       , format_float($data->totalln, 0)),
-                        array(get_string('executablelines', 'simpletest')  , format_float($data->totalcoveredln + $data->totaluncoveredln, 0)),
-                        array(get_string('coveredlines', 'simpletest')     , format_float($data->totalcoveredln, 0)),
-                        array(get_string('uncoveredlines', 'simpletest')   , format_float($data->totaluncoveredln, 0)),
-                        array(get_string('coveredpercentage', 'simpletest'), format_float($data->totalpercentage, 2) . '%')
+                        array(get_string('date')                              , userdate($data->time)),
+                        array(get_string('files')                             , format_float($data->totalfiles, 0)),
+                        array(get_string('totallines', 'tool_unittest')       , format_float($data->totalln, 0)),
+                        array(get_string('executablelines', 'tool_unittest')  , format_float($data->totalcoveredln + $data->totaluncoveredln, 0)),
+                        array(get_string('coveredlines', 'tool_unittest')     , format_float($data->totalcoveredln, 0)),
+                        array(get_string('uncoveredlines', 'tool_unittest')   , format_float($data->totaluncoveredln, 0)),
+                        array(get_string('coveredpercentage', 'tool_unittest'), format_float($data->totalpercentage, 2) . '%')
                 );
 
-                $url = $CFG->wwwroot . '/admin/report/unittest/coveragefile.php/' . $type . '/index.html';
+                $url = $CFG->wwwroot . '/'.$CFG->admin.'/tool/unittest/coveragefile.php/' . $type . '/index.html';
                 $result .= $OUTPUT->heading($data->title, 3, 'main codecoverageheading');
                 $result .= $OUTPUT->heading('<a href="' . $url . '" onclick="javascript:window.open(' . "'" . $url . "'" . ');return false;"' .
-                                   ' title="">' . get_string('codecoveragecompletereport', 'simpletest') . '</a>', 4, 'main codecoveragelink');
+                                   ' title="">' . get_string('codecoveragecompletereport', 'tool_unittest') . '</a>', 4, 'main codecoveragelink');
                 $result .= html_writer::table($table);
 
                 return $OUTPUT->box($result, 'generalbox boxwidthwide boxaligncenter codecoveragebox', '', true);
@@ -489,12 +487,12 @@ class moodle_coverage_reporter extends HtmlCoverageReporter {
                 $info->files      = format_float($data->totalfiles, 0);
                 $info->percentage = format_float($data->totalpercentage, 2) . '%';
 
-                $strlatestreport  = get_string('codecoveragelatestreport', 'simpletest');
-                $strlatestdetails = get_string('codecoveragelatestdetails', 'simpletest', $info);
+                $strlatestreport  = get_string('codecoveragelatestreport', 'tool_unittest');
+                $strlatestdetails = get_string('codecoveragelatestdetails', 'tool_unittest', $info);
 
                 // return one link to latest complete report
                 $result = '';
-                $url = $CFG->wwwroot . '/admin/report/unittest/coveragefile.php/' . $type . '/index.html';
+                $url = $CFG->wwwroot . '/'.$CFG->admin.'/tool/unittest/coveragefile.php/' . $type . '/index.html';
                 $result .= $OUTPUT->heading('<a href="' . $url . '" onclick="javascript:window.open(' . "'" . $url . "'" . ');return false;"' .
                     ' title="">' . $strlatestreport . '</a>', 3, 'main codecoveragelink');
                 $result .= $OUTPUT->heading($strlatestdetails, 4, 'main codecoveragedetails');

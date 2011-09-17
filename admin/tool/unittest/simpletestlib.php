@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,8 +24,8 @@
  * Major Contirbutors
  *     - T.J.Hunt@open.ac.uk
  *
- * @package    core
- * @subpackage simpletestex
+ * @package    tool
+ * @subpackage unittest
  * @copyright  &copy; 2006 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,7 +35,6 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Includes
  */
-require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir . '/simpletestlib/simpletest.php');
 require_once($CFG->libdir . '/simpletestlib/unit_tester.php');
 require_once($CFG->libdir . '/simpletestlib/expectation.php');
@@ -214,7 +212,7 @@ abstract class XMLStructureExpectation extends SimpleExpectation {
             foreach ($parsererrors as $key => $message) {
                 $parsererrors[$key] = $message->message;
             }
-            return 'Could not parse XML [' . $html . '] errors were [' . 
+            return 'Could not parse XML [' . $html . '] errors were [' .
                     implode('], [', $parsererrors) . ']';
         }
         return $this->customMessage($html);
@@ -958,7 +956,7 @@ class FakeDBUnitTestCase extends UnitTestCase {
             if (!file_put_contents($this->pkfile, $tabledata)) {
                 $a = new stdClass();
                 $a->filename = $this->pkfile;
-                throw new moodle_exception('testtablescsvfileunwritable', 'simpletest', '', $a);
+                throw new moodle_exception('testtablescsvfileunwritable', 'tool_unittest', '', $a);
             }
         }
     }
@@ -1010,7 +1008,7 @@ class FakeDBUnitTestCase extends UnitTestCase {
         } else {
             $a = new stdClass();
             $a->filename = $this->pkfile;
-            throw new moodle_exception('testtablescsvfilemissing', 'simpletest', '', $a);
+            throw new moodle_exception('testtablescsvfilemissing', 'tool_unittest', '', $a);
             return false;
         }
     }
@@ -1155,7 +1153,7 @@ class UnitTestDB {
         global $CFG, $DB;
         UnitTestDB::$real_db = clone($DB);
         if (empty($CFG->unittestprefix)) {
-            print_error("prefixnotset", 'simpletest');
+            print_error("prefixnotset", 'tool_unittest');
         }
 
         if (empty(UnitTestDB::$DB)) {
@@ -1166,7 +1164,7 @@ class UnitTestDB {
         $manager = UnitTestDB::$DB->get_manager();
 
         if (!$manager->table_exists('user')) {
-            print_error('tablesnotsetup', 'simpletest');
+            print_error('tablesnotsetup', 'tool_unittest');
         }
 
         $DB = new UnitTestDB();
@@ -1220,7 +1218,7 @@ class UnitTestDB {
             $a = new stdClass();
             $a->id = $dataobject->id;
             $a->table = $table;
-            throw new moodle_exception('updatingnoninsertedrecord', 'simpletest', '', $a);
+            throw new moodle_exception('updatingnoninsertedrecord', 'tool_unittest', '', $a);
         } else {
             return UnitTestDB::$DB->update_record($table, $dataobject, $bulk);
         }
@@ -1261,7 +1259,7 @@ class UnitTestDB {
         if ($proceed_with_delete) {
             return UnitTestDB::$DB->delete_records($table, $conditions);
         } else {
-            throw new moodle_exception('deletingnoninsertedrecord', 'simpletest', '', $a);
+            throw new moodle_exception('deletingnoninsertedrecord', 'tool_unittest', '', $a);
         }
     }
 
@@ -1294,7 +1292,7 @@ class UnitTestDB {
         if ($proceed_with_delete) {
             return UnitTestDB::$DB->delete_records_select($table, $select, $params);
         } else {
-            throw new moodle_exception('deletingnoninsertedrecord', 'simpletest', '', $a);
+            throw new moodle_exception('deletingnoninsertedrecord', 'tool_unittest', '', $a);
         }
     }
 

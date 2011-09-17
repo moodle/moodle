@@ -34,7 +34,7 @@ require_once($CFG->libdir . '/outputlib.php');
  * Unit tests for the xhtml_container_stack class.
  *
  * These tests assume that developer debug mode is on, which, at the time of
- * writing, is true. admin/report/unittest/index.php forces it on.
+ * writing, is true. admin/tool/unittest/index.php forces it on.
  *
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

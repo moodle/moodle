@@ -7245,7 +7245,6 @@ function get_core_subsystems() {
             'repository'  => 'repository',
             'rss'         => 'rss',
             'role'        => $CFG->admin.'/role',
-            'simpletest'  => NULL,
             'search'      => 'search',
             'table'       => NULL,
             'tag'         => 'tag',
