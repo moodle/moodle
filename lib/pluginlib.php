@@ -343,7 +343,7 @@ class plugin_manager {
 
             'report' => array(
                 'backups', 'configlog', 'courseoverview',
-                'customlang', 'log', 'profiling', 'questioninstances',
+                'customlang', 'log', 'questioninstances',
                 'security', 'spamcleaner', 'stats', 'unittest'
             ),
 
@@ -367,7 +367,7 @@ class plugin_manager {
             ),
 
             'tool' => array(
-                'capability', 'unsuproles'
+                'capability', 'profiling', 'unsuproles'
             ),
 
             'webservice' => array(

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,7 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    core
+ * Profiling tool.
+ *
+ * @package    tool
  * @subpackage profiling
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,7 +25,9 @@
 
 // TODO: Move all the DB stuff to profiling_db_xxxx() function in xhprof_moodle.php
 
-require_once(dirname(__FILE__).'/../../../config.php');
+// TODO: it is wrong when core lib references ANY plugin lang strings, maybe more login could be moved here (skodak)
+
+require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir . '/xhprof/xhprof_moodle.php');
 
@@ -41,11 +44,11 @@ $runcomment  = optional_param('runcomment', null, PARAM_TEXT);
 $dbfields = 'runid, url, totalexecutiontime, totalcputime, ' .
             'totalcalls, totalmemory, runreference, runcomment, timecreated';
 
-admin_externalpage_setup('reportprofiling');
+admin_externalpage_setup('toolprofiling');
 
 // Always add listurl if available
 if ($listurl) {
-    $listurlnav = new moodle_url('/admin/report/profiling/index.php', array('listurl' => $listurl));
+    $listurlnav = new moodle_url('/admin/tool/profiling/index.php', array('listurl' => $listurl));
     $PAGE->navbar->add($listurl, $listurlnav);
 }
 
@@ -65,7 +68,7 @@ if (isset($script)) {
 
     // No run found for script, warn and exit
     if (!$run) {
-        notice(get_string('cannotfindanyrunforurl', 'report_profiling', $script), 'index.php');
+        notice(get_string('cannotfindanyrunforurl', 'tool_profiling', $script), 'index.php');
     }
 
     // Check if there is any previous run marked as reference one
@@ -75,7 +78,7 @@ if (isset($script)) {
                                               'timecreated DESC', 'runid', 0, 1);
     $prevrunid = $prevreferences ? reset($prevreferences)->runid : false;
     echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
-    $header = get_string('lastrunof', 'report_profiling', $script);
+    $header = get_string('lastrunof', 'tool_profiling', $script);
     echo $OUTPUT->heading($header);
     $table = profiling_print_run($run, $prevrunid);
     echo $table;
@@ -93,7 +96,7 @@ if (isset($script)) {
             $run2 = $runtemp;
         }
         echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
-        $header = get_string('differencesbetween2runsof', 'report_profiling', $run1->url);
+        $header = get_string('differencesbetween2runsof', 'tool_profiling', $run1->url);
         echo $OUTPUT->heading($header);
         $table = profiling_print_rundiff($run1, $run2);
         echo $table;
@@ -117,7 +120,7 @@ if (isset($script)) {
 
     // No run found for runid, warn and exit
     if (!$run) {
-        notice(get_string('cannotfindanyrunforrunid', 'report_profiling', $runid), 'index.php');
+        notice(get_string('cannotfindanyrunforrunid', 'tool_profiling', $runid), 'index.php');
     }
 
     // Check if there is any previous run marked as reference one
@@ -127,7 +130,7 @@ if (isset($script)) {
                                               'timecreated DESC', 'runid', 0, 1);
     $prevrunid = $prevreferences ? reset($prevreferences)->runid : false;
     echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
-    $header = get_string('summaryof', 'report_profiling', $run->url);
+    $header = get_string('summaryof', 'tool_profiling', $run->url);
     echo $OUTPUT->heading($header);
     $table = profiling_print_run($run, $prevrunid);
     echo $table;
@@ -139,17 +142,17 @@ if (isset($script)) {
 
     // The flexitable that will root listings
     $table = new xhprof_table_sql('profiling-list-table');
-    $baseurl = $CFG->wwwroot . '/admin/report/profiling/index.php';
+    $baseurl = $CFG->wwwroot . '/admin/tool/profiling/index.php';
 
     // Check if we are listing all or some URL ones
     $sqlconditions = '';
     $sqlparams = array();
     if (!isset($listurl)) {
-        $header = get_string('pluginname', 'report_profiling');
+        $header = get_string('pluginname', 'tool_profiling');
         $sqlconditions = '1 = 1';
         $table->set_listurlmode(false);
     } else {
-        $header =  get_string('profilingrunsfor', 'report_profiling', $listurl);
+        $header =  get_string('profilingrunsfor', 'tool_profiling', $listurl);
         $sqlconditions = 'url = :url';
         $sqlparams['url'] = $listurl;
         $table->set_listurlmode(true);
@@ -167,9 +170,9 @@ if (isset($script)) {
         'url', 'timecreated', 'totalexecutiontime', 'totalcputime',
         'totalcalls', 'totalmemory', 'runcomment');
     $headers = array(
-        get_string('url'), get_string('date'), get_string('executiontime', 'report_profiling'),
-        get_string('cputime', 'report_profiling'), get_string('calls', 'report_profiling'),
-        get_string('memory', 'report_profiling'), get_string('comment', 'report_profiling'));
+        get_string('url'), get_string('date'), get_string('executiontime', 'tool_profiling'),
+        get_string('cputime', 'tool_profiling'), get_string('calls', 'tool_profiling'),
+        get_string('memory', 'tool_profiling'), get_string('comment', 'tool_profiling'));
     $table->define_columns($columns);
     $table->define_headers($headers);
     $table->sortable(true, 'timecreated', SORT_DESC);

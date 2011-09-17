@@ -16,11 +16,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'report_profiling', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'tool_profiling', language 'en', branch 'MOODLE_22_STABLE'
  *
- * @package   report_profiling
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tool
+ * @subpackage profiling
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['calls'] = 'Function calls';

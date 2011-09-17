@@ -280,23 +280,23 @@ function profiling_print_run($run, $prevrunid = null) {
     $table->attributes['class'] = 'profilingruntable';
     $table->colclasses = array('label', 'value');
     $table->data = array(
-       array(get_string('runid', 'report_profiling'), $run->runid),
+       array(get_string('runid', 'tool_profiling'), $run->runid),
        array(get_string('url'), $run->url),
        array(get_string('date'), userdate($run->timecreated, '%d %B %Y, %H:%M')),
-       array(get_string('executiontime', 'report_profiling'), format_float($run->totalexecutiontime / 1000, 3) . ' ms'),
-       array(get_string('cputime', 'report_profiling'), format_float($run->totalcputime / 1000, 3) . ' ms'),
-       array(get_string('calls', 'report_profiling'), $run->totalcalls),
-       array(get_string('memory', 'report_profiling'), format_float($run->totalmemory / 1024, 0) . ' KB'),
-       array(get_string('markreferencerun', 'report_profiling'), $referenceform));
+       array(get_string('executiontime', 'tool_profiling'), format_float($run->totalexecutiontime / 1000, 3) . ' ms'),
+       array(get_string('cputime', 'tool_profiling'), format_float($run->totalcputime / 1000, 3) . ' ms'),
+       array(get_string('calls', 'tool_profiling'), $run->totalcalls),
+       array(get_string('memory', 'tool_profiling'), format_float($run->totalmemory / 1024, 0) . ' KB'),
+       array(get_string('markreferencerun', 'tool_profiling'), $referenceform));
     $output = $OUTPUT->box(html_writer::table($table), 'generalbox boxwidthwide boxaligncenter profilingrunbox', 'profiling_summary', true);
     // Add link to details
-    $strviewdetails = get_string('viewdetails', 'report_profiling');
+    $strviewdetails = get_string('viewdetails', 'tool_profiling');
     $url = profiling_urls('run', $run->runid);
     $output.=$OUTPUT->heading('<a href="' . $url . '" onclick="javascript:window.open(' . "'" . $url . "'" . ');' .
                               'return false;"' . ' title="">' . $strviewdetails . '</a>', 3, 'main profilinglink');
     // If there is one previous run marked as reference, add link to diff
     if ($prevrunid) {
-        $strviewdiff = get_string('viewdiff', 'report_profiling');
+        $strviewdiff = get_string('viewdiff', 'tool_profiling');
         $url = 'index.php?runid=' . $run->runid . '&amp;runid2=' . $prevrunid . '&amp;listurl=' . urlencode($run->url);
         $output.=$OUTPUT->heading('<a href="' . $url . '" title="">' . $strviewdiff . '</a>', 3, 'main profilinglink');
     }
@@ -327,28 +327,28 @@ function profiling_print_rundiff($run1, $run2) {
     $table->attributes['class'] = 'profilingruntable';
     $table->colclasses = array('label', 'value1', 'value2');
     $table->data = array(
-       array(get_string('runid', 'report_profiling'),
+       array(get_string('runid', 'tool_profiling'),
            '<a href="index.php?runid=' . $run1->runid . '&listurl=' . urlencode($run1->url) . '" title="">' . $run1->runid . '</a>',
            '<a href="index.php?runid=' . $run2->runid . '&listurl=' . urlencode($run2->url) . '" title="">' . $run2->runid . '</a>'),
        array(get_string('url'), $run1->url, $run2->url),
        array(get_string('date'), userdate($run1->timecreated, '%d %B %Y, %H:%M'),
            userdate($run2->timecreated, '%d %B %Y, %H:%M')),
-       array(get_string('executiontime', 'report_profiling'),
+       array(get_string('executiontime', 'tool_profiling'),
            format_float($run1->totalexecutiontime / 1000, 3) . ' ms',
            format_float($run2->totalexecutiontime / 1000, 3) . ' ms ' . $diffexecutiontime),
-       array(get_string('cputime', 'report_profiling'),
+       array(get_string('cputime', 'tool_profiling'),
            format_float($run1->totalcputime / 1000, 3) . ' ms',
            format_float($run2->totalcputime / 1000, 3) . ' ms ' . $diffcputime),
-       array(get_string('calls', 'report_profiling'), $run1->totalcalls, $run2->totalcalls . ' ' . $diffcalls),
-       array(get_string('memory', 'report_profiling'),
+       array(get_string('calls', 'tool_profiling'), $run1->totalcalls, $run2->totalcalls . ' ' . $diffcalls),
+       array(get_string('memory', 'tool_profiling'),
            format_float($run1->totalmemory / 1024, 0) . ' KB',
            format_float($run2->totalmemory / 1024, 0) . ' KB ' . $diffmemory),
-       array(get_string('referencerun', 'report_profiling'), $referencetext1, $referencetext2));
+       array(get_string('referencerun', 'tool_profiling'), $referencetext1, $referencetext2));
     $output = $OUTPUT->box(html_writer::table($table), 'generalbox boxwidthwide boxaligncenter profilingrunbox', 'profiling_summary', true);
     // Add link to details
-    $strviewdetails = get_string('viewdiffdetails', 'report_profiling');
+    $strviewdetails = get_string('viewdiffdetails', 'tool_profiling');
     $url = profiling_urls('diff', $run1->runid, $run2->runid);
-    //$url =  $CFG->wwwroot . '/admin/report/profiling/index.php?run=' . $run->runid;
+    //$url =  $CFG->wwwroot . '/admin/tool/profiling/index.php?run=' . $run->runid;
     $output.=$OUTPUT->heading('<a href="' . $url . '" onclick="javascript:window.open(' . "'" . $url . "'" . ');' .
                               'return false;"' . ' title="">' . $strviewdetails . '</a>', 3, 'main profilinglink');
     return $output;
@@ -535,7 +535,7 @@ class xhprof_table_sql extends table_sql {
         global $OUTPUT;
 
         // Build the link to latest run for the script
-        $scripturl = new moodle_url('/admin/report/profiling/index.php', array('script' => $row->url, 'listurl' => $row->url));
+        $scripturl = new moodle_url('/admin/tool/profiling/index.php', array('script' => $row->url, 'listurl' => $row->url));
         $scriptaction = $OUTPUT->action_link($scripturl, $row->url);
 
         // Decide, based on $this->listurlmode which actions to show
@@ -543,8 +543,8 @@ class xhprof_table_sql extends table_sql {
             $detailsaction = '';
         } else {
             // Build link icon to script details (pix + url + actionlink)
-            $detailsimg = $OUTPUT->pix_icon('t/right', get_string('profilingfocusscript', 'report_profiling', $row->url));
-            $detailsurl = new moodle_url('/admin/report/profiling/index.php', array('listurl' => $row->url));
+            $detailsimg = $OUTPUT->pix_icon('t/right', get_string('profilingfocusscript', 'tool_profiling', $row->url));
+            $detailsurl = new moodle_url('/admin/tool/profiling/index.php', array('listurl' => $row->url));
             $detailsaction = $OUTPUT->action_link($detailsurl, $detailsimg);
         }
 
@@ -557,7 +557,7 @@ class xhprof_table_sql extends table_sql {
     protected function col_timecreated($row) {
         global $OUTPUT;
         $fdate = userdate($row->timecreated, '%d %b %Y, %H:%M');
-        $url = new moodle_url('/admin/report/profiling/index.php', array('runid' => $row->runid, 'listurl' => $row->url));
+        $url = new moodle_url('/admin/tool/profiling/index.php', array('runid' => $row->runid, 'listurl' => $row->url));
         return $OUTPUT->action_link($url, $fdate);
     }
 
