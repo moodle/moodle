@@ -367,8 +367,9 @@ class plugin_manager {
             ),
 
             'tool' => array(
-                'bloglevelupgrade', 'capability', 'dbtransfer', 'generator', 'health',
-                'innodb', 'langimport', 'profiling', 'unittest', 'unsuproles', 'xmldb'
+                'bloglevelupgrade', 'capability', 'dbtransfer', 'generator',
+                'health', 'innodb', 'langimport', 'multilangupgrade',
+                'profiling', 'unittest', 'unsuproles', 'xmldb'
             ),
 
             'webservice' => array(

@@ -1,26 +1,51 @@
 <?php
-      /// Search and replace strings throughout all texts in the whole database
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Search and replace strings throughout all texts in the whole database.
+ *
+ * Unfortunately it was a bad idea to use spans for multilang because it
+ * can not support nesting. Hopefully this will get thrown away soon....
+ *
+ * @package    tool
+ * @subpackage multilangupgrade
+ * @copyright  2006 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 define('NO_OUTPUT_BUFFERING', true);
 
-require_once('../config.php');
+require('../../../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-admin_externalpage_setup('multilangupgrade');
+admin_externalpage_setup('toolmultilangupgrade');
 
 $go = optional_param('go', 0, PARAM_BOOL);
 
 ###################################################################
 echo $OUTPUT->header();
 
-echo $OUTPUT->heading(get_string('multilangupgrade', 'admin'));
+echo $OUTPUT->heading(get_string('pluginname', 'tool_multilangupgrade'));
 
-$strmultilangupgrade = get_String('multilangupgradeinfo', 'admin');
+$strmultilangupgrade = get_String('multilangupgradeinfo', 'tool_multilangupgrade');
 
 if (!$go or !data_submitted() or !confirm_sesskey()) {   /// Print a form
     $optionsyes = array('go'=>1, 'sesskey'=>sesskey());
-    echo $OUTPUT->confirm($strmultilangupgrade, new moodle_url('multilangupgrade.php', $optionsyes), 'index.php');
+    echo $OUTPUT->confirm($strmultilangupgrade, new moodle_url('/admin/tool/multilangupgrade/index.php', $optionsyes), new moodle_url('/admin/'));
     echo $OUTPUT->footer();
     die;
 }
@@ -38,7 +63,7 @@ echo $OUTPUT->box_start();
 
 echo '<strong>Progress:</strong>';
 $i = 0;
-$skiptables = array('config', 'user_students', 'user_teachers');
+$skiptables = array('config', 'block_instances', 'sessions'); // we can not process tables with serialised data here
 
 foreach ($tables as $table) {
     if (strpos($table,'pma') === 0) { // Not our tables
@@ -99,7 +124,7 @@ echo $OUTPUT->notification('Rebuilding course cache...', 'notifysuccess');
 rebuild_course_cache();
 echo $OUTPUT->notification('...finished', 'notifysuccess');
 
-echo $OUTPUT->continue_button('index.php');
+echo $OUTPUT->continue_button(new moodle_url('/admin/'));
 
 echo $OUTPUT->footer();
 die;
