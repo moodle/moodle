@@ -85,14 +85,13 @@ echo $attemptobj->render_question_for_commenting($slot);
             <fieldset class="felement fgroup">
                 <input id="id_submitbutton" type="submit" name="submit" value="<?php
                         print_string('save', 'quiz'); ?>"/>
-                <input id="id_cancel" type="button" value="<?php
-                        print_string('cancel'); ?>" onclick="close_window()"/>
             </fieldset>
         </div>
     </div>
 </fieldset>
 <?php
 echo '</form>';
+$PAGE->requires->js_init_call('M.mod_quiz.init_comment_popup', null, false, quiz_get_js_module());
 
 // End of the page.
 echo $OUTPUT->footer();
