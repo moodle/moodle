@@ -813,32 +813,32 @@ class xmldb_field extends xmldb_object {
 
         switch ($this->getType()) {
             case XMLDB_TYPE_INTEGER:
-            break;
+                break;
 
             case XMLDB_TYPE_NUMBER:
-            break;
+                break;
 
             case XMLDB_TYPE_FLOAT:
-            break;
+                break;
 
             case XMLDB_TYPE_CHAR:
                 if ($this->getLength() > self::CHAR_MAX_LENGTH) {
                     return 'Invalid field definition in table {'.$xmldb_table->getName(). '}: XMLDB_TYPE_CHAR field "'.$this->getName().'" is too long.'
                            .' Limit is '.self::CHAR_MAX_LENGTH.' chars.';
                 }
-            break;
+                break;
 
             case XMLDB_TYPE_TEXT:
-            break;
+                break;
 
             case XMLDB_TYPE_BINARY:
-            break;
+                break;
 
             case XMLDB_TYPE_DATETIME:
-            break;
+                break;
 
             case XMLDB_TYPE_TIMESTAMP:
-            break;
+                break;
         }
 
         return null;
