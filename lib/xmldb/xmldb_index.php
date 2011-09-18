@@ -311,15 +311,15 @@ class xmldb_index extends xmldb_object {
             switch ($field->getType()) {
                 case XMLDB_TYPE_INTEGER:
                     $total += 8; // big int
-                break;
+                    break;
 
                 case XMLDB_TYPE_NUMBER:
                     $total += 12; // this is just a guess
-                break;
+                    break;
 
                 case XMLDB_TYPE_FLOAT:
                     $total += 8; // double precision
-                break;
+                    break;
 
                 case XMLDB_TYPE_CHAR:
                     if ($field->getLength() > self::INDEX_MAX_BYTES / 3) {
@@ -327,23 +327,23 @@ class xmldb_index extends xmldb_object {
                                 .' Limit is '.(self::INDEX_MAX_BYTES/3).' chars.';
                     }
                     $total += ($field->getLength() * 3); // the most complex utf-8 chars have 3 bytes
-                break;
+                    break;
 
                 case XMLDB_TYPE_TEXT:
                     return 'Invalid index definition in table {'.$xmldb_table->getName(). '}: XMLDB_TYPE_TEXT field "'.$field->getName().'" can not be indexed';
-                break;
+                    break;
 
                 case XMLDB_TYPE_BINARY:
                     return 'Invalid index definition in table {'.$xmldb_table->getName(). '}: XMLDB_TYPE_BINARY field "'.$field->getName().'" can not be indexed';
-                break;
+                    break;
 
                 case XMLDB_TYPE_DATETIME:
                     $total += 8; // this is just a guess
-                break;
+                    break;
 
                 case XMLDB_TYPE_TIMESTAMP:
                     $total += 8; // this is just a guess
-                break;
+                    break;
             }
         }
 
