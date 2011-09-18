@@ -79,6 +79,26 @@ class GoogleSpell extends SpellChecker {
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $header);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+			if (!empty($this->_config['GoogleSpell.proxyhost'])) {
+				if (!empty($this->_config['GoogleSpell.proxytype']) and ($this->_config['GoogleSpell.proxytype'] === 'SOCKS5')) {
+                    curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
+				} else {
+                    curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTML);
+                    curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, FALSE);
+                }
+				if (empty($this->_config['GoogleSpell.proxyport'])) {
+					curl_setopt($ch, CURLOPT_PROXY, $this->_config['GoogleSpell.proxyhost']);
+				} else {
+					curl_setopt($ch, CURLOPT_PROXY, $this->_config['GoogleSpell.proxyhost'].':'.$this->_config['GoogleSpell.proxyport']);
+				}
+				if (!empty($this->_config['GoogleSpell.proxyuser']) and !empty($this->_config['GoogleSpell.proxypassword'])) {
+					curl_setopt($ch, CURLOPT_PROXYUSERPWD, $this->_config['GoogleSpell.proxyuser'].':'.$this->_config['GoogleSpell.proxypassword']);
+					if (defined('CURLOPT_PROXYAUTH')) {
+						// any proxy authentication if PHP 5.1
+						curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC | CURLAUTH_NTLM);
+					}
+				}
+			}
 			$xml = curl_exec($ch);
 			curl_close($ch);
 		} else {
