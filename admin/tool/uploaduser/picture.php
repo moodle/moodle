@@ -1,35 +1,40 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// Copyright (C) 2007 Inaki Arenaza                                      //
-//                                                                       //
-// Based on .../admin/uploaduser.php and .../lib/gdlib.php               //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+/**
+ * Bulk upload of user pictures
+ *
+ * Based on .../admin/uploaduser.php and .../lib/gdlib.php
+ *
+ * @package    tool
+ * @subpackage uploaduser
+ * @copyright  (C) 2007 Inaki Arenaza
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-require_once('../config.php');
+require('../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/gdlib.php');
-require_once('uploadpicture_form.php');
+require_once('picture_form.php');
 
 define ('PIX_FILE_UPDATED', 0);
 define ('PIX_FILE_ERROR',   1);
 define ('PIX_FILE_SKIPPED', 2);
 
-admin_externalpage_setup('uploadpictures');
+admin_externalpage_setup('tooluploaduserpictures');
 
 require_login();
 
@@ -43,8 +48,8 @@ if (!$adminuser = get_admin()) {
 
 $strfile = get_string('file');
 $struser = get_string('user');
-$strusersupdated = get_string('usersupdated', 'admin');
-$struploadpictures = get_string('uploadpictures','admin');
+$strusersupdated = get_string('usersupdated', 'tool_uploaduser');
+$struploadpictures = get_string('uploadpictures','tool_uploaduser');
 
 $userfields = array (
     0 => 'username',
@@ -57,12 +62,12 @@ $overwritepicture = optional_param('overwritepicture', 0, PARAM_BOOL);
 /// Print the header
 echo $OUTPUT->header();
 
-echo $OUTPUT->heading_with_help($struploadpictures, 'uploadpictures', 'admin');
+echo $OUTPUT->heading_with_help($struploadpictures, 'uploadpictures', 'tool_uploaduser');
 
 $mform = new admin_uploadpicture_form(null, $userfields);
 if ($formdata = $mform->get_data()) {
     if (!array_key_exists($userfield, $userfields)) {
-        echo $OUTPUT->notification(get_string('uploadpicture_baduserfield','admin'));
+        echo $OUTPUT->notification(get_string('uploadpicture_baduserfield', 'tool_uploaduser'));
     } else {
         // Large files are likely to take their time and memory. Let PHP know
         // that we'll take longer, and that the process should be recycled soon
@@ -76,13 +81,13 @@ if ($formdata = $mform->get_data()) {
         $dstfile = $zipdir.'/images.zip';
 
         if (!$mform->save_file('userpicturesfile', $dstfile, true)) {
-            echo $OUTPUT->notification(get_string('uploadpicture_cannotmovezip','admin'));
+            echo $OUTPUT->notification(get_string('uploadpicture_cannotmovezip', 'tool_uploaduser'));
             @remove_dir($zipdir);
         } else {
             $fp = get_file_packer('application/zip');
             $unzipresult = $fp->extract_to_pathname($dstfile, $zipdir);
             if (!$unzipresult) {
-                echo $OUTPUT->notification(get_string('uploadpicture_cannotunzip','admin'));
+                echo $OUTPUT->notification(get_string('uploadpicture_cannotunzip', 'tool_uploaduser'));
                 @remove_dir($zipdir);
             } else {
                 // We don't need the zip file any longer, so delete it to make
@@ -96,8 +101,8 @@ if ($formdata = $mform->get_data()) {
 
                 // Finally remove the temporary directory with all the user images and print some stats.
                 remove_dir($zipdir);
-                echo $OUTPUT->notification(get_string('usersupdated', 'admin') . ": " . $results['updated']);
-                echo $OUTPUT->notification(get_string('errors', 'admin') . ": " . $results['errors']);
+                echo $OUTPUT->notification(get_string('usersupdated', 'tool_uploaduser') . ": " . $results['updated'], 'notifysuccess');
+                echo $OUTPUT->notification(get_string('errors', 'tool_uploaduser') . ": " . $results['errors'], ($results['errors'] ? 'notifyproblem' : 'notifysuccess'));
                 echo '<hr />';
             }
         }
@@ -151,7 +156,7 @@ function my_mktempdir($dir, $prefix='') {
 function process_directory ($dir, $userfield, $overwrite, &$results) {
     global $OUTPUT;
     if(!($handle = opendir($dir))) {
-        echo $OUTPUT->notification(get_string('uploadpicture_cannotprocessdir','admin'));
+        echo $OUTPUT->notification(get_string('uploadpicture_cannotprocessdir', 'tool_uploaduser'));
         return;
     }
 
@@ -211,22 +216,22 @@ function process_file ($file, $userfield, $overwrite) {
         $a = new stdClass();
         $a->userfield = clean_param($userfield, PARAM_CLEANHTML);
         $a->uservalue = clean_param($uservalue, PARAM_CLEANHTML);
-        echo $OUTPUT->notification(get_string('uploadpicture_usernotfound', 'admin', $a));
+        echo $OUTPUT->notification(get_string('uploadpicture_usernotfound', 'tool_uploaduser', $a));
         return PIX_FILE_ERROR;
     }
 
     $haspicture = $DB->get_field('user', 'picture', array('id'=>$user->id));
     if ($haspicture && !$overwrite) {
-        echo $OUTPUT->notification(get_string('uploadpicture_userskipped', 'admin', $user->username));
+        echo $OUTPUT->notification(get_string('uploadpicture_userskipped', 'tool_uploaduser', $user->username));
         return PIX_FILE_SKIPPED;
     }
 
     if (my_save_profile_image($user->id, $file)) {
         $DB->set_field('user', 'picture', 1, array('id'=>$user->id));
-        echo $OUTPUT->notification(get_string('uploadpicture_userupdated', 'admin', $user->username));
+        echo $OUTPUT->notification(get_string('uploadpicture_userupdated', 'tool_uploaduser', $user->username), 'notifysuccess');
         return PIX_FILE_UPDATED;
     } else {
-        echo $OUTPUT->notification(get_string('uploadpicture_cannotsave', 'admin', $user->username));
+        echo $OUTPUT->notification(get_string('uploadpicture_cannotsave', 'tool_uploaduser', $user->username));
         return PIX_FILE_ERROR;
     }
 }

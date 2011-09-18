@@ -17,20 +17,20 @@
 /**
  * Bulk user registration script from a comma separated file
  *
- * @package    core
- * @subpackage admin
+ * @package    tool
+ * @subpackage uploaduser
  * @copyright  2004 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../config.php');
+require('../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/csvlib.class.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
 require_once($CFG->dirroot.'/group/lib.php');
 require_once($CFG->dirroot.'/cohort/lib.php');
-require_once('uploaduserlib.php');
-require_once('uploaduser_form.php');
+require_once('locallib.php');
+require_once('user_form.php');
 
 $iid         = optional_param('iid', '', PARAM_INT);
 $previewrows = optional_param('previewrows', 10, PARAM_INT);
@@ -39,27 +39,27 @@ $previewrows = optional_param('previewrows', 10, PARAM_INT);
 raise_memory_limit(MEMORY_HUGE);
 
 require_login();
-admin_externalpage_setup('uploadusers');
+admin_externalpage_setup('tooluploaduser');
 require_capability('moodle/site:uploadusers', get_context_instance(CONTEXT_SYSTEM));
 
-$struserrenamed             = get_string('userrenamed', 'admin');
+$struserrenamed             = get_string('userrenamed', 'tool_uploaduser');
 $strusernotrenamedexists    = get_string('usernotrenamedexists', 'error');
 $strusernotrenamedmissing   = get_string('usernotrenamedmissing', 'error');
 $strusernotrenamedoff       = get_string('usernotrenamedoff', 'error');
 $strusernotrenamedadmin     = get_string('usernotrenamedadmin', 'error');
 
-$struserupdated             = get_string('useraccountupdated', 'admin');
+$struserupdated             = get_string('useraccountupdated', 'tool_uploaduser');
 $strusernotupdated          = get_string('usernotupdatederror', 'error');
 $strusernotupdatednotexists = get_string('usernotupdatednotexists', 'error');
 $strusernotupdatedadmin     = get_string('usernotupdatedadmin', 'error');
 
-$struseruptodate            = get_string('useraccountuptodate', 'admin');
+$struseruptodate            = get_string('useraccountuptodate', 'tool_uploaduser');
 
 $struseradded               = get_string('newuser');
 $strusernotadded            = get_string('usernotaddedregistered', 'error');
 $strusernotaddederror       = get_string('usernotaddederror', 'error');
 
-$struserdeleted             = get_string('userdeleted', 'admin');
+$struserdeleted             = get_string('userdeleted', 'tool_uploaduser');
 $strusernotdeletederror     = get_string('usernotdeletederror', 'error');
 $strusernotdeletedmissing   = get_string('usernotdeletedmissing', 'error');
 $strusernotdeletedoff       = get_string('usernotdeletedoff', 'error');
@@ -73,7 +73,7 @@ $stremailduplicate          = get_string('useremailduplicate', 'error');
 $strinvalidpasswordpolicy   = get_string('invalidpasswordpolicy', 'error');
 $errorstr                   = get_string('error');
 
-$returnurl = new moodle_url('/admin/uploaduser.php');
+$returnurl = new moodle_url('/admin/tool/uploaduser/index.php');
 $bulknurl  = new moodle_url('/admin/user/user_bulk.php');
 
 $today = time();
@@ -124,7 +124,7 @@ if (empty($iid)) {
     } else {
         echo $OUTPUT->header();
 
-        echo $OUTPUT->heading_with_help(get_string('uploadusers', 'admin'), 'uploadusers', 'admin');
+        echo $OUTPUT->heading_with_help(get_string('uploadusers', 'tool_uploaduser'), 'uploadusers', 'tool_uploaduser');
 
         $mform1->display();
         echo $OUTPUT->footer();
@@ -145,7 +145,7 @@ if ($formdata = $mform2->is_cancelled()) {
 } else if ($formdata = $mform2->get_data()) {
     // Print the header
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('uploadusersresult', 'admin'));
+    echo $OUTPUT->heading(get_string('uploadusersresult', 'tool_uploaduser'));
 
     $optype = $formdata->uutype;
 
@@ -647,7 +647,7 @@ if ($formdata = $mform2->is_cancelled()) {
                     if ($createpasswords) {
                         $user->password = 'to be generated';
                         $upt->track('password', '', 'normal', false);
-                        $upt->track('password', get_string('uupasswordcron', 'admin'), 'warning', false);
+                        $upt->track('password', get_string('uupasswordcron', 'tool_uploaduser'), 'warning', false);
                     } else {
                         $upt->track('password', '', 'normal', false);
                         $upt->track('password', get_string('missingfield', 'error', 'password'), 'error');
@@ -889,24 +889,24 @@ if ($formdata = $mform2->is_cancelled()) {
     echo $OUTPUT->box_start('boxwidthnarrow boxaligncenter generalbox', 'uploadresults');
     echo '<p>';
     if ($optype != UU_USER_UPDATE) {
-        echo get_string('userscreated', 'admin').': '.$usersnew.'<br />';
+        echo get_string('userscreated', 'tool_uploaduser').': '.$usersnew.'<br />';
     }
     if ($optype == UU_USER_UPDATE or $optype == UU_USER_ADD_UPDATE) {
-        echo get_string('usersupdated', 'admin').': '.$usersupdated.'<br />';
+        echo get_string('usersupdated', 'tool_uploaduser').': '.$usersupdated.'<br />';
     }
     if ($allowdeletes) {
-        echo get_string('usersdeleted', 'admin').': '.$deletes.'<br />';
-        echo get_string('deleteerrors', 'admin').': '.$deleteerrors.'<br />';
+        echo get_string('usersdeleted', 'tool_uploaduser').': '.$deletes.'<br />';
+        echo get_string('deleteerrors', 'tool_uploaduser').': '.$deleteerrors.'<br />';
     }
     if ($allowrenames) {
-        echo get_string('usersrenamed', 'admin').': '.$renames.'<br />';
-        echo get_string('renameerrors', 'admin').': '.$renameerrors.'<br />';
+        echo get_string('usersrenamed', 'tool_uploaduser').': '.$renames.'<br />';
+        echo get_string('renameerrors', 'tool_uploaduser').': '.$renameerrors.'<br />';
     }
     if ($usersskipped) {
-        echo get_string('usersskipped', 'admin').': '.$usersskipped.'<br />';
+        echo get_string('usersskipped', 'tool_uploaduser').': '.$usersskipped.'<br />';
     }
-    echo get_string('usersweakpassword', 'admin').': '.$weakpasswords.'<br />';
-    echo get_string('errors', 'admin').': '.$userserrors.'</p>';
+    echo get_string('usersweakpassword', 'tool_uploaduser').': '.$weakpasswords.'<br />';
+    echo get_string('errors', 'tool_uploaduser').': '.$userserrors.'</p>';
     echo $OUTPUT->box_end();
 
     if ($bulk) {
@@ -921,7 +921,7 @@ if ($formdata = $mform2->is_cancelled()) {
 // Print the header
 echo $OUTPUT->header();
 
-echo $OUTPUT->heading(get_string('uploaduserspreview', 'admin'));
+echo $OUTPUT->heading(get_string('uploaduserspreview', 'tool_uploaduser'));
 
 // NOTE: this is JUST csv processing preview, we must not prevent import from here if there is something in the file!!
 //       this was intended for validation of csv formatting and encoding, not filtering the data!!!!
@@ -980,11 +980,11 @@ $table = new html_table();
 $table->id = "uupreview";
 $table->attributes['class'] = 'generaltable';
 $table->tablealign = 'center';
-$table->summary = get_string('uploaduserspreview', 'admin');
+$table->summary = get_string('uploaduserspreview', 'tool_uploaduser');
 $table->head = array();
 $table->data = $data;
 
-$table->head[] = get_string('uucsvline', 'admin');
+$table->head[] = get_string('uucsvline', 'tool_uploaduser');
 foreach ($filecolumns as $column) {
     $table->head[] = $column;
 }

@@ -17,8 +17,8 @@
 /**
  * Bulk user registration functions
  *
- * @package    core
- * @subpackage admin
+ * @package    tool
+ * @subpackage uploaduser
  * @copyright  2004 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -64,10 +64,10 @@ class uu_progress_tracker {
      */
     public function start() {
         $ci = 0;
-        echo '<table id="uuresults" class="generaltable boxaligncenter flexible-wrap" summary="'.get_string('uploadusersresult', 'admin').'">';
+        echo '<table id="uuresults" class="generaltable boxaligncenter flexible-wrap" summary="'.get_string('uploadusersresult', 'tool_uploaduser').'">';
         echo '<tr class="heading r0">';
         echo '<th class="header c'.$ci++.'" scope="col">'.get_string('status').'</th>';
-        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('uucsvline', 'admin').'</th>';
+        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('uucsvline', 'tool_uploaduser').'</th>';
         echo '<th class="header c'.$ci++.'" scope="col">ID</th>';
         echo '<th class="header c'.$ci++.'" scope="col">'.get_string('username').'</th>';
         echo '<th class="header c'.$ci++.'" scope="col">'.get_string('firstname').'</th>';
