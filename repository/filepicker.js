@@ -222,14 +222,16 @@ M.core_filepicker.init = function(Y, options) {
                 }
                 this.cancel();
                 scope.hide();
-                data.client_id = client_id;
                 var formcallback_scope = null;
                 if (scope.options.magicscope) {
                     formcallback_scope = scope.options.magicscope;
                 } else {
                     formcallback_scope = scope;
                 }
-                scope.options.formcallback.apply(formcallback_scope, [data]);
+                var fileinfo = {'client_id':client_id,
+                                'url':data.newfile.url,
+                                'file':data.newfile.filename};
+                scope.options.formcallback.apply(formcallback_scope, [fileinfo]);
             }
             var handleCancel = function() {
                 // Delete tmp file
