@@ -195,7 +195,7 @@ switch ($action) {
             // use external link
             $link = $repo->get_link($source);
             $info = array();
-            $info['filename'] = $saveas_filename;
+            $info['file'] = $saveas_filename;
             $info['type'] = 'link';
             $info['url'] = $link;
             echo json_encode($info);
@@ -215,6 +215,9 @@ switch ($action) {
                     throw new file_exception('maxbytes');
                 }
                 $fileinfo = $repo->copy_to_area($source, $itemid, $saveas_path, $saveas_filename);
+                if (!isset($fileinfo['event'])) {
+                    $fileinfo['file'] = $fileinfo['title'];
+                }
                 echo json_encode($fileinfo);
                 die;
             }
@@ -270,7 +273,8 @@ switch ($action) {
         $newfilepath = required_param('newfilepath', PARAM_PATH);
         $newfilename = required_param('newfilename', PARAM_FILE);
 
-        echo json_encode(repository::overwrite_existing_draftfile($itemid, $filepath, $filename, $newfilepath, $newfilename));
+        $info = repository::overwrite_existing_draftfile($itemid, $filepath, $filename, $newfilepath, $newfilename);
+        echo json_encode($info);
         break;
 
     case 'deletetmpfile':
