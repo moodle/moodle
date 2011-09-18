@@ -751,6 +751,7 @@ class dml_test extends UnitTestCase {
         $field = $columns['name'];
         $this->assertEqual('C', $field->meta_type);
         $this->assertFalse($field->auto_increment);
+        $this->assertEqual(255, $field->max_length);
         $this->assertTrue($field->has_default);
         $this->assertIdentical('lala', $field->default_value);
         $this->assertFalse($field->not_null);

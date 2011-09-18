@@ -477,8 +477,11 @@ class oci_native_moodle_database extends moodle_database {
 
         $this->columns[$table] = array();
 
-        $sql = "SELECT CNAME, COLTYPE, WIDTH, SCALE, PRECISION, NULLS, DEFAULTVAL
-                  FROM COL
+        // We give precedence to CHAR_LENGTH for VARCHAR2 columns over WIDTH because the former is always
+        // BYTE based and, for cross-db operations, we want CHAR based results. See MDL-29415
+        $sql = "SELECT CNAME, COLTYPE, nvl(CHAR_LENGTH, WIDTH) AS WIDTH, SCALE, PRECISION, NULLS, DEFAULTVAL
+                  FROM COL c
+             LEFT JOIN USER_TAB_COLUMNS u ON (u.TABLE_NAME = c.TNAME AND u.COLUMN_NAME = c.CNAME AND u.DATA_TYPE = 'VARCHAR2')
                  WHERE TNAME = UPPER('{" . $table . "}')
               ORDER BY COLNO";
 
