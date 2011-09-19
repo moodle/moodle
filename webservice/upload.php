@@ -72,7 +72,9 @@ require_capability('moodle/user:manageownfiles', $context);
 
 $fs = get_file_storage();
 
-foreach ($_FILES as $fieldname=>$file) {
+$totalsize = 0;
+$files = array();
+foreach ($_FILES as $fieldname=>$uploaded_file) {
     // check upload errors
     if (!empty($_FILES[$fieldname]['error'])) {
         switch ($_FILES[$fieldname]['error']) {
@@ -101,18 +103,52 @@ foreach ($_FILES as $fieldname=>$file) {
             throw new moodle_exception('nofile');
         }
     }
+    $file = new stdClass();
+    $file->filename = clean_param($_FILES[$fieldname]['name'], PARAM_FILE);
+    // check system maxbytes setting
+    if (($_FILES[$fieldname]['size'] > $CFG->maxbytes)) {
+        // oversize file will be ignored, error added to array to notify
+        // web service client
+        $file->error = get_string('maxbytes', 'error');
+    } else {
+        $file->filepath = $_FILES[$fieldname]['tmp_name'];
+        // calculate total size of upload
+        $totalsize += $_FILES[$fieldname]['size'];
+    }
+    $files[] = $file;
+}
+
+$fs = get_file_storage();
+
+$usedspace = 0;
+$privatefiles = $fs->get_area_files($context->id, 'user', 'private', false, 'id', false);
+foreach ($privatefiles as $file) {
+    $usedspace += $file->get_filesize();
+}
+
+if ($totalsize > ($CFG->userquota - $usedspace)) {
+    throw new file_exception('userquotalimit');
+}
+
+$results = array();
+foreach ($files as $file) {
+    if (!empty($file->error)) {
+        // including error and filename
+        $results[] = $file;
+        continue;
+    }
     $file_record = new stdClass;
     $file_record->component = 'user';
     $file_record->contextid = $context->id;
     $file_record->userid    = $USER->id;
     $file_record->filearea  = 'private';
-    $file_record->filename = clean_param($_FILES[$fieldname]['name'], PARAM_FILE);
+    $file_record->filename = $file->filename;
     $file_record->filepath  = $filepath;
     $file_record->itemid    = 0;
     $file_record->license   = $CFG->sitedefaultlicense;
     $file_record->author    = fullname($user);;
     $file_record->source    = '';
-    $stored_file = $fs->create_file_from_pathname($file_record, $_FILES[$fieldname]['tmp_name']);
-    $uploaded_files[] = $file_record;
+    $stored_file = $fs->create_file_from_pathname($file_record, $file->filepath);
+    $results[] = $file_record;
 }
-echo json_encode($uploaded_files);
+echo json_encode($results);
