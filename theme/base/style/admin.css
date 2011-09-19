@@ -90,8 +90,6 @@
 #page-admin-roles-override .overridenotice,
 #page-admin-roles-define .definenotice {margin: 1em 10% 2em 10%;text-align: left;}
 
-#page-admin-langimport .generalbox table {margin:auto;width:100%;}
-
 #page-admin-index .adminerror .singlebutton,
 #page-admin-index .adminwarning .singlebutton,
 #page-admin-index #layout-table .singlebutton {margin:20px;}

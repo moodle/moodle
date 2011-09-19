@@ -51,10 +51,10 @@ class database_mover extends database_exporter {
             $this->feeback = $feeback;
         }
         if ($check_schema) {
-            $this->feeback->output(get_string('checkingsourcetables', 'dbtransfer'));
+            $this->feeback->output(get_string('checkingsourcetables', 'core_dbtransfer'));
         }
         parent::__construct($mdb_source, $check_schema);
-        $this->feeback->output(get_string('creatingtargettables', 'dbtransfer'));
+        $this->feeback->output(get_string('creatingtargettables', 'core_dbtransfer'));
         $this->importer = new database_importer($mdb_target, $check_schema);
     }
 
@@ -75,7 +75,7 @@ class database_mover extends database_exporter {
      * @return void
      */
     public function begin_database_export($version, $release, $timestamp, $description) {
-        $this->feeback->output(get_string('copyingtables', 'dbtransfer'));
+        $this->feeback->output(get_string('copyingtables', 'core_dbtransfer'));
         $this->importer->begin_database_import($version, $timestamp, $description);
     }
 
@@ -86,7 +86,7 @@ class database_mover extends database_exporter {
      * @return void
      */
     public function begin_table_export(xmldb_table $table) {
-        $this->feeback->output(get_string('copyingtable', 'dbtransfer', $table->getName()), 1);
+        $this->feeback->output(get_string('copyingtable', 'core_dbtransfer', $table->getName()), 1);
         $this->importer->begin_table_import($table->getName(), $table->getHash());
     }
 
@@ -108,7 +108,7 @@ class database_mover extends database_exporter {
      * @return void
      */
     public function finish_table_export(xmldb_table $table) {
-        $this->feeback->output(get_string('done', 'dbtransfer', $table->getName()), 2);
+        $this->feeback->output(get_string('done', 'core_dbtransfer', $table->getName()), 2);
         $this->importer->finish_table_import($table->getName());
     }
 

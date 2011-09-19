@@ -7246,7 +7246,6 @@ function get_core_subsystems() {
             'repository'  => 'repository',
             'rss'         => 'rss',
             'role'        => $CFG->admin.'/role',
-            'simpletest'  => NULL,
             'search'      => 'search',
             'table'       => NULL,
             'tag'         => 'tag',
@@ -7254,7 +7253,6 @@ function get_core_subsystems() {
             'user'        => 'user',
             'userkey'     => NULL,
             'webservice'  => 'webservice',
-            'xmldb'       => NULL,
         );
     }
 
@@ -7295,7 +7293,9 @@ function get_plugin_types($fullpaths=true) {
                       'qbehaviour'    => 'question/behaviour',
                       'qformat'       => 'question/format',
                       'plagiarism'    => 'plagiarism',
-                      'theme'         => 'theme'); // this is a bit hacky, themes may be in $CFG->themedir too
+                      'tool'          => $CFG->admin.'/tool',
+                      'theme'         => 'theme',  // this is a bit hacky, themes may be in $CFG->themedir too
+        );
 
         $mods = get_plugin_list('mod');
         foreach ($mods as $mod => $moddir) {

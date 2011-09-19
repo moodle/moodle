@@ -220,6 +220,5 @@ $ADMIN->add('server', $temp);
 
 
 $ADMIN->add('server', new admin_externalpage('adminregistration', get_string('registration','admin'), "$CFG->wwwroot/$CFG->admin/registration/index.php"));
-$ADMIN->add('root', new admin_externalpage('bloglevelupgrade', get_string('bloglevelupgrade', 'admin'), $CFG->wwwroot.'/'.$CFG->admin.'/blocklevelupgrade.php', 'moodle/site:config', true));
 
 } // end of speedup

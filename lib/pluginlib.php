@@ -342,9 +342,9 @@ class plugin_manager {
             ),
 
             'report' => array(
-                'backups', 'capability', 'configlog', 'courseoverview',
-                'customlang', 'log', 'profiling', 'questioninstances',
-                'security', 'spamcleaner', 'stats', 'unittest', 'unsuproles'
+                'backups', 'configlog', 'courseoverview',
+                'customlang', 'log', 'questioninstances',
+                'security', 'spamcleaner', 'stats'
             ),
 
             'repository' => array(
@@ -364,6 +364,12 @@ class plugin_manager {
                 'fusion', 'leatherbound', 'magazine', 'nimble', 'nonzero',
                 'overlay', 'serenity', 'sky_high', 'splash', 'standard',
                 'standardold'
+            ),
+
+            'tool' => array(
+                'bloglevelupgrade', 'capability', 'dbtransfer', 'generator',
+                'health', 'innodb', 'langimport', 'multilangupgrade',
+                'profiling', 'unittest', 'uploaduser', 'unsuproles', 'xmldb'
             ),
 
             'webservice' => array(

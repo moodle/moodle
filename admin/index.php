@@ -249,7 +249,7 @@ if ($version > $CFG->version) {  // upgrade
             print_upgrade_reload('index.php?confirmupgrade=1');
         } else {
             echo $OUTPUT->notification(get_string('environmentok', 'admin'), 'notifysuccess');
-            if (empty($CFG->skiplangupgrade)) {
+            if (empty($CFG->skiplangupgrade) and current_language() !== 'en') {
                 echo $OUTPUT->box_start('generalbox', 'notice');
                 print_string('langpackwillbeupdated', 'admin');
                 echo $OUTPUT->box_end();
@@ -443,12 +443,6 @@ $lastcron = $DB->get_field_sql('SELECT MAX(lastcron) FROM {modules}');
 if (time() - $lastcron > 3600 * 24) {
     $helpbutton = $OUTPUT->help_icon('cron', 'admin');
     echo $OUTPUT->box(get_string('cronwarning', 'admin').'&nbsp;'.$helpbutton, 'generalbox adminwarning');
-}
-
-// Hidden bloglevel upgrade
-$showbloglevelupgrade = ($CFG->bloglevel == BLOG_COURSE_LEVEL || $CFG->bloglevel == BLOG_GROUP_LEVEL) && empty($CFG->bloglevel_upgrade_complete);
-if ($showbloglevelupgrade) {
-    echo $OUTPUT->box(get_string('bloglevelupgradenotice', 'admin'), 'generalbox adminwarning');
 }
 
 // diagnose DB, especially the sloppy MyISAM tables

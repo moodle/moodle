@@ -26,10 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__) . '/../../../../config.php');
-
 global $CFG;
-require_once($CFG->libdir . '/simpletestlib.php'); // Include the test libraries
+
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php'); // Include the code to test
 
 

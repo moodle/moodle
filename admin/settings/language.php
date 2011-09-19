@@ -17,9 +17,4 @@ if ($hassiteconfig) {
 
     $ADMIN->add('language', $temp);
 
-    $ADMIN->add('language', new admin_externalpage('langimport', get_string('langpacks', 'admin'), "$CFG->wwwroot/$CFG->admin/langimport.php"));
-
-    // Hidden multilang upgrade page.
-    $ADMIN->add('language', new admin_externalpage('multilangupgrade', get_string('multilangupgrade', 'admin'), $CFG->wwwroot.'/'.$CFG->admin.'/multilangupgrade.php', 'moodle/site:config', !empty($CFG->filter_multilang_converted)));
-
 } // end of speedup
