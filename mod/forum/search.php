@@ -158,6 +158,17 @@ if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $per
     exit;
 }
 
+//including this here to prevent it being included if there are no search results
+require_once($CFG->dirroot.'/rating/lib.php');
+
+//set up the ratings information that will be the same for all posts
+$ratingoptions = new stdClass();
+$ratingoptions->component = 'mod_forum';
+$ratingoptions->ratingarea = 'post';
+$ratingoptions->userid = $USER->id;
+$ratingoptions->returnurl = $PAGE->url->out(false);
+$rm = new rating_manager();
+
 $PAGE->set_title($strsearchresults);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_button($searchform);
@@ -226,6 +237,23 @@ foreach ($posts as $post) {
 
     $post->subject = $fullsubject;
     $post->subjectnoformat = true;
+
+    //add the ratings information to the post
+    //Unfortunately seem to have do this individually as posts may be from different forums
+    if ($forum->assessed != RATING_AGGREGATE_NONE) {
+        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $ratingoptions->context = $modcontext;
+        $ratingoptions->items = array($post);
+        $ratingoptions->aggregate = $forum->assessed;//the aggregation method
+        $ratingoptions->scaleid = $forum->scale;
+        $ratingoptions->assesstimestart = $forum->assesstimestart;
+        $ratingoptions->assesstimefinish = $forum->assesstimefinish;
+        $postswithratings = $rm->get_ratings($ratingoptions);
+
+        if ($postswithratings && count($postswithratings)==1) {
+            $post = $postswithratings[0];
+        }
+    }
 
     // Identify search terms only found in HTML markup, and add a warning about them to
     // the start of the message text. However, do not do the highlighting here. forum_print_post
