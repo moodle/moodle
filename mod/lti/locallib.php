@@ -178,10 +178,6 @@ function lti_build_request($instance, $typeconfig, $course) {
         "launch_presentation_locale" => $locale,
     );
 
-    //$placementsecret = $typeconfig['servicesalt'];
-    
-    //Always use the servicesalt on the instance.
-    //TODO: Remove from type settings
     $placementsecret = $instance->servicesalt;
         
     if ( isset($placementsecret) ) {
@@ -384,10 +380,16 @@ QUERY;
  * Returns all basicLTI tools configured by the administrator
  *
  */
-function lti_filter_get_types() {
+function lti_filter_get_types($course) {
     global $DB;
 
-    return $DB->get_records('lti_types');
+    if(!empty($course)){
+        $filter = array('course' => $course);
+    } else {
+        $filter = array();
+    }
+    
+    return $DB->get_records('lti_types', $filter);
 }
 
 function lti_get_types_for_add_instance(){
@@ -605,6 +607,8 @@ function lti_get_type_type_config($id) {
 
     $type->lti_typename = $basicltitype->name;
     
+    $type->typeid = $basicltitype->id;
+    
     $type->lti_toolurl = $basicltitype->baseurl;
     
     if (isset($config['resourcekey'])) {
@@ -726,6 +730,8 @@ function lti_add_type($type, $config){
     }
     
     //Create a salt value to be used for signing passed data to extension services
+    //The outcome service uses the service salt on the instance. This can be used
+    //for communication with services not related to a specific LTI instance.
     $config->lti_servicesalt = uniqid('', true);
 
     $id = $DB->insert_record('lti_types', $type);

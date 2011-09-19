@@ -80,7 +80,9 @@ class mod_lti_mod_form extends moodleform_mod {
         
         foreach(lti_get_types_for_add_instance() as $id => $type){
             if($type->course == $COURSE->id) {
-                $attributes = array( 'editable' => 1 );
+                $attributes = array( 'editable' => 1, 'courseTool' => 1 );
+            } else if($id != 0) {
+                $attributes = array( 'globalTool' => 1);
             } else {
                 $attributes = array();
             }
@@ -159,19 +161,34 @@ class mod_lti_mod_form extends moodleform_mod {
         // add standard buttons, common to all modules
         $this->add_action_buttons();
 
-        $url = new moodle_url("/mod/lti/instructor_edit_tool_type.php?sesskey={$USER->sesskey}&course={$COURSE->id}");
+        $editurl = new moodle_url("/mod/lti/instructor_edit_tool_type.php?sesskey={$USER->sesskey}&course={$COURSE->id}");
+        $ajaxurl = new moodle_url('/mod/lti/ajax.php');
+        
         $jsinfo = (object)array(
                         'edit_icon_url' => (string)$OUTPUT->pix_url('t/edit'),
                         'add_icon_url' => (string)$OUTPUT->pix_url('t/add'),
                         'delete_icon_url' => (string)$OUTPUT->pix_url('t/delete'),
-                        'instructor_tool_type_edit_url' => $url->out(false)
+                        'green_check_icon_url' => (string)$OUTPUT->pix_url('i/tick_green_small'),
+                        'yellow_check_icon_url' => (string)$OUTPUT->pix_url('i/tick_amber_small'),
+                        'instructor_tool_type_edit_url' => $editurl->out(false),
+                        'ajax_url' => $ajaxurl->out(true),
+                        'courseId' => $COURSE->id
                   );
         
         $module = array(
             'name'      => 'mod_lti_edit',
             'fullpath'  => '/mod/lti/mod_form.js',
-            'requires'  => array('base', 'io', 'node', 'event', 'json-parse'),
-            'strings'   => array(),
+            'requires'  => array('base', 'io', 'querystring-stringify-simple', 'node', 'event', 'json-parse'),
+            'strings'   => array(
+                array('addtype', 'lti'),
+                array('edittype', 'lti'),
+                array('deletetype', 'lti'),
+                array('delete_confirmation', 'lti'),
+                array('cannot_edit', 'lti'),
+                array('cannot_delete', 'lti'),
+                array('global_tool_types', 'lti'),
+                array('course_tool_types', 'lti')
+            ),
         );
         
         $PAGE->requires->js_init_call('M.mod_lti.editor.init', array(json_encode($jsinfo)), true, $module);

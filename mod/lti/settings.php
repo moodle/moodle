@@ -47,7 +47,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-global $PAGE, $CFG;
+global $PAGE, $CFG, $SITE;
 
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
@@ -133,8 +133,6 @@ HTML;
 }
 
 if ($ADMIN->fulltree) {
-    require_once($CFG->dirroot.'/mod/lti/locallib.php');
-
     $configuredtoolshtml = '';
     $pendingtoolshtml = '';
     $rejectedtoolshtml = '';
@@ -147,7 +145,7 @@ if ($ADMIN->fulltree) {
     $action = get_string('action', 'lti');
     $createdon = get_string('createdon', 'lti');
     
-    $types = lti_filter_get_types();
+    $types = lti_filter_get_types($SITE->id);
     
     $configuredtools = array_filter($types, function($value){
         return $value->state == LTI_TOOL_STATE_CONFIGURED;

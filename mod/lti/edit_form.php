@@ -84,6 +84,8 @@ class mod_lti_edit_types_form extends moodleform{
             $mform->addElement('hidden', 'lti_coursevisible', '1');
         }
         
+        $mform->addElement('hidden', 'typeid');
+        
         $launchoptions=array();
         $launchoptions[LTI_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'lti');
         $launchoptions[LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS] = get_string('embed_no_blocks', 'lti');

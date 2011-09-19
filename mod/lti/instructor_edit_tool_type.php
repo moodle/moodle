@@ -28,18 +28,23 @@ $data = data_submitted();
 if (confirm_sesskey() && isset($data->submitbutton)) {
     $type = new stdClass();
     
-    if (isset($id)) {
-        /*$type->id = $id;
+    if (!empty($typeid)) {
+        $type->id = $typeid;
+        $name = json_encode($data->lti_typename);
 
         lti_update_type($type, $data);
+        
+        //Output script to update the calling window.
         $script = <<<SCRIPT
             <script type="text/javascript">
-                window.opener.M.mod_lti.editor.updateToolType({$name}, '{$id}');
+                window.opener.M.mod_lti.editor.updateToolType({$name}, '{$typeid}');
                 
                 window.close();
             </script>
-SCRIPT;*/
+SCRIPT;
         
+        echo $script;
+                
         die;
     } else {
         $type->state = LTI_TOOL_STATE_CONFIGURED;
@@ -48,6 +53,7 @@ SCRIPT;*/
         $id = lti_add_type($type, $data);
         $name = json_encode($type->name);
         
+        //Output script to update the calling window.
         $script = <<<SCRIPT
             <script type="text/javascript">
                 window.opener.M.mod_lti.editor.addToolType({$name}, '{$id}');
