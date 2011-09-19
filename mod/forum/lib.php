@@ -1243,10 +1243,10 @@ function forum_print_overview($courses,&$htmlarray) {
 
     if (count($trackingforums) > 0) {
         $cutoffdate = isset($CFG->forum_oldpostdays) ? (time() - ($CFG->forum_oldpostdays*24*60*60)) : 0;
-        $sql = 'SELECT d.forum,d.course,COUNT(p.id) AS count '.
-            ' FROM {forum_posts} p '.
-            ' JOIN {forum_discussions} d ON p.discussion = d.id '.
-            ' LEFT JOIN {forum_read} r ON r.postid = p.id AND r.userid = ? WHERE (';
+        $sql = 'SELECT d.forum,d.course,COUNT(p.id) AS count
+                  FROM {forum_posts} p
+                  JOIN {forum_discussions} d ON p.discussion = d.id
+                  LEFT JOIN {forum_read} r ON r.postid = p.id AND r.userid = ? WHERE (';
         $params = array($USER->id);
 
         foreach ($trackingforums as $track) {
@@ -1599,8 +1599,8 @@ function forum_get_participants($forumid) {
     $st_subscriptions = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
                                          FROM {user} u,
                                               {forum_subscriptions} s
-                                         WHERE s.forum = ? AND
-                                               u.id = s.userid", array($forumid));
+                                        WHERE s.forum = ? AND
+                                              u.id = s.userid", array($forumid));
     //Get students from forum_posts
     $st_posts = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
                                  FROM {user} u,
@@ -1616,10 +1616,10 @@ function forum_get_participants($forumid) {
                                         {forum_discussions} d,
                                         {forum_posts} p,
                                         {ratings} r
-                                   WHERE d.forum = ? AND
-                                         p.discussion = d.id AND
-                                         r.post = p.id AND
-                                         u.id = r.userid", array($forumid));
+                                  WHERE d.forum = ? AND
+                                        p.discussion = d.id AND
+                                        r.itemid = p.id AND
+                                        u.id = r.userid", array($forumid));
 
     //Add st_posts to st_subscriptions
     if ($st_posts) {
