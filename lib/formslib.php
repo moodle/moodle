@@ -340,6 +340,43 @@ abstract class moodleform {
     }
 
     /**
+     * Internal method. Validates filepicker and filemanager files if they are
+     * set as required fields. Also, sets the error message if encountered one.
+     *
+     * @return bool/array with errors
+     */
+    protected function validate_draft_files() {
+        global $USER;
+        $mform =& $this->_form;
+
+        $errors = array();
+        //Go through all the required elements and make sure you hit filepicker or
+        //filemanager element.
+        foreach ($mform->_rules as $elementname => $rules) {
+            $elementtype = $mform->getElementType($elementname);
+            //If element is of type filepicker then do validation
+            if (($elementtype == 'filepicker') || ($elementtype == 'filemanager')){
+                //Check if rule defined is required rule
+                foreach ($rules as $rule) {
+                    if ($rule['type'] == 'required') {
+                        $draftid = (int)$mform->getSubmitValue($elementname);
+                        $fs = get_file_storage();
+                        $context = get_context_instance(CONTEXT_USER, $USER->id);
+                        if (!$files = $fs->get_area_files($context->id, 'user', 'draft', $draftid, 'id DESC', false)) {
+                            $errors[$elementname] = $rule['message'];
+                        }
+                    }
+                }
+            }
+        }
+        if (empty($errors)) {
+            return true;
+        } else {
+            return $errors;
+        }
+    }
+
+    /**
      * Load in existing data as form defaults. Usually new entry defaults are stored directly in
      * form definition (new entry form); this function is used to load in data where values
      * already exist and data is being edited (edit entry form).
@@ -439,6 +476,16 @@ abstract class moodleform {
 
             $files = array();
             $file_val = $this->_validate_files($files);
+            //check draft files for validation and flag them if required files
+            //are not in draft area.
+            $draftfilevalue = $this->validate_draft_files();
+
+            if ($file_val !== true && $draftfilevalue !== true) {
+                $file_val = array_merge($file_val, $draftfilevalue);
+            } else if ($draftfilevalue !== true) {
+                $file_val = $draftfilevalue;
+            } //default is file_val, so no need to assign.
+
             if ($file_val !== true) {
                 if (!empty($file_val)) {
                     foreach ($file_val as $element=>$msg) {
@@ -2293,7 +2340,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         if (!$form->isFrozen()) {
             $args = $form->getLockOptionObject();
             if (count($args[1]) > 0) {
-                $PAGE->requires->js_init_call('M.form.initFormDependencies', $args, false, moodleform::get_js_module());
+                $PAGE->requires->js_init_call('M.form.initFormDependencies', $args, true, moodleform::get_js_module());
             }
         }
     }
