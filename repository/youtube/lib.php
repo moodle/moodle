@@ -27,11 +27,17 @@
  */
 
 class repository_youtube extends repository {
+
+    /**
+     * Youtube plugin constructor
+     * @param int $repositoryid
+     * @param object $context
+     * @param array $options
+     */
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
-        $this->keyword = optional_param('youtube_keyword', '', PARAM_RAW);
         $this->start =1;
         $this->max = 27;
-        $this->sort = 'published';
+        $this->sort = optional_param('youtube_sort', 'relevance', PARAM_TEXT);
         parent::__construct($repositoryid, $context, $options);
     }
 
@@ -39,13 +45,27 @@ class repository_youtube extends repository {
         return !empty($this->keyword);
     }
 
+    /**
+     * Return search results
+     * @param string $search_text
+     * @return array
+     */
     public function search($search_text) {
+        $this->keyword = $search_text;
         $ret  = array();
         $ret['nologin'] = true;
-        $ret['list'] = $this->_get_collection($this->keyword, $this->start, $this->max, $this->sort);
+        $ret['list'] = $this->_get_collection($search_text, $this->start, $this->max, $this->sort);
         return $ret;
     }
 
+    /**
+     * Private method to get youtube search results
+     * @param string $keyword
+     * @param int $start
+     * @param int $max max results
+     * @param string $sort
+     * @return array
+     */
     private function _get_collection($keyword, $start, $max, $sort) {
         $list = array();
         $this->feed_url = 'http://gdata.youtube.com/feeds/api/videos?q=' . urlencode($keyword) . '&format=5&start-index=' . $start . '&max-results=' .$max . '&orderby=' . $sort;
@@ -75,31 +95,68 @@ class repository_youtube extends repository {
         return $list;
     }
 
+    /**
+     * Youtube plugin doesn't support global search
+     */
     public function global_search() {
         return false;
     }
+
     public function get_listing($path='', $page = '') {
-        $ret  = array();
-        $ret['nologin'] = true;
-        $ret['list'] = $this->_get_collection($this->keyword, $this->start, $this->max, $this->sort);
-        return $ret;
+        return array();
     }
 
+    /**
+     * Generate search form
+     */
     public function print_login($ajax = true) {
         $ret = array();
         $search = new stdClass();
         $search->type = 'text';
         $search->id   = 'youtube_search';
-        $search->name = 'youtube_keyword';
+        $search->name = 's';
         $search->label = get_string('search', 'repository_youtube').': ';
-        $ret['login'] = array($search);
+        $sort = new stdClass();
+        $sort->type = 'select';
+        $sort->options = array(
+            (object)array(
+                'value' => 'relevance',
+                'label' => get_string('sortrelevance', 'repository_youtube')
+            ),
+            (object)array(
+                'value' => 'published',
+                'label' => get_string('sortpublished', 'repository_youtube')
+            ),
+            (object)array(
+                'value' => 'rating',
+                'label' => get_string('sortrating', 'repository_youtube')
+            ),
+            (object)array(
+                'value' => 'viewCount',
+                'label' => get_string('sortviewcount', 'repository_youtube')
+            )
+        );
+        $sort->id = 'youtube_sort';
+        $sort->name = 'youtube_sort';
+        $sort->label = get_string('sortby', 'repository_youtube').': ';
+        $ret['login'] = array($search, $sort);
         $ret['login_btn_label'] = get_string('search');
         $ret['login_btn_action'] = 'search';
         return $ret;
     }
+
+    /**
+     * file types supported by youtube plugin
+     * @return array
+     */
     public function supported_filetypes() {
         return array('web_video');
     }
+
+    /**
+     * Youtube plugin only return external links
+     * @return int
+     */
     public function supported_returntypes() {
         return FILE_EXTERNAL;
     }
