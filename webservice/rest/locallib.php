@@ -30,12 +30,17 @@ require_once("$CFG->dirroot/webservice/lib.php");
  * @author Petr Skoda (skodak)
  */
 class webservice_rest_server extends webservice_base_server {
+
+    /** @property string $alt return method (XML / JSON) */
+    protected $restformat;
+
     /**
      * Contructor
      */
-    public function __construct($authmethod) {
+    public function __construct($authmethod, $restformat = 'xml') {
         parent::__construct($authmethod);
         $this->wsname = 'rest';
+        $this->restformat = ($restformat != 'xml' && $restformat != 'json')?'xml':$restformat; //sanity check, we accept only xml or json
     }
 
     /**
@@ -78,11 +83,27 @@ class webservice_rest_server extends webservice_base_server {
      */
     protected function send_response() {
         $this->send_headers();
-        $xml = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
-        $xml .= '<RESPONSE>'."\n";
-        $xml .= self::xmlize_result($this->returns, $this->function->returns_desc);
-        $xml .= '</RESPONSE>'."\n";
-        echo $xml;
+        if ($this->restformat == 'json') {
+            try {
+                $response = external_api::clean_returnvalue($this->function->returns_desc, $this->returns);
+            } catch (Exception $ex) {
+                $error = new stdClass;
+                $error->exception = get_class($ex);
+                $error->message = $ex->getMessage();
+                if (debugging() and isset($ex->debuginfo)) {
+                    $error->debuginfo = $ex->debuginfo;
+                }
+                echo json_encode($error);
+            }
+            $json = json_encode($response);
+            echo $json;
+        } else {
+            $xml = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
+            $xml .= '<RESPONSE>'."\n";
+            $xml .= self::xmlize_result($this->returns, $this->function->returns_desc);
+            $xml .= '</RESPONSE>'."\n";
+            echo $xml;
+        }
     }
 
     /**
@@ -93,14 +114,24 @@ class webservice_rest_server extends webservice_base_server {
      */
     protected function send_error($ex=null) {
         $this->send_headers();
-        $xml = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
-        $xml .= '<EXCEPTION class="'.get_class($ex).'">'."\n";
-        $xml .= '<MESSAGE>'.htmlentities($ex->getMessage(), ENT_COMPAT, 'UTF-8').'</MESSAGE>'."\n";
-        if (debugging() and isset($ex->debuginfo)) {
-            $xml .= '<DEBUGINFO>'.htmlentities($ex->debuginfo, ENT_COMPAT, 'UTF-8').'</DEBUGINFO>'."\n";
+        if ($this->restformat == 'json') {
+            $error = new stdClass;
+            $error->exception = get_class($ex);
+            $error->message = $ex->getMessage();
+            if (debugging() and isset($ex->debuginfo)) {
+                $error->debuginfo = $ex->debuginfo;
+            }
+            echo json_encode($error);
+        } else {
+            $xml = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
+            $xml .= '<EXCEPTION class="'.get_class($ex).'">'."\n";
+            $xml .= '<MESSAGE>'.htmlentities($ex->getMessage(), ENT_COMPAT, 'UTF-8').'</MESSAGE>'."\n";
+            if (debugging() and isset($ex->debuginfo)) {
+                $xml .= '<DEBUGINFO>'.htmlentities($ex->debuginfo, ENT_COMPAT, 'UTF-8').'</DEBUGINFO>'."\n";
+            }
+            $xml .= '</EXCEPTION>'."\n";
+            echo $xml;
         }
-        $xml .= '</EXCEPTION>'."\n";
-        echo $xml;
     }
 
     /**
@@ -108,8 +139,12 @@ class webservice_rest_server extends webservice_base_server {
      * @return void
      */
     protected function send_headers() {
-        header('Content-Type: application/xml; charset=utf-8');
-        header('Content-Disposition: inline; filename="response.xml"');
+        if ($this->restformat == 'json') {
+            header('Content-type: application/json');
+        } else {
+            header('Content-Type: application/xml; charset=utf-8');
+            header('Content-Disposition: inline; filename="response.xml"');
+        }
         header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
         header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
         header('Pragma: no-cache');
