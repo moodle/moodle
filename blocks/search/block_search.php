@@ -46,6 +46,7 @@ class block_search extends block_base {
             '<form id="searchquery" method="get" action="'. $CFG->wwwroot .'/search/query.php"><div>'
           . '<label for="block_search_q">' . get_string('searchmoodle', 'block_search') . '</label>'
           . '<input id="block_search_q" type="text" name="query_string" />'
+          . '<input id="block_instance_id" type="hidden" name="block_instanceid" value="' . $this->instance->id . '"/>'
           . '<input type="submit" value="' . s(get_string('go', 'block_search')) . '" />'
           . '</div></form>';
 
