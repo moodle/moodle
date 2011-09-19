@@ -19,6 +19,8 @@
 
             var typeSelector = Y.one('#id_typeid');
             typeSelector.on('change', function(e){
+                self.updateAutomaticToolMatch();
+                
                 self.toggleEditButtons();
             });
 
@@ -47,6 +49,7 @@
 
         updateAutomaticToolMatch: function(){
             var toolurl = Y.one('#id_toolurl');
+            var typeSelector = Y.one('#id_typeid');
             var automatchToolDisplay = Y.one('#lti_automatch_tool');
 
             if(!automatchToolDisplay){
@@ -59,7 +62,7 @@
 
             var url = toolurl.get('value');
 
-            if(!url){
+            if(!url || typeSelector.get('value') > 0){
                 automatchToolDisplay.setStyle('display', 'none');
                 return;
             }
@@ -121,16 +124,21 @@
                                     .set('id', 'course_tool_group')
                                     .set('label', M.str.lti.course_tool_types);
 
-                typeSelector.all('option[globalTool=1]').remove().each(function(node){
+                var globalOptions = typeSelector.all('option[globalTool=1]').remove().each(function(node){
                     globalGroup.append(node);
                 });
 
-                typeSelector.all('option[courseTool=1]').remove().each(function(node){
+                var courseOptions = typeSelector.all('option[courseTool=1]').remove().each(function(node){
                     courseGroup.append(node);
                 });
 
-                typeSelector.append(globalGroup);
-                typeSelector.append(courseGroup);
+                if(globalOptions.size() > 0){
+                    typeSelector.append(globalGroup);
+                }
+                
+                if(courseOptions.size() > 0){
+                    typeSelector.append(courseGroup);
+                }
             }
         },
 

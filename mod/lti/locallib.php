@@ -74,7 +74,7 @@ function lti_view($instance, $makeobject=false) {
     global $PAGE, $CFG;
 
     if(empty($instance->typeid)){
-        $tool = lti_get_tool_by_url_match($instance->toolurl);
+        $tool = lti_get_tool_by_url_match($instance->toolurl, $instance->course);
         if($tool){
             $typeid = $tool->id;
         } else {
@@ -401,9 +401,10 @@ function lti_get_types_for_add_instance(){
             WHERE
                 coursevisible = 1
             AND (course = :siteid OR course = :courseid)
+            AND state = :active
 QUERY;
     
-    $admintypes = $DB->get_records_sql($query, array('siteid' => $SITE->id, 'courseid' => $COURSE->id));
+    $admintypes = $DB->get_records_sql($query, array('siteid' => $SITE->id, 'courseid' => $COURSE->id, 'active' => LTI_TOOL_STATE_CONFIGURED));
     
     $types = array();
     $types[0] = (object)array('name' => get_string('automatic', 'lti'), 'course' => $SITE->id);
