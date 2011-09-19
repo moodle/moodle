@@ -47,6 +47,12 @@
 #page-admin-report-capability-index .rolecaps th {text-align: left;}
 #page-admin-report-capability-index #settingsform #capabilitysearch {width: 30em;}
 
+#page-admin-report-backups-index .backup-report {width:100%;}
+#page-admin-report-backups-index .backup-error,
+#page-admin-report-backups-index .backup-unfinished {color: #f00000;}
+#page-admin-report-backups-index .backup-skipped,
+#page-admin-report-backups-index .backup-ok {color: #006400;}
+
 #page-admin-qbehaviours .disabled {color: gray;}
 #page-admin-qbehaviours th {white-space: normal;}
 #page-admin-qbehaviours .cell.c1,

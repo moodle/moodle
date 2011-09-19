@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20110907" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20110915" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2416,7 +2416,7 @@
         <KEY NAME="backup_code-table_name-old_id" TYPE="unique" FIELDS="backup_code, table_name, old_id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="backup_courses" COMMENT="To store every course backup status" PREVIOUS="backup_ids" NEXT="backup_log">
+    <TABLE NAME="backup_courses" COMMENT="To store every course backup status" PREVIOUS="backup_ids" NEXT="block">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="laststarttime"/>
@@ -2430,21 +2430,7 @@
         <KEY NAME="courseid" TYPE="unique" FIELDS="courseid" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="backup_log" COMMENT="To store every course backup log info" PREVIOUS="backup_courses" NEXT="block">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="time"/>
-        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid" NEXT="laststarttime"/>
-        <FIELD NAME="laststarttime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="time" NEXT="info"/>
-        <FIELD NAME="info" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="laststarttime" NEXT="backuptype"/>
-        <FIELD NAME="backuptype" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="info"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="courseid"/>
-        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="backup_courses" REFFIELDS="courseid" PREVIOUS="primary"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="block" COMMENT="contains all installed blocks" PREVIOUS="backup_log" NEXT="block_instances">
+    <TABLE NAME="block" COMMENT="contains all installed blocks" PREVIOUS="backup_courses" NEXT="block_instances">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="version"/>

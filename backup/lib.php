@@ -489,15 +489,3 @@
 
         return ($status && $status2);
     }
-
-    function add_to_backup_log($starttime,$courseid,$message, $backuptype) {
-        global $DB;
-        $log = new stdClass();
-        $log->courseid = $courseid;
-        $log->time = time();
-        $log->laststarttime = $starttime;
-        $log->info = $message;
-        $log->backuptype = $backuptype;
-        $DB->insert_record('backup_log', $log);
-    }
-

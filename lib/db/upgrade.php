@@ -1224,26 +1224,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2009021800);
     }
 
-    if ($oldversion < 2009021801) {
-    /// Define field backuptype to be added to backup_log
-        $table = new xmldb_table('backup_log');
-        $field = new xmldb_field('backuptype', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, 'info');
-    /// Conditionally Launch add field backuptype and set all old records as 'scheduledbackup' records.
-        if (!$dbman->field_exists($table, $field)) {
-            // Set the default we want applied to any existing records
-            $field->setDefault('scheduledbackup');
-            // Add the field to the database
-            $dbman->add_field($table, $field);
-            // Remove the default
-            $field->setDefault(null);
-            // Update the database to remove the default
-            $dbman->change_field_default($table, $field);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint(true, 2009021801);
-    }
-
     /// Add default sort order for question types.
     if ($oldversion < 2009030300) {
         set_config('multichoice_sortorder', 1, 'question');
@@ -6744,6 +6724,22 @@ FROM
 
         // Main savepoint reached
         upgrade_main_savepoint(true, 2011091300.00);
+    }
+
+    if ($oldversion < 2011091600.01) {
+        // It has been decided that it is now safe to drop the backup_log table
+        // as it hasn't been used within 2+.
+
+        // Define table backup_log to be dropped
+        $table = new xmldb_table('backup_log');
+
+        // Conditionally launch drop table for backup_log
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011091600.01);
     }
 
     return true;

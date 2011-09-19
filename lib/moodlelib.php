@@ -4303,7 +4303,6 @@ function remove_course_contents($courseid, $showfeedback = true) {
         'course_display' => 'course',
         'backup_courses' => 'courseid', // Delete scheduled backup stuff
         'user_lastaccess' => 'courseid',
-        'backup_log' => 'courseid'
     );
     foreach ($tablestoclear as $table => $col) {
         $DB->delete_records($table, array($col=>$course->id));
