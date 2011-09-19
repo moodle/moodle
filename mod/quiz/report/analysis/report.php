@@ -175,7 +175,7 @@ class quiz_report extends quiz_default_report {
                 }
                 $responses = get_question_actual_response($quizquestions[$i], $states[$i]);
                 foreach ($responses as $resp){
-                    if ($resp) {
+                    if ('' !== $resp) {
                         if ($key = array_search($resp, $questions[$qid]['responses'])) {
                             $questions[$qid]['rcounts'][$key]++;
                         } else {
