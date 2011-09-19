@@ -270,7 +270,7 @@ class user_picture implements renderable {
      * @return moodle_url
      */
     public function get_url(moodle_page $page, renderer_base $renderer = null) {
-        global $CFG;
+        global $CFG, $FULLME;
 
         if (is_null($renderer)) {
             $renderer = $page->get_renderer('core');
@@ -298,16 +298,14 @@ class user_picture implements renderable {
             $size = (int)$this->size;
         }
 
-        if ($this->user->picture == 1) {
-            // The user has uploaded their own profile pic. In this case we will
-            // check that a profile pic file does actually exist
-            $fs = get_file_storage();
-            $context = get_context_instance(CONTEXT_USER, $this->user->id);
-            if (!$fs->file_exists($context->id, 'user', 'icon', 0, '/', $filename.'/.png')) {
-                if (!$fs->file_exists($context->id, 'user', 'icon', 0, '/', $filename.'/.jpg')) {
-                    return $renderer->pix_url('u/'.$filename);
-                }
-            }
+        // First we need to determine whether the user has uploaded a profile
+        // picture of not.
+        $fs = get_file_storage();
+        $context = get_context_instance(CONTEXT_USER, $this->user->id);
+        $hasuploadedfile = ($fs->file_exists($context->id, 'user', 'icon', 0, '/', $filename.'/.png') || $fs->file_exists($context->id, 'user', 'icon', 0, '/', $filename.'/.jpg'));
+
+        $imageurl = $renderer->pix_url('u/'.$filename);
+        if ($hasuploadedfile && $this->user->picture == 1) {
             $path = '/';
             if (clean_param($page->theme->name, PARAM_THEME) == $page->theme->name) {
                 // We append the theme name to the file path if we have it so that
@@ -316,20 +314,27 @@ class user_picture implements renderable {
                 // picture for the correct theme.
                 $path .= $page->theme->name.'/';
             }
-            return moodle_url::make_pluginfile_url($context->id, 'user', 'icon', NULL, $path, $filename);
-
-        } else if ($this->user->picture == 2) {
-            // This is just VERY basic support for gravatar to give the actual
-            // implementor a headstart in what to do.
-            if ($size < 1 || $size > 500) {
+            // Set the image URL to the URL for the uploaded file.
+            $imageurl = moodle_url::make_pluginfile_url($context->id, 'user', 'icon', NULL, $path, $filename);
+        } else if (!empty($CFG->enablegravatar)) {
+            // Normalise the size variable to acceptable bounds
+            if ($size < 1 || $size > 512) {
                 $size = 35;
             }
+            // Hash the users email address
             $md5 = md5(strtolower(trim($this->user->email)));
-            $default = urlencode($this->pix_url('u/'.$filename)->out(false));
-            return "http://www.gravatar.com/avatar/{$md5}?s={$size}&d={$default}";
+            // Build a gravatar URL with what we know.
+            // If the currently requested page is https then we'll return an
+            // https gravatar page.
+            if (strpos($FULLME, 'https://') === 0) {
+                $imageurl = new moodle_url("https://secure.gravatar.com/avatar/{$md5}", array('s' => $size, 'd' => $imageurl->out(false)));
+            } else {
+                $imageurl = new moodle_url("http://www.gravatar.com/avatar/{$md5}", array('s' => $size, 'd' => $imageurl->out(false)));
+            }
         }
 
-        return $renderer->pix_url('u/'.$filename);
+        // Return the URL that has been generated.
+        return $imageurl;
     }
 }
 

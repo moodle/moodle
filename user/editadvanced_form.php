@@ -101,11 +101,23 @@ class user_editadvanced_form extends moodleform {
 
         // print picture
         if (!empty($CFG->gdversion) and empty($USER->newadminuser)) {
-            $image_el =& $mform->getElement('currentpicture');
-            if ($user and $user->picture) {
-                $image_el->setValue($OUTPUT->user_picture($user, array('courseid'=>SITEID)));
+            if ($user) {
+                $context = get_context_instance(CONTEXT_USER, $user->id, MUST_EXIST);
+                $fs = get_file_storage();
+                $hasuploadedpicture = (!$fs->file_exists($context->id, 'user', 'icon', 0, '/', 'f2.png') && !$fs->file_exists($context->id, 'user', 'icon', 0, '/', 'f2.jpg'));
+                if (!empty($user->picture) && $hasuploadedpicture) {
+                    $imagevalue = $OUTPUT->user_picture($user, array('courseid' => SITEID, 'size'=>64));
+                } else {
+                    $imagevalue = get_string('none');
+                }
             } else {
-                $image_el->setValue(get_string('none'));
+                $imagevalue = get_string('none');
+            }
+            $imageelement = $mform->getElement('currentpicture');
+            $imageelement->setValue($imagevalue);
+
+            if ($user && $mform->elementExists('deletepicture') && !$hasuploadedpicture) {
+                $mform->removeElement('deletepicture');
             }
         }
 

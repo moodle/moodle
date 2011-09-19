@@ -126,6 +126,7 @@ if ($hassiteconfig
         $temp->add(new admin_setting_configmulticheckbox('extrauserselectorfields',
                 get_string('extrauserselectorfields', 'admin'), get_string('configextrauserselectorfields', 'admin'), array('email' => '1'),
                 array('email' => get_string('email'), 'idnumber' => get_string('idnumber'), 'username' => get_string('username'), )));
+        $temp->add(new admin_setting_configcheckbox('enablegravatar', get_string('enablegravatar', 'admin'), get_string('enablegravatar_help', 'admin'), 0));
     }
 
     $ADMIN->add('roles', $temp);

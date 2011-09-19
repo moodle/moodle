@@ -33,23 +33,48 @@ function useredit_update_user_preference($usernew) {
     }
 }
 
-function useredit_update_picture(&$usernew, $userform) {
+/**
+ * Updates the provided users profile picture based upon the expected fields
+ * returned from the edit or edit_advanced forms.
+ *
+ * @global moodle_database $DB
+ * @param stdClass $usernew An object that contains some information about the user being updated
+ * @param moodleform $userform The form that was submitted to edit the form
+ * @return bool True if the user was updated, false if it stayed the same.
+ */
+function useredit_update_picture(stdClass $usernew, moodleform $userform) {
     global $CFG, $DB;
     require_once("$CFG->libdir/gdlib.php");
 
-    $fs = get_file_storage();
     $context = get_context_instance(CONTEXT_USER, $usernew->id, MUST_EXIST);
-
-    if (isset($usernew->deletepicture) and $usernew->deletepicture) {
+    // This will hold the value to set to the user's picture field at the end of
+    // this function
+    $picturetouse = null;
+    if (!empty($usernew->deletepicture)) {
+        // The user has chosen to delete the selected users picture
+        $fs = get_file_storage();
         $fs->delete_area_files($context->id, 'user', 'icon'); // drop all areas
-        $DB->set_field('user', 'picture', 0, array('id'=>$usernew->id));
-
+        $picturetouse = 0;
     } else if ($iconfile = $userform->save_temp_file('imagefile')) {
+        // There is a new image that has been uploaded
+        // Process the new image and set the user to make use of it.
+        // NOTE: This may be overridden by Gravatar
         if (process_new_icon($context, 'user', 'icon', 0, $iconfile)) {
-            $DB->set_field('user', 'picture', 1, array('id'=>$usernew->id));
+            $picturetouse = 1;
         }
+        // Delete the file that has now been processed
         @unlink($iconfile);
     }
+
+    // If we have a picture to set we can now do so. Note this will still be NULL
+    // unless the user has changed their picture or caused a change by selecting
+    // to delete their picture or use gravatar
+    if (!is_null($picturetouse)) {
+        $DB->set_field('user', 'picture', $picturetouse, array('id' => $usernew->id));
+        return true;
+    }
+
+    return false;
 }
 
 function useredit_update_bounces($user, $usernew) {
@@ -236,6 +261,10 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
 
     if (!empty($CFG->gdversion) and empty($USER->newadminuser)) {
         $mform->addElement('header', 'moodle_picture', get_string('pictureofuser'));
+
+        if (!empty($CFG->enablegravatar)) {
+            $mform->addElement('static', 'gravatarenabled', get_string('gravatarenabled'));
+        }
 
         $mform->addElement('static', 'currentpicture', get_string('currentpicture'));
 

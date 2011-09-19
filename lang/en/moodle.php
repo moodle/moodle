@@ -749,6 +749,7 @@ See the Moodle License information page for full details:
 http://docs.moodle.org/dev/License';
 $string['grade'] = 'Grade';
 $string['grades'] = 'Grades';
+$string['gravatarenabled'] = '<a href="http://www.gravatar.com/">Gravatar</a> has been enabled for this site. If you don\'t upload a profile picture Moodle will attempt to load a profile picture for you from Gravatar.';
 $string['group'] = 'Group';
 $string['groupadd'] = 'Add new group';
 $string['groupaddusers'] = 'Add selected to group';
