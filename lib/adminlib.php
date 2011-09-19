@@ -4172,7 +4172,7 @@ class admin_setting_configcheckbox_with_lock extends admin_setting_configcheckbo
             $checkboxparams['checked'] = 'checked';
         }
 
-        $lockcheckboxparams = array('type'=>'checkbox', 'id'=>$id.'_locked','name'=>$fullname.'[locked]', 'value'=>1, 'class'=>'form-checkbox');
+        $lockcheckboxparams = array('type'=>'checkbox', 'id'=>$id.'_locked','name'=>$fullname.'[locked]', 'value'=>1, 'class'=>'form-checkbox locked-checkbox');
         if (!empty($data['locked'])) { // convert to strings before comparison
             $lockcheckboxparams['checked'] = 'checked';
         }
