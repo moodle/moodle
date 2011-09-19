@@ -371,6 +371,7 @@ class core_question_renderer extends plugin_renderer_base {
 
         foreach ($qa->get_full_step_iterator() as $i => $step) {
             $stepno = $i + 1;
+
             $rowclass = '';
             if ($stepno == $qa->get_num_steps()) {
                 $rowclass = 'current';
@@ -382,13 +383,16 @@ class core_question_renderer extends plugin_renderer_base {
                                 array('width' => 450, 'height' => 650)),
                         array('title' => get_string('reviewresponse', 'question')));
             }
+
+            $restrictedqa = new question_attempt_with_restricted_history($qa, $i, null);
+
             $user = new stdClass();
             $user->id = $step->get_user_id();
             $row = array(
                 $stepno,
                 userdate($step->get_timecreated(), get_string('strftimedatetimeshort')),
                 s($qa->summarise_action($step)),
-                $step->get_state()->default_string(true),
+                $restrictedqa->get_state_string($options->correctness),
             );
 
             if ($options->marks >= question_display_options::MARK_AND_MAX) {
