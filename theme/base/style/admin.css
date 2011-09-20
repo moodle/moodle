@@ -156,7 +156,8 @@
 #adminsettings .form-item .form-setting .form-multicheckbox li {list-style: none;}
 #adminsettings .form-item .form-setting .form-multicheckbox ul {padding:0;margin:0;}
 #adminsettings .form-item .form-setting .defaultsnext {margin-right: 0.5em;display: inline;}
-#adminsettings .form-item .form-setting .locked-checkbox {margin-left: 0.5em;display: inline;}
+#adminsettings .form-item .form-setting .locked-checkbox {margin-right: 0.2em; margin-left: 0.5em;display: inline;}
+.dir-rtl #adminsettings .form-item .form-setting .locked-checkbox {margin-right: 0.5em; margin-left: 0.2em;display: inline;}
 #adminsettings .form-item .form-setting .form-password .unmask,
 #adminsettings .form-item .form-setting .form-defaultinfo {display: inline;}
 #adminsettings .form-item .form-description {display: block;margin: 0.5em 0 0em 14.25em;text-align: left;}
