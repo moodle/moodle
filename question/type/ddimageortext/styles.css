@@ -3,10 +3,6 @@
     display: block;
 }
 
-.que.ddimageortext .qtext * {
-    line-height: 2em;
-}
-
 .que.ddimageortext div.droparea img, form.mform fieldset#previewareaheader div.droparea img  {
     border: 1px solid #000000;
 }
