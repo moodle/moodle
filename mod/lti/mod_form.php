@@ -80,9 +80,9 @@ class mod_lti_mod_form extends moodleform_mod {
         
         foreach(lti_get_types_for_add_instance() as $id => $type){
             if($type->course == $COURSE->id) {
-                $attributes = array( 'editable' => 1, 'courseTool' => 1 );
+                $attributes = array( 'editable' => 1, 'courseTool' => 1, 'domain' => $type->tooldomain );
             } else if($id != 0) {
-                $attributes = array( 'globalTool' => 1);
+                $attributes = array( 'globalTool' => 1, 'domain' => $type->tooldomain);
             } else {
                 $attributes = array();
             }
@@ -169,7 +169,7 @@ class mod_lti_mod_form extends moodleform_mod {
                         'add_icon_url' => (string)$OUTPUT->pix_url('t/add'),
                         'delete_icon_url' => (string)$OUTPUT->pix_url('t/delete'),
                         'green_check_icon_url' => (string)$OUTPUT->pix_url('i/tick_green_small'),
-                        'yellow_check_icon_url' => (string)$OUTPUT->pix_url('i/tick_amber_small'),
+                        'warning_icon_url' => (string)$OUTPUT->pix_url('warning', 'lti'),
                         'instructor_tool_type_edit_url' => $editurl->out(false),
                         'ajax_url' => $ajaxurl->out(true),
                         'courseId' => $COURSE->id
@@ -187,7 +187,11 @@ class mod_lti_mod_form extends moodleform_mod {
                 array('cannot_edit', 'lti'),
                 array('cannot_delete', 'lti'),
                 array('global_tool_types', 'lti'),
-                array('course_tool_types', 'lti')
+                array('course_tool_types', 'lti'),
+                array('using_tool_configuration', 'lti'),
+                array('domain_mismatch', 'lti'),
+                array('custom_config', 'lti'),
+                array('tool_config_not_found', 'lti')
             ),
         );
         

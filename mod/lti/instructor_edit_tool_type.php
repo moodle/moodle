@@ -34,10 +34,13 @@ if (confirm_sesskey() && isset($data->submitbutton)) {
 
         lti_update_type($type, $data);
         
+        $fromdb = lti_get_type($typeid);
+        $json = json_encode($fromdb);
+        
         //Output script to update the calling window.
         $script = <<<SCRIPT
             <script type="text/javascript">
-                window.opener.M.mod_lti.editor.updateToolType({$name}, '{$typeid}');
+                window.opener.M.mod_lti.editor.updateToolType({$json});
                 
                 window.close();
             </script>
@@ -51,12 +54,14 @@ SCRIPT;
         $type->course = $COURSE->id;
         
         $id = lti_add_type($type, $data);
-        $name = json_encode($type->name);
+        
+        $fromdb = lti_get_type($id);
+        $json = json_encode($fromdb);
         
         //Output script to update the calling window.
         $script = <<<SCRIPT
             <script type="text/javascript">
-                window.opener.M.mod_lti.editor.addToolType({$name}, '{$id}');
+                window.opener.M.mod_lti.editor.addToolType({$json});
                 
                 window.close();
             </script>

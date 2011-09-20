@@ -202,3 +202,8 @@ $string['cannot_edit'] = 'You may not edit this tool configuration.';
 $string['cannot_delete'] = 'You may not delete this tool configuration.';
 $string['global_tool_types'] = 'Global tool types';
 $string['course_tool_types'] = 'Course tool types';
+
+$string['using_tool_configuration'] = 'Using tool configuration: ';
+$string['domain_mismatch'] = 'Launch URL\'s domain does not match tool configuration.';
+$string['custom_config'] = 'Using custom tool configuration.';
+$string['tool_config_not_found'] = 'Tool configuration not found for this URL.';

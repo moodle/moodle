@@ -410,7 +410,7 @@ QUERY;
     $types[0] = (object)array('name' => get_string('automatic', 'lti'), 'course' => $SITE->id);
     
     foreach($admintypes as $type) {
-        $types[$type->id] = (object)array('name' => $type->name, 'course' => $type->course);
+        $types[$type->id] = $type;
     }
     
     return $types;

@@ -1,6 +1,5 @@
 (function(){
     var Y;
-    var self;
     
     M.mod_lti = M.mod_lti || {};
 
@@ -10,7 +9,7 @@
                 Y = yui3;
             }
             
-            self = this;
+            var self = this;
             this.settings = Y.JSON.parse(settings);
 
             this.urlCache = {};
@@ -47,7 +46,13 @@
             self.updateAutomaticToolMatch();
         },
 
+        clearToolCache: function(){
+            this.urlCache = {};
+        },
+
         updateAutomaticToolMatch: function(){
+            var self = this;
+            
             var toolurl = Y.one('#id_toolurl');
             var typeSelector = Y.one('#id_typeid');
             var automatchToolDisplay = Y.one('#lti_automatch_tool');
@@ -62,8 +67,29 @@
 
             var url = toolurl.get('value');
 
-            if(!url || typeSelector.get('value') > 0){
+            //Hide the display if the url box is empty
+            if(!url){
                 automatchToolDisplay.setStyle('display', 'none');
+            } else {
+                automatchToolDisplay.set('innerHTML', '');
+                automatchToolDisplay.setStyle('display', '');
+            }
+
+            var selectedToolType = typeSelector.get('value');
+            var selectedOption = typeSelector.one('option[value=' + selectedToolType + ']');
+
+            //A specific tool type is selected (not "auto")"
+            if(selectedToolType > 0){
+                //If the entered domain matches the domain of the tool configuration...
+                var domainRegex = /(?:https?:\/\/)?(?:www\.)?([^\/]+)(?:\/|$)/i;
+                var match = domainRegex.exec(url);
+                if(match && match[1] && match[1].toLowerCase() === selectedOption.getAttribute('domain').toLowerCase()){
+                    automatchToolDisplay.set('innerHTML',  '<img style="vertical-align:text-bottom" src="' + self.settings.green_check_icon_url + '" />' + M.str.lti.using_tool_configuration + selectedOption.get('text'));
+                } else {
+                    //The entered URL does not match the domain of the tool configuration
+                    automatchToolDisplay.set('innerHTML', '<img style="vertical-align:text-bottom" src="' + self.settings.warning_icon_url + '" />' + M.str.lti.domain_mismatch);
+                }
+                
                 return;
             }
 
@@ -72,17 +98,15 @@
 
             //We don't care what tool type this tool is associated with if it's manually configured'
             if(key.get('value') !== '' && secret.get('value') !== ''){
-                automatchToolDisplay.set('innerHTML',  '<img style="vertical-align:text-bottom" src="' + self.settings.green_check_icon_url + '" />Using custom tool configuration.');
+                automatchToolDisplay.set('innerHTML',  '<img style="vertical-align:text-bottom" src="' + self.settings.green_check_icon_url + '" />' + M.str.lti.custom_config);
             } else {
                 var continuation = function(toolInfo){
-                    automatchToolDisplay.setStyle('display', '');
-
                     if(toolInfo.toolname){
-                        automatchToolDisplay.set('innerHTML',  '<img style="vertical-align:text-bottom" src="' + self.settings.green_check_icon_url + '" />Using tool configuration: ' + toolInfo.toolname);
+                        automatchToolDisplay.set('innerHTML',  '<img style="vertical-align:text-bottom" src="' + self.settings.green_check_icon_url + '" />' + M.str.lti.using_tool_configuration + toolInfo.toolname);
                     } else {
                         //Inform them custom configuration is in use
                         if(key.get('value') === '' || secret.get('value') === ''){
-                            automatchToolDisplay.set('innerHTML', '<img style="vertical-align:text-bottom" src="' + self.settings.yellow_check_icon_url + '" />Tool configuration not found for this URL.');
+                            automatchToolDisplay.set('innerHTML', '<img style="vertical-align:text-bottom" src="' + self.settings.warning_icon_url + '" />' + M.str.lti.tool_config_not_found);
                         }
                     }
                 };
@@ -147,6 +171,8 @@
          * Javascript is a requirement to edit course level tools at this point.
          */
         createTypeEditorButtons: function(){
+            var self = this;
+            
             var typeSelector = Y.one('#id_typeid');
 
             var createIcon = function(id, tooltip, iconUrl){
@@ -181,17 +207,7 @@
 
                 if(self.getSelectedToolTypeOption().getAttribute('editable')){
                     if(confirm(M.str.lti.delete_confirmation)){
-
-                        Y.io(self.settings.instructor_tool_type_edit_url + '&action=delete&typeid=' + toolTypeId, {
-                            on: {
-                                success: function(){
-                                    self.getSelectedToolTypeOption().remove();
-                                },
-                                failure: function(){
-
-                                }
-                            }
-                        });
+                        self.deleteTool(toolTypeId);
                     }
                 } else {
                     alert(M.str.lti.cannot_delete);
@@ -218,34 +234,65 @@
             }
         },
 
-        addToolType: function(text, value){
+        addToolType: function(toolType){
             var typeSelector = Y.one('#id_typeid');
             var course_tool_group = Y.one('#course_tool_group');
 
             var option = Y.Node.create('<option />')
-                            .set('text', text)
-                            .set('value', value)
+                            .set('text', toolType.name)
+                            .set('value', toolType.id)
                             .set('selected', 'selected')
                             .setAttribute('editable', '1')
-                            .setAttribute('courseTool', '1');
+                            .setAttribute('courseTool', '1')
+                            .setAttribute('domain', toolType.tooldomain);
 
             if(course_tool_group){
                 course_tool_group.append(option);
             } else {
                 typeSelector.append(option);
             }
+            
+            //Adding the new tool may affect which tool gets matched automatically
+            this.clearToolCache();
+            this.updateAutomaticToolMatch();
         },
 
-        updateToolType: function(text, value){
+        updateToolType: function(toolType){
             var typeSelector = Y.one('#id_typeid');
 
-            var option = typeSelector.one('option[value=' + value + ']');
-            option.set('text', text);
+            var option = typeSelector.one('option[value=' + toolType.id + ']');
+            option.set('text', toolType.name)
+                  .set('domain', toolType.tooldomain);
+            
+            //Editing the tool may affect which tool gets matched automatically
+            this.clearToolCache();
+            this.updateAutomaticToolMatch();
+        },
+
+        deleteTool: function(toolTypeId){
+            var self = this;
+            
+            Y.io(self.settings.instructor_tool_type_edit_url + '&action=delete&typeid=' + toolTypeId, {
+                on: {
+                    success: function(){
+                        self.getSelectedToolTypeOption().remove();
+                        
+                        //Editing the tool may affect which tool gets matched automatically
+                        self.clearToolCache();
+                        self.updateAutomaticToolMatch();
+                    },
+                    failure: function(){
+
+                    }
+                }
+            });
         },
 
         findToolByUrl: function(url, callback){
+            var self = this;
+            
             Y.io(self.settings.ajax_url, { 
-                data: { action: 'find_tool_config',
+                data: {action: 'find_tool_config',
                         course: self.settings.courseId,
                         toolurl: url
                 },

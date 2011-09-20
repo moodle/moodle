@@ -20,6 +20,7 @@ switch($action){
         if(!empty($tool)){
             $response->toolid = $tool->id;
             $response->toolname = htmlspecialchars($tool->name);
+            $response->tooldomain = htmlspecialchars($tool->tooldomain);
         }
         
         break;
