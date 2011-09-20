@@ -427,7 +427,7 @@ function lti_get_domain_from_url($url){
 function lti_get_tool_by_url_match($url, $courseid = null, $state = LTI_TOOL_STATE_CONFIGURED){
     $possibletools = lti_get_tools_by_url($url, $state, $courseid);
     
-    return lti_get_best_tool_by_url($url, $possibletools);
+    return lti_get_best_tool_by_url($url, $possibletools, $courseid);
 }
 
 function lti_get_url_thumbprint($url){
@@ -443,7 +443,7 @@ function lti_get_url_thumbprint($url){
     return $urllower = $urlparts['host'] . '/' . $urlparts['path'];
 }
 
-function lti_get_best_tool_by_url($url, $tools){
+function lti_get_best_tool_by_url($url, $tools, $courseid = null){
     if(count($tools) === 0){
         return null;
     }
@@ -456,11 +456,19 @@ function lti_get_best_tool_by_url($url, $tools){
         $toolbaseurllower = lti_get_url_thumbprint($tool->baseurl);
         
         if($urllower === $toolbaseurllower){
-            //100 points for exact match
+            //100 points for exact thumbprint match
             $tool->_matchscore += 100;
         } else if(substr($urllower, 0, strlen($toolbaseurllower)) === $toolbaseurllower){
-            //50 points if it starts with the base URL
+            //50 points if tool thumbprint starts with the base URL thumbprint
             $tool->_matchscore += 50;
+        }
+        
+        //Prefer course tools over site tools
+        if(!empty($courseid)){
+            //Minus 25 points for not matching the course id (global tools)
+            if($tool->course != $courseid){
+                $tool->_matchscore -= 10;
+            }
         }
     }
     
