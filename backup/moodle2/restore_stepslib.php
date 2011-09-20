@@ -1291,6 +1291,28 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
  */
 class restore_enrolments_structure_step extends restore_structure_step {
 
+    /**
+     * Conditionally decide if this step should be executed.
+     *
+     * This function checks the following parameter:
+     *
+     *   1. the course/enrolments.xml file exists
+     *
+     * @return bool true is safe to execute, false otherwise
+     */
+    protected function execute_condition() {
+
+        // Check it is included in the backup
+        $fullpath = $this->task->get_taskbasepath();
+        $fullpath = rtrim($fullpath, '/') . '/' . $this->filename;
+        if (!file_exists($fullpath)) {
+            // Not found, can't restore enrolments info
+            return false;
+        }
+
+        return true;
+    }
+
     protected function define_structure() {
 
         $paths = array();
@@ -1749,7 +1771,7 @@ class restore_course_logs_structure_step extends restore_structure_step {
     /**
      * Conditionally decide if this step should be executed.
      *
-     * This function checks the following four parameters:
+     * This function checks the following parameter:
      *
      *   1. the course/logs.xml file exists
      *
