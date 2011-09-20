@@ -1357,6 +1357,31 @@ abstract class repository {
     }
 
     /**
+     * Return size of a file in bytes.
+     *
+     * @param string $source encoded and serialized data of file
+     * @return integer file size in bytes
+     */
+    public function get_file_size($source) {
+        $browser    = get_file_browser();
+        $params     = unserialize(base64_decode($source));
+        $contextid  = clean_param($params['contextid'], PARAM_INT);
+        $fileitemid = clean_param($params['itemid'], PARAM_INT);
+        $filename   = clean_param($params['filename'], PARAM_FILE);
+        $filepath   = clean_param($params['filepath'], PARAM_PATH);
+        $filearea   = clean_param($params['filearea'], PARAM_SAFEDIR);
+        $component  = clean_param($params['component'], PARAM_ALPHAEXT);
+        $context    = get_context_instance_by_id($contextid);
+        $file_info  = $browser->get_file_info($context, $component, $filearea, $fileitemid, $filepath, $filename);
+        if (!empty($file_info)) {
+            $filesize = $file_info->get_filesize();
+        } else {
+            $filesize = null;
+        }
+        return $filesize;
+    }
+
+    /**
      * Return is the instance is visible
      * (is the type visible ? is the context enable ?)
      * @return boolean

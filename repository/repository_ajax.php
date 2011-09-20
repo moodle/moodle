@@ -205,6 +205,15 @@ switch ($action) {
             // method, so we use copy_to_area method
             // (local, user, coursefiles, recent)
             if ($repo->has_moodle_files()) {
+                // check filesize against max allowed size
+                $filesize = $repo->get_file_size($source);
+                if (empty($filesize)) {
+                    $err->error = get_string('filesizenull', 'repository');
+                    die(json_encode($err));
+                }
+                if (($maxbytes !== -1) && ($filesize > $maxbytes)) {
+                    throw new file_exception('maxbytes');
+                }
                 $fileinfo = $repo->copy_to_area($source, $itemid, $saveas_path, $saveas_filename);
                 echo json_encode($fileinfo);
                 die;
