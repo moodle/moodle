@@ -263,7 +263,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
         $mform->addElement('header', 'moodle_picture', get_string('pictureofuser'));
 
         if (!empty($CFG->enablegravatar)) {
-            $mform->addElement('static', 'gravatarenabled', get_string('gravatarenabled'));
+            $mform->addElement('html', html_writer::tag('p', get_string('gravatarenabled')));
         }
 
         $mform->addElement('static', 'currentpicture', get_string('currentpicture'));
