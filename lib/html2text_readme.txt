@@ -82,3 +82,18 @@ Index: lib/html2text.php
  }
 
 -- Tim Hunt 2010-11-02
+
+4 - Make sure html2text does not destroy '0'.
+
+index e2d0dff..9cc213d 100644
+--- a/lib/html2text.php
++++ b/lib/html2text.php
+@@ -335,7 +335,7 @@ class html2text
+      */
+     function html2text( $source = '', $from_file = false, $do_links = true, $wi     {
+-        if ( !empty($source) ) {
++        if ($source !== '') {
+             $this->set_html($source, $from_file);
+         }
+
+-- Tim Hunt 2011-09-21

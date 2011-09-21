@@ -341,7 +341,7 @@ class html2text
      */
     function html2text( $source = '', $from_file = false, $do_links = true, $width = 75 )
     {
-        if ( !empty($source) ) {
+        if ($source !== '') {
             $this->set_html($source, $from_file);
         }
 

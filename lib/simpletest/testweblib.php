@@ -255,5 +255,13 @@ END;
     public function test_html_to_text_dont_screw_up_utf8() {
         $this->assertEqual("\n\nAll the WORLD’S a stage.", html_to_text('<p>All the <strong>world’s</strong> a stage.</p>'));
     }
+
+    public function test_html_to_text_trailing_whitespace() {
+        $this->assertEqual('With trailing whitespace and some more text', html_to_text("With trailing whitespace   \nand some   more text", 0));
+    }
+
+    public function test_html_to_text_0() {
+        $this->assertIdentical('0', html_to_text('0'));
+    }
 }
 ?>
