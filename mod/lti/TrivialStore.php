@@ -58,6 +58,8 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 
+namespace moodle\mod\lti;//Using a namespace as the basicLTI module imports classes with the same names
+
 defined('MOODLE_INTERNAL') || die;
 
 /**

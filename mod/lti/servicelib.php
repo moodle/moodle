@@ -2,6 +2,8 @@
 
 require_once($CFG->dirroot.'/mod/lti/OAuthBody.php');
 
+use moodle\mod\lti as lti;
+
 define('LTI_ITEM_TYPE', 'mod');
 define('LTI_ITEM_MODULE', 'lti');
 define('LTI_SOURCE', 'mod/lti');
@@ -150,7 +152,7 @@ function lti_verify_message($ltiinstance, $body, $headers = null){
         $secret = $ltiinstance->password;
     }
     
-    handleOAuthBodyPOST($key, $secret, $body, $headers);
+    lti\handleOAuthBodyPOST($key, $secret, $body, $headers);
 }
 
 function lti_verify_sourcedid($ltiinstance, $parsed){

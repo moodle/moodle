@@ -54,13 +54,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
+namespace moodle\mod\lti;//Using a namespace as the basicLTI module imports classes with the same names
+
 defined('MOODLE_INTERNAL') || die;
 
 $oauth_last_computed_signature = false;
 
 /* Generic exception class
  */
-class OAuthException extends Exception {
+class OAuthException extends \Exception {
     // pass
 }
 
@@ -704,7 +706,7 @@ class OAuthUtil {
     public static function urlencode_rfc3986($input) {
         if (is_array($input)) {
             return array_map(array(
-                'OAuthUtil',
+                'moodle\mod\lti\OAuthUtil',
                 'urlencode_rfc3986'
             ), $input);
         } else {

@@ -47,6 +47,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use moodle\mod\lti as lti;
+
 require_once($CFG->dirroot.'/mod/lti/OAuth.php');
 
 define('LTI_URL_DOMAIN_REGEX', '/(?:https?:\/\/)?(?:www\.)?([^\/]+)(?:\/|$)/i');
@@ -238,6 +240,87 @@ function lti_build_request($instance, $typeconfig, $course) {
     }
 
     return $requestparams;
+}
+
+function lti_get_tool_table($tools, $id){
+    global $CFG, $USER;
+    $html = '';
+    
+    $typename = get_string('typename', 'lti');
+    $baseurl = get_string('baseurl', 'lti');
+    $action = get_string('action', 'lti');
+    $createdon = get_string('createdon', 'lti');
+    
+    if($id == 'lti_configured'){
+        $html .= '<div><a style="margin-top:.25em" href="'.$CFG->wwwroot.'/mod/lti/typessettings.php?action=add&amp;sesskey='.$USER->sesskey.'">'.get_string('addtype', 'lti').'</a></div>';
+    }
+    
+    if (!empty($tools)) {
+        $html .= <<<HTML
+        <div id="{$id}_container" style="margin-top:.5em;margin-bottom:.5em">
+            <table id="{$id}_tools">
+                <thead>
+                    <tr>
+                        <th>$typename</th>
+                        <th>$baseurl</th>
+                        <th>$createdon</th>
+                        <th>$action</th>
+                    </tr>
+                </thead>
+HTML;
+        
+        foreach ($tools as $type) {
+            $date = userdate($type->timecreated);
+            $accept = get_string('accept', 'lti');
+            $update = get_string('update', 'lti');
+            $delete = get_string('delete', 'lti');
+            
+            $accepthtml = <<<HTML
+                <a class="editing_accept" href="{$CFG->wwwroot}/mod/lti/typessettings.php?action=accept&amp;id={$type->id}&amp;sesskey={$USER->sesskey}&amp;tab={$id}" title="{$accept}">
+                    <img class="iconsmall" alt="{$accept}" src="{$CFG->wwwroot}/pix/t/clear.gif"/>
+                </a>
+HTML;
+
+            $deleteaction = 'delete';
+                    
+            if($type->state == LTI_TOOL_STATE_CONFIGURED){
+                $accepthtml = '';
+            }
+            
+            if($type->state != LTI_TOOL_STATE_REJECTED) {
+                $deleteaction = 'reject';
+                $delete = get_string('reject', 'lti');
+            }
+                    
+            $html .= <<<HTML
+            <tr>
+                <td>
+                    {$type->name}
+                </td>
+                <td>
+                    {$type->baseurl}
+                </td>
+                <td>
+                    {$date}
+                </td>
+                <td align="center">
+                    {$accepthtml}
+                    <a class="editing_update" href="{$CFG->wwwroot}/mod/lti/typessettings.php?action=update&amp;id={$type->id}&amp;sesskey={$USER->sesskey}&amp;tab={$id}" title="{$update}">
+                        <img class="iconsmall" alt="{$update}" src="{$CFG->wwwroot}/pix/t/edit.gif"/>
+                    </a>
+                    <a class="editing_delete" href="{$CFG->wwwroot}/mod/lti/typessettings.php?action={$deleteaction}&amp;id={$type->id}&amp;sesskey={$USER->sesskey}&amp;tab={$id}" title="{$delete}">
+                        <img class="iconsmall" alt="{$delete}" src="{$CFG->wwwroot}/pix/t/delete.gif"/>
+                    </a>
+                </td>
+            </tr>
+HTML;
+        }
+        $html .= '</table></div>';
+    } else {
+        $html .= get_string('no_' . $id, 'lti');
+    }
+    
+    return $html;
 }
 
 /**
@@ -823,10 +906,10 @@ function lti_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $
 
     $testtoken = '';
 
-    $hmacmethod = new OAuthSignatureMethod_HMAC_SHA1();
-    $testconsumer = new OAuthConsumer($oauthconsumerkey, $oauthconsumersecret, null);
+    $hmacmethod = new lti\OAuthSignatureMethod_HMAC_SHA1();
+    $testconsumer = new lti\OAuthConsumer($oauthconsumerkey, $oauthconsumersecret, null);
 
-    $accreq = OAuthRequest::from_consumer_and_token($testconsumer, $testtoken, $method, $endpoint, $parms);
+    $accreq = lti\OAuthRequest::from_consumer_and_token($testconsumer, $testtoken, $method, $endpoint, $parms);
     $accreq->sign_request($hmacmethod, $testconsumer, $testtoken);
 
     // Pass this back up "out of band" for debugging
