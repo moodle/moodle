@@ -140,6 +140,10 @@ class web_test extends UnitTestCase {
         $this->assertEqual('With trailing whitespace and some more text', html_to_text("With trailing whitespace   \nand some   more text", 0));
     }
 
+    public function test_html_to_text_0() {
+        $this->assertIdentical('0', html_to_text('0'));
+    }
+
     public function test_clean_text() {
         $text = "lala <applet>xx</applet>";
         $this->assertEqual($text, clean_text($text, FORMAT_PLAIN));
