@@ -1,7 +1,7 @@
 M.core_rating={
 
     Y : null,
-    transaction : [],
+    api: M.cfg.wwwroot+'/rating/rate_ajax.php',
 
     init : function(Y){
         this.Y = Y;
@@ -27,11 +27,10 @@ M.core_rating={
             }
         }
 
-        this.Y.io.queue.stop();
-        this.transaction.push({transaction:this.Y.io.queue(M.cfg.wwwroot+'/rating/rate_ajax.php', {
-            method : 'POST',
-            data : build_querystring(thedata),
-            on : {
+        var scope = this;
+        var cfg = {
+            method: 'POST',
+            on: {
                 complete : function(tid, outcome, args) {
                     try {
                         if (!outcome) {
@@ -39,17 +38,17 @@ M.core_rating={
                             return false;
                         }
 
-                        var data = this.Y.JSON.parse(outcome.responseText);
+                        var data = scope.Y.JSON.parse(outcome.responseText);
                         if (data.success){
                             //if the user has access to the aggregate then update it
                             if (data.itemid) { //do not test data.aggregate or data.count otherwise it doesn't refresh value=0 or no value
                                 var itemid = data.itemid;
 
-                                var node = this.Y.one('#ratingaggregate'+itemid);
+                                var node = scope.Y.one('#ratingaggregate'+itemid);
                                 node.set('innerHTML',data.aggregate);
 
                                 //empty the count value if no ratings
-                                var node = this.Y.one('#ratingcount'+itemid);
+                                var node = scope.Y.one('#ratingcount'+itemid);
                                 if (data.count > 0) {
                                     node.set('innerHTML',"("+data.count+")");
                                 } else {
@@ -67,11 +66,14 @@ M.core_rating={
                     return false;
                 }
             },
-            context : this,
-            arguments : {
-                //query : this.query.get('value')
-            }
-        }),complete:false,outcome:null});
-        this.Y.io.queue.start();
+            arguments: {
+                scope: scope
+            },
+            headers: {
+            },
+            data: build_querystring(thedata)
+        };
+        this.Y.io(this.api, cfg);
+
     }
 };
