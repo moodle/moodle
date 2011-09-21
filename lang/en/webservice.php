@@ -26,6 +26,7 @@
 $string['accessexception'] = 'Access control exception';
 $string['accessnotallowed'] = 'Access to web service not allowed';
 $string['actwebserviceshhdr'] = 'Active web service protocols';
+$string['accesstofunctionnotallowed'] = 'Access to the function {$a}() is not allowed. Please check if a service containing the function is enabled. In the service settings: if the service is restricted check that the user is listed. Still in the service settings check for IP restriction or if the service requires a capability.';
 $string['addaservice'] = 'Add service';
 $string['addcapabilitytousers'] = 'Check users capability';
 $string['addcapabilitytousersdescription'] = 'Users should have two capabilities - webservice:createtoken and a capability matching the protocols used, for example webservice/rest:use, webservice/soap:use. To achieve this, create a web services role with the appropriate capabilities allowed and assign it to the web services user as a system role.';
