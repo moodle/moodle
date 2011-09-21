@@ -334,6 +334,12 @@ class question_randomsamatch_qtype extends question_match_qtype {
     function get_random_guess_score($question) {
         return 1/$question->options->choose;
     }
+
+    function format_subquestion_text($subquestion, $state, $context) {
+        return quiz_rewrite_question_urls($subquestion->questiontext, 'pluginfile.php',
+                $context->id, 'question', 'questiontext',
+                array($state->attempt, $state->question), $subquestion->id);
+    }
 }
 
 //// END OF CLASS ////

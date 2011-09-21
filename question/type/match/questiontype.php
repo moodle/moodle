@@ -284,7 +284,7 @@ class question_match_qtype extends default_questiontype {
             if ($subquestion->questiontext !== '' && !is_null($subquestion->questiontext)) {
                 // Subquestion text:
                 $a = new stdClass;
-                $text = quiz_rewrite_question_urls($subquestion->questiontext, 'pluginfile.php', $context->id, 'qtype_match', 'subquestion', array($state->attempt, $state->question), $subquestion->id);
+                $text = $this->format_subquestion_text($subquestion, $state, $context);
                 $a->text = $this->format_text($text, $subquestion->questiontextformat, $cmoptions);
 
                 // Drop-down list:
@@ -327,6 +327,19 @@ class question_match_qtype extends default_questiontype {
             }
         }
         include("$CFG->dirroot/question/type/match/display.html");
+    }
+
+    /**
+     * Prepare the text of a subquestion for output.
+     * @param object $subquestion
+     * @param object $state
+     * @param object $context
+     * @return string html fragment.
+     */
+    function format_subquestion_text($subquestion, $state, $context) {
+        return quiz_rewrite_question_urls($subquestion->questiontext, 'pluginfile.php',
+                $context->id, 'qtype_match', 'subquestion',
+                array($state->attempt, $state->question), $subquestion->id);
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
