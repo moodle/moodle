@@ -211,7 +211,7 @@ M.core_filepicker.init = function(Y, options) {
                         if (scope.options.editor_target && scope.options.env == 'editor') {
                             scope.options.editor_target.value = data.existingfile.url;
                             scope.options.editor_target.onchange();
-                        } else {
+                        } else if (scope.options.env === 'filepicker') {
                             var fileinfo = {'client_id':client_id,
                                     'url':data.existingfile.url,
                                     'file':data.existingfile.filename};
