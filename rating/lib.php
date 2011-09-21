@@ -397,13 +397,6 @@ class rating_manager {
     protected $scales = array();
 
     /**
-     * Gets set to true when the JavaScript that controls AJAX rating has been
-     * initialised (so that it only gets initialised once.
-     * @var int
-     */
-    protected $javascriptinitialised = false;
-
-    /**
      * Delete one or more ratings. Specify either a rating id, an item id or just the context id.
      *
      * @global moodle_database $DB
@@ -1019,15 +1012,17 @@ class rating_manager {
     public function initialise_rating_javascript(moodle_page $page) {
         global $CFG;
 
-        if ($this->javascriptinitialised) {
+        //only needs to be initialized once
+        static $done = false;
+        if ($done) {
             return true;
         }
 
         if (!empty($CFG->enableajax)) {
             $page->requires->js_init_call('M.core_rating.init');
         }
+        $done = true;
 
-        $this->javascriptinitialised = true;
         return true;
     }
 
