@@ -1310,7 +1310,7 @@ abstract class webservice_base_server extends webservice_server {
         }
         $rs->close();
         if (!$allowed) {
-            throw new webservice_access_exception('Access to external function not allowed');
+            throw new webservice_access_exception(get_string('accesstofunctionnotallowed', 'webservice', $this->functionname));
         }
 
         // we have all we need now
