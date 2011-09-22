@@ -844,7 +844,7 @@ function blog_get_headers($courseid=null, $groupid=null, $userid=null, $tagid=nu
 
         $a = new stdClass();
         $a->user = fullname($user);
-        $a->course = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $courseid)));
+        $a->course = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
         $a->type = get_string('course');
         $headers['heading'] = get_string('blogentriesbyuseraboutcourse', 'blog', $a);
         $headers['stradd'] = get_string('blogaboutthis', 'blog', $a);
@@ -870,7 +870,7 @@ function blog_get_headers($courseid=null, $groupid=null, $userid=null, $tagid=nu
 
         $a = new stdClass();
         $a->group = $group->name;
-        $a->course = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $courseid)));
+        $a->course = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
         $a->type = get_string('course');
         $headers['heading'] = get_string('blogentriesbygroupaboutcourse', 'blog', $a);
         $headers['stradd'] = get_string('blogaboutthis', 'blog', $a);
@@ -927,7 +927,7 @@ function blog_get_headers($courseid=null, $groupid=null, $userid=null, $tagid=nu
         $PAGE->set_heading("$siteshortname: $courseshortname: " . get_string('blogentries', 'blog'));
         $a = new stdClass();
         $a->type = get_string('course');
-        $headers['heading'] = get_string('blogentriesabout', 'blog', format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $courseid))));
+        $headers['heading'] = get_string('blogentriesabout', 'blog', format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id))));
         $headers['stradd'] = get_string('blogaboutthis', 'blog', $a);
         $headers['strview'] = get_string('viewblogentries', 'blog', $a);
         $blogurl->remove_params(array('userid'));
