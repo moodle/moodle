@@ -26,13 +26,14 @@
  */
 
 require_once($CFG->dirroot . '/blog/locallib.php');
+require_once($CFG->dirroot . '/blog/lib.php');
 
 /**
  * Test functions that rely on the DB tables
  */
 class bloglib_test extends UnitTestCaseUsingDatabase {
 
-    public static $includecoverage = array('blog/locallib.php');
+    public static $includecoverage = array('blog/locallib.php', 'blog/lib.php');
 
     private $courseid; // To store important ids to be used in tests
     private $groupid;
