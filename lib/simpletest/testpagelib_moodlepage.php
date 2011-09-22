@@ -225,7 +225,7 @@ class moodle_page_test extends UnitTestCase {
 
     public function test_pagetype_defaults_to_script() {
         // Exercise SUT and validate
-        $this->assertEqual('admin-report-unittest-index', $this->testpage->pagetype);
+        $this->assertEqual('admin-tool-unittest-index', $this->testpage->pagetype);
     }
 
     public function test_set_pagetype() {
@@ -239,7 +239,7 @@ class moodle_page_test extends UnitTestCase {
         // Exercise SUT
         $this->testpage->initialise_default_pagetype('admin/tool/unittest/index.php');
         // Validate
-        $this->assertEqual('admin-report-unittest-index', $this->testpage->pagetype);
+        $this->assertEqual('admin-tool-unittest-index', $this->testpage->pagetype);
     }
 
     public function test_initialise_default_pagetype_fp() {
