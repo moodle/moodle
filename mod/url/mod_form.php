@@ -166,4 +166,14 @@ class mod_url_mod_form extends moodleform_mod {
         }
     }
 
+    function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        //Validating Entered url
+        $data['externalurl'] = clean_param($data['externalurl'], PARAM_URL);
+        if (empty($data['externalurl'])) {
+            $errors['externalurl'] = get_string('invalidurl', 'url');
+        }
+        return $errors;
+    }
+
 }
