@@ -164,6 +164,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
         $records    = $data->numerrors; // data to be saved into {workshopform_numerrors}
         $mappings   = $data->mappings;  // data to be saved into {workshopform_numerrors_map}
         $todelete   = array();          // dimension ids to be deleted
+        $maxnonegative = 0;             // maximum number of (weighted) negative responses
 
         for ($i=0; $i < $norepeats; $i++) {
             $record = $records[$i];
@@ -181,6 +182,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
                 // exiting field
                 $DB->update_record('workshopform_numerrors', $record);
             }
+            $maxnonegative += $record->weight;
             // re-save with correct path to embeded media files
             $record = file_postupdate_standard_editor($record, 'description', $this->descriptionopts, $PAGE->context,
                                                       'workshopform_numerrors', 'description', $record->id);
@@ -212,8 +214,8 @@ class workshop_numerrors_strategy implements workshop_strategy {
             $insql = '';
         }
         $sql = "DELETE FROM {workshopform_numerrors_map}
-                      WHERE (($insql nonegative > :nodimensions) AND (workshopid = :workshopid))";
-        $params['nodimensions'] = $norepeats;
+                      WHERE (($insql nonegative > :maxnonegative) AND (workshopid = :workshopid))";
+        $params['maxnonegative'] = $maxnonegative;
         $params['workshopid']   = $this->workshop->id;
         $DB->execute($sql, $params);
     }
