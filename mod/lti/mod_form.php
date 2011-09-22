@@ -71,12 +71,15 @@ class mod_lti_mod_form extends moodleform_mod {
 
         $mform->addElement('checkbox', 'showtitle', '&nbsp;', ' ' . get_string('display_name', 'lti'));
         $mform->setAdvanced('showtitle');
+        $mform->addHelpButton('showtitle', 'display_name', 'lti');
         
         $mform->addElement('checkbox', 'showdescription', '&nbsp;', ' ' . get_string('display_description', 'lti'));
         $mform->setAdvanced('showdescription');
+        $mform->addHelpButton('showdescription', 'display_description', 'lti');
         
         //Tool settings
         $tooltypes = $mform->addElement('select', 'typeid', get_string('external_tool_type', 'lti'), array());
+        $mform->addHelpButton('typeid', 'external_tool_type', 'lti');
         
         foreach(lti_get_types_for_add_instance() as $id => $type){
             if($type->course == $COURSE->id) {
@@ -92,6 +95,7 @@ class mod_lti_mod_form extends moodleform_mod {
         
         $mform->addElement('text', 'toolurl', get_string('launch_url', 'lti'), array('size'=>'64'));
         $mform->setType('toolurl', PARAM_TEXT);
+        $mform->addHelpButton('toolurl', 'launch_url', 'lti');
         
         $launchoptions=array();
         $launchoptions[LTI_LAUNCH_CONTAINER_DEFAULT] = get_string('default', 'lti');
@@ -101,40 +105,43 @@ class mod_lti_mod_form extends moodleform_mod {
 
         $mform->addElement('select', 'launchcontainer', get_string('launchinpopup', 'lti'), $launchoptions);
         $mform->setDefault('launchcontainer', LTI_LAUNCH_CONTAINER_DEFAULT);
+        $mform->addHelpButton('launchcontainer', 'launchinpopup', 'lti');
         
         $mform->addElement('text', 'resourcekey', get_string('resourcekey', 'lti'));
         $mform->setType('resourcekey', PARAM_TEXT);
         $mform->setAdvanced('resourcekey');
-
+        $mform->addHelpButton('resourcekey', 'resourcekey', 'lti');
+        
         $mform->addElement('passwordunmask', 'password', get_string('password', 'lti'));
         $mform->setType('password', PARAM_TEXT);
         $mform->setAdvanced('password');
+        $mform->addHelpButton('password', 'password', 'lti');
         
         $mform->addElement('textarea', 'instructorcustomparameters', get_string('custom', 'lti'), array('rows'=>4, 'cols'=>60));
         $mform->setType('instructorcustomparameters', PARAM_TEXT);
         $mform->setAdvanced('instructorcustomparameters');
+        $mform->addHelpButton('instructorcustomparameters', 'custom', 'lti');
         
-//-------------------------------------------------------------------------------
-        //$mform->addElement('hidden', 'typeid', $this->typeid);
-        //$mform->addElement('hidden', 'toolurl', $this->typeconfig['toolurl']);
-        //$mform->addElement('hidden', 'type', $typename);
-
 //-------------------------------------------------------------------------------
         // Add privacy preferences fieldset where users choose whether to send their data
         $mform->addElement('header', 'privacy', get_string('privacy', 'lti'));
 
         $mform->addElement('checkbox', 'instructorchoicesendname', '&nbsp;', ' ' . get_string('share_name', 'lti'));
         $mform->setDefault('instructorchoicesendname', '1');
+        $mform->addHelpButton('instructorchoicesendname', 'share_name', 'lti');
         
         $mform->addElement('checkbox', 'instructorchoicesendemailaddr', '&nbsp;', ' ' . get_string('share_email', 'lti'));
         $mform->setDefault('instructorchoicesendemailaddr', '1');
+        $mform->addHelpButton('instructorchoicesendemailaddr', 'share_email', 'lti');
         
         $mform->addElement('checkbox', 'instructorchoiceacceptgrades', '&nbsp;', ' ' . get_string('accept_grades', 'lti'));
         $mform->setDefault('instructorchoiceacceptgrades', '1');
+        $mform->addHelpButton('instructorchoiceacceptgrades', 'accept_grades', 'lti');
         
         $mform->addElement('checkbox', 'instructorchoiceallowroster', '&nbsp;', ' ' . get_string('share_roster', 'lti'));
         $mform->setDefault('instructorchoiceallowroster', '1');
-
+        $mform->addHelpButton('instructorchoiceallowroster', 'share_roster', 'lti');
+        
 //-------------------------------------------------------------------------------
 
 /*        $debugoptions=array();

@@ -29,4 +29,4 @@
 #page-mod-lti-submissions .qgprefs #optiontable {text-align:right;margin-left:auto;}
 
 /* Styles for admin */
-.path-admin-mod-lti .mform .fitem .fitemtitle { min-width:15em;padding-right:1em } /* Prevent setting titles from wrapping */
+.path-admin-mod-lti .mform .fitem .fitemtitle { min-width:18em;padding-right:1em } /* Prevent setting titles from wrapping */

@@ -46,14 +46,13 @@
  */
 
 $string['accept'] = 'Accept';
-$string['acceptgrades'] = 'Accept grades from tool';
 $string['activity'] = 'Activity';
 $string['addnewapp'] = 'Enable External Application';
 $string['addserver'] = 'Add new trusted server';
 $string['addtype'] = 'Add external tool configuration';
 $string['allow'] = 'Allow';
 $string['allowinstructorcustom'] = 'Allow instructors to add custom parameters';
-$string['allowroster'] = 'Tool may access course roster';
+$string['share_roster_admin'] = 'Tool may access course roster';
 $string['allowsetting'] = 'Allow tool to store 8K of settings in Moodle';
 $string['always'] = 'Always';
 $string['lti'] = 'Basic LTI';
@@ -128,6 +127,7 @@ $string['organizationid'] ='Organization ID';
 $string['organizationurl'] ='Organization URL';
 $string['pagesize'] = 'Submissions shown per page';
 $string['password'] = 'Shared Secret';
+$string['password_admin'] = 'Shared Secret';
 $string['pluginadministration'] = 'Basic LTI administration';
 $string['pluginname'] = 'LTI';
 $string['preferheight'] = 'Preferred Height';
@@ -140,11 +140,12 @@ $string['quickgrade_help'] = 'If enabled, multiple tools can be graded on one pa
 $string['redirect'] = 'You will be redirected in few seconds. If you are not, press the button.';
 $string['resource'] = 'Resource';
 $string['resourcekey'] = 'Consumer Key';
+$string['resourcekey_admin'] = 'Consumer Key';
 $string['resourceurl'] = 'Resource URL';
 $string['saveallfeedback'] = 'Save all my feedback';
 $string['send'] = 'Send';
-$string['sendemailaddr'] = 'Share launcher\'s email with tool';
-$string['sendname'] = 'Share launcher\'s name with tool';
+$string['share_email_admin'] = 'Share launcher\'s email with tool';
+$string['share_name_admin'] = 'Share launcher\'s name with tool';
 $string['setdefault'] = 'Set a default value for the professor if delegating';
 $string['setupbox'] = 'Basic LTI Tool Setup Box';
 $string['setupoptions'] = 'Setup Options';
@@ -182,6 +183,7 @@ $string['external_tool_types'] = 'External Tool Types';
 $string['no_lti_configured'] = 'There are no active External Tools configured.';
 $string['no_lti_pending'] = 'There are no pending External Tools.';
 $string['no_lti_rejected'] = 'There are no rejected External Tools.';
+$string['accept_grades_admin'] = 'Accept grades from the tool';
 
 //New instructor strings
 $string['display_name'] = 'Display activity name when launched';
@@ -207,3 +209,340 @@ $string['using_tool_configuration'] = 'Using tool configuration: ';
 $string['domain_mismatch'] = 'Launch URL\'s domain does not match tool configuration.';
 $string['custom_config'] = 'Using custom tool configuration.';
 $string['tool_config_not_found'] = 'Tool configuration not found for this URL.';
+
+//Instance help
+
+$string['external_tool_type_help'] = <<<HTML
+The main purpose of a tool configuration is to set up a secure communication channel between Moodle and the tool provider.
+It also provides an opportunity for configuration defaults and setting up additional services provided by the tool.
+
+<ul>
+   <li>
+       <b>Automatic, based on Launch URL</b> - This setting should be used in almost all cases. Moodle will select the most appropriate tool configuration
+       based on the Launch URL. Tools configured by both an administrator or within this course will be used.
+       When the Launch URL is specified, Moodle will provide feedback on whether it recognizes it or not. If Moodle does not recognize the Launch URL,
+       you may need to enter the tool configuration details manually.
+   </li>
+   <li>
+       <b>A specific tool type</b> - By selecting a specific tool type, you can force Moodle to use that tool configuration when communicating with the 
+       external tool provider. If the Launch URL does not appear to belong to the tool provider, a warning will appear. In some cases, it is not necessary
+       to enter a Launch URL when providing a specific tool type (if not launching to a particular resource within the tool provider).
+   </li>
+   <li>
+       <b>Custom configuration</b> - To setup custom tool configuration on just this instance, show Advanced options, and enter the consumer key and
+       shared secret yourself. If you do not have a consumer key and shared secret, you may be able to request them from the tool provider.
+       Not all tools require a consumer key and shared secret, in which case the fields may be left blank.
+   </li>
+</ul>
+
+<b>Tool type editing:</b><br />
+
+Three icons are available after the External tool type dropdown list:
+
+<ul>
+    <li>
+        <b>Add</b> - Create a course level tool configuration. All External Tool instances in this course may use the tool configuration.
+    </li>
+    <li>
+        <b>Edit</b> - Select a course level tool type from the dropdown, then click this icon. The details of the tool configuration may be edited.
+    </li>
+    <li>
+        <b>Delete</b> - Remove the selected course level tool type.
+    </li>
+</ul>
+HTML;
+
+$string['launch_url_help'] = <<<HTML
+The Launch URL indicates the web address of the External Tool, and may contain additional information, such as the resource to show.
+If you are unsure what to enter for the Launch URL, please check with the tool provider for more information.
+
+If you have selected a specific tool type, you may not need to enter a Launch URL. If the tool link is used to just launch
+into the tool provider's system, and not go to a specific resource, this will likely be the case.
+HTML;
+
+$string['launchinpopup_help'] = <<<HTML
+The launch container affects the display of the tool when launched from the course. Some launch containers provide more screen
+real estate to the tool, and others provide a more integrated feel with the Moodle environemnt.
+   
+<ul>
+    <li>
+        <b>Default</b>  - Use the launch container specified by the tool configuration.
+    </li>
+    <li>
+        <b>Embed</b> - The tool is displayed within the existing Moodle window, in a manner similar to most other Activity types.
+    </li>
+    <li>
+        <b>Embed, without blocks</b> - The tool is displayed within the existing Moodle window, with just the neavigation controls
+        at the top of the page.
+    </li>
+    <li>
+        <b>New window</b> - The tool opens in a new window, occupying all the available space. 
+        Depending on the browser, it will open in a new tab or a popup window.
+        It is possible that browsers will prevent the new window from opening.
+    </li>
+</ul>
+HTML;
+
+$string['resourcekey_help'] = <<<HTML
+For pre-configured tools, it is not necessary to enter a resource key here, as the consumer key will be
+provided as part of the configuration process.
+
+This field should be entered if creating a link to a tool provider which is not already configured.
+If the tool provider is to be used more than once in this course, adding a course tool configuration is a good idea.
+   
+The consumer key can be thought of as a username used to authenticate access to the tool.
+It can be used by the tool provider to uniquely identify the Moodle site from which users launch into the tool.
+
+The consumer key must be provided by the tool provider. The method of obtaining a consumer key varies between
+tool providers. It may be an automated process, or it may require a dialogue with the tool provider.
+
+Tools which do not require secure communication from Moodle and do not provide additional services (such as grade reporting)
+may not require a resource key.
+HTML;
+
+$string['password_help'] = <<<HTML
+For pre-configured tools, it is not necessary to enter a shared secret here, as the shared secret will be
+provided as part of the configuration process.
+
+This field should be entered if creating a link to a tool provider which is not already configured.
+If the tool provider is to be used more than once in this course, adding a course tool configuration is a good idea.
+
+The shared secret can be thought of as a password used to authenticate access to the tool. It should be provided
+along with the consumer key from the tool provider.
+
+Tools which do not require secure communication from Moodle and do not provide additional services (such as grade reporting)
+may not require a shared secret.
+HTML;
+
+$string['custom_help'] = <<<HTML
+Custom parameters are settings used by the tool provider. For example, a custom parameter may be used to display
+a specific resource from the provider.
+
+It is safe to leave this field unchanged unless directed by the tool provider.
+HTML;
+
+$string['share_name_help'] = <<<HTML
+Specify whether the full name of the user launching the tool should be shared with the tool provider.
+The tool provider may need launchers' names to show meaningful information within the tool.
+
+Note that this setting may be overriden in the tool configuration.
+HTML;
+
+$string['share_email_help'] = <<<HTML
+Specify whether the e-mail address of the user launching the tool will be shared with the tool provider.
+The tool provider may need launcher's e-mail addresses to distinguish users with the same name, or send e-mails
+to users based on actions within the tool.
+
+Note that this setting may be overriden in the tool configuration.
+HTML;
+
+$string['accept_grades_help'] = <<<HTML
+Specify whether the tool provider can add, update, read, and delete grades associated only with this external tool instance.
+
+Some tool providers support reporting grades back to Moodle based on actions taken within the tool, creating a more integrated
+experience.
+
+Note that this setting may be overriden in the tool configuration.
+HTML;
+
+$string['share_roster_help'] = <<<HTML
+Specify whether the tool can access the list of users enrolled in this course.
+
+Note that this setting may be overriden in the tool configuration.
+HTML;
+
+$string['display_name_help'] = <<<HTML
+If selected, the activity name (specified above) will display above the tool provider's content.
+
+It is possible that the tool provider may also display the title. This option can prevent the activity title from
+being displayed twice.
+
+The title is never displayed when the tool's launch container is in a new window.
+HTML;
+
+$string['display_description_help'] = <<<HTML
+If selected, the activity description (specified above) will display above the tool provider's content.
+
+The description may be used to provide additional instructions for launchers of the tool, but it is not required.
+
+The description is never displayed when the tool's launch container is in a new window.
+HTML;
+
+//Admin help
+$string['typename_help'] = <<<HTML
+The tool name is used to identify the tool provider within Moodle. The name entered will be visible
+to instructors when adding external tools within courses.
+HTML;
+
+$string['toolurl_help'] = <<<HTML
+The tool base URL is used to match tool launch URLs to the correct tool configuration. Prefxing the URL with http(s) is optional.
+    
+Additionally, the base URL is used as the launch URL if a launch URL is not specified in the external tool instance. 
+    
+<table>
+    <thead>
+        <tr>
+            <td>
+                <b>Base URL</b>
+            </td>
+            <td>
+                <b>Matches</b>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                tool.com
+            </td>
+            <td>
+                tool.com, tool.com/quizzes, tool.com/quizzes/quiz.php?id=10, www.tool.com/quizzes
+            </td>
+        </tr>
+        <tr>
+            <td>
+                www.tool.com/quizzes
+            </td>
+            <td>
+                tool.com/quizzes, tool.com/quizzes/take.php?id=10, www.tool.com/quizzes
+            </td>
+        </tr>
+        <tr>
+            <td>
+                quiz.tool.com
+            </td>
+            <td>
+                quiz.tool.com, quiz.tool.com/take.php?id=10
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+If two different tool configurations are for the same domain, the most specific match will be used.
+HTML;
+
+$string['resourcekey_admin_help'] = <<<HTML
+The consumer key can be thought of as a username used to authenticate access to the tool.
+It can be used by the tool provider to uniquely identify the Moodle site from which users launch into the tool.
+
+The consumer key must be provided by the tool provider. The method of obtaining a consumer key varies between
+tool providers. It may be an automated process, or it may require a dialogue with the tool provider.
+
+Tools which do not require secure communication from Moodle and do not provide additional services (such as grade reporting)
+may not require a resource key.
+HTML;
+
+$string['password_admin_help'] = <<<HTML
+The shared secret can be thought of as a password used to authenticate access to the tool. It should be provided
+along with the consumer key from the tool provider.
+
+Tools which do not require secure communication from Moodle and do not provide additional services (such as grade reporting)
+may not require a shared secret.
+HTML;
+
+$string['show_in_course_help'] = <<<HTML
+If selected, this tool configuration will appear in the "External tool type" dropdown when instructors
+configure external tools within courses.
+
+In most cases, this option does not need to be selected. Instructors can use this tool configuration
+based on the Launch URL matching the Tool base URL, which is the preferred method.
+
+The only case in which this option should be selected is if the tool configuration is just intended for single sign on.
+For example, if all launches to the tool provider just take the user to a landing page instead of to a specific resource.
+HTML;
+
+$string['default_launch_container_help'] = <<<HTML
+The launch container affects the display of the tool when launched from the course. Some launch containers provide more screen
+real estate to the tool, and others provide a more integrated feel with the Moodle environemnt.
+   
+<ul>
+    <li>
+        <b>Default</b>  - Use the launch container specified by the tool configuration.
+    </li>
+    <li>
+        <b>Embed</b> - The tool is displayed within the existing Moodle window, in a manner similar to most other Activity types.
+    </li>
+    <li>
+        <b>Embed, without blocks</b> - The tool is displayed within the existing Moodle window, with just the neavigation controls
+        at the top of the page.
+    </li>
+    <li>
+        <b>New window</b> - The tool opens in a new window, occupying all the available space. 
+        Depending on the browser, it will open in a new tab or a popup window.
+        It is possible that browsers will prevent the new window from opening.
+    </li>
+</ul>
+HTML;
+
+$string['share_name_admin_help'] = <<<HTML
+Specify whether the full name of the user launching the tool should be shared with the tool provider.
+The tool provider may need launchers' names to show meaningful information within the tool.
+HTML;
+
+$string['share_email_admin_help'] = <<<HTML
+Specify whether the e-mail address of the user launching the tool will be shared with the tool provider.
+The tool provider may need launcher's e-mail addresses to distinguish users with the same name in the UI, or send e-mails
+to users based on actions within the tool.
+HTML;
+
+$string['accept_grades_admin_help'] = <<<HTML
+Specify whether the tool provider can add, update, read, and delete grades associated with instances of this tool type.
+
+Some tool providers support reporting grades back to Moodle based on actions taken within the tool, creating a more integrated
+experience.
+HTML;
+
+$string['share_roster_admin_help'] = <<<HTML
+Specify whether the tool can access the list of users enrolled in courses from which this tool type is launched.
+HTML;
+
+$string['main_admin'] = 'General help';
+
+$string['main_admin_help'] = <<<HTML
+External tools allow Moodle users to seamlessly interact with learning resources hosted remotely. Through a special
+launch protocol, the remote tool will have access to some general information about the launching user. For example,
+the institution name, course id, user id, and other information such as the user's name or e-mail address.
+
+Tool types listed on this page are separated into three categories:
+
+<ul>
+    <li>
+        <b>Active</b> - These tool providers have been approved and configured by an administrator. They can be used from within any
+        course on this Moodle instance. If a consumer key and shared secret are entered, a trust relationship is established
+        between this Moodle instance and the remote tool, providing a secure communication channel.
+    </li>
+    <li>
+        <b>Pending</b> - These tool providers came in through a package import, but have not been configured by an administrator.
+        Instructors may still use tools from these providers if they have a consumer key and shared secret, or if none is required.
+    </li>
+    <li>
+        <b>Rejected</b> - These tools providers are flagged as ones which an administrator has no intention of making available to the entire 
+        Moodle instance. Instructors may still use tools from these providers if they have a consumer key and shared secret, or if none is required.
+    </li>
+</ul>
+HTML;
+
+$string['modulename_help'] = <<<HTML
+External tools allow Moodle users to interact with learning resources and activities on other web sites. For instance, an
+external tool could provide access to a new activity type or learning materials from a publisher.
+
+To setup an external tool instance a tool provider which supports LTI (Learning Tools Interoperability) is required.
+If you find a tool provider which supports LTI, they should be able to provide instructions on how to configure the
+external tool instance. Additionally, tool types configured by a site administrator will also be available for use.
+
+External tools differ from URL resources in a few ways:
+<ul>
+    <li>
+        <b>Context aware</b> - External tools have access to information about the user who launched the tool, such as
+        insitution, course, name, and other information.
+    </li>
+    <li>
+        <b>Deep integration</b> - External tools support reading, updating, and deleting grades associated with the activity instance. More integration points
+        are planned for future releases.
+    </li>
+    <li>
+        <b>Security</b> - External tool configurations create a trust relationship between Moodle and the tool provider, allowing secure communication
+        between them.
+    </li>
+</ul>
+HTML;

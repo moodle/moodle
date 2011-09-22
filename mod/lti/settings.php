@@ -183,5 +183,5 @@ HTML;
     $PAGE->requires->yui2_lib('tabview');
     $PAGE->requires->yui2_lib('datatable');
    
-    $settings->add(new admin_setting_heading('lti_types', get_string('external_tool_types', 'lti'), $template));
+    $settings->add(new admin_setting_heading('lti_types', get_string('external_tool_types', 'lti') . $OUTPUT->help_icon('main_admin', 'lti'), $template));
 }
