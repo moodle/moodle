@@ -240,10 +240,10 @@
         }
         if(has_capability('moodle/course:bulkmessaging', $coursecontext)) {
             $usehtmleditor = can_use_html_editor();
-            echo '<br /><div class="buttons">';
+            echo '<div class="buttons"><br />';
             echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> ';
             echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> ';
-            echo '</div';
+            echo '</div>';
             echo '<fieldset class="clearfix">';
             echo '<legend class="ftoggler">'.get_string('send_message', 'feedback').'</legend>';
             echo '<div><label for="feedback_subject">'.get_string('subject', 'feedback').'&nbsp;</label><input type="text" id="feedback_subject" size="50" maxlength="255" name="subject" value="'.$subject.'" /></div>';
@@ -257,10 +257,10 @@
             echo '<br /><div class="buttons">';
             echo '<input type="submit" name="send_message" value="'.get_string('send', 'feedback').'" />';
             echo '</div>';
-            echo '</fieldset>';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '<input type="hidden" name="action" value="sendmessage" />';
             echo '<input type="hidden" name="id" value="'.$id.'" />';
+            echo '</fieldset>';
             echo '</form>';
             //include the needed js
             $module = array('name'=>'mod_feedback', 'fullpath'=>'/mod/feedback/feedback.js');
@@ -277,4 +277,3 @@
 
     echo $OUTPUT->footer();
 
-?>
