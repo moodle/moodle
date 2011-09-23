@@ -254,7 +254,7 @@ function enrol_sharing_course($user1, $user2) {
     $sql = "SELECT DISTINCT 'x'
               FROM {enrol} e
               JOIN {user_enrolments} ue1 ON (ue1.enrolid = e.id AND ue1.status = :active1 AND ue1.userid = :user1)
-              JOIN {user_enrolments} ue2 ON (ue1.enrolid = e.id AND ue1.status = :active2 AND ue2.userid = :user2)
+              JOIN {user_enrolments} ue2 ON (ue2.enrolid = e.id AND ue2.status = :active2 AND ue2.userid = :user2)
               JOIN {course} c ON (c.id = e.courseid AND c.visible = 1)
              WHERE e.status = :enabled AND e.enrol $plugins";
 
