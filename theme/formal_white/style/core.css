@@ -110,7 +110,9 @@ input[type="radio"] {
     width: 50%;
 }
 
-.loginbox .loginform .form-label {
+.dir-ltr .loginbox .loginform .form-label {
+    float: none;
+    width: 100%;
     margin: 0 auto;
     float: left;
     text-align: right;
@@ -118,6 +120,9 @@ input[type="radio"] {
 }
 
 .dir-rtl .loginbox .loginform .form-label {
+    float: none;
+    width: 100%;
+    margin: 0 auto;
     text-align: right;
 }
 

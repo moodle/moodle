@@ -185,7 +185,12 @@ h1.headermain {
     margin-top: 15px;
 }
 
-.loginbox .loginform .form-label {
+.dir-rtl .loginbox .loginform .form-label {
+    width: 39%;
+    float: left;
+    text-align: right;
+}
+.dir-ltr .loginbox .loginform .form-label {
     width: 39%;
     float: left;
     text-align: right;
