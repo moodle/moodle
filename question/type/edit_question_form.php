@@ -152,7 +152,7 @@ abstract class question_edit_form extends moodleform {
 
         $mform->addElement('text', 'defaultmark', get_string('defaultmark', 'question'),
                 array('size' => 3));
-        $mform->setType('defaultmark', PARAM_INT);
+        $mform->setType('defaultmark', PARAM_FLOAT);
         $mform->setDefault('defaultmark', 1);
         $mform->addRule('defaultmark', null, 'required', null, 'client');
 
