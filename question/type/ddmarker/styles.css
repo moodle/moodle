@@ -1,0 +1,76 @@
+.que.ddmarker .qtext {
+    margin-bottom: 0.5em;
+    display: block;
+}
+
+.que.ddmarker div.droparea img, form.mform fieldset#previewareaheader div.droparea img  {
+    border: 1px solid #000000;
+}
+
+.que.ddmarker .draghome, form.mform fieldset#previewareaheader .draghome {
+    vertical-align: top;
+    margin: 5px;
+    visibility : hidden;
+}
+
+.que.ddmarker div.draghome, form.mform fieldset#previewareaheader div.draghome {
+    border: 1px solid black;
+    cursor: move;
+    background-color: #B0C4DE;
+    display: -moz-inline-stack;
+    display:inline-block;
+    height: auto;
+    width: auto;
+    zoom: 1;
+    *display: inline;
+}
+
+.que.ddmarker .group1, form.mform fieldset#previewareaheader .group1 {
+    background-color: #FFFFFF;
+}
+.que.ddmarker .group2, form.mform fieldset#previewareaheader .group2 {
+    background-color: #B0C4DE;
+}
+.que.ddmarker .group3, form.mform fieldset#previewareaheader .group3 {
+    background-color: #DCDCDC;
+}
+.que.ddmarker .group4, form.mform fieldset#previewareaheader .group4 {
+    background-color: #D8BFD8;
+}
+.que.ddmarker .group5, form.mform fieldset#previewareaheader .group5 {
+    background-color: #87CEFA;
+}
+.que.ddmarker .group6, form.mform fieldset#previewareaheader .group6 {
+    background-color: #DAA520;
+}
+.que.ddmarker .group7, form.mform fieldset#previewareaheader .group7 {
+    background-color: #FFD700;
+}
+.que.ddmarker .group8, form.mform fieldset#previewareaheader .group8 {
+    background-color: #F0E68C;
+}
+.que.ddmarker .drag, form.mform fieldset#previewareaheader .drag {
+    border: 1px solid black;
+    cursor: move;
+    z-index: 2;
+}
+.que.ddmarker .dragitems.readonly .drag {
+    cursor: auto;
+}
+.que.ddmarker div.ddarea, form.mform fieldset#previewareaheader div.ddarea {
+    text-align : center;
+}
+.que.ddmarker .dropbackground, form.mform fieldset#previewareaheader .dropbackground {
+    margin:0 auto;
+}
+.que.ddmarker .dropzone {
+    border: 1px solid black;
+    position: absolute;
+    z-index: 1;
+}
+.que.ddmarker div.dragitems div.draghome, .que.ddmarker div.dragitems div.drag,
+form.mform fieldset#previewareaheader div.draghome, form.mform fieldset#previewareaheader div.drag {
+    font:13px/1.231 arial,helvetica,clean,sans-serif;
+    *font-size:small; /* for IE */
+    *font:x-small; /* for IE in quirks mode */
+}
