@@ -12,7 +12,7 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/questionlib.php');
 
 // Get URL parameters.
-$requestedqtype = optional_param('qtype', '', PARAM_SAFEDIR);
+$requestedqtype = optional_param('qtype', '', PARAM_PLUGIN);
 
 // Print the header & check permissions.
 admin_externalpage_setup('reportquestioninstances');

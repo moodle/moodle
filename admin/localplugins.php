@@ -33,7 +33,7 @@ require_once($CFG->libdir.'/tablelib.php');
 
 admin_externalpage_setup('managelocalplugins');
 
-$delete  = optional_param('delete', '', PARAM_SAFEDIR);
+$delete  = optional_param('delete', '', PARAM_PLUGIN);
 $confirm = optional_param('confirm', '', PARAM_BOOL);
 
 /// If data submitted, then process and store.

@@ -79,7 +79,7 @@ $sortedqtypes = question_bank::sort_qtype_array($sortedqtypes, $config);
 // Process actions ============================================================
 
 // Disable.
-if (($disable = optional_param('disable', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
+if (($disable = optional_param('disable', '', PARAM_PLUGIN)) && confirm_sesskey()) {
     if (!isset($qtypes[$disable])) {
         print_error('unknownquestiontype', 'question', $thispageurl, $disable);
     }
@@ -89,7 +89,7 @@ if (($disable = optional_param('disable', '', PARAM_SAFEDIR)) && confirm_sesskey
 }
 
 // Enable.
-if (($enable = optional_param('enable', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
+if (($enable = optional_param('enable', '', PARAM_PLUGIN)) && confirm_sesskey()) {
     if (!isset($qtypes[$enable])) {
         print_error('unknownquestiontype', 'question', $thispageurl, $enable);
     }
@@ -103,7 +103,7 @@ if (($enable = optional_param('enable', '', PARAM_SAFEDIR)) && confirm_sesskey()
 }
 
 // Move up in order.
-if (($up = optional_param('up', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
+if (($up = optional_param('up', '', PARAM_PLUGIN)) && confirm_sesskey()) {
     if (!isset($qtypes[$up])) {
         print_error('unknownquestiontype', 'question', $thispageurl, $up);
     }
@@ -114,7 +114,7 @@ if (($up = optional_param('up', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
 }
 
 // Move down in order.
-if (($down = optional_param('down', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
+if (($down = optional_param('down', '', PARAM_PLUGIN)) && confirm_sesskey()) {
     if (!isset($qtypes[$down])) {
         print_error('unknownquestiontype', 'question', $thispageurl, $down);
     }
@@ -125,7 +125,7 @@ if (($down = optional_param('down', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
 }
 
 // Delete.
-if (($delete = optional_param('delete', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
+if (($delete = optional_param('delete', '', PARAM_PLUGIN)) && confirm_sesskey()) {
     // Check it is OK to delete this question type.
     if ($delete == 'missingtype') {
         print_error('cannotdeletemissingqtype', 'question', $thispageurl);

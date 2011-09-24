@@ -706,7 +706,7 @@ class grade_plugin_return {
     public function grade_plugin_return($params = null) {
         if (empty($params)) {
             $this->type     = optional_param('gpr_type', null, PARAM_SAFEDIR);
-            $this->plugin   = optional_param('gpr_plugin', null, PARAM_SAFEDIR);
+            $this->plugin   = optional_param('gpr_plugin', null, PARAM_PLUGIN);
             $this->courseid = optional_param('gpr_courseid', null, PARAM_INT);
             $this->userid   = optional_param('gpr_userid', null, PARAM_INT);
             $this->page     = optional_param('gpr_page', null, PARAM_INT);
@@ -838,7 +838,7 @@ class grade_plugin_return {
 
         if (!empty($this->plugin)) {
             $mform->addElement('hidden', 'gpr_plugin', $this->plugin);
-            $mform->setType('gpr_plugin', PARAM_SAFEDIR);
+            $mform->setType('gpr_plugin', PARAM_PLUGIN);
         }
 
         if (!empty($this->courseid)) {

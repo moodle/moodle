@@ -30,8 +30,8 @@ require_once('../config.php');
 require_once($CFG->dirroot.'/rating/lib.php');
 
 $contextid   = required_param('contextid', PARAM_INT);
-$component   = required_param('component', PARAM_ALPHAEXT);
-$ratingarea  = required_param('ratingarea', PARAM_ALPHANUMEXT);
+$component   = required_param('component', PARAM_COMPONENT);
+$ratingarea  = required_param('ratingarea', PARAM_AREA);
 $itemid      = required_param('itemid', PARAM_INT);
 $scaleid     = required_param('scaleid', PARAM_INT);
 $userrating  = required_param('rating', PARAM_INT);

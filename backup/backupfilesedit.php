@@ -31,8 +31,8 @@ require_once($CFG->dirroot . '/repository/lib.php');
 $contextid = required_param('contextid', PARAM_INT);
 $currentcontext = required_param('currentcontext', PARAM_INT);
 // file parameters
-$component  = optional_param('component', null, PARAM_ALPHAEXT);
-$filearea   = optional_param('filearea', null, PARAM_ALPHAEXT);
+$component  = optional_param('component', null, PARAM_COMPONENT);
+$filearea   = optional_param('filearea', null, PARAM_AREA);
 $returnurl  = optional_param('returnurl', null, PARAM_URL);
 
 list($context, $course, $cm) = get_context_info_array($currentcontext);

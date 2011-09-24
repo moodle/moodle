@@ -49,8 +49,8 @@ if (count($args) < 3) { // always at least context, component and filearea
 }
 
 $contextid = (int)array_shift($args);
-$component = clean_param(array_shift($args), PARAM_SAFEDIR);
-$filearea  = clean_param(array_shift($args), PARAM_SAFEDIR);
+$component = clean_param(array_shift($args), PARAM_COMPONENT);
+$filearea  = clean_param(array_shift($args), PARAM_AREA);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 

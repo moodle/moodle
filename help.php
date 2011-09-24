@@ -31,7 +31,7 @@ define('NO_MOODLE_COOKIES', true);
 require_once(dirname(__FILE__) . '/config.php');
 
 $identifier = required_param('identifier', PARAM_STRINGID);
-$component  = required_param('component', PARAM_SAFEDIR);
+$component  = required_param('component', PARAM_COMPONENT);
 $lang       = required_param('lang', PARAM_LANG); // TODO: maybe split into separate scripts
 $ajax       = optional_param('ajax', 0, PARAM_BOOL);
 

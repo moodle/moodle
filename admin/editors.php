@@ -14,7 +14,7 @@ require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 $returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageeditors";
 
 $action = optional_param('action', '', PARAM_ACTION);
-$editor = optional_param('editor', '', PARAM_SAFEDIR);
+$editor = optional_param('editor', '', PARAM_PLUGIN);
 
 // get currently installed and enabled auth plugins
 $available_editors = editors_get_available();

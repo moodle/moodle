@@ -22,7 +22,7 @@
 require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-$choose = optional_param('choose', '', PARAM_SAFEDIR);
+$choose = optional_param('choose', '', PARAM_PLUGIN);
 $reset  = optional_param('reset', 0, PARAM_BOOL);
 $device = optional_param('device', '', PARAM_TEXT);
 
@@ -43,7 +43,7 @@ if ($reset and confirm_sesskey()) {
     theme_reset_all_caches();
 
 } else if ($choose && $device && confirm_sesskey()) {
- 
+
     // Load the theme to make sure it is valid.
     $theme = theme_config::load($choose);
     // Get the config argument for the chosen device.

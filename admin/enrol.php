@@ -27,7 +27,7 @@ require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $action  = required_param('action', PARAM_ACTION);
-$enrol   = required_param('enrol', PARAM_SAFEDIR);
+$enrol   = required_param('enrol', PARAM_PLUGIN);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
 $PAGE->set_url('/admin/enrol.php');

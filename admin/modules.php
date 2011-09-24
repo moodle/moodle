@@ -11,9 +11,9 @@
 
     admin_externalpage_setup('managemodules');
 
-    $show    = optional_param('show', '', PARAM_SAFEDIR);
-    $hide    = optional_param('hide', '', PARAM_SAFEDIR);
-    $delete  = optional_param('delete', '', PARAM_SAFEDIR);
+    $show    = optional_param('show', '', PARAM_PLUGIN);
+    $hide    = optional_param('hide', '', PARAM_PLUGIN);
+    $delete  = optional_param('delete', '', PARAM_PLUGIN);
     $confirm = optional_param('confirm', '', PARAM_BOOL);
 
 

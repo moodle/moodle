@@ -146,7 +146,7 @@ class moodle_course_external extends external_api {
                             'summary' => new external_value(PARAM_RAW, 'summary'),
                             'summaryformat' => new external_value(PARAM_INT,
                                     'the summary text Moodle format'),
-                            'format' => new external_value(PARAM_ALPHANUMEXT,
+                            'format' => new external_value(PARAM_PLUGIN,
                                     'course format: weeks, topics, social, site,..'),
                             'showgrades' => new external_value(PARAM_INT,
                                     '1 if grades are shown, otherwise 0', VALUE_OPTIONAL),
@@ -185,9 +185,9 @@ class moodle_course_external extends external_api {
                                     VALUE_OPTIONAL),
                             'completionnotify' => new external_value(PARAM_INT,
                                     '1: yes 0: no', VALUE_OPTIONAL),
-                            'lang' => new external_value(PARAM_ALPHANUMEXT,
+                            'lang' => new external_value(PARAM_SAFEDIR,
                                     'forced course language', VALUE_OPTIONAL),
-                            'forcetheme' => new external_value(PARAM_ALPHANUMEXT,
+                            'forcetheme' => new external_value(PARAM_PLUGIN,
                                     'name of the force theme', VALUE_OPTIONAL),
                         ), 'course'
                 )
@@ -212,7 +212,7 @@ class moodle_course_external extends external_api {
                             'summary' => new external_value(PARAM_RAW, 'summary', VALUE_OPTIONAL),
                             'summaryformat' => new external_value(PARAM_INT,
                                     'the summary text Moodle format', VALUE_DEFAULT, FORMAT_MOODLE),
-                            'format' => new external_value(PARAM_ALPHANUMEXT,
+                            'format' => new external_value(PARAM_PLUGIN,
                                     'course format: weeks, topics, social, site,..',
                                     VALUE_DEFAULT, $courseconfig->format),
                             'showgrades' => new external_value(PARAM_INT,
@@ -252,9 +252,9 @@ class moodle_course_external extends external_api {
                                     VALUE_OPTIONAL),
                             'completionnotify' => new external_value(PARAM_INT,
                                     '1: yes 0: no', VALUE_OPTIONAL),
-                            'lang' => new external_value(PARAM_ALPHANUMEXT,
+                            'lang' => new external_value(PARAM_SAFEDIR,
                                     'forced course language', VALUE_OPTIONAL),
-                            'forcetheme' => new external_value(PARAM_ALPHANUMEXT,
+                            'forcetheme' => new external_value(PARAM_PLUGIN,
                                     'name of the force theme', VALUE_OPTIONAL),
                         )
                     ), 'courses to create'

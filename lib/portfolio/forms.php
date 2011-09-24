@@ -151,7 +151,7 @@ final class portfolio_admin_form extends moodleform {
         $mform->addElement('hidden', 'visible', $this->visible);
         $mform->setType('visible', PARAM_INT);
         $mform->addElement('hidden', 'plugin', $this->plugin);
-        $mform->setType('plugin', PARAM_SAFEDIR);
+        $mform->setType('plugin', PARAM_PLUGIN);
 
         if (!$this->instance) {
             $insane = portfolio_instance_sanity_check($this->instance);

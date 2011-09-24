@@ -46,8 +46,8 @@ switch ($action) {
     // used by course file tree viewer
     case 'getfiletree':
         $contextid  = required_param('contextid', PARAM_INT);
-        $component  = required_param('component', PARAM_ALPHAEXT);
-        $filearea   = required_param('filearea', PARAM_ALPHAEXT);
+        $component  = required_param('component', PARAM_COMPONENT);
+        $filearea   = required_param('filearea', PARAM_AREA);
         $itemid     = required_param('itemid', PARAM_INT);
         $filepath   = required_param('filepath', PARAM_PATH);
 

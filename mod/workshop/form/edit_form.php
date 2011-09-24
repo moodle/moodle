@@ -63,7 +63,7 @@ class workshop_edit_strategy_form extends moodleform {
         $mform->setType('workshopid', PARAM_INT);
 
         $mform->addElement('hidden', 'strategy', $this->workshop->strategy);    // strategy name
-        $mform->setType('strategy', PARAM_SAFEDIR);
+        $mform->setType('strategy', PARAM_PLUGIN);
 
         $this->definition_inner($mform);
 

@@ -262,7 +262,7 @@ class report_customlang_utils {
             debugging('Unable to dump local strings for non-installed language pack .'.s($lang));
             return false;
         }
-        if ($component !== clean_param($component, PARAM_SAFEDIR)) {
+        if ($component !== clean_param($component, PARAM_COMPONENT)) {
             throw new coding_exception('Incorrect component name');
         }
         if (!$filename = self::get_component_filename($component)) {

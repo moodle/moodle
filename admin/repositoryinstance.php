@@ -10,7 +10,7 @@ $new     = optional_param('new', '', PARAM_FORMAT);
 $hide    = optional_param('hide', 0, PARAM_INT);
 $delete  = optional_param('delete', 0, PARAM_INT);
 $sure    = optional_param('sure', '', PARAM_ALPHA);
-$type    = optional_param('type', '', PARAM_ALPHAEXT);
+$type    = optional_param('type', '', PARAM_PLUGIN);
 
 $context = get_context_instance(CONTEXT_SYSTEM);
 

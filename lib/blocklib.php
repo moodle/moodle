@@ -1078,7 +1078,7 @@ class block_manager {
      * @return boolean true if anything was done. False if not.
      */
     public function process_url_add() {
-        $blocktype = optional_param('bui_addblock', null, PARAM_SAFEDIR);
+        $blocktype = optional_param('bui_addblock', null, PARAM_PLUGIN);
         if (!$blocktype) {
             return false;
         }

@@ -6,7 +6,7 @@
 require_once '../config.php';
 require_once $CFG->libdir.'/adminlib.php';
 
-$auth = required_param('auth', PARAM_SAFEDIR);
+$auth = required_param('auth', PARAM_PLUGIN);
 $PAGE->set_pagetype('admin-auth-' . $auth);
 
 admin_externalpage_setup('authsetting'.$auth);

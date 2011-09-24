@@ -13,7 +13,7 @@
     $hide      = optional_param('hide', 0, PARAM_INT);
     $show      = optional_param('show', 0, PARAM_INT);
     $blocklist = optional_param('blocklist', 0, PARAM_INT);
-    $modulelist= optional_param('modulelist', '', PARAM_ALPHAEXT);
+    $modulelist= optional_param('modulelist', '', PARAM_PLUGIN);
 
     $PAGE->set_url('/course/search.php', compact('search', 'page', 'perpage', 'blocklist', 'modulelist', 'edit'));
     $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
