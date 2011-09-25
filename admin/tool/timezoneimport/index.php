@@ -1,20 +1,41 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-    // Automatic update of Timezones from a new source
+/**
+ * Automatic update of Timezones from a new source
+ *
+ * @package    tool
+ * @subpackage timezoneimport
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-    require_once('../config.php');
+    require_once('../../../config.php');
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->libdir.'/olson.php');
 
-    admin_externalpage_setup('timezoneimport');
+    admin_externalpage_setup('tooltimezoneimport');
 
     $ok = optional_param('ok', 0, PARAM_BOOL);
 
 
 /// Print headings
 
-    $strimporttimezones = get_string('importtimezones', 'admin');
+    $strimporttimezones = get_string('importtimezones', 'tool_timezoneimport');
 
     echo $OUTPUT->header();
 
@@ -28,9 +49,9 @@
         $message .= '<a href="'.$CFG->wwwroot.'/lib/timezone.txt">'.$CFG->dirroot.'/lib/timezone.txt</a><br />';
         $message .= '<br />';
 
-        $message = get_string("configintrotimezones", 'admin', $message);
+        $message = get_string("configintrotimezones", 'tool_timezoneimport', $message);
 
-        echo $OUTPUT->confirm($message, 'timezoneimport.php?ok=1', 'index.php');
+        echo $OUTPUT->confirm($message, 'index.php?ok=1', new moodle_url('/admin/index.php'));
 
         echo $OUTPUT->footer();
         exit;
@@ -92,9 +113,9 @@
         $a = null;
         $a->count = count($timezones);
         $a->source  = $importdone;
-        echo $OUTPUT->heading(get_string('importtimezonescount', 'admin', $a), 3);
+        echo $OUTPUT->heading(get_string('importtimezonescount', 'tool_timezoneimport', $a), 3);
 
-        echo $OUTPUT->continue_button('index.php');
+        echo $OUTPUT->continue_button(new moodle_url('/admin/index.php'));
 
         $timezonelist = array();
         foreach ($timezones as $timezone) {
@@ -117,8 +138,8 @@
         echo $OUTPUT->box_end();
 
     } else {
-        echo $OUTPUT->heading(get_string('importtimezonesfailed', 'admin'), 3);
-        echo $OUTPUT->continue_button('index.php');
+        echo $OUTPUT->heading(get_string('importtimezonesfailed', 'tool_timezoneimport'), 3);
+        echo $OUTPUT->continue_button(new moodle_url('/admin/index.php'));
     }
 
     echo $OUTPUT->footer();

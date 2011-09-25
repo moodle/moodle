@@ -19,6 +19,5 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configtext('allcountrycodes', get_string('allcountrycodes', 'admin'), get_string('configallcountrycodes', 'admin'), '', '/^(?:\w+(?:,\w+)*)?$/'));
 
     $ADMIN->add('location', $temp);
-    $ADMIN->add('location', new admin_externalpage('timezoneimport', get_string('updatetimezones', 'admin'), "$CFG->wwwroot/$CFG->admin/timezoneimport.php"));
 
 } // end of speedup
