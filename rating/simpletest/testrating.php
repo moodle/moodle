@@ -39,15 +39,50 @@ class rating_db_test extends UnitTestCaseUsingDatabase {
 
     protected $testtables = array(
             'lib' => array(
-                'rating', 'scale'));
+                'rating', 'scale', 'context', 'capabilities', 'role_assignments', 'role_capabilities', 'course'));
+
+    protected $syscontext;
+    protected $neededcaps = array('view', 'viewall', 'viewany', 'rate');
+    protected $originaldefaultfrontpageroleid;
 
     public function setUp() {
+        global $CFG;
         parent::setUp();
 
-        $this->switch_to_test_db(); // Switch to test DB for all the execution
+        // Make sure accesslib has cached a sensible system context object
+        // before we switch to the test DB.
+        $this->syscontext = get_context_instance(CONTEXT_SYSTEM);
 
         foreach ($this->testtables as $dir => $tables) {
             $this->create_test_tables($tables, $dir); // Create tables
+        }
+
+        $this->switch_to_test_db(); // Switch to test DB for all the execution
+
+        $this->fill_records();
+
+        // Ignore any frontpageroleid, that would require to crete more contexts
+        $this->originaldefaultfrontpageroleid = $CFG->defaultfrontpageroleid;
+        $CFG->defaultfrontpageroleid = null;
+    }
+
+    public function tearDown() {
+        global $CFG;
+        // Recover original frontpageroleid
+        $CFG->defaultfrontpageroleid = $this->originaldefaultfrontpageroleid;
+        parent::tearDown();
+    }
+
+    private function fill_records() {
+        global $DB;
+
+        // Set up systcontext in the test database.
+        $this->syscontext->id = $this->testdb->insert_record('context', $this->syscontext);
+
+        // Add the capabilities used by ratings
+        foreach ($this->neededcaps as $neededcap) {
+            $this->testdb->insert_record('capabilities', (object)array('name' => 'moodle/rating:' . $neededcap,
+                                                                 'contextlevel' => CONTEXT_COURSE));
         }
     }
 
@@ -57,7 +92,7 @@ class rating_db_test extends UnitTestCaseUsingDatabase {
     function test_get_ratings_sql() {
 
         // We load 3 items. Each is rated twice. For simplicity itemid == user id of the item owner
-        $ctxid = SYSCONTEXTID;
+        $ctxid = $this->syscontext->id;
         $this->load_test_data('rating',
                 array('contextid', 'component', 'ratingarea', 'itemid', 'scaleid', 'rating', 'userid', 'timecreated', 'timemodified'), array(
 
@@ -86,13 +121,13 @@ class rating_db_test extends UnitTestCaseUsingDatabase {
 
         // Prepare the default options
         $defaultoptions = array (
-                'context'    => get_context_instance(CONTEXT_SYSTEM),
+                'context'    => $this->syscontext,
                 'component'  => 'mod_forum',
                 'ratingarea' => 'post',
                 'scaleid'    => 10,
                 'aggregate'  => RATING_AGGREGATE_AVERAGE);
 
-        $rm = new rating_manager();
+        $rm = new mockup_rating_manager();
 
         // STEP 1: Retreive ratings using the current user
 
@@ -222,4 +257,22 @@ class rating_db_test extends UnitTestCaseUsingDatabase {
         $this->assertNull($result[0]->rating->rating);
         $this->assertEqual($result[0]->rating->aggregate, 3);//should still get the aggregate
     }
+}
+
+/**
+ * rating_manager subclass for unit testing without requiring capabilities to be loaded
+ */
+class mockup_rating_manager extends rating_manager {
+
+    /**
+     * Overwrite get_plugin_permissions_array() so it always return granted perms for unit testing
+     */
+    public function get_plugin_permissions_array($contextid, $component, $ratingarea) {
+        return array(
+            'rate' => true,
+            'view' => true,
+            'viewany' => true,
+            'viewall' => true);
+    }
+
 }
