@@ -345,7 +345,7 @@ abstract class moodleform {
      *
      * @return bool/array with errors
      */
-    protected function validate_draft_files() {
+    function _validate_draft_files() {
         global $USER;
         $mform =& $this->_form;
 
@@ -478,7 +478,7 @@ abstract class moodleform {
             $file_val = $this->_validate_files($files);
             //check draft files for validation and flag them if required files
             //are not in draft area.
-            $draftfilevalue = $this->validate_draft_files();
+            $draftfilevalue = $this->_validate_draft_files();
 
             if ($file_val !== true && $draftfilevalue !== true) {
                 $file_val = array_merge($file_val, $draftfilevalue);
@@ -2347,7 +2347,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         if (!$form->isFrozen()) {
             $args = $form->getLockOptionObject();
             if (count($args[1]) > 0) {
-                $PAGE->requires->js_init_call('M.form.initFormDependencies', $args, true, moodleform::get_js_module());
+                $PAGE->requires->js_init_call('M.form.initFormDependencies', $args, false, moodleform::get_js_module());
             }
         }
     }
