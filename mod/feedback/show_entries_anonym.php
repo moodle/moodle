@@ -226,4 +226,3 @@ if($showcompleted) {
 
 echo $OUTPUT->footer();
 
-?>

@@ -287,4 +287,3 @@
             return $textlib->convert($text, $enc);
         }
     }
-?>
