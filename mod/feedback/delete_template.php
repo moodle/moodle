@@ -138,4 +138,3 @@ if($shoulddelete == 1) {
 
 echo $OUTPUT->footer();
 
-?>

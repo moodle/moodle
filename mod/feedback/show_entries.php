@@ -305,4 +305,3 @@ if($do_show == 'showoneentry') {
 
 echo $OUTPUT->footer();
 
-?>
