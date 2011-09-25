@@ -1,12 +1,12 @@
-M.report_spamcleaner = {
+M.tool_spamcleaner = {
     Y: null,
     row: null,
     me: null,
 
     del_all: function() {
-        var context = M.report_spamcleaner;
+        var context = M.tool_spamcleaner;
 
-        var yes = confirm(M.str.report_spamcleaner.spamdeleteallconfirm);
+        var yes = confirm(M.str.tool_spamcleaner.spamdeleteallconfirm);
         if (yes) {
             var cfg = {
                 method: "POST",
@@ -15,7 +15,7 @@ M.report_spamcleaner = {
                         try {
                             var resp = context.Y.JSON.parse(o.responseText);
                         } catch(e) {
-                            alert(M.str.report_spamcleaner.spaminvalidresult);
+                            alert(M.str.tool_spamcleaner.spaminvalidresult);
                             return;
                         }
                         if (resp == true) {
@@ -29,14 +29,14 @@ M.report_spamcleaner = {
     },
 
     del_user: function(obj, id) {
-        var context = M.report_spamcleaner;
+        var context = M.tool_spamcleaner;
 
         if (context.Y == null) {
             // not initialised yet
             return;
         }
 
-        var yes = confirm(M.str.report_spamcleaner.spamdeleteconfirm);
+        var yes = confirm(M.str.tool_spamcleaner.spamdeleteconfirm);
         if (yes) {
             context.row = obj;
             var cfg = {
@@ -46,7 +46,7 @@ M.report_spamcleaner = {
                         try {
                             var resp = context.Y.JSON.parse(o.responseText);
                         } catch(e) {
-                            alert(M.str.report_spamcleaner.spaminvalidresult);
+                            alert(M.str.tool_spamcleaner.spaminvalidresult);
                             return;
                         }
                         if (context.row) {
@@ -57,7 +57,7 @@ M.report_spamcleaner = {
                                 context.row.parentNode.removeChild(context.row);
                                 context.row = null;
                             } else {
-                                alert(M.str.report_spamcleaner.spamcannotdelete);
+                                alert(M.str.tool_spamcleaner.spamcannotdelete);
                             }
                         }
                     }
@@ -68,7 +68,7 @@ M.report_spamcleaner = {
     },
 
     ignore_user: function(obj, id) {
-        var context = M.report_spamcleaner;
+        var context = M.tool_spamcleaner;
 
         if (context.Y == null) {
             // not initilised yet
@@ -83,7 +83,7 @@ M.report_spamcleaner = {
                     try {
                         var resp = context.Y.JSON.parse(o.responseText);
                     } catch(e) {
-                        alert(M.str.report_spamcleaner.spaminvalidresult);
+                        alert(M.str.tool_spamcleaner.spaminvalidresult);
                         return;
                     }
                     if (context.row) {
@@ -102,7 +102,7 @@ M.report_spamcleaner = {
     },
 
     init: function(Y, me) {
-        var context = M.report_spamcleaner;
+        var context = M.tool_spamcleaner;
 
         Y.use('json', 'io-base', function (Y) {
             context.Y = Y;

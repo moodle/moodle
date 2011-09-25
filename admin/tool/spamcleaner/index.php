@@ -40,7 +40,7 @@ $reset = optional_param('reset', '', PARAM_RAW);
 $id = optional_param('id', '', PARAM_INT);
 
 require_login();
-admin_externalpage_setup('reportspamcleaner');
+admin_externalpage_setup('toolspamcleaner');
 
 // Delete one user
 if (!empty($del) && confirm_sesskey() && ($id != $USER->id)) {
@@ -79,14 +79,14 @@ if (!empty($ignore)) {
     exit;
 }
 
-$PAGE->requires->js_init_call('M.report_spamcleaner.init', array(me()), true);
+$PAGE->requires->js_init_call('M.tool_spamcleaner.init', array(me()), true);
 $strings = Array('spaminvalidresult','spamdeleteallconfirm','spamcannotdelete','spamdeleteconfirm');
-$PAGE->requires->strings_for_js($strings, 'report_spamcleaner');
+$PAGE->requires->strings_for_js($strings, 'tool_spamcleaner');
 
 echo $OUTPUT->header();
 
 // Print headers and things
-echo $OUTPUT->box(get_string('spamcleanerintro', 'report_spamcleaner'));
+echo $OUTPUT->box(get_string('spamcleanerintro', 'tool_spamcleaner'));
 
 echo $OUTPUT->box_start();     // The forms section at the top
 
@@ -98,16 +98,16 @@ echo $OUTPUT->box_start();     // The forms section at the top
   <div>
     <input type="text" name="keyword" id="keyword_el" value="<?php p($keyword) ?>" />
     <input type="hidden" name="sesskey" value="<?php echo sesskey();?>" />
-    <input type="submit" value="<?php echo get_string('spamsearch', 'report_spamcleaner')?>" />
+    <input type="submit" value="<?php echo get_string('spamsearch', 'tool_spamcleaner')?>" />
   </div>
 </form>
-<p><?php echo get_string('spameg', 'report_spamcleaner');?></p>
+<p><?php echo get_string('spameg', 'tool_spamcleaner');?></p>
 
 <hr />
 
 <form method="post"  action="index.php">
   <div>
-    <input type="submit" name="autodetect" value="<?php echo get_string('spamauto', 'report_spamcleaner');?>" />
+    <input type="submit" name="autodetect" value="<?php echo get_string('spamauto', 'tool_spamcleaner');?>" />
   </div>
 </form>
 
@@ -168,7 +168,7 @@ function search_spammers($keywords) {
     $spamusers_blog = $DB->get_recordset_sql($sql2, $params);
 
     $keywordlist = implode(', ', $keywords);
-    echo $OUTPUT->box(get_string('spamresult', 'report_spamcleaner').s($keywordlist)).' ...';
+    echo $OUTPUT->box(get_string('spamresult', 'tool_spamcleaner').s($keywordlist)).' ...';
 
     print_user_list(array($spamusers_desc, $spamusers_blog), $keywords);
 
@@ -186,7 +186,7 @@ function print_user_list($users_rs, $keywords) {
     foreach ($users_rs as $rs){
         foreach ($rs as $user) {
             if (!$count) {
-                echo '<table border="1" width="100%" id="data-grid"><tr><th>&nbsp;</th><th>'.get_string('user','admin').'</th><th>'.get_string('spamdesc', 'report_spamcleaner').'</th><th>'.get_string('spamoperation', 'report_spamcleaner').'</th></tr>';
+                echo '<table border="1" width="100%" id="data-grid"><tr><th>&nbsp;</th><th>'.get_string('user','admin').'</th><th>'.get_string('spamdesc', 'tool_spamcleaner').'</th><th>'.get_string('spamoperation', 'tool_spamcleaner').'</th></tr>';
             }
             $count++;
             filter_user($user, $keywords, $count);
@@ -194,12 +194,12 @@ function print_user_list($users_rs, $keywords) {
     }
 
     if (!$count) {
-        echo get_string('spamcannotfinduser', 'report_spamcleaner');
+        echo get_string('spamcannotfinduser', 'tool_spamcleaner');
 
     } else {
         echo '</table>';
         echo '<div class="mld-align">
-              <button id="removeall_btn">'.get_string('spamdeleteall', 'report_spamcleaner').'</button>
+              <button id="removeall_btn">'.get_string('spamdeleteall', 'tool_spamcleaner').'</button>
               </div>';
     }
 }
@@ -210,7 +210,7 @@ function filter_user($user, $keywords, $count) {
         $image_search = true;
     }
     if (isset($user->summary)) {
-        $user->description = '<h3>'.get_string('spamfromblog', 'report_spamcleaner').'</h3>'.$user->summary;
+        $user->description = '<h3>'.get_string('spamfromblog', 'tool_spamcleaner').'</h3>'.$user->summary;
         unset($user->summary);
     }
     if (preg_match('#<img.*src=[\"\']('.$CFG->wwwroot.')#', $user->description, $matches)
@@ -271,8 +271,8 @@ function print_user_entry($user, $keywords, $count) {
 
         $html .= '<td align="left">'.format_text($user->description, $user->descriptionformat, array('overflowdiv'=>true)).'</td>';
         $html .= '<td width="100px" align="center">';
-        $html .= '<button onclick="M.report_spamcleaner.del_user(this,'.$user->id.')">'.get_string('deleteuser', 'admin').'</button><br />';
-        $html .= '<button onclick="M.report_spamcleaner.ignore_user(this,'.$user->id.')">'.get_string('ignore', 'admin').'</button>';
+        $html .= '<button onclick="M.tool_spamcleaner.del_user(this,'.$user->id.')">'.get_string('deleteuser', 'admin').'</button><br />';
+        $html .= '<button onclick="M.tool_spamcleaner.ignore_user(this,'.$user->id.')">'.get_string('ignore', 'admin').'</button>';
         $html .= '</td>';
         $html .= '</tr>';
         return $html;
