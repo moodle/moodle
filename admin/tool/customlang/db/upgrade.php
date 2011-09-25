@@ -24,7 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-function xmldb_report_customlang_upgrade($oldversion) {
+function xmldb_tool_customlang_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
     $dbman = $DB->get_manager();
