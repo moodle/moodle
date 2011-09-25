@@ -30,5 +30,5 @@ $module->requires  = 2010120700; // Requires this Moodle version
 $module->cron      = 0;          // Period for cron to check this module (secs)
 $module->component = 'mod_book'; // Full name of the plugin (used for diagnostics)
 
-$maturity          = 150; //MATURITY_RC
-$release           = "2.0rc (20110320)"; // User-friendly version number
+$module->maturity  = MATURITY_RC;
+$module->release   = "2.0rc (20110320)"; // User-friendly version number
