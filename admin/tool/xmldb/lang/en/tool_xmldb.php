@@ -50,6 +50,10 @@ $string['confirmcheckindexes'] = 'This functionality will search for potential m
 Once generated you can copy such statements and execute them safely with your favourite SQL interface (don\'t forget to backup your data before doing that).<br /><br />
 It\'s highly recommended to be running the latest (+ version) available of your Moodle release (1.8, 1.9, 2.x ...) before executing the search of missing indexes.<br /><br />
 This functionality doesn\'t perform any action against the DB (just reads from it), so can be safely executed at any moment.';
+$string['confirmcheckoraclesemantics'] = 'This functionality will search for <a href="http://tracker.moodle.org/browse/MDL-29322">Oracle varchar2 columns using BYTE semantics</a> in your Moodle server, generating (but not executing!) automatically the needed SQL statements to have all the columns converted to use CHAR semantics instead (better for cross-db compatibility and increased contents max. length).<br /><br />
+Once generated you can copy such statements and execute them safely with your favourite SQL interface (don\'t forget to backup your data before doing that).<br /><br />
+It\'s highly recommended to be running the latest (+ version) available of your Moodle release (2.2, 2.3, 2.x ...) before executing the search of BYTE semantics.<br /><br />
+This functionality doesn\'t perform any action against the DB (just reads from it), so can be safely executed at any moment.';
 $string['confirmrevertchanges'] = 'Are you absolutely sure that you want to revert changes performed over:';
 $string['create'] = 'Create';
 $string['createtable'] = 'Create table:';
@@ -103,6 +107,8 @@ $string['checkforeignkeys'] = 'Check foreign keys';
 $string['check_foreign_keys'] = 'Look for foreign key violations';
 $string['checkindexes'] = 'Check indexes';
 $string['check_indexes'] = 'Look for missing DB indexes';
+$string['checkoraclesemantics'] = 'Check semantics';
+$string['check_oracle_semantics'] = 'Look for incorrect length semantics';
 $string['incorrectfieldname'] = 'Incorrect name';
 $string['index'] = 'Index';
 $string['indexes'] = 'Indexes';
@@ -130,6 +136,7 @@ $string['nomissingindexesfound'] = 'No missing indexes have been found, your DB 
 $string['noviolatedforeignkeysfound'] = 'No violated foreign keys found';
 $string['nowrongdefaultsfound'] = 'No inconsistent default values have been found, your DB does not need further actions.';
 $string['nowrongintsfound'] = 'No wrong integers have been found, your DB doesn\'t need further actions.';
+$string['nowrongoraclesemanticsfound'] = 'No Oracle columns using BYTE semantics have been found, your DB doesn\'t need further actions.';
 $string['numberincorrectdecimals'] = 'Incorrect number of decimals for number field';
 $string['numberincorrectlength'] = 'Incorrect length for number field';
 $string['pendingchanges'] = 'Note: You have performed changes to this file. They can be saved at any moment.';
@@ -172,6 +179,8 @@ $string['wrongdefaults'] = 'Wrong defaults found';
 $string['wrongints'] = 'Wrong integers found';
 $string['wronglengthforenum'] = 'Incorrect length for enum field';
 $string['wrongreservedwords'] = 'Currently used reserved words<br />(note that table names aren\'t important if using $CFG->prefix)';
+$string['wrongoraclesemantics'] = 'Wrong Oracle BYTE semantics found';
 $string['yesmissingindexesfound'] = 'Some missing indexes have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to create all them (don\'t forget to backup your data before doing that).<br /><br />After doing that, it\'s highly recommended to execute this utility again to check that no more missing indexes are found.';
 $string['yeswrongdefaultsfound'] = 'Some inconsistent defaults have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to fix them all (don\'t forget to backup your data before doing that).<br /><br />After doing that, it\'s highly recommended to execute this utility again to check that no more inconsistent defaults are found.';
 $string['yeswrongintsfound'] = 'Some wrong integers have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to create all them (don\'t forget to backup your data before doing that).<br /><br />After doing that, it\'s highly recommended to execute this utility again to check that no more wrong integers are found.';
+$string['yeswrongoraclesemanticsfound'] = 'Some Oracle columns using BYTE semantics have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to create all them (don\'t forget to backup your data before doing that).<br /><br />After doing that, it\'s highly recommended to execute this utility again to check that no more wrong semantics are found.';
