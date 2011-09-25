@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version   = 2011091700; // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2011091600; // Requires this Moodle version
+$plugin->version   = 2011092500; // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2011092100; // Requires this Moodle version
 $plugin->component = 'tool_unittest'; // Full name of the plugin (used for diagnostics)
 
