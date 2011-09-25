@@ -1,13 +1,35 @@
 <?php
-      /// Search and replace strings throughout all texts in the whole database
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Search and replace strings throughout all texts in the whole database
+ *
+ * @package    tool
+ * @subpackage replace
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 define('NO_OUTPUT_BUFFERING', true);
 
-require_once('../config.php');
+require_once('../../../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-admin_externalpage_setup('replace');
+admin_externalpage_setup('toolreplace');
 
 $search  = optional_param('search', '', PARAM_RAW);
 $replace = optional_param('replace', '', PARAM_RAW);
@@ -30,7 +52,7 @@ if (!data_submitted() or !$search or !$replace or !confirm_sesskey() or !$sure) 
 
     echo $OUTPUT->box_start();
     echo '<div class="mdl-align">';
-    echo '<form action="replace.php" method="post"><div>';
+    echo '<form action="index.php" method="post"><div>';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<div><label for="search">Search whole database for: </label><input id="search" type="text" name="search" size="40" /> (usually previous server URL)</div>';
     echo '<div><label for="replace">Replace with this string: </label><input type="text" id="replace" name="replace" size="40" /> (usually new server URL)</div>';
@@ -52,7 +74,7 @@ echo $OUTPUT->notification('Rebuilding course cache...', 'notifysuccess');
 rebuild_course_cache();
 echo $OUTPUT->notification('...finished', 'notifysuccess');
 
-echo $OUTPUT->continue_button('index.php');
+echo $OUTPUT->continue_button(new moodle_url('/admin/index.php'));
 
 echo $OUTPUT->footer();
 
