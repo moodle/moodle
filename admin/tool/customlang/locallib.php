@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Definition of classes used by language customization admin report
+ * Definition of classes used by language customization admin tool
  *
- * @package    report
+ * @package    tool
  * @subpackage customlang
  * @copyright  2010 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -31,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * All the public methods here are static ones, this class can not be instantiated
  */
-class report_customlang_utils {
+class tool_customlang_utils {
 
     /**
      * Rough number of strings that are being processed during a full checkout.
@@ -95,7 +94,7 @@ class report_customlang_utils {
         global $DB;
 
         // make sure that all components are registered
-        $current = $DB->get_records('report_customlang_components', null, 'name', 'name,version,id');
+        $current = $DB->get_records('tool_customlang_components', null, 'name', 'name,version,id');
         foreach (self::list_components() as $component) {
             if (empty($current[$component])) {
                 $record = new stdclass();
@@ -105,10 +104,10 @@ class report_customlang_utils {
                 } else {
                     $record->version = $version;
                 }
-                $DB->insert_record('report_customlang_components', $record);
+                $DB->insert_record('tool_customlang_components', $record);
             } elseif ($version = get_component_version($component)) {
                 if (is_null($current[$component]->version) or ($version > $current[$component]->version)) {
-                    $DB->set_field('report_customlang_components', 'version', $version, array('id' => $current[$component]->id));
+                    $DB->set_field('tool_customlang_components', 'version', $version, array('id' => $current[$component]->id));
                 }
             }
         }
@@ -116,14 +115,14 @@ class report_customlang_utils {
 
         // initialize the progress counter - stores the number of processed strings
         $done = 0;
-        $strinprogress = get_string('checkoutinprogress', 'report_customlang');
+        $strinprogress = get_string('checkoutinprogress', 'tool_customlang');
 
         // reload components and fetch their strings
         $stringman  = get_string_manager();
-        $components = $DB->get_records('report_customlang_components');
+        $components = $DB->get_records('tool_customlang_components');
         foreach ($components as $component) {
             $sql = "SELECT stringid, id, lang, componentid, original, master, local, timemodified, timecustomized, outdated, modified
-                      FROM {report_customlang} s
+                      FROM {tool_customlang} s
                      WHERE lang = ? AND componentid = ?
                   ORDER BY stringid";
             $current = $DB->get_records_sql($sql, array($lang, $component->id));
@@ -167,7 +166,7 @@ class report_customlang_utils {
                     }
 
                     if ($needsupdate) {
-                        $DB->update_record('report_customlang', $current[$stringid]);
+                        $DB->update_record('tool_customlang', $current[$stringid]);
                         continue;
                     }
 
@@ -188,13 +187,13 @@ class report_customlang_utils {
                         $record->timecustomized = null;
                     }
 
-                    $DB->insert_record('report_customlang', $record);
+                    $DB->insert_record('tool_customlang', $record);
                 }
             }
         }
 
         if (!is_null($progressbar)) {
-            $progressbar->update_full(100, get_string('checkoutdone', 'report_customlang'));
+            $progressbar->update_full(100, get_string('checkoutdone', 'tool_customlang'));
         }
     }
 
@@ -213,8 +212,8 @@ class report_customlang_utils {
 
         // get all customized strings from updated components
         $sql = "SELECT s.*, c.name AS component
-                  FROM {report_customlang} s
-                  JOIN {report_customlang_components} c ON s.componentid = c.id
+                  FROM {tool_customlang} s
+                  JOIN {tool_customlang_components} c ON s.componentid = c.id
                  WHERE s.lang = ?
                        AND (s.local IS NOT NULL OR s.modified = 1)
               ORDER BY componentid, stringid";
@@ -232,7 +231,7 @@ class report_customlang_utils {
             self::dump_strings($lang, $component, $strings);
         }
 
-        $DB->set_field_select('report_customlang', 'modified', 0, 'lang = ?', array($lang));
+        $DB->set_field_select('tool_customlang', 'modified', 0, 'lang = ?', array($lang));
         $sm = get_string_manager();
         $sm->reset_caches();
     }
@@ -359,7 +358,7 @@ EOF
     public static function get_count_of_modified($lang) {
         global $DB;
 
-        return $DB->count_records('report_customlang', array('lang'=>$lang, 'modified'=>1));
+        return $DB->count_records('tool_customlang', array('lang'=>$lang, 'modified'=>1));
     }
 
     /**
@@ -370,12 +369,12 @@ EOF
      * @param stdclass $persistant storage object
      */
     public static function save_filter(stdclass $data, stdclass $persistant) {
-        if (!isset($persistant->report_customlang_filter)) {
-            $persistant->report_customlang_filter = array();
+        if (!isset($persistant->tool_customlang_filter)) {
+            $persistant->tool_customlang_filter = array();
         }
         foreach ($data as $key => $value) {
             if ($key !== 'submit') {
-                $persistant->report_customlang_filter[$key] = serialize($value);
+                $persistant->tool_customlang_filter[$key] = serialize($value);
             }
         }
     }
@@ -389,8 +388,8 @@ EOF
      */
     public static function load_filter(stdclass $persistant) {
         $data = new stdclass();
-        if (isset($persistant->report_customlang_filter)) {
-            foreach ($persistant->report_customlang_filter as $key => $value) {
+        if (isset($persistant->tool_customlang_filter)) {
+            foreach ($persistant->tool_customlang_filter as $key => $value) {
                 $data->{$key} = unserialize($value);
             }
         }
@@ -399,9 +398,9 @@ EOF
 }
 
 /**
- * Represents the action menu of the report
+ * Represents the action menu of the tool
  */
-class report_customlang_menu implements renderable {
+class tool_customlang_menu implements renderable {
 
     /** @var menu items */
     protected $items = array();
@@ -449,7 +448,7 @@ class report_customlang_menu implements renderable {
 /**
  * Represents the translation tool
  */
-class report_customlang_translator implements renderable {
+class tool_customlang_translator implements renderable {
 
     /** @const int number of rows per page */
     const PERPAGE = 100;
@@ -490,8 +489,8 @@ class report_customlang_translator implements renderable {
 
         $csql = "SELECT COUNT(*)";
         $fsql = "SELECT s.id, s.*, c.name AS component";
-        $sql  = "  FROM {report_customlang_components} c
-                   JOIN {report_customlang} s ON s.componentid = c.id
+        $sql  = "  FROM {tool_customlang_components} c
+                   JOIN {tool_customlang} s ON s.componentid = c.id
                   WHERE s.lang = :lang
                         AND c.name $insql";
 

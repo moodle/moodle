@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,4 +23,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$ADMIN->add('language', new admin_externalpage('reportcustomlang', get_string('pluginname', 'report_customlang'), "$CFG->wwwroot/$CFG->admin/report/customlang/index.php", 'report/customlang:view'));
+$plugin->version   = 2011092500;
+$plugin->requires  = 2011092100;
+$plugin->component = 'tool_customlang'; // Full name of the plugin (used for diagnostics)

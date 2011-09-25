@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Performs checkout of the strings into the translation table
  *
- * @package    report
+ * @package    tool
  * @subpackage customlang
  * @copyright  2010 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,81 +25,81 @@
 
 define('NO_OUTPUT_BUFFERING', true); // progress bar is used here
 
-require(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
-require_once($CFG->dirroot.'/'.$CFG->admin.'/report/customlang/locallib.php');
+require(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
+require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/customlang/locallib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 require_login(SITEID, false);
-require_capability('report/customlang:view', get_system_context());
+require_capability('tool/customlang:view', get_system_context());
 
 $action  = optional_param('action', '', PARAM_ALPHA);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
 $lng     = optional_param('lng', '', PARAM_LANG);
 
-admin_externalpage_setup('reportcustomlang');
+admin_externalpage_setup('toolcustomlang');
 $langs = get_string_manager()->get_list_of_translations();
 
 // pre-output actions
 if ($action === 'checkout') {
     require_sesskey();
-    require_capability('report/customlang:edit', get_system_context());
+    require_capability('tool/customlang:edit', get_system_context());
     if (empty($lng)) {
         print_error('missingparameter');
     }
 
     $PAGE->set_cacheable(false);    // progress bar is used here
-    $output = $PAGE->get_renderer('report_customlang');
+    $output = $PAGE->get_renderer('tool_customlang');
     echo $output->header();
-    echo $output->heading(get_string('pluginname', 'report_customlang'));
+    echo $output->heading(get_string('pluginname', 'tool_customlang'));
     $progressbar = new progress_bar();
     $progressbar->create();         // prints the HTML code of the progress bar
 
     // we may need a bit of extra execution time and memory here
     @set_time_limit(HOURSECS);
     raise_memory_limit(MEMORY_EXTRA);
-    report_customlang_utils::checkout($lng, $progressbar);
+    tool_customlang_utils::checkout($lng, $progressbar);
 
-    echo $output->continue_button(new moodle_url('/admin/report/customlang/edit.php', array('lng' => $lng)), 'get');
+    echo $output->continue_button(new moodle_url('/admin/tool/customlang/edit.php', array('lng' => $lng)), 'get');
     echo $output->footer();
     exit;
 }
 
 if ($action === 'checkin') {
     require_sesskey();
-    require_capability('report/customlang:edit', get_system_context());
+    require_capability('tool/customlang:edit', get_system_context());
     if (empty($lng)) {
         print_error('missingparameter');
     }
 
     if (!$confirm) {
-        $output = $PAGE->get_renderer('report_customlang');
+        $output = $PAGE->get_renderer('tool_customlang');
         echo $output->header();
-        echo $output->heading(get_string('pluginname', 'report_customlang'));
+        echo $output->heading(get_string('pluginname', 'tool_customlang'));
         echo $output->heading($langs[$lng], 3);
-        $numofmodified = report_customlang_utils::get_count_of_modified($lng);
+        $numofmodified = tool_customlang_utils::get_count_of_modified($lng);
         if ($numofmodified != 0) {
-            echo $output->heading(get_string('modifiednum', 'report_customlang', $numofmodified), 3);
-            echo $output->confirm(get_string('confirmcheckin', 'report_customlang'),
+            echo $output->heading(get_string('modifiednum', 'tool_customlang', $numofmodified), 3);
+            echo $output->confirm(get_string('confirmcheckin', 'tool_customlang'),
                                   new moodle_url($PAGE->url, array('action'=>'checkin', 'lng'=>$lng, 'confirm'=>1)),
                                   new moodle_url($PAGE->url, array('lng'=>$lng)));
         } else {
-            echo $output->heading(get_string('modifiedno', 'report_customlang', $numofmodified), 3);
+            echo $output->heading(get_string('modifiedno', 'tool_customlang', $numofmodified), 3);
             echo $output->continue_button(new moodle_url($PAGE->url, array('lng' => $lng)));
         }
         echo $output->footer();
         die();
 
     } else {
-        report_customlang_utils::checkin($lng);
+        tool_customlang_utils::checkin($lng);
         redirect($PAGE->url);
     }
 }
 
-$output = $PAGE->get_renderer('report_customlang');
+$output = $PAGE->get_renderer('tool_customlang');
 
 // output starts here
 echo $output->header();
-echo $output->heading(get_string('pluginname', 'report_customlang'));
+echo $output->heading(get_string('pluginname', 'tool_customlang'));
 
 if (empty($lng)) {
     $s = new single_select($PAGE->url, 'lng', $langs);
@@ -113,27 +112,27 @@ if (empty($lng)) {
 
 echo $output->heading($langs[$lng], 3);
 
-$numofmodified = report_customlang_utils::get_count_of_modified($lng);
+$numofmodified = tool_customlang_utils::get_count_of_modified($lng);
 
 if ($numofmodified != 0) {
-    echo $output->heading(get_string('modifiednum', 'report_customlang', $numofmodified), 3);
+    echo $output->heading(get_string('modifiednum', 'tool_customlang', $numofmodified), 3);
 }
 
 $menu = array();
-if (has_capability('report/customlang:edit', get_system_context())) {
+if (has_capability('tool/customlang:edit', get_system_context())) {
     $menu['checkout'] = array(
-        'title'     => get_string('checkout', 'report_customlang'),
+        'title'     => get_string('checkout', 'tool_customlang'),
         'url'       => new moodle_url($PAGE->url, array('action' => 'checkout', 'lng' => $lng)),
         'method'    => 'post',
     );
     if ($numofmodified != 0) {
         $menu['checkin'] = array(
-            'title'     => get_string('checkin', 'report_customlang'),
+            'title'     => get_string('checkin', 'tool_customlang'),
             'url'       => new moodle_url($PAGE->url, array('action' => 'checkin', 'lng' => $lng)),
             'method'    => 'post',
         );
     }
 }
-echo $output->render(new report_customlang_menu($menu));
+echo $output->render(new tool_customlang_menu($menu));
 
 echo $output->footer();

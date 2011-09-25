@@ -343,7 +343,7 @@ class plugin_manager {
 
             'report' => array(
                 'backups', 'configlog', 'courseoverview',
-                'customlang', 'log', 'questioninstances',
+                'log', 'questioninstances',
                 'security', 'spamcleaner', 'stats'
             ),
 
@@ -367,7 +367,7 @@ class plugin_manager {
             ),
 
             'tool' => array(
-                'bloglevelupgrade', 'capability', 'dbtransfer', 'generator',
+                'bloglevelupgrade', 'capability', 'customlang', 'dbtransfer', 'generator',
                 'health', 'innodb', 'langimport', 'multilangupgrade',
                 'profiling', 'unittest', 'uploaduser', 'unsuproles', 'xmldb'
             ),

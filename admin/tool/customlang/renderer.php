@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Output rendering of Language customization admin report
+ * Output rendering of Language customization admin tool
  *
- * @package    report
+ * @package    tool
  * @subpackage customlang
  * @copyright  2010 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,16 +26,16 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Rendering methods for the report widgets
+ * Rendering methods for the tool widgets
  */
-class report_customlang_renderer extends plugin_renderer_base {
+class tool_customlang_renderer extends plugin_renderer_base {
 
     /**
-     * Renders customlang report menu
+     * Renders customlang tool menu
      *
      * @return string HTML
      */
-    protected function render_report_customlang_menu(report_customlang_menu $menu) {
+    protected function render_tool_customlang_menu(tool_customlang_menu $menu) {
         $output = '';
         foreach ($menu->get_items() as $item) {
             $output .= $this->single_button($item->url, $item->title, $item->method);
@@ -47,23 +46,23 @@ class report_customlang_renderer extends plugin_renderer_base {
     /**
      * Renders customlang translation table
      *
-     * @param report_customlang_translator $translator
+     * @param tool_customlang_translator $translator
      * @return string HTML
      */
-    protected function render_report_customlang_translator(report_customlang_translator $translator) {
+    protected function render_tool_customlang_translator(tool_customlang_translator $translator) {
         $output = '';
 
         if (empty($translator->strings)) {
-            return $this->heading(get_string('nostringsfound', 'report_customlang'), 3);
+            return $this->heading(get_string('nostringsfound', 'tool_customlang'), 3);
         }
 
         $table = new html_table();
         $table->id = 'translator';
         $table->head = array(
-            get_string('headingcomponent', 'report_customlang'),
-            get_string('headingstringid', 'report_customlang'),
-            get_string('headingstandard', 'report_customlang'),
-            get_string('headinglocal', 'report_customlang'),
+            get_string('headingcomponent', 'tool_customlang'),
+            get_string('headingstringid', 'tool_customlang'),
+            get_string('headingstandard', 'tool_customlang'),
+            get_string('headinglocal', 'tool_customlang'),
         );
 
         foreach ($translator->strings as $string) {
@@ -78,8 +77,8 @@ class report_customlang_renderer extends plugin_renderer_base {
             $master = html_writer::tag('div', s($string->master), array('class' => 'preformatted'));
             $minheight = strlen($string->master) / 200;
             if (preg_match('/\{\$a(->.+)?\}/', $string->master)) {
-                $master .= html_writer::tag('div', $this->help_icon('placeholder', 'report_customlang',
-                        get_string('placeholderwarning', 'report_customlang')), array('class' => 'placeholderinfo'));
+                $master .= html_writer::tag('div', $this->help_icon('placeholder', 'tool_customlang',
+                        get_string('placeholderwarning', 'tool_customlang')), array('class' => 'placeholderinfo'));
             }
             $cells[2] = new html_table_cell($master);
             $cells[2]->attributes['class'] = 'standard master';
@@ -93,8 +92,8 @@ class report_customlang_renderer extends plugin_renderer_base {
             if (!is_null($string->local) and $string->outdated) {
                 $mark  = html_writer::empty_tag('input', array('type' => 'checkbox', 'id' => 'update_' . $string->id,
                                                                'name' => 'updates[]', 'value' => $string->id));
-                $help  = $this->help_icon('markinguptodate', 'report_customlang');
-                $mark .= html_writer::tag('label', get_string('markuptodate', 'report_customlang') . $help,
+                $help  = $this->help_icon('markinguptodate', 'tool_customlang');
+                $mark .= html_writer::tag('label', get_string('markuptodate', 'tool_customlang') . $help,
                                           array('for' => 'update_' . $string->id));
                 $mark  = html_writer::tag('div', $mark, array('class' => 'uptodatewrapper'));
             } else {
@@ -134,8 +133,8 @@ class report_customlang_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('div');
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'translatorsubmitted', 'value'=>1));
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
-        $save1   = html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'savecontinue', 'value'=>get_string('savecontinue', 'report_customlang')));
-        $save2   = html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'savecheckin', 'value'=>get_string('savecheckin', 'report_customlang')));
+        $save1   = html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'savecontinue', 'value'=>get_string('savecontinue', 'tool_customlang')));
+        $save2   = html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'savecheckin', 'value'=>get_string('savecheckin', 'tool_customlang')));
         $output .= html_writer::tag('fieldset', $save1.$save2, array('class'=>'buttonsbar'));
         $output .= html_writer::table($table);
         $output .= html_writer::tag('fieldset', $save1.$save2, array('class'=>'buttonsbar'));

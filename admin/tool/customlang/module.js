@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    report
+ * @package    tool
  * @subpackage customlang
  * @copyright  2010 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,20 +23,20 @@
 /**
  * @namespace
  */
-M.report_customlang = M.report_customlang || {};
+M.tool_customlang = M.tool_customlang || {};
 
 /**
  * YUI instance holder
  */
-M.report_customlang.Y = {};
+M.tool_customlang.Y = {};
 
 /**
  * Initialize JS support for the edit.php
  *
  * @param {Object} Y YUI instance
  */
-M.report_customlang.init_editor = function(Y) {
-    M.report_customlang.Y = Y;
+M.tool_customlang.init_editor = function(Y) {
+    M.tool_customlang.Y = Y;
 
     Y.all('#translator .local textarea').each(function (textarea) {
         var cell = textarea.get('parentNode');
