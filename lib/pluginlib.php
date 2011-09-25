@@ -1503,3 +1503,13 @@ class plugintype_mnetservice extends plugintype_base implements plugintype_inter
         }
     }
 }
+
+/**
+ * Class for admin tool plugins
+ */
+class plugintype_tool extends plugintype_base implements plugintype_interface {
+
+    public function get_uninstall_url() {
+        return new moodle_url('/admin/tools.php', array('delete' => $this->name, 'sesskey' => sesskey()));
+    }
+}
