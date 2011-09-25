@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,39 +18,41 @@
  * Lib functions (cron) to automatically complete the question engine upgrade
  * if it was not done all at once during the main upgrade.
  *
- * @package    local
+ * @package    tool
  * @subpackage qeupgradehelper
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die;
+
 /**
  * Standard cron function
  */
-function local_qeupgradehelper_cron() {
-    $settings = get_config('local_qeupgradehelper');
+function tool_qeupgradehelper_cron() {
+    $settings = get_config('tool_qeupgradehelper');
     if (empty($settings->cronenabled)) {
         return;
     }
 
-    mtrace('qeupgradehelper: local_qeupgradehelper_cron() started at '. date('H:i:s'));
+    mtrace('qeupgradehelper: tool_qeupgradehelper_cron() started at '. date('H:i:s'));
     try {
-        local_qeupgradehelper_process($settings);
+        tool_qeupgradehelper_process($settings);
     } catch (Exception $e) {
-        mtrace('qeupgradehelper: local_qeupgradehelper_cron() failed with an exception:');
+        mtrace('qeupgradehelper: tool_qeupgradehelper_cron() failed with an exception:');
         mtrace($e->getMessage());
     }
-    mtrace('qeupgradehelper: local_qeupgradehelper_cron() finished at ' . date('H:i:s'));
+    mtrace('qeupgradehelper: tool_qeupgradehelper_cron() finished at ' . date('H:i:s'));
 }
 
 /**
  * This function does the cron process within the time range according to settings.
  */
-function local_qeupgradehelper_process($settings) {
+function tool_qeupgradehelper_process($settings) {
     global $CFG;
     require_once(dirname(__FILE__) . '/locallib.php');
 
-    if (!local_qeupgradehelper_is_upgraded()) {
+    if (!tool_qeupgradehelper_is_upgraded()) {
         mtrace('qeupgradehelper: site not yet upgraded. Doing nothing.');
         return;
     }
@@ -70,17 +71,17 @@ function local_qeupgradehelper_process($settings) {
     mtrace('qeupgradehelper: processing ...');
     while (time() < $stoptime) {
 
-        $quiz = local_qeupgradehelper_get_quiz_for_upgrade();
+        $quiz = tool_qeupgradehelper_get_quiz_for_upgrade();
         if (!$quiz) {
             mtrace('qeupgradehelper: No more quizzes to process. You should probably disable the qeupgradehelper cron settings now.');
             break; // No more to do;
         }
 
         $quizid = $quiz->id;
-        $quizsummary = local_qeupgradehelper_get_quiz($quizid);
+        $quizsummary = tool_qeupgradehelper_get_quiz($quizid);
         if ($quizsummary) {
             mtrace('  starting upgrade of attempts at quiz ' . $quizid);
-            $upgrader = new local_qeupgradehelper_attempt_upgrader(
+            $upgrader = new tool_qeupgradehelper_attempt_upgrader(
                     $quizsummary->id, $quizsummary->numtoconvert);
             $upgrader->convert_all_quiz_attempts();
             mtrace('  upgrade of quiz ' . $quizid . ' complete.');

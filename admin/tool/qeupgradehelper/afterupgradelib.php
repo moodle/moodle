@@ -19,17 +19,18 @@
  * Question engine upgrade helper library code that relies on other parts of the
  * new question engine code.
  *
- * @package    local
+ * @package    tool
  * @subpackage qeupgradehelper
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/question/engine/upgrade/upgradelib.php');
 
 
-class local_qeupgradehelper_attempt_upgrader extends question_engine_attempt_upgrader {
+class tool_qeupgradehelper_attempt_upgrader extends question_engine_attempt_upgrader {
     public $quizid;
     public $attemptsdone = 0;
     public $attemptstodo;
@@ -62,7 +63,7 @@ class local_qeupgradehelper_attempt_upgrader extends question_engine_attempt_upg
         $a->done = $done;
         $a->outof = $outof;
         $this->progressbar->update($done, $outof,
-                get_string('resettingquizattemptsprogress', 'local_qeupgradehelper', $a));
+                get_string('resettingquizattemptsprogress', 'tool_qeupgradehelper', $a));
     }
 
     protected function get_resettable_attempts($quiz) {

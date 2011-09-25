@@ -28,7 +28,7 @@
  *    display updated information.
  * 4. Once you are sure that works, you can proceed with the upgrade as usual.
  *
- * @package    local
+ * @package    tool
  * @subpackage qeupgradehelper
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -44,7 +44,7 @@
  * have to take steps to upgrade them yourself using the facilities provided by
  * this plugin.
  */
-//function local_qeupgradehelper_get_quizzes_to_upgrade() {
+//function tool_qeupgradehelper_get_quizzes_to_upgrade() {
 //    return array(1, 2, 3);
 //}
 
@@ -63,9 +63,9 @@
  * have to take steps to upgrade them yourself using the facilities provided by
  * this plugin.
  */
-//function local_qeupgradehelper_get_quizzes_to_upgrade() {
+//function tool_qeupgradehelper_get_quizzes_to_upgrade() {
 //    global $CFG;
-//    $rawids = file($CFG->dirroot . '/local/qeupgradehelper/quiz-ids-to-upgrade.txt');
+//    $rawids = file($CFG->dirroot . '/' . $CFG->admin . '/tool/qeupgradehelper/quiz-ids-to-upgrade.txt');
 //    $cleanids = array();
 //    foreach ($rawids as $id) {
 //        $id = clean_param($id, PARAM_INT);
@@ -92,7 +92,7 @@
  * have to take steps to upgrade them yourself using the facilities provided by
  * this plugin.
  */
-//function local_qeupgradehelper_get_quizzes_to_upgrade() {
+//function tool_qeupgradehelper_get_quizzes_to_upgrade() {
 //    global $DB;
 //
 //    $quizmoduleid = $DB->get_field('modules', 'id', array('name' => 'quiz'));

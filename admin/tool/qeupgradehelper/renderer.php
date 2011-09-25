@@ -17,7 +17,7 @@
 /**
  * Defines the renderer for the question engine upgrade helper plugin.
  *
- * @package    local
+ * @package    tool
  * @subpackage qeupgradehelper
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_qeupgradehelper_renderer extends plugin_renderer_base {
+class tool_qeupgradehelper_renderer extends plugin_renderer_base {
 
     /**
      * Render the index page.
@@ -44,7 +44,7 @@ class local_qeupgradehelper_renderer extends plugin_renderer_base {
     public function index_page($detected, array $actions) {
         $output = '';
         $output .= $this->header();
-        $output .= $this->heading(get_string('pluginname', 'local_qeupgradehelper'));
+        $output .= $this->heading(get_string('pluginname', 'tool_qeupgradehelper'));
         $output .= $this->box($detected);
         $output .= html_writer::start_tag('ul');
         foreach ($actions as $action) {
@@ -77,7 +77,7 @@ class local_qeupgradehelper_renderer extends plugin_renderer_base {
      * @param int $numveryoldattemtps only relevant before upgrade.
      * @return string html to output.
      */
-    public function quiz_list_page(local_qeupgradehelper_quiz_list $quizzes,
+    public function quiz_list_page(tool_qeupgradehelper_quiz_list $quizzes,
             $numveryoldattemtps = null) {
         $output = '';
         $output .= $this->header();
@@ -99,7 +99,7 @@ class local_qeupgradehelper_renderer extends plugin_renderer_base {
         $output .= html_writer::table($table);
 
         if ($numveryoldattemtps) {
-            $output .= $this->box(get_string('veryoldattemtps', 'local_qeupgradehelper',
+            $output .= $this->box(get_string('veryoldattemtps', 'tool_qeupgradehelper',
                     $numveryoldattemtps));
         }
 
@@ -116,12 +116,12 @@ class local_qeupgradehelper_renderer extends plugin_renderer_base {
     public function convert_quiz_are_you_sure($quizsummary) {
         $output = '';
         $output .= $this->header();
-        $output .= $this->heading(get_string('areyousure', 'local_qeupgradehelper'));
+        $output .= $this->heading(get_string('areyousure', 'tool_qeupgradehelper'));
 
         $params = array('quizid' => $quizsummary->id, 'confirmed' => 1, 'sesskey' => sesskey());
-        $output .= $this->confirm(get_string('areyousuremessage', 'local_qeupgradehelper', $quizsummary),
-                new single_button(local_qeupgradehelper_url('convertquiz', $params), get_string('yes')),
-                local_qeupgradehelper_url('listtodo'));
+        $output .= $this->confirm(get_string('areyousuremessage', 'tool_qeupgradehelper', $quizsummary),
+                new single_button(tool_qeupgradehelper_url('convertquiz', $params), get_string('yes')),
+                tool_qeupgradehelper_url('listtodo'));
 
         $output .= $this->footer();
         return $output;
@@ -135,12 +135,12 @@ class local_qeupgradehelper_renderer extends plugin_renderer_base {
     public function reset_quiz_are_you_sure($quizsummary) {
         $output = '';
         $output .= $this->header();
-        $output .= $this->heading(get_string('areyousure', 'local_qeupgradehelper'));
+        $output .= $this->heading(get_string('areyousure', 'tool_qeupgradehelper'));
 
         $params = array('quizid' => $quizsummary->id, 'confirmed' => 1, 'sesskey' => sesskey());
-        $output .= $this->confirm(get_string('areyousureresetmessage', 'local_qeupgradehelper', $quizsummary),
-                new single_button(local_qeupgradehelper_url('resetquiz', $params), get_string('yes')),
-                local_qeupgradehelper_url('listupgraded'));
+        $output .= $this->confirm(get_string('areyousureresetmessage', 'tool_qeupgradehelper', $quizsummary),
+                new single_button(tool_qeupgradehelper_url('resetquiz', $params), get_string('yes')),
+                tool_qeupgradehelper_url('listupgraded'));
 
         $output .= $this->footer();
         return $output;
@@ -162,7 +162,7 @@ class local_qeupgradehelper_renderer extends plugin_renderer_base {
      * @return string html to output.
      */
     public function back_to_index() {
-        return $this->end_of_page_link(local_qeupgradehelper_url('index'),
-                get_string('backtoindex', 'local_qeupgradehelper'));
+        return $this->end_of_page_link(tool_qeupgradehelper_url('index'),
+                get_string('backtoindex', 'tool_qeupgradehelper'));
     }
 }

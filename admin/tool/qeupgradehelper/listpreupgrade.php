@@ -18,43 +18,43 @@
  * Script to show all the quizzes in the site with how many attempts they have
  * that will need to be upgraded.
  *
- * @package    local
+ * @package    tool
  * @subpackage qeupgradehelper
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
-local_qeupgradehelper_require_not_upgraded();
+tool_qeupgradehelper_require_not_upgraded();
 
-admin_externalpage_setup('qeupgradehelper', '', array(), local_qeupgradehelper_url(''));
-$PAGE->navbar->add(get_string('listpreupgrade', 'local_qeupgradehelper'));
+admin_externalpage_setup('qeupgradehelper', '', array(), tool_qeupgradehelper_url(''));
+$PAGE->navbar->add(get_string('listpreupgrade', 'tool_qeupgradehelper'));
 
-$renderer = $PAGE->get_renderer('local_qeupgradehelper');
+$renderer = $PAGE->get_renderer('tool_qeupgradehelper');
 
-$quizzes = new local_qeupgradehelper_pre_upgrade_quiz_list();
+$quizzes = new tool_qeupgradehelper_pre_upgrade_quiz_list();
 
 // Look to see if the admin has set things up to only upgrade certain attempts.
-$partialupgradefile = $CFG->dirroot . '/local/qeupgradehelper/partialupgrade.php';
-$partialupgradefunction = 'local_qeupgradehelper_get_quizzes_to_upgrade';
+$partialupgradefile = $CFG->dirroot . '/' . $CFG->admin . '/tool/qeupgradehelper/partialupgrade.php';
+$partialupgradefunction = 'tool_qeupgradehelper_get_quizzes_to_upgrade';
 if (is_readable($partialupgradefile)) {
     include_once($partialupgradefile);
     if (function_exists($partialupgradefunction)) {
-        $quizzes = new local_qeupgradehelper_pre_upgrade_quiz_list_restricted(
+        $quizzes = new tool_qeupgradehelper_pre_upgrade_quiz_list_restricted(
                 $partialupgradefunction());
     }
 }
 
-$numveryoldattemtps = local_qeupgradehelper_get_num_very_old_attempts();
+$numveryoldattemtps = tool_qeupgradehelper_get_num_very_old_attempts();
 
 if ($quizzes->is_empty()) {
-    echo $renderer->simple_message_page(get_string('noquizattempts', 'local_qeupgradehelper'));
+    echo $renderer->simple_message_page(get_string('noquizattempts', 'tool_qeupgradehelper'));
 
 } else {
     echo $renderer->quiz_list_page($quizzes, $numveryoldattemtps);

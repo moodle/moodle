@@ -17,7 +17,7 @@
 /**
  * Question engine upgrade helper library code.
  *
- * @package    local
+ * @package    tool
  * @subpackage qeupgradehelper
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * Detect whether this site has been upgraded to the new question engine yet.
  * @return bool whether the site has been upgraded.
  */
-function local_qeupgradehelper_is_upgraded() {
+function tool_qeupgradehelper_is_upgraded() {
     global $CFG, $DB;
     $dbman = $DB->get_manager();
     return is_readable($CFG->dirroot . '/question/engine/upgrade/upgradelib.php') &&
@@ -41,20 +41,20 @@ function local_qeupgradehelper_is_upgraded() {
 /**
  * If the site has not yet been upgraded, display an error.
  */
-function local_qeupgradehelper_require_upgraded() {
-    if (!local_qeupgradehelper_is_upgraded()) {
-        throw new moodle_exception('upgradedsiterequired', 'local_qeupgradehelper',
-                local_qeupgradehelper_url('index'));
+function tool_qeupgradehelper_require_upgraded() {
+    if (!tool_qeupgradehelper_is_upgraded()) {
+        throw new moodle_exception('upgradedsiterequired', 'tool_qeupgradehelper',
+                tool_qeupgradehelper_url('index'));
     }
 }
 
 /**
  * If the site has been upgraded, display an error.
  */
-function local_qeupgradehelper_require_not_upgraded() {
-    if (local_qeupgradehelper_is_upgraded()) {
-        throw new moodle_exception('notupgradedsiterequired', 'local_qeupgradehelper',
-                local_qeupgradehelper_url('index'));
+function tool_qeupgradehelper_require_not_upgraded() {
+    if (tool_qeupgradehelper_is_upgraded()) {
+        throw new moodle_exception('notupgradedsiterequired', 'tool_qeupgradehelper',
+                tool_qeupgradehelper_url('index'));
     }
 }
 
@@ -63,8 +63,8 @@ function local_qeupgradehelper_require_not_upgraded() {
  * @param string $script the script name, without .php. E.g. 'index'.
  * @param array $params URL parameters (optional).
  */
-function local_qeupgradehelper_url($script, $params = array()) {
-    return new moodle_url('/local/qeupgradehelper/' . $script . '.php', $params);
+function tool_qeupgradehelper_url($script, $params = array()) {
+    return new moodle_url('/admin/tool/qeupgradehelper/' . $script . '.php', $params);
 }
 
 
@@ -74,7 +74,7 @@ function local_qeupgradehelper_url($script, $params = array()) {
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_qeupgradehelper_action {
+class tool_qeupgradehelper_action {
     /** @var string the name of this action. */
     public $name;
     /** @var moodle_url the URL to launch this action. */
@@ -99,9 +99,9 @@ class local_qeupgradehelper_action {
      */
     public static function make($shortname, $params = array()) {
         return new self(
-                get_string($shortname, 'local_qeupgradehelper'),
-                local_qeupgradehelper_url($shortname, $params),
-                get_string($shortname . '_desc', 'local_qeupgradehelper'));
+                get_string($shortname, 'tool_qeupgradehelper'),
+                tool_qeupgradehelper_url($shortname, $params),
+                get_string($shortname . '_desc', 'tool_qeupgradehelper'));
     }
 }
 
@@ -113,7 +113,7 @@ class local_qeupgradehelper_action {
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class local_qeupgradehelper_quiz_list {
+abstract class tool_qeupgradehelper_quiz_list {
     public $title;
     public $intro;
     public $quizacolheader;
@@ -124,9 +124,9 @@ abstract class local_qeupgradehelper_quiz_list {
 
     protected function __construct($title, $intro, $quizacolheader) {
         global $DB;
-        $this->title = get_string($title, 'local_qeupgradehelper');
-        $this->intro = get_string($intro, 'local_qeupgradehelper');
-        $this->quizacolheader = get_string($quizacolheader, 'local_qeupgradehelper');
+        $this->title = get_string($title, 'tool_qeupgradehelper');
+        $this->intro = get_string($intro, 'tool_qeupgradehelper');
+        $this->quizacolheader = get_string($quizacolheader, 'tool_qeupgradehelper');
         $this->build_sql();
         $this->quizlist = $DB->get_records_sql($this->sql);
     }
@@ -162,11 +162,11 @@ abstract class local_qeupgradehelper_quiz_list {
 
     public function get_col_headings() {
         return array(
-            get_string('quizid', 'local_qeupgradehelper'),
+            get_string('quizid', 'tool_qeupgradehelper'),
             get_string('course'),
             get_string('pluginname', 'quiz'),
             $this->quizacolheader,
-            get_string('questionsessions', 'local_qeupgradehelper'),
+            get_string('questionsessions', 'tool_qeupgradehelper'),
         );
     }
 
@@ -210,7 +210,7 @@ abstract class local_qeupgradehelper_quiz_list {
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_qeupgradehelper_upgradable_quiz_list extends local_qeupgradehelper_quiz_list {
+class tool_qeupgradehelper_upgradable_quiz_list extends tool_qeupgradehelper_quiz_list {
     public function __construct() {
         parent::__construct('quizzeswithunconverted', 'listtodointro', 'attemptstoconvert');
     }
@@ -221,14 +221,14 @@ class local_qeupgradehelper_upgradable_quiz_list extends local_qeupgradehelper_q
 
     public function get_col_headings() {
         $headings = parent::get_col_headings();
-        $headings[] = get_string('action', 'local_qeupgradehelper');
+        $headings[] = get_string('action', 'tool_qeupgradehelper');
         return $headings;
     }
 
     public function get_row($quizinfo) {
         $row = parent::get_row($quizinfo);
-        $row[] = html_writer::link(local_qeupgradehelper_url('convertquiz', array('quizid' => $quizinfo->id)),
-                        get_string('convertquiz', 'local_qeupgradehelper'));
+        $row[] = html_writer::link(tool_qeupgradehelper_url('convertquiz', array('quizid' => $quizinfo->id)),
+                        get_string('convertquiz', 'tool_qeupgradehelper'));
         return $row;
     }
 }
@@ -240,7 +240,7 @@ class local_qeupgradehelper_upgradable_quiz_list extends local_qeupgradehelper_q
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_qeupgradehelper_resettable_quiz_list extends local_qeupgradehelper_quiz_list {
+class tool_qeupgradehelper_resettable_quiz_list extends tool_qeupgradehelper_quiz_list {
     public function __construct() {
         parent::__construct('quizzesthatcanbereset', 'listupgradedintro', 'convertedattempts');
     }
@@ -253,14 +253,14 @@ class local_qeupgradehelper_resettable_quiz_list extends local_qeupgradehelper_q
 
     public function get_col_headings() {
         $headings = parent::get_col_headings();
-        $headings[] = get_string('action', 'local_qeupgradehelper');
+        $headings[] = get_string('action', 'tool_qeupgradehelper');
         return $headings;
     }
 
     public function get_row($quizinfo) {
         $row = parent::get_row($quizinfo);
-        $row[] = html_writer::link(local_qeupgradehelper_url('resetquiz', array('quizid' => $quizinfo->id)),
-                        get_string('resetquiz', 'local_qeupgradehelper'));
+        $row[] = html_writer::link(tool_qeupgradehelper_url('resetquiz', array('quizid' => $quizinfo->id)),
+                        get_string('resetquiz', 'tool_qeupgradehelper'));
         return $row;
     }
 }
@@ -272,7 +272,7 @@ class local_qeupgradehelper_resettable_quiz_list extends local_qeupgradehelper_q
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_qeupgradehelper_pre_upgrade_quiz_list extends local_qeupgradehelper_quiz_list {
+class tool_qeupgradehelper_pre_upgrade_quiz_list extends tool_qeupgradehelper_quiz_list {
     public function __construct() {
         parent::__construct('quizzestobeupgraded', 'listpreupgradeintro', 'numberofattempts');
     }
@@ -290,7 +290,7 @@ class local_qeupgradehelper_pre_upgrade_quiz_list extends local_qeupgradehelper_
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_qeupgradehelper_pre_upgrade_quiz_list_restricted extends local_qeupgradehelper_pre_upgrade_quiz_list {
+class tool_qeupgradehelper_pre_upgrade_quiz_list_restricted extends tool_qeupgradehelper_pre_upgrade_quiz_list {
     protected $quizids;
     protected $restrictedtotalquizas = 0;
     protected $restrictedtotalqas = 0;
@@ -310,7 +310,7 @@ class local_qeupgradehelper_pre_upgrade_quiz_list_restricted extends local_qeupg
 
     public function get_col_headings() {
         $headings = parent::get_col_headings();
-        $headings[] = get_string('includedintheupgrade', 'local_qeupgradehelper');
+        $headings[] = get_string('includedintheupgrade', 'tool_qeupgradehelper');
         return $headings;
     }
 
@@ -330,7 +330,7 @@ class local_qeupgradehelper_pre_upgrade_quiz_list_restricted extends local_qeupg
         $a = new stdClass();
         $a->some = $a->some = html_writer::tag('b', $restrictedtotal);
         $a->total = $fulltotal;
-        return get_string('outof', 'local_qeupgradehelper', $a);
+        return get_string('outof', 'tool_qeupgradehelper', $a);
     }
 
     public function get_total_row() {
@@ -349,7 +349,7 @@ class local_qeupgradehelper_pre_upgrade_quiz_list_restricted extends local_qeupg
  * List the number of quiz attempts that were never upgraded from 1.4 -> 1.5.
  * @return int the number of such attempts.
  */
-function local_qeupgradehelper_get_num_very_old_attempts() {
+function tool_qeupgradehelper_get_num_very_old_attempts() {
     global $DB;
     return $DB->count_records_sql('
             SELECT COUNT(1)
@@ -366,9 +366,9 @@ function local_qeupgradehelper_get_num_very_old_attempts() {
  * Get the information about a quiz to be upgraded.
  * @param integer $quizid the quiz id.
  * @return object the information about that quiz, as for
- *      {@link local_qeupgradehelper_get_upgradable_quizzes()}.
+ *      {@link tool_qeupgradehelper_get_upgradable_quizzes()}.
  */
-function local_qeupgradehelper_get_quiz($quizid) {
+function tool_qeupgradehelper_get_quiz($quizid) {
     global $DB;
     return $DB->get_record_sql("
             SELECT
@@ -395,10 +395,10 @@ function local_qeupgradehelper_get_quiz($quizid) {
  * Get the information about a quiz to be upgraded.
  * @param integer $quizid the quiz id.
  * @return object the information about that quiz, as for
- *      {@link local_qeupgradehelper_get_resettable_quizzes()}, but with extra fields
+ *      {@link tool_qeupgradehelper_get_resettable_quizzes()}, but with extra fields
  *      totalattempts and resettableattempts.
  */
-function local_qeupgradehelper_get_resettable_quiz($quizid) {
+function tool_qeupgradehelper_get_resettable_quiz($quizid) {
     global $DB;
     return $DB->get_record_sql("
             SELECT
@@ -440,7 +440,7 @@ function local_qeupgradehelper_get_resettable_quiz($quizid) {
  * @param int $questionid a question id.
  * @return int the question session id.
  */
-function local_qeupgradehelper_get_session_id($attemptid, $questionid) {
+function tool_qeupgradehelper_get_session_id($attemptid, $questionid) {
     global $DB;
     $attempt = $DB->get_record('quiz_attempts', array('id' => $attemptid));
     if (!$attempt) {
@@ -458,7 +458,7 @@ function local_qeupgradehelper_get_session_id($attemptid, $questionid) {
  * @param string $qtype question type.
  * @return integer question_session.id.
  */
-function local_qeupgradehelper_find_test_case($behaviour, $statehistory, $qtype, $extratests) {
+function tool_qeupgradehelper_find_test_case($behaviour, $statehistory, $qtype, $extratests) {
     global $DB;
 
     $params = array(
@@ -516,7 +516,7 @@ function local_qeupgradehelper_find_test_case($behaviour, $statehistory, $qtype,
  * Grab all the data that upgrade will need for upgrading one
  * attempt at one question from the old DB.
  */
-function local_qeupgradehelper_generate_unit_test($questionsessionid, $namesuffix) {
+function tool_qeupgradehelper_generate_unit_test($questionsessionid, $namesuffix) {
     global $DB;
 
     $qsession = $DB->get_record('question_sessions', array('id' => $questionsessionid));
@@ -526,9 +526,9 @@ function local_qeupgradehelper_generate_unit_test($questionsessionid, $namesuffi
             array('attempt' => $qsession->attemptid, 'question' => $qsession->questionid),
             'seq_number, id');
 
-    $question = local_qeupgradehelper_load_question($qsession->questionid, $quiz->id);
+    $question = tool_qeupgradehelper_load_question($qsession->questionid, $quiz->id);
 
-    if (!local_qeupgradehelper_is_upgraded()) {
+    if (!tool_qeupgradehelper_is_upgraded()) {
         if (!$quiz->optionflags) {
             $quiz->preferredbehaviour = 'deferredfeedback';
         } else if ($quiz->penaltyscheme) {
@@ -548,16 +548,16 @@ function local_qeupgradehelper_generate_unit_test($questionsessionid, $namesuffi
     echo '<textarea readonly="readonly" rows="80" cols="120" >' . "
     public function test_{$question->qtype}_{$quiz->preferredbehaviour}_{$namesuffix}() {
 ";
-    local_qeupgradehelper_display_convert_attempt_input($quiz, $attempt,
+    tool_qeupgradehelper_display_convert_attempt_input($quiz, $attempt,
             $question, $qsession, $qstates);
 
     if ($question->qtype == 'random') {
         list($randombit, $realanswer) = explode('-', reset($qstates)->answer, 2);
         $newquestionid = substr($randombit, 6);
-        $newquestion = local_qeupgradehelper_load_question($newquestionid);
+        $newquestion = tool_qeupgradehelper_load_question($newquestionid);
         $newquestion->maxmark = $question->maxmark;
 
-        echo local_qeupgradehelper_format_var('$realquestion', $newquestion);
+        echo tool_qeupgradehelper_format_var('$realquestion', $newquestion);
         echo '        $this->loader->put_question_in_cache($realquestion);
 ';
     }
@@ -598,7 +598,7 @@ function local_qeupgradehelper_generate_unit_test($questionsessionid, $namesuffi
 </textarea>';
 }
 
-function local_qeupgradehelper_format_var($name, $var) {
+function tool_qeupgradehelper_format_var($name, $var) {
     $out = var_export($var, true);
     $out = str_replace('<', '&lt;', $out);
     $out = str_replace('ADOFetchObj::__set_state(array(', '(object) array(', $out);
@@ -624,16 +624,16 @@ function local_qeupgradehelper_format_var($name, $var) {
     return "        $name = $out;\n";
 }
 
-function local_qeupgradehelper_display_convert_attempt_input($quiz, $attempt,
+function tool_qeupgradehelper_display_convert_attempt_input($quiz, $attempt,
         $question, $qsession, $qstates) {
-    echo local_qeupgradehelper_format_var('$quiz', $quiz);
-    echo local_qeupgradehelper_format_var('$attempt', $attempt);
-    echo local_qeupgradehelper_format_var('$question', $question);
-    echo local_qeupgradehelper_format_var('$qsession', $qsession);
-    echo local_qeupgradehelper_format_var('$qstates', $qstates);
+    echo tool_qeupgradehelper_format_var('$quiz', $quiz);
+    echo tool_qeupgradehelper_format_var('$attempt', $attempt);
+    echo tool_qeupgradehelper_format_var('$question', $question);
+    echo tool_qeupgradehelper_format_var('$qsession', $qsession);
+    echo tool_qeupgradehelper_format_var('$qstates', $qstates);
 }
 
-function local_qeupgradehelper_load_question($questionid, $quizid) {
+function tool_qeupgradehelper_load_question($questionid, $quizid) {
     global $CFG, $DB;
 
     $question = $DB->get_record_sql('
@@ -643,7 +643,7 @@ function local_qeupgradehelper_load_question($questionid, $quizid) {
             WHERE q.id = :questionid AND qqi.quiz = :quizid',
             array('questionid' => $questionid, 'quizid' => $quizid));
 
-    if (local_qeupgradehelper_is_upgraded()) {
+    if (tool_qeupgradehelper_is_upgraded()) {
         require_once($CFG->dirroot . '/question/engine/bank.php');
         $qtype = question_bank::get_qtype($question->qtype, false);
     } else {
@@ -660,7 +660,7 @@ function local_qeupgradehelper_load_question($questionid, $quizid) {
     return $question;
 }
 
-function local_qeupgradehelper_get_quiz_for_upgrade() {
+function tool_qeupgradehelper_get_quiz_for_upgrade() {
     global $DB;
 
     return $DB->get_record_sql("SELECT quiz.id

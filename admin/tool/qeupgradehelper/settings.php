@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details.
+ * Adds this plugin to the admin menu.
  *
- * @package    local
+ * @package    tool
  * @subpackage qeupgradehelper
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,5 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version  = 2011040400;
-$plugin->requires = 2010080300;
+if ($hassiteconfig) { // needs this condition or there is error on login page
+    $ADMIN->add('root', new admin_externalpage('qeupgradehelper',
+            get_string('pluginname', 'tool_qeupgradehelper'),
+            new moodle_url('/admin/tool/qeupgradehelper/index.php')));
+}

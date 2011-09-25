@@ -21,13 +21,13 @@
  * This screen is the main entry-point to the plugin, it gives the admin a list
  * of options available to them.
  *
- * @package    local
+ * @package    tool
  * @subpackage qeupgradehelper
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
@@ -35,21 +35,21 @@ require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 admin_externalpage_setup('qeupgradehelper');
 
-$renderer = $PAGE->get_renderer('local_qeupgradehelper');
+$renderer = $PAGE->get_renderer('tool_qeupgradehelper');
 
 $actions = array();
-if (local_qeupgradehelper_is_upgraded()) {
-    $detected = get_string('upgradedsitedetected', 'local_qeupgradehelper');
-    $actions[] = local_qeupgradehelper_action::make('listtodo');
-    $actions[] = local_qeupgradehelper_action::make('listupgraded');
-    $actions[] = local_qeupgradehelper_action::make('extracttestcase');
-    $actions[] = local_qeupgradehelper_action::make('cronsetup');
+if (tool_qeupgradehelper_is_upgraded()) {
+    $detected = get_string('upgradedsitedetected', 'tool_qeupgradehelper');
+    $actions[] = tool_qeupgradehelper_action::make('listtodo');
+    $actions[] = tool_qeupgradehelper_action::make('listupgraded');
+    $actions[] = tool_qeupgradehelper_action::make('extracttestcase');
+    $actions[] = tool_qeupgradehelper_action::make('cronsetup');
 
 } else {
-    $detected = get_string('oldsitedetected', 'local_qeupgradehelper');
-    $actions[] = local_qeupgradehelper_action::make('listpreupgrade');
-    $actions[] = local_qeupgradehelper_action::make('extracttestcase');
-    $actions[] = local_qeupgradehelper_action::make('cronsetup');
+    $detected = get_string('oldsitedetected', 'tool_qeupgradehelper');
+    $actions[] = tool_qeupgradehelper_action::make('listpreupgrade');
+    $actions[] = tool_qeupgradehelper_action::make('extracttestcase');
+    $actions[] = tool_qeupgradehelper_action::make('cronsetup');
 }
 
 echo $renderer->index_page($detected, $actions);

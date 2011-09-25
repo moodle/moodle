@@ -15,16 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Script to upgrade the attempts at a particular quiz, after confirmation.
+ * Script to reset the upgrade of attempts at a particular quiz, after confirmation.
  *
- * @package    local
+ * @package    tool
  * @subpackage qeupgradehelper
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 require_once(dirname(__FILE__) . '/afterupgradelib.php');
 require_once($CFG->libdir . '/adminlib.php');
@@ -34,20 +33,20 @@ $confirmed = optional_param('confirmed', false, PARAM_BOOL);
 
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
-local_qeupgradehelper_require_upgraded();
+tool_qeupgradehelper_require_upgraded();
 
 admin_externalpage_setup('qeupgradehelper', '', array(),
-        local_qeupgradehelper_url('convertquiz', array('quizid' => $quizid)));
-$PAGE->navbar->add(get_string('listtodo', 'local_qeupgradehelper'),
-        local_qeupgradehelper_url('listtodo'));
-$PAGE->navbar->add(get_string('convertattempts', 'local_qeupgradehelper'));
+        tool_qeupgradehelper_url('resetquiz', array('quizid' => $quizid)));
+$PAGE->navbar->add(get_string('listupgraded', 'tool_qeupgradehelper'),
+        tool_qeupgradehelper_url('listtodo'));
+$PAGE->navbar->add(get_string('resetquiz', 'tool_qeupgradehelper'));
 
-$renderer = $PAGE->get_renderer('local_qeupgradehelper');
+$renderer = $PAGE->get_renderer('tool_qeupgradehelper');
 
-$quizsummary = local_qeupgradehelper_get_quiz($quizid);
+$quizsummary = tool_qeupgradehelper_get_resettable_quiz($quizid);
 if (!$quizsummary) {
-    print_error('invalidquizid', 'local_qeupgradehelper',
-            local_qeupgradehelper_url('listtodo'));
+    print_error('invalidquizid', 'tool_qeupgradehelper',
+            tool_qeupgradehelper_url('listupgraded'));
 }
 
 $quizsummary->name = format_string($quizsummary->name);
@@ -56,21 +55,18 @@ if ($confirmed && data_submitted() && confirm_sesskey()) {
     // Actually do the conversion.
     echo $renderer->header();
     echo $renderer->heading(get_string(
-            'upgradingquizattempts', 'local_qeupgradehelper', $quizsummary));
+            'resettingquizattempts', 'tool_qeupgradehelper', $quizsummary));
 
-    $upgrader = new local_qeupgradehelper_attempt_upgrader(
-            $quizsummary->id, $quizsummary->numtoconvert);
-    $upgrader->convert_all_quiz_attempts();
+    $upgrader = new tool_qeupgradehelper_attempt_upgrader(
+            $quizsummary->id, $quizsummary->resettableattempts);
+    $upgrader->reset_all_resettable_attempts();
 
-    echo $renderer->heading(get_string('conversioncomplete', 'local_qeupgradehelper'));
-    echo $renderer->end_of_page_link(
-            new moodle_url('/mod/quiz/report.php', array('q' => $quizsummary->id)),
-            get_string('gotoquizreport', 'local_qeupgradehelper'));
-    echo $renderer->end_of_page_link(local_qeupgradehelper_url('listtodo'),
-            get_string('listtodo', 'local_qeupgradehelper'));
+    echo $renderer->heading(get_string('resetcomplete', 'tool_qeupgradehelper'));
+    echo $renderer->end_of_page_link(tool_qeupgradehelper_url('listupgraded'),
+            get_string('listupgraded', 'tool_qeupgradehelper'));
 
     echo $renderer->footer();
     exit;
 }
 
-echo $renderer->convert_quiz_are_you_sure($quizsummary);
+echo $renderer->reset_quiz_are_you_sure($quizsummary);

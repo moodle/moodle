@@ -17,7 +17,7 @@
 /**
  * Settings form for extracttestcase.php.
  *
- * @package    local
+ * @package    tool
  * @subpackage qeupgradehelper
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -34,7 +34,7 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_qeupgradehelper_extract_options_form extends moodleform {
+class tool_qeupgradehelper_extract_options_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
 

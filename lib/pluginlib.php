@@ -289,7 +289,6 @@ class plugin_manager {
             ),
 
             'local' => array(
-                'qeupgradehelper'
             ),
 
             'message' => array(
@@ -368,8 +367,8 @@ class plugin_manager {
 
             'tool' => array(
                 'bloglevelupgrade', 'capability', 'customlang', 'dbtransfer', 'generator',
-                'health', 'innodb', 'langimport', 'multilangupgrade',
-                'profiling', 'unittest', 'uploaduser', 'unsuproles', 'xmldb'
+                'health', 'innodb', 'langimport', 'multilangupgrade', 'profiling',
+                'qeupgradehelper', 'unittest', 'uploaduser', 'unsuproles', 'xmldb'
             ),
 
             'webservice' => array(

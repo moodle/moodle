@@ -15,34 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Script to show all the quizzes with attempts that still need to be upgraded
- * after the main upgrade.
+ * Script to show all the quizzes with attempts that have been upgraded
+ * after the main upgrade. With an option to reset the conversion, so it can be
+ * re-done if necessary.
  *
- * @package    local
+ * @package    tool
  * @subpackage qeupgradehelper
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
-local_qeupgradehelper_require_upgraded();
+tool_qeupgradehelper_require_upgraded();
 
 admin_externalpage_setup('qeupgradehelper', '', array(),
-        local_qeupgradehelper_url('listtodo'));
-$PAGE->navbar->add(get_string('listtodo', 'local_qeupgradehelper'));
+        tool_qeupgradehelper_url('listupgraded'));
+$PAGE->navbar->add(get_string('listupgraded', 'tool_qeupgradehelper'));
 
-$renderer = $PAGE->get_renderer('local_qeupgradehelper');
+$renderer = $PAGE->get_renderer('tool_qeupgradehelper');
 
-$quizzes = new local_qeupgradehelper_upgradable_quiz_list();
+$quizzes = new tool_qeupgradehelper_resettable_quiz_list();
 
 if ($quizzes->is_empty()) {
-    echo $renderer->simple_message_page(get_string('alreadydone', 'local_qeupgradehelper'));
+    echo $renderer->simple_message_page(get_string('nothingupgradedyet', 'tool_qeupgradehelper'));
 
 } else {
     echo $renderer->quiz_list_page($quizzes);

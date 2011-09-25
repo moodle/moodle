@@ -17,14 +17,14 @@
 /**
  * Script to set up cron to complete the upgrade automatically.
  *
- * @package    local
+ * @package    tool
  * @subpackage qeupgradehelper
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 require_once(dirname(__FILE__) . '/cronsetup_form.php');
 require_once($CFG->libdir . '/adminlib.php');
@@ -33,37 +33,37 @@ require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
 admin_externalpage_setup('qeupgradehelper', '', array(),
-        local_qeupgradehelper_url('cronsetup'));
-$PAGE->navbar->add(get_string('cronsetup', 'local_qeupgradehelper'));
+        tool_qeupgradehelper_url('cronsetup'));
+$PAGE->navbar->add(get_string('cronsetup', 'tool_qeupgradehelper'));
 
-$renderer = $PAGE->get_renderer('local_qeupgradehelper');
+$renderer = $PAGE->get_renderer('tool_qeupgradehelper');
 
-$form = new local_qeupgradehelper_cron_setup_form(
-        new moodle_url('/local/qeupgradehelper/cronsetup.php'));
-$form->set_data(get_config('local_qeupgradehelper'));
+$form = new tool_qeupgradehelper_cron_setup_form(
+        new moodle_url('/admin/tool/qeupgradehelper/cronsetup.php'));
+$form->set_data(get_config('tool_qeupgradehelper'));
 
 if ($form->is_cancelled()) {
-    redirect(local_qeupgradehelper_url('index'));
+    redirect(tool_qeupgradehelper_url('index'));
 
 } else if ($fromform = $form->get_data()) {
     if ($fromform->cronenabled) {
-        set_config('cronenabled', $fromform->cronenabled, 'local_qeupgradehelper');
-        set_config('starthour', $fromform->starthour, 'local_qeupgradehelper');
-        set_config('stophour', $fromform->stophour, 'local_qeupgradehelper');
-        set_config('procesingtime', $fromform->procesingtime, 'local_qeupgradehelper');
+        set_config('cronenabled', $fromform->cronenabled, 'tool_qeupgradehelper');
+        set_config('starthour', $fromform->starthour, 'tool_qeupgradehelper');
+        set_config('stophour', $fromform->stophour, 'tool_qeupgradehelper');
+        set_config('procesingtime', $fromform->procesingtime, 'tool_qeupgradehelper');
 
     } else {
-        unset_config('cronenabled', 'local_qeupgradehelper');
-        unset_config('starthour', 'local_qeupgradehelper');
-        unset_config('stophour', 'local_qeupgradehelper');
-        unset_config('procesingtime', 'local_qeupgradehelper');
+        unset_config('cronenabled', 'tool_qeupgradehelper');
+        unset_config('starthour', 'tool_qeupgradehelper');
+        unset_config('stophour', 'tool_qeupgradehelper');
+        unset_config('procesingtime', 'tool_qeupgradehelper');
     }
-    redirect(local_qeupgradehelper_url('index'));
+    redirect(tool_qeupgradehelper_url('index'));
 
 }
 
 echo $renderer->header();
-echo $renderer->heading(get_string('cronsetup', 'local_qeupgradehelper'));
-echo $renderer->box(get_string('croninstructions', 'local_qeupgradehelper'));
+echo $renderer->heading(get_string('cronsetup', 'tool_qeupgradehelper'));
+echo $renderer->box(get_string('croninstructions', 'tool_qeupgradehelper'));
 $form->display();
 echo $renderer->footer();

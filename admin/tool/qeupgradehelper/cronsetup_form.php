@@ -17,7 +17,7 @@
 /**
  * Settings form for cronsetup.php.
  *
- * @package    local
+ * @package    tool
  * @subpackage qeupgradehelper
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -34,23 +34,23 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_qeupgradehelper_cron_setup_form extends moodleform {
+class tool_qeupgradehelper_cron_setup_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
 
         $mform->addElement('selectyesno', 'cronenabled',
-                get_string('cronenabled', 'local_qeupgradehelper'));
+                get_string('cronenabled', 'tool_qeupgradehelper'));
 
         $mform->addElement('select', 'starthour',
-                get_string('cronstarthour', 'local_qeupgradehelper'), range(0, 23));
+                get_string('cronstarthour', 'tool_qeupgradehelper'), range(0, 23));
 
         $mform->addElement('select', 'stophour',
-                get_string('cronstophour', 'local_qeupgradehelper'),
+                get_string('cronstophour', 'tool_qeupgradehelper'),
                 array_combine(range(1, 24), range(1, 24)));
         $mform->setDefault('stophour', 24);
 
         $mform->addElement('duration', 'procesingtime',
-                get_string('cronprocesingtime', 'local_qeupgradehelper'));
+                get_string('cronprocesingtime', 'tool_qeupgradehelper'));
         $mform->setDefault('procesingtime', 60);
 
         $mform->disabledIf('starthour', 'cronenabled', 'eq', 0);
