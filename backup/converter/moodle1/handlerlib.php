@@ -1221,11 +1221,14 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
         }
         unset($data['image']);
 
+        // replay the upgrade step 2011060301 - Rename field defaultgrade on table question to defaultmark
+        $data['defaultmark'] = $data['defaultgrade'];
+
         // write the common question data
         $this->xmlwriter->begin_tag('question', array('id' => $data['id']));
         foreach (array(
             'parent', 'name', 'questiontext', 'questiontextformat',
-            'generalfeedback', 'generalfeedbackformat', 'defaultgrade',
+            'generalfeedback', 'generalfeedbackformat', 'defaultmark',
             'penalty', 'qtype', 'length', 'stamp', 'version', 'hidden',
             'timecreated', 'timemodified', 'createdby', 'modifiedby'
         ) as $fieldname) {
