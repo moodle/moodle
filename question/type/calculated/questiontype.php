@@ -1893,6 +1893,12 @@ function qtype_calculated_calculate_answer($formula, $individualdata,
         // ... and have the answer rounded of to the correct length
         $answer = round($answer, $answerlength);
 
+        //if we rounded up to 1.0, place the answer back into 0.[1-9][0-9]* format
+        if ($answer >= 1) {
+            ++$p10;
+            $answer /= 10;
+        }
+
         // Have the answer written on a suitable format,
         // Either scientific or plain numeric
         if (-2 > $p10 || 4 < $p10) {
