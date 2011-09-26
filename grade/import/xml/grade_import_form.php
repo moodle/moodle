@@ -32,7 +32,6 @@ class grade_import_form extends moodleform {
         $mform->setType('id', PARAM_INT);
 
         $mform->addElement('header', 'general', get_string('importfile', 'grades'));
-        $mform->disabledIf('url', 'userfile', 'noteq', '');
 
         $mform->addElement('advcheckbox', 'feedback', get_string('importfeedback', 'grades'));
         $mform->setDefault('feedback', 0);
@@ -42,6 +41,7 @@ class grade_import_form extends moodleform {
         $mform->disabledIf('userfile', 'url', 'noteq', '');
 
         $mform->addElement('text', 'url', get_string('fileurl', 'gradeimport_xml'), 'size="80"');
+        $mform->disabledIf('url', 'userfile', 'noteq', '');
 
         if (!empty($CFG->gradepublishing)) {
             $mform->addElement('header', 'publishing', get_string('publishing', 'grades'));
