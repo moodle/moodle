@@ -259,7 +259,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @return string HTML content.
      */
     public function countdown_timer() {
-        return html_writer::tag('div', get_string('timeleft', 'quiz') .
+        return html_writer::tag('div', get_string('timeleft', 'quiz') . ' ' .
                 html_writer::tag('span', '', array('id' => 'quiz-time-left')),
                 array('id' => 'quiz-timer'));
     }
@@ -376,8 +376,10 @@ class mod_quiz_renderer extends plugin_renderer_base {
     public function attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id,
             $nextpage) {
         $output = '';
+        $output .= $this->header();
         $output .= $this->quiz_notices($messages);
         $output .= $this->attempt_form($attemptobj, $page, $slots, $id, $nextpage);
+        $output .= $this->footer();
         return $output;
     }
 
@@ -479,8 +481,12 @@ class mod_quiz_renderer extends plugin_renderer_base {
      */
     public function summary_page($attemptobj, $displayoptions) {
         $output = '';
+        $output .= $this->header();
+        $output .= $this->heading(format_string($attemptobj->get_quiz_name()));
+        $output .= $this->heading(get_string('summaryofattempt', 'quiz'), 3);
         $output .= $this->summary_table($attemptobj, $displayoptions);
         $output .= $this->summary_page_controls($attemptobj);
+        $output .= $this->footer();
         return $output;
     }
 
