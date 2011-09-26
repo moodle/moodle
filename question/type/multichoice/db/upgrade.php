@@ -118,7 +118,7 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
                 $record->incorrectfeedbackformat = FORMAT_HTML;
             } else {
                 $record->correctfeedbackformat = $record->oldquestiontextformat;
-                $record->partiallycorrectfeedback = $record->oldquestiontextformat;
+                $record->partiallycorrectfeedbackformat = $record->oldquestiontextformat;
                 $record->incorrectfeedbackformat = $record->oldquestiontextformat;
             }
             $DB->update_record('question_multichoice', $record);
