@@ -96,6 +96,8 @@ if ($data = $mform->get_data()) {
     }
 
     quiz_add_random_questions($quiz, $addonpage, $categoryid, 1, $includesubcategories);
+    quiz_delete_previews($quiz);
+    quiz_update_sumgrades($quiz);
     redirect($returnurl);
 }
 
