@@ -53,7 +53,7 @@ abstract class filter_local_settings_form extends moodleform {
         $mform->setDefault('contextid', $this->context->id);
 
         $mform->addElement('hidden', 'filter');
-        $mform->setType('filter', PARAM_ALPHAEXT);
+        $mform->setType('filter', PARAM_SAFEPATH);
         $mform->setDefault('filter', $this->filter);
 
         $this->add_action_buttons();
