@@ -697,6 +697,7 @@ class moodlelib_test extends UnitTestCase {
         // please note the cleaning of component names is very strict, no guessing here
         $this->assertIdentical(clean_param('mod_forum', PARAM_COMPONENT), 'mod_forum');
         $this->assertIdentical(clean_param('block_online_users', PARAM_COMPONENT), 'block_online_users');
+        $this->assertIdentical(clean_param('block_blond_online_users', PARAM_COMPONENT), 'block_blond_online_users');
         $this->assertIdentical(clean_param('mod_something2', PARAM_COMPONENT), 'mod_something2');
         $this->assertIdentical(clean_param('forum', PARAM_COMPONENT), 'forum');
         $this->assertIdentical(clean_param('user', PARAM_COMPONENT), 'user');
@@ -722,6 +723,7 @@ class moodlelib_test extends UnitTestCase {
         $this->assertIdentical(clean_param('forum', PARAM_PLUGIN), 'forum');
         $this->assertIdentical(clean_param('forum2', PARAM_PLUGIN), 'forum2');
         $this->assertIdentical(clean_param('online_users', PARAM_PLUGIN), 'online_users');
+        $this->assertIdentical(clean_param('blond_online_users', PARAM_PLUGIN), 'blond_online_users');
         $this->assertIdentical(clean_param('online__users', PARAM_PLUGIN), '');
         $this->assertIdentical(clean_param('forum ', PARAM_PLUGIN), '');
         $this->assertIdentical(clean_param('forum.old', PARAM_PLUGIN), '');
@@ -737,6 +739,7 @@ class moodlelib_test extends UnitTestCase {
         $this->assertIdentical(clean_param('something', PARAM_AREA), 'something');
         $this->assertIdentical(clean_param('something2', PARAM_AREA), 'something2');
         $this->assertIdentical(clean_param('some_thing', PARAM_AREA), 'some_thing');
+        $this->assertIdentical(clean_param('some_thing_xx', PARAM_AREA), 'some_thing_xx');
         $this->assertIdentical(clean_param('_something', PARAM_AREA), '');
         $this->assertIdentical(clean_param('something_', PARAM_AREA), '');
         $this->assertIdentical(clean_param('2something', PARAM_AREA), '');
