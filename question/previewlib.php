@@ -54,14 +54,14 @@ class preview_options_form extends moodleform {
 
         $mform->addElement('text', 'maxmark', get_string('markedoutof', 'question'),
                 array('size' => '5'));
-        $mform->setType('maxmark', PARAM_NUMBER);
+        $mform->setType('maxmark', PARAM_FLOAT);
 
         if ($this->_customdata['maxvariant'] > 1) {
             $variants = range(1, $this->_customdata['maxvariant']);
             $mform->addElement('select', 'variant', get_string('questionvariant', 'question'),
                     array_combine($variants, $variants));
         }
-        $mform->setType('maxmark', PARAM_INT);
+        $mform->setType('variant', PARAM_INT);
 
         $mform->addElement('select', 'correctness', get_string('whethercorrect', 'question'),
                 $hiddenofvisible);
