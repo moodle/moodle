@@ -859,7 +859,7 @@ class file_storage {
             throw new file_exception('storedfileproblem', 'Invalid component');
         }
 
-        $file_record->filearea = clean_param($file_record->filearea, PARAM_ALPHAEXT);
+        $file_record->filearea = clean_param($file_record->filearea, PARAM_AREA);
         if (empty($file_record->filearea)) {
             throw new file_exception('storedfileproblem', 'Invalid filearea');
         }
