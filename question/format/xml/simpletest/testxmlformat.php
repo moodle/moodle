@@ -306,6 +306,7 @@ END;
         $expectedq->attachments = 0;
         $expectedq->graderinfo['text'] = '';
         $expectedq->graderinfo['format'] = FORMAT_MOODLE;
+        $expectedq->graderinfo['files'] = array();
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
     }
@@ -350,6 +351,7 @@ END;
         $expectedq->attachments = -1;
         $expectedq->graderinfo['text'] = '<p>Grade <b>generously</b>!</p>';
         $expectedq->graderinfo['format'] = FORMAT_HTML;
+        $expectedq->graderinfo['files'] = array();
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
     }
