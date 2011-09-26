@@ -7552,12 +7552,20 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
  * @return mixed
  */
 function plugin_callback($type, $name, $feature, $action, $options = null, $default=null) {
+    global $CFG;
+
     $component = clean_param($type . '_' . $name, PARAM_COMPONENT);
     if (empty($component)) {
         throw coding_exception('Invalid component used in plugin_callback():' . $type . '_' . $name);
     }
 
-    $function = $name.'_'.$feature.'_'.$action;
+    list($type, $name) = normalize_component($component);
+    $component = $type . '_' . $name;
+
+    $function = null;
+
+    $function = $component.'_'.$feature.'_'.$action;
+    $oldfunction = $name.'_'.$feature.'_'.$action;
 
     $dir = get_component_directory($component);
     if (empty($dir)) {
@@ -7567,6 +7575,13 @@ function plugin_callback($type, $name, $feature, $action, $options = null, $defa
     // Load library and look for function
     if (file_exists($dir.'/lib.php')) {
         require_once($dir.'/lib.php');
+    }
+
+    if (!function_exists($function) and function_exists($oldfunction)) {
+        if ($type !== 'mod' and $type !== 'core') {
+            debugging("Please use new function name $function instead of legacy $oldfunction");
+        }
+        $function = $oldfunction;
     }
 
     if (function_exists($function)) {
