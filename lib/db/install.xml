@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20110915" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20110926" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1820,7 +1820,8 @@
         <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The short name or code for this outcome statement" PREVIOUS="courseid" NEXT="fullname"/>
         <FIELD NAME="fullname" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="The full description of the outcome (usually 1 sentence)" PREVIOUS="shortname" NEXT="scaleid"/>
         <FIELD NAME="scaleid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The recommended scale for this outcome." PREVIOUS="fullname" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Outcome description" PREVIOUS="scaleid"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Outcome description" PREVIOUS="scaleid" NEXT="descriptionformat"/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="oldid"/>
@@ -1851,7 +1852,8 @@
         <FIELD NAME="droplow" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Drop the X lowest items" PREVIOUS="keephigh" NEXT="aggregateonlygraded"/>
         <FIELD NAME="aggregateonlygraded" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="aggregate only graded items" PREVIOUS="droplow" NEXT="aggregateoutcomes"/>
         <FIELD NAME="aggregateoutcomes" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Aggregate outcomes" PREVIOUS="aggregateonlygraded" NEXT="aggregatesubcats"/>
-        <FIELD NAME="aggregatesubcats" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="ignore subcategories in aggregation" PREVIOUS="aggregateoutcomes"/>
+        <FIELD NAME="aggregatesubcats" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="ignore subcategories in aggregation" PREVIOUS="aggregateoutcomes" NEXT="hidden"/>
+        <FIELD NAME="hidden" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="aggregatesubcats"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="oldid"/>
@@ -1895,7 +1897,9 @@
         <FIELD NAME="hidden" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="1 is hidden, &amp;gt; 1 is a date to hide until (prevents viewing)" PREVIOUS="sortorder" NEXT="locked"/>
         <FIELD NAME="locked" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="1 is locked, &amp;gt; 1 is a date to lock until (prevents update)" PREVIOUS="hidden" NEXT="locktime"/>
         <FIELD NAME="locktime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="lock all final grades after this date" PREVIOUS="locked" NEXT="needsupdate"/>
-        <FIELD NAME="needsupdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="If this flag is set, then the whole column will be recalculated" PREVIOUS="locktime"/>
+        <FIELD NAME="needsupdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="If this flag is set, then the whole column will be recalculated" PREVIOUS="locktime" NEXT="display"/>
+        <FIELD NAME="display" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="needsupdate" NEXT="decimals"/>
+        <FIELD NAME="decimals" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="display"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="oldid"/>
