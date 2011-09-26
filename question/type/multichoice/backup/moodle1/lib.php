@@ -82,7 +82,7 @@ class moodle1_qtype_multichoice_handler extends moodle1_qtype_handler {
                 $multichoice['incorrectfeedbackformat']         = FORMAT_HTML;
             } else {
                 $multichoice['correctfeedbackformat']           = $oldquestiontextformat;
-                $multichoice['partiallycorrectfeedback']        = $oldquestiontextformat;
+                $multichoice['partiallycorrectfeedbackformat']  = $oldquestiontextformat;
                 $multichoice['incorrectfeedbackformat']         = $oldquestiontextformat;
             }
 
