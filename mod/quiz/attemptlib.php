@@ -1236,7 +1236,7 @@ abstract class quiz_nav_panel_base {
             if (!$showcorrectness && $button->stateclass == 'notanswered') {
                 $button->stateclass = 'complete';
             }
-            $button->statestring = $qa->get_state_string($showcorrectness);
+            $button->statestring = $this->get_state_string($qa, $showcorrectness);
             $button->currentpage = $qa->get_question()->_page == $this->page;
             $button->flagged     = $qa->is_flagged();
             $button->url         = $this->get_question_url($slot);
@@ -1244,6 +1244,19 @@ abstract class quiz_nav_panel_base {
         }
 
         return $buttons;
+    }
+
+    protected function get_state_string(question_attempt $qa, $showcorrectness) {
+        if ($qa->get_question()->length > 0)  {
+            return $qa->get_state_string($showcorrectness);
+        }
+
+        // Special case handling for 'information' items.
+        if ($qa->get_state() == question_state::$todo) {
+            return get_string('notyetviewed', 'quiz');
+        } else {
+            return get_string('viewed', 'quiz');
+        }
     }
 
     public function render_before_button_bits(mod_quiz_renderer $output) {
