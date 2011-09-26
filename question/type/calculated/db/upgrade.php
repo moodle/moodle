@@ -197,7 +197,7 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
                 $record->incorrectfeedbackformat = FORMAT_HTML;
             } else {
                 $record->correctfeedbackformat = $record->oldquestiontextformat;
-                $record->partiallycorrectfeedback = $record->oldquestiontextformat;
+                $record->partiallycorrectfeedbackformat = $record->oldquestiontextformat;
                 $record->incorrectfeedbackformat = $record->oldquestiontextformat;
             }
             $DB->update_record('question_calculated_options', $record);
