@@ -285,7 +285,7 @@ class comment {
         self::$comment_itemid  = optional_param('comment_itemid',  '', PARAM_INT);
         self::$comment_context = optional_param('comment_context', '', PARAM_INT);
         self::$comment_page    = optional_param('comment_page',    '', PARAM_INT);
-        self::$comment_area    = optional_param('comment_area',    '', PARAM_ALPHAEXT);
+        self::$comment_area    = optional_param('comment_area',    '', PARAM_AREA);
 
         $page->requires->string_for_js('addcomment', 'moodle');
         $page->requires->string_for_js('deletecomment', 'moodle');

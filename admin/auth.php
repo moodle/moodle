@@ -19,7 +19,7 @@ $returnurl = new moodle_url('/admin/settings.php', array('section'=>'manageauths
 $PAGE->set_url($returnurl);
 
 $action = optional_param('action', '', PARAM_ACTION);
-$auth   = optional_param('auth', '', PARAM_SAFEDIR);
+$auth   = optional_param('auth', '', PARAM_PLUGIN);
 
 get_enabled_auth_plugins(true); // fix the list of enabled auths
 if (empty($CFG->auth)) {

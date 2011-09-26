@@ -640,8 +640,8 @@ abstract class repository {
         $fileitemid = clean_param($params['itemid'],    PARAM_INT);
         $filename   = clean_param($params['filename'],  PARAM_FILE);
         $filepath   = clean_param($params['filepath'],  PARAM_PATH);;
-        $filearea   = clean_param($params['filearea'],  PARAM_ALPHAEXT);
-        $component  = clean_param($params['component'], PARAM_ALPHAEXT);
+        $filearea   = clean_param($params['filearea'],  PARAM_AREA);
+        $component  = clean_param($params['component'], PARAM_COMPONENT);
 
         $context    = get_context_instance_by_id($contextid);
         // the file needs to copied to draft area
@@ -1369,8 +1369,8 @@ abstract class repository {
         $fileitemid = clean_param($params['itemid'], PARAM_INT);
         $filename   = clean_param($params['filename'], PARAM_FILE);
         $filepath   = clean_param($params['filepath'], PARAM_PATH);
-        $filearea   = clean_param($params['filearea'], PARAM_SAFEDIR);
-        $component  = clean_param($params['component'], PARAM_ALPHAEXT);
+        $filearea   = clean_param($params['filearea'], PARAM_AREA);
+        $component  = clean_param($params['component'], PARAM_COMPONENT);
         $context    = get_context_instance_by_id($contextid);
         $file_info  = $browser->get_file_info($context, $component, $filearea, $fileitemid, $filepath, $filename);
         if (!empty($file_info)) {
@@ -1887,7 +1887,7 @@ final class repository_instance_form extends moodleform {
         $mform->addElement('hidden', 'new',   $this->plugin);
         $mform->setType('new', PARAM_FORMAT);
         $mform->addElement('hidden', 'plugin', $this->plugin);
-        $mform->setType('plugin', PARAM_SAFEDIR);
+        $mform->setType('plugin', PARAM_PLUGIN);
         $mform->addElement('hidden', 'typeid', $this->typeid);
         $mform->setType('typeid', PARAM_INT);
         $mform->addElement('hidden', 'contextid', $this->contextid);
@@ -2001,7 +2001,7 @@ final class repository_type_form extends moodleform {
         $mform->addElement('hidden', 'action', $this->action);
         $mform->setType('action', PARAM_TEXT);
         $mform->addElement('hidden', 'repos', $this->plugin);
-        $mform->setType('repos', PARAM_SAFEDIR);
+        $mform->setType('repos', PARAM_PLUGIN);
 
         // let the plugin add its specific fields
         $classname = 'repository_' . $this->plugin;

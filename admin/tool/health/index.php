@@ -42,7 +42,7 @@
     define('SEVERITY_SIGNIFICANT', 'significant');
     define('SEVERITY_CRITICAL',    'critical');
 
-    $solution = optional_param('solution', 0, PARAM_SAFEDIR); //in fact it is class name alhanumeric and _
+    $solution = optional_param('solution', 0, PARAM_PLUGIN);
 
     require_login();
     require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));

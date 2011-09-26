@@ -170,8 +170,8 @@ class repository_recent extends repository {
         $fileitemid = clean_param($params['itemid'],    PARAM_INT);
         $filename   = clean_param($params['filename'],  PARAM_FILE);
         $filepath   = clean_param($params['filepath'],  PARAM_PATH);;
-        $filearea   = clean_param($params['filearea'],  PARAM_ALPHAEXT);
-        $component  = clean_param($params['component'], PARAM_ALPHAEXT);
+        $filearea   = clean_param($params['filearea'],  PARAM_AREA);
+        $component  = clean_param($params['component'], PARAM_COMPONENT);
 
         // XXX:
         // When user try to pick a file from other filearea, normally file api will use file browse to

@@ -33,8 +33,8 @@ $filecontextid = optional_param('filecontextid', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
 // file parameters
 // non js interface may require these parameters
-$component  = optional_param('component', null, PARAM_ALPHAEXT);
-$filearea   = optional_param('filearea', null, PARAM_ALPHAEXT);
+$component  = optional_param('component', null, PARAM_COMPONENT);
+$filearea   = optional_param('filearea', null, PARAM_AREA);
 $itemid     = optional_param('itemid', null, PARAM_INT);
 $filepath   = optional_param('filepath', null, PARAM_PATH);
 $filename   = optional_param('filename', null, PARAM_FILE);

@@ -284,6 +284,29 @@ define('PARAM_TIMEZONE', 'timezone');
  */
 define('PARAM_CLEANFILE', 'file');
 
+/**
+ * PARAM_COMPONENT is used for full component names (aka frankenstyle) such as 'mod_forum', 'core_rating', 'auth_ldap'.
+ * Short legacy subsystem names and module names are accepted too ex: 'forum', 'rating', 'user'.
+ * Only lowercase ascii letters, numbers and underscores are allowed, it has to start with a letter.
+ * NOTE: numbers and underscores are strongly discouraged in plugin names!
+ */
+define('PARAM_COMPONENT', 'component');
+
+/**
+ * PARAM_AREA is a name of area used when addressing files, comments, ratings, etc.
+ * It is usually used together with context id and component.
+ * Only lowercase ascii letters, numbers and underscores are allowed, it has to start with a letter.
+ */
+define('PARAM_AREA', 'area');
+
+/**
+ * PARAM_PLUGIN is used for plugin names such as 'forum', 'glossary', 'ldap', 'radius', 'paypal', 'completionstatus'.
+ * Only lowercase ascii letters, numbers and underscores are allowed, it has to start with a letter.
+ * NOTE: numbers and underscores are strongly discouraged in plugin names! Underscores are forbidden in module names.
+ */
+define('PARAM_PLUGIN', 'plugin');
+
+
 /// Web Services ///
 
 /**
@@ -821,6 +844,34 @@ function clean_param($param, $type) {
             // easy, just strip all tags, if we ever want to fix orphaned '&' we have to do that in format_string()
             return strip_tags($param);
 
+        case PARAM_COMPONENT:
+            // we do not want any guessing here, either the name is correct or not
+            // please note only normalised component names are accepted
+            if (!preg_match('/^[a-z]+(_[a-z][a-z0-9_]*)?[a-z0-9]$/', $param)) {
+                return '';
+            }
+            if (strpos($param, '__') !== false) {
+                return '';
+            }
+            if (strpos($param, 'mod_') === 0) {
+                // module names must not contain underscores because we need to differentiate them from invalid plugin types
+                if (substr_count($param, '_') != 1) {
+                    return '';
+                }
+            }
+            return $param;
+
+        case PARAM_PLUGIN:
+        case PARAM_AREA:
+            // we do not want any guessing here, either the name is correct or not
+            if (!preg_match('/^[a-z][a-z0-9_]*[a-z0-9]$/', $param)) {
+                return '';
+            }
+            if (strpos($param, '__') !== false) {
+                return '';
+            }
+            return $param;
+
         case PARAM_SAFEDIR:      // Remove everything not a-zA-Z0-9_-
             return preg_replace('/[^a-zA-Z0-9_-]/i', '', $param);
 
@@ -988,8 +1039,10 @@ function clean_param($param, $type) {
             }
 
         case PARAM_AUTH:
-            $param = clean_param($param, PARAM_SAFEDIR);
-            if (exists_auth_plugin($param)) {
+            $param = clean_param($param, PARAM_PLUGIN);
+            if (empty($param)) {
+                return '';
+            } else if (exists_auth_plugin($param)) {
                 return $param;
             } else {
                 return '';
@@ -1004,8 +1057,10 @@ function clean_param($param, $type) {
             }
 
         case PARAM_THEME:
-            $param = clean_param($param, PARAM_SAFEDIR);
-            if (file_exists("$CFG->dirroot/theme/$param/config.php")) {
+            $param = clean_param($param, PARAM_PLUGIN);
+            if (empty($param)) {
+                return '';
+            } else if (file_exists("$CFG->dirroot/theme/$param/config.php")) {
                 return $param;
             } else if (!empty($CFG->themedir) and file_exists("$CFG->themedir/$param/config.php")) {
                 return $param;
@@ -7381,7 +7436,8 @@ function get_plugin_list($plugintype) {
             if (in_array($pluginname, $ignored)) {
                 continue;
             }
-            if ($pluginname !== clean_param($pluginname, PARAM_SAFEDIR)) {
+            $pluginname = clean_param($pluginname, PARAM_PLUGIN);
+            if (empty($pluginname)) {
                 // better ignore plugins with problematic names here
                 continue;
             }
@@ -7489,23 +7545,30 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
  *
  * @param string $type Plugin type e.g. 'mod'
  * @param string $name Plugin name
- * @param string $feature Feature code (FEATURE_xx constant)
+ * @param string $feature Feature name
  * @param string $action Feature's action
  * @param string $options parameters of callback function, should be an array
  * @param mixed $default default value if callback function hasn't been defined
  * @return mixed
  */
 function plugin_callback($type, $name, $feature, $action, $options = null, $default=null) {
-    global $CFG;
+    $component = clean_param($type . '_' . $name, PARAM_COMPONENT);
+    if (empty($component)) {
+        throw coding_exception('Invalid component used in plugin_callback():' . $type . '_' . $name);
+    }
 
-    $name = clean_param($name, PARAM_SAFEDIR);
     $function = $name.'_'.$feature.'_'.$action;
-    $file = get_component_directory($type . '_' . $name) . '/lib.php';
+
+    $dir = get_component_directory($component);
+    if (empty($dir)) {
+        throw coding_exception('Invalid component used in plugin_callback():' . $type . '_' . $name);
+    }
 
     // Load library and look for function
-    if (file_exists($file)) {
-        require_once($file);
+    if (file_exists($dir.'/lib.php')) {
+        require_once($dir.'/lib.php');
     }
+
     if (function_exists($function)) {
         // Function exists, so just return function result
         $ret = call_user_func_array($function, (array)$options);
@@ -7531,24 +7594,30 @@ function plugin_callback($type, $name, $feature, $action, $options = null, $defa
 function plugin_supports($type, $name, $feature, $default = NULL) {
     global $CFG;
 
-    $name = clean_param($name, PARAM_SAFEDIR); //bit of extra security
+    if ($type === 'mod' and $name === 'NEWMODULE') {
+        //somebody forgot to rename the module template
+        return false;
+    }
+
+    $component = clean_param($type . '_' . $name, PARAM_COMPONENT);
+    if (empty($component)) {
+        throw coding_exception('Invalid component used in plugin_supports():' . $type . '_' . $name);
+    }
 
     $function = null;
 
     if ($type === 'mod') {
         // we need this special case because we support subplugins in modules,
         // otherwise it would end up in infinite loop
-        if ($name === 'NEWMODULE') {
-            //somebody forgot to rename the module template
-            return false;
-        }
         if (file_exists("$CFG->dirroot/mod/$name/lib.php")) {
             include_once("$CFG->dirroot/mod/$name/lib.php");
-            $function = $type.'_'.$name.'_supports';
+            $function = $component.'_supports';
             if (!function_exists($function)) {
                 // legacy non-frankenstyle function name
                 $function = $name.'_supports';
             }
+        } else {
+            // invalid module
         }
 
     } else {
@@ -7558,7 +7627,7 @@ function plugin_supports($type, $name, $feature, $default = NULL) {
         }
         if (file_exists("$path/lib.php")) {
             include_once("$path/lib.php");
-            $function = $type.'_'.$name.'_supports';
+            $function = $component.'_supports';
         }
     }
 

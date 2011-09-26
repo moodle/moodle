@@ -519,11 +519,13 @@ class file_storage {
             throw new file_exception('storedfileproblem', 'Invalid contextid');
         }
 
-        if ($component === '' or $component !== clean_param($component, PARAM_ALPHAEXT)) {
+        $component = clean_param($component, PARAM_COMPONENT);
+        if (empty($component)) {
             throw new file_exception('storedfileproblem', 'Invalid component');
         }
 
-        if ($filearea === '' or $filearea !== clean_param($filearea, PARAM_ALPHAEXT)) {
+        $filearea = clean_param($filearea, PARAM_AREA);
+        if (empty($filearea)) {
             throw new file_exception('storedfileproblem', 'Invalid filearea');
         }
 
@@ -620,13 +622,15 @@ class file_storage {
             }
 
             if ($key == 'component') {
-                if ($value === '' or $value !== clean_param($value, PARAM_ALPHAEXT)) {
+                $value = clean_param($value, PARAM_COMPONENT);
+                if (empty($value)) {
                     throw new file_exception('storedfileproblem', 'Invalid component');
                 }
             }
 
             if ($key == 'filearea') {
-                if ($value === '' or $value !== clean_param($value, PARAM_ALPHAEXT)) {
+                $value = clean_param($value, PARAM_AREA);
+                if (empty($value)) {
                     throw new file_exception('storedfileproblem', 'Invalid filearea');
                 }
             }
@@ -755,11 +759,13 @@ class file_storage {
             throw new file_exception('storedfileproblem', 'Invalid contextid');
         }
 
-        if ($file_record->component === '' or $file_record->component !== clean_param($file_record->component, PARAM_ALPHAEXT)) {
+        $file_record->component = clean_param($file_record->component, PARAM_COMPONENT);
+        if (empty($file_record->component)) {
             throw new file_exception('storedfileproblem', 'Invalid component');
         }
 
-        if ($file_record->filearea === '' or $file_record->filearea !== clean_param($file_record->filearea, PARAM_ALPHAEXT)) {
+        $file_record->filearea = clean_param($file_record->filearea, PARAM_AREA);
+        if (empty($file_record->filearea)) {
             throw new file_exception('storedfileproblem', 'Invalid filearea');
         }
 
@@ -848,11 +854,13 @@ class file_storage {
             throw new file_exception('storedfileproblem', 'Invalid contextid');
         }
 
-        if ($file_record->component === '' or $file_record->component !== clean_param($file_record->component, PARAM_ALPHAEXT)) {
+        $file_record->component = clean_param($file_record->component, PARAM_COMPONENT);
+        if (empty($file_record->component)) {
             throw new file_exception('storedfileproblem', 'Invalid component');
         }
 
-        if ($file_record->filearea === '' or $file_record->filearea !== clean_param($file_record->filearea, PARAM_ALPHAEXT)) {
+        $file_record->filearea = clean_param($file_record->filearea, PARAM_AREA);
+        if (empty($file_record->filearea)) {
             throw new file_exception('storedfileproblem', 'Invalid filearea');
         }
 

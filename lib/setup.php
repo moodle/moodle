@@ -712,7 +712,7 @@ if (!empty($CFG->profilingenabled)) {
 // Process theme change in the URL.
 if (!empty($CFG->allowthemechangeonurl) and !empty($_GET['theme'])) {
     // we have to use _GET directly because we do not want this to interfere with _POST
-    $urlthemename = optional_param('theme', '', PARAM_SAFEDIR);
+    $urlthemename = optional_param('theme', '', PARAM_PLUGIN);
     try {
         $themeconfig = theme_config::load($urlthemename);
         // Makes sure the theme can be loaded without errors.

@@ -85,7 +85,7 @@ if (!empty($config->disabledbehaviours)) {
 // Process actions ============================================================
 
 // Disable.
-if (($disable = optional_param('disable', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
+if (($disable = optional_param('disable', '', PARAM_PLUGIN)) && confirm_sesskey()) {
     if (!isset($behaviours[$disable])) {
         print_error('unknownbehaviour', 'question', $thispageurl, $disable);
     }
@@ -98,7 +98,7 @@ if (($disable = optional_param('disable', '', PARAM_SAFEDIR)) && confirm_sesskey
 }
 
 // Enable.
-if (($enable = optional_param('enable', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
+if (($enable = optional_param('enable', '', PARAM_PLUGIN)) && confirm_sesskey()) {
     if (!isset($behaviours[$enable])) {
         print_error('unknownbehaviour', 'question', $thispageurl, $enable);
     }
@@ -115,7 +115,7 @@ if (($enable = optional_param('enable', '', PARAM_SAFEDIR)) && confirm_sesskey()
 }
 
 // Move up in order.
-if (($up = optional_param('up', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
+if (($up = optional_param('up', '', PARAM_PLUGIN)) && confirm_sesskey()) {
     if (!isset($behaviours[$up])) {
         print_error('unknownbehaviour', 'question', $thispageurl, $up);
     }
@@ -127,7 +127,7 @@ if (($up = optional_param('up', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
 }
 
 // Move down in order.
-if (($down = optional_param('down', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
+if (($down = optional_param('down', '', PARAM_PLUGIN)) && confirm_sesskey()) {
     if (!isset($behaviours[$down])) {
         print_error('unknownbehaviour', 'question', $thispageurl, $down);
     }
@@ -139,7 +139,7 @@ if (($down = optional_param('down', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
 }
 
 // Delete.
-if (($delete = optional_param('delete', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
+if (($delete = optional_param('delete', '', PARAM_PLUGIN)) && confirm_sesskey()) {
     // Check it is OK to delete this question type.
     if ($delete == 'missing') {
         print_error('cannotdeletemissingbehaviour', 'question', $thispageurl);

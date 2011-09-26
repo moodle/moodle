@@ -3506,9 +3506,9 @@ class admin_setting_emoticons extends admin_setting {
             $emoticon                   = new stdClass();
             $emoticon->text             = clean_param(trim($form['text'.$i]), PARAM_NOTAGS);
             $emoticon->imagename        = clean_param(trim($form['imagename'.$i]), PARAM_PATH);
-            $emoticon->imagecomponent   = clean_param(trim($form['imagecomponent'.$i]), PARAM_SAFEDIR);
+            $emoticon->imagecomponent   = clean_param(trim($form['imagecomponent'.$i]), PARAM_COMPONENT);
             $emoticon->altidentifier    = clean_param(trim($form['altidentifier'.$i]), PARAM_STRINGID);
-            $emoticon->altcomponent     = clean_param(trim($form['altcomponent'.$i]), PARAM_SAFEDIR);
+            $emoticon->altcomponent     = clean_param(trim($form['altcomponent'.$i]), PARAM_COMPONENT);
 
             if (strpos($emoticon->text, ':/') !== false or strpos($emoticon->text, '//') !== false) {
                 // prevent from breaking http://url.addresses by accident

@@ -117,8 +117,10 @@ function enrol_get_plugins($enabled) {
 function enrol_get_plugin($name) {
     global $CFG;
 
-    if ($name !== clean_param($name, PARAM_SAFEDIR)) {
-        // ignore malformed plugin names completely
+    $name = clean_param($name, PARAM_PLUGIN);
+
+    if (empty($name)) {
+        // ignore malformed or missing plugin names completely
         return null;
     }
 

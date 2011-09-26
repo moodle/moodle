@@ -276,14 +276,11 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
     $plugs = get_plugin_list($type);
 
     foreach ($plugs as $plug=>$fullplug) {
-        $component = $type.'_'.$plug; // standardised plugin name
+        $component = clean_param($type.'_'.$plug, PARAM_COMPONENT); // standardised plugin name
 
         // check plugin dir is valid name
-        $cplug = strtolower($plug);
-        $cplug = clean_param($cplug, PARAM_SAFEDIR);
-        $cplug = str_replace('-', '', $cplug);
-        if ($plug !== $cplug) {
-            throw new plugin_defective_exception($component, 'Invalid plugin directory name.');
+        if (empty($component)) {
+            throw new plugin_defective_exception($type.'_'.$plug, 'Invalid plugin directory name.');
         }
 
         if (!is_readable($fullplug.'/version.php')) {
@@ -430,15 +427,11 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
             continue;
         }
 
-        $component = 'mod_'.$mod;
+        $component = clean_param('mod_'.$mod, PARAM_COMPONENT);
 
         // check module dir is valid name
-        $cmod = strtolower($mod);
-        $cmod = clean_param($cmod, PARAM_SAFEDIR);
-        $cmod = str_replace('-', '', $cmod);
-        $cmod = str_replace('_', '', $cmod); // modules MUST not have '_' in name and never will, sorry
-        if ($mod !== $cmod) {
-            throw new plugin_defective_exception($component, 'Invalid plugin directory name.');
+        if (empty($component)) {
+            throw new plugin_defective_exception('mod_'.$mod, 'Invalid plugin directory name.');
         }
 
         if (!is_readable($fullmod.'/version.php')) {
@@ -593,18 +586,15 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
             $first_install = ($DB->count_records('block_instances') == 0);
         }
 
-        if ($blockname == 'NEWBLOCK') {   // Someone has unzipped the template, ignore it
+        if ($blockname === 'NEWBLOCK') {   // Someone has unzipped the template, ignore it
             continue;
         }
 
-        $component = 'block_'.$blockname;
+        $component = clean_param('block_'.$blockname, PARAM_COMPONENT);
 
         // check block dir is valid name
-        $cblockname = strtolower($blockname);
-        $cblockname = clean_param($cblockname, PARAM_SAFEDIR);
-        $cblockname = str_replace('-', '', $cblockname);
-        if ($blockname !== $cblockname) {
-            throw new plugin_defective_exception($component, 'Invalid plugin directory name.');
+        if (empty($component)) {
+            throw new plugin_defective_exception('block_'.$blockname, 'Invalid plugin directory name.');
         }
 
         if (!is_readable($fullblock.'/version.php')) {
