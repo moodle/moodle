@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Link to unsupported roles report
+ * Link to unsupported roles tool
  *
  * @package    tool
  * @subpackage unsuproles

@@ -289,7 +289,6 @@ class plugin_manager {
             ),
 
             'local' => array(
-                'qeupgradehelper'
             ),
 
             'message' => array(
@@ -343,8 +342,7 @@ class plugin_manager {
 
             'report' => array(
                 'backups', 'configlog', 'courseoverview',
-                'customlang', 'log', 'questioninstances',
-                'security', 'spamcleaner', 'stats'
+                'log', 'questioninstances', 'security', 'stats'
             ),
 
             'repository' => array(
@@ -367,9 +365,10 @@ class plugin_manager {
             ),
 
             'tool' => array(
-                'bloglevelupgrade', 'capability', 'dbtransfer', 'generator',
-                'health', 'innodb', 'langimport', 'multilangupgrade',
-                'profiling', 'unittest', 'uploaduser', 'unsuproles', 'xmldb'
+                'bloglevelupgrade', 'capability', 'customlang', 'dbtransfer', 'generator',
+                'health', 'innodb', 'langimport', 'multilangupgrade', 'profiling',
+                'qeupgradehelper', 'replace', 'spamcleaner', 'timezoneimport', 'unittest',
+                'uploaduser', 'unsuproles', 'xmldb'
             ),
 
             'webservice' => array(
@@ -1502,5 +1501,15 @@ class plugintype_mnetservice extends plugintype_base implements plugintype_inter
         } else {
             return parent::is_enabled();
         }
+    }
+}
+
+/**
+ * Class for admin tool plugins
+ */
+class plugintype_tool extends plugintype_base implements plugintype_interface {
+
+    public function get_uninstall_url() {
+        return new moodle_url('/admin/tools.php', array('delete' => $this->name, 'sesskey' => sesskey()));
     }
 }

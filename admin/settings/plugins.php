@@ -482,6 +482,13 @@ foreach (get_plugin_list('tool') as $plugin => $plugindir) {
     }
 }
 
+/// Add all admin tools
+if ($hassiteconfig) {
+    $ADMIN->add('modules', new admin_category('tools', get_string('tools', 'admin')));
+    $ADMIN->add('tools', new admin_externalpage('managetools', get_string('toolsmanage', 'admin'),
+                                                     $CFG->wwwroot . '/' . $CFG->admin . '/tools.php'));
+}
+
 /// Add all local plugins - must be always last!
 if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('localplugins', get_string('localplugins')));

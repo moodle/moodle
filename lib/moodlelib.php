@@ -7297,7 +7297,7 @@ function get_core_subsystems() {
             'publish'     => 'course/publish',
             'question'    => 'question',
             'rating'      => 'rating',
-            'register'    => 'admin/registration',
+            'register'    => 'admin/registration', //TODO: this is wrong, unfortunately we would need to modify hub code to pass around the correct url
             'repository'  => 'repository',
             'rss'         => 'rss',
             'role'        => $CFG->admin.'/role',

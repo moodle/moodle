@@ -19,7 +19,7 @@
  *
  * @package    tool
  * @subpackage health
- * @copyright  2011 petr Skoda
+ * @copyright  2011 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

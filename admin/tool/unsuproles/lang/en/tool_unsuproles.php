@@ -17,7 +17,7 @@
 /**
  * Strings for component 'tool_unsuproles', language 'en', branch 'MOODLE_22_STABLE'
  *
- * @package    report
+ * @package    tool
  * @subpackage unsuproles
  * @copyright  2010 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

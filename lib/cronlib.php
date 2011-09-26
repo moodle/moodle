@@ -452,6 +452,7 @@ function cron_run() {
     cron_execute_plugin_type('qtype', 'question types');
     cron_execute_plugin_type('plagiarism', 'plagiarism plugins');
     cron_execute_plugin_type('theme', 'themes');
+    cron_execute_plugin_type('tool', 'admin tools');
 
     // and finally run any local cronjobs, if any
     if ($locals = get_plugin_list('local')) {
