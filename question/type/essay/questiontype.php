@@ -121,7 +121,7 @@ class question_essay_qtype extends default_questiontype {
         // All grading takes place in Manual Grading
 
         $state->responses[''] = clean_param($state->responses[''], PARAM_CLEAN);
-
+        $state->event = QUESTION_EVENTCLOSE;
         $state->raw_grade = 0;
         $state->penalty = 0;
 
