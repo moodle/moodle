@@ -25,6 +25,7 @@
 
 $string['addcompletions'] = 'Add {no} activity conditions to form';
 $string['addgrades'] = 'Add {no} grade conditions to form';
+$string['adduserfields'] = 'Add {no} user field conditions to form';
 $string['availabilityconditions'] = 'Restrict access';
 $string['availablefrom'] = 'Allow access from';
 $string['availablefrom_help'] = 'Access from/to dates determine when students can access the activity via a link on the course page.
@@ -74,12 +75,15 @@ $string['requires_grade_any'] = 'Not available until you have a grade in <strong
 $string['requires_grade_max'] = 'Not available unless you get an appropriate score in <strong>{$a}</strong>.';
 $string['requires_grade_min'] = 'Not available until you achieve a required score in <strong>{$a}</strong>.';
 $string['requires_grade_range'] = 'Not available unless you get a particular score in <strong>{$a}</strong>.';
+$string['requires_user_field_restriction'] = 'Only available to users who\'s user field \'{$a->field}\' {$a->operator} \'{$a->value}\'.';
 $string['showavailability'] = 'Before activity can be accessed';
 $string['showavailabilitysection'] = 'Before section can be accessed';
 $string['showavailability_hide'] = 'Hide activity entirely';
 $string['showavailability_show'] = 'Show activity greyed-out, with restriction information';
 $string['showavailabilitysection_hide'] = 'Hide section entirely';
 $string['showavailabilitysection_show'] = 'Show section greyed-out, with restriction information';
+$string['userfield'] = 'User field';
+$string['userfield_help'] = 'This is an attribute associated with each individual user';
 $string['userrestriction_hidden'] = 'Restricted (completely hidden, no message): &lsquo;{$a}&rsquo;';
 $string['userrestriction_visible'] = 'Restricted: &lsquo;{$a}&rsquo;';
 $string['groupingnoaccess'] = 'You do not currently belong to a group which has access to this section. ';

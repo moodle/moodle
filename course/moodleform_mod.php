@@ -259,6 +259,15 @@ abstract class moodleform_mod extends moodleform {
                 $num++;
             }
 
+            $num=0;
+            foreach($fullcm->conditionsfield as $field=>$details) {
+                $groupelements=$mform->getElement('conditionfieldgroup['.$num.']')->getElements();
+                $groupelements[0]->setValue($field);
+                $groupelements[1]->setValue(is_null($details->operator)?'':$details->operator);
+                $groupelements[2]->setValue(is_null($details->value)?'':($details->value));
+                $num++;
+            }
+
             if ($completion->is_enabled()) {
                 $num=0;
                 foreach($fullcm->conditionscompletion as $othercmid=>$state) {
@@ -471,6 +480,8 @@ abstract class moodleform_mod extends moodleform {
         }
 
         if (!empty($CFG->enableavailability)) {
+            // String used by conditions
+            $strnone = get_string('none','condition');
             // Conditional availability
 
             // Available from/to defaults to midnight because then the display
@@ -504,7 +515,7 @@ abstract class moodleform_mod extends moodleform {
                 $gradeoptions[$id] = $item->get_name();
             }
             asort($gradeoptions);
-            $gradeoptions = array(0=>get_string('none','condition'))+$gradeoptions;
+            $gradeoptions = array(0=>$strnone)+$gradeoptions;
 
             $grouparray = array();
             $grouparray[] =& $mform->createElement('select','conditiongradeitemid','',$gradeoptions);
@@ -522,13 +533,33 @@ abstract class moodleform_mod extends moodleform {
                 $ci = new condition_info($this->_cm, CONDITION_MISSING_EXTRATABLE);
                 $this->_cm = $ci->get_full_course_module();
                 $count = count($this->_cm->conditionsgrade)+1;
+                $fieldcount = count($this->_cm->conditionsfield)+1;
             } else {
                 $count = 1;
+                $fieldcount = 1;
             }
 
             $this->repeat_elements(array($group), $count, array(), 'conditiongraderepeats', 'conditiongradeadds', 2,
                                    get_string('addgrades', 'condition'), true);
             $mform->addHelpButton('conditiongradegroup[0]', 'gradecondition', 'condition');
+
+            // Conditions based on user fields
+            $operators = condition_info::get_condition_user_field_operators();
+            $useroptions = condition_info::get_condition_user_fields();
+            asort($useroptions);
+
+            $useroptions = array(0=>$strnone)+$useroptions;
+            $grouparray = array();
+            $grouparray[] =& $mform->createElement('select','conditionfield','',$useroptions);
+            $grouparray[] =& $mform->createElement('select', 'conditionfieldoperator','',$operators);
+            $grouparray[] =& $mform->createElement('text', 'conditionfieldvalue');
+            $mform->setType('conditionfieldvalue',PARAM_RAW);
+            $group = $mform->createElement('group','conditionfieldgroup',
+                get_string('userfield', 'condition'),$grouparray);
+
+            $this->repeat_elements(array($group), $fieldcount, array(), 'conditionfieldrepeats', 'conditionfieldadds', 2,
+                                   get_string('adduserfields', 'condition'), true);
+            $mform->addHelpButton('conditionfieldgroup[0]', 'userfield', 'condition');
 
             // Conditions based on completion
             $completion = new completion_info($COURSE);
@@ -544,7 +575,7 @@ abstract class moodleform_mod extends moodleform {
                     }
                 }
                 asort($completionoptions);
-                $completionoptions = array(0=>get_string('none','condition'))+$completionoptions;
+                $completionoptions = array(0=>$strnone)+$completionoptions;
 
                 $completionvalues=array(
                     COMPLETION_COMPLETE=>get_string('completion_complete','condition'),

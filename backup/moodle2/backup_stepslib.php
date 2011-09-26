@@ -322,6 +322,8 @@ class backup_module_structure_step extends backup_structure_step {
         $availinfo = new backup_nested_element('availability_info');
         $availability = new backup_nested_element('availability', array('id'), array(
             'sourcecmid', 'requiredcompletion', 'gradeitemid', 'grademin', 'grademax'));
+        $availability_field = new backup_nested_element('availability_field', array('id'), array(
+            'field', 'operator', 'value'));
 
         // attach format plugin structure to $module element, only one allowed
         $this->add_plugin_structure('format', $module, false);
@@ -333,9 +335,9 @@ class backup_module_structure_step extends backup_structure_step {
         // Define the tree
         $module->add_child($availinfo);
         $availinfo->add_child($availability);
+        $availinfo->add_child($availability_field);
 
         // Set the sources
-
         $module->set_source_sql('
             SELECT cm.*, m.version, m.name AS modulename, s.id AS sectionid, s.section AS sectionnumber
               FROM {course_modules} cm
@@ -344,6 +346,7 @@ class backup_module_structure_step extends backup_structure_step {
              WHERE cm.id = ?', array(backup::VAR_MODID));
 
         $availability->set_source_table('course_modules_availability', array('coursemoduleid' => backup::VAR_MODID));
+        $availability_field->set_source_table('course_modules_availability_field', array('coursemoduleid' => backup::VAR_MODID));
 
         // Define annotations
         $module->annotate_ids('grouping', 'groupingid');

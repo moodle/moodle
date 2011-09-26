@@ -1111,6 +1111,7 @@ function get_array_of_activities($courseid) {
                        condition_info::fill_availability_conditions($rawmods[$seq]);
                        $mod[$seq]->conditionscompletion = $rawmods[$seq]->conditionscompletion;
                        $mod[$seq]->conditionsgrade  = $rawmods[$seq]->conditionsgrade;
+                       $mod[$seq]->conditionsfield  = $rawmods[$seq]->conditionsfield;
                    }
 
                    $modname = $mod[$seq]->mod;

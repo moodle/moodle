@@ -546,6 +546,14 @@ class restore_process_course_modules_availability extends restore_execution_step
                 $DB->insert_record('course_modules_availability', $availability);
             }
         }
+
+        // Now we need to do it for conditional field availability
+        $params = array('backupid' => $this->get_restoreid(), 'itemname' => 'module_availability_field');
+        $rs = $DB->get_recordset('backup_ids_temp', $params, '', 'itemid');
+        foreach($rs as $availrec) {
+            $availability = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'module_availability_field', $availrec->itemid)->info;
+            $DB->insert_record('course_modules_availability_field', $availability);
+        }
         $rs->close();
     }
 }
@@ -2539,6 +2547,7 @@ class restore_module_structure_step extends restore_structure_step {
         $paths[] = $module;
         if ($CFG->enableavailability) {
             $paths[] = new restore_path_element('availability', '/module/availability_info/availability');
+            $paths[] = new restore_path_element('availability_fields', '/module/availability_info/availability_field');
         }
 
         // Apply for 'format' plugins optional paths at module level
@@ -2632,14 +2641,22 @@ class restore_module_structure_step extends restore_structure_step {
         $DB->set_field('course_sections', 'sequence', $sequence, array('id' => $data->section));
     }
 
-
     protected function process_availability($data) {
         $data = (object)$data;
         // Simply going to store the whole availability record now, we'll process
-        // all them later in the final task (once all actvivities have been restored)
+        // all them later in the final task (once all activities have been restored)
         // Let's call the low level one to be able to store the whole object
         $data->coursemoduleid = $this->task->get_moduleid(); // Let add the availability cmid
         restore_dbops::set_backup_ids_record($this->get_restoreid(), 'module_availability', $data->id, 0, null, $data);
+    }
+
+    protected function process_availability_fields($data) {
+        $data = (object)$data;
+        // Simply going to store the whole availability record now, we'll process
+        // all them later in the final task (once all activities have been restored)
+        // Let's call the low level one to be able to store the whole object
+        $data->coursemoduleid = $this->task->get_moduleid(); // Let add the availability cmid
+        restore_dbops::set_backup_ids_record($this->get_restoreid(), 'module_availability_field', $data->id, 0, null, $data);
     }
 }
 
