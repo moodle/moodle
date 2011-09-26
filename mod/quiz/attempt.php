@@ -114,11 +114,9 @@ if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
     $PAGE->set_title($attemptobj->get_course()->shortname . ': ' .
             format_string($attemptobj->get_quiz_name()));
     $PAGE->set_cacheable(false);
-    echo $OUTPUT->header();
 
 } else {
     $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
-    echo $OUTPUT->header();
 }
 
 if ($attemptobj->is_last_page($page)) {
@@ -127,7 +125,5 @@ if ($attemptobj->is_last_page($page)) {
     $nextpage = $page + 1;
 }
 
-echo $output->attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id, $nextpage);
-
 $accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time());
-echo $OUTPUT->footer();
+echo $output->attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id, $nextpage);

@@ -723,12 +723,11 @@ class password_access_rule extends quiz_access_rule_base {
             $PAGE->set_title($this->_quizobj->get_course()->shortname . ': ' .
                     format_string($this->_quizobj->get_quiz_name()));
             $PAGE->set_cacheable(false);
-            echo $OUTPUT->header();
         } else {
             $PAGE->set_title(format_string($this->_quizobj->get_quiz_name()));
-            echo $OUTPUT->header();
         }
 
+        echo $OUTPUT->header();
         if (trim(strip_tags($this->_quiz->intro))) {
             $output .= $OUTPUT->box(format_module_intro('quiz', $this->_quiz,
                     $this->_quizobj->get_cmid()), 'generalbox', 'intro');
@@ -830,7 +829,7 @@ class securewindow_access_rule extends quiz_access_rule_base {
      *                $headtags has been deprectaed since Moodle 2.0
      */
     public function setup_secure_page($title, $headtags=null) {
-        global $OUTPUT, $PAGE;
+        global $PAGE;
         $PAGE->set_popup_notification_allowed(false);//prevent message notifications
         $PAGE->set_title($title);
         $PAGE->set_cacheable(false);
@@ -838,7 +837,6 @@ class securewindow_access_rule extends quiz_access_rule_base {
         $PAGE->add_body_class('quiz-secure-window');
         $PAGE->requires->js_init_call('M.mod_quiz.secure_window.init', null, false,
                 quiz_get_js_module());
-        echo $OUTPUT->header();
     }
 }
 
