@@ -2154,7 +2154,8 @@ abstract class lesson_page extends lesson_base {
                 $this->answers[$i]->responseformat = $properties->response_editor[$i]['format'];
             }
 
-            if (!empty($this->answers[$i]->answer)) {
+            // we don't need to check for isset here because properties called it's own isset method.
+            if ($this->answers[$i]->answer != '') {
                 if (isset($properties->jumpto[$i])) {
                     $this->answers[$i]->jumpto = $properties->jumpto[$i];
                 }
@@ -2247,7 +2248,7 @@ abstract class lesson_page extends lesson_base {
                 $answer->responseformat = $properties->response_editor[$i]['format'];
             }
 
-            if (!empty($answer->answer)) {
+            if (isset($answer->answer) && $answer->answer != '') {
                 if (isset($properties->jumpto[$i])) {
                     $answer->jumpto = $properties->jumpto[$i];
                 }

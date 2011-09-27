@@ -144,6 +144,64 @@ class lesson_page_type_truefalse extends lesson_page {
         }
         return $table;
     }
+
+    /**
+     * Updates the page and its answers
+     *
+     * @global moodle_database $DB
+     * @global moodle_page $PAGE
+     * @param stdClass $properties
+     * @return bool
+     */
+    public function update($properties) {
+        global $DB, $PAGE;
+        $answers  = $this->get_answers();
+        $properties->id = $this->properties->id;
+        $properties->lessonid = $this->lesson->id;
+        $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$PAGE->course->maxbytes), get_context_instance(CONTEXT_MODULE, $PAGE->cm->id), 'mod_lesson', 'page_contents', $properties->id);
+        $DB->update_record("lesson_pages", $properties);
+
+        // need to reset offset for correct and wrong responses
+        $this->lesson->maxanswers = 2;
+        for ($i = 0; $i < $this->lesson->maxanswers; $i++) {
+            if (!array_key_exists($i, $this->answers)) {
+                $this->answers[$i] = new stdClass;
+                $this->answers[$i]->lessonid = $this->lesson->id;
+                $this->answers[$i]->pageid = $this->id;
+                $this->answers[$i]->timecreated = $this->timecreated;
+            }
+
+            if (!empty($properties->answer_editor[$i]) && is_array($properties->answer_editor[$i])) {
+                $this->answers[$i]->answer = $properties->answer_editor[$i]['text'];
+                $this->answers[$i]->answerformat = $properties->answer_editor[$i]['format'];
+            }
+
+            if (!empty($properties->response_editor[$i]) && is_array($properties->response_editor[$i])) {
+                $this->answers[$i]->response = $properties->response_editor[$i]['text'];
+                $this->answers[$i]->responseformat = $properties->response_editor[$i]['format'];
+            }
+
+            // we don't need to check for isset here because properties called it's own isset method.
+            if ($this->answers[$i]->answer != '') {
+                if (isset($properties->jumpto[$i])) {
+                    $this->answers[$i]->jumpto = $properties->jumpto[$i];
+                }
+                if ($this->lesson->custom && isset($properties->score[$i])) {
+                    $this->answers[$i]->score = $properties->score[$i];
+                }
+                if (!isset($this->answers[$i]->id)) {
+                    $this->answers[$i]->id =  $DB->insert_record("lesson_answers", $this->answers[$i]);
+                } else {
+                    $DB->update_record("lesson_answers", $this->answers[$i]->properties());
+                }
+            } else if (isset($this->answers[$i]->id)) {
+                $DB->delete_records('lesson_answers', array('id'=>$this->answers[$i]->id));
+                unset($this->answers[$i]);
+            }
+        }
+        return true;
+    }
+
     public function stats(array &$pagestats, $tries) {
         if(count($tries) > $this->lesson->maxattempts) { // if there are more tries than the max that is allowed, grab the last "legal" attempt
             $temp = $tries[$this->lesson->maxattempts - 1];
