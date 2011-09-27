@@ -1,4 +1,10 @@
 /*
+YUI 3.4.1pr1 (build 4097)
+Copyright 2011 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
+*/
+/*
 	TODO will need to remove settings on HTML since we can't namespace it.
 	TODO with the prefix, should I group by selector or property for weight savings?
 */

@@ -1,3 +1,9 @@
+/*
+YUI 3.4.1pr1 (build 4097)
+Copyright 2011 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
+*/
 .yui3-resize-handle-inner-r,
 .yui3-resize-handle-inner-l,
 .yui3-resize-handle-inner-t,
@@ -25,7 +31,7 @@
     background-position: -58px 0;
     bottom: 0;
     right: -2px;
-    
+
 }
 
 .yui3-resize-handle-inner-bl {
@@ -38,7 +44,7 @@
     background-position: -47px 0;
     bottom: 0;
     right: -2px;
-    
+
 }
 
 .yui3-resize-handle-inner-b,.yui3-resize-handle-inner-t {
