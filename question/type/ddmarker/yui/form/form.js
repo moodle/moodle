@@ -2,11 +2,11 @@
  * This is the question editing form code.
  */
 YUI.add('moodle-qtype_ddmarker-form', function(Y) {
-    var ddmarkerFORMNAME = 'ddmarker_form';
-    var ddmarker_FORM = function() {
-        ddmarker_FORM.superclass.constructor.apply(this, arguments);
+    var DDMARKERFORMNAME = 'ddmarker_form';
+    var DDMARKER_FORM = function() {
+        DDMARKER_FORM.superclass.constructor.apply(this, arguments);
     };
-    Y.extend(ddmarker_FORM, M.qtype_ddmarker.dd_base_class, {
+    Y.extend(DDMARKER_FORM, M.qtype_ddmarker.dd_base_class, {
         fp : null,
 
         initializer : function(params) {
@@ -331,10 +331,10 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             }
             return toreturn;
         }
-    }, {NAME : ddmarkerFORMNAME, ATTRS : {maxsizes:{value:null}}});
+    }, {NAME : DDMARKERFORMNAME, ATTRS : {maxsizes:{value:null}}});
     M.qtype_ddmarker = M.qtype_ddmarker || {};
     M.qtype_ddmarker.init_form = function(config) {
-        return new ddmarker_FORM(config);
+        return new DDMARKER_FORM(config);
     }
 }, '@VERSION@', {
     requires:['moodle-qtype_ddmarker-dd', 'form_filepicker']

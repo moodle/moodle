@@ -1,12 +1,12 @@
 YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
-    var ddmarkerDDNAME = 'ddmarker_dd';
-    var ddmarker_DD = function() {
-        ddmarker_DD.superclass.constructor.apply(this, arguments);
+    var DDMARKERDDNAME = 'ddmarker_dd';
+    var DDMARKER_DD = function() {
+        DDMARKER_DD.superclass.constructor.apply(this, arguments);
     }
     /**
      * This is the base class for the question rendering and question editing form code.
      */
-    Y.extend(ddmarker_DD, Y.Base, {
+    Y.extend(DDMARKER_DD, Y.Base, {
         doc : null,
         polltimer : null,
         afterimageloaddone : false,
@@ -215,7 +215,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                     +bgimgxy[1] + this.doc.bg_img().getY() + 1];
         }
     }, {
-        NAME : ddmarkerDDNAME,
+        NAME : DDMARKERDDNAME,
         ATTRS : {
             drops : {value : null},
             readonly : {value : false},
@@ -223,16 +223,16 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         }
     });
     M.qtype_ddmarker = M.qtype_ddmarker || {};
-    M.qtype_ddmarker.dd_base_class = ddmarker_DD;
+    M.qtype_ddmarker.dd_base_class = DDMARKER_DD;
 
-    var ddmarkerQUESTIONNAME = 'ddmarker_question';
-    var ddmarker_QUESTION = function() {
-        ddmarker_QUESTION.superclass.constructor.apply(this, arguments);
+    var DDMARKERQUESTIONNAME = 'ddmarker_question';
+    var DDMARKER_QUESTION = function() {
+        DDMARKER_QUESTION.superclass.constructor.apply(this, arguments);
     };
     /**
      * This is the code for question rendering.
      */
-    Y.extend(ddmarker_QUESTION, M.qtype_ddmarker.dd_base_class, {
+    Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
         initializer : function(params) {
             this.doc = this.doc_structure(this);
             this.poll_for_image_load(null, false, 0, this.create_all_drag_and_drops);
@@ -430,7 +430,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 }, this);
             };
         }
-    }, {NAME : ddmarkerQUESTIONNAME, ATTRS : {}});
+    }, {NAME : DDMARKERQUESTIONNAME, ATTRS : {}});
 
     Y.Event.define('dragchange', {
         // Webkit and IE repeat keydown when you hold down arrow keys.
@@ -461,7 +461,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         }
     });
     M.qtype_ddmarker.init_question = function(config) {
-        return new ddmarker_QUESTION(config);
+        return new DDMARKER_QUESTION(config);
     }
 }, '@VERSION@', {
       requires:['node', 'dd', 'dd-drop', 'dd-constrain']
