@@ -7552,6 +7552,7 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
  * @return mixed
  */
 function plugin_callback($type, $name, $feature, $action, $options = null, $default=null) {
+    global $CFG; // this is needed for require_once() bellow
 
     $component = clean_param($type . '_' . $name, PARAM_COMPONENT);
     if (empty($component)) {
