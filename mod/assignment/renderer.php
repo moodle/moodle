@@ -98,7 +98,7 @@ class assignment_files implements renderable {
                 $button = new portfolio_add_button();
                 $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/locallib.php');
                 $button->reset_formats();
-                $this->portfolioform = $button->to_html();
+                $this->portfolioform = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
             }
         }
         $this->preprocess($this->dir, $filearea);
