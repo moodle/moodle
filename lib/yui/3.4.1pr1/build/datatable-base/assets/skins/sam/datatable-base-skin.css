@@ -1,3 +1,9 @@
+/*
+YUI 3.4.1pr1 (build 4097)
+Copyright 2011 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
+*/
 /* basic skin styles */
 .yui3-skin-sam .yui3-datatable table {
     margin:0;padding:0;
@@ -18,7 +24,7 @@
 }
 
 .yui3-skin-sam .yui3-datatable th {
-    background:#D8D8DA url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0; /* header gradient */
+    background:#D8D8DA url(sprite.png) repeat-x 0 0; /* header gradient */
 }
 .yui3-skin-sam .yui3-datatable th,
 .yui3-skin-sam .yui3-datatable th a {
@@ -80,7 +86,7 @@
 /* sortable columns */
 .yui3-skin-sam th.yui3-datatable-asc,
 .yui3-skin-sam th.yui3-datatable-desc {
-    background:url(../../../../assets/skins/sam/sprite.png) repeat-x 0 -100px; /* sorted header gradient */
+    background:url(sprite.png) repeat-x 0 -100px; /* sorted header gradient */
 }
 .yui3-skin-sam th.yui3-datatable-sortable .yui3-datatable-liner {
     padding-right:20px; /* room for arrow */
@@ -109,23 +115,23 @@ tbody .yui3-datatable-editable {
     padding-top:6px;text-align:right;
 }
 .yui3-datatable-editor .yui3-datatable-button button {
-    background:url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
+    background:url(sprite.png) repeat-x 0 0;
     border:1px solid #999;
     width:4em;height:1.8em;
     margin-left:6px;
 }
 .yui3-datatable-editor .yui3-datatable-button button.yui3-datatable-default {
-    background:url(../../../../assets/skins/sam/sprite.png) repeat-x 0 -1400px;
+    background:url(sprite.png) repeat-x 0 -1400px;
     background-color: #5584E0;
     border:1px solid #304369;
     color:#FFF
 }
 .yui3-datatable-editor .yui3-datatable-button button:hover {
-    background:url(../../../../assets/skins/sam/sprite.png) repeat-x 0 -1300px;
+    background:url(sprite.png) repeat-x 0 -1300px;
     color:#000;
 }
 .yui3-datatable-editor .yui3-datatable-button button:active {
-    background:url(../../../../assets/skins/sam/sprite.png) repeat-x 0 -1700px;
+    background:url(sprite.png) repeat-x 0 -1700px;
     color:#000;
 }
 
