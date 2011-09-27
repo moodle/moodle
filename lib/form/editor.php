@@ -230,7 +230,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         //Apply editor validation if required field
         $editorrules = '';
         if (!is_null($this->getAttribute('onblur')) && !is_null($this->getAttribute('onchange'))) {
-            $editorrules = 'onblur="'.htmlspecialchars($this->getAttribute('onblur')).'" onchange="'.htmlspecialchars($this->getAttribute('onchange')).'"';
+            $editorrules = ' onblur="'.htmlspecialchars($this->getAttribute('onblur')).'" onchange="'.htmlspecialchars($this->getAttribute('onchange')).'"';
         }
         $str .= '<div><textarea id="'.$id.'" name="'.$elname.'[text]" rows="'.$rows.'" cols="'.$cols.'"'.$editorrules.'>';
         $str .= s($text);
