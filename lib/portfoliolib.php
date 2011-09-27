@@ -255,7 +255,7 @@ class portfolio_add_button {
     *
     * @param int $format format to display the button or form or icon or link.
     *                    See constants PORTFOLIO_ADD_XXX for more info.
-    *                    optional, defaults to PORTFOLI_ADD_FULL_FORM
+    *                    optional, defaults to PORTFOLIO_ADD_FULL_FORM
     * @param str $addstr string to use for the button or icon alt text or link text.
     *                    this is whole string, not key.  optional, defaults to 'Add to portfolio';
     */
