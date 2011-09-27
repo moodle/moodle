@@ -7552,7 +7552,6 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
  * @return mixed
  */
 function plugin_callback($type, $name, $feature, $action, $options = null, $default=null) {
-    global $CFG;
 
     $component = clean_param($type . '_' . $name, PARAM_COMPONENT);
     if (empty($component)) {
@@ -7561,8 +7560,6 @@ function plugin_callback($type, $name, $feature, $action, $options = null, $defa
 
     list($type, $name) = normalize_component($component);
     $component = $type . '_' . $name;
-
-    $function = null;
 
     $function = $component.'_'.$feature.'_'.$action;
     $oldfunction = $name.'_'.$feature.'_'.$action;
