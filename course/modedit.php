@@ -148,6 +148,24 @@ if (!empty($add)) {
         $data->introeditor = array('text'=>$currentintro, 'format'=>$data->introformat, 'itemid'=>$draftid_editor);
     }
 
+    if (plugin_supports('mod', $data->modulename, FEATURE_ADVANCED_GRADING, false)) {
+        require_once($CFG->dirroot.'/grade/grading/lib.php');
+        $gradingman = get_grading_manager($context, 'mod_'.$data->modulename);
+        $data->_advancedgradingdata['methods'] = $gradingman->get_available_methods();
+        $areas = $gradingman->get_available_areas();
+
+        foreach ($areas as $areaname => $areatitle) {
+            $gradingman->set_areaname($areaname);
+            $method = $gradingman->get_active_area_method();
+            $data->_advancedgradingdata['areas'][$areaname] = array(
+                'title'  => $areatitle,
+                'method' => $method,
+            );
+            $formfield = 'advancedgradingmethod_'.$areaname;
+            $data->{$formfield} = $method;
+        }
+    }
+
     if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$data->modulename,
                                              'iteminstance'=>$data->instance, 'courseid'=>$course->id))) {
         // add existing outcomes

@@ -376,6 +376,8 @@ define ('PASSWORD_NONALPHANUM', '.,;:!?_-+/*@#&$');
 define('FEATURE_GRADE_HAS_GRADE', 'grade_has_grade');
 /** True if module supports outcomes */
 define('FEATURE_GRADE_OUTCOMES', 'outcomes');
+/** True if module supports advanced grading methods */
+define('FEATURE_ADVANCED_GRADING', 'grade_advanced_grading');
 
 /** True if module has code to track whether somebody viewed it */
 define('FEATURE_COMPLETION_TRACKS_VIEWS', 'completion_tracks_views');
