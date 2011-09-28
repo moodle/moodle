@@ -41,7 +41,9 @@ class editcategory_form extends moodleform {
             $themes = array(''=>get_string('forceno'));
             $allthemes = get_list_of_themes();
             foreach ($allthemes as $key=>$theme) {
-                $themes[$key] = $theme->name;
+                if (empty($theme->hidefromselector)) {
+                    $themes[$key] = $theme->name;
+                }
             }
             $mform->addElement('select', 'theme', get_string('forcetheme'), $themes);
         }
