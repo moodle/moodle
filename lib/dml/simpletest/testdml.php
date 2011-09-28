@@ -729,6 +729,9 @@ class dml_test extends UnitTestCase {
         $table->add_field('onenum', XMLDB_TYPE_NUMBER, '10,2', null, null, null, 200);
         $table->add_field('onefloat', XMLDB_TYPE_FLOAT, '10,2', null, null, null, 300);
         $table->add_field('anotherfloat', XMLDB_TYPE_FLOAT, null, null, null, null, 400);
+        $table->add_field('negativedfltint', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '-1');
+        $table->add_field('negativedfltnumber', XMLDB_TYPE_NUMBER, '10', null, XMLDB_NOTNULL, null, '-2');
+        $table->add_field('negativedfltfloat', XMLDB_TYPE_FLOAT, '10', null, XMLDB_NOTNULL, null, '-3');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
@@ -793,6 +796,19 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($field->has_default);
         $this->assertEqual(400.0, $field->default_value);
         $this->assertFalse($field->not_null);
+
+        // Test negative defaults in numerical columns
+        $field = $columns['negativedfltint'];
+        $this->assertTrue($field->has_default);
+        $this->assertEqual(-1, $field->default_value);
+
+        $field = $columns['negativedfltnumber'];
+        $this->assertTrue($field->has_default);
+        $this->assertEqual(-2, $field->default_value);
+
+        $field = $columns['negativedfltfloat'];
+        $this->assertTrue($field->has_default);
+        $this->assertEqual(-3, $field->default_value);
 
         for ($i = 0; $i < count($columns); $i++) {
             if ($i == 0) {
