@@ -7273,6 +7273,7 @@ function get_core_subsystems() {
             'fonts'       => NULL,
             'form'        => 'lib/form',
             'grades'      => 'grade',
+            'grading'     => 'grade/grading',
             'group'       => 'group',
             'help'        => NULL,
             'hub'         => NULL,
