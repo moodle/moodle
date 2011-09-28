@@ -92,7 +92,7 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
                 } else {
                     $fileexists = self::file_uploaded($question->dragitem[$dragindex]);
                 }
-                $labelexists = $question->drags[$dragindex]['draglabel'];
+                $labelexists = (trim($question->drags[$dragindex]['draglabel']) != '');
                 if ($labelexists && !$fileexists) {
                     $question->dragitemtype[$dragindex] = 'word';
                 } else {
