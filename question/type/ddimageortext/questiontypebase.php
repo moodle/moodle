@@ -43,16 +43,17 @@ class qtype_ddtoimage_base extends question_type {
     }
 
     public function requires_qtypes() {
-        return array_merge(parent::requires_qtypes(), array('ddimageortext'));
+        return array_merge(parent::requires_qtypes());
     }
 
     public function get_question_options($question) {
         global $DB;
-        $question->options = $DB->get_record('qtype_ddimageortext',
+        $dbprefix = 'qtype_'.$this->name();
+        $question->options = $DB->get_record($dbprefix,
                 array('questionid' => $question->id), '*', MUST_EXIST);
-        $question->options->drags = $DB->get_records('qtype_ddimageortext_drags',
+        $question->options->drags = $DB->get_records($dbprefix.'_drags',
                 array('questionid' => $question->id), 'no ASC', '*');
-        $question->options->drops = $DB->get_records('qtype_ddimageortext_drops',
+        $question->options->drops = $DB->get_records($dbprefix.'_drops',
                 array('questionid' => $question->id), 'no ASC', '*');
         parent::get_question_options($question);
     }
@@ -150,7 +151,7 @@ class qtype_ddtoimage_base extends question_type {
                                     '', 'no, id');
         foreach (array_keys($formdata->drags) as $dragno) {
             $info = file_get_draft_area_info($formdata->dragitem[$dragno]);
-            if ($info['filecount'] > 0 || !empty($formdata->drags[$dragno]['draglabel'])) {
+            if ($info['filecount'] > 0 || (trim($formdata->drags[$dragno]['draglabel'])!='')) {
                 $draftitemid = $formdata->dragitem[$dragno];
 
                 $drag = new stdClass();
