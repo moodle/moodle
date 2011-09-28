@@ -39,6 +39,73 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
         return 'ddimageortext';
     }
 
+    public function data_preprocessing($question) {
+        $question = parent::data_preprocessing($question);
+        $question = $this->data_preprocessing_combined_feedback($question, true);
+        $question = $this->data_preprocessing_hints($question, true, true);
+
+        $dragids = array(); // drag no -> dragid
+        if (!empty($question->options)) {
+            $question->shuffleanswers = $question->options->shuffleanswers;
+            $question->drags = array();
+            foreach ($question->options->drags as $drag) {
+                $dragindex = $drag->no -1;
+                $question->drags[$dragindex] = array();
+                $question->drags[$dragindex]['draglabel'] = $drag->label;
+                $question->drags[$dragindex]['infinite'] = $drag->infinite;
+                $question->drags[$dragindex]['draggroup'] = $drag->draggroup;
+                $dragids[$dragindex] = $drag->id;
+            }
+            $question->drops = array();
+            foreach ($question->options->drops as $drop) {
+                $question->drops[$drop->no -1] = array();
+                $question->drops[$drop->no -1]['choice'] = $drop->choice;
+                $question->drops[$drop->no -1]['droplabel'] = $drop->label;
+                $question->drops[$drop->no -1]['xleft'] = $drop->xleft;
+                $question->drops[$drop->no -1]['ytop'] = $drop->ytop;
+            }
+        }
+        //initialise file picker for bgimage
+        $draftitemid = file_get_submitted_draft_itemid('bgimage');
+
+        file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddimageortext',
+                                'bgimage', !empty($question->id) ? (int) $question->id : null,
+                                self::file_picker_options());
+        $question->bgimage = $draftitemid;
+
+        //initialise file picker for dragimages
+        list(, $imagerepeats) = $this->get_drag_item_repeats();
+        $draftitemids = optional_param_array('dragitem', array(), PARAM_INT);
+        for ($imageindex = 0; $imageindex < $imagerepeats; $imageindex++) {
+            $draftitemid = isset($draftitemids[$imageindex]) ? $draftitemids[$imageindex] :0;
+            //numbers not allowed in filearea name
+            $itemid = isset($dragids[$imageindex]) ? $dragids[$imageindex] : null;
+            file_prepare_draft_area($draftitemid, $this->context->id, 'qtype_ddimageortext',
+                                'dragimage', $itemid, self::file_picker_options());
+            $question->dragitem[$imageindex] = $draftitemid;
+        }
+        if (!empty($question->options)) {
+            foreach ($question->options->drags as $drag) {
+                $dragindex = $drag->no -1;
+                if (!isset($question->dragitem[$dragindex])) {
+                    $fileexists = false;
+                } else {
+                    $fileexists = self::file_uploaded($question->dragitem[$dragindex]);
+                }
+                $labelexists = $question->drags[$dragindex]['draglabel'];
+                if ($labelexists && !$fileexists) {
+                    $question->dragitemtype[$dragindex] = 'word';
+                } else {
+                    $question->dragitemtype[$dragindex] = 'image';
+                }
+            }
+        }
+        $this->js_call();
+
+        return $question;
+    }
+
+
     public function js_call() {
         global $PAGE;
         $maxsizes =new stdClass();
@@ -153,4 +220,68 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
         $repeatedoptions['choice']['default'] = '0';
         return $repeatedoptions;
     }
+
+        public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        if (!self::file_uploaded($data['bgimage'])) {
+            $errors["bgimage"] = get_string('formerror_nobgimage', 'qtype_'.$this->qtype());
+        }
+
+        $allchoices = array();
+        for ($i=0; $i < $data['nodropzone']; $i++) {
+            $ytoppresent = (trim($data['drops'][$i]['ytop']) !== '');
+            $xleftpresent = (trim($data['drops'][$i]['ytop']) !== '');
+            $labelpresent = (trim($data['drops'][$i]['droplabel']) !== '');
+            $choice = $data['drops'][$i]['choice'];
+            $imagechoicepresent = ($choice !== '0');
+
+            if ($imagechoicepresent) {
+                if (!$ytoppresent) {
+                    $errors["drops[$i]"] =
+                                    get_string('formerror_noytop', 'qtype_ddimageortext');
+                }
+                if (!$xleftpresent) {
+                    $errors["drops[$i]"] =
+                                get_string('formerror_noxleft', 'qtype_ddimageortext');
+                }
+
+                if ($data['dragitemtype'][$choice - 1] != 'word' &&
+                                        !self::file_uploaded($data['dragitem'][$choice - 1])) {
+                    $errors['dragitem['.($choice - 1).']'] =
+                                    get_string('formerror_nofile', 'qtype_ddimageortext', $i);
+                }
+
+                if (isset($allchoices[$choice]) && !$data['drags'][$choice-1]['infinite']) {
+                    $errors["drops[$i]"] =
+                     get_string('formerror_multipledraginstance', 'qtype_ddimageortext', $choice);
+                    $errors['drops['.($allchoices[$choice]).']'] =
+                     get_string('formerror_multipledraginstance', 'qtype_ddimageortext', $choice);
+                    $errors['drags['.($choice-1).']'] =
+                     get_string('formerror_multipledraginstance2', 'qtype_ddimageortext', $choice);
+                }
+                $allchoices[$choice] = $i;
+            } else {
+                if ($ytoppresent || $xleftpresent || $labelpresent) {
+                    $errors["drops[$i]"] =
+                        get_string('formerror_noimageselected', 'qtype_ddimageortext');
+                }
+            }
+        }
+        for ($dragindex=0; $dragindex < $data['noitems']; $dragindex++) {
+            $label = $data['drags'][$dragindex]['draglabel'];
+            if ($data['dragitemtype'][$dragindex] == 'word') {
+                $allowedtags = '<br><sub><sup><b><i><strong><em>';
+                $errormessage = get_string('formerror_disallowedtags', 'qtype_ddimageortext');
+            } else {
+                $allowedtags = '';
+                $errormessage = get_string('formerror_noallowedtags', 'qtype_ddimageortext');
+            }
+            if ($label != strip_tags($label, $allowedtags)) {
+                $errors["drags[{$dragindex}]"] = $errormessage;
+            }
+
+        }
+        return $errors;
+    }
+
 }
