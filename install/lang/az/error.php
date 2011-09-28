@@ -28,7 +28,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['language'] = 'Язык';
-$string['next'] = 'Далее';
-$string['previous'] = 'Назад';
-$string['reload'] = 'Обновить';
+$string['wrongdestpath'] = 'Səhv təyinat yolu';
+$string['wrongsourcebase'] = 'Baza URL-in səhv mənbəyi';
+$string['wrongzipfilename'] = 'ZİP faylın səhv adı';
