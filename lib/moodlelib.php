@@ -7344,6 +7344,7 @@ function get_plugin_types($fullpaths=true) {
                       'gradeexport'   => 'grade/export',
                       'gradeimport'   => 'grade/import',
                       'gradereport'   => 'grade/report',
+                      'gradingform'   => 'grade/grading/form',
                       'mnetservice'   => 'mnet/service',
                       'webservice'    => 'webservice',
                       'repository'    => 'repository',
