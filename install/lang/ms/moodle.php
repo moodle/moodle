@@ -28,7 +28,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['language'] = 'Язык';
-$string['next'] = 'Далее';
-$string['previous'] = 'Назад';
-$string['reload'] = 'Обновить';
+$string['language'] = 'Bahasa';
+$string['next'] = 'Seterusnya';
+$string['previous'] = 'Sebelum';
