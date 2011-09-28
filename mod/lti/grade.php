@@ -89,4 +89,96 @@ require_login($course, false, $cm);
 
 require_capability('mod/lti:grade', get_context_instance(CONTEXT_MODULE, $cm->id));
 
-lti_submissions($cm, $course, $basiclti, $mode);   // Display or process the submissions
+//lti_submissions($cm, $course, $basiclti, $mode);   // Display or process the submissions
+
+$module = array(
+    'name'      => 'mod_lti_submissions',
+    'fullpath'  => '/mod/lti/submissions.js',
+    'requires'  => array('base'),
+    'strings'   => array(
+        
+    ),
+);
+
+$PAGE->requires->js_init_call('M.mod_lti.submissions.init', array(), true, $module);
+
+$PAGE->requires->yui2_lib('datatable');
+
+$submissionquery = <<<SQL
+    SELECT s.id, u.firstname, u.lastname, u.id AS userid, s.datesubmitted, s.gradepercent
+    FROM {lti_submission} s
+    INNER JOIN {user} u ON s.userid = u.id
+    WHERE s.ltiid = :ltiid
+    ORDER BY s.datesubmitted DESC
+SQL;
+
+$submissions = $DB->get_records_sql($submissionquery, array('ltiid' => $basiclti->id));
+
+$html = <<<HTML
+<noscript>
+    <!-- If javascript is disabled, we need to show the table using CSS.
+        The table starts out hidden to avoid flickering as it loads -->
+    <style type="text/css">
+        #lti_submissions_table_container { display: block !important; }
+    </style>
+</noscript>
+
+<div id="lti_submissions_table_container" style="display:none">
+    <table id='lti_submissions_table'>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Date</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!--table body-->
+        </tbody>
+    </table>
+</div>
+HTML;
+
+$rowtemplate = <<<HTML
+<tr>
+    <td>
+        <!--firstname--> <!--lastname-->
+    </td>
+    <td>
+        <!--datesubmitted-->
+    </td>
+    <td>
+        <!--gradepercent-->
+    </td>
+</tr>
+HTML;
+
+$rows = '';
+
+foreach($submissions as $submission){
+    $row = $rowtemplate;
+    
+    foreach($submission as $key => $value){
+        if($key === 'datesubmitted'){
+            $value = userdate($value);
+        }
+        
+        $row = str_replace('<!--' . $key . '-->', $value, $row);
+    }
+    
+    $rows .= $row;
+}
+
+$table = str_replace('<!--table body-->', $rows, $html);
+
+$title = 'Submissions for ' . $basiclti->name;
+
+$PAGE->set_title(format_string($title , true));
+$PAGE->set_heading($course->fullname);
+
+echo $OUTPUT->header();
+echo $OUTPUT->heading($title );
+
+echo $table;
+
+echo $OUTPUT->footer();

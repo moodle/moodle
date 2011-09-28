@@ -20,7 +20,7 @@ switch($messagetype){
         lti_verify_sourcedid($ltiinstance, $parsed);
         lti_verify_message($ltiinstance, $rawbody);
         
-        $gradestatus = lti_update_grade($ltiinstance, $parsed->userid, $parsed->gradeval);
+        $gradestatus = lti_update_grade($ltiinstance, $parsed->userid, $parsed->launchid, $parsed->gradeval);
         
         $responsexml = lti_get_response_xml(
                 $gradestatus ? 'success' : 'error', 

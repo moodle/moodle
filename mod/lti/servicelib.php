@@ -49,6 +49,7 @@ function lti_parse_grade_replace_message($xml){
     
     $parsed->instanceid = $resultjson->data->instanceid;
     $parsed->userid = $resultjson->data->userid;
+    $parsed->launchid = $resultjson->data->launchid;
     $parsed->sourcedidhash = $resultjson->hash;
     
     $parsed->messageid = lti_parse_message_id($xml);
@@ -63,6 +64,7 @@ function lti_parse_grade_read_message($xml){
     $parsed = new stdClass();
     $parsed->instanceid = $resultjson->data->instanceid;
     $parsed->userid = $resultjson->data->userid;
+    $parsed->launchid = $resultjson->data->launchid;
     $parsed->sourcedidhash = $resultjson->hash;
     
     $parsed->messageid = lti_parse_message_id($xml);
@@ -77,6 +79,7 @@ function lti_parse_grade_delete_message($xml){
     $parsed = new stdClass();
     $parsed->instanceid = $resultjson->data->instanceid;
     $parsed->userid = $resultjson->data->userid;
+    $parsed->launchid = $resultjson->data->launchid;
     $parsed->sourcedidhash = $resultjson->hash;
     
     $parsed->messageid = lti_parse_message_id($xml);
@@ -84,8 +87,8 @@ function lti_parse_grade_delete_message($xml){
     return $parsed;
 }
 
-function lti_update_grade($ltiinstance, $userid, $gradeval){
-    global $CFG;
+function lti_update_grade($ltiinstance, $userid, $launchid, $gradeval){
+    global $CFG, $DB;
     require_once($CFG->libdir . '/gradelib.php');
     
     $params = array();
@@ -97,6 +100,33 @@ function lti_update_grade($ltiinstance, $userid, $gradeval){
 
     $status = grade_update(LTI_SOURCE, $ltiinstance->course, LTI_ITEM_TYPE, LTI_ITEM_MODULE, $ltiinstance->id, 0, $grade, $params);    
 
+    $record = $DB->get_record('lti_submission', array('ltiid' => $ltiinstance->id, 'userid' => $userid, 'launchid' => $launchid), 'id');
+    if($record){
+        $id = $record->id;
+    } else {
+        $id = null;
+    }
+    
+    if(!empty($id)){
+        $DB->update_record('lti_submission', array(
+            'id' => $id,
+            'dateupdated' => time(),
+            'gradepercent' => $gradeval,
+            'state' => 2
+        ));
+    } else {
+        $DB->insert_record('lti_submission', array(
+            'ltiid' => $ltiinstance->id,
+            'userid' => $userid, 
+            'datesubmitted' => time(), 
+            'dateupdated' => time(),
+            'gradepercent' => $gradeval,
+            'originalgrade' => $gradeval,
+            'launchid' => $launchid,
+            'state' => 1
+        ));
+    }
+    
     return $status == GRADE_UPDATE_OK;
 }
 
@@ -156,7 +186,7 @@ function lti_verify_message($ltiinstance, $body, $headers = null){
 }
 
 function lti_verify_sourcedid($ltiinstance, $parsed){
-    $sourceid = lti_build_sourcedid($parsed->instanceid, $parsed->userid, $ltiinstance->servicesalt);
+    $sourceid = lti_build_sourcedid($parsed->instanceid, $parsed->userid, $parsed->launchid, $ltiinstance->servicesalt);
     
     if($sourceid->hash != $parsed->sourcedidhash){
         throw new Exception('SourcedId hash not valid');

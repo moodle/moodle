@@ -95,6 +95,8 @@ function lti_view($instance, $makeobject=false) {
         $typeconfig['sendname'] = $instance->instructorchoicesendname;
         $typeconfig['sendemailaddr'] = $instance->instructorchoicesendemailaddr;
         $typeconfig['customparameters'] = $instance->instructorcustomparameters;
+        $typeconfig['acceptgrades'] = $instance->instructorchoiceacceptgrades;
+        $typeconfig['allowroster'] = $instance->instructorchoiceallowroster;
     }
     
     //Default the organizationid if not specified
@@ -131,11 +133,16 @@ function lti_view($instance, $makeobject=false) {
     echo $content;
 }
 
-function lti_build_sourcedid($instanceid, $userid, $servicesalt){
+function lti_build_sourcedid($instanceid, $userid, $launchid = null, $servicesalt){
     $data = new stdClass();
         
     $data->instanceid = $instanceid;
     $data->userid = $userid;
+    if(!empty($launchid)){
+        $data->launchid = $launchid;
+    } else {
+        $data->launchid = mt_rand();
+    }
 
     $json = json_encode($data);
 
@@ -183,7 +190,7 @@ function lti_build_request($instance, $typeconfig, $course) {
     $placementsecret = $instance->servicesalt;
         
     if ( isset($placementsecret) ) {
-        $sourcedid = json_encode(lti_build_sourcedid($instance->id, $USER->id, $placementsecret));
+        $sourcedid = json_encode(lti_build_sourcedid($instance->id, $USER->id, null, $placementsecret));
     }
 
     if ( isset($placementsecret) &&
@@ -996,44 +1003,6 @@ function lti_post_launch_html($newparms, $endpoint, $debug=false) {
             " </script> \n";
     }
     return $r;
-}
-
-/**
- * Returns a link with info about the state of the basiclti submissions
- *
- * This is used by view_header to put this link at the top right of the page.
- * For teachers it gives the number of submitted assignments with a link
- * For students it gives the time of their submission.
- * This will be suitable for most assignment types.
- *
- * @global object
- * @global object
- * @param bool $allgroup print all groups info if user can access all groups, suitable for index.php
- * @return string
- */
-function lti_submittedlink($cm, $allgroups=false) {
-    global $CFG;
-
-    $submitted = '';
-    $urlbase = "{$CFG->wwwroot}/mod/lti/";
-
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    if (has_capability('mod/lti:grade', $context)) {
-        if ($allgroups and has_capability('moodle/site:accessallgroups', $context)) {
-            $group = 0;
-        } else {
-            $group = groups_get_activity_group($cm);
-        }
-
-        $submitted = '<a href="'.$urlbase.'submissions.php?id='.$cm->id.'">'.
-                     get_string('viewsubmissions', 'lti').'</a>';
-    } else {
-        if (isloggedin()) {
-            // TODO Insert code for students if needed
-        }
-    }
-
-    return $submitted;
 }
 
 function lti_get_type($typeid){

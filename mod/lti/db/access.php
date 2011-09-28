@@ -44,7 +44,7 @@
 
 $capabilities = array(
 
-    'mod/ltii:view' => array(
+    'mod/lti:view' => array(
 
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,

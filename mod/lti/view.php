@@ -122,10 +122,6 @@ if($basiclti->showdescription && $basiclti->intro){
     echo $OUTPUT->box($basiclti->intro, 'generalbox description', 'intro');
 }
 
-if ($basiclti->instructorchoiceacceptgrades == 1) {
-    echo '<div class="reportlink">'.lti_submittedlink($cm).'</div>';
-}
-
 if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
     echo "<script language=\"javascript\">//<![CDATA[\n";
     echo "window.open('launch.php?id=".$cm->id."','lti');";
