@@ -30,3 +30,4 @@ $string['description_help'] = 'A description is not really a question type. It s
 The question text is displayed both during the attempt and on the review page. Any general feedback is displayed on the review page only.';
 $string['descriptionsummary'] = 'This is not actually a question. Instead it is a way to add some instructions, rubric or other content to the activity. This is similar to the way that labels can be used to add content to the course page.';
 $string['editingdescription'] = 'Editing a Description';
+$string['informationtext'] = 'Information text';

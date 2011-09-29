@@ -40,4 +40,8 @@ class qtype_description_renderer extends qtype_renderer {
         return html_writer::tag('div', $qa->get_question()->format_questiontext($qa),
                 array('class' => 'qtext'));
     }
+
+    public function formulation_heading() {
+        return get_string('informationtext', 'qtype_description');
+    }
 }
