@@ -35,23 +35,18 @@ class login_signup_form extends moodleform {
 
         $mform = $this->_form;
 
-        $mform->addElement('header', '', get_string('createuserandpass'), '');
+        $mform->addElement('header', '', "Account Information", '');
 
-
+    	$mform->addElement('text', 'uid', get_string('uid'), 'maxlength="100" size="12"');
+		$mform->addRule('uid', "UID is required", 'required', null, 'server');
+		
         $mform->addElement('text', 'username', get_string('username'), 'maxlength="100" size="12"');
         $mform->setType('username', PARAM_NOTAGS);
         $mform->addRule('username', get_string('missingusername'), 'required', null, 'server');
-
-        if (!empty($CFG->passwordpolicy)){
-            $mform->addElement('static', 'passwordpolicyinfo', '', print_password_policy());
-        }
-        $mform->addElement('passwordunmask', 'password', get_string('password'), 'maxlength="32" size="12"');
-        $mform->setType('password', PARAM_RAW);
-        $mform->addRule('password', get_string('missingpassword'), 'required', null, 'server');
-
-        $mform->addElement('header', '', get_string('supplyinfo'),'');
-
-        $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="25"');
+		
+		
+		
+		$mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="25"');
         $mform->setType('email', PARAM_NOTAGS);
         $mform->addRule('email', get_string('missingemail'), 'required', null, 'server');
 
@@ -59,22 +54,76 @@ class login_signup_form extends moodleform {
         $mform->setType('email2', PARAM_NOTAGS);
         $mform->addRule('email2', get_string('missingemail'), 'required', null, 'server');
 
-        $nameordercheck = new stdClass();
+        if (!empty($CFG->passwordpolicy)){
+            $mform->addElement('static', 'passwordpolicyinfo', '', print_password_policy());
+        }
+        $mform->addElement('passwordunmask', 'password', get_string('password'), 'maxlength="32" size="12"');
+        $mform->setType('password', PARAM_RAW);
+        $mform->addRule('password', get_string('missingpassword'), 'required', null, 'server');
+		
+		$mform->addElement('text', 'ration', get_string('ration'), 'maxlength="100" size="15"');
+		$mform->addRule('ration', "Ration Card No. is required", 'required', null, 'server');
+		
+		$mform->addElement('text', 'license', get_string('license'), 'maxlength="100" size="15"');
+		$mform->addRule('license', "License No. is required", 'required', null, 'server');
+		
+		$mform->addElement('text', 'passport', get_string('passport'), 'maxlength="100" size="12"');
+		$mform->addRule('passport', "Passport No. is required", 'required', null, 'server');
+		
+		$mform->addElement('text', 'pan', get_string('pan'), 'maxlength="100" size="12"');
+		$mform->addRule('pan', "PAN No. is required", 'required', null, 'server');
+		
+		if ($this->signup_captcha_enabled()) {
+            $mform->addElement('recaptcha', 'recaptcha_element', get_string('recaptcha', 'auth'), array('https' => $CFG->loginhttps));
+            $mform->addHelpButton('recaptcha_element', 'recaptcha', 'auth');
+        }
+
+        
+		$mform->addElement('header', '', "Personal Information",'');
+		
+		$nameordercheck = new stdClass();
         $nameordercheck->firstname = 'a';
         $nameordercheck->lastname  = 'b';
         if (fullname($nameordercheck) == 'b a' ) {  // See MDL-4325
             $mform->addElement('text', 'lastname',  get_string('lastname'),  'maxlength="100" size="30"');
-            $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="30"');
+			$mform->addElement('text', 'middlename',  get_string('middlename') ,  'maxlength="100" size="30"');
+            $mform->addElement('text', 'firstname', "Last name", 'maxlength="100" size="30"');
         } else {
             $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="30"');
-            $mform->addElement('text', 'lastname',  get_string('lastname'),  'maxlength="100" size="30"');
+			$mform->addElement('text', 'middlename',  "Middle name" ,  'maxlength="100" size="30"');
+            $mform->addElement('text', 'lastname',  "Last name",  'maxlength="100" size="30"');
         }
 
         $mform->setType('firstname', PARAM_TEXT);
         $mform->addRule('firstname', get_string('missingfirstname'), 'required', null, 'server');
 
-        $mform->setType('lastname', PARAM_TEXT);
+        
+		
+		$mform->setType('lastname', PARAM_TEXT);
         $mform->addRule('lastname', get_string('missinglastname'), 'required', null, 'server');
+		
+        $mform->addElement('textarea', 'ration', get_string('ration'), 'maxlength="100" size="15"');
+		$mform->addRule('pr_address', "Ra is required", 'required', null, 'server');
+        $mform->addElement('textarea', 'ration', get_string('ration'), 'maxlength="100" size="15"');
+		$mform->addRule('pe_address', "Ration Card No. is required", 'required', null, 'server');
+        
+		
+		$mform->addElement('header', '', "Contact Information",'');
+		
+		$mform->addElement('header', '', "Professional Information",'');
+		
+		$mform->addElement('header', '', "Co-curricular/Extra curricular Information",'');
+		
+		$mform->addElement('header', '', "Other Informations",'');
+		
+		
+		
+		/*
+		$mform->addElement('header', '', get_string('supplyinfo'),'');
+
+        
+
+        
 
         $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="20"');
         $mform->setType('city', PARAM_TEXT);
@@ -94,11 +143,9 @@ class login_signup_form extends moodleform {
         }else{
             $mform->setDefault('country', '');
         }
-
-        if ($this->signup_captcha_enabled()) {
-            $mform->addElement('recaptcha', 'recaptcha_element', get_string('recaptcha', 'auth'), array('https' => $CFG->loginhttps));
-            $mform->addHelpButton('recaptcha_element', 'recaptcha', 'auth');
-        }
+		*/
+		
+        
 
         profile_signup_fields($mform);
 
