@@ -107,8 +107,8 @@ function schedule_backup_cron() {
                     //Check log if there were any modifications to the course content
                     $sql = 'SELECT l.id FROM '.$CFG->prefix .'log l WHERE '.
                             'l.course='. $course->id. ' AND l.time>'. ($now-31*24*60*60). " AND lower(l.action) not like '%view%'";
-                    $logs = get_records_sql($sql, 0, 1);
-                    if (empty($logs)) {
+                    $logexists = record_exists_sql($sql);
+                    if (!$logexists) {
                         mtrace("            SKIPPING - hidden+unmodified");
                         set_field("backup_courses", "laststatus", "3", "courseid", $backup_course->courseid);
                         $skipped = true;
