@@ -41,7 +41,7 @@ class qbehaviour_informationitem_walkthrough_test extends qbehaviour_walkthrough
     public function test_informationitem_feedback_description() {
 
         // Create a true-false question with correct answer true.
-        $description = test_question_maker::make_a_description_question();
+        $description = test_question_maker::make_question('description');
         $this->start_attempt_at_question($description, 'deferredfeedback');
 
         // Check the initial state.

@@ -298,24 +298,6 @@ class test_question_maker {
     }
 
     /**
-     * Makes a truefalse question with correct ansewer true, defaultmark 1.
-     * @return question_truefalse
-     */
-    public static function make_a_description_question() {
-        question_bank::load_question_definition_classes('description');
-        $description = new qtype_description_question();
-        self::initialise_a_question($description);
-        $description->name = 'Description question';
-        $description->questiontext =
-                'This text tells you a bit about the next few questions in this quiz.';
-        $description->generalfeedback =
-                'This is what this section of the quiz should have taught you.';
-        $description->qtype = question_bank::get_qtype('description');
-
-        return $description;
-    }
-
-    /**
      * Add some standard overall feedback to a question. You need to use these
      * specific feedback strings for the corresponding contains_..._feedback
      * methods in {@link qbehaviour_walkthrough_test_base} to works.
