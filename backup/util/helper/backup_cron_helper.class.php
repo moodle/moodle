@@ -128,11 +128,10 @@ abstract class backup_cron_automated_helper {
                 // Skip backup of unavailable courses that have remained unmodified in a month
                 if (!$skipped && empty($course->visible) && ($now - $course->timemodified) > 31*24*60*60) {  //Hidden + settings were unmodified last month
                     //Check log if there were any modifications to the course content
-                    $sql = "SELECT l.id FROM {log} l WHERE ".
-                            "l.course=:courseid AND l.time>:time AND ". $DB->sql_like('l.action', ':action', false, true, true);
+                    $sqlwhere = "course=:courseid AND time>:time AND ". $DB->sql_like('action', ':action', false, true, true);
                     $params = array('courseid' => $course->id, 'time' => $now-31*24*60*60, 'action' => '%view%');
-                    $logs = $DB->get_records_sql($sql, $params, 0, 1);
-                    if (empty($logs)) {
+                    $logexists = $DB->record_exists_select('log', $sqlwhere, $params);
+                    if (!$logexists) {
                         $backupcourse->laststatus = backup_cron_automated_helper::BACKUP_STATUS_SKIPPED;
                         $backupcourse->nextstarttime = $nextstarttime;
                         $DB->update_record('backup_courses', $backupcourse);
