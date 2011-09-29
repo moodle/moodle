@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 function xmldb_main_install() {
-    global $CFG, $DB, $SITE;
+    global $CFG, $DB, $SITE, $OUTPUT;
 
     /// make sure system context exists
     $syscontext = get_system_context(false);
@@ -152,7 +152,7 @@ function xmldb_main_install() {
     $guest->timemodified= time();
     $guest->id = $DB->insert_record('user', $guest);
     if ($guest->id != 1) {
-        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Unexpected new guest user id!');
+        echo $OUTPUT->notification('Unexpected id generated for the Guest account. Your database configuration or clustering setup may not be fully supported', 'notifyproblem');
     }
     // Store guest id
     set_config('siteguest', $guest->id);
@@ -173,9 +173,14 @@ function xmldb_main_install() {
     $admin->timemodified = time();
     $admin->lastip       = CLI_SCRIPT ? '0.0.0.0' : getremoteaddr(); // installation hijacking prevention
     $admin->id = $DB->insert_record('user', $admin);
+
     if ($admin->id != 2) {
-        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Unexpected new admin user id!');
+        echo $OUTPUT->notification('Unexpected id generated for the Admin account. Your database configuration or clustering setup may not be fully supported', 'notifyproblem');
     }
+    if ($admin->id != ($guest->id + 1)) {
+        echo $OUTPUT->notification('Nonconsecutive id generated for the Admin account. Your database configuration or clustering setup may not be fully supported.', 'notifyproblem');
+    }
+
     /// Store list of admins
     set_config('siteadmins', $admin->id);
 
