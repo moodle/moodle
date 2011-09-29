@@ -47,7 +47,7 @@ class question_attempt_test extends UnitTestCase {
     private $qa;
 
     public function setUp() {
-        $this->question = test_question_maker::make_a_description_question();
+        $this->question = test_question_maker::make_question('description');
         $this->question->defaultmark = 3;
         $this->usageid = 13;
         $this->qa = new question_attempt($this->question, $this->usageid);
@@ -141,7 +141,7 @@ class question_attempt_with_steps_test extends UnitTestCase {
     private $qa;
 
     public function setUp() {
-        $this->question = test_question_maker::make_a_description_question();
+        $this->question = test_question_maker::make_question('description');
         $this->qa = new testable_question_attempt($this->question, 0, null, 2);
         for ($i = 0; $i < 3; $i++) {
             $step = new question_attempt_step(array('i' => $i));
