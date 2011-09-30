@@ -3,6 +3,6 @@
     width: auto;
     display: inline;
 }
-.que.numerical .answer input {
+.que.numerical .answer input[type="text"] {
     width: 30%;
 }
