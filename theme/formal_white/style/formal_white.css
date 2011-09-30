@@ -206,5 +206,9 @@ pre, code, tt {
     background: none repeat scroll 0 0 [[setting:lblockcolumnbgc]];
 }
 
+/* MDL-29403 */
+.capdefault {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;background-color:#E3DFD4;}
+table#defineroletable th {border-top:none;}
+
 /** Custom CSS **/
 [[setting:customcss]]
