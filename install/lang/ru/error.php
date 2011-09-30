@@ -31,7 +31,7 @@
 $string['cannotcreatelangdir'] = 'Не удается создать каталог языка';
 $string['cannotcreatetempdir'] = 'Не удается создать временный каталог';
 $string['cannotdownloadcomponents'] = 'Невозможно загрузить компоненты.';
-$string['cannotdownloadzipfile'] = 'Не удалось загрузить ZIP файл';
+$string['cannotdownloadzipfile'] = 'Не удалось загрузить ZIP-файл';
 $string['cannotfindcomponent'] = 'Не удалось найти компонент';
 $string['cannotsavemd5file'] = 'Не удалось сохранить MD5-файл';
 $string['cannotsavezipfile'] = 'Не удалось сохранить ZIP-файл';
