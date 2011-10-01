@@ -64,6 +64,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
 
 
         update_drop_zones : function () {
+            this.set_options_for_drag_item_selectors();
             //set up drop zones
             if (this.graphics !== null) {
                 this.graphics.destroy();
@@ -92,23 +93,23 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             var coordsparts = coords.match(/(\d+),(\d+);(\d+)/);
             if (coordsparts && coordsparts.length === 4) {
                 var xy = [coordsparts[1] - coordsparts[3], coordsparts[2] - coordsparts[3]];
-                var widthheight = [coordsparts[3]*2, coordsparts[3]*2];
-                console.log('circle', dropzoneno, markertext, xy, widthheight);
-                var shape = this.graphics.addShape({
-                        type: 'circle',
-                        width: widthheight[0],
-                        height: widthheight[1],
-                        fill: {
-                            color: "#0000ff",
-                            opacity : "0.5"
-                        },
-                        stroke: {
-                            weight:1,
-                            color: "black"
-                        }
-                });
-                shape.setXY(this.convert_to_window_xy(xy));
-                console.log(this.convert_to_window_xy(xy));
+                if (this.coords_in_img(xy)) {
+                    var widthheight = [coordsparts[3]*2, coordsparts[3]*2];
+                    var shape = this.graphics.addShape({
+                            type: 'circle',
+                            width: widthheight[0],
+                            height: widthheight[1],
+                            fill: {
+                                color: "#0000ff",
+                                opacity : "0.5"
+                            },
+                            stroke: {
+                                weight:1,
+                                color: "black"
+                            }
+                    });
+                    shape.setXY(this.convert_to_window_xy(xy));
+                }
             }
         },
         draw_shape_rectangle : function (dropzoneno, markertext) {
@@ -117,22 +118,22 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             if (coordsparts && coordsparts.length === 5) {
                 var xy = [coordsparts[1], coordsparts[2]];
                 var widthheight = [coordsparts[3], coordsparts[4]];
-                console.log('rectangle', dropzoneno, markertext, xy, widthheight);
-                var shape = this.graphics.addShape({
-                        type: 'rect',
-                        width: widthheight[0],
-                        height: widthheight[1],
-                        fill: {
-                            color: "#0000ff",
-                            opacity : "0.5"
-                        },
-                        stroke: {
-                            weight:1,
-                            color: "black"
-                        }
-                });
-                shape.setXY(this.convert_to_window_xy(xy));
-                console.log(this.convert_to_window_xy(xy));
+                if (this.coords_in_img([xy[0]+widthheight[0], xy[1]+widthheight[1]])) {
+                    var shape = this.graphics.addShape({
+                            type: 'rect',
+                            width: widthheight[0],
+                            height: widthheight[1],
+                            fill: {
+                                color: "#0000ff",
+                                opacity : "0.5"
+                            },
+                            stroke: {
+                                weight:1,
+                                color: "black"
+                            }
+                    });
+                    shape.setXY(this.convert_to_window_xy(xy));
+                }
             }
         },
         draw_shape_polygon : function (dropzoneno, markertext) {
@@ -141,12 +142,11 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             var xy = [];
             for (var i in coordsparts) {
                 var parts = coordsparts[i].match(/^(\d+),(\d+)$/);
-                if (parts !== null) {
+                if (parts !== null && this.coords_in_img([parts[1], parts[2]])) {
                     xy[xy.length] = [parts[1], parts[2]];
                 }
             }
             if (xy.length > 2) {
-                console.log('polygon', dropzoneno, markertext, xy);
                 var polygon = this.graphics.addShape({
                     type: "path",
                     stroke: {
@@ -160,19 +160,23 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                 });
                 for (var i in xy) {
                     var windowxy = this.convert_to_window_xy(xy[i]);
-                    console.log(i, this.convert_to_window_xy(xy[i]));
                     if (i == 0) {
-                        polygon.moveTo(windowxy[0], windowxy[1]);
+                        polygon.moveTo(xy[i][0], xy[i][1]);
                     } else {
-                        polygon.lineTo(windowxy[0], windowxy[1]);
+                        polygon.lineTo(xy[i][0], xy[i][1]);
                     }
                 }
                 if (+xy[0][0] !== +xy[xy.length-1][0] || +xy[0][1] !== +xy[xy.length-1][1]) {
                     var windowxy = this.convert_to_window_xy(xy[0]);
-                    polygon.lineTo(windowxy[0], windowxy[1]); //close polygon if not already closed
+                    polygon.lineTo(xy[0][0], xy[0][1]); //close polygon if not already closed
                 }
                 polygon.end();
+                polygon.setXY(this.doc.bg_img().getXY());
             }
+        },
+        coords_in_img : function (coords) {
+            return (coords[0] <= this.doc.bg_img().get('width') && 
+                            coords[1] <= this.doc.bg_img().get('height'));
         },
         get_coords : function (dropzoneno) {
             var coords = this.form.get_form_value('drops', [dropzoneno, 'coords']);
@@ -190,9 +194,13 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                     dragitemsoptions[i+1] = label;
                 }
             }
+            var selectedvalues = [];
             for (var i=0; i < this.form.get_form_value('nodropzone', []); i++) {
                 var selector = Y.one('#id_drops_'+i+'_choice');
-                var selectedvalue = selector.get('value');
+                selectedvalues[i] = +selector.get('value');
+            }
+            for (var i=0; i < this.form.get_form_value('nodropzone', []); i++) {
+                var selector = Y.one('#id_drops_'+i+'_choice');
                 selector.all('option').remove(true);
                 for (var value in dragitemsoptions) {
                     value = +value;
@@ -201,14 +209,17 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                                     '</option>';
                     selector.append(option);
                     var optionnode = selector.one('option[value="' + value + '"]')
-                    if (value === +selectedvalue) {
+                    if (value === selectedvalues[i]) {
                         optionnode.set('selected', true);
                     } else {
                         if (value !== 0) { // no item option is always selectable
                             var infinite = this.form.get_form_value('drags', [value-1, 'infinite']);
-                            if ((!infinite) &&
-                                    (this.doc.drag_items_cloned_from(value - 1).size() !== 0)) {
-                                optionnode.set('disabled', true);
+                            if (!infinite) {
+                                for (var k in selectedvalues) {
+                                    if (+selectedvalues[k] === value) {
+                                        optionnode.set('disabled', true);
+                                    }
+                                }
                             }
                         }
                     }
