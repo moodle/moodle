@@ -105,7 +105,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
                                     get_string('marker', 'qtype_ddmarker'), $shapearray);
         $grouparray[] = $mform->createElement('text', 'coords',
                                                 get_string('coords', 'qtype_ddmarker'),
-                                                array('size'=>20, 'class'=>'tweakcss'));
+                                                array('size'=>50, 'class'=>'tweakcss'));
         $mform->setType('coords', PARAM_NOTAGS);
         $markernos = array();
         $markernos[0] = '';
@@ -116,11 +116,6 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
                                         get_string('marker', 'qtype_ddmarker').' ');
         $grouparray[] = $mform->createElement('select', 'choice',
                                     get_string('marker', 'qtype_ddmarker'), $markernos);
-        $grouparray[] = $mform->createElement('static', '', '', ' ' .
-                                        get_string('alttext', 'qtype_ddmarker').' ');
-        $grouparray[] = $mform->createElement('text', 'label',
-                                                get_string('alttext', 'qtype_ddmarker'),
-                                                array('size'=>10, 'class'=>'tweakcss'));
         $dropzone = $mform->createElement('group', 'drops',
                 get_string('dropzone', 'qtype_ddmarker', '{no}'), $grouparray);
         return array($dropzone);

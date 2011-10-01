@@ -116,7 +116,6 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
             $drop->shape = $formdata->drops[$dropno]['shape'];
             $drop->coords = $formdata->drops[$dropno]['coords'];
             $drop->choice = $formdata->drops[$dropno]['choice'];
-            $drop->label = $formdata->drops[$dropno]['label'];
 
             $DB->insert_record('qtype_ddmarker_drops', $drop);
         }
