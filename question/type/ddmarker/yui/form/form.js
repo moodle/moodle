@@ -11,9 +11,8 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
 
         initializer : function(params) {
             this.fp = this.file_pickers();
-            Y.one(this.get('topnode')).append('<div class="ddarea"><div class="droparea"></div>'+
-                    '<div class="dragitems"></div>'+
-                    '<div class="dropzones"></div></div>');
+            Y.one(this.get('topnode')).append('<div class="ddarea"><div class="dropzones"></div>'+
+                    '<div class="droparea"></div></div>');
             this.doc = this.doc_structure(this);
             this.draw_dd_area();
         },
@@ -24,7 +23,6 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             this.set_options_for_drag_item_selectors();
             if (bgimageurl !== null) {
                 this.doc.load_bg_img(bgimageurl);
-                this.load_drag_homes();
 
                 var drop = new Y.DD.Drop({
                     node: this.doc.bg_img()
@@ -35,26 +33,20 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                 });
 
                 this.afterimageloaddone = false;
-                this.doc.bg_img().on('load', this.constrain_image_size, this, 'bgimage');
-                this.doc.drag_item_homes()
-                                        .on('load', this.constrain_image_size, this, 'dragimage');
-                this.doc.bg_img().after('load', this.poll_for_image_load, this,
-                                                        true, 0, this.after_all_images_loaded);
-                this.doc.drag_item_homes() .after('load', this.poll_for_image_load, this,
-                                                        true, 0, this.after_all_images_loaded);
+                this.attach_on_load_handlers(this.doc.bg_img(), 'bgimage');
             } else {
                 this.setup_form_events();
             }
-            this.update_visibility_of_file_pickers();
+        },
+        
+        attach_on_load_handlers : function (imgorimgs, imgtype) {
+            imgorimgs.on('load', this.constrain_image_size, this, imgtype);
+            imgorimgs.after('load', this.poll_for_image_load, this,
+                    true, 0, this.after_all_images_loaded);
         },
 
         after_all_images_loaded : function () {
-            this.update_padding_sizes_all();
-            this.update_drag_instances();
-            this.reposition_drags_for_form();
-            this.set_options_for_drag_item_selectors();
-            this.setup_form_events();
-            Y.later(500, this, this.reposition_drags_for_form, [], true);
+            Y.later(500, this, this.update_drop_zones, [], true);
         },
 
         constrain_image_size : function (e, imagetype) {
@@ -67,48 +59,135 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             e.target.addClass('constrained');
             e.target.detach('load', this.constrain_image_size);
         },
+        
+        graphics : null,
 
-        load_drag_homes : function () {
-            //set up drag items homes
-            for (var i=0; i < this.form.get_form_value('noitems', []); i++) {
-                this.load_drag_home(i);
-            }
-        },
 
-        load_drag_home : function (dragitemno) {
-            if ('image' === this.form.get_form_value('dragitemtype', [dragitemno])) {
-                var url =
-                    this.fp.file(this.form.to_name_with_index('dragitem', [dragitemno])).href;
-            } else {
-                var url = null;
-            }
-            this.doc.add_or_update_drag_item_home(dragitemno, url,
-                    this.form.get_form_value('drags', [dragitemno, 'draglabel']),
-                    this.form.get_form_value('drags', [dragitemno, 'draggroup']));
-        },
-
-        update_drag_instances : function () {
+        update_drop_zones : function () {
             //set up drop zones
+            if (this.graphics !== null) {
+                this.graphics.destroy();
+            }
+            this.graphics = new Y.Graphic({render:"div.ddarea div.dropzones"});
             for (var i=0; i < this.form.get_form_value('nodropzone', []); i++) {
-                var dragitemno = this.form.get_form_value('drops', [i, 'choice']);
-                if (dragitemno !== '0' && (this.doc.drag_item(i) === null)) {
-                    var drag = this.doc.clone_new_drag_item(i, dragitemno - 1);
-                    if (drag !== null) {
-                        this.doc.draggable_for_form(drag);
-                    }
+                this.update_drop_zone(i);
+            }
+        },
+        update_drop_zone : function (dropzoneno) {
+            var markertext;
+            var dragitemno = this.form.get_form_value('drops', [dropzoneno, 'choice']);
+            if (+dragitemno !== 0){
+                markertext = this.get_marker_text(dragitemno);
+            } else {
+                markertext = '';
+            }
+            var shape = this.form.get_form_value('drops', [dropzoneno, 'shape']);
+            var drawfunc = 'draw_shape_'+shape;
+            if (this[drawfunc] instanceof Function){
+               this[drawfunc](dropzoneno, markertext);
+            }
+        },
+        draw_shape_circle : function (dropzoneno, markertext) {
+            var coords = this.get_coords(dropzoneno);
+            var coordsparts = coords.match(/(\d+),(\d+);(\d+)/);
+            if (coordsparts && coordsparts.length === 4) {
+                var xy = [coordsparts[1] - coordsparts[3], coordsparts[2] - coordsparts[3]];
+                var widthheight = [coordsparts[3]*2, coordsparts[3]*2];
+                console.log('circle', dropzoneno, markertext, xy, widthheight);
+                var shape = this.graphics.addShape({
+                        type: 'circle',
+                        width: widthheight[0],
+                        height: widthheight[1],
+                        fill: {
+                            color: "#0000ff",
+                            opacity : "0.5"
+                        },
+                        stroke: {
+                            weight:1,
+                            color: "black"
+                        }
+                });
+                shape.setXY(this.convert_to_window_xy(xy));
+                console.log(this.convert_to_window_xy(xy));
+            }
+        },
+        draw_shape_rectangle : function (dropzoneno, markertext) {
+            var coords = this.get_coords(dropzoneno);
+            var coordsparts = coords.match(/(\d+),(\d+);(\d+),(\d+)/);
+            if (coordsparts && coordsparts.length === 5) {
+                var xy = [coordsparts[1], coordsparts[2]];
+                var widthheight = [coordsparts[3], coordsparts[4]];
+                console.log('rectangle', dropzoneno, markertext, xy, widthheight);
+                var shape = this.graphics.addShape({
+                        type: 'rect',
+                        width: widthheight[0],
+                        height: widthheight[1],
+                        fill: {
+                            color: "#0000ff",
+                            opacity : "0.5"
+                        },
+                        stroke: {
+                            weight:1,
+                            color: "black"
+                        }
+                });
+                shape.setXY(this.convert_to_window_xy(xy));
+                console.log(this.convert_to_window_xy(xy));
+            }
+        },
+        draw_shape_polygon : function (dropzoneno, markertext) {
+            var coords = this.form.get_form_value('drops', [dropzoneno, 'coords']);
+            var coordsparts = coords.split(';');
+            var xy = [];
+            for (var i in coordsparts) {
+                var parts = coordsparts[i].match(/^(\d+),(\d+)$/);
+                if (parts !== null) {
+                    xy[xy.length] = [parts[1], parts[2]];
                 }
             }
+            if (xy.length > 2) {
+                console.log('polygon', dropzoneno, markertext, xy);
+                var polygon = this.graphics.addShape({
+                    type: "path",
+                    stroke: {
+                        weight: 1,
+                        color: "#000"
+                    },
+                    fill: {
+                        color: "#f00",
+                        opacity : "0.5"
+                    }
+                });
+                for (var i in xy) {
+                    var windowxy = this.convert_to_window_xy(xy[i]);
+                    console.log(i, this.convert_to_window_xy(xy[i]));
+                    if (i == 0) {
+                        polygon.moveTo(windowxy[0], windowxy[1]);
+                    } else {
+                        polygon.lineTo(windowxy[0], windowxy[1]);
+                    }
+                }
+                if (+xy[0][0] !== +xy[xy.length-1][0] || +xy[0][1] !== +xy[xy.length-1][1]) {
+                    var windowxy = this.convert_to_window_xy(xy[0]);
+                    polygon.lineTo(windowxy[0], windowxy[1]); //close polygon if not already closed
+                }
+                polygon.end();
+            }
+        },
+        get_coords : function (dropzoneno) {
+            var coords = this.form.get_form_value('drops', [dropzoneno, 'coords']);
+            return coords.replace(new RegExp("\\s*", 'g'), '');
+        },
+        get_marker_text : function (markerno) {
+            var label = this.form.get_form_value('drags', [markerno, 'label']);
+            return label.replace(new RegExp("^\\s*(.*)\\s*$"), "$1");
         },
         set_options_for_drag_item_selectors : function () {
             var dragitemsoptions = {0: ''};
             for (var i=0; i < this.form.get_form_value('noitems', []); i++) {
-                var label = this.form.get_form_value('drags', [i, 'draglabel']);
-                var file = this.fp.file(this.form.to_name_with_index('dragitem', [i]));
-                if ('image' === this.form.get_form_value('dragitemtype', [i])
-                                                                        && file.name !== null) {
-                    dragitemsoptions[i+1] = (i+1)+'. '+label+' ('+file.name+')';
-                } else if (label != '') {
-                    dragitemsoptions[i+1] = (i+1)+'. '+label;
+                var label = this.get_marker_text(i);
+                if (label !== "") {
+                    dragitemsoptions[i+1] = label;
                 }
             }
             for (var i=0; i < this.form.get_form_value('nodropzone', []); i++) {
@@ -126,10 +205,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                         optionnode.set('selected', true);
                     } else {
                         if (value !== 0) { // no item option is always selectable
-                            var cbselector = 'fieldset#draggableitemheader_'+(value-1)
-                                                                        +' input[type="checkbox"]';
-                            var cbel = Y.one(cbselector);
-                            var infinite = cbel.get('checked');
+                            var infinite = this.form.get_form_value('drags', [value-1, 'infinite']);
                             if ((!infinite) &&
                                     (this.doc.drag_items_cloned_from(value - 1).size() !== 0)) {
                                 optionnode.set('disabled', true);
@@ -271,7 +347,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             },
             get_el : function (name, indexes) {
                 var form = document.getElementById('mform1');
-                return form.elements[this.to_name_with_index(name, indexes)]
+                return form.elements[this.to_name_with_index(name, indexes)];
             },
             get_form_value : function(name, indexes) {
                 var el = this.get_el(name, indexes);
@@ -337,5 +413,5 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
         return new DDMARKER_FORM(config);
     }
 }, '@VERSION@', {
-    requires:['moodle-qtype_ddmarker-dd', 'form_filepicker']
+    requires:['moodle-qtype_ddmarker-dd', 'form_filepicker', 'graphics', 'resize']
 });

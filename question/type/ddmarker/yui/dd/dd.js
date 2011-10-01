@@ -18,24 +18,11 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             if (waitforimageconstrain) {
                 bgdone = bgdone && this.doc.bg_img().hasClass('constrained');
             }
-            var alldragsloaded = !this.doc.drag_item_homes().some(function(dragitemhome){
-                //in 'some' loop returning true breaks the loop and is passed as return value from
-                //'some' else returns false. Can be though of as equivalent to ||.
-                if (dragitemhome.get('tagName') !== 'IMG'){
-                    return false;
-                }
-                var done = (dragitemhome.get('complete'));
-                if (waitforimageconstrain) {
-                    done = done && dragitemhome.hasClass('constrained');
-                }
-                return !done;
-            });
-            if (bgdone && alldragsloaded) {
+            if (bgdone) {
                 if (this.polltimer !== null) {
                     this.polltimer.cancel();
                     this.polltimer = null;
                 }
-                this.doc.drag_item_homes().detach('load', this.poll_for_image_load);
                 this.doc.bg_img().detach('load', this.poll_for_image_load);
                 if (pause !== 0) {
                     Y.later(pause, this, doafterwords);
