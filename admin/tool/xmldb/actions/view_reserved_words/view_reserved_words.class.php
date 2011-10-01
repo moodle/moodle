@@ -40,10 +40,10 @@ class view_reserved_words extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
     $this->sesskey_protected = false; // This action doesn't need sesskey protection
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             'listreservedwords' => 'tool_xmldb',
             'wrongreservedwords' => 'tool_xmldb',
@@ -63,18 +63,18 @@ class view_reserved_words extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         $this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB, $DB;
 
-    /// Calculate list of available SQL generators
+        // Calculate list of available SQL generators
         require_once("$CFG->libdir/ddl/sql_generator.php");
         $reserved_words = sql_generator::getAllReservedWords();
 
-    /// Now, calculate, looking into current DB (with AdoDB Metadata), which fields are
-    /// in the list of reserved words
+        // Now, calculate, looking into current DB (with AdoDB Metadata), which fields are
+        // in the list of reserved words
         $wronguses = array();
         $dbtables = $DB->get_tables();
         if ($dbtables) {
@@ -94,16 +94,16 @@ class view_reserved_words extends XMLDBAction {
             }
         }
 
-    /// Sort the wrong uses
+        // Sort the wrong uses
         sort($wronguses);
 
-    /// The back to edit table button
+        // The back to edit table button
         $b = ' <p class="centerpara buttons">';
         $b .= '<a href="index.php">[' . $this->str['back'] . ']</a>';
         $b .= '</p>';
         $o = $b;
 
-    /// The list of currently wrong field names
+        // The list of currently wrong field names
         if ($wronguses) {
             $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
             $o.= '      <tr><td align="center"><font color="red">' . $this->str['wrongreservedwords'] . '</font></td></tr>';
@@ -113,7 +113,7 @@ class view_reserved_words extends XMLDBAction {
             $o.= '    </table>';
         }
 
-    /// The textarea showing all the reserved words
+        // The textarea showing all the reserved words
         $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
         $o.= '      <tr><td align="center">' . $this->str['listreservedwords'].'</td></tr>';
         $o.= '      <tr><td><textarea cols="80" rows="32">';
@@ -123,12 +123,12 @@ class view_reserved_words extends XMLDBAction {
 
         $this->output = $o;
 
-    /// Launch postaction if exists (leave this here!)
+        // Launch postaction if exists (leave this here!)
         if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 }

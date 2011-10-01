@@ -37,9 +37,9 @@ class delete_key extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             'confirmdeletekey' => 'tool_xmldb',
             'yes' => '',
@@ -57,15 +57,15 @@ class delete_key extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         $this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB;
 
-    /// Do the job, setting result as needed
+        // Do the job, setting result as needed
 
-    /// Get the dir containing the file
+        // Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . $dirpath;
         $tableparam = required_param('table', PARAM_PATH);
@@ -73,7 +73,7 @@ class delete_key extends XMLDBAction {
 
         $confirmed = optional_param('confirmed', false, PARAM_BOOL);
 
-    /// If  not confirmed, show confirmation box
+        // If  not confirmed, show confirmation box
         if (!$confirmed) {
             $o = '<table width="60" class="generalbox" border="0" cellpadding="5" cellspacing="0" id="notice">';
             $o.= '  <tr><td class="generalboxcontent">';
@@ -93,14 +93,14 @@ class delete_key extends XMLDBAction {
 
             $this->output = $o;
         } else {
-        /// Get the edited dir
+            // Get the edited dir
             if (!empty($XMLDB->editeddirs)) {
                 if (isset($XMLDB->editeddirs[$dirpath])) {
                     $dbdir =& $XMLDB->dbdirs[$dirpath];
                     $editeddir =& $XMLDB->editeddirs[$dirpath];
                     if ($editeddir) {
                         $structure =& $editeddir->xml_file->getStructure();
-                    /// Move adjacent keys prev and next attributes
+                        // Move adjacent keys prev and next attributes
                         $tables =& $structure->getTables();
                         $table =& $structure->getTable($tableparam);
                         $keys =& $table->getKeys();
@@ -113,14 +113,14 @@ class delete_key extends XMLDBAction {
                             $next =& $table->getKey($key->getNext());
                             $next->setPrevious($key->getPrevious());
                         }
-                    /// Remove the key
+                        // Remove the key
                         $table->deleteKey($keyparam);
 
-                    /// Recalculate the hash
+                        // Recalculate the hash
                         $structure->calculateHash(true);
 
-                    /// If the hash has changed from the original one, change the version
-                    /// and mark the structure as changed
+                        // If the hash has changed from the original one, change the version
+                        // and mark the structure as changed
                         $origstructure =& $dbdir->xml_file->getStructure();
                         if ($structure->getHash() != $origstructure->getHash()) {
                             $structure->setVersion(userdate(time(), '%Y%m%d', 99, false));
@@ -131,12 +131,12 @@ class delete_key extends XMLDBAction {
             }
         }
 
-    /// Launch postaction if exists (leave this here!)
+        // Launch postaction if exists (leave this here!)
         if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 }

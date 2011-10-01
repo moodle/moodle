@@ -37,9 +37,9 @@ class delete_xml_file extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             'confirmdeletexmlfile' => 'tool_xmldb',
             'yes' => '',
@@ -57,21 +57,21 @@ class delete_xml_file extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         $this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB;
 
-    /// Do the job, setting result as needed
+        // Do the job, setting result as needed
 
-    /// Get the dir containing the file
+        // Get the dir containing the file
         $dirpath = required_param('dir', PARAM_CLEAN);
         $dirpath = $CFG->dirroot . $dirpath;
 
         $confirmed = optional_param('confirmed', false, PARAM_BOOL);
 
-    /// If  not confirmed, show confirmation box
+        // If  not confirmed, show confirmation box
         if (!$confirmed) {
             $o = '<table width="60" class="generalbox" border="0" cellpadding="5" cellspacing="0" id="notice">';
             $o.= '  <tr><td class="generalboxcontent">';
@@ -91,7 +91,7 @@ class delete_xml_file extends XMLDBAction {
 
             $this->output = $o;
         } else {
-        /// Get the original dir and delete the xml file
+            // Get the original dir and delete the xml file
             if (!empty($XMLDB->dbdirs)) {
                 if (isset($XMLDB->dbdirs[$dirpath])) {
                     $dbdir =& $XMLDB->dbdirs[$dirpath];
@@ -102,12 +102,12 @@ class delete_xml_file extends XMLDBAction {
             }
         }
 
-    /// Launch postaction if exists (leave this here!)
+        // Launch postaction if exists (leave this here!)
         if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 }

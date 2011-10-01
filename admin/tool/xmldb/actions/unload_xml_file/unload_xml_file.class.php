@@ -37,12 +37,12 @@ class unload_xml_file extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
         $this->sesskey_protected = false; // This action doesn't need sesskey protection
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
-        /// 'key' => 'module',
+            // 'key' => 'module',
         ));
     }
 
@@ -56,20 +56,19 @@ class unload_xml_file extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         $this->does_generate = ACTION_NONE;
-        //$this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB;
 
-    /// Do the job, setting result as needed
+        // Do the job, setting result as needed
 
-    /// Get the dir containing the file
+        // Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . $dirpath;
 
-        /// Get the original dir and delete some elements
+        // Get the original dir and delete some elements
         if (!empty($XMLDB->dbdirs)) {
             if (isset($XMLDB->dbdirs[$dirpath])) {
                 $dbdir =& $XMLDB->dbdirs[$dirpath];
@@ -82,19 +81,19 @@ class unload_xml_file extends XMLDBAction {
                 }
             }
         }
-        /// Get the edited dir and delete it completely
+        // Get the edited dir and delete it completely
         if (!empty($XMLDB->editeddirs)) {
             if (isset($XMLDB->editeddirs[$dirpath])) {
                 unset($XMLDB->editeddirs[$dirpath]);
             }
         }
 
-    /// Launch postaction if exists (leave this here!)
+        // Launch postaction if exists (leave this here!)
         if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 }

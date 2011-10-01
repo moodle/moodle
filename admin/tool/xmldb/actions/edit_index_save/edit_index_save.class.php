@@ -38,9 +38,9 @@ class edit_index_save extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             'indexnameempty' => 'tool_xmldb',
             'incorrectindexname' => 'tool_xmldb',
@@ -65,20 +65,20 @@ class edit_index_save extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         //$this->does_generate = ACTION_NONE;
         $this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB;
 
-    /// Do the job, setting result as needed
+        // Do the job, setting result as needed
 
-        if (!data_submitted()) { ///Basic prevention
+        if (!data_submitted()) { // Basic prevention
             print_error('wrongcall', 'error');
         }
 
-    /// Get parameters
+        // Get parameters
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . $dirpath;
 
@@ -99,44 +99,44 @@ class edit_index_save extends XMLDBAction {
         $index =& $table->getIndex($indexparam);
         $oldhash = $index->getHash();
 
-        $errors = array();    /// To store all the errors found
+        $errors = array(); // To store all the errors found
 
-    /// Perform some checks
-    /// Check empty name
+        // Perform some checks
+        // Check empty name
         if (empty($name)) {
             $errors[] = $this->str['indexnameempty'];
         }
-    /// Check incorrect name
+        // Check incorrect name
         if ($name == 'changeme') {
             $errors[] = $this->str['incorrectindexname'];
         }
-    /// Check duplicate name
+        // Check duplicate name
         if ($indexparam != $name && $table->getIndex($name)) {
             $errors[] = $this->str['duplicateindexname'];
         }
         $fieldsarr = explode(',', $fields);
-    /// Check the fields isn't empty
+        // Check the fields isn't empty
         if (empty($fieldsarr[0])) {
             $errors[] = $this->str['nofieldsspecified'];
         } else {
-        /// Check that there aren't duplicate column names
+            // Check that there aren't duplicate column names
             $uniquearr = array_unique($fieldsarr);
             if (count($fieldsarr) != count($uniquearr)) {
                 $errors[] = $this->str['duplicatefieldsused'];
             }
-        /// Check that all the fields in belong to the table
+            // Check that all the fields in belong to the table
             foreach ($fieldsarr as $field) {
                 if (!$table->getField($field)) {
                     $errors[] = $this->str['fieldsnotintable'];
                     break;
                 }
             }
-        /// Check that there isn't any key using exactly the same fields
+            // Check that there isn't any key using exactly the same fields
             $tablekeys = $table->getKeys();
             if ($tablekeys) {
                 foreach ($tablekeys as $tablekey) {
                     $keyfieldsarr = $tablekey->getFields();
-                /// Compare both arrays, looking for differences
+                    // Compare both arrays, looking for differences
                     $diferences = array_merge(array_diff($fieldsarr, $keyfieldsarr), array_diff($keyfieldsarr, $fieldsarr));
                     if (empty($diferences)) {
                         $errors[] = $this->str['fieldsusedinkey'];
@@ -144,16 +144,16 @@ class edit_index_save extends XMLDBAction {
                     }
                 }
             }
-        /// Check that there isn't any index using exactly the same fields
+            // Check that there isn't any index using exactly the same fields
             $tableindexes = $table->getIndexes();
             if ($tableindexes) {
                 foreach ($tableindexes as $tableindex) {
-                /// Skip checking against itself
+                    // Skip checking against itself
                     if ($indexparam == $tableindex->getName()) {
                         continue;
                     }
                     $indexfieldsarr = $tableindex->getFields();
-                /// Compare both arrays, looking for differences
+                    // Compare both arrays, looking for differences
                     $diferences = array_merge(array_diff($fieldsarr, $indexfieldsarr), array_diff($indexfieldsarr, $fieldsarr));
                     if (empty($diferences)) {
                         $errors[] = $this->str['fieldsusedinindex'];
@@ -167,7 +167,7 @@ class edit_index_save extends XMLDBAction {
             $tempindex = new xmldb_index($name);
             $tempindex->setUnique($unique);
             $tempindex->setFields($fieldsarr);
-        /// Prepare the output
+            // Prepare the output
             $o = '<p>' .implode(', ', $errors) . '</p>
                   <p>' . $tempindex->readableInfo() . '</p>';
             $o.= '<a href="index.php?action=edit_index&amp;index=' .$index->getName() . '&amp;table=' . $table->getName() .
@@ -175,10 +175,10 @@ class edit_index_save extends XMLDBAction {
             $this->output = $o;
         }
 
-    /// Continue if we aren't under errors
+        // Continue if we aren't under errors
         if (empty($errors)) {
-        /// If there is one name change, do it, changing the prev and next
-        /// attributes of the adjacent fields
+            // If there is one name change, do it, changing the prev and next
+            // attributes of the adjacent fields
             if ($indexparam != $name) {
                 $index->setName($name);
                 if ($index->getPrevious()) {
@@ -193,33 +193,33 @@ class edit_index_save extends XMLDBAction {
                 }
             }
 
-        /// Set comment
+            // Set comment
             $index->setComment($comment);
 
-        /// Set the rest of fields
+            // Set the rest of fields
             $index->setUnique($unique);
             $index->setFields($fieldsarr);
 
-        /// If the hash has changed from the old one, change the version
-        /// and mark the structure as changed
+            // If the hash has changed from the old one, change the version
+            // and mark the structure as changed
             $index->calculateHash(true);
             if ($oldhash != $index->getHash()) {
                 $index->setChanged(true);
                 $table->setChanged(true);
-            /// Recalculate the structure hash
+                // Recalculate the structure hash
                 $structure->calculateHash(true);
                 $structure->setVersion(userdate(time(), '%Y%m%d', 99, false));
-            /// Mark as changed
+                // Mark as changed
                 $structure->setChanged(true);
             }
 
-        /// Launch postaction if exists (leave this here!)
+            // Launch postaction if exists (leave this here!)
             if ($this->getPostAction() && $result) {
                 return $this->launch($this->getPostAction());
             }
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 }

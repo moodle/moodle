@@ -37,9 +37,9 @@ class edit_table_save extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             'tablenameempty' => 'tool_xmldb',
             'incorrecttablename' => 'tool_xmldb',
@@ -59,20 +59,20 @@ class edit_table_save extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         //$this->does_generate = ACTION_NONE;
         $this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB;
 
-    /// Do the job, setting result as needed
+        // Do the job, setting result as needed
 
-        if (!data_submitted()) { ///Basic prevention
+        if (!data_submitted()) { // Basic prevention
             print_error('wrongcall', 'error');
         }
 
-    /// Get parameters
+        // Get parameters
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . $dirpath;
 
@@ -87,25 +87,25 @@ class edit_table_save extends XMLDBAction {
         $structure =& $editeddir->xml_file->getStructure();
         $table =& $structure->getTable($tableparam);
 
-        $errors = array();    /// To store all the errors found
+        $errors = array(); // To store all the errors found
 
-    /// Perform some checks
-    /// Check empty name
+        // Perform some checks
+        // Check empty name
         if (empty($name)) {
             $errors[] = $this->str['tablenameempty'];
         }
-    /// Check incorrect name
+        // Check incorrect name
         if ($name == 'changeme') {
             $errors[] = $this->str['incorrecttablename'];
         }
-    /// Check duplicatename
+        // Check duplicatename
         if ($tableparam != $name && $structure->getTable($name)) {
             $errors[] = $this->str['duplicatetablename'];
         }
 
         if (!empty($errors)) {
             $temptable = new xmldb_table($name);
-            /// Prepare the output
+                // Prepare the output
             $o = '<p>' .implode(', ', $errors) . '</p>
                   <p>' . $temptable->getName() . '</p>';
             $o.= '<a href="index.php?action=edit_table&amp;table=' . $tableparam .
@@ -113,10 +113,10 @@ class edit_table_save extends XMLDBAction {
             $this->output = $o;
 
 
-    /// Continue if we aren't under errors
+        // Continue if we aren't under errors
         } else if (empty($errors)) {
-        /// If there is one name change, do it, changing the prev and next
-        /// atributes of the adjacent tables
+            // If there is one name change, do it, changing the prev and next
+            // atributes of the adjacent tables
             if ($tableparam != $name) {
                 $table->setName($name);
                 if ($table->getPrevious()) {
@@ -129,35 +129,35 @@ class edit_table_save extends XMLDBAction {
                     $next->setPrevious($name);
                     $next->setChanged(true);
                 }
-            /// Table has changed
+                // Table has changed
                 $table->setChanged(true);
             }
 
-        /// Set comment
+            // Set comment
             if ($table->getComment() != $comment) {
                 $table->setComment($comment);
-            /// Table has changed
+                // Table has changed
                 $table->setChanged(true);
             }
 
-        /// Recalculate the hash
+            // Recalculate the hash
             $structure->calculateHash(true);
 
-        /// If the hash has changed from the original one, change the version
-        /// and mark the structure as changed
+            // If the hash has changed from the original one, change the version
+            // and mark the structure as changed
             $origstructure =& $dbdir->xml_file->getStructure();
             if ($structure->getHash() != $origstructure->getHash()) {
                 $structure->setVersion(userdate(time(), '%Y%m%d', 99, false));
                 $structure->setChanged(true);
             }
 
-        /// Launch postaction if exists (leave this here!)
+            // Launch postaction if exists (leave this here!)
             if ($this->getPostAction() && $result) {
                 return $this->launch($this->getPostAction());
             }
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 }

@@ -37,10 +37,10 @@ class edit_field extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
         $this->sesskey_protected = false; // This action doesn't need sesskey protection
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             'change' => 'tool_xmldb',
             'float2numbernote' => 'tool_xmldb',
@@ -62,18 +62,18 @@ class edit_field extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         $this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB, $OUTPUT;
 
-    /// Do the job, setting result as needed
-    /// Get the dir containing the file
+        // Do the job, setting result as needed
+        // Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . $dirpath;
 
-    /// Get the correct dirs
+        // Get the correct dirs
         if (!empty($XMLDB->dbdirs)) {
             $dbdir =& $XMLDB->dbdirs[$dirpath];
         } else {
@@ -84,9 +84,7 @@ class edit_field extends XMLDBAction {
             $structure =& $editeddir->xml_file->getStructure();
         }
 
-    /// ADD YOUR CODE HERE
-
-    /// Fetch request data
+        // Fetch request data
         $tableparam = required_param('table', PARAM_CLEAN);
         if (!$table =& $structure->getTable($tableparam)) {
             $this->errormsg = 'Wrong table specified: ' . $tableparam;
@@ -94,7 +92,7 @@ class edit_field extends XMLDBAction {
         }
         $fieldparam = required_param('field', PARAM_CLEAN);
         if (!$field =& $table->getField($fieldparam)) {
-        /// Arriving here from a name change, looking for the new field name
+            // Arriving here from a name change, looking for the new field name
             $fieldparam = required_param('name', PARAM_CLEAN);
             $field =& $table->getField($fieldparam);
         }
@@ -102,14 +100,14 @@ class edit_field extends XMLDBAction {
         $dbdir =& $XMLDB->dbdirs[$dirpath];
         $origstructure =& $dbdir->xml_file->getStructure();
 
-        $o = ''; /// Output starts
+        $o = ''; // Output starts
 
-    /// If field is XMLDB_TYPE_FLOAT, comment about to migrate it to XMLDB_TYPE_NUMBER
+        // If field is XMLDB_TYPE_FLOAT, comment about to migrate it to XMLDB_TYPE_NUMBER
         if ($field->getType() == XMLDB_TYPE_FLOAT) {
             $o .= '<p>' . $this->str['float2numbernote'] . '</p>';
         }
 
-    /// Add the main form
+        // Add the main form
         $o.= '<form id="form" action="index.php" method="post">';
         $o.= '    <div>';
         $o.= '    <input type="hidden" name ="dir" value="' . str_replace($CFG->dirroot, '', $dirpath) . '" />';
@@ -119,8 +117,8 @@ class edit_field extends XMLDBAction {
         $o.= '    <input type="hidden" name ="action" value="edit_field_save" />';
         $o.= '    <input type="hidden" name ="postaction" value="edit_table" />';
         $o.= '    <table id="formelements" class="boxaligncenter">';
-    /// XMLDB field name
-    /// If the field has dependencies, we cannot change its name
+        // XMLDB field name
+        // If the field has dependencies, we cannot change its name
         $disabled = '';
         if ($structure->getFieldUses($table->getName(), $field->getName())) {
             $o.= '      <input type="hidden" name ="name" value="' .  s($field->getName()) .'" />';
@@ -128,9 +126,9 @@ class edit_field extends XMLDBAction {
         } else {
             $o.= '      <tr valign="top"><td><label for="name" accesskey="n">Name:</label></td><td colspan="2"><input name="name" type="text" size="30" maxlength="30" id="name" value="' . s($field->getName()) . '" /></td></tr>';
         }
-    /// XMLDB field comment
+        // XMLDB field comment
         $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td colspan="2"><textarea name="comment" rows="3" cols="80" id="comment">' . s($field->getComment()) . '</textarea></td></tr>';
-    /// xmldb_field Type
+        // xmldb_field Type
         $typeoptions = array (XMLDB_TYPE_INTEGER => $field->getXMLDBTypeName(XMLDB_TYPE_INTEGER),
                               XMLDB_TYPE_NUMBER  => $field->getXMLDBTypeName(XMLDB_TYPE_NUMBER),
                               XMLDB_TYPE_FLOAT   => $field->getXMLDBTypeName(XMLDB_TYPE_FLOAT),
@@ -138,74 +136,74 @@ class edit_field extends XMLDBAction {
                               XMLDB_TYPE_CHAR    => $field->getXMLDBTypeName(XMLDB_TYPE_CHAR),
                               XMLDB_TYPE_TEXT    => $field->getXMLDBTypeName(XMLDB_TYPE_TEXT),
                               XMLDB_TYPE_BINARY  => $field->getXMLDBTypeName(XMLDB_TYPE_BINARY));
-    /// If current field isnt float, delete such column type to avoid its creation from the interface
-    /// Note that float fields are supported completely but it's possible than in a next future
-    /// we delete them completely from Moodle DB, using, exlusively, number(x,y) types
+        // If current field isnt float, delete such column type to avoid its creation from the interface
+        // Note that float fields are supported completely but it's possible than in a next future
+        // we delete them completely from Moodle DB, using, exlusively, number(x,y) types
         if ($field->getType() != XMLDB_TYPE_FLOAT) {
             unset ($typeoptions[XMLDB_TYPE_FLOAT]);
         }
-    /// Also we hide datetimes. Only edition of them is allowed (and retrofit) but not new creation
+        // Also we hide datetimes. Only edition of them is allowed (and retrofit) but not new creation
         if ($field->getType() != XMLDB_TYPE_DATETIME) {
             unset ($typeoptions[XMLDB_TYPE_DATETIME]);
         }
         $select = html_writer::select($typeoptions, 'type', $field->getType(), false);
         $o.= '      <tr valign="top"><td><label for="menutype" accesskey="t">Type:</label></td>';
         $o.= '        <td colspan="2">' . $select . '</td></tr>';
-    /// xmldb_field Length
+        // xmldb_field Length
         $o.= '      <tr valign="top"><td><label for="length" accesskey="l">Length:</label></td>';
         $o.= '        <td colspan="2"><input name="length" type="text" size="6" maxlength="6" id="length" value="' . s($field->getLength()) . '" /><span id="lengthtip"></span></td></tr>';
-    /// xmldb_field Decimals
+        // xmldb_field Decimals
         $o.= '      <tr valign="top"><td><label for="decimals" accesskey="d">Decimals:</label></td>';
         $o.= '        <td colspan="2"><input name="decimals" type="text" size="6" maxlength="6" id="decimals" value="' . s($field->getDecimals()) . '" /><span id="decimalstip"></span></td></tr>';
-    /// xmldb_field Unsigned
+        // xmldb_field Unsigned
         $unsignedoptions = array (0 => 'signed', 1 => 'unsigned');
         $select = html_writer::select($unsignedoptions, 'unsigned', $field->getUnsigned(), false);
         $o.= '      <tr valign="top"><td><label for="menuunsigned" accesskey="u">Unsigned:</label></td>';
         $o.= '        <td colspan="2">' . $select . '</td></tr>';
-    /// xmldb_field NotNull
+        // xmldb_field NotNull
         $notnulloptions = array (0 => 'null', 'not null');
         $select = html_writer::select($notnulloptions, 'notnull', $field->getNotNull(), false);
         $o.= '      <tr valign="top"><td><label for="menunotnull" accesskey="n">Not Null:</label></td>';
         $o.= '        <td colspan="2">' . $select . '</td></tr>';
-    /// xmldb_field Sequence
+        // xmldb_field Sequence
         $sequenceoptions = array (0 => $this->str['no'], 1 => 'auto-numbered');
         $select = html_writer::select($sequenceoptions, 'sequence', $field->getSequence(), false);
         $o.= '      <tr valign="top"><td><label for="menusequence" accesskey="s">Sequence:</label></td>';
         $o.= '        <td colspan="2">' . $select . '</td></tr>';
-    /// xmldb_field Default
+        // xmldb_field Default
         $o.= '      <tr valign="top"><td><label for="default" accesskey="d">Default:</label></td>';
         $o.= '        <td colspan="2"><input type="text" name="default" size="30" maxlength="80" id="default" value="' . s($field->getDefault()) . '" /></td></tr>';
-    /// Change button
+        // Change button
         $o.= '      <tr valign="top"><td>&nbsp;</td><td colspan="2"><input type="submit" value="' .$this->str['change'] . '" /></td></tr>';
         $o.= '    </table>';
         $o.= '</div></form>';
-    /// Calculate the buttons
+        // Calculate the buttons
         $b = ' <p class="centerpara buttons">';
-    /// The view original XML button
+        // The view original XML button
         if ($table->getField($fieldparam)) {
             $b .= '&nbsp;<a href="index.php?action=view_field_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=original&amp;table=' . $tableparam . '&amp;field=' . $fieldparam . '">[' . $this->str['vieworiginal'] . ']</a>';
         } else {
             $b .= '&nbsp;[' . $this->str['vieworiginal'] . ']';
         }
-    /// The view edited XML button
+        // The view edited XML button
         if ($field->hasChanged()) {
             $b .= '&nbsp;<a href="index.php?action=view_field_xml&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '&amp;select=edited&amp;table=' . $tableparam . '&amp;field=' . $fieldparam . '">[' . $this->str['viewedited'] . ']</a>';
         } else {
             $b .= '&nbsp;[' . $this->str['viewedited'] . ']';
         }
-    /// The back to edit table button
+        // The back to edit table button
         $b .= '&nbsp;<a href="index.php?action=edit_table&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
         $b .= '</p>';
         $o .= $b;
 
         $this->output = $o;
 
-    /// Launch postaction if exists (leave this here!)
+        // Launch postaction if exists (leave this here!)
         if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 }

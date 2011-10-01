@@ -40,11 +40,11 @@ class check_indexes extends XMLDBCheckAction {
         $this->introstr = 'confirmcheckindexes';
         parent::init();
 
-    /// Set own core attributes
+        // Set own core attributes
 
-    /// Set own custom attributes
+        // Set own custom attributes
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             'missing' => 'tool_xmldb',
             'key' => 'tool_xmldb',
@@ -62,20 +62,20 @@ class check_indexes extends XMLDBCheckAction {
         $o = '';
         $missing_indexes = array();
 
-    /// Keys
+        // Keys
         if ($xmldb_keys = $xmldb_table->getKeys()) {
             $o.='        <ul>';
             foreach ($xmldb_keys as $xmldb_key) {
                 $o.='            <li>' . $this->str['key'] . ': ' . $xmldb_key->readableInfo() . ' ';
-            /// Primaries are skipped
+                // Primaries are skipped
                 if ($xmldb_key->getType() == XMLDB_KEY_PRIMARY) {
                     $o.='<font color="green">' . $this->str['ok'] . '</font></li>';
                     continue;
                 }
-            /// If we aren't creating the keys or the key is a XMLDB_KEY_FOREIGN (not underlying index generated
-            /// automatically by the RDBMS) create the underlying (created by us) index (if doesn't exists)
+                // If we aren't creating the keys or the key is a XMLDB_KEY_FOREIGN (not underlying index generated
+                // automatically by the RDBMS) create the underlying (created by us) index (if doesn't exists)
                 if (!$dbman->generator->getKeySQL($xmldb_table, $xmldb_key) || $xmldb_key->getType() == XMLDB_KEY_FOREIGN) {
-                /// Create the interim index
+                    // Create the interim index
                     $xmldb_index = new xmldb_index('anyname');
                     $xmldb_index->setFields($xmldb_key->getFields());
                     switch ($xmldb_key->getType()) {
@@ -87,12 +87,12 @@ class check_indexes extends XMLDBCheckAction {
                             $xmldb_index->setUnique(false);
                             break;
                     }
-                /// Check if the index exists in DB
+                    // Check if the index exists in DB
                     if ($dbman->index_exists($xmldb_table, $xmldb_index)) {
                         $o.='<font color="green">' . $this->str['ok'] . '</font>';
                     } else {
                         $o.='<font color="red">' . $this->str['missing'] . '</font>';
-                    /// Add the missing index to the list
+                        // Add the missing index to the list
                         $obj = new stdClass();
                         $obj->table = $xmldb_table;
                         $obj->index = $xmldb_index;
@@ -103,17 +103,17 @@ class check_indexes extends XMLDBCheckAction {
             }
             $o.='        </ul>';
         }
-    /// Indexes
+        // Indexes
         if ($xmldb_indexes = $xmldb_table->getIndexes()) {
             $o.='        <ul>';
             foreach ($xmldb_indexes as $xmldb_index) {
                 $o.='            <li>' . $this->str['index'] . ': ' . $xmldb_index->readableInfo() . ' ';
-            /// Check if the index exists in DB
+                // Check if the index exists in DB
                 if ($dbman->index_exists($xmldb_table, $xmldb_index)) {
                     $o.='<font color="green">' . $this->str['ok'] . '</font>';
                 } else {
                     $o.='<font color="red">' . $this->str['missing'] . '</font>';
-                /// Add the missing index to the list
+                    // Add the missing index to the list
                     $obj = new stdClass();
                     $obj->table = $xmldb_table;
                     $obj->index = $xmldb_index;
@@ -139,7 +139,7 @@ class check_indexes extends XMLDBCheckAction {
         $r.= '  </td></tr>';
         $r.= '  <tr><td class="generalboxcontent">';
 
-    /// If we have found missing indexes inform about them
+        // If we have found missing indexes inform about them
         if (count($missing_indexes)) {
             $r.= '    <p class="centerpara">' . $this->str['yesmissingindexesfound'] . '</p>';
             $r.= '        <ul>';
@@ -154,14 +154,14 @@ class check_indexes extends XMLDBCheckAction {
 
             }
             $r.= '        </ul>';
-        /// Add the SQL statements (all together)
+            // Add the SQL statements (all together)
             $r.= '<hr />' . $s;
         } else {
             $r.= '    <p class="centerpara">' . $this->str['nomissingindexesfound'] . '</p>';
         }
         $r.= '  </td></tr>';
         $r.= '  <tr><td class="generalboxcontent">';
-    /// Add the complete log message
+        // Add the complete log message
         $r.= '    <p class="centerpara">' . $this->str['completelogbelow'] . '</p>';
         $r.= '  </td></tr>';
         $r.= '</table>';

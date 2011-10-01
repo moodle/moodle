@@ -37,10 +37,10 @@ class generate_documentation extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
         $this->sesskey_protected = false; // This action doesn't need sesskey protection
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             'backtomainview' => 'tool_xmldb',
             'documentationintro' => 'tool_xmldb'
@@ -57,15 +57,15 @@ class generate_documentation extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         $this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB;
 
-    /// Do the job, setting $result as needed
+        // Do the job, setting $result as needed
 
-    /// Get the dir containing the file
+        // Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . $dirpath;
         $path = $dirpath.'/install.xml';
@@ -73,7 +73,7 @@ class generate_documentation extends XMLDBAction {
             return false;
         }
 
-    /// Add link back to home
+        // Add link back to home
         $b = ' <p class="centerpara buttons">';
         $b .= '&nbsp;<a href="index.php?action=main_view#lastused">[' . $this->str['backtomainview'] . ']</a>';
         $b .= '</p>';
@@ -85,7 +85,7 @@ class generate_documentation extends XMLDBAction {
         $this->output.=$c;
 
         if(class_exists('XSLTProcessor')) {
-        /// Transform XML file and display it
+            // Transform XML file and display it
             $doc = new DOMDocument();
             $xsl = new XSLTProcessor();
 
@@ -99,7 +99,7 @@ class generate_documentation extends XMLDBAction {
             $this->output.=get_string('extensionrequired','tool_xmldb','xsl');
         }
 
-    /// Launch postaction if exists (leave this unmodified)
+        // Launch postaction if exists (leave this unmodified)
         if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
