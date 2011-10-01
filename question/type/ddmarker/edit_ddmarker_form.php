@@ -80,7 +80,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
                                                 array('size'=>30, 'class'=>'tweakcss'));
         $mform->setType('text', PARAM_RAW_TRIMMED);
 
-        $grouparray[] = $mform->createElement('advcheckbox', 'infinite', ' ',
+        $grouparray[] = $mform->createElement('checkbox', 'infinite', ' ',
                                                         get_string('infinite', 'qtype_ddmarker'));
         $draggableimageitem[] = $mform->createElement('group', 'drags',
                                             get_string('marker_n', 'qtype_ddmarker'), $grouparray);
@@ -188,7 +188,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
                                 self::file_picker_options());
         $question->bgimage = $draftitemid;
 
-        //$this->js_call();
+        $this->js_call();
 
         return $question;
     }
