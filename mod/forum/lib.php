@@ -5071,17 +5071,9 @@ function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NUL
         $user = $USER;
     }
 
-    if (!has_all_capabilities(array('moodle/user:viewdetails', 'moodle/user:readuserposts'), get_context_instance(CONTEXT_USER, $post->userid))) {
-        if (isset($cm->cache->caps['mod/forum:viewdiscussion'])) {
-            if (!$cm->cache->caps['mod/forum:viewdiscussion']) {
-                return false;
-            }
-        } else {
-            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-            if (!has_capability('mod/forum:viewdiscussion', $modcontext, $user->id)) {
-                return false;
-            }
-        }
+    $canviewdiscussion = !empty($cm->cache->caps['mod/forum:viewdiscussion']) || has_capability('mod/forum:viewdiscussion', $modcontext, $user->id);
+    if (!$canviewdiscussion && !has_all_capabilities(array('moodle/user:viewdetails', 'moodle/user:readuserposts'), get_context_instance(CONTEXT_USER, $post->userid))) {
+        return false;
     }
 
     if (isset($cm->uservisible)) {
