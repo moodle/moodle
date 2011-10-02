@@ -246,63 +246,6 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             }, this);
         },
 
-        update_visibility_of_file_pickers : function() {
-            for (var i=0; i < this.form.get_form_value('noitems', []); i++) {
-                if ('image' === this.form.get_form_value('dragitemtype', [i])) {
-                    Y.one('input#id_dragitem_'+i).get('parentNode').get('parentNode')
-                                .setStyle('display', 'block');
-                } else {
-                    Y.one('input#id_dragitem_'+i).get('parentNode').get('parentNode')
-                                .setStyle('display', 'none');
-                }
-            }
-        },
-
-        reposition_drags_for_form : function() {
-            this.doc.drag_items().each(function (drag) {
-                var draginstanceno = drag.getData('draginstanceno');
-                this.reposition_drag_for_form(draginstanceno);
-            }, this);
-        },
-
-        reposition_drag_for_form : function (draginstanceno) {
-            var drag = this.doc.drag_item(draginstanceno);
-            if (null !== drag && !drag.hasClass('yui3-dd-dragging')) {
-                var fromform = [this.form.get_form_value('drops', [draginstanceno, 'xleft']),
-                                this.form.get_form_value('drops', [draginstanceno, 'ytop'])];
-                if (fromform[0] == '' && fromform[1] == '') {
-                    var dragitemno = drag.getData('dragitemno');
-                    drag.setXY(this.doc.drag_item_home(dragitemno).getXY());
-                } else {
-                    drag.setXY(this.convert_to_window_xy(fromform));
-                }
-            }
-        },
-        set_drag_xy : function (draginstanceno, xy) {
-            xy = this.constrain_xy(draginstanceno, this.convert_to_bg_img_xy(xy));
-            this.form.set_form_value('drops', [draginstanceno, 'xleft'], Math.round(xy[0]));
-            this.form.set_form_value('drops', [draginstanceno, 'ytop'], Math.round(xy[1]));
-        },
-        reset_drag_xy : function (draginstanceno) {
-            this.form.set_form_value('drops', [draginstanceno, 'xleft'], '');
-            this.form.set_form_value('drops', [draginstanceno, 'ytop'], '');
-        },
-
-        //make sure xy value is not out of bounds of bg image
-        constrain_xy : function (draginstanceno, bgimgxy) {
-            var drag = this.doc.drag_item(draginstanceno);
-            var xleftconstrained =
-                Math.min(bgimgxy[0], this.doc.bg_img().get('width') - drag.get('offsetWidth'));
-            var ytopconstrained =
-                Math.min(bgimgxy[1], this.doc.bg_img().get('height') - drag.get('offsetHeight'));
-            xleftconstrained = Math.max(xleftconstrained, 0);
-            ytopconstrained = Math.max(ytopconstrained, 0);
-            return [xleftconstrained, ytopconstrained];
-        },
-        convert_to_bg_img_xy : function (windowxy) {
-            return [+windowxy[0] - this.doc.bg_img().getX()-1,
-                    +windowxy[1] - this.doc.bg_img().getY()-1];
-        },
 
         /**
          * Low level operations on form.
@@ -383,5 +326,5 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
         return new DDMARKER_FORM(config);
     }
 }, '@VERSION@', {
-    requires:['moodle-qtype_ddmarker-dd', 'form_filepicker', 'graphics', 'resize']
+    requires:['moodle-qtype_ddmarker-dd', 'form_filepicker', 'graphics']
 });
