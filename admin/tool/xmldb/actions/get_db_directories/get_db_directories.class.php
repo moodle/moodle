@@ -37,16 +37,16 @@ class get_db_directories extends XMLDBAction {
      */
     function init() {
         parent::init();
-    /// Set own core attributes
+        // Set own core attributes
         $this->can_subaction = ACTION_NONE;
         //$this->can_subaction = ACTION_HAVE_SUBACTIONS;
 
-    /// Set own custom attributes
+        // Set own custom attributes
         $this->sesskey_protected = false; // This action doesn't need sesskey protection
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
-        /// 'key' => 'module',
+            // 'key' => 'module',
         ));
     }
 
@@ -60,22 +60,22 @@ class get_db_directories extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         $this->does_generate = ACTION_NONE;
         //$this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB;
 
-    /// Do the job, setting $result as needed
+        // Do the job, setting $result as needed
 
-    /// Lets go to add all the db directories available inside Moodle
-    /// Create the array if it doesn't exists
+        // Lets go to add all the db directories available inside Moodle
+        // Create the array if it doesn't exists
         if (!isset($XMLDB->dbdirs)) {
             $XMLDB->dbdirs = array();
         }
 
-    /// get list of all dirs and create objects with status
+        // get list of all dirs and create objects with status
         $db_directories = get_db_directories();
         foreach ($db_directories as $path) {
             $dbdir = new stdClass;
@@ -86,10 +86,10 @@ class get_db_directories extends XMLDBAction {
             $XMLDB->dbdirs[$dbdir->path]->path_exists = file_exists($dbdir->path);  //Update status
          }
 
-    /// Sort by key
+        // Sort by key
         ksort($XMLDB->dbdirs);
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return true;
     }
 }

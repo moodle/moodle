@@ -35,15 +35,15 @@ class create_xml_file extends XMLDBAction {
      */
     function init() {
         parent::init();
-    /// Set own core attributes
+        // Set own core attributes
         $this->can_subaction = ACTION_NONE;
         //$this->can_subaction = ACTION_HAVE_SUBACTIONS;
 
-    /// Set own custom attributes
+        // Set own custom attributes
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
-        /// 'key' => 'module',
+            // 'key' => 'module',
         ));
     }
 
@@ -57,28 +57,28 @@ class create_xml_file extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         $this->does_generate = ACTION_NONE;
         //$this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB;
 
-    /// Do the job, setting result as needed
+        // Do the job, setting result as needed
 
-    /// Get the dir containing the file
+        // Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . $dirpath;
         $file = $dirpath . '/install.xml';
 
-    /// Some variables
+        // Some variables
         $xmlpath = dirname(str_replace($CFG->dirroot . '/', '', $file));
         $xmlversion = userdate(time(), '%Y%m%d', 99, false);
         $xmlcomment = 'XMLDB file for Moodle ' . dirname($xmlpath);
 
         $xmltable = strtolower(basename(dirname($xmlpath)));
 
-    /// Initial contents
+        // Initial contents
         $c = '<?xml version="1.0" encoding="UTF-8" ?>' . "\n";
         $c.= '  <XMLDB PATH="' . $xmlpath . '" VERSION="' . $xmlversion .'" COMMENT="' . $xmlcomment .'">' . "\n";
         $c.= '    <TABLES>' . "\n";
@@ -98,12 +98,12 @@ class create_xml_file extends XMLDBAction {
             $result = false;
         }
 
-    /// Launch postaction if exists
+        // Launch postaction if exists
         if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 }

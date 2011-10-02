@@ -37,11 +37,11 @@ class new_index extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
-        /// 'key' => 'module',
+            // 'key' => 'module',
         ));
     }
 
@@ -55,19 +55,19 @@ class new_index extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         $this->does_generate = ACTION_NONE;
         //$this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB;
 
-    /// Do the job, setting result as needed
-    /// Get the dir containing the file
+        // Do the job, setting result as needed
+        // Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . $dirpath;
 
-    /// Get the correct dirs
+        // Get the correct dirs
         if (!empty($XMLDB->dbdirs)) {
             $dbdir =& $XMLDB->dbdirs[$dirpath];
         } else {
@@ -77,33 +77,32 @@ class new_index extends XMLDBAction {
             $editeddir =& $XMLDB->editeddirs[$dirpath];
             $structure =& $editeddir->xml_file->getStructure();
         }
-    /// ADD YOUR CODE HERE
 
-    $tableparam = required_param('table', PARAM_CLEAN);
+        $tableparam = required_param('table', PARAM_CLEAN);
 
-    $table =& $structure->getTable($tableparam);
+        $table =& $structure->getTable($tableparam);
 
-    /// If the changeme index exists, just get it and continue
+        // If the changeme index exists, just get it and continue
         $changeme_exists = false;
         if ($indexes =& $table->getIndexes()) {
             if ($index =& $table->getIndex('changeme')) {
                 $changeme_exists = true;
             }
         }
-        if (!$changeme_exists) { /// Lets create the Index
+        if (!$changeme_exists) { // Lets create the Index
             $index = new xmldb_index('changeme');
             $table->addIndex($index);
 
-        /// We have one new key, so the structure has changed
+            // We have one new key, so the structure has changed
             $structure->setVersion(userdate(time(), '%Y%m%d', 99, false));
             $structure->setChanged(true);
         }
-    /// Launch postaction if exists (leave this here!)
+        // Launch postaction if exists (leave this here!)
         if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 }

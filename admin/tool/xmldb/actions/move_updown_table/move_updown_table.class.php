@@ -37,11 +37,11 @@ class move_updown_table extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
-        /// 'key' => 'module',
+            // 'key' => 'module',
         ));
     }
 
@@ -55,19 +55,19 @@ class move_updown_table extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         $this->does_generate = ACTION_NONE;
         //$this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB;
 
-    /// Do the job, setting result as needed
-    /// Get the dir containing the file
+        // Do the job, setting result as needed
+        // Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . $dirpath;
 
-    /// Get the correct dirs
+        // Get the correct dirs
         if (!empty($XMLDB->dbdirs)) {
             $dbdir =& $XMLDB->dbdirs[$dirpath];
         } else {
@@ -77,7 +77,7 @@ class move_updown_table extends XMLDBAction {
             $editeddir =& $XMLDB->editeddirs[$dirpath];
             $structure =& $editeddir->xml_file->getStructure();
         }
-    /// ADD YOUR CODE HERE
+
         $prev = NULL;
         $next = NULL;
         $tableparam = required_param('table', PARAM_CLEAN);
@@ -91,7 +91,7 @@ class move_updown_table extends XMLDBAction {
             $table =& $structure->getTable($swap->getPrevious());
         }
 
-    /// Change the table before the pair
+        // Change the table before the pair
         if ($table->getPrevious()) {
             $prev =& $structure->getTable($table->getPrevious());
             $prev->setNext($swap->getName());
@@ -100,7 +100,7 @@ class move_updown_table extends XMLDBAction {
         } else {
             $swap->setPrevious(NULL);
         }
-    /// Change the table after the pair
+        // Change the table after the pair
         if ($swap->getNext()) {
             $next =& $structure->getTable($swap->getNext());
             $next->setPrevious($table->getName());
@@ -109,34 +109,34 @@ class move_updown_table extends XMLDBAction {
         } else {
             $table->setNext(NULL);
         }
-    /// Swap the tables
+        // Swap the tables
         $table->setPrevious($swap->getName());
         $swap->setNext($table->getName());
 
-    /// Table has changed
+        // Table has changed
         $table->setChanged(true);
 
-    /// Reorder the structure
+        // Reorder the structure
         $structure->orderTables($tables);
-    /// Send tables back to structure (the order above break refs)
+        // Send tables back to structure (the order above break refs)
         $structure->setTables($tables);
-    /// Recalculate the hash
+        // Recalculate the hash
         $structure->calculateHash(true);
 
-    /// If the hash has changed from the original one, change the version
-    /// and mark the structure as changed
+        // If the hash has changed from the original one, change the version
+        // and mark the structure as changed
         $origstructure =& $dbdir->xml_file->getStructure();
         if ($structure->getHash() != $origstructure->getHash()) {
             $structure->setVersion(userdate(time(), '%Y%m%d', 99, false));
             $structure->setChanged(true);
         }
 
-    /// Launch postaction if exists (leave this here!)
+        // Launch postaction if exists (leave this here!)
         if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 }

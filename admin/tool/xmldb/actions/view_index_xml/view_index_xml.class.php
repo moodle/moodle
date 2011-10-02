@@ -37,12 +37,12 @@ class view_index_xml extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
         $this->sesskey_protected = false; // This action doesn't need sesskey protection
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
-        /// 'key' => 'module',
+            // 'key' => 'module',
         ));
     }
 
@@ -56,23 +56,23 @@ class view_index_xml extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         $this->does_generate = ACTION_GENERATE_XML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB;
 
-    /// Do the job, setting result as needed
+        // Do the job, setting result as needed
 
-    /// Get the file parameter
+        // Get the file parameter
         $index =  required_param('index', PARAM_PATH);
         $table =  required_param('table', PARAM_PATH);
         $select = required_param('select', PARAM_ALPHA); //original/edited
-    /// Get the dir containing the file
+        // Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . $dirpath;
 
-    /// Get the correct dir
+        // Get the correct dir
         if ($select == 'original') {
             if (!empty($XMLDB->dbdirs)) {
                 $base =& $XMLDB->dbdirs[$dirpath];
@@ -86,7 +86,7 @@ class view_index_xml extends XMLDBAction {
             $result = false;
         }
         if ($base) {
-        /// Only if the directory exists and it has been loaded
+            // Only if the directory exists and it has been loaded
             if (!$base->path_exists || !$base->xml_loaded) {
                 $this->errormsg = 'Directory ' . $dirpath . ' not loaded';
                 return false;
@@ -96,47 +96,47 @@ class view_index_xml extends XMLDBAction {
             return false;
         }
 
-    /// Get the structure
+        // Get the structure
         if ($result) {
             if (!$structure =& $base->xml_file->getStructure()) {
                 $this->errormsg = 'Error retrieving ' . $select . ' structure';
                 $result = false;
             }
         }
-    /// Get the tables
+        // Get the tables
         if ($result) {
             if (!$tables =& $structure->getTables()) {
                 $this->errormsg = 'Error retrieving ' . $select . ' tables';
                 $result = false;
             }
         }
-    /// Get the table
+        // Get the table
         if ($result && !$t =& $structure->getTable($table)) {
             $this->errormsg = 'Error retrieving ' . $table . ' table';
             $result = false;
         }
-    /// Get the indexes
+        // Get the indexes
         if ($result) {
             if (!$indexes =& $t->getIndexes()) {
                 $this->errormsg = 'Error retrieving ' . $select . ' indexes';
                 $result = false;
             }
         }
-    /// Get the index
+        // Get the index
         if ($result && !$i = $t->getIndex($index)) {
             $this->errormsg = 'Error retrieving ' . $index . ' index';
             $result = false;
         }
 
         if ($result) {
-        /// Everything is ok. Generate the XML output
+            // Everything is ok. Generate the XML output
             $this->output = $i->xmlOutput();
         } else {
-        /// Switch to HTML and error
+            // Switch to HTML and error
             $this->does_generate = ACTION_GENERATE_HTML;
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 }

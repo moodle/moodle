@@ -40,11 +40,11 @@ class check_defaults extends XMLDBCheckAction {
         $this->introstr = 'confirmcheckdefaults';
         parent::init();
 
-    /// Set own core attributes
+        // Set own core attributes
 
-    /// Set own custom attributes
+        // Set own custom attributes
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             'wrongdefaults' => 'tool_xmldb',
             'nowrongdefaultsfound' => 'tool_xmldb',
@@ -58,7 +58,7 @@ class check_defaults extends XMLDBCheckAction {
         $o = '';
         $wrong_fields = array();
 
-        /// Get and process XMLDB fields
+        // Get and process XMLDB fields
         if ($xmldb_fields = $xmldb_table->getFields()) {
             $o.='        <ul>';
             foreach ($xmldb_fields as $xmldb_field) {
@@ -66,15 +66,15 @@ class check_defaults extends XMLDBCheckAction {
                 // Get the default value for the field
                 $xmldbdefault = $xmldb_field->getDefault();
 
-                /// If the metadata for that column doesn't exist or 'id' field found, skip
+                // If the metadata for that column doesn't exist or 'id' field found, skip
                 if (!isset($metacolumns[$xmldb_field->getName()]) or $xmldb_field->getName() == 'id') {
                     continue;
                 }
 
-                /// To variable for better handling
+                // To variable for better handling
                 $metacolumn = $metacolumns[$xmldb_field->getName()];
 
-                /// Going to check this field in DB
+                // Going to check this field in DB
                 $o.='            <li>' . $this->str['field'] . ': ' . $xmldb_field->getName() . ' ';
 
                 // get the value of the physical default (or blank if there isn't one)
@@ -90,7 +90,7 @@ class check_defaults extends XMLDBCheckAction {
                     $info = '('.$this->str['expected']." '$xmldbdefault', ".$this->str['actual'].
                     " '$physicaldefault')";
                     $o.='<font color="red">' . $this->str['wrong'] . " $info</font>";
-                /// Add the wrong field to the list
+                    // Add the wrong field to the list
                     $obj = new stdClass();
                     $obj->table = $xmldb_table;
                     $obj->field = $xmldb_field;
@@ -120,7 +120,7 @@ class check_defaults extends XMLDBCheckAction {
         $r.= '  </td></tr>';
         $r.= '  <tr><td class="generalboxcontent">';
 
-    /// If we have found wrong defaults inform about them
+        // If we have found wrong defaults inform about them
         if (count($wrong_fields)) {
             $r.= '    <p class="centerpara">' . $this->str['yeswrongdefaultsfound'] . '</p>';
             $r.= '        <ul>';
@@ -137,21 +137,21 @@ class check_defaults extends XMLDBCheckAction {
                                           $this->str['field'] . ': ' . $xmldb_field->getName() . ', ' .
                                           $this->str['expected'] . ' ' . "'$xmldbdefault'" . ' ' .
                                           $this->str['actual'] . ' ' . "'$physicaldefault'" . '</li>';
-                /// Add to output if we have sentences
+                // Add to output if we have sentences
                 if ($sqlarr) {
                     $sqlarr = $dbman->generator->getEndedStatements($sqlarr);
                     $s.= '<code>' . str_replace("\n", '<br />', implode('<br />', $sqlarr)) . '</code><br />';
                 }
             }
             $r.= '        </ul>';
-        /// Add the SQL statements (all together)
+            // Add the SQL statements (all together)
             $r.= '<hr />' . $s;
         } else {
             $r.= '    <p class="centerpara">' . $this->str['nowrongdefaultsfound'] . '</p>';
         }
         $r.= '  </td></tr>';
         $r.= '  <tr><td class="generalboxcontent">';
-    /// Add the complete log message
+        // Add the complete log message
         $r.= '    <p class="centerpara">' . $this->str['completelogbelow'] . '</p>';
         $r.= '  </td></tr>';
         $r.= '</table>';

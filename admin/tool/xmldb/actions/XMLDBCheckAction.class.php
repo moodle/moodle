@@ -43,11 +43,11 @@ abstract class XMLDBCheckAction extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own core attributes
+        // Set own core attributes
 
-    /// Set own custom attributes
+        // Set own custom attributes
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             $this->introstr => 'tool_xmldb',
             'ok' => '',
@@ -73,24 +73,24 @@ abstract class XMLDBCheckAction extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         $this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB, $DB, $OUTPUT;
 
-    /// And we nedd some ddl suff
+        // And we nedd some ddl suff
         $dbman = $DB->get_manager();
 
-    /// Here we'll acummulate all the wrong fields found
+        // Here we'll acummulate all the wrong fields found
         $problemsfound = array();
 
-    /// Do the job, setting $result as needed
+        // Do the job, setting $result as needed
 
-    /// Get the confirmed to decide what to do
+        // Get the confirmed to decide what to do
         $confirmed = optional_param('confirmed', false, PARAM_BOOL);
 
-    /// If  not confirmed, show confirmation box
+        // If  not confirmed, show confirmation box
         if (!$confirmed) {
             $o = '<table class="generalbox" border="0" cellpadding="5" cellspacing="0" id="notice">';
             $o.= '  <tr><td class="generalboxcontent">';
@@ -110,59 +110,59 @@ abstract class XMLDBCheckAction extends XMLDBAction {
 
             $this->output = $o;
         } else {
-        /// The back to edit table button
+            // The back to edit table button
             $b = ' <p class="centerpara buttons">';
             $b .= '<a href="index.php">[' . $this->str['back'] . ']</a>';
             $b .= '</p>';
 
-        /// Iterate over $XMLDB->dbdirs, loading their XML data to memory
+            // Iterate over $XMLDB->dbdirs, loading their XML data to memory
             if ($XMLDB->dbdirs) {
                 $dbdirs =& $XMLDB->dbdirs;
                 $o='<ul>';
                 foreach ($dbdirs as $dbdir) {
-                /// Only if the directory exists
+                    // Only if the directory exists
                     if (!$dbdir->path_exists) {
                         continue;
                     }
-                /// Load the XML file
+                    // Load the XML file
                     $xmldb_file = new xmldb_file($dbdir->path . '/install.xml');
 
-                /// Only if the file exists
+                    // Only if the file exists
                     if (!$xmldb_file->fileExists()) {
                         continue;
                     }
-                /// Load the XML contents to structure
+                    // Load the XML contents to structure
                     $loaded = $xmldb_file->loadXMLStructure();
                     if (!$loaded || !$xmldb_file->isLoaded()) {
                         echo $OUTPUT->notification('Errors found in XMLDB file: '. $dbdir->path . '/install.xml');
                         continue;
                     }
-                /// Arriving here, everything is ok, get the XMLDB structure
+                    // Arriving here, everything is ok, get the XMLDB structure
                     $structure = $xmldb_file->getStructure();
 
                     $o.='    <li>' . str_replace($CFG->dirroot . '/', '', $dbdir->path . '/install.xml');
-                /// Getting tables
+                    // Getting tables
                     if ($xmldb_tables = $structure->getTables()) {
                         $o.='        <ul>';
-                    /// Foreach table, process its fields
+                        // Foreach table, process its fields
                         foreach ($xmldb_tables as $xmldb_table) {
-                        /// Skip table if not exists
+                            // Skip table if not exists
                             if (!$dbman->table_exists($xmldb_table)) {
                                 continue;
                             }
-                        /// Fetch metadata from physical DB. All the columns info.
+                            // Fetch metadata from physical DB. All the columns info.
                             if (!$metacolumns = $DB->get_columns($xmldb_table->getName())) {
-                            //// Skip table if no metacolumns is available for it
+                                // / Skip table if no metacolumns is available for it
                                 continue;
                             }
-                        /// Table processing starts here
+                            // Table processing starts here
                             $o.='            <li>' . $xmldb_table->getName();
-                        /// Do the specific check.
+                            // Do the specific check.
                             list($output, $newproblems) = $this->check_table($xmldb_table, $metacolumns);
                             $o.=$output;
                             $problemsfound = array_merge($problemsfound, $newproblems);
                             $o.='    </li>';
-                        /// Give the script some more time (resetting to current if exists)
+                            // Give the script some more time (resetting to current if exists)
                             if ($currenttl = @ini_get('max_execution_time')) {
                                 @ini_set('max_execution_time',$currenttl);
                             }
@@ -174,19 +174,19 @@ abstract class XMLDBCheckAction extends XMLDBAction {
                 $o.='</ul>';
             }
 
-        /// Create a report of the problems found.
+            // Create a report of the problems found.
             $r = $this->display_results($problemsfound);
 
-        /// Combine the various bits of output.
+            // Combine the various bits of output.
             $this->output = $b . $r . $o;
         }
 
-    /// Launch postaction if exists (leave this here!)
+        // Launch postaction if exists (leave this here!)
         if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 

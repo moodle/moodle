@@ -38,9 +38,9 @@ class edit_key_save extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             'keynameempty' => 'tool_xmldb',
             'incorrectkeyname' => 'tool_xmldb',
@@ -71,20 +71,20 @@ class edit_key_save extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         //$this->does_generate = ACTION_NONE;
         $this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB;
 
-    /// Do the job, setting result as needed
+        // Do the job, setting result as needed
 
-        if (!data_submitted()) { ///Basic prevention
+        if (!data_submitted()) { // Basic prevention
             print_error('wrongcall', 'error');
         }
 
-    /// Get parameters
+        // Get parameters
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . $dirpath;
 
@@ -112,39 +112,39 @@ class edit_key_save extends XMLDBAction {
         $key =& $table->getKey($keyparam);
         $oldhash = $key->getHash();
 
-        $errors = array();    /// To store all the errors found
+        $errors = array(); // To store all the errors found
 
-    /// Perform some checks
-    /// Check empty name
+        // Perform some checks
+        // Check empty name
         if (empty($name)) {
             $errors[] = $this->str['keynameempty'];
         }
-    /// Check incorrect name
+        // Check incorrect name
         if ($name == 'changeme') {
             $errors[] = $this->str['incorrectkeyname'];
         }
-    /// Check duplicate name
+        // Check duplicate name
         if ($keyparam != $name && $table->getKey($name)) {
             $errors[] = $this->str['duplicatekeyname'];
         }
         $fieldsarr = explode(',', $fields);
-    /// Check the fields isn't empty
+        // Check the fields isn't empty
         if (empty($fieldsarr[0])) {
             $errors[] = $this->str['nofieldsspecified'];
         } else {
-        /// Check that there aren't duplicate column names
+            // Check that there aren't duplicate column names
             $uniquearr = array_unique($fieldsarr);
             if (count($fieldsarr) != count($uniquearr)) {
                 $errors[] = $this->str['duplicatefieldsused'];
             }
-        /// Check that all the fields in belong to the table
+            // Check that all the fields in belong to the table
             foreach ($fieldsarr as $field) {
                 if (!$table->getField($field)) {
                     $errors[] = $this->str['fieldsnotintable'];
                     break;
                 }
             }
-        /// If primary, check that all the fields are not null
+            // If primary, check that all the fields are not null
             if ($type == XMLDB_KEY_PRIMARY) {
                 foreach ($fieldsarr as $field) {
                     if ($fi = $table->getField($field)) {
@@ -155,16 +155,16 @@ class edit_key_save extends XMLDBAction {
                     }
                 }
             }
-        /// Check that there isn't any key using exactly the same fields
+            // Check that there isn't any key using exactly the same fields
             $tablekeys = $table->getKeys();
             if ($tablekeys) {
                 foreach ($tablekeys as $tablekey) {
-                /// Skip checking against itself
+                    // Skip checking against itself
                     if ($keyparam == $tablekey->getName()) {
                         continue;
                     }
                     $keyfieldsarr = $tablekey->getFields();
-                /// Compare both arrays, looking for diferences
+                    // Compare both arrays, looking for diferences
                     $diferences = array_merge(array_diff($fieldsarr, $keyfieldsarr), array_diff($keyfieldsarr, $fieldsarr));
                     if (empty($diferences)) {
                         $errors[] = $this->str['fieldsusedinkey'];
@@ -172,12 +172,12 @@ class edit_key_save extends XMLDBAction {
                     }
                 }
             }
-        /// Check that there isn't any index using exactlt the same fields
+            // Check that there isn't any index using exactlt the same fields
             $tableindexes = $table->getIndexes();
             if ($tableindexes) {
                 foreach ($tableindexes as $tableindex) {
                     $indexfieldsarr = $tableindex->getFields();
-                /// Compare both arrays, looking for diferences
+                    // Compare both arrays, looking for diferences
                     $diferences = array_merge(array_diff($fieldsarr, $indexfieldsarr), array_diff($indexfieldsarr, $fieldsarr));
                     if (empty($diferences)) {
                         $errors[] = $this->str['fieldsusedinindex'];
@@ -185,34 +185,34 @@ class edit_key_save extends XMLDBAction {
                     }
                 }
             }
-        /// If foreign key
+            // If foreign key
             if ($type == XMLDB_KEY_FOREIGN ||
                 $type == XMLDB_KEY_FOREIGN_UNIQUE) {
                 $reffieldsarr = explode(',', $reffields);
-            /// Check reftable is not empty
+                // Check reftable is not empty
                 if (empty($reftable)) {
                     $errors[] = $this->str['noreftablespecified'];
                 } else
-            /// Check reffields are not empty
+                // Check reffields are not empty
                 if (empty($reffieldsarr[0])) {
                     $errors[] = $this->str['noreffieldsspecified'];
                 } else
-            /// Check the number of fields is correct
+                // Check the number of fields is correct
                 if (count($fieldsarr) != count($reffieldsarr)) {
                     $errors[] = $this->str['wrongnumberofreffields'];
                 } else {
-            /// Check, if pointing to one structure table, that there is one master key for this key
+                // Check, if pointing to one structure table, that there is one master key for this key
                     if ($rt = $structure->getTable($reftable)) {
                         $masterfound = false;
                         $reftablekeys = $rt->getKeys();
                         if ($reftablekeys) {
                             foreach ($reftablekeys as $reftablekey) {
-                            /// Only compare with primary and unique keys
+                                // Only compare with primary and unique keys
                                 if ($reftablekey->getType() != XMLDB_KEY_PRIMARY && $reftablekey->getType() != XMLDB_KEY_UNIQUE) {
                                     continue;
                                 }
                                 $keyfieldsarr = $reftablekey->getFields();
-                            /// Compare both arrays, looking for diferences
+                                // Compare both arrays, looking for diferences
                                 $diferences = array_merge(array_diff($reffieldsarr, $keyfieldsarr), array_diff($keyfieldsarr, $reffieldsarr));
                                 if (empty($diferences)) {
                                     $masterfound = true;
@@ -222,7 +222,7 @@ class edit_key_save extends XMLDBAction {
                             if (!$masterfound) {
                                 $errors[] = $this->str['nomasterprimaryuniquefound'];
                             } else {
-                            /// Quick test of the order
+                                // Quick test of the order
                                if (implode(',', $reffieldsarr) != implode(',', $keyfieldsarr)) {
                                    $errors[] = $this->str['masterprimaryuniqueordernomatch'];
                                }
@@ -243,7 +243,7 @@ class edit_key_save extends XMLDBAction {
                 $tempkey->setRefTable($reftable);
                 $tempkey->setRefFields($reffieldsarr);
             }
-        /// Prepare the output
+            // Prepare the output
             $o = '<p>' .implode(', ', $errors) . '</p>
                   <p>' . $name . ': ' . $tempkey->readableInfo() . '</p>';
             $o.= '<a href="index.php?action=edit_key&amp;key=' .$key->getName() . '&amp;table=' . $table->getName() .
@@ -251,10 +251,10 @@ class edit_key_save extends XMLDBAction {
             $this->output = $o;
         }
 
-    /// Continue if we aren't under errors
+        // Continue if we aren't under errors
         if (empty($errors)) {
-        /// If there is one name change, do it, changing the prev and next
-        /// atributes of the adjacent fields
+            // If there is one name change, do it, changing the prev and next
+            // atributes of the adjacent fields
             if ($keyparam != $name) {
                 $key->setName($name);
                 if ($key->getPrevious()) {
@@ -269,10 +269,10 @@ class edit_key_save extends XMLDBAction {
                 }
             }
 
-        /// Set comment
+            // Set comment
             $key->setComment($comment);
 
-        /// Set the rest of fields
+            // Set the rest of fields
             $key->setType($type);
             $key->setFields($fieldsarr);
             if ($type == XMLDB_KEY_FOREIGN ||
@@ -281,26 +281,26 @@ class edit_key_save extends XMLDBAction {
                 $key->setRefFields($reffieldsarr);
             }
 
-        /// If the hash has changed from the old one, change the version
-        /// and mark the structure as changed
+            // If the hash has changed from the old one, change the version
+            // and mark the structure as changed
             $key->calculateHash(true);
             if ($oldhash != $key->getHash()) {
                 $key->setChanged(true);
                 $table->setChanged(true);
-            /// Recalculate the structure hash
+                // Recalculate the structure hash
                 $structure->calculateHash(true);
                 $structure->setVersion(userdate(time(), '%Y%m%d', 99, false));
-            /// Mark as changed
+                // Mark as changed
                 $structure->setChanged(true);
             }
 
-        /// Launch postaction if exists (leave this here!)
+            // Launch postaction if exists (leave this here!)
             if ($this->getPostAction() && $result) {
                 return $this->launch($this->getPostAction());
             }
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 }

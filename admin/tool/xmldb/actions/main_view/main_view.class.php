@@ -40,10 +40,10 @@ class main_view extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
         $this->sesskey_protected = false; // This action doesn't need sesskey protection
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             'load' => 'tool_xmldb',
             'create' => 'tool_xmldb',
@@ -75,62 +75,62 @@ class main_view extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         $this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB, $SESSION, $DB;
 
-    /// Get lastused
+        // Get lastused
         $o = '';
         if (isset($SESSION->lastused)) {
             if ($lastused = $SESSION->lastused) {
-            /// Print link
+                // Print link
                 $o .= '<p class="centerpara"><a href="#lastused">' . $this->str['gotolastused'] . '</a></p>';
             }
         } else {
             $lastused = NULL;
         }
 
-    /// Calculate the buttons
+        // Calculate the buttons
         $b = '<p class="centerpara buttons">';
-    /// The reserved_words button
+        // The reserved_words button
         $b .= '&nbsp;<a href="index.php?action=view_reserved_words">[' . $this->str['reservedwords'] . ']</a>';
-    /// The docs button
+        // The docs button
         $b .= '&nbsp;<a href="index.php?action=generate_all_documentation">[' . $this->str['doc'] . ']</a>';
-    /// The check indexes button
+        // The check indexes button
         $b .= '&nbsp;<a href="index.php?action=check_indexes&amp;sesskey=' . sesskey() . '">[' . $this->str['checkindexes'] . ']</a>';
-    /// The check defaults button
+        // The check defaults button
         $b .= '&nbsp;<a href="index.php?action=check_defaults&amp;sesskey=' . sesskey() . '">[' . $this->str['checkdefaults'] . ']</a>';
-    /// The check bigints button (only for MySQL and PostgreSQL) MDL-11038a
+        // The check bigints button (only for MySQL and PostgreSQL) MDL-11038a
         if ($DB->get_dbfamily() == 'mysql' || $DB->get_dbfamily() == 'postgres') {
             $b .= '&nbsp;<a href="index.php?action=check_bigints&amp;sesskey=' . sesskey() . '">[' . $this->str['checkbigints'] . ']</a>';
         }
-    /// The check semantics button (only for Oracle) MDL-29416
+        // The check semantics button (only for Oracle) MDL-29416
         if ($DB->get_dbfamily() == 'oracle') {
             $b .= '&nbsp;<a href="index.php?action=check_oracle_semantics&amp;sesskey=' . sesskey() . '">[' . $this->str['checkoraclesemantics'] . ']</a>';
         }
         $b .= '&nbsp;<a href="index.php?action=check_foreign_keys&amp;sesskey=' . sesskey() . '">[' . $this->str['checkforeignkeys'] . ']</a>';
         $b .= '</p>';
-    /// Send buttons to output
+        // Send buttons to output
         $o .= $b;
 
-    /// Do the job
+        // Do the job
 
-    /// Get the list of DB directories
+        // Get the list of DB directories
         $result = $this->launch('get_db_directories');
-    /// Display list of DB directories if everything is ok
+        // Display list of DB directories if everything is ok
         if ($result && !empty($XMLDB->dbdirs)) {
             $o .= '<table id="listdirectories" border="0" cellpadding="5" cellspacing="1" class="boxaligncenter flexible">';
             $row = 0;
             foreach ($XMLDB->dbdirs as $key => $dbdir) {
-            /// Detect if this is the lastused dir
+                // Detect if this is the lastused dir
                 $hithis = false;
                 if (str_replace($CFG->dirroot, '', $key) == $lastused) {
                     $hithis = true;
                 }
                 $elementtext = str_replace($CFG->dirroot . '/', '', $key);
-            /// Calculate the dbdir has_changed field if needed
+                // Calculate the dbdir has_changed field if needed
                 if (!isset($dbdir->has_changed) && isset($dbdir->xml_loaded)) {
                     $dbdir->xml_changed = false;
                     if (isset($XMLDB->editeddirs[$key])) {
@@ -144,7 +144,7 @@ class main_view extends XMLDBAction {
                         }
                     }
                 }
-            /// The file name (link to edit if the file is loaded)
+                // The file name (link to edit if the file is loaded)
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
                     is_readable($key . '/install.xml') &&
@@ -154,9 +154,9 @@ class main_view extends XMLDBAction {
                 } else {
                     $f = $elementtext;
                 }
-            /// Calculate the buttons
+                // Calculate the buttons
                 $b = ' <td class="button cell">';
-            /// The create button
+                // The create button
                 if ($dbdir->path_exists &&
                     !file_exists($key . '/install.xml') &&
                     is_writeable($key)) {
@@ -165,7 +165,7 @@ class main_view extends XMLDBAction {
                     $b .= '[' . $this->str['create'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
-            /// The load button
+                // The load button
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
                     is_readable($key . '/install.xml') &&
@@ -175,7 +175,7 @@ class main_view extends XMLDBAction {
                     $b .= '[' . $this->str['load'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
-            /// The edit button
+                // The edit button
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
                     is_readable($key . '/install.xml') &&
@@ -186,7 +186,7 @@ class main_view extends XMLDBAction {
                     $b .= '[' . $this->str['edit'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
-            /// The save button
+                // The save button
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
                     is_writeable($key . '/install.xml') &&
@@ -194,9 +194,9 @@ class main_view extends XMLDBAction {
                     !empty($dbdir->xml_loaded) &&
                     !empty($dbdir->xml_changed)) {
                     $b .= '<a href="index.php?action=save_xml_file&amp;sesskey=' . sesskey() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['save'] . ']</a>';
-                /// Check if the file has been manually edited while being modified in the editor
+                    // Check if the file has been manually edited while being modified in the editor
                     if ($dbdir->filemtime != filemtime($key . '/install.xml')) {
-                    /// File manually modified. Add to errors.
+                        // File manually modified. Add to errors.
                         if ($structure =& $dbdir->xml_file->getStructure()) {
                             $structure->errormsg = 'Warning: File locally modified while using the XMLDB Editor. Saving will overwrite local changes';
                         }
@@ -205,7 +205,7 @@ class main_view extends XMLDBAction {
                     $b .= '[' . $this->str['save'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
-            /// The document button
+                // The document button
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
                     is_readable($key . '/install.xml') &&
@@ -215,7 +215,7 @@ class main_view extends XMLDBAction {
                     $b .= '[' . $this->str['doc'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
-            /// The view xml button
+                // The view xml button
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
                     is_readable($key . '/install.xml')) {
@@ -224,7 +224,7 @@ class main_view extends XMLDBAction {
                     $b .= '[' . $this->str['viewxml'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
-            /// The revert button
+                // The revert button
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
                     is_readable($key . '/install.xml') &&
@@ -236,7 +236,7 @@ class main_view extends XMLDBAction {
                     $b .= '[' . $this->str['revert'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
-            /// The unload button
+                // The unload button
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
                     is_readable($key . '/install.xml') &&
@@ -247,7 +247,7 @@ class main_view extends XMLDBAction {
                     $b .= '[' . $this->str['unload'] . ']';
                 }
                 $b .= '</td><td class="button cell">';
-            /// The delete button
+                // The delete button
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
                     is_readable($key . '/install.xml') &&
@@ -258,14 +258,14 @@ class main_view extends XMLDBAction {
                     $b .= '[' . $this->str['delete'] . ']';
                 }
                 $b .= '</td>';
-            /// include the higlight
+                // include the higlight
                 if ($hithis) {
                     $o .= '<tr class="highlight"><td class="directory cell"><a name="lastused" />' . $f . '</td>' . $b . '</tr>';
                 } else {
                     $o .= '<tr class="r' . $row . '"><td class="directory cell">' . $f . '</td>' . $b . '</tr>';
                 }
                 $row = ($row + 1) % 2;
-            /// show errors if they exist
+                // show errors if they exist
                 if (isset($dbdir->xml_file)) {
                     if ($structure =& $dbdir->xml_file->getStructure()) {
                         if ($errors = $structure->getAllErrors()) {
@@ -277,8 +277,8 @@ class main_view extends XMLDBAction {
                         }
                     }
                 }
-            /// TODO: Drop this check in Moodle 2.1
-            /// Intercept loaded structure here and look for ENUM fields
+                // TODO: Drop this check in Moodle 2.1
+                // Intercept loaded structure here and look for ENUM fields
                 if (isset($dbdir->xml_file)) {
                     if ($structure =& $dbdir->xml_file->getStructure()) {
                         if ($tables = $structure->getTables()) {
@@ -311,7 +311,7 @@ class main_view extends XMLDBAction {
                         }
                     }
                 }
-            /// If there are changes pending to be saved, but the file cannot be written... inform here
+                // If there are changes pending to be saved, but the file cannot be written... inform here
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
                     !empty($dbdir->xml_loaded) &&
@@ -329,11 +329,11 @@ class main_view extends XMLDBAction {
             }
             $o .= '</table>';
 
-        /// Set the output
+            // Set the output
             $this->output = $o;
         }
 
-    /// Finally, return result
+        // Finally, return result
         return $result;
     }
 }
