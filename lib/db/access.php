@@ -1487,6 +1487,17 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/course:managegrades'
     ),
 
+    'moodle/grade:managegradingforms' => array(
+        'riskbitmask' => RISK_PERSONAL | RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:managegrades'
+    ),
+
     'moodle/grade:manageoutcomes' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
