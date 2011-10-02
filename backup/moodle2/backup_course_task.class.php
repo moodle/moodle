@@ -73,7 +73,7 @@ class backup_course_task extends backup_task {
         $this->add_step(new backup_course_structure_step('course_info', 'course.xml'));
 
         // Generate the enrolment file (conditionally, prevent it in any IMPORT/HUB operation)
-        if (!$this->plan->get_mode() == backup::MODE_IMPORT && !$this->plan->get_mode() == backup::MODE_HUB) {
+        if ($this->plan->get_mode() != backup::MODE_IMPORT && $this->plan->get_mode() != backup::MODE_HUB) {
             $this->add_step(new backup_enrolments_structure_step('course_enrolments', 'enrolments.xml'));
         }
 
