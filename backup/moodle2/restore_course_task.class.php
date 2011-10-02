@@ -70,7 +70,7 @@ class restore_course_task extends restore_task {
         $this->add_step(new restore_ras_and_caps_structure_step('course_ras_and_caps', 'roles.xml'));
 
         // Restore course enrolments (plugins and membership). Conditionally prevented for any IMPORT/HUB operation
-        if (!$this->plan->get_mode() == backup::MODE_IMPORT && !$this->plan->get_mode() == backup::MODE_HUB) {
+        if ($this->plan->get_mode() != backup::MODE_IMPORT && $this->plan->get_mode() != backup::MODE_HUB) {
             $this->add_step(new restore_enrolments_structure_step('course_enrolments', 'enrolments.xml'));
         }
 
