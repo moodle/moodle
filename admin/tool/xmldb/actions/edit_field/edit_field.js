@@ -86,13 +86,17 @@ function transformForm(event) {
         case '2':  // XMLDB_TYPE_NUMBER
             lengthTip.innerHTML = ' 1...20';
             decimalsTip.innerHTML = ' 0...length or empty';
+            unsignedField.disabled = true;
+            unsignedField.value = '0';
             break;
         case '3':  // XMLDB_TYPE_FLOAT
             lengthTip.innerHTML = ' 1...20 or empty';
             decimalsTip.innerHTML = ' 0...length or empty';
+            unsignedField.disabled = true;
+            unsignedField.value = '0';
             break;
         case '4':  // XMLDB_TYPE_CHAR
-            lengthTip.innerHTML = ' 1...'.xmldb_field::CHAR_MAX_LENGTH;
+            lengthTip.innerHTML = ' 1...1333'; // Hardcoded, yes!
             decimalsTip.innerHTML = '';
             decimalsField.disabled = true;
             decimalsField.value = '';
