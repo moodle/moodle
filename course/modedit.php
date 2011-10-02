@@ -155,8 +155,8 @@ if (!empty($add)) {
         $areas = $gradingman->get_available_areas();
 
         foreach ($areas as $areaname => $areatitle) {
-            $gradingman->set_areaname($areaname);
-            $method = $gradingman->get_active_area_method();
+            $gradingman->set_area($areaname);
+            $method = $gradingman->get_active_method();
             $data->_advancedgradingdata['areas'][$areaname] = array(
                 'title'  => $areatitle,
                 'method' => $method,

@@ -31,10 +31,10 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @param stdClass $context
  * @param string $component the frankenstyle name of the component
- * @param string $areaname the name of the gradable area
+ * @param string $area the name of the gradable area
  * @return grading_manager
  */
-function get_grading_manager($context = null, $component = null, $areaname = null) {
+function get_grading_manager($context = null, $component = null, $area = null) {
 
     $manager = new grading_manager();
 
@@ -46,8 +46,8 @@ function get_grading_manager($context = null, $component = null, $areaname = nul
         $manager->set_component($component);
     }
 
-    if (!is_null($areaname)) {
-        $manager->set_areaname($areaname);
+    if (!is_null($area)) {
+        $manager->set_area($area);
     }
 
     return $manager;
@@ -58,8 +58,8 @@ function get_grading_manager($context = null, $component = null, $areaname = nul
  *
  * Fully initialized instance of the grading manager operates over a single
  * gradable area. It is possible to work with a partially initialized manager
- * that knows just context and component without known areaname, for example.
- * It is also possible to change context, component and areaname of an existing
+ * that knows just context and component without known area, for example.
+ * It is also possible to change context, component and area of an existing
  * manager. Such pattern is used when copying form definitions, for example.
  */
 class grading_manager {
@@ -71,7 +71,7 @@ class grading_manager {
     protected $component;
 
     /** @var string the name of the gradable area */
-    protected $areaname;
+    protected $area;
 
     /**
      * Sets the context the manager operates on
@@ -92,12 +92,12 @@ class grading_manager {
     }
 
     /**
-     * Sets the areaname the manager operates on
+     * Sets the area the manager operates on
      *
-     * @param string $areaname the name of the gradable area
+     * @param string $area the name of the gradable area
      */
-    public function set_areaname($areaname) {
-        $this->areaname = $areaname;
+    public function set_area($area) {
+        $this->area = $area;
     }
 
     /**
@@ -151,12 +151,12 @@ class grading_manager {
     }
 
     /**
-     * Returns the currently active grading method in the given gradable area
+     * Returns the currently active grading method in the gradable area
      *
      * @return string the name of the grading plugin
      */
-    public function get_active_area_method() {
-        $this->ensure_isset(array('context', 'component', 'areaname'));
+    public function get_active_method() {
+        $this->ensure_isset(array('context', 'component', 'area'));
         // todo - hardcoded value for now
         return 'rubric';
     }
