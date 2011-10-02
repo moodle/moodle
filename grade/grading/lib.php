@@ -108,17 +108,25 @@ class grading_manager {
      * controlled per-context.
      *
      * Requires the context property to be set in advance.
+     *
+     * @param bool $includenone should the 'Simple direct grading' be included
      * @return array of the (string)name => (string)localized title of the method
      */
-    public function get_available_methods() {
+    public function get_available_methods($includenone = true) {
 
         $this->ensure_isset(array('context'));
 
-        // todo - hardcoded list for now, should read the list of installed grading plugins
-        return array(
-            '' => get_string('gradingmethodnone', 'core_grading'),
-            'rubric' => 'Rubric',
-        );
+        if ($includenone) {
+            $list = array('' => get_string('gradingmethodnone', 'core_grading'));
+        } else {
+            $list = array();
+        }
+
+        foreach (get_plugin_list('gradingform') as $name => $location) {
+            $list[$name] = get_string('pluginname', 'gradingform_'.$name);
+        }
+
+        return $list;
     }
 
     /**
