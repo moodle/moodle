@@ -153,13 +153,65 @@ class grading_manager {
     /**
      * Returns the currently active grading method in the gradable area
      *
-     * @return string the name of the grading plugin
+     * @return string|null the name of the grading plugin of null if it has not been set
      */
     public function get_active_method() {
+        global $DB;
+
         $this->ensure_isset(array('context', 'component', 'area'));
-        // todo - hardcoded value for now
-        return 'rubric';
+
+        // get the current grading area record if it exists
+        $area = $DB->get_record('grading_areas',
+            array('contextid' => $this->context->id, 'component' => $this->component, 'areaname' => $this->area), 'id,activemethod', IGNORE_MISSING);
+
+        if (empty($area)) {
+            // no area record yet
+            return null;
+        }
+
+        return $area->activemethod;
     }
+
+    /**
+     * Sets the currently active grading method in the gradable area
+     *
+     * @param string $method the method name, eg 'rubric' (must be available)
+     */
+    public function set_active_method($method) {
+        global $DB;
+
+        $this->ensure_isset(array('context', 'component', 'area'));
+
+        // make sure the passed method is a valid plugin name
+        if ('gradingform_'.$method !== clean_param('gradingform_'.$method, PARAM_COMPONENT)) {
+            throw new moodle_exception('invalid_method_name', 'core_grading');
+        }
+        $available = $this->get_available_methods(false);
+        if (!array_key_exists($method, $available)) {
+            throw new moodle_exception('invalid_method_name', 'core_grading');
+        }
+
+        // get the current grading area record if it exists
+        $area = $DB->get_record('grading_areas',
+            array('contextid' => $this->context->id, 'component' => $this->component, 'areaname' => $this->area), 'id,activemethod', IGNORE_MISSING);
+
+        if (empty($area)) {
+            // no area record yet, create one with the active method set
+            $area = array(
+                'contextid'     => $this->context->id,
+                'component'     => $this->component,
+                'areaname'      => $this->area,
+                'activemethod'  => $method);
+            $DB->insert_record('grading_areas', $area);
+
+        } else {
+            // update the existing record if needed
+            if ($area->activemethod != $method) {
+                $DB->set_field('grading_areas', 'activemethod', $method, array('id' => $area->id));
+            }
+        }
+    }
+
 
     /**
      * Make sure that the given properties were set to some not-null value

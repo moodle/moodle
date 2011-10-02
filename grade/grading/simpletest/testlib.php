@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for Moodle language manipulation library defined in mlanglib.php
+ * Unit tests for the advanced grading subsystem
  *
  * @package    core
  * @subpackage grading
@@ -32,6 +32,10 @@ if (empty($CFG->unittestprefix)) {
     die('You must define $CFG->unittestprefix to run these unit tests.');
 }
 
+if ($CFG->unittestprefix == $CFG->prefix) {
+    die('Eh? Do you play with the fire? Fireman Sam won\'t come dude. The unittestprefix must be different from the standard prefix.');
+}
+
 require_once($CFG->dirroot . '/grade/grading/lib.php'); // Include the code to test
 
 /**
@@ -45,10 +49,31 @@ class testable_grading_manager extends grading_manager {
  */
 class grading_manager_test extends UnitTestCase {
 
+    /** @var moodle_database current real driver instance */
+    protected $realDB;
+
     public function setUp() {
+        global $DB, $CFG;
+
+        $this->realDB = $DB;
+        $dbclass = get_class($this->realDB);
+        $DB = new $dbclass();
+        $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->unittestprefix);
+        $dbman = $DB->get_manager();
+
+        // drop everything we have in the mock DB
+        $dbman->delete_tables_from_xmldb_file($CFG->dirroot . '/lib/db/install.xml');
+        // create all tables we need for this test case
+        $dbman->install_one_table_from_xmldb_file($CFG->dirroot . '/lib/db/install.xml', 'grading_areas');
     }
 
     public function tearDown() {
+        global $DB, $CFG;
+
+        // clean everything we have in the mock DB
+        //$DB->get_manager()->delete_tables_from_xmldb_file($CFG->dirroot . '/lib/db/install.xml');
+        // switch to the real database
+        $DB = $this->realDB;
     }
 
     public function test_basic_instantiation() {
@@ -65,5 +90,30 @@ class grading_manager_test extends UnitTestCase {
         $manager2 = get_grading_manager($fakecontext);
         $manager3 = get_grading_manager($fakecontext, 'assignment_upload');
         $manager4 = get_grading_manager($fakecontext, 'assignment_upload', 'submission');
+    }
+
+    public function test_set_and_get_grading_area() {
+        global $DB;
+
+        sleep(2); // to make sure the microtime will always return unique values
+        $areaname = 'area' . (string)microtime(true);
+        $fakecontext = (object)array(
+            'id'            => 42,
+            'contextlevel'  => CONTEXT_MODULE,
+            'instanceid'    => 22,
+            'path'          => '/1/3/15/42',
+            'depth'         => 4);
+
+        // non-existing area
+        $gradingman = get_grading_manager($fakecontext, 'mod_foobar', $areaname);
+        $this->assertNull($gradingman->get_active_method());
+
+        // create area and set active method
+        $gradingman->set_active_method('rubric');
+        $this->assertEqual('rubric', $gradingman->get_active_method());
+
+        // attempting to set an invalid method
+        $this->expectException('moodle_exception');
+        $gradingman->set_active_method('no_one_should_ever_try_to_implement_a_method_with_this_silly_name');
     }
 }

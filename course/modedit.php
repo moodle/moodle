@@ -590,6 +590,19 @@ if ($mform->is_cancelled()) {
         }
     }
 
+    if (plugin_supports('mod', $fromform->modulename, FEATURE_ADVANCED_GRADING, false)) {
+        require_once($CFG->dirroot.'/grade/grading/lib.php');
+        $context = get_context_instance(CONTEXT_MODULE, $fromform->coursemodule);
+        $gradingman = get_grading_manager($context, 'mod_'.$fromform->modulename);
+        foreach ($gradingman->get_available_areas() as $areaname => $aretitle) {
+            $formfield = 'advancedgradingmethod_'.$areaname;
+            if (isset($fromform->{$formfield})) {
+                $gradingman->set_area($areaname);
+                $gradingman->set_active_method($fromform->{$formfield});
+            }
+        }
+    }
+
     rebuild_course_cache($course->id);
     grade_regrade_final_grades($course->id);
     plagiarism_save_form_elements($fromform); //save plagiarism settings
