@@ -727,6 +727,8 @@ class dml_test extends UnitTestCase {
         $table->add_field('description', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
         $table->add_field('enumfield', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 'test2');
         $table->add_field('onenum', XMLDB_TYPE_NUMBER, '10,2', null, null, null, 200);
+        $table->add_field('onefloat', XMLDB_TYPE_FLOAT, '10,2', null, null, null, 300);
+        $table->add_field('anotherfloat', XMLDB_TYPE_FLOAT, null, null, null, null, 400);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
@@ -772,8 +774,24 @@ class dml_test extends UnitTestCase {
         $field = $columns['onenum'];
         $this->assertEqual('N', $field->meta_type);
         $this->assertFalse($field->auto_increment);
+        $this->assertEqual(10, $field->max_length);
+        $this->assertEqual(2, $field->scale);
         $this->assertTrue($field->has_default);
         $this->assertEqual(200.0, $field->default_value);
+        $this->assertFalse($field->not_null);
+
+        $field = $columns['onefloat'];
+        $this->assertEqual('N', $field->meta_type);
+        $this->assertFalse($field->auto_increment);
+        $this->assertTrue($field->has_default);
+        $this->assertEqual(300.0, $field->default_value);
+        $this->assertFalse($field->not_null);
+
+        $field = $columns['anotherfloat'];
+        $this->assertEqual('N', $field->meta_type);
+        $this->assertFalse($field->auto_increment);
+        $this->assertTrue($field->has_default);
+        $this->assertEqual(400.0, $field->default_value);
         $this->assertFalse($field->not_null);
 
         for ($i = 0; $i < count($columns); $i++) {
