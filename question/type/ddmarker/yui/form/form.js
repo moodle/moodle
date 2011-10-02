@@ -47,6 +47,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
 
         after_all_images_loaded : function () {
             Y.later(500, this, this.update_drop_zones, [], true);
+            this.setup_form_events();
         },
 
         constrain_image_size : function (e, imagetype) {
@@ -64,7 +65,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
 
 
         update_drop_zones : function () {
-            this.set_options_for_drag_item_selectors();
+            
             //set up drop zones
             if (this.graphics !== null) {
                 this.graphics.destroy();
@@ -235,56 +236,14 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             //events triggered by changes to form data
 
             //x and y coordinates
-            Y.all('fieldset#dropzoneheader input').on('blur', function (e){
-                var name = e.target.getAttribute('name');
-                var draginstanceno = this.form.from_name_with_index(name).indexes[0];
-                var fromform = [this.form.get_form_value('drops', [draginstanceno, 'xleft']),
-                                this.form.get_form_value('drops', [draginstanceno, 'ytop'])];
-                var constrainedxy = this.constrain_xy(draginstanceno, fromform);
-                this.form.set_form_value('drops', [draginstanceno, 'xleft'], constrainedxy[0]);
-                this.form.set_form_value('drops', [draginstanceno, 'ytop'], constrainedxy[1]);
+            Y.all('fieldset#draggableitemheader input').on('change', function (e){
+                this.set_options_for_drag_item_selectors();
             }, this);
 
             //change in selected item
             Y.all('fieldset#dropzoneheader select').on('change', function (e){
-                var name = e.target.getAttribute('name');
-                var draginstanceno = this.form.from_name_with_index(name).indexes[0];
-                var old = this.doc.drag_item(draginstanceno);
-                if (old !== null) {
-                    old.remove(true);
-                }
-                this.draw_dd_area();
+                this.set_options_for_drag_item_selectors();
             }, this);
-
-            for (var i=0; i < this.form.get_form_value('noitems', []); i++) {
-                //change to group selector
-                Y.all('fieldset#draggableitemheader_'+i+' select.draggroup')
-                                                                    .on('change', function (e){
-                    this.doc.drag_items().remove(true);
-                    this.draw_dd_area();
-                }, this);
-                Y.all('fieldset#draggableitemheader_'+i+' select.dragitemtype')
-                                                                    .on('change', function (e){
-                    this.doc.drag_items().remove(true);
-                    this.draw_dd_area();
-                }, this);
-                Y.all('fieldset#draggableitemheader_'+i+' input[type="text"]')
-                                                        .on('blur', function (e, draginstanceno){
-                    this.doc.drag_item(draginstanceno).remove(true);
-                    this.draw_dd_area();
-                }, this, i);
-                //change to infinite checkbox
-                Y.all('fieldset#draggableitemheader_'+i+' input[type="checkbox"]')
-                                    .on('change', this.set_options_for_drag_item_selectors, this);
-            }
-            //event on file picker new file selection
-            Y.after(function (e){
-                var name = this.fp.name(e.id);
-                if (name !== 'bgimage') {
-                    this.doc.drag_items().remove(true);
-                }
-                this.draw_dd_area();
-            }, M.form_filepicker, 'callback', this);
         },
 
         update_visibility_of_file_pickers : function() {
