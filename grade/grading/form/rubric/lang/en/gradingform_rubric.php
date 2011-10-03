@@ -24,4 +24,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['definerubric'] = 'Define rubric';
 $string['pluginname'] = 'Rubric';

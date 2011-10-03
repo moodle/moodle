@@ -96,7 +96,8 @@ class grading_manager_test extends UnitTestCase {
         global $DB;
 
         sleep(2); // to make sure the microtime will always return unique values
-        $areaname = 'area' . (string)microtime(true);
+        $areaname1 = 'area1-' . (string)microtime(true);
+        $areaname2 = 'area2-' . (string)microtime(true);
         $fakecontext = (object)array(
             'id'            => 42,
             'contextlevel'  => CONTEXT_MODULE,
@@ -105,11 +106,19 @@ class grading_manager_test extends UnitTestCase {
             'depth'         => 4);
 
         // non-existing area
-        $gradingman = get_grading_manager($fakecontext, 'mod_foobar', $areaname);
+        $gradingman = get_grading_manager($fakecontext, 'mod_foobar', $areaname1);
         $this->assertNull($gradingman->get_active_method());
 
-        // create area and set active method
+        // creates area implicitly and sets active method
         $gradingman->set_active_method('rubric');
+        $this->assertEqual('rubric', $gradingman->get_active_method());
+
+        // switch the manager to another area
+        $gradingman->set_area($areaname2);
+        $this->assertNull($gradingman->get_active_method());
+
+        // switch back and ask again
+        $gradingman->set_area($areaname1);
         $this->assertEqual('rubric', $gradingman->get_active_method());
 
         // attempting to set an invalid method

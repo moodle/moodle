@@ -56,6 +56,9 @@ function get_grading_manager($context = null, $component = null, $area = null) {
 /**
  * General class providing access to common grading features
  *
+ * Grading manager provides access to the particular grading method controller
+ * in that area.
+ *
  * Fully initialized instance of the grading manager operates over a single
  * gradable area. It is possible to work with a partially initialized manager
  * that knows just context and component without known area, for example.
@@ -73,12 +76,16 @@ class grading_manager {
     /** @var string the name of the gradable area */
     protected $area;
 
+    /** @var stdClass|false|null the raw record from {grading_areas}, false if does not exist, null if invalidated cache */
+    private $areacache = null;
+
     /**
      * Sets the context the manager operates on
      *
      * @param stdClass $context
      */
     public function set_context(stdClass $context) {
+        $this->areacache = null;
         $this->context = $context;
     }
 
@@ -88,7 +95,9 @@ class grading_manager {
      * @param string $component the frankenstyle name of the component
      */
     public function set_component($component) {
-        $this->component = $component;
+        $this->areacache = null;
+        list($type, $name) = normalize_component($component);
+        $this->component = $type.'_'.$name;
     }
 
     /**
@@ -97,6 +106,7 @@ class grading_manager {
      * @param string $area the name of the gradable area
      */
     public function set_area($area) {
+        $this->areacache = null;
         $this->area = $area;
     }
 
@@ -147,7 +157,7 @@ class grading_manager {
         // return assignment_gradable_area_list();
 
         // todo - hardcoded list for now
-        return array('submission' => get_string('assignmentsubmission', 'assignment'));
+        return array('submission' => 'Submissions');
     }
 
     /**
@@ -161,15 +171,20 @@ class grading_manager {
         $this->ensure_isset(array('context', 'component', 'area'));
 
         // get the current grading area record if it exists
-        $area = $DB->get_record('grading_areas',
-            array('contextid' => $this->context->id, 'component' => $this->component, 'areaname' => $this->area), 'id,activemethod', IGNORE_MISSING);
+        if (is_null($this->areacache)) {
+            $this->areacache = $DB->get_record('grading_areas', array(
+                'contextid' => $this->context->id,
+                'component' => $this->component,
+                'areaname'  => $this->area),
+            '*', IGNORE_MISSING);
+        }
 
-        if (empty($area)) {
+        if ($this->areacache === false) {
             // no area record yet
             return null;
         }
 
-        return $area->activemethod;
+        return $this->areacache->activemethod;
     }
 
     /**
@@ -192,10 +207,15 @@ class grading_manager {
         }
 
         // get the current grading area record if it exists
-        $area = $DB->get_record('grading_areas',
-            array('contextid' => $this->context->id, 'component' => $this->component, 'areaname' => $this->area), 'id,activemethod', IGNORE_MISSING);
+        if (is_null($this->areacache)) {
+            $this->areacache = $DB->get_record('grading_areas', array(
+                'contextid' => $this->context->id,
+                'component' => $this->component,
+                'areaname'  => $this->area),
+            '*', IGNORE_MISSING);
+        }
 
-        if (empty($area)) {
+        if ($this->areacache === false) {
             // no area record yet, create one with the active method set
             $area = array(
                 'contextid'     => $this->context->id,
@@ -206,12 +226,104 @@ class grading_manager {
 
         } else {
             // update the existing record if needed
-            if ($area->activemethod != $method) {
-                $DB->set_field('grading_areas', 'activemethod', $method, array('id' => $area->id));
+            if ($this->areacache->activemethod != $method) {
+                $DB->set_field('grading_areas', 'activemethod', $method, array('id' => $this->areacache->id));
             }
+        }
+
+        $this->areacache = null;
+    }
+
+    /**
+     * Extends the settings navigation with the grading settings
+     *
+     * This function is called when the context for the page is an activity module with the
+     * FEATURE_ADVANCED_GRADING and the user has the permission moodle/grade:managegradingforms.
+     *
+     * @param settings_navigation $settingsnav {@link settings_navigation}
+     * @param navigation_node $modulenode {@link navigation_node}
+     */
+    public function extend_settings_navigation(settings_navigation $settingsnav, navigation_node $modulenode=null) {
+        global $PAGE, $CFG;
+
+        $this->ensure_isset(array('context', 'component'));
+
+        $areas = $this->get_available_areas();
+
+        if (empty($areas)) {
+            // no money, no funny
+            return;
+        }
+
+        foreach ($areas as $areaname => $areatitle) {
+            $this->set_area($areaname);
+            $method = $this->get_active_method();
+
+            if (empty($method)) {
+                // no grading method selected for the given area - nothing to display
+                continue;
+            }
+
+            if (count($areas) > 1) {
+                // if the module supports multiple gradable areas, make a node for each of them
+                $node = $modulenode->add(get_string('gradinginarea', 'core_grading', $areatitle), null, settings_navigation::NODETYPE_BRANCH);
+            } else {
+                // otherwise put the items directly into the module's node
+                $node = $modulenode;
+            }
+
+            $controller = $this->get_controller($method);
+            $controller->extend_settings_navigation($settingsnav, $node);
         }
     }
 
+    /**
+     * Returns the given method's controller in the gradable area
+     *
+     * @param string $method the method name, eg 'rubric' (must be available)
+     * @return grading_controller
+     */
+    public function get_controller($method) {
+        global $CFG;
+
+        $this->ensure_isset(array('context', 'component', 'area'));
+
+        // make sure the passed method is a valid plugin name
+        if ('gradingform_'.$method !== clean_param('gradingform_'.$method, PARAM_COMPONENT)) {
+            throw new moodle_exception('invalid_method_name', 'core_grading');
+        }
+        $available = $this->get_available_methods(false);
+        if (!array_key_exists($method, $available)) {
+            throw new moodle_exception('invalid_method_name', 'core_grading');
+        }
+
+        // get the current grading area record if it exists
+        if (is_null($this->areacache)) {
+            $this->areacache = $DB->get_record('grading_areas', array(
+                'contextid' => $this->context->id,
+                'component' => $this->component,
+                'areaname'  => $this->area),
+            '*', IGNORE_MISSING);
+        }
+
+        if ($this->areacache === false) {
+            // no area record yet, create one
+            $area = array(
+                'contextid' => $this->context->id,
+                'component' => $this->component,
+                'areaname'  => $this->area);
+            $areaid = $DB->insert_record('grading_areas', $area);
+            // reload the cache
+            $this->areacache = $DB->get_record('grading_areas', array('id' => $areaid), '*', MUST_EXIST);
+        }
+
+        require_once($CFG->dirroot.'/grade/grading/form/'.$method.'/lib.php');
+        $classname = $method.'_grading_controller';
+
+        return new $classname($this->context, $this->component, $this->area, $this->areacache->id);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * Make sure that the given properties were set to some not-null value
@@ -222,7 +334,7 @@ class grading_manager {
     private function ensure_isset(array $properties) {
         foreach ($properties as $property) {
             if (!isset($this->$property)) {
-                throw new coding_exception('The property '.$property.' is not set.');
+                throw new coding_exception('The property "'.$property.'" is not set.');
             }
         }
     }

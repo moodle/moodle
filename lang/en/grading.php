@@ -26,6 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['gradinginarea'] = 'Grading ({$a})';
 $string['gradingmethod'] = 'Grading method';
 $string['gradingmethods'] = 'Grading methods';
 $string['gradingmethodnone'] = 'Simple direct grading';
