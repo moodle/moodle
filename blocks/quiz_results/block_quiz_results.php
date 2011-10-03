@@ -26,6 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/mod/quiz/lib.php');
+
 
 /**
  * Block quiz_results class definition.
