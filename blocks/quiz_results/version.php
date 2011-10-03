@@ -15,4 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$plugin->version = 2007101509;
+/**
+ * Version information for the block_quiz_results plugin.
+ *
+ * @package    block
+ * @subpackage quiz_results
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
+
+$plugin->version = 2011100300;
+$plugin->requires  = 2011091600;
+$plugin->component = 'block_quiz_results';
