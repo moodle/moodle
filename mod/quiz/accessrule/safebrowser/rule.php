@@ -15,17 +15,36 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Sub-plugin definitions for the quiz module.
+ * Implementaton of the quizaccess_safebrowser plugin.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2010 Petr Skoda
+ * @package    quizaccess
+ * @subpackage safebrowser
+ * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
 
-$subplugins = array(
-    'quiz' => 'mod/quiz/report',
-    'quizaccess' => 'mod/quiz/accessrule',
-);
+require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
+
+
+/**
+* A rule representing the safe browser check.
+*
+* @copyright  2009 Oliver Rahs
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*/
+class safebrowser_access_rule extends quiz_access_rule_base {
+    public function prevent_access() {
+        if (!$this->_quizobj->is_preview_user() && !quiz_check_safe_browser()) {
+            return get_string('safebrowsererror', 'quiz');
+        } else {
+            return false;
+        }
+    }
+
+    public function description() {
+        return get_string("safebrowsernotice", "quiz");
+    }
+}

@@ -15,17 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Sub-plugin definitions for the quiz module.
+ * Version information for the quizaccess_openclosedate plugin.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2010 Petr Skoda
+ * @package    quizaccess
+ * @subpackage openclosedate
+ * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
 
-$subplugins = array(
-    'quiz' => 'mod/quiz/report',
-    'quizaccess' => 'mod/quiz/accessrule',
-);
+
+$plugin->version   = 2011092300;
+$plugin->requires  = 2011091600;
+$plugin->component = 'quizaccess_openclosedate';

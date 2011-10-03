@@ -15,17 +15,33 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Sub-plugin definitions for the quiz module.
+ * Implementaton of the quizaccess_timelimit plugin.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2010 Petr Skoda
+ * @package    quizaccess
+ * @subpackage timelimit
+ * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
 
-$subplugins = array(
-    'quiz' => 'mod/quiz/report',
-    'quizaccess' => 'mod/quiz/accessrule',
-);
+require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
+
+
+/**
+* A rule representing the time limit. It does not actually restrict access, but we use this
+* class to encapsulate some of the relevant code.
+*
+* @copyright  2009 Tim Hunt
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*/
+class quizaccess_timelimit extends quiz_access_rule_base {
+    public function description() {
+        return get_string('quiztimelimit', 'quiz', format_time($this->_quiz->timelimit));
+    }
+
+    public function time_left($attempt, $timenow) {
+        return $attempt->timestart + $this->_quiz->timelimit - $timenow;
+    }
+}
