@@ -40,17 +40,18 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class quiz_access_rule_base {
-    protected $_quiz;
-    protected $_quizobj;
-    protected $_timenow;
+    protected $quiz;
+    protected $quizobj;
+    protected $timenow;
+
     /**
      * Create an instance of this rule for a particular quiz.
      * @param object $quiz the quiz we will be controlling access to.
      */
     public function __construct($quizobj, $timenow) {
-        $this->_quizobj = $quizobj;
-        $this->_quiz = $quizobj->get_quiz();
-        $this->_timenow = $timenow;
+        $this->quizobj = $quizobj;
+        $this->quiz = $quizobj->get_quiz();
+        $this->timenow = $timenow;
     }
     /**
      * Whether or not a user should be allowed to start a new attempt at this quiz now.
@@ -98,7 +99,7 @@ abstract class quiz_access_rule_base {
      * If, because of this rule, the user has to finish their attempt by a certain time,
      * you should override this method to return the amount of time left in seconds.
      * @param object $attempt the current attempt
-     * @param int $timenow the time now. We don't use $this->_timenow, so we can
+     * @param int $timenow the time now. We don't use $this->timenow, so we can
      * give the user a more accurate indication of how much time is left.
      * @return mixed false if there is no deadline, of the time left in seconds if there is one.
      */

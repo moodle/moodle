@@ -46,8 +46,8 @@ class quizaccess_password extends quiz_access_rule_base {
      */
     public function clear_access_allowed() {
         global $SESSION;
-        if (!empty($SESSION->passwordcheckedquizzes[$this->_quiz->id])) {
-            unset($SESSION->passwordcheckedquizzes[$this->_quiz->id]);
+        if (!empty($SESSION->passwordcheckedquizzes[$this->quiz->id])) {
+            unset($SESSION->passwordcheckedquizzes[$this->quiz->id]);
         }
     }
 
@@ -63,7 +63,7 @@ class quizaccess_password extends quiz_access_rule_base {
         global $CFG, $SESSION, $OUTPUT, $PAGE;
 
         // We have already checked the password for this quiz this session, so don't ask again.
-        if (!empty($SESSION->passwordcheckedquizzes[$this->_quiz->id])) {
+        if (!empty($SESSION->passwordcheckedquizzes[$this->quiz->id])) {
             return;
         }
 
@@ -75,11 +75,11 @@ class quizaccess_password extends quiz_access_rule_base {
         // If they entered the right password, let them in.
         $enteredpassword = optional_param('quizpassword', '', PARAM_RAW);
         $validpassword = false;
-        if (strcmp($this->_quiz->password, $enteredpassword) === 0) {
+        if (strcmp($this->quiz->password, $enteredpassword) === 0) {
             $validpassword = true;
-        } else if (isset($this->_quiz->extrapasswords)) {
+        } else if (isset($this->quiz->extrapasswords)) {
             // group overrides may have additional passwords
-            foreach ($this->_quiz->extrapasswords as $password) {
+            foreach ($this->quiz->extrapasswords as $password) {
                 if (strcmp($password, $enteredpassword) === 0) {
                     $validpassword = true;
                     break;
@@ -87,7 +87,7 @@ class quizaccess_password extends quiz_access_rule_base {
             }
         }
         if ($validpassword) {
-            $SESSION->passwordcheckedquizzes[$this->_quiz->id] = true;
+            $SESSION->passwordcheckedquizzes[$this->quiz->id] = true;
             return;
         }
 
@@ -96,20 +96,20 @@ class quizaccess_password extends quiz_access_rule_base {
 
         // Start the page and print the quiz intro, if any.
         if ($accessmanager->securewindow_required($canpreview)) {
-            $accessmanager->setup_secure_page($this->_quizobj->get_course()->shortname . ': ' .
-            format_string($this->_quizobj->get_quiz_name()));
+            $accessmanager->setup_secure_page($this->quizobj->get_course()->shortname . ': ' .
+            format_string($this->quizobj->get_quiz_name()));
         } else if ($accessmanager->safebrowser_required($canpreview)) {
-            $PAGE->set_title($this->_quizobj->get_course()->shortname . ': ' .
-            format_string($this->_quizobj->get_quiz_name()));
+            $PAGE->set_title($this->quizobj->get_course()->shortname . ': ' .
+            format_string($this->quizobj->get_quiz_name()));
             $PAGE->set_cacheable(false);
         } else {
-            $PAGE->set_title(format_string($this->_quizobj->get_quiz_name()));
+            $PAGE->set_title(format_string($this->quizobj->get_quiz_name()));
         }
 
         echo $OUTPUT->header();
-        if (trim(strip_tags($this->_quiz->intro))) {
-            $output .= $OUTPUT->box(format_module_intro('quiz', $this->_quiz,
-            $this->_quizobj->get_cmid()), 'generalbox', 'intro');
+        if (trim(strip_tags($this->quiz->intro))) {
+            $output .= $OUTPUT->box(format_module_intro('quiz', $this->quiz,
+            $this->quizobj->get_cmid()), 'generalbox', 'intro');
         }
         $output .= $OUTPUT->box_start('generalbox', 'passwordbox');
 
@@ -126,7 +126,7 @@ class quizaccess_password extends quiz_access_rule_base {
         $output .= '<label for="quizpassword">' . get_string('password') . "</label>\n";
         $output .= '<input name="quizpassword" id="quizpassword" type="password" value=""/>' . "\n";
         $output .= '<input name="cmid" type="hidden" value="' .
-        $this->_quizobj->get_cmid() . '"/>' . "\n";
+        $this->quizobj->get_cmid() . '"/>' . "\n";
         $output .= '<input name="sesskey" type="hidden" value="' . sesskey() . '"/>' . "\n";
         $output .= '<input type="submit" value="' . get_string('ok') . '" />';
         $output .= '<input type="submit" name="cancelpassword" value="' .

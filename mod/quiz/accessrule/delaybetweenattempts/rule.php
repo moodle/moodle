@@ -37,17 +37,17 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
 */
 class quizaccess_delaybetweenattempts extends quiz_access_rule_base {
     public function prevent_new_attempt($numprevattempts, $lastattempt) {
-        if ($this->_quiz->attempts > 0 && $numprevattempts >= $this->_quiz->attempts) {
+        if ($this->quiz->attempts > 0 && $numprevattempts >= $this->quiz->attempts) {
             // No more attempts allowed anyway.
             return false;
         }
-        if ($this->_quiz->timeclose != 0 && $this->_timenow > $this->_quiz->timeclose) {
+        if ($this->quiz->timeclose != 0 && $this->timenow > $this->quiz->timeclose) {
             // No more attempts allowed anyway.
             return false;
         }
         $nextstarttime = $this->compute_next_start_time($numprevattempts, $lastattempt);
-        if ($this->_timenow < $nextstarttime) {
-            if ($this->_quiz->timeclose == 0 || $nextstarttime <= $this->_quiz->timeclose) {
+        if ($this->timenow < $nextstarttime) {
+            if ($this->quiz->timeclose == 0 || $nextstarttime <= $this->quiz->timeclose) {
                 return get_string('youmustwait', 'quiz', userdate($nextstarttime));
             } else {
                 return get_string('youcannotwait', 'quiz');
@@ -69,22 +69,22 @@ class quizaccess_delaybetweenattempts extends quiz_access_rule_base {
         }
 
         $lastattemptfinish = $lastattempt->timefinish;
-        if ($this->_quiz->timelimit > 0) {
+        if ($this->quiz->timelimit > 0) {
             $lastattemptfinish = min($lastattemptfinish,
-            $lastattempt->timestart + $this->_quiz->timelimit);
+            $lastattempt->timestart + $this->quiz->timelimit);
         }
 
-        if ($numprevattempts == 1 && $this->_quiz->delay1) {
-            return $lastattemptfinish + $this->_quiz->delay1;
-        } else if ($numprevattempts > 1 && $this->_quiz->delay2) {
-            return $lastattemptfinish + $this->_quiz->delay2;
+        if ($numprevattempts == 1 && $this->quiz->delay1) {
+            return $lastattemptfinish + $this->quiz->delay1;
+        } else if ($numprevattempts > 1 && $this->quiz->delay2) {
+            return $lastattemptfinish + $this->quiz->delay2;
         }
         return 0;
     }
 
     public function is_finished($numprevattempts, $lastattempt) {
         $nextstarttime = $this->compute_next_start_time($numprevattempts, $lastattempt);
-        return $this->_timenow <= $nextstarttime &&
-        $this->_quiz->timeclose != 0 && $nextstarttime >= $this->_quiz->timeclose;
+        return $this->timenow <= $nextstarttime &&
+        $this->quiz->timeclose != 0 && $nextstarttime >= $this->quiz->timeclose;
     }
 }

@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
  */
 class quizaccess_ipaddress extends quiz_access_rule_base {
     public function prevent_access() {
-        if (address_in_subnet(getremoteaddr(), $this->_quiz->subnet)) {
+        if (address_in_subnet(getremoteaddr(), $this->quiz->subnet)) {
             return false;
         } else {
             return get_string('subnetwrong', 'quiz');

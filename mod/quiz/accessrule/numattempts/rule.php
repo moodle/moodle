@@ -37,15 +37,15 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
 */
 class quizaccess_numattempts extends quiz_access_rule_base {
     public function description() {
-        return get_string('attemptsallowedn', 'quiz', $this->_quiz->attempts);
+        return get_string('attemptsallowedn', 'quiz', $this->quiz->attempts);
     }
     public function prevent_new_attempt($numprevattempts, $lastattempt) {
-        if ($numprevattempts >= $this->_quiz->attempts) {
+        if ($numprevattempts >= $this->quiz->attempts) {
             return get_string('nomoreattempts', 'quiz');
         }
         return false;
     }
     public function is_finished($numprevattempts, $lastattempt) {
-        return $numprevattempts >= $this->_quiz->attempts;
+        return $numprevattempts >= $this->quiz->attempts;
     }
 }

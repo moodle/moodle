@@ -61,7 +61,7 @@ class quizaccess_securewindow extends quiz_access_rule_base {
      */
     public function make_review_link($linktext, $attemptid) {
         global $OUTPUT;
-        $url = $this->_quizobj->review_url($attemptid);
+        $url = $this->quizobj->review_url($attemptid);
         $button = new single_button($url, $linktext);
         $button->add_action(new popup_action('click', $url, 'quizpopup', self::$popupoptions));
         return $OUTPUT->render($button);

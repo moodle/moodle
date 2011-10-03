@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
 */
 class safebrowser_access_rule extends quiz_access_rule_base {
     public function prevent_access() {
-        if (!$this->_quizobj->is_preview_user() && !quiz_check_safe_browser()) {
+        if (!$this->quizobj->is_preview_user() && !quiz_check_safe_browser()) {
             return get_string('safebrowsererror', 'quiz');
         } else {
             return false;

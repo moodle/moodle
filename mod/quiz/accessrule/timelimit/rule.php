@@ -38,10 +38,10 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
 */
 class quizaccess_timelimit extends quiz_access_rule_base {
     public function description() {
-        return get_string('quiztimelimit', 'quiz', format_time($this->_quiz->timelimit));
+        return get_string('quiztimelimit', 'quiz', format_time($this->quiz->timelimit));
     }
 
     public function time_left($attempt, $timenow) {
-        return $attempt->timestart + $this->_quiz->timelimit - $timenow;
+        return $attempt->timestart + $this->quiz->timelimit - $timenow;
     }
 }

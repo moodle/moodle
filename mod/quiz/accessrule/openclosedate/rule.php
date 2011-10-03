@@ -38,44 +38,44 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
 class quizaccess_openclosedate extends quiz_access_rule_base {
     public function description() {
         $result = array();
-        if ($this->_timenow < $this->_quiz->timeopen) {
-            $result[] = get_string('quiznotavailable', 'quiz', userdate($this->_quiz->timeopen));
-        } else if ($this->_quiz->timeclose && $this->_timenow > $this->_quiz->timeclose) {
-            $result[] = get_string("quizclosed", "quiz", userdate($this->_quiz->timeclose));
+        if ($this->timenow < $this->quiz->timeopen) {
+            $result[] = get_string('quiznotavailable', 'quiz', userdate($this->quiz->timeopen));
+        } else if ($this->quiz->timeclose && $this->timenow > $this->quiz->timeclose) {
+            $result[] = get_string("quizclosed", "quiz", userdate($this->quiz->timeclose));
         } else {
-            if ($this->_quiz->timeopen) {
-                $result[] = get_string('quizopenedon', 'quiz', userdate($this->_quiz->timeopen));
+            if ($this->quiz->timeopen) {
+                $result[] = get_string('quizopenedon', 'quiz', userdate($this->quiz->timeopen));
             }
-            if ($this->_quiz->timeclose) {
-                $result[] = get_string('quizcloseson', 'quiz', userdate($this->_quiz->timeclose));
+            if ($this->quiz->timeclose) {
+                $result[] = get_string('quizcloseson', 'quiz', userdate($this->quiz->timeclose));
             }
         }
         return $result;
     }
 
     public function prevent_access() {
-        if ($this->_timenow < $this->_quiz->timeopen ||
-        ($this->_quiz->timeclose && $this->_timenow > $this->_quiz->timeclose)) {
+        if ($this->timenow < $this->quiz->timeopen ||
+        ($this->quiz->timeclose && $this->timenow > $this->quiz->timeclose)) {
             return get_string('notavailable', 'quiz');
         }
         return false;
     }
 
     public function is_finished($numprevattempts, $lastattempt) {
-        return $this->_quiz->timeclose && $this->_timenow > $this->_quiz->timeclose;
+        return $this->quiz->timeclose && $this->timenow > $this->quiz->timeclose;
     }
 
     public function time_left($attempt, $timenow) {
         // If this is a teacher preview after the close date, do not show
         // the time.
-        if ($attempt->preview && $timenow > $this->_quiz->timeclose) {
+        if ($attempt->preview && $timenow > $this->quiz->timeclose) {
             return false;
         }
 
         // Otherwise, return to the time left until the close date, providing
         // that is less than QUIZ_SHOW_TIME_BEFORE_DEADLINE
-        if ($this->_quiz->timeclose) {
-            $timeleft = $this->_quiz->timeclose - $timenow;
+        if ($this->quiz->timeclose) {
+            $timeleft = $this->quiz->timeclose - $timenow;
             if ($timeleft < QUIZ_SHOW_TIME_BEFORE_DEADLINE) {
                 return $timeleft;
             }
