@@ -100,15 +100,22 @@ function schedule_backup_cron() {
                     $status = false;
                     continue;
                 }
+                // Skip courses that do not yet need backup
+                $skipped = !($backup_course->nextstarttime > 0 && $backup_course->nextstarttime < $now);
                 // Skip backup of unavailable courses that have remained unmodified in a month
-                $skipped = false;
-                if (!$course->visible && ($now - $course->timemodified) > 31*24*60*60) {  //Hidden + unmodified last month
-                    mtrace("            SKIPPING - hidden+unmodified");
-                    set_field("backup_courses","laststatus","3","courseid",$backup_course->courseid);
-                    $skipped = true;
+                if (!$skipped && !$course->visible && ($now - $course->timemodified) > 31*24*60*60) {  //Hidden + settings were unmodified last month
+                    //Check log if there were any modifications to the course content
+                    $sql = 'SELECT l.id FROM '.$CFG->prefix .'log l WHERE '.
+                            'l.course='. $course->id. ' AND l.time>'. ($now-31*24*60*60). " AND lower(l.action) not like '%view%'";
+                    $logexists = record_exists_sql($sql);
+                    if (!$logexists) {
+                        mtrace("            SKIPPING - hidden+unmodified");
+                        set_field("backup_courses", "laststatus", "3", "courseid", $backup_course->courseid);
+                        $skipped = true;
+                    }
                 }
-                //Now we backup every non skipped course with nextstarttime < now
-                if (!$skipped  && $backup_course->nextstarttime > 0 && $backup_course->nextstarttime < $now) {
+                //Now we backup every non-skipped course
+                if (!$skipped) {
                     //We have to send a email because we have included at least one backup
                     $emailpending = true;
                     //Only make the backup if laststatus isn't 2-UNFINISHED (uncontrolled error)
