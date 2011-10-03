@@ -1117,7 +1117,7 @@ class lesson extends lesson_base {
     }
 
      /**
-     * Gets the next page to display after the one that is provided.
+     * Gets the next page id to display after the one that is provided.
      * @param int $nextpageid
      * @return bool
      */
@@ -1126,19 +1126,19 @@ class lesson extends lesson_base {
         $allpages = $this->load_all_pages();
         if ($this->properties->nextpagedefault) {
             // in Flash Card mode...first get number of retakes
-            $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$this->properties->id, "userid"=>$USER->id));
+            $nretakes = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id));
             shuffle($allpages);
             $found = false;
             if ($this->properties->nextpagedefault == LESSON_UNSEENPAGE) {
                 foreach ($allpages as $nextpage) {
-                    if (!$DB->count_records("lesson_attempts", array("pageid"=>$nextpage->id, "userid"=>$USER->id, "retry"=>$nretakes))) {
+                    if (!$DB->count_records("lesson_attempts", array("pageid" => $nextpage->id, "userid" => $USER->id, "retry" => $nretakes))) {
                         $found = true;
                         break;
                     }
                 }
             } elseif ($this->properties->nextpagedefault == LESSON_UNANSWEREDPAGE) {
                 foreach ($allpages as $nextpage) {
-                    if (!$DB->count_records("lesson_attempts", array('pageid'=>$nextpage->id, 'userid'=>$USER->id, 'correct'=>1, 'retry'=>$nretakes))) {
+                    if (!$DB->count_records("lesson_attempts", array('pageid' => $nextpage->id, 'userid' => $USER->id, 'correct' => 1, 'retry' => $nretakes))) {
                         $found = true;
                         break;
                     }
@@ -1147,20 +1147,20 @@ class lesson extends lesson_base {
             if ($found) {
                 if ($this->properties->maxpages) {
                     // check number of pages viewed (in the lesson)
-                    if ($DB->count_records("lesson_attempts", array("lessonid"=>$this->properties->id, "userid"=>$USER->id, "retry"=>$nretakes)) >= $this->properties->maxpages) {
-                        return false;
+                    if ($DB->count_records("lesson_attempts", array("lessonid" => $this->properties->id, "userid" => $USER->id, "retry" => $nretakes)) >= $this->properties->maxpages) {
+                        return LESSON_EOL;
                     }
                 }
-                return $nextpage;
+                return $nextpage->id;
             }
         }
         // In a normal lesson mode
         foreach ($allpages as $nextpage) {
-            if ((int)$nextpage->id===(int)$nextpageid) {
-                return $nextpage;
+            if ((int)$nextpage->id === (int)$nextpageid) {
+                return $nextpage->id;
             }
         }
-        return false;
+        return LESSON_EOL;
     }
 
     /**
@@ -1985,12 +1985,7 @@ abstract class lesson_page extends lesson_base {
             if ($result->newpageid == 0) {
                 $result->newpageid = $this->properties->id;
             } elseif ($result->newpageid == LESSON_NEXTPAGE) {
-                $nextpage = $this->lesson->get_next_page($this->properties->nextpageid);
-                if ($nextpage === false) {
-                    $result->newpageid = LESSON_EOL;
-                } else {
-                    $result->newpageid = $nextpage->id;
-                }
+                $result->newpageid = $this->lesson->get_next_page($this->properties->nextpageid);
             }
 
             // Determine default feedback if necessary
