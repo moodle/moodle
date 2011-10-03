@@ -384,10 +384,10 @@ class lesson_page_type_matching extends lesson_page {
                     $answerdata->response = $answer->response;
                 }
                 if ($this->lesson->custom) {
-                        $answerdata->score = get_string("pointsearned", "lesson").": ".$answer->score;
-                    } else {
-                        $answerdata->score = get_string("receivedcredit", "lesson");
-                    }
+                    $answerdata->score = get_string("pointsearned", "lesson").": ".$answer->score;
+                } else {
+                    $answerdata->score = get_string("receivedcredit", "lesson");
+                }
             } elseif ($n == 1 && $useranswer != NULL && !$useranswer->correct) {
                 if ($answer->response == NULL && $useranswer != NULL) {
                     $answerdata->response = get_string("thatsthewronganswer", "lesson");
