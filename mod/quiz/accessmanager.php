@@ -83,7 +83,7 @@ class quiz_access_manager {
                         $this->quizobj, $this->timenow);
                 $this->rules[] = $this->securewindowrule;
             } else if ($quiz->popup == 2) {
-                $this->safebrowserrule = new quizaccess_securebrowser(
+                $this->safebrowserrule = new quizaccess_safebrowser(
                         $this->quizobj, $this->timenow);
                 $this->rules[] = $this->safebrowserrule;
             }

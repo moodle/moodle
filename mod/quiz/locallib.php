@@ -33,7 +33,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
-require_once($CFG->dirroot . '/mod/quiz/accessrules.php');
+require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
 require_once($CFG->dirroot . '/mod/quiz/renderer.php');
 require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 require_once($CFG->dirroot . '/question/editlib.php');
@@ -1281,15 +1281,6 @@ function quiz_attempt_submitted_handler($event) {
 
     return quiz_send_notification_messages($course, $quiz, $attempt,
             get_context_instance(CONTEXT_MODULE, $cm->id), $cm);
-}
-
-/**
- * Checks if browser is safe browser
- *
- * @return true, if browser is safe browser else false
- */
-function quiz_check_safe_browser() {
-    return strpos($_SERVER['HTTP_USER_AGENT'], "SEB") !== false;
 }
 
 function quiz_get_js_module() {

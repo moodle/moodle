@@ -35,9 +35,9 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
 * @copyright  2009 Oliver Rahs
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
-class safebrowser_access_rule extends quiz_access_rule_base {
+class quizaccess_safebrowser extends quiz_access_rule_base {
     public function prevent_access() {
-        if (!$this->quizobj->is_preview_user() && !quiz_check_safe_browser()) {
+        if (!$this->check_safe_browser()) {
             return get_string('safebrowsererror', 'quiz');
         } else {
             return false;
@@ -46,5 +46,14 @@ class safebrowser_access_rule extends quiz_access_rule_base {
 
     public function description() {
         return get_string("safebrowsernotice", "quiz");
+    }
+
+    /**
+     * Checks if browser is safe browser
+     *
+     * @return true, if browser is safe browser else false
+     */
+    function check_safe_browser() {
+        return strpos($_SERVER['HTTP_USER_AGENT'], "SEB") !== false;
     }
 }
