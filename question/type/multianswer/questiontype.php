@@ -75,6 +75,9 @@ class qtype_multianswer extends question_type {
             $question->options->questions[$sequence[$wrapped->id]] = $wrapped;
         }
 
+        $question->hints = $DB->get_records('question_hints',
+                array('questionid' => $question->id), 'id ASC');
+
         return true;
     }
 
@@ -164,6 +167,8 @@ class qtype_multianswer extends question_type {
                 $DB->insert_record('question_multianswer', $multianswer);
             }
         }
+
+        $this->save_hints($question);
     }
 
     public function save_question($authorizedquestion, $form) {
