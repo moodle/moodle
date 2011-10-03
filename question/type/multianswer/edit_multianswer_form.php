@@ -254,6 +254,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
             $mform->addElement('hidden', 'confirm', 0);
         }
 
+        $this->add_interactive_settings();
     }
 
 
@@ -424,6 +425,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
         if ($default_values != "") {
             $question = (object)((array)$question + $default_values);
         }
+        $question = $this->data_preprocessing_hints($question);
         parent::set_data($question);
     }
 
