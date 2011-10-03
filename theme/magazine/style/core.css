@@ -709,7 +709,7 @@ td.author {
 }
 
 .forumpost .left {
-    
+
 }
 
 .forumpost .left.picture {
@@ -791,7 +791,7 @@ td.maincalendar table.calendartable th, table.rolecap .header,.generaltable .hea
     font-weight: 200;
     text-decoration: none;
     color: #fff !important;
-    border-top: 1px #ccc solid !important;
+    border-top: 1px solid #ccc !important;
     padding: 5px;
 }
 
