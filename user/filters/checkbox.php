@@ -129,7 +129,7 @@ class user_filter_checkbox extends user_filter_type {
 
     /**
      * Returns a human friendly description of the filter used as label.
-     * 
+     *
      * @param array $data filter settings
      * @return string active filter label
      */
