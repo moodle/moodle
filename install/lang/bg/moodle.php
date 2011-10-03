@@ -31,3 +31,4 @@
 $string['language'] = 'Език';
 $string['next'] = 'Следваща';
 $string['previous'] = 'Предишна';
+$string['reload'] = 'Презареждане';
