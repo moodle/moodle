@@ -33,10 +33,11 @@ ul.dropdown span.customitem a:hover {
     border: 0;
 }
 #custommenu ul.dropdown ul {
-    padding:0;width:185px;
+    padding:0;
+    width:auto;
 }
 #custommenu ul.dropdown ul a {
-    padding:4px 0px 4px 18px;
+    padding:4px 18px;
 }
 #custommenu ul.dropdown > li span a {
     height:16px;
@@ -73,8 +74,8 @@ ul.dropdown ul {
     visibility:hidden;
     position:absolute;
     top:100%;z-index:598;
-    left:auto;
-    right:0;
+    left:0;
+    right:auto;
     margin-top: -1px;
     font:100% "Trebuchet MS",Arial,Helvetica,sans-serif;
 }
@@ -101,15 +102,16 @@ ul.dropdown li:hover > ul {
 ul.dropdown span,
 ul.dropdown span a,
 ul.dropdown li.clickable-with-children > a {
-  background-color: #34637f;
-    width:145px;
+    background-color: #34637f;
+    width:auto;
     padding:2px 6px 4px 20px;
     color: #fff;
 }
 ul.dropdown ul span,
 ul.dropdown ul span a,
 ul.dropdown ul li.clickable-with-children > a {
-    background: #34637f url([[pix:theme|menu/nav-arrow-right]]);
+    background-color:#34637f;
+    background-image: url([[pix:theme|menu/nav-arrow-right]]);
     background-position:100% 50%;
     background-repeat:no-repeat;
     color: #fff;
@@ -117,7 +119,8 @@ ul.dropdown ul li.clickable-with-children > a {
 ul.dropdown ul ul span,
 ul.dropdown ul ul span a,
 ul.dropdown ul ul li.clickable-with-children > a {
-    background-image: #34637f url([[pix:theme|menu/nav-arrow-right]]);
+    background-color:#34637f;
+    background-image: url([[pix:theme|menu/nav-arrow-right]]);
     background-position:100% 50%;
     background-repeat:no-repeat;
     color: #fff;
