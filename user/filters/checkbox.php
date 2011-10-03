@@ -15,12 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * moodlelib.php - Moodle main library
+ * Generic checkbox filter.
  *
- * Main library file of miscellaneous general-purpose Moodle functions.
- * Other main libraries:
- *  - weblib.php      - functions that produce web output
- *  - datalib.php     - functions that access the database
+ * This will create generic filter with checkbox option and can be used for
+ * disabling other elements for specific condition.
  *
  * @package    user
  * @copyright  2011 Rajesh Taneja
@@ -48,7 +46,9 @@ class user_filter_checkbox extends user_filter_type {
     protected $field;
 
     /**
-     * Constructor
+     * Constructor, initalize user_filter_type and sets $disableelements array
+     * with list of elements to be diabled by checkbox.
+     *
      * @param string $name the name of the filter instance
      * @param string $label the label of the filter instance
      * @param boolean $advanced advanced form element flag
@@ -69,6 +69,7 @@ class user_filter_checkbox extends user_filter_type {
 
     /**
      * Adds controls specific to this filter in the form.
+     *
      * @param moodleform $mform a MoodleQuickForm object in which element will be added
      */
     public function setupForm(MoodleQuickForm &$mform) {
@@ -90,6 +91,7 @@ class user_filter_checkbox extends user_filter_type {
 
     /**
      * Retrieves data from the form data
+     *
      * @param object $formdata data submited with the form
      * @return mixed array filter data or false when filter not set
      */
@@ -111,6 +113,7 @@ class user_filter_checkbox extends user_filter_type {
 
     /**
      * Returns the condition to be used with SQL where
+     *
      * @param array $data filter settings
      * @return array sql string and $params
      */
@@ -126,6 +129,7 @@ class user_filter_checkbox extends user_filter_type {
 
     /**
      * Returns a human friendly description of the filter used as label.
+     * 
      * @param array $data filter settings
      * @return string active filter label
      */
