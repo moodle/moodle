@@ -415,7 +415,7 @@ class pgsql_native_moodle_database extends moodle_database {
                 $info->scale         = null;
                 $info->not_null      = ($rawcolumn->attnotnull === 't');
                 if ($info->has_default) {
-                    $info->default_value = $rawcolumn->adsrc;
+                    $info->default_value = trim($rawcolumn->adsrc, '()');
                 } else {
                     $info->default_value = null;
                 }
@@ -433,7 +433,7 @@ class pgsql_native_moodle_database extends moodle_database {
                 $info->not_null      = ($rawcolumn->attnotnull === 't');
                 $info->has_default   = ($rawcolumn->atthasdef === 't');
                 if ($info->has_default) {
-                    $info->default_value = $rawcolumn->adsrc;
+                    $info->default_value = trim($rawcolumn->adsrc, '()');
                 } else {
                     $info->default_value = null;
                 }
@@ -451,7 +451,7 @@ class pgsql_native_moodle_database extends moodle_database {
                 $info->not_null      = ($rawcolumn->attnotnull === 't');
                 $info->has_default   = ($rawcolumn->atthasdef === 't');
                 if ($info->has_default) {
-                    $info->default_value = $rawcolumn->adsrc;
+                    $info->default_value = trim($rawcolumn->adsrc, '()');
                 } else {
                     $info->default_value = null;
                 }
