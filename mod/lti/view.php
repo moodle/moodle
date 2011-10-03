@@ -95,9 +95,20 @@ $launchcontainer = $basiclti->launchcontainer == LTI_LAUNCH_CONTAINER_DEFAULT ?
                         $toolconfig['launchcontainer'] :
                         $basiclti->launchcontainer;
 
+$devicetype = get_device_type();
+
+//Scrolling within the object element doesn't work on iOS or Android
+//Opening the popup window also had some issues in testing
+//For mobile devices, always take up the entire screen to ensure the best experience
+if($devicetype === 'mobile' || $devicetype === 'tablet' ){
+    $launchcontainer = LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW;
+}
+
 if($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS){
     $PAGE->set_pagelayout('frametop'); //Most frametops don't include footer, and pre-post blocks
     $PAGE->blocks->show_only_fake_blocks(); //Disable blocks for layouts which do include pre-post blocks
+} else if($launchcontainer == LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW) {
+    redirect('launch.php?id=' . $cm->id);
 } else {
     $PAGE->set_pagelayout('incourse');
 }
@@ -130,7 +141,7 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
     echo "<p>".get_string("basiclti_in_new_window", "lti")."</p>\n";
 } else {
     // Request the launch content with an object tag
-    echo '<object id="contentframe" height="600px" width="100%" type="text/html" data="launch.php?id='.$cm->id.'&amp;withobject=true"></object>';
+    echo '<object id="contentframe" height="600px" width="100%" type="text/html" data="launch.php?id='.$cm->id.'"></object>';
     
     //Output script to make the object tag be as large as possible
     $resize = <<<'SCRIPT'
