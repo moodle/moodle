@@ -66,14 +66,18 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
     }
 
     protected function process_lti($data) {
-        global $DB;
+        global $DB, $CFG;
 
         $data = (object)$data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
 
+        require_once($CFG->dirroot.'/mod/lti/lib.php');
+        
+        $newitemid = lti_add_instance($data);
+        
         // insert the basiclti record
-        $newitemid = $DB->insert_record('lti', $data);
+        //$newitemid = $DB->insert_record('lti', $data);
         // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }

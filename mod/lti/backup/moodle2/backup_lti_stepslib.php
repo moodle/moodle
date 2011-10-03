@@ -62,12 +62,26 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
 
         // Define each element separated
         $basiclti = new backup_nested_element('lti', array('id'), array(
-            'name', 'intro', 'introformat', 'timecreated', 'timemodified',
-            'typeid', 'toolurl', 'preferheight', 'instructorchoiccesendname',
-            'instructorchoicesendemailaddr', 'organizationid',
-            'organizationurl', 'organizationdescr', 'launchinpopup',
-            'debuglaunch', 'instructorchoiceacceptgrades', 'instructorchoiceallowroster',
-        	'instructorchoiceallowsetting', 'grade', 'instructorcustomparameters'));
+            'name', 
+            'intro', 
+            'introformat', 
+            'timecreated', 
+            'timemodified',
+            'typeid', 
+            'toolurl', 
+            'preferheight', 
+            'launchcontainer',
+            'instructorchoicesendname',
+            'instructorchoicesendemailaddr',
+            'instructorchoiceacceptgrades', 
+            'instructorchoiceallowroster',
+            'instructorchoiceallowsetting', 
+            'grade', 
+            'instructorcustomparameters',
+            'showtitle',
+            'showdescription'
+            )
+        );
 
         // Build the tree
         // (none)

@@ -93,6 +93,11 @@ function lti_add_instance($formdata) {
 
     if ($formdata->instructorchoiceacceptgrades == 1) {
         $basiclti = $DB->get_record('lti', array('id'=>$id));
+        
+        if(!isset($formdata->cmidnumber)){
+            $formdata->cmidnumber = '';
+        }
+        
         $basiclti->cmidnumber = $formdata->cmidnumber;
         
         lti_grade_item_update($basiclti);
