@@ -70,6 +70,7 @@ require_capability('mod/quiz:manageoverrides', $context);
 
 // Display a list of overrides
 
+$PAGE->set_pagelayout('admin');
 $PAGE->set_title(get_string('overrides', 'quiz'));
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
