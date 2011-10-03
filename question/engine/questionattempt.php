@@ -160,6 +160,15 @@ class question_attempt {
         }
     }
 
+    /**
+     * This method exists so that {@link question_attempt_with_restricted_history}
+     * can override it. You should not normally need to call it.
+     * @return question_attempt return ourself.
+     */
+    public function get_full_qa() {
+        return $this;
+    }
+
     /** @return question_definition the question this is an attempt at. */
     public function get_question() {
         return $this->question;
@@ -1200,29 +1209,34 @@ class question_attempt_with_restricted_history extends question_attempt {
      *      annoyting that this needs to be passed, but unavoidable for now.
      */
     public function __construct(question_attempt $baseqa, $lastseq, $preferredbehaviour) {
-        if ($lastseq < 0 || $lastseq >= $baseqa->get_num_steps()) {
-            throw new coding_exception('$seq out of range', $seq);
+        $this->baseqa = $baseqa->get_full_qa();
+
+        if ($lastseq < 0 || $lastseq >= $this->baseqa->get_num_steps()) {
+            throw new coding_exception('$lastseq out of range', $lastseq);
         }
 
-        $this->baseqa = $baseqa;
-        $this->steps = array_slice($baseqa->steps, 0, $lastseq + 1);
+        $this->steps = array_slice($this->baseqa->steps, 0, $lastseq + 1);
         $this->observer = new question_usage_null_observer();
 
         // This should be a straight copy of all the remaining fields.
-        $this->id = $baseqa->id;
-        $this->usageid = $baseqa->usageid;
-        $this->slot = $baseqa->slot;
-        $this->question = $baseqa->question;
-        $this->maxmark = $baseqa->maxmark;
-        $this->minfraction = $baseqa->minfraction;
-        $this->questionsummary = $baseqa->questionsummary;
-        $this->responsesummary = $baseqa->responsesummary;
-        $this->rightanswer = $baseqa->rightanswer;
-        $this->flagged = $baseqa->flagged;
+        $this->id = $this->baseqa->id;
+        $this->usageid = $this->baseqa->usageid;
+        $this->slot = $this->baseqa->slot;
+        $this->question = $this->baseqa->question;
+        $this->maxmark = $this->baseqa->maxmark;
+        $this->minfraction = $this->baseqa->minfraction;
+        $this->questionsummary = $this->baseqa->questionsummary;
+        $this->responsesummary = $this->baseqa->responsesummary;
+        $this->rightanswer = $this->baseqa->rightanswer;
+        $this->flagged = $this->baseqa->flagged;
 
         // Except behaviour, where we need to create a new one.
         $this->behaviour = question_engine::make_behaviour(
-                $baseqa->get_behaviour_name(), $this, $preferredbehaviour);
+                $this->baseqa->get_behaviour_name(), $this, $preferredbehaviour);
+    }
+
+    public function get_full_qa() {
+        return $this->baseqa;
     }
 
     public function get_full_step_iterator() {

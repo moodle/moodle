@@ -46,6 +46,9 @@ $attemptobj = quiz_attempt::create($attemptid);
 require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
 $attemptobj->check_review_capability();
 
+$accessmanager = $attemptobj->get_access_manager(time());
+$options = $attemptobj->get_display_options(true);
+
 $PAGE->set_pagelayout('popup');
 $output = $PAGE->get_renderer('mod_quiz');
 
@@ -54,8 +57,7 @@ if ($attemptobj->is_own_attempt()) {
     if (!$attemptobj->is_finished()) {
         echo $output->review_question_not_allowed(get_string('cannotreviewopen', 'quiz'));
         die();
-    } else if (!$options->responses) {
-        $accessmanager = $attemptobj->get_access_manager(time());
+    } else if (!$options->attempt) {
         echo $output->review_question_not_allowed(
                 $accessmanager->cannot_review_message($attemptobj->get_review_options()));
         die();
