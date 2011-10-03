@@ -34,6 +34,13 @@ require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir . '/questionlib.php');
 require_once(dirname(__FILE__) . '/previewlib.php');
 
+/**
+ * The maximum number of variants previewable. If there are more variants than this for a question
+ * then we only allow the selection of the first x variants.
+ * @var integer
+ */
+define('QUESTION_PREVIEW_MAX_VARIANTS', 100);
+
 // Get and validate question id.
 $id = required_param('id', PARAM_INT);
 $question = question_bank::load_question($id);
@@ -61,7 +68,7 @@ question_require_capability_on($question, 'use');
 $PAGE->set_pagelayout('popup');
 
 // Get and validate display options.
-$maxvariant = $question->get_num_variants();
+$maxvariant = min($question->get_num_variants(), QUESTION_PREVIEW_MAX_VARIANTS);
 $options = new question_preview_options($question);
 $options->load_user_defaults();
 $options->set_from_request();
