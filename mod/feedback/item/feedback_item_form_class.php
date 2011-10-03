@@ -31,7 +31,10 @@ abstract class feedback_item_form extends moodleform {
                                 $common['items']
                                 );
             $mform->addHelpButton('dependitem', 'depending', 'feedback');
-            $mform->addElement('text', 'dependvalue', get_string('dependvalue', 'feedback'), array('size="'.FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE.'"','maxlength="255"'));
+            $mform->addElement('text',
+                                'dependvalue',
+                                get_string('dependvalue', 'feedback'),
+                                array('size'=>FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength'=>255));
         }else {
             $mform->addElement('hidden', 'dependitem', 0);
             $mform->setType('dependitem', PARAM_INT);
