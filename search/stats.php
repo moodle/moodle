@@ -21,6 +21,8 @@
 require_once('../config.php');
 require_once($CFG->dirroot.'/search/lib.php');
 
+$block_instanceid = required_param('block_instanceid', PARAM_INT);// Block Instance ID
+
 /// checks global search is enabled
 
     if ($CFG->forcelogin) {
@@ -30,6 +32,15 @@ require_once($CFG->dirroot.'/search/lib.php');
     if (empty($CFG->enableglobalsearch)) {
         print_error('globalsearchdisabled', 'search');
     }
+    //Check user's permissions against the block instance from which the user came
+    if (empty($block_instanceid)) {
+        print_error('searchnotpermitted', 'search');
+    }
+    if (!$DB->record_exists('block_instances', array('id' => $block_instanceid, 'blockname' => 'search'))) {
+        print_error('searchnotpermitted', 'search');
+    }
+    $contextblock = get_context_instance(CONTEXT_BLOCK, $block_instanceid);
+    require_capability('moodle/block:view', $contextblock);
 
 /// check for php5, but don't die yet
 
@@ -44,10 +55,13 @@ require_once($CFG->dirroot.'/search/lib.php');
 
     $site = get_site();
 
-    $PAGE->set_url('/search/stats.php');
+    $url = new moodle_url('/search/stats.php');
+    $url->param('block_instanceid', $block_instanceid);
+    $PAGE->set_url($url);
+
     $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
-    $PAGE->navbar->add($strsearch, new moodle_url('/search/index.php'));
-    $PAGE->navbar->add($strquery, new moodle_url('/search/stats.php'));
+    $PAGE->navbar->add($strsearch, new moodle_url('/search/query.php?block_instanceid=' . $block_instanceid));
+    $PAGE->navbar->add($strquery, new moodle_url('/search/stats.php?block_instanceid=' . $block_instanceid));
     $PAGE->set_title($strsearch);
     $PAGE->set_heading($site->fullname);
     echo $OUTPUT->header();

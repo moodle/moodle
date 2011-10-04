@@ -37,6 +37,8 @@
     require_once('../config.php');
     require_once($CFG->dirroot.'/search/lib.php');
 
+    $block_instanceid = required_param('block_instanceid', PARAM_INT);// Block Instance ID
+
     if ($CFG->forcelogin) {
         require_login();
     }
@@ -44,6 +46,15 @@
     if (empty($CFG->enableglobalsearch)) {
         print_error('globalsearchdisabled', 'search');
     }
+    //Check user's permissions against the block instance from which the user came
+    if (empty($block_instanceid)) {
+        print_error('searchnotpermitted', 'search');
+    }
+    if (!$DB->record_exists('block_instances', array('id' => $block_instanceid, 'blockname' => 'search'))) {
+        print_error('searchnotpermitted', 'search');
+    }
+    $contextblock = get_context_instance(CONTEXT_BLOCK, $block_instanceid);
+    require_capability('moodle/block:view', $contextblock);
 
     $adv = new stdClass();
 
@@ -63,6 +74,7 @@
     if ($advanced) {
         $url->param('a', '1');
     }
+    $url->param('block_instanceid', $block_instanceid);
     $PAGE->set_url($url);
 
 /// discard harmfull searches
@@ -166,8 +178,8 @@
     // print the header
     $site = get_site();
     $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
-    $PAGE->navbar->add($strsearch, new moodle_url('/search/index.php'));
-    $PAGE->navbar->add($strquery, new moodle_url('/search/stats.php'));
+    $PAGE->navbar->add($strsearch, new moodle_url('/search/query.php?block_instanceid=' . $block_instanceid));
+    $PAGE->navbar->add($strquery, new moodle_url('/search/stats.php?block_instanceid=' . $block_instanceid));
     $PAGE->set_title($strsearch);
     $PAGE->set_heading($site->fullname);
     echo $OUTPUT->header();
@@ -195,16 +207,18 @@
     <?php
     if (!$advanced) {
     ?>
+        <input type="hidden" name="block_instanceid" value="<?php p($block_instanceid) ?>" />&nbsp;
         <input type="text" name="query_string" length="50" value="<?php p($query_string) ?>" />&nbsp;
         <input type="submit" value="<?php print_string('search', 'search') ?>" /> &nbsp;
-        <a href="query.php?a=1"><?php print_string('advancedsearch', 'search') ?></a> |
-        <a href="stats.php"><?php print_string('statistics', 'search') ?></a>
+        <a href="query.php?a=1&block_instanceid=<?php p($block_instanceid) ?>" ><?php print_string('advancedsearch', 'search') ?></a> |
+        <a href="stats.php?block_instanceid=<?php p($block_instanceid) ?>"><?php print_string('statistics', 'search') ?></a>
     <?php
     }
     else {
         echo $OUTPUT->box_start();
       ?>
         <input type="hidden" name="a" value="<?php p($advanced); ?>"/>
+        <input type="hidden" name="block_instanceid" value="<?php p($block_instanceid) ?>" />
 
         <table border="0" cellpadding="3" cellspacing="3">
 
@@ -269,8 +283,8 @@
           <td colspan="3" align="center">
             <table border="0" cellpadding="0" cellspacing="0">
               <tr>
-                <td><a href="query.php"><?php print_string('normalsearch', 'search') ?></a> |</td>
-                <td>&nbsp;<a href="stats.php"><?php print_string('statistics', 'search') ?></a></td>
+                <td><a href="query.php?block_instanceid=<?php p($block_instanceid) ?>"><?php print_string('normalsearch', 'search') ?></a> |</td>
+                <td>&nbsp;<a href="stats.php?block_instanceid=<?php p($block_instanceid) ?>"><?php print_string('statistics', 'search') ?></a></td>
               </tr>
             </table>
           </td>
