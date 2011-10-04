@@ -45,14 +45,22 @@ $isspecificcourse = !is_null($courseid);
 $iscurrentuser = ($USER->id == $userid);
 
 $url = new moodle_url('/mod/forum/user.php', array('id' => $userid));
-if ($isspecificcourse) $url->param('course', $courseid);
-if ($discussionsonly) $url->param('mode', 'discussions');
+if ($isspecificcourse) {
+    $url->param('course', $courseid);
+}
+if ($discussionsonly) {
+    $url->param('mode', 'discussions');
+}
 
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
 
-if ($page != 0) $url->param('page', $page);
-if ($perpage != 5) $url->param('perpage', $perpage);
+if ($page != 0) {
+    $url->param('page', $page);
+}
+if ($perpage != 5) {
+    $url->param('perpage', $perpage);
+}
 
 add_to_log(($isspecificcourse)?$courseid:SITEID, "forum", "user report", 'user.php?'.$url->get_query_string(), $userid);
 
@@ -191,7 +199,9 @@ if (empty($result->posts)) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading($pagetitle);
     echo $OUTPUT->notification($notification);
-    echo $OUTPUT->continue_button($url);
+    if (!$url->compare($PAGE->url)) {
+        echo $OUTPUT->continue_button($url);
+    }
     echo $OUTPUT->footer();
     die;
 }
