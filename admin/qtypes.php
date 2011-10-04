@@ -36,6 +36,7 @@ require_capability('moodle/question:config', $systemcontext);
 $canviewreports = has_capability('report/questioninstances:view', $systemcontext);
 
 admin_externalpage_setup('manageqtypes');
+$thispageurl = new moodle_url('/admin/qtypes.php');
 
 // Get some data we will need - question counts and which types are needed.
 $counts = $DB->get_records_sql("
@@ -77,67 +78,67 @@ $sortedqtypes = question_sort_qtype_array($sortedqtypes, $config);
 // Disable.
 if (($disable = optional_param('disable', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
     if (!isset($QTYPES[$disable])) {
-        print_error('unknownquestiontype', 'question', admin_url('qtypes.php'), $disable);
+        print_error('unknownquestiontype', 'question', $thispageurl, $disable);
     }
 
     set_config($disable . '_disabled', 1, 'question');
-    redirect(admin_url('qtypes.php'));
+    redirect($thispageurl);
 }
 
 // Enable.
 if (($enable = optional_param('enable', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
     if (!isset($QTYPES[$enable])) {
-        print_error('unknownquestiontype', 'question', admin_url('qtypes.php'), $enable);
+        print_error('unknownquestiontype', 'question', $thispageurl, $enable);
     }
 
     if (!$QTYPES[$enable]->menu_name()) {
-        print_error('cannotenable', 'question', admin_url('qtypes.php'), $enable);
+        print_error('cannotenable', 'question', $thispageurl, $enable);
     }
 
     unset_config($enable . '_disabled', 'question');
-    redirect(admin_url('qtypes.php'));
+    redirect($thispageurl);
 }
 
 // Move up in order.
 if (($up = optional_param('up', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
     if (!isset($QTYPES[$up])) {
-        print_error('unknownquestiontype', 'question', admin_url('qtypes.php'), $up);
+        print_error('unknownquestiontype', 'question', $thispageurl, $up);
     }
 
     $neworder = question_reorder_qtypes($sortedqtypes, $up, -1);
     question_save_qtype_order($neworder, $config);
-    redirect(admin_url('qtypes.php'));
+    redirect($thispageurl);
 }
 
 // Move down in order.
 if (($down = optional_param('down', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
     if (!isset($QTYPES[$down])) {
-        print_error('unknownquestiontype', 'question', admin_url('qtypes.php'), $down);
+        print_error('unknownquestiontype', 'question', $thispageurl, $down);
     }
 
     $neworder = question_reorder_qtypes($sortedqtypes, $down, +1);
     question_save_qtype_order($neworder, $config);
-    redirect(admin_url('qtypes.php'));
+    redirect($thispageurl);
 }
 
 // Delete.
 if (($delete = optional_param('delete', '', PARAM_SAFEDIR)) && confirm_sesskey()) {
     // Check it is OK to delete this question type.
     if ($delete == 'missingtype') {
-        print_error('cannotdeletemissingqtype', 'admin', admin_url('qtypes.php'));
+        print_error('cannotdeletemissingqtype', 'admin', $thispageurl);
     }
 
     if (!isset($QTYPES[$delete])) {
-        print_error('unknownquestiontype', 'question', admin_url('qtypes.php'), $delete);
+        print_error('unknownquestiontype', 'question', $thispageurl, $delete);
     }
 
     $qtypename = $QTYPES[$delete]->local_name();
     if ($counts[$delete]->numquestions + $counts[$delete]->numhidden > 0) {
-        print_error('cannotdeleteqtypeinuse', 'admin', admin_url('qtypes.php'), $qtypename);
+        print_error('cannotdeleteqtypeinuse', 'admin', $thispageurl, $qtypename);
     }
 
     if ($needed[$delete] > 0) {
-        print_error('cannotdeleteqtypeneeded', 'admin', admin_url('qtypes.php'), $qtypename);
+        print_error('cannotdeleteqtypeneeded', 'admin', $thispageurl, $qtypename);
     }
 
     // If not yet confirmed, display a confirmation message.
@@ -146,8 +147,8 @@ if (($delete = optional_param('delete', '', PARAM_SAFEDIR)) && confirm_sesskey()
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('deleteqtypeareyousure', 'admin', $qtypename));
         echo $OUTPUT->confirm(get_string('deleteqtypeareyousuremessage', 'admin', $qtypename),
-                admin_url('qtypes.php?delete=' . $delete . '&confirm=1'),
-                admin_url('qtypes.php'));
+                new moodle_url($thispageurl, array('delete' => $delete, 'confirm' => 1)),
+                $thispageurl);
         echo $OUTPUT->footer();
         exit;
     }
@@ -172,7 +173,7 @@ if (($delete = optional_param('delete', '', PARAM_SAFEDIR)) && confirm_sesskey()
     $a->qtype = $qtypename;
     $a->directory = $QTYPES[$delete]->plugin_dir();
     echo $OUTPUT->box(get_string('qtypedeletefiles', 'admin', $a), 'generalbox', 'notice');
-    echo $OUTPUT->continue_button(admin_url('qtypes.php'));
+    echo $OUTPUT->continue_button($thispageurl);
     echo $OUTPUT->footer();
     exit;
 }
@@ -185,6 +186,7 @@ echo $OUTPUT->heading(get_string('manageqtypes', 'admin'));
 
 // Set up the table.
 $table = new flexible_table('qtypeadmintable');
+$table->define_baseurl($thispageurl);
 $table->define_columns(array('questiontype', 'numquestions', 'version', 'requires',
         'availableto', 'delete', 'settings'));
 $table->define_headers(array(get_string('questiontype', 'admin'), get_string('numquestions', 'admin'),
@@ -214,8 +216,8 @@ foreach ($sortedqtypes as $qtypename => $localname) {
             $strcount = $counts[$qtypename]->numquestions;
         }
         if ($canviewreports) {
-            $row[] = '<a href="' . admin_url('/report/questioninstances/index.php?qtype=' . $qtypename) .
-                    '" title="' . get_string('showdetails', 'admin') . '">' . $strcount . '</a>';
+            $row[] = html_writer::link(new moodle_url('/admin/report/questioninstances/index.php',
+                    array('qtype' => $qtypename)), $strcount, array('title' => get_string('showdetails', 'admin')));
         } else {
             $strcount;
         }
@@ -228,7 +230,7 @@ foreach ($sortedqtypes as $qtypename => $localname) {
     if ($version) {
         $row[] = $version;
     } else {
-        $row[] = '<span class="disabled">' . get_string('nodatabase', 'admin') . '</span>';
+        $row[] = html_writer::tag('span', get_string('nodatabase', 'admin'), array('class' => 'disabled'));
     }
 
     // Other question types required by this one.
@@ -247,36 +249,35 @@ foreach ($sortedqtypes as $qtypename => $localname) {
     $rowclass = '';
     if ($qtype->menu_name()) {
         $createable = isset($createabletypes[$qtypename]);
-        $icons = enable_disable_button($qtypename, $createable);
+        $icons = question_types_enable_disable_icons($qtypename, $createable);
         if (!$createable) {
             $rowclass = 'dimmed_text';
         }
     } else {
-        $icons = '<img src="' . $OUTPUT->pix_url('spacer') . '" alt="" class="spacer" />';
+        $icons = $OUTPUT->spacer() . ' ';
     }
 
     // Move icons.
-    $icons .= icon_html('up', $qtypename, 't/up', get_string('up'), '');
-    $icons .= icon_html('down', $qtypename, 't/down', get_string('down'), '');
+    $icons .= question_type_icon_html('up', $qtypename, 't/up', get_string('up'), '');
+    $icons .= question_type_icon_html('down', $qtypename, 't/down', get_string('down'), '');
     $row[] = $icons;
 
     // Delete link, if available.
     if ($needed[$qtypename]) {
         $row[] = '';
     } else {
-        $row[] = '<a href="' . admin_url('qtypes.php?delete=' . $qtypename .
-                '&amp;sesskey=' . sesskey()) . '" title="' .
-                get_string('uninstallqtype', 'admin') . '">' . get_string('delete') . '</a>';
+        $row[] = html_writer::link(new moodle_url($thispageurl,
+                array('delete' => $qtypename, 'sesskey' => sesskey())), get_string('delete'),
+                array('title' => get_string('uninstallqtype', 'admin')));
     }
 
     // Settings link, if available.
     $settings = admin_get_root()->locate('qtypesetting' . $qtypename);
     if ($settings instanceof admin_externalpage) {
-        $row[] = '<a href="' . $settings->url .
-                '">' . get_string('settings') . '</a>';
+        $row[] = html_writer::link($settings->url, get_string('settings'));
     } else if ($settings instanceof admin_settingpage) {
-        $row[] = '<a href="' . admin_url('settings.php?section=qtypesetting' . $qtypename) .
-                '">' . get_string('settings') . '</a>';
+        $row[] = html_writer::link(new moodle_url('/admin/settings.php',
+                array('section' => 'qtypesetting' . $qtypename)), get_string('settings'));
     } else {
         $row[] = '';
     }
@@ -288,28 +289,20 @@ $table->finish_output();
 
 echo $OUTPUT->footer();
 
-function admin_url($endbit) {
-    global $CFG;
-    return $CFG->wwwroot . '/' . $CFG->admin . '/' . $endbit;
-}
-
-function enable_disable_button($qtypename, $createable) {
+function question_types_enable_disable_icons($qtypename, $createable) {
     if ($createable) {
-        return icon_html('disable', $qtypename, 'i/hide', get_string('enabled', 'question'), get_string('disable'));
+        return question_type_icon_html('disable', $qtypename, 'i/hide',
+                get_string('enabled', 'question'), get_string('disable'));
     } else {
-        return icon_html('enable', $qtypename, 'i/show', get_string('disabled', 'question'), get_string('enable'));
+        return question_type_icon_html('enable', $qtypename, 'i/show',
+                get_string('disabled', 'question'), get_string('enable'));
     }
 }
 
-function icon_html($action, $qtypename, $icon, $alt, $tip) {
+function question_type_icon_html($action, $qtypename, $icon, $alt, $tip) {
     global $OUTPUT;
-    if ($tip) {
-        $tip = 'title="' . $tip . '" ';
-    }
-    $html = ' <form action="' . admin_url('qtypes.php') . '" method="post"><div>';
-    $html .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
-    $html .= '<input type="image" name="' . $action . '" value="' . $qtypename .
-            '" src="' . $OUTPUT->pix_url($icon) . '" alt="' . $alt . '" ' . $tip . '/>';
-    $html .= '</div></form>';
-    return $html;
+    return $OUTPUT->action_icon(new moodle_url('/admin/qtypes.php',
+            array($action => $qtypename, 'sesskey' => sesskey())),
+            new pix_icon($icon, $alt, 'moodle', array('title' => '')),
+            null, array('title' => $tip)) . ' ';
 }
