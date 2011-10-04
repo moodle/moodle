@@ -38,6 +38,9 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
     */
     private $assignmentfile;
 
+    /** @var int callback arg - the id of submission we export */
+    protected $submissionid;
+
     /**
     * callback arg for a single file export
     */
@@ -45,11 +48,19 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
 
     public static function expected_callbackargs() {
         return array(
-            'id'     => true,
-            'fileid' => false,
+            'id'           => true,
+            'submissionid' => false,
+            'fileid'       => false,
         );
     }
 
+    /**
+     * Load data needed for the portfolio export
+     *
+     * If the assignment type implements portfolio_load_data(), the processing is delegated
+     * to it. Otherwise, the caller must provide either fileid (to export single file) or
+     * submissionid (to export all data attached to the given submission) via callback arguments.
+     */
     public function load_data() {
         global $DB, $CFG;
 
@@ -75,9 +86,23 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
             return $this->assignment->portfolio_load_data($this);
         }
 
-        $submission = $DB->get_record('assignment_submissions', array('assignment'=>$assignment->id, 'userid'=>$this->user->id));
+        if (empty($this->fileid)) {
+            if (empty($this->submissionid)) {
+                throw new portfolio_caller_exception('invalidfileandsubmissionid', 'mod_assignment');
+            }
 
-        $this->set_file_and_format_data($this->fileid, $this->assignment->context->id, 'mod_assignment', 'submission', $submission->id, 'timemodified', false);
+            if (! $submission = $DB->get_record('assignment_submissions', array('assignment'=>$assignment->id, 'id'=>$this->submissionid))) {
+                throw new portfolio_caller_exception('invalidsubmissionid', 'mod_assignment');
+            }
+
+            $submissionid = $submission->id;
+
+        } else {
+            // once we know the file id, we do not need the submission
+            $submissionid = null;
+        }
+
+        $this->set_file_and_format_data($this->fileid, $this->assignment->context->id, 'mod_assignment', 'submission', $submissionid, 'timemodified', false);
     }
 
     public function prepare_package() {
