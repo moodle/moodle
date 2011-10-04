@@ -125,9 +125,11 @@ $string['helpuploadsingle'] = '<p>This type of assignment allows each participan
    a zipped web site, or anything you ask them to submit.</p>';
 $string['hideintro'] = 'Hide description before available date';
 $string['hideintro_help'] = 'If enabled, the assignment description is hidden before the "Available from" date. Only the assignment name is displayed.';
-$string['invalidassignment'] = 'incorrect assignment';
-$string['invalidid'] = 'assignment ID was incorrect';
-$string['invalidtype'] = 'Incorrect assignment type';
+$string['invalidassignment'] = 'Invalid assignment';
+$string['invalidfileandsubmissionid'] = 'Missing file or submission ID';
+$string['invalidid'] = 'Invalid assignment ID';
+$string['invalidsubmissionid'] = 'Invalid submission ID';
+$string['invalidtype'] = 'Invalid assignment type';
 $string['invaliduserid'] = 'Invalid user ID';
 $string['itemstocount'] = 'Count';
 $string['lastgrade'] = 'Last grade';
