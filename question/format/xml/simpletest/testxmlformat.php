@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/question/format/xml/format.php');
+require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 
 
 /**
@@ -62,6 +63,52 @@ class qformat_xml_test extends UnitTestCase {
         $q->createdby = $USER->id;
         $q->modifiedby = $USER->id;
         return $q;
+    }
+
+    /**
+     * The data the XML import format sends to save_question is not exactly
+     * the same as the data returned from the editing form, so this method
+     * makes necessary changes to the return value of
+     * test_question_maker::get_question_form_data so that the tests can work.
+     * @param object $expectedq as returned by get_question_form_data.
+     * @return object one more likely to match the return value of import_...().
+     */
+    public function remove_irrelevant_form_data_fields($expectedq) {
+        return $this->itemid_to_files($expectedq);
+    }
+
+    /**
+     * Becuase XML import uses a files array instead of an itemid integer to
+     * handle saving files with a question, we need to covert the output of
+     * test_question_maker::get_question_form_data to match. This method recursively
+     * replaces all array elements with key itemid with an array entry with
+     * key files and value an empty array.
+     *
+     * @param mixed $var any data structure.
+     * @return mixed an equivalent structure with the relacements made.
+     */
+    protected function itemid_to_files($var) {
+        if (is_object($var)) {
+            $newvar = new stdClass();
+            foreach(get_object_vars($var) as $field => $value) {
+                $newvar->$field = $this->itemid_to_files($value);
+            }
+
+        } else if (is_array($var)) {
+            $newvar = array();
+            foreach ($var as $index => $value) {
+                if ($index === 'itemid') {
+                    $newvar['files'] = array();
+                } else {
+                    $newvar[$index] = $this->itemid_to_files($value);
+                }
+            }
+
+        } else {
+            $newvar = $var;
+        }
+
+        return $newvar;
     }
 
     public function test_write_hint_basic() {
@@ -468,7 +515,7 @@ END;
         $xmldata = xmlize($xml);
 
         $importer = new qformat_xml();
-        $q = $importer->import_matching($xmldata['question']);
+        $q = $importer->import_match($xmldata['question']);
 
         $expectedq = new stdClass();
         $expectedq->qtype = 'match';
@@ -1211,6 +1258,138 @@ END;
         <text>Doh!</text>
       </feedback>
     </answer>
+  </question>
+';
+
+        $this->assert_same_xml($expectedxml, $xml);
+    }
+
+    public function test_import_multianswer() {
+        $xml = '  <question type="cloze">
+    <name>
+      <text>Simple multianswer</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[Complete this opening line of verse: "The {1:SHORTANSWER:Dog#Wrong, silly!~=Owl#Well done!~*#Wrong answer} and the {1:MULTICHOICE:Bow-wow#You seem to have a dog obsessions!~Wiggly worm#Now you are just being ridiculous!~=Pussy-cat#Well done!} went to sea".]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[General feedback: It\'s from "The Owl and the Pussy-cat" by Lear: "The owl and the pussycat went to sea".]]></text>
+    </generalfeedback>
+    <penalty>0.5</penalty>
+    <hidden>0</hidden>
+    <hint format="html">
+      <text>Hint 1</text>
+    </hint>
+    <hint format="html">
+      <text>Hint 2</text>
+    </hint>
+  </question>
+';
+        $xmldata = xmlize($xml);
+
+        $importer = new qformat_xml();
+        $q = $importer->import_multianswer($xmldata['question']);
+
+        // Annoyingly, import works in a weird way (it duplicates code, rather
+        // than just calling save_question) so we cannot use
+        // test_question_maker::get_question_form_data('multianswer', 'twosubq').
+        $expectedqa = new stdClass();
+        $expectedqa->name = 'Simple multianswer';
+        $expectedqa->qtype = 'multianswer';
+        $expectedqa->questiontext = 'Complete this opening line of verse: "The {#1} and the {#2} went to sea".';
+        $expectedqa->generalfeedback = 'General feedback: It\'s from "The Owl and the Pussy-cat" by Lear: "The owl and the pussycat went to sea".';
+        $expectedqa->defaultmark = 2;
+        $expectedqa->penalty = 0.5;
+
+        $expectedqa->hint = array(
+            array('text' => 'Hint 1', 'format' => FORMAT_HTML, 'files' => array()),
+            array('text' => 'Hint 2', 'format' => FORMAT_HTML, 'files' => array()),
+        );
+
+        $sa = new stdClass();
+
+        $sa->questiontext = array('text' => '{1:SHORTANSWER:Dog#Wrong, silly!~=Owl#Well done!~*#Wrong answer}',
+                'format' => FORMAT_HTML, 'itemid' => null);
+        $sa->generalfeedback = array('text' => '', 'format' => FORMAT_HTML, 'itemid' => null);
+        $sa->defaultmark = 1.0;
+        $sa->qtype = 'shortanswer';
+        $sa->usecase = 0;
+
+        $sa->answer = array('Dog', 'Owl', '*');
+        $sa->fraction = array(0, 1, 0);
+        $sa->feedback = array(
+            array('text' => 'Wrong, silly!', 'format' => FORMAT_HTML, 'itemid' => null),
+            array('text' => 'Well done!',    'format' => FORMAT_HTML, 'itemid' => null),
+            array('text' => 'Wrong answer',  'format' => FORMAT_HTML, 'itemid' => null),
+        );
+
+        $mc = new stdClass();
+
+        $mc->generalfeedback = '';
+        $mc->questiontext = array('text' => '{1:MULTICHOICE:Bow-wow#You seem to have a dog obsessions!~' .
+                'Wiggly worm#Now you are just being ridiculous!~=Pussy-cat#Well done!}',
+                'format' => FORMAT_HTML, 'itemid' => null);
+        $mc->generalfeedback = array('text' => '', 'format' => FORMAT_HTML, 'itemid' => null);
+        $mc->defaultmark = 1.0;
+        $mc->qtype = 'multichoice';
+
+        $mc->layout = 0;
+        $mc->single = 1;
+        $mc->shuffleanswers = 1;
+        $mc->correctfeedback =          array('text' => '', 'format' => FORMAT_HTML, 'itemid' => null);
+        $mc->partiallycorrectfeedback = array('text' => '', 'format' => FORMAT_HTML, 'itemid' => null);
+        $mc->incorrectfeedback =        array('text' => '', 'format' => FORMAT_HTML, 'itemid' => null);
+        $mc->answernumbering = 0;
+
+        $mc->answer = array(
+            array('text' => 'Bow-wow',     'format' => FORMAT_HTML, 'itemid' => null),
+            array('text' => 'Wiggly worm', 'format' => FORMAT_HTML, 'itemid' => null),
+            array('text' => 'Pussy-cat',   'format' => FORMAT_HTML, 'itemid' => null),
+        );
+        $mc->fraction = array(0, 0, 1);
+        $mc->feedback = array(
+            array('text' => 'You seem to have a dog obsessions!', 'format' => FORMAT_HTML, 'itemid' => null),
+            array('text' => 'Now you are just being ridiculous!', 'format' => FORMAT_HTML, 'itemid' => null),
+            array('text' => 'Well done!',                         'format' => FORMAT_HTML, 'itemid' => null),
+        );
+
+        $expectedqa->options = new stdClass();
+        $expectedqa->options->questions = array(
+            1 => $sa,
+            2 => $mc,
+        );
+
+        $this->assertEqual($expectedqa->hint, $q->hint);
+        $this->assertEqual($expectedqa->options->questions[1], $q->options->questions[1]);
+        $this->assertEqual($expectedqa->options->questions[2], $q->options->questions[2]);
+        $this->assert(new CheckSpecifiedFieldsExpectation($expectedqa), $q);
+    }
+
+    public function test_export_multianswer() {
+        $qdata = test_question_maker::get_question_data('multianswer', 'twosubq');
+
+        $exporter = new qformat_xml();
+        $xml = $exporter->writequestion($qdata);
+
+        $expectedxml = '<!-- question: 0  -->
+  <question type="cloze">
+    <name>
+      <text>Simple multianswer</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[Complete this opening line of verse: "The {1:SHORTANSWER:Dog#Wrong, silly!~=Owl#Well done!~*#Wrong answer} and the {1:MULTICHOICE:Bow-wow#You seem to have a dog obsessions!~Wiggly worm#Now you are just being ridiculous!~=Pussy-cat#Well done!} went to sea".]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[General feedback: It\'s from "The Owl and the Pussy-cat" by Lear: "The owl and the pussycat went to sea]]></text>
+    </generalfeedback>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <hint format="html">
+      <text>Hint 1</text>
+    </hint>
+    <hint format="html">
+      <text>Hint 2</text>
+    </hint>
   </question>
 ';
 
