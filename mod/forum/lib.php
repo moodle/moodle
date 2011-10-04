@@ -7983,8 +7983,8 @@ function forum_page_type_list($pagetype, $parentcontext, $currentcontext) {
  * @param stdClass $user The user who's posts we are looking for
  * @param bool $discussionsonly If true only look for discussions started by the user
  * @param bool $includecontexts If set to trye contexts for the courses will be preloaded
- * @param type $limitfrom The offset of records to return
- * @param type $limitnum The number of records to return
+ * @param int $limitfrom The offset of records to return
+ * @param int $limitnum The number of records to return
  * @return array An array of courses
  */
 function forum_get_courses_user_posted_in($user, $discussionsonly = false, $includecontexts = true, $limitfrom = null, $limitnum = null) {
@@ -8035,8 +8035,8 @@ function forum_get_courses_user_posted_in($user, $discussionsonly = false, $incl
  *                       all courses the user has posted within
  * @param bool $discussionsonly If true then only forums where the user has started
  *                       a discussion will be returned.
- * @param type $limitfrom The offset of records to return
- * @param type $limitnum The number of records to return
+ * @param int $limitfrom The offset of records to return
+ * @param int $limitnum The number of records to return
  * @return array An array of forums the user has posted within in the provided courses
  */
 function forum_get_forums_user_posted_in($user, array $courseids = null, $discussionsonly = false, $limitfrom = null, $limitnum = null) {
@@ -8086,6 +8086,8 @@ function forum_get_forums_user_posted_in($user, array $courseids = null, $discus
  *                             cannot access one or more of the courses to search
  * @param bool $discussionsonly If set to true only discussion starting posts
  *                              will be returned.
+ * @param int $limitfrom The offset of records to return
+ * @param int $limitnum The number of records to return
  * @return stdClass An object the following properties
  *               ->totalcount: the total number of posts made by the requested user
  *                             that the current user can see.
@@ -8182,7 +8184,8 @@ function forum_get_posts_by_user($user, array $courses, $musthaveaccess = false,
                 // Get the groups the requested user is a member of
                 $usergroups = array_keys(groups_get_all_groups($course->id, $user->id, $course->defaultgroupingid, 'g.id, g.name'));
                 // Check whether they are members of the same group. If they are great.
-                if (!array_intersect($mygroups, $usergroups)) {
+                $intersect = array_intersect($mygroups, $usergroups);
+                if (empty($intersect)) {
                     // But they're not... if it was a specific course throw an error otherwise
                     // just skip this course so that it is not searched.
                     if ($musthaveaccess) {
@@ -8223,6 +8226,8 @@ function forum_get_posts_by_user($user, array $courses, $musthaveaccess = false,
     $forumsearchparams = array();
     // Will record forums where the user can freely access everything
     $forumsearchfullaccess = array();
+    // DB caching friendly
+    $now = round(time(), -2);
     // For each course to search we want to find the forums the user has posted in
     // and providing the current user can access the forum create a search condition
     // for the forum to get the requested users posts.
