@@ -89,7 +89,7 @@ class completion_criteria_unenrol extends completion_criteria {
      * @return  string
      */
     public function get_title() {
-        return get_string('unenrol');
+        return get_string('unenrol', 'enrol');
     }
 
     /**
@@ -107,7 +107,7 @@ class completion_criteria_unenrol extends completion_criteria {
      * @return  string
      */
     public function get_type_title() {
-        return get_string('unenrol');
+        return get_string('unenrol', 'enrol');
     }
 
     /**
