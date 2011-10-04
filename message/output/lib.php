@@ -55,6 +55,14 @@ abstract class message_output {
         return true;
     }
 
+    /**
+     * @return int the Default message output settings for this output, for
+     * message providers that do not specify what the settings should be for
+     * this output in the messages.php file.
+     */
+    public function get_default_messaging_settings() {
+        return MESSAGE_PERMITTED;
+    }
 }
 
 
