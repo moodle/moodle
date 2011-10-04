@@ -108,7 +108,7 @@ class qtype_multianswer_test extends UnitTestCase {
     }
 
     public function test_get_random_guess_score() {
-        $q = $this->get_test_question_data();
+        $q = test_question_maker::get_question_data('multianswer', 'twosubq');
         $this->assertWithinMargin(0.1666667, $this->qtype->get_random_guess_score($q), 0.0000001);
     }
 }
