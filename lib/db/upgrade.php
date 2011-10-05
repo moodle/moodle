@@ -6732,7 +6732,7 @@ FROM
         // Check for potential missing columns in the grade_items_history
 
         $table = new xmldb_table('grade_items_history');
-        $field = new xmldb_field('display', XMLDB_TYPE_INTEGER, '10', XMLDB_TYPE_INTEGER, XMLDB_NOTNULL, null, 0, 'sortorder');
+        $field = new xmldb_field('display', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'sortorder');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
