@@ -115,6 +115,10 @@ function lti_view($instance) {
     $orgdesc = $typeconfig['organizationdescr'];
     */
 
+    if(!strstr($endpoint, '://')){
+        $endpoint = 'http://' . $endpoint;
+    }
+    
     $course = $PAGE->course;
     $requestparams = lti_build_request($instance, $typeconfig, $course);
 
@@ -419,13 +423,27 @@ function lti_get_ims_role($user, $context) {
 function lti_get_type_config($typeid) {
     global $DB;
 
+    $query = <<<QUERY
+        SELECT name, value
+        FROM {lti_types_config}
+        WHERE typeid = :typeid1
+        
+        UNION ALL
+        
+        SELECT 'toolurl' AS name, baseurl AS value
+        FROM {lti_types}
+        WHERE id = :typeid2
+QUERY;
+    
     $typeconfig = array();
-    $configs = $DB->get_records('lti_types_config', array('typeid' => $typeid));
+    $configs = $DB->get_records_sql($query, array('typeid1' => $typeid, 'typeid2' => $typeid));
+    
     if (!empty($configs)) {
         foreach ($configs as $config) {
             $typeconfig[$config->name] = $config->value;
         }
     }
+    
     return $typeconfig;
 }
 
@@ -913,7 +931,7 @@ function lti_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $
     $parms["ext_submit"] = $submittext;
 
     $testtoken = '';
-
+    
     $hmacmethod = new lti\OAuthSignatureMethod_HMAC_SHA1();
     $testconsumer = new lti\OAuthConsumer($oauthconsumerkey, $oauthconsumersecret, null);
 
