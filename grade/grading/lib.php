@@ -29,14 +29,26 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Factory method returning an instance of the grading manager
  *
- * @param stdClass $context
+ * @param stdClass|int $context or $areaid
  * @param string $component the frankenstyle name of the component
  * @param string $area the name of the gradable area
  * @return grading_manager
  */
-function get_grading_manager($context = null, $component = null, $area = null) {
+function get_grading_manager($context_or_areaid = null, $component = null, $area = null) {
+    global $DB;
 
     $manager = new grading_manager();
+
+    if (is_object($context_or_areaid)) {
+        $context = $context_or_areaid;
+    } else {
+        $context = null;
+
+        if (is_numeric($context_or_areaid)) {
+            $manager->load($context_or_areaid);
+            return $manager;
+        }
+    }
 
     if (!is_null($context)) {
         $manager->set_context($context);
@@ -108,6 +120,20 @@ class grading_manager {
     public function set_area($area) {
         $this->areacache = null;
         $this->area = $area;
+    }
+
+    /**
+     * Loads the gradable area info from the database
+     *
+     * @param int $areaid
+     */
+    public function load($areaid) {
+        global $DB;
+
+        $this->areacache = $DB->get_record('grading_areas', array('id' => $areaid), '*', MUST_EXIST);
+        $this->context = get_context_instance_by_id($this->areacache->contextid, MUST_EXIST);
+        $this->component = $this->areacache->component;
+        $this->area = $this->areacache->areaname;
     }
 
     /**
