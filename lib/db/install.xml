@@ -2802,7 +2802,7 @@
         <FIELD NAME="method" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the plugin providing this grading form" PREVIOUS="areaid" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The title of the form that helps users to identify it" PREVIOUS="method" NEXT="description"/>
         <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="More detailed description of the form" PREVIOUS="name" NEXT="descriptionformat"/>
-        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Format of the description field" PREVIOUS="description" NEXT="status"/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Format of the description field" PREVIOUS="description" NEXT="status"/>
         <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Status of the form definition, by default in the under-construction state" PREVIOUS="descriptionformat" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The time stamp of when the form definition was modified recently" PREVIOUS="status" NEXT="usermodified"/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The ID of the user who did the most recent modification" PREVIOUS="timemodified" NEXT="options"/>
@@ -2824,7 +2824,7 @@
         <FIELD NAME="rawgrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The raw normalized grade 0.00000 - 100.00000 as a result of the most recent assessment" PREVIOUS="itemid" NEXT="status"/>
         <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The status of the assessment. By default the instance is under-assessment state" PREVIOUS="rawgrade" NEXT="feedback"/>
         <FIELD NAME="feedback" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Overall feedback from the rater for the author of the graded item" PREVIOUS="status" NEXT="feedbackformat"/>
-        <FIELD NAME="feedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The format of the feedback field" PREVIOUS="feedback" NEXT="timemodified"/>
+        <FIELD NAME="feedbackformat" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The format of the feedback field" PREVIOUS="feedback" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The timestamp of when the assessment was most recently modified" PREVIOUS="feedbackformat"/>
       </FIELDS>
       <KEYS>
