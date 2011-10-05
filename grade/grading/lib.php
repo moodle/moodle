@@ -348,7 +348,7 @@ class grading_manager {
         }
 
         require_once($CFG->dirroot.'/grade/grading/form/'.$method.'/lib.php');
-        $classname = $method.'_grading_controller';
+        $classname = 'gradingform_'.$method.'_controller';
 
         return new $classname($this->context, $this->component, $this->area, $this->areacache->id);
     }

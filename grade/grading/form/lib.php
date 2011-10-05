@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2011 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class grading_controller {
+abstract class gradingform_controller {
 
     /** @var stdClass the context */
     protected $context;
@@ -44,16 +44,58 @@ abstract class grading_controller {
     /** @var int the id of the gradable area record */
     protected $areaid;
 
+    /** @var moodle_page the target page we embed our widgets to */
+    protected $page;
+
+    /** @var stdClass|false the raw {grading_definitions} record */
+    protected $definition;
+
+    /** @var bool is the target grading page finalized for sending output to the browser */
+    protected $pagefinalized = false;
+
     /**
      * Do not instantinate this directly, use {@link grading_manager::get_controller()}
      *
-     * @return grading_controller instance
+     * @return gradingform_controller instance
      */
     public function __construct(stdClass $context, $component, $area, $areaid) {
-        $this->context = $context;
-        $this->component = $component;
-        $this->area = $area;
-        $this->areaid = $areaid;
+        global $DB;
+
+        $this->context      = $context;
+        $this->component    = $component;
+        $this->area         = $area;
+        $this->areaid       = $areaid;
+
+        $this->load_definition();
+    }
+
+    /**
+     * Is the grading form defined and released for usage?
+     *
+     * @return boolean
+     */
+    public function is_form_available() {
+        return true; // todo make this dependent on grading_definitions existence and its status
+    }
+
+    /**
+     * Prepare a grading widget for the given rater and item
+     *
+     * If you make multiple widgets, pass bulk = true. Note that then it is
+     * the caller's responsibility to call {@link finalize_page()} method explicitly.
+     *
+     * @param int $raterid the user who will use the widget for grading
+     * @param int $itemid the graded item
+     * @param bool $bulk are more widgets to be made by this instance or is this the last one?
+     * @return gradingform_widget renderable widget to insert into the page
+     */
+    abstract public function make_grading_widget($raterid, $itemid, $bulk = false);
+
+    /**
+     * Does everything needed before the page is sent to the browser
+     */
+    public function finalize_page() {
+        $this->pagefinalized = true;
     }
 
     /**
@@ -69,4 +111,52 @@ abstract class grading_controller {
     public function extend_settings_navigation(settings_navigation $settingsnav, navigation_node $node=null) {
         // do not extend by default
     }
+
+    /**
+     * Returns the name of the grading method, eg 'rubric'
+     */
+    abstract protected function get_method_name();
+
+    /**
+     * Sets the target page and returns a renderer for this plugin
+     *
+     * @param moodle_page $page the target page
+     * @return core_renderer
+     */
+    public function prepare_renderer(moodle_page $page) {
+        global $CFG;
+
+        $this->page = $page;
+        require_once($CFG->dirroot.'/grade/grading/form/'.$this->get_method_name().'/renderer.php');
+        return $page->get_renderer('gradingform_'.$this->get_method_name());
+    }
+
+    /**
+     * Loads the form definition is it exists
+     *
+     * The default implementation tries to load just the record ftom the {grading_definitions}
+     * table. The plugins are likely to override this with a more complex query that loads
+     * all required data at once.
+     */
+    protected function load_definition() {
+        global $DB;
+
+        $this->definition = $DB->get_record('grading_definitions', array(
+            'areaid' => $this->areaid,
+            'method' => $this->get_method_name()), '*', IGNORE_MISSING);
+    }
+}
+
+
+/**
+ * Base class for all gradingform plugins renderers
+ */
+abstract class gradingform_renderer extends plugin_renderer_base {
+}
+
+
+/**
+ * Base class for all gradingform renderable widgets
+ */
+abstract class gradingform_widget implements renderable {
 }
