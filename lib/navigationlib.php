@@ -1048,7 +1048,7 @@ class global_navigation extends navigation_node {
         $this->rootnodes['site']      = $this->add_course($SITE);
         $this->rootnodes['myprofile'] = $this->add(get_string('myprofile'), null, self::TYPE_USER, null, 'myprofile');
         $this->rootnodes['mycourses'] = $this->add(get_string('mycourses'), null, self::TYPE_ROOTNODE, null, 'mycourses');
-        $this->rootnodes['courses']   = $this->add(get_string('courses'), null, self::TYPE_ROOTNODE, null, 'courses');
+        $this->rootnodes['courses']   = $this->add(get_string('courses'), new moodle_url('/course/index.php'), self::TYPE_ROOTNODE, null, 'courses');
         $this->rootnodes['users']     = $this->add(get_string('users'), null, self::TYPE_ROOTNODE, null, 'users');
 
         // Fetch all of the users courses.
@@ -3000,9 +3000,11 @@ class settings_navigation extends navigation_node {
             $url = null;
             $icon = null;
             if ($adminbranch instanceof admin_settingpage) {
-                $url = new moodle_url('/admin/settings.php', array('section'=>$adminbranch->name));
+                $url = new moodle_url('/'.$CFG->admin.'/settings.php', array('section'=>$adminbranch->name));
             } else if ($adminbranch instanceof admin_externalpage) {
                 $url = $adminbranch->url;
+            } else if (!empty($CFG->linkadmincategories) && $adminbranch instanceof admin_category) {
+                $url = new moodle_url('/'.$CFG->admin.'/category.php', array('category' => $adminbranch->name));
             }
 
             // Add the branch

@@ -157,6 +157,7 @@ $string['cannotusepage2'] = 'Sorry, you may not use this page';
 $string['cannotviewprofile'] = 'You cannot view the profile of this user';
 $string['cannotviewreport'] = 'You cannot view this report';
 $string['cannotwritefile'] = 'Cannot write to file ({$a})';
+$string['categoryerror'] = 'Category error';
 $string['commentmisconf'] = 'Comment ID is misconfigured';
 $string['componentisuptodate'] = 'Component is up-to-date';
 $string['confirmsesskeybad'] = 'Sorry, but your session key could not be confirmed to carry out this action.  This security feature prevents against accidental or malicious execution of important functions in your name.  Please make sure you really wanted to execute this function.';
