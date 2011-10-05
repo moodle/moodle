@@ -124,23 +124,16 @@ class quiz_access_manager {
     }
 
     /**
-     * Load any settings required by the access rules. We try to do this with
-     * a single DB query.
-     *
-     * Note that the standard plugins do not use this mechanism, becuase all their
-     * settings are stored in the quiz table.
-     *
+     * Build the SQL for loading all the access settings in one go.
      * @param int $quizid the quiz id.
-     * @return array setting value name => value. The value names should all
-     *      start with the name of the corresponding plugin to avoid collisions.
+     * @param string $basefields initial part of the select list.
+     * @return array with two elements, the sql and the placeholder values.
      */
-    public static function load_settings($quizid) {
-        global $DB;
-        $rules = get_plugin_list_with_class('quizaccess', '', 'rule.php');
-
-        $allfields = '';
+    protected static function get_load_sql($quizid, $rules, $basefields) {
+        $allfields = $basefields;
         $alljoins = '{quiz} quiz';
         $allparams = array('quizid' => $quizid);
+
         foreach ($rules as $rule) {
             list($fields, $joins, $params) = $rule::get_settings_sql($quizid);
             if ($fields) {
@@ -156,16 +149,59 @@ class quiz_access_manager {
                 $allparams += $params;
             }
         }
-        $data = (array) $DB->get_record_sql("
-                SELECT $allfields
-                  FROM $alljoins
-                 WHERE quiz.id = :quizid", $allparams);
+
+        return array("SELECT $allfields FROM $alljoins WHERE quiz.id = :quizid", $allparams);
+    }
+
+    /**
+     * Load any settings required by the access rules. We try to do this with
+     * a single DB query.
+     *
+     * Note that the standard plugins do not use this mechanism, becuase all their
+     * settings are stored in the quiz table.
+     *
+     * @param int $quizid the quiz id.
+     * @return array setting value name => value. The value names should all
+     *      start with the name of the corresponding plugin to avoid collisions.
+     */
+    public static function load_settings($quizid) {
+        global $DB;
+
+        $rules = get_plugin_list_with_class('quizaccess', '', 'rule.php');
+        list($sql, $params) = self::get_load_sql($quizid, $rules, '');
+        $data = (array) $DB->get_record_sql($sql, $params);
 
         foreach ($rules as $rule) {
             $data += $rule::get_extra_settings($quizid);
         }
 
         return $data;
+    }
+
+    /**
+     * Load the quiz settings and any settings required by the access rules.
+     * We try to do this with a single DB query.
+     *
+     * Note that the standard plugins do not use this mechanism, becuase all their
+     * settings are stored in the quiz table.
+     *
+     * @param int $quizid the quiz id.
+     * @return object mdl_quiz row with extra fields.
+     */
+    public static function load_quiz_and_settings($quizid) {
+        global $DB;
+
+        $rules = get_plugin_list_with_class('quizaccess', '', 'rule.php');
+        list($sql, $params) = self::get_load_sql($quizid, $rules, 'quiz.*');
+        $quiz = $DB->get_record_sql($sql, $params, MUST_EXIST);
+
+        foreach ($rules as $rule) {
+            foreach ($rule::get_extra_settings($quizid) as $name => $value) {
+                $quiz->$name = $value;
+            }
+        }
+
+        return $quiz;
     }
 
     protected function accumulate_messages(&$messages, $new) {

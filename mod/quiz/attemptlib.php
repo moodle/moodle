@@ -103,7 +103,7 @@ class quiz {
     public static function create($quizid, $userid) {
         global $DB;
 
-        $quiz = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
+        $quiz = quiz_access_manager::load_quiz_and_settings($quizid);
         $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
@@ -383,7 +383,7 @@ class quiz_attempt {
         global $DB;
 
         $attempt = $DB->get_record('quiz_attempts', $conditions, '*', MUST_EXIST);
-        $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz), '*', MUST_EXIST);
+        $quiz = quiz_access_manager::load_quiz_and_settings($attempt->quiz);
         $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 

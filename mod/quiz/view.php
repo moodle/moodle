@@ -40,9 +40,6 @@ if ($id) {
     if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
         print_error('coursemisconf');
     }
-    if (!$quiz = $DB->get_record('quiz', array('id' => $cm->instance))) {
-        print_error('invalidcoursemodule');
-    }
 } else {
     if (!$quiz = $DB->get_record('quiz', array('id' => $q))) {
         print_error('invalidquizid', 'quiz');
@@ -67,8 +64,10 @@ $canpreview = has_capability('mod/quiz:preview', $context);
 
 // Create an object to manage all the other (non-roles) access rules.
 $timenow = time();
-$accessmanager = new quiz_access_manager(quiz::create($quiz->id, $USER->id), $timenow,
+$quizobj = quiz::create($cm->instance, $USER->id);
+$accessmanager = new quiz_access_manager($quizobj, $timenow,
         has_capability('mod/quiz:ignoretimelimits', $context, null, false));
+$quiz = $quizobj->get_quiz();
 
 // Log this request.
 add_to_log($course->id, 'quiz', 'view', 'view.php?id=' . $cm->id, $quiz->id, $cm->id);
@@ -83,9 +82,6 @@ $edit = optional_param('edit', -1, PARAM_BOOL);
 if ($edit != -1 && $PAGE->user_allowed_editing()) {
     $USER->editing = $edit;
 }
-
-// Update the quiz with overrides for the current user
-$quiz = quiz_update_effective_access($quiz, $USER->id);
 
 // Get this user's attempts.
 $attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'finished', true);
