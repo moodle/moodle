@@ -136,7 +136,7 @@ function lti_read_grade($ltiinstance, $userid){
     
     $grades = grade_get_grades($ltiinstance->course, LTI_ITEM_TYPE, LTI_ITEM_MODULE, $ltiinstance->id, $userid);
     
-    if (isset($grades) && is_array($grades->items[0]->grades)) {
+    if (isset($grades) && isset($grades->items[0]) && is_array($grades->items[0]->grades)) {
         foreach ($grades->items[0]->grades as $agrade) {
             $grade = $agrade->grade;
             break;
@@ -149,6 +149,9 @@ function lti_read_grade($ltiinstance, $userid){
 }
 
 function lti_delete_grade($ltiinstance, $userid){
+    global $CFG;
+    require_once($CFG->libdir . '/gradelib.php');
+    
     $grade = new stdClass();
     $grade->userid   = $userid;
     $grade->rawgrade = null;
