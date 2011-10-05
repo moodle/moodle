@@ -225,6 +225,10 @@ function lti_build_request($instance, $typeconfig, $course) {
         $requestparams["lis_person_contact_email_primary"] = $USER->email;
     }
 
+    //Add outcome service URL
+    $url = new moodle_url('/mod/lti/service.php');
+    $requestparams['lis_outcome_service_url'] = $url->out();
+    
     // Concatenate the custom parameters from the administrator and the instructor
     // Instructor parameters are only taken into consideration if the administrator
     // has giver permission
