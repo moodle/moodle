@@ -91,7 +91,7 @@ function lti_add_instance($formdata) {
     
     $id = $DB->insert_record("lti", $formdata);
 
-    if ($formdata->instructorchoiceacceptgrades == 1) {
+    if ($formdata->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS) {
         $basiclti = $DB->get_record('lti', array('id'=>$id));
         
         if(!isset($formdata->cmidnumber)){
@@ -128,7 +128,7 @@ function lti_update_instance($formdata) {
         $formdata->showdescription = 0;
     }
     
-    if ($formdata->instructorchoiceacceptgrades == 1) {
+    if ($formdata->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS) {
         $basicltirec = $DB->get_record("lti", array("id" => $formdata->id));
         $basicltirec->cmidnumber = $formdata->cmidnumber;
         

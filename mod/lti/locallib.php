@@ -66,7 +66,7 @@ define('LTI_TOOL_STATE_REJECTED', 3);
 
 define('LTI_SETTING_NEVER', 0);
 define('LTI_SETTING_ALWAYS', 1);
-define('LTI_SETTING_DEFAULT', 2);
+define('LTI_SETTING_DELEGATE', 2);
 
 /**
  * Prints a Basic LTI activity
@@ -199,29 +199,29 @@ function lti_build_request($instance, $typeconfig, $course) {
     }
 
     if ( isset($placementsecret) &&
-         ( $typeconfig['acceptgrades'] == 1 ||
-         ( $typeconfig['acceptgrades'] == 2 && $instance->instructorchoiceacceptgrades == 1 ) ) ) {
+         ( $typeconfig['acceptgrades'] == LTI_SETTING_ALWAYS ||
+         ( $typeconfig['acceptgrades'] == LTI_SETTING_DELEGATE && $instance->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS ) ) ) {
         $requestparams["lis_result_sourcedid"] = $sourcedid;
         $requestparams["ext_ims_lis_basic_outcome_url"] = $CFG->wwwroot.'/mod/lti/service.php';
     }
 
     if ( isset($placementsecret) &&
-         ( $typeconfig['allowroster'] == 1 ||
-         ( $typeconfig['allowroster'] == 2 && $instance->instructorchoiceallowroster == 1 ) ) ) {
+         ( $typeconfig['allowroster'] == LTI_SETTING_ALWAYS ||
+         ( $typeconfig['allowroster'] == LTI_SETTING_DELEGATE && $instance->instructorchoiceallowroster == LTI_SETTING_ALWAYS ) ) ) {
         $requestparams["ext_ims_lis_memberships_id"] = $sourcedid;
         $requestparams["ext_ims_lis_memberships_url"] = $CFG->wwwroot.'/mod/lti/service.php';
     }
 
     // Send user's name and email data if appropriate
-    if ( $typeconfig['sendname'] == 1 ||
-         ( $typeconfig['sendname'] == 2 && $instance->instructorchoicesendname == 1 ) ) {
+    if ( $typeconfig['sendname'] == LTI_SETTING_ALWAYS ||
+         ( $typeconfig['sendname'] == LTI_SETTING_DELEGATE && $instance->instructorchoicesendname == LTI_SETTING_ALWAYS ) ) {
         $requestparams["lis_person_name_given"] =  $USER->firstname;
         $requestparams["lis_person_name_family"] =  $USER->lastname;
         $requestparams["lis_person_name_full"] =  $USER->firstname." ".$USER->lastname;
     }
 
-    if ( $typeconfig['sendemailaddr'] == 1 ||
-         ( $typeconfig['sendemailaddr'] == 2 && $instance->instructorchoicesendemailaddr == 1 ) ) {
+    if ( $typeconfig['sendemailaddr'] == LTI_SETTING_ALWAYS ||
+         ( $typeconfig['sendemailaddr'] == LTI_SETTING_DELEGATE && $instance->instructorchoicesendemailaddr == LTI_SETTING_ALWAYS ) ) {
         $requestparams["lis_person_contact_email_primary"] = $USER->email;
     }
 
@@ -235,7 +235,7 @@ function lti_build_request($instance, $typeconfig, $course) {
     if ($customstr) {
         $custom = lti_split_custom_parameters($customstr);
     }
-    if (!isset($typeconfig['allowinstructorcustom']) || $typeconfig['allowinstructorcustom'] == 0) {
+    if (!isset($typeconfig['allowinstructorcustom']) || $typeconfig['allowinstructorcustom'] == LTI_SETTING_NEVER) {
         $requestparams = array_merge($custom, $requestparams);
     } else {
         if ($instructorcustomstr) {
