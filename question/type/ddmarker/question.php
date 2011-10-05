@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/type/ddimageortext/questionbase.php');
+require_once($CFG->dirroot . '/question/type/ddmarker/shapes.php');
 
 
 /**

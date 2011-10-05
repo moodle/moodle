@@ -91,14 +91,16 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
         return array();
     }
 
-
+    protected function shapes() {
+        return array('circle', 'rectangle', 'polygon');
+    }
 
 
     protected function drop_zone($mform, $imagerepeats) {
         $dropzoneitem = array();
 
         $grouparray = array();
-        foreach (array('circle', 'rectangle', 'polygon') as $shape) {
+        foreach ($this->shapes as $shape) {
             $shapearray[$shape] = get_string('shape_'.$shape, 'qtype_ddmarker');
         }
         $grouparray[] = $mform->createElement('select', 'shape',
@@ -208,7 +210,8 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        if (!self::file_uploaded($data['bgimage'])) {
+        $bgimagesize = $this->get_image_size_in_draft_area($data['bgimage']);
+        if ($bgimagesize === null) {
             $errors["bgimage"] = get_string('formerror_nobgimage', 'qtype_ddmarker');
         }
 
@@ -220,6 +223,11 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
 
             if ($choicepresent) {
                 //test coords here
+                if ($bgimagesize !== null) {
+                    if (in_array($data['drops'][$i]['shape'], $this->shapes())) {
+
+                    }
+                }
 
 
             } else {
@@ -238,5 +246,25 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
 
         }
         return $errors;
+    }
+
+    public function get_image_size_in_draft_area($draftitemid) {
+        global $USER;
+        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+        $fs = get_file_storage();
+        $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id');
+        if ($draftfiles) {
+            foreach ($draftfiles as $file) {
+                if ($file->is_directory()) {
+                    continue;
+                }
+                //just return the data for the first good file, there should only be one.
+                $imageinfo = $file->get_imageinfo();
+                $width    = $imageinfo['width'];
+                $height   = $imageinfo['height'];
+                return array($width, $height);
+            }
+        }
+        return null;
     }
 }
