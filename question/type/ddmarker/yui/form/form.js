@@ -12,7 +12,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
         initializer : function(params) {
             this.fp = this.file_pickers();
             Y.one(this.get('topnode')).append('<div class="ddarea"><div class="dropzones"></div>'+
-                    '<div class="droparea"></div></div>');
+                    '<div class="droparea"></div><div class="markertexts"></div></div>');
             this.doc = this.doc_structure(this);
             this.draw_dd_area();
         },
@@ -76,20 +76,28 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             }
         },
         update_drop_zone : function (dropzoneno) {
-            var markertext;
             var dragitemno = this.form.get_form_value('drops', [dropzoneno, 'choice']);
-            if (+dragitemno !== 0){
-                markertext = this.get_marker_text(dragitemno);
-            } else {
-                markertext = '';
-            }
+            var markertext = this.get_marker_text(dragitemno);
             var shape = this.form.get_form_value('drops', [dropzoneno, 'shape']);
             var drawfunc = 'draw_shape_'+shape;
             if (this[drawfunc] instanceof Function){
-               this[drawfunc](dropzoneno, markertext);
+               var xyfortext = this[drawfunc](dropzoneno);
+               if (xyfortext !== null) {
+                   var classnames = 'markertext markertext' + dropzoneno;
+                   var existingdiv = Y.one('div.ddarea div.markertexts span.markertext'+dropzoneno);
+                   if (existingdiv) {
+                       existingdiv.setContent(markertext);
+                   } else {
+                       Y.one('div.ddarea div.markertexts').append('<span class="'+classnames+'">' +
+                                                                           markertext+'</span>');
+                   }
+                   var markerspan = Y.one('div.ddarea div.markertexts span.markertext'+dropzoneno);
+                   markerspan.setStyle('opacity', '0.6');
+                   markerspan.setXY(this.convert_to_window_xy(xyfortext));
+               }
             }
         },
-        draw_shape_circle : function (dropzoneno, markertext) {
+        draw_shape_circle : function (dropzoneno) {
             var coords = this.get_coords(dropzoneno);
             var coordsparts = coords.match(/(\d+),(\d+);(\d+)/);
             if (coordsparts && coordsparts.length === 4) {
@@ -110,10 +118,12 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                             }
                     });
                     shape.setXY(this.convert_to_window_xy(xy));
+                    return [+coordsparts[1], +coordsparts[2]];
                 }
             }
+            return null;
         },
-        draw_shape_rectangle : function (dropzoneno, markertext) {
+        draw_shape_rectangle : function (dropzoneno) {
             var coords = this.get_coords(dropzoneno);
             var coordsparts = coords.match(/(\d+),(\d+);(\d+),(\d+)/);
             if (coordsparts && coordsparts.length === 5) {
@@ -134,10 +144,13 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                             }
                     });
                     shape.setXY(this.convert_to_window_xy(xy));
+                    return [+xy[0]+widthheight[0]/2, +xy[1]+widthheight[1]/2];
                 }
             }
+            return null;
+
         },
-        draw_shape_polygon : function (dropzoneno, markertext) {
+        draw_shape_polygon : function (dropzoneno) {
             var coords = this.form.get_form_value('drops', [dropzoneno, 'coords']);
             var coordsparts = coords.split(';');
             var xy = [];
@@ -159,8 +172,14 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                         opacity : "0.5"
                     }
                 });
+                var maxxy = [0,0];
+                var minxy = [this.doc.bg_img().get('width'), this.doc.bg_img().get('height')];
                 for (var i in xy) {
-                    var windowxy = this.convert_to_window_xy(xy[i]);
+                    //calculate min and max points to find center to show marker on
+                    minxy[0] = Math.min(xy[i][0], minxy[0]);
+                    minxy[1] = Math.min(xy[i][1], minxy[1]);
+                    maxxy[0] = Math.max(xy[i][0], maxxy[0]);
+                    maxxy[1] = Math.max(xy[i][1], maxxy[1]);
                     if (i == 0) {
                         polygon.moveTo(xy[i][0], xy[i][1]);
                     } else {
@@ -173,7 +192,9 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                 }
                 polygon.end();
                 polygon.setXY(this.doc.bg_img().getXY());
+                return [Math.round((minxy[0] + maxxy[0])/2), Math.round((minxy[1] + maxxy[1])/2)];
             }
+            return null;
         },
         coords_in_img : function (coords) {
             return (coords[0] <= this.doc.bg_img().get('width') && 
@@ -184,8 +205,12 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             return coords.replace(new RegExp("\\s*", 'g'), '');
         },
         get_marker_text : function (markerno) {
-            var label = this.form.get_form_value('drags', [markerno, 'label']);
-            return label.replace(new RegExp("^\\s*(.*)\\s*$"), "$1");
+            if (+markerno !== 0){
+                var label = this.form.get_form_value('drags', [markerno-1, 'label']);
+                return label.replace(new RegExp("^\\s*(.*)\\s*$"), "$1");
+            } else {
+                return '';
+            }
         },
         set_options_for_drag_item_selectors : function () {
             var dragitemsoptions = {0: ''};

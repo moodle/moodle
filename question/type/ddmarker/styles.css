@@ -74,3 +74,9 @@ form.mform fieldset#previewareaheader div.draghome, form.mform fieldset#previewa
     *font-size:small; /* for IE */
     *font:x-small; /* for IE in quirks mode */
 }
+.que.ddmarker div.markertexts span.markertext,
+form.mform fieldset#previewareaheader div.markertexts span.markertext {
+    border: 1px solid black;
+    background-color: white;
+    padding: 5px;
+}
