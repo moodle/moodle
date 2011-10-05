@@ -1038,6 +1038,9 @@ function quiz_after_add_or_update($quiz) {
                 array('id' => $feedback->id));
     }
 
+    // Store any settings belonging to the access rules.
+    quiz_access_manager::save_settings($quiz);
+
     // Update the events relating to this quiz.
     quiz_update_events($quiz);
 

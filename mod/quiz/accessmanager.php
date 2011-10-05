@@ -90,6 +90,31 @@ class quiz_access_manager {
         }
     }
 
+    /**
+     * Add any form fields that the access rules require to the settings form.
+     * @param mod_quiz_mod_form $quizform the quiz settings form that is being built.
+     * @param MoodleQuickForm $mform the wrapped MoodleQuickForm.
+     */
+    public static function add_settings_form_fields(
+            mod_quiz_mod_form $quizform, MoodleQuickForm $mform) {
+        $rules = get_plugin_list_with_class('quizaccess', '', 'rule.php');
+        foreach ($rules as $rule) {
+            $rule::add_settings_form_fields($quizform, $mform);
+        }
+    }
+
+    /**
+     * Save any submitted settings when the quiz settings form is submitted.
+     * @param object $quiz the data from the quiz form, including $quiz->id
+     *      which is the is of the quiz being saved.
+     */
+    public static function save_settings($quiz) {
+        $rules = get_plugin_list_with_class('quizaccess', '', 'rule.php');
+        foreach ($rules as $rule) {
+            $rule::save_settings($quiz);
+        }
+    }
+
     protected function accumulate_messages(&$messages, $new) {
         if (is_array($new)) {
             $messages = array_merge($messages, $new);

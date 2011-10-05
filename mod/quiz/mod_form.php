@@ -293,6 +293,9 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->setAdvanced('popup', $quizconfig->popup_adv);
         $mform->setDefault('popup', $quizconfig->popup);
 
+        // Any other rule plugins.
+        quiz_access_manager::add_settings_form_fields($this, $mform);
+
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'overallfeedbackhdr', get_string('overallfeedback', 'quiz'));
         $mform->addHelpButton('overallfeedbackhdr', 'overallfeedback', 'quiz');

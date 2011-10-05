@@ -106,4 +106,26 @@ abstract class quiz_access_rule_base {
     public function time_left($attempt, $timenow) {
         return false;
     }
+
+    /**
+     * Add any fields that this rule requires to the quiz settings form. This
+     * method is called from {@link mod_quiz_mod_form::definition()}, while the
+     * security seciton is being built.
+     * @param mod_quiz_mod_form $quizform the quiz settings form that is being built.
+     * @param MoodleQuickForm $mform the wrapped MoodleQuickForm.
+     */
+    public static function add_settings_form_fields(
+            mod_quiz_mod_form $quizform, MoodleQuickForm $mform) {
+        // By default do nothing.
+    }
+
+    /**
+     * Save any submitted settings when the quiz settings form is submitted. This
+     * is called from {@link quiz_after_add_or_update()} in lib.php.
+     * @param object $quiz the data from the quiz form, including $quiz->id
+     *      which is the is of the quiz being saved.
+     */
+    public static function save_settings($quiz) {
+        // By default do nothing.
+    }
 }
