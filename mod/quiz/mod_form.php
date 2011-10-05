@@ -452,6 +452,14 @@ class mod_quiz_mod_form extends moodleform_mod {
             $toform['quizpassword'] = $toform['password'];
             unset($toform['password']);
         }
+
+        // Load any settings belonging to the access rules.
+        if (!empty($toform['instance'])) {
+            $accesssettings = quiz_access_manager::load_settings($toform['instance']);
+            foreach ($accesssettings as $name => $value) {
+                $toform[$name] = $value;
+            }
+        }
     }
 
     public function validation($data, $files) {

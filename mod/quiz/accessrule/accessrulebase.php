@@ -128,4 +128,39 @@ abstract class quiz_access_rule_base {
     public static function save_settings($quiz) {
         // By default do nothing.
     }
+
+    /**
+     * Return the bits of SQL needed to load all the settings from all the access
+     * plugins in one DB query. The easiest way to understand what you need to do
+     * here is probalby to read the code of {@link quiz_access_manager::load_settings()}.
+     *
+     * If you have some settings that cannot be loaded in this way, then you can
+     * use the {@link get_extra_settings()} method instead, but that has
+     * performance implications.
+     *
+     * @param int $quizid the id of the quiz we are loading settings for. This
+     *     can also be accessed as quiz.id in the SQL. (quiz is a table alisas for {quiz}.)
+     * @return array with three elements:
+     *     1. fields: any fields to add to the select list. These should be alised
+     *        if neccessary so that the field name starts the name of the plugin.
+     *     2. joins: any joins (should probably be LEFT JOINS) with other tables that
+     *        are needed.
+     *     3. params: array of placeholder values that are needed by the SQL. You must
+     *        used named placeholders, and the placeholder names should start with the
+     *        plugin name, to avoid collisions.
+     */
+    public static function get_settings_sql($quizid) {
+        return array('', '', array());
+    }
+
+    /**
+     * You can use this method to load any extra settings your plugin has that
+     * cannot be loaded efficiently with get_settings_sql().
+     * @param int $quizid the quiz id.
+     * @return array setting value name => value. The value names should all
+     *      start with the name of your plugin to avoid collisions.
+     */
+    public static function get_extra_settings($quizid) {
+        return array();
+    }
 }

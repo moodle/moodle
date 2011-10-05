@@ -92,6 +92,10 @@ class quiz_access_manager {
 
     /**
      * Add any form fields that the access rules require to the settings form.
+     *
+     * Note that the standard plugins do not use this mechanism, becuase all their
+     * settings are stored in the quiz table.
+     *
      * @param mod_quiz_mod_form $quizform the quiz settings form that is being built.
      * @param MoodleQuickForm $mform the wrapped MoodleQuickForm.
      */
@@ -105,6 +109,10 @@ class quiz_access_manager {
 
     /**
      * Save any submitted settings when the quiz settings form is submitted.
+     *
+     * Note that the standard plugins do not use this mechanism, becuase all their
+     * settings are stored in the quiz table.
+     *
      * @param object $quiz the data from the quiz form, including $quiz->id
      *      which is the is of the quiz being saved.
      */
@@ -113,6 +121,51 @@ class quiz_access_manager {
         foreach ($rules as $rule) {
             $rule::save_settings($quiz);
         }
+    }
+
+    /**
+     * Load any settings required by the access rules. We try to do this with
+     * a single DB query.
+     *
+     * Note that the standard plugins do not use this mechanism, becuase all their
+     * settings are stored in the quiz table.
+     *
+     * @param int $quizid the quiz id.
+     * @return array setting value name => value. The value names should all
+     *      start with the name of the corresponding plugin to avoid collisions.
+     */
+    public static function load_settings($quizid) {
+        global $DB;
+        $rules = get_plugin_list_with_class('quizaccess', '', 'rule.php');
+
+        $allfields = '';
+        $alljoins = '{quiz} quiz';
+        $allparams = array('quizid' => $quizid);
+        foreach ($rules as $rule) {
+            list($fields, $joins, $params) = $rule::get_settings_sql($quizid);
+            if ($fields) {
+                if ($allfields) {
+                    $allfields .= ', ';
+                }
+                $allfields .= $fields;
+            }
+            if ($joins) {
+                $alljoins .= ' ' . $joins;
+            }
+            if ($params) {
+                $allparams += $params;
+            }
+        }
+        $data = (array) $DB->get_record_sql("
+                SELECT $allfields
+                  FROM $alljoins
+                 WHERE quiz.id = :quizid", $allparams);
+
+        foreach ($rules as $rule) {
+            $data += $rule::get_extra_settings($quizid);
+        }
+
+        return $data;
     }
 
     protected function accumulate_messages(&$messages, $new) {
