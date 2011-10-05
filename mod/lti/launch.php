@@ -50,7 +50,6 @@ require_once($CFG->dirroot.'/mod/lti/lib.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
-    $object = optional_param('withobject', false, PARAM_BOOL); // Launch BasicLTI in an object
 
 if ($id) {
     if (! $cm = $DB->get_record("course_modules", array("id" => $id))) {
@@ -81,5 +80,5 @@ require_login($course);
 
 add_to_log($course->id, "lti", "launch", "launch.php?id=$cm->id", "$basiclti->id");
 
-lti_view($basiclti, $object);
+lti_view($basiclti);
 

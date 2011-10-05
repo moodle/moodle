@@ -73,7 +73,7 @@ define('LTI_SETTING_DEFAULT', 2);
  *
  * $param int $basicltiid       Basic LTI activity id
  */
-function lti_view($instance, $makeobject=false) {
+function lti_view($instance) {
     global $PAGE, $CFG;
 
     if(empty($instance->typeid)){
