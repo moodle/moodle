@@ -285,17 +285,27 @@ class quiz_access_manager {
     }
 
     /**
-     * Do the printheader call, etc. required for a secure page, including the necessary JS.
+     * Sets up the attempt (review or summary) page with any properties required
+     * by the access rules.
      *
-     * @param string $title HTML title tag content, passed to printheader.
-     * @param string $headtags extra stuff to go in the HTML head tag, passed to printheader.
+     * @param moodle_page $page the page object to initialise.
      */
-    public function setup_secure_page($title, $headtags = null) {
-        $this->securewindowrule->setup_secure_page($title, $headtags);
+    public function setup_attempt_page($page) {
+        foreach ($this->rules as $rule) {
+            $rule->setup_attempt_page($page);
+        }
     }
 
-    public function show_attempt_timer_if_needed($attempt, $timenow) {
-        global $PAGE;
+    /**
+     * Will cause the attempt time to start counting down after the page has loaded,
+     * if that is necessary.
+     *
+     * @param object $attempt the data from the relevant quiz_attempts row.
+     * @param int $timenow the time to consider as 'now'.
+     * @param mod_quiz_renderer $output the quiz renderer.
+     */
+    public function show_attempt_timer_if_needed($attempt, $timenow, $output) {
+
         $timeleft = false;
         foreach ($this->rules as $rule) {
             $ruletimeleft = $rule->time_left($attempt, $timenow);
@@ -303,132 +313,55 @@ class quiz_access_manager {
                 $timeleft = $ruletimeleft;
             }
         }
+
         if ($timeleft !== false) {
             // Make sure the timer starts just above zero. If $timeleft was <= 0, then
             // this will just have the effect of causing the quiz to be submitted immediately.
             $timerstartvalue = max($timeleft, 1);
-            $PAGE->requires->js_init_call('M.mod_quiz.timer.init',
-                    array($timerstartvalue), false, quiz_get_js_module());
+            $output->initialise_timer($timerstartvalue);
         }
     }
 
     /**
-     * @return bolean if this quiz should only be shown to students in a secure window.
+     * @return bolean if this quiz should only be shown to students in a popup window.
      */
-    public function securewindow_required($canpreview) {
-        return !$canpreview && !is_null($this->securewindowrule);
-    }
-
-    /**
-     * @return bolean if this quiz should only be shown to students with safe browser.
-     */
-    public function safebrowser_required($canpreview) {
-        return !$canpreview && !is_null($this->safebrowserrule);
-    }
-
-    /**
-     * Print a button to start a quiz attempt, with an appropriate javascript warning,
-     * depending on the access restrictions. The link will pop up a 'secure' window, if
-     * necessary.
-     *
-     * @param bool $canpreview whether this user can preview. This affects whether they must
-     * use a secure window.
-     * @param string $buttontext the label to put on the button.
-     * @param bool $unfinished whether the button is to continue an existing attempt,
-     * or start a new one. This affects whether a javascript alert is shown.
-     */
-    //TODO: Add this function to renderer
-    public function print_start_attempt_button($canpreview, $buttontext, $unfinished) {
-        global $OUTPUT;
-
-        $url = $this->quizobj->start_attempt_url();
-        $button = new single_button($url, $buttontext);
-        $button->class .= ' quizstartbuttondiv';
-
-        if (!$unfinished) {
-            $strconfirmstartattempt = $this->confirm_start_attempt_message();
-            if ($strconfirmstartattempt) {
-                $button->add_action(new confirm_action($strconfirmstartattempt, null,
-                        get_string('startattempt', 'quiz')));
+    public function attempt_must_be_in_popup() {
+        foreach ($this->rules as $rule) {
+            if ($rule->attempt_must_be_in_popup()) {
+                return true;
             }
         }
+        return false;
+    }
 
-        $warning = '';
-
-        if ($this->securewindow_required($canpreview)) {
-            $button->class .= ' quizsecuremoderequired';
-
-            $button->add_action(new popup_action('click', $url, 'quizpopup',
-                    securewindow_access_rule::$popupoptions));
-
-            $warning = html_writer::tag('noscript',
-                    $OUTPUT->heading(get_string('noscript', 'quiz')));
+    /**
+     * @return array any options that are required for showing the attempt page
+     *      in a popup window.
+     */
+    public function get_popup_options() {
+        $options = array();
+        foreach ($this->rules as $rule) {
+            $options += $rule->get_popup_options();
         }
-
-        return $OUTPUT->render($button) . $warning;
+        return $options;
     }
 
     /**
      * Send the user back to the quiz view page. Normally this is just a redirect, but
      * If we were in a secure window, we close this window, and reload the view window we came from.
      *
-     * @param bool $canpreview This affects whether we have to worry about secure window stuff.
+     * This method does not return;
+     *
+     * @param mod_quiz_renderer $output the quiz renderer.
+     * @param string $message optional message to output while redirecting.
      */
-    public function back_to_view_page($canpreview, $message = '') {
-        global $CFG, $OUTPUT, $PAGE;
-        $url = $this->quizobj->view_url();
-        if ($this->securewindow_required($canpreview)) {
-            $PAGE->set_pagelayout('popup');
-            echo $OUTPUT->header();
-            echo $OUTPUT->box_start();
-            if ($message) {
-                echo '<p>' . $message . '</p><p>' . get_string('windowclosing', 'quiz') . '</p>';
-                $delay = 5;
-            } else {
-                echo '<p>' . get_string('pleaseclose', 'quiz') . '</p>';
-                $delay = 0;
-            }
-            $PAGE->requires->js_function_call('M.mod_quiz.secure_window.close',
-                    array($url, $delay));
-            echo $OUTPUT->box_end();
-            echo $OUTPUT->footer();
+    public function back_to_view_page($output, $message = '') {
+        if ($this->attempt_must_be_in_popup()) {
+            echo $output->close_attempt_popup($message, $this->quizobj->view_url());
             die();
         } else {
-            redirect($url, $message);
+            redirect($this->quizobj->view_url(), $message);
         }
-    }
-
-    /**
-     * Print a control to finish the review. Normally this is just a link, but if we are
-     * in a secure window, it needs to be a button that does M.mod_quiz.secure_window.close.
-     *
-     * @param bool $canpreview This affects whether we have to worry about secure window stuff.
-     */
-    public function print_finish_review_link($canpreview, $return = false) {
-        global $CFG;
-        $output = '';
-        $url = $this->quizobj->view_url();
-        $output .= '<div class="finishreview">';
-        if ($this->securewindow_required($canpreview)) {
-            $url = addslashes_js(htmlspecialchars($url));
-            $output .= '<input type="button" value="' . get_string('finishreview', 'quiz') . '" ' .
-                    "onclick=\"M.mod_quiz.secure_window.close('$url', 0)\" />\n";
-        } else {
-            $output .= '<a href="' . $url . '">' . get_string('finishreview', 'quiz') . "</a>\n";
-        }
-        $output .= "</div>\n";
-        if ($return) {
-            return $output;
-        } else {
-            echo $output;
-        }
-    }
-
-    /**
-     * @return bolean if this quiz is password protected.
-     */
-    public function password_required() {
-        return !is_null($this->passwordrule);
     }
 
     /**
@@ -453,22 +386,6 @@ class quiz_access_manager {
     }
 
     /**
-     * @return string if the quiz policies merit it, return a warning string to be displayed
-     * in a javascript alert on the start attempt button.
-     */
-    public function confirm_start_attempt_message() {
-        $quiz = $this->quizobj->get_quiz();
-        if ($quiz->timelimit && $quiz->attempts) {
-            return get_string('confirmstartattempttimelimit', 'quiz', $quiz->attempts);
-        } else if ($quiz->timelimit) {
-            return get_string('confirmstarttimelimit', 'quiz');
-        } else if ($quiz->attempts) {
-            return get_string('confirmstartattemptlimit', 'quiz', $quiz->attempts);
-        }
-        return '';
-    }
-
-    /**
      * Make some text into a link to review the quiz, if that is appropriate.
      *
      * @param string $linktext some text.
@@ -476,12 +393,11 @@ class quiz_access_manager {
      * @return string some HTML, the $linktext either unmodified or wrapped in a
      *      link to the review page.
      */
-    public function make_review_link($attempt, $canpreview, $reviewoptions) {
-        global $CFG;
+    public function make_review_link($attempt, $reviewoptions, $output) {
 
         // If review of responses is not allowed, or the attempt is still open, don't link.
         if (!$attempt->timefinish) {
-            return '';
+            return $output->no_review_message('');
         }
 
         $when = quiz_attempt_state($this->quizobj->get_quiz(), $attempt);
@@ -489,52 +405,11 @@ class quiz_access_manager {
                 $this->quizobj->get_quiz(), $when);
 
         if (!$reviewoptions->attempt) {
-            $message = $this->cannot_review_message($when, true);
-            if ($message) {
-                return '<span class="noreviewmessage">' . $message . '</span>';
-            } else {
-                return '';
-            }
-        }
+            return $output->no_review_message($this->quizobj->cannot_review_message($when, true));
 
-        $linktext = get_string('review', 'quiz');
-
-        // It is OK to link, does it need to be in a secure window?
-        if ($this->securewindow_required($canpreview)) {
-            return $this->securewindowrule->make_review_link($linktext, $attempt->id);
         } else {
-            return '<a href="' . $this->quizobj->review_url($attempt->id) . '" title="' .
-                    get_string('reviewthisattempt', 'quiz') . '">' . $linktext . '</a>';
-        }
-    }
-
-    /**
-     * If $reviewoptions->attempt is false, meaning that students can't review this
-     * attempt at the moment, return an appropriate string explaining why.
-     *
-     * @param int $when One of the mod_quiz_display_options::DURING,
-     *      IMMEDIATELY_AFTER, LATER_WHILE_OPEN or AFTER_CLOSE constants.
-     * @param bool $short if true, return a shorter string.
-     * @return string an appropraite message.
-     */
-    public function cannot_review_message($when, $short = false) {
-        $quiz = $this->quizobj->get_quiz();
-        if ($short) {
-            $langstrsuffix = 'short';
-            $dateformat = get_string('strftimedatetimeshort', 'langconfig');
-        } else {
-            $langstrsuffix = '';
-            $dateformat = '';
-        }
-        if ($when == mod_quiz_display_options::DURING ||
-                $when == mod_quiz_display_options::IMMEDIATELY_AFTER) {
-            return '';
-        } else if ($when == mod_quiz_display_options::LATER_WHILE_OPEN && $quiz->timeclose &&
-                $quiz->reviewattempt & mod_quiz_display_options::AFTER_CLOSE) {
-            return get_string('noreviewuntil' . $langstrsuffix, 'quiz',
-                    userdate($quiz->timeclose, $dateformat));
-        } else {
-            return get_string('noreview' . $langstrsuffix, 'quiz');
+            return $output->review_link($this->quizobj->review_url($attempt->id),
+                    $this->attempt_must_be_in_popup(), $this->get_popup_options());
         }
     }
 }

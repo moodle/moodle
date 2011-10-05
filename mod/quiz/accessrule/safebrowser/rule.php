@@ -48,6 +48,11 @@ class quizaccess_safebrowser extends quiz_access_rule_base {
         return get_string("safebrowsernotice", "quiz");
     }
 
+    public function setup_attempt_page($page) {
+        $page->set_title($this->quizobj->get_course()->shortname . ': ' . $page->title);
+        $page->set_cacheable(false);
+    }
+
     /**
      * Checks if browser is safe browser
      *

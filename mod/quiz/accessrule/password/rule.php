@@ -69,7 +69,7 @@ class quizaccess_password extends quiz_access_rule_base {
 
         // If the user cancelled the password form, send them back to the view page.
         if (optional_param('cancelpassword', false, PARAM_BOOL)) {
-            $accessmanager->back_to_view_page($canpreview);
+            $accessmanager->back_to_view_page($output);
         }
 
         // If they entered the right password, let them in.
@@ -95,16 +95,8 @@ class quizaccess_password extends quiz_access_rule_base {
         $output = '';
 
         // Start the page and print the quiz intro, if any.
-        if ($accessmanager->securewindow_required($canpreview)) {
-            $accessmanager->setup_secure_page($this->quizobj->get_course()->shortname . ': ' .
-            format_string($this->quizobj->get_quiz_name()));
-        } else if ($accessmanager->safebrowser_required($canpreview)) {
-            $PAGE->set_title($this->quizobj->get_course()->shortname . ': ' .
-            format_string($this->quizobj->get_quiz_name()));
-            $PAGE->set_cacheable(false);
-        } else {
-            $PAGE->set_title(format_string($this->quizobj->get_quiz_name()));
-        }
+        $PAGE->set_title(format_string($this->quizobj->get_quiz_name()));
+        $accessmanager->setup_attempt_page($PAGE);
 
         echo $OUTPUT->header();
         if (trim(strip_tags($this->quiz->intro))) {

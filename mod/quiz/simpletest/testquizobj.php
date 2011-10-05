@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for the access manager class.
+ * Unit tests for the quiz class.
  *
  * @package    mod
  * @subpackage quiz
@@ -30,12 +30,12 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 
 /**
- * Unit tests for the access manager class
+ * Unit tests for the quiz class
  *
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_access_manager_test extends UnitTestCase {
+class quiz_class_test extends UnitTestCase {
     public function test_cannot_review_message() {
         $quiz = new stdClass();
         $quiz->reviewattempt = 0x10010;
@@ -48,23 +48,20 @@ class quiz_access_manager_test extends UnitTestCase {
 
         $quizobj = new quiz($quiz, $cm, new stdClass(), false);
 
-        $am = new quiz_access_manager($quizobj, time(), false);
-
         $this->assertEqual('',
-                $am->cannot_review_message(mod_quiz_display_options::DURING));
+                $quizobj->cannot_review_message(mod_quiz_display_options::DURING));
         $this->assertEqual('',
-                $am->cannot_review_message(mod_quiz_display_options::IMMEDIATELY_AFTER));
+                $quizobj->cannot_review_message(mod_quiz_display_options::IMMEDIATELY_AFTER));
         $this->assertEqual(get_string('noreview', 'quiz'),
-                $am->cannot_review_message(mod_quiz_display_options::LATER_WHILE_OPEN));
+                $quizobj->cannot_review_message(mod_quiz_display_options::LATER_WHILE_OPEN));
         $this->assertEqual(get_string('noreview', 'quiz'),
-                $am->cannot_review_message(mod_quiz_display_options::AFTER_CLOSE));
+                $quizobj->cannot_review_message(mod_quiz_display_options::AFTER_CLOSE));
 
         $closetime = time() + 10000;
         $quiz->timeclose = $closetime;
         $quizobj = new quiz($quiz, $cm, new stdClass(), false);
-        $am = new quiz_access_manager($quizobj, time(), false);
 
         $this->assertEqual(get_string('noreviewuntil', 'quiz', userdate($closetime)),
-                $am->cannot_review_message(mod_quiz_display_options::LATER_WHILE_OPEN));
+                $quizobj->cannot_review_message(mod_quiz_display_options::LATER_WHILE_OPEN));
     }
 }

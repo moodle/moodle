@@ -58,9 +58,10 @@ $options = $attemptobj->get_display_options(true);
 if ($attemptobj->is_own_attempt()) {
     if (!$attemptobj->is_finished()) {
         redirect($attemptobj->attempt_url(null, $page));
+
     } else if (!$options->attempt) {
-        $accessmanager->back_to_view_page($attemptobj->is_preview_user(),
-                $accessmanager->cannot_review_message($attemptobj->get_attempt_state()));
+        $accessmanager->back_to_view_page($PAGE->get_renderer('mod_quiz'),
+                $attemptobj->cannot_review_message());
     }
 
 } else if (!$attemptobj->is_review_allowed()) {
@@ -100,19 +101,9 @@ if ($attemptobj->is_preview_user() && $attemptobj->is_own_attempt()) {
 
 // Set up the page header
 $headtags = $attemptobj->get_html_head_contributions($page, $showall);
-if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
-    $accessmanager->setup_secure_page($attemptobj->get_course()->shortname.': '.
-            format_string($attemptobj->get_quiz_name()), $headtags);
-} else if ($accessmanager->safebrowser_required($attemptobj->is_preview_user())) {
-    $PAGE->set_title($attemptobj->get_course()->shortname . ': '.
-            format_string($attemptobj->get_quiz_name()));
-    $PAGE->set_heading($attemptobj->get_course()->fullname);
-    $PAGE->set_cacheable(false);
-} else {
-    $PAGE->navbar->add($strreviewtitle);
-    $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
-    $PAGE->set_heading($attemptobj->get_course()->fullname);
-}
+$PAGE->set_title(format_string($attemptobj->get_quiz_name()));
+$PAGE->set_heading($attemptobj->get_course()->fullname);
+$accessmanager->setup_attempt_page($PAGE);
 
 // Summary table start ============================================================================
 

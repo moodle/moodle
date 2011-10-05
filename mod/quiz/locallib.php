@@ -383,19 +383,6 @@ function quiz_has_feedback($quiz) {
     return $cache[$quiz->id];
 }
 
-function quiz_no_questions_message($quiz, $cm, $context) {
-    global $OUTPUT;
-
-    $output = '';
-    $output .= $OUTPUT->notification(get_string('noquestions', 'quiz'));
-    if (has_capability('mod/quiz:manage', $context)) {
-        $output .= $OUTPUT->single_button(new moodle_url('/mod/quiz/edit.php',
-                array('cmid' => $cm->id)), get_string('editquiz', 'quiz'), 'get');
-    }
-
-    return $output;
-}
-
 /**
  * Update the sumgrades field of the quiz. This needs to be called whenever
  * the grading structure of the quiz is changed. For example if a question is
@@ -1293,9 +1280,10 @@ function quiz_get_js_module() {
                 'core_question_engine'),
         'strings' => array(
             array('cancel', 'moodle'),
-            array('timesup', 'quiz'),
-            array('functiondisabledbysecuremode', 'quiz'),
             array('flagged', 'question'),
+            array('functiondisabledbysecuremode', 'quiz'),
+            array('startattempt', 'quiz'),
+            array('timesup', 'quiz'),
         ),
     );
 }

@@ -40,8 +40,11 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class quiz_access_rule_base {
+    /** @var stdClass the quiz settings. */
     protected $quiz;
+    /** @var quiz the quiz object. */
     protected $quizobj;
+    /** @var int the time to use as 'now'. */
     protected $timenow;
 
     /**
@@ -105,6 +108,33 @@ abstract class quiz_access_rule_base {
      */
     public function time_left($attempt, $timenow) {
         return false;
+    }
+
+    /**
+     * @return boolean whether this rule requires that the attemp (and review)
+     *      pages must be displayed in a pop-up window.
+     */
+    public function attempt_must_be_in_popup() {
+        return false;
+    }
+
+    /**
+     * @return array any options that are required for showing the attempt page
+     *      in a popup window.
+     */
+    public function get_popup_options() {
+        return array();
+    }
+
+    /**
+    * Sets up the attempt (review or summary) page with any special extra
+    * properties required by this rule. securewindow rule is an example of where
+    * this is used.
+    *
+    * @param moodle_page $page the page object to initialise.
+    */
+    public function setup_attempt_page($page) {
+        // Do nothing by default.
     }
 
     /**

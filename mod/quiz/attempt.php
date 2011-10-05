@@ -105,19 +105,9 @@ $PAGE->blocks->add_fake_block($navbc, $firstregion);
 
 $title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
 $headtags = $attemptobj->get_html_head_contributions($page);
+$PAGE->set_title(format_string($attemptobj->get_quiz_name()));
 $PAGE->set_heading($attemptobj->get_course()->fullname);
-if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
-    $accessmanager->setup_secure_page($attemptobj->get_course()->shortname . ': ' .
-            format_string($attemptobj->get_quiz_name()));
-
-} else if ($accessmanager->safebrowser_required($attemptobj->is_preview_user())) {
-    $PAGE->set_title($attemptobj->get_course()->shortname . ': ' .
-            format_string($attemptobj->get_quiz_name()));
-    $PAGE->set_cacheable(false);
-
-} else {
-    $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
-}
+$accessmanager->setup_attempt_page($PAGE);
 
 if ($attemptobj->is_last_page($page)) {
     $nextpage = -1;
@@ -125,5 +115,5 @@ if ($attemptobj->is_last_page($page)) {
     $nextpage = $page + 1;
 }
 
-$accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time());
+$accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time(), $output);
 echo $output->attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id, $nextpage);

@@ -101,6 +101,7 @@ if (!$quizobj->is_preview_user() && $messages) {
     print_error('attempterror', 'quiz', $quizobj->view_url(),
             $output->print_messages($messages));
 }
+
 $accessmanager->do_password_check($quizobj->is_preview_user());
 
 // Delete any previous preview attempts belonging to this user.
