@@ -226,11 +226,35 @@ function enrol_check_plugins($user) {
  * The courses has to be visible and enrolments has to be active,
  * timestart and timeend restrictions are ignored.
  *
+ * This function calls {@see enrol_get_shared_courses()} setting checkexistsonly
+ * to true.
+ *
  * @param stdClass|int $user1
  * @param stdClass|int $user2
  * @return bool
  */
 function enrol_sharing_course($user1, $user2) {
+    return enrol_get_shared_courses($user1, $user2, false, true);
+}
+
+/**
+ * Returns any courses shared by the two users
+ *
+ * The courses has to be visible and enrolments has to be active,
+ * timestart and timeend restrictions are ignored.
+ *
+ * @global moodle_database $DB
+ * @param stdClass|int $user1
+ * @param stdClass|int $user2
+ * @param bool $preloadcontexts If set to true contexts for the returned courses
+ *              will be preloaded.
+ * @param bool $checkexistsonly If set to true then this function will return true
+ *              if the users share any courses and false if not.
+ * @return array|bool An array of courses that both users are enrolled in OR if
+ *              $checkexistsonly set returns true if the users share any courses
+ *              and false if not.
+ */
+function enrol_get_shared_courses($user1, $user2, $preloadcontexts = false, $checkexistsonly = false) {
     global $DB, $CFG;
 
     $user1 = !empty($user1->id) ? $user1->id : $user1;
@@ -251,14 +275,33 @@ function enrol_sharing_course($user1, $user2) {
     $params['user1']   = $user1;
     $params['user2']   = $user2;
 
-    $sql = "SELECT DISTINCT 'x'
-              FROM {enrol} e
-              JOIN {user_enrolments} ue1 ON (ue1.enrolid = e.id AND ue1.status = :active1 AND ue1.userid = :user1)
-              JOIN {user_enrolments} ue2 ON (ue2.enrolid = e.id AND ue2.status = :active2 AND ue2.userid = :user2)
-              JOIN {course} c ON (c.id = e.courseid AND c.visible = 1)
-             WHERE e.status = :enabled AND e.enrol $plugins";
+    $ctxselect = '';
+    $ctxjoin = '';
+    if ($preloadcontexts) {
+        list($ctxselect, $ctxjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+    }
 
-    return $DB->record_exists_sql($sql, $params);
+    $sql = "SELECT c.* $ctxselect
+              FROM {course} c
+              JOIN (
+                SELECT DISTINCT c.id
+                  FROM {enrol} e
+                  JOIN {user_enrolments} ue1 ON (ue1.enrolid = e.id AND ue1.status = :active1 AND ue1.userid = :user1)
+                  JOIN {user_enrolments} ue2 ON (ue2.enrolid = e.id AND ue2.status = :active2 AND ue2.userid = :user2)
+                  JOIN {course} c ON (c.id = e.courseid AND c.visible = 1)
+                 WHERE e.status = :enabled AND e.enrol $plugins
+              ) ec ON ec.id = c.id
+              $ctxjoin";
+
+    if ($checkexistsonly) {
+        return $DB->record_exists_sql($sql, $params);
+    } else {
+        $courses = $DB->get_records_sql($sql, $params);
+        if ($preloadcontexts) {
+            array_map('context_instance_preload', $courses);
+        }
+        return $courses;
+    }
 }
 
 /**
