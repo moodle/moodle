@@ -223,13 +223,17 @@ class grading_manager {
 
         $this->ensure_isset(array('context', 'component', 'area'));
 
-        // make sure the passed method is a valid plugin name
-        if ('gradingform_'.$method !== clean_param('gradingform_'.$method, PARAM_COMPONENT)) {
-            throw new moodle_exception('invalid_method_name', 'core_grading');
-        }
-        $available = $this->get_available_methods(false);
-        if (!array_key_exists($method, $available)) {
-            throw new moodle_exception('invalid_method_name', 'core_grading');
+        // make sure the passed method is empty or a valid plugin name
+        if (empty($method)) {
+            $method = null;
+        } else {
+            if ('gradingform_'.$method !== clean_param('gradingform_'.$method, PARAM_COMPONENT)) {
+                throw new moodle_exception('invalid_method_name', 'core_grading');
+            }
+            $available = $this->get_available_methods(false);
+            if (!array_key_exists($method, $available)) {
+                throw new moodle_exception('invalid_method_name', 'core_grading');
+            }
         }
 
         // get the current grading area record if it exists
@@ -252,7 +256,7 @@ class grading_manager {
 
         } else {
             // update the existing record if needed
-            if ($this->areacache->activemethod != $method) {
+            if ($this->areacache->activemethod !== $method) {
                 $DB->set_field('grading_areas', 'activemethod', $method, array('id' => $this->areacache->id));
             }
         }
