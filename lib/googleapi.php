@@ -241,8 +241,8 @@ class google_authsub extends google_auth_request {
  */
 class google_docs {
     // need both docs and the spreadsheets realm
-    const REALM            = 'http://docs.google.com/feeds/ http://spreadsheets.google.com/feeds/ http://docs.googleusercontent.com/';
-    const DOCUMENTFEED_URL = 'http://docs.google.com/feeds/default/private/full';
+    const REALM            = 'https://docs.google.com/feeds/ https://spreadsheets.google.com/feeds/ https://docs.googleusercontent.com/';
+    const DOCUMENTFEED_URL = 'https://docs.google.com/feeds/default/private/full';
     const USER_PREF_NAME   = 'google_authsub_sesskey';
 
     private $google_curl = null;
@@ -292,8 +292,6 @@ class google_docs {
         $xml = new SimpleXMLElement($content);
 
 
-
-
         $files = array();
         foreach($xml->entry as $gdoc){
             $docid  = (string) $gdoc->children('http://schemas.google.com/g/2005')->resourceId;
@@ -307,15 +305,15 @@ class google_docs {
             switch($type){
                 case 'document':
                     $title = $gdoc->title.'.rtf';
-                    $source = 'http://docs.google.com/feeds/download/documents/Export?id='.$docid.'&exportFormat=rtf';
+                    $source = 'https://docs.google.com/feeds/download/documents/Export?id='.$docid.'&exportFormat=rtf';
                     break;
                 case 'presentation':
                     $title = $gdoc->title.'.ppt';
-                    $source = 'http://docs.google.com/feeds/download/presentations/Export?id='.$docid.'&exportFormat=ppt';
+                    $source = 'https://docs.google.com/feeds/download/presentations/Export?id='.$docid.'&exportFormat=ppt';
                     break;
                 case 'spreadsheet':
                     $title = $gdoc->title.'.xls';
-                    $source = 'http://spreadsheets.google.com/feeds/download/spreadsheets/Export?key='.$docid.'&exportFormat=xls';
+                    $source = 'https://spreadsheets.google.com/feeds/download/spreadsheets/Export?key='.$docid.'&exportFormat=xls';
                     break;
                 case 'pdf':
                     $title  = (string)$gdoc->title;
@@ -374,10 +372,10 @@ class google_docs {
 class google_picasa {
     const REALM             = 'http://picasaweb.google.com/data/';
     const USER_PREF_NAME    = 'google_authsub_sesskey_picasa';
-    const UPLOAD_LOCATION   = 'http://picasaweb.google.com/data/feed/api/user/default/albumid/default';
-    const ALBUM_PHOTO_LIST  = 'http://picasaweb.google.com/data/feed/api/user/default/albumid/';
-    const PHOTO_SEARCH_URL  = 'http://picasaweb.google.com/data/feed/api/user/default?kind=photo&q=';
-    const LIST_ALBUMS_URL   = 'http://picasaweb.google.com/data/feed/api/user/default';
+    const UPLOAD_LOCATION   = 'https://picasaweb.google.com/data/feed/api/user/default/albumid/default';
+    const ALBUM_PHOTO_LIST  = 'https://picasaweb.google.com/data/feed/api/user/default/albumid/';
+    const PHOTO_SEARCH_URL  = 'https://picasaweb.google.com/data/feed/api/user/default?kind=photo&q=';
+    const LIST_ALBUMS_URL   = 'https://picasaweb.google.com/data/feed/api/user/default';
 
     private $google_curl = null;
 
