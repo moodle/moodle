@@ -28,7 +28,4 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['language'] = 'Език';
-$string['next'] = 'Следваща';
-$string['previous'] = 'Предишна';
-$string['reload'] = 'Презареждане';
+$string['thislanguage'] = 'Romansh Sursilvan';
