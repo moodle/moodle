@@ -270,6 +270,7 @@ switch ($mode) {
     case "complete" :
         get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
         $sections = get_all_sections($course->id);
+        $itemsprinted = false;
 
         for ($i=0; $i<=$course->numsections; $i++) {
 
@@ -279,8 +280,10 @@ switch ($mode) {
                 $showsection = (has_capability('moodle/course:viewhiddensections', $coursecontext) or $section->visible or !$course->hiddensections);
 
                 if ($showsection) { // prevent hidden sections in user activity. Thanks to Geoff Wilbert!
-
+                    // Check the section has a sequence. This is the sequence of modules/resources.
+                    // If there is no sequence there is nothing to display.
                     if ($section->sequence) {
+                        $itemsprinted = true;
                         echo '<div class="section">';
                         echo '<h2>';
                         echo get_section_name($course, $section);
@@ -352,6 +355,11 @@ switch ($mode) {
                 }
             }
         }
+
+        if (!$itemsprinted) {
+            echo $OUTPUT->notification(get_string('nothingtodisplay'));
+        }
+
         break;
     case "coursecompletion":
     case "coursecompletions":
