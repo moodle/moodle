@@ -91,18 +91,7 @@ $PAGE->set_context($context);
 $url = new moodle_url('/mod/lti/view.php', array('id'=>$cm->id));
 $PAGE->set_url($url);
 
-$launchcontainer = $basiclti->launchcontainer == LTI_LAUNCH_CONTAINER_DEFAULT ? 
-                        $toolconfig['launchcontainer'] :
-                        $basiclti->launchcontainer;
-
-$devicetype = get_device_type();
-
-//Scrolling within the object element doesn't work on iOS or Android
-//Opening the popup window also had some issues in testing
-//For mobile devices, always take up the entire screen to ensure the best experience
-if($devicetype === 'mobile' || $devicetype === 'tablet' ){
-    $launchcontainer = LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW;
-}
+$launchcontainer = lti_get_launch_container($basiclti, $toolconfig);
 
 if($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS){
     $PAGE->set_pagelayout('frametop'); //Most frametops don't include footer, and pre-post blocks

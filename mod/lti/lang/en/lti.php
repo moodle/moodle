@@ -160,7 +160,6 @@ $string['validurl'] = 'A valid URL must start with http(s)://';
 $string['viewsubmissions'] = 'View submissions and grading screen';
 
 //New admin strings
-
 $string['show_in_course'] = 'Show tool type when creating tool instances';
 $string['delegate'] = 'Delegate to Instructor';
 $string['tool_settings'] = 'Tool Settings';
@@ -209,6 +208,8 @@ $string['using_tool_configuration'] = 'Using tool configuration: ';
 $string['domain_mismatch'] = 'Launch URL\'s domain does not match tool configuration.';
 $string['custom_config'] = 'Using custom tool configuration.';
 $string['tool_config_not_found'] = 'Tool configuration not found for this URL.';
+
+$string['return_to_course'] = 'Click <a href="{$a->link}" target="_top">here</a> to return to the course.';
 
 //Instance help
 

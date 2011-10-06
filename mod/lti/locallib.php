@@ -228,6 +228,12 @@ function lti_build_request($instance, $typeconfig, $course) {
     //Add outcome service URL
     $url = new moodle_url('/mod/lti/service.php');
     $requestparams['lis_outcome_service_url'] = $url->out();
+
+    $launchcontainer = lti_get_launch_container($instance, $typeconfig);
+    
+    //Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns
+    $url = new moodle_url('/mod/lti/return.php', array('course' => $course->id, 'launch_container' => $launchcontainer));
+    $requestparams['launch_presentation_return_url'] = $url->out(false);
     
     // Concatenate the custom parameters from the administrator and the instructor
     // Instructor parameters are only taken into consideration if the administrator
@@ -1032,4 +1038,21 @@ function lti_get_type($typeid){
     global $DB;
     
     return $DB->get_record('lti_types', array('id' => $typeid));
+}
+
+function lti_get_launch_container($lti, $toolconfig){
+    $launchcontainer = $lti->launchcontainer == LTI_LAUNCH_CONTAINER_DEFAULT ? 
+                        $toolconfig['launchcontainer'] :
+                        $lti->launchcontainer;
+
+    $devicetype = get_device_type();
+
+    //Scrolling within the object element doesn't work on iOS or Android
+    //Opening the popup window also had some issues in testing
+    //For mobile devices, always take up the entire screen to ensure the best experience
+    if($devicetype === 'mobile' || $devicetype === 'tablet' ){
+        $launchcontainer = LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW;
+    }
+    
+    return $launchcontainer;
 }
