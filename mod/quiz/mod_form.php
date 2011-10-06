@@ -282,11 +282,11 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->disabledIf('delay2', 'attempts', 'eq', 2);
 
         // 'Secure' window.
-        $mform->addElement('select', 'popup', get_string('browsersecurity', 'quiz'),
+        $mform->addElement('select', 'browsersecurity', get_string('browsersecurity', 'quiz'),
                 quiz_access_manager::get_browser_security_choices());
-        $mform->addHelpButton('popup', 'browsersecurity', 'quiz');
-        $mform->setAdvanced('popup', $quizconfig->popup_adv);
-        $mform->setDefault('popup', $quizconfig->popup);
+        $mform->addHelpButton('browsersecurity', 'browsersecurity', 'quiz');
+        $mform->setAdvanced('browsersecurity', $quizconfig->browsersecurity_adv);
+        $mform->setDefault('browsersecurity', $quizconfig->browsersecurity);
 
         // Any other rule plugins.
         quiz_access_manager::add_settings_form_fields($this, $mform);

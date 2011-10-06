@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Quiz specific admin settings class.
+ * Admin settings class for the quiz review opitions.
  *
  * @copyright  2008 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -145,5 +145,53 @@ class mod_quiz_admin_review_setting extends admin_setting {
 
         return format_admin_setting($this, $this->visiblename, $return,
                 $this->description, true, '', get_string('everythingon', 'quiz'), $query);
+    }
+}
+
+
+/**
+ * Admin settings class for the quiz grading method.
+ *
+ * Just so we can lazy-load the choices.
+ *
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class mod_quiz_admin_setting_grademethod extends admin_setting_configselect_with_advanced {
+    public function load_choices() {
+        global $CFG;
+
+        if (is_array($this->choices)) {
+            return true;
+        }
+
+        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+        $this->choices = quiz_get_grading_options();
+
+        return true;
+    }
+}
+
+
+/**
+ * Admin settings class for the quiz browser security option.
+ *
+ * Just so we can lazy-load the choices.
+ *
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class mod_quiz_admin_setting_browsersecurity extends admin_setting_configselect_with_advanced {
+    public function load_choices() {
+        global $CFG;
+
+        if (is_array($this->choices)) {
+            return true;
+        }
+
+        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+        $this->choices = quiz_access_manager::get_browser_security_choices();
+
+        return true;
     }
 }

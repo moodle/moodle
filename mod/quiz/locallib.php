@@ -41,16 +41,6 @@ require_once($CFG->libdir  . '/eventslib.php');
 require_once($CFG->libdir . '/filelib.php');
 
 
-/**#@+
- * Options determining how the grades from individual attempts are combined to give
- * the overall grade for a user
- */
-define('QUIZ_GRADEHIGHEST', '1');
-define('QUIZ_GRADEAVERAGE', '2');
-define('QUIZ_ATTEMPTFIRST', '3');
-define('QUIZ_ATTEMPTLAST',  '4');
-/**#@-*/
-
 /**
  * We show the countdown timer if there is less than this amount of time left before the
  * the quiz close date. (1 hour)

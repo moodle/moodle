@@ -36,9 +36,9 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="timelimit"/>
         <FIELD NAME="timelimit" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timemodified" NEXT="password"/>
         <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="timelimit" NEXT="subnet"/>
-        <FIELD NAME="subnet" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="password" NEXT="popup"/>
-        <FIELD NAME="popup" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="subnet" NEXT="delay1"/>
-        <FIELD NAME="delay1" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="popup" NEXT="delay2"/>
+        <FIELD NAME="subnet" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="password" NEXT="browsersecurity"/>
+        <FIELD NAME="browsersecurity" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="subnet" NEXT="delay1"/>
+        <FIELD NAME="delay1" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="browsersecurity" NEXT="delay2"/>
         <FIELD NAME="delay2" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="delay1" NEXT="showuserpicture"/>
         <FIELD NAME="showuserpicture" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Option to show the user's picture during the attempt and on the review page." PREVIOUS="delay2" NEXT="showblocks"/>
         <FIELD NAME="showblocks" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Whether blocks should be shown on the attempt.php and review.php pages." PREVIOUS="showuserpicture"/>

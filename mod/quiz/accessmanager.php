@@ -116,7 +116,7 @@ class quiz_access_manager {
      * @return array key => lang string.
      */
     public static function get_browser_security_choices() {
-        $options = array(0 => get_string('none', 'quiz'));
+        $options = array('-' => get_string('none', 'quiz'));
         foreach (self::get_rule_classes() as $rule) {
             $options += $rule::get_browser_security_choices();
         }

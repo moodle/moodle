@@ -41,7 +41,7 @@ class quizaccess_securewindow_test extends UnitTestCase {
     // Nothing very testable in this class, just test that it obeys the general access rule contact.
     public function test_securewindow_access_rule() {
         $quiz = new stdClass();
-        $quiz->popup = 1;
+        $quiz->browsersecurity = 'securewindow';
         $quiz->questions = '';
         $cm = new stdClass();
         $cm->id = 0;

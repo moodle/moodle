@@ -195,6 +195,21 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
                             mod_quiz_display_options::AFTER_CLOSE : 0);
         }
 
+        // The old popup column from from <= 2.1 need to be mapped to
+        // the new browsersecurity. MDL-29627
+        if (!isset($data->browsersecurity)) {
+            if (empty($data->popup)) {
+                $data->browsersecurity = '-';
+            } else if ($data->popup == 1) {
+                $data->browsersecurity = 'securewindow';
+            } else if ($data->popup == 2) {
+                $data->browsersecurity = 'safebrowser';
+            } else {
+                $data->preferredbehaviour = '-';
+            }
+            unset($data->popup);
+        }
+
         // insert the quiz record
         $newitemid = $DB->insert_record('quiz', $data);
         // immediately after inserting "activity" record, call this

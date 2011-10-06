@@ -49,7 +49,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
             'questionsperpage', 'shufflequestions', 'shuffleanswers',
             'questions', 'sumgrades', 'grade', 'timecreated',
             'timemodified', 'timelimit', 'password', 'subnet',
-            'popup', 'delay1', 'delay2', 'showuserpicture',
+            'browsersecurity', 'delay1', 'delay2', 'showuserpicture',
             'showblocks'));
 
         $qinstances = new backup_nested_element('question_instances');

@@ -1121,6 +1121,76 @@ function xmldb_quiz_upgrade($oldversion) {
     // Moodle v2.1.0 release upgrade line
     // Put any upgrade step following this
 
+    if ($oldversion < 2011100600) {
+
+        // Define field browsersecurity to be added to quiz
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('browsersecurity', XMLDB_TYPE_CHAR, '32', null,
+                XMLDB_NOTNULL, null, '[unknownvalue]', 'subnet');
+
+        // Conditionally launch add field browsersecurity
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // quiz savepoint reached
+        upgrade_mod_savepoint(true, 2011100600, 'quiz');
+    }
+
+    if ($oldversion < 2011100601) {
+        $DB->set_field('quiz', 'browsersecurity', '-', array('popup' => 0));
+        $DB->set_field('quiz', 'browsersecurity', 'securewindow', array('popup' => 1));
+        $DB->set_field('quiz', 'browsersecurity', 'safebrowser', array('popup' => 2));
+
+        upgrade_mod_savepoint(true, 2011100601, 'quiz');
+    }
+
+    if ($oldversion < 2011100602) {
+
+        // Changing the default of field browsersecurity on table quiz to drop it
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('browsersecurity', XMLDB_TYPE_CHAR, '32', null,
+                XMLDB_NOTNULL, null, null, 'subnet');
+
+        // Launch change of default for field browsersecurity
+        $dbman->change_field_default($table, $field);
+
+        // quiz savepoint reached
+        upgrade_mod_savepoint(true, 2011100602, 'quiz');
+    }
+
+    if ($oldversion < 2011100603) {
+
+        // Define field popup to be dropped from quiz
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('popup');
+
+        // Conditionally launch drop field popup
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // quiz savepoint reached
+        upgrade_mod_savepoint(true, 2011100603, 'quiz');
+    }
+
+    if ($oldversion < 2011100604) {
+        switch (get_config('quiz', 'popup')) {
+            case 1:
+                set_config('browsersecurity', 'securewindow', 'quiz');
+            case 2:
+                set_config('browsersecurity', 'safebrowser', 'quiz');
+            default:
+                set_config('browsersecurity', '-', 'quiz');
+        }
+        unset_config('quiz', 'popup');
+
+        set_config('browsersecurity_adv', get_config('quiz', 'popup_adv'), 'quiz');
+        unset_config('quiz', 'popup_adv');
+
+        upgrade_mod_savepoint(true, 2011100604, 'quiz');
+    }
+
     return true;
 }
 

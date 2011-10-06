@@ -54,7 +54,7 @@ class quizaccess_securewindow extends quiz_access_rule_base {
 
     public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
 
-        if ($quizobj->get_quiz()->popup != 1) {
+        if ($quizobj->get_quiz()->browsersecurity !== 'securewindow') {
             return null;
         }
 
@@ -89,6 +89,6 @@ class quizaccess_securewindow extends quiz_access_rule_base {
      *      security settings menu.
      */
     public static function get_browser_security_choices() {
-        return array(1 => get_string('popupwithjavascriptsupport', 'quiz'));
+        return array('securewindow' => get_string('popupwithjavascriptsupport', 'quiz'));
     }
 }

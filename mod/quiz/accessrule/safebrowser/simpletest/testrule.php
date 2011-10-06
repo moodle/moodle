@@ -41,7 +41,7 @@ class quizaccess_safebrowser_test extends UnitTestCase {
     // Nothing very testable in this class, just test that it obeys the general access rule contact.
     public function test_safebrowser_access_rule() {
         $quiz = new stdClass();
-        $quiz->popup = 1;
+        $quiz->browsersecurity = 'safebrowser';
         $quiz->questions = '';
         $cm = new stdClass();
         $cm->id = 0;

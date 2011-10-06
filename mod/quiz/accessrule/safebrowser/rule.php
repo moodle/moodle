@@ -39,7 +39,7 @@ class quizaccess_safebrowser extends quiz_access_rule_base {
 
     public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
 
-        if ($quizobj->get_quiz()->popup != 2) {
+        if ($quizobj->get_quiz()->browsersecurity !== 'safebrowser') {
             return null;
         }
 
@@ -83,6 +83,6 @@ class quizaccess_safebrowser extends quiz_access_rule_base {
             return array();
         }
 
-        return array(2 => get_string('requiresafeexambrowser', 'quiz'));
+        return array('safebrowser' => get_string('requiresafeexambrowser', 'quiz'));
     }
 }

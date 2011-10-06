@@ -42,6 +42,16 @@ define('QUIZ_MAX_DECIMAL_OPTION', 5);
 define('QUIZ_MAX_Q_DECIMAL_OPTION', 7);
 /**#@-*/
 
+/**#@+
+ * Options determining how the grades from individual attempts are combined to give
+ * the overall grade for a user
+ */
+define('QUIZ_GRADEHIGHEST', '1');
+define('QUIZ_GRADEAVERAGE', '2');
+define('QUIZ_ATTEMPTFIRST', '3');
+define('QUIZ_ATTEMPTLAST',  '4');
+/**#@-*/
+
 /**
  * If start and end date for the quiz are more than this many seconds apart
  * they will be represented by two separate events in the calendar
