@@ -36,6 +36,16 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 class quizaccess_safebrowser extends quiz_access_rule_base {
+
+    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
+
+        if ($quizobj->get_quiz()->popup != 2) {
+            return null;
+        }
+
+        return new self($quizobj, $timenow);
+    }
+
     public function prevent_access() {
         if (!$this->check_safe_browser()) {
             return get_string('safebrowsererror', 'quiz');
@@ -45,7 +55,7 @@ class quizaccess_safebrowser extends quiz_access_rule_base {
     }
 
     public function description() {
-        return get_string("safebrowsernotice", "quiz");
+        return get_string('safebrowsernotice', 'quiz');
     }
 
     public function setup_attempt_page($page) {
@@ -59,6 +69,20 @@ class quizaccess_safebrowser extends quiz_access_rule_base {
      * @return true, if browser is safe browser else false
      */
     function check_safe_browser() {
-        return strpos($_SERVER['HTTP_USER_AGENT'], "SEB") !== false;
+        return strpos($_SERVER['HTTP_USER_AGENT'], 'SEB') !== false;
+    }
+
+    /**
+     * @return array key => lang string any choices to add to the quiz Browser
+     *      security settings menu.
+     */
+    public static function get_browser_security_choices() {
+        global $CFG;
+
+        if (empty($CFG->enablesafebrowserintegration)) {
+            return array();
+        }
+
+        return array(2 => get_string('requiresafeexambrowser', 'quiz'));
     }
 }

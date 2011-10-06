@@ -37,6 +37,15 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quizaccess_password extends quiz_access_rule_base {
+
+    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
+        if (empty($quizobj->get_quiz()->password)) {
+            return null;
+        }
+
+        return new self($quizobj, $timenow);
+    }
+
     public function description() {
         return get_string('requirepasswordmessage', 'quiz');
     }

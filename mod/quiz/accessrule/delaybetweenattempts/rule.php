@@ -36,6 +36,15 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 class quizaccess_delaybetweenattempts extends quiz_access_rule_base {
+
+    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
+        if (empty($quizobj->get_quiz()->delay1) && empty($quizobj->get_quiz()->delay2)) {
+            return null;
+        }
+
+        $this->rules[] = new self($quizobj, $timenow);
+    }
+
     public function prevent_new_attempt($numprevattempts, $lastattempt) {
         if ($this->quiz->attempts > 0 && $numprevattempts >= $this->quiz->attempts) {
             // No more attempts allowed anyway.

@@ -53,41 +53,44 @@ class quiz_access_manager {
     public function __construct($quizobj, $timenow, $canignoretimelimits) {
         $this->quizobj = $quizobj;
         $this->timenow = $timenow;
-        $this->create_standard_rules($canignoretimelimits);
+        $this->rules = $this->make_rules($quizobj, $timenow, $canignoretimelimits);
     }
 
-    protected function create_standard_rules($canignoretimelimits) {
-        $rules = get_plugin_list_with_class('quizaccess', '', 'rule.php');
+    /**
+     * Make all the rules relevant to a particular quiz.
+     * @param quiz $quizobj information about the quiz in question.
+     * @param int $timenow the time that should be considered as 'now'.
+     * @param bool $canignoretimelimits whether the current user is exempt from
+     *      time limits by the mod/quiz:ignoretimelimits capability.
+     * @return array of {@link quiz_access_rule_base}s.
+     */
+    protected function make_rules($quizobj, $timenow, $canignoretimelimits) {
 
-        $quiz = $this->quizobj->get_quiz();
-        if ($quiz->attempts > 0) {
-            $this->rules[] = new quizaccess_numattempts($this->quizobj, $this->timenow);
-        }
-        $this->rules[] = new quizaccess_openclosedate($this->quizobj, $this->timenow);
-        if (!empty($quiz->timelimit) && !$canignoretimelimits) {
-            $this->rules[] = new quizaccess_timelimit($this->quizobj, $this->timenow);
-        }
-        if (!empty($quiz->delay1) || !empty($quiz->delay2)) {
-            $this->rules[] = new quizaccess_delaybetweenattempts($this->quizobj, $this->timenow);
-        }
-        if (!empty($quiz->subnet)) {
-            $this->rules[] = new quizaccess_ipaddress($this->quizobj, $this->timenow);
-        }
-        if (!empty($quiz->password)) {
-            $this->passwordrule = new quizaccess_password($this->quizobj, $this->timenow);
-            $this->rules[] = $this->passwordrule;
-        }
-        if (!empty($quiz->popup)) {
-            if ($quiz->popup == 1) {
-                $this->securewindowrule = new quizaccess_securewindow(
-                        $this->quizobj, $this->timenow);
-                $this->rules[] = $this->securewindowrule;
-            } else if ($quiz->popup == 2) {
-                $this->safebrowserrule = new quizaccess_safebrowser(
-                        $this->quizobj, $this->timenow);
-                $this->rules[] = $this->safebrowserrule;
+        $rules = array();
+        foreach (self::get_rule_classes() as $ruleclass) {
+            $rule = $ruleclass::make($quizobj, $timenow, $canignoretimelimits);
+            if ($rule) {
+                $rules[$ruleclass] = $rule;
             }
         }
+
+        $superceededrules = array();
+        foreach ($rules as $rule) {
+            $superceededrules += $rule->get_superceded_rules();
+        }
+
+        foreach ($superceededrules as $superceededrule) {
+            unset($rules['quizaccess_' . $superceededrule]);
+        }
+
+        return $rules;
+    }
+
+    /**
+     * @return array of all the installed rule class names.
+     */
+    protected static function get_rule_classes() {
+        return get_plugin_list_with_class('quizaccess', '', 'rule.php');
     }
 
     /**
@@ -101,10 +104,23 @@ class quiz_access_manager {
      */
     public static function add_settings_form_fields(
             mod_quiz_mod_form $quizform, MoodleQuickForm $mform) {
-        $rules = get_plugin_list_with_class('quizaccess', '', 'rule.php');
-        foreach ($rules as $rule) {
+
+        foreach (self::get_rule_classes() as $rule) {
             $rule::add_settings_form_fields($quizform, $mform);
         }
+    }
+
+    /**
+     * The the options for the Browser security settings menu.
+     *
+     * @return array key => lang string.
+     */
+    public static function get_browser_security_choices() {
+        $options = array(0 => get_string('none', 'quiz'));
+        foreach (self::get_rule_classes() as $rule) {
+            $options += $rule::get_browser_security_choices();
+        }
+        return $options;
     }
 
     /**
@@ -117,8 +133,8 @@ class quiz_access_manager {
      *      which is the is of the quiz being saved.
      */
     public static function save_settings($quiz) {
-        $rules = get_plugin_list_with_class('quizaccess', '', 'rule.php');
-        foreach ($rules as $rule) {
+
+        foreach (self::get_rule_classes() as $rule) {
             $rule::save_settings($quiz);
         }
     }
@@ -167,7 +183,7 @@ class quiz_access_manager {
     public static function load_settings($quizid) {
         global $DB;
 
-        $rules = get_plugin_list_with_class('quizaccess', '', 'rule.php');
+        $rules = self::get_rule_classes();
         list($sql, $params) = self::get_load_sql($quizid, $rules, '');
         $data = (array) $DB->get_record_sql($sql, $params);
 
@@ -191,7 +207,7 @@ class quiz_access_manager {
     public static function load_quiz_and_settings($quizid) {
         global $DB;
 
-        $rules = get_plugin_list_with_class('quizaccess', '', 'rule.php');
+        $rules = self::get_rule_classes();
         list($sql, $params) = self::get_load_sql($quizid, $rules, 'quiz.*');
         $quiz = $DB->get_record_sql($sql, $params, MUST_EXIST);
 
@@ -202,6 +218,18 @@ class quiz_access_manager {
         }
 
         return $quiz;
+    }
+
+    /**
+     * @return array the class names of all the active rules. Mainly useful for
+     * debugging.
+     */
+    public function get_active_rule_names() {
+        $classnames = array();
+        foreach ($this->rules as $rule) {
+            $classnames[] = get_class($rule);
+        }
+        return $classnames;
     }
 
     protected function accumulate_messages(&$messages, $new) {

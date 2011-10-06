@@ -49,13 +49,28 @@ abstract class quiz_access_rule_base {
 
     /**
      * Create an instance of this rule for a particular quiz.
-     * @param object $quiz the quiz we will be controlling access to.
+     * @param quiz $quizobj information about the quiz in question.
+     * @param int $timenow the time that should be considered as 'now'.
      */
     public function __construct($quizobj, $timenow) {
         $this->quizobj = $quizobj;
         $this->quiz = $quizobj->get_quiz();
         $this->timenow = $timenow;
     }
+
+    /**
+     * Return an appropriately configured instance of this rule, if it is applicable
+     * to the given quiz, otherwise return null.
+     * @param quiz $quizobj information about the quiz in question.
+     * @param int $timenow the time that should be considered as 'now'.
+     * @param bool $canignoretimelimits whether the current user is exempt from
+     *      time limits by the mod/quiz:ignoretimelimits capability.
+     * @return quiz_access_rule_base|null the rule, if applicable, else null.
+     */
+    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
+        return null;
+    }
+
     /**
      * Whether or not a user should be allowed to start a new attempt at this quiz now.
      * @param int $numattempts the number of previous attempts this user has made.
@@ -66,6 +81,7 @@ abstract class quiz_access_rule_base {
     public function prevent_new_attempt($numprevattempts, $lastattempt) {
         return false;
     }
+
     /**
      * Whether or not a user should be allowed to start a new attempt at this quiz now.
      * @return string false if access should be allowed, a message explaining the
@@ -74,6 +90,7 @@ abstract class quiz_access_rule_base {
     public function prevent_access() {
         return false;
     }
+
     /**
      * Information, such as might be shown on the quiz view page, relating to this restriction.
      * There is no obligation to return anything. If it is not appropriate to tell students
@@ -84,6 +101,7 @@ abstract class quiz_access_rule_base {
     public function description() {
         return '';
     }
+
     /**
      * If this rule can determine that this user will never be allowed another attempt at
      * this quiz, then return true. This is used so we can know whether to display a
@@ -138,6 +156,19 @@ abstract class quiz_access_rule_base {
     }
 
     /**
+     * It is possible for one rule to override other rules.
+     *
+     * The aim is that third-party rules should be able to replace sandard rules
+     * if they want. See, for example MDL-13592.
+     *
+     * @return array plugin names of other rules that this one replaces.
+     *      For example array('ipaddress', 'password').
+     */
+    public function get_superceded_rules() {
+        return array();
+    }
+
+    /**
      * Add any fields that this rule requires to the quiz settings form. This
      * method is called from {@link mod_quiz_mod_form::definition()}, while the
      * security seciton is being built.
@@ -147,6 +178,14 @@ abstract class quiz_access_rule_base {
     public static function add_settings_form_fields(
             mod_quiz_mod_form $quizform, MoodleQuickForm $mform) {
         // By default do nothing.
+    }
+
+    /**
+     * @return array key => lang string any choices to add to the quiz Browser
+     *      security settings menu.
+     */
+    public static function get_browser_security_choices() {
+        return array();
     }
 
     /**

@@ -36,6 +36,12 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quizaccess_openclosedate extends quiz_access_rule_base {
+
+    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
+        // This rule is always used, even if the quiz has no open or close date.
+        return new self($quizobj, $timenow);
+    }
+
     public function description() {
         $result = array();
         if ($this->timenow < $this->quiz->timeopen) {

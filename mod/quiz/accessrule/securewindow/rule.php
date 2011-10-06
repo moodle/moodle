@@ -52,8 +52,17 @@ class quizaccess_securewindow extends quiz_access_rule_base {
         'menubar' => false,
     );
 
+    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
+
+        if ($quizobj->get_quiz()->popup != 1) {
+            return null;
+        }
+
+        return new self($quizobj, $timenow);
+    }
+
     public function attempt_must_be_in_popup() {
-        return true;
+        return !$this->quizobj->is_preview_user();
     }
 
     public function get_popup_options() {
@@ -65,8 +74,21 @@ class quizaccess_securewindow extends quiz_access_rule_base {
         $page->set_title($this->quizobj->get_course()->shortname . ': ' . $page->title);
         $page->set_cacheable(false);
         $page->set_pagelayout('popup');
+
+        if ($this->quizobj->is_preview_user()) {
+            return;
+        }
+
         $page->add_body_class('quiz-secure-window');
         $page->requires->js_init_call('M.mod_quiz.secure_window.init',
                 null, false, quiz_get_js_module());
+    }
+
+    /**
+     * @return array key => lang string any choices to add to the quiz Browser
+     *      security settings menu.
+     */
+    public static function get_browser_security_choices() {
+        return array(1 => get_string('popupwithjavascriptsupport', 'quiz'));
     }
 }
