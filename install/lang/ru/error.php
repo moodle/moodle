@@ -31,7 +31,7 @@
 $string['cannotcreatelangdir'] = 'Не удается создать каталог языка';
 $string['cannotcreatetempdir'] = 'Не удается создать временный каталог';
 $string['cannotdownloadcomponents'] = 'Невозможно загрузить компоненты.';
-$string['cannotdownloadzipfile'] = 'Не удалось загрузить ZIP файл';
+$string['cannotdownloadzipfile'] = 'Не удалось загрузить ZIP-файл';
 $string['cannotfindcomponent'] = 'Не удалось найти компонент';
 $string['cannotsavemd5file'] = 'Не удалось сохранить MD5-файл';
 $string['cannotsavezipfile'] = 'Не удалось сохранить ZIP-файл';
@@ -40,6 +40,7 @@ $string['componentisuptodate'] = 'Компонент не нуждается в 
 $string['downloadedfilecheckfailed'] = 'Ошибка проверки загруженного файла';
 $string['invalidmd5'] = 'Некорректная md5';
 $string['missingrequiredfield'] = 'Отсутствуют некоторые обязательные поля';
+$string['remotedownloaderror'] = 'Не удалось загрузить компонент на сервер, проверьте настройки прокси-сервера, настоятельно рекомендуется установка расширения cURL языка PHP.<br /> <br />Вам следует вручную загрузить файл по ссылке <a href="{$a->url}">{$a->url}</a>, скопировать его в папку "{$a->dest}" на своём сервере и там его распаковать.';
 $string['wrongdestpath'] = 'Ошибочный путь назначения';
 $string['wrongsourcebase'] = 'Ошибочный источник базового URL';
 $string['wrongzipfilename'] = 'Неверное имя ZIP-файла';
