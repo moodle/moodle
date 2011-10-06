@@ -41,6 +41,19 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
         return 'qtext ddwtos_questionid_for_javascript';
     }
 
+    public function formulation_and_controls(question_attempt $qa,
+            question_display_options $options) {
+        global $PAGE;
+        $result = parent::formulation_and_controls($qa, $options);
+        $topnode = 'div#q'.$qa->get_slot().' div.ddarea';
+        $params = array('topnode' => $topnode,
+                        'readonly' => $options->readonly);
+
+        $PAGE->requires->yui_module('moodle-qtype_ddwtos-dd', 'M.qtype_ddwtos.init_question',
+                                        array($params));
+        return $result;
+    }
+
     protected function post_qtext_elements(question_attempt $qa,
             question_display_options $options) {
         $result = '';
@@ -128,14 +141,6 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
         }
 
         return html_writer::nonempty_tag('div', $boxes, array('class' => 'answertext'));
-    }
-
-
-    public function head_code(question_attempt $qa) {
-        $this->page->requires->yui2_lib('dom');
-        $this->page->requires->yui2_lib('event');
-        $this->page->requires->yui2_lib('dragdrop');
-        return parent::head_code($qa);
     }
 
     /**
