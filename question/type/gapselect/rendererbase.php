@@ -52,7 +52,7 @@ abstract class qtype_elements_embedded_in_question_text_renderer
         $result = '';
         $result .= html_writer::tag('div', $question->format_text($questiontext,
                 $question->questiontextformat, $qa, 'question', 'questiontext', $question->id),
-                array('class' => $this->qtext_classname(), 'id' => $qa->get_qt_field_name('')));
+                array('class' => $this->qtext_classname(), 'id' => $this->qtext_id($qa)));
 
         $result .= $this->post_qtext_elements($qa, $options);
 
@@ -67,6 +67,10 @@ abstract class qtype_elements_embedded_in_question_text_renderer
 
     protected function qtext_classname() {
         return 'qtext';
+    }
+
+    protected function qtext_id($qa) {
+        return str_replace(':', '_', $qa->get_qt_field_name(''));
     }
 
     protected abstract function embedded_element(question_attempt $qa, $place,
