@@ -385,7 +385,8 @@ function xmldb_quiz_statistics_upgrade($oldversion) {
 
         // Changing sign of field maxmark on table quiz_question_statistics to signed
         $table = new xmldb_table('quiz_question_statistics');
-        $field = new xmldb_field('maxmark', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'subquestions');
+        $field = new xmldb_field('maxmark', XMLDB_TYPE_NUMBER, '12, 7', null,
+                null, null, null, 'subquestions');
 
         // Launch change of sign for field maxmark
         $dbman->change_field_unsigned($table, $field);

@@ -1311,7 +1311,7 @@ abstract class quiz_nav_panel_base {
     }
 
     protected function get_state_string(question_attempt $qa, $showcorrectness) {
-        if ($qa->get_question()->length > 0)  {
+        if ($qa->get_question()->length > 0) {
             return $qa->get_state_string($showcorrectness);
         }
 

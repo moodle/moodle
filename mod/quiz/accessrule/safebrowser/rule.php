@@ -30,11 +30,11 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
 
 
 /**
-* A rule representing the safe browser check.
-*
-* @copyright  2009 Oliver Rahs
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * A rule representing the safe browser check.
+ *
+ * @copyright  2009 Oliver Rahs
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class quizaccess_safebrowser extends quiz_access_rule_base {
 
     public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
@@ -68,7 +68,7 @@ class quizaccess_safebrowser extends quiz_access_rule_base {
      *
      * @return true, if browser is safe browser else false
      */
-    function check_safe_browser() {
+    public function check_safe_browser() {
         return strpos($_SERVER['HTTP_USER_AGENT'], 'SEB') !== false;
     }
 

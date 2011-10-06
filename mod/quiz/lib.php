@@ -369,8 +369,9 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
     $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
 
     //datesubmitted == time created. dategraded == time modified or time overridden
-    //if grade was last modified by the user themselves use date graded. Otherwise use date submitted
-    //TODO: move this copied & pasted code somewhere in the grades API. See MDL-26704
+    //if grade was last modified by the user themselves use date graded. Otherwise use
+    // date submitted
+    // TODO: move this copied & pasted code somewhere in the grades API. See MDL-26704
     if ($grade->usermodified == $user->id || empty($grade->datesubmitted)) {
         $result->time = $grade->dategraded;
     } else {

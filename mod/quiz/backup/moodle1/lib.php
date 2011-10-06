@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -64,10 +63,14 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
                     )
                 )
             ),
-            new convert_path('quiz_question_instances', '/MOODLE_BACKUP/COURSE/MODULES/MOD/QUIZ/QUESTION_INSTANCES'),
-            new convert_path('quiz_question_instance', '/MOODLE_BACKUP/COURSE/MODULES/MOD/QUIZ/QUESTION_INSTANCES/QUESTION_INSTANCE'),
-            new convert_path('quiz_feedbacks', '/MOODLE_BACKUP/COURSE/MODULES/MOD/QUIZ/FEEDBACKS'),
-            new convert_path('quiz_feedback', '/MOODLE_BACKUP/COURSE/MODULES/MOD/QUIZ/FEEDBACKS/FEEDBACK',
+            new convert_path('quiz_question_instances',
+                    '/MOODLE_BACKUP/COURSE/MODULES/MOD/QUIZ/QUESTION_INSTANCES'),
+            new convert_path('quiz_question_instance',
+                    '/MOODLE_BACKUP/COURSE/MODULES/MOD/QUIZ/QUESTION_INSTANCES/QUESTION_INSTANCE'),
+            new convert_path('quiz_feedbacks',
+                    '/MOODLE_BACKUP/COURSE/MODULES/MOD/QUIZ/FEEDBACKS'),
+            new convert_path('quiz_feedback',
+                    '/MOODLE_BACKUP/COURSE/MODULES/MOD/QUIZ/FEEDBACKS/FEEDBACK',
                 array(
                     'newfields' => array(
                         'feedbacktextformat' => 0
@@ -112,12 +115,14 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
         // convert course files embedded into the intro
         $this->fileman->filearea = 'intro';
         $this->fileman->itemid   = 0;
-        $data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $this->fileman);
+        $data['intro'] = moodle1_converter::migrate_referenced_files(
+                $data['intro'], $this->fileman);
 
         // start writing quiz.xml
         $this->open_xml_writer("activities/quiz_{$this->moduleid}/quiz.xml");
-        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $this->moduleid,
-            'modulename' => 'quiz', 'contextid' => $contextid));
+        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid,
+                'moduleid' => $this->moduleid, 'modulename' => 'quiz',
+                'contextid' => $contextid));
         $this->xmlwriter->begin_tag('quiz', array('id' => $instanceid));
 
         foreach ($data as $field => $value) {

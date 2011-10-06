@@ -30,12 +30,12 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
 
 
 /**
-* A rule representing the time limit. It does not actually restrict access, but we use this
-* class to encapsulate some of the relevant code.
-*
-* @copyright  2009 Tim Hunt
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * A rule representing the time limit. It does not actually restrict access, but we use this
+ * class to encapsulate some of the relevant code.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class quizaccess_timelimit extends quiz_access_rule_base {
 
     public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {

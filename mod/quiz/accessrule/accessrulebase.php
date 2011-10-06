@@ -145,12 +145,12 @@ abstract class quiz_access_rule_base {
     }
 
     /**
-    * Sets up the attempt (review or summary) page with any special extra
-    * properties required by this rule. securewindow rule is an example of where
-    * this is used.
-    *
-    * @param moodle_page $page the page object to initialise.
-    */
+     * Sets up the attempt (review or summary) page with any special extra
+     * properties required by this rule. securewindow rule is an example of where
+     * this is used.
+     *
+     * @param moodle_page $page the page object to initialise.
+     */
     public function setup_attempt_page($page) {
         // Do nothing by default.
     }

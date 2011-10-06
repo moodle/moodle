@@ -715,7 +715,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param object $context the quiz context.
      * @return string HTML to output.
      */
-    function no_questions_message($canedit, $editurl) {
+    public function no_questions_message($canedit, $editurl) {
         $output = '';
         $output .= $this->notification(get_string('noquestions', 'quiz'));
         if ($canedit) {
@@ -1093,7 +1093,8 @@ class mod_quiz_view_object {
     public $attempts;
     /** @var quiz_access_manager $accessmanager contains various access rules. */
     public $accessmanager;
-    /** @var bool $canreviewmine whether the current user has the capability to review their own attempts. */
+    /** @var bool $canreviewmine whether the current user has the capability to
+     *       review their own attempts. */
     public $canreviewmine;
     /** @var bool $canedit whether the current user has the capability to edit the quiz. */
     public $canedit;
@@ -1125,7 +1126,8 @@ class mod_quiz_view_object {
     public $unfinished;
     /** @var object $lastfinishedattempt the last attempt from the attempts array. */
     public $lastfinishedattempt;
-    /** @var array $preventmessages of messages telling the user why they can't attempt the quiz now. */
+    /** @var array $preventmessages of messages telling the user why they can't
+     *       attempt the quiz now. */
     public $preventmessages;
     /** @var string $buttontext caption for the start attempt button. If this is null, show no
      *      button, or if it is '' show a back to the course button. */

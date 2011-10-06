@@ -30,11 +30,11 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
 
 
 /**
-* A rule imposing the delay between attempts settings.
-*
-* @copyright  2009 Tim Hunt
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * A rule imposing the delay between attempts settings.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class quizaccess_delaybetweenattempts extends quiz_access_rule_base {
 
     public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
@@ -42,7 +42,7 @@ class quizaccess_delaybetweenattempts extends quiz_access_rule_base {
             return null;
         }
 
-        $this->rules[] = new self($quizobj, $timenow);
+        return new self($quizobj, $timenow);
     }
 
     public function prevent_new_attempt($numprevattempts, $lastattempt) {
