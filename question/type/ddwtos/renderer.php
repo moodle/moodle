@@ -45,8 +45,14 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
             question_display_options $options) {
         global $PAGE;
         $result = parent::formulation_and_controls($qa, $options);
-        $topnode = 'div#q'.$qa->get_slot().' div.ddarea';
-        $params = array('topnode' => $topnode,
+        $topnode = 'div.que.ddwtos#q'.$qa->get_slot();
+        $inputids = array();
+        $question = $qa->get_question();
+        foreach ($question->places as $placeno => $place) {
+            $inputids[$placeno] = $this->box_id($qa, $question->field($placeno));
+        }
+        $params = array('inputids' => $inputids,
+                        'topnode' => $topnode,
                         'readonly' => $options->readonly);
 
         $PAGE->requires->yui_module('moodle-qtype_ddwtos-dd', 'M.qtype_ddwtos.init_question',
@@ -63,8 +69,21 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
             $dragboxs .= $this->drag_boxes($qa, $group,
                     $question->get_ordered_choices($group), $options);
         }
-        $result .= html_writer::tag('div', $dragboxs,
-                array('class' => 'answercontainer'));
+        $classes = array('answercontainer');
+        if (!$options->readonly) {
+            $classes[] = 'notreadonly';
+        } else {
+            $classes[] = 'readonly';
+        }
+        $result .= html_writer::tag('div', $dragboxs, array('class' => implode(' ', $classes)));
+
+        $classes = array('drags');
+        if (!$options->readonly) {
+            $classes[] = 'notreadonly';
+        } else {
+            $classes[] = 'readonly';
+        }
+        $result .= html_writer::tag('div', '', array('class' => implode(' ', $classes)));
         // We abuse the clear_wrong method to output the hidden form fields we
         // want irrespective of whether we are actually clearing the wrong
         // bits of the response.
@@ -74,27 +93,16 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
         return $result;
     }
 
-    /**
-     * Modify the contents of a drag/drop box to fix some IE-related problem.
-     * Unfortunately I don't have more details than that.
-     * @param string $string the box contents.
-     * @return string the box contents modified.
-     */
-    protected function dodgy_ie_fix($string) {
-        return '<sub>&#160;</sub>' . $string . '<sup>&#160;</sup>';
-    }
-
     protected function embedded_element(question_attempt $qa, $place,
             question_display_options $options) {
         $question = $qa->get_question();
         $group = $question->places[$place];
-        $boxcontents = $this->dodgy_ie_fix('&#160;');
+        $boxcontents = '&#160;';
 
         $value = $qa->get_last_qt_var($question->field($place));
 
         $attributes = array(
-            'id' => $this->box_id($qa, 'p' . $place, $group),
-            'class' => 'slot group' . $group
+            'class' => 'place'.$place.' drop group' . $group
         );
 
         if ($options->readonly) {
@@ -119,16 +127,11 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
     }
 
     protected function drag_boxes($qa, $group, $choices, question_display_options $options) {
-        $readonly = '';
-        if ($options->readonly) {
-            $readonly = ' readonly';
-        }
-
         $boxes = '';
         foreach ($choices as $key => $choice) {
             //Bug 8632 -  long text entry causes bug in drag and drop field in IE
             $content = str_replace('-', '&#x2011;', $choice->text);
-            $content = $this->dodgy_ie_fix(str_replace(' ', '&#160;', $content));
+            $content = str_replace(' ', '&#160;', $content);
 
             $infinite = '';
             if ($choice->isinfinite) {
@@ -136,11 +139,11 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
             }
 
             $boxes .= html_writer::tag('span', $content, array(
-                    'id' => $this->box_id($qa, $key, $choice->draggroup),
-                    'class' => 'player group' . $choice->draggroup . $infinite . $readonly)) . ' ';
+                    'class' => 'draghome choice'.$key.' group' . $choice->draggroup . $infinite)) . ' ';
         }
 
-        return html_writer::nonempty_tag('div', $boxes, array('class' => 'answertext'));
+        return html_writer::nonempty_tag('div', $boxes,
+                                        array('class' => 'draggrouphomes'. $choice->draggroup));
     }
 
     /**
@@ -173,7 +176,7 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
             if ($cleanvalue != $value) {
                 $output .= html_writer::empty_tag('input', array(
                         'type' => 'text',
-                        'id' => $this->box_id($qa, 'p' . $place, $group) . '_hidden',
+                        'id' => $this->box_id($qa, 'p' . $place),
                         'value' => s($value))) .
                         html_writer::empty_tag('input', array(
                         'type' => 'hidden',
@@ -182,7 +185,7 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
             } else {
                 $output .= html_writer::empty_tag('input', array(
                         'type' => 'text',
-                        'id' => $this->box_id($qa, 'p' . $place, $group) . '_hidden',
+                        'id' => $this->box_id($qa, 'p' . $place),
                         'name' => $qa->get_qt_field_name($fieldname),
                         'value' => s($value)));
             }

@@ -1,40 +1,40 @@
 .que.ddwtos .qtext {
-    line-height: 2em;
     margin-bottom: 0.5em;
     display: block;
 }
 
-.que.ddwtos .qtext * {
-    line-height: 2em;
-}
-
-.que.ddwtos .answercontainer {
-    line-height: 2em;
+.que.ddwtos .draghome {
     margin-bottom: 1em;
-    display: block;
 }
 
 .que.ddwtos .answertext {
-    padding-bottom: 0.5em;
+    margin-bottom: 0.5em;
 }
 
-.que.ddwtos .slot {
+.que.ddwtos .drop {
     display: inline-block;
     text-align: center;
     border: 1px solid #000000;
 }
-.que.ddwtos .player {
+.que.ddwtos .draghome, .que.ddwtos .drag{
     display: inline-block;
     text-align: center;
+    border: 1px solid #000000;
+}
+.que.ddwtos .draghome {
+    visibility: hidden;
+}
+.que.ddwtos .drag {
+    z-index: 2;
+}
+.que.ddwtos .drag.yui3-dd-dragging {
+    z-index: 3;
+}
+
+.que.ddwtos .notreadonly .drag {
     cursor: move;
-    border: 1px solid #000000;
 }
-.que.ddwtos .player.placed { /* Lets the focus rectangle be visible in IE. */
-    background: transparent;
-    border: 0;
-}
-
-.que.ddwtos .readonly {
+.que.ddwtos .readonly .drag {
     cursor: default;
 }
 
