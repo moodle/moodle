@@ -58,7 +58,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                 },
                 drops_group : function(groupno) {
                     return topnode+' span.drop.group'+groupno;
-                },
+                }
             }
         },
         set_padding_sizes_all : function () {
@@ -77,9 +77,12 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                     maxheight = Math.max(maxheight, item.get('offsetHeight'));
                 }, this);
                 groupitems.each(function(item) {
-                    var margintopbottom = Math.ceil((maxheight - item.get('offsetHeight'))/2);
-                    var marginleftright = Math.ceil((maxwidth - item.get('offsetWidth'))/2);
-                    item.setStyle('padding', margintopbottom+'px '+marginleftright+'px ');
+                    var margintop = Math.round((maxheight - item.get('offsetHeight'))/2);
+                    var marginleft = Math.round((maxwidth - item.get('offsetWidth'))/2);
+                    var marginbottom = (maxheight - item.get('offsetHeight')) - margintop;
+                    var marginright = (maxwidth - item.get('offsetWidth')) - marginleft;
+                    item.setStyle('padding', margintop+'px '+marginleft+'px '
+                                            +marginbottom+'px '+marginright+'px');
                 }, this);
                 Y.all(this.selectors.drops_group(groupno)).setStyles({'width': maxwidth - 2,
                                                                 'height': maxheight - 2});
