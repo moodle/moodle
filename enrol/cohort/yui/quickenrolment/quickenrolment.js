@@ -122,11 +122,7 @@ YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
                     break;
                 case 'defaultcohortroleloaded':
                     defaultrole = this.get(DEFAULTCOHORTROLE);
-                    panel.get('contentBox').one('.'+CSS.PANELROLES).all('option').each(function(){
-                        if (this.get('value')==defaultrole) {
-                            this.setAttribute('selected', true);
-                        }
-                    });
+                    panel.get('contentBox').one('.'+CSS.PANELROLES+' select').set('value', defaultrole);
                     break;
             }
         },
