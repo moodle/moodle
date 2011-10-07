@@ -71,7 +71,8 @@
                 }
             }
         }        
-        if (!update_record("lesson_answers", $oldanswer)) {
+        // Don't return the error if it wasn't updated because original question type had no answers
+        if (!empty($oldanswer->id) && !update_record("lesson_answers", $oldanswer)) {
             error("Update page: EOB not updated");
         }
     } else {
