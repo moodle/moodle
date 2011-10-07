@@ -922,6 +922,7 @@ class assignment_base {
         require_once($CFG->libdir.'/gradelib.php');
         require_once($CFG->libdir.'/tablelib.php');
         require_once("$CFG->dirroot/repository/lib.php");
+        require_once("$CFG->dirroot/grade/grading/lib.php");
         if ($userid==-1) {
             $userid = required_param('userid', PARAM_INT);
         }
@@ -1037,6 +1038,35 @@ class assignment_base {
             $mformdata->fileui_options = array('subdirs'=>1, 'maxbytes'=>$assignment->maxbytes, 'maxfiles'=>$assignment->var1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
         } elseif ($assignment->assignmenttype == 'uploadsingle') {
             $mformdata->fileui_options = array('subdirs'=>0, 'maxbytes'=>$CFG->userquota, 'maxfiles'=>1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
+        }
+        $gradingman = get_grading_manager($this->context, 'mod_assignment', 'submission');
+        if ($gradingmethod = $gradingman->get_active_method()) {
+            $controller = $gradingman->get_controller($gradingmethod);
+            if ($controller->is_form_available()) {
+                if (empty($submission->id)) {
+                    $mformdata->advancedgradingenabled = true;
+                    $mformdata->advancedgradingwidget = get_string('noitemid', 'core_grading');
+                } else {
+                    $gradingrenderer = $controller->prepare_renderer($PAGE);
+                    if ($this->assignment->grade < 0) {
+                        $options = array(
+                            'displayas' => 'scale',
+                            'scaleid'   => -$this->assignment->grade);
+                    } else {
+                        $options = array(
+                            'displayas' => 'grade',
+                            'maxgrade'  => $this->assignment->grade,
+                            'decimals'  => 0);
+                    }
+                    $gradingwidget = $controller->make_grading_widget($USER->id, $submission->id, $options);
+                    if ($gradingwidget instanceof renderable) {
+                        $mformdata->advancedgradingenabled = true;
+                        $mformdata->advancedgradingwidget = $gradingrenderer->render($gradingwidget);
+                    }
+                }
+            } else {
+                notice(get_string('formnotavailable', 'core_grading'), new moodle_url('/course/view.php', array('id' => $assignment->course)));
+            }
         }
 
         $submitform = new mod_assignment_grading_form( null, $mformdata );
@@ -2275,13 +2305,20 @@ class mod_assignment_grading_form extends moodleform {
             $attributes['disabled'] ='disabled';
         }
 
-        $grademenu = make_grades_menu($this->_customdata->assignment->grade);
-        $grademenu['-1'] = get_string('nograde');
-
         $mform->addElement('header', 'Grades', get_string('grades', 'grades'));
-        $mform->addElement('select', 'xgrade', get_string('grade').':', $grademenu, $attributes);
-        $mform->setDefault('xgrade', $this->_customdata->submission->grade ); //@fixme some bug when element called 'grade' makes it break
-        $mform->setType('xgrade', PARAM_INT);
+
+        if (!empty($this->_customdata->advancedgradingenabled)) {
+            $mform->addElement('static', 'advancedgradingwidget', get_string('grade').':', $this->_customdata->advancedgradingwidget);
+
+        } else {
+            // use simple direct grading
+            $grademenu = make_grades_menu($this->_customdata->assignment->grade);
+            $grademenu['-1'] = get_string('nograde');
+
+            $mform->addElement('select', 'xgrade', get_string('grade').':', $grademenu, $attributes);
+            $mform->setDefault('xgrade', $this->_customdata->submission->grade ); //@fixme some bug when element called 'grade' makes it break
+            $mform->setType('xgrade', PARAM_INT);
+        }
 
         if (!empty($this->_customdata->enableoutcomes)) {
             foreach($this->_customdata->grading_info->outcomes as $n=>$outcome) {
@@ -3677,6 +3714,7 @@ function assignment_supports($feature) {
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_BACKUP_MOODLE2:          return true;
         case FEATURE_SHOW_DESCRIPTION:        return true;
+        case FEATURE_ADVANCED_GRADING:        return true;
 
         default: return null;
     }
