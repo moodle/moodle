@@ -56,3 +56,5 @@ $string['removeuserwarning'] = 'Removing users from a cohort may result in unenr
 $string['selectfromcohort'] = 'Select members from cohort';
 $string['unknowncohort'] = 'Unknown cohort ({$a})!';
 $string['useradded'] = 'User added to cohort "{$a}"';
+$string['search'] = 'Search';
+$string['searchcohort'] = 'Search cohort';
