@@ -6778,7 +6778,7 @@ FROM
         upgrade_main_savepoint(true, 2011092800.03);
     }
 
-    if ($oldversion < 2011092900.00) {
+    if ($oldversion < 2011100700.01) {
         // Create new core tables for the advanced grading subsystem
 
         $table = new xmldb_table('grading_areas');
@@ -6802,6 +6802,9 @@ FROM
         $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
         $table->add_field('descriptionformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, null, null, null);
         $table->add_field('status', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('copiedfromid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('usercreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('options', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
@@ -6809,6 +6812,7 @@ FROM
         $table->add_key('fk_areaid', XMLDB_KEY_FOREIGN, array('areaid'), 'grading_areas', array('id'));
         $table->add_key('fk_usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
         $table->add_key('uq_area_method', XMLDB_KEY_UNIQUE, array('areaid', 'method'));
+        $table->add_key('fk_usercreated', XMLDB_KEY_FOREIGN, array('usercreated'), 'user', array('id'));
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
@@ -6831,7 +6835,7 @@ FROM
             $dbman->create_table($table);
         }
 
-        upgrade_main_savepoint(true, 2011092900.00);
+        upgrade_main_savepoint(true, 2011100700.01);
     }
 
     return true;
