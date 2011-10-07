@@ -74,6 +74,7 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
     $newcategory = new stdClass();
     $newcategory->name = $data->name;
+    $newcategory->idnumber = $data->idnumber;
     $newcategory->description_editor = $data->description_editor;
     $newcategory->parent = $data->parent; // if $data->parent = 0, the new category will be a top-level category
 

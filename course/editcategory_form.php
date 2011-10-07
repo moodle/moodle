@@ -35,6 +35,8 @@ class editcategory_form extends moodleform {
         $mform->addElement('select', 'parent', get_string('parentcategory'), $options);
         $mform->addElement('text', 'name', get_string('categoryname'), array('size'=>'30'));
         $mform->addRule('name', get_string('required'), 'required', null);
+        $mform->addElement('text', 'idnumber', get_string('idnumbercoursecategory'),'maxlength="100"  size="10"');
+        $mform->addHelpButton('idnumber', 'idnumbercoursecategory');
         $mform->addElement('editor', 'description_editor', get_string('description'), null, $editoroptions);
         $mform->setType('description_editor', PARAM_RAW);
         if (!empty($CFG->allowcategorythemes)) {
@@ -53,6 +55,20 @@ class editcategory_form extends moodleform {
         $mform->setDefault('id', $category->id);
 
         $this->add_action_buttons(true, $strsubmit);
+    }
+
+    function validation($data, $files) {
+        global $DB;
+        $errors = parent::validation($data, $files);
+        if (!empty($data['idnumber'])) {
+            if ($existing = $DB->get_record('course_categories', array('idnumber' => $data['idnumber']))) {
+                if (!$data['id'] || $existing->id != $data['id']) {
+                    $errors['idnumber']= get_string('idnumbertaken');
+                }
+            }
+        }
+
+        return $errors;
     }
 }
 
