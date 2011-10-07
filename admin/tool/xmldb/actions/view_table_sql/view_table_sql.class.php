@@ -38,10 +38,10 @@ class view_table_sql extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
         $this->sesskey_protected = false; // This action doesn't need sesskey protection
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             'selectdb' => 'tool_xmldb',
             'back' => 'tool_xmldb'
@@ -58,19 +58,19 @@ class view_table_sql extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         $this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB, $DB;
         $dbman = $DB->get_manager();
 
-    /// Do the job, setting result as needed
-    /// Get the dir containing the file
+        // Do the job, setting result as needed
+        // Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . $dirpath;
 
-    /// Get the correct dirs
+        // Get the correct dirs
         if (!empty($XMLDB->dbdirs)) {
             $dbdir =& $XMLDB->dbdirs[$dirpath];
         } else {
@@ -80,16 +80,15 @@ class view_table_sql extends XMLDBAction {
             $editeddir =& $XMLDB->editeddirs[$dirpath];
             $structure =& $editeddir->xml_file->getStructure();
         }
-    /// ADD YOUR CODE HERE
 
-    /// Get parameters
+        // Get parameters
         $tableparam = required_param('table', PARAM_PATH);
         if (!$table = $structure->getTable($tableparam)) {
             $this->errormsg = 'Wrong table specified: ' . $tableparam;
             return false;
         }
 
-        /// The back to edit table button
+        // The back to edit table button
         $b = ' <p class="centerpara buttons">';
         $b .= '<a href="index.php?action=edit_table&amp;table=' . $tableparam . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">[' . $this->str['back'] . ']</a>';
         $b .= '</p>';
@@ -98,7 +97,7 @@ class view_table_sql extends XMLDBAction {
         $o.= '    <table id="formelements" class="boxaligncenter" cellpadding="5">';
         $o.= '      <tr><td><textarea cols="80" rows="32">';
 
-    /// Get an array of statements
+        // Get an array of statements
         if ($starr = $DB->get_manager()->generator->getCreateTableSQL($table)) {
             $starr = $dbman->generator->getEndedStatements($starr);
             $sqltext = '';
@@ -113,12 +112,12 @@ class view_table_sql extends XMLDBAction {
 
         $this->output = $o;
 
-    /// Launch postaction if exists (leave this here!)
+        // Launch postaction if exists (leave this here!)
         if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 }

@@ -42,9 +42,9 @@ class save_xml_file extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             'filenotwriteable' => 'tool_xmldb'
         ));
@@ -60,26 +60,26 @@ class save_xml_file extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         $this->does_generate = ACTION_NONE;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB;
 
-    /// Do the job, setting result as needed
+        // Do the job, setting result as needed
 
-    /// Get the dir containing the file
+        // Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . $dirpath;
         $unload = optional_param('unload', true, PARAM_BOOL);
 
-    /// Get the edited dir
+        // Get the edited dir
         if (!empty($XMLDB->editeddirs)) {
             if (isset($XMLDB->editeddirs[$dirpath])) {
                 $editeddir =& $XMLDB->editeddirs[$dirpath];
             }
         }
-    /// Copy the edited dir over the original one
+        // Copy the edited dir over the original one
         if (!empty($XMLDB->dbdirs)) {
             if (isset($XMLDB->dbdirs[$dirpath])) {
                 $XMLDB->dbdirs[$dirpath] = unserialize(serialize($editeddir));
@@ -87,19 +87,19 @@ class save_xml_file extends XMLDBAction {
             }
         }
 
-    /// Chech for perms
+        // Chech for perms
         if (!is_writeable($dirpath . '/install.xml')) {
             $this->errormsg = $this->str['filenotwriteable'] . '(' . $dirpath . '/install.xml)';
             return false;
         }
 
-    /// Save the original dir
+        // Save the original dir
         $result = $dbdir->xml_file->saveXMLFile();
 
         if ($result) {
-        /// Delete the edited dir
+            // Delete the edited dir
             unset ($XMLDB->editeddirs[$dirpath]);
-        /// Unload de originaldir
+            // Unload de originaldir
             unset($XMLDB->dbdirs[$dirpath]->xml_file);
             unset($XMLDB->dbdirs[$dirpath]->xml_loaded);
             unset($XMLDB->dbdirs[$dirpath]->xml_changed);
@@ -110,17 +110,17 @@ class save_xml_file extends XMLDBAction {
             return false;
         }
 
-    /// If unload has been disabled, simulate it by reloading the file now
+        // If unload has been disabled, simulate it by reloading the file now
         if (!$unload) {
             return $this->launch('load_xml_file');
         }
 
-    /// Launch postaction if exists (leave this here!)
+        // Launch postaction if exists (leave this here!)
         if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 }

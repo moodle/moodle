@@ -126,14 +126,14 @@ class XMLDBAction {
      * array parameter
      */
     function loadStrings($strings) {
-    /// Load some commonly used strings
+        // Load some commonly used strings
         if (get_string_manager()->string_exists($this->title, 'tool_xmldb')) {
             $this->str['title'] = get_string($this->title, 'tool_xmldb');
         } else {
             $this->str['title'] = $this->title;
         }
 
-    /// Now process the $strings array loading it in the $str atribute
+        // Now process the $strings array loading it in the $str atribute
         if ($strings) {
             foreach ($strings as $key => $module) {
                 $this->str[$key] = get_string($key, $module);
@@ -149,19 +149,19 @@ class XMLDBAction {
 
         global $SESSION;
 
-    /// Sesskey protection
+        // Sesskey protection
         if ($this->sesskey_protected) {
             require_sesskey();
         }
 
-    /// If we are used any dir, save it in the lastused session object
-    /// Some actions can use it to perform positioning
+        // If we are used any dir, save it in the lastused session object
+        // Some actions can use it to perform positioning
         if ($lastused = optional_param ('dir', NULL, PARAM_PATH)) {
             $SESSION->lastused = $lastused;
         }
 
         $this->postaction = optional_param ('postaction', NULL, PARAM_ALPHAEXT);
-    /// Avoid being recursive
+        // Avoid being recursive
         if ($this->title == $this->postaction) {
             $this->postaction = NULL;
         }
@@ -174,12 +174,12 @@ class XMLDBAction {
 
         global $CFG;
 
-    /// Get the action path and invoke it
+        // Get the action path and invoke it
         $actionsroot = "$CFG->dirroot/$CFG->admin/tool/xmldb/actions";
         $actionclass = $action . '.class.php';
         $actionpath = "$actionsroot/$action/$actionclass";
 
-    /// Load and invoke the proper action
+        // Load and invoke the proper action
         $result = false;
         if (file_exists($actionpath) && is_readable($actionpath)) {
             require_once($actionpath);
@@ -218,16 +218,16 @@ class XMLDBAction {
 
         $path = $structure->getPath();
 
-    /// Trim "db" from path
+        // Trim "db" from path
         $path = dirname($path);
 
-    /// Get pluginname, plugindir and plugintype
+        // Get pluginname, plugindir and plugintype
         $pluginname = basename($path);
-        if ($path == 'lib') { /// exception for lib (not proper plugin)
+        if ($path == 'lib') { // exception for lib (not proper plugin)
             $plugindir = 'lib';
             $plugintype = 'lib';
-        } else { /// rest of plugins
-            //TODO: this is not nice and may fail, plugintype should be passed around somehow instead
+        } else { // rest of plugins
+            // TODO: this is not nice and may fail, plugintype should be passed around somehow instead
             $plugintypes = get_plugin_types(false);
             $plugindir = dirname($path);
             $plugindir = str_replace('\\', '/', $plugindir);
@@ -237,22 +237,22 @@ class XMLDBAction {
         $result = '';
 
         switch ($plugintype ) {
-            case 'lib': /// has own savepoint function
+            case 'lib': // has own savepoint function
                 $result = XMLDB_LINEFEED .
                           '        // Main savepoint reached' . XMLDB_LINEFEED .
                           '        upgrade_main_savepoint(true, XXXXXXXXXX);' . XMLDB_LINEFEED;
                 break;
-            case 'mod': /// has own savepoint function
+            case 'mod': // has own savepoint function
                 $result = XMLDB_LINEFEED .
                           '        // ' . $pluginname . ' savepoint reached' . XMLDB_LINEFEED .
                           '        upgrade_mod_savepoint(true, XXXXXXXXXX, ' . "'$pluginname'" . ');' . XMLDB_LINEFEED;
                 break;
-            case 'block': /// has own savepoint function
+            case 'block': // has own savepoint function
                 $result = XMLDB_LINEFEED .
                           '        // ' . $pluginname . ' savepoint reached' . XMLDB_LINEFEED .
                           '        upgrade_block_savepoint(true, XXXXXXXXXX, ' . "'$pluginname'" . ');' . XMLDB_LINEFEED;
                 break;
-            default: /// rest of plugins
+            default: // rest of plugins
                 $result = XMLDB_LINEFEED .
                           '        // ' . $pluginname . ' savepoint reached' . XMLDB_LINEFEED .
                           '        upgrade_plugin_savepoint(true, XXXXXXXXXX, ' . "'$plugintype'" . ', ' . "'$pluginname'" . ');' . XMLDB_LINEFEED;

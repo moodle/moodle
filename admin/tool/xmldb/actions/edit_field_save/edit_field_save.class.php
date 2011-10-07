@@ -38,9 +38,9 @@ class edit_field_save extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             'fieldnameempty' => 'tool_xmldb',
             'incorrectfieldname' => 'tool_xmldb',
@@ -69,20 +69,20 @@ class edit_field_save extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         //$this->does_generate = ACTION_NONE;
         $this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB;
 
-    /// Do the job, setting result as needed
+        // Do the job, setting result as needed
 
-        if (!data_submitted()) { ///Basic prevention
+        if (!data_submitted()) { // Basic prevention
             print_error('wrongcall', 'error');
         }
 
-    /// Get parameters
+        // Get parameters
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . $dirpath;
 
@@ -108,9 +108,9 @@ class edit_field_save extends XMLDBAction {
         $field =& $table->getField($fieldparam);
         $oldhash = $field->getHash();
 
-        $errors = array();    /// To store all the errors found
+        $errors = array(); // To store all the errors found
 
-    /// Perform some automatic assumptions
+        // Perform some automatic assumptions
         if ($sequence) {
             $unsigned = true;
             $notnull  = true;
@@ -126,20 +126,20 @@ class edit_field_save extends XMLDBAction {
             $default = NULL;
         }
 
-    /// Perform some checks
-    /// Check empty name
+        // Perform some checks
+        // Check empty name
         if (empty($name)) {
             $errors[] = $this->str['fieldnameempty'];
         }
-    /// Check incorrect name
+        // Check incorrect name
         if ($name == 'changeme') {
             $errors[] = $this->str['incorrectfieldname'];
         }
-    /// Check duplicate name
+        // Check duplicate name
         if ($fieldparam != $name && $table->getField($name)) {
             $errors[] = $this->str['duplicatefieldname'];
         }
-    /// Integer checks
+        // Integer checks
         if ($type == XMLDB_TYPE_INTEGER) {
             if (!(is_numeric($length) && !empty($length) && intval($length)==floatval($length) &&
                   $length > 0 && $length <= 20)) {
@@ -151,7 +151,7 @@ class edit_field_save extends XMLDBAction {
                 $errors[] = $this->str['defaultincorrect'];
             }
         }
-    /// Number checks
+        // Number checks
         if ($type == XMLDB_TYPE_NUMBER) {
             if (!(is_numeric($length) && !empty($length) && intval($length)==floatval($length) &&
                   $length > 0 && $length <= 20)) {
@@ -169,7 +169,7 @@ class edit_field_save extends XMLDBAction {
                 $errors[] = $this->str['defaultincorrect'];
             }
         }
-    /// Float checks
+        // Float checks
         if ($type == XMLDB_TYPE_FLOAT) {
             if (!(empty($length) || (is_numeric($length) &&
                                      !empty($length) &&
@@ -190,7 +190,7 @@ class edit_field_save extends XMLDBAction {
                 $errors[] = $this->str['defaultincorrect'];
             }
         }
-    /// Char checks
+        // Char checks
         if ($type == XMLDB_TYPE_CHAR) {
             if (!(is_numeric($length) && !empty($length) && intval($length)==floatval($length) &&
                   $length > 0 && $length <= xmldb_field::CHAR_MAX_LENGTH)) {
@@ -203,7 +203,7 @@ class edit_field_save extends XMLDBAction {
                 }
             }
         }
-    /// Text checks
+        // Text checks
         if ($type == XMLDB_TYPE_TEXT) {
             if ($length != 'small' &&
                 $length != 'medium' &&
@@ -217,7 +217,7 @@ class edit_field_save extends XMLDBAction {
                 }
             }
         }
-    /// Binary checks
+        // Binary checks
         if ($type == XMLDB_TYPE_BINARY) {
             if ($length != 'small' &&
                 $length != 'medium' &&
@@ -235,7 +235,7 @@ class edit_field_save extends XMLDBAction {
             $tempfield->setNotNull($notnull);
             $tempfield->setSequence($sequence);
             $tempfield->setDefault($default);
-        /// Prepare the output
+            // Prepare the output
             $o = '<p>' .implode(', ', $errors) . '</p>
                   <p>' . $name . ': ' . $tempfield->readableInfo() . '</p>';
             $o.= '<a href="index.php?action=edit_field&amp;field=' . $field->getName() . '&amp;table=' . $table->getName() .
@@ -243,10 +243,10 @@ class edit_field_save extends XMLDBAction {
             $this->output = $o;
         }
 
-    /// Continue if we aren't under errors
+        // Continue if we aren't under errors
         if (empty($errors)) {
-        /// If there is one name change, do it, changing the prev and next
-        /// atributes of the adjacent fields
+            // If there is one name change, do it, changing the prev and next
+            // atributes of the adjacent fields
             if ($fieldparam != $name) {
                 $field->setName($name);
                 if ($field->getPrevious()) {
@@ -261,10 +261,10 @@ class edit_field_save extends XMLDBAction {
                 }
             }
 
-        /// Set comment
+            // Set comment
             $field->setComment($comment);
 
-        /// Set the rest of fields
+            // Set the rest of fields
             $field->setType($type);
             $field->setLength($length);
             $field->setDecimals($decimals);
@@ -273,26 +273,26 @@ class edit_field_save extends XMLDBAction {
             $field->setSequence($sequence);
             $field->setDefault($default);
 
-        /// If the hash has changed from the old one, change the version
-        /// and mark the structure as changed
+            // If the hash has changed from the old one, change the version
+            // and mark the structure as changed
             $field->calculateHash(true);
             if ($oldhash != $field->getHash()) {
                 $field->setChanged(true);
                 $table->setChanged(true);
-            /// Recalculate the structure hash
+                // Recalculate the structure hash
                 $structure->calculateHash(true);
                 $structure->setVersion(userdate(time(), '%Y%m%d', 99, false));
-            /// Mark as changed
+                // Mark as changed
                 $structure->setChanged(true);
             }
 
-        /// Launch postaction if exists (leave this here!)
+            // Launch postaction if exists (leave this here!)
             if ($this->getPostAction() && $result) {
                 return $this->launch($this->getPostAction());
             }
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 }

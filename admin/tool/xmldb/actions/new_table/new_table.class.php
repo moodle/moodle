@@ -37,11 +37,11 @@ class new_table extends XMLDBAction {
     function init() {
         parent::init();
 
-    /// Set own custom attributes
+        // Set own custom attributes
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
-        /// 'key' => 'module',
+            // 'key' => 'module',
         ));
     }
 
@@ -55,19 +55,19 @@ class new_table extends XMLDBAction {
 
         $result = true;
 
-    /// Set own core attributes
+        // Set own core attributes
         $this->does_generate = ACTION_NONE;
         //$this->does_generate = ACTION_GENERATE_HTML;
 
-    /// These are always here
+        // These are always here
         global $CFG, $XMLDB;
 
-    /// Do the job, setting result as needed
-    /// Get the dir containing the file
+        // Do the job, setting result as needed
+        // Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
         $dirpath = $CFG->dirroot . $dirpath;
 
-    /// Get the correct dirs
+        // Get the correct dirs
         if (!empty($XMLDB->dbdirs)) {
             $dbdir =& $XMLDB->dbdirs[$dirpath];
         } else {
@@ -77,16 +77,15 @@ class new_table extends XMLDBAction {
             $editeddir =& $XMLDB->editeddirs[$dirpath];
             $structure =& $editeddir->xml_file->getStructure();
         }
-    /// ADD YOUR CODE HERE
 
-    /// If the changeme table exists, just get it and continue
+        // If the changeme table exists, just get it and continue
         $changeme_exists = false;
         if ($tables =& $structure->getTables()) {
             if ($table =& $structure->getTable('changeme')) {
                 $changeme_exists = true;
             }
         }
-        if (!$changeme_exists) { /// Lets create the table
+        if (!$changeme_exists) { // Lets create the table
             $field = new xmldb_field('id');
             $field->setType(XMLDB_TYPE_INTEGER);
             $field->setLength(10);
@@ -107,16 +106,16 @@ class new_table extends XMLDBAction {
             $table->addField($field);
             $table->addKey($key);
 
-        /// Finally, add the whole retrofitted table to the structure
-        /// in the place specified
+            // Finally, add the whole retrofitted table to the structure
+            // in the place specified
             $structure->addTable($table);
         }
-    /// Launch postaction if exists (leave this here!)
+        // Launch postaction if exists (leave this here!)
         if ($this->getPostAction() && $result) {
             return $this->launch($this->getPostAction());
         }
 
-    /// Return ok if arrived here
+        // Return ok if arrived here
         return $result;
     }
 }

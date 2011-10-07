@@ -6728,6 +6728,56 @@ FROM
         upgrade_main_savepoint(true, 2011091600.01);
     }
 
+    if ($oldversion < 2011092800.01) {
+        // Check for potential missing columns in the grade_items_history
+
+        $table = new xmldb_table('grade_items_history');
+        $field = new xmldb_field('display', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'sortorder');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('decimals', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, 'display');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        } else {
+            //check that the grade_items_history.decimals allows nulls
+            //Somehow some Moodle databases have this column marked as "not null"
+            $columns = $DB->get_columns('grade_items_history');
+            if (array_key_exists('display', $columns) && !empty($columns['display']->not_null)) {
+                $dbman->change_field_notnull($table, $field);
+            }
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011092800.01);
+    }
+
+    if ($oldversion < 2011092800.02) {
+        // Check for potential missing columns in the grade_categories_history
+
+        $table = new xmldb_table('grade_categories_history');
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'timemodified');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011092800.02);
+    }
+
+    if ($oldversion < 2011092800.03) {
+        // Check for potential missing columns in the grade_outcomes_history
+
+        $table = new xmldb_table('grade_outcomes_history');
+        $field = new xmldb_field('descriptionformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'description');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011092800.03);
+    }
+
     if ($oldversion < 2011092900.00) {
         // Create new core tables for the advanced grading subsystem
 
@@ -6763,7 +6813,7 @@ FROM
             $dbman->create_table($table);
         }
 
-       $table = new xmldb_table('grading_instances');
+        $table = new xmldb_table('grading_instances');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('formid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('raterid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
@@ -6786,4 +6836,3 @@ FROM
 
     return true;
 }
-

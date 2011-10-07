@@ -58,10 +58,6 @@ if (isguestuser($user)) {
 
 if (!empty($CFG->forceloginforprofiles)) {
     require_login(); // we can not log in to course due to the parent hack bellow
-    if (isguestuser()) {
-        $SESSION->wantsurl = $PAGE->url->out(false);
-        redirect(get_login_url());
-    }
 }
 
 $PAGE->set_context($coursecontext);
@@ -96,7 +92,7 @@ $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $coursec
 /// Now test the actual capabilities and enrolment in course
 if ($currentuser) {
     // me
-    if (!is_enrolled($coursecontext) and !is_viewing($coursecontext)) { // Need to have full access to a course to see the rest of own info
+    if (!is_viewing($coursecontext) && !is_enrolled($coursecontext)) { // Need to have full access to a course to see the rest of own info
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('notenrolled', '', $fullname));
         if (!empty($_SERVER['HTTP_REFERER'])) {

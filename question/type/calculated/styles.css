@@ -3,6 +3,6 @@
     width: auto;
     display: inline;
 }
-.que.calculated .answer input {
+.que.calculated .answer input[type="text"] {
     width: 30%;
 }

@@ -44,11 +44,11 @@ class check_bigints extends XMLDBCheckAction {
         $this->introstr = 'confirmcheckbigints';
         parent::init();
 
-    /// Set own core attributes
+        // Set own core attributes
 
-    /// Set own custom attributes
+        // Set own custom attributes
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             'wrongints' => 'tool_xmldb',
             'nowrongintsfound' => 'tool_xmldb',
@@ -56,7 +56,7 @@ class check_bigints extends XMLDBCheckAction {
             'mysqlextracheckbigints' => 'tool_xmldb',
         ));
 
-    /// Correct fields must be type bigint for MySQL and int8 for PostgreSQL
+        // Correct fields must be type bigint for MySQL and int8 for PostgreSQL
         $this->dbfamily = $DB->get_dbfamily();
         switch ($this->dbfamily) {
             case 'mysql':
@@ -74,26 +74,26 @@ class check_bigints extends XMLDBCheckAction {
         $o = '';
         $wrong_fields = array();
 
-    /// Get and process XMLDB fields
+        // Get and process XMLDB fields
         if ($xmldb_fields = $xmldb_table->getFields()) {
             $o.='        <ul>';
             foreach ($xmldb_fields as $xmldb_field) {
-            /// If the field isn't integer(10), skip
+                // If the field isn't integer(10), skip
                 if ($xmldb_field->getType() != XMLDB_TYPE_INTEGER || $xmldb_field->getLength() != 10) {
                     continue;
                 }
-            /// If the metadata for that column doesn't exist, skip
+                // If the metadata for that column doesn't exist, skip
                 if (!isset($metacolumns[$xmldb_field->getName()])) {
                     continue;
                 }
-            /// To variable for better handling
+                // To variable for better handling
                 $metacolumn = $metacolumns[$xmldb_field->getName()];
-            /// Going to check this field in DB
+                // Going to check this field in DB
                 $o.='            <li>' . $this->str['field'] . ': ' . $xmldb_field->getName() . ' ';
-            /// Detect if the physical field is wrong and, under mysql, check for incorrect signed fields too
+                // Detect if the physical field is wrong and, under mysql, check for incorrect signed fields too
                 if ($metacolumn->type != $this->correct_type || ($this->dbfamily == 'mysql' && $xmldb_field->getUnsigned() && !$metacolumn->unsigned)) {
                     $o.='<font color="red">' . $this->str['wrong'] . '</font>';
-                /// Add the wrong field to the list
+                    // Add the wrong field to the list
                     $obj = new stdClass();
                     $obj->table = $xmldb_table;
                     $obj->field = $xmldb_field;
@@ -121,41 +121,41 @@ class check_bigints extends XMLDBCheckAction {
         $r.= '  </td></tr>';
         $r.= '  <tr><td class="generalboxcontent">';
 
-    /// If we have found wrong integers inform about them
+        // If we have found wrong integers inform about them
         if (count($wrong_fields)) {
             $r.= '    <p class="centerpara">' . $this->str['yeswrongintsfound'] . '</p>';
             $r.= '        <ul>';
             foreach ($wrong_fields as $obj) {
                 $xmldb_table = $obj->table;
                 $xmldb_field = $obj->field;
-            /// MySQL directly supports this
+                // MySQL directly supports this
 
 // TODO: move this hack to generators!!
 
                 if ($this->dbfamily == 'mysql') {
                     $sqlarr = $dbman->generator->getAlterFieldSQL($xmldb_table, $xmldb_field);
-            /// PostgreSQL (XMLDB implementation) is a bit, er... imperfect.
+                // PostgreSQL (XMLDB implementation) is a bit, er... imperfect.
                 } else if ($this->dbfamily == 'postgres') {
                     $sqlarr = array('ALTER TABLE ' . $DB->get_prefix() . $xmldb_table->getName() .
                               ' ALTER COLUMN ' . $xmldb_field->getName() . ' TYPE BIGINT;');
                 }
                 $r.= '            <li>' . $this->str['table'] . ': ' . $xmldb_table->getName() . '. ' .
                                           $this->str['field'] . ': ' . $xmldb_field->getName() . '</li>';
-            /// Add to output if we have sentences
+                // Add to output if we have sentences
                 if ($sqlarr) {
                     $sqlarr = $dbman->generator->getEndedStatements($sqlarr);
                     $s.= '<code>' . str_replace("\n", '<br />', implode('<br />', $sqlarr)). '</code><br />';
                 }
             }
             $r.= '        </ul>';
-        /// Add the SQL statements (all together)
+            // Add the SQL statements (all together)
             $r.= '<hr />' . $s;
         } else {
             $r.= '    <p class="centerpara">' . $this->str['nowrongintsfound'] . '</p>';
         }
         $r.= '  </td></tr>';
         $r.= '  <tr><td class="generalboxcontent">';
-    /// Add the complete log message
+        // Add the complete log message
         $r.= '    <p class="centerpara">' . $this->str['completelogbelow'] . '</p>';
         $r.= '  </td></tr>';
         $r.= '</table>';

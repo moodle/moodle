@@ -63,6 +63,7 @@ $string['runindexertest'] = 'Run indexer test';
 $string['score'] = 'Score';
 $string['search'] = 'Search';
 $string['searching'] = 'Searching in ...';
+$string['searchnotpermitted'] = 'You are not allowed to do a search';
 $string['seconds'] = 'seconds';
 $string['solutions'] = 'Solutions';
 $string['statistics'] = 'Statistics';

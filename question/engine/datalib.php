@@ -659,6 +659,11 @@ ORDER BY
                     WHERE $where)", $params);
         }
 
+        if ($this->db->get_dbfamily() == 'mysql') {
+            $this->delete_usage_records_for_mysql($qubaids);
+            return;
+        }
+
         $this->db->delete_records_select('question_attempt_step_data', "attemptstepid IN (
                 SELECT qas.id
                 FROM {question_attempts} qa
@@ -679,6 +684,40 @@ ORDER BY
     }
 
     /**
+     * This function is a work-around for poor MySQL performance with
+     * DELETE FROM x WHERE id IN (SELECT ...). We have to use a non-standard
+     * syntax to get good performance. See MDL-29520.
+     * @param qubaid_condition $qubaids identifies which question useages to delete.
+     */
+    protected function delete_usage_records_for_mysql(qubaid_condition $qubaids) {
+        // TODO once MDL-29589 is fixed, eliminate this method, and instead use the new $DB API.
+        $this->db->execute('
+                DELETE qu, qa, qas, qasd
+                  FROM {question_usages}            qu
+                  JOIN {question_attempts}          qa   ON qa.questionusageid = qu.id
+                  JOIN {question_attempt_steps}     qas  ON qas.questionattemptid = qa.id
+                  JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid = qas.id
+                 WHERE qu.id ' . $qubaids->usage_id_in(),
+                $qubaids->usage_id_in_params());
+    }
+
+    /**
+     * This function is a work-around for poor MySQL performance with
+     * DELETE FROM x WHERE id IN (SELECT ...). We have to use a non-standard
+     * syntax to get good performance. See MDL-29520.
+     * @param string $test sql fragment.
+     * @param array $params used by $test.
+     */
+    protected function delete_attempt_steps_for_mysql($test, $params) {
+        // TODO once MDL-29589 is fixed, eliminate this method, and instead use the new $DB API.
+        $this->db->execute('
+                DELETE qas, qasd
+                  FROM {question_attempt_steps}     qas
+                  JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid = qas.id
+                 WHERE qas.questionattemptid ' . $test, $params);
+    }
+
+    /**
      * Delete all the steps for a question attempt.
      * @param int $qaids question_attempt id.
      */
@@ -692,6 +731,11 @@ ORDER BY
                 SELECT id
                 FROM {question_attempt_steps}
                 WHERE questionattemptid $test)", $params);
+
+        if ($this->db->get_dbfamily() == 'mysql') {
+            $this->delete_attempt_steps_for_mysql($test, $params);
+            return;
+        }
 
         $this->db->delete_records_select('question_attempt_step_data', "attemptstepid IN (
                 SELECT qas.id

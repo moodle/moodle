@@ -23,6 +23,7 @@
 .userinfobox .userpicture {width: 100px;height: 100px;}
 .userinfobox .content {vertical-align: top;}
 .userinfobox .links {width: 100px;padding: 5px;vertical-align: bottom;}
+.userinfobox .links a {display: block;}
 .userinfobox .list td {padding: 3px;}
 .userinfobox .username {padding-bottom: 20px;font-weight: bold;}
 .userinfobox td.label {text-align:right;white-space: nowrap;vertical-align: top;font-weight:bold;}
@@ -49,6 +50,6 @@
 /** Overide for RTL layout **/
 .dir-rtl .userprofile .profilepicture {float:right; margin-left:20px;margin-right:0px;}
 .dir-rtl .descriptionbox {margin-right: 110px;margin-left: 0px; }
-.dir-rtl .userlist table#participants td, 
+.dir-rtl .userlist table#participants td,
 .dir-rtl .userlist table#participants th {text-align: right;}
 .dir-rtl .userlist table#participants {margin: 0 auto;}

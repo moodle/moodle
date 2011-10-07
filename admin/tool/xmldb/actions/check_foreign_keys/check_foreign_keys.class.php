@@ -44,11 +44,11 @@ class check_foreign_keys extends XMLDBCheckAction {
         $this->introstr = 'confirmcheckforeignkeys';
         parent::init();
 
-    /// Set own core attributes
+        // Set own core attributes
 
-    /// Set own custom attributes
+        // Set own custom attributes
 
-    /// Get needed strings
+        // Get needed strings
         $this->loadStrings(array(
             'key' => 'tool_xmldb',
             'violatedforeignkeys' => 'tool_xmldb',
@@ -67,17 +67,17 @@ class check_foreign_keys extends XMLDBCheckAction {
         $o = '';
         $violatedkeys = array();
 
-        /// Keys
+        // Keys
         if ($xmldb_keys = $xmldb_table->getKeys()) {
             $o.='        <ul>';
             foreach ($xmldb_keys as $xmldb_key) {
-            /// We are only interested in foreign keys.
+                // We are only interested in foreign keys.
                 if (!in_array($xmldb_key->getType(), array(XMLDB_KEY_FOREIGN, XMLDB_KEY_FOREIGN_UNIQUE))) {
                     continue;
                 }
                 $o.='            <li>' . $this->str['key'] . ': ' . $xmldb_key->readableInfo() . ' ';
 
-            /// Work out the SQL to find key violations.
+                // Work out the SQL to find key violations.
                 $keyfields = $xmldb_key->getFields();
                 $reffields = $xmldb_key->getRefFields();
                 $joinconditions = array();
@@ -103,13 +103,13 @@ class check_foreign_keys extends XMLDBCheckAction {
                         implode(' AND ', $joinconditions) . ' WHERE ' .
                         implode(' AND ', $nullnessconditions);
 
-            /// Check there are any problems in the database.
+                // Check there are any problems in the database.
                 $violations = $DB->count_records_sql($sql, $params);
                 if ($violations == 0) {
                     $o.='<font color="green">' . $this->str['ok'] . '</font>';
                 } else {
                     $o.='<font color="red">' . $this->str['violations'] . '</font>';
-                /// Add the missing index to the list
+                    // Add the missing index to the list
                     $violation = new stdClass;
                     $violation->table = $xmldb_table;
                     $violation->key = $xmldb_key;
@@ -139,7 +139,7 @@ class check_foreign_keys extends XMLDBCheckAction {
         $r.= '  </td></tr>';
         $r.= '  <tr><td class="generalboxcontent">';
 
-    /// If we have found wrong integers inform about them
+        // If we have found wrong integers inform about them
         if (count($violatedkeys)) {
             $r.= '    <p class="centerpara">' . $this->str['violatedforeignkeysfound'] . '</p>';
             $r.= '        <ul>';
@@ -156,7 +156,7 @@ class check_foreign_keys extends XMLDBCheckAction {
         }
         $r.= '  </td></tr>';
         $r.= '  <tr><td class="generalboxcontent">';
-    /// Add the complete log message
+        // Add the complete log message
         $r.= '    <p class="centerpara">' . $this->str['completelogbelow'] . '</p>';
         $r.= '  </td></tr>';
         $r.= '</table>';

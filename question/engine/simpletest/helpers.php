@@ -115,6 +115,40 @@ class test_question_maker {
         $q->modifiedby = $USER->id;
     }
 
+    public static function initialise_question_data($qdata) {
+        global $USER;
+
+        $qdata->id = 0;
+        $qdata->category = 0;
+        $qdata->contextid = 0;
+        $qdata->parent = 0;
+        $qdata->questiontextformat = FORMAT_HTML;
+        $qdata->generalfeedbackformat = FORMAT_HTML;
+        $qdata->defaultmark = 1;
+        $qdata->penalty = 0.3333333;
+        $qdata->length = 1;
+        $qdata->stamp = make_unique_id_code();
+        $qdata->version = make_unique_id_code();
+        $qdata->hidden = 0;
+        $qdata->timecreated = time();
+        $qdata->timemodified = time();
+        $qdata->createdby = $USER->id;
+        $qdata->modifiedby = $USER->id;
+        $qdata->hints = array();
+    }
+
+    public static function initialise_question_form_data($qdata) {
+        $formdata = new stdClass();
+        $formdata->id = 0;
+        $formdata->category = '0,0';
+        $formdata->usecurrentcat = 1;
+        $formdata->categorymoveto = '0,0';
+        $formdata->tags = array();
+        $formdata->penalty = 0.3333333;
+        $formdata->questiontextformat = FORMAT_HTML;
+        $formdata->generalfeedbackformat = FORMAT_HTML;
+    }
+
     /**
      * Get the test helper class for a particular question type.
      * @param $qtype the question type name, e.g. 'multichoice'.
@@ -143,7 +177,16 @@ class test_question_maker {
         return self::$testhelpers[$qtype];
     }
 
-    public static function make_question($qtype, $which = null) {
+    /**
+     * Call a method on a qtype_{$qtype}_test_helper class and return the result.
+     *
+     * @param string $methodtemplate e.g. 'make_{qtype}_question_{which}';
+     * @param string $qtype the question type to get a test question for.
+     * @param string $which one of the names returned by the get_test_questions
+     *      method of the relevant qtype_{$qtype}_test_helper class.
+     * @param unknown_type $which
+     */
+    protected static function call_question_helper_method($methodtemplate, $qtype, $which = null) {
         $helper = self::get_test_helper($qtype);
 
         $available = $helper->get_test_questions();
@@ -152,16 +195,62 @@ class test_question_maker {
             $which = reset($available);
         } else if (!in_array($which, $available)) {
             throw new coding_exception('Example question ' . $which . ' of type ' .
-                    $qtype . ' does not exist.');
+            $qtype . ' does not exist.');
         }
 
-        $method = "make_{$qtype}_question_{$which}";
+        $method = str_replace(array('{qtype}', '{which}'),
+                               array($qtype,    $which), $methodtemplate);
+
         if (!method_exists($helper, $method)) {
             throw new coding_exception('Method ' . $method . ' does not exist on the' .
-                    $qtype . ' question type test helper class.');
+            $qtype . ' question type test helper class.');
         }
 
         return $helper->$method();
+    }
+
+    /**
+     * Question types can provide a number of test question defintions.
+     * They do this by creating a qtype_{$qtype}_test_helper class that extends
+     * question_test_helper. The get_test_questions method returns the list of
+     * test questions available for this question type.
+     *
+     * @param string $qtype the question type to get a test question for.
+     * @param string $which one of the names returned by the get_test_questions
+     *      method of the relevant qtype_{$qtype}_test_helper class.
+     * @return question_definition the requested question object.
+     */
+    public static function make_question($qtype, $which = null) {
+        return self::call_question_helper_method('make_{qtype}_question_{which}',
+                $qtype, $which);
+    }
+
+    /**
+     * Like {@link make_question()} but returns the datastructure from
+     * get_question_options instead of the question_definition object.
+     *
+     * @param string $qtype the question type to get a test question for.
+     * @param string $which one of the names returned by the get_test_questions
+     *      method of the relevant qtype_{$qtype}_test_helper class.
+     * @return stdClass the requested question object.
+     */
+    public static function get_question_data($qtype, $which = null) {
+        return self::call_question_helper_method('get_{qtype}_question_data_{which}',
+                $qtype, $which);
+    }
+
+    /**
+     * Like {@link make_question()} but returns the data what would be saved from
+     * the question editing form instead of the question_definition object.
+     *
+     * @param string $qtype the question type to get a test question for.
+     * @param string $which one of the names returned by the get_test_questions
+     *      method of the relevant qtype_{$qtype}_test_helper class.
+     * @return stdClass the requested question object.
+     */
+    public static function get_question_form_data($qtype, $which = null) {
+        return self::call_question_helper_method('get_{qtype}_question_form_data_{which}',
+                $qtype, $which);
     }
 
     /**
@@ -295,24 +384,6 @@ class test_question_maker {
         $essay->graderinfoformat = FORMAT_MOODLE;
 
         return $essay;
-    }
-
-    /**
-     * Makes a truefalse question with correct ansewer true, defaultmark 1.
-     * @return question_truefalse
-     */
-    public static function make_a_description_question() {
-        question_bank::load_question_definition_classes('description');
-        $description = new qtype_description_question();
-        self::initialise_a_question($description);
-        $description->name = 'Description question';
-        $description->questiontext =
-                'This text tells you a bit about the next few questions in this quiz.';
-        $description->generalfeedback =
-                'This is what this section of the quiz should have taught you.';
-        $description->qtype = question_bank::get_qtype('description');
-
-        return $description;
     }
 
     /**
