@@ -57,9 +57,10 @@ class quizaccess_delaybetweenattempts extends quiz_access_rule_base {
         $nextstarttime = $this->compute_next_start_time($numprevattempts, $lastattempt);
         if ($this->timenow < $nextstarttime) {
             if ($this->quiz->timeclose == 0 || $nextstarttime <= $this->quiz->timeclose) {
-                return get_string('youmustwait', 'quiz', userdate($nextstarttime));
+                return get_string('youmustwait', 'quizaccess_delaybetweenattempts',
+                        userdate($nextstarttime));
             } else {
-                return get_string('youcannotwait', 'quiz');
+                return get_string('youcannotwait', 'quizaccess_delaybetweenattempts');
             }
         }
         return false;

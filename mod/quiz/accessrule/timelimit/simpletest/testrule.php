@@ -49,7 +49,7 @@ class quizaccess_timelimit_test extends UnitTestCase {
         $attempt = new stdClass();
 
         $this->assertEqual($rule->description(),
-                get_string('quiztimelimit', 'quiz', format_time(3600)));
+                get_string('quiztimelimit', 'quizaccess_timelimit', format_time(3600)));
 
         $attempt->timestart = 10000;
         $this->assertEqual($rule->time_left($attempt, 10000), 3600);

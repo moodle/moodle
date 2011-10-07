@@ -48,7 +48,8 @@ class quizaccess_numattempts_test extends UnitTestCase {
         $rule = new quizaccess_numattempts($quizobj, 0);
         $attempt = new stdClass();
 
-        $this->assertEqual($rule->description(), get_string('attemptsallowedn', 'quiz', 3));
+        $this->assertEqual($rule->description(),
+                get_string('attemptsallowedn', 'quizaccess_numattempts', 3));
 
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));

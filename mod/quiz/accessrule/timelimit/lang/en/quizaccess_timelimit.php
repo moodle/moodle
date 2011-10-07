@@ -28,3 +28,4 @@ defined('MOODLE_INTERNAL') || die();
 
 
 $string['pluginname'] = 'Time limit quiz access rule';
+$string['quiztimelimit'] = 'Time limit: {$a}';

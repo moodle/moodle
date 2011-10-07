@@ -49,7 +49,7 @@ class quizaccess_ipaddress extends quiz_access_rule_base {
         if (address_in_subnet(getremoteaddr(), $this->quiz->subnet)) {
             return false;
         } else {
-            return get_string('subnetwrong', 'quiz');
+            return get_string('subnetwrong', 'quizaccess_ipaddress');
         }
     }
 }

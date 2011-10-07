@@ -46,7 +46,7 @@ class quizaccess_password extends quiz_access_rule_base {
     }
 
     public function description() {
-        return get_string('requirepasswordmessage', 'quiz');
+        return get_string('requirepasswordmessage', 'quizaccess_password');
     }
 
     public function is_preflight_check_required($attemptid) {
@@ -59,11 +59,12 @@ class quizaccess_password extends quiz_access_rule_base {
 
         $mform->addElement('header', 'passwordheader', get_string('password'));
         $mform->addElement('static', 'passwordmessage', '',
-                get_string('requirepasswordmessage', 'quiz'));
+                get_string('requirepasswordmessage', 'quizaccess_password'));
 
         // don't use the 'proper' field name of 'password' since that get's
         // Firefox's password auto-complete over-excited.
-        $mform->addElement('password', 'quizpassword', get_string('quizpassword', 'quizaccess_password'));
+        $mform->addElement('password', 'quizpassword',
+                get_string('quizpassword', 'quizaccess_password'));
     }
 
     public function validate_preflight_check($data, $files, $errors, $attemptid) {
@@ -81,7 +82,7 @@ class quizaccess_password extends quiz_access_rule_base {
             }
         }
 
-        $errors['quizpassword'] = get_string('passworderror', 'quiz');
+        $errors['quizpassword'] = get_string('passworderror', 'quizaccess_password');
         return $errors;
     }
 

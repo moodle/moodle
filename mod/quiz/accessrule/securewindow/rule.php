@@ -89,6 +89,7 @@ class quizaccess_securewindow extends quiz_access_rule_base {
      *      security settings menu.
      */
     public static function get_browser_security_choices() {
-        return array('securewindow' => get_string('popupwithjavascriptsupport', 'quiz'));
+        return array('securewindow' =>
+                get_string('popupwithjavascriptsupport', 'quizaccess_securewindow'));
     }
 }

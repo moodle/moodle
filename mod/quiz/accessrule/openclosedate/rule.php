@@ -45,9 +45,12 @@ class quizaccess_openclosedate extends quiz_access_rule_base {
     public function description() {
         $result = array();
         if ($this->timenow < $this->quiz->timeopen) {
-            $result[] = get_string('quiznotavailable', 'quiz', userdate($this->quiz->timeopen));
+            $result[] = get_string('quiznotavailable', 'quizaccess_openclosedate',
+                    userdate($this->quiz->timeopen));
+
         } else if ($this->quiz->timeclose && $this->timenow > $this->quiz->timeclose) {
-            $result[] = get_string("quizclosed", "quiz", userdate($this->quiz->timeclose));
+            $result[] = get_string('quizclosed', 'quiz', userdate($this->quiz->timeclose));
+
         } else {
             if ($this->quiz->timeopen) {
                 $result[] = get_string('quizopenedon', 'quiz', userdate($this->quiz->timeopen));
@@ -56,13 +59,14 @@ class quizaccess_openclosedate extends quiz_access_rule_base {
                 $result[] = get_string('quizcloseson', 'quiz', userdate($this->quiz->timeclose));
             }
         }
+
         return $result;
     }
 
     public function prevent_access() {
         if ($this->timenow < $this->quiz->timeopen ||
         ($this->quiz->timeclose && $this->timenow > $this->quiz->timeclose)) {
-            return get_string('notavailable', 'quiz');
+            return get_string('notavailable', 'quizaccess_openclosedate');
         }
         return false;
     }

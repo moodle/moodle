@@ -78,9 +78,9 @@ class quizaccess_openclosedate_test extends UnitTestCase {
 
         $rule = new quizaccess_openclosedate($quizobj, 9999);
         $this->assertEqual($rule->description(),
-                array(get_string('quiznotavailable', 'quiz', userdate(10000))));
+                array(get_string('quiznotavailable', 'quizaccess_openclosedate', userdate(10000))));
         $this->assertEqual($rule->prevent_access(),
-                get_string('notavailable', 'quiz'));
+                get_string('notavailable', 'quizaccess_openclosedate'));
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
         $this->assertFalse($rule->time_left($attempt, 0));
@@ -120,7 +120,7 @@ class quizaccess_openclosedate_test extends UnitTestCase {
         $this->assertEqual($rule->description(),
                 array(get_string('quizclosed', 'quiz', userdate(20000))));
         $this->assertEqual($rule->prevent_access(),
-                get_string('notavailable', 'quiz'));
+                get_string('notavailable', 'quizaccess_openclosedate'));
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertTrue($rule->is_finished(0, $attempt));
         $this->assertFalse($rule->time_left($attempt, 20000 - QUIZ_SHOW_TIME_BEFORE_DEADLINE));
@@ -142,9 +142,9 @@ class quizaccess_openclosedate_test extends UnitTestCase {
 
         $rule = new quizaccess_openclosedate($quizobj, 9999);
         $this->assertEqual($rule->description(),
-                array(get_string('quiznotavailable', 'quiz', userdate(10000))));
+                array(get_string('quiznotavailable', 'quizaccess_openclosedate', userdate(10000))));
         $this->assertEqual($rule->prevent_access(),
-                get_string('notavailable', 'quiz'));
+                get_string('notavailable', 'quizaccess_openclosedate'));
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
 
@@ -168,7 +168,7 @@ class quizaccess_openclosedate_test extends UnitTestCase {
         $this->assertEqual($rule->description(),
                 array(get_string('quizclosed', 'quiz', userdate(20000))));
         $this->assertEqual($rule->prevent_access(),
-                get_string('notavailable', 'quiz'));
+                get_string('notavailable', 'quizaccess_openclosedate'));
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertTrue($rule->is_finished(0, $attempt));
 

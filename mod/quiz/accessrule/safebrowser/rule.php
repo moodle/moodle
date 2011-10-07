@@ -48,14 +48,14 @@ class quizaccess_safebrowser extends quiz_access_rule_base {
 
     public function prevent_access() {
         if (!$this->check_safe_browser()) {
-            return get_string('safebrowsererror', 'quiz');
+            return get_string('safebrowsererror', 'quizaccess_safebrowser');
         } else {
             return false;
         }
     }
 
     public function description() {
-        return get_string('safebrowsernotice', 'quiz');
+        return get_string('safebrowsernotice', 'quizaccess_safebrowser');
     }
 
     public function setup_attempt_page($page) {
@@ -83,6 +83,7 @@ class quizaccess_safebrowser extends quiz_access_rule_base {
             return array();
         }
 
-        return array('safebrowser' => get_string('requiresafeexambrowser', 'quiz'));
+        return array('safebrowser' =>
+                get_string('requiresafeexambrowser', 'quizaccess_safebrowser'));
     }
 }

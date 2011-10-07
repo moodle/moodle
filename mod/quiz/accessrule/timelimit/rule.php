@@ -48,7 +48,8 @@ class quizaccess_timelimit extends quiz_access_rule_base {
     }
 
     public function description() {
-        return get_string('quiztimelimit', 'quiz', format_time($this->quiz->timelimit));
+        return get_string('quiztimelimit', 'quizaccess_timelimit',
+                format_time($this->quiz->timelimit));
     }
 
     public function time_left($attempt, $timenow) {

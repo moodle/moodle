@@ -50,9 +50,11 @@ class quizaccess_safebrowser_test extends UnitTestCase {
         $attempt = new stdClass();
 
         // This next test assumes the unit tests are not being run using Safe Exam Browser!
-        $this->assertEqual(get_string('safebrowsererror', 'quiz'), $rule->prevent_access());
+        $this->assertEqual(get_string('safebrowsererror', 'quizaccess_safebrowser'),
+                $rule->prevent_access());
 
-        $this->assertEqual(get_string('safebrowsernotice', 'quiz'), $rule->description());
+        $this->assertEqual(get_string('safebrowsernotice', 'quizaccess_safebrowser'),
+                $rule->description());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
         $this->assertFalse($rule->time_left($attempt, 1));

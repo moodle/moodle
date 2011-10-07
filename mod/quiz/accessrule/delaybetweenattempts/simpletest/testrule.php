@@ -59,14 +59,14 @@ class quizaccess_delaybetweenattempts_test extends UnitTestCase {
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->prevent_new_attempt(3, $attempt));
         $this->assertEqual($rule->prevent_new_attempt(1, $attempt),
-                get_string('youmustwait', 'quiz', userdate(11000)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(11000)));
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
         $attempt->timefinish = 9000;
         $this->assertFalse($rule->prevent_new_attempt(1, $attempt));
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
         $attempt->timefinish = 9001;
         $this->assertEqual($rule->prevent_new_attempt(1, $attempt),
-                get_string('youmustwait', 'quiz', userdate(10001)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(10001)));
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
     }
 
@@ -94,9 +94,9 @@ class quizaccess_delaybetweenattempts_test extends UnitTestCase {
         $this->assertFalse($rule->prevent_new_attempt(5, $attempt));
         $this->assertFalse($rule->prevent_new_attempt(1, $attempt));
         $this->assertEqual($rule->prevent_new_attempt(2, $attempt),
-                get_string('youmustwait', 'quiz', userdate(11000)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(11000)));
         $this->assertEqual($rule->prevent_new_attempt(3, $attempt),
-                get_string('youmustwait', 'quiz', userdate(11000)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(11000)));
         $attempt->timefinish = 9000;
         $this->assertFalse($rule->prevent_new_attempt(1, $attempt));
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
@@ -104,9 +104,9 @@ class quizaccess_delaybetweenattempts_test extends UnitTestCase {
         $attempt->timefinish = 9001;
         $this->assertFalse($rule->prevent_new_attempt(1, $attempt));
         $this->assertEqual($rule->prevent_new_attempt(2, $attempt),
-                get_string('youmustwait', 'quiz', userdate(10001)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(10001)));
         $this->assertEqual($rule->prevent_new_attempt(4, $attempt),
-                get_string('youmustwait', 'quiz', userdate(10001)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(10001)));
     }
 
     public function test_just_both_delays() {
@@ -132,32 +132,32 @@ class quizaccess_delaybetweenattempts_test extends UnitTestCase {
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->prevent_new_attempt(5, $attempt));
         $this->assertEqual($rule->prevent_new_attempt(1, $attempt),
-                get_string('youmustwait', 'quiz', userdate(12000)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(12000)));
         $this->assertEqual($rule->prevent_new_attempt(2, $attempt),
-                get_string('youmustwait', 'quiz', userdate(11000)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(11000)));
         $this->assertEqual($rule->prevent_new_attempt(3, $attempt),
-                get_string('youmustwait', 'quiz', userdate(11000)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(11000)));
         $attempt->timefinish = 8000;
         $this->assertFalse($rule->prevent_new_attempt(1, $attempt));
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
         $this->assertFalse($rule->prevent_new_attempt(3, $attempt));
         $attempt->timefinish = 8001;
         $this->assertEqual($rule->prevent_new_attempt(1, $attempt),
-                get_string('youmustwait', 'quiz', userdate(10001)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(10001)));
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
         $this->assertFalse($rule->prevent_new_attempt(4, $attempt));
         $attempt->timefinish = 9000;
         $this->assertEqual($rule->prevent_new_attempt(1, $attempt),
-                get_string('youmustwait', 'quiz', userdate(11000)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(11000)));
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
         $this->assertFalse($rule->prevent_new_attempt(3, $attempt));
         $attempt->timefinish = 9001;
         $this->assertEqual($rule->prevent_new_attempt(1, $attempt),
-                get_string('youmustwait', 'quiz', userdate(11001)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(11001)));
         $this->assertEqual($rule->prevent_new_attempt(2, $attempt),
-                get_string('youmustwait', 'quiz', userdate(10001)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(10001)));
         $this->assertEqual($rule->prevent_new_attempt(4, $attempt),
-                get_string('youmustwait', 'quiz', userdate(10001)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(10001)));
     }
 
     public function test_with_close_date() {
@@ -182,28 +182,28 @@ class quizaccess_delaybetweenattempts_test extends UnitTestCase {
 
         $attempt->timefinish = 13000;
         $this->assertEqual($rule->prevent_new_attempt(1, $attempt),
-                get_string('youmustwait', 'quiz', userdate(15000)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(15000)));
         $attempt->timefinish = 13001;
         $this->assertEqual($rule->prevent_new_attempt(1, $attempt),
-                get_string('youcannotwait', 'quiz'));
+                get_string('youcannotwait', 'quizaccess_delaybetweenattempts'));
         $attempt->timefinish = 14000;
         $this->assertEqual($rule->prevent_new_attempt(2, $attempt),
-                get_string('youmustwait', 'quiz', userdate(15000)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(15000)));
         $attempt->timefinish = 14001;
         $this->assertEqual($rule->prevent_new_attempt(2, $attempt),
-                get_string('youcannotwait', 'quiz'));
+                get_string('youcannotwait', 'quizaccess_delaybetweenattempts'));
 
         $rule = new quizaccess_delaybetweenattempts($quizobj, 15000);
         $attempt->timefinish = 13000;
         $this->assertFalse($rule->prevent_new_attempt(1, $attempt));
         $attempt->timefinish = 13001;
         $this->assertEqual($rule->prevent_new_attempt(1, $attempt),
-                get_string('youcannotwait', 'quiz'));
+                get_string('youcannotwait', 'quizaccess_delaybetweenattempts'));
         $attempt->timefinish = 14000;
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
         $attempt->timefinish = 14001;
         $this->assertEqual($rule->prevent_new_attempt(2, $attempt),
-                get_string('youcannotwait', 'quiz'));
+                get_string('youcannotwait', 'quizaccess_delaybetweenattempts'));
 
         $rule = new quizaccess_delaybetweenattempts($quizobj, 15001);
         $attempt->timefinish = 13000;
@@ -240,11 +240,11 @@ class quizaccess_delaybetweenattempts_test extends UnitTestCase {
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->prevent_new_attempt(5, $attempt));
         $this->assertEqual($rule->prevent_new_attempt(1, $attempt),
-                get_string('youmustwait', 'quiz', userdate(12000)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(12000)));
         $this->assertEqual($rule->prevent_new_attempt(2, $attempt),
-                get_string('youmustwait', 'quiz', userdate(11000)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(11000)));
         $this->assertEqual($rule->prevent_new_attempt(3, $attempt),
-                get_string('youmustwait', 'quiz', userdate(11000)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(11000)));
         $attempt->timestart = 7950;
         $attempt->timefinish = 8000;
         $this->assertFalse($rule->prevent_new_attempt(1, $attempt));
@@ -253,36 +253,36 @@ class quizaccess_delaybetweenattempts_test extends UnitTestCase {
         $attempt->timestart = 7950;
         $attempt->timefinish = 8001;
         $this->assertEqual($rule->prevent_new_attempt(1, $attempt),
-                get_string('youmustwait', 'quiz', userdate(10001)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(10001)));
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
         $this->assertFalse($rule->prevent_new_attempt(4, $attempt));
         $attempt->timestart = 8950;
         $attempt->timefinish = 9000;
         $this->assertEqual($rule->prevent_new_attempt(1, $attempt),
-                get_string('youmustwait', 'quiz', userdate(11000)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(11000)));
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
         $this->assertFalse($rule->prevent_new_attempt(3, $attempt));
         $attempt->timestart = 8950;
         $attempt->timefinish = 9001;
         $this->assertEqual($rule->prevent_new_attempt(1, $attempt),
-                get_string('youmustwait', 'quiz', userdate(11001)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(11001)));
         $this->assertEqual($rule->prevent_new_attempt(2, $attempt),
-                get_string('youmustwait', 'quiz', userdate(10001)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(10001)));
         $this->assertEqual($rule->prevent_new_attempt(4, $attempt),
-                get_string('youmustwait', 'quiz', userdate(10001)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(10001)));
         $attempt->timestart = 8900;
         $attempt->timefinish = 9100;
         $this->assertEqual($rule->prevent_new_attempt(1, $attempt),
-                get_string('youmustwait', 'quiz', userdate(11000)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(11000)));
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
         $this->assertFalse($rule->prevent_new_attempt(3, $attempt));
         $attempt->timestart = 8901;
         $attempt->timefinish = 9100;
         $this->assertEqual($rule->prevent_new_attempt(1, $attempt),
-                get_string('youmustwait', 'quiz', userdate(11001)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(11001)));
         $this->assertEqual($rule->prevent_new_attempt(2, $attempt),
-                get_string('youmustwait', 'quiz', userdate(10001)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(10001)));
         $this->assertEqual($rule->prevent_new_attempt(4, $attempt),
-                get_string('youmustwait', 'quiz', userdate(10001)));
+                get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(10001)));
     }
 }

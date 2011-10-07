@@ -47,7 +47,7 @@ class quizaccess_numattempts extends quiz_access_rule_base {
     }
 
     public function description() {
-        return get_string('attemptsallowedn', 'quiz', $this->quiz->attempts);
+        return get_string('attemptsallowedn', 'quizaccess_numattempts', $this->quiz->attempts);
     }
 
     public function prevent_new_attempt($numprevattempts, $lastattempt) {

@@ -49,7 +49,8 @@ class quizaccess_password_test extends UnitTestCase {
         $attempt = new stdClass();
 
         $this->assertFalse($rule->prevent_access());
-        $this->assertEqual($rule->description(), get_string('requirepasswordmessage', 'quiz'));
+        $this->assertEqual($rule->description(),
+                get_string('requirepasswordmessage', 'quizaccess_password'));
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
         $this->assertFalse($rule->time_left($attempt, 1));
