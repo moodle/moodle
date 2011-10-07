@@ -63,7 +63,9 @@ if (!$attemptobj->is_preview_user() && $messages) {
     print_error('attempterror', 'quiz', $attemptobj->view_url(),
             $output->print_messages($messages));
 }
-$accessmanager->do_password_check($attemptobj->is_preview_user());
+if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {
+    redirect($attemptobj->start_attempt_url(null, $page));
+}
 
 $displayoptions = $attemptobj->get_display_options(false);
 

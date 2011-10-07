@@ -34,6 +34,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
 require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
+require_once($CFG->dirroot . '/mod/quiz/accessmanager_form.php');
 require_once($CFG->dirroot . '/mod/quiz/renderer.php');
 require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 require_once($CFG->dirroot . '/question/editlib.php');

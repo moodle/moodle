@@ -49,7 +49,6 @@ $PAGE->set_url($quizobj->view_url());
 // Check login and sesskey.
 require_login($quizobj->get_courseid(), false, $quizobj->get_cm());
 require_sesskey();
-$PAGE->set_pagelayout('base');
 
 // if no questions have been set up yet redirect to edit.php
 if (!$quizobj->has_questions() && $quizobj->has_capability('mod/quiz:manage')) {
@@ -59,7 +58,7 @@ if (!$quizobj->has_questions() && $quizobj->has_capability('mod/quiz:manage')) {
 // Create an object to manage all the other (non-roles) access rules.
 $accessmanager = $quizobj->get_access_manager(time());
 if ($quizobj->is_preview_user() && $forcenew) {
-    $accessmanager->clear_password_access();
+    $accessmanager->current_attempt_finished();
 }
 
 // Check capabilities.
@@ -76,33 +75,63 @@ if ($quizobj->is_preview_user() && $forcenew) {
 }
 
 // Look for an existing attempt.
-$attempts = quiz_get_user_attempts($quizobj->get_quizid(), $USER->id, 'all');
+$attempts = quiz_get_user_attempts($quizobj->get_quizid(), $USER->id, 'all', true);
 $lastattempt = end($attempts);
 
 // If an in-progress attempt exists, check password then redirect to it.
 if ($lastattempt && !$lastattempt->timefinish) {
-    $accessmanager->do_password_check($quizobj->is_preview_user());
-    redirect($quizobj->attempt_url($lastattempt->id, $page));
-}
+    $currentattemptid = $lastattempt->id;
+    $messages = $accessmanager->prevent_access();
 
-// Get number for the next or unfinished attempt
-if ($lastattempt && !$lastattempt->preview && !$quizobj->is_preview_user()) {
-    $attemptnumber = $lastattempt->attempt + 1;
 } else {
-    $lastattempt = false;
-    $attemptnumber = 1;
+    // Get number for the next or unfinished attempt
+    if ($lastattempt && !$lastattempt->preview && !$quizobj->is_preview_user()) {
+        $attemptnumber = $lastattempt->attempt + 1;
+    } else {
+        $lastattempt = false;
+        $attemptnumber = 1;
+    }
+    $currentattemptid = null;
+
+    $messages = $accessmanager->prevent_access() +
+            $accessmanager->prevent_new_attempt(count($attempts), $lastattempt);
 }
 
 // Check access.
-$messages = $accessmanager->prevent_access() +
-        $accessmanager->prevent_new_attempt(count($attempts), $lastattempt);
+$output = $PAGE->get_renderer('mod_quiz');
 if (!$quizobj->is_preview_user() && $messages) {
-    $output = $PAGE->get_renderer('mod_quiz');
     print_error('attempterror', 'quiz', $quizobj->view_url(),
             $output->print_messages($messages));
 }
 
-$accessmanager->do_password_check($quizobj->is_preview_user());
+if ($accessmanager->is_preflight_check_required($currentattemptid)) {
+    // Need to do some checks before allowing the user to continue.
+    $mform = $accessmanager->get_preflight_check_form(
+            $quizobj->start_attempt_url($page), $currentattemptid);
+
+    if ($mform->is_cancelled()) {
+        $accessmanager->back_to_view_page($output);
+
+    } else if (!$mform->get_data()) {
+
+        // Form not submitted successfully, re-display it and stop.
+        $PAGE->set_url($quizobj->start_attempt_url($page));
+        $PAGE->set_title(format_string($quizobj->get_quiz_name()));
+        $accessmanager->setup_attempt_page($PAGE);
+        if (empty($quizobj->get_quiz()->showblocks)) {
+            $PAGE->blocks->show_only_fake_blocks();
+        }
+
+        echo $output->start_attempt_page($quizobj, $mform);
+        die();
+    }
+
+    // Pre-flight check passed.
+    $accessmanager->notify_preflight_check_passed($currentattemptid);
+}
+if ($currentattemptid) {
+    redirect($quizobj->attempt_url($currentattemptid, $page));
+}
 
 // Delete any previous preview attempts belonging to this user.
 quiz_delete_previews($quizobj->get_quiz(), $USER->id);

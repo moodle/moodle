@@ -1162,8 +1162,8 @@ class quiz_attempt {
             $eventdata->courseid    = $this->get_courseid();
             events_trigger('quiz_attempt_submitted', $eventdata);
 
-            // Clear the password check flag in the session.
-            $this->get_access_manager($timestamp)->clear_password_access();
+            // Tell any access rules that care that the attempt is over.
+            $this->get_access_manager($timestamp)->current_attempt_finished();
         }
     }
 

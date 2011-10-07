@@ -80,7 +80,9 @@ if (!$attemptobj->is_preview_user() && $messages) {
     print_error('attempterror', 'quiz', $attemptobj->view_url(),
             $output->access_messages($messages));
 }
-$accessmanager->do_password_check($attemptobj->is_preview_user());
+if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {
+    redirect($attemptobj->start_attempt_url(null, $page));
+}
 
 add_to_log($attemptobj->get_courseid(), 'quiz', 'continue attempt',
         'review.php?attempt=' . $attemptobj->get_attemptid(),

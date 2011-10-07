@@ -362,6 +362,17 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return implode(', ', $attemptlinks);
     }
 
+    public function start_attempt_page(quiz $quizobj, mod_quiz_preflight_check_form $mform) {
+        $output = '';
+        $output .= $this->header();
+        $output .= $this->quiz_intro($quizobj->get_quiz(), $quizobj->get_cm());
+        ob_start();
+        $mform->display();
+        $output .= ob_get_clean();
+        $output .= $this->footer();
+        return $output;
+    }
+
     /**
      * Attempt Page
      *
@@ -626,7 +637,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      */
     public function view_page($course, $quiz, $cm, $context, $viewobj) {
         $output = '';
-        $output .= $this->view_information($course, $quiz, $cm, $context, $viewobj->infomessages);
+        $output .= $this->view_information($quiz, $cm, $context, $viewobj->infomessages);
         $output .= $this->view_table($quiz, $context, $viewobj);
         $output .= $this->view_best_score($viewobj);
         $output .= $this->view_result_info($quiz, $context, $cm, $viewobj);
@@ -736,7 +747,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      */
     public function view_page_guest($course, $quiz, $cm, $context, $messages) {
         $output = '';
-        $output .= $this->view_information($course, $quiz, $cm, $context, $messages);
+        $output .= $this->view_information($quiz, $cm, $context, $messages);
         $guestno = html_writer::tag('p', get_string('guestsno', 'quiz'));
         $liketologin = html_writer::tag('p', get_string('liketologin'));
         $output .= $this->confirm($guestno."\n\n".$liketologin."\n", get_login_url(),
@@ -756,7 +767,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
     public function view_page_notenrolled($course, $quiz, $cm, $context, $messages) {
         global $CFG;
         $output = '';
-        $output .= $this->view_information($course, $quiz, $cm, $context, $messages);
+        $output .= $this->view_information($quiz, $cm, $context, $messages);
         $youneedtoenrol = html_writer::tag('p', get_string('youneedtoenrol', 'quiz'));
         $button = html_writer::tag('p',
                 $this->continue_button($CFG->wwwroot . '/course/view.php?id=' . $course->id));
@@ -767,14 +778,15 @@ class mod_quiz_renderer extends plugin_renderer_base {
     /**
      * Output the page information
      *
-     * @param int $course The course ID
-     * @param array $quiz Array contingin quiz data
-     * @param int $cm Course Module ID
-     * @param int $context The page contect ID
-     * @param array $messages Array containing any messages
+     * @param object $quiz the quiz settings.
+     * @param object $cm the course_module object.
+     * @param object $context the quiz context.
+     * @param array $messages any access messages that should be described.
+     * @return string HTML to output.
      */
-    public function view_information($course, $quiz, $cm, $context, $messages) {
+    public function view_information($quiz, $cm, $context, $messages) {
         global $CFG;
+
         $output = '';
         // Print quiz name and description
         $output .= $this->heading(format_string($quiz->name));
@@ -794,6 +806,22 @@ class mod_quiz_renderer extends plugin_renderer_base {
             }
         }
         return $output;
+    }
+
+    /**
+     * Output the quiz intro.
+     * @param object $quiz the quiz settings.
+     * @param object $cm the course_module object.
+     * @return string HTML to output.
+     */
+    public function quiz_intro($quiz, $cm) {
+        if (trim(strip_tags($quiz->intro))) {
+            $output .= $this->box(format_module_intro('quiz', $quiz, $cm->id),
+                    'generalbox', 'intro');
+
+        } else {
+            return '';
+        }
     }
 
     /**

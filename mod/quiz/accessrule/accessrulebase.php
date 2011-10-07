@@ -83,12 +83,72 @@ abstract class quiz_access_rule_base {
     }
 
     /**
-     * Whether or not a user should be allowed to start a new attempt at this quiz now.
+     * Whether the user should be blocked from starting a new attempt or continuing
+     * an attempt now.
      * @return string false if access should be allowed, a message explaining the
      *      reason if access should be prevented.
      */
     public function prevent_access() {
         return false;
+    }
+
+    /**
+     * @param int|null $attemptid the id of the current attempt, if there is one,
+     *      otherwise null.
+     * @return bool whether a check is required before the user starts/continues
+     *      their attempt.
+     */
+    public function is_preflight_check_required($attemptid) {
+        return false;
+    }
+
+    /**
+     * Add any field you want to pre-flight check form. You should only do
+     * something here if {@link is_preflight_check_required()} returned true.
+     *
+     * @param mod_quiz_preflight_check_form $quizform the form being built.
+     * @param MoodleQuickForm $mform The wrapped MoodleQuickForm.
+     * @param int|null $attemptid the id of the current attempt, if there is one,
+     *      otherwise null.
+     */
+    public function add_preflight_check_form_fields(mod_quiz_preflight_check_form $quizform,
+            MoodleQuickForm $mform, $attemptid) {
+        // Do nothing by default.
+    }
+
+    /**
+     * Validate the pre-flight check form submission. You should only do
+     * something here if {@link is_preflight_check_required()} returned true.
+     *
+     * If the form validates, the user will be allowed to continue.
+     *
+     * @param array $data the submitted form data.
+     * @param array $files any files in the submission.
+     * @param array $errors the list of validation errors that is being built up.
+     * @param int|null $attemptid the id of the current attempt, if there is one,
+     *      otherwise null.
+     * @return array the update $errors array;
+     */
+    public function validate_preflight_check($data, $files, $errors, $attemptid) {
+        return $errors;
+    }
+
+    /**
+     * The pre-flight check has passed. This is a chance to record that fact in
+     * some way.
+     * @param int|null $attemptid the id of the current attempt, if there is one,
+     *      otherwise null.
+     */
+    public function notify_preflight_check_passed($attemptid) {
+        // Do nothing by default.
+    }
+
+    /**
+     * This is called when the current attempt at the quiz is finished. This is
+     * used, for example by the password rule, to clear the flag in the session.
+     */
+    public function current_attempt_finished() {
+        // Do nothing by default.
     }
 
     /**

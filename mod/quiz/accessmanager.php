@@ -35,11 +35,11 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_access_manager {
+    /** @var quiz the quiz settings object. */
     protected $quizobj;
+    /** @var int the time to be considered as 'now'. */
     protected $timenow;
-    protected $passwordrule = null;
-    protected $securewindowrule = null;
-    protected $safebrowserrule = null;
+    /** @var array of quiz_access_rule_base. */
     protected $rules = array();
 
     /**
@@ -232,7 +232,13 @@ class quiz_access_manager {
         return $classnames;
     }
 
-    protected function accumulate_messages(&$messages, $new) {
+    /**
+     * Accumulates an array of messages.
+     * @param array $messages the current list of messages.
+     * @param string|array $new the new messages or messages.
+     * @return array the updated array of messages.
+     */
+    protected function accumulate_messages($messages, $new) {
         if (is_array($new)) {
             $messages = array_merge($messages, $new);
         } else if (is_string($new) && $new) {
@@ -258,8 +264,8 @@ class quiz_access_manager {
     }
 
     /**
-     * Is it OK to let the current user start a new attempt now? If there are
-     * any restrictions in force now, return an array of reasons why access
+     * Whether or not a user should be allowed to start a new attempt at this quiz now.
+     * If there are any restrictions in force now, return an array of reasons why access
      * should be blocked. If access is OK, return false.
      *
      * @param int $numattempts the number of previous attempts this user has made.
@@ -278,9 +284,9 @@ class quiz_access_manager {
     }
 
     /**
-     * Is it OK to let the current user start a new attempt now? If there are
-     * any restrictions in force now, return an array of reasons why access
-     * should be blocked. If access is OK, return false.
+     * Whether the user should be blocked from starting a new attempt or continuing
+     * an attempt now. If there are any restrictions in force now, return an array
+     * of reasons why access should be blocked. If access is OK, return false.
      *
      * @return mixed An array of reason why access is not allowed, or an empty array
      *         (== false) if access should be allowed.
@@ -291,6 +297,56 @@ class quiz_access_manager {
             $reasons = $this->accumulate_messages($reasons, $rule->prevent_access());
         }
         return $reasons;
+    }
+
+    /**
+     * @param int|null $attemptid the id of the current attempt, if there is one,
+     *      otherwise null.
+     * @return bool whether a check is required before the user starts/continues
+     *      their attempt.
+     */
+    public function is_preflight_check_required($attemptid) {
+        foreach ($this->rules as $rule) {
+            if ($rule->is_preflight_check_required($attemptid)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Build the form required to do the pre-flight checks.
+     * @param moodle_url $url the form action URL.
+     * @param int|null $attemptid the id of the current attempt, if there is one,
+     *      otherwise null.
+     * @return mod_quiz_preflight_check_form the form.
+     */
+    public function get_preflight_check_form(moodle_url $url, $attemptid) {
+        return new mod_quiz_preflight_check_form($url->out_omit_querystring(),
+                array('rules' => $this->rules, 'quizobj' => $this->quizobj,
+                      'attemptid' => $attemptid, 'hidden' => $url->params()));
+    }
+
+    /**
+     * The pre-flight check has passed. This is a chance to record that fact in
+     * some way.
+     * @param int|null $attemptid the id of the current attempt, if there is one,
+     *      otherwise null.
+     */
+    public function notify_preflight_check_passed($attemptid) {
+        foreach ($this->rules as $rule) {
+            $rule->notify_preflight_check_passed($attemptid);
+        }
+    }
+
+    /**
+     * Inform the rules that the current attempt is finished. This is use, for example
+     * by the password rule, to clear the flag in the session.
+     */
+    public function current_attempt_finished() {
+        foreach ($this->rules as $rule) {
+            $rule->current_attempt_finished();
+        }
     }
 
     /**
@@ -389,27 +445,6 @@ class quiz_access_manager {
             die();
         } else {
             redirect($this->quizobj->view_url(), $message);
-        }
-    }
-
-    /**
-     * Clear the flag in the session that says that the current user is allowed to do this quiz.
-     */
-    public function clear_password_access() {
-        if (!is_null($this->passwordrule)) {
-            $this->passwordrule->clear_access_allowed();
-        }
-    }
-
-    /**
-     * Actually ask the user for the password, if they have not already given it this session.
-     * This function only returns is access is OK.
-     *
-     * @param bool $canpreview used to enfore securewindow stuff.
-     */
-    public function do_password_check($canpreview) {
-        if (!is_null($this->passwordrule)) {
-            $this->passwordrule->do_password_check($canpreview, $this);
         }
     }
 
