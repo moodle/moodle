@@ -26,7 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['formnotavailable'] = 'Advanced grading method was selected to use but the grading form is not available yet. You may need to define it first via a link in the Settings block.';
 $string['gradinginarea'] = 'Grading ({$a})';
 $string['gradingmethod'] = 'Grading method';
 $string['gradingmethods'] = 'Grading methods';
 $string['gradingmethodnone'] = 'Simple direct grading';
+$string['noitemid'] = 'Grading not possible. The graded item does not exist.';

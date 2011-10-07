@@ -31,7 +31,16 @@ require_once($CFG->dirroot.'/grade/grading/form/lib.php'); // parent class
 /**
  * This controller encapsulates the rubric grading logic
  */
-class rubric_grading_controller extends grading_controller {
+class gradingform_rubric_controller extends gradingform_controller {
+
+
+    /**
+     * @see parent::make_grading_widget()
+     * @return gradingform_rubric_grading_widget
+     */
+    public function make_grading_widget($raterid, $itemid, array $options) {
+        // todo
+    }
 
     /**
      * Extends the module settings navigation with the rubric grading settings
@@ -47,5 +56,12 @@ class rubric_grading_controller extends grading_controller {
         $node->add(get_string('definerubric', 'gradingform_rubric'),
             new moodle_url('/grade/grading/form/rubric/edit.php', array('area' => $this->areaid)), settings_navigation::TYPE_CUSTOM,
             null, null, new pix_icon('icon', '', 'gradingform_rubric'));
+    }
+
+    /**
+     * @see parent::get_method_name()
+     */
+    protected function get_method_name() {
+        return 'rubric';
     }
 }

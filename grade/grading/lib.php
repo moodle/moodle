@@ -92,6 +92,13 @@ class grading_manager {
     private $areacache = null;
 
     /**
+     * @return stdClass grading manager context
+     */
+    public function get_context() {
+        return $this->context;
+    }
+
+    /**
      * Sets the context the manager operates on
      *
      * @param stdClass $context
@@ -99,6 +106,13 @@ class grading_manager {
     public function set_context(stdClass $context) {
         $this->areacache = null;
         $this->context = $context;
+    }
+
+    /**
+     * @return string grading manager component
+     */
+    public function get_component() {
+        return $this->component;
     }
 
     /**
@@ -110,6 +124,13 @@ class grading_manager {
         $this->areacache = null;
         list($type, $name) = normalize_component($component);
         $this->component = $type.'_'.$name;
+    }
+
+    /**
+     * @return string grading manager area name
+     */
+    public function get_area() {
+        return $this->area;
     }
 
     /**
