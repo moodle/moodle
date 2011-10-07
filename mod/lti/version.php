@@ -46,5 +46,5 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$module->version  = 2011072000;  // The current module version (Date: YYYYMMDDXX)
+$module->version  = 2011100701;  // The current module version (Date: YYYYMMDDXX)
 $module->cron     = 0;           // Period for cron to check this module (secs)

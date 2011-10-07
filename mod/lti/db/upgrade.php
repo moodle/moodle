@@ -59,10 +59,21 @@
  */
 
 function xmldb_lti_upgrade($oldversion=0) {
-
     global $DB;
 
     $dbman = $DB->get_manager();
+    
+    if ($oldversion < 2011100701) {
+        $table = new xmldb_table('lti');
+        $field = new xmldb_field('icon', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'servicesalt');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_mod_savepoint(true, 2011100701, 'lti');
+    }   
+    
     $result = true;
 
     
