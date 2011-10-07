@@ -35,8 +35,17 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                 drag : function(no) {
                     return this.drags()+'.no'+no;
                 },
+                drags_in_group : function(groupno) {
+                    return this.drags()+'.group'+groupno;
+                },
+                unplaced_drags_in_group : function(groupno) {
+                    return this.drags_in_group(groupno)+'.unplaced';
+                },
+                drags_for_choice_in_group : function(choiceno, groupno) {
+                    return this.drags_in_group(groupno)+'.choice'+choiceno;
+                },
                 unplaced_drags_for_choice_in_group : function(choiceno, groupno) {
-                    return this.drags()+'.group'+groupno+'.choice'+choiceno+':not(.placed)';
+                    return this.unplaced_drags_in_group(groupno)+'.choice'+choiceno;
                 },
                 drops : function() {
                     return topnode+' span.drop';
@@ -148,7 +157,8 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             return this.get_classname_numeric_suffix(node, 'no');
         },
         placed : null,
-        place_drag_items : function(){
+        place_drag_items : function() {
+            Y.all(this.selectors.drags()).addClass('unplaced');
             this.placed = [];
             for (var placeno in this.get('inputids')) {
                 var inputid = this.get('inputids')[placeno];
@@ -172,7 +182,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             }).plug(Y.Plugin.DDConstrained, {constrain2node: this.selectors.top_node()});
         },
         make_drop_zones : function () {
-            Y.all(this.selectors.drops()).each(this.make_drop_zone, this)
+            Y.all(this.selectors.drops()).each(this.make_drop_zone, this);
         },
         make_drop_zone : function (drop) {
             var dropdd = new Y.DD.Drop({
@@ -184,28 +194,40 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                     this.place_drag_in_drop(drag, drop);
                 }
             }, this);
+            if (!this.get('readonly')) {
+                drop.on('dragchange', this.drop_zone_key_press, this);
+            }
         },
         place_drag_in_drop : function (drag, drop) {
             var placeno = this.get_place(drop);
             var inputid = this.get('inputids')[placeno];
             var inputnode = Y.one('input#'+inputid);
-            inputnode.set('value', this.get_choice(drag));
+            if (drag !== null) {
+                inputnode.set('value', this.get_choice(drag));
+            } else {
+                inputnode.set('value', '0');
+            }
             for (var alreadytheredragno in this.placed) {
                 if (this.placed[alreadytheredragno] === placeno) {
                     delete this.placed[alreadytheredragno];
                     var alreadytheredrag = Y.one(this.selectors.drag(alreadytheredragno));
-                    alreadytheredrag.removeClass('placed');
+                    alreadytheredrag.addClass('unplaced');
                 }
             }
-            this.placed[this.get_no(drag)] = placeno;
-            if (drag.dd) {
-                drag.dd.once('drag:start', function (e, inputnode, drag) {
-                    inputnode.set('value', 0);
-                    drag.removeClass('placed');
-                    delete this.placed[this.get_no(drag)];
-                },this, inputnode, drag);
+            if (drag !== null) {
+                this.placed[this.get_no(drag)] = placeno;
+                if (drag.dd) {
+                    drag.dd.once('drag:start', function (e, inputnode, drag) {
+                        inputnode.set('value', 0);
+                        drag.addClass('unplaced');
+                        delete this.placed[this.get_no(drag)];
+                    },this, inputnode, drag);
+                }
+                drag.removeClass('unplaced');
             }
-            drag.addClass('placed');
+        },
+        remove_drag_from_drop : function (drop) {
+            this.place_drag_in_drop(null, drop);
         },
         position_drag_items : function () {
             Y.all(this.selectors.drags()).each(this.position_drag_item, this)
@@ -223,6 +245,58 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                     drag.setXY(drop.getXY());
                 }
             }
+        },
+        
+        drop_zone_key_press : function (e) {
+            switch (e.direction) {
+                case 'next' :
+                    this.place_next_drag_in(e.target);
+                    break;
+                case 'previous' :
+                    this.place_previous_drag_in(e.target);
+                    break;
+                case 'remove' :
+                    this.remove_drag_from_drop(e.target);
+                    break;
+            }
+            e.preventDefault();
+        },
+        place_next_drag_in : function (drop) {
+            this.choose_next_choice_for_drop(drop, 1);
+        },
+        place_previous_drag_in : function (drop) {
+            this.choose_next_choice_for_drop(drop, -1);
+        },
+        choose_next_choice_for_drop : function (drop, direction) {
+            var next;
+            var groupno = this.get_group(drop);
+            var current = this.current_choice_in_drop(drop);
+            var unplaceddragsingroup = Y.all(this.selectors.unplaced_drags_in_group(groupno));
+            if (0 === current) {
+                if (direction === 1) {
+                    next = 1;
+                } else {
+                    var lastdrag = unplaceddragsingroup.pop();
+                    next = this.get_choice(lastdrag);
+                }
+            } else {
+                next = current + direction;
+            }
+            var drag;
+            do {
+                drag = Y.one(this.selectors.unplaced_drags_for_choice_in_group(next, groupno));
+                if (Y.one(this.selectors.drags_for_choice_in_group(next, groupno)) === null) {
+                    this.remove_drag_from_drop(drop);
+                    return;
+                }
+                next = next + direction;
+            } while (drag === null);
+            this.place_drag_in_drop(drag, drop);
+        },
+        current_choice_in_drop : function(drop) {
+            var inputid = this.get('inputids')[this.get_place(drop)];
+            var inputnode = Y.one('input#'+inputid);
+            return +inputnode.get('value');
         }
     }, {
         NAME : DDWTOSDDNAME,
@@ -230,6 +304,34 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             readonly : {value : false},
             topnode : {value : null},
             inputids : {value : null}
+        }
+    });
+    Y.Event.define('dragchange', {
+        // Webkit and IE repeat keydown when you hold down arrow keys.
+        // Opera links keypress to page scroll; others keydown.
+        // Firefox prevents page scroll via preventDefault() on either
+        // keydown or keypress.
+        _event: (Y.UA.webkit || Y.UA.ie) ? 'keydown' : 'keypress',
+
+        _keys: {
+            '32': 'next',
+            '37': 'previous',
+            '38': 'previous',
+            '39': 'next',
+            '40': 'next',
+            '27': 'remove'
+        },
+
+        _keyHandler: function (e, notifier) {
+            if (this._keys[e.keyCode]) {
+                e.direction = this._keys[e.keyCode];
+                notifier.fire(e);
+            }
+        },
+
+        on: function (node, sub, notifier) {
+            sub._detacher = node.on(this._event, this._keyHandler,
+                                    this, notifier);
         }
     });
     M.qtype_ddwtos = M.qtype_ddwtos || {};
