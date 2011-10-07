@@ -6800,7 +6800,7 @@ FROM
         $table->add_field('method', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
         $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
-        $table->add_field('descriptionformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('descriptionformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, null, null, null);
         $table->add_field('status', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
@@ -6821,7 +6821,7 @@ FROM
         $table->add_field('rawgrade', XMLDB_TYPE_NUMBER, '10, 5', XMLDB_UNSIGNED, null, null, null);
         $table->add_field('status', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('feedback', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
-        $table->add_field('feedbackformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('feedbackformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, null, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('fk_formid', XMLDB_KEY_FOREIGN, array('formid'), 'grading_definitions', array('id'));
