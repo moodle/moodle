@@ -58,3 +58,11 @@ function booktool_print_extend_settings_navigation(settings_navigation $settings
            }
        }
 }
+
+/**
+ * Return read actions.
+ * @return array
+ */
+function booktool_print_get_view_actions() {
+    return array('print');
+}

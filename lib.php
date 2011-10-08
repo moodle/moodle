@@ -58,16 +58,16 @@ function book_get_extra_capabilities() {
  * @param stdClass $mform
  * @return int new book instance id
  */
-function book_add_instance($book) {
+function book_add_instance($data, $mform) {
     global $DB;
 
-    $book->timecreated = time();
-    $book->timemodified = $book->timecreated;
-    if (!isset($book->customtitles)) {
-        $book->customtitles = 0;
+    $data->timecreated = time();
+    $data->timemodified = $data->timecreated;
+    if (!isset($data->customtitles)) {
+        $data->customtitles = 0;
     }
 
-    return $DB->insert_record('book', $book);
+    return $DB->insert_record('book', $data);
 }
 
 /**
@@ -77,16 +77,16 @@ function book_add_instance($book) {
  * @param stdClass $mform
  * @return bool true
  */
-function book_update_instance($book) {
+function book_update_instance($data, $mform) {
     global $DB;
 
-    $book->timemodified = time();
-    $book->id = $book->instance;
-    if (!isset($book->customtitles)) {
-        $book->customtitles = 0;
+    $data->timemodified = time();
+    $data->id = $data->instance;
+    if (!isset($data->customtitles)) {
+        $data->customtitles = 0;
     }
 
-    $DB->update_record('book', $book);
+    $DB->update_record('book', $data);
 
     return true;
 }
@@ -115,10 +115,11 @@ function book_delete_instance($id) {
 
 /**
  * Return use outline
- * @param object $course
- * @param object $user
- * @param object $mod
- * @param object $page
+ *
+ * @param stdClass $course
+ * @param stdClass $user
+ * @param stdClass $mod
+ * @param object $book
  * @return object|null
  */
 function book_user_outline($course, $user, $mod, $book) {
@@ -139,31 +140,49 @@ function book_user_outline($course, $user, $mod, $book) {
     return NULL;
 }
 
+/**
+ * Print a detailed representation of what a  user has done with
+ * a given particular instance of this module, for user activity reports.
+ *
+ * @param $course
+ * @param $user
+ * @param $mod
+ * @param $book
+ * @return bool
+ */
 function book_user_complete($course, $user, $mod, $book) {
-    // Print a detailed representation of what a  user has done with
-    // a given particular instance of this module, for user activity reports.
-
     return true;
 }
 
+/**
+ * Given a course and a time, this module should find recent activity
+ * that has occurred in book activities and print it out.
+ * Return true if there was output, or false is there was none.
+ * @param $course
+ * @param $isteacher
+ * @param $timestart
+ * @return bool
+ */
 function book_print_recent_activity($course, $isteacher, $timestart) {
-    // Given a course and a time, this module should find recent activity
-    // that has occurred in book activities and print it out.
-    // Return true if there was output, or false is there was none.
     return false;  //  True if anything was printed, otherwise false
 }
 
+/**
+ * No cron in book.
+ *
+ * @return bool
+ */
 function book_cron () {
-    // Function to be run periodically according to the moodle cron
-    // This function searches for things that need to be done, such
-    // as sending out mail, toggling flags etc ...
     return true;
 }
 
+/**
+ * No grading in book.
+ *
+ * @param $bookid
+ * @return null
+ */
 function book_grades($bookid) {
-    // Must return an array of grades for a given instance of this module,
-    // indexed by user.  It also returns a maximum allowed grade.
-
     return null;
 }
 
@@ -202,12 +221,54 @@ function book_scale_used_anywhere($scaleid) {
     return false;
 }
 
+/**
+ * Return read actions.
+ * @return array
+ */
 function book_get_view_actions() {
-    return array('view', 'view all', 'print');
+    global $CFG; // necessary for includes
+
+    $return = array('view', 'view all');
+
+    $plugins = get_plugin_list('booktool');
+    foreach($plugins as $plugin=>$dir) {
+        if (file_exists("$dir/lib.php")) {
+            require_once("$dir/lib.php");
+        }
+        $function = 'booktool_'.$plugin.'_get_view_actions';
+        if (function_exists($function)) {
+            if ($actions = $function($settingsnav, $booknode)) {
+                $return = array_merge($return, $actions);
+            }
+        }
+    }
+
+    return $return;
 }
 
+/**
+ * Return write actions.
+ * @return array
+ */
 function book_get_post_actions() {
-    return array('update');
+    global $CFG; // necessary for includes
+
+    $return = array('update');
+
+    $plugins = get_plugin_list('booktool');
+    foreach($plugins as $plugin=>$dir) {
+        if (file_exists("$dir/lib.php")) {
+            require_once("$dir/lib.php");
+        }
+        $function = 'booktool_'.$plugin.'_get_post_actions';
+        if (function_exists($function)) {
+            if ($actions = $function($settingsnav, $booknode)) {
+                $return = array_merge($return, $actions);
+            }
+        }
+    }
+
+    return $return;
 }
 
 /**
@@ -235,7 +296,7 @@ function book_supports($feature) {
 /**
  * Adds module specific settings to the settings block
  *
- * @param settings_navigation $settings The settings navigation object
+ * @param settings_navigation $settingsnav The settings navigation object
  * @param navigation_node $booknode The node to add module settings to
  * @return void
  */
@@ -253,7 +314,7 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
 
     $params = $PAGE->url->params();
 
-    if (empty($params['id']) or empty($params['chapterid'])) {
+    if (empty($params['id'])) {
         return;
     }
 
@@ -268,7 +329,7 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
         }
     }
 
-    if (has_capability('mod/book:edit', $PAGE->cm->context)) {
+    if (!empty($params['chapterid']) and has_capability('mod/book:edit', $PAGE->cm->context)) {
         if (!empty($USER->editing)) {
             $string = get_string("turneditingoff");
             $edit = '0';
@@ -290,10 +351,10 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
- * @return bool false if file not found, does not return if found - justsend the file
+ * @return bool false if file not found, does not return if found - just send the file
  */
 function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
-    global $CFG, $DB;
+    global $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
