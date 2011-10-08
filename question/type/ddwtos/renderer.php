@@ -174,7 +174,7 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
             }
             if ($cleanvalue != $value) {
                 $output .= html_writer::empty_tag('input', array(
-                        'type' => 'text',
+                        'type' => 'hidden',
                         'id' => $this->box_id($qa, 'p' . $place),
                         'value' => s($value))) .
                         html_writer::empty_tag('input', array(
@@ -183,7 +183,7 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
                         'value' => s($cleanvalue)));
             } else {
                 $output .= html_writer::empty_tag('input', array(
-                        'type' => 'text',
+                        'type' => 'hidden',
                         'id' => $this->box_id($qa, 'p' . $place),
                         'name' => $qa->get_qt_field_name($fieldname),
                         'value' => s($value)));
