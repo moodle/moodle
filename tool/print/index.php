@@ -24,7 +24,7 @@
  */
 
 require(dirname(__FILE__).'/../../../../config.php');
-require_once($CFG->dirroot.'/mod/book/locallib.php');
+require_once(dirname(__FILE__).'/locallib.php');
 
 $id        = required_param('id', PARAM_INT);           // Course Module ID
 $chapterid = optional_param('chapterid', 0, PARAM_INT); // Chapter ID
@@ -151,7 +151,7 @@ if ($chapter) {
     </table></div>
 
     <?php
-    list($toc, $titles) = book_get_print_toc($chapters, $book, $cm);
+    list($toc, $titles) = booktool_print_get_toc($chapters, $book, $cm);
     echo $toc;
     // chapters
     $link1 = $CFG->wwwroot.'/mod/book/view.php?id='.$course->id.'&chapterid=';
