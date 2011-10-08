@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die;
  * @param string $path
  * @return void
  */
-function book_migrate_moddata_dir_to_legacy($book, $context, $path) {
+function mod_book_migrate_moddata_dir_to_legacy($book, $context, $path) {
     global $OUTPUT, $CFG;
 
     $base = "$CFG->dataroot/$book->course/$CFG->moddata/book/$book->id";
@@ -103,4 +103,67 @@ function book_migrate_moddata_dir_to_legacy($book, $context, $path) {
         }
     }
     unset($items); //release file handles
+}
+
+/**
+ * Migrate legacy files in intro and chapters
+ * @return void
+ */
+function mod_book_migrate_all_areas() {
+    global $DB;
+
+    $rsbooks = $DB->get_recordset('book');
+    foreach($rsbooks as $book) {
+        upgrade_set_timeout(360); // set up timeout, may also abort execution
+        $cm = get_coursemodule_from_instance('book', $book->id);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        mod_book_migrate_area($book, 'intro', 'book', $book->course, $context, 'mod_book', 'intro', 0);
+
+        $rschapters = $DB->get_recordset('book_chapters', array('bookid'=>$book->id));
+        foreach ($rschapters as $chapter) {
+            mod_book_migrate_area($chapter, 'content', 'book_chapters', $book->course, $context, 'mod_book', 'chapter', $chapter->id);
+        }
+        $rschapters->close();
+    }
+    $rsbooks->close();
+}
+
+/**
+ * Migrate one area, this should be probably part of moodle core...
+ * @param $record
+ * @param $field
+ * @param $table
+ * @param $courseid
+ * @param $context
+ * @param $component
+ * @param $filearea
+ * @param $itemid
+ * @return void
+ */
+function mod_book_migrate_area($record, $field, $table, $courseid, $context, $component, $filearea, $itemid) {
+    global $CFG, $DB;
+
+    $fs = get_file_storage();
+
+    foreach(array(get_site()->id, $courseid) as $cid) {
+        $matches = null;
+        $ooldcontext = get_context_instance(CONTEXT_COURSE, $cid);
+        if (preg_match_all("|$CFG->wwwroot/file.php(\?file=)?/$cid(/[^\s'\"&\?#]+)|", $record->$field, $matches)) {
+            $file_record = array('contextid'=>$context->id, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid);
+            foreach ($matches[2] as $i=>$filepath) {
+                if (!$file = $fs->get_file_by_hash(sha1("/$ooldcontext->id/course/legacy/0".$filepath))) {
+                    continue;
+                }
+                try {
+                    if (!$newfile = $fs->get_file_by_hash(sha1("/$context->id/$component/$filearea/$itemid".$filepath))) {
+                        $fs->create_file_from_storedfile($file_record, $file);
+                    }
+                    $record->$field = str_replace($matches[0][$i], '@@PLUGINFILE@@'.$filepath, $record->$field);
+                } catch (Exception $ex) {
+                    // ignore problems
+                }
+                $DB->set_field($table, $field, $record->$field, array('id'=>$record->id));
+            }
+        }
+    }
 }

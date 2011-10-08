@@ -138,7 +138,7 @@ function xmldb_book_upgrade($oldversion) {
 
                 $context = get_context_instance(CONTEXT_MODULE, $book->cmid);
 
-                book_migrate_moddata_dir_to_legacy($book, $context, '/');
+                mod_book_migrate_moddata_dir_to_legacy($book, $context, '/');
 
                 // remove dirs if empty
                 @rmdir("$CFG->dataroot/$book->course/$CFG->moddata/book/$book->id/");
@@ -174,8 +174,13 @@ function xmldb_book_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2011011601, 'book');
     }
 
+    if ($oldversion < 2011090800) {
+        require_once("$CFG->dirroot/mod/book/db/upgradelib.php");
 
-    //TODO: migrate the legacy file.php links to new pluginfile.php and file areas per chapter
+        mod_book_migrate_all_areas();
+
+        upgrade_mod_savepoint(true, 2011090800, 'book');
+    }
 
 
     return true;

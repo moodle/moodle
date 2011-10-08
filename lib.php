@@ -369,7 +369,7 @@ function book_get_file_areas($course, $cm, $context) {
 function book_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG, $DB;
 
-    // note: book_intro handled in file_browser automatically
+    // note: 'intro' area is handled in file_browser automatically
 
     if (!has_capability('mod/book:read', $context)) {
         return null;
