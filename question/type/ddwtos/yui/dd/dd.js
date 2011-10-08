@@ -13,7 +13,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             this.selectors = this.css_selectors(this.get('topnode'));
             this.set_padding_sizes_all();
             this.clone_drag_items();
-            this.place_drag_items();
+            this.initial_place_of_drag_items();
             this.make_drop_zones();
             Y.later(500, this, this.position_drag_items, [], true);
         },
@@ -93,8 +93,8 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                     item.setStyle('padding', margintop+'px '+marginleft+'px '
                                             +marginbottom+'px '+marginright+'px');
                 }, this);
-                Y.all(this.selectors.drops_group(groupno)).setStyles({'width': maxwidth - 2,
-                                                                'height': maxheight - 2});
+                Y.all(this.selectors.drops_group(groupno)).setStyles({'width': maxwidth ,
+                                                                'height': maxheight});
             }
         },
         /**
@@ -157,7 +157,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             return this.get_classname_numeric_suffix(node, 'no');
         },
         placed : null,
-        place_drag_items : function() {
+        initial_place_of_drag_items : function() {
             Y.all(this.selectors.drags()).addClass('unplaced');
             this.placed = [];
             for (var placeno in this.get('inputids')) {
@@ -211,7 +211,6 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                 if (this.placed[alreadytheredragno] === placeno) {
                     delete this.placed[alreadytheredragno];
                     var alreadytheredrag = Y.one(this.selectors.drag(alreadytheredragno));
-                    alreadytheredrag.addClass('unplaced');
                 }
             }
             if (drag !== null) {
@@ -219,11 +218,10 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                 if (drag.dd) {
                     drag.dd.once('drag:start', function (e, inputnode, drag) {
                         inputnode.set('value', 0);
-                        drag.addClass('unplaced');
                         delete this.placed[this.get_no(drag)];
+                        drag.addClass('unplaced');
                     },this, inputnode, drag);
                 }
-                drag.removeClass('unplaced');
             }
         },
         remove_drag_from_drop : function (drop) {
@@ -239,10 +237,12 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                     var choiceno = this.get_choice(drag)
                     var home = Y.one(this.selectors.drag_home(groupno, choiceno));
                     drag.setXY(home.getXY());
+                    drag.addClass('unplaced');
                 } else {
                     var placeno = this.placed[this.get_no(drag)];
                     var drop = Y.one(this.selectors.drop_for_place(placeno));
-                    drag.setXY(drop.getXY());
+                    drag.setXY([drop.getX()+2, drop.getY()+2]);
+                    drag.removeClass('unplaced');
                 }
             }
         },

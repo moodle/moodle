@@ -118,7 +118,6 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
             if (array_key_exists($fieldname, $response)) {
                 $fraction = (int) ($response[$fieldname] ==
                         $question->get_right_choice_for($place));
-                $attributes['class'] .= ' ' . $this->feedback_class($fraction);
                 $feedbackimage = $this->feedback_image($fraction);
             }
         }

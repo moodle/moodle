@@ -11,6 +11,10 @@
     margin-bottom: 0.5em;
 }
 
+.que.ddwtos .drop.filled {
+    border: 3px dotted #000000;
+}
+
 .que.ddwtos .drop {
     display: inline-block;
     text-align: center;
@@ -19,6 +23,10 @@
 .que.ddwtos .draghome, .que.ddwtos .drag{
     display: inline-block;
     text-align: center;
+    background: transparent;
+    border: 0;
+}
+.que.ddwtos .draghome, .que.ddwtos .drag.unplaced{
     border: 1px solid #000000;
 }
 .que.ddwtos .draghome {
