@@ -104,15 +104,6 @@ function book_delete_instance($id) {
     return true;
 }
 
-function book_get_types() {
-    $type = new stdClass();
-    $type->modclass = MOD_CLASS_RESOURCE;
-    $type->type     = 'book';
-    $type->typestr  = get_string('modulename', 'mod_book');
-
-    return array($type);
-}
-
 /**
  * Return use outline
  * @param object $course
@@ -218,11 +209,14 @@ function book_get_post_actions() {
  */
 function book_supports($feature) {
     switch($feature) {
+        case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
         case FEATURE_GROUPS:                  return false;
         case FEATURE_GROUPINGS:               return false;
         case FEATURE_GROUPMEMBERSONLY:        return true;
         case FEATURE_MOD_INTRO:               return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
+        case FEATURE_GRADE_HAS_GRADE:         return false;
+        case FEATURE_GRADE_OUTCOMES:          return false;
         case FEATURE_BACKUP_MOODLE2:          return true;
 
         default: return null;
