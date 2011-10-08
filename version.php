@@ -25,10 +25,10 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$module->version   = 2011090800; // The current module version (Date: YYYYMMDDXX)
+$module->version   = 2011100800; // The current module version (Date: YYYYMMDDXX)
 $module->requires  = 2011070100; // Requires this Moodle version
 $module->cron      = 0;          // Period for cron to check this module (secs)
 $module->component = 'mod_book'; // Full name of the plugin (used for diagnostics)
 
-$module->maturity  = MATURITY_RC;
-$module->release   = "2.0rc (20110320)"; // User-friendly version number
+$module->maturity  = MATURITY_BETA;
+$module->release   = "2.1dev (20111008)"; // User-friendly version number
