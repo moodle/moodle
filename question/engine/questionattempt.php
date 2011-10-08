@@ -416,6 +416,21 @@ class question_attempt {
     }
 
     /**
+     * Get the last step with a particular behaviour variable set.
+     * @param string $name the name of the variable to get.
+     * @return question_attempt_step the last step, or a step with no variables
+     * if there was not a real step.
+     */
+    public function get_last_step_with_behaviour_var($name) {
+        foreach ($this->get_reverse_step_iterator() as $step) {
+            if ($step->has_behaviour_var($name)) {
+                return $step;
+            }
+        }
+        return new question_attempt_step_read_only();
+    }
+
+    /**
      * Get the latest value of a particular question type variable. That is, get
      * the value from the latest step that has it set. Return null if it is not
      * set in any step.
