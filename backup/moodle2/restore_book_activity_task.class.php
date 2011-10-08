@@ -81,11 +81,11 @@ class restore_book_activity_task extends restore_activity_task {
 
         // book by cm->id
         $rules[] = new restore_decode_rule('BOOKVIEWBYID', '/mod/book/view.php?id=$1', 'course_module');
-        $rules[] = new restore_decode_rule('BOOKVIEWBYIDCH', '/mod/book/view.php?id=$1&chapterid=$2', array('course_module', 'book_chapter'));
+        $rules[] = new restore_decode_rule('BOOKVIEWBYIDCH', '/mod/book/view.php?id=$1&amp;chapterid=$2', array('course_module', 'book_chapter'));
 
         // book by book->id
         $rules[] = new restore_decode_rule('BOOKVIEWBYB', '/mod/book/view.php?b=$1', 'book');
-        $rules[] = new restore_decode_rule('BOOKVIEWBYBCH', '/mod/book/view.php?b=$1&chapterid=$2', array('book', 'book_chapter'));
+        $rules[] = new restore_decode_rule('BOOKVIEWBYBCH', '/mod/book/view.php?b=$1&amp;chapterid=$2', array('book', 'book_chapter'));
 
         return $rules;
     }
