@@ -98,3 +98,5 @@ $string['book:edit'] = 'Edit book chapters';
 $string['book:viewhiddenchapters'] = 'View hidden book chapters';
 
 $string['errorchapter'] = 'Error reading book chapter.';
+
+$string['page-mod-book-x'] = 'Any book module page';

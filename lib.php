@@ -391,3 +391,16 @@ function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
     // finally send the file
     send_stored_file($file, 360, 0, false);
 }
+
+/**
+ * Return a list of page types
+ *
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ * @return array
+ */
+function book_page_type_list($pagetype, $parentcontext, $currentcontext) {
+    $module_pagetype = array('mod-book-*'=>get_string('page-mod-book-x', 'mod_book'));
+    return $module_pagetype;
+}
