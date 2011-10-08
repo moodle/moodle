@@ -1,4 +1,29 @@
 <?php
+// This file is part of Book plugin for Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Book module language strings
+ *
+ * @package    mod
+ * @subpackage book
+ * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die;
 
 $string['modulename'] = 'Book';
 $string['modulenameplural'] = 'Books';
@@ -63,10 +88,6 @@ $string['confchapterdelete'] = 'Do you really want to delete this chapter?';
 $string['confchapterdeleteall'] = 'Do you really want to delete this chapter and all its subchapters?';
 
 $string['generateimscp'] = 'Generate IMS content package';
-$string['printbook'] = 'Print book';
-$string['printchapter'] = 'Print this chapter';
-$string['printdate'] = 'Date';
-$string['printedby'] = 'Printed by';
 $string['top'] = 'top';
 
 $string['navprev'] = 'Previous';
@@ -88,7 +109,6 @@ $string['book:read'] = 'Read book';
 $string['book:edit'] = 'Edit book chapters';
 $string['book:viewhiddenchapters'] = 'View hidden book chapters';
 $string['book:import'] = 'Import chapters';
-$string['book:print'] = 'Print book';
 $string['book:exportimscp'] = 'Export book as IMS content package';
 
 $string['errorchapter'] = 'Error reading book chapter.';

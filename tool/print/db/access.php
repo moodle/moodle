@@ -17,15 +17,14 @@
 /**
  * Book module capability definition
  *
- * @package    mod
- * @subpackage book
- * @copyright  2009-2010 Petr Skoda  {@link http://skodak.org}
+ * @package    booktool
+ * @subpackage print
+ * @copyright  2011 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $capabilities = array(
-
-    'mod/book:read' => array(
+    'booktool/print:print' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
@@ -37,40 +36,4 @@ $capabilities = array(
             'manager' => CAP_ALLOW,
         )
     ),
-
-    'mod/book:viewhiddenchapters' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
-    'mod/book:edit' => array(
-        'riskbitmask' => RISK_XSS,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
-    'mod/book:import' => array(
-        'riskbitmask' => RISK_XSS,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
-    'mod/book:exportimscp' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE
-    ),
-
 );

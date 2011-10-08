@@ -1,5 +1,5 @@
 <?php
-// This file is part of Book module for Moodle - http://moodle.org/
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,18 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Definition of log events
+ * Book subplugin types declaration
  *
  * @package    mod
  * @subpackage book
- * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @copyright  2011 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$logs = array(
-    array('module'=>'book', 'action'=>'update', 'mtable'=>'book', 'field'=>'name'),
-    array('module'=>'book', 'action'=>'view', 'mtable'=>'book', 'field'=>'name'),
-    array('module'=>'book', 'action'=>'view all', 'mtable'=>'book', 'field'=>'name'),
-);
+$subplugins = array(
+                    'booktool'       => 'mod/book/tool',
+                    );

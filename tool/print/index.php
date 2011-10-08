@@ -17,13 +17,13 @@
 /**
  * Book printing
  *
- * @package    mod
- * @subpackage book
+ * @package    booktool
+ * @subpackage print
  * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
+require(dirname(__FILE__).'/../../../../config.php');
 require_once($CFG->dirroot.'/mod/book/locallib.php');
 
 $id        = required_param('id', PARAM_INT);           // Course Module ID
@@ -41,7 +41,7 @@ require_course_login($course, true, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/book:read', $context);
-require_capability('mod/book:print', $context);
+require_capability('booktool/print:print', $context);
 
 //check all variables
 if ($chapterid) {
@@ -79,7 +79,7 @@ if ($chapter) {
         require_capability('mod/book:viewhiddenchapters', $context);
     }
 
-    add_to_log($course->id, 'book', 'print', 'print.php?id='.$cm->id.'&chapterid='.$chapter->id, $book->id, $cm->id);
+    add_to_log($course->id, 'book', 'print', 'tool/print/index.php?id='.$cm->id.'&chapterid='.$chapter->id, $book->id, $cm->id);
 
     /// page header
     ?>
@@ -114,7 +114,7 @@ if ($chapter) {
     echo '</body> </html>';
 
 } else {
-    add_to_log($course->id, 'book', 'print', 'print.php?id='.$cm->id, $book->id, $cm->id);
+    add_to_log($course->id, 'book', 'print', 'tool/print/index.php?id='.$cm->id, $book->id, $cm->id);
     $allchapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum');
 
     /// page header
@@ -142,10 +142,10 @@ if ($chapter) {
     <td><?php echo get_string('modulename', 'mod_book') ?>:</td>
     <td><?php echo format_string($book->name, true, array('context'=>$context)) ?></td>
     </tr><tr>
-    <td><?php echo get_string('printedby', 'mod_book') ?>:</td>
+    <td><?php echo get_string('printedby', 'booktool_print') ?>:</td>
     <td><?php echo fullname($USER, true) ?></td>
     </tr><tr>
-    <td><?php echo get_string('printdate','mod_book') ?>:</td>
+    <td><?php echo get_string('printdate','booktool_print') ?>:</td>
     <td><?php echo userdate(time()) ?></td>
     </tr>
     </table></div>
