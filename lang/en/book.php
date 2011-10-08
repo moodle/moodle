@@ -93,20 +93,8 @@ $string['navprev'] = 'Previous';
 $string['navnext'] = 'Next';
 $string['navexit'] = 'Exit book';
 
-$string['importingchapters'] = 'Importing chapters into book';
-$string['import'] = 'Import';
-$string['import_help'] = 'You can import a single HTML file or every HTML file in a direcory. Relative file links are converted to absolute chapter links. Images, flash and Java are relinked too.';
-$string['doimport'] = 'Import';
-$string['doexport'] = 'Export';
-$string['importing'] = 'Importing';
-$string['relinking'] = 'Relinking';
-$string['importinfo'] = 'Import selected HTML file or directory.<br />Chapters are sorted alphabetically using file names.<br />Files named \'sub_*.*\' are always imported as subchapters.';
-$string['maindirectory'] = 'Main directory';
-$string['fileordir'] = 'File or directory';
-
 $string['book:read'] = 'Read book';
 $string['book:edit'] = 'Edit book chapters';
 $string['book:viewhiddenchapters'] = 'View hidden book chapters';
-$string['book:import'] = 'Import chapters';
 
 $string['errorchapter'] = 'Error reading book chapter.';

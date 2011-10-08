@@ -1,5 +1,5 @@
 <?php
-// This file is part of Book module for Moodle - http://moodle.org/
+// This file is part of Book plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,20 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Book plugin version info
+ * Book import plugin version info
  *
- * @package    mod
- * @subpackage book
- * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
+ * @package    booktool
+ * @subpackage importhtml
+ * @copyright  2011 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-$module->version   = 2011032003; // The current module version (Date: YYYYMMDDXX)
-$module->requires  = 2011070101; // Requires this Moodle version
-$module->cron      = 0;          // Period for cron to check this module (secs)
-$module->component = 'mod_book'; // Full name of the plugin (used for diagnostics)
-
-$module->maturity  = MATURITY_RC;
-$module->release   = "2.0rc (20110320)"; // User-friendly version number
+$plugin->version   = 2011090800; // The current plugin version (Date: YYYYMMDDXX)
+$plugin->component = 'booktool_importhtml'; // Full name of the plugin (used for diagnostics)

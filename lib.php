@@ -259,11 +259,6 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
         }
     }
 
-    if (has_capability('mod/book:import', $PAGE->cm->context)) {
-        //TODO
-        //$doimport = ($allowimport and $edit) ? '<div>(<a href="import.php?id='.$cm->id.'">'.get_string('doimport', 'book').'</a>)</div>' : '';
-    }
-
     if (has_capability('mod/book:edit', $PAGE->cm->context)) {
         if (!empty($USER->editing)) {
             $string = get_string("turneditingoff");

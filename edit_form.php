@@ -50,12 +50,6 @@ class book_chapter_edit_form extends moodleform {
         $mform->setType('content_editor', PARAM_RAW);
         $mform->addRule('content_editor', get_string('required'), 'required', null, 'client');
 
-        if ($chapter->id and has_capability('mod/book:import', $context)) {
-            //TODO: after files
-            //$mform->addElement('static', 'doimport', get_string('importingchapters', 'book').':', '<a href="import.php?id='.$chapter->cmid.'">'.get_string('doimport', 'book').'</a>');
-        }
-
-
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 

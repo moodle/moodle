@@ -17,11 +17,13 @@
 /**
  * Book import
  *
- * @package    mod
- * @subpackage book
+ * @package    booktool
+ * @subpackage importhtml
  * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+die('TODO');
 
 require('../../config.php');
 require_once($CFG->dirroot.'/mod/book/locallib.php');
@@ -70,7 +72,7 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
 
 
-    die('TODO');
+
 /*
 
     $coursebase = $CFG->dataroot.'/'.$book->course;

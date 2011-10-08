@@ -17,11 +17,13 @@
 /**
  * Book import form
  *
- * @package    mod
- * @subpackage book
+ * @package    booktool
+ * @subpackage importhtml
  * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/formslib.php');
 
