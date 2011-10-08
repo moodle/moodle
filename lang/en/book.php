@@ -63,6 +63,7 @@ page.';
 $string['customtitles'] = 'Custom titles';
 $string['customtitles_help'] = 'Chapter titles are displayed automatically only in TOC.';
 
+$string['chapters'] = 'Chapters';
 $string['editingchapter'] = 'Editing chapter';
 $string['chaptertitle'] = 'Chapter title';
 $string['content'] = 'Content';

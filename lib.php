@@ -339,6 +339,69 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
     }
 }
 
+
+/**
+ * Lists all browsable file areas
+ * @param object $course
+ * @param object $cm
+ * @param object $context
+ * @return array
+ */
+function book_get_file_areas($course, $cm, $context) {
+    $areas = array();
+    $areas['chapter'] = get_string('chapters', 'mod_book');
+    return $areas;
+}
+
+/**
+ * File browsing support for book module ontent area.
+ * @param object $browser
+ * @param object $areas
+ * @param object $course
+ * @param object $cm
+ * @param object $context
+ * @param string $filearea
+ * @param int $itemid
+ * @param string $filepath
+ * @param string $filename
+ * @return object file_info instance or null if not found
+ */
+function book_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+    global $CFG, $DB;
+
+    // note: book_intro handled in file_browser automatically
+
+    if (!has_capability('mod/book:read', $context)) {
+        return null;
+    }
+
+    if ($filearea !== 'chapter') {
+        return null;
+    }
+
+    require_once("$CFG->dirroot/mod/book/locallib.php");
+
+    if (is_null($itemid)) {
+        return new book_file_info($browser, $course, $cm, $context, $areas, $filearea, $itemid);
+    }
+
+    $fs = get_file_storage();
+    $filepath = is_null($filepath) ? '/' : $filepath;
+    $filename = is_null($filename) ? '.' : $filename;
+    if (!$storedfile = $fs->get_file($context->id, 'mod_book', $filearea, $itemid, $filepath, $filename)) {
+        return null;
+    }
+
+    // modifications may be tricky - may cause caching problems
+    $canwrite = has_capability('mod/book:edit', $context);
+
+    $chaptername = $DB->get_field('book_chapters', 'title', array('bookid'=>$cm->instance, 'id'=>$itemid));
+    $chaptername = format_string($chaptername, true, array('context'=>$context));
+
+    $urlbase = $CFG->wwwroot.'/pluginfile.php';
+    return new file_info_stored($browser, $context, $storedfile, $urlbase, $chaptername, true, true, $canwrite, false);
+}
+
 /**
  * Serves the book attachments. Implements needed access control ;-)
  *

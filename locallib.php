@@ -319,3 +319,86 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
 
     return $toc;
 }
+
+
+/**
+ * File browsing support class
+ */
+class book_file_info extends file_info {
+    protected $course;
+    protected $cm;
+    protected $areas;
+    protected $filearea;
+
+    public function __construct($browser, $course, $cm, $context, $areas, $filearea) {
+        parent::__construct($browser, $context);
+        $this->course   = $course;
+        $this->cm       = $cm;
+        $this->areas    = $areas;
+        $this->filearea = $filearea;
+    }
+
+    /**
+     * Returns list of standard virtual file/directory identification.
+     * The difference from stored_file parameters is that null values
+     * are allowed in all fields
+     * @return array with keys contextid, filearea, itemid, filepath and filename
+     */
+    public function get_params() {
+        return array('contextid'=>$this->context->id,
+                     'component'=>'mod_book',
+                     'filearea' =>$this->filearea,
+                     'itemid'   =>null,
+                     'filepath' =>null,
+                     'filename' =>null);
+    }
+
+    /**
+     * Returns localised visible name.
+     * @return string
+     */
+    public function get_visible_name() {
+        return $this->areas[$this->filearea];
+    }
+
+    /**
+     * Can I add new files or directories?
+     * @return bool
+     */
+    public function is_writable() {
+        return false;
+    }
+
+    /**
+     * Is directory?
+     * @return bool
+     */
+    public function is_directory() {
+        return true;
+    }
+
+    /**
+     * Returns list of children.
+     * @return array of file_info instances
+     */
+    public function get_children() {
+        global $DB;
+
+        $children = array();
+        $chapters = $DB->get_records('book_chapters', array('bookid'=>$this->cm->instance), 'pagenum', 'id, pagenum');
+        foreach ($chapters as $itemid=>$unused) {
+            if ($child = $this->browser->get_file_info($this->context, 'mod_book', $this->filearea, $itemid)) {
+                $children[] = $child;
+            }
+        }
+        return $children;
+    }
+
+    /**
+     * Returns parent file_info instance
+     * @return file_info or null for root
+     */
+    public function get_parent() {
+        return $this->browser->get_file_info($this->context);
+    }
+}
