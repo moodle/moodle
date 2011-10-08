@@ -104,7 +104,7 @@ if($shoulddelete == 1) {
     $mform->display();
     echo $OUTPUT->box_end();
 }else {
-    $templates = feedback_get_template_list($course, true);
+    $templates = feedback_get_template_list($course, 'own');
     echo '<div class="mdl-align">';
     if(!is_array($templates)) {
         echo $OUTPUT->box(get_string('no_templates_available_yet', 'feedback'), 'generalbox boxaligncenter');
@@ -112,7 +112,8 @@ if($shoulddelete == 1) {
         echo '<table width="30%">';
         echo '<tr><th>'.get_string('templates', 'feedback').'</th><th>&nbsp;</th></tr>';
         foreach($templates as $template) {
-            echo '<tr><td align="center">'.$template->name.'</td>';
+            $suffix = $template->ispublic ? (' ('.get_string('public', 'feedback').')') : '';
+            echo '<tr><td align="left">'.$template->name.$suffix.'</td>';
             echo '<td align="center">';
             echo '<form action="delete_template.php" method="post">';
             echo '<input title="'.get_string('delete_template','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/delete') . '" hspace="1" height="11" width="11" border="0" />';

@@ -138,6 +138,9 @@ function feedback_update_instance($feedback) {
 /**
  * Serves the files included in feedback items like label. Implements needed access control ;-)
  *
+ * There are two situations in general where the files will be sent.
+ * 1) filearea = item, 2) filearea = template
+ *
  * @param object $course
  * @param object $cm
  * @param object $context
@@ -149,17 +152,59 @@ function feedback_update_instance($feedback) {
 function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
 
-    require_login($course, false, $cm);
-
     $itemid = (int)array_shift($args);
 
-    require_course_login($course, true, $cm);
-
+    //get the item what includes the file
     if (!$item = $DB->get_record('feedback_item', array('id'=>$itemid))) {
         return false;
     }
+    
+    //if the filearea is "item" so we check the permissions like view/complete the feedback
+    if($filearea === 'item') {
+        //get the feedback
+        if(!$feedback = $DB->get_record('feedback', array('id'=>$item->feedback))) {
+            return false;
+        }
 
-    if (!has_capability('mod/feedback:view', $context)) {
+        $canload = false;
+        //first check whether the user has the complete capability
+        if(has_capability('mod/feedback:complete', $context)) {
+            $canload = true;
+        }
+        
+        //now we check whether the user has the view capability
+        if(has_capability('mod/feedback:view', $context)) {
+            $canload = true;
+        }
+        
+        //if the feedback is on frontpage and anonymous and the fullanonymous is allowed
+        //so the file can be loaded too.
+        if(isset($CFG->feedback_allowfullanonymous)
+                    AND $CFG->feedback_allowfullanonymous
+                    AND $course->id == SITEID
+                    AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES ) {
+            $canload = true;
+        }
+
+        if(!$canload) {
+            return false;
+        }
+    }else if($filearea === 'template') { //now we check files in templates
+        if(!$template = $DB->get_record('feedback_template', array('id'=>$item->template))) {
+            return false;
+        }
+        
+        //if the file is not public so the capability edititems has to be there
+        if(!$template->ispublic) {
+            if(!has_capability('mod/feedback:edititems', $context)) {
+                return false;
+            }
+        }else { //on public templates, at least the user has to be logged in
+            if(!isloggedin()) {
+                return false;
+            }
+        }
+    }else {
         return false;
     }
 
@@ -1073,6 +1118,9 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
 
     $fs = get_file_storage();
 
+    if(!$template = $DB->get_record('feedback_template', array('id'=>$templateid))) {
+        return false;
+    }
     //get all templateitems
     if(!$templitems = $DB->get_records('feedback_item', array('template'=>$templateid))) {
         return false;
@@ -1080,7 +1128,11 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
 
     //files in the template_item are in the context of the current course
     //files in the feedback_item are in the feedback_context of the feedback
-    $c_context = get_context_instance(CONTEXT_COURSE, $feedback->course);
+    if($template->ispublic) {
+        $c_context = get_context_instance(CONTEXT_COURSE, $template->course);
+    }else {
+        $c_context = get_context_instance(CONTEXT_COURSE, $feedback->course);
+    }
     $course = $DB->get_record('course', array('id'=>$feedback->course));
     $cm = get_coursemodule_from_instance('feedback', $feedback->id);
     $f_context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -1128,7 +1180,7 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
         $item->position = $item->position + $positionoffset;
 
         $item->id = $DB->insert_record('feedback_item', $item);
-
+        
         //TODO: moving the files to the new items
         if ($templatefiles = $fs->get_area_files($c_context->id, 'mod_feedback', 'template', $t_item->id, "id", false)) {
             foreach($templatefiles as $tfile) {
@@ -1162,16 +1214,22 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
  *
  * @global object
  * @param object $course
- * @param boolean $onlyown
+ * @param string $onlyownorpublic
  * @return array the template recordsets
  */
-function feedback_get_template_list($course, $onlyown = false) {
-    global $DB;
+function feedback_get_template_list($course, $onlyownorpublic = '') {
+    global $DB, $CFG;
 
-    if ($onlyown) {
-        $templates = $DB->get_records('feedback_template', array('course'=>$course->id));
-    } else {
-        $templates = $DB->get_records_select('feedback_template', 'course = ? OR ispublic = 1', array($course->id));
+    switch($onlyownorpublic) {
+        case '':
+            $templates = $DB->get_records_select('feedback_template', 'course = ? OR ispublic = 1', array($course->id), 'name');
+            break;
+        case 'own':
+            $templates = $DB->get_records('feedback_template', array('course'=>$course->id), 'name');
+            break;
+        case 'public':
+            $templates = $DB->get_records('feedback_template', array('course'=>$CFG->frontpage, 'ispublic'=>1), 'name');
+            break;
     }
     return $templates;
 }
