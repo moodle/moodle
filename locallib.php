@@ -28,6 +28,11 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot.'/mod/book/lib.php');
 require_once($CFG->libdir.'/filelib.php');
 
+define('BOOK_NUM_NONE',     '0');
+define('BOOK_NUM_NUMBERS',  '1');
+define('BOOK_NUM_BULLETS',  '2');
+define('BOOK_NUM_INDENTED', '3');
+
 /**
  * Preload book chapters and fix toc structure if necessary.
  *

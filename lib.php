@@ -25,17 +25,14 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-
-define('BOOK_NUM_NONE',     '0');
-define('BOOK_NUM_NUMBERS',  '1');
-define('BOOK_NUM_BULLETS',  '2');
-define('BOOK_NUM_INDENTED', '3');
-
 /**
  * Returns list of available numbering types
  * @return array
  */
 function book_get_numbering_types() {
+    global $CFG; // required for the include
+    require_once(dirname(__FILE__).'/locallib.php');
+
     return array (BOOK_NUM_NONE       => get_string('numbering0', 'mod_book'),
                   BOOK_NUM_NUMBERS    => get_string('numbering1', 'mod_book'),
                   BOOK_NUM_BULLETS    => get_string('numbering2', 'mod_book'),
