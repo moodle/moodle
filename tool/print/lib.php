@@ -47,15 +47,10 @@ function booktool_print_extend_settings_navigation(settings_navigation $settings
      if (has_capability('booktool/print:print', $PAGE->cm->context)) {
          $url1 = new moodle_url('/mod/book/tool/print/index.php', array('id'=>$params['id']));
          $url2 = new moodle_url('/mod/book/tool/print/index.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid']));
-         if ($CFG->version > 2011020900) {
-             $action = new action_link($url1, get_string('printbook', 'booktool_print'), new popup_action('click', $url1));
-             $booknode->add('', $action, navigation_node::TYPE_SETTING, null, null, new pix_icon('book', '', 'booktool_print', array('class'=>'icon')));
-             $action = new action_link($url2, get_string('printchapter', 'booktool_print'), new popup_action('click', $url2));
-             $booknode->add('', $action, navigation_node::TYPE_SETTING, null, null, new pix_icon('chapter', '', 'booktool_print', array('class'=>'icon')));
-         } else {
-             $booknode->add(get_string('printbook', 'booktool_print'), $url1, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_book', '', 'booktool_print', array('class'=>'icon')));
-             $booknode->add(get_string('printchapter', 'booktool_print'), $url2, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_chapter', '', 'booktool_print', array('class'=>'icon')));
-         }
+         $action = new action_link($url1, get_string('printbook', 'booktool_print'), new popup_action('click', $url1));
+         $booknode->add('', $action, navigation_node::TYPE_SETTING, null, null, new pix_icon('book', '', 'booktool_print', array('class'=>'icon')));
+         $action = new action_link($url2, get_string('printchapter', 'booktool_print'), new popup_action('click', $url2));
+         $booknode->add('', $action, navigation_node::TYPE_SETTING, null, null, new pix_icon('chapter', '', 'booktool_print', array('class'=>'icon')));
      }
 }
 
