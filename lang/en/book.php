@@ -87,7 +87,6 @@ $string['addafter'] = 'Add new chapter';
 $string['confchapterdelete'] = 'Do you really want to delete this chapter?';
 $string['confchapterdeleteall'] = 'Do you really want to delete this chapter and all its subchapters?';
 
-$string['generateimscp'] = 'Generate IMS content package';
 $string['top'] = 'top';
 
 $string['navprev'] = 'Previous';
@@ -109,6 +108,5 @@ $string['book:read'] = 'Read book';
 $string['book:edit'] = 'Edit book chapters';
 $string['book:viewhiddenchapters'] = 'View hidden book chapters';
 $string['book:import'] = 'Import chapters';
-$string['book:exportimscp'] = 'Export book as IMS content package';
 
 $string['errorchapter'] = 'Error reading book chapter.';

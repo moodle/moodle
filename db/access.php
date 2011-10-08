@@ -68,9 +68,4 @@ $capabilities = array(
         )
     ),
 
-    'mod/book:exportimscp' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE
-    ),
-
 );
