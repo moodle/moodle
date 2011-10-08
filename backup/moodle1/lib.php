@@ -78,6 +78,7 @@ class moodle1_mod_book_handler extends moodle1_mod_handler {
     /**
      * This is executed every time we have one /MOODLE_BACKUP/COURSE/MODULES/MOD/BOOK
      * data available
+     * @param array $data
      */
     public function process_book($data) {
         global $CFG;
@@ -118,10 +119,15 @@ class moodle1_mod_book_handler extends moodle1_mod_handler {
     /**
      * This is executed every time we have one /MOODLE_BACKUP/COURSE/MODULES/MOD/BOOK/CHAPTERS/CHAPTER
      * data available
+     * @param array $data
      */
     public function process_book_chapters($data) {
         $this->write_xml('chapter', $data, array('/chapter/id'));
-        //TODO: convert chapter files
+
+        // convert chapter files
+        $this->fileman->filearea = 'chapter';
+        $this->fileman->itemid   = $data['id'];
+        $data['content'] = moodle1_converter::migrate_referenced_files($data['content'], $this->fileman);
     }
 
     /**
