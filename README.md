@@ -24,11 +24,12 @@ Created by:
 Project page:
 
 * https://github.com/skodak/moodle-mod_book
+* http://moodle.org/plugins/view.php?plugin=mod_book
 
 
 Installation:
 
-* http://docs.moodle.org/en/Installing_contributed_modules_or_plugins
+* http://docs.moodle.org/20/en/Installing_contributed_modules_or_plugins
 
 
 Issue tracker:
