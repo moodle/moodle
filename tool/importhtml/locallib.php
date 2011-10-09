@@ -25,211 +25,264 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once(dirname(__FILE__).'/lib.php');
+require_once($CFG->dirroot.'/mod/book/locallib.php');
 
-//TODO: not converted yet!
+function toolbook_importhtml_import_chapters($package, $type, $book, $context, $verbose = true) {
+    global $DB, $OUTPUT;
 
-/// normalize relative links (= remove ..)
-function book_prepare_link($ref) {
-    if ($ref == '') {
-        return '';
+    $fs = get_file_storage();
+    $chapterfiles = toolbook_importhtml_get_chapter_files($package, $type);
+    $packer = get_file_packer('application/zip');
+    $fs->delete_area_files($context->id, 'mod_book', 'importhtmltemp', 0);
+    $package->extract_to_storage($packer, $context->id, 'mod_book', 'importhtmltemp', 0, '/');
+    //$datafiles = $fs->get_area_files($context->id, 'mod_book', 'importhtmltemp', 0, 'id', false);
+    //echo "<pre>";p(var_export($datafiles, true));
+
+    $chapters = array();
+
+    if ($verbose) {
+        echo $OUTPUT->notification(get_string('importing', 'booktool_importhtml'), 'notifysuccess');
     }
-    $ref = str_replace('\\','/',$ref); //anti MS hack
-    $cnt = substr_count($ref, '..');
-    for($i=0; $i<$cnt; $i++) {
-        $ref = ereg_replace('[^/]+/\.\./', '', $ref);
+    if ($type == 0) {
+        $chapterfile = reset($chapterfiles);
+        if ($file = $fs->get_file_by_hash("$context->id/mod_book/importhtmltemp/0/$chapterfile->pathname")) {
+            $htmlcontent = toolbook_importhtml_fix_encoding($file->get_content());
+            $htmlchapters = toolbook_importhtml_parse_headings(toolbook_importhtml_parse_body($htmlcontent));
+            //TODO: process h1 as main chapter and h2 as subchapters
+        }
+    } else {
+        foreach ($chapterfiles as $chapterfile) {
+            if ($file = $fs->get_file_by_hash(sha1("/$context->id/mod_book/importhtmltemp/0/$chapterfile->pathname"))) {
+                $chapter = new stdClass();
+                $htmlcontent = toolbook_importhtml_fix_encoding($file->get_content());
+
+                $chapter->bookid        = $book->id;
+                $chapter->pagenum       = $DB->get_field_sql('SELECT MAX(pagenum) FROM {book_chapters} WHERE bookid = ?', array($book->id)) + 1;
+                $chapter->importsrc     = '/'.$chapterfile->pathname;
+                $chapter->content       = toolbook_importhtml_parse_styles($htmlcontent);
+                $chapter->content       .= toolbook_importhtml_parse_body($htmlcontent);
+                $chapter->title         = toolbook_importhtml_parse_title($htmlcontent, $chapterfile->pathname);
+                $chapter->contentformat = FORMAT_HTML;
+                $chapter->hidden        = 0;
+                $chapter->timecreated   = time();
+                $chapter->timemodified  = time();
+                if (preg_match('/_sub(\/|\.htm)/i', $chapter->importsrc)) { //if filename or directory ends with sub_* treat as subchapters
+                    $chapter->subchapter = 1;
+                } else {
+                    $chapter->subchapter = 0;
+                }
+
+                $chapter->id = $DB->insert_record('book_chapters', $chapter);
+                $chapters[$chapter->id] = $chapter;
+
+                add_to_log($book->course, 'book', 'update', 'view.php?id='.$context->instanceid.'&chapterid='.$chapter->id, $book->id, $context->instanceid);
+            }
+        }
     }
-    //still any '..' left?? == error! error!
-    if (substr_count($ref, '..') > 0) {
-        return '';
+
+    if ($verbose) {
+        echo $OUTPUT->notification(get_string('relinking', 'booktool_importhtml'), 'notifysuccess');
     }
-    if (ereg('[\|\`]', $ref)) {  // check for other bad characters
-        return '';
+    $allchapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum');
+    foreach ($chapters as $chapter) {
+        // find references to all files and copy them + relink them
+        $matches = null;
+        if (preg_match_all('/(src|codebase|name|href)\s*=\s*"([^"]+)"/i', $chapter->content, $matches)) {
+            $file_record = array('contextid'=>$context->id, 'component'=>'mod_book', 'filearea'=>'chapter', 'itemid'=>$chapter->id);
+            foreach ($matches[0] as $i=>$match) {
+                $filepath = dirname($chapter->importsrc).'/'.$matches[2][$i];
+                $filepath = toolbook_importhtml_fix_path($filepath);
+
+                if (strtolower($matches[1][$i]) === 'href') {
+                    // skip linked html files, we will try chapter relinking later
+                    foreach ($allchapters as $target) {
+                        if ($target->importsrc === $filepath) {
+                            continue 2;
+                        }
+                    }
+                }
+
+                if ($file = $fs->get_file_by_hash(sha1("/$context->id/mod_book/importhtmltemp/0$filepath"))) {
+                    if (!$oldfile = $fs->get_file_by_hash(sha1("/$context->id/mod_book/chapter/$chapter->id$filepath"))) {
+                        $fs->create_file_from_storedfile($file_record, $file);
+                    }
+                    $chapter->content = str_replace($match, $matches[1][$i].'="@@PLUGINFILE@@'.$filepath.'"', $chapter->content);
+                }
+            }
+            $DB->set_field('book_chapters', 'content', $chapter->content, array('id'=>$chapter->id));
+        }
     }
-    return $ref;
+    unset($chapters);
+
+    $allchapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum');
+    foreach ($allchapters as $chapter) {
+        $newcontent = $chapter->content;
+        $matches = null;
+        if (preg_match_all('/(href)\s*=\s*"([^"]+)"/i', $chapter->content, $matches)) {
+            foreach ($matches[0] as $i=>$match) {
+                if (strpos($matches[2][$i], ':') !== false or strpos($matches[2][$i], '@') !== false) {
+                    // it is either absolute or pluginfile link
+                    continue;
+                }
+                $chapterpath = dirname($chapter->importsrc).'/'.$matches[2][$i];
+                $chapterpath = toolbook_importhtml_fix_path($chapterpath);
+                foreach ($allchapters as $target) {
+                    if ($target->importsrc === $chapterpath) {
+                        $newcontent = str_replace($match, 'href="'.new moodle_url('/mod/book/view.php', array('id'=>$context->instanceid, 'chapter'=>$target->id)).'"', $newcontent);
+                    }
+                }
+            }
+        }
+        if ($newcontent !== $chapter->content) {
+            $DB->set_field('book_chapters', 'content', $newcontent, array('id'=>$chapter->id));
+        }
+    }
+
+    add_to_log($book->course, 'course', 'update mod', '../mod/book/view.php?id='.$context->instanceid, 'book '.$book->id);
+    $fs->delete_area_files($context->id, 'mod_book', 'importhtmltemp', 0);
 }
 
-/// read chapter content from file
-function book_read_chapter($base, $ref) {
-    $file = $base.'/'.$ref;
-    if (filesize($file) <= 0 or !is_readable($file)) {
-        book_log($ref, get_string('error'), 2);
-        return;
+function toolbook_importhtml_parse_headings($html) {
+    //TODO
+}
+
+function toolbook_importhtml_parse_styles($html) {
+    $styles = '';
+    if (preg_match('/<head[^>]*>(.+)<\/head>/is', $html, $matches)) {
+        $head = $matches[1];
+        if (preg_match_all('/<link[^>]+rel="stylesheet"[^>]*>/i', $head, $matches)) { //dlnsk extract links to css
+            for($i=0; $i<count($matches[0]); $i++) {
+                $styles .= $matches[0][$i]."\n";
+            }
+        }
     }
-    //first read data
-    $handle = fopen($file, "rb");
-    $contents = fread($handle, filesize($file));
-    fclose($handle);
-    //extract title
-    $chapter = new object();
-    if (preg_match('/<title>([^<]+)<\/title>/i', $contents, $matches)) {
-        $chapter->title = $matches[1];
-    } else {
-        $chapter->title = $ref;
+    return $styles;
+}
+
+function toolbook_importhtml_fix_path($path) {
+    $path = str_replace('\\', '/', $path); //anti MS hack
+    $path = '/'.ltrim($path, './'); // dirname() produces . for top level files + our paths start with /
+
+    $cnt = substr_count($path, '..');
+    for($i=0; $i<$cnt; $i++) {
+        $path = preg_replace('|[^/]+/\.\./|', '', $path, 1);
     }
-    //extract page body
-    if (preg_match('/<body[^>]*>(.+)<\/body>/is', $contents, $matches)) {
-        $chapter->content = $matches[1];
-    } else {
-        book_log($ref, get_string('error'), 2);
-        return;
-    }
-    book_log($ref, get_string('ok'));
-    $chapter->importsrc = $ref;
-    //extract page head
-    if (preg_match('/<head[^>]*>(.+)<\/head>/is', $contents, $matches)) {
+
+    $path = clean_param($path, PARAM_PATH);
+    return $path;
+}
+
+function toolbook_importhtml_fix_encoding($html) {
+    if (preg_match('/<head[^>]*>(.+)<\/head>/is', $html, $matches)) {
         $head = $matches[1];
         if (preg_match('/charset=([^"]+)/is', $head, $matches)) {
             $enc = $matches[1];
-            $textlib = textlib_get_instance();
-            $chapter->content = $textlib->convert($chapter->content, $enc, 'utf-8');
-            $chapter->title = $textlib->convert($chapter->title, $enc, 'utf-8');
-        }
-        if (preg_match_all('/<link[^>]+rel="stylesheet"[^>]*>/i', $head, $matches)) { //dlnsk extract links to css
-            for($i=0; $i<count($matches[0]); $i++){
-                $chapter->content = $matches[0][$i]."\n".$chapter->content;
-            }
+            return textlib_get_instance()->convert($html, $enc, 'utf-8');
         }
     }
-    return $chapter;
+    return iconv('UTF-8', 'UTF-8//IGNORE', $html);
 }
 
-///relink images and relative links
-function book_relink($id, $bookid, $courseid) {
-    global $CFG, $DB;
-
-    if ($CFG->slasharguments) {
-        $coursebase = $CFG->wwwroot.'/file.php/'.$courseid;
+function toolbook_importhtml_parse_body($html) {
+    $matches = null;
+    if (preg_match('/<body[^>]*>(.+)<\/body>/is', $html, $matches)) {
+        return $matches[1];
     } else {
-        $coursebase = $CFG->wwwroot.'/file.php?file=/'.$courseid;
+        return '';
     }
-    $chapters = $DB->get_records('book_chapters', array('bookid'=>$bookid), 'pagenum', 'id, pagenum, title, content, importsrc');
-    $originals = array();
-    foreach($chapters as $ch) {
-        $originals[$ch->importsrc] = $ch;
+}
+
+function  toolbook_importhtml_parse_title($html, $default) {
+    $matches = null;
+    if (preg_match('/<title>([^<]+)<\/title>/i', $html, $matches)) {
+        return $matches[1];
+    } else {
+        return $default;
     }
-    foreach($chapters as $ch) {
-        $rel = substr($ch->importsrc, 0, strrpos($ch->importsrc, '/')+1);
-        $base = $coursebase.strtr(urlencode($rel), array("%2F" => "/"));  //for better internationalization (dlnsk)
-        $modified = false;
-        //image relinking
-        if ($ch->importsrc && preg_match_all('/(<img[^>]+src=")([^"]+)("[^>]*>)/i', $ch->content, $images)) {
-            for($i = 0; $i<count($images[0]); $i++) {
-                if (!preg_match('/[a-z]+:/i', $images[2][$i])) { // not absolute link
-                    $link = book_prepare_link($base.$images[2][$i]);
-                    if ($link == '') {
-                        continue;
-                    }
-                    $origtag = $images[0][$i];
-                    $newtag = $images[1][$i].$link.$images[3][$i];
-                    $ch->content = str_replace($origtag, $newtag, $ch->content);
-                    $modified = true;
-                    book_log($ch->title, $images[2][$i].' --> '.$link);
-                }
-            }
+}
+
+function toolbook_importhtml_get_chapter_files($package, $type) {
+    $packer = get_file_packer('application/zip');
+    $files = $package->list_files($packer);
+    $tophtmlfiles = array();
+    $subhtmlfiles = array();
+    $topdirs = array();
+
+    foreach ($files as $file) {
+        if (empty($file->pathname)) {
+            continue;
         }
-        //css relinking (dlnsk)
-        if ($ch->importsrc && preg_match_all('/(<link[^>]+href=")([^"]+)("[^>]*>)/i', $ch->content, $csslinks)) {
-            for($i = 0; $i<count($csslinks[0]); $i++) {
-                if (!preg_match('/[a-z]+:/i', $csslinks[2][$i])) { // not absolute link
-                    $link = book_prepare_link($base.$csslinks[2][$i]);
-                    if ($link == '') {
-                        continue;
-                    }
-                    $origtag = $csslinks[0][$i];
-                    $newtag = $csslinks[1][$i].$link.$csslinks[3][$i];
-                    $ch->content = str_replace($origtag, $newtag, $ch->content);
-                    $modified = true;
-                    book_log($ch->title, $csslinks[2][$i].' --> '.$link);
-                }
+        if (substr($file->pathname, -1) === '/') {
+            if (substr_count($file->pathname, '/') !== 1) {
+                // skip subdirs
+                continue;
             }
-        }
-        //general embed relinking - flash and others??
-        if ($ch->importsrc && preg_match_all('/(<embed[^>]+src=")([^"]+)("[^>]*>)/i', $ch->content, $embeds)) {
-            for($i = 0; $i<count($embeds[0]); $i++) {
-                if (!preg_match('/[a-z]+:/i', $embeds[2][$i])) { // not absolute link
-                    $link = book_prepare_link($base.$embeds[2][$i]);
-                    if ($link == '') {
-                        continue;
-                    }
-                    $origtag = $embeds[0][$i];
-                    $newtag = $embeds[1][$i].$link.$embeds[3][$i];
-                    $ch->content = str_replace($origtag, $newtag, $ch->content);
-                    $modified = true;
-                    book_log($ch->title, $embeds[2][$i].' --> '.$link);
-                }
+            if (!isset($topdirs[$file->pathname])) {
+                $topdirs[$file->pathname] = array();
             }
-        }
-        //flash in IE <param name=movie value="something" - I do hate IE!
-        if ($ch->importsrc && preg_match_all('/<param[^>]+name\s*=\s*"?movie"?[^>]*>/i', $ch->content, $params)) {
-            for($i = 0; $i<count($params[0]); $i++) {
-                if (preg_match('/(value=\s*")([^"]+)(")/i', $params[0][$i], $values)) {
-                    if (!preg_match('/[a-z]+:/i', $values[2])) { // not absolute link
-                        $link = book_prepare_link($base.$values[2]);
-                        if ($link == '') {
-                            continue;
-                        }
-                        $newvalue = $values[1].$link.$values[3];
-                        $newparam = str_replace($values[0], $newvalue, $params[0][$i]);
-                        $ch->content = str_replace($params[0][$i], $newparam, $ch->content);
-                        $modified = true;
-                        book_log($ch->title, $values[2].' --> '.$link);
-                    }
-                }
+
+        } else {
+            $mime = mimeinfo('icon', $file->pathname);
+            if ($mime !== 'html') {
+                continue;
             }
-        }
-        //java applet - add code bases if not present!!!!
-        if ($ch->importsrc && preg_match_all('/<applet[^>]*>/i', $ch->content, $applets)) {
-            for($i = 0; $i<count($applets[0]); $i++) {
-                if (!stripos($applets[0][$i], 'codebase')) {
-                    $newapplet = str_ireplace('<applet', '<applet codebase="."', $applets[0][$i]);
-                    $ch->content = str_replace($applets[0][$i], $newapplet, $ch->content);
-                    $modified = true;
-                }
+            $level = substr_count($file->pathname, '/');
+            if ($level === 0) {
+                $tophtmlfiles[$file->pathname] = $file;
+            } else if ($level === 1) {
+                $subhtmlfiles[$file->pathname] = $file;
+                $dir = preg_replace('|/.*$|', '', $file->pathname);
+                $topdirs[$dir][$file->pathname] = $file;
+            } else {
+                // lower levels are not interesting
+                continue;
             }
-        }
-        //relink java applet code bases
-        if ($ch->importsrc && preg_match_all('/(<applet[^>]+codebase=")([^"]+)("[^>]*>)/i', $ch->content, $codebases)) {
-            for($i = 0; $i<count($codebases[0]); $i++) {
-                if (!preg_match('/[a-z]+:/i', $codebases[2][$i])) { // not absolute link
-                    $link = book_prepare_link($base.$codebases[2][$i]);
-                    if ($link == '') {
-                        continue;
-                    }
-                    $origtag = $codebases[0][$i];
-                    $newtag = $codebases[1][$i].$link.$codebases[3][$i];
-                    $ch->content = str_replace($origtag, $newtag, $ch->content);
-                    $modified = true;
-                    book_log($ch->title, $codebases[2][$i].' --> '.$link);
-                }
-            }
-        }
-        //relative link conversion
-        if ($ch->importsrc && preg_match_all('/(<a\s[^>]*href=")([^"^#]*)(#[^"]*)?("[^>]*>)/i', $ch->content, $links)) {
-            for($i = 0; $i<count($links[0]); $i++) {
-                if ($links[2][$i] != ''                         //check for inner anchor links
-                && !preg_match('/[a-z]+:/i', $links[2][$i])) { //not absolute link
-                    $origtag = $links[0][$i];
-                    $target = book_prepare_link($rel.$links[2][$i]); //target chapter
-                    if ($target != '' && array_key_exists($target, $originals)) {
-                        $o = $originals[$target];
-                        $newtag = $links[1][$i].$CFG->wwwroot.'/mod/book/view.php?id='.$id.'&chapterid='.$o->id.$links[3][$i].$links[4][$i];
-                        $newtag = preg_replace('/target=[^\s>]/i','', $newtag);
-                        $ch->content = str_replace($origtag, $newtag, $ch->content);
-                        $modified = true;
-                        book_log($ch->title, $links[2][$i].$links[3][$i].' --> '.$CFG->wwwroot.'/mod/book/view.php?id='.$id.'&chapterid='.$o->id.$links[3][$i]);
-                    } else if ($target!='' && (!preg_match('/\.html$|\.htm$/i', $links[2][$i]))) { // other relative non html links converted to download links
-                        $target = book_prepare_link($base.$links[2][$i]);
-                        $origtag = $links[0][$i];
-                        $newtag = $links[1][$i].$target.$links[4][$i];
-                        $ch->content = str_replace($origtag, $newtag, $ch->content);
-                        $modified = true;
-                        book_log($ch->title, $links[2][$i].' --> '.$target);
-                    }
-                }
-            }
-        }
-        if ($modified) {
-            $DB->update_record('book_chapters', $ch);
         }
     }
+    // TODO: natural dir sorting would be nice here...
+    textlib_get_instance()->asort($tophtmlfiles);
+    textlib_get_instance()->asort($subhtmlfiles);
+    textlib_get_instance()->asort($topdirs);
+
+    $chapterfiles = array();
+
+    if ($type == 2) {
+        $chapterfiles = $tophtmlfiles;
+
+    } else if ($type == 1) {
+        foreach ($topdirs as $dir=>$htmlfiles) {
+            if (empty($htmlfiles)) {
+                continue;
+            }
+            textlib_get_instance()->asort($htmlfiles);
+            if (isset($htmlfiles[$dir.'/index.html'])) {
+                $htmlfile = $htmlfiles[$dir.'/index.html'];
+            } else if (isset($htmlfiles[$dir.'/index.htm'])) {
+                $htmlfile = $htmlfiles[$dir.'/index.htm'];
+            } else if (isset($htmlfiles[$dir.'/Default.htm'])) {
+                $htmlfile = $htmlfiles[$dir.'/Default.htm'];
+            } else {
+                $htmlfile = reset($htmlfiles);
+            }
+            $chapterfiles[$htmlfile->pathname] = $htmlfile;
+        }
+    } else if ($type == 0) {
+        if ($tophtmlfiles) {
+            if (isset($tophtmlfiles['index.html'])) {
+                $htmlfile = $tophtmlfiles['index.html'];
+            } else if (isset($tophtmlfiles['index.htm'])) {
+                $htmlfile = $tophtmlfiles['index.htm'];
+            } else if (isset($tophtmlfiles['Default.htm'])) {
+                $htmlfile = $tophtmlfiles['Default.htm'];
+            } else {
+                $htmlfile = reset($tophtmlfiles);
+            }
+        } else {
+            $htmlfile = reset($subhtmlfiles);
+        }
+        $chapterfiles[$htmlfile->pathname] = $htmlfile;
+    }
+
+    return $chapterfiles;
 }

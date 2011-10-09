@@ -36,16 +36,8 @@ function booktool_importhtml_extend_settings_navigation(settings_navigation $set
          $PAGE->cm->context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->instance);
      }
 
-
-     $params = $PAGE->url->params();
-
-     if (empty($params['id'])) {
-         return;
-     }
-
-
      if (has_capability('booktool/importhtml:import', $PAGE->cm->context)) {
-         //TODO
-         //$doimport = ($allowimport and $edit) ? '<div>(<a href="import.php?id='.$cm->id.'">'.get_string('doimport', 'book').'</a>)</div>' : '';
+         $url = new moodle_url('/mod/book/tool/importhtml/index.php', array('id'=>$PAGE->cm->id));
+         $booknode->add(get_string('import', 'booktool_importhtml'), $url, navigation_node::TYPE_SETTING, null, null, null);
      }
 }

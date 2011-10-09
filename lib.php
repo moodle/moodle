@@ -308,13 +308,6 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
         $PAGE->cm->context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->instance);
     }
 
-
-    $params = $PAGE->url->params();
-
-    if (empty($params['id'])) {
-        return;
-    }
-
     $plugins = get_plugin_list('booktool');
     foreach($plugins as $plugin=>$dir) {
         if (file_exists("$dir/lib.php")) {
@@ -326,7 +319,9 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
         }
     }
 
-    if (!empty($params['chapterid']) and has_capability('mod/book:edit', $PAGE->cm->context)) {
+    $params = $PAGE->url->params();
+
+    if (!empty($params['id']) and !empty($params['chapterid']) and has_capability('mod/book:edit', $PAGE->cm->context)) {
         if (!empty($USER->editing)) {
             $string = get_string("turneditingoff");
             $edit = '0';

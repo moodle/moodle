@@ -23,11 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-die('TODO');
-
-require('../../config.php');
-require_once($CFG->dirroot.'/mod/book/locallib.php');
-require_once('import_form.php');
+require(dirname(__FILE__).'/../../../../config.php');
+require_once(dirname(__FILE__).'/locallib.php');
+require_once(dirname(__FILE__).'/import_form.php');
 
 $id        = required_param('id', PARAM_INT);           // Course Module ID
 $chapterid = optional_param('chapterid', 0, PARAM_INT); // Chapter ID
@@ -39,9 +37,9 @@ $book = $DB->get_record('book', array('id'=>$cm->instance), '*', MUST_EXIST);
 require_login($course, false, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-require_capability('mod/book:import', $context);
+require_capability('booktool/importhtml:import', $context);
 
-$PAGE->set_url('/mod/book/import.php', array('id'=>$id, 'chapterid'=>$chapterid));
+$PAGE->set_url('/mod/book/tool/importhtml/index.php', array('id'=>$id, 'chapterid'=>$chapterid));
 
 if ($chapterid) {
     if (!$chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id))) {
@@ -59,7 +57,7 @@ $PAGE->set_heading(format_string($course->fullname));
 $strbook = get_string('modulename', 'mod_book');
 $strbooks = get_string('modulenameplural', 'mod_book');
 
-$mform = new book_import_form(null, array('id'=>$id, 'chapterid'=>$chapterid));
+$mform = new booktool_importhtml_form(null, array('id'=>$id, 'chapterid'=>$chapterid));
 
 /// If data submitted, then process and store.
 if ($mform->is_cancelled()) {
@@ -70,81 +68,25 @@ if ($mform->is_cancelled()) {
     }
 
 } else if ($data = $mform->get_data()) {
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('importingchapters', 'booktool_importhtml'));
 
-
-
-/*
-
-    $coursebase = $CFG->dataroot.'/'.$book->course;
-
-    $reference = book_prepare_link($data->reference);
-
-    if ($reference == '') {
-        $base = $coursebase;
-    } else {
-        $base = $coursebase.'/'.$reference;
+    // this is a bloody hack - children do not try this at home!
+    $fs = get_file_storage();
+    $draftid = file_get_submitted_draft_itemid('importfile');
+    if (!$files = $fs->get_area_files(get_context_instance(CONTEXT_USER, $USER->id)->id, 'user', 'draft', $draftid, 'id DESC', false)) {
+        redirect($PAGE->url);
     }
+    $file = reset($files);
+    toolbook_importhtml_import_chapters($file, $data->type, $book, $context);
 
-    //prepare list of html files in $refs
-    $refs = array();
-    $htmlpat = '/\.html$|\.htm$/i';
-    if (is_dir($base)) { //import whole directory
-        $basedir = opendir($base);
-        while ($file = readdir($basedir)) {
-            $path = $base.'/'.$file;
-            if (filetype($path) == 'file' and preg_match($htmlpat, $file)) {
-                $refs[] = str_replace($coursebase, '', $path);
-            }
-        }
-        asort($refs);
-    } else if (is_file($base)) { //import single file
-        $refs[] = '/'.$reference;
-    } else { //what is it???
-        error('Incorrect file/directory specified!');
-    }
-
-    print_header("$course->shortname: $book->name", $course->fullname, $navigation);
-
-    //import files
-    print_box_start('generalbox boxaligncenter centerpara');
-    echo '<strong>'.get_string('importing', 'book').':</strong>';
-    echo '<table cellpadding="2" cellspacing="2" border="1">';
-    book_preload_chapters($book); // fix structure
-    foreach($refs as $ref) {
-        $chapter = book_read_chapter($coursebase, $ref);
-        if ($chapter) {
-            $chapter->bookid       = $book->id;
-            $chapter->pagenum      = $DB->count_records('book_chapters', array('bookid'=>$book->id)+1);
-            $chapter->timecreated  = time();
-            $chapter->timemodified = time();
-            echo "imsrc:".$chapter->importsrc;
-            if (($data->subchapter) || preg_match('/_sub\.htm/i', $chapter->importsrc)) { //if filename or directory starts with sub_* treat as subdirecotories
-                $chapter->subchapter = 1;
-            } else {
-                $chapter->subchapter = 0;
-            }
-            $chapter->id = $DB->insert_record('book_chapters', $chapter);
-
-            add_to_log($course->id, 'course', 'update mod', '../mod/book/view.php?id='.$cm->id, 'book '.$book->id);
-            add_to_log($course->id, 'book', 'update', 'view.php?id='.$cm->id.'&chapterid='.$chapter->id, $book->id, $cm->id);
-        }
-    }
-    echo '</table><br />';
-    echo '<strong>'.get_string('relinking', 'book').':</strong>';
-    echo '<table cellpadding="2" cellspacing="2" border="1">';
-    //relink whole book = all chapters
-    book_relink($cm->id, $book->id, $course->id);
-    echo '</table><br />';
-    print_box_end();
-    print_continue('view.php?id='.$cm->id);
-    print_footer($course);
+    echo $OUTPUT->continue_button(new moodle_url('/mod/book/view.php', array('id'=>$id)));
+    echo $OUTPUT->footer();
     die;
-
- */
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('importingchapters', 'mod_book'));
+echo $OUTPUT->heading(get_string('import', 'booktool_importhtml'));
 
 $mform->display();
 

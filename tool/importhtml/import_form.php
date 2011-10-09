@@ -27,14 +27,21 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/formslib.php');
 
-class book_import_form extends moodleform {
+class booktool_importhtml_form extends moodleform {
 
     function definition() {
-        global $CFG;
         $mform = $this->_form;
         $data  = $this->_customdata;
 
         $mform->addElement('header', 'general', get_string('import'));
+
+        $options = array(
+                //'0'=>get_string('typeonefile', 'booktool_importhtml'),
+                '1'=>get_string('typezipdirs', 'booktool_importhtml'),
+                '2'=>get_string('typezipfiles', 'booktool_importhtml'),
+        );
+        $mform->addElement('select', 'type', get_string('type', 'booktool_importhtml'), $options);
+        $mform->setDefault('type', 2);
 
         $mform->addElement('filepicker', 'importfile', get_string('file'));
         $mform->addRule('importfile', null, 'required');
@@ -45,17 +52,36 @@ class book_import_form extends moodleform {
         $mform->addElement('hidden', 'chapterid');
         $mform->setType('chapterid', PARAM_INT);
 
-        $this->add_action_buttons(true, get_string('import', 'mod_book'));
+        $this->add_action_buttons(true, get_string('doimport', 'booktool_importhtml'));
 
         $this->set_data($data);
     }
 
     function validation($data, $files) {
-        global $CFG;
+        global $USER;
 
-        $errors = parent::validation($data, $files);
+        if ($errors = parent::validation($data, $files)) {
+            return $errors;
+        }
 
-        //TODO: validate package
+        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+        $fs = get_file_storage();
+
+        if (!$files = $fs->get_area_files($usercontext->id, 'user', 'draft', $data['importfile'], 'id', false)) {
+            $errors['importfile'] = get_string('required');
+            return $errors;
+        } else {
+            $file = reset($files);
+            if ($file->get_mimetype() != 'application/zip') {
+                $errors['importfile'] = get_string('invalidfiletype', 'error', $file->get_filename());
+                // better delete current file, it is not usable anyway
+                $fs->delete_area_files($usercontext->id, 'user', 'draft', $data['importfile']);
+            } else {
+                if (!$chpterfiles = toolbook_importhtml_get_chapter_files($file, $data['type'])) {
+                    $errors['importfile'] = get_string('errornochapters', 'booktool_importhtml');
+                }
+            }
+        }
 
         return $errors;
     }

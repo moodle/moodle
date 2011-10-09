@@ -26,12 +26,14 @@
 defined('MOODLE_INTERNAL') || die;
 
 $string['doimport'] = 'Import';
-$string['import'] = 'Import';
+$string['errornochapters'] = 'Can not find chapters in selected file';
+$string['import'] = 'Import from HTML';
 $string['importhtml:import'] = 'Import chapters';
-$string['importinfo'] = 'Import selected HTML file or directory.<br />Chapters are sorted alphabetically using file names.<br />Files named \'sub_*.*\' are always imported as subchapters.';
 $string['importing'] = 'Importing';
 $string['importingchapters'] = 'Importing chapters into book';
-$string['import_help'] = 'You can import a single HTML file or every HTML file in a direcory. Relative file links are converted to absolute chapter links. Images, flash and Java are relinked too.';
-$string['maindirectory'] = 'Main directory';
 $string['pluginname'] = 'Book HTML import';
 $string['relinking'] = 'Relinking';
+$string['type'] = 'Type';
+$string['typeonefile'] = 'One HTML file with headings as chapters';
+$string['typezipfiles'] = 'Each HTML file represents one chapter';
+$string['typezipdirs'] = 'Each directory represents one chapter';
