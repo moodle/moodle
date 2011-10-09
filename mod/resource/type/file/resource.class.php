@@ -412,6 +412,7 @@ class resource_file extends resource_base {
                     print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
                 }
                 echo "</body></html>";
+                add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
                 exit;
             }
             /// display the resource into a frame tag
