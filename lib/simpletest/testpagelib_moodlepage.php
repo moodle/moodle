@@ -67,7 +67,7 @@ class moodle_page_test extends UnitTestCase {
     }
 
     public function tearDown() {
-        global $COURSE;
+        global $COURSE, $PAGE;
         $this->testpage = NULL;
         $COURSE = $this->originalcourse;
         $PAGE = $this->originalpage;
