@@ -141,6 +141,10 @@ function toolbook_importhtml_import_chapters($package, $type, $book, $context, $
 
     add_to_log($book->course, 'course', 'update mod', '../mod/book/view.php?id='.$context->instanceid, 'book '.$book->id);
     $fs->delete_area_files($context->id, 'mod_book', 'importhtmltemp', 0);
+
+    // update the revision flag - this takes a long time, better to refetch the current value
+    $book = $DB->get_record('book', array('id'=>$book->id));
+    $DB->set_field('book', 'revision', $book->revision+1, array('id'=>$book->id));
 }
 
 function toolbook_importhtml_parse_headings($html) {

@@ -85,6 +85,9 @@ function book_update_instance($data, $mform) {
 
     $DB->update_record('book', $data);
 
+    $book = $DB->get_record('book', array('id'=>$data->id));
+    $DB->set_field('book', 'revision', $book->revision+1, array('id'=>$book->id));
+
     return true;
 }
 

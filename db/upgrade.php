@@ -182,6 +182,20 @@ function xmldb_book_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2011090800, 'book');
     }
 
+    if ($oldversion < 2011100900) {
+
+        // Define field revision to be added to book
+        $table = new xmldb_table('book');
+        $field = new xmldb_field('revision', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'customtitles');
+
+        // Conditionally launch add field revision
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // book savepoint reached
+        upgrade_mod_savepoint(true, 2011100900, 'book');
+    }
 
     return true;
 }

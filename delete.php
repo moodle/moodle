@@ -74,8 +74,9 @@ if ($confirm) {  // the operation was confirmed.
     add_to_log($course->id, 'book', 'update', 'view.php?id='.$cm->id, $book->id, $cm->id);
 
     book_preload_chapters($book); //fix structure
-    redirect('view.php?id='.$cm->id);
+    $DB->set_field('book', 'revision', $book->revision+1, array('id'=>$book->id));
 
+    redirect('view.php?id='.$cm->id);
 }
 
 echo $OUTPUT->header();
