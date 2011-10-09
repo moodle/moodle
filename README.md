@@ -17,7 +17,8 @@ GNU General Public License for more details: http://www.gnu.org/copyleft/gpl.htm
 Created by:
 
 * Petr Skoda (skodak) - most of the coding & design
-* Mojmir Volf - CSS formatted printer friendly format
+* Mojmir Volf, Eloy Lafuente, Antonio Vicent and others
+
 
 
 Project page:
