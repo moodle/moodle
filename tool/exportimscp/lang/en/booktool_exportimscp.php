@@ -26,5 +26,5 @@
 defined('MOODLE_INTERNAL') || die;
 
 $string['exportimscp:export'] = 'Export book as IMS content package';
-$string['generateimscp'] = 'Generate IMS content package';
-$string['pluginname'] = 'Book IMSCP export';
+$string['generateimscp'] = 'Generate IMS CP';
+$string['pluginname'] = 'Book IMS CP export';

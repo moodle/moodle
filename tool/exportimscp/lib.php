@@ -18,7 +18,7 @@
  * IMSCP export lib
  *
  * @package    booktool
- * @subpackage print
+ * @subpackage exportimscp
  * @copyright  2011 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,16 +36,9 @@ function booktool_exportimscp_extend_settings_navigation(settings_navigation $se
         $PAGE->cm->context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->instance);
     }
 
-
-    $params = $PAGE->url->params();
-
-    if (empty($params['id']) or empty($params['chapterid'])) {
-        return;
-    }
-
     if (has_capability('booktool/exportimscp:export', $PAGE->cm->context)) {
-        //TODO
-        /// Enable the IMS CP button
-        //$generateimscp = ($allowexport) ? '<a title="'.get_string('generateimscp', 'booktool_exportimscp').'" href="generateimscp.php?id='.$cm->id.'"><img class="bigicon" src="'.$OUTPUT->pix_url('generateimscp', 'mod_book').'" alt="'.get_string('generateimscp', 'book').'"></img></a>' : '';
+        $url = new moodle_url('/mod/book/tool/exportimscp/index.php', array('id'=>$PAGE->cm->id));
+        $icon = new pix_icon('generate', '', 'booktool_exportimscp', array('class'=>'icon'));
+        $booknode->add(get_string('generateimscp', 'booktool_exportimscp'), $url, navigation_node::TYPE_SETTING, null, null, $icon);
     }
 }

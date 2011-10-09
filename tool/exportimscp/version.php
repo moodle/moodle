@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Book print plugin version info
+ * Book IMSCP export plugin version info
  *
  * @package    booktool
  * @subpackage exportimscp
