@@ -1,4 +1,4 @@
-Book module for Moodle - Copyright (C) 2004-2011  Petr Skoda (http://skodak.org)
+Book module for Moodle (http://moodle.org/) - Copyright (C) 2004-2011  Petr Skoda (http://skodak.org/)
 
 The Book module makes it easy to create multi-page resources with a book-like format. This module can be used to build complete book-like websites inside of your Moodle course.
 This module was developed for Technical University of Liberec (Czech Republic). Many ideas and code were taken from other Moodle modules and Moodle itself
