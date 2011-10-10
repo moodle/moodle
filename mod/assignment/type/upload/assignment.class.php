@@ -80,11 +80,6 @@ class assignment_upload extends assignment_base {
         }
 
         if (empty($submission->timemarked)) {   /// Nothing to show, so print nothing
-            if ($this->count_responsefiles($USER->id)) {
-                print_heading(get_string('responsefiles', 'assignment', $this->course->teacher), '', 3);
-                $responsefiles = $this->print_responsefiles($USER->id, true);
-                print_simple_box($responsefiles, 'center');
-            }
             return;
         }
 
@@ -96,7 +91,12 @@ class assignment_upload extends assignment_base {
             return;
         }
 
-        if ($grade->grade === null and empty($grade->str_feedback)) {   /// Nothing to show yet
+        if ($grade->grade === null and empty($grade->str_feedback)) {   // No grades to show yet
+            if ($this->count_responsefiles($USER->id)) {   // but possibly response files to show  
+                print_heading(get_string('responsefiles', 'assignment', $this->course->teacher), '', 3);
+                $responsefiles = $this->print_responsefiles($USER->id, true);
+                print_simple_box($responsefiles, 'center');
+            }
             return;
         }
 
