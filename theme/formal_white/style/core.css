@@ -1,11 +1,10 @@
 /************************************************************************
-    Non sono riuscito a trovare un modo per sovrascrivere la regola
+    I could not find a way to override the rule
         border: 2px solid #ddd;
-    presente nel file
+    belonging to the file
         /theme/canvas/style/core.css
-    Per questo questo file è stato creato a partire dalla copia del
-    foglio di stile core.css del tema canvas, ed è stato adeguato alle
-    esigenze del tema corrente.
+    Therefore this file has been created from the copy of that css file
+    and adapted to the needs of the current theme.
 ************************************************************************/
 
 .sitetopic {
@@ -40,6 +39,7 @@
 label {
     margin-right: 0.3em;
 }
+
 .navbutton .singlebutton {
     margin: 0;
 }
@@ -111,10 +111,10 @@ input[type="radio"] {
 }
 
 .loginbox .loginform .form-label {
-    float: none;
-    width: 100%;
     margin: 0 auto;
-    text-align: left;
+    float: left;
+    text-align: right;
+    width: 40%;
 }
 
 .dir-rtl .loginbox .loginform .form-label {
@@ -122,8 +122,8 @@ input[type="radio"] {
 }
 
 .loginbox .loginform .form-input {
-    float: none;
-    width: 100%;
+    float: right;
+    width: 59%;
     margin: 0 auto;
 }
 
