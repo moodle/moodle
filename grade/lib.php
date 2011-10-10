@@ -1003,6 +1003,14 @@ class grade_structure {
     public $courseid;
 
     /**
+    * Reference to modinfo for current course (for performance, to save
+    * retrieving it from courseid every time). Not actually set except for
+    * the grade_tree type.
+    * @var course_modinfo
+    */
+    public $modinfo;
+
+    /**
      * 1D array of grade items only
      */
     public $items;
@@ -1104,8 +1112,6 @@ class grade_structure {
      * @return string header
      */
     public function get_element_header(&$element, $withlink=false, $icon=true, $spacerifnone=false) {
-        global $CFG;
-
         $header = '';
 
         if ($icon) {
@@ -1119,29 +1125,52 @@ class grade_structure {
             return $header;
         }
 
-        $itemtype     = $element['object']->itemtype;
-        $itemmodule   = $element['object']->itemmodule;
-        $iteminstance = $element['object']->iteminstance;
-
-        if ($withlink and $itemtype=='mod' and $iteminstance and $itemmodule) {
-            if ($cm = get_coursemodule_from_instance($itemmodule, $iteminstance, $this->courseid)) {
-
+        if ($withlink) {
+            $url = $this->get_activity_link($element);
+            if ($url) {
                 $a = new stdClass();
                 $a->name = get_string('modulename', $element['object']->itemmodule);
                 $title = get_string('linktoactivity', 'grades', $a);
-                $dir = $CFG->dirroot.'/mod/'.$itemmodule;
 
-                if (file_exists($dir.'/grade.php')) {
-                    $url = $CFG->wwwroot.'/mod/'.$itemmodule.'/grade.php?id='.$cm->id;
-                } else {
-                    $url = $CFG->wwwroot.'/mod/'.$itemmodule.'/view.php?id='.$cm->id;
-                }
-
-                $header = '<a href="'.$url.'" title="'.s($title).'">'.$header.'</a>';
+                $header = html_writer::link($url, $header, array('title' => $title));
             }
         }
 
         return $header;
+    }
+
+    private function get_activity_link($element) {
+        global $CFG;
+
+        $itemtype = $element['object']->itemtype;
+        $itemmodule = $element['object']->itemmodule;
+        $iteminstance = $element['object']->iteminstance;
+
+        // Links only for module items that have valid instance, module and are
+        // called from grade_tree with valid modinfo
+        if ($itemtype != 'mod' || !$iteminstance || !$itemmodule || !$this->modinfo) {
+            return null;
+        }
+
+        // Get $cm efficiently and with visibility information using modinfo
+        $instances = $this->modinfo->get_instances();
+        if (empty($instances[$itemmodule][$iteminstance])) {
+            return null;
+        }
+        $cm = $instances[$itemmodule][$iteminstance];
+
+        // Do not add link if activity is not visible to the current user
+        if (!$cm->uservisible) {
+            return null;
+        }
+
+        // If module has grade.php, link to that, otherwise view.php
+        $dir = $CFG->dirroot . '/mod/' . $itemmodule;
+        if (file_exists($dir.'/grade.php')) {
+            return new moodle_url('/mod/' . $itemmodule . '/grade.php', array('id' => $cm->id));
+        } else {
+            return new moodle_url('/mod/' . $itemmodule . '/view.php', array('id' => $cm->id));
+        }
     }
 
     /**
@@ -1600,11 +1629,18 @@ class grade_tree extends grade_structure {
      */
     public function grade_tree($courseid, $fillers=true, $category_grade_last=false,
                                $collapsed=null, $nooutcomes=false) {
-        global $USER, $CFG;
+        global $USER, $CFG, $COURSE, $DB;
 
         $this->courseid   = $courseid;
         $this->levels     = array();
         $this->context    = get_context_instance(CONTEXT_COURSE, $courseid);
+
+        if (!empty($COURSE->id) && $COURSE->id == $this->courseid) {
+            $course = $COURSE;
+        } else {
+            $course = $DB->get_record('course', array('id' => $this->courseid));
+        }
+        $this->modinfo = get_fast_modinfo($course);
 
         // get course grade tree
         $this->top_element = grade_category::fetch_course_tree($courseid, true);
