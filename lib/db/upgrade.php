@@ -6778,16 +6778,18 @@ FROM
         upgrade_main_savepoint(true, 2011092800.03);
     }
 
-    if ($oldversion < 2011100700.01) {
+    if ($oldversion < 2011100700.02) {
         // Define field idnumber to be added to course_categories
         $table = new xmldb_table('course_categories');
         $field = new xmldb_field('idnumber', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'name');
 
         // Conditionally launch add field idnumber
         if (!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2011100700.01);
+        upgrade_main_savepoint(true, 2011100700.02);
     }
 
     return true;
