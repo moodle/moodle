@@ -53,7 +53,7 @@ $string['questioninquiz'] = '
   <li>change their question type (numerical, shortanswer, multiple choice). </li></ul>
 ';
 $string['questionsless'] = '{$a} question(s) less than in the multianswer question stored in the database';
-$string['questionsmissing'] = 'No valid questions, create at least one question';
+$string['questionsmissing'] = 'The question text must include at least one embedded answer.';
 $string['questionsmore'] = '{$a} question(s) more than in the multianswer question stored in the database';
 $string['questionnotfound'] = 'Unable to find question of question part #{$a}';
 $string['questionsaveasedited'] = 'The question will be saved as edited';
