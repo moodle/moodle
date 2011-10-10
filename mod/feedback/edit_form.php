@@ -145,7 +145,7 @@ class feedback_edit_create_template_form extends moodleform {
         $elementgroup[] =& $mform->createElement('text', 'templatename', get_string('name', 'feedback'), array('size'=>'40', 'maxlength'=>'200'));
 
         //If the feedback is located on the frontpage the we can create public templates
-        if($CFG->frontpage === $this->feedbackdata->course->id) {
+        if(SITEID === $this->feedbackdata->course->id) {
             if(has_capability('mod/feedback:createpublictemplate', $this->feedbackdata->context)) {
                 $elementgroup[] =& $mform->createElement('checkbox', 'ispublic', get_string('public', 'feedback'), get_string('public', 'feedback'));
             }

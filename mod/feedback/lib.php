@@ -1228,7 +1228,7 @@ function feedback_get_template_list($course, $onlyownorpublic = '') {
             $templates = $DB->get_records('feedback_template', array('course'=>$course->id), 'name');
             break;
         case 'public':
-            $templates = $DB->get_records('feedback_template', array('course'=>$CFG->frontpage, 'ispublic'=>1), 'name');
+            $templates = $DB->get_records('feedback_template', array('course'=>SITEID, 'ispublic'=>1), 'name');
             break;
     }
     return $templates;

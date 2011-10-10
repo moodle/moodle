@@ -99,7 +99,7 @@ if(isset($create_template_formdata->savetemplate) && $create_template_formdata->
         $savereturn = 'notsaved_name';
     }else {
         //if the feedback is located on the frontpage then templates can be public
-        if($CFG->frontpage === $course->id && has_capability('mod/feedback:createpublictemplate', $context)) {
+        if(SITEID === $course->id && has_capability('mod/feedback:createpublictemplate', $context)) {
             $create_template_formdata->ispublic = isset($create_template_formdata->ispublic) ? 1 : 0;
         }else {
             $create_template_formdata->ispublic = 0;
