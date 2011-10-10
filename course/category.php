@@ -314,7 +314,8 @@
 
             $linkcss = $acourse->visible ? '' : ' class="dimmed" ';
             echo '<tr>';
-            echo '<td><a '.$linkcss.' href="view.php?id='.$acourse->id.'">'. format_string($acourse->fullname) .'</a></td>';
+            $coursename = get_course_display_name_for_list($course);
+            echo '<td><a '.$linkcss.' href="view.php?id='.$acourse->id.'">'. format_string($coursename) .'</a></td>';
             if ($editingon) {
                 echo '<td>';
                 if (has_capability('moodle/course:update', $coursecontext)) {
