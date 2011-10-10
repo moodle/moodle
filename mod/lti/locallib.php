@@ -556,7 +556,7 @@ function lti_get_url_thumbprint($url){
     }
     
     if(substr($urlparts['host'], 0, 3) === 'www'){
-        $urllparts['host'] = substr(3);
+        $urllparts['host'] = substr($urlparts['host'], 3);
     }
     
     return $urllower = $urlparts['host'] . '/' . $urlparts['path'];
