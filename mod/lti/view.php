@@ -142,6 +142,8 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
 
                 var dom = YAHOO.util.Dom;
                 var frame = document.getElementById('contentframe');
+                
+                var padding = 15; //The bottom of the iframe wasn't visible on some themes. Probably because of border widths, etc.
 
                 var lastHeight;
 
@@ -149,7 +151,8 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
                     var viewportHeight = dom.getViewportHeight();
 
                     if(lastHeight !== Math.min(dom.getDocumentHeight(), viewportHeight)){
-                        frame.style.height = viewportHeight - dom.getY(frame) + 'px';
+                        
+                        frame.style.height = viewportHeight - dom.getY(frame) - padding + 'px';
 
                         lastHeight = Math.min(dom.getDocumentHeight(), dom.getViewportHeight());
                     }
