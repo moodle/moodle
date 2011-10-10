@@ -163,6 +163,20 @@ function lti_delete_instance($id) {
     return $DB->delete_records("lti", array("id" => $basiclti->id));
 }
 
+function lti_get_coursemodule_info($coursemodule){
+    global $DB;
+    
+    $lti = $DB->get_record('lti', array('id' => $coursemodule->instance), 'icon');
+
+    $info = new stdClass();
+    
+    if(!empty($lti->icon)){
+        $info->icon = $lti->icon;
+    }
+    
+    return $info;
+}
+
 /**
  * Return a small object with summary information about what a
  * user has done with a given particular instance of this module
