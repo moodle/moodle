@@ -38,11 +38,17 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $paths = array();
         $userinfo = $this->get_setting_value('userinfo');
 
-        $paths[] = new restore_path_element('quiz', '/activity/quiz');
+        $quiz = new restore_path_element('quiz', '/activity/quiz');
+        $paths[] = $quiz;
+
+        // A chance for access subplugings to set up their quiz data.
+        $this->add_subplugin_structure('quizaccess', $quiz);
+
         $paths[] = new restore_path_element('quiz_question_instance',
                 '/activity/quiz/question_instances/question_instance');
         $paths[] = new restore_path_element('quiz_feedback', '/activity/quiz/feedbacks/feedback');
         $paths[] = new restore_path_element('quiz_override', '/activity/quiz/overrides/override');
+
         if ($userinfo) {
             $paths[] = new restore_path_element('quiz_grade', '/activity/quiz/grades/grade');
 
@@ -52,8 +58,12 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
                 $quizattempt = new restore_path_element('quiz_attempt',
                         '/activity/quiz/attempts/attempt');
                 $paths[] = $quizattempt;
+
                 // Add states and sessions
                 $this->add_question_usages($quizattempt, $paths);
+
+                // A chance for access subplugings to set up their attempt data.
+                $this->add_subplugin_structure('quizaccess', $quizattempt);
 
             } else {
                 // Restoring from a version 2.0.x+ or earlier.

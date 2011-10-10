@@ -52,6 +52,9 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
             'browsersecurity', 'delay1', 'delay2', 'showuserpicture',
             'showblocks'));
 
+        // Define elements for access rule subplugin settings.
+        $this->add_subplugin_structure('quizaccess', $quiz, true);
+
         $qinstances = new backup_nested_element('question_instances');
 
         $qinstance = new backup_nested_element('question_instance', array('id'), array(
@@ -83,6 +86,9 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         // This module is using questions, so produce the related question states and sessions
         // attaching them to the $attempt element based in 'uniqueid' matching
         $this->add_question_usages($attempt, 'uniqueid');
+
+        // Define elements for access rule subplugin attempt data.
+        $this->add_subplugin_structure('quizaccess', $attempt, true);
 
         // Build the tree
 
