@@ -1269,12 +1269,14 @@ function quiz_reset_userdata($data) {
             'error' => false);
 
         // Remove all grades from gradebook
+        $DB->delete_records_select('quiz_grades',
+                'quiz IN (SELECT id FROM {quiz} WHERE course = ?)', array($data->courseid));
         if (empty($data->reset_gradebook_grades)) {
             quiz_reset_gradebook($data->courseid);
         }
         $status[] = array(
             'component' => $componentstr,
-            'item' => get_string('attemptsdeleted', 'quiz'),
+            'item' => get_string('gradesdeleted', 'quiz'),
             'error' => false);
     }
 
