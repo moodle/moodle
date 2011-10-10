@@ -608,6 +608,38 @@ function lti_get_best_tool_by_url($url, $tools, $courseid = null){
     return $bestmatch;
 }
 
+function lti_get_shared_secrets_by_key($key){
+    global $DB;
+    
+    //Look up the shared secret for the specified key in both the types_config table (for configured tools)
+    //And in the lti resource table for ad-hoc tools
+    $query = <<<QUERY
+        SELECT t2.value
+        FROM {lti_types_config} t1
+        INNER JOIN {lti_types_config} t2 ON t1.typeid = t2.typeid
+        WHERE 
+            t1.name = 'resourcekey'
+        AND t1.value = :key1
+        AND t2.name = 'password'
+        
+        UNION
+        
+        SELECT password
+        FROM {lti}
+        WHERE resourcekey = :key2
+QUERY;
+    
+    $sharedsecrets = $DB->get_records_sql($query, array('key1' => $key, 'key2' => $key));
+    
+    $values = array_map(function($item){
+        return $item->value;
+    }, $sharedsecrets);
+    
+    //There should really only be one shared secret per key. But, we can't prevent
+    //more than one getting entered. For instance, if the same key is used for two tool providers.
+    return $values;
+}
+
 /**
  * Prints the various configured tool types
  *

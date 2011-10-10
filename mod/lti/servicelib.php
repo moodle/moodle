@@ -161,31 +161,23 @@ function lti_delete_grade($ltiinstance, $userid){
     return $status == GRADE_UPDATE_OK || $status == GRADE_UPDATE_ITEM_DELETED; //grade_update seems to return ok now, but could reasonably return deleted in the future
 }
 
-function lti_verify_message($ltiinstance, $body, $headers = null){
-    //Use the key / secret configured on the tool, or look it up from the admin config
-    if(empty($ltiinstance->resourcekey) || empty($ltiinstance->password)){
-        if($ltiinstance->typeid){
-            $typeid = $ltiinstance->typeid;
-        } else {
-            $tool = lti_get_tool_by_url_match($ltiinstance->toolurl, $ltiinstance->course);
-
-            if(!$tool){
-                throw new Exception('Tool configuration not found for tool instance ' . $ltiinstance->id);
-            }
-            
-            $typeid = $tool->id;
-        }
-
-        $typeconfig = lti_get_type_config($typeid);//Consider only fetching the 2 necessary settings here
+function lti_verify_message($key, $sharedsecrets, $body, $headers = null){
+    foreach($sharedsecrets as $secret){
+        $signaturefailed = false;
         
-        $key = $typeconfig['resourcekey'];
-        $secret = $typeconfig['password'];
-    } else {
-        $key = $ltiinstance->resourcekey;
-        $secret = $ltiinstance->password;
+        try{
+            lti\handleOAuthBodyPOST($key, $secret, $body, $headers);
+        }
+        catch(Exception $e){
+            $signaturefailed = true;
+        }
+        
+        if(!$signaturefailed){
+            return $secret;//Return the secret used to sign the message)
+        }
     }
     
-    lti\handleOAuthBodyPOST($key, $secret, $body, $headers);
+    return false;
 }
 
 function lti_verify_sourcedid($ltiinstance, $parsed){

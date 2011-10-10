@@ -3,7 +3,29 @@ require_once(dirname(__FILE__) . "/../../config.php");
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 require_once($CFG->dirroot.'/mod/lti/servicelib.php');
 
+use moodle\mod\lti as lti;
+
 $rawbody = file_get_contents("php://input");
+
+foreach(getallheaders() as $name => $value){
+    if($name === 'Authorization'){
+        $oauthparams = lti\OAuthUtil::split_header($value);
+        
+        $consumerkey = $oauthparams['oauth_consumer_key'];
+        break;
+    }
+}
+
+if(empty($consumerkey)){
+    throw new Exception('Consumer key is missing.');
+}
+
+$sharedsecret = lti_verify_message($consumerkey, lti_get_shared_secrets_by_key($consumerkey), $rawbody);
+
+if($sharedsecret === false){
+    throw new Exception('Message signature not valid');
+}
+
 $xml = new SimpleXMLElement($rawbody);
 
 $body = $xml->imsx_POXBody;
@@ -18,7 +40,6 @@ switch($messagetype){
         $ltiinstance = $DB->get_record('lti', array('id' => $parsed->instanceid));
         
         lti_verify_sourcedid($ltiinstance, $parsed);
-        lti_verify_message($ltiinstance, $rawbody);
         
         $gradestatus = lti_update_grade($ltiinstance, $parsed->userid, $parsed->launchid, $parsed->gradeval);
         
@@ -43,7 +64,6 @@ switch($messagetype){
         $PAGE->set_context($context);
         
         lti_verify_sourcedid($ltiinstance, $parsed);
-        lti_verify_message($ltiinstance, $rawbody);
         
         $grade = lti_read_grade($ltiinstance, $parsed->userid);
         
@@ -69,7 +89,6 @@ switch($messagetype){
         $ltiinstance = $DB->get_record('lti', array('id' => $parsed->instanceid));
         
         lti_verify_sourcedid($ltiinstance, $parsed);
-        lti_verify_message($ltiinstance, $rawbody);
         
         $gradestatus = lti_delete_grade($ltiinstance, $parsed->userid);
         
@@ -81,6 +100,20 @@ switch($messagetype){
         );
  
         echo $responsexml->asXML();
+        
+        break;
+    
+    default:
+        //Fire an event if we get a web service request which we don't support directly.
+        //This will allow others to extend the LTI services, which I expect to be a common
+        //use case, at least until the spec matures.
+        $data = new stdClass();
+        $data->body = $rawbody;
+        $data->messagetype = $messagetype;
+        $data->consumerkey = $consumerkey;
+        $data->sharedsecret = $sharedsecret;
+        
+        events_trigger('lti_unknown_service_api_call', $data);
         
         break;
 }
