@@ -1922,7 +1922,7 @@ class assignment_base {
                     $button->set_format_by_file($file);
                     $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                 }
-                
+
                 if ($CFG->enableplagiarism) {
                     require_once($CFG->libdir.'/plagiarismlib.php');
                     $output .= plagiarism_get_links(array('userid'=>$userid, 'file'=>$file, 'cmid'=>$this->cm->id, 'course'=>$this->course, 'assignment'=>$this->assignment));
