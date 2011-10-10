@@ -134,7 +134,7 @@ abstract class gradingform_controller {
     /**
      * Loads the form definition is it exists
      *
-     * The default implementation tries to load just the record ftom the {grading_definitions}
+     * The default implementation tries to load just the record from the {grading_definitions}
      * table. The plugins are likely to override this with a more complex query that loads
      * all required data at once.
      */
@@ -144,6 +144,56 @@ abstract class gradingform_controller {
         $this->definition = $DB->get_record('grading_definitions', array(
             'areaid' => $this->areaid,
             'method' => $this->get_method_name()), '*', IGNORE_MISSING);
+    }
+
+    public function get_context() {
+        return $this->context;
+    }
+
+    /**
+     * Updates the entry in table {grading_definitions} (or creates a new one if not present)
+     *
+     * The plugins are likely to override (extend) this with a more complex function that updates
+     * all changed data.
+     *
+     * @param $properties array or object of changed fields
+     * @param boolean $force specifies whether usermodified/timemodified should be explicitly updated even if $properties is empty
+     * @return boolean whether changes are made to DB
+     */
+    public function update($properties, $force = false) {
+        global $DB, $USER;
+        if (!empty($properties)) {
+            $properties = (array)$properties;
+        } else {
+            $properties = array();
+        }
+
+        $data = array();
+        foreach (array('name', 'description', 'descriptionformat', 'options', 'status') as $key) {
+            if (array_key_exists($key, $properties) && (!$this->definition || $this->definition->$key != $properties[$key])) {
+                $data[$key] = $properties[$key];
+            }
+        }
+        if (!$this->definition || !empty($data) || $force) {
+            $data['timemodified'] = time();
+            $data['usermodified'] = $USER->id;
+            if (!$this->definition) {
+                // Insert entry in DB
+                $data['areaid'] = $this->areaid;
+                $data['method'] = $this->get_method_name();
+                if (!array_key_exists('descriptionformat', $data)) {
+                    $data['descriptionformat'] = FORMAT_MOODLE; //TODO ?
+                }
+                $id = $DB->insert_record('grading_definitions', $data);
+            } else {
+                // Update entry in DB
+                $data['id'] = $this->definition->id;
+                $DB->update_record('grading_definitions', $data);
+            }
+            $this->load_definition();
+            return true;
+        }
+        return false;
     }
 }
 

@@ -1,0 +1,66 @@
+/*
+.form_rubric.editor[.frozen|.editable]
+    .criterion[.first][.last].odd/even
+        .controls
+            .moveup
+                [input type=submit]
+            .delete
+                [input type=submit]
+            .movedown
+                [input type=submit]
+        .description
+            .levels
+                .level[.first][.last].odd/even
+                    .definition
+                        [textarea]
+                    .score
+                        span
+                            [input type=text]
+                    .delete
+                        [input type=submit]
+            .addlevel
+                [input type=submit]
+    .addcriterion
+        [input type=submit]
+
+.form_rubric.evaluate
+    .criterion[.first][.last].odd/even
+        .description
+            .levels
+                .level[.first][.last].odd/even
+                    .definition
+                    .score
+                        span
+
+*/
+
+
+.form_rubric.editor .criterion .controls,
+.form_rubric .criterion .description,
+.form_rubric .criterion .levels,
+.form_rubric.editor .criterion .addlevel,
+.form_rubric .criterion .levels .level {display: inline-block; vertical-align: top;}
+
+.form_rubric.editor .criterion .controls,
+.form_rubric .criterion .description,
+.form_rubric.editor .criterion .addlevel,
+.form_rubric .criterion .levels .level {padding:3px}
+
+.form_rubric .criterion {border:1px solid #DDD;}
+.form_rubric .criterion.even {background:#F0F0F0;}
+
+.form_rubric .criterion .description {min-width:100px;font-weight:bold;}
+
+.form_rubric .criterion .levels .level {border-left:1px solid #DDD;min-width:80px;}
+.form_rubric .criterion .levels .level.last {border-right:1px solid #DDD;}
+
+.form_rubric .criterion .levels .level .score {display:inline-block;}
+.form_rubric.editor .criterion .levels .level .delete {display:inline-block; padding-left: 5px;}
+
+/* Make invisible the buttons 'Move up' for the first criterion and 'Move down' for the last, because those buttons will make no change */
+.form_rubric.editor .criterion.first .controls .moveup input,
+.form_rubric.editor .criterion.last .controls .movedown input {display:none;}
+
+/* evaluation */
+.form_rubric.evaluate .criterion .levels .level.checked {background:#d0ffd0;}
+.form_rubric.evaluate .criterion .levels .level:hover {background:#30ff30;}

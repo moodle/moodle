@@ -102,6 +102,17 @@ class grading_manager {
     }
 
     /**
+     * Returns the current context
+     */
+    public function get_context() {
+        return $this->context;
+    }
+
+    public function get_cm() {
+        return get_coursemodule_from_id(null, $this->context->instanceid);
+    }
+
+    /**
      * Sets the component the manager operates on
      *
      * @param string $component the frankenstyle name of the component
