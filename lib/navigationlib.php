@@ -1494,6 +1494,7 @@ class global_navigation extends navigation_node {
                     $activity->hidden = (!$cm->visible);
                     $activity->modname = $cm->modname;
                     $activity->nodetype = navigation_node::NODETYPE_LEAF;
+                    $activity->onclick = $cm->get_on_click();
                     $url = $cm->get_url();
                     if (!$url) {
                         $activity->url = null;
@@ -1578,6 +1579,8 @@ class global_navigation extends navigation_node {
      * @return array Array of activity nodes
      */
     protected function load_section_activities(navigation_node $sectionnode, $sectionnumber, $activities) {
+        // A static counter for JS function naming
+        static $legacyonclickcounter = 0;
 
         if ($activities instanceof course_modinfo) {
             debugging('global_navigation::load_section_activities argument 3 should now recieve an array of activites. See that method for an example.', DEBUG_DEVELOPER);
@@ -1594,7 +1597,34 @@ class global_navigation extends navigation_node {
             } else {
                 $icon = new pix_icon('icon', get_string('modulename', $activity->modname), $activity->modname);
             }
-            $activitynode = $sectionnode->add(format_string($activity->name), $activity->url, navigation_node::TYPE_ACTIVITY, null, $activity->id, $icon);
+
+            // Prepare the default name and url for the node
+            $activityname = format_string($activity->name, true, array('context' => get_context_instance(CONTEXT_MODULE, $activity->id)));
+            $action = new moodle_url($activity->url);
+
+            // Check if the onclick property is set (puke!)
+            if (!empty($activity->onclick)) {
+                // Increment the counter so that we have a unique number.
+                $legacyonclickcounter++;
+                // Generate the function name we will use
+                $functionname = 'legacy_activity_onclick_handler_'.$legacyonclickcounter;
+                $propogrationhandler = '';
+                // Check if we need to cancel propogation. Remember inline onclick
+                // events would return false if they wanted to prevent propogation and the
+                // default action.
+                if (strpos($activity->onclick, 'return false')) {
+                    $propogrationhandler = 'e.halt();';
+                }
+                // Decode the onclick - it has already been encoded for display (puke)
+                $onclick = htmlspecialchars_decode($activity->onclick);
+                // Build the JS function the click event will call
+                $jscode = "function {$functionname}(e) { $propogrationhandler $onclick }";
+                $this->page->requires->js_init_code($jscode);
+                // Override the default url with the new action link
+                $action = new action_link($action, $activityname, new component_action('click', $functionname));
+            }
+
+            $activitynode = $sectionnode->add($activityname, $action, navigation_node::TYPE_ACTIVITY, null, $activity->id, $icon);
             $activitynode->title(get_string('modulename', $activity->modname));
             $activitynode->hidden = $activity->hidden;
             $activitynode->display = $activity->display;
