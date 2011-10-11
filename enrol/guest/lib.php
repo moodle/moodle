@@ -271,6 +271,10 @@ class enrol_guest_plugin extends enrol_plugin {
                         }
                     }
                     $this->add_instance($course, $fields);
+                } else {
+                    if ($this->get_config('defaultenrol')) {
+                        $this->add_default_instance($course);
+                    }
                 }
             } else {
                 $instances = $DB->get_records('enrol', array('courseid'=>$course->id, 'enrol'=>'guest'));
