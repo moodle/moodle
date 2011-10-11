@@ -18,24 +18,29 @@
 /**
  * @package    gradingform
  * @subpackage rubric
- * @copyright  2011 David Mudrak <david@moodle.com>
+ * @copyright  2011 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
 
-$string['definerubric'] = 'Define rubric';
-$string['pluginname'] = 'Rubric';
+/**
+ * Grading method plugin renderer
+ */
+class gradingform_rubric_renderer extends gradingform_renderer {
 
-$string['confirmdeletecriterion'] = 'Are you sure you want to delete this criterion?';
-$string['confirmdeletelevel'] = 'Are you sure you want to delete this level?';
-$string['description'] = 'Description';
-$string['name'] = 'Name';
+    /**
+     * Renders grading widget
+     *
+     * @param gradingform_random_widget $widget
+     * @return string HTML
+     */
+    protected function render_gradingform_rubric_widget(gradingform_rubric_widget $widget) {
 
-$string['addcriterion'] = 'Add criterion';
-$string['criterionmoveup'] = 'Up';
-$string['criteriondelete'] = 'Delete';
-$string['criterionmovedown'] = 'Down';
-$string['criterionaddlevel'] = 'Add level';
-$string['scorepostfix'] = ' pts';
-$string['leveldelete'] = 'Del';
+        $button  = html_writer::tag('button', 'Loading ...', array('type' => 'button', 'value' => 'Go'));
+        $span    = html_writer::tag('span', '');
+
+        return $this->output->container($button.$span, 'gradingform_rubric-widget-wrapper', 1);
+    }
+}
