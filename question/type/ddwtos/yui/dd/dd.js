@@ -80,19 +80,31 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             if (groupitems.size() !== 0) {
                 var maxwidth = 0;
                 var maxheight = 0;
+                //ie7 does not calculate the height of span correctly when there is 
+                //both a sup and sub in the span.
+                var ie7fix = false;
                 //find max height and width
                 groupitems.each(function(item){
                     maxwidth = Math.max(maxwidth, item.get('offsetWidth'));
                     maxheight = Math.max(maxheight, item.get('offsetHeight'));
+                    if (item.one('sup') && item.one('sub') && Y.UA.ie == 7){
+                        ie7fix = true;
+                    }
                 }, this);
                 groupitems.each(function(item) {
                     var margintop = Math.round((maxheight - item.get('offsetHeight'))/2);
                     var marginleft = Math.round((maxwidth - item.get('offsetWidth'))/2);
                     var marginbottom = (maxheight - item.get('offsetHeight')) - margintop;
+                    if (ie7fix) {
+                        marginbottom += 8;
+                    }
                     var marginright = (maxwidth - item.get('offsetWidth')) - marginleft;
                     item.setStyle('padding', margintop+'px '+marginleft+'px '
                                             +marginbottom+'px '+marginright+'px');
                 }, this);
+                if (ie7fix) {
+                    maxheight += 8;
+                }
                 Y.all(this.selectors.drops_group(groupno)).setStyles({'width': maxwidth ,
                                                                 'height': maxheight});
             }
