@@ -211,6 +211,21 @@ $string['tool_config_not_found'] = 'Tool configuration not found for this URL.';
 
 $string['return_to_course'] = 'Click <a href="{$a->link}" target="_top">here</a> to return to the course.';
 
+$string['lti_launch_error'] = 'An error occured when launching the external tool: ';
+$string['lti_launch_error_unsigned_help'] = <<<'HTML'
+    <p>
+        This error may be a result of a missing consumer key and shared secret for the tool provider.
+    </p>
+    <p>
+        If you have a consumer key and shared secret, you may enter it on the 
+        <a href="{$a->instance_edit_url}" target="_top">external tool instance</a> (make sure advanced options are visible).<br />
+        Alternatively, you may create a course level tool provider configuration <a href="{$a->course_tool_editor}" target="_top">here</a>.
+    </p>
+    <p>
+        To submit a request for an administrator to complete the tool configuration, click <a href="{$a->admin_request_url}" target="_top">here</a>.
+    </p>
+HTML;
+
 //Instance help
 
 $string['external_tool_type_help'] = <<<HTML

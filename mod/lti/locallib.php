@@ -107,9 +107,23 @@ function lti_view($instance) {
         $typeconfig['organizationid'] = $urlparts['host'];
     }
     
+    if(!empty($instance->resourcekey)){
+        $key = $instance->resourcekey;
+    } else if(!empty($typeconfig['resourcekey'])){
+        $key = $typeconfig['resourcekey'];
+    } else {
+        $key = '';
+    }
+
+    if(!empty($instance->password)){
+        $secret = $instance->password;
+    } else if(!empty($typeconfig['password'])){
+        $secret = $typeconfig['password'];
+    } else {
+        $secret = '';
+    }
+    
     $endpoint = !empty($instance->toolurl) ? $instance->toolurl : $typeconfig['toolurl'];
-    $key = !empty($instance->resourcekey) ? $instance->resourcekey : $typeconfig['resourcekey'];
-    $secret = !empty($instance->password) ? $instance->password : $typeconfig['password'];
     $orgid = $typeconfig['organizationid'];
     /* Suppress this for now - Chuck
     $orgdesc = $typeconfig['organizationdescr'];
@@ -122,15 +136,26 @@ function lti_view($instance) {
     $course = $PAGE->course;
     $requestparams = lti_build_request($instance, $typeconfig, $course);
 
-    // Make sure we let the tool know what LMS they are being called from
-    $requestparams["ext_lms"] = "moodle-2";
-
-    // Add oauth_callback to be compliant with the 1.0A spec
-    $requestparams["oauth_callback"] = "about:blank";
-
-    $submittext = get_string('press_to_submit', 'lti');
-    $parms = lti_sign_parameters($requestparams, $endpoint, "POST", $key, $secret, $submittext, $orgid /*, $orgdesc*/);
-
+    $launchcontainer = lti_get_launch_container($instance, $typeconfig);
+    $returnurlparams = array('course' => $course->id, 'launch_container' => $launchcontainer);
+    
+    if ( $orgid ) {
+        $requestparams["tool_consumer_instance_guid"] = $orgid;
+    }
+    
+    if(!empty($key) && !empty($secret)){
+        $parms = lti_sign_parameters($requestparams, $endpoint, "POST", $key, $secret);
+    } else {
+        //If no key and secret, do the launch unsigned.
+        $parms = $requestparams;
+        
+        $returnurlparams['unsigned'] = '1';
+    }
+    
+    //Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns
+    $url = new moodle_url('/mod/lti/return.php', $returnurlparams);
+    $parms['launch_presentation_return_url'] = $url->out(false);
+    
     $debuglaunch = ( $instance->debuglaunch == 1 );
     
     $content = lti_post_launch_html($parms, $endpoint, $debuglaunch);
@@ -229,12 +254,6 @@ function lti_build_request($instance, $typeconfig, $course) {
     $url = new moodle_url('/mod/lti/service.php');
     $requestparams['lis_outcome_service_url'] = $url->out();
 
-    $launchcontainer = lti_get_launch_container($instance, $typeconfig);
-    
-    //Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns
-    $url = new moodle_url('/mod/lti/return.php', array('course' => $course->id, 'launch_container' => $launchcontainer));
-    $requestparams['launch_presentation_return_url'] = $url->out(false);
-    
     // Concatenate the custom parameters from the administrator and the instructor
     // Instructor parameters are only taken into consideration if the administrator
     // has giver permission
@@ -261,6 +280,21 @@ function lti_build_request($instance, $typeconfig, $course) {
         $requestparams = array_merge($custom, $requestparams);
     }
 
+    // Make sure we let the tool know what LMS they are being called from
+    $requestparams["ext_lms"] = "moodle-2";
+
+    // Add oauth_callback to be compliant with the 1.0A spec
+    $requestparams["oauth_callback"] = "about:blank";
+
+    $submittext = get_string('press_to_submit', 'lti');
+    $requestparams["ext_submit"] = $submittext;
+    
+    $requestparams["lti_version"] = "LTI-1p0";
+    $requestparams["lti_message_type"] = "basic-lti-launch-request";
+    /* Suppress this for now - Chuck
+    if ( $orgdesc ) $requestparams["tool_consumer_instance_description"] = $orgdesc;
+    */
+    
     return $requestparams;
 }
 
@@ -624,7 +658,7 @@ function lti_get_shared_secrets_by_key($key){
         
         UNION
         
-        SELECT password
+        SELECT password AS value
         FROM {lti}
         WHERE resourcekey = :key2
 QUERY;
@@ -959,18 +993,9 @@ function lti_update_config($config) {
  * @param $orgid       LMS name
  * @param $orgdesc     LMS key
  */
-function lti_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $oauthconsumersecret, $submittext, $orgid /*, $orgdesc*/) {
-    global $lastbasestring;
+function lti_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $oauthconsumersecret) {
+    //global $lastbasestring;
     $parms = $oldparms;
-    $parms["lti_version"] = "LTI-1p0";
-    $parms["lti_message_type"] = "basic-lti-launch-request";
-    if ( $orgid ) {
-        $parms["tool_consumer_instance_guid"] = $orgid;
-    }
-    /* Suppress this for now - Chuck
-    if ( $orgdesc ) $parms["tool_consumer_instance_description"] = $orgdesc;
-    */
-    $parms["ext_submit"] = $submittext;
 
     $testtoken = '';
     
@@ -981,7 +1006,7 @@ function lti_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $
     $accreq->sign_request($hmacmethod, $testconsumer, $testtoken);
 
     // Pass this back up "out of band" for debugging
-    $lastbasestring = $accreq->get_signature_base_string();
+    //$lastbasestring = $accreq->get_signature_base_string();
 
     $newparms = $accreq->get_parameters();
 
@@ -996,7 +1021,7 @@ function lti_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $
  * @param $debug        Debug (true/false)
  */
 function lti_post_launch_html($newparms, $endpoint, $debug=false) {
-    global $lastbasestring;
+    //global $lastbasestring;
     
     $r = "<form action=\"".$endpoint."\" name=\"ltiLaunchForm\" id=\"ltiLaunchForm\" method=\"post\" encType=\"application/x-www-form-urlencoded\">\n";
     
@@ -1043,7 +1068,7 @@ function lti_post_launch_html($newparms, $endpoint, $debug=false) {
             $r .= "$key = $value<br/>\n";
         }
         $r .= "&nbsp;<br/>\n";
-        $r .= "<p><b>".get_string("basiclti_base_string", "lti")."</b><br/>\n".$lastbasestring."</p>\n";
+        //$r .= "<p><b>".get_string("basiclti_base_string", "lti")."</b><br/>\n".$lastbasestring."</p>\n";
         $r .= "</div>\n";
     }
     $r .= "</form>\n";

@@ -7,6 +7,7 @@ require_once($CFG->dirroot.'/mod/lti/lib.php');
 
 $courseid = required_param('course', PARAM_INT);
 $errormsg = optional_param('lti_errormsg', '', PARAM_RAW);
+$unsigned = optional_param('unsigned', '0', PARAM_INT);
 $launchcontainer = optional_param('launch_container', LTI_LAUNCH_CONTAINER_WINDOW, PARAM_INT);
 
 $course = $DB->get_record('course', array('id' => $courseid));
@@ -30,8 +31,15 @@ if(!empty($errormsg)){
             
     echo $OUTPUT->header();
     
+    echo get_string('lti_launch_error', 'lti');
+    
     //TODO: Add some help around this error message.
     echo htmlspecialchars($errormsg);
+
+    if($unsigned == 1){
+        echo '<br /><br />';
+        echo get_string('lti_launch_error_unsigned_help', 'lti');
+    }
     
     echo $OUTPUT->footer();
 } else {
