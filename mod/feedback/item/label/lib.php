@@ -123,7 +123,11 @@ class feedback_item_label extends feedback_item_base {
         //is the item a template?
         if(!$item->feedback AND $item->template) {
             $template = $DB->get_record('feedback_template', array('id'=>$item->template));
-            $context = get_context_instance(CONTEXT_COURSE, $template->course);
+            if($template->ispublic) {
+                $context = get_system_context();
+            }else {
+                $context = get_context_instance(CONTEXT_COURSE, $template->course);
+            }
             $filearea = 'template';
         }else {
             $cm = get_coursemodule_from_instance('feedback', $item->feedback);

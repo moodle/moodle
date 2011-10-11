@@ -79,20 +79,29 @@ class feedback_edit_use_template_form extends moodleform {
         $templates_options = array();
         $owntemplates = feedback_get_template_list($this->feedbackdata->course, 'own');
         $publictemplates = feedback_get_template_list($this->feedbackdata->course, 'public');
-        if($owntemplates OR $publictemplates){//get the templates
-            $templates_options[' '] = get_string('select');
-            foreach($owntemplates as $template) {
-                if($template->ispublic) {
-                    continue;
+
+        $options = array();
+        if($owntemplates or $publictemplates) {
+            $options[''] = array('' => get_string('choose'));
+        
+            if($owntemplates) {
+                $courseoptions = array();
+                foreach($owntemplates as $template) {
+                    $courseoptions[$template->id] = $template->name;
                 }
-                $templates_options[$template->id] = $template->name;
+                $options[get_string('course')] = $courseoptions;
             }
-            foreach($publictemplates as $template) {
-                $templates_options[$template->id] = '*'.$template->name;
+        
+            if($publictemplates) {
+                $publicoptions = array();
+                foreach($publictemplates as $template) {
+                    $publicoptions[$template->id] = $template->name;
+                }
+                $options[get_string('public', 'feedback')] = $publicoptions;
             }
+
             $attributes = 'onChange="this.form.submit()"';
-            $elementgroup[] =& $mform->createElement('select', 'templateid', '', $templates_options, $attributes);
-            // buttons
+            $elementgroup[] =& $mform->createElement('selectgroups', 'templateid', '', $options, $attributes);
             $elementgroup[] =& $mform->createElement('submit', 'use_template', get_string('use_this_template', 'feedback'));
         }else {
             $mform->addElement('static', 'info', get_string('no_templates_available_yet', 'feedback'));
@@ -144,11 +153,8 @@ class feedback_edit_create_template_form extends moodleform {
         $elementgroup[] =& $mform->createElement('static', 'templatenamelabel', get_string('name', 'feedback'));
         $elementgroup[] =& $mform->createElement('text', 'templatename', get_string('name', 'feedback'), array('size'=>'40', 'maxlength'=>'200'));
 
-        //If the feedback is located on the frontpage the we can create public templates
-        if(SITEID === $this->feedbackdata->course->id) {
-            if(has_capability('mod/feedback:createpublictemplate', $this->feedbackdata->context)) {
-                $elementgroup[] =& $mform->createElement('checkbox', 'ispublic', get_string('public', 'feedback'), get_string('public', 'feedback'));
-            }
+        if(has_capability('mod/feedback:createpublictemplate', get_system_context())) {
+            $elementgroup[] =& $mform->createElement('checkbox', 'ispublic', get_string('public', 'feedback'), get_string('public', 'feedback'));
         }
 
         // buttons
