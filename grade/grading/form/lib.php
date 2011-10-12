@@ -264,6 +264,16 @@ abstract class gradingform_controller {
         }
     }
 
+    /**
+     * Saves non-js data and returns the gradebook grade
+     */
+    abstract public function save_and_get_grade($itemid, $formdata);
+
+    /**
+     * Returns html for form element
+     */
+    abstract public function to_html($elementname, $itemid);
+
     ////////////////////////////////////////////////////////////////////////////
 
 

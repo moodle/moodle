@@ -374,6 +374,19 @@ class grading_manager {
         return new $classname($this->context, $this->component, $this->area, $this->areacache->id);
     }
 
+    /**
+     * Returns the controller for the active method if it is available
+     */
+    public function get_active_controller() {
+        if ($gradingmethod = $this->get_active_method()) {
+            $controller = $this->get_controller($gradingmethod);
+            if ($controller->is_form_available()) {
+                return $controller;
+            }
+        }
+        return null;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
 
     /**
