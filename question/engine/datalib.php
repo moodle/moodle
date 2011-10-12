@@ -695,8 +695,8 @@ ORDER BY
                 DELETE qu, qa, qas, qasd
                   FROM {question_usages}            qu
                   JOIN {question_attempts}          qa   ON qa.questionusageid = qu.id
-                  JOIN {question_attempt_steps}     qas  ON qas.questionattemptid = qa.id
-                  JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid = qas.id
+             LEFT JOIN {question_attempt_steps}     qas  ON qas.questionattemptid = qa.id
+             LEFT JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid = qas.id
                  WHERE qu.id ' . $qubaids->usage_id_in(),
                 $qubaids->usage_id_in_params());
     }
@@ -713,7 +713,7 @@ ORDER BY
         $this->db->execute('
                 DELETE qas, qasd
                   FROM {question_attempt_steps}     qas
-                  JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid = qas.id
+             LEFT JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid = qas.id
                  WHERE qas.questionattemptid ' . $test, $params);
     }
 
