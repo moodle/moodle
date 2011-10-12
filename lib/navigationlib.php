@@ -1495,6 +1495,9 @@ class global_navigation extends navigation_node {
                     $activity->modname = $cm->modname;
                     $activity->nodetype = navigation_node::NODETYPE_LEAF;
                     $activity->onclick = $cm->get_on_click();
+                    if (empty($activity->onclick) && !empty($cm->extra) && preg_match('/onclick=(\'|")([^\1]+)\1/', $cm->extra, $matches)) {
+                        $activity->onclick = $matches[2];
+                    }
                     $url = $cm->get_url();
                     if (!$url) {
                         $activity->url = null;
