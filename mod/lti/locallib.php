@@ -657,11 +657,13 @@ function lti_get_shared_secrets_by_key($key){
         SELECT t2.value
         FROM {lti_types_config} t1
         INNER JOIN {lti_types_config} t2 ON t1.typeid = t2.typeid
+        INNER JOIN {lti_types} type ON t2.typeid = type.id
         WHERE 
             t1.name = 'resourcekey'
         AND t1.value = :key1
         AND t2.name = 'password'
-        
+        AND type.state = :configured
+
         UNION
         
         SELECT password AS value
@@ -669,7 +671,7 @@ function lti_get_shared_secrets_by_key($key){
         WHERE resourcekey = :key2
 QUERY;
     
-    $sharedsecrets = $DB->get_records_sql($query, array('key1' => $key, 'key2' => $key));
+    $sharedsecrets = $DB->get_records_sql($query, array('configured' => LTI_TOOL_STATE_CONFIGURED, 'key1' => $key, 'key2' => $key));
     
     $values = array_map(function($item){
         return $item->value;
