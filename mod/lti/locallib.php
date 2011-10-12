@@ -290,6 +290,8 @@ function lti_build_request($instance, $typeconfig, $course) {
     // Add oauth_callback to be compliant with the 1.0A spec
     $requestparams["oauth_callback"] = "about:blank";
 
+    //The submit button needs to be part of the signature as it gets posted with the form.
+    //This needs to be here to support launching without javascript.
     $submittext = get_string('press_to_submit', 'lti');
     $requestparams["ext_submit"] = $submittext;
     
