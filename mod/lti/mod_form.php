@@ -122,6 +122,11 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setAdvanced('instructorcustomparameters');
         $mform->addHelpButton('instructorcustomparameters', 'custom', 'lti');
         
+        $mform->addElement('text', 'icon', get_string('icon_url', 'lti'), array('size'=>'64'));
+        $mform->setType('icon', PARAM_TEXT);
+        $mform->setAdvanced('icon');
+        //$mform->addHelpButton('icon', 'icon', 'lti');
+        
 //-------------------------------------------------------------------------------
         // Add privacy preferences fieldset where users choose whether to send their data
         $mform->addElement('header', 'privacy', get_string('privacy', 'lti'));

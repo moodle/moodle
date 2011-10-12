@@ -215,6 +215,8 @@ $string['domain_mismatch'] = 'Launch URL\'s domain does not match tool configura
 $string['custom_config'] = 'Using custom tool configuration.';
 $string['tool_config_not_found'] = 'Tool configuration not found for this URL.';
 
+$string['icon_url'] = 'Icon URL';
+
 $string['return_to_course'] = 'Click <a href="{$a->link}" target="_top">here</a> to return to the course.';
 
 $string['lti_launch_error'] = 'An error occured when launching the external tool: ';
