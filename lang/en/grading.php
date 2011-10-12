@@ -26,6 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['exc_gradingformelement'] = 'Unable to instantiate grading form element';
 $string['formnotavailable'] = 'Advanced grading method was selected to use but the grading form is not available yet. You may need to define it first via a link in the Settings block.';
 $string['gradinginarea'] = 'Grading ({$a})';
 $string['gradingmethod'] = 'Grading method';

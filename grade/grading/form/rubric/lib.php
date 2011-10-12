@@ -226,6 +226,41 @@ class gradingform_rubric_controller extends gradingform_controller {
         return $properties;
     }
 
+    /**
+     * Saves non-js data and returns the gradebook grade
+     */
+    public function save_and_get_grade($itemid, $formdata) {
+        // TODO: this function is a patch at the moment!
+        if (is_array($formdata) && array_key_exists('grade', $formdata)) {
+            return $formdata['grade'];
+        }
+        return -1;
+    }
+
+    /**
+     * Returns html for form element
+     */
+    public function to_html($gradingformelement) {
+        // TODO: this function is a patch at the moment!
+
+        //global $PAGE, $USER;
+        //$gradingrenderer = $this->prepare_renderer($PAGE);
+        $output = '';
+        $elementname = $gradingformelement->getName();
+        $elementvalue = $gradingformelement->getValue();
+        $submissionid = $gradingformelement->get_grading_attribute('submissionid');
+        $output .= "assessing submission $submissionid<br />";
+        $output .= html_writer::empty_tag('input', array('type' => 'text', 'name' => $elementname.'[grade]', 'size' => '20', 'value' => $elementvalue['grade']));
+        //$output .= "assessing user $userid on assignment $assignmentid<br>";
+        //TODO find $submissionid from $userid & $assignmentid (may not exist yet, actually)
+        /*$submissionid = null;
+        $gradingwidget = $this->make_grading_widget($USER->id, $submissionid);
+        if ($gradingwidget instanceof renderable) {
+            return $output. $gradingrenderer->render($gradingwidget);
+        }*/
+        return $output;
+    }
+
     // TODO the following functions may be moved to parent:
 
     /**
@@ -272,5 +307,27 @@ class gradingform_rubric_controller extends gradingform_controller {
             'gradingform_rubric', 'definition_description', $this->definition->id);
             // TODO change filearea for embedded files in grading_definition.description
         return $data;
+    }
+
+    public function is_form_available($foruserid = null) {
+        return true;
+        // TODO this is temporary for testing!
+    }
+
+    /**
+     *
+     */
+    public function default_validation_error_message() {
+        return 'Validation failed';
+    }
+
+    /**
+     *
+     */
+    public function validate_grading_element($elementvalue, $itemid) {
+        if ($elementvalue['grade'] > 100 || $elementvalue['grade'] < 0) {
+            return false;
+        }
+        return true;
     }
 }
