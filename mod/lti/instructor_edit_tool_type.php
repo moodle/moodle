@@ -12,6 +12,8 @@ $PAGE->set_pagelayout('popup');
 $action = optional_param('action', null, PARAM_TEXT);
 $typeid = optional_param('typeid', null, PARAM_INT);
 
+require_capability('mod/lti:addcoursetool', get_context_instance(CONTEXT_COURSE, $courseid));
+
 if(!empty($typeid)){
     $type = lti_get_type($typeid);
     if($type->course != $courseid){
@@ -25,7 +27,7 @@ echo $OUTPUT->header();
 
 $data = data_submitted();
 
-if (confirm_sesskey() && isset($data->submitbutton)) {
+if (isset($data->submitbutton) && confirm_sesskey()) {
     $type = new stdClass();
     
     if (!empty($typeid)) {

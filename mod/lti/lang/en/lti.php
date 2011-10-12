@@ -45,6 +45,12 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+//Permissions
+$string['lti:view'] = 'View LTI activities';
+$string['lti:grade'] = 'Grade LTI activities';
+$string['lti:addcoursetool'] = 'Grade LTI activities';
+$string['lti:requesttooladd'] = 'Submit a tool to admins for configuration';
+
 $string['accept'] = 'Accept';
 $string['activity'] = 'Activity';
 $string['addnewapp'] = 'Enable External Application';
@@ -217,13 +223,22 @@ $string['lti_launch_error_unsigned_help'] = <<<'HTML'
         This error may be a result of a missing consumer key and shared secret for the tool provider.
     </p>
     <p>
-        If you have a consumer key and shared secret, you may enter it on the 
-        <a href="{$a->instance_edit_url}" target="_top">external tool instance</a> (make sure advanced options are visible).<br />
-        Alternatively, you may create a course level tool provider configuration <a href="{$a->course_tool_editor}" target="_top">here</a>.
+        If you have a consumer key and shared secret, you may enter it when editing the external tool instance (make sure advanced options are visible).<br />
+        Alternatively, you may create a course level tool provider configuration <a href="{$a->course_tool_editor}">here</a>.
     </p>
+HTML;
+$string['lti_launch_error_tool_request'] = <<<'HTML'
     <p>
         To submit a request for an administrator to complete the tool configuration, click <a href="{$a->admin_request_url}" target="_top">here</a>.
     </p>
+HTML;
+
+$string['lti_tool_request_added'] = <<<HTML
+    Tool configuration request successfully submitted. You may need to contact an administrator to complete the tool configuration.
+HTML;
+
+$string['lti_tool_request_existing'] = <<<HTML
+    A tool configuration for the tool domain has already been submitted.
 HTML;
 
 //Instance help

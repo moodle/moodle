@@ -81,7 +81,7 @@ $tool = lti_get_tool_by_url_match($basiclti->toolurl);
 if($tool){
     $toolconfig = lti_get_type_config($tool->id);
 } else {
-    $toolconfig = array('launchcontainer' => LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS);
+    $toolconfig = array();
 }
 
 $PAGE->set_cm($cm, $course); // set's up global $COURSE

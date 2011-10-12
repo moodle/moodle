@@ -384,11 +384,13 @@ function lti_grade_item_delete($basiclti) {
 function lti_extend_settings_navigation($settings, $parentnode) {
     global $PAGE;
     
-    $keys = $parentnode->get_children_key_list();
+    if(has_capability('mod/lti:grade', get_context_instance(CONTEXT_MODULE, $PAGE->cm->id))){
+        $keys = $parentnode->get_children_key_list();
     
-    $node = navigation_node::create('Submissions',
-        new moodle_url('/mod/lti/grade.php', array('id'=>$PAGE->cm->id)),
-        navigation_node::TYPE_SETTING, null, 'mod_lti_submissions');
-    
-    $parentnode->add_node($node, $keys[1]);
+        $node = navigation_node::create('Submissions',
+            new moodle_url('/mod/lti/grade.php', array('id'=>$PAGE->cm->id)),
+            navigation_node::TYPE_SETTING, null, 'mod_lti_submissions');
+
+        $parentnode->add_node($node, $keys[1]);
+    }
 }

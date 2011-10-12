@@ -6,8 +6,11 @@ require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/lti/lib.php');
 
 $courseid = required_param('course', PARAM_INT);
+$instanceid = required_param('instanceid', PARAM_INT);
+
 $errormsg = optional_param('lti_errormsg', '', PARAM_RAW);
 $unsigned = optional_param('unsigned', '0', PARAM_INT);
+
 $launchcontainer = optional_param('launch_container', LTI_LAUNCH_CONTAINER_WINDOW, PARAM_INT);
 
 $course = $DB->get_record('course', array('id' => $courseid));
@@ -28,17 +31,28 @@ if(!empty($errormsg)){
     } else {
         $PAGE->set_pagelayout('incourse');
     }
-            
+    
     echo $OUTPUT->header();
     
     echo get_string('lti_launch_error', 'lti');
     
-    //TODO: Add some help around this error message.
     echo htmlspecialchars($errormsg);
 
-    if($unsigned == 1){
+    $canaddtools = has_capability('mod/lti:addcoursetool', get_context_instance(CONTEXT_COURSE, $courseid));
+    
+    if($unsigned == 1 && $canaddtools){
         echo '<br /><br />';
-        echo get_string('lti_launch_error_unsigned_help', 'lti');
+        
+        $links = new stdClass();
+        $coursetooleditor = new moodle_url('/mod/lti/instructor_edit_tool_type.php', array('course' => $courseid, 'action' => 'add'));
+        $links->course_tool_editor = $coursetooleditor->out(false);
+        
+        $adminrequesturl = new moodle_url('/mod/lti/request_tool.php', array('instanceid' => $instanceid));
+        $links->admin_request_url = $adminrequesturl->out(false);
+        
+        echo get_string('lti_launch_error_unsigned_help', 'lti', $links);
+        
+        echo get_string('lti_launch_error_tool_request', 'lti', $links);
     }
     
     echo $OUTPUT->footer();

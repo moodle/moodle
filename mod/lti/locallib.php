@@ -139,7 +139,7 @@ function lti_view($instance) {
     $requestparams = lti_build_request($instance, $typeconfig, $course);
 
     $launchcontainer = lti_get_launch_container($instance, $typeconfig);
-    $returnurlparams = array('course' => $course->id, 'launch_container' => $launchcontainer);
+    $returnurlparams = array('course' => $course->id, 'launch_container' => $launchcontainer, 'instanceid' => $instance->id);
     
     if ( $orgid ) {
         $requestparams["tool_consumer_instance_guid"] = $orgid;
@@ -149,8 +149,8 @@ function lti_view($instance) {
         $returnurlparams['unsigned'] = '1';
         
         //Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns
-    $url = new moodle_url('/mod/lti/return.php', $returnurlparams);
-        $parms['launch_presentation_return_url'] = $url->out(false);    
+        $url = new moodle_url('/mod/lti/return.php', $returnurlparams);
+        $requestparams['launch_presentation_return_url'] = $url->out(false);    
     }
     
     if(!empty($key) && !empty($secret)){
@@ -1102,9 +1102,17 @@ function lti_get_type($typeid){
 }
 
 function lti_get_launch_container($lti, $toolconfig){
-    $launchcontainer = $lti->launchcontainer == LTI_LAUNCH_CONTAINER_DEFAULT ? 
-                        $toolconfig['launchcontainer'] :
-                        $lti->launchcontainer;
+    if($lti->launchcontainer == LTI_LAUNCH_CONTAINER_DEFAULT){
+        if(isset($toolconfig['launchcontainer'])){
+            $launchcontainer = $toolconfig['launchcontainer'];
+        }
+    } else {
+        $launchcontainer = $lti->launchcontainer;
+    }
+    
+    if(empty($launchcontainer) || $launchcontainer == LTI_LAUNCH_CONTAINER_DEFAULT){
+        $launchcontainer = LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
+    }
 
     $devicetype = get_device_type();
 
