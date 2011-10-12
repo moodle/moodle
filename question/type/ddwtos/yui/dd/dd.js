@@ -1,3 +1,27 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * JavaScript code for the ddwtos question type.
+ *
+ * @package    qtype
+ * @subpackage ddwtos
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
     var DDWTOSDDNAME = 'ddwtos_dd';
     var DDWTOS_DD = function() {
@@ -326,12 +350,12 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
         _event: (Y.UA.webkit || Y.UA.ie) ? 'keydown' : 'keypress',
 
         _keys: {
-            '32': 'next',
-            '37': 'previous',
-            '38': 'previous',
-            '39': 'next',
-            '40': 'next',
-            '27': 'remove'
+            '32': 'next',     // Space
+            '37': 'previous', // Left arrow
+            '38': 'previous', // Up arrow
+            '39': 'next',     // Right arrow
+            '40': 'next',     // Down arrow
+            '27': 'remove'    // Escape
         },
 
         _keyHandler: function (e, notifier) {

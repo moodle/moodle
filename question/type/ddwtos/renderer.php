@@ -44,19 +44,24 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
         global $PAGE;
+
         $result = parent::formulation_and_controls($qa, $options);
-        $topnode = 'div.que.ddwtos#q'.$qa->get_slot();
+
         $inputids = array();
         $question = $qa->get_question();
         foreach ($question->places as $placeno => $place) {
             $inputids[$placeno] = $this->box_id($qa, $question->field($placeno));
         }
-        $params = array('inputids' => $inputids,
-                        'topnode' => $topnode,
-                        'readonly' => $options->readonly);
 
-        $PAGE->requires->yui_module('moodle-qtype_ddwtos-dd', 'M.qtype_ddwtos.init_question',
-                                        array($params));
+        $params = array(
+            'inputids' => $inputids,
+            'topnode' => 'div.que.ddwtos#q' . $qa->get_slot(),
+            'readonly' => $options->readonly
+        );
+
+        $PAGE->requires->yui_module('moodle-qtype_ddwtos-dd',
+                'M.qtype_ddwtos.init_question', array($params));
+
         return $result;
     }
 
@@ -64,11 +69,13 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
             question_display_options $options) {
         $result = '';
         $question = $qa->get_question();
+
         $dragboxs = '';
         foreach ($question->choices as $group => $choices) {
             $dragboxs .= $this->drag_boxes($qa, $group,
                     $question->get_ordered_choices($group), $options);
         }
+
         $classes = array('answercontainer');
         if (!$options->readonly) {
             $classes[] = 'notreadonly';
@@ -84,6 +91,7 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
             $classes[] = 'readonly';
         }
         $result .= html_writer::tag('div', '', array('class' => implode(' ', $classes)));
+
         // We abuse the clear_wrong method to output the hidden form fields we
         // want irrespective of whether we are actually clearing the wrong
         // bits of the response.
@@ -102,7 +110,7 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
         $value = $qa->get_last_qt_var($question->field($place));
 
         $attributes = array(
-            'class' => 'place'.$place.' drop group' . $group
+            'class' => 'place' . $place . ' drop group' . $group
         );
 
         if ($options->readonly) {
@@ -138,11 +146,12 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
             }
 
             $boxes .= html_writer::tag('span', $content, array(
-                    'class' => 'draghome choice'.$key.' group' . $choice->draggroup . $infinite)) . ' ';
+                    'class' => 'draghome choice' . $key . ' group' .
+                            $choice->draggroup . $infinite)) . ' ';
         }
 
         return html_writer::nonempty_tag('div', $boxes,
-                                        array('class' => 'draggrouphomes'. $choice->draggroup));
+                array('class' => 'draggrouphomes' . $choice->draggroup));
     }
 
     /**
