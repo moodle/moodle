@@ -47,32 +47,55 @@ abstract class gradingform_controller {
     /** @var int the id of the gradable area record */
     protected $areaid;
 
-    /** @var moodle_page the target page we embed our widgets to */
-    protected $page;
-
-    /** @var stdClass|false the raw {grading_definitions} record */
+    /** @var stdClass|false the definition structure */
     protected $definition;
-
-    /** @var bool is the target grading page finalized for sending output to the browser */
-    protected $pagefinalized = false;
-
-    /** @var array list of widgets made by this controller for $this->page */
-    protected $widgets = array();
 
     /**
      * Do not instantinate this directly, use {@link grading_manager::get_controller()}
      *
-     * @return gradingform_controller instance
+     * @param stdClass $context the context of the form
+     * @param string $component the frankenstyle name of the component
+     * @param string $area the name of the gradable area
+     * @param int $areaid the id of the gradable area record
      */
     public function __construct(stdClass $context, $component, $area, $areaid) {
         global $DB;
 
         $this->context      = $context;
-        $this->component    = $component;
+        list($type, $name)  = normalize_component($component);
+        $this->component    = $type.'_'.$name;
         $this->area         = $area;
         $this->areaid       = $areaid;
 
         $this->load_definition();
+    }
+
+    /**
+     * @return stdClass controller context
+     */
+    public function get_context() {
+        return $this->context;
+    }
+
+    /**
+     * @return string gradable component name
+     */
+    public function get_component() {
+        return $this->component;
+    }
+
+    /**
+     * @return string gradable area name
+     */
+    public function get_area() {
+        return $this->area;
+    }
+
+    /**
+     * @return int gradable area id
+     */
+    public function get_areaid() {
+        return $this->areaid;
     }
 
     /**
@@ -106,31 +129,6 @@ abstract class gradingform_controller {
     }
 
     /**
-     * Prepare a grading widget for the given rater and item
-     *
-     * The options array MUST contain (string)displayas set to either 'scale' or 'grade'.
-     * If scale is used, the (int)scaleid must be provided. If grade is used, (int)maxgrade
-     * must be provided and (int)decimals can be provided (defaults to 0).
-     * The options array CAN contain (bool)bulk to signalize whether there are more widgets to be
-     * made by this controller instance or whether this is the last one.
-     * If you make multiple widgets, pass bulk option se to true. Note that then it is
-     * the caller's responsibility to call {@link finalize_page()} method explicitly then.
-     *
-     * @param int $raterid the user who will use the widget for grading
-     * @param int $itemid the graded item
-     * @param array $options the widget options
-     * @return gradingform_widget renderable widget to insert into the page
-     */
-    abstract public function make_grading_widget($raterid, $itemid, array $options);
-
-    /**
-     * Does everything needed before the page is sent to the browser
-     */
-    public function finalize_page() {
-        $this->pagefinalized = true;
-    }
-
-    /**
      * Extends the module settings navigation
      *
      * This function is called when the context for the page is an activity module with the
@@ -145,31 +143,26 @@ abstract class gradingform_controller {
     }
 
     /**
-     * Returns the name of the grading method, eg 'rubric'
-     */
-    abstract protected function get_method_name();
-
-    /**
-     * Sets the target page and returns a renderer for this plugin
+     * Returns the grading form definition structure
      *
-     * @param moodle_page $page the target page
-     * @return core_renderer
+     * @return stdClass|false definition data or false if the form is not defined yet
      */
-    public function prepare_renderer(moodle_page $page) {
-        global $CFG;
-
-        $this->page = $page;
-        require_once($CFG->dirroot.'/grade/grading/form/'.$this->get_method_name().'/renderer.php');
-        return $page->get_renderer('gradingform_'.$this->get_method_name());
+    public function get_definition() {
+        if (is_null($this->definition)) {
+            $this->load_definition();
+        }
+        return $this->definition;
     }
 
     /**
-     * Saves the defintion data into database
+     * Saves the defintion data into the database
      *
-     * The default implementation stored the record into the {grading_definition} table. The
-     * plugins are likely to extend this and save their data into own tables, too.
+     * The implementation in this base class stores the common data into the record
+     * into the {grading_definition} table. The plugins are likely to extend this
+     * and save their data into own tables, too.
      *
-     * @param stdClass $definition
+     * @param stdClass $definition data containing values for the {grading_definition} table
+     * @param int|null $usermodified optional userid of the author of the definition, defaults to the current user
      */
     public function update_definition(stdClass $definition, $usermodified = null) {
         global $DB, $USER;
@@ -178,37 +171,59 @@ abstract class gradingform_controller {
             $usermodified = $USER->id;
         }
 
-        if ($this->definition) {
-            // the following fields can't be altered by the caller
-            $definition->id             = $this->definition->id;
-            $definition->timemodified   = time();
-            $definition->usermodified   = $usermodified;
-            unset($definition->areaid);
-            unset($definition->method);
-            unset($definition->timecreated);
+        if (!empty($this->definition->id)) {
+            // prepare a record to be updated
+            $record = new stdClass();
+            // populate it with scalar values from the passed definition structure
+            foreach ($definition as $prop => $val) {
+                if (is_array($val) or is_object($val)) {
+                    // probably plugin's data
+                    continue;
+                }
+                $record->{$prop} = $val;
+            }
+            // make sure we do not override some crucial values by accident
+            if (!empty($record->id) and $record->id != $this->definition->id) {
+                throw new coding_exception('Attempting to update other definition record.');
+            }
+            $record->id = $this->definition->id;
+            unset($record->areaid);
+            unset($record->method);
+            unset($record->timecreated);
+            // set the modification flags
+            $record->timemodified = time();
+            $record->usermodified = $usermodified;
 
-            $DB->update_record('grading_definitions', $definition);
+            $DB->update_record('grading_definitions', $record);
 
         } else if ($this->definition === false) {
-            // the record did not existed when the controller was instantinated
-            // let us assume it still does not exist (this may throw exception
-            // in case of two users working on the same form definition at the same time)
-            unset($definition->id);
-            $definition->areaid         = $this->areaid;
-            $definition->method         = $this->get_method_name();
-            $definition->timecreated    = time();
-            $definition->usercreated    = $usermodified;
-            $definition->timemodified   = $definition->timecreated;
-            $definition->usermodified   = $definition->usercreated;
-            $definition->status         = self::DEFINITION_STATUS_WORKINPROGRESS;
+            // prepare a record to be inserted
+            $record = new stdClass();
+            // populate it with scalar values from the passed definition structure
+            foreach ($definition as $prop => $val) {
+                if (is_array($val) or is_object($val)) {
+                    // probably plugin's data
+                    continue;
+                }
+                $record->{$prop} = $val;
+            }
+            // make sure we do not override some crucial values by accident
+            if (!empty($record->id)) {
+                throw new coding_exception('Attempting to create a new record while there is already one existing.');
+            }
+            unset($record->id);
+            $record->areaid       = $this->areaid;
+            $record->method       = $this->get_method_name();
+            $record->timecreated  = time();
+            $record->usercreated  = $usermodified;
+            $record->timemodified = $definition->timecreated;
+            $record->usermodified = $definition->usercreated;
+            $record->status       = self::DEFINITION_STATUS_WORKINPROGRESS;
 
             $DB->insert_record('grading_definitions', $definition);
 
         } else {
-            // this should not happen - the record cache status is unknown, let us
-            // reload it and start again
-            $this->load_definition();
-            $this->update_definition($definition, $usermodified);
+            throw new coding_exception('Unknown status of the cached definition record.');
         }
     }
 
@@ -249,6 +264,9 @@ abstract class gradingform_controller {
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+
+
     /**
      * Loads the form definition if it exists
      *
@@ -258,66 +276,20 @@ abstract class gradingform_controller {
      */
     protected function load_definition() {
         global $DB;
-
         $this->definition = $DB->get_record('grading_definitions', array(
             'areaid' => $this->areaid,
             'method' => $this->get_method_name()), '*', IGNORE_MISSING);
     }
-}
-
-
-/**
- * Base class for all gradingform plugins renderers
- */
-abstract class gradingform_renderer extends plugin_renderer_base {
-}
-
-
-/**
- * Base class for all gradingform renderable widgets
- */
-abstract class gradingform_widget implements renderable {
-
-    /** @var string unique identifier that can be used as the element id during the rendering, for example */
-    public $id;
-
-    /** @var gradingform_controller instance of the controller that created this widget */
-    public $controller;
-
-    /** @var array the widget options */
-    public $options;
-
-    /** @var stdClass the current instance data */
-    public $instance;
 
     /**
-     * @param gradingform_controller the method controller that created this widget
+     * @return string the name of the grading method plugin, eg 'rubric'
+     * @see PARAM_PLUGIN
      */
-    public function __construct(gradingform_controller $controller, array $options, stdClass $instance) {
-        $this->id         = uniqid(get_class($this));
-        $this->controller = $controller;
-        $this->options    = $options;
-        $this->instance   = $instance;
+    protected function get_method_name() {
+        if (preg_match('/^gradingform_([a-z][a-z0-9_]*[a-z0-9])_controller$/', get_class($this), $matches)) {
+            return $matches[1];
+        } else {
+            throw new coding_exception('Invalid class name');
+        }
     }
-}
-
-
-/**
- * Base class for all gradingform renderable grading widgets
- *
- * Grading widget is the UI element that raters use when they interact with
- * the grading form.
- */
-abstract class gradingform_grading_widget extends gradingform_widget {
-}
-
-
-/**
- * Base class for all gradingform renderable editor widgets
- *
- * Plugins that implement editor UI via its own renderable widgets should
- * probably extend this. Editor widget is the UI element that course designers
- * use when they design (define) the grading form.
- */
-abstract class gradingform_editor_widget implements renderable {
 }

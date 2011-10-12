@@ -16,91 +16,43 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Rubric editor page
+ *
  * @package    gradingform
  * @subpackage rubric
  * @copyright  2011 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("../../../../config.php");
-require_once("../../lib.php");
-require_once($CFG->dirroot.'/lib/formslib.php');
-require_once($CFG->dirroot."/grade/grading/form/rubric/rubriceditor.php");
-MoodleQuickForm::registerElementType('rubriceditor', $CFG->dirroot.'/grade/grading/form/rubric/rubriceditor.php', 'MoodleQuickForm_rubriceditor');
+require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/config.php');
+require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__).'/edit_form.php');
+require_once($CFG->dirroot.'/grade/grading/lib.php');
 
-$areaid   = required_param('areaid', PARAM_INT);          // Area ID
+$areaid = required_param('areaid', PARAM_INT);
 
 $manager = get_grading_manager($areaid);
+
+list($context, $course, $cm) = get_context_info_array($manager->get_context()->id);
+
+require_login($course, true, $cm);
+require_capability('moodle/grade:managegradingforms', $context);
+
 $controller = $manager->get_controller('rubric');
 
-$cm = $manager->get_cm();
-if (! $assignment = $DB->get_record("assignment", array("id"=>$cm->instance))) {
-    print_error('invalidid', 'assignment');
-}
-if (! $course = $DB->get_record("course", array("id"=>$assignment->course))) {
-    print_error('coursemisconf', 'assignment');
-}
-
-require_login($course, false, $cm);
-//require_capability('TODO', $context); // TODO
-
-$url = new moodle_url('/grade/grading/form/rubric/edit.php', array('areaid' => $areaid));
-$PAGE->set_url($url);
-$title = get_string('definerubric', 'gradingform_rubric');
-$PAGE->set_title($title);
-$PAGE->set_heading($title);
-
+$PAGE->set_url(new moodle_url('/grade/grading/form/rubric/edit.php', array('areaid' => $areaid)));
+$PAGE->set_title(get_string('definerubric', 'gradingform_rubric'));
+$PAGE->set_heading(get_string('definerubric', 'gradingform_rubric'));
 $PAGE->requires->js('/grade/grading/form/rubric/js/rubriceditor.js');
-
-
-
-class gradingform_rubric_editrubric extends moodleform {
-    function definition() {
-        $form = $this->_form;
-
-        $form->addElement('hidden', 'areaid');
-        $form->setType('areaid', PARAM_INT);
-
-        // name
-        $form->addElement('text', 'name', get_string('name', 'gradingform_rubric'), array('size'=>52));
-        $form->addRule('name', get_string('required'), 'required');
-        $form->setType('name', PARAM_TEXT);
-
-        // description
-        $options = array();//gradingform_definition_base::description_form_field_options($this->_customdata['areaid']);
-        $form->addElement('editor', 'description_editor', get_string('description', 'gradingform_rubric'), null, $options);
-        $form->setType('description_editor', PARAM_RAW);
-
-        // rubric editor
-
-        $element = $form->addElement('rubriceditor', 'rubric', 'Rubric 1');
-        $form->setType('rubric', PARAM_RAW);
-        $form->addRule('rubric', '', 'rubriceditorcompleted'); //TODO how to add this rule automatically?????
-        if (array_key_exists('freezerubric', $this->_customdata) && $this->_customdata['freezerubric']) {
-            $element->freeze();
-        }
-
-        $this->add_action_buttons(true);
-    }
-
-    function set_data($obj) {
-        if ($obj instanceof gradingform_rubric_controller) {
-            $properties = $obj->get_data_for_edit();
-        } else {
-            $properties = $obj;
-        }
-        parent::set_data($properties);
-    }
-}
 
 //TODO freeze rubric editor if needed
 $mform = new gradingform_rubric_editrubric(null, array('areaid' => $areaid, 'freezerubric' => optional_param('freeze', 0, PARAM_INT)));
-$mform->set_data($controller);
+$mform->set_data($controller->get_definition_for_editing());
 if ($mform->is_submitted() && $mform->is_validated()) {
     $data = $mform->get_data();
-    $data = $controller->postupdate_data($data);
-    $controller->update($data);
-    redirect($url);
+    $data = $controller->postupdate_definition_data($data);
+    $controller->update_definition($data);
+    redirect($PAGE->url);
 }
 
 echo $OUTPUT->header();
