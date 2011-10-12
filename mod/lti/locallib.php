@@ -124,6 +124,8 @@ function lti_view($instance) {
     }
     
     $endpoint = !empty($instance->toolurl) ? $instance->toolurl : $typeconfig['toolurl'];
+    $endpiont = trim($endpoint);
+    
     $orgid = $typeconfig['organizationid'];
     /* Suppress this for now - Chuck
     $orgdesc = $typeconfig['organizationdescr'];
@@ -143,18 +145,20 @@ function lti_view($instance) {
         $requestparams["tool_consumer_instance_guid"] = $orgid;
     }
     
+    if(empty($key) || empty($secret)){
+        $returnurlparams['unsigned'] = '1';
+        
+        //Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns
+    $url = new moodle_url('/mod/lti/return.php', $returnurlparams);
+        $parms['launch_presentation_return_url'] = $url->out(false);    
+    }
+    
     if(!empty($key) && !empty($secret)){
         $parms = lti_sign_parameters($requestparams, $endpoint, "POST", $key, $secret);
     } else {
         //If no key and secret, do the launch unsigned.
         $parms = $requestparams;
-        
-        $returnurlparams['unsigned'] = '1';
     }
-    
-    //Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns
-    $url = new moodle_url('/mod/lti/return.php', $returnurlparams);
-    $parms['launch_presentation_return_url'] = $url->out(false);
     
     $debuglaunch = ( $instance->debuglaunch == 1 );
     
@@ -230,12 +234,12 @@ function lti_build_request($instance, $typeconfig, $course) {
         $requestparams["ext_ims_lis_basic_outcome_url"] = $CFG->wwwroot.'/mod/lti/service.php';
     }
 
-    if ( isset($placementsecret) &&
+    /*if ( isset($placementsecret) &&
          ( $typeconfig['allowroster'] == LTI_SETTING_ALWAYS ||
          ( $typeconfig['allowroster'] == LTI_SETTING_DELEGATE && $instance->instructorchoiceallowroster == LTI_SETTING_ALWAYS ) ) ) {
         $requestparams["ext_ims_lis_memberships_id"] = $sourcedid;
         $requestparams["ext_ims_lis_memberships_url"] = $CFG->wwwroot.'/mod/lti/service.php';
-    }
+    }*/
 
     // Send user's name and email data if appropriate
     if ( $typeconfig['sendname'] == LTI_SETTING_ALWAYS ||
