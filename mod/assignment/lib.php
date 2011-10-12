@@ -1611,8 +1611,7 @@ class assignment_base {
                 $data = $mform->get_data();
                 // TODO find better way to find submission id
                 $submission = $this->get_submission($userid);
-                // TODO replace $_POST['advancedgrading'] with $data->advancedgrading when element type is changed from 'static' to 'grading'
-                $_POST['xgrade'] = $controller->save_and_get_grade($submission->id, $_POST['advancedgrading']);
+                $_POST['xgrade'] = $controller->save_and_get_grade($submission->id, $data->advancedgrading);
             }
         }
         return true;
@@ -2370,7 +2369,8 @@ class mod_assignment_grading_form extends moodleform {
 
         if ($controller = $this->use_advanced_grading()) {
             // TODO what if submission id does not exist yet!
-            $mform->addElement('static', 'advancedgrading', get_string('grade').':', $controller->to_html('advancedgrading', $this->_customdata->submission->id));
+            $mform->addElement('grading', 'advancedgrading', get_string('grade').':',
+                    array('controller' => $controller, 'submissionid' => $this->_customdata->submission->id));
         } else {
             // use simple direct grading
             $grademenu = make_grades_menu($this->_customdata->assignment->grade);

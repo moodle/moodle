@@ -272,7 +272,21 @@ abstract class gradingform_controller {
     /**
      * Returns html for form element
      */
-    abstract public function to_html($elementname, $itemid);
+    abstract public function to_html($gradingformelement);
+
+    /**
+     *
+     */
+    public function default_validation_error_message() {
+        return '';
+    }
+
+    /**
+     *
+     */
+    public function validate_grading_element($elementvalue, $itemid) {
+        return true;
+    }
 
     ////////////////////////////////////////////////////////////////////////////
 

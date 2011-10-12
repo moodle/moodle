@@ -240,14 +240,17 @@ class gradingform_rubric_controller extends gradingform_controller {
     /**
      * Returns html for form element
      */
-    public function to_html($elementname, $submissionid) {
+    public function to_html($gradingformelement) {
         // TODO: this function is a patch at the moment!
 
         //global $PAGE, $USER;
         //$gradingrenderer = $this->prepare_renderer($PAGE);
         $output = '';
+        $elementname = $gradingformelement->getName();
+        $elementvalue = $gradingformelement->getValue();
+        $submissionid = $gradingformelement->get_grading_attribute('submissionid');
         $output .= "assessing submission $submissionid<br />";
-        $output .= html_writer::empty_tag('input', array('type' => 'text', 'name' => $elementname.'[grade]', 'size' => '20'));
+        $output .= html_writer::empty_tag('input', array('type' => 'text', 'name' => $elementname.'[grade]', 'size' => '20', 'value' => $elementvalue['grade']));
         //$output .= "assessing user $userid on assignment $assignmentid<br>";
         //TODO find $submissionid from $userid & $assignmentid (may not exist yet, actually)
         /*$submissionid = null;
@@ -309,5 +312,22 @@ class gradingform_rubric_controller extends gradingform_controller {
     public function is_form_available($foruserid = null) {
         return true;
         // TODO this is temporary for testing!
+    }
+
+    /**
+     *
+     */
+    public function default_validation_error_message() {
+        return 'Validation failed';
+    }
+
+    /**
+     *
+     */
+    public function validate_grading_element($elementvalue, $itemid) {
+        if ($elementvalue['grade'] > 100 || $elementvalue['grade'] < 0) {
+            return false;
+        }
+        return true;
     }
 }
