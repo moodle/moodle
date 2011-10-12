@@ -312,22 +312,11 @@ abstract class qtype_gapselect_base extends question_type {
 
     public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
-
-        $fs = get_file_storage();
-        $fs->move_area_files_to_new_context($oldcontextid,
-                $newcontextid, 'question', 'correctfeedback', $questionid);
-        $fs->move_area_files_to_new_context($oldcontextid,
-                $newcontextid, 'question', 'partiallycorrectfeedback', $questionid);
-        $fs->move_area_files_to_new_context($oldcontextid,
-                $newcontextid, 'question', 'incorrectfeedback', $questionid);
+        $this->move_files_in_combined_feedback($questionid, $oldcontextid, $newcontextid);
     }
 
     protected function delete_files($questionid, $contextid) {
         parent::delete_files($questionid, $contextid);
-
-        $fs = get_file_storage();
-        $fs->delete_area_files($contextid, 'question', 'correctfeedback', $questionid);
-        $fs->delete_area_files($contextid, 'question', 'partiallycorrectfeedback', $questionid);
-        $fs->delete_area_files($contextid, 'question', 'incorrectfeedback', $questionid);
+        $this->delete_files_in_combined_feedback($questionid, $contextid);
     }
 }
