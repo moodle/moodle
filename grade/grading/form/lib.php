@@ -256,12 +256,37 @@ abstract class gradingform_controller {
             $instance->raterid = $raterid;
             $instance->itemid = $itemid;
             $instance->timemodified = time();
+            $instance->feedbackformat = FORMAT_MOODLE;
             $instance->id = $DB->insert_record('grading_instances', $instance);
             return $instance;
 
         } else {
             return $current;
         }
+    }
+
+    /**
+     * Saves non-js data and returns the gradebook grade
+     */
+    abstract public function save_and_get_grade($raterid, $itemid, $formdata);
+
+    /**
+     * Returns html for form element
+     */
+    abstract public function to_html($gradingformelement);
+
+    /**
+     *
+     */
+    public function default_validation_error_message() {
+        return '';
+    }
+
+    /**
+     *
+     */
+    public function validate_grading_element($elementvalue, $itemid) {
+        return true;
     }
 
     ////////////////////////////////////////////////////////////////////////////

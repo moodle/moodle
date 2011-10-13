@@ -226,6 +226,155 @@ class gradingform_rubric_controller extends gradingform_controller {
         return $properties;
     }
 
+    public function get_grading($raterid, $itemid) {
+        global $DB;
+        $sql = "SELECT f.id, f.criterionid, f.levelid, f.remark, f.remarkformat
+                    FROM {grading_instances} i, {gradingform_rubric_fillings} f
+                    WHERE i.formid = :formid ".
+                    "AND i.raterid = :raterid ".
+                    "AND i.itemid = :itemid
+                    AND i.id = f.forminstanceid";
+        $params = array('formid' => $this->definition->id, 'itemid' => $itemid, 'raterid' => $raterid);
+        $rs = $DB->get_recordset_sql($sql, $params);
+        $grading = array();
+        foreach ($rs as $record) {
+            if ($record->levelid) {
+                $grading[$record->criterionid] = $record->levelid;
+            }
+            // TODO: remarks
+        }
+        return $grading;
+    }
+
+    /**
+     * Converts the rubric data to the gradebook score 0-100
+     */
+    protected function calculate_grade($grade, $itemid) {
+        if (!$this->validate_grading_element($grade, $itemid)) {
+            return -1;
+        }
+
+        $minscore = 0;
+        $maxscore = 0;
+        foreach ($this->definition->rubric_criteria as $id => $criterion) {
+            $keys = array_keys($criterion['levels']);
+            // TODO array_reverse($keys) if levels are sorted DESC
+            $minscore += $criterion['levels'][$keys[0]]['score'];
+            $maxscore += $criterion['levels'][$keys[sizeof($keys)-1]]['score'];
+        }
+
+        if ($maxscore == 0) {
+            return -1;
+        }
+
+        $curscore = 0;
+        foreach ($grade as $id => $levelid) {
+            $curscore += $this->definition->rubric_criteria[$id]['levels'][$levelid]['score'];
+        }
+        return $curscore/$maxscore*100; // TODO mapping
+    }
+
+    /**
+     * Saves non-js data and returns the gradebook grade
+     */
+    public function save_and_get_grade($raterid, $itemid, $formdata) {
+        global $DB, $USER;
+        $instance = $this->prepare_instance($raterid, $itemid);
+        $currentgrade = $this->get_grading($raterid, $itemid);
+        if (!is_array($formdata)) {
+            return $this->calculate_grade($currentgrade, $itemid);
+        }
+        foreach ($formdata as $criterionid => $levelid) {
+            $params = array('forminstanceid' => $instance->id, 'criterionid' => $criterionid);
+            if (!array_key_exists($criterionid, $currentgrade)) {
+                $DB->insert_record('gradingform_rubric_fillings', $params + array('levelid' => $levelid));
+            } else if ($currentgrade[$criterionid] != $levelid) {
+                $DB->set_field('gradingform_rubric_fillings', 'levelid', $levelid, $params);
+            }
+        }
+        foreach ($currentgrade as $criterionid => $levelid) {
+            if (!array_key_exists($criterionid, $formdata)) {
+                $params = array('forminstanceid' => $instance->id, 'criterionid' => $criterionid);
+                $DB->delete_records('gradingform_rubric_fillings', $params);
+            }
+        }
+        // TODO: remarks
+        return $this->calculate_grade($formdata, $itemid);
+    }
+
+    /**
+     * Returns html for form element
+     */
+    public function to_html($gradingformelement) {
+        global $PAGE, $USER;
+        //TODO move to renderer
+
+        //$gradingrenderer = $this->prepare_renderer($PAGE);
+        $html = '';
+        $elementname = $gradingformelement->getName();
+        $elementvalue = $gradingformelement->getValue();
+        $submissionid = $gradingformelement->get_grading_attribute('submissionid');
+        $raterid = $USER->id; // TODO - this is very strange!
+        $html .= "assessing submission $submissionid<br />";
+        //$html .= html_writer::empty_tag('input', array('type' => 'text', 'name' => $elementname.'[grade]', 'size' => '20', 'value' => $elementvalue['grade']));
+
+        if (!$gradingformelement->_flagFrozen) {
+            $module = array('name'=>'gradingform_rubric', 'fullpath'=>'/grade/grading/form/rubric/js/rubric.js');
+            $PAGE->requires->js_init_call('M.gradingform_rubric.init', array(array('name' => $gradingformelement->getName(), 'criteriontemplate' =>'', 'leveltemplate' => '')), true, $module);
+        }
+        $criteria = $this->definition->rubric_criteria;
+
+        $html .= html_writer::start_tag('div', array('id' => 'rubric-'.$gradingformelement->getName(), 'class' => 'form_rubric evaluate'));
+        $criteria_cnt = 0;
+
+        $value = $gradingformelement->getValue();
+        if ($value === null) {
+            $value = $this->get_grading($raterid, $submissionid); // TODO maybe implement in form->set_data() ?
+        }
+
+        foreach ($criteria as $criterionid => $criterion) {
+            $html .= html_writer::start_tag('div', array('class' => 'criterion'.$this->get_css_class_suffix($criteria_cnt++, count($criteria)-1)));
+            $html .= html_writer::tag('div', $criterion['description'], array('class' => 'description')); // TODO descriptionformat
+            $html .= html_writer::start_tag('div', array('class' => 'levels'));
+            $level_cnt = 0;
+            foreach ($criterion['levels'] as $levelid => $level) {
+                $checked = (is_array($value) && array_key_exists($criterionid, $value) && ((int)$value[$criterionid] === $levelid));
+                $classsuffix = $this->get_css_class_suffix($level_cnt++, count($criterion['levels'])-1);
+                if ($checked) {
+                    $classsuffix .= ' checked';
+                }
+                $html .= html_writer::start_tag('div', array('id' => $gradingformelement->getName().'-'.$criterionid.'-levels-'.$levelid, 'class' => 'level'.$classsuffix));
+                $input = html_writer::empty_tag('input', array('type' => 'radio', 'name' => $gradingformelement->getName().'['.$criterionid.']', 'value' => $levelid) +
+                    ($checked ? array('checked' => 'checked') : array())); // TODO rewrite
+                $html .= html_writer::tag('div', $input, array('class' => 'radio'));
+                $html .= html_writer::tag('div', $level['definition'], array('class' => 'definition')); // TODO definitionformat
+                $html .= html_writer::tag('div', (float)$level['score'].' pts', array('class' => 'score'));  //TODO span, get_string
+                $html .= html_writer::end_tag('div'); // .level
+            }
+            $html .= html_writer::end_tag('div'); // .levels
+            $html .= html_writer::end_tag('div'); // .criterion
+        }
+        $html .= html_writer::end_tag('div'); // .rubric
+        return $html;
+
+    }
+
+    private function get_css_class_suffix($cnt, $maxcnt) {
+        $class = '';
+        if ($cnt == 0) {
+            $class .= ' first';
+        }
+        if ($cnt == $maxcnt) {
+            $class .= ' last';
+        }
+        if ($cnt%2) {
+            $class .= ' odd';
+        } else {
+            $class .= ' even';
+        }
+        return $class;
+    }
+
     // TODO the following functions may be moved to parent:
 
     /**
@@ -272,5 +421,36 @@ class gradingform_rubric_controller extends gradingform_controller {
             'gradingform_rubric', 'definition_description', $this->definition->id);
             // TODO change filearea for embedded files in grading_definition.description
         return $data;
+    }
+
+    public function is_form_available($foruserid = null) {
+        return true;
+        // TODO this is temporary for testing!
+    }
+
+    /**
+     * Returns the error message displayed in case of validation failed
+     *
+     * @see validate_grading_element
+     */
+    public function default_validation_error_message() {
+        return 'The rubric is incomplete'; //TODO string
+    }
+
+    /**
+     * Validates that rubric is fully completed and contains valid grade on each criterion
+     */
+    public function validate_grading_element($elementvalue, $itemid) {
+        // TODO: if there is nothing selected in rubric, we don't enter this function at all :(
+        $criteria = $this->definition->rubric_criteria;
+        if (!is_array($elementvalue) || sizeof($elementvalue) < sizeof($criteria)) {
+            return false;
+        }
+        foreach ($criteria as $id => $criterion) {
+            if (!array_key_exists($id, $elementvalue) || !array_key_exists($elementvalue[$id], $criterion['levels'])) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -6836,6 +6836,7 @@ FROM
         }
 
         upgrade_main_savepoint(true, 2011100700.01);
+    }
 
     if ($oldversion < 2011100700.02) {
         // Define field idnumber to be added to course_categories

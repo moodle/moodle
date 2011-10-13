@@ -630,7 +630,10 @@ class assignment_base {
 
         switch ($mode) {
             case 'grade':                         // We are in a main window grading
-                if ($submission = $this->process_feedback()) {
+                if (!$this->validate_and_preprocess_feedback()) {
+                    // validation failed
+                    $this->display_submission();
+                } else if ($submission = $this->process_feedback()) {
                     $this->display_submissions(get_string('changessaved'));
                 } else {
                     $this->display_submissions();
@@ -744,7 +747,11 @@ class assignment_base {
             case 'saveandnext':
                 ///We are in pop up. save the current one and go to the next one.
                 //first we save the current changes
-                if ($submission = $this->process_feedback()) {
+                if (!$this->validate_and_preprocess_feedback()) {
+                    // validation failed
+                    $this->display_submission();
+                    break;
+                } else if ($submission = $this->process_feedback()) {
                     //print_heading(get_string('changessaved'));
                     //$extra_javascript = $this->update_main_listing($submission);
                 }
@@ -1039,7 +1046,7 @@ class assignment_base {
         } elseif ($assignment->assignmenttype == 'uploadsingle') {
             $mformdata->fileui_options = array('subdirs'=>0, 'maxbytes'=>$CFG->userquota, 'maxfiles'=>1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
         }
-        $gradingman = get_grading_manager($this->context, 'mod_assignment', 'submission');
+        /*$gradingman = get_grading_manager($this->context, 'mod_assignment', 'submission');
         if ($gradingmethod = $gradingman->get_active_method()) {
             $controller = $gradingman->get_controller($gradingmethod);
             if ($controller->is_form_available()) {
@@ -1067,6 +1074,13 @@ class assignment_base {
             } else {
                 notice(get_string('formnotavailable', 'core_grading'), new moodle_url('/course/view.php', array('id' => $assignment->course)));
             }
+        }*/
+        if ($controller = get_grading_manager($this->context, 'mod_assignment', 'submission')->get_active_controller()) {
+            if (!isset($submission->id)) {
+                // TODO this is a patch if submission id does not exist yet
+                $mformdata->submission = $this->get_submission($user->id, true);
+            }
+            $mformdata->advancedgradingcontroller = $controller;
         }
 
         $submitform = new mod_assignment_grading_form( null, $mformdata );
@@ -1074,7 +1088,9 @@ class assignment_base {
          if (!$display) {
             $ret_data = new stdClass();
             $ret_data->mform = $submitform;
-            $ret_data->fileui_options = $mformdata->fileui_options;
+            if (isset($mformdata->fileui_options)) {
+                $ret_data->fileui_options = $mformdata->fileui_options;
+            }
             return $ret_data;
         }
 
@@ -1572,6 +1588,34 @@ class assignment_base {
         $mform->display();
 
         echo $OUTPUT->footer();
+    }
+
+    /**
+     * Validates the submitted form and returns false if validation did not pass.
+     * If validation passes, preprocess advanced grading (if applicable) and returns true.
+     */
+    function validate_and_preprocess_feedback() {
+        global $USER;
+        if (!$feedback = data_submitted()) {
+            return true;      // No incoming data, nothing to validate
+        }
+        $userid = required_param('userid', PARAM_INT);
+        $offset = required_param('offset', PARAM_INT);
+        $submissiondata = $this->display_submission($offset, $userid, false);
+        $mform = $submissiondata->mform;
+        if ($mform->is_submitted()) {
+            if (!$mform->is_validated()) {
+                return false;
+            }
+            // preprocess advanced grading here
+            if ($controller = $mform->use_advanced_grading()) {
+                $data = $mform->get_data();
+                // TODO find better way to find submission id
+                $submission = $this->get_submission($userid);
+                $_POST['xgrade'] = $controller->save_and_get_grade($USER->id /* TODO */, $submission->id, $data->advancedgrading);
+            }
+        }
+        return true;
     }
 
     /**
@@ -2256,6 +2300,10 @@ class mod_assignment_grading_form extends moodleform {
         global $OUTPUT;
         $mform =& $this->_form;
 
+        if (isset($this->_customdata->advancedgradingcontroller)) {
+            $this->use_advanced_grading($this->_customdata->advancedgradingcontroller);
+        }
+
         $formattr = $mform->getAttributes();
         $formattr['id'] = 'submitform';
         $mform->setAttributes($formattr);
@@ -2301,6 +2349,19 @@ class mod_assignment_grading_form extends moodleform {
 
     }
 
+    private $_advancegradingcontroller;
+    /**
+     * Gets or sets the controller for advanced grading
+     *
+     * @param <type> $controller
+     */
+    public function use_advanced_grading($controller = false) {
+        if ($controller !== false) {
+            $this->_advancegradingcontroller = $controller;
+        }
+        return $this->_advancegradingcontroller;
+    }
+
     function add_grades_section() {
         global $CFG;
         $mform =& $this->_form;
@@ -2311,9 +2372,10 @@ class mod_assignment_grading_form extends moodleform {
 
         $mform->addElement('header', 'Grades', get_string('grades', 'grades'));
 
-        if (!empty($this->_customdata->advancedgradingenabled)) {
-            $mform->addElement('static', 'advancedgradingwidget', get_string('grade').':', $this->_customdata->advancedgradingwidget);
-
+        if ($controller = $this->use_advanced_grading()) {
+            // TODO what if submission id does not exist yet!
+            $mform->addElement('grading', 'advancedgrading', get_string('grade').':',
+                    array('controller' => $controller, 'submissionid' => $this->_customdata->submission->id));
         } else {
             // use simple direct grading
             $grademenu = make_grades_menu($this->_customdata->assignment->grade);
@@ -2472,6 +2534,11 @@ class mod_assignment_grading_form extends moodleform {
             }
             $data = file_postupdate_standard_editor($data, 'submissioncomment', $editoroptions, $this->_customdata->context, $editoroptions['component'], $editoroptions['filearea'], $itemid);
         }
+
+        if ($this->use_advanced_grading() && !isset($data->advancedgrading)) {
+            $data->advancedgrading = null;
+        }
+
         return $data;
     }
 }
