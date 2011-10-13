@@ -1595,6 +1595,7 @@ class assignment_base {
      * If validation passes, preprocess advanced grading (if applicable) and returns true.
      */
     function validate_and_preprocess_feedback() {
+        global $USER;
         if (!$feedback = data_submitted()) {
             return true;      // No incoming data, nothing to validate
         }
@@ -1611,7 +1612,7 @@ class assignment_base {
                 $data = $mform->get_data();
                 // TODO find better way to find submission id
                 $submission = $this->get_submission($userid);
-                $_POST['xgrade'] = $controller->save_and_get_grade($submission->id, $data->advancedgrading);
+                $_POST['xgrade'] = $controller->save_and_get_grade($USER->id /* TODO */, $submission->id, $data->advancedgrading);
             }
         }
         return true;

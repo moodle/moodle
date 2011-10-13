@@ -256,6 +256,7 @@ abstract class gradingform_controller {
             $instance->raterid = $raterid;
             $instance->itemid = $itemid;
             $instance->timemodified = time();
+            $instance->feedbackformat = FORMAT_MOODLE;
             $instance->id = $DB->insert_record('grading_instances', $instance);
             return $instance;
 
@@ -267,7 +268,7 @@ abstract class gradingform_controller {
     /**
      * Saves non-js data and returns the gradebook grade
      */
-    abstract public function save_and_get_grade($itemid, $formdata);
+    abstract public function save_and_get_grade($raterid, $itemid, $formdata);
 
     /**
      * Returns html for form element
