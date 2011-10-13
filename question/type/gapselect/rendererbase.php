@@ -81,8 +81,8 @@ abstract class qtype_elements_embedded_in_question_text_renderer
         return '';
     }
 
-    protected function box_id(question_attempt $qa, $place, $group) {
-        return $qa->get_qt_field_name($place) . '_' . $group;
+    protected function box_id(question_attempt $qa, $place) {
+        return str_replace(':', '_', $qa->get_qt_field_name($place));
     }
 
     public function specific_feedback(question_attempt $qa) {

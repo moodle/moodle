@@ -46,7 +46,7 @@ class qtype_gapselect_renderer extends qtype_elements_embedded_in_question_text_
         $value = $qa->get_last_qt_var($question->field($place));
 
         $attributes = array(
-            'id' => $this->box_id($qa, 'p' . $place, $group),
+            'id' => $this->box_id($qa, 'p' . $place),
         );
         $groupclass = 'group' . $group;
 
