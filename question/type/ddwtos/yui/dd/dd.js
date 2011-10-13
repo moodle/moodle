@@ -115,6 +115,8 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                         ie7fix = true;
                     }
                 }, this);
+                maxwidth += 8;
+                maxheight += 2;
                 groupitems.each(function(item) {
                     var margintop = Math.round((maxheight - item.get('offsetHeight'))/2);
                     var marginleft = Math.round((maxwidth - item.get('offsetWidth'))/2);
