@@ -59,7 +59,7 @@ class xmldb_key extends xmldb_object {
     /**
      * Set all the attributes of one xmldb_key
      *
-     * @param string type XMLDB_KEY_PRIMARY, XMLDB_KEY_UNIQUE, XMLDB_KEY_FOREIGN
+     * @param string type XMLDB_KEY_[PRIMARY|UNIQUE|FOREIGN|FOREIGN_UNIQUE]
      * @param array fields an array of fieldnames to build the key over
      * @param string reftable name of the table the FK points to or null
      * @param array reffields an array of fieldnames in the FK table or null
@@ -418,6 +418,9 @@ class xmldb_key extends xmldb_object {
             case XMLDB_KEY_FOREIGN:
                 $result .= 'XMLDB_KEY_FOREIGN' . ', ';
                 break;
+            case XMLDB_KEY_FOREIGN_UNIQUE:
+                $result .= 'XMLDB_KEY_FOREIGN_UNIQUE' . ', ';
+                break;
         }
     /// The fields
         $keyfields = $this->getFields();
@@ -427,7 +430,8 @@ class xmldb_key extends xmldb_object {
             $result .= 'null';
         }
     /// The FKs attributes
-        if ($this->getType() == XMLDB_KEY_FOREIGN) {
+        if ($this->getType() == XMLDB_KEY_FOREIGN ||
+            $this->getType() == XMLDB_KEY_FOREIGN_UNIQUE) {
         /// The reftable
             $reftable = $this->getRefTable();
             if (!empty($reftable)) {

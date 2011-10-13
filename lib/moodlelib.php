@@ -7457,45 +7457,96 @@ function get_plugin_list($plugintype) {
 }
 
 /**
- * Gets a list of all plugin API functions for given plugin type, function
- * name, and filename.
- * @param string $plugintype Plugin type, e.g. 'mod' or 'report'
- * @param string $function Name of function after the frankenstyle prefix;
- *   e.g. if the function is called report_courselist_hook then this value
- *   would be 'hook'
- * @param string $file Name of file that includes function within plugin,
- *   default 'lib.php'
- * @return Array of plugin frankenstyle (e.g. 'report_courselist', 'mod_forum')
- *   to valid, existing plugin function name (e.g. 'report_courselist_hook',
- *   'forum_hook')
+ * Get a list of all the plugins of a given type that contain a particular file.
+ * @param string $plugintype the type of plugin, e.g. 'mod' or 'report'.
+ * @param string $file the name of file that must be present in the plugin.
+ *      (e.g. 'view.php', 'db/install.xml').
+ * @param bool $include if true (default false), the file will be include_once-ed if found.
+ * @return array with plugin name as keys (e.g. 'forum', 'courselist') and the path
+ *      to the file relative to dirroot as value (e.g. "$CFG->dirroot/mod/forum/view.php").
  */
-function get_plugin_list_with_function($plugintype, $function, $file='lib.php') {
-    global $CFG; // mandatory in case it is referenced by include()d PHP script
+function get_plugin_list_with_file($plugintype, $file, $include = false) {
+    global $CFG; // Necessary in case it is referenced by include()d PHP scripts.
 
-    $result = array();
-    // Loop through list of plugins with given type
-    $list = get_plugin_list($plugintype);
-    foreach($list as $plugin => $dir) {
+    $plugins = array();
+
+    foreach(get_plugin_list($plugintype) as $plugin => $dir) {
         $path = $dir . '/' . $file;
-        // If file exists, require it and look for function
         if (file_exists($path)) {
-            include_once($path);
-            $fullfunction = $plugintype . '_' . $plugin . '_' . $function;
-            if (function_exists($fullfunction)) {
-                // Function exists with standard name. Store, indexed by
-                // frankenstyle name of plugin
-                $result[$plugintype . '_' . $plugin] = $fullfunction;
-            } else if ($plugintype === 'mod') {
-                // For modules, we also allow plugin without full frankenstyle
-                // but just starting with the module name
-                $shortfunction = $plugin . '_' . $function;
-                if (function_exists($shortfunction)) {
-                    $result[$plugintype . '_' . $plugin] = $shortfunction;
-                }
+            if ($include) {
+                include_once($path);
+            }
+            $plugins[$plugin] = $path;
+        }
+    }
+
+    return $plugins;
+}
+
+/**
+ * Get a list of all the plugins of a given type that define a certain API function
+ * in a certain file. The plugin component names and function names are returned.
+ *
+ * @param string $plugintype the type of plugin, e.g. 'mod' or 'report'.
+ * @param string $function the part of the name of the function after the
+ *      frankenstyle prefix. e.g 'hook' if you are looking for functions with
+ *      names like report_courselist_hook.
+ * @param string $file the name of file within the plugin that defines the
+ *      function. Defaults to lib.php.
+ * @return array with frankenstyle plugin names as keys (e.g. 'report_courselist', 'mod_forum')
+ *      and the function names as values (e.g. 'report_courselist_hook', 'forum_hook').
+ */
+function get_plugin_list_with_function($plugintype, $function, $file = 'lib.php') {
+    $pluginfunctions = array();
+    foreach (get_plugin_list_with_file($plugintype, $file, true) as $plugin => $notused) {
+        $fullfunction = $plugintype . '_' . $plugin . '_' . $function;
+
+        if (function_exists($fullfunction)) {
+            // Function exists with standard name. Store, indexed by
+            // frankenstyle name of plugin
+            $pluginfunctions[$plugintype . '_' . $plugin] = $fullfunction;
+
+        } else if ($plugintype === 'mod') {
+            // For modules, we also allow plugin without full frankenstyle
+            // but just starting with the module name
+            $shortfunction = $plugin . '_' . $function;
+            if (function_exists($shortfunction)) {
+                $pluginfunctions[$plugintype . '_' . $plugin] = $shortfunction;
             }
         }
     }
-    return $result;
+    return $pluginfunctions;
+}
+
+/**
+ * Get a list of all the plugins of a given type that define a certain class
+ * in a certain file. The plugin component names and class names are returned.
+ *
+ * @param string $plugintype the type of plugin, e.g. 'mod' or 'report'.
+ * @param string $class the part of the name of the class after the
+ *      frankenstyle prefix. e.g 'thing' if you are looking for classes with
+ *      names like report_courselist_thing. If you are looking for classes with
+ *      the same name as the plugin name (e.g. qtype_multichoice) then pass ''.
+ * @param string $file the name of file within the plugin that defines the class.
+ * @return array with frankenstyle plugin names as keys (e.g. 'report_courselist', 'mod_forum')
+ *      and the class names as values (e.g. 'report_courselist_thing', 'qtype_multichoice').
+ */
+function get_plugin_list_with_class($plugintype, $class, $file) {
+    if ($class) {
+        $suffix = '_' . $class;
+    } else {
+        $suffix = '';
+    }
+
+    $pluginclasses = array();
+    foreach (get_plugin_list_with_file($plugintype, $file, true) as $plugin => $notused) {
+        $classname = $plugintype . '_' . $plugin . $suffix;
+        if (class_exists($classname)) {
+            $pluginclasses[$plugintype . '_' . $plugin] = $classname;
+        }
+    }
+
+    return $pluginclasses;
 }
 
 /**

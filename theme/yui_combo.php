@@ -48,7 +48,7 @@ if (substr($parts, -3) === '.js') {
 // if they are requesting a revision that's not -1, and they have supplied an
 // If-Modified-Since header, we can send back a 304 Not Modified since the
 // content never changes (the rev number is increased any time the content changes)
-if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+if (strpos($parts, '/-1/') === false and (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE']))) {
     $lifetime = 60*60*24*30; // 30 days
     header('HTTP/1.1 304 Not Modified');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');

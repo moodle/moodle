@@ -36,7 +36,7 @@ $userid = optional_param('id', $USER->id, PARAM_INT);    // user id
 $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 $cancelemailchange = optional_param('cancelemailchange', 0, PARAM_INT);   // course id (defaults to Site)
 
-$PAGE->set_url('/user/edit.php', array('course'=>$course, 'id'=>$userid, 'cancelemailchange'=>$cancelemailchange));
+$PAGE->set_url('/user/edit.php', array('course'=>$course, 'id'=>$userid));
 
 if (!$course = $DB->get_record('course', array('id'=>$course))) {
     print_error('invalidcourseid');
@@ -50,7 +50,8 @@ if ($course->id != SITEID) {
     }
     redirect(get_login_url());
 } else {
-    $PAGE->set_course($course);
+    $PAGE->set_context(get_system_context());
+    $PAGE->set_pagelayout('standard');
 }
 
 // Guest can not edit

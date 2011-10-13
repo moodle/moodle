@@ -40,23 +40,25 @@
         user_accesstime_log();
     }
 
+    $hassiteconfig = has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+
     $PAGE->set_url('/');
     $PAGE->set_course($SITE);
 
 /// If the site is currently under maintenance, then print a message
-    if (!empty($CFG->maintenance_enabled) and !has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+    if (!empty($CFG->maintenance_enabled) and !$hassiteconfig) {
         print_maintenance_message();
     }
 
-    if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-        if (moodle_needs_upgrading()) {
-            redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
-        }
-    } else if (get_home_page() != HOMEPAGE_SITE) {
+    if ($hassiteconfig && moodle_needs_upgrading()) {
+        redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
+    }
+
+    if (get_home_page() != HOMEPAGE_SITE) {
         // Redirect logged-in users to My Moodle overview if required
         if (optional_param('setdefaulthome', false, PARAM_BOOL)) {
             set_user_preference('user_home_page_preference', HOMEPAGE_SITE);
-        } else if ($CFG->defaulthomepage == HOMEPAGE_MY && optional_param('redirect', true, PARAM_BOOL)) {
+        } else if ($CFG->defaulthomepage == HOMEPAGE_MY && (optional_param('redirect', true, PARAM_BOOL) || !$hassiteconfig)) {
             redirect($CFG->wwwroot .'/my/');
         } else if (!empty($CFG->defaulthomepage) && $CFG->defaulthomepage == HOMEPAGE_USER) {
             $PAGE->settingsnav->get('usercurrentsettings')->add(get_string('makethismyhome'), new moodle_url('/', array('setdefaulthome'=>true)), navigation_node::TYPE_SETTING);
@@ -187,12 +189,12 @@
             break;
 
             case FRONTPAGECOURSELIST:
-                if (isloggedin() and !has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and !isguestuser() and empty($CFG->disablemycourses)) {
+                if (isloggedin() and !$hassiteconfig and !isguestuser() and empty($CFG->disablemycourses)) {
                     echo html_writer::tag('a', get_string('skipa', 'access', moodle_strtolower(get_string('mycourses'))), array('href'=>'#skipmycourses', 'class'=>'skip-block'));
                     echo $OUTPUT->heading(get_string('mycourses'), 2, 'headingblock header');
                     print_my_moodle();
                     echo html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipmycourses'));
-                } else if ((!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM)) and !isguestuser()) or ($DB->count_records('course') <= FRONTPAGECOURSELIMIT)) {
+                } else if ((!$hassiteconfig and !isguestuser()) or ($DB->count_records('course') <= FRONTPAGECOURSELIMIT)) {
                     // admin should not see list of courses when there are too many of them
                     echo html_writer::tag('a', get_string('skipa', 'access', moodle_strtolower(get_string('availablecourses'))), array('href'=>'#skipavailablecourses', 'class'=>'skip-block'));
                     echo $OUTPUT->heading(get_string('availablecourses'), 2, 'headingblock header');
