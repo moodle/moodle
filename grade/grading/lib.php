@@ -383,6 +383,8 @@ class grading_manager {
 
     /**
      * Returns the controller for the active method if it is available
+     *
+     * @return null|grading_controller
      */
     public function get_active_controller() {
         if ($gradingmethod = $this->get_active_method()) {
@@ -392,6 +394,29 @@ class grading_manager {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the URL of the grading area management page
+     *
+     * @param moodle_url $returnurl optional URL of the page where the user should be sent back to
+     * @return moodle_url
+     */
+    public function get_management_url(moodle_url $returnurl = null) {
+
+        $this->ensure_isset(array('context', 'component'));
+
+        if ($this->areacache) {
+            $params = array('areaid' => $this->areacache->id);
+        } else {
+            $params = array('contextid' => $this->context->id, 'component' => $this->component);
+        }
+
+        if (!is_null($returnurl)) {
+            $params['returnurl'] = $returnurl->out(false);
+        }
+
+        return new moodle_url('/grade/grading/management.php', $params);
     }
 
     ////////////////////////////////////////////////////////////////////////////

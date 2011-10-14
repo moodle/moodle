@@ -594,11 +594,18 @@ if ($mform->is_cancelled()) {
         require_once($CFG->dirroot.'/grade/grading/lib.php');
         $context = get_context_instance(CONTEXT_MODULE, $fromform->coursemodule);
         $gradingman = get_grading_manager($context, 'mod_'.$fromform->modulename);
+        $showgradingmanagement = false;
         foreach ($gradingman->get_available_areas() as $areaname => $aretitle) {
             $formfield = 'advancedgradingmethod_'.$areaname;
             if (isset($fromform->{$formfield})) {
                 $gradingman->set_area($areaname);
-                $gradingman->set_active_method($fromform->{$formfield});
+                $methodchanged = $gradingman->set_active_method($fromform->{$formfield});
+                if (empty($fromform->{$formfield})) {
+                    // going back to the simple direct grading is not a reason
+                    // to open the management screen
+                    $methodchanged = false;
+                }
+                $showgradingmanagement = $showgradingmanagement || $methodchanged;
             }
         }
     }
@@ -608,7 +615,12 @@ if ($mform->is_cancelled()) {
     plagiarism_save_form_elements($fromform); //save plagiarism settings
 
     if (isset($fromform->submitbutton)) {
-        redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$fromform->coursemodule");
+        if (empty($showgradingmanagement)) {
+            redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$fromform->coursemodule");
+        } else {
+            $returnurl = new moodle_url("/mod/$module->name/view.php", array('id' => $fromform->coursemodule));
+            redirect($gradingman->get_management_url($returnurl));
+        }
     } else {
         redirect("$CFG->wwwroot/course/view.php?id={$course->id}#section-{$cw->section}");
     }
