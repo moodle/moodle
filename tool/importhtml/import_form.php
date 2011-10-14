@@ -43,7 +43,8 @@ class booktool_importhtml_form extends moodleform {
         $mform->addElement('select', 'type', get_string('type', 'booktool_importhtml'), $options);
         $mform->setDefault('type', 2);
 
-        $mform->addElement('filepicker', 'importfile', get_string('file'));
+        $mform->addElement('filepicker', 'importfile', get_string('ziparchive', 'booktool_importhtml'));
+        $mform->addHelpButton('importfile', 'ziparchive', 'booktool_importhtml');
         $mform->addRule('importfile', null, 'required');
 
         $mform->addElement('hidden', 'id');
