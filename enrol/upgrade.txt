@@ -1,0 +1,8 @@
+This files describes API changes in /enrol/* - plugins,
+information provided here is intended especially for developers.
+
+=== 2.2 ===
+
+required changes in code:
+* load_temp_role() is deprecated, use load_temp_course_role() instead, temp role not loaded
+* remove_temp_role() is deprecated, use remove_temp_course_roles() instead

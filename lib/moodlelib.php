@@ -2790,7 +2790,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
                 } else {
                     //expired
                     unset($USER->enrol['tempguest'][$course->id]);
-                    $USER->access = remove_temp_roles($coursecontext, $USER->access);
+                    remove_temp_course_roles($coursecontext);
                 }
             }
 
@@ -2817,7 +2817,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
                 $access = true;
 
                 // remove traces of previous temp guest access
-                $USER->access = remove_temp_roles($coursecontext, $USER->access);
+                remove_temp_course_roles($coursecontext);
 
             } else {
                 $instances = $DB->get_records('enrol', array('courseid'=>$course->id, 'status'=>ENROL_INSTANCE_ENABLED), 'sortorder, id ASC');
@@ -2831,7 +2831,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
                     $until = $enrols[$instance->enrol]->try_autoenrol($instance);
                     if ($until !== false) {
                         $USER->enrol['enrolled'][$course->id] = $until;
-                        $USER->access = remove_temp_roles($coursecontext, $USER->access);
+                        remove_temp_course_roles($coursecontext);
                         $access = true;
                         break;
                     }
@@ -3031,6 +3031,7 @@ function require_user_key_login($script, $instance=null) {
     }
 
 /// emulate normal session
+    enrol_check_plugins($user);
     session_set_user($user);
 
 /// note we are not using normal login
@@ -3882,12 +3883,15 @@ function complete_user_login($user) {
     // this helps prevent session fixation attacks from the same domain
     session_regenerate_id(true);
 
+    // let enrol plugins deal with new enrolments if necessary
+    enrol_check_plugins($user);
+
     // check enrolments, load caps and setup $USER object
     session_set_user($user);
 
     // reload preferences from DB
-    unset($user->preference);
-    check_user_preferences_loaded($user);
+    unset($USER->preference);
+    check_user_preferences_loaded($USER);
 
     // update login times
     update_user_login_times();

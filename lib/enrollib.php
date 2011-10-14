@@ -188,7 +188,9 @@ function enrol_is_enabled($enrol) {
  * Check all the login enrolment information for the given user object
  * by querying the enrolment plugins
  *
- * @param object $user
+ * This function may be very slow, use only once after log-in or login-as.
+ *
+ * @param stdClass $user
  * @return void
  */
 function enrol_check_plugins($user) {
@@ -201,7 +203,7 @@ function enrol_check_plugins($user) {
 
     if (is_siteadmin()) {
         // no sync for admin user, please use admin accounts only for admin tasks like the unix root user!
-        // if plugin fails on sync admins need to be able to log in
+        // if plugin fails on sync admins need to be able to log in and fix the settings
         return;
     }
 
@@ -1150,7 +1152,7 @@ abstract class enrol_plugin {
             }
             if (isset($USER->enrol['tempguest'][$courseid])) {
                 unset($USER->enrol['tempguest'][$courseid]);
-                $USER->access = remove_temp_roles($context, $USER->access);
+                remove_temp_course_roles($context);
             }
         }
     }
@@ -1272,7 +1274,7 @@ abstract class enrol_plugin {
             }
             if (isset($USER->enrol['tempguest'][$courseid])) {
                 unset($USER->enrol['tempguest'][$courseid]);
-                $USER->access = remove_temp_roles($context, $USER->access);
+                remove_temp_course_roles($context);
             }
         }
     }

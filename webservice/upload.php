@@ -66,6 +66,8 @@ $user = $DB->get_record('user', array('id'=>$token->userid, 'deleted'=>0), '*', 
 // log token access
 $DB->set_field('external_tokens', 'lastaccess', time(), array('id'=>$token->id));
 
+// let enrol plugins deal with new enrolments if necessary
+enrol_check_plugins($user);
 session_set_user($user);
 $context = get_context_instance(CONTEXT_USER, $USER->id);
 require_capability('moodle/user:manageownfiles', $context);

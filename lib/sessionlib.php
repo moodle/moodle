@@ -894,7 +894,8 @@ function get_moodle_cookie() {
 
 /**
  * Setup $USER object - called during login, loginas, etc.
- * Preloads capabilities and checks enrolment plugins
+ *
+ * Call sync_user_enrolments() manually after log-in, or log-in-as.
  *
  * @param stdClass $user full user record object
  * @return void
@@ -902,11 +903,6 @@ function get_moodle_cookie() {
 function session_set_user($user) {
     $_SESSION['USER'] = $user;
     unset($_SESSION['USER']->description); // conserve memory
-    if (!isset($_SESSION['USER']->access)) {
-        // check enrolments and load caps only once
-        enrol_check_plugins($_SESSION['USER']);
-        load_all_capabilities();
-    }
     sesskey(); // init session key
 }
 
@@ -950,6 +946,10 @@ function session_loginas($userid, $context) {
     $user = get_complete_user_data('id', $userid);
     $user->realuser       = $_SESSION['REALUSER']->id;
     $user->loginascontext = $context;
+
+    // let enrol plugins deal with new enrolments if necessary
+    enrol_check_plugins($user);
+    // set up global $USER
     session_set_user($user);
 }
 

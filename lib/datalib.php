@@ -1014,7 +1014,11 @@ function fix_course_sortorder() {
 
     // now fix the paths and depths in context table if needed
     if ($fixcontexts) {
-        rebuild_contexts($fixcontexts);
+        foreach ($fixcontexts as $fixcontext) {
+            $fixcontext->reset_paths(false);
+        }
+        context_helper::build_all_paths(false);
+        unset($fixcontexts);
     }
 
     // release memory

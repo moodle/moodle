@@ -77,7 +77,7 @@ class enrol_guest_plugin extends enrol_plugin {
         if (empty($instance->password)) {
             // Temporarily assign them some guest role for this context
             $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
-            $USER->access = load_temp_role($context, $CFG->guestroleid, $USER->access);
+            load_temp_course_role($context, $CFG->guestroleid);
             return ENROL_REQUIRE_LOGIN_CACHE_PERIOD + time();
         }
 
@@ -131,7 +131,7 @@ class enrol_guest_plugin extends enrol_plugin {
 
                 // add guest role
                 $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
-                $USER->access = load_temp_role($context, $CFG->guestroleid, $USER->access);
+                load_temp_course_role($context, $CFG->guestroleid);
 
                 // go to the originally requested page
                 if (!empty($SESSION->wantsurl)) {

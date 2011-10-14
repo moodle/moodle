@@ -38,9 +38,6 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
 
 require_login();
 
-// Refreshing enrolment data in the USER session
-load_all_capabilities();
-
 if ($SESSION->wantsurl) {
     $destination = $SESSION->wantsurl;
     unset($SESSION->wantsurl);
