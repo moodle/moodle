@@ -156,7 +156,12 @@ if ($nextid) {
     if ($section = $DB->get_record('course_sections', array('id'=>$cm->section))) {
         $sec = $section->section;
     }
-    $chnavigation .= '<a title="'.get_string('navexit', 'book').'" href="../../course/view.php?id='.$course->id.'#section-'.$sec.'"><img src="'.$OUTPUT->pix_url('nav_exit', 'mod_book').'" class="bigicon" alt="'.get_string('navexit', 'book').'" /></a>';
+    if ($course->id == $SITE->id) {
+        $returnurl = "$CFG->wwwroot/";
+    } else {
+        $returnurl = "$CFG->wwwroot/course/view.php?id=$course->id#section-$sec";
+    }
+    $chnavigation .= '<a title="'.get_string('navexit', 'book').'" href="'.$returnurl.'"><img src="'.$OUTPUT->pix_url('nav_exit', 'mod_book').'" class="bigicon" alt="'.get_string('navexit', 'book').'" /></a>';
 
     // we are cheating a bit here, viewing the last page means user has viewed the whole book
     $completion = new completion_info($course);
