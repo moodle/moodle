@@ -118,23 +118,27 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                 maxwidth += 8;
                 maxheight += 2;
                 groupitems.each(function(item) {
-                    var margintop = Math.round((maxheight - item.get('offsetHeight'))/2);
-                    var marginleft = Math.round((maxwidth - item.get('offsetWidth'))/2);
-                    var marginbottom = (maxheight - item.get('offsetHeight')) - margintop;
-                    if (ie7fix) {
-                        marginbottom += 8;
-                    }
-                    var marginright = (maxwidth - item.get('offsetWidth')) - marginleft;
-                    item.setStyle('padding', margintop+'px '+marginleft+'px '
-                                            +marginbottom+'px '+marginright+'px');
+                    this.pad_to_width_height(item, maxwidth, maxheight, ie7fix);
                 }, this);
-                if (ie7fix) {
-                    maxheight += 8;
-                }
-                Y.all(this.selectors.drops_group(groupno)).setStyles({'width': maxwidth ,
-                                                                'height': maxheight});
+                Y.all(this.selectors.drops_group(groupno)).each(function(item) {
+                    this.pad_to_width_height(item, maxwidth + 2, maxheight + 2, ie7fix);
+                }, this);
             }
         },
+        pad_to_width_height : function (node, width, height, extrabottompadding) {
+            var totalypadding = height - node.get('offsetHeight');
+            var totalxpadding = width - node.get('offsetWidth');
+            var margintop = Math.round(totalypadding/2);
+            var marginleft = Math.round(totalxpadding/2);
+            var marginbottom = totalypadding - margintop;
+            if (extrabottompadding) {
+                marginbottom += 8;
+            }
+            var marginright = totalxpadding - marginleft;
+            node.setStyle('padding', margintop+'px '+marginleft+'px '
+                                    +marginbottom+'px '+marginright+'px');
+        },
+        
         /**
          * Invisible 'drag homes' are output by the renderer. These have the same properties 
          * as the drag items but are invisible. We clone these invisible elements to make the 
