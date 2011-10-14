@@ -3,28 +3,35 @@
 $hasheading = ($PAGE->heading);
 $hasnavbar = (empty($PAGE->layout_options['nonavbar']) && $PAGE->has_navbar());
 $hasfooter = (empty($PAGE->layout_options['nofooter']));
+
 $hassidepre = $PAGE->blocks->region_has_content('side-pre', $OUTPUT);
 $hassidepost = $PAGE->blocks->region_has_content('side-post', $OUTPUT);
+
+$showsidepre = ($hassidepre && !$PAGE->blocks->region_completely_docked('side-pre', $OUTPUT));
+$showsidepost = ($hassidepost && !$PAGE->blocks->region_completely_docked('side-post', $OUTPUT));
+
 $custommenu = $OUTPUT->custom_menu();
 $hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
 $bodyclasses = array();
-if ($hassidepre && !$hassidepost) {
+if ($showsidepre && !$showsidepost) {
     $bodyclasses[] = 'side-pre-only';
-} else if ($hassidepost && !$hassidepre) {
+} else if ($showsidepost && !$showsidepre) {
     $bodyclasses[] = 'side-post-only';
-} else if (!$hassidepost && !$hassidepre) {
+} else if (!$showsidepost && !$showsidepre) {
     $bodyclasses[] = 'content-only';
 }
 if ($hascustommenu) {
     $bodyclasses[] = 'has_custom_menu';
 }
 
+
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes() ?>>
 <head>
     <title><?php echo $PAGE->title ?></title>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->pix_url('favicon', 'theme')?>" />
+    <meta name="description" content="<?php p(strip_tags(format_text($SITE->summary, FORMAT_HTML))) ?>" />
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
 
