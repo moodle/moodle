@@ -24,5 +24,25 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2011101400;
-$plugin->requires = 2011092900;  // Requires this Moodle version
+/**
+ * Keeps track or rubric plugin upgrade path
+ *
+ * @todo get rid of this before merging into the master branch MDL-29798
+ * @param int $oldversion the DB version of currently installed plugin
+ * @return bool true
+ */
+function xmldb_gradingform_rubric_upgrade($oldversion) {
+    global $CFG, $DB, $OUTPUT;
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2011101400) {
+        // add key uq_instance_criterion (unique)
+        $table = new xmldb_table('gradingform_rubric_fillings');
+        $key = new xmldb_key('uq_instance_criterion', XMLDB_KEY_UNIQUE, array('forminstanceid', 'criterionid'));
+        $dbman->add_key($table, $key);
+        upgrade_plugin_savepoint(true, 2011101400, 'gradingform', 'rubric');
+    }
+
+    return true;
+}

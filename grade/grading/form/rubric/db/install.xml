@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="grade/grading/form/rubric/db" VERSION="20110929" COMMENT="XMLDB file for Moodle rubrics"
+<XMLDB PATH="grade/grading/form/rubric/db" VERSION="20111014" COMMENT="XMLDB file for Moodle rubrics"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >
@@ -42,7 +42,8 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_forminstanceid"/>
         <KEY NAME="fk_forminstanceid" TYPE="foreign" FIELDS="forminstanceid" REFTABLE="grading_instances" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_criterionid"/>
-        <KEY NAME="fk_criterionid" TYPE="foreign" FIELDS="criterionid" REFTABLE="gradingform_rubric_criteria" REFFIELDS="id" PREVIOUS="fk_forminstanceid"/>
+        <KEY NAME="fk_criterionid" TYPE="foreign" FIELDS="criterionid" REFTABLE="gradingform_rubric_criteria" REFFIELDS="id" PREVIOUS="fk_forminstanceid" NEXT="uq_instance_criterion"/>
+        <KEY NAME="uq_instance_criterion" TYPE="unique" FIELDS="forminstanceid, criterionid" PREVIOUS="fk_criterionid"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="ix_levelid" UNIQUE="false" FIELDS="levelid" COMMENT="levelid acts as a foreign key but null values are allowed"/>
