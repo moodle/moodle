@@ -35,7 +35,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="forminstanceid"/>
         <FIELD NAME="forminstanceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The ID of the grading form instance" PREVIOUS="id" NEXT="criterionid"/>
         <FIELD NAME="criterionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The ID of the criterion (row) in the rubric" PREVIOUS="forminstanceid" NEXT="levelid"/>
-        <FIELD NAME="levelid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="If a particular level was selected during the assessment, its ID is stored here" PREVIOUS="criterionid" NEXT="remark"/>
+        <FIELD NAME="levelid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="If a particular level was selected during the assessment, its ID is stored here" PREVIOUS="criterionid" NEXT="remark"/>
         <FIELD NAME="remark" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Side note feedback regarding this particular criterion" PREVIOUS="levelid" NEXT="remarkformat"/>
         <FIELD NAME="remarkformat" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The format of the remark field" PREVIOUS="remark"/>
       </FIELDS>
