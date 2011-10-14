@@ -31,4 +31,4 @@ $module->cron      = 0;          // Period for cron to check this module (secs)
 $module->component = 'mod_book'; // Full name of the plugin (used for diagnostics)
 
 $module->maturity  = MATURITY_BETA;
-$module->release   = "2.1beta1 (20111009)"; // User-friendly version number
+$module->release   = "2.1beta1 (20111014)"; // User-friendly version number
