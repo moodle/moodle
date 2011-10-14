@@ -11,10 +11,6 @@
     margin-bottom: 0.5em;
 }
 
-.que.ddwtos .drop.filled {
-    border: 3px dotted #000000;
-}
-
 .que.ddwtos .drop {
     display: inline-block;
     text-align: center;
