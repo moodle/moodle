@@ -40,7 +40,10 @@ function booktool_exportimscp_build_package($book, $context) {
         return $packagefile;
     }
 
-    book_preload_chapters($book); //fix structure
+    // fix structure and test if chapters present
+    if (!book_preload_chapters($book)) {
+        print_error('nochapters', 'booktool_exportimscp');
+    }
 
     // prepare temp area with package contents
     booktool_exportimscp_prepare_files($book, $context);
