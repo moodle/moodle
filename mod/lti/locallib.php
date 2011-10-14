@@ -201,8 +201,11 @@ function lti_build_sourcedid($instanceid, $userid, $launchid = null, $servicesal
 function lti_build_request($instance, $typeconfig, $course) {
     global $USER, $CFG;
 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    $role = lti_get_ims_role($USER, $context);
+    if(empty($instance->cmid)){
+        $instance->cmid = 0;
+    }
+    
+    $role = lti_get_ims_role($USER, $instance->cmid);
 
     $locale = $course->lang;
     if ( strlen($locale) < 1 ) {
@@ -433,34 +436,27 @@ function lti_map_keyname($key) {
 }
 
 /**
- * Returns the IMS user role in a given context
- *
- * This function queries Moodle for an user role and
- * returns the correspondant IMS role
- *
- * @param StdClass $user          Moodle user instance
- * @param StdClass $context       Moodle context
- *
- * @return string                 IMS Role
- *
+ * Gets the IMS role string for the specified user and LTI course module.
+ * 
+ * @param mixed $user User object or user id
+ * @param int $cmid The course module id of the LTI activity
+ * @return string A role string suitable for passing with an LTI launch
  */
-function lti_get_ims_role($user, $context) {
-
-    $roles = get_user_roles($context, $user->id);
-    $rolesname = array();
-    foreach ($roles as $role) {
-        $rolesname[] = $role->shortname;
+function lti_get_ims_role($user, $cmid) {
+    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    $roles = array();
+    
+    if(has_capability('mod/lti:manage', $context)){
+        array_push($roles, 'Instructor');
+    } else {
+        array_push($roles, 'Learner');
     }
-
-    if (in_array('admin', $rolesname) || in_array('coursecreator', $rolesname)) {
-        return get_string('imsroleadmin', 'lti');
+    
+    if(is_siteadmin($user)){
+        array_push($roles, 'urn:lti:sysrole:ims/lis/Administrator');
     }
-
-    if (in_array('editingteacher', $rolesname) || in_array('teacher', $rolesname)) {
-        return get_string('imsroleinstructor', 'lti');
-    }
-
-    return get_string('imsrolelearner', 'lti');
+    
+    return join(',', $roles);
 }
 
 /**

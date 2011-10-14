@@ -80,5 +80,6 @@ require_login($course);
 
 add_to_log($course->id, "lti", "launch", "launch.php?id=$cm->id", "$basiclti->id");
 
+$basiclti->cmid = $cm->id;
 lti_view($basiclti);
 
