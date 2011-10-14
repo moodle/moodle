@@ -6778,6 +6778,7 @@ FROM
         upgrade_main_savepoint(true, 2011092800.03);
     }
 
+    // TODO squash this before merging into the master - MDL-29798
     if ($oldversion < 2011100700.01) {
         // Create new core tables for the advanced grading subsystem
 
@@ -6852,6 +6853,14 @@ FROM
         upgrade_main_savepoint(true, 2011100700.02);
     }
 
+    // TODO squash this before merging into the master - MDL-29798
+    if ($oldversion < 2011101200.01) {
+        // drop the unique key uq_rater_per_item (unique)
+        $table = new xmldb_table('grading_instances');
+        $key = new xmldb_key('uq_rater_per_item', XMLDB_KEY_UNIQUE, array('formid', 'raterid', 'itemid'));
+        $dbman->drop_key($table, $key);
+        upgrade_main_savepoint(true, 2011101200.01);
+    }
+
     return true;
 }
-

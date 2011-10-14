@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20111007" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20111014" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2839,8 +2839,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_formid"/>
         <KEY NAME="fk_formid" TYPE="foreign" FIELDS="formid" REFTABLE="grading_definitions" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_raterid"/>
-        <KEY NAME="fk_raterid" TYPE="foreign" FIELDS="raterid" REFTABLE="user" REFFIELDS="id" PREVIOUS="fk_formid" NEXT="uq_rater_per_item"/>
-        <KEY NAME="uq_rater_per_item" TYPE="unique" FIELDS="formid, raterid, itemid" PREVIOUS="fk_raterid"/>
+        <KEY NAME="fk_raterid" TYPE="foreign" FIELDS="raterid" REFTABLE="user" REFFIELDS="id" PREVIOUS="fk_formid"/>
       </KEYS>
     </TABLE>
   </TABLES>
