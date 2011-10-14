@@ -313,6 +313,15 @@ class grading_manager {
             return;
         }
 
+        if ($PAGE->url->compare(new moodle_url('/grade/grading/management.php'), URL_MATCH_BASE)) {
+            // we are already at the management page, do not produce link to ourselves
+            // (because of the returnurl)
+            $managementurl = null;
+        } else {
+            $managementurl = $this->get_management_url($PAGE->url);
+        }
+        $managementnode = $modulenode->add(get_string('gradingmanagement', 'core_grading'), $managementurl, settings_navigation::TYPE_CUSTOM);
+
         foreach ($areas as $areaname => $areatitle) {
             $this->set_area($areaname);
             $method = $this->get_active_method();
@@ -324,10 +333,10 @@ class grading_manager {
 
             if (count($areas) > 1) {
                 // if the module supports multiple gradable areas, make a node for each of them
-                $node = $modulenode->add(get_string('gradinginarea', 'core_grading', $areatitle), null, settings_navigation::NODETYPE_BRANCH);
+                $node = $managementnode->add(get_string('gradinginarea', 'core_grading', $areatitle), null, settings_navigation::NODETYPE_BRANCH);
             } else {
                 // otherwise put the items directly into the module's node
-                $node = $modulenode;
+                $node = $managementnode;
             }
 
             $controller = $this->get_controller($method);
