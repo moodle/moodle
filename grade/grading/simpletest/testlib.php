@@ -110,8 +110,11 @@ class grading_manager_test extends UnitTestCase {
         $this->assertNull($gradingman->get_active_method());
 
         // creates area implicitly and sets active method
-        $gradingman->set_active_method('rubric');
+        $this->assertTrue($gradingman->set_active_method('rubric'));
         $this->assertEqual('rubric', $gradingman->get_active_method());
+
+        // repeat setting of already set active method
+        $this->assertFalse($gradingman->set_active_method('rubric'));
 
         // switch the manager to another area
         $gradingman->set_area($areaname2);

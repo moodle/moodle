@@ -238,6 +238,7 @@ class grading_manager {
      * Sets the currently active grading method in the gradable area
      *
      * @param string $method the method name, eg 'rubric' (must be available)
+     * @return bool true if the method changed or was just set, false otherwise
      */
     public function set_active_method($method) {
         global $DB;
@@ -266,6 +267,8 @@ class grading_manager {
             '*', IGNORE_MISSING);
         }
 
+        $methodchanged = false;
+
         if ($this->areacache === false) {
             // no area record yet, create one with the active method set
             $area = array(
@@ -274,15 +277,19 @@ class grading_manager {
                 'areaname'      => $this->area,
                 'activemethod'  => $method);
             $DB->insert_record('grading_areas', $area);
+            $methodchanged = true;
 
         } else {
             // update the existing record if needed
             if ($this->areacache->activemethod !== $method) {
                 $DB->set_field('grading_areas', 'activemethod', $method, array('id' => $this->areacache->id));
+                $methodchanged = true;
             }
         }
 
         $this->areacache = null;
+
+        return $methodchanged;
     }
 
     /**
