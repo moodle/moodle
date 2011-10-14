@@ -669,12 +669,8 @@ class file_storage {
         try {
             $newrecord->id = $DB->insert_record('files', $newrecord);
         } catch (dml_exception $e) {
-            $newrecord->id = false;
-        }
-
-        if (!$newrecord->id) {
             throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
-                                                     $newrecord->filepath, $newrecord->filename);
+                                                     $newrecord->filepath, $newrecord->filename, $e->debuginfo);
         }
 
         $this->create_directory($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
@@ -814,15 +810,11 @@ class file_storage {
         try {
             $newrecord->id = $DB->insert_record('files', $newrecord);
         } catch (dml_exception $e) {
-            $newrecord->id = false;
-        }
-
-        if (!$newrecord->id) {
             if ($newfile) {
                 $this->deleted_file_cleanup($newrecord->contenthash);
             }
             throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
-                                                    $newrecord->filepath, $newrecord->filename);
+                                                    $newrecord->filepath, $newrecord->filename, $e->debuginfo);
         }
 
         $this->create_directory($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
@@ -907,15 +899,11 @@ class file_storage {
         try {
             $newrecord->id = $DB->insert_record('files', $newrecord);
         } catch (dml_exception $e) {
-            $newrecord->id = false;
-        }
-
-        if (!$newrecord->id) {
             if ($newfile) {
                 $this->deleted_file_cleanup($newrecord->contenthash);
             }
             throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
-                                                    $newrecord->filepath, $newrecord->filename);
+                                                    $newrecord->filepath, $newrecord->filename, $e->debuginfo);
         }
 
         $this->create_directory($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
