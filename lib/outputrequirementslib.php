@@ -105,7 +105,7 @@ class page_requirements_manager {
     protected $yui2loader;
     /** YUI PHPLoader instance responsible for YUI3 loading from PHP only */
     protected $yui3loader;
-    /** YUI PHPLoader instance responsible for YUI3 loading from javascript */
+    /** YUI loader information for YUI3 loading from javascript */
     protected $M_yui_loader;
     /** some config vars exposed in JS, please no secret stuff there */
     protected $M_cfg;
@@ -120,7 +120,7 @@ class page_requirements_manager {
 
         require_once("$CFG->libdir/yui/phploader/phploader/loader.php");
 
-        $this->yui3loader = new YAHOO_util_Loader($CFG->yui3version);
+        $this->yui3loader = new stdClass();
         $this->yui2loader = new YAHOO_util_Loader($CFG->yui2version);
 
         // set up some loader options
@@ -201,11 +201,6 @@ class page_requirements_manager {
         $this->js_module($this->find_module('core_filepicker'));
         $this->js_module($this->find_module('core_dock'));
 
-        // YUI3 init code
-        $libs = array('cssreset', 'cssbase', 'cssfonts', 'cssgrids', 'node', 'loader'); // full CSS reset + basic libs
-        foreach ($libs as $lib) {
-            $this->yui3loader->load($lib);
-        }
     }
 
     /**
@@ -965,10 +960,29 @@ class page_requirements_manager {
      * @return string
      */
     protected function get_yui3lib_headcode() {
-        $code = $this->yui3loader->tags();
-        // unfortunately yui loader does not produce xhtml strict code, so let's fix it for now
-        $code = str_replace('&amp;', '&', $code);
-        $code = str_replace('&', '&amp;', $code);
+        global $CFG;
+
+        $code = '';
+
+        if ($this->yui3loader->combine) {
+            $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->comboBase
+                     .$CFG->yui3version.'/build/cssreset/reset-min.css&amp;'
+                     .$CFG->yui3version.'/build/cssfonts/fonts-min.css&amp;'
+                     .$CFG->yui3version.'/build/cssgrids/grids-min.css&amp;'
+                     .$CFG->yui3version.'/build/cssbase/base-min.css" />';
+        } else {
+            $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.'cssreset/reset-min.css" />';
+            $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.'cssfonts/fonts-min.css" />';
+            $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.'cssgrids/grids-min.css" />';
+            $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.'cssbase/base-min.css" />';
+        }
+
+        if (debugging('', DEBUG_DEVELOPER)) {
+            $code .= '<script src="'.$this->yui3loader->base.'yui/yui-debug.js"></script>';
+        } else {
+            $code .= '<script src="'.$this->yui3loader->base.'yui/yui-min.js"></script>';
+        }
+
         return $code;
     }
 
