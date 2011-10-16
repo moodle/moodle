@@ -209,10 +209,29 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         // Links to course
         $searchstring = '/\$@(COURSEVIEWBYID)\*([0-9]+)@\$/';
-        $replacestring= $CFG->wwwroot . '/course/view.php?id=' . $restore->course_id;
-        $result = preg_replace($searchstring, $replacestring, $content);
+        // We look for it
+        preg_match_all($searchstring, $content, $foundset);
+        // If found, then we are going to look for its new id (in backup tables)
+        if ($foundset[0]) {
+            // Iterate over foundset[2]. They are the old_ids
+            foreach ($foundset[2] as $old_id) {
+                // We get the needed variables here (course id)
+                $rec = backup_getid($restore->backup_unique_code, 'course', $old_id);
+                // Personalize the searchstring
+                $searchstring = '/\$@(COURSEVIEWBYID)\*('.$old_id.')@\$/';
+                // If it is a link to itself, replace it
+                if (!empty($rec->new_id)) {
+                    $replacestring = $CFG->wwwroot . '/course/view.php?id=' . $rec->new_id;
+                // It s a link to another course, keep it unmodified
+                } else {
+                    $replacestring = $restore->original_wwwroot . '/course/view.php?id=' . $old_id;
+                }
+                // Perform the replacement
+                $content = preg_replace($searchstring, $replacestring, $content);
+            }
+        }
 
-        return $result;
+        return $content;
     }
 
     //This function is called from all xxxx_decode_content_links_caller(),
