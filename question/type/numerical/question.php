@@ -153,7 +153,7 @@ class qtype_numerical_question extends question_graded_automatically {
                 $prevresponse, $newresponse, 'unit');
         }
 
-        return false;
+        return true;
     }
 
     public function get_correct_response() {

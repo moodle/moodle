@@ -129,7 +129,8 @@ class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrou
 
         // Now change the correct answer to the question, and regrade.
         $mc->answers[13]->fraction = -0.33333333;
-        $mc->answers[15]->fraction = 1;
+        $mc->answers[14]->fraction = 1; // We don't know which "wrong" index we chose above!
+        $mc->answers[15]->fraction = 1; // Therefore, treat answers B and C with the same score.
         $this->quba->regrade_all_questions();
 
         // Verify.
@@ -139,8 +140,8 @@ class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrou
                 $this->get_contains_mark_summary(1),
                 $this->get_contains_partcorrect_expectation());
 
-        $autogradedstep = $this->get_step($this->get_step_count() - 2);
-        $this->assertWithinMargin($autogradedstep->get_fraction(), 0, 0.0000001);
+        $autogradedstep = $this->get_step($this->get_step_count() - 3);
+        $this->assertWithinMargin($autogradedstep->get_fraction(), 1, 0.0000001);
     }
 
     public function test_multichoice2() {
