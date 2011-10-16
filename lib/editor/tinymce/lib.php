@@ -46,6 +46,9 @@ class tinymce_texteditor extends texteditor {
         if (check_browser_version('Opera', 9)) {
             return true;
         }
+        if (check_browser_version('Safari iOS', 534)) {
+            return true;
+        }
 
         return false;
     }
