@@ -85,28 +85,26 @@ if($switchitemrequired) {
 
 //the create_template-form
 $create_template_form = new feedback_edit_create_template_form();
-$create_template_form->set_feedbackdata(array('context' => $context));
+$create_template_form->set_feedbackdata(array('context'=>$context, 'course'=>$course));
 $create_template_form->set_form_elements();
 $create_template_form->set_data(array('id'=>$id, 'do_show'=>'templates'));
 $create_template_formdata = $create_template_form->get_data();
 if(isset($create_template_formdata->savetemplate) && $create_template_formdata->savetemplate == 1) {
     //check the capabilities to create templates
     if(!has_capability('mod/feedback:createprivatetemplate', $context) AND
-        !has_capability('mod/feedback:createpublictemplate', $context)) {
+            !has_capability('mod/feedback:createpublictemplate', $context)) {
         print_error('cannotsavetempl', 'feedback');
     }
-    if(trim($create_template_formdata->templatename) == '')
-    {
+    if(trim($create_template_formdata->templatename) == '') {
         $savereturn = 'notsaved_name';
     }else {
-        //public templates are currently deaktivated
-        // if(has_capability('mod/feedback:createpublictemplate', $context)) {
-            // $create_template_formdata->ispublic = isset($create_template_formdata->ispublic) ? 1 : 0;
-        // }else {
+        //if the feedback is located on the frontpage then templates can be public
+        if(has_capability('mod/feedback:createpublictemplate', get_system_context())) {
+            $create_template_formdata->ispublic = isset($create_template_formdata->ispublic) ? 1 : 0;
+        }else {
             $create_template_formdata->ispublic = 0;
-        // }
-        if(!feedback_save_as_template($feedback, $create_template_formdata->templatename, $create_template_formdata->ispublic))
-        {
+        }
+        if(!feedback_save_as_template($feedback, $create_template_formdata->templatename, $create_template_formdata->ispublic)) {
             $savereturn = 'failed';
         }else {
             $savereturn = 'saved';
