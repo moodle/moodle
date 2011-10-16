@@ -220,7 +220,7 @@ function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
         }
     }
 
-    if ($context->contextlevel == CONTEXT_COURSE) {
+    if ($context->contextlevel == CONTEXT_COURSE || $context->contextlevel == CONTEXT_SYSTEM) {
         if ($filearea !== 'template') {
             return false;
         }

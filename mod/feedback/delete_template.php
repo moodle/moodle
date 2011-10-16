@@ -95,7 +95,7 @@ if(isset($formdata->confirmdelete) AND $formdata->confirmdelete == 1){
 /// Print the page header
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
-$str_delete_feedback = get_string('delete_template','feedback');
+$strdeletefeedback = get_string('delete_template','feedback');
 
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
@@ -108,7 +108,7 @@ include('tabs.php');
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-echo $OUTPUT->heading($str_delete_feedback);
+echo $OUTPUT->heading($strdeletefeedback);
 if($shoulddelete == 1) {
 
     echo $OUTPUT->box_start('generalbox errorboxcontent boxaligncenter boxwidthnormal');
@@ -125,17 +125,17 @@ if($shoulddelete == 1) {
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
         $tablecolumns = array('template', 'action');
         $tableheaders = array(get_string('template', 'feedback'), '');
-        $table_course = new flexible_table('feedback_template_course_table');
+        $tablecourse = new flexible_table('feedback_template_course_table');
 
-        $table_course->define_columns($tablecolumns);
-        $table_course->define_headers($tableheaders);
-        $table_course->define_baseurl($deleteurl);
-        $table_course->column_style('action', 'width', '10%');
+        $tablecourse->define_columns($tablecolumns);
+        $tablecourse->define_headers($tableheaders);
+        $tablecourse->define_baseurl($deleteurl);
+        $tablecourse->column_style('action', 'width', '10%');
 
-        $table_course->sortable(false);
-        $table_course->set_attribute('width', '100%');
-        $table_course->set_attribute('class', 'generaltable');
-        $table_course->setup();
+        $tablecourse->sortable(false);
+        $tablecourse->set_attribute('width', '100%');
+        $tablecourse->set_attribute('class', 'generaltable');
+        $tablecourse->setup();
 
         foreach($templates as $template) {
             $data = array();
@@ -146,10 +146,10 @@ if($shoulddelete == 1) {
                                             'shoulddelete'=>1,
                                             ));
                                                                                   
-            $data[] = $OUTPUT->single_button($url, $str_delete_feedback, 'post');
-            $table_course->add_data($data);
+            $data[] = $OUTPUT->single_button($url, $strdeletefeedback, 'post');
+            $tablecourse->add_data($data);
         }
-        $table_course->finish_output();
+        $tablecourse->finish_output();
         echo $OUTPUT->box_end();
     }
     //now we get the public templates if it is permitted
@@ -162,19 +162,19 @@ if($shoulddelete == 1) {
         }else {
             echo $OUTPUT->heading(get_string('public', 'feedback'), 3);
             echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
-            $tablecolumns = $tablecolumns = array('template', 'action');
+            $tablecolumns = array('template', 'action');
             $tableheaders = array(get_string('template', 'feedback'), '');
-            $table_public = new flexible_table('feedback_template_public_table');
+            $tablepublic = new flexible_table('feedback_template_public_table');
 
-            $table_public->define_columns($tablecolumns);
-            $table_public->define_headers($tableheaders);
-            $table_public->define_baseurl($deleteurl);
-            $table_public->column_style('action', 'width', '10%');
+            $tablepublic->define_columns($tablecolumns);
+            $tablepublic->define_headers($tableheaders);
+            $tablepublic->define_baseurl($deleteurl);
+            $tablepublic->column_style('action', 'width', '10%');
 
-            $table_public->sortable(false);
-            $table_public->set_attribute('width', '100%');
-            $table_public->set_attribute('class', 'generaltable');
-            $table_public->setup();
+            $tablepublic->sortable(false);
+            $tablepublic->set_attribute('width', '100%');
+            $tablepublic->set_attribute('class', 'generaltable');
+            $tablepublic->setup();
 
             
             // echo $OUTPUT->heading(get_string('public', 'feedback'), 3);
@@ -188,10 +188,10 @@ if($shoulddelete == 1) {
                                                 'shoulddelete'=>1,
                                                 ));
                                                                                       
-                $data[] = $OUTPUT->single_button($url, $str_delete_feedback, 'post');
-                $table_public->add_data($data);
+                $data[] = $OUTPUT->single_button($url, $strdeletefeedback, 'post');
+                $tablepublic->add_data($data);
             }
-            $table_public->finish_output();
+            $tablepublic->finish_output();
             echo $OUTPUT->box_end();
         }
     }

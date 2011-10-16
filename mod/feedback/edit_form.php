@@ -131,8 +131,6 @@ class feedback_edit_create_template_form extends moodleform {
     }
 
     function set_form_elements(){
-        global $CFG;
-        
         $mform =& $this->_form;
         // $capabilities = $this->feedbackdata->capabilities;
 
