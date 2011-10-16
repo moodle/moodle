@@ -45,6 +45,7 @@ $string['displayselectexplain'] = 'Choose display type, unfortunately not all ty
 $string['externalurl'] = 'External URL';
 $string['framesize'] = 'Frame height';
 $string['chooseavariable'] = 'Choose a variable...';
+$string['invalidurl'] = 'Entered URL is invalid';
 $string['modulename'] = 'URL';
 $string['modulenameplural'] = 'URLs';
 $string['neverseen'] = 'Never seen';
