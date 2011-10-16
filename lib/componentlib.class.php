@@ -592,7 +592,7 @@ class lang_installer {
         global $CFG;
 
         $this->set_queue($langcode);
-        $this->version = '2.1';
+        $this->version = '2.2';
 
         if (!empty($CFG->langotherroot) and $CFG->langotherroot !== $CFG->dataroot . '/lang') {
             debugging('The in-built language pack installer does not support alternative location ' .
