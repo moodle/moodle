@@ -53,6 +53,20 @@ function xmldb_url_upgrade($oldversion) {
 
     // Moodle v2.1.0 release upgrade line
     // Put any upgrade step following this
+    if ($oldversion < 2011092800) {
+
+        // Changing nullability of field externalurl on table urls to not-null
+        $table = new xmldb_table('url');
+        $field = new xmldb_field('externalurl', XMLDB_TYPE_TEXT, 'small', null,
+                XMLDB_NOTNULL, null, null, 'introformat');
+
+        $DB->set_field_select('url', 'externalurl', $DB->sql_empty(), 'externalurl IS NULL');
+        // Launch change of nullability for field =externalurl
+        $dbman->change_field_notnull($table, $field);
+
+        // url savepoint reached
+        upgrade_mod_savepoint(true, 2011092800, 'url');
+    }
 
     return true;
 }
