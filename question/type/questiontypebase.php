@@ -863,22 +863,9 @@ class question_type {
     }
 
     /**
-     * Like @see{get_html_head_contributions}, but this method is for CSS and
-     * JavaScript required on the question editing page question/question.php.
-     */
-    public function get_editing_head_contributions() {
-        // By default, we link to any of the files styles.css, styles.php,
-        // script.js or script.php that exist in the plugin folder.
-        // Core question types should not use this mechanism. Their styles
-        // should be included in the standard theme.
-        $this->find_standard_scripts();
-    }
-
-    /**
-     * Utility method used by @see{get_html_head_contributions} and
-     * @see{get_editing_head_contributions}. This looks for any of the files
-     * script.js or script.php that exist in the plugin folder and ensures they
-     * get included.
+     * Utility method used by {@link qtype_renderer::head_code()}. It looks
+     * for any of the files script.js or script.php that exist in the plugin
+     * folder and ensures they get included.
      */
     public function find_standard_scripts() {
         global $PAGE;
