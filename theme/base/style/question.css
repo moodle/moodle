@@ -41,12 +41,11 @@ body.jsenabled #qtypechoicecontainer {display: block;}
 .que .info {float: left;width: 7em;padding:0.5em;margin-bottom: 1.8em;background: #eee;}
 .que h2.no {margin: 0;font-size: 0.8em;line-height: 1;}
 .que span.qno {font-size: 1.5em;font-weight:bold;}
-.que .info * {font-size: 0.8em;}
-.que .info .state,
-.que .info .grade,
-.que .info .editquestion,
-.que .info .questionflag {margin-top: 0.7em;}
+.que .info > div {font-size: 0.8em;margin-top: 0.7em;}
 .que .info .questionflag {cursor:pointer;}
+.que .info .editquestion img,
+.que .info .questionflag img,
+.que .info .questionflag input {vertical-align: bottom;}
 
 .que .content {margin: 0 0 0 8.5em;}
 
