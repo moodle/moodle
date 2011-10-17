@@ -144,6 +144,43 @@ class grading_manager {
     }
 
     /**
+     * Returns a text describing the context and the component
+     *
+     * At the moment this works for gradable areas in course modules. In the future, this
+     * method should be improved so it works for other contexts (blocks, gradebook items etc)
+     * or subplugins.
+     *
+     * @return string
+     */
+    public function get_component_title() {
+
+        $this->ensure_isset(array('context', 'component'));
+        list($context, $course, $cm) = get_context_info_array($this->get_context()->id);
+
+        if (!empty($cm->name)) {
+            $title = $cm->name;
+        } else {
+            debugging('Gradable areas are currently supported at the course module level only', DEBUG_DEVELOPER);
+            $title = $this->get_component();
+        }
+
+        return $title;
+    }
+
+    /**
+     * Returns the localized title of the currently set area
+     *
+     * @return string
+     */
+    public function get_area_title() {
+
+        $this->ensure_isset(array('context', 'component', 'area'));
+        $areas = $this->get_available_areas();
+
+        return $areas[$this->get_area()];
+    }
+
+    /**
      * Loads the gradable area info from the database
      *
      * @param int $areaid
@@ -302,7 +339,6 @@ class grading_manager {
      * @param navigation_node $modulenode {@link navigation_node}
      */
     public function extend_settings_navigation(settings_navigation $settingsnav, navigation_node $modulenode=null) {
-        global $PAGE, $CFG;
 
         $this->ensure_isset(array('context', 'component'));
 
@@ -313,14 +349,8 @@ class grading_manager {
             return;
         }
 
-        if ($PAGE->url->compare(new moodle_url('/grade/grading/management.php'), URL_MATCH_BASE)) {
-            // we are already at the management page, do not produce link to ourselves
-            // (because of the returnurl)
-            $managementurl = null;
-        } else {
-            $managementurl = $this->get_management_url($PAGE->url);
-        }
-        $managementnode = $modulenode->add(get_string('gradingmanagement', 'core_grading'), $managementurl, settings_navigation::TYPE_CUSTOM);
+        $managementnode = $modulenode->add(get_string('gradingmanagement', 'core_grading'),
+            $this->get_management_url(), settings_navigation::TYPE_CUSTOM);
 
         foreach ($areas as $areaname => $areatitle) {
             $this->set_area($areaname);
@@ -333,7 +363,7 @@ class grading_manager {
 
             if (count($areas) > 1) {
                 // if the module supports multiple gradable areas, make a node for each of them
-                $node = $managementnode->add(get_string('gradinginarea', 'core_grading', $areatitle), null, settings_navigation::NODETYPE_BRANCH);
+                $node = $managementnode->add($areatitle, null, settings_navigation::NODETYPE_BRANCH);
             } else {
                 // otherwise put the items directly into the module's node
                 $node = $managementnode;
@@ -409,9 +439,10 @@ class grading_manager {
      * Returns the URL of the grading area management page
      *
      * @param moodle_url $returnurl optional URL of the page where the user should be sent back to
+     * @param string $area optional area name for multi-area components
      * @return moodle_url
      */
-    public function get_management_url(moodle_url $returnurl = null) {
+    public function get_management_url(moodle_url $returnurl = null, $area = null) {
 
         $this->ensure_isset(array('context', 'component'));
 
@@ -419,13 +450,16 @@ class grading_manager {
             $params = array('areaid' => $this->areacache->id);
         } else {
             $params = array('contextid' => $this->context->id, 'component' => $this->component);
+            if (!is_null($area)) {
+                $params['area'] = $area;
+            }
         }
 
         if (!is_null($returnurl)) {
             $params['returnurl'] = $returnurl->out(false);
         }
 
-        return new moodle_url('/grade/grading/management.php', $params);
+        return new moodle_url('/grade/grading/manage.php', $params);
     }
 
     ////////////////////////////////////////////////////////////////////////////

@@ -31,20 +31,6 @@ defined('MOODLE_INTERNAL') || die();
 class gradingform_rubric_renderer {
 
     /**
-     * Renders grading widget
-     *
-     * @param gradingform_random_widget $widget
-     * @return string HTML
-     */
-    protected function render_gradingform_rubric_widget(gradingform_rubric_widget $widget) {
-
-        $button  = html_writer::tag('button', 'Loading ...', array('type' => 'button', 'value' => 'Go'));
-        $span    = html_writer::tag('span', '');
-
-        return $this->output->container($button.$span, 'gradingform_rubric-widget-wrapper', 1);
-    }
-
-    /**
      *
      * @param int $mode @see gradingform_rubric_controller
      * @return string

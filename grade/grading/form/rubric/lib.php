@@ -52,7 +52,7 @@ class gradingform_rubric_controller extends gradingform_controller {
      */
     public function extend_settings_navigation(settings_navigation $settingsnav, navigation_node $node=null) {
         $node->add(get_string('definerubric', 'gradingform_rubric'),
-            new moodle_url('/grade/grading/form/rubric/edit.php', array('areaid' => $this->areaid)), settings_navigation::TYPE_CUSTOM,
+            $this->get_editor_url(), settings_navigation::TYPE_CUSTOM,
             null, null, new pix_icon('icon', '', 'gradingform_rubric'));
     }
 
@@ -332,7 +332,7 @@ class gradingform_rubric_controller extends gradingform_controller {
         if ($value === null) {
             $value = $this->get_grading($raterid, $submissionid); // TODO maybe implement in form->set_data() ?
         }
-        return $this->get_renderer()->display_rubric($criteria, $mode, $gradingformelement->getName(), $value);
+        return $this->get_renderer($PAGE)->display_rubric($criteria, $mode, $gradingformelement->getName(), $value);
     }
 
     /**
@@ -485,5 +485,34 @@ class gradingform_rubric_controller extends gradingform_controller {
             }
         }
         return true;
+    }
+
+    /**
+     * Returns the rubric plugin renderer
+     *
+     * @param moodle_page $page the target page
+     * @return renderer_base
+     */
+    public function get_renderer(moodle_page $page) {
+        return $page->get_renderer('gradingform_'. $this->get_method_name());
+    }
+
+    /**
+     * Returns the HTML code displaying the preview of the grading form
+     *
+     * @param moodle_page $page the target page
+     * @return string
+     */
+    public function render_preview(moodle_page $page) {
+
+        // use the parent's method to render the common information about the form
+        $header = parent::render_preview($page);
+
+        // append the rubric itself, using own renderer
+        $output = $this->get_renderer($page);
+        // todo something like $rubric = $output->render_preview($this);
+        $rubric = '[[TODO RUBRIC PREVIEW]]';
+
+        return $header . $rubric;
     }
 }

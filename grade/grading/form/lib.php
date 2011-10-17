@@ -99,6 +99,18 @@ abstract class gradingform_controller {
     }
 
     /**
+     * Is the form definition record available?
+     *
+     * Note that this actually checks whether the process of defining the form ever started
+     * and not whether the form definition should be considered as final.
+     *
+     * @return boolean
+     */
+    public function is_form_defined() {
+        return !empty($this->definition);
+    }
+
+    /**
      * Is the grading form defined and released for usage by the given user?
      *
      * @param int $foruserid the id of the user who attempts to work with the form
@@ -111,7 +123,7 @@ abstract class gradingform_controller {
             $foruserid = $USER->id;
         }
 
-        if (empty($this->definition)) {
+        if (!$this->is_form_defined()) {
             return false;
         }
 
@@ -126,6 +138,23 @@ abstract class gradingform_controller {
         }
 
         return false;
+    }
+
+    /**
+     * Returns URL of a page where the grading form can be defined and edited.
+     *
+     * @param moodle_url $returnurl optional URL of a page where the user should be sent once they are finished with editing
+     * @return moodle_url
+     */
+    public function get_editor_url(moodle_url $returnurl = null) {
+
+        $params = array('areaid' => $this->areaid);
+
+        if (!is_null($returnurl)) {
+            $params['returnurl'] = $returnurl->out(false);
+        }
+
+        return new moodle_url('/grade/grading/form/'.$this->get_method_name().'/edit.php', $params);
     }
 
     /**
@@ -290,15 +319,23 @@ abstract class gradingform_controller {
     }
 
     /**
-     * Returns the renderer for the current plugin
+     * Returns the HTML code displaying the preview of the grading form
      *
-     * @param string $subtype optional subtype
-     * @param string $target one of rendering target constants
-     * @return renderer_base
+     * Plugins are supposed to override/extend this. Ideally they should delegate
+     * the task to their own renderer.
+     *
+     * @param moodle_page $page the target page
+     * @return string
      */
-    public function get_renderer($subtype = null, $target = null) {
-        global $PAGE;
-        return $PAGE->get_renderer('gradingform_'. $this->get_method_name(), $subtype, $target);
+    public function render_preview(moodle_page $page) {
+
+        if (!$this->is_form_defined()) {
+            throw new coding_exception('It is the caller\'s responsibility to make sure that the form is actually defined');
+        }
+
+        $output = $page->get_renderer('core_grading');
+
+        return $output->preview_definition_header($this);
     }
 
     ////////////////////////////////////////////////////////////////////////////

@@ -666,6 +666,7 @@ abstract class moodleform_mod extends moodleform {
                     $areaname = key($this->current->_advancedgradingdata['areas']);
                     $mform->addElement('select', 'advancedgradingmethod_'.$areaname,
                         get_string('gradingmethod', 'core_grading'), $this->current->_advancedgradingdata['methods']);
+                    $mform->addHelpButton('advancedgradingmethod_'.$areaname, 'gradingmethod', 'core_grading');
 
                 } else {
                     // the module defines multiple gradable areas, display a selector

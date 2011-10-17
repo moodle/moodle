@@ -26,11 +26,21 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['activemethodinfo'] = '\'{$a->method}\' is selected as the active grading method for the \'{$a->area}\' area';
+$string['activemethodinfonone'] = 'There is no advanced grading method selected for the \'{$a->area}\' area. Simple direct grading will be used.';
+$string['changeactivemethod'] = 'Change active grading method to';
 $string['exc_gradingformelement'] = 'Unable to instantiate grading form element';
 $string['formnotavailable'] = 'Advanced grading method was selected to use but the grading form is not available yet. You may need to define it first via a link in the Settings block.';
-$string['gradinginarea'] = 'Grading ({$a})';
 $string['gradingmanagement'] = 'Advanced grading';
+$string['gradingmanagementtitle'] = 'Advanced grading: {$a->component} ({$a->area})';
 $string['gradingmethod'] = 'Grading method';
+$string['gradingmethod_help'] = 'Choose the advanced grading method that should be used for calculating grades in the given context.
+
+To disable advance grading and switch back to the default grading mechanism, choose \'Simple direct grading\'.';
 $string['gradingmethods'] = 'Grading methods';
 $string['gradingmethodnone'] = 'Simple direct grading';
+$string['manageactionclone'] = 'Create new grading form from template';
+$string['manageactiondelete'] = 'Remove the currently defined form';
+$string['manageactionedit'] = 'Edit the current form definition';
+$string['manageactionnew'] = 'Define new grading form from scratch';
 $string['noitemid'] = 'Grading not possible. The graded item does not exist.';
