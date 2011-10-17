@@ -1,4 +1,4 @@
-Description of TinyMCE v3.4.5 library integration in Moodle
+Description of TinyMCE v3.4.6 library integration in Moodle
 =========================================================================================
 
 Copyright: (c) 2004-2011, Moxiecode Systems AB, All rights reserved.
@@ -41,6 +41,7 @@ AMOS maintainer / custom-tinymce maintainer / integrators about that.
 =========================================================================================
 Added:
  * plugins/gragmath/*
+ * plugins/moodlemotions/*
  * plugins/moodlenolink/*
  * plugins/moodlemedia/*
 
