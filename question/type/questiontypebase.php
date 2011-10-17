@@ -74,7 +74,11 @@ class question_type {
      * You should not need to override this method, the default behaviour should be fine.
      */
     public function local_name() {
-        return get_string($this->name(), $this->plugin_name());
+        if (get_string_manager()->string_exists('pluginname', $this->plugin_name())) {
+            $this->displayname = get_string('pluginname', $this->plugin_name());
+        } else {
+            $this->displayname = get_string($this->name(), $this->plugin_name());
+        }
     }
 
     /**

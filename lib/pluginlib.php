@@ -1237,7 +1237,11 @@ class plugintype_qtype extends plugintype_base implements plugintype_interface {
      * @see plugintype_interface::init_display_name()
      */
     public function init_display_name() {
-        $this->displayname = get_string($this->name, 'qtype_' . $this->name);
+        if (get_string_manager()->string_exists('pluginname', $this->type . '_' . $this->name)) {
+            $this->displayname = get_string('pluginname', $this->type . '_' . $this->name);
+        } else {
+            $this->displayname = get_string($this->name, 'qtype_' . $this->name);
+        }
     }
 }
 
@@ -1250,7 +1254,11 @@ class plugintype_qformat extends plugintype_base implements plugintype_interface
      * @see plugintype_interface::init_display_name()
      */
     public function init_display_name() {
-        $this->displayname = get_string($this->name, 'qformat_' . $this->name);
+        if (get_string_manager()->string_exists('pluginname', $this->type . '_' . $this->name)) {
+            $this->displayname = get_string('pluginname', $this->type . '_' . $this->name);
+        } else {
+            $this->displayname = get_string($this->name, 'qformat_' . $this->name);
+        }
     }
 }
 
