@@ -55,6 +55,12 @@ $completion->set_module_viewed($cm);
 
 $PAGE->set_url('/mod/url/view.php', array('id' => $cm->id));
 
+// Make sure URL is valid before generating output
+$url->externalurl = clean_param($url->externalurl, PARAM_URL);
+if (empty($url->externalurl)) {
+    print_error('invalidstoredurl', 'url');
+}
+
 if ($redirect) {
     // coming from course page or url index page,
     // the redirection is needed for completion tracking and logging
