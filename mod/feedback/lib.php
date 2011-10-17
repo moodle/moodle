@@ -158,7 +158,7 @@ function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
     if (!$item = $DB->get_record('feedback_item', array('id'=>$itemid))) {
         return false;
     }
-    
+
     //if the filearea is "item" so we check the permissions like view/complete the feedback
     if($filearea === 'item') {
         //get the feedback
@@ -171,12 +171,12 @@ function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
         if(has_capability('mod/feedback:complete', $context)) {
             $canload = true;
         }
-        
+
         //now we check whether the user has the view capability
         if(has_capability('mod/feedback:view', $context)) {
             $canload = true;
         }
-        
+
         //if the feedback is on frontpage and anonymous and the fullanonymous is allowed
         //so the file can be loaded too.
         if(isset($CFG->feedback_allowfullanonymous)
@@ -193,7 +193,7 @@ function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
         if(!$template = $DB->get_record('feedback_template', array('id'=>$item->template))) {
             return false;
         }
-        
+
         //if the file is not public so the capability edititems has to be there
         if(!$template->ispublic) {
             if(!has_capability('mod/feedback:edititems', $context)) {
@@ -1176,7 +1176,7 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
         $item->position = $item->position + $positionoffset;
 
         $item->id = $DB->insert_record('feedback_item', $item);
-        
+
         //TODO: moving the files to the new items
         if ($templatefiles = $fs->get_area_files($s_context->id, 'mod_feedback', 'template', $t_item->id, "id", false)) {
             foreach($templatefiles as $tfile) {
@@ -1409,7 +1409,7 @@ function feedback_delete_item($itemid, $renumber = true, $template = false){
 
     //deleting the files from the item
     $fs = get_file_storage();
-    
+
     if($template) {
         if($template->ispublic) {
             $context = get_system_context();

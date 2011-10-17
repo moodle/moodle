@@ -81,13 +81,13 @@ if(isset($formdata->confirmdelete) AND $formdata->confirmdelete == 1){
     if(!$template = $DB->get_record("feedback_template", array("id"=>$deletetempl))) {
         print_error('error');
     }
-    
+
     if($template->ispublic) {
         $systemcontext = get_system_context();
         require_capability('mod/feedback:createpublictemplate', $systemcontext);
         require_capability('mod/feedback:deletetemplate', $systemcontext);
     }
-    
+
     feedback_delete_template($template);
     redirect($deleteurl->out(false));
 }
@@ -145,7 +145,7 @@ if($shoulddelete == 1) {
                                             'deletetempl'=>$template->id,
                                             'shoulddelete'=>1,
                                             ));
-                                                                                  
+
             $data[] = $OUTPUT->single_button($url, $strdeletefeedback, 'post');
             $tablecourse->add_data($data);
         }
@@ -176,7 +176,6 @@ if($shoulddelete == 1) {
             $tablepublic->set_attribute('class', 'generaltable');
             $tablepublic->setup();
 
-            
             // echo $OUTPUT->heading(get_string('public', 'feedback'), 3);
             // echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
             foreach($templates as $template) {
@@ -187,7 +186,7 @@ if($shoulddelete == 1) {
                                                 'deletetempl'=>$template->id,
                                                 'shoulddelete'=>1,
                                                 ));
-                                                                                      
+
                 $data[] = $OUTPUT->single_button($url, $strdeletefeedback, 'post');
                 $tablepublic->add_data($data);
             }
@@ -195,13 +194,13 @@ if($shoulddelete == 1) {
             echo $OUTPUT->box_end();
         }
     }
-    
+
     echo $OUTPUT->box_start('boxaligncenter boxwidthnormal');
     $url = new moodle_url($deleteurl, array(
                                     'id'=>$id,
                                     'canceldelete'=>1,
                                     ));
-                                                                          
+
     echo $OUTPUT->single_button($url, get_string('back'), 'post');
     echo $OUTPUT->box_end();
 }

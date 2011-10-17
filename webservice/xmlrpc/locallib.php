@@ -62,7 +62,7 @@ class moodle_zend_xmlrpc_server extends Zend_XmlRpc_Server {
 class webservice_xmlrpc_server extends webservice_zend_server {
     /**
      * Contructor
-     * @param integer $authmethod authentication method one of WEBSERVICE_AUTHMETHOD_* 
+     * @param integer $authmethod authentication method one of WEBSERVICE_AUTHMETHOD_*
      */
     public function __construct($authmethod) {
         require_once 'Zend/XmlRpc/Server.php';

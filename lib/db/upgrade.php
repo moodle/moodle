@@ -6796,12 +6796,12 @@ FROM
         // The conditional availability date system used to rely on dates being
         // set to 23:59:59 for the end date, but now that exact times are
         // supported, it uses midnight on the following day.
-        
+
         // The query is restricted on 'time mod 10 = 9' in order that
         // it is safe to run this upgrade twice if something goes wrong.
         $DB->execute('UPDATE {course_modules} SET availableuntil = availableuntil + 1 ' .
                 'WHERE availableuntil > 0 AND ' . $DB->sql_modulo('availableuntil', 10) . ' = 9');
-        
+
         // Because availableuntil is stored in modinfo, we need to clear modinfo
         // for all courses.
         rebuild_course_cache(0, true);
@@ -6809,7 +6809,7 @@ FROM
         // Main savepoint reached
         upgrade_main_savepoint(true, 2011101200.01);
     }
-    
+
     return true;
 }
 

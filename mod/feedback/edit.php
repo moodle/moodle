@@ -209,7 +209,7 @@ if($do_show == 'edit') {
 
     if(is_array($feedbackitems)){
         $itemnr = 0;
-        
+
         $align = right_to_left() ? 'right' : 'left';
 
         $helpbutton = $OUTPUT->help_icon('preview', 'feedback');
