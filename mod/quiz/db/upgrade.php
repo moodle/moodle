@@ -1178,8 +1178,10 @@ function xmldb_quiz_upgrade($oldversion) {
         switch (get_config('quiz', 'popup')) {
             case 1:
                 set_config('browsersecurity', 'securewindow', 'quiz');
+                break;
             case 2:
                 set_config('browsersecurity', 'safebrowser', 'quiz');
+                break;
             default:
                 set_config('browsersecurity', '-', 'quiz');
         }
