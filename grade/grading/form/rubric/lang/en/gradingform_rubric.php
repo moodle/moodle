@@ -33,9 +33,12 @@ $string['description'] = 'Description';
 $string['name'] = 'Name';
 
 $string['addcriterion'] = 'Add criterion';
-$string['criterionmoveup'] = 'Up';
-$string['criteriondelete'] = 'Delete';
-$string['criterionmovedown'] = 'Down';
+$string['criterionmoveup'] = 'Move up';
+$string['criteriondelete'] = 'Delete criterion';
+$string['criterionmovedown'] = 'Move down';
 $string['criterionaddlevel'] = 'Add level';
 $string['scorepostfix'] = ' pts';
-$string['leveldelete'] = 'Del';
+$string['leveldelete'] = 'Delete level';
+
+$string['criterionempty'] = 'Click to edit criterion';
+$string['levelempty'] = 'Click to edit level';

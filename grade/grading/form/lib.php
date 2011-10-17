@@ -289,6 +289,18 @@ abstract class gradingform_controller {
         return true;
     }
 
+    /**
+     * Returns the renderer for the current plugin
+     *
+     * @param string $subtype optional subtype
+     * @param string $target one of rendering target constants
+     * @return renderer_base
+     */
+    public function get_renderer($subtype = null, $target = null) {
+        global $PAGE;
+        return $PAGE->get_renderer('gradingform_'. $this->get_method_name(), $subtype, $target);
+    }
+
     ////////////////////////////////////////////////////////////////////////////
 
 

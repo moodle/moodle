@@ -9,28 +9,30 @@
             .movedown
                 [input type=submit]
         .description
-            .levels
-                .level[.first][.last].odd/even
-                    .definition
-                        [textarea]
-                    .score
-                        span
-                            [input type=text]
-                    .delete
-                        [input type=submit]
-            .addlevel
-                [input type=submit]
+        .levels
+            .level[.first][.last].odd/even
+                .definition
+                    [textarea]
+                .score
+                    span
+                        [input type=text]
+                .delete
+                    [input type=submit]
+        .addlevel
+            [input type=submit]
     .addcriterion
         [input type=submit]
 
 .form_rubric.evaluate
     .criterion[.first][.last].odd/even
         .description
-            .levels
-                .level[.first][.last].odd/even
-                    .definition
-                    .score
-                        span
+        .levels
+            .level[.first][.last].odd/even
+                .radio
+                    input
+                .definition
+                .score
+                    span
 
 */
 
@@ -39,23 +41,30 @@
 .form_rubric .criterion .description,
 .form_rubric .criterion .levels,
 .form_rubric.editor .criterion .addlevel,
-.form_rubric .criterion .levels .level {display: inline-block; vertical-align: top;}
+.form_rubric .criterion .levels .level {display: inline-block; vertical-align: top;overflow: hidden;}
 
 .form_rubric.editor .criterion .controls,
 .form_rubric .criterion .description,
 .form_rubric.editor .criterion .addlevel,
-.form_rubric .criterion .levels .level {padding:3px}
+.form_rubric .criterion .levels .level {padding:3px;}
 
-.form_rubric .criterion {border:1px solid #DDD;}
+/* Those divs should extend vertically and fill 100% of parent element height */
+.form_rubric .criterion .levels .level,
+.form_rubric .criterion .description,
+.form_rubric .criterion .levels {padding-bottom: 32767px;margin-bottom: -32767px;}
+
+.form_rubric .criterion {border:1px solid #DDD;overflow: hidden;}
 .form_rubric .criterion.even {background:#F0F0F0;}
 
-.form_rubric .criterion .description {min-width:100px;font-weight:bold;}
+.form_rubric .criterion .description {width:150px;font-weight:bold;}
 
-.form_rubric .criterion .levels .level {border-left:1px solid #DDD;min-width:80px;}
+.form_rubric .criterion .levels .level {border-left:1px solid #DDD;min-width:80px;max-width:150px;position:relative;}
 .form_rubric .criterion .levels .level.last {border-right:1px solid #DDD;}
 
-.form_rubric .criterion .levels .level .score {display:inline-block;}
-.form_rubric.editor .criterion .levels .level .delete {display:inline-block; padding-left: 5px;}
+.form_rubric .plainvalue.empty {font-style: italic; color: #AAA;}
+
+.form_rubric.editor .criterion .levels .level .delete {position:absolute;right:0px;bottom:32767px;}
+.form_rubric .criterion .levels .level .score {display:block;}
 
 /* Make invisible the buttons 'Move up' for the first criterion and 'Move down' for the last, because those buttons will make no change */
 .form_rubric.editor .criterion.first .controls .moveup input,
@@ -64,3 +73,17 @@
 /* evaluation */
 .form_rubric.evaluate .criterion .levels .level.checked {background:#d0ffd0;}
 .form_rubric.evaluate .criterion .levels .level:hover {background:#30ff30;}
+
+/* replace buttons with images */
+.form_rubric.editor .delete input,
+.form_rubric.editor .moveup input,
+.form_rubric.editor .movedown input{text-indent: -1000em;cursor:pointer;border:none;}
+.form_rubric.editor .criterion .controls .delete input {width:20px;height:16px;background: transparent url([[pix:i/cross_red_big]]) no-repeat center top;}
+.form_rubric.editor .levels .level .delete input {width:20px;height:16px;background: transparent url([[pix:i/cross_red_small]]) no-repeat center top;}
+.form_rubric.editor .moveup input {width:20px;height:15px;background: transparent url([[pix:t/up]]) no-repeat center top;margin-top:4px;}
+.form_rubric.editor .movedown input {width:20px;height:15px;background: transparent url([[pix:t/down]]) no-repeat center top;margin-top:4px;}
+
+.form_rubric.editor .addcriterion input,
+.form_rubric.editor .addlevel input {background: transparent url([[pix:t/addgreen]]) no-repeat;display:block;color:#555555;font-weight:bold;text-decoration:none;}
+.form_rubric.editor .addcriterion input {background-position: 5px 8px;height:30px;line-height:29px;margin-bottom:14px;padding-left:20px;padding-right:10px;}
+.form_rubric.editor .addlevel input {background-position: 5px 6px;height:25px;line-height:24px;margin-bottom:10px;padding-left:18px;padding-right:8px;}

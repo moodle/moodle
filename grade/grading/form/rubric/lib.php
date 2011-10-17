@@ -32,6 +32,13 @@ require_once($CFG->dirroot.'/grade/grading/form/lib.php');
  * This controller encapsulates the rubric grading logic
  */
 class gradingform_rubric_controller extends gradingform_controller {
+    // Modes of displaying the rubric (used in gradingform_rubric_renderer)
+    const DISPLAY_EDIT_FULL     = 1; // For editing (moderator or teacher creates a rubric)
+    const DISPLAY_EDIT_FROZEN   = 2; // Preview the rubric design with hidden fields
+    const DISPLAY_PREVIEW       = 3; // Preview the rubric design
+    const DISPLAY_EVAL          = 4; // For evaluation, enabled (teacher grades a student)
+    const DISPLAY_EVAL_FROZEN   = 5; // For evaluation, with hidden fields
+    const DISPLAY_REVIEW        = 6; // Dispaly filled rubric (i.e. students see their grades)
 
     /**
      * Extends the module settings navigation with the rubric grading settings
@@ -306,6 +313,32 @@ class gradingform_rubric_controller extends gradingform_controller {
      * Returns html for form element
      */
     public function to_html($gradingformelement) {
+        global $PAGE, $USER;
+        if (!$gradingformelement->_flagFrozen) {
+            $module = array('name'=>'gradingform_rubric', 'fullpath'=>'/grade/grading/form/rubric/js/rubric.js');
+            $PAGE->requires->js_init_call('M.gradingform_rubric.init', array(array('name' => $gradingformelement->getName(), 'criteriontemplate' =>'', 'leveltemplate' => '')), true, $module);
+            $mode = self::DISPLAY_EVAL;
+        } else {
+            if ($this->_persistantFreeze) {
+                $mode = gradingform_rubric_controller::DISPLAY_EVAL_FROZEN;
+            } else {
+                $mode = gradingform_rubric_controller::DISPLAY_REVIEW;
+            }
+        }
+        $criteria = $this->definition->rubric_criteria;
+        $submissionid = $gradingformelement->get_grading_attribute('submissionid');
+        $raterid = $USER->id; // TODO - this is very strange!
+        $value = $gradingformelement->getValue();
+        if ($value === null) {
+            $value = $this->get_grading($raterid, $submissionid); // TODO maybe implement in form->set_data() ?
+        }
+        return $this->get_renderer()->display_rubric($criteria, $mode, $gradingformelement->getName(), $value);
+    }
+
+    /**
+     * Returns html for form element
+     */
+    public function to_html_old($gradingformelement) {
         global $PAGE, $USER;
         //TODO move to renderer
 
