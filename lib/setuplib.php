@@ -62,6 +62,12 @@ define('MATURITY_RC',       150);   // tested, will be released unless there are
 define('MATURITY_STABLE',   200);   // ready for production deployment
 
 /**
+ * Special value that can be used in $plugin->dependencies in version.php files.
+ */
+define('ANY_VERSION', 'any');
+
+
+/**
  * Simple class. It is usually used instead of stdClass because it looks
  * more familiar to Java developers ;-) Do not use for type checking of
  * function parameters. Please use stdClass instead.

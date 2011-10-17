@@ -92,7 +92,8 @@ class plugin_manager {
      * Returns a tree of known plugins and information about them
      *
      * @param bool $disablecache force reload, cache can be used otherwise
-     * @return array
+     * @return array the array keys are frankenstyle component names, and
+     *      the values are the corresponding plugintype_interface information objects.
      */
     public function get_plugins($disablecache=false) {
 
@@ -120,12 +121,14 @@ class plugin_manager {
     }
 
     /**
-     * Returns list of plugins that define their subplugins and information about them
+     * Returns list of plugins that define their subplugins and the information
+     * about them from the db/subplugins.php file.
      *
      * At the moment, only activity modules can define subplugins.
      *
-     * @param double $disablecache force reload, cache can be used otherwise
-     * @return array
+     * @param bool $disablecache force reload, cache can be used otherwise
+     * @return array with keys like 'mod_quiz', and values the data from the
+     *      corresponding db/subplugins.php file.
      */
     public function get_subplugins($disablecache=false) {
 
@@ -209,6 +212,23 @@ class plugin_manager {
         } else {
             return $type;
         }
+    }
+
+    public function are_dependancies_satisfied($dependancies) {
+        $installedplugins = $this->get_plugins();
+
+        foreach ($dependancies as $component => $requiredversion) {
+            if (!array_key_exists($component, $installedplugins)) {
+                return false;
+            }
+
+            if ($requiredversion != ANY_VERSION and
+                    $installedplugins[$component]->versiondb < $requiredversion) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -488,6 +508,13 @@ interface plugintype_interface {
     public function get_status();
 
     /**
+     * Get the list of other plugins that this plugin requires ot be installed.
+     * @return array with keys the frankenstyle plugin name, and values either
+     *      a version string (like '2011101700') or the constant ANY_VERSION.
+     */
+    public function get_other_required_plugins();
+
+    /**
      * Returns the information about plugin availability
      *
      * True means that the plugin is enabled. False means that the plugin is
@@ -563,6 +590,9 @@ abstract class plugintype_base {
     public $versiondb;
     /** @var int|float|string required version of Moodle core  */
     public $versionrequires;
+    /** @var array other plugins that this one depends on.
+     *  Lazy-loaded by {@link get_other_required_plugins()} */
+    public $dependancies = null;
     /** @var int number of instances of the plugin - not supported yet */
     public $instances;
     /** @var int order of the plugin among other plugins of the same type - not supported yet */
@@ -647,6 +677,29 @@ abstract class plugintype_base {
         if (isset($plugin->requires)) {
             $this->versionrequires = $plugin->requires;
         }
+    }
+
+    /**
+     * Initialise {@link $dependancies} to the list of other plugins (in any)
+     * that this one requires to be installed.
+     */
+    protected function load_other_required_plugins() {
+        $plugin = $this->load_version_php();
+        if (!empty($plugin->dependancies)) {
+            $this->dependancies = $plugin->dependancies;
+        } else {
+            $this->dependancies = array(); // By default, no dependancies.
+        }
+    }
+
+    /**
+     * @see plugintype_interface::get_other_required_plugins()
+     */
+    public function get_other_required_plugins() {
+        if (is_null($this->dependancies)) {
+            $this->load_other_required_plugins();
+        }
+        return $this->dependancies;
     }
 
     /**
@@ -1228,6 +1281,32 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
     }
 }
 
+
+/**
+ * Class for question behaviours.
+ */
+class plugintype_qbehaviour extends plugintype_base implements plugintype_interface {
+
+    /**
+     * @see plugintype_base::load_other_required_plugins().
+     */
+    protected function load_other_required_plugins() {
+        parent::load_other_required_plugins();
+        if (!empty($this->dependancies)) {
+            return;
+        }
+
+        // Standard mechanism did not find anything, so try the legacy way.
+        global $CFG;
+        require_once($CFG->libdir . '/questionlib.php');
+        $required = question_engine::get_behaviour_required_behaviours($this->name);
+        foreach ($required as $other) {
+            $this->dependancies['qbehaviour_' . $other] = ANY_VERSION;
+        }
+    }
+}
+
+
 /**
  * Class for question types
  */
@@ -1241,6 +1320,24 @@ class plugintype_qtype extends plugintype_base implements plugintype_interface {
             $this->displayname = get_string('pluginname', $this->type . '_' . $this->name);
         } else {
             $this->displayname = get_string($this->name, 'qtype_' . $this->name);
+        }
+    }
+
+    /**
+     * @see plugintype_base::load_other_required_plugins().
+     */
+    protected function load_other_required_plugins() {
+        parent::load_other_required_plugins();
+        if (!empty($this->dependancies)) {
+            return;
+        }
+
+        // Standard mechanism did not find anything, so try the legacy way.
+        global $CFG;
+        require_once($CFG->libdir . '/questionlib.php');
+        $required = question_bank::get_qtype($this->name)->requires_qtypes();
+        foreach ($required as $other) {
+            $this->dependancies['qtype_' . $other] = ANY_VERSION;
         }
     }
 }
