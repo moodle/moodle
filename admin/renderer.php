@@ -39,11 +39,13 @@ class core_admin_renderer extends plugin_renderer_base {
      * options support:
      *     (bool)full = false: whether to display up-to-date plugins, too
      *
-     * @param array $plugininfo as returned by {@see plugin_manager::get_plugins()}
+     * @param plugin_manager $pluginman provides information about the plugins.
      * @param array $options rendering options
      * @return string HTML code
      */
-    public function plugins_check(array $plugininfo, array $options = null) {
+    public function plugins_check(plugin_manager $pluginman, array $options = null) {
+        global $CFG;
+        $plugininfo = $pluginman->get_plugins();
 
         if (empty($plugininfo)) {
             return '';
@@ -55,8 +57,6 @@ class core_admin_renderer extends plugin_renderer_base {
             );
         }
 
-        $pluginman = plugin_manager::instance();
-
         $table = new html_table();
         $table->id = 'plugins-check';
         $table->head = array(
@@ -65,10 +65,11 @@ class core_admin_renderer extends plugin_renderer_base {
             get_string('source', 'core_plugin'),
             get_string('versiondb', 'core_plugin'),
             get_string('versiondisk', 'core_plugin'),
+            get_string('requires', 'core_plugin'),
             get_string('status', 'core_plugin'),
         );
         $table->colclasses = array(
-            'displayname', 'rootdir', 'source', 'versiondb', 'versiondisk', 'status',
+            'displayname', 'rootdir', 'source', 'versiondb', 'versiondisk', 'requires', 'status',
         );
         $table->data = array();
 
@@ -126,7 +127,13 @@ class core_admin_renderer extends plugin_renderer_base {
 
                 $status = new html_table_cell(get_string('status_' . $statuscode, 'core_plugin'));
 
-                if ($isstandard and in_array($statuscode, array(plugin_manager::PLUGIN_STATUS_NODB, plugin_manager::PLUGIN_STATUS_UPTODATE))) {
+                $requires = new html_table_cell($this->required_column($plugin, $pluginman));
+
+                $statusisboring = in_array($statuscode, array(
+                        plugin_manager::PLUGIN_STATUS_NODB, plugin_manager::PLUGIN_STATUS_UPTODATE));
+                $dependanciesok = $pluginman->are_dependancies_satisfied(
+                        $plugin->get_other_required_plugins());
+                if ($isstandard and $statusisboring and $dependanciesok) {
                     if (empty($options['full'])) {
                         continue;
                     }
@@ -134,7 +141,8 @@ class core_admin_renderer extends plugin_renderer_base {
                     $numofhighlighted[$type]++;
                 }
 
-                $row->cells = array($displayname, $rootdir, $source, $versiondb, $versiondisk, $status);
+                $row->cells = array($displayname, $rootdir, $source,
+                    $versiondb, $versiondisk, $requires, $status);
                 $plugintyperows[] = $row;
             }
 
@@ -177,20 +185,73 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Formats the information that needs to go in the 'Requires' column.
+     * @param plugin_information $plugin the plugin we are rendering the row for.
+     * @param plugin_manager $pluginman provides data on all the plugins.
+     */
+    protected function required_column($plugin, $pluginman) {
+        global $CFG;
+        $requires = array();
+
+        if (!empty($plugin->versionrequires)) {
+            if ($plugin->versionrequires <= $CFG->version) {
+                $class = 'requires-ok';
+            } else {
+                $class = 'requires-failed';
+            }
+            $requires[] = html_writer::tag('li',
+                get_string('moodleversion', 'core_plugin', $plugin->versionrequires),
+                array('class' => $class));
+        }
+
+        foreach ($plugin->get_other_required_plugins() as $component => $requiredversion) {
+            $ok = true;
+            $otherplugin = $pluginman->get_plugin_info($component);
+
+            if (is_null($otherplugin)) {
+                $ok = false;
+            }
+            if ($requiredversion != ANY_VERSION and $otherplugin->versiondb < $requiredversion) {
+                $ok = false;
+            }
+
+            if ($ok) {
+                $class = 'requires-ok';
+            } else {
+                $class = 'requires-failed';
+            }
+
+            if ($requiredversion != ANY_VERSION) {
+                $str = 'otherpluginversion';
+            } else {
+                $str = 'otherplugin';
+            }
+            $requires[] = html_writer::tag('li',
+                    get_string($str, 'core_plugin',
+                            array('component' => $component, 'version' => $requiredversion)),
+                    array('class' => $class));
+        }
+
+        if (!$requires) {
+            return '';
+        }
+        return html_writer::tag('ul', implode("\n", $requires));
+    }
+
+    /**
      * Displays all known plugins and links to manage them
      *
      * This default implementation renders all plugins into one big table.
      *
-     * @param array $plugininfo as returned by {@see plugin_manager::get_plugins()}
+     * @param plugin_manager $pluginman provides information about the plugins.
      * @return string HTML code
      */
-    public function plugins_control_panel(array $plugininfo) {
+    public function plugins_control_panel(plugin_manager $pluginman) {
+        $plugininfo = $pluginman->get_plugins();
 
         if (empty($plugininfo)) {
             return '';
         }
-
-        $pluginman = plugin_manager::instance();
 
         $table = new html_table();
         $table->id = 'plugins-control-panel';

@@ -267,12 +267,11 @@ if ($version > $CFG->version) {  // upgrade
         $PAGE->set_heading($strplugincheck);
         $PAGE->set_cacheable(false);
         $output = $PAGE->get_renderer('core', 'admin');
-        $pluginman = plugin_manager::instance();
 
         echo $output->header();
         echo $output->box_start('generalbox');
         echo $output->container(get_string('pluginchecknotice', 'core_plugin'), 'generalbox', 'notice');
-        echo $output->plugins_check($pluginman->get_plugins(), array('full' => $showallplugins));
+        echo $output->plugins_check(plugin_manager::instance(), array('full' => $showallplugins));
         echo $output->box_end();
         print_upgrade_reload('index.php?confirmupgrade=1&amp;confirmrelease=1');
         $button = new single_button(new moodle_url('index.php', array('confirmupgrade'=>1, 'confirmrelease'=>1, 'confirmplugincheck'=>1)), get_string('upgradestart', 'admin'), 'get');
@@ -307,12 +306,11 @@ if (moodle_needs_upgrading()) {
             $PAGE->set_heading($strplugincheck);
             $PAGE->set_cacheable(false);
             $output = $PAGE->get_renderer('core', 'admin');
-            $pluginman = plugin_manager::instance();
 
             echo $output->header();
             echo $output->box_start('generalbox');
             echo $output->container(get_string('pluginchecknotice', 'core_plugin'), 'generalbox', 'notice');
-            echo $output->plugins_check($pluginman->get_plugins(), array('full' => $showallplugins));
+            echo $output->plugins_check(plugin_manager::instance(), array('full' => $showallplugins));
             echo $output->box_end();
             print_upgrade_reload('index.php');
             $button = new single_button(new moodle_url('index.php', array('confirmplugincheck'=>1)), get_string('upgradestart', 'admin'), 'get');
