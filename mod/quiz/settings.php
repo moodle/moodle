@@ -27,26 +27,17 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
-require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/mod/quiz/settingslib.php');
 
 // First get a list of quiz reports with there own settings pages. If there none,
 // we use a simpler overall menu structure.
+$reports = get_plugin_list_with_file('quiz', 'settings.php', false);
 $reportsbyname = array();
-if ($reports = get_plugin_list('quiz')) {
-    foreach ($reports as $report => $reportdir) {
-        if (file_exists("$reportdir/settings.php")) {
-            $strreportname = get_string($report . 'report', 'quiz_'.$report);
-            // Deal with reports which are lacking the language string
-            if ($strreportname[0] == '[') {
-                $textlib = textlib_get_instance();
-                $strreportname = $textlib->strtotitle($report . ' report');
-            }
-            $reportsbyname[$strreportname] = $report;
-        }
-    }
-    ksort($reportsbyname);
+foreach ($reports as $report => $reportdir) {
+    $strreportname = get_string($report . 'report', 'quiz_'.$report);
+    $reportsbyname[$strreportname] = $report;
 }
+ksort($reportsbyname);
 
 // Create the quiz settings page.
 if (empty($reportsbyname)) {
@@ -74,9 +65,9 @@ $quizsettings->add(new admin_setting_configselect_with_advanced('quiz/attempts',
         array('value' => 0, 'fix' => false), $options));
 
 // Grading method.
-$quizsettings->add(new admin_setting_configselect_with_advanced('quiz/grademethod',
+$quizsettings->add(new mod_quiz_admin_setting_grademethod('quiz/grademethod',
         get_string('grademethod', 'quiz'), get_string('configgrademethod', 'quiz'),
-        array('value' => QUIZ_GRADEHIGHEST, 'fix' => false), quiz_get_grading_options()));
+        array('value' => QUIZ_GRADEHIGHEST, 'fix' => false), null));
 
 // Maximum grade
 $quizsettings->add(new admin_setting_configtext('quiz/maximumgrade',
@@ -178,9 +169,9 @@ $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/delay2',
         array('value' => 0, 'fix' => true), PARAM_INTEGER));
 
 // 'Secure' window.
-$quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/popup',
+$quizsettings->add(new mod_quiz_admin_setting_browsersecurity('quiz/browsersecurity',
         get_string('showinsecurepopup', 'quiz'), get_string('configpopup', 'quiz'),
-        array('value' => 0, 'adv' => true)));
+        array('value' => '-', 'adv' => true), null));
 
 // Now, depending on whether any reports have their own settings page, add
 // the quiz setting page to the appropriate place in the tree.
@@ -198,7 +189,7 @@ if (empty($reportsbyname)) {
         $settings = new admin_settingpage('modsettingsquizcat'.$reportname,
                 $strreportname, 'moodle/site:config', !$module->visible);
         if ($ADMIN->fulltree) {
-            include($CFG->dirroot."/mod/quiz/report/$reportname/settings.php");
+            include($CFG->dirroot . "/mod/quiz/report/$reportname/settings.php");
         }
         $ADMIN->add('modsettingsquizcat', $settings);
     }

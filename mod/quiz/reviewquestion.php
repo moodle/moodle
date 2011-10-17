@@ -59,7 +59,7 @@ if ($attemptobj->is_own_attempt()) {
         die();
     } else if (!$options->attempt) {
         echo $output->review_question_not_allowed(
-                $accessmanager->cannot_review_message($attemptobj->get_review_options()));
+                $attemptobj->cannot_review_message());
         die();
     }
 

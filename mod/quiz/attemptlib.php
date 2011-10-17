@@ -103,7 +103,7 @@ class quiz {
     public static function create($quizid, $userid) {
         global $DB;
 
-        $quiz = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
+        $quiz = quiz_access_manager::load_quiz_and_settings($quizid);
         $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
@@ -317,6 +317,58 @@ class quiz {
     // Bits of content =====================================================================
 
     /**
+     * @param bool $unfinished whether there is currently an unfinished attempt active.
+     * @return string if the quiz policies merit it, return a warning string to
+     *      be displayed in a javascript alert on the start attempt button.
+     */
+    public function confirm_start_attempt_message($unfinished) {
+        if ($unfinished) {
+            return '';
+        }
+
+        if ($this->quiz->timelimit && $this->quiz->attempts) {
+            return get_string('confirmstartattempttimelimit', 'quiz', $this->quiz->attempts);
+        } else if ($this->quiz->timelimit) {
+            return get_string('confirmstarttimelimit', 'quiz');
+        } else if ($this->quiz->attempts) {
+            return get_string('confirmstartattemptlimit', 'quiz', $this->quiz->attempts);
+        }
+
+        return '';
+    }
+
+    /**
+     * If $reviewoptions->attempt is false, meaning that students can't review this
+     * attempt at the moment, return an appropriate string explaining why.
+     *
+     * @param int $when One of the mod_quiz_display_options::DURING,
+     *      IMMEDIATELY_AFTER, LATER_WHILE_OPEN or AFTER_CLOSE constants.
+     * @param bool $short if true, return a shorter string.
+     * @return string an appropraite message.
+     */
+    public function cannot_review_message($when, $short = false) {
+
+        if ($short) {
+            $langstrsuffix = 'short';
+            $dateformat = get_string('strftimedatetimeshort', 'langconfig');
+        } else {
+            $langstrsuffix = '';
+            $dateformat = '';
+        }
+
+        if ($when == mod_quiz_display_options::DURING ||
+                $when == mod_quiz_display_options::IMMEDIATELY_AFTER) {
+            return '';
+        } else if ($when == mod_quiz_display_options::LATER_WHILE_OPEN && $this->quiz->timeclose &&
+                $this->quiz->reviewattempt & mod_quiz_display_options::AFTER_CLOSE) {
+            return get_string('noreviewuntil' . $langstrsuffix, 'quiz',
+                    userdate($this->quiz->timeclose, $dateformat));
+        } else {
+            return get_string('noreview' . $langstrsuffix, 'quiz');
+        }
+    }
+
+    /**
      * @param string $title the name of this particular quiz page.
      * @return array the data that needs to be sent to print_header_simple as the $navigation
      * parameter.
@@ -383,7 +435,7 @@ class quiz_attempt {
         global $DB;
 
         $attempt = $DB->get_record('quiz_attempts', $conditions, '*', MUST_EXIST);
-        $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz), '*', MUST_EXIST);
+        $quiz = quiz_access_manager::load_quiz_and_settings($attempt->quiz);
         $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
@@ -898,6 +950,18 @@ class quiz_attempt {
     // Bits of content =====================================================================
 
     /**
+     * If $reviewoptions->attempt is false, meaning that students can't review this
+     * attempt at the moment, return an appropriate string explaining why.
+     *
+     * @param bool $short if true, return a shorter string.
+     * @return string an appropraite message.
+     */
+    public function cannot_review_message($short = false) {
+        return $this->quizobj->cannot_review_message(
+                $this->get_attempt_state(), $short);
+    }
+
+    /**
      * Initialise the JS etc. required all the questions on a page..
      * @param mixed $page a page number, or 'all'.
      */
@@ -1098,8 +1162,8 @@ class quiz_attempt {
             $eventdata->courseid    = $this->get_courseid();
             events_trigger('quiz_attempt_submitted', $eventdata);
 
-            // Clear the password check flag in the session.
-            $this->get_access_manager($timestamp)->clear_password_access();
+            // Tell any access rules that care that the attempt is over.
+            $this->get_access_manager($timestamp)->current_attempt_finished();
         }
     }
 
@@ -1247,7 +1311,7 @@ abstract class quiz_nav_panel_base {
     }
 
     protected function get_state_string(question_attempt $qa, $showcorrectness) {
-        if ($qa->get_question()->length > 0)  {
+        if ($qa->get_question()->length > 0) {
             return $qa->get_state_string($showcorrectness);
         }
 

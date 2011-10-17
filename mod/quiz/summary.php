@@ -63,7 +63,9 @@ if (!$attemptobj->is_preview_user() && $messages) {
     print_error('attempterror', 'quiz', $attemptobj->view_url(),
             $output->print_messages($messages));
 }
-$accessmanager->do_password_check($attemptobj->is_preview_user());
+if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {
+    redirect($attemptobj->start_attempt_url(null, $page));
+}
 
 $displayoptions = $attemptobj->get_display_options(false);
 
@@ -77,21 +79,12 @@ if (empty($attemptobj->get_quiz()->showblocks)) {
     $PAGE->blocks->show_only_fake_blocks();
 }
 
-if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
-    $accessmanager->setup_secure_page($attemptobj->get_course()->shortname . ': ' .
-            format_string($attemptobj->get_quiz_name()), '');
-} else if ($accessmanager->safebrowser_required($attemptobj->is_preview_user())) {
-    $PAGE->set_title($attemptobj->get_course()->shortname . ': ' .
-            format_string($attemptobj->get_quiz_name()));
-    $PAGE->set_heading($attemptobj->get_course()->fullname);
-    $PAGE->set_cacheable(false);
-} else {
-    $PAGE->navbar->add(get_string('summaryofattempt', 'quiz'));
-    $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
-    $PAGE->set_heading($attemptobj->get_course()->fullname);
-}
+$PAGE->navbar->add(get_string('summaryofattempt', 'quiz'));
+$PAGE->set_title(format_string($attemptobj->get_quiz_name()));
+$PAGE->set_heading($attemptobj->get_course()->fullname);
+$accessmanager->setup_attempt_page($PAGE);
 
 // Print heading.
 
-$accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time());
+$accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time(), $output);
 echo $output->summary_page($attemptobj, $displayoptions);

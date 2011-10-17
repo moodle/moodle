@@ -117,10 +117,12 @@ class quiz_overview_report extends quiz_attempt_report {
         }
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-        $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
+        $courseshortname = format_string($course->shortname, true,
+                array('context' => $coursecontext));
 
         $displaycoursecontext = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-        $displaycourseshortname = format_string($COURSE->shortname, true, array('context' => $displaycoursecontext));
+        $displaycourseshortname = format_string($COURSE->shortname, true,
+                array('context' => $displaycoursecontext));
 
         // Load the required questions.
         $questions = quiz_report_get_significant_questions($quiz);

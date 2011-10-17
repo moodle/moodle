@@ -340,6 +340,11 @@ class plugin_manager {
                 'grading', 'overview', 'responses', 'statistics'
             ),
 
+            'quizaccess' => array(
+                'delaybetweenattempts', 'ipaddress', 'numattempts', 'openclosedate',
+                'password', 'safebrowser', 'securewindow', 'timelimit'
+            ),
+
             'report' => array(
                 'backups', 'configlog', 'courseoverview',
                 'log', 'questioninstances', 'security', 'stats'

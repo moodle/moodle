@@ -42,6 +42,16 @@ define('QUIZ_MAX_DECIMAL_OPTION', 5);
 define('QUIZ_MAX_Q_DECIMAL_OPTION', 7);
 /**#@-*/
 
+/**#@+
+ * Options determining how the grades from individual attempts are combined to give
+ * the overall grade for a user
+ */
+define('QUIZ_GRADEHIGHEST', '1');
+define('QUIZ_GRADEAVERAGE', '2');
+define('QUIZ_ATTEMPTFIRST', '3');
+define('QUIZ_ATTEMPTLAST',  '4');
+/**#@-*/
+
 /**
  * If start and end date for the quiz are more than this many seconds apart
  * they will be represented by two separate events in the calendar
@@ -369,8 +379,9 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
     $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
 
     //datesubmitted == time created. dategraded == time modified or time overridden
-    //if grade was last modified by the user themselves use date graded. Otherwise use date submitted
-    //TODO: move this copied & pasted code somewhere in the grades API. See MDL-26704
+    //if grade was last modified by the user themselves use date graded. Otherwise use
+    // date submitted
+    // TODO: move this copied & pasted code somewhere in the grades API. See MDL-26704
     if ($grade->usermodified == $user->id || empty($grade->datesubmitted)) {
         $result->time = $grade->dategraded;
     } else {
@@ -1037,6 +1048,9 @@ function quiz_after_add_or_update($quiz) {
         $DB->set_field('quiz_feedback', 'feedbacktext', $feedbacktext,
                 array('id' => $feedback->id));
     }
+
+    // Store any settings belonging to the access rules.
+    quiz_access_manager::save_settings($quiz);
 
     // Update the events relating to this quiz.
     quiz_update_events($quiz);
