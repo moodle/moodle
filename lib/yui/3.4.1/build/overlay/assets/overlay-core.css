@@ -1,0 +1,17 @@
+/*
+YUI 3.4.1 (build 4118)
+Copyright 2011 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
+*/
+.yui3-overlay {
+    position:absolute;
+}
+
+.yui3-overlay-hidden {
+    visibility:hidden
+}
+
+.yui3-widget-tmp-forcesize .yui3-overlay-content {
+    overflow:hidden !important;
+}
