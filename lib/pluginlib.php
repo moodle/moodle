@@ -860,7 +860,7 @@ class plugintype_block extends plugintype_base implements plugintype_interface {
             return parent::get_settings_url();
 
         } else if ($block->has_config()) {
-            if (!empty($this->rootdir) and file_exists($this->rootdir . '/settings.php')) {
+            if (file_exists($this->full_path('settings.php'))) {
                 return new moodle_url('/admin/settings.php', array('section' => 'blocksetting' . $this->name));
             } else {
                 $blocksinfo = self::get_blocks_info();
@@ -1191,7 +1191,7 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
      */
     public function get_settings_url() {
 
-        if (!empty($this->rootdir) and (file_exists($this->rootdir . '/settings.php') or file_exists($this->rootdir . '/settingstree.php'))) {
+        if (file_exists($this->full_path('settings.php')) or file_exists($this->full_path('settingstree.php'))) {
             return new moodle_url('/admin/settings.php', array('section' => 'modsetting' . $this->name));
         } else {
             return parent::get_settings_url();
@@ -1283,8 +1283,7 @@ class plugintype_auth extends plugintype_base implements plugintype_interface {
      * @see plugintype_interface::get_settings_url()
      */
     public function get_settings_url() {
-
-        if (!empty($this->rootdir) and file_exists($this->rootdir . '/settings.php')) {
+        if (file_exists($this->full_path('settings.php'))) {
             return new moodle_url('/admin/settings.php', array('section' => 'authsetting' . $this->name));
         } else {
             return new moodle_url('/admin/auth_config.php', array('auth' => $this->name));
@@ -1322,7 +1321,7 @@ class plugintype_enrol extends plugintype_base implements plugintype_interface {
      */
     public function get_settings_url() {
 
-        if ($this->is_enabled() or (!empty($this->rootdir) and file_exists($this->rootdir . '/settings.php'))) {
+        if ($this->is_enabled() or file_exists($this->full_path('settings.php'))) {
             return new moodle_url('/admin/settings.php', array('section' => 'enrolsettings' . $this->name));
         } else {
             return parent::get_settings_url();
@@ -1347,14 +1346,11 @@ class plugintype_message extends plugintype_base implements plugintype_interface
      */
     public function get_settings_url() {
 
-        if ($this->name === 'jabber') {
-            return new moodle_url('/admin/settings.php', array('section' => 'jabber'));
+        if (file_exists($this->full_path('settings.php')) or file_exists($this->full_path('settingstree.php'))) {
+            return new moodle_url('/admin/settings.php', array('section' => 'messagesetting' . $this->name));
+        } else {
+            return parent::get_settings_url();
         }
-
-        if ($this->name === 'email') {
-            return new moodle_url('/admin/settings.php', array('section' => 'mail'));
-        }
-
     }
 }
 
