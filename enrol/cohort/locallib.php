@@ -289,8 +289,7 @@ function enrol_cohort_get_cohorts(course_enrolment_manager $manager) {
  */
 function enrol_cohort_can_view_cohort($cohortid) {
     global $DB;
-    $cohort = $DB->get_record_select('cohort', 'id = ?', array($cohortid));
-
+    $cohort = $DB->get_record('cohort', array('id' => $cohortid), 'id, contextid');
     if ($cohort) {
         $context = get_context_instance_by_id($cohort->contextid);
         if (has_capability('moodle/cohort:view', $context)) {
