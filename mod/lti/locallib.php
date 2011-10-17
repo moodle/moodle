@@ -205,7 +205,7 @@ function lti_build_request($instance, $typeconfig, $course) {
         $instance->cmid = 0;
     }
     
-    $role = lti_get_ims_role($USER, $instance->cmid);
+    $role = lti_get_ims_role($USER, $instance->cmid, $instance->course);
 
     $locale = $course->lang;
     if ( strlen($locale) < 1 ) {
@@ -442,16 +442,30 @@ function lti_map_keyname($key) {
  * @param int $cmid The course module id of the LTI activity
  * @return string A role string suitable for passing with an LTI launch
  */
-function lti_get_ims_role($user, $cmid) {
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+function lti_get_ims_role($user, $cmid, $courseid) {
     $roles = array();
     
-    if(has_capability('mod/lti:manage', $context)){
-        array_push($roles, 'Instructor');
+    if(empty($cmid)){
+        //If no cmid is passed, check if the user is a teacher in the course
+        //This allows other modules to programmatically "fake" a launch without
+        //a real LTI instance
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+        
+        if(has_capability('moodle/course:manageactivities', $coursecontext)){
+            array_push($roles, 'Instructor');
+        } else {
+            array_push($roles, 'Learner');
+        }
     } else {
-        array_push($roles, 'Learner');
+        $context = get_context_instance(CONTEXT_MODULE, $cmid);
+
+        if(has_capability('mod/lti:manage', $context)){
+            array_push($roles, 'Instructor');
+        } else {
+            array_push($roles, 'Learner');
+        }
     }
-    
+
     if(is_siteadmin($user)){
         array_push($roles, 'urn:lti:sysrole:ims/lis/Administrator');
     }
