@@ -426,7 +426,7 @@ interface plugintype_interface {
      *
      * @return void
      */
-    public function set_display_name();
+    public function init_display_name();
 
     /**
      * Sets $versiondisk property to a numerical value representing the
@@ -438,7 +438,7 @@ interface plugintype_interface {
      *
      * @return void
      */
-    public function set_version_disk();
+    public function load_disk_version();
 
     /**
      * Sets $versiondb property to a numerical value representing the
@@ -450,7 +450,7 @@ interface plugintype_interface {
      *
      * @return void
      */
-    public function set_version_db();
+    public function load_db_version();
 
     /**
      * Sets $versionrequires property to a numerical value representing
@@ -458,7 +458,7 @@ interface plugintype_interface {
      *
      * @return void
      */
-    public function set_version_requires();
+    public function load_required_main_version();
 
     /**
      * Sets $source property to one of plugin_manager::PLUGIN_SOURCE_xxx
@@ -470,7 +470,7 @@ interface plugintype_interface {
      *
      * @return void
      */
-    public function set_source();
+    public function init_is_standard();
 
     /**
      * Returns true if the plugin is shipped with the official distribution
@@ -575,11 +575,11 @@ abstract class plugintype_base {
             $plugin->name           = $pluginname;
             $plugin->rootdir        = $pluginrootdir;
 
-            $plugin->set_display_name();
-            $plugin->set_version_disk();
-            $plugin->set_version_db();
-            $plugin->set_version_requires();
-            $plugin->set_source();
+            $plugin->init_display_name();
+            $plugin->load_disk_version();
+            $plugin->load_db_version();
+            $plugin->load_required_main_version();
+            $plugin->init_is_standard();
 
             $ondisk[$pluginname] = $plugin;
         }
@@ -587,9 +587,9 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugintype_interface::set_display_name()
+     * @see plugintype_interface::init_display_name()
      */
-    public function set_display_name() {
+    public function init_display_name() {
         if (! get_string_manager()->string_exists('pluginname', $this->type . '_' . $this->name)) {
             $this->displayname = '[pluginname,' . $this->type . '_' . $this->name . ']';
         } else {
@@ -598,9 +598,9 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugintype_interface::set_version_disk()
+     * @see plugintype_interface::load_disk_version()
      */
-    public function set_version_disk() {
+    public function load_disk_version() {
 
         if (empty($this->rootdir)) {
             return;
@@ -617,9 +617,9 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugintype_interface::set_version_db()
+     * @see plugintype_interface::load_db_version()
      */
-    public function set_version_db() {
+    public function load_db_version() {
 
         if ($ver = self::get_version_from_config_plugins($this->type . '_' . $this->name)) {
             $this->versiondb = $ver;
@@ -627,9 +627,9 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugintype_interface::set_version_requires()
+     * @see plugintype_interface::load_required_main_version()
      */
-    public function set_version_requires() {
+    public function load_required_main_version() {
 
         if (empty($this->rootdir)) {
             return;
@@ -646,9 +646,9 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugintype_interface::set_source()
+     * @see plugintype_interface::init_is_standard()
      */
-    public function set_source() {
+    public function init_is_standard() {
 
         $standard = plugin_manager::standard_plugins_list($this->type);
 
@@ -784,7 +784,7 @@ class plugintype_block extends plugintype_base implements plugintype_interface {
             $plugin->rootdir        = null;
             $plugin->displayname    = $blockname;
             $plugin->versiondb      = $blockinfo->version;
-            $plugin->set_source();
+            $plugin->init_is_standard();
 
             $blocks[$blockname]   = $plugin;
         }
@@ -793,9 +793,9 @@ class plugintype_block extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::set_display_name()
+     * @see plugintype_interface::init_display_name()
      */
-    public function set_display_name() {
+    public function init_display_name() {
 
         if (get_string_manager()->string_exists('pluginname', 'block_' . $this->name)) {
             $this->displayname = get_string('pluginname', 'block_' . $this->name);
@@ -804,14 +804,14 @@ class plugintype_block extends plugintype_base implements plugintype_interface {
             $this->displayname = $block->get_title();
 
         } else {
-            parent::set_display_name();
+            parent::init_display_name();
         }
     }
 
     /**
-     * @see plugintype_interface::set_version_db()
+     * @see plugintype_interface::load_db_version()
      */
-    public function set_version_db() {
+    public function load_db_version() {
         global $DB;
 
         $blocksinfo = self::get_blocks_info();
@@ -909,10 +909,10 @@ class plugintype_filter extends plugintype_base implements plugintype_interface 
             $plugin->rootdir        = $CFG->dirroot . '/' . $filterlegacyname;
             $plugin->displayname    = $displayname;
 
-            $plugin->set_version_disk();
-            $plugin->set_version_db();
-            $plugin->set_version_requires();
-            $plugin->set_source();
+            $plugin->load_disk_version();
+            $plugin->load_db_version();
+            $plugin->load_required_main_version();
+            $plugin->init_is_standard();
 
             $filters[$plugin->name] = $plugin;
         }
@@ -945,7 +945,7 @@ class plugintype_filter extends plugintype_base implements plugintype_interface 
                 $plugin->rootdir        = $CFG->dirroot . '/' . $info->legacyname;
                 $plugin->displayname    = $info->legacyname;
 
-                $plugin->set_version_db();
+                $plugin->load_db_version();
 
                 if (is_null($plugin->versiondb)) {
                     // this is a hack to stimulate 'Missing from disk' error
@@ -961,36 +961,36 @@ class plugintype_filter extends plugintype_base implements plugintype_interface 
     }
 
     /**
-     * @see plugintype_interface::set_display_name()
+     * @see plugintype_interface::init_display_name()
      */
-    public function set_display_name() {
+    public function init_display_name() {
         // do nothing, the name is set in self::get_plugins()
     }
 
     /**
-     * @see plugintype_interface::set_version_disk()
+     * @see plugintype_interface::load_disk_version()
      */
-    public function set_version_disk() {
+    public function load_disk_version() {
 
         if (strpos($this->name, 'mod_') === 0) {
             // filters bundled with modules do not use versioning
             return;
         }
 
-        return parent::set_version_disk();
+        return parent::load_disk_version();
     }
 
     /**
-     * @see plugintype_interface::set_version_requires()
+     * @see plugintype_interface::load_required_main_version()
      */
-    public function set_version_requires() {
+    public function load_required_main_version() {
 
         if (strpos($this->name, 'mod_') === 0) {
             // filters bundled with modules do not use versioning
             return;
         }
 
-        return parent::set_version_requires();
+        return parent::load_required_main_version();
     }
 
     /**
@@ -1124,7 +1124,7 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
             $plugin->rootdir        = null;
             $plugin->displayname    = $modulename;
             $plugin->versiondb      = $moduleinfo->version;
-            $plugin->set_source();
+            $plugin->init_is_standard();
 
             $modules[$modulename]   = $plugin;
         }
@@ -1133,9 +1133,9 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::set_display_name()
+     * @see plugintype_interface::init_display_name()
      */
-    public function set_display_name() {
+    public function init_display_name() {
         if (get_string_manager()->string_exists('pluginname', $this->type . '_' . $this->name)) {
             $this->displayname = get_string('pluginname', $this->type . '_' . $this->name);
         } else {
@@ -1144,9 +1144,9 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::set_version_disk()
+     * @see plugintype_interface::load_disk_version()
      */
-    public function set_version_disk() {
+    public function load_disk_version() {
 
         if (empty($this->rootdir)) {
             return;
@@ -1163,9 +1163,9 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::set_version_db()
+     * @see plugintype_interface::load_db_version()
      */
-    public function set_version_db() {
+    public function load_db_version() {
         global $DB;
 
         $modulesinfo = self::get_modules_info();
@@ -1175,9 +1175,9 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::set_version_requires()
+     * @see plugintype_interface::load_required_main_version()
      */
-    public function set_version_requires() {
+    public function load_required_main_version() {
 
         if (empty($this->rootdir)) {
             return;
@@ -1258,9 +1258,9 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
 class plugintype_qtype extends plugintype_base implements plugintype_interface {
 
     /**
-     * @see plugintype_interface::set_display_name()
+     * @see plugintype_interface::init_display_name()
      */
-    public function set_display_name() {
+    public function init_display_name() {
         $this->displayname = get_string($this->name, 'qtype_' . $this->name);
     }
 }
@@ -1271,9 +1271,9 @@ class plugintype_qtype extends plugintype_base implements plugintype_interface {
 class plugintype_qformat extends plugintype_base implements plugintype_interface {
 
     /**
-     * @see plugintype_interface::set_display_name()
+     * @see plugintype_interface::init_display_name()
      */
-    public function set_display_name() {
+    public function init_display_name() {
         $this->displayname = get_string($this->name, 'qformat_' . $this->name);
     }
 }
