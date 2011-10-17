@@ -529,6 +529,14 @@ interface plugintype_interface {
      * @return string
      */
     public function get_dir();
+
+    /**
+     * Return the full path name of a file within the plugin.
+     * No check is made to see if the file exists.
+     * @param string $relativepath e.g. 'version.php'.
+     * @return string e.g. $CFG->dirroot . '/mod/quiz/version.php'.
+     */
+    public function full_path($relativepath);
 }
 
 /**
@@ -598,21 +606,46 @@ abstract class plugintype_base {
     }
 
     /**
+     * @see plugintype_interface::full_path()
+     */
+    public function full_path($relativepath) {
+        if (empty($this->rootdir)) {
+            return '';
+        }
+        return $this->rootdir . '/' . $relativepath;
+    }
+
+    /**
+     * Load the data from version.php.
+     * @return object the data object defined in version.php.
+     */
+    protected function load_version_php() {
+        $versionfile = $this->full_path('version.php');
+
+        $plugin = new stdClass();
+        if (is_readable($versionfile)) {
+            include($versionfile);
+        }
+        return $plugin;
+    }
+
+    /**
      * @see plugintype_interface::load_disk_version()
      */
     public function load_disk_version() {
-
-        if (empty($this->rootdir)) {
-            return;
+        $plugin = $this->load_version_php();
+        if (isset($plugin->version)) {
+            $this->versiondisk = $plugin->version;
         }
+    }
 
-        $versionfile = $this->rootdir . '/version.php';
-
-        if (is_readable($versionfile)) {
-            include($versionfile);
-            if (isset($plugin->version)) {
-                $this->versiondisk = $plugin->version;
-            }
+    /**
+     * @see plugintype_interface::load_required_main_version()
+     */
+    public function load_required_main_version() {
+        $plugin = $this->load_version_php();
+        if (isset($plugin->requires)) {
+            $this->versionrequires = $plugin->requires;
         }
     }
 
@@ -623,25 +656,6 @@ abstract class plugintype_base {
 
         if ($ver = self::get_version_from_config_plugins($this->type . '_' . $this->name)) {
             $this->versiondb = $ver;
-        }
-    }
-
-    /**
-     * @see plugintype_interface::load_required_main_version()
-     */
-    public function load_required_main_version() {
-
-        if (empty($this->rootdir)) {
-            return;
-        }
-
-        $versionfile = $this->rootdir . '/version.php';
-
-        if (is_readable($versionfile)) {
-            include($versionfile);
-            if (isset($plugin->requires)) {
-                $this->versionrequires = $plugin->requires;
-            }
         }
     }
 
@@ -968,29 +982,15 @@ class plugintype_filter extends plugintype_base implements plugintype_interface 
     }
 
     /**
-     * @see plugintype_interface::load_disk_version()
+     * @see plugintype_base::load_version_php().
      */
-    public function load_disk_version() {
-
+    protected function load_version_php() {
         if (strpos($this->name, 'mod_') === 0) {
-            // filters bundled with modules do not use versioning
-            return;
+            // filters bundled with modules do not have a version.php and so
+            // do not provide their own versioning information.
+            return new stdClass();
         }
-
-        return parent::load_disk_version();
-    }
-
-    /**
-     * @see plugintype_interface::load_required_main_version()
-     */
-    public function load_required_main_version() {
-
-        if (strpos($this->name, 'mod_') === 0) {
-            // filters bundled with modules do not use versioning
-            return;
-        }
-
-        return parent::load_required_main_version();
+        return parent::load_version_php();
     }
 
     /**
@@ -1144,22 +1144,17 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::load_disk_version()
+     * Load the data from version.php.
+     * @return object the data object defined in version.php.
      */
-    public function load_disk_version() {
+    protected function load_version_php() {
+        $versionfile = $this->full_path('version.php');
 
-        if (empty($this->rootdir)) {
-            return;
-        }
-
-        $versionfile = $this->rootdir . '/version.php';
-
+        $module = new stdClass();
         if (is_readable($versionfile)) {
             include($versionfile);
-            if (isset($module->version)) {
-                $this->versiondisk = $module->version;
-            }
         }
+        return $module;
     }
 
     /**
@@ -1171,25 +1166,6 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
         $modulesinfo = self::get_modules_info();
         if (isset($modulesinfo[$this->name]->version)) {
             $this->versiondb = $modulesinfo[$this->name]->version;
-        }
-    }
-
-    /**
-     * @see plugintype_interface::load_required_main_version()
-     */
-    public function load_required_main_version() {
-
-        if (empty($this->rootdir)) {
-            return;
-        }
-
-        $versionfile = $this->rootdir . '/version.php';
-
-        if (is_readable($versionfile)) {
-            include($versionfile);
-            if (isset($module->requires)) {
-                $this->versionrequires = $module->requires;
-            }
         }
     }
 
