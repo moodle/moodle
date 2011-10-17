@@ -331,22 +331,81 @@ WHERE
             }
         }
 
-        // Dates
+        // The date logic is complicated. The intention of this logic is:
+        // 1) display date without time where possible (whenever the date is
+        //    midnight)
+        // 2) when the 'until' date is e.g. 00:00 on the 14th, we display it as
+        //    'until the 13th' (experience at the OU showed that students are
+        //    likely to interpret 'until <date>' as 'until the end of <date>').
+        // 3) This behaviour becomes confusing for 'same-day' dates where there
+        //    are some exceptions.
+        // Users in different time zones will typically not get the 'abbreviated'
+        // behaviour but it should work OK for them aside from that.
+
+        // The following cases are possible:
+        // a) From 13:05 on 14 Oct until 12:10 on 17 Oct (exact, exact)
+        // b) From 14 Oct until 12:11 on 17 Oct (midnight, exact)
+        // c) From 13:05 on 14 Oct until 17 Oct (exact, midnight 18 Oct)
+        // d) From 14 Oct until 17 Oct (midnight 14 Oct, midnight 18 Oct)
+        // e) On 14 Oct (midnight 14 Oct, midnight 15 Oct)
+        // f) From 13:05 on 14 Oct until 0:00 on 15 Oct (exact, midnight, same day)
+        // g) From 0:00 on 14 Oct until 12:05 on 14 Oct (midnight, exact, same day)
+        // h) From 13:05 on 14 Oct (exact)
+        // i) From 14 Oct (midnight)
+        // j) Until 13:05 on 14 Oct (exact)
+        // k) Until 14 Oct (midnight 15 Oct)
+
+        // Check if start and end dates are 'midnights', if so we show in short form
+        $shortfrom = self::is_midnight($this->cm->availablefrom);
+        $shortuntil = self::is_midnight($this->cm->availableuntil);
+
+        // For some checks and for display, we need the previous day for the 'until'
+        // value, if we are going to display it in short form
+        if ($this->cm->availableuntil) {
+            $daybeforeuntil = strtotime("-1 day", usergetmidnight($this->cm->availableuntil));
+        }
+
+        // Special case for if one but not both are exact and they are within a day
+        if ($this->cm->availablefrom && $this->cm->availableuntil &&
+                $shortfrom != $shortuntil && $daybeforeuntil < $this->cm->availablefrom) {
+            // Don't use abbreviated version (see examples f, g above)
+            $shortfrom = false;
+            $shortuntil = false;
+        }
+
+        // When showing short end date, the display time is the 'day before' one
+        $displayuntil = $shortuntil ? $daybeforeuntil : $this->cm->availableuntil;
+
         if ($this->cm->availablefrom && $this->cm->availableuntil) {
-            $information .= get_string('requires_date_both', 'condition',
-                (object)array(
-                    'from' => self::show_time($this->cm->availablefrom, false),
-                    'until' => self::show_time($this->cm->availableuntil, true)));
+            if ($shortfrom && $shortuntil && $daybeforeuntil == $this->cm->availablefrom) {
+                $information .= get_string('requires_date_both_single_day', 'condition',
+                        self::show_time($this->cm->availablefrom, true));
+            } else {
+                $information .= get_string('requires_date_both', 'condition', (object)array(
+                         'from' => self::show_time($this->cm->availablefrom, $shortfrom),
+                         'until' => self::show_time($displayuntil, $shortuntil)));
+            }
         } else if ($this->cm->availablefrom) {
             $information .= get_string('requires_date', 'condition',
-                self::show_time($this->cm->availablefrom, false));
+                self::show_time($this->cm->availablefrom, $shortfrom));
         } else if ($this->cm->availableuntil) {
             $information .= get_string('requires_date_before', 'condition',
-                self::show_time($this->cm->availableuntil, true));
+                self::show_time($displayuntil, $shortuntil));
         }
 
         $information = trim($information);
         return $information;
+    }
+
+    /**
+     * Checks whether a given time refers exactly to midnight (in current user
+     * timezone).
+     * @param int $time Time
+     * @return bool True if time refers to midnight, false if it's some other
+     *   time or if it is set to zero
+     */
+    private static function is_midnight($time) {
+        return $time && usergetmidnight($time) == $time;
     }
 
     /**
@@ -467,7 +526,8 @@ WHERE
                 $available = false;
 
                 $information .= get_string('requires_date', 'condition',
-                    self::show_time($this->cm->availablefrom, false));
+                        self::show_time($this->cm->availablefrom,
+                            self::is_midnight($this->cm->availablefrom)));
             }
         }
 
@@ -491,30 +551,15 @@ WHERE
     }
 
     /**
-     * Shows a time either as a date (if it falls exactly on the day) or
-     * a full date and time, according to user's timezone.
-     *
+     * Shows a time either as a date or a full date and time, according to
+     * user's timezone.
      * @param int $time Time
-     * @param bool $until True if this date should be treated as the second of
-     *   an inclusive pair - if so the time will be shown unless date is 23:59:59.
-     *   Without this the date shows for 0:00:00.
+     * @param bool $dateonly If true, uses date only
      * @return string Date
      */
-    private function show_time($time, $until) {
-        // Break down the time into fields
-        $userdate = usergetdate($time);
-
-        // Handle the 'inclusive' second date
-        if($until) {
-            $dateonly = $userdate['hours']==23 && $userdate['minutes']==59 &&
-                $userdate['seconds']==59;
-        } else {
-            $dateonly = $userdate['hours']==0 && $userdate['minutes']==0 &&
-                $userdate['seconds']==0;
-        }
-
-        return userdate($time, get_string(
-            $dateonly ? 'strftimedate' : 'strftimedatetime', 'langconfig'));
+    private function show_time($time, $dateonly) {
+        return userdate($time,
+                get_string($dateonly ? 'strftimedate' : 'strftimedatetime', 'langconfig'));
     }
 
     /**
