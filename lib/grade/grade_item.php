@@ -1727,16 +1727,26 @@ class grade_item extends grade_object {
             return true; // no need to recalculate locked items
         }
 
-        // precreate grades - we need them to exist
-        $params = array($this->courseid, $this->id, $this->id);
-        $sql = "SELECT DISTINCT go.userid
-                  FROM {grade_grades} go
-                       JOIN {grade_items} gi
-                       ON (gi.id = go.itemid AND gi.courseid = ?)
-                       LEFT OUTER JOIN {grade_grades} g
-                       ON (g.userid = go.userid AND g.itemid = ?)
-                 WHERE gi.id <> ? AND g.id IS NULL";
-        if ($missing = $DB->get_records_sql($sql, $params)) {
+        if ($userid) {
+            $missing = array();
+            if (!$DB->record_exists('grade_grades', array('itemid'=>$this->id, 'userid'=>$userid))) {
+                $m = new stdClass();
+                $m->userid = $userid;
+                $missing[] = $m;
+            }
+        } else {
+            // precreate grades - we need them to exist
+            $params = array($this->courseid, $this->id);
+            $sql = "SELECT go.userid
+                      FROM {grade_grades} go
+                           JOIN {grade_items} gi
+                           ON (gi.id = go.itemid AND gi.courseid = ?)
+                     GROUP BY go.userid
+                     HAVING SUM(go.itemid = ?) = 0";
+            $missing = $DB->get_records_sql($sql, $params);
+        }
+
+        if ($missing) {
             foreach ($missing as $m) {
                 $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$m->userid), false);
                 $grade->grade_item =& $this;
