@@ -37,12 +37,15 @@ if (!is_null($areaid)) {
     $manager = get_grading_manager($areaid);
 } else {
     // get manager by context and component
-    if (is_null($contextid) or is_null($component)) {
+    if (is_null($contextid) or is_null($component) or is_null($area)) {
         throw new coding_exception('The caller script must identify the gradable area.');
     }
     $context = get_context_instance_by_id($contextid, MUST_EXIST);
     $manager = get_grading_manager($context, $component, $area);
 }
+
+// currently active method
+$method = $manager->get_active_method();
 
 list($context, $course, $cm) = get_context_info_array($manager->get_context()->id);
 
@@ -55,33 +58,11 @@ if (is_null($returnurl)) {
 require_login($course, true, $cm);
 require_capability('moodle/grade:managegradingforms', $context);
 
-$PAGE->set_url($manager->get_management_url($returnurl, $area));
+$PAGE->set_url($manager->get_management_url($returnurl));
 navigation_node::override_active_url($manager->get_management_url());
 $PAGE->set_title(get_string('gradingmanagement', 'core_grading'));
 $PAGE->set_heading(get_string('gradingmanagement', 'core_grading'));
 $output = $PAGE->get_renderer('core_grading');
-
-if (is_null($manager->get_area())) {
-    $areas = $manager->get_available_areas();
-
-    if (empty($areas)) {
-        throw new moodle_exception('no_gradable_area_available', 'core_grading');
-    }
-
-    if (count($areas) == 1) {
-        // if there is just one area available, set it automatically
-        $area = reset(array_keys($areas));
-        $manager->set_area($area);
-
-    } else {
-        // display area selector (we will make this page nicer once we have some real multi-area component)
-        echo $output->header();
-        echo $output->heading($manager->get_component_title());
-        echo $output->single_select($PAGE->url, 'area', $areas);
-        echo $output->footer();
-        die();
-    }
-}
 
 // process the eventual change of the active grading method
 if (!empty($activemethod)) {
@@ -102,7 +83,6 @@ echo $output->heading(get_string('gradingmanagementtitle', 'core_grading', array
 echo $output->management_method_selector($manager, $PAGE->url);
 
 // get the currently active method's controller
-$method = $manager->get_active_method();
 if (!empty($method)) {
     $controller = $manager->get_controller($method);
     // display relevant actions
