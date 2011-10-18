@@ -125,16 +125,17 @@ if (!core_tables_exist()) {
         $PAGE->set_title($strinstallation.' - Moodle '.$CFG->target_release);
         $PAGE->set_heading($strinstallation);
         $PAGE->set_cacheable(false);
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading('<a href="http://moodle.org">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment');
-        echo $OUTPUT->heading(get_string('copyrightnotice'));
+        $output = $PAGE->get_renderer('core', 'admin');
+        echo $output->header();
+        echo $output->heading('<a href="http://moodle.org">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment');
+        echo $output->heading(get_string('copyrightnotice'));
         $copyrightnotice = text_to_html(get_string('gpl3'));
         $copyrightnotice = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $copyrightnotice); // extremely ugly validation hack
-        echo $OUTPUT->box($copyrightnotice, 'copyrightnotice');
+        echo $output->box($copyrightnotice, 'copyrightnotice');
         echo '<br />';
         $continue = new single_button(new moodle_url('/admin/index.php', array('lang'=>$CFG->lang, 'agreelicense'=>1)), get_string('continue'), 'get');
-        echo $OUTPUT->confirm(get_string('doyouagree'), $continue, "http://docs.moodle.org/dev/License");
-        echo $OUTPUT->footer();
+        echo $output->confirm(get_string('doyouagree'), $continue, "http://docs.moodle.org/dev/License");
+        echo $output->footer();
         die;
     }
     if (empty($confirmrelease)) {
@@ -143,33 +144,34 @@ if (!core_tables_exist()) {
         $PAGE->set_title($strinstallation);
         $PAGE->set_heading($strinstallation . ' - Moodle ' . $CFG->target_release);
         $PAGE->set_cacheable(false);
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading("Moodle $release");
+        $output = $PAGE->get_renderer('core', 'admin');
+        echo $output->header();
+        echo $output->heading("Moodle $release");
 
         if (isset($maturity)) {
             // main version.php declares moodle code maturity
             if ($maturity < MATURITY_STABLE) {
                 $maturitylevel = get_string('maturity'.$maturity, 'admin');
-                echo $OUTPUT->box(
-                    $OUTPUT->container(get_string('maturitycorewarning', 'admin', $maturitylevel)) .
-                    $OUTPUT->container($OUTPUT->doc_link('admin/versions', get_string('morehelp'))),
+                echo $output->box(
+                    $output->container(get_string('maturitycorewarning', 'admin', $maturitylevel)) .
+                    $output->container($output->doc_link('admin/versions', get_string('morehelp'))),
                     'generalbox maturitywarning');
             }
         }
 
         $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/dev/Releases');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
-        echo $OUTPUT->box($releasenoteslink, 'generalbox releasenoteslink');
+        echo $output->box($releasenoteslink, 'generalbox releasenoteslink');
 
         require_once($CFG->libdir.'/environmentlib.php');
         if (!check_moodle_environment(normalize_version($release), $environment_results, true, ENV_SELECT_RELEASE)) {
-            print_upgrade_reload("index.php?agreelicense=1&amp;lang=$CFG->lang");
+            echo $output->upgrade_reload(new moodle_url('/admin/index.php', array('agreelicense' => 1, 'lang' => $CFG->lang)));
         } else {
-            echo $OUTPUT->notification(get_string('environmentok', 'admin'), 'notifysuccess');
-            echo $OUTPUT->continue_button(new moodle_url('/admin/index.php', array('agreelicense'=>1, 'confirmrelease'=>1, 'lang'=>$CFG->lang)));
+            echo $output->notification(get_string('environmentok', 'admin'), 'notifysuccess');
+            echo $output->continue_button(new moodle_url('/admin/index.php', array('agreelicense'=>1, 'confirmrelease'=>1, 'lang'=>$CFG->lang)));
         }
 
-        echo $OUTPUT->footer();
+        echo $output->footer();
         die;
     }
 
@@ -179,7 +181,8 @@ if (!core_tables_exist()) {
     $PAGE->set_title($strinstallation.' - Moodle '.$CFG->target_release);
     $PAGE->set_heading($strinstallation);
     $PAGE->set_cacheable(false);
-    echo $OUTPUT->header();
+    $output = $PAGE->get_renderer('core', 'admin');
+    echo $output->header();
 
     if (!$DB->setup_is_unicodedb()) {
         if (!$DB->change_db_encoding()) {
@@ -215,21 +218,22 @@ if ($version > $CFG->version) {  // upgrade
         $PAGE->set_title($stradministration);
         $PAGE->set_heading($strdatabasechecking);
         $PAGE->set_cacheable(false);
-        echo $OUTPUT->header();
+        $output = $PAGE->get_renderer('core', 'admin');
+        echo $output->header();
         if (isset($maturity)) {
             // main version.php declares moodle code maturity
             if ($maturity < MATURITY_STABLE) {
                 $maturitylevel = get_string('maturity'.$maturity, 'admin');
-                echo $OUTPUT->box(
-                    $OUTPUT->container(get_string('maturitycorewarning', 'admin', $maturitylevel)) .
-                    $OUTPUT->container($OUTPUT->doc_link('admin/versions', get_string('morehelp'))),
+                echo $output->box(
+                    $output->container(get_string('maturitycorewarning', 'admin', $maturitylevel)) .
+                    $output->container($output->doc_link('admin/versions', get_string('morehelp'))),
                     'generalbox maturitywarning');
 }
         }
         $continueurl = new moodle_url('index.php', array('confirmupgrade' => 1));
         $cancelurl = new moodle_url('index.php');
-        echo $OUTPUT->confirm(get_string('upgradesure', 'admin', $a->newversion), $continueurl, $cancelurl);
-        echo $OUTPUT->footer();
+        echo $output->confirm(get_string('upgradesure', 'admin', $a->newversion), $continueurl, $cancelurl);
+        echo $output->footer();
         exit;
 
     } else if (empty($confirmrelease)){
@@ -238,26 +242,27 @@ if ($version > $CFG->version) {  // upgrade
         $PAGE->set_title($strcurrentrelease);
         $PAGE->set_heading($strcurrentrelease);
         $PAGE->set_cacheable(false);
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading("Moodle $release");
+        $output = $PAGE->get_renderer('core', 'admin');
+        echo $output->header();
+        echo $output->heading("Moodle $release");
         $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/dev/Releases');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
-        echo $OUTPUT->box($releasenoteslink);
+        echo $output->box($releasenoteslink);
 
         require_once($CFG->libdir.'/environmentlib.php');
         if (!check_moodle_environment($release, $environment_results, true, ENV_SELECT_RELEASE)) {
-            print_upgrade_reload('index.php?confirmupgrade=1');
+            echo $output->upgrade_reload(new moodle_url('/admin/index.php'), array('confirmupgrade' => 1));
         } else {
-            echo $OUTPUT->notification(get_string('environmentok', 'admin'), 'notifysuccess');
+            echo $output->notification(get_string('environmentok', 'admin'), 'notifysuccess');
             if (empty($CFG->skiplangupgrade) and current_language() !== 'en') {
-                echo $OUTPUT->box_start('generalbox', 'notice');
+                echo $output->box_start('generalbox', 'notice');
                 print_string('langpackwillbeupdated', 'admin');
-                echo $OUTPUT->box_end();
+                echo $output->box_end();
             }
-            echo $OUTPUT->continue_button('index.php?confirmupgrade=1&confirmrelease=1');
+            echo $output->continue_button('index.php?confirmupgrade=1&confirmrelease=1');
         }
 
-        echo $OUTPUT->footer();
+        echo $output->footer();
         die;
 
     } elseif (empty($confirmplugins)) {
@@ -273,7 +278,7 @@ if ($version > $CFG->version) {  // upgrade
         echo $output->container(get_string('pluginchecknotice', 'core_plugin'), 'generalbox', 'notice');
         echo $output->plugins_check(plugin_manager::instance(), array('full' => $showallplugins));
         echo $output->box_end();
-        print_upgrade_reload('index.php?confirmupgrade=1&amp;confirmrelease=1');
+        echo $output->upgrade_reload(new moodle_url('/admin/index.php'), array('confirmupgrade' => 1, 'confirmrelease' => 1));
         $button = new single_button(new moodle_url('index.php', array('confirmupgrade'=>1, 'confirmrelease'=>1, 'confirmplugincheck'=>1)), get_string('upgradestart', 'admin'), 'get');
         $button->class = 'continuebutton';
         echo $output->render($button);
@@ -312,7 +317,7 @@ if (moodle_needs_upgrading()) {
             echo $output->container(get_string('pluginchecknotice', 'core_plugin'), 'generalbox', 'notice');
             echo $output->plugins_check(plugin_manager::instance(), array('full' => $showallplugins));
             echo $output->box_end();
-            print_upgrade_reload('index.php');
+            echo $output->upgrade_reload(new moodle_url('/admin/index.php'));
             $button = new single_button(new moodle_url('index.php', array('confirmplugincheck'=>1)), get_string('upgradestart', 'admin'), 'get');
             $button->class = 'continuebutton';
             echo $output->render($button);
