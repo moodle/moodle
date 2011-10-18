@@ -25,13 +25,16 @@
  */
 require_once("$CFG->libdir/externallib.php");
 
-class moodle_message_external extends external_api {
+/**
+ * Message functions
+ */
+class core_message_external extends external_api {
 
     /**
      * Returns description of method parameters
      * @return external_function_parameters
      */
-    public static function send_instantmessages_parameters() {
+    public static function send_instant_messages_parameters() {
         return new external_function_parameters(
             array(
                 'messages' => new external_multiple_structure(
@@ -53,7 +56,7 @@ class moodle_message_external extends external_api {
      * @param $messages  An array of message to send.
      * @return boolean
      */
-    public static function send_instantmessages($messages = array()) {
+    public static function send_instant_messages($messages = array()) {
         global $CFG, $USER, $DB;
         require_once($CFG->dirroot . "/message/lib.php");
 
@@ -67,7 +70,7 @@ class moodle_message_external extends external_api {
         self::validate_context($context);
         require_capability('moodle/site:sendmessage', $context);
 
-        $params = self::validate_parameters(self::send_instantmessages_parameters(), array('messages' => $messages));
+        $params = self::validate_parameters(self::send_instant_messages_parameters(), array('messages' => $messages));
 
         //retrieve all tousers of the messages
         $receivers = array();
@@ -154,7 +157,7 @@ class moodle_message_external extends external_api {
      * Returns description of method result value
      * @return external_description
      */
-    public static function send_instantmessages_returns() {
+    public static function send_instant_messages_returns() {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
@@ -164,6 +167,42 @@ class moodle_message_external extends external_api {
                 )
             )
         );
+    }
+
+}
+
+/**
+ * Deprecated message functions
+ * @deprecated since Moodle 2.2 please use core_message_external instead
+ */
+class moodle_message_external extends external_api {
+
+    /**
+     * Returns description of method parameters
+     * @deprecated since Moodle 2.2 please use core_message_external::send_instant_messages_parameters instead
+     * @return external_function_parameters
+     */
+    public static function send_instantmessages_parameters() {
+        return core_message_external::send_instant_messages_parameters();
+    }
+
+    /**
+     * Send private messages from the current USER to other users
+     * @deprecated since Moodle 2.2 please use core_message_external::send_instant_messages instead
+     * @param $messages  An array of message to send.
+     * @return boolean
+     */
+    public static function send_instantmessages($messages = array()) {
+        return core_message_external::send_instant_messages($messages);
+    }
+
+    /**
+     * Returns description of method result value
+     * @deprecated since Moodle 2.2 please use core_message_external::send_instant_messages_returns instead
+     * @return external_description
+     */
+    public static function send_instantmessages_returns() {
+        return core_message_external::send_instant_messages_returns();
     }
 
 }

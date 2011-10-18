@@ -26,7 +26,10 @@
 
 require_once("$CFG->libdir/externallib.php");
 
-class moodle_user_external extends external_api {
+/**
+ * User functions
+ */
+class core_user_external extends external_api {
 
     /**
      * Returns description of method parameters
@@ -196,6 +199,11 @@ class moodle_user_external extends external_api {
         );
     }
 
+    /**
+     * Delete users
+     * @param array $userids
+     * @return null 
+     */
     public static function delete_users($userids) {
         global $CFG, $DB, $USER;
         require_once($CFG->dirroot."/user/lib.php");
@@ -282,6 +290,11 @@ class moodle_user_external extends external_api {
         );
     }
 
+    /**
+     * Update users
+     * @param array $users
+     * @return null 
+     */
     public static function update_users($users) {
         global $CFG, $DB;
         require_once($CFG->dirroot."/user/lib.php");
@@ -469,7 +482,7 @@ class moodle_user_external extends external_api {
      * Returns description of method parameters
      * @return external_function_parameters
      */
-    public static function get_course_participants_by_id_parameters() {
+    public static function get_course_user_profiles_parameters() {
         return new external_function_parameters(
             array(
                 'userlist' => new external_multiple_structure(
@@ -489,10 +502,10 @@ class moodle_user_external extends external_api {
      * @param array $userlist  array of user ids and according course ids
      * @return array An array of arrays describing course participants
      */
-    public static function get_course_participants_by_id($userlist) {
+    public static function get_course_user_profiles($userlist) {
         global $CFG, $USER, $DB;
         require_once($CFG->dirroot . "/user/lib.php");
-        $params = self::validate_parameters(self::get_course_participants_by_id_parameters(), array('userlist'=>$userlist));
+        $params = self::validate_parameters(self::get_course_user_profiles_parameters(), array('userlist'=>$userlist));
 
         $userids = array();
         $courseids = array();
@@ -546,7 +559,7 @@ class moodle_user_external extends external_api {
      * Returns description of method result value
      * @return external_description
      */
-    public static function get_course_participants_by_id_returns() {
+    public static function get_course_user_profiles_returns() {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
@@ -621,28 +634,172 @@ class moodle_user_external extends external_api {
             )
         );
     }
+}
+
+/**
+ * Deprecated user functions
+ * @deprecated since Moodle 2.2 please use core_user_external instead
+ */
+class moodle_user_external extends external_api {
 
     /**
      * Returns description of method parameters
+     * @deprecated since Moodle 2.2 please use core_user_external::create_users_parameters instead
+     * @return external_function_parameters
+     */
+    public static function create_users_parameters() {
+        return core_user_external::create_users_parameters();
+    }
+
+    /**
+     * Create one or more users
+     * @deprecated since Moodle 2.2 please use core_user_external::create_users instead
+     * @param array $users  An array of users to create.
+     * @return array An array of arrays
+     */
+    public static function create_users($users) {
+        return core_user_external::create_users($users);
+    }
+
+   /**
+     * Returns description of method result value
+     * @deprecated since Moodle 2.2 please use core_user_external::create_users_returns instead
+     * @return external_description
+     */
+    public static function create_users_returns() {
+        return core_user_external::create_users_returns();
+    }
+
+
+    /**
+     * Returns description of method parameters
+     * @deprecated since Moodle 2.2 please use core_user_external::delete_users_parameters instead
+     * @return external_function_parameters
+     */
+    public static function delete_users_parameters() {
+        return core_user_external::delete_users_parameters();
+    }
+
+    /**
+     * Delete users
+     * @deprecated since Moodle 2.2 please use core_user_external::delete_users instead
+     * @param array $userids
+     * @return null 
+     */
+    public static function delete_users($userids) {
+        return core_user_external::delete_users($userids);
+    }
+
+   /**
+     * Returns description of method result value
+     * @deprecated since Moodle 2.2 please use core_user_external::delete_users_returns instead
+     * @return external_description
+     */
+    public static function delete_users_returns() {
+        return core_user_external::delete_users_returns();
+    }
+
+
+    /**
+     * Returns description of method parameters
+     * @deprecated since Moodle 2.2 please use core_user_external::update_users_parameters instead
+     * @return external_function_parameters
+     */
+    public static function update_users_parameters() {
+        return core_user_external::update_users_parameters();
+    }
+
+    /**
+     * Update users
+     * @deprecated since Moodle 2.2 please use core_user_external::update_users instead
+     * @param array $users
+     * @return null 
+     */
+    public static function update_users($users) {
+        return core_user_external::update_users($users);
+    }
+
+   /**
+     * Returns description of method result value
+    * @deprecated since Moodle 2.2 please use core_user_external::update_users_returns instead
+     * @return external_description
+     */
+    public static function update_users_returns() {
+        return core_user_external::update_users_returns();
+    }
+
+    /**
+     * Returns description of method parameters
+     * @deprecated since Moodle 2.2 please use core_user_external::get_users_by_id_parameters instead
+     * @return external_function_parameters
+     */
+    public static function get_users_by_id_parameters() {
+        return core_user_external::get_users_by_id_parameters();
+    }
+
+    /**
+     * Get user information
+     * - This function is matching the permissions of /user/profil.php
+     * - It is also matching some permissions from /user/editadvanced.php for the following fields:
+     *   auth, confirmed, idnumber, lang, theme, timezone, mailformat
+     * @deprecated since Moodle 2.2 please use core_user_external::get_users_by_id instead
+     * @param array $userids  array of user ids
+     * @return array An array of arrays describing users
+     */
+    public static function get_users_by_id($userids) {
+        return core_user_external::get_users_by_id($userids);
+    }
+
+    /**
+     * Returns description of method result value
+     * @deprecated since Moodle 2.2 please use core_user_external::get_users_by_id_returns instead
+     * @return external_description
+     */
+    public static function get_users_by_id_returns() {
+        return core_user_external::get_users_by_id_returns();
+    }
+    /**
+     * Returns description of method parameters
+     * @deprecated since Moodle 2.2 please use core_user_external::get_course_user_profiles_parameters instead
+     * @return external_function_parameters
+     */
+    public static function get_course_participants_by_id_parameters() {
+        return core_user_external::get_course_user_profiles_parameters();
+    }
+
+    /**
+     * Get course participant's details
+     * @deprecated since Moodle 2.2 please use core_user_external::get_course_user_profiles instead
+     * @param array $userlist  array of user ids and according course ids
+     * @return array An array of arrays describing course participants
+     */
+    public static function get_course_participants_by_id($userlist) {
+        return core_user_external::get_course_user_profiles($userlist);
+    }
+
+    /**
+     * Returns description of method result value
+     * @deprecated since Moodle 2.2 please use core_user_external::get_course_user_profiles_returns instead
+     * @return external_description
+     */
+    public static function get_course_participants_by_id_returns() {
+        return core_user_external::get_course_user_profiles_returns();
+    }
+
+    /**
+     * Returns description of method parameters
+     * @deprecated since Moodle 2.2 please use core_enrol_external::get_enrolled_users_parameters instead
      * @return external_function_parameters
      */
     public static function get_users_by_courseid_parameters() {
-        return new external_function_parameters(
-            array(
-                'courseid' => new external_value(PARAM_INT, 'course id'),
-                'options'  => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'name'  => new external_value(PARAM_ALPHANUMEXT, 'option name'),
-                            'value' => new external_value(PARAM_RAW, 'option value')
-                        )
-                    ), 'method options'),
-            )
-        );
+        global $CFG;
+        require_once($CFG->dirroot . '/enrol/externallib.php');
+        return core_enrol_external::get_enrolled_users_parameters();
     }
 
     /**
      * Get course participants details
+     * @deprecated since Moodle 2.2 please use core_enrol_external::get_enrolled_users instead
      * @param int $courseid  course id
      * @param array $options options {
      *          'name' => option name
@@ -651,167 +808,18 @@ class moodle_user_external extends external_api {
      * @return array An array of users
      */
     public static function get_users_by_courseid($courseid, $options) {
-        global $CFG, $USER, $DB;
-        require_once($CFG->dirroot . "/user/lib.php");
-
-        $params = self::validate_parameters(
-            self::get_users_by_courseid_parameters(),
-            array(
-                'courseid'=>$courseid,
-                'options'=>$options
-            )
-        );
-        $withcapability = '';
-        $groupid        = 0;
-        $onlyactive     = false;
-        foreach ($options as $option) {
-            switch ($option['name']) {
-            case 'withcapability':
-                $withcapability = $option['value'];
-                break;
-            case 'groupid':
-                $groupid = (int)$option['value'];
-                break;
-            case 'onlyactive':
-                $onlyactive = !empty($option['value']);
-                break;
-            }
-        }
-
-        // to overwrite this parameter, you need role:review capability
-        if ($withcapability) {
-            require_capability('moodle/role:review', $coursecontext);
-        }
-        // need accessallgroups capability if you want to overwrite this option
-        if (!empty($groupid) && groups_is_member($groupid)) {
-            require_capability('moodle/site:accessallgroups', $context);
-        }
-        // to overwrite this option, you need course:enrolereview permission
-        if ($onlyactive) {
-            require_capability('moodle/course:enrolreview', $coursecontext);
-        }
-
-        list($coursectxselect, $coursectxjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-        $coursesql = "SELECT c.* $coursectxselect
-                        FROM {course} c $coursectxjoin
-                       WHERE c.id = $courseid";
-        $course = $DB->get_record_sql($coursesql);
-        context_instance_preload($course);
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $params['courseid']);
-        if ($courseid == SITEID) {
-            $context = get_system_context();
-        } else {
-            $context = $coursecontext;
-        }
-        try {
-            self::validate_context($context);
-        } catch (Exception $e) {
-            $exceptionparam = new stdClass();
-            $exceptionparam->message = $e->getMessage();
-            $exceptionparam->courseid = $params['courseid'];
-            throw new moodle_exception(get_string('errorcoursecontextnotvalid' , 'webservice', $exceptionparam));
-        }
-
-        list($enrolledsql, $enrolledparams) = get_enrolled_sql($coursecontext, $withcapability, $groupid, $onlyactive);
-        list($ctxselect, $ctxjoin) = context_instance_preload_sql('u.id', CONTEXT_USER, 'ctx');
-        $records = $DB->get_records_sql($enrolledsql, $enrolledparams);
-        $sqlparams['courseid'] = $courseid;
-        $sql = "SELECT u.* $ctxselect
-                  FROM {user} u $ctxjoin
-                 WHERE u.id IN ($enrolledsql)
-                 ORDER BY u.id ASC";
-        $enrolledusers = $DB->get_recordset_sql($sql, $enrolledparams);
-        $users = array();
-        foreach ($enrolledusers as $user) {
-            if (!empty($user->deleted)) {
-                continue;
-            }
-            context_instance_preload($user);
-            if ($userdetails = user_get_user_details($user, $course)) {
-                $users[] = $userdetails;
-            }
-        }
-        $enrolledusers->close();
-
-        return $users;
+        global $CFG;
+        require_once($CFG->dirroot . '/enrol/externallib.php');
+        return core_enrol_external::get_enrolled_users($courseid, $options);
     }
     /**
      * Returns description of method result value
+     * @deprecated since Moodle 2.2 please use core_enrol_external::get_enrolled_users_returns instead
      * @return external_description
      */
     public static function get_users_by_courseid_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id'    => new external_value(PARAM_NUMBER, 'ID of the user'),
-                    'username'    => new external_value(PARAM_RAW, 'Username policy is defined in Moodle security config', VALUE_OPTIONAL),
-                    'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
-                    'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
-                    'fullname'    => new external_value(PARAM_NOTAGS, 'The fullname of the user'),
-                    'email'       => new external_value(PARAM_TEXT, 'An email address - allow email as root@localhost', VALUE_OPTIONAL),
-                    'address'     => new external_value(PARAM_MULTILANG, 'Postal address', VALUE_OPTIONAL),
-                    'phone1'      => new external_value(PARAM_NOTAGS, 'Phone 1', VALUE_OPTIONAL),
-                    'phone2'      => new external_value(PARAM_NOTAGS, 'Phone 2', VALUE_OPTIONAL),
-                    'icq'         => new external_value(PARAM_NOTAGS, 'icq number', VALUE_OPTIONAL),
-                    'skype'       => new external_value(PARAM_NOTAGS, 'skype id', VALUE_OPTIONAL),
-                    'yahoo'       => new external_value(PARAM_NOTAGS, 'yahoo id', VALUE_OPTIONAL),
-                    'aim'         => new external_value(PARAM_NOTAGS, 'aim id', VALUE_OPTIONAL),
-                    'msn'         => new external_value(PARAM_NOTAGS, 'msn number', VALUE_OPTIONAL),
-                    'department'  => new external_value(PARAM_TEXT, 'department', VALUE_OPTIONAL),
-                    'institution' => new external_value(PARAM_TEXT, 'institution', VALUE_OPTIONAL),
-                    'interests'   => new external_value(PARAM_TEXT, 'user interests (separated by commas)', VALUE_OPTIONAL),
-                    'firstaccess' => new external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
-                    'lastaccess'  => new external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),
-                    'description' => new external_value(PARAM_RAW, 'User profile description', VALUE_OPTIONAL),
-                    'descriptionformat' => new external_value(PARAM_INT, 'User profile description format', VALUE_OPTIONAL),
-                    'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
-                    'url'         => new external_value(PARAM_URL, 'URL of the user', VALUE_OPTIONAL),
-                    'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
-                    'profileimageurlsmall' => new external_value(PARAM_URL, 'User image profile URL - small version'),
-                    'profileimageurl' => new external_value(PARAM_URL, 'User image profile URL - big version'),
-                    'customfields' => new external_multiple_structure(
-                        new external_single_structure(
-                            array(
-                                'type'  => new external_value(PARAM_ALPHANUMEXT, 'The type of the custom field - text field, checkbox...'),
-                                'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
-                                'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
-                                'shortname' => new external_value(PARAM_RAW, 'The shortname of the custom field - to be able to build the field class in the code'),
-                            )
-                        ), 'User custom fields (also known as user profil fields)', VALUE_OPTIONAL),
-                    'groups' => new external_multiple_structure(
-                        new external_single_structure(
-                            array(
-                                'id'  => new external_value(PARAM_INT, 'group id'),
-                                'name' => new external_value(PARAM_RAW, 'group name'),
-                                'description' => new external_value(PARAM_RAW, 'group description'),
-                            )
-                        ), 'user groups', VALUE_OPTIONAL),
-                    'roles' => new external_multiple_structure(
-                        new external_single_structure(
-                            array(
-                                'roleid'       => new external_value(PARAM_INT, 'role id'),
-                                'name'         => new external_value(PARAM_RAW, 'role name'),
-                                'shortname'    => new external_value(PARAM_ALPHANUMEXT, 'role shortname'),
-                                'sortorder'    => new external_value(PARAM_INT, 'role sortorder')
-                            )
-                        ), 'user roles', VALUE_OPTIONAL),
-                    'preferences' => new external_multiple_structure(
-                        new external_single_structure(
-                            array(
-                                'name'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preferences'),
-                                'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
-                            )
-                    ), 'User preferences', VALUE_OPTIONAL),
-                    'enrolledcourses' => new external_multiple_structure(
-                        new external_single_structure(
-                            array(
-                                'id'  => new external_value(PARAM_INT, 'Id of the course'),
-                                'fullname' => new external_value(PARAM_RAW, 'Fullname of the course'),
-                                'shortname' => new external_value(PARAM_RAW, 'Shortname of the course')
-                            )
-                    ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL)
-                )
-            )
-        );
+        global $CFG;
+        require_once($CFG->dirroot . '/enrol/externallib.php');
+        return core_enrol_external::get_enrolled_users_returns();
     }
 }

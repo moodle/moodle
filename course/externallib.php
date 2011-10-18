@@ -28,7 +28,10 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
 
-class moodle_course_external extends external_api {
+/**
+ * Course functions
+ */
+class core_course_external extends external_api {
 
     /**
      * Returns description of method parameters
@@ -361,6 +364,70 @@ class moodle_course_external extends external_api {
                 )
             )
         );
+    }
+
+}
+
+/**
+ * Deprecated course functions
+ * @deprecated since Moodle 2.2 please use core_course_external instead
+ */
+class moodle_course_external extends external_api {
+
+    /**
+     * Returns description of method parameters
+     * @deprecated since Moodle 2.2 please use core_course_external::get_courses_parameters instead
+     * @return external_function_parameters
+     */
+    public static function get_courses_parameters() {
+        return core_course_external::get_courses_parameters();
+    }
+
+    /**
+     * Get courses
+     * @param array $options
+     * @deprecated since Moodle 2.2 please use core_course_external::get_courses instead
+     * @return array
+     */
+    public static function get_courses($options) {
+        return core_course_external::get_courses($options);
+    }
+
+    /**
+     * Returns description of method result value
+     * @deprecated since Moodle 2.2 please use core_course_external::get_courses_returns instead
+     * @return external_description
+     */
+    public static function get_courses_returns() {
+        return core_course_external::get_courses_returns();
+    }
+
+    /**
+     * Returns description of method parameters
+     * @deprecated since Moodle 2.2 please use core_course_external::create_courses_parameters instead
+     * @return external_function_parameters
+     */
+    public static function create_courses_parameters() {
+        return core_course_external::create_courses_parameters();
+    }
+
+    /**
+     * Create  courses
+     * @deprecated since Moodle 2.2 please use core_course_external::create_courses instead
+     * @param array $courses
+     * @return array courses (id and shortname only)
+     */
+    public static function create_courses($courses) {
+        return core_course_external::create_courses($courses);
+    }
+
+    /**
+     * Returns description of method result value
+     * @deprecated since Moodle 2.2 please use core_course_external::create_courses_returns instead
+     * @return external_description
+     */
+    public static function create_courses_returns() {
+        return core_course_external::create_courses_returns();
     }
 
 }

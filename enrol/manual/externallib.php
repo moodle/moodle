@@ -29,13 +29,16 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/externallib.php");
 
-class moodle_enrol_manual_external extends external_api {
+/**
+ * Manual enrolment functions
+ */
+class enrol_manual_external extends external_api {
 
     /**
      * Returns description of method parameters
      * @return external_function_parameters
      */
-    public static function manual_enrol_users_parameters() {
+    public static function enrol_users_parameters() {
         return new external_function_parameters(
                 array(
                     'enrolments' => new external_multiple_structure(
@@ -60,12 +63,12 @@ class moodle_enrol_manual_external extends external_api {
      * @param array $enrolments  An array of user enrolment
      * @return null
      */
-    public static function manual_enrol_users($enrolments) {
+    public static function enrol_users($enrolments) {
         global $DB, $CFG;
 
         require_once($CFG->libdir . '/enrollib.php');
 
-        $params = self::validate_parameters(self::manual_enrol_users_parameters(),
+        $params = self::validate_parameters(self::enrol_users_parameters(),
                 array('enrolments' => $enrolments));
 
         $transaction = $DB->start_delegated_transaction(); //rollback all enrolment if an error occurs
@@ -134,10 +137,47 @@ class moodle_enrol_manual_external extends external_api {
 
     /**
      * Returns description of method result value
+     * @return null
+     */
+    public static function enrol_users_returns() {
+        return null;
+    }
+
+}
+
+/**
+ * Deprecated manual enrolment functions
+ * @deprecated since Moodle 2.2 please use enrol_manual_external instead
+ */
+class moodle_enrol_manual_external extends external_api {
+
+    /**
+     * Returns description of method parameters
+     * @deprecated since Moodle 2.2 please use enrol_manual_external::enrol_users_parameters instead
+     * @return external_function_parameters
+     */
+    public static function manual_enrol_users_parameters() {
+        return enrol_manual_external::enrol_users_parameters();
+    }
+
+    /**
+     * Enrolment of users
+     * Function throw an exception at the first error encountered.
+     * @deprecated since Moodle 2.2 please use enrol_manual_external::enrol_users instead
+     * @param array $enrolments  An array of user enrolment
+     * @return null
+     */
+    public static function manual_enrol_users($enrolments) {
+        return enrol_manual_external::enrol_users($enrolments);
+    }
+
+    /**
+     * Returns description of method result value
+     * @deprecated since Moodle 2.2 please use enrol_manual_external::enrol_users_returns instead
      * @return external_description
      */
     public static function manual_enrol_users_returns() {
-        return null;
+        return enrol_manual_external::enrol_users_returns();
     }
 
 }
