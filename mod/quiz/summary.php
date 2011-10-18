@@ -77,7 +77,7 @@ if (empty($attemptobj->get_quiz()->showblocks)) {
     $PAGE->blocks->show_only_fake_blocks();
 }
 
-$navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', $page);
+$navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', -1);
 $firstregion = reset($PAGE->blocks->get_regions());
 $PAGE->blocks->add_fake_block($navbc, $firstregion);
 
