@@ -6734,7 +6734,7 @@ function get_string($identifier, $component = '', $a = NULL) {
     $result = get_string_manager()->get_string($identifier, $component, $a);
 
     // Debugging feature lets you display string identifier and component
-    if ($CFG->debugstringids && optional_param('strings', 0, PARAM_INT)) {
+    if (isset($CFG->debugstringids) && $CFG->debugstringids && optional_param('strings', 0, PARAM_INT)) {
         $result .= ' {' . $identifier . '/' . $component . '}';
     }
     return $result;
