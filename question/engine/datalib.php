@@ -367,7 +367,9 @@ GROUP BY
     qa.questionid,
     q.name,
     q.id,
-    summarystate
+    CASE qas.state
+        {$this->full_states_to_summary_state_sql()}
+    END
 
 ORDER BY
     qa.slot,
