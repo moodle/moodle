@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['activemethodinfo'] = '\'{$a->method}\' is selected as the active grading method for the \'{$a->area}\' area';
 $string['activemethodinfonone'] = 'There is no advanced grading method selected for the \'{$a->area}\' area. Simple direct grading will be used.';
 $string['changeactivemethod'] = 'Change active grading method to';
+$string['clicktoclose'] = 'click to close';
 $string['exc_gradingformelement'] = 'Unable to instantiate grading form element';
 $string['formnotavailable'] = 'Advanced grading method was selected to use but the grading form is not available yet. You may need to define it first via a link in the Settings block.';
 $string['gradingmanagement'] = 'Advanced grading';
@@ -37,10 +38,13 @@ $string['gradingmethod'] = 'Grading method';
 $string['gradingmethod_help'] = 'Choose the advanced grading method that should be used for calculating grades in the given context.
 
 To disable advance grading and switch back to the default grading mechanism, choose \'Simple direct grading\'.';
-$string['gradingmethods'] = 'Grading methods';
 $string['gradingmethodnone'] = 'Simple direct grading';
-$string['manageactionclone'] = 'Create new grading form from template';
+$string['gradingmethods'] = 'Grading methods';
+$string['manageactionclone'] = 'Create new grading form from a template';
 $string['manageactiondelete'] = 'Remove the currently defined form';
 $string['manageactionedit'] = 'Edit the current form definition';
 $string['manageactionnew'] = 'Define new grading form from scratch';
+$string['manageactionshare'] = 'Publish the form as a new template';
+$string['manageactionshareconfirm'] = 'You are going to save a copy of the grading form \'{$a}\' as a new public template. Other users at your site will be able to create new grading forms in their activities from that template. Note that users are able to reuse their own grading forms in other activities even if the forms were not saved as template.';
+$string['manageactionsharedone'] = 'The form was successfully saved as a template';
 $string['noitemid'] = 'Grading not possible. The graded item does not exist.';

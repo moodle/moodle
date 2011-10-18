@@ -233,6 +233,39 @@ class gradingform_rubric_controller extends gradingform_controller {
         return $properties;
     }
 
+    /**
+     * Returns the form definition suitable for cloning into another area
+     *
+     * @see parent::get_definition_copy()
+     * @param gradingform_controller $target the controller of the new copy
+     * @return stdClass definition structure to pass to the target's {@link update_definition()}
+     */
+    public function get_definition_copy(gradingform_controller $target) {
+
+        $new = parent::get_definition_copy($target);
+        $old = $this->get_definition();
+        $new->rubric_criteria = array();
+        $newcritid = 1;
+        $newlevid = 1;
+        foreach ($old->rubric_criteria as $oldcritid => $oldcrit) {
+            unset($oldcrit['id']);
+            if (isset($oldcrit['levels'])) {
+                foreach ($oldcrit['levels'] as $oldlevid => $oldlev) {
+                    unset($oldlev['id']);
+                    $oldcrit['levels']['NEWID'.$newlevid] = $oldlev;
+                    unset($oldcrit['levels'][$oldlevid]);
+                    $newlevid++;
+                }
+            } else {
+                $oldcrit['levels'] = array();
+            }
+            $new->rubric_criteria['NEWID'.$newcritid] = $oldcrit;
+            $newcritid++;
+        }
+
+        return $new;
+    }
+
     public function get_grading($raterid, $itemid) {
         global $DB;
         $sql = "SELECT f.id, f.criterionid, f.levelid, f.remark, f.remarkformat
@@ -250,6 +283,7 @@ class gradingform_rubric_controller extends gradingform_controller {
             }
             // TODO: remarks
         }
+        $rs->close();
         return $grading;
     }
 

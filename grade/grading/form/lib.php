@@ -184,6 +184,36 @@ abstract class gradingform_controller {
     }
 
     /**
+     * Returns the form definition suitable for cloning into another area
+     *
+     * @param gradingform_controller $target the controller of the new copy
+     * @return stdClass definition structure to pass to the target's {@link update_definition()}
+     */
+    public function get_definition_copy(gradingform_controller $target) {
+
+        if (get_class($this) != get_class($target)) {
+            throw new coding_exception('The source and copy controller mismatch');
+        }
+
+        if ($target->is_form_defined()) {
+            throw new coding_exception('The target controller already contains a form definition');
+        }
+
+        $old = $this->get_definition();
+        // keep our id
+        $new = new stdClass();
+        $new->copiedfromid = $old->id;
+        $new->name = $old->name;
+        // once we support files embedded into the description, we will want to
+        // relink them into the new file area here (that is why we accept $target)
+        $new->description = $old->description;
+        $new->descriptionformat = $old->descriptionformat;
+        $new->options = $old->options;
+
+        return $new;
+    }
+
+    /**
      * Saves the defintion data into the database
      *
      * The implementation in this base class stores the common data into the record

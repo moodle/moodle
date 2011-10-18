@@ -155,13 +155,26 @@ class grading_manager {
     public function get_component_title() {
 
         $this->ensure_isset(array('context', 'component'));
-        list($context, $course, $cm) = get_context_info_array($this->get_context()->id);
 
-        if (!empty($cm->name)) {
-            $title = $cm->name;
+        if ($this->get_context()->contextlevel == CONTEXT_SYSTEM) {
+            if ($this->get_component() == 'core_grading') {
+                $title = ''; // we are in the bank UI
+            } else {
+                throw new coding_exception('Unsupported component at the system context');
+            }
+
+        } else if ($this->get_context()->contextlevel >= CONTEXT_COURSE) {
+            list($context, $course, $cm) = get_context_info_array($this->get_context()->id);
+
+            if (!empty($cm->name)) {
+                $title = $cm->name;
+            } else {
+                debugging('Gradable areas are currently supported at the course module level only', DEBUG_DEVELOPER);
+                $title = $this->get_component();
+            }
+
         } else {
-            debugging('Gradable areas are currently supported at the course module level only', DEBUG_DEVELOPER);
-            $title = $this->get_component();
+            throw new coding_exception('Unsupported gradable area context level');
         }
 
         return $title;
@@ -174,10 +187,22 @@ class grading_manager {
      */
     public function get_area_title() {
 
-        $this->ensure_isset(array('context', 'component', 'area'));
-        $areas = $this->get_available_areas();
+        if ($this->get_context()->contextlevel == CONTEXT_SYSTEM) {
+            return '';
 
-        return $areas[$this->get_area()];
+        } else if ($this->get_context()->contextlevel >= CONTEXT_COURSE) {
+            $this->ensure_isset(array('context', 'component', 'area'));
+            $areas = $this->get_available_areas();
+            if (array_key_exists($this->get_area(), $areas)) {
+                return $areas[$this->get_area()];
+            } else {
+                debugging('Unknown area!');
+                return '???';
+            }
+
+        } else {
+            throw new coding_exception('Unsupported context level');
+        }
     }
 
     /**
@@ -240,6 +265,7 @@ class grading_manager {
         // require_once($CFG->dirroot.'/mod/assignment/lib.php');
         // return assignment_gradable_area_list();
 
+        // todo - what to return for bank areas in the system context
         // todo - hardcoded list for now
         return array('submission' => 'Submissions');
     }
@@ -463,6 +489,29 @@ class grading_manager {
         }
 
         return new moodle_url('/grade/grading/manage.php', $params);
+    }
+
+    /**
+     * Creates a new shared area to hold a grading form template
+     *
+     * Shared area are implemented as virtual gradable areas at the system level context
+     * with the component set to core_grading and unique random area name.
+     *
+     * @param string $method the name of the plugin we create the area for
+     * @return int the new area id
+     */
+    public function create_shared_area($method) {
+        global $DB;
+
+        // generate some unique random name for the new area
+        $name = $method . '_' . sha1(rand().uniqid($method, true));
+        // create new area record
+        $area = array(
+            'contextid'     => get_system_context()->id,
+            'component'     => 'core_grading',
+            'areaname'      => $name,
+            'activemethod'  => $method);
+        return $DB->insert_record('grading_areas', $area);
     }
 
     ////////////////////////////////////////////////////////////////////////////

@@ -25,12 +25,22 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/grade/grading/lib.php');
 
+// identify gradable area by its id
 $areaid     = optional_param('areaid', null, PARAM_INT);
+// alternatively the context, component and areaname must be provided
 $contextid  = optional_param('contextid', null, PARAM_INT);
 $component  = optional_param('component', null, PARAM_COMPONENT);
 $area       = optional_param('area', null, PARAM_AREA);
+// keep the caller's URL so that we know where to send the user finally
 $returnurl  = optional_param('returnurl', null, PARAM_LOCALURL);
+// active method selector
 $setmethod  = optional_param('setmethod', null, PARAM_PLUGIN);
+// publish the given form definition as a new template in the forms bank
+$shareform  = optional_param('shareform', null, PARAM_INT);
+// consider the required action as confirmed
+$confirmed  = optional_param('confirmed', false, PARAM_BOOL);
+// a message to display, typically a previous action's result
+$message    = optional_param('message', null, PARAM_NOTAGS);
 
 if (!is_null($areaid)) {
     // get manager by id
@@ -47,16 +57,29 @@ if (!is_null($areaid)) {
 // currently active method
 $method = $manager->get_active_method();
 
-list($context, $course, $cm) = get_context_info_array($manager->get_context()->id);
+if ($manager->get_context()->contextlevel == CONTEXT_SYSTEM) {
+    // this is a shared area in the forms bank, redirect the user
+    $params = array('areaid' =>$areaid);
+    if (!is_null($returnurl)) {
+        $params['returnurl'] = $returnurl;
+    }
+    redirect(new moodle_url('/grade/grading/bank.php', $params));
 
-if (is_null($returnurl)) {
-    $returnurl = new moodle_url('/course/view.php', array('id' => $course->id));
+} else if ($manager->get_context()->contextlevel >= CONTEXT_COURSE) {
+    list($context, $course, $cm) = get_context_info_array($manager->get_context()->id);
+
+    if (is_null($returnurl)) {
+        $returnurl = new moodle_url('/course/view.php', array('id' => $course->id));
+    } else {
+        $returnurl = new moodle_url($returnurl);
+    }
+
+    require_login($course, true, $cm);
+    require_capability('moodle/grade:managegradingforms', $context);
+
 } else {
-    $returnurl = new moodle_url($returnurl);
+    throw new coding_exception('Unsupported gradable area context level');
 }
-
-require_login($course, true, $cm);
-require_capability('moodle/grade:managegradingforms', $context);
 
 $PAGE->set_url($manager->get_management_url($returnurl));
 navigation_node::override_active_url($manager->get_management_url());
@@ -75,7 +98,35 @@ if (!empty($setmethod)) {
     redirect($PAGE->url);
 }
 
+// publish the form as a template
+if (!empty($shareform)) {
+    require_capability('moodle/grade:sharegradingforms', get_system_context());
+    $controller = $manager->get_controller($method);
+    $definition = $controller->get_definition();
+    if (!$confirmed) {
+        // let the user confirm they understand what they are doing (haha ;-)
+        echo $output->header();
+        echo $output->confirm(get_string('manageactionshareconfirm', 'core_grading', s($definition->name)),
+            new moodle_url($PAGE->url, array('shareform' => $shareform, 'confirmed' => 1)),
+            $PAGE->url);
+        echo $output->footer();
+        die();
+    } else {
+        require_sesskey();
+        $newareaid = $manager->create_shared_area($method);
+        $targetarea = get_grading_manager($newareaid);
+        $targetcontroller = $targetarea->get_controller($method);
+        $targetcontroller->update_definition($controller->get_definition_copy($targetcontroller));
+        redirect(new moodle_url($PAGE->url, array('message' => get_string('manageactionsharedone', 'core_grading'))));
+    }
+}
+
 echo $output->header();
+
+if (!empty($message)) {
+    echo $output->management_message($message);
+}
+
 echo $output->heading(get_string('gradingmanagementtitle', 'core_grading', array(
     'component' => $manager->get_component_title(), 'area' => $manager->get_area_title())));
 
@@ -88,10 +139,15 @@ if (!empty($method)) {
     // display relevant actions
     echo $output->container_start('actions');
     if ($controller->is_form_defined()) {
+        $definition = $controller->get_definition();
         echo $output->management_action_icon($controller->get_editor_url($returnurl),
-            get_string('manageactionedit', 'core_grading'), 'b/document-properties');
+            get_string('manageactionedit', 'core_grading'), 'b/document-edit');
         echo $output->management_action_icon($PAGE->url,
             get_string('manageactiondelete', 'core_grading'), 'b/edit-delete');
+        if (has_capability('moodle/grade:sharegradingforms', get_system_context())) {
+            echo $output->management_action_icon(new moodle_url($PAGE->url, array('shareform' => $definition->id)),
+                get_string('manageactionshare', 'core_grading'), 'b/bookmark-new');
+        }
     } else {
         echo $output->management_action_icon($controller->get_editor_url($returnurl),
             get_string('manageactionnew', 'core_grading'), 'b/document-new');

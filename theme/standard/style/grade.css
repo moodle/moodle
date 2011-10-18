@@ -41,4 +41,7 @@ td.grade div.overridden {background-color: #DDDDDD;}
 #page-grade-grading-manage .actions {text-align:center;}
 #page-grade-grading-manage .action {display:inline-block;width: 150px;background-color:#EEE;border:2px solid #CCC;
     margin:0.5em;padding:0.5em;text-align:center;-moz-border-radius:5px}
-#page-grade-grading-manage .action:hover {text-decoration:none;background-color:#F6F6F6;
+#page-grade-grading-manage .action:hover {text-decoration:none;background-color:#F6F6F6;}
+#page-grade-grading-manage #actionresultmessagebox {background-color:#D2EBFF;width:60%;margin:1em auto 1em auto;text-align:center;
+    padding:0.5em;border:2px solid #CCC;text-align:center;-moz-border-radius:5px;position:relative}
+#page-grade-grading-manage #actionresultmessagebox span {position:absolute;right:0px;top:-1.2em;color:#666;font-size:80%}
