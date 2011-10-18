@@ -654,6 +654,7 @@ abstract class webservice_server implements webservice_server_interface {
         }
 
         // now fake user login, the session is completely empty too
+        enrol_check_plugins($user);
         session_set_user($user);
         $this->userid = $user->id;
 

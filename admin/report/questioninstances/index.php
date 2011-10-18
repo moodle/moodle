@@ -65,13 +65,15 @@ if ($requestedqtype) {
 
     // Get the question counts, and all the context information, for each
     // context. That is, rows of these results can be used as $context objects.
+    $ctxpreload = context_helper::get_preload_record_columns_sql('con');
+    $ctxgroupby = implode(',', array_keys(context_helper::get_preload_record_columns('con')));
     $counts = $DB->get_records_sql("
-            SELECT qc.contextid, count(1) as numquestions, sum(hidden) as numhidden, con.id, con.contextlevel, con.instanceid, con.path, con.depth
+            SELECT qc.contextid, count(1) as numquestions, sum(hidden) as numhidden, $ctxpreload
             FROM {question} q
             JOIN {question_categories} qc ON q.category = qc.id
             JOIN {context} con ON con.id = qc.contextid
             $sqlqtypetest
-            GROUP BY contextid, con.id, con.contextlevel, con.instanceid, con.path, con.depth
+            GROUP BY qc.contextid, $ctxgroupby
             ORDER BY numquestions DESC, numhidden ASC, con.contextlevel ASC, con.id ASC", $params);
 
     // Print the report heading.
@@ -94,8 +96,10 @@ if ($requestedqtype) {
     $totalhidden = 0;
     foreach ($counts as $count) {
         // Work out a link for editing questions in this context.
-        $contextname = print_context_name($count);
-        $url = question_edit_url($count);
+        context_helper::preload_from_record($count);
+        $context = context::instance_by_id($count->contextid);
+        $contextname = $context->get_context_name();
+        $url = question_edit_url($context);
         if ($url) {
             $contextname = '<a href="' . $url . '" title="' .
                     get_string('editquestionshere', 'report_questioninstances') .

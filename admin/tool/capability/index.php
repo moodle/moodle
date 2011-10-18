@@ -138,7 +138,8 @@ if ($capability) {
 
     // Put the contexts into a tree structure.
     foreach ($contexts as $conid => $con) {
-        $parentcontextid = get_parent_contextid($con);
+        $context = context::instance_by_id($conid);
+        $parentcontextid = get_parent_contextid($context);
         if ($parentcontextid) {
             $contexts[$parentcontextid]->children[] = $conid;
         }
@@ -196,7 +197,8 @@ function print_report_tree($contextid, $contexts, $allroles) {
         $url = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$contextid";
         $title = get_string('changeoverrides', 'tool_capability');
     }
-    echo '<h3><a href="' . $url . '" title="' . $title . '">', print_context_name($contexts[$contextid]), '</a></h3>';
+    $context = context::instance_by_id($contextid);
+    echo '<h3><a href="' . $url . '" title="' . $title . '">', $context->get_context_name(), '</a></h3>';
 
     // If there are any role overrides here, print them.
     if (!empty($contexts[$contextid]->rolecapabilities)) {

@@ -2868,7 +2868,7 @@ class settings_navigation extends navigation_node {
         $context = $this->context;
         if ($context->contextlevel == CONTEXT_BLOCK) {
             $this->load_block_settings();
-            $context = $DB->get_record_sql('SELECT ctx.* FROM {block_instances} bi LEFT JOIN {context} ctx ON ctx.id=bi.parentcontextid WHERE bi.id=?', array($context->instanceid));
+            $context = $context->get_parent_context();
         }
 
         switch ($context->contextlevel) {

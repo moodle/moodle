@@ -247,10 +247,10 @@ class blog_entry {
 
             // First find and show the associated course
             foreach ($blogassociations as $assocrec) {
-                $contextrec = $DB->get_record('context', array('id' => $assocrec->contextid));
-                if ($contextrec->contextlevel ==  CONTEXT_COURSE) {
-                    $assocurl = new moodle_url('/course/view.php', array('id' => $contextrec->instanceid));
-                    $text = $DB->get_field('course', 'shortname', array('id' => $contextrec->instanceid)); //TODO: performance!!!!
+                $context = get_context_instance_by_id($assocrec->contextid);
+                if ($context->contextlevel ==  CONTEXT_COURSE) {
+                    $assocurl = new moodle_url('/course/view.php', array('id' => $context->instanceid));
+                    $text = $DB->get_field('course', 'shortname', array('id' => $context->instanceid)); //TODO: performance!!!!
                     $assocstr .= $OUTPUT->action_icon($assocurl, new pix_icon('i/course', $text), null, array(), true);
                     $hascourseassocs = true;
                     $assoctype = get_string('course');
@@ -259,15 +259,15 @@ class blog_entry {
 
             // Now show mod association
             foreach ($blogassociations as $assocrec) {
-                $contextrec = $DB->get_record('context', array('id' => $assocrec->contextid));
+                $context = get_context_instance_by_id($assocrec->contextid);
 
-                if ($contextrec->contextlevel ==  CONTEXT_MODULE) {
+                if ($context->contextlevel ==  CONTEXT_MODULE) {
                     if ($hascourseassocs) {
                         $assocstr .= ', ';
                         $hascourseassocs = false;
                     }
 
-                    $modinfo = $DB->get_record('course_modules', array('id' => $contextrec->instanceid));
+                    $modinfo = $DB->get_record('course_modules', array('id' => $context->instanceid));
                     $modname = $DB->get_field('modules', 'name', array('id' => $modinfo->module));
 
                     $assocurl = new moodle_url('/mod/'.$modname.'/view.php', array('id' => $modinfo->id));

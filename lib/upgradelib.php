@@ -1417,11 +1417,11 @@ function upgrade_core($version, $verbose) {
         purge_all_caches();
 
         // Clean up contexts - more and more stuff depends on existence of paths and contexts
-        cleanup_contexts();
-        create_contexts();
-        build_context_path();
-        $syscontext = get_context_instance(CONTEXT_SYSTEM);
-        mark_context_dirty($syscontext->path);
+        context_helper::cleanup_instances();
+        context_helper::create_instances(null, false);
+        context_helper::build_all_paths(false);
+        $syscontext = context_system::instance();
+        $syscontext->mark_dirty();
 
         print_upgrade_part_end('moodle', false, $verbose);
     } catch (Exception $ex) {
