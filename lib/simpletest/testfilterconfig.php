@@ -372,35 +372,41 @@ class filter_get_active_available_in_context_test extends UnitTestCaseUsingDatab
     public function setUp() {
         parent::setUp();
 
-        // Make sure accesslib has cached a sensible system context object
-        // before we switch to the test DB.
+        // Create the table we need and switch to test DB.
+        $this->create_test_tables(array('filter_active', 'filter_config', 'context', 'course_categories', 'course'), 'lib');
+        $this->switch_to_test_db();
+        // Nasty hack, recreate the system context record (the accesslib API does not allow to create it easily)
+        $this->create_system_context_record();
+        // Reset all caches
+        accesslib_clear_all_caches_for_unit_testing();
+
         $this->syscontext = get_context_instance(CONTEXT_SYSTEM);
 
-        // Create the table we need and switch to test DB.
-        $this->create_test_tables(array('filter_active', 'filter_config', 'context'), 'lib');
-        $this->switch_to_test_db();
-
-        // Set up systcontext in the test database.
-        $this->testdb->insert_record('context', $this->syscontext);
-        $this->syscontext->id = 1;
-
         // Set up a child context.
-        $this->childcontext = new stdClass;
-        $this->childcontext->contextlevel = CONTEXT_COURSECAT;
-        $this->childcontext->instanceid = 1;
-        $this->childcontext->depth = 2;
-        $this->childcontext->path = '/1/2';
-        $this->testdb->insert_record('context', $this->childcontext);
-        $this->childcontext->id = 2;
+        $cat = new stdClass();
+        $cat->name         = 'testcategory';
+        $cat->parent       = 0;
+        $cat->depth        = 1;
+        $cat->sortorder    = 100;
+        $cat->timemodified = time();
+        $catid = $this->testdb->insert_record('course_categories', $cat);
+        $this->testdb->set_field('course_categories', 'path', '/' . $catid, array('id' => $catid));
+        $this->childcontext = context_coursecat::instance($catid);
 
         // Set up a grandchild context.
-        $this->childcontext2 = new stdClass;
-        $this->childcontext2->contextlevel = CONTEXT_COURSE;
-        $this->childcontext2->instanceid = 2;
-        $this->childcontext2->depth = 3;
-        $this->childcontext2->path = '/1/2/3';
-        $this->testdb->insert_record('context', $this->childcontext2);
-        $this->childcontext2->id = 3;
+        $course = new stdClass();
+        $course->fullname     = 'testcourse';
+        $course->shortname    = 'tc';
+        $course->summary      = 'testcourse summary';
+        $course->newsitems    = 0;
+        $course->numsections  = 1;
+        $course->category     = $catid;
+        $course->format       = 'topics';
+        $course->timecreated  = time();
+        $course->visible      = 1;
+        $course->timemodified = $course->timecreated;
+        $courseid = $this->testdb->insert_record('course', $course);
+        $this->childcontext2 = context_course::instance($courseid);
     }
 
     private function assert_filter_list($expectedfilters, $filters) {
@@ -560,36 +566,37 @@ class filter_preload_activities_test extends UnitTestCaseUsingDatabase {
 
         // Create the table we need and switch to test DB.
         $this->create_test_tables(array('filter_active', 'filter_config', 'context',
-            'course', 'course_modules', 'modules', 'course_sections',
-            'course_modules_availability', 'grade_items'), 'lib');
+            'course', 'course_categories', 'course_modules', 'modules', 'course_sections',
+            'course_modules_availability', 'grade_items', 'cache_text'), 'lib');
         $this->create_test_tables(array('label'), 'mod/label');
         $this->switch_to_test_db();
+        // Nasty hack, recreate the system context record (the accesslib API does not allow to create it easily)
+        $this->create_system_context_record();
+        // Reset all caches
+        accesslib_clear_all_caches_for_unit_testing();
 
-        // Set up systcontext in the test database.
-        $this->syscontext->id = $this->testdb->insert_record('context', $this->syscontext);
+        $this->syscontext = get_context_instance(CONTEXT_SYSTEM);
+
+        // Make the category
+        $cat = new stdClass();
+        $cat->name         = 'testcategory';
+        $cat->parent       = 0;
+        $cat->depth        = 1;
+        $cat->sortorder    = 100;
+        $cat->timemodified = time();
+        $catid = $this->testdb->insert_record('course_categories', $cat);
+        $this->testdb->set_field('course_categories', 'path', '/' . $catid, array('id' => $catid));
+        $this->catcontext = context_coursecat::instance($catid);
 
         // Make the course
         $course = (object)array(
             'shortname' => 'TEST101');
-        $course->id = $this->testdb->insert_record('course', $course);
-
-        // Set up category and course contexts
-        $this->catcontext = (object)array(
-            'contextlevel' => CONTEXT_COURSECAT,
-            'instanceid' => 1,
-            'depth' => 2,
-            'path' => '/1/2');
-        $this->catcontext->id = $this->testdb->insert_record('context', $this->catcontext);
-        $this->coursecontext = (object)array(
-            'contextlevel' => CONTEXT_COURSE,
-            'instanceid' => $course->id,
-            'depth' => 3,
-            'path' => '/1/2/3');
-        $this->coursecontext->id = $this->testdb->insert_record('context', $this->coursecontext);
+        $courseid = $this->testdb->insert_record('course', $course);
+        $this->coursecontext = context_course::instance($courseid);
 
         // Set up section
         $section = (object)array(
-            'course' => $course->id);
+            'course' => $courseid);
         $section->id = $this->testdb->insert_record('course_sections', $section);
 
         // Make course-modules
@@ -598,45 +605,32 @@ class filter_preload_activities_test extends UnitTestCaseUsingDatabase {
             'visible' => 1);
         $mod->id = $this->testdb->insert_record('modules', $mod);
         $label1 = (object)array(
-            'course' => $course->id,
+            'course' => $courseid,
             'intro' => 'Intro 1',
             'name' => 'Label 1');
         $label1->id = $this->testdb->insert_record('label', $label1);
         $cm1 = (object)array(
-            'course' => $course->id,
+            'course' => $courseid,
             'section' => $section->id,
             'module' => $mod->id,
             'instance' => $label1->id);
         $cm1->id = $this->testdb->insert_record('course_modules', $cm1);
+        $this->activity1context = context_module::instance($cm1->id);
+
         $label2 = (object)array(
-            'course' => $course->id,
+            'course' => $courseid,
             'intro' => 'Intro 2',
             'name' => 'Label 2');
         $label2->id = $this->testdb->insert_record('label', $label2);
         $cm2 = (object)array(
-            'course' => $course->id,
+            'course' => $courseid,
             'section' => $section->id,
             'module' => $mod->id,
             'instance' => $label2->id);
         $cm2->id = $this->testdb->insert_record('course_modules', $cm2);
         $this->testdb->set_field('course_sections', 'sequence',
             "$cm1->id,$cm2->id", array('id' => $section->id));
-
-        // Set up activity contexts
-        $this->activity1context = (object)array(
-            'contextlevel' => CONTEXT_MODULE,
-            'instanceid' => $cm1->id,
-            'depth' => 4,
-            'path' => '/1/2/3/4');
-        $this->activity1context->id =
-                $this->testdb->insert_record('context', $this->activity1context);
-        $this->activity2context = (object)array(
-                'contextlevel' => CONTEXT_MODULE,
-                'instanceid' => $cm2->id,
-                'depth' => 4,
-                'path' => '/1/2/3/5');
-        $this->activity2context->id =
-                $this->testdb->insert_record('context', $this->activity2context);
+        $this->activity2context = context_module::instance($cm2->id);
     }
 
     private function assert_matches($modinfo) {

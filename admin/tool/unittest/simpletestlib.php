@@ -746,6 +746,52 @@ class UnitTestCaseUsingDatabase extends UnitTestCase {
     }
 
     /**
+     * Recreates the system context record in the 'context' table
+     *
+     * Once we have switched to test db, if we have recreated the
+     * context table and it's empty, it may be necessary to manually
+     * create the system context record if unittests are going to
+     * play with contexts.
+     *
+     * This is needed because the context_system::instance() method
+     * is exceptional and always requires the record to exist, never
+     * creating it :-( No problem for other contexts.
+     *
+     * Altenatively one complete install can be done, like
+     * {@see accesslib_test::test_everything_in_accesslib} does, but that's
+     * to much for some tests not requiring all the roles/caps/friends
+     * to be present.
+     *
+     * Ideally some day we'll move a lot of these UnitTests to a complete
+     * cloned installation with real data to play with. That day this
+     * won't be necessary anymore.
+     */
+    protected function create_system_context_record() {
+        global $DB;
+
+        // If, for any reason, the record exists, do nothing
+        if ($DB->record_exists('context', array('contextlevel'=>CONTEXT_SYSTEM))) {
+            return;
+        }
+
+        $record = new stdClass();
+        $record->contextlevel = CONTEXT_SYSTEM;
+        $record->instanceid   = 0;
+        $record->depth        = 1;
+        $record->path         = null;
+        if (defined('SYSCONTEXTID')) {
+            $record->id = SYSCONTEXTID;
+            $DB->import_record('context', $record);
+            $DB->get_manager()->reset_sequence('context');
+        } else {
+            $record->id = $DB->insert_record('context', $record);
+        }
+        // fix path
+        $record->path  = '/'.$record->id;
+        $DB->set_field('context', 'path', $record->path, array('id' => $record->id));
+    }
+
+    /**
      * Check that the user has not forgotten to clean anything up, and if they
      * have, display a rude message and clean it up for them.
      */

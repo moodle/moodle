@@ -49,15 +49,18 @@ class rating_db_test extends UnitTestCaseUsingDatabase {
         global $CFG;
         parent::setUp();
 
-        // Make sure accesslib has cached a sensible system context object
-        // before we switch to the test DB.
-        $this->syscontext = get_context_instance(CONTEXT_SYSTEM);
-
         foreach ($this->testtables as $dir => $tables) {
             $this->create_test_tables($tables, $dir); // Create tables
         }
 
         $this->switch_to_test_db(); // Switch to test DB for all the execution
+
+        // Nasty hack, recreate the system context record (the accesslib API does not allow to create it easily)
+        $this->create_system_context_record();
+        // Reset all caches
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->syscontext = get_context_instance(CONTEXT_SYSTEM);
 
         $this->fill_records();
 
@@ -75,9 +78,6 @@ class rating_db_test extends UnitTestCaseUsingDatabase {
 
     private function fill_records() {
         global $DB;
-
-        // Set up systcontext in the test database.
-        $this->syscontext->id = $this->testdb->insert_record('context', $this->syscontext);
 
         // Add the capabilities used by ratings
         foreach ($this->neededcaps as $neededcap) {

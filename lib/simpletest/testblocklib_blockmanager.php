@@ -170,8 +170,12 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
             unset($USER->editing);
         }
         parent::setUp();
-        $this->create_test_tables(array('block', 'block_instances', 'block_positions', 'context'), 'lib');
+        $this->create_test_tables(array('block', 'block_instances', 'block_positions', 'context', 'course_categories', 'course'), 'lib');
         $this->switch_to_test_db();
+        // Nasty hack, recreate the system context record (the accesslib API does not allow to create it easily)
+        $this->create_system_context_record();
+        // Reset all caches
+        accesslib_clear_all_caches_for_unit_testing();
     }
 
     public function tearDown() {
@@ -182,17 +186,6 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
             $this->isediting = null;
         }
         parent::tearDown();
-    }
-
-    /**
-     * Saves the context in the DB, setting $contextid.
-     * @param $context. Context. Path should be set to /parent/path/, that is with a traling /.
-     * This context's id will be appended.
-     */
-    protected function insert_context_in_db($context) {
-        $context->id = $this->testdb->insert_record('context', $context);
-        $context->path .= $context->id;
-        $this->testdb->set_field('context', 'path', $context->path, array('id' => $context->id));
     }
 
     protected function get_a_page_and_block_manager($regions, $context, $pagetype, $subpage = '') {
@@ -245,8 +238,6 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
         $context = get_context_instance(CONTEXT_SYSTEM);
-        $context->path = '/';
-        $this->insert_context_in_db($context);
 
         list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
                 $context, 'page-type');
@@ -264,8 +255,6 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
         $context = get_context_instance(CONTEXT_SYSTEM);
-        $context->path = '/';
-        $this->insert_context_in_db($context);
 
         list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
                 $context, 'page-type');
@@ -280,14 +269,18 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
     }
 
     public function test_block_not_included_in_different_context() {
+        global $DB;
         // Set up fixture.
         $syscontext = get_context_instance(CONTEXT_SYSTEM);
-        $syscontext->path = '/';
-        $this->insert_context_in_db($syscontext);
-        $fakecontext = new stdClass;
-        $fakecontext->contextlevel = CONTEXT_COURSECAT;
-        $fakecontext->path = $syscontext->path . '/';
-        $this->insert_context_in_db($fakecontext);
+        $cat = new stdClass();
+        $cat->name         = 'testcategory';
+        $cat->parent       = 0;
+        $cat->depth        = 1;
+        $cat->sortorder    = 100;
+        $cat->timemodified = time();
+        $catid = $DB->insert_record('course_categories', $cat);
+        $DB->set_field('course_categories', 'path', '/' . $catid, array('id' => $catid));
+        $fakecontext = context_coursecat::instance($catid);
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
 
@@ -304,14 +297,18 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
     }
 
     public function test_block_included_in_sub_context() {
+        global $DB;
         // Set up fixture.
         $syscontext = get_context_instance(CONTEXT_SYSTEM);
-        $syscontext->path = '/';
-        $this->insert_context_in_db($syscontext);
-        $childcontext = new stdClass;
-        $childcontext->contextlevel = CONTEXT_COURSECAT;
-        $childcontext->path = $syscontext->path . '/';
-        $this->insert_context_in_db($childcontext);
+        $cat = new stdClass();
+        $cat->name         = 'testcategory';
+        $cat->parent       = 0;
+        $cat->depth        = 1;
+        $cat->sortorder    = 100;
+        $cat->timemodified = time();
+        $catid = $DB->insert_record('course_categories', $cat);
+        $DB->set_field('course_categories', 'path', '/' . $catid, array('id' => $catid));
+        $childcontext = context_coursecat::instance($catid);
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
 
@@ -330,8 +327,6 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
     public function test_block_not_included_on_different_page_type() {
         // Set up fixture.
         $syscontext = get_context_instance(CONTEXT_SYSTEM);
-        $syscontext->path = '/';
-        $this->insert_context_in_db($syscontext);
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
 
@@ -352,8 +347,6 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
         $syscontext = get_context_instance(CONTEXT_SYSTEM);
-        $syscontext->path = '/';
-        $this->insert_context_in_db($syscontext);
 
         list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
                 $syscontext, 'page-type', 'sub-page');
@@ -372,8 +365,6 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
         $syscontext = get_context_instance(CONTEXT_SYSTEM);
-        $syscontext->path = '/';
-        $this->insert_context_in_db($syscontext);
 
         list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
                 $syscontext, 'page-type', 'sub-page');
@@ -392,8 +383,6 @@ class moodle_block_manager_test_saving_loading extends UnitTestCaseUsingDatabase
         $regionname = 'a-region';
         $blockname = $this->get_a_known_block_type();
         $syscontext = get_context_instance(CONTEXT_SYSTEM);
-        $syscontext->path = '/';
-        $this->insert_context_in_db($syscontext);
 
         list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
                 $syscontext, 'page-type', 'sub-page');
