@@ -3377,6 +3377,48 @@ class dml_test extends UnitTestCase {
         $DB->get_records_sql($sql, $params);
     }
 
+    function test_coalesce() {
+        $DB = $this->tdb;
+
+        // Testing not-null ocurrences, return 1st
+        $sql = "SELECT COALESCE('returnthis', 'orthis', 'orwhynotthis') AS test" . $DB->sql_null_from_clause();
+        $this->assertEqual('returnthis', $DB->get_field_sql($sql, array()));
+        $sql = "SELECT COALESCE(:paramvalue, 'orthis', 'orwhynotthis') AS test" . $DB->sql_null_from_clause();
+        $this->assertEqual('returnthis', $DB->get_field_sql($sql, array('paramvalue' => 'returnthis')));
+
+        // Testing null ocurrences, return 2nd
+        $sql = "SELECT COALESCE(null, 'returnthis', 'orthis') AS test" . $DB->sql_null_from_clause();
+        $this->assertEqual('returnthis', $DB->get_field_sql($sql, array()));
+        $sql = "SELECT COALESCE(:paramvalue, 'returnthis', 'orthis') AS test" . $DB->sql_null_from_clause();
+        $this->assertEqual('returnthis', $DB->get_field_sql($sql, array('paramvalue' => null)));
+        $sql = "SELECT COALESCE(null, :paramvalue, 'orthis') AS test" . $DB->sql_null_from_clause();
+        $this->assertEqual('returnthis', $DB->get_field_sql($sql, array('paramvalue' => 'returnthis')));
+
+        // Testing null ocurrences, return 3rd
+        $sql = "SELECT COALESCE(null, null, 'returnthis') AS test" . $DB->sql_null_from_clause();
+        $this->assertEqual('returnthis', $DB->get_field_sql($sql, array()));
+        $sql = "SELECT COALESCE(null, :paramvalue, 'returnthis') AS test" . $DB->sql_null_from_clause();
+        $this->assertEqual('returnthis', $DB->get_field_sql($sql, array('paramvalue' => null)));
+        $sql = "SELECT COALESCE(null, null, :paramvalue) AS test" . $DB->sql_null_from_clause();
+        $this->assertEqual('returnthis', $DB->get_field_sql($sql, array('paramvalue' => 'returnthis')));
+
+        // Testing all null ocurrences, return null
+        // Note: under mssql, if all elements are nulls, at least one must be a "typed" null, hence
+        // we cannot test this in a cross-db way easily, so next 2 tests are using
+        // different queries depending of the DB family
+        $customnull = $DB->get_dbfamily() == 'mssql' ? 'CAST(null AS varchar)' : 'null';
+        $sql = "SELECT COALESCE(null, null, " . $customnull . ") AS test" . $DB->sql_null_from_clause();
+        $this->assertNull($DB->get_field_sql($sql, array()));
+        $sql = "SELECT COALESCE(null, :paramvalue, " . $customnull . ") AS test" . $DB->sql_null_from_clause();
+        $this->assertNull($DB->get_field_sql($sql, array('paramvalue' => null)));
+
+        // Check there are not problems with whitespace strings
+        $sql = "SELECT COALESCE(null, '', null) AS test" . $DB->sql_null_from_clause();
+        $this->assertEqual('', $DB->get_field_sql($sql, array()));
+        $sql = "SELECT COALESCE(null, :paramvalue, null) AS test" . $DB->sql_null_from_clause();
+        $this->assertEqual('', $DB->get_field_sql($sql, array('paramvalue' => '')));
+    }
+
     function test_sql_concat() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
