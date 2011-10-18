@@ -25,12 +25,12 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/grade/grading/lib.php');
 
-$areaid         = optional_param('areaid', null, PARAM_INT);
-$contextid      = optional_param('contextid', null, PARAM_INT);
-$component      = optional_param('component', null, PARAM_COMPONENT);
-$area           = optional_param('area', null, PARAM_AREA);
-$returnurl      = optional_param('returnurl', null, PARAM_LOCALURL);
-$activemethod   = optional_param('activemethod', null, PARAM_PLUGIN);
+$areaid     = optional_param('areaid', null, PARAM_INT);
+$contextid  = optional_param('contextid', null, PARAM_INT);
+$component  = optional_param('component', null, PARAM_COMPONENT);
+$area       = optional_param('area', null, PARAM_AREA);
+$returnurl  = optional_param('returnurl', null, PARAM_LOCALURL);
+$setmethod  = optional_param('setmethod', null, PARAM_PLUGIN);
 
 if (!is_null($areaid)) {
     // get manager by id
@@ -65,13 +65,13 @@ $PAGE->set_heading(get_string('gradingmanagement', 'core_grading'));
 $output = $PAGE->get_renderer('core_grading');
 
 // process the eventual change of the active grading method
-if (!empty($activemethod)) {
+if (!empty($setmethod)) {
     require_sesskey();
-    if ($activemethod == 'none') {
+    if ($setmethod == 'none') {
         // here we expect that noone would actually want to call their plugin as 'none'
-        $activemethod = null;
+        $setmethod = null;
     }
-    $manager->set_active_method($activemethod);
+    $manager->set_active_method($setmethod);
     redirect($PAGE->url);
 }
 
