@@ -245,11 +245,11 @@ abstract class gradingform_controller {
             $record->method       = $this->get_method_name();
             $record->timecreated  = time();
             $record->usercreated  = $usermodified;
-            $record->timemodified = $definition->timecreated;
-            $record->usermodified = $definition->usercreated;
+            $record->timemodified = $record->timecreated;
+            $record->usermodified = $record->usercreated;
             $record->status       = self::DEFINITION_STATUS_WORKINPROGRESS;
 
-            $DB->insert_record('grading_definitions', $definition);
+            $DB->insert_record('grading_definitions', $record);
 
         } else {
             throw new coding_exception('Unknown status of the cached definition record.');
