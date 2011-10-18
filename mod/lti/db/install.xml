@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/lti/db" VERSION="20111007" COMMENT="XMLDB file for Moodle mod/lti"
+<XMLDB PATH="mod/lti/db" VERSION="20111018" COMMENT="XMLDB file for Moodle mod/lti"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -14,8 +14,9 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="typeid"/>
         <FIELD NAME="typeid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Basic LTI type" PREVIOUS="timemodified" NEXT="toolurl"/>
-        <FIELD NAME="toolurl" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="Remote tool url" PREVIOUS="typeid" NEXT="instructorchoicesendname"/>
-        <FIELD NAME="instructorchoicesendname" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Send user's name" PREVIOUS="toolurl" NEXT="instructorchoicesendemailaddr"/>
+        <FIELD NAME="toolurl" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="Remote tool url" PREVIOUS="typeid" NEXT="securetoolurl"/>
+        <FIELD NAME="securetoolurl" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="toolurl" NEXT="instructorchoicesendname"/>
+        <FIELD NAME="instructorchoicesendname" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Send user's name" PREVIOUS="securetoolurl" NEXT="instructorchoicesendemailaddr"/>
         <FIELD NAME="instructorchoicesendemailaddr" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Send user's email" PREVIOUS="instructorchoicesendname" NEXT="instructorchoiceallowroster"/>
         <FIELD NAME="instructorchoiceallowroster" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Allow the roster to be retrieved" PREVIOUS="instructorchoicesendemailaddr" NEXT="instructorchoiceallowsetting"/>
         <FIELD NAME="instructorchoiceallowsetting" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Allow a tool to store a setting" PREVIOUS="instructorchoiceallowroster" NEXT="instructorcustomparameters"/>
@@ -29,7 +30,8 @@
         <FIELD NAME="showtitle" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="debuglaunch" NEXT="showdescription"/>
         <FIELD NAME="showdescription" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="showtitle" NEXT="servicesalt"/>
         <FIELD NAME="servicesalt" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" PREVIOUS="showdescription" NEXT="icon"/>
-        <FIELD NAME="icon" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" PREVIOUS="servicesalt"/>
+        <FIELD NAME="icon" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="servicesalt" NEXT="secureicon"/>
+        <FIELD NAME="secureicon" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="icon"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
