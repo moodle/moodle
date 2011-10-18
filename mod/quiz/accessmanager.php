@@ -144,6 +144,8 @@ class quiz_access_manager {
      * @param int $quizid the quiz id.
      * @param string $basefields initial part of the select list.
      * @return array with two elements, the sql and the placeholder values.
+     *      If $basefields is '' then you must allow for the possibility that
+     *      there is no data to load, in which case this method returns $sql = ''.
      */
     protected static function get_load_sql($quizid, $rules, $basefields) {
         $allfields = $basefields;
@@ -166,6 +168,10 @@ class quiz_access_manager {
             }
         }
 
+        if ($allfields === '') {
+            return array('', array());
+        }
+
         return array("SELECT $allfields FROM $alljoins WHERE quiz.id = :quizid", $allparams);
     }
 
@@ -185,7 +191,12 @@ class quiz_access_manager {
 
         $rules = self::get_rule_classes();
         list($sql, $params) = self::get_load_sql($quizid, $rules, '');
-        $data = (array) $DB->get_record_sql($sql, $params);
+
+        if ($sql) {
+            $data = (array) $DB->get_record_sql($sql, $params);
+        } else {
+            $data = array();
+        }
 
         foreach ($rules as $rule) {
             $data += $rule::get_extra_settings($quizid);
