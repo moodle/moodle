@@ -74,17 +74,21 @@ add_to_log($attemptobj->get_courseid(), 'quiz', 'view summary',
         'summary.php?attempt=' . $attemptobj->get_attemptid(),
         $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
-// Print the page header
+// Arrange for the navigation to be displayed.
 if (empty($attemptobj->get_quiz()->showblocks)) {
     $PAGE->blocks->show_only_fake_blocks();
 }
+
+$navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', $page);
+$firstregion = reset($PAGE->blocks->get_regions());
+$PAGE->blocks->add_fake_block($navbc, $firstregion);
 
 $PAGE->navbar->add(get_string('summaryofattempt', 'quiz'));
 $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
 $PAGE->set_heading($attemptobj->get_course()->fullname);
 $accessmanager->setup_attempt_page($PAGE);
 
-// Print heading.
+// Display the page.
 
 $accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time(), $output);
 echo $output->summary_page($attemptobj, $displayoptions);
