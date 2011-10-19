@@ -145,7 +145,7 @@ body {margin:auto 0px;width:auto;}
 .blocks-moving.side-post-only #page-content #region-main-box #region-post-box #region-pre {
     float: right;
     position: relative;
-    left: [[setting:leftregionwidthmargin]];
+    left: [[setting:regionprewidth]];
     width: [[setting:regionprewidth]];
 }
 
