@@ -230,12 +230,12 @@ class plugin_manager {
     }
 
     /**
-     * Check a dependancies list against the list of installed plugins.
-     * @param array $dependancies compenent name to required version or ANY_VERSION.
-     * @return bool true if all the dependancies are satisfied.
+     * Check a dependencies list against the list of installed plugins.
+     * @param array $dependencies compenent name to required version or ANY_VERSION.
+     * @return bool true if all the dependencies are satisfied.
      */
-    public function are_dependancies_satisfied($dependancies) {
-        foreach ($dependancies as $component => $requiredversion) {
+    public function are_dependencies_satisfied($dependencies) {
+        foreach ($dependencies as $component => $requiredversion) {
             $otherplugin = $this->get_plugin_info($component);
             if (is_null($otherplugin)) {
                 return false;
@@ -250,9 +250,9 @@ class plugin_manager {
     }
 
     /**
-     * Checks all dependancies for all installed plugins. Used by install and upgrade.
+     * Checks all dependencies for all installed plugins. Used by install and upgrade.
      * @param int $moodleversion the version from version.php.
-     * @return bool true if all the dependancies are satisfied for all plugins.
+     * @return bool true if all the dependencies are satisfied for all plugins.
      */
     public function all_plugins_ok($moodleversion) {
         foreach ($this->get_plugins() as $type => $plugins) {
@@ -262,7 +262,7 @@ class plugin_manager {
                     return false;
                 }
 
-                if (!$this->are_dependancies_satisfied($plugin->get_other_required_plugins())) {
+                if (!$this->are_dependencies_satisfied($plugin->get_other_required_plugins())) {
                     return false;
                 }
             }
@@ -636,7 +636,7 @@ abstract class plugintype_base {
     public $versionrequires;
     /** @var array other plugins that this one depends on.
      *  Lazy-loaded by {@link get_other_required_plugins()} */
-    public $dependancies = null;
+    public $dependencies = null;
     /** @var int number of instances of the plugin - not supported yet */
     public $instances;
     /** @var int order of the plugin among other plugins of the same type - not supported yet */
@@ -724,15 +724,15 @@ abstract class plugintype_base {
     }
 
     /**
-     * Initialise {@link $dependancies} to the list of other plugins (in any)
+     * Initialise {@link $dependencies} to the list of other plugins (in any)
      * that this one requires to be installed.
      */
     protected function load_other_required_plugins() {
         $plugin = $this->load_version_php();
-        if (!empty($plugin->dependancies)) {
-            $this->dependancies = $plugin->dependancies;
+        if (!empty($plugin->dependencies)) {
+            $this->dependencies = $plugin->dependencies;
         } else {
-            $this->dependancies = array(); // By default, no dependancies.
+            $this->dependencies = array(); // By default, no dependencies.
         }
     }
 
@@ -740,10 +740,10 @@ abstract class plugintype_base {
      * @see plugin_information::get_other_required_plugins()
      */
     public function get_other_required_plugins() {
-        if (is_null($this->dependancies)) {
+        if (is_null($this->dependencies)) {
             $this->load_other_required_plugins();
         }
-        return $this->dependancies;
+        return $this->dependencies;
     }
 
     /**
@@ -1336,7 +1336,7 @@ class plugintype_qbehaviour extends plugintype_base implements plugin_informatio
      */
     protected function load_other_required_plugins() {
         parent::load_other_required_plugins();
-        if (!empty($this->dependancies)) {
+        if (!empty($this->dependencies)) {
             return;
         }
 
@@ -1345,7 +1345,7 @@ class plugintype_qbehaviour extends plugintype_base implements plugin_informatio
         require_once($CFG->libdir . '/questionlib.php');
         $required = question_engine::get_behaviour_required_behaviours($this->name);
         foreach ($required as $other) {
-            $this->dependancies['qbehaviour_' . $other] = ANY_VERSION;
+            $this->dependencies['qbehaviour_' . $other] = ANY_VERSION;
         }
     }
 }
@@ -1372,7 +1372,7 @@ class plugintype_qtype extends plugintype_base implements plugin_information {
      */
     protected function load_other_required_plugins() {
         parent::load_other_required_plugins();
-        if (!empty($this->dependancies)) {
+        if (!empty($this->dependencies)) {
             return;
         }
 
@@ -1381,7 +1381,7 @@ class plugintype_qtype extends plugintype_base implements plugin_information {
         require_once($CFG->libdir . '/questionlib.php');
         $required = question_bank::get_qtype($this->name)->requires_qtypes();
         foreach ($required as $other) {
-            $this->dependancies['qtype_' . $other] = ANY_VERSION;
+            $this->dependencies['qtype_' . $other] = ANY_VERSION;
         }
     }
 }

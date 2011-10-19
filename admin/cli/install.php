@@ -648,7 +648,7 @@ if (!$envstatus) {
     exit(1);
 }
 
-// Test plugin dependancies.
+// Test plugin dependencies.
 if (!plugin_manager::instance()->all_plugins_ok($version)) {
     cli_error(get_string('pluginschecktodo', 'admin'));
 }

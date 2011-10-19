@@ -483,9 +483,9 @@ class core_admin_renderer extends plugin_renderer_base {
 
                 $statusisboring = in_array($statuscode, array(
                         plugin_manager::PLUGIN_STATUS_NODB, plugin_manager::PLUGIN_STATUS_UPTODATE));
-                $dependanciesok = $pluginman->are_dependancies_satisfied(
+                $dependenciesok = $pluginman->are_dependencies_satisfied(
                         $plugin->get_other_required_plugins());
-                if ($isstandard and $statusisboring and $dependanciesok) {
+                if ($isstandard and $statusisboring and $dependenciesok) {
                     if (empty($options['full'])) {
                         continue;
                     }
