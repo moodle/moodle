@@ -66,7 +66,12 @@ class mod_assignment_renderer extends plugin_renderer_base {
         foreach ($dir['files'] as $file) {
             $filename = $file->get_filename();
             $icon = mimeinfo("icon", $filename);
-            $plagiarsmlinks = plagiarism_get_links(array('userid'=>$file->get_userid(), 'file'=>$file, 'cmid'=>$tree->cm->id, 'course'=>$tree->course));
+            if ($CFG->enableplagiarism) {
+                require_once($CFG->libdir.'/plagiarismlib.php');
+                $plagiarsmlinks = plagiarism_get_links(array('userid'=>$file->get_userid(), 'file'=>$file, 'cmid'=>$tree->cm->id, 'course'=>$tree->course));
+            } else {
+                $plagiarsmlinks = '';
+            }
             $image = $this->output->pix_icon("f/$icon", $filename, 'moodle', array('class'=>'icon'));
             $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.$file->fileurl.' '.$plagiarsmlinks.$file->portfoliobutton.'</div></li>';
         }
