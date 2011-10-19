@@ -32,30 +32,15 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/environmentlib.php');
 require_once($CFG->libdir.'/componentlib.class.php');
 
-admin_externalpage_setup('environment');
-
 // Parameters
 $action  = optional_param('action', '', PARAM_ACTION);
 $version = optional_param('version', '', PARAM_FILE); //
 
-
-// Get some strings
-$stradmin = get_string('administration');
-$stradminhelpenvironment = get_string("adminhelpenvironment");
-$strenvironment = get_string('environment', 'admin');
-$strerror = get_string('error');
-$strmoodleversion = get_string('moodleversion');
-$strupdate = get_string('updatecomponent', 'admin');
-$strupwards = get_string('upwards', 'admin');
-$strmisc = get_string('miscellaneous');
-
-// Print the header stuff
-echo $OUTPUT->header();
-
-// Print the component download link
-echo '<div class="reportlink"><a href="environment.php?action=updatecomponent&amp;sesskey='.sesskey().'">'.$strupdate.'</a></div>';
-
-echo $OUTPUT->heading($strenvironment);
+$extraurlparams = array();
+if ($version) {
+    $extraurlparams['version'] = $version;
+}
+admin_externalpage_setup('environment', '', $extraurlparams);
 
 // Handle the 'updatecomponent' action
 if ($action == 'updatecomponent' && confirm_sesskey()) {
@@ -68,27 +53,26 @@ if ($action == 'updatecomponent' && confirm_sesskey()) {
             case COMPONENT_ERROR:
                 if ($cd->get_error() == 'remotedownloaderror') {
                     $a = new stdClass();
-                    $a->url = 'http://download.moodle.org/environment/environment.zip';
-                    $a->dest= $CFG->dataroot.'/';
-                    echo $OUTPUT->box(get_string($cd->get_error(), 'error', $a), 'errorbox');
+                    $a->url  = 'http://download.moodle.org/environment/environment.zip';
+                    $a->dest = $CFG->dataroot . '/';
+                    print_error($cd->get_error(), 'error', $PAGE->url, $a);
+                    die();
+
                 } else {
-                    echo $OUTPUT->box(get_string($cd->get_error(), 'error'), 'errorbox');
+                    print_error($cd->get_error(), 'error', $PAGE->url);
+                    die();
                 }
-                break;
+
             case COMPONENT_UPTODATE:
-                echo $OUTPUT->box(get_string($cd->get_error(), 'error'));
-                break;
+                redirect($PAGE->url, get_string($cd->get_error(), 'error'));
+                die;
+
             case COMPONENT_INSTALLED:
-                echo $OUTPUT->box(get_string('componentinstalled', 'admin'));
-                break;
+                redirect($PAGE->url, get_string('componentinstalled', 'admin'));
+                die;
         }
     }
 }
-
-// Start of main box
-echo $OUTPUT->box_start();
-
-echo "<div style=\"text-align:center\">".$stradminhelpenvironment."</div><br />";
 
 // Get current Moodle version
 $current_version = $CFG->release;
@@ -111,24 +95,15 @@ if ($contents = load_environment_xml()) {
             }
         }
         // Add 'upwards' to the last element
-        $versions[$env_version] = $env_version.' '.$strupwards;
+        $versions[$env_version] = $env_version.' '.get_string('upwards', 'admin');
     } else {
-        $versions = array('error' => $strerror);
+        $versions = array('error' => get_string('error'));
     }
 }
 
-// Print form and popup menu
-echo '<div style="text-align:center"> ';
-$select = new single_select(new moodle_url('/admin/environment.php'), 'version', $versions, $version, null);
-$select->label = $strmoodleversion;
-echo $OUTPUT->render($select);
-echo '</div>';
+// Get the results of the environment check.
+list($envstatus, $environment_results) = check_moodle_environment($version);
 
-// End of main box
-echo $OUTPUT->box_end();
-
-// Gather and show results
-$status = check_moodle_environment($version, $environment_results);
-
-// Print footer
-echo $OUTPUT->footer();
+// Display the page.
+$output = $PAGE->get_renderer('core', 'admin');
+echo $output->environment_check_page($versions, $version, $envstatus, $environment_results);

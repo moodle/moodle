@@ -103,6 +103,11 @@ if (!$version or !$release) {
     print_error('withoutversion', 'debug'); // without version, stop
 }
 
+if (!isset($maturity)) {
+    // Fallback for now. Should probably be removed in the future.
+    $maturity = MATURITY_STABLE;
+}
+
 // Turn off xmlstrictheaders during upgrade.
 $origxmlstrictheaders = !empty($CFG->xmlstrictheaders);
 $CFG->xmlstrictheaders = false;
@@ -121,66 +126,39 @@ if (!core_tables_exist()) {
 
     if (empty($agreelicense)) {
         $strlicense = get_string('license');
+
         $PAGE->navbar->add($strlicense);
         $PAGE->set_title($strinstallation.' - Moodle '.$CFG->target_release);
         $PAGE->set_heading($strinstallation);
         $PAGE->set_cacheable(false);
+
         $output = $PAGE->get_renderer('core', 'admin');
-        echo $output->header();
-        echo $output->heading('<a href="http://moodle.org">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment');
-        echo $output->heading(get_string('copyrightnotice'));
-        $copyrightnotice = text_to_html(get_string('gpl3'));
-        $copyrightnotice = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $copyrightnotice); // extremely ugly validation hack
-        echo $output->box($copyrightnotice, 'copyrightnotice');
-        echo '<br />';
-        $continue = new single_button(new moodle_url('/admin/index.php', array('lang'=>$CFG->lang, 'agreelicense'=>1)), get_string('continue'), 'get');
-        echo $output->confirm(get_string('doyouagree'), $continue, "http://docs.moodle.org/dev/License");
-        echo $output->footer();
+        echo $output->install_licence_page();
         die;
     }
     if (empty($confirmrelease)) {
+        require_once($CFG->libdir.'/environmentlib.php');
+        list($envstatus, $environment_results) = check_moodle_environment(normalize_version($release), ENV_SELECT_RELEASE);
         $strcurrentrelease = get_string('currentrelease');
+
         $PAGE->navbar->add($strcurrentrelease);
         $PAGE->set_title($strinstallation);
         $PAGE->set_heading($strinstallation . ' - Moodle ' . $CFG->target_release);
         $PAGE->set_cacheable(false);
+
         $output = $PAGE->get_renderer('core', 'admin');
-        echo $output->header();
-        echo $output->heading("Moodle $release");
-
-        if (isset($maturity)) {
-            // main version.php declares moodle code maturity
-            if ($maturity < MATURITY_STABLE) {
-                $maturitylevel = get_string('maturity'.$maturity, 'admin');
-                echo $output->box(
-                    $output->container(get_string('maturitycorewarning', 'admin', $maturitylevel)) .
-                    $output->container($output->doc_link('admin/versions', get_string('morehelp'))),
-                    'generalbox maturitywarning');
-            }
-        }
-
-        $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/dev/Releases');
-        $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
-        echo $output->box($releasenoteslink, 'generalbox releasenoteslink');
-
-        require_once($CFG->libdir.'/environmentlib.php');
-        if (!check_moodle_environment(normalize_version($release), $environment_results, true, ENV_SELECT_RELEASE)) {
-            echo $output->upgrade_reload(new moodle_url('/admin/index.php', array('agreelicense' => 1, 'lang' => $CFG->lang)));
-        } else {
-            echo $output->notification(get_string('environmentok', 'admin'), 'notifysuccess');
-            echo $output->continue_button(new moodle_url('/admin/index.php', array('agreelicense'=>1, 'confirmrelease'=>1, 'lang'=>$CFG->lang)));
-        }
-
-        echo $output->footer();
+        echo $output->install_environment_page($maturity, $envstatus, $environment_results);
         die;
     }
 
     $strdatabasesetup = get_string('databasesetup');
     upgrade_init_javascript();
+
     $PAGE->navbar->add($strdatabasesetup);
     $PAGE->set_title($strinstallation.' - Moodle '.$CFG->target_release);
     $PAGE->set_heading($strinstallation);
     $PAGE->set_cacheable(false);
+
     $output = $PAGE->get_renderer('core', 'admin');
     echo $output->header();
 
@@ -210,79 +188,45 @@ if ($version > $CFG->version) {  // upgrade
     $PAGE->set_pagelayout('maintenance');
     $PAGE->set_popup_notification_allowed(false);
 
-    $a->oldversion = "$CFG->release ($CFG->version)";
-    $a->newversion = "$release ($version)";
-    $strdatabasechecking = get_string('databasechecking', '', $a);
-
     if (empty($confirmupgrade)) {
+        $a->oldversion = "$CFG->release ($CFG->version)";
+        $a->newversion = "$release ($version)";
+        $strdatabasechecking = get_string('databasechecking', '', $a);
+
         $PAGE->set_title($stradministration);
         $PAGE->set_heading($strdatabasechecking);
         $PAGE->set_cacheable(false);
+
         $output = $PAGE->get_renderer('core', 'admin');
-        echo $output->header();
-        if (isset($maturity)) {
-            // main version.php declares moodle code maturity
-            if ($maturity < MATURITY_STABLE) {
-                $maturitylevel = get_string('maturity'.$maturity, 'admin');
-                echo $output->box(
-                    $output->container(get_string('maturitycorewarning', 'admin', $maturitylevel)) .
-                    $output->container($output->doc_link('admin/versions', get_string('morehelp'))),
-                    'generalbox maturitywarning');
-}
-        }
-        $continueurl = new moodle_url('index.php', array('confirmupgrade' => 1));
-        $cancelurl = new moodle_url('index.php');
-        echo $output->confirm(get_string('upgradesure', 'admin', $a->newversion), $continueurl, $cancelurl);
-        echo $output->footer();
+        echo $output->upgrade_confirm_page($a->newversion, $maturity);
         exit;
 
     } else if (empty($confirmrelease)){
+        require_once($CFG->libdir.'/environmentlib.php');
+        list($envstatus, $environment_results) = check_moodle_environment($release, ENV_SELECT_RELEASE);
         $strcurrentrelease = get_string('currentrelease');
+
         $PAGE->navbar->add($strcurrentrelease);
         $PAGE->set_title($strcurrentrelease);
         $PAGE->set_heading($strcurrentrelease);
         $PAGE->set_cacheable(false);
+
         $output = $PAGE->get_renderer('core', 'admin');
-        echo $output->header();
-        echo $output->heading("Moodle $release");
-        $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/dev/Releases');
-        $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
-        echo $output->box($releasenoteslink);
-
-        require_once($CFG->libdir.'/environmentlib.php');
-        if (!check_moodle_environment($release, $environment_results, true, ENV_SELECT_RELEASE)) {
-            echo $output->upgrade_reload(new moodle_url('/admin/index.php'), array('confirmupgrade' => 1));
-        } else {
-            echo $output->notification(get_string('environmentok', 'admin'), 'notifysuccess');
-            if (empty($CFG->skiplangupgrade) and current_language() !== 'en') {
-                echo $output->box_start('generalbox', 'notice');
-                print_string('langpackwillbeupdated', 'admin');
-                echo $output->box_end();
-            }
-            echo $output->continue_button('index.php?confirmupgrade=1&confirmrelease=1');
-        }
-
-        echo $output->footer();
+        echo $this->upgrade_environment_page($release, $envstatus, $environment_results);
         die;
 
-    } elseif (empty($confirmplugins)) {
+    } else if (empty($confirmplugins)) {
         $strplugincheck = get_string('plugincheck');
+
         $PAGE->navbar->add($strplugincheck);
         $PAGE->set_title($strplugincheck);
         $PAGE->set_heading($strplugincheck);
         $PAGE->set_cacheable(false);
-        $output = $PAGE->get_renderer('core', 'admin');
 
-        echo $output->header();
-        echo $output->box_start('generalbox');
-        echo $output->container(get_string('pluginchecknotice', 'core_plugin'), 'generalbox', 'notice');
-        echo $output->plugins_check(plugin_manager::instance(), array('full' => $showallplugins));
-        echo $output->box_end();
-        echo $output->upgrade_reload(new moodle_url('/admin/index.php'), array('confirmupgrade' => 1, 'confirmrelease' => 1));
-        $button = new single_button(new moodle_url('index.php', array('confirmupgrade'=>1, 'confirmrelease'=>1, 'confirmplugincheck'=>1)), get_string('upgradestart', 'admin'), 'get');
-        $button->class = 'continuebutton';
-        echo $output->render($button);
-        echo $output->footer();
+        $output = $PAGE->get_renderer('core', 'admin');
+        echo $output->upgrade_plugin_check_page(plugin_manager::instance(), $showallplugins,
+                new moodle_url('/admin/index.php', array('confirmupgrade' => 1, 'confirmrelease' => 1)),
+                new moodle_url('/admin/index.php', array('confirmupgrade'=>1, 'confirmrelease'=>1, 'confirmplugincheck'=>1)));
         die();
 
     } else {
@@ -303,25 +247,19 @@ if (moodle_needs_upgrading()) {
     if (!$PAGE->headerprinted) {
         // means core upgrade or installation was not already done
         if (!$confirmplugins) {
+            $strplugincheck = get_string('plugincheck');
+
             $PAGE->set_pagelayout('maintenance');
             $PAGE->set_popup_notification_allowed(false);
-            $strplugincheck = get_string('plugincheck');
             $PAGE->navbar->add($strplugincheck);
             $PAGE->set_title($strplugincheck);
             $PAGE->set_heading($strplugincheck);
             $PAGE->set_cacheable(false);
-            $output = $PAGE->get_renderer('core', 'admin');
 
-            echo $output->header();
-            echo $output->box_start('generalbox');
-            echo $output->container(get_string('pluginchecknotice', 'core_plugin'), 'generalbox', 'notice');
-            echo $output->plugins_check(plugin_manager::instance(), array('full' => $showallplugins));
-            echo $output->box_end();
-            echo $output->upgrade_reload(new moodle_url('/admin/index.php'));
-            $button = new single_button(new moodle_url('index.php', array('confirmplugincheck'=>1)), get_string('upgradestart', 'admin'), 'get');
-            $button->class = 'continuebutton';
-            echo $output->render($button);
-            echo $output->footer();
+            $output = $PAGE->get_renderer('core', 'admin');
+            echo $output->upgrade_plugin_check_page(plugin_manager::instance(), $showallplugins,
+                    new moodle_url('/admin/index.php'),
+                    new moodle_url('/admin/index.php', array('confirmplugincheck'=>1)));
             die();
         }
     }
@@ -416,58 +354,14 @@ if (any_new_admin_settings($adminroot)){
 // Everything should now be set up, and the user is an admin
 
 // Print default admin page with notifications.
-admin_externalpage_setup('adminnotifications');
-echo $OUTPUT->header();
+$errorsdisplayed = defined('WARN_DISPLAY_ERRORS_ENABLED');
 
-// Unstable code warning
-if (isset($maturity)) {
-    if ($maturity < MATURITY_STABLE) {
-        $maturitylevel = get_string('maturity'.$maturity, 'admin');
-        echo $OUTPUT->box(
-            get_string('maturitycoreinfo', 'admin', $maturitylevel) . ' ' .
-            $OUTPUT->doc_link('admin/versions', get_string('morehelp')),
-            'generalbox adminwarning maturityinfo');
-    }
-}
-
-if ($insecuredataroot == INSECURE_DATAROOT_WARNING) {
-    echo $OUTPUT->box(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot), 'generalbox adminwarning');
-} else if ($insecuredataroot == INSECURE_DATAROOT_ERROR) {
-    echo $OUTPUT->box(get_string('datarootsecurityerror', 'admin', $CFG->dataroot), 'generalbox adminerror');
-
-}
-
-if (defined('WARN_DISPLAY_ERRORS_ENABLED')) {
-    echo $OUTPUT->box(get_string('displayerrorswarning', 'admin'), 'generalbox adminwarning');
-}
-
-// If no recently cron run
 $lastcron = $DB->get_field_sql('SELECT MAX(lastcron) FROM {modules}');
-if (time() - $lastcron > 3600 * 24) {
-    $helpbutton = $OUTPUT->help_icon('cron', 'admin');
-    echo $OUTPUT->box(get_string('cronwarning', 'admin').'&nbsp;'.$helpbutton, 'generalbox adminwarning');
-}
+$cronoverdue = ($lastcron < time() - 3600 * 24);
+$dbproblems = $DB->diagnose();
+$maintenancemode = !empty($CFG->maintenance_enabled);
 
-// diagnose DB, especially the sloppy MyISAM tables
-$diagnose = $DB->diagnose();
-if ($diagnose !== NULL) {
-    echo $OUTPUT->box($diagnose, 'generalbox adminwarning');
-}
-
-// Alert if we are currently in maintenance mode
-if (!empty($CFG->maintenance_enabled)) {
-    echo $OUTPUT->box(get_string('sitemaintenancewarning2', 'admin', "$CFG->wwwroot/$CFG->admin/settings.php?section=maintenancemode"), 'generalbox adminwarning');
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO HIDE, REMOVE OR MODIFY THIS COPYRIGHT NOTICE ///
-$copyrighttext = '<a href="http://moodle.org/">Moodle</a> '.
-                 '<a href="http://docs.moodle.org/dev/Releases" title="'.$CFG->version.'">'.$CFG->release.'</a><br />'.
-                 'Copyright &copy; 1999 onwards, Martin Dougiamas<br />'.
-                 'and <a href="http://docs.moodle.org/dev/Credits">many other contributors</a>.<br />'.
-                 '<a href="http://docs.moodle.org/dev/License">GNU Public License</a>';
-echo $OUTPUT->box($copyrighttext, 'copyright');
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
-echo $OUTPUT->footer();
-
+admin_externalpage_setup('adminnotifications');
+$output = $PAGE->get_renderer('core', 'admin');
+echo $output->admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
+        $cronoverdue, $dbproblems, $maintenancemode);

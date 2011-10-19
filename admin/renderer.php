@@ -33,6 +33,354 @@ require_once($CFG->libdir . '/pluginlib.php');
 class core_admin_renderer extends plugin_renderer_base {
 
     /**
+     * Display the 'Do you acknowledge the terms of the GPL' page. The first page
+     * during install.
+     * @return string HTML to output.
+     */
+    public function install_licence_page() {
+        global $CFG;
+        $output = '';
+
+        $copyrightnotice = text_to_html(get_string('gpl3'));
+        $copyrightnotice = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $copyrightnotice); // extremely ugly validation hack
+
+        $continue = new single_button(new moodle_url('/admin/index.php', array('lang'=>$CFG->lang, 'agreelicense'=>1)), get_string('continue'), 'get');
+
+        $output .= $this->header();
+        $output .= $this->heading('<a href="http://moodle.org">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment');
+        $output .= $this->heading(get_string('copyrightnotice'));
+        $output .= $this->box($copyrightnotice, 'copyrightnotice');
+        $output .= html_writer::empty_tag('br');
+        $output .= $this->confirm(get_string('doyouagree'), $continue, "http://docs.moodle.org/dev/License");
+        $output .= $this->footer();
+
+        return $output;
+    }
+
+    /**
+     * Display the 'environment check' page that is displayed during install.
+     * @return string HTML to output.
+     */
+    public function install_environment_page($maturity, $envstatus, $environment_results) {
+        global $CFG;
+        $output = '';
+
+        $output .= $this->header();
+        $output .= $this->maturity_warning($maturity);
+        $output .= $this->heading("Moodle $release");
+        $output .= $this->release_notes_link();
+
+        $output .= $this->environment_check_table($envstatus, $environment_results);
+
+        if (!$envstatus) {
+            $output .= $this->upgrade_reload(new moodle_url('/admin/index.php', array('agreelicense' => 1, 'lang' => $CFG->lang)));
+        } else {
+            $output .= $this->notification(get_string('environmentok', 'admin'), 'notifysuccess');
+            $output .= $this->continue_button(new moodle_url('/admin/index.php', array('agreelicense'=>1, 'confirmrelease'=>1, 'lang'=>$CFG->lang)));
+        }
+
+        $output .= $this->footer();
+        return $output;
+    }
+
+    /**
+     * Display the 'You are about to upgrade Moodle' page. The first page
+     * during upgrade.
+     * @return string HTML to output.
+     */
+    public function upgrade_confirm_page($strnewversion, $maturity) {
+        $output = '';
+
+        $continueurl = new moodle_url('index.php', array('confirmupgrade' => 1));
+        $cancelurl = new moodle_url('index.php');
+
+        $output .= $this->header();
+        $output .= $this->maturity_warning($maturity);
+        $output .= $this->confirm(get_string('upgradesure', 'admin', $strnewversion), $continueurl, $cancelurl);
+        $output .= $this->footer();
+
+        return $output;
+    }
+
+    /**
+     * Display the environment page during the upgrade process.
+     * @return string HTML to output.
+     */
+    public function upgrade_environment_page($release, $envstatus, $environment_results) {
+        global $CFG;
+        $output = '';
+
+        $output .= $this->header();
+        $output .= $this->heading("Moodle $release");
+        $output .= $this->release_notes_link();
+        $output .= $this->environment_check_table($envstatus, $environment_results);
+
+        if (!$envstatus) {
+            $output .= $this->upgrade_reload(new moodle_url('/admin/index.php'), array('confirmupgrade' => 1));
+
+        } else {
+            echo $output->notification(get_string('environmentok', 'admin'), 'notifysuccess');
+
+            if (empty($CFG->skiplangupgrade) and current_language() !== 'en') {
+                $output .= $this->box(get_string('langpackwillbeupdated', 'admin'), 'generalbox', 'notice');
+            }
+
+            $output .= $this->continue_button(new moodle_url('/admin/index.php', array('confirmupgrade' => 1, 'confirmrelease' => 1)));
+        }
+
+        $output .= $this->footer();
+
+        return $output;
+    }
+
+    /**
+     * Display the upgrade page that lists all the plugins that require attention.
+     * @return string HTML to output.
+     */
+    public function upgrade_plugin_check_page($pluginman, $showallplugins, $reloadurl, $continueurl) {
+        $output = '';
+
+        $output .= $this->header();
+        $output .= $this->box_start('generalbox');
+        $output .= $this->container(get_string('pluginchecknotice', 'core_plugin'), 'generalbox', 'notice');
+        $output .= $this->plugins_check_table($pluginman, array('full' => $showallplugins));
+        $output .= $this->box_end();
+        $output .= $this->upgrade_reload($reloadurl);
+
+        $button = new single_button($continueurl, get_string('upgradestart', 'admin'), 'get');
+        $button->class = 'continuebutton';
+        $output .= $this->render($button);
+
+        $output .= $this->footer();
+
+        return $output;
+    }
+
+    /**
+     * Display the admin notifications page.
+     * @return string HTML to output.
+     */
+    public function admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
+            $cronoverdue, $dbproblems, $maintenancemode) {
+        $output = '';
+
+        $output .= $this->header();
+        $output .= $this->maturity_info($maturity);
+        $output .= $this->insecure_dataroot_warning($insecuredataroot);
+        $output .= $this->display_errors_warning($errorsdisplayed);
+        $output .= $this->cron_overdue_warning($errorsdisplayed);
+        $output .= $this->db_problems($dbproblems);
+        $output .= $this->maintenance_mode_warning($maintenancemode);
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO HIDE, REMOVE OR MODIFY THIS COPYRIGHT NOTICE ///
+        $output .= $this->moodle_copyright();
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+
+        $output .= $this->footer();
+
+        return $output;
+    }
+
+    /**
+     * Display the plugin management page (admin/plugins.php).
+     * @return string HTML to output.
+     */
+    public function plugin_management_page($pluginman) {
+        $output = '';
+
+        $output .= $this->header();
+        $output .= $this->heading(get_string('pluginsoverview', 'core_admin'));
+        $output .= $this->box_start('generalbox');
+        $output .= $this->plugins_control_panel($pluginman);
+        $output .= $this->box_end();
+        $output .= $this->footer();
+
+        return $output;
+    }
+
+    /**
+     * Display the plugin management page (admin/environment.php).
+     * @return string HTML to output.
+     */
+    public function environment_check_page($versions, $version, $envstatus, $environment_results) {
+        $output = '';
+        $output .= $this->header();
+
+        // Print the component download link
+        $output .= html_writer::tag('div', html_writer::link(
+                    new moodle_url('/admin/environment.php', array('action' => 'updatecomponent', 'sesskey' => sesskey())),
+                    get_string('updatecomponent', 'admin')),
+                array('class' => 'reportlink'));
+
+        // Heading.
+        $output .= $this->heading(get_string('environment', 'admin'));
+
+        // Box with info and a menu to choose the version.
+        $output .= $this->box_start();
+        $output .= html_writer::tag('div', get_string('adminhelpenvironment'));
+        $select = new single_select(new moodle_url('/admin/environment.php'), 'version', $versions, $version, null);
+        $select->label = get_string('moodleversion');
+        $output .= $this->render($select);
+        $output .= $this->box_end();
+
+        // The results
+        $output .= $this->environment_check_table($envstatus, $environment_results);
+
+        $output .= $this->footer();
+        return $output;
+    }
+
+    /**
+     * Output a warning message, of the type that appears on the admin notifications page.
+     * @param string $message the message to display.
+     * @return string HTML to output.
+     */
+    protected function warning($message, $type = 'warning') {
+        return $this->box($message, 'generalbox admin' . $type);
+    }
+
+    /**
+     * Render an appropriate message if dataroot is insecure.
+     * @return string HTML to output.
+     */
+    protected function insecure_dataroot_warning($insecuredataroot) {
+        global $CFG;
+
+        if ($insecuredataroot == INSECURE_DATAROOT_WARNING) {
+            return $this->warning(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot));
+
+        } else if ($insecuredataroot == INSECURE_DATAROOT_ERROR) {
+            return $this->warning(get_string('datarootsecurityerror', 'admin', $CFG->dataroot), 'error');
+
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * Render an appropriate message if dataroot is insecure.
+     * @return string HTML to output.
+     */
+    protected function display_errors_warning($errorsdisplayed) {
+        if (!$errorsdisplayed) {
+            return '';
+        }
+
+        return $this->warning(get_string('displayerrorswarning', 'admin'));
+    }
+
+    /**
+     * Render an appropriate message if cron has not been run recently.
+     * @return string HTML to output.
+     */
+    public function cron_overdue_warning($cronoverdue) {
+        if (!$cronoverdue) {
+            return '';
+        }
+
+        return $this->warning(get_string('cronwarning', 'admin') . '&nbsp;' .
+                $this->help_icon('cron', 'admin'));
+    }
+
+    /**
+     * Render an appropriate message if there are any problems with the DB set-up.
+     * @return string HTML to output.
+     */
+    public function db_problems($dbproblems) {
+        if (!$dbproblems) {
+            return '';
+        }
+
+        return $this->warning($dbproblems);
+    }
+
+    /**
+     * Render an appropriate message if the site in in maintenance mode.
+     * @return string HTML to output.
+     */
+    public function maintenance_mode_warning($maintenancemode) {
+        if (!$maintenancemode) {
+            return '';
+        }
+
+        return $this->warning(get_string('sitemaintenancewarning2', 'admin',
+                new moodle_url('/admin/settings.php', array('section' => 'maintenancemode'))));
+    }
+
+    /**
+     * Display a warning about installing development code if necesary.
+     * @return string HTML to output.
+     */
+    protected function maturity_warning($maturity) {
+        if ($maturity == MATURITY_STABLE) {
+            return ''; // No worries.
+        }
+
+        $maturitylevel = get_string('maturity' . $maturity, 'admin');
+        return $this->box(
+                    $this->container(get_string('maturitycorewarning', 'admin', $maturitylevel)) .
+                    $this->container($this->doc_link('admin/versions', get_string('morehelp'))),
+                'generalbox maturitywarning');
+    }
+
+    /**
+     * Output the copyright notice.
+     * @return string HTML to output.
+     */
+    protected function moodle_copyright() {
+        global $CFG;
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO HIDE, REMOVE OR MODIFY THIS COPYRIGHT NOTICE ///
+        $copyrighttext = '<a href="http://moodle.org/">Moodle</a> '.
+                         '<a href="http://docs.moodle.org/dev/Releases" title="'.$CFG->version.'">'.$CFG->release.'</a><br />'.
+                         'Copyright &copy; 1999 onwards, Martin Dougiamas<br />'.
+                         'and <a href="http://docs.moodle.org/dev/Credits">many other contributors</a>.<br />'.
+                         '<a href="http://docs.moodle.org/dev/License">GNU Public License</a>';
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+
+        return $this->box($copyrighttext, 'copyright');
+    }
+
+    /**
+     * Display a warning about installing development code if necesary.
+     * @param string HTML to output.
+     */
+    protected function maturity_info($maturity) {
+        if ($maturity == MATURITY_STABLE) {
+            return ''; // No worries.
+        }
+
+        $maturitylevel = get_string('maturity' . $maturity, 'admin');
+        return $this->box(
+                    get_string('maturitycoreinfo', 'admin', $maturitylevel) . ' ' .
+                    $this->doc_link('admin/versions', get_string('morehelp')),
+                'generalbox adminwarning maturityinfo');
+    }
+
+    /**
+     * Display a link to the release notes.
+     * @param string HTML to output.
+     */
+    protected function release_notes_link() {
+        $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/dev/Releases');
+        $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
+        return $this->box($releasenoteslink, 'generalbox releasenoteslink');
+    }
+
+    /**
+     * Display the reload link that appears on several upgrade/install pages.
+     */
+    function upgrade_reload($url) {
+        return html_writer::empty_tag('br') .
+                html_writer::tag('div',
+                    html_writer::link($url, $this->pix_icon('i/reload', '') .
+                            get_string('reload'), array('title' => get_string('reload'))),
+                array('class' => 'continuebutton')) . html_writer::empty_tag('br');
+    }
+
+    /**
      * Displays all known plugins and information about their installation or upgrade
      *
      * This default implementation renders all plugins into one big table. The rendering
@@ -43,7 +391,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param array $options rendering options
      * @return string HTML code
      */
-    public function plugins_check(plugin_manager $pluginman, array $options = null) {
+    public function plugins_check_table(plugin_manager $pluginman, array $options = null) {
         global $CFG;
         $plugininfo = $pluginman->get_plugins();
 
@@ -356,13 +704,181 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @global object
+     * This function will render one beautiful table with all the environmental
+     * configuration and how it suits Moodle needs.
+     *
+     * @param boolean $result final result of the check (true/false)
+     * @param array $environment_results array of results gathered
+     * @return string HTML to output.
      */
-    function upgrade_reload($url) {
-        return html_writer::empty_tag('br') .
-                html_writer::tag('div',
-                    html_writer::link($url, $this->pix_icon('i/reload', '') .
-                            get_string('reload'), array('title' => get_string('reload'))),
-                array('class' => 'continuebutton')) . html_writer::empty_tag('br');
+    public function environment_check_table($result, $environment_results) {
+        global $CFG;
+
+        // Table headers
+        $servertable = new html_table();//table for server checks
+        $servertable->head  = array(
+            get_string('name'),
+            get_string('info'),
+            get_string('report'),
+            get_string('status'),
+        );
+        $servertable->align = array('center', 'center', 'left', 'center');
+        $servertable->wrap  = array('nowrap', '', '', 'nowrap');
+        $servertable->size  = array('10', 10, '100%', '10');
+        $servertable->attributes['class'] = 'environmenttable generaltable';
+
+        $serverdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());
+
+        $othertable = new html_table();//table for custom checks
+        $othertable->head  = array(
+            get_string('info'),
+            get_string('report'),
+            get_string('status'),
+        );
+        $othertable->align = array('center', 'left', 'center');
+        $othertable->wrap  = array('', '', 'nowrap');
+        $othertable->size  = array(10, '100%', '10');
+        $othertable->attributes['class'] = 'environmenttable generaltable';
+
+        $otherdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());
+
+        // Iterate over each environment_result
+        $continue = true;
+        foreach ($environment_results as $environment_result) {
+            $errorline   = false;
+            $warningline = false;
+            $stringtouse = '';
+            if ($continue) {
+                $type = $environment_result->getPart();
+                $info = $environment_result->getInfo();
+                $status = $environment_result->getStatus();
+                $error_code = $environment_result->getErrorCode();
+                // Process Report field
+                $rec = new stdClass();
+                // Something has gone wrong at parsing time
+                if ($error_code) {
+                    $stringtouse = 'environmentxmlerror';
+                    $rec->error_code = $error_code;
+                    $status = get_string('error');
+                    $errorline = true;
+                    $continue = false;
+                }
+
+                if ($continue) {
+                    if ($rec->needed = $environment_result->getNeededVersion()) {
+                        // We are comparing versions
+                        $rec->current = $environment_result->getCurrentVersion();
+                        if ($environment_result->getLevel() == 'required') {
+                            $stringtouse = 'environmentrequireversion';
+                        } else {
+                            $stringtouse = 'environmentrecommendversion';
+                        }
+
+                    } else if ($environment_result->getPart() == 'custom_check') {
+                        // We are checking installed & enabled things
+                        if ($environment_result->getLevel() == 'required') {
+                            $stringtouse = 'environmentrequirecustomcheck';
+                        } else {
+                            $stringtouse = 'environmentrecommendcustomcheck';
+                        }
+
+                    } else if ($environment_result->getPart() == 'php_setting') {
+                        if ($status) {
+                            $stringtouse = 'environmentsettingok';
+                        } else if ($environment_result->getLevel() == 'required') {
+                            $stringtouse = 'environmentmustfixsetting';
+                        } else {
+                            $stringtouse = 'environmentshouldfixsetting';
+                        }
+
+                    } else {
+                        if ($environment_result->getLevel() == 'required') {
+                            $stringtouse = 'environmentrequireinstall';
+                        } else {
+                            $stringtouse = 'environmentrecommendinstall';
+                        }
+                    }
+
+                    // Calculate the status value
+                    if ($environment_result->getBypassStr() != '') {            //Handle bypassed result (warning)
+                        $status = get_string('bypassed');
+                        $warningline = true;
+                    } else if ($environment_result->getRestrictStr() != '') {   //Handle restricted result (error)
+                        $status = get_string('restricted');
+                        $errorline = true;
+                    } else {
+                        if ($status) {                                          //Handle ok result (ok)
+                            $status = get_string('ok');
+                        } else {
+                            if ($environment_result->getLevel() == 'optional') {//Handle check result (warning)
+                                $status = get_string('check');
+                                $warningline = true;
+                            } else {                                            //Handle error result (error)
+                                $status = get_string('check');
+                                $errorline = true;
+                            }
+                        }
+                    }
+                }
+
+                // Build the text
+                $linkparts = array();
+                $linkparts[] = 'admin/environment';
+                $linkparts[] = $type;
+                if (!empty($info)){
+                   $linkparts[] = $info;
+                }
+                if (empty($CFG->docroot)) {
+                    $report = get_string($stringtouse, 'admin', $rec);
+                } else {
+                    $report = $this->doc_link(join($linkparts, '/'), get_string($stringtouse, 'admin', $rec));
+                }
+
+                // Format error or warning line
+                if ($errorline || $warningline) {
+                    $messagetype = $errorline? 'error':'warn';
+                } else {
+                    $messagetype = 'ok';
+                }
+                $status = '<span class="'.$messagetype.'">'.$status.'</span>';
+                // Here we'll store all the feedback found
+                $feedbacktext = '';
+                // Append the feedback if there is some
+                $feedbacktext .= $environment_result->strToReport($environment_result->getFeedbackStr(), $messagetype);
+                //Append the bypass if there is some
+                $feedbacktext .= $environment_result->strToReport($environment_result->getBypassStr(), 'warn');
+                //Append the restrict if there is some
+                $feedbacktext .= $environment_result->strToReport($environment_result->getRestrictStr(), 'error');
+
+                $report .= $feedbacktext;
+
+                // Add the row to the table
+                if ($environment_result->getPart() == 'custom_check'){
+                    $otherdata[$messagetype][] = array ($info, $report, $status);
+                } else {
+                    $serverdata[$messagetype][] = array ($type, $info, $report, $status);
+                }
+            }
+        }
+
+        //put errors first in
+        $servertable->data = array_merge($serverdata['error'], $serverdata['warn'], $serverdata['ok']);
+        $othertable->data = array_merge($otherdata['error'], $otherdata['warn'], $otherdata['ok']);
+
+        // Print table
+        $output = '';
+        $output .= $this->heading(get_string('serverchecks', 'admin'));
+        $output .= html_writer::table($servertable);
+        if (count($othertable->data)){
+            $output .= $this->heading(get_string('customcheck', 'admin'));
+            $output .= html_writer::table($othertable);
+        }
+
+        // Finally, if any error has happened, print the summary box
+        if (!$result) {
+            $output .= $this->box(get_string('environmenterrortodo', 'admin'), 'environmentbox errorbox');
+        }
+
+        return $output;
     }
 }
