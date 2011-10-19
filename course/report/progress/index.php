@@ -206,9 +206,13 @@ if($total > COMPLETION_REPORT_PAGE) {
     $pagingbar .= get_string('page').': ';
 
     $sistrings = array();
-    $sistrings[] = $sifirst != 'all' ? "sifirst={$sifirst}" : null;
-    $sistrings[] = $silast != 'all' ? "silast={$silast}" : null;
-    $sistring = !empty($sistrings) ? implode('&amp;', $sistrings) : '';
+    if ($sifirst != 'all') {
+        $sistrings[] =  "sifirst={$sifirst}";
+    }
+    if ($silast != 'all') {
+        $sistrings[] =  "silast={$silast}";
+    }
+    $sistring = !empty($sistrings) ? '&amp;'.implode('&amp;', $sistrings) : '';
 
     // Display previous link
     if ($start > 0) {
