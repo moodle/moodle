@@ -189,12 +189,15 @@ $string['no_lti_configured'] = 'There are no active External Tools configured.';
 $string['no_lti_pending'] = 'There are no pending External Tools.';
 $string['no_lti_rejected'] = 'There are no rejected External Tools.';
 $string['accept_grades_admin'] = 'Accept grades from the tool';
+$string['force_ssl'] = 'Force SSL';
+$string['lti_administration'] = 'LTI Administration';
 
 //New instructor strings
 $string['display_name'] = 'Display activity name when launched';
 $string['display_description'] = 'Display activity description when launched';
 $string['external_tool_type'] = 'External tool type';
 $string['launch_url'] = 'Launch URL';
+$string['secure_launch_url'] = 'Secure Launch URL';
 $string['share_name'] = 'Share launcher\'s name with the tool';
 $string['share_email'] = 'Share launcher\'s email with the tool';
 $string['accept_grades'] = 'Accept grades from the tool';
@@ -216,6 +219,7 @@ $string['custom_config'] = 'Using custom tool configuration.';
 $string['tool_config_not_found'] = 'Tool configuration not found for this URL.';
 
 $string['icon_url'] = 'Icon URL';
+$string['secure_icon_url'] = 'Secure Icon URL';
 
 $string['return_to_course'] = 'Click <a href="{$a->link}" target="_top">here</a> to return to the course.';
 
@@ -291,6 +295,24 @@ If you are unsure what to enter for the Launch URL, please check with the tool p
 
 If you have selected a specific tool type, you may not need to enter a Launch URL. If the tool link is used to just launch
 into the tool provider's system, and not go to a specific resource, this will likely be the case.
+HTML;
+
+$string['secure_launch_url_help'] = <<<HTML
+Similar to Launch URL, but used instead of the launch url if high security is required. Moodle will use the
+secure launch URL instead of the launch URL if the Moodle site is accessed through SSL, or if the tool configuration
+is set to always launch through SSL.
+    
+The Launch URL may also be set to an https address to force launching through SSL, and this field may be left blank.
+HTML;
+
+$string['icon_url_help'] = <<<HTML
+The icon URL allows the icon that shows up in the course listing for this activity to be modified. Instead of using the default
+LTI icon, an icon which conveys the type of activity may be specified.
+HTML;
+
+$string['secure_icon_url_help'] = <<<HTML
+Similar to the icon URL, but used if the user accessing Moodle securely through SSL. The main purpose for this field is to prevent
+the browser from warning the user if the underlying page was accessed over SSL, but requesting to show an unsecure image.
 HTML;
 
 $string['launchinpopup_help'] = <<<HTML
@@ -578,4 +600,24 @@ External tools differ from URL resources in a few ways:
         between them.
     </li>
 </ul>
+HTML;
+
+$string['force_ssl_help'] = <<<HTML
+Selecting this option forces all launches to this tool provider to use SSL.
+
+In addition, all web service requests from the tool provider will use SSL.
+
+If using this option, confirm that this Moodle site and the tool provider support SSL.
+HTML;
+
+$string['organizationid_help'] = <<<HTML
+A unique identifier for this Moodle instance. Typically, the DNS name of the organization is used.
+
+If this field is left blank, the host name of this Moodle site will be used as the default value.
+HTML;
+
+$string['organizationurl_help'] = <<<HTML
+The base URL of this Moodle instance.
+    
+If this field is left blank, a default value will be used based on the site configuration.
 HTML;

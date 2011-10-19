@@ -98,6 +98,7 @@ function lti_view($instance) {
         $typeconfig['customparameters'] = $instance->instructorcustomparameters;
         $typeconfig['acceptgrades'] = $instance->instructorchoiceacceptgrades;
         $typeconfig['allowroster'] = $instance->instructorchoiceallowroster;
+        $typeconfig['forcessl'] = '0';
     }
     
     //Default the organizationid if not specified
@@ -124,17 +125,28 @@ function lti_view($instance) {
     }
     
     $endpoint = !empty($instance->toolurl) ? $instance->toolurl : $typeconfig['toolurl'];
-    $endpiont = trim($endpoint);
+    $endpoint = trim($endpoint);
     
-    $orgid = $typeconfig['organizationid'];
-    /* Suppress this for now - Chuck
-    $orgdesc = $typeconfig['organizationdescr'];
-    */
-
-    if(!strstr($endpoint, '://')){
-        $endpoint = 'http://' . $endpoint;
+    //If the current request is using SSL and a secure tool URL is specified, use it
+    if(lti_request_is_using_ssl() && !empty($instance->securetoolurl)){
+        $endpoint = trim($instance->securetoolurl);
     }
     
+    //If SSL is forced, use the secure tool url if specified. Otherwise, make sure https is on the normal launch URL.
+    if($typeconfig['forcessl'] == '1'){
+        if(!empty($instance->securetoolurl)){
+            $endpoint = trim($instance->securetoolurl);
+        }
+        
+        $endpoint = lti_ensure_url_is_https($endpoint);
+    } else {
+        if(!strstr($endpoint, '://')){
+            $endpoint = 'http://' . $endpoint;
+        }
+    }
+    
+    $orgid = $typeconfig['organizationid'];
+
     $course = $PAGE->course;
     $requestparams = lti_build_request($instance, $typeconfig, $course);
 
@@ -150,7 +162,13 @@ function lti_view($instance) {
         
         //Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns
         $url = new moodle_url('/mod/lti/return.php', $returnurlparams);
-        $requestparams['launch_presentation_return_url'] = $url->out(false);    
+        $returnurl = $url->out(false);
+        
+        if($typeconfig['forcessl'] == '1'){
+            $returnurl = lti_ensure_url_is_https($returnurl);
+        }
+        
+        $requestparams['launch_presentation_return_url'] = $returnurl;
     }
     
     if(!empty($key) && !empty($secret)){
@@ -234,7 +252,13 @@ function lti_build_request($instance, $typeconfig, $course) {
          ( $typeconfig['acceptgrades'] == LTI_SETTING_ALWAYS ||
          ( $typeconfig['acceptgrades'] == LTI_SETTING_DELEGATE && $instance->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS ) ) ) {
         $requestparams["lis_result_sourcedid"] = $sourcedid;
-        $requestparams["ext_ims_lis_basic_outcome_url"] = $CFG->wwwroot.'/mod/lti/service.php';
+        
+        $serviceurl = $CFG->wwwroot . '/mod/lti/service.php';
+        if($typeconfig['forcessl'] == '1'){
+            $serviceurl = lti_ensure_url_is_https($serviceurl);
+        }
+        
+        $requestparams["ext_ims_lis_basic_outcome_url"] = $serviceurl;
     }
 
     /*if ( isset($placementsecret) &&
@@ -605,8 +629,12 @@ function lti_get_url_thumbprint($url){
         $urlparts['path'] = '';
     }
     
-    if(substr($urlparts['host'], 0, 3) === 'www'){
-        $urllparts['host'] = substr($urlparts['host'], 3);
+    if(!isset($urlparts['host'])){
+        $urlparts['host'] = '';
+    }
+    
+    if(substr($urlparts['host'], 0, 4) === 'www.'){
+        $urlparts['host'] = substr($urlparts['host'], 4);
     }
     
     return $urllower = $urlparts['host'] . '/' . $urlparts['path'];
@@ -859,6 +887,10 @@ function lti_get_type_type_config($id) {
         $type->lti_customparameters = $config['customparameters'];
     }
 
+    if(isset($config['forcessl'])){
+        $type->lti_forcessl = $config['forcessl'];
+    }
+    
     if (isset($config['organizationid'])) {
         $type->lti_organizationid = $config['organizationid'];
     }
@@ -894,6 +926,9 @@ function lti_prepare_type_for_save($type, $config){
     
     $type->coursevisible = !empty($config->lti_coursevisible) ? $config->lti_coursevisible : 0;
     $config->lti_coursevisible = $type->coursevisible;
+    
+    $type->forcessl = !empty($config->lti_forcessl) ? $config->lti_forcessl : 0;
+    $config->lti_forcessl = $type->forcessl;
     
     $type->timemodified = time();
     
@@ -1138,4 +1173,22 @@ function lti_get_launch_container($lti, $toolconfig){
     }
     
     return $launchcontainer;
+}
+
+function lti_request_is_using_ssl() {
+    global $ME;
+    return (stripos($ME, 'https://') === 0);
+}
+
+function lti_ensure_url_is_https($url){
+    if(!strstr($url, '://')){
+        $url = 'https://' . $url;
+    } else {
+        //If the URL starts with http, replace with https
+        if(stripos($url, 'http://') === 0){
+            $url = 'https://' . substr($url, 8);
+        }
+    }
+    
+    return $url;
 }

@@ -166,12 +166,18 @@ function lti_delete_instance($id) {
 function lti_get_coursemodule_info($coursemodule){
     global $DB;
     
-    $lti = $DB->get_record('lti', array('id' => $coursemodule->instance), 'icon');
+    $lti = $DB->get_record('lti', array('id' => $coursemodule->instance), 'icon, secureicon');
 
     $info = new stdClass();
     
-    if(!empty($lti->icon)){
-        $info->icon = $lti->icon;
+    //We want to use the right icon based on whether the current page is being requested over http or https.
+    //There's a potential problem here as the icon URLs are cached in the modinfo field and won't be updated for each request.
+    if(lti_request_is_using_ssl() && !empty($lti->secureicon)){
+        $info->icon = $lti->secureicon;
+    } else {
+        if(!empty($lti->icon)){
+            $info->icon = $lti->icon;
+        }
     }
     
     return $info;

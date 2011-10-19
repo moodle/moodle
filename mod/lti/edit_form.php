@@ -68,7 +68,6 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->addElement('text', 'lti_toolurl', get_string('toolurl', 'lti'), array('size'=>'64'));
         $mform->setType('lti_toolurl', PARAM_TEXT);
         $mform->addHelpButton('lti_toolurl', 'toolurl', 'lti');
-        
         $mform->addRule('lti_toolurl', null, 'required', null, 'client');
 
         $mform->addElement('text', 'lti_resourcekey', get_string('resourcekey_admin', 'lti'));
@@ -130,6 +129,10 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->setDefault('lti_allowroster', '2');
         $mform->addHelpButton('lti_allowroster', 'share_roster_admin', 'lti');
 
+        $mform->addElement('checkbox', 'lti_forcessl','&nbsp;', ' ' . get_string('force_ssl', 'lti'), $options);
+        $mform->setDefault('lti_forcessl', '0');
+        
+        $mform->addHelpButton('lti_forcessl', 'force_ssl', 'lti');
           
         if(!empty($this->_customdata->isadmin)){
             //-------------------------------------------------------------------------------
@@ -143,11 +146,11 @@ class mod_lti_edit_types_form extends moodleform{
 
             $mform->addElement('text', 'lti_organizationid', get_string('organizationid', 'lti'));
             $mform->setType('lti_organizationid', PARAM_TEXT);
-    //        $mform->addHelpButton('lti_organizationid', 'organizationid', 'lti');
+            $mform->addHelpButton('lti_organizationid', 'organizationid', 'lti');
 
             $mform->addElement('text', 'lti_organizationurl', get_string('organizationurl', 'lti'));
             $mform->setType('lti_organizationurl', PARAM_TEXT);
-    //        $mform->addHelpButton('lti_organizationurl', 'organizationurl', 'lti');
+            $mform->addHelpButton('lti_organizationurl', 'organizationurl', 'lti');
         }
         
         /* Suppress this for now - Chuck

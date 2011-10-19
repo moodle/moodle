@@ -16,9 +16,14 @@
 
             this.addOptGroups();
 
+            var updateToolMatches = function(){
+                self.updateAutomaticToolMatch(Y.one('#id_toolurl'));
+                self.updateAutomaticToolMatch(Y.one('#id_securetoolurl'));
+            };
+
             var typeSelector = Y.one('#id_typeid');
             typeSelector.on('change', function(e){
-                self.updateAutomaticToolMatch();
+                updateToolMatches();
                 
                 self.toggleEditButtons();
             });
@@ -29,6 +34,7 @@
             
             var textAreas = new Y.NodeList([
                 Y.one('#id_toolurl'),
+                Y.one('#id_securetoolurl'),
                 Y.one('#id_resourcekey'),
                 Y.one('#id_password')
             ]);
@@ -39,27 +45,29 @@
 
                 //If no more changes within 2 seconds, look up the matching tool URL
                 debounce = setTimeout(function(){
-                    self.updateAutomaticToolMatch();
+                    updateToolMatches();
                 }, 2000);
             });
             
-            self.updateAutomaticToolMatch();
+            updateToolMatches();
         },
 
         clearToolCache: function(){
             this.urlCache = {};
         },
 
-        updateAutomaticToolMatch: function(){
+        updateAutomaticToolMatch: function(field){
             var self = this;
             
-            var toolurl = Y.one('#id_toolurl');
+            var toolurl = field;
             var typeSelector = Y.one('#id_typeid');
-            var automatchToolDisplay = Y.one('#lti_automatch_tool');
+            
+            var id = field.get('id') + '_lti_automatch_tool';
+            var automatchToolDisplay = Y.one('#' + id);
 
             if(!automatchToolDisplay){
                 automatchToolDisplay = Y.Node.create('<span />')
-                                        .set('id', 'lti_automatch_tool')
+                                        .set('id', id)
                                         .setStyle('padding-left', '1em');
                                         
                 toolurl.insert(automatchToolDisplay, 'after');

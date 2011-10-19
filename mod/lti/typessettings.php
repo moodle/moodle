@@ -125,7 +125,7 @@ if (empty($SITE->fullname)) {
     $PAGE->set_title($settingspage->visiblename);
     $PAGE->set_heading($settingspage->visiblename);
 
-    $PAGE->navbar->add('Basic LTI Administration', $CFG->wwwroot.'/admin/settings.php?section=modsettinglti');
+    $PAGE->navbar->add(get_string('lti_administration', 'lti'), $CFG->wwwroot.'/admin/settings.php?section=modsettinglti');
 
     echo $OUTPUT->header();
 
@@ -168,7 +168,7 @@ if (empty($SITE->fullname)) {
 
     $PAGE->set_title("$SITE->shortname: " . get_string('toolsetup', 'lti'));
 
-    $PAGE->navbar->add('Basic LTI Administration', $CFG->wwwroot.'/admin/settings.php?section=modsettinglti');
+    $PAGE->navbar->add(get_string('lti_administration', 'lti'), $CFG->wwwroot.'/admin/settings.php?section=modsettinglti');
 
     echo $OUTPUT->header();
 

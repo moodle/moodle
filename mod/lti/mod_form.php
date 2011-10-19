@@ -97,6 +97,11 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setType('toolurl', PARAM_TEXT);
         $mform->addHelpButton('toolurl', 'launch_url', 'lti');
         
+        $mform->addElement('text', 'securetoolurl', get_string('secure_launch_url', 'lti'), array('size'=>'64'));
+        $mform->setType('securetoolurl', PARAM_TEXT);
+        $mform->setAdvanced('securetoolurl');
+        $mform->addHelpButton('securetoolurl', 'secure_launch_url', 'lti');
+        
         $launchoptions=array();
         $launchoptions[LTI_LAUNCH_CONTAINER_DEFAULT] = get_string('default', 'lti');
         $launchoptions[LTI_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'lti');
@@ -125,7 +130,12 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->addElement('text', 'icon', get_string('icon_url', 'lti'), array('size'=>'64'));
         $mform->setType('icon', PARAM_TEXT);
         $mform->setAdvanced('icon');
-        //$mform->addHelpButton('icon', 'icon', 'lti');
+        $mform->addHelpButton('icon', 'icon_url', 'lti');
+        
+        $mform->addElement('text', 'secureicon', get_string('secure_icon_url', 'lti'), array('size'=>'64'));
+        $mform->setType('secureicon', PARAM_TEXT);
+        $mform->setAdvanced('secureicon');
+        $mform->addHelpButton('secureicon', 'secure_icon_url', 'lti');
         
 //-------------------------------------------------------------------------------
         // Add privacy preferences fieldset where users choose whether to send their data
@@ -217,6 +227,7 @@ class mod_lti_mod_form extends moodleform_mod {
     function definition_after_data() {
         parent::definition_after_data();
        
+        //$mform =& $this->_form;
     }
 
     /**
