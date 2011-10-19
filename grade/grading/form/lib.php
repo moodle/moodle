@@ -368,8 +368,31 @@ abstract class gradingform_controller {
         return $output->preview_definition_header($this);
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    /**
+     * Deletes the form definition and all the associated data
+     *
+     * @see delete_plugin_definition()
+     * @return void
+     */
+    public function delete_definition() {
+        global $DB;
 
+        if (!$this->is_form_defined()) {
+            // nothing to do
+            return;
+        }
+
+        // firstly, let the plugin delete everything from their own tables
+        $this->delete_plugin_definition();
+        // then, delete all instances left
+        $DB->delete_records('grading_instances', array('formid' => $this->definition->id));
+        // finally, delete the main definition record
+        $DB->delete_records('grading_definitions', array('id' => $this->definition->id));
+
+        $this->definition = false;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * Loads the form definition if it exists
@@ -384,6 +407,13 @@ abstract class gradingform_controller {
             'areaid' => $this->areaid,
             'method' => $this->get_method_name()), '*', IGNORE_MISSING);
     }
+
+    /**
+     * Deletes all plugin data associated with the given form definiton
+     *
+     * @see delete_definition()
+     */
+    abstract protected function delete_plugin_definition();
 
     /**
      * @return string the name of the grading method plugin, eg 'rubric'

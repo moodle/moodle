@@ -42,6 +42,14 @@ $string['gradingmethodnone'] = 'Simple direct grading';
 $string['gradingmethods'] = 'Grading methods';
 $string['manageactionclone'] = 'Create new grading form from a template';
 $string['manageactiondelete'] = 'Remove the currently defined form';
+$string['manageactiondeleteconfirm'] = 'You are going to remove the grading form \'{$a->formname}\' and all the associated information from \'{$a->component} ({$a->area})\'. Please make sure you understand the following consequences:
+
+* There is no way to undo this operation.
+* You can switch to another grading method including the \'Simple direct grading\' without removing this form.
+* All the information about how the grading forms are filled will be lost.
+* The calculated result grades stored in the gradebook will not be affected. However the explanation of how they were calculated will not be available.
+* This operation does not affect eventual copies of this form in other activities.';
+$string['manageactiondeletedone'] = 'The form was successfully deleted';
 $string['manageactionedit'] = 'Edit the current form definition';
 $string['manageactionnew'] = 'Define new grading form from scratch';
 $string['manageactionshare'] = 'Publish the form as a new template';

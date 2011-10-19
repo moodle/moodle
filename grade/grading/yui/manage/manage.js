@@ -23,8 +23,8 @@ YUI.add('moodle-core_grading-manage', function(Y) {
                 var box = e.currentTarget;
                 var anim = new Y.Anim({
                     node: box,
-                    from: { opacity: 1 },
-                    to: { opacity: 0 },
+                    duration: 1,
+                    to: { opacity: 0, height: 0 },
                 });
                 anim.run();
                 anim.on('end', function() {

@@ -37,6 +37,8 @@ $returnurl  = optional_param('returnurl', null, PARAM_LOCALURL);
 $setmethod  = optional_param('setmethod', null, PARAM_PLUGIN);
 // publish the given form definition as a new template in the forms bank
 $shareform  = optional_param('shareform', null, PARAM_INT);
+// delete the given form definition
+$deleteform = optional_param('deleteform', null, PARAM_INT);
 // consider the required action as confirmed
 $confirmed  = optional_param('confirmed', false, PARAM_BOOL);
 // a message to display, typically a previous action's result
@@ -121,6 +123,27 @@ if (!empty($shareform)) {
     }
 }
 
+// delete the form definition
+if (!empty($deleteform)) {
+    $controller = $manager->get_controller($method);
+    $definition = $controller->get_definition();
+    if (!$confirmed) {
+        // let the user confirm they understand the consequences (also known as WTF-effect)
+        echo $output->header();
+        echo $output->confirm(markdown_to_html(get_string('manageactiondeleteconfirm', 'core_grading', array(
+            'formname'  => s($definition->name),
+            'component' => $manager->get_component_title(),
+            'area'      => $manager->get_area_title()))),
+            new moodle_url($PAGE->url, array('deleteform' => $deleteform, 'confirmed' => 1)), $PAGE->url);
+        echo $output->footer();
+        die();
+    } else {
+        require_sesskey();
+        $controller->delete_definition();
+        redirect(new moodle_url($PAGE->url, array('message' => get_string('manageactiondeletedone', 'core_grading'))));
+    }
+}
+
 echo $output->header();
 
 if (!empty($message)) {
@@ -142,7 +165,7 @@ if (!empty($method)) {
         $definition = $controller->get_definition();
         echo $output->management_action_icon($controller->get_editor_url($returnurl),
             get_string('manageactionedit', 'core_grading'), 'b/document-edit');
-        echo $output->management_action_icon($PAGE->url,
+        echo $output->management_action_icon(new moodle_url($PAGE->url, array('deleteform' => $definition->id)),
             get_string('manageactiondelete', 'core_grading'), 'b/edit-delete');
         if (has_capability('moodle/grade:sharegradingforms', get_system_context())) {
             echo $output->management_action_icon(new moodle_url($PAGE->url, array('shareform' => $definition->id)),
