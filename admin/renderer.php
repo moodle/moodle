@@ -119,7 +119,7 @@ class core_admin_renderer extends plugin_renderer_base {
             $output .= $this->upgrade_reload(new moodle_url('/admin/index.php'), array('confirmupgrade' => 1));
 
         } else {
-            echo $output->notification(get_string('environmentok', 'admin'), 'notifysuccess');
+            $output .= $this->notification(get_string('environmentok', 'admin'), 'notifysuccess');
 
             if (empty($CFG->skiplangupgrade) and current_language() !== 'en') {
                 $output .= $this->box(get_string('langpackwillbeupdated', 'admin'), 'generalbox', 'notice');
@@ -137,19 +137,23 @@ class core_admin_renderer extends plugin_renderer_base {
      * Display the upgrade page that lists all the plugins that require attention.
      * @return string HTML to output.
      */
-    public function upgrade_plugin_check_page($pluginman, $showallplugins, $reloadurl, $continueurl) {
+    public function upgrade_plugin_check_page($pluginman, $version, $showallplugins, $reloadurl, $continueurl) {
         $output = '';
 
         $output .= $this->header();
         $output .= $this->box_start('generalbox');
         $output .= $this->container(get_string('pluginchecknotice', 'core_plugin'), 'generalbox', 'notice');
-        $output .= $this->plugins_check_table($pluginman, array('full' => $showallplugins));
+        $output .= $this->plugins_check_table($pluginman, $version, array('full' => $showallplugins));
         $output .= $this->box_end();
         $output .= $this->upgrade_reload($reloadurl);
 
-        $button = new single_button($continueurl, get_string('upgradestart', 'admin'), 'get');
-        $button->class = 'continuebutton';
-        $output .= $this->render($button);
+        if ($pluginman->all_plugins_ok($version)) {
+            $button = new single_button($continueurl, get_string('upgradestart', 'admin'), 'get');
+            $button->class = 'continuebutton';
+            $output .= $this->render($button);
+        } else {
+            $output .= $this->box(get_string('pluginschecktodo', 'admin'), 'environmentbox errorbox');
+        }
 
         $output .= $this->footer();
 
@@ -388,11 +392,11 @@ class core_admin_renderer extends plugin_renderer_base {
      *     (bool)full = false: whether to display up-to-date plugins, too
      *
      * @param plugin_manager $pluginman provides information about the plugins.
+     * @param int $version the version of the Moodle code from version.php.
      * @param array $options rendering options
      * @return string HTML code
      */
-    public function plugins_check_table(plugin_manager $pluginman, array $options = null) {
-        global $CFG;
+    public function plugins_check_table(plugin_manager $pluginman, $version, array $options = null) {
         $plugininfo = $pluginman->get_plugins();
 
         if (empty($plugininfo)) {
@@ -475,7 +479,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
                 $status = new html_table_cell(get_string('status_' . $statuscode, 'core_plugin'));
 
-                $requires = new html_table_cell($this->required_column($plugin, $pluginman));
+                $requires = new html_table_cell($this->required_column($plugin, $pluginman, $version));
 
                 $statusisboring = in_array($statuscode, array(
                         plugin_manager::PLUGIN_STATUS_NODB, plugin_manager::PLUGIN_STATUS_UPTODATE));
@@ -537,12 +541,11 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param plugin_information $plugin the plugin we are rendering the row for.
      * @param plugin_manager $pluginman provides data on all the plugins.
      */
-    protected function required_column($plugin, $pluginman) {
-        global $CFG;
+    protected function required_column($plugin, $pluginman, $version) {
         $requires = array();
 
         if (!empty($plugin->versionrequires)) {
-            if ($plugin->versionrequires <= $CFG->version) {
+            if ($plugin->versionrequires <= $version) {
                 $class = 'requires-ok';
             } else {
                 $class = 'requires-failed';

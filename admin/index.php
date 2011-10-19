@@ -212,8 +212,8 @@ if ($version > $CFG->version) {  // upgrade
         $PAGE->set_cacheable(false);
 
         $output = $PAGE->get_renderer('core', 'admin');
-        echo $this->upgrade_environment_page($release, $envstatus, $environment_results);
-        die;
+        echo $output->upgrade_environment_page($release, $envstatus, $environment_results);
+        die();
 
     } else if (empty($confirmplugins)) {
         $strplugincheck = get_string('plugincheck');
@@ -224,7 +224,7 @@ if ($version > $CFG->version) {  // upgrade
         $PAGE->set_cacheable(false);
 
         $output = $PAGE->get_renderer('core', 'admin');
-        echo $output->upgrade_plugin_check_page(plugin_manager::instance(), $showallplugins,
+        echo $output->upgrade_plugin_check_page(plugin_manager::instance(), $version, $showallplugins,
                 new moodle_url('/admin/index.php', array('confirmupgrade' => 1, 'confirmrelease' => 1)),
                 new moodle_url('/admin/index.php', array('confirmupgrade'=>1, 'confirmrelease'=>1, 'confirmplugincheck'=>1)));
         die();
@@ -257,7 +257,7 @@ if (moodle_needs_upgrading()) {
             $PAGE->set_cacheable(false);
 
             $output = $PAGE->get_renderer('core', 'admin');
-            echo $output->upgrade_plugin_check_page(plugin_manager::instance(), $showallplugins,
+            echo $output->upgrade_plugin_check_page(plugin_manager::instance(), $version, $showallplugins,
                     new moodle_url('/admin/index.php'),
                     new moodle_url('/admin/index.php', array('confirmplugincheck'=>1)));
             die();

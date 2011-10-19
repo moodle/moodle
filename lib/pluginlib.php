@@ -235,8 +235,6 @@ class plugin_manager {
      * @return bool true if all the dependancies are satisfied.
      */
     public function are_dependancies_satisfied($dependancies) {
-        $installedplugins = $this->get_plugins();
-
         foreach ($dependancies as $component => $requiredversion) {
             $otherplugin = $this->get_plugin_info($component);
             if (is_null($otherplugin)) {
@@ -245,6 +243,28 @@ class plugin_manager {
 
             if ($requiredversion != ANY_VERSION and $otherplugin->versiondb < $requiredversion) {
                 return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks all dependancies for all installed plugins. Used by install and upgrade.
+     * @param int $moodleversion the version from version.php.
+     * @return bool true if all the dependancies are satisfied for all plugins.
+     */
+    public function all_plugins_ok($moodleversion) {
+        foreach ($this->get_plugins() as $type => $plugins) {
+            foreach ($plugins as $plugin) {
+
+                if (!empty($plugin->versionrequires) && $plugin->versionrequires > $moodleversion) {
+                    return false;
+                }
+
+                if (!$this->are_dependancies_satisfied($plugin->get_other_required_plugins())) {
+                    return false;
+                }
             }
         }
 
