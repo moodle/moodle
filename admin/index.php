@@ -26,7 +26,7 @@
 // Check that config.php exists, if not then call the install script
 if (!file_exists('../config.php')) {
     header('Location: ../install.php');
-    die;
+    die();
 }
 
 // Check that PHP is of a sufficient version as soon as possible
@@ -35,7 +35,7 @@ if (version_compare(phpversion(), '5.3.2') < 0) {
     // do NOT localise - lang strings would not work here and we CAN NOT move it to later place
     echo "Moodle 2.1 or later requires at least PHP 5.3.2 (currently using version $phpversion).<br />";
     echo "Please upgrade your server software or install older Moodle version.";
-    die;
+    die();
 }
 
 // make sure iconv is available and actually works
@@ -47,7 +47,7 @@ if (!function_exists('iconv')) {
 if (iconv('UTF-8', 'UTF-8//IGNORE', 'abc') !== 'abc') {
     // known to be broken in mid-2011 MAMP installations
     echo 'Broken iconv PHP extension detected, installation/upgrade can not continue.';
-    die;
+    die();
 }
 
 define('NO_OUTPUT_BUFFERING', true);
@@ -134,7 +134,7 @@ if (!core_tables_exist()) {
 
         $output = $PAGE->get_renderer('core', 'admin');
         echo $output->install_licence_page();
-        die;
+        die();
     }
     if (empty($confirmrelease)) {
         require_once($CFG->libdir.'/environmentlib.php');
@@ -148,7 +148,7 @@ if (!core_tables_exist()) {
 
         $output = $PAGE->get_renderer('core', 'admin');
         echo $output->install_environment_page($maturity, $envstatus, $environment_results);
-        die;
+        die();
     }
 
     $strdatabasesetup = get_string('databasesetup');
@@ -199,7 +199,7 @@ if ($version > $CFG->version) {  // upgrade
 
         $output = $PAGE->get_renderer('core', 'admin');
         echo $output->upgrade_confirm_page($a->newversion, $maturity);
-        exit;
+        die();
 
     } else if (empty($confirmrelease)){
         require_once($CFG->libdir.'/environmentlib.php');
