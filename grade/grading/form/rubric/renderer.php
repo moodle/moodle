@@ -213,4 +213,35 @@ class gradingform_rubric_renderer {
         }
         return $class;
     }
+
+    /**
+     * Displays for the student the list of instances or default content if no instances found
+     *
+     * @param array $instances array of objects of type gradingform_rubric_instance
+     * @param string $defaultcontent default string that would be displayed without advanced grading
+     * @return string
+     */
+    public function display_instances($instances, $defaultcontent) {
+        if (sizeof($instances)) {
+            $rv = html_writer::start_tag('div', array('class' => 'advancedgrade'));
+            $idx = 0;
+            foreach ($instances as $instance) {
+                $rv .= $this->display_instance($instance, $idx++);
+            }
+            $rv .= html_writer::end_tag('div');
+        }
+        return $rv. $defaultcontent;
+    }
+
+    /**
+     * Displays one grading instance
+     *
+     * @param gradingform_rubric_instance $instance
+     * @param int idx unique number of instance on page
+     */
+    public function display_instance(gradingform_rubric_instance $instance, $idx) {
+        $criteria = $instance->get_controller()->get_definition()->rubric_criteria;
+        $values = $instance->get_rubric_filling();
+        return $this->display_rubric($criteria, gradingform_rubric_controller::DISPLAY_REVIEW, 'rubric'.$idx, $values);
+    }
 }

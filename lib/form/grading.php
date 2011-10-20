@@ -31,7 +31,11 @@ if (class_exists('HTML_QuickForm')) {
 }
 
 /**
- * HTML class for a grading element
+ * HTML class for a grading element. This is a wrapper for advanced grading plugins.
+ * When adding the 'grading' element to the form, developer must pass an object of
+ * class gradingform_instance as $attributes['gradinginstance']. Otherwise an exception will be
+ * thrown.
+ * This object is responsible for implementing functions to render element html and validate it
  *
  * @author       Marina Glancy
  * @access       public
@@ -44,6 +48,10 @@ class MoodleQuickForm_grading extends HTML_QuickForm_input{
      */
     var $_helpbutton='';
 
+    /**
+     * Stores attributes passed to the element
+     * @var array
+     */
     private $gradingattributes;
 
     function MoodleQuickForm_grading($elementName=null, $elementLabel=null, $attributes=null) {
@@ -51,16 +59,27 @@ class MoodleQuickForm_grading extends HTML_QuickForm_input{
         $this->gradingattributes = $attributes;
     }
 
+    /**
+     * Helper function to retrieve gradingform_instance passed in element attributes
+     *
+     * @return gradingform_instance
+     */
+    function get_gradinginstance() {
+        if (is_array($this->gradingattributes) && array_key_exists('gradinginstance', $this->gradingattributes)) {
+            return $this->gradingattributes['gradinginstance'];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the input field in HTML
+     *
+     * @return    string
+     */
     function toHtml(){
-        return $this->get_controller()->to_html($this);
-    }
-
-    function get_grading_attribute($name) {
-        return $this->gradingattributes[$name];
-    }
-
-    function get_controller() {
-        return $this->get_grading_attribute('controller');
+        global $PAGE;
+        return $this->get_gradinginstance()->render_grading_element($PAGE, $this);
     }
 
     /**
@@ -97,22 +116,23 @@ class MoodleQuickForm_grading extends HTML_QuickForm_input{
     function onQuickFormEvent($event, $arg, &$caller) {
         if ($event == 'createElement') {
             $attributes = $arg[2];
-            if (!is_array($attributes) || !array_key_exists('controller', $attributes) || !($attributes['controller'] instanceof gradingform_controller)) {
+            if (!is_array($attributes) || !array_key_exists('gradinginstance', $attributes) || !($attributes['gradinginstance'] instanceof gradingform_instance)) {
                 throw new moodle_exception('exc_gradingformelement', 'grading');
             }
         }
 
         $name = $this->getName();
         if ($name && $caller->elementExists($name)) {
-            $caller->addRule($name, $this->get_controller()->default_validation_error_message(), 'gradingvalidated', $this->gradingattributes);
+            $caller->addRule($name, $this->get_gradinginstance()->default_validation_error_message(), 'gradingvalidated', $this->gradingattributes);
         }
         return parent::onQuickFormEvent($event, $arg, $caller);
     }
 
     /**
-     * Function registered as rule for this element and is called when this element is being validated
+     * Function registered as rule for this element and is called when this element is being validated.
+     * This is a wrapper to pass the validation to the method gradingform_instance::validate_grading_element
      */
     static function _validate($elementValue, $attributes = null) {
-        return $attributes['controller']->validate_grading_element($elementValue, $attributes['submissionid']);
+        return $attributes['gradinginstance']->validate_grading_element($elementValue);
     }
 }

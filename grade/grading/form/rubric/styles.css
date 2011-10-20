@@ -71,7 +71,7 @@
 .form_rubric.editor .criterion.last .controls .movedown input {display:none;}
 
 /* evaluation */
-.form_rubric.evaluate .criterion .levels .level.checked {background:#d0ffd0;}
+.form_rubric .criterion .levels .level.checked {background:#d0ffd0;}
 .form_rubric.evaluate .criterion .levels .level:hover {background:#30ff30;}
 
 /* replace buttons with images */
