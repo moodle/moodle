@@ -723,7 +723,7 @@ abstract class lesson_add_page_form_base extends moodleform {
 
         if ($this->standard === true) {
             $mform->addElement('hidden', 'qtype');
-            $mform->setType('qtype', PARAM_SAFEDIR);
+            $mform->setType('qtype', PARAM_INT);
 
             $mform->addElement('text', 'title', get_string('pagetitle', 'lesson'), array('size'=>70));
             $mform->setType('title', PARAM_TEXT);
