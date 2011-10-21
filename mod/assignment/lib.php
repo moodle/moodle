@@ -332,7 +332,8 @@ class assignment_base {
         echo '<td class="content">';
         $grade_str = '<div class="grade">'. get_string("grade").': '.$grade->str_long_grade. '</div>';
         if (!empty($submission) && $controller = get_grading_manager($this->context, 'mod_assignment', 'submission')->get_active_controller()) {
-            echo $controller->render_grade($PAGE, $submission->id, $grade_str);
+            $controller->set_grade_range(make_grades_menu($this->assignment->grade));
+            echo $controller->render_grade($PAGE, $submission->id, $item, $grade_str);
         } else {
             echo $grade_str;
         }
@@ -781,6 +782,23 @@ class assignment_base {
     }
 
     /**
+     * Checks if grading method allows quickgrade mode. At the moment it is hardcoded
+     * that advanced grading methods do not allow quickgrade.
+     *
+     * Assignment type plugins are not allowed to override this method
+     *
+     * @return boolean
+     */
+    public final function quickgrade_mode_allowed() {
+        global $CFG;
+        require_once("$CFG->dirroot/grade/grading/lib.php");
+        if ($controller = get_grading_manager($this->context, 'mod_assignment', 'submission')->get_active_controller()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Helper method updating the listing on the main script from popup using javascript
      *
      * @global object
@@ -794,7 +812,7 @@ class assignment_base {
 
         $perpage = get_user_preferences('assignment_perpage', 10);
 
-        $quickgrade = get_user_preferences('assignment_quickgrade', 0);
+        $quickgrade = get_user_preferences('assignment_quickgrade', 0) && $this->quickgrade_mode_allowed();
 
         /// Run some Javascript to try and update the parent page
         $output .= '<script type="text/javascript">'."\n<!--\n";
@@ -1138,7 +1156,7 @@ class assignment_base {
          * from database
          */
         $perpage    = get_user_preferences('assignment_perpage', 10);
-        $quickgrade = get_user_preferences('assignment_quickgrade', 0);
+        $quickgrade = get_user_preferences('assignment_quickgrade', 0) && $this->quickgrade_mode_allowed();
         $filter = get_user_preferences('assignment_filter', 0);
         $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id);
 
@@ -1367,6 +1385,7 @@ class assignment_base {
 
                     /// Calculate user status
                         $auser->status = ($auser->timemarked > 0) && ($auser->timemarked >= $auser->timemodified);
+                        // TODO add here code if advanced grading grade must be reviewed => $auser->status=0
                         $picture = $OUTPUT->user_picture($auser);
 
                         if (empty($auser->submissionid)) {
@@ -1552,9 +1571,11 @@ class assignment_base {
         $mform->addElement('text', 'perpage', get_string('pagesize', 'assignment'), array('size'=>1));
         $mform->setDefault('perpage', $perpage);
 
-        $mform->addElement('checkbox', 'quickgrade', get_string('quickgrade','assignment'));
-        $mform->setDefault('quickgrade', $quickgrade);
-        $mform->addHelpButton('quickgrade', 'quickgrade', 'assignment');
+        if ($this->quickgrade_mode_allowed()) {
+            $mform->addElement('checkbox', 'quickgrade', get_string('quickgrade','assignment'));
+            $mform->setDefault('quickgrade', $quickgrade);
+            $mform->addHelpButton('quickgrade', 'quickgrade', 'assignment');
+        }
 
         $mform->addElement('submit', 'savepreferences', get_string('savepreferences'));
 
@@ -2352,11 +2373,12 @@ class mod_assignment_grading_form extends moodleform {
 
         $mform->addElement('header', 'Grades', get_string('grades', 'grades'));
 
+        $grademenu = make_grades_menu($this->_customdata->assignment->grade);
         if ($gradinginstance = $this->use_advanced_grading()) {
+            $gradinginstance->get_controller()->set_grade_range($grademenu);
             $mform->addElement('grading', 'advancedgrading', get_string('grade').':', array('gradinginstance' => $gradinginstance));
         } else {
             // use simple direct grading
-            $grademenu = make_grades_menu($this->_customdata->assignment->grade);
             $grademenu['-1'] = get_string('nograde');
 
             $mform->addElement('select', 'xgrade', get_string('grade').':', $grademenu, $attributes);

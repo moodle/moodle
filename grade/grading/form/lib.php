@@ -50,6 +50,9 @@ abstract class gradingform_controller {
     /** @var stdClass|false the definition structure */
     protected $definition;
 
+    /** @var array graderange array of valid grades for this area. Use set_grade_range and get_grade_range to access this */
+    private $graderange = null;
+
     /**
      * Do not instantinate this directly, use {@link grading_manager::get_controller()}
      *
@@ -174,9 +177,10 @@ abstract class gradingform_controller {
     /**
      * Returns the grading form definition structure
      *
+     * @param boolean $force whether to force loading from DB even if it was already loaded
      * @return stdClass|false definition data or false if the form is not defined yet
      */
-    public function get_definition() {
+    public function get_definition($force = false) {
         if (is_null($this->definition)) {
             $this->load_definition();
         }
@@ -459,11 +463,32 @@ abstract class gradingform_controller {
      *
      * @param moodle_page $page
      * @param int $itemid
-     * @param string $defaultcontent default string to be returned if no active grading is found
+     * @param array $grading_info result of function grade_get_grades if plugin want to use some of their info
+     * @param string $defaultcontent default string to be returned if no active grading is found or for some reason can not be shown to a user
      * @return string
      */
-    public function render_grade($page, $itemid, $defaultcontent) {
+    public function render_grade($page, $itemid, $grading_info, $defaultcontent) {
         return $defaultcontent;
+    }
+
+    /**
+     * Sets the range of grades used in this area. This is usually either range like 0-100
+     * or the scale where keys start from 1. Typical use:
+     * $controller->set_grade_range(make_grades_menu($gradingtype));
+     */
+    public final function set_grade_range(array $graderange) {
+        $this->graderange = $graderange;
+    }
+
+    /**
+     * Returns the range of grades used in this area
+     * @return array
+     */
+    public final function get_grade_range() {
+        if (empty($this->graderange)) {
+            return array();
+        }
+        return $this->graderange;
     }
 }
 
@@ -600,7 +625,8 @@ abstract class gradingform_instance {
 
     /**
      * Calculates the grade to be pushed to the gradebook
-     * @return int the grade on 0-100 scale
+     *
+     * @return int the valid grade from $this->get_controller()->get_grade_range()
      */
     abstract public function get_grade();
 
@@ -622,11 +648,12 @@ abstract class gradingform_instance {
      * If there are more than one input elements they MUST be elements of array with
      * name $gradingformelement->getName().
      * Example: {NAME}[myelement1], {NAME}[myelement2][sub1], {NAME}[myelement2][sub2], etc.
+     * ( {NAME} is a shortcut for $gradingformelement->getName() )
      * After submitting the form the value of $_POST[{NAME}] is passed to the functions
      * validate_grading_element() and submit_and_get_grade()
      *
      * Plugins may use $gradingformelement->getValue() to get the value passed on previous
-     * from submit
+     * form submit
      *
      * When forming html it is a plugin's responsibility to analyze flags
      * $gradingformelement->_flagFrozen and $gradingformelement->_persistantFreeze:

@@ -50,7 +50,7 @@ class gradingform_rubric_editrubric extends moodleform {
         $form->setType('name', PARAM_TEXT);
 
         // description
-        $options = array();
+        $options = gradingform_rubric_controller::description_form_field_options($this->_customdata['context']);
         $form->addElement('editor', 'description_editor', get_string('description', 'gradingform_rubric'), null, $options);
         $form->setType('description_editor', PARAM_RAW);
 

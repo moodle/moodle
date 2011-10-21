@@ -60,19 +60,28 @@ class gradingform_rubric_controller extends gradingform_controller {
      * Saves the rubric definition into the database
      *
      * @see parent::update_definition()
-     * @param stdClass $newdefinition rubric definition data as coming from {@link self::postupdate_definition_data()}
+     * @param stdClass $newdefinition rubric definition data as coming from gradingform_rubric_editrubric::get_data()
      * @param int|null $usermodified optional userid of the author of the definition, defaults to the current user
      */
     public function update_definition(stdClass $newdefinition, $usermodified = null) {
         global $DB;
 
         // firstly update the common definition data in the {grading_definition} table
+        if ($this->definition === false) {
+            // if definition does not exist yet, create a blank one with only required fields set
+            // (we need id to save files embedded in description)
+            parent::update_definition((object)array('descriptionformat' => FORMAT_MOODLE), $usermodified);
+            parent::load_definition();
+        }
+        $options = self::description_form_field_options($this->get_context());
+        $newdefinition = file_postupdate_standard_editor($newdefinition, 'description', $options, $this->get_context(),
+            'gradingform_rubric', 'definition_description', $this->definition->id);
         parent::update_definition($newdefinition, $usermodified);
-        // reload the definition from the database
-        $this->load_definition();
-        $currentdefinition = $this->get_definition();
 
-        // update current data
+        // reload the definition from the database
+        $currentdefinition = $this->get_definition(true);
+
+        // update rubric data
         $haschanges = false;
         if (empty($newdefinition->rubric_criteria)) {
             $newcriteria = array();
@@ -299,21 +308,6 @@ class gradingform_rubric_controller extends gradingform_controller {
         return format_text($description, $this->definition->descriptionformat, $formatoptions);
     }
 
-    /**
-     * Converts the rubric definition data from the submitted form back to the form
-     * suitable for storing in database
-     */
-    public function postupdate_definition_data($data) {
-        if (!$this->definition) {
-            return $data;
-        }
-        $options = self::description_form_field_options($this->get_context());
-        $data = file_postupdate_standard_editor($data, 'description', $options, $this->get_context(),
-            'gradingform_rubric', 'definition_description', $this->definition->id);
-            // TODO change filearea for embedded files in grading_definition.description
-        return $data;
-    }
-
     public function is_form_available($foruserid = null) {
         return true;
         // TODO this is temporary for testing!
@@ -373,10 +367,11 @@ class gradingform_rubric_controller extends gradingform_controller {
      *
      * @param moodle_page $page
      * @param int $itemid
+     * @param array $grading_info result of function grade_get_grades
      * @param string $defaultcontent default string to be returned if no active grading is found
      * @return string
      */
-    public function render_grade($page, $itemid, $defaultcontent) {
+    public function render_grade($page, $itemid, $grading_info, $defaultcontent) {
         $instances = $this->get_current_instances($itemid);
         return $this->get_renderer($page)->display_instances($this->get_current_instances($itemid), $defaultcontent);
     }
@@ -484,7 +479,8 @@ class gradingform_rubric_instance extends gradingform_instance {
 
     /**
      * Calculates the grade to be pushed to the gradebook
-     * @return int the grade on 0-100 scale
+     *
+     * @return int the valid grade from $this->get_controller()->get_grade_range()
      */
     public function get_grade() {
         global $DB, $USER;
@@ -494,20 +490,28 @@ class gradingform_rubric_instance extends gradingform_instance {
         $maxscore = 0;
         foreach ($this->get_controller()->get_definition()->rubric_criteria as $id => $criterion) {
             $keys = array_keys($criterion['levels']);
-            // TODO array_reverse($keys) if levels are sorted DESC
+            sort($keys);
             $minscore += $criterion['levels'][$keys[0]]['score'];
             $maxscore += $criterion['levels'][$keys[sizeof($keys)-1]]['score'];
         }
 
-        if ($maxscore == 0) {
+        if ($maxscore <= $minscore) {
             return -1;
         }
+
+        $graderange = array_keys($this->get_controller()->get_grade_range());
+        if (empty($graderange)) {
+            return -1;
+        }
+        sort($graderange);
+        $mingrade = $graderange[0];
+        $maxgrade = $graderange[sizeof($graderange) - 1];
 
         $curscore = 0;
         foreach ($grade as $id => $levelid) {
             $curscore += $this->get_controller()->get_definition()->rubric_criteria[$id]['levels'][$levelid]['score'];
         }
-        return $curscore/$maxscore*100; // TODO mapping
+        return round(($curscore-$minscore)/($maxscore-$minscore)*($maxgrade-$mingrade), 0) + $mingrade; // TODO mapping
     }
 
     /**
