@@ -24,7 +24,6 @@
  */
 
 $string['accessexception'] = 'Access control exception';
-$string['accessnotallowed'] = 'Access to web service not allowed';
 $string['actwebserviceshhdr'] = 'Active web service protocols';
 $string['accesstofunctionnotallowed'] = 'Access to the function {$a}() is not allowed. Please check if a service containing the function is enabled. In the service settings: if the service is restricted check that the user is listed. Still in the service settings check for IP restriction or if the service requires a capability.';
 $string['addaservice'] = 'Add service';
@@ -130,6 +129,7 @@ $string['potusers'] = 'Not authorised users';
 $string['potusersmatching'] = 'Not authorised users matching';
 $string['print'] = 'Print all';
 $string['protocol'] = 'Protocol';
+$string['protocolnotallowed'] = 'You are not allowed to use the {$a} protocol (missing capability: webservice/{$a}:use)';
 $string['removefunction'] = 'Remove';
 $string['removefunctionconfirm'] = 'Do you really want to remove function "{$a->function}" from service "{$a->service}"?';
 $string['requireauthentication'] = 'This method requires authentication with xxx permission.';
