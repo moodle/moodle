@@ -661,7 +661,7 @@ function initialise_cfg() {
  * setup.php.
  */
 function initialise_fullme() {
-    global $CFG, $FULLME, $ME, $SCRIPT, $FULLSCRIPT, $USER;
+    global $CFG, $FULLME, $ME, $SCRIPT, $FULLSCRIPT;
 
     // Detect common config error.
     if (substr($CFG->wwwroot, -1) == '/') {
@@ -673,13 +673,26 @@ function initialise_fullme() {
         return;
     }
 
-    $wwwroot = parse_url($CFG->wwwroot);
-    if (!isset($wwwroot['path'])) {
-        $wwwroot['path'] = '';
-    }
-    $wwwroot['path'] .= '/';
-
     $rurl = setup_get_remote_url();
+    $wwwroot = parse_url($CFG->wwwroot.'/');
+
+    if (empty($rurl['host'])) {
+        // missing host in request header, probably not a real browser, let's ignore them
+
+    } else if (!empty($CFG->reverseproxy)) {
+        // $CFG->reverseproxy specifies if reverse proxy server used
+        // Used in load balancing scenarios.
+        // Do not abuse this to try to solve lan/wan access problems!!!!!
+
+    } else {
+        if (($rurl['host'] !== $wwwroot['host']) or (!empty($wwwroot['port']) and $rurl['port'] != $wwwroot['port'])) {
+            // Explain the problem and redirect them to the right URL
+            if (!defined('NO_MOODLE_COOKIES')) {
+                define('NO_MOODLE_COOKIES', true);
+            }
+            redirect($CFG->wwwroot, get_string('wwwrootmismatch', 'error', $CFG->wwwroot), 3);
+        }
+    }
 
     // Check that URL is under $CFG->wwwroot.
     if (strpos($rurl['path'], $wwwroot['path']) === 0) {
@@ -701,27 +714,6 @@ function initialise_fullme() {
             throw new coding_exception('Must use https address in wwwroot when ssl proxy enabled!');
         }
         $rurl['scheme'] = 'https'; // make moodle believe it runs on https, squid or something else it doing it
-    }
-
-    // $CFG->reverseproxy specifies if reverse proxy server used.
-    // Used in load balancing scenarios.
-    // Do not abuse this to try to solve lan/wan access problems!!!!!
-    if (empty($CFG->reverseproxy)) {
-        if (empty($rurl['host'])) {
-            // missing host in request header, probably not a real browser, let's ignore them
-        } else if (($rurl['host'] !== $wwwroot['host']) or
-                (!empty($wwwroot['port']) and $rurl['port'] != $wwwroot['port'])) {
-            // Explain the problem and redirect them to the right URL
-            if (!defined('NO_MOODLE_COOKIES')) {
-                define('NO_MOODLE_COOKIES', true);
-            }
-            if (!isset($USER->id)) {
-                // MDL-27899 workaround
-                $USER = new stdClass();
-                $USER->id = 0;
-            }
-            redirect($CFG->wwwroot, get_string('wwwrootmismatch', 'error', $CFG->wwwroot), 3);
-        }
     }
 
     // hopefully this will stop all those "clever" admins trying to set up moodle
@@ -1366,6 +1358,12 @@ class bootstrap_renderer {
 
     /**
      * Returns nicely formatted error message in a div box.
+     * @static
+     * @param string $message error message
+     * @param string $moreinfourl ignored
+     * @param string $link ignored
+     * @param array $backtrace
+     * @param string $debuginfo
      * @return string
      */
     public static function early_error_content($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
@@ -1392,6 +1390,12 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
 
     /**
      * This function should only be called by this class, or from exception handlers
+     * @static
+     * @param string $message error message
+     * @param string $moreinfourl
+     * @param string $link
+     * @param array $backtrace
+     * @param string $debuginfo
      * @return string
      */
     public static function early_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
@@ -1454,17 +1458,54 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
         return self::plain_page($strerror, $content);
     }
 
+    /**
+     * Early notification message
+     * @static
+     * @param $message
+     * @param string $classes
+     * @return string
+     */
     public static function early_notification($message, $classes = 'notifyproblem') {
         return '<div class="' . $classes . '">' . $message . '</div>';
     }
 
+    /**
+     * Page should redirect message.
+     * @static
+     * @param $encodedurl
+     * @return string
+     */
     public static function plain_redirect_message($encodedurl) {
-        $message = '<p>' . get_string('pageshouldredirect') . '</p><p><a href="'.
-                $encodedurl .'">'. get_string('continue') .'</a></p>';
+        $message = '<div style="margin-top: 3em; margin-left:auto; margin-right:auto; text-align:center;">' . get_string('pageshouldredirect') . '</p><p><a href="'.
+                $encodedurl .'">'. get_string('continue') .'</a></div>';
         return self::plain_page(get_string('redirect'), $message);
     }
 
-    protected static function plain_page($title, $content) {
+    /**
+     * Early redirection page, used before full init of $PAGE global
+     * @static
+     * @param $encodedurl
+     * @param $message
+     * @param $delay
+     * @return string
+     */
+    public static function early_redirect_message($encodedurl, $message, $delay) {
+        $meta = '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
+        $content = self::early_error_content($message, null, null, null);
+        $content .= self::plain_redirect_message($encodedurl);
+
+        return self::plain_page(get_string('redirect'), $content, $meta);
+    }
+
+    /**
+     * Output basic html page.
+     * @static
+     * @param $title
+     * @param $content
+     * @param string $meta
+     * @return string
+     */
+    protected static function plain_page($title, $content, $meta = '') {
         if (function_exists('get_string') && function_exists('get_html_lang')) {
             $htmllang = get_html_lang();
         } else {
@@ -1475,6 +1516,7 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
 <html xmlns="http://www.w3.org/1999/xhtml" ' . $htmllang . '>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+'.$meta.'
 <title>' . $title . '</title>
 </head><body>' . $content . '</body></html>';
     }
