@@ -221,7 +221,7 @@
     <location>typo3</location>
     <name>Typo3</name>
     <license>GPL</license>
-    <version>4.2.1</version>
+    <version>4.5.0</version>
     <licenseversion>2.0+</licenseversion>
   </library>
   <library>

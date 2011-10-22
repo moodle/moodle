@@ -2989,7 +2989,7 @@ final class t3lib_div {
 	 * @param	array			Error code/message and, if $includeHeader is 1, response meta data (HTTP status and content type)
 	 * @return	string	The content from the resource given as input. FALSE if an error has occured.
 	 */
-	public static function getURL($url, $includeHeader = 0, $requestHeaders = FALSE, &$report = NULL) {
+	public static function getUrl($url, $includeHeader = 0, $requestHeaders = FALSE, &$report = NULL) {
 		$content = FALSE;
 
 		if (isset($report)) {
