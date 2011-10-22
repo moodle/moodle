@@ -959,7 +959,7 @@ class assignment_base {
         /// Get all ppl that can submit assignments
 
         $currentgroup = groups_get_activity_group($cm);
-        $users = get_enrolled_users($context, 'mod/assignment:view', $currentgroup, 'u.id');
+        $users = get_enrolled_users($context, 'mod/assignment:submit', $currentgroup, 'u.id');
         if ($users) {
             $users = array_keys($users);
             // if groupmembersonly used, remove users who are not in any group
