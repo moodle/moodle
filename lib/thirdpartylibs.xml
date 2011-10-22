@@ -274,13 +274,6 @@
     <licenseversion>3.0+</licenseversion>
   </library>
   <library>
-    <location>kses.php</location>
-    <name>KSES</name>
-    <license>GPL</license>
-    <version>0.2.2</version>
-    <licenseversion>3.0+</licenseversion>
-  </library>
-  <library>
     <location>markdown.php</location>
     <name>Markdown original+extra</name>
     <license>BSD</license>

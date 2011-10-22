@@ -3716,14 +3716,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010051801);
     }
 
-    if ($oldversion < 2010052100) {
-        // Switch to html purifier as default cleaning engine - KSES is really very bad
-        if (empty($CFG->enablehtmlpurifier)) {
-            unset_config('enablehtmlpurifier');
-        }
-        upgrade_main_savepoint(true, 2010052100);
-    }
-
     if ($oldversion < 2010052200) {
         // Define field legacyfiles to be added to course - just in case we are upgrading from PR1
         $table = new xmldb_table('course');
@@ -6808,6 +6800,12 @@ FROM
 
         // Main savepoint reached
         upgrade_main_savepoint(true, 2011101200.01);
+    }
+
+    if ($oldversion < 2011101900.02) {
+        // remove unused setting
+        unset_config('enablehtmlpurifier');
+        upgrade_main_savepoint(true, 2011101900.02);
     }
 
     return true;

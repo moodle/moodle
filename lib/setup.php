@@ -811,9 +811,6 @@ if ($USER && function_exists('apache_note')
     apache_note('MOODLEUSER', $logname);
 }
 
-// Adjust ALLOWED_TAGS
-adjust_allowed_tags();
-
 // Use a custom script replacement if one exists
 if (!empty($CFG->customscripts)) {
     if (($customscript = custom_script_path()) !== false) {
