@@ -144,7 +144,6 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
 
                     drag.setData('group', group);
                     drag.setData('choice', choice);
-
                 },
                 draggable_for_form : function (drag) {
                     var dd = new Y.DD.Drag({
