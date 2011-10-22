@@ -260,13 +260,6 @@
     <licenseversion>2.0+/2.0.2</licenseversion>
   </library>
   <library>
-    <location>odbc.php</location>
-    <name>ODBC server/client</name>
-    <license>Public Domain</license>
-    <version></version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
     <location>html2text.php</location>
     <name>HTML2Text</name>
     <license>GPL</license>
