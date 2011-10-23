@@ -174,7 +174,7 @@ class enrol_database_plugin extends enrol_plugin {
                 }
             } else {
                 $roleid = reset($roles);
-                $this->enrol_user($instance, $user->id, $roleid);
+                $this->enrol_user($instance, $user->id, $roleid, 0, 0, ENROL_USER_ACTIVE);
             }
 
             if (!$context = get_context_instance(CONTEXT_COURSE, $instance->courseid)) {
@@ -455,7 +455,7 @@ class enrol_database_plugin extends enrol_plugin {
             foreach ($requested_roles as $userid=>$userroles) {
                 foreach ($userroles as $roleid) {
                     if (empty($current_roles[$userid])) {
-                        $this->enrol_user($instance, $userid, $roleid);
+                        $this->enrol_user($instance, $userid, $roleid, 0, 0, ENROL_USER_ACTIVE);
                         $current_roles[$userid][$roleid] = $roleid;
                         $current_status[$userid] = ENROL_USER_ACTIVE;
                         if ($verbose) {
