@@ -92,13 +92,6 @@
     <licenseversion>3</licenseversion>
   </library>
   <library>
-    <location>overlib</location>
-    <name>Overlib</name>
-    <license>http://www.bosrup.com/web/overlib/?License</license>
-    <version>4.21</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
     <location>pear/Auth/RADIUS.php</location>
     <name>Pear_Auth_Radius</name>
     <license>?</license>
