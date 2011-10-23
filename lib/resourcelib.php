@@ -477,6 +477,7 @@ EOT;
  * @param string $fullurl
  * @param string $title
  * @param string $clicktoopen
+ * @param string $mimetype
  * @return string html
  */
 function resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype) {
@@ -490,17 +491,11 @@ function resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype) {
 
     $param = '<param name="src" value="'.$fullurl.'" />';
 
-    // IE can not embed stuff properly if stored on different server
-    // that is why we use iframe instead, unfortunately this tag does not validate
-    // in xhtml strict mode
+    // IE can not embed stuff properly, that is why we use iframe instead.
+    // Unfortunately this tag does not validate in xhtml strict mode,
+    // but in any case it is undeprecated in HTML 5 - we will use it everywhere soon!
     if ($mimetype === 'text/html' and check_browser_version('MSIE', 5)) {
-        // The param tag needs to be removed to avoid trouble in IE.
-        $param = '';
-        if (preg_match('(^https?://[^/]*)', $fullurl, $matches)) {
-            if (strpos($CFG->wwwroot, $matches[0]) !== 0) {
-                $iframe = true;
-            }
-        }
+        $iframe = true;
     }
 
     if ($iframe) {
