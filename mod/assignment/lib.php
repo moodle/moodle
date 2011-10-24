@@ -1067,11 +1067,11 @@ class assignment_base {
             $mformdata->fileui_options = array('subdirs'=>0, 'maxbytes'=>$CFG->userquota, 'maxfiles'=>1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
         }
         if ($controller = get_grading_manager($this->context, 'mod_assignment', 'submission')->get_active_controller()) {
-            if (!isset($submission->id)) {
-                // we create a submission if it does not exist yet because we need submission->id for grading
-                $mformdata->submission = $this->get_submission($user->id, true);
+            $itemid = null;
+            if (!empty($submission->id)) {
+                $itemid = $submission->id;
             }
-            $mformdata->advancedgradinginstance = $controller->create_instance($USER->id, $mformdata->submission->id);
+            $mformdata->advancedgradinginstance = $controller->create_instance($USER->id, $itemid);
         }
 
         $submitform = new mod_assignment_grading_form( null, $mformdata );
@@ -1613,7 +1613,9 @@ class assignment_base {
             // preprocess advanced grading here
             if ($gradinginstance) {
                 $data = $mform->get_data();
-                $_POST['xgrade'] = $gradinginstance->submit_and_get_grade($data->advancedgrading);
+                // create submission if it did not exist yet because we need submission->id for storing the grading instance
+                $submission = $this->get_submission($userid, true);
+                $_POST['xgrade'] = $gradinginstance->submit_and_get_grade($data->advancedgrading, $submission->id);
             }
         }
         return true;

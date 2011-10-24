@@ -457,11 +457,13 @@ class gradingform_rubric_instance extends gradingform_instance {
      * Updates the instance with the data received from grading form. This function may be
      * called via AJAX when grading is not yet completed, so it does not change the
      * status of the instance.
+     *
+     * @param array $data
      */
     public function update($data) {
         global $DB;
         $currentgrade = $this->get_rubric_filling();
-        parent::update($data); // TODO ? +timemodified
+        parent::update($data);
         foreach ($data['criteria'] as $criterionid => $record) {
             if (!array_key_exists($criterionid, $currentgrade['criteria'])) {
                 $newrecord = array('forminstanceid' => $this->get_id(), 'criterionid' => $criterionid,

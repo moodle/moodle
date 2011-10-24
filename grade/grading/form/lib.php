@@ -368,10 +368,10 @@ abstract class gradingform_controller {
      * @param int $itemid
      * @return gradingform_instance
      */
-    public function create_instance($raterid, $itemid) {
+    public function create_instance($raterid, $itemid = null) {
         global $DB;
         // first find if there is already an active instance for this itemid
-        if ($current = $this->get_current_instance($raterid, $itemid)) {
+        if ($itemid && $current = $this->get_current_instance($raterid, $itemid)) {
             return $this->get_instance($current->copy($raterid, $itemid));
         } else {
             $class = 'gradingform_'. $this->get_method_name(). '_instance';
@@ -588,6 +588,9 @@ abstract class gradingform_instance {
             // already active
             return;
         }
+        if (empty($this->data->itemid)) {
+            throw new coding_exception('You cannot mark active the grading instance without itemid');
+        }
         $currentid = $this->get_controller()->get_current_instance($this->data->raterid, $this->data->itemid, true);
         if ($currentid) {
             if ($currentid != $this->get_id()) {
@@ -618,9 +621,22 @@ abstract class gradingform_instance {
      * Updates the instance with the data received from grading form. This function may be
      * called via AJAX when grading is not yet completed, so it does not change the
      * status of the instance.
+     *
+     * @param array $elementvalue
      */
     public function update($elementvalue) {
-        // TODO update timemodified at least
+        global $DB;
+        $newdata = new stdClass();
+        $newdata->id = $this->get_id();
+        $newdata->timemodified = time();
+        if (isset($elementvalue['itemid']) && $elementvalue['itemid'] != $this->data->itemid) {
+            $newdata->itemid = $elementvalue['itemid'];
+        }
+        // TODO also update: rawgrade, feedback, feedbackformat
+        $DB->update_record('grading_instances', $newdata);
+        foreach ($newdata as $key => $value) {
+            $this->data->$key = $value;
+        }
     }
 
     /**
@@ -632,10 +648,16 @@ abstract class gradingform_instance {
 
     /**
      * Called when teacher submits the grading form:
-     * updates the instance in DB, marks it as ACTIVE and returns the grade to be pushed to the gradebook
+     * updates the instance in DB, marks it as ACTIVE and returns the grade to be pushed to the gradebook.
+     * $itemid must be specified here (it was not required when the instance was
+     * created, because it might not existed in draft)
+     *
+     * @param array $elementvalue
+     * @param int $itemid
      * @return int the grade on 0-100 scale
      */
-    public function submit_and_get_grade($elementvalue) {
+    public function submit_and_get_grade($elementvalue, $itemid) {
+        $elementvalue['itemid'] = $itemid;
         $this->update($elementvalue);
         $this->make_active();
         return $this->get_grade();
