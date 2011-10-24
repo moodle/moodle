@@ -659,7 +659,7 @@ abstract class webservice_server implements webservice_server_interface {
         $this->userid = $user->id;
 
         if ($this->authmethod != WEBSERVICE_AUTHMETHOD_SESSION_TOKEN && !has_capability("webservice/$this->wsname:use", $this->restricted_context)) {
-            throw new webservice_access_exception(get_string('accessnotallowed', 'webservice'));
+            throw new webservice_access_exception(get_string('protocolnotallowed', 'webservice', $this->wsname));
         }
 
         external_api::set_context_restriction($this->restricted_context);
