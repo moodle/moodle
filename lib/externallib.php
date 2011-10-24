@@ -149,7 +149,7 @@ class external_api {
     public static function validate_parameters(external_description $description, $params) {
         if ($description instanceof external_value) {
             if (is_array($params) or is_object($params)) {
-                throw new invalid_parameter_exception(get_string('errorscalartype', 'webservice'));
+                throw new invalid_parameter_exception('Scalar type expected, array or object received.');
             }
 
             if ($description->type == PARAM_BOOL) {
@@ -158,48 +158,50 @@ class external_api {
                     return (bool)$params;
                 }
             }
-            return validate_param($params, $description->type, $description->allownull, get_string('errorinvalidparamsapi', 'webservice'));
+            $debuginfo = 'Invalid external api parameter: the value is "' . $params .
+                    '", the server was expecting "' . $description->type . '" type';
+            return validate_param($params, $description->type, $description->allownull, $debuginfo);
 
         } else if ($description instanceof external_single_structure) {
             if (!is_array($params)) {
-                throw new invalid_parameter_exception(get_string('erroronlyarray', 'webservice'));
+                throw new invalid_parameter_exception('Only arrays accepted. The bad value is: \''
+                        . print_r($params, true) . '\'');
             }
             $result = array();
             foreach ($description->keys as $key=>$subdesc) {
                 if (!array_key_exists($key, $params)) {
                     if ($subdesc->required == VALUE_REQUIRED) {
-                        throw new invalid_parameter_exception(get_string('errormissingkey', 'webservice', $key));
+                        throw new invalid_parameter_exception('Missing required key in single structure: '. $key);
                     }
                     if ($subdesc->required == VALUE_DEFAULT) {
                         try {
                             $result[$key] = self::validate_parameters($subdesc, $subdesc->default);
                         } catch (invalid_parameter_exception $e) {
-                            throw new webservice_parameter_exception('invalidextparam',$key);
+                            //we are only interested by exceptions returned by validate_param() and validate_parameters()
+                            //(in order to build the path to the faulty attribut)
+                            throw new invalid_parameter_exception($key." => ".$e->getMessage() . ': ' .$e->debuginfo);
                         }
                     }
                 } else {
                     try {
                         $result[$key] = self::validate_parameters($subdesc, $params[$key]);
                     } catch (invalid_parameter_exception $e) {
-                        //it's ok to display debug info as here the information is useful for ws client/dev
-                        throw new webservice_parameter_exception('invalidextparam',$key." (".$e->debuginfo.")");
+                        //we are only interested by exceptions returned by validate_param() and validate_parameters()
+                        //(in order to build the path to the faulty attribut)
+                        throw new invalid_parameter_exception($key." => ".$e->getMessage() . ': ' .$e->debuginfo);
                     }
                 }
                 unset($params[$key]);
             }
             if (!empty($params)) {
-                //list all unexpected keys
-                $keys = '';
-                foreach($params as $key => $value) {
-                    $keys .= $key . ',';
-                }
-                throw new invalid_parameter_exception(get_string('errorunexpectedkey', 'webservice', $keys));
+                throw new invalid_parameter_exception('Unexpected keys (' . implode(', ', array_keys($params)) . ') detected in parameter array.');
             }
             return $result;
 
         } else if ($description instanceof external_multiple_structure) {
             if (!is_array($params)) {
-                throw new invalid_parameter_exception(get_string('erroronlyarray', 'webservice'));
+                throw new invalid_parameter_exception('Only arrays accepted. The bad value is: \''
+                        . print_r($params, true) . '\'');
             }
             $result = array();
             foreach ($params as $param) {
@@ -208,7 +210,7 @@ class external_api {
             return $result;
 
         } else {
-            throw new invalid_parameter_exception(get_string('errorinvalidparamsdesc', 'webservice'));
+            throw new invalid_parameter_exception('Invalid external api description');
         }
     }
 
@@ -225,7 +227,7 @@ class external_api {
     public static function clean_returnvalue(external_description $description, $response) {
         if ($description instanceof external_value) {
             if (is_array($response) or is_object($response)) {
-                throw new invalid_response_exception(get_string('errorscalartype', 'webservice'));
+                throw new invalid_response_exception('Scalar type expected, array or object received.');
             }
 
             if ($description->type == PARAM_BOOL) {
@@ -234,33 +236,42 @@ class external_api {
                     return (bool)$response;
                 }
             }
-            return validate_param($response, $description->type, $description->allownull, get_string('errorinvalidresponseapi', 'webservice'));
+            $debuginfo = 'Invalid external api response: the value is "' . $response .
+                    '", the server was expecting "' . $description->type . '" type';
+            try {
+                return validate_param($response, $description->type, $description->allownull, $debuginfo);
+            } catch (invalid_parameter_exception $e) {
+                //proper exception name, to be recursively catched to build the path to the faulty attribut
+                throw new invalid_response_exception($e->debuginfo);
+            }
 
         } else if ($description instanceof external_single_structure) {
             if (!is_array($response)) {
-                throw new invalid_response_exception(get_string('erroronlyarray', 'webservice'));
+                throw new invalid_response_exception('Only arrays accepted. The bad value is: \'' .
+                        print_r($response, true) . '\'');
             }
             $result = array();
             foreach ($description->keys as $key=>$subdesc) {
                 if (!array_key_exists($key, $response)) {
                     if ($subdesc->required == VALUE_REQUIRED) {
-                        throw new webservice_parameter_exception('errorresponsemissingkey', $key);
+                        throw new invalid_response_exception('Error in response - Missing following required key in a single structure: ' . $key);
                     }
                     if ($subdesc instanceof external_value) {
                         if ($subdesc->required == VALUE_DEFAULT) {
                             try {
                                     $result[$key] = self::clean_returnvalue($subdesc, $subdesc->default);
-                            } catch (Exception $e) {
-                                    throw new webservice_parameter_exception('invalidextresponse',$key." (".$e->debuginfo.")");
+                            } catch (invalid_response_exception $e) {
+                                //build the path to the faulty attribut
+                                throw new invalid_response_exception($key." => ".$e->getMessage() . ': ' . $e->debuginfo);
                             }
                         }
                     }
                 } else {
                     try {
                         $result[$key] = self::clean_returnvalue($subdesc, $response[$key]);
-                    } catch (Exception $e) {
-                        //it's ok to display debug info as here the information is useful for ws client/dev
-                        throw new webservice_parameter_exception('invalidextresponse',$key." (".$e->debuginfo.")");
+                    } catch (invalid_response_exception $e) {
+                        //build the path to the faulty attribut
+                        throw new invalid_response_exception($key." => ".$e->getMessage() . ': ' . $e->debuginfo);
                     }
                 }
                 unset($response[$key]);
@@ -270,7 +281,8 @@ class external_api {
 
         } else if ($description instanceof external_multiple_structure) {
             if (!is_array($response)) {
-                throw new invalid_response_exception(get_string('erroronlyarray', 'webservice'));
+                throw new invalid_response_exception('Only arrays accepted. The bad value is: \'' .
+                        print_r($response, true) . '\'');
             }
             $result = array();
             foreach ($response as $param) {
@@ -279,7 +291,7 @@ class external_api {
             return $result;
 
         } else {
-            throw new invalid_response_exception(get_string('errorinvalidresponsedesc', 'webservice'));
+            throw new invalid_response_exception('Invalid external api response description');
         }
     }
 

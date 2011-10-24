@@ -41,18 +41,14 @@ if (!$cm = get_coursemodule_from_id('quiz', $id)) {
 if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
     print_error("coursemisconf");
 }
-if (!$quiz = $DB->get_record('quiz', array('id' => $cm->instance))) {
-    print_error('invalidcoursemodule');
-}
 
-$quizobj = quiz::create($quiz->id, $USER->id);
+$quizobj = quiz::create($cm->instance, $USER->id);
 // This script should only ever be posted to, so set page URL to the view page.
 $PAGE->set_url($quizobj->view_url());
 
 // Check login and sesskey.
 require_login($quizobj->get_courseid(), false, $quizobj->get_cm());
 require_sesskey();
-$PAGE->set_pagelayout('base');
 
 // if no questions have been set up yet redirect to edit.php
 if (!$quizobj->has_questions() && $quizobj->has_capability('mod/quiz:manage')) {
@@ -62,7 +58,7 @@ if (!$quizobj->has_questions() && $quizobj->has_capability('mod/quiz:manage')) {
 // Create an object to manage all the other (non-roles) access rules.
 $accessmanager = $quizobj->get_access_manager(time());
 if ($quizobj->is_preview_user() && $forcenew) {
-    $accessmanager->clear_password_access();
+    $accessmanager->current_attempt_finished();
 }
 
 // Check capabilities.
@@ -75,48 +71,79 @@ if ($quizobj->is_preview_user() && $forcenew) {
     // To force the creation of a new preview, we set a finish time on the
     // current attempt (if any). It will then automatically be deleted below
     $DB->set_field('quiz_attempts', 'timefinish', time(),
-            array('quiz' => $quiz->id, 'userid' => $USER->id));
+            array('quiz' => $quizobj->get_quizid(), 'userid' => $USER->id));
 }
 
 // Look for an existing attempt.
-$attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'all');
+$attempts = quiz_get_user_attempts($quizobj->get_quizid(), $USER->id, 'all', true);
 $lastattempt = end($attempts);
 
 // If an in-progress attempt exists, check password then redirect to it.
 if ($lastattempt && !$lastattempt->timefinish) {
-    $accessmanager->do_password_check($quizobj->is_preview_user());
-    redirect($quizobj->attempt_url($lastattempt->id, $page));
-}
+    $currentattemptid = $lastattempt->id;
+    $messages = $accessmanager->prevent_access();
 
-// Get number for the next or unfinished attempt
-if ($lastattempt && !$lastattempt->preview && !$quizobj->is_preview_user()) {
-    $attemptnumber = $lastattempt->attempt + 1;
 } else {
-    $lastattempt = false;
-    $attemptnumber = 1;
+    // Get number for the next or unfinished attempt
+    if ($lastattempt && !$lastattempt->preview && !$quizobj->is_preview_user()) {
+        $attemptnumber = $lastattempt->attempt + 1;
+    } else {
+        $lastattempt = false;
+        $attemptnumber = 1;
+    }
+    $currentattemptid = null;
+
+    $messages = $accessmanager->prevent_access() +
+            $accessmanager->prevent_new_attempt(count($attempts), $lastattempt);
 }
 
 // Check access.
-$messages = $accessmanager->prevent_access() +
-        $accessmanager->prevent_new_attempt(count($attempts), $lastattempt);
+$output = $PAGE->get_renderer('mod_quiz');
 if (!$quizobj->is_preview_user() && $messages) {
-    $output = $PAGE->get_renderer('mod_quiz');
     print_error('attempterror', 'quiz', $quizobj->view_url(),
             $output->print_messages($messages));
 }
-$accessmanager->do_password_check($quizobj->is_preview_user());
+
+if ($accessmanager->is_preflight_check_required($currentattemptid)) {
+    // Need to do some checks before allowing the user to continue.
+    $mform = $accessmanager->get_preflight_check_form(
+            $quizobj->start_attempt_url($page), $currentattemptid);
+
+    if ($mform->is_cancelled()) {
+        $accessmanager->back_to_view_page($output);
+
+    } else if (!$mform->get_data()) {
+
+        // Form not submitted successfully, re-display it and stop.
+        $PAGE->set_url($quizobj->start_attempt_url($page));
+        $PAGE->set_title(format_string($quizobj->get_quiz_name()));
+        $accessmanager->setup_attempt_page($PAGE);
+        if (empty($quizobj->get_quiz()->showblocks)) {
+            $PAGE->blocks->show_only_fake_blocks();
+        }
+
+        echo $output->start_attempt_page($quizobj, $mform);
+        die();
+    }
+
+    // Pre-flight check passed.
+    $accessmanager->notify_preflight_check_passed($currentattemptid);
+}
+if ($currentattemptid) {
+    redirect($quizobj->attempt_url($currentattemptid, $page));
+}
 
 // Delete any previous preview attempts belonging to this user.
-quiz_delete_previews($quiz, $USER->id);
+quiz_delete_previews($quizobj->get_quiz(), $USER->id);
 
 $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
-$quba->set_preferred_behaviour($quiz->preferredbehaviour);
+$quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
 // Create the new attempt and initialize the question sessions
-$attempt = quiz_create_attempt($quiz, $attemptnumber, $lastattempt, time(),
+$attempt = quiz_create_attempt($quizobj->get_quiz(), $attemptnumber, $lastattempt, time(),
         $quizobj->is_preview_user());
 
-if (!($quiz->attemptonlast && $lastattempt)) {
+if (!($quizobj->get_quiz()->attemptonlast && $lastattempt)) {
     // Starting a normal, new, quiz attempt.
 
     // Fully load all the questions in this quiz.
@@ -128,14 +155,14 @@ if (!($quiz->attemptonlast && $lastattempt)) {
     $questionsinuse = array_keys($quizobj->get_questions());
     foreach ($quizobj->get_questions() as $i => $questiondata) {
         if ($questiondata->qtype != 'random') {
-            if (!$quiz->shuffleanswers) {
+            if (!$quizobj->get_quiz()->shuffleanswers) {
                 $questiondata->options->shuffleanswers = false;
             }
             $question = question_bank::make_question($questiondata);
 
         } else {
             $question = question_bank::get_qtype('random')->choose_other_question(
-                    $questiondata, $questionsinuse, $quiz->shuffleanswers);
+                    $questiondata, $questionsinuse, $quizobj->get_quiz()->shuffleanswers);
             if (is_null($question)) {
                 throw new moodle_exception('notenoughrandomquestions', 'quiz',
                         $quizobj->view_url(), $questiondata);

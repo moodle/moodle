@@ -11,6 +11,7 @@
 require_once("../../config.php");
 require_once("lib.php");
 require_once('delete_template_form.php');
+require_once($CFG->libdir.'/tablelib.php');
 
 // $SESSION->feedback->current_tab = 'templates';
 $current_tab = 'templates';
@@ -77,13 +78,24 @@ if ($mform->is_cancelled()) {
 }
 
 if(isset($formdata->confirmdelete) AND $formdata->confirmdelete == 1){
-    feedback_delete_template($formdata->deletetempl);
+    if(!$template = $DB->get_record("feedback_template", array("id"=>$deletetempl))) {
+        print_error('error');
+    }
+
+    if($template->ispublic) {
+        $systemcontext = get_system_context();
+        require_capability('mod/feedback:createpublictemplate', $systemcontext);
+        require_capability('mod/feedback:deletetemplate', $systemcontext);
+    }
+
+    feedback_delete_template($template);
     redirect($deleteurl->out(false));
 }
 
 /// Print the page header
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
+$strdeletefeedback = get_string('delete_template','feedback');
 
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
@@ -96,7 +108,7 @@ include('tabs.php');
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-echo $OUTPUT->heading(get_string('delete_template','feedback'));
+echo $OUTPUT->heading($strdeletefeedback);
 if($shoulddelete == 1) {
 
     echo $OUTPUT->box_start('generalbox errorboxcontent boxaligncenter boxwidthnormal');
@@ -104,36 +116,93 @@ if($shoulddelete == 1) {
     $mform->display();
     echo $OUTPUT->box_end();
 }else {
-    $templates = feedback_get_template_list($course, true);
-    echo '<div class="mdl-align">';
+    //first we get the own templates
+    $templates = feedback_get_template_list($course, 'own');
     if(!is_array($templates)) {
         echo $OUTPUT->box(get_string('no_templates_available_yet', 'feedback'), 'generalbox boxaligncenter');
     }else {
-        echo '<table width="30%">';
-        echo '<tr><th>'.get_string('templates', 'feedback').'</th><th>&nbsp;</th></tr>';
+        echo $OUTPUT->heading(get_string('course'), 3);
+        echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
+        $tablecolumns = array('template', 'action');
+        $tableheaders = array(get_string('template', 'feedback'), '');
+        $tablecourse = new flexible_table('feedback_template_course_table');
+
+        $tablecourse->define_columns($tablecolumns);
+        $tablecourse->define_headers($tableheaders);
+        $tablecourse->define_baseurl($deleteurl);
+        $tablecourse->column_style('action', 'width', '10%');
+
+        $tablecourse->sortable(false);
+        $tablecourse->set_attribute('width', '100%');
+        $tablecourse->set_attribute('class', 'generaltable');
+        $tablecourse->setup();
+
         foreach($templates as $template) {
-            echo '<tr><td align="center">'.$template->name.'</td>';
-            echo '<td align="center">';
-            echo '<form action="delete_template.php" method="post">';
-            echo '<input title="'.get_string('delete_template','feedback').'" type="image" src="'.$OUTPUT->pix_url('t/delete') . '" hspace="1" height="11" width="11" border="0" />';
-            echo '<input type="hidden" name="deletetempl" value="'.$template->id.'" />';
-            echo '<input type="hidden" name="shoulddelete" value="1" />';
-            echo '<input type="hidden" name="id" value="'.$id.'" />';
-            echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-            echo '</form>';
-            echo '</td></tr>';
+            $data = array();
+            $data[] = $template->name;
+            $url = new moodle_url($deleteurl, array(
+                                            'id'=>$id,
+                                            'deletetempl'=>$template->id,
+                                            'shoulddelete'=>1,
+                                            ));
+
+            $data[] = $OUTPUT->single_button($url, $strdeletefeedback, 'post');
+            $tablecourse->add_data($data);
         }
-        echo '</table>';
+        $tablecourse->finish_output();
+        echo $OUTPUT->box_end();
     }
-?>
-        <form name="frm" action="delete_template.php" method="post">
-            <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
-            <input type="hidden" name="id" value="<?php echo $id;?>" />
-            <input type="hidden" name="canceldelete" value="0" />
-            <button type="button" onclick="this.form.canceldelete.value=1;this.form.submit();"><?php print_string('cancel');?></button>
-        </form>
-        </div>
-<?php
+    //now we get the public templates if it is permitted
+    $systemcontext = get_system_context();
+    if(has_capability('mod/feedback:createpublictemplate', $systemcontext) AND
+        has_capability('mod/feedback:deletetemplate', $systemcontext)) {
+        $templates = feedback_get_template_list($course, 'public');
+        if(!is_array($templates)) {
+            echo $OUTPUT->box(get_string('no_templates_available_yet', 'feedback'), 'generalbox boxaligncenter');
+        }else {
+            echo $OUTPUT->heading(get_string('public', 'feedback'), 3);
+            echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
+            $tablecolumns = array('template', 'action');
+            $tableheaders = array(get_string('template', 'feedback'), '');
+            $tablepublic = new flexible_table('feedback_template_public_table');
+
+            $tablepublic->define_columns($tablecolumns);
+            $tablepublic->define_headers($tableheaders);
+            $tablepublic->define_baseurl($deleteurl);
+            $tablepublic->column_style('action', 'width', '10%');
+
+            $tablepublic->sortable(false);
+            $tablepublic->set_attribute('width', '100%');
+            $tablepublic->set_attribute('class', 'generaltable');
+            $tablepublic->setup();
+
+            // echo $OUTPUT->heading(get_string('public', 'feedback'), 3);
+            // echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
+            foreach($templates as $template) {
+                $data = array();
+                $data[] = $template->name;
+                $url = new moodle_url($deleteurl, array(
+                                                'id'=>$id,
+                                                'deletetempl'=>$template->id,
+                                                'shoulddelete'=>1,
+                                                ));
+
+                $data[] = $OUTPUT->single_button($url, $strdeletefeedback, 'post');
+                $tablepublic->add_data($data);
+            }
+            $tablepublic->finish_output();
+            echo $OUTPUT->box_end();
+        }
+    }
+
+    echo $OUTPUT->box_start('boxaligncenter boxwidthnormal');
+    $url = new moodle_url($deleteurl, array(
+                                    'id'=>$id,
+                                    'canceldelete'=>1,
+                                    ));
+
+    echo $OUTPUT->single_button($url, get_string('back'), 'post');
+    echo $OUTPUT->box_end();
 }
 
 echo $OUTPUT->footer();

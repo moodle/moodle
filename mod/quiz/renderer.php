@@ -362,6 +362,17 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return implode(', ', $attemptlinks);
     }
 
+    public function start_attempt_page(quiz $quizobj, mod_quiz_preflight_check_form $mform) {
+        $output = '';
+        $output .= $this->header();
+        $output .= $this->quiz_intro($quizobj->get_quiz(), $quizobj->get_cm());
+        ob_start();
+        $mform->display();
+        $output .= ob_get_clean();
+        $output .= $this->footer();
+        return $output;
+    }
+
     /**
      * Attempt Page
      *
@@ -454,13 +465,49 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Output the JavaScript required to initialise the countdown timer.
+     * @param int $timerstartvalue time remaining, in seconds.
+     */
+    public function initialise_timer($timerstartvalue) {
+        $this->page->requires->js_init_call('M.mod_quiz.timer.init',
+                array($timerstartvalue), false, quiz_get_js_module());
+    }
+
+    /**
+     * Output a page with an optional message, and JavaScript code to close the
+     * current window and redirect the parent window to a new URL.
+     * @param moodle_url $url the URL to redirect the parent window to.
+     * @param string $message message to display before closing the window. (optional)
+     * @return string HTML to output.
+     */
+    public function close_attempt_popup($url, $message = '') {
+        $output = '';
+        $output .= $this->header();
+        $output .= $this->box_start();
+
+        if ($message) {
+            $output .= html_writer('p', $message);
+            $output .= html_writer('p', get_string('windowclosing', 'quiz'));
+            $delay = 5;
+        } else {
+            $output .= html_writer('p', get_string('pleaseclose', 'quiz'));
+            $delay = 0;
+        }
+        $this->page->requires->js_function_call('M.mod_quiz.secure_window.close',
+                array($url, $delay));
+
+        $output .= $this->box_end();
+        $output .= $this->footer();
+        return $output;
+    }
+
+    /**
      * Print each message in an array, surrounded by &lt;p>, &lt;/p> tags.
      *
      * @param array $messages the array of message strings.
      * @param bool $return if true, return a string, instead of outputting.
      *
-     * @return mixed, if $return is true, return the string that would have been output, otherwise
-     * return null.
+     * @return string HTML to output.
      */
     public function access_messages($messages) {
         $output = '';
@@ -588,15 +635,104 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param array $infomessages further information about why the student cannot
      *      attempt this quiz now, if appicable this quiz
      */
-    public function view_page($course, $quiz, $cm, $context, $infomessages, $viewobj,
-            $buttontext, $preventmessages) {
+    public function view_page($course, $quiz, $cm, $context, $viewobj) {
         $output = '';
-        $output .= $this->view_information($course, $quiz, $cm, $context, $infomessages);
+        $output .= $this->view_information($quiz, $cm, $context, $viewobj->infomessages);
         $output .= $this->view_table($quiz, $context, $viewobj);
         $output .= $this->view_best_score($viewobj);
         $output .= $this->view_result_info($quiz, $context, $cm, $viewobj);
-        $output .= $this->view_attempt_button($course, $quiz, $cm, $context, $viewobj,
-                $buttontext, $preventmessages);
+        $output .= $this->box($this->view_page_buttons($viewobj), 'quizattempt');
+        return $output;
+    }
+
+    /**
+     * Work out, and render, whatever buttons, and surrounding info, should appear
+     * at the end of the review page.
+     * @param mod_quiz_view_object $viewobj the information required to display
+     * the view page.
+     * @return string HTML to output.
+     */
+    public function view_page_buttons(mod_quiz_view_object $viewobj) {
+        $output = '';
+
+        if (!$viewobj->quizhasquestions) {
+            $output .= $this->no_questions_message($viewobj->canedit, $viewobj->editurl);
+        }
+
+        $output .= $this->access_messages($viewobj->preventmessages);
+
+        if ($viewobj->buttontext) {
+            $output .= $this->start_attempt_button($viewobj->buttontext,
+                    $viewobj->startattempturl, $viewobj->startattemptwarning,
+                    $viewobj->popuprequired, $viewobj->popupoptions);
+
+        } else if ($viewobj->buttontext === '') {
+            // We should show a 'back to the course' button.
+            $output .= $this->single_button($viewobj->backtocourseurl,
+                    get_string('backtocourse', 'quiz'), 'get',
+                    array('class' => 'continuebutton'));
+        }
+
+        return $output;
+    }
+
+    /**
+     * Generates the view attempt button
+     *
+     * @param int $course The course ID
+     * @param array $quiz Array containging quiz date
+     * @param int $cm The Course Module ID
+     * @param int $context The page Context ID
+     * @param mod_quiz_view_object $viewobj
+     * @param string $buttontext
+     */
+    public function start_attempt_button($buttontext, moodle_url $url,
+            $startattemptwarning, $popuprequired, $popupoptions) {
+
+        $button = new single_button($url, $buttontext);
+        $button->class .= ' quizstartbuttondiv';
+
+        $warning = '';
+        if ($popuprequired) {
+            $this->page->requires->js_module(quiz_get_js_module());
+            $this->page->requires->js('/mod/quiz/module.js');
+            $popupaction = new popup_action('click', $url, 'quizpopup', $popupoptions);
+
+            $button->class .= ' quizsecuremoderequired';
+            $button->add_action(new component_action('click',
+                    'M.mod_quiz.secure_window.start_attempt_action', array(
+                        'url' => $url->out(false),
+                        'windowname' => 'quizpopup',
+                        'popupoptions' => $popupaction->get_js_options(),
+                        'fullscreen' => true,
+                        'startattemptwarning' => $startattemptwarning,
+                    )));
+
+            $warning = html_writer::tag('noscript', $this->heading(get_string('noscript', 'quiz')));
+
+        } else if ($startattemptwarning) {
+            $button->add_action(new confirm_action($startattemptwarning, null,
+                    get_string('startattempt', 'quiz')));
+        }
+
+        return $this->render($button) . $warning;
+    }
+
+    /**
+     * Generate a message saying that this quiz has no questions, with a button to
+     * go to the edit page, if the user has the right capability.
+     * @param object $quiz the quiz settings.
+     * @param object $cm the course_module object.
+     * @param object $context the quiz context.
+     * @return string HTML to output.
+     */
+    public function no_questions_message($canedit, $editurl) {
+        $output = '';
+        $output .= $this->notification(get_string('noquestions', 'quiz'));
+        if ($canedit) {
+            $output .= $this->single_button($editurl, get_string('editquiz', 'quiz'), 'get');
+        }
+
         return $output;
     }
 
@@ -611,7 +747,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      */
     public function view_page_guest($course, $quiz, $cm, $context, $messages) {
         $output = '';
-        $output .= $this->view_information($course, $quiz, $cm, $context, $messages);
+        $output .= $this->view_information($quiz, $cm, $context, $messages);
         $guestno = html_writer::tag('p', get_string('guestsno', 'quiz'));
         $liketologin = html_writer::tag('p', get_string('liketologin'));
         $output .= $this->confirm($guestno."\n\n".$liketologin."\n", get_login_url(),
@@ -631,7 +767,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
     public function view_page_notenrolled($course, $quiz, $cm, $context, $messages) {
         global $CFG;
         $output = '';
-        $output .= $this->view_information($course, $quiz, $cm, $context, $messages);
+        $output .= $this->view_information($quiz, $cm, $context, $messages);
         $youneedtoenrol = html_writer::tag('p', get_string('youneedtoenrol', 'quiz'));
         $button = html_writer::tag('p',
                 $this->continue_button($CFG->wwwroot . '/course/view.php?id=' . $course->id));
@@ -642,14 +778,15 @@ class mod_quiz_renderer extends plugin_renderer_base {
     /**
      * Output the page information
      *
-     * @param int $course The course ID
-     * @param array $quiz Array contingin quiz data
-     * @param int $cm Course Module ID
-     * @param int $context The page contect ID
-     * @param array $messages Array containing any messages
+     * @param object $quiz the quiz settings.
+     * @param object $cm the course_module object.
+     * @param object $context the quiz context.
+     * @param array $messages any access messages that should be described.
+     * @return string HTML to output.
      */
-    public function view_information($course, $quiz, $cm, $context, $messages) {
+    public function view_information($quiz, $cm, $context, $messages) {
         global $CFG;
+
         $output = '';
         // Print quiz name and description
         $output .= $this->heading(format_string($quiz->name));
@@ -669,6 +806,22 @@ class mod_quiz_renderer extends plugin_renderer_base {
             }
         }
         return $output;
+    }
+
+    /**
+     * Output the quiz intro.
+     * @param object $quiz the quiz settings.
+     * @param object $cm the course_module object.
+     * @return string HTML to output.
+     */
+    public function quiz_intro($quiz, $cm) {
+        if (trim(strip_tags($quiz->intro))) {
+            $output .= $this->box(format_module_intro('quiz', $quiz, $cm->id),
+                    'generalbox', 'intro');
+
+        } else {
+            return '';
+        }
     }
 
     /**
@@ -797,7 +950,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
             if ($viewobj->canreviewmine) {
                 $row[] = $viewobj->accessmanager->make_review_link($attempt,
-                        $viewobj->canpreview, $attemptoptions);
+                        $attemptoptions, $this);
             }
 
             if ($viewobj->feedbackcolumn && $attempt->timefinish > 0) {
@@ -893,42 +1046,35 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Generates the view attempt button
+     * Output either a link to the review page for an attempt, or a button to
+     * open the review in a popup window.
      *
-     * @param int $course The course ID
-     * @param array $quiz Array containging quiz date
-     * @param int $cm The Course Module ID
-     * @param int $context The page Context ID
-     * @param mod_quiz_view_object $viewobj
-     * @param string $buttontext
+     * @param moodle_url $url of the target page.
+     * @param bool $reviewinpopup whether a pop-up is required.
+     * @param array $popupoptions options to pass to the popup_action constructor.
+     * @return string HTML to output.
      */
-    public function view_attempt_button($course, $quiz, $cm, $context, $viewobj,
-            $buttontext, $preventmessages) {
-        $output = '';
-        // Determine if we should be showing a start/continue attempt button,
-        // or a button to go back to the course page.
-        $output .= $this->box_start('quizattempt');
+    public function review_link($url, $reviewinpopup, $popupoptions) {
+        if ($reviewinpopup) {
+            $button = new single_button($url, get_string('review', 'quiz'));
+            $button->add_action(new popup_action('click', $url, 'quizpopup', $popupoptions));
+            return $this->render($button);
 
-        // Now actually print the appropriate button.
-        if (!quiz_clean_layout($quiz->questions, true)) {
-            $output .= quiz_no_questions_message($quiz, $cm, $context);
+        } else {
+            return html_writer::link($url, get_string('review', 'quiz'),
+                    array('title' => get_string('reviewthisattempt', 'quiz')));
         }
+    }
 
-        if ($preventmessages) {
-            $output .= $this->access_messages($preventmessages);
-        }
-
-        if ($buttontext) {
-            $output .= $viewobj->accessmanager->print_start_attempt_button($viewobj->canpreview,
-                    $buttontext, $viewobj->unfinished);
-        } else if ($buttontext === '') {
-            $output .= $this->single_button(new moodle_url('/course/view.php',
-                    array('id' => $course->id)), get_string('backtocourse', 'quiz'), 'get',
-                    array('class' => 'continuebutton'));
-        }
-        $output .= $this->box_end();
-
-        return $output;
+    /**
+     * Displayed where there might normally be a review link, to explain why the
+     * review is not available at this time.
+     * @param string $message optional message explaining why the review is not possible.
+     * @return string HTML to output.
+     */
+    public function no_review_message($message) {
+        return html_writer::nonempty_tag('span', $message,
+                array('class' => 'noreviewmessage'));
     }
 
     /**
@@ -969,76 +1115,61 @@ class mod_quiz_links_to_other_attempts implements renderable {
 }
 
 class mod_quiz_view_object {
-    /**
-     * @var array $attempt contains all the user's attempts at this quiz.
-     */
+    /** @var array $infomessages of messages with information to display about the quiz. */
+    public $infomessages;
+    /** @var array $attempt contains all the user's attempts at this quiz. */
     public $attempts;
-    /**
-     * @var object $accessmanager contains various access rules.
-     */
+    /** @var quiz_access_manager $accessmanager contains various access rules. */
     public $accessmanager;
-    /**
-     * @var int $canattempt determins capability for attempting a quiz.
-     */
-    public $canattempt;
-    /**
-     * @var int $canpreview determins capability for previewing a quiz.
-     */
-    public $canpreview;
-    /**
-     * @var int $canreviewmine determins capability for reviwing own quiz.
-     */
+    /** @var bool $canreviewmine whether the current user has the capability to
+     *       review their own attempts. */
     public $canreviewmine;
-    /**
-     * @var int $attemptcolumn contains the number of attempts done.
-     */
+    /** @var bool $canedit whether the current user has the capability to edit the quiz. */
+    public $canedit;
+    /** @var moodle_url $editurl the URL for editing this quiz. */
+    public $editurl;
+    /** @var int $attemptcolumn contains the number of attempts done. */
     public $attemptcolumn;
-    /**
-     * @var int $gradecolumn contains the grades of any attempts.
-     */
+    /** @var int $gradecolumn contains the grades of any attempts. */
     public $gradecolumn;
-    /**
-     * @var int $markcolumn contains the marks of any attempt.
-     */
+    /** @var int $markcolumn contains the marks of any attempt. */
     public $markcolumn;
-    /**
-     * @var int $overallstats contains all marks for any attempt.
-     */
+    /** @var int $overallstats contains all marks for any attempt. */
     public $overallstats;
-    /**
-     * @var string $feedbackcolumn contains any feedback for and attempt.
-     */
+    /** @var string $feedbackcolumn contains any feedback for and attempt. */
     public $feedbackcolumn;
-    /**
-     * @var string $timenow contains a timestamp in string format.
-     */
+    /** @var string $timenow contains a timestamp in string format. */
     public $timenow;
-    /**
-     * @var int $numattempts contains the total number of attempts.
-     */
+    /** @var int $numattempts contains the total number of attempts. */
     public $numattempts;
-    /**
-     * @var int $mygrade contains the current users final grade for a quiz.
-     */
+    /** @var float $mygrade contains the user's final grade for a quiz. */
     public $mygrade;
-    /**
-     * @var int $moreattempts total attempts left.
-     */
+    /** @var bool $moreattempts whether this user is allowed more attempts. */
     public $moreattempts;
-    /**
-     * @var int $mygradeoverridden contains an overriden grade.
-     */
+    /** @var int $mygradeoverridden contains an overriden grade. */
     public $mygradeoverridden;
-    /**
-     * @var string $gradebookfeedback contains any feedback for a gradebook.
-     */
+    /** @var string $gradebookfeedback contains any feedback for a gradebook. */
     public $gradebookfeedback;
-    /**
-     * @var int $unfinished contains 1 if an attempt is unfinished.
-     */
+    /** @var bool $unfinished contains 1 if an attempt is unfinished. */
     public $unfinished;
-    /**
-     * @var int $lastfinishedattempt contains a pointer to the last attempt in the attempts array.
-     */
+    /** @var object $lastfinishedattempt the last attempt from the attempts array. */
     public $lastfinishedattempt;
+    /** @var array $preventmessages of messages telling the user why they can't
+     *       attempt the quiz now. */
+    public $preventmessages;
+    /** @var string $buttontext caption for the start attempt button. If this is null, show no
+     *      button, or if it is '' show a back to the course button. */
+    public $buttontext;
+    /** @var string $startattemptwarning alert to show the user before starting an attempt. */
+    public $startattemptwarning;
+    /** @var moodle_url $startattempturl URL to start an attempt. */
+    public $startattempturl;
+    /** @var moodle_url $startattempturl URL for any Back to the course button. */
+    public $backtocourseurl;
+    /** @var bool whether the attempt must take place in a popup window. */
+    public $popuprequired;
+    /** @var array options to use for the popup window, if required. */
+    public $popupoptions;
+    /** @var bool $quizhasquestions whether the quiz has any questions. */
+    public $quizhasquestions;
 }

@@ -124,7 +124,8 @@ class quiz_responses_report extends quiz_attempt_report {
             $allowed = array();
         }
 
-        if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT) && confirm_sesskey()) {
+        $attemptids = optional_param_array('attemptid', array(), PARAM_INT);
+        if ($attemptids && confirm_sesskey()) {
             require_capability('mod/quiz:deleteattempts', $this->context);
             $this->delete_selected_attempts($quiz, $cm, $attemptids, $allowed);
             redirect($reporturl->out(false, $displayoptions));
@@ -134,10 +135,12 @@ class quiz_responses_report extends quiz_attempt_report {
         $questions = quiz_report_get_significant_questions($quiz);
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-        $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
+        $courseshortname = format_string($course->shortname, true,
+                array('context' => $coursecontext));
 
         $displaycoursecontext = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-        $displaycourseshortname = format_string($COURSE->shortname, true, array('context' => $displaycoursecontext));
+        $displaycourseshortname = format_string($COURSE->shortname, true,
+                array('context' => $displaycoursecontext));
 
         $table = new quiz_report_responses_table($quiz, $this->context, $qmsubselect,
                 $groupstudents, $students, $questions, $candelete, $reporturl, $displayoptions);

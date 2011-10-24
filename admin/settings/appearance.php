@@ -118,8 +118,11 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $ADMIN->add('appearance', $temp);
 
     // coursecontact is the person responsible for course - usually manages enrolments, receives notification, etc.
-    $temp = new admin_settingpage('coursecontact', get_string('coursecontact', 'admin'));
+    $temp = new admin_settingpage('coursecontact', get_string('courses'));
     $temp->add(new admin_setting_special_coursecontact());
+    $temp->add(new admin_setting_configcheckbox('courselistshortnames',
+            get_string('courselistshortnames', 'admin'),
+            get_string('courselistshortnames_desc', 'admin'), 0));
     $ADMIN->add('appearance', $temp);
 
     $temp = new admin_settingpage('ajax', get_string('ajaxuse'));

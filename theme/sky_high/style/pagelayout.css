@@ -1,12 +1,7 @@
 /** Path: theme pagelayout **/
 
 /*********************************************************************************************
-
-    left column: 230px
-    right column: 330px
-    padding left/right column: 10px
-    padding center column: 30px
-
+    column witdh: [[setting:regionwidth]]
 **********************************************************************************************/
 
 body {
@@ -91,8 +86,6 @@ body {
     width: 100%;
 }
 
-
-
 /* @end */
 
 /* @group Pre Side Only */
@@ -118,8 +111,6 @@ body {
     width: 0%;
 }
 
-
-
 /* @end */
 
 /* @group Post Side Only */
@@ -136,8 +127,13 @@ body {
     margin-left: [[setting:regionwidth]];
 }
 
+.side-post-only #page-content #region-main-box #region-post-box #region-pre {
+    left: 0;
+    width: 0;
+}
+
 .side-post-only #page-content #region-main-box #region-post-box #region-post {
-    left: [[setting:regionwidthdouble]];
+    left: [[setting:regionwidth]];
     width: [[setting:regionwidth]];
 }
 
@@ -145,7 +141,49 @@ body {
     margin-left: 200px;
 }
 
+.blocks-moving.side-post-only #page-content #region-main-box {
+    float: left;
+    margin-left: -[[setting:regionwidth]];
+    position: relative;
+    width: 200%;
+    right: 100%;
+}
 
+.blocks-moving.side-post-only #page-content #region-main-box #region-post-box {
+    float: left;
+    margin-left: -[[setting:regionwidth]];
+    width: 100%;
+    border-right: 2px solid #98bcd6;
+    background: url([[pix:theme|top_bg]]) repeat-x top #fff;
+}
+
+.blocks-moving.side-post-only #page-content #region-main-box #region-post-box #region-main-wrap {
+    float: left;
+    width: 50%;
+}
+
+.blocks-moving.side-post-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+    overflow: hidden;
+    position: relative;
+    margin-left: [[setting:regionwidthdouble]];
+    left: 100%;
+}
+
+.blocks-moving.side-post-only #page-content #region-main-box #region-post-box #region-pre {
+    float: right;
+    position: relative;
+    left: [[setting:leftregionwidthmargin]];
+    width: [[setting:regionwidth]];
+    background: transparent;
+}
+
+.blocks-moving.side-post-only #page-content #region-main-box #region-post-box #region-post {
+    float: right;
+    position: relative;
+    left: [[setting:rightregionwidthmargin]];
+    width: [[setting:regionwidth]];
+    background: transparent;
+}
 
 /* @end */
 
@@ -171,12 +209,13 @@ body {
     width: 0px;
 }
 
-
-
 /* @end */
+
+/* @pagelayout-report - overflow */
+
 .pagelayout-report #page-content #region-main {
-    overflow:auto;
+    overflow: auto;
 }
 .pagelayout-report #page-content #region-main .region-content {
-    overflow:visible;
+    overflow: visible;
 }

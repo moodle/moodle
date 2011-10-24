@@ -40,12 +40,13 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
     *
     * startyear => integer start of range of years that can be selected
     * stopyear => integer last year that can be selected
+    * defaulttime => default time value if the field is currently not set
     * timezone => float/string timezone
     * applydst => apply users daylight savings adjustment?
     * step     => step to increment minutes by
     * optional => if true, show a checkbox beside the date to turn it on (or off)
     */
-    var $_options = array('startyear' => 1970, 'stopyear' => 2020,
+    var $_options = array('startyear' => 1970, 'stopyear' => 2020, 'defaulttime' => 0,
                     'timezone' => 99, 'applydst' => true, 'step' => 5, 'optional' => false);
 
    /**
@@ -159,7 +160,10 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group{
                 }
                 $requestvalue=$value;
                 if ($value == 0) {
-                    $value = time();
+                    $value = $this->_options['defaulttime'];
+                    if (!$value) {
+                        $value = time();
+                    }
                 }
                 if (!is_array($value)) {
                     $currentdate = usergetdate($value);

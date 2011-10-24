@@ -24,6 +24,36 @@
  */
 
 require_once("$CFG->dirroot/webservice/lib.php");
+require_once 'Zend/XmlRpc/Server.php';
+
+/**
+ * The Zend XMLRPC server but with a fault that return debuginfo
+ */
+class moodle_zend_xmlrpc_server extends Zend_XmlRpc_Server {
+
+    /**
+     * Raise an xmlrpc server fault
+     *
+     * Moodle note: the difference with the Zend server is that we throw a plain PHP Exception
+     * with the debuginfo integrated to the exception message when DEBUG >= NORMAL
+     *
+     * @param string|Exception $fault
+     * @param int $code
+     * @return Zend_XmlRpc_Server_Fault
+     */
+    public function fault($fault = null, $code = 404)
+    {
+        //intercept any exceptions with debug info and transform it in Moodle exception
+        if ($fault instanceof Exception) {
+            //add the debuginfo to the exception message if debuginfo must be returned
+            if (debugging() and isset($fault->debuginfo)) {
+                $fault = new Exception($fault->getMessage() . ' | DEBUG INFO: ' . $fault->debuginfo, 0);
+            }
+        }
+
+        return parent::fault($fault, $code);
+    }
+}
 
 /**
  * XML-RPC service server implementation.
@@ -32,11 +62,11 @@ require_once("$CFG->dirroot/webservice/lib.php");
 class webservice_xmlrpc_server extends webservice_zend_server {
     /**
      * Contructor
-     * @param integer $authmethod authentication method one of WEBSERVICE_AUTHMETHOD_* 
+     * @param integer $authmethod authentication method one of WEBSERVICE_AUTHMETHOD_*
      */
     public function __construct($authmethod) {
         require_once 'Zend/XmlRpc/Server.php';
-        parent::__construct($authmethod, 'Zend_XmlRpc_Server');
+        parent::__construct($authmethod, 'moodle_zend_xmlrpc_server');
         $this->wsname = 'xmlrpc';
     }
 
@@ -48,6 +78,11 @@ class webservice_xmlrpc_server extends webservice_zend_server {
         parent::init_zend_server();
         // this exception indicates request failed
         Zend_XmlRpc_Server_Fault::attachFaultException('moodle_exception');
+        //when DEBUG >= NORMAL then the thrown exceptions are "casted" into a plain PHP Exception class
+        //in order to display the $debuginfo (see moodle_zend_xmlrpc_server class - MDL-29435)
+        if (debugging()) {
+            Zend_XmlRpc_Server_Fault::attachFaultException('Exception');
+        }
     }
 
 }

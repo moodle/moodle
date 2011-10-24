@@ -191,6 +191,51 @@ function cohort_get_visible_list($course) {
 }
 
 /**
+ * Get all the cohorts.
+ *
+ * @global moodle_database $DB
+ * @param int $contextid
+ * @param int $page number of the current page
+ * @param int $perpage items per page
+ * @param string $search search string
+ * @return array    Array(totalcohorts => int, cohorts => array)
+ */
+function cohort_get_cohorts($contextid, $page = 0, $perpage = 25, $search = '') {
+    global $DB;
+
+    $cohorts = array();
+
+    // Add some additional sensible conditions
+    $tests = array('contextid = ?');
+    $params = array($contextid);
+
+    if (!empty($search)) {
+        $conditions = array(
+            'name',
+            'idnumber',
+            'description',
+        );
+        $searchparam = '%' . $search . '%';
+        foreach ($conditions as $key=>$condition) {
+            $conditions[$key] = $DB->sql_like($condition,"?", false);
+            $params[] = $searchparam;
+        }
+        $tests[] = '(' . implode(' OR ', $conditions) . ')';
+    }
+    $wherecondition = implode(' AND ', $tests);
+
+    $fields = 'SELECT *';
+    $countfields = 'SELECT COUNT(1)';
+    $sql = " FROM {cohort}
+             WHERE $wherecondition";
+    $order = ' ORDER BY name ASC';
+    $totalcohorts = $DB->count_records_sql($countfields . $sql, $params);
+    $cohorts = $DB->get_records_sql($fields . $sql . $order, $params, $page*$perpage, $perpage);
+
+    return array('totalcohorts' => $totalcohorts, 'cohorts' => $cohorts);
+}
+
+/**
  * Cohort assignment candidates
  */
 class cohort_candidate_selector extends user_selector_base {

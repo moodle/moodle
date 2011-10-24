@@ -717,7 +717,7 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
     $params     = array();
     $i = 0;
 
-    $concat = $DB->sql_concat('c.summary', "' '", 'c.fullname', "' '", 'c.idnumber', "' '", 'c.shortname');
+    $concat = $DB->sql_concat("COALESCE(c.summary, '". $DB->sql_empty() ."')", "' '", 'c.fullname', "' '", 'c.idnumber', "' '", 'c.shortname');
 
     foreach ($searchterms as $searchterm) {
         $i++;
@@ -1014,7 +1014,11 @@ function fix_course_sortorder() {
 
     // now fix the paths and depths in context table if needed
     if ($fixcontexts) {
-        rebuild_contexts($fixcontexts);
+        foreach ($fixcontexts as $fixcontext) {
+            $fixcontext->reset_paths(false);
+        }
+        context_helper::build_all_paths(false);
+        unset($fixcontexts);
     }
 
     // release memory

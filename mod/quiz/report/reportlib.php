@@ -369,3 +369,24 @@ function quiz_report_download_filename($report, $courseshortname, $quizname) {
 function quiz_report_default_report($context) {
     return reset(quiz_report_list($context));
 }
+
+/**
+ * Generate a message saying that this quiz has no questions, with a button to
+ * go to the edit page, if the user has the right capability.
+ * @param object $quiz the quiz settings.
+ * @param object $cm the course_module object.
+ * @param object $context the quiz context.
+ * @return string HTML to output.
+ */
+function quiz_no_questions_message($quiz, $cm, $context) {
+    global $OUTPUT;
+
+    $output = '';
+    $output .= $OUTPUT->notification(get_string('noquestions', 'quiz'));
+    if (has_capability('mod/quiz:manage', $context)) {
+        $output .= $OUTPUT->single_button(new moodle_url('/mod/quiz/edit.php',
+        array('cmid' => $cm->id)), get_string('editquiz', 'quiz'), 'get');
+    }
+
+    return $output;
+}

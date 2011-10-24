@@ -1218,7 +1218,7 @@ class page_wiki_history extends page_wiki {
         $creator = wiki_get_user_info($version0page->userid);
         $a = new StdClass;
         $a->date = userdate($this->page->timecreated, get_string('strftimedaydatetime', 'langconfig'));
-        $a->username = $creator->username;
+        $a->username = fullname($creator);
         echo $OUTPUT->heading(get_string('createddate', 'wiki', $a), 4, 'wiki_headingtime');
         if ($vcount > 0) {
 
@@ -2545,7 +2545,7 @@ class page_wiki_admin extends page_wiki {
         $creator = wiki_get_user_info($version0page->userid);
         $a = new stdClass();
         $a->date = userdate($this->page->timecreated, get_string('strftimedaydatetime', 'langconfig'));
-        $a->username = $creator->username;
+        $a->username = fullname($creator);
         echo $OUTPUT->heading(get_string('createddate', 'wiki', $a), 4, 'wiki_headingtime');
         if ($versioncount > 0) {
             /// If there is only one version, we don't need radios nor forms

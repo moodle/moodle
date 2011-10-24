@@ -24,6 +24,43 @@
  */
 
 require_once("$CFG->dirroot/webservice/lib.php");
+require_once 'Zend/Soap/Server.php';
+
+/**
+ * The Zend XMLRPC server but with a fault that returns debuginfo
+ */
+class moodle_zend_soap_server extends Zend_Soap_Server {
+
+    /**
+     * Generate a server fault
+     *
+     * Note that the arguments are reverse to those of SoapFault.
+     *
+     * Moodle note: the difference with the Zend server is that we throw a SoapFault exception
+     * with the debuginfo integrated to the exception message when DEBUG >= NORMAL
+     *
+     * If an exception is passed as the first argument, its message and code
+     * will be used to create the fault object if it has been registered via
+     * {@Link registerFaultException()}.
+     *
+     * @link   http://www.w3.org/TR/soap12-part1/#faultcodes
+     * @param  string|Exception $fault
+     * @param  string $code SOAP Fault Codes
+     * @return SoapFault
+     */
+    public function fault($fault = null, $code = "Receiver")
+    {
+        //intercept any exceptions with debug info and transform it in Moodle exception
+        if ($fault instanceof Exception) {
+            //add the debuginfo to the exception message if debuginfo must be returned
+            if (debugging() and isset($fault->debuginfo)) {
+                $fault = new SoapFault('Receiver', $fault->getMessage() . ' | DEBUG INFO: ' . $fault->debuginfo);
+            }
+        }
+
+        return parent::fault($fault, $code);
+    }
+}
 
 /**
  * SOAP service server implementation.
@@ -43,7 +80,7 @@ class webservice_soap_server extends webservice_zend_server {
         if (optional_param('wsdl', 0, PARAM_BOOL)) {
             parent::__construct($authmethod, 'Zend_Soap_AutoDiscover');
         } else {
-            parent::__construct($authmethod, 'Zend_Soap_Server');
+            parent::__construct($authmethod, 'moodle_zend_soap_server');
         }
         $this->wsname = 'soap';
     }
@@ -76,9 +113,14 @@ class webservice_soap_server extends webservice_zend_server {
             $this->zend_server->setReturnResponse(true);
             //TODO: the error handling in Zend Soap server is useless, XML-RPC is much, much better :-(
             $this->zend_server->registerFaultException('moodle_exception');
-            $this->zend_server->registerFaultException('webservice_parameter_exception');
+            $this->zend_server->registerFaultException('webservice_parameter_exception'); //deprecated since Moodle 2.2 - kept for backward compatibility
             $this->zend_server->registerFaultException('invalid_parameter_exception');
             $this->zend_server->registerFaultException('invalid_response_exception');
+            //when DEBUG >= NORMAL then the thrown exceptions are "casted" into a PHP SoapFault expception
+            //in order to diplay the $debuginfo (see moodle_zend_soap_server class - MDL-29435)
+            if (debugging()) {
+                $this->zend_server->registerFaultException('SoapFault');
+            }
         }
     }
 

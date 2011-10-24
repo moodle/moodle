@@ -143,9 +143,9 @@ if (!empty($entry->id)) {
     if ($CFG->useblogassociations && ($blogassociations = $DB->get_records('blog_association', array('blogid' => $entry->id)))) {
 
         foreach ($blogassociations as $assocrec) {
-            $contextrec = $DB->get_record('context', array('id' => $assocrec->contextid));
+            $context = get_context_instance_by_id($assocrec->contextid);
 
-            switch ($contextrec->contextlevel) {
+            switch ($context->contextlevel) {
                 case CONTEXT_COURSE:
                     $entry->courseassoc = $assocrec->contextid;
                     break;

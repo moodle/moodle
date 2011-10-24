@@ -63,7 +63,9 @@ if (!$attemptobj->is_preview_user() && $messages) {
     print_error('attempterror', 'quiz', $attemptobj->view_url(),
             $output->print_messages($messages));
 }
-$accessmanager->do_password_check($attemptobj->is_preview_user());
+if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {
+    redirect($attemptobj->start_attempt_url(null, $page));
+}
 
 $displayoptions = $attemptobj->get_display_options(false);
 
@@ -72,26 +74,21 @@ add_to_log($attemptobj->get_courseid(), 'quiz', 'view summary',
         'summary.php?attempt=' . $attemptobj->get_attemptid(),
         $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
-// Print the page header
+// Arrange for the navigation to be displayed.
 if (empty($attemptobj->get_quiz()->showblocks)) {
     $PAGE->blocks->show_only_fake_blocks();
 }
 
-if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
-    $accessmanager->setup_secure_page($attemptobj->get_course()->shortname . ': ' .
-            format_string($attemptobj->get_quiz_name()), '');
-} else if ($accessmanager->safebrowser_required($attemptobj->is_preview_user())) {
-    $PAGE->set_title($attemptobj->get_course()->shortname . ': ' .
-            format_string($attemptobj->get_quiz_name()));
-    $PAGE->set_heading($attemptobj->get_course()->fullname);
-    $PAGE->set_cacheable(false);
-} else {
-    $PAGE->navbar->add(get_string('summaryofattempt', 'quiz'));
-    $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
-    $PAGE->set_heading($attemptobj->get_course()->fullname);
-}
+$navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', -1);
+$firstregion = reset($PAGE->blocks->get_regions());
+$PAGE->blocks->add_fake_block($navbc, $firstregion);
 
-// Print heading.
+$PAGE->navbar->add(get_string('summaryofattempt', 'quiz'));
+$PAGE->set_title(format_string($attemptobj->get_quiz_name()));
+$PAGE->set_heading($attemptobj->get_course()->fullname);
+$accessmanager->setup_attempt_page($PAGE);
 
-$accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time());
+// Display the page.
+
+$accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time(), $output);
 echo $output->summary_page($attemptobj, $displayoptions);

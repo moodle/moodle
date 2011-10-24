@@ -138,6 +138,9 @@ function feedback_update_instance($feedback) {
 /**
  * Serves the files included in feedback items like label. Implements needed access control ;-)
  *
+ * There are two situations in general where the files will be sent.
+ * 1) filearea = item, 2) filearea = template
+ *
  * @param object $course
  * @param object $cm
  * @param object $context
@@ -149,17 +152,59 @@ function feedback_update_instance($feedback) {
 function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
 
-    require_login($course, false, $cm);
-
     $itemid = (int)array_shift($args);
 
-    require_course_login($course, true, $cm);
-
+    //get the item what includes the file
     if (!$item = $DB->get_record('feedback_item', array('id'=>$itemid))) {
         return false;
     }
 
-    if (!has_capability('mod/feedback:view', $context)) {
+    //if the filearea is "item" so we check the permissions like view/complete the feedback
+    if($filearea === 'item') {
+        //get the feedback
+        if(!$feedback = $DB->get_record('feedback', array('id'=>$item->feedback))) {
+            return false;
+        }
+
+        $canload = false;
+        //first check whether the user has the complete capability
+        if(has_capability('mod/feedback:complete', $context)) {
+            $canload = true;
+        }
+
+        //now we check whether the user has the view capability
+        if(has_capability('mod/feedback:view', $context)) {
+            $canload = true;
+        }
+
+        //if the feedback is on frontpage and anonymous and the fullanonymous is allowed
+        //so the file can be loaded too.
+        if(isset($CFG->feedback_allowfullanonymous)
+                    AND $CFG->feedback_allowfullanonymous
+                    AND $course->id == SITEID
+                    AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES ) {
+            $canload = true;
+        }
+
+        if(!$canload) {
+            return false;
+        }
+    }else if($filearea === 'template') { //now we check files in templates
+        if(!$template = $DB->get_record('feedback_template', array('id'=>$item->template))) {
+            return false;
+        }
+
+        //if the file is not public so the capability edititems has to be there
+        if(!$template->ispublic) {
+            if(!has_capability('mod/feedback:edititems', $context)) {
+                return false;
+            }
+        }else { //on public templates, at least the user has to be logged in
+            if(!isloggedin()) {
+                return false;
+            }
+        }
+    }else {
         return false;
     }
 
@@ -175,7 +220,7 @@ function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
         }
     }
 
-    if ($context->contextlevel == CONTEXT_COURSE) {
+    if ($context->contextlevel == CONTEXT_COURSE || $context->contextlevel == CONTEXT_SYSTEM) {
         if ($filearea !== 'template') {
             return false;
         }
@@ -194,7 +239,6 @@ function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
 
     return false;
 }
-
 
 /**
  * this will delete a given instance.
@@ -945,7 +989,7 @@ function feedback_create_template($courseid, $name, $ispublic = 0) {
     global $DB;
 
     $templ = new stdClass();
-    $templ->course   = $courseid;
+    $templ->course   = ($ispublic ? 0 : $courseid);
     $templ->name     = $name;
     $templ->ispublic = $ispublic;
 
@@ -978,9 +1022,14 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
         return false;
     }
 
-    //files in the template_item are in the context of the current course
+    //files in the template_item are in the context of the current course or
+    //if the template is public the files are in the system context
     //files in the feedback_item are in the feedback_context of the feedback
-    $c_context = get_context_instance(CONTEXT_COURSE, $newtempl->course);
+    if($ispublic) {
+        $s_context = get_system_context();
+    }else {
+        $s_context = get_context_instance(CONTEXT_COURSE, $newtempl->course);
+    }
     $cm = get_coursemodule_from_instance('feedback', $feedback->id);
     $f_context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -1001,7 +1050,7 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
         if ($itemfiles = $fs->get_area_files($f_context->id, 'mod_feedback', 'item', $item->id, "id", false)) {
             foreach($itemfiles as $ifile) {
                 $file_record = new stdClass();
-                $file_record->contextid = $c_context->id;
+                $file_record->contextid = $s_context->id;
                 $file_record->component = 'mod_feedback';
                 $file_record->filearea = 'template';
                 $file_record->itemid = $t_item->id;
@@ -1031,27 +1080,19 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
  *
  * @global object
  * @uses CONTEXT_COURSE
- * @param int $id the templateid
+ * @param object $template the template
  * @return void
  */
-function feedback_delete_template($id) {
+function feedback_delete_template($template) {
     global $DB;
 
-    $template = $DB->get_record("feedback_template", array("id"=>$id));
-
-    //deleting the files from the item
-    $fs = get_file_storage();
-    $context = get_context_instance(CONTEXT_COURSE, $template->course);
-
-
-    if($t_items = $DB->get_records("feedback_item", array("template"=>$id))) {
+    //deleting the files from the item is done by feedback_delete_item
+    if($t_items = $DB->get_records("feedback_item", array("template"=>$template->id))) {
         foreach($t_items as $t_item) {
-            if ($templatefiles = $fs->get_area_files($context->id, 'mod_feedback', 'template', $t_item->id, "id", false)) {
-                $fs->delete_area_files($context->id, 'mod_feedback', 'template', $t_item->id);
-            }
+            feedback_delete_item($t_item->id, false, $template);
         }
     }
-    $DB->delete_records("feedback_template", array("id"=>$id));
+    $DB->delete_records("feedback_template", array("id"=>$template->id));
 }
 
 /**
@@ -1073,6 +1114,9 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
 
     $fs = get_file_storage();
 
+    if(!$template = $DB->get_record('feedback_template', array('id'=>$templateid))) {
+        return false;
+    }
     //get all templateitems
     if(!$templitems = $DB->get_records('feedback_item', array('template'=>$templateid))) {
         return false;
@@ -1080,7 +1124,11 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
 
     //files in the template_item are in the context of the current course
     //files in the feedback_item are in the feedback_context of the feedback
-    $c_context = get_context_instance(CONTEXT_COURSE, $feedback->course);
+    if($template->ispublic) {
+        $s_context = get_system_context();
+    }else {
+        $s_context = get_context_instance(CONTEXT_COURSE, $feedback->course);
+    }
     $course = $DB->get_record('course', array('id'=>$feedback->course));
     $cm = get_coursemodule_from_instance('feedback', $feedback->id);
     $f_context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -1130,7 +1178,7 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
         $item->id = $DB->insert_record('feedback_item', $item);
 
         //TODO: moving the files to the new items
-        if ($templatefiles = $fs->get_area_files($c_context->id, 'mod_feedback', 'template', $t_item->id, "id", false)) {
+        if ($templatefiles = $fs->get_area_files($s_context->id, 'mod_feedback', 'template', $t_item->id, "id", false)) {
             foreach($templatefiles as $tfile) {
                 $file_record = new stdClass();
                 $file_record->contextid = $f_context->id;
@@ -1162,16 +1210,22 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
  *
  * @global object
  * @param object $course
- * @param boolean $onlyown
+ * @param string $onlyownorpublic
  * @return array the template recordsets
  */
-function feedback_get_template_list($course, $onlyown = false) {
-    global $DB;
+function feedback_get_template_list($course, $onlyownorpublic = '') {
+    global $DB, $CFG;
 
-    if ($onlyown) {
-        $templates = $DB->get_records('feedback_template', array('course'=>$course->id));
-    } else {
-        $templates = $DB->get_records_select('feedback_template', 'course = ? OR ispublic = 1', array($course->id));
+    switch($onlyownorpublic) {
+        case '':
+            $templates = $DB->get_records_select('feedback_template', 'course = ? OR ispublic = 1', array($course->id), 'name');
+            break;
+        case 'own':
+            $templates = $DB->get_records('feedback_template', array('course'=>$course->id), 'name');
+            break;
+        case 'public':
+            $templates = $DB->get_records('feedback_template', array('ispublic'=>1), 'name');
+            break;
     }
     return $templates;
 }
@@ -1344,9 +1398,10 @@ function feedback_update_item($item){
  * @uses CONTEXT_MODULE
  * @param int $itemid
  * @param boolean $renumber should the kept items renumbered Yes/No
+ * @param object $template if the template is given so the items are bound to it
  * @return void
  */
-function feedback_delete_item($itemid, $renumber = true){
+function feedback_delete_item($itemid, $renumber = true, $template = false){
     global $DB;
 
 
@@ -1354,13 +1409,25 @@ function feedback_delete_item($itemid, $renumber = true){
 
     //deleting the files from the item
     $fs = get_file_storage();
-    if (!$cm = get_coursemodule_from_instance('feedback', $item->feedback)) {
-        return false;
-    }
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    if ($itemfiles = $fs->get_area_files($context->id, 'mod_feedback', 'item', $item->id, "id", false)) {
-        $fs->delete_area_files($context->id, 'mod_feedback', 'item', $item->id);
+    if($template) {
+        if($template->ispublic) {
+            $context = get_system_context();
+        }else {
+            $context = get_context_instance(CONTEXT_COURSE, $template->course);
+        }
+        if ($templatefiles = $fs->get_area_files($context->id, 'mod_feedback', 'template', $item->id, "id", false)) {
+            $fs->delete_area_files($context->id, 'mod_feedback', 'template', $item->id);
+        }
+    }else {
+        if (!$cm = get_coursemodule_from_instance('feedback', $item->feedback)) {
+            return false;
+        }
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+        if ($itemfiles = $fs->get_area_files($context->id, 'mod_feedback', 'item', $item->id, "id", false)) {
+            $fs->delete_area_files($context->id, 'mod_feedback', 'item', $item->id);
+        }
     }
 
     $DB->delete_records("feedback_value", array("item"=>$itemid));

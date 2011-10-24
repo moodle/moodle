@@ -656,6 +656,16 @@ class file_storage {
                 }
             }
 
+            if ($key === 'timecreated' or $key === 'timemodified') {
+                if (!is_number($value)) {
+                    throw new file_exception('storedfileproblem', 'Invalid file '.$key);
+                }
+                if ($value < 0) {
+                    //NOTE: unfortunately I make a mistake when creating the "files" table, we can not have negative numbers there, on the other hand no file should be older than 1970, right? (skodak)
+                    $value = 0;
+                }
+            }
+
             $newrecord->$key = $value;
         }
 
@@ -673,12 +683,8 @@ class file_storage {
         try {
             $newrecord->id = $DB->insert_record('files', $newrecord);
         } catch (dml_exception $e) {
-            $newrecord->id = false;
-        }
-
-        if (!$newrecord->id) {
             throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
-                                                     $newrecord->filepath, $newrecord->filename);
+                                                     $newrecord->filepath, $newrecord->filename, $e->debuginfo);
         }
 
         $this->create_directory($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
@@ -794,6 +800,29 @@ class file_storage {
         }
 
         $now = time();
+        if (isset($file_record->timecreated)) {
+            if (!is_number($file_record->timecreated)) {
+                throw new file_exception('storedfileproblem', 'Invalid file timecreated');
+            }
+            if ($file_record->timecreated < 0) {
+                //NOTE: unfortunately I make a mistake when creating the "files" table, we can not have negative numbers there, on the other hand no file should be older than 1970, right? (skodak)
+                $file_record->timecreated = 0;
+            }
+        } else {
+            $file_record->timecreated = $now;
+        }
+
+        if (isset($file_record->timemodified)) {
+            if (!is_number($file_record->timemodified)) {
+                throw new file_exception('storedfileproblem', 'Invalid file timemodified');
+            }
+            if ($file_record->timemodified < 0) {
+                //NOTE: unfortunately I make a mistake when creating the "files" table, we can not have negative numbers there, on the other hand no file should be older than 1970, right? (skodak)
+                $file_record->timemodified = 0;
+            }
+        } else {
+            $file_record->timemodified = $now;
+        }
 
         $newrecord = new stdClass();
 
@@ -804,8 +833,8 @@ class file_storage {
         $newrecord->filepath  = $file_record->filepath;
         $newrecord->filename  = $file_record->filename;
 
-        $newrecord->timecreated  = empty($file_record->timecreated) ? $now : $file_record->timecreated;
-        $newrecord->timemodified = empty($file_record->timemodified) ? $now : $file_record->timemodified;
+        $newrecord->timecreated  = $file_record->timecreated;
+        $newrecord->timemodified = $file_record->timemodified;
         $newrecord->mimetype     = empty($file_record->mimetype) ? mimeinfo('type', $file_record->filename) : $file_record->mimetype;
         $newrecord->userid       = empty($file_record->userid) ? null : $file_record->userid;
         $newrecord->source       = empty($file_record->source) ? null : $file_record->source;
@@ -820,15 +849,11 @@ class file_storage {
         try {
             $newrecord->id = $DB->insert_record('files', $newrecord);
         } catch (dml_exception $e) {
-            $newrecord->id = false;
-        }
-
-        if (!$newrecord->id) {
             if ($newfile) {
                 $this->deleted_file_cleanup($newrecord->contenthash);
             }
             throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
-                                                    $newrecord->filepath, $newrecord->filename);
+                                                    $newrecord->filepath, $newrecord->filename, $e->debuginfo);
         }
 
         $this->create_directory($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
@@ -889,6 +914,29 @@ class file_storage {
         }
 
         $now = time();
+        if (isset($file_record->timecreated)) {
+            if (!is_number($file_record->timecreated)) {
+                throw new file_exception('storedfileproblem', 'Invalid file timecreated');
+            }
+            if ($file_record->timecreated < 0) {
+                //NOTE: unfortunately I make a mistake when creating the "files" table, we can not have negative numbers there, on the other hand no file should be older than 1970, right? (skodak)
+                $file_record->timecreated = 0;
+            }
+        } else {
+            $file_record->timecreated = $now;
+        }
+
+        if (isset($file_record->timemodified)) {
+            if (!is_number($file_record->timemodified)) {
+                throw new file_exception('storedfileproblem', 'Invalid file timemodified');
+            }
+            if ($file_record->timemodified < 0) {
+                //NOTE: unfortunately I make a mistake when creating the "files" table, we can not have negative numbers there, on the other hand no file should be older than 1970, right? (skodak)
+                $file_record->timemodified = 0;
+            }
+        } else {
+            $file_record->timemodified = $now;
+        }
 
         $newrecord = new stdClass();
 
@@ -899,8 +947,8 @@ class file_storage {
         $newrecord->filepath  = $file_record->filepath;
         $newrecord->filename  = $file_record->filename;
 
-        $newrecord->timecreated  = empty($file_record->timecreated) ? $now : $file_record->timecreated;
-        $newrecord->timemodified = empty($file_record->timemodified) ? $now : $file_record->timemodified;
+        $newrecord->timecreated  = $file_record->timecreated;
+        $newrecord->timemodified = $file_record->timemodified;
         $newrecord->mimetype     = empty($file_record->mimetype) ? mimeinfo('type', $file_record->filename) : $file_record->mimetype;
         $newrecord->userid       = empty($file_record->userid) ? null : $file_record->userid;
         $newrecord->source       = empty($file_record->source) ? null : $file_record->source;
@@ -915,15 +963,11 @@ class file_storage {
         try {
             $newrecord->id = $DB->insert_record('files', $newrecord);
         } catch (dml_exception $e) {
-            $newrecord->id = false;
-        }
-
-        if (!$newrecord->id) {
             if ($newfile) {
                 $this->deleted_file_cleanup($newrecord->contenthash);
             }
             throw new stored_file_creation_exception($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid,
-                                                    $newrecord->filepath, $newrecord->filename);
+                                                    $newrecord->filepath, $newrecord->filename, $e->debuginfo);
         }
 
         $this->create_directory($newrecord->contextid, $newrecord->component, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);

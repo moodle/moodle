@@ -1,0 +1,10 @@
+This files describes API changes in /auth/* - plugins,
+information provided here is intended especially for developers.
+
+=== 2.2 ===
+
+required changes in code:
+* the correct sequence to set up global $USER is:
+    $user = get_complete_user_data('username', $username); // or $user = authenticate_user_login()
+    enrol_check_plugins($user);
+    session_set_user($user);

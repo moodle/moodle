@@ -309,7 +309,7 @@ abstract class moodleform_mod extends moodleform {
         // Conditions: Don't let them set dates which make no sense
         if (array_key_exists('availablefrom', $data) &&
             $data['availablefrom'] && $data['availableuntil'] &&
-            $data['availablefrom'] > $data['availableuntil']) {
+            $data['availablefrom'] >= $data['availableuntil']) {
             $errors['availablefrom'] = get_string('badavailabledates', 'condition');
         }
 
@@ -430,10 +430,23 @@ abstract class moodleform_mod extends moodleform {
 
         if (!empty($CFG->enableavailability)) {
             // Conditional availability
-            $mform->addElement('header', 'availabilityconditionsheader', get_string('availabilityconditions', 'condition'));
-            $mform->addElement('date_selector', 'availablefrom', get_string('availablefrom', 'condition'), array('optional'=>true));
+
+            // Available from/to defaults to midnight because then the display
+            // will be nicer where it tells users when they can access it (it
+            // shows only the date and not time).
+            $date = usergetdate(time());
+            $midnight = make_timestamp($date['year'], $date['mon'], $date['mday']);
+
+            // From/until controls
+            $mform->addElement('header', 'availabilityconditionsheader',
+                    get_string('availabilityconditions', 'condition'));
+            $mform->addElement('date_time_selector', 'availablefrom',
+                    get_string('availablefrom', 'condition'),
+                    array('optional' => true, 'defaulttime' => $midnight));
             $mform->addHelpButton('availablefrom', 'availablefrom', 'condition');
-            $mform->addElement('date_selector', 'availableuntil', get_string('availableuntil', 'condition'), array('optional'=>true));
+            $mform->addElement('date_time_selector', 'availableuntil',
+                    get_string('availableuntil', 'condition'),
+                    array('optional' => true, 'defaulttime' => $midnight));
 
             // Conditions based on grades
             $gradeoptions = array();

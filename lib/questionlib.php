@@ -852,17 +852,6 @@ function question_hash($question) {
 
 /// FUNCTIONS THAT SIMPLY WRAP QUESTIONTYPE METHODS //////////////////////////////////
 /**
- * Get anything that needs to be included in the head of the question editing page
- * for a particular question type. This function is called by question/question.php.
- *
- * @param $question A question object. Only $question->qtype is used.
- * @return string Deprecated. Some HTML code that can go inside the head tag.
- */
-function question_get_editing_head_contributions($question) {
-    question_bank::get_qtype($question->qtype, false)->get_editing_head_contributions();
-}
-
-/**
  * Saves question options
  *
  * Simply calls the question type specific save_question_options() method.

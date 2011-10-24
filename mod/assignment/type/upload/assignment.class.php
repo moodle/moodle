@@ -730,7 +730,7 @@ class assignment_upload extends assignment_base {
             $updated->data2 = '';
             $DB->update_record('assignment_submissions', $updated);
             //TODO: add unfinalize action to log
-            add_to_log($this->course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+            add_to_log($this->course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->cm->id.'&userid='.$userid.'&mode='.$mode.'&offset='.$offset, $this->assignment->id, $this->cm->id);
             $submission = $this->get_submission($userid);
             $this->update_grade($submission);
         }

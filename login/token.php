@@ -56,6 +56,9 @@ if (!empty($user)) {
         }
     }
 
+    // let enrol plugins deal with new enrolments if necessary
+    enrol_check_plugins($user);
+
     // setup user session to check capability
     session_set_user($user);
 

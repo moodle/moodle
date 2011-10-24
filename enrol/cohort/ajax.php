@@ -70,7 +70,9 @@ switch ($action) {
         break;
     case 'getcohorts':
         require_capability('moodle/course:enrolconfig', $context);
-        $outcome->response = enrol_cohort_get_cohorts($manager);
+        $offset = optional_param('offset', 0, PARAM_INT);
+        $search  = optional_param('search', '', PARAM_RAW);
+        $outcome->response = enrol_cohort_search_cohorts($manager, $offset, 25, $search);
         break;
     case 'enrolcohort':
         require_capability('moodle/course:enrolconfig', $context);
@@ -79,8 +81,7 @@ switch ($action) {
         $cohortid = required_param('cohortid', PARAM_INT);
         
         $roles = $manager->get_assignable_roles();
-        $cohorts = enrol_cohort_get_cohorts($manager);
-        if (!array_key_exists($cohortid, $cohorts) || !array_key_exists($roleid, $roles)) {
+        if (!enrol_cohort_can_view_cohort($cohortid) || !array_key_exists($roleid, $roles)) {
             throw new enrol_ajax_exception('errorenrolcohort');
         }
         $enrol = enrol_get_plugin('cohort');
@@ -94,8 +95,7 @@ switch ($action) {
         $result = enrol_cohort_enrol_all_users($manager, $cohortid, $roleid);
 
         $roles = $manager->get_assignable_roles();
-        $cohorts = enrol_cohort_get_cohorts($manager);
-        if (!array_key_exists($cohortid, $cohorts) || !array_key_exists($roleid, $roles)) {
+        if (!enrol_cohort_can_view_cohort($cohortid) || !array_key_exists($roleid, $roles)) {
             throw new enrol_ajax_exception('errorenrolcohort');
         }
         if ($result === false) {

@@ -280,28 +280,28 @@ function isteacher() {
  * @deprecated
  */
 function isteacherinanycourse() {
-    error('Function isteacherinanycourse() was removed, please use capabilities instead!');
+    throw new coding_Exception('Function isteacherinanycourse() was removed, please use capabilities instead!');
 }
 
 /**
  * @deprecated
  */
 function get_guest() {
-    error('Function get_guest() was removed, please use capabilities instead!');
+    throw new coding_Exception('Function get_guest() was removed, please use capabilities instead!');
 }
 
 /**
  * @deprecated
  */
 function isguest() {
-    error('Function isguest() was removed, please use capabilities instead!');
+    throw new coding_Exception('Function isguest() was removed, please use capabilities instead!');
 }
 
 /**
  * @deprecated
  */
 function get_teacher() {
-    error('Function get_teacher() was removed, please use capabilities instead!');
+    throw new coding_Exception('Function get_teacher() was removed, please use capabilities instead!');
 }
 
 /**
@@ -371,15 +371,7 @@ function get_recent_enrolments($courseid, $timestart) {
  * @return object
  */
 function make_context_subobj($rec) {
-    $ctx = new StdClass;
-    $ctx->id           = $rec->ctxid;    unset($rec->ctxid);
-    $ctx->path         = $rec->ctxpath;  unset($rec->ctxpath);
-    $ctx->depth        = $rec->ctxdepth; unset($rec->ctxdepth);
-    $ctx->contextlevel = $rec->ctxlevel; unset($rec->ctxlevel);
-    $ctx->instanceid   = $rec->id;
-
-    $rec->context = $ctx;
-    return $rec;
+    throw new coding_Exception('make_context_subobj() was removed, use new context preloading');
 }
 
 /**
@@ -395,10 +387,7 @@ function make_context_subobj($rec) {
  *      for this thing.
  */
 function is_context_subobj_valid($rec, $contextlevel) {
-    return isset($rec->context) && isset($rec->context->id) &&
-            isset($rec->context->path) && isset($rec->context->depth) &&
-            isset($rec->context->contextlevel) && isset($rec->context->instanceid) &&
-            $rec->context->contextlevel == $contextlevel && $rec->context->instanceid == $rec->id;
+    throw new coding_Exception('is_context_subobj_valid() was removed, use new context preloading');
 }
 
 /**
@@ -415,9 +404,7 @@ function is_context_subobj_valid($rec, $contextlevel) {
  * @param integer $contextlevel the type of thing $rec is, one of the CONTEXT_... constants.
  */
 function ensure_context_subobj_present(&$rec, $contextlevel) {
-    if (!is_context_subobj_valid($rec, $contextlevel)) {
-        $rec->context = get_context_instance($contextlevel, $rec->id);
-    }
+    throw new coding_Exception('ensure_context_subobj_present() was removed, use new context preloading');
 }
 
 ########### FROM weblib.php ##########################################################################

@@ -16,9 +16,9 @@
 
 /**
  * rss/file.php - entry point to serve rss streams
- * 
+ *
  * This script simply checks the parameters to construct a $USER
- * then finds and calls a function in the relevant component to 
+ * then finds and calls a function in the relevant component to
  * actually check security and create the RSS stream
  *
  * @package   moodlecore
@@ -81,7 +81,7 @@ if ($token==="$inttoken") {
         if (!isset($modinfo->instances[$componentname])) {
             $modinfo->instances[$componentname] = array();
         }
-        
+
         foreach ($modinfo->instances[$componentname] as $modinstanceid=>$cm) {
             if ($modinstanceid==$instanceid) {
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -122,6 +122,10 @@ if ($token==="$inttoken") {
 }
 
 $user = get_complete_user_data('id', $userid);
+
+// let enrol plugins deal with new enrolments if necessary
+enrol_check_plugins($user);
+
 session_set_user($user); //for login and capability checks
 
 // Check the context actually exists

@@ -113,4 +113,24 @@ class courselib_test extends UnitTestCase {
         $this->assertEqual(25, next($newsections_flipped));
         $this->assertEqual(21, next($newsections_flipped));
     }
+
+    function test_get_course_display_name_for_list() {
+        global $CFG;
+
+        $course = (object)array('shortname' => 'FROG101',
+                'fullname' => 'Introduction to pond life');
+
+        // Store config value in case other tests rely on it
+        $oldcfg = $CFG->courselistshortnames;
+
+        $CFG->courselistshortnames = 0;
+        $this->assertEqual('Introduction to pond life',
+                get_course_display_name_for_list($course));
+
+        $CFG->courselistshortnames = 1;
+        $this->assertEqual('FROG101 Introduction to pond life',
+                get_course_display_name_for_list($course));
+
+        $CFG->courselistshortnames = $oldcfg;
+    }
 }

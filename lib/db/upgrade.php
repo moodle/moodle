@@ -6853,14 +6853,33 @@ FROM
         upgrade_main_savepoint(true, 2011100700.02);
     }
 
-    // TODO squash this before merging into the master - MDL-29798
     if ($oldversion < 2011101200.01) {
+        // The conditional availability date system used to rely on dates being
+        // set to 23:59:59 for the end date, but now that exact times are
+        // supported, it uses midnight on the following day.
+
+        // The query is restricted on 'time mod 10 = 9' in order that
+        // it is safe to run this upgrade twice if something goes wrong.
+        $DB->execute('UPDATE {course_modules} SET availableuntil = availableuntil + 1 ' .
+                'WHERE availableuntil > 0 AND ' . $DB->sql_modulo('availableuntil', 10) . ' = 9');
+
+        // Because availableuntil is stored in modinfo, we need to clear modinfo
+        // for all courses.
+        rebuild_course_cache(0, true);
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011101200.01);
+    }
+
+    // TODO squash this before merging into the master - MDL-29798
+    if ($oldversion < 2011101200.02) {
         // drop the unique key uq_rater_per_item (unique)
         $table = new xmldb_table('grading_instances');
         $key = new xmldb_key('uq_rater_per_item', XMLDB_KEY_UNIQUE, array('formid', 'raterid', 'itemid'));
         $dbman->drop_key($table, $key);
-        upgrade_main_savepoint(true, 2011101200.01);
+        upgrade_main_savepoint(true, 2011101200.02);
     }
 
     return true;
 }
+

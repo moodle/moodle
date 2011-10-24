@@ -50,6 +50,7 @@ class mod_url_mod_form extends moodleform_mod {
         //-------------------------------------------------------
         $mform->addElement('header', 'content', get_string('contentheader', 'url'));
         $mform->addElement('url', 'externalurl', get_string('externalurl', 'url'), array('size'=>'60'), array('usefilepicker'=>true));
+        $mform->addRule('externalurl', null, 'required', null, 'client');
         //-------------------------------------------------------
         $mform->addElement('header', 'optionssection', get_string('optionsheader', 'url'));
 
@@ -163,6 +164,16 @@ class mod_url_mod_form extends moodleform_mod {
                 $i++;
             }
         }
+    }
+
+    function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        //Validating Entered url
+        $data['externalurl'] = clean_param($data['externalurl'], PARAM_URL);
+        if (empty($data['externalurl'])) {
+            $errors['externalurl'] = get_string('invalidurl', 'url');
+        }
+        return $errors;
     }
 
 }
