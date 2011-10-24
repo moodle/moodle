@@ -139,7 +139,7 @@ class quiz_report_statistics_table extends flexible_table {
         return quiz_question_action_icons($this->quiz, $this->cmid, $question, $editreturnurl);
     }
     function col_qtype($question){
-        return get_string($question->qtype,'quiz');
+        return get_string($question->qtype, 'qtype_' . $question->qtype);
     }
     function col_intended_weight($question){
         return quiz_report_scale_sumgrades_as_percentage($question->_stats->maxgrade, $this->quiz);
