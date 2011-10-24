@@ -30,21 +30,16 @@ class purifier_test extends UnitTestCase {
 
     public static $includecoverage = array('lib/htmlpurifier/HTMLPurifier.php');
 
-    private $enablehtmlpurifier = null;
     private $cachetext = null;
 
     function setUp() {
         global $CFG;
-        $this->enablehtmlpurifier = $CFG->enablehtmlpurifier;
-        $CFG->enablehtmlpurifier = 1;
-
         $this->cachetext = $CFG->cachetext;
         $CFG->cachetext = 0;
     }
 
     function tearDown() {
         global $CFG;
-        $CFG->enablehtmlpurifier = $this->enablehtmlpurifier;
         $CFG->cachetext = $this->cachetext;
     }
 
