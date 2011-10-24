@@ -253,13 +253,6 @@
     <licenseversion>2.0+</licenseversion>
   </library>
   <library>
-    <location>base32.php</location>
-    <name>Base32 Library</name>
-    <license>GPL/PHP</license>
-    <version></version>
-    <licenseversion>2.0+/2.0.2</licenseversion>
-  </library>
-  <library>
     <location>odbc.php</location>
     <name>ODBC server/client</name>
     <license>Public Domain</license>
