@@ -21,7 +21,8 @@
  * @subpackage ddmarker
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */abstract class qtype_ddmarker_shape {
+ */
+abstract class qtype_ddmarker_shape {
     public function __construct($coordsstring) {
 
     }
@@ -46,13 +47,13 @@
     }
 
     protected function is_point_in_bounding_box($pointxy, $xleftytop, $xrightybottom) {
-        if ($pointxy[0] < $xleftytop[0]) {
+        if ($pointxy[0] <= $xleftytop[0]) {
             return false;
-        } else if ($pointxy[0] > $xrightybottom[0]) {
+        } else if ($pointxy[0] >= $xrightybottom[0]) {
             return false;
-        } else if ($pointxy[1] < $xleftytop[1]) {
+        } else if ($pointxy[1] <= $xleftytop[1]) {
             return false;
-        } else if ($pointxy[1] > $xrightybottom[1]) {
+        } else if ($pointxy[1] >= $xrightybottom[1]) {
             return false;
         }
         return true;
@@ -101,8 +102,8 @@ class qtype_ddmarker_shape_rectangle extends qtype_ddmarker_shape {
         return array($this->xleft + $this->width, $this->ytop + $this->height);
     }
     public function is_point_in_shape($xy) {
-        $this->is_point_in_bounding_box($xy, array($this->xleft, $this->ytop),
-                                  array($this->ytop + $this->height, $this->xleft + $this->width));
+        return $this->is_point_in_bounding_box($xy, array($this->xleft, $this->ytop),
+                                  array($this->xleft + $this->width, $this->ytop + $this->height));
     }
 }
 class qtype_ddmarker_shape_circle extends qtype_ddmarker_shape {

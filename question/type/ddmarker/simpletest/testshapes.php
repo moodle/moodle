@@ -77,4 +77,28 @@ class qtype_ddmarker_shapes_test extends UnitTestCase {
         $shape = new qtype_ddmarker_shape_polygon('0,0;500,0;600,1000;0,1200;10,10');
         $this->assertTrue($shape->is_point_in_shape(array(25,10)));
     }
+
+    public function test_circle_hit_test() {
+        $shape = new qtype_ddmarker_shape_circle('10,10;10');
+        $this->assertTrue($shape->is_point_in_shape(array(19,10)));
+        $this->assertFalse($shape->is_point_in_shape(array(20,10)));
+        $this->assertTrue($shape->is_point_in_shape(array(10,1)));
+        $this->assertFalse($shape->is_point_in_shape(array(15,25)));
+        $this->assertFalse($shape->is_point_in_shape(array(25,15)));
+        $this->assertTrue($shape->is_point_in_shape(array(11,11)));
+        $this->assertTrue($shape->is_point_in_shape(array(1,10)));
+        $this->assertTrue($shape->is_point_in_shape(array(17,17)));
+        $this->assertTrue($shape->is_point_in_shape(array(3,3)));
+        $this->assertFalse($shape->is_point_in_shape(array(2,2)));
+    }
+    public function test_rectangle_hit_test() {
+        $shape = new qtype_ddmarker_shape_rectangle('1000,4000;500,400');
+        $this->assertTrue($shape->is_point_in_shape(array(1001,4001)));
+        $this->assertFalse($shape->is_point_in_shape(array(1000,4000)));
+        $this->assertFalse($shape->is_point_in_shape(array(501,3601)));
+        $this->assertTrue($shape->is_point_in_shape(array(1499,4399)));
+        $this->assertFalse($shape->is_point_in_shape(array(25,15)));
+        $this->assertTrue($shape->is_point_in_shape(array(1001,4399)));
+        $this->assertTrue($shape->is_point_in_shape(array(1499,4001)));
+    }
 }
