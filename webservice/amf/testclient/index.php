@@ -12,11 +12,6 @@ if ($node) {
 }
 $PAGE->navbar->add(get_string('amftestclient', 'webservice'));
 
-$flashvars = new stdClass();
-$flashvars->rooturl =$CFG->wwwroot;
-
-
-
 $PAGE->set_title('Test Client');
 $PAGE->set_heading('Test Client');
 echo $OUTPUT->header();
@@ -28,10 +23,12 @@ $output = <<<OET
 <param name="movie" value="$url" />
 <param name="base" value="." />
 <param name="allowscriptaccess" value="sameDomain" />
+<param name="FlashVars" value="rooturl=$CFG->wwwroot" />
 <!--[if !IE]>-->
 <object type="application/x-shockwave-flash" data="$url" width="100%" height="1000">
   <param name="base" value="." />
   <param name="allowscriptaccess" value="sameDomain" />
+  <param name="FlashVars" value="rooturl=$CFG->wwwroot" />
 <!--<![endif]-->
 <p>You need to install Flash 9.0</p>
 <!--[if !IE]>-->
