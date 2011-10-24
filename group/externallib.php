@@ -535,7 +535,7 @@ class moodle_group_external extends external_api {
 
    /**
      * Returns description of method result value
-    * @deprecated since Moodle 2.2 please use core_group_external::create_groups_returns instead
+     * @deprecated since Moodle 2.2 please use core_group_external::create_groups_returns instead
      * @return external_description
      */
     public static function create_groups_returns() {
@@ -563,7 +563,7 @@ class moodle_group_external extends external_api {
 
    /**
      * Returns description of method result value
-    * @deprecated since Moodle 2.2 please use core_group_external::get_groups_returns instead
+     * @deprecated since Moodle 2.2 please use core_group_external::get_groups_returns instead
      * @return external_description
      */
     public static function get_groups_returns() {
@@ -591,7 +591,7 @@ class moodle_group_external extends external_api {
 
    /**
      * Returns description of method result value
-    * @deprecated since Moodle 2.2 please use core_group_external::get_course_groups_returns instead
+     * @deprecated since Moodle 2.2 please use core_group_external::get_course_groups_returns instead
      * @return external_description
      */
     public static function get_course_groups_returns() {
@@ -648,7 +648,7 @@ class moodle_group_external extends external_api {
 
    /**
      * Returns description of method result value
-    * @deprecated since Moodle 2.2 please use core_group_external::get_group_members_returns instead
+     * @deprecated since Moodle 2.2 please use core_group_external::get_group_members_returns instead
      * @return external_description
      */
     public static function get_groupmembers_returns() {
@@ -677,7 +677,7 @@ class moodle_group_external extends external_api {
 
    /**
      * Returns description of method result value
-    * @deprecated since Moodle 2.2 please use core_group_external::add_group_members_returns instead
+     * @deprecated since Moodle 2.2 please use core_group_external::add_group_members_returns instead
      * @return external_description
      */
     public static function add_groupmembers_returns() {
@@ -706,7 +706,7 @@ class moodle_group_external extends external_api {
 
    /**
      * Returns description of method result value
-    * @deprecated since Moodle 2.2 please use core_group_external::delete_group_members_returns instead
+     * @deprecated since Moodle 2.2 please use core_group_external::delete_group_members_returns instead
      * @return external_description
      */
     public static function delete_groupmembers_returns() {

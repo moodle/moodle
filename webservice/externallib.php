@@ -169,7 +169,7 @@ class moodle_webservice_external extends external_api {
      * @param array $serviceshortnames of service shortnames - the functions of these services will be returned
      * @return array
      */
-    function get_siteinfo($serviceshortnames = array()) {
+    public function get_siteinfo($serviceshortnames = array()) {
         return core_webservice_external::get_site_info($serviceshortnames);
     }
 

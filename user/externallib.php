@@ -249,7 +249,7 @@ class core_user_external extends external_api {
      */
     public static function update_users_parameters() {
         global $CFG;
-       return new external_function_parameters(
+        return new external_function_parameters(
             array(
                 'users' => new external_multiple_structure(
                     new external_single_structure(
