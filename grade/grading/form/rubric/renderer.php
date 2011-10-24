@@ -22,7 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -31,8 +30,25 @@ defined('MOODLE_INTERNAL') || die();
 class gradingform_rubric_renderer {
 
     /**
+     * This function returns html code for displaying criterion. Depending on $mode it may be the
+     * code to edit rubric, to preview the rubric, to evaluate somebody or to review the evaluation.
      *
-     * @param int $mode @see gradingform_rubric_controller
+     * This function may be called from display_rubric() to display the whole rubric, or it can be
+     * called by itself to return a template used by JavaScript to add new empty criteria to the
+     * rubric being designed.
+     * In this case it will use macros like {NAME}, {LEVELS}, {CRITERION-id}, etc.
+     *
+     * When overriding this function it is very important to remember that all elements of html
+     * form (in edit or evaluate mode) must have the name $elementname.
+     *
+     * Also JavaScript relies on the class names of elements and when developer changes them
+     * script might stop working.
+     *
+     * @param int $mode rubric display mode @see gradingform_rubric_controller
+     * @param string $elementname the name of the form element (in editor mode) or the prefix for div ids (in view mode)
+     * @param array|null $criterion criterion data
+     * @param string $levels_str evaluated templates for this criterion levels
+     * @param array|null $value (only in view mode) teacher's feedback on this criterion
      * @return string
      */
     public function criterion_template($mode, $elementname = '{NAME}', $criterion = null, $levels_str = '{LEVELS}', $value = null) {
@@ -96,6 +112,27 @@ class gradingform_rubric_renderer {
         return $criterion_template;
     }
 
+    /**
+     * This function returns html code for displaying one level of one criterion. Depending on $mode
+     * it may be the code to edit rubric, to preview the rubric, to evaluate somebody or to review the evaluation.
+     *
+     * This function may be called from display_rubric() to display the whole rubric, or it can be
+     * called by itself to return a template used by JavaScript to add new empty level to the
+     * criterion during the design of rubric.
+     * In this case it will use macros like {NAME}, {CRITERION-id}, {LEVEL-id}, etc.
+     *
+     * When overriding this function it is very important to remember that all elements of html
+     * form (in edit or evaluate mode) must have the name $elementname.
+     *
+     * Also JavaScript relies on the class names of elements and when developer changes them
+     * script might stop working.
+     *
+     * @param int $mode rubric display mode @see gradingform_rubric_controller
+     * @param string $elementname the name of the form element (in editor mode) or the prefix for div ids (in view mode)
+     * @param string|int $criterionid either id of the nesting criterion or a macro for template
+     * @param array|null $level level data, also in view mode it might also have property $level['checked'] whether this level is checked
+     * @return string
+     */
     public function level_template($mode, $elementname = '{NAME}', $criterionid = '{CRITERION-id}', $level = null) {
         // TODO definition format
         if (!isset($level['id'])) {
@@ -146,7 +183,25 @@ class gradingform_rubric_renderer {
         return $level_template;
     }
 
-    protected function rubric_template($mode, $elementname = '{NAME}', $criteria_str = '{CRITERIA}') {
+    /**
+     * This function returns html code for displaying rubric template (content before and after
+     * criteria list). Depending on $mode it may be the code to edit rubric, to preview the rubric,
+     * to evaluate somebody or to review the evaluation.
+     *
+     * This function is called from display_rubric() to display the whole rubric.
+     *
+     * When overriding this function it is very important to remember that all elements of html
+     * form (in edit or evaluate mode) must have the name $elementname.
+     *
+     * Also JavaScript relies on the class names of elements and when developer changes them
+     * script might stop working.
+     *
+     * @param int $mode rubric display mode @see gradingform_rubric_controller
+     * @param string $elementname the name of the form element (in editor mode) or the prefix for div ids (in view mode)
+     * @param string $criteria_str evaluated templates for this rubric's criteria
+     * @return string
+     */
+    protected function rubric_template($mode, $elementname, $criteria_str) {
         $classsuffix = ''; // CSS suffix for class of the main div. Depends on the mode
         switch ($mode) {
             case gradingform_rubric_controller::DISPLAY_EDIT_FULL:
@@ -163,7 +218,7 @@ class gradingform_rubric_renderer {
                 $classsuffix = ' review';  break;
         }
 
-        $rubric_template = html_writer::start_tag('div', array('id' => 'rubric-{NAME}', 'class' => 'clearfix form_rubric'.$classsuffix));
+        $rubric_template = html_writer::start_tag('div', array('id' => 'rubric-{NAME}', 'class' => 'clearfix gradingform_rubric'.$classsuffix));
         $rubric_template .= html_writer::tag('div', $criteria_str, array('class' => 'criteria', 'id' => '{NAME}-criteria'));
         if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FULL) {
             $value = get_string('addcriterion', 'gradingform_rubric');
@@ -176,12 +231,18 @@ class gradingform_rubric_renderer {
     }
 
     /**
-     * Returns html code for displaying the rubric in the specified mode
+     * This function returns html code for displaying rubric. Depending on $mode it may be the code
+     * to edit rubric, to preview the rubric, to evaluate somebody or to review the evaluation.
      *
-     * @param array $criteria
-     * @param int $mode
-     * @param string $elementname
-     * @param array $values
+     * It is very unlikely that this function needs to be overriden by theme. It does not produce
+     * any html code, it just prepares data about rubric design and evaluation, adds the CSS
+     * class to elements and calls the functions level_template, criterion_template and
+     * rubric_template
+     *
+     * @param array $criteria data about the rubric design
+     * @param int $mode rubric display mode @see gradingform_rubric_controller
+     * @param string $elementname the name of the form element (in editor mode) or the prefix for div ids (in view mode)
+     * @param array $values evaluation result
      * @return string
      */
     public function display_rubric($criteria, $mode, $elementname = null, $values = null) {
@@ -202,7 +263,7 @@ class gradingform_rubric_renderer {
                 $level['checked'] = (isset($criterionvalue['levelid']) && ((int)$criterionvalue['levelid'] === $levelid));
                 if ($level['checked'] && ($mode == gradingform_rubric_controller::DISPLAY_EVAL_FROZEN || $mode == gradingform_rubric_controller::DISPLAY_REVIEW)) {
                     $level['class'] .= ' checked';
-                    //in mode DISPLAY_EVAL the class 'checked' will be added by JS if it is enabled. If it is not enabled, the 'checked' class will only confuse
+                    //in mode DISPLAY_EVAL the class 'checked' will be added by JS if it is enabled. If JS is not enabled, the 'checked' class will only confuse
                 }
                 $levels_str .= $this->level_template($mode, $elementname, $id, $level);
             }
@@ -212,13 +273,13 @@ class gradingform_rubric_renderer {
     }
 
     /**
-     * Help function to return CSS class names for element (first/last/even/odd)
+     * Help function to return CSS class names for element (first/last/even/odd) with leading space
      *
-     * @param <type> $cnt
-     * @param <type> $maxcnt
+     * @param int $cnt
+     * @param int $maxcnt
      * @return string
      */
-    private function get_css_class_suffix($cnt, $maxcnt) {
+    protected function get_css_class_suffix($cnt, $maxcnt) {
         $class = '';
         if ($cnt == 0) {
             $class .= ' first';
