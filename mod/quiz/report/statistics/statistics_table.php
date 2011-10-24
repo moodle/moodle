@@ -275,6 +275,8 @@ class quiz_report_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_effective_weight($question) {
+        global $OUTPUT;
+
         if ($question->_stats->subquestion) {
             return '';
         }
@@ -283,9 +285,9 @@ class quiz_report_statistics_table extends flexible_table {
             $negcovar = get_string('negcovar', 'quiz_statistics');
 
             if (!$this->is_downloading()) {
-                $negcovar .= helpbutton('negcovar', $negcovar, 'quiz_statistics',
-                        true, false, '', true);
-                $negcovar = '<div class="negcovar">' . $negcovar . '</div>';
+                $negcovar = html_writer::tag('div',
+                        $negcovar . $OUTPUT->help_icon('negcovar', 'quiz_statistics'),
+                        array('class' => 'negcovar'));
             }
 
             return $negcovar;
