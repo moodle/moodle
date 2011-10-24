@@ -16,6 +16,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * A single gradable area management page
+ *
+ * This page alows the user to set the current active method in the given
+ * area, provides access to the plugin editor and allows user to save the
+ * current form as a template or re-use some existing form.
+ *
  * @package    core
  * @subpackage grading
  * @copyright  2011 David Mudrak <david@moodle.com>
@@ -56,31 +62,22 @@ if (!is_null($areaid)) {
     $manager = get_grading_manager($context, $component, $area);
 }
 
-// currently active method
+if ($manager->get_context()->contextlevel < CONTEXT_COURSE) {
+    throw new coding_exception('Unsupported gradable area context level');
+}
+
+// get the currently active method
 $method = $manager->get_active_method();
 
-if ($manager->get_context()->contextlevel == CONTEXT_SYSTEM) {
-    // this is a shared area in the forms bank, redirect the user
-    $params = array('areaid' =>$areaid);
-    if (!is_null($returnurl)) {
-        $params['returnurl'] = $returnurl;
-    }
-    redirect(new moodle_url('/grade/grading/bank.php', $params));
+list($context, $course, $cm) = get_context_info_array($manager->get_context()->id);
 
-} else if ($manager->get_context()->contextlevel >= CONTEXT_COURSE) {
-    list($context, $course, $cm) = get_context_info_array($manager->get_context()->id);
+require_login($course, true, $cm);
+require_capability('moodle/grade:managegradingforms', $context);
 
-    if (is_null($returnurl)) {
-        $returnurl = new moodle_url('/course/view.php', array('id' => $course->id));
-    } else {
-        $returnurl = new moodle_url($returnurl);
-    }
-
-    require_login($course, true, $cm);
-    require_capability('moodle/grade:managegradingforms', $context);
-
+if (!empty($returnurl)) {
+    $returnurl = new moodle_url($returnurl);
 } else {
-    throw new coding_exception('Unsupported gradable area context level');
+    $returnurl = null;
 }
 
 $PAGE->set_url($manager->get_management_url($returnurl));
@@ -174,7 +171,11 @@ if (!empty($method)) {
     } else {
         echo $output->management_action_icon($controller->get_editor_url($returnurl),
             get_string('manageactionnew', 'core_grading'), 'b/document-new');
-        echo $output->management_action_icon($PAGE->url,
+        $pickurl = new moodle_url('/grade/grading/pick.php', array('targetid' => $controller->get_areaid()));
+        if (!is_null($returnurl)) {
+            $pickurl->param('returnurl', $returnurl->out(false));
+        }
+        echo $output->management_action_icon($pickurl,
             get_string('manageactionclone', 'core_grading'), 'b/edit-copy');
     }
     echo $output->container_end();
