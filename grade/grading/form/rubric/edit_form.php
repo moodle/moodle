@@ -44,13 +44,15 @@ class gradingform_rubric_editrubric extends moodleform {
         $form->addElement('hidden', 'areaid');
         $form->setType('areaid', PARAM_INT);
 
+        $form->addElement('hidden', 'returnurl');
+
         // name
         $form->addElement('text', 'name', get_string('name', 'gradingform_rubric'), array('size'=>52));
         $form->addRule('name', get_string('required'), 'required');
         $form->setType('name', PARAM_TEXT);
 
         // description
-        $options = array();
+        $options = gradingform_rubric_controller::description_form_field_options($this->_customdata['context']);
         $form->addElement('editor', 'description_editor', get_string('description', 'gradingform_rubric'), null, $options);
         $form->setType('description_editor', PARAM_RAW);
 

@@ -83,6 +83,7 @@ M.gradingform_rubriceditor.editmode = function(el, editmode) {
         }
         ta.get('parentNode').one('.plainvalue').setStyle('display', 'none')
         ta.setStyle('display', 'block').setStyle('width', width).setStyle('height', height)
+        ta.focus()
     }
 }
 

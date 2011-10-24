@@ -48,7 +48,10 @@ abstract class gradingform_controller {
     protected $areaid;
 
     /** @var stdClass|false the definition structure */
-    protected $definition;
+    protected $definition = false;
+
+    /** @var array graderange array of valid grades for this area. Use set_grade_range and get_grade_range to access this */
+    private $graderange = null;
 
     /**
      * Do not instantinate this directly, use {@link grading_manager::get_controller()}
@@ -107,7 +110,7 @@ abstract class gradingform_controller {
      * @return boolean
      */
     public function is_form_defined() {
-        return !empty($this->definition);
+        return ($this->definition !== false);
     }
 
     /**
@@ -174,10 +177,11 @@ abstract class gradingform_controller {
     /**
      * Returns the grading form definition structure
      *
+     * @param boolean $force whether to force loading from DB even if it was already loaded
      * @return stdClass|false definition data or false if the form is not defined yet
      */
-    public function get_definition() {
-        if (is_null($this->definition)) {
+    public function get_definition($force = false) {
+        if ($this->definition === false || $force) {
             $this->load_definition();
         }
         return $this->definition;
@@ -287,65 +291,92 @@ abstract class gradingform_controller {
     }
 
     /**
-     * Makes sure there is a form instance for the given rater grading the given item
+     * Returns the ACTIVE instance for this definition for the specified $raterid and $itemid
+     * (if multiple raters are allowed, or only for $itemid otherwise).
      *
-     * Plugins will probably override/extend this and load additional data of how their
-     * forms are filled in one complex query.
-     *
-     * @todo this might actually become abstract method
      * @param int $raterid
      * @param int $itemid
-     * @return stdClass newly created or existing record from {grading_instances}
+     * @param boolean $idonly
+     * @return mixed if $idonly=true returns id of the found instance, otherwise returns the instance object
      */
-    public function prepare_instance($raterid, $itemid) {
+    public function get_current_instance($raterid, $itemid, $idonly = false) {
         global $DB;
-
-        if (empty($this->definition)) {
-            throw new coding_exception('Attempting to prepare an instance of non-existing grading form');
+        $select = array(
+                'formid'  => $this->definition->id,
+                'itemid' => $itemid,
+                'status'  => gradingform_instance::INSTANCE_STATUS_ACTIVE);
+        if (false /* TODO $manager->allow_multiple_raters() */) {
+            $select['raterid'] = $raterid;
         }
-
-        $current = $DB->get_record('grading_instances', array(
-            'formid'  => $this->definition->id,
-            'raterid' => $raterid,
-            'itemid'  => $itemid), '*', IGNORE_MISSING);
-
-        if (empty($current)) {
-            $instance = new stdClass();
-            $instance->formid = $this->definition->id;
-            $instance->raterid = $raterid;
-            $instance->itemid = $itemid;
-            $instance->timemodified = time();
-            $instance->feedbackformat = FORMAT_MOODLE;
-            $instance->id = $DB->insert_record('grading_instances', $instance);
-            return $instance;
-
+        if ($idonly) {
+            if ($current = $DB->get_record('grading_instances', $select, 'id', IGNORE_MISSING)) {
+                return $current->id;
+            }
         } else {
-            return $current;
+            if ($current = $DB->get_record('grading_instances', $select, '*', IGNORE_MISSING)) {
+                return $this->get_instance($current);
+            }
         }
+        return null;
     }
 
     /**
-     * Saves non-js data and returns the gradebook grade
-     */
-    abstract public function save_and_get_grade($raterid, $itemid, $formdata);
-
-    /**
-     * Returns html for form element
-     */
-    abstract public function to_html($gradingformelement);
-
-    /**
+     * Returns list of active instances for the specified $itemid
      *
+     * @param int $itemid
+     * @return array of gradingform_instance objects
      */
-    public function default_validation_error_message() {
-        return '';
+    public function get_current_instances($itemid) {
+        global $DB;
+        $conditions = array('formid'  => $this->definition->id,
+                    'itemid' => $itemid,
+                    'status'  => gradingform_instance::INSTANCE_STATUS_ACTIVE);
+        $records = $DB->get_recordset('grading_instances', $conditions);
+        $rv = array();
+        foreach ($records as $record) {
+            $rv[] = $this->get_instance($record);
+        }
+        return $rv;
     }
 
     /**
+     * Returns the object of type gradingform_XXX_instance (where XXX is the plugin method name)
      *
+     * @param mixed $instance id or row from grading_isntances table
+     * @return gradingform_instance
      */
-    public function validate_grading_element($elementvalue, $itemid) {
-        return true;
+    protected function get_instance($instance) {
+        global $DB;
+        if (is_scalar($instance)) {
+            // instance id is passed as parameter
+            $instance = $DB->get_record('grading_instances', array('id'  => $instance), '*', MUST_EXIST);
+        }
+        if ($instance) {
+            $class = 'gradingform_'. $this->get_method_name(). '_instance';
+            return new $class($this, $instance);
+        }
+        return null;
+    }
+
+    /**
+     * This function is invoked when user (teacher) starts grading.
+     * It creates and returns copy of the current ACTIVE instance if it exists. If this is the
+     * first grading attempt, a new instance is created.
+     * The status of the returned instance is INCOMPLETE
+     *
+     * @param int $raterid
+     * @param int $itemid
+     * @return gradingform_instance
+     */
+    public function create_instance($raterid, $itemid = null) {
+        global $DB;
+        // first find if there is already an active instance for this itemid
+        if ($itemid && $current = $this->get_current_instance($raterid, $itemid)) {
+            return $this->get_instance($current->copy($raterid, $itemid));
+        } else {
+            $class = 'gradingform_'. $this->get_method_name(). '_instance';
+            return $this->get_instance($class::create_new($this->definition->id, $raterid, $itemid));
+        }
     }
 
     /**
@@ -425,5 +456,271 @@ abstract class gradingform_controller {
         } else {
             throw new coding_exception('Invalid class name');
         }
+    }
+
+    /**
+     * Returns html code to be included in student's feedback.
+     *
+     * @param moodle_page $page
+     * @param int $itemid
+     * @param array $grading_info result of function grade_get_grades if plugin want to use some of their info
+     * @param string $defaultcontent default string to be returned if no active grading is found or for some reason can not be shown to a user
+     * @return string
+     */
+    public function render_grade($page, $itemid, $grading_info, $defaultcontent) {
+        return $defaultcontent;
+    }
+
+    /**
+     * Sets the range of grades used in this area. This is usually either range like 0-100
+     * or the scale where keys start from 1. Typical use:
+     * $controller->set_grade_range(make_grades_menu($gradingtype));
+     */
+    public final function set_grade_range(array $graderange) {
+        $this->graderange = $graderange;
+    }
+
+    /**
+     * Returns the range of grades used in this area
+     * @return array
+     */
+    public final function get_grade_range() {
+        if (empty($this->graderange)) {
+            return array();
+        }
+        return $this->graderange;
+    }
+}
+
+/**
+ * Class to manage one grading instance. Stores information and performs actions like
+ * update, copy, validate, submit, etc.
+ *
+ * @copyright  2011 Marina Glancy
+ */
+abstract class gradingform_instance {
+    const INSTANCE_STATUS_ACTIVE = 1;
+    const INSTANCE_STATUS_INCOMPLETE = 0;
+    const INSTANCE_STATUS_ARCHIVE = 3;
+
+    /** @var stdClass record from table grading_instances */
+    protected $data;
+    /** @var gradingform_controller link to the corresponding controller */
+    protected $controller;
+
+    /**
+     * Creates an instance
+     *
+     * @param gradingform_controller $controller
+     * @param stdClass $data
+     */
+    public function __construct($controller, $data) {
+        $this->data = (object)$data;
+        $this->controller = $controller;
+    }
+
+    /**
+     * Creates a new empty instance in DB and mark its status as INCOMPLETE
+     *
+     * @param int $formid
+     * @param int $raterid
+     * @param int $itemid
+     * @return int id of the created instance
+     */
+    public static function create_new($formid, $raterid, $itemid) {
+        global $DB;
+        $instance = new stdClass();
+        $instance->formid = $formid;
+        $instance->raterid = $raterid;
+        $instance->itemid = $itemid;
+        $instance->status = self::INSTANCE_STATUS_INCOMPLETE;
+        $instance->timemodified = time();
+        $instance->feedbackformat = FORMAT_MOODLE;
+        $instanceid = $DB->insert_record('grading_instances', $instance);
+        return $instanceid;
+    }
+
+    /**
+     * Duplicates the instance before editing (optionally substitutes raterid and/or itemid with
+     * the specified values)
+     * Plugins may want to override this function to copy data from additional tables as well
+     *
+     * @param int $raterid value for raterid in the duplicate
+     * @param int $itemid value for itemid in the duplicate
+     * @return int id of the new instance
+     */
+    public function copy($raterid, $itemid) {
+        global $DB;
+        $data = (array)$this->data; // Cast to array to make a copy
+        unset($data['id']);
+        $data['raterid'] = $raterid;
+        $data['itemid'] = $itemid;
+        $data['timemodified'] = time();
+        $data['status'] = self::INSTANCE_STATUS_INCOMPLETE;
+        $instanceid = $DB->insert_record('grading_instances', $data);
+        return $instanceid;
+    }
+
+    /**
+     * Returns the controller
+     *
+     * @return gradingform_controller
+     */
+    public function get_controller() {
+        return $this->controller;
+    }
+
+    /**
+     * Returns instance id
+     *
+     * @return int
+     */
+    public function get_id() {
+        return $this->data->id;
+    }
+
+    /**
+     * Marks the instance as ACTIVE and current active instance (if exists) as ARCHIVE
+     */
+    protected function make_active() {
+        global $DB;
+        if ($this->data->status == self::INSTANCE_STATUS_ACTIVE) {
+            // already active
+            return;
+        }
+        if (empty($this->data->itemid)) {
+            throw new coding_exception('You cannot mark active the grading instance without itemid');
+        }
+        $currentid = $this->get_controller()->get_current_instance($this->data->raterid, $this->data->itemid, true);
+        if ($currentid) {
+            if ($currentid != $this->get_id()) {
+                $DB->update_record('grading_instances', array('id' => $currentid, 'status' => self::INSTANCE_STATUS_ARCHIVE));
+                $DB->update_record('grading_instances', array('id' => $this->get_id(), 'status' => self::INSTANCE_STATUS_ACTIVE));
+            }
+        } else {
+            $DB->update_record('grading_instances', array('id' => $this->get_id(), 'status' => self::INSTANCE_STATUS_ACTIVE));
+        }
+        $this->data->status = self::INSTANCE_STATUS_ACTIVE;
+    }
+
+    /**
+     * Deletes this (INCOMPLETE) instance from database. This function is invoked on cancelling the
+     * grading form and/or during cron cleanup.
+     * Plugins using additional tables must override this method to remove additional data.
+     * Note that if the teacher just closes the window or presses 'Back' button of the browser,
+     * this function is not invoked.
+     */
+    public function cancel() {
+        global $DB;
+        // TODO what if we happen delete the ACTIVE instance, shall we rollback to the last ARCHIVE? or throw an exception?
+        // TODO create cleanup cron
+        $DB->delete_records('grading_instances', array('id' => $this->get_id()));
+    }
+
+    /**
+     * Updates the instance with the data received from grading form. This function may be
+     * called via AJAX when grading is not yet completed, so it does not change the
+     * status of the instance.
+     *
+     * @param array $elementvalue
+     */
+    public function update($elementvalue) {
+        global $DB;
+        $newdata = new stdClass();
+        $newdata->id = $this->get_id();
+        $newdata->timemodified = time();
+        if (isset($elementvalue['itemid']) && $elementvalue['itemid'] != $this->data->itemid) {
+            $newdata->itemid = $elementvalue['itemid'];
+        }
+        // TODO also update: rawgrade, feedback, feedbackformat
+        $DB->update_record('grading_instances', $newdata);
+        foreach ($newdata as $key => $value) {
+            $this->data->$key = $value;
+        }
+    }
+
+    /**
+     * Calculates the grade to be pushed to the gradebook
+     *
+     * @return int the valid grade from $this->get_controller()->get_grade_range()
+     */
+    abstract public function get_grade();
+
+    /**
+     * Called when teacher submits the grading form:
+     * updates the instance in DB, marks it as ACTIVE and returns the grade to be pushed to the gradebook.
+     * $itemid must be specified here (it was not required when the instance was
+     * created, because it might not existed in draft)
+     *
+     * @param array $elementvalue
+     * @param int $itemid
+     * @return int the grade on 0-100 scale
+     */
+    public function submit_and_get_grade($elementvalue, $itemid) {
+        $elementvalue['itemid'] = $itemid;
+        $this->update($elementvalue);
+        $this->make_active();
+        return $this->get_grade();
+    }
+
+
+    /**
+     * Returns html for form element of type 'grading'. If there is a form input element
+     * it must have the name $gradingformelement->getName().
+     * If there are more than one input elements they MUST be elements of array with
+     * name $gradingformelement->getName().
+     * Example: {NAME}[myelement1], {NAME}[myelement2][sub1], {NAME}[myelement2][sub2], etc.
+     * ( {NAME} is a shortcut for $gradingformelement->getName() )
+     * After submitting the form the value of $_POST[{NAME}] is passed to the functions
+     * validate_grading_element() and submit_and_get_grade()
+     *
+     * Plugins may use $gradingformelement->getValue() to get the value passed on previous
+     * form submit
+     *
+     * When forming html it is a plugin's responsibility to analyze flags
+     * $gradingformelement->_flagFrozen and $gradingformelement->_persistantFreeze:
+     *
+     * (_flagFrozen == false) => form element is editable
+     *
+     * (_flagFrozen == false && _persistantFreeze == true) => form element is not editable
+     * but all values are passed as hidden elements
+     *
+     * (_flagFrozen == false && _persistantFreeze == false) => form element is not editable
+     * and no values are passed as hidden elements
+     *
+     * Plugins are welcome to use AJAX in the form element. But it is strongly recommended
+     * that the grading only becomes active when teacher presses 'Submit' button (the
+     * method submit_and_get_grade() is invoked)
+     *
+     * Also client-side JS validation may be implemented here
+     *
+     * @see MoodleQuickForm_grading in lib/form/grading.php
+     *
+     * @param moodle_page $page
+     * @param MoodleQuickForm_grading $gradingformelement
+     * @return string
+     */
+    abstract function render_grading_element($page, $gradingformelement);
+
+    /**
+     * Server-side validation of the data received from grading form.
+     *
+     * @param mixed $elementvalue is the scalar or array received in $_POST
+     * @return boolean true if the form data is validated and contains no errors
+     */
+    public function validate_grading_element($elementvalue) {
+        return true;
+    }
+
+    /**
+     * Returns the error message displayed if validation failed.
+     * If plugin wants to display custom message, the empty string should be returned here
+     * and the custom message should be output in render_grading_element()
+     *
+     * @see validate_grading_element()
+     * @return string
+     */
+    public function default_validation_error_message() {
+        return '';
     }
 }

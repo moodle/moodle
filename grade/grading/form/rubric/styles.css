@@ -20,6 +20,8 @@
                     [input type=submit]
         .addlevel
             [input type=submit]
+        .remark
+            textarea
     .addcriterion
         [input type=submit]
 
@@ -41,11 +43,13 @@
 .form_rubric .criterion .description,
 .form_rubric .criterion .levels,
 .form_rubric.editor .criterion .addlevel,
+.form_rubric .criterion .remark,
 .form_rubric .criterion .levels .level {display: inline-block; vertical-align: top;overflow: hidden;}
 
 .form_rubric.editor .criterion .controls,
 .form_rubric .criterion .description,
 .form_rubric.editor .criterion .addlevel,
+.form_rubric .criterion .remark,
 .form_rubric .criterion .levels .level {padding:3px;}
 
 /* Those divs should extend vertically and fill 100% of parent element height */
@@ -71,7 +75,7 @@
 .form_rubric.editor .criterion.last .controls .movedown input {display:none;}
 
 /* evaluation */
-.form_rubric.evaluate .criterion .levels .level.checked {background:#d0ffd0;}
+.form_rubric .criterion .levels .level.checked {background:#d0ffd0;}
 .form_rubric.evaluate .criterion .levels .level:hover {background:#30ff30;}
 
 /* replace buttons with images */
