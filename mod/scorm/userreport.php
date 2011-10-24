@@ -45,18 +45,18 @@ if ($attempt !== '1') {
 if (!empty($id)) {
     $url->param('id', $id);
     $cm = get_coursemodule_from_id('scorm', $id, 0, false, MUST_EXIST);
-    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
-    $scorm = $DB->get_record('scorm', array('id'=>$cm->instance), '*', MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $scorm = $DB->get_record('scorm', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
     if (!empty($b)) {
         $url->param('b', $b);
-        $sco = $DB->get_record('scorm_scoes', array('id'=>$b), '*', MUST_EXIST);
-        $a = $sco->scorm;
+        $selsco = $DB->get_record('scorm_scoes', array('id' => $b), '*', MUST_EXIST);
+        $a = $selsco->scorm;
     }
     if (!empty($a)) {
         $url->param('a', $a);
-        $scorm = $DB->get_record('scorm', array('id'=>$a), '*', MUST_EXIST);
-        $course = $DB->get_record('course', array('id'=>$scorm->course), '*', MUST_EXIST);
+        $scorm = $DB->get_record('scorm', array('id' => $a), '*', MUST_EXIST);
+        $course = $DB->get_record('course', array('id' => $scorm->course), '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id, false, MUST_EXIST);
     }
 }
@@ -85,7 +85,7 @@ if (empty($b)) {
     }
 } else {
     $PAGE->navbar->add("$strattempt $attempt - ".fullname($userdata), new moodle_url('/mod/scorm/userreport.php', array('a'=>$a, 'user'=>$user, 'attempt'=>$attempt)));
-    $PAGE->navbar->add($sco->title);
+    $PAGE->navbar->add($selsco->title);
 }
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($scorm->name));
@@ -154,10 +154,10 @@ if ($scoes = $DB->get_records_select('scorm_scoes', "scorm=? ORDER BY id", array
 
 if (!empty($b)) {
     echo $OUTPUT->box_start('generalbox boxaligncenter');
-    echo $OUTPUT->heading('<a href="'.$CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;mode=browse&amp;scoid='.$sco->id.'" target="_new">'.format_string($sco->title).'</a>');
+    echo $OUTPUT->heading('<a href="'.$CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;mode=browse&amp;scoid='.$selsco->id.'" target="_new">'.format_string($selsco->title).'</a>');
     echo '<div class="mdl-align">'."\n";
     $scoreview = '';
-    if ($trackdata = scorm_get_tracks($sco->id, $user, $attempt)) {
+    if ($trackdata = scorm_get_tracks($selsco->id, $user, $attempt)) {
         if ($trackdata->score_raw != '') {
             $scoreview = get_string('score', 'scorm').':&nbsp;'.$trackdata->score_raw;
         }
@@ -211,7 +211,7 @@ if (!empty($b)) {
                     $row[] = s(scorm_format_duration($trackdata->$element));
                 break;
                 default:
-                    s($trackdata->$element);
+                    $row[] = s($trackdata->$element);
                 break;
             }
             $table->data[] = $row;
