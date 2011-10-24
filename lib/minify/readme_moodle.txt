@@ -15,3 +15,5 @@ Changes:
  * Removed .htaccess - Not needed
  * Changed config.php - Changed settings to Moodle specific settings incase this
    ever gets accidentally used.
+ * Updated lib/Minify/CSS/Compressor.php - Applied an upstream fix for MDL-29864
+   to allow usage of unquoted font-familes with spaces in CSS.
