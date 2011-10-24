@@ -661,7 +661,7 @@ function initialise_cfg() {
  * setup.php.
  */
 function initialise_fullme() {
-    global $CFG, $FULLME, $ME, $SCRIPT, $FULLSCRIPT;
+    global $CFG, $FULLME, $ME, $SCRIPT, $FULLSCRIPT, $USER;
 
     // Detect common config error.
     if (substr($CFG->wwwroot, -1) == '/') {
@@ -714,6 +714,11 @@ function initialise_fullme() {
             // Explain the problem and redirect them to the right URL
             if (!defined('NO_MOODLE_COOKIES')) {
                 define('NO_MOODLE_COOKIES', true);
+            }
+            if (!isset($USER->id)) {
+                // MDL-27899 workaround
+                $USER = new stdClass();
+                $USER->id = 0;
             }
             redirect($CFG->wwwroot, get_string('wwwrootmismatch', 'error', $CFG->wwwroot), 3);
         }
