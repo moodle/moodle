@@ -180,7 +180,7 @@ if ($attempt->timefinish) {
 if (!empty($overtime)) {
     $summarydata['overdue'] = array(
         'title'   => get_string('overdue', 'quiz'),
-        'content' => format_time($overtime),
+        'content' => $overtime,
     );
 }
 
