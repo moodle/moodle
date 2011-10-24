@@ -190,7 +190,7 @@ class gradingform_rubric_controller extends gradingform_controller {
         $this->definition = false;
         foreach ($rs as $record) {
             // pick the common definition data
-            if (empty($this->definition)) {
+            if ($this->definition === false) {
                 $this->definition = new stdClass();
                 foreach (array('id', 'name', 'description', 'descriptionformat', 'status', 'copiedfromid',
                         'timecreated', 'usercreated', 'timemodified', 'usermodified', 'options') as $fieldname) {
@@ -290,7 +290,7 @@ class gradingform_rubric_controller extends gradingform_controller {
     }
 
     public function get_formatted_description() {
-        if (!$this->definition) {
+        if ($this->definition === false) {
             return null;
         }
         $context = $this->get_context();
@@ -385,6 +385,8 @@ class gradingform_rubric_controller extends gradingform_controller {
  */
 class gradingform_rubric_instance extends gradingform_instance {
 
+    protected $rubric;
+
     /**
      * Deletes this (INCOMPLETE) instance from database.
      */
@@ -406,11 +408,11 @@ class gradingform_rubric_instance extends gradingform_instance {
         global $DB;
         $instanceid = parent::copy($raterid, $itemid);
         $currentgrade = $this->get_rubric_filling();
-        foreach ($currentgrade as $criterionid => $levelid) {
-            $params = array('forminstanceid' => $instanceid, 'criterionid' => $criterionid, 'levelid' => $levelid);
+        foreach ($currentgrade['criteria'] as $criterionid => $record) {
+            $params = array('forminstanceid' => $instanceid, 'criterionid' => $criterionid,
+                'levelid' => $record['levelid'], 'remark' => $record['remark'], 'remarkformat' => $record['remarkformat']);
             $DB->insert_record('gradingform_rubric_fillings', $params);
         }
-        // TODO remarks
         return $instanceid;
     }
 
@@ -421,11 +423,12 @@ class gradingform_rubric_instance extends gradingform_instance {
     public function validate_grading_element($elementvalue) {
         // TODO: if there is nothing selected in rubric, we don't enter this function at all :(
         $criteria = $this->get_controller()->get_definition()->rubric_criteria;
-        if (!is_array($elementvalue) || sizeof($elementvalue) < sizeof($criteria)) {
+        if (!isset($elementvalue['criteria']) || !is_array($elementvalue['criteria']) || sizeof($elementvalue['criteria']) < sizeof($criteria)) {
             return false;
         }
         foreach ($criteria as $id => $criterion) {
-            if (!array_key_exists($id, $elementvalue) || !array_key_exists($elementvalue[$id], $criterion['levels'])) {
+            if (!isset($elementvalue['criteria'][$id]['levelid'])
+                    || !array_key_exists($elementvalue['criteria'][$id]['levelid'], $criterion['levels'])) {
                 return false;
             }
         }
@@ -435,20 +438,19 @@ class gradingform_rubric_instance extends gradingform_instance {
     /**
      * Retrieves from DB and returns the data how this rubric was filled
      *
+     * @param boolean $force whether to force DB query even if the data is cached
      * @return array
      */
-    public function get_rubric_filling() {
-        // TODO cache
+    public function get_rubric_filling($force = false) {
         global $DB;
-        $rs = $DB->get_records('gradingform_rubric_fillings', array('forminstanceid' => $this->get_id()));
-        $grading = array();
-        foreach ($rs as $record) {
-            if ($record->levelid) {
-                $grading[$record->criterionid] = $record->levelid;
+        if ($this->rubric === null || $force) {
+            $records = $DB->get_records('gradingform_rubric_fillings', array('forminstanceid' => $this->get_id()));
+            $this->rubric = array('criteria' => array());
+            foreach ($records as $record) {
+                $this->rubric['criteria'][$record->criterionid] = (array)$record;
             }
-            // TODO: remarks
         }
-        return $grading;
+        return $this->rubric;
     }
 
     /**
@@ -460,21 +462,29 @@ class gradingform_rubric_instance extends gradingform_instance {
         global $DB;
         $currentgrade = $this->get_rubric_filling();
         parent::update($data); // TODO ? +timemodified
-        foreach ($data as $criterionid => $levelid) {
-            $params = array('forminstanceid' => $this->get_id(), 'criterionid' => $criterionid);
-            if (!array_key_exists($criterionid, $currentgrade)) {
-                $DB->insert_record('gradingform_rubric_fillings', $params + array('levelid' => $levelid));
-            } else if ($currentgrade[$criterionid] != $levelid) {
-                $DB->set_field('gradingform_rubric_fillings', 'levelid', $levelid, $params);
+        foreach ($data['criteria'] as $criterionid => $record) {
+            if (!array_key_exists($criterionid, $currentgrade['criteria'])) {
+                $newrecord = array('forminstanceid' => $this->get_id(), 'criterionid' => $criterionid,
+                    'levelid' => $record['levelid'], 'remark' => $record['remark'], 'remarkformat' => FORMAT_MOODLE);
+                $DB->insert_record('gradingform_rubric_fillings', $newrecord);
+            } else {
+                $newrecord = array('id' => $currentgrade['criteria'][$criterionid]['id']);
+                foreach (array('levelid', 'remark'/*, 'remarkformat' TODO */) as $key) {
+                    if ($currentgrade['criteria'][$criterionid][$key] != $record[$key]) {
+                        $newrecord[$key] = $record[$key];
+                    }
+                }
+                if (count($newrecord) > 1) {
+                    $DB->update_record('gradingform_rubric_fillings', $newrecord);
+                }
             }
         }
-        foreach ($currentgrade as $criterionid => $levelid) {
-            if (!array_key_exists($criterionid, $data)) {
-                $params = array('forminstanceid' => $this->get_id(), 'criterionid' => $criterionid);
-                $DB->delete_records('gradingform_rubric_fillings', $params);
+        foreach ($currentgrade['criteria'] as $criterionid => $record) {
+            if (!array_key_exists($criterionid, $data['criteria'])) {
+                $DB->delete_records('gradingform_rubric_fillings', array('id' => $record['id']));
             }
         }
-        // TODO: remarks
+        $this->get_rubric_filling(true);
     }
 
     /**
@@ -508,8 +518,8 @@ class gradingform_rubric_instance extends gradingform_instance {
         $maxgrade = $graderange[sizeof($graderange) - 1];
 
         $curscore = 0;
-        foreach ($grade as $id => $levelid) {
-            $curscore += $this->get_controller()->get_definition()->rubric_criteria[$id]['levels'][$levelid]['score'];
+        foreach ($grade['criteria'] as $id => $record) {
+            $curscore += $this->get_controller()->get_definition()->rubric_criteria[$id]['levels'][$record['levelid']]['score'];
         }
         return round(($curscore-$minscore)/($maxscore-$minscore)*($maxgrade-$mingrade), 0) + $mingrade; // TODO mapping
     }

@@ -48,7 +48,7 @@ abstract class gradingform_controller {
     protected $areaid;
 
     /** @var stdClass|false the definition structure */
-    protected $definition;
+    protected $definition = false;
 
     /** @var array graderange array of valid grades for this area. Use set_grade_range and get_grade_range to access this */
     private $graderange = null;
@@ -110,7 +110,7 @@ abstract class gradingform_controller {
      * @return boolean
      */
     public function is_form_defined() {
-        return !empty($this->definition);
+        return ($this->definition !== false);
     }
 
     /**
@@ -181,7 +181,7 @@ abstract class gradingform_controller {
      * @return stdClass|false definition data or false if the form is not defined yet
      */
     public function get_definition($force = false) {
-        if (is_null($this->definition)) {
+        if ($this->definition === false || $force) {
             $this->load_definition();
         }
         return $this->definition;

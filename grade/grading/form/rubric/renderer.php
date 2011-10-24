@@ -35,8 +35,8 @@ class gradingform_rubric_renderer {
      * @param int $mode @see gradingform_rubric_controller
      * @return string
      */
-    public function criterion_template($mode, $elementname = '{NAME}', $criterion = null, $levels_str = '{LEVELS}') {
-        // TODO description format
+    public function criterion_template($mode, $elementname = '{NAME}', $criterion = null, $levels_str = '{LEVELS}', $value = null) {
+        // TODO description format, remark format
         if ($criterion === null || !is_array($criterion) || !array_key_exists('id', $criterion)) {
             $criterion = array('id' => '{CRITERION-id}', 'description' => '{CRITERION-description}', 'sortorder' => '{CRITERION-sortorder}', 'class' => '{CRITERION-class}');
         } else {
@@ -74,6 +74,21 @@ class gradingform_rubric_renderer {
                 'id' => '{NAME}-{CRITERION-id}-levels-addlevel', 'value' => $value, 'title' => $value)); //TODO '{NAME}-{CRITERION-id}-levels-addlevel
             $criterion_template .= html_writer::tag('div', $button, array('class' => 'addlevel'));
         }
+        if (isset($value['remark'])) {
+            $currentremark = $value['remark'];
+        } else {
+            $currentremark = '';
+        }
+        if ($mode == gradingform_rubric_controller::DISPLAY_EVAL) {
+            $input = html_writer::tag('textarea', htmlspecialchars($currentremark), array('name' => '{NAME}[criteria][{CRITERION-id}][remark]', 'cols' => '10', 'rows' => '5'));
+            $criterion_template .= html_writer::tag('div', $input, array('class' => 'remark'));
+        }
+        if ($mode == gradingform_rubric_controller::DISPLAY_EVAL_FROZEN) {
+            $criterion_template .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => '{NAME}[criteria][{CRITERION-id}][remark]', 'value' => $currentremark));
+        }
+        if ($mode == gradingform_rubric_controller::DISPLAY_REVIEW) {
+            $criterion_template .= html_writer::tag('div', $currentremark, array('class' => 'remark')); // TODO maybe some prefix here like 'Teacher remark:'
+        }
         $criterion_template .= html_writer::end_tag('div'); // .criterion
 
         $criterion_template = str_replace('{NAME}', $elementname, $criterion_template);
@@ -83,7 +98,7 @@ class gradingform_rubric_renderer {
 
     public function level_template($mode, $elementname = '{NAME}', $criterionid = '{CRITERION-id}', $level = null) {
         // TODO definition format
-        if ($level === null || !is_array($level) || !array_key_exists('id', $level)) {
+        if (!isset($level['id'])) {
             $level = array('id' => '{LEVEL-id}', 'definition' => '{LEVEL-definition}', 'score' => '{LEVEL-score}', 'class' => '{LEVEL-class}', 'checked' => false);
         } else {
             foreach (array('score', 'definition', 'class', 'checked') as $key) {
@@ -108,12 +123,12 @@ class gradingform_rubric_renderer {
             $score = $level['score'];
         }
         if ($mode == gradingform_rubric_controller::DISPLAY_EVAL) {
-            $input = html_writer::empty_tag('input', array('type' => 'radio', 'name' => '{NAME}[{CRITERION-id}]', 'value' => $level['id']) +
+            $input = html_writer::empty_tag('input', array('type' => 'radio', 'name' => '{NAME}[criteria][{CRITERION-id}][levelid]', 'value' => $level['id']) +
                     ($level['checked'] ? array('checked' => 'checked') : array()));
             $level_template .= html_writer::tag('div', $input, array('class' => 'radio'));
         }
         if ($mode == gradingform_rubric_controller::DISPLAY_EVAL_FROZEN && $level['checked']) {
-            $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => '{NAME}[{CRITERION-id}]', 'value' => $level['id']));
+            $level_template .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => '{NAME}[criteria][{CRITERION-id}][levelid]', 'value' => $level['id']));
         }
         $score = html_writer::tag('span', $score, array('id' => '{NAME}-{CRITERION-id}-levels-{LEVEL-id}-score'));
         $level_template .= html_writer::tag('div', $definition, array('class' => 'definition', 'id' => '{NAME}-{CRITERION-id}-levels-{LEVEL-id}-definition'));
@@ -176,17 +191,22 @@ class gradingform_rubric_renderer {
             $criterion['class'] = $this->get_css_class_suffix($cnt++, sizeof($criteria) -1);
             $levels_str = '';
             $levelcnt = 0;
+            if (isset($values['criteria'][$id])) {
+                $criterionvalue = $values['criteria'][$id];
+            } else {
+                $criterionvalue = null;
+            }
             foreach ($criterion['levels'] as $levelid => $level) {
                 $level['score'] = (float)$level['score']; // otherwise the display will look like 1.00000
                 $level['class'] = $this->get_css_class_suffix($levelcnt++, sizeof($criterion['levels']) -1);
-                $level['checked'] = (is_array($values) && (array_key_exists($id, $values) && ((int)$values[$id] === $levelid)));
+                $level['checked'] = (isset($criterionvalue['levelid']) && ((int)$criterionvalue['levelid'] === $levelid));
                 if ($level['checked'] && ($mode == gradingform_rubric_controller::DISPLAY_EVAL_FROZEN || $mode == gradingform_rubric_controller::DISPLAY_REVIEW)) {
                     $level['class'] .= ' checked';
                     //in mode DISPLAY_EVAL the class 'checked' will be added by JS if it is enabled. If it is not enabled, the 'checked' class will only confuse
                 }
                 $levels_str .= $this->level_template($mode, $elementname, $id, $level);
             }
-            $criteria_str .= $this->criterion_template($mode, $elementname, $criterion, $levels_str);
+            $criteria_str .= $this->criterion_template($mode, $elementname, $criterion, $levels_str, $criterionvalue);
         }
         return $this->rubric_template($mode, $elementname, $criteria_str);
     }
