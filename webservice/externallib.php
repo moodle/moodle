@@ -23,9 +23,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class moodle_webservice_external extends external_api {
+/**
+ * Web service related functions
+ */
+class core_webservice_external extends external_api {
 
-    public static function get_siteinfo_parameters() {
+    /**
+     * Returns description of method parameters
+     * @return type 
+     */
+    public static function get_site_info_parameters() {
         return new external_function_parameters(
             array('serviceshortnames' => new external_multiple_structure (
                 new external_value(
@@ -47,10 +54,10 @@ class moodle_webservice_external extends external_api {
      * @param array $serviceshortnames of service shortnames - the functions of these services will be returned
      * @return array
      */
-    function get_siteinfo($serviceshortnames = array()) {
+    public function get_site_info($serviceshortnames = array()) {
         global $USER, $SITE, $CFG;
 
-        $params = self::validate_parameters(self::get_siteinfo_parameters(),
+        $params = self::validate_parameters(self::get_site_info_parameters(),
                       array('serviceshortnames'=>$serviceshortnames));
 
         $profileimageurl = moodle_url::make_pluginfile_url(
@@ -112,7 +119,11 @@ class moodle_webservice_external extends external_api {
         );
     }
 
-    public static function get_siteinfo_returns() {
+    /**
+     * Returns description of method result value
+     * @return type 
+     */
+    public static function get_site_info_returns() {
         return new external_single_structure(
             array(
                 'sitename'       => new external_value(PARAM_RAW, 'site name'),
@@ -132,5 +143,42 @@ class moodle_webservice_external extends external_api {
                     ),
             )
         );
+    }
+}
+
+/**
+ * Deprecated web service related functions
+ * @deprecated since Moodle 2.2 please use core_webservice_external instead
+ */
+class moodle_webservice_external extends external_api {
+
+    /**
+     * Returns description of method parameters
+     * @deprecated since Moodle 2.2 please use core_webservice_external::get_site_info_parameters instead
+     * @return type 
+     */
+    public static function get_siteinfo_parameters() {
+        return core_webservice_external::get_site_info_parameters();
+    }
+
+    /**
+     * Return user information including profile picture + basic site information
+     * Note:
+     * - no capability checking because we return just known information by logged user
+     * @deprecated since Moodle 2.2 please use core_webservice_external::get_site_info instead
+     * @param array $serviceshortnames of service shortnames - the functions of these services will be returned
+     * @return array
+     */
+    function get_siteinfo($serviceshortnames = array()) {
+        return core_webservice_external::get_site_info($serviceshortnames);
+    }
+
+    /**
+     * Returns description of method result value
+     * @deprecated since Moodle 2.2 please use core_webservice_external::get_site_info_returns instead
+     * @return type 
+     */
+    public static function get_siteinfo_returns() {
+        return core_webservice_external::get_site_info_returns();
     }
 }
