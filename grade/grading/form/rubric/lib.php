@@ -252,7 +252,8 @@ class gradingform_rubric_controller extends gradingform_controller {
     public function get_definition_copy(gradingform_controller $target) {
 
         $new = parent::get_definition_copy($target);
-        $old = $this->get_definition();
+        $old = $this->get_definition_for_editing();
+        $new->description_editor = $old->description_editor;
         $new->rubric_criteria = array();
         $newcritid = 1;
         $newlevid = 1;
