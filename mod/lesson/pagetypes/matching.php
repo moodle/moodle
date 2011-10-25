@@ -120,13 +120,14 @@ class lesson_page_type_matching extends lesson_page {
                 $answer->responseformat = $properties->response_editor[$i]['format'];
             }
 
+            if (isset($properties->jumpto[$i])) {
+                $answer->jumpto = $properties->jumpto[$i];
+            }
+            if ($this->lesson->custom && isset($properties->score[$i])) {
+                $answer->score = $properties->score[$i];
+            }
+
             if (isset($answer->answer) && $answer->answer != '') {
-                if (isset($properties->jumpto[$i])) {
-                    $answer->jumpto = $properties->jumpto[$i];
-                }
-                if ($this->lesson->custom && isset($properties->score[$i])) {
-                    $answer->score = $properties->score[$i];
-                }
                 $answer->id = $DB->insert_record("lesson_answers", $answer);
                 $answers[$answer->id] = new lesson_page_answer($answer);
             } else if ($i < 2) {
@@ -232,6 +233,32 @@ class lesson_page_type_matching extends lesson_page {
                     $cells[] = format_text($answer->answer, $answer->answerformat, $options);
                     $table->data[] = new html_table_row($cells);
                 }
+
+                if ($n == 0) {
+                    $cells = array();
+                    $cells[] = '<span class="label">'.get_string("correctanswerscore", "lesson")."</span>: ";
+                    $cells[] = $answer->score;
+                    $table->data[] = new html_table_row($cells);
+
+                    $cells = array();
+                    $cells[] = '<span class="label">'.get_string("correctanswerjump", "lesson")."</span>: ";
+                    $cells[] = $this->get_jump_name($answer->jumpto);
+                    $table->data[] = new html_table_row($cells);
+                } elseif ($n == 1) {
+                    $cells = array();
+                    $cells[] = '<span class="label">'.get_string("wronganswerscore", "lesson")."</span>: ";
+                    $cells[] = $answer->score;
+                    $table->data[] = new html_table_row($cells);
+
+                    $cells = array();
+                    $cells[] = '<span class="label">'.get_string("wronganswerjump", "lesson")."</span>: ";
+                    $cells[] = $this->get_jump_name($answer->jumpto);
+                    $table->data[] = new html_table_row($cells);
+                }
+
+                if ($n === 0){
+                    $table->data[count($table->data)-1]->cells[0]->style = 'width:20%;';
+                }
                 $n++;
                 $i--;
             } else {
@@ -254,33 +281,6 @@ class lesson_page_type_matching extends lesson_page {
                 $cells[] = format_text($answer->response, $answer->responseformat, $options);
                 $table->data[] = new html_table_row($cells);
             }
-
-            if ($i == 1) {
-                $cells = array();
-                $cells[] = '<span class="label">'.get_string("correctanswerscore", "lesson")." $i</span>: ";
-                $cells[] = $answer->score;
-                $table->data[] = new html_table_row($cells);
-
-                $cells = array();
-                $cells[] = '<span class="label">'.get_string("correctanswerjump", "lesson")." $i</span>: ";
-                $cells[] = $this->get_jump_name($answer->jumpto);
-                $table->data[] = new html_table_row($cells);
-            } elseif ($i == 2) {
-                $cells = array();
-                $cells[] = '<span class="label">'.get_string("wronganswerscore", "lesson")." $i</span>: ";
-                $cells[] = $answer->score;
-                $table->data[] = new html_table_row($cells);
-
-                $cells = array();
-                $cells[] = '<span class="label">'.get_string("wronganswerjump", "lesson")." $i</span>: ";
-                $cells[] = $this->get_jump_name($answer->jumpto);
-                $table->data[] = new html_table_row($cells);
-            }
-
-            if ($i === 1){
-                $table->data[count($table->data)-1]->cells[0]->style = 'width:20%;';
-            }
-
             $i++;
         }
         return $table;
@@ -320,20 +320,20 @@ class lesson_page_type_matching extends lesson_page {
                 $this->answers[$i]->responseformat = $properties->response_editor[$i]['format'];
             }
 
+            if (isset($properties->jumpto[$i])) {
+                $this->answers[$i]->jumpto = $properties->jumpto[$i];
+            }
+            if ($this->lesson->custom && isset($properties->score[$i])) {
+                $this->answers[$i]->score = $properties->score[$i];
+            }
+
             // we don't need to check for isset here because properties called it's own isset method.
             if ($this->answers[$i]->answer != '') {
-                if (isset($properties->jumpto[$i])) {
-                    $this->answers[$i]->jumpto = $properties->jumpto[$i];
-                }
-                if ($this->lesson->custom && isset($properties->score[$i])) {
-                    $this->answers[$i]->score = $properties->score[$i];
-                }
                 if (!isset($this->answers[$i]->id)) {
                     $this->answers[$i]->id =  $DB->insert_record("lesson_answers", $this->answers[$i]);
                 } else {
                     $DB->update_record("lesson_answers", $this->answers[$i]->properties());
                 }
-
             } else if ($i < 2) {
                 if (!isset($this->answers[$i]->id)) {
                     $this->answers[$i]->id =  $DB->insert_record("lesson_answers", $this->answers[$i]);
@@ -460,12 +460,12 @@ class lesson_add_page_form_matching extends lesson_add_page_form_base {
         $this->_form->addElement('header', 'correctresponse', get_string('correctresponse', 'lesson'));
         $this->_form->addElement('editor', 'answer_editor[0]', get_string('correctresponse', 'lesson'), array('rows'=>'4', 'columns'=>'80'), array('noclean'=>true));
         $this->add_jumpto(0, get_string('correctanswerjump','lesson'), LESSON_NEXTPAGE);
-        $this->add_score(0, get_string("correctanswerscore", "lesson"));
+        $this->add_score(0, get_string("correctanswerscore", "lesson"), 1);
 
         $this->_form->addElement('header', 'wrongresponse', get_string('wrongresponse', 'lesson'));
         $this->_form->addElement('editor', 'answer_editor[1]', get_string('wrongresponse', 'lesson'), array('rows'=>'4', 'columns'=>'80'), array('noclean'=>true));
         $this->add_jumpto(1, get_string('wronganswerjump','lesson'), LESSON_THISPAGE);
-        $this->add_score(1, get_string("wronganswerscore", "lesson"));
+        $this->add_score(1, get_string("wronganswerscore", "lesson"), 0);
 
         for ($i = 2; $i < $this->_customdata['lesson']->maxanswers+2; $i++) {
             $this->_form->addElement('header', 'matchingpair'.($i-1), get_string('matchingpair', 'lesson', $i-1));
