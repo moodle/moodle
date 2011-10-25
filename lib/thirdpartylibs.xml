@@ -148,13 +148,6 @@
     <licenseversion>3.0</licenseversion>
   </library>
   <library>
-    <location>pear/PHP</location>
-    <name>Pear_PHP_CodeSniffer</name>
-    <license>BSD</license>
-    <version>1.1.0</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
     <location>pear/Spreadsheet/Excel</location>
     <name>Pear_Spreadsheet_Excel</name>
     <license>LGPL</license>

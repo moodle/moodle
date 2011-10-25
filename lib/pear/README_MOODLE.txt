@@ -31,18 +31,6 @@ XML/Parser
 * http://cvs.moodle.org/moodle/lib/pear/XML/Parser.php.diff?r1=1.1&r2=1.2
 
 
-PHP/CodeSniffer
-===============
-
-MDL-20876 - replaced deprecated split() with explode()
-
-A whole Moodle coding standards definition sits in lib/pear/PHP/CodeSniffer/Standards/Moodle
-
-To run the codesniffer, you can call the runsniffer script using your command-line php binary:
-
-Example:  /usr/bin/php lib/pear/PHP/runsniffer mod/forum
-
-
 Quickforms
 ==========
 Full of our custom hacks, no way to upgrade to latest upstream.
