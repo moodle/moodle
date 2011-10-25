@@ -319,6 +319,7 @@ function cron_run() {
                         mtrace("... used " . ($DB->perf_get_queries() - $pre_dbqueries) . " dbqueries");
                         mtrace("... used " . (microtime(1) - $pre_time) . " seconds");
                     }
+                    @set_time_limit(0);
                     mtrace("done.");
                 }
             }
@@ -544,6 +545,7 @@ function cron_execute_plugin_type($plugintype, $description = null) {
                 round(microtime(true) - $pre_time, 2) . " seconds)");
 
         set_config('lastcron', time(), $component);
+        @set_time_limit(0);
     }
 
     if ($description) {
