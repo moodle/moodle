@@ -3755,6 +3755,28 @@ class dml_test extends UnitTestCase {
         $records = $DB->get_records_sql($sql, null);
         $this->assertEqual($result, $records);
 
+        // another grouping by CASE expression just to ensure it works ok for multiple WHEN
+        $sql = "SELECT CASE name
+                            WHEN 'xyz' THEN 'last'
+                            WHEN 'def' THEN 'mid'
+                            WHEN 'abc' THEN 'first'
+                       END AS casecol,
+                       COUNT(1) AS countrecs,
+                       MAX(name) AS maxname
+                  FROM {{$tablename}}
+              GROUP BY CASE name
+                           WHEN 'xyz' THEN 'last'
+                           WHEN 'def' THEN 'mid'
+                           WHEN 'abc' THEN 'first'
+                       END
+              ORDER BY casecol DESC";
+        $result = array(
+                'mid'  => (object)array('casecol' => 'mid', 'countrecs' => 1, 'maxname' => 'def'),
+                'last' => (object)array('casecol' => 'last', 'countrecs' => 1, 'maxname' => 'xyz'),
+                'first'=> (object)array('casecol' => 'first', 'countrecs' => 2, 'maxname' => 'abc'));
+        $records = $DB->get_records_sql($sql, null);
+        $this->assertEqual($result, $records);
+
         // test limits in queries with DISTINCT/ALL clauses and multiple whitespace. MDL-25268
         $sql = "SELECT   DISTINCT   course
                   FROM {{$tablename}}
