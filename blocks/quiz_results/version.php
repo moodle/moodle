@@ -29,5 +29,5 @@ defined('MOODLE_INTERNAL') || die();
 
 
 $plugin->version = 2011100300;
-$plugin->requires  = 2011091600;
+$plugin->requires  = 2011070102;
 $plugin->component = 'block_quiz_results';
