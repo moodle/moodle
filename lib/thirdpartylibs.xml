@@ -99,13 +99,6 @@
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>pear/Console/Getopt.php</location>
-    <name>Pear_Console_Getopt</name>
-    <license>PHP</license>
-    <version>1.2.3</version>
-    <licenseversion>3.0</licenseversion>
-  </library>
-  <library>
     <location>pear/Crypt/CHAP.php</location>
     <name>Pear_Crypt_CHAP</name>
     <license>BSD</license>

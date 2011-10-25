@@ -9827,11 +9827,6 @@ function get_performance_info() {
     $info['html'] .= '<span class="dbqueries">DB reads/writes: '.$info['dbqueries'].'</span> ';
     $info['txt'] .= 'db reads/writes: '.$info['dbqueries'].' ';
 
-    if (!empty($PERF->profiling) && $PERF->profiling) {
-        require_once($CFG->dirroot .'/lib/profilerlib.php');
-        $info['html'] .= '<span class="profilinginfo">'.Profiler::get_profiling(array('-R')).'</span>';
-    }
-
     if (function_exists('posix_times')) {
         $ptimes = posix_times();
         if (is_array($ptimes)) {

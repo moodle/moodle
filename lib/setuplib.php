@@ -862,15 +862,6 @@ function init_performance_info() {
     if (function_exists('posix_times')) {
         $PERF->startposixtimes = posix_times();
     }
-    if (function_exists('apd_set_pprof_trace')) {
-        // APD profiling
-        if ($USER->id > 0 && $CFG->perfdebug >= 15) {
-            $tempdir = $CFG->tempdir . '/profile/' . $USER->id;
-            mkdir($tempdir);
-            apd_set_pprof_trace($tempdir);
-            $PERF->profiling = true;
-        }
-    }
 }
 
 /**
