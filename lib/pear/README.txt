@@ -50,11 +50,6 @@ In detail, the libraries added here are:
       Greg Beaver and Martin Jansen
     - License: PHP
     - http://pear.php.net/package/PEAR
-- PEAR Console_Getopt
-    - Current version: 1.2.3
-    - by Andrei Zmievski, Greg Beaver, Stig Bakken
-    - License: PHP (Permission given to Moodle to redistribute under GPL)
-    - http://pear.php.net/package/Console_Getopt
 - PEAR HTTP_WebDAV_Server
     - Current version: HEAD @ 28-01-2008
     - by Hartmut Holzgraefe and Christian Stocker
