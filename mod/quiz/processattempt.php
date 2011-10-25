@@ -94,10 +94,22 @@ if (!$finishattempt) {
     // Just process the responses for this page and go to the next page.
     try {
         $attemptobj->process_all_actions($timenow);
+
     } catch (question_out_of_sequence_exception $e) {
         print_error('submissionoutofsequencefriendlymessage', 'question',
                 $attemptobj->attempt_url(null, $thispage));
+
+    } catch (Exception $e) {
+        // This sucks, if we display our own custom error message, there is no way
+        // to display the original stack trace.
+        $debuginfo = '';
+        if (!empty($e->debuginfo)) {
+            $debuginfo = $e->debuginfo;
+        }
+        print_error('errorprocessingresponses', 'question',
+                $attemptobj->attempt_url(null, $thispage), $e->getMessage(), $debuginfo);
     }
+
     $transaction->allow_commit();
     redirect($nexturl);
 }
@@ -110,7 +122,23 @@ add_to_log($attemptobj->get_courseid(), 'quiz', 'close attempt',
         $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
 // Update the quiz attempt record.
-$attemptobj->finish_attempt($timenow);
+try {
+    $attemptobj->finish_attempt($timenow);
+
+} catch (question_out_of_sequence_exception $e) {
+    print_error('submissionoutofsequencefriendlymessage', 'question',
+            $attemptobj->attempt_url(null, $thispage));
+
+} catch (Exception $e) {
+    // This sucks, if we display our own custom error message, there is no way
+    // to display the original stack trace.
+    $debuginfo = '';
+    if (!empty($e->debuginfo)) {
+        $debuginfo = $e->debuginfo;
+    }
+    print_error('errorprocessingresponses', 'question',
+            $attemptobj->attempt_url(null, $thispage), $e->getMessage(), $debuginfo);
+}
 
 // Send the user to the review page.
 $transaction->allow_commit();
