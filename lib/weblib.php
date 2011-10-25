@@ -2257,6 +2257,7 @@ function redirect($url, $message='', $delay=-1) {
     // prevent debug errors - make sure context is properly initialised
     if ($PAGE) {
         $PAGE->set_context(null);
+        $PAGE->set_pagelayout('redirect');  // No header and footer needed
     }
 
     if ($url instanceof moodle_url) {
@@ -2354,10 +2355,14 @@ function redirect($url, $message='', $delay=-1) {
     }
 
     // Include a redirect message, even with a HTTP redirect, because that is recommended practice.
-    $PAGE->set_pagelayout('redirect');  // No header and footer needed
-    $CFG->docroot = false; // to prevent the link to moodle docs from being displayed on redirect page.
-    echo $OUTPUT->redirect_message($encodedurl, $message, $delay, $debugdisableredirect);
-    exit;
+    if ($PAGE) {
+        $CFG->docroot = false; // to prevent the link to moodle docs from being displayed on redirect page.
+        echo $OUTPUT->redirect_message($encodedurl, $message, $delay, $debugdisableredirect);
+        exit;
+    } else {
+        echo bootstrap_renderer::early_redirect_message($encodedurl, $message, $delay);
+        exit;
+    }
 }
 
 /**
