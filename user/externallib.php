@@ -202,7 +202,7 @@ class core_user_external extends external_api {
     /**
      * Delete users
      * @param array $userids
-     * @return null 
+     * @return null
      */
     public static function delete_users($userids) {
         global $CFG, $DB, $USER;
@@ -293,7 +293,7 @@ class core_user_external extends external_api {
     /**
      * Update users
      * @param array $users
-     * @return null 
+     * @return null
      */
     public static function update_users($users) {
         global $CFG, $DB;
@@ -684,7 +684,7 @@ class moodle_user_external extends external_api {
      * Delete users
      * @deprecated since Moodle 2.2 please use core_user_external::delete_users instead
      * @param array $userids
-     * @return null 
+     * @return null
      */
     public static function delete_users($userids) {
         return core_user_external::delete_users($userids);
@@ -713,7 +713,7 @@ class moodle_user_external extends external_api {
      * Update users
      * @deprecated since Moodle 2.2 please use core_user_external::update_users instead
      * @param array $users
-     * @return null 
+     * @return null
      */
     public static function update_users($users) {
         return core_user_external::update_users($users);

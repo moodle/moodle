@@ -102,8 +102,7 @@ class core_enrol_external extends external_api {
             )
         );
     }
-    
-    
+
     /**
      * Returns description of method parameters
      * @return external_function_parameters
@@ -217,7 +216,7 @@ class core_enrol_external extends external_api {
 
         return $users;
     }
-    
+
     /**
      * Returns description of method result value
      * @return external_description

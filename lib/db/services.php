@@ -300,7 +300,7 @@ $functions = array(
         'capabilities'=> 'moodle/site:viewparticipants, moodle/course:viewparticipants,
             moodle/role:review, moodle/site:accessallgroups, moodle/course:enrolreview',
     ),
-    
+
     'core_enrol_get_enrolled_users' => array(
         'classname'   => 'core_enrol_external',
         'methodname'  => 'get_enrolled_users',

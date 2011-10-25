@@ -30,7 +30,7 @@ class core_webservice_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @return type 
+     * @return external_function_parameters
      */
     public static function get_site_info_parameters() {
         return new external_function_parameters(
@@ -121,7 +121,7 @@ class core_webservice_external extends external_api {
 
     /**
      * Returns description of method result value
-     * @return type 
+     * @return external_single_structure
      */
     public static function get_site_info_returns() {
         return new external_single_structure(
@@ -155,7 +155,7 @@ class moodle_webservice_external extends external_api {
     /**
      * Returns description of method parameters
      * @deprecated since Moodle 2.2 please use core_webservice_external::get_site_info_parameters instead
-     * @return type 
+     * @return external_function_parameters
      */
     public static function get_siteinfo_parameters() {
         return core_webservice_external::get_site_info_parameters();
@@ -176,7 +176,7 @@ class moodle_webservice_external extends external_api {
     /**
      * Returns description of method result value
      * @deprecated since Moodle 2.2 please use core_webservice_external::get_site_info_returns instead
-     * @return type 
+     * @return external_single_structure
      */
     public static function get_siteinfo_returns() {
         return core_webservice_external::get_site_info_returns();
