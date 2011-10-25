@@ -1319,6 +1319,12 @@ class bootstrap_renderer {
         return false;
     }
 
+    /**
+     * Constructor - to be used by core code only.
+     * @param $method
+     * @param $arguments
+     * @return string
+     */
     public function __call($method, $arguments) {
         global $OUTPUT, $PAGE;
 
@@ -1360,8 +1366,8 @@ class bootstrap_renderer {
      * Returns nicely formatted error message in a div box.
      * @static
      * @param string $message error message
-     * @param string $moreinfourl ignored
-     * @param string $link ignored
+     * @param string $moreinfourl (ignored in early errors)
+     * @param string $link (ignored in early errors)
      * @param array $backtrace
      * @param string $debuginfo
      * @return string
@@ -1392,10 +1398,10 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
      * This function should only be called by this class, or from exception handlers
      * @static
      * @param string $message error message
-     * @param string $moreinfourl
-     * @param string $link
+     * @param string $moreinfourl (ignored in early errors)
+     * @param string $link (ignored in early errors)
      * @param array $backtrace
-     * @param string $debuginfo
+     * @param string $debuginfo extra information for developers
      * @return string
      */
     public static function early_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
@@ -1462,7 +1468,7 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
      * Early notification message
      * @static
      * @param $message
-     * @param string $classes
+     * @param string $classes usually notifyproblem or notifysuccess
      * @return string
      */
     public static function early_notification($message, $classes = 'notifyproblem') {
@@ -1472,11 +1478,11 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
     /**
      * Page should redirect message.
      * @static
-     * @param $encodedurl
+     * @param $encodedurl redirect url
      * @return string
      */
     public static function plain_redirect_message($encodedurl) {
-        $message = '<div style="margin-top: 3em; margin-left:auto; margin-right:auto; text-align:center;">' . get_string('pageshouldredirect') . '</p><p><a href="'.
+        $message = '<div style="margin-top: 3em; margin-left:auto; margin-right:auto; text-align:center;">' . get_string('pageshouldredirect') . '<br /><a href="'.
                 $encodedurl .'">'. get_string('continue') .'</a></div>';
         return self::plain_page(get_string('redirect'), $message);
     }
@@ -1484,10 +1490,10 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
     /**
      * Early redirection page, used before full init of $PAGE global
      * @static
-     * @param $encodedurl
-     * @param $message
-     * @param $delay
-     * @return string
+     * @param $encodedurl redirect url
+     * @param $message redirect message
+     * @param $delay time in seconds
+     * @return string redirect page
      */
     public static function early_redirect_message($encodedurl, $message, $delay) {
         $meta = '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
@@ -1500,10 +1506,10 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
     /**
      * Output basic html page.
      * @static
-     * @param $title
-     * @param $content
-     * @param string $meta
-     * @return string
+     * @param $title page title
+     * @param $content page content
+     * @param string $meta meta tag
+     * @return string html page
      */
     protected static function plain_page($title, $content, $meta = '') {
         if (function_exists('get_string') && function_exists('get_html_lang')) {
