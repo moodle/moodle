@@ -38,13 +38,12 @@
 
 */
 
-
 .gradingform_rubric.editor .criterion .controls,
 .gradingform_rubric .criterion .description,
 .gradingform_rubric .criterion .levels,
 .gradingform_rubric.editor .criterion .addlevel,
 .gradingform_rubric .criterion .remark,
-.gradingform_rubric .criterion .levels .level {display: inline-block; vertical-align: top;overflow: hidden;}
+.gradingform_rubric .criterion .levels .level {vertical-align: top;}
 
 .gradingform_rubric.editor .criterion .controls,
 .gradingform_rubric .criterion .description,
@@ -52,22 +51,22 @@
 .gradingform_rubric .criterion .remark,
 .gradingform_rubric .criterion .levels .level {padding:3px;}
 
-/* Those divs should extend vertically and fill 100% of parent element height */
-.gradingform_rubric .criterion .levels .level,
-.gradingform_rubric .criterion .description,
-.gradingform_rubric .criterion .levels {padding-bottom: 32767px;margin-bottom: -32767px;}
-
+.gradingform_rubric .criteria {height:100%;}
 .gradingform_rubric .criterion {border:1px solid #DDD;overflow: hidden;}
 .gradingform_rubric .criterion.even {background:#F0F0F0;}
 
 .gradingform_rubric .criterion .description {width:150px;font-weight:bold;}
 
-.gradingform_rubric .criterion .levels .level {border-left:1px solid #DDD;min-width:80px;max-width:150px;position:relative;}
+.gradingform_rubric .criterion .levels table {width:100%;height:100%;}
+.gradingform_rubric .criterion .levels,
+.gradingform_rubric .criterion .levels table,
+.gradingform_rubric .criterion .levels table tbody {padding:0;margin:0;}
+.gradingform_rubric .criterion .levels .level {border-left:1px solid #DDD;max-width:150px;position:relative;}
 .gradingform_rubric .criterion .levels .level.last {border-right:1px solid #DDD;}
 
 .gradingform_rubric .plainvalue.empty {font-style: italic; color: #AAA;}
 
-.gradingform_rubric.editor .criterion .levels .level .delete {position:absolute;right:0px;bottom:32767px;}
+.gradingform_rubric.editor .criterion .levels .level .delete {position:absolute;right:0px;bottom:0px;}
 .gradingform_rubric .criterion .levels .level .score {display:block;}
 
 /* Make invisible the buttons 'Move up' for the first criterion and 'Move down' for the last, because those buttons will make no change */
