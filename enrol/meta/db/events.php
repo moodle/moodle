@@ -56,6 +56,13 @@ $handlers = array (
         'internal'         => 1,
     ),
 
+    'user_enrol_modified' => array (
+        'handlerfile'      => '/enrol/meta/locallib.php',
+        'handlerfunction'  => array('enrol_meta_handler', 'user_enrol_modified'),
+        'schedule'         => 'instant',
+        'internal'         => 1,
+    ),
+
     'course_deleted' => array (
         'handlerfile'      => '/enrol/meta/locallib.php',
         'handlerfunction'  => array('enrol_meta_handler', 'course_deleted'),
