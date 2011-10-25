@@ -239,8 +239,8 @@ class quiz_statistics_report extends quiz_default_report {
             $this->qtable->export_class_instance($this->table->export_class_instance());
             $questiontabletitle = !empty($question->number)?'('.$question->number.') ':'';
             $questiontabletitle .= "\"{$question->name}\"";
-            $questiontabletitle = "<em>$questiontabletitle</em>";
             if ($downloadtype == 'xhtml'){
+                $questiontabletitle = "<em>$questiontabletitle</em>";
                 $questiontabletitle = get_string('analysisofresponsesfor', 'quiz_statistics', $questiontabletitle);
             }
             $exportclass =& $this->table->export_class_instance();
