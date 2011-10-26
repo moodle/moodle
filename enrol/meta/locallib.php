@@ -357,7 +357,13 @@ function enrol_meta_sync($courseid = NULL) {
 
     // sync enrolment status
     if (enrol_is_enabled('meta')) {
-        list($enabled, $params) = $DB->get_in_or_equal(explode(',', $CFG->enrol_plugins_enabled), SQL_PARAMS_NAMED, 'e');
+        $enabled = explode(',', $CFG->enrol_plugins_enabled);
+        foreach($enabled as $k=>$v) {
+            if ($v === 'meta') {
+                unset($enabled[$k]);
+            }
+        }
+        list($enabled, $params) = $DB->get_in_or_equal($enabled, SQL_PARAMS_NAMED, 'e');
         if ($courseid) {
             $params['courseid'] = $courseid;
         }
@@ -365,11 +371,11 @@ function enrol_meta_sync($courseid = NULL) {
         $sql = "SELECT ue.userid, e.id AS enrolid
                   FROM {user_enrolments} ue
                   JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'meta' AND e.status = :statusenabled $onecourse)
-                 WHERE ue.status = :activestatus1
-                       AND NOT EXISTS (SELECT 'x'
-                                         FROM {user_enrolments} pue
-                                         JOIN {enrol} pe ON (pe.courseid = e.customint1 AND pe.enrol <> 'meta' AND pe.enrol $enabled)
-                                        WHERE pue.enrolid = pe.id AND pue.userid = ue.userid AND pue.status = :activestatus2)";
+             LEFT JOIN (SELECT pue.id, pue.userid, pe.courseid
+                          FROM {user_enrolments} pue
+                          JOIN {enrol} pe ON (pe.enrol $enabled)
+                         WHERE pue.enrolid = pe.id AND pue.status = :activestatus2) xx ON (xx.userid = ue.userid AND xx.courseid = e.customint1)
+                 WHERE ue.status = :activestatus1 AND xx.id IS NULL";
         $params['statusenabled'] = ENROL_INSTANCE_ENABLED;
         $params['activestatus1'] = ENROL_USER_ACTIVE;
         $params['activestatus2'] = ENROL_USER_ACTIVE;
@@ -388,15 +394,13 @@ function enrol_meta_sync($courseid = NULL) {
         if ($courseid) {
             $params['courseid'] = $courseid;
         }
-        //note: this will probably take a long time on mysql...
-        $sql = "SELECT ue.userid, e.id AS enrolid
+        // enable if at least one enrolment active in linked course
+        $sql = "SELECT DISTINCT ue.userid, e.id AS enrolid
                   FROM {user_enrolments} ue
                   JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'meta' AND e.status = :statusenabled $onecourse)
-                 WHERE ue.status = :suspendedstatus
-                       AND EXISTS (SELECT 'x'
-                                     FROM {user_enrolments} pue
-                                     JOIN {enrol} pe ON (pe.courseid = e.customint1 AND pe.enrol <> 'meta' AND pe.enrol $enabled)
-                                    WHERE pue.enrolid = pe.id AND pue.userid = ue.userid AND pue.status = :activestatus)";
+                  JOIN {enrol} pe ON (pe.courseid = e.customint1 AND pe.enrol $enabled)
+                  JOIN {user_enrolments} pue ON (pue.enrolid = pe.id AND pue.userid = ue.userid AND pue.status = :activestatus)
+                 WHERE ue.status = :suspendedstatus";
         $params['statusenabled'] = ENROL_INSTANCE_ENABLED;
         $params['suspendedstatus'] = ENROL_USER_SUSPENDED;
         $params['activestatus'] = ENROL_USER_ACTIVE;
