@@ -717,7 +717,12 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
     $params     = array();
     $i = 0;
 
-    $concat = $DB->sql_concat("COALESCE(c.summary, '". $DB->sql_empty() ."')", "' '", 'c.fullname', "' '", 'c.idnumber', "' '", 'c.shortname');
+    // Thanks Oracle for your non-ansi concat and type limits in coalesce. MDL-29912
+    if ($DB->get_dbfamily() == 'oracle') {
+        $concat = $DB->sql_concat('c.summary', "' '", 'c.fullname', "' '", 'c.idnumber', "' '", 'c.shortname');
+    } else {
+        $concat = $DB->sql_concat("COALESCE(c.summary, '". $DB->sql_empty() ."')", "' '", 'c.fullname', "' '", 'c.idnumber', "' '", 'c.shortname');
+    }
 
     foreach ($searchterms as $searchterm) {
         $i++;
