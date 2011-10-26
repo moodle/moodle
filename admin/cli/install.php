@@ -636,6 +636,23 @@ if (!file_exists($configfile)) {
     cli_error('Can not create config file.');
 }
 
+// Test environment first.
+list($envstatus, $environment_results) = check_moodle_environment(normalize_version($release), ENV_SELECT_RELEASE);
+if (!$envstatus) {
+    $errors = environment_get_errors($environment_results);
+    cli_heading(get_string('environment', 'admin'));
+    foreach ($errors as $error) {
+        list($info, $report) = $error;
+        echo "!! $info !!\n$report\n\n";
+    }
+    exit(1);
+}
+
+// Test plugin dependencies.
+if (!plugin_manager::instance()->all_plugins_ok($version)) {
+    cli_error(get_string('pluginschecktodo', 'admin'));
+}
+
 // remember selected language
 $installlang = $CFG->lang;
 // return back to original dir before executing setup.php which changes the dir again

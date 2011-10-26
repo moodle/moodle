@@ -31,11 +31,4 @@ require_once($CFG->libdir . '/pluginlib.php');
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 admin_externalpage_setup('pluginsoverview');
 $output = $PAGE->get_renderer('core', 'admin');
-$pluginman = plugin_manager::instance();
-
-echo $output->header();
-echo $output->heading(get_string('pluginsoverview', 'core_admin'));
-echo $output->box_start('generalbox');
-echo $output->plugins_control_panel($pluginman->get_plugins());
-echo $output->box_end();
-echo $output->footer();
+echo $output->plugin_management_page(plugin_manager::instance());

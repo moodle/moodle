@@ -93,8 +93,9 @@ if ($version < $CFG->version) {
 $oldversion = "$CFG->release ($CFG->version)";
 $newversion = "$release ($version)";
 
-// test environment first
-if (!check_moodle_environment(normalize_version($release), $environment_results, false, ENV_SELECT_RELEASE)) {
+// Test environment first.
+list($envstatus, $environment_results) = check_moodle_environment(normalize_version($release), ENV_SELECT_RELEASE);
+if (!$envstatus) {
     $errors = environment_get_errors($environment_results);
     cli_heading(get_string('environment', 'admin'));
     foreach ($errors as $error) {
@@ -102,6 +103,11 @@ if (!check_moodle_environment(normalize_version($release), $environment_results,
         echo "!! $info !!\n$report\n\n";
     }
     exit(1);
+}
+
+// Test plugin dependencies.
+if (!plugin_manager::instance()->all_plugins_ok($version)) {
+    cli_error(get_string('pluginschecktodo', 'admin'));
 }
 
 if ($interactive) {

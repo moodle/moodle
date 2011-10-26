@@ -80,23 +80,19 @@ defined('MOODLE_INTERNAL') || die();
     define('ENV_SELECT_RELEASE',                 2);
 
 /**
- * This function will perform the whole check, returning
- * true or false as final result. Also, he full array of
- * environment_result will be returned in the parameter list.
- * The function looks for the best version to compare and
- * everything. This is the only function that should be called
- * ever from the rest of Moodle.
+ * This function checks all the requirements defined in environment.xml.
  *
  * @staticvar bool $result
  * @staticvar array $env_results
  * @staticvar bool $cache_exists
+ *
  * @param string $version version to check.
- * @param array $environment_results results array of results checked.
- * @param boolean $print_table true/false, whether to print the table or just return results array
  * @param int $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use. Default ENV_SELECT_NEWER (BC)
- * @return boolean true/false, depending of results
+ * @return array with two elements. The first element true/false, depending on
+ *      on whether the check passed. The second element is an array of environment_results
+ *      objects that has detailed information about the checks and which ones passed.
  */
-function check_moodle_environment($version, &$environment_results, $print_table=true, $env_select=ENV_SELECT_NEWER) {
+function check_moodle_environment($version, $env_select = ENV_SELECT_NEWER) {
 
     $status = true;
 
@@ -140,186 +136,7 @@ function check_moodle_environment($version, &$environment_results, $print_table=
         $cache_exists = true;
     } ///End of cache block
 
-/// If we have decided to print all the information, just do it
-    if ($print_table) {
-        print_moodle_environment($result && $status, $environment_results);
-    }
-    return ($result && $status);
-}
-
-/**
- * This function will print one beautiful table with all the environmental
- * configuration and how it suits Moodle needs.
- *
- * @global object
- * @param boolean $result final result of the check (true/false)
- * @param array $environment_results array of results gathered
- * @return void
- */
-function print_moodle_environment($result, $environment_results) {
-    global $CFG, $OUTPUT;
-
-/// Get some strings
-    $strname = get_string('name');
-    $strinfo = get_string('info');
-    $strreport = get_string('report');
-    $strstatus = get_string('status');
-    $strok = get_string('ok');
-    $strerror = get_string('error');
-    $strcheck = get_string('check');
-    $strbypassed = get_string('bypassed');
-    $strrestricted = get_string('restricted');
-    $strenvironmenterrortodo = get_string('environmenterrortodo', 'admin');
-/// Table headers
-    $servertable = new html_table();//table for server checks
-    $servertable->head  = array ($strname, $strinfo, $strreport, $strstatus);
-    $servertable->align = array ('center', 'center', 'left', 'center');
-    $servertable->wrap  = array ('nowrap', '', '', 'nowrap');
-    $servertable->size  = array ('10', 10, '100%', '10');
-    $servertable->attributes['class'] = 'environmenttable generaltable';
-
-    $serverdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());
-
-    $othertable = new html_table();//table for custom checks
-    $othertable->head  = array ($strinfo, $strreport, $strstatus);
-    $othertable->align = array ('center', 'left', 'center');
-    $othertable->wrap  = array ('', '', 'nowrap');
-    $othertable->size  = array (10, '100%', '10');
-    $othertable->attributes['class'] = 'environmenttable generaltable';
-
-    $otherdata = array('ok'=>array(), 'warn'=>array(), 'error'=>array());
-
-/// Iterate over each environment_result
-    $continue = true;
-    foreach ($environment_results as $environment_result) {
-        $errorline   = false;
-        $warningline = false;
-        $stringtouse = '';
-        if ($continue) {
-            $type = $environment_result->getPart();
-            $info = $environment_result->getInfo();
-            $status = $environment_result->getStatus();
-            $error_code = $environment_result->getErrorCode();
-        /// Process Report field
-            $rec = new stdClass();
-        /// Something has gone wrong at parsing time
-            if ($error_code) {
-                $stringtouse = 'environmentxmlerror';
-                $rec->error_code = $error_code;
-                $status = $strerror;
-                $errorline = true;
-                $continue = false;
-            }
-
-            if ($continue) {
-            /// We are comparing versions
-                if ($rec->needed = $environment_result->getNeededVersion()) {
-                    $rec->current = $environment_result->getCurrentVersion();
-                    if ($environment_result->getLevel() == 'required') {
-                        $stringtouse = 'environmentrequireversion';
-                    } else {
-                        $stringtouse = 'environmentrecommendversion';
-                    }
-            /// We are checking installed & enabled things
-                } else if ($environment_result->getPart() == 'custom_check') {
-                    if ($environment_result->getLevel() == 'required') {
-                        $stringtouse = 'environmentrequirecustomcheck';
-                    } else {
-                        $stringtouse = 'environmentrecommendcustomcheck';
-                    }
-                } else if ($environment_result->getPart() == 'php_setting') {
-                    if ($status) {
-                        $stringtouse = 'environmentsettingok';
-                    } else if ($environment_result->getLevel() == 'required') {
-                        $stringtouse = 'environmentmustfixsetting';
-                    } else {
-                        $stringtouse = 'environmentshouldfixsetting';
-                    }
-                } else {
-                    if ($environment_result->getLevel() == 'required') {
-                        $stringtouse = 'environmentrequireinstall';
-                    } else {
-                        $stringtouse = 'environmentrecommendinstall';
-                    }
-                }
-            /// Calculate the status value
-                if ($environment_result->getBypassStr() != '') {            //Handle bypassed result (warning)
-                    $status = $strbypassed;
-                    $warningline = true;
-                } else if ($environment_result->getRestrictStr() != '') {   //Handle restricted result (error)
-                    $status = $strrestricted;
-                    $errorline = true;
-                } else {
-                    if ($status) {                                          //Handle ok result (ok)
-                        $status = $strok;
-                    } else {
-                        if ($environment_result->getLevel() == 'optional') {//Handle check result (warning)
-                            $status = $strcheck;
-                            $warningline = true;
-                        } else {                                            //Handle error result (error)
-                            $status = $strcheck;
-                            $errorline = true;
-                        }
-                    }
-                }
-            }
-
-        /// Build the text
-            $linkparts = array();
-            $linkparts[] = 'admin/environment';
-            $linkparts[] = $type;
-            if (!empty($info)){
-               $linkparts[] = $info;
-            }
-            if (empty($CFG->docroot)) {
-                $report = get_string($stringtouse, 'admin', $rec);
-            } else {
-                $report = $OUTPUT->doc_link(join($linkparts, '/'), get_string($stringtouse, 'admin', $rec));
-            }
-
-
-        /// Format error or warning line
-            if ($errorline || $warningline) {
-                $messagetype = $errorline? 'error':'warn';
-            } else {
-                $messagetype = 'ok';
-            }
-            $status = '<span class="'.$messagetype.'">'.$status.'</span>';
-        /// Here we'll store all the feedback found
-            $feedbacktext = '';
-            ///Append  the feedback if there is some
-            $feedbacktext .= $environment_result->strToReport($environment_result->getFeedbackStr(), $messagetype);
-        ///Append the bypass if there is some
-            $feedbacktext .= $environment_result->strToReport($environment_result->getBypassStr(), 'warn');
-        ///Append the restrict if there is some
-            $feedbacktext .= $environment_result->strToReport($environment_result->getRestrictStr(), 'error');
-
-            $report .= $feedbacktext;
-        /// Add the row to the table
-
-            if ($environment_result->getPart() == 'custom_check'){
-                $otherdata[$messagetype][] = array ($info, $report, $status);
-            } else {
-                $serverdata[$messagetype][] = array ($type, $info, $report, $status);
-            }
-        }
-    }
-    //put errors first in
-    $servertable->data = array_merge($serverdata['error'], $serverdata['warn'], $serverdata['ok']);
-    $othertable->data = array_merge($otherdata['error'], $otherdata['warn'], $otherdata['ok']);
-
-/// Print table
-    echo $OUTPUT->heading(get_string('serverchecks', 'admin'));
-    echo html_writer::table($servertable);
-    if (count($othertable->data)){
-        echo $OUTPUT->heading(get_string('customcheck', 'admin'));
-        echo html_writer::table($othertable);
-    }
-
-/// Finally, if any error has happened, print the summary box
-    if (!$result) {
-        echo $OUTPUT->box($strenvironmenterrortodo, 'environmentbox errorbox');
-    }
+    return array($result && $status, $environment_results);
 }
 
 
