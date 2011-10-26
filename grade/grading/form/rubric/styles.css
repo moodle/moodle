@@ -1,5 +1,6 @@
 /*
 .gradingform_rubric.editor[.frozen|.editable]
+  .criteria
     .criterion[.first][.last][.odd|.even]
         .controls
             .moveup
@@ -10,31 +11,37 @@
                 [input type=submit]
         .description
         .levels
-            .level[.first][.last][.odd|.even]
-                .definition
-                    [textarea]
-                .score
-                    span
-                        [input type=text]
-                .delete
-                    [input type=submit]
+            td.level[.first][.last][.odd|.even]
+                div.level-wrapper
+                    .definition
+                        [textarea]
+                    .score
+                        span
+                            [input type=text]
+                    .delete
+                        [input type=submit]
         .addlevel
             [input type=submit]
         .remark
             textarea
     .addcriterion
         [input type=submit]
+  .options
+    .optionsheading
+    .option.OPTIONNAME
 
 .gradingform_rubric[.review][.evaluate[.editable|.frozen]]
+  .criteria
     .criterion[.first][.last][.odd|.even]
         .description
         .levels
-            .level[.first][.last][.odd|.even]
-                .radio
-                    input
-                .definition
-                .score
-                    span
+            td.level[.first][.last][.odd|.even]
+                div.level-wrapper
+                    div.radio
+                        input
+                    .definition
+                    .score
+                        span
 
 */
 
@@ -61,13 +68,14 @@
 .gradingform_rubric .criterion .levels,
 .gradingform_rubric .criterion .levels table,
 .gradingform_rubric .criterion .levels table tbody {padding:0;margin:0;}
-.gradingform_rubric .criterion .levels .level {border-left:1px solid #DDD;max-width:150px;position:relative;}
+.gradingform_rubric .criterion .levels .level {border-left:1px solid #DDD;max-width:150px;}
+.gradingform_rubric .criterion .levels .level .level-wrapper {position:relative;}
 .gradingform_rubric .criterion .levels .level.last {border-right:1px solid #DDD;}
 
 .gradingform_rubric .plainvalue.empty {font-style: italic; color: #AAA;}
 
-.gradingform_rubric.editor .criterion .levels .level .delete {position:absolute;right:0px;bottom:0px;}
-.gradingform_rubric .criterion .levels .level .score {display:block;}
+.gradingform_rubric.editor .criterion .levels .level .delete {position:absolute;right:0;bottom:0;}
+.gradingform_rubric .criterion .levels .level .score {font-style:italic;color:#575;font-weight: bold;margin-top:5px;}
 
 /* Make invisible the buttons 'Move up' for the first criterion and 'Move down' for the last, because those buttons will make no change */
 .gradingform_rubric.editor .criterion.first .controls .moveup input,
@@ -90,3 +98,8 @@
 .gradingform_rubric.editor .addlevel input {background: transparent url([[pix:t/addgreen]]) no-repeat;display:block;color:#555555;font-weight:bold;text-decoration:none;}
 .gradingform_rubric.editor .addcriterion input {background-position: 5px 8px;height:30px;line-height:29px;margin-bottom:14px;padding-left:20px;padding-right:10px;}
 .gradingform_rubric.editor .addlevel input {background-position: 5px 6px;height:25px;line-height:24px;margin-bottom:10px;padding-left:18px;padding-right:8px;}
+
+.gradingform_rubric .options .optionsheading {font-weight:bold;font-size:1.1em;padding-bottom:5px;}
+.gradingform_rubric .options .option {padding-bottom:2px;}
+.gradingform_rubric .options .option label {margin-left: 5px;}
+.gradingform_rubric .options .option .value {margin-left: 5px;font-weight:bold;}

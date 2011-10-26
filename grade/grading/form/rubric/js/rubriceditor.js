@@ -92,10 +92,10 @@ M.gradingform_rubriceditor.buttonclick = function(e, Y, name, confirmed) {
     if (e.target.get('type') != 'submit') return;
     var chunks = e.target.get('id').split('-'),
         action = chunks[chunks.length-1]
-    if (chunks[0] != name) return;
+    if (chunks[0] != name || chunks[1] != 'criteria') return;
     var elements_str
-    if (chunks.length>3 || action == 'addlevel') {
-        elements_str = '#rubric-'+name+' #'+name+'-'+chunks[1]+'-levels .level'
+    if (chunks.length>4 || action == 'addlevel') {
+        elements_str = '#rubric-'+name+' #'+name+'-criteria-'+chunks[2]+'-levels .level'
     } else {
         elements_str = '#rubric-'+name+' .criterion'
     }
@@ -112,38 +112,44 @@ M.gradingform_rubriceditor.buttonclick = function(e, Y, name, confirmed) {
         'callbackargs' : [e, Y, name, true],
         'callback' : M.gradingform_rubriceditor.buttonclick
     };
-    if (chunks.length == 2 && action == 'addcriterion') {
+    if (chunks.length == 3 && action == 'addcriterion') {
         // ADD NEW CRITERION
         var newcriterion = M.gradingform_rubriceditor.templates[name]['criterion'].
             replace(/\{CRITERION-id\}/g, 'NEWID'+newid).replace(/\{.+?\}/g, '')
-        Y.one('#'+name+'-criteria').append(newcriterion)
+        var parentel = Y.one('#'+name+'-criteria')
+        if (parentel.one('>tbody')) parentel = parentel.one('>tbody')
+        parentel.append(newcriterion)
         M.gradingform_rubriceditor.addhandlers(Y, name);
-    } else if (chunks.length == 4 && action == 'addlevel') {
+    } else if (chunks.length == 5 && action == 'addlevel') {
         // ADD NEW LEVEL
         var newlevel = M.gradingform_rubriceditor.templates[name]['level'].
-            replace(/\{CRITERION-id\}/g, chunks[1]).replace(/\{LEVEL-id\}/g, 'NEWID'+newid).replace(/\{.+?\}/g, '')
-        Y.one('#'+name+'-'+chunks[1]+'-levels').append(newlevel)
+            replace(/\{CRITERION-id\}/g, chunks[2]).replace(/\{LEVEL-id\}/g, 'NEWID'+newid).replace(/\{.+?\}/g, '')
+        Y.one('#'+name+'-criteria-'+chunks[2]+'-levels').append(newlevel)
+        var levels = Y.all('#'+name+'-criteria-'+chunks[2]+'-levels .level')
+        if (levels.size()) levels.set('width', Math.round(100/levels.size())+'%')
         M.gradingform_rubriceditor.addhandlers(Y, name);
-    } else if (chunks.length == 3 && action == 'moveup') {
+    } else if (chunks.length == 4 && action == 'moveup') {
         // MOVE CRITERION UP
-        el = Y.one('#'+name+'-'+chunks[1])
+        el = Y.one('#'+name+'-criteria-'+chunks[2])
         if (el.previous()) el.get('parentNode').insertBefore(el, el.previous())
-    } else if (chunks.length == 3 && action == 'movedown') {
+    } else if (chunks.length == 4 && action == 'movedown') {
         // MOVE CRITERION DOWN
-        el = Y.one('#'+name+'-'+chunks[1])
+        el = Y.one('#'+name+'-criteria-'+chunks[2])
         if (el.next()) el.get('parentNode').insertBefore(el.next(), el)
-    } else if (chunks.length == 3 && action == 'delete') {
+    } else if (chunks.length == 4 && action == 'delete') {
         // DELETE CRITERION
         if (confirmed) {
-            Y.one('#'+name+'-'+chunks[1]).remove()
+            Y.one('#'+name+'-criteria-'+chunks[2]).remove()
         } else {
             dialog_options['message'] = M.str.gradingform_rubric.confirmdeletecriterion
             M.util.show_confirm_dialog(e, dialog_options);
         }
-    } else if (chunks.length == 5 && action == 'delete') {
+    } else if (chunks.length == 6 && action == 'delete') {
         // DELETE LEVEL
         if (confirmed) {
-            Y.one('#'+name+'-'+chunks[1]+'-'+chunks[2]+'-'+chunks[3]).remove()
+            Y.one('#'+name+'-criteria-'+chunks[2]+'-'+chunks[3]+'-'+chunks[4]).remove()
+            levels = Y.all('#'+name+'-criteria-'+chunks[2]+'-levels .level')
+            if (levels.size()) levels.set('width', Math.round(100/levels.size())+'%')
         } else {
             dialog_options['message'] = M.str.gradingform_rubric.confirmdeletelevel
             M.util.show_confirm_dialog(e, dialog_options);
