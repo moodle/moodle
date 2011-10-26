@@ -1,7 +1,7 @@
       <QUESTION_CATEGORY>
         <ID>[#quiz_id#]</ID>
-        <NAME><![CDATA[Quiz Bank '[#quiz_name#]']]></NAME>
-        <INFO><![CDATA[Questions in quiz '[#quiz_name#]'.]]></INFO>
+        <NAME>Quiz Bank '[#quiz_name#]'</NAME>
+        <INFO>Questions in quiz '[#quiz_name#]'.</INFO>
         <CONTEXT>
           <LEVEL>course</LEVEL>
         </CONTEXT>

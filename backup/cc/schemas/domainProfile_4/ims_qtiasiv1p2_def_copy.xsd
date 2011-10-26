@@ -49,7 +49,7 @@
   <!-- ** Inclusions and Imports ** -->
   <!-- **************************** -->
   <!-- ID changed schemaLocation from "http://www.w3.org/2001/03/xml.xsd" to "http://www.w3.org/2001/xml.xsd" -->
-  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd" />
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../xml.xsd" />
   <!-- ****************** -->
   <!-- ** Root Element ** -->
   <!-- ****************** -->

@@ -7,7 +7,7 @@
       <FULLNAME>[#course_name#]</FULLNAME>
       <SHORTNAME>[#course_short_name#]</SHORTNAME>
       <IDNUMBER></IDNUMBER>
-      <SUMMARY></SUMMARY>
+      <SUMMARY>[#course_description#]</SUMMARY>
       <FORMAT>topics</FORMAT>
       <SHOWGRADES>1</SHOWGRADES>
       <NEWSITEMS>5</NEWSITEMS>

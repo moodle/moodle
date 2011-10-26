@@ -17,14 +17,13 @@
  * @package   moodlecore
  * @subpackage backup-imscc
  * @copyright 2009 Mauro Rondinelli (mauro.rondinelli [AT] uvcms.com)
+ * @copyright 2011 Darko Miletic (dmiletic@moodlerooms.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
-class resource extends entities {
-
-    private $namespaces = array('wl' => 'http://www.imsglobal.org/xsd/imswl_v1p0');
+class cc_resource extends entities {
 
     public function generate_node () {
 
@@ -46,9 +45,9 @@ class resource extends entities {
     private function create_node_course_modules_mod_resource ($sheet_mod_resource, $instance) {
 
         $link = '';
-        $xpath = cc2moodle::newx_path(CC2Moodle::$manifest, CC2Moodle::$namespaces);
+        $xpath = cc2moodle::newx_path(cc2moodle::$manifest, cc2moodle::$namespaces);
 
-        if ($instance['common_cartriedge_type'] == CC_TYPE_WEBCONTENT || $instance['common_cartriedge_type'] == CC_TYPE_ASSOCIATED_CONTENT) {
+        if ($instance['common_cartriedge_type'] == cc2moodle::CC_TYPE_WEBCONTENT || $instance['common_cartriedge_type'] == cc2moodle::CC_TYPE_ASSOCIATED_CONTENT) {
             $resource = $xpath->query('/imscc:manifest/imscc:resources/imscc:resource[@identifier="' . $instance['resource_indentifier'] . '"]/@href');
             $resource = !empty($resource->item(0)->nodeValue) ? $resource->item(0)->nodeValue : '';
 
@@ -66,7 +65,7 @@ class resource extends entities {
             }
         }
 
-        if ($instance['common_cartriedge_type'] == CC_TYPE_WEBLINK) {
+        if ($instance['common_cartriedge_type'] == cc2moodle::CC_TYPE_WEBLINK) {
 
             $external_resource = $xpath->query('/imscc:manifest/imscc:resources/imscc:resource[@identifier="' . $instance['resource_indentifier'] . '"]/imscc:file/@href')->item(0)->nodeValue;
 
@@ -75,9 +74,11 @@ class resource extends entities {
                 $resource = $this->load_xml_resource(cc2moodle::$path_to_manifest_folder . DIRECTORY_SEPARATOR . $external_resource);
 
                 if (!empty($resource)) {
-                    $xpath = cc2moodle::newx_path($resource, $this->namespaces);
-                    $resource = $xpath->query('/wl:webLink/url/@href');
-                    $link = $resource->item(0)->nodeValue;
+                    $xpath = cc2moodle::newx_path($resource, cc2moodle::getresourcens());
+                    $resource = $xpath->query('/wl:webLink/wl:url/@href');
+                    if ($resource->length > 0) {
+                        $link = $resource->item(0)->nodeValue;
+                    }
                 }
             }
         }
@@ -91,9 +92,9 @@ class resource extends entities {
                            '[#date_now#]');
 
         $replace_values = array($instance['instance'],
-                                $instance['title'],
+                                htmlentities($instance['title']),
                                 'file',
-                                $link,
+                                htmlentities($link),
                                 '',
                                 '',
                                 time());

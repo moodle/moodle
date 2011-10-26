@@ -35,6 +35,7 @@ class backup_final_task extends backup_task {
      * Create all the steps that will be part of this task
      */
     public function build() {
+        global $CFG;
 
         // Set the backup::VAR_CONTEXTID setting to course context as far as next steps require that
         $coursectxid = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
@@ -105,8 +106,31 @@ class backup_final_task extends backup_task {
         // to the backup, settings, license, versions and other useful information
         $this->add_step(new backup_main_structure_step('mainfile', 'moodle_backup.xml'));
 
+        require_once($CFG->dirroot . '/backup/util/helper/convert_helper.class.php');
+
+        //Checking if we have some converter involved in the process
+        $converters = convert_helper::available_converters(false);
+        //Conversion status
+        $conversion = false;
+        foreach ($converters as $value) {
+            if ($this->get_setting_value($value)) {
+                //zip class
+                $zip_contents      = "{$value}_zip_contents";
+                $store_backup_file = "{$value}_store_backup_file";
+                $convert           = "{$value}_backup_convert";
+
+                $this->add_step(new $convert("package_convert_{$value}"));
+                $this->add_step(new $zip_contents("zip_contents_{$value}"));
+                $this->add_step(new $store_backup_file("save_backupfile_{$value}"));
+                if (!$conversion) {
+                    $conversion = true;
+                }
+            }
+        }
+
+
         // On backup::MODE_IMPORT, we don't have to zip nor store the the file, skip these steps
-        if ($this->plan->get_mode() != backup::MODE_IMPORT) {
+        if (($this->plan->get_mode() != backup::MODE_IMPORT) && !$conversion) {
             // Generate the zip file (mbz extension)
             $this->add_step(new backup_zip_contents('zip_contents'));
 

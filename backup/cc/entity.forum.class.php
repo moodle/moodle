@@ -17,12 +17,56 @@
  * @package   moodlecore
  * @subpackage backup-imscc
  * @copyright 2009 Mauro Rondinelli (mauro.rondinelli [AT] uvcms.com)
+ * @copyright 2011 Darko Miletic (dmiletic@moodlerooms.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
-class forum extends entities {
+class cc_forum extends entities {
+
+    public function full_path ($path, $dir_sep = DIRECTORY_SEPARATOR) {
+
+        $token = '$IMS-CC-FILEBASE$';
+        $path = str_replace($token, '', $path);
+
+        if (is_string($path) && ($path != '')) {
+            $dir_sep;
+            $dot_dir = '.';
+            $up_dir = '..';
+            $length = strlen($path);
+            $rtemp = trim($path);
+            $start = strrpos($path, $dir_sep);
+            $can_continue = ($start !== false);
+            $result = $can_continue ? '' : $path;
+            $rcount = 0;
+
+            while ($can_continue) {
+
+                $dir_part = ($start !== false) ? substr($rtemp, $start + 1, $length - $start) : $rtemp;
+                $can_continue = ($dir_part !== false);
+
+                if ($can_continue) {
+                    if ($dir_part != $dot_dir) {
+                        if ($dir_part == $up_dir) {
+                            $rcount++;
+                        } else {
+                            if ($rcount > 0) {
+                                $rcount --;
+                            } else {
+                                $result = ($result == '') ? $dir_part : $dir_part . $dir_sep . $result;
+                            }
+                        }
+                    }
+                    $rtemp = substr($path, 0, $start);
+                    $start = strrpos($rtemp, $dir_sep);
+                    $can_continue = (($start !== false) || (strlen($rtemp) > 0));
+                }
+            }
+        }
+
+        return $result;
+    }
 
     public function generate_node () {
 
@@ -45,6 +89,7 @@ class forum extends entities {
 
         $topic_data = $this->get_topic_data($instance);
 
+        $result = '';
         if (!empty($topic_data)) {
 
             $find_tags = array('[#mod_instance#]',
@@ -53,35 +98,36 @@ class forum extends entities {
                                '[#date_now#]');
 
             $replace_values = array($instance['instance'],
-                                    $instance['title'] . ' - ' . $topic_data['title'],
-                                    $topic_data['description'],
+                                    //To be more true to the actual forum name we use only forum title
+                                    htmlentities($topic_data['title']),
+                                    htmlentities($topic_data['description']),
                                     time());
 
-            return str_replace($find_tags, $replace_values, $sheet_mod_forum);
+            $result = str_replace($find_tags, $replace_values, $sheet_mod_forum);
 
-        } else {
-            return '';
         }
+
+        return $result;
     }
 
     public function get_topic_data ($instance) {
 
         $topic_data = '';
 
-        $namespaces = array('dt' => 'http://www.imsglobal.org/xsd/imsdt_v1p0');
-
         $topic_file = $this->get_external_xml($instance['resource_indentifier']);
 
         if (!empty($topic_file)) {
 
-            $topic = $this->load_xml_resource(cc2moodle::$path_to_manifest_folder . DIRECTORY_SEPARATOR . $topic_file);
+            $topic_file_path = cc2moodle::$path_to_manifest_folder . DIRECTORY_SEPARATOR . $topic_file;
+            $topic_file_dir = dirname($topic_file_path);
+            $topic = $this->load_xml_resource($topic_file_path);
 
             if (!empty($topic)) {
 
-                $xpath = cc2moodle::newx_path($topic, $namespaces);
+                $xpath = cc2moodle::newx_path($topic, cc2moodle::getforumns());
 
                 $topic_title = $xpath->query('/dt:topic/title');
-                $topic_title = !empty($topic_title->item(0)->nodeValue) ? $topic_title->item(0)->nodeValue : '';
+                $topic_title = !empty($topic_title->item(0)->nodeValue) ? $topic_title->item(0)->nodeValue : 'Untitled Topic';
 
                 $topic_text = $xpath->query('/dt:topic/text');
                 $topic_text = !empty($topic_text->item(0)->nodeValue) ? $this->update_sources($topic_text->item(0)->nodeValue, dirname($topic_file)) : '';
@@ -100,7 +146,7 @@ class forum extends entities {
                 $attachment_html = '';
 
                 foreach ($topic_attachments as $file) {
-                    $attachment_html .= $this->generate_attachment_html($file->nodeValue);
+                    $attachment_html .= $this->generate_attachment_html($this->full_path($file->nodeValue,'/'));
                 }
 
                 $topic_data['description'] = !empty($attachment_html) ? $topic_text . '<p>Attachments:</p>' . $attachment_html : $topic_text;

@@ -17,6 +17,7 @@
  * @package   moodlecore
  * @subpackage backup-imscc
  * @copyright 2009 Mauro Rondinelli (mauro.rondinelli [AT] uvcms.com)
+ * @copyright 2011 Darko Miletic (dmiletic@moodlerooms.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -188,21 +189,17 @@ class entities {
         }
     }
 
-    private function get_all_files () {
+    protected function get_all_files () {
 
         $all_files = array();
 
         $xpath = cc2moodle::newx_path(cc2moodle::$manifest, cc2moodle::$namespaces);
 
-        $types = array('associatedcontent/imscc_xmlv1p0/learning-application-resource',
-                       'webcontent',
-                      );
-
-        foreach ($types as $type) {
+        foreach (cc2moodle::$restypes as $type) {
 
             $files = $xpath->query('/imscc:manifest/imscc:resources/imscc:resource[@type="' . $type . '"]/imscc:file/@href');
 
-            if (!empty($files)) {
+            if (!empty($files) && ($files->length > 0)) {
                 foreach ($files as $file) {
                     $all_files[] = $file;
                 }

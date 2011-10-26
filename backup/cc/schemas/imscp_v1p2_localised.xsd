@@ -62,7 +62,7 @@
 <!--*************************************************************************-->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.imsglobal.org/xsd/imscc/imscp_v1p1" targetNamespace="http://www.imsglobal.org/xsd/imscc/imscp_v1p1" version="IMS CP 1.2 localised_Schema_2008_6_30" elementFormDefault="qualified" attributeFormDefault="unqualified" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsccauth_v1p0 domainProfile_0\imsccauth_v1p0_localised.xsd http://ltsc.ieee.org/xsd/imscc/LOM domainProfile_1\lomLoose_localised.xsd http://ltsc.ieee.org/xsd/LOM domainProfile_2\lomLoose_localised.xsd http://www.imsglobal.org/xsd/imscp_extensionv1p2 domainProfile_3\imscp_extensionv1p2_localised.xsd">
 	<xsd:include xmlns:xsd="http://www.w3.org/2001/XMLSchema" schemaLocation="imscc_c1p2maeV0p15_definition.xsd" />
-    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd" />
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd" />
     <xs:annotation>
         <xs:documentation>
             XSD Data File Information

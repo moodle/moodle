@@ -22,7 +22,7 @@
 
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
-class label extends entities {
+class cc_label extends entities {
 
     public function generate_node () {
 
@@ -47,10 +47,10 @@ class label extends entities {
                            '[#mod_name#]',
                            '[#mod_content#]',
                            '[#date_now#]');
-
+        //$instance['title']
         $replace_values = array($instance['instance'],
-                                $instance['title'],
-                                $instance['title'],
+                                'Untitled',
+                                'Untitled',
                                 time());
 
         return str_replace($find_tags, $replace_values, $sheet_mod_label);

@@ -56,6 +56,8 @@ define('SHEET_COURSE_QUESTION_CATEGORIES_QUESTION_CATEGORY_QUESTION_TRUE_FALSE',
 define('SHEET_COURSE_QUESTION_CATEGORIES_QUESTION_CATEGORY_QUESTION_EESAY', 'cc/sheets/course_question_categories_question_category_question_eesay.xml');
 define('SHEET_COURSE_QUESTION_CATEGORIES_QUESTION_CATEGORY_QUESTION_SHORTANSWER', 'cc/sheets/course_question_categories_question_category_question_shortanswer.xml');
 define('SHEET_COURSE_QUESTION_CATEGORIES_QUESTION_CATEGORY_QUESTION_ANSWER', 'cc/sheets/course_question_categories_question_category_question_answer.xml');
+define('SHEET_COURSE_SECTIONS_SECTION_MODS_MOD_BASICLTI', 'cc/sheets/course_modules_mod_basiclti.xml');
+define('SHEET_COURSE_SECTIONS_SECTION_MODS_MOD_LTI', 'cc/sheets/course_modules_mod_lti.xml');
 
 // CC RESOURCES TYPE ************************************************************************************************** //
 define('CC_TYPE_FORUM', 'imsdt_xmlv1p0');
@@ -72,6 +74,8 @@ define('MOODLE_TYPE_QUIZ', 'quiz');
 define('MOODLE_TYPE_QUESTION_BANK', 'question_bank');
 define('MOODLE_TYPE_RESOURCE', 'resource');
 define('MOODLE_TYPE_LABEL', 'label');
+define('MOODLE_TYPE_BASICLTI', 'basiclti');
+define('MOODLE_TYPE_LTI', 'lti');
 
 // UNKNOWN TYPE ******************************************************************************************************* //
 define('TYPE_UNKNOWN', '[UNKNOWN]');

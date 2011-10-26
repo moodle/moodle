@@ -1,11 +1,11 @@
           <QUESTION>
             <ID>[#question_id#]</ID>
             <PARENT>0</PARENT>
-            <NAME><![CDATA[[#question_title#]]]></NAME>
-            <QUESTIONTEXT><![CDATA[[#question_text#]]]></QUESTIONTEXT>
+            <NAME>[#question_title#]</NAME>
+            <QUESTIONTEXT>[#question_text#]</QUESTIONTEXT>
             <QUESTIONTEXTFORMAT>1</QUESTIONTEXTFORMAT>
             <IMAGE></IMAGE>
-            <GENERALFEEDBACK><![CDATA[[#question_general_feedback#]]]></GENERALFEEDBACK>
+            <GENERALFEEDBACK>[#question_general_feedback#]</GENERALFEEDBACK>
             <DEFAULTGRADE>1</DEFAULTGRADE>
             <PENALTY>0</PENALTY>
             <QTYPE>[#question_type#]</QTYPE>

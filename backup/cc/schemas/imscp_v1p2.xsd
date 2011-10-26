@@ -54,7 +54,7 @@
     FROM THE USE OF THIS SPECIFICATION.
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.imsglobal.org/xsd/imscp_v1p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://www.imsglobal.org/xsd/imscp_v1p1" version="IMS CP 1.2" elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd" />
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd" />
     <xs:annotation>
         <xs:documentation>
             XSD Data File Information

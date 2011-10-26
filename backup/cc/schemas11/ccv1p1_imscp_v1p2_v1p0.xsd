@@ -1,0 +1,827 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<xs:schema xmlns="http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1"
+    targetNamespace="http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1"
+    xmlns:autz="http://www.imsglobal.org/xsd/imsccv1p1/imsccauth_v1p1"
+    xmlns:lomm="http://ltsc.ieee.org/xsd/imsccv1p1/LOM/manifest"
+    xmlns:lomr="http://ltsc.ieee.org/xsd/imsccv1p1/LOM/resource"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+    version="IMS CC 1.1 CP 1.2"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace"                  schemaLocation="xml.xsd"                    />
+    <xs:import namespace="http://www.imsglobal.org/xsd/imsccv1p1/imsccauth_v1p1" schemaLocation="ccv1p1_imsccauth_v1p1.xsd"  />
+    <xs:import namespace="http://ltsc.ieee.org/xsd/imsccv1p1/LOM/manifest"       schemaLocation="ccv1p1_lommanifest_v1p0.xsd"/>
+    <xs:import namespace="http://ltsc.ieee.org/xsd/imsccv1p1/LOM/resource"       schemaLocation="ccv1p1_lomresource_v1p0.xsd"/>
+    <xs:annotation>
+        <xs:documentation>
+            XSD Data File Information
+            -------------------------
+            Author:         Colin Smythe
+            Date:           31st January, 2011
+            Version:        1.1
+            Status:         Final Release
+            Description:    This model forms a part of the IMS GLC Common Catrtridge specification.  This model is the profile of the 
+                            IMS GLC Content Package Core specification (v1.2).  The changes made to create the profile are:
+                            
+                            (a) The 'default' characteristic for the 'Organizations' class has been removed;
+                            (b) The 'isvisible' characteristic for the Item class has been removed;
+                            (c) The 'parameters' characteristic for the Item class has been removed;
+                            (d) The 'structure' characteristic for the Organization class has been fixed to 'rooted-hierarchy';
+                            (e) The 'extension' and 'version' characteristics for the Manifest class have been removed;
+                            (f) The 'extension' attribute and 'extension' characteristic have been removed the Organizations class;
+                            (g) The 'extension' attribute and 'extension' characteristic have been removed the Organization class;
+                            (h) The 'extension' attribute and 'extension' characteristic have been removed from the Resources class;
+                            (i) The 'extension' attribute and the 'extension' characteristic have been removed from the Resource class;
+                            (j) The 'extension' attribute and 'extension' characteristic have been removed from the Item class;
+                            (k) The 'extension' attribute and the 'extension' characteristic have been removed from the File class;
+                            (l) The 'extension' attribute and 'extension' characteristic have been removed from the Dependency class;
+                            (m) The 'type' characteristic of the Resource class has a new enumerated list of 'PredfinedContentTypes';
+                            (n) The 'title' attribute for the Item class has its multiplicity changed to '1' except for the top-level item 
+                            attribute in the Orgaization class where it must not occur;
+                            (o) Manifests are NO longer allowed to contain sub-manifests;
+                            (p) The multiplicity of the Organization class in the Organizations class has been made '0..1';
+                            (q) Only the metadata in the Manifest class is permitted to have the 'schema' and 'schemaversion' attributes;
+                            (r) The 'schema', 'schemaversion' and 'title' attributes are redefined directly as 'String' primitiveTypes;
+                            (s) The multiplicity of the 'item' attribute in the Organization class has been made '1';
+                            (t) The value for the 'schema' attribute has been set as 'IMS Common Cartridge';
+                            (u) The value for the 'schemaversion' attribute has been set to '1.1.0';
+                            (v) The authorizations attribute has been added as an imported extension to the manifest;
+                            (w) The protect attribute has been added as an imported extension to the resource;
+                            (x) The IEEE LOM attribute has been added as an imported extension to the manifest metadata;
+                            (y) The 'intendeduse' attribute has been added to the ResourceType complexType.
+
+            History:        This profile is taken from the formal representation in UML of the IMS CP v1.2 core specification.
+                            This is the second version of the profile for the CCv1.1.  The two changes are the addition of the 
+                            ResourceMetadata class and the vocabulary for the permitted resource types.
+
+            License:        IPR, License and Distribution Notices
+
+                            This machine readable file is derived from IMS Global Learning Consortium (GLC) specification IMS Common Cartridge Version 1.1
+                            found at http://www.imsglobal.org/cc and the original IMS GLC schema binding or code base
+                            http://www.imsglobal.org/cc.
+
+                            Recipients of this document are requested to submit, with their comments, notification of any
+                            relevant patent claims or other intellectual property rights of which they may be aware that might be
+                            infringed by the schema binding contained in this document.
+
+                            IMS GLC takes no position regarding the validity or scope of any intellectual property or other
+                            rights that might be claimed to pertain to the implementation or use of the technology described in this
+                            document or the extent to which any license under such rights might or might not be available; neither
+                            does it represent that it has made any effort to identify any such rights. Information on IMS GLCs
+                            procedures with respect to rights in IMS GLC specifications can be found at the IMS GLC Intellectual Property
+                            Rights web page: http://www.imsglobal.org/ipr/imsipr_policyFinal.pdf.
+
+                            Copyright (c) IMS Global Learning Consortium 1999-2011. All Rights Reserved.
+
+                            License Notice for Users
+
+                            Users of products or services that include this document are hereby granted a worldwide, royalty-free, 
+                            non-exclusive license to use this document. 
+
+                            Distribution Notice for Developers
+
+                            Developers of products or services that are not original incorporators of this document and 
+                            have not changed this document, that is, are distributing a software product that incorporates this 
+                            document as is from a third-party source other than IMS, are hereby granted permission to copy,
+                            display and distribute the contents of this document in any medium for any purpose without fee or 
+                            royalty provided that you include this IPR, License and Distribution notice in its entirety on ALL
+                            copies, or portions thereof.
+
+                            Developers of products or services that are original incorporators of this document and wish 
+                            to provide distribution of this document as is or with modifications and developers of products and 
+                            services that are not original incorporators of this document and have changed this document, are
+                            required to register with the IMS GLC community on the IMS GLC website as described in the following two
+                            paragraphs:-
+
+                            *  If you wish to distribute this document as is, with no modifications, you are hereby granted 
+                               permission to copy, display and distribute the contents of this document in any medium for any 
+                               purpose without fee or royalty provided that you include this IPR, License and Distribution notice in
+                               its entirety on ALL copies, or portions thereof, that you make and you complete a valid license 
+                               registration with IMS and receive an email from IMS granting the license. To register, follow the 
+                               instructions on the IMS website: http://www.imsglobal.org/specificationdownload.cfm. Once 
+                               registered you are granted permission to transfer unlimited distribution rights of this document for the 
+                               purposes of third-party or other distribution of your product or service that incorporates this 
+                               document as long as this IPR, License and Distribution notice remains in place in its entirety; 
+
+                            *  If you wish to create and distribute a derived work from this document, you are hereby 
+                               granted permission to copy, display and distribute the contents of the derived work in any medium for 
+                               any purpose without fee or royalty provided that you include this IPR, License and Distribution 
+                               notice in its entirety on ALL copies, or portions thereof, that you make and you complete a valid 
+                               profile registration with IMS GLC and receive an email from IMS GLC granting the license. To register, follow
+                               the instructions on the IMS GLC website: http://www.imsglobal.org/profile/. Once registered you are 
+                               granted permission to transfer unlimited distribution rights of the derived work for the purposes of 
+                               third-party or other distribution of your product or service that incorporates the derived work as long 
+                               as this IPR, License and Distribution notice remains in place in its entirety. 
+
+                            The limited permissions granted above are perpetual and will not be revoked by IMS GLC or its 
+                            successors or assigns.
+
+                            THIS SPECIFICATION IS BEING OFFERED WITHOUT ANY WARRANTY WHATSOEVER, AND IN PARTICULAR, ANY WARRANTY OF NONINFRINGEMENT IS
+                            EXPRESSLY DISCLAIMED. ANY USE OF THIS SPECIFICATION SHALL BE MADE ENTIRELY AT THE IMPLEMENTERS OWN RISK, AND NEITHER THE CONSORTIUM
+                            NOR ANY OF ITS MEMBERS OR SUBMITTERS, SHALL HAVE ANY LIABILITY WHATSOEVER TO ANY IMPLEMENTER OR THIRD PARTY FOR ANY DAMAGES OF
+                            ANY NATURE WHATSOEVER, DIRECTLY OR INDIRECTLY, ARISING FROM THE USE OF THIS SPECIFICATION.
+
+            Source UML File Information
+            ---------------------------
+            The source file information must be supplied as an XMI file (without diagram layout information).
+            The supported UML authoring tools are:
+            (a) Poseidon – v6 (and later)
+
+            Source XSLT File Information
+            ----------------------------
+            XSL Generator:    UMLtoXSDTransformv0p9.xsl
+            XSLT Processor:   Xalan
+            Release:          1.0 Beta 3
+            Date:             31st May, 2009
+
+            IMS GLC Auto-generation Binding Tool-kit (I-BAT)
+            ------------------------------------------------
+            This file was auto-generated using the IMS GLC Binding Auto-generation Tool-kit (I-BAT).  While every
+            attempt has been made to ensure that this tool auto-generates the files correctly, users should be aware
+            that this is an experimental tool.  Permission is given to make use of this tool.  IMS GLC makes no
+            claim on the materials created by third party users of this tool.  Details on how to use this tool
+            are contained in the IMS GLC "I-BAT" Documentation available at the IMS GLC web-site.
+
+            Tool Copyright:  2005-2011 (c) IMS Global Learning Consortium Inc.  All Rights Reserved.
+        </xs:documentation>
+    </xs:annotation>
+    
+    <xs:annotation>
+        <xs:documentation>
+            Schematron Validation Rules Information
+            ---------------------------------------
+            Author:         Colin Smythe
+            Date:           29th November, 2010
+            Version:        1.1
+            Status:         Final Release
+            
+            Description:    This set of schematron rules have been created to increase the validation capability of the CPv1.2 XSD for CCv1.1.
+                            A total of 10 rule sets have been created to ensure that:
+                            [1]  The set of rules to ensure that resources for Discussion Topics are correctly provided;
+                            [2]  The set of rules to ensure that resources for Web Links are correctly provided;
+                            [3]  The set of rules to ensure that resources for Assessments are correctly provided;
+                            [4]  The set of rules to ensure that resources for Question Banks are correctly provided;
+                            [5]  The set of rules to ensure that resources for Web Content are correctly provided;
+                            [6]  The set of rules to ensure that resources for Associated Content are correctly provided;
+                            [7]  The set of general rules to ensure that Dependencies are used correctly;
+                            [8]  The set of general rules to ensure that Items are defined correctly;
+                            [9]  The set of general rules to ensure that Files are used correctly;
+                            [10] The set of general rules to ensure that Resources are used correctly;
+                            [11] The set of rules to ensure that resources for BasicLTI are correctly provided.
+                   
+            Rule Set:       [1]  The set of rules to ensure that resources for Discussion Topics are correctly provided. 
+                                 The rules are:
+                                 (a) Detect for the Discussion Topic Resource when the required 'file' element is missing;
+                                 (b) Detect for the Discussion Topic Resource when too many 'file' elements are declared;
+                                 (c) Ensure for the Discussion Topic Resource that the 'href' attribute is not used on the 'resource' element;
+                                 (d) Detect for the Discussion Topic Resource when it has a prohibited dependency on a Discussion Topic;
+                                 (e) Detect for the Discussion Topic Resource when it has a prohibited dependency on a Web Link;
+                                 (f) Detect for the Discussion Topic Resource when it has a prohibited dependency on an Assessment;
+                                 (g) Detect for the Discussion Topic Resource when it has a prohibited dependency on a Question Bank;
+                                 (h) Detect for the Discussion Topic Resource when it has a prohibited dependency on a BasicLTI link;
+                            
+                            [2]  The set of rules to ensure that resources for Web Links are correctly provided. 
+                                 The rules are:
+                                 (a) Detect for the Web Links Resource when the required 'file' element is missing;
+                                 (b) Detect for the Web Links Resource when too many 'file' elements are declared;
+                                 (c) Ensure for the Web Links Resource that the 'href' attribute is not used on the 'resource' element;
+                                 (d) Ensure for the Web Links Resource that the 'dependency' element is not used;
+                            
+                            [3]  The set of rules to ensure that resources for Assessments are correctly provided. 
+                                 The rules are:
+                                 (a) Detect for the Assessment Resource when the required 'file' element is missing;
+                                 (b) Detect for the Assessment Resource when too many 'file' elements are declared;
+                                 (c) Ensure for the Assessment Resource that the 'href' attribute is not used on the 'resource' element;
+                                 (d) Detect for the Assessment Resource when it has a prohibited dependency on a Discussion Topic;
+                                 (e) Detect for the Assessment Resource when it has a prohibited dependency on a Web Link;
+                                 (f) Detect for the Assessment Resource when it has a prohibited dependency on an Assessment;
+                                 (g) Detect for the Assessment Resource when it has a prohibited dependency on a Question Bank;
+                                 (h) Detect for the Assessment Resource when it has a prohibited dependency on a BasicLTI link;
+                            
+                            [4]  The set of rules to ensure that resources for Question Banks are correctly provided. 
+                                 The rules are:
+                                 (a) Ensure that no more than one Qestion Bank is defiend as a resource;
+                                 (b) Detect for the Question Bank Resource when the required 'file' element is missing;
+                                 (c) Detect for the Question Bank Resource when too many 'file' elements are declared;
+                                 (d) Ensure for the Question Bank Resource that the 'href' attribute is not used on the 'resource' element;
+                                 (e) Detect for the Question Bank Resource when it has a prohibited dependency on a Discussion Topic;
+                                 (f) Detect for the Question Bank Resource when it has a prohibited dependency on a Web Link;
+                                 (g) Detect for the Question Bank Resource when it has a prohibited dependency on an Assessment;
+                                 (h) Detect for the Question Bank Resource when it has a prohibited dependency on a Question Bank;
+                                 (i) Detect for the Question Bank Resource when it has a prohibited dependency on a BasicLTI link;
+                                 
+                            [5]  The set of rules to ensure that resources for Web Content are correctly provided. 
+                                 The rules are:
+                                 (a) Detect for the Web Content Resource when it has a prohibited dependency on a Discussion Topic;
+                                 (b) Detect for the Web Content Resource when it has a prohibited dependency on a Web Link;
+                                 (c) Detect for the Web Content Resource when it has a prohibited dependency on an Assessment;
+                                 (d) Detect for the Web Content Resource when it has a prohibited dependency on a Question Bank;
+                                 (e) Detect for the Web Content Resource when it has a prohibited dependency on a Associated Content;
+                                 (f) Detect for the Web Content Resource when it has a prohibited dependency on a BasicLTI link;
+                                 (g) A Web Content Resource has a missing 'href' attribute (required because the resource is directly referenced by an Item). [TO BE VERIFIED]
+                                 
+                            [6]  The set of rules to ensure that resources for Associated Content are correctly provided. 
+                                 The rules are:
+                                 (a) Detect for the Associated Content Resource when it has a prohibited dependency on a Discussion Topic;
+                                 (b) Detect for the Associated Content Resource when it has a prohibited dependency on a Web Link;
+                                 (c) Detect for the Associated Content Resource when it has a prohibited dependency on an Assessment;
+                                 (d) Detect for the Associated Content Resource when it has a prohibited dependency on a Question Bank;
+                                 (e) Detect for the Associated Content Resource when it has a prohibited dependency on a Associated Content;
+                                 (f) Detect for the Associated Content Resource when it has a prohibited dependency on a BasicLTI link;
+                                 (g) An Associated Content Resource has a missing 'href' attribute (required because the resource is directly referenced by an Item). [TO BE VERIFIED]
+                                 
+                            [7]  The set of general rules to ensure that Dependencies are used correctly. 
+                                 The rules are:
+                                 (a) A 'dependency' element has a circular reference to its host 'resource' element with identifier;
+                                 (b) In a 'resource' element at least two 'dependency' elements reference the same 'resource' element.
+                                 
+                            [8]  The set of general rules to ensure that Items are defined correctly. 
+                                 The rules are:
+                                 (a) An Item has a prohibited reference(s) to a Question Bank Resource;
+                                 (b) A Learning Object Item contains prohibited child Item(s).
+                                 
+                            [9]  The set of general rules to ensure that Files are used correctly. 
+                                 The rules are:
+                                 (a) In a 'resource' element at least two 'file' elements have the same 'href' attribute;
+                                 
+                            [10] The set of general rules to ensure that Resources are used correctly. 
+                                 The rules are:
+                                 (a) For a 'resource' element with the 'href' attribute the 'file' element is missing;
+                                 (b) For a 'resource' element with the 'href' attribute there is no 'file' element with the correct 'href' attribute.
+                                 
+                            [11] The set of rules to ensure that resources for BasicLTI are correctly provided. 
+                                 The rules are:
+                                 (a) Detect for the BasicLTI Resource when it has a prohibited dependency on a Discussion Topic;
+                                 (b) Detect for the BasicLTI Resource when it has a prohibited dependency on a Web Link;
+                                 (c) Detect for the BasicLTI Resource when it has a prohibited dependency on an Assessment;
+                                 (d) Detect for the BasicLTI Resource when it has a prohibited dependency on a Question Bank;
+                                 (e) Detect for the BasicLTI Resource when it has a prohibited dependency on a Web Content;
+                                 (f) Detect for the BasicLTI Resource when it has a prohibited dependency on a BasicLTI link.
+        </xs:documentation>
+        
+        <xs:appinfo>
+            <sch:ns uri="http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1" prefix="cp"/>
+            <sch:title>Schematron validation rules for the Common Cartridge v1p1 profile of CP v1.1.4/1.2</sch:title>
+            
+            <!-- RULE 1: Discussion Topic Resource Validation -->
+            <sch:pattern abstract="false" name="RULE SET 1">
+                <sch:title>RULE SET 1: The set of rules to ensure that resources for Discussion Topics are correctly provided</sch:title>
+                
+                <sch:rule abstract="false" context="cp:resource[@type='imsdt_xmlv1p0']">
+                    <sch:assert test="count(cp:file) &gt; 0">
+                        [RULE 1a] For the Discussion Topic Resource the required 'file' element is missing.
+                    </sch:assert>
+                    <sch:assert test="count(cp:file) &lt; 2">
+                        [RULE 1b] For the Discussion Topic Resource there are too many 'file' element references: <sch:value-of select="count(cp:file)"/>.
+                    </sch:assert>
+                    <sch:assert test="count(@href) = 0">
+                        [RULE 1c] For the Discussion Topic Resource the 'href' attribute must not be used on the 'resource' element.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsdt_xmlv1p0']/@identifier]) = 0">
+                        [RULE 1d] The Discussion Topic Resource has a prohibited dependency on a Discussion Topic: <sch:value-of select="cp:dependency/@identifierref"/>
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imswl_xmlv1p0']/@identifier]) = 0">
+                        [RULE 1e] The Discussion Topic Resource has a prohibited dependency on a Web Link: <sch:value-of select="cp:dependency/@identifierref"/>
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/assessment']/@identifier]) = 0">
+                        [RULE 1f] The Discussion Topic Resource has a prohibited dependency on an Assessment: <sch:value-of select="cp:dependency/@identifierref"/>
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank']/@identifier]) = 0">
+                        [RULE 1g] The Discussion Topic Resource has a prohibited dependency on a Question Bank: <sch:value-of select="cp:dependency/@identifierref"/>
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsbasiclti_xmlv1p0']/@identifier]) = 0">
+                        [RULE 1h] The Discussion Topic Resource has a prohibited dependency on a BasicLTI: <sch:value-of select="cp:dependency/@identifierref"/>
+                    </sch:assert>
+                </sch:rule>
+                
+            </sch:pattern>
+            <!-- **************************************************************************** -->
+            
+            <!-- RULE 2: Web Links Resource Validation -->
+            <sch:pattern abstract="false" name="RULE SET 2">
+                <sch:title>RULE SET 2: The set of rules to ensure that resources for Web Links are correctly provided</sch:title>
+                
+                <sch:rule abstract="false" context="cp:resource[@type='imswl_xmlv1p0']">
+                    <sch:assert test="count(cp:file) &gt; 0">
+                        [RULE 2a] For the Web Link Resource the required 'file' element is missing.
+                    </sch:assert>
+                    <sch:assert test="count(cp:file) &lt; 2">
+                        [RULE 2b] For the Web Link Resource there are too many 'file' element references: <sch:value-of select="count(cp:file)"/>.
+                    </sch:assert>
+                    <sch:assert test="count(@href) = 0">
+                        [RULE 2c] For the Web Link Resource the 'href' attribute must not be used on the 'resource' element.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency) = 0">
+                        [RULE 2d] For the Web Link Resource the prohibited 'dependency' element is used: <sch:value-of select="count(cp:dependency)"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+            </sch:pattern>
+            <!-- **************************************************************************** -->
+            
+            <!-- RULE 3: Assessment Resource Validation -->
+            <sch:pattern abstract="false" name="RULE SET 3">
+                <sch:title>RULE SET 3: The set of rules to ensure that resources for Assessments are correctly provided</sch:title>
+                
+                <sch:rule abstract="false" context="cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/assessment']">
+                    <sch:assert test="count(cp:file) &gt; 0">
+                        [RULE 3a] For the Assessments Resource the required 'file' element is missing.
+                    </sch:assert>
+                    <sch:assert test="count(cp:file) &lt; 2">
+                        [RULE 3b] For the Assessments Resource there are too many 'file' element references: <sch:value-of select="count(cp:file)"/>.
+                    </sch:assert>
+                    <sch:assert test="count(@href) = 0">
+                        [RULE 3c] For the Assessments Resource the 'href' attribute must not be used on the 'resource' element.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsdt_xmlv1p0']/@identifier]) = 0">
+                        [RULE 3d] The Assessment Resource has a prohibited dependency on a Discussion Topic: <sch:value-of select="cp:dependency/@identifierref"/>
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imswl_xmlv1p0']/@identifier]) = 0">
+                        [RULE 3e] The Assessment Resource has a prohibited dependency on a Web Link: <sch:value-of select="cp:dependency/@identifierref"/>
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/assessment']/@identifier]) = 0">
+                        [RULE 3f] The Assessment Resource has a prohibited dependency on an Assessment: <sch:value-of select="cp:dependency/@identifierref"/>
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank']/@identifier]) = 0">
+                        [RULE 3g] The Assessment Resource has a prohibited dependency on a Question Bank: <sch:value-of select="cp:dependency/@identifierref"/>
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsbasiclti_xmlv1p0']/@identifier]) = 0">
+                        [RULE 3h] The Assessment Resource has a prohibited dependency on a BasicLTI: <sch:value-of select="cp:dependency/@identifierref"/>
+                    </sch:assert>
+                </sch:rule>
+                
+            </sch:pattern>
+            <!-- **************************************************************************** -->
+            
+            <!-- RULE 4: Question Bank Resource Validation -->
+            <sch:pattern abstract="false" name="RULE SET 4">
+                <sch:title>RULE SET 4: The set of rules to ensure that resources for Question Banks are correctly provided</sch:title>
+                
+                <sch:rule abstract="false" context="cp:resources">
+                    <sch:assert test="count(cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank']) &lt; 2">
+                        [RULE 4a] The are too many Question Bank Resources (a maximum of one is permitted).  Number of Question Bank Resources is: <sch:value-of select="count(cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank'])"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+                <sch:rule abstract="false" context="cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank']">
+                    <sch:assert test="count(cp:file) &gt; 0">
+                        [RULE 4b] For the Question Bank Resource the required 'file' element is missing.
+                    </sch:assert>
+                    <sch:assert test="count(cp:file) &lt; 2">
+                        [RULE 4c] For the Question Bank Resource there are too many 'file' element references: <sch:value-of select="count(cp:file)"/>.
+                    </sch:assert>
+                    <sch:assert test="count(@href) = 0">
+                        [RULE 4d] For the Question Bank Resource the 'href' attribute must not be used on the 'resource' element.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsdt_xmlv1p0']/@identifier]) = 0">
+                        [RULE 4e] The Question Bank Resource has a prohibited dependency on a Discussion Topic: <sch:value-of select="cp:dependency/@identifierref"/>
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imswl_xmlv1p0']/@identifier]) = 0">
+                        [RULE 4f] The Question Bank Resource has a prohibited dependency on a Web Link: <sch:value-of select="cp:dependency/@identifierref"/>
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/assessment']/@identifier]) = 0">
+                        [RULE 4g] The Question Bank Resource has a prohibited dependency on an Assessment: <sch:value-of select="cp:dependency/@identifierref"/>
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank']/@identifier]) = 0">
+                        [RULE 4h] The Question Bank Resource has a prohibited dependency on a Question Bank: <sch:value-of select="cp:dependency/@identifierref"/>
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsbasiclti_xmlv1p0']/@identifier]) = 0">
+                        [RULE 4i] The Question Bank Resource has a prohibited dependency on a BasicLTI: <sch:value-of select="cp:dependency/@identifierref"/>
+                    </sch:assert>
+                </sch:rule>
+                
+            </sch:pattern>
+            <!-- **************************************************************************** -->
+            
+            <!-- RULE 5: Web Content Resource Validation -->
+            <sch:pattern abstract="false" name="RULE SET 5">
+                <sch:title>RULE SET 5: The set of rules to ensure that resources for Web Content are correctly provided</sch:title>
+                
+                <sch:rule abstract="false" context="cp:resource[@type='webcontent']">
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsdt_xmlv1p0']/@identifier]) = 0">
+                        [RULE 5a] The Web Content has a prohibited dependency on a Discussion Topic: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imswl_xmlv1p0']/@identifier]) = 0">
+                        [RULE 5b] The Web Content has a prohibited dependency on a Web Link: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/assessment']/@identifier]) = 0">
+                        [RULE 5c] The Web Content has a prohibited dependency on an Assessment: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank']/@identifier]) = 0">
+                        [RULE 5d] The Web Content has a prohibited dependency on a Question Bank: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='associatedcontent/imscc_xmlv1p0/learning-application-resource']/@identifier]) = 0">
+                        [RULE 5e] The Web Content has a prohibited dependency on an Associated Content: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsbasiclti_xmlv1p0']/@identifier]) = 0">
+                        [RULE 5f] The Web Content has a prohibited dependency on a BasicLTI: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                </sch:rule>
+<!-- UNDER REVIEW
+                <sch:rule abstract="false" context="cp:resources">
+                    <sch:assert test="cp:resource[@type='webcontent'][@identifier=//cp:item/@identifierref][@href]">
+                        [RULE 5g] An Web Content resource has a missing 'href' attribute (required because the resource is directly referenced by an Item).  Check the following resources: <sch:value-of select="cp:resource[@type='webcontent']/@identifier"/>.
+                    </sch:assert>
+                </sch:rule>
+-->                
+            </sch:pattern>
+            <!-- **************************************************************************** -->
+            
+            <!-- RULE 6: Associated Content Resource Validation -->
+            <sch:pattern abstract="false" name="RULE SET 6">
+                <sch:title>RULE SET 6: The set of rules to ensure that resources for Associated Content are correctly provided</sch:title>
+                
+                <sch:rule abstract="false" context="cp:resource[@type='associatedcontent/imscc_xmlv1p0/learning-application-resource']">
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsdt_xmlv1p0']/@identifier]) = 0">
+                        [RULE 6a] The Associated Content Resource has a prohibited dependency on a Discussion Topic: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imswl_xmlv1p0']/@identifier]) = 0">
+                        [RULE 6b] The Associated Content Resource has a prohibited dependency on a Web Link: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/assessment']/@identifier]) = 0">
+                        [RULE 6c] The Associated Content Resource has a prohibited dependency on an Assessment: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank']/@identifier]) = 0">
+                        [RULE 6d] The Associated Content Resource has a prohibited dependency on a Question Bank: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='associatedcontent/imscc_xmlv1p0/learning-application-resource']/@identifier]) = 0">
+                        [RULE 6e] The Associated Content Resource has a prohibited dependency on an Associated Content: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsbasiclti_xmlv1p0']/@identifier]) = 0">
+                        [RULE 6f] The Associated Content Resource has a prohibited dependency on a BasicLTI: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                </sch:rule>
+<!-- UNDER REVIEW
+                <sch:rule abstract="false" context="cp:resources">
+                    <sch:assert test="cp:resource[@type='associatedcontent/imscc_xmlv1p0/learning-application-resource'][@identifier=//cp:item/@identifierref][@href]">
+                        [RULE 6g] An Associated Content resource has a missing 'href' attribute (required because the resource is directly referenced by an Item).  Check the following resources: <sch:value-of select="cp:resource[@type='associatedcontent/imscc_xmlv1p0/learning-application-resource']/@identifier"/>.
+                    </sch:assert>
+                </sch:rule>
+-->                
+            </sch:pattern>
+            <!-- **************************************************************************** -->
+            
+            <!-- RULE 7: General Dependency Validation -->
+            <sch:pattern abstract="false" name="RULE SET 7">
+                <sch:title>RULE SET 7: The set of rules to ensure that Dependencies are used correctly.</sch:title>
+                
+                <sch:rule abstract="false" context="cp:dependency">
+                    <sch:assert test="@identifierref != parent::cp:resource/@identifier">
+                        [RULE 7a] A 'dependency' element has a circular reference to its host 'resource' element with identifier: <sch:value-of select="@identifierref"/>.
+                    </sch:assert>
+                </sch:rule>
+                <sch:rule abstract="false" context="cp:resource">
+                    <sch:assert test="not(cp:dependency[@identifierref = preceding-sibling::cp:dependency/@identifierref])">
+                        [RULE 7b] In a 'resource' element at least two 'dependency' elements reference the same 'resource' element. <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+            </sch:pattern>
+            <!-- **************************************************************************** -->
+            
+            <!-- RULE 8: General Item Validation -->
+            <sch:pattern abstract="false" name="RULE SET 8">
+                <sch:title>RULE SET 8: The set of rules to ensure that Items are defined correctly.</sch:title>
+                
+                <sch:rule abstract="false" context="cp:resources">
+                    <sch:assert test="count(cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank'][@identifier=//cp:item/@identifierref]) = 0">
+                        [RULE 8a] An Item has a prohibited reference(s) to a Question Bank Resource: <sch:value-of select="cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank']/@identifier"/>.
+                    </sch:assert>                 
+                </sch:rule>
+                <sch:rule abstract="false" context="cp:item/cp:item[@identifierref]">
+                    <sch:assert test="count(cp:item) = 0">
+                        [RULE 8b] A Learning Object Item contains prohibited child Item(s): <sch:value-of select="cp:item/@identifier"/>.
+                    </sch:assert>                    
+                </sch:rule>
+                
+            </sch:pattern>
+            <!-- **************************************************************************** -->
+            
+            <!-- RULE 9: General File Validation -->
+            <sch:pattern abstract="false" name="RULE SET 9">
+                <sch:title>RULE SET 9: The set of rules to ensure that Files are used correctly.</sch:title>
+                
+                <sch:rule abstract="false" context="cp:resource">
+                    <sch:assert test="not(cp:file[@href = preceding-sibling::cp:file/@href])">
+                        [RULE 9a] In a 'resource' element at least two 'file' elements have the same 'href' attribute: <sch:value-of select="cp:file/@href"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+            </sch:pattern>
+            <!-- **************************************************************************** -->
+            
+            <!-- RULE 10: General Resource Validation -->
+            <sch:pattern abstract="false" name="RULE SET 10">
+                <sch:title>RULE SET 10: The set of general rules to ensure that Resources are used correctly.</sch:title>
+                
+                <sch:rule abstract="false" context="cp:resource[@href]">
+                    <sch:assert test="count(cp:file) &gt; 0">
+                        [RULE 10a] For a 'resource' element with the 'href' attribute the 'file' element is missing: <sch:value-of select="@identifier"/>.
+                    </sch:assert>
+                    <sch:assert test="@href=cp:file/@href">
+                        [RULE 10b] For a 'resource' element with the 'href' attribute there is no 'file' element with the correct 'href' attribute: <sch:value-of select="@identifier"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+            </sch:pattern>
+            <!-- **************************************************************************** -->
+           
+            <!-- RULE 11: BasicLTI Resource Validation -->
+            <sch:pattern abstract="false" name="RULE SET 11">
+                <sch:title>RULE SET 11: The set of rules to ensure that resources for BasicLTI are correctly provided</sch:title>
+                
+                <sch:rule abstract="false" context="cp:resource[@type='imsbasiclti_xmlv1p0']">
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsdt_xmlv1p0']/@identifier]) = 0">
+                        [RULE 11a] The BasicLTI has a prohibited dependency on a Discussion Topic: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imswl_xmlv1p0']/@identifier]) = 0">
+                        [RULE 11b] The BasicLTI has a prohibited dependency on a Web Link: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/assessment']/@identifier]) = 0">
+                        [RULE 11c] The Web Content has a prohibited dependency on an Assessment: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsqti_xmlv1p2/imscc_xmlv1p0/question-bank']/@identifier]) = 0">
+                        [RULE 11d] The Web Content has a prohibited dependency on a Question Bank: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='webcontent']/@identifier]) = 0">
+                        [RULE 11e] The Web Content has a prohibited dependency on an Associated Content: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                    <sch:assert test="count(cp:dependency[@identifierref=//cp:resource[@type='imsbasiclti_xmlv1p0']/@identifier]) = 0">
+                        [RULE 11f] The Web Content has a prohibited dependency on a BasicLTI: <sch:value-of select="cp:dependency/@identifierref"/>.
+                    </sch:assert>
+                </sch:rule>
+                
+            </sch:pattern>
+            <!-- **************************************************************************** -->
+            
+        </xs:appinfo>
+        
+    </xs:annotation>
+
+    <!-- Generate Global Attributes *********************************************************************** -->
+
+    <xs:attributeGroup name="protected.Resource.Attr">
+        <xs:attribute ref="autz:protected" use="optional" default="false"/>
+    </xs:attributeGroup>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate Global List Types *********************************************************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate Namespaced extension Group  ************************************************************* -->
+
+    <xs:group name="grpStrict.any">
+        <xs:annotation>
+            <xs:documentation>
+                Any namespaced element from any namespace may be included within an "any" element.
+                The namespace for the imported element must be defined in the instance, and the schema must be imported.
+                The extension has a definition of "strict" i.e. they must have their own namespace.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:any namespace = "##other" processContents = "strict" minOccurs = "0" maxOccurs = "unbounded"/>
+        </xs:sequence>
+    </xs:group>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate Special DataTypes  ********************************************************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the enumerated simpleType declarations ************************************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the simpleType elements based IMS data-types  ******************************************* -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the derived data-type elements based upon simpleType ************************************ -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the derived data-type elements based upon derived simpleType **************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Generate the data-type ComplexTypes ************************************************************** -->
+
+    <xs:complexType name="Dependency.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                <p>This identifies a resource whose files this resource depends upon. The reference to an identifier in the resources section is contained in the Identifierref attribute.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+        </xs:sequence>
+        <xs:attribute name="identifierref" use="required" type="xs:IDREF"/>
+    </xs:complexType>
+
+    <xs:complexType name="File.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                <p>A listing of file that this resource is dependent on. The href attribute identifies the location of the file. This may have some meta-data.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="metadata" type="Metadata.Type" minOccurs = "0" maxOccurs = "1"/>
+        </xs:sequence>
+        <xs:attribute name="href" use="required" type="xs:anyURI"/>
+    </xs:complexType>
+
+    <xs:complexType name="Item.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                <p>This is the structure that describes the shape of the organization. It is used in a hierarchical organizational scheme by ordering and nesting. Each Item has an identifier that is unique within the Manifest file. Identifierref acts as a reference to an identifier in the resources section. An Item has a title and may have meta-data. The parameters and isvisible attributes have been removed for this profile.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="title" type="xs:string" minOccurs = "1" maxOccurs = "1"/>
+            <xs:element name="item" type="Item.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+            <xs:element name="metadata" type="Metadata.Type" minOccurs = "0" maxOccurs = "1"/>
+        </xs:sequence>
+        <xs:attribute name="identifier" use="required" type="xs:ID"/>
+        <xs:attribute name="identifierref" use="optional" type="xs:IDREF"/>
+    </xs:complexType>
+
+    <xs:complexType name="ItemOrg.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                <p>This is the structure that describes the top-level shape of the organization and so only a single Item is permitted. The top-level has an identifier that is unique within the Manifest file.  It may have meta-data but it has not title. It can contain any number of Items. The parameters and isvisible attributes have been removed for this profile</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="item" type="Item.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+            <xs:element name="metadata" type="Metadata.Type" minOccurs = "0" maxOccurs = "1"/>
+        </xs:sequence>
+        <xs:attribute name="identifier" use="required" type="xs:ID"/>
+    </xs:complexType>
+
+    <xs:complexType name="Manifest.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                <p>A reusable unit of instruction. It encapsulates meta-data, organizations, resource references and authorization.<br/> It must have an identifier that is unique within the Manifest. The version and reference base is optional.<br/> The base provides the relative path offset for the content file(s).</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="metadata" type="ManifestMetadata.Type" minOccurs = "1" maxOccurs = "1"/>
+            <xs:element name="organizations" type="Organizations.Type" minOccurs = "1" maxOccurs = "1"/>
+            <xs:element name="resources" type="Resources.Type" minOccurs = "1" maxOccurs = "1"/>
+            <xs:element ref="autz:authorizations" minOccurs = "0" maxOccurs = "1"/>
+        </xs:sequence>
+        <xs:attribute name="identifier" use="required" type="xs:ID"/>
+        <xs:attribute ref="xml:base" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="ManifestMetadata.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                <p>This is the meta-data describing the Manifest. The schema describes the schema that defines and controls the Manifest.<br/> Schemaversion describes the version of the above schema (e.g., 1,0, 1.1). In Common Cartridge all of the meta-data is described<br/> using the iEEE LOM standard format. CC manifest metadata is required.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="schema" minOccurs = "1" maxOccurs = "1">
+                <xs:simpleType>
+                    <xs:annotation>
+                        <xs:documentation source="umldocumentation">
+                            <p>This is the meta-data describing the associated class (but not the manifest which has its own meta-data structure). <br/> In Common Cartridge all of the meta-data is described using the IEEE LOM standard format.</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="IMS Common Cartridge"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="schemaversion" minOccurs = "1" maxOccurs = "1">
+                <xs:simpleType>
+                    <xs:annotation>
+                        <xs:documentation source="umldocumentation">
+                            <p>This is the meta-data describing the associated class (but not the manifest which has its own meta-data structure). <br/> In Common Cartridge all of the meta-data is described using the IEEE LOM standard format.</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="1.1.0"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element ref="lomm:lom" minOccurs = "1" maxOccurs = "1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Metadata.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                <p>This is the meta-data describing the associated class (but not the manifest which has its own meta-data structure). <br/> In Common Cartridge all of the meta-data is described using the IEEE LOM standard format.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:group ref="grpStrict.any"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Organization.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                <p>Describes a particular hierarchical organization in this profile; this is the only type of oranization that is permitted. The identifier, for the organization, that is unique within the Manifest file. The organization may have meta-data.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="title" type="xs:string" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="item" type="ItemOrg.Type" minOccurs = "1" maxOccurs = "1"/>
+            <xs:element name="metadata" type="Metadata.Type" minOccurs = "0" maxOccurs = "1"/>
+        </xs:sequence>
+        <xs:attribute name="identifier" use="required" type="xs:ID"/>
+        <xs:attribute name="structure" use="required" fixed="rooted-hierarchy" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="Organizations.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                <p>Describes zero or one structures or organizations for the Cartridge. Only one organization is permitted so the default attribute has been removed for this Profile.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="organization" type="Organization.Type" minOccurs = "0" maxOccurs = "1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Resource.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                <p>A reference to a resource which consists of one or more physical files. The Identifer of the resource is unique within the scope of its containing Manifest file. The Type attribute indicates the type of resource - for the Cartridge this is an enumerated set. The resource may have meta-data, zero or more files references, and zero or more dependencies.</p>
+<p>CCV1.1 PROFILE: The authorizations 'protected' attribute and the 'intendedUse' attribute are added.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="metadata" type="ResourceMetadata.Type" minOccurs = "0" maxOccurs = "1"/>
+            <xs:element name="file" type="File.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+            <xs:element name="dependency" type="Dependency.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="identifier" use="required" type="xs:ID"/>
+        <xs:attribute name="type" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="webcontent"/>
+                    <xs:enumeration value="imsqti_xmlv1p2/imscc_xmlv1p1/assessment"/>
+                    <xs:enumeration value="imsqti_xmlv1p2/imscc_xmlv1p1/question-bank"/>
+                    <xs:enumeration value="associatedcontent/imscc_xmlv1p1/learning-application-resource"/>
+                    <xs:enumeration value="imsdt_xmlv1p1"/>
+                    <xs:enumeration value="imswl_xmlv1p1"/>
+                    <xs:enumeration value="imsbasiclti_xmlv1p0"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="href" use="optional" type="xs:anyURI"/>
+        <xs:attribute ref="xml:base" use="optional"/>
+        <xs:attribute name="intendeduse" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="lessonplan"/>
+                    <xs:enumeration value="syllabus"/>
+                    <xs:enumeration value="unspecified"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attributeGroup ref="protected.Resource.Attr"/>
+    </xs:complexType>
+
+    <xs:complexType name="ResourceMetadata.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                <p>This is the container for resource specific metadata..</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element ref="lomr:lom" minOccurs = "1" maxOccurs = "1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Resources.Type" mixed="false">
+        <xs:annotation>
+            <xs:documentation source="umldocumentation">
+                <p>A collection of references to resources. There is no assumption of order or hierarchy. The base attribute provides the relative path offset for the content file(s).</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="resource" type="Resource.Type" minOccurs = "0" maxOccurs = "unbounded"/>
+        </xs:sequence>
+        <xs:attribute ref="xml:base" use="optional"/>
+    </xs:complexType>
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the elements ********************************************************************** -->
+
+    <!-- ================================================================================================== -->
+
+    <!-- Declaration of the root element(s) *************************************************************** -->
+
+    <xs:element name="manifest" type="Manifest.Type"/>
+
+    <!-- ================================================================================================== -->
+
+</xs:schema>

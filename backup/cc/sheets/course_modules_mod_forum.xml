@@ -2,8 +2,8 @@
         <ID>[#mod_instance#]</ID>
         <MODTYPE>forum</MODTYPE>
         <TYPE>news</TYPE>
-        <NAME><![CDATA[[#mod_forum_title#]]]></NAME>
-        <INTRO><![CDATA[[#mod_forum_intro#]]]></INTRO>
+        <NAME>[#mod_forum_title#]</NAME>
+        <INTRO>[#mod_forum_intro#]</INTRO>
         <ASSESSED>0</ASSESSED>
         <ASSESSTIMESTART>0</ASSESSTIMESTART>
         <ASSESSTIMEFINISH>0</ASSESSTIMEFINISH>
