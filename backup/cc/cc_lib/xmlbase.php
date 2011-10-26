@@ -1,25 +1,16 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* @package    backup-convert
-* @subpackage cc-library
-* @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Implementation of Common Cartridge library based on
+ * {@link http://www.imsglobal.org/cc/ IMS Common Cartridge Standard v1.2}
+ *
+ * @author Darko Miletic
+ * @author Daniel Muhlrad (daniel.muhlrad@uvcms.com)
+ * @version 1.0
+ * @copyright 2009 {@link http://www.uvcms.com UVCMS e-learning}
+ * @package cc_library
+ *
+ */
 
 require_once 'gral_lib/cssparser.php';
 
@@ -207,11 +198,6 @@ class XMLGenericDocument {
 		return $result;
 	}
 
-// 	public function nodeValue($path,$count = 1,$node=null){
-// 		$nd = $this->node($path,$count,$node);
-// 		return $this->nodeTextValue($nd);
-// 	}
-
 	/**
 	 *
 	 * Get's text value of the node based on xpath query
@@ -221,7 +207,7 @@ class XMLGenericDocument {
 	 * @return string
 	 */
 	public function nodeValue($path, $node = null, $count = 1){
-	    $nd = $this->node($path,$count,$node);
+	    $nd = $this->node($path, $node, $count);
 	    return $this->nodeTextValue($nd);
 	}
 
@@ -251,11 +237,11 @@ class XMLGenericDocument {
 	 *
 	 * Enter description here ...
 	 * @param string $path
-	 * @param int $count
 	 * @param DOMNode $nd
+	 * @param int $count
 	 * @return DOMNode
 	 */
-	public function node($path, $count = 1, $nd=null) {
+	public function node($path, $nd = null, $count = 1) {
 		$result = null;
 		$resultlist = $this->nodeList($path,$nd);
 		if ( is_object($resultlist) &&
@@ -295,7 +281,7 @@ class XMLGenericDocument {
 	 */
 	public function create_attribute_ns($namespace, $name, $value = null) {
 	    $result = $this->doc->createAttributeNS($namespace, $name);
-	    if (!empty($value)) {
+	    if (!is_null($value)) {
 	        $result->nodeValue = $value;
 	    }
 	    return $result;
@@ -310,7 +296,7 @@ class XMLGenericDocument {
 	 */
 	public function create_attribute($name, $value = null) {
 	    $result = $this->doc->createAttribute($name);
-	    if (!empty($value)) {
+	    if (!is_null($value)) {
 	        $result->nodeValue = $value;
 	    }
 	    return $result;
@@ -327,10 +313,27 @@ class XMLGenericDocument {
 	 */
 	public function append_new_element_ns(DOMNode &$parentnode, $namespace, $name, $value = null) {
 	    $newnode = null;
-	    if (empty($value)) {
+	    if (is_null($value)) {
 	        $newnode = $this->doc->createElementNS($namespace, $name);
 	    } else {
 	        $newnode = $this->doc->createElementNS($namespace, $name, $value);
+	    }
+	    return $parentnode->appendChild($newnode);
+	}
+
+	/**
+	 *
+	 * New node with CDATA content
+	 * @param DOMNode $parentnode
+	 * @param string $namespace
+	 * @param string $name
+	 * @param string $value
+	 */
+	public function append_new_element_ns_cdata(DOMNode &$parentnode, $namespace, $name, $value = null) {
+	    $newnode = $this->doc->createElementNS($namespace, $name);
+	    if (!is_null($value)) {
+	        $cdata = $this->doc->createCDATASection($value);
+	        $newnode->appendChild($cdata);
 	    }
 	    return $parentnode->appendChild($newnode);
 	}
@@ -345,7 +348,7 @@ class XMLGenericDocument {
 	 */
 	public function append_new_element(DOMNode &$parentnode, $name, $value = null) {
 	    $newnode = null;
-	    if (empty($value)) {
+	    if (is_null($value)) {
 	        $newnode = $this->doc->createElement($name);
 	    } else {
 	        $newnode = $this->doc->createElement($name, $value);

@@ -155,11 +155,9 @@ abstract class cc_convert_moodle2 {
                         $caller = "cc_converter_{$activity_type}";
                         if (class_exists($caller)) {
                             $obj = new $caller($aitem, $manifest, $packageroot, $path);
-                            if ( !$obj->convert($outdir) ) {
-                                echo "failed to convert {$activity_type}".PHP_EOL;
+                            if (!$obj->convert($outdir)) {
+                                throw new RuntimeException("failed to convert {$activity_type}");
                             }
-                        } else {
-                            echo "skipped {$activity_type}".PHP_EOL;
                         }
                     }
                 }

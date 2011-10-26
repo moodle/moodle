@@ -82,10 +82,11 @@ abstract class cc_helpers {
     public static function embedded_files($html) {
         $result = array();
         $doc = new XMLGenericDocument();
-        if ($doc->loadHTML($html)) {
-            $list = $doc->nodeList("//img[starts-with(@src,'@@PLUGINFILE@@')]/@src");
+        if (!empty($html) && $doc->loadHTML($html)) {
+            $list = $doc->nodeList("//img[starts-with(@src,'@@PLUGINFILE@@')]/@src | //a[starts-with(@href,'@@PLUGINFILE@@')]/@href");
             foreach ($list as $filelink) {
-                $result[] = str_replace('@@PLUGINFILE@@', '', $filelink->nodeValue);
+                $rawvalue = rawurldecode(str_replace('@@PLUGINFILE@@', '', $filelink->nodeValue));
+                $result[] = $rawvalue;
             }
         }
         return $result;
@@ -226,7 +227,7 @@ abstract class cc_helpers {
         */
         $lfiles = self::embedded_files($content);
         $text = $content;
-        $deps = null;
+        $deps = array();
         if (!empty($lfiles)) {
             $files = self::handle_static_content($manifest,
                                                  $packageroot,
@@ -234,12 +235,14 @@ abstract class cc_helpers {
                                                  $outdir);
             foreach ($lfiles as $lfile) {
                 if (array_key_exists($lfile, $files)) {
-                    $text = str_replace('@@PLUGINFILE@@'.$lfile,
-                                        '$IMS-CC-FILEBASE$../'.$files[$lfile][1],
-                    $text);
+                    $filename = rawurlencode(basename($lfile));
+                    $content = str_replace('@@PLUGINFILE@@/'.$filename,
+                                           '$IMS-CC-FILEBASE$../'.$files[$lfile][1],
+                                           $content);
                     $deps[] = $files[$lfile][0];
                 }
             }
+            $text = $content;
         }
         return array($text, $deps);
     }
@@ -379,5 +382,52 @@ class pkg_static_resources {
     public function reset() {
         $this->values   = array();
         $this->finished = false  ;
+    }
+}
+
+
+class pkg_resource_dependencies {
+    /**
+    * @var array
+    */
+    private $values = array();
+
+    /**
+     * @var pkg_resource_dependencies
+     */
+    private static $instance = null;
+
+    private function __clone() {
+    }
+    private function __construct() {
+    }
+
+    /**
+     * @return pkg_resource_dependencies
+     */
+    public static function instance() {
+        if (empty(self::$instance)) {
+            $c = __CLASS__;
+            self::$instance = new $c();
+        }
+        return self::$instance;
+    }
+
+    /**
+     * @param array $deps
+     */
+    public function add(array $deps) {
+        $this->values = array_merge($this->values, $deps);
+    }
+
+    public function reset() {
+        $this->values = array();
+    }
+
+    /**
+     * @return array
+     */
+    public function get_deps() {
+        return $this->values;
     }
 }

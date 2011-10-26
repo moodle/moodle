@@ -35,12 +35,18 @@ class cc_converter_lti extends cc_converter {
 
     public function convert($outdir) {
         $rt = new basicltil1_resurce_file();
+        $contextid = $this->doc->nodeValue('/activity/@contextid');
         $title = $this->doc->nodeValue('/activity/lti/name');
         $rt->set_title($title);
-        $rt->set_description($this->doc->nodeValue('/activity/lti/intro'));
+        $result = cc_helpers::process_linked_files($text,
+                                                   $this->manifest,
+                                                   $this->rootpath,
+                                                   $contextid,
+                                                   $outdir);
+        $rt->set_description($result[0]);
         $rt->set_launch_url($this->doc->nodeValue('/activity/lti/toolurl'));
         $rt->set_launch_icon('');
-        $this->store($rt, $outdir, $title);
+        $this->store($rt, $outdir, $title, $result[1]);
         return true;
     }
 }
