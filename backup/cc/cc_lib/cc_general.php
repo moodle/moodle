@@ -60,10 +60,13 @@ class general_cc_file extends XMLGenericDocument {
             $vt = empty($schemaLocation) ? '' : ' ';
             $schemaLocation .= $vt.$this->ccnamespaces[$key].' '.$value;
         }
-        $this->append_new_attribute_ns($rootel,
-                                       $this->ccnamespaces['xsi'],
-                                       'xsi:schemaLocation',
-                                        $schemaLocation);
+
+        if (!empty($schemaLocation) && isset($this->ccnamespaces['xsi'])) {
+            $this->append_new_attribute_ns($rootel,
+                                           $this->ccnamespaces['xsi'],
+                                           'xsi:schemaLocation',
+                                            $schemaLocation);
+        }
 
         $this->root = $rootel;
     }

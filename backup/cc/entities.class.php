@@ -25,6 +25,38 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 class entities {
 
+    protected function prepare_content($content) {
+        $result = $content;
+        if (empty($result)) {
+            return '';
+        }
+        $encoding = null;
+        $dom = new DOMDocument();
+        try {
+            if ($dom->loadHTML($content)) {
+                $encoding = $dom->xmlEncoding;
+            }
+        } catch(DOMException $e) {
+            //silence the exception if any
+        }
+        if (empty($encoding)) {
+            $encoding = mb_detect_encoding($content, 'auto', true);
+        }
+        if (!empty($encoding) && !mb_check_encoding($content, 'UTF-8')) {
+            $result = mb_convert_encoding($content, 'UTF-8', $encoding);
+        }
+
+        // See if we can strip off body tag and anything outside of it
+        foreach (array('body', 'html') as $tagname) {
+            $regex = str_replace('##', $tagname, "/<##[^>]*>(.+)<\/##>/is");
+            if (preg_match($regex, $result, $matches)) {
+                $result = $matches[1];
+                break;
+            }
+        }
+        return $result;
+    }
+
     public function load_xml_resource ($path_to_file) {
 
         $resource = new DOMDocument();
@@ -173,13 +205,14 @@ class entities {
 
                 cc2moodle::log_action('Copy the file: ' . $source . ' to ' . $destination);
 
-                //echo 'Copy the file: ' . $source . ' to ' . $destination . '<br>';
-
                 if (!file_exists($destination_directory)) {
                     mkdir($destination_directory, $CFG->directorypermissions, true);
                 }
 
-                $copy_success = @copy($source, $destination);
+                $copy_success = true;
+                if (is_file($source)) {
+                    $copy_success = @copy($source, $destination);
+                }
 
                 if (!$copy_success) {
                     notify('WARNING: Cannot copy the file ' . $source . ' to ' . $destination);
@@ -201,11 +234,34 @@ class entities {
 
             if (!empty($files) && ($files->length > 0)) {
                 foreach ($files as $file) {
+                    //omit html files
+                    $ext = strtolower(pathinfo($file->nodeValue, PATHINFO_EXTENSION));
+                    if (in_array($ext, array('html', 'htm', 'xhtml'))) {
+                        continue;
+                    }
                     $all_files[] = $file;
                 }
             }
 
             unset($files);
+        }
+
+        //are there any labels?
+        $xquery = "//imscc:item/imscc:item/imscc:item[imscc:title][not(@identifierref)]";
+        $labels = $xpath->query($xquery);
+        if (!empty($labels) && ($labels->length > 0)) {
+            $tname = 'course_files';
+            $dpath = cc2moodle::$path_to_manifest_folder . DIRECTORY_SEPARATOR . $tname;
+            $fpath = $dpath . DIRECTORY_SEPARATOR . 'folder.gif';
+            $rfpath = $tname.'/folder.gif';
+
+            if (!file_exists($dpath)) {
+                mkdir($dpath);
+            }
+            //copy the folder.gif file
+            $folder_gif = "{$CFG->dirroot}/pix/f/folder.gif";
+            copy($folder_gif, $fpath);
+            $all_files[] = $rfpath;
         }
 
         $all_files = empty($all_files) ? '' : $all_files;

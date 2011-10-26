@@ -117,13 +117,16 @@ abstract class cc_converter {
     protected function store(general_cc_file $doc, $outdir, $title, $deps = null) {
         $rdir = new cc_resource_location($outdir);
         $rtp = $rdir->fullpath(true).$this->defaultname;
-        $doc->saveTo($rtp);
-        $resource = new cc_resource($rdir->rootdir(), $this->defaultname, $rdir->dirname(true));
-        $resource->dependency = empty($deps) ? array() : $deps;
-        $res = $this->manifest->add_resource($resource, null, $this->cc_type);
-        $resitem = new cc_item();
-        $resitem->attach_resource($res[0]);
-        $resitem->title = $title;
-        $this->item->add_child_item($resitem);
+        if ( $doc->saveTo($rtp) ) {
+            $resource = new cc_resource($rdir->rootdir(), $this->defaultname, $rdir->dirname(true));
+            $resource->dependency = empty($deps) ? array() : $deps;
+            $res = $this->manifest->add_resource($resource, null, $this->cc_type);
+            $resitem = new cc_item();
+            $resitem->attach_resource($res[0]);
+            $resitem->title = $title;
+            $this->item->add_child_item($resitem);
+        } else {
+            throw new RuntimeException("Unable to save file {$rtp}!");
+        }
     }
 }

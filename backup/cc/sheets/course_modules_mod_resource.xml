@@ -7,6 +7,6 @@
         <SUMMARY>[#mod_summary#]</SUMMARY>
         <ALLTEXT>[#mod_alltext#]</ALLTEXT>
         <POPUP></POPUP>
-        <OPTIONS>objectframe</OPTIONS>
+        <OPTIONS>[#mod_options#]</OPTIONS>
         <TIMEMODIFIED>[#date_now#]</TIMEMODIFIED>
       </MOD>

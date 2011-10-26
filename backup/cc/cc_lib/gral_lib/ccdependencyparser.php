@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once $CFG->dirroot .'/backup/cc/cc_lib/xmlbase.php';
+require_once dirname(__FILE__) .'/../xmlbase.php';
 require_once 'cssparser.php';
 require_once 'pathutils.php';
 

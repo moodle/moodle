@@ -73,6 +73,31 @@ abstract class cc_helpers {
         return $dirname;
     }
 
+    public static function build_query($attributes, $search) {
+        $result = '';
+        foreach ($attributes as $attribute) {
+            if ($result != '') {
+                $result .= ' | ';
+            }
+            $result .= "//*[starts-with(@{$attribute},'{$search}')]/@{$attribute}";
+        }
+        return $result;
+    }
+
+    public static function process_embedded_files(&$doc, $attributes, $search, $customslash = null) {
+        $result = array();
+        $query = self::build_query($attributes, $search);
+        $list = $doc->nodeList($query);
+        foreach ($list as $filelink) {
+            $rvalue = str_replace($search, '', $filelink->nodeValue);
+            if (!empty($customslash)) {
+                $rvalue = str_replace($customslash, '/', $rvalue);
+            }
+            $result[] = rawurldecode($rvalue);
+        }
+        return $result;
+    }
+
     /**
      *
      * Get list of embedded files
@@ -82,12 +107,13 @@ abstract class cc_helpers {
     public static function embedded_files($html) {
         $result = array();
         $doc = new XMLGenericDocument();
+        $doc->doc->validateOnParse = false;
+        $doc->doc->strictErrorChecking = false;
         if (!empty($html) && $doc->loadHTML($html)) {
-            $list = $doc->nodeList("//img[starts-with(@src,'@@PLUGINFILE@@')]/@src | //a[starts-with(@href,'@@PLUGINFILE@@')]/@href");
-            foreach ($list as $filelink) {
-                $rawvalue = rawurldecode(str_replace('@@PLUGINFILE@@', '', $filelink->nodeValue));
-                $result[] = $rawvalue;
-            }
+            $attributes = array('src', 'href');
+            $result1 = self::process_embedded_files($doc, $attributes, '@@PLUGINFILE@@');
+            $result2 = self::process_embedded_files($doc, $attributes, '$@FILEPHP@$', '$@SLASH@$');
+            $result = array_merge($result1, $result2);
         }
         return $result;
     }
@@ -139,10 +165,10 @@ abstract class cc_helpers {
             if (!$allinone) {
                 $rdir = new cc_resource_location($outdir);
             }
-            $rtp = $rdir->fullpath(true).$clean_filename;
+            $rtp = $rdir->fullpath().$values[7].$clean_filename;
             //Are there any relative virtual directories?
             //let us try to recreate them
-            $justdir = $rdir->fullpath(true).$values[7];
+            $justdir = $rdir->fullpath(false).$values[7];
             if (!file_exists($justdir)) {
                 if (!mkdir($justdir, 0777, true)) {
                     throw new RuntimeException('Unable to create directories!');
@@ -153,9 +179,15 @@ abstract class cc_helpers {
             if (!copy($source, $rtp)) {
                 throw new RuntimeException('Unable to copy files!');
             }
-            $resource = new cc_resource($rdir->rootdir(), $clean_filename, $rdir->dirname(true));
+            $resource = new cc_resource($rdir->rootdir(),
+                                        $values[7].$clean_filename,
+                                        $rdir->dirname(false));
             $res = $manifest->add_resource($resource, null, cc_version11::webcontent);
-            pkg_static_resources::instance()->add($virtual, $res[0], $rdir->dirname(true).$clean_filename, $values[1], $resource);
+            pkg_static_resources::instance()->add($virtual,
+                                                  $res[0],
+                                                  $rdir->dirname(false).$values[7].$clean_filename,
+                                                  $values[1],
+                                                  $resource);
         }
 
         pkg_static_resources::instance()->finished = true;
@@ -214,7 +246,7 @@ abstract class cc_helpers {
         return $result;
     }
 
-    public static function process_linked_files($content, cc_i_manifest &$manifest, $packageroot, $contextid, $outdir) {
+    public static function process_linked_files($content, cc_i_manifest &$manifest, $packageroot, $contextid, $outdir, $webcontent = false) {
         /**
         - detect all embedded files
         - locate their physical counterparts in moodle 2 backup
@@ -233,11 +265,16 @@ abstract class cc_helpers {
                                                  $packageroot,
                                                  $contextid,
                                                  $outdir);
+            $replaceprefix = $webcontent ? '' : '$IMS-CC-FILEBASE$';
             foreach ($lfiles as $lfile) {
                 if (array_key_exists($lfile, $files)) {
-                    $filename = rawurlencode(basename($lfile));
-                    $content = str_replace('@@PLUGINFILE@@/'.$filename,
-                                           '$IMS-CC-FILEBASE$../'.$files[$lfile][1],
+                    $filename = str_replace('%2F', '/',rawurlencode($lfile));
+                    $content = str_replace('@@PLUGINFILE@@'.$filename,
+                                           $replaceprefix.'../'.$files[$lfile][1],
+                                           $content);
+                    //for the legacy stuff
+                    $content = str_replace('$@FILEPHP@$'.str_replace('/','$@SLASH@$',$filename),
+                                           $replaceprefix.'../'.$files[$lfile][1],
                                            $content);
                     $deps[] = $files[$lfile][0];
                 }

@@ -35,6 +35,7 @@ class entities11 extends entities {
     }
 
     protected function get_all_files () {
+        global $CFG;
         $all_files = array();
         $xpath = cc2moodle::newx_path(cc112moodle::$manifest, cc112moodle::$namespaces);
         foreach (cc112moodle::$restypes as $type) {
@@ -44,11 +45,33 @@ class entities11 extends entities {
                 continue;
             }
             foreach ($files as $file) {
+                //omit html files
+                //this is a bit too simplistic
+                $ext = strtolower(pathinfo($file->nodeValue, PATHINFO_EXTENSION));
+                if (in_array($ext, array('html', 'htm', 'xhtml'))) {
+                    continue;
+                }
                 $all_files[] = $file;
             }
             unset($files);
         }
 
+        //are there any labels?
+        $xquery = "//imscc:item/imscc:item/imscc:item[imscc:title][not(@identifierref)]";
+        $labels = $xpath->query($xquery);
+        if (!empty($labels) && ($labels->length > 0)) {
+            $tname = 'course_files';
+            $dpath = cc2moodle::$path_to_manifest_folder . DIRECTORY_SEPARATOR . $tname;
+            $fpath = $dpath . DIRECTORY_SEPARATOR . 'folder.gif';
+            $rfpath = $tname.'/folder.gif';
+            if (!file_exists($dpath)) {
+                mkdir($dpath);
+            }
+            //copy the folder.gif file
+            $folder_gif = "{$CFG->dirroot}/pix/f/folder.gif";
+            copy($folder_gif, $fpath);
+            $all_files[] = $rfpath;
+        }
         $all_files = empty($all_files) ? '' : $all_files;
 
         return $all_files;

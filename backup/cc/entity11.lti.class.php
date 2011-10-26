@@ -53,14 +53,16 @@ class cc11_lti extends entities11 {
                                '[#mod_basiclti_intro#]'  ,
                                '[#mod_basiclti_timec#]'  ,
                                '[#mod_basiclti_timem#]'  ,
-                               '[#mod_basiclti_toolurl#]'
+                               '[#mod_basiclti_toolurl#]',
+            				   '[#mod_basiclti_icon#]'
                                );
 
             $replace_values = array($instance['instance'],
                                     $topic_data['title'],
                                     $topic_data['description'],
                                     time(),time(),
-                                    $topic_data['launchurl']
+                                    $topic_data['launchurl'],
+                                    $topic_data['icon']
                                     );
 
             $result = str_replace($find_tags, $replace_values, $sheet_mod_basiclti);
@@ -93,12 +95,14 @@ class cc11_lti extends entities11 {
                 $topic_title = $this->getValue($xpath->query('/xmlns:cartridge_basiclti_link/blti:title'),'Untitled');
                 $blti_description = $this->getValue($xpath->query('/xmlns:cartridge_basiclti_link/blti:description'));
                 $launch_url = $this->getValue($xpath->query('/xmlns:cartridge_basiclti_link/blti:launch_url'));
+                $launch_icon = $this->getValue($xpath->query('/xmlns:cartridge_basiclti_link/blti:icon'));
                 $tool_raw = $this->getValue($xpath->query('/xmlns:cartridge_basiclti_link/blti:vendor/lticp:code'),null);
                 $tool_url = $this->getValue($xpath->query('/xmlns:cartridge_basiclti_link/blti:vendor/lticp:url'),null);
                 $tool_desc = $this->getValue($xpath->query('/xmlns:cartridge_basiclti_link/blti:vendor/lticp:description'),null);
                 $topic_data['title'      ] = $topic_title;
                 $topic_data['description'] = $blti_description;
                 $topic_data['launchurl'  ] = $launch_url;
+                $topic_data['icon'       ] = $launch_icon;
                 $topic_data['orgid'      ] = $tool_raw;
                 $topic_data['orgurl'     ] = $tool_url;
                 $topic_data['orgdesc'    ] = $tool_desc;

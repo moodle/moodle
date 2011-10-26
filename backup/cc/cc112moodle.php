@@ -63,8 +63,11 @@ class cc112moodle extends cc2moodle {
     public function generate_moodle_xml () {
 
         global $CFG;
+        $cdir = static::$path_to_manifest_folder . DIRECTORY_SEPARATOR . 'course_files';
 
-        mkdir(static::$path_to_manifest_folder . DIRECTORY_SEPARATOR . 'course_files');
+        if (!file_exists($cdir)) {
+            mkdir($cdir);
+        }
 
         $sheet_base = static::loadsheet(SHEET_BASE);
 
@@ -175,12 +178,16 @@ class cc112moodle extends cc2moodle {
     }
 
     protected function create_node_course_modules_mod () {
+        $labels = new cc_label();
         $resources = new cc11_resource();
         $forums = new cc11_forum();
         $quiz = new cc11_quiz();
         $basiclti = new cc11_lti();
 
         static::log_action('Creating node: COURSE/MODULES/MOD');
+
+        // LABELS
+        $node_course_modules_mod_label = $labels->generate_node();
 
         // RESOURCES (WEB CONTENT AND WEB LINK)
         $node_course_modules_mod_resource = $resources->generate_node();
@@ -194,7 +201,8 @@ class cc112moodle extends cc2moodle {
         //BasicLTI
         $node_course_modules_mod_basiclti = $basiclti->generate_node();
 
-        $node_course_modules = $node_course_modules_mod_resource .
+        $node_course_modules = $node_course_modules_mod_label.
+                               $node_course_modules_mod_resource .
                                $node_course_modules_mod_forum .
                                $node_course_modules_mod_quiz .
                                $node_course_modules_mod_basiclti;

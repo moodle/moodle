@@ -141,7 +141,11 @@ class cc2moodle {
 
         global $CFG;
 
-        mkdir(static::$path_to_manifest_folder . DIRECTORY_SEPARATOR . 'course_files');
+        $cdir = static::$path_to_manifest_folder . DIRECTORY_SEPARATOR . 'course_files';
+
+        if (!file_exists($cdir)) {
+            mkdir($cdir);
+        }
 
         $sheet_base = static::loadsheet(SHEET_BASE);
 
@@ -295,7 +299,8 @@ class cc2moodle {
 
         // QUIZ
         $node_course_modules_mod_quiz = $quiz->generate_node_course_modules_mod();
-        $node_course_modules = /*$node_course_modules_mod_label .*/ $node_course_modules_mod_resource . $node_course_modules_mod_forum . $node_course_modules_mod_quiz;
+        //TODO: label
+        $node_course_modules = $node_course_modules_mod_label . $node_course_modules_mod_resource . $node_course_modules_mod_forum . $node_course_modules_mod_quiz;
 
         return $node_course_modules;
     }
@@ -527,7 +532,8 @@ class cc2moodle {
         $forum_mod = $count_forum ? $this->create_mod_info_details_mod(MOODLE_TYPE_FORUM, $forum_instance) : '';
         $label_mod = $count_label ? $this->create_mod_info_details_mod(MOODLE_TYPE_LABEL, $label_instance) : '';
 
-        return /*$label_mod .*/ $resource_mod . $quiz_mod . $forum_mod;
+        //TODO: label
+        return $label_mod . $resource_mod . $quiz_mod . $forum_mod;
 
     }
 
@@ -552,6 +558,11 @@ class cc2moodle {
         for ($i = 1; $i <= $instances_quantity; $i++) {
 
             $user_info = ($instances[$i - 1]['common_cartriedge_type'] == static::CC_TYPE_FORUM) ? 'true' : 'false';
+            if ($instances[$i - 1]['common_cartriedge_type'] == static::CC_TYPE_EMPTY) {
+                if ($instances[$i - 1]['deep'] <= ROOT_DEEP ) {
+                    continue;
+                }
+            }
 
             $replace_values = array($instances[$i - 1]['instance'],
                                     htmlentities($instances[$i - 1]['title']),
@@ -577,7 +588,7 @@ class cc2moodle {
 
                 $array_index++;
 
-                if ($item->nodeName == "item") {
+                if ($item->nodeName == "item")  {
 
                     $identifierref = $xpath->query('@identifierref', $item);
                     $identifierref = !empty($identifierref->item(0)->nodeValue) ? $identifierref->item(0)->nodeValue : '';
@@ -587,7 +598,6 @@ class cc2moodle {
 
                     $cc_type = $this->get_item_cc_type($identifierref);
                     $moodle_type = $this->convert_to_moodle_type($cc_type);
-
                 }
                 elseif ($item->nodeName == "resource")  {
 
@@ -615,8 +625,10 @@ class cc2moodle {
                 static::$instances['index'][$array_index]['resource_indentifier'] = $identifierref;
 
                 static::$instances['instances'][$moodle_type][] = array('title' => $title,
-                        'instance' => static::$instances['index'][$array_index]['instance'],
-                        'common_cartriedge_type' => $cc_type , 'resource_indentifier' => $identifierref);
+                                                                        'instance' => static::$instances['index'][$array_index]['instance'],
+                                                                        'common_cartriedge_type' => $cc_type,
+                                                                        'resource_indentifier' => $identifierref,
+                                                                        'deep' => $level);
 
                 $more_items = $xpath->query('imscc:item', $item);
 
@@ -677,9 +689,10 @@ class cc2moodle {
         if ($cc_type == static::CC_TYPE_QUESTION_BANK) {
             $type = MOODLE_TYPE_QUESTION_BANK;
         }
-        /*if ($cc_type == static::CC_TYPE_EMPTY) {
+        //TODO: label
+        if ($cc_type == static::CC_TYPE_EMPTY) {
             $type = MOODLE_TYPE_LABEL;
-        }*/
+        }
 
         return $type;
     }

@@ -34,7 +34,7 @@ class XMLGenericDocument {
      * @var DOMXPath
      */
     protected $dxpath = null;
-    private   $filename;
+    protected   $filename;
     private   $filepath;
     private   $isloaded         = false;
     private   $arrayPrefixNS    = array();
@@ -74,7 +74,7 @@ class XMLGenericDocument {
 	}
 
 	public function viewXML (){
-	    return $this->doc->saveXML;
+	    return $this->doc->saveXML();
 	}
 
 	public function registerNS($prefix, $nsuri) {
@@ -402,7 +402,7 @@ class XMLGenericDocument {
 		}
 	}
 
-	private function processPath(){
+	protected function processPath(){
 		$path_parts = pathinfo($this->filename);
 		$this->filepath = array_key_exists('dirname',$path_parts) ? $path_parts['dirname']."/" : '';
 	}

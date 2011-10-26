@@ -37,6 +37,7 @@ class cc_converter_lti extends cc_converter {
         $rt = new basicltil1_resurce_file();
         $contextid = $this->doc->nodeValue('/activity/@contextid');
         $title = $this->doc->nodeValue('/activity/lti/name');
+        $text = $this->doc->nodeValue('/activity/lti/intro');
         $rt->set_title($title);
         $result = cc_helpers::process_linked_files($text,
                                                    $this->manifest,
