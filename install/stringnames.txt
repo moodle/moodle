@@ -10,6 +10,7 @@ cannotsavezipfile,error
 cannotunzipfile,error
 chooselanguagehead,install
 chooselanguagesub,install
+clialreadyconfigured,install
 clialreadyinstalled,install
 clianswerno,admin
 cliansweryes,admin
