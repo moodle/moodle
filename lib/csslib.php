@@ -362,41 +362,65 @@ class css_optimiser {
         $this->optimisedstrlen = strlen($css);
 
         $this->timecomplete = microtime(true);
-        if (!empty($CFG->includecssstats)) {
-            $css = $this->get_stats().$css;
+        if (!empty($CFG->cssincludestats)) {
+            $css = $this->output_stats_css().$css;
         }
         return trim($css);
     }
 
     /**
-     * Returns a string to display the stats generated during the processing of
-     * raw CSS.
+     * Returns an array of stats from the last processing run
      * @return string
      */
     public function get_stats() {
 
-        $strlenimprovement = round(($this->optimisedstrlen / $this->rawstrlen) * 100, 1);
-        $ruleimprovement = round(($this->optimisedrules / $this->rawrules) * 100, 1);
-        $selectorimprovement = round(($this->optimisedselectors / $this->rawselectors) * 100, 1);
+        $stats = array(
+            'timestart'             => $this->timestart,
+            'timecomplete'          => $this->timecomplete,
+            'timetaken'             => round($this->timecomplete - $this->timestart, 4),
+            'commentsincss'         => $this->commentsincss,
+            'rawstrlen'             => $this->rawstrlen,
+            'rawselectors'          => $this->rawselectors,
+            'rawrules'              => $this->rawrules,
+            'optimisedstrlen'       => $this->optimisedstrlen,
+            'optimisedrules'        => $this->optimisedrules,
+            'optimiedselectors'     => $this->optimisedselectors,
+            'improvementstrlen'     => round(100 - ($this->optimisedstrlen / $this->rawstrlen) * 100, 1).'%',
+            'improvementrules'      => round(100 - ($this->optimisedrules / $this->rawrules) * 100, 1).'%',
+            'improvementselectors'  => round(100 - ($this->optimisedselectors / $this->rawselectors) * 100, 1).'%',
+        );
+        return $stats;
+    }
+
+    /**
+     * Returns a string to display stats about the last generation within CSS output
+     * @return string
+     */
+    public function output_stats_css() {
+        $stats = $this->get_stats();
+
+        $strlenimprovement = round(100 - ($this->optimisedstrlen / $this->rawstrlen) * 100, 1);
+        $ruleimprovement = round(100 - ($this->optimisedrules / $this->rawrules) * 100, 1);
+        $selectorimprovement = round(100 - ($this->optimisedselectors / $this->rawselectors) * 100, 1);
         $timetaken = round($this->timecomplete - $this->timestart, 4);
 
         $computedcss  = "/****************************************\n";
         $computedcss .= " *------- CSS Optimisation stats --------\n";
         $computedcss .= " *  ".date('r')."\n";
-        $computedcss .= " *  {$this->commentsincss}  \t comments removed\n";
-        $computedcss .= " *  Optimization took $timetaken seconds\n";
+        $computedcss .= " *  {$stats[commentsincss]}  \t comments removed\n";
+        $computedcss .= " *  Optimisation took {$stats[timetaken]} seconds\n";
         $computedcss .= " *--------------- before ----------------\n";
-        $computedcss .= " *  {$this->rawstrlen}  \t chars read in\n";
-        $computedcss .= " *  {$this->rawrules}  \t rules read in\n";
-        $computedcss .= " *  {$this->rawselectors}  \t total selectors\n";
+        $computedcss .= " *  {$stats[rawstrlen]}  \t chars read in\n";
+        $computedcss .= " *  {$stats[rawrules]}  \t rules read in\n";
+        $computedcss .= " *  {$stats[rawselectors]}  \t total selectors\n";
         $computedcss .= " *---------------- after ----------------\n";
-        $computedcss .= " *  {$this->optimisedstrlen}  \t chars once optimized\n";
-        $computedcss .= " *  {$this->optimisedrules}  \t optimized rules\n";
-        $computedcss .= " *  {$this->optimisedselectors}  \t total selectors once optimized\n";
+        $computedcss .= " *  {$stats[optimisedstrlen]}  \t chars once optimized\n";
+        $computedcss .= " *  {$stats[optimisedrules]}  \t optimized rules\n";
+        $computedcss .= " *  {$stats[optimisedselectors]}  \t total selectors once optimized\n";
         $computedcss .= " *---------------- stats ----------------\n";
-        $computedcss .= " *  {$strlenimprovement}%  \t improvement in chars\n";
-        $computedcss .= " *  {$ruleimprovement}%  \t improvement in rules\n";
-        $computedcss .= " *  {$selectorimprovement}%  \t improvement in selectors\n";
+        $computedcss .= " *  {$stats[strlenimprovement]}%  \t reduction in chars\n";
+        $computedcss .= " *  {$stats[ruleimprovement]}%  \t reduction in rules\n";
+        $computedcss .= " *  {$stats[selectorimprovement]}%  \t reduction in selectors\n";
         $computedcss .= " ****************************************/\n\n";
 
         return $computedcss;
