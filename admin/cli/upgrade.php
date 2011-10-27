@@ -20,7 +20,6 @@
  *
  * This script is not intended for beginners!
  * Potential problems:
- * - environment check is not present yet
  * - su to apache account or sudo before execution
  * - not compatible with Windows platform
  *
@@ -37,7 +36,7 @@ require_once($CFG->libdir.'/adminlib.php');       // various admin-only function
 require_once($CFG->libdir.'/upgradelib.php');     // general upgrade/install related functions
 require_once($CFG->libdir.'/clilib.php');         // cli only functions
 require_once($CFG->libdir.'/environmentlib.php');
-
+require_once($CFG->libdir.'/pluginlib.php');
 
 // now get cli options
 list($options, $unrecognized) = cli_get_params(
