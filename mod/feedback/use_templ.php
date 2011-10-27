@@ -1,4 +1,18 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * print the confirm dialog to use template and create new items from template
@@ -16,11 +30,11 @@ $id = required_param('id', PARAM_INT);
 $templateid = optional_param('templateid', false, PARAM_INT);
 $deleteolditems = optional_param('deleteolditems', 0, PARAM_INT);
 
-if(!$templateid) {
+if (!$templateid) {
     redirect('edit.php?id='.$id);
 }
 
-$url = new moodle_url('/mod/feedback/use_templ.php', array('id'=>$id,'templateid'=>$templateid));
+$url = new moodle_url('/mod/feedback/use_templ.php', array('id'=>$id, 'templateid'=>$templateid));
 if ($deleteolditems !== 0) {
     $url->param('deleteolditems', $deleteolditems);
 }
@@ -59,7 +73,7 @@ if ($mform->is_cancelled()) {
     redirect('edit.php?id='.$id.'&do_show=templates');
 }
 
-if(isset($formdata->confirmadd) AND $formdata->confirmadd == 1){
+if (isset($formdata->confirmadd) AND $formdata->confirmadd == 1) {
     feedback_items_from_template($feedback, $templateid, $deleteolditems);
     redirect('edit.php?id=' . $id);
 }
@@ -88,37 +102,38 @@ $mform->display();
 echo $OUTPUT->box_end();
 
 $templateitems = $DB->get_records('feedback_item', array('template'=>$templateid), 'position');
-if(is_array($templateitems)){
+if (is_array($templateitems)) {
     $templateitems = array_values($templateitems);
 }
 
-if(is_array($templateitems)){
+if (is_array($templateitems)) {
     $itemnr = 0;
     $align = right_to_left() ? 'right' : 'left';
     echo $OUTPUT->box_start('feedback_items');
-    foreach($templateitems as $templateitem){
+    foreach ($templateitems as $templateitem) {
         echo $OUTPUT->box_start('feedback_item_box_'.$align);
-            if($templateitem->hasvalue == 1 AND $feedback->autonumbering) {
-                $itemnr++;
-                echo $OUTPUT->box_start('feedback_item_number_'.$align);
-                echo $itemnr;
-                echo $OUTPUT->box_end();
-            }
-            echo $OUTPUT->box_start('box generalbox boxalign_'.$align);
-            if($templateitem->typ != 'pagebreak') {
-                // echo '<div class="feedback_item_'.$align.'">';
-                feedback_print_item_preview($templateitem);
-            }else {
-                echo $OUTPUT->box_start('feedback_pagebreak');
-                echo get_string('pagebreak', 'feedback').'<hr class="feedback_pagebreak" />';
-                echo $OUTPUT->box_end();
-            }
+        if ($templateitem->hasvalue == 1 AND $feedback->autonumbering) {
+            $itemnr++;
+            echo $OUTPUT->box_start('feedback_item_number_'.$align);
+            echo $itemnr;
             echo $OUTPUT->box_end();
+        }
+        echo $OUTPUT->box_start('box generalbox boxalign_'.$align);
+        if ($templateitem->typ != 'pagebreak') {
+            // echo '<div class="feedback_item_'.$align.'">';
+            feedback_print_item_preview($templateitem);
+        } else {
+            echo $OUTPUT->box_start('feedback_pagebreak');
+            echo get_string('pagebreak', 'feedback').'<hr class="feedback_pagebreak" />';
+            echo $OUTPUT->box_end();
+        }
+        echo $OUTPUT->box_end();
         echo $OUTPUT->box_end();
     }
     echo $OUTPUT->box_end();
-}else{
-    echo $OUTPUT->box(get_string('no_items_available_at_this_template','feedback'),'generalbox boxaligncenter boxwidthwide');
+} else {
+    echo $OUTPUT->box(get_string('no_items_available_at_this_template', 'feedback'),
+                    'generalbox boxaligncenter boxwidthwide');
 }
 
 echo $OUTPUT->footer();

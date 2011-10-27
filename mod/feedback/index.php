@@ -1,4 +1,18 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * prints the overview of all feedbacks included into the current course
@@ -43,7 +57,8 @@ echo $OUTPUT->header();
 /// Get all the appropriate data
 
 if (! $feedbacks = get_all_instances_in_course("feedback", $course)) {
-    notice(get_string('thereareno', 'moodle', $strfeedbacks), new moodle_url('/course/view.php', array('id'=>$course->id)));
+    $url = new moodle_url('/course/view.php', array('id'=>$course->id));
+    notice(get_string('thereareno', 'moodle', $strfeedbacks), $url);
     die;
 }
 
@@ -62,18 +77,18 @@ $strresponses = get_string('responses', 'feedback');
 $table = new html_table();
 
 if ($usesections) {
-    if(has_capability('mod/feedback:viewreports', $context)) {
+    if (has_capability('mod/feedback:viewreports', $context)) {
         $table->head  = array ($strsectionname, $strname, $strresponses);
         $table->align = array ("center", "left", 'center');
-    }else{
+    } else {
         $table->head  = array ($strsectionname, $strname);
         $table->align = array ("center", "left");
     }
 } else {
-    if(has_capability('mod/feedback:viewreports', $context)) {
+    if (has_capability('mod/feedback:viewreports', $context)) {
         $table->head  = array ($strname, $strresponses);
         $table->align = array ("left", "center");
-    }else{
+    } else {
         $table->head  = array ($strname);
         $table->align = array ("left");
     }
@@ -84,8 +99,8 @@ foreach ($feedbacks as $feedback) {
     //get the responses of each feedback
     $viewurl = new moodle_url('/mod/feedback/view.php', array('id'=>$feedback->coursemodule));
 
-    if(has_capability('mod/feedback:viewreports', $context)) {
-        $completedFeedbackCount = intval(feedback_get_completeds_group_count($feedback));
+    if (has_capability('mod/feedback:viewreports', $context)) {
+        $completed_feedback_count = intval(feedback_get_completeds_group_count($feedback));
     }
 
     $dimmedclass = $feedback->visible ? '' : 'class="dimmed"';
@@ -96,8 +111,8 @@ foreach ($feedbacks as $feedback) {
     } else {
         $tabledata = array ($link);
     }
-    if(has_capability('mod/feedback:viewreports', $context)) {
-        $tabledata[] = $completedFeedbackCount;
+    if (has_capability('mod/feedback:viewreports', $context)) {
+        $tabledata[] = $completed_feedback_count;
     }
 
     $table->data[] = $tabledata;
