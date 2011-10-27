@@ -28,12 +28,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['clianswerno'] = 'e';
-$string['cliansweryes'] = 'k';
-$string['cliincorrectvalueerror'] = 'Virhe, epäkelpo arvo "{$a->value}" "{$a->option}":ssa';
-$string['cliincorrectvalueretry'] = 'Epäkelpo arvo, syötä uudelleen';
-$string['clitypevalue'] = 'syötä arvo';
-$string['clitypevaluedefault'] = 'syötä arvo, paina Enteriä käyttääksesi oletusarvoa ({$a})';
-$string['cliyesnoprompt'] = 'syötä y (kyllä) tai n (ei)';
-$string['environmentrequireinstall'] = 'pitää olla asennettuna ja käytössä';
-$string['environmentrequireversion'] = 'versio {$a->needed} vaaditaan ja käytössä on versio {$a->current}';
+$string['clianswerno'] = 'T';
+$string['cliansweryes'] = 'Y';
+$string['cliincorrectvalueerror'] = 'Error, nilai yang salah "{$a->value}" untuk opsi "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Nilai input salah, silahkan coba lagi';
+$string['clitypevalue'] = 'tipe nilai';
+$string['clitypevaluedefault'] = 'tipe nilai, tekan enter untuk menggunakan nilai default ({$a})';
+$string['cliunknowoption'] = 'Opsi tidak dikenali :
+ {$a}
+Silahkan gunakan opsi --help';
+$string['cliyesnoprompt'] = 'ketik y (Ya) atau t (Tidak)';

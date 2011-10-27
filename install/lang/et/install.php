@@ -39,6 +39,8 @@ $string['dataroot'] = 'Andmete kataloog';
 $string['dbprefix'] = 'Tabeli eesliide';
 $string['dirroot'] = 'Moodle kataloog';
 $string['environmenthead'] = 'Keskkonna kontrollimine...';
+$string['environmentsub2'] = 'Iga Moodle väljalaskel on oma minimaalne PHP versiooni nõue ja kohustuslikud PHP laiendused.
+Täielik keskkonna kontroll tehakse enne iga installeerimist ja uuendamist. Palun võta ühendust serveri administraatoriga, kui sa ei sa kuidas installeerida või võimaldada PHP laiendusi.';
 $string['errorsinenvironment'] = 'Keskkonna sobivuse kontroll ebaõnnestus!';
 $string['installation'] = 'Installeerimine';
 $string['langdownloaderror'] = 'Kahjuks keelt "{$a}" ei paigaldatud. Paigaldamine jätkub inglise keeles.';
@@ -56,6 +58,13 @@ See lubab Moodle\'il ise mälu limiiti määrata.</li>
 $string['paths'] = 'Rajad';
 $string['pathserrcreatedataroot'] = 'Andmete kataloogi ({$a->dataroot}) ei saa installeerija luua.';
 $string['pathshead'] = 'Radade kinnitused';
+$string['pathssubdataroot'] = 'Sa pead näitama koha, kuhu Moodle saaks salvestada üles laetud failid. See kataloog peab olema loetav JA KIRJUTATAV veebiserveri kasutaja poolt (tavaliselt \'nobody\' or \'apache\'), samas see kataloog ei tohiks olla ligipääsetav otse veebi kaudu. Kui kataloogi ei eksisteeri, siis installeerija püüab selle ise luua.';
+$string['pathssubdirroot'] = 'Täistee Moodle paigalduse kataloogile.';
+$string['pathssubwwwroot'] = 'Täielik veebiaadress, kust kaudu Moodle\'le ligi pääsetakse.
+Ei ole võimalik kasutada mitmest kohast kohast ligipääsu.
+Kui Su sait omab mitut avalikku aadress, siis pead seadistama ümbersuunamised kõikidelt teistest aadressidelt.
+Kui Su sait on ligipääsetav nii Internetist kui intranetist (sisevõrgust), siis kasuta Interneti ehk avalikku aadressi ja seadista DNS sellisellt, et intraneti kasutajad kasutaksid ka avalikku aadressi.
+Kui aadress pole korrektne, siis palun muuda URL oma brauseris, et taasalustada installeerimist erineva väärtusega.';
 $string['pathsunsecuredataroot'] = 'Andmete juurkataloogi asukoht pole turvamine';
 $string['pathswrongadmindir'] = 'Admin kataloogi ei eksisteeri';
 $string['phpextension'] = '{$a} PHP laiendus';
