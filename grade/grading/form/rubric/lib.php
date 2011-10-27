@@ -38,7 +38,8 @@ class gradingform_rubric_controller extends gradingform_controller {
     const DISPLAY_PREVIEW       = 3; // Preview the rubric design
     const DISPLAY_EVAL          = 4; // For evaluation, enabled (teacher grades a student)
     const DISPLAY_EVAL_FROZEN   = 5; // For evaluation, with hidden fields
-    const DISPLAY_REVIEW        = 6; // Dispaly filled rubric (i.e. students see their grades)
+    const DISPLAY_REVIEW        = 6; // Teacher reviews filled rubric
+    const DISPLAY_VIEW          = 7; // Dispaly filled rubric (i.e. students see their grades)
 
     /**
      * Extends the module settings navigation with the rubric grading settings
@@ -73,8 +74,12 @@ class gradingform_rubric_controller extends gradingform_controller {
             parent::update_definition((object)array('descriptionformat' => FORMAT_MOODLE), $usermodified);
             parent::load_definition();
         }
-        $options = self::description_form_field_options($this->get_context());
-        $newdefinition = file_postupdate_standard_editor($newdefinition, 'description', $options, $this->get_context(),
+        if (!isset($newdefinition->rubric['options'])) {
+            $newdefinition->rubric['options'] = self::get_default_options();
+        }
+        $newdefinition->options = json_encode($newdefinition->rubric['options']);
+        $editoroptions = self::description_form_field_options($this->get_context());
+        $newdefinition = file_postupdate_standard_editor($newdefinition, 'description', $editoroptions, $this->get_context(),
             'gradingform_rubric', 'definition_description', $this->definition->id);
         parent::update_definition($newdefinition, $usermodified);
 
@@ -83,10 +88,10 @@ class gradingform_rubric_controller extends gradingform_controller {
 
         // update rubric data
         $haschanges = false;
-        if (empty($newdefinition->rubric_criteria)) {
+        if (empty($newdefinition->rubric['criteria'])) {
             $newcriteria = array();
         } else {
-            $newcriteria = $newdefinition->rubric_criteria; // new ones to be saved
+            $newcriteria = $newdefinition->rubric['criteria']; // new ones to be saved
         }
         $currentcriteria = $currentdefinition->rubric_criteria;
         $criteriafields = array('sortorder', 'description', 'descriptionformat');
@@ -175,7 +180,6 @@ class gradingform_rubric_controller extends gradingform_controller {
      */
     protected function load_definition() {
         global $DB;
-
         $sql = "SELECT gd.*,
                        rc.id AS rcid, rc.sortorder AS rcsortorder, rc.description AS rcdescription, rc.descriptionformat AS rcdescriptionformat,
                        rl.id AS rlid, rl.score AS rlscore, rl.definition AS rldefinition, rl.definitionformat AS rldefinitionformat
@@ -213,6 +217,37 @@ class gradingform_rubric_controller extends gradingform_controller {
             }
         }
         $rs->close();
+        $options = $this->get_options();
+        if (!$options['sortlevelsasc']) {
+            foreach (array_keys($this->definition->rubric_criteria) as $rcid) {
+                $this->definition->rubric_criteria[$rcid]['levels'] = array_reverse($this->definition->rubric_criteria[$rcid]['levels'], true);
+            }
+        }
+    }
+
+    public static function get_default_options() {
+        $options = array(
+            'sortlevelsasc' => 1,
+            //'showdescriptionteacher' => 1,
+            //'showdescriptionstudent' => 1,
+            'showscoreteacher' => 1,
+            'showscorestudent' => 1,
+            'enableremarks' => 1,
+            'showremarksstudent' => 1
+        );
+        // TODO description options
+        return $options;
+    }
+
+    public function get_options() {
+        $options = self::get_default_options();
+        if (!empty($this->definition->options)) {
+            $thisoptions = json_decode($this->definition->options);
+            foreach ($thisoptions as $option => $value) {
+                $options[$option] = $value;
+            }
+        }
+        return $options;
     }
 
     /**
@@ -226,17 +261,16 @@ class gradingform_rubric_controller extends gradingform_controller {
         $properties = new stdClass();
         $properties->areaid = $this->areaid;
         if ($definition) {
-            foreach (array('id', 'name', 'description', 'descriptionformat', 'options', 'status') as $key) {
+            foreach (array('id', 'name', 'description', 'descriptionformat', 'status') as $key) {
                 $properties->$key = $definition->$key;
             }
             $options = self::description_form_field_options($this->get_context());
             $properties = file_prepare_standard_editor($properties, 'description', $options, $this->get_context(),
                 'gradingform_rubric', 'definition_description', $definition->id);
         }
+        $properties->rubric = array('criteria' => array(), 'options' => $this->get_options());
         if (!empty($definition->rubric_criteria)) {
-            $properties->rubric_criteria = $definition->rubric_criteria;
-        } else {
-            $properties->rubric_criteria = array();
+            $properties->rubric['criteria'] = $definition->rubric_criteria;
         }
 
         return $properties;
@@ -252,11 +286,12 @@ class gradingform_rubric_controller extends gradingform_controller {
     public function get_definition_copy(gradingform_controller $target) {
 
         $new = parent::get_definition_copy($target);
-        $old = $this->get_definition();
-        $new->rubric_criteria = array();
+        $old = $this->get_definition_for_editing();
+        $new->description_editor = $old->description_editor;
+        $new->rubric = array('criteria' => array(), 'options' => $old->rubric['options']);
         $newcritid = 1;
         $newlevid = 1;
-        foreach ($old->rubric_criteria as $oldcritid => $oldcrit) {
+        foreach ($old->rubric['criteria'] as $oldcritid => $oldcrit) {
             unset($oldcrit['id']);
             if (isset($oldcrit['levels'])) {
                 foreach ($oldcrit['levels'] as $oldlevid => $oldlev) {
@@ -268,7 +303,7 @@ class gradingform_rubric_controller extends gradingform_controller {
             } else {
                 $oldcrit['levels'] = array();
             }
-            $new->rubric_criteria['NEWID'.$newcritid] = $oldcrit;
+            $new->rubric['criteria']['NEWID'.$newcritid] = $oldcrit;
             $newcritid++;
         }
 
@@ -337,7 +372,8 @@ class gradingform_rubric_controller extends gradingform_controller {
         // append the rubric itself, using own renderer
         $output = $this->get_renderer($page);
         $criteria = $this->definition->rubric_criteria;
-        $rubric = $output->display_rubric($criteria, self::DISPLAY_PREVIEW, 'rubric');
+        $options = $this->get_options();
+        $rubric = $output->display_rubric($criteria, $options, self::DISPLAY_PREVIEW, 'rubric');
 
         return $header . $rubric;
     }
@@ -556,10 +592,11 @@ class gradingform_rubric_instance extends gradingform_instance {
             }
         }
         $criteria = $this->get_controller()->get_definition()->rubric_criteria;
+        $options = $this->get_controller()->get_options();
         $value = $gradingformelement->getValue();
         if ($value === null) {
             $value = $this->get_rubric_filling();
         }
-        return $this->get_controller()->get_renderer($page)->display_rubric($criteria, $mode, $gradingformelement->getName(), $value);
+        return $this->get_controller()->get_renderer($page)->display_rubric($criteria, $options, $mode, $gradingformelement->getName(), $value);
     }
 }

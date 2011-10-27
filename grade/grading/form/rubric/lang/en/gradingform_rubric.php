@@ -37,8 +37,21 @@ $string['criterionmoveup'] = 'Move up';
 $string['criteriondelete'] = 'Delete criterion';
 $string['criterionmovedown'] = 'Move down';
 $string['criterionaddlevel'] = 'Add level';
-$string['scorepostfix'] = ' pts';
+$string['scorepostfix'] = ' points';
 $string['leveldelete'] = 'Delete level';
 
 $string['criterionempty'] = 'Click to edit criterion';
 $string['levelempty'] = 'Click to edit level';
+
+$string['rubric'] = 'Rubric';
+$string['rubricoptions'] = 'Rubric options';
+
+$string['sortlevelsasc'] = 'Sort order for levels:';
+$string['sortlevelsasc1'] = 'Ascending by number of points';
+$string['sortlevelsasc0'] = 'Descending by number of points';
+$string['showdescriptionteacher'] = 'Display rubric description during evaluation';
+$string['showdescriptionstudent'] = 'Display rubric description to those being graded';
+$string['showscoreteacher'] = 'Display points for each level during evaluation';
+$string['showscorestudent'] = 'Display points for each level to those being graded';
+$string['enableremarks'] = 'Allow grader to add text remarks for each criteria';
+$string['showremarksstudent'] = 'Show remarks to those being graded';

@@ -57,9 +57,9 @@ class gradingform_rubric_editrubric extends moodleform {
         $form->setType('description_editor', PARAM_RAW);
 
         // rubric editor
-        $element = $form->addElement('rubriceditor', 'rubric_criteria', 'Rubric 1'); // todo label
-        $form->setType('rubric_criteria', PARAM_RAW);
-        $form->addRule('rubric_criteria', '', 'rubriceditorcompleted'); //TODO how to add this rule automatically?????
+        $element = $form->addElement('rubriceditor', 'rubric', get_string('rubric', 'gradingform_rubric'));
+        $form->setType('rubric', PARAM_RAW);
+        $form->addRule('rubric', '', 'rubriceditorcompleted'); //TODO how to add this rule automatically?????
         if (array_key_exists('freezerubric', $this->_customdata) && $this->_customdata['freezerubric']) {
             $element->freeze();
         }

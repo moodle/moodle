@@ -50,6 +50,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
         global $PAGE;
         $html = $this->_getTabs();
         $renderer = $PAGE->get_renderer('gradingform_rubric');
+        $data = $this->prepare_non_js_data();
         if (!$this->_flagFrozen) {
             $mode = gradingform_rubric_controller::DISPLAY_EDIT_FULL;
             $module = array('name'=>'gradingform_rubriceditor', 'fullpath'=>'/grade/grading/form/rubric/js/rubriceditor.js',
@@ -58,32 +59,54 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                     ));
             $PAGE->requires->js_init_call('M.gradingform_rubriceditor.init', array(
                 array('name' => $this->getName(),
-                    'criteriontemplate' => $renderer->criterion_template($mode, $this->getName()),
-                    'leveltemplate' => $renderer->level_template($mode, $this->getName())
+                    'criteriontemplate' => $renderer->criterion_template($mode, $data['options'], $this->getName()),
+                    'leveltemplate' => $renderer->level_template($mode, $data['options'], $this->getName())
                    )),
                 true, $module);
         } else {
+            // Rubric is frozen, no javascript needed
             if ($this->_persistantFreeze) {
                 $mode = gradingform_rubric_controller::DISPLAY_EDIT_FROZEN;
             } else {
                 $mode = gradingform_rubric_controller::DISPLAY_PREVIEW;
             }
         }
-        $html .= $renderer->display_rubric($this->prepare_non_js_data(), $mode, $this->getName());
+        $html .= $renderer->display_rubric($data['criteria'], $data['options'], $mode, $this->getName());
         return $html;
     }
 
-    function prepare_non_js_data() {
-        $return = array();
-        $criteria = $this->getValue();
-        if (empty($criteria)) {
-            $criteria = array();
+    /**
+     * Prepares the data passed in $_POST:
+     * - processes the pressed buttons 'addlevel', 'addcriterion', 'moveup', 'movedown', 'delete' (when JavaScript is disabled)
+     * - if options not passed (i.e. we create a new rubric) fills the options array with the default values
+     * - if options are passed completes the options array with unchecked checkboxes
+     *
+     * @param array $value
+     * @return array
+     */
+    function prepare_non_js_data($value = null) {
+        if (null === $value) {
+            $value = $this->getValue();
+        }
+        $return = array('criteria' => array(), 'options' => gradingform_rubric_controller::get_default_options());
+        if (!isset($value['criteria'])) {
+            $value['criteria'] = array();
+        }
+        if (!empty($value['options'])) {
+            foreach (array_keys($return['options']) as $option) {
+                // special treatment for checkboxes
+                if (!empty($value['options'][$option])) {
+                    $return['options'][$option] = $value['options'][$option];
+                } else {
+                    $return['options'][$option] = null;
+                }
+            }
         }
         $lastaction = null;
         $lastid = null;
-        foreach ($criteria as $id => $criterion) {
+        foreach ($value['criteria'] as $id => $criterion) {
             if ($id == 'addcriterion') {
-                $id = $this->get_next_id(array_keys($criteria));
+                $id = $this->get_next_id(array_keys($value['criteria']));
                 $criterion = array('description' => '');
             }
             $levels = array();
@@ -105,12 +128,12 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
             if (array_key_exists('moveup', $criterion) || $lastaction == 'movedown') {
                 unset($criterion['moveup']);
                 if ($lastid !== null) {
-                    $lastcriterion = $return[$lastid];
-                    unset($return[$lastid]);
-                    $return[$id] = $criterion;
-                    $return[$lastid] = $lastcriterion;
+                    $lastcriterion = $return['criteria'][$lastid];
+                    unset($return['criteria'][$lastid]);
+                    $return['criteria'][$id] = $criterion;
+                    $return['criteria'][$lastid] = $lastcriterion;
                 } else {
-                    $return[$id] = $criterion;
+                    $return['criteria'][$id] = $criterion;
                 }
                 $lastaction = null;
                 $lastid = $id;
@@ -120,13 +143,13 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                     unset($criterion['movedown']);
                     $lastaction = 'movedown';
                 }
-                $return[$id] = $criterion;
+                $return['criteria'][$id] = $criterion;
                 $lastid = $id;
             }
         }
         $csortorder = 1;
-        foreach (array_keys($return) as $id) {
-            $return[$id]['sortorder'] = $csortorder++;
+        foreach (array_keys($return['criteria']) as $id) {
+            $return['criteria'][$id]['sortorder'] = $csortorder++;
         }
         return $return;
     }
@@ -143,8 +166,8 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
 
     function _ruleIsCompleted($elementValue) {
         //echo "_ruleIsCompleted";
-        if (is_array($elementValue)) {
-            foreach ($elementValue as $criterionid => $criterion) {
+        if (isset($elementValue['criteria'])) {
+            foreach ($elementValue['criteria'] as $criterionid => $criterion) {
                 if ($criterionid == 'addcriterion') {
                     return false;
                 }
@@ -177,4 +200,16 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
         return parent::onQuickFormEvent($event, $arg, $caller);
     }
 
+    /**
+     * Prepares the data for saving
+     * @see prepare_non_js_data
+     *
+     * @param array $submitValues
+     * @param boolean $assoc
+     * @return array
+     */
+    function exportValue(&$submitValues, $assoc = false) {
+        $value =  $this->prepare_non_js_data($this->_findValue($submitValues));
+        return $this->_prepareValue($value, $assoc);
+    }
 }
