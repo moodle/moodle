@@ -452,7 +452,7 @@ class stored_file {
      * @return string
      */
     public function get_author() {
-        return $this->file_record->license;
+        return $this->file_record->author;
     }
 
     /**

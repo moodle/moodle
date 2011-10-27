@@ -77,26 +77,6 @@ define('URL_MATCH_PARAMS', 1);
  */
 define('URL_MATCH_EXACT', 2);
 
-/**
- * Allowed tags - string of html tags that can be tested against for safe html tags
- * @global string $ALLOWED_TAGS
- * @name $ALLOWED_TAGS
- */
-global $ALLOWED_TAGS;
-$ALLOWED_TAGS =
-'<p><br><b><i><u><font><table><tbody><thead><tfoot><span><div><tr><td><th><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><param><acronym><nolink><lang><tex><algebra><math><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><partialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpose><selector><annotation><semantics><annotation-xml><tt><code>';
-
-/**
- * Allowed protocols - array of protocols that are safe to use in links and so on
- * @global string $ALLOWED_PROTOCOLS
- */
-$ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'teamspeak', 'gopher', 'mms',
-                           'color', 'callto', 'cursor', 'text-align', 'font-size', 'font-weight', 'font-style', 'font-family',
-                           'border', 'border-bottom', 'border-left', 'border-top', 'border-right', 'margin', 'margin-bottom', 'margin-left', 'margin-top', 'margin-right',
-                           'padding', 'padding-bottom', 'padding-left', 'padding-top', 'padding-right', 'vertical-align',
-                           'background', 'background-color', 'text-decoration');   // CSS as well to get through kses
-
-
 /// Functions
 
 /**
@@ -1310,19 +1290,6 @@ function wikify_links($string) {
 }
 
 /**
- * Replaces non-standard HTML entities
- *
- * @param string $string
- * @return string
- */
-function fix_non_standard_entities($string) {
-    $text = preg_replace('/&#0*([0-9]+);?/', '&#$1;', $string);
-    $text = preg_replace('/&#x0*([0-9a-fA-F]+);?/', '&#x$1;', $text);
-    $text = preg_replace('[\x00-\x08\x0b-\x0c\x0e-\x1f]', '', $text);
-    return $text;
-}
-
-/**
  * Given text in a variety of format codings, this function returns
  * the text as plain text suitable for plain email.
  *
@@ -1436,8 +1403,6 @@ function trusttext_trusted($context) {
 /**
  * Is trusttext feature active?
  *
- * @global object
- * @param object $context
  * @return bool
  */
 function trusttext_active() {
@@ -1459,8 +1424,6 @@ function trusttext_active() {
  * @return string The cleaned up text
  */
 function clean_text($text, $format = FORMAT_HTML, $options = array()) {
-    global $ALLOWED_TAGS, $CFG;
-
     if (empty($text) or is_numeric($text)) {
        return (string)$text;
     }
@@ -1474,22 +1437,7 @@ function clean_text($text, $format = FORMAT_HTML, $options = array()) {
         return $text;
     }
 
-    if (!empty($CFG->enablehtmlpurifier)) {
-        $text = purify_html($text, $options);
-    } else {
-    /// Fix non standard entity notations
-        $text = fix_non_standard_entities($text);
-
-    /// Remove tags that are not allowed
-        $text = strip_tags($text, $ALLOWED_TAGS);
-
-    /// Clean up embedded scripts and , using kses
-        $text = cleanAttributes($text);
-
-    /// Again remove tags that are not allowed
-        $text = strip_tags($text, $ALLOWED_TAGS);
-
-    }
+    $text = purify_html($text, $options);
 
     // Remove potential script events - some extra protection for undiscovered bugs in our code
     $text = preg_replace("~([^a-z])language([[:space:]]*)=~i", "$1Xlanguage=", $text);
@@ -1501,10 +1449,10 @@ function clean_text($text, $format = FORMAT_HTML, $options = array()) {
 /**
  * KSES replacement cleaning function - uses HTML Purifier.
  *
- * @global object
  * @param string $text The (X)HTML string to purify
  * @param array $options Array of options; currently only option supported is 'allowid' (if set,
  *   does not remove id attributes when cleaning)
+ * @return string
  */
 function purify_html($text, $options = array()) {
     global $CFG;
@@ -1569,89 +1517,6 @@ function purify_html($text, $options = array()) {
 }
 
 /**
- * This function takes a string and examines it for HTML tags.
- *
- * If tags are detected it passes the string to a helper function {@link cleanAttributes2()}
- * which checks for attributes and filters them for malicious content
- *
- * @param string $str The string to be examined for html tags
- * @return string
- */
-function cleanAttributes($str){
-    $result = preg_replace_callback(
-            '%(<[^>]*(>|$)|>)%m', #search for html tags
-            "cleanAttributes2",
-            $str
-            );
-    return  $result;
-}
-
-/**
- * This function takes a string with an html tag and strips out any unallowed
- * protocols e.g. javascript:
- *
- * It calls ancillary functions in kses which are prefixed by kses
- *
- * @global object
- * @global string
- * @param array $htmlArray An array from {@link cleanAttributes()}, containing in its 1st
- *              element the html to be cleared
- * @return string
- */
-function cleanAttributes2($htmlArray){
-
-    global $CFG, $ALLOWED_PROTOCOLS;
-    require_once($CFG->libdir .'/kses.php');
-
-    $htmlTag = $htmlArray[1];
-    if (substr($htmlTag, 0, 1) != '<') {
-        return '&gt;';  //a single character ">" detected
-    }
-    if (!preg_match('%^<\s*(/\s*)?([a-zA-Z0-9]+)([^>]*)>?$%', $htmlTag, $matches)) {
-        return ''; // It's seriously malformed
-    }
-    $slash = trim($matches[1]); //trailing xhtml slash
-    $elem = $matches[2];    //the element name
-    $attrlist = $matches[3]; // the list of attributes as a string
-
-    $attrArray = kses_hair($attrlist, $ALLOWED_PROTOCOLS);
-
-    $attStr = '';
-    foreach ($attrArray as $arreach) {
-        $arreach['name'] = strtolower($arreach['name']);
-        if ($arreach['name'] == 'style') {
-            $value = $arreach['value'];
-            while (true) {
-                $prevvalue = $value;
-                $value = kses_no_null($value);
-                $value = preg_replace("/\/\*.*\*\//Us", '', $value);
-                $value = kses_decode_entities($value);
-                $value = preg_replace('/(&#[0-9]+)(;?)/', "\\1;", $value);
-                $value = preg_replace('/(&#x[0-9a-fA-F]+)(;?)/', "\\1;", $value);
-                if ($value === $prevvalue) {
-                    $arreach['value'] = $value;
-                    break;
-                }
-            }
-            $arreach['value'] = preg_replace("/j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t/i", "Xjavascript", $arreach['value']);
-            $arreach['value'] = preg_replace("/v\s*b\s*s\s*c\s*r\s*i\s*p\s*t/i", "Xvbscript", $arreach['value']);
-            $arreach['value'] = preg_replace("/e\s*x\s*p\s*r\s*e\s*s\s*s\s*i\s*o\s*n/i", "Xexpression", $arreach['value']);
-            $arreach['value'] = preg_replace("/b\s*i\s*n\s*d\s*i\s*n\s*g/i", "Xbinding", $arreach['value']);
-        } else if ($arreach['name'] == 'href') {
-            //Adobe Acrobat Reader XSS protection
-            $arreach['value'] = preg_replace('/(\.(pdf|fdf|xfdf|xdp|xfd)[^#]*)#.*$/i', '$1', $arreach['value']);
-        }
-        $attStr .=  ' '.$arreach['name'].'="'.$arreach['value'].'"';
-    }
-
-    $xhtml_slash = '';
-    if (preg_match('%/\s*$%', $attrlist)) {
-        $xhtml_slash = ' /';
-    }
-    return '<'. $slash . $elem . $attStr . $xhtml_slash .'>';
-}
-
-/**
  * Given plain text, makes it into HTML as nicely as possible.
  * May contain HTML tags already
  *
@@ -1659,7 +1524,6 @@ function cleanAttributes2($htmlArray){
  * by {@see format_text()} to convert FORMAT_MOODLE to HTML. You are supposed
  * to call format_text() in most of cases.
  *
- * @global object
  * @param string $text The string to convert.
  * @param boolean $smiley_ignored Was used to determine if smiley characters should convert to smiley images, ignored now
  * @param boolean $para If true then the returned string will be wrapped in div tags
@@ -1668,8 +1532,6 @@ function cleanAttributes2($htmlArray){
  */
 
 function text_to_html($text, $smiley_ignored=null, $para=true, $newlines=true) {
-    global $CFG;
-
 /// Remove any whitespace that may be between HTML tags
     $text = preg_replace("~>([[:space:]]+)<~i", "><", $text);
 
@@ -2395,6 +2257,7 @@ function redirect($url, $message='', $delay=-1) {
     // prevent debug errors - make sure context is properly initialised
     if ($PAGE) {
         $PAGE->set_context(null);
+        $PAGE->set_pagelayout('redirect');  // No header and footer needed
     }
 
     if ($url instanceof moodle_url) {
@@ -2492,10 +2355,14 @@ function redirect($url, $message='', $delay=-1) {
     }
 
     // Include a redirect message, even with a HTTP redirect, because that is recommended practice.
-    $PAGE->set_pagelayout('redirect');  // No header and footer needed
-    $CFG->docroot = false; // to prevent the link to moodle docs from being displayed on redirect page.
-    echo $OUTPUT->redirect_message($encodedurl, $message, $delay, $debugdisableredirect);
-    exit;
+    if ($PAGE) {
+        $CFG->docroot = false; // to prevent the link to moodle docs from being displayed on redirect page.
+        echo $OUTPUT->redirect_message($encodedurl, $message, $delay, $debugdisableredirect);
+        exit;
+    } else {
+        echo bootstrap_renderer::early_redirect_message($encodedurl, $message, $delay);
+        exit;
+    }
 }
 
 /**
@@ -2610,22 +2477,6 @@ function print_maintenance_message() {
     }
     echo $OUTPUT->footer();
     die;
-}
-
-/**
- * Adjust the list of allowed tags based on $CFG->allowobjectembed and user roles (admin)
- *
- * @global object
- * @global string
- * @return void
- */
-function adjust_allowed_tags() {
-
-    global $CFG, $ALLOWED_TAGS;
-
-    if (!empty($CFG->allowobjectembed)) {
-        $ALLOWED_TAGS .= '<embed><object>';
-    }
 }
 
 /**

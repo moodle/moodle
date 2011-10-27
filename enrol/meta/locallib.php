@@ -139,8 +139,20 @@ class enrol_meta_handler {
 
         $plugin = enrol_get_plugin('meta');
         foreach ($enrols as $enrol) {
+            if ($ue->status == ENROL_USER_ACTIVE) {
+                $status = ENROL_USER_ACTIVE;
+            } else {
+                $context = get_context_instance(CONTEXT_COURSE, $enrol->courseid);
+                if (is_enrolled($context, $ue->userid)) {
+                    // user already has active enrolment, do not change it
+                    $status = ENROL_USER_ACTIVE;
+                } else {
+                    $status = $ue->status;
+                }
+
+            }
             // no problem if already enrolled
-            $plugin->enrol_user($enrol, $ue->userid);
+            $plugin->enrol_user($enrol, $ue->userid, $status);
         }
 
         return true;
@@ -167,6 +179,33 @@ class enrol_meta_handler {
             $plugin->unenrol_user($enrol, $ue->userid);
         }
         $rs->close();
+
+        return true;
+    }
+
+    public function user_enrol_modified($ue) {
+        global $DB;
+
+        // update enrolment status if necessary
+
+        if (!enrol_is_enabled('meta')) {
+            return true;
+        }
+
+        if ($ue->enrol === 'meta') {
+            // prevent circular dependencies - we can not sync meta enrolments recursively
+            return true;
+        }
+
+        // does anything want to sync with this parent?
+        if (!$enrols = $DB->get_records('enrol', array('customint1'=>$ue->courseid, 'enrol'=>'meta'), 'id ASC')) {
+            return true;
+        }
+
+        $plugin = enrol_get_plugin('meta');
+        foreach ($enrols as $enrol) {
+            $plugin->update_user_enrol($enrol, $ue->userid, $ue->status);
+        }
 
         return true;
     }
@@ -207,6 +246,8 @@ function enrol_meta_sync($courseid = NULL) {
     // unfortunately this may take a loooong time
     @set_time_limit(0); //if this fails during upgrade we can continue from cron, no big deal
 
+    $instances = array(); //cache
+
     $meta = enrol_get_plugin('meta');
 
     $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
@@ -214,10 +255,8 @@ function enrol_meta_sync($courseid = NULL) {
     // iterate through all not enrolled yet users
     if (enrol_is_enabled('meta')) {
         list($enabled, $params) = $DB->get_in_or_equal(explode(',', $CFG->enrol_plugins_enabled), SQL_PARAMS_NAMED, 'e');
-        $onecourse = "";
         if ($courseid) {
             $params['courseid'] = $courseid;
-            $onecourse = "AND e.courseid = :courseid";
         }
         $sql = "SELECT pue.userid, e.id AS enrolid
                   FROM {user_enrolments} pue
@@ -229,7 +268,6 @@ function enrol_meta_sync($courseid = NULL) {
         $params['courseid'] = $courseid;
 
         $rs = $DB->get_recordset_sql($sql, $params);
-        $instances = array(); //cache
         foreach($rs as $ue) {
             if (!isset($instances[$ue->enrolid])) {
                 $instances[$ue->enrolid] = $DB->get_record('enrol', array('id'=>$ue->enrolid));
@@ -237,7 +275,6 @@ function enrol_meta_sync($courseid = NULL) {
             $meta->enrol_user($instances[$ue->enrolid], $ue->userid);
         }
         $rs->close();
-        unset($instances);
     }
 
     // unenrol as necessary - ignore enabled flag, we want to get rid of all
@@ -251,7 +288,6 @@ function enrol_meta_sync($courseid = NULL) {
              WHERE pue.courseid IS NULL";
     //TODO: this may use a bit of SQL optimisation
     $rs = $DB->get_recordset_sql($sql, array('courseid'=>$courseid));
-    $instances = array(); //cache
     foreach($rs as $ue) {
         if (!isset($instances[$ue->enrolid])) {
             $instances[$ue->enrolid] = $DB->get_record('enrol', array('id'=>$ue->enrolid));
@@ -259,7 +295,6 @@ function enrol_meta_sync($courseid = NULL) {
         $meta->unenrol_user($instances[$ue->enrolid], $ue->userid);
     }
     $rs->close();
-    unset($instances);
 
     // now assign all necessary roles
     if (enrol_is_enabled('meta')) {
@@ -319,5 +354,66 @@ function enrol_meta_sync($courseid = NULL) {
         role_unassign($ra->roleid, $ra->userid, $ra->contextid, 'enrol_meta', $ra->itemid);
     }
     $rs->close();
+
+    // sync enrolment status
+    if (enrol_is_enabled('meta')) {
+        $enabled = explode(',', $CFG->enrol_plugins_enabled);
+        foreach($enabled as $k=>$v) {
+            if ($v === 'meta') {
+                unset($enabled[$k]);
+            }
+        }
+        list($enabled, $params) = $DB->get_in_or_equal($enabled, SQL_PARAMS_NAMED, 'e');
+        if ($courseid) {
+            $params['courseid'] = $courseid;
+        }
+        //note: this will probably take a long time on mysql...
+        $sql = "SELECT ue.userid, e.id AS enrolid
+                  FROM {user_enrolments} ue
+                  JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'meta' AND e.status = :statusenabled $onecourse)
+             LEFT JOIN (SELECT pue.id, pue.userid, pe.courseid
+                          FROM {user_enrolments} pue
+                          JOIN {enrol} pe ON (pe.enrol $enabled)
+                         WHERE pue.enrolid = pe.id AND pue.status = :activestatus2) xx ON (xx.userid = ue.userid AND xx.courseid = e.customint1)
+                 WHERE ue.status = :activestatus1 AND xx.id IS NULL";
+        $params['statusenabled'] = ENROL_INSTANCE_ENABLED;
+        $params['activestatus1'] = ENROL_USER_ACTIVE;
+        $params['activestatus2'] = ENROL_USER_ACTIVE;
+        $params['courseid'] = $courseid;
+
+        $rs = $DB->get_recordset_sql($sql, $params);
+        foreach($rs as $ue) {
+            if (!isset($instances[$ue->enrolid])) {
+                $instances[$ue->enrolid] = $DB->get_record('enrol', array('id'=>$ue->enrolid));
+            }
+            $meta->update_user_enrol($instances[$ue->enrolid], $ue->userid, ENROL_USER_SUSPENDED);
+        }
+        $rs->close();
+
+        list($enabled, $params) = $DB->get_in_or_equal(explode(',', $CFG->enrol_plugins_enabled), SQL_PARAMS_NAMED, 'e');
+        if ($courseid) {
+            $params['courseid'] = $courseid;
+        }
+        // enable if at least one enrolment active in linked course
+        $sql = "SELECT DISTINCT ue.userid, e.id AS enrolid
+                  FROM {user_enrolments} ue
+                  JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'meta' AND e.status = :statusenabled $onecourse)
+                  JOIN {enrol} pe ON (pe.courseid = e.customint1 AND pe.enrol $enabled)
+                  JOIN {user_enrolments} pue ON (pue.enrolid = pe.id AND pue.userid = ue.userid AND pue.status = :activestatus)
+                 WHERE ue.status = :suspendedstatus";
+        $params['statusenabled'] = ENROL_INSTANCE_ENABLED;
+        $params['suspendedstatus'] = ENROL_USER_SUSPENDED;
+        $params['activestatus'] = ENROL_USER_ACTIVE;
+        $params['courseid'] = $courseid;
+        $rs = $DB->get_recordset_sql($sql, $params);
+        foreach($rs as $ue) {
+            if (!isset($instances[$ue->enrolid])) {
+                $instances[$ue->enrolid] = $DB->get_record('enrol', array('id'=>$ue->enrolid));
+            }
+            $meta->update_user_enrol($instances[$ue->enrolid], $ue->userid, ENROL_USER_ACTIVE);
+        }
+        $rs->close();
+
+    }
 
 }

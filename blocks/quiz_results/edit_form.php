@@ -16,12 +16,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form for editing Quiz results block instances.
+ * Defines the form for editing Quiz results block instances.
  *
  * @package   moodlecore
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Form for editing Quiz results block instances.

@@ -258,7 +258,7 @@ class enrol_manual_editselectedusers_operation extends enrol_bulk_enrolment_oper
                 foreach ($user->enrolments as $enrolment) {
                     $enrolment->courseid  = $enrolment->enrolmentinstance->courseid;
                     $enrolment->enrol     = 'manual';
-                    events_trigger('user_unenrol_modified', $enrolment);
+                    events_trigger('user_enrol_modified', $enrolment);
                 }
             }
             return true;

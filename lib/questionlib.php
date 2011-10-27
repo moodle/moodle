@@ -1191,29 +1191,27 @@ function question_categorylist($categoryid) {
  */
 function get_import_export_formats($type) {
     global $CFG;
+    require_once($CFG->dirroot . '/question/format.php');
 
-    $fileformats = get_plugin_list('qformat');
+    $formatclasses = get_plugin_list_with_class('qformat', '', 'format.php');
 
     $fileformatname = array();
-    require_once($CFG->dirroot . '/question/format.php');
-    foreach ($fileformats as $fileformat => $fdir) {
-        $formatfile = $fdir . '/format.php';
-        if (is_readable($formatfile)) {
-            include_once($formatfile);
-        } else {
-            continue;
-        }
+    foreach ($formatclasses as $component => $formatclass) {
 
-        $classname = 'qformat_' . $fileformat;
-        $formatclass = new $classname();
+        $format = new $formatclass();
         if ($type == 'import') {
-            $provided = $formatclass->provide_import();
+            $provided = $format->provide_import();
         } else {
-            $provided = $formatclass->provide_export();
+            $provided = $format->provide_export();
         }
 
         if ($provided) {
-            $fileformatnames[$fileformat] = get_string($fileformat, 'qformat_' . $fileformat);
+            list($notused, $fileformat) = explode('_', $component, 2);
+            if (get_string_manager()->string_exists('pluginname', $component)) {
+                $fileformatnames[$fileformat] = get_string('pluginname', $component);
+            } else {
+                $fileformatnames[$fileformat] = get_string($fileformat, $component);
+            }
         }
     }
 

@@ -27,9 +27,12 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['availability'] = 'Availability';
 $string['displayname'] = 'Plugin name';
+$string['moodleversion'] = 'Moodle {$a}';
 $string['nonehighlighted'] = 'No plugins require your attention during this upgrade';
 $string['nonehighlightedinfo'] = 'Display the list of all installed plugins anyway';
 $string['noneinstalled'] = 'No plugins of this type are installed';
+$string['otherplugin'] = '{$a->component}';
+$string['otherpluginversion'] = '{$a->component} ({$a->version})';
 $string['showall'] = 'Reload and show all plugins';
 $string['pluginchecknotice'] = 'This page displays plugins that may require your attention during the upgrade. Highlighted items include new plugins that are about to be installed, updated plugins that are about to be upgraded and any missing plugins. Contributed plugins are also highlighted.
 It is recommended that you check whether there are more recent versions of contributed plugins available and update their source code before continuing with this Moodle upgrade.';
@@ -37,6 +40,7 @@ $string['plugindisable'] = 'Disable';
 $string['plugindisabled'] = 'Disabled';
 $string['pluginenable'] = 'Enable';
 $string['pluginenabled'] = 'Enabled';
+$string['requires'] = 'Requires';
 $string['rootdir'] = 'Directory';
 $string['settings'] = 'Settings';
 $string['somehighlighted'] = 'Number of plugins requiring attention during this upgrade: {$a}';

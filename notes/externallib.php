@@ -25,7 +25,10 @@
  */
 require_once("$CFG->libdir/externallib.php");
 
-class moodle_notes_external extends external_api {
+/**
+ * Notes functions
+ */
+class core_notes_external extends external_api {
 
     /**
      * Returns description of method parameters
@@ -179,6 +182,44 @@ class moodle_notes_external extends external_api {
                 )
             )
         );
+    }
+
+}
+
+/**
+ * Deprecated notes functions
+ * @deprecated since Moodle 2.2 please use core_notes_external instead
+ */
+class moodle_notes_external extends external_api {
+
+    /**
+     * Returns description of method parameters
+     * @deprecated since Moodle 2.2 please use core_notes_external::create_notes_parameters instead
+     * @return external_function_parameters
+     */
+    public static function create_notes_parameters() {
+        return core_notes_external::create_notes_parameters();
+    }
+
+    /**
+     * Create notes about some users
+     * Note: code should be matching the /notes/edit.php checks
+     * and the /user/addnote.php checks. (they are similar cheks)
+     * @deprecated since Moodle 2.2 please use core_notes_external::create_notes instead
+     * @param array $notes  An array of notes to create.
+     * @return array (success infos and fail infos)
+     */
+    public static function create_notes($notes = array()) {
+        return core_notes_external::create_notes($notes);
+    }
+
+    /**
+     * Returns description of method result value
+     * @deprecated since Moodle 2.2 please use core_notes_external::create_notes_returns instead
+     * @return external_description
+     */
+    public static function create_notes_returns() {
+        return core_notes_external::create_notes_returns();
     }
 
 }

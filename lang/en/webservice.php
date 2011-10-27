@@ -24,7 +24,6 @@
  */
 
 $string['accessexception'] = 'Access control exception';
-$string['accessnotallowed'] = 'Access to web service not allowed';
 $string['actwebserviceshhdr'] = 'Active web service protocols';
 $string['accesstofunctionnotallowed'] = 'Access to the function {$a}() is not allowed. Please check if a service containing the function is enabled. In the service settings: if the service is restricted check that the user is listed. Still in the service settings check for IP restriction or if the service requires a capability.';
 $string['addaservice'] = 'Add service';
@@ -43,7 +42,7 @@ $string['apiexplorer'] = 'API explorer';
 $string['apiexplorernotavalaible'] = 'API explorer not available yet.';
 $string['arguments'] = 'Arguments';
 $string['authmethod'] = 'Authentication method';
-$string['cannotcreatemobiletoken'] = 'No permission to create web service token for mobile access.';
+$string['cannotcreatetoken'] = 'No permission to create web service token for the service {$a}.';
 $string['configwebserviceplugins'] = 'For security reasons, only protocols that are in use should be enabled.';
 $string['context'] = 'Context';
 $string['createservicedescription'] = 'A service is a set of web service functions. You will allow the user to access to a new service. On the <strong>Add service</strong> page check \'Enable\' and \'Authorised users\' options. Select \'No required capability\'.';
@@ -111,6 +110,7 @@ $string['managetokens'] = 'Manage tokens';
 $string['missingcaps'] = 'Missing capabilities';
 $string['missingcaps_help'] = 'List of required capabilities for the service which the selected user does not have. Missing capabilities must be added to the user\'s role in order to use the service.';
 $string['missingpassword'] = 'Missing password';
+$string['missingrequiredcapability'] = 'The capability {$a} is required.';
 $string['missingusername'] = 'Missing username';
 $string['missingversionfile'] = 'Coding error: version.php file is missing for the component {$a}';
 $string['mobilewsdisabled'] = 'Disabled';
@@ -130,6 +130,7 @@ $string['potusers'] = 'Not authorised users';
 $string['potusersmatching'] = 'Not authorised users matching';
 $string['print'] = 'Print all';
 $string['protocol'] = 'Protocol';
+$string['protocolnotallowed'] = 'You are not allowed to use the {$a} protocol (missing capability: webservice/{$a}:use)';
 $string['removefunction'] = 'Remove';
 $string['removefunctionconfirm'] = 'Do you really want to remove function "{$a->function}" from service "{$a->service}"?';
 $string['requireauthentication'] = 'This method requires authentication with xxx permission.';

@@ -62,11 +62,10 @@ class block_online_users extends block_base {
                   GROUP BY $userfields
                   ORDER BY lastaccess DESC ";
 
-           $csql = "SELECT COUNT(u.id), u.id
+           $csql = "SELECT COUNT(u.id)
                       FROM {user} u $groupmembers
                      WHERE u.lastaccess > $timefrom
-                           $groupselect
-                  GROUP BY u.id";
+                           $groupselect";
 
         } else {
             // Course level - show only enrolled users for now
@@ -85,14 +84,13 @@ class block_online_users extends block_base {
                   GROUP BY $userfields
                   ORDER BY lastaccess DESC";
 
-           $csql = "SELECT u.id
+           $csql = "SELECT COUNT(u.id)
                       FROM {user_lastaccess} ul $groupmembers, {user} u
                       JOIN ($esqljoin) euj ON euj.id = u.id
                      WHERE ul.timeaccess > $timefrom
                            AND u.id = ul.userid
                            AND ul.courseid = :courseid
-                           $groupselect
-                  GROUP BY u.id";
+                           $groupselect";
 
             $params['courseid'] = $this->page->course->id;
         }

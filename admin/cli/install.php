@@ -20,7 +20,6 @@
  *
  * This script is not intended for beginners!
  * Potential problems:
- * - environment check is not present yet
  * - su to apache account or sudo before execution
  * - not compatible with Windows platform
  *
@@ -91,7 +90,11 @@ if (file_exists($configfile)) {
         echo "\n\n";
     }
 
-    cli_error(get_string('clialreadyinstalled', 'install'));
+    if ($DB->get_manager()->table_exists('config')) {
+        cli_error(get_string('clialreadyinstalled', 'install'));
+    } else {
+        cli_error(get_string('clialreadyconfigured', 'install'));
+    }
 }
 
 $olddir = getcwd();
@@ -646,6 +649,27 @@ require($configfile);
 // use selected language
 $CFG->lang = $installlang;
 $SESSION->lang = $CFG->lang;
+
+require("$CFG->dirroot/version.php");
+
+// Test environment first.
+require_once($CFG->libdir . '/environmentlib.php');
+list($envstatus, $environment_results) = check_moodle_environment(normalize_version($release), ENV_SELECT_RELEASE);
+if (!$envstatus) {
+    $errors = environment_get_errors($environment_results);
+    cli_heading(get_string('environment', 'admin'));
+    foreach ($errors as $error) {
+        list($info, $report) = $error;
+        echo "!! $info !!\n$report\n\n";
+    }
+    exit(1);
+}
+
+// Test plugin dependencies.
+require_once($CFG->libdir . '/pluginlib.php');
+if (!plugin_manager::instance()->all_plugins_ok($version)) {
+    cli_error(get_string('pluginschecktodo', 'admin'));
+}
 
 install_cli_database($options, $interactive);
 

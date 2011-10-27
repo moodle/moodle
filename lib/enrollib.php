@@ -1103,6 +1103,7 @@ abstract class enrol_plugin {
         $context = get_context_instance(CONTEXT_COURSE, $instance->courseid, MUST_EXIST);
 
         $inserted = false;
+        $updated  = false;
         if ($ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$userid))) {
             //only update if timestart or timeend or status are different.
             if ($ue->timestart != $timestart or $ue->timeend != $timeend or (!is_null($status) and $ue->status != $status)) {
@@ -1114,6 +1115,8 @@ abstract class enrol_plugin {
                 $ue->modifierid   = $USER->id;
                 $ue->timemodified = time();
                 $DB->update_record('user_enrolments', $ue);
+
+                $updated = true;
             }
         } else {
             $ue = new stdClass();
@@ -1143,6 +1146,10 @@ abstract class enrol_plugin {
             $ue->courseid  = $courseid;
             $ue->enrol     = $name;
             events_trigger('user_enrolled', $ue);
+        } else if ($updated) {
+            $ue->courseid  = $courseid;
+            $ue->enrol     = $name;
+            events_trigger('user_enrol_modified', $ue);
         }
 
         // reset primitive require_login() caching
@@ -1160,8 +1167,8 @@ abstract class enrol_plugin {
     /**
      * Store user_enrolments changes and trigger event.
      *
-     * @param object $ue
-     * @param int $user id
+     * @param stdClass $instance
+     * @param int $userid
      * @param int $status
      * @param int $timestart
      * @param int $timeend
@@ -1206,7 +1213,7 @@ abstract class enrol_plugin {
         // trigger event
         $ue->courseid  = $instance->courseid;
         $ue->enrol     = $instance->name;
-        events_trigger('user_unenrol_modified', $ue);
+        events_trigger('user_enrol_modified', $ue);
     }
 
     /**

@@ -82,13 +82,18 @@ if ($previewid) {
     if (!isset($SESSION->question_previews[$previewid])) {
         print_error('notyourpreview', 'question');
     }
+
     try {
         $quba = question_engine::load_questions_usage_by_activity($previewid);
+
     } catch (Exception $e) {
+        // This may not seem like the right error message to display, but
+        // actually from the user point of view, it makes sense.
         print_error('submissionoutofsequencefriendlymessage', 'question',
                 question_preview_url($question->id, $options->behaviour,
                 $options->maxmark, $options, $options->variant, $context), null, $e);
     }
+
     $slot = $quba->get_first_question_number();
     $usedquestion = $quba->get_question($slot);
     if ($usedquestion->id != $question->id) {
@@ -140,48 +145,57 @@ $actionurl = question_preview_action_url($question->id, $quba->get_id(), $option
 
 // Process any actions from the buttons at the bottom of the form.
 if (data_submitted() && confirm_sesskey()) {
-    if (optional_param('restart', false, PARAM_BOOL)) {
-        restart_preview($previewid, $question->id, $options, $context);
 
-    } else if (optional_param('fill', null, PARAM_BOOL)) {
-        $correctresponse = $quba->get_correct_response($slot);
-        $quba->process_action($slot, $correctresponse);
+    try {
 
-        $transaction = $DB->start_delegated_transaction();
-        question_engine::save_questions_usage_by_activity($quba);
-        $transaction->allow_commit();
+        if (optional_param('restart', false, PARAM_BOOL)) {
+            restart_preview($previewid, $question->id, $options, $context);
 
-        redirect($actionurl);
+        } else if (optional_param('fill', null, PARAM_BOOL)) {
+            $correctresponse = $quba->get_correct_response($slot);
+            $quba->process_action($slot, $correctresponse);
 
-    } else if (optional_param('finish', null, PARAM_BOOL)) {
-        try {
+            $transaction = $DB->start_delegated_transaction();
+            question_engine::save_questions_usage_by_activity($quba);
+            $transaction->allow_commit();
+
+            redirect($actionurl);
+
+        } else if (optional_param('finish', null, PARAM_BOOL)) {
             $quba->process_all_actions();
-        } catch (question_out_of_sequence_exception $e) {
-            print_error('submissionoutofsequencefriendlymessage', 'question', $actionurl);
-        }
-        $quba->finish_all_questions();
+            $quba->finish_all_questions();
 
-        $transaction = $DB->start_delegated_transaction();
-        question_engine::save_questions_usage_by_activity($quba);
-        $transaction->allow_commit();
-        redirect($actionurl);
+            $transaction = $DB->start_delegated_transaction();
+            question_engine::save_questions_usage_by_activity($quba);
+            $transaction->allow_commit();
+            redirect($actionurl);
 
-    } else {
-        try {
+        } else {
             $quba->process_all_actions();
-        } catch (question_out_of_sequence_exception $e) {
-            print_error('submissionoutofsequencefriendlymessage', 'question', $actionurl);
+
+            $transaction = $DB->start_delegated_transaction();
+            question_engine::save_questions_usage_by_activity($quba);
+            $transaction->allow_commit();
+
+            $scrollpos = optional_param('scrollpos', '', PARAM_RAW);
+            if ($scrollpos !== '') {
+                $actionurl->param('scrollpos', (int) $scrollpos);
+            }
+            redirect($actionurl);
         }
 
-        $transaction = $DB->start_delegated_transaction();
-        question_engine::save_questions_usage_by_activity($quba);
-        $transaction->allow_commit();
+    } catch (question_out_of_sequence_exception $e) {
+        print_error('submissionoutofsequencefriendlymessage', 'question', $actionurl);
 
-        $scrollpos = optional_param('scrollpos', '', PARAM_RAW);
-        if ($scrollpos !== '') {
-            $actionurl->param('scrollpos', (int) $scrollpos);
+    } catch (Exception $e) {
+        // This sucks, if we display our own custom error message, there is no way
+        // to display the original stack trace.
+        $debuginfo = '';
+        if (!empty($e->debuginfo)) {
+            $debuginfo = $e->debuginfo;
         }
-        redirect($actionurl);
+        print_error('errorprocessingresponses', 'question', $actionurl,
+                $e->getMessage(), $debuginfo);
     }
 }
 

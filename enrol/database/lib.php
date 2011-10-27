@@ -170,11 +170,11 @@ class enrol_database_plugin extends enrol_plugin {
             if ($e = $DB->get_record('user_enrolments', array('userid'=>$user->id, 'enrolid'=>$instance->id))) {
                 // reenable enrolment when previously disable enrolment refreshed
                 if ($e->status == ENROL_USER_SUSPENDED) {
-                    $DB->set_field('user_enrolments', 'status', ENROL_USER_ACTIVE, array('enrolid'=>$instance->id, 'userid'=>$user->id));
+                    $this->update_user_enrol($instance, $user->id, ENROL_USER_ACTIVE);
                 }
             } else {
                 $roleid = reset($roles);
-                $this->enrol_user($instance, $user->id, $roleid);
+                $this->enrol_user($instance, $user->id, $roleid, 0, 0, ENROL_USER_ACTIVE);
             }
 
             if (!$context = get_context_instance(CONTEXT_COURSE, $instance->courseid)) {
@@ -231,7 +231,7 @@ class enrol_database_plugin extends enrol_plugin {
             } else if ($unenrolaction == ENROL_EXT_REMOVED_SUSPEND or $unenrolaction == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
                 // disable
                 if ($instance->ustatus != ENROL_USER_SUSPENDED) {
-                    $DB->set_field('user_enrolments', 'status', ENROL_USER_SUSPENDED, array('enrolid'=>$instance->id, 'userid'=>$user->id));
+                    $this->update_user_enrol($instance, $user->id, ENROL_USER_SUSPENDED);
                 }
                 if ($unenrolaction == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
                     role_unassign_all(array('contextid'=>$context->id, 'userid'=>$user->id, 'component'=>'enrol_database', 'itemid'=>$instance->id));
@@ -455,7 +455,7 @@ class enrol_database_plugin extends enrol_plugin {
             foreach ($requested_roles as $userid=>$userroles) {
                 foreach ($userroles as $roleid) {
                     if (empty($current_roles[$userid])) {
-                        $this->enrol_user($instance, $userid, $roleid);
+                        $this->enrol_user($instance, $userid, $roleid, 0, 0, ENROL_USER_ACTIVE);
                         $current_roles[$userid][$roleid] = $roleid;
                         $current_status[$userid] = ENROL_USER_ACTIVE;
                         if ($verbose) {
@@ -488,7 +488,7 @@ class enrol_database_plugin extends enrol_plugin {
 
                 // reenable enrolment when previously disable enrolment refreshed
                 if ($current_status[$userid] == ENROL_USER_SUSPENDED) {
-                    $DB->set_field('user_enrolments', 'status', ENROL_USER_ACTIVE, array('enrolid'=>$instance->id, 'userid'=>$userid));
+                    $this->update_user_enrol($instance, $userid, ENROL_USER_ACTIVE);
                     if ($verbose) {
                         mtrace("  unsuspending: $userid ==> $course->shortname");
                     }
@@ -520,7 +520,7 @@ class enrol_database_plugin extends enrol_plugin {
                         continue;
                     }
                     if ($status != ENROL_USER_SUSPENDED) {
-                        $DB->set_field('user_enrolments', 'status', ENROL_USER_SUSPENDED, array('enrolid'=>$instance->id, 'userid'=>$userid));
+                        $this->update_user_enrol($instance, $userid, ENROL_USER_SUSPENDED);
                         if ($verbose) {
                             mtrace("  suspending: $userid ==> $course->shortname");
                         }

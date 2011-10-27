@@ -6,3 +6,4 @@ information provided here is intended especially for developers.
 required changes in code:
 * load_temp_role() is deprecated, use load_temp_course_role() instead, temp role not loaded
 * remove_temp_role() is deprecated, use remove_temp_course_roles() instead
+* 'user_unenrol_modified' event was renamed to 'user_enrol_modified'

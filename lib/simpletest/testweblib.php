@@ -83,11 +83,6 @@ class web_test extends UnitTestCase {
         $this->assertEqual(wikify_links('this is a <a href="http://someaddress.com/query">link</a>'), 'this is a link [ http://someaddress.com/query ]');
     }
 
-    function test_fix_non_standard_entities() {
-        $this->assertEqual(fix_non_standard_entities('&#x00A3&#0228'), '&#xA3;&#228;');
-        $this->assertEqual(fix_non_standard_entities('&#x00A3;&#0228;'), '&#xA3;&#228;');
-    }
-
     function test_compare_url() {
         $url1 = new moodle_url('index.php', array('var1' => 1, 'var2' => 2));
         $url2 = new moodle_url('index2.php', array('var1' => 1, 'var2' => 2, 'var3' => 3));

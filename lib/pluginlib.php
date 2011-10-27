@@ -92,7 +92,9 @@ class plugin_manager {
      * Returns a tree of known plugins and information about them
      *
      * @param bool $disablecache force reload, cache can be used otherwise
-     * @return array
+     * @return array 2D array. The first keys are plugin type names (e.g. qtype);
+     *      the second keys are the plugin local name (e.g. multichoice); and
+     *      the values are the corresponding {@link plugin_information} objects.
      */
     public function get_plugins($disablecache=false) {
 
@@ -108,8 +110,8 @@ class plugin_manager {
                 } else {
                     $plugintypeclass = 'plugintype_general';
                 }
-                if (!in_array('plugintype_interface', class_implements($plugintypeclass))) {
-                    throw new coding_exception('Class ' . $plugintypeclass . ' must implement plugintype_interface');
+                if (!in_array('plugin_information', class_implements($plugintypeclass))) {
+                    throw new coding_exception('Class ' . $plugintypeclass . ' must implement plugin_information');
                 }
                 $plugins = call_user_func(array($plugintypeclass, 'get_plugins'), $plugintype, $plugintyperootdir, $plugintypeclass);
                 $this->pluginsinfo[$plugintype] = $plugins;
@@ -120,12 +122,14 @@ class plugin_manager {
     }
 
     /**
-     * Returns list of plugins that define their subplugins and information about them
+     * Returns list of plugins that define their subplugins and the information
+     * about them from the db/subplugins.php file.
      *
      * At the moment, only activity modules can define subplugins.
      *
-     * @param double $disablecache force reload, cache can be used otherwise
-     * @return array
+     * @param bool $disablecache force reload, cache can be used otherwise
+     * @return array with keys like 'mod_quiz', and values the data from the
+     *      corresponding db/subplugins.php file.
      */
     public function get_subplugins($disablecache=false) {
 
@@ -209,6 +213,62 @@ class plugin_manager {
         } else {
             return $type;
         }
+    }
+
+    /**
+     * @param string $component frankenstyle component name.
+     * @return plugin_information|null the corresponding plugin information.
+     */
+    public function get_plugin_info($component) {
+        list($type, $name) = normalize_component($component);
+        $plugins = $this->get_plugins();
+        if (isset($plugins[$type][$name])) {
+            return $plugins[$type][$name];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Check a dependencies list against the list of installed plugins.
+     * @param array $dependencies compenent name to required version or ANY_VERSION.
+     * @return bool true if all the dependencies are satisfied.
+     */
+    public function are_dependencies_satisfied($dependencies) {
+        foreach ($dependencies as $component => $requiredversion) {
+            $otherplugin = $this->get_plugin_info($component);
+            if (is_null($otherplugin)) {
+                return false;
+            }
+
+            if ($requiredversion != ANY_VERSION and $otherplugin->versiondb < $requiredversion) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks all dependencies for all installed plugins. Used by install and upgrade.
+     * @param int $moodleversion the version from version.php.
+     * @return bool true if all the dependencies are satisfied for all plugins.
+     */
+    public function all_plugins_ok($moodleversion) {
+        foreach ($this->get_plugins() as $type => $plugins) {
+            foreach ($plugins as $plugin) {
+
+                if (!empty($plugin->versionrequires) && $plugin->versionrequires > $moodleversion) {
+                    return false;
+                }
+
+                if (!$this->are_dependencies_satisfied($plugin->get_other_required_plugins())) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -407,9 +467,13 @@ class plugin_manager {
 }
 
 /**
- * All classes that represent a plugin of some type must implement this interface
+ * Interface for making information about a plugin available.
+ *
+ * Note that most of the useful information is made available in pubic fields,
+ * which cannot be documented in this interface. See the field definitions on
+ * {@link plugintype_base} to find out what information is available.
  */
-interface plugintype_interface {
+interface plugin_information {
 
     /**
      * Gathers and returns the information about all plugins of the given type
@@ -430,7 +494,7 @@ interface plugintype_interface {
      *
      * @return void
      */
-    public function set_display_name();
+    public function init_display_name();
 
     /**
      * Sets $versiondisk property to a numerical value representing the
@@ -442,7 +506,7 @@ interface plugintype_interface {
      *
      * @return void
      */
-    public function set_version_disk();
+    public function load_disk_version();
 
     /**
      * Sets $versiondb property to a numerical value representing the
@@ -454,7 +518,7 @@ interface plugintype_interface {
      *
      * @return void
      */
-    public function set_version_db();
+    public function load_db_version();
 
     /**
      * Sets $versionrequires property to a numerical value representing
@@ -462,7 +526,7 @@ interface plugintype_interface {
      *
      * @return void
      */
-    public function set_version_requires();
+    public function load_required_main_version();
 
     /**
      * Sets $source property to one of plugin_manager::PLUGIN_SOURCE_xxx
@@ -474,7 +538,7 @@ interface plugintype_interface {
      *
      * @return void
      */
-    public function set_source();
+    public function init_is_standard();
 
     /**
      * Returns true if the plugin is shipped with the official distribution
@@ -490,6 +554,13 @@ interface plugintype_interface {
      * @return string one of plugin_manager::PLUGIN_STATUS_xxx constants
      */
     public function get_status();
+
+    /**
+     * Get the list of other plugins that this plugin requires ot be installed.
+     * @return array with keys the frankenstyle plugin name, and values either
+     *      a version string (like '2011101700') or the constant ANY_VERSION.
+     */
+    public function get_other_required_plugins();
 
     /**
      * Returns the information about plugin availability
@@ -533,6 +604,14 @@ interface plugintype_interface {
      * @return string
      */
     public function get_dir();
+
+    /**
+     * Return the full path name of a file within the plugin.
+     * No check is made to see if the file exists.
+     * @param string $relativepath e.g. 'version.php'.
+     * @return string e.g. $CFG->dirroot . '/mod/quiz/version.php'.
+     */
+    public function full_path($relativepath);
 }
 
 /**
@@ -559,13 +638,16 @@ abstract class plugintype_base {
     public $versiondb;
     /** @var int|float|string required version of Moodle core  */
     public $versionrequires;
+    /** @var array other plugins that this one depends on.
+     *  Lazy-loaded by {@link get_other_required_plugins()} */
+    public $dependencies = null;
     /** @var int number of instances of the plugin - not supported yet */
     public $instances;
     /** @var int order of the plugin among other plugins of the same type - not supported yet */
     public $sortorder;
 
     /**
-     * @see plugintype_interface::get_plugins()
+     * @see plugin_information::get_plugins()
      */
     public static function get_plugins($type, $typerootdir, $typeclass) {
 
@@ -579,11 +661,11 @@ abstract class plugintype_base {
             $plugin->name           = $pluginname;
             $plugin->rootdir        = $pluginrootdir;
 
-            $plugin->set_display_name();
-            $plugin->set_version_disk();
-            $plugin->set_version_db();
-            $plugin->set_version_requires();
-            $plugin->set_source();
+            $plugin->init_display_name();
+            $plugin->load_disk_version();
+            $plugin->load_db_version();
+            $plugin->load_required_main_version();
+            $plugin->init_is_standard();
 
             $ondisk[$pluginname] = $plugin;
         }
@@ -591,9 +673,9 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugintype_interface::set_display_name()
+     * @see plugin_information::init_display_name()
      */
-    public function set_display_name() {
+    public function init_display_name() {
         if (! get_string_manager()->string_exists('pluginname', $this->type . '_' . $this->name)) {
             $this->displayname = '[pluginname,' . $this->type . '_' . $this->name . ']';
         } else {
@@ -602,28 +684,76 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugintype_interface::set_version_disk()
+     * @see plugin_information::full_path()
      */
-    public function set_version_disk() {
-
+    public function full_path($relativepath) {
         if (empty($this->rootdir)) {
-            return;
+            return '';
         }
+        return $this->rootdir . '/' . $relativepath;
+    }
 
-        $versionfile = $this->rootdir . '/version.php';
+    /**
+     * Load the data from version.php.
+     * @return object the data object defined in version.php.
+     */
+    protected function load_version_php() {
+        $versionfile = $this->full_path('version.php');
 
+        $plugin = new stdClass();
         if (is_readable($versionfile)) {
             include($versionfile);
-            if (isset($plugin->version)) {
-                $this->versiondisk = $plugin->version;
-            }
+        }
+        return $plugin;
+    }
+
+    /**
+     * @see plugin_information::load_disk_version()
+     */
+    public function load_disk_version() {
+        $plugin = $this->load_version_php();
+        if (isset($plugin->version)) {
+            $this->versiondisk = $plugin->version;
         }
     }
 
     /**
-     * @see plugintype_interface::set_version_db()
+     * @see plugin_information::load_required_main_version()
      */
-    public function set_version_db() {
+    public function load_required_main_version() {
+        $plugin = $this->load_version_php();
+        if (isset($plugin->requires)) {
+            $this->versionrequires = $plugin->requires;
+        }
+    }
+
+    /**
+     * Initialise {@link $dependencies} to the list of other plugins (in any)
+     * that this one requires to be installed.
+     */
+    protected function load_other_required_plugins() {
+        $plugin = $this->load_version_php();
+        if (!empty($plugin->dependencies)) {
+            $this->dependencies = $plugin->dependencies;
+        } else {
+            $this->dependencies = array(); // By default, no dependencies.
+        }
+    }
+
+    /**
+     * @see plugin_information::get_other_required_plugins()
+     */
+    public function get_other_required_plugins() {
+        if (is_null($this->dependencies)) {
+            $this->load_other_required_plugins();
+        }
+        return $this->dependencies;
+    }
+
+    /**
+     * @see plugin_information::load_db_version()
+     */
+    public function load_db_version() {
 
         if ($ver = self::get_version_from_config_plugins($this->type . '_' . $this->name)) {
             $this->versiondb = $ver;
@@ -631,28 +761,9 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugintype_interface::set_version_requires()
+     * @see plugin_information::init_is_standard()
      */
-    public function set_version_requires() {
-
-        if (empty($this->rootdir)) {
-            return;
-        }
-
-        $versionfile = $this->rootdir . '/version.php';
-
-        if (is_readable($versionfile)) {
-            include($versionfile);
-            if (isset($plugin->requires)) {
-                $this->versionrequires = $plugin->requires;
-            }
-        }
-    }
-
-    /**
-     * @see plugintype_interface::set_source()
-     */
-    public function set_source() {
+    public function init_is_standard() {
 
         $standard = plugin_manager::standard_plugins_list($this->type);
 
@@ -667,14 +778,14 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugintype_interface::is_standard()
+     * @see plugin_information::is_standard()
      */
     public function is_standard() {
         return $this->source === plugin_manager::PLUGIN_SOURCE_STANDARD;
     }
 
     /**
-     * @see plugintype_interface::get_status()
+     * @see plugin_information::get_status()
      */
     public function get_status() {
 
@@ -703,28 +814,28 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugintype_interface::is_enabled()
+     * @see plugin_information::is_enabled()
      */
     public function is_enabled() {
         return null;
     }
 
     /**
-     * @see plugintype_interface::get_settings_url()
+     * @see plugin_information::get_settings_url()
      */
     public function get_settings_url() {
         return null;
     }
 
     /**
-     * @see plugintype_interface::get_uninstall_url()
+     * @see plugin_information::get_uninstall_url()
      */
     public function get_uninstall_url() {
         return null;
     }
 
     /**
-     * @see plugintype_interface::get_dir()
+     * @see plugin_information::get_dir()
      */
     public function get_dir() {
         global $CFG;
@@ -744,7 +855,12 @@ abstract class plugintype_base {
         static $pluginversions = null;
 
         if (is_null($pluginversions) or $disablecache) {
-            $pluginversions = $DB->get_records_menu('config_plugins', array('name' => 'version'), 'plugin', 'plugin,value');
+            try {
+                $pluginversions = $DB->get_records_menu('config_plugins', array('name' => 'version'), 'plugin', 'plugin,value');
+            } catch (dml_exception $e) {
+                // before install
+                $pluginversions = array();
+            }
         }
 
         if (!array_key_exists($plugin, $pluginversions)) {
@@ -758,17 +874,17 @@ abstract class plugintype_base {
 /**
  * General class for all plugin types that do not have their own class
  */
-class plugintype_general extends plugintype_base implements plugintype_interface {
+class plugintype_general extends plugintype_base implements plugin_information {
 
 }
 
 /**
  * Class for page side blocks
  */
-class plugintype_block extends plugintype_base implements plugintype_interface {
+class plugintype_block extends plugintype_base implements plugin_information {
 
     /**
-     * @see plugintype_interface::get_plugins()
+     * @see plugin_information::get_plugins()
      */
     public static function get_plugins($type, $typerootdir, $typeclass) {
 
@@ -788,7 +904,7 @@ class plugintype_block extends plugintype_base implements plugintype_interface {
             $plugin->rootdir        = null;
             $plugin->displayname    = $blockname;
             $plugin->versiondb      = $blockinfo->version;
-            $plugin->set_source();
+            $plugin->init_is_standard();
 
             $blocks[$blockname]   = $plugin;
         }
@@ -797,9 +913,9 @@ class plugintype_block extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::set_display_name()
+     * @see plugin_information::init_display_name()
      */
-    public function set_display_name() {
+    public function init_display_name() {
 
         if (get_string_manager()->string_exists('pluginname', 'block_' . $this->name)) {
             $this->displayname = get_string('pluginname', 'block_' . $this->name);
@@ -808,14 +924,14 @@ class plugintype_block extends plugintype_base implements plugintype_interface {
             $this->displayname = $block->get_title();
 
         } else {
-            parent::set_display_name();
+            parent::init_display_name();
         }
     }
 
     /**
-     * @see plugintype_interface::set_version_db()
+     * @see plugin_information::load_db_version()
      */
-    public function set_version_db() {
+    public function load_db_version() {
         global $DB;
 
         $blocksinfo = self::get_blocks_info();
@@ -825,7 +941,7 @@ class plugintype_block extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::is_enabled()
+     * @see plugin_information::is_enabled()
      */
     public function is_enabled() {
 
@@ -842,7 +958,7 @@ class plugintype_block extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::get_settings_url()
+     * @see plugin_information::get_settings_url()
      */
     public function get_settings_url() {
 
@@ -850,7 +966,7 @@ class plugintype_block extends plugintype_base implements plugintype_interface {
             return parent::get_settings_url();
 
         } else if ($block->has_config()) {
-            if (!empty($this->rootdir) and file_exists($this->rootdir . '/settings.php')) {
+            if (file_exists($this->full_path('settings.php'))) {
                 return new moodle_url('/admin/settings.php', array('section' => 'blocksetting' . $this->name));
             } else {
                 $blocksinfo = self::get_blocks_info();
@@ -863,7 +979,7 @@ class plugintype_block extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::get_uninstall_url()
+     * @see plugin_information::get_uninstall_url()
      */
     public function get_uninstall_url() {
 
@@ -882,7 +998,12 @@ class plugintype_block extends plugintype_base implements plugintype_interface {
         static $blocksinfocache = null;
 
         if (is_null($blocksinfocache) or $disablecache) {
-            $blocksinfocache = $DB->get_records('block', null, 'name', 'name,id,version,visible');
+            try {
+                $blocksinfocache = $DB->get_records('block', null, 'name', 'name,id,version,visible');
+            } catch (dml_exception $e) {
+                // before install
+                $blocksinfocache = array();
+            }
         }
 
         return $blocksinfocache;
@@ -892,10 +1013,10 @@ class plugintype_block extends plugintype_base implements plugintype_interface {
 /**
  * Class for text filters
  */
-class plugintype_filter extends plugintype_base implements plugintype_interface {
+class plugintype_filter extends plugintype_base implements plugin_information {
 
     /**
-     * @see plugintype_interface::get_plugins()
+     * @see plugin_information::get_plugins()
      */
     public static function get_plugins($type, $typerootdir, $typeclass) {
         global $CFG, $DB;
@@ -913,10 +1034,10 @@ class plugintype_filter extends plugintype_base implements plugintype_interface 
             $plugin->rootdir        = $CFG->dirroot . '/' . $filterlegacyname;
             $plugin->displayname    = $displayname;
 
-            $plugin->set_version_disk();
-            $plugin->set_version_db();
-            $plugin->set_version_requires();
-            $plugin->set_source();
+            $plugin->load_disk_version();
+            $plugin->load_db_version();
+            $plugin->load_required_main_version();
+            $plugin->init_is_standard();
 
             $filters[$plugin->name] = $plugin;
         }
@@ -949,7 +1070,7 @@ class plugintype_filter extends plugintype_base implements plugintype_interface 
                 $plugin->rootdir        = $CFG->dirroot . '/' . $info->legacyname;
                 $plugin->displayname    = $info->legacyname;
 
-                $plugin->set_version_db();
+                $plugin->load_db_version();
 
                 if (is_null($plugin->versiondb)) {
                     // this is a hack to stimulate 'Missing from disk' error
@@ -965,40 +1086,26 @@ class plugintype_filter extends plugintype_base implements plugintype_interface 
     }
 
     /**
-     * @see plugintype_interface::set_display_name()
+     * @see plugin_information::init_display_name()
      */
-    public function set_display_name() {
+    public function init_display_name() {
         // do nothing, the name is set in self::get_plugins()
     }
 
     /**
-     * @see plugintype_interface::set_version_disk()
+     * @see plugintype_base::load_version_php().
      */
-    public function set_version_disk() {
-
+    protected function load_version_php() {
         if (strpos($this->name, 'mod_') === 0) {
-            // filters bundled with modules do not use versioning
-            return;
+            // filters bundled with modules do not have a version.php and so
+            // do not provide their own versioning information.
+            return new stdClass();
         }
-
-        return parent::set_version_disk();
+        return parent::load_version_php();
     }
 
     /**
-     * @see plugintype_interface::set_version_requires()
-     */
-    public function set_version_requires() {
-
-        if (strpos($this->name, 'mod_') === 0) {
-            // filters bundled with modules do not use versioning
-            return;
-        }
-
-        return parent::set_version_requires();
-    }
-
-    /**
-     * @see plugintype_interface::is_enabled()
+     * @see plugin_information::is_enabled()
      */
     public function is_enabled() {
 
@@ -1020,7 +1127,7 @@ class plugintype_filter extends plugintype_base implements plugintype_interface 
     }
 
     /**
-     * @see plugintype_interface::get_settings_url()
+     * @see plugin_information::get_settings_url()
      */
     public function get_settings_url() {
 
@@ -1034,7 +1141,7 @@ class plugintype_filter extends plugintype_base implements plugintype_interface 
     }
 
     /**
-     * @see plugintype_interface::get_uninstall_url()
+     * @see plugin_information::get_uninstall_url()
      */
     public function get_uninstall_url() {
 
@@ -1105,10 +1212,10 @@ class plugintype_filter extends plugintype_base implements plugintype_interface 
 /**
  * Class for activity modules
  */
-class plugintype_mod extends plugintype_base implements plugintype_interface {
+class plugintype_mod extends plugintype_base implements plugin_information {
 
     /**
-     * @see plugintype_interface::get_plugins()
+     * @see plugin_information::get_plugins()
      */
     public static function get_plugins($type, $typerootdir, $typeclass) {
 
@@ -1128,7 +1235,7 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
             $plugin->rootdir        = null;
             $plugin->displayname    = $modulename;
             $plugin->versiondb      = $moduleinfo->version;
-            $plugin->set_source();
+            $plugin->init_is_standard();
 
             $modules[$modulename]   = $plugin;
         }
@@ -1137,9 +1244,9 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::set_display_name()
+     * @see plugin_information::init_display_name()
      */
-    public function set_display_name() {
+    public function init_display_name() {
         if (get_string_manager()->string_exists('pluginname', $this->type . '_' . $this->name)) {
             $this->displayname = get_string('pluginname', $this->type . '_' . $this->name);
         } else {
@@ -1148,28 +1255,23 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::set_version_disk()
+     * Load the data from version.php.
+     * @return object the data object defined in version.php.
      */
-    public function set_version_disk() {
+    protected function load_version_php() {
+        $versionfile = $this->full_path('version.php');
 
-        if (empty($this->rootdir)) {
-            return;
-        }
-
-        $versionfile = $this->rootdir . '/version.php';
-
+        $module = new stdClass();
         if (is_readable($versionfile)) {
             include($versionfile);
-            if (isset($module->version)) {
-                $this->versiondisk = $module->version;
-            }
         }
+        return $module;
     }
 
     /**
-     * @see plugintype_interface::set_version_db()
+     * @see plugin_information::load_db_version()
      */
-    public function set_version_db() {
+    public function load_db_version() {
         global $DB;
 
         $modulesinfo = self::get_modules_info();
@@ -1179,26 +1281,7 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::set_version_requires()
-     */
-    public function set_version_requires() {
-
-        if (empty($this->rootdir)) {
-            return;
-        }
-
-        $versionfile = $this->rootdir . '/version.php';
-
-        if (is_readable($versionfile)) {
-            include($versionfile);
-            if (isset($module->requires)) {
-                $this->versionrequires = $module->requires;
-            }
-        }
-    }
-
-    /**
-     * @see plugintype_interface::is_enabled()
+     * @see plugin_information::is_enabled()
      */
     public function is_enabled() {
 
@@ -1215,11 +1298,11 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::get_settings_url()
+     * @see plugin_information::get_settings_url()
      */
     public function get_settings_url() {
 
-        if (!empty($this->rootdir) and (file_exists($this->rootdir . '/settings.php') or file_exists($this->rootdir . '/settingstree.php'))) {
+        if (file_exists($this->full_path('settings.php')) or file_exists($this->full_path('settingstree.php'))) {
             return new moodle_url('/admin/settings.php', array('section' => 'modsetting' . $this->name));
         } else {
             return parent::get_settings_url();
@@ -1227,7 +1310,7 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::get_uninstall_url()
+     * @see plugin_information::get_uninstall_url()
      */
     public function get_uninstall_url() {
 
@@ -1249,46 +1332,103 @@ class plugintype_mod extends plugintype_base implements plugintype_interface {
         static $modulesinfocache = null;
 
         if (is_null($modulesinfocache) or $disablecache) {
-            $modulesinfocache = $DB->get_records('modules', null, 'name', 'name,id,version,visible');
+            try {
+                $modulesinfocache = $DB->get_records('modules', null, 'name', 'name,id,version,visible');
+            } catch (dml_exception $e) {
+                // before install
+                $modulesinfocache = array();
+            }
         }
 
         return $modulesinfocache;
     }
 }
 
+
+/**
+ * Class for question behaviours.
+ */
+class plugintype_qbehaviour extends plugintype_base implements plugin_information {
+
+    /**
+     * @see plugintype_base::load_other_required_plugins().
+     */
+    protected function load_other_required_plugins() {
+        parent::load_other_required_plugins();
+        if (!empty($this->dependencies)) {
+            return;
+        }
+
+        // Standard mechanism did not find anything, so try the legacy way.
+        global $CFG;
+        require_once($CFG->libdir . '/questionlib.php');
+        $required = question_engine::get_behaviour_required_behaviours($this->name);
+        foreach ($required as $other) {
+            $this->dependencies['qbehaviour_' . $other] = ANY_VERSION;
+        }
+    }
+}
+
+
 /**
  * Class for question types
  */
-class plugintype_qtype extends plugintype_base implements plugintype_interface {
+class plugintype_qtype extends plugintype_base implements plugin_information {
 
     /**
-     * @see plugintype_interface::set_display_name()
+     * @see plugin_information::init_display_name()
      */
-    public function set_display_name() {
-        $this->displayname = get_string($this->name, 'qtype_' . $this->name);
+    public function init_display_name() {
+        if (get_string_manager()->string_exists('pluginname', $this->type . '_' . $this->name)) {
+            $this->displayname = get_string('pluginname', $this->type . '_' . $this->name);
+        } else {
+            $this->displayname = get_string($this->name, 'qtype_' . $this->name);
+        }
+    }
+
+    /**
+     * @see plugintype_base::load_other_required_plugins().
+     */
+    protected function load_other_required_plugins() {
+        parent::load_other_required_plugins();
+        if (!empty($this->dependencies)) {
+            return;
+        }
+
+        // Standard mechanism did not find anything, so try the legacy way.
+        global $CFG;
+        require_once($CFG->libdir . '/questionlib.php');
+        $required = question_bank::get_qtype($this->name)->requires_qtypes();
+        foreach ($required as $other) {
+            $this->dependencies['qtype_' . $other] = ANY_VERSION;
+        }
     }
 }
 
 /**
  * Class for question formats
  */
-class plugintype_qformat extends plugintype_base implements plugintype_interface {
+class plugintype_qformat extends plugintype_base implements plugin_information {
 
     /**
-     * @see plugintype_interface::set_display_name()
+     * @see plugin_information::init_display_name()
      */
-    public function set_display_name() {
-        $this->displayname = get_string($this->name, 'qformat_' . $this->name);
+    public function init_display_name() {
+        if (get_string_manager()->string_exists('pluginname', $this->type . '_' . $this->name)) {
+            $this->displayname = get_string('pluginname', $this->type . '_' . $this->name);
+        } else {
+            $this->displayname = get_string($this->name, 'qformat_' . $this->name);
+        }
     }
 }
 
 /**
  * Class for authentication plugins
  */
-class plugintype_auth extends plugintype_base implements plugintype_interface {
+class plugintype_auth extends plugintype_base implements plugin_information {
 
     /**
-     * @see plugintype_interface::is_enabled()
+     * @see plugin_information::is_enabled()
      */
     public function is_enabled() {
         global $CFG;
@@ -1308,11 +1448,10 @@ class plugintype_auth extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::get_settings_url()
+     * @see plugin_information::get_settings_url()
      */
     public function get_settings_url() {
-
-        if (!empty($this->rootdir) and file_exists($this->rootdir . '/settings.php')) {
+        if (file_exists($this->full_path('settings.php'))) {
             return new moodle_url('/admin/settings.php', array('section' => 'authsetting' . $this->name));
         } else {
             return new moodle_url('/admin/auth_config.php', array('auth' => $this->name));
@@ -1323,7 +1462,7 @@ class plugintype_auth extends plugintype_base implements plugintype_interface {
 /**
  * Class for enrolment plugins
  */
-class plugintype_enrol extends plugintype_base implements plugintype_interface {
+class plugintype_enrol extends plugintype_base implements plugin_information {
 
     /**
      * We do not actually need whole enrolment classes here so we do not call
@@ -1331,7 +1470,7 @@ class plugintype_enrol extends plugintype_base implements plugintype_interface {
      * results, for example if the enrolment plugin does not contain lib.php
      * but it is listed in $CFG->enrol_plugins_enabled
      *
-     * @see plugintype_interface::is_enabled()
+     * @see plugin_information::is_enabled()
      */
     public function is_enabled() {
         global $CFG;
@@ -1346,11 +1485,11 @@ class plugintype_enrol extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::get_settings_url()
+     * @see plugin_information::get_settings_url()
      */
     public function get_settings_url() {
 
-        if ($this->is_enabled() or (!empty($this->rootdir) and file_exists($this->rootdir . '/settings.php'))) {
+        if ($this->is_enabled() or file_exists($this->full_path('settings.php'))) {
             return new moodle_url('/admin/settings.php', array('section' => 'enrolsettings' . $this->name));
         } else {
             return parent::get_settings_url();
@@ -1358,7 +1497,7 @@ class plugintype_enrol extends plugintype_base implements plugintype_interface {
     }
 
     /**
-     * @see plugintype_interface::get_uninstall_url()
+     * @see plugin_information::get_uninstall_url()
      */
     public function get_uninstall_url() {
         return new moodle_url('/admin/enrol.php', array('action' => 'uninstall', 'enrol' => $this->name, 'sesskey' => sesskey()));
@@ -1368,31 +1507,28 @@ class plugintype_enrol extends plugintype_base implements plugintype_interface {
 /**
  * Class for messaging processors
  */
-class plugintype_message extends plugintype_base implements plugintype_interface {
+class plugintype_message extends plugintype_base implements plugin_information {
 
     /**
-     * @see plugintype_interface::get_settings_url()
+     * @see plugin_information::get_settings_url()
      */
     public function get_settings_url() {
 
-        if ($this->name === 'jabber') {
-            return new moodle_url('/admin/settings.php', array('section' => 'jabber'));
+        if (file_exists($this->full_path('settings.php')) or file_exists($this->full_path('settingstree.php'))) {
+            return new moodle_url('/admin/settings.php', array('section' => 'messagesetting' . $this->name));
+        } else {
+            return parent::get_settings_url();
         }
-
-        if ($this->name === 'email') {
-            return new moodle_url('/admin/settings.php', array('section' => 'mail'));
-        }
-
     }
 }
 
 /**
  * Class for repositories
  */
-class plugintype_repository extends plugintype_base implements plugintype_interface {
+class plugintype_repository extends plugintype_base implements plugin_information {
 
     /**
-     * @see plugintype_interface::is_enabled()
+     * @see plugin_information::is_enabled()
      */
     public function is_enabled() {
 
@@ -1402,7 +1538,7 @@ class plugintype_repository extends plugintype_base implements plugintype_interf
     }
 
     /**
-     * @see plugintype_interface::get_settings_url()
+     * @see plugin_information::get_settings_url()
      */
     public function get_settings_url() {
 
@@ -1434,10 +1570,10 @@ class plugintype_repository extends plugintype_base implements plugintype_interf
 /**
  * Class for portfolios
  */
-class plugintype_portfolio extends plugintype_base implements plugintype_interface {
+class plugintype_portfolio extends plugintype_base implements plugin_information {
 
     /**
-     * @see plugintype_interface::is_enabled()
+     * @see plugin_information::is_enabled()
      */
     public function is_enabled() {
 
@@ -1477,10 +1613,10 @@ class plugintype_portfolio extends plugintype_base implements plugintype_interfa
 /**
  * Class for themes
  */
-class plugintype_theme extends plugintype_base implements plugintype_interface {
+class plugintype_theme extends plugintype_base implements plugin_information {
 
     /**
-     * @see plugintype_interface::is_enabled()
+     * @see plugin_information::is_enabled()
      */
     public function is_enabled() {
         global $CFG;
@@ -1497,10 +1633,10 @@ class plugintype_theme extends plugintype_base implements plugintype_interface {
 /**
  * Class representing an MNet service
  */
-class plugintype_mnetservice extends plugintype_base implements plugintype_interface {
+class plugintype_mnetservice extends plugintype_base implements plugin_information {
 
     /**
-     * @see plugintype_interface::is_enabled()
+     * @see plugin_information::is_enabled()
      */
     public function is_enabled() {
         global $CFG;
@@ -1516,7 +1652,7 @@ class plugintype_mnetservice extends plugintype_base implements plugintype_inter
 /**
  * Class for admin tool plugins
  */
-class plugintype_tool extends plugintype_base implements plugintype_interface {
+class plugintype_tool extends plugintype_base implements plugin_information {
 
     public function get_uninstall_url() {
         return new moodle_url('/admin/tools.php', array('delete' => $this->name, 'sesskey' => sesskey()));

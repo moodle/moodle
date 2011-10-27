@@ -111,7 +111,7 @@ class question_engine_data_mapper {
         $record = new stdClass();
         $record->questionattemptid = $questionattemptid;
         $record->sequencenumber = $seq;
-        $record->state = '' . $step->get_state();
+        $record->state = (string) $step->get_state();
         $record->fraction = $step->get_fraction();
         $record->timecreated = $step->get_timecreated();
         $record->userid = $step->get_user_id();
@@ -367,7 +367,9 @@ GROUP BY
     qa.questionid,
     q.name,
     q.id,
-    summarystate
+    CASE qas.state
+        {$this->full_states_to_summary_state_sql()}
+    END
 
 ORDER BY
     qa.slot,
@@ -505,14 +507,14 @@ $sqlorderby
         }
 
         list($statetest, $stateparams) = $this->db->get_in_or_equal(array(
-                question_state::$gaveup,
-                question_state::$gradedwrong,
-                question_state::$gradedpartial,
-                question_state::$gradedright,
-                question_state::$mangaveup,
-                question_state::$mangrwrong,
-                question_state::$mangrpartial,
-                question_state::$mangrright), SQL_PARAMS_NAMED, 'st');
+                (string) question_state::$gaveup,
+                (string) question_state::$gradedwrong,
+                (string) question_state::$gradedpartial,
+                (string) question_state::$gradedright,
+                (string) question_state::$mangaveup,
+                (string) question_state::$mangrwrong,
+                (string) question_state::$mangrpartial,
+                (string) question_state::$mangrright), SQL_PARAMS_NAMED, 'st');
 
         return $this->db->get_records_sql("
 SELECT
@@ -818,7 +820,8 @@ ORDER BY
      */
     public function in_summary_state_test($summarystate, $equal = true, $prefix = 'summarystates') {
         $states = question_state::get_all_for_summary_state($summarystate);
-        return $this->db->get_in_or_equal($states, SQL_PARAMS_NAMED, $prefix, $equal);
+        return $this->db->get_in_or_equal(array_map('strval', $states),
+                SQL_PARAMS_NAMED, $prefix, $equal);
     }
 
     /**

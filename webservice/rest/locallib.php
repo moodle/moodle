@@ -82,56 +82,69 @@ class webservice_rest_server extends webservice_base_server {
      * @return void
      */
     protected function send_response() {
-        $this->send_headers();
-        if ($this->restformat == 'json') {
-            try {
-                $response = external_api::clean_returnvalue($this->function->returns_desc, $this->returns);
-            } catch (Exception $ex) {
-                $error = new stdClass;
-                $error->exception = get_class($ex);
-                $error->message = $ex->getMessage();
-                if (debugging() and isset($ex->debuginfo)) {
-                    $error->debuginfo = $ex->debuginfo;
-                }
-                echo json_encode($error);
-            }
-            $json = json_encode($response);
-            echo $json;
-        } else {
-            $xml = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
-            $xml .= '<RESPONSE>'."\n";
-            $xml .= self::xmlize_result($this->returns, $this->function->returns_desc);
-            $xml .= '</RESPONSE>'."\n";
-            echo $xml;
+
+        //Check that the returned values are valid
+        try {
+            $validatedvalues = external_api::clean_returnvalue($this->function->returns_desc, $this->returns);
+        } catch (Exception $ex) {
+            $exception = $ex;
         }
+
+        if (!empty($exception)) {
+            $response =  $this->generate_error($exception);
+        } else {
+            //We can now convert the response to the requested REST format
+            if ($this->restformat == 'json') {
+                $response = json_encode($validatedvalues);
+            } else {
+                $response = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
+                $response .= '<RESPONSE>'."\n";
+                $response .= self::xmlize_result($this->returns, $this->function->returns_desc);
+                $response .= '</RESPONSE>'."\n";
+            }
+        }
+
+        $this->send_headers();
+        echo $response;
     }
 
     /**
      * Send the error information to the WS client
      * formatted as XML document.
+     * Note: the exception is never passed as null,
+     *       it only matches the abstract function declaration.
      * @param exception $ex
      * @return void
      */
     protected function send_error($ex=null) {
         $this->send_headers();
+        echo $this->generate_error($ex);
+    }
+
+    /**
+     * Build the error information matching the REST returned value format (JSON or XML)
+     * @param exception $ex
+     * @return string the error in the requested REST format
+     */
+    protected function generate_error($ex) {
         if ($this->restformat == 'json') {
-            $error = new stdClass;
-            $error->exception = get_class($ex);
-            $error->message = $ex->getMessage();
+            $errorobject = new stdClass;
+            $errorobject->exception = get_class($ex);
+            $errorobject->message = $ex->getMessage();
             if (debugging() and isset($ex->debuginfo)) {
-                $error->debuginfo = $ex->debuginfo;
+                $errorobject->debuginfo = $ex->debuginfo;
             }
-            echo json_encode($error);
+            $error = json_encode($errorobject);
         } else {
-            $xml = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
-            $xml .= '<EXCEPTION class="'.get_class($ex).'">'."\n";
-            $xml .= '<MESSAGE>'.htmlentities($ex->getMessage(), ENT_COMPAT, 'UTF-8').'</MESSAGE>'."\n";
+            $error = '<?xml version="1.0" encoding="UTF-8" ?>'."\n";
+            $error .= '<EXCEPTION class="'.get_class($ex).'">'."\n";
+            $error .= '<MESSAGE>'.htmlentities($ex->getMessage(), ENT_COMPAT, 'UTF-8').'</MESSAGE>'."\n";
             if (debugging() and isset($ex->debuginfo)) {
-                $xml .= '<DEBUGINFO>'.htmlentities($ex->debuginfo, ENT_COMPAT, 'UTF-8').'</DEBUGINFO>'."\n";
+                $error .= '<DEBUGINFO>'.htmlentities($ex->debuginfo, ENT_COMPAT, 'UTF-8').'</DEBUGINFO>'."\n";
             }
-            $xml .= '</EXCEPTION>'."\n";
-            echo $xml;
+            $error .= '</EXCEPTION>'."\n";
         }
+        return $error;
     }
 
     /**
@@ -185,15 +198,6 @@ class webservice_rest_server extends webservice_base_server {
         } else if ($desc instanceof external_single_structure) {
             $single = '<SINGLE>'."\n";
             foreach ($desc->keys as $key=>$subdesc) {
-                if (!array_key_exists($key, $returns)) {
-                    if ($subdesc->required == VALUE_REQUIRED) {
-                        $single .= '<ERROR>Missing required key "'.$key.'"</ERROR>';
-                        continue;
-                    } else {
-                        //optional field
-                        continue;
-                    }
-                }
                 $single .= '<KEY name="'.$key.'">'.self::xmlize_result($returns[$key], $subdesc).'</KEY>'."\n";
             }
             $single .= '</SINGLE>'."\n";

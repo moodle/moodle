@@ -73,7 +73,7 @@ course_content_removed - object course table record + context property
 course_deleted - object course table record + context property
 
 user_enrolled - object record from user_enrolments table + courseid,enrol
-user_unenrol_modified - object record from user_enrolments table + courseid,enrol
+user_enrol_modified - object record from user_enrolments table + courseid,enrol
 user_unenrolled - object record from user_enrolments table + courseid,enrol,lastenrol
 
 ==== cohort related events ===

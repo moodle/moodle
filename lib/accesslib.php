@@ -986,6 +986,8 @@ function load_role_access_by_context($roleid, context $context, &$accessdata) {
 
 /**
  * Returns empty accessdata structure.
+ *
+ * @private
  * @return array empt accessdata
  */
 function get_empty_accessdata() {
@@ -1163,6 +1165,7 @@ function reload_all_capabilities() {
  * Adds a temp role to current USER->access array.
  *
  * Useful for the "temporary guest" access we grant to logged-in users.
+ * @since 2.2
  *
  * @param context_course $coursecontext
  * @param int $roleid
@@ -1198,6 +1201,7 @@ function load_temp_course_role(context_course $coursecontext, $roleid) {
 
 /**
  * Removes any extra guest roles from current USER->access array.
+ * @since 2.2
  *
  * @param context_course $coursecontext
  * @return void
@@ -1532,7 +1536,6 @@ function get_roles_with_capability($capability, $permission = null, $context = n
 
     return $DB->get_records_sql($sql, $params);
 }
-
 
 /**
  * This function makes a role-assignment (a role for a user in a particular context)
@@ -2271,7 +2274,7 @@ function load_capability_def($component) {
         if (!empty(${$component.'_capabilities'})) {
             // BC capability array name
             // since 2.0 we prefer $capabilities instead - it is easier to use and matches db/* files
-            debugging('componentname_capabilities array is deprecated, please use capabilities array only in access.php files');
+            debugging('componentname_capabilities array is deprecated, please use $capabilities array only in access.php files');
             $capabilities = ${$component.'_capabilities'};
         }
     }
@@ -2499,12 +2502,6 @@ function capabilities_cleanup($component, $newcapdef = null) {
     }
     return $removedcount;
 }
-
-
-
-//////////////////
-// UI FUNCTIONS //
-//////////////////
 
 /**
  * Returns an array of all the known types of risk
@@ -3843,7 +3840,6 @@ function get_roles_on_exact_context(context $context) {
                                    FROM {role_assignments} ra, {role} r
                                   WHERE ra.roleid = r.id AND ra.contextid = ?",
                                 array($context->id));
-
 }
 
 /**
@@ -4427,240 +4423,10 @@ function role_change_permission($roleid, $context, $capname, $permission) {
 
 
 /**
- * Context maintenance and helper methods.
- *
- * This is "extends context" is a bloody hack that tires to work around the deficiencies
- * in the "protected" keyword in PHP, this helps us to hide all the internals of context
- * level implementation from the rest of code, the code completion returns what developers need.
- *
- * Thank you Tim Hunt for helping me with this nasty trick.
- *
- * @author Petr Skoda
- */
-class context_helper extends context {
-
-    private static $alllevels = array(
-            CONTEXT_SYSTEM    => 'context_system',
-            CONTEXT_USER      => 'context_user',
-            CONTEXT_COURSECAT => 'context_coursecat',
-            CONTEXT_COURSE    => 'context_course',
-            CONTEXT_MODULE    => 'context_module',
-            CONTEXT_BLOCK     => 'context_block',
-    );
-
-    /**
-     * Instance does not make sense here, only static use
-     */
-    protected function __construct() {
-    }
-
-    /**
-     * Returns a class name of the context level class
-     *
-     * @static
-     * @param int $contextlevel (CONTEXT_SYSTEM, etc.)
-     * @return string class name of the context class
-     */
-    public static function get_class_for_level($contextlevel) {
-        if (isset(self::$alllevels[$contextlevel])) {
-            return self::$alllevels[$contextlevel];
-        } else {
-            throw new coding_exception('Invalid context level specified');
-        }
-    }
-
-    /**
-     * Returns a list of all context levels
-     *
-     * @static
-     * @return array int=>string (level=>level class name)
-     */
-    public static function get_all_levels() {
-        return self::$alllevels;
-    }
-
-    /**
-     * Remove stale contexts that belonged to deleted instances.
-     * Ideally all code should cleanup contexts properly, unfortunately accidents happen...
-     *
-     * @static
-     * @return void
-     */
-    public static function cleanup_instances() {
-        global $DB;
-        $sqls = array();
-        foreach (self::$alllevels as $level=>$classname) {
-            $sqls[] = $classname::get_cleanup_sql();
-        }
-
-        $sql = implode(" UNION ", $sqls);
-
-        // it is probably better to use transactions, it might be faster too
-        $transaction = $DB->start_delegated_transaction();
-
-        $rs = $DB->get_recordset_sql($sql);
-        foreach ($rs as $record) {
-            $context = context::create_instance_from_record($record);
-            $context->delete();
-        }
-        $rs->close();
-
-        $transaction->allow_commit();
-    }
-
-    /**
-     * Create all context instances at the given level and above.
-     *
-     * @static
-     * @param int $contextlevel null means all levels
-     * @param bool $buildpaths
-     * @return void
-     */
-    public static function create_instances($contextlevel = null, $buildpaths = true) {
-        foreach (self::$alllevels as $level=>$classname) {
-            if ($contextlevel and $level > $contextlevel) {
-                // skip potential sub-contexts
-                continue;
-            }
-            $classname::create_level_instances();
-            if ($buildpaths) {
-                $classname::build_paths(false);
-            }
-        }
-    }
-
-    /**
-     * Rebuild paths and depths in all context levels.
-     *
-     * @static
-     * @param bool $force false means add missing only
-     * @return void
-     */
-    public static function build_all_paths($force = false) {
-        foreach (self::$alllevels as $classname) {
-            $classname::build_paths($force);
-        }
-
-        // reset static course cache - it might have incorrect cached data
-        accesslib_clear_all_caches(true);
-    }
-
-    /**
-     * Resets the cache to remove all data.
-     * @static
-     */
-    public static function reset_caches() {
-        context::reset_caches();
-    }
-
-    /**
-     * Returns all fields necessary for context preloading from user $rec.
-     *
-     * This helps with performance when dealing with hundreds of contexts.
-     *
-     * @static
-     * @param string $tablealias context table alias in the query
-     * @return array (table.column=>alias, ...)
-     */
-    public static function get_preload_record_columns($tablealias) {
-        return array("$tablealias.id"=>"ctxid", "$tablealias.path"=>"ctxpath", "$tablealias.depth"=>"ctxdepth", "$tablealias.contextlevel"=>"ctxlevel", "$tablealias.instanceid"=>"ctxinstance");
-    }
-
-    /**
-     * Returns all fields necessary for context preloading from user $rec.
-     *
-     * This helps with performance when dealing with hundreds of contexts.
-     *
-     * @static
-     * @param string $tablealias context table alias in the query
-     * @return string
-     */
-    public static function get_preload_record_columns_sql($tablealias) {
-        return "$tablealias.id AS ctxid, $tablealias.path AS ctxpath, $tablealias.depth AS ctxdepth, $tablealias.contextlevel AS ctxlevel, $tablealias.instanceid AS ctxinstance";
-    }
-
-    /**
-     * Preloads context information from db record and strips the cached info.
-     *
-     * The db request has to contain all columns from context_helper::get_preload_record_columns().
-     *
-     * @static
-     * @param stdClass $rec
-     * @return void (modifies $rec)
-     */
-     public static function preload_from_record(stdClass $rec) {
-         context::preload_from_record($rec);
-     }
-
-    /**
-     * Preload all contexts instances from course.
-     *
-     * To be used if you expect multiple queries for course activities...
-     *
-     * @static
-     * @param $courseid
-     */
-    public static function preload_course($courseid) {
-        // Users can call this multiple times without doing any harm
-        if (isset(context::$cache_preloaded[$courseid])) {
-            return;
-        }
-        $coursecontext = context_course::instance($courseid);
-        $coursecontext->get_child_contexts();
-
-        context::$cache_preloaded[$courseid] = true;
-    }
-
-    /**
-     * Delete context instance
-     *
-     * @static
-     * @param int $contextlevel
-     * @param int $instanceid
-     * @return void
-     */
-    public static function delete_instance($contextlevel, $instanceid) {
-        global $DB;
-
-        // double check the context still exists
-        if ($record = $DB->get_record('context', array('contextlevel'=>$contextlevel, 'instanceid'=>$instanceid))) {
-            $context = context::create_instance_from_record($record);
-            $context->delete();
-        } else {
-            // we should try to purge the cache anyway
-        }
-    }
-
-    /**
-     * Returns the name of specified context level
-     *
-     * @static
-     * @param int $contextlevel
-     * @return string name of the context level
-     */
-    public static function get_level_name($contextlevel) {
-        $classname = context_helper::get_class_for_level($contextlevel);
-        return $classname::get_level_name();
-    }
-
-    /**
-     * not used
-     */
-    public function get_url() {
-    }
-
-    /**
-     * not used
-     */
-    public function get_capabilities() {
-    }
-}
-
-
-/**
  * Basic moodle context abstraction class.
  *
  * @author Petr Skoda
+ * @since 2.2
  *
  * @property-read int $id context id
  * @property-read int $contextlevel CONTEXT_SYSTEM, CONTEXT_COURSE, etc.
@@ -4696,6 +4462,7 @@ abstract class context extends stdClass {
 
     /**
      * Resets the cache to remove all data.
+     * @static
      */
     protected static function reset_caches() {
         self::$cache_contextsbyid = array();
@@ -4893,6 +4660,7 @@ abstract class context extends stdClass {
 
     /**
      * This function is also used to work around 'protected' keyword problems in context_helper.
+     * @static
      * @param stdClass $record
      * @return context instance
      */
@@ -5394,8 +5162,241 @@ abstract class context extends stdClass {
 
 
 /**
+ * Context maintenance and helper methods.
+ *
+ * This is "extends context" is a bloody hack that tires to work around the deficiencies
+ * in the "protected" keyword in PHP, this helps us to hide all the internals of context
+ * level implementation from the rest of code, the code completion returns what developers need.
+ *
+ * Thank you Tim Hunt for helping me with this nasty trick.
+ *
+ * @author Petr Skoda
+ * @since 2.2
+ */
+class context_helper extends context {
+
+    private static $alllevels = array(
+            CONTEXT_SYSTEM    => 'context_system',
+            CONTEXT_USER      => 'context_user',
+            CONTEXT_COURSECAT => 'context_coursecat',
+            CONTEXT_COURSE    => 'context_course',
+            CONTEXT_MODULE    => 'context_module',
+            CONTEXT_BLOCK     => 'context_block',
+    );
+
+    /**
+     * Instance does not make sense here, only static use
+     */
+    protected function __construct() {
+    }
+
+    /**
+     * Returns a class name of the context level class
+     *
+     * @static
+     * @param int $contextlevel (CONTEXT_SYSTEM, etc.)
+     * @return string class name of the context class
+     */
+    public static function get_class_for_level($contextlevel) {
+        if (isset(self::$alllevels[$contextlevel])) {
+            return self::$alllevels[$contextlevel];
+        } else {
+            throw new coding_exception('Invalid context level specified');
+        }
+    }
+
+    /**
+     * Returns a list of all context levels
+     *
+     * @static
+     * @return array int=>string (level=>level class name)
+     */
+    public static function get_all_levels() {
+        return self::$alllevels;
+    }
+
+    /**
+     * Remove stale contexts that belonged to deleted instances.
+     * Ideally all code should cleanup contexts properly, unfortunately accidents happen...
+     *
+     * @static
+     * @return void
+     */
+    public static function cleanup_instances() {
+        global $DB;
+        $sqls = array();
+        foreach (self::$alllevels as $level=>$classname) {
+            $sqls[] = $classname::get_cleanup_sql();
+        }
+
+        $sql = implode(" UNION ", $sqls);
+
+        // it is probably better to use transactions, it might be faster too
+        $transaction = $DB->start_delegated_transaction();
+
+        $rs = $DB->get_recordset_sql($sql);
+        foreach ($rs as $record) {
+            $context = context::create_instance_from_record($record);
+            $context->delete();
+        }
+        $rs->close();
+
+        $transaction->allow_commit();
+    }
+
+    /**
+     * Create all context instances at the given level and above.
+     *
+     * @static
+     * @param int $contextlevel null means all levels
+     * @param bool $buildpaths
+     * @return void
+     */
+    public static function create_instances($contextlevel = null, $buildpaths = true) {
+        foreach (self::$alllevels as $level=>$classname) {
+            if ($contextlevel and $level > $contextlevel) {
+                // skip potential sub-contexts
+                continue;
+            }
+            $classname::create_level_instances();
+            if ($buildpaths) {
+                $classname::build_paths(false);
+            }
+        }
+    }
+
+    /**
+     * Rebuild paths and depths in all context levels.
+     *
+     * @static
+     * @param bool $force false means add missing only
+     * @return void
+     */
+    public static function build_all_paths($force = false) {
+        foreach (self::$alllevels as $classname) {
+            $classname::build_paths($force);
+        }
+
+        // reset static course cache - it might have incorrect cached data
+        accesslib_clear_all_caches(true);
+    }
+
+    /**
+     * Resets the cache to remove all data.
+     * @static
+     */
+    public static function reset_caches() {
+        context::reset_caches();
+    }
+
+    /**
+     * Returns all fields necessary for context preloading from user $rec.
+     *
+     * This helps with performance when dealing with hundreds of contexts.
+     *
+     * @static
+     * @param string $tablealias context table alias in the query
+     * @return array (table.column=>alias, ...)
+     */
+    public static function get_preload_record_columns($tablealias) {
+        return array("$tablealias.id"=>"ctxid", "$tablealias.path"=>"ctxpath", "$tablealias.depth"=>"ctxdepth", "$tablealias.contextlevel"=>"ctxlevel", "$tablealias.instanceid"=>"ctxinstance");
+    }
+
+    /**
+     * Returns all fields necessary for context preloading from user $rec.
+     *
+     * This helps with performance when dealing with hundreds of contexts.
+     *
+     * @static
+     * @param string $tablealias context table alias in the query
+     * @return string
+     */
+    public static function get_preload_record_columns_sql($tablealias) {
+        return "$tablealias.id AS ctxid, $tablealias.path AS ctxpath, $tablealias.depth AS ctxdepth, $tablealias.contextlevel AS ctxlevel, $tablealias.instanceid AS ctxinstance";
+    }
+
+    /**
+     * Preloads context information from db record and strips the cached info.
+     *
+     * The db request has to contain all columns from context_helper::get_preload_record_columns().
+     *
+     * @static
+     * @param stdClass $rec
+     * @return void (modifies $rec)
+     */
+     public static function preload_from_record(stdClass $rec) {
+         context::preload_from_record($rec);
+     }
+
+    /**
+     * Preload all contexts instances from course.
+     *
+     * To be used if you expect multiple queries for course activities...
+     *
+     * @static
+     * @param $courseid
+     */
+    public static function preload_course($courseid) {
+        // Users can call this multiple times without doing any harm
+        if (isset(context::$cache_preloaded[$courseid])) {
+            return;
+        }
+        $coursecontext = context_course::instance($courseid);
+        $coursecontext->get_child_contexts();
+
+        context::$cache_preloaded[$courseid] = true;
+    }
+
+    /**
+     * Delete context instance
+     *
+     * @static
+     * @param int $contextlevel
+     * @param int $instanceid
+     * @return void
+     */
+    public static function delete_instance($contextlevel, $instanceid) {
+        global $DB;
+
+        // double check the context still exists
+        if ($record = $DB->get_record('context', array('contextlevel'=>$contextlevel, 'instanceid'=>$instanceid))) {
+            $context = context::create_instance_from_record($record);
+            $context->delete();
+        } else {
+            // we should try to purge the cache anyway
+        }
+    }
+
+    /**
+     * Returns the name of specified context level
+     *
+     * @static
+     * @param int $contextlevel
+     * @return string name of the context level
+     */
+    public static function get_level_name($contextlevel) {
+        $classname = context_helper::get_class_for_level($contextlevel);
+        return $classname::get_level_name();
+    }
+
+    /**
+     * not used
+     */
+    public function get_url() {
+    }
+
+    /**
+     * not used
+     */
+    public function get_capabilities() {
+    }
+}
+
+
+/**
  * Basic context class
  * @author Petr Skoda (http://skodak.org)
+ * @since 2.2
  */
 class context_system extends context {
     /**
@@ -5632,6 +5633,7 @@ class context_system extends context {
 /**
  * User context class
  * @author Petr Skoda (http://skodak.org)
+ * @since 2.2
  */
 class context_user extends context {
     /**
@@ -5799,6 +5801,7 @@ class context_user extends context {
 /**
  * Course category context class
  * @author Petr Skoda (http://skodak.org)
+ * @since 2.2
  */
 class context_coursecat extends context {
     /**
@@ -6018,6 +6021,7 @@ class context_coursecat extends context {
 /**
  * Course context class
  * @author Petr Skoda (http://skodak.org)
+ * @since 2.2
  */
 class context_course extends context {
     /**
@@ -6232,6 +6236,7 @@ class context_course extends context {
 /**
  * Course module context class
  * @author Petr Skoda (http://skodak.org)
+ * @since 2.2
  */
 class context_module extends context {
     /**
@@ -6471,6 +6476,7 @@ class context_module extends context {
 /**
  * Block context class
  * @author Petr Skoda (http://skodak.org)
+ * @since 2.2
  */
 class context_block extends context {
     /**
@@ -6681,12 +6687,20 @@ class context_block extends context {
 }
 
 
-// ============== DEPRECATED ========================
+// ============== DEPRECATED FUNCTIONS ==========================================
+// Old context related functions were deprecated in 2.0, it is recommended
+// to use context classes in new code. Old function can be used when
+// creating patches that are supposed to be backported to older stable branches.
+// These deprecated functions will not be removed in near future,
+// before removing devs will be warned with a debugging message first,
+// then we will add error message and only after that we can remove the functions
+// completely.
 
 
 /**
- * Use load_temp_course_role() instead.
- * @deprecated
+ * Not available any more, use load_temp_course_role() instead.
+ *
+ * @deprecated since 2.2
  * @param stdClass $context
  * @param int $roleid
  * @param array $accessdata
@@ -6698,8 +6712,9 @@ function load_temp_role($context, $roleid, array $accessdata) {
 }
 
 /**
- * Use remove_temp_course_roles() instead
- * @deprecated
+ * Not available any more, use remove_temp_course_roles() instead.
+ *
+ * @deprecated since 2.2
  * @param object $context
  * @param array $accessdata
  * @return array access data
@@ -6712,7 +6727,7 @@ function remove_temp_roles($context, array $accessdata) {
 /**
  * Returns system context or null if can not be created yet.
  *
- * @deprecated
+ * @deprecated since 2.2, use context_system::instance()
  * @param bool $cache use caching
  * @return context system context (null if context table not created yet)
  */
@@ -6724,7 +6739,7 @@ function get_system_context($cache = true) {
  * Get the context instance as an object. This function will create the
  * context instance if it does not exist yet.
  *
- * @deprecated
+ * @deprecated since 2.2, use context_course::instance() or other relevant class instead
  * @param integer $contextlevel The context level, for example CONTEXT_COURSE, or CONTEXT_MODULE.
  * @param integer $instance The instance id. For $level = CONTEXT_COURSE, this would be $course->id,
  *      for $level = CONTEXT_MODULE, this would be $cm->id. And so on. Defaults to 0
@@ -6753,7 +6768,7 @@ function get_context_instance($contextlevel, $instance = 0, $strictness = IGNORE
 /**
  * Get a context instance as an object, from a given context id.
  *
- * @deprecated
+ * @deprecated since 2.2, use context::instance_by_id($id) instead
  * @param int $id context id
  * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
  *                        MUST_EXIST means throw exception if no record or multiple records found
@@ -6768,7 +6783,7 @@ function get_context_instance_by_id($id, $strictness = IGNORE_MISSING) {
  * and return the array in reverse order, i.e. parent first, then grand
  * parent, etc.
  *
- * @deprecated
+ * @deprecated since 2.2, use $context->get_parent_context_ids() instead
  * @param context $context
  * @param bool $includeself optional, defaults to false
  * @return array
@@ -6781,7 +6796,7 @@ function get_parent_contexts(context $context, $includeself = false) {
  * Return the id of the parent of this context, or false if there is no parent (only happens if this
  * is the site context.)
  *
- * @deprecated
+ * @deprecated since 2.2, use $context->get_parent_context() instead
  * @param context $context
  * @return integer the id of the parent context.
  */
@@ -6806,7 +6821,7 @@ function get_parent_contextid(context $context) {
  * If called on a user/course/module context it _will_ populate the cache with the appropriate
  * contexts ;-)
  *
- * @deprecated
+ * @deprecated since 2.2, use $context->get_child_contexts() instead
  * @param context $context.
  * @return array Array of child records
  */
@@ -6817,7 +6832,7 @@ function get_child_contexts(context $context) {
 /**
  * Precreates all contexts including all parents
  *
- * @deprecated
+ * @deprecated since 2.2
  * @param int $contextlevel empty means all
  * @param bool $buildpaths update paths and depths
  * @return void
@@ -6829,7 +6844,7 @@ function create_contexts($contextlevel = null, $buildpaths = true) {
 /**
  * Remove stale context records
  *
- * @deprecated
+ * @deprecated since 2.2, use context_helper::cleanup_instances() instead
  * @return bool
  */
 function cleanup_contexts() {
@@ -6840,7 +6855,7 @@ function cleanup_contexts() {
 /**
  * Populate context.path and context.depth where missing.
  *
- * @deprecated
+ * @deprecated since 2.2, use context_helper::build_all_paths() instead
  * @param bool $force force a complete rebuild of the path and depth fields, defaults to false
  * @return void
  */
@@ -6867,7 +6882,7 @@ function rebuild_contexts(array $fixcontexts) {
  * are no longer loaded here. The contexts for all the blocks on the current
  * page are now efficiently loaded by {@link block_manager::load_blocks()}.
  *
- * @deprecated
+ * @deprecated since 2.2
  * @param int $courseid Course ID
  * @return void
  */
@@ -6895,7 +6910,7 @@ function context_instance_preload_sql($joinon, $contextlevel, $tablealias) {
  * Preloads context information from db record and strips the cached info.
  * The db request has to contain both the $join and $select from context_instance_preload_sql()
  *
- * @deprecated
+ * @deprecated since 2.2
  * @param stdClass $rec
  * @return void (modifies $rec)
  */
@@ -6906,9 +6921,7 @@ function context_instance_preload(stdClass $rec) {
 /**
  * Mark a context as dirty (with timestamp) so as to force reloading of the context.
  *
- * NOTE: use $context->mark_dirty() instead
- *
- * @deprecated
+ * @deprecated since 2.2, use $context->mark_dirty() instead
  * @param string $path context path
  */
 function mark_context_dirty($path) {
@@ -6949,7 +6962,7 @@ function mark_context_dirty($path) {
  * DB efficient as possible. This op can have a
  * massive impact in the DB.
  *
- * @deprecated
+ * @deprecated since 2.2
  * @param context $context context obj
  * @param context $newparent new parent obj
  * @return void
@@ -6962,7 +6975,7 @@ function context_moved(context $context, context $newparent) {
  * Remove a context record and any dependent entries,
  * removes context from static context cache too
  *
- * @deprecated
+ * @deprecated since 2.2, use $context->delete_content() instead
  * @param int $contextlevel
  * @param int $instanceid
  * @param bool $deleterecord false means keep record for now
@@ -6982,8 +6995,8 @@ function delete_context($contextlevel, $instanceid, $deleterecord = true) {
 }
 
 /**
- *
- * @deprecated
+ * Returns context level name
+ * @deprecated since 2.2
  * @param integer $contextlevel $context->context level. One of the CONTEXT_... constants.
  * @return string the name for this type of context.
  */
@@ -6994,7 +7007,7 @@ function get_contextlevel_name($contextlevel) {
 /**
  * Prints human readable context identifier.
  *
- * @deprecated
+ * @deprecated since 2.2
  * @param context $context the context.
  * @param boolean $withprefix whether to prefix the name of the context with the
  *      type of context, e.g. User, Course, Forum, etc.
@@ -7011,7 +7024,7 @@ function print_context_name(context $context, $withprefix = true, $short = false
  * CONTEXT_COURSE, this is the course page. For CONTEXT_USER it is the
  * user profile page.
  *
- * @deprecated
+ * @deprecated since 2.2
  * @param context $context the context.
  * @return moodle_url
  */
@@ -7023,7 +7036,7 @@ function get_context_url(context $context) {
  * Is this context part of any course? if yes return course context,
  * if not return null or throw exception.
  *
- * @deprecated
+ * @deprecated since 2.2, use $context->get_course_context() instead
  * @param context $context
  * @return course_context context of the enclosing course, null if not found or exception
  */
@@ -7034,7 +7047,7 @@ function get_course_context(context $context) {
 /**
  * Returns current course id or null if outside of course based on context parameter.
  *
- * @deprecated
+ * @deprecated since 2.2, use  $context->get_course_context instead
  * @param context $context
  * @return int|bool related course id or false
  */
@@ -7050,7 +7063,7 @@ function get_courseid_from_context(context $context) {
  * Get an array of courses where cap requested is available
  * and user is enrolled, this can be relatively slow.
  *
- * @deprecated
+ * @deprecated since 2.2, use enrol_get_users_courses() instead
  * @param int    $userid A user id. By default (null) checks the permissions of the current user.
  * @param string $cap - name of the capability
  * @param array  $accessdata_ignored
@@ -7085,7 +7098,7 @@ function get_user_courses_bycap($userid, $cap, $accessdata_ignored, $doanything_
  * `contextlevel` int(10) NOT NULL,
  * `component` varchar(100) NOT NULL,
  *
- * @deprecated
+ * @deprecated since 2.2
  * @param context $context
  * @return array
  */
@@ -7100,7 +7113,7 @@ function fetch_context_capabilities(context $context) {
  * for the purpose of $select, you need to know that the context table has been
  * aliased to ctx, so for example, you can call get_sorted_contexts('ctx.depth = 3');
  *
- * @deprecated
+ * @deprecated since 2.2
  * @param string $select the contents of the WHERE clause. Remember to do ctx.fieldname.
  * @param array $params any parameters required by $select.
  * @return array the requested context records.
@@ -7129,7 +7142,7 @@ function get_sorted_contexts($select, $params = array()) {
 /**
  * This is really slow!!! do not use above course context level
  *
- * @deprecated
+ * @deprecated since 2.2
  * @param int $roleid
  * @param context $context
  * @return array
@@ -7175,7 +7188,7 @@ function get_role_context_caps($roleid, context $context) {
  *
  * NOTE: use $DB->get_in_or_equal($context->get_parent_context_ids()...
  *
- * @deprecated
+ * @deprecated since 2.2, $context->use get_parent_context_ids() instead
  * @param context $context
  * @return string
  */
