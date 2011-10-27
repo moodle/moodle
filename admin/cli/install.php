@@ -20,7 +20,6 @@
  *
  * This script is not intended for beginners!
  * Potential problems:
- * - environment check is not present yet
  * - su to apache account or sudo before execution
  * - not compatible with Windows platform
  *
@@ -91,7 +90,11 @@ if (file_exists($configfile)) {
         echo "\n\n";
     }
 
-    cli_error(get_string('clialreadyinstalled', 'install'));
+    if ($DB->get_manager()->table_exists('config')) {
+        cli_error(get_string('clialreadyinstalled', 'install'));
+    } else {
+        cli_error(get_string('clialreadyconfigured', 'install'));
+    }
 }
 
 $olddir = getcwd();
@@ -636,7 +639,21 @@ if (!file_exists($configfile)) {
     cli_error('Can not create config file.');
 }
 
+// remember selected language
+$installlang = $CFG->lang;
+// return back to original dir before executing setup.php which changes the dir again
+chdir($olddir);
+// We have config.php, it is a real php script from now on :-)
+require($configfile);
+
+// use selected language
+$CFG->lang = $installlang;
+$SESSION->lang = $CFG->lang;
+
+require("$CFG->dirroot/version.php");
+
 // Test environment first.
+require_once($CFG->libdir . '/environmentlib.php');
 list($envstatus, $environment_results) = check_moodle_environment(normalize_version($release), ENV_SELECT_RELEASE);
 if (!$envstatus) {
     $errors = environment_get_errors($environment_results);
@@ -649,20 +666,10 @@ if (!$envstatus) {
 }
 
 // Test plugin dependencies.
+require_once($CFG->libdir . '/pluginlib.php');
 if (!plugin_manager::instance()->all_plugins_ok($version)) {
     cli_error(get_string('pluginschecktodo', 'admin'));
 }
-
-// remember selected language
-$installlang = $CFG->lang;
-// return back to original dir before executing setup.php which changes the dir again
-chdir($olddir);
-// We have config.php, it is a real php script from now on :-)
-require($configfile);
-
-// use selected language
-$CFG->lang = $installlang;
-$SESSION->lang = $CFG->lang;
 
 install_cli_database($options, $interactive);
 

@@ -851,7 +851,12 @@ abstract class plugintype_base {
         static $pluginversions = null;
 
         if (is_null($pluginversions) or $disablecache) {
-            $pluginversions = $DB->get_records_menu('config_plugins', array('name' => 'version'), 'plugin', 'plugin,value');
+            try {
+                $pluginversions = $DB->get_records_menu('config_plugins', array('name' => 'version'), 'plugin', 'plugin,value');
+            } catch (dml_exception $e) {
+                // before install
+                $pluginversions = array();
+            }
         }
 
         if (!array_key_exists($plugin, $pluginversions)) {
@@ -989,7 +994,12 @@ class plugintype_block extends plugintype_base implements plugin_information {
         static $blocksinfocache = null;
 
         if (is_null($blocksinfocache) or $disablecache) {
-            $blocksinfocache = $DB->get_records('block', null, 'name', 'name,id,version,visible');
+            try {
+                $blocksinfocache = $DB->get_records('block', null, 'name', 'name,id,version,visible');
+            } catch (dml_exception $e) {
+                // before install
+                $blocksinfocache = array();
+            }
         }
 
         return $blocksinfocache;
@@ -1318,7 +1328,12 @@ class plugintype_mod extends plugintype_base implements plugin_information {
         static $modulesinfocache = null;
 
         if (is_null($modulesinfocache) or $disablecache) {
-            $modulesinfocache = $DB->get_records('modules', null, 'name', 'name,id,version,visible');
+            try {
+                $modulesinfocache = $DB->get_records('modules', null, 'name', 'name,id,version,visible');
+            } catch (dml_exception $e) {
+                // before install
+                $modulesinfocache = array();
+            }
         }
 
         return $modulesinfocache;
