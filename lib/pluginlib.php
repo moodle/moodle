@@ -1283,7 +1283,7 @@ class plugintype_auth extends plugintype_base implements plugintype_interface {
         }
 
         if (is_null($enabled)) {
-            $enabled = explode(',', $CFG->auth);
+            $enabled = array_flip(explode(',', $CFG->auth));
         }
 
         return isset($enabled[$this->name]);
@@ -1321,7 +1321,7 @@ class plugintype_enrol extends plugintype_base implements plugintype_interface {
         static $enabled = null;
 
         if (is_null($enabled)) {
-            $enabled = explode(',', $CFG->enrol_plugins_enabled);
+            $enabled = array_flip(explode(',', $CFG->enrol_plugins_enabled));
         }
 
         return isset($enabled[$this->name]);
