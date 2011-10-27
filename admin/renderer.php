@@ -598,7 +598,7 @@ class core_admin_renderer extends plugin_renderer_base {
             if (is_null($otherplugin)) {
                 $ok = false;
             }
-            if ($requiredversion != ANY_VERSION and $otherplugin->versiondb < $requiredversion) {
+            if ($requiredversion != ANY_VERSION and $otherplugin->versiondisk < $requiredversion) {
                 $ok = false;
             }
 
