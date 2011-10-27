@@ -59,9 +59,13 @@ class core_admin_renderer extends plugin_renderer_base {
 
     /**
      * Display the 'environment check' page that is displayed during install.
+     * @param int $maturity
+     * @param boolean $envstatus final result of the check (true/false)
+     * @param array $environment_results array of results gathered
+     * @param string $release moodle release
      * @return string HTML to output.
      */
-    public function install_environment_page($maturity, $envstatus, $environment_results) {
+    public function install_environment_page($maturity, $envstatus, $environment_results, $release) {
         global $CFG;
         $output = '';
 
@@ -86,6 +90,8 @@ class core_admin_renderer extends plugin_renderer_base {
     /**
      * Display the 'You are about to upgrade Moodle' page. The first page
      * during upgrade.
+     * @param string $strnewversion
+     * @param int $maturity
      * @return string HTML to output.
      */
     public function upgrade_confirm_page($strnewversion, $maturity) {
@@ -104,6 +110,9 @@ class core_admin_renderer extends plugin_renderer_base {
 
     /**
      * Display the environment page during the upgrade process.
+     * @param string $release
+     * @param boolean $envstatus final result of env check (true/false)
+     * @param array $environment_results array of results gathered
      * @return string HTML to output.
      */
     public function upgrade_environment_page($release, $envstatus, $environment_results) {
@@ -135,9 +144,14 @@ class core_admin_renderer extends plugin_renderer_base {
 
     /**
      * Display the upgrade page that lists all the plugins that require attention.
+     * @param plugin_manager $pluginman provides information about the plugins.
+     * @param int $version the version of the Moodle code from version.php.
+     * @param bool $showallplugins
+     * @param moodle_url $reloadurl
+     * @param moodle_url $continueurl
      * @return string HTML to output.
      */
-    public function upgrade_plugin_check_page($pluginman, $version, $showallplugins, $reloadurl, $continueurl) {
+    public function upgrade_plugin_check_page(plugin_manager $pluginman, $version, $showallplugins, $reloadurl, $continueurl) {
         $output = '';
 
         $output .= $this->header();
@@ -162,6 +176,12 @@ class core_admin_renderer extends plugin_renderer_base {
 
     /**
      * Display the admin notifications page.
+     * @param int $maturity
+     * @param bool $insecuredataroot warn dataroot is invalid
+     * @param bool $errorsdisplayed warn invalid dispaly error setting
+     * @param bool $cronoverdue warn cron not running
+     * @param bool $dbproblems warn db has problems
+     * @param bool $maintenancemode warn in maintenance mode
      * @return string HTML to output.
      */
     public function admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
@@ -188,9 +208,10 @@ class core_admin_renderer extends plugin_renderer_base {
 
     /**
      * Display the plugin management page (admin/plugins.php).
+     * @param plugin_manager $pluginman
      * @return string HTML to output.
      */
-    public function plugin_management_page($pluginman) {
+    public function plugin_management_page(plugin_manager $pluginman) {
         $output = '';
 
         $output .= $this->header();
@@ -205,6 +226,10 @@ class core_admin_renderer extends plugin_renderer_base {
 
     /**
      * Display the plugin management page (admin/environment.php).
+     * @param array $versions
+     * @param string $version
+     * @param boolean $envstatus final result of env check (true/false)
+     * @param array $environment_results array of results gathered
      * @return string HTML to output.
      */
     public function environment_check_page($versions, $version, $envstatus, $environment_results) {
@@ -238,6 +263,7 @@ class core_admin_renderer extends plugin_renderer_base {
     /**
      * Output a warning message, of the type that appears on the admin notifications page.
      * @param string $message the message to display.
+     * @param string $type type class
      * @return string HTML to output.
      */
     protected function warning($message, $type = 'warning') {
@@ -246,6 +272,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
     /**
      * Render an appropriate message if dataroot is insecure.
+     * @param bool $insecuredataroot
      * @return string HTML to output.
      */
     protected function insecure_dataroot_warning($insecuredataroot) {
@@ -264,6 +291,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
     /**
      * Render an appropriate message if dataroot is insecure.
+     * @param bool $errorsdisplayed
      * @return string HTML to output.
      */
     protected function display_errors_warning($errorsdisplayed) {
@@ -276,6 +304,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
     /**
      * Render an appropriate message if cron has not been run recently.
+     * @param bool $cronoverdue
      * @return string HTML to output.
      */
     public function cron_overdue_warning($cronoverdue) {
@@ -289,6 +318,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
     /**
      * Render an appropriate message if there are any problems with the DB set-up.
+     * @param bool $dbproblems
      * @return string HTML to output.
      */
     public function db_problems($dbproblems) {
@@ -301,6 +331,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
     /**
      * Render an appropriate message if the site in in maintenance mode.
+     * @param bool $maintenancemode
      * @return string HTML to output.
      */
     public function maintenance_mode_warning($maintenancemode) {
@@ -314,6 +345,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
     /**
      * Display a warning about installing development code if necesary.
+     * @param int $maturity
      * @return string HTML to output.
      */
     protected function maturity_warning($maturity) {
@@ -349,7 +381,8 @@ class core_admin_renderer extends plugin_renderer_base {
 
     /**
      * Display a warning about installing development code if necesary.
-     * @param string HTML to output.
+     * @param int $maturity
+     * @return string HTML to output.
      */
     protected function maturity_info($maturity) {
         if ($maturity == MATURITY_STABLE) {
@@ -365,7 +398,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
     /**
      * Display a link to the release notes.
-     * @param string HTML to output.
+     * @return string HTML to output.
      */
     protected function release_notes_link() {
         $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/dev/Releases');
@@ -375,6 +408,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
     /**
      * Display the reload link that appears on several upgrade/install pages.
+     * @return string HTML to output.
      */
     function upgrade_reload($url) {
         return html_writer::empty_tag('br') .
@@ -540,8 +574,10 @@ class core_admin_renderer extends plugin_renderer_base {
      * Formats the information that needs to go in the 'Requires' column.
      * @param plugin_information $plugin the plugin we are rendering the row for.
      * @param plugin_manager $pluginman provides data on all the plugins.
+     * @param string $version
+     * @return string HTML code
      */
-    protected function required_column($plugin, $pluginman, $version) {
+    protected function required_column(plugin_information $plugin, plugin_manager $pluginman, $version) {
         $requires = array();
 
         if (!empty($plugin->versionrequires)) {

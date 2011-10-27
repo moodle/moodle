@@ -147,9 +147,11 @@ if (!core_tables_exist()) {
         $PAGE->set_cacheable(false);
 
         $output = $PAGE->get_renderer('core', 'admin');
-        echo $output->install_environment_page($maturity, $envstatus, $environment_results);
+        echo $output->install_environment_page($maturity, $envstatus, $environment_results, $release);
         die();
     }
+
+    //TODO: add a page with list of non-standard plugins here
 
     $strdatabasesetup = get_string('databasesetup');
     upgrade_init_javascript();
