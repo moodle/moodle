@@ -385,7 +385,7 @@ class plugin_manager {
 
             'qformat' => array(
                 'aiken', 'blackboard', 'blackboard_six', 'examview', 'gift',
-                'learnwise', 'missingword', 'multianswer', 'qti_two', 'webct',
+                'learnwise', 'missingword', 'multianswer', 'webct',
                 'xhtml', 'xml'
             ),
 
