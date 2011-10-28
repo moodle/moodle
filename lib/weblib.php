@@ -2436,6 +2436,37 @@ function redirect($url, $message='', $delay=-1) {
         }
     } while (false);
 
+    // Technically, HTTP/1.1 requires Location: header to contain the absolute path.
+    // (In practice browsers accept relative paths - but still, might as well do it properly.)
+    // This code turns relative into absolute.
+    if (!preg_match('|^[a-z]+:|', $url)) {
+        // Get host name http://www.wherever.com
+        $hostpart = preg_replace('|^(.*?[^:/])/.*$|', '$1', $CFG->wwwroot);
+        if (preg_match('|^/|', $url)) {
+            // URLs beginning with / are relative to web server root so we just add them in
+            $url = $hostpart.$url;
+        } else {
+            // URLs not beginning with / are relative to path of current script, so add that on.
+            $url = $hostpart.preg_replace('|\?.*$|','',me()).'/../'.$url;
+        }
+        // Replace all ..s
+        while (true) {
+            $newurl = preg_replace('|/(?!\.\.)[^/]*/\.\./|', '/', $url);
+            if ($newurl == $url) {
+                break;
+            }
+            $url = $newurl;
+        }
+    }
+
+    // Sanitise url - we can not rely on moodle_url or our URL cleaning
+    // because they do not support all valid external URLs
+    $url = preg_replace('/[\x00-\x1F\x7F]/', '', $url);
+    $url = str_replace('"', '%22', $url);
+    $encodedurl = preg_replace("/\&(?![a-zA-Z0-9#]{1,8};)/", "&amp;", $url);
+    $encodedurl = preg_replace('/^.*href="([^"]*)".*$/', "\\1", clean_text('<a href="'.$encodedurl.'" />', FORMAT_HTML));
+    $url = str_replace('&amp;', '&', $encodedurl);
+
     if (!empty($message)) {
         if ($delay === -1 || !is_numeric($delay)) {
             $delay = 3;
@@ -2444,26 +2475,6 @@ function redirect($url, $message='', $delay=-1) {
     } else {
         $message = get_string('pageshouldredirect');
         $delay = 0;
-        // We are going to try to use a HTTP redirect, so we need a full URL.
-        if (!preg_match('|^[a-z]+:|', $url)) {
-            // Get host name http://www.wherever.com
-            $hostpart = preg_replace('|^(.*?[^:/])/.*$|', '$1', $CFG->wwwroot);
-            if (preg_match('|^/|', $url)) {
-                // URLs beginning with / are relative to web server root so we just add them in
-                $url = $hostpart.$url;
-            } else {
-                // URLs not beginning with / are relative to path of current script, so add that on.
-                $url = $hostpart.preg_replace('|\?.*$|','',me()).'/../'.$url;
-            }
-            // Replace all ..s
-            while (true) {
-                $newurl = preg_replace('|/(?!\.\.)[^/]*/\.\./|', '/', $url);
-                if ($newurl == $url) {
-                    break;
-                }
-                $url = $newurl;
-            }
-        }
     }
 
     if (defined('MDL_PERF') || (!empty($CFG->perfdebug) and $CFG->perfdebug > 7)) {
@@ -2472,9 +2483,6 @@ function redirect($url, $message='', $delay=-1) {
             error_log("PERF: " . $perf['txt']);
         }
     }
-
-    $encodedurl = preg_replace("/\&(?![a-zA-Z0-9#]{1,8};)/", "&amp;", $url);
-    $encodedurl = preg_replace('/^.*href="([^"]*)".*$/', "\\1", clean_text('<a href="'.$encodedurl.'" />'));
 
     if ($delay == 0 && !$debugdisableredirect && !headers_sent()) {
         // workaround for IIS bug http://support.microsoft.com/kb/q176113/
