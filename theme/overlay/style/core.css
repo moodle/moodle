@@ -85,11 +85,11 @@ h1.headermain {
     -webkit-text-stroke: 1px white;
 }
 
-.headermenu .logininfo, 
-.headermenu .langmenu, 
-.headermenu .langmenu div, 
-.headermenu .langmenu form, 
-.headermenu .langmenu select, 
+.headermenu .logininfo,
+.headermenu .langmenu,
+.headermenu .langmenu div,
+.headermenu .langmenu form,
+.headermenu .langmenu select,
 .headermenu .langmenu label {
     display: inline !important;
 }
@@ -212,6 +212,10 @@ h1.headermain {
 
 .course-content .current {
     background: #1f5480;
+}
+
+.course-content .current .left {
+    background: #1f5480;
     color: #fff;
 }
 
@@ -236,7 +240,7 @@ h1.headermain {
     background-color:#666;
 }
 
-#custommenu .yui3-menu-content, 
+#custommenu .yui3-menu-content,
 #custommenu .yui3-menu .yui3-menu .yui3-menu-content {
     background-image:none;
     background-color:#333;
@@ -268,7 +272,7 @@ h1.headermain {
     padding:0 20px;
 }
 
-#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content, 
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content,
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content .ul {
     border-width:0;
 }
