@@ -426,7 +426,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
     }
 
     // Now display all the calendar
-    for($day = 1; $day <= $display->maxdays; ++$day, ++$dayweek) {
+    for($aday = 1; $aday <= $display->maxdays; ++$aday, ++$dayweek) {
         if($dayweek > $display->maxwday) {
             // We need to change week (table row)
             echo "</tr>\n<tr>";
@@ -436,7 +436,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
 
         // Reset vars
         $cell = '';
-        $dayhref = calendar_get_link_href(CALENDAR_URL.'view.php?view=day&amp;course='.$courseid.'&amp;', $day, $m, $y);
+        $dayhref = calendar_get_link_href(CALENDAR_URL.'view.php?view=day&amp;course='.$courseid.'&amp;', $aday, $m, $y);
 
         if(CALENDAR_WEEKEND & (1 << ($dayweek % 7))) {
             // Weekend. This is true no matter what the exact range is.
@@ -448,35 +448,35 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
         }
 
         // Special visual fx if an event is defined
-        if(isset($eventsbyday[$day])) {
-            if(count($eventsbyday[$day]) == 1) {
+        if(isset($eventsbyday[$aday])) {
+            if(count($eventsbyday[$aday]) == 1) {
                 $title = get_string('oneevent', 'calendar');
             }
             else {
-                $title = get_string('manyevents', 'calendar', count($eventsbyday[$day]));
+                $title = get_string('manyevents', 'calendar', count($eventsbyday[$aday]));
             }
-            $cell = '<div class="day"><a href="'.$dayhref.'" title="'.$title.'">'.$day.'</a></div>';
+            $cell = '<div class="day"><a href="'.$dayhref.'" title="'.$title.'">'.$aday.'</a></div>';
         }
         else {
-            $cell = '<div class="day">'.$day.'</div>';
+            $cell = '<div class="day">'.$aday.'</div>';
         }
 
         // Special visual fx if an event spans many days
-        if(isset($typesbyday[$day]['durationglobal'])) {
+        if(isset($typesbyday[$aday]['durationglobal'])) {
             $class .= ' duration_global';
         }
-        else if(isset($typesbyday[$day]['durationcourse'])) {
+        else if(isset($typesbyday[$aday]['durationcourse'])) {
             $class .= ' duration_course';
         }
-        else if(isset($typesbyday[$day]['durationgroup'])) {
+        else if(isset($typesbyday[$aday]['durationgroup'])) {
             $class .= ' duration_group';
         }
-        else if(isset($typesbyday[$day]['durationuser'])) {
+        else if(isset($typesbyday[$aday]['durationuser'])) {
             $class .= ' duration_user';
         }
 
         // Special visual fx for today
-        if($display->thismonth && $day == $d) {
+        if($display->thismonth && $aday == $d) {
             $class .= ' today';
         } else {
             $class .= ' nottoday';
@@ -488,9 +488,9 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
         }
         echo '<td'.$class.'>'.$cell;
 
-        if(isset($eventsbyday[$day])) {
+        if(isset($eventsbyday[$aday])) {
             echo '<ul class="events-new">';
-            foreach($eventsbyday[$day] as $eventindex) {
+            foreach($eventsbyday[$aday] as $eventindex) {
 
                 // If event has a class set then add it to the event <li> tag
                 $eventclass = '';
@@ -502,9 +502,9 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
             }
             echo '</ul>';
         }
-        if(isset($durationbyday[$day])) {
+        if(isset($durationbyday[$aday])) {
             echo '<ul class="events-underway">';
-            foreach($durationbyday[$day] as $eventindex) {
+            foreach($durationbyday[$aday] as $eventindex) {
                 echo '<li>['.format_string($events[$eventindex]->name,true).']</li>';
             }
             echo '</ul>';
