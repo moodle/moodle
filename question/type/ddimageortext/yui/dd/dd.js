@@ -92,8 +92,7 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
                     var oldhome = this.drag_item_home(dragitemno);
                     var classes = 'draghome dragitemhomes'+dragitemno+' group'+group;
                     var imghtml = '<img class="'+classes+'" src="'+url+'" alt="'+alt+'" />';
-                    var divhtml = '<div class="yui3-cssfonts yui3-cssreset '
-                                                                    +classes+'">'+alt+'</div>';
+                    var divhtml = '<div class="'+classes+'">'+alt+'</div>';
                     if (oldhome === null) {
                         if (url) {
                             dragitemsarea.append(imghtml);
