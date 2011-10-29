@@ -188,18 +188,18 @@
         <div id='scormapi-parent'>
             <script id="external-scormapi" type="text/JavaScript"></script>
         </div>
-        <div id="scormtop">
-        <?php echo $mode == 'browse' ? '<div id="scormmode" class="scorm-left">'.get_string('browsemode','scorm')."</div>\n" : ''; ?>
-        <?php echo $mode == 'review' ? '<div id="scormmode" class="scorm-left">'.get_string('reviewmode','scorm')."</div>\n" : ''; ?>
-            <div id="scormnav" class="scorm-right">
 <?php
-if ($scorm->hidetoc == SCORM_TOC_POPUP) {
-    echo $result->tocmenu;
+if ($scorm->hidetoc == SCORM_TOC_POPUP or $mode=='browse' or $mode=='review') {
+    echo '<div id="scormtop">';
+    echo $mode == 'browse' ? '<div id="scormmode" class="scorm-left">'.get_string('browsemode', 'scorm')."</div>\n" : '';
+    echo $mode == 'review' ? '<div id="scormmode" class="scorm-left">'.get_string('reviewmode', 'scorm')."</div>\n" : '';
+    if ($scorm->hidetoc == SCORM_TOC_POPUP) {
+        echo '<div id="scormnav" class="scorm-right">'.$result->tocmenu.'</div>';
+    }
+    echo '</div>';
 }
 ?>
-            </div> <!-- Scormnav -->
-        </div> <!-- Scormtop -->
-            <div id="toctree" class="generalbox">
+            <div id="toctree">
                 <?php
                 if (empty($scorm->popup) || $displaymode == 'popup') {
                     echo $result->toc;
