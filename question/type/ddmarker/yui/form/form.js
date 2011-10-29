@@ -87,6 +87,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                    }
                    var markerspan = Y.one('div.ddarea div.markertexts span.markertext'+dropzoneno);
                    markerspan.setStyle('opacity', '0.6');
+                   xyfortext[1] -= Math.round(markerspan.get('offsetHeight') / 2);
                    markerspan.setXY(this.convert_to_window_xy(xyfortext));
                }
             }
