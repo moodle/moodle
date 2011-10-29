@@ -1112,10 +1112,9 @@ class global_navigation extends navigation_node {
 
                 // If the user is not enrolled then we only want to show the
                 // course node and not populate it.
-                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
                 // Not enrolled, can't view, and hasn't switched roles
-                if (!can_access_course($coursecontext)) {
+                if (!can_access_course($course)) {
                     // TODO: very ugly hack - do not force "parents" to enrol into course their child is enrolled in,
                     // this hack has been propagated from user/view.php to display the navigation node. (MDL-25805)
                     $isparent = false;
@@ -1164,8 +1163,7 @@ class global_navigation extends navigation_node {
 
                 // If the user is not enrolled then we only want to show the
                 // course node and not populate it.
-                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-                if (!can_access_course($coursecontext)) {
+                if (!can_access_course($course)) {
                     $coursenode->make_active();
                     $canviewcourseprofile = false;
                     break;
@@ -1232,8 +1230,7 @@ class global_navigation extends navigation_node {
 
                     // If the user is not enrolled then we only want to show the
                     // course node and not populate it.
-                    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-                    if (!can_access_course($coursecontext)) {
+                    if (!can_access_course($course)) {
                         $coursenode->make_active();
                         $canviewcourseprofile = false;
                         break;
@@ -2089,7 +2086,7 @@ class global_navigation extends navigation_node {
                     $usercoursenode->add(get_string('notes', 'notes'), $url, self::TYPE_SETTING);
                 }
 
-                if (can_access_course(get_context_instance(CONTEXT_COURSE, $usercourse->id), $user->id)) {
+                if (can_access_course($usercourse, $user->id)) {
                     $usercoursenode->add(get_string('entercourse'), new moodle_url('/course/view.php', array('id'=>$usercourse->id)), self::TYPE_SETTING, null, null, new pix_icon('i/course', ''));
                 }
 
@@ -3614,7 +3611,7 @@ class settings_navigation extends navigation_node {
             } else {
                 $canviewusercourse = has_capability('moodle/user:viewdetails', $coursecontext);
                 $canaccessallgroups = has_capability('moodle/site:accessallgroups', $coursecontext);
-                if ((!$canviewusercourse && !$canviewuser) || !can_access_course($coursecontext, $user->id)) {
+                if ((!$canviewusercourse && !$canviewuser) || !can_access_course($course, $user->id)) {
                     return false;
                 }
                 if (!$canaccessallgroups && groups_get_course_groupmode($course) == SEPARATEGROUPS) {
