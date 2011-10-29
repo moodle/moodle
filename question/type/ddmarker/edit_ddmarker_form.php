@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once($CFG->dirroot.'/question/type/ddimageortext/edit_ddtoimage_form_base.php');
+require_once($CFG->dirroot.'/question/type/ddmarker/shapes.php');
 
 /**
  * Defines the editing form for the drag-and-drop images onto images question type.
@@ -92,7 +93,10 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
     }
 
     protected function shapes() {
-        return array('circle', 'rectangle', 'polygon');
+        return preg_grep('!^qtype_ddmarker_shape_!', get_declared_classes());
+        return array('qtype_ddmarker_shape_circle',
+                        'qtype_ddmarker_shape_rectangle',
+                        'qtype_ddmarker_shape_polygon');
     }
 
 
@@ -100,8 +104,9 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
         $dropzoneitem = array();
 
         $grouparray = array();
-        foreach ($this->shapes as $shape) {
-            $shapearray[$shape] = get_string('shape_'.$shape, 'qtype_ddmarker');
+        $shapearray = array();
+        foreach ($this->shapes() as $shape) {
+            $shapearray[$shape::name()] = $shape::human_readable_name();
         }
         $grouparray[] = $mform->createElement('select', 'shape',
                                     get_string('marker', 'qtype_ddmarker'), $shapearray);

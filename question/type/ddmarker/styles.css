@@ -76,7 +76,15 @@ form.mform fieldset#previewareaheader div.draghome, form.mform fieldset#previewa
 }
 .que.ddmarker div.markertexts span.markertext,
 form.mform fieldset#previewareaheader div.markertexts span.markertext {
+    z-index: 2;
     border: 1px solid black;
     background-color: white;
     padding: 5px;
+    position:absolute;
+    display: -moz-inline-stack;
+    display:inline-block;
+    height: auto;
+    width: auto;
+    zoom: 1;
+    *display: inline;
 }

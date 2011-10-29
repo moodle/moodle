@@ -64,6 +64,14 @@ abstract class qtype_ddmarker_shape {
      * @return boolean is point inside shape
      */
     abstract public function is_point_in_shape($xy);
+
+    public static function name() {
+        return substr(get_called_class(), 21);
+    }
+
+    public static function human_readable_name() {
+        return get_string('shape_'.self::name(), 'qtype_ddmarker');
+    }
 }
 class qtype_ddmarker_shape_rectangle extends qtype_ddmarker_shape {
     protected $width;
@@ -71,15 +79,16 @@ class qtype_ddmarker_shape_rectangle extends qtype_ddmarker_shape {
     protected $xleft;
     protected $ytop;
     public function __construct($coordsstring) {
-        $coordstring = preg_replace('!\s!', '', $coordsstring);
-        $coordsstringparts = explode(';', $coordsstring);
+        $coordstring = preg_replace('!^\s*!', '', $coordsstring);
+        $coordstring = preg_replace('!\s*$!', '', $coordsstring);
+        $coordsstringparts = preg_split('!\s*!', $coordsstring);
         if (count($coordsstringparts) > 2) {
-            $this->error = 'toomanysemicolons';
+            $this->error = 'rectangletoomanyspaces';
         } else if (count($coordsstringparts) < 2) {
-            $this->error = 'nosemicolons';
+            $this->error = 'rectanglenospaces';
         } else {
             $xy = explode(',', $coordsstringparts[0]);
-            $widthheightparts = explode(',', $coordsstringparts[1]);
+            $widthheightparts = explode('x', $coordsstringparts[1]);
             if (count($xy) !== 2) {
                 $this->error = 'unrecognisedxypart';
             } else if (count($widthheightparts) !== 2) {

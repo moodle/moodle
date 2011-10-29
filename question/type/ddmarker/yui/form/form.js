@@ -11,16 +11,23 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
 
         initializer : function(params) {
             this.fp = this.file_pickers();
-            Y.one(this.get('topnode')).append('<div class="ddarea"><div class="dropzones"></div>'+
-                    '<div class="droparea"></div><div class="markertexts"></div></div>');
+            Y.one(this.get('topnode')).append(
+                    '<div class="ddarea">'+
+                        '<div class="markertexts"></div>'+
+                        '<div class="droparea"></div>'+
+                        '<div class="dropzones"></div>'+
+                    '</div>');
             this.doc = this.doc_structure(this);
-            this.draw_dd_area();
-        },
-
-        draw_dd_area : function() {
-            var bgimageurl = this.fp.file('bgimage').href;
             this.stop_selector_events();
             this.set_options_for_drag_item_selectors();
+            this.setup_form_events();
+            Y.later(500, this, this.update_drop_zones, [], true);
+            Y.after(this.load_bg_image, M.form_filepicker, 'callback', this);
+            this.load_bg_image();
+        },
+        
+        load_bg_image : function() {
+            var bgimageurl = this.fp.file('bgimage').href;
             if (bgimageurl !== null) {
                 this.doc.load_bg_img(bgimageurl);
 
@@ -33,25 +40,12 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                 });
 
                 this.afterimageloaddone = false;
-                this.attach_on_load_handlers(this.doc.bg_img(), 'bgimage');
-            } else {
-                this.setup_form_events();
+                this.doc.bg_img().on('load', this.constrain_image_size, this);
             }
         },
-        
-        attach_on_load_handlers : function (imgorimgs, imgtype) {
-            imgorimgs.on('load', this.constrain_image_size, this, imgtype);
-            imgorimgs.after('load', this.poll_for_image_load, this,
-                    true, 0, this.after_all_images_loaded);
-        },
 
-        after_all_images_loaded : function () {
-            Y.later(500, this, this.update_drop_zones, [], true);
-            this.setup_form_events();
-        },
-
-        constrain_image_size : function (e, imagetype) {
-            var maxsize = this.get('maxsizes')[imagetype];
+        constrain_image_size : function (e) {
+            var maxsize = this.get('maxsizes')['bgimage'];
             var reduceby = Math.max(e.target.get('width') / maxsize.width,
                                     e.target.get('height') / maxsize.height);
             if (reduceby > 1) {
@@ -101,9 +95,9 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             var coords = this.get_coords(dropzoneno);
             var coordsparts = coords.match(/(\d+),(\d+);(\d+)/);
             if (coordsparts && coordsparts.length === 4) {
-                var xy = [coordsparts[1] - coordsparts[3], coordsparts[2] - coordsparts[3]];
+                var xy = [+coordsparts[1] - coordsparts[3], +coordsparts[2] - coordsparts[3]];
                 if (this.coords_in_img(xy)) {
-                    var widthheight = [coordsparts[3]*2, coordsparts[3]*2];
+                    var widthheight = [+coordsparts[3]*2, +coordsparts[3]*2];
                     var shape = this.graphics.addShape({
                             type: 'circle',
                             width: widthheight[0],
@@ -127,8 +121,8 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             var coords = this.get_coords(dropzoneno);
             var coordsparts = coords.match(/(\d+),(\d+);(\d+),(\d+)/);
             if (coordsparts && coordsparts.length === 5) {
-                var xy = [coordsparts[1], coordsparts[2]];
-                var widthheight = [coordsparts[3], coordsparts[4]];
+                var xy = [+coordsparts[1], +coordsparts[2]];
+                var widthheight = [+coordsparts[3], +coordsparts[4]];
                 if (this.coords_in_img([xy[0]+widthheight[0], xy[1]+widthheight[1]])) {
                     var shape = this.graphics.addShape({
                             type: 'rect',
@@ -217,7 +211,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             for (var i=0; i < this.form.get_form_value('noitems', []); i++) {
                 var label = this.get_marker_text(i);
                 if (label !== "") {
-                    dragitemsoptions[i+1] = label;
+                    dragitemsoptions[i] = label;
                 }
             }
             var selectedvalues = [];
