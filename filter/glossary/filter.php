@@ -32,7 +32,6 @@ defined('MOODLE_INTERNAL') || die();
  *
  * TODO: erase the $GLOSSARY_EXCLUDECONCEPTS global => require format_text()
  *       to be able to pass arbitrary $options['filteroptions']['glossary'] to filter_text()
- * TODO: fix linking to glossary categories
  */
 class filter_glossary extends moodle_text_filter {
 
@@ -151,8 +150,9 @@ class filter_glossary extends moodle_text_filter {
             foreach ($concepts as $concept) {
                 $glossaryname = str_replace(':', '-', $glossaries[$concept->glossaryid]);
                 if ($concept->category) {       // Link to a category
+                    // TODO: Fix this string usage
                     $title = strip_tags($glossaryname.': '.$strcategory.' '.$concept->concept);
-                    $href_tag_begin = '<a class="glossary autolink glossaryid'.$concept->glossaryid.'" title="'.$title.'" '.
+                    $href_tag_begin = '<a class="glossary autolink category glossaryid'.$concept->glossaryid.'" title="'.$title.'" '.
                                       'href="'.$CFG->wwwroot.'/mod/glossary/view.php?g='.$concept->glossaryid.
                                       '&amp;mode=cat&amp;hook='.$concept->id.'">';
                 } else { // Link to entry or alias
@@ -170,7 +170,7 @@ class filter_glossary extends moodle_text_filter {
                     $attributes = array(
                         'href' => $link,
                         'title'=> $title,
-                        'class'=> 'glossary autolink glossaryid'.$concept->glossaryid);
+                        'class'=> 'glossary autolink concept glossaryid'.$concept->glossaryid);
 
                     // this flag is optionally set by resource_pluginfile()
                     // if processing an embedded file use target to prevent getting nested Moodles
@@ -189,7 +189,10 @@ class filter_glossary extends moodle_text_filter {
             if (empty($jsinitialised)) {
                 // Add a JavaScript event to open popup's here. This only ever need to be
                 // added once!
-                $PAGE->requires->yui_module('moodle-mod_glossary-autolinker', 'M.mod_glossary.init_filter_autolinking', array(array('courseid'=>$courseid)));
+                $PAGE->requires->yui_module(
+                        'moodle-filter_glossary-autolinker',
+                        'M.filter_glossary.init_filter_autolinking',
+                        array(array('courseid' => $courseid)));
                 $jsinitialised = true;
             }
         }
