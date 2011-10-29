@@ -1395,7 +1395,7 @@ class global_navigation extends navigation_node {
      */
     protected function add_category(stdClass $category, navigation_node $parent) {
         if (array_key_exists($category->id, $this->addedcategories)) {
-            continue;
+            return;
         }
         $url = new moodle_url('/course/category.php', array('id' => $category->id));
         $categorynode = $parent->add($category->name, $url, self::TYPE_CATEGORY, $category->name, $category->id);
