@@ -2016,7 +2016,7 @@ function can_access_course(stdClass $course, $user = null, $withcapability = '',
         }
     }
 
-    if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+    if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $coursecontext, $userid)) {
         return false;
     }
 
@@ -2028,6 +2028,8 @@ function can_access_course(stdClass $course, $user = null, $withcapability = '',
         // for performance reasons we do not verify temporary guest access for other users, sorry...
         return is_enrolled($coursecontext, $userid, '', $onlyactive);
     }
+
+    // === from here we deal only with $USER ===
 
     // verify our caches
     if (!isset($USER->enrol)) {
