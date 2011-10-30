@@ -1,6 +1,7 @@
 This files describes API changes in /auth/* - plugins,
 information provided here is intended especially for developers.
 
+
 === 2.2 ===
 
 required changes in code:
