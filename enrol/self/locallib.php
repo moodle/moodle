@@ -30,6 +30,7 @@ require_once("$CFG->libdir/formslib.php");
 
 class enrol_self_enrol_form extends moodleform {
     protected $instance;
+    protected $toomany = false;
 
     /**
      * Overriding this function to get unique form id for multiple self enrolments
@@ -42,19 +43,33 @@ class enrol_self_enrol_form extends moodleform {
     }
 
     public function definition() {
+        global $DB;
+
         $mform = $this->_form;
         $instance = $this->_customdata;
         $this->instance = $instance;
         $plugin = enrol_get_plugin('self');
 
+        $heading = $plugin->get_instance_name($instance);
+        $mform->addElement('header', 'selfheader', $heading);
+
+        if ($instance->customint3 > 0) {
+            // max enrol limit specified
+            $count = $DB->count_records('user_enrolments', array('enrolid'=>$instance->id));
+            if ($count >= $instance->customint3) {
+                // bad luck, no more self enrolments here
+                $this->toomany = true;
+                $mform->addElement('static', 'notice', '', get_string('maxenrolledreached', 'enrol_self'));
+                return;
+            }
+        }
+
         if ($instance->password) {
-            $heading = $plugin->get_instance_name($instance);
-            $mform->addElement('header', 'selfheader', $heading);
             //change the id of self enrolment key input as there can be multiple self enrolment methods
             $mform->addElement('passwordunmask', 'enrolpassword', get_string('password', 'enrol_self'),
                     array('id' => $instance->id."_enrolpassword"));
         } else {
-            // nothing?
+            $mform->addElement('static', 'nokey', '', get_string('nopassword', 'enrol_self'));
         }
 
         $this->add_action_buttons(false, get_string('enrolme', 'enrol_self'));
@@ -73,6 +88,11 @@ class enrol_self_enrol_form extends moodleform {
 
         $errors = parent::validation($data, $files);
         $instance = $this->instance;
+
+        if ($this->toomany) {
+            $errors['notice'] = get_string('error');
+            return $errors;
+        }
 
         if ($instance->password) {
             if ($data['enrolpassword'] !== $instance->password) {

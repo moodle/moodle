@@ -189,15 +189,6 @@ class enrol_self_plugin extends enrol_plugin {
             return null;
         }
 
-        if ($instance->customint3 > 0) {
-            // max enrol limit specified
-            $count = $DB->count_records('user_enrolments', array('enrolid'=>$instance->id));
-            if ($count >= $instance->customint3) {
-                // bad luck, no more self enrolments here
-                return $OUTPUT->notification(get_string('maxenrolledreached', 'enrol_self'));
-            }
-        }
-
         require_once("$CFG->dirroot/enrol/self/locallib.php");
         require_once("$CFG->dirroot/group/lib.php");
 
