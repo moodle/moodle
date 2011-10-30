@@ -252,7 +252,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
                 $dimid = $fields->{'dimensionid__idx_'.$i};
                 if (isset($grades[$dimid])) {
                     $current->{'gradeid__idx_'.$i}      = $grades[$dimid]->id;
-                    $current->{'grade__idx_'.$i}        = $grades[$dimid]->grade;
+                    $current->{'grade__idx_'.$i}        = ($grades[$dimid]->grade == 0 ? -1 : 1);
                     $current->{'peercomment__idx_'.$i}  = $grades[$dimid]->peercomment;
                 }
             }
@@ -294,7 +294,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
             $grade->assessmentid        = $assessment->id;
             $grade->strategy            = 'numerrors';
             $grade->dimensionid         = $data->{'dimensionid__idx_' . $i};
-            $grade->grade               = $data->{'grade__idx_' . $i};
+            $grade->grade               = ($data->{'grade__idx_' . $i} <= 0 ? 0 : 1);
             $grade->peercomment         = $data->{'peercomment__idx_' . $i};
             $grade->peercommentformat   = FORMAT_HTML;
             if (empty($grade->id)) {
