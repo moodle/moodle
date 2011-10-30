@@ -15,16 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Data module version information
+ * Strings for filter_data
  *
- * @package    mod
+ * @package    filter
  * @subpackage data
- * @copyright  2005 onwards Martin Dougiamas {@link http://moodle.com}
+ * @copyright  2011 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version  = 2011102800;
-$module->requires = 2011102700;  // Requires this Moodle version
-$module->cron     = 60;          // Period for cron to check this module (secs)
+$string['filtername'] = 'Database auto-linking';

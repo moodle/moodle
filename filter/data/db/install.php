@@ -15,16 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Data module version information
+ * Database activity filter post install hook
  *
- * @package    mod
+ * @package    filter
  * @subpackage data
- * @copyright  2005 onwards Martin Dougiamas {@link http://moodle.com}
+ * @copyright  2011 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version  = 2011102800;
-$module->requires = 2011102700;  // Requires this Moodle version
-$module->cron     = 60;          // Period for cron to check this module (secs)
+function xmldb_filter_data_install() {
+    global $DB;
+
+    // If the legacy mod/data filter is installed we need to:
+    //   1- Delete new filter (filter_active and filter_config) information, in order to
+    //   2- Usurpate the identity of the legacy filter by moving all its
+    //      information to filter/data
+    // If the legacy mod/data filter was not installed, no action is needed
+    if ($DB->record_exists('filter_active', array('filter' => 'mod/data'))) {
+        $DB->delete_records('filter_active', array('filter' => 'filter/data'));
+        $DB->set_field('filter_active', 'filter', 'filter/data', array('filter' => 'mod/data'));
+    }
+}
