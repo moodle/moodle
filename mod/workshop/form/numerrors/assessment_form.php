@@ -71,9 +71,11 @@ class workshop_numerrors_assessment_form extends workshop_assessment_form {
 
             // evaluation of the assertion
             $label = get_string('dimensiongrade', 'workshopform_numerrors');
-            $mform->addElement('radio', 'grade__idx_' . $i, get_string('yourassessment', 'workshop'), $fields->{'grade0__idx_'.$i}, 0);
-            $mform->addElement('radio', 'grade__idx_' . $i, '', $fields->{'grade1__idx_'.$i}, 1);
-            $mform->setDefault('grade__idx_' . $i, 0);
+            $mform->addGroup(array(
+                $mform->createElement('radio', 'grade__idx_' . $i, '', $fields->{'grade0__idx_'.$i}, -1),
+                $mform->createElement('radio', 'grade__idx_' . $i, '', $fields->{'grade1__idx_'.$i}, 1),
+            ), 'group_grade__idx_' . $i, get_string('yourassessment', 'workshop'), '<br />', false);
+            $mform->addRule('group_grade__idx_' . $i, get_string('required'), 'required');
 
             // comment
             $label = get_string('dimensioncomment', 'workshopform_numerrors');
