@@ -46,8 +46,8 @@ Options:
 --adminuser=USERNAME  Username for the moodle admin account. Default is admin.
 --adminpass=PASSWORD  Password for the moodle admin account.
 --agree-license       Indicates agreement with software license.
---fullname            Name of the site
---shortname           Name of the site
+--fullname=STRING     Name of the site
+--shortname=STRING    Name of the site
 -h, --help            Print out this help
 
 Example:
