@@ -508,10 +508,16 @@ function filter_get_name($filter) {
 function filter_get_all_installed() {
     global $CFG;
     $filternames = array();
+    // TODO: deprecated in 2.2, delete support for "mod" legacy filters location in 2.3. MDL-29996
     $filterlocations = array('mod', 'filter');
     foreach ($filterlocations as $filterlocation) {
+        // TODO: move get_list_of_plugins() to get_plugin_list()
         $filters = get_list_of_plugins($filterlocation);
         foreach ($filters as $filter) {
+            // MDL-29994 - Ignore mod/data and mod/glossary filters forever, this will be out in 2.3
+            if ($filterlocation == 'mod' && ($filter == 'data' || $filter == 'glossary')) {
+                continue;
+            }
             $path = $filterlocation . '/' . $filter;
             if (is_readable($CFG->dirroot . '/' . $path . '/filter.php')) {
                 $strfiltername = filter_get_name($path);
