@@ -36,6 +36,7 @@ $string['dimensionweight'] = 'Weight';
 $string['excellent'] = 'Excellent';
 $string['good'] = 'Good';
 $string['incorrect'] = 'Incorrect';
+$string['mustchoosegrade'] = 'You have to select a grade for this aspect';
 $string['pluginname'] = 'Accumulative grading';
 $string['poor'] = 'Poor';
 $string['present'] = 'Present';

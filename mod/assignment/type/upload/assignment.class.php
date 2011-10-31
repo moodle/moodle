@@ -44,6 +44,7 @@ class assignment_upload extends assignment_base {
         global $USER, $OUTPUT;
 
         require_capability('mod/assignment:view', $this->context);
+        $cansubmit = has_capability('mod/assignment:submit', $this->context);
 
         add_to_log($this->course->id, 'assignment', 'view', "view.php?id={$this->cm->id}", $this->assignment->id, $this->cm->id);
 
@@ -67,35 +68,34 @@ class assignment_upload extends assignment_base {
             } else {
                 $filecount = 0;
             }
+            if ($cansubmit or !empty($filecount)) { //if a user has submitted files using a previous role we should still show the files
+                $this->view_feedback();
 
-            $this->view_feedback();
-
-            if (!$this->drafts_tracked() or !$this->isopen() or $this->is_finalized($submission)) {
-                echo $OUTPUT->heading(get_string('submission', 'assignment'), 3);
-            } else {
-                echo $OUTPUT->heading(get_string('submissiondraft', 'assignment'), 3);
-            }
-
-            if ($filecount and $submission) {
-                echo $OUTPUT->box($this->print_user_files($USER->id, true), 'generalbox boxaligncenter', 'userfiles');
-            } else {
-                if (!$this->isopen() or $this->is_finalized($submission)) {
-                    echo $OUTPUT->box(get_string('nofiles', 'assignment'), 'generalbox boxaligncenter nofiles', 'userfiles');
+                if (!$this->drafts_tracked() or !$this->isopen() or $this->is_finalized($submission)) {
+                    echo $OUTPUT->heading(get_string('submission', 'assignment'), 3);
                 } else {
-                    echo $OUTPUT->box(get_string('nofilesyet', 'assignment'), 'generalbox boxaligncenter nofiles', 'userfiles');
+                    echo $OUTPUT->heading(get_string('submissiondraft', 'assignment'), 3);
                 }
-            }
 
-            if (has_capability('mod/assignment:submit', $this->context)) {
+                if ($filecount and $submission) {
+                    echo $OUTPUT->box($this->print_user_files($USER->id, true), 'generalbox boxaligncenter', 'userfiles');
+                } else {
+                    if (!$this->isopen() or $this->is_finalized($submission)) {
+                        echo $OUTPUT->box(get_string('nofiles', 'assignment'), 'generalbox boxaligncenter nofiles', 'userfiles');
+                    } else {
+                        echo $OUTPUT->box(get_string('nofilesyet', 'assignment'), 'generalbox boxaligncenter nofiles', 'userfiles');
+                    }
+                }
+
                 $this->view_upload_form();
-            }
 
-            if ($this->notes_allowed()) {
-                echo $OUTPUT->heading(get_string('notes', 'assignment'), 3);
-                $this->view_notes();
-            }
+                if ($this->notes_allowed()) {
+                    echo $OUTPUT->heading(get_string('notes', 'assignment'), 3);
+                    $this->view_notes();
+                }
 
-            $this->view_final_submission();
+                $this->view_final_submission();
+            }
         }
         $this->view_footer();
     }
