@@ -514,7 +514,6 @@ $string['publishedit'] = 'You must have permission in the publishing course to a
 $string['qname'] = 'name';
 $string['qbrief'] = 'Q. {$a}';
 $string['qti'] = 'IMS QTI format';
-$string['qti_two'] = 'IMS QTI 2.0 format';
 $string['qtypename'] = 'type, name';
 $string['question'] = 'Question';
 $string['questionbankcontents'] = 'Question bank contents';
