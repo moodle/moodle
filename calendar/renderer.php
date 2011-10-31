@@ -580,7 +580,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('tr');
 
         // Global events
-        $link = new moodle_url(CALENDAR_URL.'set.php', array('var' => 'showglobal', 'return' => $returnurl));
+        $link = new moodle_url(CALENDAR_URL.'set.php', array('var' => 'showglobal', 'return' => base64_encode($returnurl->out(false)), 'sesskey'=>sesskey()));
         if (calendar_show_event_type(CALENDAR_EVENT_GLOBAL)) {
             $output .= html_writer::tag('td', '', array('class'=>'calendar_event_global', 'style'=>'width:8px;'));
             $output .= html_writer::tag('td', html_writer::tag('strong', get_string('globalevents', 'calendar')).' '.get_string('shown', 'calendar').' ('.html_writer::link($link, get_string('clickhide', 'calendar')).')');
@@ -590,7 +590,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         }
 
         // Course events
-        $link = new moodle_url(CALENDAR_URL.'set.php', array('var'=>'showcourses', 'return' => $returnurl));
+        $link = new moodle_url(CALENDAR_URL.'set.php', array('var'=>'showcourses', 'return' => base64_encode($returnurl->out(false)), 'sesskey'=>sesskey()));
         if (calendar_show_event_type(CALENDAR_EVENT_COURSE)) {
             $output .= html_writer::tag('td', '', array('class'=>'calendar_event_course', 'style'=>'width:8px;'));
             $output .= html_writer::tag('td', html_writer::tag('strong', get_string('courseevents', 'calendar')).' '.get_string('shown', 'calendar').' ('.html_writer::link($link, get_string('clickhide', 'calendar')).')');
@@ -603,7 +603,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         if(isloggedin() && !isguestuser()) {
             $output .= html_writer::start_tag('tr');
             // Group events
-            $link = new moodle_url(CALENDAR_URL.'set.php', array('var'=>'showgroups', 'return' => $returnurl));
+            $link = new moodle_url(CALENDAR_URL.'set.php', array('var'=>'showgroups', 'return' => base64_encode($returnurl->out(false)), 'sesskey'=>sesskey()));
             if (calendar_show_event_type(CALENDAR_EVENT_GROUP)) {
                 $output .= html_writer::tag('td', '', array('class'=>'calendar_event_group', 'style'=>'width:8px;'));
                 $output .= html_writer::tag('td', html_writer::tag('strong', get_string('groupevents', 'calendar')).' '.get_string('shown', 'calendar').' ('.html_writer::link($link, get_string('clickhide', 'calendar')).')');
@@ -612,7 +612,7 @@ class core_calendar_renderer extends plugin_renderer_base {
                 $output .= html_writer::tag('td', html_writer::tag('strong', get_string('groupevents', 'calendar')).' '.get_string('hidden', 'calendar').' ('.html_writer::link($link, get_string('clickshow', 'calendar')).')');
             }
             // User events
-            $link = new moodle_url(CALENDAR_URL.'set.php', array('var'=>'showuser', 'return' => $returnurl));
+            $link = new moodle_url(CALENDAR_URL.'set.php', array('var'=>'showuser', 'return' => base64_encode($returnurl->out(false)), 'sesskey'=>sesskey()));
             if (calendar_show_event_type(CALENDAR_EVENT_USER)) {
                 $output .= html_writer::tag('td', '', array('class'=>'calendar_event_user', 'style'=>'width:8px;'));
                 $output .= html_writer::tag('td', html_writer::tag('strong', get_string('userevents', 'calendar')).' '.get_string('shown', 'calendar').' ('.html_writer::link($link, get_string('clickhide', 'calendar')).')');
@@ -701,7 +701,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         } else {
             $selected = '';
         }
-        $select = new single_select(new moodle_url(CALENDAR_URL.'set.php', array('return' => $returnurl, 'var' => 'setcourse')), 'id', $courseoptions, $selected, null);
+        $select = new single_select(new moodle_url(CALENDAR_URL.'set.php', array('return' => base64_encode($returnurl->out(false)), 'var' => 'setcourse', 'sesskey'=>sesskey())), 'id', $courseoptions, $selected, null);
         $select->class = 'cal_courses_flt';
         if ($label !== null) {
             $select->label = $label;
