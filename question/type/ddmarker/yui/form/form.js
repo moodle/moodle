@@ -64,6 +64,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             if (this.graphics !== null) {
                 this.graphics.destroy();
             }
+            this.restart_colours();
             this.graphics = new Y.Graphic({render:"div.ddarea div.dropzones"});
             for (var i=0; i < this.form.get_form_value('nodropzone', []); i++) {
                 this.update_drop_zone(i);
@@ -74,26 +75,35 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             var markertext = this.get_marker_text(dragitemno);
             var shape = this.form.get_form_value('drops', [dropzoneno, 'shape']);
             var drawfunc = 'draw_shape_'+shape;
+            var colourfordropzone = this.get_next_colour();
+            Y.one('input#id_drops_'+dropzoneno+'_coords')
+                                                .setStyle('background-color', colourfordropzone);
             if (this[drawfunc] instanceof Function){
-               var xyfortext = this[drawfunc](dropzoneno);
+               var xyfortext = this[drawfunc](dropzoneno, colourfordropzone);
                if (xyfortext !== null) {
                    var classnames = 'markertext markertext' + dropzoneno;
                    var existingdiv = Y.one('div.ddarea div.markertexts span.markertext'+dropzoneno);
                    if (existingdiv) {
-                       existingdiv.setContent(markertext);
+                       if (markertext !== '') {
+                           existingdiv.setContent(markertext);
+                       } else {
+                           existingdiv.remove(true);
+                       }
                    } else {
                        Y.one('div.ddarea div.markertexts').append('<span class="'+classnames+'">' +
                                                                            markertext+'</span>');
                    }
                    var markerspan = Y.one('div.ddarea div.markertexts span.markertext'+dropzoneno);
-                   markerspan.setStyle('opacity', '0.4');
-                   xyfortext[0] -= Math.round(markerspan.get('offsetWidth') / 2);
-                   xyfortext[1] -= Math.round(markerspan.get('offsetHeight') / 2);
-                   markerspan.setXY(this.convert_to_window_xy(xyfortext));
+                   if (markerspan !== null) {
+                       markerspan.setStyle('opacity', '0.4');
+                       xyfortext[0] -= Math.round(markerspan.get('offsetWidth') / 2);
+                       xyfortext[1] -= Math.round(markerspan.get('offsetHeight') / 2);
+                       markerspan.setXY(this.convert_to_window_xy(xyfortext));
+                   }
                }
             }
         },
-        draw_shape_circle : function (dropzoneno) {
+        draw_shape_circle : function (dropzoneno, colourfordropzone) {
             var coords = this.get_coords(dropzoneno);
             var coordsparts = coords.match(/(\d+),(\d+);(\d+)/);
             if (coordsparts && coordsparts.length === 4) {
@@ -105,7 +115,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                             width: widthheight[0],
                             height: widthheight[1],
                             fill: {
-                                color: "#0000ff",
+                                color: colourfordropzone,
                                 opacity : "0.5"
                             },
                             stroke: {
@@ -119,7 +129,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             }
             return null;
         },
-        draw_shape_rectangle : function (dropzoneno) {
+        draw_shape_rectangle : function (dropzoneno, colourfordropzone) {
             var coords = this.get_coords(dropzoneno);
             var coordsparts = coords.match(/(\d+),(\d+);(\d+),(\d+)/);
             if (coordsparts && coordsparts.length === 5) {
@@ -131,7 +141,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                             width: widthheight[0],
                             height: widthheight[1],
                             fill: {
-                                color: "#0000ff",
+                                color: colourfordropzone,
                                 opacity : "0.5"
                             },
                             stroke: {
@@ -146,7 +156,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             return null;
 
         },
-        draw_shape_polygon : function (dropzoneno) {
+        draw_shape_polygon : function (dropzoneno, colourfordropzone) {
             var coords = this.form.get_form_value('drops', [dropzoneno, 'coords']);
             var coordsparts = coords.split(';');
             var xy = [];
@@ -161,10 +171,10 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                     type: "path",
                     stroke: {
                         weight: 1,
-                        color: "#000"
+                        color: "black"
                     },
                     fill: {
-                        color: "#f00",
+                        color: colourfordropzone,
                         opacity : "0.5"
                     }
                 });

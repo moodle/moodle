@@ -25,30 +25,6 @@
     *display: inline;
 }
 
-.que.ddmarker .group1, form.mform fieldset#previewareaheader .group1 {
-    background-color: #FFFFFF;
-}
-.que.ddmarker .group2, form.mform fieldset#previewareaheader .group2 {
-    background-color: #B0C4DE;
-}
-.que.ddmarker .group3, form.mform fieldset#previewareaheader .group3 {
-    background-color: #DCDCDC;
-}
-.que.ddmarker .group4, form.mform fieldset#previewareaheader .group4 {
-    background-color: #D8BFD8;
-}
-.que.ddmarker .group5, form.mform fieldset#previewareaheader .group5 {
-    background-color: #87CEFA;
-}
-.que.ddmarker .group6, form.mform fieldset#previewareaheader .group6 {
-    background-color: #DAA520;
-}
-.que.ddmarker .group7, form.mform fieldset#previewareaheader .group7 {
-    background-color: #FFD700;
-}
-.que.ddmarker .group8, form.mform fieldset#previewareaheader .group8 {
-    background-color: #F0E68C;
-}
 .que.ddmarker .drag, form.mform fieldset#previewareaheader .drag {
     border: 1px solid black;
     cursor: move;
@@ -86,8 +62,8 @@ form.mform fieldset#previewareaheader div.markertexts span.markertext {
     width: auto;
     zoom: 1;
     *display: inline;
-    -moz-border-radius: 20px;
-    -webkit-border-radius: 20px;
-    -khtml-border-radius: 20px;
-    border-radius: 20px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -khtml-border-radius: 10px;
+    border-radius: 10px;
 }

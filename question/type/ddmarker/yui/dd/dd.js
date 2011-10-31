@@ -171,6 +171,21 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
 
             }
         },
+        
+        colours : ['#FFFFFF', '#B0C4DE', '#DCDCDC', '#D8BFD8',
+                   '#87CEFA','#DAA520', '#FFD700', '#F0E68C'],
+        nextcolourindex : 0,
+        restart_colours : function () {
+            this.nextcolourindex = 0;
+        },
+        get_next_colour : function () {
+            var colour = this.colours[this.nextcolourindex];
+            this.nextcolourindex++;
+            if (this.nextcolourindex === this.colours.length) {
+                this.nextcolourindex = 0;
+            }
+            return colour;
+        },
 
         update_padding_sizes_all : function () {
             for (var groupno = 1; groupno <= 8; groupno++) {
