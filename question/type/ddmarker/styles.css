@@ -14,7 +14,7 @@
 }
 
 .que.ddmarker div.draghome, form.mform fieldset#previewareaheader div.draghome {
-    border: 1px solid black;
+    border: 1px dashed black;
     cursor: move;
     background-color: #B0C4DE;
     display: -moz-inline-stack;
@@ -77,7 +77,7 @@ form.mform fieldset#previewareaheader div.draghome, form.mform fieldset#previewa
 .que.ddmarker div.markertexts span.markertext,
 form.mform fieldset#previewareaheader div.markertexts span.markertext {
     z-index: 2;
-    border: 1px solid black;
+    border: 1px dashed black;
     background-color: white;
     padding: 5px;
     position:absolute;
@@ -87,4 +87,8 @@ form.mform fieldset#previewareaheader div.markertexts span.markertext {
     width: auto;
     zoom: 1;
     *display: inline;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -khtml-border-radius: 10px;
+    border-radius: 10px;
 }
