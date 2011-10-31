@@ -77,7 +77,6 @@ form.mform fieldset#previewareaheader div.draghome, form.mform fieldset#previewa
 .que.ddmarker div.markertexts span.markertext,
 form.mform fieldset#previewareaheader div.markertexts span.markertext {
     z-index: 2;
-    border: 1px dashed black;
     background-color: white;
     padding: 5px;
     position:absolute;
@@ -87,8 +86,8 @@ form.mform fieldset#previewareaheader div.markertexts span.markertext {
     width: auto;
     zoom: 1;
     *display: inline;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -khtml-border-radius: 10px;
-    border-radius: 10px;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -khtml-border-radius: 20px;
+    border-radius: 20px;
 }
