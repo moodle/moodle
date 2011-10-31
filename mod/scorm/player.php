@@ -34,6 +34,14 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6') !== false) {
     @apache_setenv('no-gzip', 1);
 }
 
+//IE 9 workaround for Flash bug: MDL-29213
+if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 9') !== false) {
+    if (!isset($CFG->additionalhtmlhead)) { //check to make sure set first - that way we can use .=
+        $CFG->additionalhtmlhead = '';
+    }
+    $CFG->additionalhtmlhead .= '<meta http-equiv="X-UA-Compatible" content="IE=8" />';
+}
+
 if (!empty($id)) {
     if (! $cm = get_coursemodule_from_id('scorm', $id)) {
         print_error('invalidcoursemodule');
