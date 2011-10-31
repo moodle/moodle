@@ -181,11 +181,6 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
                     this.doc.drag_items().remove(true);
                     this.draw_dd_area();
                 }, this);
-                Y.all('fieldset#draggableitemheader_'+i+' input[type="text"]')
-                                                        .on('blur', function (e, draginstanceno){
-                    this.doc.drag_item(draginstanceno).remove(true);
-                    this.draw_dd_area();
-                }, this, i);
                 //change to infinite checkbox
                 Y.all('fieldset#draggableitemheader_'+i+' input[type="checkbox"]')
                                     .on('change', this.set_options_for_drag_item_selectors, this);
