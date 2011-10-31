@@ -34,9 +34,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_renderer {
 
-    public function head_code(question_attempt $qa) {
-        return parent::head_code($qa);
-    }
     public function clear_wrong(question_attempt $qa) {
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
