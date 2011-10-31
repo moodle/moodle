@@ -209,10 +209,10 @@ class enrol_manual_plugin extends enrol_plugin {
         $startdateoptions = array();
         $timeformat = get_string('strftimedatefullshort');
         if ($startdate > 0) {
-            $today = time();
-            $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
             $startdateoptions[2] = get_string('coursestart') . ' (' . userdate($startdate, $timeformat) . ')';
         }
+        $today = time();
+        $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
         $startdateoptions[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
 
         $modules = array('moodle-enrol_manual-quickenrolment', 'moodle-enrol_manual-quickenrolment-skin');
