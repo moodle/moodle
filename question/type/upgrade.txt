@@ -1,0 +1,16 @@
+This files describes API changes for question type plugins.
+
+=== 2.2 ===
+
+* The XML import/export base class has had some minor API changes. The
+  - write_combined_feedback method now requires that you pass the questionid and
+    contextid. (MDL-29058)
+  - calls to the import_hints and import_answer methods now should pass the question
+    text format as the last argument, to be used as a default if necessary. (MDL-29739)
+  If you do not upgrade your code, it will not break, but there will be PHP
+  warnings, and it the export will not work 100% correctly.
+
+* Question type plugins should start using a string called 'pluginname' for the
+  question type name, as with other plugins. Using a string with the same name
+  as the question type (e.g. get_string('essay', 'qtype_essay') will be supported
+  for one more release, but will generate a debugging warning.
