@@ -842,7 +842,7 @@ function calendar_filter_controls(moodle_url $returnurl) {
 
     $id = optional_param( 'id',0,PARAM_INT );
 
-    $seturl = new moodle_url('/calendar/set.php', array('return' => $returnurl));
+    $seturl = new moodle_url('/calendar/set.php', array('return' => base64_encode($returnurl->out(false)), 'sesskey'=>sesskey()));
 
     $content = '<table>';
     $content .= '<tr>';
