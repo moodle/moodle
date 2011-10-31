@@ -130,9 +130,14 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
                                                                         +' input[type="checkbox"]';
                             var cbel = Y.one(cbselector);
                             var infinite = cbel.get('checked');
-                            if ((!infinite) &&
-                                    (this.doc.drag_items_cloned_from(value - 1).size() !== 0)) {
-                                optionnode.set('disabled', true);
+                            if (!infinite) {
+                                Y.all('fieldset#dropzoneheader select').some(function (selector) {
+                                    if (+selector.get('value') == value){
+                                        optionnode.set('disabled', true);
+                                        return true; // stop looping
+                                    }
+                                    return false;
+                                }, this);
                             }
                         }
                     }
@@ -182,10 +187,7 @@ YUI.add('moodle-qtype_ddimageortext-form', function(Y) {
                     this.draw_dd_area();
                 }, this);
                 Y.all('fieldset#draggableitemheader_'+i+' input[type="text"]')
-                                                        .on('blur', function (e, draginstanceno){
-                    this.doc.drag_item(draginstanceno).remove(true);
-                    this.draw_dd_area();
-                }, this, i);
+                                    .on('blur', this.set_options_for_drag_item_selectors, this);
                 //change to infinite checkbox
                 Y.all('fieldset#draggableitemheader_'+i+' input[type="checkbox"]')
                                     .on('change', this.set_options_for_drag_item_selectors, this);
