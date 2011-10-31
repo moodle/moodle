@@ -1,6 +1,6 @@
-YUI.add('moodle-mod_glossary-autolinker', function(Y) {
+YUI.add('moodle-filter_glossary-autolinker', function(Y) {
 
-    var AUTOLINKERNAME = 'Glossary autolinker',
+    var AUTOLINKERNAME = 'Glossary filter autolinker',
         URL = 'url',
         POPUPNAME = 'name',
         POPUPOPTIONS = 'options',
@@ -33,7 +33,7 @@ YUI.add('moodle-mod_glossary-autolinker', function(Y) {
 
                 //display a progress indicator
                 var title = '';
-                var content = Y.Node.create('<div id="glossaryoverlayprogress"><img src="'+M.cfg.loadingicon+'" class="spinner" /></div>');
+                var content = Y.Node.create('<div id="glossaryfilteroverlayprogress"><img src="'+M.cfg.loadingicon+'" class="spinner" /></div>');
                 var o = new Y.Overlay({
                     headerContent :  title,
                     bodyContent : content
@@ -61,7 +61,7 @@ YUI.add('moodle-mod_glossary-autolinker', function(Y) {
                 };
                 Y.io(fullurl, cfg);
 
-            }, Y.one(document.body), 'a.glossary.autolink');
+            }, Y.one(document.body), 'a.glossary.autolink.concept');
         },
         display_callback : function(content) {
             try {
@@ -126,8 +126,8 @@ YUI.add('moodle-mod_glossary-autolinker', function(Y) {
         }
     });
 
-    M.mod_glossary = M.mod_glossary || {};
-    M.mod_glossary.init_filter_autolinking = function(config) {
+    M.filter_glossary = M.filter_glossary || {};
+    M.filter_glossary.init_filter_autolinking = function(config) {
         return new AUTOLINKER(config);
     }
 
