@@ -87,7 +87,9 @@ function url_get_post_actions() {
  * @return int new url instance id
  */
 function url_add_instance($data, $mform) {
-    global $DB;
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot.'/mod/url/locallib.php');
 
     $parameters = array();
     for ($i=0; $i < 100; $i++) {
@@ -111,9 +113,7 @@ function url_add_instance($data, $mform) {
     }
     $data->displayoptions = serialize($displayoptions);
 
-    if (!empty($data->externalurl) && (strpos($data->externalurl, '://') === false) && (strpos($data->externalurl, '/', 0) === false)) {
-        $data->externalurl = 'http://'.$data->externalurl;
-    }
+    $data->externalurl = url_fix_submitted_url($data->externalurl);
 
     $data->timemodified = time();
     $data->id = $DB->insert_record('url', $data);
@@ -130,6 +130,8 @@ function url_add_instance($data, $mform) {
 function url_update_instance($data, $mform) {
     global $CFG, $DB;
 
+    require_once($CFG->dirroot.'/mod/url/locallib.php');
+
     $parameters = array();
     for ($i=0; $i < 100; $i++) {
         $parameter = "parameter_$i";
@@ -152,9 +154,7 @@ function url_update_instance($data, $mform) {
     }
     $data->displayoptions = serialize($displayoptions);
 
-    if (!empty($data->externalurl) && (strpos($data->externalurl, '://') === false) && (strpos($data->externalurl, '/', 0) === false)) {
-        $data->externalurl = 'http://'.$data->externalurl;
-    }
+    $data->externalurl = url_fix_submitted_url($data->externalurl);
 
     $data->timemodified = time();
     $data->id           = $data->instance;
