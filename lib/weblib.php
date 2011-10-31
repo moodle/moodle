@@ -6203,8 +6203,35 @@ function redirect($url, $message='', $delay=-1) {
 
     $message = clean_text($message);
 
+    // Technically, HTTP/1.1 requires Location: header to contain the absolute path.
+    // (In practice browsers accept relative paths - but still, might as well do it properly.)
+    // This code turns relative into absolute.
+    if (!preg_match('|^[a-z]+:|', $url)) {
+        // Get host name http://www.wherever.com
+        $hostpart = preg_replace('|^(.*?[^:/])/.*$|', '$1', $CFG->wwwroot);
+        if (preg_match('|^/|', $url)) {
+            // URLs beginning with / are relative to web server root so we just add them in
+            $url = $hostpart.$url;
+        } else {
+            // URLs not beginning with / are relative to path of current script, so add that on.
+            $url = $hostpart.preg_replace('|\?.*$|','',me()).'/../'.$url;
+        }
+        // Replace all ..s
+        while (true) {
+            $newurl = preg_replace('|/(?!\.\.)[^/]*/\.\./|', '/', $url);
+            if ($newurl == $url) {
+                break;
+            }
+            $url = $newurl;
+        }
+    }
+
+    // Sanitise url - we can not rely on our URL cleaning
+    // because it does not support all valid external URLs
+    $url = preg_replace('/[\x00-\x1F\x7F]/', '', $url);
+    $url = str_replace('"', '%22', $url);
     $encodedurl = preg_replace("/\&(?![a-zA-Z0-9#]{1,8};)/", "&amp;", $url);
-    $encodedurl = preg_replace('/^.*href="([^"]*)".*$/', "\\1", clean_text('<a href="'.$encodedurl.'" />'));
+    $encodedurl = preg_replace('/^.*href="([^"]*)".*$/', "\\1", clean_text('<a href="'.$encodedurl.'" />', FORMAT_HTML));
     $url = str_replace('&amp;', '&', $encodedurl);
 
 /// At developer debug level. Don't redirect if errors have been printed on screen.
@@ -6226,31 +6253,6 @@ function redirect($url, $message='', $delay=-1) {
 
 /// when no message and header printed yet, try to redirect
     if (empty($message) and !defined('HEADER_PRINTED')) {
-
-        // Technically, HTTP/1.1 requires Location: header to contain
-        // the absolute path. (In practice browsers accept relative
-        // paths - but still, might as well do it properly.)
-        // This code turns relative into absolute.
-        if (!preg_match('|^[a-z]+:|', $url)) {
-            // Get host name http://www.wherever.com
-            $hostpart = preg_replace('|^(.*?[^:/])/.*$|', '$1', $CFG->wwwroot);
-            if (preg_match('|^/|', $url)) {
-                // URLs beginning with / are relative to web server root so we just add them in
-                $url = $hostpart.$url;
-            } else {
-                // URLs not beginning with / are relative to path of current script, so add that on.
-                $url = $hostpart.preg_replace('|\?.*$|','',me()).'/../'.$url;
-            }
-            // Replace all ..s
-            while (true) {
-                $newurl = preg_replace('|/(?!\.\.)[^/]*/\.\./|', '/', $url);
-                if ($newurl == $url) {
-                    break;
-                }
-                $url = $newurl;
-            }
-        }
-
         $delay = 0;
         //try header redirection first
         @header($_SERVER['SERVER_PROTOCOL'] . ' 303 See Other'); //302 might not work for POST requests, 303 is ignored by obsolete clients
