@@ -19,6 +19,7 @@
 <node ID="_Freemind_Link_313976796" TEXT=".ra"/>
 <node ID="_Freemind_Link_709595453" TEXT=".wma"/>
 <node TEXT=".ogg"/>
+<node TEXT=".aac"/>
 </node>
 <node ID="_Freemind_Link_1800832653" TEXT="non_web_audio">
 <node ID="_Freemind_Link_1772266185" TEXT=".ape"/>
@@ -35,6 +36,9 @@
 <node ID="_Freemind_Link_810187762" TEXT=".wmv"/>
 <node ID="_Freemind_Link_763870397" TEXT=".asf"/>
 <node TEXT=".ogv"/>
+<node TEXT=".f4v"/>
+<node TEXT=".m4v"/>
+<node TEXT=".webm"/>
 </node>
 <node ID="_Freemind_Link_1019644700" TEXT="non_web_video">
 <node ID="_Freemind_Link_190589975" TEXT=".avi"/>
