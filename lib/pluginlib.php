@@ -241,7 +241,7 @@ class plugin_manager {
                 return false;
             }
 
-            if ($requiredversion != ANY_VERSION and $otherplugin->versiondb < $requiredversion) {
+            if ($requiredversion != ANY_VERSION and $otherplugin->versiondisk < $requiredversion) {
                 return false;
             }
         }
