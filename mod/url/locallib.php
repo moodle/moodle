@@ -32,7 +32,7 @@ require_once("$CFG->dirroot/mod/url/lib.php");
 
 /**
  * This methods does weak url validation, we are looking for major problems only,
- * mo strict RFE validation.
+ * no strict RFE validation.
  *
  * @param $url
  * @return bool true is seems valid, false if definitely not valid URL
