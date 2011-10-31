@@ -4,6 +4,7 @@
     require_once('change_password_form.php');
 
     $id = optional_param('id', SITEID, PARAM_INT); // current course
+    $return = optional_param('return', 0, PARAM_BOOL); // redirect after password change
 
     $strparticipants = get_string('participants');
 
@@ -12,6 +13,19 @@
 
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
+    if ($return) {
+        // this redirect prevents security warning because https can not POST to http pages
+        if (empty($SESSION->wantsurl)
+                or stripos(str_replace('https://', 'http://', $SESSION->wantsurl), str_replace('https://', 'http://', $CFG->wwwroot.'/login/change_password.php') === 0)) {
+            $returnto = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$id";
+        } else {
+            $returnto = $SESSION->wantsurl;
+        }
+        unset($SESSION->wantsurl);
+
+        redirect($returnto);
+    }
+
     if (!$course = get_record('course', 'id', $id)) {
         error('No such course!');
     }
@@ -19,7 +33,7 @@
     // require proper login; guest user can not change password
     if (empty($USER->id) or isguestuser()) {
         if (empty($SESSION->wantsurl)) {
-            $SESSION->wantsurl = $CFG->httpswwwroot.'/login/change_password.php';
+            $SESSION->wantsurl = $CFG->httpswwwroot.'/login/change_password.php?id=' . $id;
         }
         redirect($CFG->httpswwwroot.'/login/index.php');
     }
@@ -54,7 +68,7 @@
         redirect($changeurl);
     }
 
-    $mform = new login_change_password_form();
+    $mform = new login_change_password_form($CFG->httpswwwroot . '/login/change_password.php');
     $mform->set_data(array('id'=>$course->id));
 
     $navlinks = array();
