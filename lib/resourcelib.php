@@ -233,6 +233,8 @@ function resourcelib_embed_mp3($fullurl, $title, $clicktoopen) {
 
     if ($fullurl instanceof moodle_url) {
         $fullurl = $fullurl->out(false);
+    } else {
+        $fullurl = str_replace('&amp;', '&', $fullurl);
     }
 
     $id = 'resource_mp3_'.time(); //we need something unique because it might be stored in text cache
@@ -259,6 +261,8 @@ function resourcelib_embed_flashvideo($fullurl, $title, $clicktoopen) {
 
     if ($fullurl instanceof moodle_url) {
         $fullurl = $fullurl->out(false);
+    } else {
+        $fullurl = str_replace('&amp;', '&', $fullurl);
     }
 
     $id = 'resource_flv_'.time(); //we need something unique because it might be stored in text cache
