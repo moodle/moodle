@@ -802,9 +802,11 @@ class grade_report_grader extends grade_report {
 
         $rows = $this->get_right_icons_row($rows);
 
-        // Preload scale objects for items with a scaleid
+        // Preload scale objects for items with a scaleid, initialize tab indices and prepare the list
+        // of all activity modules that have the file grade.php present if showanalysisicon is enabled
         $scaleslist = array();
         $tabindices = array();
+        $modgrades  = array();
 
         foreach ($this->gtree->get_items() as $itemid=>$item) {
             $scale = null;
@@ -817,6 +819,16 @@ class grade_report_grader extends grade_report {
             $tabindices[$item->id]['grade'] = $gradetabindex;
             $tabindices[$item->id]['feedback'] = $gradetabindex + $numusers;
             $gradetabindex += $numusers * 2;
+
+            if ($this->get_pref('showanalysisicon')) {
+                if ($item->itemtype == 'mod' and !array_key_exists($item->itemmodule, $modgrades)) {
+                    if (file_exists($CFG->dirroot . '/mod/' . $item->itemmodule . '/grade.php')) {
+                        $modgrades[$item->itemmodule] = true;
+                    } else {
+                        $modgrades[$item->itemmodule] = false;
+                    }
+                }
+            }
         }
         $scalesarray = array();
 
@@ -1007,6 +1019,11 @@ class grade_report_grader extends grade_report {
                     if ($item->needsupdate) {
                         $itemcell->text .= html_writer::tag('span', get_string('error'), array('class'=>"gradingerror$hidden$gradepass"));
                     } else {
+                        if ($this->get_pref('showanalysisicon') and !is_null($gradeval)) {
+                            if ($item->itemtype == 'mod' and !empty($modgrades[$item->itemmodule])) {
+                                $itemcell->text .= $this->gtree->get_grade_analysis_icon($grade);
+                            }
+                        }
                         $itemcell->text .= html_writer::tag('span', grade_format_gradevalue($gradeval, $item, true, $gradedisplaytype, null), array('class'=>"gradevalue$hidden$gradepass"));
                     }
                 }

@@ -1175,6 +1175,74 @@ class grade_structure {
     }
 
     /**
+     * Returns URL of a page that is supposed to contain detailed grade analysis
+     *
+     * Please note this method does not check if the referenced file actually exists,
+     * the caller is usually able to do it in more effective way.
+     *
+     * At the moment, only activity modules are supported. The method generates link
+     * to the module's file grade.php with the parameters id (cmid), itemid, itemnumber,
+     * gradeid and userid.
+     *
+     * @return moodle_url|null URL or null if unable to construct it
+     */
+    public function get_grade_analysis_url(grade_grade $grade) {
+
+        if (empty($grade->grade_item) or !($grade->grade_item instanceof grade_item)) {
+            throw new coding_exception('Passed grade without the associated grade item');
+        }
+        $item = $grade->grade_item;
+
+        if (!$item->is_external_item()) {
+            // at the moment, only activity modules are supported
+            return null;
+        }
+        if ($item->itemtype !== 'mod') {
+            throw new coding_exception('Unknown external itemtype: '.$item->itemtype);
+        }
+        if (empty($item->iteminstance) or empty($item->itemmodule) or empty($this->modinfo)) {
+            return null;
+        }
+
+        $instances = $this->modinfo->get_instances();
+        if (empty($instances[$item->itemmodule][$item->iteminstance])) {
+            return null;
+        }
+        $cm = $instances[$item->itemmodule][$item->iteminstance];
+        if (!$cm->uservisible) {
+            return null;
+        }
+
+        $url = new moodle_url('/mod/'.$item->itemmodule.'/grade.php', array(
+            'id'         => $cm->id,
+            'itemid'     => $item->id,
+            'itemnumber' => $item->itemnumber,
+            'gradeid'    => $grade->id,
+            'userid'     => $grade->userid,
+        ));
+
+        return $url;
+    }
+
+    /**
+     * Returns an action icon leading to the grade analysis page
+     *
+     * @param grade_grade $grade
+     * @return string
+     */
+    public function get_grade_analysis_icon(grade_grade $grade) {
+        global $OUTPUT;
+
+        $url = $this->get_grade_analysis_url($grade);
+        if (is_null($url)) {
+            return '';
+        }
+
+        return $OUTPUT->action_icon($url, new pix_icon('i/search',
+            get_string('gradeanalysis', 'core_grades')));
+    }
+
+    /**
      * Returns the grade eid - the grade may not exist yet.
      *
      * @param grade_grade $grade_grade A grade_grade object
