@@ -117,7 +117,7 @@ class core_enrol_external extends external_api {
                             'name'  => new external_value(PARAM_ALPHANUMEXT, 'option name'),
                             'value' => new external_value(PARAM_RAW, 'option value')
                         )
-                    ), 'method options'),
+                    ), 'method options', VALUE_DEFAULT, array()),
             )
         );
     }
@@ -136,7 +136,7 @@ class core_enrol_external extends external_api {
         require_once($CFG->dirroot . "/user/lib.php");
 
         $params = self::validate_parameters(
-            self::get_users_by_course_id_parameters(),
+            self::get_enrolled_users_parameters(),
             array(
                 'courseid'=>$courseid,
                 'options'=>$options
