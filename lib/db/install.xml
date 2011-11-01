@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20111014" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20111101" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2813,8 +2813,9 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The timestamp of when the form definition was created initially" PREVIOUS="copiedfromid" NEXT="usercreated"/>
         <FIELD NAME="usercreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The ID of the user who created this definition and is considered as its owner for access control purposes" PREVIOUS="timecreated" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The time stamp of when the form definition was modified recently" PREVIOUS="usercreated" NEXT="usermodified"/>
-        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The ID of the user who did the most recent modification" PREVIOUS="timemodified" NEXT="options"/>
-        <FIELD NAME="options" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="General field to be used by plugins as a general storage place for their own settings" PREVIOUS="usermodified"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The ID of the user who did the most recent modification" PREVIOUS="timemodified" NEXT="timecopied"/>
+        <FIELD NAME="timecopied" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp of when this form was most recently copied into another area" PREVIOUS="usermodified" NEXT="options"/>
+        <FIELD NAME="options" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="General field to be used by plugins as a general storage place for their own settings" PREVIOUS="timecopied"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_areaid"/>

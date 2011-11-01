@@ -198,7 +198,7 @@ class gradingform_rubric_controller extends gradingform_controller {
             if ($this->definition === false) {
                 $this->definition = new stdClass();
                 foreach (array('id', 'name', 'description', 'descriptionformat', 'status', 'copiedfromid',
-                        'timecreated', 'usercreated', 'timemodified', 'usermodified', 'options') as $fieldname) {
+                        'timecreated', 'usercreated', 'timemodified', 'usermodified', 'timecopied', 'options') as $fieldname) {
                     $this->definition->$fieldname = $record->$fieldname;
                 }
                 $this->definition->rubric_criteria = array();

@@ -90,6 +90,7 @@ if ($pick) {
         require_sesskey();
         $targetcontroller->update_definition($sourcecontroller->get_definition_copy($targetcontroller),
             gradingform_controller::DEFINITION_STATUS_READY);
+        $DB->set_field('grading_definitions', 'timecopied', time(), array('id' => $definition->id));
         redirect(new moodle_url('/grade/grading/manage.php', array('areaid' => $targetid)));
     }
 }
@@ -209,7 +210,10 @@ foreach ($rs as $template) {
 $rs->close();
 
 if (!$found) {
-    echo $output->heading(get_string('nothingtodisplay'));
+    echo $output->heading(get_string('nosharedformfound', 'core_grading'));
+    echo $output->single_button(
+        new moodle_url('/grade/grading/manage.php', array('areaid' => $targetid)),
+        get_string('back'), 'get');
 }
 
 echo $output->footer();

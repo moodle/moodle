@@ -117,6 +117,7 @@ if (!empty($shareform)) {
         $targetcontroller = $targetarea->get_controller($method);
         $targetcontroller->update_definition($controller->get_definition_copy($targetcontroller),
             gradingform_controller::DEFINITION_STATUS_READY);
+        $DB->set_field('grading_definitions', 'timecopied', time(), array('id' => $definition->id));
         redirect(new moodle_url($PAGE->url, array('message' => get_string('manageactionsharedone', 'core_grading'))));
     }
 }
@@ -161,13 +162,51 @@ if (!empty($method)) {
     echo $output->container_start('actions');
     if ($controller->is_form_defined()) {
         $definition = $controller->get_definition();
+        // icon to edit the form definition
         echo $output->management_action_icon($controller->get_editor_url($returnurl),
             get_string('manageactionedit', 'core_grading'), 'b/document-edit');
+        // icon to delete the current form definition
         echo $output->management_action_icon(new moodle_url($PAGE->url, array('deleteform' => $definition->id)),
             get_string('manageactiondelete', 'core_grading'), 'b/edit-delete');
+        // icon to save the form as a new template
         if (has_capability('moodle/grade:sharegradingforms', get_system_context())) {
-            echo $output->management_action_icon(new moodle_url($PAGE->url, array('shareform' => $definition->id)),
-                get_string('manageactionshare', 'core_grading'), 'b/bookmark-new');
+            if (empty($definition->copiedfromid)) {
+                $hasoriginal = false;
+            } else {
+                $hasoriginal = $DB->record_exists('grading_definitions', array('id' => $definition->copiedfromid));
+            }
+            if (!$hasoriginal) {
+                // was created from scratch or is orphaned
+                if (empty($definition->timecopied)) {
+                    // was never shared before
+                    $allowshare = true;
+                } else if ($definition->timemodified > $definition->timecopied) {
+                    // was modified since last time shared
+                    $allowshare = true;
+                } else {
+                    // was not modified since last time shared
+                    $allowshare = false;
+                }
+            } else {
+                // was created from a template and the template still exists
+                if ($definition->timecreated == $definition->timemodified) {
+                    // was not modified since created
+                    $allowshare = false;
+                } else if (empty($definition->timecopied)) {
+                    // was modified but was not re-shared yet
+                    $allowshare = true;
+                } else if ($definition->timemodified > $definition->timecopied) {
+                    // was modified since last time re-shared
+                    $allowshare = true;
+                } else {
+                    // was not modified since last time re-shared
+                    $allowshare = false;
+                }
+            }
+            if ($allowshare) {
+                echo $output->management_action_icon(new moodle_url($PAGE->url, array('shareform' => $definition->id)),
+                    get_string('manageactionshare', 'core_grading'), 'b/bookmark-new');
+            }
         }
     } else {
         echo $output->management_action_icon($controller->get_editor_url($returnurl),

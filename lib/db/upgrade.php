@@ -6885,6 +6885,16 @@ FROM
         upgrade_main_savepoint(true, 2011102700.03);
     }
 
+    // TODO squash this before merging into the master - MDL-29798
+    if ($oldversion < 2011102700.05) {
+        $table = new xmldb_table('grading_definitions');
+        $field = new xmldb_field('timecopied', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, '0', 'usermodified');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_main_savepoint(true, 2011102700.05);
+    }
+
     return true;
 }
 
