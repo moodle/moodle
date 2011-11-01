@@ -64,6 +64,14 @@ class gradingform_rubric_editrubric extends moodleform {
             $element->freeze();
         }
 
-        $this->add_action_buttons(true);
+        // submit and cancel buttons
+        $buttonarray = array(
+            $form->createElement('submit', 'submitdraft', get_string('saveandcontinue', 'core_grading')),
+            $form->createElement('submit', 'submitfinal', get_string('saveandmakeready', 'core_grading')),
+            $form->createElement('cancel')
+        );
+        $form->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $form->setType('buttonar', PARAM_RAW);
+        $form->closeHeaderBefore('buttonar');
     }
 }
