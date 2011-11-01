@@ -1133,14 +1133,6 @@ abstract class enrol_plugin {
             $inserted = true;
         }
 
-        if ($roleid) {
-            if ($this->roles_protected()) {
-                role_assign($roleid, $userid, $context->id, 'enrol_'.$name, $instance->id);
-            } else {
-                role_assign($roleid, $userid, $context->id);
-            }
-        }
-
         if ($inserted) {
             // add extra info and trigger event
             $ue->courseid  = $courseid;
@@ -1150,6 +1142,15 @@ abstract class enrol_plugin {
             $ue->courseid  = $courseid;
             $ue->enrol     = $name;
             events_trigger('user_enrol_modified', $ue);
+        }
+
+        if ($roleid) {
+            // this must be done after the enrolment event so that the role_assigned event is trigerred aftwerwards
+            if ($this->roles_protected()) {
+                role_assign($roleid, $userid, $context->id, 'enrol_'.$name, $instance->id);
+            } else {
+                role_assign($roleid, $userid, $context->id);
+            }
         }
 
         // reset primitive require_login() caching
