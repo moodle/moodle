@@ -89,7 +89,7 @@ function url_get_full_url($url, $cm, $course, $config=null) {
     // make sure there are no encoded entities, it is ok to do this twice
     $fullurl = html_entity_decode($url->externalurl, ENT_QUOTES, 'UTF-8');
 
-    if (preg_match('/^(\/|https?:|ftp:)/i', $fullurl) or preg_match('|^/|', $url)) {
+    if (preg_match('/^(\/|https?:|ftp:)/i', $fullurl) or preg_match('|^/|', $fullurl)) {
         // encode extra chars in URLs - this does not make it always valid, but it helps with some UTF-8 problems
         $allowed = "a-zA-Z0-9".preg_quote(';/?:@=&$_.+!*(),-#%', '/');
         $fullurl = preg_replace_callback("/[^$allowed]/", 'url_filter_callback', $fullurl);
