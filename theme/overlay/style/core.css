@@ -248,6 +248,10 @@ h1.headermain {
     padding:0;
 }
 
+#custommenu .yui3-menuitem-active .yui3-menuitem-content {
+    background-image: none;
+}
+
 #custommenu .yui3-menu-label,
 #custommenu .yui3-menu .yui3-menu .yui3-menu-label {
     background-image:url([[pix:theme|vertical-menu-submenu-indicator]]);
