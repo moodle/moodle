@@ -75,9 +75,9 @@ class question_type {
      */
     public function local_name() {
         if (get_string_manager()->string_exists('pluginname', $this->plugin_name())) {
-            $this->displayname = get_string('pluginname', $this->plugin_name());
+            return get_string('pluginname', $this->plugin_name());
         } else {
-            $this->displayname = get_string($this->name(), $this->plugin_name());
+            return get_string($this->name(), $this->plugin_name());
         }
     }
 
