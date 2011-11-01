@@ -29,7 +29,8 @@ require_once($CFG->dirroot.'/grade/grading/lib.php');
 require_once($CFG->dirroot.'/grade/grading/templates_form.php');
 
 $targetid   = required_param('targetid', PARAM_INT); // area we are coming from
-$pick       = optional_param('pick', null, PARAM_INT); // use this form
+$pick       = optional_param('pick', null, PARAM_INT); // create new form from this template
+$remove     = optional_param('remove', null, PARAM_INT); // remove this template
 $confirmed  = optional_param('confirmed', false, PARAM_BOOL); // is the action confirmed
 
 // the manager of the target area
@@ -54,13 +55,18 @@ list($context, $course, $cm) = get_context_info_array($targetmanager->get_contex
 require_login($course, true, $cm);
 require_capability('moodle/grade:managegradingforms', $context);
 
+// user's capability in the templates bank
+$canshare   = has_capability('moodle/grade:sharegradingforms', get_system_context());
+$canmanage  = has_capability('moodle/grade:managesharedforms', get_system_context());
+
+// setup the page
 $PAGE->set_url(new moodle_url('/grade/grading/templates.php', array('targetid' => $targetid)));
 navigation_node::override_active_url($targetmanager->get_management_url());
 $PAGE->set_title(get_string('gradingmanagement', 'core_grading'));
 $PAGE->set_heading(get_string('gradingmanagement', 'core_grading'));
 $output = $PAGE->get_renderer('core_grading');
 
-// process template actions
+// process picking a template
 if ($pick) {
     $sourceid = $DB->get_field('grading_definitions', 'areaid', array('id' => $pick), MUST_EXIST);
     $sourcemanager = get_grading_manager($sourceid);
@@ -88,6 +94,35 @@ if ($pick) {
     }
 }
 
+// process removing a template
+if ($remove) {
+    $sourceid = $DB->get_field('grading_definitions', 'areaid', array('id' => $remove), MUST_EXIST);
+    $sourcemanager = get_grading_manager($sourceid);
+    $sourcecontroller = $sourcemanager->get_controller($method);
+    if (!$sourcecontroller->is_form_defined()) {
+        throw new moodle_exception('form_definition_mismatch', 'core_grading');
+    }
+    $definition = $sourcecontroller->get_definition();
+    if ($canmanage or ($canshare and ($definition->usercreated == $USER->id))) {
+        // ok, this user can drop the template
+    } else {
+        throw new moodle_exception('no_permission_to_remove_template', 'core_grading');
+    }
+    if (!$confirmed) {
+        echo $output->header();
+        echo $output->confirm(get_string('templatedeleteconfirm', 'core_grading', s($definition->name)),
+            new moodle_url($PAGE->url, array('remove' => $remove, 'confirmed' => 1)),
+            $PAGE->url);
+        echo $output->box($sourcecontroller->render_preview($PAGE), 'template-preview-confirm');
+        echo $output->footer();
+        die();
+    } else {
+        require_sesskey();
+        $sourcecontroller->delete_definition();
+        redirect($PAGE->url);
+    }
+}
+
 $searchform = new grading_search_template_form($PAGE->url, null, 'GET', '', array('class' => 'templatesearchform'));
 
 if ($searchdata = $searchform->get_data()) {
@@ -100,7 +135,8 @@ if ($searchdata = $searchform->get_data()) {
 }
 
 // construct the SQL to find all matching templates
-$sql = "SELECT DISTINCT gd.id, gd.areaid, gd.name, gd.description, gd.descriptionformat, gd.timecreated
+$sql = "SELECT DISTINCT gd.id, gd.areaid, gd.name, gd.description, gd.descriptionformat, gd.timecreated,
+                        gd.usercreated, gd.timemodified, gd.usermodified
           FROM {grading_definitions} gd
           JOIN {grading_areas} ga ON (gd.areaid = ga.id)";
 // join method-specific tables from the plugin scope
@@ -143,7 +179,6 @@ $sql .= " ORDER BY gd.name";
 $rs = $DB->get_recordset_sql($sql, $params);
 
 echo $output->header();
-
 $searchform->display();
 
 $found = 0;
@@ -154,14 +189,15 @@ foreach ($rs as $template) {
     $manager = get_grading_manager($template->areaid);
     $controller = $manager->get_controller($method);
     $out .= $output->box($controller->render_preview($PAGE), 'template-preview');
-    $out .= $output->box(join(' ', array(
-        $output->pick_action_icon(new moodle_url($PAGE->url, array('pick' => $template->id)),
-            get_string('templatepick', 'core_grading'), 'i/tick_green_big', 'pick'),
-        //$output->pick_action_icon(new moodle_url($PAGE->url, array('edit' => $template->id)),
-        //    get_string('templateedit', 'core_grading'), 'i/edit', 'edit'),
-        //$output->pick_action_icon(new moodle_url($PAGE->url, array('remove' => $template->id)),
-        //    get_string('templatedelete', 'core_grading'), 't/delete', 'edit'),
-        )), 'template-actions');
+    $actions = array($output->pick_action_icon(new moodle_url($PAGE->url, array('pick' => $template->id)),
+        get_string('templatepick', 'core_grading'), 'i/tick_green_big', 'pick'));
+    if ($canmanage or ($canshare and ($template->usercreated == $USER->id))) {
+        //$actions[] = $output->pick_action_icon(new moodle_url($PAGE->url, array('edit' => $template->id)),
+        //    get_string('templateedit', 'core_grading'), 'i/edit', 'edit');
+        $actions[] = $output->pick_action_icon(new moodle_url($PAGE->url, array('remove' => $template->id)),
+            get_string('templatedelete', 'core_grading'), 't/delete', 'remove');
+    }
+    $out .= $output->box(join(' ', $actions), 'template-actions');
     $out .= $output->box(format_text($template->description, $template->descriptionformat), 'template-description');
 
     // ideally we should highlight just the name, description and the fields

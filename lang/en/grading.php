@@ -41,11 +41,11 @@ To disable advance grading and switch back to the default grading mechanism, cho
 $string['gradingmethodnone'] = 'Simple direct grading';
 $string['gradingmethods'] = 'Grading methods';
 $string['manageactionclone'] = 'Create new grading form from a template';
-$string['manageactiondelete'] = 'Remove the currently defined form';
-$string['manageactiondeleteconfirm'] = 'You are going to remove the grading form \'{$a->formname}\' and all the associated information from \'{$a->component} ({$a->area})\'. Please make sure you understand the following consequences:
+$string['manageactiondelete'] = 'Delete the currently defined form';
+$string['manageactiondeleteconfirm'] = 'You are going to delete the grading form \'{$a->formname}\' and all the associated information from \'{$a->component} ({$a->area})\'. Please make sure you understand the following consequences:
 
 * There is no way to undo this operation.
-* You can switch to another grading method including the \'Simple direct grading\' without removing this form.
+* You can switch to another grading method including the \'Simple direct grading\' without deleting this form.
 * All the information about how the grading forms are filled will be lost.
 * The calculated result grades stored in the gradebook will not be affected. However the explanation of how they were calculated will not be available.
 * This operation does not affect eventual copies of this form in other activities.';
@@ -56,7 +56,8 @@ $string['manageactionshare'] = 'Publish the form as a new template';
 $string['manageactionshareconfirm'] = 'You are going to save a copy of the grading form \'{$a}\' as a new public template. Other users at your site will be able to create new grading forms in their activities from that template. Note that users are able to reuse their own grading forms in other activities even if the forms were not saved as template.';
 $string['manageactionsharedone'] = 'The form was successfully saved as a template';
 $string['noitemid'] = 'Grading not possible. The graded item does not exist.';
-$string['templatedelete'] = 'Remove';
+$string['templatedelete'] = 'Delete';
+$string['templatedeleteconfirm'] = 'You are going to delete the shared template \'{$a}\'. Deleting a template does not affect existing forms that were created from it.';
 $string['templateedit'] = 'Edit';
 $string['templatepick'] = 'Use this template';
 $string['templatepickconfirm'] = 'Do you want to use the grading form \'{$a->formname}\' as a template for the new grading form in \'{$a->component} ({$a->area})\'?';
