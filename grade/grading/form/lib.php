@@ -31,9 +31,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class gradingform_controller {
 
-    const DEFINITION_STATUS_WORKINPROGRESS  = 0;
-    const DEFINITION_STATUS_PRIVATE         = 1;
-    const DEFINITION_STATUS_PUBLIC          = 2;
+    /** undefined definition status */
+    const DEFINITION_STATUS_NULL = 0;
+    /** the form is currently being edited and is not ready for usage yet */
+    const DEFINITION_STATUS_DRAFT = 10;
+    /** the for was marked as ready for actual usage */
+    const DEFINITION_STATUS_READY = 20;
 
     /** @var stdClass the context */
     protected $context;
@@ -114,30 +117,18 @@ abstract class gradingform_controller {
     }
 
     /**
-     * Is the grading form defined and released for usage by the given user?
+     * Is the grading form defined and ready for usage?
      *
-     * @param int $foruserid the id of the user who attempts to work with the form
      * @return boolean
      */
-    public function is_form_available($foruserid = null) {
-        global $USER;
-
-        if (is_null($foruserid)) {
-            $foruserid = $USER->id;
-        }
+    public function is_form_available() {
 
         if (!$this->is_form_defined()) {
             return false;
         }
 
-        if ($this->definition->status == self::DEFINITION_STATUS_PUBLIC) {
+        if ($this->definition->status == self::DEFINITION_STATUS_READY) {
             return true;
-        }
-
-        if ($this->definition->status == self::DEFINITION_STATUS_PRIVATE) {
-            if ($this->definition->usercreated == $foruserid) {
-                return true;
-            }
         }
 
         return false;
@@ -225,9 +216,10 @@ abstract class gradingform_controller {
      * and save their data into own tables, too.
      *
      * @param stdClass $definition data containing values for the {grading_definition} table
+     * @param int|null $status optionally overwrite the status field with this value
      * @param int|null $usermodified optional userid of the author of the definition, defaults to the current user
      */
-    public function update_definition(stdClass $definition, $usermodified = null) {
+    public function update_definition(stdClass $definition, $status = null, $usermodified = null) {
         global $DB, $USER;
 
         if (is_null($usermodified)) {
@@ -256,6 +248,10 @@ abstract class gradingform_controller {
             // set the modification flags
             $record->timemodified = time();
             $record->usermodified = $usermodified;
+            // overwrite the status if required
+            if (!is_null($status)) {
+                $record->status = $status;
+            }
 
             $DB->update_record('grading_definitions', $record);
 
@@ -281,7 +277,11 @@ abstract class gradingform_controller {
             $record->usercreated  = $usermodified;
             $record->timemodified = $record->timecreated;
             $record->usermodified = $record->usercreated;
-            $record->status       = self::DEFINITION_STATUS_WORKINPROGRESS;
+            if (!is_null($status)) {
+                $record->status = $status;
+            } else {
+                $record->status = self::DEFINITION_STATUS_DRAFT;
+            }
 
             $DB->insert_record('grading_definitions', $record);
 

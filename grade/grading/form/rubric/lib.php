@@ -62,16 +62,17 @@ class gradingform_rubric_controller extends gradingform_controller {
      *
      * @see parent::update_definition()
      * @param stdClass $newdefinition rubric definition data as coming from gradingform_rubric_editrubric::get_data()
+     * @param int|null $status optionally overwrite the status field with this value
      * @param int|null $usermodified optional userid of the author of the definition, defaults to the current user
      */
-    public function update_definition(stdClass $newdefinition, $usermodified = null) {
+    public function update_definition(stdClass $newdefinition, $status = null, $usermodified = null) {
         global $DB;
 
         // firstly update the common definition data in the {grading_definition} table
         if ($this->definition === false) {
-            // if definition does not exist yet, create a blank one with only required fields set
+            // if definition does not exist yet, create a blank one
             // (we need id to save files embedded in description)
-            parent::update_definition((object)array('descriptionformat' => FORMAT_MOODLE), $usermodified);
+            parent::update_definition((object)array(), $status, $usermodified);
             parent::load_definition();
         }
         if (!isset($newdefinition->rubric['options'])) {
@@ -81,7 +82,7 @@ class gradingform_rubric_controller extends gradingform_controller {
         $editoroptions = self::description_form_field_options($this->get_context());
         $newdefinition = file_postupdate_standard_editor($newdefinition, 'description', $editoroptions, $this->get_context(),
             'gradingform_rubric', 'definition_description', $this->definition->id);
-        parent::update_definition($newdefinition, $usermodified);
+        parent::update_definition($newdefinition, $status, $usermodified);
 
         // reload the definition from the database
         $currentdefinition = $this->get_definition(true);
@@ -341,11 +342,6 @@ class gradingform_rubric_controller extends gradingform_controller {
             'context' => $context
         );
         return format_text($description, $this->definition->descriptionformat, $formatoptions);
-    }
-
-    public function is_form_available($foruserid = null) {
-        return true;
-        // TODO this is temporary for testing!
     }
 
     /**

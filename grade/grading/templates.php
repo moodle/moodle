@@ -82,7 +82,8 @@ if ($pick) {
         die();
     } else {
         require_sesskey();
-        $targetcontroller->update_definition($sourcecontroller->get_definition_copy($targetcontroller));
+        $targetcontroller->update_definition($sourcecontroller->get_definition_copy($targetcontroller),
+            gradingform_controller::DEFINITION_STATUS_READY);
         redirect(new moodle_url('/grade/grading/manage.php', array('areaid' => $targetid)));
     }
 }

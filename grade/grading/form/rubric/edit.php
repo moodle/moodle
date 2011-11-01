@@ -56,7 +56,7 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 } else if ($mform->is_submitted() && $mform->is_validated()) {
     $data = $mform->get_data();
-    $controller->update_definition($data);
+    $controller->update_definition($data); // todo set status
     redirect($returnurl);
 }
 

@@ -115,7 +115,8 @@ if (!empty($shareform)) {
         $newareaid = $manager->create_shared_area($method);
         $targetarea = get_grading_manager($newareaid);
         $targetcontroller = $targetarea->get_controller($method);
-        $targetcontroller->update_definition($controller->get_definition_copy($targetcontroller));
+        $targetcontroller->update_definition($controller->get_definition_copy($targetcontroller),
+            gradingform_controller::DEFINITION_STATUS_READY);
         redirect(new moodle_url($PAGE->url, array('message' => get_string('manageactionsharedone', 'core_grading'))));
     }
 }

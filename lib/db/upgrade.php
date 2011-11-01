@@ -6878,6 +6878,13 @@ FROM
         upgrade_main_savepoint(true, 2011101900.02);
     }
 
+    // TODO squash this before merging into the master - MDL-29798
+    if ($oldversion < 2011102700.03) {
+        // set the reasonable status to all definitions we have in our databases so far
+        $DB->set_field('grading_definitions', 'status', 20);
+        upgrade_main_savepoint(true, 2011102700.03);
+    }
+
     return true;
 }
 
