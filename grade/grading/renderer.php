@@ -79,15 +79,18 @@ class core_grading_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Renders the common information about the form definition
+     * Renders the template action icon
      *
-     * @param gradingform_controller $controller
+     * @param moodle_url $url action URL
+     * @param string $text action text
+     * @param string $icon the name of the icon to use
+     * @param string $class extra class of this action
      * @return string
      */
-    public function preview_definition_header(gradingform_controller $controller) {
+    public function pick_action_icon(moodle_url $url, $text, $icon = '', $class = '') {
 
-        $definition = $controller->get_definition();
-        // todo make this nicer, append the information about the time created/modified etc
-        return $this->output->heading(format_text($definition->name));
+        $img = html_writer::empty_tag('img', array('src' => $this->output->pix_url($icon), 'class' => 'action-icon'));
+        $txt = html_writer::tag('div', $text, array('class' => 'action-text'));
+        return html_writer::link($url, $img . $txt, array('class' => 'action '.$class));
     }
 }

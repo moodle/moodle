@@ -56,3 +56,7 @@ $string['manageactionshare'] = 'Publish the form as a new template';
 $string['manageactionshareconfirm'] = 'You are going to save a copy of the grading form \'{$a}\' as a new public template. Other users at your site will be able to create new grading forms in their activities from that template. Note that users are able to reuse their own grading forms in other activities even if the forms were not saved as template.';
 $string['manageactionsharedone'] = 'The form was successfully saved as a template';
 $string['noitemid'] = 'Grading not possible. The graded item does not exist.';
+$string['templatedelete'] = 'Remove';
+$string['templateedit'] = 'Edit';
+$string['templatepick'] = 'Use this template';
+$string['templatepickconfirm'] = 'Do you want to use the grading form \'{$a->formname}\' as a template for the new grading form in \'{$a->component} ({$a->area})\'?';

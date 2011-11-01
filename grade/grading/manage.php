@@ -171,7 +171,7 @@ if (!empty($method)) {
     } else {
         echo $output->management_action_icon($controller->get_editor_url($returnurl),
             get_string('manageactionnew', 'core_grading'), 'b/document-new');
-        $pickurl = new moodle_url('/grade/grading/pick.php', array('targetid' => $controller->get_areaid()));
+        $pickurl = new moodle_url('/grade/grading/templates.php', array('targetid' => $controller->get_areaid()));
         if (!is_null($returnurl)) {
             $pickurl->param('returnurl', $returnurl->out(false));
         }

@@ -366,16 +366,16 @@ class gradingform_rubric_controller extends gradingform_controller {
      */
     public function render_preview(moodle_page $page) {
 
-        // use the parent's method to render the common information about the form
-        $header = parent::render_preview($page);
+        if (!$this->is_form_defined()) {
+            throw new coding_exception('It is the caller\'s responsibility to make sure that the form is actually defined');
+        }
 
-        // append the rubric itself, using own renderer
         $output = $this->get_renderer($page);
         $criteria = $this->definition->rubric_criteria;
         $options = $this->get_options();
         $rubric = $output->display_rubric($criteria, $options, self::DISPLAY_PREVIEW, 'rubric');
 
-        return $header . $rubric;
+        return $rubric;
     }
 
     /**
@@ -410,6 +410,46 @@ class gradingform_rubric_controller extends gradingform_controller {
     public function render_grade($page, $itemid, $grading_info, $defaultcontent) {
         $instances = $this->get_current_instances($itemid);
         return $this->get_renderer($page)->display_instances($this->get_current_instances($itemid), $defaultcontent);
+    }
+
+    //// full-text search support /////////////////////////////////////////////
+
+    /**
+     * Prepare the part of the search query to append to the FROM statement
+     *
+     * @param string $gdid the alias of grading_definitions.id column used by the caller
+     * @return string
+     */
+    public static function sql_search_from_tables($gdid) {
+        return " LEFT JOIN {gradingform_rubric_criteria} rc ON (rc.formid = $gdid)
+                 LEFT JOIN {gradingform_rubric_levels} rl ON (rl.criterionid = rc.id)";
+    }
+
+    /**
+     * Prepare the parts of the SQL WHERE statement to search for the given token
+     *
+     * The returned array cosists of the list of SQL comparions and the list of
+     * respective parameters for the comparisons. The returned chunks will be joined
+     * with other conditions using the OR operator.
+     *
+     * @param string $token token to search for
+     * @return array
+     */
+    public static function sql_search_where($token) {
+        global $DB;
+
+        $subsql = array();
+        $params = array();
+
+        // search in rubric criteria description
+        $subsql[] = $DB->sql_like('rc.description', '?', false, false);
+        $params[] = '%'.$DB->sql_like_escape($token).'%';
+
+        // search in rubric levels definition
+        $subsql[] = $DB->sql_like('rl.definition', '?', false, false);
+        $params[] = '%'.$DB->sql_like_escape($token).'%';
+
+        return array($subsql, $params);
     }
 }
 

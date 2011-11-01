@@ -382,22 +382,13 @@ abstract class gradingform_controller {
     /**
      * Returns the HTML code displaying the preview of the grading form
      *
-     * Plugins are supposed to override/extend this. Ideally they should delegate
+     * Plugins are forced to override this. Ideally they should delegate
      * the task to their own renderer.
      *
      * @param moodle_page $page the target page
      * @return string
      */
-    public function render_preview(moodle_page $page) {
-
-        if (!$this->is_form_defined()) {
-            throw new coding_exception('It is the caller\'s responsibility to make sure that the form is actually defined');
-        }
-
-        $output = $page->get_renderer('core_grading');
-
-        return $output->preview_definition_header($this);
-    }
+    abstract public function render_preview(moodle_page $page);
 
     /**
      * Deletes the form definition and all the associated data
@@ -421,6 +412,35 @@ abstract class gradingform_controller {
         $DB->delete_records('grading_definitions', array('id' => $this->definition->id));
 
         $this->definition = false;
+    }
+
+    /**
+     * Prepare the part of the search query to append to the FROM statement
+     *
+     * @param string $gdid the alias of grading_definitions.id column used by the caller
+     * @return string
+     */
+    public static function sql_search_from_tables($gdid) {
+        return '';
+    }
+
+    /**
+     * Prepare the parts of the SQL WHERE statement to search for the given token
+     *
+     * The returned array cosists of the list of SQL comparions and the list of
+     * respective parameters for the comparisons. The returned chunks will be joined
+     * with other conditions using the OR operator.
+     *
+     * @param string $token token to search for
+     * @return array
+     */
+    public static function sql_search_where($token) {
+        global $DB;
+
+        $subsql = array();
+        $params = array();
+
+        return array($subsql, $params);
     }
 
     ////////////////////////////////////////////////////////////////////////////

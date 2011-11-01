@@ -514,6 +514,51 @@ class grading_manager {
         return $DB->insert_record('grading_areas', $area);
     }
 
+    /**
+     * Helper method to tokenize the given string
+     *
+     * Splits the given string into smaller strings. This is a helper method for
+     * full text searching in grading forms. If the given string is surrounded with
+     * double quotes, the resulting array consists of a single item containing the
+     * quoted content.
+     *
+     * Otherwise, string like 'grammar, english language' would be tokenized into
+     * the three tokens 'grammar', 'english', 'language'.
+     *
+     * One-letter tokens like are dropped in non-phrase mode. Repeated tokens are
+     * returned just once.
+     *
+     * @param string $needle
+     * @return array
+     */
+    public static function tokenize($needle) {
+
+        // check if we are searching for the exact phrase
+        if (preg_match('/^[\s]*"[\s]*(.*?)[\s]*"[\s]*$/', $needle, $matches)) {
+            $token = $matches[1];
+            if ($token === '') {
+                return array();
+            } else {
+                return array($token);
+            }
+        }
+
+        // split the needle into smaller parts separated by non-word characters
+        $tokens = preg_split("/\W/u", $needle);
+        // keep just non-empty parts
+        $tokens = array_filter($tokens);
+        // distinct
+        $tokens = array_unique($tokens);
+        // drop one-letter tokens
+        foreach ($tokens as $ix => $token) {
+            if (strlen($token) == 1) {
+                unset($tokens[$ix]);
+            }
+        }
+
+        return array_values($tokens);
+    }
+
     ////////////////////////////////////////////////////////////////////////////
 
     /**

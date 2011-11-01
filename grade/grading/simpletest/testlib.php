@@ -128,4 +128,33 @@ class grading_manager_test extends UnitTestCase {
         $this->expectException('moodle_exception');
         $gradingman->set_active_method('no_one_should_ever_try_to_implement_a_method_with_this_silly_name');
     }
+
+    public function test_tokenize() {
+
+        $needle = "    šašek, \n\n   \r    a král;  \t";
+        $tokens = testable_grading_manager::tokenize($needle);
+        $this->assertEqual(2, count($tokens));
+        $this->assertTrue(in_array('šašek', $tokens));
+        $this->assertTrue(in_array('král', $tokens));
+
+        $needle = ' "   šašek a král "    ';
+        $tokens = testable_grading_manager::tokenize($needle);
+        $this->assertEqual(1, count($tokens));
+        $this->assertTrue(in_array('šašek a král', $tokens));
+
+        $needle = '""';
+        $tokens = testable_grading_manager::tokenize($needle);
+        $this->assertTrue(empty($tokens));
+
+        $needle = '"0"';
+        $tokens = testable_grading_manager::tokenize($needle);
+        $this->assertEqual(1, count($tokens));
+        $this->assertTrue(in_array('0', $tokens));
+
+        $needle = '<span>Aha</span>, then who\'s a bad guy here he?';
+        $tokens = testable_grading_manager::tokenize($needle);
+        $this->assertTrue(in_array('span', $tokens));
+        $this->assertTrue(in_array('Aha', $tokens));
+        $this->assertTrue(in_array('who', $tokens));
+    }
 }
