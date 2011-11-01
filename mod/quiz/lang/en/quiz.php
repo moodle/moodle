@@ -435,7 +435,6 @@ $string['nopossibledatasets'] = 'No possible datasets';
 $string['noquestionintext'] = 'The question text does not contain any embedded questions';
 $string['noquestions'] = 'No questions have been added yet';
 $string['noquestionsfound'] = 'No questions found';
-$string['noquestionsinfile'] = 'There are no questions in the import file';
 $string['noquestionsinquiz'] = 'There are no questions in this quiz.';
 $string['noquestionsnotinuse'] = 'This random question is not in use, since its category is empty.';
 $string['noquestionsonpage'] = 'Empty page';
