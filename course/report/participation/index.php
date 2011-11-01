@@ -223,6 +223,7 @@
 
         $countsql = "SELECT COUNT(DISTINCT(ra.userid))
                        FROM {role_assignments} ra
+                       JOIN {user} u ON u.id = ra.userid
                       WHERE ra.contextid $relatedcontexts AND ra.roleid = :roleid";
 
         $totalcount = $DB->count_records_sql($countsql, $params);
