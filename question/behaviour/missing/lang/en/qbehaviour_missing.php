@@ -24,4 +24,4 @@
  */
 
 $string['pluginname'] = 'Missing behaviour';
-$string['questionusedunknownmodel'] = 'This question was attempted with an behaviour that is not currently availalbe. We are attempting to show the question, but there may be problems.';
+$string['questionusedunknownmodel'] = 'This question was attempted with a behaviour that is not currently available. The question is being displayed as well as possible, but some parts may be missing or wrong.';
