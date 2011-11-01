@@ -385,6 +385,37 @@ $CFG->admin = 'admin';
 //
 //     $CFG->extramemorylimit = 1G;
 //
+// The CSS files the Moodle produces can be extremely large and complex, especially
+// if you are using a custom theme that builds upon several other themes.
+// In Moodle 2.2 a CSS optimiser was added as an experimental feature for advanced
+// users. The CSS optimiser organises the CSS in order to reduce the overall number
+// of rules and styles being sent to the client. It does this by collating the
+// CSS before it is cached removing excess styles and rules and stripping out any
+// extraneous content such as comments and empty rules.
+// The following settings are used to enable and control the optimisation.
+//
+// Enable the CSS optimiser. This will only optimise the CSS if themedesignermode
+// is not enabled.
+//
+//      $CFG->cssoptimise = true;
+//
+// If set then CSS will also be optimised when themedesignermode is enabled.
+// This is useful if you are a theme designer and want some help optimising your
+// CSS.
+//
+//      $CFG->cssoptimisedebug = true;
+//
+// If set the CSS optimiser will add stats about the optimisation to the top of
+// the optimised CSS file. You can then inspect the CSS to see the affect the CSS
+// optimiser is having.
+//
+//      $CFG->cssoptimisestats = true;
+//
+// If set the CSS that is optimised will still retain a minamilistic formatting
+// so that anyone wanting to can still clearly read it.
+//
+//      $CFG->cssoptimisepretty = true;
+//
 //=========================================================================
 // 8. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================

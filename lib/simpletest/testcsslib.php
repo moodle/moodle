@@ -32,20 +32,101 @@ class css_optimiser_test extends UnitTestCase {
     public function setUp() {
         global $CFG;
         parent::setUp();
-        $CFG->includecssstats = false;
+        $CFG->cssoptimisestats = false;
+        $CFG->cssoptimisepretty = false;
     }
 
     public function test_process() {
         $optimiser = new css_optimiser;
 
-        $this->check_simple_comparisons($optimiser);
-        $this->check_invalid_css_handling($optimiser);
-        $this->check_optimisation($optimiser);
-        $this->check_logic_maintained($optimiser);
-        $this->check_bulk_processing($optimiser);
+        $this->check_background($optimiser);
+        $this->check_borders($optimiser);
+        $this->check_colors($optimiser);
+        $this->check_margins($optimiser);
+        $this->check_padding($optimiser);
+
+        $this->try_invalid_css_handling($optimiser);
+        $this->try_bulk_processing($optimiser);
+
+
+        return;
+
+        $cssin = '.one {background-color:color:red}';
+        $cssout = '.one{background-color:color:red;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
     }
 
-    protected function check_simple_comparisons(css_optimiser $optimiser) {
+    protected function check_background(css_optimiser $optimiser) {
+
+        $cssin = '.test {background-color: #123456;}';
+        $cssout = '.test{background:#123456;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test {background: #123456 url(\'test.png\') no-repeat top left;}';
+        $cssout = '.test{background:#123456 url(\'test.png\') no-repeat top left;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test {background: url(\'test.png\') no-repeat top left;}.test{background-position: bottom right}.test {background-color:#123456;}';
+        $cssout = '.test{background:#123456 url(\'test.png\') no-repeat bottom right;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test {background: url(   \'test.png\'    )}.test{background: bottom right}.test {background:#123456;}';
+        $cssout = '.test{background:#123456 url(\'test.png\') bottom right;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test {background-color: #123456;background-repeat: repeat-x; background-position: 100% 0%;}';
+        $cssout = '.test{background:#123456 repeat-x 100% 0%;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+    }
+
+    protected function check_borders(css_optimiser $optimiser) {
+        $cssin = '.test {border: 1px solid #654321} .test {border-color-bottom: #123456}';
+        $cssout = '.test{border:1px solid;border-color:#654321 #654321 #123456;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {border:1px solid red;}';
+        $cssout = '.one{border:1px solid #FF0000;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one, .two {border:1px solid red;}';
+        $cssout = ".one, .two{border:1px solid #FF0000;}";
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {border:1px solid red;} .two {border:1px solid red;}';
+        $cssout = ".one, .two{border:1px solid #FF0000;}";
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {border:1px solid red;width:20px;} .two {border:1px solid red;height:20px;}';
+        $cssout = ".one{width:20px;border:1px solid #FF0000;} .two{height:20px;border:1px solid #FF0000;}";
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test {border: 1px solid #123456;} .test {border-color: #654321}';
+        $cssout = '.test{border:1px solid #654321;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test {border-width: 1px; border-style: solid; border-color: #123456;}';
+        $cssout = '.test{border:1px solid #123456;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test {border:1px solid #123456;border-top:2px dotted #654321;}';
+        $cssout = '.test{border:1px solid #123456;border-top:2px dotted #654321;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test {border:1px solid #123456;border-left:2px dotted #654321;}';
+        $cssout = '.test{border:1px solid #123456;border-left:2px dotted #654321;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test {border-left:2px dotted #654321;border:1px solid #123456;}';
+        $cssout = '.test{border:1px solid #123456;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.test {border:1px solid;border-color-top:#123456;}';
+        $cssout = '.test{border:1px solid;border-color-top:#123456;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+    }
+
+    protected function check_colors(css_optimiser $optimiser) {
         $css = '.css{}';
         $this->assertEqual($css, $optimiser->process($css));
 
@@ -91,9 +172,100 @@ class css_optimiser_test extends UnitTestCase {
         $cssout = '.css{width:100px;}';
         $this->assertEqual($cssout, $optimiser->process($cssin));
 
+        $cssin = '.one {color:red;} .two {color:#F00;}';
+        $cssout = ".one, .two{color:#F00;}";
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {color:#123;color:#321;}';
+        $cssout = '.one{color:#321;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {color:#123; color : #321 ;}';
+        $cssout = '.one{color:#321;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {color:#123;} .one {color:#321;}';
+        $cssout = '.one{color:#321;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {color:#123 !important;color:#321;}';
+        $cssout = '.one{color:#123 !important;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {color:#123 !important;} .one {color:#321;}';
+        $cssout = '.one{color:#123 !important;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {color:rgb(255, 128, 1)}';
+        $cssout = '.one{color:rgb(255, 128, 1);}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {color:rgba(255, 128, 1, 0.5)}';
+        $cssout = '.one{color:rgba(255, 128, 1, 0.5);}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {color:hsl(120, 65%, 75%)}';
+        $cssout = '.one{color:hsl(120, 65%, 75%);}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {color:hsla(120,65%,75%,0.5)}';
+        $cssout = '.one{color:hsla(120,65%,75%,0.5);}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
     }
 
-    protected function check_invalid_css_handling(css_optimiser $optimiser) {
+    protected function check_margins(css_optimiser $optimiser) {
+        $cssin = '.one {margin: 1px 2px 3px 4px}';
+        $cssout = '.one{margin:1px 2px 3px 4px;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {margin-top:1px; margin-left:4px; margin-right:2px; margin-bottom: 3px;}';
+        $cssout = '.one{margin:1px 2px 3px 4px;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {margin-top:1px; margin-left:4px;}';
+        $cssout = '.one{margin-top:1px;margin-left:4px;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {margin:1px; margin-left:4px;}';
+        $cssout = '.one{margin:1px 1px 1px 4px;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {margin:1px; margin-bottom:4px;}';
+        $cssout = '.one{margin:1px 1px 4px;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one, .two, .one.two, .one .two {margin:0;} .one.two {margin:0 7px;}';
+        $cssout = '.one, .two, .one .two{margin:0;} .one.two{margin:0 7px;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+    }
+
+    protected function check_padding(css_optimiser $optimiser) {
+        $cssin = '.one {margin: 1px 2px 3px 4px}';
+        $cssout = '.one{margin:1px 2px 3px 4px;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {margin-top:1px; margin-left:4px; margin-right:2px; margin-bottom: 3px;}';
+        $cssout = '.one{margin:1px 2px 3px 4px;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {margin-top:1px; margin-left:4px;}';
+        $cssout = '.one{margin-top:1px;margin-left:4px;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {margin:1px; margin-left:4px;}';
+        $cssout = '.one{margin:1px 1px 1px 4px;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {margin:1px; margin-bottom:4px;}';
+        $cssout = '.one{margin:1px 1px 4px;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one, .two, .one.two, .one .two {margin:0;} .one.two {margin:0 7px;}';
+        $cssout = '.one, .two, .one .two{margin:0;} .one.two{margin:0 7px;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+    }
+
+    protected function try_invalid_css_handling(css_optimiser $optimiser) {
 
         $cssin = array(
             '.one{}',
@@ -147,61 +319,16 @@ class css_optimiser_test extends UnitTestCase {
         $this->assertEqual($cssout, $optimiser->process($cssin));
 
         $cssin  = '{background-color:#123456;color:red;}{color:green;}';
-        $cssout = "{background-color:#123456;color:#008000;}";
+        $cssout = "{color:#008000;background-color:#123456;}";
         $this->assertEqual($cssout, $optimiser->process($cssin));
 
         $cssin  = '.one {color:red;} {color:green;} .one {background-color:blue;}';
-        $cssout = ".one{color:#F00;background-color:#00F;}\n{color:#008000;}";
+        $cssout = ".one{color:#F00;background-color:#00F;} {color:#008000;}";
         $this->assertEqual($cssout, $optimiser->process($cssin));
     }
 
-    public function check_optimisation(css_optimiser $optimiser) {
-        $cssin = '.one {border:1px solid red;}';
-        $cssout = '.one{border:1px solid red;}';
-        $this->assertEqual($cssout, $optimiser->process($cssin));
-
-        $cssin = '.one, .two {border:1px solid red;}';
-        $cssout = ".one,\n.two{border:1px solid red;}";
-        $this->assertEqual($cssout, $optimiser->process($cssin));
-
-        $cssin = '.one {border:1px solid red;} .two {border:1px solid red;}';
-        $cssout = ".one,\n.two{border:1px solid red;}";
-        $this->assertEqual($cssout, $optimiser->process($cssin));
-
-        $cssin = '.one {border:1px solid red;width:20px;} .two {border:1px solid red;height:20px;}';
-        $cssout = ".one{border:1px solid red;width:20px;}\n.two{border:1px solid red;height:20px;}";
-        $this->assertEqual($cssout, $optimiser->process($cssin));
-
-        $cssin = '.one {color:red;} .two {color:#F00;}';
-        $cssout = ".one,\n.two{color:#F00;}";
-        $this->assertEqual($cssout, $optimiser->process($cssin));
-    }
-
-    protected function check_logic_maintained(css_optimiser $optimiser) {
-
-        $cssin = '.one {color:#123;color:#321;}';
-        $cssout = '.one{color:#321;}';
-        $this->assertEqual($cssout, $optimiser->process($cssin));
-
-        $cssin = '.one {color:#123; color : #321 ;}';
-        $cssout = '.one{color:#321;}';
-        $this->assertEqual($cssout, $optimiser->process($cssin));
-
-        $cssin = '.one {color:#123;} .one {color:#321;}';
-        $cssout = '.one{color:#321;}';
-        $this->assertEqual($cssout, $optimiser->process($cssin));
-
-        $cssin = '.one {color:#123 !important;color:#321;}';
-        $cssout = '.one{color:#123 !important;}';
-        $this->assertEqual($cssout, $optimiser->process($cssin));
-
-        $cssin = '.one {color:#123 !important;} .one {color:#321;}';
-        $cssout = '.one{color:#123 !important;}';
-        $this->assertEqual($cssout, $optimiser->process($cssin));
-
-    }
-
-    protected function check_bulk_processing(css_optimiser $optimiser) {
+    protected function try_bulk_processing(css_optimiser $optimiser) {
+        global $CFG;
         $cssin = <<<CSS
 .test .one {
     margin:5px;
@@ -220,17 +347,43 @@ class css_optimiser_test extends UnitTestCase {
 #test #one {margin:  25px;}.test #one {margin:  30px;}
   .test    .one      {     background-color: #123;     }
 .test.one{border:1px solid blue}.test.one{border-color:green;}
+
+@media print {
+    #test .one {margin: 35px;}
+}
+
+@media print {
+    #test .one {margin: 40px;color: #123456;}
+    #test #one {margin: 45px;}
+}
+
+@media print,screen {
+    #test .one {color: #654321;}
+}
+
+#test .one,
+#new.style {color:#000;}
 CSS;
-        $cssout = $optimiser->process($cssin);
 
-        $this->assertTrue(preg_match('#\.test\s\.one\{[^\}]*margin:10px;#', $cssout));
-        $this->assertTrue(preg_match('#\.test\s\.one\{[^\}]*background\-color:\#123;#', $cssout));
+        $cssout = <<<CSS
+.test .one{color:#F00;margin:10px;border-width:0;background-color:#123;}
+.test.one{margin:15px;border:1px solid #008000;}
+#test .one{color:#000;margin:20px;}
+#test #one{margin:25px;}
+.test #one{margin:30px;}
+#new.style{color:#000;}
 
-        $this->assertTrue(preg_match('#\.test\.one\{[^\}]*margin:15px;#', $cssout));
-        $this->assertTrue(preg_match('#\.test\.one\{[^\}]*border:1px solid blue;#', $cssout));
 
-        $this->assertTrue(preg_match('#\#test \.one\{[^\}]*margin:20px;#', $cssout));
-        $this->assertTrue(preg_match('#\#test \#one\{[^\}]*margin:25px;#', $cssout));
-        $this->assertTrue(preg_match('#\.test \#one\{[^\}]*margin:30px;#', $cssout));
+@media print {
+  #test .one{color:#123456;margin:40px;}
+  #test #one{margin:45px;}
+}
+
+@media print,screen {
+  #test .one{color:#654321;}
+}
+CSS;
+        $CFG->cssoptimisepretty = 1;
+        $this->assertEqual($optimiser->process($cssin), $cssout);
     }
 }

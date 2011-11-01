@@ -30,14 +30,39 @@
  * @param array $cssfiles
  */
 function css_store_css(theme_config $theme, $csspath, array $cssfiles) {
-    $css = '';
-    foreach ($cssfiles as $file) {
-        $css .= "\n".file_get_contents($file);
-    }
-    $css = $theme->post_process($css);
+    global $CFG;
 
-    $optimiser = new css_optimiser;
-    $css = $optimiser->process($css);
+    if (!empty($CFG->cssoptimise)) {
+        // This is an experimental feature introduced in Moodle 2.2
+        // The CSS optimiser organises the CSS in order to reduce the overall number
+        // of rules and styles being sent to the client. It does this by collating
+        // the CSS before it is cached removing excess styles and rules and stripping
+        // out any extraneous content such as comments and empty rules.
+        $optimiser = new css_optimiser;
+        $css = '';
+        foreach ($cssfiles as $file) {
+            $css .= file_get_contents($file)."\n";
+        }
+        $css = $theme->post_process($css);
+        $css = $optimiser->process($css);
+
+        // If cssoptimisestats is set then stats from the optimisation are collected
+        // and output at the beginning of the CSS
+        if (!empty($CFG->cssoptimisestats)) {
+            $css = $optimiser->output_stats_css().$css;
+        }
+    } else {
+        // This is the default behaviour.
+        // The cssoptimise setting was introduced in Moodle 2.2 and will hopefully
+        // in the future be changed from an experimental setting to the default.
+        // The css_minify_css will method will use the Minify library remove
+        // comments, additional whitespace and other minor measures to reduce the
+        // the overall CSS being sent.
+        // However it has the distinct disadvantage of having to minify the CSS
+        // before running the post process functions. Potentially things may break
+        // here if theme designers try to push things with CSS post processing.
+        $css = $theme->post_process(css_minify_css($cssfiles));
+    }
 
     check_dir_exists(dirname($csspath));
     $fp = fopen($csspath, 'w');
@@ -104,6 +129,7 @@ function css_send_cached_css($csspath, $rev) {
  * @param string CSS
  */
 function css_send_uncached_css($css) {
+    global $CFG;
 
     header('Content-Disposition: inline; filename="styles_debug.php"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
@@ -115,9 +141,18 @@ function css_send_uncached_css($css) {
     if (is_array($css)) {
         $css = implode("\n\n", $css);
     }
-    $css = str_replace("\n", "\r\n", $css);
-    $optimiser = new css_optimiser;
-    echo $optimiser->process($css);
+
+    if (!empty($CFG->cssoptimise) && !empty($CFG->cssoptimisedebug)) {
+        $css = str_replace("\n", "\r\n", $css);
+
+        $optimiser = new css_optimiser;
+        $css = $optimiser->process($css);
+        if (!empty($CFG->cssoptimisestats)) {
+            $css = $optimiser->output_stats_css().$css;
+        }
+    }
+
+    echo $css;
 
     die;
 }
@@ -128,6 +163,55 @@ function css_send_uncached_css($css) {
 function css_send_css_not_found() {
     header('HTTP/1.0 404 not found');
     die('CSS was not found, sorry.');
+}
+
+function css_minify_css($files) {
+    global $CFG;
+
+    set_include_path($CFG->libdir . '/minify/lib' . PATH_SEPARATOR . get_include_path());
+    require_once('Minify.php');
+
+    if (0 === stripos(PHP_OS, 'win')) {
+        Minify::setDocRoot(); // IIS may need help
+    }
+    // disable all caching, we do it in moodle
+    Minify::setCache(null, false);
+
+    $options = array(
+        'bubbleCssImports' => false,
+        // Don't gzip content we just want text for storage
+        'encodeOutput' => false,
+        // Maximum age to cache, not used but required
+        'maxAge' => (60*60*24*20),
+        // The files to minify
+        'files' => $files,
+        // Turn orr URI rewriting
+        'rewriteCssUris' => false,
+        // This returns the CSS rather than echoing it for display
+        'quiet' => true
+    );
+    $result = Minify::serve('Files', $options);
+    return $result['content'];
+}
+
+/**
+ * Given a value determines if it is a valid CSS colour
+ *
+ * @param string $value
+ * @return bool
+ */
+function css_is_colour($value) {
+    $value = trim($value);
+    if (preg_match('/^#([a-fA-F0-9]{1,6})$/', $value)) {
+        return true;
+    } else if (in_array(strtolower($value), array_keys(css_optimiser::$htmlcolours))) {
+        return true;
+    } else if (preg_match('#^(rgb|hsl)\s*\(\s*\d{1,3}\%?\s*,\s*\d{1,3}\%?\s*,\s*\d{1,3}\%?\s*\)$#', $value)) {
+        return true;
+    } else if (preg_match('#^(rgb|hsl)a\s*\(\s*\d{1,3}\%?\s*,\s*\d{1,3}\%?\s*,\s*\d{1,3}\%?\s*,\s*\d(\.\d+)?\s*\)$#', $value)) {
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -192,9 +276,9 @@ class css_optimiser {
         );
         $imports = array();
         $charset = false;
-        
+
         $currentprocess = self::PROCESSING_START;
-        $currentstyle = css_rule::init();
+        $currentrule = css_rule::init();
         $currentselector = css_selector::init();
         $inquotes = false;      // ' or "
         $inbraces = false;      // {
@@ -278,9 +362,9 @@ class css_optimiser {
                             if ($inbrackets) {
                                 continue 3;
                             }
-                            
+
                             $currentselector->add($buffer);
-                            $currentstyle->add_selector($currentselector);
+                            $currentrule->add_selector($currentselector);
                             $currentselector = css_selector::init();
                             $currentprocess = self::PROCESSING_STYLES;
 
@@ -301,7 +385,7 @@ class css_optimiser {
                                 continue 3;
                             }
                             $currentselector->add($buffer);
-                            $currentstyle->add_selector($currentselector);
+                            $currentrule->add_selector($currentselector);
                             $currentselector = css_selector::init();
                             $buffer = '';
                             continue 3;
@@ -323,17 +407,17 @@ class css_optimiser {
                     }
                     switch ($char) {
                         case ';':
-                            $currentstyle->add_style($buffer);
+                            $currentrule->add_style($buffer);
                             $buffer = '';
                             $inquotes = false;
                             continue 3;
                         case '}':
-                            $currentstyle->add_style($buffer);
-                            $this->rawselectors += $currentstyle->get_selector_count();
+                            $currentrule->add_style($buffer);
+                            $this->rawselectors += $currentrule->get_selector_count();
 
-                            $currentmedia->add_rule($currentstyle);
+                            $currentmedia->add_rule($currentrule);
 
-                            $currentstyle = css_rule::init();
+                            $currentrule = css_rule::init();
                             $currentprocess = self::PROCESSING_SELECTORS;
                             $this->rawrules++;
                             $buffer = '';
@@ -362,9 +446,6 @@ class css_optimiser {
         $this->optimisedstrlen = strlen($css);
 
         $this->timecomplete = microtime(true);
-        if (!empty($CFG->cssincludestats)) {
-            $css = $this->output_stats_css().$css;
-        }
         return trim($css);
     }
 
@@ -373,7 +454,6 @@ class css_optimiser {
      * @return string
      */
     public function get_stats() {
-
         $stats = array(
             'timestart'             => $this->timestart,
             'timecomplete'          => $this->timecomplete,
@@ -384,7 +464,7 @@ class css_optimiser {
             'rawrules'              => $this->rawrules,
             'optimisedstrlen'       => $this->optimisedstrlen,
             'optimisedrules'        => $this->optimisedrules,
-            'optimiedselectors'     => $this->optimisedselectors,
+            'optimisedselectors'     => $this->optimisedselectors,
             'improvementstrlen'     => round(100 - ($this->optimisedstrlen / $this->rawstrlen) * 100, 1).'%',
             'improvementrules'      => round(100 - ($this->optimisedrules / $this->rawrules) * 100, 1).'%',
             'improvementselectors'  => round(100 - ($this->optimisedselectors / $this->rawselectors) * 100, 1).'%',
@@ -407,20 +487,20 @@ class css_optimiser {
         $computedcss  = "/****************************************\n";
         $computedcss .= " *------- CSS Optimisation stats --------\n";
         $computedcss .= " *  ".date('r')."\n";
-        $computedcss .= " *  {$stats[commentsincss]}  \t comments removed\n";
-        $computedcss .= " *  Optimisation took {$stats[timetaken]} seconds\n";
+        $computedcss .= " *  {$stats['commentsincss']}  \t comments removed\n";
+        $computedcss .= " *  Optimisation took {$stats['timetaken']} seconds\n";
         $computedcss .= " *--------------- before ----------------\n";
-        $computedcss .= " *  {$stats[rawstrlen]}  \t chars read in\n";
-        $computedcss .= " *  {$stats[rawrules]}  \t rules read in\n";
-        $computedcss .= " *  {$stats[rawselectors]}  \t total selectors\n";
+        $computedcss .= " *  {$stats['rawstrlen']}  \t chars read in\n";
+        $computedcss .= " *  {$stats['rawrules']}  \t rules read in\n";
+        $computedcss .= " *  {$stats['rawselectors']}  \t total selectors\n";
         $computedcss .= " *---------------- after ----------------\n";
-        $computedcss .= " *  {$stats[optimisedstrlen]}  \t chars once optimized\n";
-        $computedcss .= " *  {$stats[optimisedrules]}  \t optimized rules\n";
-        $computedcss .= " *  {$stats[optimisedselectors]}  \t total selectors once optimized\n";
+        $computedcss .= " *  {$stats['optimisedstrlen']}  \t chars once optimized\n";
+        $computedcss .= " *  {$stats['optimisedrules']}  \t optimized rules\n";
+        $computedcss .= " *  {$stats['optimisedselectors']}  \t total selectors once optimized\n";
         $computedcss .= " *---------------- stats ----------------\n";
-        $computedcss .= " *  {$stats[strlenimprovement]}%  \t reduction in chars\n";
-        $computedcss .= " *  {$stats[ruleimprovement]}%  \t reduction in rules\n";
-        $computedcss .= " *  {$stats[selectorimprovement]}%  \t reduction in selectors\n";
+        $computedcss .= " *  {$stats['improvementstrlen']}  \t reduction in chars\n";
+        $computedcss .= " *  {$stats['improvementrules']}  \t reduction in rules\n";
+        $computedcss .= " *  {$stats['improvementselectors']}  \t reduction in selectors\n";
         $computedcss .= " ****************************************/\n\n";
 
         return $computedcss;
@@ -601,6 +681,154 @@ class css_optimiser {
     );
 }
 
+
+/**
+ * Used to prepare CSS strings
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class css_writer {
+    /**
+     * The current indent level
+     * @var int
+     */
+    protected static $indent = 0;
+
+    /**
+     * Returns true if the output should still maintain minimum formatting.
+     * @return bool
+     */
+    protected static function is_pretty() {
+        global $CFG;
+        return (!empty($CFG->cssoptimisepretty));
+    }
+
+    /**
+     * Returns the indenting char to use for indenting things nicely.
+     * @return string
+     */
+    protected static function get_indent() {
+        if (self::is_pretty()) {
+            return str_repeat("  ", self::$indent);
+        }
+        return '';
+    }
+
+    /**
+     * Increases the current indent
+     */
+    protected static function increase_indent() {
+        self::$indent++;
+    }
+
+    /**
+     * Descreases the current indent
+     */
+    protected static function decrease_indent() {
+        self::$indent--;
+    }
+
+    /**
+     * Returns the string to use as a separator
+     * @return string
+     */
+    protected static function get_separator() {
+        return (self::is_pretty())?"\n":' ';
+    }
+
+    /**
+     * Returns CSS for media
+     *
+     * @param string $typestring
+     * @param array $rules An array of css_rule objects
+     * @return string
+     */
+    public static function media($typestring, array &$rules) {
+        $nl = self::get_separator();
+
+        $output = '';
+        if ($typestring !== 'all') {
+            $output .= $nl.$nl."@media {$typestring} {".$nl;
+            self::increase_indent();
+        }
+        foreach ($rules as $rule) {
+            $output .= $rule->out().$nl;
+        }
+        if ($typestring !== 'all') {
+            self::decrease_indent();
+            $output .= '}';
+        }
+        return $output;
+    }
+
+    /**
+     * Returns CSS for a rule
+     *
+     * @param string $selector
+     * @param string $styles
+     * @return string
+     */
+    public static function rule($selector, $styles) {
+        $css = self::get_indent()."{$selector}{{$styles}}";
+        return $css;
+    }
+
+    /**
+     * Returns CSS for the selectors of a rule
+     *
+     * @param array $selectors Array of css_selector objects
+     * @return string
+     */
+    public static function selectors(array $selectors) {
+        $nl = self::get_separator();
+        $selectorstrings = array();
+        foreach ($selectors as $selector) {
+            $selectorstrings[] = $selector->out();
+        }
+        return join(','.$nl, $selectorstrings);
+    }
+
+    /**
+     * Returns a selector given the components that make it up.
+     *
+     * @param array $components
+     * @return string
+     */
+    public static function selector(array $components) {
+        return trim(join(' ', $components));
+    }
+
+    /**
+     *
+     * @param array $styles Array of css_style objects
+     * @return type
+     */
+    public static function styles(array $styles) {
+        $bits = array();
+        foreach ($styles as $style) {
+            $bits[] = $style->out();
+        }
+        return join('', $bits);
+    }
+
+    /**
+     * Returns a style CSS
+     *
+     * @param string $name
+     * @param string $value
+     * @param bool $important
+     * @return string
+     */
+    public static function style($name, $value, $important = false) {
+        if ($important && strpos($value, '!important') === false) {
+            $value .= ' !important';
+        }
+        return "{$name}:{$value};";
+    }
+}
+
 /**
  * A structure to represent a CSS selector.
  *
@@ -627,7 +855,7 @@ class css_selector {
 
     /**
      * Initialises a new CSS selector
-     * @return css_selector 
+     * @return css_selector
      */
     public static function init() {
         return new css_selector();
@@ -665,7 +893,7 @@ class css_selector {
      * @return string
      */
     public function out() {
-        return trim(join(' ', $this->selectors));
+        return css_writer::selector($this->selectors);
     }
 }
 
@@ -743,6 +971,8 @@ class css_rule {
             if (isset($name) && isset($value) && $name !== '' && $value !== '') {
                 $style = css_style::init($name, $value);
             }
+        } else if ($style instanceof css_style) {
+            $style = clone($style);
         }
         if ($style instanceof css_style) {
             $name = $style->get_name();
@@ -750,6 +980,10 @@ class css_rule {
                 $this->styles[$name]->set_value($style->get_value());
             } else {
                 $this->styles[$name] = $style;
+            }
+        } else if (is_array($style)) {
+            foreach ($style as $astyle) {
+                $this->add_style($astyle);
             }
         }
     }
@@ -763,34 +997,6 @@ class css_rule {
         foreach ($styles as $style) {
             $this->add_style($style);
         }
-    }
-
-    /**
-     * Returns all of the styles as a single string that can be used in a CSS
-     * rule.
-     *
-     * @return string
-     */
-    protected function get_style_sting() {
-        $bits = array();
-        foreach ($this->styles as $style) {
-            $bits[] = $style->out();
-        }
-        return join('', $bits);
-    }
-
-    /**
-     * Returns all of the selectors as a single string that can be used in a
-     * CSS rule
-     *
-     * @return string
-     */
-    protected function get_selector_string() {
-        $selectors = array();
-        foreach ($this->selectors as $selector) {
-            $selectors[] = $selector->out();
-        }
-        return join(",\n", $selectors);
     }
 
     /**
@@ -814,11 +1020,34 @@ class css_rule {
      * @return string
      */
     public function out() {
-        $css = $this->get_selector_string();
-        $css .= '{';
-        $css .= $this->get_style_sting();
-        $css .= '}';
-        return $css;
+        $selectors = css_writer::selectors($this->selectors);
+        $styles = css_writer::styles($this->get_consolidated_styles());
+        return css_writer::rule($selectors, $styles);
+    }
+
+    public function get_consolidated_styles() {
+        $finalstyles = array();
+        $consolidate = array();
+        foreach ($this->styles as $style) {
+            $consolidatetoclass = $style->consolidate_to();
+            if (!empty($consolidatetoclass) && class_exists('css_style_'.$consolidatetoclass)) {
+                $class = 'css_style_'.$consolidatetoclass;
+                if (!array_key_exists($class, $consolidate)) {
+                    $consolidate[$class] = array();
+                }
+                $consolidate[$class][] = $style;
+            } else {
+                $finalstyles[] = $style;
+            }
+        }
+
+        foreach ($consolidate as $class => $styles) {
+            $styles = $class::consolidate($styles);
+            foreach ($styles as $style) {
+                $finalstyles[] = $style;
+            }
+        }
+        return $finalstyles;
     }
 
     /**
@@ -854,8 +1083,7 @@ class css_rule {
      * @return string
      */
     public function get_style_hash() {
-        $styles = $this->get_style_sting();
-        return md5($styles);
+        return md5(css_writer::styles($this->styles));
     }
 
     /**
@@ -863,8 +1091,7 @@ class css_rule {
      * @return string
      */
     public function get_selector_hash() {
-        $selector = $this->get_selector_string();
-        return md5($selector);
+        return md5(css_writer::selectors($this->selectors));
     }
 
     /**
@@ -988,20 +1215,7 @@ class css_media {
      * @return string
      */
     public function out() {
-        $output = '';
-        $types = join(',', $this->types);
-        if ($types !== 'all') {
-            $output .= "\n\n/***** New media declaration *****/\n";
-            $output .= "@media {$types} {\n";
-        }
-        foreach ($this->rules as $rule) {
-            $output .= $rule->out()."\n";
-        }
-        if ($types !== 'all') {
-            $output .= '}';
-            $output .= "\n/***** Media declaration end for $types *****/";
-        }
-        return $output;
+        return css_writer::media(join(',', $this->types), $this->rules);
     }
 
     /**
@@ -1049,7 +1263,7 @@ abstract class css_style {
      *
      * @param type $name
      * @param type $value
-     * @return css_style_generic 
+     * @return css_style_generic
      */
     public static function init($name, $value) {
         $specificclass = 'css_style_'.preg_replace('#[^a-zA-Z0-9]+#', '', $name);
@@ -1116,12 +1330,10 @@ abstract class css_style {
      * @return string
      */
     public function out($value = null) {
-        if ($value === null) {
+        if (is_null($value)) {
             $value = $this->get_value();
-        } else if ($this->important && strpos($value, '!important') === false) {
-            $value .= ' !important';
         }
-        return "{$this->name}:{$value};";
+        return css_writer::style($this->name, $value, $this->important);
     }
 
     /**
@@ -1133,6 +1345,10 @@ abstract class css_style {
      */
     protected function clean_value($value) {
         return $value;
+    }
+
+    public function consolidate_to() {
+        return null;
     }
 }
 
@@ -1218,25 +1434,340 @@ class css_style_color extends css_style {
     }
 }
 
+class css_style_margin extends css_style {
+    public static function init($value) {
+        $value = preg_replace('#\s+#', ' ', $value);
+        $bits = explode(' ', $value, 4);
+
+        $top = $right = $bottom = $left = null;
+        if (count($bits) > 0) {
+            $top = $right = $bottom = $left = array_shift($bits);
+        }
+        if (count($bits) > 0) {
+            $right = $left = array_shift($bits);
+        }
+        if (count($bits) > 0) {
+            $bottom = array_shift($bits);
+        }
+        if (count($bits) > 0) {
+            $left = array_shift($bits);
+        }
+        return array(
+            new css_style_margintop('margin-top', $top),
+            new css_style_marginright('margin-right', $right),
+            new css_style_marginbottom('margin-bottom', $bottom),
+            new css_style_marginleft('margin-left', $left)
+        );
+    }
+    public static function consolidate(array $styles) {
+        if (count($styles) != 4) {
+            return $styles;
+        }
+        $top = $right = $bottom = $left = null;
+        foreach ($styles as $style) {
+            switch ($style->get_name()) {
+                case 'margin-top' : $top = $style->get_value();break;
+                case 'margin-right' : $right = $style->get_value();break;
+                case 'margin-bottom' : $bottom = $style->get_value();break;
+                case 'margin-left' : $left = $style->get_value();break;
+            }
+        }
+        if ($top == $bottom && $left == $right) {
+            if ($top == $left) {
+                return array(new css_style_margin('margin', $top));
+            } else {
+                return array(new css_style_margin('margin', "{$top} {$left}"));
+            }
+        } else if ($left == $right) {
+            return array(new css_style_margin('margin', "{$top} {$right} {$bottom}"));
+        } else {
+            return array(new css_style_margin('margin', "{$top} {$right} {$bottom} {$left}"));
+        }
+        
+    }
+}
+
+class css_style_margintop extends css_style {
+    public static function init($value) {
+        return new css_style_margintop('margin-top', $value);
+    }
+    public function consolidate_to() {
+        return 'margin';
+    }
+}
+
+class css_style_marginright extends css_style {
+    public static function init($value) {
+        return new css_style_marginright('margin-right', $value);
+    }
+    public function consolidate_to() {
+        return 'margin';
+    }
+}
+
+class css_style_marginbottom extends css_style {
+    public static function init($value) {
+        return new css_style_marginbottom('margin-bottom', $value);
+    }
+    public function consolidate_to() {
+        return 'margin';
+    }
+}
+
+class css_style_marginleft extends css_style {
+    public static function init($value) {
+        return new css_style_marginleft('margin-left', $value);
+    }
+    public function consolidate_to() {
+        return 'margin';
+    }
+}
+
 /**
- * A background colour style.
- *
- * Based upon the colour style.
+ * A border style
  *
  * @package   moodlecore
  * @copyright 2011 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class css_style_backgroundcolor extends css_style_color {
-    /**
-     * Creates a new background colour style
-     *
-     * @param mixed $value
-     * @return css_style_backgroundcolor
-     */
+class css_style_border extends css_style {
     public static function init($value) {
-        return new css_style_backgroundcolor('background-color', $value);
+        $value = preg_replace('#\s+#', ' ', $value);
+        $bits = explode(' ', $value, 3);
+
+        $return = array();
+        if (count($bits) > 0) {
+            $width = array_shift($bits);
+            $return[] = new css_style_borderwidth('border-width-top', $width);
+            $return[] = new css_style_borderwidth('border-width-right', $width);
+            $return[] = new css_style_borderwidth('border-width-bottom', $width);
+            $return[] = new css_style_borderwidth('border-width-left', $width);
+        }
+        if (count($bits) > 0) {
+            $style = array_shift($bits);
+            $return[] = new css_style_borderstyle('border-style-top', $style);
+            $return[] = new css_style_borderstyle('border-style-right', $style);
+            $return[] = new css_style_borderstyle('border-style-bottom', $style);
+            $return[] = new css_style_borderstyle('border-style-left', $style);
+        }
+        if (count($bits) > 0) {
+            $colour = array_shift($bits);
+            $return[] = new css_style_bordercolor('border-color-top', $colour);
+            $return[] = new css_style_bordercolor('border-color-right', $colour);
+            $return[] = new css_style_bordercolor('border-color-bottom', $colour);
+            $return[] = new css_style_bordercolor('border-color-left', $colour);
+        }
+        return $return;
     }
+    public static function consolidate(array $styles) {
+
+        $borderwidths = array('top' => null, 'right' => null, 'bottom' => null, 'left' => null);
+        $borderstyles = array('top' => null, 'right' => null, 'bottom' => null, 'left' => null);
+        $bordercolors = array('top' => null, 'right' => null, 'bottom' => null, 'left' => null);
+
+        foreach ($styles as $style) {
+            switch ($style->get_name()) {
+                case 'border-width-top': $borderwidths['top'] = $style->get_value(); break;
+                case 'border-width-right': $borderwidths['right'] = $style->get_value(); break;
+                case 'border-width-bottom': $borderwidths['bottom'] = $style->get_value(); break;
+                case 'border-width-left': $borderwidths['left'] = $style->get_value(); break;
+
+                case 'border-style-top': $borderstyles['top'] = $style->get_value(); break;
+                case 'border-style-right': $borderstyles['right'] = $style->get_value(); break;
+                case 'border-style-bottom': $borderstyles['bottom'] = $style->get_value(); break;
+                case 'border-style-left': $borderstyles['left'] = $style->get_value(); break;
+
+                case 'border-color-top': $bordercolors['top'] = $style->get_value(); break;
+                case 'border-color-right': $bordercolors['right'] = $style->get_value(); break;
+                case 'border-color-bottom': $bordercolors['bottom'] = $style->get_value(); break;
+                case 'border-color-left': $bordercolors['left'] = $style->get_value(); break;
+            }
+        }
+
+        $uniquewidths = count(array_unique($borderwidths));
+        $uniquestyles = count(array_unique($borderstyles));
+        $uniquecolors = count(array_unique($bordercolors));
+
+        $nullwidths = in_array(null, $borderwidths);
+        $nullstyles = in_array(null, $borderstyles);
+        $nullcolors = in_array(null, $bordercolors);
+
+        $allwidthsthesame = ($uniquewidths == 1)?1:0;
+        $allstylesthesame = ($uniquestyles == 1)?1:0;
+        $allcolorsthesame = ($uniquecolors == 1)?1:0;
+
+        $allwidthsnull = $allwidthsthesame && $nullwidths;
+        $allstylesnull = $allstylesthesame && $nullstyles;
+        $allcolorsnull = $allcolorsthesame && $nullcolors;
+
+        $return = array();
+        if ($allwidthsnull && $allstylesnull && $allcolorsnull) {
+            // Everything is null still... boo
+            return array(new css_style_border('border', ''));
+
+        } else if ($allwidthsnull && $allstylesnull) {
+
+            self::consolidate_styles_by_direction($return, 'css_style_bordercolor', 'border-color', $bordercolors);
+            return $return;
+
+        } else if ($allwidthsnull && $allcolorsnull) {
+
+            self::consolidate_styles_by_direction($return, 'css_style_borderstyle', 'border-style', $borderstyles);
+            return $return;
+
+        } else if ($allcolorsnull && $allstylesnull) {
+
+            self::consolidate_styles_by_direction($return, 'css_style_borderwidth', 'border-width', $borderwidths);
+            return $return;
+
+        }
+
+        if ($allwidthsthesame + $allstylesthesame + $allcolorsthesame == 3) {
+
+            $return[] = new css_style_border('border', $borderwidths['top'].' '.$borderstyles['top'].' '.$bordercolors['top']);
+            
+        } else if ($allwidthsthesame + $allstylesthesame + $allcolorsthesame == 2) {
+
+            if ($allwidthsthesame && $allstylesthesame && !$nullwidths && !$nullstyles) {
+
+                $return[] = new css_style_border('border', $borderwidths['top'].' '.$borderstyles['top']);
+                self::consolidate_styles_by_direction($return, 'css_style_bordercolor', 'border-color', $bordercolors);
+                
+            } else if ($allwidthsthesame && $allcolorsthesame && !$nullwidths && !$nullcolors) {
+
+                $return[] = new css_style_border('border', $borderwidths['top'].' solid '.$bordercolors['top']);
+                self::consolidate_styles_by_direction($return, 'css_style_borderstyle', 'border-style', $borderstyles);
+                
+            } else if ($allstylesthesame && $allcolorsthesame && !$nullstyles && !$nullcolors) {
+
+                $return[] = new css_style_border('border', '1px '.$borderstyles['top'].' '.$bordercolors['top']);
+                self::consolidate_styles_by_direction($return, 'css_style_borderwidth', 'border-width', $borderwidths);
+
+            } else {
+                self::consolidate_styles_by_direction($return, 'css_style_borderwidth', 'border-width', $borderwidths);
+                self::consolidate_styles_by_direction($return, 'css_style_borderstyle', 'border-style', $borderstyles);
+                self::consolidate_styles_by_direction($return, 'css_style_bordercolor', 'border-color', $bordercolors);
+            }
+
+        } else if (max(array_count_values($borderwidths)) == 3 && max(array_count_values($borderstyles)) == 3 && max(array_count_values($bordercolors)) == 3) {
+            $widthkeys = array();
+            $stylekeys = array();
+            $colorkeys = array();
+
+            foreach ($borderwidths as $key => $value) {
+                if (!array_key_exists($value, $widthkeys)) {
+                    $widthkeys[$value] = array();
+                }
+                $widthkeys[$value][] = $key;
+            }
+            usort($widthkeys, 'css_sort_by_count');
+            $widthkeys = array_values($widthkeys);
+
+            foreach ($borderstyles as $key => $value) {
+                if (!array_key_exists($value, $stylekeys)) {
+                    $stylekeys[$value] = array();
+                }
+                $stylekeys[$value][] = $key;
+            }
+            usort($stylekeys, 'css_sort_by_count');
+            $stylekeys = array_values($stylekeys);
+
+            foreach ($bordercolors as $key => $value) {
+                if (!array_key_exists($value, $colorkeys)) {
+                    $colorkeys[$value] = array();
+                }
+                $colorkeys[$value][] = $key;
+            }
+            usort($colorkeys, 'css_sort_by_count');
+            $colorkeys = array_values($colorkeys);
+
+            if ($widthkeys == $stylekeys && $stylekeys == $colorkeys) {
+                $key = $widthkeys[0][0];
+                self::build_style_string($return, 'css_style_border', 'border',  $borderwidths[$key].' '.$borderstyles[$key].' '.$bordercolors[$key]);
+                $key = $widthkeys[1][0];
+                self::build_style_string($return, 'css_style_border'.$key, 'border-'.$key,  $borderwidths[$key].' '.$borderstyles[$key].' '.$bordercolors[$key]);
+            } else {
+                self::build_style_string($return, 'css_style_bordertop', 'border-top', $borderwidths['top'], $borderstyles['top'], $bordercolors['top']);
+                self::build_style_string($return, 'css_style_borderright', 'border-right', $borderwidths['right'], $borderstyles['right'], $bordercolors['right']);
+                self::build_style_string($return, 'css_style_borderbottom', 'border-bottom', $borderwidths['bottom'], $borderstyles['bottom'], $bordercolors['bottom']);
+                self::build_style_string($return, 'css_style_borderleft', 'border-left', $borderwidths['left'], $borderstyles['left'], $bordercolors['left']);
+            }
+        } else {
+            self::build_style_string($return, 'css_style_bordertop', 'border-top', $borderwidths['top'], $borderstyles['top'], $bordercolors['top']);
+            self::build_style_string($return, 'css_style_borderright', 'border-right', $borderwidths['right'], $borderstyles['right'], $bordercolors['right']);
+            self::build_style_string($return, 'css_style_borderbottom', 'border-bottom', $borderwidths['bottom'], $borderstyles['bottom'], $bordercolors['bottom']);
+            self::build_style_string($return, 'css_style_borderleft', 'border-left', $borderwidths['left'], $borderstyles['left'], $bordercolors['left']);
+        }
+        foreach ($return as $key => $style) {
+            if ($style->get_value() == '') {
+                unset($return[$key]);
+            }
+        }
+        return $return;
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+    public static function consolidate_styles_by_direction(&$array, $class, $style, $top, $right = null, $bottom = null, $left = null) {
+
+        if (is_array($top)) {
+            $right = $top['right'];
+            $bottom = $top['bottom'];
+            $left = $top['left'];
+            $top = $top['top'];
+        }
+
+        if ($top == $bottom && $left == $right && $top == $left) {
+            if ($top == null) {
+                $array[] = new $class($style, '');
+            } else {
+                $array[] =  new $class($style, $top);
+            }
+        } else if ($top == null || $right == null || $bottom == null || $left == null) {
+            if ($top !== null) {
+                $array[] = new $class($style.'-top', $top);
+            }
+            if ($right !== null) {
+                $array[] = new $class($style.'-right', $right);
+            }
+            if ($bottom !== null) {
+                $array[] = new $class($style.'-bottom', $bottom);
+            }
+            if ($left !== null) {
+                $array[] = new $class($style.'-left', $left);
+            }
+        } else if ($top == $bottom && $left == $right) {
+            $array[] = new $class($style, $top.' '.$right);
+        } else if ($left == $right) {
+            $array[] = new $class($style, $top.' '.$right.' '.$bottom);
+        } else {
+            $array[] = new $class($style, $top.' '.$right.' '.$bottom.' '.$left);
+        }
+        return true;
+    }
+    public static function build_style_string(&$array, $class, $cssstyle, $width = null, $style = null, $color = null) {
+        if (!is_null($width) && !is_null($style) && !is_null($color)) {
+            $array[] = new $class($cssstyle, $width.' '.$style.' '.$color);
+        } else if (!is_null($width) && !is_null($style) && is_null($color)) {
+            $array[] = new $class($cssstyle, $width.' '.$style);
+        } else if (!is_null($width) && is_null($style) && is_null($color)) {
+            $array[] = new $class($cssstyle.'-width', $width);
+        } else {
+            if (!is_null($width)) $array[] = new $class($cssstyle.'-width', $width);
+            if (!is_null($style)) $array[] = new $class($cssstyle.'-style', $style);
+            if (!is_null($color)) $array[] = new $class($cssstyle.'-color', $color);
+        }
+        return true;
+    }
+}
+
+function css_sort_by_count(array $a, array $b) {
+    $a = count($a);
+    $b = count($b);
+    if ($a == $b) {
+        return 0;
+    }
+    return ($a > $b) ? -1 : 1;
 }
 
 /**
@@ -1256,25 +1787,479 @@ class css_style_bordercolor extends css_style_color {
      * @return css_style_bordercolor
      */
     public static function init($value) {
-        return new css_style_bordercolor('border-color', $value);
+        $value = preg_replace('#\s+#', ' ', $value);
+        $bits = explode(' ', $value, 4);
+
+        $top = $right = $bottom = $left = null;
+        if (count($bits) > 0) {
+            $top = $right = $bottom = $left = array_shift($bits);
+        }
+        if (count($bits) > 0) {
+            $right = $left = array_shift($bits);
+        }
+        if (count($bits) > 0) {
+            $bottom = array_shift($bits);
+        }
+        if (count($bits) > 0) {
+            $left = array_shift($bits);
+        }
+        return array(
+            new css_style_bordercolor('border-color-top', $top),
+            new css_style_bordercolor('border-color-right', $right),
+            new css_style_bordercolor('border-color-bottom', $bottom),
+            new css_style_bordercolor('border-color-left', $left)
+        );
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+    protected function clean_value($value) {
+        $values = explode(' ', $value);
+        $values = array_map('parent::clean_value', $values);
+        return join (' ', $values);
+    }
+}
+
+class css_style_borderleft extends css_style_generic {
+    public static function init($value) {
+        $value = preg_replace('#\s+#', ' ', $value);
+        $bits = explode(' ', $value, 3);
+
+        $return = array();
+        if (count($bits) > 0) {
+            $return[] = new css_style_borderwidth('border-width-left', array_shift($bits));
+        }
+        if (count($bits) > 0) {
+            $return[] = new css_style_borderstyle('border-style-left', array_shift($bits));
+        }
+        if (count($bits) > 0) {
+            $return[] = new css_style_bordercolor('border-color-left', array_shift($bits));
+        }
+        return $return;
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+
+class css_style_borderright extends css_style_generic {
+    public static function init($value) {
+        $value = preg_replace('#\s+#', ' ', $value);
+        $bits = explode(' ', $value, 3);
+
+        $return = array();
+        if (count($bits) > 0) {
+            $return[] = new css_style_borderwidth('border-width-right', array_shift($bits));
+        }
+        if (count($bits) > 0) {
+            $return[] = new css_style_borderstyle('border-style-right', array_shift($bits));
+        }
+        if (count($bits) > 0) {
+            $return[] = new css_style_bordercolor('border-color-right', array_shift($bits));
+        }
+        return $return;
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+
+class css_style_bordertop extends css_style_generic {
+    public static function init($value) {
+        $value = preg_replace('#\s+#', ' ', $value);
+        $bits = explode(' ', $value, 3);
+
+        $return = array();
+        if (count($bits) > 0) {
+            $return[] = new css_style_borderwidth('border-width-top', array_shift($bits));
+        }
+        if (count($bits) > 0) {
+            $return[] = new css_style_borderstyle('border-style-top', array_shift($bits));
+        }
+        if (count($bits) > 0) {
+            $return[] = new css_style_bordercolor('border-color-top', array_shift($bits));
+        }
+        return $return;
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+
+class css_style_borderbottom extends css_style_generic {
+    public static function init($value) {
+        $value = preg_replace('#\s+#', ' ', $value);
+        $bits = explode(' ', $value, 3);
+
+        $return = array();
+        if (count($bits) > 0) {
+            $return[] = new css_style_borderwidth('border-width-bottom', array_shift($bits));
+        }
+        if (count($bits) > 0) {
+            $return[] = new css_style_borderstyle('border-style-bottom', array_shift($bits));
+        }
+        if (count($bits) > 0) {
+            $return[] = new css_style_bordercolor('border-color-bottom', array_shift($bits));
+        }
+        return $return;
+    }
+    public function consolidate_to() {
+        return 'border';
     }
 }
 
 /**
- * A border style
+ * A border width style
  *
  * @package   moodlecore
  * @copyright 2011 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class css_style_border extends css_style {
+class css_style_borderwidth extends css_style_generic {
     /**
-     * Created a new border style
+     * Creates a new border colour style
+     *
+     * Based upon the colour style
      *
      * @param mixed $value
-     * @return css_style_border
+     * @return css_style_borderwidth
      */
     public static function init($value) {
-        return new css_style_border('border', $value);
+        $value = preg_replace('#\s+#', ' ', $value);
+        $bits = explode(' ', $value, 4);
+
+        $top = $right = $bottom = $left = null;
+        if (count($bits) > 0) {
+            $top = $right = $bottom = $left = array_shift($bits);
+        }
+        if (count($bits) > 0) {
+            $right = $left = array_shift($bits);
+        }
+        if (count($bits) > 0) {
+            $bottom = array_shift($bits);
+        }
+        if (count($bits) > 0) {
+            $left = array_shift($bits);
+        }
+        return array(
+            new css_style_borderwidth('border-width-top', $top),
+            new css_style_borderwidth('border-width-right', $right),
+            new css_style_borderwidth('border-width-bottom', $bottom),
+            new css_style_borderwidth('border-width-left', $left)
+        );
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+
+/**
+ * A border style style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class css_style_borderstyle extends css_style_generic {
+    /**
+     * Creates a new border colour style
+     *
+     * Based upon the colour style
+     *
+     * @param mixed $value
+     * @return css_style_borderstyle
+     */
+    public static function init($value) {
+        $value = preg_replace('#\s+#', ' ', $value);
+        $bits = explode(' ', $value, 4);
+
+        $top = $right = $bottom = $left = null;
+        if (count($bits) > 0) {
+            $top = $right = $bottom = $left = array_shift($bits);
+        }
+        if (count($bits) > 0) {
+            $right = $left = array_shift($bits);
+        }
+        if (count($bits) > 0) {
+            $bottom = array_shift($bits);
+        }
+        if (count($bits) > 0) {
+            $left = array_shift($bits);
+        }
+        return array(
+            new css_style_borderstyle('border-style-top', $top),
+            new css_style_borderstyle('border-style-right', $right),
+            new css_style_borderstyle('border-style-bottom', $bottom),
+            new css_style_borderstyle('border-style-left', $left)
+        );
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+
+class css_style_background extends css_style {
+    public static function init($value) {
+        // colour - image - repeat - attachment - position
+
+        $imageurl = null;
+        if (preg_match('#url\(([^\)]+)\)#', $value, $matches)) {
+            $imageurl = trim($matches[1]);
+            $value = str_replace($matches[1], '', $value);
+        }
+
+        $value = preg_replace('#\s+#', ' ', $value);
+        $bits = explode(' ', $value);
+
+        $repeats = array('repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'inherit');
+        $attachments = array('scroll' , 'fixed', 'inherit');
+
+        $return = array();
+        if (count($bits) > 0 && css_is_colour(reset($bits))) {
+            $return[] = new css_style_backgroundcolor('background-color', array_shift($bits));
+        }
+        if (count($bits) > 0 && preg_match('#(none|inherit|url\(\))#', reset($bits))) {
+            $image = array_shift($bits);
+            if ($image == 'url()') {
+                $image = "url({$imageurl})";
+            }
+            $return[] = new css_style_backgroundimage('background-image', $image);
+        }
+        if (count($bits) > 0 && in_array(reset($bits), $repeats)) {
+            $return[] = new css_style_backgroundrepeat('background-repeat', array_shift($bits));
+        }
+        if (count($bits) > 0 && in_array(reset($bits), $attachments)) {
+            // scroll , fixed, inherit
+            $return[] = new css_style_backgroundattachment('background-attachment', array_shift($bits));
+        }
+        if (count($bits) > 0) {
+            $return[] = new css_style_backgroundposition('background-position', join(' ',$bits));
+        }
+        return $return;
+    }
+    public static function consolidate(array $styles) {
+
+        if (count($styles) < 1) {
+            return $styles;
+        }
+
+        $color = $image = $repeat = $attachment = $position = null;
+        foreach ($styles as $style) {
+            switch ($style->get_name()) {
+                case 'background-color' : $color = $style->get_value(); break;
+                case 'background-image' : $image = $style->get_value(); break;
+                case 'background-repeat' : $repeat = $style->get_value(); break;
+                case 'background-attachment' : $attachment = $style->get_value(); break;
+                case 'background-position' : $position = $style->get_value(); break;
+            }
+        }
+        $value = array();
+        if (!is_null($color)) $value[] .= $color;
+        if (!is_null($image)) $value[] .= $image;
+        if (!is_null($repeat)) $value[] .= $repeat;
+        if (!is_null($attachment)) $value[] .= $attachment;
+        if (!is_null($position)) $value[] .= $position;
+        return array(new css_style_background('background', join(' ', $value)));
+    }
+}
+
+/**
+ * A background colour style.
+ *
+ * Based upon the colour style.
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class css_style_backgroundcolor extends css_style_color {
+    /**
+     * Creates a new background colour style
+     *
+     * @param mixed $value
+     * @return css_style_backgroundcolor
+     */
+    public static function init($value) {
+        return new css_style_backgroundcolor('background-color', $value);
+    }
+    public function consolidate_to() {
+        return 'background';
+    }
+}
+
+/**
+ * A background image style.
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class css_style_backgroundimage extends css_style_generic {
+    /**
+     * Creates a new background colour style
+     *
+     * @param mixed $value
+     * @return css_style_backgroundimage
+     */
+    public static function init($value) {
+        return new css_style_backgroundimage('background-image', $value);
+    }
+    public function consolidate_to() {
+        return 'background';
+    }
+}
+
+/**
+ * A background repeat style.
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class css_style_backgroundrepeat extends css_style_generic {
+    /**
+     * Creates a new background colour style
+     *
+     * @param mixed $value
+     * @return css_style_backgroundrepeat
+     */
+    public static function init($value) {
+        return new css_style_backgroundrepeat('background-repeat', $value);
+    }
+    public function consolidate_to() {
+        return 'background';
+    }
+}
+
+/**
+ * A background attachment style.
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class css_style_backgroundattachment extends css_style_generic {
+    /**
+     * Creates a new background colour style
+     *
+     * @param mixed $value
+     * @return css_style_backgroundattachment
+     */
+    public static function init($value) {
+        return new css_style_backgroundattachment('background-attachment', $value);
+    }
+    public function consolidate_to() {
+        return 'background';
+    }
+}
+
+/**
+ * A background position style.
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class css_style_backgroundposition extends css_style_generic {
+    /**
+     * Creates a new background colour style
+     *
+     * @param mixed $value
+     * @return css_style_backgroundposition
+     */
+    public static function init($value) {
+        return new css_style_backgroundposition('background-position', $value);
+    }
+    public function consolidate_to() {
+        return 'background';
+    }
+}
+
+class css_style_padding extends css_style {
+    public static function init($value) {
+        $value = preg_replace('#\s+#', ' ', $value);
+        $bits = explode(' ', $value, 4);
+
+        $top = $right = $bottom = $left = null;
+        if (count($bits) > 0) {
+            $top = $right = $bottom = $left = array_shift($bits);
+        }
+        if (count($bits) > 0) {
+            $right = $left = array_shift($bits);
+        }
+        if (count($bits) > 0) {
+            $bottom = array_shift($bits);
+        }
+        if (count($bits) > 0) {
+            $left = array_shift($bits);
+        }
+        return array(
+            new css_style_paddingtop('padding-top', $top),
+            new css_style_paddingright('padding-right', $right),
+            new css_style_paddingbottom('padding-bottom', $bottom),
+            new css_style_paddingleft('padding-left', $left)
+        );
+    }
+    public static function consolidate(array $styles) {
+        if (count($styles) != 4) {
+            return $styles;
+        }
+        $top = $right = $bottom = $left = null;
+        foreach ($styles as $style) {
+            switch ($style->get_name()) {
+                case 'padding-top' : $top = $style->get_value();break;
+                case 'padding-right' : $right = $style->get_value();break;
+                case 'padding-bottom' : $bottom = $style->get_value();break;
+                case 'padding-left' : $left = $style->get_value();break;
+            }
+        }
+        if ($top == $bottom && $left == $right) {
+            if ($top == $left) {
+                return array(new css_style_padding('padding', $top));
+            } else {
+                return array(new css_style_padding('padding', "{$top} {$left}"));
+            }
+        } else if ($left == $right) {
+            return array(new css_style_padding('padding', "{$top} {$right} {$bottom}"));
+        } else {
+            return array(new css_style_padding('padding', "{$top} {$right} {$bottom} {$left}"));
+        }
+
+    }
+}
+
+class css_style_paddingtop extends css_style {
+    public static function init($value) {
+        return new css_style_paddingtop('padding-top', $value);
+    }
+    public function consolidate_to() {
+        return 'padding';
+    }
+}
+
+class css_style_paddingright extends css_style {
+    public static function init($value) {
+        return new css_style_paddingright('padding-right', $value);
+    }
+    public function consolidate_to() {
+        return 'padding';
+    }
+}
+
+class css_style_paddingbottom extends css_style {
+    public static function init($value) {
+        return new css_style_paddingbottom('padding-bottom', $value);
+    }
+    public function consolidate_to() {
+        return 'padding';
+    }
+}
+
+class css_style_paddingleft extends css_style {
+    public static function init($value) {
+        return new css_style_paddingleft('padding-left', $value);
+    }
+    public function consolidate_to() {
+        return 'padding';
     }
 }
