@@ -414,8 +414,9 @@
             $userresponse = implode(",", $userresponse);
 
             $response = '';
-            if ($ncorrect == count($answers)-2) {  // dont count correct/wrong responses in the total.
-                $response = reset($answers)->answer;
+            if ($ncorrect == count($answers) - 2) {  // dont count correct/wrong responses in the total.
+                $answer = reset($answers);
+                $response = $answer->answer;
                 if (isset($correctpageid)) {
                     $newpageid = $correctpageid;
                 }
@@ -425,7 +426,8 @@
                 $correctanswer = true;
             } else {
                 reset($answers);
-                $response = next($answers)->answer;
+                $answer = next($answers);
+                $response = $answer->answer;
                 $newpageid = $wrongpageid;
                 $answerid = $wronganswerid;
             }
