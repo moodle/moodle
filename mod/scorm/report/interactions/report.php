@@ -74,7 +74,7 @@ class scorm_interactions_report extends scorm_default_report {
         $displayoptions['qtext'] = $includeqtext;
         $displayoptions['resp'] = $includeresp;
         $displayoptions['right'] = $includeright;
-        
+
         $mform->set_data($displayoptions + array('pagesize' => $pagesize));
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
             if (!$download) {
@@ -511,7 +511,7 @@ class scorm_interactions_report extends scorm_default_report {
                                         $i++;
                                         $element='cmi.interactions_'.$i.'.id';
                                     }
-                                    //---end of interaction data*/                           
+                                    //---end of interaction data*/
                                 } else {
                                     // if we don't have track data, we haven't attempted yet
                                     $strstatus = get_string('notattempted', 'scorm');
