@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines forms used by templates.php
+ * Defines forms used by pick.php
  *
  * @package    core
  * @subpackage grading

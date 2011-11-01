@@ -45,15 +45,15 @@ td.grade div.overridden {background-color: #DDDDDD;}
 #page-grade-grading-manage #actionresultmessagebox {background-color:#D2EBFF;width:60%;margin:1em auto 1em auto;text-align:center;
     padding:0.5em;border:2px solid #CCC;text-align:center;-moz-border-radius:5px;position:relative}
 #page-grade-grading-manage #actionresultmessagebox span {position:absolute;right:0px;top:-1.2em;color:#666;font-size:80%}
-#page-grade-grading-templates .templatesearchform {text-align:center;margin:0px auto;}
-#page-grade-grading-templates .template-name {clear: both; padding:3px; background-color: #F6F6F6;}
-#page-grade-grading-templates .template-description {margin-bottom: 1em; padding: 0px 2em 0px 0px; margin-right:51%;}
-#page-grade-grading-templates .template-preview {width:50%; float:right; border:1px solid #EEE; padding: 1em; margin-bottom: 1em;}
-#page-grade-grading-templates .template-actions {margin-bottom: 1em; padding: 0px 2em 0px 0px; margin-right:51%;}
-#page-grade-grading-templates .template-actions .action {display:inline-block;margin:0.25em;padding:0.25em;border:2px solid transparent;}
-#page-grade-grading-templates .template-actions .action.pick {background-color:#EEE;border:2px solid #CCC;-moz-border-radius:3px}
-#page-grade-grading-templates .template-actions .action:hover {text-decoration:none;background-color:#F6F6F6;border:2px solid #CCC;-moz-border-radius:3px}
-#page-grade-grading-templates .template-actions .action .action-text {display:inline;}
-#page-grade-grading-templates .template-actions .action .action-icon {margin:0px 3px;}
-#page-grade-grading-templates .template-preview-confirm {width:50%;margin:1em auto;border:1px solid #EEE; padding: 1em;}
-
+#page-grade-grading-pick .templatesearchform {text-align:center;margin:0px auto;}
+#page-grade-grading-pick .template-name {clear: both; padding:3px; background-color: #F6F6F6;}
+#page-grade-grading-pick .template-description {margin-bottom: 1em; padding: 0px 2em 0px 0px; margin-right:51%;}
+#page-grade-grading-pick .template-preview {width:50%; float:right; border:1px solid #EEE; padding: 1em; margin-bottom: 1em;}
+#page-grade-grading-pick .template-actions {margin-bottom: 1em; padding: 0px 2em 0px 0px; margin-right:51%;}
+#page-grade-grading-pick .template-actions .action {display:inline-block;margin:0.25em;padding:0.25em;border:2px solid transparent;}
+#page-grade-grading-pick .template-actions .action.pick {background-color:#EEE;border:2px solid #CCC;-moz-border-radius:3px}
+#page-grade-grading-pick .template-actions .action:hover {text-decoration:none;background-color:#F6F6F6;border:2px solid #CCC;-moz-border-radius:3px}
+#page-grade-grading-pick .template-actions .action .action-text {display:inline;}
+#page-grade-grading-pick .template-actions .action .action-icon {margin:0px 3px;}
+#page-grade-grading-pick .template-preview-confirm {width:50%;margin:1em auto;border:1px solid #EEE; padding: 1em;}
+#page-grade-grading-pick .singlebutton {clear:both;}

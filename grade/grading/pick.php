@@ -26,7 +26,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->dirroot.'/grade/grading/lib.php');
-require_once($CFG->dirroot.'/grade/grading/templates_form.php');
+require_once($CFG->dirroot.'/grade/grading/pick_form.php');
 
 $targetid   = required_param('targetid', PARAM_INT); // area we are coming from
 $pick       = optional_param('pick', null, PARAM_INT); // create new form from this template
@@ -60,7 +60,7 @@ $canshare   = has_capability('moodle/grade:sharegradingforms', get_system_contex
 $canmanage  = has_capability('moodle/grade:managesharedforms', get_system_context());
 
 // setup the page
-$PAGE->set_url(new moodle_url('/grade/grading/templates.php', array('targetid' => $targetid)));
+$PAGE->set_url(new moodle_url('/grade/grading/pick.php', array('targetid' => $targetid)));
 navigation_node::override_active_url($targetmanager->get_management_url());
 $PAGE->set_title(get_string('gradingmanagement', 'core_grading'));
 $PAGE->set_heading(get_string('gradingmanagement', 'core_grading'));
@@ -211,10 +211,11 @@ $rs->close();
 
 if (!$found) {
     echo $output->heading(get_string('nosharedformfound', 'core_grading'));
-    echo $output->single_button(
-        new moodle_url('/grade/grading/manage.php', array('areaid' => $targetid)),
-        get_string('back'), 'get');
 }
+
+echo $output->single_button(
+    new moodle_url('/grade/grading/manage.php', array('areaid' => $targetid)),
+    get_string('back'), 'get');
 
 echo $output->footer();
 
