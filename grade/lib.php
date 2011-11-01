@@ -1145,6 +1145,7 @@ class grade_structure {
         $itemtype = $element['object']->itemtype;
         $itemmodule = $element['object']->itemmodule;
         $iteminstance = $element['object']->iteminstance;
+        $itemnumber = $element['object']->itemnumber;
 
         // Links only for module items that have valid instance, module and are
         // called from grade_tree with valid modinfo
@@ -1167,7 +1168,7 @@ class grade_structure {
         // If module has grade.php, link to that, otherwise view.php
         $dir = $CFG->dirroot . '/mod/' . $itemmodule;
         if (file_exists($dir.'/grade.php')) {
-            return new moodle_url('/mod/' . $itemmodule . '/grade.php', array('id' => $cm->id));
+            return new moodle_url('/mod/' . $itemmodule . '/grade.php', array('id' => $cm->id, 'itemnumber' => $itemnumber));
         } else {
             return new moodle_url('/mod/' . $itemmodule . '/view.php', array('id' => $cm->id));
         }
