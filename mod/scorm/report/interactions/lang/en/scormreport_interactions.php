@@ -17,8 +17,9 @@
 /**
  * Strings for component 'scorm_interactions' report plugin
  *
- * @package   scorm_interactions
- * @author    Ankit Kumar Agarwal
+ * @package   scormreport
+ * @subpackage interactions
+ * @author    Dan Marsden and Ankit Kumar Agarwal
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

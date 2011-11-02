@@ -17,13 +17,13 @@
 
 /**
  * Defines the version of scorm_interactions
- *
- * @package   scorm_interactions
- * @author    Ankit Kumar Agarwal
+ * @package   scormreport
+ * @subpackage interactions
+ * @author    Dan Marsden and Ankit Kumar Agarwal
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2011071100;
+$plugin->version  = 2011110100;
 $plugin->requires = 2011070800;

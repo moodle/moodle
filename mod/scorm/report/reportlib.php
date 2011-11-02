@@ -47,6 +47,12 @@ function scorm_report_list($context) {
     }
     return $reportlist;
 }
+/**
+ * Returns The maximum numbers of Questions associated with an Scorm Pack
+ * @param array array of sco objects
+ * @param array array of attempt objects
+ * @return int an integer representing the question count
+ */
 function get_scorm_question_count($scoes,$attempts)
 {
     $count=0;

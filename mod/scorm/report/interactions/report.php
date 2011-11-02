@@ -15,7 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * Core Report class of basic reporting plugin
- * @package   scorm_interactions
+ * @package   scormreport
+ * @subpackage interactions
  * @author    Dan Marsden and Ankit Kumar Agarwal
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,7 +35,7 @@ class scorm_interactions_report extends scorm_default_report {
      */
     function display($scorm, $cm, $course, $download) {
         global $CFG, $DB, $OUTPUT, $PAGE;
-        $contextmodule= get_context_instance(CONTEXT_MODULE, $cm->id);
+        $contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
         $action = optional_param('action', '', PARAM_ALPHA);
         $attemptids = optional_param('attemptid', array(), PARAM_RAW);
 
@@ -81,12 +82,12 @@ class scorm_interactions_report extends scorm_default_report {
                 groups_print_activity_menu($cm, new moodle_url($PAGE->url, $displayoptions));
             }
         }
-        $formattextoptions = array('context'=>get_context_instance(CONTEXT_COURSE, $course->id));
+        $formattextoptions = array('context' => get_context_instance(CONTEXT_COURSE, $course->id));
 
         // We only want to show the checkbox to delete attempts
         // if the user has permissions and if the report mode is showing attempts.
         $candelete = has_capability('mod/scorm:deleteresponses', $contextmodule)
-                && ($attemptsmode!= SCORM_REPORT_ATTEMPTS_STUDENTS_WITH_NO);
+                && ($attemptsmode != SCORM_REPORT_ATTEMPTS_STUDENTS_WITH_NO);
         // select the students
         $nostudents = false;
 
@@ -118,38 +119,36 @@ class scorm_interactions_report extends scorm_default_report {
             $columns = array();
             $headers = array();
             if (!$download && $candelete) {
-                $columns[]= 'checkbox';
-                $headers[]= null;
+                $columns[] = 'checkbox';
+                $headers[] = null;
             }
             if (!$download && $CFG->grade_report_showuserimage) {
-                $columns[]= 'picture';
-                $headers[]= '';
+                $columns[] = 'picture';
+                $headers[] = '';
             }
-            $columns[]= 'fullname';
-            $headers[]= get_string('name');
+            $columns[] = 'fullname';
+            $headers[] = get_string('name');
             if ($CFG->grade_report_showuseridnumber) {
-                $columns[]= 'idnumber';
-                $headers[]= get_string('idnumber');
+                $columns[] = 'idnumber';
+                $headers[] = get_string('idnumber');
             }
-            $columns[]= 'attempt';
-            $headers[]= get_string('attempt', 'scorm');
-            $columns[]= 'start';
-            $headers[]= get_string('started', 'scorm');
-            $columns[]= 'finish';
-            $headers[]= get_string('last', 'scorm');
-            $columns[]= 'score';
-            $headers[]= get_string('score', 'scorm');
-            if ($scoes = $DB->get_records('scorm_scoes', array("scorm"=>$scorm->id), 'id')) {
-                foreach ($scoes as $sco) {
-                    if ($sco->launch!='') {
-                        $columns[]= 'scograde'.$sco->id;
-                        $headers[]= format_string($sco->title,'',$formattextoptions);
-                        $table->head[]= format_string($sco->title,'',$formattextoptions);
-                    }
+            $columns[] = 'attempt';
+            $headers[] = get_string('attempt', 'scorm');
+            $columns[] = 'start';
+            $headers[] = get_string('started', 'scorm');
+            $columns[] = 'finish';
+            $headers[] = get_string('last', 'scorm');
+            $columns[] = 'score';
+            $headers[] = get_string('score', 'scorm');
+            $scoes = $DB->get_records('scorm_scoes', array("scorm"=>$scorm->id), 'id');
+            foreach ($scoes as $sco) {
+                if ($sco->launch != '') {
+                    $columns[] = 'scograde'.$sco->id;
+                    $headers[] = format_string($sco->title,'',$formattextoptions);
+                    $table->head[]= format_string($sco->title,'',$formattextoptions);
                 }
-            } else {
-                $scoes = null;
             }
+
             $params = array();
             list($usql, $params) = $DB->get_in_or_equal($allowedlist);
                                     // Construct the SQL
@@ -180,8 +179,8 @@ class scorm_interactions_report extends scorm_default_report {
             $countsql .= 'COUNT(DISTINCT(u.id)) AS nbusers ';
             $countsql .= $from.$where;
             $attempts = $DB->get_records_sql($select.$from.$where, $params);
-            $questioncount=get_scorm_question_count($scoes,$attempts);
-            for($id=0;$id<$questioncount;$id++) {
+            $questioncount = get_scorm_question_count($scoes,$attempts);
+            for($id = 0; $id < $questioncount; $id++) {
                 if ($displayoptions['qtext']) {
                     $columns[] = 'question' . $id;
                     $headers[] = get_string('questionx', 'scormreport_interactions', $id);
@@ -213,11 +212,10 @@ class scorm_interactions_report extends scorm_default_report {
                 $table->no_sorting('start');
                 $table->no_sorting('finish');
                 $table->no_sorting('score');
-                if ( $scoes ) {
-                    foreach ($scoes as $sco) {
-                        if ($sco->launch!='') {
-                            $table->no_sorting('scograde'.$sco->id);
-                        }
+                
+                foreach ($scoes as $sco) {
+                    if ($sco->launch != '') {
+                        $table->no_sorting('scograde'.$sco->id);
                     }
                 }
 
@@ -231,7 +229,7 @@ class scorm_interactions_report extends scorm_default_report {
 
                 // Start working -- this is necessary as soon as the niceties are over
                 $table->setup();
-            } else if ($download =='ODS') {
+            } else if ($download == 'ODS') {
                 require_once("$CFG->libdir/odslib.class.php");
 
                 $filename .= ".ods";
@@ -269,7 +267,7 @@ class scorm_interactions_report extends scorm_default_report {
                     $myxls->write(0, $colnum, $item, $formatbc);
                     $colnum++;
                 }
-                $rownum=1;
+                $rownum = 1;
             } else if ($download =='Excel') {
                 require_once("$CFG->libdir/excellib.class.php");
 
@@ -307,8 +305,8 @@ class scorm_interactions_report extends scorm_default_report {
                     $myxls->write(0, $colnum, $item, $formatbc);
                     $colnum++;
                 }
-                $rownum=1;
-            } else if ($download=='CSV') {
+                $rownum = 1;
+            } else if ($download == 'CSV') {
                 $filename .= ".txt";
                 header("Content-Type: application/download\n");
                 header("Content-Disposition: attachment; filename=\"$filename\"");
@@ -438,88 +436,86 @@ class scorm_interactions_report extends scorm_default_report {
                         }
                         $row[] = scorm_grade_user_attempt($scorm, $scouser->userid, $scouser->attempt);
                     }
-                                    // print out all scores of attempt
-                    if ($scoes) {
-                        foreach ($scoes as $sco) {
-                            if ($sco->launch!='') {
-                                if ($trackdata = scorm_get_tracks($sco->id, $scouser->userid, $scouser->attempt)) {
-                                    if ($trackdata->status == '') {
-                                        $trackdata->status = 'notattempted';
-                                    }
-                                    $strstatus = get_string($trackdata->status, 'scorm');
-                                    // if raw score exists, print it
-                                    if ($trackdata->score_raw != '') {
-                                        $score = $trackdata->score_raw;
-                                        // add max score if it exists
-                                        if ($scorm->version == 'SCORM_1.3') {
-                                            $maxkey = 'cmi.score.max';
-                                        } else {
-                                            $maxkey = 'cmi.core.score.max';
-                                        }
-                                        if (isset($trackdata->$maxkey)) {
-                                            $score .= '/'.$trackdata->$maxkey;
-                                        }
-                                        // else print out status
+                    // print out all scores of attempt
+                    foreach ($scoes as $sco) {
+                        if ($sco->launch != '') {
+                            if ($trackdata = scorm_get_tracks($sco->id, $scouser->userid, $scouser->attempt)) {
+                                if ($trackdata->status == '') {
+                                    $trackdata->status = 'notattempted';
+                                }
+                                $strstatus = get_string($trackdata->status, 'scorm');
+                                // if raw score exists, print it
+                                if ($trackdata->score_raw != '') {
+                                    $score = $trackdata->score_raw;
+                                    // add max score if it exists
+                                    if ($scorm->version == 'SCORM_1.3') {
+                                        $maxkey = 'cmi.score.max';
                                     } else {
-                                        $score = $strstatus;
+                                        $maxkey = 'cmi.core.score.max';
                                     }
-                                    if (!$download) {
-                                        $row[] = '<img src="'.$OUTPUT->pix_url($trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.$strstatus.'" /><br/>
-                                                <a href="userreport.php?b='.$sco->id.'&amp;user='.$scouser->userid.'&amp;attempt='.$scouser->attempt.
-                                                '" title="'.get_string('details', 'scorm').'">'.$score.'</a>';
-                                    } else {
-                                        $row[] = $score;
+                                    if (isset($trackdata->$maxkey)) {
+                                        $score .= '/'.$trackdata->$maxkey;
                                     }
-                                    // interaction data
-                                    $i=0;
-                                    $element='cmi.interactions_'.$i.'.id';
-                                    while(isset($trackdata->$element)) {
-                                        if ($displayoptions['qtext']) {
-                                            $element='cmi.interactions_'.$i.'.id';
-                                            if (isset($trackdata->$element)) {
-                                                $row[] = s($trackdata->$element);
-                                            } else {
-                                                $row[] = '&nbsp;';
-                                            }
-                                        }
-                                        if ($displayoptions['resp']) {
-                                            $element='cmi.interactions_'.$i.'.student_response';
-                                            if (isset($trackdata->$element)) {
-                                                $row[] = s($trackdata->$element);
-                                            } else {
-                                                $row[] = '&nbsp;';
-                                            }
-                                        }
-                                        if ($displayoptions['right']) {
-                                            $j=0;
-                                            $element='cmi.interactions_'.$i.'.correct_responses_'.$j.'.pattern';
-                                            $rightans='';
-                                            if (isset($trackdata->$element)) {
-                                                while(isset($trackdata->$element)) {
-                                                    if($j>0) {
-                                                        $rightans.=',';
-                                                    }
-                                                    $rightans.=s($trackdata->$element);
-                                                    $j++;
-                                                    $element='cmi.interactions_'.$i.'.correct_responses_'.$j.'.pattern';
-                                                }
-                                                $row[]=$rightans;
-                                            } else {
-                                                $row[] = '&nbsp;';
-                                            }
-                                        }
-                                        $i++;
-                                        $element='cmi.interactions_'.$i.'.id';
-                                    }
-                                    //---end of interaction data*/
+                                // else print out status
                                 } else {
-                                    // if we don't have track data, we haven't attempted yet
-                                    $strstatus = get_string('notattempted', 'scorm');
-                                    if (!$download) {
-                                        $row[] = '<img src="'.$OUTPUT->pix_url('notattempted', 'scorm').'" alt="'.$strstatus.'" title="'.$strstatus.'" /><br/>'.$strstatus;
-                                    } else {
-                                        $row[] = $strstatus;
+                                    $score = $strstatus;
+                                }
+                                if (!$download) {
+                                    $row[] = '<img src="'.$OUTPUT->pix_url($trackdata->status, 'scorm').'" alt="'.$strstatus.'" title="'.$strstatus.'" /><br/>
+                                            <a href="userreport.php?b='.$sco->id.'&amp;user='.$scouser->userid.'&amp;attempt='.$scouser->attempt.
+                                            '" title="'.get_string('details', 'scorm').'">'.$score.'</a>';
+                                } else {
+                                    $row[] = $score;
+                                }
+                                // interaction data
+                                $i=0;
+                                $element='cmi.interactions_'.$i.'.id';
+                                while(isset($trackdata->$element)) {
+                                    if ($displayoptions['qtext']) {
+                                        $element='cmi.interactions_'.$i.'.id';
+                                        if (isset($trackdata->$element)) {
+                                            $row[] = s($trackdata->$element);
+                                        } else {
+                                            $row[] = '&nbsp;';
+                                        }
                                     }
+                                    if ($displayoptions['resp']) {
+                                        $element='cmi.interactions_'.$i.'.student_response';
+                                        if (isset($trackdata->$element)) {
+                                            $row[] = s($trackdata->$element);
+                                        } else {
+                                            $row[] = '&nbsp;';
+                                        }
+                                    }
+                                    if ($displayoptions['right']) {
+                                        $j=0;
+                                        $element = 'cmi.interactions_'.$i.'.correct_responses_'.$j.'.pattern';
+                                        $rightans = '';
+                                        if (isset($trackdata->$element)) {
+                                            while(isset($trackdata->$element)) {
+                                                if($j>0) {
+                                                    $rightans .= ',';
+                                                }
+                                                $rightans .= s($trackdata->$element);
+                                                $j++;
+                                                $element = 'cmi.interactions_'.$i.'.correct_responses_'.$j.'.pattern';
+                                            }
+                                            $row[] = $rightans;
+                                        } else {
+                                            $row[] = '&nbsp;';
+                                        }
+                                    }
+                                    $i++;
+                                    $element = 'cmi.interactions_'.$i.'.id';
+                                }
+                            //---end of interaction data*/
+                            } else {
+                                // if we don't have track data, we haven't attempted yet
+                                $strstatus = get_string('notattempted', 'scorm');
+                                if (!$download) {
+                                    $row[] = '<img src="'.$OUTPUT->pix_url('notattempted', 'scorm').'" alt="'.$strstatus.'" title="'.$strstatus.'" /><br/>'.$strstatus;
+                                } else {
+                                    $row[] = $strstatus;
                                 }
                             }
                         }
@@ -534,7 +530,7 @@ class scorm_interactions_report extends scorm_default_report {
                             $colnum++;
                         }
                         $rownum++;
-                    } else if ($download=='CSV') {
+                    } else if ($download == 'CSV') {
                         $text = implode("\t", $row);
                         echo $text." \n";
                     }
