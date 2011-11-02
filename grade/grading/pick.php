@@ -56,8 +56,8 @@ require_login($course, true, $cm);
 require_capability('moodle/grade:managegradingforms', $context);
 
 // user's capability in the templates bank
-$canshare   = has_capability('moodle/grade:sharegradingforms', get_system_context());
-$canmanage  = has_capability('moodle/grade:managesharedforms', get_system_context());
+$canshare   = has_capability('moodle/grade:sharegradingforms', context_system::instance());
+$canmanage  = has_capability('moodle/grade:managesharedforms', context_system::instance());
 
 // setup the page
 $PAGE->set_url(new moodle_url('/grade/grading/pick.php', array('targetid' => $targetid)));
@@ -158,13 +158,13 @@ $params = array($method);
 if (!$includeownforms) {
     // search for public templates only
     $sql .= " AND ga.contextid = ? AND ga.component = 'core_grading'";
-    $params[] = get_system_context()->id;
+    $params[] = context_system::instance()->id;
 
 } else {
     // search both templates and own forms in other areas
     $sql .= " AND ((ga.contextid = ? AND ga.component = 'core_grading')
                    OR (gd.usercreated = ? AND gd.status = ?))";
-    $params = array_merge($params,  array(get_system_context()->id, $USER->id,
+    $params = array_merge($params,  array(context_system::instance()->id, $USER->id,
         gradingform_controller::DEFINITION_STATUS_READY));
 }
 

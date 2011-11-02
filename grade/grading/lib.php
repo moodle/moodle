@@ -518,7 +518,7 @@ class grading_manager {
         $name = $method . '_' . sha1(rand().uniqid($method, true));
         // create new area record
         $area = array(
-            'contextid'     => get_system_context()->id,
+            'contextid'     => context_system::instance()->id,
             'component'     => 'core_grading',
             'areaname'      => $name,
             'activemethod'  => $method);

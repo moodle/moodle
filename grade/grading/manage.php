@@ -99,7 +99,7 @@ if (!empty($setmethod)) {
 
 // publish the form as a template
 if (!empty($shareform)) {
-    require_capability('moodle/grade:sharegradingforms', get_system_context());
+    require_capability('moodle/grade:sharegradingforms', context_system::instance());
     $controller = $manager->get_controller($method);
     $definition = $controller->get_definition();
     if (!$confirmed) {
@@ -168,7 +168,7 @@ if (!empty($method)) {
         echo $output->management_action_icon(new moodle_url($PAGE->url, array('deleteform' => $definition->id)),
             get_string('manageactiondelete', 'core_grading'), 'b/edit-delete');
         // icon to save the form as a new template
-        if (has_capability('moodle/grade:sharegradingforms', get_system_context())) {
+        if (has_capability('moodle/grade:sharegradingforms', context_system::instance())) {
             if (empty($definition->copiedfromid)) {
                 $hasoriginal = false;
             } else {
