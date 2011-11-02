@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'report_backups'
+ * Version details.
  *
  * @package    report
  * @subpackage backups
@@ -23,4 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Backups report';
+defined('MOODLE_INTERNAL') || die;
+
+$plugin->version   = 2011110200;       // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2011102700.01;    // Requires this Moodle version
+$plugin->component = 'report_backups'; // Full name of the plugin (used for diagnostics)
