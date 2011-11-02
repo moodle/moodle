@@ -260,14 +260,25 @@ class grading_manager {
 
         $this->ensure_isset(array('context', 'component'));
 
-        // example: if the given context+component lead to mod_assignment, this method
-        // will do something like
-        // require_once($CFG->dirroot.'/mod/assignment/lib.php');
-        // return assignment_gradable_area_list();
+        if ($this->get_context()->contextlevel == CONTEXT_SYSTEM) {
+            if ($this->get_component() !== 'core_grading') {
+                throw new coding_exception('Unsupported component at the system context');
+            } else {
+                return array();
+            }
 
-        // todo - what to return for bank areas in the system context
-        // todo - hardcoded list for now
-        return array('submission' => 'Submissions');
+        } else if ($this->get_context()->contextlevel >= CONTEXT_COURSE) {
+            list($context, $course, $cm) = get_context_info_array($this->get_context()->id);
+
+            if (empty($cm->modname)) {
+                throw new coding_exception('Unsupported area location');
+            } else {
+                return plugin_callback('mod', $cm->modname, 'grading', 'areas_list', null, array());
+            }
+
+        } else {
+            throw new coding_exception('Unsupported gradable area context level');
+        }
     }
 
     /**

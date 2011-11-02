@@ -3892,3 +3892,12 @@ function assignment_page_type_list($pagetype, $parentcontext, $currentcontext) {
     );
     return $module_pagetype;
 }
+
+/**
+ * Lists all gradable areas for the advanced grading methods gramework
+ *
+ * @return array
+ */
+function assignment_grading_areas_list() {
+    return array('submission' => get_string('submissions', 'mod_assignment'));
+}
