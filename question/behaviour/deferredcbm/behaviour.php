@@ -45,10 +45,6 @@ require_once(dirname(__FILE__) . '/../deferredfeedback/behaviour.php');
 class qbehaviour_deferredcbm extends qbehaviour_deferredfeedback {
     const IS_ARCHETYPAL = true;
 
-    public static function get_required_behaviours() {
-        return array('deferredfeedback');
-    }
-
     public static function get_unused_display_options() {
         return array('correctness', 'marks', 'specificfeedback', 'generalfeedback',
                 'rightanswer');

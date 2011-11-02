@@ -1382,25 +1382,9 @@ class plugintype_mod extends plugintype_base implements plugin_information {
  * Class for question behaviours.
  */
 class plugintype_qbehaviour extends plugintype_base implements plugin_information {
-
     /**
-     * @see plugintype_base::load_other_required_plugins().
+     * @see plugin_information::get_uninstall_url()
      */
-    protected function load_other_required_plugins() {
-        parent::load_other_required_plugins();
-        if (!empty($this->dependencies)) {
-            return;
-        }
-
-        // Standard mechanism did not find anything, so try the legacy way.
-        global $CFG;
-        require_once($CFG->libdir . '/questionlib.php');
-        $required = question_engine::get_behaviour_required_behaviours($this->name);
-        foreach ($required as $other) {
-            $this->dependencies['qbehaviour_' . $other] = ANY_VERSION;
-        }
-    }
-
     public function get_uninstall_url() {
         return new moodle_url('/admin/qbehaviours.php',
                 array('delete' => $this->name, 'sesskey' => sesskey()));

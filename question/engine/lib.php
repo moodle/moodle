@@ -329,17 +329,6 @@ abstract class question_engine {
     }
 
     /**
-     * Get the translated name of an behaviour, for display in the UI.
-     * @param string $behaviour the internal name of the model.
-     * @return string name from the current language pack.
-     */
-    public static function get_behaviour_required_behaviours($behaviour) {
-        self::load_behaviour_class($behaviour);
-        $class = 'qbehaviour_' . $behaviour;
-        return $class::get_required_behaviours();
-    }
-
-    /**
      * @return array all the file area names that may contain response files.
      */
     public static function get_all_response_file_areas() {

@@ -15,32 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Question behaviour for the old adaptive mode, with no penalties.
+ * Version information for the calculated question type.
  *
  * @package    qbehaviour
- * @subpackage adaptivenopenalty
- * @copyright  2009 The Open University
+ * @subpackage deferredcbm
+ * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__) . '/../adaptive/behaviour.php');
+$plugin->component = 'qbehaviour_deferredcbm';
+$plugin->version   = 2011102700;
 
+$plugin->requires  = 2011102700;
+$plugin->dependencies = array(
+    'qbehaviour_deferredfeedback' => 2011102700
+);
 
-/**
- * Question behaviour for adaptive mode, with no penalties.
- *
- * This is the old version of interactive mode, without penalties.
- *
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class qbehaviour_adaptivenopenalty extends qbehaviour_adaptive {
-    const IS_ARCHETYPAL = true;
-
-    protected function adjusted_fraction($fraction, $prevtries) {
-        return $fraction;
-    }
-}
+$plugin->maturity  = MATURITY_STABLE;
