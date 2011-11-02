@@ -304,7 +304,7 @@ class plugin_manager {
             ),
 
             'coursereport' => array(
-                'completion', 'log', 'participation', 'progress', 'stats'
+                'log', 'participation', 'progress', 'stats'
             ),
 
             'datafield' => array(
@@ -406,7 +406,7 @@ class plugin_manager {
             ),
 
             'report' => array(
-                'backups', 'configlog', 'courseoverview',
+                'backups', 'completion', 'configlog', 'courseoverview',
                 'log', 'outline', 'questioninstances', 'security', 'stats'
             ),
 

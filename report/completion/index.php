@@ -24,7 +24,7 @@
  * @author    Aaron Barnes <aaronb@catalyst.net.nz>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once('../../../config.php');
+require_once('../../config.php');
 require_once($CFG->libdir.'/completionlib.php');
 
 /**
@@ -46,7 +46,7 @@ $edituser = optional_param('edituser', 0, PARAM_INT);
 
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
-$url = new moodle_url('/course/report/completion/index.php', array('course'=>$course->id));
+$url = new moodle_url('/report/completion/index.php', array('course'=>$course->id));
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 
@@ -78,7 +78,7 @@ function csv_quote($value) {
 require_login($course);
 
 $context=get_context_instance(CONTEXT_COURSE, $course->id);
-require_capability('coursereport/completion:view', $context);
+require_capability('report/completion:view', $context);
 
 // Get group mode
 $group = groups_get_course_group($course, true); // Supposed to verify group
@@ -177,10 +177,10 @@ if ($csv) {
         )
     );
 
-    $PAGE->requires->js('/course/report/completion/textrotate.js');
+    $PAGE->requires->js('/report/completion/textrotate.js');
 
     // Handle groups (if enabled)
-    groups_print_course_menu($course, $CFG->wwwroot.'/course/report/completion/?course='.$course->id);
+    groups_print_course_menu($course, $CFG->wwwroot.'/report/completion/?course='.$course->id);
 }
 
 
@@ -227,7 +227,7 @@ if ($total) {
 
 
 // Build link for paging
-$link = $CFG->wwwroot.'/course/report/completion/?course='.$course->id;
+$link = $CFG->wwwroot.'/report/completion/?course='.$course->id;
 if (strlen($sort)) {
     $link .= '&amp;sort='.$sort;
 }

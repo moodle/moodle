@@ -18,7 +18,6 @@
 /**
  * This file contains functions used by the progress report
  *
- * @since 2.0
  * @package course-report
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -33,14 +32,14 @@ require_once($CFG->libdir.'/completionlib.php');
  * @param stdClass $course The course to object for the report
  * @param stdClass $context The context of the course
  */
-function completion_report_extend_navigation($navigation, $course, $context) {
+function report_completion_extend_navigation_course($navigation, $course, $context) {
     global $CFG, $OUTPUT;
 
-    if (has_capability('coursereport/completion:view', $context)) {
+    if (has_capability('report/completion:view', $context)) {
         $completion = new completion_info($course);
         if ($completion->is_enabled() && $completion->has_criteria()) {
-            $url = new moodle_url('/course/report/completion/index.php', array('course'=>$course->id));
-            $navigation->add(get_string('pluginname','coursereport_completion'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
+            $url = new moodle_url('/report/completion/index.php', array('course'=>$course->id));
+            $navigation->add(get_string('pluginname','report_completion'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
         }
     }
 }
@@ -50,12 +49,13 @@ function completion_report_extend_navigation($navigation, $course, $context) {
  * @param string $pagetype current page type
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
+ * @return array
  */
-function completion_page_type_list($pagetype, $parentcontext, $currentcontext) {
+function report_completion_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $array = array(
         '*' => get_string('page-x', 'pagetype'),
         'course-report-*' => get_string('page-course-report-x', 'pagetype'),
-        'course-report-completion-index' => get_string('pluginpagetype',  'coursereport_completion')
+        'course-report-completion-index' => get_string('pluginpagetype',  'report_completion')
     );
     return $array;
 }
