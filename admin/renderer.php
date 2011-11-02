@@ -725,8 +725,12 @@ class core_admin_renderer extends plugin_renderer_base {
                 }
 
                 $uninstallurl = $plugin->get_uninstall_url();
+                $requriedby = $pluginman->other_plugins_that_require($plugin->component);
                 if (is_null($uninstallurl)) {
                     $uninstall = new html_table_cell('');
+                } else if ($requriedby) {
+                    $uninstall = new html_table_cell(get_string('requiredby', 'core_plugin', implode(', ', $requriedby)));
+                    $uninstall->attributes['class'] = 'requiredby';
                 } else {
                     $uninstall = html_writer::link($uninstallurl, get_string('uninstall', 'core_plugin'));
                     $uninstall = new html_table_cell($uninstall);
