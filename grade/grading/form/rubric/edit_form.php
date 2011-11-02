@@ -58,10 +58,9 @@ class gradingform_rubric_editrubric extends moodleform {
 
         // rubric completion status
         $choices = array();
-        $choices[gradingform_controller::DEFINITION_STATUS_WORKINPROGRESS]    = get_string('statusworkinprogress', 'gradingform_rubric');
-        $choices[gradingform_controller::DEFINITION_STATUS_PRIVATE]    = get_string('statusprivate', 'gradingform_rubric');
-        $choices[gradingform_controller::DEFINITION_STATUS_PUBLIC]    = get_string('statuspublic', 'gradingform_rubric');
-        $form->addElement('select', 'status', 'Current rubric status', $choices)->freeze();
+        $choices[gradingform_controller::DEFINITION_STATUS_DRAFT]    = get_string('statusdraft', 'grading');
+        $choices[gradingform_controller::DEFINITION_STATUS_READY]    = get_string('statusready', 'grading');
+        $form->addElement('select', 'status', get_string('rubricstatus', 'gradingform_rubric'), $choices)->freeze();
 
         // rubric editor
         $element = $form->addElement('rubriceditor', 'rubric', get_string('rubric', 'gradingform_rubric'));
@@ -112,9 +111,9 @@ class gradingform_rubric_editrubric extends moodleform {
     function get_data() {
         $data = parent::get_data();
         if (!empty($data->saverubric)) {
-            $data->status = gradingform_controller::DEFINITION_STATUS_PUBLIC; // TODO ???
+            $data->status = gradingform_controller::DEFINITION_STATUS_READY;
         } else if (!empty($data->saverubricdraft)) {
-            $data->status = gradingform_controller::DEFINITION_STATUS_WORKINPROGRESS;
+            $data->status = gradingform_controller::DEFINITION_STATUS_DRAFT;
         }
         return $data;
     }

@@ -122,16 +122,7 @@ abstract class gradingform_controller {
      * @return boolean
      */
     public function is_form_available() {
-
-        if (!$this->is_form_defined()) {
-            return false;
-        }
-
-        if ($this->definition->status == self::DEFINITION_STATUS_READY) {
-            return true;
-        }
-
-        return false;
+        return ($this->is_form_defined() && $this->definition->status == self::DEFINITION_STATUS_READY);
     }
 
     /**
@@ -217,6 +208,7 @@ abstract class gradingform_controller {
         $new->description = $old->description;
         $new->descriptionformat = $old->descriptionformat;
         $new->options = $old->options;
+        $new->status = $old->status;
 
         return $new;
     }
@@ -229,10 +221,9 @@ abstract class gradingform_controller {
      * and save their data into own tables, too.
      *
      * @param stdClass $definition data containing values for the {grading_definition} table
-     * @param int|null $status optionally overwrite the status field with this value
      * @param int|null $usermodified optional userid of the author of the definition, defaults to the current user
      */
-    public function update_definition(stdClass $definition, $status = null, $usermodified = null) {
+    public function update_definition(stdClass $definition, $usermodified = null) {
         global $DB, $USER;
 
         if (is_null($usermodified)) {
@@ -261,10 +252,6 @@ abstract class gradingform_controller {
             // set the modification flags
             $record->timemodified = time();
             $record->usermodified = $usermodified;
-            // overwrite the status if required
-            if (!is_null($status)) {
-                $record->status = $status;
-            }
 
             $DB->update_record('grading_definitions', $record);
 
@@ -290,10 +277,11 @@ abstract class gradingform_controller {
             $record->usercreated  = $usermodified;
             $record->timemodified = $record->timecreated;
             $record->usermodified = $record->usercreated;
-            if (!is_null($status)) {
-                $record->status = $status;
-            } else {
+            if (empty($record->status)) {
                 $record->status = self::DEFINITION_STATUS_DRAFT;
+            }
+            if (empty($record->descriptionformat)) {
+                $record->descriptionformat = FORMAT_MOODLE; // field can not be empty
             }
 
             $DB->insert_record('grading_definitions', $record);
@@ -301,6 +289,18 @@ abstract class gradingform_controller {
         } else {
             throw new coding_exception('Unknown status of the cached definition record.');
         }
+    }
+
+    /**
+     * Formats the definition description for display on page
+     *
+     * @return string
+     */
+    public function get_formatted_description() {
+        if (!isset($this->definition->description)) {
+            return '';
+        }
+        return format_text($this->definition->description, $this->definition->descriptionformat);
     }
 
     /**

@@ -62,17 +62,16 @@ class gradingform_rubric_controller extends gradingform_controller {
      *
      * @see parent::update_definition()
      * @param stdClass $newdefinition rubric definition data as coming from gradingform_rubric_editrubric::get_data()
-     * @param int|null $status optionally overwrite the status field with this value
      * @param int|null $usermodified optional userid of the author of the definition, defaults to the current user
      */
-    public function update_definition(stdClass $newdefinition, $status = null, $usermodified = null) {
+    public function update_definition(stdClass $newdefinition, $usermodified = null) {
         global $DB;
 
         // firstly update the common definition data in the {grading_definition} table
         if ($this->definition === false) {
             // if definition does not exist yet, create a blank one
             // (we need id to save files embedded in description)
-            parent::update_definition((object)array(), $status, $usermodified);
+            parent::update_definition(new stdClass(), $usermodified);
             parent::load_definition();
         }
         if (!isset($newdefinition->rubric['options'])) {
@@ -82,7 +81,7 @@ class gradingform_rubric_controller extends gradingform_controller {
         $editoroptions = self::description_form_field_options($this->get_context());
         $newdefinition = file_postupdate_standard_editor($newdefinition, 'description', $editoroptions, $this->get_context(),
             'gradingform_rubric', 'definition_description', $this->definition->id);
-        parent::update_definition($newdefinition, $status, $usermodified);
+        parent::update_definition($newdefinition, $usermodified);
 
         // reload the definition from the database
         $currentdefinition = $this->get_definition(true);
@@ -336,9 +335,14 @@ class gradingform_rubric_controller extends gradingform_controller {
         );
     }
 
+    /**
+     * Formats the definition description for display on page
+     *
+     * @return string
+     */
     public function get_formatted_description() {
-        if ($this->definition === false) {
-            return null;
+        if (!isset($this->definition->description)) {
+            return '';
         }
         $context = $this->get_context();
 
@@ -584,10 +588,13 @@ class gradingform_rubric_instance extends gradingform_instance {
         $minscore = 0;
         $maxscore = 0;
         foreach ($this->get_controller()->get_definition()->rubric_criteria as $id => $criterion) {
-            $keys = array_keys($criterion['levels']);
-            sort($keys);
-            $minscore += $criterion['levels'][$keys[0]]['score'];
-            $maxscore += $criterion['levels'][$keys[sizeof($keys)-1]]['score'];
+            $scores = array();
+            foreach ($criterion['levels'] as $level) {
+                $scores[] = $level['score'];
+            }
+            sort($scores);
+            $minscore += $criterion['levels'][$scores[0]];
+            $maxscore += $criterion['levels'][$scores[sizeof($scores)-1]];
         }
 
         if ($maxscore <= $minscore) {
@@ -646,4 +653,45 @@ class gradingform_rubric_instance extends gradingform_instance {
         }
         return $this->get_controller()->get_renderer($page)->display_rubric($criteria, $options, $mode, $gradingformelement->getName(), $value);
     }
+}
+
+
+/**
+ * Processes file requests for the gradingform_rubric
+ *
+ * Required to serve files for this plugin
+ * Called from pluginfile.php
+ *
+ * @global moodle_database $DB
+ * @param stdClass $course
+ * @param null $cm
+ * @param stdClass $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
+ * @return void|false
+ */
+function gradingform_rubric_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+    global $CFG, $DB;
+    // First argument should ALWAYS be the itemid
+    $itemid = (int)array_shift($args);
+    // Construct a URL to the file and check it exists
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/gradingform_rubric/$filearea/$itemid/$relativepath";
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        // File doesnt exist anyway no point proceeding.
+        return false;
+    }
+    // Switch by the fileare and check the appropriate information
+    switch ($filearea) {
+        case 'definition_description' :
+            // Make sure the itemid points to a valid definition
+            if ($DB->record_exists('grading_definitions', array('id' => $itemid))) {
+                send_stored_file($file, 0, 0, $forcedownload);
+            }
+            break;
+    }
+    // Obviosly bogus comething or other in there
+    return false;
 }

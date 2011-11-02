@@ -88,8 +88,7 @@ if ($pick) {
         die();
     } else {
         require_sesskey();
-        $targetcontroller->update_definition($sourcecontroller->get_definition_copy($targetcontroller),
-            gradingform_controller::DEFINITION_STATUS_READY);
+        $targetcontroller->update_definition($sourcecontroller->get_definition_copy($targetcontroller));
         $DB->set_field('grading_definitions', 'timecopied', time(), array('id' => $definition->id));
         redirect(new moodle_url('/grade/grading/manage.php', array('areaid' => $targetid)));
     }
@@ -199,7 +198,7 @@ foreach ($rs as $template) {
             get_string('templatedelete', 'core_grading'), 't/delete', 'remove');
     }
     $out .= $output->box(join(' ', $actions), 'template-actions');
-    $out .= $output->box(format_text($template->description, $template->descriptionformat), 'template-description');
+    $out .= $output->box($controller->get_formatted_description(), 'template-description');
 
     // ideally we should highlight just the name, description and the fields
     // in the preview that were actually searched. to make our life easier, we

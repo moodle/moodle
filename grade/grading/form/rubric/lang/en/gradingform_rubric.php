@@ -56,12 +56,12 @@ $string['showscorestudent'] = 'Display points for each level to those being grad
 $string['enableremarks'] = 'Allow grader to add text remarks for each criteria';
 $string['showremarksstudent'] = 'Show remarks to those being graded';
 
-$string['saverubric'] = 'Save rubric and make it available';
+$string['saverubric'] = 'Save rubric and make it ready';
 $string['saverubricdraft'] = 'Save as draft';
 
-$string['statusworkinprogress'] = 'Work in progress';
-$string['statusprivate'] = 'Private';
-$string['statuspublic'] = 'Public';
+$string['rubricstatus'] = 'Current rubric status';
+$string['statusdraft'] = 'Draft';
+$string['statusready'] = 'Ready';
 
 $string['err_nocriteria'] = 'Rubric must contain at least one criterion';
 $string['err_mintwolevels'] = 'Each criterion must have at least two levels';

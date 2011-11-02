@@ -53,13 +53,8 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 } else if ($mform->is_submitted() && $mform->is_validated()) {
     $data = $mform->get_data();
-    if (!empty($data->submitfinal)) {
-        $controller->update_definition($data, gradingform_controller::DEFINITION_STATUS_READY);
-        redirect($returnurl);
-    } else {
-        $controller->update_definition($data, gradingform_controller::DEFINITION_STATUS_DRAFT);
-        redirect($PAGE->url);
-    }
+    $controller->update_definition($data);
+    redirect($returnurl);
 }
 
 echo $OUTPUT->header();
