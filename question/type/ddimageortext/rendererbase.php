@@ -136,14 +136,15 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
         if ($filearea == 'bgimage') {
             $itemid = $question->id;
         }
-        $draftfiles = $fs->get_area_files($question->contextid, 'qtype_ddimageortext',
-                                                                    $filearea, $itemid, 'id');
+        $componentname = $question->qtype->plugin_name();
+        $draftfiles = $fs->get_area_files($question->contextid, $componentname,
+                                                                        $filearea, $itemid, 'id');
         if ($draftfiles) {
             foreach ($draftfiles as $file) {
                 if ($file->is_directory()) {
                     continue;
                 }
-                $url = moodle_url::make_pluginfile_url($question->contextid, 'qtype_ddimageortext',
+                $url = moodle_url::make_pluginfile_url($question->contextid, $componentname,
                                             $filearea, "$qubaid/$slot/{$itemid}", '/',
                                             $file->get_filename());
                 return $url->out();
