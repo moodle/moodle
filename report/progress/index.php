@@ -1,5 +1,5 @@
 <?php
-require_once('../../../config.php');
+require_once('../../config.php');
 require_once($CFG->libdir . '/completionlib.php');
 
 define('COMPLETION_REPORT_PAGE', 25);
@@ -42,7 +42,7 @@ function csv_quote($value) {
     }
 }
 
-$url = new moodle_url('/course/report/progress/index.php', array('course'=>$id));
+$url = new moodle_url('/report/progress/index.php', array('course'=>$id));
 if ($sort !== '') {
     $url->param('sort', $sort);
 }
@@ -59,7 +59,7 @@ require_login($course);
 
 // Check basic permission
 $context=get_context_instance(CONTEXT_COURSE,$course->id);
-require_capability('coursereport/progress:view',$context);
+require_capability('report/progress:view',$context);
 
 // Get group mode
 $group=groups_get_course_group($course,true); // Supposed to verify group
@@ -138,11 +138,11 @@ if($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are 
 
     if($svgcleverness) {
         $PAGE->requires->yui2_lib('event');
-        $PAGE->requires->js('/course/report/progress/textrotate.js');
+        $PAGE->requires->js('/report/progress/textrotate.js');
     }
 
     // Handle groups (if enabled)
-    groups_print_course_menu($course,$CFG->wwwroot.'/course/report/progress/?course='.$course->id);
+    groups_print_course_menu($course,$CFG->wwwroot.'/report/progress/?course='.$course->id);
 }
 
 if(count($activities)==0) {
@@ -159,7 +159,7 @@ if (!$grandtotal) {
 }
 
 // Build link for paging
-$link = $CFG->wwwroot.'/course/report/progress/?course='.$course->id;
+$link = $CFG->wwwroot.'/report/progress/?course='.$course->id;
 if (strlen($sort)) {
     $link .= '&amp;sort='.$sort;
 }

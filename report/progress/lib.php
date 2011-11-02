@@ -18,7 +18,6 @@
 /**
  * This file contains functions used by the progress report
  *
- * @since 2.0
  * @package course-report
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -33,10 +32,10 @@ require_once($CFG->libdir.'/completionlib.php');
  * @param stdClass $course The course to object for the report
  * @param stdClass $context The context of the course
  */
-function progress_report_extend_navigation($navigation, $course, $context) {
+function report_progress_extend_navigation_course($navigation, $course, $context) {
     global $CFG, $OUTPUT;
 
-    $showonnavigation = has_capability('coursereport/progress:view', $context);
+    $showonnavigation = has_capability('report/progress:view', $context);
     $group=groups_get_course_group($course,true); // Supposed to verify group
     if($group===0 && $course->groupmode==SEPARATEGROUPS) {
         $showonnavigation = ($showonnavigation && has_capability('moodle/site:accessallgroups', $context));
@@ -45,8 +44,8 @@ function progress_report_extend_navigation($navigation, $course, $context) {
     $completion = new completion_info($course);
     $showonnavigation = ($showonnavigation && $completion->is_enabled() && count($completion->get_activities())>0);
     if ($showonnavigation) {
-        $url = new moodle_url('/course/report/progress/index.php', array('course'=>$course->id));
-        $navigation->add(get_string('pluginname','coursereport_progress'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
+        $url = new moodle_url('/report/progress/index.php', array('course'=>$course->id));
+        $navigation->add(get_string('pluginname','report_progress'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
     }
 }
 
@@ -55,8 +54,9 @@ function progress_report_extend_navigation($navigation, $course, $context) {
  * @param string $pagetype current page type
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
+ * @return array
  */
-function progress_page_type_list($pagetype, $parentcontext, $currentcontext) {
+function report_progress_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $array = array(
         '*' => get_string('page-x', 'pagetype'),
         'course-report-*' => get_string('page-course-report-x', 'pagetype'),
