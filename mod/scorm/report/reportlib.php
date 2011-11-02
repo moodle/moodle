@@ -49,27 +49,29 @@ function scorm_report_list($context) {
 }
 /**
  * Returns The maximum numbers of Questions associated with an Scorm Pack
- * @param array array of sco objects
- * @param array array of attempt objects
+ *
+ * @param int Scorm ID
  * @return int an integer representing the question count
  */
-function get_scorm_question_count($scoes,$attempts)
-{
-    $count=0;
-    foreach($attempts as $scouser){
-        foreach($scoes as $sco) {
-            $i=0;
-            if ($trackdata = scorm_get_tracks($sco->id, $scouser->userid, $scouser->attempt)) {
-                $element='cmi.interactions_'.$i.'.id';
-                while(isset($trackdata->$element)) {
-                    $i++;
-                    $element='cmi.interactions_'.$i.'.id';
-                }
-            }
-            if($i>$count)
-            $count=$i;
+function get_scorm_question_count($scormid) {
+    global $DB;
+    $count = 0;
+    $params = array();
+    $select = "scormid = ? AND ";
+    $select .= $DB->sql_like("element", "?", false);
+    $params[] = $scormid;
+    $params[] = "cmi.interactions_%.id";
+    $rs = $DB->get_recordset_select("scorm_scoes_track", $select, $params, 'element');
+    $keywords = array("cmi.interactions_", ".id");
+    foreach ($rs as $record) {
+        $num = trim(str_ireplace($keywords, '', $record->element));
+        if (is_numeric($num) && $num > $count) {
+            $count = $num;
         }
     }
+    //done as interactions start at 0
+    $count++;
+    $rs->close(); // closing recordset
     return $count;
 }
 
