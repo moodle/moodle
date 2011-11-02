@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details.
+ * Version details
  *
  * @package    report
  * @subpackage completion
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @copyright  2009 Catalyst IT Ltd
+ * @author     Aaron Barnes <aaronb@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

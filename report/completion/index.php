@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,16 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Course completion progress report
  *
- * @package   moodlecore
- * @copyright 2009 Catalyst IT Ltd
- * @author    Aaron Barnes <aaronb@catalyst.net.nz>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report
+ * @subpackage completion
+ * @copyright  2009 Catalyst IT Ltd
+ * @author     Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once('../../config.php');
+
+require('../../config.php');
 require_once($CFG->libdir.'/completionlib.php');
 
 /**
@@ -33,7 +33,7 @@ require_once($CFG->libdir.'/completionlib.php');
 define('COMPLETION_REPORT_PAGE',        25);
 define('COMPLETION_REPORT_COL_TITLES',  true);
 
-/**
+/*
  * Setup page, check permissions
  */
 
@@ -65,8 +65,8 @@ $idnumbers = $CFG->grade_report_showuseridnumber;
 // Function for quoting csv cell values
 function csv_quote($value) {
     global $excel;
-    if($excel) {
-        $tl=textlib_get_instance();
+    if ($excel) {
+        $tl = textlib_get_instance();
         return $tl->convert('"'.str_replace('"',"'",$value).'"','UTF-8','UTF-16LE');
     } else {
         return '"'.str_replace('"',"'",$value).'"';
@@ -82,7 +82,7 @@ require_capability('report/completion:view', $context);
 
 // Get group mode
 $group = groups_get_course_group($course, true); // Supposed to verify group
-if($group === 0 && $course->groupmode == SEPARATEGROUPS) {
+if ($group === 0 && $course->groupmode == SEPARATEGROUPS) {
     require_capability('moodle/site:accessallgroups',$context);
 }
 
@@ -139,7 +139,7 @@ if (!$csv) {
     }
 }
 
-/**
+/*
  * Setup page header
  */
 if ($csv) {
@@ -148,7 +148,7 @@ if ($csv) {
     header('Content-Disposition: attachment; filename=progress.'.
         preg_replace('/[^a-z0-9-]/','_',$textlib->strtolower(strip_tags($shortname))).'.csv');
     // Unicode byte-order mark for Excel
-    if($excel) {
+    if ($excel) {
         header('Content-Type: text/csv; charset=UTF-16LE');
         print chr(0xFF).chr(0xFE);
         $sep="\t".chr(0);
@@ -267,7 +267,7 @@ foreach ($initials as $initial) {
 }
 
 // Do we need a paging bar?
-if($total > COMPLETION_REPORT_PAGE) {
+if ($total > COMPLETION_REPORT_PAGE) {
 
     // Paging bar
     $pagingbar .= '<div class="paging">';
@@ -314,12 +314,12 @@ if($total > COMPLETION_REPORT_PAGE) {
 }
 
 
-/**
+/*
  * Draw table header
  */
 
 // Start of table
-if(!$csv) {
+if (!$csv) {
     print '<br class="clearer"/>'; // ugh
 
     $total_header = ($total == $grandtotal) ? $total : "{$total}/{$grandtotal}";
@@ -456,7 +456,7 @@ if(!$csv) {
 
     $sistring = "&amp;silast={$silast}&amp;sifirst={$sifirst}";
 
-    if($firstnamesort) {
+    if ($firstnamesort) {
         print
             get_string('firstname')." / <a href=\"./?course={$course->id}{$sistring}\">".
             get_string('lastname').'</a>';
@@ -469,7 +469,7 @@ if(!$csv) {
 
 
     // Print user id number column
-    if($idnumbers) {
+    if ($idnumbers) {
         print '<th>'.get_string('idnumber').'</th>';
     }
 
@@ -540,7 +540,7 @@ if(!$csv) {
 
 } else {
     // TODO
-    if($idnumbers) {
+    if ($idnumbers) {
         print $sep;
     }
 }
@@ -552,9 +552,9 @@ if(!$csv) {
 foreach ($progress as $user) {
 
     // User name
-    if($csv) {
+    if ($csv) {
         print csv_quote(fullname($user));
-        if($idnumbers) {
+        if ($idnumbers) {
             print $sep.csv_quote($user->idnumber);
         }
     } else {
@@ -562,7 +562,7 @@ foreach ($progress as $user) {
 
         print '<th scope="row"><a href="'.$CFG->wwwroot.'/user/view.php?id='.
             $user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></th>';
-        if($idnumbers) {
+        if ($idnumbers) {
             print '<td>'.htmlspecialchars($user->idnumber).'</td>';
         }
     }
@@ -580,7 +580,7 @@ foreach ($progress as $user) {
 
 
             // Get progress information and state
-            if(array_key_exists($activity->id,$user->progress)) {
+            if (array_key_exists($activity->id,$user->progress)) {
                 $thisprogress=$user->progress[$activity->id];
                 $state=$thisprogress->completionstate;
                 $date=userdate($thisprogress->timemodified);
@@ -611,7 +611,7 @@ foreach ($progress as $user) {
             $a->activity=strip_tags($activity->name);
             $fulldescribe=get_string('progress-title','completion',$a);
 
-            if($csv) {
+            if ($csv) {
                 print $sep.csv_quote($describe).$sep.csv_quote($date);
             } else {
                 print '<td class="completion-progresscell">';
@@ -693,14 +693,14 @@ foreach ($progress as $user) {
         print '</td>';
     }
 
-    if($csv) {
+    if ($csv) {
         print $line;
     } else {
         print '</tr>';
     }
 }
 
-if($csv) {
+if ($csv) {
     exit;
 }
 print '</table>';

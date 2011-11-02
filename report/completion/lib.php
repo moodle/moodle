@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,14 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains functions used by the progress report
+ * Version details.
  *
- * @package course-report
- * @copyright 2009 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report
+ * @subpackage completion
+ * @copyright  2009 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->libdir.'/completionlib.php');
+defined('MOODLE_INTERNAL') || die;
 
 /**
  * This function extends the navigation with the report items
@@ -34,6 +34,8 @@ require_once($CFG->libdir.'/completionlib.php');
  */
 function report_completion_extend_navigation_course($navigation, $course, $context) {
     global $CFG, $OUTPUT;
+
+    require_once($CFG->libdir.'/completionlib.php');
 
     if (has_capability('report/completion:view', $context)) {
         $completion = new completion_info($course);
