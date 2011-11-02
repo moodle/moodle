@@ -34,7 +34,11 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6') !== false) {
     @apache_setenv('no-gzip', 1);
 }
 
-//IE 9 workaround for Flash bug: MDL-29213
+// IE 9 workaround for Flash bug: MDL-29213
+// Note that it's not clear if appending the meta tag via $CFG->additionalhtmlhead
+// is correct at all, both because of the mechanism itself and because MS says
+// the tag must be used *before* including other stuff. See the issue for more info.
+// TODO: Once we implement some way to inject meta tags, change this to use it. MDL-30039
 if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 9') !== false) {
     if (!isset($CFG->additionalhtmlhead)) { //check to make sure set first - that way we can use .=
         $CFG->additionalhtmlhead = '';
