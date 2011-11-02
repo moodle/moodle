@@ -8148,7 +8148,7 @@ function forum_get_posts_by_user($user, array $courses, $musthaveaccess = false,
         } else {
             // Check whether the current user is enrolled or has access to view the course
             // if they don't we immediately have a problem.
-            if (!can_access_course($coursecontext)) {
+            if (!can_access_course($course)) {
                 if ($musthaveaccess) {
                     print_error('errorenrolmentrequired', 'forum');
                 }
@@ -8157,7 +8157,7 @@ function forum_get_posts_by_user($user, array $courses, $musthaveaccess = false,
 
             // Check whether the requested user is enrolled or has access to view the course
             // if they don't we immediately have a problem.
-            if (!can_access_course($coursecontext, $user)) {
+            if (!can_access_course($course, $user)) {
                 if ($musthaveaccess) {
                     print_error('notenrolled', 'forum');
                 }

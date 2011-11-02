@@ -50,6 +50,12 @@ class workshop_accumulative_assessment_form extends workshop_assessment_form {
         $mform->addElement('hidden', 'nodims', $nodims);
         $mform->setType('nodims', PARAM_INT);
 
+        // minimal grade value to select - used by the 'compare' rule below
+        // (just an implementation detail to make the rule work, this element is
+        // not processed by the server)
+        $mform->addElement('hidden', 'minusone', -1);
+        $mform->setType('minusone', PARAM_INT);
+
         for ($i = 0; $i < $nodims; $i++) {
             // dimension header
             $dimtitle = get_string('dimensionnumber', 'workshopform_accumulative', $i+1);
@@ -72,7 +78,9 @@ class workshop_accumulative_assessment_form extends workshop_assessment_form {
             // grade for this aspect
             $label = get_string('dimensiongrade', 'workshopform_accumulative');
             $options = make_grades_menu($fields->{'grade__idx_' . $i});
+            $options = array('-1' => get_string('choosedots')) + $options;
             $mform->addElement('select', 'grade__idx_' . $i, $label, $options);
+            $mform->addRule(array('grade__idx_' . $i, 'minusone') , get_string('mustchoosegrade', 'workshopform_accumulative'), 'compare', 'gt');
 
             // comment
             $label = get_string('dimensioncomment', 'workshopform_accumulative');

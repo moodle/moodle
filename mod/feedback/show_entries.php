@@ -1,4 +1,18 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * print the single entries
@@ -27,7 +41,7 @@ $current_tab = $do_show;
 //get the objects
 ////////////////////////////////////////////////////////
 
-if($userid) {
+if ($userid) {
     $formdata->userid = intval($userid);
 }
 
@@ -53,7 +67,7 @@ if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
 
 require_login($course->id, true, $cm);
 
-if(($formdata = data_submitted()) AND !confirm_sesskey()) {
+if (($formdata = data_submitted()) AND !confirm_sesskey()) {
     print_error('invalidsesskey');
 }
 
@@ -62,10 +76,15 @@ require_capability('mod/feedback:viewreports', $context);
 ////////////////////////////////////////////////////////
 //get the responses of given user
 ////////////////////////////////////////////////////////
-if($do_show == 'showoneentry') {
+if ($do_show == 'showoneentry') {
     //get the feedbackitems
     $feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id), 'position');
-    $feedbackcompleted = $DB->get_record('feedback_completed', array('feedback'=>$feedback->id, 'userid'=>$userid, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO)); //arb
+
+    $params = array('feedback'=>$feedback->id,
+                    'userid'=>$userid,
+                    'anonymous_response'=>FEEDBACK_ANONYMOUS_NO);
+
+    $feedbackcompleted = $DB->get_record('feedback_completed', $params); //arb
 }
 
 /// Print the page header
@@ -76,7 +95,7 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
 echo $OUTPUT->header();
 
-include('tabs.php');
+require('tabs.php');
 
 /// Print the main part of the page
 ///////////////////////////////////////////////////////////////////////////
@@ -86,9 +105,9 @@ include('tabs.php');
 ////////////////////////////////////////////////////////
 /// Print the links to get responses and analysis
 ////////////////////////////////////////////////////////
-if($do_show == 'showentries'){
+if ($do_show == 'showentries') {
     //print the link to analysis
-    if(has_capability('mod/feedback:viewreports', $context)) {
+    if (has_capability('mod/feedback:viewreports', $context)) {
         //get the effective groupmode of this course and module
         if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
             $groupmode =  $cm->groupmode;
@@ -96,7 +115,6 @@ if($do_show == 'showentries'){
             $groupmode = $course->groupmode;
         }
 
-        // $groupselect = groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/feedback/show_entries.php?id=' . $cm->id.'&do_show=showentries', true);
         $groupselect = groups_print_activity_menu($cm, $url->out(), true);
         $mygroupid = groups_get_activity_group($cm);
 
@@ -107,7 +125,7 @@ if($do_show == 'showentries'){
         $tablecolumns = array('userpic', 'fullname', 'c.timemodified');
         $tableheaders = array(get_string('userpic'), get_string('fullnameuser'), get_string('date'));
 
-        if(has_capability('mod/feedback:deletesubmissions', $context)) {
+        if (has_capability('mod/feedback:deletesubmissions', $context)) {
             $tablecolumns[] = 'deleteentry';
             $tableheaders[] = '';
         }
@@ -130,9 +148,9 @@ if($do_show == 'showentries'){
                     ));
         $table->setup();
 
-        if($table->get_sql_sort()) {
+        if ($table->get_sql_sort()) {
             $sort = $table->get_sql_sort();
-        }else {
+        } else {
             $sort = '';
         }
 
@@ -142,79 +160,101 @@ if($do_show == 'showentries'){
         }
 
         //get students in conjunction with groupmode
-        if($groupmode > 0) {
-            if($mygroupid > 0) {
+        if ($groupmode > 0) {
+            if ($mygroupid > 0) {
                 $usedgroupid = $mygroupid;
             } else {
                 $usedgroupid = false;
             }
-        }else {
+        } else {
             $usedgroupid = false;
         }
 
         $matchcount = feedback_count_complete_users($cm, $usedgroupid);
         $table->initialbars(true);
 
-        if($showall) {
+        if ($showall) {
             $startpage = false;
             $pagecount = false;
-        }else {
+        } else {
             $table->pagesize($perpage, $matchcount);
             $startpage = $table->get_page_start();
             $pagecount = $table->get_page_size();
         }
 
         $students = feedback_get_complete_users($cm, $usedgroupid, $where, $params, $sort, $startpage, $pagecount);
+        $str_analyse = get_string('analysis', 'feedback');
+        $str_complete = get_string('completed_feedbacks', 'feedback');
+        $str_course = get_string('course');
 
-        $completedFeedbackCount = feedback_get_completeds_group_count($feedback, $mygroupid);
-        if($feedback->course == SITEID){
+        $completed_fb_count = feedback_get_completeds_group_count($feedback, $mygroupid);
+        if ($feedback->course == SITEID) {
             $analysisurl = new moodle_url('/mod/feedback/analysis_course.php', array('id'=>$id, 'courseid'=>$courseid));
             echo $OUTPUT->box_start('mdl-align');
-            echo '<a href="'.$analysisurl->out().'">'.get_string('course').' '.get_string('analysis', 'feedback').' ('.get_string('completed_feedbacks', 'feedback').': '.intval($completedFeedbackCount).')</a>';
+            echo '<a href="'.$analysisurl->out().'">';
+            echo $str_course.' '.$str_analyse.' ('.$str_complete.': '.intval($completed_fb_count).')';
+            echo '</a>';
             echo $OUTPUT->help_icon('viewcompleted', 'feedback');
             echo $OUTPUT->box_end();
-        }else {
+        } else {
             $analysisurl = new moodle_url('/mod/feedback/analysis.php', array('id'=>$id, 'courseid'=>$courseid));
             echo $OUTPUT->box_start('mdl-align');
-            echo '<a href="'.$analysisurl->out().'">'.get_string('analysis', 'feedback').' ('.get_string('completed_feedbacks', 'feedback').': '.intval($completedFeedbackCount).')</a>';
+            echo '<a href="'.$analysisurl->out().'">';
+            echo $str_analyse.' ('.$str_complete.': '.intval($completed_fb_count).')';
+            echo '</a>';
             echo $OUTPUT->box_end();
         }
     }
 
     //####### viewreports-start
-    if(has_capability('mod/feedback:viewreports', $context)) {
+    if (has_capability('mod/feedback:viewreports', $context)) {
         //print the list of students
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
         echo isset($groupselect) ? $groupselect : '';
         echo '<div class="clearer"></div>';
         echo $OUTPUT->box_start('mdl-align');
-        // echo '<table><tr><td width="400">';
         if (!$students) {
-            if($courseid != SITEID){
+            if ($courseid != SITEID) {
                 echo $OUTPUT->notification(get_string('noexistingparticipants', 'enrol'));
             }
-        } else{
+        } else {
             echo print_string('non_anonymous_entries', 'feedback');
             echo ' ('.count($students).')<hr />';
 
-            foreach ($students as $student){
-                $completedCount = $DB->count_records('feedback_completed', array('userid'=>$student->id, 'feedback'=>$feedback->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO));
-                if($completedCount > 0) {
+            foreach ($students as $student) {
+                $params = array('userid'=>$student->id,
+                                'feedback'=>$feedback->id,
+                                'anonymous_response'=>FEEDBACK_ANONYMOUS_NO);
+
+                $completed_count = $DB->count_records('feedback_completed', $params);
+                if ($completed_count > 0) {
 
                     //userpicture and link to the profilepage
-                    $profilelink = '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$student->id.'&amp;course='.$course->id.'">'.fullname($student).'</a></strong>';
+                    $fullname_url = $CFG->wwwroot.'/user/view.php?id='.$student->id.'&amp;course='.$course->id;
+                    $profilelink = '<strong><a href="'.$fullname_url.'">'.fullname($student).'</a></strong>';
                     $data = array ($OUTPUT->user_picture($student, array('courseid'=>$course->id)), $profilelink);
 
                     //link to the entry of the user
-                    $feedbackcompleted = $DB->get_record('feedback_completed', array('feedback'=>$feedback->id, 'userid'=>$student->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO));
-                    $showentryurl = new moodle_url($url, array('userid'=>$student->id, 'do_show'=>'showoneentry'));
-                    $showentrylink = '<a href="'.$showentryurl->out().'">'.UserDate($feedbackcompleted->timemodified).'</a>';
+                    $params = array('feedback'=>$feedback->id,
+                                    'userid'=>$student->id,
+                                    'anonymous_response'=>FEEDBACK_ANONYMOUS_NO);
+
+                    $feedbackcompleted = $DB->get_record('feedback_completed', $params);
+                    $showentryurl_params = array('userid'=>$student->id, 'do_show'=>'showoneentry');
+                    $showentryurl = new moodle_url($url, $showentryurl_params);
+                    $showentrylink = '<a href="'.$showentryurl->out().'">'.userdate($feedbackcompleted->timemodified).'</a>';
                     $data[] = $showentrylink;
 
                     //link to delete the entry
-                    if(has_capability('mod/feedback:deletesubmissions', $context)) {
-                        $deleteentryurl = new moodle_url($CFG->wwwroot.'/mod/feedback/delete_completed.php', array('id'=>$cm->id, 'completedid'=>$feedbackcompleted->id, 'do_show'=>'showoneentry'));
-                        $deleteentrylink = '<a href="'.$deleteentryurl->out().'">'.get_string('delete_entry', 'feedback').'</a>';
+                    if (has_capability('mod/feedback:deletesubmissions', $context)) {
+                        $delete_url_params = array('id' => $cm->id,
+                                            'completedid' => $feedbackcompleted->id,
+                                            'do_show' => 'showoneentry');
+
+                        $deleteentryurl = new moodle_url($CFG->wwwroot.'/mod/feedback/delete_completed.php', $delete_url_params);
+                        $deleteentrylink = '<a href="'.$deleteentryurl->out().'">'.
+                                                get_string('delete_entry', 'feedback').
+                                            '</a>';
                         $data[] = $deleteentrylink;
                     }
                     $table->add_data($data);
@@ -226,28 +266,44 @@ if($do_show == 'showentries'){
 
             if ($showall) {
                 $allurl->param('showall', 0);
-                echo $OUTPUT->container(html_writer::link($allurl, get_string('showperpage', '', FEEDBACK_DEFAULT_PAGE_COUNT)), array(), 'showall');
+                echo $OUTPUT->container(html_writer::link($allurl, get_string('showperpage', '', FEEDBACK_DEFAULT_PAGE_COUNT)),
+                                        array(),
+                                        'showall');
+
             } else if ($matchcount > 0 && $perpage < $matchcount) {
                 $allurl->param('showall', 1);
-                echo $OUTPUT->container(html_writer::link($allurl, get_string('showall', '', $matchcount)), array(), 'showall');
+                echo $OUTPUT->container(html_writer::link($allurl, get_string('showall', '', $matchcount)),
+                                        array(),
+                                        'showall');
             }
         }
-?>
+        ?>
         <hr />
         <table width="100%">
             <tr>
                 <td align="left" colspan="2">
-                    <?php print_string('anonymous_entries', 'feedback');?>&nbsp;(<?php echo $DB->count_records('feedback_completed', array('feedback'=>$feedback->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_YES));?>)
+                    <?php
+                    $params = array('feedback' => $feedback->id,
+                                    'anonymous_response' => FEEDBACK_ANONYMOUS_YES);
+
+                    $feedback_completeds_count = $DB->count_records('feedback_completed', $params);
+                    print_string('anonymous_entries', 'feedback');
+                    echo '&nbsp;('.$feedback_completeds_count.')';
+                    ?>
                 </td>
                 <td align="right">
                     <?php
-                        $aurl = new moodle_url('show_entries_anonym.php', array('sesskey'=>sesskey(), 'userid'=>0, 'do_show'=>'showoneentry', 'id'=>$id));
+                        $url_params = array('sesskey'=>sesskey(),
+                                        'userid'=>0,
+                                        'do_show'=>'showoneentry',
+                                        'id'=>$id);
+                        $aurl = new moodle_url('show_entries_anonym.php', $url_params);
                         echo $OUTPUT->single_button($aurl, get_string('show_entries', 'feedback'));
                     ?>
                 </td>
             </tr>
         </table>
-<?php
+        <?php
         echo $OUTPUT->box_end();
         echo $OUTPUT->box_end();
     }
@@ -256,38 +312,39 @@ if($do_show == 'showentries'){
 ////////////////////////////////////////////////////////
 /// Print the responses of the given user
 ////////////////////////////////////////////////////////
-if($do_show == 'showoneentry') {
+if ($do_show == 'showoneentry') {
     echo $OUTPUT->heading(format_text($feedback->name));
 
     //print the items
-    if(is_array($feedbackitems)){
+    if (is_array($feedbackitems)) {
         $align = right_to_left() ? 'right' : 'left';
         $usr = $DB->get_record('user', array('id'=>$userid));
 
-        if($feedbackcompleted) {
-            echo $OUTPUT->heading(UserDate($feedbackcompleted->timemodified).' ('.fullname($usr).')', 3);
+        if ($feedbackcompleted) {
+            echo $OUTPUT->heading(userdate($feedbackcompleted->timemodified).' ('.fullname($usr).')', 3);
         } else {
-            echo $OUTPUT->heading(get_string('not_completed_yet','feedback'), 3);
+            echo $OUTPUT->heading(get_string('not_completed_yet', 'feedback'), 3);
         }
 
         echo $OUTPUT->box_start('feedback_items');
         $itemnr = 0;
-        foreach($feedbackitems as $feedbackitem){
+        foreach ($feedbackitems as $feedbackitem) {
             //get the values
-            $value = $DB->get_record('feedback_value', array('completed'=>$feedbackcompleted->id, 'item'=>$feedbackitem->id));
+            $params = array('completed'=>$feedbackcompleted->id, 'item'=>$feedbackitem->id);
+            $value = $DB->get_record('feedback_value', $params);
             echo $OUTPUT->box_start('feedback_item_box_'.$align);
-            if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
+            if ($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
                 $itemnr++;
                 echo $OUTPUT->box_start('feedback_item_number_'.$align);
                 echo $itemnr;
                 echo $OUTPUT->box_end();
             }
 
-            if($feedbackitem->typ != 'pagebreak') {
+            if ($feedbackitem->typ != 'pagebreak') {
                 echo $OUTPUT->box_start('box generalbox boxalign_'.$align);
-                if(isset($value->value)) {
+                if (isset($value->value)) {
                     feedback_print_item_show_value($feedbackitem, $value->value);
-                }else {
+                } else {
                     feedback_print_item_show_value($feedbackitem, false);
                 }
                 echo $OUTPUT->box_end();

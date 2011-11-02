@@ -1,24 +1,36 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* shows an analysed view of a feedback on the mainsite
-*
-* @author Andreas Grabs
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package feedback
-*/
+ * shows an analysed view of a feedback on the mainsite
+ *
+ * @author Andreas Grabs
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package feedback
+ */
 
 require_once("../../config.php");
 require_once("lib.php");
 
-// $SESSION->feedback->current_tab = 'analysis';
 $current_tab = 'analysis';
 
 $id = required_param('id', PARAM_INT);  //the POST dominated the GET
 $coursefilter = optional_param('coursefilter', '0', PARAM_INT);
 $courseitemfilter = optional_param('courseitemfilter', '0', PARAM_INT);
 $courseitemfiltertyp = optional_param('courseitemfiltertyp', '0', PARAM_ALPHANUM);
-// $searchcourse = optional_param('searchcourse', '', PARAM_ALPHAEXT);
 $searchcourse = optional_param('searchcourse', '', PARAM_RAW);
 $courseid = optional_param('courseid', false, PARAM_INT);
 
@@ -40,7 +52,7 @@ if ($searchcourse !== '') {
 }
 $PAGE->set_url($url);
 
-if(($searchcourse OR $courseitemfilter OR $coursefilter) AND !confirm_sesskey()) {
+if (($searchcourse OR $courseitemfilter OR $coursefilter) AND !confirm_sesskey()) {
     print_error('invalidsesskey');
 }
 
@@ -62,7 +74,7 @@ if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
 
 require_login($course->id, true, $cm);
 
-if( !( (intval($feedback->publish_stats) == 1) OR has_capability('mod/feedback:viewreports', $context))) {
+if (!($feedback->publish_stats OR has_capability('mod/feedback:viewreports', $context))) {
     print_error('error');
 }
 
@@ -75,15 +87,19 @@ $PAGE->set_title(format_string($feedback->name));
 echo $OUTPUT->header();
 
 /// print the tabs
-include('tabs.php');
+require('tabs.php');
 
 //print the analysed items
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
-if( has_capability('mod/feedback:viewreports', $context) ) {
+if (has_capability('mod/feedback:viewreports', $context)) {
     //button "export to excel"
     echo $OUTPUT->container_start('mdl-align');
-    $aurl = new moodle_url('analysis_to_excel.php', array('sesskey'=>sesskey(), 'id'=>$id, 'coursefilter'=>$coursefilter));
+    $aurl = new moodle_url('analysis_to_excel.php',
+                           array('sesskey' => sesskey(),
+                                 'id' => $id,
+                                 'coursefilter' => $coursefilter));
+
     echo $OUTPUT->single_button($aurl, get_string('export_to_excel', 'feedback'));
     echo $OUTPUT->container_end();
 }
@@ -98,11 +114,14 @@ $completedscount = feedback_get_completeds_group_count($feedback, $mygroupid, $c
 echo '<b>'.get_string('completed_feedbacks', 'feedback').': '.$completedscount. '</b><br />';
 
 // get the items of the feedback
-$items = $DB->get_records('feedback_item', array('feedback'=>$feedback->id, 'hasvalue'=>1), 'position');
+$params = array('feedback' => $feedback->id, 'hasvalue' => 1);
+$items = $DB->get_records('feedback_item', $params, 'position');
 //show the count
-if(is_array($items)){
-    echo '<b>'.get_string('questions', 'feedback').': ' .sizeof($items). ' </b><hr />';
-    echo '<a href="analysis_course.php?id=' . $id . '&courseid='.$courseid.'">'.get_string('show_all', 'feedback').'</a>';
+if (is_array($items)) {
+    echo '<b>'.get_string('questions', 'feedback').': ' .count($items). ' </b><hr />';
+    echo '<a href="analysis_course.php?id=' . $id . '&courseid='.$courseid.'">';
+    echo get_string('show_all', 'feedback');
+    echo '</a>';
 } else {
     $items=array();
 }
@@ -114,12 +133,14 @@ if ($courseitemfilter > 0) {
     if ($DB->get_dbfamily() == 'postgres') { // TODO: this should be moved to standard sql DML function ;-)
          $avgvalue = 'avg(cast (value as integer))';
     }
-    if ($courses = $DB->get_records_sql ("SELECT fv.course_id, c.shortname, $avgvalue AS avgvalue
-                                            FROM {feedback_value} fv, {course} c, {feedback_item} fi
-                                           WHERE fv.course_id = c.id AND fi.id = fv.item AND fi.typ = ? AND fv.item = ?
-                                        GROUP BY course_id, shortname
-                                        ORDER BY avgvalue desc",
-                                          array($courseitemfiltertyp, $courseitemfilter))) {
+
+    $sql = "SELECT fv.course_id, c.shortname, $avgvalue AS avgvalue
+            FROM {feedback_value} fv, {course} c, {feedback_item} fi
+            WHERE fv.course_id = c.id AND fi.id = fv.item AND fi.typ = ? AND fv.item = ?
+            GROUP BY course_id, shortname
+            ORDER BY avgvalue desc";
+
+    if ($courses = $DB->get_records_sql($sql, array($courseitemfiltertyp, $courseitemfilter))) {
         $item = $DB->get_record('feedback_item', array('id'=>$courseitemfilter));
         echo '<tr><th colspan="2">'.$item->name.'</th></tr>';
         echo '<tr><td><table align="left">';
@@ -128,8 +149,15 @@ if ($courseitemfilter > 0) {
         $sep_thous = get_string('separator_thousand', 'feedback');
 
         foreach ($courses as $c) {
-            $shortname = format_string($c->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $c->course_id)));
-            echo '<tr><td>'.$shortname.'</td><td align="right">'.number_format(($c->avgvalue), 2, $sep_dec, $sep_thous).'</td></tr>';
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $c->course_id);
+            $shortname = format_string($c->shortname, true, array('context' => $coursecontext));
+
+            echo '<tr>';
+            echo '<td>'.$shortname.'</td>';
+            echo '<td align="right">'
+            echo number_format(($c->avgvalue), 2, $sep_dec, $sep_thous);
+            echo '</td>';
+            echo '</tr>';
         }
          echo '</table></td></tr>';
     } else {
@@ -138,7 +166,8 @@ if ($courseitemfilter > 0) {
 } else {
 
     echo get_string('search_course', 'feedback') . ': ';
-    echo '<input type="text" name="searchcourse" value="'.s($searchcourse).'"/> <input type="submit" value="'.get_string('search').'"/>';
+    echo '<input type="text" name="searchcourse" value="'.s($searchcourse).'"/> ';
+    echo '<input type="submit" value="'.get_string('search').'"/>';
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
     echo '<input type="hidden" name="id" value="'.$id.'" />';
     echo '<input type="hidden" name="courseitemfilter" value="'.$courseitemfilter.'" />';
@@ -158,28 +187,40 @@ if ($courseitemfilter > 0) {
 
          echo ' ' . get_string('filter_by_course', 'feedback') . ': ';
 
-         echo html_writer::select($courses, 'coursefilter', $coursefilter, null, array('id'=>'coursefilterid'));
-         $PAGE->requires->js_init_call('M.util.init_select_autosubmit', array('analysis-form', 'coursefilterid', false));
+         echo html_writer::select($courses, 'coursefilter', $coursefilter,
+                                  null, array('id'=>'coursefilterid'));
+
+         $PAGE->requires->js_init_call('M.util.init_select_autosubmit',
+                                        array('analysis-form', 'coursefilterid', false));
     }
     echo '<hr />';
     $itemnr = 0;
     //print the items in an analysed form
     echo '<tr><td>';
-    foreach($items as $item) {
-        if($item->hasvalue == 0) continue;
+    foreach ($items as $item) {
+        if ($item->hasvalue == 0) {
+            continue;
+        }
         echo '<table width="100%" class="generalbox">';
         //get the class from item-typ
         $itemobj = feedback_get_item_class($item->typ);
         $itemnr++;
-        if($feedback->autonumbering) {
+        if ($feedback->autonumbering) {
             $printnr = $itemnr.'.';
         } else {
             $printnr = '';
         }
         $itemobj->print_analysed($item, $printnr, $mygroupid, $coursefilter);
         if (preg_match('/rated$/i', $item->typ)) {
-             echo '<tr><td colspan="2"><a href="#" onclick="setcourseitemfilter('.$item->id.',\''.$item->typ.'\'); return false;">'.
-                get_string('sort_by_course', 'feedback').'</a></td></tr>';
+            $onclick = 'onclick="setcourseitemfilter'.
+                        "(".$item->id.",'".$item->typ."');".
+                        ' return false;"';
+
+            $anker = '<a href="#" '.$onclick.'>'.
+                     get_string('sort_by_course', 'feedback').
+                     '</a>';
+
+            echo '<tr><td colspan="2">'.$anker.'</td></tr>';
         }
         echo '</table>';
     }

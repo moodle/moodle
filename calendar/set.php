@@ -41,12 +41,14 @@
 require_once('../config.php');
 require_once($CFG->dirroot.'/calendar/lib.php');
 
-$return = required_param('return', PARAM_URL);
-$var = required_param('var', PARAM_ALPHA);
+require_sesskey();
 
-$url = new moodle_url('/calendar/set.php', array('return'=>$return,'var'=>$var));
+$var = required_param('var', PARAM_ALPHA);
+$return = clean_param(base64_decode(required_param('return', PARAM_RAW)), PARAM_URL);
+
+$url = new moodle_url('/calendar/set.php', array('return'=>base64_encode($return),'var'=>$var, 'sesskey'=>sesskey()));
 $PAGE->set_url($url);
-$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM)); //TODO: wrong
+$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
 switch($var) {
     case 'showgroups':

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -97,12 +96,12 @@ $string['edit_items'] = 'Edit questions';
 $string['email_notification'] = 'Send e-mail notifications';
 $string['emailnotification'] = 'emailnotifications';
 $string['emailnotification_help'] = 'If enabled, administrators receive email notification of feedback submissions.';
-$string['emailteachermail'] = '{$a->username} has completed feedback activity : \'{$a->feedback}\'                               
-                                       
-You can view it here:                                   
-                                       
+$string['emailteachermail'] = '{$a->username} has completed feedback activity : \'{$a->feedback}\'
+
+You can view it here:
+
 {$a->url}';
-$string['emailteachermailhtml'] = '{$a->username} has completed feedback activity : <i>\'{$a->feedback}\'</i><br /><br />                             
+$string['emailteachermailhtml'] = '{$a->username} has completed feedback activity : <i>\'{$a->feedback}\'</i><br /><br />
 You can view it <a href="{$a->url}">here</a>.';
 $string['entries_saved'] = 'Your answers have been saved. Thank you.';
 $string['export_questions'] = 'Export questions';

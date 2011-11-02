@@ -1,7 +1,0 @@
-@todo
-
-- Additional queries: wildcard, proximity, and range
-
-- Better class-level docblocks (most functions okay)
-
-

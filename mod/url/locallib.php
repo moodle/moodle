@@ -31,45 +31,116 @@ require_once("$CFG->libdir/resourcelib.php");
 require_once("$CFG->dirroot/mod/url/lib.php");
 
 /**
+ * This methods does weak url validation, we are looking for major problems only,
+ * no strict RFE validation.
+ *
+ * @param $url
+ * @return bool true is seems valid, false if definitely not valid URL
+ */
+function url_appears_valid_url($url) {
+    if (preg_match('/^(\/|https?:|ftp:)/i', $url)) {
+        // note: this is not exact validation, we look for severely malformed URLs only
+        return preg_match('/^[a-z]+:\/\/([^:@\s]+:[^@\s]+@)?[a-z0-9_\.\-]+(:[0-9]+)?(\/[^#]*)?(#.*)?$/i', $url);
+    } else {
+        return preg_match('/^[a-z]+:\/\/...*$/i', $url);
+    }
+}
+
+/**
+ * Fix common URL problems that we want teachers to see fixed
+ * the next time they edit the resource.
+ *
+ * This function does not include any XSS protection.
+ *
+ * @param string $url
+ * @return string
+ */
+function url_fix_submitted_url($url) {
+    // note: empty urls are prevented in form validation
+    $url = trim($url);
+
+    // remove encoded entities - we want the raw URI here
+    $url = html_entity_decode($url, ENT_QUOTES, 'UTF-8');
+
+    if (!preg_match('|^[a-z]+:|i', $url) and !preg_match('|^/|', $url)) {
+        // invalid URI, try to fix it by making it normal URL,
+        // please note relative urls are not allowed, /xx/yy links are ok
+        $url = 'http://'.$url;
+    }
+
+    return $url;
+}
+
+/**
  * Return full url with all extra parameters
+ *
+ * This function does not include any XSS protection.
+ *
  * @param string $url
  * @param object $cm
  * @param object $course
- * @return string url
+ * @param object $config
+ * @return string url with & encoded as &amp;
  */
 function url_get_full_url($url, $cm, $course, $config=null) {
 
     $parameters = empty($url->parameters) ? array() : unserialize($url->parameters);
 
-    if (empty($parameters)) {
-        // easy - no params
-        return $url->externalurl;
+    // make sure there are no encoded entities, it is ok to do this twice
+    $fullurl = html_entity_decode($url->externalurl, ENT_QUOTES, 'UTF-8');
+
+    if (preg_match('/^(\/|https?:|ftp:)/i', $fullurl) or preg_match('|^/|', $fullurl)) {
+        // encode extra chars in URLs - this does not make it always valid, but it helps with some UTF-8 problems
+        $allowed = "a-zA-Z0-9".preg_quote(';/?:@=&$_.+!*(),-#%', '/');
+        $fullurl = preg_replace_callback("/[^$allowed]/", 'url_filter_callback', $fullurl);
+    } else {
+        // encode special chars only
+        $fullurl = str_replace('"', '%22', $fullurl);
+        $fullurl = str_replace('\'', '%27', $fullurl);
+        $fullurl = str_replace(' ', '%20', $fullurl);
+        $fullurl = str_replace('<', '%3C', $fullurl);
+        $fullurl = str_replace('>', '%3E', $fullurl);
     }
 
-    if (!$config) {
-        $config = get_config('url');
-    }
-    $paramvalues = url_get_variable_values($url, $cm, $course, $config);
+    // add variable url parameters
+    if (!empty($parameters)) {
+        if (!$config) {
+            $config = get_config('url');
+        }
+        $paramvalues = url_get_variable_values($url, $cm, $course, $config);
 
-    foreach ($parameters as $parse=>$parameter) {
-        if (isset($paramvalues[$parameter])) {
-            $parameters[$parse] = urlencode($parse).'='.urlencode($paramvalues[$parameter]);
-        } else {
-            unset($parameters[$parse]);
+        foreach ($parameters as $parse=>$parameter) {
+            if (isset($paramvalues[$parameter])) {
+                $parameters[$parse] = rawurlencode($parse).'='.rawurlencode($paramvalues[$parameter]);
+            } else {
+                unset($parameters[$parse]);
+            }
+        }
+
+        if (!empty($parameters)) {
+            if (stripos($fullurl, 'teamspeak://') === 0) {
+                $fullurl = $fullurl.'?'.implode('?', $parameters);
+            } else {
+                $join = (strpos($fullurl->externalurl, '?') === false) ? '?' : '&';
+                $fullurl = $fullurl.$join.implode('&', $parameters);
+            }
         }
     }
 
-    if (empty($parameters)) {
-        // easy - no params available
-        return $url->externalurl;
-    }
+    // encode all & to &amp; entity
+    $fullurl = str_replace('&', '&amp;', $fullurl);
 
-    if (stripos($url->externalurl, 'teamspeak://') === 0) {
-        return $url->externalurl.'?'.implode('?', $parameters);
-    } else {
-        $join = (strpos($url->externalurl, '?') === false) ? '?' : '&amp;';
-        return $url->externalurl.$join.implode('&amp;', $parameters);
-    }
+    return $fullurl;
+}
+
+/**
+ * Unicode encoding helper callback
+ * @internal
+ * @param array $matches
+ * @return string
+ */
+function url_filter_callback($matches) {
+    return rawurlencode($matches[0]);
 }
 
 /**
@@ -197,11 +268,12 @@ function url_print_workaround($url, $cm, $course) {
 
     $display = url_get_final_display_type($url);
     if ($display == RESOURCELIB_DISPLAY_POPUP) {
+        $jsfullurl = addslashes_js($fullurl);
         $options = empty($url->displayoptions) ? array() : unserialize($url->displayoptions);
         $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
         $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
         $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
-        $extra = "onclick=\"window.open('$fullurl', '', '$wh'); return false;\"";
+        $extra = "onclick=\"window.open('$jsfullurl', '', '$wh'); return false;\"";
 
     } else if ($display == RESOURCELIB_DISPLAY_NEW) {
         $extra = "onclick=\"this.target='_blank';\"";
@@ -223,7 +295,6 @@ function url_print_workaround($url, $cm, $course) {
  * @param object $url
  * @param object $cm
  * @param object $course
- * @param stored_file $file main file
  * @return does not return
  */
 function url_display_embed($url, $cm, $course) {
@@ -286,7 +357,7 @@ function url_display_embed($url, $cm, $course) {
 }
 
 /**
- * Decide the best diaply format.
+ * Decide the best display format.
  * @param object $url
  * @return int display type constant
  */

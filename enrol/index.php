@@ -82,6 +82,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(get_string('enrolmentoptions','enrol'));
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('enrolmentoptions','enrol'));
 
 //TODO: find if future enrolments present and display some info
 

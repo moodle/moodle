@@ -1,155 +1,184 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 defined('MOODLE_INTERNAL') OR die('not allowed');
 require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 
 class feedback_item_textfield extends feedback_item_base {
-    var $type = "textfield";
-    var $commonparams;
-    var $item_form;
-    var $item;
+    protected $type = "textfield";
+    private $commonparams;
+    private $item_form;
+    private $item;
 
-    function init() {
+    public function init() {
 
     }
 
-    function build_editform($item, $feedback, $cm) {
+    public function build_editform($item, $feedback, $cm) {
         global $DB, $CFG;
         require_once('textfield_form.php');
 
         //get the lastposition number of the feedback_items
         $position = $item->position;
         $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
-        if($position == -1){
+        if ($position == -1) {
             $i_formselect_last = $lastposition + 1;
             $i_formselect_value = $lastposition + 1;
             $item->position = $lastposition + 1;
-        }else {
+        } else {
             $i_formselect_last = $lastposition;
             $i_formselect_value = $item->position;
         }
         //the elements for position dropdownlist
-        $positionlist = array_slice(range(0,$i_formselect_last),1,$i_formselect_last,true);
-        
+        $positionlist = array_slice(range(0, $i_formselect_last), 1, $i_formselect_last, true);
+
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
-        
-        $sizeAndLength = explode('|',$item->presentation);
-        $itemsize = (isset($sizeAndLength[0]) AND $sizeAndLength[0] >= 5) ? $sizeAndLength[0] : 30;
-        $itemlength = isset($sizeAndLength[1]) ? $sizeAndLength[1] : 5;
+
+        $size_and_length = explode('|', $item->presentation);
+
+        if (isset($size_and_length[0]) AND $size_and_length[0] >= 5) {
+            $itemsize = $size_and_length[0];
+        } else {
+            $itemsize = 30;
+        }
+
+        $itemlength = isset($size_and_length[1]) ? $size_and_length[1] : 5;
+
         $item->itemsize = $itemsize;
         $item->itemmaxlength = $itemlength;
 
         //all items for dependitem
         $feedbackitems = feedback_get_depend_candidates_for_item($feedback, $item);
-        $commonparams = array('cmid'=>$cm->id,
-                             'id'=>isset($item->id) ? $item->id : NULL,
-                             'typ'=>$item->typ,
-                             'items'=>$feedbackitems,
-                             'feedback'=>$feedback->id);
+        $commonparams = array('cmid' => $cm->id,
+                             'id' => isset($item->id) ? $item->id : null,
+                             'typ' => $item->typ,
+                             'items' => $feedbackitems,
+                             'feedback' => $feedback->id);
 
         //build the form
-        $this->item_form = new feedback_textfield_form('edit_item.php', array('item'=>$item, 'common'=>$commonparams, 'positionlist'=>$positionlist, 'position'=>$position));
+        $customdata = array('item' => $item,
+                            'common' => $commonparams,
+                            'positionlist' => $positionlist,
+                            'position' => $position);
+
+        $this->item_form = new feedback_textfield_form('edit_item.php', $customdata);
     }
 
     //this function only can used after the call of build_editform()
-    function show_editform() {
+    public function show_editform() {
         $this->item_form->display();
     }
-    
-    function is_cancelled() {
+
+    public function is_cancelled() {
         return $this->item_form->is_cancelled();
     }
 
-    function get_data() {
-        if($this->item = $this->item_form->get_data()) {
+    public function get_data() {
+        if ($this->item = $this->item_form->get_data()) {
             return true;
         }
         return false;
     }
 
-    function save_item() {
+    public function save_item() {
         global $DB;
-        
-        if(!$item = $this->item_form->get_data()) {
+
+        if (!$item = $this->item_form->get_data()) {
             return false;
         }
-        
-        if(isset($item->clone_item) AND $item->clone_item) {
+
+        if (isset($item->clone_item) AND $item->clone_item) {
             $item->id = ''; //to clone this item
             $item->position++;
         }
-        
+
         $item->hasvalue = $this->get_hasvalue();
-        if(!$item->id) {
+        if (!$item->id) {
             $item->id = $DB->insert_record('feedback_item', $item);
-        }else {
+        } else {
             $DB->update_record('feedback_item', $item);
         }
-        
+
         return $DB->get_record('feedback_item', array('id'=>$item->id));
     }
 
 
     //liefert eine Struktur ->name, ->data = array(mit Antworten)
-    function get_analysed($item, $groupid = false, $courseid = false) {
+    public function get_analysed($item, $groupid = false, $courseid = false) {
         global $DB;
 
-        $aVal = null;
-        $aVal->data = null;
-        $aVal->name = $item->name;
-        //$values = $DB->get_records('feedback_value', array('item'=>$item->id));
+        $analysed_val = null;
+        $analysed_val->data = null;
+        $analysed_val->name = $item->name;
+
         $values = feedback_get_group_values($item, $groupid, $courseid);
-        if($values) {
+        if ($values) {
             $data = array();
-            foreach($values as $value) {
+            foreach ($values as $value) {
                 $data[] = str_replace("\n", '<br />', $value->value);
             }
-            $aVal->data = $data;
+            $analysed_val->data = $data;
         }
-        return $aVal;
+        return $analysed_val;
     }
 
-    function get_printval($item, $value) {
+    public function get_printval($item, $value) {
 
-        if(!isset($value->value)) return '';
+        if (!isset($value->value)) {
+            return '';
+        }
         return $value->value;
     }
 
-    function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
+    public function print_analysed($item, $itemnr = '', $groupid = false, $courseid = false) {
         $values = feedback_get_group_values($item, $groupid, $courseid);
-        if($values) {
-            //echo '<table>';2
-            // $itemnr++;
-            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;('. $item->label .') ' . $item->name .'</th></tr>';
-            foreach($values as $value) {
-                echo '<tr><td colspan="2" valign="top" align="left">-&nbsp;&nbsp;' . str_replace("\n", '<br />', $value->value) . '</td></tr>';
+        if ($values) {
+            echo '<tr><th colspan="2" align="left">';
+            echo $itemnr.'&nbsp;('.$item->label.') '.$item->name;
+            echo '</th></tr>';
+            foreach ($values as $value) {
+                echo '<tr><td colspan="2" valign="top" align="left">';
+                echo '-&nbsp;&nbsp;'.str_replace("\n", '<br />', $value->value);
+                echo '</td></tr>';
             }
-            //echo '</table>';
         }
-        // return $itemnr;
     }
 
-    function excelprint_item(&$worksheet, $rowOffset, $xlsFormats, $item, $groupid, $courseid = false) {
+    public function excelprint_item(&$worksheet, $row_offset,
+                             $xls_formats, $item,
+                             $groupid, $courseid = false) {
+
         $analysed_item = $this->get_analysed($item, $groupid, $courseid);
 
-        // $worksheet->setFormat("<l><f><ro2><vo><c:green>");
-        $worksheet->write_string($rowOffset, 0, $item->label, $xlsFormats->head2);
-        $worksheet->write_string($rowOffset, 1, $item->name, $xlsFormats->head2);
+        $worksheet->write_string($row_offset, 0, $item->label, $xls_formats->head2);
+        $worksheet->write_string($row_offset, 1, $item->name, $xls_formats->head2);
         $data = $analysed_item->data;
-        if(is_array($data)) {
-            // $worksheet->setFormat("<l><ro2><vo>");
-            $worksheet->write_string($rowOffset, 2, $data[0], $xlsFormats->value_bold);
-            $rowOffset++;
-            $sizeofdata = sizeof($data);
-            for($i = 1; $i < $sizeofdata; $i++) {
-                // $worksheet->setFormat("<l><vo>");
-                $worksheet->write_string($rowOffset, 2, $data[$i], $xlsFormats->default);
-                $rowOffset++;
+        if (is_array($data)) {
+            $worksheet->write_string($row_offset, 2, $data[0], $xls_formats->value_bold);
+            $row_offset++;
+            $sizeofdata = count($data);
+            for ($i = 1; $i < $sizeofdata; $i++) {
+                $worksheet->write_string($row_offset, 2, $data[$i], $xls_formats->default);
+                $row_offset++;
             }
         }
-        $rowOffset++;
-        return $rowOffset;
+        $row_offset++;
+        return $row_offset;
     }
-    
+
     /**     
      * print the item at the edit-page of feedback
      *
@@ -157,19 +186,22 @@ class feedback_item_textfield extends feedback_item_base {
      * @param object $item
      * @return void
      */
-    function print_item_preview($item) {
+    public function print_item_preview($item) {
         global $OUTPUT, $DB;
         $align = right_to_left() ? 'right' : 'left';
+        $str_required_mark = '<span class="feedback_required_mark">*</span>';
 
         $presentation = explode ("|", $item->presentation);
-        $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+        $requiredmark =  ($item->required == 1) ? $str_required_mark : '';
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.'">';
         echo '('.$item->label.') ';
         echo format_text($item->name.$requiredmark, true, false, false);
-        if($item->dependitem) {
-            if($dependitem = $DB->get_record('feedback_item', array('id'=>$item->dependitem))) {
-                echo ' <span class="feedback_depend">('.$dependitem->label.'-&gt;'.$item->dependvalue.')</span>';
+        if ($item->dependitem) {
+            if ($dependitem = $DB->get_record('feedback_item', array('id'=>$item->dependitem))) {
+                echo ' <span class="feedback_depend">';
+                echo '('.$dependitem->label.'-&gt;'.$item->dependvalue.')';
+                echo '</span>';
             }
         }
         echo '</div>';
@@ -177,11 +209,15 @@ class feedback_item_textfield extends feedback_item_base {
         //print the presentation
         echo '<div class="feedback_item_presentation_'.$align.'">';
         echo '<span class="feedback_item_textfield">';
-        echo '<input type="text" name="'.$item->typ . '_' . $item->id.'" size="'.$presentation[0].'" maxlength="'.$presentation[1].'" value="" />';
+        echo '<input type="text" '.
+                    'name="'.$item->typ.'_'.$item->id.'" '.
+                    'size="'.$presentation[0].'" '.
+                    'maxlength="'.$presentation[1].'" '.
+                    'value="" />';
         echo '</span>';
         echo '</div>';
     }
-    
+
     /**     
      * print the item at the complete-page of feedback
      *
@@ -191,27 +227,32 @@ class feedback_item_textfield extends feedback_item_base {
      * @param bool $highlightrequire
      * @return void
      */
-    function print_item_complete($item, $value = '', $highlightrequire = false) {
+    public function print_item_complete($item, $value = '', $highlightrequire = false) {
         global $OUTPUT;
         $align = right_to_left() ? 'right' : 'left';
+        $str_required_mark = '<span class="feedback_required_mark">*</span>';
 
         $presentation = explode ("|", $item->presentation);
-        if($highlightrequire AND $item->required AND strval($value) == '') {
+        if ($highlightrequire AND $item->required AND strval($value) == '') {
             $highlight = ' missingrequire';
-        }else {
+        } else {
             $highlight = '';
         }
-        $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
-        
+        $requiredmark =  ($item->required == 1) ? $str_required_mark : '';
+
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.$highlight.'">';
             echo format_text($item->name.$requiredmark, true, false, false);
         echo '</div>';
-        
+
         //print the presentation
         echo '<div class="feedback_item_presentation_'.$align.$highlight.'">';
         echo '<span class="feedback_item_textfield">';
-        echo '<input type="text" name="'.$item->typ.'_'.$item->id.'" size="'.$presentation[0].'" maxlength="'.$presentation[1].'" value="'.($value ? htmlspecialchars($value) : '').'" />';
+        echo '<input type="text" '.
+                    'name="'.$item->typ.'_'.$item->id.'" '.
+                    'size="'.$presentation[0].'" '.
+                    'maxlength="'.$presentation[1].'" '.
+                    'value="'.($value ? htmlspecialchars($value) : '').'" />';
         echo '</span>';
         echo '</div>';
     }
@@ -224,13 +265,14 @@ class feedback_item_textfield extends feedback_item_base {
      * @param string $value
      * @return void
      */
-    function print_item_show_value($item, $value = '') {
+    public function print_item_show_value($item, $value = '') {
         global $OUTPUT;
         $align = right_to_left() ? 'right' : 'left';
+        $str_required_mark = '<span class="feedback_required_mark">*</span>';
 
         $presentation = explode ("|", $item->presentation);
-        $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
-        
+        $requiredmark =  ($item->required == 1) ? $str_required_mark : '';
+
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.'">';
             echo '('.$item->label.') ';
@@ -241,14 +283,18 @@ class feedback_item_textfield extends feedback_item_base {
         echo $OUTPUT->box_end();
     }
 
-    function check_value($value, $item) {
+    public function check_value($value, $item) {
         //if the item is not required, so the check is true if no value is given
-        if((!isset($value) OR $value == '') AND $item->required != 1) return true;
-        if($value == "")return false;
+        if ((!isset($value) OR $value == '') AND $item->required != 1) {
+            return true;
+        }
+        if ($value == "") {
+            return false;
+        }
         return true;
     }
 
-    function create_value($data) {
+    public function create_value($data) {
         $data = clean_text($data);
         return $data;
     }
@@ -256,22 +302,22 @@ class feedback_item_textfield extends feedback_item_base {
     //compares the dbvalue with the dependvalue
     //dbvalue is the value put in by the user
     //dependvalue is the value that is compared
-    function compare_value($item, $dbvalue, $dependvalue) {
-        if($dbvalue == $dependvalue) {
+    public function compare_value($item, $dbvalue, $dependvalue) {
+        if ($dbvalue == $dependvalue) {
             return true;
         }
         return false;
     }
-    
-    function get_presentation($data) {
+
+    public function get_presentation($data) {
         return $data->itemsize . '|'. $data->itemmaxlength;
     }
 
-    function get_hasvalue() {
+    public function get_hasvalue() {
         return 1;
     }
 
-    function can_switch_require() {
+    public function can_switch_require() {
         return true;
     }
 }

@@ -211,6 +211,11 @@ M.core_filepicker.init = function(Y, options) {
                         if (scope.options.editor_target && scope.options.env == 'editor') {
                             scope.options.editor_target.value = data.existingfile.url;
                             scope.options.editor_target.onchange();
+                        } else if (scope.options.env === 'filepicker') {
+                            var fileinfo = {'client_id':client_id,
+                                    'url':data.existingfile.url,
+                                    'file':data.existingfile.filename};
+                            scope.options.formcallback.apply(scope, [fileinfo]);
                         }
                     }
                 }, true);
@@ -222,14 +227,16 @@ M.core_filepicker.init = function(Y, options) {
                 }
                 this.cancel();
                 scope.hide();
-                data.client_id = client_id;
                 var formcallback_scope = null;
                 if (scope.options.magicscope) {
                     formcallback_scope = scope.options.magicscope;
                 } else {
                     formcallback_scope = scope;
                 }
-                scope.options.formcallback.apply(formcallback_scope, [data]);
+                var fileinfo = {'client_id':client_id,
+                                'url':data.newfile.url,
+                                'file':data.newfile.filename};
+                scope.options.formcallback.apply(formcallback_scope, [fileinfo]);
             }
             var handleCancel = function() {
                 // Delete tmp file

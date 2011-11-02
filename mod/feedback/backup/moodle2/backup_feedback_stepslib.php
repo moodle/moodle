@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -54,7 +53,6 @@ class backup_feedback_activity_structure_step extends backup_activity_structure_
                                                 'timemodified',
                                                 'completionsubmit'));
 
-
         $completeds = new backup_nested_element('completeds');
 
         $completed = new backup_nested_element('completed', array('id'), array(
@@ -91,7 +89,6 @@ class backup_feedback_activity_structure_step extends backup_activity_structure_
                                                 'template',
                                                 'completed',
                                                 'value'));
-
 
         // Build the tree
         $feedback->add_child($items);

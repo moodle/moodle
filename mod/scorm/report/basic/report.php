@@ -362,6 +362,8 @@ class scorm_basic_report extends scorm_default_report {
                     $row = array();
                     if (!empty($scouser->attempt)) {
                         $timetracks = scorm_get_sco_runtime($scorm->id, false, $scouser->userid, $scouser->attempt);
+                    } else {
+                        $timetracks = '';
                     }
                     if (in_array('checkbox', $columns)) {
                         if ($candelete && !empty($timetracks->start)) {

@@ -6,6 +6,11 @@ Description of TCPDF library import
     timesb.php, timesi.php, times.php, zapfdingbats.php) and FreeFont
 * remove font/utils/
 
+2011/10/29
+----------
+Upgrade to tcpdf_php5 TCPDF 5.9.133 (MDL-29283)
+by Petr Skoda
+
 2009/11/19
 ----------
 Upgrade to tcpdf_php5 TCPDF 4.8.014 (MDL-20888)

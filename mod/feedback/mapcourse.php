@@ -1,4 +1,18 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * print the form to map courses for global feedbacks
@@ -29,11 +43,10 @@ if ($courseid !== false) {
 }
 $PAGE->set_url($url);
 
-if(($formdata = data_submitted()) AND !confirm_sesskey()) {
+if (($formdata = data_submitted()) AND !confirm_sesskey()) {
     print_error('invalidsesskey');
 }
 
-// $SESSION->feedback->current_tab = 'mapcourse';
 $current_tab = 'mapcourse';
 
 if (! $cm = get_coursemodule_from_id('feedback', $id)) {
@@ -76,7 +89,7 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
 echo $OUTPUT->header();
 
-include('tabs.php');
+require('tabs.php');
 
 echo $OUTPUT->box(get_string('mapcourseinfo', 'feedback'), 'generalbox boxaligncenter boxwidthwide');
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
@@ -95,18 +108,22 @@ if (($courses = $DB->get_records_sql_menu($sql, $params)) && !empty($searchcours
     echo html_writer::select($courses, 'coursefilter', $coursefilter);
     echo '<input type="submit" value="'.get_string('mapcourse', 'feedback').'"/>';
     echo $OUTPUT->help_icon('mapcourses', 'feedback');
-    echo '<input type="button" value="'.get_string('searchagain').'" onclick="document.location=\'mapcourse.php?id='.$id.'\'"/>';
+    echo '<input type="button" '.
+                'value="'.get_string('searchagain').'" '.
+                'onclick="document.location=\'mapcourse.php?id='.$id.'\'"/>';
+
     echo '<input type="hidden" name="searchcourse" value="'.$searchcourse.'"/>';
     echo '<input type="hidden" name="feedbackid" value="'.$feedback->id.'"/>';
     echo $OUTPUT->help_icon('searchcourses', 'feedback');
 } else {
-    echo '<input type="text" name="searchcourse" value="'.$searchcourse.'"/> <input type="submit" value="'.get_string('searchcourses').'"/>';
+    echo '<input type="text" name="searchcourse" value="'.$searchcourse.'"/> ';
+    echo '<input type="submit" value="'.get_string('searchcourses').'"/>';
     echo $OUTPUT->help_icon('searchcourses', 'feedback');
 }
 
 echo '</form>';
 
-if($coursemap = feedback_get_courses_from_sitecourse_map($feedback->id)) {
+if ($coursemap = feedback_get_courses_from_sitecourse_map($feedback->id)) {
     $table = new flexible_table('coursemaps');
     $table->define_columns( array('course'));
     $table->define_headers( array(get_string('mappedcourses', 'feedback')));
@@ -117,9 +134,13 @@ if($coursemap = feedback_get_courses_from_sitecourse_map($feedback->id)) {
     foreach ($coursemap as $cmap) {
         $cmapcontext = get_context_instance(CONTEXT_COURSE, $cmap->id);
         $cmapshortname = format_string($cmap->shortname, true, array('context' => $cmapcontext));
-        $cmapfullname = format_string($cmap->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $cmap->courseid)));
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $cmap->courseid);
+        $cmapfullname = format_string($cmap->fullname, true, array('context' => $coursecontext));
         $unmapurl->params(array('id'=>$id, 'cmapid'=>$cmap->id));
-        $table->add_data(array('<a href="'.$unmapurl->out().'"><img src="'.$OUTPUT->pix_url('t/delete') . '" alt="Delete" /></a> ('.$cmapshortname.') '.$cmapfullname));
+        $anker = '<a href="'.$unmapurl->out().'">';
+        $anker .= '<img src="'.$OUTPUT->pix_url('t/delete').'" alt="Delete" />';
+        $anker .= '</a>';
+        $table->add_data(array($anker.' ('.$cmapshortname.') '.$cmapfullname));
     }
 
     $table->print_html();
@@ -131,4 +152,3 @@ if($coursemap = feedback_get_courses_from_sitecourse_map($feedback->id)) {
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
-

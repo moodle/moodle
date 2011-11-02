@@ -6385,6 +6385,7 @@ class core_string_manager implements string_manager {
             if (!empty($CFG->langcache) and !empty($this->menucache)) {
                 // cache the list so that it can be used next time
                 collatorlib::asort($languages);
+                check_dir_exists(dirname($this->menucache), true, true);
                 file_put_contents($this->menucache, json_encode($languages));
             }
         }

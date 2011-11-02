@@ -241,7 +241,7 @@ class plugin_manager {
                 return false;
             }
 
-            if ($requiredversion != ANY_VERSION and $otherplugin->versiondb < $requiredversion) {
+            if ($requiredversion != ANY_VERSION and $otherplugin->versiondisk < $requiredversion) {
                 return false;
             }
         }
@@ -298,7 +298,7 @@ class plugin_manager {
                 'login', 'mentees', 'messages', 'mnet_hosts', 'myprofile',
                 'navigation', 'news_items', 'online_users', 'participants',
                 'private_files', 'quiz_results', 'recent_activity',
-                'rss_client', 'search', 'search_forums', 'section_links',
+                'rss_client', 'search_forums', 'section_links',
                 'selfcompletion', 'settings', 'site_main_menu',
                 'social_activities', 'tag_flickr', 'tag_youtube', 'tags'
             ),
@@ -389,7 +389,7 @@ class plugin_manager {
 
             'qformat' => array(
                 'aiken', 'blackboard', 'blackboard_six', 'examview', 'gift',
-                'learnwise', 'missingword', 'multianswer', 'qti_two', 'webct',
+                'learnwise', 'missingword', 'multianswer', 'webct',
                 'xhtml', 'xml'
             ),
 

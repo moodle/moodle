@@ -1,26 +1,38 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* deletes a template
-*
-* @author Andreas Grabs
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package feedback
-*/
+ * deletes a template
+ *
+ * @author Andreas Grabs
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package feedback
+ */
 
 require_once("../../config.php");
 require_once("lib.php");
 require_once('delete_template_form.php');
 require_once($CFG->libdir.'/tablelib.php');
 
-// $SESSION->feedback->current_tab = 'templates';
 $current_tab = 'templates';
 
 $id = required_param('id', PARAM_INT);
 $canceldelete = optional_param('canceldelete', false, PARAM_INT);
 $shoulddelete = optional_param('shoulddelete', false, PARAM_INT);
 $deletetempl = optional_param('deletetempl', false, PARAM_INT);
-// $formdata = data_submitted();
 
 $url = new moodle_url('/mod/feedback/delete_template.php', array('id'=>$id));
 if ($canceldelete !== false) {
@@ -34,11 +46,11 @@ if ($deletetempl !== false) {
 }
 $PAGE->set_url($url);
 
-if(($formdata = data_submitted()) AND !confirm_sesskey()) {
+if (($formdata = data_submitted()) AND !confirm_sesskey()) {
     print_error('invalidsesskey');
 }
 
-if($canceldelete == 1){
+if ($canceldelete == 1) {
     $editurl = new moodle_url('/mod/feedback/edit.php', array('id'=>$id, 'do_show'=>'templates'));
     redirect($editurl->out(false));
 }
@@ -77,12 +89,12 @@ if ($mform->is_cancelled()) {
     redirect($deleteurl->out(false));
 }
 
-if(isset($formdata->confirmdelete) AND $formdata->confirmdelete == 1){
-    if(!$template = $DB->get_record("feedback_template", array("id"=>$deletetempl))) {
+if (isset($formdata->confirmdelete) AND $formdata->confirmdelete == 1) {
+    if (!$template = $DB->get_record("feedback_template", array("id"=>$deletetempl))) {
         print_error('error');
     }
 
-    if($template->ispublic) {
+    if ($template->ispublic) {
         $systemcontext = get_system_context();
         require_capability('mod/feedback:createpublictemplate', $systemcontext);
         require_capability('mod/feedback:deletetemplate', $systemcontext);
@@ -95,32 +107,33 @@ if(isset($formdata->confirmdelete) AND $formdata->confirmdelete == 1){
 /// Print the page header
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
-$strdeletefeedback = get_string('delete_template','feedback');
+$strdeletefeedback = get_string('delete_template', 'feedback');
 
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
 echo $OUTPUT->header();
 
 /// print the tabs
-include('tabs.php');
+require('tabs.php');
 
 /// Print the main part of the page
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 echo $OUTPUT->heading($strdeletefeedback);
-if($shoulddelete == 1) {
+if ($shoulddelete == 1) {
 
     echo $OUTPUT->box_start('generalbox errorboxcontent boxaligncenter boxwidthnormal');
     echo $OUTPUT->heading(get_string('confirmdeletetemplate', 'feedback'));
     $mform->display();
     echo $OUTPUT->box_end();
-}else {
+} else {
     //first we get the own templates
     $templates = feedback_get_template_list($course, 'own');
-    if(!is_array($templates)) {
-        echo $OUTPUT->box(get_string('no_templates_available_yet', 'feedback'), 'generalbox boxaligncenter');
-    }else {
+    if (!is_array($templates)) {
+        echo $OUTPUT->box(get_string('no_templates_available_yet', 'feedback'),
+                         'generalbox boxaligncenter');
+    } else {
         echo $OUTPUT->heading(get_string('course'), 3);
         echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
         $tablecolumns = array('template', 'action');
@@ -137,7 +150,7 @@ if($shoulddelete == 1) {
         $tablecourse->set_attribute('class', 'generaltable');
         $tablecourse->setup();
 
-        foreach($templates as $template) {
+        foreach ($templates as $template) {
             $data = array();
             $data[] = $template->name;
             $url = new moodle_url($deleteurl, array(
@@ -154,12 +167,13 @@ if($shoulddelete == 1) {
     }
     //now we get the public templates if it is permitted
     $systemcontext = get_system_context();
-    if(has_capability('mod/feedback:createpublictemplate', $systemcontext) AND
+    if (has_capability('mod/feedback:createpublictemplate', $systemcontext) AND
         has_capability('mod/feedback:deletetemplate', $systemcontext)) {
         $templates = feedback_get_template_list($course, 'public');
-        if(!is_array($templates)) {
-            echo $OUTPUT->box(get_string('no_templates_available_yet', 'feedback'), 'generalbox boxaligncenter');
-        }else {
+        if (!is_array($templates)) {
+            echo $OUTPUT->box(get_string('no_templates_available_yet', 'feedback'),
+                              'generalbox boxaligncenter');
+        } else {
             echo $OUTPUT->heading(get_string('public', 'feedback'), 3);
             echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
             $tablecolumns = array('template', 'action');
@@ -176,9 +190,7 @@ if($shoulddelete == 1) {
             $tablepublic->set_attribute('class', 'generaltable');
             $tablepublic->setup();
 
-            // echo $OUTPUT->heading(get_string('public', 'feedback'), 3);
-            // echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-            foreach($templates as $template) {
+            foreach ($templates as $template) {
                 $data = array();
                 $data[] = $template->name;
                 $url = new moodle_url($deleteurl, array(

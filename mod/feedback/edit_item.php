@@ -1,4 +1,18 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * prints the form to edit a dedicated item
@@ -13,7 +27,6 @@ require_once("lib.php");
 
 feedback_init_feedback_session();
 
-// $cmid = optional_param('cmid', NULL, PARAM_INT);
 $cmid = required_param('cmid', PARAM_INT);
 $typ = optional_param('typ', false, PARAM_ALPHA);
 $id = optional_param('id', false, PARAM_INT);
@@ -21,7 +34,9 @@ $action = optional_param('action', false, PARAM_ALPHA);
 
 $editurl = new moodle_url('/mod/feedback/edit.php', array('id'=>$cmid));
 
-if(!$typ)redirect($editurl->out(false));
+if (!$typ) {
+    redirect($editurl->out(false));
+}
 
 $url = new moodle_url('/mod/feedback/edit_item.php', array('cmid'=>$cmid));
 if ($typ !== false) {
@@ -36,7 +51,7 @@ $PAGE->set_url($url);
 $usehtmleditor = can_use_html_editor();
 
 
-if(($formdata = data_submitted()) AND !confirm_sesskey()) {
+if (($formdata = data_submitted()) AND !confirm_sesskey()) {
     print_error('invalidsesskey');
 }
 
@@ -61,7 +76,7 @@ require_login($course->id, true, $cm);
 require_capability('mod/feedback:edititems', $context);
 
 //if the typ is pagebreak so the item will be saved directly
-if($typ == 'pagebreak') {
+if ($typ == 'pagebreak') {
     feedback_create_pagebreak($feedback->id);
     redirect($editurl->out(false));
     exit;
@@ -69,9 +84,9 @@ if($typ == 'pagebreak') {
 
 //get the existing item or create it
 // $formdata->itemid = isset($formdata->itemid) ? $formdata->itemid : NULL;
-if($id and $item = $DB->get_record('feedback_item', array('id'=>$id))) {
+if ($id and $item = $DB->get_record('feedback_item', array('id'=>$id))) {
     $typ = $item->typ;
-}else {
+} else {
     $item = new stdClass();
     $item->id = null;
     $item->position = -1;
@@ -88,12 +103,12 @@ $itemobj = feedback_get_item_class($typ);
 
 $itemobj->build_editform($item, $feedback, $cm);
 
-if($itemobj->is_cancelled()) {
+if ($itemobj->is_cancelled()) {
     redirect($editurl->out(false));
     exit;
 }
-if($itemobj->get_data()) {
-    if($item = $itemobj->save_item()) {
+if ($itemobj->get_data()) {
+    if ($item = $itemobj->save_item()) {
         feedback_move_item($item, $item->position);
         redirect($editurl->out(false));
     }
@@ -113,17 +128,14 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
 echo $OUTPUT->header();
 /// print the tabs
-include('tabs.php');
+require('tabs.php');
 /// Print the main part of the page
 echo $OUTPUT->heading(format_text($feedback->name));
 //print errormsg
-if(isset($error)) {
+if (isset($error)) {
     echo $error;
 }
-feedback_print_errors();
 $itemobj->show_editform();
-
-// echo $OUTPUT->box_end();
 
 if ($typ!='label') {
     $PAGE->requires->js('/mod/feedback/feedback.js');
@@ -136,4 +148,3 @@ if ($typ!='label') {
 ///////////////////////////////////////////////////////////////////////////
 
 echo $OUTPUT->footer();
-

@@ -1,11 +1,25 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_form_class.php');
 
 class feedback_multichoicerated_form extends feedback_item_form {
-    var $type = "multichoicerated";
+    protected $type = "multichoicerated";
 
-    function definition() {
+    public function definition() {
         $item = $this->_customdata['item'];
         $common = $this->_customdata['common'];
         $positionlist = $this->_customdata['positionlist'];
@@ -20,16 +34,20 @@ class feedback_multichoicerated_form extends feedback_item_form {
         $mform->addElement('text',
                             'name',
                             get_string('item_name', 'feedback'),
-                            array('size'=>FEEDBACK_ITEM_NAME_TEXTBOX_SIZE, 'maxlength'=>255));
+                            array('size'=>FEEDBACK_ITEM_NAME_TEXTBOX_SIZE,
+                                  'maxlength'=>255));
+
         $mform->addElement('text',
                             'label',
                             get_string('item_label', 'feedback'),
-                            array('size'=>FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE, 'maxlength'=>255));
+                            array('size'=>FEEDBACK_ITEM_LABEL_TEXTBOX_SIZE,
+                                  'maxlength'=>255));
 
         $mform->addElement('select',
                             'horizontal',
                             get_string('adjustment', 'feedback').'&nbsp;',
-                            array(0 => get_string('vertical', 'feedback'), 1 => get_string('horizontal', 'feedback')));
+                            array(0 => get_string('vertical', 'feedback'),
+                                  1 => get_string('horizontal', 'feedback')));
 
         $mform->addElement('select',
                             'subtype',
@@ -37,19 +55,30 @@ class feedback_multichoicerated_form extends feedback_item_form {
                             array('r'=>get_string('radio', 'feedback'),
                                   'd'=>get_string('dropdown', 'feedback')));
 
-        $mform->addElement('selectyesno', 'ignoreempty', get_string('do_not_analyse_empty_submits', 'feedback'));
-        $mform->addElement('selectyesno', 'hidenoselect', get_string('hide_no_select_option', 'feedback'));
-        
-        $mform->addElement('static', 'hint', get_string('multichoice_values', 'feedback'), get_string('use_one_line_for_each_value', 'feedback'));
+        $mform->addElement('selectyesno',
+                           'ignoreempty',
+                           get_string('do_not_analyse_empty_submits', 'feedback'));
 
-        $this->values = $mform->addElement('textarea', 'values', '', 'wrap="virtual" rows="10" cols="65"');
+        $mform->addElement('selectyesno',
+                           'hidenoselect',
+                           get_string('hide_no_select_option', 'feedback'));
+
+        $mform->addElement('static',
+                           'hint',
+                           get_string('multichoice_values', 'feedback'),
+                           get_string('use_one_line_for_each_value', 'feedback'));
+
+        $this->values = $mform->addElement('textarea',
+                            'values',
+                            '',
+                            'wrap="virtual" rows="10" cols="65"');
 
         parent::definition();
         $this->set_data($item);
 
     }
 
-    function set_data($item) {
+    public function set_data($item) {
         $info = $this->_customdata['info'];
 
         $item->horizontal = $info->horizontal;
@@ -58,27 +87,28 @@ class feedback_multichoicerated_form extends feedback_item_form {
 
         $item->values = $info->values;
 
-        return parent::set_data($item); 
+        return parent::set_data($item);
     }
-    
-    function get_data() {
-        if(!$item = parent::get_data()) {
+
+    public function get_data() {
+        if (!$item = parent::get_data()) {
             return false;
         }
-        
+
         $itemobj = new feedback_item_multichoicerated();
-        
-        $presentation = $itemobj->prepare_presentation_values_save(trim($item->values), FEEDBACK_MULTICHOICERATED_VALUE_SEP2, FEEDBACK_MULTICHOICERATED_VALUE_SEP);
-        if(!isset($item->subtype)) {
+
+        $presentation = $itemobj->prepare_presentation_values_save(trim($item->values),
+                                                FEEDBACK_MULTICHOICERATED_VALUE_SEP2,
+                                                FEEDBACK_MULTICHOICERATED_VALUE_SEP);
+        if (!isset($item->subtype)) {
             $subtype = 'r';
-        }else {
+        } else {
             $subtype = substr($item->subtype, 0, 1);
         }
-        if(isset($item->horizontal) AND $item->horizontal == 1 AND $subtype != 'd') {
+        if (isset($item->horizontal) AND $item->horizontal == 1 AND $subtype != 'd') {
             $presentation .= FEEDBACK_MULTICHOICERATED_ADJUST_SEP.'1';
         }
         $item->presentation = $subtype.FEEDBACK_MULTICHOICERATED_TYPE_SEP.$presentation;
         return $item;
     }
 }
-

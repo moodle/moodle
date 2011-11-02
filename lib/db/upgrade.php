@@ -6878,6 +6878,37 @@ FROM
         upgrade_main_savepoint(true, 2011101900.02);
     }
 
+    if ($oldversion < 2011102700.01) {
+        // purge everything related to abandoned experimental global search
+
+        // unset setting - this disables it in case user does not delete the dirs
+        unset_config('enableglobalsearch');
+
+        // Delete block, instances and db table
+        $table = new xmldb_table('block_search_documents');
+        if ($dbman->table_exists($table)) {
+            $instances = $DB->get_records('block_instances', array('blockname'=>'search'));
+            foreach($instances as $instance) {
+                context_helper::delete_instance(CONTEXT_BLOCK, $instance->id);
+                $DB->delete_records('block_positions', array('blockinstanceid' => $instance->id));
+                $DB->delete_records('block_instances', array('id' => $instance->id));
+            }
+            $DB->delete_records('block', array('name'=>'search'));
+
+            $dbman->drop_table($table);
+        }
+
+        // purge all settings used by the search block
+        $like = $DB->sql_like('name', '?', true, true, false, '|');
+        $params = array($DB->sql_like_escape('block_search_', '|') . '%', $DB->sql_like_escape('search_in_', '|') . '%');
+        $settings = $DB->get_records_select('config', "$like OR $like", $params);
+        foreach ($settings as $setting) {
+            unset_config($setting->name);
+        }
+
+        upgrade_main_savepoint(true, 2011102700.01);
+    }
+
     // TODO squash this before merging into the master - MDL-29798
     if ($oldversion < 2011102700.03) {
         // set the reasonable status to all definitions we have in our databases so far

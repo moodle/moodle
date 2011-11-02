@@ -47,6 +47,7 @@ $string['longtimenosee_help'] = 'If users haven\'t accessed a course for a long 
 $string['maxenrolled'] = 'Max enrolled users';
 $string['maxenrolled_help'] = 'Specifies the maximum number of users that can self enrol. 0 means no limit.';
 $string['maxenrolledreached'] = 'Maximum number of users allowed to self-enrol was already reached.';
+$string['nopassword'] = 'No enrolment key required.';
 $string['password'] = 'Enrolment key';
 $string['password_help'] = 'An enrolment key enables access to the course to be restricted to only those who know the key.
 
