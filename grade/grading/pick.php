@@ -47,7 +47,7 @@ $targetcontrollerclass = get_class($targetcontroller);
 
 // make sure there is no such form defined in the target area
 if ($targetcontroller->is_form_defined()) {
-    throw new moodle_exception('target_defined', 'core_grading');
+    redirect(new moodle_url('/grade/grading/manage.php', array('areaid' => $targetid)));
 }
 
 list($context, $course, $cm) = get_context_info_array($targetmanager->get_context()->id);
