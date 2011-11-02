@@ -220,6 +220,10 @@ if (!empty($method)) {
     }
     echo $output->container_end();
 
+    // display the message if the form is currently not available (if applicable)
+    if ($message = $controller->form_unavailable_notification()) {
+        echo $output->notification($message);
+    }
     // display the grading form preview
     if ($controller->is_form_defined()) {
         if ($definition->status == gradingform_controller::DEFINITION_STATUS_READY) {

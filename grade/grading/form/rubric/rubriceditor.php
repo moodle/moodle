@@ -26,13 +26,11 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("HTML/QuickForm/input.php");
 
-// register file-related rules
-if (class_exists('HTML_QuickForm')) {
-    HTML_QuickForm::registerRule('rubriceditorcompleted', 'callback', '_ruleIsCompleted', 'MoodleQuickForm_rubriceditor');
-}
-
 class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
     public $_helpbutton = '';
+    protected $validationerrors = null; // null - undefined, false - no errors, string - error(s) text
+    protected $wasvalidated = false; // if element has already been validated
+    protected $nonjsbuttonpressed = false; // null - unknown, true/false - button was/wasn't pressed
 
     function MoodleQuickForm_rubriceditor($elementName=null, $elementLabel=null, $attributes=null) {
         parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
@@ -50,7 +48,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
         global $PAGE;
         $html = $this->_getTabs();
         $renderer = $PAGE->get_renderer('gradingform_rubric');
-        $data = $this->prepare_non_js_data();
+        $data = $this->prepare_data(null, $this->wasvalidated);
         if (!$this->_flagFrozen) {
             $mode = gradingform_rubric_controller::DISPLAY_EDIT_FULL;
             $module = array('name'=>'gradingform_rubriceditor', 'fullpath'=>'/grade/grading/form/rubric/js/rubriceditor.js',
@@ -71,6 +69,9 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                 $mode = gradingform_rubric_controller::DISPLAY_PREVIEW;
             }
         }
+        if ($this->validationerrors) {
+            $html .= $renderer->notification($this->validationerrors, 'error');
+        }
         $html .= $renderer->display_rubric($data['criteria'], $data['options'], $mode, $this->getName());
         return $html;
     }
@@ -78,20 +79,31 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
     /**
      * Prepares the data passed in $_POST:
      * - processes the pressed buttons 'addlevel', 'addcriterion', 'moveup', 'movedown', 'delete' (when JavaScript is disabled)
+     *   sets $this->nonjsbuttonpressed to true/false if such button was pressed
      * - if options not passed (i.e. we create a new rubric) fills the options array with the default values
      * - if options are passed completes the options array with unchecked checkboxes
+     * - if $withvalidation is set, adds 'error_xxx' attributes to elements that contain errors and creates an error string
+     *   and stores it in $this->validationerrors
      *
      * @param array $value
+     * @param boolean $withvalidation whether to enable data validation
      * @return array
      */
-    function prepare_non_js_data($value = null) {
+    function prepare_data($value = null, $withvalidation = false) {
         if (null === $value) {
             $value = $this->getValue();
         }
+        if ($this->nonjsbuttonpressed === null) {
+            $this->nonjsbuttonpressed = false;
+        }
+        $totalscore = 0;
+        $errors = array();
         $return = array('criteria' => array(), 'options' => gradingform_rubric_controller::get_default_options());
         if (!isset($value['criteria'])) {
             $value['criteria'] = array();
+            $errors['err_nocriteria'] = 1;
         }
+        // If options are present in $value, replace default values with submitted values
         if (!empty($value['options'])) {
             foreach (array_keys($return['options']) as $option) {
                 // special treatment for checkboxes
@@ -102,14 +114,18 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                 }
             }
         }
+
+        // iterate through criteria
         $lastaction = null;
         $lastid = null;
         foreach ($value['criteria'] as $id => $criterion) {
             if ($id == 'addcriterion') {
                 $id = $this->get_next_id(array_keys($value['criteria']));
                 $criterion = array('description' => '');
+                $this->nonjsbuttonpressed = true;
             }
             $levels = array();
+            $maxscore = null;
             if (array_key_exists('levels', $criterion)) {
                 foreach ($criterion['levels'] as $levelid => $level) {
                     if ($levelid == 'addlevel') {
@@ -118,13 +134,41 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                             'definition' => '',
                             'score' => 0,
                         );
+                        $this->nonjsbuttonpressed = true;
                     }
                     if (!array_key_exists('delete', $level)) {
+                        if ($withvalidation) {
+                            if (empty($level['definition'])) {
+                                $errors['err_nodefinition'] = 1;
+                                $level['error_definition'] = true;
+                            }
+                            if (!preg_match('#^[\+]?\d*$#', trim($level['score'])) && !preg_match('#^[\+]?\d*[\.,]\d+$#', trim($level['score']))) {
+                                // TODO why we can't allow negative score for rubric?
+                                $errors['err_scoreformat'] = 1;
+                                $level['error_score'] = true;
+                            }
+                        }
                         $levels[$levelid] = $level;
+                        if ($maxscore === null || (float)$level['score'] > $maxscore) {
+                            $maxscore = (float)$level['score'];
+                        }
+                    } else {
+                        $this->nonjsbuttonpressed = true;
                     }
                 }
             }
+            $totalscore += (float)$maxscore;
             $criterion['levels'] = $levels;
+            if ($withvalidation && !array_key_exists('delete', $criterion)) {
+                if (count($levels)<2) {
+                    $errors['err_mintwolevels'] = 1;
+                    $criterion['error_levels'] = true;
+                }
+                if (empty($criterion['description'])) {
+                    $errors['err_nodescription'] = 1;
+                    $criterion['error_description'] = true;
+                }
+            }
             if (array_key_exists('moveup', $criterion) || $lastaction == 'movedown') {
                 unset($criterion['moveup']);
                 if ($lastid !== null) {
@@ -137,19 +181,42 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                 }
                 $lastaction = null;
                 $lastid = $id;
+                $this->nonjsbuttonpressed = true;
             } else if (array_key_exists('delete', $criterion)) {
+                $this->nonjsbuttonpressed = true;
             } else {
                 if (array_key_exists('movedown', $criterion)) {
                     unset($criterion['movedown']);
                     $lastaction = 'movedown';
+                    $this->nonjsbuttonpressed = true;
                 }
                 $return['criteria'][$id] = $criterion;
                 $lastid = $id;
             }
         }
+
+        if ($totalscore <= 0) {
+            $errors['err_totalscore'] = 1;
+        }
+
+        // add sort order field to criteria
         $csortorder = 1;
         foreach (array_keys($return['criteria']) as $id) {
             $return['criteria'][$id]['sortorder'] = $csortorder++;
+        }
+
+        // create validation error string (if needed)
+        if ($withvalidation) {
+            if (count($errors)) {
+                $rv = array();
+                foreach ($errors as $error => $v) {
+                    $rv[] = get_string($error, 'gradingform_rubric');
+                }
+                $this->validationerrors = join('<br/ >', $rv);
+            } else {
+                $this->validationerrors = false;
+            }
+            $this->wasvalidated = true;
         }
         return $return;
     }
@@ -164,52 +231,47 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
         return 'NEWID'.($maxid+1);
     }
 
-    function _ruleIsCompleted($elementValue) {
-        //echo "_ruleIsCompleted";
-        if (isset($elementValue['criteria'])) {
-            foreach ($elementValue['criteria'] as $criterionid => $criterion) {
-                if ($criterionid == 'addcriterion') {
-                    return false;
-                }
-                if (array_key_exists('moveup', $criterion) || array_key_exists('movedown', $criterion) || array_key_exists('delete', $criterion)) {
-                    return false;
-                }
-                if (array_key_exists('levels', $criterion) && is_array($criterion['levels'])) {
-                    foreach ($criterion['levels'] as $levelid => $level) {
-                        if ($levelid == 'addlevel') {
-                            return false;
-                        }
-                        if (array_key_exists('delete', $level)) {
-                            return false;
-                        }
-                    }
-                }
-            }
+    /**
+     * Checks if a submit button was pressed which is supposed to be processed on client side by JS
+     * but user seem to have disabled JS in the browser.
+     * (buttons 'add criteria', 'add level', 'move up', 'move down', etc.)
+     * In this case the form containing this element is prevented from being submitted
+     *
+     * @param array $value
+     * @return boolean true if non-submit button was pressed and not processed by JS
+     */
+    function non_js_button_pressed($value) {
+        if ($this->nonjsbuttonpressed === null) {
+            $this->prepare_data($value);
         }
-        //TODO check everything is filled
-        //echo "<pre>";print_r($elementValue);echo "</pre>";
-        return true;
+        return $this->nonjsbuttonpressed;
     }
 
-    function onQuickFormEvent($event, $arg, &$caller)
-    {
-        $name = $this->getName();
-        if ($name && $caller->elementExists($name)) {
-            $caller->addRule($name, '', 'rubriceditorcompleted');
+    /**
+     * Validates that rubric has at least one criterion, at least two levels within one criterion,
+     * each level has a valid score, all levels have filled definitions and all criteria
+     * have filled descriptions
+     *
+     * @param array $value
+     * @return string|false error text or false if no errors found
+     */
+    function validate($value) {
+        if (!$this->wasvalidated) {
+            $this->prepare_data($value, true);
         }
-        return parent::onQuickFormEvent($event, $arg, $caller);
+        return $this->validationerrors;
     }
 
     /**
      * Prepares the data for saving
-     * @see prepare_non_js_data
+     * @see prepare_data()
      *
      * @param array $submitValues
      * @param boolean $assoc
      * @return array
      */
     function exportValue(&$submitValues, $assoc = false) {
-        $value =  $this->prepare_non_js_data($this->_findValue($submitValues));
+        $value =  $this->prepare_data($this->_findValue($submitValues));
         return $this->_prepareValue($value, $assoc);
     }
 }

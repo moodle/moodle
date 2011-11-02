@@ -103,3 +103,8 @@
 .gradingform_rubric .options .option {padding-bottom:2px;}
 .gradingform_rubric .options .option label {margin-left: 5px;}
 .gradingform_rubric .options .option .value {margin-left: 5px;font-weight:bold;}
+
+.gradingform_rubric .criterion .levels.error { border:1px solid red;}
+.gradingform_rubric .criterion .description.error,
+.gradingform_rubric .criterion .levels .level .definition.error,
+.gradingform_rubric .criterion .levels .level .score.error {background:#FFDDDD;}

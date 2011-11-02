@@ -36,7 +36,7 @@ MoodleQuickForm::registerElementType('rubriceditor', $CFG->dirroot.'/grade/gradi
 class gradingform_rubric_editrubric extends moodleform {
 
     /**
-     * Form elements definition
+     * Form element definition
      */
     public function definition() {
         $form = $this->_form;
@@ -56,22 +56,66 @@ class gradingform_rubric_editrubric extends moodleform {
         $form->addElement('editor', 'description_editor', get_string('description', 'gradingform_rubric'), null, $options);
         $form->setType('description_editor', PARAM_RAW);
 
+        // rubric completion status
+        $choices = array();
+        $choices[gradingform_controller::DEFINITION_STATUS_WORKINPROGRESS]    = get_string('statusworkinprogress', 'gradingform_rubric');
+        $choices[gradingform_controller::DEFINITION_STATUS_PRIVATE]    = get_string('statusprivate', 'gradingform_rubric');
+        $choices[gradingform_controller::DEFINITION_STATUS_PUBLIC]    = get_string('statuspublic', 'gradingform_rubric');
+        $form->addElement('select', 'status', 'Current rubric status', $choices)->freeze();
+
         // rubric editor
         $element = $form->addElement('rubriceditor', 'rubric', get_string('rubric', 'gradingform_rubric'));
         $form->setType('rubric', PARAM_RAW);
-        $form->addRule('rubric', '', 'rubriceditorcompleted'); //TODO how to add this rule automatically?????
-        if (array_key_exists('freezerubric', $this->_customdata) && $this->_customdata['freezerubric']) {
-            $element->freeze();
-        }
+        //$element->freeze(); // TODO freeze rubric editor if needed
 
-        // submit and cancel buttons
-        $buttonarray = array(
-            $form->createElement('submit', 'submitdraft', get_string('saveandcontinue', 'core_grading')),
-            $form->createElement('submit', 'submitfinal', get_string('saveandmakeready', 'core_grading')),
-            $form->createElement('cancel')
-        );
+        $buttonarray = array();
+        $buttonarray[] = &$form->createElement('submit', 'saverubric', get_string('saverubric', 'gradingform_rubric'));
+        $buttonarray[] = &$form->createElement('submit', 'saverubricdraft', get_string('saverubricdraft', 'gradingform_rubric'));
+        $buttonarray[] = &$form->createElement('cancel');
         $form->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-        $form->setType('buttonar', PARAM_RAW);
         $form->closeHeaderBefore('buttonar');
+    }
+
+    /**
+     * Form vlidation.
+     * If there are errors return array of errors ("fieldname"=>"error message"),
+     * otherwise true if ok.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *               or an empty array if everything is OK (true allowed for backwards compatibility too).
+     */
+    function validation($data, $files) {
+        $err = parent::validation($data, $files);
+        $err = array();
+        $form = $this->_form;
+        $rubricel = $form->getElement('rubric');
+        if ($rubricel->non_js_button_pressed($data['rubric'])) {
+            // if JS is disabled and button such as 'Add criterion' is pressed - prevent from submit
+            $err['rubricdummy'] = 1;
+        } else if (isset($data['saverubric']) && $data['saverubric']) {
+            // If user attempts to make rubric active - it needs to be validated
+            if ($rubricel->validate($data['rubric']) !== false) {
+                $err['rubricdummy'] = 1;
+            }
+        }
+        return $err;
+    }
+
+    /**
+     * Return submitted data if properly submitted or returns NULL if validation fails or
+     * if there is no submitted data.
+     *
+     * @return object submitted data; NULL if not valid or not submitted or cancelled
+     */
+    function get_data() {
+        $data = parent::get_data();
+        if (!empty($data->saverubric)) {
+            $data->status = gradingform_controller::DEFINITION_STATUS_PUBLIC; // TODO ???
+        } else if (!empty($data->saverubricdraft)) {
+            $data->status = gradingform_controller::DEFINITION_STATUS_WORKINPROGRESS;
+        }
+        return $data;
     }
 }

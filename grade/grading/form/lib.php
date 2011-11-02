@@ -135,6 +135,19 @@ abstract class gradingform_controller {
     }
 
     /**
+     * Returns a message why this form is unavailable. Maybe overriden by plugins to give more details.
+     * @see is_form_available()
+     *
+     * @return string
+     */
+    public function form_unavailable_notification() {
+        if ($this->is_form_available()) {
+            return null;
+        }
+        return get_string('gradingformunavailable', 'grades');
+    }
+
+    /**
      * Returns URL of a page where the grading form can be defined and edited.
      *
      * @param moodle_url $returnurl optional URL of a page where the user should be sent once they are finished with editing

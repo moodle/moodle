@@ -289,6 +289,7 @@ $string['gradetype_help'] = 'There are 4 grade types:
 Only value and scale grade types may be aggregated. The grade type for an activity-based grade item is set on the activity settings page.';
 $string['gradeview'] = 'View grade';
 $string['gradeweighthelp'] = 'Grade weight help';
+$string['gradingformunavailable'] = 'Please note: this form is not available for grading at the moment. Simple grading method will be used until form has a valid status.';
 $string['groupavg'] = 'Group average';
 $string['hidden'] = 'Hidden';
 $string['hidden_help'] = 'If ticked, grades are hidden from students. A hidden until date may be set if desired, to release grades after grading is completed.';

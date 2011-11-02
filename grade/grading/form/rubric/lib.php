@@ -136,6 +136,13 @@ class gradingform_rubric_controller extends gradingform_controller {
                 }
             }
             foreach ($levelsdata as $levelid => $level) {
+                if (isset($level['score'])) {
+                    $level['score'] = (float)$level['score'];
+                    if ($level['score']<0) {
+                        // TODO why we can't allow negative score for rubric?
+                        $level['score'] = 0;
+                    }
+                }
                 if (preg_match('/^NEWID\d+$/', $levelid)) {
                     // insert level into DB
                     $data = array('criterionid' => $id, 'definitionformat' => FORMAT_MOODLE); // TODO format is not supported yet
@@ -213,7 +220,11 @@ class gradingform_rubric_controller extends gradingform_controller {
             // pick the level data
             if (!empty($record->rlid)) {
                 foreach (array('id', 'score', 'definition', 'definitionformat') as $fieldname) {
-                    $this->definition->rubric_criteria[$record->rcid]['levels'][$record->rlid][$fieldname] = $record->{'rl'.$fieldname};
+                    $value = $record->{'rl'.$fieldname};
+                    if ($fieldname == 'score') {
+                        $value = (float)$value; // To prevent display like 1.00000
+                    }
+                    $this->definition->rubric_criteria[$record->rcid]['levels'][$record->rlid][$fieldname] = $value;
                 }
             }
         }
