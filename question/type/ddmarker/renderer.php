@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/rendererbase.php');
 class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
-        global $PAGE;
+        global $PAGE, $OUTPUT;
 
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
@@ -54,6 +54,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
 
         $dragimagehomes = '';
         $orderedgroup = $question->get_ordered_choices(1);
+        $componentname = $question->qtype->plugin_name();
         foreach ($orderedgroup as $choiceno => $dragimage) {
             $classes = array('draghome',
                              "dragitemhomes{$dragimage->no}",
@@ -61,9 +62,12 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
             if ($dragimage->infinite) {
                 $classes[] = 'infinite';
             }
-            $dragimagehomes .= html_writer::tag('div',
-                                                $dragimage->text,
-                                                array('class'=>join(' ', $classes)));
+            $targeticonhtml =
+                $OUTPUT->pix_icon('crosshairs', '', $componentname, array('class'=> 'target'));
+
+            $dragimagehomes .= html_writer::tag('span',
+                                                    $targeticonhtml.$dragimage->text,
+                                                    array('class'=>join(' ', $classes)));
         }
         $dragimagehomesdiv = html_writer::tag('div', $dragimagehomes);
 
@@ -72,9 +76,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
             $dragitemsclass .= ' readonly';
         }
         $dragitems = html_writer::tag('div', $dragimagehomesdiv, array('class'=> $dragitemsclass));
-        $dropzones = html_writer::empty_tag('div', array('class'=>'dropzones'));
-        $output .= html_writer::tag('div', $droparea.$dragitems.$dropzones,
-                                                                        array('class'=>'ddarea'));
+        $output .= html_writer::tag('div', $droparea.$dragitems, array('class'=>'ddarea'));
         $topnode = 'div#q'.$qa->get_slot().' div.ddarea';
         $params = array('drops' => $question->places,
                         'topnode' => $topnode,

@@ -39,23 +39,19 @@
 .que.ddmarker .dropbackground, form.mform fieldset#previewareaheader .dropbackground {
     margin:0 auto;
 }
-.que.ddmarker .dropzone {
-    border: 1px solid black;
-    position: absolute;
-    z-index: 1;
-}
+
 .que.ddmarker div.dragitems div.draghome, .que.ddmarker div.dragitems div.drag,
 form.mform fieldset#previewareaheader div.draghome, form.mform fieldset#previewareaheader div.drag {
     font:13px/1.231 arial,helvetica,clean,sans-serif;
     *font-size:small; /* for IE */
     *font:x-small; /* for IE in quirks mode */
 }
-.que.ddmarker div.markertexts span.markertext,
+.que.ddmarker span.draghome,
+.que.ddmarker div.markertexts span.drag,
 form.mform fieldset#previewareaheader div.markertexts span.markertext {
     z-index: 2;
     background-color: white;
     padding: 5px;
-    position:absolute;
     display: -moz-inline-stack;
     display:inline-block;
     height: auto;
@@ -66,4 +62,8 @@ form.mform fieldset#previewareaheader div.markertexts span.markertext {
     -webkit-border-radius: 10px;
     -khtml-border-radius: 10px;
     border-radius: 10px;
+}
+.que.ddmarker div.dragitems span.drag,
+form.mform fieldset#previewareaheader div.markertexts span.markertext {
+    position:absolute;
 }
