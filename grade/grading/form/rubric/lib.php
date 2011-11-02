@@ -593,8 +593,8 @@ class gradingform_rubric_instance extends gradingform_instance {
                 $scores[] = $level['score'];
             }
             sort($scores);
-            $minscore += $criterion['levels'][$scores[0]];
-            $maxscore += $criterion['levels'][$scores[sizeof($scores)-1]];
+            $minscore += $scores[0];
+            $maxscore += $scores[sizeof($scores)-1];
         }
 
         if ($maxscore <= $minscore) {
