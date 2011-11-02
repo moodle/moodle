@@ -15,14 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Settings for the backups report
+ * Strings for component 'report_stats'
  *
  * @package    report
- * @subpackage backups
- * @copyright  2007 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @subpackage stats
+ * @copyright  2011 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
-
-$ADMIN->add('reports', new admin_externalpage('reportbackups', get_string('backups', 'admin'), "$CFG->wwwroot/$CFG->admin/report/backups/index.php",'moodle/backup:backupcourse'));
+$string['pluginname'] = 'Statistics';

@@ -1,6 +1,6 @@
 <?php
 
-    require_once('../../../config.php');
+    require_once('../../config.php');
     require_once($CFG->dirroot.'/lib/statslib.php');
     require_once($CFG->libdir.'/adminlib.php');
 
@@ -90,7 +90,7 @@
             if (empty($CFG->gdversion)) {
                 echo '<div class="graph">(' . get_string("gdneed") .')</div>';
             } else {
-                echo '<div class="graph"><img alt="'.get_string('courseoverviewgraph').'" src="'.$CFG->wwwroot.'/'.$CFG->admin.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></div>';
+                echo '<div class="graph"><img alt="'.get_string('courseoverviewgraph').'" src="'.$CFG->wwwroot.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></div>';
             }
 
             $table = new html_table();

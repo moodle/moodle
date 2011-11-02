@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,16 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'report_configlog', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'report_backups'
  *
- * @package   report_configlog
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report
+ * @subpackage backups
+ * @copyright  2011 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['configlog'] = 'Config changes';
-$string['oldvalue'] = 'Original value';
-$string['plugin'] = 'Plugin';
-$string['setting'] = 'Setting';
-$string['timemodified'] = 'Date';
-$string['value'] = 'New value';
+$string['pluginname'] = 'Backups report';

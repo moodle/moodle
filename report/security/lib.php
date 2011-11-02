@@ -752,7 +752,7 @@ function report_security_check_riskadmin($detailed=false) {
             $url = "$CFG->wwwroot/user/view.php?id=$user->id";
             $admins[$uid] = '<li><a href="'.$url.'">'.fullname($user).' ('.$user->email.')</a></li>';
         }
-        $admins = '<ul>'.implode($admins).'</ul>';
+        $admins = '<ul>'.implode('', $admins).'</ul>';
     }
 
     $result->status  = REPORT_SECURITY_OK;
@@ -856,7 +856,7 @@ function report_security_check_riskbackup($detailed=false) {
                 $role->url = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$role->contextid&amp;roleid=$role->id";
                 $links[] = '<li>'.get_string('check_riskbackup_editoverride', 'report_security', $role).'</li>';
             }
-            $links = '<ul>'.implode($links).'</ul>';
+            $links = '<ul>'.implode('', $links).'</ul>';
             $result->details .= get_string('check_riskbackup_details_overriddenroles', 'report_security', $links);
         }
 
@@ -874,7 +874,7 @@ function report_security_check_riskbackup($detailed=false) {
             $users[] = '<li>'.get_string('check_riskbackup_unassign', 'report_security', $a).'</li>';
         }
         if (!empty($users)) {
-            $users = '<ul>'.implode($users).'</ul>';
+            $users = '<ul>'.implode('', $users).'</ul>';
             $result->details .= get_string('check_riskbackup_details_users', 'report_security', $users);
         }
     }

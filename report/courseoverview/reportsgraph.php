@@ -1,6 +1,6 @@
 <?php
 
-    require_once('../../../config.php');
+    require_once('../../config.php');
     require_once($CFG->dirroot.'/lib/statslib.php');
     require_once($CFG->dirroot.'/lib/graphlib.php');
 
@@ -30,7 +30,7 @@
     $courses = $DB->get_records_sql($sql, $param->params, 0, $numcourses);
 
     if (empty($courses)) {
-        $PAGE->set_url('/admin/report/courseoverview/index.php');
+        $PAGE->set_url('/report/courseoverview/index.php');
         print_error('statsnodata', 'error', $PAGE->url->out());
     }
 

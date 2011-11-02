@@ -25,8 +25,8 @@
 
 define('NO_OUTPUT_BUFFERING', true);
 
-require_once('../../../config.php');
-require_once($CFG->dirroot.'/'.$CFG->admin.'/report/security/lib.php');
+require_once('../../config.php');
+require_once($CFG->dirroot.'/report/security/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 require_login();
@@ -69,7 +69,7 @@ $statusarr = array(REPORT_SECURITY_OK       => $strok,
                    REPORT_SECURITY_SERIOUS  => $strserious,
                    REPORT_SECURITY_CRITICAL => $strcritical);
 
-$url = "$CFG->wwwroot/$CFG->admin/report/security/index.php";
+$url = "$CFG->wwwroot/report/security/index.php";
 
 if ($issue and ($result = $issue(true))) {
     report_security_hide_timearning();
@@ -88,7 +88,7 @@ if ($issue and ($result = $issue(true))) {
     $row[2] = $result->info;
     $row[3] = is_null($result->link) ? '&nbsp;' : $result->link;
 
-    $PAGE->set_docs_path('admin/report/security/' . $issue);
+    $PAGE->set_docs_path('report/security/' . $issue);
 
     $table->data[] = $row;
 
