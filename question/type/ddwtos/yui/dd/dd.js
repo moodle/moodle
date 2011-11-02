@@ -212,6 +212,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                     var drag =
                         Y.one(this.selectors.unplaced_drags_for_choice_in_group(choiceno, groupno));
                     this.place_drag_in_drop(drag, drop);
+                    this.position_drag_item(drag);
                 }
             }
         },
