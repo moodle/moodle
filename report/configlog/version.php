@@ -15,19 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Report settings
+ * Version details.
  *
  * @package    report
  * @subpackage configlog
- * @copyright  2009 Petr Skoda
+ * @copyright  2011 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-defined('MOODLE_INTERNAL') || die;
-
-$ADMIN->add('reports', new admin_externalpage('reportconfiglog', get_string('configlog', 'report_configlog'), "$CFG->wwwroot/report/configlog/index.php"));
-
-// no report settings
-$settings = null;
+$plugin->version   = 2011110200;         // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2011102700.01;      // Requires this Moodle version
+$plugin->component = 'report_configlog'; // Full name of the plugin (used for diagnostics)

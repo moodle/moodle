@@ -17,8 +17,9 @@
 /**
  * Strings for component 'report_configlog', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   report_configlog
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @package   report
+ * @subplugin configlog
+ * @copyright 2009 petr Skoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
