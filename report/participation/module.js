@@ -1,7 +1,7 @@
 
-M.coursereport_participation = {};
+M.report_participation = {};
 
-M.coursereport_participation.init = function(Y) {
+M.report_participation.init = function(Y) {
 
     Y.on('submit', function(e) {
             Y.one('#formactionselect').get('options').each(function() {

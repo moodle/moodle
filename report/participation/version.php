@@ -15,19 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Post installation and migration code.
+ * Version info
  *
  * @package    report
- * @subpackage progress
- * @copyright  2011 Petr Skoda {@link http://skodak.org}
+ * @subpackage participation
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-function xmldb_report_progress_install() {
-    // this is a hack which is needed for cleanup of original coursereport_progress stuff
-    unset_all_config_for_plugin('coursereport_progress');
-    capabilities_cleanup('coursereport_progress');
-}
-
+$plugin->version   = 2011110200;             // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2011102700.01;          // Requires this Moodle version
+$plugin->component = 'report_participation'; // Full name of the plugin (used for diagnostics)

@@ -25,7 +25,7 @@
 
 $capabilities = array(
 
-    'coursereport/participation:view' => array(
+    'report/participation:view' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
@@ -35,7 +35,7 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         ),
 
-        'clonepermissionsfrom' => 'moodle/site:viewreports',
+        'clonepermissionsfrom' => 'coursereport/participation:view',
     )
 );
 

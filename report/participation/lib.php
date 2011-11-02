@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,10 +17,10 @@
 /**
  * This file contains functions used by the participation report
  *
- * @since 2.0
- * @package course-report
- * @copyright 2009 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report
+ * @subpackage participation
+ * @copyright  2009 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -31,11 +30,11 @@
  * @param stdClass $course The course to object for the report
  * @param stdClass $context The context of the course
  */
-function participation_report_extend_navigation($navigation, $course, $context) {
+function report_participation_extend_navigation_course($navigation, $course, $context) {
     global $CFG, $OUTPUT;
-    if (has_capability('coursereport/participation:view', $context)) {
-        $url = new moodle_url('/course/report/participation/index.php', array('id'=>$course->id));
-        $navigation->add(get_string('participationreport'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
+    if (has_capability('report/participation:view', $context)) {
+        $url = new moodle_url('/report/participation/index.php', array('id'=>$course->id));
+        $navigation->add(get_string('pluginname', 'report_participation'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
     }
 }
 
@@ -44,8 +43,9 @@ function participation_report_extend_navigation($navigation, $course, $context) 
  * @param string $pagetype current page type
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
+ * @return array
  */
-function participation_page_type_list($pagetype, $parentcontext, $currentcontext) {
+function report_participation_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $array = array(
         '*' => get_string('page-x', 'pagetype'),
         'course-report-*' => get_string('page-course-report-x', 'pagetype'),

@@ -18,16 +18,16 @@
  * Post installation and migration code.
  *
  * @package    report
- * @subpackage progress
+ * @subpackage participation
  * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-function xmldb_report_progress_install() {
-    // this is a hack which is needed for cleanup of original coursereport_progress stuff
-    unset_all_config_for_plugin('coursereport_progress');
-    capabilities_cleanup('coursereport_progress');
+function xmldb_report_participation_install() {
+    // this is a hack which is needed for cleanup of original coursereport_participation stuff
+    unset_all_config_for_plugin('coursereport_participation');
+    capabilities_cleanup('coursereport_participation');
 }
 

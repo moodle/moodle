@@ -1,13 +1,37 @@
 <?php
-require_once('../../config.php');
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Activity progress reports
+ *
+ * @package    report
+ * @subpackage progress
+ * @copyright  2008 Sam Marshall
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+require('../../config.php');
 require_once($CFG->libdir . '/completionlib.php');
 
 define('COMPLETION_REPORT_PAGE', 25);
 
 // Get course
 $id = required_param('course',PARAM_INT);
-$course=$DB->get_record('course',array('id'=>$id));
-if(!$course) {
+$course = $DB->get_record('course',array('id'=>$id));
+if (!$course) {
     print_error('invalidcourseid');
 }
 
@@ -24,7 +48,7 @@ $csv = $format == 'csv' || $excel;
 $start   = optional_param('start', 0, PARAM_INT);
 $sifirst = optional_param('sifirst', 'all', PARAM_ALPHA);
 $silast  = optional_param('silast', 'all', PARAM_ALPHA);
-$start = optional_param('start',0,PARAM_INT);
+$start   = optional_param('start', 0, PARAM_INT);
 
 // Whether to show idnumber
 // TODO: This should really not be using a config option 'intended' for
@@ -34,8 +58,8 @@ $idnumbers = $CFG->grade_report_showuseridnumber;
 
 function csv_quote($value) {
     global $excel;
-    if($excel) {
-        $tl=textlib_get_instance();
+    if ($excel) {
+        $tl = textlib_get_instance();
         return $tl->convert('"'.str_replace('"',"'",$value).'"','UTF-8','UTF-16LE');
     } else {
         return '"'.str_replace('"',"'",$value).'"';
@@ -58,20 +82,20 @@ $PAGE->set_pagelayout('report');
 require_login($course);
 
 // Check basic permission
-$context=get_context_instance(CONTEXT_COURSE,$course->id);
+$context = get_context_instance(CONTEXT_COURSE,$course->id);
 require_capability('report/progress:view',$context);
 
 // Get group mode
-$group=groups_get_course_group($course,true); // Supposed to verify group
-if($group===0 && $course->groupmode==SEPARATEGROUPS) {
+$group = groups_get_course_group($course,true); // Supposed to verify group
+if ($group===0 && $course->groupmode==SEPARATEGROUPS) {
     require_capability('moodle/site:accessallgroups',$context);
 }
 
 // Get data on activities and progress of all users, and give error if we've
 // nothing to display (no users or no activities)
-$reportsurl=$CFG->wwwroot.'/course/report.php?id='.$course->id;
-$completion=new completion_info($course);
-$activities=$completion->get_activities();
+$reportsurl = $CFG->wwwroot.'/course/report.php?id='.$course->id;
+$completion = new completion_info($course);
+$activities = $completion->get_activities();
 
 // Generate where clause
 $where = array();
@@ -107,14 +131,14 @@ if ($total) {
     );
 }
 
-if($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are some users/actvs
+if ($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are some users/actvs
 
     $shortname = format_string($course->shortname, true, array('context' => $context));
     $textlib = textlib_get_instance();
     header('Content-Disposition: attachment; filename=progress.'.
         preg_replace('/[^a-z0-9-]/','_',$textlib->strtolower(strip_tags($shortname))).'.csv');
     // Unicode byte-order mark for Excel
-    if($excel) {
+    if ($excel) {
         header('Content-Type: text/csv; charset=UTF-16LE');
         print chr(0xFF).chr(0xFE);
         $sep="\t".chr(0);
@@ -136,7 +160,7 @@ if($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are 
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
 
-    if($svgcleverness) {
+    if ($svgcleverness) {
         $PAGE->requires->yui2_lib('event');
         $PAGE->requires->js('/report/progress/textrotate.js');
     }
@@ -145,7 +169,7 @@ if($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are 
     groups_print_course_menu($course,$CFG->wwwroot.'/report/progress/?course='.$course->id);
 }
 
-if(count($activities)==0) {
+if (count($activities)==0) {
     echo $OUTPUT->container(get_string('err_noactivities', 'completion'), 'errorbox errorboxcontent');
     echo $OUTPUT->footer();
     exit;
@@ -199,7 +223,7 @@ foreach ($initials as $initial) {
 }
 
 // Do we need a paging bar?
-if($total > COMPLETION_REPORT_PAGE) {
+if ($total > COMPLETION_REPORT_PAGE) {
 
     // Paging bar
     $pagingbar .= '<div class="paging">';
@@ -228,8 +252,7 @@ if($total > COMPLETION_REPORT_PAGE) {
 
         if ($curstart == $start) {
             $pagingbar .= '&nbsp;'.$curpage.'&nbsp;';
-        }
-        else {
+        } else {
             $pagingbar .= "&nbsp;<a href=\"{$link}{$curstart}{$sistring}\">$curpage</a>&nbsp;";
         }
 
@@ -248,7 +271,7 @@ if($total > COMPLETION_REPORT_PAGE) {
 // Okay, let's draw the table of progress info,
 
 // Start of table
-if(!$csv) {
+if (!$csv) {
     print '<br class="clearer"/>'; // ugh
 
     print $pagingbar;
@@ -266,7 +289,7 @@ if(!$csv) {
 
     $sistring = "&amp;silast={$silast}&amp;sifirst={$sifirst}";
 
-    if($firstnamesort) {
+    if ($firstnamesort) {
         print
             get_string('firstname')." / <a href=\"./?course={$course->id}{$sistring}\">".
             get_string('lastname').'</a>';
@@ -277,12 +300,12 @@ if(!$csv) {
     }
     print '</th>';
 
-    if($idnumbers) {
+    if ($idnumbers) {
         print '<th>'.get_string('idnumber').'</th>';
     }
 
 } else {
-    if($idnumbers) {
+    if ($idnumbers) {
         print $sep;
     }
 }
@@ -292,7 +315,7 @@ foreach($activities as $activity) {
     $activity->datepassed = $activity->completionexpected && $activity->completionexpected <= time();
     $activity->datepassedclass=$activity->datepassed ? 'completion-expired' : '';
 
-    if($activity->completionexpected) {
+    if ($activity->completionexpected) {
         $datetext=userdate($activity->completionexpected,get_string('strftimedate','langconfig'));
     } else {
         $datetext='';
@@ -301,7 +324,7 @@ foreach($activities as $activity) {
     // Some names (labels) come URL-encoded and can be very long, so shorten them
     $activity->name = shorten_text($activity->name);
 
-    if($csv) {
+    if ($csv) {
         print $sep.csv_quote(strip_tags($activity->name)).$sep.csv_quote($datetext);
     } else {
         print '<th scope="col" class="'.$activity->datepassedclass.'">'.
@@ -310,14 +333,14 @@ foreach($activities as $activity) {
             '<img src="'.$OUTPUT->pix_url('icon', $activity->modname).'" alt="'.
             get_string('modulename',$activity->modname).'" /> <span class="completion-activityname">'.
             format_string($activity->name).'</span></a>';
-        if($activity->completionexpected) {
+        if ($activity->completionexpected) {
             print '<div class="completion-expected"><span>'.$datetext.'</span></div>';
         }
         print '</th>';
     }
 }
 
-if($csv) {
+if ($csv) {
     print $line;
 } else {
     print '</tr>';
@@ -326,15 +349,15 @@ if($csv) {
 // Row for each user
 foreach($progress as $user) {
     // User name
-    if($csv) {
+    if ($csv) {
         print csv_quote(fullname($user));
-        if($idnumbers) {
+        if ($idnumbers) {
             print $sep.csv_quote($user->idnumber);
         }
     } else {
         print '<tr><th scope="row"><a href="'.$CFG->wwwroot.'/user/view.php?id='.
             $user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></th>';
-        if($idnumbers) {
+        if ($idnumbers) {
             print '<td>'.htmlspecialchars($user->idnumber).'</td>';
         }
     }
@@ -343,7 +366,7 @@ foreach($progress as $user) {
     foreach($activities as $activity) {
 
         // Get progress information and state
-        if(array_key_exists($activity->id,$user->progress)) {
+        if (array_key_exists($activity->id,$user->progress)) {
             $thisprogress=$user->progress[$activity->id];
             $state=$thisprogress->completionstate;
             $date=userdate($thisprogress->timemodified);
@@ -372,7 +395,7 @@ foreach($progress as $user) {
         $a->activity=strip_tags($activity->name);
         $fulldescribe=get_string('progress-title','completion',$a);
 
-        if($csv) {
+        if ($csv) {
             print $sep.csv_quote($describe).$sep.csv_quote($date);
         } else {
             print '<td class="completion-progresscell '.$activity->datepassedclass.'">'.
@@ -381,14 +404,14 @@ foreach($progress as $user) {
         }
     }
 
-    if($csv) {
+    if ($csv) {
         print $line;
     } else {
         print '</tr>';
     }
 }
 
-if($csv) {
+if ($csv) {
     exit;
 }
 print '</table>';

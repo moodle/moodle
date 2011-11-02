@@ -1,6 +1,6 @@
 <?php
 
-    require_once('../../../config.php');
+    require_once('../../config.php');
     require_once($CFG->dirroot.'/lib/tablelib.php');
 
     define('DEFAULT_PAGE_SIZE', 20);
@@ -14,7 +14,7 @@
     $page       = optional_param('page', 0, PARAM_INT);                     // which page to show
     $perpage    = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
 
-    $url = new moodle_url('/course/report/participation/index.php', array('id'=>$id));
+    $url = new moodle_url('/report/participation/index.php', array('id'=>$id));
     if ($roleid !== 0) $url->param('roleid');
     if ($instanceid !== 0) $url->param('instanceid');
     if ($timefrom !== 0) $url->param('timefrom');
@@ -38,7 +38,7 @@
 
     require_login($course);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    require_capability('coursereport/participation:view', $context);
+    require_capability('report/participation:view', $context);
 
     add_to_log($course->id, "course", "report participation", "report/participation/index.php?id=$course->id", $course->id);
 
@@ -141,7 +141,7 @@
     echo html_writer::select($actionoptions,'action',$action,false);
     echo '<input type="submit" value="'.get_string('go').'" />'."\n</div></form>\n";
 
-    $baseurl =  $CFG->wwwroot.'/course/report/participation/index.php?id='.$course->id.'&amp;roleid='
+    $baseurl =  $CFG->wwwroot.'/report/participation/index.php?id='.$course->id.'&amp;roleid='
         .$roleid.'&amp;instanceid='.$instanceid.'&amp;timefrom='.$timefrom.'&amp;action='.$action.'&amp;perpage='.$perpage;
 
     if (!empty($instanceid) && !empty($roleid)) {
@@ -296,7 +296,7 @@
         echo '</form>'."\n";
         echo '</div>'."\n";
 
-        $PAGE->requires->js_init_call('M.coursereport_participation.init');
+        $PAGE->requires->js_init_call('M.report_participation.init');
     }
 
     echo $OUTPUT->footer();
