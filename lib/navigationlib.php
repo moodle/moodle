@@ -2286,8 +2286,8 @@ class global_navigation extends navigation_node {
 
         // View course reports
         if (has_capability('moodle/site:viewreports', $this->page->context)) { // basic capability for listing of reports
-            $reportnav = $coursenode->add(get_string('reports'), new moodle_url('/course/report.php', array('id'=>$course->id)), self::TYPE_CONTAINER, null, null, new pix_icon('i/stats', ''));
-            $coursereports = get_plugin_list('coursereport');
+            $reportnav = $coursenode->add(get_string('reports'), null, self::TYPE_CONTAINER, null, null, new pix_icon('i/stats', ''));
+            $coursereports = get_plugin_list('coursereport'); // deprecated
             foreach ($coursereports as $report=>$dir) {
                 $libfile = $CFG->dirroot.'/course/report/'.$report.'/lib.php';
                 if (file_exists($libfile)) {
@@ -2297,6 +2297,11 @@ class global_navigation extends navigation_node {
                         $reportfunction($reportnav, $course, $this->page->context);
                     }
                 }
+            }
+
+            $reports = get_plugin_list_with_function('report', 'extend_navigation_course', 'lib.php');
+            foreach ($reports as $reportfunction) {
+                $reportfunction($reportnav, $course, $this->page->context);
             }
         }
         return true;
@@ -2356,8 +2361,8 @@ class global_navigation extends navigation_node {
 
         // View course reports
         if (has_capability('moodle/site:viewreports', $this->page->context)) { // basic capability for listing of reports
-            $reportnav = $coursenode->add(get_string('reports'), new moodle_url('/course/report.php', array('id'=>$course->id)), self::TYPE_CONTAINER, null, null, new pix_icon('i/stats', ''));
-            $coursereports = get_plugin_list('coursereport');
+            $reportnav = $coursenode->add(get_string('reports'), null, self::TYPE_CONTAINER, null, null, new pix_icon('i/stats', ''));
+            $coursereports = get_plugin_list('coursereport'); // deprecated
             foreach ($coursereports as $report=>$dir) {
                 $libfile = $CFG->dirroot.'/course/report/'.$report.'/lib.php';
                 if (file_exists($libfile)) {
@@ -2367,6 +2372,11 @@ class global_navigation extends navigation_node {
                         $reportfunction($reportnav, $course, $this->page->context);
                     }
                 }
+            }
+
+            $reports = get_plugin_list_with_function('report', 'extend_navigation_course', 'lib.php');
+            foreach ($reports as $reportfunction) {
+                $reportfunction($reportnav, $course, $this->page->context);
             }
         }
         return true;
