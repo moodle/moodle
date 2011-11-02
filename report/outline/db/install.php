@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die;
 
 function xmldb_report_outline_install() {
     // this is a hack which is needed for cleanup of original coursereport_outline stuff
-    unset_all_config_for_plugin('coursereport_online');
-    capabilities_cleanup('coursereport_online');
+    unset_all_config_for_plugin('coursereport_outline');
+    capabilities_cleanup('coursereport_outline');
 }
 
