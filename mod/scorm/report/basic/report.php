@@ -98,8 +98,8 @@ class scorm_basic_report extends scorm_default_report {
 
         if ( !$nostudents ) {
             // Now check if asked download of data
+            $coursecontext = context_course::instance($course->id);
             if ($download) {
-                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                 $shortname = format_string($course->shortname, true, array('context' => $coursecontext));
                 $filename = clean_filename("$shortname ".format_string($scorm->name, true));
             }
@@ -117,10 +117,12 @@ class scorm_basic_report extends scorm_default_report {
             }
             $columns[]= 'fullname';
             $headers[]= get_string('name');
-            if ($CFG->grade_report_showuseridnumber) {
-                $columns[]= 'idnumber';
-                $headers[]= get_string('idnumber');
+            $extrafields = get_extra_user_fields($coursecontext);
+            foreach ($extrafields as $field) {
+                $columns[] = $field;
+                $headers[] = get_user_field_name($field);
             }
+
             $columns[]= 'attempt';
             $headers[]= get_string('attempt', 'scorm');
             $columns[]= 'start';
@@ -153,7 +155,12 @@ class scorm_basic_report extends scorm_default_report {
 
                 $table->column_suppress('picture');
                 $table->column_suppress('fullname');
-                $table->column_suppress('idnumber');
+                // I wonder why it is doing all this suppress malarkey?
+                // However, if it was suppressing idnumber field before, I guess
+                // it needs to suppress all the user identity fields now
+                foreach ($extrafields as $field) {
+                    $table->column_suppress($field);
+                }
 
                 $table->no_sorting('start');
                 $table->no_sorting('finish');
@@ -266,7 +273,8 @@ class scorm_basic_report extends scorm_default_report {
                             // Construct the SQL
             $select = 'SELECT DISTINCT '.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').' AS uniqueid, ';
             $select .= 'st.scormid AS scormid, st.attempt AS attempt, ' .
-                    'u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, u.imagealt, u.email ';
+                    'u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, u.imagealt, u.email' .
+                    get_extra_user_fields_sql($coursecontext, 'u', '', array('idnumber')) . ' ';
 
             // This part is the same for all cases - join users and scorm_scoes_track tables
             $from = 'FROM {user} u ';
@@ -385,8 +393,8 @@ class scorm_basic_report extends scorm_default_report {
                     } else {
                         $row[] = fullname($scouser);
                     }
-                    if (in_array('idnumber', $columns)) {
-                        $row[] = $scouser->idnumber;
+                    foreach ($extrafields as $field) {
+                        $row[] = s($scouser->{$field});
                     }
                     if (empty($timetracks->start)) {
                         $row[] = '-';

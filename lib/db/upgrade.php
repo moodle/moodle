@@ -6815,6 +6815,7 @@ FROM
             set_config('showuseridentity', $CFG->extrauserselectorfields);
             unset_config('extrauserselectorfields');
         }
+        unset_config('grade_report_showuseridnumber');
         upgrade_main_savepoint(true, 2011102700.01);
     }
 
