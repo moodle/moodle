@@ -229,9 +229,9 @@ if (!empty($method)) {
     // display the grading form preview
     if ($controller->is_form_defined()) {
         if ($definition->status == gradingform_controller::DEFINITION_STATUS_READY) {
-            $tag = html_writer::tag('span', get_string('statusready', 'core_grading'), array('class' => 'status-ready'));
+            $tag = html_writer::tag('span', get_string('statusready', 'core_grading'), array('class' => 'status ready'));
         } else {
-            $tag = html_writer::tag('span', get_string('statusdraft', 'core_grading'), array('class' => 'status-draft'));
+            $tag = html_writer::tag('span', get_string('statusdraft', 'core_grading'), array('class' => 'status draft'));
         }
         echo $output->heading(s($definition->name) . ' ' . $tag, 3, 'definition-name');
         echo $output->box($controller->get_formatted_description());

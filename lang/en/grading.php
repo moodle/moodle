@@ -58,6 +58,11 @@ $string['manageactionshareconfirm'] = 'You are going to save a copy of the gradi
 $string['manageactionsharedone'] = 'The form was successfully saved as a template';
 $string['noitemid'] = 'Grading not possible. The graded item does not exist.';
 $string['nosharedformfound'] = 'No template found';
+$string['searchtemplate'] = 'Grading forms search';
+$string['searchtemplate_help'] = 'You can search for a grading form and use it as a template for the new grading form here. Simply type words that should appear somewhere in the form name, its description or the form body itself. To search for a phrase, wrap the whole query in double quotes.
+
+By default, only the grading forms that have been saved as shared templates are included in the search results. You can also include all your own grading forms in the search results. This way, you can simply re-use your grading forms without sharing them. Only forms marked as \'Ready for usage\' can be re-used this way.';
+$string['searchownforms'] = 'include my own forms';
 $string['statusdraft'] = 'Draft';
 $string['statusready'] = 'Ready for usage';
 $string['templatedelete'] = 'Delete';
@@ -65,3 +70,7 @@ $string['templatedeleteconfirm'] = 'You are going to delete the shared template 
 $string['templateedit'] = 'Edit';
 $string['templatepick'] = 'Use this template';
 $string['templatepickconfirm'] = 'Do you want to use the grading form \'{$a->formname}\' as a template for the new grading form in \'{$a->component} ({$a->area})\'?';
+$string['templatepickownform'] = 'Use this form as a template';
+$string['templatetypeown'] = 'Own form';
+$string['templatetypeshared'] = 'Shared template';
+$string['templatesource'] = 'Location: {$a->component} ({$a->area})';

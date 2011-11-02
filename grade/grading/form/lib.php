@@ -126,6 +126,36 @@ abstract class gradingform_controller {
     }
 
     /**
+     * Is the grading form saved as a shared public template?
+     *
+     * @return boolean
+     */
+    public function is_shared_template() {
+        return ($this->get_context()->id == context_system::instance()->id
+            and $this->get_component() == 'core_grading');
+    }
+
+    /**
+     * Is the grading form owned by the given user?
+     *
+     * The form owner is the user who created this instance of the form.
+     *
+     * @param int $userid the user id to check, defaults to the current user
+     * @return boolean|null null if the form not defined yet, boolean otherwise
+     */
+    public function is_own_form($userid = null) {
+        global $USER;
+
+        if (!$this->is_form_defined()) {
+            return null;
+        }
+        if (is_null($userid)) {
+            $userid = $USER->id;
+        }
+        return ($this->definition->usercreated == $userid);
+    }
+
+    /**
      * Returns a message why this form is unavailable. Maybe overriden by plugins to give more details.
      * @see is_form_available()
      *

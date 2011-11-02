@@ -71,6 +71,13 @@ if ($pick) {
     $sourceid = $DB->get_field('grading_definitions', 'areaid', array('id' => $pick), MUST_EXIST);
     $sourcemanager = get_grading_manager($sourceid);
     $sourcecontroller = $sourcemanager->get_controller($method);
+    if (!$sourcecontroller->is_shared_template() and !$sourcecontroller->is_own_form()) {
+        // note that we don't actually check whether the user has still the capability
+        // moodle/grade:managegradingforms in the source area. so when users loose
+        // their teacher role in a course, they can't access the course but they can
+        // still copy the forms they have created there.
+        throw new moodle_exception('attempt_to_pick_others_form', 'core_grading');
+    }
     if (!$sourcecontroller->is_form_defined()) {
         throw new moodle_exception('form_definition_mismatch', 'core_grading');
     }
@@ -99,6 +106,9 @@ if ($remove) {
     $sourceid = $DB->get_field('grading_definitions', 'areaid', array('id' => $remove), MUST_EXIST);
     $sourcemanager = get_grading_manager($sourceid);
     $sourcecontroller = $sourcemanager->get_controller($method);
+    if (!$sourcecontroller->is_shared_template()) {
+        throw new moodle_exception('attempt_to_delete_nontemplate', 'core_grading');
+    }
     if (!$sourcecontroller->is_form_defined()) {
         throw new moodle_exception('form_definition_mismatch', 'core_grading');
     }
@@ -126,12 +136,11 @@ if ($remove) {
 $searchform = new grading_search_template_form($PAGE->url, null, 'GET', '', array('class' => 'templatesearchform'));
 
 if ($searchdata = $searchform->get_data()) {
-    $needle = $searchdata->needle;
-    $searchform->set_data(array(
-        'needle' => $needle,
-    ));
+    $tokens = grading_manager::tokenize($searchdata->needle);
+    $includeownforms = (!empty($searchdata->mode));
 } else {
-    $needle = '';
+    $tokens = array();
+    $includeownforms = false;
 }
 
 // construct the SQL to find all matching templates
@@ -142,13 +151,23 @@ $sql = "SELECT DISTINCT gd.id, gd.areaid, gd.name, gd.description, gd.descriptio
 // join method-specific tables from the plugin scope
 $sql .= $targetcontrollerclass::sql_search_from_tables('gd.id');
 
-$sql .= " WHERE gd.method = ?
-               AND ga.contextid = ?
-               AND ga.component = 'core_grading'";
+$sql .= " WHERE gd.method = ?";
 
-$params = array($method, get_system_context()->id);
+$params = array($method);
 
-$tokens = grading_manager::tokenize($needle);
+if (!$includeownforms) {
+    // search for public templates only
+    $sql .= " AND ga.contextid = ? AND ga.component = 'core_grading'";
+    $params[] = get_system_context()->id;
+
+} else {
+    // search both templates and own forms in other areas
+    $sql .= " AND ((ga.contextid = ? AND ga.component = 'core_grading')
+                   OR (gd.usercreated = ? AND gd.status = ?))";
+    $params = array_merge($params,  array(get_system_context()->id, $USER->id,
+        gradingform_controller::DEFINITION_STATUS_READY));
+}
+
 if ($tokens) {
     $subsql = array();
 
@@ -185,17 +204,37 @@ $found = 0;
 foreach ($rs as $template) {
     $found++;
     $out = '';
-    $out .= $output->heading(s($template->name), 2, 'template-name');
     $manager = get_grading_manager($template->areaid);
     $controller = $manager->get_controller($method);
+    if ($controller->is_shared_template()) {
+        $templatetag = html_writer::tag('span', get_string('templatetypeshared', 'core_grading'),
+            array('class' => 'type shared'));
+        $templatesrc  = '';
+    } else if ($controller->is_own_form()) {
+        $templatetag = html_writer::tag('span', get_string('templatetypeown', 'core_grading'),
+            array('class' => 'type ownform'));
+        $templatesrc  = get_string('templatesource', 'core_grading', array(
+            'component' => $manager->get_component_title(),
+            'area'      => $manager->get_area_title()));
+    } else {
+        throw new coding_exception('Something is wrong, the displayed form must be either template or own form');
+    }
+    $out .= $output->heading(s($template->name).' '.$templatetag, 2, 'template-name');
+    $out .= $output->container($templatesrc, 'template-source');
     $out .= $output->box($controller->render_preview($PAGE), 'template-preview');
-    $actions = array($output->pick_action_icon(new moodle_url($PAGE->url, array('pick' => $template->id)),
-        get_string('templatepick', 'core_grading'), 'i/tick_green_big', 'pick'));
-    if ($canmanage or ($canshare and ($template->usercreated == $USER->id))) {
-        //$actions[] = $output->pick_action_icon(new moodle_url($PAGE->url, array('edit' => $template->id)),
-        //    get_string('templateedit', 'core_grading'), 'i/edit', 'edit');
-        $actions[] = $output->pick_action_icon(new moodle_url($PAGE->url, array('remove' => $template->id)),
-            get_string('templatedelete', 'core_grading'), 't/delete', 'remove');
+    $actions = array();
+    if ($controller->is_shared_template()) {
+        $actions[] = $output->pick_action_icon(new moodle_url($PAGE->url, array('pick' => $template->id)),
+            get_string('templatepick', 'core_grading'), 'i/tick_green_big', 'pick template');
+        if ($canmanage or ($canshare and ($template->usercreated == $USER->id))) {
+            //$actions[] = $output->pick_action_icon(new moodle_url($PAGE->url, array('edit' => $template->id)),
+            //    get_string('templateedit', 'core_grading'), 'i/edit', 'edit');
+            $actions[] = $output->pick_action_icon(new moodle_url($PAGE->url, array('remove' => $template->id)),
+                get_string('templatedelete', 'core_grading'), 't/delete', 'remove');
+        }
+    } else if ($controller->is_own_form()) {
+        $actions[] = $output->pick_action_icon(new moodle_url($PAGE->url, array('pick' => $template->id)),
+            get_string('templatepickownform', 'core_grading'), 'i/tick_green_big', 'pick ownform');
     }
     $out .= $output->box(join(' ', $actions), 'template-actions');
     $out .= $output->box($controller->get_formatted_description(), 'template-description');

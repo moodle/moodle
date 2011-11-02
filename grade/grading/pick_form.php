@@ -38,7 +38,10 @@ class grading_search_template_form extends moodleform {
      */
     public function definition() {
         $mform = $this->_form;
+        $mform->addElement('header', 'searchheader', get_string('searchtemplate', 'core_grading'));
+        $mform->addHelpButton('searchheader', 'searchtemplate', 'core_grading');
         $mform->addGroup(array(
+            $mform->createElement('checkbox', 'mode', '', get_string('searchownforms', 'core_grading')),
             $mform->createElement('text', 'needle', '', array('size' => 30)),
             $mform->createElement('submit', 'submitbutton', get_string('search')),
         ), 'buttonar', '', array(' '), false);
