@@ -55,3 +55,17 @@ $string['showscoreteacher'] = 'Display points for each level during evaluation';
 $string['showscorestudent'] = 'Display points for each level to those being graded';
 $string['enableremarks'] = 'Allow grader to add text remarks for each criteria';
 $string['showremarksstudent'] = 'Show remarks to those being graded';
+
+$string['saverubric'] = 'Save rubric and make it ready';
+$string['saverubricdraft'] = 'Save as draft';
+
+$string['rubricstatus'] = 'Current rubric status';
+$string['statusdraft'] = 'Draft';
+$string['statusready'] = 'Ready';
+
+$string['err_nocriteria'] = 'Rubric must contain at least one criterion';
+$string['err_mintwolevels'] = 'Each criterion must have at least two levels';
+$string['err_nodescription'] = 'Criterion description can not be empty';
+$string['err_nodefinition'] = 'Level definition can not be empty';
+$string['err_scoreformat'] = 'Number of points for each level must be a valid non-negative number';
+$string['err_totalscore'] = 'Maximum number of points possible when graded by the rubric must be more than zero';

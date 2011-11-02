@@ -257,6 +257,8 @@ class assignment_base {
      *
      * This default method prints the teacher picture and name, date when marked,
      * grade and teacher submissioncomment.
+     * If advanced grading is used the method render_grade from the
+     * advanced grading controller is called to display the grade.
      *
      * @global object
      * @global object
@@ -268,27 +270,27 @@ class assignment_base {
         require_once($CFG->libdir.'/gradelib.php');
         require_once("$CFG->dirroot/grade/grading/lib.php");
 
-        if (!is_enrolled($this->context, $USER, 'mod/assignment:view')) {
-            // can not submit assignments -> no feedback
-            return;
-        }
-
         if (!$submission) { /// Get submission for this assignment
-            $submission = $this->get_submission($USER->id);
+            $userid = $USER->id;
+            $submission = $this->get_submission($userid);
+        } else {
+            $userid = $submission->userid;
         }
         // Check the user can submit
-        $cansubmit = has_capability('mod/assignment:submit', $this->context, $USER->id, false);
+        $canviewfeedback = ($userid == $USER->id && has_capability('mod/assignment:submit', $this->context, $USER->id, false));
         // If not then check if the user still has the view cap and has a previous submission
-        $cansubmit = $cansubmit || (!empty($submission) && has_capability('mod/assignment:view', $this->context, $USER->id, false));
+        $canviewfeedback = $canviewfeedback || (!empty($submission) && $submission->userid == $USER->id && has_capability('mod/assignment:view', $this->context));
+        // Or if user can grade (is a teacher or admin)
+        $canviewfeedback = $canviewfeedback || has_capability('mod/assignment:grade', $this->context);
 
-        if (!$cansubmit) {
-            // can not submit assignments -> no feedback
+        if (!$canviewfeedback) {
+            // can not view or submit assignments -> no feedback
             return;
         }
 
-        $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $USER->id);
+        $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid);
         $item = $grading_info->items[0];
-        $grade = $item->grades[$USER->id];
+        $grade = $item->grades[$userid];
 
         if ($grade->hidden or $grade->grade === false) { // hidden or error
             return;
@@ -1066,12 +1068,19 @@ class assignment_base {
         } elseif ($assignment->assignmenttype == 'uploadsingle') {
             $mformdata->fileui_options = array('subdirs'=>0, 'maxbytes'=>$CFG->userquota, 'maxfiles'=>1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
         }
-        if ($controller = get_grading_manager($this->context, 'mod_assignment', 'submission')->get_active_controller()) {
-            $itemid = null;
-            if (!empty($submission->id)) {
-                $itemid = $submission->id;
+        $advancedgradingwarning = false;
+        $gradingmanager = get_grading_manager($this->context, 'mod_assignment', 'submission');
+        if ($gradingmethod = $gradingmanager->get_active_method()) {
+            $controller = $gradingmanager->get_controller($gradingmethod);
+            if ($controller->is_form_available()) {
+                $itemid = null;
+                if (!empty($submission->id)) {
+                    $itemid = $submission->id;
+                }
+                $mformdata->advancedgradinginstance = $controller->create_instance($USER->id, $itemid);
+            } else {
+                $advancedgradingwarning = $controller->form_unavailable_notification();
             }
-            $mformdata->advancedgradinginstance = $controller->create_instance($USER->id, $itemid);
         }
 
         $submitform = new mod_assignment_grading_form( null, $mformdata );
@@ -1100,6 +1109,9 @@ class assignment_base {
         echo $OUTPUT->heading(get_string('feedback', 'assignment').': '.fullname($user, true));
 
         // display mform here...
+        if ($advancedgradingwarning) {
+            echo $OUTPUT->notification($advancedgradingwarning, 'error');
+        }
         $submitform->display();
 
         $customfeedback = $this->custom_feedbackform($submission, true);
@@ -2086,12 +2098,6 @@ class assignment_base {
      */
     function user_complete($user, $grade=null) {
         global $OUTPUT;
-        if ($grade) {
-            echo $OUTPUT->container(get_string('grade').': '.$grade->str_long_grade);
-            if ($grade->str_feedback) {
-                echo $OUTPUT->container(get_string('feedback').': '.$grade->str_feedback);
-            }
-        }
 
         if ($submission = $this->get_submission($user->id)) {
 
@@ -2118,6 +2124,12 @@ class assignment_base {
             echo $OUTPUT->box_end();
 
         } else {
+            if ($grade) {
+                echo $OUTPUT->container(get_string('grade').': '.$grade->str_long_grade);
+                if ($grade->str_feedback) {
+                    echo $OUTPUT->container(get_string('feedback').': '.$grade->str_feedback);
+                }
+            }
             print_string("notsubmittedyet", "assignment");
         }
     }

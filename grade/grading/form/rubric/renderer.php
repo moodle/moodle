@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Grading method plugin renderer
  */
-class gradingform_rubric_renderer {
+class gradingform_rubric_renderer extends plugin_renderer_base {
 
     /**
      * This function returns html code for displaying criterion. Depending on $mode it may be the
@@ -82,9 +82,17 @@ class gradingform_rubric_renderer {
             }
             $description = $criterion['description'];
         }
-        $criterion_template .= html_writer::tag('td', $description, array('class' => 'description', 'id' => '{NAME}-criteria-{CRITERION-id}-description'));
+        $descriptionclass = 'description';
+        if (isset($criterion['error_description'])) {
+            $descriptionclass .= ' error';
+        }
+        $criterion_template .= html_writer::tag('td', $description, array('class' => $descriptionclass, 'id' => '{NAME}-criteria-{CRITERION-id}-description'));
         $levels_str_table = html_writer::tag('table', html_writer::tag('tr', $levels_str, array('id' => '{NAME}-criteria-{CRITERION-id}-levels')));
-        $criterion_template .= html_writer::tag('td', $levels_str_table, array('class' => 'levels'));
+        $levelsclass = 'levels';
+        if (isset($criterion['error_levels'])) {
+            $levelsclass .= ' error';
+        }
+        $criterion_template .= html_writer::tag('td', $levels_str_table, array('class' => $levelsclass));
         if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FULL) {
             $value = get_string('criterionaddlevel', 'gradingform_rubric');
             $button = html_writer::empty_tag('input', array('type' => 'submit', 'name' => '{NAME}[criteria][{CRITERION-id}][levels][addlevel]',
@@ -174,7 +182,11 @@ class gradingform_rubric_renderer {
             $level_template .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => '{NAME}[criteria][{CRITERION-id}][levelid]', 'value' => $level['id']));
         }
         $score = html_writer::tag('span', $score, array('id' => '{NAME}-criteria-{CRITERION-id}-levels-{LEVEL-id}-score'));
-        $level_template .= html_writer::tag('div', $definition, array('class' => 'definition', 'id' => '{NAME}-criteria-{CRITERION-id}-levels-{LEVEL-id}-definition'));
+        $definitionclass = 'definition';
+        if (isset($level['error_definition'])) {
+            $definitionclass .= ' error';
+        }
+        $level_template .= html_writer::tag('div', $definition, array('class' => $definitionclass, 'id' => '{NAME}-criteria-{CRITERION-id}-levels-{LEVEL-id}-definition'));
         $displayscore = true;
         if (!$options['showscoreteacher'] && in_array($mode, array(gradingform_rubric_controller::DISPLAY_EVAL, gradingform_rubric_controller::DISPLAY_EVAL_FROZEN, gradingform_rubric_controller::DISPLAY_REVIEW))) {
             $displayscore = false;
@@ -183,7 +195,11 @@ class gradingform_rubric_renderer {
             $displayscore = false;
         }
         if ($displayscore) {
-            $level_template .= html_writer::tag('div', $score. get_string('scorepostfix', 'gradingform_rubric'), array('class' => 'score'));
+            $scoreclass = 'score';
+            if (isset($level['error_score'])) {
+                $scoreclass .= ' error';
+            }
+            $level_template .= html_writer::tag('div', $score. get_string('scorepostfix', 'gradingform_rubric'), array('class' => $scoreclass));
         }
         if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FULL) {
             $value = get_string('leveldelete', 'gradingform_rubric');
@@ -333,7 +349,6 @@ class gradingform_rubric_renderer {
             }
             foreach ($criterion['levels'] as $levelid => $level) {
                 $level['id'] = $levelid;
-                $level['score'] = (float)$level['score']; // otherwise the display will look like 1.00000
                 $level['class'] = $this->get_css_class_suffix($levelcnt++, sizeof($criterion['levels']) -1);
                 $level['checked'] = (isset($criterionvalue['levelid']) && ((int)$criterionvalue['levelid'] === $levelid));
                 if ($level['checked'] && ($mode == gradingform_rubric_controller::DISPLAY_EVAL_FROZEN || $mode == gradingform_rubric_controller::DISPLAY_REVIEW || $mode == gradingform_rubric_controller::DISPLAY_VIEW)) {

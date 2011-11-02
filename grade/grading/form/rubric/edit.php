@@ -43,26 +43,18 @@ $controller = $manager->get_controller('rubric');
 $PAGE->set_url(new moodle_url('/grade/grading/form/rubric/edit.php', array('areaid' => $areaid)));
 $PAGE->set_title(get_string('definerubric', 'gradingform_rubric'));
 $PAGE->set_heading(get_string('definerubric', 'gradingform_rubric'));
-$PAGE->requires->js('/grade/grading/form/rubric/js/rubriceditor.js');
 
-//TODO freeze rubric editor if needed
-$mform = new gradingform_rubric_editrubric(null, array('areaid' => $areaid, 'context' => $context, 'freezerubric' => optional_param('freeze', 0, PARAM_INT)));
+$mform = new gradingform_rubric_editrubric(null, array('areaid' => $areaid, 'context' => $context));
 $data = $controller->get_definition_for_editing();
 $returnurl = optional_param('returnurl', $manager->get_management_url(), PARAM_LOCALURL);
 $data->returnurl = $returnurl;
 $mform->set_data($data);
 if ($mform->is_cancelled()) {
-    // todo process editing cancel in a better way
     redirect($returnurl);
 } else if ($mform->is_submitted() && $mform->is_validated()) {
     $data = $mform->get_data();
-    if (!empty($data->submitfinal)) {
-        $controller->update_definition($data, gradingform_controller::DEFINITION_STATUS_READY);
-        redirect($returnurl);
-    } else {
-        $controller->update_definition($data, gradingform_controller::DEFINITION_STATUS_DRAFT);
-        redirect($PAGE->url);
-    }
+    $controller->update_definition($data);
+    redirect($returnurl);
 }
 
 echo $OUTPUT->header();

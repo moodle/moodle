@@ -115,8 +115,7 @@ if (!empty($shareform)) {
         $newareaid = $manager->create_shared_area($method);
         $targetarea = get_grading_manager($newareaid);
         $targetcontroller = $targetarea->get_controller($method);
-        $targetcontroller->update_definition($controller->get_definition_copy($targetcontroller),
-            gradingform_controller::DEFINITION_STATUS_READY);
+        $targetcontroller->update_definition($controller->get_definition_copy($targetcontroller));
         $DB->set_field('grading_definitions', 'timecopied', time(), array('id' => $definition->id));
         redirect(new moodle_url($PAGE->url, array('message' => get_string('manageactionsharedone', 'core_grading'))));
     }
@@ -175,7 +174,10 @@ if (!empty($method)) {
             } else {
                 $hasoriginal = $DB->record_exists('grading_definitions', array('id' => $definition->copiedfromid));
             }
-            if (!$hasoriginal) {
+            if (!$controller->is_form_available()) {
+                // drafts can not be shared
+                $allowshare = false;
+            } else if (!$hasoriginal) {
                 // was created from scratch or is orphaned
                 if (empty($definition->timecopied)) {
                     // was never shared before
@@ -220,6 +222,10 @@ if (!empty($method)) {
     }
     echo $output->container_end();
 
+    // display the message if the form is currently not available (if applicable)
+    if ($message = $controller->form_unavailable_notification()) {
+        echo $output->notification($message);
+    }
     // display the grading form preview
     if ($controller->is_form_defined()) {
         if ($definition->status == gradingform_controller::DEFINITION_STATUS_READY) {
@@ -228,7 +234,7 @@ if (!empty($method)) {
             $tag = html_writer::tag('span', get_string('statusdraft', 'core_grading'), array('class' => 'status-draft'));
         }
         echo $output->heading(s($definition->name) . ' ' . $tag, 3, 'definition-name');
-        echo $output->box(format_text($definition->description, $definition->descriptionformat));
+        echo $output->box($controller->get_formatted_description());
         echo $output->box($controller->render_preview($PAGE), 'definition-preview');
     }
 }
