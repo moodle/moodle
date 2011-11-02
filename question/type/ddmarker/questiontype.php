@@ -86,6 +86,7 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
     public function requires_qtypes() {
         return array_merge(parent::requires_qtypes(), array('ddimageortext'));
     }
+
     public function save_question_options($formdata) {
         global $DB, $USER;
         $context = $formdata->context;
@@ -230,5 +231,11 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
     protected function make_hint($hint) {
         return question_hint_ddmarker::load_from_record($hint);
     }
+    protected function make_choice($dragdata) {
+        return new qtype_ddmarker_drag_item($dragdata->label, $dragdata->no, $dragdata->infinite);
+    }
 
+    protected function make_place($dropdata) {
+        return new qtype_ddmarker_drop_zone($dropdata->no, $dropdata->shape, $dropdata->coords);
+    }
 }

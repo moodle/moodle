@@ -36,5 +36,59 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/rendererbase.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
+    public function formulation_and_controls(question_attempt $qa,
+            question_display_options $options) {
+        global $PAGE;
 
+        $question = $qa->get_question();
+        $response = $qa->get_last_qt_data();
+
+        $questiontext = $question->format_questiontext($qa);
+
+        $output = html_writer::tag('div', $questiontext, array('class' => 'qtext'));
+
+        $bgimage = self::get_url_for_image($qa, 'bgimage');
+
+        $img = html_writer::empty_tag('img', array('src'=>$bgimage, 'class'=>'dropbackground'));
+        $droparea = html_writer::tag('div', $img, array('class'=>'droparea'));
+
+        $dragimagehomes = '';
+        $orderedgroup = $question->get_ordered_choices(1);
+        foreach ($orderedgroup as $choiceno => $dragimage) {
+            $classes = array('draghome',
+                             "dragitemhomes{$dragimage->no}",
+                             "choice{$choiceno}");
+            if ($dragimage->infinite) {
+                $classes[] = 'infinite';
+            }
+            $dragimagehomes .= html_writer::tag('div',
+                                                $dragimage->text,
+                                                array('class'=>join(' ', $classes)));
+        }
+        $dragimagehomesdiv = html_writer::tag('div', $dragimagehomes);
+
+        $dragitemsclass = 'dragitems';
+        if ($options->readonly) {
+            $dragitemsclass .= ' readonly';
+        }
+        $dragitems = html_writer::tag('div', $dragimagehomesdiv, array('class'=> $dragitemsclass));
+        $dropzones = html_writer::empty_tag('div', array('class'=>'dropzones'));
+        $output .= html_writer::tag('div', $droparea.$dragitems.$dropzones,
+                                                                        array('class'=>'ddarea'));
+        $topnode = 'div#q'.$qa->get_slot().' div.ddarea';
+        $params = array('drops' => $question->places,
+                        'topnode' => $topnode,
+                        'readonly' => $options->readonly);
+
+        $PAGE->requires->yui_module('moodle-qtype_ddmarker-dd',
+                                        'M.qtype_ddmarker.init_question',
+                                        array($params));
+
+        if ($qa->get_state() == question_state::$invalid) {
+            $output .= html_writer::nonempty_tag('div',
+                                        $question->get_validation_error($qa->get_last_qt_data()),
+                                        array('class' => 'validationerror'));
+        }
+        return $output;
+    }
 }

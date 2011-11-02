@@ -37,9 +37,22 @@ require_once($CFG->dirroot . '/question/type/ddmarker/shapes.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
-
+    public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
+        if ($filearea == 'bgimage') {
+            $validfilearea = true;
+        } else {
+            $validfilearea = false;
+        }
+        if ($component == 'qtype_ddmarker' && $validfilearea) {
+            $question = $qa->get_question();
+            $itemid = reset($args);
+            return $itemid == $question->id;
+        } else {
+            return parent::check_file_access($qa, $options, $component,
+                                                                $filearea, $args, $forcedownload);
+        }
+    }
 }
-
 
 /**
  * Represents one of the choices (draggable markers).
@@ -48,13 +61,13 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddmarker_drag_item {
-    public $id;
     public $text;
     public $no;
+    public $infinite;
 
-    public function __construct($label, $no, $id = 0) {
-        $this->id = $id;
+    public function __construct($label, $no, $infinite) {
         $this->text = $label;
+        $this->infinite = $infinite;
         $this->no = $no;
     }
     public function choice_group() {
@@ -72,26 +85,18 @@ class qtype_ddmarker_drag_item {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddmarker_drop_zone {
+    public $group = 1;
     public $no;
-    public $text;
     public $shape;
     public $coords;
 
-    public function __construct($label, $no, $shape, $coords) {
+    public function __construct($no, $shape, $coords) {
         $this->no = $no;
-        $this->text = $label;
         $this->shape = $shape;
         $this->coords = $coords;
     }
 
     public function summarise() {
-        if (trim($this->text) != '') {
-            $summariseplace =
-                        get_string('summariseplace', 'qtype_ddmarker', $this);
-        } else {
-            $summariseplace =
-                    get_string('summariseplaceno', 'qtype_ddmarker', $this->no);
-        }
-        return $summariseplace;
+        return get_string('summariseplaceno', 'qtype_ddmarker', $this->no);
     }
 }
