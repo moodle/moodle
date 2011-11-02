@@ -135,7 +135,7 @@ abstract class gradingform_controller {
         if ($this->is_form_available()) {
             return null;
         }
-        return get_string('gradingformunavailable', 'grades');
+        return get_string('gradingformunavailable', 'grading');
     }
 
     /**

@@ -1068,12 +1068,19 @@ class assignment_base {
         } elseif ($assignment->assignmenttype == 'uploadsingle') {
             $mformdata->fileui_options = array('subdirs'=>0, 'maxbytes'=>$CFG->userquota, 'maxfiles'=>1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
         }
-        if ($controller = get_grading_manager($this->context, 'mod_assignment', 'submission')->get_active_controller()) {
-            $itemid = null;
-            if (!empty($submission->id)) {
-                $itemid = $submission->id;
+        $advancedgradingwarning = false;
+        $gradingmanager = get_grading_manager($this->context, 'mod_assignment', 'submission');
+        if ($gradingmethod = $gradingmanager->get_active_method()) {
+            $controller = $gradingmanager->get_controller($gradingmethod);
+            if ($controller->is_form_available()) {
+                $itemid = null;
+                if (!empty($submission->id)) {
+                    $itemid = $submission->id;
+                }
+                $mformdata->advancedgradinginstance = $controller->create_instance($USER->id, $itemid);
+            } else {
+                $advancedgradingwarning = $controller->form_unavailable_notification();
             }
-            $mformdata->advancedgradinginstance = $controller->create_instance($USER->id, $itemid);
         }
 
         $submitform = new mod_assignment_grading_form( null, $mformdata );
@@ -1102,6 +1109,9 @@ class assignment_base {
         echo $OUTPUT->heading(get_string('feedback', 'assignment').': '.fullname($user, true));
 
         // display mform here...
+        if ($advancedgradingwarning) {
+            echo $OUTPUT->notification($advancedgradingwarning, 'error');
+        }
         $submitform->display();
 
         $customfeedback = $this->custom_feedbackform($submission, true);
