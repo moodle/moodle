@@ -23,10 +23,10 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="question"/>
         <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="showunits"/>
-        <FIELD NAME="showunits" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="display units as multichoice" PREVIOUS="question" NEXT="unitsleft"/>
+        <FIELD NAME="showunits" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="How units are handled: 3) Not used at all, 0) Optional, or 1) must be right or penalty applied." PREVIOUS="question" NEXT="unitsleft"/>
         <FIELD NAME="unitsleft" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="display the unit at left as in $1.00" PREVIOUS="showunits" NEXT="unitgradingtype"/>
-        <FIELD NAME="unitgradingtype" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 no penalty, 1 response grade, 2 total grade" PREVIOUS="unitsleft" NEXT="unitpenalty"/>
-        <FIELD NAME="unitpenalty" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="true" DEFAULT="0.1" SEQUENCE="false" DECIMALS="7" PREVIOUS="unitgradingtype"/>
+        <FIELD NAME="unitgradingtype" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 no penalty, 1 fraction response grade, 2 fraction total grade" PREVIOUS="unitsleft" NEXT="unitpenalty"/>
+        <FIELD NAME="unitpenalty" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="true" DEFAULT="0.1" SEQUENCE="false" DECIMALS="7" COMMENT="Penalty for getting the unit wrong, when they are being graded." PREVIOUS="unitgradingtype"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>
