@@ -94,9 +94,9 @@ if (!empty($user)) {
     //      It does not really matter we take the first one that is valid.
     $tokenssql = "SELECT t.id, t.sid, t.token, t.validuntil, t.iprestriction
               FROM {external_tokens} t
-             WHERE t.userid = ? AND t.externalserviceid = ?
+             WHERE t.userid = ? AND t.externalserviceid = ? AND t.tokentype = ?
           ORDER BY t.timecreated ASC";
-    $tokens = $DB->get_records_sql($tokenssql, array($user->id, $service->id));
+    $tokens = $DB->get_records_sql($tokenssql, array($user->id, $service->id, EXTERNAL_TOKEN_PERMANENT));
 
     //A bit of sanity checks
     foreach ($tokens as $key=>$token) {
