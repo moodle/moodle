@@ -1,7 +1,87 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-    if (!defined('MOODLE_INTERNAL')) {
-        die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+/**
+ * Reports implementation
+ *
+ * @package    report
+ * @subpackage stats
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die;
+
+require_once(dirname(__FILE__).'/lib.php');
+
+
+function report_stats_mode_menu($course, $mode, $time, $url) {
+    global $CFG, $OUTPUT;
+    /*
+    $reportoptions = stats_get_report_options($course->id, $mode);
+    $timeoptions = report_stats_timeoptions($mode);
+    if (empty($timeoptions)) {
+        print_error('nostatstodisplay', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
+    }
+    */
+
+    $options = array();
+    $options[STATS_MODE_GENERAL] = get_string('statsmodegeneral');
+    $options[STATS_MODE_DETAILED] = get_string('statsmodedetailed');
+    if (has_capability('report/stats:view', get_context_instance(CONTEXT_SYSTEM))) {
+        $options[STATS_MODE_RANKED] = get_string('reports');
+    }
+    $popupurl = $url."?course=$course->id&time=$time";
+    $select = new single_select(new moodle_url($popupurl), 'mode', $options, $mode, null);
+    $select->formid = 'switchmode';
+    return $OUTPUT->render($select);
+}
+
+function report_stats_timeoptions($mode) {
+    global $CFG, $DB;
+
+    if ($mode == STATS_MODE_DETAILED) {
+        $earliestday = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_user_daily}');
+        $earliestweek = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_user_weekly}');
+        $earliestmonth = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_user_monthly}');
+    } else {
+        $earliestday = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_daily}');
+        $earliestweek = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_weekly}');
+        $earliestmonth = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_monthly}');
+    }
+
+
+    if (empty($earliestday)) $earliestday = time();
+    if (empty($earliestweek)) $earliestweek = time();
+    if (empty($earliestmonth)) $earliestmonth = time();
+
+    $now = stats_get_base_daily();
+    $lastweekend = stats_get_base_weekly();
+    $lastmonthend = stats_get_base_monthly();
+
+    return stats_get_time_options($now,$lastweekend,$lastmonthend,$earliestday,$earliestweek,$earliestmonth);
+}
+
+function report_stats_report($course, $report, $mode, $user, $roleid, $time) {
+    global $CFG, $DB, $OUTPUT;
+
+    if ($user) {
+        $userid = $user->id;
+    } else {
+        $userid = 0;
     }
 
     $courses = get_courses('all','c.shortname','c.id,c.shortname,c.fullname');
@@ -10,7 +90,7 @@
     foreach ($courses as $c) {
         $context = get_context_instance(CONTEXT_COURSE, $c->id);
 
-        if (has_capability('coursereport/stats:view', $context)) {
+        if (has_capability('report/stats:view', $context)) {
             $courseoptions[$c->id] = format_string($c->shortname, true, array('context' => $context));
         }
     }
@@ -21,6 +101,7 @@
         print_error('nostatstodisplay', '', $CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
+    $users = array();
     $table = new html_table();
     $table->width = 'auto';
 
@@ -116,9 +197,9 @@
                 echo "(".get_string("gdneed").")";
             } else {
                 if ($mode == STATS_MODE_DETAILED) {
-                    echo '<div class="graph"><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.$mode.'&amp;course='.$course->id.'&amp;time='.$time.'&amp;report='.$report.'&amp;userid='.$userid.'" alt="'.get_string('statisticsgraph').'" /></div';
+                    echo '<div class="graph"><img src="'.$CFG->wwwroot.'/report/stats/graph.php?mode='.$mode.'&amp;course='.$course->id.'&amp;time='.$time.'&amp;report='.$report.'&amp;userid='.$userid.'" alt="'.get_string('statisticsgraph').'" /></div';
                 } else {
-                    echo '<div class="graph"><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.$mode.'&amp;course='.$course->id.'&amp;time='.$time.'&amp;report='.$report.'&amp;roleid='.$roleid.'" alt="'.get_string('statisticsgraph').'" /></div>';
+                    echo '<div class="graph"><img src="'.$CFG->wwwroot.'/report/stats/graph.php?mode='.$mode.'&amp;course='.$course->id.'&amp;time='.$time.'&amp;report='.$report.'&amp;roleid='.$roleid.'" alt="'.get_string('statisticsgraph').'" /></div>';
                 }
             }
 
@@ -138,15 +219,17 @@
                     $table->head[] = $param->line2;
                 }
             }
-            if (empty($param->crosstab)) {
+            if (!file_exists($CFG->dirroot.'/report/log/index.php')) {
+                // bad luck, we can not link other report
+            } else if (empty($param->crosstab)) {
                 foreach  ($stats as $stat) {
                     $a = array(userdate($stat->timeend-(60*60*24),get_string('strftimedate'),$CFG->timezone),$stat->line1);
                     if (isset($stat->line2)) {
                         $a[] = $stat->line2;
                     }
                     if (empty($CFG->loglifetime) || ($stat->timeend-(60*60*24)) >= (time()-60*60*24*$CFG->loglifetime)) {
-                        if (has_capability('coursereport/log:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
-                            $a[] = '<a href="'.$CFG->wwwroot.'/course/report/log/index.php?id='.
+                        if (has_capability('report/log:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                            $a[] = '<a href="'.$CFG->wwwroot.'/report/log/index.php?id='.
                                 $course->id.'&amp;chooselog=1&amp;showusers=1&amp;showcourses=1&amp;user='
                                 .$userid.'&amp;date='.usergetmidnight($stat->timeend-(60*60*24)).'">'
                                 .get_string('course').' ' .get_string('logs').'</a>&nbsp;';
@@ -202,8 +285,8 @@
                     krsort($rolesdata);
                     $row = array_merge(array($times[$time]),$rolesdata);
                     if (empty($CFG->loglifetime) || ($stat->timeend-(60*60*24)) >= (time()-60*60*24*$CFG->loglifetime)) {
-                        if (has_capability('coursereport/log:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
-                            $row[] = '<a href="'.$CFG->wwwroot.'/course/report/log/index.php?id='
+                        if (has_capability('report/log:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                            $row[] = '<a href="'.$CFG->wwwroot.'/report/log/index.php?id='
                                 .$course->id.'&amp;chooselog=1&amp;showusers=1&amp;showcourses=1&amp;user='.$userid
                                 .'&amp;date='.usergetmidnight($time-(60*60*24)).'">'
                                 .get_string('course').' ' .get_string('logs').'</a>&nbsp;';
@@ -217,12 +300,11 @@
                 $table->head = array_merge($table->head,$roles);
             }
             $table->head[] = get_string('logs');
-            if (!empty($lastrecord)) {
-                $lastrecord[] = $lastlink;
-                $table->data[] = $lastrecord;
-            }
+            //if (!empty($lastrecord)) {
+                //$lastrecord[] = $lastlink;
+                //$table->data[] = $lastrecord;
+            //}
             echo html_writer::table($table);
         }
     }
-
-
+}

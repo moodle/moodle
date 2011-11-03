@@ -15,14 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings
+ * Version info
  *
  * @package    report
  * @subpackage stats
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Statistics';
-$string['pluginpagetype'] = 'Statistics course report';
-$string['stats:view'] = 'View course statistics report';
+defined('MOODLE_INTERNAL') || die;
+
+$plugin->version   = 2011110200;     // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2011102700.01;  // Requires this Moodle version
+$plugin->component = 'report_stats'; // Full name of the plugin (used for diagnostics)

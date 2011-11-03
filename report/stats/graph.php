@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,12 +17,13 @@
 /**
  * This file is part of the User section Moodle
  *
- * @copyright 1999 Martin Dougiamas  http://dougiamas.com
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package course
+ * @package    report
+ * @subpackage stats
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../../config.php');
+require('../../config.php');
 require_once($CFG->dirroot.'/lib/statslib.php');
 require_once($CFG->dirroot.'/lib/graphlib.php');
 
@@ -34,7 +34,7 @@ $mode     = required_param('mode', PARAM_INT);
 $userid   = optional_param('userid', 0, PARAM_INT);
 $roleid   = optional_param('roleid',0,PARAM_INT);
 
-$url = new moodle_url('/course/report/stats/graph.php', array('course'=>$courseid, 'report'=>$report, 'time'=>$time, 'mode'=>$mode));
+$url = new moodle_url('/report/stats/graph.php', array('course'=>$courseid, 'report'=>$report, 'time'=>$time, 'mode'=>$mode));
 if ($userid !== 0) {
     $url->param('userid', $userid);
 }
@@ -57,7 +57,7 @@ require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
 if (!$course->showreports or $USER->id != $userid) {
-    require_capability('coursereport/stats:view', $context);
+    require_capability('report/stats:view', $context);
 }
 
 stats_check_uptodate($course->id);

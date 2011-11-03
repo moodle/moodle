@@ -304,7 +304,7 @@ class plugin_manager {
             ),
 
             'coursereport' => array(
-                'stats'
+                //deprecated!
             ),
 
             'datafield' => array(

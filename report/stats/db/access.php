@@ -23,7 +23,20 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-$plugin->version  = 2010090501;
-$plugin->requires = 2010090501;
+$capabilities = array(
+
+    'report/stats:view' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+
+        'clonepermissionsfrom' => 'coursereport/stats:view',
+    )
+);
 
 
