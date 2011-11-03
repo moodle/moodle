@@ -15,12 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'report_log'
+ * Lang strings.
  *
  * @package    report
  * @subpackage log
- * @copyright  2011 Petr Skoda (http://skodak.org)
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['log:view'] = 'View course logs';
+$string['log:viewtoday'] = 'View today\'s logs';
+$string['pluginpagetype'] = 'Logs course report';
 $string['pluginname'] = 'Logs';

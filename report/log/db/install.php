@@ -15,18 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Links and settings
+ * Post installation and migration code.
  *
  * @package    report
  * @subpackage log
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-// just a link to course report
-$ADMIN->add('reports', new admin_externalpage('reportlog', get_string('log', 'admin'), "$CFG->wwwroot/report/log/index.php?id=".SITEID, 'report/log:view'));
+function xmldb_report_log_install() {
+    // this is a hack which is needed for cleanup of original coursereport_log stuff
+    unset_all_config_for_plugin('coursereport_log');
+    capabilities_cleanup('coursereport_log');
+}
 
-// no report settings
-$settings = null;

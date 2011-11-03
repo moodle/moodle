@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,10 +17,15 @@
 /**
  * This file contains functions used by the log reports
  *
- * @package course
- * @copyright  1999 onwards  Martin Dougiamas  http://moodle.com
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report
+ * @subpackage log
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die;
+
+require_once(dirname(__FILE__).'/lib.php');
 
 function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $selecteddate='today',
                                  $modname="", $modid=0, $modaction='', $selectedgroup=-1, $showcourses=0, $showusers=0, $logformat='showashtml') {
@@ -134,7 +138,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         $courses = array();
         $sites = array();
         if ($CFG->mnet_localhost_id == $hostid) {
-            if (has_capability('coursereport/log:view', $sitecontext) && $showcourses) {
+            if (has_capability('report/log:view', $sitecontext) && $showcourses) {
                 if ($ccc = $DB->get_records("course", null, "fullname","id,fullname,category")) {
                     foreach ($ccc as $cc) {
                         if ($cc->id == SITEID) {
@@ -146,7 +150,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
                 }
             }
         } else {
-            if (has_capability('coursereport/log:view', $sitecontext) && $showcourses) {
+            if (has_capability('report/log:view', $sitecontext) && $showcourses) {
                 $sql = "SELECT DISTINCT course, coursename FROM {mnet_log} where hostid = ?";
                 if ($ccc = $DB->get_records_sql($sql, array($hostid))) {
                     foreach ($ccc as $cc) {
@@ -195,7 +199,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         }
     }
 
-    if (has_capability('coursereport/log:view', $sitecontext) && !$course->category) {
+    if (has_capability('report/log:view', $sitecontext) && !$course->category) {
         $activities["site_errors"] = get_string("siteerrors");
         if ($modid === "site_errors") {
             $selectedactivity = "site_errors";
@@ -244,21 +248,21 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         $selecteddate = $today;
     }
 
-    echo "<form class=\"logselectform\" action=\"$CFG->wwwroot/course/report/log/index.php\" method=\"get\">\n";
+    echo "<form class=\"logselectform\" action=\"$CFG->wwwroot/report/log/index.php\" method=\"get\">\n";
     echo "<div>\n";//invisible fieldset here breaks wrapping
     echo "<input type=\"hidden\" name=\"chooselog\" value=\"1\" />\n";
     echo "<input type=\"hidden\" name=\"showusers\" value=\"$showusers\" />\n";
     echo "<input type=\"hidden\" name=\"showcourses\" value=\"$showcourses\" />\n";
-    if (has_capability('coursereport/log:view', $sitecontext) && $showcourses) {
+    if (has_capability('report/log:view', $sitecontext) && $showcourses) {
         $cid = empty($course->id)? '1' : $course->id;
         echo html_writer::select($dropdown, "host_course", $hostid.'/'.$cid);
     } else {
         $courses = array();
         $courses[$course->id] = $course->fullname . ((empty($course->category)) ? ' ('.get_string('site').') ' : '');
         echo html_writer::select($courses,"id",$course->id, false);
-        if (has_capability('coursereport/log:view', $sitecontext)) {
+        if (has_capability('report/log:view', $sitecontext)) {
             $a = new stdClass();
-            $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
+            $a->url = "$CFG->wwwroot/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
                 ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showcourses=1&showusers=$showusers";
             print_string('logtoomanycourses','moodle',$a);
         }
@@ -289,7 +293,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
             $users[0] = get_string('allparticipants');
         }
         echo html_writer::select($users, "user", $selecteduser, false);
-        $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
+        $a->url = "$CFG->wwwroot/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
             ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showusers=1&showcourses=$showcourses";
         print_string('logtoomanyusers','moodle',$a);
     }
@@ -365,7 +369,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         $users[$CFG->siteguest] = get_string('guestuser');
     }
 
-    if (has_capability('coursereport/log:view', $sitecontext) && $showcourses) {
+    if (has_capability('report/log:view', $sitecontext) && $showcourses) {
         if ($ccc = $DB->get_records("course", null, "fullname", "id,fullname,category")) {
             foreach ($ccc as $cc) {
                 if ($cc->category) {
@@ -408,7 +412,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         }
     }
 
-    if (has_capability('coursereport/log:view', $sitecontext) && ($course->id == SITEID)) {
+    if (has_capability('report/log:view', $sitecontext) && ($course->id == SITEID)) {
         $activities["site_errors"] = get_string("siteerrors");
         if ($modid === "site_errors") {
             $selectedactivity = "site_errors";
@@ -457,21 +461,21 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         $selecteddate = $today;
     }
 
-    echo "<form class=\"logselectform\" action=\"$CFG->wwwroot/course/report/log/index.php\" method=\"get\">\n";
+    echo "<form class=\"logselectform\" action=\"$CFG->wwwroot/report/log/index.php\" method=\"get\">\n";
     echo "<div>\n";
     echo "<input type=\"hidden\" name=\"chooselog\" value=\"1\" />\n";
     echo "<input type=\"hidden\" name=\"showusers\" value=\"$showusers\" />\n";
     echo "<input type=\"hidden\" name=\"showcourses\" value=\"$showcourses\" />\n";
-    if (has_capability('coursereport/log:view', $sitecontext) && $showcourses) {
+    if (has_capability('report/log:view', $sitecontext) && $showcourses) {
         echo html_writer::select($courses, "id", $course->id, false);
     } else {
         //        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         $courses = array();
         $courses[$course->id] = $course->fullname . (($course->id == SITEID) ? ' ('.get_string('site').') ' : '');
         echo html_writer::select($courses,"id",$course->id, false);
-        if (has_capability('coursereport/log:view', $sitecontext)) {
+        if (has_capability('report/log:view', $sitecontext)) {
             $a = new stdClass();
-            $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
+            $a->url = "$CFG->wwwroot/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
                 ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showcourses=1&showusers=$showusers";
             print_string('logtoomanycourses','moodle',$a);
         }
@@ -503,7 +507,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         }
         echo html_writer::select($users, "user", $selecteduser, false);
         $a = new stdClass();
-        $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
+        $a->url = "$CFG->wwwroot/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
             ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showusers=1&showcourses=$showcourses";
         print_string('logtoomanyusers','moodle',$a);
     }
@@ -521,35 +525,4 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     echo '<input type="submit" value="'.get_string('gettheselogs').'" />';
     echo '</div>';
     echo '</form>';
-}
-
-/**
- * This function extends the navigation with the report items
- *
- * @param navigation_node $navigation The navigation node to extend
- * @param stdClass $course The course to object for the report
- * @param stdClass $context The context of the course
- */
-function log_report_extend_navigation($navigation, $course, $context) {
-    global $CFG, $OUTPUT;
-    if (has_capability('coursereport/log:view', $context)) {
-        $url = new moodle_url('/course/report/log/index.php', array('id'=>$course->id));
-        $navigation->add(get_string('pluginname', 'coursereport_log'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
-    }
-}
-
-/**
- * Return a list of page types
- * @param string $pagetype current page type
- * @param stdClass $parentcontext Block's parent context
- * @param stdClass $currentcontext Current context of block
- */
-function log_page_type_list($pagetype, $parentcontext, $currentcontext) {
-    $array = array(
-        '*' => get_string('page-x', 'pagetype'),
-        'course-report-*' => get_string('page-course-report-x', 'pagetype'),
-        'course-report-log-index' => get_string('pluginpagetype',  'coursereport_log')
-        //course-report-log-live not included as theres no blocks on the live log page
-    );
-    return $array;
 }

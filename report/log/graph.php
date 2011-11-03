@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,13 +17,14 @@
 /**
  * Produces a graph of log accesses
  *
- * @copyright 1999 Martin Dougiamas  http://dougiamas.com
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package course
+ * @package    report
+ * @subpackage log
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("../../../config.php");
-require_once("../../lib.php");
+require("../../config.php");
+require_once("$CFG->dirroot/course/lib.php");
 require_once("$CFG->libdir/graphlib.php");
 
 $id   = required_param('id', PARAM_INT);    // Course ID
@@ -32,7 +32,7 @@ $type = required_param('type', PARAM_FILE);  // Graph Type
 $user = optional_param('user', 0, PARAM_INT);  // Student ID
 $date = optional_param('date', 0, PARAM_INT);  // A time of a day (in GMT)
 
-$url = new moodle_url('/course/report/log/graph.php', array('id'=>$id,'type'=>$type));
+$url = new moodle_url('/report/log/graph.php', array('id'=>$id,'type'=>$type));
 if ($user !== 0) {
     $url->param('user', $user);
 }
@@ -49,7 +49,7 @@ require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
 if (!$course->showreports or $USER->id != $user) {
-    require_capability('coursereport/log:view', $context);
+    require_capability('report/log:view', $context);
 }
 
 if ($user) {
