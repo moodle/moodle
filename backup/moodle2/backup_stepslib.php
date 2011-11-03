@@ -418,6 +418,10 @@ class backup_course_structure_step extends backup_structure_step {
         // save course data (in case of user theme, legacy theme, etc)
         $this->add_plugin_structure('theme', $course, true);
 
+        // attach general report plugin structure to $course element; multiple
+        // reports can save course data if required
+        $this->add_plugin_structure('report', $course, true);
+
         // attach course report plugin structure to $course element; multiple
         // course reports can save course data if required
         $this->add_plugin_structure('coursereport', $course, true);
@@ -809,7 +813,7 @@ class backup_gradebook_structure_step extends backup_structure_step {
         //grade_categories
         $grade_categories = new backup_nested_element('grade_categories');
         $grade_category   = new backup_nested_element('grade_category', array('id'), array(
-                //'courseid', 
+                //'courseid',
                 'parent', 'depth', 'path', 'fullname', 'aggregation', 'keephigh',
                 'dropload', 'aggregateonlygraded', 'aggregateoutcomes', 'aggregatesubcats',
                 'timecreated', 'timemodified', 'hidden'));
