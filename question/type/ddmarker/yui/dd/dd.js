@@ -57,6 +57,9 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 drag_items : function() {
                     return dragitemsarea.all('.dragitem');
                 },
+                drag_item : function(choiceno) {
+                    return dragitemsarea.one('span.dragitem.choice' + choiceno);
+                },
                 drag_item_home : function (choiceno) {
                     return dragitemsarea.one('span.draghome.choice' + choiceno);
                 },
@@ -131,14 +134,6 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                                                     false, 0, this.create_all_drag_and_drops);
         },
         create_all_drag_and_drops : function () {
-            var drop = new Y.DD.Drop({
-                node: this.doc.bg_img()
-            });
-            //Listen for a drop:hit on the background image
-            drop.on('drop:hit', function(e) {
-                e.drag.get('node').setData('droppedonbgimg', true);
-            });
-            this.doc.drag_item_homes().each(this.clone_new_drag_item, this);
             this.reposition_drags();
             Y.later(500, this, this.reposition_drags, [], true);
 //            if (!this.get('readonly')) {
@@ -159,6 +154,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             if (!this.get('readonly')) {
                 this.draggable(drag);
             }
+            return drag;
         },
         draggable : function (drag) {
             var dd = new Y.DD.Drag({
@@ -167,46 +163,81 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             }).plug(Y.Plugin.DDConstrained, {constrain2node: this.doc.top_node()});
             dd.on('drag:end', function(e) {
                 var dragnode = e.target.get('node');
-                var gooddrop = dragnode.getData('droppedonbgimg');
                 var choiceno = this.get_choiceno_for_drag(drag);
 
-                if (!gooddrop) {
+                var xy = this.convert_to_bg_img_xy([e.pageX, e.pageY]);
+                if (!this.xy_in_bgimg(drag, xy)) {
                     this.reset_drag_xy(choiceno);
                 } else {
-                    var xy = this.constrain_xy(drag, this.convert_to_bg_img_xy([e.pageX, e.pageY]));
                     this.set_drag_xy(choiceno, xy);
                 }
             }, this);
-            dd.on('drag:start', function(e) {
-                var drag = e.target;
-                drag.get('node').setData('droppedonbgimg', false);
-            }, this);
-
         },
         set_drag_xy : function (choiceno, xy) {
             this.set_form_value(choiceno, Math.round(xy[0])+','+Math.round(xy[1]));
         },
         reset_drag_xy : function (choiceno) {
-            var choiceno = this.get_choiceno_for_drag(drag);
             this.set_form_value(choiceno, '');
         },
         set_form_value : function (choiceno, value) {
             this.doc.input_for_choice(choiceno).set('value', value);
         },
+        get_form_value : function (choiceno) {
+            return this.doc.input_for_choice(choiceno).get('value');
+        },
+        get_coords : function (choiceno) {
+            var fv = this.get_form_value(choiceno);
+            if (fv === '') {
+                var dragitemhome = this.doc.drag_item_home(choiceno);
+                return dragitemhome.getXY();
+            } else {
+                return this.convert_to_window_xy(fv.split(','));
+            }
+        },
         //make sure xy value is not out of bounds of bg image
-        constrain_xy : function (drag, bgimgxy) {
-            var xleftconstrained =
-                Math.min(bgimgxy[0], this.doc.bg_img().get('width') - drag.get('offsetWidth'));
-            var ytopconstrained =
-                Math.min(bgimgxy[1], this.doc.bg_img().get('height') - drag.get('offsetHeight'));
-            xleftconstrained = Math.max(xleftconstrained, 0);
-            ytopconstrained = Math.max(ytopconstrained, 0);
-            return [xleftconstrained, ytopconstrained];
+        xy_in_bgimg : function (drag, bgimgxy) {
+            if ((bgimgxy[0] < 0) ||
+                    (bgimgxy[1] < 0) ||
+                    (bgimgxy[0] > this.doc.bg_img().get('width')) || 
+                    (bgimgxy[1] > this.doc.bg_img().get('height'))){
+                return false;
+            } else {
+                return true;
+            }
         },
         convert_to_bg_img_xy : function (windowxy) {
             return [+windowxy[0] - this.doc.bg_img().getX()-1,
                     +windowxy[1] - this.doc.bg_img().getY()-1];
         },
+        reposition_drags : function() {
+            this.doc.drag_items().each(function(item) {
+                if (!item.hasClass('yui3-dd-dragging')){
+                    item.remove(true);
+                }
+            }, this);
+            this.doc.drag_item_homes().each(function (dragitemhome) {
+                var choiceno = this.get_choiceno_for_drag(dragitemhome);
+                if (!this.doc.drag_item(choiceno)) {
+                    var dragitem = this.clone_new_drag_item(dragitemhome);
+                    var coords = this.get_coords(choiceno);
+                    dragitem.setXY(coords);
+                } else {
+                    //item is being dragged
+                }
+            }, this);
+            this.doc.drag_items().removeClass('placed');
+            this.doc.drag_items().each (function (dragitem) {
+                if (dragitem.dd !== undefined) {
+                    dragitem.dd.detachAll('drag:start');
+                }
+            }, this);
+
+        },
+        get_choiceno_for_drag : function(drag) {
+            return +this.doc.get_classname_numeric_suffix(drag, 'choice');
+        },
+        
+        //----------- keyboard accessibility stuff below line ---------------------
         drop_zone_key_press : function (e) {
             switch (e.direction) {
                 case 'next' :
@@ -263,53 +294,6 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         },
         remove_drag_from_drop : function (drop) {
             this.place_drag_in_drop(null, drop);
-        },
-        place_drag_in_drop : function (drag, drop) {
-            var inputid = drop.getData('inputid');
-            var inputnode = Y.one('input#'+inputid);
-            if (drag !== null) {
-                inputnode.set('value', drag.getData('choice'));
-            } else {
-                inputnode.set('value', '');
-            }
-        },
-        reposition_drags : function() {
-            this.doc.drag_items().removeClass('placed');
-            this.doc.drag_items().each (function (dragitem) {
-                if (dragitem.dd !== undefined) {
-                    dragitem.dd.detachAll('drag:start');
-                }
-            }, this);
-//            this.doc.drop_zones().each(function(dropzone) {
-//                var relativexy = dropzone.getData('xy');
-//                dropzone.setXY(this.convert_to_window_xy(relativexy));
-//                var inputcss = 'input#' + dropzone.getData('inputid');
-//                var input = this.doc.top_node().one(inputcss);
-//                var choice = input.get('value');
-//                if (choice !== "") {
-//                    var dragitem = this.get_unplaced_choice_for_drop(choice, dropzone);
-//                    if (dragitem !== null) {
-//                        dragitem.setXY(dropzone.getXY());
-//                        dragitem.addClass('placed');
-//                        if (dragitem.dd !== undefined) {
-//                            dragitem.dd.once('drag:start', function (e, input) {
-//                                input.set('value', '');
-//                                e.target.get('node').removeClass('placed');
-//                            },this, input);
-//                        }
-//                    }
-//                }
-//            }, this);
-            this.doc.drag_items().each(function(dragitem) {
-                if (!dragitem.hasClass('placed') && !dragitem.hasClass('yui3-dd-dragging')) {
-                    var choiceno = this.get_choiceno_for_drag(dragitem);
-                    var dragitemhome = this.doc.drag_item_home(choiceno);
-                    dragitem.setXY(dragitemhome.getXY());
-                }
-            }, this);
-        },
-        get_choiceno_for_drag : function(drag) {
-            return +this.doc.get_classname_numeric_suffix(drag, 'choice');
         },
         get_choices_for_drop : function(choice, drop) {
             var group = drop.getData('group');
