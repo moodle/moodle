@@ -80,13 +80,13 @@ if ($mode === 'today') {
     report_log_print_graph($course, $user->id, "userday.png");
     echo '</div>';
     print_log($course, $user->id, usergetmidnight(time()), "l.time DESC", $page, $perpage,
-              "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode");
+              "user.php?course=$course->id&amp;id=$user->id&amp;mode=$mode");
 } else {
     echo '<div class="graph">';
     report_log_print_graph($course, $user->id, "usercourse.png");
     echo '</div>';
     print_log($course, $user->id, 0, "l.time DESC", $page, $perpage,
-              "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode");
+              "user.php?course=$course->id&amp;id=$user->id&amp;mode=$mode");
 }
 
 echo $OUTPUT->footer();
