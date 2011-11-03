@@ -1831,11 +1831,12 @@ class global_navigation extends navigation_node {
         return false;
     }
     /**
-     * Loads user specific information into the navigation in the appopriate place.
+     * Loads user specific information into the navigation in the appropriate place.
      *
      * If no user is provided the current user is assumed.
      *
      * @param stdClass $user
+     * @param bool $forceforcontext probably force something to be loaded somewhere (ask SamH if not sure what this means)
      * @return bool
      */
     protected function load_for_user($user=null, $forceforcontext=false) {
@@ -1972,30 +1973,31 @@ class global_navigation extends navigation_node {
             $usernode->add(get_string('notes', 'notes'), $url);
         }
 
-        //TODO: all this is a hack - we can not link to plugins like this - all this must be abstracted to plugin callbacks!
+        $reporttab = $usernode->add(get_string('activityreports'));
+
+        $reports = get_plugin_list_with_function('report', 'extend_navigation_user', 'lib.php');
+        foreach ($reports as $reportfunction) {
+            $reportfunction($reporttab, $user, $course);
+        }
+
+        //TODO: hack area alert - all this must be abstracted to plugin callbacks above
 
         // Add a reports tab and then add reports the the user has permission to see.
         $anyreport      = has_capability('moodle/user:viewuseractivitiesreport', $usercontext);
 
-        $outlinetreport = ($anyreport || has_capability('report/outline:view', $coursecontext));
         $logtodayreport = ($anyreport || has_capability('report/log:viewtoday', $coursecontext));
         $logreport      = ($anyreport || has_capability('report/log:view', $coursecontext));
         $statsreport    = ($anyreport || has_capability('report/stats:view', $coursecontext));
 
-        $somereport     = $outlinetreport || $logtodayreport || $logreport || $statsreport;
+        $somereport     = $logtodayreport || $logreport || $statsreport;
 
         $viewreports = ($anyreport || $somereport || ($course->showreports && $iscurrentuser && $forceforcontext));
         if ($viewreports) {
-            $reporttab = $usernode->add(get_string('activityreports'));
             $reportargs = array('user'=>$user->id);
             if (!empty($course->id)) {
                 $reportargs['id'] = $course->id;
             } else {
                 $reportargs['id'] = SITEID;
-            }
-            if ($viewreports || $outlinetreport) {
-                $reporttab->add(get_string('outlinereport'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'outline'))));
-                $reporttab->add(get_string('completereport'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'complete'))));
             }
 
             if ($viewreports || $logtodayreport) {
@@ -2036,6 +2038,12 @@ class global_navigation extends navigation_node {
             // the node
             $reporttab->trim_if_empty();
         }
+
+        //TODO: end of hacky area
+
+        // Check the number of nodes in the report node... if there are none remove
+        // the node
+        $reporttab->trim_if_empty();
 
         // If the user is the current user add the repositories for the current user
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
@@ -2092,17 +2100,20 @@ class global_navigation extends navigation_node {
                     $usercoursenode->add(get_string('entercourse'), new moodle_url('/course/view.php', array('id'=>$usercourse->id)), self::TYPE_SETTING, null, null, new pix_icon('i/course', ''));
                 }
 
-                $outlinetreport = ($anyreport || has_capability('report/outline:view', $usercoursecontext));
+                $reporttab = $usercoursenode->add(get_string('activityreports'));
+
+                $reports = get_plugin_list_with_function('report', 'extend_navigation_user', 'lib.php');
+                foreach ($reports as $reportfunction) {
+                    $reportfunction($reporttab, $user, $usercourse);
+                }
+
+                //TODO: hacky area - migrate to plugin callbacks above
+
                 $logtodayreport = ($anyreport || has_capability('report/log:viewtoday', $usercoursecontext));
                 $logreport =      ($anyreport || has_capability('report/log:view', $usercoursecontext));
                 $statsreport =    ($anyreport || has_capability('report/stats:view', $usercoursecontext));
-                if ($outlinetreport || $logtodayreport || $logreport || $statsreport) {
-                    $reporttab = $usercoursenode->add(get_string('activityreports'));
+                if ($logtodayreport || $logreport || $statsreport) {
                     $reportargs = array('user'=>$user->id, 'id'=>$usercourse->id);
-                    if ($outlinetreport) {
-                        $reporttab->add(get_string('outlinereport'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'outline'))));
-                        $reporttab->add(get_string('completereport'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'complete'))));
-                    }
 
                     if ($logtodayreport) {
                         $reporttab->add(get_string('todaylogs'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'todaylogs'))));
@@ -2116,6 +2127,10 @@ class global_navigation extends navigation_node {
                         $reporttab->add(get_string('stats'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'stats'))));
                     }
                 }
+
+                //TODO: end of hacky area
+
+                $reporttab->trim_if_empty();
             }
         }
         return true;

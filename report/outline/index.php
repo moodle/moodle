@@ -24,7 +24,7 @@
  */
 
 require('../../config.php');
-require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->dirroot.'/report/outline/locallib.php');
 
 $id = required_param('id',PARAM_INT);       // course id
 

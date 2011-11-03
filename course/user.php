@@ -49,6 +49,11 @@ if (! $user = $DB->get_record("user", array("id"=>$user))) {
     print_error('invaliduserid', 'error');
 }
 
+if ($mode === 'outline' or $mode === 'complete') {
+    $url = new moodle_url('/report/outline/user.php', array('id'=>$user->id, 'course'=>$course->id, 'mode'=>$mode));
+    redirect($url);
+}
+
 require_login();
 $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
 $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
@@ -76,14 +81,6 @@ $myreports  = ($course->showreports and $USER->id == $user->id);
 $anyreport  = has_capability('moodle/user:viewuseractivitiesreport', $personalcontext);
 
 $modes = array();
-
-if ($myreports or $anyreport or has_capability('report/outline:view', $coursecontext)) {
-    $modes[] = 'outline';
-}
-
-if ($myreports or $anyreport or has_capability('report/outline:view', $coursecontext)) {
-    $modes[] = 'complete';
-}
 
 if ($myreports or $anyreport or has_capability('report/log:viewtoday', $coursecontext)) {
     $modes[] = 'todaylogs';
@@ -140,7 +137,6 @@ add_to_log($course->id, "course", "user report", "user.php?id=$course->id&amp;us
 
 $stractivityreport = get_string("activityreport");
 $strparticipants   = get_string("participants");
-$stroutline        = get_string("outline");
 $strcomplete       = get_string("complete");
 $stralllogs        = get_string("alllogs");
 $strtodaylogs      = get_string("todaylogs");
@@ -267,101 +263,6 @@ switch ($mode) {
         echo html_writer::table($table);
         break;
 
-    case "outline" :
-    case "complete" :
-        get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
-        $sections = get_all_sections($course->id);
-        $itemsprinted = false;
-
-        for ($i=0; $i<=$course->numsections; $i++) {
-
-            if (isset($sections[$i])) {   // should always be true
-
-                $section = $sections[$i];
-                $showsection = (has_capability('moodle/course:viewhiddensections', $coursecontext) or $section->visible or !$course->hiddensections);
-
-                if ($showsection) { // prevent hidden sections in user activity. Thanks to Geoff Wilbert!
-                    // Check the section has a sequence. This is the sequence of modules/resources.
-                    // If there is no sequence there is nothing to display.
-                    if ($section->sequence) {
-                        $itemsprinted = true;
-                        echo '<div class="section">';
-                        echo '<h2>';
-                        echo get_section_name($course, $section);
-                        echo "</h2>";
-
-                        echo '<div class="content">';
-
-                        if ($mode == "outline") {
-                            echo "<table cellpadding=\"4\" cellspacing=\"0\">";
-                        }
-
-                        $sectionmods = explode(",", $section->sequence);
-                        foreach ($sectionmods as $sectionmod) {
-                            if (empty($mods[$sectionmod])) {
-                                continue;
-                            }
-                            $mod = $mods[$sectionmod];
-
-                            if (empty($mod->visible)) {
-                                continue;
-                            }
-
-                            $instance = $DB->get_record("$mod->modname", array("id"=>$mod->instance));
-                            $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";
-
-                            if (file_exists($libfile)) {
-                                require_once($libfile);
-
-                                switch ($mode) {
-                                    case "outline":
-                                        $user_outline = $mod->modname."_user_outline";
-                                        if (function_exists($user_outline)) {
-                                            $output = $user_outline($course, $user, $mod, $instance);
-                                            print_outline_row($mod, $instance, $output);
-                                        }
-                                        break;
-                                    case "complete":
-                                        $user_complete = $mod->modname."_user_complete";
-                                        if (function_exists($user_complete)) {
-                                            $image = $OUTPUT->pix_icon('icon', $mod->modfullname, 'mod_'.$mod->modname, array('class'=>'icon'));
-                                            echo "<h4>$image $mod->modfullname: ".
-                                                 "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                                 format_string($instance->name,true)."</a></h4>";
-
-                                            ob_start();
-
-                                            echo "<ul>";
-                                            $user_complete($course, $user, $mod, $instance);
-                                            echo "</ul>";
-
-                                            $output = ob_get_contents();
-                                            ob_end_clean();
-
-                                            if (str_replace(' ', '', $output) != '<ul></ul>') {
-                                                echo $output;
-                                            }
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-
-                        if ($mode == "outline") {
-                            echo "</table>";
-                        }
-                        echo '</div>';  // content
-                        echo '</div>';  // section
-                    }
-                }
-            }
-        }
-
-        if (!$itemsprinted) {
-            echo $OUTPUT->notification(get_string('nothingtodisplay'));
-        }
-
-        break;
     case "coursecompletion":
     case "coursecompletions":
 
@@ -608,31 +509,3 @@ switch ($mode) {
 
 
 echo $OUTPUT->footer();
-
-
-function print_outline_row($mod, $instance, $result) {
-    global $OUTPUT;
-
-    $image = "<img src=\"" . $OUTPUT->pix_url('icon', $mod->modname) . "\" class=\"icon\" alt=\"$mod->modfullname\" />";
-
-    echo "<tr>";
-    echo "<td valign=\"top\">$image</td>";
-    echo "<td valign=\"top\" style=\"width:300\">";
-    echo "   <a title=\"$mod->modfullname\"";
-    echo "   href=\"../mod/$mod->modname/view.php?id=$mod->id\">".format_string($instance->name,true)."</a></td>";
-    echo "<td>&nbsp;&nbsp;&nbsp;</td>";
-    echo "<td valign=\"top\">";
-    if (isset($result->info)) {
-        echo "$result->info";
-    } else {
-        echo "<p style=\"text-align:center\">-</p>";
-    }
-    echo "</td>";
-    echo "<td>&nbsp;&nbsp;&nbsp;</td>";
-    if (!empty($result->time)) {
-        $timeago = format_time(time() - $result->time);
-        echo "<td valign=\"top\" style=\"white-space: nowrap\">".userdate($result->time)." ($timeago)</td>";
-    }
-    echo "</tr>";
-}
-
