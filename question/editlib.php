@@ -1781,6 +1781,12 @@ function print_choose_qtype_to_add_form($hiddenparams) {
  * @param $qtype the question type.
  */
 function print_qtype_to_add_option($qtype) {
+    if (get_string_manager()->string_exists('pluginnamesummary', $qtype->plugin_name())) {
+        $summary = get_string('pluginnamesummary', $qtype->plugin_name());
+    } else {
+        $summary = get_string($qtype->name() . 'summary', $qtype->plugin_name());
+    }
+
     echo '<div class="qtypeoption">' . "\n";
     echo '<label for="qtype_' . $qtype->name() . '">';
     echo '<input type="radio" name="qtype" id="qtype_' . $qtype->name() . '" value="' . $qtype->name() . '" />';
@@ -1788,8 +1794,7 @@ function print_qtype_to_add_option($qtype) {
     $fakequestion = new stdClass();
     $fakequestion->qtype = $qtype->name();
     print_question_icon($fakequestion);
-    echo $qtype->menu_name() . '</span><span class="qtypesummary">' .
-            get_string($qtype->name() . 'summary', 'qtype_' . $qtype->name());
+    echo $qtype->menu_name() . '</span><span class="qtypesummary">' . $summary;
     echo "</span></label>\n";
     echo "</div>\n";
 }

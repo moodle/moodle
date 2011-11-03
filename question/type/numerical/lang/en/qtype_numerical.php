@@ -24,7 +24,6 @@
  */
 
 $string['acceptederror'] = 'Accepted error';
-$string['addingnumerical'] = 'Adding a Numerical question';
 $string['addmoreanswerblanks'] = 'Blanks for {no} More Answers';
 $string['addmoreunitblanks'] = 'Blanks for {no} More Units';
 $string['answermustbenumberorstar'] = 'The answer must be a number, for example -1.234 or 3e8, or \'*\'.';
@@ -33,7 +32,6 @@ $string['decfractionofquestiongrade'] = 'as a fraction (0-1) of the question gra
 $string['decfractionofresponsegrade'] = 'as a fraction (0-1) of the response grade';
 $string['decimalformat'] = 'decimals';
 $string['editableunittext'] = 'the text input element';
-$string['editingnumerical'] = 'Editing a Numerical question';
 $string['errornomultiplier'] = 'You must specify a multiplier for this unit.';
 $string['errorrepeatedunit'] = 'You cannot have two units with the same name.';
 $string['geometric'] = 'Geometric';
@@ -47,10 +45,6 @@ $string['noneditableunittext'] = 'NON editable text of Unit No1';
 $string['nonvalidcharactersinnumber'] = 'NON valid characters in number';
 $string['notenoughanswers'] = 'You must enter at least one answer.';
 $string['nounitdisplay'] = 'No unit grading';
-$string['numerical'] = 'Numerical';
-$string['numerical_help'] = 'From the student perspective, a numerical question looks just like a short-answer question. The difference is that numerical answers are allowed to have an accepted error. This allows a fixed range of answers to be evaluated as one answer. For example, if the answer is 10 with an accepted error of 2, then any number between 8 and 12 will be accepted as correct. ';
-$string['numerical_link'] = 'question/type/numerical';
-$string['numericalsummary'] = 'Allows a numerical response, possibly with units, that is graded by comparing against various model answers, possibly with tolerances.';
 $string['numericalmultiplier'] = 'Multiplier';
 $string['numericalmultiplier_help'] = 'The multiplier is the factor by which the correct numerical response will be multiplied.
 
@@ -65,6 +59,12 @@ $string['onlynumerical'] = 'Units are not used at all. Only the numerical value 
 $string['oneunitshown'] = 'Unit 1 is automatically displayed beside the answer box.';
 $string['pleaseenterananswer'] = 'Please enter an answer.';
 $string['pleaseenteranswerwithoutthousandssep'] = 'Please enter your answer without using the thousand separator ({$a}).';
+$string['pluginname'] = 'Numerical';
+$string['pluginname_help'] = 'From the student perspective, a numerical question looks just like a short-answer question. The difference is that numerical answers are allowed to have an accepted error. This allows a fixed range of answers to be evaluated as one answer. For example, if the answer is 10 with an accepted error of 2, then any number between 8 and 12 will be accepted as correct. ';
+$string['pluginname_link'] = 'question/type/numerical';
+$string['pluginnameadding'] = 'Adding a Numerical question';
+$string['pluginnameediting'] = 'Editing a Numerical question';
+$string['pluginnamesummary'] = 'Allows a numerical response, possibly with units, that is graded by comparing against various model answers, possibly with tolerances.';
 $string['relative'] = 'Relative';
 $string['rightexample'] = 'on the right, for example 1.00cm or 1.00km';
 $string['selectunits'] = 'Select units';

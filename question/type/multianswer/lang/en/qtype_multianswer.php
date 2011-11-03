@@ -23,24 +23,24 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addingmultianswer'] = 'Adding an Embedded answers (Cloze) question';
 $string['confirmquestionsaveasedited'] = 'I confirm that I want the question to be saved as edited';
 $string['confirmsave'] = 'Confirm then save {$a}';
 $string['correctanswer'] = 'Correct answer';
 $string['correctanswerandfeedback'] = 'Correct answer and feedback';
 $string['decodeverifyquestiontext'] = 'Decode and verify the question text';
-$string['editingmultianswer'] = 'Editing an Embedded answers (Cloze) question';
 $string['layout'] = 'Layout';
 $string['layouthorizontal'] = 'Horizontal row of radio-buttons';
 $string['layoutselectinline'] = 'Dropdown menu in-line in the text';
 $string['layoutundefined'] = 'Undefined layout';
 $string['layoutvertical'] = 'Vertical column of radio buttons';
-$string['multianswer'] = 'Embedded answers (Cloze)';
-$string['multianswersummary'] = 'Questions of this type are very flexible, but can only be created by entering text containing special codes that create embedded multiple-choice, short answers and numerical questions.';
-$string['multianswer_help'] = 'Embedded answers (Cloze) questions consist of a passage of text with questions such as multiple-choice and short answer embedded within it.';
-$string['multianswer_link'] = 'question/type/multianswer';
 $string['nooptionsforsubquestion'] = 'Unable to get options for question part # {$a->sub} (question->id={$a->id})';
 $string['noquestions'] = 'The Cloze(multianswer) question "<strong>{$a}</strong>" does not contain any question';
+$string['pluginname'] = 'Embedded answers (Cloze)';
+$string['pluginname_help'] = 'Embedded answers (Cloze) questions consist of a passage of text with questions such as multiple-choice and short answer embedded within it.';
+$string['pluginname_link'] = 'question/type/multianswer';
+$string['pluginnameadding'] = 'Adding an Embedded answers (Cloze) question';
+$string['pluginnameediting'] = 'Editing an Embedded answers (Cloze) question';
+$string['pluginnamesummary'] = 'Questions of this type are very flexible, but can only be created by entering text containing special codes that create embedded multiple-choice, short answers and numerical questions.';
 $string['qtypenotrecognized'] = 'questiontype {$a} not recognized';
 $string['questionnadded'] = 'Question added';
 $string['questiondefinition'] = 'Question definition';
