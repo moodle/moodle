@@ -44,16 +44,16 @@ $PAGE->set_url(new moodle_url('/grade/grading/form/rubric/edit.php', array('area
 $PAGE->set_title(get_string('definerubric', 'gradingform_rubric'));
 $PAGE->set_heading(get_string('definerubric', 'gradingform_rubric'));
 
-$mform = new gradingform_rubric_editrubric(null, array('areaid' => $areaid, 'context' => $context));
+$mform = new gradingform_rubric_editrubric(null, array('areaid' => $areaid, 'context' => $context, 'allowdraft' => !$controller->has_active_instances()));
 $data = $controller->get_definition_for_editing();
 $returnurl = optional_param('returnurl', $manager->get_management_url(), PARAM_LOCALURL);
 $data->returnurl = $returnurl;
 $mform->set_data($data);
 if ($mform->is_cancelled()) {
     redirect($returnurl);
-} else if ($mform->is_submitted() && $mform->is_validated()) {
-    $data = $mform->get_data();
-    $controller->update_definition($data);
+} else if ($mform->is_submitted() && $mform->is_validated() && !$mform->need_confirm_regrading($controller)) {
+    // everything ok, validated, re-grading confirmed if needed. Make changes to the rubric
+    $controller->update_definition($mform->get_data());
     redirect($returnurl);
 }
 

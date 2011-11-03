@@ -44,6 +44,23 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
         return 'default';
     }
 
+    protected $regradeconfirmation = false;
+    /**
+     * Specifies that confirmation about re-grading needs to be added to this rubric editor.
+     * $changelevel is saved in $this->regradeconfirmation and retrieved in toHtml()
+     *
+     * @see gradingform_rubric_controller::update_or_check_rubric()
+     * @param int $changelevel
+     */
+    function add_regrade_confirmation($changelevel) {
+        $this->regradeconfirmation = $changelevel;
+    }
+
+    /**
+     * Returns html string to display this element
+     *
+     * @return string
+     */
     function toHtml() {
         global $PAGE;
         $html = $this->_getTabs();
@@ -68,6 +85,12 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
             } else {
                 $mode = gradingform_rubric_controller::DISPLAY_PREVIEW;
             }
+        }
+        if ($this->regradeconfirmation) {
+            if (!isset($data['regrade'])) {
+                $data['regrade'] = 1;
+            }
+            $html .= $renderer->display_regrade_confirmation($this->getName(), $this->regradeconfirmation, $data['regrade']);
         }
         if ($this->validationerrors) {
             $html .= $renderer->notification($this->validationerrors, 'error');
@@ -111,6 +134,14 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                     $return['options'][$option] = $value['options'][$option];
                 } else {
                     $return['options'][$option] = null;
+                }
+            }
+        }
+        if (is_array($value)) {
+            // for other array keys of $value no special treatmeant neeeded, copy them to return value as is
+            foreach (array_keys($value) as $key) {
+                if ($key != 'options' && $key != 'criteria') {
+                    $return[$key] = $value[$key];
                 }
             }
         }

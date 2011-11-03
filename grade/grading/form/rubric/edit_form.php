@@ -69,7 +69,12 @@ class gradingform_rubric_editrubric extends moodleform {
 
         $buttonarray = array();
         $buttonarray[] = &$form->createElement('submit', 'saverubric', get_string('saverubric', 'gradingform_rubric'));
-        $buttonarray[] = &$form->createElement('submit', 'saverubricdraft', get_string('saverubricdraft', 'gradingform_rubric'));
+        if ($this->_customdata['allowdraft']) {
+            $buttonarray[] = &$form->createElement('submit', 'saverubricdraft', get_string('saverubricdraft', 'gradingform_rubric'));
+        }
+        $editbutton = &$form->createElement('submit', 'editrubric', ' ');
+        $editbutton->freeze();
+        $buttonarray[] = &$editbutton;
         $buttonarray[] = &$form->createElement('cancel');
         $form->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $form->closeHeaderBefore('buttonar');
@@ -92,6 +97,9 @@ class gradingform_rubric_editrubric extends moodleform {
         $rubricel = $form->getElement('rubric');
         if ($rubricel->non_js_button_pressed($data['rubric'])) {
             // if JS is disabled and button such as 'Add criterion' is pressed - prevent from submit
+            $err['rubricdummy'] = 1;
+        } else if (isset($data['editrubric'])) {
+            // continue editing
             $err['rubricdummy'] = 1;
         } else if (isset($data['saverubric']) && $data['saverubric']) {
             // If user attempts to make rubric active - it needs to be validated
@@ -116,5 +124,71 @@ class gradingform_rubric_editrubric extends moodleform {
             $data->status = gradingform_controller::DEFINITION_STATUS_DRAFT;
         }
         return $data;
+    }
+
+    /**
+     * Check if there are changes in the rubric and it is needed to ask user whether to
+     * mark the current grades for re-grading. User may confirm re-grading and continue,
+     * return to editing or cancel the changes
+     *
+     * @param gradingform_rubric_controller $controller
+     */
+    function need_confirm_regrading($controller) {
+        $data = $this->get_data();
+        if (isset($data->rubric['regrade'])) {
+            // we have already displayed the confirmation on the previous step
+            return false;
+        }
+        if (!isset($data->saverubric) || !$data->saverubric) {
+            // we only need confirmation when button 'Save rubric' is pressed
+            return false;
+        }
+        if (!$controller->has_active_instances()) {
+            // nothing to re-grade, confirmation not needed
+            return false;
+        }
+        $changelevel = $controller->update_or_check_rubric($data);
+        if ($changelevel == 0) {
+            // no changes in the rubric, no confirmation needed
+            return false;
+        }
+
+        // freeze form elements and pass the values in hidden fields
+        // TODO description_editor does not freeze the normal way!
+        $form = $this->_form;
+        foreach (array('rubric', 'name'/*, 'description_editor'*/) as $fieldname) {
+            $el =& $form->getElement($fieldname);
+            $el->freeze();
+            $el->setPersistantFreeze(true);
+            if ($fieldname == 'rubric') {
+                $el->add_regrade_confirmation($changelevel);
+            }
+        }
+
+        // replace button text 'saverubric' and unfreeze 'Back to edit' button
+        $this->findButton('saverubric')->setValue(get_string('continue'));
+        $el =& $this->findButton('editrubric');
+        $el->setValue(get_string('backtoediting', 'gradingform_rubric'));
+        $el->unfreeze();
+
+        return true;
+    }
+
+    /**
+     * Returns a form element (submit button) with the name $elementname
+     *
+     * @param string $elementname
+     * @return HTML_QuickForm_element
+     */
+    function &findButton($elementname) {
+        $form = $this->_form;
+        $buttonar =& $form->getElement('buttonar');
+        $elements =& $buttonar->getElements();
+        foreach ($elements as $el) {
+            if ($el->getName() == $elementname) {
+                return $el;
+            }
+        }
+        return null;
     }
 }

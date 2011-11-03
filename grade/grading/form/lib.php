@@ -56,6 +56,9 @@ abstract class gradingform_controller {
     /** @var array graderange array of valid grades for this area. Use set_grade_range and get_grade_range to access this */
     private $graderange = null;
 
+    /** @var boolean|null cached result of function has_active_instances() */
+    protected $hasactiveinstances = null;
+
     /**
      * Do not instantinate this directly, use {@link grading_manager::get_controller()}
      *
@@ -334,8 +337,8 @@ abstract class gradingform_controller {
     }
 
     /**
-     * Returns the ACTIVE instance for this definition for the specified $raterid and $itemid
-     * (if multiple raters are allowed, or only for $itemid otherwise).
+     * Returns the current instance (either with status ACTIVE or NEEDUPDATE) for this definition for the
+     * specified $raterid and $itemid (if multiple raters are allowed, or only for $itemid otherwise).
      *
      * @param int $raterid
      * @param int $itemid
@@ -344,19 +347,22 @@ abstract class gradingform_controller {
      */
     public function get_current_instance($raterid, $itemid, $idonly = false) {
         global $DB;
-        $select = array(
+        $params = array(
                 'formid'  => $this->definition->id,
                 'itemid' => $itemid,
-                'status'  => gradingform_instance::INSTANCE_STATUS_ACTIVE);
+                'status1'  => gradingform_instance::INSTANCE_STATUS_ACTIVE,
+                'status2'  => gradingform_instance::INSTANCE_STATUS_NEEDUPDATE);
+        $select = 'formid=:formid and itemid=:itemid and (status=:status1 or status=:status2)';
         if (false /* TODO $manager->allow_multiple_raters() */) {
-            $select['raterid'] = $raterid;
+            $select .= ' and raterid=:raterid';
+            $params['raterid'] = $raterid;
         }
         if ($idonly) {
-            if ($current = $DB->get_record('grading_instances', $select, 'id', IGNORE_MISSING)) {
+            if ($current = $DB->get_record_select('grading_instances', $select, $params, 'id', IGNORE_MISSING)) {
                 return $current->id;
             }
         } else {
-            if ($current = $DB->get_record('grading_instances', $select, '*', IGNORE_MISSING)) {
+            if ($current = $DB->get_record_select('grading_instances', $select, $params, '*', IGNORE_MISSING)) {
                 return $this->get_instance($current);
             }
         }
@@ -364,12 +370,13 @@ abstract class gradingform_controller {
     }
 
     /**
-     * Returns list of active instances for the specified $itemid
+     * Returns list of ACTIVE instances for the specified $itemid
+     * (intentionally does not return instances with status NEEDUPDATE)
      *
      * @param int $itemid
      * @return array of gradingform_instance objects
      */
-    public function get_current_instances($itemid) {
+    public function get_active_instances($itemid) {
         global $DB;
         $conditions = array('formid'  => $this->definition->id,
                     'itemid' => $itemid,
@@ -380,6 +387,22 @@ abstract class gradingform_controller {
             $rv[] = $this->get_instance($record);
         }
         return $rv;
+    }
+
+    /**
+     * Returns true if there are already people who has been graded on this definition.
+     * In this case plugins may restrict changes of the grading definition
+     *
+     * @return boolean
+     */
+    public function has_active_instances() {
+        global $DB;
+        if ($this->hasactiveinstances === null) {
+            $conditions = array('formid'  => $this->definition->id,
+                        'status'  => gradingform_instance::INSTANCE_STATUS_ACTIVE);
+            $this->hasactiveinstances = $DB->record_exists('grading_instances', $conditions);
+        }
+        return $this->hasactiveinstances;
     }
 
     /**
@@ -528,9 +551,10 @@ abstract class gradingform_controller {
      * @param int $itemid
      * @param array $grading_info result of function grade_get_grades if plugin want to use some of their info
      * @param string $defaultcontent default string to be returned if no active grading is found or for some reason can not be shown to a user
+     * @param boolean $cangrade whether current user has capability to grade in this context
      * @return string
      */
-    public function render_grade($page, $itemid, $grading_info, $defaultcontent) {
+    public function render_grade($page, $itemid, $grading_info, $defaultcontent, $cangrade) {
         return $defaultcontent;
     }
 
@@ -563,6 +587,7 @@ abstract class gradingform_controller {
  */
 abstract class gradingform_instance {
     const INSTANCE_STATUS_ACTIVE = 1;
+    const INSTANCE_STATUS_NEEDUPDATE = 2;
     const INSTANCE_STATUS_INCOMPLETE = 0;
     const INSTANCE_STATUS_ARCHIVE = 3;
 
@@ -625,6 +650,19 @@ abstract class gradingform_instance {
     }
 
     /**
+     * Returns the current (active or needupdate) instance for the same raterid and itemid as this
+     * instance. This function is useful to find the status of the currently modified instance
+     *
+     * @return gradingform_instance
+     */
+    public function get_current_instance() {
+        if ($this->get_status() == self::INSTANCE_STATUS_ACTIVE || $this->get_status() == self::INSTANCE_STATUS_NEEDUPDATE) {
+            return $this;
+        }
+        return $this->get_controller()->get_current_instance($this->data->raterid, $this->data->itemid);
+    }
+
+    /**
      * Returns the controller
      *
      * @return gradingform_controller
@@ -643,6 +681,15 @@ abstract class gradingform_instance {
     }
 
     /**
+     * Returns instance status
+     *
+     * @return int
+     */
+    public function get_status() {
+        return $this->data->status;
+    }
+
+    /**
      * Marks the instance as ACTIVE and current active instance (if exists) as ARCHIVE
      */
     protected function make_active() {
@@ -655,14 +702,10 @@ abstract class gradingform_instance {
             throw new coding_exception('You cannot mark active the grading instance without itemid');
         }
         $currentid = $this->get_controller()->get_current_instance($this->data->raterid, $this->data->itemid, true);
-        if ($currentid) {
-            if ($currentid != $this->get_id()) {
-                $DB->update_record('grading_instances', array('id' => $currentid, 'status' => self::INSTANCE_STATUS_ARCHIVE));
-                $DB->update_record('grading_instances', array('id' => $this->get_id(), 'status' => self::INSTANCE_STATUS_ACTIVE));
-            }
-        } else {
-            $DB->update_record('grading_instances', array('id' => $this->get_id(), 'status' => self::INSTANCE_STATUS_ACTIVE));
+        if ($currentid && $currentid != $this->get_id()) {
+            $DB->update_record('grading_instances', array('id' => $currentid, 'status' => self::INSTANCE_STATUS_ARCHIVE));
         }
+        $DB->update_record('grading_instances', array('id' => $this->get_id(), 'status' => self::INSTANCE_STATUS_ACTIVE));
         $this->data->status = self::INSTANCE_STATUS_ACTIVE;
     }
 
