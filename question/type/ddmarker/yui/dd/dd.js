@@ -55,10 +55,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                     this.bg_img().on('load', this.on_image_load, this, 'bg_image');
                 },
                 drag_items : function() {
-                    return dragitemsarea.all('.drag');
-                },
-                drag_item : function(draginstanceno) {
-                    return dragitemsarea.one('.draginstance' + draginstanceno);
+                    return dragitemsarea.all('.dragitem');
                 },
                 drag_item_home : function (choiceno) {
                     return dragitemsarea.one('span.draghome.choice' + choiceno);
@@ -156,9 +153,8 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         clone_new_drag_item : function (draghome) {
             var drag = draghome.cloneNode(true);
             drag.removeClass('draghome');
-            drag.addClass('drag');
-            drag.setStyles({'visibility': 'visible', 'position': 'absolute', 'opacity': 0.5});
-            drag.one('img.target').setStyle('opacity', 1);
+            drag.addClass('dragitem');
+            drag.one('span.markertext').setStyle('opacity', 0.5);
             draghome.get('parentNode').appendChild(drag);
             if (!this.get('readonly')) {
                 this.draggable(drag);

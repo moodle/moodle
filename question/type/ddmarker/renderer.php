@@ -65,8 +65,10 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
             $targeticonhtml =
                 $OUTPUT->pix_icon('crosshairs', '', $componentname, array('class'=> 'target'));
 
+            $markertextattrs = array('class'=> 'markertext');
+            $markertext = html_writer::tag('span', $drag->text, $markertextattrs);
             $draghomesattrs = array('class'=>join(' ', $classes));
-            $draghomes .= html_writer::tag('span', $targeticonhtml.$drag->text, $draghomesattrs);
+            $draghomes .= html_writer::tag('span', $targeticonhtml.$markertext, $draghomesattrs);
             $hiddenfields .= $this->hidden_field_choice($qa, $choiceno);
         }
 

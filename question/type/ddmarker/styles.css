@@ -8,8 +8,6 @@
 }
 
 .que.ddmarker .draghome, form.mform fieldset#previewareaheader .draghome {
-    vertical-align: top;
-    margin: 5px;
     visibility : hidden;
 }
 
@@ -24,12 +22,16 @@
     zoom: 1;
     *display: inline;
 }
-
-.que.ddmarker .dragitems .drag {
+.que.ddmarker .dragitems .dragitem,
+.que.ddmarker .dragitems .draghome {
+    vertical-align: top;
+}
+.que.ddmarker .dragitems .dragitem {
     cursor: move;
+    position: absolute;
     z-index: 2;
 }
-.que.ddmarker .dragitems.readonly .drag {
+.que.ddmarker .dragitems.readonly .dragitem {
     cursor: auto;
 }
 .que.ddmarker div.ddarea, form.mform fieldset#previewareaheader div.ddarea {
@@ -39,16 +41,16 @@
     margin:0 auto;
 }
 
-.que.ddmarker div.dragitems div.draghome, .que.ddmarker div.dragitems div.drag,
+.que.ddmarker div.dragitems div.draghome, .que.ddmarker div.dragitems div.dragitem,
 form.mform fieldset#previewareaheader div.draghome, form.mform fieldset#previewareaheader div.drag {
     font:13px/1.231 arial,helvetica,clean,sans-serif;
     *font-size:small; /* for IE */
     *font:x-small; /* for IE in quirks mode */
 }
-.que.ddmarker span.draghome,
-.que.ddmarker div.dragitems span.drag,
+.que.ddmarker div.dragitems span.markertext,
 form.mform fieldset#previewareaheader div.markertexts span.markertext {
-    z-index: 2;
+    margin: 5px;
+     z-index: 2;
     background-color: white;
     border-style : none;
     padding: 5px;
@@ -62,8 +64,4 @@ form.mform fieldset#previewareaheader div.markertexts span.markertext {
     -webkit-border-radius: 10px;
     -khtml-border-radius: 10px;
     border-radius: 10px;
-}
-.que.ddmarker div.dragitems span.drag,
-form.mform fieldset#previewareaheader div.markertexts span.markertext {
-    position:absolute;
 }
