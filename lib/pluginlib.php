@@ -1432,22 +1432,6 @@ class plugintype_qtype extends plugintype_base implements plugin_information {
     }
 }
 
-/**
- * Class for question formats
- */
-class plugintype_qformat extends plugintype_base implements plugin_information {
-
-    /**
-     * @see plugin_information::init_display_name()
-     */
-    public function init_display_name() {
-        if (get_string_manager()->string_exists('pluginname', $this->component)) {
-            $this->displayname = get_string('pluginname', $this->component);
-        } else {
-            $this->displayname = get_string($this->name, $this->component);
-        }
-    }
-}
 
 /**
  * Class for authentication plugins

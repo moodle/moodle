@@ -23,5 +23,5 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['learnwise'] = 'Learnwise format';
-$string['learnwise_help'] = 'This format enables the import of multiple choice questions saved in Learnwise\'s XML format.';
+$string['pluginname'] = 'Learnwise format';
+$string['plugidnname_help'] = 'This format enables the import of multiple choice questions saved in Learnwise\'s XML format.';

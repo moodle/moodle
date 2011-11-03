@@ -15,14 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'qformat_missingword', language 'en', branch 'MOODLE_20_STABLE'
+ * Version information for the calculated question type.
  *
  * @package    qformat
- * @subpackage missingword
- * @copyright  2010 Helen Foster
+ * @subpackage xml
+ * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Missing word format';
-$string['pluginname_help'] = 'Missing word format enables questions to be imported via text file.';
-$string['pluginname_link'] = 'Missing word format';
+defined('MOODLE_INTERNAL') || die();
+
+$plugin->component = 'qformat_xml';
+$plugin->version   = 2011102700;
+
+$plugin->requires  = 2011102700;
+
+$plugin->maturity  = MATURITY_STABLE;

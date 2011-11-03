@@ -23,6 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['aiken'] = 'Aiken format';
-$string['aiken_help'] = 'This is a simple format for importing multiple choice questions from a text file.';
-$string['aiken_link'] = 'qformat/aiken';
+$string['pluginname'] = 'Aiken format';
+$string['pluginname_help'] = 'This is a simple format for importing multiple choice questions from a text file.';
+$string['pluginname_link'] = 'qformat/aiken';

@@ -1,0 +1,17 @@
+This files describes API changes for question import/export format plugins.
+
+=== 2.2 ===
+
+* The plugin name used to be defined in a string called the same thing as the
+format, with assoicated help strings, for example:
+
+$string['aiken'] = 'Aiken format';
+$string['aiken_help'] = 'This is a simple format ...';
+$string['aiken_link'] = 'qformat/aiken';
+
+This needs to be changed to use the standard string name pluginname, as for
+other plugin types.
+
+$string['pluginname'] = 'Aiken format';
+$string['pluginname_help'] = 'This is a simple format ...';
+$string['pluginname_link'] = 'qformat/aiken';
