@@ -55,27 +55,54 @@ $chooselog   = optional_param('chooselog', 0, PARAM_INT);
 $logformat   = optional_param('logformat', 'showashtml', PARAM_ALPHA);
 
 $params = array();
-if ($id !== 0) $params['id'] = $id;
-if ($host_course !== '') $params['host_course'] = $host_course;
-if ($group !== 0) $params['group'] = $group;
-if ($user !== 0) $params['user'] = $user;
-if ($date !== 0) $params['date'] = $date;
-if ($modname !== '') $params['modname'] = $modname;
-if ($modid !== 0) $params['modid'] = $modid;
-if ($modaction !== '') $params['modaction'] = $modaction;
-if ($page !== '0') $params['page'] = $page;
-if ($perpage !== '100') $params['perpage'] = $perpage;
-if ($showcourses !== 0) $params['showcourses'] = $showcourses;
-if ($showusers !== 0) $params['showusers'] = $showusers;
-if ($chooselog !== 0) $params['chooselog'] = $chooselog;
-if ($logformat !== 'showashtml') $params['logformat'] = $logformat;
+if ($id !== 0) {
+    $params['id'] = $id;
+}
+if ($host_course !== '') {
+    $params['host_course'] = $host_course;
+}
+if ($group !== 0) {
+    $params['group'] = $group;
+}
+if ($user !== 0) {
+    $params['user'] = $user;
+}
+if ($date !== 0) {
+    $params['date'] = $date;
+}
+if ($modname !== '') {
+    $params['modname'] = $modname;
+}
+if ($modid !== 0) {
+    $params['modid'] = $modid;
+}
+if ($modaction !== '') {
+    $params['modaction'] = $modaction;
+}
+if ($page !== '0') {
+    $params['page'] = $page;
+}
+if ($perpage !== '100') {
+    $params['perpage'] = $perpage;
+}
+if ($showcourses !== 0) {
+    $params['showcourses'] = $showcourses;
+}
+if ($showusers !== 0) {
+    $params['showusers'] = $showusers;
+}
+if ($chooselog !== 0) {
+    $params['chooselog'] = $chooselog;
+}
+if ($logformat !== 'showashtml') {
+    $params['logformat'] = $logformat;
+}
 $PAGE->set_url('/report/log/index.php', $params);
 $PAGE->set_pagelayout('report');
 
 if ($hostid == $CFG->mnet_localhost_id) {
-    if (!$course = $DB->get_record('course', array('id'=>$id))) {
-        print_error('That\'s an invalid course id'.$id);
-    }
+    $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+
 } else {
     $course_stub       = $DB->get_record('mnet_log', array('hostid'=>$hostid, 'course'=>$id), '*', true);
     $course->id        = $id;
@@ -97,16 +124,12 @@ $strreports = get_string('reports');
 
 session_get_instance()->write_close();
 
-$navlinks = array();
-
 if (!empty($chooselog)) {
     $userinfo = get_string('allparticipants');
     $dateinfo = get_string('alldays');
 
     if ($user) {
-        if (!$u = $DB->get_record('user', array('id'=>$user))) {
-            print_error('That\'s an invalid user!');
-        }
+        $u = $DB->get_record('user', array('id'=>$user, 'deleted'=>0), '*', MUST_EXIST);
         $userinfo = fullname($u, has_capability('moodle/site:viewfullnames', $context));
     }
     if ($date) {
@@ -127,9 +150,9 @@ if (!empty($chooselog)) {
             }
 
             echo $OUTPUT->heading(format_string($course->fullname) . ": $userinfo, $dateinfo (".usertimezone().")");
-            print_mnet_log_selector_form($hostid, $course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers, $logformat);
+            report_log_print_mnet_selector_form($hostid, $course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers, $logformat);
 
-            if($hostid == $CFG->mnet_localhost_id) {
+            if ($hostid == $CFG->mnet_localhost_id) {
                 print_log($course, $user, $date, 'l.time DESC', $page, $perpage,
                         "index.php?id=$course->id&amp;chooselog=1&amp;user=$user&amp;date=$date&amp;modid=$modid&amp;modaction=$modaction&amp;group=$group",
                         $modname, $modid, $modaction, $group);
@@ -173,10 +196,8 @@ if (!empty($chooselog)) {
 
     echo $OUTPUT->heading(get_string('chooselogs') .':');
 
-    print_log_selector_form($course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers, $logformat);
+    report_log_print_selector_form($course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers, $logformat);
 }
 
 echo $OUTPUT->footer();
-
-exit;
 

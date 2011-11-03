@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Produces a graph of log accesses
+ * Produces a graph of log accesses for a user
  *
  * @package    report
  * @subpackage log
@@ -24,46 +24,55 @@
  */
 
 require("../../config.php");
-require_once("$CFG->dirroot/course/lib.php");
 require_once("$CFG->libdir/graphlib.php");
+require_once($CFG->dirroot.'/report/log/locallib.php');
 
-$id   = required_param('id', PARAM_INT);    // Course ID
-$type = required_param('type', PARAM_FILE);  // Graph Type
-$user = optional_param('user', 0, PARAM_INT);  // Student ID
+$id   = required_param('id', PARAM_INT);       // Course ID
+$type = required_param('type', PARAM_FILE);    // Graph Type
+$user = required_param('user', PARAM_INT);     // Student ID
 $date = optional_param('date', 0, PARAM_INT);  // A time of a day (in GMT)
 
-$url = new moodle_url('/report/log/graph.php', array('id'=>$id,'type'=>$type));
-if ($user !== 0) {
-    $url->param('user', $user);
-}
-if ($date !== 0) {
-    $url->param('date', $date);
-}
+$url = new moodle_url('/report/log/graph.php', array('id'=>$id,'type'=>$type,'user'=>$user,'date'=>$date));
 $PAGE->set_url($url);
 
-if (! $course = $DB->get_record("course", array("id"=>$id))) {
-    print_error('invalidcourseid');
+if ($type !== "usercourse.png" and $type !== "userday.png") {
+    $type = 'userday.png';
 }
 
-require_login($course);
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
+$course = $DB->get_record("course", array("id"=>$id), '*', MUST_EXIST);
+$user = $DB->get_record("user", array("id"=>$user, 'deleted'=>0), '*', MUST_EXIST);
 
-if (!$course->showreports or $USER->id != $user) {
-    require_capability('report/log:view', $context);
+$coursecontext   = context_course::instance($course->id);
+$personalcontext = context_user::instance($user->id);
+
+if ($USER->id != $user->id and has_capability('moodle/user:viewuseractivitiesreport', $personalcontext)
+        and !is_enrolled($coursecontext, $USER) and is_enrolled($coursecontext, $user)) {
+    //TODO: do not require parents to be enrolled in courses - this is a hack!
+    require_login();
+    $PAGE->set_course($course);
+} else {
+    require_login($course);
 }
 
-if ($user) {
-    if (! $user = $DB->get_record("user", array("id"=>$user))) {
-        print_error("nousers");
+list($all, $today) = report_log_can_access_user_report($user, $course);
+
+if ($type === "userday.png") {
+    if (!$today) {
+        require_capability('report/log:viewtoday', $coursecontext);
+    }
+} else {
+    if (!$all) {
+        require_capability('report/log:view', $coursecontext);
     }
 }
+
+add_to_log($course->id, 'course', 'report log', "report/log/graph.php?user=$user->id&id=$course->id&type=$type&date=$date", $course->id);
 
 $logs = array();
 
 $timenow = time();
 
-switch ($type) {
- case "usercourse.png":
+if ($type === "usercourse.png") {
 
    $site = get_site();
 
@@ -73,7 +82,7 @@ switch ($type) {
        $courseselect = $course->id;
    }
 
-   $maxseconds = COURSE_MAX_LOG_DISPLAY * 3600 * 24;  // seconds
+   $maxseconds = REPORT_LOG_MAX_DISPLAY * 3600 * 24;  // seconds
    //$maxseconds = 60 * 3600 * 24;  // seconds
    if ($timenow - $course->startdate > $maxseconds) {
        $course->startdate = $timenow - $maxseconds;
@@ -120,7 +129,7 @@ switch ($type) {
 
    $graph = new graph(750, 400);
 
-   $a->coursename = format_string($course->shortname, true, array('context' => $context));
+   $a->coursename = format_string($course->shortname, true, array('context' => $coursecontext));
    $a->username = fullname($user, true);
    $graph->parameter['title'] = get_string("hitsoncourse", "", $a);
 
@@ -149,9 +158,7 @@ switch ($type) {
    error_reporting(5); // ignore most warnings such as font problems etc
    $graph->draw_stack();
 
-   break;
-
- case "userday.png":
+} else {
 
    $site = get_site();
 
@@ -183,7 +190,7 @@ switch ($type) {
 
    $graph = new graph(750, 400);
 
-   $a->coursename = format_string($course->shortname, true, array('context' => $context));
+   $a->coursename = format_string($course->shortname, true, array('context' => $coursecontext));
    $a->username = fullname($user, true);
    $graph->parameter['title'] = get_string("hitsoncoursetoday", "", $a);
 
@@ -207,10 +214,5 @@ switch ($type) {
 
    error_reporting(5); // ignore most warnings such as font problems etc
    $graph->draw_stack();
-
-   break;
-
- default:
-   break;
 }
 

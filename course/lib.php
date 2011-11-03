@@ -29,7 +29,6 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/filelib.php');
 
-define('COURSE_MAX_LOG_DISPLAY', 150);          // days
 define('COURSE_MAX_LOGS_PER_PAGE', 1000);       // records
 define('COURSE_MAX_RECENT_PERIOD', 172800);     // Two days, in seconds
 define('COURSE_MAX_SUMMARIES_PER_PAGE', 10);    // courses
@@ -826,27 +825,6 @@ function print_log_ods($course, $user, $date, $order='l.time DESC', $modname,
 
     $workbook->close();
     return true;
-}
-
-
-function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
-    global $CFG, $USER;
-
-    // note: this is a hack - we should not use plugins from core
-    if (!file_exists($CFG->dirroot.'/report/log/graph.php')) {
-        return;
-    }
-
-    if (empty($CFG->gdversion)) {
-        echo "(".get_string("gdneed").")";
-    } else {
-        // MDL-10818, do not display broken graph when user has no permission to view graph
-        if (has_capability('report/log:view', get_context_instance(CONTEXT_COURSE, $course->id)) ||
-            ($course->showreports and $USER->id == $userid)) {
-            echo '<img src="'.$CFG->wwwroot.'/report/log/graph.php?id='.$course->id.
-                 '&amp;user='.$userid.'&amp;type='.$type.'&amp;date='.$date.'" alt="" />';
-        }
-    }
 }
 
 

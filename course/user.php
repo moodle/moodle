@@ -52,6 +52,11 @@ if (! $user = $DB->get_record("user", array("id"=>$user))) {
 if ($mode === 'outline' or $mode === 'complete') {
     $url = new moodle_url('/report/outline/user.php', array('id'=>$user->id, 'course'=>$course->id, 'mode'=>$mode));
     redirect($url);
+
+} else if ($mode === 'todaylogs' or $mode === 'alllogs') {
+    $logmode = ($mode === 'todaylogs') ? 'today' : 'all';
+    $url = new moodle_url('/report/log/user.php', array('id'=>$user->id, 'course'=>$course->id, 'mode'=>$logmode));
+    redirect($url);
 }
 
 require_login();
@@ -81,14 +86,6 @@ $myreports  = ($course->showreports and $USER->id == $user->id);
 $anyreport  = has_capability('moodle/user:viewuseractivitiesreport', $personalcontext);
 
 $modes = array();
-
-if ($myreports or $anyreport or has_capability('report/log:viewtoday', $coursecontext)) {
-    $modes[] = 'todaylogs';
-}
-
-if ($myreports or $anyreport or has_capability('report/log:view', $coursecontext)) {
-    $modes[] = 'alllogs';
-}
 
 if ($myreports or $anyreport or has_capability('report/stats:view', $coursecontext)) {
     $modes[] = 'stats';
@@ -138,8 +135,6 @@ add_to_log($course->id, "course", "user report", "user.php?id=$course->id&amp;us
 $stractivityreport = get_string("activityreport");
 $strparticipants   = get_string("participants");
 $strcomplete       = get_string("complete");
-$stralllogs        = get_string("alllogs");
-$strtodaylogs      = get_string("todaylogs");
 $strmode           = get_string($mode);
 $fullname          = fullname($user, true);
 
@@ -169,21 +164,6 @@ switch ($mode) {
         }
         break;
 
-    case "todaylogs" :
-        echo '<div class="graph">';
-        print_log_graph($course, $user->id, "userday.png");
-        echo '</div>';
-        print_log($course, $user->id, usergetmidnight(time()), "l.time DESC", $page, $perpage,
-                  "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode");
-        break;
-
-    case "alllogs" :
-        echo '<div class="graph">';
-        print_log_graph($course, $user->id, "usercourse.png");
-        echo '</div>';
-        print_log($course, $user->id, 0, "l.time DESC", $page, $perpage,
-                  "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode");
-        break;
     case 'stats':
 
         if (empty($CFG->enablestats)) {

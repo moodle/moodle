@@ -25,9 +25,24 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+if (!defined('REPORT_LOG_MAX_DISPLAY')) {
+    define('REPORT_LOG_MAX_DISPLAY', 150); // days
+}
+
 require_once(dirname(__FILE__).'/lib.php');
 
-function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $selecteddate='today',
+function report_log_print_graph($course, $userid, $type, $date=0) {
+    global $CFG;
+
+    if (empty($CFG->gdversion)) {
+        echo "(".get_string("gdneed").")";
+    } else {
+        echo '<img src="'.$CFG->wwwroot.'/report/log/graph.php?id='.$course->id.
+             '&amp;user='.$userid.'&amp;type='.$type.'&amp;date='.$date.'" alt="" />';
+    }
+}
+
+function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, $selecteddate='today',
                                  $modname="", $modid=0, $modaction='', $selectedgroup=-1, $showcourses=0, $showusers=0, $logformat='showashtml') {
 
     global $USER, $CFG, $SITE, $DB, $OUTPUT, $SESSION;
@@ -312,7 +327,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     echo '</form>';
 }
 
-function print_log_selector_form($course, $selecteduser=0, $selecteddate='today',
+function report_log_print_selector_form($course, $selecteduser=0, $selecteddate='today',
                                  $modname="", $modid=0, $modaction='', $selectedgroup=-1, $showcourses=0, $showusers=0, $logformat='showashtml') {
 
     global $USER, $CFG, $DB, $OUTPUT, $SESSION;
