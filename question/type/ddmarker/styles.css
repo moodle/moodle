@@ -25,8 +25,7 @@
     *display: inline;
 }
 
-.que.ddmarker .drag, form.mform fieldset#previewareaheader .drag {
-    border: 1px solid black;
+.que.ddmarker .dragitems .drag {
     cursor: move;
     z-index: 2;
 }
@@ -47,10 +46,11 @@ form.mform fieldset#previewareaheader div.draghome, form.mform fieldset#previewa
     *font:x-small; /* for IE in quirks mode */
 }
 .que.ddmarker span.draghome,
-.que.ddmarker div.markertexts span.drag,
+.que.ddmarker div.dragitems span.drag,
 form.mform fieldset#previewareaheader div.markertexts span.markertext {
     z-index: 2;
     background-color: white;
+    border-style : none;
     padding: 5px;
     display: -moz-inline-stack;
     display:inline-block;

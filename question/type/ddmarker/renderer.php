@@ -52,33 +52,32 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
         $img = html_writer::empty_tag('img', array('src'=>$bgimage, 'class'=>'dropbackground'));
         $droparea = html_writer::tag('div', $img, array('class'=>'droparea'));
 
-        $dragimagehomes = '';
+        $draghomes = '';
         $orderedgroup = $question->get_ordered_choices(1);
         $componentname = $question->qtype->plugin_name();
-        foreach ($orderedgroup as $choiceno => $dragimage) {
+        $hiddenfields = '';
+        foreach ($orderedgroup as $choiceno => $drag) {
             $classes = array('draghome',
-                             "dragitemhomes{$dragimage->no}",
                              "choice{$choiceno}");
-            if ($dragimage->infinite) {
+            if ($drag->infinite) {
                 $classes[] = 'infinite';
             }
             $targeticonhtml =
                 $OUTPUT->pix_icon('crosshairs', '', $componentname, array('class'=> 'target'));
 
-            $dragimagehomes .= html_writer::tag('span',
-                                                    $targeticonhtml.$dragimage->text,
-                                                    array('class'=>join(' ', $classes)));
+            $draghomesattrs = array('class'=>join(' ', $classes));
+            $draghomes .= html_writer::tag('span', $targeticonhtml.$drag->text, $draghomesattrs);
+            $hiddenfields .= $this->hidden_field_choice($qa, $choiceno);
         }
-        $dragimagehomesdiv = html_writer::tag('div', $dragimagehomes);
 
         $dragitemsclass = 'dragitems';
         if ($options->readonly) {
             $dragitemsclass .= ' readonly';
         }
-        $dragitems = html_writer::tag('div', $dragimagehomesdiv, array('class'=> $dragitemsclass));
+        $dragitems = html_writer::tag('div', $draghomes, array('class'=> $dragitemsclass));
         $output .= html_writer::tag('div', $droparea.$dragitems, array('class'=>'ddarea'));
-        $topnode = 'div#q'.$qa->get_slot().' div.ddarea';
-        $params = array('drops' => $question->places,
+        $topnode = 'div#q'.$qa->get_slot();
+        $params = array('inputids' => $question->places,
                         'topnode' => $topnode,
                         'readonly' => $options->readonly);
 
@@ -91,6 +90,13 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
                                         $question->get_validation_error($qa->get_last_qt_data()),
                                         array('class' => 'validationerror'));
         }
+        $output .= html_writer::tag('div', $hiddenfields, array('class'=>'ddform'));
         return $output;
+    }
+    protected function hidden_field_choice(question_attempt $qa, $choiceno, $value = null) {
+        $varname = 'c'.$choiceno;
+        $classes = array('choices', 'choice'.$choiceno);
+        list(,$html) = $this->hidden_field_for_qt_var($qa, $varname, null, $classes);
+        return $html;
     }
 }

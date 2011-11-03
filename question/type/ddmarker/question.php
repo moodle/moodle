@@ -52,6 +52,21 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
                                                                 $filearea, $args, $forcedownload);
         }
     }
+    /**
+     * @param int $key stem number
+     * @return string the question-type variable name.
+     */
+    public function choice($choice) {
+        return 'c' . $choice;
+    }
+
+    public function get_expected_data() {
+        $vars = array();
+        foreach ($this->choices as $choice => $notused) {
+            $vars[$this->choice($choice)] = PARAM_INTEGER;
+        }
+        return $vars;
+    }
 }
 
 /**
