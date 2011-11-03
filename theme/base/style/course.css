@@ -57,16 +57,6 @@
 #page-course-pending .pendingcourserequests .cell {padding: 0 5px;}
 #page-course-pending .pendingcourserequests .cell.c6 {white-space: nowrap;}
 
-#page-course-report-log-index .info,
-#page-course-report-log-indexlive .info {margin:10px;}
-#page-course-report-stats-index .graph {margin-bottom: 1em;}
-
-#page-course-report .logselectform,
-#page-course-report .participationselectform,
-#page-course-report-log-index .logselectform,
-#page-course-report-participation-index .participationselectform {margin:10px auto;}
-#page-course-report .participationselectform label,
-#page-course-report-participation-index .participationselectform label {margin-left:15px;margin-right:5px;}
 
 .coursebox {width: 100%;margin-bottom: 15px;}
 .coursebox .info {float: left;text-align:left;width: 40%;}
@@ -87,9 +77,6 @@
 
 .categorylist .indentation {padding-left: 20px;}
 #page-course-index .category .image {padding-right: 2px;}
-
-.path-course-report-outline td.numviews {text-align:right;}
-.path-course-report-outline tr.section {text-align: center;}
 
 .course ul.section {margin:5px;padding:0;}
 
@@ -121,7 +108,7 @@
 /*all courses view*/
 #page-course-index .categorylist .course.clearfloat { height: auto; }
 
-/** 
+/**
 * Overide for RTL layout
 */
 .dir-rtl .coursebox .info {float: right; text-align: right;}
