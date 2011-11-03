@@ -65,10 +65,36 @@ class gradingform_rubric_controller extends gradingform_controller {
      * @param int|null $usermodified optional userid of the author of the definition, defaults to the current user
      */
     public function update_definition(stdClass $newdefinition, $usermodified = null) {
+        $this->update_or_check_rubric($newdefinition, $usermodified, true);
+        if (isset($newdefinition->rubric['regrade']) && $newdefinition->rubric['regrade']) {
+            $this->mark_for_regrade();
+        }
+    }
+
+    /**
+     * Either saves the rubric definition into the database or check if it has been changed.
+     * Returns the level of changes:
+     * 0 - no changes
+     * 1 - only texts or criteria sortorders are changed, students probably do not require re-grading
+     * 2 - added levels but maximum score on rubric is the same, students still may not require re-grading
+     * 3 - removed criteria or added levels or changed number of points, students require re-grading but may be re-graded automatically
+     * 4 - removed levels - students require re-grading and not all students may be re-graded automatically
+     * 5 - added criteria - all students require manual re-grading
+     *
+     * @param stdClass $newdefinition rubric definition data as coming from gradingform_rubric_editrubric::get_data()
+     * @param int|null $usermodified optional userid of the author of the definition, defaults to the current user
+     * @param boolean $doupdate if true actually updates DB, otherwise performs a check
+     *
+     */
+    public function update_or_check_rubric(stdClass $newdefinition, $usermodified = null, $doupdate = false) {
         global $DB;
 
         // firstly update the common definition data in the {grading_definition} table
         if ($this->definition === false) {
+            if (!$doupdate) {
+                // if we create the new definition there is no such thing as re-grading anyway
+                return 5;
+            }
             // if definition does not exist yet, create a blank one
             // (we need id to save files embedded in description)
             parent::update_definition(new stdClass(), $usermodified);
@@ -81,13 +107,12 @@ class gradingform_rubric_controller extends gradingform_controller {
         $editoroptions = self::description_form_field_options($this->get_context());
         $newdefinition = file_postupdate_standard_editor($newdefinition, 'description', $editoroptions, $this->get_context(),
             'gradingform_rubric', 'definition_description', $this->definition->id);
-        parent::update_definition($newdefinition, $usermodified);
 
         // reload the definition from the database
         $currentdefinition = $this->get_definition(true);
 
         // update rubric data
-        $haschanges = false;
+        $haschanges = array();
         if (empty($newdefinition->rubric['criteria'])) {
             $newcriteria = array();
         } else {
@@ -102,6 +127,7 @@ class gradingform_rubric_controller extends gradingform_controller {
             if (array_key_exists('levels', $criterion)) {
                 $levelsdata = $criterion['levels'];
             }
+            $criterionmaxscore = null;
             if (preg_match('/^NEWID\d+$/', $id)) {
                 // insert criterion into DB
                 $data = array('formid' => $this->definition->id, 'descriptionformat' => FORMAT_MOODLE); // TODO format is not supported yet
@@ -110,8 +136,10 @@ class gradingform_rubric_controller extends gradingform_controller {
                         $data[$key] = $criterion[$key];
                     }
                 }
-                $id = $DB->insert_record('gradingform_rubric_criteria', $data);
-                $haschanges = true;
+                if ($doupdate) {
+                    $id = $DB->insert_record('gradingform_rubric_criteria', $data);
+                }
+                $haschanges[5] = true;
             } else {
                 // update criterion in DB
                 $data = array();
@@ -123,14 +151,21 @@ class gradingform_rubric_controller extends gradingform_controller {
                 if (!empty($data)) {
                     // update only if something is changed
                     $data['id'] = $id;
-                    $DB->update_record('gradingform_rubric_criteria', $data);
-                    $haschanges = true;
+                    if ($doupdate) {
+                        $DB->update_record('gradingform_rubric_criteria', $data);
+                    }
+                    $haschanges[1] = true;
                 }
-                // remove deleted levels from DB
-                foreach (array_keys($currentcriteria[$id]['levels']) as $levelid) {
+                // remove deleted levels from DB and calculate the maximum score for this criteria
+                foreach ($currentcriteria[$id]['levels'] as $levelid => $currentlevel) {
+                    if ($criterionmaxscore === null || $criterionmaxscore < $currentlevel['score']) {
+                        $criterionmaxscore = $currentlevel['score'];
+                    }
                     if (!array_key_exists($levelid, $levelsdata)) {
-                        $DB->delete_records('gradingform_rubric_levels', array('id' => $levelid));
-                        $haschanges = true;
+                        if ($doupdate) {
+                            $DB->delete_records('gradingform_rubric_levels', array('id' => $levelid));
+                        }
+                        $haschanges[4] = true;
                     }
                 }
             }
@@ -150,8 +185,15 @@ class gradingform_rubric_controller extends gradingform_controller {
                             $data[$key] = $level[$key];
                         }
                     }
-                    $levelid = $DB->insert_record('gradingform_rubric_levels', $data);
-                    $haschanges = true;
+                    if ($doupdate) {
+                        $levelid = $DB->insert_record('gradingform_rubric_levels', $data);
+                    }
+                    if ($criterionmaxscore !== null && $criterionmaxscore >= $level['score']) {
+                        // new level is added but the maximum score for this criteria did not change, re-grading may not be necessary
+                        $haschanges[2] = true;
+                    } else {
+                        $haschanges[3] = true;
+                    }
                 } else {
                     // update level in DB
                     $data = array();
@@ -163,8 +205,13 @@ class gradingform_rubric_controller extends gradingform_controller {
                     if (!empty($data)) {
                         // update only if something is changed
                         $data['id'] = $levelid;
-                        $DB->update_record('gradingform_rubric_levels', $data);
-                        $haschanges = true;
+                        if ($doupdate) {
+                            $DB->update_record('gradingform_rubric_levels', $data);
+                        }
+                        if (isset($data['score'])) {
+                            $haschanges[3] = true;
+                        }
+                        $haschanges[1] = true;
                     }
                 }
             }
@@ -172,12 +219,41 @@ class gradingform_rubric_controller extends gradingform_controller {
         // remove deleted criteria from DB
         foreach (array_keys($currentcriteria) as $id) {
             if (!array_key_exists($id, $newcriteria)) {
-                $DB->delete_records('gradingform_rubric_criteria', array('id' => $id));
-                $DB->delete_records('gradingform_rubric_levels', array('criterionid' => $id));
-                $haschanges = true;
+                if ($doupdate) {
+                    $DB->delete_records('gradingform_rubric_criteria', array('id' => $id));
+                    $DB->delete_records('gradingform_rubric_levels', array('criterionid' => $id));
+                }
+                $haschanges[3] = true;
             }
         }
-        $this->load_definition();
+        foreach (array('status', 'description', 'descriptionformat', 'name', 'options') as $key) {
+            if (isset($newdefinition->$key) && $newdefinition->$key != $this->definition->$key) {
+                $haschanges[1] = true;
+            }
+        }
+        if ($usermodified && $usermodified != $this->definition->usermodified) {
+            $haschanges[1] = true;
+        }
+        if (!count($haschanges)) {
+            return 0;
+        }
+        if ($doupdate) {
+            parent::update_definition($newdefinition, $usermodified);
+            $this->load_definition();
+        }
+        // return the maximum level of changes
+        $changelevels = array_keys($haschanges);
+        sort($changelevels);
+        return array_pop($changelevels);
+    }
+
+    public function mark_for_regrade() {
+        global $DB;
+        if ($this->has_active_instances()) {
+            $conditions = array('formid'  => $this->definition->id,
+                        'status'  => gradingform_instance::INSTANCE_STATUS_ACTIVE);
+            $DB->set_field('grading_instances', 'status', gradingform_instance::INSTANCE_STATUS_NEEDUPDATE, $conditions);
+        }
     }
 
     /**
@@ -321,8 +397,6 @@ class gradingform_rubric_controller extends gradingform_controller {
         return $new;
     }
 
-    // TODO the following functions may be moved to parent:
-
     /**
      * @return array options for the form description field
      */
@@ -416,11 +490,11 @@ class gradingform_rubric_controller extends gradingform_controller {
      * @param int $itemid
      * @param array $grading_info result of function grade_get_grades
      * @param string $defaultcontent default string to be returned if no active grading is found
+     * @param boolean $cangrade whether current user has capability to grade in this context
      * @return string
      */
-    public function render_grade($page, $itemid, $grading_info, $defaultcontent) {
-        $instances = $this->get_current_instances($itemid);
-        return $this->get_renderer($page)->display_instances($this->get_current_instances($itemid), $defaultcontent);
+    public function render_grade($page, $itemid, $grading_info, $defaultcontent, $cangrade) {
+        return $this->get_renderer($page)->display_instances($this->get_active_instances($itemid), $defaultcontent, $cangrade);
     }
 
     //// full-text search support /////////////////////////////////////////////
@@ -508,7 +582,6 @@ class gradingform_rubric_instance extends gradingform_instance {
      * @return boolean true if the form data is validated and contains no errors
      */
     public function validate_grading_element($elementvalue) {
-        // TODO: if there is nothing selected in rubric, we don't enter this function at all :(
         $criteria = $this->get_controller()->get_definition()->rubric_criteria;
         if (!isset($elementvalue['criteria']) || !is_array($elementvalue['criteria']) || sizeof($elementvalue['criteria']) < sizeof($criteria)) {
             return false;
@@ -554,12 +627,15 @@ class gradingform_rubric_instance extends gradingform_instance {
         foreach ($data['criteria'] as $criterionid => $record) {
             if (!array_key_exists($criterionid, $currentgrade['criteria'])) {
                 $newrecord = array('forminstanceid' => $this->get_id(), 'criterionid' => $criterionid,
-                    'levelid' => $record['levelid'], 'remark' => $record['remark'], 'remarkformat' => FORMAT_MOODLE);
+                    'levelid' => $record['levelid'], 'remarkformat' => FORMAT_MOODLE);
+                if (isset($record['remark'])) {
+                    $newrecord['remark'] = $record['remark'];
+                }
                 $DB->insert_record('gradingform_rubric_fillings', $newrecord);
             } else {
                 $newrecord = array('id' => $currentgrade['criteria'][$criterionid]['id']);
                 foreach (array('levelid', 'remark'/*, 'remarkformat' TODO */) as $key) {
-                    if ($currentgrade['criteria'][$criterionid][$key] != $record[$key]) {
+                    if (isset($record[$key]) && $currentgrade['criteria'][$criterionid][$key] != $record[$key]) {
                         $newrecord[$key] = $record[$key];
                     }
                 }
@@ -617,15 +693,6 @@ class gradingform_rubric_instance extends gradingform_instance {
     }
 
     /**
-     * Returns the error message displayed in case of validation failed
-     *
-     * @return string
-     */
-    public function default_validation_error_message() {
-        return 'The rubric is incomplete'; //TODO string
-    }
-
-    /**
      * Returns html for form element of type 'grading'.
      *
      * @param moodle_page $page
@@ -648,10 +715,18 @@ class gradingform_rubric_instance extends gradingform_instance {
         $criteria = $this->get_controller()->get_definition()->rubric_criteria;
         $options = $this->get_controller()->get_options();
         $value = $gradingformelement->getValue();
+        $html = '';
         if ($value === null) {
             $value = $this->get_rubric_filling();
+        } else if (!$this->validate_grading_element($value)) {
+            $html .= html_writer::tag('div', get_string('rubricnotcompleted', 'gradingform_rubric'), array('class' => 'gradingform_rubric-error'));
         }
-        return $this->get_controller()->get_renderer($page)->display_rubric($criteria, $options, $mode, $gradingformelement->getName(), $value);
+        $currentinstance = $this->get_current_instance();
+        if ($currentinstance && $currentinstance->get_status() == gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
+            $html .= html_writer::tag('div', get_string('needregrademessage', 'gradingform_rubric'), array('class' => 'gradingform_rubric-regrade'));
+        }
+        $html .= $this->get_controller()->get_renderer($page)->display_rubric($criteria, $options, $mode, $gradingformelement->getName(), $value);
+        return $html;
     }
 }
 

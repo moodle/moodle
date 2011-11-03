@@ -69,3 +69,18 @@ $string['err_nodescription'] = 'Criterion description can not be empty';
 $string['err_nodefinition'] = 'Level definition can not be empty';
 $string['err_scoreformat'] = 'Number of points for each level must be a valid non-negative number';
 $string['err_totalscore'] = 'Maximum number of points possible when graded by the rubric must be more than zero';
+
+$string['regrademessage1'] = 'You are about to save changes to the rubric that has already been used for grading. Please indicate whether your changes
+                are significant and students grades need to be reviewed.
+                If students already graded are marked for re-grading their
+                current grades remain in gradebook but the students will not see the rubric grading before teacher updates it.';
+$string['regrademessage5'] = 'You are about to save significant changes to the rubric that has already been used for grading. Please note that all students already graded will be marked for re-grading.
+                The
+                current grades remain in gradebook but the students will not see the rubric grading before teacher updates it.';
+$string['regradeoption0'] = 'Do not mark for regrade';
+$string['regradeoption1'] = 'Mark for regrade';
+
+$string['needregrademessage'] = 'Rubric definition was changed after this student had been graded. You must update the grade otherwise it will not be shown to student.';
+$string['rubricnotcompleted'] = 'You have to select a feedback on each rubric criterion';
+
+$string['backtoediting'] = 'Back to editing';

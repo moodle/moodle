@@ -335,7 +335,7 @@ class assignment_base {
         $grade_str = '<div class="grade">'. get_string("grade").': '.$grade->str_long_grade. '</div>';
         if (!empty($submission) && $controller = get_grading_manager($this->context, 'mod_assignment', 'submission')->get_active_controller()) {
             $controller->set_grade_range(make_grades_menu($this->assignment->grade));
-            echo $controller->render_grade($PAGE, $submission->id, $item, $grade_str);
+            echo $controller->render_grade($PAGE, $submission->id, $item, $grade_str, has_capability('mod/assignment:grade', $this->context));
         } else {
             echo $grade_str;
         }

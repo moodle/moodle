@@ -296,16 +296,16 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
                     }
                     break;
                 default:
+                    if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FROZEN && $value) {
+                        $html .= html_writer::empty_tag('input', $attrs + array('type' => 'hidden', 'value' => $value));
+                    }
                     // Display option as checkbox
                     $attrs['type'] = 'checkbox';
                     $attrs['value'] = 1;
                     if ($value) {
                         $attrs['checked'] = 'checked';
                     }
-                    if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FROZEN) {
-                        $attrs['disabled'] = 'disabled';
-                    }
-                    if ($mode == gradingform_rubric_controller::DISPLAY_PREVIEW) {
+                    if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FROZEN || $mode == gradingform_rubric_controller::DISPLAY_PREVIEW) {
                         $attrs['disabled'] = 'disabled';
                         unset($attrs['name']);
                     }
@@ -391,14 +391,16 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
      *
      * @param array $instances array of objects of type gradingform_rubric_instance
      * @param string $defaultcontent default string that would be displayed without advanced grading
+     * @param boolean $cangrade whether current user has capability to grade in this context
      * @return string
      */
-    public function display_instances($instances, $defaultcontent) {
+    public function display_instances($instances, $defaultcontent, $cangrade) {
+        $rv = '';
         if (sizeof($instances)) {
-            $rv = html_writer::start_tag('div', array('class' => 'advancedgrade'));
+            $rv .= html_writer::start_tag('div', array('class' => 'advancedgrade'));
             $idx = 0;
             foreach ($instances as $instance) {
-                $rv .= $this->display_instance($instance, $idx++);
+                $rv .= $this->display_instance($instance, $idx++, $cangrade);
             }
             $rv .= html_writer::end_tag('div');
         }
@@ -410,12 +412,34 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
      *
      * @param gradingform_rubric_instance $instance
      * @param int idx unique number of instance on page
+     * @param boolean $cangrade whether current user has capability to grade in this context
      */
-    public function display_instance(gradingform_rubric_instance $instance, $idx) {
+    public function display_instance(gradingform_rubric_instance $instance, $idx, $cangrade) {
         $criteria = $instance->get_controller()->get_definition()->rubric_criteria;
         $options = $instance->get_controller()->get_options();
         $values = $instance->get_rubric_filling();
-        // TODO mode should be DISPLAY_REVIEW if this user is a teacher
-        return $this->display_rubric($criteria, $options, gradingform_rubric_controller::DISPLAY_VIEW, 'rubric'.$idx, $values);
+        if ($cangrade) {
+            $mode = gradingform_rubric_controller::DISPLAY_REVIEW;
+        } else {
+            $mode = gradingform_rubric_controller::DISPLAY_VIEW;
+        }
+        return $this->display_rubric($criteria, $options, $mode, 'rubric'.$idx, $values);
+    }
+
+    public function display_regrade_confirmation($elementname, $changelevel, $value) {
+        $html = html_writer::start_tag('div', array('class' => 'gradingform_rubric-regrade'));
+        if ($changelevel<=2) {
+            $html .= get_string('regrademessage1', 'gradingform_rubric');
+            $selectoptions = array(
+                0 => get_string('regradeoption0', 'gradingform_rubric'),
+                1 => get_string('regradeoption1', 'gradingform_rubric')
+            );
+            $html .= html_writer::select($selectoptions, $elementname.'[regrade]', $value, false);
+        } else {
+            $html .= get_string('regrademessage5', 'gradingform_rubric');
+            $html .= html_writer::empty_tag('input', array('name' => $elementname.'[regrade]', 'value' => 1, 'type' => 'hidden'));
+        }
+        $html .= html_writer::end_tag('div');
+        return $html;
     }
 }

@@ -108,3 +108,10 @@
 .gradingform_rubric .criterion .description.error,
 .gradingform_rubric .criterion .levels .level .definition.error,
 .gradingform_rubric .criterion .levels .level .score.error {background:#FFDDDD;}
+
+/**
+ *
+ */
+
+.gradingform_rubric-regrade {padding:10px;background:#FFDDDD;border:1px solid #F00;margin-bottom:10px;}
+.gradingform_rubric-error {color:red;font-weight:bold;}
