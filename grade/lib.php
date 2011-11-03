@@ -1141,6 +1141,8 @@ class grade_structure {
 
     private function get_activity_link($element) {
         global $CFG;
+        /** @var array static cache of the grade.php file existence flags */
+        static $hasgradephp = array();
 
         $itemtype = $element['object']->itemtype;
         $itemmodule = $element['object']->itemmodule;
@@ -1165,9 +1167,16 @@ class grade_structure {
             return null;
         }
 
+        if (!array_key_exists($itemmodule, $hasgradephp)) {
+            if (file_exists($CFG->dirroot . '/mod/' . $itemmodule . '/grade.php')) {
+                $hasgradephp[$itemmodule] = true;
+            } else {
+                $hasgradephp[$itemmodule] = false;
+            }
+        }
+
         // If module has grade.php, link to that, otherwise view.php
-        $dir = $CFG->dirroot . '/mod/' . $itemmodule;
-        if (file_exists($dir.'/grade.php')) {
+        if ($hasgradephp[$itemmodule]) {
             return new moodle_url('/mod/' . $itemmodule . '/grade.php', array('id' => $cm->id, 'itemnumber' => $itemnumber));
         } else {
             return new moodle_url('/mod/' . $itemmodule . '/view.php', array('id' => $cm->id));
@@ -1177,16 +1186,16 @@ class grade_structure {
     /**
      * Returns URL of a page that is supposed to contain detailed grade analysis
      *
-     * Please note this method does not check if the referenced file actually exists,
-     * the caller is usually able to do it in more effective way.
-     *
      * At the moment, only activity modules are supported. The method generates link
      * to the module's file grade.php with the parameters id (cmid), itemid, itemnumber,
-     * gradeid and userid.
+     * gradeid and userid. If the grade.php does not exist, null is returned.
      *
      * @return moodle_url|null URL or null if unable to construct it
      */
     public function get_grade_analysis_url(grade_grade $grade) {
+        global $CFG;
+        /** @var array static cache of the grade.php file existence flags */
+        static $hasgradephp = array();
 
         if (empty($grade->grade_item) or !($grade->grade_item instanceof grade_item)) {
             throw new coding_exception('Passed grade without the associated grade item');
@@ -1201,6 +1210,18 @@ class grade_structure {
             throw new coding_exception('Unknown external itemtype: '.$item->itemtype);
         }
         if (empty($item->iteminstance) or empty($item->itemmodule) or empty($this->modinfo)) {
+            return null;
+        }
+
+        if (!array_key_exists($item->itemmodule, $hasgradephp)) {
+            if (file_exists($CFG->dirroot . '/mod/' . $item->itemmodule . '/grade.php')) {
+                $hasgradephp[$item->itemmodule] = true;
+            } else {
+                $hasgradephp[$item->itemmodule] = false;
+            }
+        }
+
+        if (!$hasgradephp[$item->itemmodule]) {
             return null;
         }
 
