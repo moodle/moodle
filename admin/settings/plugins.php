@@ -459,7 +459,7 @@ if ($hassiteconfig) {
 
 // Now add reports
 $pages = array();
-foreach (get_plugin_list('report') as $plugin => $plugindir) {
+foreach (get_plugin_list('report') as $report => $plugindir) {
     $settings_path = "$plugindir/settings.php";
     if (file_exists($settings_path)) {
         $settings = new admin_settingpage('report' . $report,
