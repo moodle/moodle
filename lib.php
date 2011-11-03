@@ -237,7 +237,7 @@ function book_get_view_actions() {
         }
         $function = 'booktool_'.$plugin.'_get_view_actions';
         if (function_exists($function)) {
-            if ($actions = $function($settingsnav, $booknode)) {
+            if ($actions = $function()) {
                 $return = array_merge($return, $actions);
             }
         }
