@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die;
  * @param stdClass $context The context of the course
  */
 function report_completion_extend_navigation_course($navigation, $course, $context) {
-    global $CFG, $OUTPUT;
+    global $CFG;
 
     require_once($CFG->libdir.'/completionlib.php');
 
@@ -44,6 +44,64 @@ function report_completion_extend_navigation_course($navigation, $course, $conte
             $navigation->add(get_string('pluginname','report_completion'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
         }
     }
+}
+
+/**
+ * This function extends the course navigation with the report items
+ *
+ * @param navigation_node $navigation The navigation node to extend
+ * @param stdClass $user
+ * @param stdClass $course The course to object for the report
+ */
+function report_completion_extend_navigation_user($navigation, $user, $course) {
+
+    return; //TODO: this plugin was not linked from navigation in 2.0, let's keep it that way for now --skodak
+
+    if (report_completion_can_access_user_report($user, $course)) {
+        $url = new moodle_url('/report/completion/user.php', array('id'=>$user->id, 'course'=>$course->id));
+        $navigation->add(get_string('coursecompletion'), $url);
+    }
+}
+
+/**
+ * Is current user allowed to access this report
+ *
+ * @private defined in lib.php for performance reasons
+ *
+ * @param stdClass $user
+ * @param stdClass $course
+ * @return bool
+ */
+function report_completion_can_access_user_report($user, $course) {
+    global $USER, $CFG;
+
+    if (empty($CFG->enablecompletion)) {
+        return false;
+    }
+
+    if ($course->id != SITEID and !$course->enablecompletion) {
+        return;
+    }
+
+    $coursecontext = context_course::instance($course->id);
+    $personalcontext = context_user::instance($user->id);
+
+    if (has_capability('report/completion:view', $coursecontext)) {
+        return true;
+    }
+
+    if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext)) {
+        if ($course->showreports and (is_viewing($coursecontext, $user) or is_enrolled($coursecontext, $user))) {
+            return true;
+        }
+
+    } else if ($user->id == $USER->id) {
+        if ($course->showreports and (is_viewing($coursecontext, $USER) or is_enrolled($coursecontext, $USER))) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /**
