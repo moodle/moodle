@@ -153,7 +153,8 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
         return null;
     }
 
-    protected function hidden_field_for_qt_var(question_attempt $qa, $varname, $value = null) {
+    protected function hidden_field_for_qt_var(question_attempt $qa, $varname, $value = null,
+                                                $classes = null) {
         if ($value === null) {
             $value = $qa->get_last_qt_var($varname);
         }
@@ -162,6 +163,9 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
                                 'id' => str_replace(':', '_', $fieldname),
                                 'name' => $fieldname,
                                 'value' => $value);
+        if ($classes !== null) {
+            $attributes['class'] = join(' ', $classes);
+        }
         return array($fieldname, html_writer::empty_tag('input', $attributes)."\n");
     }
 
