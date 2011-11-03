@@ -57,7 +57,11 @@ if ($mode === 'outline' or $mode === 'complete') {
     $logmode = ($mode === 'todaylogs') ? 'today' : 'all';
     $url = new moodle_url('/report/log/user.php', array('id'=>$user->id, 'course'=>$course->id, 'mode'=>$logmode));
     redirect($url);
+} else if ($mode === 'stats') {
+    $url = new moodle_url('/report/stats/user.php', array('id'=>$user->id, 'course'=>$course->id));
+    redirect($url);
 }
+
 
 require_login();
 $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -86,10 +90,6 @@ $myreports  = ($course->showreports and $USER->id == $user->id);
 $anyreport  = has_capability('moodle/user:viewuseractivitiesreport', $personalcontext);
 
 $modes = array();
-
-if ($myreports or $anyreport or has_capability('report/stats:view', $coursecontext)) {
-    $modes[] = 'stats';
-}
 
 if (has_capability('moodle/grade:viewall', $coursecontext)) {
     //ok - can view all course grades
@@ -162,85 +162,6 @@ switch ($mode) {
         if (function_exists($functionname)) {
             $functionname($course, $user);
         }
-        break;
-
-    case 'stats':
-
-        if (empty($CFG->enablestats)) {
-            print_error('statsdisable', 'error');
-        }
-
-        require_once($CFG->dirroot.'/lib/statslib.php');
-
-        $statsstatus = stats_check_uptodate($course->id);
-        if ($statsstatus !== NULL) {
-            echo $OUTPUT->notification($statsstatus);
-        }
-
-        $earliestday   = $DB->get_field_sql('SELECT timeend FROM {stats_user_daily} ORDER BY timeend');
-        $earliestweek  = $DB->get_field_sql('SELECT timeend FROM {stats_user_weekly} ORDER BY timeend');
-        $earliestmonth = $DB->get_field_sql('SELECT timeend FROM {stats_user_monthly} ORDER BY timeend');
-
-        if (empty($earliestday)) $earliestday = time();
-        if (empty($earliestweek)) $earliestweek = time();
-        if (empty($earliestmonth)) $earliestmonth = time();
-
-        $now = stats_get_base_daily();
-        $lastweekend = stats_get_base_weekly();
-        $lastmonthend = stats_get_base_monthly();
-
-        $timeoptions = stats_get_time_options($now,$lastweekend,$lastmonthend,$earliestday,$earliestweek,$earliestmonth);
-
-        if (empty($timeoptions)) {
-            print_error('nostatstodisplay', '', $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
-        }
-
-        // use the earliest.
-        $time = array_pop(array_keys($timeoptions));
-
-        $param = stats_get_parameters($time,STATS_REPORT_USER_VIEW,$course->id,STATS_MODE_DETAILED);
-        $params = $param->params;
-
-        $param->table = 'user_'.$param->table;
-
-        $sql = 'SELECT timeend,'.$param->fields.' FROM {stats_'.$param->table.'} WHERE '
-        .(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
-            .' userid = '.$user->id.' AND timeend >= '.$param->timeafter .$param->extras
-            .' ORDER BY timeend DESC';
-        $stats = $DB->get_records_sql($sql, $params); //TODO: improve these params!!
-
-        if (empty($stats)) {
-            print_error('nostatstodisplay', '', $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
-        }
-
-        // MDL-10818, do not display broken graph when user has no permission to view graph
-        if ($myreports or has_capability('report/stats:view', $coursecontext)) {
-            echo '<center><img src="'.$CFG->wwwroot.'/report/stats/graph.php?mode='.STATS_MODE_DETAILED.'&course='.$course->id.'&time='.$time.'&report='.STATS_REPORT_USER_VIEW.'&userid='.$user->id.'" alt="'.get_string('statisticsgraph').'" /></center>';
-        }
-
-        // What the heck is this about?   -- MD
-        $stats = stats_fix_zeros($stats,$param->timeafter,$param->table,(!empty($param->line2)),(!empty($param->line3)));
-
-        $table = new html_table();
-        $table->align = array('left','center','center','center');
-        $param->table = str_replace('user_','',$param->table);
-        switch ($param->table) {
-            case 'daily'  : $period = get_string('day'); break;
-            case 'weekly' : $period = get_string('week'); break;
-            case 'monthly': $period = get_string('month', 'form'); break;
-            default : $period = '';
-        }
-        $table->head = array(get_string('periodending','moodle',$period),$param->line1,$param->line2,$param->line3);
-        foreach ($stats as $stat) {
-            if (!empty($stat->zerofixed)) {  // Don't know why this is necessary, see stats_fix_zeros above - MD
-                continue;
-            }
-            $a = array(userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone),$stat->line1);
-            $a[] = $stat->line2;
-            $a[] = $stat->line3;
-            $table->data[] = $a;
-        }
-        echo html_writer::table($table);
         break;
 
     case "coursecompletion":

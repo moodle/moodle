@@ -24,7 +24,6 @@
  */
 
 require_once('../../config.php');
-require_once($CFG->dirroot.'/lib/statslib.php');
 require_once($CFG->dirroot.'/report/stats/locallib.php');
 require_once($CFG->libdir.'/adminlib.php');
 

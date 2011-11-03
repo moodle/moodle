@@ -35,13 +35,65 @@ defined('MOODLE_INTERNAL') || die;
  * @param stdClass $context The context of the course
  */
 function report_stats_extend_navigation_course($navigation, $course, $context) {
-    global $CFG, $OUTPUT;
+    global $CFG;
+    if (!empty($CFG->enablestats)) {
+        return;
+    }
     if (has_capability('report/stats:view', $context)) {
-        if (!empty($CFG->enablestats)) {
-            $url = new moodle_url('/report/stats/index.php', array('course'=>$course->id));
-            $navigation->add(get_string('pluginname', 'report_stats'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
+        $url = new moodle_url('/report/stats/index.php', array('course'=>$course->id));
+        $navigation->add(get_string('pluginname', 'report_stats'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
+    }
+}
+
+/**
+ * This function extends the course navigation with the report items
+ *
+ * @param navigation_node $navigation The navigation node to extend
+ * @param stdClass $user
+ * @param stdClass $course The course to object for the report
+ */
+function report_stats_extend_navigation_user($navigation, $user, $course) {
+    global $CFG;
+    if (!empty($CFG->enablestats)) {
+        return;
+    }
+    if (report_stats_can_access_user_report($user, $course)) {
+        $url = new moodle_url('/report/stats/user.php', array('id'=>$user->id, 'course'=>$course->id));
+        $navigation->add(get_string('stats'), $url);
+    }
+}
+
+/**
+ * Is current user allowed to access this report
+ *
+ * @private defined in lib.php for performance reasons
+ *
+ * @param stdClass $user
+ * @param stdClass $course
+ * @return bool
+ */
+function report_stats_can_access_user_report($user, $course) {
+    global $USER;
+
+    $coursecontext = context_course::instance($course->id);
+    $personalcontext = context_user::instance($user->id);
+
+    if (has_capability('report/stats:view', $coursecontext)) {
+        return true;
+    }
+
+    if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext)) {
+        if ($course->showreports and (is_viewing($coursecontext, $user) or is_enrolled($coursecontext, $user))) {
+            return true;
+        }
+
+    } else if ($user->id == $USER->id) {
+        if ($course->showreports and (is_viewing($coursecontext, $USER) or is_enrolled($coursecontext, $USER))) {
+            return true;
         }
     }
+
+    return false;
 }
 
 /**

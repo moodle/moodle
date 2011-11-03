@@ -1973,37 +1973,15 @@ class global_navigation extends navigation_node {
             $usernode->add(get_string('notes', 'notes'), $url);
         }
 
+        // Add reports node
         $reporttab = $usernode->add(get_string('activityreports'));
-
         $reports = get_plugin_list_with_function('report', 'extend_navigation_user', 'lib.php');
         foreach ($reports as $reportfunction) {
             $reportfunction($reporttab, $user, $course);
         }
-
-        //TODO: hack area alert - all this must be abstracted to plugin callbacks above
-
-        // Add a reports tab and then add reports the the user has permission to see.
-        $anyreport      = has_capability('moodle/user:viewuseractivitiesreport', $usercontext);
-
-        $statsreport    = ($anyreport || has_capability('report/stats:view', $coursecontext));
-
-        $somereport     = $statsreport;
-
-        $viewreports = ($anyreport || $somereport || ($course->showreports && $iscurrentuser && $forceforcontext));
-        if ($viewreports) {
-            $reportargs = array('user'=>$user->id);
-            if (!empty($course->id)) {
-                $reportargs['id'] = $course->id;
-            } else {
-                $reportargs['id'] = SITEID;
-            }
-
-            if (!empty($CFG->enablestats)) {
-                if ($viewreports || $statsreport) {
-                    $reporttab->add(get_string('stats'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'stats'))));
-                }
-            }
-
+        $anyreport = has_capability('moodle/user:viewuseractivitiesreport', $usercontext);
+        if ($anyreport || ($course->showreports && $iscurrentuser && $forceforcontext)) {
+            // Add grade hardcoded grade report if necessary
             $gradeaccess = false;
             if (has_capability('moodle/grade:viewall', $coursecontext)) {
                 //ok - can view all course grades
@@ -2021,18 +1999,10 @@ class global_navigation extends navigation_node {
                 }
             }
             if ($gradeaccess) {
-                $reporttab->add(get_string('grade'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'grade'))));
+                $reporttab->add(get_string('grade'), new moodle_url('/course/user.php', array('mode'=>'grade', 'id'=>$course->id)));
             }
-
-            // Check the number of nodes in the report node... if there are none remove
-            // the node
-            $reporttab->trim_if_empty();
         }
-
-        //TODO: end of hacky area
-
-        // Check the number of nodes in the report node... if there are none remove
-        // the node
+        // Check the number of nodes in the report node... if there are none remove the node
         $reporttab->trim_if_empty();
 
         // If the user is the current user add the repositories for the current user
@@ -2096,19 +2066,6 @@ class global_navigation extends navigation_node {
                 foreach ($reports as $reportfunction) {
                     $reportfunction($reporttab, $user, $usercourse);
                 }
-
-                //TODO: hacky area - migrate to plugin callbacks above
-
-                $statsreport =    ($anyreport || has_capability('report/stats:view', $usercoursecontext));
-                if ($statsreport) {
-                    $reportargs = array('user'=>$user->id, 'id'=>$usercourse->id);
-
-                    if (!empty($CFG->enablestats) && $statsreport) {
-                        $reporttab->add(get_string('stats'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'stats'))));
-                    }
-                }
-
-                //TODO: end of hacky area
 
                 $reporttab->trim_if_empty();
             }

@@ -24,7 +24,7 @@
  */
 
 require('../../config.php');
-require_once($CFG->dirroot.'/lib/statslib.php');
+require_once($CFG->dirroot.'/report/stats/locallib.php');
 require_once($CFG->dirroot.'/lib/graphlib.php');
 
 $courseid = required_param('course', PARAM_INT);
@@ -34,31 +34,35 @@ $mode     = required_param('mode', PARAM_INT);
 $userid   = optional_param('userid', 0, PARAM_INT);
 $roleid   = optional_param('roleid',0,PARAM_INT);
 
-$url = new moodle_url('/report/stats/graph.php', array('course'=>$courseid, 'report'=>$report, 'time'=>$time, 'mode'=>$mode));
-if ($userid !== 0) {
-    $url->param('userid', $userid);
-}
-if ($roleid !== 0) {
-    $url->param('roleid', $roleid);
-}
+$url = new moodle_url('/report/stats/graph.php', array('course'=>$courseid, 'report'=>$report, 'time'=>$time, 'mode'=>$mode, 'userid'=>$userid, 'roleid'=>$roleid));
 $PAGE->set_url($url);
 
-if (!$course = $DB->get_record("course", array("id"=>$courseid))) {
-    print_error("invalidcourseid");
-}
+$course = $DB->get_record("course", array("id"=>$courseid), '*', MUST_EXIST);
+$coursecontext   = context_course::instance($course->id);
+$PAGE->set_context($coursecontext);
 
 if (!empty($userid)) {
-    if (!$user = $DB->get_record('user', array('id'=>$userid))) {
-        print_error("nousers");
+    $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0), '*', MUST_EXIST);
+    $personalcontext = context_user::instance($user->id);
+
+    if ($USER->id != $user->id and has_capability('moodle/user:viewuseractivitiesreport', $personalcontext)
+            and !is_enrolled($coursecontext, $USER) and is_enrolled($coursecontext, $user)) {
+        //TODO: do not require parents to be enrolled in courses - this is a hack!
+        require_login();
+        $PAGE->set_course($course);
+    } else {
+        require_login($course);
     }
+
+    if (!report_stats_can_access_user_report($user, $course, true)) {
+        require_capability('report/stats:view', $coursecontext);
+    }
+
+} else {
+    require_capability('report/stats:view', $coursecontext);
 }
 
-require_login($course);
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
-
-if (!$course->showreports or $USER->id != $userid) {
-    require_capability('report/stats:view', $context);
-}
+add_to_log($course->id, 'course', 'report stats', "report/stats/graph.php?userid=$userid&id=$course->id&mode=$mode&roleid=$roleid", $course->id);
 
 stats_check_uptodate($course->id);
 
