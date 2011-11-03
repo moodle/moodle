@@ -63,7 +63,7 @@
 #page-course-user .info {text-align:center;}
 
 #page-admin-report .plugin,
-#page-course-report .plugin,
+#page-report .plugin,
 #page-course-import .plugin {margin-bottom:20px;margin-left:10%;margin-right:10%;border:1px solid #cecece;background-color:[[setting:blockcontentbgc]];}
 
 .path-course-view .unread {background:#9EBEFF;}
@@ -72,15 +72,15 @@
 #page-course-category .courseboxes,
 #page-course-index .courseboxes {padding:20px;}
 
-#page-course-report #content {padding-top:15px;padding-bottom:15px;}
+#page-report #content {padding-top:15px;padding-bottom:15px;}
 
-#page-course-report #region-main p,
+#page-report #region-main p,
 #page-report-log-index #region-main .info,
 #page-report-loglive-index #region-main .info,
 #page-report-stats-index #region-main .graph {text-align:center;}
 
-#page-course-report .logselectform,
-#page-course-report .participationselectform,
+#page-report .logselectform,
+#page-report .participationselectform,
 #page-report-log-index .logselectform,
 #page-report-participation-index .participationselectform {text-align:center;}
 

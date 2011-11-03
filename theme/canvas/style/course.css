@@ -66,12 +66,12 @@
 	margin-top: 1em;
 }
 
-#page-course-report .plugin p,
-#page-course-report .logselectform {
+#page-report .plugin p,
+#page-report .logselectform {
 	text-align: center;
 }
 
-#page-course-report .logselectform .select {
+#page-report .logselectform .select {
 	margin: 0 4px 10px;
 }
 
