@@ -1350,13 +1350,13 @@ function stats_get_report_options($courseid,$mode) {
     case STATS_MODE_DETAILED:
         $reportoptions[STATS_REPORT_USER_ACTIVITY] = get_string('statsreport'.STATS_REPORT_USER_ACTIVITY);
         $reportoptions[STATS_REPORT_USER_ALLACTIVITY] = get_string('statsreport'.STATS_REPORT_USER_ALLACTIVITY);
-        if (has_capability('coursereport/stats:view', get_context_instance(CONTEXT_SYSTEM))) {
+        if (has_capability('report/stats:view', get_context_instance(CONTEXT_SYSTEM))) {
             $site = get_site();
             $reportoptions[STATS_REPORT_USER_LOGINS] = get_string('statsreport'.STATS_REPORT_USER_LOGINS);
         }
         break;
     case STATS_MODE_RANKED:
-        if (has_capability('coursereport/stats:view', get_context_instance(CONTEXT_SYSTEM))) {
+        if (has_capability('report/stats:view', get_context_instance(CONTEXT_SYSTEM))) {
             $reportoptions[STATS_REPORT_ACTIVE_COURSES] = get_string('statsreport'.STATS_REPORT_ACTIVE_COURSES);
             $reportoptions[STATS_REPORT_ACTIVE_COURSES_WEIGHTED] = get_string('statsreport'.STATS_REPORT_ACTIVE_COURSES_WEIGHTED);
             $reportoptions[STATS_REPORT_PARTICIPATORY_COURSES] = get_string('statsreport'.STATS_REPORT_PARTICIPATORY_COURSES);

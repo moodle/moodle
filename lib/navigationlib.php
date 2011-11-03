@@ -1972,13 +1972,15 @@ class global_navigation extends navigation_node {
             $usernode->add(get_string('notes', 'notes'), $url);
         }
 
+        //TODO: all this is a hack - we can not link to plugins like this - all this must be abstracted to plugin callbacks!
+
         // Add a reports tab and then add reports the the user has permission to see.
         $anyreport      = has_capability('moodle/user:viewuseractivitiesreport', $usercontext);
 
-        $outlinetreport = ($anyreport || has_capability('coursereport/outline:view', $coursecontext));
-        $logtodayreport = ($anyreport || has_capability('coursereport/log:viewtoday', $coursecontext));
-        $logreport      = ($anyreport || has_capability('coursereport/log:view', $coursecontext));
-        $statsreport    = ($anyreport || has_capability('coursereport/stats:view', $coursecontext));
+        $outlinetreport = ($anyreport || has_capability('report/outline:view', $coursecontext));
+        $logtodayreport = ($anyreport || has_capability('report/log:viewtoday', $coursecontext));
+        $logreport      = ($anyreport || has_capability('report/log:view', $coursecontext));
+        $statsreport    = ($anyreport || has_capability('report/stats:view', $coursecontext));
 
         $somereport     = $outlinetreport || $logtodayreport || $logreport || $statsreport;
 
@@ -2090,10 +2092,10 @@ class global_navigation extends navigation_node {
                     $usercoursenode->add(get_string('entercourse'), new moodle_url('/course/view.php', array('id'=>$usercourse->id)), self::TYPE_SETTING, null, null, new pix_icon('i/course', ''));
                 }
 
-                $outlinetreport = ($anyreport || has_capability('coursereport/outline:view', $usercoursecontext));
-                $logtodayreport = ($anyreport || has_capability('coursereport/log:viewtoday', $usercoursecontext));
-                $logreport =      ($anyreport || has_capability('coursereport/log:view', $usercoursecontext));
-                $statsreport =    ($anyreport || has_capability('coursereport/stats:view', $usercoursecontext));
+                $outlinetreport = ($anyreport || has_capability('report/outline:view', $usercoursecontext));
+                $logtodayreport = ($anyreport || has_capability('report/log:viewtoday', $usercoursecontext));
+                $logreport =      ($anyreport || has_capability('report/log:view', $usercoursecontext));
+                $statsreport =    ($anyreport || has_capability('report/stats:view', $usercoursecontext));
                 if ($outlinetreport || $logtodayreport || $logreport || $statsreport) {
                     $reporttab = $usercoursenode->add(get_string('activityreports'));
                     $reportargs = array('user'=>$user->id, 'id'=>$usercourse->id);
@@ -3455,8 +3457,10 @@ class settings_navigation extends navigation_node {
             $modulenode->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING, null, 'filtermanage');
         }
 
-        if (has_capability('coursereport/log:view', get_context_instance(CONTEXT_COURSE, $this->page->cm->course))) {
-            $url = new moodle_url('/course/report/log/index.php', array('chooselog'=>'1','id'=>$this->page->cm->course,'modid'=>$this->page->cm->id));
+        //TODO: all this is a hack - we can not link to plugins like this - this must be abstracted to plugin callbacks!
+
+        if (has_capability('report/log:view', get_context_instance(CONTEXT_COURSE, $this->page->cm->course))) {
+            $url = new moodle_url('/report/log/index.php', array('chooselog'=>'1','id'=>$this->page->cm->course,'modid'=>$this->page->cm->id));
             $modulenode->add(get_string('logs'), $url, self::TYPE_SETTING, null, 'logreport');
         }
 

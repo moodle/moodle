@@ -51,7 +51,7 @@ function report_participation_page_type_list($pagetype, $parentcontext, $current
     $array = array(
         '*' => get_string('page-x', 'pagetype'),
         'course-report-*' => get_string('page-course-report-x', 'pagetype'),
-        'course-report-participation-index' => get_string('pluginpagetype',  'coursereport_participation')
+        'course-report-participation-index' => get_string('pluginpagetype',  'report_participation')
     );
     return $array;
 }

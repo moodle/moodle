@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -70,29 +69,31 @@ if ($user->deleted) {
     die;
 }
 
+//TODO: all this is a hack - we can not link to plugins like this - all this must be abstracted to plugin callbacks!
+
 // prepare list of allowed modes
 $myreports  = ($course->showreports and $USER->id == $user->id);
 $anyreport  = has_capability('moodle/user:viewuseractivitiesreport', $personalcontext);
 
 $modes = array();
 
-if ($myreports or $anyreport or has_capability('coursereport/outline:view', $coursecontext)) {
+if ($myreports or $anyreport or has_capability('report/outline:view', $coursecontext)) {
     $modes[] = 'outline';
 }
 
-if ($myreports or $anyreport or has_capability('coursereport/outline:view', $coursecontext)) {
+if ($myreports or $anyreport or has_capability('report/outline:view', $coursecontext)) {
     $modes[] = 'complete';
 }
 
-if ($myreports or $anyreport or has_capability('coursereport/log:viewtoday', $coursecontext)) {
+if ($myreports or $anyreport or has_capability('report/log:viewtoday', $coursecontext)) {
     $modes[] = 'todaylogs';
 }
 
-if ($myreports or $anyreport or has_capability('coursereport/log:view', $coursecontext)) {
+if ($myreports or $anyreport or has_capability('report/log:view', $coursecontext)) {
     $modes[] = 'alllogs';
 }
 
-if ($myreports or $anyreport or has_capability('coursereport/stats:view', $coursecontext)) {
+if ($myreports or $anyreport or has_capability('report/stats:view', $coursecontext)) {
     $modes[] = 'stats';
 }
 
@@ -115,7 +116,7 @@ if (has_capability('moodle/grade:viewall', $coursecontext)) {
 
 // Course completion tab
 if (!empty($CFG->enablecompletion) && ($course->id == SITEID || !empty($course->enablecompletion)) && // completion enabled
-    ($myreports || $anyreport || ($course->id == SITEID || has_capability('coursereport/completion:view', $coursecontext)))) { // permissions to view the report
+    ($myreports || $anyreport || ($course->id == SITEID || has_capability('report/completion:view', $coursecontext)))) { // permissions to view the report
 
     // Decide if singular or plural
     if ($course->id == SITEID) {
@@ -237,8 +238,8 @@ switch ($mode) {
         }
 
         // MDL-10818, do not display broken graph when user has no permission to view graph
-        if ($myreports or has_capability('coursereport/stats:view', $coursecontext)) {
-            echo '<center><img src="'.$CFG->wwwroot.'/course/report/stats/graph.php?mode='.STATS_MODE_DETAILED.'&course='.$course->id.'&time='.$time.'&report='.STATS_REPORT_USER_VIEW.'&userid='.$user->id.'" alt="'.get_string('statisticsgraph').'" /></center>';
+        if ($myreports or has_capability('report/stats:view', $coursecontext)) {
+            echo '<center><img src="'.$CFG->wwwroot.'/report/stats/graph.php?mode='.STATS_MODE_DETAILED.'&course='.$course->id.'&time='.$time.'&report='.STATS_REPORT_USER_VIEW.'&userid='.$user->id.'" alt="'.get_string('statisticsgraph').'" /></center>';
         }
 
         // What the heck is this about?   -- MD
@@ -413,9 +414,9 @@ switch ($mode) {
         if (!$rs->valid()) {
 
             if ($course->id != 1) {
-                $error = get_string('nocompletions', 'coursereport_completion');
+                $error = get_string('nocompletions', 'report_completion');
             } else {
-                $error = get_string('nocompletioncoursesenroled', 'coursereport_completion');
+                $error = get_string('nocompletioncoursesenroled', 'report_completion');
             }
 
             echo $OUTPUT->notification($error);
@@ -456,7 +457,7 @@ switch ($mode) {
             // If there are courses with this status
             if (!empty($infos)) {
 
-                echo '<h1 align="center">'.get_string($type, 'coursereport_completion').'</h1>';
+                echo '<h1 align="center">'.get_string($type, 'report_completion').'</h1>';
                 echo '<table class="generalbox boxaligncenter">';
                 echo '<tr class="ccheader">';
                 echo '<th class="c0 header" scope="col">'.get_string('course').'</th>';
@@ -465,7 +466,7 @@ switch ($mode) {
                 echo '<th class="c3 header" scope="col" width="15%">'.get_string('info').'</th>';
 
                 if ($type === 'complete') {
-                    echo '<th class="c4 header" scope="col">'.get_string('completiondate', 'coursereport_completion').'</th>';
+                    echo '<th class="c4 header" scope="col">'.get_string('completiondate', 'report_completion').'</th>';
                 }
 
                 echo '</tr>';
@@ -529,7 +530,7 @@ switch ($mode) {
                     if (!empty($activities)) {
 
                         $row = array();
-                        $row['title'] = get_string('activitiescomplete', 'coursereport_completion');
+                        $row['title'] = get_string('activitiescomplete', 'report_completion');
                         $row['status'] = $activities_complete.' of '.count($activities);
                         $rows[] = $row;
                     }
@@ -565,7 +566,7 @@ switch ($mode) {
                                 break;
 
                             case 'No':
-                                echo get_string('incomplete', 'coursereport_completion');
+                                echo get_string('incomplete', 'report_completion');
                                 break;
 
                             default:
@@ -575,7 +576,7 @@ switch ($mode) {
                         // Display link on first row
                         echo '</td><td class="c3">';
                         if ($first_row) {
-                            echo '<a href="'.$CFG->wwwroot.'/blocks/completionstatus/details.php?course='.$c_course->id.'&user='.$user->id.'">'.get_string('detailedview', 'coursereport_completion').'</a>';
+                            echo '<a href="'.$CFG->wwwroot.'/blocks/completionstatus/details.php?course='.$c_course->id.'&user='.$user->id.'">'.get_string('detailedview', 'report_completion').'</a>';
                         }
                         echo '</td>';
 
