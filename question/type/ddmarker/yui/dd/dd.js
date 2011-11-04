@@ -57,8 +57,11 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 drag_items : function() {
                     return dragitemsarea.all('.dragitem');
                 },
-                drag_item : function(choiceno) {
-                    return dragitemsarea.one('span.dragitem.choice' + choiceno);
+                drag_items_for_choice : function(choiceno) {
+                    return dragitemsarea.all('span.dragitem.choice' + choiceno);
+                },
+                drag_item_being_dragged : function(choiceno) {
+                    return dragitemsarea.one('span.dragitem.yui3-dd-dragging.choice' + choiceno);
                 },
                 drag_item_home : function (choiceno) {
                     return dragitemsarea.one('span.draghome.choice' + choiceno);
@@ -80,6 +83,9 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                         }
                     }
                     throw 'Prefix "'+prefix+'" not found in class names.';
+                },
+                inputs_for_choices : function () {
+                    return topnode.all('input.choices');
                 },
                 input_for_choice : function (choiceno) {
                     return topnode.one('input.choice'+choiceno);
@@ -135,7 +141,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         },
         create_all_drag_and_drops : function () {
             this.reposition_drags();
-            Y.later(500, this, this.reposition_drags, [], true);
+            Y.on('windowresize', this.reposition_drags, this);
 //            if (!this.get('readonly')) {
 //                this.doc.drags().set('tabIndex', 0);
 //                this.doc.drags().each(
@@ -161,19 +167,30 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 node: drag,
                 dragMode: 'intersect'
             }).plug(Y.Plugin.DDConstrained, {constrain2node: this.doc.top_node()});
-            dd.on('drag:end', function(e) {
+            dd.after('drag:start', function(e){
                 var dragnode = e.target.get('node');
-                var choiceno = this.get_choiceno_for_drag(drag);
-
-                var xy = this.convert_to_bg_img_xy([e.pageX, e.pageY]);
-                if (!this.xy_in_bgimg(drag, xy)) {
-                    this.reset_drag_xy(choiceno);
-                } else {
-                    this.set_drag_xy(choiceno, xy);
-                }
+                var choiceno = this.get_choiceno_for_node(dragnode);
+                this.save_all_xy_for_choice(choiceno);
+            }, this);
+            dd.after('drag:end', function(e) {
+                var dragnode = e.target.get('node');
+                var choiceno = this.get_choiceno_for_node(dragnode);
+                Y.later(100, this, this.save_all_xy_for_choice, choiceno);
             }, this);
         },
-        set_drag_xy : function (choiceno, xy) {
+        save_all_xy_for_choice: function (choiceno) {
+            var dragitems = this.doc.drag_items_for_choice(choiceno);
+            var coords = [];
+            dragitems.each(function(dragitem){
+                var bgimgxy = this.convert_to_bg_img_xy(dragitem.getXY());
+                if (this.xy_in_bgimg(bgimgxy) && !dragitem.hasClass('yui3-dd-dragging')) {
+                    coords[coords.length] = this.convert_to_bg_img_xy(dragitem.getXY());
+                }
+            }, this);
+            this.set_form_value(choiceno, coords.join(';'));
+            this.reposition_drags();
+        },
+        add_drag_xy : function (choiceno, xy) {
             this.set_form_value(choiceno, Math.round(xy[0])+','+Math.round(xy[1]));
         },
         reset_drag_xy : function (choiceno) {
@@ -182,20 +199,8 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         set_form_value : function (choiceno, value) {
             this.doc.input_for_choice(choiceno).set('value', value);
         },
-        get_form_value : function (choiceno) {
-            return this.doc.input_for_choice(choiceno).get('value');
-        },
-        get_coords : function (choiceno) {
-            var fv = this.get_form_value(choiceno);
-            if (fv === '') {
-                var dragitemhome = this.doc.drag_item_home(choiceno);
-                return dragitemhome.getXY();
-            } else {
-                return this.convert_to_window_xy(fv.split(','));
-            }
-        },
         //make sure xy value is not out of bounds of bg image
-        xy_in_bgimg : function (drag, bgimgxy) {
+        xy_in_bgimg : function (bgimgxy) {
             if ((bgimgxy[0] < 0) ||
                     (bgimgxy[1] < 0) ||
                     (bgimgxy[0] > this.doc.bg_img().get('width')) || 
@@ -206,8 +211,8 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             }
         },
         convert_to_bg_img_xy : function (windowxy) {
-            return [+windowxy[0] - this.doc.bg_img().getX()-1,
-                    +windowxy[1] - this.doc.bg_img().getY()-1];
+            return [Math.round(+windowxy[0] - this.doc.bg_img().getX()-1),
+                    Math.round(+windowxy[1] - this.doc.bg_img().getY()-1)];
         },
         reposition_drags : function() {
             this.doc.drag_items().each(function(item) {
@@ -215,26 +220,41 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                     item.remove(true);
                 }
             }, this);
-            this.doc.drag_item_homes().each(function (dragitemhome) {
-                var choiceno = this.get_choiceno_for_drag(dragitemhome);
-                if (!this.doc.drag_item(choiceno)) {
+            this.doc.inputs_for_choices().each(function (input) {
+                var choiceno = this.get_choiceno_for_node(input);
+                var coords = this.get_coords(input);
+                var dragitemhome = this.doc.drag_item_home(choiceno);
+                for (var i=0; i < coords.length; i++) {
                     var dragitem = this.clone_new_drag_item(dragitemhome);
-                    var coords = this.get_coords(choiceno);
-                    dragitem.setXY(coords);
-                } else {
-                    //item is being dragged
+                    dragitem.setXY(coords[i]);
                 }
             }, this);
-            this.doc.drag_items().removeClass('placed');
-            this.doc.drag_items().each (function (dragitem) {
-                if (dragitem.dd !== undefined) {
-                    dragitem.dd.detachAll('drag:start');
-                }
-            }, this);
-
         },
-        get_choiceno_for_drag : function(drag) {
-            return +this.doc.get_classname_numeric_suffix(drag, 'choice');
+        /**
+         * Return coords of all drag items except any that are currently being dragged
+         * based on contents of hidden inputs and whether drags are 'infinite'
+         */
+        get_coords : function (input) {
+            var choiceno = this.get_choiceno_for_node(input);
+            var fv = input.get('value');
+            var infinite = input.hasClass('infinite');
+            var dragging = (null !== this.doc.drag_item_being_dragged(choiceno));
+            var coords = [];
+            var dragitemhome = this.doc.drag_item_home(choiceno);
+            if (infinite || (!dragging && fv === '')) {
+                coords[coords.length] = dragitemhome.getXY();
+            }
+            if (fv !== '') {
+                var coordsstrings = fv.split(';');
+                for (var i=0; i<coordsstrings.length; i++) {
+                    coords[coords.length] = 
+                                    this.convert_to_window_xy(coordsstrings[i].split(','));
+                }
+            }
+            return coords;
+        },
+        get_choiceno_for_node : function(node) {
+            return +this.doc.get_classname_numeric_suffix(node, 'choice');
         },
         
         //----------- keyboard accessibility stuff below line ---------------------

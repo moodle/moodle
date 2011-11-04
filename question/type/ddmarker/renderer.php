@@ -69,7 +69,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
             $markertext = html_writer::tag('span', $drag->text, $markertextattrs);
             $draghomesattrs = array('class'=>join(' ', $classes));
             $draghomes .= html_writer::tag('span', $targeticonhtml.$markertext, $draghomesattrs);
-            $hiddenfields .= $this->hidden_field_choice($qa, $choiceno);
+            $hiddenfields .= $this->hidden_field_choice($qa, $choiceno, $drag->infinite);
         }
 
         $dragitemsclass = 'dragitems';
@@ -79,8 +79,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
         $dragitems = html_writer::tag('div', $draghomes, array('class'=> $dragitemsclass));
         $output .= html_writer::tag('div', $droparea.$dragitems, array('class'=>'ddarea'));
         $topnode = 'div#q'.$qa->get_slot();
-        $params = array('inputids' => $question->places,
-                        'topnode' => $topnode,
+        $params = array('topnode' => $topnode,
                         'readonly' => $options->readonly);
 
         $PAGE->requires->yui_module('moodle-qtype_ddmarker-dd',
@@ -95,9 +94,12 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
         $output .= html_writer::tag('div', $hiddenfields, array('class'=>'ddform'));
         return $output;
     }
-    protected function hidden_field_choice(question_attempt $qa, $choiceno, $value = null) {
+    protected function hidden_field_choice(question_attempt $qa, $choiceno, $infinite, $value = null) {
         $varname = 'c'.$choiceno;
         $classes = array('choices', 'choice'.$choiceno);
+        if ($infinite) {
+            $classes[] = 'infinite';
+        }
         list(,$html) = $this->hidden_field_for_qt_var($qa, $varname, null, $classes);
         return $html;
     }
