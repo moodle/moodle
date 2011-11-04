@@ -104,7 +104,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             if (groupitems.size() !== 0) {
                 var maxwidth = 0;
                 var maxheight = 0;
-                //ie7 does not calculate the height of span correctly when there is 
+                //ie7 does not calculate the height of span correctly when there is
                 //both a sup and sub in the span.
                 var ie7fix = false;
                 //find max height and width
@@ -138,10 +138,10 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             node.setStyle('padding', margintop+'px '+marginleft+'px '
                                     +marginbottom+'px '+marginright+'px');
         },
-        
+
         /**
-         * Invisible 'drag homes' are output by the renderer. These have the same properties 
-         * as the drag items but are invisible. We clone these invisible elements to make the 
+         * Invisible 'drag homes' are output by the renderer. These have the same properties
+         * as the drag items but are invisible. We clone these invisible elements to make the
          * actual drag items.
          */
         clone_drag_items : function () {
@@ -289,7 +289,7 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                 }
             }
         },
-        
+
         drop_zone_key_press : function (e) {
             switch (e.direction) {
                 case 'next' :
