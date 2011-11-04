@@ -69,7 +69,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
             foreach (array('moveup', 'delete', 'movedown') as $key) {
                 $value = get_string('criterion'.$key, 'gradingform_rubric');
                 $button = html_writer::empty_tag('input', array('type' => 'submit', 'name' => '{NAME}[criteria][{CRITERION-id}]['.$key.']',
-                    'id' => '{NAME}-criteria-{CRITERION-id}-'.$key, 'value' => $value, 'title' => $value));
+                    'id' => '{NAME}-criteria-{CRITERION-id}-'.$key, 'value' => $value, 'title' => $value, 'tabindex' => -1));
                 $criterion_template .= html_writer::tag('div', $button, array('class' => $key));
             }
             $criterion_template .= html_writer::end_tag('td'); // .controls
@@ -203,7 +203,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
         }
         if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FULL) {
             $value = get_string('leveldelete', 'gradingform_rubric');
-            $button = html_writer::empty_tag('input', array('type' => 'submit', 'name' => '{NAME}[criteria][{CRITERION-id}][levels][{LEVEL-id}][delete]', 'id' => '{NAME}-criteria-{CRITERION-id}-levels-{LEVEL-id}-delete', 'value' => $value, 'title' => $value));
+            $button = html_writer::empty_tag('input', array('type' => 'submit', 'name' => '{NAME}[criteria][{CRITERION-id}][levels][{LEVEL-id}][delete]', 'id' => '{NAME}-criteria-{CRITERION-id}-levels-{LEVEL-id}-delete', 'value' => $value, 'title' => $value, 'tabindex' => -1));
             $level_template .= html_writer::tag('div', $button, array('class' => 'delete'));
         }
         $level_template .= html_writer::end_tag('div'); // .level-wrapper
