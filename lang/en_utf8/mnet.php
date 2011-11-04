@@ -208,6 +208,7 @@ $string['addtoacl'] = 'Add to Access Control';
 $string['accesslevel'] = 'Access Level';
 $string['ssoaccesscontrol'] = 'SSO Access Control';
 $string['notpermittedtojump'] = 'You do not have permission to begin a remote session from this Moodle hub.';
+$string['notpermittedtojumpas'] = 'You can\'t begin a remote session while you are logged in as another user.';
 $string['notpermittedtoland'] = 'You do not have permission to begin a remote session.';
 $string['authfail_nosessionexists'] = 'Authorisation failed: the mnet session does not exist.';
 $string['authfail_sessiontimedout'] = 'Authorisation failed: the mnet session has timed out.';
