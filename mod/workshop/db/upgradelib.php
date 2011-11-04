@@ -163,6 +163,8 @@ function workshop_upgrade_module_instances() {
         $DB->set_field('workshop_old', 'newid', $new->id, array('id' => $old->id));
     }
     $rs->close();
+    $dbman = $DB->get_manager();
+    $dbman->reset_sequence('workshop');
 }
 
 /**
