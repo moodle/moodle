@@ -81,6 +81,6 @@ $string['regradeoption0'] = 'Do not mark for regrade';
 $string['regradeoption1'] = 'Mark for regrade';
 
 $string['needregrademessage'] = 'Rubric definition was changed after this student had been graded. You must update the grade otherwise it will not be shown to student.';
-$string['rubricnotcompleted'] = 'You have to select a feedback on each rubric criterion';
+$string['rubricnotcompleted'] = 'Please choose something for each criterion';
 
 $string['backtoediting'] = 'Back to editing';
