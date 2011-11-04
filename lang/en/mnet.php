@@ -159,6 +159,7 @@ $string['notinxmlrpcserver'] = 'Attempt to access the MNet remote client, not du
 $string['notmoodleapplication'] = 'WARNING: This is not a Moodle application, so some of the inspection methods may not work properly.';
 $string['notPEM'] = 'This key is not in PEM format. It will not work.';
 $string['notpermittedtojump'] = 'You do not have permission to begin a remote session from this Moodle server.';
+$string['notpermittedtojumpas'] = 'You can\'t begin a remote session while you are logged in as another user.';
 $string['notpermittedtoland'] = 'You do not have permission to begin a remote session.';
 $string['off'] = 'Off';
 $string['on'] = 'On';
