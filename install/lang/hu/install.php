@@ -32,6 +32,7 @@ $string['admindirname'] = 'Rendszergazdakönyvtár';
 $string['availablelangs'] = 'Elérhető nyelvek listája';
 $string['chooselanguagehead'] = 'Nyelv kiválasztása';
 $string['chooselanguagesub'] = 'Válasszon nyelvet a telepítéshez! Ez lesz a portál alapbeállítás szerinti nyelve, de később módosíthatja.';
+$string['clialreadyconfigured'] = 'A config.php már létezik, a portál telepítéséhez használja az admin/cli/install_database.php állományt.';
 $string['clialreadyinstalled'] = 'A config.php már létezik, a portál frissítéséhez használja az admin/cli/upgrade.php állományt.';
 $string['cliinstallheader'] = 'A Moodle {$a} parancssori telepítő programja';
 $string['databasehost'] = 'Az adatbázis gazdagépe';
