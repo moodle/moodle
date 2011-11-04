@@ -68,9 +68,16 @@ switch ($action) {
         $search  = optional_param('search', '', PARAM_RAW);
         $page = optional_param('page', 0, PARAM_INT);
         $outcome->response = $manager->get_potential_users($enrolid, $search, true, $page);
+        $extrafields = get_extra_user_fields($context);
         foreach ($outcome->response['users'] as &$user) {
             $user->picture = $OUTPUT->user_picture($user);
             $user->fullname = fullname($user);
+            $fieldvalues = array();
+            foreach ($extrafields as $field) {
+                $fieldvalues[] = s($user->{$field});
+                unset($user->{$field});
+            }
+            $user->extrafields = implode(', ', $fieldvalues);
         }
         $outcome->success = true;
         break;

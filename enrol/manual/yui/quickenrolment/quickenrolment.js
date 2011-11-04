@@ -44,7 +44,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
         PICTURE : 'picture',
         DETAILS : 'details',
         FULLNAME : 'fullname',
-        EMAIL : 'email',
+        EXTRAFIELDS : 'extrafields',
         OPTIONS : 'options',
         ODD  : 'odd',
         EVEN : 'even',
@@ -344,7 +344,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                         .append(create(user.picture)))
                     .append(create('<div class="'+CSS.DETAILS+'"></div>')
                         .append(create('<div class="'+CSS.FULLNAME+'">'+user.fullname+'</div>'))
-                        .append(create('<div class="'+CSS.EMAIL+'">'+user.email+'</div>')))
+                        .append(create('<div class="'+CSS.EXTRAFIELDS+'">'+user.extrafields+'</div>')))
                     .append(create('<div class="'+CSS.OPTIONS+'"></div>')
                         .append(create('<input type="button" class="'+CSS.ENROL+'" value="'+M.str.enrol.enrol+'" />')))
                 );

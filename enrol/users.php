@@ -166,13 +166,18 @@ if ($action) {
 
 
 $renderer = $PAGE->get_renderer('core_enrol');
+$userdetails = array (
+    'picture' => false,
+    'firstname' => get_string('firstname'),
+    'lastname' => get_string('lastname'),
+);
+$extrafields = get_extra_user_fields($context);
+foreach ($extrafields as $field) {
+    $userdetails[$field] = get_user_field_name($field);
+}
+
 $fields = array(
-    'userdetails' => array (
-        'picture' => false,
-        'firstname' => get_string('firstname'),
-        'lastname' => get_string('lastname'),
-        'email' => get_string('email')
-    ),
+    'userdetails' => $userdetails,
     'lastseen' => get_string('lastaccess'),
     'role' => get_string('roles', 'role'),
     'group' => get_string('groups', 'group'),
