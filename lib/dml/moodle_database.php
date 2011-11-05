@@ -506,10 +506,15 @@ abstract class moodle_database {
             $columns = $this->get_columns($table);
             foreach ($conditions as $key=>$value) {
                 if (!isset($columns[$key])) {
-                    $a = new stdClass();
-                    $a->fieldname = $key;
-                    $a->tablename = $table;
-                    throw new dml_exception('ddlfieldnotexist', $a);
+                    if (empty($columns)) {
+                        // no supported columns means most probably table does not exist
+                        throw new dml_exception('ddltablenotexist', $table);
+                    } else {
+                        $a = new stdClass();
+                        $a->fieldname = $key;
+                        $a->tablename = $table;
+                        throw new dml_exception('ddlfieldnotexist', $a);
+                    }
                 }
                 $column = $columns[$key];
                 if ($column->meta_type == 'X') {
