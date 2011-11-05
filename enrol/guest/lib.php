@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -45,7 +44,7 @@ class enrol_guest_plugin extends enrol_plugin {
      */
     public function get_info_icons(array $instances) {
         foreach ($instances as $instance) {
-            if ($instance->password) {
+            if ($instance->password !== '') {
                 return array(new pix_icon('withpassword', get_string('pluginname', 'enrol_guest'), 'enrol_guest'));
             } else {
                 return array(new pix_icon('withoutpassword', get_string('pluginname', 'enrol_guest'), 'enrol_guest'));
@@ -73,7 +72,18 @@ class enrol_guest_plugin extends enrol_plugin {
     public function try_guestaccess(stdClass $instance) {
         global $USER, $CFG;
 
-        if (empty($instance->password)) {
+        $allow = false;
+
+        if ($instance->password === '') {
+            $allow = true;
+
+        } else if (isset($USER->enrol_guest_passwords[$instance->id])) { // this is a hack, ideally we should not add stuff to $USER...
+            if ($USER->enrol_guest_passwords[$instance->id] === $instance->password) {
+                $allow = true;
+            }
+        }
+
+        if ($allow) {
             // Temporarily assign them some guest role for this context
             $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
             load_temp_course_role($context, $CFG->guestroleid);
@@ -114,7 +124,12 @@ class enrol_guest_plugin extends enrol_plugin {
     public function enrol_page_hook(stdClass $instance) {
         global $CFG, $OUTPUT, $SESSION, $USER;
 
-        if (empty($instance->password)) {
+        if ($instance->password === '') {
+            return null;
+        }
+
+        if (isset($USER->enrol['tempguest'][$instance->courseid]) and $USER->enrol['tempguest'][$instance->courseid] > time()) {
+            // no need to show the guest access when user can already enter course as guest
             return null;
         }
 
@@ -124,13 +139,14 @@ class enrol_guest_plugin extends enrol_plugin {
 
         if ($instance->id == $instanceid) {
             if ($data = $form->get_data()) {
-                // set up primitive require_login() caching
-                unset($USER->enrol['enrolled'][$instance->courseid]);
-                $USER->enrol['tempguest'][$instance->courseid] = time() + 60*60*8; // 8 hours access before asking for pw again
-
                 // add guest role
                 $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
+                $USER->enrol_guest_passwords[$instance->id] = $data->guestpassword; // this is a hack, ideally we should not add stuff to $USER...
+                if (isset($USER->enrol['tempguest'][$instance->courseid])) {
+                    remove_temp_course_roles($context);
+                }
                 load_temp_course_role($context, $CFG->guestroleid);
+                $USER->enrol['tempguest'][$instance->courseid] = ENROL_MAX_TIMESTAMP;
 
                 // go to the originally requested page
                 if (!empty($SESSION->wantsurl)) {
@@ -282,6 +298,9 @@ class enrol_guest_plugin extends enrol_plugin {
                         $instance->status       = $data->{'enrol_guest_status_'.$i};
                         $instance->timemodified = time();
                         if ($instance->status == ENROL_INSTANCE_ENABLED) {
+                            if ($instance->password !== $data->{'enrol_guest_password_'.$i}) {
+                                $reset = true;
+                            }
                             $instance->password = $data->{'enrol_guest_password_'.$i};
                         }
                         $DB->update_record('enrol', $instance);
