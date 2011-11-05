@@ -36,7 +36,6 @@ class book_chapter_edit_form extends moodleform {
         $options = $this->_customdata['options'];
 
         $mform = $this->_form;
-        $context = $options['context'];
 
         $mform->addElement('header', 'general', get_string('edit'));
 

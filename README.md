@@ -48,4 +48,4 @@ Intentionally omitted features:
 
 Future:
 
-* I like eXe editor, I would like to improve Book in this direction ...
+* No more development planned
