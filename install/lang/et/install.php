@@ -32,6 +32,7 @@ $string['admindirname'] = 'Administreerimiskataloog';
 $string['availablelangs'] = 'Saadaval keelte nimekiri';
 $string['chooselanguagehead'] = 'Keele valik';
 $string['chooselanguagesub'] = 'Palun vali keel, mida kasutatakse AINULT installeerimise käigus. Hiljem saab valida õpikeskkonna ja kasutajate keelt.';
+$string['clialreadyinstalled'] = 'Fail config.php juba eksisteerib, palun kasuta admin/cli/upgrade.php kui soovid uuendada oma saiti.';
 $string['databasehost'] = 'Andmebaasi host';
 $string['databasename'] = 'Andmebaasi nimi';
 $string['databasetypehead'] = 'Vali andmebaasi draiver';
@@ -43,7 +44,7 @@ $string['environmentsub2'] = 'Iga Moodle väljalaskel on oma minimaalne PHP vers
 Täielik keskkonna kontroll tehakse enne iga installeerimist ja uuendamist. Palun võta ühendust serveri administraatoriga, kui sa ei sa kuidas installeerida või võimaldada PHP laiendusi.';
 $string['errorsinenvironment'] = 'Keskkonna sobivuse kontroll ebaõnnestus!';
 $string['installation'] = 'Installeerimine';
-$string['langdownloaderror'] = 'Kahjuks keelt "{$a}" ei paigaldatud. Paigaldamine jätkub inglise keeles.';
+$string['langdownloaderror'] = 'Kahjuks keelt "{$a}" ei saanud alla tõmmata. Paigaldamine jätkub inglise keeles.';
 $string['memorylimithelp'] = '<p>PHP mälu limiit sinu serveri jaoks on hetkel {$a}.</p>
 <p>See võib hiljem tekitada Moodle\'il mäluprobleeme, eriti kui sul on palju mooduleid ja/või kasutajaid.
 </p>
@@ -58,6 +59,7 @@ See lubab Moodle\'il ise mälu limiiti määrata.</li>
 $string['paths'] = 'Rajad';
 $string['pathserrcreatedataroot'] = 'Andmete kataloogi ({$a->dataroot}) ei saa installeerija luua.';
 $string['pathshead'] = 'Radade kinnitused';
+$string['pathsroparentdataroot'] = 'Ülemkataloog ({$a->parent}) ei ole kirjutatav. Installeerija ei saanud andmete kataloogi ({$a->dataroot}) luua.';
 $string['pathssubdataroot'] = 'Sa pead näitama koha, kuhu Moodle saaks salvestada üles laetud failid. See kataloog peab olema loetav JA KIRJUTATAV veebiserveri kasutaja poolt (tavaliselt \'nobody\' or \'apache\'), samas see kataloog ei tohiks olla ligipääsetav otse veebi kaudu. Kui kataloogi ei eksisteeri, siis installeerija püüab selle ise luua.';
 $string['pathssubdirroot'] = 'Täistee Moodle paigalduse kataloogile.';
 $string['pathssubwwwroot'] = 'Täielik veebiaadress, kust kaudu Moodle\'le ligi pääsetakse.
