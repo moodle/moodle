@@ -98,6 +98,7 @@ if ($canconfig and $action and confirm_sesskey()) {
 
             if ($confirm) {
                 $plugin->delete_instance($instance);
+                $context->mark_dirty(); // invalidate all enrol caches
                 redirect($PAGE->url);
             }
 
@@ -115,6 +116,7 @@ if ($canconfig and $action and confirm_sesskey()) {
             if ($instance->status == ENROL_INSTANCE_ENABLED) {
                 $instance->status = ENROL_INSTANCE_DISABLED;
                 $DB->update_record('enrol', $instance);
+                $context->mark_dirty(); // invalidate all enrol caches
                 redirect($PAGE->url);
             }
 
@@ -123,6 +125,7 @@ if ($canconfig and $action and confirm_sesskey()) {
             if ($instance->status == ENROL_INSTANCE_DISABLED) {
                 $instance->status = ENROL_INSTANCE_ENABLED;
                 $DB->update_record('enrol', $instance);
+                $context->mark_dirty(); // invalidate all enrol caches
                 redirect($PAGE->url);
             }
         }

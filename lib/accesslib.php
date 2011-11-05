@@ -1122,7 +1122,9 @@ function load_all_capabilities() {
 
     // Clear to force a refresh
     unset($USER->mycourses);
-    unset($USER->enrol);
+
+    // init/reset internal enrol caches - active course enrolments and temp access
+    $USER->enrol = array('enrolled'=>array(), 'tempguest'=>array());
 }
 
 /**
@@ -1172,12 +1174,15 @@ function reload_all_capabilities() {
  * @return void
  */
 function load_temp_course_role(context_course $coursecontext, $roleid) {
-    global $USER;
-
-    //TODO: this gets removed if there are any dirty contexts, we should probably store list of these temp roles somewhere (skodak)
+    global $USER, $SITE;
 
     if (empty($roleid)) {
         debugging('invalid role specified in load_temp_course_role()');
+        return;
+    }
+
+    if ($coursecontext->instanceid == $SITE->id) {
+        debugging('Can not use temp roles on the frontpage');
         return;
     }
 
@@ -1207,7 +1212,12 @@ function load_temp_course_role(context_course $coursecontext, $roleid) {
  * @return void
  */
 function remove_temp_course_roles(context_course $coursecontext) {
-    global $DB, $USER;
+    global $DB, $USER, $SITE;
+
+    if ($coursecontext->instanceid == $SITE->id) {
+        debugging('Can not use temp roles on the frontpage');
+        return;
+    }
 
     if (empty($USER->access['ra'][$coursecontext->path])) {
         //no roles here, weird
@@ -1877,6 +1887,8 @@ function is_viewing(context $context, $user = null, $withcapability = '') {
  * Returns true if user is enrolled (is participating) in course
  * this is intended for students and teachers.
  *
+ * Since 2.2 the result for active enrolments and current user are cached.
+ *
  * @param context $context
  * @param int|stdClass $user, if null $USER is used, otherwise user object or id expected
  * @param string $withcapability extra capability name
@@ -1907,30 +1919,33 @@ function is_enrolled(context $context, $user = null, $withcapability = '', $only
     if ($coursecontext->instanceid == SITEID) {
         // everybody participates on frontpage
     } else {
-        if ($onlyactive) {
-            $sql = "SELECT ue.*
-                      FROM {user_enrolments} ue
-                      JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid)
-                      JOIN {user} u ON u.id = ue.userid
-                     WHERE ue.userid = :userid AND ue.status = :active AND e.status = :enabled AND u.deleted = 0";
-            $params = array('enabled'=>ENROL_INSTANCE_ENABLED, 'active'=>ENROL_USER_ACTIVE, 'userid'=>$userid, 'courseid'=>$coursecontext->instanceid);
-            // this result should be very small, better not do the complex time checks in sql for now ;-)
-            $enrolments = $DB->get_records_sql($sql, $params);
-            $now = time();
-            // make sure the enrol period is ok
-            $result = false;
-            foreach ($enrolments as $e) {
-                if ($e->timestart > $now) {
-                    continue;
+        // try cached info first - the enrolled flag is set only when active enrolment present
+        if ($USER->id == $userid) {
+            $coursecontext->reload_if_dirty();
+            if (isset($USER->enrol['enrolled'][$coursecontext->instanceid])) {
+                if ($USER->enrol['enrolled'][$coursecontext->instanceid] > time()) {
+                    return true;
                 }
-                if ($e->timeend and $e->timeend < $now) {
-                    continue;
-                }
-                $result = true;
-                break;
             }
-            if (!$result) {
+        }
+
+        if ($onlyactive) {
+            // look for active enrolments only
+            $until = enrol_get_enrolment_end($coursecontext->instanceid, $userid);
+
+            if ($until === false) {
                 return false;
+            }
+
+            if ($USER->id == $userid) {
+                if ($until == 0) {
+                    $until = ENROL_MAX_TIMESTAMP;
+                }
+                $USER->enrol['enrolled'][$coursecontext->instanceid] = $until;
+                if (isset($USER->enrol['tempguest'][$coursecontext->instanceid])) {
+                    unset($USER->enrol['tempguest'][$coursecontext->instanceid]);
+                    remove_temp_course_roles($coursecontext);
+                }
             }
 
         } else {
@@ -2031,57 +2046,22 @@ function can_access_course(stdClass $course, $user = null, $withcapability = '',
 
     // === from here we deal only with $USER ===
 
-    // verify our caches
-    if (!isset($USER->enrol)) {
-        /**
-         * These flags within the $USER object should NEVER be used outside of this
-         * function can_access_course and the function require_login.
-         * Doing so WILL break future versions!!!!
-         */
-        $USER->enrol = array();
-        $USER->enrol['enrolled'] = array();
-        $USER->enrol['tempguest'] = array();
-    }
+    $coursecontext->reload_if_dirty();
+
     if (isset($USER->enrol['enrolled'][$course->id])) {
-        if ($USER->enrol['enrolled'][$course->id] == 0) {
-            return true;
-        } else if ($USER->enrol['enrolled'][$course->id] > time()) {
+        if ($USER->enrol['enrolled'][$course->id] > time()) {
             return true;
         }
     }
     if (isset($USER->enrol['tempguest'][$course->id])) {
-        if ($USER->enrol['tempguest'][$course->id] == 0) {
-            return true;
-        } else if ($USER->enrol['tempguest'][$course->id] > time()) {
+        if ($USER->enrol['tempguest'][$course->id] > time()) {
             return true;
         }
     }
 
-    if (is_enrolled($coursecontext, $USER, '', true)) {
-        // active participants may always access
-        // TODO: refactor this into some new function
-        $now = time();
-        $sql = "SELECT MAX(ue.timeend)
-                  FROM {user_enrolments} ue
-                  JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid)
-                  JOIN {user} u ON u.id = ue.userid
-                 WHERE ue.userid = :userid AND ue.status = :active AND e.status = :enabled AND u.deleted = 0
-                       AND ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)";
-        $params = array('enabled'=>ENROL_INSTANCE_ENABLED, 'active'=>ENROL_USER_ACTIVE,
-                        'userid'=>$USER->id, 'courseid'=>$coursecontext->instanceid, 'now1'=>$now, 'now2'=>$now);
-        $until = $DB->get_field_sql($sql, $params);
-        if (!$until or $until > time() + ENROL_REQUIRE_LOGIN_CACHE_PERIOD) {
-            $until = time() + ENROL_REQUIRE_LOGIN_CACHE_PERIOD;
-        }
-
-        $USER->enrol['enrolled'][$course->id] = $until;
-
-        // remove traces of previous temp guest access
-        remove_temp_course_roles($coursecontext);
-
+    if (is_enrolled($coursecontext, $USER, '', $onlyactive)) {
         return true;
     }
-    unset($USER->enrol['enrolled'][$course->id]);
 
     // if not enrolled try to gain temporary guest access
     $instances = $DB->get_records('enrol', array('courseid'=>$course->id, 'status'=>ENROL_INSTANCE_ENABLED), 'sortorder, id ASC');
@@ -2090,14 +2070,17 @@ function can_access_course(stdClass $course, $user = null, $withcapability = '',
         if (!isset($enrols[$instance->enrol])) {
             continue;
         }
-        // Get a duration for the guestaccess, a timestamp in the future or false.
+        // Get a duration for the guest access, a timestamp in the future, 0 (always) or false.
         $until = $enrols[$instance->enrol]->try_guestaccess($instance);
-        if ($until !== false) {
+        if ($until !== false and $until > time()) {
             $USER->enrol['tempguest'][$course->id] = $until;
             return true;
         }
     }
-    unset($USER->enrol['tempguest'][$course->id]);
+    if (isset($USER->enrol['tempguest'][$course->id])) {
+        unset($USER->enrol['tempguest'][$course->id]);
+        remove_temp_course_roles($coursecontext);
+    }
 
     return false;
 }
