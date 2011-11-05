@@ -244,6 +244,7 @@ function scorm_parse($scorm, $full) {
             if (!scorm_parse_aicc($scorm)) {
                 $scorm->version = 'ERROR';
             }
+            $scorm->version = 'AICC';
         }
 
     } else if ($scorm->scormtype === SCORM_TYPE_EXTERNAL and $cfg_scorm->allowtypeexternal) {
@@ -266,7 +267,13 @@ function scorm_parse($scorm, $full) {
             $scorm->version = 'ERROR';
         }
         $newhash = sha1($scorm->reference);
-
+    } else if ($scorm->scormtype === SCORM_TYPE_AICCURL  and $cfg_scorm->allowtypeexternalaicc) {
+        require_once("$CFG->dirroot/mod/scorm/datamodels/aicclib.php");
+        // AICC
+        if (!scorm_parse_aicc($scorm)) {
+            $scorm->version = 'ERROR';
+        }
+        $scorm->version = 'AICC';
     } else {
         // sorry, disabled type
         return;
