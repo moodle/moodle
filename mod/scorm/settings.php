@@ -123,6 +123,16 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('scorm/allowtypeimsrepository', get_string('allowtypeimsrepository', 'scorm'), '', 0));
 
+    $settings->add(new admin_setting_configcheckbox('scorm/allowaicchacp', get_string('allowtypeaicchacp', 'scorm'), get_string('allowtypeaicchacp_desc', 'scorm'), 0));
+
+    $settings->add(new admin_setting_configtext('scorm/aicchacptimeout',
+        get_string('aicchacptimeout', 'scorm'), get_string('aicchacptimeout_desc', 'scorm'),
+        30, PARAM_INT));
+
+    $settings->add(new admin_setting_configtext('scorm/aicchacpkeepsessiondata',
+        get_string('aicchacpkeepsessiondata', 'scorm'), get_string('aicchacpkeepsessiondata_desc', 'scorm'),
+        1, PARAM_INT));
+
     $settings->add(new admin_setting_configcheckbox('scorm/forcejavascript', get_string('forcejavascript', 'scorm'), get_string('forcejavascript_desc', 'scorm'), 1));
 
     $settings->add(new admin_setting_configcheckbox('scorm/allowapidebug', get_string('allowapidebug', 'scorm'), '', 0));

@@ -60,8 +60,8 @@ require_login($course->id, false, $cm);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 $contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-if (isset($SESSION->scorm_scoid)) {
-    unset($SESSION->scorm_scoid);
+if (isset($SESSION->scorm)) {
+    unset($SESSION->scorm);
 }
 
 $strscorms = get_string("modulenameplural", "scorm");

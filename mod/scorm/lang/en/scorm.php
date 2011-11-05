@@ -23,7 +23,10 @@
  */
 $string['toc'] = 'TOC';
 $string['navigation'] = 'Navigation';
-
+$string['aicchacptimeout'] = 'AICC HACP Timeout';
+$string['aicchacptimeout_desc'] = 'Length of time in minutes that an AICC HACP session can remain open';
+$string['aicchacpkeepsessiondata'] = 'AICC HACP session data';
+$string['aicchacpkeepsessiondata_desc'] = 'Length of time in days to keep the AICC HACP session data (a high setting will fill up the table with old data but may be useful when debugging)';
 $string['activation'] = 'Activation';
 $string['activityloading'] = 'You will be automatically redirected to the activity in';
 $string['activitypleasewait'] = 'Activity loading, please wait ...';
@@ -33,6 +36,8 @@ $string['allowapidebug'] = 'Activate API debug and tracing (set the capture mask
 $string['allowtypeexternal'] = 'Enable external package type';
 $string['allowtypeimsrepository'] = 'Enable IMS package type';
 $string['allowtypelocalsync'] = 'Enable downloaded package type';
+$string['allowtypeaicchacp'] = 'Enable AICC HACP';
+$string['allowtypeaicchacp_desc'] = 'If enabled this allows AICC HACP external communication without requiring user login for post requests from the external AICC package';
 $string['apidebugmask'] = 'API debug capture mask  - use a simple regex on &lt;username&gt;:&lt;activityname&gt; e.g. admin:.* will debug for admin user only';
 $string['areacontent'] = 'Content files';
 $string['areapackage'] = 'Package file';
@@ -161,6 +166,7 @@ $string['interactionstype'] = 'Type of question';
 $string['interactionsweight'] = 'Weight assigned to the element';
 $string['interactionslearnerresponse'] = 'Learner\'s Response';
 $string['invalidactivity'] = 'Scorm activity is incorrect';
+$string['invalidhacpsession'] = 'Invalid HACP Session';
 $string['invalidmanifestresource'] = 'WARNING: The following resources were referenced in your manifest but couldn\'t be found:';
 $string['last'] = 'Last accessed on';
 $string['lastaccess'] = 'Last access';

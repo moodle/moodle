@@ -108,11 +108,16 @@ if ((isset($sco->parameters) && (!empty($sco->parameters))) || ($version == 'AIC
 }
 
 if ($version == 'AICC') {
+    require_once("$CFG->dirroot/mod/scorm/datamodels/aicclib.php");
+    $aicc_sid = scorm_aicc_get_hacp_session($scorm->id);
+    if (empty($aicc_sid)) {
+        $aicc_sid = sesskey();
+    }
     $sco_params = '';
     if (isset($sco->parameters) && (!empty($sco->parameters))) {
         $sco_params = '&'. $sco->parameters;
     }
-    $launcher = $sco->launch.$connector.'aicc_sid='.sesskey().'&aicc_url='.$CFG->wwwroot.'/mod/scorm/aicc.php'.$sco_params;
+    $launcher = $sco->launch.$connector.'aicc_sid='.$aicc_sid.'&aicc_url='.$CFG->wwwroot.'/mod/scorm/aicc.php'.$sco_params;
 } else {
     if (isset($sco->parameters) && (!empty($sco->parameters))) {
         $launcher = $sco->launch.$connector.$sco->parameters;

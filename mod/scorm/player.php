@@ -170,10 +170,10 @@ if ($mode == 'browse') {
 }
 $orgstr = '&currentorg='.$currentorg;
 
-$SESSION->scorm_scoid = $sco->id;
-$SESSION->scorm_status = 'Not Initialized';
-$SESSION->scorm_mode = $mode;
-$SESSION->scorm_attempt = $attempt;
+$SESSION->scorm->scoid = $sco->id;
+$SESSION->scorm->scormstatus = 'Not Initialized';
+$SESSION->scorm->scormmode = $mode;
+$SESSION->scorm->attempt = $attempt;
 
 // Mark module viewed
 $completion = new completion_info($course);
