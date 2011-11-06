@@ -470,13 +470,12 @@ foreach (get_plugin_list('report') as $report => $plugindir) {
         }
     }
 }
-if (!empty($pages)) {
-    $ADMIN->add('modules', new admin_category('reports', get_string('reports')));
-    foreach ($pages as $page) {
-        $ADMIN->add('reports', $page);
-    }
+$ADMIN->add('modules', new admin_category('reportplugins', get_string('reports')));
+$ADMIN->add('reportplugins', new admin_externalpage('managereports', get_string('reportsmanage', 'admin'),
+                                                    $CFG->wwwroot . '/' . $CFG->admin . '/reports.php'));
+foreach ($pages as $page) {
+    $ADMIN->add('reportplugins', $page);
 }
-unset($pages);
 
 // Now add various admin tools
 foreach (get_plugin_list('tool') as $plugin => $plugindir) {

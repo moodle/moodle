@@ -1654,3 +1654,13 @@ class plugintype_tool extends plugintype_base implements plugin_information {
         return new moodle_url('/admin/tools.php', array('delete' => $this->name, 'sesskey' => sesskey()));
     }
 }
+
+/**
+ * Class for admin tool plugins
+ */
+class plugintype_report extends plugintype_base implements plugin_information {
+
+    public function get_uninstall_url() {
+        return new moodle_url('/admin/reports.php', array('delete' => $this->name, 'sesskey' => sesskey()));
+    }
+}
