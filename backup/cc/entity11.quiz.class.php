@@ -140,10 +140,10 @@ class cc11_quiz extends entities11 {
                            '[#node_questions_feedback#]');
 
         $replace_values = array($instance['id'],
-                                htmlentities($instance['title']),
-                                htmlentities($instance['title']),
-                                htmlentities($quiz_stamp),
-                                htmlentities($questions_strings),
+                                self::safexml($instance['title']),
+                                self::safexml($instance['title']),
+                                self::safexml($quiz_stamp),
+                                self::safexml($questions_strings),
                                 time(),
                                 $instance['options']['max_attempts'],
                                 $instance['options']['timelimit'],
@@ -256,7 +256,7 @@ class cc11_quiz extends entities11 {
         $quiz_stamp = 'localhost+' . time() . '+' . $this->generate_random_string(6);
 
         $replace_values = array($instance['id'],
-                                htmlentities($instance['title']),
+                                self::safexml($instance['title']),
                                 $quiz_stamp,
                                 $node_course_question_categories_questions);
 
@@ -304,10 +304,10 @@ class cc11_quiz extends entities11 {
                 $question_type_node = ($question_moodle_type == MOODLE_QUIZ_SHORTANSWER) ? $this->create_node_course_question_categories_question_category_question_shortanswer($question) : $question_type_node;
 
                 $replace_values = array($question['id'],
-                                        htmlentities($this->truncate_text($question['title'], 255, true)),
-                                        htmlentities($question['title']),
+                                        self::safexml($this->truncate_text($question['title'], 255, true)),
+                                        self::safexml($question['title']),
                                         $question_moodle_type,
-                                        htmlentities($question['feedback']),
+                                        self::safexml($question['feedback']),
                                         time(),
                                         $question_type_node,
                                         $quiz_stamp,
@@ -764,7 +764,7 @@ class cc11_quiz extends entities11 {
                            '[#is_single#]');
 
         $replace_values = array($node_course_question_categories_question_answer,
-                                htmlentities($answer_string),
+                                self::safexml($answer_string),
                                 $is_single);
 
         $node_question_categories_question = str_replace($find_tags, $replace_values, $sheet_question_categories_question);
@@ -819,8 +819,8 @@ class cc11_quiz extends entities11 {
                            '[#use_case#]',
                            '[#node_course_question_categories_question_category_question_answer#]');
 
-        $replace_values = array(htmlentities($answers_string),
-                                htmlentities($use_case),
+        $replace_values = array(self::safexml($answers_string),
+                                self::safexml($use_case),
                                 $node_course_question_categories_question_answer);
 
 
@@ -866,7 +866,7 @@ class cc11_quiz extends entities11 {
                            '[#false_answer_id#]');
 
         $replace_values = array($node_course_question_categories_question_answer,
-                                htmlentities($true_answer_id),
+                                $true_answer_id,
                                 $false_answer_id);
 
         $node_question_categories_question = str_replace($find_tags, $replace_values, $sheet_question_categories_question);
@@ -900,9 +900,9 @@ class cc11_quiz extends entities11 {
                            '[#answer_feedback#]');
 
         $replace_values = array($answer['id'],
-                                htmlentities($answer['title']),
+                                self::safexml($answer['title']),
                                 $answer['score'],
-                                $answer['feedback']);
+                                self::safexml($answer['feedback']));
 
         $node_question_categories_question_answer = str_replace($find_tags, $replace_values, $sheet_question_categories_question_answer);
 

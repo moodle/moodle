@@ -103,12 +103,18 @@ class imscc1_converter extends base_converter {
         }
         $status = $cc2moodle->generate_moodle_xml();
         //Final cleanup
+        $xml_error = new libxml_errors_mgr(true);
         $mdoc = new DOMDocument();
         $mdoc->preserveWhiteSpace = false;
         $mdoc->formatOutput = true;
         $mdoc->validateOnParse = false;
+        $mdoc->strictErrorChecking = false;
         if ($mdoc->load($manifestdir.'/moodle.xml', LIBXML_NONET)) {
             $mdoc->save($this->get_workdir_path().'/moodle.xml', LIBXML_NOEMPTYTAG);
+        } else {
+            $xml_error->collect();
+            $this->log('validation error(s): '.PHP_EOL.error_messages::instance(), backup::LOG_DEBUG, null, 2);
+            throw new imscc1_convert_exception(error_messages::instance()->to_string(true));
         }
         //Move the files to the workdir
         rename($manifestdir.'/course_files', $this->get_workdir_path().'/course_files');

@@ -75,7 +75,7 @@ class cc11_lti extends entities11 {
     protected function getValue($node, $default = '') {
         $result = $default;
         if (is_object($node) && ($node->length > 0) && !empty($node->item(0)->nodeValue)) {
-            $result = htmlentities(trim($node->item(0)->nodeValue));
+            $result = htmlspecialchars(trim($node->item(0)->nodeValue), ENT_COMPAT, 'UTF-8', false);
         }
         return $result;
     }

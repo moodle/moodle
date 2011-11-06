@@ -157,13 +157,13 @@ class cc11_resource extends entities11 {
                         //silence the complaints
                     }
                     chdir($cdir);
-                    $mod_alltext = htmlspecialchars($mod_alltext, ENT_COMPAT, 'UTF-8', false);
+                    $mod_alltext = self::safexml($mod_alltext);
                 }
             }
         }
 
         $replace_values = array($instance['instance'],
-                                htmlspecialchars($instance['title']),
+                                self::safexml($instance['title']),
                                 $mod_type,
                                 $mod_reference,
                                 '',

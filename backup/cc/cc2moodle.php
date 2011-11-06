@@ -257,9 +257,9 @@ class cc2moodle {
                            '[#date_now#]',
                            '[#section_count#]');
 
-        $replace_values = array(htmlentities($course_title),
-                                htmlentities($course_short_name),
-                                htmlentities($course_description),
+        $replace_values = array(entities::safexml($course_title),
+                                entities::safexml($course_short_name),
+                                entities::safexml($course_description),
                                 time(),
                                 $section_count);
 
@@ -565,7 +565,7 @@ class cc2moodle {
             }
 
             $replace_values = array($instances[$i - 1]['instance'],
-                                    htmlentities($instances[$i - 1]['title']),
+                                    entities::safexml($instances[$i - 1]['title']),
                                     $user_info);
 
             $instance .= str_replace($find_tags, $replace_values, $sheet);

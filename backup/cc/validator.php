@@ -109,7 +109,14 @@ final class libxml_errors_mgr {
      * @var boolean
      */
     private $previous = false;
-    public function __construct(){
+
+    /**
+     * @param boolean $reset
+     */
+    public function __construct($reset=false){
+        if ($reset) {
+            error_messages::instance()->reset();
+        }
         $this->previous = libxml_use_internal_errors(true);
         libxml_clear_errors();
     }
@@ -145,6 +152,10 @@ final class libxml_errors_mgr {
         if (!$this->previous) {
             libxml_use_internal_errors($this->previous);
         }
+    }
+
+    public function collect() {
+        $this->collect_errors();
     }
 }
 

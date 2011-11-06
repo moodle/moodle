@@ -24,6 +24,18 @@
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 class entities {
+    /**
+     *
+     * Prepares convert for inclusion into XML
+     * @param string $value
+     */
+    public static function safexml($value) {
+        $result = htmlspecialchars(html_entity_decode($value, ENT_QUOTES, 'UTF-8'),
+                                   ENT_NOQUOTES,
+                                   'UTF-8',
+                                   false);
+        return $result;
+    }
 
     protected function prepare_content($content) {
         $result = $content;
@@ -31,13 +43,12 @@ class entities {
             return '';
         }
         $encoding = null;
+        $xml_error = new libxml_errors_mgr();
         $dom = new DOMDocument();
-        try {
-            if ($dom->loadHTML($content)) {
-                $encoding = $dom->xmlEncoding;
-            }
-        } catch(DOMException $e) {
-            //silence the exception if any
+        $dom->validateOnParse = false;
+        $dom->strictErrorChecking = false;
+        if ($dom->loadHTML($content)) {
+            $encoding = $dom->xmlEncoding;
         }
         if (empty($encoding)) {
             $encoding = mb_detect_encoding($content, 'auto', true);
@@ -223,6 +234,7 @@ class entities {
     }
 
     protected function get_all_files () {
+        global $CFG;
 
         $all_files = array();
 

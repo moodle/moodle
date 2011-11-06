@@ -98,8 +98,8 @@ class cc11_forum extends entities11 {
 
             $replace_values = array($instance['instance'],
             //To be more true to the actual forum name we use only forum title
-            htmlentities($topic_data['title']),
-            htmlentities($topic_data['description']),
+            self::safexml($topic_data['title']),
+            self::safexml($topic_data['description']),
             time());
 
             $result = str_replace($find_tags, $replace_values, $sheet_mod_forum);

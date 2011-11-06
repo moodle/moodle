@@ -54,8 +54,8 @@ class cc_label extends entities {
         $title = isset($instance['title']) && !empty($instance['title']) ? $instance['title'] : 'Untitled';
         $content = "<img src=\"$@FILEPHP@$$@SLASH@$"."folder.gif\" alt=\"Folder\" title=\"{$title}\" /> {$title}";
         $replace_values = array($instance['instance'],
-                                $title,
-                                htmlentities($content),
+                                self::safexml($title),
+                                self::safexml($content),
                                 time());
 
         return str_replace($find_tags, $replace_values, $sheet_mod_label);
