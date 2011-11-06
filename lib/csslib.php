@@ -1030,7 +1030,7 @@ class css_rule {
         $consolidate = array();
         foreach ($this->styles as $style) {
             $consolidatetoclass = $style->consolidate_to();
-            if (!empty($consolidatetoclass) && class_exists('css_style_'.$consolidatetoclass)) {
+            if ($style->is_valid() && !empty($consolidatetoclass) && class_exists('css_style_'.$consolidatetoclass)) {
                 $class = 'css_style_'.$consolidatetoclass;
                 if (!array_key_exists($class, $consolidate)) {
                     $consolidate[$class] = array();
@@ -1301,6 +1301,10 @@ abstract class css_style {
         }
     }
 
+    public function is_valid() {
+        return true;
+    }
+
     /**
      * Returns the name for the style
      *
@@ -1427,10 +1431,21 @@ class css_style_color extends css_style {
      * @return string
      */
     public function out($overridevalue = null) {
-        if (preg_match('/#([a-fA-F0-9])\1([a-fA-F0-9])\2([a-fA-F0-9])\3/', $this->value, $matches)) {
-            $overridevalue = '#'.$matches[1].$matches[2].$matches[3];
+        if ($overridevalue === null) {
+            $overridevalue = $this->value;
         }
-        return parent::out($overridevalue);
+        return parent::out(self::shrink_value($overridevalue));
+    }
+
+    public static function shrink_value($value) {
+        if (preg_match('/#([a-fA-F0-9])\1([a-fA-F0-9])\2([a-fA-F0-9])\3/', $value, $matches)) {
+            return '#'.$matches[1].$matches[2].$matches[3];
+        }
+        return $value;
+    }
+
+    public function is_valid() {
+        return css_is_colour($this->value);
     }
 }
 
@@ -1592,9 +1607,9 @@ class css_style_border extends css_style {
         $nullstyles = in_array(null, $borderstyles);
         $nullcolors = in_array(null, $bordercolors);
 
-        $allwidthsthesame = ($uniquewidths == 1)?1:0;
-        $allstylesthesame = ($uniquestyles == 1)?1:0;
-        $allcolorsthesame = ($uniquecolors == 1)?1:0;
+        $allwidthsthesame = ($uniquewidths === 1)?1:0;
+        $allstylesthesame = ($uniquestyles === 1)?1:0;
+        $allcolorsthesame = ($uniquecolors === 1)?1:0;
 
         $allwidthsnull = $allwidthsthesame && $nullwidths;
         $allstylesnull = $allstylesthesame && $nullstyles;
@@ -1649,7 +1664,7 @@ class css_style_border extends css_style {
                 self::consolidate_styles_by_direction($return, 'css_style_bordercolor', 'border-color', $bordercolors);
             }
 
-        } else if (max(array_count_values($borderwidths)) == 3 && max(array_count_values($borderstyles)) == 3 && max(array_count_values($bordercolors)) == 3) {
+        } else if (!$nullwidths && !$nullcolors && !$nullstyles && max(array_count_values($borderwidths)) == 3 && max(array_count_values($borderstyles)) == 3 && max(array_count_values($bordercolors)) == 3) {
             $widthkeys = array();
             $stylekeys = array();
             $colorkeys = array();
@@ -1683,9 +1698,9 @@ class css_style_border extends css_style {
 
             if ($widthkeys == $stylekeys && $stylekeys == $colorkeys) {
                 $key = $widthkeys[0][0];
-                self::build_style_string($return, 'css_style_border', 'border',  $borderwidths[$key].' '.$borderstyles[$key].' '.$bordercolors[$key]);
+                self::build_style_string($return, 'css_style_border', 'border',  $borderwidths[$key], $borderstyles[$key], $bordercolors[$key]);
                 $key = $widthkeys[1][0];
-                self::build_style_string($return, 'css_style_border'.$key, 'border-'.$key,  $borderwidths[$key].' '.$borderstyles[$key].' '.$bordercolors[$key]);
+                self::build_style_string($return, 'css_style_border'.$key, 'border-'.$key,  $borderwidths[$key], $borderstyles[$key], $bordercolors[$key]);
             } else {
                 self::build_style_string($return, 'css_style_bordertop', 'border-top', $borderwidths['top'], $borderstyles['top'], $bordercolors['top']);
                 self::build_style_string($return, 'css_style_borderright', 'border-right', $borderwidths['right'], $borderstyles['right'], $bordercolors['right']);
@@ -1709,7 +1724,6 @@ class css_style_border extends css_style {
         return 'border';
     }
     public static function consolidate_styles_by_direction(&$array, $class, $style, $top, $right = null, $bottom = null, $left = null) {
-
         if (is_array($top)) {
             $right = $top['right'];
             $bottom = $top['bottom'];
@@ -1804,10 +1818,10 @@ class css_style_bordercolor extends css_style_color {
             $left = array_shift($bits);
         }
         return array(
-            new css_style_bordercolor('border-color-top', $top),
-            new css_style_bordercolor('border-color-right', $right),
-            new css_style_bordercolor('border-color-bottom', $bottom),
-            new css_style_bordercolor('border-color-left', $left)
+            css_style_bordercolortop::init($top),
+            css_style_bordercolorright::init($right),
+            css_style_bordercolorbottom::init($bottom),
+            css_style_bordercolorleft::init($left)
         );
     }
     public function consolidate_to() {
@@ -1818,6 +1832,14 @@ class css_style_bordercolor extends css_style_color {
         $values = array_map('parent::clean_value', $values);
         return join (' ', $values);
     }
+    public function out($overridevalue = null) {
+        if ($overridevalue === null) {
+            $overridevalue = $this->value;
+        }
+        $values = explode(' ', $overridevalue);
+        $values = array_map('css_style_color::shrink_value', $values);
+        return parent::out(join (' ', $values));
+    }
 }
 
 class css_style_borderleft extends css_style_generic {
@@ -1827,13 +1849,13 @@ class css_style_borderleft extends css_style_generic {
 
         $return = array();
         if (count($bits) > 0) {
-            $return[] = new css_style_borderwidth('border-width-left', array_shift($bits));
+            $return[] = css_style_borderwidthleft::init(array_shift($bits));
         }
         if (count($bits) > 0) {
-            $return[] = new css_style_borderstyle('border-style-left', array_shift($bits));
+            $return[] = css_style_borderstyleleft::init(array_shift($bits));
         }
         if (count($bits) > 0) {
-            $return[] = new css_style_bordercolor('border-color-left', array_shift($bits));
+            $return[] = css_style_bordercolorleft::init(array_shift($bits));
         }
         return $return;
     }
@@ -1849,13 +1871,13 @@ class css_style_borderright extends css_style_generic {
 
         $return = array();
         if (count($bits) > 0) {
-            $return[] = new css_style_borderwidth('border-width-right', array_shift($bits));
+            $return[] = css_style_borderwidthright::init(array_shift($bits));
         }
         if (count($bits) > 0) {
-            $return[] = new css_style_borderstyle('border-style-right', array_shift($bits));
+            $return[] = css_style_borderstyleright::init(array_shift($bits));
         }
         if (count($bits) > 0) {
-            $return[] = new css_style_bordercolor('border-color-right', array_shift($bits));
+            $return[] = css_style_bordercolorright::init(array_shift($bits));
         }
         return $return;
     }
@@ -1871,13 +1893,13 @@ class css_style_bordertop extends css_style_generic {
 
         $return = array();
         if (count($bits) > 0) {
-            $return[] = new css_style_borderwidth('border-width-top', array_shift($bits));
+            $return[] = css_style_borderwidthtop::init(array_shift($bits));
         }
         if (count($bits) > 0) {
-            $return[] = new css_style_borderstyle('border-style-top', array_shift($bits));
+            $return[] = css_style_borderstyletop::init(array_shift($bits));
         }
         if (count($bits) > 0) {
-            $return[] = new css_style_bordercolor('border-color-top', array_shift($bits));
+            $return[] = css_style_bordercolortop::init(array_shift($bits));
         }
         return $return;
     }
@@ -1893,13 +1915,13 @@ class css_style_borderbottom extends css_style_generic {
 
         $return = array();
         if (count($bits) > 0) {
-            $return[] = new css_style_borderwidth('border-width-bottom', array_shift($bits));
+            $return[] = css_style_borderwidthbottom::init(array_shift($bits));
         }
         if (count($bits) > 0) {
-            $return[] = new css_style_borderstyle('border-style-bottom', array_shift($bits));
+            $return[] = css_style_borderstylebottom::init(array_shift($bits));
         }
         if (count($bits) > 0) {
-            $return[] = new css_style_bordercolor('border-color-bottom', array_shift($bits));
+            $return[] = css_style_bordercolorbottom::init(array_shift($bits));
         }
         return $return;
     }
@@ -1942,10 +1964,10 @@ class css_style_borderwidth extends css_style_generic {
             $left = array_shift($bits);
         }
         return array(
-            new css_style_borderwidth('border-width-top', $top),
-            new css_style_borderwidth('border-width-right', $right),
-            new css_style_borderwidth('border-width-bottom', $bottom),
-            new css_style_borderwidth('border-width-left', $left)
+            css_style_borderwidthtop::init($top),
+            css_style_borderwidthright::init($right),
+            css_style_borderwidthbottom::init($bottom),
+            css_style_borderwidthleft::init($left)
         );
     }
     public function consolidate_to() {
@@ -1987,16 +2009,117 @@ class css_style_borderstyle extends css_style_generic {
             $left = array_shift($bits);
         }
         return array(
-            new css_style_borderstyle('border-style-top', $top),
-            new css_style_borderstyle('border-style-right', $right),
-            new css_style_borderstyle('border-style-bottom', $bottom),
-            new css_style_borderstyle('border-style-left', $left)
+            css_style_borderstyletop::init($top),
+            css_style_borderstyleright::init($right),
+            css_style_borderstylebottom::init($bottom),
+            css_style_borderstyleleft::init($left)
         );
     }
     public function consolidate_to() {
         return 'border';
     }
 }
+
+class css_style_bordercolortop extends css_style_color {
+    public static function init($value) {
+        return new css_style_bordercolortop('border-color-top', $value);
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+class css_style_bordercolorleft extends css_style_color {
+    public static function init($value) {
+        return new css_style_bordercolorleft('border-color-left', $value);
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+class css_style_bordercolorright extends css_style_color {
+    public static function init($value) {
+        return new css_style_bordercolorright('border-color-right', $value);
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+class css_style_bordercolorbottom extends css_style_color {
+    public static function init($value) {
+        return new css_style_bordercolorbottom('border-color-bottom', $value);
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+
+class css_style_borderwidthtop extends css_style_generic {
+    public static function init($value) {
+        return new css_style_borderwidthtop('border-width-top', $value);
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+class css_style_borderwidthleft extends css_style_generic {
+    public static function init($value) {
+        return new css_style_borderwidthleft('border-width-left', $value);
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+class css_style_borderwidthright extends css_style_generic {
+    public static function init($value) {
+        return new css_style_borderwidthright('border-width-right', $value);
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+class css_style_borderwidthbottom extends css_style_generic {
+    public static function init($value) {
+        return new css_style_borderwidthbottom('border-width-bottom', $value);
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+
+
+class css_style_borderstyletop extends css_style_generic {
+    public static function init($value) {
+        return new css_style_borderstyletop('border-style-top', $value);
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+class css_style_borderstyleleft extends css_style_generic {
+    public static function init($value) {
+        return new css_style_borderstyleleft('border-style-left', $value);
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+class css_style_borderstyleright extends css_style_generic {
+    public static function init($value) {
+        return new css_style_borderstyleright('border-style-right', $value);
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+class css_style_borderstylebottom extends css_style_generic {
+    public static function init($value) {
+        return new css_style_borderstylebottom('border-style-bottom', $value);
+    }
+    public function consolidate_to() {
+        return 'border';
+    }
+}
+
 
 class css_style_background extends css_style {
     public static function init($value) {
@@ -2046,13 +2169,18 @@ class css_style_background extends css_style {
         $color = $image = $repeat = $attachment = $position = null;
         foreach ($styles as $style) {
             switch ($style->get_name()) {
-                case 'background-color' : $color = $style->get_value(); break;
+                case 'background-color' : $color = css_style_color::shrink_value($style->get_value()); break;
                 case 'background-image' : $image = $style->get_value(); break;
                 case 'background-repeat' : $repeat = $style->get_value(); break;
                 case 'background-attachment' : $attachment = $style->get_value(); break;
                 case 'background-position' : $position = $style->get_value(); break;
             }
         }
+
+        if ((is_null($image) || is_null($position) || is_null($repeat)) && ($image!= null || $position != null || $repeat != null)) {
+            return $styles;
+        }
+
         $value = array();
         if (!is_null($color)) $value[] .= $color;
         if (!is_null($image)) $value[] .= $image;
