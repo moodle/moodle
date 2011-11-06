@@ -121,4 +121,14 @@ class block_html extends block_base {
 
         return true;
     }
+    
+    /**
+     * The block should only be dockable when the title of the block is not empty
+     * and when parent allows docking.
+     *
+     * @return bool
+     */
+    public function instance_can_be_docked() {
+        return (!empty($this->config->title) && parent::instance_can_be_docked());
+    }
 }
