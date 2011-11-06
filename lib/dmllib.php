@@ -79,6 +79,18 @@ class dml_connection_exception extends dml_exception {
 }
 
 /**
+ * DML db session wait exception - triggered when session lock request times out.
+ */
+class dml_sessionwait_exception extends dml_exception {
+    /**
+     * Constructor
+     */
+    function __construct() {
+        parent::__construct('sessionwaiterr');
+    }
+}
+
+/**
  * DML read exception - triggered by SQL syntax errors, missing tables, etc.
  */
 class dml_read_exception extends dml_exception {

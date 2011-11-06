@@ -1203,10 +1203,17 @@ class mysqli_native_moodle_database extends moodle_database {
         return true;
     }
 
-    public function get_session_lock($rowid) {
-        parent::get_session_lock($rowid);
+    /**
+     * Obtain session lock
+     * @param int $rowid id of the row with session record
+     * @param int $timeout max allowed time to wait for the lock in seconds
+     * @return bool success
+     */
+    public function get_session_lock($rowid, $timeout) {
+        parent::get_session_lock($rowid, $timeout);
+
         $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
-        $sql = "SELECT GET_LOCK('$fullname',120)";
+        $sql = "SELECT GET_LOCK('$fullname', $timeout)";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
@@ -1218,8 +1225,7 @@ class mysqli_native_moodle_database extends moodle_database {
             if (reset($arr) == 1) {
                 return;
             } else {
-                // try again!
-                $this->get_session_lock($rowid);
+                throw new dml_sessionwait_exception();
             }
         }
     }
