@@ -1153,7 +1153,13 @@ class pgsql_native_moodle_database extends moodle_database {
         return true;
     }
 
-    public function get_session_lock($rowid) {
+    /**
+     * Obtain session lock
+     * @param int $rowid id of the row with session record
+     * @param int $timeout max allowed time to wait for the lock in seconds
+     * @return bool success
+     */
+    public function get_session_lock($rowid, $timeout) {
         // NOTE: there is a potential locking problem for database running
         //       multiple instances of moodle, we could try to use pg_advisory_lock(int, int),
         //       luckily there is not a big chance that they would collide
@@ -1161,8 +1167,39 @@ class pgsql_native_moodle_database extends moodle_database {
             return;
         }
 
-        parent::get_session_lock($rowid);
+        parent::get_session_lock($rowid, $timeout);
+
+        $timeoutmilli = $timeout * 1000;
+
+        $sql = "SET statement_timeout TO $timeoutmilli";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = pg_query($this->pgsql, $sql);
+        $this->query_end($result);
+
+        if ($result) {
+            pg_free_result($result);
+        }
+
         $sql = "SELECT pg_advisory_lock($rowid)";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $start = time();
+        $result = pg_query($this->pgsql, $sql);
+        $end = time();
+        try {
+            $this->query_end($result);
+        } catch (dml_exception $ex) {
+            if ($end - $start >= $timeout) {
+                throw new dml_sessionwait_exception();
+            } else {
+                throw $ex;
+            }
+        }
+
+        if ($result) {
+            pg_free_result($result);
+        }
+
+        $sql = "SET statement_timeout TO DEFAULT";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = pg_query($this->pgsql, $sql);
         $this->query_end($result);

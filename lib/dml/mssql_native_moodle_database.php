@@ -1227,17 +1227,32 @@ s only returning name of SQL substring function, it now requires all parameters.
         return true;
     }
 
-    public function get_session_lock($rowid) {
+    /**
+     * Obtain session lock
+     * @param int $rowid id of the row with session record
+     * @param int $timeout max allowed time to wait for the lock in seconds
+     * @return bool success
+     */
+    public function get_session_lock($rowid, $timeout) {
         if (!$this->session_lock_supported()) {
             return;
         }
-        parent::get_session_lock($rowid);
+        parent::get_session_lock($rowid, $timeout);
+
+        $timeoutmilli = $timeout * 1000;
 
         $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
-        $sql = "sp_getapplock '$fullname', 'Exclusive', 'Session',  120000";
+        $sql = "sp_getapplock '$fullname', 'Exclusive', 'Session',  $timeoutmilli";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = mssql_query($sql, $this->mssql);
         $this->query_end($result);
+
+        if ($result) {
+            $row = mssql_fetch_row($result);
+            if ($row[0] < 0) {
+                throw new dml_sessionwait_exception();
+            }
+        }
 
         $this->free_result($result);
     }

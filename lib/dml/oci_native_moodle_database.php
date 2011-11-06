@@ -1610,21 +1610,34 @@ class oci_native_moodle_database extends moodle_database {
         return $this->dblocks_supported;
     }
 
-    public function get_session_lock($rowid) {
+    /**
+     * Obtain session lock
+     * @param int $rowid id of the row with session record
+     * @param int $timeout max allowed time to wait for the lock in seconds
+     * @return bool success
+     */
+    public function get_session_lock($rowid, $timeout) {
         if (!$this->session_lock_supported()) {
             return;
         }
-        parent::get_session_lock($rowid);
+        parent::get_session_lock($rowid, $timeout);
 
         $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
         $sql = 'SELECT MOODLE_LOCKS.GET_LOCK(:lockname, :locktimeout) FROM DUAL';
-        $params = array('lockname' => $fullname , 'locktimeout' => 120);
+        $params = array('lockname' => $fullname , 'locktimeout' => $timeout);
         $this->query_start($sql, $params, SQL_QUERY_AUX);
         $stmt = $this->parse_query($sql);
         $this->bind_params($stmt, $params);
+        $start = time();
         $result = oci_execute($stmt, $this->commit_status);
+        $end = time();
         $this->query_end($result, $stmt);
         oci_free_statement($stmt);
+
+        if ($end - $start >= $timeout) {
+            //TODO: there has to be a better way to find out if lock obtained
+            throw new dml_sessionwait_exception();
+        }
     }
 
     public function release_session_lock($rowid) {
