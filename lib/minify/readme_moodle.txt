@@ -17,3 +17,4 @@ Changes:
    ever gets accidentally used.
  * Updated lib/Minify/CSS/Compressor.php - Applied an upstream fix for MDL-29864
    to allow usage of unquoted font-familes with spaces in CSS.
+   http://code.google.com/p/minify/issues/detail?id=210
