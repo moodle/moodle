@@ -52,17 +52,17 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
-class mod_lti_edit_types_form extends moodleform{
-    function definition() {
+public class mod_lti_edit_types_form extends moodleform{
+    public function definition() {
         $mform    =& $this->_form;
 
-//-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
         // Add basiclti elements
         $mform->addElement('header', 'setup', get_string('tool_settings', 'lti'));
 
         $mform->addElement('text', 'lti_typename', get_string('typename', 'lti'));
         $mform->setType('lti_typename', PARAM_INT);
-        $mform->addHelpButton('lti_typename', 'typename','lti');
+        $mform->addHelpButton('lti_typename', 'typename', 'lti');
         $mform->addRule('lti_typename', null, 'required', null, 'client');
 
         $mform->addElement('text', 'lti_toolurl', get_string('toolurl', 'lti'), array('size'=>'64'));
@@ -82,7 +82,7 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->setType('lti_customparameters', PARAM_TEXT);
         $mform->addHelpButton('lti_customparameters', 'custom', 'lti');
 
-        if(!empty($this->_customdata->isadmin)){
+        if (!empty($this->_customdata->isadmin)) {
             $mform->addElement('checkbox', 'lti_coursevisible', '&nbsp;', ' ' . get_string('show_in_course', 'lti'));
             $mform->addHelpButton('lti_coursevisible', 'show_in_course', 'lti');
         } else {
@@ -116,7 +116,7 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->setDefault('lti_sendemailaddr', '2');
         $mform->addHelpButton('lti_sendemailaddr', 'share_email_admin', 'lti');
 
-//-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
         // LTI Extensions
 
         // Add grading preferences fieldset where the tool is allowed to return grades
@@ -129,11 +129,11 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->setDefault('lti_allowroster', '2');
         $mform->addHelpButton('lti_allowroster', 'share_roster_admin', 'lti');
 
-        $mform->addElement('checkbox', 'lti_forcessl','&nbsp;', ' ' . get_string('force_ssl', 'lti'), $options);
+        $mform->addElement('checkbox', 'lti_forcessl', '&nbsp;', ' ' . get_string('force_ssl', 'lti'), $options);
         $mform->setDefault('lti_forcessl', '0');
         $mform->addHelpButton('lti_forcessl', 'force_ssl', 'lti');
 
-        if(!empty($this->_customdata->isadmin)){
+        if (!empty($this->_customdata->isadmin)) {
             //-------------------------------------------------------------------------------
             // Add setup parameters fieldset
             $mform->addElement('header', 'setupoptions', get_string('miscellaneous', 'lti'));
@@ -158,7 +158,7 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->addHelpButton('lti_organizationdescr', 'organizationdescr', 'lti');
         */
 
-//-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
         // Add a hidden element to signal a tool fixing operation after a problematic backup - restore process
         //$mform->addElement('hidden', 'lti_fix');
 
@@ -168,7 +168,7 @@ class mod_lti_edit_types_form extends moodleform{
         $courseid = optional_param('course', 1, PARAM_INT);
         $mform->addElement('hidden', 'course', $courseid);
 
-//-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
         // Add standard buttons, common to all modules
         $this->add_action_buttons();
 

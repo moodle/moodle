@@ -79,7 +79,7 @@ if ($id) {
 }
 
 $tool = lti_get_tool_by_url_match($basiclti->toolurl);
-if($tool){
+if ($tool) {
     $toolconfig = lti_get_type_config($tool->id);
 } else {
     $toolconfig = array();
@@ -94,10 +94,10 @@ $PAGE->set_url($url);
 
 $launchcontainer = lti_get_launch_container($basiclti, $toolconfig);
 
-if($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS){
+if ($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
     $PAGE->set_pagelayout('frametop'); //Most frametops don't include footer, and pre-post blocks
     $PAGE->blocks->show_only_fake_blocks(); //Disable blocks for layouts which do include pre-post blocks
-} else if($launchcontainer == LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW) {
+} else if ($launchcontainer == LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW) {
     redirect('launch.php?id=' . $cm->id);
 } else {
     $PAGE->set_pagelayout('incourse');
@@ -114,12 +114,12 @@ $PAGE->set_heading($course->fullname);
 /// Print the page header
 echo $OUTPUT->header();
 
-if($basiclti->showtitle) {
+if ($basiclti->showtitle) {
     /// Print the main part of the page
     echo $OUTPUT->heading(format_string($basiclti->name));
 }
 
-if($basiclti->showdescription && $basiclti->intro){
+if ($basiclti->showdescription && $basiclti->intro) {
     echo $OUTPUT->box($basiclti->intro, 'generalbox description', 'intro');
 }
 

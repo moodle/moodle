@@ -51,22 +51,22 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
-class mod_lti_mod_form extends moodleform_mod {
+public class mod_lti_mod_form extends moodleform_mod {
 
-    function definition() {
+    public function definition() {
         global $DB, $PAGE, $OUTPUT, $USER, $COURSE;
 
         $this->typeid = 0;
 
         $mform =& $this->_form;
-//-------------------------------------------------------------------------------
-    /// Adding the "general" fieldset, where all the common settings are shown
+        //-------------------------------------------------------------------------------
+        // Adding the "general" fieldset, where all the common settings are shown
         $mform->addElement('header', 'general', get_string('general', 'form'));
-    /// Adding the standard "name" field
+        // Adding the standard "name" field
         $mform->addElement('text', 'name', get_string('basicltiname', 'lti'), array('size'=>'64'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
-    /// Adding the optional "intro" and "introformat" pair of fields
+        // Adding the optional "intro" and "introformat" pair of fields
         $this->add_intro_editor(false, get_string('basicltiintro', 'lti'));
         $mform->setAdvanced('introeditor');
 
@@ -78,14 +78,14 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setAdvanced('showdescription');
         $mform->addHelpButton('showdescription', 'display_description', 'lti');
 
-        //Tool settings
+        // Tool settings
         $tooltypes = $mform->addElement('select', 'typeid', get_string('external_tool_type', 'lti'), array());
         $mform->addHelpButton('typeid', 'external_tool_type', 'lti');
 
-        foreach(lti_get_types_for_add_instance() as $id => $type){
-            if($type->course == $COURSE->id) {
+        foreach (lti_get_types_for_add_instance() as $id => $type) {
+            if ($type->course == $COURSE->id) {
                 $attributes = array( 'editable' => 1, 'courseTool' => 1, 'domain' => $type->tooldomain );
-            } else if($id != 0) {
+            } else if ($id != 0) {
                 $attributes = array( 'globalTool' => 1, 'domain' => $type->tooldomain);
             } else {
                 $attributes = array();
@@ -138,7 +138,7 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setAdvanced('secureicon');
         $mform->addHelpButton('secureicon', 'secure_icon_url', 'lti');
 
-//-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
         // Add privacy preferences fieldset where users choose whether to send their data
         $mform->addElement('header', 'privacy', get_string('privacy', 'lti'));
 
@@ -158,9 +158,10 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setDefault('instructorchoiceallowroster', '1');
         $mform->addHelpButton('instructorchoiceallowroster', 'share_roster', 'lti');
 
-//-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
 
-/*        $debugoptions=array();
+        /**
+        $debugoptions=array();
         $debugoptions[0] = get_string('debuglaunchoff', 'lti');
         $debugoptions[1] = get_string('debuglaunchon', 'lti');
 
@@ -173,13 +174,13 @@ class mod_lti_mod_form extends moodleform_mod {
                 $mform->setDefault('debuglaunch', '1');
             }
         }
-*/
+        */
 
-//-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
         $this->standard_coursemodule_elements();
         $mform->setAdvanced('cmidnumber');
-//-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
         // add standard buttons, common to all modules
         $this->add_action_buttons();
 
@@ -224,7 +225,7 @@ class mod_lti_mod_form extends moodleform_mod {
      * Make fields editable or non-editable depending on the administrator choices
      * @see moodleform_mod::definition_after_data()
      */
-    function definition_after_data() {
+    public function definition_after_data() {
         parent::definition_after_data();
 
         //$mform =& $this->_form;
@@ -236,7 +237,7 @@ class mod_lti_mod_form extends moodleform_mod {
      *
      * @param array $default_values passed by reference
      */
-    function data_preprocessing(&$default_values) {
+    protected function data_preprocessing(&$default_values) {
 
     }
 }

@@ -31,12 +31,11 @@ define('LTI_ITEM_TYPE', 'mod');
 define('LTI_ITEM_MODULE', 'lti');
 define('LTI_SOURCE', 'mod/lti');
 
-function lti_get_response_xml($codemajor, $description, $messageref, $messagetype){
+function lti_get_response_xml($codemajor, $description, $messageref, $messagetype) {
     $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><imsx_POXEnvelopeResponse />');
     $xml->addAttribute('xmlns', 'http://www.imsglobal.org/lis/oms1p0/pox');
 
-    $headerinfo = $xml->addChild('imsx_POXHeader')
-                      ->addChild('imsx_POXResponseHeaderInfo');
+    $headerinfo = $xml->addChild('imsx_POXHeader')->addChild('imsx_POXResponseHeaderInfo');
 
     $headerinfo->addChild('imsx_version', 'V1.0');
     $headerinfo->addChild('imsx_messageIdentifier', (string)mt_rand());
@@ -47,20 +46,19 @@ function lti_get_response_xml($codemajor, $description, $messageref, $messagetyp
     $statusinfo->addChild('imsx_description', $description);
     $statusinfo->addChild('imsx_messageRefIdentifier', $messageref);
 
-    $xml->addChild('imsx_POXBody')
-        ->addChild($messagetype);
+    $xml->addChild('imsx_POXBody')->addChild($messagetype);
 
     return $xml;
 }
 
-function lti_parse_message_id($xml){
+function lti_parse_message_id($xml) {
     $node = $xml->imsx_POXHeader->imsx_POXRequestHeaderInfo->imsx_messageIdentifier;
     $messageid = (string)$node;
 
     return $messageid;
 }
 
-function lti_parse_grade_replace_message($xml){
+function lti_parse_grade_replace_message($xml) {
     $node = $xml->imsx_POXBody->replaceResultRequest->resultRecord->sourcedGUID->sourcedId;
     $resultjson = json_decode((string)$node);
 
@@ -80,7 +78,7 @@ function lti_parse_grade_replace_message($xml){
     return $parsed;
 }
 
-function lti_parse_grade_read_message($xml){
+function lti_parse_grade_read_message($xml) {
     $node = $xml->imsx_POXBody->readResultRequest->resultRecord->sourcedGUID->sourcedId;
     $resultjson = json_decode((string)$node);
 
@@ -95,7 +93,7 @@ function lti_parse_grade_read_message($xml){
     return $parsed;
 }
 
-function lti_parse_grade_delete_message($xml){
+function lti_parse_grade_delete_message($xml) {
     $node = $xml->imsx_POXBody->deleteResultRequest->resultRecord->sourcedGUID->sourcedId;
     $resultjson = json_decode((string)$node);
 
@@ -110,7 +108,7 @@ function lti_parse_grade_delete_message($xml){
     return $parsed;
 }
 
-function lti_update_grade($ltiinstance, $userid, $launchid, $gradeval){
+function lti_update_grade($ltiinstance, $userid, $launchid, $gradeval) {
     global $CFG, $DB;
     require_once($CFG->libdir . '/gradelib.php');
 
@@ -124,13 +122,13 @@ function lti_update_grade($ltiinstance, $userid, $launchid, $gradeval){
     $status = grade_update(LTI_SOURCE, $ltiinstance->course, LTI_ITEM_TYPE, LTI_ITEM_MODULE, $ltiinstance->id, 0, $grade, $params);
 
     $record = $DB->get_record('lti_submission', array('ltiid' => $ltiinstance->id, 'userid' => $userid, 'launchid' => $launchid), 'id');
-    if($record){
+    if ($record) {
         $id = $record->id;
     } else {
         $id = null;
     }
 
-    if(!empty($id)){
+    if (!empty($id)) {
         $DB->update_record('lti_submission', array(
             'id' => $id,
             'dateupdated' => time(),
@@ -153,7 +151,7 @@ function lti_update_grade($ltiinstance, $userid, $launchid, $gradeval){
     return $status == GRADE_UPDATE_OK;
 }
 
-function lti_read_grade($ltiinstance, $userid){
+function lti_read_grade($ltiinstance, $userid) {
     global $CFG;
     require_once($CFG->libdir . '/gradelib.php');
 
@@ -166,12 +164,12 @@ function lti_read_grade($ltiinstance, $userid){
         }
     }
 
-    if(isset($grade)){
+    if (isset($grade)) {
         return $grade;
     }
 }
 
-function lti_delete_grade($ltiinstance, $userid){
+function lti_delete_grade($ltiinstance, $userid) {
     global $CFG;
     require_once($CFG->libdir . '/gradelib.php');
 
@@ -184,18 +182,17 @@ function lti_delete_grade($ltiinstance, $userid){
     return $status == GRADE_UPDATE_OK || $status == GRADE_UPDATE_ITEM_DELETED; //grade_update seems to return ok now, but could reasonably return deleted in the future
 }
 
-function lti_verify_message($key, $sharedsecrets, $body, $headers = null){
-    foreach($sharedsecrets as $secret){
+function lti_verify_message($key, $sharedsecrets, $body, $headers = null) {
+    foreach ($sharedsecrets as $secret) {
         $signaturefailed = false;
 
-        try{
+        try {
             lti\handleOAuthBodyPOST($key, $secret, $body, $headers);
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             $signaturefailed = true;
         }
 
-        if(!$signaturefailed){
+        if (!$signaturefailed) {
             return $secret;//Return the secret used to sign the message)
         }
     }
@@ -203,12 +200,10 @@ function lti_verify_message($key, $sharedsecrets, $body, $headers = null){
     return false;
 }
 
-function lti_verify_sourcedid($ltiinstance, $parsed){
+function lti_verify_sourcedid($ltiinstance, $parsed) {
     $sourceid = lti_build_sourcedid($parsed->instanceid, $parsed->userid, $parsed->launchid, $ltiinstance->servicesalt);
 
-    if($sourceid->hash != $parsed->sourcedidhash){
+    if ($sourceid->hash != $parsed->sourcedidhash) {
         throw new Exception('SourcedId hash not valid');
     }
 }
-
-?>

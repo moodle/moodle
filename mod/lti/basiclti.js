@@ -48,10 +48,9 @@
 
 function basicltiDebugToggle() {
     var ele = document.getElementById('basicltiDebug');
-    if(ele.style.display == 'block') {
+    if (ele.style.display == 'block') {
         ele.style.display = 'none';
-    }
-    else {
+    } else {
         ele.style.display = 'block';
     }
 }

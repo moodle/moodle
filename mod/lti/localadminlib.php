@@ -55,7 +55,7 @@ require_once($CFG->libdir.'/adminlib.php');
  *
  * @TODO: finish doc this class and it's functions
  */
-class admin_setting_ltimodule_configlink extends admin_setting {
+public class admin_setting_ltimodule_configlink extends admin_setting {
 
     /**
      * Constructor
@@ -63,19 +63,19 @@ class admin_setting_ltimodule_configlink extends admin_setting {
      * @param string $visiblename localised
      * @param string $description long localised info
      */
-    function admin_setting_ltimodule_configlink($name, $visiblename, $description) {
+    public function __construct($name, $visiblename, $description) {
         parent::__construct($name, $visiblename, $description, '');
     }
 
-    function get_setting() {
+    public function get_setting() {
         return true;
     }
 
-    function write_setting($data) {
+    public function write_setting($data) {
         return "";
     }
 
-    function output_html($data, $query='') {
+    public function output_html($data, $query='') {
         global $CFG;
         return format_admin_setting($this, "",
                 '<div class="defaultsnext" >'.

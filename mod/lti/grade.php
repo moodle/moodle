@@ -154,11 +154,11 @@ HTML;
 
 $rows = '';
 
-foreach($submissions as $submission){
+foreach ($submissions as $submission) {
     $row = $rowtemplate;
 
-    foreach($submission as $key => $value){
-        if($key === 'datesubmitted'){
+    foreach ($submission as $key => $value) {
+        if ($key === 'datesubmitted') {
             $value = userdate($value);
         }
 

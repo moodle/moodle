@@ -38,9 +38,9 @@ $typeid = optional_param('typeid', null, PARAM_INT);
 
 require_capability('mod/lti:addcoursetool', get_context_instance(CONTEXT_COURSE, $courseid));
 
-if(!empty($typeid)){
+if (!empty($typeid)) {
     $type = lti_get_type($typeid);
-    if($type->course != $courseid){
+    if ($type->course != $courseid) {
         throw new Exception('You do not have permissions to edit this tool type.');
         die;
     }
@@ -93,7 +93,7 @@ SCRIPT;
 
         die;
     }
-} else if(isset($data->cancel)){
+} else if (isset($data->cancel)) {
     $script = <<<SCRIPT
         <script type="text/javascript">
             window.close();
@@ -105,17 +105,17 @@ SCRIPT;
 }
 
 //Delete action is called via ajax
-if ($action == 'delete'){
+if ($action == 'delete') {
     lti_delete_type($typeid);
     die;
 }
 
 echo $OUTPUT->heading(get_string('toolsetup', 'lti'));
 
-if($action == 'add') {
+if ($action == 'add') {
     $form = new mod_lti_edit_types_form();
     $form->display();
-} else if($action == 'edit'){
+} else if ($action == 'edit') {
     $form = new mod_lti_edit_types_form();
     $type = lti_get_type_type_config($typeid);
     $form->set_data($type);

@@ -33,8 +33,6 @@
             }
 
             this.setupTable();
-
-
         },
 
         setupTable: function(){

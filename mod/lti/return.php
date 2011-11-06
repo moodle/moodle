@@ -38,7 +38,7 @@ $course = $DB->get_record('course', array('id' => $courseid));
 
 require_login($course);
 
-if(!empty($errormsg)){
+if (!empty($errormsg)) {
     $url = new moodle_url('/mod/lti/return.php', array('course' => $courseid));
     $PAGE->set_url($url);
 
@@ -47,7 +47,7 @@ if(!empty($errormsg)){
     $PAGE->set_heading($course->fullname);
 
     //Avoid frame-in-frame action
-    if($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED || $launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
+    if ($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED || $launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
         $PAGE->set_pagelayout('embedded');
     } else {
         $PAGE->set_pagelayout('incourse');
@@ -61,7 +61,7 @@ if(!empty($errormsg)){
 
     $canaddtools = has_capability('mod/lti:addcoursetool', get_context_instance(CONTEXT_COURSE, $courseid));
 
-    if($unsigned == 1 && $canaddtools){
+    if ($unsigned == 1 && $canaddtools) {
         echo '<br /><br />';
 
         $links = new stdClass();
@@ -82,7 +82,7 @@ if(!empty($errormsg)){
     $url = $courseurl->out();
 
     //Avoid frame-in-frame action
-    if($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED || $launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
+    if ($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED || $launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
         //Output a page containing some script to break out of frames and redirect them
 
         echo '<html><body>';

@@ -31,8 +31,8 @@ use moodle\mod\lti as lti;
 
 $rawbody = file_get_contents("php://input");
 
-foreach(getallheaders() as $name => $value){
-    if($name === 'Authorization'){
+foreach (getallheaders() as $name => $value) {
+    if ($name === 'Authorization') {
         $oauthparams = lti\OAuthUtil::split_header($value);
 
         $consumerkey = $oauthparams['oauth_consumer_key'];
@@ -40,24 +40,24 @@ foreach(getallheaders() as $name => $value){
     }
 }
 
-if(empty($consumerkey)){
+if (empty($consumerkey)) {
     throw new Exception('Consumer key is missing.');
 }
 
 $sharedsecret = lti_verify_message($consumerkey, lti_get_shared_secrets_by_key($consumerkey), $rawbody);
 
-if($sharedsecret === false){
+if ($sharedsecret === false) {
     throw new Exception('Message signature not valid');
 }
 
 $xml = new SimpleXMLElement($rawbody);
 
 $body = $xml->imsx_POXBody;
-foreach($body->children() as $child){
+foreach ($body->children() as $child) {
     $messagetype = $child->getName();
 }
 
-switch($messagetype){
+switch ($messagetype) {
     case 'replaceResultRequest':
         $parsed = lti_parse_grade_replace_message($xml);
 
@@ -99,9 +99,7 @@ switch($messagetype){
         );
 
         $node = $responsexml->imsx_POXBody->readResultResponse;
-        $node->addChild('result')
-             ->addChild('resultScore')
-             ->addChild('textString', isset($grade) ? $grade : '');
+        $node->addChild('result')->addChild('resultScore')->addChild('textString', isset($grade) ? $grade : '');
 
         echo $responsexml->asXML();
 
@@ -145,7 +143,7 @@ switch($messagetype){
 
         events_trigger('lti_unknown_service_api_call', $data);
 
-        if(!$lti_web_service_handled){
+        if (!$lti_web_service_handled) {
             $responsexml = lti_get_response_xml(
                 'unsupported',
                 'unsupported',

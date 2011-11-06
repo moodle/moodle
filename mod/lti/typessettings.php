@@ -96,7 +96,7 @@ if (confirm_sesskey() && isset($data->submitbutton)) {
         redirect($redirect);
         die;
     }
-} else if(isset($data->cancel)){
+} else if (isset($data->cancel)) {
     redirect($redirect);
     die;
 }
