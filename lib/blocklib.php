@@ -1623,7 +1623,10 @@ function generate_page_type_patterns($pagetype, $parentcontext = null, $currentc
                     $libfile = $directory.'/lib.php';
                     if (file_exists($libfile)) {
                         require_once($libfile);
-                        $function = $pluginname.'_page_type_list';
+                        $function = $possiblecomponent.'_'.$pluginname.'_page_type_list';
+                        if (!function_exists($function)) {
+                            $function = $pluginname.'_page_type_list';
+                        }
                         if (function_exists($function)) {
                             if ($patterns = $function($pagetype, $parentcontext, $currentcontext)) {
                                 break;
