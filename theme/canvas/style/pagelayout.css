@@ -65,3 +65,26 @@
 .has_dock.side-post-only .page-middle #region-main-box #region-post-box #region-main-wrap #region-main {
     margin-left: 210px;
 }
+
+/** Moving blocks when side-post-only **/
+
+.blocks-moving.side-post-only #page-content #region-main-box {
+    left: 210px;
+}
+
+.blocks-moving.side-post-only #page-content #region-post-box {
+    margin-left: -420px;
+}
+
+.blocks-moving.side-post-only #page-content #region-main {
+    margin-left: 420px;
+}
+
+.blocks-moving.side-post-only #page-content #region-pre {
+left: 210px;
+    width: 210px;
+}
+
+.blocks-moving.side-post-only #page-content #region-post {
+    width: 210px;
+}
