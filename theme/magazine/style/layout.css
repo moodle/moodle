@@ -1,150 +1,176 @@
 #page-content {
-	clear: both;
-	float: left;
-	overflow: visible;
-	position: relative;
-	width: 100%;
+    clear: both;
+    float: left;
+    overflow: visible;
+    position: relative;
+    width: 100%;
 }
 
 #page-content #region-main-box {
-	float: left;
-	right: 23%;
-	position: relative;
-	width: 100%;
-	border: 0px solid #3333cc;
+    float: left;
+    right: 23%;
+    position: relative;
+    width: 100%;
+    border: 0px solid #3333cc;
 }
 
 #page-content #region-post-box {
-	float: left;
-	right: 54%;
-	position: relative;
-	width: 100%;
-	border: 0px solid #3333cc;
+    float: left;
+    right: 54%;
+    position: relative;
+    width: 100%;
+    border: 0px solid #3333cc;
 }
 
 #page-content #region-main {
-	float: left;
-	left: 101%;
-	overflow: visible;
-	position: relative;
-	width: 52%;
+    float: left;
+    left: 101%;
+    overflow: visible;
+    position: relative;
+    width: 52%;
 }
 
 #page-content #region-pre {
-	float: left;
-	left: 26%;
-	overflow: visible;
-	position: relative;
-	width: 21%;
+    float: left;
+    left: 26%;
+    overflow: visible;
+    position: relative;
+    width: 21%;
 }
 
 #page-content #region-post {
-	float: left;
-	left: 82%;
-	overflow: visible;
-	position: relative;
-	width: 21%;
+    float: left;
+    left: 82%;
+    overflow: visible;
+    position: relative;
+    width: 21%;
 }
 
 #page-content .region-content {
-	overflow: visible;
-	padding: 10px 0;
-	border: 0px solid #3333cc;
+    overflow: visible;
+    padding: 10px 0;
+    border: 0px solid #3333cc;
 }
 
 #page-content {
-	overflow: hidden
+    overflow: hidden
 }
 
 /** Only side pre **/
 
 .side-pre-only #page-content #region-main-box {
-	right: 0%;
+    right: 0%;
 }
 
 .side-pre-only #page-content #region-post-box {
-	right: 77%;
+    right: 77%;
 }
 
 .side-pre-only #page-content #region-main {
-	left: 100%;
-	width: 77%;
+    left: 100%;
+    width: 77%;
 }
 
 .side-pre-only #page-content #region-main .region-content {
-	overflow: hidden;
-	padding: 20px 10px;
-	padding-top: 10px;
+    overflow: hidden;
+    padding: 20px 10px;
+    padding-top: 10px;
 }
 
 .side-pre-only #page-content #region-pre {
-	left: 1%;
-	width: 21%;
+    left: 1%;
+    width: 21%;
 }
 
 .side-pre-only #page-content #region-post {
-	width: 0%;
+    width: 0%;
 }
 
 /** Only side post **/
 
 .side-post-only #page-content #region-main-box {
-	right: 23%;
+    right: 23%;
 }
 
 .side-post-only #page-content #region-post-box {
-	right: 76%;
+    right: 76%;
 }
 
 .side-post-only #page-content #region-main {
-	left: 100%;
-	width: 77%;
+    left: 100%;
+    width: 77%;
 }
 
 .side-post-only #page-content #region-main .region-content {
-	overflow: hidden;
-	padding: 20px 10px;
+    overflow: hidden;
+    padding: 20px 10px;
 }
 
 .side-post-only #page-content #region-post {
-	left: 100%;
-	width: 21%;
+    left: 100%;
+    width: 21%;
 }
 
 .has_dock.side-post-only .page-middle #region-main-box #region-post-box #region-main-wrap #region-main {
-	margin-left: 23%;
+    margin-left: 23%;
+}
+
+/** Moving blocks when side-post-only **/
+
+.blocks-moving.side-post-only #page-content #region-main-box {
+    right: 23%;
+    width: 100%;
+}
+
+.blocks-moving.side-post-only #page-content #region-post-box {
+    right: 54%;
+}
+
+.blocks-moving.side-post-only #page-content #region-main {
+    left: 101%;
+    width: 52%;
+}
+
+.blocks-moving.side-post-only #page-content #region-pre {
+    left: 26%;
+    width: 21%;
+}
+
+.blocks-moving.side-post-only #page-content #region-post {
+    left: 82%;
+    width: 21%;
 }
 
 /** No blocks whatsoever **/
 
 .content-only #page-content #region-main-box {
-	right: 0%;
+    right: 0%;
 }
 
 .content-only #page-content #region-post-box {
-	right: 100%;
+    right: 100%;
 }
 
 .content-only #page-content #region-main {
-	width: 98%;
+    width: 98%;
 }
 
 .content-only #page-content #region-pre {
-	width: 0%;
+    width: 0%;
 }
 
 #region-pre {
-	padding-top: 0px;
+    padding-top: 0px;
 }
 
 /** fix for some extra padding in side-post-only view **/
 
 .side-post-only div.region-content {
-	padding-top: 0px !important;
+    padding-top: 0px !important;
 }
 
 #region-post {
-	padding-top: 0px;
+    padding-top: 0px;
 }
 
 .pagelayout-report #page-content #region-main {overflow:auto;}

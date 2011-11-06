@@ -53,6 +53,13 @@ body {margin:auto 0px;width:auto;}
 .side-post-only #page-content #region-pre {width:0px;}
 .has_dock.side-post-only .page-middle #region-main {margin-left:200px;}
 
+/** Moving block when side-post-only **/
+.blocks-moving.side-post-only #page-content #region-main-box {left:200px;width:200%;}
+.blocks-moving.side-post-only #page-content #region-post-box {margin-left:-400px;}
+.blocks-moving.side-post-only #page-content #region-main {margin-left:400px;}
+.blocks-moving.side-post-only #page-content #region-pre {left:200px;width:200px;}
+.blocks-moving.side-post-only #page-content #region-post {left:0px;width:200px;}
+
 /** No blocks whatsoever **/
 .content-only #page-content {min-width:0;}
 .content-only #page-content #region-main-box {left:0px;}
