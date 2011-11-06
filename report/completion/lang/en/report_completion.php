@@ -26,5 +26,7 @@
 
 $string['completion:view'] = 'View course completion report';
 $string['completiondate'] = 'Completion date';
-$string['pluginpagetype'] = 'Course completion report';
+$string['page-report-completion-x'] = 'Any completion report';
+$string['page-report-completion-index'] = 'Course completion report';
+$string['page-report-completion-user'] = 'User course completion report';
 $string['pluginname'] = 'Course completion';

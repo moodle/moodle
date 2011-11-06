@@ -97,9 +97,11 @@ function report_outline_can_access_user_report($user, $course) {
  */
 function report_outline_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $array = array(
-        '*' => get_string('page-x', 'pagetype'),
-        'course-report-*' => get_string('page-course-report-x', 'pagetype'),
-        'course-report-outline-index' => get_string('pluginpagetype',  'report_outline')
+        '*'                    => get_string('page-x', 'pagetype'),
+        'report-*'             => get_string('page-report-x', 'pagetype'),
+        'report-outline-*'     => get_string('page-report-outline-x',  'report_outline'),
+        'report-outline-index' => get_string('page-report-outline-index',  'report_outline'),
+        'report-outline-user'  => get_string('page-report-outline-user',  'report_outline')
     );
     return $array;
 }

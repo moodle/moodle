@@ -31,6 +31,7 @@ $string['page-course-report-x'] = 'Any course report';
 $string['page-mod-x'] = 'Any activity module page';
 $string['page-mod-x-view'] = 'Any main activity module page';
 $string['page-my-index'] = 'My home page';
+$string['page-report-x'] = 'Any report page';
 $string['page-site-index'] = 'The front page only';
 $string['page-site-x'] = 'Any top-level site page';
 $string['page-user-view'] = 'Only user profile pages';
