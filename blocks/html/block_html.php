@@ -121,7 +121,7 @@ class block_html extends block_base {
 
         return true;
     }
-    
+
     /**
      * The block should only be dockable when the title of the block is not empty
      * and when parent allows docking.
