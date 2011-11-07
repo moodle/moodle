@@ -397,6 +397,9 @@ abstract class gradingform_controller {
      */
     public function has_active_instances() {
         global $DB;
+        if (empty($this->definition->id)) {
+            return false;
+        }
         if ($this->hasactiveinstances === null) {
             $conditions = array('formid'  => $this->definition->id,
                         'status'  => gradingform_instance::INSTANCE_STATUS_ACTIVE);
@@ -443,6 +446,25 @@ abstract class gradingform_controller {
             $class = 'gradingform_'. $this->get_method_name(). '_instance';
             return $this->get_instance($class::create_new($this->definition->id, $raterid, $itemid));
         }
+    }
+
+    /**
+     * If instanceid is specified and grading instance exists and it is created by this rater for
+     * this item, this instance is returned.
+     * Otherwise new instance is created for the specified rater and itemid
+     *
+     * @param int $instanceid
+     * @param int $raterid
+     * @param int $itemid
+     * @return gradingform_instance
+     */
+    public function get_or_create_instance($instanceid, $raterid, $itemid) {
+        global $DB;
+        if ($instanceid &&
+                $instance = $DB->get_record('grading_instances', array('id'  => $instanceid, 'raterid' => $raterid, 'itemid' => $itemid), '*', IGNORE_MISSING)) {
+            return $this->get_instance($instance);
+        }
+        return $this->create_instance($raterid, $itemid);
     }
 
     /**
@@ -672,12 +694,25 @@ abstract class gradingform_instance {
     }
 
     /**
+     * Returns the specified element from object $this->data
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function get_data($key) {
+        if (isset($this->data->$key)) {
+            return $this->data->$key;
+        }
+        return null;
+    }
+
+    /**
      * Returns instance id
      *
      * @return int
      */
     public function get_id() {
-        return $this->data->id;
+        return $this->get_data('id');
     }
 
     /**
@@ -686,7 +721,7 @@ abstract class gradingform_instance {
      * @return int
      */
     public function get_status() {
-        return $this->data->status;
+        return $this->get_data('status');
     }
 
     /**

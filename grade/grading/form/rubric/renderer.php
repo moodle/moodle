@@ -355,6 +355,9 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
                     $level['class'] .= ' checked';
                     //in mode DISPLAY_EVAL the class 'checked' will be added by JS if it is enabled. If JS is not enabled, the 'checked' class will only confuse
                 }
+                if (isset($criterionvalue['savedlevelid']) && ((int)$criterionvalue['savedlevelid'] === $levelid)) {
+                    $level['class'] .= ' currentchecked';
+                }
                 $level['tdwidth'] = 100/count($criterion['levels']);
                 $levels_str .= $this->level_template($mode, $options, $elementname, $id, $level);
             }

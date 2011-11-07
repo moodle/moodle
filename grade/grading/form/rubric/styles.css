@@ -82,6 +82,7 @@
 .gradingform_rubric.editor .criterion.last .controls .movedown input {display:none;}
 
 /* evaluation */
+.gradingform_rubric .criterion .levels .level.currentchecked {background:#fff0f0;}
 .gradingform_rubric .criterion .levels .level.checked {background:#d0ffd0;border:1px solid #555;}
 .gradingform_rubric.evaluate .criterion .levels .level:hover {background:#30ff30;}
 
@@ -114,4 +115,5 @@
  */
 
 .gradingform_rubric-regrade {padding:10px;background:#FFDDDD;border:1px solid #F00;margin-bottom:10px;}
+.gradingform_rubric-restored {padding:10px;background:#FFFFDD;border:1px solid #FF0;margin-bottom:10px;}
 .gradingform_rubric-error {color:red;font-weight:bold;}

@@ -484,6 +484,36 @@ class gradingform_rubric_controller extends gradingform_controller {
     }
 
     /**
+     * If instanceid is specified and grading instance exists and it is created by this rater for
+     * this item, this instance is returned.
+     * If there exists a draft for this raterid+itemid, take this draft (this is the change from parent)
+     * Otherwise new instance is created for the specified rater and itemid
+     *
+     * @param int $instanceid
+     * @param int $raterid
+     * @param int $itemid
+     * @return gradingform_instance
+     */
+    public function get_or_create_instance($instanceid, $raterid, $itemid) {
+        global $DB;
+        if ($instanceid &&
+                $instance = $DB->get_record('grading_instances', array('id'  => $instanceid, 'raterid' => $raterid, 'itemid' => $itemid), '*', IGNORE_MISSING)) {
+            return $this->get_instance($instance);
+        }
+        if ($itemid && $raterid) {
+            if ($rs = $DB->get_records('grading_instances', array('raterid' => $raterid, 'itemid' => $itemid), 'timemodified DESC', '*', 0, 1)) {
+                $record = reset($rs);
+                $currentinstance = $this->get_current_instance($raterid, $itemid);
+                if ($record->status == gradingform_rubric_instance::INSTANCE_STATUS_INCOMPLETE && $record->timemodified > $currentinstance->get_data('timemodified')) {
+                    $record->isrestored = true;
+                    return $this->get_instance($record);
+                }
+            }
+        }
+        return $this->create_instance($raterid, $itemid);
+    }
+
+    /**
      * Returns html code to be included in student's feedback.
      *
      * @param moodle_page $page
@@ -724,6 +754,23 @@ class gradingform_rubric_instance extends gradingform_instance {
         $currentinstance = $this->get_current_instance();
         if ($currentinstance && $currentinstance->get_status() == gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
             $html .= html_writer::tag('div', get_string('needregrademessage', 'gradingform_rubric'), array('class' => 'gradingform_rubric-regrade'));
+        }
+        $haschanges = false;
+        if ($currentinstance) {
+            $curfilling = $currentinstance->get_rubric_filling();
+            foreach ($curfilling['criteria'] as $criterionid => $curvalues) {
+                $value['criteria'][$criterionid]['savedlevelid'] = $curvalues['levelid'];
+                $newremark = null;
+                $newlevelid = null;
+                if (isset($value['criteria'][$criterionid]['remark'])) $newremark = $value['criteria'][$criterionid]['remark'];
+                if (isset($value['criteria'][$criterionid]['levelid'])) $newlevelid = $value['criteria'][$criterionid]['levelid'];
+                if ($newlevelid != $curvalues['levelid'] || $newremark != $curvalues['remark']) {
+                    $haschanges = true;
+                }
+            }
+        }
+        if ($this->get_data('isrestored') && $haschanges) {
+            $html .= html_writer::tag('div', get_string('restoredfromdraft', 'gradingform_rubric'), array('class' => 'gradingform_rubric-restored'));
         }
         $html .= $this->get_controller()->get_renderer($page)->display_rubric($criteria, $options, $mode, $gradingformelement->getName(), $value);
         return $html;
