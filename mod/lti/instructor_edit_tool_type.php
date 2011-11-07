@@ -63,12 +63,12 @@ if (isset($data->submitbutton) && confirm_sesskey()) {
         $json = json_encode($fromdb);
 
         //Output script to update the calling window.
-        $script = <<<SCRIPT
-            <script type="text/javascript">
+        $script = "
+            <script type=\"text/javascript\">
                 window.opener.M.mod_lti.editor.updateToolType({$json});
                 window.close();
             </script>
-SCRIPT;
+        ";
 
         echo $script;
         die;
@@ -82,23 +82,23 @@ SCRIPT;
         $json = json_encode($fromdb);
 
         //Output script to update the calling window.
-        $script = <<<SCRIPT
-            <script type="text/javascript">
+        $script = "
+            <script type=\"text/javascript\">
                 window.opener.M.mod_lti.editor.addToolType({$json});
                 window.close();
             </script>
-SCRIPT;
+        ";
 
         echo $script;
 
         die;
     }
 } else if (isset($data->cancel)) {
-    $script = <<<SCRIPT
-        <script type="text/javascript">
+    $script = "
+        <script type=\"text/javascript\">
             window.close();
         </script>
-SCRIPT;
+    ";
 
     echo $script;
     die;

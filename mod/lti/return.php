@@ -87,23 +87,23 @@ if (!empty($errormsg)) {
 
         echo '<html><body>';
 
-        $script = <<<SCRIPT
-            <script type='text/javascript'>
+        $script = "
+            <script type=\"text/javascript\">
             //<![CDATA[
                 if(window != top){
                     top.location.href = '{$url}';
                 }
             //]]
             </script>
-SCRIPT;
+        ";
 
         $clickhere = get_string('return_to_course', 'lti', (object)array('link' => $url));
 
-        $noscript = <<<NOSCRIPT
+        $noscript = "
             <noscript>
                 {$clickhere}
             </noscript>
-NOSCRIPT;
+        ";
 
         echo $script;
         echo $noscript;

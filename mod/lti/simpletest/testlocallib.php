@@ -90,7 +90,7 @@ class lti_locallib_test extends UnitTestCase {
     }
 
     public function test_parse_grade_replace_message() {
-        $message = <<<XML
+        $message = '
             <imsx_POXEnvelopeRequest xmlns = "http://www.imsglobal.org/lis/oms1p0/pox">
               <imsx_POXHeader>
                 <imsx_POXRequestHeaderInfo>
@@ -114,7 +114,7 @@ class lti_locallib_test extends UnitTestCase {
                 </replaceResultRequest>
               </imsx_POXBody>
             </imsx_POXEnvelopeRequest>
-XML;
+';
 
         $parsed = lti_parse_grade_replace_message(new SimpleXMLElement($message));
 

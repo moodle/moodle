@@ -87,17 +87,17 @@ $PAGE->requires->js_init_call('M.mod_lti.submissions.init', array(), true, $modu
 
 $PAGE->requires->yui2_lib('datatable');
 
-$submissionquery = <<<SQL
+$submissionquery = '
     SELECT s.id, u.firstname, u.lastname, u.id AS userid, s.datesubmitted, s.gradepercent
     FROM {lti_submission} s
     INNER JOIN {user} u ON s.userid = u.id
     WHERE s.ltiid = :ltiid
     ORDER BY s.datesubmitted DESC
-SQL;
+';
 
 $submissions = $DB->get_records_sql($submissionquery, array('ltiid' => $lti->id));
 
-$html = <<<HTML
+$html = '
 <noscript>
     <!-- If javascript is disabled, we need to show the table using CSS.
         The table starts out hidden to avoid flickering as it loads -->
@@ -107,7 +107,7 @@ $html = <<<HTML
 </noscript>
 
 <div id="lti_submissions_table_container" style="display:none">
-    <table id='lti_submissions_table'>
+    <table id="lti_submissions_table">
         <thead>
             <tr>
                 <th>User</th>
@@ -120,9 +120,9 @@ $html = <<<HTML
         </tbody>
     </table>
 </div>
-HTML;
+';
 
-$rowtemplate = <<<HTML
+$rowtemplate = '
 <tr>
     <td>
         <!--firstname--> <!--lastname-->
@@ -134,7 +134,7 @@ $rowtemplate = <<<HTML
         <!--gradepercent-->
     </td>
 </tr>
-HTML;
+';
 
 $rows = '';
 

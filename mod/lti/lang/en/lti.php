@@ -225,7 +225,7 @@ $string['secure_icon_url'] = 'Secure Icon URL';
 $string['return_to_course'] = 'Click <a href="{$a->link}" target="_top">here</a> to return to the course.';
 
 $string['lti_launch_error'] = 'An error occured when launching the external tool: ';
-$string['lti_launch_error_unsigned_help'] = <<<'HTML'
+$string['lti_launch_error_unsigned_help'] = '
     <p>
         This error may be a result of a missing consumer key and shared secret for the tool provider.
     </p>
@@ -233,24 +233,25 @@ $string['lti_launch_error_unsigned_help'] = <<<'HTML'
         If you have a consumer key and shared secret, you may enter it when editing the external tool instance (make sure advanced options are visible).<br />
         Alternatively, you may create a course level tool provider configuration <a href="{$a->course_tool_editor}">here</a>.
     </p>
-HTML;
-$string['lti_launch_error_tool_request'] = <<<'HTML'
+';
+
+$string['lti_launch_error_tool_request'] = '
     <p>
         To submit a request for an administrator to complete the tool configuration, click <a href="{$a->admin_request_url}" target="_top">here</a>.
     </p>
-HTML;
+';
 
-$string['lti_tool_request_added'] = <<<HTML
+$string['lti_tool_request_added'] = '
     Tool configuration request successfully submitted. You may need to contact an administrator to complete the tool configuration.
-HTML;
+';
 
-$string['lti_tool_request_existing'] = <<<HTML
+$string['lti_tool_request_existing'] = '
     A tool configuration for the tool domain has already been submitted.
-HTML;
+';
 
 //Instance help
 
-$string['external_tool_type_help'] = <<<HTML
+$string['external_tool_type_help'] = '
 The main purpose of a tool configuration is to set up a secure communication channel between Moodle and the tool provider.
 It also provides an opportunity for configuration defaults and setting up additional services provided by the tool.
 
@@ -288,35 +289,35 @@ Three icons are available after the External tool type dropdown list:
         <b>Delete</b> - Remove the selected course level tool type.
     </li>
 </ul>
-HTML;
+';
 
-$string['launch_url_help'] = <<<HTML
+$string['launch_url_help'] = '
 The Launch URL indicates the web address of the External Tool, and may contain additional information, such as the resource to show.
 If you are unsure what to enter for the Launch URL, please check with the tool provider for more information.
 
 If you have selected a specific tool type, you may not need to enter a Launch URL. If the tool link is used to just launch
-into the tool provider's system, and not go to a specific resource, this will likely be the case.
-HTML;
+into the tool provider\'s system, and not go to a specific resource, this will likely be the case.
+';
 
-$string['secure_launch_url_help'] = <<<HTML
+$string['secure_launch_url_help'] = '
 Similar to Launch URL, but used instead of the launch url if high security is required. Moodle will use the
 secure launch URL instead of the launch URL if the Moodle site is accessed through SSL, or if the tool configuration
 is set to always launch through SSL.
     
 The Launch URL may also be set to an https address to force launching through SSL, and this field may be left blank.
-HTML;
+';
 
-$string['icon_url_help'] = <<<HTML
+$string['icon_url_help'] = '
 The icon URL allows the icon that shows up in the course listing for this activity to be modified. Instead of using the default
 LTI icon, an icon which conveys the type of activity may be specified.
-HTML;
+'
 
-$string['secure_icon_url_help'] = <<<HTML
+$string['secure_icon_url_help'] = '
 Similar to the icon URL, but used if the user accessing Moodle securely through SSL. The main purpose for this field is to prevent
 the browser from warning the user if the underlying page was accessed over SSL, but requesting to show an unsecure image.
-HTML;
+';
 
-$string['launchinpopup_help'] = <<<HTML
+$string['launchinpopup_help'] = '
 The launch container affects the display of the tool when launched from the course. Some launch containers provide more screen
 real estate to the tool, and others provide a more integrated feel with the Moodle environemnt.
    
@@ -337,9 +338,9 @@ real estate to the tool, and others provide a more integrated feel with the Mood
         It is possible that browsers will prevent the new window from opening.
     </li>
 </ul>
-HTML;
+';
 
-$string['resourcekey_help'] = <<<HTML
+$string['resourcekey_help'] = '
 For pre-configured tools, it is not necessary to enter a resource key here, as the consumer key will be
 provided as part of the configuration process.
 
@@ -354,9 +355,9 @@ tool providers. It may be an automated process, or it may require a dialogue wit
 
 Tools which do not require secure communication from Moodle and do not provide additional services (such as grade reporting)
 may not require a resource key.
-HTML;
+';
 
-$string['password_help'] = <<<HTML
+$string['password_help'] = '
 For pre-configured tools, it is not necessary to enter a shared secret here, as the shared secret will be
 provided as part of the configuration process.
 
@@ -368,69 +369,69 @@ along with the consumer key from the tool provider.
 
 Tools which do not require secure communication from Moodle and do not provide additional services (such as grade reporting)
 may not require a shared secret.
-HTML;
+';
 
-$string['custom_help'] = <<<HTML
+$string['custom_help'] = '
 Custom parameters are settings used by the tool provider. For example, a custom parameter may be used to display
 a specific resource from the provider.
 
 It is safe to leave this field unchanged unless directed by the tool provider.
-HTML;
+';
 
-$string['share_name_help'] = <<<HTML
+$string['share_name_help'] = '
 Specify whether the full name of the user launching the tool should be shared with the tool provider.
-The tool provider may need launchers' names to show meaningful information within the tool.
+The tool provider may need launchers\' names to show meaningful information within the tool.
 
 Note that this setting may be overriden in the tool configuration.
-HTML;
+';
 
-$string['share_email_help'] = <<<HTML
+$string['share_email_help'] = '
 Specify whether the e-mail address of the user launching the tool will be shared with the tool provider.
-The tool provider may need launcher's e-mail addresses to distinguish users with the same name, or send e-mails
+The tool provider may need launcher\'s e-mail addresses to distinguish users with the same name, or send e-mails
 to users based on actions within the tool.
 
 Note that this setting may be overriden in the tool configuration.
-HTML;
+';
 
-$string['accept_grades_help'] = <<<HTML
+$string['accept_grades_help'] = '
 Specify whether the tool provider can add, update, read, and delete grades associated only with this external tool instance.
 
 Some tool providers support reporting grades back to Moodle based on actions taken within the tool, creating a more integrated
 experience.
 
 Note that this setting may be overriden in the tool configuration.
-HTML;
+';
 
-$string['share_roster_help'] = <<<HTML
+$string['share_roster_help'] = '
 Specify whether the tool can access the list of users enrolled in this course.
 
 Note that this setting may be overriden in the tool configuration.
-HTML;
+';
 
-$string['display_name_help'] = <<<HTML
-If selected, the activity name (specified above) will display above the tool provider's content.
+$string['display_name_help'] = '
+If selected, the activity name (specified above) will display above the tool provider\'s content.
 
 It is possible that the tool provider may also display the title. This option can prevent the activity title from
 being displayed twice.
 
-The title is never displayed when the tool's launch container is in a new window.
-HTML;
+The title is never displayed when the tool\'s launch container is in a new window.
+';
 
-$string['display_description_help'] = <<<HTML
-If selected, the activity description (specified above) will display above the tool provider's content.
+$string['display_description_help'] = '
+If selected, the activity description (specified above) will display above the tool provider\'s content.
 
 The description may be used to provide additional instructions for launchers of the tool, but it is not required.
 
-The description is never displayed when the tool's launch container is in a new window.
-HTML;
+The description is never displayed when the tool\'s launch container is in a new window.
+';
 
 //Admin help
-$string['typename_help'] = <<<HTML
+$string['typename_help'] = '
 The tool name is used to identify the tool provider within Moodle. The name entered will be visible
 to instructors when adding external tools within courses.
-HTML;
+';
 
-$string['toolurl_help'] = <<<HTML
+$string['toolurl_help'] = '
 The tool base URL is used to match tool launch URLs to the correct tool configuration. Prefxing the URL with http(s) is optional.
     
 Additionally, the base URL is used as the launch URL if a launch URL is not specified in the external tool instance. 
@@ -475,9 +476,9 @@ Additionally, the base URL is used as the launch URL if a launch URL is not spec
 </table>
 
 If two different tool configurations are for the same domain, the most specific match will be used.
-HTML;
+';
 
-$string['resourcekey_admin_help'] = <<<HTML
+$string['resourcekey_admin_help'] = '
 The consumer key can be thought of as a username used to authenticate access to the tool.
 It can be used by the tool provider to uniquely identify the Moodle site from which users launch into the tool.
 
@@ -486,17 +487,17 @@ tool providers. It may be an automated process, or it may require a dialogue wit
 
 Tools which do not require secure communication from Moodle and do not provide additional services (such as grade reporting)
 may not require a resource key.
-HTML;
+';
 
-$string['password_admin_help'] = <<<HTML
+$string['password_admin_help'] = '
 The shared secret can be thought of as a password used to authenticate access to the tool. It should be provided
 along with the consumer key from the tool provider.
 
 Tools which do not require secure communication from Moodle and do not provide additional services (such as grade reporting)
 may not require a shared secret.
-HTML;
+';
 
-$string['show_in_course_help'] = <<<HTML
+$string['show_in_course_help'] = '
 If selected, this tool configuration will appear in the "External tool type" dropdown when instructors
 configure external tools within courses.
 
@@ -505,9 +506,9 @@ based on the Launch URL matching the Tool base URL, which is the preferred metho
 
 The only case in which this option should be selected is if the tool configuration is just intended for single sign on.
 For example, if all launches to the tool provider just take the user to a landing page instead of to a specific resource.
-HTML;
+';
 
-$string['default_launch_container_help'] = <<<HTML
+$string['default_launch_container_help'] = '
 The launch container affects the display of the tool when launched from the course. Some launch containers provide more screen
 real estate to the tool, and others provide a more integrated feel with the Moodle environemnt.
    
@@ -528,36 +529,36 @@ real estate to the tool, and others provide a more integrated feel with the Mood
         It is possible that browsers will prevent the new window from opening.
     </li>
 </ul>
-HTML;
+';
 
-$string['share_name_admin_help'] = <<<HTML
+$string['share_name_admin_help'] = '
 Specify whether the full name of the user launching the tool should be shared with the tool provider.
-The tool provider may need launchers' names to show meaningful information within the tool.
-HTML;
+The tool provider may need launchers\' names to show meaningful information within the tool.
+';
 
-$string['share_email_admin_help'] = <<<HTML
+$string['share_email_admin_help'] = '
 Specify whether the e-mail address of the user launching the tool will be shared with the tool provider.
-The tool provider may need launcher's e-mail addresses to distinguish users with the same name in the UI, or send e-mails
+The tool provider may need launcher\'s e-mail addresses to distinguish users with the same name in the UI, or send e-mails
 to users based on actions within the tool.
-HTML;
+';
 
-$string['accept_grades_admin_help'] = <<<HTML
+$string['accept_grades_admin_help'] = '
 Specify whether the tool provider can add, update, read, and delete grades associated with instances of this tool type.
 
 Some tool providers support reporting grades back to Moodle based on actions taken within the tool, creating a more integrated
 experience.
-HTML;
+';
 
-$string['share_roster_admin_help'] = <<<HTML
+$string['share_roster_admin_help'] = '
 Specify whether the tool can access the list of users enrolled in courses from which this tool type is launched.
-HTML;
+';
 
 $string['main_admin'] = 'General help';
 
-$string['main_admin_help'] = <<<HTML
+$string['main_admin_help'] = '
 External tools allow Moodle users to seamlessly interact with learning resources hosted remotely. Through a special
 launch protocol, the remote tool will have access to some general information about the launching user. For example,
-the institution name, course id, user id, and other information such as the user's name or e-mail address.
+the institution name, course id, user id, and other information such as the user\'s name or e-mail address.
 
 Tool types listed on this page are separated into three categories:
 
@@ -576,9 +577,9 @@ Tool types listed on this page are separated into three categories:
         Moodle instance. Instructors may still use tools from these providers if they have a consumer key and shared secret, or if none is required.
     </li>
 </ul>
-HTML;
+';
 
-$string['modulename_help'] = <<<HTML
+$string['modulename_help'] = '
 External tools allow Moodle users to interact with learning resources and activities on other web sites. For instance, an
 external tool could provide access to a new activity type or learning materials from a publisher.
 
@@ -601,24 +602,24 @@ External tools differ from URL resources in a few ways:
         between them.
     </li>
 </ul>
-HTML;
+';
 
-$string['force_ssl_help'] = <<<HTML
+$string['force_ssl_help'] = '
 Selecting this option forces all launches to this tool provider to use SSL.
 
 In addition, all web service requests from the tool provider will use SSL.
 
 If using this option, confirm that this Moodle site and the tool provider support SSL.
-HTML;
+';
 
-$string['organizationid_help'] = <<<HTML
+$string['organizationid_help'] = '
 A unique identifier for this Moodle instance. Typically, the DNS name of the organization is used.
 
 If this field is left blank, the host name of this Moodle site will be used as the default value.
-HTML;
+';
 
-$string['organizationurl_help'] = <<<HTML
+$string['organizationurl_help'] = '
 The base URL of this Moodle instance.
     
 If this field is left blank, a default value will be used based on the site configuration.
-HTML;
+';

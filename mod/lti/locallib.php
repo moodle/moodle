@@ -346,9 +346,9 @@ function lti_get_tool_table($tools, $id) {
     }
 
     if (!empty($tools)) {
-        $html .= <<<HTML
-        <div id="{$id}_container" style="margin-top:.5em;margin-bottom:.5em">
-            <table id="{$id}_tools">
+        $html .= "
+        <div id=\"{$id}_container\" style=\"margin-top:.5em;margin-bottom:.5em\">
+            <table id=\"{$id}_tools\">
                 <thead>
                     <tr>
                         <th>$typename</th>
@@ -357,7 +357,7 @@ function lti_get_tool_table($tools, $id) {
                         <th>$action</th>
                     </tr>
                 </thead>
-HTML;
+        ";
 
         foreach ($tools as $type) {
             $date = userdate($type->timecreated);
@@ -365,11 +365,11 @@ HTML;
             $update = get_string('update', 'lti');
             $delete = get_string('delete', 'lti');
 
-            $accepthtml = <<<HTML
-                <a class="editing_accept" href="{$CFG->wwwroot}/mod/lti/typessettings.php?action=accept&amp;id={$type->id}&amp;sesskey={$USER->sesskey}&amp;tab={$id}" title="{$accept}">
-                    <img class="iconsmall" alt="{$accept}" src="{$CFG->wwwroot}/pix/t/clear.gif"/>
+            $accepthtml = "
+                <a class=\"editing_accept\" href=\"{$CFG->wwwroot}/mod/lti/typessettings.php?action=accept&amp;id={$type->id}&amp;sesskey={$USER->sesskey}&amp;tab={$id}\" title=\"{$accept}\">
+                    <img class=\"iconsmall\" alt=\"{$accept}\" src=\"{$CFG->wwwroot}/pix/t/clear.gif\"/>
                 </a>
-HTML;
+            ";
 
             $deleteaction = 'delete';
 
@@ -382,7 +382,7 @@ HTML;
                 $delete = get_string('reject', 'lti');
             }
 
-            $html .= <<<HTML
+            $html .= "
             <tr>
                 <td>
                     {$type->name}
@@ -393,17 +393,17 @@ HTML;
                 <td>
                     {$date}
                 </td>
-                <td align="center">
+                <td align=\"center\">
                     {$accepthtml}
-                    <a class="editing_update" href="{$CFG->wwwroot}/mod/lti/typessettings.php?action=update&amp;id={$type->id}&amp;sesskey={$USER->sesskey}&amp;tab={$id}" title="{$update}">
-                        <img class="iconsmall" alt="{$update}" src="{$CFG->wwwroot}/pix/t/edit.gif"/>
+                    <a class=\"editing_update\" href=\"{$CFG->wwwroot}/mod/lti/typessettings.php?action=update&amp;id={$type->id}&amp;sesskey={$USER->sesskey}&amp;tab={$id}\" title=\"{$update}\">
+                        <img class=\"iconsmall\" alt=\"{$update}\" src=\"{$CFG->wwwroot}/pix/t/edit.gif\"/>
                     </a>
-                    <a class="editing_delete" href="{$CFG->wwwroot}/mod/lti/typessettings.php?action={$deleteaction}&amp;id={$type->id}&amp;sesskey={$USER->sesskey}&amp;tab={$id}" title="{$delete}">
-                        <img class="iconsmall" alt="{$delete}" src="{$CFG->wwwroot}/pix/t/delete.gif"/>
+                    <a class=\"editing_delete\" href=\"{$CFG->wwwroot}/mod/lti/typessettings.php?action={$deleteaction}&amp;id={$type->id}&amp;sesskey={$USER->sesskey}&amp;tab={$id}\" title=\"{$delete}\">
+                        <img class=\"iconsmall\" alt=\"{$delete}\" src=\"{$CFG->wwwroot}/pix/t/delete.gif\"/>
                     </a>
                 </td>
             </tr>
-HTML;
+            ";
         }
         $html .= '</table></div>';
     } else {
@@ -508,17 +508,17 @@ function lti_get_ims_role($user, $cmid, $courseid) {
 function lti_get_type_config($typeid) {
     global $DB;
 
-    $query = <<<QUERY
+    $query = '
         SELECT name, value
         FROM {lti_types_config}
         WHERE typeid = :typeid1
 
         UNION ALL
 
-        SELECT 'toolurl' AS name, baseurl AS value
+        SELECT \'toolurl\' AS name, baseurl AS value
         FROM {lti_types}
         WHERE id = :typeid2
-QUERY;
+    ';
 
     $typeconfig = array();
     $configs = $DB->get_records_sql($query, array('typeid1' => $typeid, 'typeid2' => $typeid));
@@ -554,13 +554,13 @@ function lti_get_tools_by_domain($domain, $state = null, $courseid = null) {
         $coursefilter = 'OR course = :courseid';
     }
 
-    $query = <<<QUERY
+    $query = '
         SELECT * FROM {lti_types}
         WHERE
             tooldomain = :tooldomain
         AND (course = :siteid $coursefilter)
         $statefilter
-QUERY;
+    ';
 
     return $DB->get_records_sql($query, array(
         'courseid' => $courseid,
@@ -589,14 +589,14 @@ function lti_filter_get_types($course) {
 function lti_get_types_for_add_instance() {
     global $DB, $SITE, $COURSE;
 
-    $query = <<<QUERY
+    $query = '
             SELECT *
             FROM {lti_types}
             WHERE
                 coursevisible = 1
             AND (course = :siteid OR course = :courseid)
             AND state = :active
-QUERY;
+    ';
 
     $admintypes = $DB->get_records_sql($query, array('siteid' => $SITE->id, 'courseid' => $COURSE->id, 'active' => LTI_TOOL_STATE_CONFIGURED));
 
@@ -692,15 +692,15 @@ function lti_get_shared_secrets_by_key($key) {
 
     //Look up the shared secret for the specified key in both the types_config table (for configured tools)
     //And in the lti resource table for ad-hoc tools
-    $query = <<<QUERY
+    $query = '
         SELECT t2.value
         FROM {lti_types_config} t1
         INNER JOIN {lti_types_config} t2 ON t1.typeid = t2.typeid
         INNER JOIN {lti_types} type ON t2.typeid = type.id
         WHERE
-            t1.name = 'resourcekey'
+            t1.name = \'resourcekey\'
         AND t1.value = :key1
-        AND t2.name = 'password'
+        AND t2.name = \'password\'
         AND type.state = :configured
 
         UNION
@@ -708,7 +708,7 @@ function lti_get_shared_secrets_by_key($key) {
         SELECT password AS value
         FROM {lti}
         WHERE resourcekey = :key2
-QUERY;
+    ';
 
     $sharedsecrets = $DB->get_records_sql($query, array('configured' => LTI_TOOL_STATE_CONFIGURED, 'key1' => $key, 'key2' => $key));
 

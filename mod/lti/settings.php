@@ -99,26 +99,26 @@ if ($ADMIN->fulltree) {
             break;
     }
 
-    $template = <<<HTML
-<div id="lti_tabs" class="yui-navset">
-    <ul id="lti_tab_heading" class="yui-nav" style="display:none">
+    $template = "
+<div id=\"lti_tabs\" class=\"yui-navset\">
+    <ul id=\"lti_tab_heading\" class=\"yui-nav\" style=\"display:none\">
         <li {$activeselected}>
-            <a href="#tab1">
+            <a href=\"#tab1\">
                 <em>$active</em>
             </a>
         </li>
         <li {$pendingselected}>
-            <a href="#tab2">
+            <a href=\"#tab2\">
                 <em>$pending</em>
             </a>
         </li>
         <li {$rejectedselected}>
-            <a href="#tab3">
+            <a href=\"#tab3\">
                 <em>$rejected</em>
             </a>
         </li>
     </ul>
-    <div class="yui-content">
+    <div class=\"yui-content\">
         <div>
             $configuredtoolshtml
         </div>
@@ -131,7 +131,7 @@ if ($ADMIN->fulltree) {
     </div>
 </div>
 
-<script type='text/javascript'>
+<script type=\"text/javascript\">
 //<![CDATA[
     (function(){
         //If javascript is disabled, they will just see the three tabs one after another
@@ -141,29 +141,29 @@ if ($ADMIN->fulltree) {
         new YAHOO.widget.TabView('lti_tabs');
 
         var setupTools = function(id, sort){
-            var lti_tools = YAHOO.util.Dom.get(id + "_tools");
+            var lti_tools = YAHOO.util.Dom.get(id + '_tools');
 
             if(lti_tools){
                 var dataSource = new YAHOO.util.DataSource(lti_tools);
 
                 var configuredColumns = [
-                    {key:"name", label:"$typename", sortable:true},
-                    {key:"baseURL", label:"$baseurl", sortable:true},
-                    {key:"timecreated", label:"$createdon", sortable:true, formatter:YAHOO.widget.DataTable.formatDate},
-                    {key:"action", label:"$action"}
+                    {key:'name', label:'$typename', sortable:true},
+                    {key:'baseURL', label:'$baseurl', sortable:true},
+                    {key:'timecreated', label:'$createdon', sortable:true, formatter:YAHOO.widget.DataTable.formatDate},
+                    {key:'action', label:'$action'}
                 ];
 
                 dataSource.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE;
                 dataSource.responseSchema = {
                     fields: [
-                        {key:"name"},
-                        {key:"baseURL"},
-                        {key:"timecreated", parser:"date"},
-                        {key:"action"}
+                        {key:'name'},
+                        {key:'baseURL'},
+                        {key:'timecreated', parser:'date'},
+                        {key:'action'}
                     ]
                 };
 
-                new YAHOO.widget.DataTable(id + "_container", configuredColumns, dataSource,
+                new YAHOO.widget.DataTable(id + '_container', configuredColumns, dataSource,
                     {
                         sortedBy: sort
                     }
@@ -171,13 +171,13 @@ if ($ADMIN->fulltree) {
             }
         };
 
-        setupTools('lti_configured', {key:"name", dir:"asc"});
-        setupTools('lti_pending', {key:"timecreated", dir:"desc"});
-        setupTools('lti_rejected', {key:"timecreated", dir:"desc"});
+        setupTools('lti_configured', {key:'name', dir:'asc'});
+        setupTools('lti_pending', {key:'timecreated', dir:'desc'});
+        setupTools('lti_rejected', {key:'timecreated', dir:'desc'});
     })();
 //]]
 </script>
-HTML;
+";
 
     $PAGE->requires->yui2_lib('tabview');
     $PAGE->requires->yui2_lib('datatable');

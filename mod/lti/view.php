@@ -120,17 +120,17 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
     echo '<object id="contentframe" height="600px" width="100%" type="text/html" data="launch.php?id='.$cm->id.'"></object>';
 
     //Output script to make the object tag be as large as possible
-    $resize = <<<'SCRIPT'
-        <script type='text/javascript'>
+    $resize = '
+        <script type="text/javascript">
         //<![CDATA[
             (function(){
                 //Take scrollbars off the outer document to prevent double scroll bar effect
-                document.body.style.overflow = 'hidden';
+                document.body.style.overflow = "hidden";
 
                 var dom = YAHOO.util.Dom;
-                var frame = document.getElementById('contentframe');
+                var frame = document.getElementById("contentframe");
 
-                var padding = 15; //The bottom of the iframe wasn't visible on some themes. Probably because of border widths, etc.
+                var padding = 15; //The bottom of the iframe wasn\'t visible on some themes. Probably because of border widths, etc.
 
                 var lastHeight;
 
@@ -139,7 +139,7 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
 
                     if(lastHeight !== Math.min(dom.getDocumentHeight(), viewportHeight)){
 
-                        frame.style.height = viewportHeight - dom.getY(frame) - padding + 'px';
+                        frame.style.height = viewportHeight - dom.getY(frame) - padding + "px";
 
                         lastHeight = Math.min(dom.getDocumentHeight(), dom.getViewportHeight());
                     }
@@ -151,7 +151,7 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
             })();
         //]]
         </script>
-SCRIPT;
+';
 
     echo $resize;
 }
