@@ -24,6 +24,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/* Generates and returns list of available Scorm report sub-plugins
+ *
+ * @param context context level to check caps against
+ * @return array list of valid reports present
+ */
 function scorm_report_list($context) {
     global $CFG;
     static $reportlist;
