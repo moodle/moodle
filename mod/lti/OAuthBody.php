@@ -59,7 +59,7 @@ namespace moodle\mod\lti;//Using a namespace as the basicLTI module imports clas
 require_once($CFG->dirroot . '/mod/lti/OAuth.php');
 require_once($CFG->dirroot . '/mod/lti/TrivialStore.php');
 
-function getOAuthKeyFromHeaders() 
+function getOAuthKeyFromHeaders()
 {
     $request_headers = OAuthUtil::get_headers();
     // print_r($request_headers);
@@ -73,8 +73,8 @@ function getOAuthKeyFromHeaders()
     }
     return false;
 }
- 
-function handleOAuthBodyPOST($oauth_consumer_key, $oauth_consumer_secret, $body, $request_headers = null) 
+
+function handleOAuthBodyPOST($oauth_consumer_key, $oauth_consumer_secret, $body, $request_headers = null)
 {
     if($request_headers == null){
         $request_headers = OAuthUtil::get_headers();

@@ -263,7 +263,7 @@ It also provides an opportunity for configuration defaults and setting up additi
        you may need to enter the tool configuration details manually.
    </li>
    <li>
-       <b>A specific tool type</b> - By selecting a specific tool type, you can force Moodle to use that tool configuration when communicating with the 
+       <b>A specific tool type</b> - By selecting a specific tool type, you can force Moodle to use that tool configuration when communicating with the
        external tool provider. If the Launch URL does not appear to belong to the tool provider, a warning will appear. In some cases, it is not necessary
        to enter a Launch URL when providing a specific tool type (if not launching to a particular resource within the tool provider).
    </li>
@@ -303,14 +303,14 @@ $string['secure_launch_url_help'] = '
 Similar to Launch URL, but used instead of the launch url if high security is required. Moodle will use the
 secure launch URL instead of the launch URL if the Moodle site is accessed through SSL, or if the tool configuration
 is set to always launch through SSL.
-    
+
 The Launch URL may also be set to an https address to force launching through SSL, and this field may be left blank.
 ';
 
 $string['icon_url_help'] = '
 The icon URL allows the icon that shows up in the course listing for this activity to be modified. Instead of using the default
 LTI icon, an icon which conveys the type of activity may be specified.
-'
+';
 
 $string['secure_icon_url_help'] = '
 Similar to the icon URL, but used if the user accessing Moodle securely through SSL. The main purpose for this field is to prevent
@@ -320,7 +320,7 @@ the browser from warning the user if the underlying page was accessed over SSL, 
 $string['launchinpopup_help'] = '
 The launch container affects the display of the tool when launched from the course. Some launch containers provide more screen
 real estate to the tool, and others provide a more integrated feel with the Moodle environemnt.
-   
+
 <ul>
     <li>
         <b>Default</b>  - Use the launch container specified by the tool configuration.
@@ -333,7 +333,7 @@ real estate to the tool, and others provide a more integrated feel with the Mood
         at the top of the page.
     </li>
     <li>
-        <b>New window</b> - The tool opens in a new window, occupying all the available space. 
+        <b>New window</b> - The tool opens in a new window, occupying all the available space.
         Depending on the browser, it will open in a new tab or a popup window.
         It is possible that browsers will prevent the new window from opening.
     </li>
@@ -346,7 +346,7 @@ provided as part of the configuration process.
 
 This field should be entered if creating a link to a tool provider which is not already configured.
 If the tool provider is to be used more than once in this course, adding a course tool configuration is a good idea.
-   
+
 The consumer key can be thought of as a username used to authenticate access to the tool.
 It can be used by the tool provider to uniquely identify the Moodle site from which users launch into the tool.
 
@@ -433,9 +433,9 @@ to instructors when adding external tools within courses.
 
 $string['toolurl_help'] = '
 The tool base URL is used to match tool launch URLs to the correct tool configuration. Prefxing the URL with http(s) is optional.
-    
-Additionally, the base URL is used as the launch URL if a launch URL is not specified in the external tool instance. 
-    
+
+Additionally, the base URL is used as the launch URL if a launch URL is not specified in the external tool instance.
+
 <table>
     <thead>
         <tr>
@@ -511,7 +511,7 @@ For example, if all launches to the tool provider just take the user to a landin
 $string['default_launch_container_help'] = '
 The launch container affects the display of the tool when launched from the course. Some launch containers provide more screen
 real estate to the tool, and others provide a more integrated feel with the Moodle environemnt.
-   
+
 <ul>
     <li>
         <b>Default</b>  - Use the launch container specified by the tool configuration.
@@ -524,7 +524,7 @@ real estate to the tool, and others provide a more integrated feel with the Mood
         at the top of the page.
     </li>
     <li>
-        <b>New window</b> - The tool opens in a new window, occupying all the available space. 
+        <b>New window</b> - The tool opens in a new window, occupying all the available space.
         Depending on the browser, it will open in a new tab or a popup window.
         It is possible that browsers will prevent the new window from opening.
     </li>
@@ -573,7 +573,7 @@ Tool types listed on this page are separated into three categories:
         Instructors may still use tools from these providers if they have a consumer key and shared secret, or if none is required.
     </li>
     <li>
-        <b>Rejected</b> - These tools providers are flagged as ones which an administrator has no intention of making available to the entire 
+        <b>Rejected</b> - These tools providers are flagged as ones which an administrator has no intention of making available to the entire
         Moodle instance. Instructors may still use tools from these providers if they have a consumer key and shared secret, or if none is required.
     </li>
 </ul>
@@ -620,6 +620,6 @@ If this field is left blank, the host name of this Moodle site will be used as t
 
 $string['organizationurl_help'] = '
 The base URL of this Moodle instance.
-    
+
 If this field is left blank, a default value will be used based on the site configuration.
 ';
