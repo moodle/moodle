@@ -769,8 +769,11 @@ class assignment_base {
                 $offset = required_param('offset', PARAM_INT);
                 $nextid = required_param('nextid', PARAM_INT);
                 $id = required_param('id', PARAM_INT);
-                $offset = (int)$offset+1;
                 $filter = optional_param('filter', self::FILTER_ALL, PARAM_INT);
+
+                if ($mode == 'next' || $filter !== self::FILTER_REQUIRE_GRADING) {
+                    $offset = (int)$offset+1;
+                }
                 $redirect = new moodle_url('submissions.php',
                         array('id' => $id, 'offset' => $offset, 'userid' => $nextid,
                         'mode' => 'single', 'filter' => $filter));
