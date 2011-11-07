@@ -26,8 +26,13 @@
 defined('MOODLE_INTERNAL') || die;
 
 function xmldb_report_log_install() {
+    global $DB;
+
     // this is a hack which is needed for cleanup of original coursereport_log stuff
     unset_all_config_for_plugin('coursereport_log');
     capabilities_cleanup('coursereport_log');
+
+    // update existing block page patterns
+    $DB->set_field('block_instances', 'pagetypepattern', 'report-log-index', array('pagetypepattern'=>'course-report-log-index'));
 }
 
