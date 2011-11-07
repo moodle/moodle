@@ -25,6 +25,7 @@
 
 require_once($CFG->dirroot.'/mod/lti/OAuthBody.php');
 
+// TODO: Switch to core oauthlib once implemented - MDL-30149
 use moodle\mod\lti as lti;
 
 define('LTI_ITEM_TYPE', 'mod');
@@ -187,6 +188,7 @@ function lti_verify_message($key, $sharedsecrets, $body, $headers = null) {
         $signaturefailed = false;
 
         try {
+            // TODO: Switch to core oauthlib once implemented - MDL-30149
             lti\handleOAuthBodyPOST($key, $secret, $body, $headers);
         } catch (Exception $e) {
             $signaturefailed = true;

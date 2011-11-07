@@ -48,6 +48,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+// TODO: Switch to core oauthlib once implemented - MDL-30149
 use moodle\mod\lti as lti;
 
 require_once($CFG->dirroot.'/mod/lti/OAuth.php');
@@ -1052,9 +1053,9 @@ function lti_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $
 
     $testtoken = '';
 
+    // TODO: Switch to core oauthlib once implemented - MDL-30149
     $hmacmethod = new lti\OAuthSignatureMethod_HMAC_SHA1();
     $testconsumer = new lti\OAuthConsumer($oauthconsumerkey, $oauthconsumersecret, null);
-
     $accreq = lti\OAuthRequest::from_consumer_and_token($testconsumer, $testtoken, $method, $endpoint, $parms);
     $accreq->sign_request($hmacmethod, $testconsumer, $testtoken);
 
