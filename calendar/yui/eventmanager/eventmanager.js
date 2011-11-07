@@ -120,26 +120,6 @@ YUI.add('moodle-calendar-eventmanager', function(Y) {
     var EVENTMANAGER = {
         add_event : function(config) {
             new EVENT(config);
-        },
-        init_basic_export : function(allowthisweek, allownextweek, allownextmonth, username, authtoken) {
-            var params = {
-                preset_what : (Y.one('#pw_course').get('checked'))?'courses':'all',
-                preset_time : 'recentupcoming',
-                username : username,
-                authtoken : authtoken
-
-            }
-            if (allowthisweek && Y.one('#pt_wknow').get('checked')) {
-                params.presettime = 'weeknow';
-            } else if (allownextweek && Y.one('#pt_wknext').get('checked')) {
-                params.presettime = 'weeknext';
-            } else if (allownextmonth && Y.one('#pt_monnext').get('checked')) {
-                params.presettime = 'monthnext';
-            } else if (Y.one('#pt_monnow').get('checked')) {
-                params.presettime = 'monthnow';
-            }
-            Y.one('#url').setContent(M.cfg.wwwroot+'/calendar/export_execute.php?'+build_querystring(params));
-            Y.one('#urlbox').setStyle('display', 'block');
         }
     }
 

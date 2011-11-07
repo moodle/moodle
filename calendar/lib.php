@@ -1806,7 +1806,7 @@ class calendar_event {
             $group = $DB->get_record('groups', array('id'=>$data->groupid));
             $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
         } else if (isset($data->userid) && $data->userid > 0 && $data->userid == $USER->id) {
-            $context =  get_context_instance(CONTEXT_USER);
+            $context =  get_context_instance(CONTEXT_USER, $data->userid);
         } else if (isset($data->userid) && $data->userid > 0 && $data->userid != $USER->id &&
                    isset($data->instance) && $data->instance > 0) {
             $cm = get_coursemodule_from_instance($data->modulename, $data->instance, 0, false, MUST_EXIST);
