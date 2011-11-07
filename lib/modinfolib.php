@@ -579,6 +579,11 @@ class cm_info extends stdClass  {
     private $extraclasses;
 
     /**
+     * @var moodle_url full external url pointing to icon image for activity
+     */
+    private $iconurl;
+
+    /**
      * @var string
      */
     private $onclick;
@@ -650,7 +655,7 @@ class cm_info extends stdClass  {
 
     /**
      * Note: Will collect view data, if not already obtained.
-		 * @return string Extra HTML code to display after link
+     * @return string Extra HTML code to display after link
      */
     public function get_after_link() {
         $this->obtain_view_data();
@@ -675,7 +680,12 @@ class cm_info extends stdClass  {
         if (!$output) {
             $output = $OUTPUT;
         }
-        if (!empty($this->icon)) {
+        // Support modules setting their own, external, icon image
+        if (!empty($this->iconurl)) {
+            $icon = $this->iconurl;
+
+        // Fallback to normal local icon + component procesing
+        } else if (!empty($this->icon)) {
             if (substr($this->icon, 0, 4) === 'mod/') {
                 list($modname, $iconname) = explode('/', substr($this->icon, 4), 2);
                 $icon = $output->pix_url($iconname, $modname);
@@ -727,6 +737,18 @@ class cm_info extends stdClass  {
      */
     public function set_extra_classes($extraclasses) {
         $this->extraclasses = $extraclasses;
+    }
+
+    /**
+     * Sets the external full url that points to the icon being used
+     * by the activity. Useful for external-tool modules (lti...)
+     * If set, takes precedence over $icon and $iconcomponent
+     *
+     * @param moodle_url $iconurl full external url pointing to icon image for activity
+     * @return void
+     */
+    public function set_icon_url(moodle_url $iconurl) {
+        $this->iconurl = $iconurl;
     }
 
     /**
@@ -856,6 +878,7 @@ class cm_info extends stdClass  {
         $this->indent           = isset($mod->indent) ? $mod->indent : 0;
         $this->extra            = isset($mod->extra) ? $mod->extra : '';
         $this->extraclasses     = isset($mod->extraclasses) ? $mod->extraclasses : '';
+        $this->iconurl          = isset($mod->iconurl) ? $mod->iconurl : '';
         $this->onclick          = isset($mod->onclick) ? $mod->onclick : '';
         $this->content          = isset($mod->content) ? $mod->content : '';
         $this->icon             = isset($mod->icon) ? $mod->icon : '';
@@ -1198,6 +1221,13 @@ class cached_cm_info {
      * @var string
      */
     public $extraclasses;
+
+    /**
+     * External URL image to be used by activity as icon, useful for some external-tool modules
+     * like lti. If set, takes precedence over $icon and $iconcomponent
+     * @var $moodle_url
+     */
+    public $iconurl;
 
     /**
      * Content of onclick JavaScript; escaped HTML to be inserted as attribute value
