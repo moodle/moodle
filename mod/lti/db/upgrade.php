@@ -46,9 +46,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+ defined('MOODLE_INTERNAL') || die;
+
 /**
- * xmldb_lti_upgrade is the function that upgrades Moodle's
- * database when is needed
+ * xmldb_lti_upgrade is the function that upgrades
+ * the lti module database when is needed
  *
  * This function is automaticly called when version number in
  * version.php changes.
@@ -57,41 +59,11 @@
  *
  * @return boolean
  */
-function xmldb_lti_upgrade($oldversion=0) {
-    global $DB;
+function xmldb_lti_upgrade($oldversion) {
+    global $CFG, $DB;
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2011100701) {
-        $table = new xmldb_table('lti');
-        $field = new xmldb_field('icon', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'servicesalt');
-
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        upgrade_mod_savepoint(true, 2011100701, 'lti');
-    }
-
-    if ($oldversion < 2011101801) {
-        $table = new xmldb_table('lti');
-        $field = new xmldb_field('securetoolurl', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'toolurl');
-
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('secureicon', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'icon');
-
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        upgrade_mod_savepoint(true, 2011101801, 'lti');
-    }
-
-    $result = true;
-
-    return $result;
+    return true;
 }
 
