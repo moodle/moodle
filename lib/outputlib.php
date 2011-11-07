@@ -911,12 +911,7 @@ class theme_config {
             $params['component'] = $component;
         }
 
-        //Allow references to images on other sites.
-        if(strstr($imagename, '://')){
-            return $imagename;
-        } else {
-            return new moodle_url("$CFG->httpswwwroot/theme/image.php", $params);
-        }
+        return new moodle_url("$CFG->httpswwwroot/theme/image.php", $params);
     }
 
     /**
