@@ -56,17 +56,17 @@ require_once($CFG->dirroot . '/mod/lti/servicelib.php');
 
 class lti_locallib_test extends UnitTestCase {
     public static $includecoverage = array('mod/lti/locallib.php');
-    
+
     function test_split_custom_parameters() {
         $this->assertEqual(lti_split_custom_parameters("x=1\ny=2"),
                 array('custom_x' => '1', 'custom_y'=> '2'));
-        
+
         $this->assertEqual(lti_split_custom_parameters('x=1;y=2'),
                 array('custom_x' => '1', 'custom_y'=> '2'));
-        
+
         $this->assertEqual(lti_split_custom_parameters('Review:Chapter=1.2.56'),
                 array('custom_review_chapter' => '1.2.56'));
-        
+
         $this->assertEqual(lti_split_custom_parameters('Complex!@#$^*(){}[]KEY=Complex!@#$^*(){}[]Value'),
                 array('custom_complex____________key' => 'Complex!@#$^*(){}[]Value'));
     }
@@ -117,15 +117,15 @@ class lti_locallib_test extends UnitTestCase {
               </imsx_POXBody>
             </imsx_POXEnvelopeRequest>
 XML;
-        
+
         $parsed = lti_parse_grade_replace_message(new SimpleXMLElement($message));
-        
+
         $this->assertEqual($parsed->userid, '2');
         $this->assertEqual($parsed->instanceid, '2');
         $this->assertEqual($parsed->sourcedidhash, '0b5078feab59b9938c333ceaae21d8e003a7b295e43cdf55338445254421076b');
-        
+
         $ltiinstance = (object)array('servicesalt' => '4e5fcc06de1d58.44963230');
-        
+
         lti_verify_sourcedid($ltiinstance, $parsed);
     }
 }

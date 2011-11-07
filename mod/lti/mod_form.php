@@ -57,7 +57,7 @@ class mod_lti_mod_form extends moodleform_mod {
         global $DB, $PAGE, $OUTPUT, $USER, $COURSE;
 
         $this->typeid = 0;
-        
+
         $mform =& $this->_form;
 //-------------------------------------------------------------------------------
     /// Adding the "general" fieldset, where all the common settings are shown
@@ -73,15 +73,15 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->addElement('checkbox', 'showtitle', '&nbsp;', ' ' . get_string('display_name', 'lti'));
         $mform->setAdvanced('showtitle');
         $mform->addHelpButton('showtitle', 'display_name', 'lti');
-        
+
         $mform->addElement('checkbox', 'showdescription', '&nbsp;', ' ' . get_string('display_description', 'lti'));
         $mform->setAdvanced('showdescription');
         $mform->addHelpButton('showdescription', 'display_description', 'lti');
-        
+
         //Tool settings
         $tooltypes = $mform->addElement('select', 'typeid', get_string('external_tool_type', 'lti'), array());
         $mform->addHelpButton('typeid', 'external_tool_type', 'lti');
-        
+
         foreach(lti_get_types_for_add_instance() as $id => $type){
             if($type->course == $COURSE->id) {
                 $attributes = array( 'editable' => 1, 'courseTool' => 1, 'domain' => $type->tooldomain );
@@ -90,19 +90,19 @@ class mod_lti_mod_form extends moodleform_mod {
             } else {
                 $attributes = array();
             }
-            
+
             $tooltypes->addOption($type->name, $id, $attributes);
         }
-        
+
         $mform->addElement('text', 'toolurl', get_string('launch_url', 'lti'), array('size'=>'64'));
         $mform->setType('toolurl', PARAM_TEXT);
         $mform->addHelpButton('toolurl', 'launch_url', 'lti');
-        
+
         $mform->addElement('text', 'securetoolurl', get_string('secure_launch_url', 'lti'), array('size'=>'64'));
         $mform->setType('securetoolurl', PARAM_TEXT);
         $mform->setAdvanced('securetoolurl');
         $mform->addHelpButton('securetoolurl', 'secure_launch_url', 'lti');
-        
+
         $launchoptions=array();
         $launchoptions[LTI_LAUNCH_CONTAINER_DEFAULT] = get_string('default', 'lti');
         $launchoptions[LTI_LAUNCH_CONTAINER_EMBED] = get_string('embed', 'lti');
@@ -112,32 +112,32 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->addElement('select', 'launchcontainer', get_string('launchinpopup', 'lti'), $launchoptions);
         $mform->setDefault('launchcontainer', LTI_LAUNCH_CONTAINER_DEFAULT);
         $mform->addHelpButton('launchcontainer', 'launchinpopup', 'lti');
-        
+
         $mform->addElement('text', 'resourcekey', get_string('resourcekey', 'lti'));
         $mform->setType('resourcekey', PARAM_TEXT);
         $mform->setAdvanced('resourcekey');
         $mform->addHelpButton('resourcekey', 'resourcekey', 'lti');
-        
+
         $mform->addElement('passwordunmask', 'password', get_string('password', 'lti'));
         $mform->setType('password', PARAM_TEXT);
         $mform->setAdvanced('password');
         $mform->addHelpButton('password', 'password', 'lti');
-        
+
         $mform->addElement('textarea', 'instructorcustomparameters', get_string('custom', 'lti'), array('rows'=>4, 'cols'=>60));
         $mform->setType('instructorcustomparameters', PARAM_TEXT);
         $mform->setAdvanced('instructorcustomparameters');
         $mform->addHelpButton('instructorcustomparameters', 'custom', 'lti');
-        
+
         $mform->addElement('text', 'icon', get_string('icon_url', 'lti'), array('size'=>'64'));
         $mform->setType('icon', PARAM_TEXT);
         $mform->setAdvanced('icon');
         $mform->addHelpButton('icon', 'icon_url', 'lti');
-        
+
         $mform->addElement('text', 'secureicon', get_string('secure_icon_url', 'lti'), array('size'=>'64'));
         $mform->setType('secureicon', PARAM_TEXT);
         $mform->setAdvanced('secureicon');
         $mform->addHelpButton('secureicon', 'secure_icon_url', 'lti');
-        
+
 //-------------------------------------------------------------------------------
         // Add privacy preferences fieldset where users choose whether to send their data
         $mform->addElement('header', 'privacy', get_string('privacy', 'lti'));
@@ -145,19 +145,19 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->addElement('checkbox', 'instructorchoicesendname', '&nbsp;', ' ' . get_string('share_name', 'lti'));
         $mform->setDefault('instructorchoicesendname', '1');
         $mform->addHelpButton('instructorchoicesendname', 'share_name', 'lti');
-        
+
         $mform->addElement('checkbox', 'instructorchoicesendemailaddr', '&nbsp;', ' ' . get_string('share_email', 'lti'));
         $mform->setDefault('instructorchoicesendemailaddr', '1');
         $mform->addHelpButton('instructorchoicesendemailaddr', 'share_email', 'lti');
-        
+
         $mform->addElement('checkbox', 'instructorchoiceacceptgrades', '&nbsp;', ' ' . get_string('accept_grades', 'lti'));
         $mform->setDefault('instructorchoiceacceptgrades', '1');
         $mform->addHelpButton('instructorchoiceacceptgrades', 'accept_grades', 'lti');
-        
+
         $mform->addElement('checkbox', 'instructorchoiceallowroster', '&nbsp;', ' ' . get_string('share_roster', 'lti'));
         $mform->setDefault('instructorchoiceallowroster', '1');
         $mform->addHelpButton('instructorchoiceallowroster', 'share_roster', 'lti');
-        
+
 //-------------------------------------------------------------------------------
 
 /*        $debugoptions=array();
@@ -178,7 +178,6 @@ class mod_lti_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
         $this->standard_coursemodule_elements();
-        
         $mform->setAdvanced('cmidnumber');
 //-------------------------------------------------------------------------------
         // add standard buttons, common to all modules
@@ -186,7 +185,7 @@ class mod_lti_mod_form extends moodleform_mod {
 
         $editurl = new moodle_url("/mod/lti/instructor_edit_tool_type.php?sesskey={$USER->sesskey}&course={$COURSE->id}");
         $ajaxurl = new moodle_url('/mod/lti/ajax.php');
-        
+
         $jsinfo = (object)array(
                         'edit_icon_url' => (string)$OUTPUT->pix_url('t/edit'),
                         'add_icon_url' => (string)$OUTPUT->pix_url('t/add'),
@@ -197,7 +196,7 @@ class mod_lti_mod_form extends moodleform_mod {
                         'ajax_url' => $ajaxurl->out(true),
                         'courseId' => $COURSE->id
                   );
-        
+
         $module = array(
             'name'      => 'mod_lti_edit',
             'fullpath'  => '/mod/lti/mod_form.js',
@@ -217,7 +216,7 @@ class mod_lti_mod_form extends moodleform_mod {
                 array('tool_config_not_found', 'lti')
             ),
         );
-        
+
         $PAGE->requires->js_init_call('M.mod_lti.editor.init', array(json_encode($jsinfo)), true, $module);
     }
 
@@ -227,7 +226,7 @@ class mod_lti_mod_form extends moodleform_mod {
      */
     function definition_after_data() {
         parent::definition_after_data();
-       
+
         //$mform =& $this->_form;
     }
 

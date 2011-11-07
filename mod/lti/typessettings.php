@@ -80,19 +80,19 @@ $data = data_submitted();
 
 if (confirm_sesskey() && isset($data->submitbutton)) {
     $type = new stdClass();
-    
+
     if (isset($id)) {
         $type->id = $id;
 
         lti_update_type($type, $data);
-        
+
         redirect($redirect);
         die;
     } else {
         $type->state = LTI_TOOL_STATE_CONFIGURED;
-       
+
         lti_add_type($type, $data);
-        
+
         redirect($redirect);
         die;
     }

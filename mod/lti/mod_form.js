@@ -23,7 +23,7 @@
  */
 (function(){
     var Y;
-    
+
     M.mod_lti = M.mod_lti || {};
 
     M.mod_lti.editor = {
@@ -31,7 +31,7 @@
             if(yui3){
                 Y = yui3;
             }
-            
+
             var self = this;
             this.settings = Y.JSON.parse(settings);
 
@@ -47,21 +47,21 @@
             var typeSelector = Y.one('#id_typeid');
             typeSelector.on('change', function(e){
                 updateToolMatches();
-                
+
                 self.toggleEditButtons();
             });
 
             this.createTypeEditorButtons();
 
             this.toggleEditButtons();
-            
+
             var textAreas = new Y.NodeList([
                 Y.one('#id_toolurl'),
                 Y.one('#id_securetoolurl'),
                 Y.one('#id_resourcekey'),
                 Y.one('#id_password')
             ]);
-            
+
             var debounce;
             textAreas.on('keyup', function(e){
                 clearTimeout(debounce);
@@ -71,7 +71,7 @@
                     updateToolMatches();
                 }, 2000);
             });
-            
+
             updateToolMatches();
         },
 
@@ -81,10 +81,10 @@
 
         updateAutomaticToolMatch: function(field){
             var self = this;
-            
+
             var toolurl = field;
             var typeSelector = Y.one('#id_typeid');
-            
+
             var id = field.get('id') + '_lti_automatch_tool';
             var automatchToolDisplay = Y.one('#' + id);
 
@@ -92,7 +92,7 @@
                 automatchToolDisplay = Y.Node.create('<span />')
                                         .set('id', id)
                                         .setStyle('padding-left', '1em');
-                                        
+
                 toolurl.insert(automatchToolDisplay, 'after');
             }
 
@@ -120,7 +120,7 @@
                     //The entered URL does not match the domain of the tool configuration
                     automatchToolDisplay.set('innerHTML', '<img style="vertical-align:text-bottom" src="' + self.settings.warning_icon_url + '" />' + M.str.lti.domain_mismatch);
                 }
-                
+
                 return;
             }
 
@@ -141,7 +141,7 @@
                         }
                     }
                 };
-                
+
                 //Cache urls which have already been checked to increaes performance
                 if(self.urlCache[url]){
                     continuation(self.urlCache[url]);
@@ -190,7 +190,7 @@
                 if(globalOptions.size() > 0){
                     typeSelector.append(globalGroup);
                 }
-                
+
                 if(courseOptions.size() > 0){
                     typeSelector.append(courseGroup);
                 }
@@ -203,11 +203,11 @@
          */
         createTypeEditorButtons: function(){
             var self = this;
-            
+
             var typeSelector = Y.one('#id_typeid');
 
             var createIcon = function(id, tooltip, iconUrl){
-                return Y.Node.create('<a />') 
+                return Y.Node.create('<a />')
                         .set('id', id)
                         .set('title', tooltip)
                         .setStyle('margin-left', '.5em')
@@ -282,7 +282,7 @@
             } else {
                 typeSelector.append(option);
             }
-            
+
             //Adding the new tool may affect which tool gets matched automatically
             this.clearToolCache();
             this.updateAutomaticToolMatch();
@@ -294,7 +294,7 @@
             var option = typeSelector.one('option[value=' + toolType.id + ']');
             option.set('text', toolType.name)
                   .set('domain', toolType.tooldomain);
-            
+
             //Editing the tool may affect which tool gets matched automatically
             this.clearToolCache();
             this.updateAutomaticToolMatch();
@@ -302,12 +302,12 @@
 
         deleteTool: function(toolTypeId){
             var self = this;
-            
+
             Y.io(self.settings.instructor_tool_type_edit_url + '&action=delete&typeid=' + toolTypeId, {
                 on: {
                     success: function(){
                         self.getSelectedToolTypeOption().remove();
-                        
+
                         //Editing the tool may affect which tool gets matched automatically
                         self.clearToolCache();
                         self.updateAutomaticToolMatch();
@@ -321,8 +321,8 @@
 
         findToolByUrl: function(url, callback){
             var self = this;
-            
-            Y.io(self.settings.ajax_url, { 
+
+            Y.io(self.settings.ajax_url, {
                 data: {action: 'find_tool_config',
                         course: self.settings.courseId,
                         toolurl: url
@@ -331,9 +331,9 @@
                 on: {
                     success: function(transactionid, xhr){
                         var response = xhr.response;
-                        
+
                         var toolInfo = Y.JSON.parse(response);
-                        
+
                         callback(toolInfo);
                     },
                     failure: function(){

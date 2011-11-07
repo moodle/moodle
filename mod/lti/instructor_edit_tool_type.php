@@ -42,7 +42,6 @@ if(!empty($typeid)){
     $type = lti_get_type($typeid);
     if($type->course != $courseid){
         throw new Exception('You do not have permissions to edit this tool type.');
-        
         die;
     }
 }
@@ -53,65 +52,61 @@ $data = data_submitted();
 
 if (isset($data->submitbutton) && confirm_sesskey()) {
     $type = new stdClass();
-    
+
     if (!empty($typeid)) {
         $type->id = $typeid;
         $name = json_encode($data->lti_typename);
 
         lti_update_type($type, $data);
-        
+
         $fromdb = lti_get_type($typeid);
         $json = json_encode($fromdb);
-        
+
         //Output script to update the calling window.
         $script = <<<SCRIPT
             <script type="text/javascript">
                 window.opener.M.mod_lti.editor.updateToolType({$json});
-                
                 window.close();
             </script>
 SCRIPT;
-        
+
         echo $script;
-                
         die;
     } else {
         $type->state = LTI_TOOL_STATE_CONFIGURED;
         $type->course = $COURSE->id;
-        
+
         $id = lti_add_type($type, $data);
-        
+
         $fromdb = lti_get_type($id);
         $json = json_encode($fromdb);
-        
+
         //Output script to update the calling window.
         $script = <<<SCRIPT
             <script type="text/javascript">
                 window.opener.M.mod_lti.editor.addToolType({$json});
-                
                 window.close();
             </script>
 SCRIPT;
-        
+
         echo $script;
-        
+
         die;
     }
 } else if(isset($data->cancel)){
-        $script = <<<SCRIPT
-            <script type="text/javascript">
-                window.close();
-            </script>
+    $script = <<<SCRIPT
+        <script type="text/javascript">
+            window.close();
+        </script>
 SCRIPT;
-        
-        echo $script;
+
+    echo $script;
     die;
 }
 
 //Delete action is called via ajax
 if ($action == 'delete'){
     lti_delete_type($typeid);
-    
     die;
 }
 

@@ -84,22 +84,22 @@ function lti_add_instance($formdata) {
     $formdata->timecreated = time();
     $formdata->timemodified = $formdata->timecreated;
     $formdata->servicesalt = uniqid('', true);
-    
+
     if(!isset($formdata->grade)){
         $formdata->grade = 100;
     }
-    
+
     $id = $DB->insert_record("lti", $formdata);
 
     if ($formdata->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS) {
         $basiclti = $DB->get_record('lti', array('id'=>$id));
-        
+
         if(!isset($formdata->cmidnumber)){
             $formdata->cmidnumber = '';
         }
-        
+
         $basiclti->cmidnumber = $formdata->cmidnumber;
-        
+
         lti_grade_item_update($basiclti);
     }
 
@@ -123,15 +123,15 @@ function lti_update_instance($formdata) {
     if(!isset($formdata->showtitle)){
         $formdata->showtitle = 0;
     }
-    
+
     if(!isset($formdata->showdescription)){
         $formdata->showdescription = 0;
     }
-    
+
     if ($formdata->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS) {
         $basicltirec = $DB->get_record("lti", array("id" => $formdata->id));
         $basicltirec->cmidnumber = $formdata->cmidnumber;
-        
+
         lti_grade_item_update($basicltirec);
     } else {
         lti_grade_item_delete($formdata);
@@ -165,11 +165,11 @@ function lti_delete_instance($id) {
 
 function lti_get_coursemodule_info($coursemodule){
     global $DB;
-    
+
     $lti = $DB->get_record('lti', array('id' => $coursemodule->instance), 'icon, secureicon');
 
     $info = new stdClass();
-    
+
     //We want to use the right icon based on whether the current page is being requested over http or https.
     //There's a potential problem here as the icon URLs are cached in the modinfo field and won't be updated for each request.
     if(lti_request_is_using_ssl() && !empty($lti->secureicon)){
@@ -179,7 +179,7 @@ function lti_get_coursemodule_info($coursemodule){
             $info->icon = $lti->icon;
         }
     }
-    
+
     return $info;
 }
 
@@ -389,10 +389,10 @@ function lti_grade_item_delete($basiclti) {
 
 function lti_extend_settings_navigation($settings, $parentnode) {
     global $PAGE;
-    
+
     if(has_capability('mod/lti:grade', get_context_instance(CONTEXT_MODULE, $PAGE->cm->id))){
         $keys = $parentnode->get_children_key_list();
-    
+
         $node = navigation_node::create('Submissions',
             new moodle_url('/mod/lti/grade.php', array('id'=>$PAGE->cm->id)),
             navigation_node::TYPE_SETTING, null, 'mod_lti_submissions');

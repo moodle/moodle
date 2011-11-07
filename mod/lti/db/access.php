@@ -53,7 +53,7 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
-    
+
     'mod/lti:manage' => array(
         'riskbitmask' => RISK_XSS,
 
@@ -65,7 +65,7 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
-    
+
     'mod/lti:addcoursetool' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -75,7 +75,7 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
-    
+
     'mod/lti:requesttooladd' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,

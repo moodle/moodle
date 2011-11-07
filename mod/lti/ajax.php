@@ -37,15 +37,14 @@ $response = new stdClass();
 switch($action){
     case 'find_tool_config':
         $toolurl = required_param('toolurl', PARAM_RAW);
-        
+
         $tool = lti_get_tool_by_url_match($toolurl, $courseid);
-        
+
         if(!empty($tool)){
             $response->toolid = $tool->id;
             $response->toolname = htmlspecialchars($tool->name);
             $response->tooldomain = htmlspecialchars($tool->tooldomain);
         }
-        
         break;
 }
 

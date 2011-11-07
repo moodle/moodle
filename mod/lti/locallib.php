@@ -87,13 +87,13 @@ function lti_view($instance) {
     } else {
         $typeid = $instance->typeid;
     }
-    
+
     if($typeid){
         $typeconfig = lti_get_type_config($typeid);
     } else {
         //There is no admin configuration for this tool. Use configuration in the lti instance record plus some defaults.
         $typeconfig = (array)$instance;
-        
+
         $typeconfig['sendname'] = $instance->instructorchoicesendname;
         $typeconfig['sendemailaddr'] = $instance->instructorchoicesendemailaddr;
         $typeconfig['customparameters'] = $instance->instructorcustomparameters;
@@ -101,14 +101,14 @@ function lti_view($instance) {
         $typeconfig['allowroster'] = $instance->instructorchoiceallowroster;
         $typeconfig['forcessl'] = '0';
     }
-    
+
     //Default the organizationid if not specified
     if(empty($typeconfig['organizationid'])){
         $urlparts = parse_url($CFG->wwwroot);
-        
+
         $typeconfig['organizationid'] = $urlparts['host'];
     }
-    
+
     if(!empty($instance->resourcekey)){
         $key = $instance->resourcekey;
     } else if(!empty($typeconfig['resourcekey'])){
@@ -124,28 +124,28 @@ function lti_view($instance) {
     } else {
         $secret = '';
     }
-    
+
     $endpoint = !empty($instance->toolurl) ? $instance->toolurl : $typeconfig['toolurl'];
     $endpoint = trim($endpoint);
-    
+
     //If the current request is using SSL and a secure tool URL is specified, use it
     if(lti_request_is_using_ssl() && !empty($instance->securetoolurl)){
         $endpoint = trim($instance->securetoolurl);
     }
-    
+
     //If SSL is forced, use the secure tool url if specified. Otherwise, make sure https is on the normal launch URL.
     if($typeconfig['forcessl'] == '1'){
         if(!empty($instance->securetoolurl)){
             $endpoint = trim($instance->securetoolurl);
         }
-        
+
         $endpoint = lti_ensure_url_is_https($endpoint);
     } else {
         if(!strstr($endpoint, '://')){
             $endpoint = 'http://' . $endpoint;
         }
     }
-    
+
     $orgid = $typeconfig['organizationid'];
 
     $course = $PAGE->course;
@@ -153,42 +153,42 @@ function lti_view($instance) {
 
     $launchcontainer = lti_get_launch_container($instance, $typeconfig);
     $returnurlparams = array('course' => $course->id, 'launch_container' => $launchcontainer, 'instanceid' => $instance->id);
-    
+
     if ( $orgid ) {
         $requestparams["tool_consumer_instance_guid"] = $orgid;
     }
-    
+
     if(empty($key) || empty($secret)){
         $returnurlparams['unsigned'] = '1';
-        
+
         //Add the return URL. We send the launch container along to help us avoid frames-within-frames when the user returns
         $url = new moodle_url('/mod/lti/return.php', $returnurlparams);
         $returnurl = $url->out(false);
-        
+
         if($typeconfig['forcessl'] == '1'){
             $returnurl = lti_ensure_url_is_https($returnurl);
         }
-        
+
         $requestparams['launch_presentation_return_url'] = $returnurl;
     }
-    
+
     if(!empty($key) && !empty($secret)){
         $parms = lti_sign_parameters($requestparams, $endpoint, "POST", $key, $secret);
     } else {
         //If no key and secret, do the launch unsigned.
         $parms = $requestparams;
     }
-    
+
     $debuglaunch = ( $instance->debuglaunch == 1 );
-    
+
     $content = lti_post_launch_html($parms, $endpoint, $debuglaunch);
-    
+
     echo $content;
 }
 
 function lti_build_sourcedid($instanceid, $userid, $launchid = null, $servicesalt){
     $data = new stdClass();
-        
+
     $data->instanceid = $instanceid;
     $data->userid = $userid;
     if(!empty($launchid)){
@@ -223,7 +223,7 @@ function lti_build_request($instance, $typeconfig, $course) {
     if(empty($instance->cmid)){
         $instance->cmid = 0;
     }
-    
+
     $role = lti_get_ims_role($USER, $instance->cmid, $instance->course);
 
     $locale = $course->lang;
@@ -244,7 +244,7 @@ function lti_build_request($instance, $typeconfig, $course) {
     );
 
     $placementsecret = $instance->servicesalt;
-        
+
     if ( isset($placementsecret) ) {
         $sourcedid = json_encode(lti_build_sourcedid($instance->id, $USER->id, null, $placementsecret));
     }
@@ -253,12 +253,12 @@ function lti_build_request($instance, $typeconfig, $course) {
          ( $typeconfig['acceptgrades'] == LTI_SETTING_ALWAYS ||
          ( $typeconfig['acceptgrades'] == LTI_SETTING_DELEGATE && $instance->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS ) ) ) {
         $requestparams["lis_result_sourcedid"] = $sourcedid;
-        
+
         $serviceurl = $CFG->wwwroot . '/mod/lti/service.php';
         if($typeconfig['forcessl'] == '1'){
             $serviceurl = lti_ensure_url_is_https($serviceurl);
         }
-        
+
         $requestparams["ext_ims_lis_basic_outcome_url"] = $serviceurl;
     }
 
@@ -322,29 +322,29 @@ function lti_build_request($instance, $typeconfig, $course) {
     //This needs to be here to support launching without javascript.
     $submittext = get_string('press_to_submit', 'lti');
     $requestparams["ext_submit"] = $submittext;
-    
+
     $requestparams["lti_version"] = "LTI-1p0";
     $requestparams["lti_message_type"] = "basic-lti-launch-request";
     /* Suppress this for now - Chuck
     if ( $orgdesc ) $requestparams["tool_consumer_instance_description"] = $orgdesc;
     */
-    
+
     return $requestparams;
 }
 
 function lti_get_tool_table($tools, $id){
     global $CFG, $USER;
     $html = '';
-    
+
     $typename = get_string('typename', 'lti');
     $baseurl = get_string('baseurl', 'lti');
     $action = get_string('action', 'lti');
     $createdon = get_string('createdon', 'lti');
-    
+
     if($id == 'lti_configured'){
         $html .= '<div><a style="margin-top:.25em" href="'.$CFG->wwwroot.'/mod/lti/typessettings.php?action=add&amp;sesskey='.$USER->sesskey.'">'.get_string('addtype', 'lti').'</a></div>';
     }
-    
+
     if (!empty($tools)) {
         $html .= <<<HTML
         <div id="{$id}_container" style="margin-top:.5em;margin-bottom:.5em">
@@ -358,13 +358,13 @@ function lti_get_tool_table($tools, $id){
                     </tr>
                 </thead>
 HTML;
-        
+
         foreach ($tools as $type) {
             $date = userdate($type->timecreated);
             $accept = get_string('accept', 'lti');
             $update = get_string('update', 'lti');
             $delete = get_string('delete', 'lti');
-            
+
             $accepthtml = <<<HTML
                 <a class="editing_accept" href="{$CFG->wwwroot}/mod/lti/typessettings.php?action=accept&amp;id={$type->id}&amp;sesskey={$USER->sesskey}&amp;tab={$id}" title="{$accept}">
                     <img class="iconsmall" alt="{$accept}" src="{$CFG->wwwroot}/pix/t/clear.gif"/>
@@ -372,16 +372,16 @@ HTML;
 HTML;
 
             $deleteaction = 'delete';
-                    
+
             if($type->state == LTI_TOOL_STATE_CONFIGURED){
                 $accepthtml = '';
             }
-            
+
             if($type->state != LTI_TOOL_STATE_REJECTED) {
                 $deleteaction = 'reject';
                 $delete = get_string('reject', 'lti');
             }
-                    
+
             $html .= <<<HTML
             <tr>
                 <td>
@@ -409,7 +409,7 @@ HTML;
     } else {
         $html .= get_string('no_' . $id, 'lti');
     }
-    
+
     return $html;
 }
 
@@ -462,20 +462,20 @@ function lti_map_keyname($key) {
 
 /**
  * Gets the IMS role string for the specified user and LTI course module.
- * 
+ *
  * @param mixed $user User object or user id
  * @param int $cmid The course module id of the LTI activity
  * @return string A role string suitable for passing with an LTI launch
  */
 function lti_get_ims_role($user, $cmid, $courseid) {
     $roles = array();
-    
+
     if(empty($cmid)){
         //If no cmid is passed, check if the user is a teacher in the course
         //This allows other modules to programmatically "fake" a launch without
         //a real LTI instance
         $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
-        
+
         if(has_capability('moodle/course:manageactivities', $coursecontext)){
             array_push($roles, 'Instructor');
         } else {
@@ -494,7 +494,7 @@ function lti_get_ims_role($user, $cmid, $courseid) {
     if(is_siteadmin($user)){
         array_push($roles, 'urn:lti:sysrole:ims/lis/Administrator');
     }
-    
+
     return join(',', $roles);
 }
 
@@ -512,48 +512,48 @@ function lti_get_type_config($typeid) {
         SELECT name, value
         FROM {lti_types_config}
         WHERE typeid = :typeid1
-        
+
         UNION ALL
-        
+
         SELECT 'toolurl' AS name, baseurl AS value
         FROM {lti_types}
         WHERE id = :typeid2
 QUERY;
-    
+
     $typeconfig = array();
     $configs = $DB->get_records_sql($query, array('typeid1' => $typeid, 'typeid2' => $typeid));
-    
+
     if (!empty($configs)) {
         foreach ($configs as $config) {
             $typeconfig[$config->name] = $config->value;
         }
     }
-    
+
     return $typeconfig;
 }
 
 function lti_get_tools_by_url($url, $state, $courseid = null){
     $domain = lti_get_domain_from_url($url);
-    
+
     return lti_get_tools_by_domain($domain, $state, $courseid);
 }
 
 function lti_get_tools_by_domain($domain, $state = null, $courseid = null){
     global $DB, $SITE;
-    
+
     $filters = array('tooldomain' => $domain);
-    
+
     $statefilter = '';
     $coursefilter = '';
-    
+
     if($state){
         $statefilter = 'AND state = :state';
     }
-  
+
     if($courseid && $courseid != $SITE->id){
         $coursefilter = 'OR course = :courseid';
     }
-    
+
     $query = <<<QUERY
         SELECT * FROM {lti_types}
         WHERE
@@ -561,11 +561,11 @@ function lti_get_tools_by_domain($domain, $state = null, $courseid = null){
         AND (course = :siteid $coursefilter)
         $statefilter
 QUERY;
-    
+
     return $DB->get_records_sql($query, array(
-        'courseid' => $courseid, 
-        'siteid' => $SITE->id, 
-        'tooldomain' => $domain, 
+        'courseid' => $courseid,
+        'siteid' => $SITE->id,
+        'tooldomain' => $domain,
         'state' => $state
     ));
 }
@@ -582,13 +582,13 @@ function lti_filter_get_types($course) {
     } else {
         $filter = array();
     }
-    
+
     return $DB->get_records('lti_types', $filter);
 }
 
 function lti_get_types_for_add_instance(){
     global $DB, $SITE, $COURSE;
-    
+
     $query = <<<QUERY
             SELECT *
             FROM {lti_types}
@@ -597,22 +597,22 @@ function lti_get_types_for_add_instance(){
             AND (course = :siteid OR course = :courseid)
             AND state = :active
 QUERY;
-    
+
     $admintypes = $DB->get_records_sql($query, array('siteid' => $SITE->id, 'courseid' => $COURSE->id, 'active' => LTI_TOOL_STATE_CONFIGURED));
-    
+
     $types = array();
     $types[0] = (object)array('name' => get_string('automatic', 'lti'), 'course' => $SITE->id);
-    
+
     foreach($admintypes as $type) {
         $types[$type->id] = $type;
     }
-    
+
     return $types;
 }
 
 function lti_get_domain_from_url($url){
     $matches = array();
-    
+
     if(preg_match(LTI_URL_DOMAIN_REGEX, $url, $matches)){
         return $matches[1];
     }
@@ -620,7 +620,7 @@ function lti_get_domain_from_url($url){
 
 function lti_get_tool_by_url_match($url, $courseid = null, $state = LTI_TOOL_STATE_CONFIGURED){
     $possibletools = lti_get_tools_by_url($url, $state, $courseid);
-    
+
     return lti_get_best_tool_by_url($url, $possibletools, $courseid);
 }
 
@@ -629,15 +629,15 @@ function lti_get_url_thumbprint($url){
     if(!isset($urlparts['path'])){
         $urlparts['path'] = '';
     }
-    
+
     if(!isset($urlparts['host'])){
         $urlparts['host'] = '';
     }
-    
+
     if(substr($urlparts['host'], 0, 4) === 'www.'){
         $urlparts['host'] = substr($urlparts['host'], 4);
     }
-    
+
     return $urllower = $urlparts['host'] . '/' . $urlparts['path'];
 }
 
@@ -645,14 +645,14 @@ function lti_get_best_tool_by_url($url, $tools, $courseid = null){
     if(count($tools) === 0){
         return null;
     }
-    
+
     $urllower = lti_get_url_thumbprint($url);
-    
+
     foreach($tools as $tool){
         $tool->_matchscore = 0;
-         
+
         $toolbaseurllower = lti_get_url_thumbprint($tool->baseurl);
-        
+
         if($urllower === $toolbaseurllower){
             //100 points for exact thumbprint match
             $tool->_matchscore += 100;
@@ -660,7 +660,7 @@ function lti_get_best_tool_by_url($url, $tools, $courseid = null){
             //50 points if tool thumbprint starts with the base URL thumbprint
             $tool->_matchscore += 50;
         }
-        
+
         //Prefer course tools over site tools
         if(!empty($courseid)){
             //Minus 25 points for not matching the course id (global tools)
@@ -669,27 +669,27 @@ function lti_get_best_tool_by_url($url, $tools, $courseid = null){
             }
         }
     }
-    
+
     $bestmatch = array_reduce($tools, function($value, $tool){
         if($tool->_matchscore > $value->_matchscore){
             return $tool;
         } else {
             return $value;
         }
-        
+
     }, (object)array('_matchscore' => -1));
-    
+
     //None of the tools are suitable for this URL
     if($bestmatch->_matchscore <= 0){
         return null;
     }
-    
+
     return $bestmatch;
 }
 
 function lti_get_shared_secrets_by_key($key){
     global $DB;
-    
+
     //Look up the shared secret for the specified key in both the types_config table (for configured tools)
     //And in the lti resource table for ad-hoc tools
     $query = <<<QUERY
@@ -697,25 +697,25 @@ function lti_get_shared_secrets_by_key($key){
         FROM {lti_types_config} t1
         INNER JOIN {lti_types_config} t2 ON t1.typeid = t2.typeid
         INNER JOIN {lti_types} type ON t2.typeid = type.id
-        WHERE 
+        WHERE
             t1.name = 'resourcekey'
         AND t1.value = :key1
         AND t2.name = 'password'
         AND type.state = :configured
 
         UNION
-        
+
         SELECT password AS value
         FROM {lti}
         WHERE resourcekey = :key2
 QUERY;
-    
+
     $sharedsecrets = $DB->get_records_sql($query, array('configured' => LTI_TOOL_STATE_CONFIGURED, 'key1' => $key, 'key2' => $key));
-    
+
     $values = array_map(function($item){
         return $item->value;
     }, $sharedsecrets);
-    
+
     //There should really only be one shared secret per key. But, we can't prevent
     //more than one getting entered. For instance, if the same key is used for two tool providers.
     return $values;
@@ -775,7 +775,7 @@ function lti_delete_type($id) {
 
 function lti_set_state_for_type($id, $state){
     global $DB;
-    
+
     $DB->update_record('lti_types', array('id' => $id, 'state' => $state));
 }
 
@@ -847,11 +847,11 @@ function lti_get_type_type_config($id) {
     $config = lti_get_type_config($id);
 
     $type->lti_typename = $basicltitype->name;
-    
+
     $type->typeid = $basicltitype->id;
-    
+
     $type->lti_toolurl = $basicltitype->baseurl;
-    
+
     if (isset($config['resourcekey'])) {
         $type->lti_resourcekey = $config['resourcekey'];
     }
@@ -891,7 +891,7 @@ function lti_get_type_type_config($id) {
     if(isset($config['forcessl'])){
         $type->lti_forcessl = $config['forcessl'];
     }
-    
+
     if (isset($config['organizationid'])) {
         $type->lti_organizationid = $config['organizationid'];
     }
@@ -904,15 +904,15 @@ function lti_get_type_type_config($id) {
     if (isset($config['launchcontainer'])) {
         $type->lti_launchcontainer = $config['launchcontainer'];
     }
-    
+
     if (isset($config['coursevisible'])) {
         $type->lti_coursevisible = $config['coursevisible'];
     }
-    
+
     if (isset($config['debuglaunch'])) {
         $type->lti_debuglaunch = $config['debuglaunch'];
     }
-    
+
     if (isset($config['module_class_type'])) {
             $type->lti_module_class_type = $config['module_class_type'];
     }
@@ -924,24 +924,24 @@ function lti_prepare_type_for_save($type, $config){
     $type->baseurl = $config->lti_toolurl;
     $type->tooldomain = lti_get_domain_from_url($config->lti_toolurl);
     $type->name = $config->lti_typename;
-    
+
     $type->coursevisible = !empty($config->lti_coursevisible) ? $config->lti_coursevisible : 0;
     $config->lti_coursevisible = $type->coursevisible;
-    
+
     $type->forcessl = !empty($config->lti_forcessl) ? $config->lti_forcessl : 0;
     $config->lti_forcessl = $type->forcessl;
-    
+
     $type->timemodified = time();
-    
+
     unset ($config->lti_typename);
     unset ($config->lti_toolurl);
 }
 
 function lti_update_type($type, $config){
     global $DB;
-    
+
     lti_prepare_type_for_save($type, $config);
-    
+
     if ($DB->update_record('lti_types', $type)) {
         foreach ($config as $key => $value) {
             if (substr($key, 0, 4)=='lti_' && !is_null($value)) {
@@ -949,7 +949,7 @@ function lti_update_type($type, $config){
                 $record->typeid = $type->id;
                 $record->name = substr($key, 4);
                 $record->value = $value;
-                
+
                 lti_update_config($record);
             }
         }
@@ -958,25 +958,25 @@ function lti_update_type($type, $config){
 
 function lti_add_type($type, $config){
     global $USER, $SITE, $DB;
-    
+
     lti_prepare_type_for_save($type, $config);
-    
+
     if(!isset($type->state)){
         $type->state = LTI_TOOL_STATE_PENDING;
     }
-    
+
     if(!isset($type->timecreated)){
         $type->timecreated = time();
     }
-    
+
     if(!isset($type->createdby)){
         $type->createdby = $USER->id;
     }
-    
+
     if(!isset($type->course)){
         $type->course = $SITE->id;
     }
-    
+
     //Create a salt value to be used for signing passed data to extension services
     //The outcome service uses the service salt on the instance. This can be used
     //for communication with services not related to a specific LTI instance.
@@ -996,7 +996,7 @@ function lti_add_type($type, $config){
             }
         }
     }
-    
+
     return $id;
 }
 
@@ -1025,7 +1025,7 @@ function lti_update_config($config) {
 
     $return = true;
     $old = $DB->get_record('lti_types_config', array('typeid' => $config->typeid, 'name' => $config->name));
-    
+
     if ($old) {
         $config->id = $old->id;
         $return = $DB->update_record('lti_types_config', $config);
@@ -1052,7 +1052,7 @@ function lti_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $
     $parms = $oldparms;
 
     $testtoken = '';
-    
+
     $hmacmethod = new lti\OAuthSignatureMethod_HMAC_SHA1();
     $testconsumer = new lti\OAuthConsumer($oauthconsumerkey, $oauthconsumersecret, null);
 
@@ -1076,9 +1076,9 @@ function lti_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $
  */
 function lti_post_launch_html($newparms, $endpoint, $debug=false) {
     //global $lastbasestring;
-    
+
     $r = "<form action=\"".$endpoint."\" name=\"ltiLaunchForm\" id=\"ltiLaunchForm\" method=\"post\" encType=\"application/x-www-form-urlencoded\">\n";
-    
+
     $submittext = $newparms['ext_submit'];
 
     // Contruct html for the launch parameters
@@ -1147,11 +1147,15 @@ function lti_post_launch_html($newparms, $endpoint, $debug=false) {
 
 function lti_get_type($typeid){
     global $DB;
-    
+
     return $DB->get_record('lti_types', array('id' => $typeid));
 }
 
 function lti_get_launch_container($lti, $toolconfig){
+    if(empty($lti->launchcontainer)){
+        $lti->launchcontainer = LTI_LAUNCH_CONTAINER_DEFAULT;
+    }
+
     if($lti->launchcontainer == LTI_LAUNCH_CONTAINER_DEFAULT){
         if(isset($toolconfig['launchcontainer'])){
             $launchcontainer = $toolconfig['launchcontainer'];
@@ -1159,7 +1163,7 @@ function lti_get_launch_container($lti, $toolconfig){
     } else {
         $launchcontainer = $lti->launchcontainer;
     }
-    
+
     if(empty($launchcontainer) || $launchcontainer == LTI_LAUNCH_CONTAINER_DEFAULT){
         $launchcontainer = LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
     }
@@ -1172,7 +1176,7 @@ function lti_get_launch_container($lti, $toolconfig){
     if($devicetype === 'mobile' || $devicetype === 'tablet' ){
         $launchcontainer = LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW;
     }
-    
+
     return $launchcontainer;
 }
 
@@ -1190,6 +1194,6 @@ function lti_ensure_url_is_https($url){
             $url = 'https://' . substr($url, 8);
         }
     }
-    
+
     return $url;
 }

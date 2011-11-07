@@ -54,11 +54,11 @@ if(!lti_get_tool_by_url_match($lti->toolurl, $lti->course, LTI_TOOL_STATE_ANY)){
     $tooltype = new stdClass();
     $toolconfig = new stdClass();
 
-    $toolconfig->lti_toolurl = lti_get_domain_from_url($lti->toolurl); 
+    $toolconfig->lti_toolurl = lti_get_domain_from_url($lti->toolurl);
     $toolconfig->lti_typename = $toolconfig->lti_toolurl;
 
     lti_add_type($tooltype, $toolconfig);
-    
+
     echo get_string('lti_tool_request_added', 'lti');
 } else {
     echo get_string('lti_tool_request_existing', 'lti');

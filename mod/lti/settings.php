@@ -64,27 +64,27 @@ if ($ADMIN->fulltree) {
     $baseurl = get_string('baseurl', 'lti');
     $action = get_string('action', 'lti');
     $createdon = get_string('createdon', 'lti');
-    
+
     $types = lti_filter_get_types($SITE->id);
-    
+
     $configuredtools = array_filter($types, function($value){
         return $value->state == LTI_TOOL_STATE_CONFIGURED;
     });
-    
+
     $configuredtoolshtml = lti_get_tool_table($configuredtools, 'lti_configured');
 
     $pendingtools = array_filter($types, function($value){
         return $value->state == LTI_TOOL_STATE_PENDING;
     });
-    
+
     $pendingtoolshtml = lti_get_tool_table($pendingtools, 'lti_pending');
-    
+
     $rejectedtools = array_filter($types, function($value){
         return $value->state == LTI_TOOL_STATE_REJECTED;
     });
-    
+
     $rejectedtoolshtml = lti_get_tool_table($rejectedtools, 'lti_rejected');
-    
+
     $tab = optional_param('tab', '', PARAM_ALPHAEXT);
     $activeselected = '';
     $pendingselected = '';
@@ -100,7 +100,7 @@ if ($ADMIN->fulltree) {
             $activeselected = 'class="selected"';
             break;
     }
-    
+
     $template = <<<HTML
 <div id="lti_tabs" class="yui-navset">
     <ul id="lti_tab_heading" class="yui-nav" style="display:none">
@@ -141,13 +141,13 @@ if ($ADMIN->fulltree) {
         lti_tab_heading.style.display = '';
 
         new YAHOO.widget.TabView('lti_tabs');
-    
+
         var setupTools = function(id, sort){
             var lti_tools = YAHOO.util.Dom.get(id + "_tools");
-    
+
             if(lti_tools){
                 var dataSource = new YAHOO.util.DataSource(lti_tools);
-    
+
                 var configuredColumns = [
                     {key:"name", label:"$typename", sortable:true},
                     {key:"baseURL", label:"$baseurl", sortable:true},
@@ -180,9 +180,9 @@ if ($ADMIN->fulltree) {
 //]]
 </script>
 HTML;
-    
+
     $PAGE->requires->yui2_lib('tabview');
     $PAGE->requires->yui2_lib('datatable');
-   
+
     $settings->add(new admin_setting_heading('lti_types', get_string('external_tool_types', 'lti') . $OUTPUT->help_icon('main_admin', 'lti'), $template));
 }

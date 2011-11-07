@@ -96,9 +96,7 @@ $module = array(
     'name'      => 'mod_lti_submissions',
     'fullpath'  => '/mod/lti/submissions.js',
     'requires'  => array('base'),
-    'strings'   => array(
-        
-    ),
+    'strings'   => array(),
 );
 
 $PAGE->requires->js_init_call('M.mod_lti.submissions.init', array(), true, $module);
@@ -158,15 +156,15 @@ $rows = '';
 
 foreach($submissions as $submission){
     $row = $rowtemplate;
-    
+
     foreach($submission as $key => $value){
         if($key === 'datesubmitted'){
             $value = userdate($value);
         }
-        
+
         $row = str_replace('<!--' . $key . '-->', $value, $row);
     }
-    
+
     $rows .= $row;
 }
 

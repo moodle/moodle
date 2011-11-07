@@ -61,7 +61,7 @@ function xmldb_lti_upgrade($oldversion=0) {
     global $DB;
 
     $dbman = $DB->get_manager();
-    
+
     if ($oldversion < 2011100701) {
         $table = new xmldb_table('lti');
         $field = new xmldb_field('icon', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'servicesalt');
@@ -71,28 +71,26 @@ function xmldb_lti_upgrade($oldversion=0) {
         }
 
         upgrade_mod_savepoint(true, 2011100701, 'lti');
-    }   
-    
+    }
+
     if ($oldversion < 2011101801) {
         $table = new xmldb_table('lti');
         $field = new xmldb_field('securetoolurl', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'toolurl');
-        
+
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        
+
         $field = new xmldb_field('secureicon', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'icon');
-      
+
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
-        }        
-        
+        }
+
         upgrade_mod_savepoint(true, 2011101801, 'lti');
     }
-    
-    $result = true;
 
-    
+    $result = true;
 
     return $result;
 }

@@ -34,7 +34,7 @@ $rawbody = file_get_contents("php://input");
 foreach(getallheaders() as $name => $value){
     if($name === 'Authorization'){
         $oauthparams = lti\OAuthUtil::split_header($value);
-        
+
         $consumerkey = $oauthparams['oauth_consumer_key'];
         break;
     }
@@ -60,73 +60,73 @@ foreach($body->children() as $child){
 switch($messagetype){
     case 'replaceResultRequest':
         $parsed = lti_parse_grade_replace_message($xml);
-       
+
         $ltiinstance = $DB->get_record('lti', array('id' => $parsed->instanceid));
-        
+
         lti_verify_sourcedid($ltiinstance, $parsed);
-        
+
         $gradestatus = lti_update_grade($ltiinstance, $parsed->userid, $parsed->launchid, $parsed->gradeval);
-        
+
         $responsexml = lti_get_response_xml(
-                $gradestatus ? 'success' : 'error', 
+                $gradestatus ? 'success' : 'error',
                 'Grade replace response',
                 $parsed->messageid,
                 'replaceResultResponse'
         );
-        
+
         echo $responsexml->asXML();
-        
+
         break;
-    
+
     case 'readResultRequest':
         $parsed = lti_parse_grade_read_message($xml);
-        
+
         $ltiinstance = $DB->get_record('lti', array('id' => $parsed->instanceid));
-        
+
         //Getting the grade requires the context is set
         $context = get_context_instance(CONTEXT_COURSE, $ltiinstance->course);
         $PAGE->set_context($context);
-        
+
         lti_verify_sourcedid($ltiinstance, $parsed);
-        
+
         $grade = lti_read_grade($ltiinstance, $parsed->userid);
-        
+
         $responsexml = lti_get_response_xml(
                 isset($grade) ? 'success' : 'error',
                 'Result read',
                 $parsed->messageid,
                 'readResultResponse'
         );
-        
+
         $node = $responsexml->imsx_POXBody->readResultResponse;
         $node->addChild('result')
              ->addChild('resultScore')
              ->addChild('textString', isset($grade) ? $grade : '');
-        
+
         echo $responsexml->asXML();
-        
+
         break;
-    
+
     case 'deleteResultRequest':
         $parsed = lti_parse_grade_delete_message($xml);
-        
+
         $ltiinstance = $DB->get_record('lti', array('id' => $parsed->instanceid));
-        
+
         lti_verify_sourcedid($ltiinstance, $parsed);
-        
+
         $gradestatus = lti_delete_grade($ltiinstance, $parsed->userid);
-        
+
         $responsexml = lti_get_response_xml(
-                $gradestatus ? 'success' : 'error', 
-                'Grade delete request', 
-                $parsed->messageid, 
+                $gradestatus ? 'success' : 'error',
+                'Grade delete request',
+                $parsed->messageid,
                 'deleteResultResponse'
         );
- 
+
         echo $responsexml->asXML();
-        
+
         break;
-    
+
     default:
         //Fire an event if we get a web service request which we don't support directly.
         //This will allow others to extend the LTI services, which I expect to be a common
@@ -137,25 +137,25 @@ switch($messagetype){
         $data->messagetype = $messagetype;
         $data->consumerkey = $consumerkey;
         $data->sharedsecret = $sharedsecret;
-        
+
         //If an event handler handles the web service, it should set this global to true
         //So this code knows whether to send an "operation not supported" or not.
         global $lti_web_service_handled;
         $lti_web_service_handled = false;
-        
+
         events_trigger('lti_unknown_service_api_call', $data);
-        
+
         if(!$lti_web_service_handled){
             $responsexml = lti_get_response_xml(
-                'unsupported', 
-                'unsupported', 
+                'unsupported',
+                'unsupported',
                  lti_parse_message_id($xml),
                  $messagetype
             );
 
             echo $responsexml->asXML();
         }
-        
+
         break;
 }
 
