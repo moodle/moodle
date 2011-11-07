@@ -163,21 +163,31 @@ function lti_delete_instance($id) {
     return $DB->delete_records("lti", array("id" => $basiclti->id));
 }
 
+/**
+ * Given a coursemodule object, this function returns the extra
+ * information needed to print this activity in various places.
+ * For this module we just need to support external urls as
+ * activity icons
+ *
+ * @param cm_info $coursemodule
+ * @return cached_cm_info info
+ */
 function lti_get_coursemodule_info($coursemodule) {
     global $DB;
 
-    $lti = $DB->get_record('lti', array('id' => $coursemodule->instance), 'icon, secureicon');
+    if (!$lti = $DB->get_record('lti', array('id' => $coursemodule->instance),
+            'icon, secureicon')) {
+        return null;
+    }
 
-    $info = new stdClass();
+    $info = new cached_cm_info();
 
-    //We want to use the right icon based on whether the current page is being requested over http or https.
-    //There's a potential problem here as the icon URLs are cached in the modinfo field and won't be updated for each request.
+    // We want to use the right icon based on whether the
+    // current page is being requested over http or https.
     if (lti_request_is_using_ssl() && !empty($lti->secureicon)) {
-        $info->icon = $lti->secureicon;
-    } else {
-        if (!empty($lti->icon)) {
-            $info->icon = $lti->icon;
-        }
+        $info->iconurl = new moodle_url($lti->secureicon);
+    } else if (!empty($lti->icon)) {
+        $info->iconurl = new moodle_url($lti->icon);
     }
 
     return $info;
