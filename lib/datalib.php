@@ -1938,7 +1938,9 @@ function count_login_failures($mode, $username, $lastlogin) {
  */
 function print_object($object) {
     echo '<pre class="notifytiny">';
-    print_r($object);  // Direct to output because some objects get too big for memory otherwise!
+    // we may need a lot of memory here
+    raise_memory_limit(MEMORY_EXTRA);
+    echo s(print_r($object, true));
     echo '</pre>';
 }
 
