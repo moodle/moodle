@@ -22,15 +22,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addingddimageortext'] = 'Adding drag and drop onto images';
+$string['addingddimageortext'] = 'Adding drag and drop onto image';
 $string['addmoredropzones'] = 'Blanks for {no} More Drop Zones';
 $string['addmoreimages'] = 'Blanks for {no} More Draggable Items';
 $string['answer'] = 'Answer';
 $string['bgimage'] = 'Background Image';
 $string['correctansweris'] = 'The correct answer is: {$a}';
-$string['ddimageortext'] = 'Drag and drop onto images';
+$string['ddimageortext'] = 'Drag and drop onto image';
 $string['ddimageortext_help'] = 'Select a background image file, select draggable images or enter text and define the drop zones on the background image to which they must be dragged.';
-$string['ddimageortextsummary'] = 'Images or text labels are dragged and dropped into visible drop zones on a background image.';
+$string['ddimageortextsummary'] = 'Images or text labels are dragged and dropped into drop zones on a background image.';
 $string['draggableimage'] = 'Draggable image';
 $string['draggableitem'] = 'Draggable item';
 $string['draggableitemheader'] = 'Draggable item {$a}';
@@ -38,7 +38,7 @@ $string['draggableitemtype'] = 'Type';
 $string['draggableword'] = 'Draggable text';
 $string['dropzone'] = 'Drop zone {$a}';
 $string['dropzoneheader'] = 'Drop zones';
-$string['editingddimageortext'] = 'Editing drag and drop onto images';
+$string['editingddimageortext'] = 'Editing drag and drop onto image';
 $string['formerror_disallowedtags'] = 'You have used html tags here that are not allowed in a draggable text drag item type.';
 $string['formerror_noallowedtags'] = 'No html tags are allowed in this text which is the alt text for a draggable image';
 $string['formerror_noytop'] = 'You must provide a value for the y coords for the top left corner of this drop area. You can drag and drop the drop area above to set the coordinates or enter them manually here.';
