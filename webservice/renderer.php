@@ -320,6 +320,9 @@ class core_webservice_renderer extends plugin_renderer_base {
                     $validuntil = date("F j, Y"); //TODO: language support (look for moodle function)
                 }
 
+                if (!$token->enabled) { //that is the (1 token-1ws) related ws is not enabled.
+                    $token->name = '<span class="dimmed_text">'.$token->name.'</span>';
+                }
                 $row = array($token->token, $token->name, $validuntil, $creatoratag, $reset);
 
                 if ($documentation) {
