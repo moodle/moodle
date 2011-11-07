@@ -199,7 +199,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
             if (isset($level['error_score'])) {
                 $scoreclass .= ' error';
             }
-            $level_template .= html_writer::tag('div', $score. get_string('scorepostfix', 'gradingform_rubric'), array('class' => $scoreclass));
+            $level_template .= html_writer::tag('div', get_string('scorepostfix', 'gradingform_rubric', $score), array('class' => $scoreclass));
         }
         if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FULL) {
             $value = get_string('leveldelete', 'gradingform_rubric');
