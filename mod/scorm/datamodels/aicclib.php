@@ -358,7 +358,7 @@ function scorm_aicc_get_hacp_session($scormid) {
 
     $hacpsession = $SESSION->scorm;
     $hacpsession->scormid = $scormid;
-    $hacpsession->hacpsession = random_string(10);
+    $hacpsession->hacpsession = random_string(20);
     $hacpsession->userid      = $USER->id;
     $hacpsession->timecreated = $now;
     $hacpsession->timemodified = $now;
