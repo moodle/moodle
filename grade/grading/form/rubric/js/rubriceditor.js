@@ -23,6 +23,7 @@ M.gradingform_rubriceditor.addhandlers = function() {
     M.gradingform_rubriceditor.eventhandler = Y.on('click', M.gradingform_rubriceditor.buttonclick, '#rubric-'+name+' input[type=submit]', null);
 }
 
+// switches all input text elements to non-edit mode
 M.gradingform_rubriceditor.disablealleditors = function() {
     var Y = M.gradingform_rubriceditor.Y
     var name = M.gradingform_rubriceditor.name
@@ -30,6 +31,9 @@ M.gradingform_rubriceditor.disablealleditors = function() {
     Y.all('#rubric-'+name+' .description').each( function(node) {M.gradingform_rubriceditor.editmode(node, false)} );
 }
 
+// function invoked on each click on the page. If level and/or criterion description is clicked
+// it switches this element to edit mode. If rubric button is clicked it does nothing so the 'buttonclick'
+// function is invoked
 M.gradingform_rubriceditor.clickanywhere = function(e) {
     var el = e.target
     // if clicked on button - disablecurrenteditor, continue
@@ -54,56 +58,55 @@ M.gradingform_rubriceditor.clickanywhere = function(e) {
     M.gradingform_rubriceditor.disablealleditors()
 }
 
+// switch the criterion description or level to edit mode or switch back
 M.gradingform_rubriceditor.editmode = function(el, editmode, focustb) {
     var ta = el.one('textarea')
-    if (!ta.get('parentNode').one('.plainvalue')) {
-        ta.get('parentNode').append('<div class="plainvalue"></div>')
+    if (!editmode && ta.getStyle('display') == 'none') return;
+    if (editmode && ta.getStyle('display') == 'block') return;
+    var pseudotablink = '<a href="#" class="pseudotablink"> </a>',
+        taplain = ta.get('parentNode').one('.plainvalue'),
+        tbplain = null,
+        tb = el.one('input[type=text]')
+    // add 'plainvalue' next to textarea for description/definition and next to input text field for score (if applicable)
+    if (!taplain) {
+        ta.get('parentNode').append('<div class="plainvalue"><span></span>'+pseudotablink+'</div>')
+        taplain = ta.get('parentNode').one('.plainvalue')
+        taplain.one('.pseudotablink').on('focus', M.gradingform_rubriceditor.clickanywhere)
+        if (tb) {
+            tb.get('parentNode').append('<div class="plainvalue"><span></span>'+pseudotablink+'</div>')
+            tbplain = tb.get('parentNode').one('.plainvalue')
+            tbplain.one('.pseudotablink').on('focus', M.gradingform_rubriceditor.clickanywhere)
+        }
     }
-    var tb = el.one('input[type=text]')
-    if (tb && !tb.get('parentNode').one('.plainvalue')) {
-        tb.get('parentNode').append('<div class="plainvalue"></div>')
-    }
+    if (tb && !tbplain) tbplain = tb.get('parentNode').one('.plainvalue')
     if (!editmode) {
-        if (ta.getStyle('display') == 'none') return;
+        // if we need to hide the input fields, copy their contents to plainvalue(s). If description/definition
+        // is empty, display the default text ('Click to edit ...') and add/remove 'empty' CSS class to element
         var value = ta.get('value')
-        if (value.length) ta.get('parentNode').one('.plainvalue').removeClass('empty')
+        if (value.length) taplain.removeClass('empty')
         else {
             value = (el.hasClass('level')) ? M.str.gradingform_rubric.levelempty : M.str.gradingform_rubric.criterionempty
-            ta.get('parentNode').one('.plainvalue').addClass('empty')
+            taplain.addClass('empty')
         }
-        ta.get('parentNode').one('.plainvalue').set('innerHTML', value)
-        ta.get('parentNode').one('.plainvalue').setStyle('display', 'block')
-        ta.setStyle('display', 'none')
-        if (tb) {
-            tb.get('parentNode').one('.plainvalue').set('innerHTML', tb.get('value'))
-            tb.get('parentNode').one('.plainvalue').setStyle('display', 'inline-block')
-            tb.setStyle('display', 'none')
-        }
+        taplain.one('span').set('innerHTML', value)
+        if (tb) tbplain.one('span').set('innerHTML', tb.get('value'))
     } else {
-        if (tb) {
-            tb.get('parentNode').one('.plainvalue').setStyle('display', 'none')
-            tb.setStyle('display', 'inline-block')
-        }
-        var width = ta.get('parentNode').getComputedStyle('width') // TODO min width
-        var height = ta.get('parentNode').getComputedStyle('height') // TODO min height
-        if (el.hasClass('level')) {
-            height = el.getComputedStyle('height') - el.one('.score').getComputedStyle('height')
-        } else if (el.hasClass('description')) {
-            height = el.get('parentNode').getComputedStyle('height')
-        }
-        ta.get('parentNode').one('.plainvalue').setStyle('display', 'none')
-        ta.setStyle('display', 'block').setStyle('width', width).setStyle('height', height)
-        if (tb && focustb) tb.focus(); else ta.focus()
+        // if we need to show the input fields, set the width/height for textarea so it fills the cell
+        var width = parseFloat(ta.get('parentNode').getComputedStyle('width')),
+            height
+        if (el.hasClass('level')) height = parseFloat(el.getComputedStyle('height')) - parseFloat(el.one('.score').getComputedStyle('height'))
+        else height = parseFloat(ta.get('parentNode').getComputedStyle('height'))
+        ta.setStyle('width', Math.max(width,50)+'px').setStyle('height', Math.max(height,20)+'px')
     }
-    if (!ta.get('parentNode').one('.plainvalue').one('.pseudotablink')) {
-        var pseudotablink = '<a href="#" class="pseudotablink"> </a>'
-        ta.get('parentNode').one('.plainvalue').append(pseudotablink)
-        ta.get('parentNode').one('.plainvalue').one('.pseudotablink').on('focus', M.gradingform_rubriceditor.clickanywhere)
-        if (tb) {
-            tb.get('parentNode').one('.plainvalue').append(pseudotablink)
-            tb.get('parentNode').one('.plainvalue').one('.pseudotablink').on('focus', M.gradingform_rubriceditor.clickanywhere)
-        }
+    // hide/display textarea, textbox and plaintexts
+    taplain.setStyle('display', editmode ? 'none' : 'block')
+    ta.setStyle('display', editmode ? 'block' : 'none')
+    if (tb) {
+        tbplain.setStyle('display', editmode ? 'none' : 'inline-block')
+        tb.setStyle('display', editmode ? 'inline-block' : 'none')
     }
+    // focus the proper input field in edit mode
+    if (editmode) { if (tb && focustb) tb.focus(); else ta.focus() }
 }
 
 // handler for clicking on submit buttons within rubriceditor element. Adds/deletes/rearranges criteria and/or levels on client side
@@ -133,43 +136,52 @@ M.gradingform_rubriceditor.buttonclick = function(e, confirmed) {
     };
     if (chunks.length == 3 && action == 'addcriterion') {
         // ADD NEW CRITERION
-        var nlevels = 3
-        var criteria = Y.all('#'+name+'-criteria .criterion')
-        if (criteria.size()) nlevels = Math.max(nlevels, criteria.item(criteria.size()-1).all('.level').size())
-        var levelsstr = '';
-        for (var levidx=0;levidx<nlevels;levidx++) {
-            levelsstr += M.gradingform_rubriceditor.templates[name]['level'].
-            replace(/\{CRITERION-id\}/g, 'NEWID'+newid).replace(/\{LEVEL-id\}/g, 'NEWID'+(newlevid+levidx)).replace(/\{.+?\}/g, '')
-        }
-        var newcriterion = M.gradingform_rubriceditor.templates[name]['criterion'].
-            replace(/\{CRITERION-id\}/g, 'NEWID'+newid).replace(/\{LEVELS\}/, levelsstr).replace(/\{.+?\}/g, '')
+        var levelsscores = [0], levidx = 1
         var parentel = Y.one('#'+name+'-criteria')
         if (parentel.one('>tbody')) parentel = parentel.one('>tbody')
-        parentel.append(newcriterion)
-        M.gradingform_rubriceditor.addhandlers();
+        if (parentel.all('.criterion').size()) {
+            var lastcriterion = parentel.all('.criterion').item(parentel.all('.criterion').size()-1).all('.level')
+            for (levidx=0;levidx<lastcriterion.size();levidx++) levelsscores[levidx] = lastcriterion.item(levidx).one('.score input[type=text]').get('value')
+        }
+        for (levidx;levidx<3;levidx++) levelsscores[levidx] = parseFloat(levelsscores[levidx-1])+1
+        var levelsstr = '';
+        for (levidx=0;levidx<levelsscores.length;levidx++) {
+            levelsstr += M.gradingform_rubriceditor.templates[name]['level'].replace(/\{LEVEL-id\}/g, 'NEWID'+(newlevid+levidx)).replace(/\{LEVEL-score\}/g, levelsscores[levidx])
+        }
+        var newcriterion = M.gradingform_rubriceditor.templates[name]['criterion'].replace(/\{LEVELS\}/, levelsstr)
+        parentel.append(newcriterion.replace(/\{CRITERION-id\}/g, 'NEWID'+newid).replace(/\{.+?\}/g, ''))
         M.gradingform_rubriceditor.assignclasses('#rubric-'+name+' #'+name+'-criteria-NEWID'+newid+'-levels .level')
+        M.gradingform_rubriceditor.addhandlers();
+        M.gradingform_rubriceditor.disablealleditors()
+        M.gradingform_rubriceditor.assignclasses(elements_str)
         M.gradingform_rubriceditor.editmode(Y.one('#rubric-'+name+' #'+name+'-criteria-NEWID'+newid+'-description'),true)
     } else if (chunks.length == 5 && action == 'addlevel') {
         // ADD NEW LEVEL
+        var newscore = 0;
+        parent = Y.one('#'+name+'-criteria-'+chunks[2]+'-levels')
+        parent.all('.level').each(function (node) { newscore = Math.max(newscore, parseFloat(node.one('.score input[type=text]').get('value'))+1) })
         var newlevel = M.gradingform_rubriceditor.templates[name]['level'].
-            replace(/\{CRITERION-id\}/g, chunks[2]).replace(/\{LEVEL-id\}/g, 'NEWID'+newlevid).replace(/\{.+?\}/g, '')
-        Y.one('#'+name+'-criteria-'+chunks[2]+'-levels').append(newlevel)
-        var levels = Y.all('#'+name+'-criteria-'+chunks[2]+'-levels .level')
-        if (levels.size()) levels.set('width', Math.round(100/levels.size())+'%')
+            replace(/\{CRITERION-id\}/g, chunks[2]).replace(/\{LEVEL-id\}/g, 'NEWID'+newlevid).replace(/\{LEVEL-score\}/g, newscore).replace(/\{.+?\}/g, '')
+        parent.append(newlevel)
         M.gradingform_rubriceditor.addhandlers();
-        M.gradingform_rubriceditor.editmode(levels.item(levels.size()-1),true)
+        M.gradingform_rubriceditor.disablealleditors()
+        M.gradingform_rubriceditor.assignclasses(elements_str)
+        M.gradingform_rubriceditor.editmode(parent.all('.level').item(parent.all('.level').size()-1), true)
     } else if (chunks.length == 4 && action == 'moveup') {
         // MOVE CRITERION UP
         el = Y.one('#'+name+'-criteria-'+chunks[2])
         if (el.previous()) el.get('parentNode').insertBefore(el, el.previous())
+        M.gradingform_rubriceditor.assignclasses(elements_str)
     } else if (chunks.length == 4 && action == 'movedown') {
         // MOVE CRITERION DOWN
         el = Y.one('#'+name+'-criteria-'+chunks[2])
         if (el.next()) el.get('parentNode').insertBefore(el.next(), el)
+        M.gradingform_rubriceditor.assignclasses(elements_str)
     } else if (chunks.length == 4 && action == 'delete') {
         // DELETE CRITERION
         if (confirmed) {
             Y.one('#'+name+'-criteria-'+chunks[2]).remove()
+            M.gradingform_rubriceditor.assignclasses(elements_str)
         } else {
             dialog_options['message'] = M.str.gradingform_rubric.confirmdeletecriterion
             M.util.show_confirm_dialog(e, dialog_options);
@@ -178,8 +190,7 @@ M.gradingform_rubriceditor.buttonclick = function(e, confirmed) {
         // DELETE LEVEL
         if (confirmed) {
             Y.one('#'+name+'-criteria-'+chunks[2]+'-'+chunks[3]+'-'+chunks[4]).remove()
-            levels = Y.all('#'+name+'-criteria-'+chunks[2]+'-levels .level')
-            if (levels.size()) levels.set('width', Math.round(100/levels.size())+'%')
+            M.gradingform_rubriceditor.assignclasses(elements_str)
         } else {
             dialog_options['message'] = M.str.gradingform_rubric.confirmdeletelevel
             M.util.show_confirm_dialog(e, dialog_options);
@@ -189,21 +200,22 @@ M.gradingform_rubriceditor.buttonclick = function(e, confirmed) {
         return;
     }
     e.preventDefault();
-    // properly set classes and sortorder
-    M.gradingform_rubriceditor.assignclasses(elements_str)
 }
 
+// properly set classes (first/last/odd/even), level width and/or criterion sortorder for elements Y.all(elements_str)
 M.gradingform_rubriceditor.assignclasses = function (elements_str) {
     var elements = M.gradingform_rubriceditor.Y.all(elements_str)
     for (var i=0;i<elements.size();i++) {
         elements.item(i).removeClass('first').removeClass('last').removeClass('even').removeClass('odd').
             addClass(((i%2)?'odd':'even') + ((i==0)?' first':'') + ((i==elements.size()-1)?' last':''))
         elements.item(i).all('input[type=hidden]').each(
-            function(node) { if (node.get('name').match(/sortorder/)) node.set('value', i) }
+            function(node) {if (node.get('name').match(/sortorder/)) node.set('value', i)}
         );
+        if (elements.item(i).hasClass('level')) elements.item(i).set('width', Math.round(100/elements.size())+'%')
     }
 }
 
+// returns unique id for the next added element, it should not be equal to any of Y.all(elements_str) ids
 M.gradingform_rubriceditor.calculatenewid = function (elements_str) {
     var newid = 1
     M.gradingform_rubriceditor.Y.all(elements_str).each( function(node) {
