@@ -51,34 +51,20 @@ require_once($CFG->dirroot.'/mod/lti/lib.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
-$a  = optional_param('a', 0, PARAM_INT);  // lti ID
+$l  = optional_param('l', 0, PARAM_INT);  // lti ID
 
-if ($id) {
-    if (! $cm = get_coursemodule_from_id("lti", $id)) {
-        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Course Module ID was incorrect');
-    }
-
-    if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
-        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Course is misconfigured');
-    }
-
-    if (! $basiclti = $DB->get_record("lti", array("id" => $cm->instance))) {
-        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Course module is incorrect');
-    }
+if ($l) {  // Two ways to specify the module
+    $lti = $DB->get_record('lti', array('id' => $l), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('lti', $lti->id, $lti->course, false, MUST_EXIST);
 
 } else {
-    if (! $basiclti = $DB->get_record("lti", array("id" => $a))) {
-        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Course module is incorrect');
-    }
-    if (! $course = $DB->get_record("course", array("id" => $basiclti->course))) {
-        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Course is misconfigured');
-    }
-    if (! $cm = get_coursemodule_from_instance("lti", $basiclti->id, $course->id)) {
-        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Course Module ID was incorrect');
-    }
+    $cm = get_coursemodule_from_id('lti', $id, 0, false, MUST_EXIST);
+    $lti = $DB->get_record('lti', array('id' => $cm->instance), '*', MUST_EXIST);
 }
 
-$tool = lti_get_tool_by_url_match($basiclti->toolurl);
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+
+$tool = lti_get_tool_by_url_match($lti->toolurl);
 if ($tool) {
     $toolconfig = lti_get_type_config($tool->id);
 } else {
@@ -92,7 +78,7 @@ $PAGE->set_context($context);
 $url = new moodle_url('/mod/lti/view.php', array('id'=>$cm->id));
 $PAGE->set_url($url);
 
-$launchcontainer = lti_get_launch_container($basiclti, $toolconfig);
+$launchcontainer = lti_get_launch_container($lti, $toolconfig);
 
 if ($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
     $PAGE->set_pagelayout('frametop'); //Most frametops don't include footer, and pre-post blocks
@@ -105,22 +91,22 @@ if ($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
 
 require_login($course);
 
-add_to_log($course->id, "lti", "view", "view.php?id=$cm->id", "$basiclti->id");
+add_to_log($course->id, "lti", "view", "view.php?id=$cm->id", "$lti->id");
 
-$pagetitle = strip_tags($course->shortname.': '.format_string($basiclti->name));
+$pagetitle = strip_tags($course->shortname.': '.format_string($lti->name));
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 
 /// Print the page header
 echo $OUTPUT->header();
 
-if ($basiclti->showtitle) {
+if ($lti->showtitle) {
     /// Print the main part of the page
-    echo $OUTPUT->heading(format_string($basiclti->name));
+    echo $OUTPUT->heading(format_string($lti->name));
 }
 
-if ($basiclti->showdescription && $basiclti->intro) {
-    echo $OUTPUT->box($basiclti->intro, 'generalbox description', 'intro');
+if ($lti->showdescription && $lti->intro) {
+    echo $OUTPUT->box($lti->intro, 'generalbox description', 'intro');
 }
 
 if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {

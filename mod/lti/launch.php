@@ -33,7 +33,7 @@
 // Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu
 
 /**
- * This file contains all necessary code to view a basiclti activity instance
+ * This file contains all necessary code to view a lti activity instance
  *
  * @package    mod
  * @subpackage lti
@@ -50,37 +50,16 @@ require_once("../../config.php");
 require_once($CFG->dirroot.'/mod/lti/lib.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
-$id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
+$id = required_param('id', PARAM_INT); // Course Module ID
 
-if ($id) {
-    if (! $cm = $DB->get_record("course_modules", array("id" => $id))) {
-        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Course Module ID was incorrect');
-    }
-
-    if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
-        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Course is misconfigured');
-    }
-
-    if (! $basiclti = $DB->get_record("lti", array("id" => $cm->instance))) {
-        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Course module is incorrect');
-    }
-
-} else {
-    if (! $basiclti = $DB->get_record("lti", array("id" => $a))) {
-        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Course module is incorrect');
-    }
-    if (! $course = $DB->get_record("course", array("id" => $basiclti->course))) {
-        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Course is misconfigured');
-    }
-    if (! $cm = get_coursemodule_from_instance("lti", $basiclti->id, $course->id)) {
-        throw new moodle_exception('generalexceptionmessage', 'error', '', 'Course Module ID was incorrect');
-    }
-}
+$cm = get_coursemodule_from_id('lti', $id, 0, false, MUST_EXIST);
+$lti = $DB->get_record('lti', array('id' => $cm->instance), '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course);
 
-add_to_log($course->id, "lti", "launch", "launch.php?id=$cm->id", "$basiclti->id");
+add_to_log($course->id, "lti", "launch", "launch.php?id=$cm->id", "$lti->id");
 
-$basiclti->cmid = $cm->id;
-lti_view($basiclti);
+$lti->cmid = $cm->id;
+lti_view($lti);
 

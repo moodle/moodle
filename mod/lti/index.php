@@ -33,7 +33,7 @@
 // Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu
 
 /**
- * This page lists all the instances of basiclti in a particular course
+ * This page lists all the instances of lti in a particular course
  *
  * @package    mod
  * @subpackage lti
@@ -50,18 +50,14 @@ require_once($CFG->dirroot.'/mod/lti/lib.php');
 
 $id = required_param('id', PARAM_INT);   // course id
 
-if (! $course = $DB->get_record("course", array("id" => $id))) {
-    throw new moodle_exception('generalexceptionmessage', 'error', '', 'Course ID is incorrect');
-}
-
-$url = new moodle_url('/mod/lti/index.php', array('id'=>$id));
-$PAGE->set_url($url);
-$PAGE->set_pagelayout('incourse');
+$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 
 require_login($course);
+$PAGE->set_pagelayout('incourse');
 
 add_to_log($course->id, "lti", "view all", "index.php?id=$course->id", "");
 
+$PAGE->set_url('/mod/lti/index.php', array('id' => $course->id));
 $pagetitle = strip_tags($course->shortname.': '.get_string("modulenamepluralformatted", "lti"));
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);

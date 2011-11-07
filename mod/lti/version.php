@@ -46,6 +46,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die;
+
 $module->version  = 2011101801;  // The current module version (Date: YYYYMMDDXX)
 $module->requires = 2011070100;  // Requires this Moodle version
 $module->cron     = 0;           // Period for cron to check this module (secs)

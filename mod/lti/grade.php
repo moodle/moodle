@@ -33,7 +33,7 @@
 // Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu
 
 /**
- * This file contains submissions-specific code for the basiclti module
+ * This file contains submissions-specific code for the lti module
  *
  * @package    mod
  * @subpackage lti
@@ -51,46 +51,30 @@ require_once($CFG->dirroot.'/mod/lti/lib.php');
 require_once($CFG->libdir.'/plagiarismlib.php');
 
 $id   = optional_param('id', 0, PARAM_INT);          // Course module ID
-$a    = optional_param('a', 0, PARAM_INT);           // Assignment ID
+$l    = optional_param('l', 0, PARAM_INT);           // lti instance ID
 $mode = optional_param('mode', 'all', PARAM_ALPHA);  // What mode are we in?
 $download = optional_param('download' , 'none', PARAM_ALPHA); //ZIP download asked for?
 
-$url = new moodle_url('/mod/lti/submissions.php');
-if ($id) {
-    if (! $cm = get_coursemodule_from_id('lti', $id)) {
-        print_error('invalidcoursemodule');
-    }
+if ($l) {  // Two ways to specify the module
+    $lti = $DB->get_record('lti', array('id' => $l), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('lti', $lti->id, $lti->course, false, MUST_EXIST);
 
-    if (! $basiclti = $DB->get_record("lti", array("id"=>$cm->instance))) {
-        print_error('invalidid', 'lti');
-    }
-
-    if (! $course = $DB->get_record("course", array("id"=>$basiclti->course))) {
-        print_error('coursemisconf', 'lti');
-    }
-    $url->param('id', $id);
 } else {
-    if (!$basiclti = $DB->get_record("lti", array("id"=>$a))) {
-        print_error('invalidcoursemodule');
-    }
-    if (! $course = $DB->get_record("course", array("id"=>$basiclti->course))) {
-        print_error('coursemisconf', 'lti');
-    }
-    if (! $cm = get_coursemodule_from_instance("lti", $basiclti->id, $course->id)) {
-        print_error('invalidcoursemodule');
-    }
-    $url->param('a', $a);
+    $cm = get_coursemodule_from_id('lti', $id, 0, false, MUST_EXIST);
+    $lti = $DB->get_record('lti', array('id' => $cm->instance), '*', MUST_EXIST);
 }
 
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+
+require_login($course, false, $cm);
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('mod/lti:grade', $context);
+
+$url = new moodle_url('/mod/lti/grade.php', array('id' => $cm->id));
 if ($mode !== 'all') {
     $url->param('mode', $mode);
 }
 $PAGE->set_url($url);
-require_login($course, false, $cm);
-
-require_capability('mod/lti:grade', get_context_instance(CONTEXT_MODULE, $cm->id));
-
-//lti_submissions($cm, $course, $basiclti, $mode);   // Display or process the submissions
 
 $module = array(
     'name'      => 'mod_lti_submissions',
@@ -111,7 +95,7 @@ $submissionquery = <<<SQL
     ORDER BY s.datesubmitted DESC
 SQL;
 
-$submissions = $DB->get_records_sql($submissionquery, array('ltiid' => $basiclti->id));
+$submissions = $DB->get_records_sql($submissionquery, array('ltiid' => $lti->id));
 
 $html = <<<HTML
 <noscript>
@@ -170,7 +154,7 @@ foreach ($submissions as $submission) {
 
 $table = str_replace('<!--table body-->', $rows, $html);
 
-$title = 'Submissions for ' . $basiclti->name;
+$title = 'Submissions for ' . $lti->name;
 
 $PAGE->set_title(format_string($title , true));
 $PAGE->set_heading($course->fullname);

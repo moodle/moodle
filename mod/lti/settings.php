@@ -48,8 +48,6 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-global $PAGE, $CFG, $SITE;
-
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 if ($ADMIN->fulltree) {
