@@ -37,6 +37,13 @@ if (!is_enabled_auth('mnet')) {
 
 // If hostid hasn't been specified, try getting it using wwwroot
 if (!$hostid) {
+    $hostwwwroot = trim($hostwwwroot);
+    $hostwwwroot = rtrim($hostwwwroot, '/');
+
+    // ensure the wwwroot starts with a http or https prefix
+    if (strtolower(substr($hostwwwroot, 0, 4)) != 'http') {
+        $hostwwwroot = 'http://'.$hostwwwroot;
+    }
     $hostid = $DB->get_field('mnet_host', 'id', array('wwwroot' => $hostwwwroot));
 }
 
