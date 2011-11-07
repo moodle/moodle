@@ -82,5 +82,6 @@ $string['regradeoption1'] = 'Mark for regrade';
 
 $string['needregrademessage'] = 'Rubric definition was changed after this student had been graded. You must update the grade otherwise it will not be shown to student.';
 $string['rubricnotcompleted'] = 'Please choose something for each criterion';
+$string['restoredfromdraft'] = 'Please note: You did not submit the last attempt to grade this person. The grading is restored from draft. To cancel the changes press "Cancel" button below';
 
 $string['backtoediting'] = 'Back to editing';

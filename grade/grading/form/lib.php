@@ -694,12 +694,25 @@ abstract class gradingform_instance {
     }
 
     /**
+     * Returns the specified element from object $this->data
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function get_data($key) {
+        if (isset($this->data->$key)) {
+            return $this->data->$key;
+        }
+        return null;
+    }
+
+    /**
      * Returns instance id
      *
      * @return int
      */
     public function get_id() {
-        return $this->data->id;
+        return $this->get_data('id');
     }
 
     /**
@@ -708,7 +721,7 @@ abstract class gradingform_instance {
      * @return int
      */
     public function get_status() {
-        return $this->data->status;
+        return $this->get_data('status');
     }
 
     /**
