@@ -449,6 +449,25 @@ abstract class gradingform_controller {
     }
 
     /**
+     * If instanceid is specified and grading instance exists and it is created by this rater for
+     * this item, this instance is returned.
+     * Otherwise new instance is created for the specified rater and itemid
+     *
+     * @param int $instanceid
+     * @param int $raterid
+     * @param int $itemid
+     * @return gradingform_instance
+     */
+    public function get_or_create_instance($instanceid, $raterid, $itemid) {
+        global $DB;
+        if ($instanceid &&
+                $instance = $DB->get_record('grading_instances', array('id'  => $instanceid, 'raterid' => $raterid, 'itemid' => $itemid), '*', IGNORE_MISSING)) {
+            return $this->get_instance($instance);
+        }
+        return $this->create_instance($raterid, $itemid);
+    }
+
+    /**
      * Returns the HTML code displaying the preview of the grading form
      *
      * Plugins are forced to override this. Ideally they should delegate

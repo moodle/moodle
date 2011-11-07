@@ -615,6 +615,7 @@ class assignment_base {
 
         //make user global so we can use the id
         global $USER, $OUTPUT, $DB, $PAGE;
+
         $mailinfo = optional_param('mailinfo', null, PARAM_BOOL);
 
         if (optional_param('next', null, PARAM_BOOL)) {
@@ -1077,7 +1078,8 @@ class assignment_base {
                 if (!empty($submission->id)) {
                     $itemid = $submission->id;
                 }
-                $mformdata->advancedgradinginstance = $controller->create_instance($USER->id, $itemid);
+                $instanceid = optional_param('advancedgradinginstanceid', 0, PARAM_INT);
+                $mformdata->advancedgradinginstance = $controller->get_or_create_instance($instanceid, $USER->id, $itemid);
             } else {
                 $advancedgradingwarning = $controller->form_unavailable_notification();
             }
@@ -2389,6 +2391,7 @@ class mod_assignment_grading_form extends moodleform {
 
         $grademenu = make_grades_menu($this->_customdata->assignment->grade);
         if ($gradinginstance = $this->use_advanced_grading()) {
+            $mform->addElement('hidden', 'advancedgradinginstanceid', $gradinginstance->get_id());
             $gradinginstance->get_controller()->set_grade_range($grademenu);
             $mform->addElement('grading', 'advancedgrading', get_string('grade').':', array('gradinginstance' => $gradinginstance));
         } else {
