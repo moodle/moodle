@@ -51,7 +51,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
-public class mod_lti_mod_form extends moodleform_mod {
+class mod_lti_mod_form extends moodleform_mod {
 
     public function definition() {
         global $DB, $PAGE, $OUTPUT, $USER, $COURSE;
@@ -237,7 +237,7 @@ public class mod_lti_mod_form extends moodleform_mod {
      *
      * @param array $default_values passed by reference
      */
-    protected function data_preprocessing(&$default_values) {
+    public function data_preprocessing(&$default_values) {
 
     }
 }

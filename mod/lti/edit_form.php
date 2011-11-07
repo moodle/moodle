@@ -52,7 +52,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
-public class mod_lti_edit_types_form extends moodleform{
+class mod_lti_edit_types_form extends moodleform{
     public function definition() {
         $mform    =& $this->_form;
 

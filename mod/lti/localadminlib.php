@@ -55,7 +55,7 @@ require_once($CFG->libdir.'/adminlib.php');
  *
  * @TODO: finish doc this class and it's functions
  */
-public class admin_setting_ltimodule_configlink extends admin_setting {
+class admin_setting_ltimodule_configlink extends admin_setting {
 
     /**
      * Constructor
