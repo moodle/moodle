@@ -397,6 +397,9 @@ abstract class gradingform_controller {
      */
     public function has_active_instances() {
         global $DB;
+        if (empty($this->definition->id)) {
+            return false;
+        }
         if ($this->hasactiveinstances === null) {
             $conditions = array('formid'  => $this->definition->id,
                         'status'  => gradingform_instance::INSTANCE_STATUS_ACTIVE);
