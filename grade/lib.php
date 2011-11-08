@@ -1177,7 +1177,11 @@ class grade_structure {
 
         // If module has grade.php, link to that, otherwise view.php
         if ($hasgradephp[$itemmodule]) {
-            return new moodle_url('/mod/' . $itemmodule . '/grade.php', array('id' => $cm->id, 'itemnumber' => $itemnumber));
+            $args = array('id' => $cm->id, 'itemnumber' => $itemnumber);
+            if (isset($element['userid'])) {
+                $args['userid'] = $element['userid'];
+            }
+            return new moodle_url('/mod/' . $itemmodule . '/grade.php', $args);
         } else {
             return new moodle_url('/mod/' . $itemmodule . '/view.php', array('id' => $cm->id));
         }
@@ -1259,7 +1263,7 @@ class grade_structure {
             return '';
         }
 
-        return $OUTPUT->action_icon($url, new pix_icon('i/search',
+        return $OUTPUT->action_icon($url, new pix_icon('t/preview',
             get_string('gradeanalysis', 'core_grades')));
     }
 
