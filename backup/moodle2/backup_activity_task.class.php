@@ -148,6 +148,9 @@ abstract class backup_activity_task extends backup_task {
         // Generate the grades file
         $this->add_step(new backup_activity_grades_structure_step('activity_grades', 'grades.xml'));
 
+        // Generate the grading file (conditionally)
+        $this->add_step(new backup_activity_grading_structure_step('activity_grading', 'grading.xml'));
+
         // Annotate the scales used in already annotated outcomes
         $this->add_step(new backup_annotate_scales_from_outcomes('annotate_scales'));
 
