@@ -106,7 +106,7 @@ class gradingform_rubric_controller extends gradingform_controller {
         $newdefinition->options = json_encode($newdefinition->rubric['options']);
         $editoroptions = self::description_form_field_options($this->get_context());
         $newdefinition = file_postupdate_standard_editor($newdefinition, 'description', $editoroptions, $this->get_context(),
-            'gradingform_rubric', 'definition_description', $this->definition->id);
+            'grading', 'description', $this->definition->id);
 
         // reload the definition from the database
         $currentdefinition = $this->get_definition(true);
@@ -353,7 +353,7 @@ class gradingform_rubric_controller extends gradingform_controller {
             }
             $options = self::description_form_field_options($this->get_context());
             $properties = file_prepare_standard_editor($properties, 'description', $options, $this->get_context(),
-                'gradingform_rubric', 'definition_description', $definition->id);
+                'grading', 'description', $definition->id);
         }
         $properties->rubric = array('criteria' => array(), 'options' => $this->get_options());
         if (!empty($definition->rubric_criteria)) {
@@ -422,7 +422,7 @@ class gradingform_rubric_controller extends gradingform_controller {
 
         $options = self::description_form_field_options($this->get_context());
         $description = file_rewrite_pluginfile_urls($this->definition->description, 'pluginfile.php', $context->id,
-            'gradingform_rubric', 'definition_description', $this->definition->id, $options);
+            'grading', 'description', $this->definition->id, $options);
 
         $formatoptions = array(
             'noclean' => false,
@@ -775,45 +775,4 @@ class gradingform_rubric_instance extends gradingform_instance {
         $html .= $this->get_controller()->get_renderer($page)->display_rubric($criteria, $options, $mode, $gradingformelement->getName(), $value);
         return $html;
     }
-}
-
-
-/**
- * Processes file requests for the gradingform_rubric
- *
- * Required to serve files for this plugin
- * Called from pluginfile.php
- *
- * @global moodle_database $DB
- * @param stdClass $course
- * @param null $cm
- * @param stdClass $context
- * @param string $filearea
- * @param array $args
- * @param bool $forcedownload
- * @return void|false
- */
-function gradingform_rubric_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
-    global $CFG, $DB;
-    // First argument should ALWAYS be the itemid
-    $itemid = (int)array_shift($args);
-    // Construct a URL to the file and check it exists
-    $fs = get_file_storage();
-    $relativepath = implode('/', $args);
-    $fullpath = "/$context->id/gradingform_rubric/$filearea/$itemid/$relativepath";
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-        // File doesnt exist anyway no point proceeding.
-        return false;
-    }
-    // Switch by the fileare and check the appropriate information
-    switch ($filearea) {
-        case 'definition_description' :
-            // Make sure the itemid points to a valid definition
-            if ($DB->record_exists('grading_definitions', array('id' => $itemid))) {
-                send_stored_file($file, 0, 0, $forcedownload);
-            }
-            break;
-    }
-    // Obviosly bogus comething or other in there
-    return false;
 }
