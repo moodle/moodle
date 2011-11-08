@@ -356,12 +356,23 @@ function process_group_tag($tagcontents){
                   $this->log_line("Course $coursecode not found in Moodle's course idnumbers.");
               } else {
                 // Create the (hidden) course(s) if not found
+                $courseconfig = get_config('moodlecourse'); // Load Moodle Course shell defaults
                 $course = new stdClass();
                 $course->fullname = $group->description;
                 $course->shortname = $coursecode;
                 $course->idnumber = $coursecode;
-                $course->format = 'topics';
-                $course->visible = 0;
+                $course->format = $courseconfig->format;
+                $course->visible = $courseconfig->visible;
+                $course->numsections = $courseconfig->numsections;
+                $course->hiddensections = $courseconfig->hiddensections;
+                $course->newsitems = $courseconfig->newsitems;
+                $course->showgrades = $courseconfig->showgrades;
+                $course->showreports = $courseconfig->showreports;
+                $course->maxbytes = $courseconfig->maxbytes;
+                $course->groupmode = $courseconfig->groupmode;
+                $course->groupmodeforce = $courseconfig->groupmodeforce;
+                $course->enablecompletion = $courseconfig->enablecompletion;
+                $course->completionstartonenrol = $courseconfig->completionstartonenrol;
                 // Insert default names for teachers/students, from the current language
                 $site = get_site();
 
@@ -388,7 +399,6 @@ function process_group_tag($tagcontents){
                 }
                 $course->timecreated = time();
                 $course->startdate = time();
-                $course->numsections = 1;
                 // Choose a sort order that puts us at the start of the list!
                 $course->sortorder = 0;
 
