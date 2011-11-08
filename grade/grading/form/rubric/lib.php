@@ -504,7 +504,8 @@ class gradingform_rubric_controller extends gradingform_controller {
             if ($rs = $DB->get_records('grading_instances', array('raterid' => $raterid, 'itemid' => $itemid), 'timemodified DESC', '*', 0, 1)) {
                 $record = reset($rs);
                 $currentinstance = $this->get_current_instance($raterid, $itemid);
-                if ($record->status == gradingform_rubric_instance::INSTANCE_STATUS_INCOMPLETE && $record->timemodified > $currentinstance->get_data('timemodified')) {
+                if ($record->status == gradingform_rubric_instance::INSTANCE_STATUS_INCOMPLETE &&
+                        (!$currentinstance || $record->timemodified > $currentinstance->get_data('timemodified'))) {
                     $record->isrestored = true;
                     return $this->get_instance($record);
                 }
