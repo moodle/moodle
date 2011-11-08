@@ -42,7 +42,12 @@ if ($stage & restore_ui::STAGE_CONFIRM + restore_ui::STAGE_DESTINATION) {
 $outcome = $restore->process();
 if (!$restore->is_independent()) {
     if ($restore->get_stage() == restore_ui::STAGE_PROCESS && !$restore->requires_substage()) {
-        $restore->execute();
+        try {
+            $restore->execute();
+        } catch(Exception $e) {
+            $restore->cleanup();
+            throw new moodle_exception((string)$e);
+        }
     } else {
         $restore->save_controller();
     }

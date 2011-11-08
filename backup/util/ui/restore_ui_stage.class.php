@@ -333,7 +333,7 @@ class restore_ui_stage_settings extends restore_ui_stage {
         $form = $this->initialise_stage_form();
 
         if ($form->is_cancelled()) {
-            $this->ui->cancel_restore();
+            $this->ui->cancel_process();
         }
 
         $data = $form->get_data();
