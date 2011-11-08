@@ -655,6 +655,43 @@ if ($component === 'blog') {
     send_file_not_found();
 
 // ========================================================================================================================
+} else if ($component === 'grading') {
+    if ($filearea === 'description') {
+        // files embedded into the form definition description
+
+        if ($context->contextlevel == CONTEXT_SYSTEM) {
+            require_login();
+
+        } else if ($context->contextlevel >= CONTEXT_COURSE) {
+            require_login($course, false, $cm);
+
+        } else {
+            send_file_not_found();
+        }
+
+        $formid = (int)array_shift($args);
+
+        $sql = "SELECT ga.id
+                  FROM {grading_areas} ga
+                  JOIN {grading_definitions} gd ON (gd.areaid = ga.id)
+                 WHERE gd.id = ? AND ga.contextid = ?";
+        $areaid = $DB->get_field_sql($sql, array($formid, $context->id), IGNORE_MISSING);
+
+        if (!$areaid) {
+            send_file_not_found();
+        }
+
+        $fullpath = "/$context->id/$component/$filearea/$formid/".implode('/', $args);
+
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        session_get_instance()->write_close(); // unlock session during fileserving
+        send_stored_file($file, 60*60, 0, $forcedownload);
+    }
+
+// ========================================================================================================================
 } else if (strpos($component, 'mod_') === 0) {
     $modname = substr($component, 4);
     if (!file_exists("$CFG->dirroot/mod/$modname/lib.php")) {

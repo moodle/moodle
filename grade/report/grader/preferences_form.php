@@ -112,6 +112,7 @@ class grader_report_preferences_form extends moodleform {
             $preferences['prefshow']['showuseridnumber'] = $checkbox_default;
             $preferences['prefshow']['showactivityicons'] = $checkbox_default;
             $preferences['prefshow']['showranges'] = $checkbox_default;
+            $preferences['prefshow']['showanalysisicon'] = $checkbox_default;
 
             if ($canviewhidden) {
                 $preferences['prefrows']['shownumberofgrades'] = $checkbox_default;

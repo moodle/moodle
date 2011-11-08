@@ -348,6 +348,10 @@ class plugin_manager {
                 'grader', 'outcomes', 'overview', 'user'
             ),
 
+            'gradingform' => array(
+                'rubric'
+            ),
+
             'local' => array(
             ),
 

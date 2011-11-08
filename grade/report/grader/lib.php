@@ -802,7 +802,7 @@ class grade_report_grader extends grade_report {
 
         $rows = $this->get_right_icons_row($rows);
 
-        // Preload scale objects for items with a scaleid
+        // Preload scale objects for items with a scaleid and initialize tab indices
         $scaleslist = array();
         $tabindices = array();
 
@@ -1008,6 +1008,9 @@ class grade_report_grader extends grade_report {
                         $itemcell->text .= html_writer::tag('span', get_string('error'), array('class'=>"gradingerror$hidden$gradepass"));
                     } else {
                         $itemcell->text .= html_writer::tag('span', grade_format_gradevalue($gradeval, $item, true, $gradedisplaytype, null), array('class'=>"gradevalue$hidden$gradepass"));
+                        if ($this->get_pref('showanalysisicon')) {
+                            $itemcell->text .= $this->gtree->get_grade_analysis_icon($grade);
+                        }
                     }
                 }
 
@@ -1442,7 +1445,7 @@ class grade_report_grader extends grade_report {
      * figures out the state of the object and builds then returns a div
      * with the icons needed for the grader report.
      *
-     * @param object $object
+     * @param array $object
      * @return string HTML
      */
     protected function get_icons($element) {
@@ -1464,7 +1467,6 @@ class grade_report_grader extends grade_report {
         $lockunlockicon      = '';
 
         if (has_capability('moodle/grade:manage', $this->context)) {
-
             if ($this->get_pref('showcalculations')) {
                 $editcalculationicon = $this->gtree->get_calculation_icon($element, $this->gpr);
             }
@@ -1476,9 +1478,15 @@ class grade_report_grader extends grade_report {
             if ($this->get_pref('showlocks')) {
                 $lockunlockicon = $this->gtree->get_locking_icon($element, $this->gpr);
             }
+
         }
 
-        return $OUTPUT->container($editicon.$editcalculationicon.$showhideicon.$lockunlockicon, 'grade_icons');
+        $gradeanalysisicon   = '';
+        if ($this->get_pref('showanalysisicon') && $element['type'] == 'grade') {
+            $gradeanalysisicon .= $this->gtree->get_grade_analysis_icon($element['object']);
+        }
+
+        return $OUTPUT->container($editicon.$editcalculationicon.$showhideicon.$lockunlockicon.$gradeanalysisicon, 'grade_icons');
     }
 
     /**
