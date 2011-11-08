@@ -67,7 +67,7 @@ class qformat_xml extends qformat_default {
      * @param string name format name from xml file
      * @return int Moodle format code
      */
-    protected function trans_format($name) {
+    public function trans_format($name) {
         $name = trim($name);
 
         if ($name == 'moodle_auto_format') {
@@ -970,7 +970,7 @@ class qformat_xml extends qformat_default {
      * @param int id internal code
      * @return string format text
      */
-    protected function get_format($id) {
+    public function get_format($id) {
         switch($id) {
             case FORMAT_MOODLE:
                 return 'moodle_auto_format';
