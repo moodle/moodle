@@ -48,9 +48,9 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot.'/mod/lti/locallib.php');
-
 if ($ADMIN->fulltree) {
+    require_once($CFG->dirroot.'/mod/lti/locallib.php');
+
     $configuredtoolshtml = '';
     $pendingtoolshtml = '';
     $rejectedtoolshtml = '';
@@ -63,7 +63,7 @@ if ($ADMIN->fulltree) {
     $action = get_string('action', 'lti');
     $createdon = get_string('createdon', 'lti');
 
-    $types = lti_filter_get_types($SITE->id);
+    $types = lti_filter_get_types(get_site()->id);
 
     $configuredtools = array_filter($types, function($value) {
         return $value->state == LTI_TOOL_STATE_CONFIGURED;
@@ -178,7 +178,7 @@ if ($ADMIN->fulltree) {
 //]]
 </script>
 ";
-
+    global $PAGE; // TODO: Move to YUI3 ASAP
     $PAGE->requires->yui2_lib('tabview');
     $PAGE->requires->yui2_lib('datatable');
 
