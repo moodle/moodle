@@ -471,6 +471,8 @@ width:2000px;
 float:right;
 }
 
+.path-grade-report-grader .action-icon {margin-left:0.3em;}
+
 .path-grade-report-grader .gradestable th.user,
 .path-grade-report-grader .gradestable th.range,
 .path-grade-report-grader .flexible th,

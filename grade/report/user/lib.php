@@ -304,6 +304,7 @@ class grade_report_user extends grade_report {
         $depth = $element['depth'];
         $grade_object = $element['object'];
         $eid = $grade_object->id;
+        $element['userid'] = $this->user->id;
         $fullname = $this->gtree->get_element_header($element, true, true, true);
         $data = array();
         $hidden = '';
@@ -393,10 +394,6 @@ class grade_report_user extends grade_report {
                         $data['grade']['class'] = $class;
                         $gradeval = $this->blank_hidden_total($this->courseid, $grade_grade->grade_item, $gradeval);
                         $data['grade']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true);
-
-                        if ($this->get_pref('showanalysisicon') and !is_null($gradeval)) {
-                            $data['grade']['content'] = $this->gtree->get_grade_analysis_icon($grade_grade) . $data['grade']['content'];
-                        }
                     }
                 }
 

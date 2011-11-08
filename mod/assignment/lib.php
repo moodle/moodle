@@ -1078,8 +1078,12 @@ class assignment_base {
                 if (!empty($submission->id)) {
                     $itemid = $submission->id;
                 }
-                $instanceid = optional_param('advancedgradinginstanceid', 0, PARAM_INT);
-                $mformdata->advancedgradinginstance = $controller->get_or_create_instance($instanceid, $USER->id, $itemid);
+                if ($gradingdisabled && $itemid) {
+                    $mformdata->advancedgradinginstance = $controller->get_current_instance($USER->id, $itemid);
+                } else if (!$gradingdisabled) {
+                    $instanceid = optional_param('advancedgradinginstanceid', 0, PARAM_INT);
+                    $mformdata->advancedgradinginstance = $controller->get_or_create_instance($instanceid, $USER->id, $itemid);
+                }
             } else {
                 $advancedgradingwarning = $controller->form_unavailable_notification();
             }
@@ -1605,12 +1609,18 @@ class assignment_base {
      * If validation passes, preprocess advanced grading (if applicable) and returns true.
      */
     function validate_and_preprocess_feedback() {
-        global $USER;
+        global $USER, $CFG;
+        require_once($CFG->libdir.'/gradelib.php');
         if (!($feedback = data_submitted()) || !isset($feedback->userid) || !isset($feedback->offset)) {
             return true;      // No incoming data, nothing to validate
         }
         $userid = required_param('userid', PARAM_INT);
         $offset = required_param('offset', PARAM_INT);
+        $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, array($userid));
+        $gradingdisabled = $grading_info->items[0]->grades[$userid]->locked || $grading_info->items[0]->grades[$userid]->overridden;
+        if ($gradingdisabled) {
+            return true;
+        }
         $submissiondata = $this->display_submission($offset, $userid, false);
         $mform = $submissiondata->mform;
         $gradinginstance = $mform->use_advanced_grading();
@@ -2391,9 +2401,13 @@ class mod_assignment_grading_form extends moodleform {
 
         $grademenu = make_grades_menu($this->_customdata->assignment->grade);
         if ($gradinginstance = $this->use_advanced_grading()) {
-            $mform->addElement('hidden', 'advancedgradinginstanceid', $gradinginstance->get_id());
             $gradinginstance->get_controller()->set_grade_range($grademenu);
-            $mform->addElement('grading', 'advancedgrading', get_string('grade').':', array('gradinginstance' => $gradinginstance));
+            $gradingelement = $mform->addElement('grading', 'advancedgrading', get_string('grade').':', array('gradinginstance' => $gradinginstance));
+            if ($this->_customdata->gradingdisabled) {
+                $gradingelement->freeze();
+            } else {
+                $mform->addElement('hidden', 'advancedgradinginstanceid', $gradinginstance->get_id());
+            }
         } else {
             // use simple direct grading
             $grademenu['-1'] = get_string('nograde');
@@ -2408,7 +2422,8 @@ class mod_assignment_grading_form extends moodleform {
                 $options = make_grades_menu(-$outcome->scaleid);
                 if ($outcome->grades[$this->_customdata->submission->userid]->locked) {
                     $options[0] = get_string('nooutcome', 'grades');
-                    echo $options[$outcome->grades[$this->_customdata->submission->userid]->grade];
+                    $mform->addElement('static', 'outcome_'.$n.'['.$this->_customdata->userid.']', $outcome->name.':',
+                            $options[$outcome->grades[$this->_customdata->submission->userid]->grade]);
                 } else {
                     $options[''] = get_string('nooutcome', 'grades');
                     $attributes = array('id' => 'menuoutcome_'.$n );
