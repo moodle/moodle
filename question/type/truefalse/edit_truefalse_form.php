@@ -49,11 +49,11 @@ class qtype_truefalse_edit_form extends question_edit_form {
                 1 => get_string('true', 'qtype_truefalse')));
 
         $mform->addElement('editor', 'feedbacktrue',
-                get_string('feedbacktrue', 'qtype_truefalse'), null, $this->editoroptions);
+                get_string('feedbacktrue', 'qtype_truefalse'), array('rows' => 10), $this->editoroptions);
         $mform->setType('feedbacktrue', PARAM_RAW);
 
         $mform->addElement('editor', 'feedbackfalse',
-                get_string('feedbackfalse', 'qtype_truefalse'), null, $this->editoroptions);
+                get_string('feedbackfalse', 'qtype_truefalse'), array('rows' => 10), $this->editoroptions);
         $mform->setType('feedbackfalse', PARAM_RAW);
 
         $mform->addElement('header', 'multitriesheader',
