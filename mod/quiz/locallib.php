@@ -693,7 +693,12 @@ function quiz_update_all_final_grades($quiz) {
 
             WHERE
                 ABS(newgrades.newgrade - qg.grade) > 0.000005 OR
-                (newgrades.newgrade IS NULL) <> (qg.grade IS NULL)",
+                ((newgrades.newgrade IS NULL OR qg.grade IS NULL) AND NOT
+                          (newgrades.newgrade IS NULL AND qg.grade IS NULL))",
+                // The mess on the previous line is detecting where the value is
+                // NULL in one column, and NOT NULL in the other, but SQL does
+                // not have an XOR operator, and MS SQL server can't cope with
+                // (newgrades.newgrade IS NULL) <> (qg.grade IS NULL).
             $param);
 
     $timenow = time();
