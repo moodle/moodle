@@ -1426,7 +1426,7 @@ EOD;
                     break;
                 }
             }
-            
+
             // data is to big to handle it as one. Get it chunk per chunk...
             //trying to get the full length of max_chunk_size
             $buffer = fread($this->sock, $max_chunk_size);
