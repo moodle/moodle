@@ -508,17 +508,13 @@ function lti_get_ims_role($user, $cmid, $courseid) {
 function lti_get_type_config($typeid) {
     global $DB;
 
-    $query = '
-        SELECT name, value
-        FROM {lti_types_config}
-        WHERE typeid = :typeid1
-
-        UNION ALL
-
-        SELECT \'toolurl\' AS name, baseurl AS value
-        FROM {lti_types}
-        WHERE id = :typeid2
-    ';
+    $query = "SELECT name, value
+                FROM {lti_types_config}
+               WHERE typeid = :typeid1
+           UNION ALL
+              SELECT 'toolurl' AS name, baseurl AS value
+                FROM {lti_types}
+               WHERE id = :typeid2";
 
     $typeconfig = array();
     $configs = $DB->get_records_sql($query, array('typeid1' => $typeid, 'typeid2' => $typeid));
@@ -554,13 +550,11 @@ function lti_get_tools_by_domain($domain, $state = null, $courseid = null) {
         $coursefilter = 'OR course = :courseid';
     }
 
-    $query = '
-        SELECT * FROM {lti_types}
-        WHERE
-            tooldomain = :tooldomain
-        AND (course = :siteid $coursefilter)
-        $statefilter
-    ';
+    $query = "SELECT *
+                FROM {lti_types}
+               WHERE tooldomain = :tooldomain
+                 AND (course = :siteid $coursefilter)
+                 $statefilter";
 
     return $DB->get_records_sql($query, array(
         'courseid' => $courseid,
@@ -589,14 +583,11 @@ function lti_filter_get_types($course) {
 function lti_get_types_for_add_instance() {
     global $DB, $SITE, $COURSE;
 
-    $query = '
-            SELECT *
-            FROM {lti_types}
-            WHERE
-                coursevisible = 1
-            AND (course = :siteid OR course = :courseid)
-            AND state = :active
-    ';
+    $query = "SELECT *
+                FROM {lti_types}
+               WHERE coursevisible = 1
+                 AND (course = :siteid OR course = :courseid)
+                 AND state = :active";
 
     $admintypes = $DB->get_records_sql($query, array('siteid' => $SITE->id, 'courseid' => $COURSE->id, 'active' => LTI_TOOL_STATE_CONFIGURED));
 
@@ -692,23 +683,18 @@ function lti_get_shared_secrets_by_key($key) {
 
     //Look up the shared secret for the specified key in both the types_config table (for configured tools)
     //And in the lti resource table for ad-hoc tools
-    $query = '
-        SELECT t2.value
-        FROM {lti_types_config} t1
-        INNER JOIN {lti_types_config} t2 ON t1.typeid = t2.typeid
-        INNER JOIN {lti_types} type ON t2.typeid = type.id
-        WHERE
-            t1.name = \'resourcekey\'
-        AND t1.value = :key1
-        AND t2.name = \'password\'
-        AND type.state = :configured
-
-        UNION
-
-        SELECT password AS value
-        FROM {lti}
-        WHERE resourcekey = :key2
-    ';
+    $query = "SELECT t2.value
+                FROM {lti_types_config} t1
+                JOIN {lti_types_config} t2 ON t1.typeid = t2.typeid
+                JOIN {lti_types} type ON t2.typeid = type.id
+              WHERE t1.name = 'resourcekey'
+                AND t1.value = :key1
+                AND t2.name = 'password'
+                AND type.state = :configured
+              UNION
+             SELECT password AS value
+               FROM {lti}
+              WHERE resourcekey = :key2";
 
     $sharedsecrets = $DB->get_records_sql($query, array('configured' => LTI_TOOL_STATE_CONFIGURED, 'key1' => $key, 'key2' => $key));
 
