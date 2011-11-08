@@ -191,13 +191,13 @@ END;
         $qo = new stdClass();
 
         $importer = new qformat_xml();
-        $importer->import_hints($qo, $questionxml['question']);
+        $importer->import_hints($qo, $questionxml['question'], false, false, 'html');
 
         $this->assertEqual(array(
                 array('text' => 'This is the first hint',
-                        'format' => FORMAT_MOODLE, 'files' => array()),
+                        'format' => FORMAT_HTML, 'files' => array()),
                 array('text' => 'This is the second hint',
-                        'format' => FORMAT_MOODLE, 'files' => array()),
+                        'format' => FORMAT_HTML, 'files' => array()),
                 ), $qo->hint);
         $this->assertFalse(isset($qo->hintclearwrong));
         $this->assertFalse(isset($qo->hintshownumcorrect));
@@ -221,13 +221,13 @@ END;
         $qo = new stdClass();
 
         $importer = new qformat_xml();
-        $importer->import_hints($qo, $questionxml['question'], true, true);
+        $importer->import_hints($qo, $questionxml['question'], true, true, 'html');
 
         $this->assertEqual(array(
                 array('text' => 'This is the first hint',
-                        'format' => FORMAT_MOODLE, 'files' => array()),
+                        'format' => FORMAT_HTML, 'files' => array()),
                 array('text' => 'This is the second hint',
-                        'format' => FORMAT_MOODLE, 'files' => array()),
+                        'format' => FORMAT_HTML, 'files' => array()),
                 ), $qo->hint);
         $this->assertEqual(array(1, 0), $qo->hintclearwrong);
         $this->assertEqual(array(0, 1), $qo->hintshownumcorrect);
@@ -243,7 +243,7 @@ END;
         $qo = new stdClass();
 
         $importer = new qformat_xml();
-        $importer->import_hints($qo, $questionxml['question']);
+        $importer->import_hints($qo, $questionxml['question'], 'html');
 
         $this->assertFalse(isset($qo->hint));
     }
@@ -523,27 +523,27 @@ END;
         $expectedq->questiontext = 'Match the upper and lower case letters.';
         $expectedq->questiontextformat = FORMAT_HTML;
         $expectedq->correctfeedback = array('text' => 'Well done.',
-                'format' => FORMAT_MOODLE, 'files' => array());
+                'format' => FORMAT_HTML, 'files' => array());
         $expectedq->partiallycorrectfeedback = array('text' => 'Not entirely.',
-                'format' => FORMAT_MOODLE, 'files' => array());
+                'format' => FORMAT_HTML, 'files' => array());
         $expectedq->shownumcorrect = false;
         $expectedq->incorrectfeedback = array('text' => 'Completely wrong!',
-                'format' => FORMAT_MOODLE, 'files' => array());
+                'format' => FORMAT_HTML, 'files' => array());
         $expectedq->generalfeedback = 'The answer is A -> a, B -> b and C -> c.';
-        $expectedq->generalfeedbackformat = FORMAT_MOODLE;
+        $expectedq->generalfeedbackformat = FORMAT_HTML;
         $expectedq->defaultmark = 1;
         $expectedq->length = 1;
         $expectedq->penalty = 0.3333333;
         $expectedq->shuffleanswers = 0;
         $expectedq->subquestions = array(
-            array('text' => 'A', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => 'B', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => 'C', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => '', 'format' => FORMAT_MOODLE, 'files' => array()));
+            array('text' => 'A', 'format' => FORMAT_HTML, 'files' => array()),
+            array('text' => 'B', 'format' => FORMAT_HTML, 'files' => array()),
+            array('text' => 'C', 'format' => FORMAT_HTML, 'files' => array()),
+            array('text' => '', 'format' => FORMAT_HTML, 'files' => array()));
         $expectedq->subanswers = array('a', 'b', 'c', 'd');
         $expectedq->hint = array(
-            array('text' => 'Hint 1', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => '', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => 'Hint 1', 'format' => FORMAT_HTML, 'files' => array()),
+            array('text' => '', 'format' => FORMAT_HTML, 'files' => array()),
         );
         $expectedq->hintshownumcorrect = array(true, true);
         $expectedq->hintclearwrong = array(false, true);
@@ -744,17 +744,17 @@ END;
         $expectedq->questiontextformat = FORMAT_HTML;
         $expectedq->correctfeedback = array(
                 'text'   => '<p>Your answer is correct.</p>',
-                'format' => FORMAT_MOODLE,
+                'format' => FORMAT_HTML,
                 'files'  => array());
         $expectedq->shownumcorrect = false;
         $expectedq->partiallycorrectfeedback = array(
                 'text'   => '<p>Your answer is partially correct.</p>',
-                'format' => FORMAT_MOODLE,
+                'format' => FORMAT_HTML,
                 'files'  => array());
         $expectedq->shownumcorrect = true;
         $expectedq->incorrectfeedback = array(
                 'text'   => '<p>Your answer is incorrect.</p>',
-                'format' => FORMAT_MOODLE,
+                'format' => FORMAT_HTML,
                 'files'  => array());
         $expectedq->generalfeedback = 'The even numbers are 2 and 4.';
         $expectedq->defaultmark = 2;
@@ -764,20 +764,20 @@ END;
         $expectedq->single = false;
 
         $expectedq->answer = array(
-            array('text' => '1', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => '2', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => '3', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => '4', 'format' => FORMAT_MOODLE, 'files' => array()));
+            array('text' => '1', 'format' => FORMAT_HTML, 'files' => array()),
+            array('text' => '2', 'format' => FORMAT_HTML, 'files' => array()),
+            array('text' => '3', 'format' => FORMAT_HTML, 'files' => array()),
+            array('text' => '4', 'format' => FORMAT_HTML, 'files' => array()));
         $expectedq->fraction = array(0, 1, 0, 1);
         $expectedq->feedback = array(
-            array('text' => '', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => '', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => '', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => '', 'format' => FORMAT_MOODLE, 'files' => array()));
+            array('text' => '', 'format' => FORMAT_HTML, 'files' => array()),
+            array('text' => '', 'format' => FORMAT_HTML, 'files' => array()),
+            array('text' => '', 'format' => FORMAT_HTML, 'files' => array()),
+            array('text' => '', 'format' => FORMAT_HTML, 'files' => array()));
 
         $expectedq->hint = array(
-            array('text' => 'Hint 1.', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => 'Hint 2.', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => 'Hint 1.', 'format' => FORMAT_HTML, 'files' => array()),
+            array('text' => 'Hint 2.', 'format' => FORMAT_HTML, 'files' => array()),
         );
         $expectedq->hintshownumcorrect = array(false, false);
         $expectedq->hintclearwrong = array(false, false);
@@ -937,7 +937,7 @@ END;
         $expectedq->questiontext = 'What is the answer?';
         $expectedq->questiontextformat = FORMAT_HTML;
         $expectedq->generalfeedback = 'General feedback: Think Hitch-hikers guide to the Galaxy.';
-        $expectedq->generalfeedbackformat = FORMAT_MOODLE;
+        $expectedq->generalfeedbackformat = FORMAT_HTML;
         $expectedq->defaultmark = 1;
         $expectedq->length = 1;
         $expectedq->penalty = 0.1;
@@ -946,11 +946,11 @@ END;
         $expectedq->fraction = array(1, 0, 0);
         $expectedq->feedback = array(
             array('text' => 'Well done!',
-                    'format' => FORMAT_MOODLE, 'files' => array()),
+                    'format' => FORMAT_HTML, 'files' => array()),
             array('text' => 'What were you thinking?!',
-                    'format' => FORMAT_MOODLE, 'files' => array()),
+                    'format' => FORMAT_HTML, 'files' => array()),
             array('text' => 'Completely wrong.',
-                    'format' => FORMAT_MOODLE, 'files' => array()));
+                    'format' => FORMAT_HTML, 'files' => array()));
         $expectedq->tolerance = array(0.001, 1, 0);
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
@@ -1081,8 +1081,8 @@ END;
         $expectedq->answer = array('Beta', '*');
         $expectedq->fraction = array(1, 0);
         $expectedq->feedback = array(
-            array('text' => 'Well done!', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => 'Doh!', 'format' => FORMAT_MOODLE, 'files' => array()));
+            array('text' => 'Well done!', 'format' => FORMAT_HTML, 'files' => array()),
+            array('text' => 'Doh!', 'format' => FORMAT_HTML, 'files' => array()));
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
     }
@@ -1199,9 +1199,9 @@ END;
         $expectedq->penalty = 1;
 
         $expectedq->feedbacktrue = array('text' => 'Well done!',
-                'format' => FORMAT_MOODLE, 'files' => array());
+                'format' => FORMAT_HTML, 'files' => array());
         $expectedq->feedbackfalse = array('text' => 'Doh!',
-                'format' => FORMAT_MOODLE, 'files' => array());
+                'format' => FORMAT_HTML, 'files' => array());
         $expectedq->correctanswer = true;
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
