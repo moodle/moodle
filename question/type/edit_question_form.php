@@ -344,7 +344,7 @@ abstract class question_edit_form extends moodleform {
             $mform->setType($feedbackname, PARAM_RAW);
 
             if ($withshownumpartscorrect && $feedbackname == 'partiallycorrectfeedback') {
-                $mform->addElement('checkbox', 'shownumcorrect',
+                $mform->addElement('advcheckbox', 'shownumcorrect',
                         get_string('options', 'question'),
                         get_string('shownumpartscorrect', 'question'));
             }
@@ -361,11 +361,11 @@ abstract class question_edit_form extends moodleform {
         $repeatedoptions['hint']['type'] = PARAM_RAW;
 
         if ($withclearwrong) {
-            $repeated[] = $mform->createElement('checkbox', 'hintclearwrong',
+            $repeated[] = $mform->createElement('advcheckbox', 'hintclearwrong',
                     get_string('options', 'question'), get_string('clearwrongparts', 'question'));
         }
         if ($withshownumpartscorrect) {
-            $repeated[] = $mform->createElement('checkbox', 'hintshownumcorrect', '',
+            $repeated[] = $mform->createElement('advcheckbox', 'hintshownumcorrect', '',
                     get_string('shownumpartscorrect', 'question'));
         }
 
