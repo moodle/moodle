@@ -224,12 +224,18 @@ class restore_ui extends base_ui {
     /**
      * Cancels the current restore and redirects the user back to the relevant place
      */
-    public function cancel_restore() {
+    public function cancel_process() {
         //Delete temporary restore course if exists.
         if ($this->controller->get_target() == backup::TARGET_NEW_COURSE) {
             $this->cleanup();
         }
         parent::cancel_process();
+    }
+    /**
+     * wrapper of cancel_process, kept for avoiding regression.
+     */
+    public function cancel_restore() {
+        $this->cancel_process();
     }
     /**
      * Gets an array of progress bar items that can be displayed through the restore renderer.
