@@ -202,7 +202,7 @@ function lti_get_coursemodule_info($coursemodule) {
  * @TODO: implement this moodle function (if needed)
  **/
 function lti_user_outline($course, $user, $mod, $basiclti) {
-    return $return;
+    return null;
 }
 
 /**

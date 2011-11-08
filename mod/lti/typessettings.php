@@ -55,7 +55,7 @@ require_once($CFG->dirroot.'/mod/lti/locallib.php');
 $section      = 'modsettinglti';
 $return       = optional_param('return', '', PARAM_ALPHA);
 $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
-$action       = optional_param('action', null, PARAM_TEXT);
+$action       = optional_param('action', null, PARAM_ACTION);
 $id           = optional_param('id', null, PARAM_INT);
 $useexisting  = optional_param('useexisting', null, PARAM_INT);
 $definenew    = optional_param('definenew', null, PARAM_INT);
@@ -78,7 +78,12 @@ $focus = '';
 
 $data = data_submitted();
 
-if (confirm_sesskey() && isset($data->submitbutton)) {
+// Any posted data & any action
+if (!empty($data) || !empty($action)) {
+    require_sesskey();
+}
+
+if (isset($data->submitbutton)) {
     $type = new stdClass();
 
     if (isset($id)) {
@@ -87,36 +92,28 @@ if (confirm_sesskey() && isset($data->submitbutton)) {
         lti_update_type($type, $data);
 
         redirect($redirect);
-        die;
     } else {
         $type->state = LTI_TOOL_STATE_CONFIGURED;
 
         lti_add_type($type, $data);
 
         redirect($redirect);
-        die;
     }
+
 } else if (isset($data->cancel)) {
     redirect($redirect);
-    die;
-}
 
-if ($action == 'accept') {
+} else if ($action == 'accept') {
     lti_set_state_for_type($id, LTI_TOOL_STATE_CONFIGURED);
     redirect($redirect);
-    die;
-}
 
-if ($action == 'reject') {
+} else if ($action == 'reject') {
     lti_set_state_for_type($id, LTI_TOOL_STATE_REJECTED);
     redirect($redirect);
-    die;
-}
 
-if ($action == 'delete') {
+} else if ($action == 'delete') {
     lti_delete_type($id);
     redirect($redirect);
-    die;
 }
 
 /// print header stuff ------------------------------------------------------------
