@@ -1868,6 +1868,119 @@ class restore_activity_logs_structure_step extends restore_course_logs_structure
     }
 }
 
+
+/**
+ * Defines the restore step for advanced grading methods attached to the activity module
+ */
+class restore_activity_grading_structure_step extends restore_structure_step {
+
+    /**
+     * Declares paths in the grading.xml file we are interested in
+     */
+    protected function define_structure() {
+
+        $paths = array();
+        $userinfo = $this->get_setting_value('userinfo');
+
+        $paths[] = new restore_path_element('grading_area', '/areas/area');
+
+        $definition = new restore_path_element('grading_definition', '/areas/area/definitions/definition');
+        $paths[] = $definition;
+        $this->add_plugin_structure('gradingform', $definition);
+
+        if ($userinfo) {
+            $instance = new restore_path_element('grading_instance',
+                '/areas/area/definitions/definition/instances/instance');
+            $paths[] = $instance;
+            $this->add_plugin_structure('gradingform', $instance);
+        }
+
+        return $paths;
+    }
+
+    /**
+     * Processes one grading area element
+     *
+     * @param array $data element data
+     */
+    protected function process_grading_area($data) {
+        global $DB;
+
+        $task = $this->get_task();
+        $data = (object)$data;
+        $oldid = $data->id;
+        $data->component = 'mod_'.$task->get_modulename();
+        $data->contextid = $task->get_contextid();
+
+        $newid = $DB->insert_record('grading_areas', $data);
+        $this->set_mapping('grading_area', $oldid, $newid);
+    }
+
+    /**
+     * Processes one grading definition element
+     *
+     * @param array $data element data
+     */
+    protected function process_grading_definition($data) {
+        global $DB;
+
+        $task = $this->get_task();
+        $data = (object)$data;
+        $oldid = $data->id;
+        $data->areaid = $this->get_new_parentid('grading_area');
+        $data->copiedfromid = null;
+        $data->timecreated = time();
+        $data->usercreated = $task->get_userid();
+        $data->timemodified = $data->timecreated;
+        $data->usermodified = $data->usercreated;
+
+        $newid = $DB->insert_record('grading_definitions', $data);
+        $this->set_mapping('grading_definition', $oldid, $newid, true);
+    }
+
+    /**
+     * Processes one grading form instance element
+     *
+     * @param array $data element data
+     */
+    protected function process_grading_instance($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        // new form definition id
+        $newformid = $this->get_new_parentid('grading_definition');
+
+        // get the name of the area we are restoring to
+        $sql = "SELECT ga.areaname
+                  FROM {grading_definitions} gd
+                  JOIN {grading_areas} ga ON gd.areaid = ga.id
+                 WHERE gd.id = ?";
+        $areaname = $DB->get_field_sql($sql, array($newformid), MUST_EXIST);
+
+        // get the mapped itemid - the activity module is expected to define the mappings
+        // for each gradable area
+        $newitemid = $this->get_mappingid(restore_gradingform_plugin::itemid_mapping($areaname), $data->itemid);
+
+        $oldid = $data->id;
+        $data->formid = $newformid;
+        $data->raterid = $this->get_mappingid('user', $data->raterid);
+        $data->itemid = $newitemid;
+
+        $newid = $DB->insert_record('grading_instances', $data);
+        $this->set_mapping('grading_instance', $oldid, $newid);
+    }
+
+    /**
+     * Final operations when the database records are inserted
+     */
+    protected function after_execute() {
+        // Add files embedded into the definition description
+        $this->add_related_files('grading', 'description', 'grading_definition');
+    }
+}
+
+
 /**
  * This structure step restores the grade items associated with one activity
  * All the grade items are made child of the "course" grade item but the original

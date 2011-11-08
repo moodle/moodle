@@ -90,6 +90,7 @@ class restore_assignment_activity_structure_step extends restore_activity_struct
 
         $newitemid = $DB->insert_record('assignment_submissions', $data);
         $this->set_mapping('assignment_submission', $oldid, $newitemid, true); // Going to have files
+        $this->set_mapping(restore_gradingform_plugin::itemid_mapping('submission'), $oldid, $newitemid);
     }
 
     protected function after_execute() {
