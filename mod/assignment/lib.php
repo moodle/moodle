@@ -2422,7 +2422,8 @@ class mod_assignment_grading_form extends moodleform {
                 $options = make_grades_menu(-$outcome->scaleid);
                 if ($outcome->grades[$this->_customdata->submission->userid]->locked) {
                     $options[0] = get_string('nooutcome', 'grades');
-                    echo $options[$outcome->grades[$this->_customdata->submission->userid]->grade];
+                    $mform->addElement('static', 'outcome_'.$n.'['.$this->_customdata->userid.']', $outcome->name.':',
+                            $options[$outcome->grades[$this->_customdata->submission->userid]->grade]);
                 } else {
                     $options[''] = get_string('nooutcome', 'grades');
                     $attributes = array('id' => 'menuoutcome_'.$n );
