@@ -118,7 +118,7 @@ class repository_webdav extends repository {
             }
             if (!empty($v['resourcetype']) && $v['resourcetype'] == 'collection') {
                 // a folder
-                if ($path != $v['href']) {
+                if (ltrim($path, '/') != ltrim($v['href'], '/')) {
                     $matches = array();
                     preg_match('#(\w+)$#i', $v['href'], $matches);
                     if (!empty($matches[1])) {
@@ -137,6 +137,7 @@ class repository_webdav extends repository {
                 }
             }else{
                 // a file
+                $path = rtrim($path,'/');
                 $title = urldecode(substr($v['href'], strpos($v['href'], $path)+strlen($path)));
                 $title = basename($title);
                 $size = !empty($v['getcontentlength'])? $v['getcontentlength']:'';

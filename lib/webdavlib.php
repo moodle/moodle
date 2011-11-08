@@ -797,7 +797,7 @@ EOD;
                 if (strcmp($response['status']['status-code'],'207') == 0 ) {
                     // ok so far
                     // next there should be a Content-Type: text/xml; charset="utf-8" header line
-                    if (preg_match('#text/xml;\s?charset=[\'\"]?utf-8[\'\"]?#i', $response['header']['Content-Type'])) {
+                    if (preg_match('#(application|text)/xml;\s?charset=[\'\"]?utf-8[\'\"]?#i', $response['header']['Content-Type'])) {
                         // ok let's get the content of the xml stuff
                         $this->_parser = xml_parser_create_ns('UTF-8');
                         // forget old data...
@@ -1401,22 +1401,48 @@ EOD;
             // check for a specified content-length
         case preg_match('/Content\\-Length:\\s+([0-9]*)\\r\\n/',$header,$matches):
             $this->_error_log('Getting data using Content-Length '. $matches[1]);
+
             // check if we the content data size is small enough to get it as one block
             if ($matches[1] <= $max_chunk_size ) {
                 // only read something if Content-Length is bigger than 0
                 if ($matches[1] > 0 ) {
                     $buffer = fread($this->sock, $matches[1]);
+                    $loadsize = strlen($buffer);
+                    //did we realy get the full length?
+                    if ($loadsize < $matches[1]) {
+                        $max_chunk_size = $loadsize;
+                        do {
+                            $mod = $max_chunk_size % ($matches[1] - strlen($buffer));
+                            $chunk_size = ($mod == $max_chunk_size ? $max_chunk_size : $matches[1] - strlen($buffer));
+                            $buffer .= fread($this->sock, $chunk_size);
+                            $this->_error_log('mod: ' . $mod . ' chunk: ' . $chunk_size . ' total: ' . strlen($buffer));
+                        } while ($mod == $max_chunk_size);
+                        break;
+                    } else {
+                        break;
+                    }
                 } else {
                     $buffer = '';
+                    break;
                 }
-            } else {
-                // data is to big to handle it as one. Get it chunk per chunk...
-                do {
-                    $mod = $max_chunk_size % ($matches[1] - strlen($buffer));
-                    $chunk_size = ($mod == $max_chunk_size ? $max_chunk_size : $matches[1] - strlen($buffer));
-                    $buffer .= fread($this->sock, $chunk_size);
-                    $this->_error_log('mod: ' . $mod . ' chunk: ' . $chunk_size . ' total: ' . strlen($buffer));
-                } while ($mod == $max_chunk_size);
+            }
+            
+            // data is to big to handle it as one. Get it chunk per chunk...
+            //trying to get the full length of max_chunk_size
+            $buffer = fread($this->sock, $max_chunk_size);
+            $loadsize = strlen($buffer);
+            if ($loadsize < $max_chunk_size) {
+                $max_chunk_size = $loadsize;
+            }
+            do {
+                $mod = $max_chunk_size % ($matches[1] - strlen($buffer));
+                $chunk_size = ($mod == $max_chunk_size ? $max_chunk_size : $matches[1] - strlen($buffer));
+                $buffer .= fread($this->sock, $chunk_size);
+                $this->_error_log('mod: ' . $mod . ' chunk: ' . $chunk_size . ' total: ' . strlen($buffer));
+            } while ($mod == $max_chunk_size);
+            $loadsize = strlen($buffer);
+            if ($loadsize < $matches[1]) {
+                $buffer .= fread($this->sock, $matches[1] - $loadsize);
             }
             break;
 
