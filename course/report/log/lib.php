@@ -350,7 +350,12 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     // Get all the possible users
     $users = array();
 
-    $courseusers = get_enrolled_users($context, '', $selectedgroup, 'u.id, u.firstname, u.lastname, u.idnumber', 'lastname ASC, firstname ASC');
+    // Define limitfrom and limitnum for queries below
+    // If $showusers is enabled... don't apply limitfrom and limitnum
+    $limitfrom = empty($showusers) ? 0 : '';
+    $limitnum  = empty($showusers) ? COURSE_MAX_USERS_PER_DROPDOWN + 1 : '';
+
+    $courseusers = get_enrolled_users($context, '', $selectedgroup, 'u.id, u.firstname, u.lastname', 'lastname ASC, firstname ASC', $limitfrom, $limitnum);
 
     if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
         $showusers = 1;
