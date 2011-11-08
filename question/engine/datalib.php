@@ -865,33 +865,42 @@ ORDER BY
             END) = 0";
     }
 
-    public function question_attempt_latest_state_view($alias) {
-        return "(
-                SELECT
-                    {$alias}qa.id AS questionattemptid,
-                    {$alias}qa.questionusageid,
-                    {$alias}qa.slot,
-                    {$alias}qa.behaviour,
-                    {$alias}qa.questionid,
-                    {$alias}qa.variant,
-                    {$alias}qa.maxmark,
-                    {$alias}qa.minfraction,
-                    {$alias}qa.flagged,
-                    {$alias}qa.questionsummary,
-                    {$alias}qa.rightanswer,
-                    {$alias}qa.responsesummary,
-                    {$alias}qa.timemodified,
-                    {$alias}qas.id AS attemptstepid,
-                    {$alias}qas.sequencenumber,
-                    {$alias}qas.state,
-                    {$alias}qas.fraction,
-                    {$alias}qas.timecreated,
-                    {$alias}qas.userid
+    /**
+     * Get a subquery that returns the latest step of every qa in some qubas.
+     * Currently, this is only used by the quiz reports. See
+     * {@link quiz_attempt_report_table::add_latest_state_join()}.
+     * @param string $alias alias to use for this inline-view.
+     * @param qubaid_condition $qubaids restriction on which question_usages we
+     *      are interested in. This is important for performance.
+     * @return array with two elements, the SQL fragment and any params requried.
+     */
+    public function question_attempt_latest_state_view($alias, qubaid_condition $qubaids) {
+        return array("(
+                SELECT {$alias}qa.id AS questionattemptid,
+                       {$alias}qa.questionusageid,
+                       {$alias}qa.slot,
+                       {$alias}qa.behaviour,
+                       {$alias}qa.questionid,
+                       {$alias}qa.variant,
+                       {$alias}qa.maxmark,
+                       {$alias}qa.minfraction,
+                       {$alias}qa.flagged,
+                       {$alias}qa.questionsummary,
+                       {$alias}qa.rightanswer,
+                       {$alias}qa.responsesummary,
+                       {$alias}qa.timemodified,
+                       {$alias}qas.id AS attemptstepid,
+                       {$alias}qas.sequencenumber,
+                       {$alias}qas.state,
+                       {$alias}qas.fraction,
+                       {$alias}qas.timecreated,
+                       {$alias}qas.userid
 
-                FROM {question_attempts} {$alias}qa
-                JOIN {question_attempt_steps} {$alias}qas ON
-                        {$alias}qas.id = {$this->latest_step_for_qa_subquery($alias . 'qa.id')}
-            ) $alias";
+                  FROM {$qubaids->from_question_attempts($alias . 'qa')}
+                  JOIN {question_attempt_steps} {$alias}qas ON
+                           {$alias}qas.id = {$this->latest_step_for_qa_subquery($alias . 'qa.id')}
+                 WHERE {$qubaids->where()}
+            ) $alias", $qubaids->from_where_params());
     }
 
     protected function latest_step_for_qa_subquery($questionattemptid = 'qa.id') {
