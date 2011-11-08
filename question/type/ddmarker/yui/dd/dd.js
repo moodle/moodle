@@ -182,7 +182,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             var dragitems = this.doc.drag_items_for_choice(choiceno);
             var coords = [];
             dragitems.each(function(dragitem){
-                var bgimgxy = this.convert_to_bg_img_xy(this.get_target_center_xy(dragitem));
+                var bgimgxy = this.convert_to_bg_img_xy(dragitem.getXY());
                 if (this.xy_in_bgimg(bgimgxy) && !dragitem.hasClass('yui3-dd-dragging')) {
                     coords[coords.length] = bgimgxy;
                 }
@@ -190,22 +190,6 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             console.log({'coords read from display':coords});
             this.set_form_value(choiceno, coords.join(';'));
             this.reposition_drags();
-        },
-        get_target_center_xy : function (dragitem) {
-            console.log('dragitem.getXY()', dragitem.getXY());
-            var targetnode = dragitem.one('img.target');
-            return [targetnode.getX() + (targetnode.get('offsetWidth') / 2),
-                      targetnode.getY() + (targetnode.get('offsetHeight') / 2)];
-        },
-        convert_target_center_xy_to_drag_xy : function (dragitem, targetcenterxy) {
-            var currenttargetxy = this.get_target_center_xy(dragitem);
-            var currentdragitemxy = dragitem.getXY();
-            var difference = [currenttargetxy[0] - currentdragitemxy[0],
-                              currenttargetxy[1] - currentdragitemxy[1]];
-            console.log({'targetcenterxy':targetcenterxy});
-            console.log({'difference':difference});
-            return [targetcenterxy[0] - difference[0],
-                            targetcenterxy[1] - difference[1]-1];
         },
         reset_drag_xy : function (choiceno) {
             this.set_form_value(choiceno, '');
@@ -261,10 +245,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             if (fv !== '') {
                 var coordsstrings = fv.split(';');
                 for (var i=0; i<coordsstrings.length; i++) {
-                    var targetxy = this.convert_to_window_xy(coordsstrings[i].split(','));
-                    var dragxy = this.convert_target_center_xy_to_drag_xy(dragitemhome, targetxy);
-                    coords[coords.length] = dragxy;
-                    console.log('coords[coords.length]', dragxy);
+                    coords[coords.length] = this.convert_to_window_xy(coordsstrings[i].split(','));
                 }
             }
             return coords;

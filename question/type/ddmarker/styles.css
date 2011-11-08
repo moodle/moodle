@@ -65,6 +65,14 @@ form.mform fieldset#previewareaheader div.markertexts span.markertext {
     -khtml-border-radius: 10px;
     border-radius: 10px;
 }
+.que.ddmarker div.dragitems img.target {
+    position:absolute;
+    left:-7px;
+    top :-7px;
+}
+.que.ddmarker div.dragitems div.draghome img.target {
+    display:none;
+}
 .que.ddmarker .dragitem.yui3-dd-dragging span.markertext {
     z-index: 3;
     -moz-box-shadow: 3px 3px 4px #000;
