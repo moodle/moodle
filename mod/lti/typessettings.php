@@ -60,7 +60,7 @@ $id           = optional_param('id', null, PARAM_INT);
 $useexisting  = optional_param('useexisting', null, PARAM_INT);
 $definenew    = optional_param('definenew', null, PARAM_INT);
 
-/// no guest autologin
+// no guest autologin
 require_login(0, false);
 $url = new moodle_url('/mod/lti/typesettings.php');
 $PAGE->set_url($url);
@@ -70,7 +70,7 @@ admin_externalpage_setup('managemodules'); // Hacky solution for printing the ad
 $tab = optional_param('tab', '', PARAM_ALPHAEXT);
 $redirect = "$CFG->wwwroot/$CFG->admin/settings.php?section=modsettinglti&tab={$tab}";
 
-/// WRITING SUBMITTED DATA (IF ANY) -------------------------------------------------------------------------------
+// WRITING SUBMITTED DATA (IF ANY)
 
 $statusmsg = '';
 $errormsg  = '';
@@ -116,7 +116,7 @@ if (isset($data->submitbutton)) {
     redirect($redirect);
 }
 
-/// print header stuff ------------------------------------------------------------
+// print header stuff
 $PAGE->set_focuscontrol($focus);
 if (empty($SITE->fullname)) {
     $PAGE->set_title($settingspage->visiblename);
@@ -134,8 +134,6 @@ if (empty($SITE->fullname)) {
     } else if ($statusmsg !== '') {
         echo $OUTPUT->notification($statusmsg, 'notifysuccess');
     }
-
-    // ---------------------------------------------------------------------------------------------------------------
 
     echo '<form action="typesettings.php" method="post" id="'.$id.'" >';
     echo '<div class="settingsform clearfix">';
@@ -176,7 +174,6 @@ if (empty($SITE->fullname)) {
         echo $OUTPUT->notification($statusmsg, 'notifysuccess');
     }
 
-    // ---------------------------------------------------------------------------------------------------------------
     echo $OUTPUT->heading(get_string('toolsetup', 'lti'));
     echo $OUTPUT->box_start('generalbox');
     if ($action == 'add') {

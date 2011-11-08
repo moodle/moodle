@@ -97,11 +97,11 @@ $pagetitle = strip_tags($course->shortname.': '.format_string($lti->name));
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 
-/// Print the page header
+// Print the page header
 echo $OUTPUT->header();
 
 if ($lti->showtitle) {
-    /// Print the main part of the page
+    // Print the main part of the page
     echo $OUTPUT->heading(format_string($lti->name));
 }
 
@@ -156,6 +156,5 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
     echo $resize;
 }
 
-
-/// Finish the page
+// Finish the page
 echo $OUTPUT->footer();

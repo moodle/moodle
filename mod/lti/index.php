@@ -64,16 +64,16 @@ $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
 
-/// Print the main part of the page
+// Print the main part of the page
 echo $OUTPUT->heading(get_string("modulenamepluralformatted", "lti"));
 
-/// Get all the appropriate data
+// Get all the appropriate data
 if (! $basicltis = get_all_instances_in_course("lti", $course)) {
     notice("There are no basicltis", "../../course/view.php?id=$course->id");
     die;
 }
 
-/// Print the list of instances (your module will probably extend this)
+// Print the list of instances (your module will probably extend this)
 $timenow = time();
 $strname = get_string("name");
 $strsectionname  = get_string('sectionname', 'format_'.$course->format);
@@ -112,7 +112,5 @@ echo "<br />";
 
 echo html_writer::table($table);
 
-/// Finish the page
-
+// Finish the page
 echo $OUTPUT->footer();
-
