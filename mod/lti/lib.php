@@ -79,31 +79,28 @@ function lti_supports($feature) {
  * @param object $instance An object from the form in mod.html
  * @return int The id of the newly inserted basiclti record
  **/
-function lti_add_instance($formdata) {
+function lti_add_instance($lti, $mform) {
     global $DB;
-    $formdata->timecreated = time();
-    $formdata->timemodified = $formdata->timecreated;
-    $formdata->servicesalt = uniqid('', true);
 
-    if (!isset($formdata->grade)) {
-        $formdata->grade = 100;
+    $lti->timecreated = time();
+    $lti->timemodified = $lti->timecreated;
+    $lti->servicesalt = uniqid('', true);
+
+    if (!isset($lti->grade)) {
+        $lti->grade = 100; // TODO: Why is this harcoded here and default @ DB
     }
 
-    $id = $DB->insert_record("lti", $formdata);
+    $lti->id = $DB->insert_record('lti', $lti);
 
-    if ($formdata->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS) {
-        $basiclti = $DB->get_record('lti', array('id'=>$id));
-
-        if (!isset($formdata->cmidnumber)) {
-            $formdata->cmidnumber = '';
+    if ($lti->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS) {
+        if (!isset($lti->cmidnumber)) {
+            $lti->cmidnumber = '';
         }
 
-        $basiclti->cmidnumber = $formdata->cmidnumber;
-
-        lti_grade_item_update($basiclti);
+        lti_grade_item_update($lti);
     }
 
-    return $id;
+    return $lti->id;
 }
 
 /**
@@ -114,30 +111,31 @@ function lti_add_instance($formdata) {
  * @param object $instance An object from the form in mod.html
  * @return boolean Success/Fail
  **/
-function lti_update_instance($formdata) {
+function lti_update_instance($lti, $mform) {
     global $DB;
 
-    $formdata->timemodified = time();
-    $formdata->id = $formdata->instance;
+    $lti->timemodified = time();
+    $lti->id = $lti->instance;
 
-    if (!isset($formdata->showtitle)) {
-        $formdata->showtitle = 0;
+    if (!isset($lti->showtitle)) {
+        $lti->showtitle = 0;
     }
 
-    if (!isset($formdata->showdescription)) {
-        $formdata->showdescription = 0;
+    if (!isset($lti->showdescription)) {
+        $lti->showdescription = 0;
     }
 
-    if ($formdata->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS) {
-        $basicltirec = $DB->get_record("lti", array("id" => $formdata->id));
-        $basicltirec->cmidnumber = $formdata->cmidnumber;
+    if (!isset($lti->grade)) {
+        $lti->grade = $DB->get_field('lti', 'grade', array('id' => $lti->id));
+    }
 
-        lti_grade_item_update($basicltirec);
+    if ($lti->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS) {
+        lti_grade_item_update($lti);
     } else {
-        lti_grade_item_delete($formdata);
+        lti_grade_item_delete($lti);
     }
 
-    return $DB->update_record("lti", $formdata);
+    return $DB->update_record('lti', $lti);
 }
 
 /**
