@@ -125,7 +125,6 @@ class qformat_blackboard extends qformat_default {
             if ($ishtml) {
                 $question->questiontext = html_entity_decode(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]),ENT_QUOTES,'UTF-8');
             }
-            $question->questiontext = $question->questiontext;
             // put name in question object
             $question->name = shorten_text($question->questiontext, 254);
 
@@ -178,7 +177,6 @@ class qformat_blackboard extends qformat_default {
             if ($ishtml) {
                 $question->questiontext = html_entity_decode(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]),ENT_QUOTES,'UTF-8');
             }
-            $question->questiontext = $question->questiontext;
 
             // put name of question in question object, careful of length
             $question->name = shorten_text($question->questiontext, 254);
@@ -244,7 +242,6 @@ class qformat_blackboard extends qformat_default {
             if ($ishtml) {
                 $question->questiontext = html_entity_decode(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]),ENT_QUOTES,'UTF-8');
             }
-            $question->questiontext = $question->questiontext;
             // put name of question in question object
             $question->name = shorten_text($question->questiontext, 254);
 
@@ -308,7 +305,6 @@ class qformat_blackboard extends qformat_default {
             if ($ishtml) {
                 $question->questiontext = html_entity_decode(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]),ENT_QUOTES,'UTF-8');
             }
-            $question->questiontext = $question->questiontext;
             // put name of question in question object
             $question->name = shorten_text($question->questiontext, 254);
 
@@ -362,7 +358,6 @@ class qformat_blackboard extends qformat_default {
             if ($ishtml) {
                 $question->questiontext = html_entity_decode(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]),ENT_QUOTES,'UTF-8');
             }
-            $question->questiontext = $question->questiontext;
             // put name of question in question object
             $question->name = shorten_text($question->questiontext, 254);
 
