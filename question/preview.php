@@ -153,12 +153,13 @@ if (data_submitted() && confirm_sesskey()) {
 
         } else if (optional_param('fill', null, PARAM_BOOL)) {
             $correctresponse = $quba->get_correct_response($slot);
-            $quba->process_action($slot, $correctresponse);
+            if (!is_null($correctresponse)) {
+                $quba->process_action($slot, $correctresponse);
 
-            $transaction = $DB->start_delegated_transaction();
-            question_engine::save_questions_usage_by_activity($quba);
-            $transaction->allow_commit();
-
+                $transaction = $DB->start_delegated_transaction();
+                question_engine::save_questions_usage_by_activity($quba);
+                $transaction->allow_commit();
+            }
             redirect($actionurl);
 
         } else if (optional_param('finish', null, PARAM_BOOL)) {
@@ -209,6 +210,8 @@ $finishdisabled = '';
 $filldisabled = '';
 if ($quba->get_question_state($slot)->is_finished()) {
     $finishdisabled = ' disabled="disabled"';
+    $filldisabled = ' disabled="disabled"';
+} else if (is_null($quba->get_correct_response($slot))) {
     $filldisabled = ' disabled="disabled"';
 }
 if (!$previewid) {
