@@ -825,16 +825,8 @@ function get_question_options(&$questions, $loadtags = false) {
  * @return string the HTML for the img tag.
  */
 function print_question_icon($question) {
-    global $OUTPUT;
-
-    $qtype = question_bank::get_qtype($question->qtype, false);
-    $namestr = $qtype->menu_name();
-
-    // TODO convert to return a moodle_icon object, or whatever the class is.
-    $html = '<img src="' . $OUTPUT->pix_url('icon', $qtype->plugin_name()) . '" alt="' .
-            $namestr . '" title="' . $namestr . '" />';
-
-    return $html;
+    global $PAGE;
+    return $PAGE->get_renderer('question', 'bank')->qtype_icon($question->qtype);
 }
 
 /**
