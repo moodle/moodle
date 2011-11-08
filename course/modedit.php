@@ -86,6 +86,22 @@ if (!empty($add)) {
         $data->introeditor = array('text'=>'', 'format'=>FORMAT_HTML, 'itemid'=>$draftid_editor); // TODO: add better default
     }
 
+    if (plugin_supports('mod', $data->modulename, FEATURE_ADVANCED_GRADING, false)) {
+        require_once($CFG->dirroot.'/grade/grading/lib.php');
+
+        $data->_advancedgradingdata['methods'] = grading_manager::available_methods();
+        $areas = grading_manager::available_areas('mod_'.$module->name);
+
+        foreach ($areas as $areaname => $areatitle) {
+            $data->_advancedgradingdata['areas'][$areaname] = array(
+                'title'  => $areatitle,
+                'method' => '',
+            );
+            $formfield = 'advancedgradingmethod_'.$areaname;
+            $data->{$formfield} = '';
+        }
+    }
+
     if (!empty($type)) { //TODO: hopefully will be removed in 2.0
         $data->type = $type;
     }

@@ -220,20 +220,13 @@ class grading_manager {
     }
 
     /**
-     * Returns the list of available grading methods in the given context
-     *
-     * Basically this returns the list of installed grading plugins with an empty value
-     * for simple direct grading. In the future, the list of available methods may be
-     * controlled per-context.
-     *
-     * Requires the context property to be set in advance.
+     * Returns the list of installed grading plugins together, optionally extended
+     * with a simple direct grading.
      *
      * @param bool $includenone should the 'Simple direct grading' be included
      * @return array of the (string)name => (string)localized title of the method
      */
-    public function get_available_methods($includenone = true) {
-
-        $this->ensure_isset(array('context'));
+    public static function available_methods($includenone = true) {
 
         if ($includenone) {
             $list = array('' => get_string('gradingmethodnone', 'core_grading'));
@@ -247,6 +240,48 @@ class grading_manager {
 
         return $list;
     }
+
+    /**
+     * Returns the list of available grading methods in the given context
+     *
+     * Currently this is just a static list obtained from {@link self::available_methods()}.
+     * In the future, the list of available methods may be controlled per-context.
+     *
+     * Requires the context property to be set in advance.
+     *
+     * @param bool $includenone should the 'Simple direct grading' be included
+     * @return array of the (string)name => (string)localized title of the method
+     */
+    public function get_available_methods($includenone = true) {
+        $this->ensure_isset(array('context'));
+        return self::available_methods($includenone);
+    }
+
+    /**
+     * Returns the list of gradable areas provided by the given component
+     *
+     * This performs a callback to the library of the relevant plugin to obtain
+     * the list of supported areas.
+     *
+     * @param string $component normalized component name
+     * @return array of (string)areacode => (string)localized title of the area
+     */
+    public static function available_areas($component) {
+        global $CFG;
+
+        list($plugintype, $pluginname) = normalize_component($component);
+
+        if ($component === 'core_grading') {
+            return array();
+
+        } else if ($plugintype === 'mod') {
+            return plugin_callback('mod', $pluginname, 'grading', 'areas_list', null, array());
+
+        } else {
+            throw new coding_exception('Unsupported area location');
+        }
+    }
+
 
     /**
      * Returns the list of gradable areas in the given context and component
@@ -267,14 +302,9 @@ class grading_manager {
                 return array();
             }
 
-        } else if ($this->get_context()->contextlevel >= CONTEXT_COURSE) {
+        } else if ($this->get_context()->contextlevel == CONTEXT_MODULE) {
             list($context, $course, $cm) = get_context_info_array($this->get_context()->id);
-
-            if (empty($cm->modname)) {
-                throw new coding_exception('Unsupported area location');
-            } else {
-                return plugin_callback('mod', $cm->modname, 'grading', 'areas_list', null, array());
-            }
+            return self::available_areas('mod_'.$cm->modname);
 
         } else {
             throw new coding_exception('Unsupported gradable area context level');
