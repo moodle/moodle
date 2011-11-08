@@ -56,6 +56,8 @@
 
 namespace moodle\mod\lti;//Using a namespace as the basicLTI module imports classes with the same names
 
+defined('MOODLE_INTERNAL') || die;
+
 require_once($CFG->dirroot . '/mod/lti/OAuth.php');
 require_once($CFG->dirroot . '/mod/lti/TrivialStore.php');
 
