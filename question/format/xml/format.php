@@ -628,8 +628,8 @@ class qformat_xml extends qformat_default {
             }
         }
         $qo->unitgradingtype = $this->getpath($question, array('#', 'unitgradingtype', 0, '#'), 0);
-        $qo->unitpenalty = $this->getpath($question, array('#', 'unitpenalty', 0, '#'), 0);
-        $qo->showunits = $this->getpath($question, array('#', 'showunits', 0, '#'), 0);
+        $qo->unitpenalty = $this->getpath($question, array('#', 'unitpenalty', 0, '#'), 0.1);
+        $qo->showunits = $this->getpath($question, array('#', 'showunits', 0, '#'), null);
         $qo->unitsleft = $this->getpath($question, array('#', 'unitsleft', 0, '#'), 0);
         $qo->instructions['text'] = '';
         $qo->instructions['format'] = FORMAT_HTML;
@@ -642,6 +642,15 @@ class qformat_xml extends qformat_default {
                     array('0', '@', 'format'), $this->get_format($qo->questiontextformat)));
             $qo->instructions['files'] = $this->import_files($this->getpath(
                     $instructions, array('0', '#', 'file'), array()));
+        }
+
+        if (is_null($qo->showunits)) {
+            // Set a good default, depending on whether there are any units defined.
+            if (empty($qo->unit)) {
+                $qo->showunits = 3; // qtype_numerical::UNITNONE;
+            } else {
+                $qo->showunits = 0; // qtype_numerical::UNITOPTIONAL;
+            }
         }
 
         $this->import_hints($qo, $question, false, false, $this->get_format($qo->questiontextformat));
@@ -737,7 +746,7 @@ class qformat_xml extends qformat_default {
 
         $qo->unitgradingtype = $this->getpath($question,
                 array('#', 'unitgradingtype', 0, '#'), 0);
-        $qo->unitpenalty = $this->getpath($question, array('#', 'unitpenalty', 0, '#'), 0);
+        $qo->unitpenalty = $this->getpath($question, array('#', 'unitpenalty', 0, '#'), null);
         $qo->showunits = $this->getpath($question, array('#', 'showunits', 0, '#'), 0);
         $qo->unitsleft = $this->getpath($question, array('#', 'unitsleft', 0, '#'), 0);
         $qo->instructions = $this->getpath($question,
@@ -801,6 +810,16 @@ class qformat_xml extends qformat_default {
             $qo->instructions['files'] = $this->import_files($this->getpath($instructions,
                     array('0', '#', 'file'), array()));
         }
+
+        if (is_null($qo->unitpenalty)) {
+            // Set a good default, depending on whether there are any units defined.
+            if (empty($qo->unit)) {
+                $qo->showunits = 3; // qtype_numerical::UNITNONE;
+            } else {
+                $qo->showunits = 0; // qtype_numerical::UNITOPTIONAL;
+            }
+        }
+
         $datasets = $question['#']['dataset_definitions'][0]['#']['dataset_definition'];
         $qo->dataset = array();
         $qo->datasetindex= 0;

@@ -61,11 +61,22 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
         // Adding keys to table question_numerical_options
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('question', XMLDB_KEY_FOREIGN, array('question'), 'question', array('id'));
+
         // Conditionally launch create table for question_calculated_options
         if (!$dbman->table_exists($table)) {
             // $dbman->create_table doesnt return a result, we just have to trust it
             $dbman->create_table($table);
         }
+
+        // Set a better default for questions without units.
+        $DB->execute('
+                UPDATE {question_numerical_options} qno
+                   SET showunits = 3
+                 WHERE NOT EXISTS (
+                         SELECT 1
+                           FROM {question_numerical_units} qnu
+                          WHERE qnu.question = qno.question)');
+
         upgrade_plugin_savepoint(true, 2009100100, 'qtype', 'numerical');
     }
 
@@ -81,7 +92,7 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // In the past, question_match_sub.questiontext assumed to contain
+        // In the past, question_numerical_options.instructions assumed to contain
         // content of the same form as question.questiontextformat. If we are
         // using the HTML editor, then convert FORMAT_MOODLE content to FORMAT_HTML.
         $rs = $DB->get_recordset_sql('
