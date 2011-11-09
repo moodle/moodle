@@ -25,6 +25,13 @@ class block_mnet_hosts extends block_list {
             return false;
         }
 
+        if (session_is_loggedinas()) {
+            $this->content = new stdClass();
+            $this->content->footer = html_writer::tag('span',
+                get_string('notpermittedtojumpas', 'mnet'));
+            return $this->content;
+        }
+
         // according to start_jump_session,
         // remote users can't on-jump
         // so don't show this block to them
