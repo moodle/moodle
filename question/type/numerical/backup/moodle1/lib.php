@@ -52,12 +52,13 @@ class moodle1_qtype_numerical_handler extends moodle1_qtype_handler {
 
         // convert and write the numerical units and numerical options
         if (isset($data['numerical'][0]['numerical_units'])) {
-            $numericalunits   = $data['numerical'][0]['numerical_units'];
-            $numericaloptions = $this->get_default_numerical_options($data['oldquestiontextformat']);
+            $numericalunits = $data['numerical'][0]['numerical_units'];
         } else {
-            $numericalunits   = array();
-            $numericaloptions = array();
+            $numericalunits = array();
         }
+        $numericaloptions = $this->get_default_numerical_options(
+                $data['oldquestiontextformat'], $numericalunits);
+
         $this->write_numerical_units($numericalunits);
         $this->write_numerical_options($numericaloptions);
 

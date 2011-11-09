@@ -1778,7 +1778,7 @@ abstract class moodle1_qtype_handler extends moodle1_plugin_handler {
      * @param int $oldquestiontextformat
      * @return array
      */
-    protected function get_default_numerical_options($oldquestiontextformat) {
+    protected function get_default_numerical_options($oldquestiontextformat, $units) {
         global $CFG;
 
         // replay the upgrade step 2009100100 - new table
@@ -1797,6 +1797,11 @@ abstract class moodle1_qtype_handler extends moodle1_plugin_handler {
             $options['instructionsformat'] = FORMAT_HTML;
         } else {
             $options['instructionsformat'] = $oldquestiontextformat;
+        }
+
+        // Set a good default, depending on whether there are any units defined.
+        if (empty($units)) {
+            $options['showunits'] = 3;
         }
 
         return $options;
