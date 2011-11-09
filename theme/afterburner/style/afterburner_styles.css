@@ -254,8 +254,8 @@ Course Section Topic & Weekly
     margin-bottom: 9px;
 }
 /*Login (Login page)*/
-.dir-rtl .loginbox .loginform .form-label {width:47%;}
-.dir-ltr .loginbox .loginform .form-label {width:46%;}
+.loginbox .loginform .form-label {width:46%;}
+.dir-rtl .loginbox .loginform .form-label {width:46%;}
 .loginbox .loginform .form-input {width:53%;}
 
 /*
