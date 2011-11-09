@@ -159,7 +159,6 @@ $string['forum:editanypost'] = 'Edit any post';
 $string['forum:exportdiscussion'] = 'Export whole discussion';
 $string['forum:exportownpost'] = 'Export own post';
 $string['forum:exportpost'] = 'Export post';
-$string['forum:initialsubscriptions'] = 'Initial subscription';
 $string['forumintro'] = 'Forum introduction';
 $string['forum:managesubscriptions'] = 'Manage subscriptions';
 $string['forum:movediscussions'] = 'Move discussions';
