@@ -29,7 +29,7 @@ $authuserid = !empty($userid) && $authtoken == sha1($userid . $user->password . 
 $authusername = !empty($username) && $authtoken == sha1($username . $user->password . $CFG->calendar_exportsalt);
 if (!$authuserid && !$authusername) {
     die('Invalid authentication');
-} 
+}
 
 $what = optional_param('preset_what', 'all', PARAM_ALPHA);
 $time = optional_param('preset_time', 'weeknow', PARAM_ALPHA);
