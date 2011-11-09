@@ -24,5 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2011101401;
-$plugin->requires = 2011092900;  // Requires this Moodle version
+$plugin->component  = 'gradingform_rubric';
+$plugin->version    = 2011110900;
+
+$plugin->requires   = 2011110200;
+
+$plugin->maturity   = MATURITY_STABLE;

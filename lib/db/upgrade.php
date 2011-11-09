@@ -6770,67 +6770,6 @@ FROM
         upgrade_main_savepoint(true, 2011092800.03);
     }
 
-    // TODO squash this before merging into the master - MDL-29798
-    if ($oldversion < 2011100700.01) {
-        // Create new core tables for the advanced grading subsystem
-
-        $table = new xmldb_table('grading_areas');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('areaname', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('activemethod', XMLDB_TYPE_CHAR, '100', null, null, null, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('uq_gradable_area', XMLDB_KEY_UNIQUE, array('contextid', 'component', 'areaname'));
-        $table->add_key('fk_context', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        $table = new xmldb_table('grading_definitions');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('areaid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('method', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
-        $table->add_field('descriptionformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, null, null, null);
-        $table->add_field('status', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('copiedfromid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
-        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('usercreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('options', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('fk_areaid', XMLDB_KEY_FOREIGN, array('areaid'), 'grading_areas', array('id'));
-        $table->add_key('fk_usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
-        $table->add_key('uq_area_method', XMLDB_KEY_UNIQUE, array('areaid', 'method'));
-        $table->add_key('fk_usercreated', XMLDB_KEY_FOREIGN, array('usercreated'), 'user', array('id'));
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        $table = new xmldb_table('grading_instances');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('formid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('raterid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
-        $table->add_field('rawgrade', XMLDB_TYPE_NUMBER, '10, 5', XMLDB_UNSIGNED, null, null, null);
-        $table->add_field('status', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('feedback', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
-        $table->add_field('feedbackformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, null, null, null);
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('fk_formid', XMLDB_KEY_FOREIGN, array('formid'), 'grading_definitions', array('id'));
-        $table->add_key('fk_raterid', XMLDB_KEY_FOREIGN, array('raterid'), 'user', array('id'));
-        $table->add_key('uq_rater_per_item', XMLDB_KEY_UNIQUE, array('formid', 'raterid', 'itemid'));
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        upgrade_main_savepoint(true, 2011100700.01);
-    }
-
     if ($oldversion < 2011100700.02) {
         // Define field idnumber to be added to course_categories
         $table = new xmldb_table('course_categories');
@@ -6861,15 +6800,6 @@ FROM
 
         // Main savepoint reached
         upgrade_main_savepoint(true, 2011101200.01);
-    }
-
-    // TODO squash this before merging into the master - MDL-29798
-    if ($oldversion < 2011101200.02) {
-        // drop the unique key uq_rater_per_item (unique)
-        $table = new xmldb_table('grading_instances');
-        $key = new xmldb_key('uq_rater_per_item', XMLDB_KEY_UNIQUE, array('formid', 'raterid', 'itemid'));
-        $dbman->drop_key($table, $key);
-        upgrade_main_savepoint(true, 2011101200.02);
     }
 
     if ($oldversion < 2011101900.02) {
@@ -6909,21 +6839,70 @@ FROM
         upgrade_main_savepoint(true, 2011102700.01);
     }
 
-    // TODO squash this before merging into the master - MDL-29798
-    if ($oldversion < 2011102700.03) {
-        // set the reasonable status to all definitions we have in our databases so far
-        $DB->set_field('grading_definitions', 'status', 20);
-        upgrade_main_savepoint(true, 2011102700.03);
-    }
+    if ($oldversion < 2011110200.01) {
+        // create new core tables for the advanced grading methods framework
 
-    // TODO squash this before merging into the master - MDL-29798
-    if ($oldversion < 2011102700.05) {
-        $table = new xmldb_table('grading_definitions');
-        $field = new xmldb_field('timecopied', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, '0', 'usermodified');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
+        // grading_areas table
+        $table = new xmldb_table('grading_areas');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('areaname', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('activemethod', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('uq_gradable_area', XMLDB_KEY_UNIQUE, array('contextid', 'component', 'areaname'));
+        $table->add_key('fk_context', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
         }
-        upgrade_main_savepoint(true, 2011102700.05);
+
+        // grading_definitions table
+        $table = new xmldb_table('grading_definitions');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('areaid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('method', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
+        $table->add_field('descriptionformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('status', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('copiedfromid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('usercreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecopied', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, '0');
+        $table->add_field('options', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('fk_areaid', XMLDB_KEY_FOREIGN, array('areaid'), 'grading_areas', array('id'));
+        $table->add_key('fk_usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
+        $table->add_key('uq_area_method', XMLDB_KEY_UNIQUE, array('areaid', 'method'));
+        $table->add_key('fk_usercreated', XMLDB_KEY_FOREIGN, array('usercreated'), 'user', array('id'));
+
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // grading_instances table
+        $table = new xmldb_table('grading_instances');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('formid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('raterid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('rawgrade', XMLDB_TYPE_NUMBER, '10, 5', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('status', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('feedback', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
+        $table->add_field('feedbackformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('fk_formid', XMLDB_KEY_FOREIGN, array('formid'), 'grading_definitions', array('id'));
+        $table->add_key('fk_raterid', XMLDB_KEY_FOREIGN, array('raterid'), 'user', array('id'));
+
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        upgrade_main_savepoint(true, 2011110200.01);
     }
 
     return true;
