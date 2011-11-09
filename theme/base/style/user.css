@@ -39,6 +39,7 @@
 .userselector select {width: 100%;}
 .userselector div {margin-top: 0.2em;}
 .userselector div label {margin-right: 0.3em;}
+#userselector_options {padding:0.3em 0;}
 #userselector_options .collapsibleregioncaption {font-weight: bold;}
 #userselector_options p {margin:0.2em 0;text-align:left;}
 .dir-rtl #userselector_options p {text-align:right;}
