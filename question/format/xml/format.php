@@ -1127,7 +1127,7 @@ class qformat_xml extends qformat_default {
                         "</shuffleanswers>\n";
                 $expout .= "    <answernumbering>" . $question->options->answernumbering .
                         "</answernumbering>\n";
-                $expout .= $this->write_combined_feedback($question->options);
+                $expout .= $this->write_combined_feedback($question->options, $question->id, $question->contextid);
                 $expout .= $this->write_answers($question->options->answers);
                 break;
 
@@ -1181,7 +1181,7 @@ class qformat_xml extends qformat_default {
                 $expout .= "    <shuffleanswers>" .
                         $this->get_single($question->options->shuffleanswers) .
                         "</shuffleanswers>\n";
-                $expout .= $this->write_combined_feedback($question->options);
+                $expout .= $this->write_combined_feedback($question->options, $question->id, $question->contextid);
                 foreach ($question->options->subquestions as $subquestion) {
                     $files = $fs->get_area_files($contextid, 'qtype_match',
                             'subquestion', $subquestion->id);
@@ -1409,6 +1409,11 @@ class qformat_xml extends qformat_default {
         return $output;
     }
 
+    /**
+     * Write out the hints.
+     * @param object $question the question definition data.
+     * @return string XML to output.
+     */
     public function write_hints($question) {
         if (empty($question->hints)) {
             return '';
@@ -1416,7 +1421,7 @@ class qformat_xml extends qformat_default {
 
         $output = '';
         foreach ($question->hints as $hint) {
-            $output .= $this->write_hint($hint);
+            $output .= $this->write_hint($hint, $question->contextid);
         }
         return $output;
     }
@@ -1429,30 +1434,51 @@ class qformat_xml extends qformat_default {
         return 'format="' . $this->get_format($format) . '"';
     }
 
-    public function write_hint($hint) {
+    public function write_hint($hint, $contextid) {
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($contextid, 'question', 'hint', $hint->id);
+
         $output = '';
         $output .= "    <hint {$this->format($hint->hintformat)}>\n";
         $output .= '      ' . $this->writetext($hint->hint);
+
         if (!empty($hint->shownumcorrect)) {
             $output .= "      <shownumcorrect/>\n";
         }
         if (!empty($hint->clearwrong)) {
             $output .= "      <clearwrong/>\n";
         }
+
         if (!empty($hint->options)) {
             $output .= '      <options>' . $this->xml_escape($hint->options) . "</options>\n";
         }
+        $output .= $this->writefiles($files);
         $output .= "    </hint>\n";
         return $output;
     }
 
-    public function write_combined_feedback($questionoptions) {
-        $output = "    <correctfeedback {$this->format($questionoptions->correctfeedbackformat)}>
-      {$this->writetext($questionoptions->correctfeedback)}    </correctfeedback>
-    <partiallycorrectfeedback {$this->format($questionoptions->partiallycorrectfeedbackformat)}>
-      {$this->writetext($questionoptions->partiallycorrectfeedback)}    </partiallycorrectfeedback>
-    <incorrectfeedback {$this->format($questionoptions->incorrectfeedbackformat)}>
-      {$this->writetext($questionoptions->incorrectfeedback)}    </incorrectfeedback>\n";
+    /**
+     * Output the combined feedback fields.
+     * @param object $questionoptions the question definition data.
+     * @param int $questionid the question id.
+     * @param int $contextid the question context id.
+     * @return string XML to output.
+     */
+    public function write_combined_feedback($questionoptions, $questionid, $contextid) {
+        $fs = get_file_storage();
+        $output = '';
+
+        $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
+        foreach ($fields as $field) {
+            $formatfield = $field . 'format';
+            $files = $fs->get_area_files($contextid, 'question', $field, $questionid);
+
+            $output .= "    <{$field} {$this->format($questionoptions->$formatfield)}>\n";
+            $output .= '      ' . $this->writetext($questionoptions->$field);
+            $output .= $this->writefiles($files);
+            $output .= "    </{$field}>\n";
+        }
+
         if (!empty($questionoptions->shownumcorrect)) {
             $output .= "    <shownumcorrect/>\n";
         }
