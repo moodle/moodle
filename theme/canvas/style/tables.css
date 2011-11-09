@@ -10,10 +10,9 @@
 .environmenttable td,
 .forumheaderlist td,
 .forumheaderlist th {
-	border: 1px solid #ddd;
-	border-collapse: collapse;
+    border: 1px solid #ddd;
+    border-collapse: collapse;
 }
-
 
 #page-admin-course-category .generalbox th,
 .editcourse .header,
@@ -22,6 +21,6 @@
 .generaltable .header,
 .environmenttable th,
 .forumheaderlist th {
-	background: #f3f3f3;
-	border-bottom-width: 2px;
+    background: #f3f3f3;
+    border-bottom-width: 2px;
 }

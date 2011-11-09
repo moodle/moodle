@@ -82,7 +82,7 @@ input[type="radio"] {
 }
 
 /* Login
-------------------------*/
+-------------------------*/
 
 .loginbox {
     margin: 15px 25%;
@@ -176,7 +176,7 @@ input[type="radio"] {
 }
 
 /* Calendar
------------------------*/
+-------------------------*/
 
 .calendarlayout .sidecalendar {
     padding-left: 15px;
@@ -327,7 +327,7 @@ input[type="radio"] {
 }
 
 /* User
------------------------*/
+-------------------------*/
 
 .userinfobox {
     border-color: #ddd;
@@ -653,24 +653,26 @@ input[type="radio"] {
     border-left: 2px solid #8a8a8a;
 }
 
-/**
- * Enrol   - TODO: tidy up styles here
- */
+/* Enrol
+-------------------------*/
+
 .userenrolment {
     font-size:90%;
     border:1px solid #999;
 }
 .userenrolment tr.r0 {
-    background-color:#F9F9F9;
+    background-color: #F9F9F9;
 }
 .userenrolment tr.r1 {
-    background-color:#F3F3F3;
+    background-color: #F3F3F3;
 }
 .userenrolment td {
-    border:1px solid #E9E9E9;
-    border-top-color:#F6F6F6;
-    border-right-color:#EEE;
-    border-left-color:#F3F3F3;
+    border-width: 1px;
+    border-style: solid;
+    border-top-color: #F6F6F6;
+    border-right-color: #EEE;
+    border-bottom-color: #E9E9E9;
+    border-left-color: #F3F3F3;
 }
 .userenrolment td.c0 {
     border-left-color:#999;
@@ -686,19 +688,19 @@ input[type="radio"] {
     position:relative;
 }
 .userenrolment .col_role .role {
-    line-height:10px;
-    font-size:10px;
+    line-height: 10px;
+    font-size: 10px;
 }
 .userenrolment .col_role .role a img {
     height:8px;
 }
 .userenrolment .col_role .addrole {
-    background-color:#DDD;
-    border:1px outset #EEE;
-    -moz-border-radius:5px;
+    background-color: #DDD;
+    border: 1px outset #EEE;
+    -moz-border-radius: 5px;
 }
 .userenrolment .col_group {
-    max-width:300px;
+    max-width: 300px;
 }
 .userenrolment .col_group .group {
     line-height:10px;
@@ -731,16 +733,18 @@ input[type="radio"] {
     float:right;
 }
 
-/* Registration */
+/* Registration
+-------------------------*/
+
+
 #page-admin-registration-hubselector .registration_textfield {
     width: 400px;
 }
 
-/**
- * Redirect
- */
+/* Redirect
+-------------------------*/
+
 .pagelayout-redirect #content {
-    text-align:center;
-    margin-top:10%;
-    margin-bottom:10%;
+    text-align: center;
+    margin: 10% auto;
 }
