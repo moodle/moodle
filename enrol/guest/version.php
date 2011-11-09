@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,4 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2010081800;
+$plugin->version = 2011110600;
+$plugin->component = 'enrol_guest';
