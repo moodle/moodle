@@ -107,7 +107,6 @@ function process_tf($xml, &$questions) {
         if ($ishtml) {
             $question->questiontext = html_entity_decode(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]),ENT_QUOTES,'UTF-8');
         }
-        $question->questiontext = $question->questiontext;
         // put name in question object
         $question->name = shorten_text($question->questiontext, 254);
 
@@ -160,7 +159,6 @@ function process_mc($xml, &$questions) {
         if ($ishtml) {
             $question->questiontext = html_entity_decode(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]),ENT_QUOTES,'UTF-8');
         }
-        $question->questiontext = $question->questiontext;
 
         // put name of question in question object, careful of length
         $question->name = shorten_text($question->questiontext, 254);
@@ -226,7 +224,6 @@ function process_ma($xml, &$questions) {
         if ($ishtml) {
             $question->questiontext = html_entity_decode(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]),ENT_QUOTES,'UTF-8');
         }
-        $question->questiontext = $question->questiontext;
         // put name of question in question object
         $question->name = shorten_text($question->questiontext, 254);
 
@@ -290,7 +287,6 @@ function process_fib($xml, &$questions) {
         if ($ishtml) {
             $question->questiontext = html_entity_decode(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]),ENT_QUOTES,'UTF-8');
         }
-        $question->questiontext = $question->questiontext;
         // put name of question in question object
         $question->name = shorten_text($question->questiontext, 254);
 
@@ -344,7 +340,6 @@ function process_matching($xml, &$questions) {
         if ($ishtml) {
             $question->questiontext = html_entity_decode(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]),ENT_QUOTES,'UTF-8');
         }
-        $question->questiontext = $question->questiontext;
         // put name of question in question object
         $question->name = shorten_text($question->questiontext, 254);
 
