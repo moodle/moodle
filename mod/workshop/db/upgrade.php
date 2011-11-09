@@ -308,5 +308,13 @@ function xmldb_workshop_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2011021100, 'workshop');
     }
 
+    /**
+     * Fix the eventually corrupted workshop table id sequence
+     */
+    if ($oldversion < 2011030401) {
+        $dbman->reset_sequence('workshop');
+        upgrade_mod_savepoint(true, 2011030401, 'workshop');
+    }
+
     return true;
 }
