@@ -4287,58 +4287,122 @@ function delete_course($courseorid, $showfeedback = true) {
  * This function does not verify any permissions.
  *
  * Please note this function also deletes all user enrolments,
- * enrolment instances and role assignments.
+ * enrolment instances and role assignments by default.
+ *
+ * $options:
+ *  - 'keep_roles_and_enrolments' - false by default
+ *  - 'keep_groups_and_groupings' - false by default
  *
  * @param int $courseid The id of the course that is being deleted
  * @param bool $showfeedback Whether to display notifications of each action the function performs.
+ * @param array $options extra options
  * @return bool true if all the removals succeeded. false if there were any failures. If this
  *             method returns false, some of the removals will probably have succeeded, and others
  *             failed, but you have no way of knowing which.
  */
-function remove_course_contents($courseid, $showfeedback = true) {
+function remove_course_contents($courseid, $showfeedback = true, array $options = null) {
     global $CFG, $DB, $OUTPUT;
     require_once($CFG->libdir.'/completionlib.php');
     require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/group/lib.php');
     require_once($CFG->dirroot.'/tag/coursetagslib.php');
+    require_once($CFG->dirroot.'/comment/lib.php');
+    require_once($CFG->dirroot.'/rating/lib.php');
+
+    // NOTE: these concatenated strings are suboptimal, but it is just extra info...
+    $strdeleted = get_string('deleted').' - ';
+
+    // Some crazy wishlist of stuff we should skip during purging of course content
+    $options = (array)$options;
 
     $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
-    $context = get_context_instance(CONTEXT_COURSE, $courseid, MUST_EXIST);
+    $coursecontext = context_course::instance($courseid);
+    $fs = get_file_storage();
 
-    $strdeleted = get_string('deleted');
-
-    // Delete course completion information,
-    // this has to be done before grades and enrols
+    // Delete course completion information, this has to be done before grades and enrols
     $cc = new completion_info($course);
     $cc->clear_criteria();
-
-    // remove roles and enrolments
-    role_unassign_all(array('contextid'=>$context->id), true);
-    enrol_course_delete($course);
-
-    // Clean up course formats (iterate through all formats in the even the course format was ever changed)
-    $formats = get_plugin_list('format');
-    foreach ($formats as $format=>$formatdir) {
-        $formatdelete = 'format_'.$format.'_delete_course';
-        $formatlib    = "$formatdir/lib.php";
-        if (file_exists($formatlib)) {
-            include_once($formatlib);
-            if (function_exists($formatdelete)) {
-                if ($showfeedback) {
-                    echo $OUTPUT->notification($strdeleted.' '.$format);
-                }
-                $formatdelete($course->id);
-            }
-        }
+    if ($showfeedback) {
+        echo $OUTPUT->notification($strdeleted.get_string('completion', 'completion'), 'notifysuccess');
     }
 
     // Remove all data from gradebook - this needs to be done before course modules
     // because while deleting this information, the system may need to reference
     // the course modules that own the grades.
     remove_course_grades($courseid, $showfeedback);
-    remove_grade_letters($context, $showfeedback);
+    remove_grade_letters($coursecontext, $showfeedback);
 
+    // Delete course blocks in any all child contexts,
+    // they may depend on modules so delete them first
+    $childcontexts = $coursecontext->get_child_contexts(); // returns all subcontexts since 2.2
+    foreach ($childcontexts as $childcontext) {
+        blocks_delete_all_for_context($childcontext->id);
+    }
+    unset($childcontexts);
+    blocks_delete_all_for_context($coursecontext->id);
+    if ($showfeedback) {
+        echo $OUTPUT->notification($strdeleted.get_string('type_block_plural', 'plugin'), 'notifysuccess');
+    }
+
+    // Delete every instance of every module,
+    // this has to be done before deleting of course level stuff
+    $locations = get_plugin_list('mod');
+    foreach ($locations as $modname=>$moddir) {
+        if ($modname === 'NEWMODULE') {
+            continue;
+        }
+        if ($module = $DB->get_record('modules', array('name'=>$modname))) {
+            include_once("$moddir/lib.php");                 // Shows php warning only if plugin defective
+            $moddelete = $modname .'_delete_instance';       // Delete everything connected to an instance
+            $moddeletecourse = $modname .'_delete_course';   // Delete other stray stuff (uncommon)
+
+            if ($instances = $DB->get_records($modname, array('course'=>$course->id))) {
+                foreach ($instances as $instance) {
+                    if ($cm = get_coursemodule_from_instance($modname, $instance->id, $course->id)) {
+                        /// Delete activity context questions and question categories
+                        question_delete_activity($cm,  $showfeedback);
+                    }
+                    if (function_exists($moddelete)) {
+                        // This purges all module data in related tables, extra user prefs, settings, etc.
+                        $moddelete($instance->id);
+                    } else {
+                        // NOTE: we should not allow installation of modules with missing delete support!
+                        debugging("Defective module '$modname' detected when deleting course contents: missing function $moddelete()!");
+                        $DB->delete_records($modname, array('id'=>$instance->id));
+                    }
+
+                    if ($cm) {
+                        // Delete cm and its context - orphaned contexts are purged in cron in case of any race condition
+                        context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
+                        $DB->delete_records('course_modules', array('id'=>$cm->id));
+                    }
+                }
+            }
+            if (function_exists($moddeletecourse)) {
+                // Execute ptional course cleanup callback
+                $moddeletecourse($course, $showfeedback);
+            }
+            if ($instances and $showfeedback) {
+                echo $OUTPUT->notification($strdeleted.get_string('pluginname', $modname), 'notifysuccess');
+            }
+        } else {
+            // Ooops, this module is not properly installed, force-delete it in the next block
+        }
+    }
+    // We have tried to delete everything the nice way - now let's force-delete any remaining module data
+    $cms = $DB->get_records('course_modules', array('course'=>$course->id));
+    foreach ($cms as $cm) {
+        if ($module = $DB->get_record('module', array('id'=>$cm->module))) {
+            try {
+                $DB->delete_records($module->name, array('id'=>$cm->instance));
+            } catch (Exception $e) {
+                // Ignore weird or missing table problems
+            }
+        }
+        context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
+        $DB->delete_records('course_modules', array('id'=>$cm->id));
+    }
     // Remove all data from availability and completion tables that is associated
     // with course-modules belonging to this course. Note this is done even if the
     // features are not enabled now, in case they were enabled previously
@@ -4348,101 +4412,122 @@ function remove_course_contents($courseid, $showfeedback = true) {
     $DB->delete_records_select('course_modules_availability',
            'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
            array($courseid));
+    if ($showfeedback) {
+        echo $OUTPUT->notification($strdeleted.get_string('type_mod_plural', 'plugin'), 'notifysuccess');
+    }
 
-    // Delete course blocks - they may depend on modules so delete them first
-    blocks_delete_all_for_context($context->id);
+    // Cleanup the rest of plugins
+    $cleanuplugintypes = array('report', 'coursereport', 'format');
+    foreach ($cleanuplugintypes as $type) {
+        $plugins = get_plugin_list_with_function($type, 'delete_course', 'lib.php');
+        foreach ($plugins as $plugin=>$pluginfunction) {
+            $pluginfunction($course->id, $showfeedback);
+        }
+        if ($showfeedback) {
+            echo $OUTPUT->notification($strdeleted.get_string('type_'.$type.'_plural', 'plugin'), 'notifysuccess');
+        }
+    }
 
-    // Delete every instance of every module
-    if ($allmods = $DB->get_records('modules') ) {
-        foreach ($allmods as $mod) {
-            $modname = $mod->name;
-            $modfile = $CFG->dirroot .'/mod/'. $modname .'/lib.php';
-            $moddelete = $modname .'_delete_instance';       // Delete everything connected to an instance
-            $moddeletecourse = $modname .'_delete_course';   // Delete other stray stuff (uncommon)
-            $count=0;
-            if (file_exists($modfile)) {
-                include_once($modfile);
-                if (function_exists($moddelete)) {
-                    if ($instances = $DB->get_records($modname, array('course'=>$course->id))) {
-                        foreach ($instances as $instance) {
-                            if ($cm = get_coursemodule_from_instance($modname, $instance->id, $course->id)) {
-                                /// Delete activity context questions and question categories
-                                question_delete_activity($cm,  $showfeedback);
-                            }
-                            if ($moddelete($instance->id)) {
-                                $count++;
+    // Delete questions and question categories
+    question_delete_course($course, $showfeedback);
+    if ($showfeedback) {
+        echo $OUTPUT->notification($strdeleted.get_string('questions', 'question'), 'notifysuccess');
+    }
 
-                            } else {
-                                echo $OUTPUT->notification('Could not delete '. $modname .' instance '. $instance->id .' ('. format_string($instance->name) .')');
-                            }
-                            if ($cm) {
-                                // delete cm and its context in correct order
-                                delete_context(CONTEXT_MODULE, $cm->id); // some callbacks may try to fetch context, better delete first
-                                $DB->delete_records('course_modules', array('id'=>$cm->id));
-                            }
-                        }
-                    }
-                } else {
-                    //note: we should probably delete these anyway
-                    echo $OUTPUT->notification('Function '.$moddelete.'() doesn\'t exist!');
-                }
+    // Make sure there are no subcontexts left - all valid blocks and modules should be already gone
+    $childcontexts = $coursecontext->get_child_contexts(); // returns all subcontexts since 2.2
+    foreach ($childcontexts as $childcontext) {
+        $childcontext->delete();
+    }
+    unset($childcontexts);
 
-                if (function_exists($moddeletecourse)) {
-                    $moddeletecourse($course, $showfeedback);
-                }
-            }
-            if ($showfeedback) {
-                echo $OUTPUT->notification($strdeleted .' '. $count .' x '. $modname);
-            }
+    // Remove all roles and enrolments by default
+    if (empty($options['keep_roles_and_enrolments'])) {
+        // this hack is used in restore when deleting contents of existing course
+        role_unassign_all(array('contextid'=>$coursecontext->id), true);
+        enrol_course_delete($course);
+        if ($showfeedback) {
+            echo $OUTPUT->notification($strdeleted.get_string('type_enrol_plural', 'plugin'), 'notifysuccess');
         }
     }
 
     // Delete any groups, removing members and grouping/course links first.
-    groups_delete_groupings($course->id, $showfeedback);
-    groups_delete_groups($course->id, $showfeedback);
+    if (empty($options['keep_groups_and_groupings'])) {
+        groups_delete_groupings($course->id, $showfeedback);
+        groups_delete_groups($course->id, $showfeedback);
+    }
 
-    // Delete questions and question categories
-    question_delete_course($course, $showfeedback);
+    // filters be gone!
+    filter_delete_all_for_context($coursecontext->id);
+
+    // die comments!
+    comment::delete_comments($coursecontext->id);
+
+    // ratings are history too
+    $delopt = new stdclass();
+    $delopt->contextid = $coursecontext->id;
+    $rm = new rating_manager();
+    $rm->delete_ratings($delopt);
 
     // Delete course tags
     coursetag_delete_course_tags($course->id, $showfeedback);
 
-    // Delete legacy files (just in case some files are still left there after conversion to new file api)
-    fulldelete($CFG->dataroot.'/'.$course->id);
+    // Delete calendar events
+    $DB->delete_records('event', array('courseid'=>$course->id));
+    $fs->delete_area_files($coursecontext->id, 'calendar');
 
-    // cleanup course record - remove links to delted stuff
-    $oldcourse = new stdClass();
-    $oldcourse->id                = $course->id;
-    $oldcourse->summary           = '';
-    $oldcourse->modinfo           = NULL;
-    $oldcourse->legacyfiles       = 0;
-    $oldcourse->defaultgroupingid = 0;
-    $oldcourse->enablecompletion  = 0;
-    $DB->update_record('course', $oldcourse);
-
-    // Delete all related records in other tables that may have a courseid
+    // Delete all related records in other core tables that may have a courseid
     // This array stores the tables that need to be cleared, as
     // table_name => column_name that contains the course id.
     $tablestoclear = array(
-        'event' => 'courseid', // Delete events
-        'log' => 'course', // Delete logs
-        'course_sections' => 'course', // Delete any course stuff
-        'course_modules' => 'course',
-        'course_display' => 'course',
-        'backup_courses' => 'courseid', // Delete scheduled backup stuff
-        'user_lastaccess' => 'courseid',
+        'log' => 'course',               // Course logs (NOTE: this might be changed in the future)
+        'backup_courses' => 'courseid',  // Scheduled backup stuff
+        'user_lastaccess' => 'courseid', // User access info
     );
     foreach ($tablestoclear as $table => $col) {
         $DB->delete_records($table, array($col=>$course->id));
     }
 
-    // Delete all remaining stuff linked to context,
-    // such as remaining roles, files, comments, etc.
-    // Keep the context record for now.
-    delete_context(CONTEXT_COURSE, $course->id, false);
+    // delete all course backup files
+    $fs->delete_area_files($coursecontext->id, 'backup');
 
-    //trigger events
-    $course->context = $context; // you can not access context in cron event later after course is deleted
+    // cleanup course record - remove links to deleted stuff
+    $oldcourse = new stdClass();
+    $oldcourse->id               = $course->id;
+    $oldcourse->summary          = '';
+    $oldcourse->modinfo          = NULL;
+    $oldcourse->legacyfiles      = 0;
+    $oldcourse->enablecompletion = 0;
+    if (!empty($options['keep_groups_and_groupings'])) {
+        $oldcourse->defaultgroupingid = 0;
+    }
+    $DB->update_record('course', $oldcourse);
+
+    // Delete course sections and user selections
+    $DB->delete_records('course_sections', array('course'=>$course->id));
+    $DB->delete_records('course_display', array('course'=>$course->id));
+
+    // delete legacy, section and any other course files
+    $fs->delete_area_files($coursecontext->id, 'course'); // files from summary and section
+
+    // Delete all remaining stuff linked to context such as files, comments, ratings, etc.
+    if (empty($options['keep_roles_and_enrolments']) and empty($options['keep_groups_and_groupings'])) {
+        // Easy, do not delete the context itself...
+        $coursecontext->delete_content();
+
+    } else {
+        // Hack alert!!!!
+        // We can not drop all context stuff because it would bork enrolments and roles,
+        // there might be also files used by enrol plugins...
+    }
+
+    // Delete legacy files - just in case some files are still left there after conversion to new file api,
+    // also some non-standard unsupported plugins may try to store something there
+    fulldelete($CFG->dataroot.'/'.$course->id);
+
+    // Finally trigger the event
+    $course->context = $coursecontext; // you can not access context in cron event later after course is deleted
+    $course->options = $options;       // not empty if we used any crazy hack
     events_trigger('course_content_removed', $course);
 
     return true;

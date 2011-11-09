@@ -343,7 +343,7 @@ function question_delete_question($questionid) {
 /**
  * All question categories and their questions are deleted for this course.
  *
- * @param object $mod an object representing the activity
+ * @param stdClass $course an object representing the activity
  * @param boolean $feedback to specify if the process must output a summary of its work
  * @return boolean
  */

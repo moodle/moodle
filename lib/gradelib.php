@@ -1195,8 +1195,7 @@ function grade_update_mod_grades($modinstance, $userid=0) {
 /**
  * Remove grade letters for given context
  *
- * @global object
- * @param object $context
+ * @param context $context
  * @param bool $showfeedback
  */
 function remove_grade_letters($context, $showfeedback) {
@@ -1206,25 +1205,27 @@ function remove_grade_letters($context, $showfeedback) {
 
     $DB->delete_records('grade_letters', array('contextid'=>$context->id));
     if ($showfeedback) {
-        echo $OUTPUT->notification($strdeleted.' - '.get_string('letters', 'grades'));
+        echo $OUTPUT->notification($strdeleted.' - '.get_string('letters', 'grades'), 'notifysuccess');
     }
 }
+
 /**
  * Remove all grade related course data - history is kept
  *
- * @global object
  * @param int $courseid
  * @param bool $showfeedback print feedback
  */
 function remove_course_grades($courseid, $showfeedback) {
     global $DB, $OUTPUT;
 
+    $fs = get_file_storage();
     $strdeleted = get_string('deleted');
 
     $course_category = grade_category::fetch_course_category($courseid);
     $course_category->delete('coursedelete');
+    $fs->delete_area_files(get_context_instance(CONTEXT_COURSE, $courseid)->id, 'grade', 'feedback');
     if ($showfeedback) {
-        echo $OUTPUT->notification($strdeleted.' - '.get_string('grades', 'grades').', '.get_string('items', 'grades').', '.get_string('categories', 'grades'));
+        echo $OUTPUT->notification($strdeleted.' - '.get_string('grades', 'grades').', '.get_string('items', 'grades').', '.get_string('categories', 'grades'), 'notifysuccess');
     }
 
     if ($outcomes = grade_outcome::fetch_all(array('courseid'=>$courseid))) {
@@ -1234,7 +1235,7 @@ function remove_course_grades($courseid, $showfeedback) {
     }
     $DB->delete_records('grade_outcomes_courses', array('courseid'=>$courseid));
     if ($showfeedback) {
-        echo $OUTPUT->notification($strdeleted.' - '.get_string('outcomes', 'grades'));
+        echo $OUTPUT->notification($strdeleted.' - '.get_string('outcomes', 'grades'), 'notifysuccess');
     }
 
     if ($scales = grade_scale::fetch_all(array('courseid'=>$courseid))) {
@@ -1243,12 +1244,12 @@ function remove_course_grades($courseid, $showfeedback) {
         }
     }
     if ($showfeedback) {
-        echo $OUTPUT->notification($strdeleted.' - '.get_string('scales'));
+        echo $OUTPUT->notification($strdeleted.' - '.get_string('scales'), 'notifysuccess');
     }
 
     $DB->delete_records('grade_settings', array('courseid'=>$courseid));
     if ($showfeedback) {
-        echo $OUTPUT->notification($strdeleted.' - '.get_string('settings', 'grades'));
+        echo $OUTPUT->notification($strdeleted.' - '.get_string('settings', 'grades'), 'notifysuccess');
     }
 }
 
