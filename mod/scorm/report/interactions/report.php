@@ -212,7 +212,7 @@ class scorm_interactions_report extends scorm_default_report {
                 $table->no_sorting('start');
                 $table->no_sorting('finish');
                 $table->no_sorting('score');
-                
+
                 foreach ($scoes as $sco) {
                     if ($sco->launch != '') {
                         $table->no_sorting('scograde'.$sco->id);
