@@ -285,8 +285,8 @@ input#id_externalurl {direction:ltr;}
 .loginbox .potentialidps .potentialidplist {margin-left:40%;}
 .loginbox .potentialidps .potentialidplist div {text-align:left;}
 .loginbox .loginform {margin-top:1em;text-align:left;}
+.loginbox .loginform .form-label {float:left;text-align:right;width:44%;direction:rtl; white-space:nowrap;}
 .dir-rtl .loginbox .loginform .form-label {float:left;text-align:right;width:44%;direction:ltr; white-space:nowrap;}
-.dir-ltr .loginbox .loginform .form-label {float:left;text-align:right;width:44%;direction:rtl; white-space:nowrap;}
 .loginbox .loginform .form-input {float:right;width:55%;}
 .loginbox .loginform .form-input input {width: 6em;}
 .loginbox .signupform {margin-top:1em;text-align:center;}
