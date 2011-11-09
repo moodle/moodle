@@ -1,6 +1,7 @@
 This files describes API changes in /blocks/* - activity modules,
 information provided here is intended especially for developers.
 
+
 === 2.0 ===
 
 required changes in code:
@@ -15,12 +16,7 @@ required changes in code:
                  move all images into new blocks/xxx/pix/ directory and use new outputlib api
                  old global $THEME is fully replaced by $OUTPUT
 * remove '_utf8' from language pack names, use new {$a} syntax in language packs
-* use 'pluginname' lang pack identifier instead of 'blockname' 
+* use 'pluginname' lang pack identifier instead of 'blockname'
 * move cron and version number into standard version.php
 * removed support for old config_global.html, use settings.php
 
-optional - no changes needed in older code:
-*
-
-
-TODO: add links to docs

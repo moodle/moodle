@@ -1,0 +1,53 @@
+This files describes API changes in core lbraries and APIs,
+information provided here is intended especially for developers.
+
+
+=== 2.2 ===
+
+removed unused libraries:
+* odbc, base32, CodeSniffer, overlib, apd profiling, kses, Smarty, PEAR Console, swfobject, cssshover.htc, md5.js
+
+API changes:
+* new admin/tool plugin type
+* new context API - old API is still available
+* removed global search
+
+
+=== 2.1 ===
+
+API changes:
+* basic suport for restore from 1.9
+* new mobile devices API
+* new questions API
+
+
+=== 2.0 ===
+
+API changes:
+* new DML API - http://docs.moodle.org/dev/DML_functions
+* new DDL API - http://docs.moodle.org/dev/DDL_functions
+* new file API - http://docs.moodle.org/dev/File_API
+* new $PAGE and $OUTPUT API
+* new navigation API
+* new theme API - http://docs.moodle.org/dev/Theme_changes_in_2.0
+* new javascript API - http://docs.moodle.org/dev/JavaScript_usage_guide
+* new portfolio API
+* new local plugin type
+* new translation support - http://lang.moodle.org
+* new web service API
+* new cohorts API
+* new messaging API
+* new rating API
+* new comment API
+* new sessions API
+* new enrolment API
+* new backup/restore API
+* new blocks API
+* new filters API
+* improved plugin support (aka Frankenstyle)
+* new registration and hub API
+* new course completion API
+* new plagiarism API
+* changed blog API
+* new text editor API
+* new my moodle and profiles API
