@@ -48,6 +48,24 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
 
     Y.use('yui2-resize', 'yui2-dragdrop', 'yui2-container', 'yui2-button', 'yui2-layout', 'yui2-treeview', 'yui2-json', 'yui2-event', function(Y) {
 
+        YAHOO.widget.TextNode.prototype.getContentHtml = function() {
+            var sb = [];
+            sb[sb.length] = this.href ? '<a' : '<span';
+            sb[sb.length] = ' id="' + YAHOO.lang.escapeHTML(this.labelElId) + '"';
+            sb[sb.length] = ' class="' + YAHOO.lang.escapeHTML(this.labelStyle) + '"';
+            if (this.href) {
+                sb[sb.length] = ' href="' + YAHOO.lang.escapeHTML(this.href) + '"';
+                sb[sb.length] = ' target="' + YAHOO.lang.escapeHTML(this.target) + '"';
+            }
+            if (this.title) {
+                sb[sb.length] = ' title="' + YAHOO.lang.escapeHTML(this.title) + '"';
+            }
+            sb[sb.length] = ' >';
+            sb[sb.length] = this.label;
+            sb[sb.length] = this.href?'</a>':'</span>';
+            return sb.join("");
+        };
+
         var scorm_activate_item = function(node) {
             if (!node) {
                 return;
