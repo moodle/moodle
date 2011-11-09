@@ -68,7 +68,6 @@ class enrol_guest_plugin extends enrol_plugin {
      * calling code has to make sure the plugin and instance are active.
      *
      * @param stdClass $instance course enrol instance
-     * @param stdClass $user record
      * @return bool|int false means no guest access, integer means end of cached time
      */
     public function try_guestaccess(stdClass $instance) {
@@ -78,7 +77,7 @@ class enrol_guest_plugin extends enrol_plugin {
             // Temporarily assign them some guest role for this context
             $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
             load_temp_course_role($context, $CFG->guestroleid);
-            return ENROL_REQUIRE_LOGIN_CACHE_PERIOD + time();
+            return ENROL_MAX_TIMESTAMP;
         }
 
         return false;
@@ -282,12 +281,18 @@ class enrol_guest_plugin extends enrol_plugin {
                     $i = $instance->id;
 
                     if (isset($data->{'enrol_guest_status_'.$i})) {
+                        $reset = ($instance->status != $data->{'enrol_guest_status_'.$i});
+
                         $instance->status       = $data->{'enrol_guest_status_'.$i};
                         $instance->timemodified = time();
                         if ($instance->status == ENROL_INSTANCE_ENABLED) {
                             $instance->password = $data->{'enrol_guest_password_'.$i};
                         }
                         $DB->update_record('enrol', $instance);
+
+                        if ($reset) {
+                            $context->mark_dirty();
+                        }
                     }
                 }
             }

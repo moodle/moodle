@@ -2758,13 +2758,6 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
             }
         }
 
-        // very simple enrolment caching - changes in course setting are not reflected immediately
-        if (!isset($USER->enrol)) {
-            $USER->enrol = array();
-            $USER->enrol['enrolled'] = array();
-            $USER->enrol['tempguest'] = array();
-        }
-
         $access = false;
 
         if (is_viewing($coursecontext, $USER)) {
@@ -2773,10 +2766,12 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
 
         } else {
             if (isset($USER->enrol['enrolled'][$course->id])) {
-                if ($USER->enrol['enrolled'][$course->id] == 0) {
+                if ($USER->enrol['enrolled'][$course->id] > time()) {
                     $access = true;
-                } else if ($USER->enrol['enrolled'][$course->id] > time()) {
-                    $access = true;
+                    if (isset($USER->enrol['tempguest'][$course->id])) {
+                        unset($USER->enrol['tempguest'][$course->id]);
+                        remove_temp_course_roles($coursecontext);
+                    }
                 } else {
                     //expired
                     unset($USER->enrol['enrolled'][$course->id]);
@@ -2796,58 +2791,48 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
 
             if ($access) {
                 // cache ok
-            } else if (is_enrolled($coursecontext, $USER, '', true)) {
-                // active participants may always access
-                // TODO: refactor this into some new function
-                $now = time();
-                $sql = "SELECT MAX(ue.timeend)
-                          FROM {user_enrolments} ue
-                          JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid)
-                          JOIN {user} u ON u.id = ue.userid
-                         WHERE ue.userid = :userid AND ue.status = :active AND e.status = :enabled AND u.deleted = 0
-                               AND ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)";
-                $params = array('enabled'=>ENROL_INSTANCE_ENABLED, 'active'=>ENROL_USER_ACTIVE,
-                                'userid'=>$USER->id, 'courseid'=>$coursecontext->instanceid, 'now1'=>$now, 'now2'=>$now);
-                $until = $DB->get_field_sql($sql, $params);
-                if (!$until or $until > time() + ENROL_REQUIRE_LOGIN_CACHE_PERIOD) {
-                    $until = time() + ENROL_REQUIRE_LOGIN_CACHE_PERIOD;
-                }
-
-                $USER->enrol['enrolled'][$course->id] = $until;
-                $access = true;
-
-                // remove traces of previous temp guest access
-                remove_temp_course_roles($coursecontext);
-
             } else {
-                $instances = $DB->get_records('enrol', array('courseid'=>$course->id, 'status'=>ENROL_INSTANCE_ENABLED), 'sortorder, id ASC');
-                $enrols = enrol_get_plugins(true);
-                // first ask all enabled enrol instances in course if they want to auto enrol user
-                foreach($instances as $instance) {
-                    if (!isset($enrols[$instance->enrol])) {
-                        continue;
+                $until = enrol_get_enrolment_end($coursecontext->instanceid, $USER->id);
+                if ($until !== false) {
+                    // active participants may always access, a timestamp in the future, 0 (always) or false.
+                    if ($until == 0) {
+                        $until = ENROL_MAX_TIMESTAMP;
                     }
-                    // Get a duration for the guestaccess, a timestamp in the future or false.
-                    $until = $enrols[$instance->enrol]->try_autoenrol($instance);
-                    if ($until !== false) {
-                        $USER->enrol['enrolled'][$course->id] = $until;
-                        remove_temp_course_roles($coursecontext);
-                        $access = true;
-                        break;
-                    }
-                }
-                // if not enrolled yet try to gain temporary guest access
-                if (!$access) {
+                    $USER->enrol['enrolled'][$course->id] = $until;
+                    $access = true;
+
+                } else {
+                    $instances = $DB->get_records('enrol', array('courseid'=>$course->id, 'status'=>ENROL_INSTANCE_ENABLED), 'sortorder, id ASC');
+                    $enrols = enrol_get_plugins(true);
+                    // first ask all enabled enrol instances in course if they want to auto enrol user
                     foreach($instances as $instance) {
                         if (!isset($enrols[$instance->enrol])) {
                             continue;
                         }
-                        // Get a duration for the guestaccess, a timestamp in the future or false.
-                        $until = $enrols[$instance->enrol]->try_guestaccess($instance);
+                        // Get a duration for the enrolment, a timestamp in the future, 0 (always) or false.
+                        $until = $enrols[$instance->enrol]->try_autoenrol($instance);
                         if ($until !== false) {
-                            $USER->enrol['tempguest'][$course->id] = $until;
+                            if ($until == 0) {
+                                $until = ENROL_MAX_TIMESTAMP;
+                            }
+                            $USER->enrol['enrolled'][$course->id] = $until;
                             $access = true;
                             break;
+                        }
+                    }
+                    // if not enrolled yet try to gain temporary guest access
+                    if (!$access) {
+                        foreach($instances as $instance) {
+                            if (!isset($enrols[$instance->enrol])) {
+                                continue;
+                            }
+                            // Get a duration for the guest access, a timestamp in the future or false.
+                            $until = $enrols[$instance->enrol]->try_guestaccess($instance);
+                            if ($until !== false and $until > time()) {
+                                $USER->enrol['tempguest'][$course->id] = $until;
+                                $access = true;
+                                break;
+                            }
                         }
                     }
                 }

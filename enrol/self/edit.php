@@ -65,6 +65,8 @@ if ($mform->is_cancelled()) {
 
 } else if ($data = $mform->get_data()) {
     if ($instance->id) {
+        $reset = ($instance->status != $data->status);
+
         $instance->status         = $data->status;
         $instance->name           = $data->name;
         $instance->password       = $data->password;
@@ -79,6 +81,10 @@ if ($mform->is_cancelled()) {
         $instance->enrolenddate   = $data->enrolenddate;
         $instance->timemodified   = time();
         $DB->update_record('enrol', $instance);
+
+        if ($reset) {
+            $context->mark_dirty();
+        }
 
     } else {
         $fields = array('status'=>$data->status, 'name'=>$data->name, 'password'=>$data->password, 'customint1'=>$data->customint1, 'customint2'=>$data->customint2,

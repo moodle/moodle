@@ -39,8 +39,11 @@ define('ENROL_USER_ACTIVE', 0);
 /** User participation in course is suspended (used in user_enrolments->status) */
 define('ENROL_USER_SUSPENDED', 1);
 
-/** Enrol info is cached for this number of seconds in require_login() */
+/** @deprecated - enrol caching was reworked, use ENROL_MAX_TIMESTAMP instead */
 define('ENROL_REQUIRE_LOGIN_CACHE_PERIOD', 1800);
+
+/** The timestamp indicating forever */
+define('ENROL_MAX_TIMESTAMP', 2147483647);
 
 /** When user disappears from external source, the enrolment is completely removed */
 define('ENROL_EXT_REMOVED_UNENROL', 0);
@@ -72,7 +75,7 @@ define('ENROL_EXT_REMOVED_SUSPENDNOROLES', 3);
 
 /**
  * Returns instances of enrol plugins
- * @param bool $enable return enabled only
+ * @param bool $enabled return enabled only
  * @return array of enrol plugins name=>instance
  */
 function enrol_get_plugins($enabled) {
@@ -804,7 +807,7 @@ function enrol_user_delete($user) {
 
 /**
  * Called when course is about to be deleted.
- * @param stdClass $object
+ * @param stdClass $course
  * @return void
  */
 function enrol_course_delete($course) {
@@ -884,6 +887,88 @@ function enrol_selfenrol_available($courseid) {
 
     return $result;
 }
+
+/**
+ * This function returns the end of current active user enrolment.
+ *
+ * It deals correctly with multiple overlapping user enrolments.
+ *
+ * @param int $courseid
+ * @param int $userid
+ * @return int|bool timestamp when active enrolment ends, false means no active enrolment now, 0 means never
+ */
+function enrol_get_enrolment_end($courseid, $userid) {
+    global $DB;
+
+    $sql = "SELECT ue.*
+              FROM {user_enrolments} ue
+              JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid)
+              JOIN {user} u ON u.id = ue.userid
+             WHERE ue.userid = :userid AND ue.status = :active AND e.status = :enabled AND u.deleted = 0";
+    $params = array('enabled'=>ENROL_INSTANCE_ENABLED, 'active'=>ENROL_USER_ACTIVE, 'userid'=>$userid, 'courseid'=>$courseid);
+
+    if (!$enrolments = $DB->get_records_sql($sql, $params)) {
+        return false;
+    }
+
+    $changes = array();
+
+    foreach ($enrolments as $ue) {
+        $start = (int)$ue->timestart;
+        $end = (int)$ue->timeend;
+        if ($end != 0 and $end < $start) {
+            debugging('Invalid enrolment start or end in user_enrolment id:'.$ue->id);
+            continue;
+        }
+        if (isset($changes[$start])) {
+            $changes[$start] = $changes[$start] + 1;
+        } else {
+            $changes[$start] = 1;
+        }
+        if ($end === 0) {
+            // no end
+        } else if (isset($changes[$end])) {
+            $changes[$end] = $changes[$end] - 1;
+        } else {
+            $changes[$end] = -1;
+        }
+    }
+
+    // let's sort then enrolment starts&ends and go through them chronologically,
+    // looking for current status and the next future end of enrolment
+    ksort($changes);
+
+    $now = time();
+    $current = 0;
+    $present = null;
+
+    foreach ($changes as $time => $change) {
+        if ($time > $now) {
+            if ($present === null) {
+                // we have just went past current time
+                $present = $current;
+                if ($present < 1) {
+                    // no enrolment active
+                    return false;
+                }
+            }
+            if ($present !== null) {
+                // we are already in the future - look for possible end
+                if ($current + $change < 1) {
+                    return $time;
+                }
+            }
+        }
+        $current += $change;
+    }
+
+    if ($current > 0) {
+        return 0;
+    } else {
+        return false;
+    }
+}
+
 
 /**
  * All enrol plugins should be based on this class,
@@ -1051,7 +1136,6 @@ abstract class enrol_plugin {
      * This should return either a timestamp in the future or false.
      *
      * @param stdClass $instance course enrol instance
-     * @param stdClass $user record
      * @return bool|int false means not enrolled, integer means timeend
      */
     public function try_autoenrol(stdClass $instance) {
@@ -1067,7 +1151,6 @@ abstract class enrol_plugin {
      * This should return either a timestamp in the future or false.
      *
      * @param stdClass $instance course enrol instance
-     * @param stdClass $user record
      * @return bool|int false means no guest access, integer means timeend
      */
     public function try_guestaccess(stdClass $instance) {
@@ -1142,10 +1225,12 @@ abstract class enrol_plugin {
             $ue->courseid  = $courseid;
             $ue->enrol     = $name;
             events_trigger('user_enrol_modified', $ue);
+            // resets current enrolment caches
+            $context->mark_dirty();
         }
 
         if ($roleid) {
-            // this must be done after the enrolment event so that the role_assigned event is trigerred aftwerwards
+            // this must be done after the enrolment event so that the role_assigned event is triggered afterwards
             if ($this->roles_protected()) {
                 role_assign($roleid, $userid, $context->id, 'enrol_'.$name, $instance->id);
             } else {
@@ -1153,7 +1238,7 @@ abstract class enrol_plugin {
             }
         }
 
-        // reset primitive require_login() caching
+        // reset current user enrolment caching
         if ($userid == $USER->id) {
             if (isset($USER->enrol['enrolled'][$courseid])) {
                 unset($USER->enrol['enrolled'][$courseid]);
@@ -1210,6 +1295,7 @@ abstract class enrol_plugin {
 
         $ue->modifierid = $USER->id;
         $DB->update_record('user_enrolments', $ue);
+        context_course::instance($instance->courseid)->mark_dirty(); // reset enrol caches
 
         // trigger event
         $ue->courseid  = $instance->courseid;
@@ -1275,7 +1361,11 @@ abstract class enrol_plugin {
             $ue->lastenrol = true; // means user not enrolled any more
             events_trigger('user_unenrolled', $ue);
         }
-        // reset primitive require_login() caching
+
+        // reset all enrol caches
+        $context->mark_dirty();
+
+        // reset current user enrolment caching
         if ($userid == $USER->id) {
             if (isset($USER->enrol['enrolled'][$courseid])) {
                 unset($USER->enrol['enrolled'][$courseid]);
@@ -1508,7 +1598,7 @@ abstract class enrol_plugin {
      * By defaults looks for manage links only.
      *
      * @param navigation_node $instancesnode
-     * @param object $instance
+     * @param stdClass $instance
      * @return void
      */
     public function add_course_navigation($instancesnode, stdClass $instance) {
