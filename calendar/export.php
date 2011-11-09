@@ -59,6 +59,7 @@ $action = optional_param('action', '', PARAM_ALPHA);
 $day  = optional_param('cal_d', 0, PARAM_INT);
 $mon  = optional_param('cal_m', 0, PARAM_INT);
 $yr   = optional_param('cal_y', 0, PARAM_INT);
+$generateurl = optional_param('generateurl', 0, PARAM_BOOL);
 
 if ($courseid != SITEID && !empty($courseid)) {
     $course = $DB->get_record('course', array('id' => $courseid));
@@ -93,6 +94,7 @@ $calendar = new calendar_information($day, $mon, $yr);
 $calendar->prepare_for_view($course, $courses);
 
 $pagetitle = get_string('export', 'calendar');
+$now = usergetdate(time());
 
 // Print title and header
 if ($issite) {
@@ -122,8 +124,8 @@ switch($action) {
         if (isset($CFG->calendar_weekend)) {
             $weekend = intval($CFG->calendar_weekend);
         }
-        $username = $USER->username;
-        $authtoken = sha1($USER->username . $USER->password . $CFG->calendar_exportsalt);
+
+        $authtoken = sha1($USER->id . $USER->password . $CFG->calendar_exportsalt);
         // Let's populate some vars to let "common tasks" be somewhat smart...
         // If today it's weekend, give the "next week" option
         $allownextweek  = $weekend & (1 << $now['wday']);
@@ -131,8 +133,18 @@ switch($action) {
         $allownextmonth = calendar_days_in_month($now['mon'], $now['year']) - $now['mday'] < 7;
         // If today it's weekend but tomorrow it isn't, do NOT give the "this week" option
         $allowthisweek  = !(($weekend & (1 << $now['wday'])) && !($weekend & (1 << (($now['wday'] + 1) % 7))));
-        echo $renderer->basic_export_form($allowthisweek, $allownextweek, $allownextmonth, $username, $authtoken);
+        echo $renderer->basic_export_form($allowthisweek, $allownextweek, $allownextmonth, $USER->id, $authtoken);
         break;
+}
+
+if (!empty($generateurl)) {
+    $params['userid']      = optional_param('userid', 0, PARAM_INT);
+    $params['authtoken']   = optional_param('authtoken', '', PARAM_ALPHANUM);
+    $params['preset_what'] = optional_param('preset_what', 'all', PARAM_ALPHA);
+    $params['preset_time'] = optional_param('preset_time', 'weeknow', PARAM_ALPHA);
+
+    $link = new moodle_url('/calendar/export_execute.php', $params);
+    print html_writer::tag('div', get_string('calendarurl', 'calendar', $link->out()), array('class' => 'generalbox calendarurl'));
 }
 
 echo $renderer->complete_layout();

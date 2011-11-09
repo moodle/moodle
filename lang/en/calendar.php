@@ -28,6 +28,7 @@ $string['allday'] = 'All day';
 $string['calendar'] = 'Calendar';
 $string['calendarheading'] = '{$a} Calendar';
 $string['calendarpreferences'] = 'Calendar preferences';
+$string['calendarurl'] = 'Calendar URL: {$a}';
 $string['clickhide'] = 'click to hide';
 $string['clickshow'] = 'click to show';
 $string['commontasks'] = 'Options';
