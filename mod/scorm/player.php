@@ -191,7 +191,7 @@
 
 ?>
     <div id="scormpage">
-    
+
       <div id="tocbox">
         <div id='scormapi-parent'>
             <script id="external-scormapi" type="text/JavaScript"></script>
@@ -256,7 +256,7 @@ if ($scorm->hidetoc == SCORM_TOC_POPUP or $mode=='browse' or $mode=='review') {
     }
 ?>
     </div> <!-- SCORM page -->
-<?php 
+<?php
 // NEW IMS TOC
 if (empty($scorm->popup) || $displaymode == 'popup') {
     if (!isset($result->toctitle)) {
