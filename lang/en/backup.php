@@ -220,5 +220,7 @@ $string['setting_overwriteconf'] = 'Overwrite course configuration';
 $string['setting_course_fullname'] = 'Course name';
 $string['setting_course_shortname'] = 'Course short name';
 $string['setting_course_startdate'] = 'Course startdate';
+$string['setting_keep_roles_and_enrolments'] = 'Keep current roles and enrolments';
+$string['setting_keep_groups_and_groupings'] = 'Keep current groups and groupings';
 $string['totalcategorysearchresults'] = 'Total categories: {$a}';
 $string['totalcoursesearchresults'] = 'Total courses: {$a}';
