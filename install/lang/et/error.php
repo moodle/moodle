@@ -41,5 +41,5 @@ $string['downloadedfilecheckfailed'] = 'Alla laetud faili kontroll ebaõnnestus.
 $string['invalidmd5'] = 'Vigane md5';
 $string['missingrequiredfield'] = 'Mõned nõutud väljad on puudu';
 $string['wrongdestpath'] = 'Vale sihtrada.';
-$string['wrongsourcebase'] = 'Vale allika URL\'i baas.';
+$string['wrongsourcebase'] = 'Vale allika URL-i baas.';
 $string['wrongzipfilename'] = 'Vale ZIP-failinimi.';
