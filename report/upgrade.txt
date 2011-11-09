@@ -1,0 +1,19 @@
+This files describes API changes in /report/* - plugins,
+information provided here is intended especially for developers.
+
+
+=== 2.2 ===
+
+API changes:
+* reports were moved from /admin/report/ to /report/
+* new support for report settings
+
+
+How to migrate old admin reports:
+# copy all files to new /report/yourplugin/ location
+# if settings.php exists add $settings=null;
+# if settings.php does not exist create it and link the report, index.php is not linked automatically any more
+# update require('../../config.php'); - remove one ../
+# update all links to report pages by removing /admin/ or /$CFG->admin/
+# add language pack with at least pluginname string
+

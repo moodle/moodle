@@ -507,8 +507,8 @@ class core_renderer extends renderer_base {
                         } else {
                             $loggedinas .= get_string('failedloginattemptsall', '', $count);
                         }
-                        if (has_capability('coursereport/log:view', get_context_instance(CONTEXT_SYSTEM))) {
-                            $loggedinas .= ' (<a href="'.$CFG->wwwroot.'/course/report/log/index.php'.
+                        if (file_exists("$CFG->dirroot/report/log/index.php") and has_capability('report/log:view', get_context_instance(CONTEXT_SYSTEM))) {
+                            $loggedinas .= ' (<a href="'.$CFG->wwwroot.'/report/log/index.php'.
                                                  '?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
                         }
                         $loggedinas .= '</div>';

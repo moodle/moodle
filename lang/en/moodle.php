@@ -902,7 +902,6 @@ $string['liketologin'] = 'Would you like to log in now with a full user account?
 $string['list'] = 'List';
 $string['listfiles'] = 'List of files in {$a}';
 $string['listofallpeople'] = 'List of all people';
-$string['livelogs'] = 'Live logs from the past hour';
 $string['local'] = 'Local';
 $string['localplugindeleteconfirm'] = 'You are about to completely delete the local plugin \'{$a}\'. This will completely delete everything in the database associated with this plugin. Are you SURE you want to continue?';
 $string['localplugins'] = 'Local plugins';
@@ -1175,7 +1174,7 @@ $string['notice'] = 'Notice';
 $string['noticenewerbackup'] = 'This backup file has been created with Moodle {$a->backuprelease} ({$a->backupversion}) and it\'s newer than your currently installed Moodle {$a->serverrelease} ({$a->serverversion}). This could cause some inconsistencies because backwards compatibility of backup files cannot be guaranteed.';
 $string['notifications'] = 'Notifications';
 $string['notifyloginfailuresmessage'] = '{$a->time}, IP: {$a->ip}, User: {$a->info}';
-$string['notifyloginfailuresmessageend'] = 'You can view these logs at {$a}/course/report/log/index.php?id=1&amp;chooselog=1&amp;modid=site_errors.';
+$string['notifyloginfailuresmessageend'] = 'You can view these logs at {$a}/report/log/index.php?id=1&amp;chooselog=1&amp;modid=site_errors.';
 $string['notifyloginfailuresmessagestart'] = 'Here is a list of failed login attempts at {$a} since you were last notified';
 $string['notifyloginfailuressubject'] = '{$a} :: Failed logins notification';
 $string['notincluded'] = 'Not included';

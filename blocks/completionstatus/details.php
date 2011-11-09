@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,15 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Block for displayed logged in user's course completion status
  *
- * @package   moodlecore
- * @copyright 2009 Catalyst IT Ltd
- * @author    Aaron Barnes <aaronb@catalyst.net.nz>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    block
+ * @subpackage completion
+ * @copyright  2009 Catalyst IT Ltd
+ * @author     Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 require_once('../../config.php');
 require_once($CFG->libdir.'/completionlib.php');
 
@@ -62,9 +62,9 @@ if ($USER->id == $user->id) {
     $can_view = true;
 } else if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext)) {
     $can_view = true;
-} else if (has_capability('coursereport/completion:view', $coursecontext)) {
+} else if (has_capability('report/completion:view', $coursecontext)) {
     $can_view = true;
-} else if (has_capability('coursereport/completion:view', $personalcontext)) {
+} else if (has_capability('report/completion:view', $personalcontext)) {
     $can_view = true;
 }
 
@@ -165,7 +165,7 @@ echo '<th class="c1 header" scope="col">'.get_string('criteria', 'completion').'
 echo '<th class="c2 header" scope="col">'.get_string('requirement', 'block_completionstatus').'</th>';
 echo '<th class="c3 header" scope="col">'.get_string('status').'</th>';
 echo '<th class="c4 header" scope="col">'.get_string('complete').'</th>';
-echo '<th class="c5 header" scope="col">'.get_string('completiondate', 'coursereport_completion').'</th>';
+echo '<th class="c5 header" scope="col">'.get_string('completiondate', 'report_completion').'</th>';
 echo '</tr>';
 
 // Save row data

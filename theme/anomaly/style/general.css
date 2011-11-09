@@ -37,11 +37,11 @@ html, body {background-color:#C8C9C7;}
 .course-content .section.main .content {margin:0 30px 10px 30px;background-color:#FFF;}
 .course-content .section.main .content .section_add_menus {text-align:right;}
 
-#course-user .section {border:1px solid #DDD;margin:0 5% 1.5em 5%;}
+#page-report-outline-user .section {border:1px solid #DDD;margin:0 5% 1.5em 5%;}
 
-#course-user .section h2,
-#course-user .section .content {margin:5px 1em;}
-#course-user .section table td {border:0;}
+#page-report-outline-user .section h2,
+#page-report-outline-user .section .content {margin:5px 1em;}
+#page-report-outline-user .section table td {border:0;}
 
 .generaltable {border:1px solid #DDD;}
 .generaltable .cell {background-color:#FFF;border:1px solid #EEE;border-collapse: collapse;}

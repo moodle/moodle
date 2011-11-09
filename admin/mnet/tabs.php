@@ -38,7 +38,7 @@ $strmnetlog        = get_string('mnetlog', 'mnet');
 $strmnetedithost   = get_string('reviewhostdetails', 'mnet');
 
 $logurl = $CFG->wwwroot.
-          '/course/report/log/index.php?chooselog=1&amp;showusers=1&amp;showcourses=1&amp;host_course='.$mnet_peer->id.
+          '/report/log/index.php?chooselog=1&amp;showusers=1&amp;showcourses=1&amp;host_course='.$mnet_peer->id.
           '%2F1&amp;user='.'0'.
           '&amp;date=0'.
           '&amp;modid=&amp;modaction=0&amp;logformat=showashtml';

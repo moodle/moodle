@@ -454,24 +454,27 @@ if ($hassiteconfig) {
             $ADMIN->add('coursereports', $page);
         }
     }
+    unset($pages);
 }
 
 // Now add reports
-foreach (get_plugin_list('report') as $plugin => $plugindir) {
+$pages = array();
+foreach (get_plugin_list('report') as $report => $plugindir) {
     $settings_path = "$plugindir/settings.php";
     if (file_exists($settings_path)) {
+        $settings = new admin_settingpage('report' . $report,
+                get_string('pluginname', 'report_' . $report), 'moodle/site:config');
         include($settings_path);
-        continue;
+        if ($settings) {
+            $pages[] = $settings;
+        }
     }
-
-    $index_path = "$plugindir/index.php";
-    if (!file_exists($index_path)) {
-        continue;
-    }
-    // old style 3rd party plugin without settings.php
-    $www_path = "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php";
-    $reportname = get_string($plugin, 'report_' . $plugin);
-    $ADMIN->add('reports', new admin_externalpage('report'.$plugin, $reportname, $www_path, 'moodle/site:viewreports'));
+}
+$ADMIN->add('modules', new admin_category('reportplugins', get_string('reports')));
+$ADMIN->add('reportplugins', new admin_externalpage('managereports', get_string('reportsmanage', 'admin'),
+                                                    $CFG->wwwroot . '/' . $CFG->admin . '/reports.php'));
+foreach ($pages as $page) {
+    $ADMIN->add('reportplugins', $page);
 }
 
 // Now add various admin tools

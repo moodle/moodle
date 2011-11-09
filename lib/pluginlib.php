@@ -304,7 +304,7 @@ class plugin_manager {
             ),
 
             'coursereport' => array(
-                'completion', 'log', 'outline', 'participation', 'progress', 'stats'
+                //deprecated!
             ),
 
             'datafield' => array(
@@ -406,8 +406,8 @@ class plugin_manager {
             ),
 
             'report' => array(
-                'backups', 'configlog', 'courseoverview',
-                'log', 'questioninstances', 'security', 'stats'
+                'backups', 'completion', 'configlog', 'courseoverview',
+                'log', 'loglive', 'outline', 'participation', 'progress', 'questioninstances', 'security', 'stats'
             ),
 
             'repository' => array(
@@ -1652,5 +1652,15 @@ class plugintype_tool extends plugintype_base implements plugin_information {
 
     public function get_uninstall_url() {
         return new moodle_url('/admin/tools.php', array('delete' => $this->name, 'sesskey' => sesskey()));
+    }
+}
+
+/**
+ * Class for admin tool plugins
+ */
+class plugintype_report extends plugintype_base implements plugin_information {
+
+    public function get_uninstall_url() {
+        return new moodle_url('/admin/reports.php', array('delete' => $this->name, 'sesskey' => sesskey()));
     }
 }

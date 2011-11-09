@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,4 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$plugin->version = 2009072800;
+/**
+ * Version info
+ *
+ * @package    block
+ * @subpackage completion
+ * @copyright  2009 Catalyst IT Ltd
+ * @author     Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+$plugin->version      = 2011110300;
+$plugin->component    = 'block_completionstatus';
+$plugin->dependencies = array('report_completion' => 2011110200);
