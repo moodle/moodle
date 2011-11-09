@@ -132,6 +132,10 @@ class auth_plugin_mnet extends auth_plugin_base {
         global $CFG, $USER, $DB;
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
+        if (session_is_loggedinas()) {
+            print_error('notpermittedtojumpas', 'mnet');
+        }
+
         // check remote login permissions
         if (! has_capability('moodle/site:mnetlogintoremote', get_system_context())
                 or is_mnet_remote_user($USER)
