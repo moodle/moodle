@@ -34,6 +34,8 @@ $string['adminsettings'] = 'Admin settings';
 $string['advanced'] = 'Parameters';
 $string['allowapidebug'] = 'Activate API debug and tracing (set the capture mask with apidebugmask)';
 $string['allowtypeexternal'] = 'Enable external package type';
+$string['allowtypeexternalaicc'] = 'Enable direct AICC url';
+$string['allowtypeexternalaicc_desc'] = 'If enabled this allows a direct url to a simple AICC package';
 $string['allowtypeimsrepository'] = 'Enable IMS package type';
 $string['allowtypelocalsync'] = 'Enable downloaded package type';
 $string['allowtypeaicchacp'] = 'Enable external AICC HACP';
@@ -166,6 +168,7 @@ $string['interactionstype'] = 'Type of question';
 $string['interactionsweight'] = 'Weight assigned to the element';
 $string['interactionslearnerresponse'] = 'Learner\'s Response';
 $string['invalidactivity'] = 'Scorm activity is incorrect';
+$string['invalidurl'] = 'Invalid URL specified';
 $string['invalidhacpsession'] = 'Invalid HACP Session';
 $string['invalidmanifestresource'] = 'WARNING: The following resources were referenced in your manifest but couldn\'t be found:';
 $string['last'] = 'Last accessed on';
@@ -265,7 +268,8 @@ $string['scormtype_help'] = 'This setting determines how the package is included
 * Uploaded package - Enables a SCORM package to be chosen via the file picker
 * External SCORM manifest - Enables an imsmanifest.xml URL to be specified. Note: If the URL has a different domain name than your site, then "Downloaded package" is a better option, since otherwise grades are not saved.
 * Downloaded package - Enables a package URL to be specified. The package will be unzipped and saved locally, and updated when the external SCORM package is updated.
-* Local IMS content repository - Enables a package to be selected from within an IMS repository';
+* Local IMS content repository - Enables a package to be selected from within an IMS repository
+* External AICC URL - this URL is the launch URL for a single AICC Activity.  A psuedo package will be constructed around this.';
 $string['scorm:viewreport'] = 'View reports';
 $string['scorm:viewscores'] = 'View scores';
 $string['scrollbars'] = 'Allow the window to be scrolled';
@@ -297,6 +301,7 @@ $string['too_many_children'] = 'Tag {$a->tag} has too many children';
 $string['totaltime'] = 'Time';
 $string['trackingloose'] = 'WARNING: The tracking data of this package will be lost!';
 $string['type'] = 'Type';
+$string['typeaiccurl'] = 'External AICC URL';
 $string['typeexternal'] = 'External SCORM manifest';
 $string['typeimsrepository'] = 'Local IMS content repository';
 $string['typelocal'] = 'Uploaded package';
