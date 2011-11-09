@@ -34,11 +34,11 @@ class core_calendar_renderer extends plugin_renderer_base {
      * @param bool $allowthisweek
      * @param bool $allownextweek
      * @param bool $allownextmonth
-     * @param string $username
+     * @param int $userid
      * @param string $authtoken
      * @return string
      */
-    public function basic_export_form($allowthisweek, $allownextweek, $allownextmonth, $username, $authtoken) {
+    public function basic_export_form($allowthisweek, $allownextweek, $allownextmonth, $userid, $authtoken) {
 
         $output  = html_writer::tag('div', get_string('export', 'calendar'), array('class'=>'header'));
         $output .= html_writer::start_tag('fieldset');
@@ -86,10 +86,10 @@ class core_calendar_renderer extends plugin_renderer_base {
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'cal_d', 'value'=>''));
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'cal_m', 'value'=>''));
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'cal_y', 'value'=>''));
-        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'username', 'value'=>$username));
+        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'userid', 'value'=>$userid));
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'authtoken', 'value'=>$authtoken));
 
-        $output .= html_writer::empty_tag('input', array('type'=>'button', 'id'=>'generateurl', 'value'=>get_string('generateurlbutton', 'calendar')));
+        $output .= html_writer::empty_tag('input', array('type'=>'submit', 'name' => 'generateurl', 'id'=>'generateurl', 'value'=>get_string('generateurlbutton', 'calendar')));
         $output .= html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('exportbutton', 'calendar')));
 
         $output .= html_writer::end_tag('div');
@@ -101,8 +101,6 @@ class core_calendar_renderer extends plugin_renderer_base {
         $output .= html_writer::tag('p', get_string('urlforical', 'calendar'));
         $output .= html_writer::tag('div', '', array('id'=>'url', 'style'=>'overflow:scroll;width:650px;'));
         $output .= html_writer::end_tag('div');
-
-        $this->page->requires->yui_module('moodle-calendar-eventmanager', 'M.core_calendar.init_basic_export', array($allowthisweek, $allownextweek, $allownextmonth, $username, $authtoken));
 
         return $output;
     }
