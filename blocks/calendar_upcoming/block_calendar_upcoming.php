@@ -71,7 +71,7 @@ class block_calendar_upcoming extends block_base {
             $this->content->text = '<div class="post">'.
                                    get_string('noupcomingevents', 'calendar').'</div>';
         }
-print_object($this->content);
+
         return $this->content;
     }
 }
