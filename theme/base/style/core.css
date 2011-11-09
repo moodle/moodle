@@ -77,7 +77,7 @@ a.autolink.glossary:hover {cursor: help;}
 img.resize {height: 1em;width: 1em;}
 .block img.resize,
 .breadcrumb img.resize {height: 0.9em;width: 0.8em;}
-img.icon {height:16px;vertical-align:middle;width:16px;}
+img.icon {height:16px;vertical-align:middle;width:16px;padding-right:4px;}
 img.iconsmall {height:11px;margin-right:1px;vertical-align:middle;width:11px;}
 img.iconhelp {height:17px;margin-right:4px;vertical-align:middle;width:17px;}
 img.icontoggle {height:17px;vertical-align:middle;width:50px;}
