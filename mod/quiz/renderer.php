@@ -24,6 +24,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * The renderer for the quiz module.
  *
@@ -816,7 +819,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      */
     public function quiz_intro($quiz, $cm) {
         if (trim(strip_tags($quiz->intro))) {
-            $output .= $this->box(format_module_intro('quiz', $quiz, $cm->id),
+            return $this->box(format_module_intro('quiz', $quiz, $cm->id),
                     'generalbox', 'intro');
 
         } else {
