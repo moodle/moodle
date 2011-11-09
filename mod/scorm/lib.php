@@ -504,6 +504,13 @@ function scorm_cron () {
         foreach ($scormsupdate as $scormupdate) {
             scorm_parse($scormupdate, true);
         }
+
+        //now clear out AICC session table with old session data
+        $cfg_scorm = get_config('scorm');
+        if (!empty($cfg_scorm->allowaicchacp)) {
+            $expiretime = time() - ($cfg_scorm->aicchacpkeepsessiondata*24*60*60);
+            $DB->delete_records_select('scorm_aicc_session', 'WHERE timemodified < ?', array($expiretime));
+        }
     }
 
     return true;

@@ -571,6 +571,39 @@ function xmldb_scorm_upgrade($oldversion) {
 
         upgrade_mod_savepoint(true, 2011080100, 'scorm');
     }
+    if ($oldversion < 2011110502) {
+
+        // Define table scorm_aicc_session to be created
+        $table = new xmldb_table('scorm_aicc_session');
+
+        // Adding fields to table scorm_aicc_session
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('scormid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('hacpsession', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('scoid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, '0');
+        $table->add_field('scormmode', XMLDB_TYPE_CHAR, '50', null, null, null, null);
+        $table->add_field('scormstatus', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('attempt', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('lessonstatus', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('sessiontime', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table scorm_aicc_session
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('scormid', XMLDB_KEY_FOREIGN, array('scormid'), 'scorm', array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+        // Conditionally launch create table for scorm_aicc_session
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // scorm savepoint reached
+        upgrade_mod_savepoint(true, 2011110502, 'scorm');
+    }
+
     return true;
 }
 
