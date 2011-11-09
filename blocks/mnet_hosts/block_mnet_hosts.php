@@ -32,6 +32,14 @@ class block_mnet_hosts extends block_list {
             return '';
         }
 
+        if (!empty($USER->realuser)) {
+            $this->content = new stdClass();
+            $this->content->items = array();
+            $this->content->icons = array();
+            $this->content->footer = get_string('notpermittedtojumpas', 'mnet');
+            return $this->content;
+        }
+
         // check for outgoing roaming permission first
         if (!has_capability('moodle/site:mnetlogintoremote', get_context_instance(CONTEXT_SYSTEM), NULL, false)) {
             return '';
