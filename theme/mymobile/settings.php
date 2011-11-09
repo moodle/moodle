@@ -27,43 +27,53 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
 
-$name = 'theme_mymobile/mswatch';
-    $title = get_string('mswatch','theme_mymobile');
-    $description = get_string('mswatch_desc', 'theme_mymobile');
+    // TODO: Really the yes/no settings below should be changed to checkboxes
+    //       given checkboxes are yes/no. Also saves us having to use language
+    //       strings for them.
+    $yesstr = get_string('yes','theme_mymobile');
+    $nostr = get_string('no','theme_mymobile');
+
+    $name = 'theme_mymobile/colourswatch';
+    $title = get_string('colourswatch','theme_mymobile');
+    $description = get_string('colourswatch_desc', 'theme_mymobile');
     $default = 'light';
-    $choices = array('light'=>'light', 'grey'=>'grey');
+    $choices = array(
+        'light' => get_string('light', 'theme_mymobile'),
+        'grey' => get_string('grey', 'theme_mymobile')
+    );
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $settings->add($setting);
-    
-    $name = 'theme_mymobile/mtext';
-    $title = get_string('mtext','theme_mymobile');
-    $description = get_string('mtext_desc', 'theme_mymobile');
+
+    $name = 'theme_mymobile/showmobileintro';
+    $title = get_string('showmobileintro','theme_mymobile');
+    $description = get_string('showmobileintro_desc', 'theme_mymobile');
     $setting = new admin_setting_confightmleditor($name, $title, $description, '');
     $settings->add($setting);
 
-$name = 'theme_mymobile/mtopic';
-    $title = get_string('mtopic','theme_mymobile');
-    $description = get_string('mtopic_desc', 'theme_mymobile');
+    $name = 'theme_mymobile/showsitetopic';
+    $title = get_string('showsitetopic','theme_mymobile');
+    $description = get_string('showsitetopic_desc', 'theme_mymobile');
     $default = 'topicshow';
-    $choices = array('topicshow'=>'Yes', 'topicnoshow'=>'No');
+    $choices = array('topicshow' => $yesstr, 'topicnoshow' => $nostr);
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $settings->add($setting);
-    
-$name = 'theme_mymobile/mimgs';
-    $title = get_string('mimgs','theme_mymobile');
-    $description = get_string('mimgs_desc', 'theme_mymobile');
+
+    $name = 'theme_mymobile/showfullsizeimages';
+    $title = get_string('showfullsizeimages','theme_mymobile');
+    $description = get_string('showfullsizeimages_desc', 'theme_mymobile');
     $default = 'ithumb';
-    $choices = array('ithumb'=>'No', 'ithumbno'=>'Yes');
+    $choices = array('ithumb' => $nostr, 'ithumbno' => $yesstr);
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $settings->add($setting);
- 
-$name = 'theme_mymobile/mtab';
-    $title = get_string('mtab','theme_mymobile');
-    $description = get_string('mtab_desc', 'theme_mymobile');
+
+    $name = 'theme_mymobile/usetableview';
+    $title = get_string('usetableview','theme_mymobile');
+    $description = get_string('usetableview_desc', 'theme_mymobile');
     $default = 'tabshow';
-    $choices = array('tabshow'=>'Yes', 'tabnoshow'=>'No');
+    $choices = array('tabshow' => $yesstr, 'tabnoshow' => $nostr);
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
-    $settings->add($setting);    
-  
-   
+    $settings->add($setting);
+
+    unset($yesstr);
+    unset($nostr);
 }

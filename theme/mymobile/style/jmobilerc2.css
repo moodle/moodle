@@ -11,12 +11,9 @@
 * Copyright (c) jQuery Project
 * Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
 */
-
 /* Swatches */
-
 /* A
 -----------------------------------------------------------------------------------------------------------*/
-
 .ui-bar-a {
 	border: 1px solid 		#2A2A2A /*{a-bar-border}*/;
 	background: 			#111111 /*{a-bar-background-color}*/;
@@ -30,30 +27,26 @@
 	background-image:      -o-linear-gradient(top, #3c3c3c /*{a-bar-background-start}*/, #111 /*{a-bar-background-end}*/); /* Opera 11.10+ */
 	background-image:         linear-gradient(top, #3c3c3c /*{a-bar-background-start}*/, #111 /*{a-bar-background-end}*/);
 }
-.ui-bar-a, 
-.ui-bar-a input, 
-.ui-bar-a select, 
-.ui-bar-a textarea, 
+.ui-bar-a,
+.ui-bar-a input,
+.ui-bar-a select,
+.ui-bar-a textarea,
 .ui-bar-a button {
 	font-family: Helvetica, Arial, sans-serif /*{a-bar-font}*/;
 }
 .ui-bar-a .ui-link-inherit {
 	color: #fff /*{a-bar-color}*/;
 }
-
 .ui-bar-a .ui-link {
 	color: #7cc4e7 /*{a-bar-link-color}*/;
 	font-weight: bold;
 }
-
 .ui-bar-a .ui-link:hover {
 	color: #2489CE /*{a-bar-link-hover}*/;
 }
-
 .ui-bar-a .ui-link:active {
 	color: #2489CE /*{a-bar-link-active}*/;
 }
-
 .ui-bar-a .ui-link:visited {
     color: #2489CE /*{a-bar-link-visited}*/;
 }
@@ -80,24 +73,19 @@
 .ui-body-a .ui-link-inherit {
 	color: 	#fff /*{a-body-color}*/;
 }
-
 .ui-body-a .ui-link {
 	color: #2489CE /*{a-body-link-color}*/;
 	font-weight: bold;
 }
-
 .ui-body-a .ui-link:hover {
 	color: #2489CE /*{a-body-link-hover}*/;
 }
-
 .ui-body-a .ui-link:active {
 	color: #2489CE /*{a-body-link-active}*/;
 }
-
 .ui-body-a .ui-link:visited {
     color: #2489CE /*{a-body-link-visited}*/;
 }
-
 .ui-br {
 	border-bottom: rgb(130,130,130);
 	border-bottom: rgba(130,130,130,.3);
@@ -158,11 +146,8 @@
 	font-family: Helvetica, Arial, sans-serif /*{a-button-font}*/;
 	text-decoration: none;
 }
-
-
 /* B
 -----------------------------------------------------------------------------------------------------------*/
-
 .ui-bar-b {
 	border: 1px solid 		#456f9a /*{b-bar-border}*/;
 	background: 			#5e87b0 /*{b-bar-background-color}*/;
@@ -190,15 +175,12 @@
 	color: #ddf0f8 /*{b-bar-link-color}*/;
 	font-weight: bold;
 }
-
 .ui-bar-b .ui-link:hover {
 	color: #ddf0f8 /*{b-bar-link-hover}*/;
 }
-
 .ui-bar-b .ui-link:active {
 	color: #ddf0f8 /*{b-bar-link-active}*/;
 }
-
 .ui-bar-b .ui-link:visited {
     color: #ddf0f8 /*{b-bar-link-visited}*/;
 }
@@ -225,24 +207,19 @@
 .ui-body-b .ui-link-inherit {
 	color: 	#333333 /*{b-body-color}*/;
 }
-
 .ui-body-b .ui-link {
 	color: #2489CE /*{b-body-link-color}*/;
 	font-weight: bold;
 }
-
 .ui-body-b .ui-link:hover {
 	color: #2489CE /*{b-body-link-hover}*/;
 }
-
 .ui-body-b .ui-link:active {
 	color: #2489CE /*{b-body-link-active}*/;
 }
-
 .ui-body-b .ui-link:visited {
     color: #2489CE /*{b-body-link-visited}*/;
 }
-
 .ui-btn-up-b {
 	border: 1px solid 		#145072 /*{b-bup-border}*/;
 	background: 			#2567ab /*{b-bup-background-color}*/;
@@ -297,11 +274,8 @@
 	font-family: Helvetica, Arial, sans-serif /*{b-button-font}*/;
 	text-decoration: none;
 }
-
-
 /* C
 -----------------------------------------------------------------------------------------------------------*/
-
 .ui-bar-c {
 	border: 1px solid 		#B3B3B3 /*{c-bar-border}*/;
 	background: 			#e9eaeb /*{c-bar-background-color}*/;
@@ -315,7 +289,6 @@
 	background-image:      -o-linear-gradient(top, #f0f0f0 /*{c-bar-background-start}*/, #e9eaeb /*{c-bar-background-end}*/); /* Opera 11.10+ */
 	background-image:         linear-gradient(top, #f0f0f0 /*{c-bar-background-start}*/, #e9eaeb /*{c-bar-background-end}*/);
 }
-
 .ui-bar-c .ui-link-inherit {
 	color: 	#3E3E3E /*{c-bar-color}*/;
 }
@@ -323,19 +296,15 @@
 	color: #7cc4e7 /*{c-bar-link-color}*/;
 	font-weight: bold;
 }
-
 .ui-bar-c .ui-link:hover {
 	color: #2489CE /*{c-bar-link-hover}*/;
 }
-
 .ui-bar-c .ui-link:active {
 	color: #2489CE /*{c-bar-link-active}*/;
 }
-
 .ui-bar-c .ui-link:visited {
     color: #2489CE /*{c-bar-link-visited}*/;
 }
-
 .ui-bar-c,
 .ui-bar-c input,
 .ui-bar-c select,
@@ -362,28 +331,22 @@
 .ui-body-c button {
 	font-family: Helvetica, Arial, sans-serif /*{c-body-font}*/;
 }
-
 .ui-body-c .ui-link-inherit {
 	color: 	#333333 /*{c-body-color}*/;
 }
-
 .ui-body-c .ui-link {
 	color: #2489CE /*{c-body-link-color}*/;
 	font-weight: bold;
 }
-
 .ui-body-c .ui-link:hover {
 	color: #2489CE /*{c-body-link-hover}*/;
 }
-
 .ui-body-c .ui-link:active {
 	color: #2489CE /*{c-body-link-active}*/;
 }
-
 .ui-body-c .ui-link:visited {
     color: #2489CE /*{c-body-link-visited}*/;
 }
-
 .ui-btn-up-c {
 	border: 1px solid 		#ccc /*{c-bup-border}*/;
 	background: 			#eee /*{c-bup-background-color}*/;
@@ -400,7 +363,6 @@
 .ui-btn-up-c a.ui-link-inherit {
 	color: 					#2F3E46 /*{c-bup-color}*/;
 }
-
 .ui-btn-hover-c {
 	border: 1px solid 		#bbbbbb /*{c-bhover-border}*/;
 	background: 			#dadada /*{c-bhover-background-color}*/;
@@ -439,11 +401,8 @@
 	font-family: Helvetica, Arial, sans-serif /*{c-button-font}*/;
 	text-decoration: none;
 }
-
-
 /* D
 -----------------------------------------------------------------------------------------------------------*/
-
 .ui-bar-d {
 	border: 1px solid 		#ccc /*{d-bar-border}*/;
 	background: 			#bbb /*{d-bar-background-color}*/;
@@ -463,7 +422,6 @@
 .ui-bar-d button {
 	font-family: Helvetica, Arial, sans-serif /*{d-bar-font}*/;
 }
-
 .ui-bar-d .ui-link-inherit {
 	color: 	#333333 /*{d-bar-color}*/;
 }
@@ -471,19 +429,15 @@
 	color: #2489CE /*{d-bar-link-color}*/;
 	font-weight: bold;
 }
-
 .ui-bar-d .ui-link:hover {
 	color: #2489CE /*{d-bar-link-hover}*/;
 }
-
 .ui-bar-d .ui-link:active {
 	color: #2489CE /*{d-bar-link-active}*/;
 }
-
 .ui-bar-d .ui-link:visited {
     color: #2489CE /*{d-bar-link-visited}*/;
 }
-
 .ui-body-d {
 	border: 1px solid 		#ccc /*{d-body-border}*/;
 	color: 					#333333 /*{d-body-color}*/;
@@ -503,28 +457,22 @@
 .ui-body-d button {
 	font-family: Helvetica, Arial, sans-serif /*{d-body-font}*/;
 }
-
 .ui-body-d .ui-link-inherit {
 	color: 	#333333 /*{d-body-color}*/;
 }
-
 .ui-body-d .ui-link {
 	color: #2489CE /*{d-body-link-color}*/;
 	font-weight: bold;
 }
-
 .ui-body-d .ui-link:hover {
 	color: #2489CE /*{d-body-link-hover}*/;
 }
-
 .ui-body-d .ui-link:active {
 	color: #2489CE /*{d-body-link-active}*/;
 }
-
 .ui-body-d .ui-link:visited {
     color: #2489CE /*{d-body-link-visited}*/;
 }
-
 .ui-btn-up-d {
 	border: 1px solid 		#ccc /*{d-bup-border}*/;
 	background: 			#fff /*{d-bup-background-color}*/;
@@ -580,11 +528,8 @@
 	font-family: Helvetica, Arial, sans-serif /*{d-button-font}*/;
 	text-decoration: none;
 }
-
-
 /* E
 -----------------------------------------------------------------------------------------------------------*/
-
 .ui-bar-e {
 	border: 1px solid 		#F7C942 /*{e-bar-border}*/;
 	background: 			#fadb4e /*{e-bar-background-color}*/;
@@ -611,19 +556,15 @@
 	color: #2489CE /*{e-bar-link-color}*/;
 	font-weight: bold;
 }
-
 .ui-bar-e .ui-link:hover {
 	color: #2489CE /*{e-bar-link-hover}*/;
 }
-
 .ui-bar-e .ui-link:active {
 	color: #2489CE /*{e-bar-link-active}*/;
 }
-
 .ui-bar-e .ui-link:visited {
     color: #2489CE /*{e-bar-link-visited}*/;
 }
-
 .ui-body-e {
 	border: 1px solid 		#F7C942 /*{e-body-border}*/;
 	color: 					#333333 /*{e-body-color}*/;
@@ -646,24 +587,19 @@
 .ui-body-e .ui-link-inherit {
 	color: 	#333333 /*{e-body-color}*/;
 }
-
 .ui-body-e .ui-link {
 	color: #2489CE /*{e-body-link-color}*/;
 	font-weight: bold;
 }
-
 .ui-body-e .ui-link:hover {
 	color: #2489CE /*{e-body-link-hover}*/;
 }
-
 .ui-body-e .ui-link:active {
 	color: #2489CE /*{e-body-link-active}*/;
 }
-
 .ui-body-e .ui-link:visited {
     color: #2489CE /*{e-body-link-visited}*/;
 }
-
 .ui-btn-up-e {
 	border: 1px solid 		#F7C942 /*{e-bup-border}*/;
 	background: 			#fadb4e /*{e-bup-background-color}*/;
@@ -693,7 +629,6 @@
 	background-image:      -o-linear-gradient(top, #fcf0b5 /*{e-bhover-background-start}*/, #fbe26f /*{e-bhover-background-end}*/); /* Opera 11.10+ */
 	background-image:         linear-gradient(top, #fcf0b5 /*{e-bhover-background-start}*/, #fbe26f /*{e-bhover-background-end}*/);
 }
-
 .ui-btn-hover-e a.ui-link-inherit {
 	color: 					#333 /*{e-bhover-color}*/;
 }
@@ -719,20 +654,14 @@
 	font-family: Helvetica, Arial, sans-serif /*{e-button-font}*/;
 	text-decoration: none;
 }
-
 /* Structure */
-
-/* links within "buttons" 
+/* links within "buttons"
 -----------------------------------------------------------------------------------------------------------*/
-
 a.ui-link-inherit {
 	text-decoration: none !important;
 }
-
-
 /* Active class used as the "on" state across all themes
 -----------------------------------------------------------------------------------------------------------*/
-
 .ui-btn-active {
 	border: 1px solid 		#155678 /*{global-active-border}*/;
 	background: 			#4596ce /*{global-active-background-color}*/;
@@ -752,20 +681,14 @@ a.ui-link-inherit {
 .ui-btn-active a.ui-link-inherit {
 	color: 					#fff /*{global-active-color}*/;
 }
-
-
 /* button inner top highlight
 -----------------------------------------------------------------------------------------------------------*/
-
 .ui-btn-inner {
 	border-top: 1px solid 	#fff;
 	border-color: 			rgba(255,255,255,.3);
 }
-
-
 /* corner rounding classes
 -----------------------------------------------------------------------------------------------------------*/
-
 .ui-corner-tl {
 	-moz-border-radius-topleft: 		.6em /*{global-radii-blocks}*/;
 	-webkit-border-top-left-radius: 	.6em /*{global-radii-blocks}*/;
@@ -828,7 +751,6 @@ a.ui-link-inherit {
 	-webkit-border-radius: 				   0;
 	border-radius: 						   0;
 }
-
 /* Interaction cues
 -----------------------------------------------------------------------------------------------------------*/
 .ui-disabled {
@@ -839,10 +761,8 @@ a.ui-link-inherit {
 	pointer-events: none;
 	cursor: default;
 }
-
 /* Icons
 -----------------------------------------------------------------------------------------------------------*/
-
 .ui-icon,
 .ui-icon-searchfield:after {
 	background: 						#666 /*{global-icon-color}*/;
@@ -853,21 +773,16 @@ a.ui-link-inherit {
 	-webkit-border-radius: 				9px;
 	border-radius: 						9px;
 }
-
-
 /* Alt icon color
 -----------------------------------------------------------------------------------------------------------*/
-
 .ui-icon-alt {
 	background: 						#fff;
 	background: 						rgba(255,255,255,.3);
 	background-image: url([[pix:theme|icons-18-black]]);
 	background-repeat: no-repeat;
 }
-
 /* HD/"retina" sprite
 -----------------------------------------------------------------------------------------------------------*/
-
 @media only screen and (-webkit-min-device-pixel-ratio: 1.5),
        only screen and (min--moz-device-pixel-ratio: 1.5),
        only screen and (min-resolution: 240dpi) {
@@ -875,7 +790,7 @@ a.ui-link-inherit {
 	.ui-icon-plus, .ui-icon-minus, .ui-icon-delete, .ui-icon-arrow-r,
 	.ui-icon-arrow-l, .ui-icon-arrow-u, .ui-icon-arrow-d, .ui-icon-check,
 	.ui-icon-gear, .ui-icon-refresh, .ui-icon-forward, .ui-icon-back,
-	.ui-icon-grid, .ui-icon-star, .ui-icon-alert, .ui-icon-info, .ui-icon-home, .ui-icon-search, .ui-icon-searchfield:after, 
+	.ui-icon-grid, .ui-icon-star, .ui-icon-alert, .ui-icon-info, .ui-icon-home, .ui-icon-search, .ui-icon-searchfield:after,
 	.ui-icon-checkbox-off, .ui-icon-checkbox-on, .ui-icon-radio-off, .ui-icon-radio-on {
 		background-image: url([[pix:theme|icons-36-white]]);
 		-moz-background-size: 776px 18px;
@@ -887,7 +802,6 @@ a.ui-link-inherit {
 		background-image: url([[pix:theme|icons-36-black]]);
 	}
 }
-
 /* plus minus */
 .ui-icon-plus {
 	background-position: 	-0 50%;
@@ -895,12 +809,10 @@ a.ui-link-inherit {
 .ui-icon-minus {
 	background-position: 	-36px 50%;
 }
-
 /* delete/close */
 .ui-icon-delete {
 	background-position: 	-72px 50%;
 }
-
 /* arrows */
 .ui-icon-arrow-r {
 	background-position: 	-108px 50%;
@@ -914,7 +826,6 @@ a.ui-link-inherit {
 .ui-icon-arrow-d {
 	background-position: 	-216px 50%;
 }
-
 /* misc */
 .ui-icon-check {
 	background-position: 	-252px 50%;
@@ -962,8 +873,6 @@ a.ui-link-inherit {
 .ui-icon-radio-on {
 	background-position: 	-720px 50%;
 }
-
-
 /* checks,radios */
 .ui-checkbox .ui-icon {
 	-moz-border-radius: 3px;
@@ -978,7 +887,6 @@ a.ui-link-inherit {
 .ui-radio-on .ui-icon {
 	background-color: #4596ce /*{global-active-background-color}*/; /* NOTE: this hex should match the active state color. It's repeated here for cascade */
 }
-
 /* loading icon */
 .ui-icon-loading {
 	background-image: url([[pix:theme|ajax-loader]]);
@@ -989,11 +897,8 @@ a.ui-link-inherit {
 	border-radius: 20px;
 	background-size: 35px 35px;
 }
-
-
 /* Button corner classes
 -----------------------------------------------------------------------------------------------------------*/
-
 .ui-btn-corner-tl {
 	-moz-border-radius-topleft: 		1em /*{global-radii-buttons}*/;
 	-webkit-border-top-left-radius: 	1em /*{global-radii-buttons}*/;
@@ -1051,23 +956,22 @@ a.ui-link-inherit {
 	-webkit-border-radius: 				1em /*{global-radii-buttons}*/;
 	border-radius: 						1em /*{global-radii-buttons}*/;
 }
-
 /* radius clip workaround for cleaning up corner trapping */
 .ui-corner-tl,
 .ui-corner-tr,
-.ui-corner-bl, 
+.ui-corner-bl,
 .ui-corner-br,
 .ui-corner-top,
-.ui-corner-bottom, 
+.ui-corner-bottom,
 .ui-corner-right,
 .ui-corner-left,
 .ui-corner-all,
 .ui-btn-corner-tl,
 .ui-btn-corner-tr,
-.ui-btn-corner-bl, 
+.ui-btn-corner-bl,
 .ui-btn-corner-br,
 .ui-btn-corner-top,
-.ui-btn-corner-bottom, 
+.ui-btn-corner-bottom,
 .ui-btn-corner-right,
 .ui-btn-corner-left,
 .ui-btn-corner-all {
@@ -1075,10 +979,8 @@ a.ui-link-inherit {
      -moz-background-clip: padding;
           background-clip: padding-box;
 }
-
 /* Overlay / modal
 -----------------------------------------------------------------------------------------------------------*/
-
 .ui-overlay {
 	background: #666;
 	opacity: .5;
@@ -1114,25 +1016,20 @@ a.ui-link-inherit {
 	-webkit-box-shadow: 0px 1px 0 			rgba(255,255,255,.4);
 	box-shadow: 0px 1px 0 					rgba(255,255,255,.4);
 }
-
 /* Focus state - set here for specificity
 -----------------------------------------------------------------------------------------------------------*/
-
 .ui-focus {
 	-moz-box-shadow: 0px 0px 12px 		#387bbe /*{global-active-background-color}*/;
 	-webkit-box-shadow: 0px 0px 12px 	#387bbe /*{global-active-background-color}*/;
 	box-shadow: 0px 0px 12px 			#387bbe /*{global-active-background-color}*/;
 }
-
 /* unset box shadow in browsers that don't do it right
 -----------------------------------------------------------------------------------------------------------*/
-
 .ui-mobile-nosupport-boxshadow * {
 	-moz-box-shadow: none !important;
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 }
-
 /* ...and bring back focus */
 .ui-mobile-nosupport-boxshadow .ui-focus {
 	outline-width: 2px;
@@ -1141,22 +1038,17 @@ a.ui-link-inherit {
 * Copyright (c) jQuery Project
 * Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
 */
-
 /* some unsets - more probably needed */
 .ui-mobile, .ui-mobile body { height: 100%; }
 .ui-mobile fieldset, .ui-page { padding: 0; margin: 0; }
 .ui-mobile a img, .ui-mobile fieldset { border: 0; }
-
 /* responsive page widths */
 .ui-mobile-viewport {  margin: 0; overflow-x: hidden; -webkit-text-size-adjust: none; -ms-text-size-adjust:none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
-
 /* "page" containers - full-screen views, one should always be in view post-pageload */
-.ui-mobile [data-role=page], .ui-mobile [data-role=dialog], .ui-page { top: 0; left: 0; width: 100%; min-height: 100%; position: absolute; display: none; border: 0; } 
+.ui-mobile [data-role=page], .ui-mobile [data-role=dialog], .ui-page { top: 0; left: 0; width: 100%; min-height: 100%; position: absolute; display: none; border: 0; }
 .ui-mobile .ui-page-active { display: block; overflow: visible; }
-
 /* on ios4, setting focus on the page element causes flashing during transitions when there is an outline, so we turn off outlines */
 .ui-page { outline: none; }
-
 /*orientations from js are available */
 @media screen and (orientation: portrait){
 .ui-mobile, .ui-mobile .ui-page { min-height: 420px; }
@@ -1164,7 +1056,6 @@ a.ui-link-inherit {
 @media screen and (orientation: landscape){
 .ui-mobile, .ui-mobile .ui-page { min-height: 300px; }
 }
-
 /* native overflow scrolling */
 .ui-page.ui-mobile-touch-overflow,
 .ui-mobile-touch-overflow.ui-native-fixed .ui-content {
@@ -1184,7 +1075,6 @@ a.ui-link-inherit {
 .ui-page.ui-mobile-pre-transition {
 	display: block;
 }
-
 /* loading screen */
 .ui-loading .ui-mobile-viewport { overflow: hidden !important; }
 .ui-loading .ui-loader { display: block; }
@@ -1192,26 +1082,21 @@ a.ui-link-inherit {
 .ui-loader { display: none; position: absolute; opacity: .85; z-index: 100; left: 50%; width: 200px; margin-left: -130px; margin-top: -35px; padding: 10px 30px; }
 .ui-loader h1 { font-size: 15px; text-align: center; }
 .ui-loader .ui-icon { position: static; display: block; opacity: .9; margin: 0 auto; width: 35px; height: 35px; background-color: transparent; }
-
 /*fouc*/
 .ui-mobile-rendering > * { visibility: hidden; }
-
 /*headers, content panels*/
 .ui-bar, .ui-body { position: relative; padding: .4em 15px;  overflow: hidden; display: block;  clear:both;  }
 .ui-bar { font-size: 16px; margin: 0; }
 .ui-bar h1, .ui-bar h2, .ui-bar h3, .ui-bar h4, .ui-bar h5, .ui-bar h6 { margin: 0; padding: 0; font-size: 16px; display: inline-block; }
-
 .ui-header, .ui-footer { display: block; }
 .ui-page .ui-header, .ui-page .ui-footer { position: relative; }
 .ui-header .ui-btn-left { position: absolute; left: 10px; top: .4em;  }
 .ui-header .ui-btn-right { position: absolute; right: 10px; top: .4em; }
 .ui-header .ui-title, .ui-footer .ui-title { min-height: 1.1em; text-align: center; font-size: 16px; display: block; margin: .6em 90px .8em;  padding: 0;  text-overflow: ellipsis; overflow: hidden; white-space: nowrap; outline: 0 !important; }
 .ui-footer .ui-title { margin: .6em 15px .8em;  }
-
 /*content area*/
 .ui-content { border-width: 0; overflow: visible; overflow-x: hidden; padding: 15px; }
 .ui-page-fullscreen .ui-content { padding:0; }
-
 /* native fixed headers and footers */
 .ui-mobile-touch-overflow.ui-page.ui-native-fixed,
 .ui-mobile-touch-overflow.ui-page.ui-native-fullscreen {
@@ -1248,17 +1133,13 @@ a.ui-link-inherit {
 .ui-native-bars-hidden {
 	display: none;
 }
-
 /* icons sizing */
 .ui-icon { width: 18px; height: 18px; }
-
 /* fullscreen class on ui-content div */
 .ui-fullscreen {  }
 .ui-fullscreen img { max-width: 100%; }
-
 /* non-js content hiding */
 .ui-nojs { position: absolute; left: -9999px; }
-
 /* accessible content hiding */
 .ui-hide-label label,
 .ui-hidden-accessible { position: absolute !important; left: -9999px; clip: rect(1px 1px 1px 1px); clip: rect(1px,1px,1px,1px); }
@@ -1278,7 +1159,6 @@ a.ui-link-inherit {
 	from {-webkit-transform: rotate(0deg);}
   	to {-webkit-transform: rotate(360deg);}
 }
-
 /* Transitions from jQtouch (with small modifications): http://www.jqtouch.com/
 Built by David Kaneda and maintained by Jonathan Stark.
 */
@@ -1286,107 +1166,86 @@ Built by David Kaneda and maintained by Jonathan Stark.
 	-webkit-animation-timing-function: ease-in-out;
 	-webkit-animation-duration: 350ms;
 }
-
-
 .slide.out {
 	-webkit-transform: translateX(-100%);
 	-webkit-animation-name: slideouttoleft;
 }
-
 .slide.in {
 	-webkit-transform: translateX(0);
 	-webkit-animation-name: slideinfromright;
 }
-
 .slide.out.reverse {
 	-webkit-transform: translateX(100%);
 	-webkit-animation-name: slideouttoright;
 }
-
 .slide.in.reverse {
 	-webkit-transform: translateX(0);
 	-webkit-animation-name: slideinfromleft;
 }
-
 .slideup.out {
 	-webkit-animation-name: dontmove;
 	z-index: 0;
 }
-
 .slideup.in {
 	-webkit-transform: translateY(0);
 	-webkit-animation-name: slideinfrombottom;
 	z-index: 10;
 }
-
 .slideup.in.reverse {
 	z-index: 0;
 	-webkit-animation-name: dontmove;
 }
-
 .slideup.out.reverse {
 	-webkit-transform: translateY(100%);
 	z-index: 10;
 	-webkit-animation-name: slideouttobottom;
 }
-
 .slidedown.out {
 	-webkit-animation-name: dontmove;
 	z-index: 0;
 }
-
 .slidedown.in {
 	-webkit-transform: translateY(0);
 	-webkit-animation-name: slideinfromtop;
 	z-index: 10;
 }
-
 .slidedown.in.reverse {
 	z-index: 0;
 	-webkit-animation-name: dontmove;
 }
-
 .slidedown.out.reverse {
 	-webkit-transform: translateY(-100%);
 	z-index: 10;
 	-webkit-animation-name: slideouttotop;
 }
-
 @-webkit-keyframes slideinfromright {
     from { -webkit-transform: translateX(100%); }
     to { -webkit-transform: translateX(0); }
 }
-
 @-webkit-keyframes slideinfromleft {
     from { -webkit-transform: translateX(-100%); }
     to { -webkit-transform: translateX(0); }
 }
-
 @-webkit-keyframes slideouttoleft {
     from { -webkit-transform: translateX(0); }
     to { -webkit-transform: translateX(-100%); }
 }
-
 @-webkit-keyframes slideouttoright {
     from { -webkit-transform: translateX(0); }
     to { -webkit-transform: translateX(100%); }
 }
-
 @-webkit-keyframes slideinfromtop {
     from { -webkit-transform: translateY(-100%); }
     to { -webkit-transform: translateY(0); }
 }
-
 @-webkit-keyframes slideinfrombottom {
     from { -webkit-transform: translateY(100%); }
     to { -webkit-transform: translateY(0); }
 }
-
 @-webkit-keyframes slideouttobottom {
     from { -webkit-transform: translateY(0); }
     to { -webkit-transform: translateY(100%); }
 }
-
 @-webkit-keyframes slideouttotop {
     from { -webkit-transform: translateY(0); }
     to { -webkit-transform: translateY(-100%); }
@@ -1395,23 +1254,19 @@ Built by David Kaneda and maintained by Jonathan Stark.
     from { opacity: 0; }
     to { opacity: 1; }
 }
-
 @-webkit-keyframes fadeout {
     from { opacity: 1; }
     to { opacity: 0; }
 }
-
 .fade.out {
 	z-index: 0;
 	-webkit-animation-name: fadeout;
 }
-
 .fade.in {
 	opacity: 1;
 	z-index: 10;
 	-webkit-animation-name: fadein;
 }
-
 /* The properties in this rule are only necessary for the 'flip' transition.
  * We need specify the perspective to create a projection matrix. This will add
  * some depth as the element flips. The depth number represents the distance of
@@ -1422,93 +1277,74 @@ Built by David Kaneda and maintained by Jonathan Stark.
 	-webkit-perspective: 1000;
 	position: absolute;
 }
-
 .ui-mobile-viewport-transitioning,
 .ui-mobile-viewport-transitioning .ui-page {
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
 }
-
 .flip {
 	-webkit-animation-duration: .65s;
 	-webkit-backface-visibility:hidden;
 	-webkit-transform:translateX(0); /* Needed to work around an iOS 3.1 bug that causes listview thumbs to disappear when -webkit-visibility:hidden is used. */
 }
-
 .flip.out {
 	-webkit-transform: rotateY(-180deg) scale(.8);
 	-webkit-animation-name: flipouttoleft;
 }
-
 .flip.in {
 	-webkit-transform: rotateY(0) scale(1);
 	-webkit-animation-name: flipinfromleft;
 }
-
 /* Shake it all about */
-
 .flip.out.reverse {
 	-webkit-transform: rotateY(180deg) scale(.8);
 	-webkit-animation-name: flipouttoright;
 }
-
 .flip.in.reverse {
 	-webkit-transform: rotateY(0) scale(1);
 	-webkit-animation-name: flipinfromright;
 }
-
 @-webkit-keyframes flipinfromright {
     from { -webkit-transform: rotateY(-180deg) scale(.8); }
     to { -webkit-transform: rotateY(0) scale(1); }
 }
-
 @-webkit-keyframes flipinfromleft {
     from { -webkit-transform: rotateY(180deg) scale(.8); }
     to { -webkit-transform: rotateY(0) scale(1); }
 }
-
 @-webkit-keyframes flipouttoleft {
     from { -webkit-transform: rotateY(0) scale(1); }
     to { -webkit-transform: rotateY(-180deg) scale(.8); }
 }
-
 @-webkit-keyframes flipouttoright {
     from { -webkit-transform: rotateY(0) scale(1); }
     to { -webkit-transform: rotateY(180deg) scale(.8); }
 }
-
-
 /* Hackish, but reliable. */
-
 @-webkit-keyframes dontmove {
     from { opacity: 1; }
     to { opacity: 1; }
 }
-
 .pop {
 	-webkit-transform-origin: 50% 50%;
 }
-
 .pop.in {
 	-webkit-transform: scale(1);
     opacity: 1;
 	-webkit-animation-name: popin;
 	z-index: 10;
 }
-
 .pop.in.reverse {
 	z-index: 0;
 	-webkit-animation-name: dontmove;
 }
-
 .pop.out.reverse {
 	-webkit-transform: scale(.2);
 	opacity: 0;
 	-webkit-animation-name: popout;
 	z-index: 10;
 }
-
 @-webkit-keyframes popin {
     from {
         -webkit-transform: scale(.2);
@@ -1519,7 +1355,6 @@ Built by David Kaneda and maintained by Jonathan Stark.
         opacity: 1;
     }
 }
-
 @-webkit-keyframes popout {
     from {
         -webkit-transform: scale(1);
@@ -1534,26 +1369,20 @@ Built by David Kaneda and maintained by Jonathan Stark.
 * Copyright (c) jQuery Project
 * Dual licensed under the MIT (MIT-LICENSE.txt) or GPL (GPL-LICENSE.txt) licenses.
 */
-
 /* content configurations. */
 .ui-grid-a, .ui-grid-b, .ui-grid-c, .ui-grid-d { overflow: hidden; }
 .ui-block-a, .ui-block-b, .ui-block-c, .ui-block-d, .ui-block-e { margin: 0; padding: 0; border: 0; float: left; min-height:1px;}
-
 /* grid solo: 100 - single item fallback */
 .ui-grid-solo .ui-block-a { width: 100%; float: none; }
-
 /* grid a: 50/50 */
 .ui-grid-a .ui-block-a, .ui-grid-a .ui-block-b { width: 50%; }
 .ui-grid-a .ui-block-a { clear: left; }
-
 /* grid b: 33/33/33 */
 .ui-grid-b .ui-block-a, .ui-grid-b .ui-block-b, .ui-grid-b .ui-block-c { width: 33.333%; }
 .ui-grid-b .ui-block-a { clear: left; }
-
 /* grid c: 25/25/25/25 */
 .ui-grid-c .ui-block-a, .ui-grid-c .ui-block-b, .ui-grid-c .ui-block-c, .ui-grid-c .ui-block-d { width: 25%; }
 .ui-grid-c .ui-block-a { clear: left; }
-
 /* grid d: 20/20/20/20/20 */
 .ui-grid-d .ui-block-a, .ui-grid-d .ui-block-b, .ui-grid-d .ui-block-c, .ui-grid-d .ui-block-d, .ui-grid-d .ui-block-e { width: 20%; }
 .ui-grid-d .ui-block-a { clear: left; }
@@ -1627,7 +1456,6 @@ Built by David Kaneda and maintained by Jonathan Stark.
 .ui-header .ui-btn-icon-bottom .ui-btn-inner,
 .ui-footer .ui-btn-icon-bottom .ui-btn-inner,
 .ui-bar .ui-btn-icon-bottom .ui-btn-inner { padding-bottom: 27px; }
-
 /*btn icon positioning*/
 .ui-btn-icon-notext .ui-icon { display: block; z-index: 0;}
 .ui-btn-icon-left .ui-icon, .ui-btn-icon-right .ui-icon { position: absolute; top: 50%; margin-top: -9px; }
@@ -1648,7 +1476,6 @@ Built by David Kaneda and maintained by Jonathan Stark.
 .ui-header .ui-btn-icon-bottom .ui-icon,
 .ui-footer .ui-btn-icon-bottom .ui-icon,
 .ui-bar .ui-btn-icon-bottom .ui-icon { bottom: 4px; }
-
 /*hiding native button,inputs */
 .ui-btn-hidden { position: absolute; top: 0; left: 0; width: 100%; height: 100%; -webkit-appearance: button; opacity: .1; cursor: pointer; background: transparent; font-size: 1px; border: none; line-height: 999px; }
 /*
@@ -1673,7 +1500,6 @@ Built by David Kaneda and maintained by Jonathan Stark.
 	font-weight: normal;    /* Overrides ui-btn-up-* */
 }
 .ui-collapsible-content-collapsed { display: none; }
-
 .ui-collapsible-set { margin: .5em 0; }
 .ui-collapsible-set .ui-collapsible { margin: -1px 0 0; }
 /*
@@ -1689,7 +1515,6 @@ Built by David Kaneda and maintained by Jonathan Stark.
 .ui-controlgroup-vertical .ui-btn,
 .ui-controlgroup-vertical .ui-checkbox, .ui-controlgroup-vertical .ui-radio { margin: 0; border-bottom-width: 0;  }
 .ui-controlgroup-controls label.ui-select { position: absolute; left: -9999px; }
-
 .ui-controlgroup-vertical .ui-controlgroup-last { border-bottom-width: 1px; }
 .ui-controlgroup-horizontal { padding: 0; }
 .ui-controlgroup-horizontal .ui-btn, .ui-controlgroup-horizontal .ui-select { display: inline-block; margin: 0 -5px 0 0; }
@@ -1702,11 +1527,10 @@ Built by David Kaneda and maintained by Jonathan Stark.
 .ui-controlgroup .ui-btn-icon-notext { width: 30px; height: 30px; text-indent: -9999px; }
 .ui-controlgroup .ui-btn-icon-notext .ui-btn-inner {  padding: 5px 6px 5px 5px; }
 */
-
 @media all and (min-width: 450px){
 	.ui-field-contain .ui-controlgroup-label { vertical-align: top; display: inline-block;  width: 20%;  margin: 0 2% 0 0;  }
 	.ui-field-contain .ui-controlgroup-controls { width: 60%; display: inline-block; }
-	.ui-field-contain .ui-controlgroup .ui-select { width: 100%; } 
+	.ui-field-contain .ui-controlgroup .ui-select { width: 100%; }
 	.ui-field-contain .ui-controlgroup-horizontal .ui-select { width: auto; }
 }	/*
 * jQuery Mobile Framework
@@ -1751,17 +1575,13 @@ Built by David Kaneda and maintained by Jonathan Stark.
 .ui-select .ui-btn select { cursor: pointer; -webkit-appearance: button; left: 0; top:0; width: 100%;  min-height: 1.5em; min-height: 100%; height: 3em; max-height: 100%; opacity: 0; -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"; filter: alpha(opacity=0); z-index: 2; }
 @-moz-document url-prefix() {.ui-select .ui-btn select { opacity: 0.0001; }}
 .ui-select .ui-btn select.ui-select-nativeonly { opacity: 1; text-indent: 0; }
-
-.ui-select .ui-btn-icon-right .ui-btn-inner { padding-right: 45px; } 
+.ui-select .ui-btn-icon-right .ui-btn-inner { padding-right: 45px; }
 .ui-select .ui-btn-icon-right .ui-icon { right: 15px;  }
-
 /* labels */
 label.ui-select { font-size: 16px; line-height: 1.4;  font-weight: normal; margin: 0 0 .3em; display: block; }
-
 /*listbox*/
 .ui-select .ui-btn-text, .ui-selectmenu .ui-btn-text { display: block; min-height: 1em; overflow: hidden; }
 .ui-select .ui-btn-text { text-overflow: ellipsis; }
-
 .ui-selectmenu { position: absolute; padding: 0; z-index: 100 !important; width: 80%; max-width: 350px; padding: 6px; }
 .ui-selectmenu .ui-listview { margin: 0; }
 .ui-selectmenu .ui-btn.ui-li-divider { cursor: default; }
@@ -1771,12 +1591,10 @@ label.ui-select { font-size: 16px; line-height: 1.4;  font-weight: normal; margi
 .ui-selectmenu-list .ui-li .ui-icon { display: block; }
 .ui-li.ui-selectmenu-placeholder { display: none; }
 .ui-selectmenu .ui-header .ui-title { margin: 0.6em 46px 0.8em; }
-
 @media all and (min-width: 450px){	
 	.ui-field-contain label.ui-select { vertical-align: top;  display: inline-block;  width: 20%;  margin: 0 2% 0 0; }
 	.ui-field-contain .ui-select { width: 60%; display: inline-block; }
-}	
-
+}
 /* when no placeholder is defined in a multiple select, the header height doesn't even extend past the close button.  this shim's content in there */
 .ui-selectmenu .ui-header h1:after { content: '.'; visibility: hidden; }/*
 * jQuery Mobile Framework
@@ -1792,17 +1610,16 @@ textarea.ui-input-text { height: 50px; -webkit-transition: height 200ms linear; 
 .ui-input-search input.ui-input-text { border: none; width: 98%; padding: .4em 0; margin: 0; display: block; background: transparent none; outline: 0 !important; }
 .ui-input-search .ui-input-clear { position: absolute; right: 0; top: 50%; margin-top: -13px; }
 .ui-input-search .ui-input-clear-hidden { display: none; }
-
 /* orientation adjustments - incomplete!*/
 @media all and (min-width: 450px){
 	.ui-field-contain label.ui-input-text  { vertical-align: top; display: inline-block;  width: 20%;  margin: 0 2% 0 0 }
-	.ui-field-contain input.ui-input-text, 
-	.ui-field-contain textarea.ui-input-text, 
-	.ui-field-contain .ui-input-search { width: 60%; display: inline-block; } 
+	.ui-field-contain input.ui-input-text,
+	.ui-field-contain textarea.ui-input-text,
+	.ui-field-contain .ui-input-search { width: 60%; display: inline-block; }
 	.ui-field-contain .ui-input-search { width: 50%; }
-	.ui-hide-label input.ui-input-text, 
-	.ui-hide-label textarea.ui-input-text, 
-	.ui-hide-label .ui-input-search { padding: .4em 1.5%; width: 97%; } 
+	.ui-hide-label input.ui-input-text,
+	.ui-hide-label textarea.ui-input-text,
+	.ui-hide-label .ui-input-search { padding: .4em 1.5%; width: 97%; }
 	.ui-input-search input.ui-input-text { width: 98%; /*echos rule from above*/ }
 }/*
 * jQuery Mobile Framework
@@ -1834,11 +1651,10 @@ ol.ui-listview .ui-li-jsnumbering:before { content: "" !important; } /* to avoid
 .ui-li-thumb, .ui-li-icon { position: absolute; left: 1px; top: 0; max-height: 80px; max-width: 80px; }
 .ui-li-icon { max-height: 40px; max-width: 40px; left: 10px; top: .9em; }
 .ui-li-thumb, .ui-li-icon, .ui-li-content { float: left; margin-right: 10px; }
-
 .ui-li-aside { float: right; width: 50%; text-align: right; margin: .3em 0; }
 @media all and (min-width: 480px){
 	 .ui-li-aside { width: 45%; }
-}	 
+}	
 .ui-li-divider { cursor: default; }
 .ui-li-has-alt .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li-has-alt { padding-right: 95px; }
 .ui-li-has-count .ui-li-count { position: absolute; font-size: 11px; font-weight: bold; padding: .2em .5em; top: 50%; margin-top: -.9em; right: 38px; }
@@ -1848,12 +1664,9 @@ ol.ui-listview .ui-li-jsnumbering:before { content: "" !important; } /* to avoid
 .ui-li-link-alt .ui-btn { overflow: hidden; position: absolute; right: 8px; top: 50%; margin: -11px 0 0 0; border-bottom-width: 1px; z-index: -1;}
 .ui-li-link-alt .ui-btn-inner { padding: 0; height: 100%; position: absolute; width: 100%; top: 0; left: 0;}
 .ui-li-link-alt .ui-btn .ui-icon { right: 50%; margin-right: -9px;  }
-
 .ui-listview * .ui-btn-inner > .ui-btn > .ui-btn-inner { border-top: 0px; }
-
 .ui-listview-filter { border-width: 0; overflow: hidden; margin: -15px -15px 15px -15px }
 .ui-listview-filter .ui-input-search { margin: 5px; width: auto; display: block; }
-
 .ui-listview-filter-inset { margin: -15px -5px -15px -5px; background: transparent; }
 .ui-li.ui-screen-hidden{display:none;}
 /* Odd iPad positioning issue. */
@@ -1875,8 +1688,7 @@ a.ui-slider-handle .ui-btn-inner { padding-left: 0; padding-right: 0; }
 @media all and (min-width: 480px){
 	.ui-field-contain label.ui-slider { vertical-align: top;  display: inline-block;  width: 20%;  margin: 0 2% 0 0; }
 	.ui-field-contain div.ui-slider { width: 43%; }
-}	
-
+}
 div.ui-slider-switch { height: 32px;  overflow: hidden; margin-left: 0; }
 div.ui-slider-inneroffset { margin-left: 50%; position: absolute; top: 1px; height: 100%; width: 50%; }
 a.ui-slider-handle-snapping { -webkit-transition: left 100ms linear; }
@@ -1885,7 +1697,6 @@ div.ui-slider-switch div.ui-slider-labelbg-a { width: 60%; height: 100%; left: 0
 div.ui-slider-switch div.ui-slider-labelbg-b { width: 60%; height: 100%; right: 0; }
 .ui-slider-switch-a div.ui-slider-labelbg-a, .ui-slider-switch-b div.ui-slider-labelbg-b { z-index: -1; }
 .ui-slider-switch-a div.ui-slider-labelbg-b, .ui-slider-switch-b div.ui-slider-labelbg-a { z-index: 0; }
-
 div.ui-slider-switch a.ui-slider-handle { z-index: 20;  width: 101%; height: 32px; margin-top: -18px; margin-left: -101%; }
 span.ui-slider-label { width: 100%; position: absolute;height: 32px;  font-size: 16px; text-align: center; line-height: 2; background: none; border-color: transparent; }
 span.ui-slider-label-a { left: -100%;  margin-right: -1px }

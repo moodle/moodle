@@ -22,31 +22,22 @@
  * @copyright  John Stabinger
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
-$string['pluginname'] = 'MyMobile';
-$string['region-side-post'] = 'Right';
-$string['region-side-pre'] = 'Left';
-$string['region-myblocks'] = 'block region';
+
 $string['choosereadme'] = '<div class="clearfix"><div class="theme_screenshot"><h2>MyMobile</h2><img src="mymobile/pix/screenshot.png" /><h2>About</h2><p>MyMobile is a mobile theme for Moodle 2.x. More information on modifying themes can be found in the <a href="http://docs.moodle.org/en/Theme">MoodleDocs</a>.</p></div></div>';
-
-$string['configtitle'] = 'MyMobile theme';
-
-$string['mtext'] = 'Mobile Intro Text';
-$string['mtext_desc'] = 'Add mobile only text/images to the mobile homepage.';
-
-$string['mtopic'] = 'Show site topic:';
-$string['mtopic_desc'] = 'Show the standard site topic section(s) on the front page for mobile theme users (if available).';
-
-$string['mimgs'] = 'Show full images on site index and course pages.';
-$string['mimgs_desc'] = 'Show full size images on site index and course pages instead of replaced thumb icon method. Default is to not show full size images.';
-
-$string['mdesk'] = 'Show desktop version link:';
-$string['mdesk_desc'] = 'Show a link to the desktop version of the site, the link attempts to clear the mobile theme and use whatever theme you have as standard. Disabled by default.';
-
-$string['mswatch'] = 'Mobile theme color swatch';
-$string['mswatch_desc'] = 'Toggle the color swatch of the theme between grey and light/blue.';
-
-$string['mtab'] = 'Tablet View';
-$string['mtab_desc'] = 'Use the tablet view for larger devices (yes by default).';
-
+$string['colourswatch'] = 'Mobile theme color swatch';
+$string['colourswatch_desc'] = 'Toggle the color swatch of the theme between grey and light/blue.';
+$string['grey'] = 'Grey';
+$string['light'] = 'Light';
 $string['mtoggle'] = 'Toggle 2nd Column';
+$string['no'] = 'No';
+$string['pluginname'] = 'MyMobile';
+$string['region-myblocks'] = 'block region';
+$string['showmobileintro'] = 'Mobile Intro Text';
+$string['showmobileintro_desc'] = 'Add mobile only text/images to the mobile homepage.';
+$string['showsitetopic'] = 'Show site topic:';
+$string['showsitetopic_desc'] = 'Show the standard site topic section(s) on the front page for mobile theme users (if available).';
+$string['showfullsizeimages'] = 'Show full images on site index and course pages.';
+$string['showfullsizeimages_desc'] = 'Show full size images on site index and course pages instead of replaced thumb icon method. Default is to not show full size images.';
+$string['usetableview'] = 'Tablet View';
+$string['usetableview_desc'] = 'Use the tablet view for larger devices (yes by default).';
+$string['yes'] = 'Yes';

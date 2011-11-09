@@ -1,5 +1,5 @@
 <?php
- // This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,94 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * renderers file for mymobile theme
+ * Renderers for the mymobile theme
+ *
+ * @package    theme
+ * @subpackage mymobile
+ * @copyright  John Stabinger
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+ * A custom renderer for the mymobile theme to produce snippets of content.
+ *
+ * @package    theme
+ * @subpackage mymobile
+ * @copyright  John Stabinger
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class theme_mymobile_renderer extends plugin_renderer_base {
+
+    /**
+     * Produces the settings tree
+     *
+     * @param settings_navigation $navigation
+     * @return string
+     */
+    public function settings_tree(settings_navigation $navigation) {
+        $content = $this->navigation_node($navigation, array('class' => 'settings'));
+        if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+            // TODO: Work out whether something is missing from here.
+        }
+        return $content;
+    }
+
+    /**
+     * Produces the navigation tree
+     *
+     * @param global_navigation $navigation
+     * @return string
+     */
+    public function navigation_tree(global_navigation $navigation) {
+        return $this->navigation_node($navigation, array());
+    }
+
+    /**
+     * Protected method to render a navigaiton node
+     *
+     * @param navigation_node $node
+     * @param array $attrs
+     * @return type
+     */
+    protected function navigation_node(navigation_node $node, $attrs = array()) {
+        $items = $node->children;
+
+        // exit if empty, we don't want an empty ul element
+        if ($items->count() == 0) {
+            return '';
+        }
+
+        // array of nested li elements
+        $lis = array();
+        foreach ($items as $item) {
+            if (!$item->display) {
+                continue;
+            }
+
+            $isbranch = ($item->children->count() > 0 || $item->nodetype == navigation_node::NODETYPE_BRANCH);
+            $item->hideicon = true;
+
+            $content = $this->output->render($item);
+            $content .= $this->navigation_node($item);
+
+            if ($isbranch && !(is_string($item->action) || empty($item->action))) {
+                $content = html_writer::tag('li', $content, array('data-role' => 'list-divider', 'class' => (string)$item->key));
+            } else if($isbranch) {
+                $content = html_writer::tag('li', $content, array('data-role' => 'list-divider'));
+            } else {
+                $content = html_writer::tag('li', $content, array('class' => (string)$item->text));
+            }
+            $lis[] = $content;
+        }
+        if (!count($lis)) {
+            return '';
+        }
+        return implode("\n", $lis);
+    }
+}
+
+/**
+ * Overridden core renderer for the mymobile theme
  *
  * @package    theme
  * @subpackage mymobile
@@ -23,91 +110,63 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class theme_mymobile_core_renderer extends core_renderer {
- 
- public function themeswatch() {
-    if (!empty($this->page->theme->settings->mswatch)) {
-    $showswatch = $this->page->theme->settings->mswatch;
-    } else {
-    $showswatch = 'light';
-    }
-    if ($showswatch == 'light') {
-    $dtheme = 'b';
-    }
-    else {
-    $dtheme = 'd';
-    }
-    return $dtheme;
- }
- 
- public function heading($text, $level = 2, $classes = 'main', $id = null) {
-    
-    if (!empty($this->page->theme->settings->mswatch)) {
-    $showswatch = $this->page->theme->settings->mswatch;
-    } else {
-    $showswatch = 'light';
-    }
-    if ($showswatch == 'light') {
-    $dtheme = 'b';
-    }
-    else {
-    $dtheme = 'd';
-    }
 
-    if ($classes == 'helpheading') { 
-    //keeps wrap from help headings in dialog 
-     $content = parent::heading($text, $level, $classes, $id);
-    } else {
-    $content  = html_writer::start_tag('div', array('class'=>'headingwrap ui-bar-'.$dtheme .' ui-footer'));
-    $classes .= ' ui-title';
-    $content .= parent::heading($text, $level, $classes, $id);
-    $content .= html_writer::end_tag('div');
-    }
-    return $content;
-}
- 
-  public function box2($contents, $classes = 'generalbox2', $id = null) {
-    if (!empty($this->page->theme->settings->mswatch)) {
-    $showswatch = $this->page->theme->settings->mswatch;
-    } else {
-    $showswatch = 'light';
-    }
-    if ($showswatch == 'light') {
-    $dtheme = 'b';
-    }
-    else {
-    $dtheme = 'd';
-    }
-          $content  = html_writer::start_tag('ul', array('data-role'=>'listview', 'data-inset'=>'true', 'data-dividertheme'=>''.$dtheme .''));
-          $content .= $contents;
-          $content .= html_writer::end_tag('ul');
+    /**
+     * Returns the dtheme to use for the selected swatch
+     * 
+     * @return string
+     */
+    protected function theme_swatch() {
+        $showswatch = 'light';
+        if (!empty($this->page->theme->settings->colourswatch)) {
+            $showswatch = $this->page->theme->settings->colourswatch;
+        }
+        if ($showswatch == 'light') {
+            $dtheme = 'b';
+        } else {
+            $dtheme = 'd';
+        }
+        return $dtheme;
+     }
+
+     /**
+      * Produces a heading
+      *
+      * @param string $text
+      * @param int $level
+      * @param string $classes
+      * @param string $id
+      * @return string
+      */
+     public function heading($text, $level = 2, $classes = 'main', $id = null) {
+        if ($classes == 'helpheading') {
+            // Keeps wrap from help headings in dialog.
+            $content = parent::heading($text, $level, $classes, $id);
+        } else {
+            $content  = html_writer::start_tag('div', array('class' => 'headingwrap ui-bar-'.$this->theme_swatch() .' ui-footer'));
+            $content .= parent::heading($text, $level, $classes.' ui-title', $id);
+            $content .= html_writer::end_tag('div');
+        }
         return $content;
     }
 
- 
-        function block(block_contents $bc, $region) {
-        if (!empty($this->page->theme->settings->mswatch)) {
-        $showswatch = $this->page->theme->settings->mswatch;
-        } else {
-        $showswatch = '';
-        }
-        if ($showswatch == 'light') {
-        $dtheme = 'd';
-        }
-        else {
-        $dtheme = 'c';
-         }
+    /**
+     * Renders a block
+     *
+     * @param block_contents $bc
+     * @param string $region
+     * @return string
+     */
+    public function block(block_contents $bc, $region) {
+        // Avoid messing up the object passed in.
+        $bc = clone($bc);
+        // The mymobile theme does not support collapsible blocks.
+        $bc->collapsible = block_contents::NOT_HIDEABLE;
+        // There are no controls that are usable within the
+        $bc->controls = array();
 
-        $bc = clone($bc); // Avoid messing up the object passed in.
-        if (empty($bc->blockinstanceid) || !strip_tags($bc->title)) {
-            $bc->collapsible = block_contents::NOT_HIDEABLE;
-        }
-        if ($bc->collapsible == block_contents::HIDDEN) {
-        
-        }
-        if (!empty($bc->controls)) {
-          
-        }
-        
+        // TODO: Do we still need to support accessibility here? Surely screen
+        // readers don't present themselves as mobile devices too often.
         $skiptitle = strip_tags($bc->title);
         if (empty($skiptitle)) {
             $output = '';
@@ -117,30 +176,29 @@ class theme_mymobile_core_renderer extends core_renderer {
             $skipdest = html_writer::tag('span', '', array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to'));
         }
         $testb = $bc->attributes['class'];
-        
+
+        // TODO: Find a better solution to this hardcoded block checks
         if ($testb == "block_calendar_month2  block") {
-        $output  = html_writer::start_tag('span');
+            $output  = html_writer::start_tag('span');
+        } else if ($testb == "block_course_overview  block") {
+            $output  = html_writer::start_tag('div');
+        } else {
+            if (!empty($this->page->theme->settings->colourswatch)) {
+                $showswatch = $this->page->theme->settings->colourswatch;
+            } else {
+                $showswatch = '';
+            }
+            if ($showswatch == 'light') {
+                $dtheme = 'd';
+            } else {
+                $dtheme = 'c';
+            }
+            $output  = html_writer::start_tag('div', array('data-role' => 'collapsible', 'data-collapsed' => 'true', 'data-content-theme' => $dtheme));
         }
-        
-        else if ($testb == "block_course_overview  block") {
-        $output  = html_writer::start_tag('div');
-        }
-        
-        else {
-        $output  = html_writer::start_tag('div', array('data-role'=>'collapsible','data-collapsed'=>'true','data-content-theme'=>$dtheme));
-        }
-        
-        $colheader = $this->block_header($bc);
-        if ($colheader == "") {
-            $colheader = "&nbsp;";
-        }
-        
-        $output  .= html_writer::start_tag('h1');
-        $output .= $colheader;
-        $output .= html_writer::end_tag('h1');
+
+        $output .= html_writer::tag('h1', $this->block_header($bc));
         $output .= html_writer::start_tag('div', $bc->attributes);
         $output .= $this->block_content($bc);
-
         $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('div');
 
@@ -151,131 +209,93 @@ class theme_mymobile_core_renderer extends core_renderer {
         return $output;
     }
 
- 
-  
+    /**
+     * Produces a blocks header
+     *
+     * @param block_contents $bc
+     * @return string
+     */
     protected function block_header(block_contents $bc) {
-
         $title = '';
-        if ($bc->title) {
-            $title = $bc->title;
+        if (!$bc->title) {
+            return '&nbsp;';
         }
-
-            $controlshtml = "";
-        $output = '';
-        if ($title || $controlshtml) {
-           $output .= html_writer::tag('div', html_writer::tag('div', html_writer::tag('div', '', array('class'=>'block_action')). $title . $controlshtml, array('class' => 'title')), array('class' => 'header'));
-           
-        }
+        $output  = html_writer::start_tag('div', array('class' => 'header'));
+        $output .= html_writer::tag('div', html_writer::tag('div', '', array('class'=>'block_action')). $bc->title, array('class' => 'title'));
+        $output .= html_writer::end_tag('div');
         return $output;
     }
 
-  protected function init_block_hider_js(block_contents $bc) {
-        if (!empty($bc->attributes['id']) and $bc->collapsible != block_contents::NOT_HIDEABLE) {
-            $config = new stdClass;
-            $config->id = $bc->attributes['id'];
-            $config->title = strip_tags($bc->title);
-            $config->preference = 'block' . $bc->blockinstanceid . 'hidden';
-            $config->tooltipVisible = get_string('hideblocka', 'access', $config->title);
-            $config->tooltipHidden = get_string('showblocka', 'access', $config->title);
-
-        }
+    /**
+     * An evil function we don't want to execute
+     *
+     * @param block_contents $bc
+     */
+    protected function init_block_hider_js(block_contents $bc) {
+        // The mymobile theme in no shape or form supports the hiding of blocks
+        // this function has been defined and left empty intentionally so that
+        // the block hider JS is not even included.
     }
- 
-  public function navbar() {
-         $items = $this->page->navbar->get_items();
 
-        $count = 0;
+    /**
+     * Produces the navigation bar for the mymobile theme
+     *
+     * @return string
+     */
+    public function navbar() {
+        $items = $this->page->navbar->get_items();
 
-        $htmlblocks = array();
+        $htmlblocks = array(html_writer::tag('option', get_string('navigation'), array('data-placeholder' => 'true', 'value' => '-1')));
         // Iterate the navarray and display each node
         $itemcount = count($items);
         $separator = "";
-       
-      for ($i=0;$i < $itemcount;$i++) {
+
+        for ($i = 0; $i < $itemcount; $i++) {
             $item = $items[$i];
             $item->hideicon = true;
-            
-            if ($i===0) {
-        
-                $testg = $item->action;
-                $content = html_writer::tag('option', $this->render($item), array('value' => ''.$testg.''));
-                
+            if ($i === 0) {
+                $content = html_writer::tag('option', $this->render($item), array('value' => (string)$item->action));
+            } else if (!empty($item->action)) {
+                $content = html_writer::tag('option', $this->render($item), array('value' => (string)$item->action));
             } else {
-                //by john to check for action type and list div
-                if (empty($item->action)) {
-                  $content = "";
-                } else {
-                $testg = $item->action;
-                $content = html_writer::tag('option', $this->render($item), array('value' => ''.$testg.''));
-                }
+                $content = '';
             }
             $htmlblocks[] = $content;
         }
 
-    
-    if (!empty($this->page->theme->settings->mswatch)) {
-    $showswatch = $this->page->theme->settings->mswatch;
-    } else {
-    $showswatch = "";
-    }
-    if ($showswatch == "light") {
-    $dtheme = "b";
-    }
-    else {
-    $dtheme = "d";
-    }
-
-        $navbarcontent =  join('', $htmlblocks);
+        $navbarcontent  = html_writer::start_tag('form', array('id' => 'navselectform'));
+        $navbarcontent .= html_writer::start_tag('select', array('id' => 'navselect', 'data-theme' => 'c', 'data-inline' => 'false', 'data-icon' => 'false'));
+        $navbarcontent .= join('', $htmlblocks);
+        $navbarcontent .= html_writer::end_tag('select');
+        $navbarcontent .= html_writer::end_tag('form');
         // XHTML
         return $navbarcontent;
-    } 
- 
- 
- protected function render_navigation_node(navigation_node $item) {
-        $content = $item->get_content();
-        $title = $item->get_title();
-        if ($item->icon instanceof renderable && !$item->hideicon) {
-            $icon = $this->render($item->icon);
-            $content = $icon.$content; // use CSS for spacing of icons
-        }
-        if ($item->helpbutton !== null) {
-            $content = trim($item->helpbutton).html_writer::tag('span', $content, array('class'=>'clearhelpbutton'));
-        }
-        if ($content === '') {
-            return '';
-        }
-        if ($item->action instanceof action_link) {
-            //TODO: to be replaced with something else
-            $link = $item->action;
-            if ($item->hidden) {
-                $link->add_class('dimmed');
-            }
-            $content = $this->render($link);
-        } else if ($item->action instanceof moodle_url) {
-            $attributes = array();
-            if ($title !== '') {
-                $attributes['title'] = $title;
-            }
-            if ($item->hidden) {
-                $attributes['class'] = 'dimmed_text';
-            }
-            $content = html_writer::link($item->action, $content, $attributes);
+    }
 
-        } else if (is_string($item->action) || empty($item->action)) {
-            $attributes = array();
-            if ($title !== '') {
-                $attributes['title'] = $title;
-            }
-            if ($item->hidden) {
-                $attributes['class'] = 'dimmed_text';
-            }
-            $content = html_writer::tag('span', $content, $attributes);
-        }
+    /**
+     * Renders a navigation node
+     *
+     * This function has been overridden to remove tabindexs
+     *
+     * @param navigation_node $item
+     * @return string
+     */
+    protected function render_navigation_node(navigation_node $item) {
+        // Generate the content normally
+        $content = parent::render_navigation_node($item);
+        // Strip out any tabindex's
+        $content = str_replace(' tabindex="0"', '', $content);
+        $content = str_replace(' tabindex=\'0\'', '', $content);
+        // Return the cleaned content
         return $content;
     }
 
- 
-   public function login_info() {
+    /**
+     * Displays login info
+     *
+     * @return string
+     */
+    public function login_info() {
         global $USER, $CFG, $DB, $SESSION;
 
         if (during_initial_install()) {
@@ -287,7 +307,6 @@ class theme_mymobile_core_renderer extends core_renderer {
         if (session_is_loggedinas()) {
             $realuser = session_get_realuser();
             $fullname = fullname($realuser, true);
-           
             $realuserinfo = " [<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;sesskey=".sesskey()."\">$fullname</a>] ";
         } else {
             $realuserinfo = '';
@@ -300,34 +319,32 @@ class theme_mymobile_core_renderer extends core_renderer {
             return '';
         } else if (isloggedin()) {
             $context = get_context_instance(CONTEXT_COURSE, $course->id);
-
             $fullname = fullname($USER, true);
-            
+
             // Since Moodle 2.0 this link always goes to the public profile page (not the course profile page)
-           $username = "";
+            // TODO: Test what happens when someone is using this via mnet [for this as well as login_info_footer]
+            // TODO: Test what happens when you use the loginas feature [for this as well as login_info_footer]
+            $username = "";
             if (is_mnet_remote_user($USER) and $idprovider = $DB->get_record('mnet_host', array('id'=>$USER->mnethostid))) {
                 $username .= " from <a href=\"{$idprovider->wwwroot}\">{$idprovider->name}</a>";
             }
             if (isguestuser()) {
-                $loggedinas = $realuserinfo.get_string('loggedinasguest').
-                          " (<a href=\"$loginurl\">".get_string('login').'</a>)';
+                $loggedinas = $realuserinfo.get_string('loggedinasguest')." (<a href=\"$loginurl\">".get_string('login').'</a>)';
             } else if (is_role_switched($course->id)) { // Has switched roles
                 $rolename = '';
                 if ($role = $DB->get_record('role', array('id'=>$USER->access['rsw'][$context->path]))) {
                     $rolename = ': '.format_string($role->name);
                 }
-             
-                 
             } else {
-                $loggedinas = $realuserinfo.$username.' '.
-                          '<a id="mypower" data-inline="true" data-role="button" data-icon="mypower" data-ajax="false" class="ui-btn-right mypower" href="'.$CFG->wwwroot.'/login/logout.php?sesskey='.sesskey().'\">'.get_string('logout').'</a>';
+                $loggedinas = $realuserinfo.$username.'     <a id="mypower" data-inline="true" data-role="button" data-icon="mypower" data-ajax="false" class="ui-btn-right mypower" href="'.$CFG->wwwroot.'/login/logout.php?sesskey='.sesskey().'\">'.get_string('logout').'</a>';
             }
         } else {
-             $loggedinas = '<a data-role="button" data-icon="alert" class="ui-btn-right nolog" href="'.$loginurl.'" data-prefetch>'.get_string('login').'</a>';            
+            $loggedinas = '<a data-role="button" data-icon="alert" class="ui-btn-right nolog" href="'.$loginurl.'" data-prefetch>'.get_string('login').'</a>';
         }
 
-        $loggedinas = $loggedinas;
-
+        // TODO: Enable $CFG->displayloginfailures and test as admin what happens after you succesfully
+        //       log in after a failed log in attempt.  [for this as well as login_info_footer]
+        //       This is probably totally unneeded
         if (isset($SESSION->justloggedin)) {
             unset($SESSION->justloggedin);
             if (!empty($CFG->displayloginfailures)) {
@@ -340,8 +357,7 @@ class theme_mymobile_core_renderer extends core_renderer {
                             $loggedinas .= get_string('failedloginattemptsall', '', $count);
                         }
                         if (has_capability('coursereport/log:view', get_context_instance(CONTEXT_SYSTEM))) {
-                            $loggedinas .= ' (<a href="'.$CFG->wwwroot.'/course/report/log/index.php'.
-                                                 '?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
+                            $loggedinas .= ' (<a href="'.$CFG->wwwroot.'/course/report/log/index.php?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
                         }
                         $loggedinas .= '</div>';
                     }
@@ -352,8 +368,12 @@ class theme_mymobile_core_renderer extends core_renderer {
         return $loggedinas;
     }
 
- 
- public function login_infoB() {
+    /**
+     * Displays login info in the footer
+     *
+     * @return string
+     */
+    public function login_info_footer() {
         global $USER, $CFG, $DB, $SESSION;
 
         if (during_initial_install()) {
@@ -395,11 +415,9 @@ class theme_mymobile_core_renderer extends core_renderer {
                 if ($role = $DB->get_record('role', array('id'=>$USER->access['rsw'][$context->path]))) {
                     $rolename = ': '.format_string($role->name);
                 }
-                $loggedinas = get_string('loggedinas', 'moodle', $username).$rolename.
-                          " (<a href=\"$CFG->wwwroot/course/view.php?id=$course->id&amp;switchrole=0&amp;sesskey=".sesskey()."\">".get_string('switchrolereturn').'</a>)';
+                $loggedinas = get_string('loggedinas', 'moodle', $username).$rolename." (<a href=\"$CFG->wwwroot/course/view.php?id=$course->id&amp;switchrole=0&amp;sesskey=".sesskey()."\">".get_string('switchrolereturn').'</a>)';
             } else {
-                $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username).' '.
-                          " (<a href=\"$CFG->wwwroot/login/logout.php?sesskey=".sesskey()."\" data-ajax=\"false\">".get_string('logout').'</a>)';
+                $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username).' '." (<a href=\"$CFG->wwwroot/login/logout.php?sesskey=".sesskey()."\" data-ajax=\"false\">".get_string('logout').'</a>)';
             }
         } else {
             $loggedinas = get_string('loggedinnot', 'moodle');
@@ -422,8 +440,7 @@ class theme_mymobile_core_renderer extends core_renderer {
                             $loggedinas .= get_string('failedloginattemptsall', '', $count);
                         }
                         if (has_capability('coursereport/log:view', get_context_instance(CONTEXT_SYSTEM))) {
-                            $loggedinas .= ' (<a href="'.$CFG->wwwroot.'/course/report/log/index.php'.
-                                                 '?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
+                            $loggedinas .= ' (<a href="'.$CFG->wwwroot.'/course/report/log/index.php?chooselog=1&amp;id=1&amp;modid=site_errors">'.get_string('logs').'</a>)';
                         }
                         $loggedinas .= '</div>';
                     }
@@ -434,23 +451,29 @@ class theme_mymobile_core_renderer extends core_renderer {
         return $loggedinas;
     }
 
- 
-     public function redirect_message($encodedurl, $message, $delay, $debugdisableredirect) {
+    /**
+     * Prints a message and redirects
+     *
+     * @param string $encodedurl
+     * @param string $message
+     * @param int $delay
+     * @param true $debugdisableredirect
+     * @return type
+     */
+    public function redirect_message($encodedurl, $message, $delay, $debugdisableredirect) {
         global $CFG;
         $url = str_replace('&amp;', '&', $encodedurl);
-        //the below to fix redirect issues with ajax... John
+        // TODO: Find a much better solution for this... looks like it is just removing
+        //       the anchor from the link.
+        // The below to fix redirect issues with ajax... John
         $encodedurl = str_replace('#', '&', $encodedurl);
-        
-         $urlcheck = substr($encodedurl, 0, 4);
-         
-        
+
         switch ($this->page->state) {
             case moodle_page::STATE_BEFORE_HEADER :
                 // No output yet it is safe to delivery the full arsenal of redirect methods
                 if (!$debugdisableredirect) {
                     // Don't use exactly the same time here, it can cause problems when both redirects fire at the same time.
                     $this->metarefreshtag = '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />'."\n";
-                  
                 }
                 $output = $this->header();
                 break;
@@ -471,25 +494,23 @@ class theme_mymobile_core_renderer extends core_renderer {
                 throw new coding_exception('You cannot redirect after the entire page has been generated');
                 break;
         }
+
         $output .= $this->notification($message, 'redirectmessage');
-         if ($urlcheck != "http") {
-         //if it is not a full http request, do local ajax load.
-               $output .= '<div class="continuebutton"><a data-ajax="false" data-role="button" href="'. $encodedurl .'">'. get_string('continue') .'</a></div>';
-               }
-               else {
         $output .= '<div class="continuebutton"><a data-ajax="false" data-role="button" href="'. $encodedurl .'">'. get_string('continue') .'</a></div>';
-                }
         if ($debugdisableredirect) {
             $output .= '<p><strong>Error output, so disabling automatic redirect.</strong></p>';
         }
         $output .= $this->footer();
         return $output;
     }
-  
 
-
-
-  protected function render_help_icon(help_icon $helpicon) {
+    /**
+     * Renders a help icon
+     *
+     * @param help_icon $helpicon
+     * @return string
+     */
+    protected function render_help_icon(help_icon $helpicon) {
         global $CFG;
 
         // first get the help image icon
@@ -513,6 +534,7 @@ class theme_mymobile_core_renderer extends core_renderer {
         }
 
         // now create the link around it
+        // TODO: Do we need to specify the theme in the help.php link?
         $url = new moodle_url('/help.php', array('component' => $helpicon->component, 'identifier' => $helpicon->identifier, 'lang'=>current_language(), 'theme'=>'mymobile'));
 
         // note: this title is displayed only if JS is disabled, otherwise the link will have the new ajax tooltip
@@ -529,15 +551,20 @@ class theme_mymobile_core_renderer extends core_renderer {
         // and finally span
         return html_writer::tag('span', $output, array('class' => 'helplink2'));
     }
- 
- 
 
- 
-       protected function render_single_button(single_button $button) {
-        $attributes = array('type'     => 'submit',
-                            'value'    => $button->label,
-                            'disabled' => $button->disabled ? 'disabled' : null,
-                            'title'    => $button->tooltip);
+    /**
+     * Renders a single button
+     *
+     * @param single_button $button
+     * @return string
+     */
+    protected function render_single_button(single_button $button) {
+        $attributes = array(
+            'type'     => 'submit',
+            'value'    => $button->label,
+            'disabled' => $button->disabled ? 'disabled' : null,
+            'title'    => $button->tooltip
+        );
 
         if ($button->actions) {
             $id = html_writer::random_id('single_button');
@@ -560,58 +587,74 @@ class theme_mymobile_core_renderer extends core_renderer {
         }
 
         // then div wrapper for xhtml strictness
-        $output = html_writer::tag('div', $output, array('rel' => ''.$button->url->out_omit_querystring().''));
-        
+        $output = html_writer::tag('div', $output, array('rel' => $button->url->out_omit_querystring()));
+
+        // TODO: Test a single_button that has an anchor and is set to use post
         // now the form itself around it
         $url = $button->url->out_omit_querystring(); // url without params
-     
-       $urlcheck = substr($url, 0, 4);
-       if ($url === '') {
+
+        if ($url === '') {
             $url = '#'; // there has to be always some action
         }
-       
-       //if the url has http, cool, if not we need to add it, JOHN 
-       if ($urlcheck != 'http') {
-       $url = $this->page->url->out_omit_querystring();
-               }
-       
-        
-        
-        $attributes = array('method' => $button->method,
-                            'action' => $url,
-                            'id'     => $button->formid);
+
+        // TODO: This is surely a bug that needs fixing.. all of a sudden we've switched
+        //       to the pages URL.
+        //       Test an single button with an external URL as its url
+        // If the url has http, cool, if not we need to add it, JOHN
+        $urlcheck = substr($url, 0, 4);
+        if ($urlcheck != 'http') {
+            $url = $this->page->url->out_omit_querystring();
+        }
+
+        $attributes = array(
+            'method' => $button->method,
+            'action' => $url,
+            'id'     => $button->formid
+        );
         $output = html_writer::tag('form', $output, $attributes);
 
         // and finally one more wrapper with class
         return html_writer::tag('div', $output, array('class' => $button->class));
     }
- 
- 
- 
-  public function header() {
+
+    /**
+     * Renders the header for the page
+     *
+     * @return string
+     */
+    public function header() {
         global $USER, $CFG;
 
         if (session_is_loggedinas()) {
             $this->page->add_body_class('userloggedinas');
         }
-        
+
         $this->page->set_state(moodle_page::STATE_PRINTING_HEADER);
 
         // Find the appropriate page layout file, based on $this->page->pagelayout.
-        
         $layoutfile = $this->page->theme->layout_file($this->page->pagelayout);
         // Render the layout using the layout file.
         $rendered = $this->render_page_layout($layoutfile);
 
         // Slice the rendered output into header and footer.
-        $cutpos = strpos($rendered, self::MAIN_CONTENT_TOKEN);
+        $cutpos = strpos($rendered, $this->unique_main_content_token);
         if ($cutpos === false) {
-            //turned off error by john for ajax load of blocks without main content.
-           // throw new coding_exception('page layout file ' . $layoutfile .
+            $cutpos = strpos($rendered, self::MAIN_CONTENT_TOKEN);
+            $token = self::MAIN_CONTENT_TOKEN;
+        } else {
+            $token = $this->unique_main_content_token;
+        }
+
+        if ($cutpos === false) {
+            // TODO: Search for a better solution to this... check this is even needed?
+            //       The following code will lead to header containing nothing, and
+            //       footer containing all of the content for the template.
+            // turned off error by john for ajax load of blocks without main content.
+            // throw new coding_exception('page layout file ' . $layoutfile .
             //        ' does not contain the string "' . self::MAIN_CONTENT_TOKEN . '".');
         }
         $header = substr($rendered, 0, $cutpos);
-        $footer = substr($rendered, $cutpos + strlen(self::MAIN_CONTENT_TOKEN));
+        $footer = substr($rendered, $cutpos + strlen($token));
 
         if (empty($this->contenttype)) {
             debugging('The page layout file did not call $OUTPUT->doctype()');
@@ -626,17 +669,31 @@ class theme_mymobile_core_renderer extends core_renderer {
         return $header . $this->skip_link_target('maincontent');
     }
 
-  public function notification($message, $classes = 'notifyproblem') {
+    /**
+     * Renders a notification
+     *
+     * @param string $message
+     * @param string $classes
+     * @return string
+     */
+    public function notification($message, $classes = 'notifyproblem') {
         return html_writer::tag('div', clean_text($message), array('data-role'=>'none', 'data-icon'=>'alert', 'data-theme'=>'d', 'class' => renderer_base::prepare_classes($classes)));
     }
- 
- public function blocks_for_region($region) {
+
+    /**
+     * Renders the blocks for a block region in the page
+     *
+     * @param type $region
+     * @return string
+     */
+    public function blocks_for_region($region) {
         $blockcontents = $this->page->blocks->get_content_for_region($region, $this);
+        
         $output = '';
         foreach ($blockcontents as $bc) {
             if ($bc instanceof block_contents) {
-                if (!($bc->attributes['class'] == 'block_settings  block')
-                        && !($bc->attributes['class'] == 'block_navigation  block')) {
+                // We don't want to print navigation and settings blocks here.
+                if ($bc->attributes['class'] != 'block_settings  block' && $bc->attributes['class'] != 'block_navigation  block') {
                     $output .= $this->block($bc, $region);
                 }
             } else if ($bc instanceof block_move_target) {
@@ -645,17 +702,17 @@ class theme_mymobile_core_renderer extends core_renderer {
                 throw new coding_exception('Unexpected type of thing (' . get_class($bc) . ') found in list of block contents.');
             }
         }
-        //by john for no blocks
-        if ($output =="") {
-        //$output = "<h2>No blocks found.</h2>";
-        }
-        
+
         return $output;
     }
 
-
-  
- protected function render_single_select(single_select $select) {
+    /**
+     * Renders a single select instance
+     *
+     * @param single_select $select
+     * @return string
+     */
+    protected function render_single_select(single_select $select) {
         $select = clone($select);
         if (empty($select->formid)) {
             $select->formid = html_writer::random_id('single_select_f');
@@ -672,8 +729,8 @@ class theme_mymobile_core_renderer extends core_renderer {
 
         if (empty($select->attributes['id'])) {
             $select->attributes['id'] = html_writer::random_id('single_select');
-             //$select->attributes['data-native-menu'] = 'false';
-             //above by john for select elements to use native style and help performance?
+            //$select->attributes['data-native-menu'] = 'false';
+            //above by john for select elements to use native style and help performance?
         }
 
         if ($select->disabled) {
@@ -695,11 +752,11 @@ class theme_mymobile_core_renderer extends core_renderer {
         }
 
         $output .= html_writer::select($select->options, $select->name, $select->selected, $select->nothing, $select->attributes);
-        
+
         //by john show go button to fix selects
         $go = '';
-        $output .= html_writer::empty_tag('input data-inline="true"', array('type'=>'submit', 'value'=>get_string('go')));
-        $output .= html_writer::tag('noscript', html_writer::tag('div', $go), array('style'=>'inline'));
+        $output .= html_writer::empty_tag('input data-inline="true"', array('type' => 'submit', 'value' => get_string('go')));
+        $output .= html_writer::tag('noscript', html_writer::tag('div', $go), array('style' => 'inline'));
 
         $nothing = empty($select->nothing) ? false : key($select->nothing);
         $this->page->requires->js_init_call('M.util.init_select_autosubmit', array($select->formid, $select->attributes['id'], $nothing));
@@ -708,19 +765,26 @@ class theme_mymobile_core_renderer extends core_renderer {
         $output = html_writer::tag('div', $output);
 
         // now the form itself around it
-        $formattributes = array('method' => $select->method,
-                                'action' => $select->url->out_omit_querystring(),
-                                'id'     => $select->formid);
+        $formattributes = array(
+            'method' => $select->method,
+            'action' => $select->url->out_omit_querystring(),
+            'id'     => $select->formid
+        );
         $output = html_writer::tag('form', $output, $formattributes);
 
         // and finally one more wrapper with class
         return html_writer::tag('div', $output, array('class' => $select->class));
     }
-
 }
 
-
-
+/**
+ * Overridden choie module renderer for the mymobile theme
+ *
+ * @package    theme
+ * @subpackage mymobile
+ * @copyright  John Stabinger
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class theme_mymobile_mod_choice_renderer extends plugin_renderer_base {
 
     /**
@@ -741,14 +805,13 @@ class theme_mymobile_mod_choice_renderer extends plugin_renderer_base {
 
         $html = html_writer::start_tag('form', $attributes);
         $html .= html_writer::start_tag('ul', array('class'=>'choices', 'data-role'=>'controlgroup' ));
-        
+
         $availableoption = count($options['options']);
         foreach ($options['options'] as $option) {
-           $html .= html_writer::start_tag('li', array('class'=>'option'));
-            $rande = rand();
+            $html .= html_writer::start_tag('li', array('class'=>'option'));
             $option->attributes->name = 'answer';
             $option->attributes->type = 'radio';
-            $option->attributes->id = "answer$rande";
+            $option->attributes->id = 'answer'.html_writer::random_id();
 
             $labeltext = $option->text;
             if (!empty($option->attributes->disabled)) {
@@ -789,29 +852,11 @@ class theme_mymobile_mod_choice_renderer extends plugin_renderer_base {
 
     /**
      * Returns HTML to display choices result
-     * @param object $choices
-     * @param bool $forcepublish
-     * @return string
-     */
-    public function display_result($choices, $forcepublish = false) {
-        if (empty($forcepublish)) { //allow the publish setting to be overridden
-            $forcepublish = $choices->publish;
-        }
-
-        $displaylayout = $choices->display;
-
-        if ($forcepublish) {  //CHOICE_PUBLISH_NAMES
-            return $this->display_publish_name_vertical($choices);
-        } else { //CHOICE_PUBLISH_ANONYMOUS';
-            if ($displaylayout == DISPLAY_HORIZONTAL_LAYOUT) {
-                return $this->display_publish_anonymous_horizontal($choices);
-            }
-            return $this->display_publish_anonymous_vertical($choices);
-        }
-    }
-
-    /**
-     * Returns HTML to display choices result
+     *
+     * TODO: There are differences between this method and the mod choice renderers function.
+     *       This needs to be checked VERY careful as the minor changes look like they
+     *       may lead to regressions.
+     *
      * @param object $choices
      * @param bool $forcepublish
      * @return string
@@ -922,165 +967,6 @@ class theme_mymobile_mod_choice_renderer extends plugin_renderer_base {
         if ($choices->viewresponsecapability) {
             $html .= html_writer::end_tag('form');
         }
-
-        return $html;
-    }
-
-
-    /**
-     * Returns HTML to display choices result
-     * @param object $choices
-     * @return string
-     */
-    public function display_publish_anonymous_vertical($choices) {
-        global $CHOICE_COLUMN_HEIGHT;
-
-        $html = '';
-        $table = new html_table();
-        $table->cellpadding = 5;
-        $table->cellspacing = 0;
-        $table->attributes['class'] = 'results anonymous ';
-        $table->data = array();
-        $count = 0;
-        ksort($choices->options);
-        $columns = array();
-        $rows = array();
-
-        foreach ($choices->options as $optionid => $options) {
-            $numberofuser = 0;
-            if (!empty($options->user)) {
-               $numberofuser = count($options->user);
-            }
-            $height = 0;
-            $percentageamount = 0;
-            if($choices->numberofuser > 0) {
-               $height = ($CHOICE_COLUMN_HEIGHT * ((float)$numberofuser / (float)$choices->numberofuser));
-               $percentageamount = ((float)$numberofuser/(float)$choices->numberofuser)*100.0;
-            }
-
-            $displaydiagram = html_writer::tag('img','', array('style'=>'height:'.$height.'px;width:49px;', 'alt'=>'', 'src'=>$this->output->pix_url('column', 'choice')));
-
-            $cell = new html_table_cell();
-            $cell->text = $displaydiagram;
-            $cell->attributes = array('class'=>'graph vertical data');
-            $columns[] = $cell;
-        }
-        $rowgraph = new html_table_row();
-        $rowgraph->cells = $columns;
-        $rows[] = $rowgraph;
-
-        $columns = array();
-        $printskiplink = true;
-        foreach ($choices->options as $optionid => $options) {
-            $columndata = '';
-            $numberofuser = 0;
-            if (!empty($options->user)) {
-               $numberofuser = count($options->user);
-            }
-
-            if ($printskiplink) {
-                $columndata .= html_writer::tag('div', '', array('class'=>'skip-block-to', 'id'=>'skipresultgraph'));
-                $printskiplink = false;
-            }
-
-            if ($choices->showunanswered && $optionid == 0) {
-                $columndata .= html_writer::tag('div', format_string(get_string('notanswered', 'choice')), array('class'=>'option'));
-            } else if ($optionid > 0) {
-                $columndata .= html_writer::tag('div', format_string($choices->options[$optionid]->text), array('class'=>'option'));
-            }
-            $columndata .= html_writer::tag('div', ' ('.$numberofuser.')', array('class'=>'numberofuser', 'title'=> get_string('numberofuser', 'choice')));
-
-            if($choices->numberofuser > 0) {
-               $percentageamount = ((float)$numberofuser/(float)$choices->numberofuser)*100.0;
-            }
-            $columndata .= html_writer::tag('div', format_float($percentageamount,1). '%', array('class'=>'percentage'));
-
-            $cell = new html_table_cell();
-            $cell->text = $columndata;
-            $cell->attributes = array('class'=>'data header');
-            $columns[] = $cell;
-        }
-        $rowdata = new html_table_row();
-        $rowdata->cells = $columns;
-        $rows[] = $rowdata;
-
-        $table->data = $rows;
-
-        $header = html_writer::tag('h2',format_string(get_string("responses", "choice")));
-        $html .= html_writer::tag('div', $header, array('class'=>'responseheader'));
-        $html .= html_writer::tag('a', get_string('skipresultgraph', 'choice'), array('href'=>'#skipresultgraph', 'class'=>'skip-block'));
-        $html .= html_writer::tag('div', html_writer::table($table), array('class'=>'response'));
-
-        return $html;
-    }
-
-    /**
-     * Returns HTML to display choices result
-     * @param object $choices
-     * @return string
-     */
-    public function display_publish_anonymous_horizontal($choices) {
-        global $CHOICE_COLUMN_WIDTH;
-
-        $table = new html_table();
-        $table->cellpadding = 5;
-        $table->cellspacing = 0;
-        $table->attributes['class'] = 'results anonymous ';
-        $table->data = array();
-
-        $count = 0;
-        ksort($choices->options);
-
-        $rows = array();
-        foreach ($choices->options as $optionid => $options) {
-            $numberofuser = 0;
-            $graphcell = new html_table_cell();
-            if (!empty($options->user)) {
-               $numberofuser = count($options->user);
-            }
-
-            $width = 0;
-            $percentageamount = 0;
-            $columndata = '';
-            if($choices->numberofuser > 0) {
-               $width = ($CHOICE_COLUMN_WIDTH * ((float)$numberofuser / (float)$choices->numberofuser));
-               $percentageamount = ((float)$numberofuser/(float)$choices->numberofuser)*100.0;
-            }
-            $displaydiagram = html_writer::tag('img','', array('style'=>'height:50px; width:'.$width.'px', 'alt'=>'', 'src'=>$this->output->pix_url('row', 'choice')));
-
-            $skiplink = html_writer::tag('a', get_string('skipresultgraph', 'choice'), array('href'=>'#skipresultgraph'. $optionid, 'class'=>'skip-block'));
-            $skiphandler = html_writer::tag('span', '', array('class'=>'skip-block-to', 'id'=>'skipresultgraph'.$optionid));
-
-            $graphcell->text = $skiplink . $displaydiagram . $skiphandler;
-            $graphcell->attributes = array('class'=>'graph horizontal');
-
-            $datacell = new html_table_cell();
-            if ($choices->showunanswered && $optionid == 0) {
-                $columndata .= html_writer::tag('div', format_string(get_string('notanswered', 'choice')), array('class'=>'option'));
-            } else if ($optionid > 0) {
-                $columndata .= html_writer::tag('div', format_string($choices->options[$optionid]->text), array('class'=>'option'));
-            }
-            $columndata .= html_writer::tag('div', ' ('.$numberofuser.')', array('title'=> get_string('numberofuser', 'choice'), 'class'=>'numberofuser'));
-
-            if($choices->numberofuser > 0) {
-               $percentageamount = ((float)$numberofuser/(float)$choices->numberofuser)*100.0;
-            }
-            $columndata .= html_writer::tag('div', format_float($percentageamount,1). '%', array('class'=>'percentage'));
-
-            $datacell->text = $columndata;
-            $datacell->attributes = array('class'=>'header');
-
-            $row = new html_table_row();
-            $row->cells = array($datacell, $graphcell);
-            $rows[] = $row;
-        }
-
-        $table->data = $rows;
-
-        $html = '';
-        $header = html_writer::tag('h2',format_string(get_string("responses", "choice")));
-        $html .= html_writer::tag('div', $header, array('class'=>'responseheader'));
-        $html .= html_writer::table($table);
 
         return $html;
     }
