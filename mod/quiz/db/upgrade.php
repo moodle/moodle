@@ -94,6 +94,105 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2012030901, 'quiz');
     }
 
+    if ($oldversion < 2012040200) {
+        // Define index quiz-userid-attempt (unique) to be dropped form quiz_attempts
+        $table = new xmldb_table('quiz_attempts');
+        $index = new xmldb_index('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
+
+        // Conditionally launch drop index quiz-userid-attempt
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // quiz savepoint reached
+        upgrade_mod_savepoint(true, 2012040200, 'quiz');
+    }
+
+    if ($oldversion < 2012040201) {
+
+        // Define key userid (foreign) to be added to quiz_attempts
+        $table = new xmldb_table('quiz_attempts');
+        $key = new xmldb_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+        // Launch add key userid
+        $dbman->add_key($table, $key);
+
+        // quiz savepoint reached
+        upgrade_mod_savepoint(true, 2012040201, 'quiz');
+    }
+
+    if ($oldversion < 2012040202) {
+
+        // Define index quiz-userid-attempt (unique) to be added to quiz_attempts
+        $table = new xmldb_table('quiz_attempts');
+        $index = new xmldb_index('quiz-userid-attempt', XMLDB_INDEX_UNIQUE, array('quiz', 'userid', 'attempt'));
+
+        // Conditionally launch add index quiz-userid-attempt
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // quiz savepoint reached
+        upgrade_mod_savepoint(true, 2012040202, 'quiz');
+    }
+
+    if ($oldversion < 2012040203) {
+
+        // Define field state to be added to quiz_attempts
+        $table = new xmldb_table('quiz_attempts');
+        $field = new xmldb_field('state', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, 'inprogress', 'preview');
+
+        // Conditionally launch add field state
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // quiz savepoint reached
+        upgrade_mod_savepoint(true, 2012040203, 'quiz');
+    }
+
+    if ($oldversion < 2012040204) {
+
+        // Update quiz_attempts.state for finished attempts.
+        $DB->set_field_select('quiz_attempts', 'state', 'finished', 'timefinish > 0');
+
+        // Other, more complex transitions (basically abandoned attempts), will
+        // be handled by cron later.
+
+        // quiz savepoint reached
+        upgrade_mod_savepoint(true, 2012040204, 'quiz');
+    }
+
+    if ($oldversion < 2012040205) {
+
+        // Define field overduehandling to be added to quiz
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('overduehandling', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, 'autoabandon', 'timelimit');
+
+        // Conditionally launch add field overduehandling
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // quiz savepoint reached
+        upgrade_mod_savepoint(true, 2012040205, 'quiz');
+    }
+
+    if ($oldversion < 2012040206) {
+
+        // Define field graceperiod to be added to quiz
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('graceperiod', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'overduehandling');
+
+        // Conditionally launch add field graceperiod
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // quiz savepoint reached
+        upgrade_mod_savepoint(true, 2012040206, 'quiz');
+    }
+
     return true;
 }
 
