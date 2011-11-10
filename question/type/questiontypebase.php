@@ -995,10 +995,11 @@ class question_type {
             array_shift($extraanswersfields);
         }
         foreach ($question->options->answers as $answer) {
+            // TODO this should be re-factored to use $format->write_answer().
             $percent = 100 * $answer->fraction;
-            $expout .= "    <answer fraction=\"$percent\">\n";
+            $expout .= "    <answer fraction=\"$percent\" {$format->format($answer->answerformat)}>\n";
             $expout .= $format->writetext($answer->answer, 3, false);
-            $expout .= "      <feedback>\n";
+            $expout .= "      <feedback {$format->format($question->feedbackformat)}>\n";
             $expout .= $format->writetext($answer->feedback, 4, false);
             $expout .= "      </feedback>\n";
             if (is_array($extraanswersfields)) {
