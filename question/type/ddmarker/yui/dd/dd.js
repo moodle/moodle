@@ -208,7 +208,6 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                     coords[coords.length] = bgimgxy;
                 }
             }
-            console.log({'coords read from display':coords});
             this.set_form_value(choiceno, coords.join(';'));
             this.reposition_drags();
         },
