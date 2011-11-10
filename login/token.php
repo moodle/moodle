@@ -95,16 +95,11 @@ if (!empty($user)) {
     //Check if a token has already been created for this user and this service
     //Note: this could be an admin created or an user created token.
     //      It does not really matter we take the first one that is valid.
-    $tokenssql = "SELECT t.id, t.sid, t.token, t.validuntil, t.iprestriction,
-                         s.restrictedusers, s.id as serviceid, s.requiredcapability
+    $tokenssql = "SELECT t.id, t.sid, t.token, t.validuntil, t.iprestriction
               FROM {external_tokens} t
-              JOIN {external_services} s
-                   ON t.externalserviceid = s.id
-             WHERE s.shortname = ?
-               AND s.enabled = 1
-               AND t.userid = ?
+             WHERE t.userid = ? AND t.externalserviceid = ?
           ORDER BY t.timecreated ASC";
-    $tokens = $DB->get_records_sql($tokenssql, array($serviceshortname, $user->id, time()));
+    $tokens = $DB->get_records_sql($tokenssql, array($user->id, $service->id));
 
     //A bit of sanity checks
     foreach ($tokens as $key=>$token) {
