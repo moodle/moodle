@@ -143,7 +143,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         },
         after_image_load : function () {
             this.reposition_drags();
-            Y.on('windowresize', this.reposition_drags, this);
+            Y.later(500, this, this.reposition_drags, [], true);
 //            if (!this.get('readonly')) {
 //                this.doc.drags().set('tabIndex', 0);
 //                this.doc.drags().each(
