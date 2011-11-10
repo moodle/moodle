@@ -412,10 +412,10 @@ function ip_in_range($address, $network, $mask) {
    $lnetwork  = ip2long($network);
    $laddress  = ip2long($address);
 
-   $binnet    = str_pad( decbin($lnetwork),32,"0","STR_PAD_LEFT" );
+   $binnet    = str_pad( decbin($lnetwork), 32, "0", STR_PAD_LEFT );
    $firstpart = substr($binnet,0,$mask);
 
-   $binip     = str_pad( decbin($laddress),32,"0","STR_PAD_LEFT" );
+   $binip     = str_pad( decbin($laddress), 32, "0", STR_PAD_LEFT );
    $firstip   = substr($binip,0,$mask);
    return(strcmp($firstpart,$firstip)==0);
 }
