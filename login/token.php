@@ -28,7 +28,7 @@ require_once(dirname(dirname(__FILE__)) . '/config.php');
 
 $username = required_param('username', PARAM_USERNAME);
 $password = required_param('password', PARAM_RAW);
-$service  = required_param('service',  PARAM_ALPHANUMEXT);
+$serviceshortname  = required_param('service',  PARAM_ALPHANUMEXT);
 
 echo $OUTPUT->header();
 
@@ -59,67 +59,101 @@ if (!empty($user)) {
     // setup user session to check capability
     session_set_user($user);
 
-    $admintokenssql = "SELECT t.*
+    //check if the service exists and is enabled
+    $service = $DB->get_record('external_services', array('shortname' => $serviceshortname, 'enabled' => 1));
+    if (empty($service)) {
+        // will throw exception if no token found
+        throw new moodle_exception('servicenotavailable', 'webservice');
+    }
+
+    //check if there is any required system capability
+    if ($service->requiredcapability and !has_capability($service->requiredcapability, get_context_instance(CONTEXT_SYSTEM), $user)) {
+        throw new moodle_exception('missingrequiredcapability', 'webservice', '', $service->requiredcapability);
+    }
+
+    //specific checks related to user restricted service
+    if ($service->restrictedusers) {
+        $authoriseduser = $DB->get_record('external_services_users',
+            array('externalserviceid' => $service->id, 'userid' => $user->id));
+
+        if (empty($authoriseduser)) {
+            throw new moodle_exception('usernotallowed', 'webservice', '', $serviceshortname);
+        }
+
+        if (!empty($authoriseduser->validuntil) and $authoriseduser->validuntil < time()) {
+            throw new moodle_exception('invalidtimedtoken', 'webservice');
+        }
+
+        if (!empty($authoriseduser->iprestriction) and !address_in_subnet(getremoteaddr(), $authoriseduser->iprestriction)) {
+            throw new moodle_exception('invalidiptoken', 'webservice');
+        }
+    }
+
+    //Check if a token has already been created for this user and this service
+    //Note: this could be an admin created or an user created token.
+    //      It does not really matter we take the first one that is valid.
+    $tokenssql = "SELECT t.id, t.sid, t.token, t.validuntil, t.iprestriction
               FROM {external_tokens} t
-              JOIN {external_services} s
-                   ON t.externalserviceid = s.id
-             WHERE s.shortname = ?
-               AND s.enabled = 1
-               AND t.userid = ?
-               AND (t.validuntil = 0 OR t.validuntil IS NULL OR t.validuntil > ?)
-               AND t.userid != t.creatorid
+             WHERE t.userid = ? AND t.externalserviceid = ? AND t.tokentype = ?
           ORDER BY t.timecreated ASC";
-    $tokens = $DB->get_records_sql($admintokenssql, array($service, $user->id, time()));
-    foreach ($tokens as $key=>$admin_token) {
+    $tokens = $DB->get_records_sql($tokenssql, array($user->id, $service->id, EXTERNAL_TOKEN_PERMANENT));
+
+    //A bit of sanity checks
+    foreach ($tokens as $key=>$token) {
+
+        /// Checks related to a specific token. (script execution continue)
+        $unsettoken = false;
+        //if sid is set then there must be a valid associated session no matter the token type
+        if (!empty($token->sid)) {
+            $session = session_get_instance();
+            if (!$session->session_exists($token->sid)){
+                //this token will never be valid anymore, delete it
+                $DB->delete_records('external_tokens', array('sid'=>$token->sid));
+                $unsettoken = true;
+            }
+        }
+
+        //remove token if no valid anymore
+        //Also delete this wrong token (similar logic to the web service servers
+        //    /webservice/lib.php/webservice_server::authenticate_by_token())
+        if (!empty($token->validuntil) and $token->validuntil < time()) {
+            $DB->delete_records('external_tokens', array('token'=>$token->token, 'tokentype'=> EXTERNAL_TOKEN_PERMANENT));
+            $unsettoken = true;
+        }
+
         // remove token if its ip not in whitelist
-        if (isset($admin_token->iprestriction) and !address_in_subnet(getremoteaddr(), $admin_token->iprestriction)) {
+        if (isset($token->iprestriction) and !address_in_subnet(getremoteaddr(), $token->iprestriction)) {
+            $unsettoken = true;
+        }
+
+        if ($unsettoken) {
             unset($tokens[$key]);
         }
     }
-    // if admin created token then use the most recent created one over user created token
+
+    // if some valid tokens exist then use the most recent
     if (count($tokens) > 0) {
         $token = array_pop($tokens);
     } else {
-        // if no admin created tokens, try to use user created token
-        // NOTE user created token doesn't have valid date and ip limits
-        $usertokensql = "SELECT t.*
-                  FROM {external_tokens} t
-                  JOIN {external_services} s
-                       ON t.externalserviceid = s.id
-                 WHERE s.shortname = ?
-                   AND s.enabled = 1
-                   AND t.userid = ?
-                   AND t.userid = t.creatorid";
-
-        $token = $DB->get_record_sql($usertokensql, array($service, $user->id));
-        // create token if not exists
-        if (!$token) {
-            // This is an exception for Moodle Mobiel App
-            // if user doesn't have token, we will create one on the fly
-            // even user doesn't have createtoken permission
-            if ($service == MOODLE_OFFICIAL_MOBILE_SERVICE) {
-                if (has_capability('moodle/webservice:createmobiletoken', get_system_context())) {
-                    // if service doesn't exist, dml will throw exception
-                    $service_record = $DB->get_record('external_services', array('shortname'=>$service, 'enabled'=>1), '*', MUST_EXIST);
-                    // create a new token
-                    $token = new stdClass;
-                    $token->token = md5(uniqid(rand(), 1));
-                    $token->userid = $user->id;
-                    $token->tokentype = EXTERNAL_TOKEN_PERMANENT;
-                    $token->contextid = get_context_instance(CONTEXT_SYSTEM)->id;
-                    $token->creatorid = $user->id;
-                    $token->timecreated = time();
-                    $token->externalserviceid = $service_record->id;
-                    $tokenid = $DB->insert_record('external_tokens', $token);
-                    add_to_log(SITEID, 'webservice', get_string('createtokenforuserauto', 'webservice'), '' , 'User ID: ' . $user->id);
-                    $token->id = $tokenid;
-                } else {
-                    throw new moodle_exception('cannotcreatemobiletoken', 'webservice');
-                }
-            } else {
-                // will throw exception if no token found
-                throw new moodle_exception('invalidtoken', 'webservice');
-            }
+        if ( ($serviceshortname == MOODLE_OFFICIAL_MOBILE_SERVICE and has_capability('moodle/webservice:createmobiletoken', get_system_context()))
+                //Note: automatically token generation is not available to admin (they must create a token manually)
+                or (!is_siteadmin($user) && has_capability('moodle/webservice:createtoken', get_system_context()))) {
+            // if service doesn't exist, dml will throw exception
+            $service_record = $DB->get_record('external_services', array('shortname'=>$serviceshortname, 'enabled'=>1), '*', MUST_EXIST);
+            // create a new token
+            $token = new stdClass;
+            $token->token = md5(uniqid(rand(), 1));
+            $token->userid = $user->id;
+            $token->tokentype = EXTERNAL_TOKEN_PERMANENT;
+            $token->contextid = get_context_instance(CONTEXT_SYSTEM)->id;
+            $token->creatorid = $user->id;
+            $token->timecreated = time();
+            $token->externalserviceid = $service_record->id;
+            $tokenid = $DB->insert_record('external_tokens', $token);
+            add_to_log(SITEID, 'webservice', get_string('createtokenforuserauto', 'webservice'), '' , 'User ID: ' . $user->id);
+            $token->id = $tokenid;
+        } else {
+            throw new moodle_exception('cannotcreatetoken', 'webservice', '', $serviceshortname);
         }
     }
 
