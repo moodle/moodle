@@ -77,10 +77,6 @@ abstract class question_behaviour {
         }
     }
 
-    public static function get_required_behaviours() {
-        return array();
-    }
-
     /**
      * Most behaviours can only work with {@link question_definition}s
      * of a particular subtype, or that implement a particular interface.

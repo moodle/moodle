@@ -23,6 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['missingword'] = 'Missing word format';
-$string['missingword_help'] = 'Missing word format enables questions to be imported via text file.';
-$string['missingword_link'] = 'Missing word format';
+$string['pluginname'] = 'Missing word format';
+$string['pluginname_help'] = 'Missing word format enables questions to be imported via text file.';
+$string['pluginname_link'] = 'Missing word format';

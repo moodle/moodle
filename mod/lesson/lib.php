@@ -876,8 +876,7 @@ function lesson_get_import_export_formats($type) {
             $provided = $format_class->provide_export();
         }
         if ($provided) {
-            $formatname = get_string($fileformat, 'qformat_'.$fileformat);
-            $fileformatnames[$fileformat] = $formatname;
+            $fileformatnames[$fileformat] = get_string('pluginname', 'qformat_'.$fileformat);
         }
     }
     natcasesort($fileformatnames);

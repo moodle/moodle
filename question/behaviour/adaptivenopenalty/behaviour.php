@@ -40,10 +40,6 @@ require_once(dirname(__FILE__) . '/../adaptive/behaviour.php');
 class qbehaviour_adaptivenopenalty extends qbehaviour_adaptive {
     const IS_ARCHETYPAL = true;
 
-    public static function get_required_behaviours() {
-        return array('adaptive');
-    }
-
     protected function adjusted_fraction($fraction, $prevtries) {
         return $fraction;
     }

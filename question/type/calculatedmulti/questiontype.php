@@ -38,10 +38,6 @@ require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
  */
 class qtype_calculatedmulti extends qtype_calculated {
 
-    public function requires_qtypes() {
-        return array('calculated', 'multichoice');
-    }
-
     public function save_question_options($question) {
         global $CFG, $DB;
         $context = $question->context;

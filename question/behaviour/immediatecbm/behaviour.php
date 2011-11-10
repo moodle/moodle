@@ -45,10 +45,6 @@ require_once(dirname(__FILE__) . '/../immediatefeedback/behaviour.php');
 class qbehaviour_immediatecbm extends qbehaviour_immediatefeedback {
     const IS_ARCHETYPAL = true;
 
-    public static function get_required_behaviours() {
-        return array('immediatefeedback', 'deferredcbm');
-    }
-
     public function get_min_fraction() {
         return question_cbm::adjust_fraction(parent::get_min_fraction(), question_cbm::HIGH);
     }

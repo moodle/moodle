@@ -23,7 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addingcalculated'] = 'Adding a calculated question';
 $string['additem'] = 'Add item';
 $string['addmoreanswerblanks'] = 'Add another answer blank.';
 $string['addmoreunitblanks'] = 'Blanks for {$a} more units';
@@ -38,10 +37,6 @@ $string['calcdistribution'] = 'Distribution';
 $string['calclength'] = 'Decimal places';
 $string['calcmax'] = 'Maximum';
 $string['calcmin'] = 'Minimum';
-$string['calculated'] = 'Calculated';
-$string['calculated_help'] = 'Calculated questions enable individual numerical questions to be created using wildcards in curly brackets that are substituted with individual values when the quiz is taken. For example, the question "What is the area of a rectangle of length {l} and width {w}?" would have correct answer formula "{l}*{w}" (where * denotes multiplication).';
-$string['calculated_link'] = 'question/type/calculated';
-$string['calculatedsummary'] = 'Calculated questions are like numerical questions but with the numbers used selected randomly from a set when the quiz is taken.';
 $string['choosedatasetproperties'] = 'Choose wildcards dataset properties';
 $string['choosedatasetproperties_help'] = 'A dataset is a set of values inserted in place of a wildcard. You can create a private dataset for a specific question, or a shared dataset that can be used for other calculated questions within the category.';
 $string['correctanswerformula'] = 'Correct answer formula';
@@ -53,7 +48,6 @@ $string['datasetrole']= ' The wild cards <strong>{x..}</strong> will be substitu
 $string['decimals'] = 'with {$a}';
 $string['deleteitem'] = 'Delete item';
 $string['deletelastitem'] = 'Delete last item';
-$string['editingcalculated'] = 'Editing a Calculated question';
 $string['editdatasets'] = 'Edit the wildcards datasets';
 $string['editdatasets_help'] = 'Wildcard values may be created by entering a number in each wild card field then clicking the add button. To automatically generate 10 or more values, select the number of values required before clicking the add button. A uniform distribution means any value between the limits is equally likely to be generated; a loguniform distribution means that values towards the lower limit are more likely.';
 $string['editdatasets_link'] = 'question/type/calculated';
@@ -113,6 +107,12 @@ $string['notvalidnumber'] = 'Wild card value is not a valid number ';
 $string['oneanswertrueansweroutsidelimits'] = 'At least one correct answer outside the true value limits.<br />Modify the answers tolerance settings available as Advanced parameters';
 $string['param'] = 'Param {<strong>{$a}</strong>}';
 $string['partiallycorrectfeedback'] = 'For any partially correct response';
+$string['pluginname'] = 'Calculated';
+$string['pluginname_help'] = 'Calculated questions enable individual numerical questions to be created using wildcards in curly brackets that are substituted with individual values when the quiz is taken. For example, the question "What is the area of a rectangle of length {l} and width {w}?" would have correct answer formula "{l}*{w}" (where * denotes multiplication).';
+$string['pluginname_link'] = 'question/type/calculated';
+$string['pluginnameadding'] = 'Adding a Calculated question';
+$string['pluginnameediting'] = 'Editing a Calculated question';
+$string['pluginnamesummary'] = 'Calculated questions are like numerical questions but with the numbers used selected randomly from a set when the quiz is taken.';
 $string['possiblehdr'] = 'Possible wild cards present only in the question text';
 $string['questiondatasets'] = 'Question datasets';
 $string['questiondatasets_help'] = 'Question datasets of wild cards that will be used in each individual question';

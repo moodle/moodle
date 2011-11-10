@@ -1207,11 +1207,7 @@ function get_import_export_formats($type) {
 
         if ($provided) {
             list($notused, $fileformat) = explode('_', $component, 2);
-            if (get_string_manager()->string_exists('pluginname', $component)) {
-                $fileformatnames[$fileformat] = get_string('pluginname', $component);
-            } else {
-                $fileformatnames[$fileformat] = get_string($fileformat, $component);
-            }
+            $fileformatnames[$fileformat] = get_string('pluginname', $component);
         }
     }
 

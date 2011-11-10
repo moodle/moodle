@@ -40,10 +40,6 @@ class qtype_calculated extends question_type {
 
     public $wizardpagesnumber = 3;
 
-    public function requires_qtypes() {
-        return array('numerical');
-    }
-
     public function get_question_options($question) {
         // First get the datasets and default options
         // the code is used for calculated, calculatedsimple and calculatedmulti qtypes

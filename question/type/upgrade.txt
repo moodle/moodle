@@ -10,7 +10,31 @@ This files describes API changes for question type plugins.
   If you do not upgrade your code, it will not break, but there will be PHP
   warnings, and it the export will not work 100% correctly.
 
-* Question type plugins should start using a string called 'pluginname' for the
-  question type name, as with other plugins. Using a string with the same name
-  as the question type (e.g. get_string('essay', 'qtype_essay') will be supported
-  for one more release, but will generate a debugging warning.
+* The old
+    public function requires_qtypes()
+method is no more. Instead use the ->dependencies facility in version.php. E.g.
+$plugin->dependencies = array(
+    'qtype_numerical' => 2011102700,
+);
+
+* The plugin name and related strings used to be defined in language strings
+called the same thing as the format, for example:
+
+$string['addingdescription'] = 'Adding a Description';
+$string['description'] = 'Description';
+$string['description_help'] = 'A description is not really a question type. It simply enables text to be displayed without requiring any answers, similar to a label on the course page.
+$string['description_link'] = 'A description is not really a question type. It simply enables text to be displayed without requiring any answers, similar to a label on the course page.
+$string['descriptionsummary'] = 'This is not actually a question. Instead it is a way to add some instructions, rubric or other content to the activity. This is similar to the way that labels can be used to add content to the course page.';
+$string['editingdescription'] = 'Editing a Description';
+
+All these need to be changed to use the standard string name pluginname, as for
+other plugin types, and similar for the other strings.
+
+$string['pluginname'] = 'Description';
+$string['pluginname_help'] = 'A description is not really a question type. It simply enables text to be displayed without requiring any answers, similar to a label on the course page.
+$string['pluginname_link'] = 'A description is not really a question type. It simply enables text to be displayed without requiring any answers, similar to a label on the course page.
+$string['pluginnameadding'] = 'Adding a Description';
+$string['pluginnameediting'] = 'Editing a Description';
+$string['pluginnamesummary'] = 'This is not actually a question. Instead it is a way to add some instructions, rubric or other content to the activity. This is similar to the way that labels can be used to add content to the course page.';
+
+The old strings will continue to work, but only until Moodle 2.3 is released.

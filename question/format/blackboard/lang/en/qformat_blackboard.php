@@ -23,5 +23,5 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['blackboard'] = 'Blackboard';
-$string['blackboard_help'] = 'Blackboard format enables questions saved in the Blackboard version 5 "POOL" type export format to be imported.';
+$string['pluginname'] = 'Blackboard';
+$string['pluginname_help'] = 'Blackboard format enables questions saved in the Blackboard version 5 "POOL" type export format to be imported.';
