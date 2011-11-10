@@ -25,5 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2011110100;
-$plugin->requires = 2011070800;
+$plugin->version   = 2011110100;                 // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2011070800;                 // Requires this Moodle version
+$plugin->component = 'scormreport_interactions'; // Full name of the plugin (used for diagnostics)
