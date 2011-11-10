@@ -978,7 +978,10 @@ class assignment_base {
             $userfields = user_picture::fields('u', array('lastaccess'));
             $select = "SELECT $userfields,
                               s.id AS submissionid, s.grade, s.submissioncomment,
-                              s.timemodified, s.timemarked ";
+                              s.timemodified, s.timemarked,
+                              CASE WHEN s.timemarked > 0 AND s.timemarked >= s.timemodified THEN 1
+                                   ELSE 0 END AS status ";
+
             $sql = 'FROM {user} u '.
                    'LEFT JOIN {assignment_submissions} s ON u.id = s.userid
                    AND s.assignment = '.$this->assignment->id.' '.
@@ -991,8 +994,6 @@ class assignment_base {
 
             if (is_array($auser) && count($auser)>1) {
                 $nextuser = next($auser);
-            /// Calculate user status
-                $nextuser->status = ($nextuser->timemarked > 0) && ($nextuser->timemarked >= $nextuser->timemodified);
                 $nextid = $nextuser->id;
             }
         }
@@ -1311,7 +1312,10 @@ class assignment_base {
         if (!empty($users)) {
             $select = "SELECT $ufields,
                               s.id AS submissionid, s.grade, s.submissioncomment,
-                              s.timemodified, s.timemarked ";
+                              s.timemodified, s.timemarked,
+                              CASE WHEN s.timemarked > 0 AND s.timemarked >= s.timemodified THEN 1
+                                   ELSE 0 END AS status ";
+
             $sql = 'FROM {user} u '.
                    'LEFT JOIN {assignment_submissions} s ON u.id = s.userid
                     AND s.assignment = '.$this->assignment->id.' '.
@@ -1341,8 +1345,6 @@ class assignment_base {
                             $locked_overridden = 'overridden';
                         }
 
-                    /// Calculate user status
-                        $auser->status = ($auser->timemarked > 0) && ($auser->timemarked >= $auser->timemodified);
                         $picture = $OUTPUT->user_picture($auser);
 
                         if (empty($auser->submissionid)) {
