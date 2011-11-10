@@ -73,6 +73,9 @@ class mod_quiz_mod_form extends moodleform_mod {
         // Introduction.
         $this->add_intro_editor(false, get_string('introduction', 'quiz'));
 
+        //-------------------------------------------------------------------------------
+        $mform->addElement('header', 'timing', get_string('timing', 'quiz'));
+
         // Open and close dates.
         $mform->addElement('date_time_selector', 'timeopen', get_string('quizopen', 'quiz'),
                 array('optional' => true, 'step' => 1));
@@ -87,6 +90,14 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addHelpButton('timelimit', 'timelimit', 'quiz');
         $mform->setAdvanced('timelimit', $quizconfig->timelimit_adv);
         $mform->setDefault('timelimit', $quizconfig->timelimit);
+
+        //-------------------------------------------------------------------------------
+        // Grade settings
+        $this->standard_grading_coursemodule_elements();
+
+        $mform->removeElement('grade');
+        $mform->addElement('hidden', 'grade', $quizconfig->maximumgrade);
+        $mform->setType('grade', PARAM_NUMBER);
 
         // Number of attempts.
         $attemptoptions = array('0' => get_string('unlimited'));
@@ -105,14 +116,6 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->setAdvanced('grademethod', $quizconfig->grademethod_adv);
         $mform->setDefault('grademethod', $quizconfig->grademethod);
         $mform->disabledIf('grademethod', 'attempts', 'eq', 1);
-
-        //-------------------------------------------------------------------------------
-        // Grade settings
-        $this->standard_grading_coursemodule_elements();
-
-        $mform->removeElement('grade');
-        $mform->addElement('hidden', 'grade', $quizconfig->maximumgrade);
-        $mform->setType('grade', PARAM_NUMBER);
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'layouthdr', get_string('layout', 'quiz'));

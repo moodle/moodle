@@ -757,6 +757,7 @@ $string['timelimitsec'] = 'Time limit (seconds)';
 $string['timestr'] = '%H:%M:%S on %d/%m/%y';
 $string['timesup'] = 'Time is up!';
 $string['timetaken'] = 'Time taken';
+$string['timing'] = 'Timing';
 $string['tofile'] = 'to file';
 $string['tolerance'] = 'Tolerance';
 $string['toomanyrandom'] = 'The number of random questions required is more than are still available in the category!';
