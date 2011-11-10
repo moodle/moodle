@@ -10,6 +10,7 @@
 .block .content .list .c1 {margin-left:5px;display:inline;}
 .block .footer {margin-bottom: 4px;}
 .block .blockannotation {font-size:0.75em;margin: -1em 0 1em;}
+.block_navigation .block_tree li {overflow:hidden;}
 
 /** block_list blocks need column stuffs **/
 .block.list_block .unlist > li > .column {display:inline-block;}
@@ -27,6 +28,6 @@
 .block.hidden .block-hider-show {display:inline;}
 
 /** Overide for RTL layout **/
-.dir-rtl .block .header, 
+.dir-rtl .block .header,
 .dir-rtl .block h2.header {text-align:right;}
 .dir-rtl .block .header .commands { text-align: right;}
