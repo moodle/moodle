@@ -60,6 +60,10 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 drag_items_for_choice : function(choiceno) {
                     return dragitemsarea.all('span.dragitem.choice' + choiceno);
                 },
+                drag_item_for_choice : function(choiceno, itemno) {
+                    return dragitemsarea.one('span.dragitem.choice'+ choiceno + 
+                                            '.item' + itemno);
+                },
                 drag_item_being_dragged : function(choiceno) {
                     return dragitemsarea.one('span.dragitem.yui3-dd-dragging.choice' + choiceno);
                 },
@@ -136,8 +140,6 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             this.poll_for_image_load(null, false, 0, this.after_image_load);
             this.doc.bg_img().after('load', this.poll_for_image_load, this,
                                                     false, 0, this.after_image_load);
-            this.doc.drag_item_homes().after('load', this.poll_for_image_load, this,
-                                                    false, 0, this.after_image_load);
         },
         after_image_load : function () {
             this.reposition_drags();
@@ -151,10 +153,11 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
 //                , this);
 //            }
         },
-        clone_new_drag_item : function (draghome) {
+        clone_new_drag_item : function (draghome, itemno) {
             var drag = draghome.cloneNode(true);
             drag.removeClass('draghome');
             drag.addClass('dragitem');
+            drag.addClass('item'+ itemno);
             drag.one('span.markertext').setStyle('opacity', 0.5);
             draghome.get('parentNode').appendChild(drag);
             if (!this.get('readonly')) {
@@ -170,23 +173,37 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             dd.after('drag:start', function(e){
                 var dragnode = e.target.get('node');
                 var choiceno = this.get_choiceno_for_node(dragnode);
-                this.save_all_xy_for_choice(choiceno);
+                this.save_all_xy_for_choice(choiceno, null);
             }, this);
             dd.after('drag:end', function(e) {
                 var dragnode = e.target.get('node');
                 var choiceno = this.get_choiceno_for_node(dragnode);
-                Y.later(100, this, this.save_all_xy_for_choice, choiceno);
+                Y.later(100, this, this.save_all_xy_for_choice, [choiceno, dragnode]);
             }, this);
         },
-        save_all_xy_for_choice: function (choiceno) {
-            var dragitems = this.doc.drag_items_for_choice(choiceno);
+        save_all_xy_for_choice: function (choiceno, dropped) {
             var coords = [];
-            dragitems.each(function(dragitem){
-                var bgimgxy = this.convert_to_bg_img_xy(dragitem.getXY());
-                if (this.xy_in_bgimg(bgimgxy) && !dragitem.hasClass('yui3-dd-dragging')) {
+            for (var i=0; i <= this.doc.drag_items_for_choice(choiceno).size(); i++) {
+                var dragitem = this.doc.drag_item_for_choice(choiceno, i);
+                if (dragitem) {
+                    dragitem.removeClass('item'+i);
+                    if (!dragitem.hasClass('yui3-dd-dragging')) {
+                        var bgimgxy = this.convert_to_bg_img_xy(dragitem.getXY());
+                        if (this.xy_in_bgimg(bgimgxy)) {
+                            dragitem.removeClass('item'+i);
+                            dragitem.addClass('item'+coords.length);
+                            coords[coords.length] = bgimgxy;
+                        }
+                    }
+                }
+            }
+            if (dropped !== null){
+                var bgimgxy = this.convert_to_bg_img_xy(dropped.getXY());
+                if (this.xy_in_bgimg(bgimgxy)) {
                     coords[coords.length] = bgimgxy;
                 }
-            }, this);
+                dropped.remove(true);
+            }
             console.log({'coords read from display':coords});
             this.set_form_value(choiceno, coords.join(';'));
             this.reposition_drags();
@@ -214,17 +231,28 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         },
         reposition_drags : function() {
             this.doc.drag_items().each(function(item) {
-                if (!item.hasClass('yui3-dd-dragging')){
-                    item.remove(true);
-                }
+                //if (!item.hasClass('yui3-dd-dragging')){
+                    item.addClass('unneeded');
+                //}
             }, this);
             this.doc.inputs_for_choices().each(function (input) {
                 var choiceno = this.get_choiceno_for_node(input);
                 var coords = this.get_coords(input);
                 var dragitemhome = this.doc.drag_item_home(choiceno);
                 for (var i=0; i < coords.length; i++) {
-                    var dragitem = this.clone_new_drag_item(dragitemhome);
+                    var dragitem;
+                    dragitem = this.doc.drag_item_for_choice(choiceno, i);
+                    if (!dragitem || dragitem.hasClass('yui3-dd-dragging')) {
+                        dragitem = this.clone_new_drag_item(dragitemhome, i);
+                    } else {
+                        dragitem.removeClass('unneeded');
+                    }
                     dragitem.setXY(coords[i]);
+                }
+            }, this);
+            this.doc.drag_items().each(function(item) {
+                if (item.hasClass('unneeded') && !item.hasClass('yui3-dd-dragging')) {
+                    item.remove(true);
                 }
             }, this);
         },
@@ -239,14 +267,14 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             var dragging = (null !== this.doc.drag_item_being_dragged(choiceno));
             var coords = [];
             var dragitemhome = this.doc.drag_item_home(choiceno);
-            if (infinite || (!dragging && fv === '')) {
-                coords[coords.length] = dragitemhome.getXY();
-            }
             if (fv !== '') {
                 var coordsstrings = fv.split(';');
                 for (var i=0; i<coordsstrings.length; i++) {
                     coords[coords.length] = this.convert_to_window_xy(coordsstrings[i].split(','));
                 }
+            }
+            if (infinite || (!dragging && fv === '')) {
+                coords[coords.length] = dragitemhome.getXY();
             }
             return coords;
         },
@@ -335,7 +363,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
 
     }, {NAME : DDMARKERQUESTIONNAME, ATTRS : {}});
 
-    Y.Event.define('dragchange', {
+/*    Y.Event.define('dragchange', {
         // Webkit and IE repeat keydown when you hold down arrow keys.
         // Opera links keypress to page scroll; others keydown.
         // Firefox prevents page scroll via preventDefault() on either
@@ -362,10 +390,10 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             sub._detacher = node.on(this._event, this._keyHandler,
                                     this, notifier);
         }
-    });
+    });*/
     M.qtype_ddmarker.init_question = function(config) {
         return new DDMARKER_QUESTION(config);
     }
 }, '@VERSION@', {
-      requires:['node', 'dd', 'dd-drop', 'dd-constrain']
+      requires:['node', 'event-resize', 'dd', 'dd-drop', 'dd-constrain']
 });
