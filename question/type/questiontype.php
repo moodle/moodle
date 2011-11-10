@@ -1609,9 +1609,11 @@ class default_questiontype {
         } else {
             foreach ($question->options->answers as $answer) {
                 $percent = 100 * $answer->fraction;
-                $expout .= "    <answer fraction=\"$percent\">\n";
+                $ansformat = $format->get_format($answer->answerformat);
+                $fbformat = $format->get_format($answer->feedbackformat);
+                $expout .= "    <answer fraction=\"$percent\" format=\"{$ansformat}\">\n";
                 $expout .= $format->writetext($answer->answer, 3, false);
-                $expout .= "      <feedback>\n";
+                $expout .= "      <feedback format=\"{$fbformat}\">\n";
                 $expout .= $format->writetext($answer->feedback, 4, false);
                 $expout .= "      </feedback>\n";
                 $expout .= "    </answer>\n";
