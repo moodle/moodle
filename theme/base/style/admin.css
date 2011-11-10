@@ -193,10 +193,9 @@
 #page-admin-index #plugins-check .status-upgrade .status {background-color:#d2ebff;}
 #page-admin-index #plugins-check .status-uptodate .status {color:#999;}
 #page-admin-index #plugins-check .requires ul {font-size:0.7em;margin:0;}
-#page-admin-index #plugins-check .requires li {display:block;;}
+#page-admin-index #plugins-check .requires li {display:block;}
 #page-admin-index #plugins-check .requires-ok {color:#999;}
 #page-admin-index #plugins-check .requires-failed {background-color:#ffd3d9;}
-
 
 /** Plugins management */
 #page-admin-plugins #plugins-control-panel {margin-left:auto; margin-right:auto;}
@@ -205,3 +204,4 @@
 #page-admin-plugins #plugins-control-panel .disabled .availability {background-color:#eee;}
 #page-admin-plugins #plugins-control-panel .extension .source {background-color:#f3f2aa;}
 #page-admin-plugins #plugins-control-panel .msg td {text-align:center;}
+#page-admin-plugins #plugins-control-panel .requiredby {font-size:0.7em;color:#999;}
