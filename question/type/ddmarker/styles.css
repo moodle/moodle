@@ -31,6 +31,9 @@
     position: absolute;
     z-index: 2;
 }
+.que.ddmarker .dragitems .draghome {
+    margin : 10px;
+}
 .que.ddmarker .dragitems.readonly .dragitem {
     cursor: auto;
 }
