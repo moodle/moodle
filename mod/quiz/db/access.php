@@ -173,6 +173,13 @@ $capabilities = array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array()
-    )
+    ),
+
+    // Receive a notification message when a quiz attempt becomes overdue.
+    'mod/quiz:emailwarnoverdue' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array()
+    ),
 );
 
