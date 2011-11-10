@@ -86,7 +86,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                             }
                         }
                     }
-                    throw 'Prefix "'+prefix+'" not found in class names.';
+                    return null;
                 },
                 inputs_for_choices : function () {
                     return topnode.all('input.choices');
@@ -173,12 +173,16 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             dd.after('drag:start', function(e){
                 var dragnode = e.target.get('node');
                 var choiceno = this.get_choiceno_for_node(dragnode);
+                var itemno = this.get_itemno_for_node(dragnode);
+                if (itemno !== null) {
+                    dragnode.removeClass('item'+dragnode);
+                }
                 this.save_all_xy_for_choice(choiceno, null);
             }, this);
             dd.after('drag:end', function(e) {
                 var dragnode = e.target.get('node');
                 var choiceno = this.get_choiceno_for_node(dragnode);
-                Y.later(100, this, this.save_all_xy_for_choice, [choiceno, dragnode]);
+                this.save_all_xy_for_choice(choiceno, dragnode);
             }, this);
         },
         save_all_xy_for_choice: function (choiceno, dropped) {
@@ -199,10 +203,10 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             }
             if (dropped !== null){
                 var bgimgxy = this.convert_to_bg_img_xy(dropped.getXY());
+                dropped.addClass('item'+coords.length);
                 if (this.xy_in_bgimg(bgimgxy)) {
                     coords[coords.length] = bgimgxy;
                 }
-                dropped.remove(true);
             }
             console.log({'coords read from display':coords});
             this.set_form_value(choiceno, coords.join(';'));
@@ -280,6 +284,9 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         },
         get_choiceno_for_node : function(node) {
             return +this.doc.get_classname_numeric_suffix(node, 'choice');
+        },
+        get_itemno_for_node : function(node) {
+            return +this.doc.get_classname_numeric_suffix(node, 'item');
         },
         
         //----------- keyboard accessibility stuff below line ---------------------
