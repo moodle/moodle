@@ -55,6 +55,21 @@ $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/timelimit',
         get_string('timelimitsec', 'quiz'), get_string('configtimelimitsec', 'quiz'),
         array('value' => '0', 'fix' => false), PARAM_INT));
 
+// What to do with overdue attempts.
+$quizsettings->add(new mod_quiz_admin_setting_overduehandling('quiz/overduehandling',
+        get_string('overduehandling', 'quiz'), get_string('overduehandling_desc', 'quiz'),
+        array('value' => 'autoabandon', 'fix' => false), null));
+
+// Grace period time.
+$quizsettings->add(new admin_setting_configtext_with_advanced('quiz/graceperiod',
+        get_string('graceperiod', 'quiz'), get_string('graceperiod_desc', 'quiz'),
+        array('value' => '86400', 'fix' => false), PARAM_INT));
+
+// Minimum grace period used behind the scenes.
+$quizsettings->add(new admin_setting_configtext('quiz/graceperiodmin',
+        get_string('graceperiodmin', 'quiz'), get_string('graceperiodmin_desc', 'quiz'),
+        60, PARAM_INT));
+
 // Number of attempts
 $options = array(get_string('unlimited'));
 for ($i = 1; $i <= QUIZ_MAX_ATTEMPT_OPTION; $i++) {

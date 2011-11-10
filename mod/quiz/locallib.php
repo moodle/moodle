@@ -776,7 +776,8 @@ function quiz_calculate_best_attempt($quiz, $attempts) {
 }
 
 /**
- * @return the options for calculating the quiz grade from the individual attempt grades.
+ * @return array int => lang string the options for calculating the quiz grade
+ *      from the individual attempt grades.
  */
 function quiz_get_grading_options() {
     return array(
@@ -795,6 +796,18 @@ function quiz_get_grading_options() {
 function quiz_get_grading_option_name($option) {
     $strings = quiz_get_grading_options();
     return $strings[$option];
+}
+
+/**
+ * @return array string => lang string the options for handling overdue quiz
+ *      attempts.
+ */
+function quiz_get_overdue_handling_options() {
+    return array(
+        'autosubmit'  => get_string('overduehandlingautosubmit', 'quiz'),
+        'graceperiod' => get_string('overduehandlinggraceperiod', 'quiz'),
+        'autoabandon' => get_string('overduehandlingautoabandon', 'quiz'),
+    );
 }
 
 /// Other quiz functions ////////////////////////////////////////////////////

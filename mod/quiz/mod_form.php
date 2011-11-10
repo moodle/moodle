@@ -91,6 +91,23 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->setAdvanced('timelimit', $quizconfig->timelimit_adv);
         $mform->setDefault('timelimit', $quizconfig->timelimit);
 
+        // What to do with overdue attempts.
+        $mform->addElement('select', 'overduehandling', get_string('overduehandling', 'quiz'),
+                quiz_get_overdue_handling_options());
+        $mform->setAdvanced('overduehandling', $quizconfig->overduehandling_adv);
+        $mform->setDefault('overduehandling', $quizconfig->overduehandling);
+        // TODO Formslib does OR logic on disableif, and we need AND logic here. 
+        // $mform->disabledIf('overduehandling', 'timelimit', 'eq', 0);
+        // $mform->disabledIf('overduehandling', 'timeclose', 'eq', 0);
+
+        // Grace period time.
+        $mform->addElement('duration', 'graceperiod', get_string('graceperiod', 'quiz'),
+                array('optional' => true));
+        $mform->addHelpButton('graceperiod', 'graceperiod', 'quiz');
+        $mform->setAdvanced('graceperiod', $quizconfig->graceperiod_adv);
+        $mform->setDefault('graceperiod', $quizconfig->graceperiod);
+        $mform->disabledIf('graceperiod', 'overduehandling', 'neq', 'graceperiod');
+
         //-------------------------------------------------------------------------------
         // Grade settings
         $this->standard_grading_coursemodule_elements();
