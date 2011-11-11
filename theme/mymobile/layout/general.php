@@ -99,8 +99,8 @@ $gowide = ($mydevice == 'default' && $showusetableview == 'tabshow' || $mydevice
 if ($gowide) {
     // initialize column position choices.
     mymobile_initialise_colpos($PAGE);
-    $usercol = (mymobile_get_colpos() == 'on');
 }
+$usercol = (mymobile_get_colpos() == 'on');
 
 $renderer = $PAGE->get_renderer('theme_mymobile');
 
