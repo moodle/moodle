@@ -29,9 +29,18 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Factory method returning an instance of the grading manager
  *
- * @param stdClass|int $context or $areaid
- * @param string $component the frankenstyle name of the component
- * @param string $area the name of the gradable area
+ * There are basically ways how to use this factory method. If the area record
+ * id is known to the caller, get the manager for that area by providing just
+ * the id. If the area record id is not know, the context, component and area name
+ * can be provided. Note that null values are allowed in the second case as the context,
+ * component and the area name can be set explicitly later.
+ *
+ * @example $manager = get_grading_manager($areaid);
+ * @example $manager = get_grading_manager(get_system_context());
+ * @example $manager = get_grading_manager($context, 'mod_assignment', 'submission');
+ * @param stdClass|int|null $context or $areaid if $areaid is passed, no other parameter is needed
+ * @param string|null $component the frankenstyle name of the component
+ * @param string|null $area the name of the gradable area
  * @return grading_manager
  */
 function get_grading_manager($context_or_areaid = null, $component = null, $area = null) {
