@@ -113,7 +113,7 @@ class theme_mymobile_core_renderer extends core_renderer {
 
     /**
      * Returns the dtheme to use for the selected swatch
-     * 
+     *
      * @return string
      */
     protected function theme_swatch() {
@@ -688,7 +688,7 @@ class theme_mymobile_core_renderer extends core_renderer {
      */
     public function blocks_for_region($region) {
         $blockcontents = $this->page->blocks->get_content_for_region($region, $this);
-        
+
         $output = '';
         foreach ($blockcontents as $bc) {
             if ($bc instanceof block_contents) {
