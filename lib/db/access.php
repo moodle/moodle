@@ -385,6 +385,20 @@ $capabilities = array(
         )
     ),
 
+    // In reports that give lists of users, extra information about each user's
+    // identity (the fields configured in site option showuseridentity) will be
+    // displayed to users who have this capability.
+    'moodle/site:viewuseridentity' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     'moodle/site:viewreports' => array(
 
         'riskbitmask' => RISK_PERSONAL,

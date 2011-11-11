@@ -152,6 +152,9 @@ abstract class quiz_attempt_report extends quiz_default_report {
             $fields .= "\n(CASE WHEN $qmsubselect THEN 1 ELSE 0 END) AS gradedattempt,";
         }
 
+        $extrafields = get_extra_user_fields_sql($this->context, 'u', '',
+                array('id', 'idnumber', 'firstname', 'lastname', 'picture',
+                'imagealt', 'institution', 'department', 'email'));
         $fields .= '
                 quiza.uniqueid AS usageid,
                 quiza.id AS attempt,
@@ -163,7 +166,7 @@ abstract class quiz_attempt_report extends quiz_default_report {
                 u.imagealt,
                 u.institution,
                 u.department,
-                u.email,
+                u.email' . $extrafields . ',
                 quiza.sumgrades,
                 quiza.timefinish,
                 quiza.timestart,
@@ -239,9 +242,13 @@ abstract class quiz_attempt_report extends quiz_default_report {
             $headers[] = get_string('firstname');
         }
 
-        if ($CFG->grade_report_showuseridnumber) {
-            $columns[] = 'idnumber';
-            $headers[] = get_string('idnumber');
+        // When downloading, some extra fields are always displayed (because
+        // there's no space constraint) so do not include in extra-field list
+        $extrafields = get_extra_user_fields($this->context,
+                $table->is_downloading() ? array('institution', 'department', 'email') : array());
+        foreach ($extrafields as $field) {
+            $columns[] = $field;
+            $headers[] = get_user_field_name($field);
         }
 
         if ($table->is_downloading()) {

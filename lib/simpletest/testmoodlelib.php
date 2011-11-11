@@ -1203,6 +1203,81 @@ class moodlelib_test extends UnitTestCase {
         }
     }
 
+    public function test_get_extra_user_fields() {
+        global $CFG;
+        $oldshowuseridentity = $CFG->showuseridentity;
+
+        // It would be really nice if there were a way to 'mock' has_capability
+        // checks (either to return true or false) but as there is not, this
+        // test doesn't test the capability check. Presumably, anyone running
+        // unit tests will have the capability.
+        $context = context_system::instance();
+
+        // No fields
+        $CFG->showuseridentity = '';
+        $this->assertEqual(array(), get_extra_user_fields($context));
+
+        // One field
+        $CFG->showuseridentity = 'frog';
+        $this->assertEqual(array('frog'), get_extra_user_fields($context));
+
+        // Two fields
+        $CFG->showuseridentity = 'frog,zombie';
+        $this->assertEqual(array('frog', 'zombie'), get_extra_user_fields($context));
+
+        // No fields, except
+        $CFG->showuseridentity = '';
+        $this->assertEqual(array(), get_extra_user_fields($context, array('frog')));
+
+        // One field
+        $CFG->showuseridentity = 'frog';
+        $this->assertEqual(array(), get_extra_user_fields($context, array('frog')));
+
+        // Two fields
+        $CFG->showuseridentity = 'frog,zombie';
+        $this->assertEqual(array('zombie'), get_extra_user_fields($context, array('frog')));
+
+        // As long as this test passes, the value will be set back. This is only
+        // in-memory anyhow
+        $CFG->showuseridentity = $oldshowuseridentity;
+    }
+
+    public function test_get_extra_user_fields_sql() {
+        global $CFG;
+        $oldshowuseridentity = $CFG->showuseridentity;
+        $context = context_system::instance();
+
+        // No fields
+        $CFG->showuseridentity = '';
+        $this->assertEqual('', get_extra_user_fields_sql($context));
+
+        // One field
+        $CFG->showuseridentity = 'frog';
+        $this->assertEqual(', frog', get_extra_user_fields_sql($context));
+
+        // Two fields with table prefix
+        $CFG->showuseridentity = 'frog,zombie';
+        $this->assertEqual(', u1.frog, u1.zombie', get_extra_user_fields_sql($context, 'u1'));
+
+        // Two fields with field prefix
+        $CFG->showuseridentity = 'frog,zombie';
+        $this->assertEqual(', frog AS u_frog, zombie AS u_zombie',
+                get_extra_user_fields_sql($context, '', 'u_'));
+
+        // One field excluded
+        $CFG->showuseridentity = 'frog';
+        $this->assertEqual('', get_extra_user_fields_sql($context, '', '', array('frog')));
+
+        // Two fields, one excluded, table+field prefix
+        $CFG->showuseridentity = 'frog,zombie';
+        $this->assertEqual(', u1.zombie AS u_zombie',
+                get_extra_user_fields_sql($context, 'u1', 'u_', array('frog')));
+
+        // As long as this test passes, the value will be set back. This is only
+        // in-memory anyhow
+        $CFG->showuseridentity = $oldshowuseridentity;
+    }
+
     public function test_userdate() {
         global $USER, $CFG;
 

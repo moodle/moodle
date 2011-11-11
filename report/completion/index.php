@@ -45,6 +45,7 @@ $edituser = optional_param('edituser', 0, PARAM_INT);
 
 
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+$context = context_course::instance($course->id);
 
 $url = new moodle_url('/report/completion/index.php', array('course'=>$course->id));
 $PAGE->set_url($url);
@@ -59,8 +60,9 @@ $start   = optional_param('start', 0, PARAM_INT);
 $sifirst = optional_param('sifirst', 'all', PARAM_ALPHA);
 $silast  = optional_param('silast', 'all', PARAM_ALPHA);
 
-// Whether to show idnumber
-$idnumbers = $CFG->grade_report_showuseridnumber;
+// Whether to show extra user identity information
+$extrafields = get_extra_user_fields($context);
+$leftcols = 1 + count($extrafields);
 
 // Function for quoting csv cell values
 function csv_quote($value) {
@@ -77,7 +79,6 @@ function csv_quote($value) {
 // Check permissions
 require_login($course);
 
-$context=get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('report/completion:view', $context);
 
 // Get group mode
@@ -221,7 +222,8 @@ if ($total) {
         $group,
         $firstnamesort ? 'u.firstname ASC' : 'u.lastname ASC',
         $csv ? 0 : COMPLETION_REPORT_PAGE,
-        $csv ? 0 : $start
+        $csv ? 0 : $start,
+        $context
     );
 }
 
@@ -337,7 +339,8 @@ if (!$csv) {
 
     // Print criteria group names
     print PHP_EOL.'<tr style="vertical-align: top">';
-    print '<th scope="row" class="rowheader">'.get_string('criteriagroup', 'completion').'</th>';
+    echo '<th scope="row" class="rowheader" colspan="' . $leftcols . '">' .
+            get_string('criteriagroup', 'completion') . '</th>';
 
     $current_group = false;
     $col_count = 0;
@@ -371,7 +374,8 @@ if (!$csv) {
 
     // Print aggregation methods
     print PHP_EOL.'<tr style="vertical-align: top">';
-    print '<th scope="row" class="rowheader">'.get_string('aggregationmethod', 'completion').'</th>';
+    echo '<th scope="row" class="rowheader" colspan="' . $leftcols . '">' .
+            get_string('aggregationmethod', 'completion').'</th>';
 
     $current_group = false;
     $col_count = 0;
@@ -430,7 +434,8 @@ if (!$csv) {
     if (COMPLETION_REPORT_COL_TITLES) {
 
         print PHP_EOL.'<tr>';
-        print '<th scope="row" class="rowheader">'.get_string('criteria', 'completion').'</th>';
+        echo '<th scope="row" class="rowheader" colspan="' . $leftcols . '">' .
+                get_string('criteria', 'completion') . '</th>';
 
         foreach ($criteria as $criterion) {
             // Get criteria details
@@ -468,9 +473,10 @@ if (!$csv) {
     print '</th>';
 
 
-    // Print user id number column
-    if ($idnumbers) {
-        print '<th>'.get_string('idnumber').'</th>';
+    // Print user identity columns
+    foreach ($extrafields as $field) {
+        echo '<th scope="col" class="completion-identifyfield">' .
+                get_user_field_name($field) . '</th>';
     }
 
     ///
@@ -539,10 +545,7 @@ if (!$csv) {
 
 
 } else {
-    // TODO
-    if ($idnumbers) {
-        print $sep;
-    }
+    // The CSV file does not contain any headers
 }
 
 
@@ -554,16 +557,16 @@ foreach ($progress as $user) {
     // User name
     if ($csv) {
         print csv_quote(fullname($user));
-        if ($idnumbers) {
-            print $sep.csv_quote($user->idnumber);
+        foreach ($extrafields as $field) {
+            echo $sep . csv_quote($user->{$field});
         }
     } else {
         print PHP_EOL.'<tr id="user-'.$user->id.'">';
 
         print '<th scope="row"><a href="'.$CFG->wwwroot.'/user/view.php?id='.
             $user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></th>';
-        if ($idnumbers) {
-            print '<td>'.htmlspecialchars($user->idnumber).'</td>';
+        foreach ($extrafields as $field) {
+            echo '<td>' . s($user->{$field}) . '</td>';
         }
     }
 

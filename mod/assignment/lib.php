@@ -1240,19 +1240,28 @@ class assignment_base {
             }
         }
 
-        $tablecolumns = array('picture', 'fullname', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'status', 'finalgrade');
+        $extrafields = get_extra_user_fields($context);
+        $tablecolumns = array_merge(array('picture', 'fullname'), $extrafields,
+                array('grade', 'submissioncomment', 'timemodified', 'timemarked', 'status', 'finalgrade'));
         if ($uses_outcomes) {
             $tablecolumns[] = 'outcome'; // no sorting based on outcomes column
         }
 
-        $tableheaders = array('',
-                              get_string('fullnameuser'),
-                              get_string('grade'),
-                              get_string('comment', 'assignment'),
-                              get_string('lastmodified').' ('.get_string('submission', 'assignment').')',
-                              get_string('lastmodified').' ('.get_string('grade').')',
-                              get_string('status'),
-                              get_string('finalgrade', 'grades'));
+        $extrafieldnames = array();
+        foreach ($extrafields as $field) {
+            $extrafieldnames[] = get_user_field_name($field);
+        }
+        $tableheaders = array_merge(
+                array('', get_string('fullnameuser')),
+                $extrafieldnames,
+                array(
+                    get_string('grade'),
+                    get_string('comment', 'assignment'),
+                    get_string('lastmodified').' ('.get_string('submission', 'assignment').')',
+                    get_string('lastmodified').' ('.get_string('grade').')',
+                    get_string('status'),
+                    get_string('finalgrade', 'grades'),
+                ));
         if ($uses_outcomes) {
             $tableheaders[] = get_string('outcome', 'grades');
         }
@@ -1273,6 +1282,9 @@ class assignment_base {
 
         $table->column_class('picture', 'picture');
         $table->column_class('fullname', 'fullname');
+        foreach ($extrafields as $field) {
+            $table->column_class($field, $field);
+        }
         $table->column_class('grade', 'grade');
         $table->column_class('submissioncomment', 'comment');
         $table->column_class('timemodified', 'timemodified');
@@ -1313,7 +1325,7 @@ class assignment_base {
             $sort = ' ORDER BY '.$sort;
         }
 
-        $ufields = user_picture::fields('u');
+        $ufields = user_picture::fields('u', $extrafields);
         if (!empty($users)) {
             $select = "SELECT $ufields,
                               s.id AS submissionid, s.grade, s.submissioncomment,
@@ -1475,7 +1487,13 @@ class assignment_base {
                         }
 
                         $userlink = '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $auser->id . '&amp;course=' . $course->id . '">' . fullname($auser, has_capability('moodle/site:viewfullnames', $this->context)) . '</a>';
-                        $row = array($picture, $userlink, $grade, $comment, $studentmodified, $teachermodified, $status, $finalgrade);
+                        $extradata = array();
+                        foreach ($extrafields as $field) {
+                            $extradata[] = $auser->{$field};
+                        }
+                        $row = array_merge(array($picture, $userlink), $extradata,
+                                array($grade, $comment, $studentmodified, $teachermodified,
+                                $status, $finalgrade));
                         if ($uses_outcomes) {
                             $row[] = $outcomes;
                         }

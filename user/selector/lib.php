@@ -40,6 +40,9 @@ abstract class user_selector_base {
     protected $name;
     /** @var array Extra fields to search on and return in addition to firstname and lastname. */
     protected $extrafields;
+    /** @var object Context used for capability checks regarding this selector (does
+     * not necessarily restrict user list) */
+    protected $accesscontext;
     /** @var boolean Whether the conrol should allow selection of many users, or just one. */
     protected $multiselect = true;
     /** @var int The height this control should have, in rows. */
@@ -89,10 +92,20 @@ abstract class user_selector_base {
 
         // Initialise member variables from constructor arguments.
         $this->name = $name;
+
+        // Use specified context for permission checks, system context if not
+        // specified
+        if (isset($options['accesscontext'])) {
+            $this->accesscontext = $options['accesscontext'];
+        } else {
+            $this->accesscontext = get_context_instance(CONTEXT_SYSTEM);
+        }
+
         if (isset($options['extrafields'])) {
             $this->extrafields = $options['extrafields'];
-        } else if (!empty($CFG->extrauserselectorfields)) {
-            $this->extrafields = explode(',', $CFG->extrauserselectorfields);
+        } else if (!empty($CFG->showuseridentity) &&
+                has_capability('moodle/site:viewuseridentity', $this->accesscontext)) {
+            $this->extrafields = explode(',', $CFG->showuseridentity);
         } else {
             $this->extrafields = array();
         }
@@ -331,7 +344,8 @@ abstract class user_selector_base {
             'name' => $this->name,
             'exclude' => $this->exclude,
             'extrafields' => $this->extrafields,
-            'multiselect' => $this->multiselect
+            'multiselect' => $this->multiselect,
+            'accesscontext' => $this->accesscontext,
         );
     }
 
@@ -580,13 +594,15 @@ abstract class user_selector_base {
      * @return string a string representation of the user.
      */
     public function output_user($user) {
-        $bits = array(
-            fullname($user)
-        );
-        foreach ($this->extrafields as $field) {
-            $bits[] = $user->$field;
+        $out = fullname($user);
+        if ($this->extrafields) {
+            $displayfields = array();
+            foreach ($this->extrafields as $field) {
+                $displayfields[] = $user->{$field};
+            }
+            $out .= ' (' . implode(', ', $displayfields) . ')';
         }
-        return implode(', ', $bits);
+        return $out;
     }
 
     /**
@@ -660,6 +676,7 @@ abstract class groups_user_selector_base extends user_selector_base {
      */
     public function __construct($name, $options) {
         global $CFG;
+        $options['accesscontext'] = get_context_instance(CONTEXT_COURSE, $options['courseid']);
         parent::__construct($name, $options);
         $this->groupid = $options['groupid'];
         $this->courseid = $options['courseid'];

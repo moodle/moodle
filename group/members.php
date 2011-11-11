@@ -34,9 +34,7 @@ if ($cancel) {
 }
 
 $groupmembersselector = new group_members_selector('removeselect', array('groupid' => $groupid, 'courseid' => $course->id));
-$groupmembersselector->set_extra_fields(array());
 $potentialmembersselector = new group_non_members_selector('addselect', array('groupid' => $groupid, 'courseid' => $course->id));
-$potentialmembersselector->set_extra_fields(array());
 
 if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     $userstoadd = $potentialmembersselector->get_selected_users();

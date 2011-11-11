@@ -7478,6 +7478,7 @@ abstract class forum_subscriber_selector_base extends user_selector_base {
      * @param array $options
      */
     public function __construct($name, $options) {
+        $options['accesscontext'] = $options['context'];
         parent::__construct($name, $options);
         if (isset($options['context'])) {
             $this->context = $options['context'];

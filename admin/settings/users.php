@@ -123,9 +123,24 @@ if ($hassiteconfig
                              'mycourses' => get_string('mycourses'),
                              'groups' => get_string('groups'))));
 
-        $temp->add(new admin_setting_configmulticheckbox('extrauserselectorfields',
-                get_string('extrauserselectorfields', 'admin'), get_string('configextrauserselectorfields', 'admin'), array('email' => '1'),
-                array('email' => get_string('email'), 'idnumber' => get_string('idnumber'), 'username' => get_string('username'), )));
+        // Select fields to display as part of user identity (only to those
+        // with moodle/site:viewuseridentity).
+        // Options include fields from the user table that might be helpful to
+        // distinguish when adding or listing users ('I want to add the John
+        // Smith from Science faculty').
+        // Username is not included as an option because in some sites, it might
+        // be a security problem to reveal usernames even to trusted staff.
+        // Custom user profile fields are not currently supported.
+        $temp->add(new admin_setting_configmulticheckbox('showuseridentity',
+                get_string('showuseridentity', 'admin'),
+                get_string('showuseridentity_desc', 'admin'), array('email' => 1), array(
+                    'idnumber'    => get_string('idnumber'),
+                    'email'       => get_string('email'),
+                    'phone1'      => get_string('phone'),
+                    'phone2'      => get_string('phone2'),
+                    'department'  => get_string('department'),
+                    'institution' => get_string('institution'),
+                )));
         $temp->add(new admin_setting_configcheckbox('enablegravatar', get_string('enablegravatar', 'admin'), get_string('enablegravatar_help', 'admin'), 0));
     }
 

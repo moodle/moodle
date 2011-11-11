@@ -361,7 +361,8 @@ table.mod_index {width:100%;}
  */
 .completion-expired {background:#FFDDDD;}
 .completion-expected {font-size:0.75em;}
-.completion-sortchoice {font-size:0.75em;vertical-align:bottom;}
+.completion-sortchoice,
+.completion-identifyfield {font-size:0.75em;vertical-align:bottom;}
 .completion-progresscell {text-align:right;}
 .completion-expired .completion-expected {font-weight:bold;}
 
