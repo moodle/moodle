@@ -3798,7 +3798,7 @@ function assignment_reset_course_form_defaults($course) {
  * Returns all other caps used in module
  */
 function assignment_get_extra_capabilities() {
-    return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
+    return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames', 'moodle/grade:managegradingforms');
 }
 
 /**
