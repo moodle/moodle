@@ -1,0 +1,1716 @@
+body {
+    line-height: inherit;
+    background: #dddddd;
+}
+html {
+    height: 100%;
+}
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+p {
+    margin: 0 0 0.5em;
+}
+h3, h1, h2 {
+    line-height: inherit;
+}
+ul {
+    margin: 0;
+}
+/* a few ui overrides */
+.ui-body-a legend.ftoggler {
+    color: #fff;
+    border-bottom: none;
+}
+#page-site-indexPAGE .ui-content .ui-controlgroup {
+    margin: 0.5em 0;
+    padding: 0;
+}
+.headingblock {
+    border-bottom:0px solid #DDDDDD;
+    color:inherit;
+    font-size:inherit;
+}
+h1.helpheading {
+    font-size: 1.6em;
+}
+/*extra line abve labels and remove padding right for no icon */
+.label .ui-btn-inner {
+    border-top: none !important;
+    padding-right: 15px;
+}
+.ui-header .ui-btn-left.ibrand {
+    top: 0.35em !important;
+}
+.ui-header .ui-btn-right.twor {
+    right: 3.3em;
+}
+li.modtype_label {
+    border-bottom: none;
+}
+.ui-li-count {
+    position: absolute;
+    font-size: 11px;
+    font-weight: bold;
+    padding: .2em .5em;
+    top: 50%;
+    margin-top: -.9em;
+    right: 38px;
+}
+/*fix for weird UI footer only small button */
+.ui-footer-fixed .ui-grid-null {
+    display: none;
+}
+/* over ride for section name titles allowing more space */
+.ui-header .sectionname.ui-title, .ui-footer .sectionname.ui-title {
+    margin-left: 40px;
+    margin-right: 40px;
+}
+/*hide turn editing on button */
+.settingsul li.Turn.editing.on {
+    display: none !important;
+}
+/*media plugin style overrides */
+span.mediaplugin {
+    clear: both;
+    display: block;
+}
+object.mediaplugin.mediaplugin_youtube, .mediaplugin object {
+    max-width: 100% !important;
+}
+/*front page spacing issue */
+.ui-bar.mymobilebar {
+    padding-bottom: 0;
+    padding-left: 10px;
+}
+#page-site-indexPAGE2 .ui-bar.mymobilebar {
+    padding-top: 0px;
+    margin-top: 0px;
+}
+.topic .ui-btn-inner, .answer .ui-btn-inner, #userselector_options_inner .ui-btn-inner, .contact .ui-btn-inner, .ui-checkbox .ui-btn-inner, fieldset div.ui-select .ui-btn-inner, #page-mod-lesson-viewPAGE .ui-btn-inner, .label .ui-btn-inner, .label.ui-li .ui-btn-text, .option .ui-btn-inner {
+    white-space: normal;
+    overflow: inherit;
+}
+.langmenu .ui-select {
+    float: left;
+}
+.que .control {
+width: auto;
+}
+.generalbox, .box {
+    border: none;
+}
+.sitetopic {
+    margin-bottom: .50em;
+}
+.generalfooter .smallicon.navicon {
+    display: none;
+}
+.mobile_blocksonly {
+    display: none;
+}
+.block.hidden .content {
+    display: block;
+}
+.ui-navbar .arrow.sep {
+    display: none;
+}
+.ui-navbar li, #page-user-filesPAGE li, #page-user-filesPAGE ul, .box.files ul, .box.files li {
+    list-style-type: none;
+}
+div.notifyproblem {
+    cursor:default !important;
+}
+/*under footer */
+#underfooter .logininfo  {
+    text-align: center;
+    padding-top: .8em !important;
+    padding-bottom: .8em;
+    font-size: .8em;
+    font-weight: 400;
+}
+#underfooter div {
+    text-align: center;
+    font-size: .8em;
+}
+#underfooter .noajax {
+    padding-bottom: .2em;
+}
+/* content for page redirect */
+.pagelayout-redirect #content2 {
+    text-align: center;
+}
+/* front page styles*/
+.coursebox h3 {
+    margin-bottom: 0;
+    line-height:inherit !important;
+}
+.coursebox h3 a, .categorylist .category a {
+    text-align: left;
+}
+.coursebox h3 a .ui-btn-inner, .category a .ui-btn-inner {
+    padding-left: .8em;
+}
+ul.section li.activity .mod-indent {
+    display: inline;
+}
+ .category a .ui-li-count {
+    right: 1em;
+}
+.coursebox .name {
+    font-size: 1.2em;
+}
+.coursebox div.summary {
+    display: none;
+}
+.coursebox div.info {
+    width: 100%;
+}
+.block_course_overview .coursebox .info {
+    float: none;
+}
+.coursebox ul.teachers {
+    display: none;
+}
+.coursebox, div.categorylist div.category {
+    margin-bottom: 0px;
+    border: none;
+}
+div.categorylist div.category {
+    padding: 0px;
+}
+.category span.numberofcourse {
+    display: none;
+}
+.categorylist .category .indentation {
+    float: none;
+    padding-left: 0px;
+}
+.block {
+    border: 0px;
+    margin-top: 0px !important;
+    padding-top: 0px !important;
+    margin-bottom: 0px !important;
+    padding-bottom: 0px !important;
+}
+#page-site-indexPAGE td {
+    padding: inherit;
+}
+#page-site-indexPAGE td .singlebutton form {
+    display: none;
+}
+/* frontpage logged in but no courses assigned fixes */
+#page-site-indexPAGE .categorylist .indentation {
+   padding-left: 0px;
+}
+#page-site-indexPAGE .categorylist .indentation div, #page-site-indexPAGE .categorylist .category .image, #page-site-indexPAGE .categorylist .category .name .ui-li-count {
+   display: none;
+}
+#page-site-indexPAGE .categorylist .category .name {
+    float: none !important;
+}
+/* all course list */
+#page-course-indexPAGE .ui-li-count, #page-course-indexPAGE .category .image {
+    display: none;
+}
+#page-course-indexPAGE .category .name {
+    float: none;
+}
+/* course stuff */
+/*coursebox summary has an empy &nbsp; in it, which chops things up. need a fix...  hidesummary does this and is added via js... not anymore...*/
+.section div.summary {
+    height: auto;
+    padding-bottom: 0em;
+    padding-left: .4em;
+    padding-right: .4em;
+    line-height: 0px;
+}
+.section div.summary .no-overflow {
+    line-height: normal;
+    padding-bottom: .4em;
+}
+/* mod-indent change 11/25/10 to fix ... after activity names */
+#completionprogressid.completionprogress {
+    display: none;
+    font-size: 0.7em;
+    position: absolute;
+    right: 1em;
+    z-index: 2;
+    text-align: center;
+    white-space: normal;
+    width: 30px;
+}
+#completionprogressid .helplink2 {
+    float: right;
+}
+#completionprogressid.completionprogress img.iconhelp {
+    vertical-align: middle;
+}
+.mod-indent {
+    display: inline;
+}
+#completion_dynamic_change {
+    display: none;
+    width: 0px;
+    height: 0px;
+}
+input[type="hidden"] {
+    height: 0px !important;
+    width: 0px !important;
+    display: inline;
+    visibility: hidden;
+    background: none !important;
+    border: none !important;
+    background-color: transparent !important;
+}
+.mod-indent-1, .mod-indent {
+    margin-left:0;
+}
+li a.dimmed span {
+    color: #aaa !important;
+}
+.course-content .current {
+    background: none;
+}
+.path-course-view .section .content .weekdates {
+    color:inherit;
+    font-size:inherit;
+    font-weight:700;
+}
+.course-content ul.weeks li.section {
+    margin-bottom: .6em;
+}
+.course-content ul.topics li.section .content {
+    margin: 0 0px;
+}
+.course-content ul.topics li.section .left {
+    width: auto !important;
+    float: none;
+    clear: both !important;
+    margin-bottom: 5px;
+}
+/* push left on course items in course view
+.course-content li.activity.ui-btn .ui-btn-text a {
+    padding-left: 10px;
+}
+*/
+.course-content li.activity.ui-btn .ui-btn-text a {
+    padding-left: 35px;
+    padding-right: 60px;
+}
+.topics #section-0 div.left.side {
+    display: none;
+}
+.topics div.right.side {
+    display: none;
+}
+.topics li.activity {
+}
+.topics li.activity span.accesshide, .weeks li.activity span.accesshide, .ui-navbar span.accesshide {
+    display: none;
+}
+.topics li.activity span.autocompletion, .weeks li.activity span.autocompletion {
+    display: block;
+    right: 70px;
+    top: -5px;
+}
+.course-content .section .activity img.activityicon {
+    margin-top: -.2em;
+}
+li.activity.ui-li-static span, li.activity div.availabilityinfo {
+    white-space: normal;
+}
+.topics img.spacer, .weeks img.spacer {
+    display: none;
+}
+form.togglecompletion a {
+    display: none !important;
+}
+form.togglecompletion {
+    right: auto !important;
+    position: inherit !important;
+    display: inline;
+}
+form.togglecompletion div {
+    display: inline;
+}
+form.togglecompletion input {
+    visibility: hidden;
+}
+.togglecompletion input[type="image"] {
+    display: block !important;
+    position: absolute !important;
+    top: 21%;
+    right: 2em !important;
+    left:auto !important;
+    visibility: visible;
+    width: 26px;
+    height: 23px;
+}
+li.activity.ui-li-static span, li.activity div.availabilityinfo{
+    margin-left: 1.3em;
+}
+.topics .content, .weeks .content {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    margin: 0;
+}
+.course ul.section {
+    margin: 0px;
+}
+.resourceworkaround, .urlworkaround, .modified {
+    font-size: inherit;
+}
+/* image thumb replacement for main course overview uses a settings tag to decide whether this happens or not */
+.ithumb .course-content .summary img, .ithumb .course-content .activity.label img, .ithumb .sitetopic .no-overflow img {
+    background: url([[pix:theme|photos]]) no-repeat 50% 50%;
+   height:0;
+   overflow:hidden;
+   padding-top: 40px;
+   width: 40px;
+   background-size: 40px 40px;
+    -webkit-background-size: 40px 40px;
+    float: none !important;
+    margin-right: auto !important;
+    position: inherit !important;
+    left:auto !important;
+}
+ul.weeks .left.side, ul.weeks .right.side {
+    display: none;
+}
+.course-content ul.weeks li.section .content {
+    margin:0 0px;
+}
+.course-content ul.topics li.section {
+    margin-bottom: .6em;
+}
+.section .left.side {
+    font-weight: 700;
+}
+.section .content .headingwrap {
+    margin-bottom: .25em;
+}
+.weeks .section .content .headingwrap {
+    margin-bottom: .4em;
+}
+.weeks h3.weekdates {
+    display: block;
+    float: none;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+li.activity.label {
+    padding: .6em !important;
+    cursor:default;
+}
+li.label .no-overflow ul, li.label .no-overflow ul li {
+    list-style-position: inside;
+}
+span.instancename {
+    font-size: 110%;
+}
+.path-course-view .section .content {
+    padding:0;
+    margin: 0px;
+}
+.section.hidden, .section.hidden a {
+    color: #aaaaaa !important;
+}
+.label div.no-overflow {
+    overflow:inherit !important;
+}
+/*forms */
+.buttons .singlebutton, .buttons .singlebutton form, .buttons .singlebutton div, .mform .fitem fieldset.fgroup label, .mform .fradio label, .mform .fcheckbox label, .mform fieldset.fdate_selector label  {
+    display: inherit;
+}
+.mform .fitemtitle {
+    text-align: center !important;
+    clear: both !important;
+    float: none !important;
+    width: 100% !important;
+    font-size: 16px;
+}
+.mform .felement.fstatic {
+    font-weight: 800;
+    font-size: 16px;
+}
+.mform .fitemtitle img.req {
+    display: inline;
+}
+.mform .fitem .felement {
+    margin-left: 0px;
+    width: 100%;
+}
+.mform .fitem .felement input[type="text"], .mform .fitem .felement textarea, .message .messagearea .messagesend .messagesendbox {
+    width: 92%;
+}
+.mform fieldset legend {
+    margin-left: 0em;
+}
+legend {
+    color: inherit;
+}
+.landscape .mform .fitem .ui-select {
+    width: 95%;
+}
+.mform .fitem .ui-checkbox {
+    display: block !important;
+    max-width: 95%;
+}
+input[name="mailnow"] {
+    display: none;
+}
+.mform .required {
+    color:inherit;
+}
+.loginbox .loginform .form-input #username, .loginbox .loginform .form-input #password {
+    margin: 0 0 .4em;
+}
+.loginbox .loginform .form-input #username, .loginbox .loginform .form-input #password {
+    border: 1px solid #ccc !important;
+    color: inherit !important;
+    font-family: inherit !important;
+    font-size: 16px !important;
+    line-height: 1.4;
+    padding: .4em !important;
+    width: 98% !important;
+}
+.form-input #password {
+    margin-bottom: 1.2em !important;
+}
+.loginbox #loginbtn {
+    width: 100% !important;
+}
+.mform fieldset div {
+margin:0;
+}
+.mform fieldset div div {
+    margin: .5em;
+}
+/*admin forms and profile type forms */
+.portrait2 #page-user-editPAGE select, .portrait2 .pagelayout-admin select, .path-course-report2 select {
+    max-width: 200px;
+}
+.landscape2 #page-user-editPAGE select, .landscape2 .pagelayout-admin select, .path-course-report2 select {
+    max-width: 450px;
+}
+/*forums */
+.forumheaderlist {
+    border: 0px !important;
+    border-collapse:collapse;
+    width: 100%;
+}
+.forumheaderlist th {
+    text-align: left;
+}
+.forumheaderlist thead .ui-btn-inner, .topic .ui-btn {
+    text-align: left !important;
+}
+.forumheaderlist .ui-btn-icon-right .ui-btn-inner {
+    padding-right: 55px;
+}
+.forumheaderlist thead .ui-btn {
+    cursor: default;
+}
+.forumheaderlist, .forumheaderlist th, .forumheaderlist td{
+    background: none;
+    border: none ;
+    border: 0px !important;
+    border-collapse: collapse;
+}
+.forumheaderlist td.author, .forumheaderlist td.picture, .forumheaderlist th.author, .forumheaderlist th.replies, .forumheaderlist th.lastpost, .forumheaderlist td.replies, .forumheaderlist td.lastpost, #page-mod-quiz-reportPAGE .headingwrap {
+    display: none;
+}
+.forumheaderlist td, .forumheaderlist tr {
+    padding: 0px !important;
+}
+table.forumheaderlist2 td.topic a {
+    padding: 10px;
+    padding-right: 17px;
+    border-top: 1px solid #666;
+}
+.forumheaderlist th, .forumheaderlist td {
+    padding: 0px;
+}
+.forumpost .row.header.ui-li-divider {
+    padding-top: .2em;
+}
+.forumpost .picture img {
+    margin-left:0;
+    margin-top: .5em;
+}
+.forumpost .row.side .left {
+    display: none;
+}
+.forumpost .options .forum-post-rating {
+    float:none;
+}
+.forumpost {
+    margin-top: .4em;
+}
+.forumpost .row .topic, .forumpost .row .content-mask, .forumpost .row .options {
+    margin-left:0px;
+    margin-top: .4em;
+}
+.forumpost .row.maincontent .left {
+    display: none;
+}
+.forumpost .content  {
+    padding-top: .5em;
+    padding-left: .5em;
+    padding-right: .5em;
+}
+.forumpost .row {
+    width: auto;
+}
+div.discussioncontrols {
+    display: none;
+}
+.path-mod-forum .indent {
+    margin-left: 0px;
+}
+.path-mod-forum div.subject {
+    font-size: 120%;
+}
+.forumpost td.picture.left, .forumpost td.left.side {
+    display: none;
+}
+.topic img.userpicture {
+    float: left;
+    margin-right: .3em;
+}
+.forumpost .topic {
+    border-bottom: none;
+    cursor: default;
+}
+#id_subscribe-button .ui-btn-text {
+    display: none;
+}
+.forumpost span.edited {
+    font-size: 80%;
+}
+.forumpost .author .ui-btn, .forumpost .author .ui-btn-inner {
+    padding: 0px;
+    background: none;
+    border: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+/*profile */
+.userprofilebox .profilepicture {
+    float: none !important;
+    text-align: center !important;
+}
+.userprofilebox .profilepicture img {
+    text-align: center;
+}
+.userprofilebox div.descriptionbox {
+    margin: 0;
+    padding: 0 0 0 0;
+    border: 0px;
+}
+#page-user-editPAGE .ui-btn-inner, #page-mod-lesson-viewPAGE .ui-btn-inner {
+    white-space:normal;
+}
+.path-user .description {
+    border-bottom: none;
+ }
+.path-user img.userpicture {
+    margin: .25em;
+}
+.block_private_files ul li, .block_private_files ul {
+    list-style-type: none;
+}
+/*login */
+.loginbox.onecolumn {
+    margin: 0px;
+}
+.loginbox .guestsub {
+    border-top:0px solid #DDDDDD;
+    margin: 0px;
+}
+.loginbox .loginform {
+    width: 100%;
+}
+.loginbox.twocolumns {
+    width: 100%;
+    margin: 0;
+}
+.loginbox.twocolumns .loginpanel {
+    float: none;
+    border: none;
+    width: 100%;
+    padding: 0 0 0 0;
+    margin-bottom: 0px !important;
+    padding-bottom: 0px !important;
+}
+.loginbox.twocolumns .signuppanel {
+    float: none;
+    width: 100%;
+    margin: 0;
+    margin-bottom: 0px !important;
+    padding-bottom: 0px !important;
+}
+#intro {
+    margin: 0px 0px;
+    border: none !important;
+}
+/*signup forms*/
+#page-login-signup .mform .fitem .felement {
+    margin-left: auto;
+}
+#page-login-signup .mform {
+    margin: 0 auto;
+    width: 98%;
+}
+.loginbox .subcontent {
+    margin: 0px;
+    padding: 0px;
+}
+.loginbox .subcontent.loginsub {
+    margin: 0px;
+    padding: 8px;
+}
+.loginbox h2 {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+#id_passwordunmaskdiv {
+    display: none;
+}
+/* quiz */
+#page-mod-quiz-reportPAGE label.ui-btn{
+    display: inherit;
+    width: 95%;
+}
+#page-mod-quiz-reportPAGE #preferencesuser, #page-mod-quiz-reportPAGE .graph {
+    display: none;
+}
+/* display quiz timer only on quiz pages if necessary */
+#quiz-timer {
+    display: none;
+}
+.path-mod-quiz #quiz-timer {
+    display: inherit;
+    text-align: center;
+    margin-top: 0em;
+}
+.que {
+    border: none;
+}
+.que .content {
+    width: 100%;
+}
+.que .prompt, .que .answer {
+    float: none;
+    clear: both;
+}
+.que .prompt {
+    width: auto !important;
+}
+.que .answer {
+    width: 100%;
+}
+.que .control {
+    width:95%;
+}
+.que .answer textarea {
+    min-width: 100%;
+}
+.que .feedback {
+    border: none;
+}
+.que .info {
+    float: none;
+    width: auto !important;
+    padding-top: .4em;
+}
+.que .info div {
+    display: inline;
+    margin-top: .5em !important;
+    margin-left: .2em;
+}
+.que .content {
+    margin: 0 0 0 0em;
+}
+.que .formulation, .que .outcome, .que .comment, .que .history {
+    margin: 0 0 0em;
+    padding: 0em;
+    clear: both;
+    float: none;
+    background: none;
+}
+.que .info h2, .que .info .grade, .que .info .questionflag {
+    display: inline;
+}
+input.questionflagimage {
+    vertical-align: middle;
+    padding: .2em;
+    height: 30px;
+    width: 30px;
+}
+.questionflagimage.ui-btn-hidden {
+    display: inline !important;
+    height: 30px;
+    width: 30px;
+    border: 1px solid #ccc;
+}
+/*hides extra checkbox */
+.questionflag input {
+    visibility: hidden !important;
+}
+.questionflag input.questionflagimage {
+    visibility: visible !important;
+}
+.questionflag .ui-btn.ui-btn-corner-all.ui-shadow {
+    display: none !important;
+}
+.truefalse2 .answer span {
+    float: none;
+    width: inherit;
+    padding: 0px;
+    padding-top: .4em;
+    padding-bottom: .4em;
+}
+.truefalse .answer span.r0, .truefalse .answer span.r1 {
+    float: none;
+    width: inherit;
+    padding: 0px;
+    padding-top: .4em;
+    padding-bottom: .4em;
+}
+.truefalse .answer span.r0 span, .truefalse .answer span.r1 span {
+    clear: both;
+    float: none;
+    padding: inherit;
+    width: inherit;
+}
+.truefalse2 .answer span .ui-icon {
+    padding: 0 10px;
+}
+.truefalse .answer span .ui-btn-inner {
+    padding-top: .5em;
+    padding-bottom: .5em;
+}
+table.quizattemptsummary .bestrow, table.quizattemptsummary .bestrow td {
+    background-color:inherit !important;
+}
+.questionflag div.ui-checkbox {
+    display: inline;
+}
+.answer .control label.ui-btn-up-a .ui-btn-text span {
+    color: #fff !important;
+}
+.answer .control label.ui-btn-up-a.ui-btn-active .ui-btn-text span {
+    color: #000 !important;
+}
+/* other modules */
+div#page-mod-data-viewPAGE img.iconsmall, #page-mod-glossary-viewPAGE img.iconsmall, #page-mod-data-view .approve img.icon {
+    height: 22px;
+    width: 22px;
+    padding-left: .5em;
+    padding-right: .5em;
+}
+.path-mod-glossary .glossarypost .commands {
+    white-space: normal;
+    width: auto;
+}
+/*tables */
+.pagelayout-report .no-overflow {
+    overflow: auto;
+}
+table.generaltable {
+    min-width: 98%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1em;
+    overflow: auto;
+    border-collapse: collapse;
+}
+/*odd row highlight */
+.generaltable tbody tr.r0, .flexible tbody tr.r0  {
+    background: #eee;
+    color: #333;
+}
+.glossarycategoryheader {
+    width: 100%;
+}
+/*surveys activities */
+.surveytable {
+    width: 100%;
+    max-height: 200px;
+    overflow: auto !important;
+    display: block;
+}
+th.optioncell label.ui-input-text {
+    width: 100%;
+}
+/*graphs and summarys that also get scrollview */
+div.resultgraph, div.reportsummary {
+    max-height: 300px;
+}
+.surveytable .ui-radio .ui-btn .ui-btn-inner .ui-btn-text {
+    display: block;
+    padding: .8em;
+    padding-bottom: .3em;
+}
+table.generaltable thead, table.generaltable th.header {
+    background: none;
+}
+table.quizreviewsummary td.cell, table.quizreviewsummary th.cell {
+    background: none;
+}
+/*blocks */
+.block_messages .info, .block_online_users .info, .block_recent_activity .activitydate {
+    color: inherit !important;
+}
+.block .minicalendar {
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.minicalendar {
+    border-collapse:collapse;
+}
+.minicalendar td, .minicalendar th {
+    border-color:#FFFFFF;
+    border-width:1px 0;
+}
+.block .minicalendar td {
+    border-color: transparent;
+}
+/*grades */
+table.user-grade {
+     font-size:110%;
+     border:0px solid black;
+}
+table#user-grades {
+    border-width: 0px;
+    font-size: inherit;
+}
+table.user-grade td.oddd1.b1t.b2b.b1l{
+    width: 0px;
+}
+.user-grade td.item {
+    border-left: 0px solid gray;
+    border-right: 1px solid #eee;
+}
+.user-grade thead {
+    border-bottom: 2px solid #666;
+}
+table#user-grades th.category {
+    border-width:0px 0px 0;
+}
+table.user-grade td.oddd1 {
+    background-color:inherit !important;
+    border: none;
+}
+table.user-grade td.b1b, table.user-grade td.b2b {
+    border-bottom:1px solid black;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+table.user-grade td.b1b, table.user-grade td.b2b {
+    border-bottom:0px solid black;
+}
+/*lessons */
+div.ui-radio label.afirst, div.ui-checkbox label.afirst {
+    display: none;
+}
+#page-mod-lesson-viewPAGE input[type="radio"], .path-mod-lesson input[type="radio"], .fitem input[type="checkbox"], .path-calendar input[type="radio"], #page-mod-wiki-createPAGE input[type="radio"] {
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    left: -1000px;
+}
+.path-mod-lesson .ongoing {
+    color:inherit;
+    border-bottom:  2px dashed #0000FF;
+    font-style: italic;
+    margin:0 0 1em;
+}
+.path-mod-lesson .branchbuttoncontainer.horizontal div, .path-mod-lesson .branchbuttoncontainer.horizontal form {
+    display: inherit;
+}
+/*tabs */
+.tabtree li.selected a {
+    cursor: default;
+}
+.tabtree ul li.here ul {
+    position: inherit;
+    top: inherit;
+    width: inherit;
+}
+/*messages and message areas */
+ .message .contactselector {
+    float:none;
+    width: 100%;
+}
+.message .messagearea {
+    border-left:0px solid #eee;
+    float:right;
+    min-height:200px;
+    padding-left:1%;
+    width:100%;
+}
+/*calendar and event stuff */
+.calendar_event_user {
+    background: none;
+}
+.calendartable .events-new ul, .calendartable .events-new li, .foldertree ul, .foldertree li {
+    list-style-type: none;
+    margin-left: 0px;
+}
+#page-calendar-view .eventlist .event .topic {
+    background:none;
+}
+.calendar-controls {
+    text-align: center;
+}
+.calendar-controls h1 {
+    text-align: center;
+    float:left !important;
+    display: inline;
+    width: auto !important;
+    text-align: center;
+}
+.calendar-controls .arrow_text {
+    display: none;
+}
+.calendar-controls .arrow_link.next {
+    float: right;
+}
+.calendar_event_course {
+    background-color:inherit;
+    border: 2px solid #FFD3BD;
+}
+.calendar_event_group {
+    background-color:inherit;
+    border: 2px solid #FEE7AE;
+}
+.calendar_event_global {
+    background-color:inherit;
+    border: 2px solid #D6F8CD;
+}
+.calendartable td.today.cell, .calendartable td.nottoday.cell {
+    border: 1px solid       #ccc;
+    background:             #eee;
+    font-weight: bold;
+    color:                  #444;
+    text-shadow: 0 1px 1px #f6f6f6;
+    background-image: -moz-linear-gradient(top,
+                            #fefefe,
+                            #eeeeee);
+    background-image: -webkit-gradient(linear,left top,left bottom,
+        color-stop(0,       #fdfdfd),
+        color-stop(1,       #eeeeee));
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fdfdfd', EndColorStr='#eeeeee')";
+}
+.calendartable td.weekend.cell {
+    border: 1px solid       #ccc;
+    background:             #fff;
+    font-weight: bold;
+    color:                  #444;
+    text-shadow: 0 1px 1px #fff;
+}
+.path-calendar .maincalendar .header .buttons {
+    float:none;
+}
+table.event {
+    width: 95%;
+}
+.event .picture.cell {
+    width: 40px;
+}
+.maincalendar .bottom {
+    margin-top: 1em;
+    text-align: center;
+}
+.maincalendar .bottom img {
+    background: #fff;
+    padding: .5em;
+    border: .2em solid #ccc;
+}
+/*hide calendar add event for now because of hash error on redirect of new event */
+.maincalendar .header .buttons form {
+    display: none;
+}
+.ui-icon.ui-icon-custom {
+    -moz-border-radius:0px;
+    background-color: inherit !important;
+    height: 26px;
+    width: 26px;
+}
+/*mymoodle */
+#page-my-indexPAGE .headingwrap h3.main a {
+    color: inherit !important;
+}
+#page-my-indexPAGE .box.coursebox {
+    padding: 0px;
+    margin-bottom: .4em;
+    width: 99%;
+}
+#page-my-indexPAGE h1 .header .title {
+    font-size: 75%;
+    text-align: center;
+}
+#page-my-indexPAGE .headingwrap {
+    margin-bottom: .4em;
+}
+#page-my-indexPAGE .coursebox .overview .name {
+    margin-left: 0px;
+}
+#page-my-indexPAGE .coursebox .overview .info {
+    margin-left: 5px;
+}
+#page-my-indexPAGE .block h3.main {
+    text-align: left;
+    margin-left: 15px;
+}
+#page-mod-folder-viewPAGE .foldertree {
+    width: auto;
+    padding-top: .5em;
+}
+.ui-icon-mynav {background-image:  url([[pix:theme|navs]]); background-position:  50% 50%; background-repeat:  no-repeat; background-size: 16px 16px;
+-webkit-background-size: 16px 16px;  }
+#myuser .ui-icon {background-image:  url([[pix:theme|iuser]]); background-position:  50% 51%; background-repeat:  no-repeat; background-size: 14px 14px; -webkit-background-size: 14px 14px; }
+#mycal .ui-icon {background-image:  url([[pix:theme|icalendar]]); background-position:  50% 50%; background-repeat:  no-repeat; background-size: 14px 14px; -webkit-background-size: 14px 14px; }
+#mymess .ui-icon {background-image:  url([[pix:theme|imessage]]); background-position:  50% 50%; background-repeat:  no-repeat; background-size: 14px 14px; -webkit-background-size: 14px 14px; }
+#mypower .ui-icon {background-image:  url([[pix:theme|power]]);
+background-position:  50% 50%; background-repeat:  no-repeat; background-size: 16px 16px;  }
+.ui2-icon-mypower {
+    background-image: url([[pix:theme|power]]) !important;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+}
+/*iphone4 retina display icons */
+@media all and (-webkit-min-device-pixel-ratio:2) {
+    .ui-icon-mynav {
+    background-image:  url([[pix:theme|navsI4]]);
+     }
+     #myuser .ui-icon {
+    background-image:  url([[pix:theme|iuserI4]]);
+     }
+     #mycal .ui-icon {
+     background-image:  url([[pix:theme|icalendarI4]]);
+     }
+     #mymess .ui-icon {
+     background-image:  url([[pix:theme|imessageI4]]);
+     }
+}
+.jsets {
+    text-align: center;
+    margin-top: .4em;
+}
+.label .ui-li-desc {
+    margin:0em 0 0.6em;
+    white-space:normal;
+}
+.redirectmessage .ui-btn-inner, #page-mid-quiz-reportPAGE .ui-btn-inner.ui-btn-corner-all {
+    white-space:normal !important;
+}
+/*grades and tables */
+div.gradeparent, #attemptsform .no-overflow, .usersubmissions .no-overflow {
+    width: 95%;
+    max-height: 400px;
+    overflow: auto;
+    padding-bottom: 3em;
+}
+#attemptsform .no-overflow, .usersubmissions .no-overflow {
+    max-height: 200px;
+}
+.userenrolment .col_enrol .enrolment, #page-admin-course-category .generalbox th, .editcourse .header, .results .header, #attempts .header, .generaltable .header, .plugincompattable th, .environmenttable th, .forumheaderlist th, .path-mod-assignment #dates .c0, .userenrolment tr.r1, .userenrolment tr.r0, table#user-grades .catlevel1, table#user-grades .r1, .path-grade-report-grader table tr.even td.cell, .path-grade-report-grader table tr.even th, .gradestable .lastrow td.cell, .gradestable .lastrow th.header, table#user-grades tr.avg td.cell, table#fixed_column tr.odd th, table#user-grades tr.odd th, table#user-grades tr.odd td.cell, table#user-grades td.topleft, table#user-grades .catlevel1, table#user-grades .r1, .path-grade-report-grader table tr.even td.cell, .path-grade-report-grader table tr.even th {
+    background-color:inherit !important;
+    background: inherit !important;
+}
+table#user-grades tr.avg td.cell {
+    color:inherit;
+    text-decoration: underline;
+    font-weight:800;
+}
+#outlinetable {
+    width: 98% !important;
+}
+#graded_users_selector {
+    float: none;
+    text-align: inherit;
+}
+/*wiki */
+#page-mod-wiki-editPAGE .hidden.ui-field-contain.ui-body.ui-br a.ui-btn, #page-mod-quiz-reportPAGE #commands .ui-btn {
+    display: none;
+}
+.path-mod-wiki .ui-radio .ui-btn-inner {
+   padding: 1.1em 35px 1.1em 1.1em;
+}
+.path-mod-wiki .mform .fitem {
+    width: auto;
+    margin: 0px 0px;
+    overflow: visible;
+}
+/*questionarre */
+body#page-mod-questionnaire-view .notice .buttons div, body#page-mod-questionnaire-view .notice .buttons form {
+    display: block;
+}
+body#page-mod-questionnaire-view td.qnInner, body#page-mod-questionnaire-preview td.qnInner, body#page-mod-questionnaire-report td.qnInner, body#page-mod-questionnaire-myreport td.qnInner, .reportQuestionTitle, td.qnInner {
+    background-color: transparent;
+    border: none;
+    display: inline;
+}
+.qnInnerTd, .reportQuestionNumber {
+    display: inline;
+}
+body#page-mod-questionnaire-view td.qnType, body#page-mod-questionnaire-preview td.qnType, body#page-mod-questionnaire-report td.qnType, body#page-mod-questionnaire-myreport td.qnType {
+    border-color: transparent;
+    border: none;
+}
+/*messages and overlays */
+#newmessageoverlay {
+  font-weight: normal;
+  border: 1px solid       #222;
+  background:             #444;
+  color:                  #ddd;
+  text-shadow: 0 -1px 0px #000;
+  background-image: -moz-linear-gradient(top,
+                          #333  0%,
+                          #333  5%,
+                          #444  15%,
+                          #444  60%,
+                          #222  100%);
+  background-image: -webkit-gradient(linear, center top, center bottom,
+    color-stop(0,         #333),
+    color-stop(5%,        #333),
+    color-stop(15%,       #444),
+    color-stop(60%,       #444),
+    color-stop(1,         #222));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#333333', EndColorStr='#222222')";
+    padding:20px;
+    padding-left: 0px;
+    padding-right: 10px;
+    position: inherit;
+    z-index: 9999;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100%;
+}
+#newmessageoverlay a {
+ color: #e98a15;
+  font-weight: bold;
+  }
+.resourcecontent.resourcepdf object {
+    overflow: auto;
+}
+.resourcepdf #resourceobject {
+    min-height: 400px;
+    margin-bottom: 20px;
+}
+.mobileresource {
+    border: 1px solid #666;
+    z-index: 99999;
+    position: absolute;
+    top: 45px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    background: #000 url([[pix:theme|clip]]) no-repeat 50% 50%;
+}
+/*end scrollview changes */
+#dock {
+    display: none;
+}
+/* reports and logs */
+.groupmanagementtable td{
+}
+.boxwidthnormal, .boxwidthwide, .capabilitysearchui {
+    width: auto;
+}
+/*choice */
+ul.choices {
+    margin-left: 0em;
+}
+ul.choices, ul.choices li {
+    list-style-type: none;
+}
+.path-mod-choice .horizontal .choices .option {
+    display: inherit;
+    padding-right: 0px;
+}
+li.reportoption, #page-mod-choice-report .downloadreport ul li {
+    display: block;
+    float: none;
+    list-style: none outside none;
+    padding: 0;
+}
+#page-mod-scorm-player #tocbox {
+    font-size:0.8em;
+    left:0;
+    position:relative;
+    width:100% !important;
+}
+.path-mod-choice .anonymous, .path-mod-choice .names {
+    margin-left:auto;
+    margin-right:auto;
+    width:100%;
+    overflow: auto;
+}
+.path-mod-choice .ui-scrollview-clip .names {
+    max-width: 1500px;
+    min-width: 480px;
+}
+.path-mod-choice .horizontal, .path-mod-choice .vertical {
+    margin-left:1%;
+    margin-right:1%;
+}
+table.results.anonymous {
+    display: block;
+    max-height: 300px;
+}
+/*chat */
+.path-mod-chat-gui_ajax .ui-page {
+    background: none !important;
+}
+.landscape #chatpage.ui-page, .portrait #chatpage.ui-page {
+    min-height:0;
+}
+#page-mod-chat-gui_ajax-index #input-message {
+    width: 70% !important;
+    display: inline !important;
+}
+#chat-input-area {
+    padding-bottom: 5px;
+}
+#chat-input-area div.ui-btn {
+    float: right !important;
+    max-width: 40%;
+    margin-top: 0px !important;
+}
+#chat-input-area #choosetheme {
+    display: none;
+}
+.path-mod-chat .userpicture {
+    width: 20px;
+    height: 20px;
+}
+#chatback {
+    position: absolute;
+    top: .5em;
+    right: .1em;
+}
+#page-mod-chat-gui_ajax-index #layout-doc {
+    width: 100% !important;
+}
+#page-mod-chat-gui_ajax-index #yui-gen5 {
+    width: 100% !important;
+}
+#page-mod-chat-gui_ajax-index #yui-gen0, #page-mod-chat-gui_ajax-index yui-gen1, #page-mod-chat-gui_ajax-index #yui-gen0 .yui-layout-bd.yui-layout-bd-nohd.yui-layout-bd-noft {
+    width: 25% !important;
+    display: none;
+}
+#page-mod-chat-gui_ajax-index #yui-gen2 {
+    display: none !important;
+}
+#page-mod-chat-gui_ajax-index #yui-gen6, #page-mod-chat-gui_ajax-index #yui-gen6 .yui-layout-bd.yui-layout-bd-nohd.yui-layout-bd-noft {
+    width: 99% !important;
+}
+/*show nonjs comments only */
+a.showcommentsnonjs {
+    display: block !important;
+}
+a.comment-link, .block_comments a.showcommentsnonjs, .block_comments .comment-area {
+    display: none !important;
+}
+.block_comments .comment-ctrl {
+    display: block;
+}
+/*collapsed topic format*/
+#thetopics {
+    table-layout: inherit !important;
+    width: 100%;
+    display: block !important;
+}
+#page-course-view-topcollPAGE .section td.content, col.content {
+    text-align: left;
+    width: 100% !important;
+    overflow: hidden;
+}
+#page-course-view-topcollPAGE .section td.content {
+    padding: .5em;
+}
+#page-course-view-topcollPAGE td.left.side, #page-course-view-topcollPAGE td.right.side {
+    display: none;
+}
+#page-course-view-topcollPAGE tr.cps td a {
+    background: none !important;
+    color: inherit !important;
+    padding: 7px 0 7px 0px !important;
+}
+tr.cps td span {
+    font-style: inherit !important;
+    font-size: 1.12em !important;
+}
+#page-course-view-topcollPAGE .section.separator, td.cps_centre {
+    display: none;
+}
+tr.cps {
+    background-color: inherit !important;
+    color: inherit !important;
+}
+.opencps .ui-btn-inner .ui-icon-arrow-r {
+    background-position: -216px 50%;
+}
+tr.cps td span.ui-li-count {
+    font-size: .6em !important;
+    right: 12px;
+}
+#page-course-view-topcollPAGE .cps .ui-btn-inner {
+    white-space: normal;
+}
+/*filemanager fixes and other button fixes and adds */
+#page-mod-quiz-reportPAGE #commands input[type="submit"], #newmessagelinks a, .que input.submit {
+    display: block !important;
+    height: 3em !important;
+    width: 95% !important;
+    position: relative !important;
+    left: 10px !important;
+    margin-top: .3em;
+    margin-bottom: .3em;
+    border: 1px solid       #ccc;
+    background:             #eee;
+    font-weight: bold;
+    color:                  #444;
+    cursor: pointer;
+    text-shadow: 0 1px 1px #f6f6f6;
+    text-decoration: none;
+    background-image: -moz-linear-gradient(top,
+                            #fefefe,
+                            #eeeeee);
+    background-image: -webkit-gradient(linear,left top,left bottom,
+        color-stop(0,       #fdfdfd),
+        color-stop(1,       #eeeeee));
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fdfdfd', EndColorStr='#eeeeee')";
+    -moz-border-radius: 1em; -webkit-border-radius: 1em; border-radius: 1em;
+}
+#newmessagelinks a {
+    line-height: 3em;
+}
+.filemanager-toolbar a.ui-btn {
+    display: none;
+}
+.yui-panel-container.show-scrollbars {
+    position: absolute !important;
+    top: 0px !important;
+    left: 0px !important;
+    width: 100% !important;
+}
+.yui-panel-container.show-scrollbars .yui-layout, .yui-panel-container.show-scrollbars .yui-layout-unit-center, .yui-panel-container.show-scrollbars .yui-layout-doc, .yui-panel-container.show-scrollbars .yui-layout-bd, .yui-panel-container.show-scrollbars .yui-layout-wrap {
+    width: 100% !important;
+}
+.yui-panel-container.show-scrollbars, .yui-tt.show-scrollbars {
+overflow:auto !important;
+}
+/*hide skip link br tags on front page only, hope this is fixed by moodle sometime soon */
+#page-site-indexPAGE br, .section .content br {
+    display: none;
+}
+/*settings to hide certain thins */
+.topicnoshow .sitetopic {
+    display: none !important;
+}
+/*hide category tree controls because they don't work with touch events. */
+.course_category_tree .controls {
+    display: none;
+}
+/*scrollview */
+.ui-scrollview-clip {
+}
+.ui-scrollview-view {
+}
+.ui-scrolllistview .ui-li-divider {
+    z-index: 10;
+}
+.ui-scrollbar {
+    position: absolute;
+    overflow: hidden;
+    -webkit-transition: opacity 500ms;
+    -moz-transition: opacity 500ms;
+    transition: opacity 500ms;
+    opacity: .3;
+}
+.ui-scrollbar-visible {
+    opacity: 1;
+}
+.ui-scrollbar-y {
+    top: 2px;
+    right: 2px;
+    bottom: 8px;
+    width: 5px;
+}
+.ui-scrollbar-x {
+    right: 8px;
+    bottom: 2px;
+    left: 2px;
+    height: 5px;
+}
+.ui-scrollbar-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.ui-scrollbar-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+.ui-scrollbar-y .ui-scrollbar-thumb {
+    width: 5px;
+    height: 100%;
+}
+.ui-scrollbar-x .ui-scrollbar-thumb {
+    width: 100%;
+    height: 5px;
+}
+/*some loader overrides to hide the loading message */
+body .ui-loader {
+    background: none;
+    border: none;
+    padding: 1em;
+    background-color: #000;
+    opacity: 1;
+    background-position: center center;
+    -webkit-border-top-left-radius: 0.7em;
+    -webkit-border-top-right-radius: 0.7em;
+    -webkit-border-bottom-right-radius: 0.7em;
+    -webkit-border-bottom-left-radius: 0.7em;
+    -moz-border-radius-topleft: 0.7em;
+    -moz-border-radius-topright: 0.7em;
+    -moz-border-radius-bottomright: 0.7em;
+    -moz-border-radius-bottomleft: 0.7em;
+    border-top-left-radius: 0.7em;
+    border-top-right-radius: 0.7em;
+    border-bottom-right-radius: 0.7em;
+    border-bottom-left-radius: 0.7em;
+    width: 35px;
+    margin-left: -35px;
+}
+body .ui-loader.ui-body-e {
+    width: inherit;
+    color: #fff;
+    padding: 2em;
+}
+body .ui-loader h1 {
+    display: none;
+}
+body .ui-loader.ui-body-e h1 {
+    display: inherit;
+}
+.ui-loader .ui-icon { opacity: 1; }
+/*current highlight */
+.weeks .current .headingwrap, .topics .current div.headingwrap, .current .ui-bar-b, .current .left.side, .tabtree ul.tabrow0 li.selected a, .ui-btn-active, #page-course-view-topcollPAGE .current {
+    border: 1px solid #F7C942;
+    background: #fadb4e;
+    color: #333;
+    text-shadow: 0 1px 0    #fff;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#fceda7), to(#fadb4e)); /* Saf4+, Chrome */
+    background-image: -webkit-linear-gradient(top, #fceda7, #fadb4e); /* Chrome 10+, Saf5.1+ */
+    background-image:    -moz-linear-gradient(top, #fceda7, #fadb4e); /* FF3.6 */
+    background-image:     -ms-linear-gradient(top, #fceda7, #fadb4e); /* IE10 */
+    background-image:      -o-linear-gradient(top, #fceda7, #fadb4e); /* Opera 11.10+ */
+    background-image:         linear-gradient(top, #fceda7, #fadb4e);
+}
+.ui-btn-active a.ui-link-inherit {  color: #333; }
+/*changes to nav bar at top and header */
+/*necessary to set the navbar the same as the buttons because floats are not perfect ... */
+.ui-header .ui-navbar {
+    background:             #eee;
+    background-image: -moz-linear-gradient(top,
+                            #fefefe,
+                            #e7e7e7);
+    background-image: -webkit-gradient(linear,left top,left bottom,
+        color-stop(0,       #fdfdfd),
+        color-stop(1,       #e7e7e7));
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fdfdfd', EndColorStr='#eeeeee')";
+    border-top: 1px solid #666;
+    -webkit-box-shadow: inset 0px 1px 1px #fff;
+     -moz-box-shadow: inset 0px 1px 1px #fff;
+     box-shadow: inset 0px 1px 1px #fff;
+}
+.ui-bar-a.ui-header, .ui-bar-b.ui-header {
+    border-bottom: 1px solid #ccc;
+}
+.ui-navbar .ui-select {
+    width: 100% !important;
+    display: block !important;
+}
+.ui-navbar .ui-select2 .ui-btn-corner-all, .ui-navbar .ui-select .ui-btn-inner {
+    border-radius: 0em 0em 0em 0em;
+}
+.ui-navbar .ui-select .ui-btn-icon-right .ui-btn-inner {
+    padding-right: 5px;
+}
+.ui-header .ui-navbar li .ui-btn {
+    -webkit-border-radius:              .4em /*{global-radii-blocks}*/;
+    -webkit-border-radius:  .4em .4em .4em .4em;
+    -moz-border-radius:  .4em .4em .4em .4em;
+     border-radius: .4em .4em .4em .4em;
+     border: 1px solid #ccc !important;
+     border-top: 1px solid #aaa !important;
+     margin: .4em;
+     margin-left: .4em;
+     margin-right: 0em;
+     -webkit-box-shadow: 1px 1px 1px #fff, inset 1px 1px 1px #eee;
+     -moz-box-shadow: 1px 1px 1px #fff, inset 1px 1px 1px #eee;
+     box-shadow: 1px 1px 1px #fff, inset 1px 1px 1px #eee;
+     text-shadow: 0 1px 1px #FFFFFF;
+}
+.ui-header .ui-navbar li:last-child .ui-btn {
+    margin-right: .4em;
+}
+.ui-header .ui-navbar li .ui-btn .ui-btn-inner {
+    padding-bottom: 0.6em;
+    padding-top: 0.5em;
+}
+/*header bar gradient corrections */
+.mymobileheader.ui-bar-b {
+    background-image: -moz-linear-gradient(top,
+                            #81a8ce 10%,
+                            #5e87b0 75%);
+    background-image: -webkit-gradient(linear,left top,left bottom,
+        color-stop(0.05,        #81a8ce),
+        color-stop(0.55,        #5e87b0));
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#81a8ce', EndColorStr='#5e87b0')";
+}
+.mymobileheader.ui-bar-a {
+    background-image: -moz-linear-gradient(top,
+                            #3c3c3c,
+                            #111111);
+    background-image: -webkit-gradient(linear,left top,left bottom,
+        color-stop(0.05,    #3c3c3c),
+        color-stop(.55,         #111111));
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#3c3c3c', EndColorStr='#111111')";
+}
+/*split page stuff for tablets */
+    div.tablets, #sliderdiv, .has-myblocks .jsetsbar {
+        display: none;
+    }
+@media all and (min-width: 650px){
+    .has-myblocks div.tablets, .content-secondary, #sliderdiv {
+        display: block;
+    }
+    .type-home .ui-content,
+    .type-interior .ui-content {
+        padding: 0;
+    }
+    .type-interior .ui-content {
+        overflow: hidden;
+    }
+    .has-myblocks .content-secondary {
+        text-align: left;
+        float: left;
+        width: 45%;
+        background: none;
+        border-top: 0;
+    }
+    .has-myblocks .content-secondary,
+    .has-myblocks .type-interior .content-secondary {
+        margin: 0px 0 20px 2%;
+        padding: 10px 4% 0 0;
+        background: none;
+    }
+    .type-index .content-secondary {
+        padding: 0;
+    }
+    .type-index .content-secondary .ui-listview {
+        margin: 0;
+    }
+    .has-myblocks .content-primary {
+        width: 45%;
+        float: right;
+        margin-top: 0px;
+        margin-right: 1%;
+        padding-right: 1%;
+    }
+    .has-myblocks .content-primary ul:first-child {
+        margin-top: 0;
+    }
+    .has-myblocks .content-secondary h2 {
+        position: absolute;
+        left: -9999px;
+    }
+    .has-myblocks .type-interior .content-primary {
+        padding: 1.5em 6% 3em 0;
+        margin: 0;
+    }
+    .has-myblocks .type-interior  .content-secondary .ui-li-divider {
+        padding-top: 1em;
+        padding-bottom: 1em;
+    }
+    .has-myblocks .type-interior .content-secondary {
+        margin: 0;
+        padding: 0;
+    }
+}
+@media all and (min-width: 750px){
+    .has-myblocks .content-secondary {
+        width: 34%;
+    }
+    .has-myblocks .content-primary {
+        width: 56%;
+        padding-right: 1%;
+    }
+}
+@media all and (min-width: 1200px){
+    .has-myblocks .content-secondary {
+        width: 30%;
+        padding-right:6%;
+        margin: 0px 0 20px 5%;
+    }
+    .has-myblocks .type-interior .content-secondary {
+        margin: 0;
+        padding: 0;
+    }
+    .has-myblocks .content-primary {
+        width: 50%;
+        margin-right: 5%;
+        padding-right: 3%;
+    }
+    .has-myblocks .type-interior .content-primary {
+        width: 60%;
+    }
+}
+.tablets {
+    text-align: center;
+    padding-bottom: 1em;
+}
+.tablets span {
+    font-weight: bold;
+    line-height: 1.3;
+}
+.tablets h1 {
+    text-align: center;
+    margin-top: 0px;
+    padding-bottom: .5em;
+    background: url([[pix:theme|linevert]]) repeat-x 0 100%;
+}
+.has-myblocks .content-secondary .ui-collapsible-set {
+    padding-bottom: 1em;
+}
+.has-myblocks .content-secondary div.ui-slider {
+    width: 100%;
+}
+#profcol .userimg a img {
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    max-width: 100px;
+    max-height: 100px;
+}
