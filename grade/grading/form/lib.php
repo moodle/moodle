@@ -438,7 +438,7 @@ abstract class gradingform_controller {
      * @return gradingform_instance
      */
     public function create_instance($raterid, $itemid = null) {
-        global $DB;
+
         // first find if there is already an active instance for this itemid
         if ($itemid && $current = $this->get_current_instance($raterid, $itemid)) {
             return $this->get_instance($current->copy($raterid, $itemid));
@@ -523,7 +523,6 @@ abstract class gradingform_controller {
      * @return array
      */
     public static function sql_search_where($token) {
-        global $DB;
 
         $subsql = array();
         $params = array();
