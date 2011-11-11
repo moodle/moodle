@@ -72,7 +72,7 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
 
         require_once($CFG->dirroot.'/mod/lti/lib.php');
 
-        $newitemid = lti_add_instance($data);
+        $newitemid = lti_add_instance($data, null);
 
         // insert the basiclti record
         //$newitemid = $DB->insert_record('lti', $data);
