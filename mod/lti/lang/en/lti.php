@@ -126,6 +126,7 @@ $string['modulenameplural'] = 'basicltis';
 $string['modulenamepluralformatted'] = 'LTI Instances';
 $string['never'] = 'Never';
 $string['noattempts'] = 'No attempts have been made on this tool instance';
+$string['noltis'] = 'There are no lti instances';
 $string['noservers'] = 'No servers found';
 $string['notypes'] = 'There are currently no LTI tools setup in Moodle. Click the Install link above to add some.';
 $string['noviewusers'] = 'No users were found with permissions to use this tool';

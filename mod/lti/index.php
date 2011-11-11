@@ -69,7 +69,7 @@ echo $OUTPUT->heading(get_string("modulenamepluralformatted", "lti"));
 
 // Get all the appropriate data
 if (! $basicltis = get_all_instances_in_course("lti", $course)) {
-    notice("There are no basicltis", "../../course/view.php?id=$course->id");
+    notice(get_string('noltis', 'lti'), "../../course/view.php?id=$course->id");
     die;
 }
 
