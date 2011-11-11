@@ -1,45 +1,188 @@
-body, body.has_dock {margin:25px 3%;}
-body, div, p, li, input, option, textarea {font-size: 10pt; line-height: 1.5em;}
-body, div, p, li, input, option, textarea, h1, h2, h3, h4, h5 {font-family: Georgia,Times,"Times New Roman",serif;}
-h1.main, h2.main, h3.main, h4.main, h5.main, h6.main {text-align: center;}
-.generalbox {padding: 10px; margin-bottom: 15px;}
-.generaltable, .userinfobox {margin-left: auto; margin-right: auto;}
-#notice.generalbox {margin-left: auto; margin-right: auto; width: 60%;}
-.notifyproblem {padding: 10px; color: #660000; text-align: center;}
-.notifysuccess {padding: 10px; color: #006600; text-align: center;}
-.paging {text-align: center;}
+/**
+ * Core
+ */
+
+body,
+body.has_dock {
+    margin: 25px 3%;
+}
+
+#page, div, p, li, input, option, textarea {
+    font-size: 10pt;
+    line-height: 1.5em;
+}
+
+#page, div, p, li, input, option, textarea, h1, h2, h3, h4, h5 {
+    font-family: Georgia,Times,"Times New Roman",serif;
+}
+
+h1.main,
+h2.main,
+h3.main,
+h4.main,
+h5.main,
+h6.main {
+    text-align: center;
+}
+
+.generalbox {
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+#notice.generalbox,
+.generaltable,
+.userinfobox {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#notice.generalbox {
+    width: 60%;
+}
+
+.notifyproblem,
+.notifysuccess {
+    padding: 10px;
+}
+
+.notifyproblem {
+    color: #660000;
+}
+.notifysuccess {
+    color: #006600;
+}
+
+.notifyproblem,
+.notifysuccess,
+.paging {
+    text-align: center;
+}
 
 /**
  * Tabs
  */
-.tabtree {position: relative; margin-bottom: 3.5em;}
-.tabtree .tabrow0 {text-align: center; width: 100%; margin: 1em 0px;}
-.tabtree .tabrow0 li {display: inline; margin-right: -4px;}
-.tabtree .tabrow0 li.here a {position: relative; z-index: 102;}
-.tabtree .tabrow0 li a {background-image: url([[pix:theme|tab/left]]); padding-left: 14px; padding-top: 10px; background-repeat: no-repeat; padding-bottom: 3px; margin-bottom: -1px;}
-.tabtree .tabrow0 li a:hover {background-image: url([[pix:theme|tab/left_hover]]);}
-.tabtree .tabrow0 li a span {background-image: url([[pix:theme|tab/right]]); background-repeat: no-repeat; background-position: 100% 0%; padding-right: 14px; padding-top: 10px; padding-bottom: 3px;}
-.tabtree .tabrow0 li a:hover span {background-image: url([[pix:theme|tab/right_hover]]);}
+.tabtree {
+    position: relative;
+    margin-bottom: 3.5em;
+}
+
+.tabtree .tabrow0 {
+    text-align: center;
+    width: 100%;
+    margin: 1em 0px;
+}
+
+.tabtree .tabrow0 li {
+    display: inline;
+    margin-right: -4px;
+}
+
+.tabtree .tabrow0 li.here a {
+    position: relative;
+    z-index: 102;
+}
+
+.tabtree .tabrow0 li a {
+    background-image: url([[pix:theme|tab/left]]);
+    padding-left: 14px;
+    padding-top: 10px;
+    background-repeat: no-repeat;
+    padding-bottom: 3px;
+    margin-bottom: -1px;
+}
+
+.tabtree .tabrow0 li a:hover {
+    background-image: url([[pix:theme|tab/left_hover]]);
+}
+
+.tabtree .tabrow0 li a span {
+    background-image: url([[pix:theme|tab/right]]);
+    background-repeat: no-repeat;
+    background-position: 100% 0%;
+    padding-right: 14px;
+    padding-top: 10px;
+    padding-bottom: 3px;
+}
+
+.tabtree .tabrow0 li a:hover span {
+    background-image: url([[pix:theme|tab/right_hover]]);
+}
+
 .tabtree .tabrow0 ul,
-.tabtree .tabrow0 div {background-image: url([[pix:theme|tab/tabrow1]]); background-position: 0% 50%; position: absolute; width: 100%; border-top: 1px solid #aaa; padding: 0.25em 0px; top: 100%; margin: 0px;}
-.tabtree .tabrow0 .empty {height: 1px; overflow: hidden; padding: 0px; position: absolute;}
+.tabtree .tabrow0 div {
+    background-image: url([[pix:theme|tab/tabrow1]]);
+    background-position: 0% 50%;
+    position: absolute;
+    width: 100%;
+    border-top: 1px solid #aaa;
+    padding: 0.25em 0px;
+    top: 100%;
+    margin: 0px;
+}
+
+.tabtree .tabrow0 .empty {
+    height: 1px;
+    overflow: hidden;
+    padding: 0px;
+    position: absolute;
+}
+
 .tabtree .tabrow1 li a,
 .tabtree .tabrow1 li a:hover,
 .tabtree .tabrow1 li a span,
-.tabtree .tabrow1 li a:hover span {background-image: none !important;}
+.tabtree .tabrow1 li a:hover span {
+    background-image: none;
+}
 
-.groupmanagementtable {width: 90%;}
-.groupmanagementtable td {vertical-align: top; border-width: 0px;}
-.groupmanagementtable td p {margin: 0px;}
+.groupmanagementtable {
+    width: 90%;
+}
+
+.groupmanagementtable td {
+    vertical-align: top;
+    border-width: 0px;
+}
+.groupmanagementtable td p {
+    margin: 0px;
+}
 
 /**
  * Themes
  */
-#page-admin-theme-index .generalbox {border: none;background: none;}
-.theme_screenshot {float: left; width: 300px;}
-.theme_screenshot img {width: 275px;}
-.theme_screenshot h2 {font-size: 2em; margin-top: 0;}
-.theme_screenshot h3 {font-size: 0.9em; margin: 1em 0 0;}
-.theme_screenshot p {font-size: 0.9em; margin: 0 0 1em;}
-.theme_description {margin-left: 300px;}
-.theme_description h2 {padding-top: 0.5em;}
+#page-admin-theme-index .generalbox {
+    border: 0 none;
+    background: none;
+}
+
+.theme_screenshot {
+    float: left;
+    width: 300px;
+}
+
+.theme_screenshot img {
+    width: 275px;
+}
+
+.theme_screenshot h2 {
+    font-size: 2em;
+    margin-top: 0;
+}
+
+.theme_screenshot h3 {
+    font-size: 0.9em;
+    margin: 1em 0 0;
+}
+
+.theme_screenshot p {
+    font-size: 0.9em;
+    margin: 0 0 1em;
+}
+
+.theme_description {
+    margin-left: 300px;
+}
+
+.theme_description h2 {
+    padding-top: 0.5em;
+}
