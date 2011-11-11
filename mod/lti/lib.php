@@ -48,8 +48,6 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot.'/mod/lti/locallib.php');
-
 /**
  * List of features supported in URL module
  * @param string $feature FEATURE_xx constant for requested feature
@@ -80,7 +78,8 @@ function lti_supports($feature) {
  * @return int The id of the newly inserted basiclti record
  **/
 function lti_add_instance($lti, $mform) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
     $lti->timecreated = time();
     $lti->timemodified = $lti->timecreated;
@@ -112,7 +111,8 @@ function lti_add_instance($lti, $mform) {
  * @return boolean Success/Fail
  **/
 function lti_update_instance($lti, $mform) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
     $lti->timemodified = time();
     $lti->id = $lti->instance;
@@ -171,7 +171,8 @@ function lti_delete_instance($id) {
  * @return cached_cm_info info
  */
 function lti_get_coursemodule_info($coursemodule) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
     if (!$lti = $DB->get_record('lti', array('id' => $coursemodule->instance),
             'icon, secureicon')) {
