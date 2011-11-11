@@ -86,7 +86,8 @@ if (!empty($add)) {
         $data->introeditor = array('text'=>'', 'format'=>FORMAT_HTML, 'itemid'=>$draftid_editor); // TODO: add better default
     }
 
-    if (plugin_supports('mod', $data->modulename, FEATURE_ADVANCED_GRADING, false)) {
+    if (plugin_supports('mod', $data->modulename, FEATURE_ADVANCED_GRADING, false)
+            and has_capability('moodle/grade:managegradingforms', $context)) {
         require_once($CFG->dirroot.'/grade/grading/lib.php');
 
         $data->_advancedgradingdata['methods'] = grading_manager::available_methods();
@@ -164,7 +165,8 @@ if (!empty($add)) {
         $data->introeditor = array('text'=>$currentintro, 'format'=>$data->introformat, 'itemid'=>$draftid_editor);
     }
 
-    if (plugin_supports('mod', $data->modulename, FEATURE_ADVANCED_GRADING, false)) {
+    if (plugin_supports('mod', $data->modulename, FEATURE_ADVANCED_GRADING, false)
+            and has_capability('moodle/grade:managegradingforms', $context)) {
         require_once($CFG->dirroot.'/grade/grading/lib.php');
         $gradingman = get_grading_manager($context, 'mod_'.$data->modulename);
         $data->_advancedgradingdata['methods'] = $gradingman->get_available_methods();
@@ -594,10 +596,10 @@ if ($mform->is_cancelled()) {
         }
     }
 
-    if (plugin_supports('mod', $fromform->modulename, FEATURE_ADVANCED_GRADING, false)) {
+    if (plugin_supports('mod', $fromform->modulename, FEATURE_ADVANCED_GRADING, false)
+            and has_capability('moodle/grade:managegradingforms', $modcontext)) {
         require_once($CFG->dirroot.'/grade/grading/lib.php');
-        $context = get_context_instance(CONTEXT_MODULE, $fromform->coursemodule);
-        $gradingman = get_grading_manager($context, 'mod_'.$fromform->modulename);
+        $gradingman = get_grading_manager($modcontext, 'mod_'.$fromform->modulename);
         $showgradingmanagement = false;
         foreach ($gradingman->get_available_areas() as $areaname => $aretitle) {
             $formfield = 'advancedgradingmethod_'.$areaname;
