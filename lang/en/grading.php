@@ -38,7 +38,7 @@ $string['gradingmanagementtitle'] = 'Advanced grading: {$a->component} ({$a->are
 $string['gradingmethod'] = 'Grading method';
 $string['gradingmethod_help'] = 'Choose the advanced grading method that should be used for calculating grades in the given context.
 
-To disable advance grading and switch back to the default grading mechanism, choose \'Simple direct grading\'.';
+To disable advanced grading and switch back to the default grading mechanism, choose \'Simple direct grading\'.';
 $string['gradingmethodnone'] = 'Simple direct grading';
 $string['gradingmethods'] = 'Grading methods';
 $string['manageactionclone'] = 'Create new grading form from a template';
