@@ -54,7 +54,7 @@ foreach ($qtypes as $qtypename => $qtype) {
         $counts[$qtypename]->numquestions = 0;
         $counts[$qtypename]->numhidden = 0;
     }
-    $needed[$qtypename] = $counts[$qtypename]->numquestions > 0 &&
+    $needed[$qtypename] = $counts[$qtypename]->numquestions > 0 ||
             $pluginmanager->other_plugins_that_require($qtype->plugin_name());
     $counts[$qtypename]->numquestions -= $counts[$qtypename]->numhidden;
 }
