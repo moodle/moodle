@@ -347,7 +347,7 @@ class plugin_manager {
             'filter' => array(
                 'activitynames', 'algebra', 'censor', 'emailprotect',
                 'emoticon', 'mediaplugin', 'multilang', 'tex', 'tidy',
-                'urltolink', 'mod_data', 'mod_glossary'
+                'urltolink', 'data', 'glossary'
             ),
 
             'format' => array(
