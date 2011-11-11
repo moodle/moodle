@@ -169,7 +169,7 @@ abstract class page_wiki {
             $currentgroup = groups_get_activity_group($PAGE->cm);
             $manage = has_capability('mod/wiki:managewiki', $PAGE->cm->context);
             $edit = has_capability('mod/wiki:editpage', $PAGE->context);
-            if (!$manage and !($edit and groups_is_member($currentgroup))) { 
+            if (!$manage and !($edit and groups_is_member($currentgroup))) {
                 unset($this->tabs['edit']);
             }
         } else {
