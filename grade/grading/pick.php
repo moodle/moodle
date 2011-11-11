@@ -147,7 +147,8 @@ if ($searchdata = $searchform->get_data()) {
 $sql = "SELECT DISTINCT gd.id, gd.areaid, gd.name, gd.description, gd.descriptionformat, gd.timecreated,
                         gd.usercreated, gd.timemodified, gd.usermodified
           FROM {grading_definitions} gd
-          JOIN {grading_areas} ga ON (gd.areaid = ga.id)";
+          JOIN {grading_areas} ga ON (gd.areaid = ga.id)
+          JOIN {context} cx ON (ga.contextid = cx.id)";
 // join method-specific tables from the plugin scope
 $sql .= $targetcontrollerclass::sql_search_from_tables('gd.id');
 
