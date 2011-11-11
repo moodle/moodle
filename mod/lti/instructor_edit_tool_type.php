@@ -46,8 +46,6 @@ if (!empty($typeid)) {
     }
 }
 
-echo $OUTPUT->header();
-
 $data = data_submitted();
 
 if (isset($data->submitbutton) && confirm_sesskey()) {
@@ -64,10 +62,12 @@ if (isset($data->submitbutton) && confirm_sesskey()) {
 
         //Output script to update the calling window.
         $script = "
-            <script type=\"text/javascript\">
-                window.opener.M.mod_lti.editor.updateToolType({$json});
-                window.close();
-            </script>
+            <html>
+                <script type=\"text/javascript\">
+                    window.opener.M.mod_lti.editor.updateToolType({$json});
+                    window.close();
+                </script>
+            </html>
         ";
 
         echo $script;
@@ -83,10 +83,12 @@ if (isset($data->submitbutton) && confirm_sesskey()) {
 
         //Output script to update the calling window.
         $script = "
-            <script type=\"text/javascript\">
-                window.opener.M.mod_lti.editor.addToolType({$json});
-                window.close();
-            </script>
+            <html>
+                <script type=\"text/javascript\">
+                    window.opener.M.mod_lti.editor.addToolType({$json});
+                    window.close();
+                </script>
+            </html>
         ";
 
         echo $script;
@@ -95,9 +97,11 @@ if (isset($data->submitbutton) && confirm_sesskey()) {
     }
 } else if (isset($data->cancel)) {
     $script = "
-        <script type=\"text/javascript\">
-            window.close();
-        </script>
+        <html>
+            <script type=\"text/javascript\">
+                window.close();
+            </script>
+        </html>
     ";
 
     echo $script;
@@ -109,6 +113,8 @@ if ($action == 'delete') {
     lti_delete_type($typeid);
     die;
 }
+
+echo $OUTPUT->header();
 
 echo $OUTPUT->heading(get_string('toolsetup', 'lti'));
 

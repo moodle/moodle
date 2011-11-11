@@ -107,9 +107,9 @@
             }
 
             var selectedToolType = typeSelector.get('value');
-            var selectedOption = typeSelector.one('option[value=' + selectedToolType + ']');
+            var selectedOption = typeSelector.one('option[value="' + selectedToolType + '"]');
 
-            //A specific tool type is selected (not "auto")"
+            //A specific tool type is selected (not "auto")
             if(selectedToolType > 0){
                 //If the entered domain matches the domain of the tool configuration...
                 var domainRegex = /(?:https?:\/\/)?(?:www\.)?([^\/]+)(?:\/|$)/i;
@@ -158,7 +158,7 @@
         getSelectedToolTypeOption: function(){
             var typeSelector = Y.one('#id_typeid');
 
-            return typeSelector.one('option[value=' + typeSelector.get('value') + ']');
+            return typeSelector.one('option[value="' + typeSelector.get('value') + '"]');
         },
 
         /**
@@ -285,19 +285,21 @@
 
             //Adding the new tool may affect which tool gets matched automatically
             this.clearToolCache();
-            this.updateAutomaticToolMatch();
+            this.updateAutomaticToolMatch(Y.one('#id_toolurl'));
+            this.updateAutomaticToolMatch(Y.one('#id_securetoolurl'));
         },
 
         updateToolType: function(toolType){
             var typeSelector = Y.one('#id_typeid');
 
-            var option = typeSelector.one('option[value=' + toolType.id + ']');
+            var option = typeSelector.one('option[value="' + toolType.id + '"]');
             option.set('text', toolType.name)
                   .set('domain', toolType.tooldomain);
 
             //Editing the tool may affect which tool gets matched automatically
             this.clearToolCache();
-            this.updateAutomaticToolMatch();
+            this.updateAutomaticToolMatch(Y.one('#id_toolurl'));
+            this.updateAutomaticToolMatch(Y.one('#id_securetoolurl'));
         },
 
         deleteTool: function(toolTypeId){
@@ -310,7 +312,8 @@
 
                         //Editing the tool may affect which tool gets matched automatically
                         self.clearToolCache();
-                        self.updateAutomaticToolMatch();
+                        self.updateAutomaticToolMatch(Y.one('#id_toolurl'));
+                        self.updateAutomaticToolMatch(Y.one('#id_securetoolurl'));
                     },
                     failure: function(){
 
