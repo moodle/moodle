@@ -1267,8 +1267,17 @@ class dml_test extends UnitTestCase {
         }
 
         // test get_records passing non-existing table
+        // with params
         try {
             $records = $DB->get_records('xxxx', array('id' => 0));
+            $this->fail('An Exception is missing, expected due to query against non-existing table');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+            $this->assertEqual($e->errorcode, 'ddltablenotexist');
+        }
+        // and without params
+        try {
+            $records = $DB->get_records('xxxx', array());
             $this->fail('An Exception is missing, expected due to query against non-existing table');
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
