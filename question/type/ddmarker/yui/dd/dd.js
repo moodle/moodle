@@ -144,14 +144,6 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         after_image_load : function () {
             this.reposition_drags();
             Y.later(500, this, this.reposition_drags, [], true);
-//            if (!this.get('readonly')) {
-//                this.doc.drags().set('tabIndex', 0);
-//                this.doc.drags().each(
-//                    function(v){
-//                        v.on('dragchange', this.drop_zone_key_press, this);
-//                    }
-//                , this);
-//            }
         },
         clone_new_drag_item : function (draghome, itemno) {
             var drag = draghome.cloneNode(true);
@@ -159,7 +151,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             drag.addClass('dragitem');
             drag.addClass('item'+ itemno);
             drag.one('span.markertext').setStyle('opacity', 0.5);
-            draghome.get('parentNode').appendChild(drag);
+            draghome.insert(drag, 'after');
             if (!this.get('readonly')) {
                 this.draggable(drag);
             }
@@ -178,12 +170,17 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                     dragnode.removeClass('item'+dragnode);
                 }
                 this.save_all_xy_for_choice(choiceno, null);
+                this.reposition_drags();
             }, this);
             dd.after('drag:end', function(e) {
                 var dragnode = e.target.get('node');
                 var choiceno = this.get_choiceno_for_node(dragnode);
                 this.save_all_xy_for_choice(choiceno, dragnode);
+                this.reposition_drags();
             }, this);
+            //--- keyboard accessibility
+            drag.set('tabIndex', 0);
+            drag.on('dragchange', this.drop_zone_key_press, this);
         },
         save_all_xy_for_choice: function (choiceno, dropped) {
             var coords = [];
@@ -209,7 +206,6 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 }
             }
             this.set_form_value(choiceno, coords.join(';'));
-            this.reposition_drags();
         },
         reset_drag_xy : function (choiceno) {
             this.set_form_value(choiceno, '');
@@ -227,6 +223,14 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             } else {
                 return true;
             }
+        },
+        constrain_to_bgimg : function (windowxy) {
+            var bgimgxy = this.convert_to_bg_img_xy(windowxy);
+            bgimgxy[0] = Math.max(0, bgimgxy[0]);
+            bgimgxy[1] = Math.max(0, bgimgxy[1]);
+            bgimgxy[0] = Math.min(this.doc.bg_img().get('width'), bgimgxy[0]);
+            bgimgxy[1] = Math.min(this.doc.bg_img().get('height'), bgimgxy[1]);
+            return this.convert_to_window_xy(bgimgxy);
         },
         convert_to_bg_img_xy : function (windowxy) {
             return [Math.round(+windowxy[0] - this.doc.bg_img().getX()-1),
@@ -290,86 +294,41 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         
         //----------- keyboard accessibility stuff below line ---------------------
         drop_zone_key_press : function (e) {
+            var dragitem = e.target;
+            var xy = dragitem.getXY();
             switch (e.direction) {
-                case 'next' :
-                    this.place_next_drag_in(e.target);
+                case 'left' :
+                    xy[0] -= 1;
                     break;
-                case 'previous' :
-                    this.place_previous_drag_in(e.target);
+                case 'right' :
+                    xy[0] += 1;
+                    break;
+                case 'down' :
+                    xy[1] += 1;
+                    break;
+                case 'up' :
+                    xy[1] -= 1;
                     break;
                 case 'remove' :
-                    this.remove_drag_from_drop(e.target);
+                    xy = null;
                     break;
             }
-            e.preventDefault();
-            this.reposition_drags();
-        },
-        place_next_drag_in : function (drop) {
-            this.search_for_unplaced_drop_choice(drop, 1);
-        },
-        place_previous_drag_in : function (drop) {
-            this.search_for_unplaced_drop_choice(drop, -1);
-        },
-        search_for_unplaced_drop_choice : function (drop, direction) {
-            var next;
-            var current = this.current_drag_in_drop(drop);
-            if ('' === current) {
-                if (direction == 1) {
-                    next = 1;
-                } else {
-                    next = 1;
-                    var groupno = drop.getData('group');
-                    this.doc.drag_items_in_group(groupno).each(function(drag) {
-                        next = Math.max(next, drag.getData('choice'));
-                    }, this);
-                }
+            var choiceno = this.get_choiceno_for_node(dragitem);
+            if (xy !== null) {
+                xy = this.constrain_to_bgimg(xy);
             } else {
-                next = + current + direction;
+                xy = this.doc.drag_item_home(choiceno).getXY();
             }
-            var drag;
-            do {
-                if (this.get_choices_for_drop(next, drop).size() === 0){
-                    this.remove_drag_from_drop(drop);
-                    return;
-                } else {
-                    drag = this.get_unplaced_choice_for_drop(next, drop);
-                }
-                next = next + direction;
-            } while (drag === null);
-            this.place_drag_in_drop(drag, drop);
-        },
-        current_drag_in_drop : function (drop) {
-            var inputid = drop.getData('inputid');
-            var inputnode = Y.one('input#'+inputid);
-            return inputnode.get('value');
-        },
-        remove_drag_from_drop : function (drop) {
-            this.place_drag_in_drop(null, drop);
-        },
-        get_choices_for_drop : function(choice, drop) {
-            var group = drop.getData('group');
-            var dragitem = null;
-            var dragitems = this.doc.top_node()
-                                .all('div.dragitemgroup'+group+' .choice'+choice+'.drag');
-            return dragitems;
-        },
-        get_unplaced_choice_for_drop : function(choice, drop) {
-            var dragitems = this.get_choices_for_drop(choice, drop);
-            var dragitem = null;
-            if (dragitems.some(function (d) {
-                if (!d.hasClass('placed') && !d.hasClass('yui3-dd-dragging')) {
-                    dragitem = d;
-                    return true;
-                } else {
-                    return false;
-                }
-            }));
-            return dragitem;
+            console.log(e.direction, xy);
+            e.preventDefault();
+            dragitem.setXY(xy);
+            this.save_all_xy_for_choice(choiceno, null);
         }
+
 
     }, {NAME : DDMARKERQUESTIONNAME, ATTRS : {}});
 
-/*    Y.Event.define('dragchange', {
+    Y.Event.define('dragchange', {
         // Webkit and IE repeat keydown when you hold down arrow keys.
         // Opera links keypress to page scroll; others keydown.
         // Firefox prevents page scroll via preventDefault() on either
@@ -377,12 +336,12 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         _event: (Y.UA.webkit || Y.UA.ie) ? 'keydown' : 'keypress',
 
         _keys: {
-            '32': 'next',
-            '37': 'previous',
-            '38': 'previous',
-            '39': 'next',
-            '40': 'next',
-            '27': 'remove'
+            '32': 'remove',     // Space
+            '37': 'left', // Left arrow
+            '38': 'up', // Up arrow
+            '39': 'right',     // Right arrow
+            '40': 'down',     // Down arrow
+            '27': 'remove'    // Escape
         },
 
         _keyHandler: function (e, notifier) {
@@ -396,7 +355,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             sub._detacher = node.on(this._event, this._keyHandler,
                                     this, notifier);
         }
-    });*/
+    });
     M.qtype_ddmarker.init_question = function(config) {
         return new DDMARKER_QUESTION(config);
     }
