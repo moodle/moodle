@@ -821,6 +821,10 @@ class dml_test extends UnitTestCase {
 
             $this->assertEqual($next_column->name, $next_field->name);
         }
+
+        // Test get_columns for non-existing table returns empty array. MDL-30147
+        $columns = $DB->get_columns('xxxx');
+        $this->assertEqual(array(), $columns);
     }
 
     public function test_get_manager() {
@@ -1260,6 +1264,24 @@ class dml_test extends UnitTestCase {
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
             $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
+        }
+
+        // test get_records passing non-existing table
+        try {
+            $records = $DB->get_records('xxxx', array('id' => 0));
+            $this->fail('An Exception is missing, expected due to query against non-existing table');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+            $this->assertEqual($e->errorcode, 'ddltablenotexist');
+        }
+
+        // test get_records passing non-existing column
+        try {
+            $records = $DB->get_records($tablename, array('xxxx' => 0));
+            $this->fail('An Exception is missing, expected due to query against non-existing column');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+            $this->assertEqual($e->errorcode, 'ddlfieldnotexist');
         }
 
         // note: delegate limits testing to test_get_records_sql()
