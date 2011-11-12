@@ -30,5 +30,6 @@
 
 $string['clianswerno'] = 'ei';
 $string['cliansweryes'] = 'jah';
+$string['clitypevalue'] = 'tüübi väärtus';
 $string['environmentrequireinstall'] = 'on nõutud, et oleks installeeritud ja võimaldatud';
 $string['environmentrequireversion'] = 'versioon {$a->needed} on nõutud, Sinul on jooksmas versioon {$a->current}';
