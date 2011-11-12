@@ -905,7 +905,7 @@ class dml_test extends UnitTestCase {
             $DB->execute($sql);
             $this->fail("Expecting an exception, none occurred");
         } catch (Exception $e) {
-            $this->assertTrue($e instanceof dml_write_exception);
+            $this->assertTrue($e instanceof dml_exception);
         }
 
         // update records
@@ -1785,7 +1785,7 @@ class dml_test extends UnitTestCase {
         try {
             $DB->insert_record_raw($tablename, array('xxxxx' => 3, 'onechar' => 'bb'));
             $this->assertFail('Exception expected due to invalid column');
-        } catch (dml_write_exception $ex) {
+        } catch (dml_exception $ex) {
             $this->assertTrue(true);
         }
     }

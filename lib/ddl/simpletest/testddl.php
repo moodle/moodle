@@ -180,7 +180,7 @@ class ddl_test extends UnitTestCase {
         ob_start(); // hide debug warning
         try {
             $result = $DB->get_records('test_table0');
-        } catch (dml_read_exception $e) {
+        } catch (dml_exception $e) {
             $result = false;
         }
         ob_end_clean();
@@ -203,7 +203,7 @@ class ddl_test extends UnitTestCase {
         ob_start(); // hide debug warning
         try {
             $result = $DB->get_records('test_table0');
-        } catch (dml_read_exception $e) {
+        } catch (dml_exception $e) {
             $result = false;
         }
         ob_end_clean();
@@ -337,14 +337,14 @@ class ddl_test extends UnitTestCase {
 
         try { // columns cache must be empty, so sentence throw exception
             $columns = $DB->get_columns('test_table0');
-        } catch (dml_read_exception $e) {
+        } catch (dml_exception $e) {
             $columns = false;
         }
         $this->assertFalse($columns);
 
         try { /// throw exception
             $indexes = $DB->get_indexes('test_table0');
-        } catch (dml_read_exception $e) {
+        } catch (dml_exception $e) {
             $indexes = false;
         }
         $this->assertFalse($indexes);
@@ -931,7 +931,7 @@ class ddl_test extends UnitTestCase {
         ob_start(); // hide debug warning
         try {
             $result = $DB->insert_record('test_table_cust0', $record, false);
-        } catch (dml_write_exception $e) {
+        } catch (dml_exception $e) {
             $result = false;
         }
         ob_end_clean();
@@ -953,7 +953,7 @@ class ddl_test extends UnitTestCase {
         ob_start(); // hide debug warning
         try {
             $result = $DB->insert_record('test_table_cust0', $record, false);
-        } catch (dml_write_exception $e) {
+        } catch (dml_exception $e) {
             $result = false;
         }
         ob_end_clean();
@@ -1022,7 +1022,7 @@ class ddl_test extends UnitTestCase {
         ob_start(); // hide debug warning
         try {
             $result = $DB->insert_record('test_table_cust0', $record, false);
-        } catch (dml_write_exception $e) {
+        } catch (dml_exception $e) {
             $result = false;;
         }
         ob_end_clean();
@@ -1644,7 +1644,7 @@ class ddl_test extends UnitTestCase {
 
             $rec = $DB->get_record($tablename, array('id'=>$id));
             $this->assertIdentical($rec->name, $maxstr);
-        } catch (dml_write_exception $e) {
+        } catch (dml_exception $e) {
             if ($DB->get_dbfamily() === 'oracle') {
                 $this->fail('Oracle does not support text fields larger than 4000 bytes, this is not a big problem for mostly ascii based languages');
             } else {

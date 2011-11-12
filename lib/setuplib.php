@@ -657,7 +657,7 @@ function initialise_cfg() {
                 $CFG->{$name} = $value;
             }
         }
-    } catch (dml_read_exception $e) {
+    } catch (dml_exception $e) {
         // most probably empty db, going to install soon
     }
 }
