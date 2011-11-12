@@ -495,26 +495,21 @@ abstract class moodle_database {
      * @return array sql part and params
      */
     protected function where_clause($table, array $conditions=null) {
-        $allowed_types = $this->allowed_param_types();
-        if (empty($conditions)) {
-            return array('', array());
-        }
-        $where = array();
-        $params = array();
-
+        // We accept nulls in conditions
+        $conditions = is_null($conditions) ? array() : $conditions;
+        // Some checks performed under debugging only
         if (debugging()) {
             $columns = $this->get_columns($table);
+            if (empty($columns)) {
+                // no supported columns means most probably table does not exist
+                throw new dml_exception('ddltablenotexist', $table);
+            }
             foreach ($conditions as $key=>$value) {
                 if (!isset($columns[$key])) {
-                    if (empty($columns)) {
-                        // no supported columns means most probably table does not exist
-                        throw new dml_exception('ddltablenotexist', $table);
-                    } else {
-                        $a = new stdClass();
-                        $a->fieldname = $key;
-                        $a->tablename = $table;
-                        throw new dml_exception('ddlfieldnotexist', $a);
-                    }
+                    $a = new stdClass();
+                    $a->fieldname = $key;
+                    $a->tablename = $table;
+                    throw new dml_exception('ddlfieldnotexist', $a);
                 }
                 $column = $columns[$key];
                 if ($column->meta_type == 'X') {
@@ -523,6 +518,13 @@ abstract class moodle_database {
                 }
             }
         }
+
+        $allowed_types = $this->allowed_param_types();
+        if (empty($conditions)) {
+            return array('', array());
+        }
+        $where = array();
+        $params = array();
 
         foreach ($conditions as $key=>$value) {
             if (is_int($key)) {
