@@ -439,12 +439,12 @@ YUI.add('moodle-qtype_ddimageortext-dd', function(Y) {
         _event: (Y.UA.webkit || Y.UA.ie) ? 'keydown' : 'keypress',
 
         _keys: {
-            '32': 'next',
-            '37': 'previous',
-            '38': 'previous',
-            '39': 'next',
-            '40': 'next',
-            '27': 'remove'
+            '32': 'next',     // Space
+            '37': 'previous', // Left arrow
+            '38': 'previous', // Up arrow
+            '39': 'next',     // Right arrow
+            '40': 'next',     // Down arrow
+            '27': 'remove'    // Escape
         },
 
         _keyHandler: function (e, notifier) {
