@@ -1242,7 +1242,20 @@ s only returning name of SQL substring function, it now requires all parameters.
         $timeoutmilli = $timeout * 1000;
 
         $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
-        $sql = "sp_getapplock '$fullname', 'Exclusive', 'Session',  $timeoutmilli";
+        // There is one bug in PHP/freetds (both reproducible with mssql_query()
+        // and its mssql_init()/mssql_bind()/mssql_execute() alternative) for
+        // stored procedures, causing scalar results of the execution
+        // to be cast to boolean (true/fals). Here there is one
+        // workaround that forces the return of one recordset resource.
+        // $sql = "sp_getapplock '$fullname', 'Exclusive', 'Session',  $timeoutmilli";
+        $sql = "BEGIN
+                    DECLARE @result INT
+                    EXECUTE @result = sp_getapplock @Resource='$fullname',
+                                                    @LockMode='Exclusive',
+                                                    @LockOwner='Session',
+                                                    @LockTimeout='$timeoutmilli'
+                    SELECT @result
+                END";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = mssql_query($sql, $this->mssql);
         $this->query_end($result);
