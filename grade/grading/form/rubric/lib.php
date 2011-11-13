@@ -472,7 +472,7 @@ class gradingform_rubric_controller extends gradingform_controller {
         // get the list of instances
         $instances = array_keys($DB->get_records('grading_instances', array('definitionid' => $this->definition->id), '', 'id'));
         // delete all fillings
-        $DB->delete_records_list('gradingform_rubric_fillings', 'forminstanceid', $instances);
+        $DB->delete_records_list('gradingform_rubric_fillings', 'instanceid', $instances);
         // delete instances
         $DB->delete_records_list('grading_instances', 'id', $instances);
         // get the list of criteria records
@@ -585,7 +585,7 @@ class gradingform_rubric_instance extends gradingform_instance {
     public function cancel() {
         global $DB;
         parent::cancel();
-        $DB->delete_records('gradingform_rubric_fillings', array('forminstanceid' => $this->get_id()));
+        $DB->delete_records('gradingform_rubric_fillings', array('instanceid' => $this->get_id()));
     }
 
     /**
@@ -601,7 +601,7 @@ class gradingform_rubric_instance extends gradingform_instance {
         $instanceid = parent::copy($raterid, $itemid);
         $currentgrade = $this->get_rubric_filling();
         foreach ($currentgrade['criteria'] as $criterionid => $record) {
-            $params = array('forminstanceid' => $instanceid, 'criterionid' => $criterionid,
+            $params = array('instanceid' => $instanceid, 'criterionid' => $criterionid,
                 'levelid' => $record['levelid'], 'remark' => $record['remark'], 'remarkformat' => $record['remarkformat']);
             $DB->insert_record('gradingform_rubric_fillings', $params);
         }
@@ -635,7 +635,7 @@ class gradingform_rubric_instance extends gradingform_instance {
     public function get_rubric_filling($force = false) {
         global $DB;
         if ($this->rubric === null || $force) {
-            $records = $DB->get_records('gradingform_rubric_fillings', array('forminstanceid' => $this->get_id()));
+            $records = $DB->get_records('gradingform_rubric_fillings', array('instanceid' => $this->get_id()));
             $this->rubric = array('criteria' => array());
             foreach ($records as $record) {
                 $this->rubric['criteria'][$record->criterionid] = (array)$record;
@@ -657,7 +657,7 @@ class gradingform_rubric_instance extends gradingform_instance {
         parent::update($data);
         foreach ($data['criteria'] as $criterionid => $record) {
             if (!array_key_exists($criterionid, $currentgrade['criteria'])) {
-                $newrecord = array('forminstanceid' => $this->get_id(), 'criterionid' => $criterionid,
+                $newrecord = array('instanceid' => $this->get_id(), 'criterionid' => $criterionid,
                     'levelid' => $record['levelid'], 'remarkformat' => FORMAT_MOODLE);
                 if (isset($record['remark'])) {
                     $newrecord['remark'] = $record['remark'];

@@ -105,7 +105,7 @@ class restore_gradingform_rubric_plugin extends restore_gradingform_plugin {
         global $DB;
 
         $data = (object)$data;
-        $data->forminstanceid = $this->get_new_parentid('grading_instance');
+        $data->instanceid = $this->get_new_parentid('grading_instance');
         $data->criterionid = $this->get_mappingid('gradingform_rubric_criterion', $data->criterionid);
         $data->levelid = $this->get_mappingid('gradingform_rubric_level', $data->levelid);
 

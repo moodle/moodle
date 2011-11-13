@@ -107,7 +107,7 @@ class backup_gradingform_rubric_plugin extends backup_gradingform_plugin {
         // Set sources to populate the data
 
         $filling->set_source_table('gradingform_rubric_fillings',
-            array('forminstanceid' => backup::VAR_PARENTID));
+            array('instanceid' => backup::VAR_PARENTID));
 
         // no need to annotate ids or files yet (one day when remark field supports
         // embedded fileds, they must be annotated here)
