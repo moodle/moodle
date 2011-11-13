@@ -4147,6 +4147,50 @@ class dml_test extends UnitTestCase {
         $DB2->dispose();
     }
 
+    public function test_session_locks() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        // Open second connection
+        $cfg = $DB->export_dbconfig();
+        if (!isset($cfg->dboptions)) {
+            $cfg->dboptions = array();
+        }
+        $DB2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
+        $DB2->connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
+
+        // Testing that acquiring a lock efectively locks
+        // Get a session lock on connection1
+        $rowid = rand(100, 200);
+        $timeout = 1;
+        $DB->get_session_lock($rowid, $timeout);
+
+        // Try to get the same session lock on connection2
+        try {
+            $DB2->get_session_lock($rowid, $timeout);
+            $DB2->release_session_lock($rowid); // Should not be excuted, but here for safety
+            $this->fail('An Exception is missing, expected due to session lock acquired.');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_sessionwait_exception);
+            $DB->release_session_lock($rowid); // Release lock on connection1
+        }
+
+        // Testing that releasing a lock efectively frees
+        // Get a session lock on connection1
+        $rowid = rand(100, 200);
+        $timeout = 1;
+        $DB->get_session_lock($rowid, $timeout);
+        // Release the lock on connection1
+        $DB->release_session_lock($rowid);
+
+        // Get the just released lock on connection2
+        $DB2->get_session_lock($rowid, $timeout);
+        // Release the lock on connection2
+        $DB2->release_session_lock($rowid);
+
+        $DB2->dispose();
+    }
+
     public function test_bound_param_types() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
