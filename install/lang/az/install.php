@@ -28,6 +28,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die();
+
 $string['admindirname'] = 'Administrator kataloqu';
 $string['availablelangs'] = 'Mümkün dillərin siyahısı';
 $string['chooselanguagehead'] = 'Dili seçin';
