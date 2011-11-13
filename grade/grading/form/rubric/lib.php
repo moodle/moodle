@@ -130,7 +130,7 @@ class gradingform_rubric_controller extends gradingform_controller {
             $criterionmaxscore = null;
             if (preg_match('/^NEWID\d+$/', $id)) {
                 // insert criterion into DB
-                $data = array('formid' => $this->definition->id, 'descriptionformat' => FORMAT_MOODLE); // TODO format is not supported yet
+                $data = array('definitionid' => $this->definition->id, 'descriptionformat' => FORMAT_MOODLE); // TODO format is not supported yet
                 foreach ($criteriafields as $key) {
                     if (array_key_exists($key, $criterion)) {
                         $data[$key] = $criterion[$key];
@@ -250,7 +250,7 @@ class gradingform_rubric_controller extends gradingform_controller {
     public function mark_for_regrade() {
         global $DB;
         if ($this->has_active_instances()) {
-            $conditions = array('formid'  => $this->definition->id,
+            $conditions = array('definitionid'  => $this->definition->id,
                         'status'  => gradingform_instance::INSTANCE_STATUS_ACTIVE);
             $DB->set_field('grading_instances', 'status', gradingform_instance::INSTANCE_STATUS_NEEDUPDATE, $conditions);
         }
@@ -267,7 +267,7 @@ class gradingform_rubric_controller extends gradingform_controller {
                        rc.id AS rcid, rc.sortorder AS rcsortorder, rc.description AS rcdescription, rc.descriptionformat AS rcdescriptionformat,
                        rl.id AS rlid, rl.score AS rlscore, rl.definition AS rldefinition, rl.definitionformat AS rldefinitionformat
                   FROM {grading_definitions} gd
-             LEFT JOIN {gradingform_rubric_criteria} rc ON (rc.formid = gd.id)
+             LEFT JOIN {gradingform_rubric_criteria} rc ON (rc.definitionid = gd.id)
              LEFT JOIN {gradingform_rubric_levels} rl ON (rl.criterionid = rc.id)
                  WHERE gd.areaid = :areaid AND gd.method = :method
               ORDER BY rc.sortorder,rl.score";
@@ -470,13 +470,13 @@ class gradingform_rubric_controller extends gradingform_controller {
         global $DB;
 
         // get the list of instances
-        $instances = array_keys($DB->get_records('grading_instances', array('formid' => $this->definition->id), '', 'id'));
+        $instances = array_keys($DB->get_records('grading_instances', array('definitionid' => $this->definition->id), '', 'id'));
         // delete all fillings
         $DB->delete_records_list('gradingform_rubric_fillings', 'forminstanceid', $instances);
         // delete instances
         $DB->delete_records_list('grading_instances', 'id', $instances);
         // get the list of criteria records
-        $criteria = array_keys($DB->get_records('gradingform_rubric_criteria', array('formid' => $this->definition->id), '', 'id'));
+        $criteria = array_keys($DB->get_records('gradingform_rubric_criteria', array('definitionid' => $this->definition->id), '', 'id'));
         // delete levels
         $DB->delete_records_list('gradingform_rubric_levels', 'criterionid', $criteria);
         // delete critera
@@ -537,7 +537,7 @@ class gradingform_rubric_controller extends gradingform_controller {
      * @return string
      */
     public static function sql_search_from_tables($gdid) {
-        return " LEFT JOIN {gradingform_rubric_criteria} rc ON (rc.formid = $gdid)
+        return " LEFT JOIN {gradingform_rubric_criteria} rc ON (rc.definitionid = $gdid)
                  LEFT JOIN {gradingform_rubric_levels} rl ON (rl.criterionid = rc.id)";
     }
 

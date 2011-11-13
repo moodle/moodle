@@ -67,7 +67,7 @@ class backup_gradingform_rubric_plugin extends backup_gradingform_plugin {
         // Set sources to populate the data
 
         $criterion->set_source_table('gradingform_rubric_criteria',
-                array('formid' => backup::VAR_PARENTID));
+                array('definitionid' => backup::VAR_PARENTID));
 
         $level->set_source_table('gradingform_rubric_levels',
                 array('criterionid' => backup::VAR_PARENTID));

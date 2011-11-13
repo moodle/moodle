@@ -75,7 +75,7 @@ class restore_gradingform_rubric_plugin extends restore_gradingform_plugin {
 
         $data = (object)$data;
         $oldid = $data->id;
-        $data->formid = $this->get_new_parentid('grading_definition');
+        $data->definitionid = $this->get_new_parentid('grading_definition');
 
         $newid = $DB->insert_record('gradingform_rubric_criteria', $data);
         $this->set_mapping('gradingform_rubric_criterion', $oldid, $newid);

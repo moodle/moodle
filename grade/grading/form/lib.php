@@ -348,11 +348,11 @@ abstract class gradingform_controller {
     public function get_current_instance($raterid, $itemid, $idonly = false) {
         global $DB;
         $params = array(
-                'formid'  => $this->definition->id,
+                'definitionid'  => $this->definition->id,
                 'itemid' => $itemid,
                 'status1'  => gradingform_instance::INSTANCE_STATUS_ACTIVE,
                 'status2'  => gradingform_instance::INSTANCE_STATUS_NEEDUPDATE);
-        $select = 'formid=:formid and itemid=:itemid and (status=:status1 or status=:status2)';
+        $select = 'definitionid=:definitionid and itemid=:itemid and (status=:status1 or status=:status2)';
         if (false /* TODO $manager->allow_multiple_raters() */) {
             $select .= ' and raterid=:raterid';
             $params['raterid'] = $raterid;
@@ -378,7 +378,7 @@ abstract class gradingform_controller {
      */
     public function get_active_instances($itemid) {
         global $DB;
-        $conditions = array('formid'  => $this->definition->id,
+        $conditions = array('definitionid'  => $this->definition->id,
                     'itemid' => $itemid,
                     'status'  => gradingform_instance::INSTANCE_STATUS_ACTIVE);
         $records = $DB->get_recordset('grading_instances', $conditions);
@@ -401,7 +401,7 @@ abstract class gradingform_controller {
             return false;
         }
         if ($this->hasactiveinstances === null) {
-            $conditions = array('formid'  => $this->definition->id,
+            $conditions = array('definitionid'  => $this->definition->id,
                         'status'  => gradingform_instance::INSTANCE_STATUS_ACTIVE);
             $this->hasactiveinstances = $DB->record_exists('grading_instances', $conditions);
         }
@@ -495,7 +495,7 @@ abstract class gradingform_controller {
         // firstly, let the plugin delete everything from their own tables
         $this->delete_plugin_definition();
         // then, delete all instances left
-        $DB->delete_records('grading_instances', array('formid' => $this->definition->id));
+        $DB->delete_records('grading_instances', array('definitionid' => $this->definition->id));
         // finally, delete the main definition record
         $DB->delete_records('grading_definitions', array('id' => $this->definition->id));
 
@@ -631,15 +631,15 @@ abstract class gradingform_instance {
     /**
      * Creates a new empty instance in DB and mark its status as INCOMPLETE
      *
-     * @param int $formid
+     * @param int $definitionid
      * @param int $raterid
      * @param int $itemid
      * @return int id of the created instance
      */
-    public static function create_new($formid, $raterid, $itemid) {
+    public static function create_new($definitionid, $raterid, $itemid) {
         global $DB;
         $instance = new stdClass();
-        $instance->formid = $formid;
+        $instance->definitionid = $definitionid;
         $instance->raterid = $raterid;
         $instance->itemid = $itemid;
         $instance->status = self::INSTANCE_STATUS_INCOMPLETE;

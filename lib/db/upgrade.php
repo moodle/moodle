@@ -6886,7 +6886,7 @@ FROM
         // grading_instances table
         $table = new xmldb_table('grading_instances');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('formid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('definitionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('raterid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
         $table->add_field('rawgrade', XMLDB_TYPE_NUMBER, '10, 5', XMLDB_UNSIGNED, null, null, null);
@@ -6895,7 +6895,7 @@ FROM
         $table->add_field('feedbackformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, null, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('fk_formid', XMLDB_KEY_FOREIGN, array('formid'), 'grading_definitions', array('id'));
+        $table->add_key('fk_definitionid', XMLDB_KEY_FOREIGN, array('definitionid'), 'grading_definitions', array('id'));
         $table->add_key('fk_raterid', XMLDB_KEY_FOREIGN, array('raterid'), 'user', array('id'));
 
         if (!$dbman->table_exists($table)) {
