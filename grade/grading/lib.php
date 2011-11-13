@@ -565,6 +565,30 @@ class grading_manager {
     }
 
     /**
+     * Removes all data associated with the given context
+     *
+     * This is called by {@link context::delete_content()}
+     *
+     * @param int $contextid context id
+     */
+    public static function delete_all_for_context($contextid) {
+        global $DB;
+
+        $areaids = $DB->get_fieldset_select('grading_areas', 'id', 'contextid = ?', array($contextid));
+        $methods = array_keys(self::available_methods(false));
+
+        foreach($areaids as $areaid) {
+            $manager = get_grading_manager($areaid);
+            foreach ($methods as $method) {
+                $controller = $manager->get_controller($method);
+                $controller->delete_definition();
+            }
+        }
+
+        $DB->delete_records_list('grading_areas', 'id', $areaids);
+    }
+
+    /**
      * Helper method to tokenize the given string
      *
      * Splits the given string into smaller strings. This is a helper method for
