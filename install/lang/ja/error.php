@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'langディレクトリを作成できません。';
 $string['cannotcreatetempdir'] = 'tempディレクトリを作成できません。';

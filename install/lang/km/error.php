@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'មិនអាច​បង្កើត​ថត lang បាន​ឡើយ ។';
 $string['cannotcreatetempdir'] = 'មិនអាច​បង្កើត​ថត temp បាន​ឡើយ ។';

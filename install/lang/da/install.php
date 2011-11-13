@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Admin-mappe';
 $string['availablelangs'] = 'Tilgængelige sprogpakker';

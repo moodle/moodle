@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Adresár pre správu (admin)';
 $string['availablelangs'] = 'Dostupné jazykové balíčky';

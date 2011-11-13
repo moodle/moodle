@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'மொழி அடைவை உருவாக்க முடியவில்லை';
 $string['cannotcreatetempdir'] = 'தற்காலிக அடைவை உருவாக்க முடியவில்லை';

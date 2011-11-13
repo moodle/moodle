@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'ថត​អ្នក​គ្រប់គ្រង';
 $string['availablelangs'] = 'កញ្ចប់​ភាសា​ដែល​មាន';

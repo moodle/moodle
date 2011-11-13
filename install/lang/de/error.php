@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Verzeichnis "lang" kann nicht angelegt werden';
 $string['cannotcreatetempdir'] = 'Das Verzeichnis "temp" kann nicht angelegt werden.';

@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['environmentrequireinstall'] = 'angen ei osod/ei alluogi.';
 $string['environmentrequireversion'] = 'Mae angen fersiwn {$a->needed} ac rydych yn defnyddio {$a->current}';

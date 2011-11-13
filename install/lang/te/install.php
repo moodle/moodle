@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['availablelangs'] = 'అందుబాటులో ఉన్న భాషల జాబితా';
 $string['chooselanguagehead'] = 'భాషను ఎంచుకోండి';

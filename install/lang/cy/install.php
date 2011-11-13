@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Cyfeiriadur y Gweinyddwr';
 $string['availablelangs'] = 'Y pecynnau iaith sydd ar gael';

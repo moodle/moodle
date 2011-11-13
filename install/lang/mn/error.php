@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'lang хавтсыг үүсгэх боломжгүй.';
 $string['cannotcreatetempdir'] = 'temp  директор үүсгэж чадахгүй байна';

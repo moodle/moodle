@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['environmentrequireinstall'] = '必須安裝/啟用';
 $string['environmentrequireversion'] = '要求版本為 {$a->needed} ，您目前版本為 {$a->current}';

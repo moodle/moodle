@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Kan lang map niet maken';
 $string['cannotcreatetempdir'] = 'Kan tijdelijke map niet maken.';

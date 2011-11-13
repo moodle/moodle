@@ -29,6 +29,5 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['welcomep50'] = 'In non interactive mode you must agree to license by specifying --agree-license option';

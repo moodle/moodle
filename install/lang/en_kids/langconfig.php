@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['parentlanguage'] = 'en';
 $string['thislanguage'] = 'English - Kids';

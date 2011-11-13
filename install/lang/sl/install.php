@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Skrbniški imenik';
 $string['availablelangs'] = 'Jezikovni paketi na voljo';

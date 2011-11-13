@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'admin ඩිරෙක්ටරිය';
 $string['availablelangs'] = 'පවතින භාෂා ලයිස්තුව';

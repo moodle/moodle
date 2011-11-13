@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Ei saa luua lang kataloogi';
 $string['cannotcreatetempdir'] = 'Ei saa luua temp kataloogi';

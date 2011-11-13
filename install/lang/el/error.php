@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Δε δημιουργήθηκε φάκελος γλώσσας.';
 $string['cannotcreatetempdir'] = 'Δε δημιουργήθηκε φάκελος temp.';

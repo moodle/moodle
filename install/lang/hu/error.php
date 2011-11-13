@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Nem hozható létre a lang könyvtár.';
 $string['cannotcreatetempdir'] = 'Nem hozható létre a temp könyvtár.';

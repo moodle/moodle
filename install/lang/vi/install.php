@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Thư mục quản trị';
 $string['availablelangs'] = 'Các gói ngôn ngữ đã có';
