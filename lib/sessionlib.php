@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 if (!defined('SESSION_ACQUIRE_LOCK_TIMEOUT')) {
     /**
      * How much time to wait for session lock before displaying error (in seconds),
-     * 3 minutes by default should be a reasonable time before telling users to wait and refresh browser.
+     * 2 minutes by default should be a reasonable time before telling users to wait and refresh browser.
      */
     define('SESSION_ACQUIRE_LOCK_TIMEOUT', 60*2);
 }
