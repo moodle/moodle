@@ -116,7 +116,7 @@ PLEASE DO NOT ALTER THESE SETTINGS UNLESS YOU KNOW WHAT YOU ARE DOING AS IT WILL
 ------------------------------------------------------------------------------------------------*/
 /*
 SIDE-PRE-ONLY (Left Column + Middle Column)
----------------------------*/
+----------------------------------------*/
 .side-pre-only #region-main-box {width: 200%; left: 220px;}
 .side-pre-only #region-post-box {width: 100%; left: 50%; margin-left: -220px; background-color: #fff;}
 .side-pre-only #region-main-wrap {width: 50%; right: 100%;}
@@ -126,7 +126,7 @@ SIDE-PRE-ONLY (Left Column + Middle Column)
 .side-pre-only #region-post {width: 0px; left: 0px;}
 /*
 SIDE-POST-ONLY (Middle Column + Right Column)
-----------------------------*/
+------------------------------------------*/
 .side-post-only #page-content { background-color: #fff;}
 .side-post-only #region-main-box {width: 200%; left: 220px;}
 .side-post-only #region-post-box {width: 100%; left: 50%; margin-left: -440px;}
@@ -136,8 +136,16 @@ SIDE-POST-ONLY (Middle Column + Right Column)
 .side-post-only #region-pre {width: 0px;left: 0px;}
 .side-post-only #region-post {width: 220px; left: 0px;}
 /*
+SIDE-POST-ONLY WHEN MOVING BLOCKS (Left Column + Middle Column + Right Column)
+---------------------------------------------------------------------------*/
+.blocks-moving.side-post-only #region-main-box {left: 220px;}
+.blocks-moving.side-post-only #region-post-box {margin-left: -440px;}
+.blocks-moving.side-post-only #region-main-pad {margin: 0 10px 0 450px;}
+.blocks-moving.side-post-only #region-pre {width: 220px;left: 220px;}
+.blocks-moving.side-post-only #region-post {width: 220px;left: 0px;}
+/*
 CONTENT ONLY - NO SIDE BLOCKS WHATSOEVER (Middle Column Only)
---------------------------------------------------------*/
+----------------------------------------------------------*/
 .content-only #page-content { background-color: #fff;}
 .content-only #region-main-box {width: 200%; left: 0px;}
 .content-only #region-post-box {width: 100%; left: 50%; margin-left: 0px; background-color: #fff;}
