@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['environmentrequireinstall'] = 'cần phải được cài hay kích hoạt.';
 $string['environmentrequireversion'] = 'Cần phiên bản {$a->needed} trong khi bạn đang dùng {$a->current}';

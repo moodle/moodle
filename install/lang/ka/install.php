@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'ადმინისტრატორის დირექტორია';
 $string['availablelangs'] = 'ხელმისაწვდომი ენის პაკეტები';

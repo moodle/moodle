@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['environmentrequireinstall'] = 'потребно е да се инсталира/овозможи';
 $string['environmentrequireversion'] = 'верзијата {$a->needed} е потребна, а вие извршувате {$a->current}';

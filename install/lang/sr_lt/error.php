@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Nije moguće kreiranje direktorijuma jezika';
 $string['cannotcreatetempdir'] = 'Nije moguće kreiranje privremenog direktorijuma';

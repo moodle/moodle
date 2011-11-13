@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Nelze vytvořit adresář pro jazykové soubory';
 $string['cannotcreatetempdir'] = 'Nelze vytvořit dočasný adresář';

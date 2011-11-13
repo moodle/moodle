@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Get ekki myndað lang skráarsafnið';
 $string['cannotcreatetempdir'] = 'Get ekki myndað tímabundið skráarsafn';

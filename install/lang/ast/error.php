@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Nun pue crear un direutoriu d\'idioma.';
 $string['cannotcreatetempdir'] = 'Nun pue crear un direutoriu de tiempu.';

@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Nevar izveidot valodas direktoriju';
 $string['cannotcreatetempdir'] = 'Nevar izveidot pagaidu direktoriju';

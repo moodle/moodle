@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Ezin da hizkuntza-direktorioa sortu';
 $string['cannotcreatetempdir'] = 'Ezin da temp direktorioa sortu';

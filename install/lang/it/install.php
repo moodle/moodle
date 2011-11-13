@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Cartella Admin';
 $string['availablelangs'] = 'Elenco delle lingue disponibili:';

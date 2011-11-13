@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Direutoriu d\'alministración';
 $string['availablelangs'] = 'Paquetes d\'idioma disponibles';

@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['environmentrequireinstall'] = 'nepieciešams instalēt/iespējot';
 $string['environmentrequireversion'] = 'nepieciešama versija {$a->needed}, bet jūs izmantojat versiju {$a->current}';

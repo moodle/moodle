@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Hindi makalikha ng lang bgsk.';
 $string['cannotcreatetempdir'] = 'Hindi makalikha ng temp bgsk.';

@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['environmentrequireinstall'] = 'é solicitada para ser instalada/activada.';
 $string['environmentrequireversion'] = 'Solicítase a versión {$a->needed} e está a executar a {$a->current}';

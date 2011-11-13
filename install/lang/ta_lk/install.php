@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'நிர்வாகக் கோப்புறை';
 $string['availablelangs'] = 'இருக்கும் மொழிக்கட்டுகள்';

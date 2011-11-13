@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Administrator kataloqu';
 $string['availablelangs'] = 'Mümkün dillərin siyahısı';

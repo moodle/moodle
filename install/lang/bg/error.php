@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatetempdir'] = 'Не може да създаде временна директория';
 $string['cannotfindcomponent'] = 'Не можа да намери компонент';
