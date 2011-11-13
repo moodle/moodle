@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Nije moguće stvoriti lang mapu';
 $string['cannotcreatetempdir'] = 'Nije moguće stvoriti privremenu (TEMP) mapu';

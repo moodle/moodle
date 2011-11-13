@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = '無法建立語言資料夾。';
 $string['cannotcreatetempdir'] = '無法建立暫存資料夾。';

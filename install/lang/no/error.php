@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Kan ikke opprette mappen \'lang\'.';
 $string['cannotcreatetempdir'] = 'Kan ikke opprette mappen \'temp';

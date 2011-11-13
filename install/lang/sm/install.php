@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Fa\'afoega';
 $string['dataroot'] = 'Ala atu i fa\'amaumauga';

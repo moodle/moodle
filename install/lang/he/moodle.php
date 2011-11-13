@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['language'] = 'חבילת שפה';
 $string['next'] = 'הלאה';

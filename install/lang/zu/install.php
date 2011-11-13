@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Admin Directory';
 $string['availablelangs'] = 'Amaphasela ezilimi ezikhona';

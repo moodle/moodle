@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['environmentrequireinstall'] = 'суусан/идэвхжсэн байх ёстой';
 $string['environmentrequireversion'] = 'та {$a->current} хувилбар ашиглаж байна {$a->needed} хувилбарыг ашиглагх ёстой';

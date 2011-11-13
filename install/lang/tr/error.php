@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Dil dizini oluşturulamıyor.';
 $string['cannotcreatetempdir'] = 'Geçici dizin oluşturulamıyor.';

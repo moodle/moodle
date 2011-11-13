@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Не удается создать каталог языка';
 $string['cannotcreatetempdir'] = 'Не удается создать временный каталог';

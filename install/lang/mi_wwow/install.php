@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Whaiaronga Whakahaere';
 $string['availablelangs'] = 'Rārangi o ngā reo wātea ki db n';

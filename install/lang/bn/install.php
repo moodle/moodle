@@ -29,6 +29,5 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['availablelangs'] = 'যে সমস্ত ভাষা ব্যাবহার করতে পারেন';

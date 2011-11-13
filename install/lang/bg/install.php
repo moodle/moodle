@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['availablelangs'] = 'Списък на наличните езици';
 $string['chooselanguagehead'] = 'Изберете език';

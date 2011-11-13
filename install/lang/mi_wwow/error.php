@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Kāore i taea te whaiaronga reo.';
 $string['cannotcreatetempdir'] = 'Kāore i taea te whaiaronga rangitaki.';

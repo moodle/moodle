@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Pang-Admin na Bugsok';
 $string['availablelangs'] = 'Magagamit na mga pakete ng wika';

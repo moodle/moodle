@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Kielihakemistoa ei voitu luoda';
 $string['cannotcreatetempdir'] = 'Temp-hakemistoa ei voitu luoda';

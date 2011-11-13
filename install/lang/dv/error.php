@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'ލޭންގް (lang) ޑައިރެކްޓްރީއެއް ނުހެދުނު';
 $string['cannotcreatetempdir'] = 'ޓެމްޕް ޑައިރެކްޓްރީ ނުހެދުނު';

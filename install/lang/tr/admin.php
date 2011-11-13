@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'h';
 $string['cliansweryes'] = 'e';

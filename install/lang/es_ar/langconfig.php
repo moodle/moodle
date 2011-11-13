@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['parentlanguage'] = 'es';
 $string['thislanguage'] = 'Español - Argentina';

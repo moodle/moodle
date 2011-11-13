@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['environmentrequireinstall'] = 'باید نصب و فعال باشد';
 $string['environmentrequireversion'] = 'نسخهٔ {$a->needed} لازم است و شما نسخهٔ {$a->current} را دارید';

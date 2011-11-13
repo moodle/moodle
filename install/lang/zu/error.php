@@ -29,7 +29,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Ngekhe ukhande i lang directory';
 $string['cannotcreatetempdir'] = 'Ngeke ukhande i temp directory';
