@@ -28,6 +28,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die();
+
 $string['availablelangs'] = 'అందుబాటులో ఉన్న భాషల జాబితా';
 $string['chooselanguagehead'] = 'భాషను ఎంచుకోండి';
 $string['databasehost'] = 'డేటాబేసు హోస్టు';

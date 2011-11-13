@@ -28,6 +28,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die();
+
 $string['cannotcreatelangdir'] = 'Kāore e taea te waihanga whaiaronga reo';
 $string['cannotcreatetempdir'] = 'Kāore e taea te waihanga whaiaronga rangitahi';
 $string['cannotdownloadcomponents'] = 'Kāore e taea te tikiake i ngā mōtete';

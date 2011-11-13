@@ -28,6 +28,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die();
+
 $string['cannotcreatelangdir'] = 'భాష డైరెక్టరీని సృష్టించలేం';
 $string['cannotcreatetempdir'] = 'టెంప్ డైరెక్టరీని సృష్టించలేం';
 $string['cannotdownloadcomponents'] = 'కాంపొనెంట్లను దించుకోలేరు';

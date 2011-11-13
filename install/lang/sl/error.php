@@ -28,6 +28,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die();
+
 $string['cannotcreatelangdir'] = 'Imenika jezika ni možno ustvariti.';
 $string['cannotcreatetempdir'] = 'Začasnega imenika ni mogoče ustvariti';
 $string['cannotdownloadcomponents'] = 'Komponent ni mogoče prenesti.';
@@ -36,7 +39,7 @@ $string['cannotfindcomponent'] = 'Komponente ni mogoče najti.';
 $string['cannotsavemd5file'] = 'Datoteke MD5 ni možno shraniti.';
 $string['cannotsavezipfile'] = 'Datoteke ZIP ni možno shraniti.';
 $string['cannotunzipfile'] = 'Datoteke ni mogoče razširiti (unzip).';
-$string['componentisuptodate'] = 'Komponenta je posodobljena.';
+$string['componentisuptodate'] = 'vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvKomponenta je posodobljena.';
 $string['downloadedfilecheckfailed'] = 'Preverjanje prenesene datoteke je spodletelo.';
 $string['invalidmd5'] = 'Preverjanje spremenljivke je bilo napačno - poskusite ponovno';
 $string['missingrequiredfield'] = 'Eno izmed zahtevanih polj manjka';

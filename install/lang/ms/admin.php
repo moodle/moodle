@@ -28,6 +28,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die();
+
 $string['clianswerno'] = 't';
 $string['cliansweryes'] = 'y';
 $string['cliincorrectvalueerror'] = 'Ralat, nilai tidak betul "{$a->value}" untuk "{$a->option}"';

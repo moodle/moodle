@@ -28,6 +28,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die();
+
 $string['cannotcreatelangdir'] = 'Nije moguće stvoriti jezičnu (<i>lang</i>) mapu';
 $string['cannotcreatetempdir'] = 'Nije moguće stvoriti privremenu (<i>temp</i>) mapu';
 $string['cannotdownloadcomponents'] = 'Nije moguće preuzeti komponente';
