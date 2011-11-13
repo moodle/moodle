@@ -1628,16 +1628,12 @@ class oci_native_moodle_database extends moodle_database {
         $this->query_start($sql, $params, SQL_QUERY_AUX);
         $stmt = $this->parse_query($sql);
         $this->bind_params($stmt, $params);
-        $start = time();
         $result = oci_execute($stmt, $this->commit_status);
-        $end = time();
-        $this->query_end($result, $stmt);
-        oci_free_statement($stmt);
-
-        if ($end - $start >= $timeout) {
-            //TODO: there has to be a better way to find out if lock obtained
+        if ($result === false) { // Any failure in get_lock() raises error, causing return of bool false
             throw new dml_sessionwait_exception();
         }
+        $this->query_end($result, $stmt);
+        oci_free_statement($stmt);
     }
 
     public function release_session_lock($rowid) {
