@@ -1842,7 +1842,7 @@ class backup_activity_grading_structure_step extends backup_structure_step {
         $definition->set_source_table('grading_definitions', array('areaid' => backup::VAR_PARENTID));
 
         if ($userinfo) {
-            $instance->set_source_table('grading_instances', array('formid' => backup::VAR_PARENTID));
+            $instance->set_source_table('grading_instances', array('definitionid' => backup::VAR_PARENTID));
         }
 
         // Annotate references
