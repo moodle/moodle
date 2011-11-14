@@ -3427,6 +3427,14 @@ class settings_navigation extends navigation_node {
             $modulenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, 'restore');
         }
 
+        // Allow the active advanced grading method plugin to append its settings
+        $featuresfunc = $this->page->activityname.'_supports';
+        if (function_exists($featuresfunc) && $featuresfunc(FEATURE_ADVANCED_GRADING) && has_capability('moodle/grade:managegradingforms', $this->page->cm->context)) {
+            require_once($CFG->dirroot.'/grade/grading/lib.php');
+            $gradingman = get_grading_manager($this->page->cm->context, $this->page->activityname);
+            $gradingman->extend_settings_navigation($this, $modulenode);
+        }
+
         $function = $this->page->activityname.'_extend_settings_navigation';
         if (!function_exists($function)) {
             return $modulenode;

@@ -1141,10 +1141,13 @@ class grade_structure {
 
     private function get_activity_link($element) {
         global $CFG;
+        /** @var array static cache of the grade.php file existence flags */
+        static $hasgradephp = array();
 
         $itemtype = $element['object']->itemtype;
         $itemmodule = $element['object']->itemmodule;
         $iteminstance = $element['object']->iteminstance;
+        $itemnumber = $element['object']->itemnumber;
 
         // Links only for module items that have valid instance, module and are
         // called from grade_tree with valid modinfo
@@ -1164,13 +1167,104 @@ class grade_structure {
             return null;
         }
 
+        if (!array_key_exists($itemmodule, $hasgradephp)) {
+            if (file_exists($CFG->dirroot . '/mod/' . $itemmodule . '/grade.php')) {
+                $hasgradephp[$itemmodule] = true;
+            } else {
+                $hasgradephp[$itemmodule] = false;
+            }
+        }
+
         // If module has grade.php, link to that, otherwise view.php
-        $dir = $CFG->dirroot . '/mod/' . $itemmodule;
-        if (file_exists($dir.'/grade.php')) {
-            return new moodle_url('/mod/' . $itemmodule . '/grade.php', array('id' => $cm->id));
+        if ($hasgradephp[$itemmodule]) {
+            $args = array('id' => $cm->id, 'itemnumber' => $itemnumber);
+            if (isset($element['userid'])) {
+                $args['userid'] = $element['userid'];
+            }
+            return new moodle_url('/mod/' . $itemmodule . '/grade.php', $args);
         } else {
             return new moodle_url('/mod/' . $itemmodule . '/view.php', array('id' => $cm->id));
         }
+    }
+
+    /**
+     * Returns URL of a page that is supposed to contain detailed grade analysis
+     *
+     * At the moment, only activity modules are supported. The method generates link
+     * to the module's file grade.php with the parameters id (cmid), itemid, itemnumber,
+     * gradeid and userid. If the grade.php does not exist, null is returned.
+     *
+     * @return moodle_url|null URL or null if unable to construct it
+     */
+    public function get_grade_analysis_url(grade_grade $grade) {
+        global $CFG;
+        /** @var array static cache of the grade.php file existence flags */
+        static $hasgradephp = array();
+
+        if (empty($grade->grade_item) or !($grade->grade_item instanceof grade_item)) {
+            throw new coding_exception('Passed grade without the associated grade item');
+        }
+        $item = $grade->grade_item;
+
+        if (!$item->is_external_item()) {
+            // at the moment, only activity modules are supported
+            return null;
+        }
+        if ($item->itemtype !== 'mod') {
+            throw new coding_exception('Unknown external itemtype: '.$item->itemtype);
+        }
+        if (empty($item->iteminstance) or empty($item->itemmodule) or empty($this->modinfo)) {
+            return null;
+        }
+
+        if (!array_key_exists($item->itemmodule, $hasgradephp)) {
+            if (file_exists($CFG->dirroot . '/mod/' . $item->itemmodule . '/grade.php')) {
+                $hasgradephp[$item->itemmodule] = true;
+            } else {
+                $hasgradephp[$item->itemmodule] = false;
+            }
+        }
+
+        if (!$hasgradephp[$item->itemmodule]) {
+            return null;
+        }
+
+        $instances = $this->modinfo->get_instances();
+        if (empty($instances[$item->itemmodule][$item->iteminstance])) {
+            return null;
+        }
+        $cm = $instances[$item->itemmodule][$item->iteminstance];
+        if (!$cm->uservisible) {
+            return null;
+        }
+
+        $url = new moodle_url('/mod/'.$item->itemmodule.'/grade.php', array(
+            'id'         => $cm->id,
+            'itemid'     => $item->id,
+            'itemnumber' => $item->itemnumber,
+            'gradeid'    => $grade->id,
+            'userid'     => $grade->userid,
+        ));
+
+        return $url;
+    }
+
+    /**
+     * Returns an action icon leading to the grade analysis page
+     *
+     * @param grade_grade $grade
+     * @return string
+     */
+    public function get_grade_analysis_icon(grade_grade $grade) {
+        global $OUTPUT;
+
+        $url = $this->get_grade_analysis_url($grade);
+        if (is_null($url)) {
+            return '';
+        }
+
+        return $OUTPUT->action_icon($url, new pix_icon('t/preview',
+            get_string('gradeanalysis', 'core_grades')));
     }
 
     /**

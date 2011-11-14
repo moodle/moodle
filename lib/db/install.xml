@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20111007" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20111101" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2771,7 +2771,7 @@
         <INDEX NAME="timecreated_runreference_ix" UNIQUE="false" FIELDS="timecreated, runreference" PREVIOUS="url_runreference_ix"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="course_published" COMMENT="Information about how and when an local courses were published to hubs" PREVIOUS="profiling">
+    <TABLE NAME="course_published" COMMENT="Information about how and when an local courses were published to hubs" PREVIOUS="profiling" NEXT="grading_areas">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="huburl"/>
         <FIELD NAME="huburl" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="the url of the &quot;registered on&quot; hub" PREVIOUS="id" NEXT="courseid"/>
@@ -2784,6 +2784,63 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="grading_areas" COMMENT="Identifies gradable areas where advanced grading can happen. For each area, the current active plugin can be set." PREVIOUS="course_published" NEXT="grading_definitions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="contextid"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The context of the gradable area, eg module instance context." PREVIOUS="id" NEXT="component"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Frankenstyle name of the component holding this area" PREVIOUS="contextid" NEXT="areaname"/>
+        <FIELD NAME="areaname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The name of gradable area" PREVIOUS="component" NEXT="activemethod"/>
+        <FIELD NAME="activemethod" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="The default grading method (plugin) that should be used for this area" PREVIOUS="areaname"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="uq_gradable_area"/>
+        <KEY NAME="uq_gradable_area" TYPE="unique" FIELDS="contextid, component, areaname" PREVIOUS="primary" NEXT="fk_context"/>
+        <KEY NAME="fk_context" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id" PREVIOUS="uq_gradable_area"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="grading_definitions" COMMENT="Contains the basic information about an advanced grading form defined in the given gradable area" PREVIOUS="grading_areas" NEXT="grading_instances">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="areaid"/>
+        <FIELD NAME="areaid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="method"/>
+        <FIELD NAME="method" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the plugin providing this grading form" PREVIOUS="areaid" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The title of the form that helps users to identify it" PREVIOUS="method" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="More detailed description of the form" PREVIOUS="name" NEXT="descriptionformat"/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Format of the description field" PREVIOUS="description" NEXT="status"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Status of the form definition, by default in the under-construction state" PREVIOUS="descriptionformat" NEXT="copiedfromid"/>
+        <FIELD NAME="copiedfromid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the original definition that this was initially copied from or null if it was from scratch" PREVIOUS="status" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The timestamp of when the form definition was created initially" PREVIOUS="copiedfromid" NEXT="usercreated"/>
+        <FIELD NAME="usercreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The ID of the user who created this definition and is considered as its owner for access control purposes" PREVIOUS="timecreated" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The time stamp of when the form definition was modified recently" PREVIOUS="usercreated" NEXT="usermodified"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The ID of the user who did the most recent modification" PREVIOUS="timemodified" NEXT="timecopied"/>
+        <FIELD NAME="timecopied" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The timestamp of when this form was most recently copied into another area" PREVIOUS="usermodified" NEXT="options"/>
+        <FIELD NAME="options" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="General field to be used by plugins as a general storage place for their own settings" PREVIOUS="timecopied"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_areaid"/>
+        <KEY NAME="fk_areaid" TYPE="foreign" FIELDS="areaid" REFTABLE="grading_areas" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_usermodified"/>
+        <KEY NAME="fk_usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" PREVIOUS="fk_areaid" NEXT="uq_area_method"/>
+        <KEY NAME="uq_area_method" TYPE="unique" FIELDS="areaid, method" PREVIOUS="fk_usermodified" NEXT="fk_usercreated"/>
+        <KEY NAME="fk_usercreated" TYPE="foreign" FIELDS="usercreated" REFTABLE="user" REFFIELDS="id" PREVIOUS="uq_area_method"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="grading_instances" COMMENT="Grading form instance is an assessment record for one gradable item assessed by one rater" PREVIOUS="grading_definitions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="definitionid"/>
+        <FIELD NAME="definitionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The ID of the form definition this is instance of" PREVIOUS="id" NEXT="raterid"/>
+        <FIELD NAME="raterid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The ID of the user who did the assessment" PREVIOUS="definitionid" NEXT="itemid"/>
+        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="This identifies the graded item within the grabable area" PREVIOUS="raterid" NEXT="rawgrade"/>
+        <FIELD NAME="rawgrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The raw normalized grade 0.00000 - 100.00000 as a result of the most recent assessment" PREVIOUS="itemid" NEXT="status"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The status of the assessment. By default the instance is under-assessment state" PREVIOUS="rawgrade" NEXT="feedback"/>
+        <FIELD NAME="feedback" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Overall feedback from the rater for the author of the graded item" PREVIOUS="status" NEXT="feedbackformat"/>
+        <FIELD NAME="feedbackformat" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The format of the feedback field" PREVIOUS="feedback" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The timestamp of when the assessment was most recently modified" PREVIOUS="feedbackformat"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_definitionid"/>
+        <KEY NAME="fk_definitionid" TYPE="foreign" FIELDS="definitionid" REFTABLE="grading_definitions" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_raterid"/>
+        <KEY NAME="fk_raterid" TYPE="foreign" FIELDS="raterid" REFTABLE="user" REFFIELDS="id" PREVIOUS="fk_definitionid"/>
       </KEYS>
     </TABLE>
   </TABLES>

@@ -4902,6 +4902,10 @@ abstract class context extends stdClass {
         $fs = get_file_storage();
         $fs->delete_area_files($this->_id);
 
+        // delete all advanced grading data attached to this context
+        require_once($CFG->dirroot.'/grade/grading/lib.php');
+        grading_manager::delete_all_for_context($this->_id);
+
         // now delete stuff from role related tables, role_unassign_all
         // and unenrol should be called earlier to do proper cleanup
         $DB->delete_records('role_assignments', array('contextid'=>$this->_id));

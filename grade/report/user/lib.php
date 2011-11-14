@@ -304,6 +304,7 @@ class grade_report_user extends grade_report {
         $depth = $element['depth'];
         $grade_object = $element['object'];
         $eid = $grade_object->id;
+        $element['userid'] = $this->user->id;
         $fullname = $this->gtree->get_element_header($element, true, true, true);
         $data = array();
         $hidden = '';

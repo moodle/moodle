@@ -87,6 +87,7 @@ abstract class moodleform_mod extends moodleform {
         $this->_features->showdescription   = plugin_supports('mod', $this->_modname, FEATURE_SHOW_DESCRIPTION, false);
 
         $this->_features->gradecat          = ($this->_features->outcomes or $this->_features->hasgrades);
+        $this->_features->advancedgrading   = plugin_supports('mod', $this->_modname, FEATURE_ADVANCED_GRADING, false);
     }
 
     /**
@@ -665,6 +666,33 @@ abstract class moodleform_mod extends moodleform {
             if (!$this->_features->rating) {
                 $mform->addElement('modgrade', 'grade', get_string('grade'));
                 $mform->setDefault('grade', 100);
+            }
+
+            if ($this->_features->advancedgrading
+                    and !empty($this->current->_advancedgradingdata['methods'])
+                    and !empty($this->current->_advancedgradingdata['areas'])) {
+
+                if (count($this->current->_advancedgradingdata['areas']) == 1) {
+                    // if there is just one gradable area (most cases), display just the selector
+                    // without its name to make UI simplier
+                    $areadata = reset($this->current->_advancedgradingdata['areas']);
+                    $areaname = key($this->current->_advancedgradingdata['areas']);
+                    $mform->addElement('select', 'advancedgradingmethod_'.$areaname,
+                        get_string('gradingmethod', 'core_grading'), $this->current->_advancedgradingdata['methods']);
+                    $mform->addHelpButton('advancedgradingmethod_'.$areaname, 'gradingmethod', 'core_grading');
+
+                } else {
+                    // the module defines multiple gradable areas, display a selector
+                    // for each of them together with a name of the area
+                    $areasgroup = array();
+                    foreach ($this->current->_advancedgradingdata['areas'] as $areaname => $areadata) {
+                        $areasgroup[] = $mform->createElement('select', 'advancedgradingmethod_'.$areaname,
+                            $areadata['title'], $this->current->_advancedgradingdata['methods']);
+                        $areasgroup[] = $mform->createElement('static', 'advancedgradingareaname_'.$areaname, '', $areadata['title']);
+                    }
+                    $mform->addGroup($areasgroup, 'advancedgradingmethodsgroup', get_string('gradingmethods', 'core_grading'),
+                        array(' ', '<br />'), false);
+                }
             }
 
             if ($this->_features->gradecat) {

@@ -1784,6 +1784,77 @@ class backup_annotate_all_user_files extends backup_execution_step {
     }
 }
 
+
+/**
+ * Defines the backup step for advanced grading methods attached to the activity module
+ */
+class backup_activity_grading_structure_step extends backup_structure_step {
+
+    /**
+     * Include the grading.xml only if the module supports advanced grading
+     */
+    protected function execute_condition() {
+        return plugin_supports('mod', $this->get_task()->get_modulename(), FEATURE_ADVANCED_GRADING, false);
+    }
+
+    /**
+     * Declares the gradable areas structures and data sources
+     */
+    protected function define_structure() {
+
+        // To know if we are including userinfo
+        $userinfo = $this->get_setting_value('userinfo');
+
+        // Define the elements
+
+        $areas = new backup_nested_element('areas');
+
+        $area = new backup_nested_element('area', array('id'), array(
+            'areaname', 'activemethod'));
+
+        $definitions = new backup_nested_element('definitions');
+
+        $definition = new backup_nested_element('definition', array('id'), array(
+            'method', 'name', 'description', 'descriptionformat', 'status',
+            'timecreated', 'timemodified', 'options'));
+
+        $instances = new backup_nested_element('instances');
+
+        $instance = new backup_nested_element('instance', array('id'), array(
+            'raterid', 'itemid', 'rawgrade', 'status', 'feedback',
+            'feedbackformat', 'timemodified'));
+
+        // Build the tree including the method specific structures
+        // (beware - the order of how gradingform plugins structures are attached is important)
+        $areas->add_child($area);
+        $area->add_child($definitions);
+        $definitions->add_child($definition);
+        $this->add_plugin_structure('gradingform', $definition, true);
+        $definition->add_child($instances);
+        $instances->add_child($instance);
+        $this->add_plugin_structure('gradingform', $instance, false);
+
+        // Define data sources
+
+        $area->set_source_table('grading_areas', array('contextid' => backup::VAR_CONTEXTID,
+            'component' => array('sqlparam' => 'mod_'.$this->get_task()->get_modulename())));
+
+        $definition->set_source_table('grading_definitions', array('areaid' => backup::VAR_PARENTID));
+
+        if ($userinfo) {
+            $instance->set_source_table('grading_instances', array('formid' => backup::VAR_PARENTID));
+        }
+
+        // Annotate references
+        $definition->annotate_files('grading', 'description', 'id');
+        $instance->annotate_ids('user', 'raterid');
+
+        // Return the root element
+        return $areas;
+    }
+}
+
+
 /**
  * structure step in charge of constructing the grades.xml file for all the grade items
  * and letters related to one activity
