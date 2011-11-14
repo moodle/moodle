@@ -1878,6 +1878,21 @@ class restore_activity_logs_structure_step extends restore_course_logs_structure
 class restore_activity_grading_structure_step extends restore_structure_step {
 
     /**
+     * This step is executed only if the grading file is present
+     */
+     protected function execute_condition() {
+
+        $fullpath = $this->task->get_taskbasepath();
+        $fullpath = rtrim($fullpath, '/') . '/' . $this->filename;
+        if (!file_exists($fullpath)) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
      * Declares paths in the grading.xml file we are interested in
      */
     protected function define_structure() {
