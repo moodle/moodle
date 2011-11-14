@@ -165,7 +165,7 @@ class webservice {
     }
 
     /**
-     * Return all ws user token
+     * Return all ws user token with ws enabled/disabled and ws restricted users mode.
      * @param integer $userid
      * @return array of token
      */
@@ -173,7 +173,7 @@ class webservice {
         global $DB;
         //here retrieve token list (including linked users firstname/lastname and linked services name)
         $sql = "SELECT
-                    t.id, t.creatorid, t.token, u.firstname, u.lastname, s.name, t.validuntil
+                    t.id, t.creatorid, t.token, u.firstname, u.lastname, s.id as wsid, s.name, s.enabled, s.restrictedusers, t.validuntil
                 FROM
                     {external_tokens} t, {user} u, {external_services} s
                 WHERE

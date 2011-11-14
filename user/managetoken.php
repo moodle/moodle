@@ -66,7 +66,15 @@ if ( !is_siteadmin($USER->id)
     if (empty($resetconfirmation)) {
         $webservice->generate_user_ws_tokens($USER->id); //generate all token that need to be generated
         $tokens = $webservice->get_user_ws_tokens($USER->id);
-        $webservicetokenboxhtml =  $wsrenderer->user_webservice_tokens_box($tokens, $USER->id, 
+        foreach ($tokens as $token) {
+            if ($token->restrictedusers) {
+                $authlist = $webservice->get_ws_authorised_user($token->wsid, $USER->id);
+                if (empty($authlist)) {
+                    $token->enabled = false;
+                }
+            }
+        }
+        $webservicetokenboxhtml =  $wsrenderer->user_webservice_tokens_box($tokens, $USER->id,
                 $CFG->enablewsdocumentation); //display the box for web service token
     }
 }
