@@ -28,12 +28,12 @@ class basicltil1_resurce_file extends general_cc_file {
     protected $rootname = 'cartridge_basiclti_link';
     protected $ccnamespaces = array('xmlns' => 'http://www.imsglobal.org/xsd/imslticc_v1p0',
                                     'blti'  => 'http://www.imsglobal.org/xsd/imsbasiclti_v1p0',
-    								'lticm' => 'http://www.imsglobal.org/xsd/imslticm_v1p0',
+                                    'lticm' => 'http://www.imsglobal.org/xsd/imslticm_v1p0',
                                     'lticp' => 'http://www.imsglobal.org/xsd/imslticp_v1p0',
                                     'xsi'   => 'http://www.w3.org/2001/XMLSchema-instance');
     protected $ccnsnames = array('xmlns' => 'http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticc_v1p0.xsd',
                                  'blti'  => 'http://www.imsglobal.org/xsd/lti/ltiv1p0/imsbasiclti_v1p0p1.xsd',
-    							 'lticm' => 'http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticm_v1p0.xsd',
+                                 'lticm' => 'http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticm_v1p0.xsd',
                                  'lticp' => 'http://www.imsglobal.org/xsd/lti/ltiv1p0/imslticp_v1p0.xsd');
 
     protected $title = 'Untitled';

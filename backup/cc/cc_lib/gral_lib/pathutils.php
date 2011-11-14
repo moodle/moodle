@@ -303,7 +303,7 @@ function getRawFiles($startDir, &$fhandle, $rootDir='', $excludedirs = null, $ex
                 $pinfo = pathinfo($entry);
                 $ext = array_key_exists('extension',$pinfo) ? $pinfo['extension'] : '';
                 if (!is_array($excludefileext) ||
-				(is_array($excludefileext) && !in_array($ext,$excludefileext))) {
+                (is_array($excludefileext) && !in_array($ext,$excludefileext))) {
                     fwrite($fhandle,$rootDir.$entry."\n");
                 }
             }

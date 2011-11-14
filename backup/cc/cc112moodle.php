@@ -51,7 +51,7 @@ class cc112moodle extends cc2moodle {
     public static $basicltins = array(
                                        'xmlns' => 'http://www.imsglobal.org/xsd/imslticc_v1p0',
                                        'blti'  => 'http://www.imsglobal.org/xsd/imsbasiclti_v1p0',
-    								   'lticm' => 'http://www.imsglobal.org/xsd/imslticm_v1p0',
+                                       'lticm' => 'http://www.imsglobal.org/xsd/imslticm_v1p0',
                                        'lticp' => 'http://www.imsglobal.org/xsd/imslticp_v1p0'
                                       );
 

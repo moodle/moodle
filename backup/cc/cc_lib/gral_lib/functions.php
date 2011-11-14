@@ -37,9 +37,9 @@
  * @param string $errline
  */
 function errorHandler($errno, $errstr, $errfile, $errline) {
-	// si deseas podes guardarlos en un archivo
-	($errfile);($errline);
-	throw new Exception($errstr, $errno);
+    // si deseas podes guardarlos en un archivo
+    ($errfile);($errline);
+    throw new Exception($errstr, $errno);
 }
 
 

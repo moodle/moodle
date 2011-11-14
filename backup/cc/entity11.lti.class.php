@@ -54,7 +54,7 @@ class cc11_lti extends entities11 {
                                '[#mod_basiclti_timec#]'  ,
                                '[#mod_basiclti_timem#]'  ,
                                '[#mod_basiclti_toolurl#]',
-            				   '[#mod_basiclti_icon#]'
+                               '[#mod_basiclti_icon#]'
                                );
 
             $replace_values = array($instance['instance'],
