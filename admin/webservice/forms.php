@@ -174,7 +174,7 @@ class external_service_functions_form extends moodleform {
 class web_service_token_form extends moodleform {
 
     function definition() {
-        global $USER, $DB;
+        global $USER, $DB, $CFG;
 
         $mform = $this->_form;
         $data = $this->_customdata;
@@ -183,10 +183,12 @@ class web_service_token_form extends moodleform {
 
         if (empty($data->nouserselection)) {
             //user searchable selector - get all users (admin and guest included)
+            //user must be confirmed, not deleted, not suspended, not guest
             $sql = "SELECT u.id, u.firstname, u.lastname
             FROM {user} u
+            WHERE u.deleted = 0 AND u.confirmed = 1 AND u.suspended = 0 AND u.id != ?
             ORDER BY u.lastname";
-            $users = $DB->get_records_sql($sql, array());
+            $users = $DB->get_records_sql($sql, array($CFG->siteguest));
             $options = array();
             foreach ($users as $userid => $user) {
                 $options[$userid] = $user->firstname . " " . $user->lastname;
