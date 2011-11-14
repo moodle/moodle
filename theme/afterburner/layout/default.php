@@ -13,6 +13,8 @@ $showsidepost = ($hassidepost && !$PAGE->blocks->region_completely_docked('side-
 $custommenu = $OUTPUT->custom_menu();
 $hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
+$hasfootnote = (!empty($PAGE->theme->settings->footnote));
+
 $bodyclasses = array();
 if ($showsidepre && !$showsidepost) {
     $bodyclasses[] = 'side-pre-only';
@@ -108,6 +110,11 @@ echo $OUTPUT->doctype() ?>
     <div id="page-footer" class="clearfix">
 
         <div class="footer-left">
+
+			<?php if ($hasfootnote) { ?>
+				<div id="footnote"><?php echo $PAGE->theme->settings->footnote;?></div>
+			<?php } ?>
+
             <a href="http://moodle.org" title="Moodle">
                 <img src="<?php echo $OUTPUT->pix_url('footer/moodle-logo','theme')?>" alt="Moodle logo" />
             </a>

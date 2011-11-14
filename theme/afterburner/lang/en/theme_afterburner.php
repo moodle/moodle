@@ -26,6 +26,12 @@
 $string['pluginname'] = 'Afterburner';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
+$string['logo'] = 'Logo';
+$string['logodesc'] = 'Please add the URL to your new logo only if you want to replace the default logo for this theme.<br />For your information, the default logo is a JPG image 320px (wide) by 75px (high)';
+$string['footnote'] = 'Footnote';
+$string['footnotedesc'] = 'Whatever you add to this textarea will be displayed in the footer of every page.';
+$string['customcss'] = 'Custom CSS';
+$string['customcssdesc'] = 'Whatever CSS rules you add to this textarea will be reflected in every page, making for easier customization of this theme.';
 $string['choosereadme'] = '
 <div class="clearfix">
  <div class="theme_screenshot">
