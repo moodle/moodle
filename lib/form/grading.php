@@ -54,7 +54,15 @@ class MoodleQuickForm_grading extends HTML_QuickForm_input{
      */
     private $gradingattributes;
 
-    function MoodleQuickForm_grading($elementName=null, $elementLabel=null, $attributes=null) {
+    /**
+     * Class constructor
+     *
+     * @param string $elementName   Input field name attribute
+     * @param mixed $elementLabel   Label(s) for the input field
+     * @param mixed $attributes     Either a typical HTML attribute string or an associative array
+     * @return void
+     */
+    public function MoodleQuickForm_grading($elementName=null, $elementLabel=null, $attributes=null) {
         parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
         $this->gradingattributes = $attributes;
     }
@@ -64,7 +72,7 @@ class MoodleQuickForm_grading extends HTML_QuickForm_input{
      *
      * @return gradingform_instance
      */
-    function get_gradinginstance() {
+    public function get_gradinginstance() {
         if (is_array($this->gradingattributes) && array_key_exists('gradinginstance', $this->gradingattributes)) {
             return $this->gradingattributes['gradinginstance'];
         } else {
@@ -77,7 +85,7 @@ class MoodleQuickForm_grading extends HTML_QuickForm_input{
      *
      * @return    string
      */
-    function toHtml(){
+    public function toHtml(){
         global $PAGE;
         return $this->get_gradinginstance()->render_grading_element($PAGE, $this);
     }
@@ -89,7 +97,7 @@ class MoodleQuickForm_grading extends HTML_QuickForm_input{
      * @param array $help array of arguments to make a help button
      * @param string $function function name to call to get html
      */
-    function setHelpButton($helpbuttonargs, $function='helpbutton'){
+    public function setHelpButton($helpbuttonargs, $function='helpbutton'){
         debugging('component setHelpButton() is not used any more, please use $mform->setHelpButton() instead');
     }
 
@@ -99,21 +107,32 @@ class MoodleQuickForm_grading extends HTML_QuickForm_input{
      * @access   public
      * @return  string html for help button
      */
-    function getHelpButton(){
+    public function getHelpButton(){
         return $this->_helpbutton;
     }
 
     /**
+     * The renderer of gradingform_instance will take care itself about different display
+     * in normal and frozen states
+     *
      * @return string
      */
-    function getElementTemplateType(){
+    public function getElementTemplateType(){
         return 'default';
     }
 
     /**
-     * Adds necessary rules to the element
+     * Called by HTML_QuickForm whenever form event is made on this element.
+     * Adds necessary rules to the element and checks that coorenct instance of gradingform_instance
+     * is passed in attributes
+     *
+     * @param     string    $event  Name of event
+     * @param     mixed     $arg    event arguments
+     * @param     object    $caller calling object
+     * @return    void
+     * @throws    moodle_exception
      */
-    function onQuickFormEvent($event, $arg, &$caller) {
+    public function onQuickFormEvent($event, $arg, &$caller) {
         if ($event == 'createElement') {
             $attributes = $arg[2];
             if (!is_array($attributes) || !array_key_exists('gradinginstance', $attributes) || !($attributes['gradinginstance'] instanceof gradingform_instance)) {
@@ -131,6 +150,9 @@ class MoodleQuickForm_grading extends HTML_QuickForm_input{
     /**
      * Function registered as rule for this element and is called when this element is being validated.
      * This is a wrapper to pass the validation to the method gradingform_instance::validate_grading_element
+     *
+     * @param mixed $elementValue
+     * @param array $attributes
      */
     static function _validate($elementValue, $attributes = null) {
         return $attributes['gradinginstance']->validate_grading_element($elementValue);

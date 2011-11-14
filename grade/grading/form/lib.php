@@ -570,12 +570,12 @@ abstract class gradingform_controller {
      *
      * @param moodle_page $page
      * @param int $itemid
-     * @param array $grading_info result of function grade_get_grades if plugin want to use some of their info
+     * @param array $gradinginfo result of function grade_get_grades if plugin want to use some of their info
      * @param string $defaultcontent default string to be returned if no active grading is found or for some reason can not be shown to a user
      * @param boolean $cangrade whether current user has capability to grade in this context
      * @return string
      */
-    public function render_grade($page, $itemid, $grading_info, $defaultcontent, $cangrade) {
+    public function render_grade($page, $itemid, $gradinginfo, $defaultcontent, $cangrade) {
         return $defaultcontent;
     }
 
@@ -583,6 +583,8 @@ abstract class gradingform_controller {
      * Sets the range of grades used in this area. This is usually either range like 0-100
      * or the scale where keys start from 1. Typical use:
      * $controller->set_grade_range(make_grades_menu($gradingtype));
+     *
+     * @param array $graderange
      */
     public final function set_grade_range(array $graderange) {
         $this->graderange = $graderange;
@@ -590,6 +592,7 @@ abstract class gradingform_controller {
 
     /**
      * Returns the range of grades used in this area
+     *
      * @return array
      */
     public final function get_grade_range() {

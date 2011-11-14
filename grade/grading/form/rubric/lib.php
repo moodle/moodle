@@ -33,13 +33,20 @@ require_once($CFG->dirroot.'/grade/grading/form/lib.php');
  */
 class gradingform_rubric_controller extends gradingform_controller {
     // Modes of displaying the rubric (used in gradingform_rubric_renderer)
-    const DISPLAY_EDIT_FULL     = 1; // For editing (moderator or teacher creates a rubric)
-    const DISPLAY_EDIT_FROZEN   = 2; // Preview the rubric design with hidden fields
-    const DISPLAY_PREVIEW       = 3; // Preview the rubric design
-    const DISPLAY_EVAL          = 4; // For evaluation, enabled (teacher grades a student)
-    const DISPLAY_EVAL_FROZEN   = 5; // For evaluation, with hidden fields
-    const DISPLAY_REVIEW        = 6; // Teacher reviews filled rubric
-    const DISPLAY_VIEW          = 7; // Dispaly filled rubric (i.e. students see their grades)
+    /** Rubric display mode: For editing (moderator or teacher creates a rubric) */
+    const DISPLAY_EDIT_FULL     = 1;
+    /** Rubric display mode: Preview the rubric design with hidden fields */
+    const DISPLAY_EDIT_FROZEN   = 2;
+    /** Rubric display mode: Preview the rubric design */
+    const DISPLAY_PREVIEW       = 3;
+    /** Rubric display mode: For evaluation, enabled (teacher grades a student) */
+    const DISPLAY_EVAL          = 4;
+    /** Rubric display mode: For evaluation, with hidden fields */
+    const DISPLAY_EVAL_FROZEN   = 5;
+    /** Rubric display mode: Teacher reviews filled rubric */
+    const DISPLAY_REVIEW        = 6;
+    /** Rubric display mode: Dispaly filled rubric (i.e. students see their grades) */
+    const DISPLAY_VIEW          = 7;
 
     /**
      * Extends the module settings navigation with the rubric grading settings
@@ -247,6 +254,9 @@ class gradingform_rubric_controller extends gradingform_controller {
         return array_pop($changelevels);
     }
 
+    /**
+     * Marks all instances filled with this rubric with the status INSTANCE_STATUS_NEEDUPDATE
+     */
     public function mark_for_regrade() {
         global $DB;
         if ($this->has_active_instances()) {
@@ -312,6 +322,11 @@ class gradingform_rubric_controller extends gradingform_controller {
         }
     }
 
+    /**
+     * Returns the default options for the rubric display
+     *
+     * @return array
+     */
     public static function get_default_options() {
         $options = array(
             'sortlevelsasc' => 1,
@@ -326,6 +341,11 @@ class gradingform_rubric_controller extends gradingform_controller {
         return $options;
     }
 
+    /**
+     * Gets the options of this rubric definition, fills the missing options with default values
+     *
+     * @return array
+     */
     public function get_options() {
         $options = self::get_default_options();
         if (!empty($this->definition->options)) {
@@ -398,6 +418,9 @@ class gradingform_rubric_controller extends gradingform_controller {
     }
 
     /**
+     * Options for displaying the rubric description field in the form
+     *
+     * @param object $context
      * @return array options for the form description field
      */
     public static function description_form_field_options($context) {
@@ -437,7 +460,7 @@ class gradingform_rubric_controller extends gradingform_controller {
      * Returns the rubric plugin renderer
      *
      * @param moodle_page $page the target page
-     * @return renderer_base
+     * @return gradingform_rubric_renderer
      */
     public function get_renderer(moodle_page $page) {
         return $page->get_renderer('gradingform_'. $this->get_method_name());
@@ -519,12 +542,12 @@ class gradingform_rubric_controller extends gradingform_controller {
      *
      * @param moodle_page $page
      * @param int $itemid
-     * @param array $grading_info result of function grade_get_grades
+     * @param array $gradinginfo result of function grade_get_grades
      * @param string $defaultcontent default string to be returned if no active grading is found
      * @param boolean $cangrade whether current user has capability to grade in this context
      * @return string
      */
-    public function render_grade($page, $itemid, $grading_info, $defaultcontent, $cangrade) {
+    public function render_grade($page, $itemid, $gradinginfo, $defaultcontent, $cangrade) {
         return $this->get_renderer($page)->display_instances($this->get_active_instances($itemid), $defaultcontent, $cangrade);
     }
 
@@ -610,6 +633,8 @@ class gradingform_rubric_instance extends gradingform_instance {
 
     /**
      * Validates that rubric is fully completed and contains valid grade on each criterion
+     *
+     * @param array $elementvalue value of element as came in form submit
      * @return boolean true if the form data is validated and contains no errors
      */
     public function validate_grading_element($elementvalue) {

@@ -90,7 +90,7 @@ class gradingform_rubric_editrubric extends moodleform {
      * @return array of "element_name"=>"error_description" if there are errors,
      *               or an empty array if everything is OK (true allowed for backwards compatibility too).
      */
-    function validation($data, $files) {
+    public function validation($data, $files) {
         $err = parent::validation($data, $files);
         $err = array();
         $form = $this->_form;
@@ -116,7 +116,7 @@ class gradingform_rubric_editrubric extends moodleform {
      *
      * @return object submitted data; NULL if not valid or not submitted or cancelled
      */
-    function get_data() {
+    public function get_data() {
         $data = parent::get_data();
         if (!empty($data->saverubric)) {
             $data->status = gradingform_controller::DEFINITION_STATUS_READY;
@@ -133,7 +133,7 @@ class gradingform_rubric_editrubric extends moodleform {
      *
      * @param gradingform_rubric_controller $controller
      */
-    function need_confirm_regrading($controller) {
+    public function need_confirm_regrading($controller) {
         $data = $this->get_data();
         if (isset($data->rubric['regrade'])) {
             // we have already displayed the confirmation on the previous step
@@ -180,7 +180,7 @@ class gradingform_rubric_editrubric extends moodleform {
      * @param string $elementname
      * @return HTML_QuickForm_element
      */
-    function &findButton($elementname) {
+    protected function &findButton($elementname) {
         $form = $this->_form;
         $buttonar =& $form->getElement('buttonar');
         $elements =& $buttonar->getElements();

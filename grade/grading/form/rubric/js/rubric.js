@@ -7,7 +7,7 @@ M.gradingform_rubric.init = function(Y, options) {
     Y.on('click', M.gradingform_rubric.levelclick, '#rubric-'+options.name+' .level', null, Y, options.name);
     Y.all('#rubric-'+options.name+' .radio').setStyle('display', 'none')
     Y.all('#rubric-'+options.name+' .level').each(function (node) {
-      if (node.one('input[type=radio][checked]')) {
+      if (node.one('input[type=radio]').get('checked')) {
         node.addClass('checked');
       }
     });
