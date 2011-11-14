@@ -702,6 +702,16 @@ class question_type {
         $question->createdby = $questiondata->createdby;
         $question->modifiedby = $questiondata->modifiedby;
 
+        //Fill extra question fields values
+        $extraquestionfields = $this->extra_question_fields();
+        if (is_array($extraquestionfields)) {
+            //omit table name
+            array_shift($extraquestionfields);
+            foreach($extraquestionfields as $field) {
+                $question->$field = $questiondata->options->$field;
+            }
+        }
+
         $this->initialise_question_hints($question, $questiondata);
     }
 
