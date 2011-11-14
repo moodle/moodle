@@ -372,18 +372,6 @@ abstract class base_setting {
                 }
                 $dependency = new setting_dependency_disabledif_equals($this, $dependentsetting, $options['value'], $options['defaultvalue']);
                 break;
-            case setting_dependency::DISABLED_NOT_VALUE :
-                if (!array_key_exists('value', $options)) {
-                    throw new base_setting_exception('dependency_needs_value');
-                }
-                $dependency = new setting_dependency_disabledif_not_equals($this, $dependentsetting, $options['value'], $options['defaultvalue']);
-                break;
-            case setting_dependency::DISABLED_VALUES :
-                if (!array_key_exists('value', $options)) {
-                    throw new base_setting_exception('dependency_needs_value');
-                }
-                $dependency = new setting_dependency_disabledif_equals2($this, $dependentsetting, $options['value'], $options['defaultvalue']);
-                break;
             case setting_dependency::DISABLED_TRUE :
                 $dependency = new setting_dependency_disabledif_equals($this, $dependentsetting, true, $options['defaultvalue']);
                 break;

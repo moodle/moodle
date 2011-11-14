@@ -44,8 +44,6 @@ abstract class setting_dependency {
     const DISABLED_NOT_CHECKED = 5;
     const DISABLED_EMPTY = 6;
     const DISABLED_NOT_EMPTY = 7;
-    const DISABLED_VALUES = 8;
-    const DISABLED_NOT_VALUES = 9;
 
     /**
      * The parent setting (primary)
