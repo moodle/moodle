@@ -383,7 +383,7 @@ class plugin_manager {
 
             'mod' => array(
                 'assignment', 'chat', 'choice', 'data', 'feedback', 'folder',
-                'forum', 'glossary', 'imscp', 'label', 'lesson', 'page',
+                'forum', 'glossary', 'imscp', 'label', 'lesson', 'lti', 'page',
                 'quiz', 'resource', 'scorm', 'survey', 'url', 'wiki', 'workshop'
             ),
 
