@@ -63,17 +63,17 @@ M.gradingform_rubriceditor.editmode = function(el, editmode, focustb) {
     var ta = el.one('textarea')
     if (!editmode && ta.getStyle('display') == 'none') return;
     if (editmode && ta.getStyle('display') == 'block') return;
-    var pseudotablink = '<a href="#" class="pseudotablink"> </a>',
+    var pseudotablink = '<a href="#" class="pseudotablink">&nbsp;</a>',
         taplain = ta.get('parentNode').one('.plainvalue'),
         tbplain = null,
         tb = el.one('input[type=text]')
     // add 'plainvalue' next to textarea for description/definition and next to input text field for score (if applicable)
     if (!taplain) {
-        ta.get('parentNode').append('<div class="plainvalue"><span></span>'+pseudotablink+'</div>')
+        ta.get('parentNode').append('<div class="plainvalue"><span class="textvalue">&nbsp;</span>'+pseudotablink+'</div>')
         taplain = ta.get('parentNode').one('.plainvalue')
         taplain.one('.pseudotablink').on('focus', M.gradingform_rubriceditor.clickanywhere)
         if (tb) {
-            tb.get('parentNode').append('<div class="plainvalue"><span></span>'+pseudotablink+'</div>')
+            tb.get('parentNode').append('<div class="plainvalue"><span class="textvalue">&nbsp;</span>'+pseudotablink+'</div>')
             tbplain = tb.get('parentNode').one('.plainvalue')
             tbplain.one('.pseudotablink').on('focus', M.gradingform_rubriceditor.clickanywhere)
         }
@@ -88,8 +88,8 @@ M.gradingform_rubriceditor.editmode = function(el, editmode, focustb) {
             value = (el.hasClass('level')) ? M.str.gradingform_rubric.levelempty : M.str.gradingform_rubric.criterionempty
             taplain.addClass('empty')
         }
-        taplain.one('span').set('innerHTML', value)
-        if (tb) tbplain.one('span').set('innerHTML', tb.get('value'))
+        taplain.one('.textvalue').set('innerHTML', value)
+        if (tb) tbplain.one('.textvalue').set('innerHTML', tb.get('value'))
     } else {
         // if we need to show the input fields, set the width/height for textarea so it fills the cell
         var width = parseFloat(ta.get('parentNode').getComputedStyle('width')),
