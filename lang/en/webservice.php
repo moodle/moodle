@@ -93,6 +93,7 @@ $string['externalservicefunctions'] = 'External service functions';
 $string['externalservices'] = 'External services';
 $string['externalserviceusers'] = 'External service users';
 $string['failedtolog'] = 'Failed to log';
+$string['forbiddenwsuser'] = 'Can not create token for a unconfirmed, deleted, suspended or guest user.';
 $string['function'] = 'Function';
 $string['functions'] = 'Functions';
 $string['generalstructure'] = 'General structure';
