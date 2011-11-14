@@ -23,6 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class qtype_ddmarker_shape {
+
+    protected $error = false;
+
     public function __construct($coordsstring) {
 
     }
@@ -59,6 +62,17 @@ abstract class qtype_ddmarker_shape {
         return true;
     }
 
+    public function get_coords_interpreter_error() {
+        if ($this->error) {
+            $a = new stdClass();
+            $a->shape = self::human_readable_name();
+            $a->coordsstring = self::human_readable_coords_format();
+            return get_string('formerror_'.$this->error, 'qtype_ddmarker', $a);
+        } else {
+            return false;
+        }
+    }
+
     /**
      * @param array $xy $xy[0] is x, $xy[1] is y
      * @return boolean is point inside shape
@@ -66,11 +80,36 @@ abstract class qtype_ddmarker_shape {
     abstract public function is_point_in_shape($xy);
 
     public static function name() {
-        return substr(get_called_class(), 21);
+        return substr(get_called_class(), strlen(self::$classnameprefix));
     }
+
+    protected static $classnameprefix = 'qtype_ddmarker_shape_';
 
     public static function human_readable_name() {
         return get_string('shape_'.self::name(), 'qtype_ddmarker');
+    }
+
+    public static function human_readable_coords_format() {
+        return get_string('shape_'.self::name().'_coords', 'qtype_ddmarker');
+    }
+
+
+    public static function shape_options() {
+        $grepexpression = '!^'.preg_quote(self::$classnameprefix, '!').'!';
+        $shapes = preg_grep($grepexpression, get_declared_classes());
+        $shapearray = array();
+        foreach ($shapes as $shape) {
+            $shapearray[$shape::name()] = $shape::human_readable_name();
+        }
+        asort($shapearray);
+        return $shapearray;
+    }
+    public static function exists($shape) {
+        return class_exists((self::$classnameprefix).$shape);
+    }
+    public static function create($shape, $coordsstring) {
+        $classname = (self::$classnameprefix).$shape;
+        return new $classname($coordsstring);
     }
 }
 class qtype_ddmarker_shape_rectangle extends qtype_ddmarker_shape {
@@ -81,14 +120,14 @@ class qtype_ddmarker_shape_rectangle extends qtype_ddmarker_shape {
     public function __construct($coordsstring) {
         $coordstring = preg_replace('!^\s*!', '', $coordsstring);
         $coordstring = preg_replace('!\s*$!', '', $coordsstring);
-        $coordsstringparts = preg_split('!\s*!', $coordsstring);
+        $coordsstringparts = preg_split('!;!', $coordsstring);
         if (count($coordsstringparts) > 2) {
-            $this->error = 'rectangletoomanyspaces';
+            $this->error = 'toomanysemicolons';
         } else if (count($coordsstringparts) < 2) {
-            $this->error = 'rectanglenospaces';
+            $this->error = 'nosemicolons';
         } else {
             $xy = explode(',', $coordsstringparts[0]);
-            $widthheightparts = explode('x', $coordsstringparts[1]);
+            $widthheightparts = explode(',', $coordsstringparts[1]);
             if (count($xy) !== 2) {
                 $this->error = 'unrecognisedxypart';
             } else if (count($widthheightparts) !== 2) {

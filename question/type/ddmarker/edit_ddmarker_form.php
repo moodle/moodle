@@ -92,22 +92,13 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
         return array();
     }
 
-    protected function shapes() {
-        return preg_grep('!^qtype_ddmarker_shape_!', get_declared_classes());
-        return array('qtype_ddmarker_shape_circle',
-                        'qtype_ddmarker_shape_rectangle',
-                        'qtype_ddmarker_shape_polygon');
-    }
 
 
     protected function drop_zone($mform, $imagerepeats) {
         $dropzoneitem = array();
 
         $grouparray = array();
-        $shapearray = array();
-        foreach ($this->shapes() as $shape) {
-            $shapearray[$shape::name()] = $shape::human_readable_name();
-        }
+        $shapearray = qtype_ddmarker_shape::shape_options();
         $grouparray[] = $mform->createElement('select', 'shape',
                                     get_string('marker', 'qtype_ddmarker'), $shapearray);
         $grouparray[] = $mform->createElement('text', 'coords',
@@ -229,18 +220,25 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
             if ($choicepresent) {
                 //test coords here
                 if ($bgimagesize !== null) {
-                    if (in_array($data['drops'][$i]['shape'], $this->shapes())) {
-
+                    $shape = $data['drops'][$i]['shape'];
+                    $coordsstring = $data['drops'][$i]['coords'];
+                    $shapeobj = qtype_ddmarker_shape::create($shape, $coordsstring);
+                    $interpretererror = $shapeobj->get_coords_interpreter_error();
+                    if ($interpretererror) {
+                        $errors["drops[{$i}]"] = $interpretererror;
+                    } else if (!$shapeobj->inside_width_height($bgimagesize)) {
+                        $errorcode = 'shapeoutsideboundsofbgimage';
+                        $errors["drops[{$i}]"] =
+                                            get_string('formerror_'.$errorcode, 'qtype_ddmarker');
                     }
                 }
-
-
             } else {
                 if (trim($data['drops'][$i]['coords']) !== '') {
-                    $errors["drops[{$i}]"]
-                                        = get_string('formerror_noitemselected', 'qtype_ddmarker');
+                    $errorcode = 'noitemselected';
+                    $errors["drops[{$i}]"] = get_string('formerror_'.$errorcode, 'qtype_ddmarker');
                 }
             }
+
         }
         for ($dragindex=0; $dragindex < $data['noitems']; $dragindex++) {
             $label = $data['drags'][$dragindex]['label'];
