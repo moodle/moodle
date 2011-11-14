@@ -27,24 +27,51 @@ defined('MOODLE_INTERNAL') || die();
 require_once("HTML/QuickForm/input.php");
 
 class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
+    /** help message */
     public $_helpbutton = '';
-    protected $validationerrors = null; // null - undefined, false - no errors, string - error(s) text
-    protected $wasvalidated = false; // if element has already been validated
-    protected $nonjsbuttonpressed = false; // null - unknown, true/false - button was/wasn't pressed
+    /** stores the result of the last validation: null - undefined, false - no errors, string - error(s) text */
+    protected $validationerrors = null;
+    /** if element has already been validated **/
+    protected $wasvalidated = false;
+    /** If non-submit (JS) button was pressed: null - unknown, true/false - button was/wasn't pressed */
+    protected $nonjsbuttonpressed = false;
+    /** Message to display in front of the editor (that there exist grades on this rubric being edited) */
+    protected $regradeconfirmation = false;
 
     function MoodleQuickForm_rubriceditor($elementName=null, $elementLabel=null, $attributes=null) {
         parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
     }
 
-    function getHelpButton() {
+    /**
+     * set html for help button
+     *
+     * @access   public
+     * @param array $help array of arguments to make a help button
+     * @param string $function function name to call to get html
+     */
+    public function setHelpButton($helpbuttonargs, $function='helpbutton'){
+        debugging('component setHelpButton() is not used any more, please use $mform->setHelpButton() instead');
+    }
+
+    /**
+     * get html for help button
+     *
+     * @access   public
+     * @return  string html for help button
+     */
+    public function getHelpButton() {
         return $this->_helpbutton;
     }
 
-    function getElementTemplateType() {
+    /**
+     * The renderer will take care itself about different display in normal and frozen states
+     *
+     * @return string
+     */
+    public function getElementTemplateType() {
         return 'default';
     }
 
-    protected $regradeconfirmation = false;
     /**
      * Specifies that confirmation about re-grading needs to be added to this rubric editor.
      * $changelevel is saved in $this->regradeconfirmation and retrieved in toHtml()
@@ -52,7 +79,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
      * @see gradingform_rubric_controller::update_or_check_rubric()
      * @param int $changelevel
      */
-    function add_regrade_confirmation($changelevel) {
+    public function add_regrade_confirmation($changelevel) {
         $this->regradeconfirmation = $changelevel;
     }
 
@@ -61,7 +88,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
      *
      * @return string
      */
-    function toHtml() {
+    public function toHtml() {
         global $PAGE;
         $html = $this->_getTabs();
         $renderer = $PAGE->get_renderer('gradingform_rubric');
@@ -112,7 +139,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
      * @param boolean $withvalidation whether to enable data validation
      * @return array
      */
-    function prepare_data($value = null, $withvalidation = false) {
+    protected function prepare_data($value = null, $withvalidation = false) {
         if (null === $value) {
             $value = $this->getValue();
         }
@@ -191,7 +218,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                     }
                     if (!array_key_exists('delete', $level)) {
                         if ($withvalidation) {
-                            if (empty($level['definition'])) {
+                            if (!strlen(trim($level['definition']))) {
                                 $errors['err_nodefinition'] = 1;
                                 $level['error_definition'] = true;
                             }
@@ -217,7 +244,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                     $errors['err_mintwolevels'] = 1;
                     $criterion['error_levels'] = true;
                 }
-                if (empty($criterion['description'])) {
+                if (!strlen(trim($criterion['description']))) {
                     $errors['err_nodescription'] = 1;
                     $criterion['error_description'] = true;
                 }
@@ -274,7 +301,13 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
         return $return;
     }
 
-    function get_next_id($ids) {
+    /**
+     * Scans array $ids to find the biggest element ! NEWID*, increments it by 1 and returns
+     *
+     * @param array $ids
+     * @return string
+     */
+    protected function get_next_id($ids) {
         $maxid = 0;
         foreach ($ids as $id) {
             if (preg_match('/^NEWID(\d+)$/', $id, $matches) && ((int)$matches[1]) > $maxid) {
@@ -293,7 +326,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
      * @param array $value
      * @return boolean true if non-submit button was pressed and not processed by JS
      */
-    function non_js_button_pressed($value) {
+    public function non_js_button_pressed($value) {
         if ($this->nonjsbuttonpressed === null) {
             $this->prepare_data($value);
         }
@@ -308,7 +341,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
      * @param array $value
      * @return string|false error text or false if no errors found
      */
-    function validate($value) {
+    public function validate($value) {
         if (!$this->wasvalidated) {
             $this->prepare_data($value, true);
         }
@@ -323,7 +356,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
      * @param boolean $assoc
      * @return array
      */
-    function exportValue(&$submitValues, $assoc = false) {
+    public function exportValue(&$submitValues, $assoc = false) {
         $value =  $this->prepare_data($this->_findValue($submitValues));
         return $this->_prepareValue($value, $assoc);
     }

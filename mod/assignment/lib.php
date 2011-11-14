@@ -332,12 +332,12 @@ class assignment_base {
         echo '<tr>';
         echo '<td class="left side">&nbsp;</td>';
         echo '<td class="content">';
-        $grade_str = '<div class="grade">'. get_string("grade").': '.$grade->str_long_grade. '</div>';
+        $gradestr = '<div class="grade">'. get_string("grade").': '.$grade->str_long_grade. '</div>';
         if (!empty($submission) && $controller = get_grading_manager($this->context, 'mod_assignment', 'submission')->get_active_controller()) {
             $controller->set_grade_range(make_grades_menu($this->assignment->grade));
-            echo $controller->render_grade($PAGE, $submission->id, $item, $grade_str, has_capability('mod/assignment:grade', $this->context));
+            echo $controller->render_grade($PAGE, $submission->id, $item, $gradestr, has_capability('mod/assignment:grade', $this->context));
         } else {
-            echo $grade_str;
+            echo $gradestr;
         }
         echo '<div class="clearer"></div>';
 
@@ -1607,8 +1607,17 @@ class assignment_base {
      * from advanced grading (if applicable) and returns true
      * If the form was submitted, validates it and returns false if validation did not pass.
      * If validation passes, preprocess advanced grading (if applicable) and returns true.
+     *
+     * Note to the developers: This is NOT the correct way to implement advanced grading
+     * in grading form. The assignment grading was written long time ago and unfortunately
+     * does not fully use the mforms. Usually function is_validated() is called to
+     * validate the form and get_data() is called to get the data from the form.
+     *
+     * Here we have to push the calculated grade to $_POST['xgrade'] because further processing
+     * of the form gets the data not from form->get_data(), but from $_POST (using statement
+     * like  $feedback = data_submitted() )
      */
-    function validate_and_preprocess_feedback() {
+    protected function validate_and_preprocess_feedback() {
         global $USER, $CFG;
         require_once($CFG->libdir.'/gradelib.php');
         if (!($feedback = data_submitted()) || !isset($feedback->userid) || !isset($feedback->offset)) {
@@ -1616,8 +1625,8 @@ class assignment_base {
         }
         $userid = required_param('userid', PARAM_INT);
         $offset = required_param('offset', PARAM_INT);
-        $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, array($userid));
-        $gradingdisabled = $grading_info->items[0]->grades[$userid]->locked || $grading_info->items[0]->grades[$userid]->overridden;
+        $gradinginfo = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, array($userid));
+        $gradingdisabled = $gradinginfo->items[0]->grades[$userid]->locked || $gradinginfo->items[0]->grades[$userid]->overridden;
         if ($gradingdisabled) {
             return true;
         }
@@ -2322,6 +2331,8 @@ class assignment_base {
 
 
 class mod_assignment_grading_form extends moodleform {
+    /** @var stores the advaned grading instance (if used in grading) */
+    private $advancegradinginstance;
 
     function definition() {
         global $OUTPUT;
@@ -2376,7 +2387,6 @@ class mod_assignment_grading_form extends moodleform {
 
     }
 
-    private $advancegradinginstance;
     /**
      * Gets or sets the instance for advanced grading
      *
