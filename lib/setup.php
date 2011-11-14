@@ -808,12 +808,14 @@ if (!empty($CFG->customscripts)) {
     }
 }
 
-// in the first case, ip in allowed list will be performed first
-// for example, client IP is 192.168.1.1
-// 192.168 subnet is an entry in allowed list
-// 192.168.1.1 is banned in blocked list
-// This ip will be banned finally
-if (!empty($CFG->allowbeforeblock)) { // allowed list processed before blocked list?
+if (CLI_SCRIPT and !defined('WEB_CRON_EMULATED_CLI') and !PHPUNIT_SCRIPT) {
+    // no ip blocking
+} else if (!empty($CFG->allowbeforeblock)) { // allowed list processed before blocked list?
+    // in this case, ip in allowed list will be performed first
+    // for example, client IP is 192.168.1.1
+    // 192.168 subnet is an entry in allowed list
+    // 192.168.1.1 is banned in blocked list
+    // This ip will be banned finally
     if (!empty($CFG->allowedip)) {
         if (!remoteip_in_list($CFG->allowedip)) {
             die(get_string('ipblocked', 'admin'));
