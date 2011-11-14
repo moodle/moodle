@@ -392,6 +392,25 @@ class quiz_access_manager {
     }
 
     /**
+     * Compute how much time is left before this attempt must be submitted.
+     *
+     * @param object $attempt the data from the relevant quiz_attempts row.
+     * @param int $timenow the time to consider as 'now'.
+     * @return int|false the number of seconds remaining for this attempt.
+     *      False if there is no limit.
+     */
+    public function get_time_left($attempt, $timenow) {
+        $timeleft = false;
+        foreach ($this->rules as $rule) {
+            $ruletimeleft = $rule->time_left($attempt, $timenow);
+            if ($ruletimeleft !== false && ($timeleft === false || $ruletimeleft < $timeleft)) {
+                $timeleft = $ruletimeleft;
+            }
+        }
+        return $timeleft;
+    }
+
+    /**
      * Will cause the attempt time to start counting down after the page has loaded,
      * if that is necessary.
      *
@@ -400,14 +419,7 @@ class quiz_access_manager {
      * @param mod_quiz_renderer $output the quiz renderer.
      */
     public function show_attempt_timer_if_needed($attempt, $timenow, $output) {
-
-        $timeleft = false;
-        foreach ($this->rules as $rule) {
-            $ruletimeleft = $rule->time_left($attempt, $timenow);
-            if ($ruletimeleft !== false && ($timeleft === false || $ruletimeleft < $timeleft)) {
-                $timeleft = $ruletimeleft;
-            }
-        }
+        $timeleft = $this->get_time_left($attempt, $timenow);
 
         if ($timeleft !== false) {
             // Make sure the timer starts just above zero. If $timeleft was <= 0, then

@@ -411,12 +411,22 @@ class quiz {
  * @since      Moodle 2.0
  */
 class quiz_attempt {
-    // Fields initialised in the constructor.
+
+    /** @var string to identify the in progress state. */
+    const IN_PROGRESS = 'inprogress';
+    /** @var string to identify the overdue state. */
+    const OVERDUE     = 'overdue';
+    /** @var string to identify the finished state. */
+    const FINISHED    = 'finished';
+    /** @var string to identify the abandoned state. */
+    const ABANDONED   = 'abandoned';
+
+    // Basic data
     protected $quizobj;
     protected $attempt;
-    protected $quba;
 
-    // Fields set later if that data is needed.
+    // More details of what happened for each question.
+    protected $quba;
     protected $pagelayout; // array page no => array of numbers on the page in order.
     protected $reviewoptions = null;
 
@@ -612,6 +622,10 @@ class quiz_attempt {
         return $this->attempt->attempt;
     }
 
+    public function get_state() {
+        return $this->attempt->state;
+    }
+
     /** @return int the id of the user this attempt belongs to. */
     public function get_userid() {
         return $this->attempt->userid;
@@ -622,12 +636,16 @@ class quiz_attempt {
         return $this->attempt->currentpage;
     }
 
+    public function get_sum_marks() {
+        return $this->attempt->sumgrades;
+    }
+
     /**
      * @return bool whether this attempt has been finished (true) or is still
      *     in progress (false).
      */
     public function is_finished() {
-        return $this->attempt->timefinish != 0;
+        return $this->attempt->state == self::FINISHED;
     }
 
     /** @return bool whether this attempt is a preview attempt. */
@@ -925,6 +943,40 @@ class quiz_attempt {
      */
     public function get_question_action_time($slot) {
         return $this->quba->get_question_action_time($slot);
+    }
+
+
+    /**
+     * @return int the time when this attempt was submitted. 0 if it has not been
+     * submitted yet.
+     */
+    public function get_submitted_date() {
+        return $this->attempt->timefinish;
+    }
+
+    /**
+     * If the attempt is in an applicable state, work out the time by which the
+     * student should next do something.
+     * @return int timestamp by which the student needs to do something.
+     */
+    function get_due_date($timenow) {
+
+        switch ($attempt->state) {
+            case self::IN_PROGRESS:
+                $timeleft = $this->get_access_manager($timenow)->get_time_left(
+                        $this->attempt, $timenow);
+                if ($timeleft === false) {
+                    return false;
+                } else {
+                    return $timenow + $timeleft;
+                }
+
+            case self::OVERDUE:
+                return $this->attempt->timefinished + $this->quizobj->get_quiz()->graceperiod;
+
+            default:
+                throw new coding_exception('Unexpected state: ' . $attempt->state);
+        }
     }
 
     // URLs related to this attempt ========================================================
