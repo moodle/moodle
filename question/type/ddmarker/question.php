@@ -244,6 +244,23 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
                         / ($numtries * max($maxitemsdragged, count($this->places)));
         return $grade;
     }
+    public function clear_wrong_from_response(array $response) {
+        $hits = $this->choose_hits($response);
+
+        $cleanedresponse = array();
+        foreach ($response as $choicekey => $coords) {
+            $choice = (int)substr($choicekey, 1);
+            $choiceresponse = array();
+            $coordparts = explode(';', $coords);
+            foreach ($coordparts as $itemno => $coord) {
+                if (in_array("$choice $itemno", $hits)) {
+                    $choiceresponse[] = $coord;
+                }
+            }
+            $cleanedresponse[$choicekey] = join(';', $choiceresponse);
+        }
+        return $cleanedresponse;
+    }
 
     public function classify_response(array $response) {
         $parts = array();
