@@ -32,5 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'ei';
 $string['cliansweryes'] = 'jah';
+$string['cliincorrectvalueretry'] = 'Vale väärtus(value), palun proovige uuesti';
+$string['cliyesnoprompt'] = 'kirjuta y (tähendab jah) või n (tähendab ei)';
 $string['environmentrequireinstall'] = 'on nõutud, et oleks installeeritud ja võimaldatud';
 $string['environmentrequireversion'] = 'versioon {$a->needed} on nõutud, Sinul on jooksmas versioon {$a->current}';
