@@ -173,6 +173,9 @@ function lti_view($instance) {
         $requestparams['launch_presentation_return_url'] = $returnurl;
     }
 
+    $requestparams['tool_consumer_info_product_family_code'] = 'moodle';
+    $requestparams['tool_consumer_info_version'] = strval($CFG->version);
+
     if (!empty($key) && !empty($secret)) {
         $parms = lti_sign_parameters($requestparams, $endpoint, "POST", $key, $secret);
     } else {
@@ -422,7 +425,7 @@ function lti_split_custom_parameters($customstr) {
             continue;
         }
         $key = trim($textlib->substr($line, 0, $pos));
-        $val = trim($textlib->substr($line, $pos+1));
+        $val = trim($textlib->substr($line, $pos+1, strlen($line)));
         $key = lti_map_keyname($key);
         $retval['custom_'.$key] = $val;
     }
