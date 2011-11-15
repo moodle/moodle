@@ -64,6 +64,7 @@ $string['pathserrcreatedataroot'] = 'Andmete kataloogi ({$a->dataroot}) ei saa i
 $string['pathshead'] = 'Radade kinnitused';
 $string['pathsrodataroot'] = 'Andmete juurkataloog (Dataroot) ei ole kirjutatav.';
 $string['pathsroparentdataroot'] = 'Ülemkataloog ({$a->parent}) ei ole kirjutatav. Installeerija ei saanud andmete kataloogi ({$a->dataroot}) luua.';
+$string['pathssubadmindir'] = 'Väga vähesed veebihostid kasutavad /admin spetsiaalse URL-na, et pääseda ligi kontrollpaneelile või millegile sarnasele. Kahjuks on see konfliktis Moodle administreerimislehtedega. Sa saad olukorda parandada, kui nimetad kataloogi admin ümber oma üaigalduses ning kirjutad selle uue nime siia. Näiteks: <em>moodleadmin</em>. See parandab administreerimisliidese lingid Moodle\'s.';
 $string['pathssubdataroot'] = 'Sa pead näitama koha, kuhu Moodle saaks salvestada üles laetud failid. See kataloog peab olema loetav JA KIRJUTATAV veebiserveri kasutaja poolt (tavaliselt \'nobody\' or \'apache\'), samas see kataloog ei tohiks olla ligipääsetav otse veebi kaudu. Kui kataloogi ei eksisteeri, siis installeerija püüab selle ise luua.';
 $string['pathssubdirroot'] = 'Täistee Moodle paigalduse kataloogile.';
 $string['pathssubwwwroot'] = 'Täielik veebiaadress, kust kaudu Moodle\'le ligi pääsetakse.
@@ -81,6 +82,7 @@ $string['phpversionhelp'] = '<p>Moodle vajab vähemalt PHP versiooni 4.3.0 või 
 (5.0.x sa võid ka minna tagasi versioonile 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Sa näed seda lehte, sest oled edukalt installeerinud ja käivitanud <strong>{$a->packname} {$a->packversion}</strong> paketi Sinu arvutis. Õnnitleme!';
+$string['welcomep30'] = 'See <strong>{$a->installername}</strong> väljalase rakendusi loomaks keskkonda, millel <strong>Moodle</strong> hakkab will operate, namely:';
 $string['welcomep40'] = 'Pakett sisaldab ka <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep70'] = 'Vajuta "Järgmine" nuppu all jätkamaks <strong>Moodle</strong> paigaldamisega.';
 $string['wwwroot'] = 'Veebiaadress';
