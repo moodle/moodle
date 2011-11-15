@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['cannotcreatelangdir'] = 'Hindi makalikha ng lang bgsk.';
 $string['cannotcreatetempdir'] = 'Hindi makalikha ng temp bgsk.';
 $string['cannotdownloadcomponents'] = 'Hindi mailusong ang mga piyesa';

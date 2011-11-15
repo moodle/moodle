@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['cannotcreatelangdir'] = 'មិនអាច​បង្កើត​ថត lang បាន​ឡើយ ។';
 $string['cannotcreatetempdir'] = 'មិនអាច​បង្កើត​ថត temp បាន​ឡើយ ។';
 $string['cannotdownloadcomponents'] = 'មិនអាច​ទាញយក​សមាសភាគ​បាន​ឡើយ ។';

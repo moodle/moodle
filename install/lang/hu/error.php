@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['cannotcreatelangdir'] = 'Nem hozható létre a lang könyvtár.';
 $string['cannotcreatetempdir'] = 'Nem hozható létre a temp könyvtár.';
 $string['cannotdownloadcomponents'] = 'Az összetevőket nem lehet letölteni.';

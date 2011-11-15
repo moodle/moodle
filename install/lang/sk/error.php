@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['cannotcreatelangdir'] = 'Nie je možné vytvoriť adresár pre jazykové súbory.';
 $string['cannotcreatetempdir'] = 'Nie je možné vytvoriť dočasný adresár.';
 $string['cannotdownloadcomponents'] = 'Nie je možné stiahnuť komponenty.';

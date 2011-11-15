@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['clianswerno'] = 'இ';
 $string['cliansweryes'] = 'ஆ';
 $string['cliincorrectvalueerror'] = 'வழு, "{$a->option}" இற்கான தவறான பெறுமானம் "{$a->value}"';

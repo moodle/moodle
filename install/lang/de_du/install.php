@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['chooselanguagesub'] = 'Wähle eine Sprache, die du während der Installation verwenden möchtest. Nach der Installation kannst du die Sprache für die Oberfläche und die Nutzer/innen festlegen.';
 $string['memorylimithelp'] = '<p>Die PHP-Einstellung memory_limit für deinen Server ist zur Zeit auf {$a} eingestellt. </p>
 <p>Dies wird vermutlich zu Problemen führen, wenn du Moodle mit vielen Aktivitäten oder vielen Nutzer/innen verwendst. </p>

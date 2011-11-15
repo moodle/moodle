@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['wrongdestpath'] = 'Səhv təyinat yolu';
 $string['wrongsourcebase'] = 'Baza URL-in səhv mənbəyi';
 $string['wrongzipfilename'] = 'ZİP faylın səhv adı';

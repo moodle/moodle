@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['cannotcreatelangdir'] = 'Verzeichnis "lang" kann nicht angelegt werden';
 $string['cannotcreatetempdir'] = 'Das Verzeichnis "temp" kann nicht angelegt werden.';
 $string['cannotdownloadcomponents'] = 'Einige Komponenten können nicht heruntergeladen werden.';

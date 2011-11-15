@@ -28,5 +28,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['environmentrequireinstall'] = 'ត្រូវ​តែ​បាន​ដំឡើង និង​អនុញ្ញាត';
 $string['environmentrequireversion'] = 'ត្រូវការ​កំណែ {$a->needed} ហើយ​អ្នក​កំពុង​រត់ {$a->current}';

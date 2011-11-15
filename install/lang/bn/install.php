@@ -28,4 +28,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['availablelangs'] = 'যে সমস্ত ভাষা ব্যাবহার করতে পারেন';

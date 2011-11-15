@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';
 $string['cliincorrectvalueerror'] = '오류: "{$a->option}" 에 대한 "{$a->value}" 값이 바르지 않음';

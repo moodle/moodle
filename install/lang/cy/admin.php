@@ -28,5 +28,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['environmentrequireinstall'] = 'angen ei osod/ei alluogi.';
 $string['environmentrequireversion'] = 'Mae angen fersiwn {$a->needed} ac rydych yn defnyddio {$a->current}';

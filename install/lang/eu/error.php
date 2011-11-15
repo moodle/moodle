@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['cannotcreatelangdir'] = 'Ezin da hizkuntza-direktorioa sortu';
 $string['cannotcreatetempdir'] = 'Ezin da temp direktorioa sortu';
 $string['cannotdownloadcomponents'] = 'Ezin dira osagaiak jaitsi';

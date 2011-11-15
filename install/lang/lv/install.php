@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['admindirname'] = 'Administratora direktorijs';
 $string['availablelangs'] = 'Pieejamās valodu pakotnes';
 $string['chooselanguagehead'] = 'Valodas izvēle';
