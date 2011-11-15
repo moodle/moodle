@@ -224,7 +224,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
                     $coordsstring = $data['drops'][$i]['coords'];
                     $shapeobj = qtype_ddmarker_shape::create($shape, $coordsstring);
                     $interpretererror = $shapeobj->get_coords_interpreter_error();
-                    if ($interpretererror) {
+                    if ($interpretererror !== false) {
                         $errors["drops[{$i}]"] = $interpretererror;
                     } else if (!$shapeobj->inside_width_height($bgimagesize)) {
                         $errorcode = 'shapeoutsideboundsofbgimage';
@@ -246,7 +246,6 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
                 $errors["drags[{$dragindex}]"]
                                         = get_string('formerror_notagsallowed', 'qtype_ddmarker');
             }
-
         }
         return $errors;
     }

@@ -62,10 +62,207 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
 
     public function get_expected_data() {
         $vars = array();
-        foreach ($this->choices as $choice => $notused) {
-            $vars[$this->choice($choice)] = PARAM_INTEGER;
+        foreach ($this->choices[1] as $choice => $notused) {
+            $vars[$this->choice($choice)] = PARAM_NOTAGS;
         }
         return $vars;
+    }
+    public function is_complete_response(array $response) {
+        foreach ($this->choices[1] as $choice => $notused) {
+            if ('' != trim($response[$this->choice($choice)])) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public function is_gradable_response(array $response) {
+        return $this->is_complete_response($response);
+    }
+    public function is_same_response(array $prevresponse, array $newresponse) {
+        foreach ($this->choices[1] as $choice => $notused) {
+            $fieldname = $this->choice($choice);
+            if (!$this->arrays_same_at_key_integer(
+                    $prevresponse, $newresponse, $fieldname)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    /**
+     * Tests to see whether two arrays have the same set of coords at a particular key. Coords
+     * can be in any order.
+     * @param array $array1 the first array.
+     * @param array $array2 the second array.
+     * @param string $key an array key.
+     * @return bool whether the two arrays have the same set of coords (or lack of them)
+     * for a given key.
+     */
+    public function arrays_same_at_key_integer(
+            array $array1, array $array2, $key) {
+        if (array_key_exists($key, $array1)) {
+            $value1 = $array1[$key];
+        } else {
+            $value1 = '';
+        }
+        if (array_key_exists($key, $array2)) {
+            $value2 = $array2[$key];
+        } else {
+            $value2 = '';
+        }
+        $coords1 = explode(';', $value1);
+        $coords2 = explode(';', $value2);
+        if (count($coords1) !== count($coords1)) {
+            return false;
+        } else if (count($coords1) === 0) {
+            return true;
+        } else {
+            $valuesinbotharrays = array_intersect($coords1, $coords2);
+            return (count($valuesinbotharrays) == count($coords1) &&
+                                                count($valuesinbotharrays) == count($coords2));
+        }
+    }
+    public function get_validation_error(array $response) {
+        if ($this->is_complete_response($response)) {
+            return '';
+        }
+        return get_string('pleasedragatleastonemarker', 'qtype_ddmarker');
+    }
+    public function get_num_parts_right(array $response) {
+        $chosenhits = $this->choose_hits($response);
+        $divisor = max(count($this->rightchoices), $this->total_number_of_items_dragged($response));
+        return array(count($chosenhits), $divisor);
+    }
+    /**
+     * Choose hits to maximize grade where drop targets may have more than one hit and drop targets
+     * can overlap.
+     * @param array $response
+     * @return array chosen hits
+     */
+    protected function choose_hits(array $response) {
+        $allhits = $this->get_all_hits($response);
+        $chosenhits = array();
+        foreach ($allhits as $placeno => $hits) {
+            foreach ($hits as $itemno => $hit) {
+                $choice = $this->get_right_choice_for($placeno);
+                $choiceitem = "$choice $itemno";
+                if (!in_array($choiceitem, $chosenhits)) {
+                    $chosenhits[$placeno] = $choiceitem;
+                    break;
+                }
+            }
+        }
+        return $chosenhits;
+    }
+    public function total_number_of_items_dragged(array $response) {
+        $total = 0;
+        foreach ($this->choiceorder[1] as $choice) {
+            $choicekey = $this->choice($choice);
+            if (array_key_exists($choicekey, $response) && trim($response[$choicekey] !== '')) {
+                $total += count(explode(';', $response[$choicekey]));
+            }
+        }
+        return $total;
+    }
+
+    /**
+     * Get's an array of all hits on drop targets. Needs further processing to find which hits
+     * to select in the general case that drop targets may have more than one hit and drop targets
+     * can overlap.
+     * @param array $response
+     * @return array all hits
+     */
+    protected function get_all_hits(array $response) {
+        $hits = array();
+        foreach ($this->places as $placeno => $place) {
+            $rightchoice = $this->get_right_choice_for($placeno);
+            $rightchoicekey = $this->choice($rightchoice);
+            if (!array_key_exists($rightchoicekey, $response)) {
+                continue;
+            }
+            $choicecoords = $response[$rightchoicekey];
+            $coords = explode(';', $choicecoords);
+            foreach ($coords as $itemno => $coord) {
+                if (trim($coord) === '') {
+                    continue;
+                }
+                $pointxy = explode(',', $coord);
+                if ($place->drop_hit($pointxy)) {
+                    if (!isset($hits[$placeno])) {
+                        $hits[$placeno] = array();
+                    }
+                    $hits[$placeno][$itemno] = $coord;
+                }
+            }
+        }
+        //reverse sort in order of number of hits per place
+        //(if two or more hits per place then we want to make sure hits do not hit elsewhere)
+        $sortcomparison = function ($a1, $a2){
+            return (count($a1) - count($a2));
+        };
+        uasort($hits, $sortcomparison);
+        return $hits;
+    }
+
+    public function get_right_choice_for($place) {
+        $group = $this->places[$place]->group;
+        foreach ($this->choiceorder[$group] as $choicekey => $choiceid) {
+            if ($this->rightchoices[$place] == $choiceid) {
+                return $choicekey;
+            }
+        }
+    }
+    public function grade_response(array $response) {
+        list($right, $total) = $this->get_num_parts_right($response);
+        $fraction = $right / $total;
+        return array($fraction, question_state::graded_state_for_fraction($fraction));
+    }
+
+    public function compute_final_grade($responses, $totaltries) {
+        $maxitemsdragged = 0;
+        $rightsince = array();
+        foreach ($responses as $i => $response) {
+            $maxitemsdragged = max($maxitemsdragged,
+                                                $this->total_number_of_items_dragged($response));
+            $hits = $this->choose_hits($response);
+            dbg(compact('hits', 'maxitemsdragged'));
+            foreach ($hits as $place => $choiceitem) {
+                if (!isset($rightsince[$place])) {
+                    $rightsince[$place] = $i;
+                }
+            }
+            foreach ($rightsince as $place => $notused) {
+                if (!isset($hits[$place])) {
+                    unset($rightsince[$place]);
+                }
+            }
+        }
+        $numtries = count($responses);
+        $numright = count($rightsince);
+        dbg("($numright * $numtries) - ".array_sum($rightsince).")
+                        / ($numright * max($maxitemsdragged, ".count($this->places).")");
+        $grade = (($numright * $numtries) - array_sum($rightsince))
+                        / ($numtries * max($maxitemsdragged, count($this->places)));
+        return $grade;
+    }
+
+    public function classify_response(array $response) {
+        $parts = array();
+        foreach ($this->places as $place => $group) {
+            if (!array_key_exists($this->field($place), $response) ||
+                    !$response[$this->field($place)]) {
+                $parts[$place] = question_classified_response::no_response();
+                continue;
+            }
+
+            $fieldname = $this->field($place);
+            $choiceno = $this->choiceorder[$group][$response[$fieldname]];
+            $choice = $this->choices[$group][$choiceno];
+            $parts[$place] = new question_classified_response(
+                    $choiceno, html_to_text($choice->text, 0, false),
+                    ($this->get_right_choice_for($place) == $response[$fieldname])
+                            / count($this->places));
+        }
+        return $parts;
     }
 }
 
@@ -107,11 +304,15 @@ class qtype_ddmarker_drop_zone {
 
     public function __construct($no, $shape, $coords) {
         $this->no = $no;
-        $this->shape = $shape;
+        $this->shape = qtype_ddmarker_shape::create($shape, $coords);
         $this->coords = $coords;
     }
 
     public function summarise() {
         return get_string('summariseplaceno', 'qtype_ddmarker', $this->no);
+    }
+
+    public function drop_hit($xy) {
+        return $this->shape->is_point_in_shape($xy);
     }
 }
