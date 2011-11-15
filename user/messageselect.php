@@ -46,7 +46,7 @@
     foreach ($_POST as $k => $v) {
         if (preg_match('/^(user|teacher)(\d+)$/',$k,$m)) {
             if (!array_key_exists($m[2],$SESSION->emailto[$id])) {
-                if ($user = get_record_select('user','id = '.$m[2],'id,firstname,lastname,idnumber,email,emailstop,mailformat,lastaccess')) {
+                if ($user = get_record_select('user','id = '.$m[2],'id,firstname,lastname,idnumber,email,emailstop,mailformat,lastaccess,maildisplay')) {
                     $SESSION->emailto[$id][$m[2]] = $user;
                     $SESSION->emailto[$id][$m[2]]->teacher = ($m[1] == 'teacher');
                     $count++;
