@@ -943,12 +943,19 @@ class global_navigation extends navigation_node {
     protected $cache;
     /** @var array An array of course ids that are present in the navigation */
     protected $addedcourses = array();
+    /** @var bool */
+    protected $allcategoriesloaded = false;
     /** @var array An array of category ids that are included in the navigation */
     protected $addedcategories = array();
     /** @var int expansion limit */
     protected $expansionlimit = 0;
     /** @var int userid to allow parent to see child's profile page navigation */
     protected $useridtouseforparentchecks = 0;
+
+    /** Used when loading categories to load all top level categories [parent = 0] **/
+    const LOAD_ROOT_CATEGORIES = 0;
+    /** Used when loading categories to load all categories **/
+    const LOAD_ALL_CATEGORIES = -1;
 
     /**
      * Constructs a new global navigation
@@ -1050,18 +1057,15 @@ class global_navigation extends navigation_node {
         $this->rootnodes['users']     = $this->add(get_string('users'), null, self::TYPE_ROOTNODE, null, 'users');
 
         // Fetch all of the users courses.
-        $limit = 20;
-        if (!empty($CFG->navcourselimit)) {
-            $limit = $CFG->navcourselimit;
-        }
-
-        $mycourses = enrol_get_my_courses(NULL, 'visible DESC,sortorder ASC');
-        $showallcourses = (count($mycourses) == 0 || !empty($CFG->navshowallcourses));
-        // When checking if we are to show categories there is an additional override.
-        // If the user is viewing a category then we will load it regardless of settings.
-        // to ensure that the navigation is consistent.
-        $showcategories = $this->page->context->contextlevel == CONTEXT_COURSECAT || ($showallcourses && $this->show_categories());
+        $mycourses = enrol_get_my_courses();
+        // We need to show all courses if the user has selected to show all courses in the settings
+        // OR if the user is not enrolled in any courses and we're not showing categories
+        $showallcourses = (!empty($CFG->navshowallcourses) || (count($mycourses) === 0 && !$this->show_categories()));
+        // We need to show categories if we can show categories and the user isn't enrolled in any courses or we're not showing all courses
+        $showcategories = ($this->show_categories() && (count($mycourses) == 0 || !empty($CFG->navshowallcourses)));
+        // $issite gets set to true if the current pages course is the sites frontpage course
         $issite = ($this->page->course->id == SITEID);
+        // $ismycourse gets set to true if the user is enrolled in the current pages course.
         $ismycourse = (array_key_exists($this->page->course->id, $mycourses));
 
         // Check if any courses were returned.
@@ -1137,12 +1141,40 @@ class global_navigation extends navigation_node {
             }
 
             // Add all of the users courses to the navigation.
+            // First up we need to add to the mycourses section.
             foreach ($mycourses as $course) {
                 $course->coursenode = $this->add_course($course, false, true);
             }
-        }
 
-        if ($showallcourses) {
+            if ($showallcourses) {
+                // Load all courses
+                $this->load_all_courses();
+            }
+
+            // Next if nasvshowallcourses is enabled then we need to add courses
+            // to the courses branch as well.
+            if (!empty($CFG->navshowallcourses)) {
+                foreach ($mycourses as $course) {
+                    if (!empty($course->category) && !$this->can_add_more_courses_to_category($course->category)) {
+                        continue;
+                    }
+                    $genericcoursenode = $this->add_course($course, true);
+                    if ($genericcoursenode->isactive) {
+                        // We don't want this node to be active because we want the
+                        // node in the mycourses branch to be active.
+                        $genericcoursenode->make_inactive();
+                        $genericcoursenode->collapse = true;
+                        if ($genericcoursenode->parent && $genericcoursenode->parent->type == self::TYPE_CATEGORY) {
+                            $parent = $genericcoursenode->parent;
+                            while ($parent && $parent->type == self::TYPE_CATEGORY) {
+                                $parent->collapse = true;
+                                $parent = $parent->parent;
+                            }
+                        }
+                    }
+                }
+            }
+        } else if ($showallcourses) {
             // Load all courses
             $this->load_all_courses();
         }
@@ -1160,14 +1192,15 @@ class global_navigation extends navigation_node {
             case CONTEXT_SYSTEM :
                 // This has already been loaded we just need to map the variable
                 $coursenode = $frontpagecourse;
-                $this->load_all_categories(null, $showcategories);
+                if ($this->show_categories()) {
+                    $this->load_all_categories(self::LOAD_ROOT_CATEGORIES, $showcategories);
+                }
                 break;
             case CONTEXT_COURSECAT :
                 // This has already been loaded we just need to map the variable
                 $coursenode = $frontpagecourse;
-                $this->load_all_categories($this->page->context->instanceid, $showcategories);
-                if (array_key_exists($this->page->context->instanceid, $this->addedcategories)) {
-                    $this->addedcategories[$this->page->context->instanceid]->make_active();
+                if ($this->show_categories()) {
+                    $this->load_all_categories($this->page->context->instanceid, $showcategories);
                 }
                 break;
             case CONTEXT_BLOCK :
@@ -1179,7 +1212,7 @@ class global_navigation extends navigation_node {
                 }
                 // Load the course associated with the page into the navigation
                 $course = $this->page->course;
-                if ($showcategories && !$ismycourse) {
+                if ($this->show_categories() && !$ismycourse) {
                     $this->load_all_categories($course->category, $showcategories);
                 }
                 $coursenode = $this->load_course($course);
@@ -1240,7 +1273,7 @@ class global_navigation extends navigation_node {
                 $course = $this->page->course;
                 $cm = $this->page->cm;
 
-                if ($showcategories && !$ismycourse) {
+                if ($this->show_categories() && !$ismycourse) {
                     $this->load_all_categories($course->category, $showcategories);
                 }
 
@@ -1328,7 +1361,7 @@ class global_navigation extends navigation_node {
                     break;
                 }
                 $course = $this->page->course;
-                if ($showcategories && !$ismycourse) {
+                if ($this->show_categories() && !$ismycourse) {
                     $this->load_all_categories($course->category, $showcategories);
                 }
                 // Load the course associated with the user into the navigation
@@ -1352,19 +1385,30 @@ class global_navigation extends navigation_node {
                 break;
         }
 
-        $limit = 20;
-        if (!empty($CFG->navcourselimit)) {
-            $limit = $CFG->navcourselimit;
-        }
         if ($showcategories) {
             $categories = $this->find_all_of_type(self::TYPE_CATEGORY);
-            foreach ($categories as &$category) {
-                if ($category->children->count() >= $limit) {
-                    $url = new moodle_url('/course/category.php', array('id'=>$category->key));
-                    $category->add(get_string('viewallcourses'), $url, self::TYPE_SETTING);
+            if (count($categories) !== 0) {
+                $categoryids = array();
+                foreach ($categories as $category) {
+                    $categoryids[] = $category->key;
+                }
+                list($categoriessql, $params) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED);
+                $params['limit'] = (!empty($CFG->navcourselimit))?$CFG->navcourselimit:20;
+                $sql = "SELECT cc.id, COUNT(c.id) AS coursecount
+                          FROM {course_categories} cc
+                          JOIN {course} c ON c.category = cc.id
+                         WHERE cc.id {$categoriessql}
+                      GROUP BY cc.id
+                        HAVING COUNT(c.id) > :limit";
+                $excessivecategories = $DB->get_records_sql($sql, $params);
+                foreach ($categories as &$category) {
+                    if (array_key_exists($category->key, $excessivecategories) && !$this->can_add_more_courses_to_category($category)) {
+                        $url = new moodle_url('/course/category.php', array('id'=>$category->key));
+                        $category->add(get_string('viewallcourses'), $url, self::TYPE_SETTING);
+                    }
                 }
             }
-        } else if ($this->rootnodes['courses']->children->count() >= $limit) {
+        } else if ((!empty($CFG->navshowallcourses) || empty($mycourses)) && !$this->can_add_more_courses_to_category($this->rootnodes['courses'])) {
             $this->rootnodes['courses']->add(get_string('viewallcoursescategories'), new moodle_url('/course/index.php'), self::TYPE_SETTING);
         }
 
@@ -1465,49 +1509,234 @@ class global_navigation extends navigation_node {
     /**
      * Loads the courses in Moodle into the navigation.
      *
-     * @param mixed $categoryids Either a string or array of category ids to load courses for
-     * @return array An array of navigation_node
+     * @global moodle_database $DB
+     * @param string|array $categoryids An array containing categories to load courses
+     *                     for, OR null to load courses for all categories.
+     * @return array An array of navigation_nodes one for each course
      */
-    protected function load_all_courses($categoryids=null) {
-        global $CFG, $DB, $USER;
+    protected function load_all_courses($categoryids = null) {
+        global $CFG, $DB;
 
-        if ($categoryids !== null) {
-            if (is_array($categoryids)) {
-                list ($categoryselect, $params) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'catid');
-            } else {
-                $categoryselect = '= :categoryid';
-                $params = array('categoryid', $categoryids);
-            }
-            $params['siteid'] = SITEID;
-            $categoryselect = ' AND c.category '.$categoryselect;
-        } else {
-            $params = array('siteid' => SITEID);
-            $categoryselect = '';
-        }
-
-        $ccselect = context_helper::get_preload_record_columns_sql('ctx');
-        $params['contextlevel'] = CONTEXT_COURSE;
-        list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses) + array(SITEID), SQL_PARAMS_NAMED, 'lcourse', false);
-        $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category, cat.path AS categorypath, $ccselect
-                  FROM {course} c
-                  JOIN {context} ctx ON c.id = ctx.instanceid
-             LEFT JOIN {course_categories} cat ON cat.id=c.category
-                 WHERE c.id {$courseids} AND
-                       ctx.contextlevel = :contextlevel
-                       {$categoryselect}
-              ORDER BY c.sortorder ASC";
+        // Work out the limit of courses.
         $limit = 20;
         if (!empty($CFG->navcourselimit)) {
             $limit = $CFG->navcourselimit;
         }
-        $courses = $DB->get_records_sql($sql, $params + $courseparams, 0, $limit);
 
+        // Work out the key to use for caching.
+        if (is_array($categoryids)) {
+            $cachekey = sprintf('load_all_courses_%d_%s', $limit, md5(join('_', $categoryids)));
+        } else if (is_string($categoryids) || is_int($categoryids)) {
+            $cachekey = sprintf('load_all_courses_%d_%s', $limit, md5($categoryids));
+        } else {
+            $cachekey = sprintf('load_all_courses_%d', $limit);
+        }
+
+        $toload = (empty($CFG->navshowallcourses))?self::LOAD_ROOT_CATEGORIES:self::LOAD_ALL_CATEGORIES;
+
+        // If we are going to show all courses AND we are showing categories then
+        // to save us repeated DB calls load all of the categories now
+        if ($this->show_categories()) {
+            $this->load_all_categories($toload);
+        }
+
+        // Will be the return of our efforts
         $coursenodes = array();
-        foreach ($courses as $course) {
-            context_helper::preload_from_record($course);
-            $coursenodes[$course->id] = $this->add_course($course);
+
+        // Here we have a very important cache check.
+        // Loading all courses is a VERY costly buisness for two reasons.
+        // 1. We still have a limit per category of courses, however there is no
+        //    great way to select a maximum per category in a single query.
+        // 2. Each course loaded is costly as we have permission checks, ajax tie
+        //    in's and a great deal of code that will be executed.
+        if (!$this->cache->cached($cachekey)) {
+            // Check if we need to show categories.
+            if ($this->show_categories()) {
+                // Hmmm we need to show categories... this is going to be painful.
+                // We now need to fetch up to $limit courses for each category to
+                // be displayed.
+                if ($categoryids !== null) {
+                    if (!is_array($categoryids)) {
+                        $categoryids = array($categoryids);
+                    }
+                    list($categorywhere, $categoryparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'cc');
+                    $categorywhere = 'WHERE cc.id '.$categorywhere;
+                } else if ($toload == self::LOAD_ROOT_CATEGORIES) {
+                    $categorywhere = 'WHERE cc.depth = 1 OR cc.depth = 2';
+                    $categoryparams = array();
+                } else {
+                    $categorywhere = '';
+                    $categoryparams = array();
+                }
+
+                // First up we are going to get the categories that we are going to
+                // need so that we can determine how best to load the courses from them.
+                $sql = "SELECT cc.id, COUNT(c.id) AS coursecount
+                          FROM {course_categories} cc
+                     LEFT JOIN {course} c ON c.category = cc.id
+                               {$categorywhere}
+                      GROUP BY cc.id";
+                $categories = $DB->get_recordset_sql($sql, $categoryparams);
+                $fullfetch = array();
+                $partfetch = array();
+                foreach ($categories as $category) {
+                    if (!$this->can_add_more_courses_to_category($category->id)) {
+                        continue;
+                    }
+                    if ($category->coursecount > $limit * 5) {
+                        $partfetch[] = $category->id;
+                    } else if ($category->coursecount > 0) {
+                        $fullfetch[] = $category->id;
+                    }
+                }
+                $categories->close();
+
+                if (count($fullfetch)) {
+                    // First up fetch all of the courses in categories where we know that we are going to
+                    // need the majority of courses.
+                    list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+                    list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses) + array(SITEID), SQL_PARAMS_NAMED, 'lcourse', false);
+                    list($categoryids, $categoryparams) = $DB->get_in_or_equal($fullfetch, SQL_PARAMS_NAMED, 'lcategory');
+                    $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category $ccselect
+                              FROM {course} c
+                                   $ccjoin
+                             WHERE c.category {$categoryids} AND
+                                   c.id {$courseids}
+                          ORDER BY c.sortorder ASC";
+                    $coursesrs = $DB->get_recordset_sql($sql, $courseparams + $categoryparams);
+                    foreach ($coursesrs as $course) {
+                        if (!$this->can_add_more_courses_to_category($course->category)) {
+                            continue;
+                        }
+                        context_instance_preload($course);
+                        if ($course->id != SITEID && !$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                            continue;
+                        }
+                        $coursenodes[$course->id] = $this->add_course($course);
+                    }
+                    $coursesrs->close();
+                }
+
+                if (count($partfetch)) {
+                    // Next we will work our way through the categories where we will likely only need a small
+                    // proportion of the courses.
+                    foreach ($partfetch as $categoryid) {
+                        list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+                        list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses) + array(SITEID), SQL_PARAMS_NAMED, 'lcourse', false);
+                        $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category $ccselect
+                                  FROM {course} c
+                                       $ccjoin
+                                 WHERE c.category = :categoryid AND
+                                       c.id {$courseids}
+                              ORDER BY c.sortorder ASC";
+                        $courseparams['categoryid'] = $categoryid;
+                        $coursesrs = $DB->get_recordset_sql($sql, $courseparams, 0, $limit * 5);
+                        foreach ($coursesrs as $course) {
+                            if (!$this->can_add_more_courses_to_category($course->category)) {
+                                break;
+                            }
+                            context_instance_preload($course);
+                            if ($course->id != SITEID && !$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                                continue;
+                            }
+                            $coursenodes[$course->id] = $this->add_course($course);
+                        }
+                        $coursesrs->close();
+                    }
+                }
+            } else {
+                // Prepare the SQL to load the courses and their contexts
+                list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+                list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses), SQL_PARAMS_NAMED, 'lc', false);
+                $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category $ccselect
+                          FROM {course} c
+                               $ccjoin
+                         WHERE c.id {$courseids}
+                      ORDER BY c.sortorder ASC";
+                $coursesrs = $DB->get_recordset_sql($sql, $courseparams);
+                foreach ($coursesrs as $course) {
+                    context_instance_preload($course);
+                    if ($course->id != SITEID && !$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
+                        continue;
+                    }
+                    $coursenodes[$course->id] = $this->add_course($course);
+                    if (count($coursenodes) >= $limit) {
+                        break;
+                    }
+                }
+                $coursesrs->close();
+            }
+
+            // Cache the course id's that we've had to load to save us running these queries again.
+            $this->cache->set($cachekey, array_keys($coursenodes));
+        } else {
+            // YAY we've already cached this information
+            // First get the courses that we need to load from the navigation cache
+            $courseids = $this->cache->$cachekey;
+
+            // Check to make sure we have some course nodes.
+            if (!count($courseids)) {
+                return $coursenodes;
+            }
+
+            // Next check for courses that have already been loaded and remove them
+            // from the array we are about to load.
+            foreach (array_intersect($courseids, array_keys($this->addedcourses)) as $id) {
+                $key = array_search($id, $courseids);
+                unset($courseids[$key]);
+            }
+
+            // Check that we still have course nodes. Any that have already been loaded
+            // will now have been removed.
+            if (!count($courseids)) {
+                return $coursenodes;
+            }
+
+            // Prepare the SQL to load the courses and their contexts
+            list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+            list($courseids, $courseparams) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED, 'lc');
+            $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category $ccselect
+                      FROM {course} c
+                           $ccjoin
+                     WHERE c.id {$courseids}
+                  ORDER BY c.sortorder ASC";
+            $coursesrs = $DB->get_recordset_sql($sql, $courseparams);
+            foreach ($coursesrs as $course) {
+                context_instance_preload($course);
+                $coursenodes[$course->id] = $this->add_course($course);
+            }
+            $coursesrs->close();
         }
         return $coursenodes;
+    }
+
+    /**
+     * Returns true if more courses can be added to the provided category.
+     *
+     * @global type $CFG
+     * @param type $categoryid
+     * @return type
+     */
+    protected function can_add_more_courses_to_category($category) {
+        global $CFG;
+        $limit = 20;
+        if (!empty($CFG->navcourselimit)) {
+            $limit = (int)$CFG->navcourselimit;
+        }
+        if (is_numeric($category)) {
+            if (!array_key_exists($category, $this->addedcategories)) {
+                return true;
+            }
+            $coursecount = count($this->addedcategories[$category]->children->type(self::TYPE_COURSE));
+        } else if ($category instanceof navigation_node) {
+            if ($category->type != self::TYPE_CATEGORY && $category->type != self::TYPE_ROOTNODE) {
+                return false;
+            }
+            $coursecount = count($category->children->type(self::TYPE_COURSE));
+        } else if (is_object($category) && property_exists($category,'id')) {
+            $coursecount = count($this->addedcategories[$category->id]->children->type(self::TYPE_COURSE));
+        }
+        return ($coursecount < $limit);
     }
 
     /**
@@ -1518,16 +1747,18 @@ class global_navigation extends navigation_node {
      *        as the requested category and any parent categories.
      * @return navigation_node|void returns a navigation node if a category has been loaded.
      */
-    protected function load_all_categories($categoryid = null, $showbasecategories = false) {
+    protected function load_all_categories($categoryid = self::LOAD_ROOT_CATEGORIES, $showbasecategories = false) {
         global $DB;
 
         // Check if this category has already been loaded
-        if ($categoryid !== null && array_key_exists($categoryid, $this->addedcategories) && $this->addedcategories[$categoryid]->children->count() > 0) {
-            return $this->addedcategories[$categoryid];
+        if ($this->allcategoriesloaded || ($categoryid < 1 && $this->is_category_fully_loaded($categoryid))) {
+            return true;
         }
 
-        $coursestoload = array();
-        if (empty($categoryid)) { // can be 0
+        $categoriestoload = array();
+        if ($categoryid == self::LOAD_ALL_CATEGORIES) {
+            $categories = $DB->get_records('course_categories', null, 'sortorder ASC, id ASC');
+        } else if ($categoryid == self::LOAD_ROOT_CATEGORIES) { // can be 0
             // We are going to load all of the first level categories (categories without parents)
             $categories = $DB->get_records('course_categories', array('parent'=>'0'), 'sortorder ASC, id ASC');
         } else if (array_key_exists($categoryid, $this->addedcategories)) {
@@ -1558,11 +1789,11 @@ class global_navigation extends navigation_node {
             // This category hasn't been loaded yet so we need to fetch it, work out its category path
             // and load this category plus all its parents and subcategories
             $category = $DB->get_record('course_categories', array('id' => $categoryid), 'path', MUST_EXIST);
-            $coursestoload = explode('/', trim($category->path, '/'));
-            list($select, $params) = $DB->get_in_or_equal($coursestoload);
+            $categoriestoload = explode('/', trim($category->path, '/'));
+            list($select, $params) = $DB->get_in_or_equal($categoriestoload);
             $select = 'id '.$select.' OR parent '.$select;
             if ($showbasecategories) {
-                $select .= ' OR parent = 0';
+                $select .= ' OR depth = 1';
             }
             $params = array_merge($params, $params);
             $categories = $DB->get_records_select('course_categories', $select, $params, 'sortorder');
@@ -1605,9 +1836,20 @@ class global_navigation extends navigation_node {
             // Remove the category from the categories array now that we know it has been added.
             unset($categories[$category->id]);
         }
+        if ($categoryid === self::LOAD_ALL_CATEGORIES) {
+            $this->allcategoriesloaded = true;
+        }
         // Check if there are any categories to load.
-        if (count($coursestoload) > 0) {
-            $this->load_all_courses($coursestoload);
+        if (count($categoriestoload) > 0) {
+            $readytoloadcourses = array();
+            foreach ($categoriestoload as $category) {
+                if ($this->can_add_more_courses_to_category($category)) {
+                    $readytoloadcourses[] = $category;
+                }
+            }
+            if (count($readytoloadcourses)) {
+                $this->load_all_courses($readytoloadcourses);
+            }
         }
     }
 
@@ -2259,8 +2501,8 @@ class global_navigation extends navigation_node {
      * Adds the given course to the navigation structure.
      *
      * @param stdClass $course
-     * @param bool $forcegeneric (optional)
-     * @param bool $ismycourse (optional)
+     * @param bool $forcegeneric
+     * @param bool $ismycourse
      * @return navigation_node
      */
     public function add_course(stdClass $course, $forcegeneric = false, $ismycourse = false) {
@@ -2282,7 +2524,6 @@ class global_navigation extends navigation_node {
         }
 
         $issite = ($course->id == SITEID);
-        $ismycourse = ($ismycourse && !$forcegeneric);
         $shortname = format_string($course->shortname, true, array('context' => $coursecontext));
 
         if ($issite) {
@@ -2291,7 +2532,7 @@ class global_navigation extends navigation_node {
             if (empty($CFG->usesitenameforsitepages)) {
                 $shortname = get_string('sitepages');
             }
-        } else if ($ismycourse) {
+        } else if ($ismycourse && !$forcegeneric) {
             if (!empty($CFG->navshowmycoursecategories) && ($parent = $this->rootnodes['mycourses']->find($course->category, self::TYPE_CATEGORY))) {
                 // Nothing to do here the above statement set $parent to the category within mycourses.
             } else {
@@ -2301,18 +2542,17 @@ class global_navigation extends navigation_node {
         } else {
             $parent = $this->rootnodes['courses'];
             $url = new moodle_url('/course/view.php', array('id'=>$course->id));
-        }
-
-        if (!$ismycourse && !$issite && !empty($course->category)) {
-            if ($this->show_categories()) {
-                // We need to load the category structure for this course
-                $this->load_all_categories($course->category);
-            }
-            if (array_key_exists($course->category, $this->addedcategories)) {
-                $parent = $this->addedcategories[$course->category];
-                // This could lead to the course being created so we should check whether it is the case again
-                if (!$forcegeneric && array_key_exists($course->id, $this->addedcourses)) {
-                    return $this->addedcourses[$course->id];
+            if (!empty($course->category) && $this->show_categories()) {
+                if ($this->show_categories() && !$this->is_category_fully_loaded($course->category)) {
+                    // We need to load the category structure for this course
+                    $this->load_all_categories($course->category);
+                }
+                if (array_key_exists($course->category, $this->addedcategories)) {
+                    $parent = $this->addedcategories[$course->category];
+                    // This could lead to the course being created so we should check whether it is the case again
+                    if (!$forcegeneric && array_key_exists($course->id, $this->addedcourses)) {
+                        return $this->addedcourses[$course->id];
+                    }
                 }
             }
         }
@@ -2324,25 +2564,20 @@ class global_navigation extends navigation_node {
         if (!$forcegeneric) {
             $this->addedcourses[$course->id] = &$coursenode;
         }
-        if ($ismycourse && !empty($CFG->navshowallcourses)) {
-            // We need to add this course to the general courses node as well as the
-            // my courses node, rerun the function with the kill param
-            $genericcourse = $this->add_course($course, true);
-            if ($genericcourse->isactive) {
-                $genericcourse->make_inactive();
-                $genericcourse->collapse = true;
-                if ($genericcourse->parent && $genericcourse->parent->type == self::TYPE_CATEGORY) {
-                    $parent = $genericcourse->parent;
-                    while ($parent && $parent->type == self::TYPE_CATEGORY) {
-                        $parent->collapse = true;
-                        $parent = $parent->parent;
-                    }
-                }
-            }
-        }
 
         return $coursenode;
     }
+
+    /**
+     * Returns true if the category has already been loaded as have any child categories
+     *
+     * @param int $categoryid
+     * @return bool
+     */
+    protected function is_category_fully_loaded($categoryid) {
+        return (array_key_exists($categoryid, $this->addedcategories) && ($this->allcategoriesloaded || $this->addedcategories[$categoryid]->children->count() > 0));
+    }
+
     /**
      * Adds essential course nodes to the navigation for the given course.
      *
