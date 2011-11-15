@@ -28,17 +28,20 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['cannotcreatelangdir'] = 'Ei saa luua lang kataloogi';
 $string['cannotcreatetempdir'] = 'Ei saa luua temp kataloogi';
 $string['cannotdownloadcomponents'] = 'Ei saa alla tõmmata komponente.';
-$string['cannotdownloadzipfile'] = 'Ei saa alla tõmmata ZIP faili.';
+$string['cannotdownloadzipfile'] = 'Ei saa alla tõmmata ZIP-faili.';
 $string['cannotfindcomponent'] = 'Ei leia komponenti.';
-$string['cannotsavemd5file'] = 'Ei saa salvestada md5 faili.';
-$string['cannotsavezipfile'] = 'Ei saa salvestada ZIP faili.';
-$string['cannotunzipfile'] = 'Ei saa lahti pakkida faili.';
+$string['cannotsavemd5file'] = 'Ei saa salvestada md5-faili.';
+$string['cannotsavezipfile'] = 'Ei saa salvestada ZIP-faili.';
+$string['cannotunzipfile'] = 'Ei saa faili lahti pakkida.';
+$string['componentisuptodate'] = 'Komponent on ajakohane';
 $string['downloadedfilecheckfailed'] = 'Alla laetud faili kontroll ebaõnnestus.';
 $string['invalidmd5'] = 'Vigane md5';
 $string['missingrequiredfield'] = 'Mõned nõutud väljad on puudu';
 $string['wrongdestpath'] = 'Vale sihtrada.';
-$string['wrongsourcebase'] = 'Vale allika URL\'i baas.';
-$string['wrongzipfilename'] = 'Vale ZIP failinimi.';
+$string['wrongsourcebase'] = 'Vale allika URL-i baas.';
+$string['wrongzipfilename'] = 'Vale ZIP-failinimi.';

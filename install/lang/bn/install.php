@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['admindirname'] = 'অ্যাডমিন ডিরেক্টরিটি';
 $string['availablelangs'] = 'যে সমস্ত ভাষা ব্যাবহার করতে পারেন';
 $string['chooselanguagehead'] = 'একটি ভাষা নির্বাচন';

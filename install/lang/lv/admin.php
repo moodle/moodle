@@ -28,5 +28,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['environmentrequireinstall'] = 'nepieciešams instalēt/iespējot';
 $string['environmentrequireversion'] = 'nepieciešama versija {$a->needed}, bet jūs izmantojat versiju {$a->current}';

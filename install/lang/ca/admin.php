@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['clianswerno'] = 'No';
 $string['cliansweryes'] = 'Sí';
 $string['cliincorrectvalueerror'] = 'Error, valor incorrecte "{$a->value}" per a "{$a->option}"';

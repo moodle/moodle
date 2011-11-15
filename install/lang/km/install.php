@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['admindirname'] = 'ថត​អ្នក​គ្រប់គ្រង';
 $string['availablelangs'] = 'កញ្ចប់​ភាសា​ដែល​មាន';
 $string['chooselanguagehead'] = 'ជ្រើស​ភាសា';

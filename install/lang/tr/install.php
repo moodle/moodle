@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['admindirname'] = 'Yönetici Dizini';
 $string['availablelangs'] = 'Kullanılabilir diller';
 $string['chooselanguagehead'] = 'Bir dil seçin';

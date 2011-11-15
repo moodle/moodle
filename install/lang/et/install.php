@@ -28,10 +28,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['admindirname'] = 'Administreerimiskataloog';
 $string['availablelangs'] = 'Saadaval keelte nimekiri';
 $string['chooselanguagehead'] = 'Keele valik';
-$string['chooselanguagesub'] = 'Palun vali keel, mida kasutatakse AINULT installeerimise käigus. Hiljem saab valida õpikeskkonna ja kasutajate keelt.';
+$string['chooselanguagesub'] = 'Palun vali keel installeerimiseks. Seda keelt kasutatakse samuti vaikimisi keelena saidil, kuigi seda võib muuta hiljem.';
+$string['clialreadyinstalled'] = 'Fail config.php juba eksisteerib, palun kasuta admin/cli/upgrade.php kui soovid uuendada oma saiti.';
+$string['cliinstallheader'] = 'Moodle {$a} käsurea põhine installeerimise programm';
 $string['databasehost'] = 'Andmebaasi host';
 $string['databasename'] = 'Andmebaasi nimi';
 $string['databasetypehead'] = 'Vali andmebaasi draiver';
@@ -43,21 +47,24 @@ $string['environmentsub2'] = 'Iga Moodle väljalaskel on oma minimaalne PHP vers
 Täielik keskkonna kontroll tehakse enne iga installeerimist ja uuendamist. Palun võta ühendust serveri administraatoriga, kui sa ei sa kuidas installeerida või võimaldada PHP laiendusi.';
 $string['errorsinenvironment'] = 'Keskkonna sobivuse kontroll ebaõnnestus!';
 $string['installation'] = 'Installeerimine';
-$string['langdownloaderror'] = 'Kahjuks keelt "{$a}" ei paigaldatud. Paigaldamine jätkub inglise keeles.';
+$string['langdownloaderror'] = 'Kahjuks keelt "{$a}" ei saanud alla tõmmata. Paigaldamine jätkub inglise keeles.';
 $string['memorylimithelp'] = '<p>PHP mälu limiit sinu serveri jaoks on hetkel {$a}.</p>
 <p>See võib hiljem tekitada Moodle\'il mäluprobleeme, eriti kui sul on palju mooduleid ja/või kasutajaid.
 </p>
-<p>Me soovitame, et sa konfigureeriksid PHP kõrgema limiidi peale, näiteks 16M. Selle tostamiseks on mitu viisi:</p>
+<p>Me soovitame, et sa konfigureeriksid PHP kõrgema limiidi peale, näiteks 40M. Selle teostamiseks on mitu viisi:</p>
 <ol>
 <li>Kui võimalik, siis kompileeri PHP uuesti parameetriga <i>--enable-memory-limit</i>.
 See lubab Moodle\'il ise mälu limiiti määrata.</li>
-<li>Kui sul on juurdepääs oma php.ini failile, siis saad muuta seal <b>memory_limit</b> väärtuseks midagi 16M lähedast. Kui sul ei ole juurdepääsu, siis võiksid paluda administraatoril seda teha.</li>
-<li>Mõnedes PHP serverites saad luua Moodle kataloogi .htaccess faili, mis sisaldab seda rida:<p><blockquote>php_value memory_limit 16M</blockquote></p>
-<p>Kuigi mõnedes serverites tõkestab see <b>kõigi</b> PHP lehekülgede tööd (sa näed veateateid, kui vaatad lehti), nii et pead eemaldama .htaccess faili.</p></li>
+<li>Kui sul on juurdepääs oma php.ini failile, siis saad muuta seal <b>memory_limit</b> väärtuseks nt. 40M. Kui sul ei ole juurdepääsu, siis võiksid paluda administraatoril seda teha.</li>
+<li>Mõnedes PHP-serverites saad luua Moodle kataloogi .htaccess faili, mis sisaldab rida:<p><blockquote>php_value memory_limit 40M</blockquote></p>
+<p>Kuigi mõnedes serverites tõkestab see <b>kõigi</b> PHP lehtede tööd (sa näed veateateid, kui vaatad lehti), nii et pead eemaldama .htaccess faili.</p></li>
 </ol>';
 $string['paths'] = 'Rajad';
 $string['pathserrcreatedataroot'] = 'Andmete kataloogi ({$a->dataroot}) ei saa installeerija luua.';
 $string['pathshead'] = 'Radade kinnitused';
+$string['pathsrodataroot'] = 'Andmete juurkataloog (Dataroot) ei ole kirjutatav.';
+$string['pathsroparentdataroot'] = 'Ülemkataloog ({$a->parent}) ei ole kirjutatav. Installeerija ei saanud andmete kataloogi ({$a->dataroot}) luua.';
+$string['pathssubadmindir'] = 'Väga vähesed veebihostid kasutavad /admin spetsiaalse URL-na, et pääseda ligi kontrollpaneelile või millegile sarnasele. Kahjuks on see konfliktis Moodle administreerimislehtedega. Sa saad olukorda parandada, kui nimetad kataloogi admin ümber oma üaigalduses ning kirjutad selle uue nime siia. Näiteks: <em>moodleadmin</em>. See parandab administreerimisliidese lingid Moodle\'s.';
 $string['pathssubdataroot'] = 'Sa pead näitama koha, kuhu Moodle saaks salvestada üles laetud failid. See kataloog peab olema loetav JA KIRJUTATAV veebiserveri kasutaja poolt (tavaliselt \'nobody\' or \'apache\'), samas see kataloog ei tohiks olla ligipääsetav otse veebi kaudu. Kui kataloogi ei eksisteeri, siis installeerija püüab selle ise luua.';
 $string['pathssubdirroot'] = 'Täistee Moodle paigalduse kataloogile.';
 $string['pathssubwwwroot'] = 'Täielik veebiaadress, kust kaudu Moodle\'le ligi pääsetakse.
@@ -69,11 +76,13 @@ $string['pathsunsecuredataroot'] = 'Andmete juurkataloogi asukoht pole turvamine
 $string['pathswrongadmindir'] = 'Admin kataloogi ei eksisteeri';
 $string['phpextension'] = '{$a} PHP laiendus';
 $string['phpversion'] = 'PHP versioon';
-$string['phpversionhelp'] = '<p>Moodle vajab vähemalt PHP versiooni 4.1.0</p>
+$string['phpversionhelp'] = '<p>Moodle vajab vähemalt PHP versiooni 4.3.0 või 5.1.0 (5.0.x-ga on terve rida teada probleeme).</p>
 <p>Sinu jooksev versioon on {$a}</p>
-<p>Sa pead oma PHP-d uuendama või kolima hosti, kus on uuem PHP versioon!</p>';
+<p>Sa pead oma PHP-d uuendama või kolima hosti, kus on uuem PHP versioon!
+(5.0.x sa võid ka minna tagasi versioonile 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Sa näed seda lehte, sest oled edukalt installeerinud ja käivitanud <strong>{$a->packname} {$a->packversion}</strong> paketi Sinu arvutis. Õnnitleme!';
+$string['welcomep30'] = 'See <strong>{$a->installername}</strong> väljalase rakendusi loomaks keskkonda, millel <strong>Moodle</strong> hakkab will operate, namely:';
 $string['welcomep40'] = 'Pakett sisaldab ka <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep70'] = 'Vajuta "Järgmine" nuppu all jätkamaks <strong>Moodle</strong> paigaldamisega.';
 $string['wwwroot'] = 'Veebiaadress';

@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['admindirname'] = 'Administrator katalogi nomi';
 $string['availablelangs'] = 'Mavjud(foydalanish mumkin bo\'lgan)til paketlari';
 $string['dataroot'] = 'Ma\'lumotlar katalogi';

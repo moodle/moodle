@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['admindirname'] = 'Pang-Admin na Bugsok';
 $string['availablelangs'] = 'Magagamit na mga pakete ng wika';
 $string['chooselanguagehead'] = 'Pumilì ng wika';

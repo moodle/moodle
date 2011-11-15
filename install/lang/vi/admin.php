@@ -28,5 +28,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['environmentrequireinstall'] = 'cần phải được cài hay kích hoạt.';
 $string['environmentrequireversion'] = 'Cần phiên bản {$a->needed} trong khi bạn đang dùng {$a->current}';

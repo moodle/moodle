@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['clianswerno'] = 'h';
 $string['cliansweryes'] = 'e';
 $string['cliincorrectvalueerror'] = 'Hata, "{$a->option}" için geçeriz değer ("{$a->value}")';

@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['language'] = '言語設定';
 $string['next'] = '次へ';
 $string['previous'] = '前へ';
