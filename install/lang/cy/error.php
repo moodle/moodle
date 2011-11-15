@@ -28,16 +28,18 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['cannotcreatelangdir'] = 'Does dim modd creu cyfeiriadur iaith.';
-$string['cannotcreatetempdir'] = 'Does dim modd creu cyfeiriadur dros dro.';
-$string['cannotdownloadcomponents'] = 'Does dim modd llwytho cydrannau i lawr.';
-$string['cannotdownloadzipfile'] = 'Does dim modd llwytho ffeil ZIP i lawr.';
-$string['cannotfindcomponent'] = 'Does dim modd canfod cydran.';
-$string['cannotsavemd5file'] = 'Does dim modd cadw ffeil md5.';
-$string['cannotsavezipfile'] = 'Does dim modd cadw ffeil ZIP.';
-$string['cannotunzipfile'] = 'Does dim modd dadzipio\'r ffeil.';
-$string['componentisuptodate'] = 'Mae\'r gydran wedi\'i diweddaru.';
-$string['downloadedfilecheckfailed'] = 'Heb lwyddo i wirio\'r ffeil a lwythwyd i lawr.';
+defined('MOODLE_INTERNAL') || die();
+
+$string['cannotcreatelangdir'] = 'Does dim modd creu cyfeiriadur iaith';
+$string['cannotcreatetempdir'] = 'Does dim modd creu cyfeiriadur dros dro';
+$string['cannotdownloadcomponents'] = 'Does dim modd llwytho cydrannau i lawr';
+$string['cannotdownloadzipfile'] = 'Does dim modd llwytho ffeil ZIP i lawr';
+$string['cannotfindcomponent'] = 'Does dim modd canfod cydran';
+$string['cannotsavemd5file'] = 'Does dim modd cadw ffeil md5';
+$string['cannotsavezipfile'] = 'Does dim modd cadw ffeil ZIP';
+$string['cannotunzipfile'] = 'Does dim modd dadzipio\'r ffeil';
+$string['componentisuptodate'] = 'Mae\'r gydran wedi\'i diweddaru';
+$string['downloadedfilecheckfailed'] = 'Heb lwyddo i wirio\'r ffeil a lwythwyd i lawr';
 $string['invalidmd5'] = 'md5 annilys';
 $string['missingrequiredfield'] = 'Mae maes gofynnol ar goll';
 $string['wrongdestpath'] = 'Llwybr cyrchfan anghywir.';

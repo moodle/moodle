@@ -28,4 +28,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['welcomep50'] = 'In non interactive mode you must agree to license by specifying --agree-license option';

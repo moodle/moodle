@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['admindirname'] = '管理目录';
 $string['availablelangs'] = '可用的语言包';
 $string['chooselanguagehead'] = '选择一种语言';

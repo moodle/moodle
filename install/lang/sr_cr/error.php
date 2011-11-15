@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['cannotcreatelangdir'] = 'Није могуће креирање директоријума језика';
 $string['cannotcreatetempdir'] = 'Није могуће креирање привременог директоријума';
 $string['cannotdownloadcomponents'] = 'Није могуће преузети компоненте.';

@@ -28,5 +28,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['environmentrequireinstall'] = 'vaaditaan asennettavaksi/käyttöönotettavaksi';
 $string['environmentrequireversion'] = 'versio {$a->needed} vaaditaan ja käytössä on versio {$a->current}';

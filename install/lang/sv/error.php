@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['cannotcreatelangdir'] = 'Det går inte att skapa en lang-katalog';
 $string['cannotcreatetempdir'] = 'Det går inte att skapa en temp-katalog';
 $string['cannotdownloadcomponents'] = 'Det går inte att ladda ner komponenter';

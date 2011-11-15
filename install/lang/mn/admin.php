@@ -28,5 +28,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['environmentrequireinstall'] = 'суусан/идэвхжсэн байх ёстой';
 $string['environmentrequireversion'] = 'та {$a->current} хувилбар ашиглаж байна {$a->needed} хувилбарыг ашиглагх ёстой';

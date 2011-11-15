@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['admindirname'] = '관리 디렉토리';
 $string['availablelangs'] = '가능한 언어 목록';
 $string['chooselanguagehead'] = '언어를 선택하시오';

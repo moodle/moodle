@@ -28,5 +28,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['environmentrequireinstall'] = 'solicítase instalar y activar esto.';
 $string['environmentrequireversion'] = 'Solicítase la versión {$a->needed} y va executar la {$a->current}';

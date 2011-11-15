@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['cannotcreatelangdir'] = 'Nevar izveidot valodas direktoriju';
 $string['cannotcreatetempdir'] = 'Nevar izveidot pagaidu direktoriju';
 $string['cannotdownloadcomponents'] = 'Nevar lejupielādēt komponentus';

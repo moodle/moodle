@@ -28,5 +28,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['environmentrequireinstall'] = 'باید نصب و فعال باشد';
 $string['environmentrequireversion'] = 'نسخهٔ {$a->needed} لازم است و شما نسخهٔ {$a->current} را دارید';

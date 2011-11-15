@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['availablelangs'] = 'Tiltækir tungumálapakkar';
 $string['chooselanguagehead'] = 'Tungumál valið';
 $string['chooselanguagesub'] = 'Veldu tungumál sem þú vilt nota við uppsetninguna. Tungumálið sem þú velur verður einnig notað sem sjálfgefið tungumál á vefnum, en því má breyta síðar.';
