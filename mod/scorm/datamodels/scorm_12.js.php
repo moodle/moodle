@@ -566,19 +566,49 @@ function SCORMapi1_2() {
             } else {
                 element = parent+'.'+property;
                 expression = new RegExp(CMIIndex,'g');
+
+                // get the generic name for this element (e.g. convert 'cmi.interactions.1.id' to 'cmi.interactions.n.id')
                 elementmodel = String(element).replace(expression,'.n.');
-                if (elementmodel != "cmi.core.session_time") {
-                    if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
-                        if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
+
+                // ignore the session time element
+                if (element != "cmi.core.session_time") {
+
+                    // check if this specific element is not defined in the datamodel,
+                    // but the generic element name is
+                    if ((eval('typeof datamodel["'+element+'"]')) == "undefined"
+                        && (eval('typeof datamodel["'+elementmodel+'"]')) != "undefined") {
+
+                        // add this specific element to the data model (by cloning
+                        // the generic element) so we can track changes to it
+                        eval('datamodel["'+element+'"]=CloneObj(datamodel["'+elementmodel+'"]);');
+                    }
+
+                    // check if the current element exists in the datamodel
+                    if ((typeof eval('datamodel["'+element+'"]')) != "undefined") {
+
+                        // make sure this is not a read only element
+                        if (eval('datamodel["'+element+'"].mod') != 'r') {
+
                             elementstring = '&'+underscore(element)+'='+encodeURIComponent(data[property]);
-                            if ((typeof eval('datamodel["'+elementmodel+'"].defaultvalue')) != "undefined") {
-                                if (eval('datamodel["'+elementmodel+'"].defaultvalue') != data[property] || eval('typeof(datamodel["'+elementmodel+'"].defaultvalue)') != typeof(data[property])) {
+
+                            // check if the element has a default value
+                            if ((typeof eval('datamodel["'+element+'"].defaultvalue')) != "undefined") {
+
+                                // check if the default value is different from the current value
+                                if (eval('datamodel["'+element+'"].defaultvalue') != data[property]
+                                    || eval('typeof(datamodel["'+element+'"].defaultvalue)') != typeof(data[property])) {
+
+                                    // append the URI fragment to the string we plan to commit
                                     datastring += elementstring;
-                                    eval('datamodel["'+elementmodel+'"].defaultvalue=data[property];');
+
+                                    // update the element default to reflect the current committed value
+                                    eval('datamodel["'+element+'"].defaultvalue=data[property];');
                                 }
                             } else {
+                                // append the URI fragment to the string we plan to commit
                                 datastring += elementstring;
-                                eval('datamodel["'+elementmodel+'"].defaultvalue=data[property];');
+                                // no default value for the element, so set it now
+                                eval('datamodel["'+element+'"].defaultvalue=data[property];');
                             }
                         }
                     }
@@ -586,6 +616,19 @@ function SCORMapi1_2() {
             }
         }
         return datastring;
+    }
+
+    function CloneObj(obj){
+        if(obj == null || typeof(obj) != 'object') {
+            return obj;
+        }
+
+        var temp = new obj.constructor(); // changed (twice)
+        for(var key in obj) {
+            temp[key] = CloneObj(obj[key]);
+        }
+
+        return temp;
     }
 
     function StoreData(data,storetotaltime) {
