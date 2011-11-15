@@ -233,15 +233,15 @@ function lti_build_request($instance, $typeconfig, $course) {
     }
 
     $requestparams = array(
-        "resource_link_id" => $instance->id,
-        "resource_link_title" => $instance->name,
-        "resource_link_description" => $instance->intro,
-        "user_id" => $USER->id,
-        "roles" => $role,
-        "context_id" => $course->id,
-        "context_label" => $course->shortname,
-        "context_title" => $course->fullname,
-        "launch_presentation_locale" => $locale,
+        'resource_link_id' => $instance->id,
+        'resource_link_title' => $instance->name,
+        'resource_link_description' => $instance->intro,
+        'user_id' => $USER->id,
+        'roles' => $role,
+        'context_id' => $course->id,
+        'context_label' => $course->shortname,
+        'context_title' => $course->fullname,
+        'launch_presentation_locale' => $locale,
     );
 
     $placementsecret = $instance->servicesalt;
@@ -253,38 +253,30 @@ function lti_build_request($instance, $typeconfig, $course) {
     if ( isset($placementsecret) &&
          ( $typeconfig['acceptgrades'] == LTI_SETTING_ALWAYS ||
          ( $typeconfig['acceptgrades'] == LTI_SETTING_DELEGATE && $instance->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS ) ) ) {
-        $requestparams["lis_result_sourcedid"] = $sourcedid;
+        $requestparams['lis_result_sourcedid'] = $sourcedid;
 
-        /* $serviceurl = $CFG->wwwroot . '/mod/lti/service.php';
+        //Add outcome service URL
+        $serviceurl = new moodle_url('/mod/lti/service.php');
+        $serviceurl = $serviceurl->out();
+        
         if ($typeconfig['forcessl'] == '1') {
             $serviceurl = lti_ensure_url_is_https($serviceurl);
         }
-
-        $requestparams["ext_ims_lis_basic_outcome_url"] = $serviceurl; */
-
-        //Add outcome service URL
-        $url = new moodle_url('/mod/lti/service.php');
-        $requestparams['lis_outcome_service_url'] = $url->out();
+        
+        $requestparams['lis_outcome_service_url'] = $serviceurl;
     }
-
-    /*if ( isset($placementsecret) &&
-         ( $typeconfig['allowroster'] == LTI_SETTING_ALWAYS ||
-         ( $typeconfig['allowroster'] == LTI_SETTING_DELEGATE && $instance->instructorchoiceallowroster == LTI_SETTING_ALWAYS ) ) ) {
-        $requestparams["ext_ims_lis_memberships_id"] = $sourcedid;
-        $requestparams["ext_ims_lis_memberships_url"] = $CFG->wwwroot.'/mod/lti/service.php';
-    }*/
 
     // Send user's name and email data if appropriate
     if ( $typeconfig['sendname'] == LTI_SETTING_ALWAYS ||
          ( $typeconfig['sendname'] == LTI_SETTING_DELEGATE && $instance->instructorchoicesendname == LTI_SETTING_ALWAYS ) ) {
-        $requestparams["lis_person_name_given"] =  $USER->firstname;
-        $requestparams["lis_person_name_family"] =  $USER->lastname;
-        $requestparams["lis_person_name_full"] =  $USER->firstname." ".$USER->lastname;
+        $requestparams['lis_person_name_given'] =  $USER->firstname;
+        $requestparams['lis_person_name_family'] =  $USER->lastname;
+        $requestparams['lis_person_name_full'] =  $USER->firstname." ".$USER->lastname;
     }
 
     if ( $typeconfig['sendemailaddr'] == LTI_SETTING_ALWAYS ||
          ( $typeconfig['sendemailaddr'] == LTI_SETTING_DELEGATE && $instance->instructorchoicesendemailaddr == LTI_SETTING_ALWAYS ) ) {
-        $requestparams["lis_person_contact_email_primary"] = $USER->email;
+        $requestparams['lis_person_contact_email_primary'] = $USER->email;
     }
 
     // Concatenate the custom parameters from the administrator and the instructor
@@ -314,20 +306,19 @@ function lti_build_request($instance, $typeconfig, $course) {
 
     // Make sure we let the tool know what LMS they are being called from
     $requestparams["ext_lms"] = "moodle-2";
+    $requestparams['tool_consumer_info_product_family_code'] = 'moodle';
+    $requestparams['tool_consumer_info_version'] = strval($CFG->version);
 
     // Add oauth_callback to be compliant with the 1.0A spec
-    $requestparams["oauth_callback"] = "about:blank";
+    $requestparams['oauth_callback'] = 'about:blank';
 
     //The submit button needs to be part of the signature as it gets posted with the form.
     //This needs to be here to support launching without javascript.
     $submittext = get_string('press_to_submit', 'lti');
-    $requestparams["ext_submit"] = $submittext;
+    $requestparams['ext_submit'] = $submittext;
 
-    $requestparams["lti_version"] = "LTI-1p0";
-    $requestparams["lti_message_type"] = "basic-lti-launch-request";
-    /* Suppress this for now - Chuck
-    if ( $orgdesc ) $requestparams["tool_consumer_instance_description"] = $orgdesc;
-    */
+    $requestparams['lti_version'] = 'LTI-1p0';
+    $requestparams['lti_message_type'] = 'basic-lti-launch-request';
 
     return $requestparams;
 }
