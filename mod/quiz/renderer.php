@@ -261,7 +261,16 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * Return the HTML of the quiz timer.
      * @return string HTML content.
      */
-    public function countdown_timer() {
+    public function countdown_timer(quiz_attempt $attemptobj, $timenow) {
+
+        $timeleft = $attemptobj->get_time_left($timenow);
+        if ($timeleft !== false) {
+            // Make sure the timer starts just above zero. If $timeleft was <= 0, then
+            // this will just have the effect of causing the quiz to be submitted immediately.
+            $timerstartvalue = max($timeleft, 1);
+            $this->initialise_timer($timerstartvalue);
+        }
+
         return html_writer::tag('div', get_string('timeleft', 'quiz') . ' ' .
                 html_writer::tag('span', '', array('id' => 'quiz-time-left')),
                 array('id' => 'quiz-timer'));
@@ -604,8 +613,6 @@ class mod_quiz_renderer extends plugin_renderer_base {
      */
     public function summary_page_controls($attemptobj) {
         $output = '';
-        // countdown timer
-        $output .= $this->countdown_timer();
 
         // Return to place button
         $button = new single_button(
@@ -626,11 +633,23 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 new moodle_url($attemptobj->processattempt_url(), $options),
                 get_string('submitallandfinish', 'quiz'));
         $button->id = 'responseform';
-        $button->add_action(new confirm_action(get_string('confirmclose', 'quiz'), null,
-                get_string('submitallandfinish', 'quiz')));
+        if ($attemptobj->get_state() == quiz_attempt::IN_PROGRESS) {
+            $button->add_action(new confirm_action(get_string('confirmclose', 'quiz'), null,
+                    get_string('submitallandfinish', 'quiz')));
+        }
 
-        $output .= $this->container($this->container($this->render($button),
-                'controls'), 'submitbtns mdl-align');
+        $duedate = $attemptobj->get_due_date();
+        $message = '';
+        if ($attemptobj->get_state() == quiz_attempt::OVERDUE) {
+            $message = get_string('overduemustbesubmittedby', 'quiz', userdate($duedate));
+
+        } else if ($duedate) {
+            $message = get_string('mustbesubmittedby', 'quiz', userdate($duedate));
+        }
+
+        $output .= $this->countdown_timer($attemptobj, time());
+        $output .= $this->container($message . $this->container(
+                $this->render($button), 'controls'), 'submitbtns mdl-align');
 
         return $output;
     }
@@ -911,7 +930,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 }
             }
 
-            $row[] = $this->attempt_state($attemptobj, $viewobj->timenow);
+            $row[] = $this->attempt_state($attemptobj);
 
             if ($viewobj->markcolumn) {
                 if ($attemptoptions->marks >= question_display_options::MARK_AND_MAX &&
@@ -975,7 +994,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param int $timenow the time to use as 'now'.
      * @return string the appropriate lang string to describe the state.
      */
-    public function attempt_state($attemptobj, $timenow) {
+    public function attempt_state($attemptobj) {
         switch ($attemptobj->get_state()) {
             case quiz_attempt::IN_PROGRESS:
                 return get_string('stateinprogress', 'quiz');
@@ -983,7 +1002,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
             case quiz_attempt::OVERDUE:
                 return get_string('stateoverdue', 'quiz') . html_writer::tag('span',
                         get_string('stateoverduedetails', 'quiz',
-                                userdate($attemptobj->get_due_date($timenow))),
+                                userdate($attemptobj->get_due_date())),
                         array('class' => 'statedetails'));
 
             case quiz_attempt::FINISHED:

@@ -126,5 +126,4 @@ if ($attemptobj->is_last_page($page)) {
     $nextpage = $page + 1;
 }
 
-$accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time(), $output);
 echo $output->attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id, $nextpage);

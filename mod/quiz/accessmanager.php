@@ -411,25 +411,6 @@ class quiz_access_manager {
     }
 
     /**
-     * Will cause the attempt time to start counting down after the page has loaded,
-     * if that is necessary.
-     *
-     * @param object $attempt the data from the relevant quiz_attempts row.
-     * @param int $timenow the time to consider as 'now'.
-     * @param mod_quiz_renderer $output the quiz renderer.
-     */
-    public function show_attempt_timer_if_needed($attempt, $timenow, $output) {
-        $timeleft = $this->get_time_left($attempt, $timenow);
-
-        if ($timeleft !== false) {
-            // Make sure the timer starts just above zero. If $timeleft was <= 0, then
-            // this will just have the effect of causing the quiz to be submitted immediately.
-            $timerstartvalue = max($timeleft, 1);
-            $output->initialise_timer($timerstartvalue);
-        }
-    }
-
-    /**
      * @return bolean if this quiz should only be shown to students in a popup window.
      */
     public function attempt_must_be_in_popup() {

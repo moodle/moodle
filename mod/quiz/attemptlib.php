@@ -945,6 +945,19 @@ class quiz_attempt {
         return $this->quba->get_question_action_time($slot);
     }
 
+    /**
+     * Get the time remaining for an in-progress attempt, if the time is short
+     * enought that it would be worth showing a timer.
+     * @param int $timenow the time to consider as 'now'.
+     * @return int|false the number of seconds remaining for this attempt.
+     *      False if there is no limit.
+     */
+    public function get_time_left($timenow) {
+        if ($this->attempt->state != self::IN_PROGRESS) {
+            return false;
+        }
+        return $this->get_access_manager($timenow)->get_time_left($this->attempt, $timenow);
+    }
 
     /**
      * @return int the time when this attempt was submitted. 0 if it has not been
@@ -959,23 +972,29 @@ class quiz_attempt {
      * student should next do something.
      * @return int timestamp by which the student needs to do something.
      */
-    function get_due_date($timenow) {
+    function get_due_date() {
+        $deadlines = array();
+        if ($this->quizobj->get_quiz()->timelimit) {
+            $deadlines[] = $this->attempt->timestart + $this->quizobj->get_quiz()->timelimit;
+        }
+        if ($this->quizobj->get_quiz()->timeclose) {
+            $deadlines[] = $this->quizobj->get_quiz()->timeclose;
+        }
+        if ($deadlines) {
+            $duedate = min($deadlines);
+        } else {
+            return false;
+        }
 
-        switch ($attempt->state) {
+        switch ($this->attempt->state) {
             case self::IN_PROGRESS:
-                $timeleft = $this->get_access_manager($timenow)->get_time_left(
-                        $this->attempt, $timenow);
-                if ($timeleft === false) {
-                    return false;
-                } else {
-                    return $timenow + $timeleft;
-                }
+                return $duedate;
 
             case self::OVERDUE:
-                return $this->attempt->timefinished + $this->quizobj->get_quiz()->graceperiod;
+                return $duedate + $this->quizobj->get_quiz()->graceperiod;
 
             default:
-                throw new coding_exception('Unexpected state: ' . $attempt->state);
+                throw new coding_exception('Unexpected state: ' . $this->attempt->state);
         }
     }
 
@@ -1473,7 +1492,7 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base {
     public function render_end_bits(mod_quiz_renderer $output) {
         return html_writer::link($this->attemptobj->summary_url(),
                 get_string('endtest', 'quiz'), array('class' => 'endtestlink')) .
-                $output->countdown_timer() .
+                $output->countdown_timer($this->attemptobj, time()) .
                 $this->render_restart_preview_link($output);
     }
 }
