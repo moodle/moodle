@@ -56,8 +56,16 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
             6 => get_string('saturday', 'calendar')
         )));
     $temp->add(new admin_setting_special_calendar_weekend());
-    $temp->add(new admin_setting_configtext('calendar_lookahead',get_string('configlookahead','admin'),get_string('helpupcominglookahead', 'admin'),21,PARAM_INT));
-    $temp->add(new admin_setting_configtext('calendar_maxevents',get_string('configmaxevents','admin'),get_string('helpupcomingmaxevents', 'admin'),10,PARAM_INT));
+    $options = array();
+    for ($i=1; $i<=99; $i++) {
+        $options[$i] = $i;
+    }
+    $temp->add(new admin_setting_configselect('calendar_lookahead',get_string('configlookahead','admin'),get_string('helpupcominglookahead', 'admin'),21,$options));
+    $options = array();
+    for ($i=1; $i<=20; $i++) {
+        $options[$i] = $i;
+    }
+    $temp->add(new admin_setting_configselect('calendar_maxevents',get_string('configmaxevents','admin'),get_string('helpupcomingmaxevents', 'admin'),10,$options));
     $temp->add(new admin_setting_configcheckbox('enablecalendarexport', get_string('enablecalendarexport', 'admin'), get_string('configenablecalendarexport','admin'), 1));
     $temp->add(new admin_setting_configtext('calendar_exportsalt', get_string('calendarexportsalt','admin'), get_string('configcalendarexportsalt', 'admin'), random_string(60)));
     $ADMIN->add('appearance', $temp);
