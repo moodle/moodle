@@ -79,6 +79,10 @@ abstract class question_behaviour {
     /**
      * Some behaviours can only work with certing types of question. This method
      * allows the behaviour to verify that a question is compatible.
+     *
+     * This implementation is only provided for backwards-compatibility. You should
+     * override this method if you are implementing a behaviour.
+     *
      * @param question_definition $question the question.
      */
     public function is_compatible_question(question_definition $question) {
@@ -91,6 +95,9 @@ abstract class question_behaviour {
      * of a particular subtype, or that implement a particular interface.
      * This method lets the behaviour document that. The type of
      * question passed to the constructor is then checked against this type.
+     *
+     * @deprecated since 2.2. Please use/override {@link is_compatible_question()} instead.
+     *
      * @return string class/interface name.
      */
     protected function required_question_definition_type() {
