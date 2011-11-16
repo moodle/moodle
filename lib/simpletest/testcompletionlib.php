@@ -527,7 +527,7 @@ WHERE
         $c->__construct((object)array('id'=>42));
 
         // 1) Basic usage
-        $c->expectAt(0,'get_tracked_users',array(false, array(), 0, '', '', ''));
+        $c->expectAt(0,'get_tracked_users',array(false, array(), 0, '', '', '', null));
         $c->setReturnValueAt(0,'get_tracked_users',array(
             (object)array('id'=>100,'firstname'=>'Woot','lastname'=>'Plugh'),
             (object)array('id'=>201,'firstname'=>'Vroom','lastname'=>'Xyzzy'),
@@ -556,7 +556,7 @@ WHERE
             ),$c->get_progress_all(false));
 
         // 2) With more than 1,000 results
-        $c->expectAt(1,'get_tracked_users',array(true, 3, 0, '', '', ''));
+        $c->expectAt(1,'get_tracked_users',array(true, 3, 0, '', '', '', null));
 
         $tracked=array();
         $ids=array();
