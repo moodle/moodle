@@ -204,7 +204,7 @@ class quiz_overview_report extends quiz_attempts_report {
             }
 
             $this->add_user_columns($table, $columns, $headers);
-
+            $this->add_state_column($columns, $headers);
             $this->add_time_columns($columns, $headers);
 
             if ($options->slotmarks) {

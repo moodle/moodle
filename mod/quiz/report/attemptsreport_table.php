@@ -155,6 +155,15 @@ abstract class quiz_attempts_report_table extends table_sql {
     }
 
     /**
+     * Generate the display of the attempt state column.
+     * @param object $attempt the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_state($attempt) {
+        return quiz_attempt::state_name($attempt->state);
+    }
+
+    /**
      * Generate the display of the start time column.
      * @param object $attempt the table row being output.
      * @return string HTML content to go inside the td.
@@ -363,6 +372,7 @@ abstract class quiz_attempts_report_table extends table_sql {
                 u.institution,
                 u.department,
                 u.email' . $extrafields . ',
+                quiza.state,
                 quiza.sumgrades,
                 quiza.timefinish,
                 quiza.timestart,

@@ -200,6 +200,16 @@ abstract class quiz_attempts_report extends quiz_default_report {
     }
 
     /**
+     * Add the state column to the $columns and $headers arrays.
+     * @param array $columns the list of columns. Added to.
+     * @param array $headers the columns headings. Added to.
+     */
+    protected function add_state_column(&$columns, &$headers) {
+        $columns[] = 'state';
+        $headers[] = get_string('attemptstate', 'quiz');
+    }
+
+    /**
      * Add all the time-related columns to the $columns and $headers arrays.
      * @param array $columns the list of columns. Added to.
      * @param array $headers the columns headings. Added to.
