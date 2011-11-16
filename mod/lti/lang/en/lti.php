@@ -40,9 +40,11 @@
  * @copyright  2009 Marc Alier, Jordi Piguillem, Nikolas Galanis
  *  marc.alier@upc.edu
  * @copyright  2009 Universitat Politecnica de Catalunya http://www.upc.edu
+ * @copyright Copyright (c) 2011 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @author     Marc Alier
  * @author     Jordi Piguillem
  * @author     Nikolas Galanis
+ * @author     Chris Scribner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

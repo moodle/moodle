@@ -15,12 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MRTODO: Brief description of this file
+ * AJAX service used when adding an External Tool to provide immediate feedback
+ * of which tool provider is to be used based on the Launch URL.
  *
  * @package    mod
  * @subpackage xml
- * @copyright  2011 onwards MRTODO
+ * @copyright Copyright (c) 2011 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author     Chris Scribner
  */
 
 require_once(dirname(__FILE__) . "/../../config.php");

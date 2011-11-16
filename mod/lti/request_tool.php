@@ -15,12 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MRTODO: Brief description of this file
+ * Submits a request to administrators to add a tool configuration for the requested site.
  *
  * @package    mod
  * @subpackage lti
- * @copyright  2011 onwards MRTODO
+ * @copyright  Copyright (c) 2011 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author     Chris Scribner
  */
 
 require_once('../../config.php');
