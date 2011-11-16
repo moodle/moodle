@@ -219,29 +219,26 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
 
     public function compute_final_grade($responses, $totaltries) {
         $maxitemsdragged = 0;
-        $rightsince = array();
+        $wrongtries = array();
         foreach ($responses as $i => $response) {
             $maxitemsdragged = max($maxitemsdragged,
                                                 $this->total_number_of_items_dragged($response));
             $hits = $this->choose_hits($response);
-            dbg(compact('hits', 'maxitemsdragged'));
             foreach ($hits as $place => $choiceitem) {
-                if (!isset($rightsince[$place])) {
-                    $rightsince[$place] = $i;
+                if (!isset($wrongtries[$place])) {
+                    $wrongtries[$place] = $i;
                 }
             }
-            foreach ($rightsince as $place => $notused) {
+            foreach ($wrongtries as $place => $notused) {
                 if (!isset($hits[$place])) {
-                    unset($rightsince[$place]);
+                    unset($wrongtries[$place]);
                 }
             }
         }
         $numtries = count($responses);
-        $numright = count($rightsince);
-        dbg("($numright * $numtries) - ".array_sum($rightsince).")
-                        / ($numright * max($maxitemsdragged, ".count($this->places).")");
-        $grade = (($numright * $numtries) - array_sum($rightsince))
-                        / ($numtries * max($maxitemsdragged, count($this->places)));
+        $numright = count($wrongtries);
+        $penalty = array_sum($wrongtries) * $this->penalty;
+        $grade = ($numright - $penalty) / (max($maxitemsdragged, count($this->places)));
         return $grade;
     }
     public function clear_wrong_from_response(array $response) {
