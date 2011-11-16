@@ -492,6 +492,23 @@ class quiz_attempt {
         return self::create_helper(array('uniqueid' => $usageid));
     }
 
+    /**
+     * @param string $state one of the state constants like IN_PROGRESS.
+     * @return string the human-readable state name.
+     */
+    public static function state_name($state) {
+        switch ($state) {
+            case quiz_attempt::IN_PROGRESS:
+                return get_string('stateinprogress', 'quiz');
+            case quiz_attempt::OVERDUE:
+                return get_string('stateoverdue', 'quiz');
+            case quiz_attempt::FINISHED:
+                return get_string('statefinished', 'quiz');
+            case quiz_attempt::ABANDONED:
+                return get_string('stateabandoned', 'quiz');
+        }
+    }
+
     private function determine_layout() {
         $this->pagelayout = array();
 

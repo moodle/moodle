@@ -112,7 +112,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param int $page the current page number
      * @return $summarydata containing filtered row data
      */
-    protected function filter_summary_table($summarydata, $page) {
+    protected function filter_review_summary_table($summarydata, $page) {
         if ($page == 0) {
             return $summarydata;
         }
@@ -134,7 +134,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @param int $page contains the current page number
      */
     public function review_summary_table($summarydata, $page) {
-        $summarydata = $this->filter_summary_table($summarydata, $page);
+        $summarydata = $this->filter_review_summary_table($summarydata, $page);
         if (empty($summarydata)) {
             return '';
         }

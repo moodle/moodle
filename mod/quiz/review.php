@@ -112,7 +112,7 @@ $attempt = $attemptobj->get_attempt();
 $quiz = $attemptobj->get_quiz();
 $overtime = 0;
 
-if ($attempt->timefinish) {
+if ($attempt->state == quiz_attempt::FINISHED) {
     if ($timetaken = ($attempt->timefinish - $attempt->timestart)) {
         if ($quiz->timelimit && $timetaken > ($quiz->timelimit + 60)) {
             $overtime = $timetaken - $quiz->timelimit;
@@ -140,6 +140,7 @@ if (!$attemptobj->get_quiz()->showuserpicture && $attemptobj->get_userid() != $U
                           fullname($student, true)),
     );
 }
+
 if ($attemptobj->has_capability('mod/quiz:viewreports')) {
     $attemptlist = $attemptobj->links_to_other_attempts($attemptobj->review_url(null, $page,
             $showall));
@@ -157,7 +158,12 @@ $summarydata['startedon'] = array(
     'content' => userdate($attempt->timestart),
 );
 
-if ($attempt->timefinish) {
+$summarydata['state'] = array(
+    'title'   => get_string('attemptstate', 'quiz'),
+    'content' => quiz_attempt::state_name($attempt->state),
+);
+
+if ($attempt->state == quiz_attempt::FINISHED) {
     $summarydata['completedon'] = array(
         'title'   => get_string('completedon', 'quiz'),
         'content' => userdate($attempt->timefinish),
