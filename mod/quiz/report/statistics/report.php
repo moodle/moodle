@@ -1076,8 +1076,8 @@ function quiz_statistics_attempts_sql($quizid, $currentgroup, $groupstudents,
 
     $fromqa = '{quiz_attempts} quiza ';
 
-    $whereqa = 'quiza.quiz = :quizid AND quiza.preview = 0 AND quiza.timefinish <> 0';
-    $qaparams = array('quizid' => $quizid);
+    $whereqa = 'quiza.quiz = :quizid AND quiza.preview = 0 AND quiza.state = :quizstatefinished';
+    $qaparams = array('quizid' => $quizid, 'quizstatefinished' => quiz_attempt::FINISHED);
 
     if (!empty($currentgroup) && $groupstudents) {
         list($grpsql, $grpparams) = $DB->get_in_or_equal(array_keys($groupstudents),
