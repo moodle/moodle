@@ -277,6 +277,8 @@ h2.tag-heading {text-align:center;margin-left:auto;margin-right:auto;width:95%;}
 #tags-management-links,
 .tag .managelink {text-align:right;}
 table#tag-management-list {margin: 10px auto;width: 80%;}
+#page-tag-index.dir-rtl .relatedpages {text-align:center;}
+#page-tag-index.dir-rtl .user-box {float:right;}
 
 /**
  * Overriding base

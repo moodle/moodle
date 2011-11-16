@@ -218,6 +218,8 @@ a.skip:active {position: static;display: block;}
 .mform .ftags label.accesshide {display: block;position: static;}
 .mform .ftags select {margin-bottom: 0.7em;min-width: 22em;}
 
+input#id_externalurl {direction:ltr;}
+
 /** Browser corrections for mforms **/
 .ie .mform .fitem .felement {margin-left:0;text-align:left;float:left;}
 /** Fix IE double margin + float bugs **/
@@ -717,6 +719,23 @@ body.tag .managelink {padding: 5px;}
 .mod-indent-15,
 .mod-indent-huge {margin-left:300px;}
 
+.dir-rtl .mod-indent-1 {margin-right:20px;margin-left:0;}
+.dir-rtl .mod-indent-2 {margin-right:40px;margin-left:0;}
+.dir-rtl .mod-indent-3 {margin-right:60px;margin-left:0;}
+.dir-rtl .mod-indent-4 {margin-right:80px;margin-left:0;}
+.dir-rtl .mod-indent-5 {margin-right:100px;margin-left:0;}
+.dir-rtl .mod-indent-6 {margin-right:120px;margin-left:0;}
+.dir-rtl .mod-indent-7 {margin-right:140px;margin-left:0;}
+.dir-rtl .mod-indent-8 {margin-right:160px;margin-left:0;}
+.dir-rtl .mod-indent-9 {margin-right:180px;margin-left:0;}
+.dir-rtl .mod-indent-10 {margin-right:200px;margin-left:0;}
+.dir-rtl .mod-indent-11 {margin-right:220px;margin-left:0;}
+.dir-rtl .mod-indent-12 {margin-right:240px;margin-left:0;}
+.dir-rtl .mod-indent-13 {margin-right:260px;margin-left:0;}
+.dir-rtl .mod-indent-14 {margin-right:280px;margin-left:0;}
+.dir-rtl .mod-indent-15,
+.dir-rtl .mod-indent-huge {margin-right:300px;margin-left:0;}
+
 .dir-rtl .felement.feditor select {margin-right:18.75%;}
 
 /* Resourcelib mp3 player size: only width could be changed here, height hardcoded in JS */
@@ -801,3 +820,53 @@ ul li,
 ol li,
 .course-content ul.weeks .content .summary ol li,
 .course-content ul.topics .content .summary ol li {list-style: decimal outside none;}
+
+.dir-rtl #adminsettings #id_s__pathtodu,
+.dir-rtl #adminsettings #id_s__aspellpath,
+.dir-rtl #adminsettings #id_s__pathtodot,
+.dir-rtl #adminsettings #id_s__supportemail,
+.dir-rtl #adminsettings #id_s__supportpage,
+.dir-rtl #adminsettings #id_s__sessioncookie,
+.dir-rtl #adminsettings #id_s__sessioncookiepath,
+.dir-rtl #adminsettings #id_s__sessioncookiedomain,
+.dir-rtl #adminsettings #id_s__proxyhost,
+.dir-rtl #adminsettings #id_s__proxyuser,
+.dir-rtl #adminsettings #id_s__proxypassword,
+.dir-rtl #adminsettings #id_s__proxybypass,
+.dir-rtl #adminsettings #id_s__jabberhost,
+.dir-rtl #adminsettings #id_s__jabberserver,
+.dir-rtl #adminsettings #id_s__jabberusername,
+.dir-rtl #adminsettings #id_s__jabberpassword,
+.dir-rtl #adminsettings #id_s__additionalhtmlhead,
+.dir-rtl #adminsettings #id_s__additionalhtmltopofbody,
+.dir-rtl #adminsettings #id_s__additionalhtmlfooter,
+.dir-rtl #adminsettings #id_s__docroot,
+.dir-rtl #adminsettings #id_s__filter_tex_latexpreamble,
+.dir-rtl #adminsettings #id_s__filter_tex_latexbackground,
+.dir-rtl #adminsettings #id_s__filter_tex_pathlatex,
+.dir-rtl #adminsettings #id_s__filter_tex_pathdvips,
+.dir-rtl #adminsettings #id_s__filter_tex_pathconvert,
+.dir-rtl #adminsettings #id_s__blockedip,
+.dir-rtl #adminsettings #id_s__pathtoclam,
+.dir-rtl #adminsettings #id_s__quarantinedir,
+.dir-rtl #adminsettings #id_s__sitepolicy,
+.dir-rtl #adminsettings #id_s__sitepolicyguest,
+.dir-rtl #adminsettings #id_s__cronremotepassword,
+.dir-rtl #adminsettings #id_s__allowedip,
+.dir-rtl #adminsettings #id_s__blockedip,
+.dir-rtl #adminsettings #id_s_enrol_meta_nosyncroleids,
+.dir-rtl #adminsettings #id_s_enrol_ldap_host_url,
+.dir-rtl #adminsettings #id_s_enrol_ldap_ldapencoding,
+.dir-rtl #adminsettings #id_s_enrol_ldap_bind_dn,
+.dir-rtl #adminsettings #id_s_enrol_ldap_bind_pw,
+.dir-rtl #adminsettings #admin-emoticons .form-text,
+.dir-rtl #adminsettings #admin-role_mapping input[type=text],
+.dir-rtl #adminsettings #id_s_enrol_paypal_paypalbusiness,
+.dir-rtl #adminsettings #id_s_enrol_flatfile_location,
+#page-admin-setting-enrolsettingsflatfile.dir-rtl input[type=text],
+#page-admin-setting-enrolsettingsdatabase.dir-rtl input[type=text],
+#page-admin-auth-db.dir-rtl input[type=text] {direction: ltr;}
+
+#page-admin-setting-enrolsettingsflatfile.dir-rtl .informationbox {direction: ltr;text-align: left;}
+
+#page-admin-grade-edit-scale-edit.dir-rtl .error input#id_name {margin-right: 170px;}

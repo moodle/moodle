@@ -27,7 +27,7 @@
 .path-course-view li.activity form.togglecompletion .ajaxworking {position:absolute;top:0; left:20px;width: 20px; height: 20px;background: url([[pix:i/ajaxloader]]) no-repeat;}
 .dir-rtl.path-course-view li.activity {margin-right:0px;margin-left:20px;}
 .dir-rtl.path-course-view li.activity form.togglecompletion,
-.dir-rtl.path-course-view li.activity span.autocompletion {right:auto;left:-20px;}
+.dir-rtl.path-course-view li.activity span.autocompletion {right:auto;right:-20px;}
 
 .section img.movetarget {height:16px;width:80px;}
 
