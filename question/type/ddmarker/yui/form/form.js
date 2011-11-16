@@ -73,6 +73,18 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
         update_drop_zone : function (dropzoneno) {
             var dragitemno = this.form.get_form_value('drops', [dropzoneno, 'choice']);
             var markertext = this.get_marker_text(dragitemno);
+            var existingmarkertext = Y.one('div.ddarea div.markertexts span.markertext'+dropzoneno);
+            if (existingmarkertext) {
+                if (markertext !== '') {
+                    existingmarkertext.setContent(markertext);
+                } else {
+                    existingmarkertext.remove(true);
+                }
+            } else if (markertext !== '') {
+                var classnames = 'markertext markertext' + dropzoneno;
+                Y.one('div.ddarea div.markertexts').append('<span class="'+classnames+'">' +
+                                                                    markertext+'</span>');
+            }
             var shape = this.form.get_form_value('drops', [dropzoneno, 'shape']);
             var drawfunc = 'draw_shape_'+shape;
             var colourfordropzone = this.get_next_colour();
@@ -81,18 +93,6 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             if (this[drawfunc] instanceof Function){
                var xyfortext = this[drawfunc](dropzoneno, colourfordropzone);
                if (xyfortext !== null) {
-                   var classnames = 'markertext markertext' + dropzoneno;
-                   var existingdiv = Y.one('div.ddarea div.markertexts span.markertext'+dropzoneno);
-                   if (existingdiv) {
-                       if (markertext !== '') {
-                           existingdiv.setContent(markertext);
-                       } else {
-                           existingdiv.remove(true);
-                       }
-                   } else {
-                       Y.one('div.ddarea div.markertexts').append('<span class="'+classnames+'">' +
-                                                                           markertext+'</span>');
-                   }
                    var markerspan = Y.one('div.ddarea div.markertexts span.markertext'+dropzoneno);
                    if (markerspan !== null) {
                        markerspan.setStyle('opacity', '0.4');
