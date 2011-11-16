@@ -213,7 +213,6 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
 
         $allchoices = array();
         for ($i=0; $i < $data['nodropzone']; $i++) {
-            $labelpresent = (trim($data['drops'][$i]['label']) !== '');
             $choice = $data['drops'][$i]['choice'];
             $choicepresent = ($choice !== '0');
 
