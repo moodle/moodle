@@ -6213,7 +6213,17 @@ class core_string_manager implements string_manager {
             }
             if (!isset($string[$identifier])) {
                 // the string is still missing - should be fixed by developer
-                debugging("Invalid get_string() identifier: '$identifier' or component '$component'", DEBUG_DEVELOPER);
+                list($plugintype, $pluginname) = normalize_component($component);
+                if ($plugintype == 'core') {
+                    $file = "lang/en/{$component}.php";
+                } else if ($plugintype == 'mod') {
+                    $file = "mod/{$pluginname}/lang/en/{$pluginname}.php";
+                } else {
+                    $path = get_plugin_directory($plugintype, $pluginname);
+                    $file = "{$path}/lang/en/{$plugintype}_{$pluginname}.php";
+                }
+                debugging("Invalid get_string() identifier: '{$identifier}' or component '{$component}'. " .
+                        "Perhaps you are missing \$string['{$identifier}'] = ''; in {$file}?", DEBUG_DEVELOPER);
                 return "[[$identifier]]";
             }
         }
