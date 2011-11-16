@@ -2855,6 +2855,7 @@ function forum_subscribed_users($course, $forum, $groupid=0, $context = null, $f
                   u.maildigest,
                   u.imagealt,
                   u.email,
+                  u.emailstop,
                   u.city,
                   u.country,
                   u.lastaccess,
