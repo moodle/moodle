@@ -39,6 +39,8 @@ abstract class qtype_ddmarker_shape {
     }
     abstract protected function outlying_coords_to_test();
 
+    abstract public function center_point();
+
     protected function is_only_numbers() {
         $args = func_get_args();
         foreach ($args as $arg) {
@@ -153,6 +155,10 @@ class qtype_ddmarker_shape_rectangle extends qtype_ddmarker_shape {
         return $this->is_point_in_bounding_box($xy, array($this->xleft, $this->ytop),
                                   array($this->xleft + $this->width, $this->ytop + $this->height));
     }
+    public function center_point() {
+        return array($this->xleft + round($this->width / 2),
+                        $this->ytop + round($this->height / 2));
+    }
 }
 class qtype_ddmarker_shape_circle extends qtype_ddmarker_shape {
 
@@ -190,6 +196,9 @@ class qtype_ddmarker_shape_circle extends qtype_ddmarker_shape {
         $distancefromcentre = sqrt(pow(($xy[0] - $this->xcentre), 2)
                                         + pow(($xy[1] - $this->ycentre), 2));
         return $distancefromcentre < $this->radius;
+    }
+    public function center_point() {
+        return array($this->xcentre, $this->ycentre);
     }
 }
 class qtype_ddmarker_shape_polygon extends qtype_ddmarker_shape {
@@ -326,6 +335,16 @@ class qtype_ddmarker_shape_polygon extends qtype_ddmarker_shape {
             $q->b->y = $q->b->y - $b;
         }
         return array($p, $q);
+    }
+    public function center_point() {
+        $center = array(round(($this->minxy[0] + $this->maxxy[0])/2),
+                        round(($this->minxy[1] + $this->maxxy[1])/2));
+        if ($this->is_point_in_shape($center)) {
+            return $center;
+        } else {
+            return null;
+        }
+
     }
 }
 class qtype_ddmarker_point {

@@ -210,6 +210,7 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
                 return $choicekey;
             }
         }
+        return null;
     }
     public function grade_response(array $response) {
         list($right, $total) = $this->get_num_parts_right($response);
@@ -278,6 +279,28 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
         }
         return $parts;
     }
+
+    public function get_correct_response() {
+        $responsecoords = array();
+        foreach ($this->places as $placeno => $place) {
+            $rightchoice = $this->get_right_choice_for($placeno);
+            if ($rightchoice !== null) {
+                $rightchoicekey = $this->choice($rightchoice);
+                $correctcoords = $place->correct_coords();
+                if ($correctcoords !== null) {
+                    if (!isset($responsecoords[$rightchoicekey])) {
+                        $responsecoords[$rightchoicekey] = array();
+                    }
+                    $responsecoords[$rightchoicekey][] = join(',', $correctcoords);
+                }
+            }
+        }
+        $response = array();
+        foreach ($responsecoords as $choicekey => $coords) {
+            $response[$choicekey] = join(';', $coords);
+        }
+        return $response;
+    }
 }
 
 /**
@@ -328,5 +351,9 @@ class qtype_ddmarker_drop_zone {
 
     public function drop_hit($xy) {
         return $this->shape->is_point_in_shape($xy);
+    }
+
+    public function correct_coords() {
+        return $this->shape->center_point();
     }
 }
