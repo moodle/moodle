@@ -510,7 +510,7 @@ function scorm_cron () {
         $cfg_scorm = get_config('scorm');
         if (!empty($cfg_scorm->allowaicchacp)) {
             $expiretime = time() - ($cfg_scorm->aicchacpkeepsessiondata*24*60*60);
-            $DB->delete_records_select('scorm_aicc_session', 'WHERE timemodified < ?', array($expiretime));
+            $DB->delete_records_select('scorm_aicc_session', 'timemodified < ?', array($expiretime));
         }
     }
 
