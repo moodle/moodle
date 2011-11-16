@@ -1301,7 +1301,18 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $timeoutmilli = $timeout * 1000;
 
         $fullname = $this->dbname.'-'.$this->prefix.'-session-'.$rowid;
-        $sql = "sp_getapplock '$fullname', 'Exclusive', 'Session',  $timeoutmilli";
+        // While this may work using proper {call sp_...} calls + binding +
+        // executing + consuming recordsets, the solution used for the mssql
+        // driver is working perfectly, so 100% mimic-ing that code.
+        // $sql = "sp_getapplock '$fullname', 'Exclusive', 'Session',  $timeoutmilli";
+        $sql = "BEGIN
+                    DECLARE @result INT
+                    EXECUTE @result = sp_getapplock @Resource='$fullname',
+                                                    @LockMode='Exclusive',
+                                                    @LockOwner='Session',
+                                                    @LockTimeout='$timeoutmilli'
+                    SELECT @result
+                END";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = sqlsrv_query($this->sqlsrv, $sql);
         $this->query_end($result);
