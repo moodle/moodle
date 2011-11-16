@@ -1,0 +1,9 @@
+This files describes API changes in /message/ messaging system,
+information provided here is intended especially for developers.
+
+=== 2.2 ===
+
+required changes:
+* lib/messagelib.php message_send($eventdata)
+  $eventdata->userto should contain a property called "emailstop", $eventdata->userto->emailstop
+  If it is absent it will be retrieved from the user table causing an additional database query
