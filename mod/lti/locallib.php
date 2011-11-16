@@ -1167,8 +1167,8 @@ function lti_get_launch_container($lti, $toolconfig) {
 }
 
 function lti_request_is_using_ssl() {
-    global $ME;
-    return (stripos($ME, 'https://') === 0);
+    global $FULLME;
+    return (stripos($FULLME, 'https://') === 0);
 }
 
 function lti_ensure_url_is_https($url) {
