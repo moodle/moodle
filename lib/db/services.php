@@ -477,6 +477,7 @@ $services = array(
             'moodle_message_send_instantmessages'),
         'enabled' => 0,
         'restrictedusers' => 0,
-        'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE
+        'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE,
+        'downloadfiles' => 1
     ),
 );

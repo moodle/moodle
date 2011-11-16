@@ -6916,6 +6916,21 @@ FROM
         upgrade_main_savepoint(true, 2011110200.02);
     }
 
+    if ($oldversion < 2011111500.01) {
+
+        // Define field downloadfiles to be added to external_services
+        $table = new xmldb_table('external_services');
+        $field = new xmldb_field('downloadfiles', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'shortname');
+
+        // Conditionally launch add field downloadfiles
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011111500.01);
+    }
+
     return true;
 }
 
