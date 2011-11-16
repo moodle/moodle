@@ -1260,20 +1260,13 @@ class page_wiki_history extends page_wiki {
             } else {
 
                 $checked = $vcount - $offset;
-                $lastdate = '';
                 $rowclass = array();
 
                 foreach ($versions as $version) {
                     $user = wiki_get_user_info($version->userid);
                     $picture = $OUTPUT->user_picture($user, array('popup' => true));
                     $date = userdate($version->timecreated, get_string('strftimedate'));
-                    if ($date == $lastdate) {
-                        $date = '';
-                        $rowclass[] = '';
-                    } else {
-                        $lastdate = $date;
-                        $rowclass[] = 'wiki_histnewdate';
-                    }
+                    $rowclass[] = 'wiki_histnewdate';
                     $time = userdate($version->timecreated, get_string('strftimetime', 'langconfig'));
                     $versionid = wiki_get_version($version->id);
                     if ($versionid) {
