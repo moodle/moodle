@@ -39,8 +39,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qbehaviour_informationitem extends question_behaviour {
 
-    public function required_question_definition_type() {
-        return 'question_definition';
+    public function is_compatible_question(question_definition $question) {
+        return true;
     }
 
     public function get_expected_data() {

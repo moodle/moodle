@@ -45,8 +45,9 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_missing extends question_behaviour {
-    public function required_question_definition_type() {
-        return 'question_definition';
+
+    public function is_compatible_question(question_definition $question) {
+        return true;
     }
 
     public function summarise_action(question_attempt_step $step) {

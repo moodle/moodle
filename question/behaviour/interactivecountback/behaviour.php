@@ -64,8 +64,8 @@ require_once(dirname(__FILE__) . '/../interactive/behaviour.php');
 class qbehaviour_interactivecountback extends qbehaviour_interactive {
     const IS_ARCHETYPAL = false;
 
-    public function required_question_definition_type() {
-        return 'question_automatically_gradable_with_countback';
+    public function is_compatible_question(question_definition $question) {
+        return $question instanceof question_automatically_gradable_with_countback;
     }
 
     protected function adjust_fraction($fraction, question_attempt_pending_step $pendingstep) {

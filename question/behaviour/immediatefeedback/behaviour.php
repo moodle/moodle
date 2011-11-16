@@ -42,8 +42,8 @@ defined('MOODLE_INTERNAL') || die();
 class qbehaviour_immediatefeedback extends question_behaviour_with_save {
     const IS_ARCHETYPAL = true;
 
-    public function required_question_definition_type() {
-        return 'question_automatically_gradable';
+    public function is_compatible_question(question_definition $question) {
+        return $question instanceof question_automatically_gradable;
     }
 
     public function get_min_fraction() {
