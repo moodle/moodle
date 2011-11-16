@@ -26,6 +26,10 @@
 
     M.mod_lti = M.mod_lti || {};
 
+    M.mod_lti.LTI_SETTING_NEVER = 0;
+    M.mod_lti.LTI_SETTING_ALWAYS = 1;
+    M.mod_lti.LTI_SETTING_DELEGATE = 2;
+
     M.mod_lti.editor = {
         init: function(yui3, settings){
             if(yui3){
@@ -110,6 +114,7 @@
             var selectedOption = typeSelector.one('option[value="' + selectedToolType + '"]');
 
             //A specific tool type is selected (not "auto")
+            //We still need to check with the server to get privacy settings
             if(selectedToolType > 0){
                 //If the entered domain matches the domain of the tool configuration...
                 var domainRegex = /(?:https?:\/\/)?(?:www\.)?([^\/]+)(?:\/|$)/i;
@@ -120,37 +125,105 @@
                     //The entered URL does not match the domain of the tool configuration
                     automatchToolDisplay.set('innerHTML', '<img style="vertical-align:text-bottom" src="' + self.settings.warning_icon_url + '" />' + M.str.lti.domain_mismatch);
                 }
-
-                return;
             }
 
             var key = Y.one('#id_resourcekey');
             var secret = Y.one('#id_password');
 
-            //We don't care what tool type this tool is associated with if it's manually configured'
+            //Indicate the tool is manually configured
+            //We still check the Launch URL with the server as course/site tools may override privacy settings
             if(key.get('value') !== '' && secret.get('value') !== ''){
                 automatchToolDisplay.set('innerHTML',  '<img style="vertical-align:text-bottom" src="' + self.settings.green_check_icon_url + '" />' + M.str.lti.custom_config);
-            } else {
-                var continuation = function(toolInfo){
-                    if(toolInfo.toolname){
-                        automatchToolDisplay.set('innerHTML',  '<img style="vertical-align:text-bottom" src="' + self.settings.green_check_icon_url + '" />' + M.str.lti.using_tool_configuration + toolInfo.toolname);
-                    } else {
-                        //Inform them custom configuration is in use
-                        if(key.get('value') === '' || secret.get('value') === ''){
-                            automatchToolDisplay.set('innerHTML', '<img style="vertical-align:text-bottom" src="' + self.settings.warning_icon_url + '" />' + M.str.lti.tool_config_not_found);
-                        }
-                    }
-                };
+            } 
+            
+            var continuation = function(toolInfo){
+                self.updatePrivacySettings(toolInfo);
 
-                //Cache urls which have already been checked to increaes performance
-                if(self.urlCache[url]){
-                    continuation(self.urlCache[url]);
+                if(toolInfo.toolname){
+                    automatchToolDisplay.set('innerHTML',  '<img style="vertical-align:text-bottom" src="' + self.settings.green_check_icon_url + '" />' + M.str.lti.using_tool_configuration + toolInfo.toolname);
                 } else {
-                    self.findToolByUrl(url, function(toolInfo){
+                    //Inform them custom configuration is in use
+                    if(key.get('value') === '' || secret.get('value') === ''){
+                        automatchToolDisplay.set('innerHTML', '<img style="vertical-align:text-bottom" src="' + self.settings.warning_icon_url + '" />' + M.str.lti.tool_config_not_found);
+                    }
+                }
+            };
+
+            //Cache urls which have already been checked to increase performance
+            if(self.urlCache[url]){
+                continuation(self.urlCache[url]);
+            } else {
+                self.findToolByUrl(url, function(toolInfo){
+                    if(toolInfo){
                         self.urlCache[url] = toolInfo;
 
                         continuation(toolInfo);
-                    });
+                    }
+                });
+            }
+        },
+
+        /**
+         * Updates display of privacy settings to show course / site tool configuration settings.
+         */
+        updatePrivacySettings: function(toolInfo){
+            if(!toolInfo || !toolInfo.toolname){
+                toolInfo = {
+                    sendname: M.mod_lti.LTI_SETTING_DELEGATE,
+                    sendemailaddr: M.mod_lti.LTI_SETTING_DELEGATE,
+                    acceptgrades: M.mod_lti.LTI_SETTING_DELEGATE,
+                    allowroster: M.mod_lti.LTI_SETTING_DELEGATE
+                }
+            }
+            
+            var setting, control;
+            
+            //Can't look these up by ID as they seem to get random IDs. 
+            //Setting an id manually from mod_form made them turn into text boxes.
+            var privacyControls = {
+                sendname: Y.one('input[name=instructorchoicesendname]'),
+                sendemailaddr: Y.one('input[name=instructorchoicesendemailaddr]'),
+                acceptgrades: Y.one('input[name=instructorchoiceacceptgrades]'),
+                allowroster: Y.one('input[name=instructorchoiceallowroster]')
+            };
+            
+            //Store a copy of user entered privacy settings as we may overwrite them
+            if(!this.userPrivacySettings){
+                this.userPrivacySettings = {};
+            }
+
+            for(setting in privacyControls){
+                if(privacyControls.hasOwnProperty(setting)){
+                    control = privacyControls[setting];
+
+                    //Only store the value if it hasn't been forced by the editor
+                    if(!control.get('disabled')){
+                        this.userPrivacySettings[setting] = control.get('checked');
+                    }
+                }
+            }
+            
+            //Update UI based on course / site tool configuration
+            for(setting in privacyControls){
+                if(privacyControls.hasOwnProperty(setting)){
+                    var settingValue = toolInfo[setting];
+                    control = privacyControls[setting];
+                    
+                    if(settingValue == M.mod_lti.LTI_SETTING_NEVER){
+                        control.set('disabled', true);
+                        control.set('checked', false);
+                        control.set('title', M.str.lti.forced_help);
+                    } else if(settingValue == M.mod_lti.LTI_SETTING_ALWAYS){
+                        control.set('disabled', true);
+                        control.set('checked', true);
+                        control.set('title', M.str.lti.forced_help);
+                    } else if(settingValue == M.mod_lti.LTI_SETTING_DELEGATE){
+                        control.set('disabled', false);
+                        
+                        //Get the value out of the stored copy
+                        control.set('checked', this.userPrivacySettings[setting]); 
+                        control.set('title', '');
+                    }
                 }
             }
         },
@@ -324,6 +397,10 @@
 
         findToolByUrl: function(url, callback){
             var self = this;
+            
+            if(!url || url === ''){
+                return callback();
+            }
 
             Y.io(self.settings.ajax_url, {
                 data: {action: 'find_tool_config',

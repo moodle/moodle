@@ -181,6 +181,7 @@ $string['fixexistingconf'] = 'Use an existing configuration for the misconfigure
 $string['fixnew'] = 'New Configuration';
 $string['fixnewconf'] = 'Define a new configuration for the misconfigured instance';
 $string['fixold'] = 'Use Existing';
+$string['forced_help'] = 'This setting has been forced in a course or site level tool configuration. You may not change it from this interface.';
 $string['force_ssl'] = 'Force SSL';
 $string['force_ssl_help'] = 'Selecting this option forces all launches to this tool provider to use SSL.
 

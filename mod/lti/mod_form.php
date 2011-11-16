@@ -224,7 +224,8 @@ class mod_lti_mod_form extends moodleform_mod {
                 array('using_tool_configuration', 'lti'),
                 array('domain_mismatch', 'lti'),
                 array('custom_config', 'lti'),
-                array('tool_config_not_found', 'lti')
+                array('tool_config_not_found', 'lti'),
+                array('forced_help', 'lti')
             ),
         );
 

@@ -646,7 +646,7 @@ function lti_get_best_tool_by_url($url, $tools, $courseid = null) {
 
         //Prefer course tools over site tools
         if (!empty($courseid)) {
-            //Minus 25 points for not matching the course id (global tools)
+            //Minus 10 points for not matching the course id (global tools)
             if ($tool->course != $courseid) {
                 $tool->_matchscore -= 10;
             }

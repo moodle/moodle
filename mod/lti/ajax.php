@@ -46,6 +46,22 @@ switch ($action) {
             $response->toolid = $tool->id;
             $response->toolname = htmlspecialchars($tool->name);
             $response->tooldomain = htmlspecialchars($tool->tooldomain);
+            
+            //Look up privacy settings
+            $query = 
+            '
+                SELECT name, value
+                FROM {lti_types_config}
+                WHERE
+                    typeid = :typeid
+                AND name IN (\'sendname\', \'sendemailaddr\', \'acceptgrades\', \'allowroster\')
+            ';
+                        
+            $privacyconfigs = $DB->get_records_sql($query, array('typeid' => $tool->id));
+            foreach($privacyconfigs as $config){
+                $configname = $config->name;
+                $response->$configname = $config->value;
+            }
         }
         break;
 }
