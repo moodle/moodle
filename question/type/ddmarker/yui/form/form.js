@@ -95,7 +95,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                if (xyfortext !== null) {
                    var markerspan = Y.one('div.ddarea div.markertexts span.markertext'+dropzoneno);
                    if (markerspan !== null) {
-                       markerspan.setStyle('opacity', '0.4');
+                       markerspan.setStyle('opacity', '0.6');
                        xyfortext[0] -= Math.round(markerspan.get('offsetWidth') / 2);
                        xyfortext[1] -= Math.round(markerspan.get('offsetHeight') / 2);
                        markerspan.setXY(this.convert_to_window_xy(xyfortext));

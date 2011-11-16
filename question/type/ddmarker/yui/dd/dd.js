@@ -150,7 +150,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             drag.removeClass('draghome');
             drag.addClass('dragitem');
             drag.addClass('item'+ itemno);
-            drag.one('span.markertext').setStyle('opacity', 0.5);
+            drag.one('span.markertext').setStyle('opacity', 0.6);
             draghome.insert(drag, 'after');
             if (!this.get('readonly')) {
                 this.draggable(drag);
