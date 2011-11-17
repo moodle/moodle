@@ -84,7 +84,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
                                     $droparea.$dragitems.$dropzones.$texts,
                                     array('class'=>'ddarea'));
 
-        if ($qa->get_state()->is_finished()) {
+        if ($question->showmisplaced && $qa->get_state()->is_finished()) {
             $visibledropzones = $question->get_drop_zones_without_hit($response);
         } else {
             $visibledropzones = array();
@@ -104,7 +104,8 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
                                         $question->get_validation_error($qa->get_last_qt_data()),
                                         array('class' => 'validationerror'));
         }
-        if ($qa->get_state()->is_finished()) {
+
+        if ($question->showmisplaced && $qa->get_state()->is_finished()) {
             $wrongparts = $question->wrong_parts($response);
             $wrongpartsstring = '';
             foreach($wrongparts as $wrongpart) {

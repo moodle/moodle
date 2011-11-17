@@ -238,4 +238,11 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
     protected function make_place($dropdata) {
         return new qtype_ddmarker_drop_zone($dropdata->no, $dropdata->shape, $dropdata->coords);
     }
+
+    protected function initialise_combined_feedback(question_definition $question,
+                                                                $questiondata, $withparts = false) {
+        parent::initialise_combined_feedback($question, $questiondata, $withparts);
+        $question->showmisplaced = $questiondata->options->showmisplaced;
+    }
+
 }

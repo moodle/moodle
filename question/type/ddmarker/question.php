@@ -37,6 +37,9 @@ require_once($CFG->dirroot . '/question/type/ddmarker/shapes.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
+
+    public $showmisplaced;
+
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
         if ($filearea == 'bgimage') {
             $validfilearea = true;
