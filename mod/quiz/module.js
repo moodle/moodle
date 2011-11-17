@@ -152,7 +152,7 @@ M.mod_quiz.nav.init = function(Y) {
 
     if (Y.one('a.endtestlink')) {
         Y.on('click', function(e) {
-            e.preventDefault(e);
+            e.preventDefault();
             Y.one('#nextpagehiddeninput').set('value', -1);
             Y.one('#responseform').submit();
         }, 'a.endtestlink');
