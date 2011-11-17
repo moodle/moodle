@@ -436,7 +436,7 @@ class qtype_calculated extends question_type {
                 break;
             case 'datasetitems':
                 require("$CFG->dirroot/question/type/calculated/datasetitems_form.php");
-                $regenerate = optional_param('forceregeneration', 0, PARAM_BOOL);
+                $regenerate = optional_param('forceregeneration', false, PARAM_BOOL);
                 $mform = new question_dataset_dependent_items_form(
                         "$submiturl?wizardnow=datasetitems", $question, $regenerate);
                 break;

@@ -53,11 +53,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
     public function __construct($submiturl, $question, $category, $contexts, $formeditable = true) {
         global $SESSION, $CFG, $DB;
         $this->regenerate = true;
-        if ("1" == optional_param('reload', '', PARAM_INT)) {
-            $this->reload = true;
-        } else {
-            $this->reload = false;
-        }
+        $this->reload = optional_param('reload', false, PARAM_BOOL);
 
         $this->used_in_quiz = false;
 
@@ -85,7 +81,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
 
         // Remove meaningless defaultmark field.
         $mform->removeElement('defaultmark');
-        $this->confirm = optional_param('confirm', '0', PARAM_RAW);
+        $this->confirm = optional_param('confirm', false, PARAM_BOOL);
 
         // Make questiontext a required field for this question type.
         $mform->addRule('questiontext', null, 'required', null, 'client');
@@ -145,11 +141,10 @@ class qtype_multianswer_edit_form extends question_edit_form {
         if ($this->reload) {
             for ($sub = 1; $sub <= $countsubquestions; $sub++) {
 
-                $this->editas[$sub] = 'unknown type';
                 if (isset($this->questiondisplay->options->questions[$sub]->qtype)) {
                     $this->editas[$sub] = $this->questiondisplay->options->questions[$sub]->qtype;
-                } else if (optional_param('sub_'.$sub."_".'qtype', '', PARAM_RAW) != '') {
-                    $this->editas[$sub] = optional_param('sub_'.$sub."_".'qtype', '', PARAM_RAW);
+                } else {
+                    $this->editas[$sub] = optional_param('sub_'.$sub.'_qtype', 'unknown type', PARAM_PLUGIN);
                 }
 
                 $storemess = '';
@@ -167,43 +162,43 @@ class qtype_multianswer_edit_form extends question_edit_form {
                        '{#'.$sub.'}').'&nbsp;'.question_bank::get_qtype_name(
                         $this->questiondisplay->options->questions[$sub]->qtype).$storemess);
 
-                $mform->addElement('static', 'sub_'.$sub."_".'questiontext',
+                $mform->addElement('static', 'sub_'.$sub.'_questiontext',
                         get_string('questiondefinition', 'qtype_multianswer'));
 
                 if (isset ($this->questiondisplay->options->questions[$sub]->questiontext)) {
-                    $mform->setDefault('sub_'.$sub."_".'questiontext',
+                    $mform->setDefault('sub_'.$sub.'_questiontext',
                             $this->questiondisplay->options->questions[$sub]->questiontext['text']);
                 }
 
-                $mform->addElement('static', 'sub_'.$sub."_".'defaultmark',
+                $mform->addElement('static', 'sub_'.$sub.'_defaultmark',
                         get_string('defaultmark', 'question'));
-                $mform->setDefault('sub_'.$sub."_".'defaultmark',
+                $mform->setDefault('sub_'.$sub.'_defaultmark',
                         $this->questiondisplay->options->questions[$sub]->defaultmark);
 
                 if ($this->questiondisplay->options->questions[$sub]->qtype == 'shortanswer') {
-                    $mform->addElement('static', 'sub_'.$sub."_".'usecase',
+                    $mform->addElement('static', 'sub_'.$sub.'_usecase',
                             get_string('casesensitive', 'qtype_shortanswer'));
                 }
 
                 if ($this->questiondisplay->options->questions[$sub]->qtype == 'multichoice') {
-                    $mform->addElement('static', 'sub_'.$sub."_".'layout',
+                    $mform->addElement('static', 'sub_'.$sub.'_layout',
                             get_string('layout', 'qtype_multianswer'));
                 }
 
                 foreach ($this->questiondisplay->options->questions[$sub]->answer as $key => $ans) {
-                    $mform->addElement('static', 'sub_'.$sub."_".'answer['.$key.']',
+                    $mform->addElement('static', 'sub_'.$sub.'_answer['.$key.']',
                             get_string('answer', 'question'));
 
                     if ($this->questiondisplay->options->questions[$sub]->qtype == 'numerical' &&
                             $key == 0) {
-                        $mform->addElement('static', 'sub_'.$sub."_".'tolerance['.$key.']',
+                        $mform->addElement('static', 'sub_'.$sub.'_tolerance['.$key.']',
                                 get_string('acceptederror', 'qtype_numerical'));
                     }
 
-                    $mform->addElement('static', 'sub_'.$sub."_".'fraction['.$key.']',
+                    $mform->addElement('static', 'sub_'.$sub.'_fraction['.$key.']',
                             get_string('grade'));
 
-                    $mform->addElement('static', 'sub_'.$sub."_".'feedback['.$key.']',
+                    $mform->addElement('static', 'sub_'.$sub.'_feedback['.$key.']',
                             get_string('feedback', 'question'));
                 }
             }
@@ -490,7 +485,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
 
         if (($this->negative_diff > 0 || $this->used_in_quiz &&
                 ($this->negative_diff > 0 || $this->negative_diff < 0 ||
-                        $this->qtype_change))&& $this->confirm == 0) {
+                        $this->qtype_change)) && !$this->confirm) {
             $errors['confirm'] =
                     get_string('confirmsave', 'qtype_multianswer', $this->negative_diff);
         }

@@ -80,11 +80,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
         // which is not what we want so this should be removed from here
         // get priority to paramdatasets
 
-        if ("1" == optional_param('reload', '', PARAM_INT)) {
-            $this->reload = true;
-        } else {
-            $this->reload = false;
-        }
+        $this->reload = optional_param('reload', false, PARAM_BOOL);
         if (!$this->reload) { // use database data as this is first pass
             // question->id == 0 so no stored datasets
             if (!empty($question->id)) {
@@ -145,16 +141,16 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
             // should not test on adding a new answer
             // should test if there are already olddatasets or if the 'analyzequestion'
             // submit button has been clicked
-            if ('' != optional_param('datasetdef', '', PARAM_RAW) ||
-                    '' != optional_param('analyzequestion', '', PARAM_RAW)) {
+            if (optional_param_array('datasetdef', false, PARAM_BOOL) ||
+                    optional_param('analyzequestion', false, PARAM_BOOL)) {
 
-                if ($dummyform->answer = optional_param('answer', '', PARAM_NOTAGS)) {
+                if ($dummyform->answer = optional_param_array('answer', '', PARAM_NOTAGS)) {
                     // there is always at least one answer...
-                    $fraction = optional_param('fraction', '', PARAM_NUMBER);
-                    $tolerance = optional_param('tolerance', '', PARAM_NUMBER);
-                    $tolerancetype = optional_param('tolerancetype', '', PARAM_NUMBER);
-                    $correctanswerlength = optional_param('correctanswerlength', '', PARAM_INT);
-                    $correctanswerformat = optional_param('correctanswerformat', '', PARAM_INT);
+                    $fraction = optional_param_array('fraction', '', PARAM_NUMBER);
+                    $tolerance = optional_param_array('tolerance', '', PARAM_NUMBER);
+                    $tolerancetype = optional_param_array('tolerancetype', '', PARAM_NUMBER);
+                    $correctanswerlength = optional_param_array('correctanswerlength', '', PARAM_INT);
+                    $correctanswerformat = optional_param_array('correctanswerformat', '', PARAM_INT);
 
                     foreach ($dummyform->answer as $key => $answer) {
                         if (trim($answer) != '') {  // just look for non-empty
@@ -172,11 +168,11 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                 }
                 $this->datasetdefs = array();
                 // rebuild datasetdefs from old values
-                if ($olddef = optional_param('datasetdef', '', PARAM_RAW)) {
-                    $calcmin = optional_param('calcmin', '', PARAM_NUMBER);
-                    $calclength = optional_param('calclength', '', PARAM_INT);
-                    $calcmax = optional_param('calcmax', '', PARAM_NUMBER);
-                    $oldoptions  = optional_param('defoptions', '', PARAM_RAW);
+                if ($olddef = optional_param_array('datasetdef', '', PARAM_RAW)) {
+                    $calcmin = optional_param_array('calcmin', '', PARAM_NUMBER);
+                    $calclength = optional_param_array('calclength', '', PARAM_INT);
+                    $calcmax = optional_param_array('calcmax', '', PARAM_NUMBER);
+                    $oldoptions  = optional_param_array('defoptions', '', PARAM_RAW);
                     $newdatasetvalues = false;
                     $sizeofolddef = count($olddef);
                     for ($key = 1; $key <= $sizeofolddef; $key++) {
@@ -238,7 +234,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
             }
         }
         $maxnumber = -1;
-        if ("" != optional_param('addbutton', '', PARAM_TEXT)) {
+        if (optional_param('addbutton', false, PARAM_BOOL)) {
             $maxnumber = optional_param('selectadd', '', PARAM_INT); //FIXME: sloppy coding
             foreach ($this->datasetdefs as $defid => $datasetdef) {
                 $datasetdef->itemcount = $maxnumber;
@@ -255,12 +251,12 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
             $this->maxnumber = $maxnumber;
         } else {
             // Handle reload dataset items
-            if ("" != optional_param('definition', '', PARAM_NOTAGS) &&
+            if (optional_param_array('definition', '', PARAM_NOTAGS) &&
                     !($datasettoremove ||$newdataset ||$newdatasetvalues)) {
                 $i = 1;
-                $fromformdefinition = optional_param('definition', '', PARAM_NOTAGS);
-                $fromformnumber = optional_param('number', '', PARAM_INT);
-                $fromformitemid = optional_param('itemid', '', PARAM_INT);
+                $fromformdefinition = optional_param_array('definition', '', PARAM_NOTAGS);
+                $fromformnumber = optional_param_array('number', '', PARAM_INT);
+                $fromformitemid = optional_param_array('itemid', '', PARAM_INT);
                 ksort($fromformdefinition);
 
                 foreach ($fromformdefinition as $key => $defid) {
@@ -320,7 +316,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                 get_string('findwildcards', 'qtype_calculatedsimple'));
         $mform->registerNoSubmitButton('analyzequestion');
         $mform->closeHeaderBefore('analyzequestion');
-        if ("" != optional_param('analyzequestion', '', PARAM_RAW)) {
+        if (optional_param('analyzequestion', false, PARAM_BOOL)) {
 
             $this->wizarddisplay = true;
 
@@ -499,10 +495,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
 
                 //--------------------------------------------------------------
                 $j = $this->noofitems * count($this->datasetdefs);
-                $k = 1;
-                if ("" != optional_param('selectshow', '', PARAM_INT)) {
-                    $k = optional_param('selectshow', '', PARAM_INT);
-                }
+                $k = optional_param('selectshow', 1, PARAM_INT);
 
                 for ($i = $this->noofitems; $i >= 1; $i--) {
                     foreach ($this->datasetdefs as $defkey => $datasetdef) {

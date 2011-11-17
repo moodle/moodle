@@ -52,11 +52,7 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
             $formeditable = true) {
         global $CFG, $DB;
         $this->question = $question;
-        if ('1' == optional_param('reload', '', PARAM_INT)) {
-            $this->reload = true;
-        } else {
-            $this->reload = false;
-        }
+        $this->reload = optional_param('reload', false, PARAM_BOOL);
 
         if (!$this->reload) { // use database data as this is first pass
             if (isset($this->question->id)) {
