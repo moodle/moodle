@@ -145,7 +145,7 @@ class quiz_responses_report extends quiz_attempt_report {
         $displaycourseshortname = format_string($COURSE->shortname, true,
                 array('context' => $displaycoursecontext));
 
-        $table = new quiz_report_responses_table($quiz, $this->context, $qmsubselect,
+        $table = new quiz_responses_table($quiz, $this->context, $qmsubselect,
                 $qmfilter, $attemptsmode, $groupstudents, $students, $questions,
                 $includecheckboxes, $reporturl, $displayoptions);
         $filename = quiz_report_download_filename(get_string('responsesfilename', 'quiz_responses'),

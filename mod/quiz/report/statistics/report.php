@@ -112,7 +112,7 @@ class quiz_statistics_report extends quiz_default_report {
         }
 
         // Set up the main table.
-        $this->table = new quiz_report_statistics_table();
+        $this->table = new quiz_statistics_table();
         if ($everything) {
             $report = get_string('completestatsfilename', 'quiz_statistics');
         } else {
@@ -364,7 +364,7 @@ class quiz_statistics_report extends quiz_default_report {
             return;
         }
 
-        $qtable = new quiz_report_statistics_question_table($question->id);
+        $qtable = new quiz_statistics_question_table($question->id);
         $exportclass = $this->table->export_class_instance();
         $qtable->export_class_instance($exportclass);
         if (!$this->table->is_downloading()) {
