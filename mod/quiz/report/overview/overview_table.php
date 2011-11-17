@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2008 Jamie Pratt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_report_overview_table extends quiz_attempt_report_table {
+class quiz_overview_table extends quiz_attempt_report_table {
 
     protected $regradedqs = array();
 

@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2008 Jean-Michel Vedrine
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_report_responses_table extends quiz_attempt_report_table {
+class quiz_responses_table extends quiz_attempt_report_table {
 
     public function __construct($quiz, $context, $qmsubselect, $qmfilter,
             $attemptsmode, $groupstudents, $students,

@@ -128,7 +128,7 @@ class quiz_overview_report extends quiz_attempt_report {
         // Load the required questions.
         $questions = quiz_report_get_significant_questions($quiz);
 
-        $table = new quiz_report_overview_table($quiz, $this->context, $qmsubselect,
+        $table = new quiz_overview_table($quiz, $this->context, $qmsubselect,
                 $qmfilter, $attemptsmode, $groupstudents, $students, $detailedmarks,
                 $questions, $includecheckboxes, $reporturl, $displayoptions);
         $filename = quiz_report_download_filename(get_string('overviewfilename', 'quiz_overview'),

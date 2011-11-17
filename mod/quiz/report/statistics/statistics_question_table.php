@@ -40,7 +40,7 @@ require_once($CFG->libdir . '/tablelib.php');
  * @copyright  2008 Jamie Pratt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_report_statistics_question_table extends flexible_table {
+class quiz_statistics_question_table extends flexible_table {
     /** @var object this question with a _stats field. */
     protected $questiondata;
 
