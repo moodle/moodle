@@ -55,7 +55,6 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             e.target.detach('load', this.constrain_image_size);
         },
         
-        graphics : null,
 
 
         update_drop_zones : function () {
@@ -66,146 +65,19 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             }
             this.restart_colours();
             this.graphics = new Y.Graphic({render:"div.ddarea div.dropzones"});
-            for (var i=0; i < this.form.get_form_value('nodropzone', []); i++) {
-                this.update_drop_zone(i);
-            }
-        },
-        update_drop_zone : function (dropzoneno) {
-            var dragitemno = this.form.get_form_value('drops', [dropzoneno, 'choice']);
-            var markertext = this.get_marker_text(dragitemno);
-            var existingmarkertext = Y.one('div.ddarea div.markertexts span.markertext'+dropzoneno);
-            if (existingmarkertext) {
-                if (markertext !== '') {
-                    existingmarkertext.setContent(markertext);
-                } else {
-                    existingmarkertext.remove(true);
-                }
-            } else if (markertext !== '') {
-                var classnames = 'markertext markertext' + dropzoneno;
-                Y.one('div.ddarea div.markertexts').append('<span class="'+classnames+'">' +
-                                                                    markertext+'</span>');
-            }
-            var shape = this.form.get_form_value('drops', [dropzoneno, 'shape']);
-            var drawfunc = 'draw_shape_'+shape;
-            var colourfordropzone = this.get_next_colour();
-            Y.one('input#id_drops_'+dropzoneno+'_coords')
+            var noofdropzones = this.form.get_form_value('nodropzone', []);
+            for (var dropzoneno=0; dropzoneno < noofdropzones; dropzoneno++) {
+                var dragitemno = this.form.get_form_value('drops', [dropzoneno, 'choice']);
+                var markertext = this.get_marker_text(dragitemno);
+                var shape = this.form.get_form_value('drops', [dropzoneno, 'shape']);
+                var coords = this.get_coords(dropzoneno);
+                var colourfordropzone = this.get_next_colour();
+                Y.one('input#id_drops_'+dropzoneno+'_coords')
                                                 .setStyle('background-color', colourfordropzone);
-            if (this[drawfunc] instanceof Function){
-               var xyfortext = this[drawfunc](dropzoneno, colourfordropzone);
-               if (xyfortext !== null) {
-                   var markerspan = Y.one('div.ddarea div.markertexts span.markertext'+dropzoneno);
-                   if (markerspan !== null) {
-                       markerspan.setStyle('opacity', '0.6');
-                       xyfortext[0] -= Math.round(markerspan.get('offsetWidth') / 2);
-                       xyfortext[1] -= Math.round(markerspan.get('offsetHeight') / 2);
-                       markerspan.setXY(this.convert_to_window_xy(xyfortext));
-                   }
-               }
+                this.draw_drop_zone(dropzoneno, markertext, shape, coords, colourfordropzone);
             }
         },
-        draw_shape_circle : function (dropzoneno, colourfordropzone) {
-            var coords = this.get_coords(dropzoneno);
-            var coordsparts = coords.match(/(\d+),(\d+);(\d+)/);
-            if (coordsparts && coordsparts.length === 4) {
-                var xy = [+coordsparts[1] - coordsparts[3], +coordsparts[2] - coordsparts[3]];
-                if (this.coords_in_img(xy)) {
-                    var widthheight = [+coordsparts[3]*2, +coordsparts[3]*2];
-                    var shape = this.graphics.addShape({
-                            type: 'circle',
-                            width: widthheight[0],
-                            height: widthheight[1],
-                            fill: {
-                                color: colourfordropzone,
-                                opacity : "0.5"
-                            },
-                            stroke: {
-                                weight:1,
-                                color: "black"
-                            }
-                    });
-                    shape.setXY(this.convert_to_window_xy(xy));
-                    return [+coordsparts[1], +coordsparts[2]];
-                }
-            }
-            return null;
-        },
-        draw_shape_rectangle : function (dropzoneno, colourfordropzone) {
-            var coords = this.get_coords(dropzoneno);
-            var coordsparts = coords.match(/(\d+),(\d+);(\d+),(\d+)/);
-            if (coordsparts && coordsparts.length === 5) {
-                var xy = [+coordsparts[1], +coordsparts[2]];
-                var widthheight = [+coordsparts[3], +coordsparts[4]];
-                if (this.coords_in_img([xy[0]+widthheight[0], xy[1]+widthheight[1]])) {
-                    var shape = this.graphics.addShape({
-                            type: 'rect',
-                            width: widthheight[0],
-                            height: widthheight[1],
-                            fill: {
-                                color: colourfordropzone,
-                                opacity : "0.5"
-                            },
-                            stroke: {
-                                weight:1,
-                                color: "black"
-                            }
-                    });
-                    shape.setXY(this.convert_to_window_xy(xy));
-                    return [+xy[0]+widthheight[0]/2, +xy[1]+widthheight[1]/2];
-                }
-            }
-            return null;
 
-        },
-        draw_shape_polygon : function (dropzoneno, colourfordropzone) {
-            var coords = this.form.get_form_value('drops', [dropzoneno, 'coords']);
-            var coordsparts = coords.split(';');
-            var xy = [];
-            for (var i in coordsparts) {
-                var parts = coordsparts[i].match(/^(\d+),(\d+)$/);
-                if (parts !== null && this.coords_in_img([parts[1], parts[2]])) {
-                    xy[xy.length] = [parts[1], parts[2]];
-                }
-            }
-            if (xy.length > 2) {
-                var polygon = this.graphics.addShape({
-                    type: "path",
-                    stroke: {
-                        weight: 1,
-                        color: "black"
-                    },
-                    fill: {
-                        color: colourfordropzone,
-                        opacity : "0.5"
-                    }
-                });
-                var maxxy = [0,0];
-                var minxy = [this.doc.bg_img().get('width'), this.doc.bg_img().get('height')];
-                for (var i in xy) {
-                    //calculate min and max points to find center to show marker on
-                    minxy[0] = Math.min(xy[i][0], minxy[0]);
-                    minxy[1] = Math.min(xy[i][1], minxy[1]);
-                    maxxy[0] = Math.max(xy[i][0], maxxy[0]);
-                    maxxy[1] = Math.max(xy[i][1], maxxy[1]);
-                    if (i == 0) {
-                        polygon.moveTo(xy[i][0], xy[i][1]);
-                    } else {
-                        polygon.lineTo(xy[i][0], xy[i][1]);
-                    }
-                }
-                if (+xy[0][0] !== +xy[xy.length-1][0] || +xy[0][1] !== +xy[xy.length-1][1]) {
-                    var windowxy = this.convert_to_window_xy(xy[0]);
-                    polygon.lineTo(xy[0][0], xy[0][1]); //close polygon if not already closed
-                }
-                polygon.end();
-                polygon.setXY(this.doc.bg_img().getXY());
-                return [Math.round((minxy[0] + maxxy[0])/2), Math.round((minxy[1] + maxxy[1])/2)];
-            }
-            return null;
-        },
-        coords_in_img : function (coords) {
-            return (coords[0] <= this.doc.bg_img().get('width') && 
-                            coords[1] <= this.doc.bg_img().get('height'));
-        },
         get_coords : function (dropzoneno) {
             var coords = this.form.get_form_value('drops', [dropzoneno, 'coords']);
             return coords.replace(new RegExp("\\s*", 'g'), '');

@@ -51,9 +51,10 @@ form.mform fieldset#previewareaheader div.draghome, form.mform fieldset#previewa
     *font:x-small; /* for IE in quirks mode */
 }
 .que.ddmarker div.dragitems span.markertext,
+.que.ddmarker div.dropzones span.markertext,
 form.mform fieldset#previewareaheader div.markertexts span.markertext {
     margin: 5px;
-     z-index: 2;
+    z-index: 3;
     background-color: white;
     border-style : none;
     padding: 5px;
@@ -67,6 +68,30 @@ form.mform fieldset#previewareaheader div.markertexts span.markertext {
     -webkit-border-radius: 10px;
     -khtml-border-radius: 10px;
     border-radius: 10px;
+}
+.que.ddmarker div.dropzones span.markertext {
+    z-index: 2;
+    background-color: yellow;
+    border-style : solid;
+    border-width : 2px;
+    border-colour : khaki;
+}
+.que.ddmarker span.wrongparts span.wrongpart {
+    background-color: yellow;
+    border-style : solid;
+    border-width : 2px;
+    border-colour : khaki;
+    padding: 5px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -khtml-border-radius: 10px;
+    border-radius: 10px;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+    filter: alpha(opacity=60);
+    -moz-opacity:0.6;
+    -khtml-opacity: 0.6;
+    opacity: 0.6;
+    margin: 5px;
 }
 .que.ddmarker div.dragitems img.target {
     position:absolute;

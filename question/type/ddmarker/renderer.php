@@ -76,10 +76,23 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
         if ($options->readonly) {
             $dragitemsclass .= ' readonly';
         }
+
         $dragitems = html_writer::tag('div', $draghomes, array('class'=> $dragitemsclass));
-        $output .= html_writer::tag('div', $droparea.$dragitems, array('class'=>'ddarea'));
+        $dropzones = html_writer::empty_tag('div', array('class'=> 'dropzones'));
+        $texts = html_writer::empty_tag('div', array('class'=> 'markertexts'));
+        $output .= html_writer::tag('div',
+                                    $droparea.$dragitems.$dropzones.$texts,
+                                    array('class'=>'ddarea'));
+
+        if ($qa->get_state()->is_finished()) {
+            $visibledropzones = $question->get_drop_zones_without_hit($response);
+        } else {
+            $visibledropzones = array();
+        }
+
         $topnode = 'div#q'.$qa->get_slot();
-        $params = array('topnode' => $topnode,
+        $params = array('dropzones' => $visibledropzones,
+                        'topnode' => $topnode,
                         'readonly' => $options->readonly);
 
         $PAGE->requires->yui_module('moodle-qtype_ddmarker-dd',
@@ -90,6 +103,17 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
             $output .= html_writer::nonempty_tag('div',
                                         $question->get_validation_error($qa->get_last_qt_data()),
                                         array('class' => 'validationerror'));
+        }
+        if ($qa->get_state()->is_finished()) {
+            $wrongparts = $question->wrong_parts($response);
+            $wrongpartsstring = '';
+            foreach($wrongparts as $wrongpart) {
+                $wrongpartsstring .= html_writer::nonempty_tag('span',
+                                        $wrongpart, array('class' => 'wrongpart'));
+            }
+            $output .= html_writer::nonempty_tag('span',
+                                    get_string('followingarewrong', 'qtype_ddmarker', $wrongpartsstring),
+                                    array('class' => 'wrongparts'));
         }
         $output .= html_writer::tag('div', $hiddenfields, array('class'=>'ddform'));
         return $output;

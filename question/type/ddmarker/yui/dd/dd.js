@@ -10,6 +10,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         doc : null,
         polltimer : null,
         afterimageloaddone : false,
+        graphics : null,
         poll_for_image_load : function (e, waitforimageconstrain, pause, doafterwords) {
             if (this.afterimageloaddone) {
                 return;
@@ -93,6 +94,9 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 },
                 input_for_choice : function (choiceno) {
                     return topnode.one('input.choice'+choiceno);
+                },
+                marker_texts : function () {
+                    return topnode.one('div.markertexts');
                 }
 
             }
@@ -115,6 +119,148 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         convert_to_window_xy : function (bgimgxy) {
             return [+bgimgxy[0] + this.doc.bg_img().getX() + 1,
                     +bgimgxy[1] + this.doc.bg_img().getY() + 1];
+        },
+        shapes : [],
+        draw_drop_zone : function (dropzoneno, markertext, shape, coords, colour) {
+            var existingmarkertext = this.doc.marker_texts().one('span.markertext'+dropzoneno+' a');
+            if (existingmarkertext) {
+                if (markertext !== '') {
+                    existingmarkertext.setContent(markertext);
+                } else {
+                    existingmarkertext.remove(true);
+                }
+            } else if (markertext !== '') {
+                var classnames = 'markertext markertext' + dropzoneno;
+                this.doc.marker_texts().append('<span class="'+classnames+'"><a href="#">' +
+                                                                    markertext+'</a></span>');
+            }
+            var drawfunc = 'draw_shape_'+shape;
+            if (this[drawfunc] instanceof Function){
+               var xyfortext = this[drawfunc](dropzoneno, coords, colour);
+               if (xyfortext !== null) {
+                   var markerspan = Y.one('div.ddarea div.markertexts span.markertext'+dropzoneno);
+                   if (markerspan !== null) {
+                       markerspan.setStyle('opacity', '0.6');
+                       xyfortext[0] -= Math.round(markerspan.get('offsetWidth') / 2);
+                       xyfortext[1] -= Math.round(markerspan.get('offsetHeight') / 2);
+                       markerspan.setXY(this.convert_to_window_xy(xyfortext));
+                       markerspan.one('a').once('click',
+                           function (e, dropzoneno) {
+                               var fill = this.shapes[dropzoneno].get('fill');
+                               fill.opacity = 1;
+                               this.shapes[dropzoneno].set('fill', fill);
+                           },
+                           this,
+                           dropzoneno
+                       );
+                       markerspan.one('a').set('tabIndex', 0);
+
+                   }
+               }
+            }
+        },
+        draw_shape_circle : function (dropzoneno, coords, colour) {
+            var coordsparts = coords.match(/(\d+),(\d+);(\d+)/);
+            if (coordsparts && coordsparts.length === 4) {
+                var xy = [+coordsparts[1] - coordsparts[3], +coordsparts[2] - coordsparts[3]];
+                if (this.coords_in_img(xy)) {
+                    var widthheight = [+coordsparts[3]*2, +coordsparts[3]*2];
+                    var shape = this.graphics.addShape({
+                            type: 'circle',
+                            width: widthheight[0],
+                            height: widthheight[1],
+                            fill: {
+                                color: colour,
+                                opacity : "0.5"
+                            },
+                            stroke: {
+                                weight:1,
+                                color: "black"
+                            }
+                    });
+                    shape.setXY(this.convert_to_window_xy(xy));
+                    this.shapes[dropzoneno] = shape;
+                    return [+coordsparts[1], +coordsparts[2]];
+                }
+            }
+            return null;
+        },
+        draw_shape_rectangle : function (dropzoneno, coords, colour) {
+            var coordsparts = coords.match(/(\d+),(\d+);(\d+),(\d+)/);
+            if (coordsparts && coordsparts.length === 5) {
+                var xy = [+coordsparts[1], +coordsparts[2]];
+                var widthheight = [+coordsparts[3], +coordsparts[4]];
+                if (this.coords_in_img([xy[0]+widthheight[0], xy[1]+widthheight[1]])) {
+                    var shape = this.graphics.addShape({
+                            type: 'rect',
+                            width: widthheight[0],
+                            height: widthheight[1],
+                            fill: {
+                                color: colour,
+                                opacity : "0.5"
+                            },
+                            stroke: {
+                                weight:1,
+                                color: "black"
+                            }
+                    });
+                    shape.setXY(this.convert_to_window_xy(xy));
+                    this.shapes[dropzoneno] = shape;
+                    return [+xy[0]+widthheight[0]/2, +xy[1]+widthheight[1]/2];
+                }
+            }
+            return null;
+
+        },
+        draw_shape_polygon : function (dropzoneno, coords, colour) {
+            var coordsparts = coords.split(';');
+            var xy = [];
+            for (var i in coordsparts) {
+                var parts = coordsparts[i].match(/^(\d+),(\d+)$/);
+                if (parts !== null && this.coords_in_img([parts[1], parts[2]])) {
+                    xy[xy.length] = [parts[1], parts[2]];
+                }
+            }
+            if (xy.length > 2) {
+                var polygon = this.graphics.addShape({
+                    type: "path",
+                    stroke: {
+                        weight: 1,
+                        color: "black"
+                    },
+                    fill: {
+                        color: colour,
+                        opacity : "0.5"
+                    }
+                });
+                var maxxy = [0,0];
+                var minxy = [this.doc.bg_img().get('width'), this.doc.bg_img().get('height')];
+                for (var i in xy) {
+                    //calculate min and max points to find center to show marker on
+                    minxy[0] = Math.min(xy[i][0], minxy[0]);
+                    minxy[1] = Math.min(xy[i][1], minxy[1]);
+                    maxxy[0] = Math.max(xy[i][0], maxxy[0]);
+                    maxxy[1] = Math.max(xy[i][1], maxxy[1]);
+                    if (i == 0) {
+                        polygon.moveTo(xy[i][0], xy[i][1]);
+                    } else {
+                        polygon.lineTo(xy[i][0], xy[i][1]);
+                    }
+                }
+                if (+xy[0][0] !== +xy[xy.length-1][0] || +xy[0][1] !== +xy[xy.length-1][1]) {
+                    var windowxy = this.convert_to_window_xy(xy[0]);
+                    polygon.lineTo(xy[0][0], xy[0][1]); //close polygon if not already closed
+                }
+                polygon.end();
+                polygon.setXY(this.doc.bg_img().getXY());
+                this.shapes[dropzoneno] = polygon;
+                return [Math.round((minxy[0] + maxxy[0])/2), Math.round((minxy[1] + maxxy[1])/2)];
+            }
+            return null;
+        },
+        coords_in_img : function (coords) {
+            return (coords[0] <= this.doc.bg_img().get('width') && 
+                            coords[1] <= this.doc.bg_img().get('height'));
         }
     }, {
         NAME : DDMARKERDDNAME,
@@ -142,8 +288,8 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                                                     false, 0, this.after_image_load);
         },
         after_image_load : function () {
-            this.reposition_drags();
-            Y.later(500, this, this.reposition_drags, [], true);
+            this.redraw_drags_and_drops();
+            Y.later(2000, this, this.redraw_drags_and_drops, [], true);
         },
         clone_new_drag_item : function (draghome, itemno) {
             var drag = draghome.cloneNode(true);
@@ -170,13 +316,13 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                     dragnode.removeClass('item'+dragnode);
                 }
                 this.save_all_xy_for_choice(choiceno, null);
-                this.reposition_drags();
+                this.redraw_drags_and_drops();
             }, this);
             dd.after('drag:end', function(e) {
                 var dragnode = e.target.get('node');
                 var choiceno = this.get_choiceno_for_node(dragnode);
                 this.save_all_xy_for_choice(choiceno, dragnode);
-                this.reposition_drags();
+                this.redraw_drags_and_drops();
             }, this);
             //--- keyboard accessibility
             drag.set('tabIndex', 0);
@@ -236,7 +382,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             return [Math.round(+windowxy[0] - this.doc.bg_img().getX()-1),
                     Math.round(+windowxy[1] - this.doc.bg_img().getY()-1)];
         },
-        reposition_drags : function() {
+        redraw_drags_and_drops : function() {
             this.doc.drag_items().each(function(item) {
                 //if (!item.hasClass('yui3-dd-dragging')){
                     item.addClass('unneeded');
@@ -262,6 +408,18 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                     item.remove(true);
                 }
             }, this);
+            if (this.graphics !== null) {
+                this.graphics.destroy();
+            }
+            this.restart_colours();
+            this.graphics = new Y.Graphic(
+                {render:this.doc.top_node().one("div.ddarea div.dropzones")}
+            );
+            for (var dropzoneno in this.get('dropzones')) {
+                var colourfordropzone = this.get_next_colour();
+                var d = this.get('dropzones')[dropzoneno];
+                this.draw_drop_zone(dropzoneno, d.markertext, d.shape, d.coords, colourfordropzone);
+            }
         },
         /**
          * Return coords of all drag items except any that are currently being dragged
@@ -326,7 +484,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         }
 
 
-    }, {NAME : DDMARKERQUESTIONNAME, ATTRS : {}});
+    }, {NAME : DDMARKERQUESTIONNAME, ATTRS : {dropzones:{value:[]}}});
 
     Y.Event.define('dragchange', {
         // Webkit and IE repeat keydown when you hold down arrow keys.
@@ -360,5 +518,5 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         return new DDMARKER_QUESTION(config);
     }
 }, '@VERSION@', {
-      requires:['node', 'event-resize', 'dd', 'dd-drop', 'dd-constrain']
+      requires:['node', 'event-resize', 'dd', 'dd-drop', 'dd-constrain', 'graphics']
 });

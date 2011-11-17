@@ -259,7 +259,34 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
         }
         return $cleanedresponse;
     }
+    public function get_drop_zones_without_hit(array $response) {
+        $hits = $this->choose_hits($response);
 
+        $nohits = array();
+        foreach ($this->places as $placeno => $place) {
+            $choice = $this->get_right_choice_for($placeno);
+            if (!isset($hits[$placeno])) {
+                $nohit = new stdClass();
+                $nohit->coords = $place->coords;
+                $nohit->shape = $place->shape->name();
+                $nohit->markertext = $this->choices[1][$choice]->text;
+                $nohits[] = $nohit;
+            }
+        }
+        return $nohits;
+    }
+    public function wrong_parts(array $response) {
+        $hits = $this->choose_hits($response);
+
+        $wrong = array();
+        foreach ($this->places as $placeno => $place) {
+            $choice = $this->get_right_choice_for($placeno);
+            if (!isset($hits[$placeno])) {
+                $wrong[] = $this->choices[1][$choice]->text;
+            }
+        }
+        return $wrong;
+    }
     public function classify_response(array $response) {
         $parts = array();
         foreach ($this->places as $place => $group) {
