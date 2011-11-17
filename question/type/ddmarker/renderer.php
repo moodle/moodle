@@ -106,16 +106,17 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
         }
 
         if ($question->showmisplaced && $qa->get_state()->is_finished()) {
-            $wrongparts = $question->wrong_parts($response);
+            $wrongparts = $question->get_drop_zones_without_hit($response);
             $wrongpartsstring = '';
             foreach($wrongparts as $wrongpart) {
                 $wrongpartsstring .= html_writer::nonempty_tag('span',
-                                        $wrongpart, array('class' => 'wrongpart'));
+                                $wrongpart->markertext, array('class' => 'wrongpart'));
             }
             $output .= html_writer::nonempty_tag('span',
-                                    get_string('followingarewrong', 'qtype_ddmarker', $wrongpartsstring),
-                                    array('class' => 'wrongparts'));
+                get_string('followingarewrongandhighlighted', 'qtype_ddmarker', $wrongpartsstring),
+                array('class' => 'wrongparts'));
         }
+
         $output .= html_writer::tag('div', $hiddenfields, array('class'=>'ddform'));
         return $output;
     }
@@ -127,5 +128,22 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
         }
         list(,$html) = $this->hidden_field_for_qt_var($qa, $varname, null, $classes);
         return $html;
+    }
+
+    protected function hint(question_attempt $qa, question_hint $hint)  {
+        $question = $qa->get_question();
+        $response = $qa->get_last_qt_data();
+        if ($hint->statewhichincorrect) {
+            $wrongparts = $question->get_wrong_drags($response);
+            $wrongpartsstring = '';
+            foreach($wrongparts as $wrongpart) {
+                $wrongpartsstring .= html_writer::nonempty_tag('span',
+                                        $wrongpart, array('class' => 'wrongpart'));
+            }
+            $output .= html_writer::nonempty_tag('span',
+                    get_string('followingarewrong', 'qtype_ddmarker', $wrongpartsstring),
+                    array('class' => 'wrongparts'));
+        }
+        return $output . parent::hint($qa, $hint);
     }
 }

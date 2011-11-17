@@ -262,6 +262,24 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
         }
         return $cleanedresponse;
     }
+    public function get_wrong_drags(array $response) {
+        $hits = $this->choose_hits($response);
+        $wrong = array();
+        foreach ($response as $choicekey => $coords) {
+            $choice = (int)substr($choicekey, 1);
+            if ($coords != '') {
+            $coordparts = explode(';', $coords);
+                foreach ($coordparts as $itemno => $coord) {
+                    if (!in_array("$choice $itemno", $hits)) {
+                        $wrong[] = $this->get_selected_choice(1, $choice)->text;
+                    }
+                }
+            }
+        }
+        return $wrong;
+    }
+
+
     public function get_drop_zones_without_hit(array $response) {
         $hits = $this->choose_hits($response);
 
@@ -278,18 +296,7 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
         }
         return $nohits;
     }
-    public function wrong_parts(array $response) {
-        $hits = $this->choose_hits($response);
 
-        $wrong = array();
-        foreach ($this->places as $placeno => $place) {
-            $choice = $this->get_right_choice_for($placeno);
-            if (!isset($hits[$placeno])) {
-                $wrong[] = $this->choices[1][$choice]->text;
-            }
-        }
-        return $wrong;
-    }
     public function classify_response(array $response) {
         $parts = array();
         foreach ($this->places as $place => $group) {
