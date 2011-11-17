@@ -56,7 +56,7 @@ form.mform fieldset#previewareaheader div.markertexts span.markertext {
     margin: 5px;
     z-index: 3;
     background-color: white;
-    border-style : none;
+    border: 2px solid black;
     padding: 5px;
     display: -moz-inline-stack;
     display:inline-block;
