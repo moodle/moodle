@@ -27,7 +27,7 @@ $string['choosereadme'] = '<div class="clearfix"><div class="theme_screenshot"><
 $string['colourswatch'] = 'Mobile theme color swatch';
 $string['colourswatch_desc'] = 'Toggle the color swatch of the theme between grey and light/blue.';
 $string['grey'] = 'Grey';
-$string['light'] = 'Light';
+$string['light'] = 'Light/Blue';
 $string['mtoggle'] = 'Toggle 2nd Column';
 $string['no'] = 'No';
 $string['pluginname'] = 'MyMobile';
