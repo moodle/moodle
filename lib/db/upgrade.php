@@ -6917,15 +6917,17 @@ FROM
     }
 
     if ($oldversion < 2011111500.01) {
+        upgrade_set_timeout(60*20); // this may take a while
         // Remove duplicate entries from groupings_groups table
         $sql = 'SELECT MIN(id) AS firstid, groupingid, groupid FROM {groupings_groups} '.
                'GROUP BY groupingid, groupid HAVING COUNT(id)>1';
-        $badrecs = $DB->get_records_sql($sql);
-        foreach ($badrecs as $badrec) {
+        $badrs = $DB->get_recordset_sql($sql);
+        foreach ($badrs as $badrec) {
             $where = 'groupingid = ? and groupid = ? and id > ?';
             $params = array($badrec->groupingid, $badrec->groupid, $badrec->firstid);
             $DB->delete_records_select('groupings_groups', $where, $params);
         }
+        $badrs->close();
 
         // Main savepoint reached
         upgrade_main_savepoint(true, 2011111500.01);
