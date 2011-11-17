@@ -6160,6 +6160,21 @@ FROM
         upgrade_main_savepoint(true, 2011033004.09);
     }
 
+    if ($oldversion < 2011033005.07) {
+        // Remove duplicate entries from groupings_groups table
+        $sql = 'SELECT MIN(id) AS firstid, groupingid, groupid FROM {groupings_groups} '.
+               'GROUP BY groupingid, groupid HAVING COUNT(id)>1';
+        $badrecs = $DB->get_records_sql($sql);
+        foreach ($badrecs as $badrec) {
+            $where = 'groupingid = ? and groupid = ? and id > ?';
+            $params = array($badrec->groupingid, $badrec->groupid, $badrec->firstid);
+            $DB->delete_records_select('groupings_groups', $where, $params);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011033005.07);
+    }
+
     return true;
 }
 
