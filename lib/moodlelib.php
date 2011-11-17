@@ -8454,12 +8454,17 @@ function generate_password($maxlen=10) {
         $filler1 = $fillers[rand(0, strlen($fillers) - 1)];
         $password = $word1 . $filler1 . $word2;
     } else {
-        $maxlen = !empty($CFG->minpasswordlength) ? $CFG->minpasswordlength : 0;
+        $minlen = !empty($CFG->minpasswordlength) ? $CFG->minpasswordlength : 0;
         $digits = $CFG->minpassworddigits;
         $lower = $CFG->minpasswordlower;
         $upper = $CFG->minpasswordupper;
         $nonalphanum = $CFG->minpasswordnonalphanum;
-        $additional = $maxlen - ($lower + $upper + $digits + $nonalphanum);
+        $total = $lower + $upper + $digits + $nonalphanum;
+        // minlength should be the greater one of the two ( $minlen and $total )
+        $minlen = $minlen < $total ? $total : $minlen;
+        // maxlen can never be smaller than minlen
+        $maxlen = $minlen > $maxlen ? $minlen : $maxlen;
+        $additional = $maxlen - $total;
 
         // Make sure we have enough characters to fulfill
         // complexity requirements
