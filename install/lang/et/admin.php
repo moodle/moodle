@@ -32,8 +32,10 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'ei';
 $string['cliansweryes'] = 'jah';
+$string['cliincorrectvalueerror'] = 'Viga, vigane väärtus "{$a->value}" "{$a->option}"-le';
 $string['cliincorrectvalueretry'] = 'Vale väärtus(value), palun proovige uuesti';
 $string['clitypevalue'] = 'tüübi väärtus';
+$string['clitypevaluedefault'] = 'sisesta väärtus, vajuta Enter kasutamaks vaikeväärtust ({$a})';
 $string['cliunknowoption'] = 'Tundmatud valikud: 
    {$a}
 Palun kasuta --help valikut.';
