@@ -131,6 +131,7 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
     }
 
     protected function hint(question_attempt $qa, question_hint $hint)  {
+        $output = '';
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
         if ($hint->statewhichincorrect) {
