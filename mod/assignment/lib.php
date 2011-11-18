@@ -1349,6 +1349,7 @@ class assignment_base {
                 $currentposition = 0;
                 foreach ($ausers as $auser) {
                     if ($currentposition == $offset && $offset < $endposition) {
+                        $rowclass = null;
                         $final_grade = $grading_info->items[0]->grades[$auser->id];
                         $grademax = $grading_info->items[0]->grademax;
                         $final_grade->formatted_grade = round($final_grade->grade,2) .' / ' . round($grademax,2);
@@ -1369,11 +1370,16 @@ class assignment_base {
                         ///attach file or print link to student answer, depending on the type of the assignment.
                         ///Refer to print_student_answer in inherited classes.
                             if ($auser->timemodified > 0) {
-                                $studentmodified = '<div id="ts'.$auser->id.'">'.$this->print_student_answer($auser->id)
-                                                 . userdate($auser->timemodified).'</div>';
+                                $studentmodifiedcontent = $this->print_student_answer($auser->id)
+                                        . userdate($auser->timemodified);
+                                if ($assignment->timedue && $auser->timemodified > $assignment->timedue) {
+                                    $studentmodifiedcontent .= assignment_display_lateness($auser->timemodified, $assignment->timedue);
+                                    $rowclass = 'late';
+                                }
                             } else {
-                                $studentmodified = '<div id="ts'.$auser->id.'">&nbsp;</div>';
+                                $studentmodifiedcontent = '&nbsp;';
                             }
+                            $studentmodified = html_writer::tag('div', $studentmodifiedcontent, array('id' => 'ts' . $auser->id));
                         ///Print grade, dropdown or text
                             if ($auser->timemarked > 0) {
                                 $teachermodified = '<div id="tt'.$auser->id.'">'.userdate($auser->timemarked).'</div>';
@@ -1486,7 +1492,7 @@ class assignment_base {
                         if ($uses_outcomes) {
                             $row[] = $outcomes;
                         }
-                        $table->add_data($row);
+                        $table->add_data($row, $rowclass);
                     }
                     $currentposition++;
                 }
