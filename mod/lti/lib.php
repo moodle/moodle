@@ -63,6 +63,7 @@ function lti_supports($feature) {
         case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return true;
         case FEATURE_BACKUP_MOODLE2:          return true;
+        case FEATURE_SHOW_DESCRIPTION:        return true;
 
         default: return null;
     }
@@ -117,12 +118,12 @@ function lti_update_instance($lti, $mform) {
     $lti->timemodified = time();
     $lti->id = $lti->instance;
 
-    if (!isset($lti->showtitle)) {
-        $lti->showtitle = 0;
+    if (!isset($lti->showtitlelaunch)) {
+        $lti->showtitlelaunch = 0;
     }
 
-    if (!isset($lti->showdescription)) {
-        $lti->showdescription = 0;
+    if (!isset($lti->showdescriptionlaunch)) {
+        $lti->showdescriptionlaunch = 0;
     }
 
     if (!isset($lti->grade)) {
@@ -175,7 +176,7 @@ function lti_get_coursemodule_info($coursemodule) {
     require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
     if (!$lti = $DB->get_record('lti', array('id' => $coursemodule->instance),
-            'icon, secureicon')) {
+            'icon, secureicon, intro, introformat, name')) {
         return null;
     }
 
@@ -188,7 +189,14 @@ function lti_get_coursemodule_info($coursemodule) {
     } else if (!empty($lti->icon)) {
         $info->iconurl = new moodle_url($lti->icon);
     }
+    
+    if ($coursemodule->showdescription) {
+        // Convert intro to html. Do not filter cached version, filters run at display time.
+        $info->content = format_module_intro('lti', $lti, $coursemodule->id, false);
+    }
 
+    $info->name = $lti->name;
+    
     return $info;
 }
 

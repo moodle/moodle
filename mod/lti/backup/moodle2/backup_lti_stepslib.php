@@ -77,8 +77,8 @@ class backup_lti_activity_structure_step extends backup_activity_structure_step 
             'instructorchoiceallowsetting',
             'grade',
             'instructorcustomparameters',
-            'showtitle',
-            'showdescription'
+            'showtitlelaunch',
+            'showdescriptionlaunch'
             )
         );
 

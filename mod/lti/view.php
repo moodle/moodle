@@ -100,12 +100,12 @@ $PAGE->set_heading($course->fullname);
 // Print the page header
 echo $OUTPUT->header();
 
-if ($lti->showtitle) {
+if ($lti->showtitlelaunch) {
     // Print the main part of the page
     echo $OUTPUT->heading(format_string($lti->name));
 }
 
-if ($lti->showdescription && $lti->intro) {
+if ($lti->showdescriptionlaunch && $lti->intro) {
     echo $OUTPUT->box($lti->intro, 'generalbox description', 'intro');
 }
 
