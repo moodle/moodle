@@ -74,7 +74,8 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                 var colourfordropzone = this.get_next_colour();
                 Y.one('input#id_drops_'+dropzoneno+'_coords')
                                                 .setStyle('background-color', colourfordropzone);
-                this.draw_drop_zone(dropzoneno, markertext, shape, coords, colourfordropzone);
+                this.draw_drop_zone(dropzoneno, markertext,
+                                    shape, coords, colourfordropzone, false);
             }
         },
 
