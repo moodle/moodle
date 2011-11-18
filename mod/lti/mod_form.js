@@ -184,8 +184,7 @@
                 toolInfo = {
                     sendname: M.mod_lti.LTI_SETTING_DELEGATE,
                     sendemailaddr: M.mod_lti.LTI_SETTING_DELEGATE,
-                    acceptgrades: M.mod_lti.LTI_SETTING_DELEGATE,
-                    allowroster: M.mod_lti.LTI_SETTING_DELEGATE
+                    acceptgrades: M.mod_lti.LTI_SETTING_DELEGATE
                 }
             }
             
@@ -196,8 +195,7 @@
             var privacyControls = {
                 sendname: Y.one('input[name=instructorchoicesendname]'),
                 sendemailaddr: Y.one('input[name=instructorchoicesendemailaddr]'),
-                acceptgrades: Y.one('input[name=instructorchoiceacceptgrades]'),
-                allowroster: Y.one('input[name=instructorchoiceallowroster]')
+                acceptgrades: Y.one('input[name=instructorchoiceacceptgrades]')
             };
             
             //Store a copy of user entered privacy settings as we may overwrite them

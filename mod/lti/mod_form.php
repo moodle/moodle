@@ -164,9 +164,9 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setDefault('instructorchoiceacceptgrades', '1');
         $mform->addHelpButton('instructorchoiceacceptgrades', 'accept_grades', 'lti');
 
-        $mform->addElement('checkbox', 'instructorchoiceallowroster', '&nbsp;', ' ' . get_string('share_roster', 'lti'));
-        $mform->setDefault('instructorchoiceallowroster', '1');
-        $mform->addHelpButton('instructorchoiceallowroster', 'share_roster', 'lti');
+        //$mform->addElement('checkbox', 'instructorchoiceallowroster', '&nbsp;', ' ' . get_string('share_roster', 'lti'));
+        //$mform->setDefault('instructorchoiceallowroster', '1');
+        //$mform->addHelpButton('instructorchoiceallowroster', 'share_roster', 'lti');
 
         //-------------------------------------------------------------------------------
 

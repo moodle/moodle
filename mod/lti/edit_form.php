@@ -126,9 +126,9 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->addHelpButton('lti_acceptgrades', 'accept_grades_admin', 'lti');
 
         // Add grading preferences fieldset where the tool is allowed to retrieve rosters
-        $mform->addElement('select', 'lti_allowroster', get_string('share_roster_admin', 'lti'), $options);
-        $mform->setDefault('lti_allowroster', '2');
-        $mform->addHelpButton('lti_allowroster', 'share_roster_admin', 'lti');
+        //$mform->addElement('select', 'lti_allowroster', get_string('share_roster_admin', 'lti'), $options);
+        //$mform->setDefault('lti_allowroster', '2');
+        //$mform->addHelpButton('lti_allowroster', 'share_roster_admin', 'lti');
 
         $mform->addElement('checkbox', 'lti_forcessl', '&nbsp;', ' ' . get_string('force_ssl', 'lti'), $options);
         $mform->setDefault('lti_forcessl', '0');
