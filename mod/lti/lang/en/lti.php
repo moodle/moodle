@@ -230,6 +230,7 @@ $string['launchoptions'] = 'Launch Options';
 $string['lti'] = 'LTI';
 $string['lti:addcoursetool'] = 'Grade LTI activities';
 $string['lti:grade'] = 'Grade LTI activities';
+$string['lti:manage'] = 'Edit LTI activities';
 $string['lti:requesttooladd'] = 'Submit a tool to admins for configuration';
 $string['lti:view'] = 'View LTI activities';
 $string['lti_administration'] = 'LTI Administration';
