@@ -69,14 +69,14 @@ class mod_lti_mod_form extends moodleform_mod {
         // Adding the optional "intro" and "introformat" pair of fields
         $this->add_intro_editor(false, get_string('basicltiintro', 'lti'));
         $mform->setAdvanced('introeditor');
-        
-        //Display the label to the right of the checkbox so it looks better & matches rest of the form
+
+        // Display the label to the right of the checkbox so it looks better & matches rest of the form
         $coursedesc = $mform->getElement('showdescription');
         if(!empty($coursedesc)){
             $coursedesc->setText(' ' . $coursedesc->getLabel());
             $coursedesc->setLabel('&nbsp');
         }
-        
+
         $mform->setAdvanced('showdescription');
 
         $mform->addElement('checkbox', 'showtitlelaunch', '&nbsp;', ' ' . get_string('display_name', 'lti'));

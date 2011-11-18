@@ -189,14 +189,14 @@ function lti_get_coursemodule_info($coursemodule) {
     } else if (!empty($lti->icon)) {
         $info->iconurl = new moodle_url($lti->icon);
     }
-    
+
     if ($coursemodule->showdescription) {
         // Convert intro to html. Do not filter cached version, filters run at display time.
         $info->content = format_module_intro('lti', $lti, $coursemodule->id, false);
     }
 
     $info->name = $lti->name;
-    
+
     return $info;
 }
 
