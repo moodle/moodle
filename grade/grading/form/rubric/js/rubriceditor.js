@@ -12,6 +12,10 @@ M.gradingform_rubriceditor.init = function(Y, options) {
     }
     M.gradingform_rubriceditor.disablealleditors()
     Y.on('click', M.gradingform_rubriceditor.clickanywhere, 'body', null)
+    YUI().use('event-touch', function (Y) {
+        Y.one('body').on('touchstart', M.gradingform_rubriceditor.clickanywhere);
+        Y.one('body').on('touchend', M.gradingform_rubriceditor.clickanywhere);
+    })
     M.gradingform_rubriceditor.addhandlers()
 };
 
@@ -35,6 +39,7 @@ M.gradingform_rubriceditor.disablealleditors = function() {
 // it switches this element to edit mode. If rubric button is clicked it does nothing so the 'buttonclick'
 // function is invoked
 M.gradingform_rubriceditor.clickanywhere = function(e) {
+    if (e.type == 'touchstart') return
     var el = e.target
     // if clicked on button - disablecurrenteditor, continue
     if (el.get('tagName') == 'INPUT' && el.get('type') == 'submit') {
@@ -48,7 +53,7 @@ M.gradingform_rubriceditor.clickanywhere = function(e) {
         el = el.get('parentNode')
     }
     if (el) {
-        if (el.one('textarea').getStyle('display') == 'none') {
+        if (el.one('textarea').hasClass('hiddenelement')) {
             M.gradingform_rubriceditor.disablealleditors()
             M.gradingform_rubriceditor.editmode(el, true, focustb)
         }
@@ -61,19 +66,19 @@ M.gradingform_rubriceditor.clickanywhere = function(e) {
 // switch the criterion description or level to edit mode or switch back
 M.gradingform_rubriceditor.editmode = function(el, editmode, focustb) {
     var ta = el.one('textarea')
-    if (!editmode && ta.getStyle('display') == 'none') return;
-    if (editmode && ta.getStyle('display') == 'block') return;
-    var pseudotablink = '<a href="#" class="pseudotablink">&nbsp;</a>',
+    if (!editmode && ta.hasClass('hiddenelement')) return;
+    if (editmode && !ta.hasClass('hiddenelement')) return;
+    var pseudotablink = '<input type="text" size="1" class="pseudotablink"/>',
         taplain = ta.get('parentNode').one('.plainvalue'),
         tbplain = null,
-        tb = el.one('input[type=text]')
+        tb = el.one('.score input[type=text]')
     // add 'plainvalue' next to textarea for description/definition and next to input text field for score (if applicable)
     if (!taplain) {
-        ta.get('parentNode').append('<div class="plainvalue"><span class="textvalue">&nbsp;</span>'+pseudotablink+'</div>')
+        ta.get('parentNode').append('<div class="plainvalue">'+pseudotablink+'<span class="textvalue">&nbsp;</span></div>')
         taplain = ta.get('parentNode').one('.plainvalue')
         taplain.one('.pseudotablink').on('focus', M.gradingform_rubriceditor.clickanywhere)
         if (tb) {
-            tb.get('parentNode').append('<div class="plainvalue"><span class="textvalue">&nbsp;</span>'+pseudotablink+'</div>')
+            tb.get('parentNode').append('<span class="plainvalue">'+pseudotablink+'<span class="textvalue">&nbsp;</span></span>')
             tbplain = tb.get('parentNode').one('.plainvalue')
             tbplain.one('.pseudotablink').on('focus', M.gradingform_rubriceditor.clickanywhere)
         }
@@ -90,20 +95,33 @@ M.gradingform_rubriceditor.editmode = function(el, editmode, focustb) {
         }
         taplain.one('.textvalue').set('innerHTML', value)
         if (tb) tbplain.one('.textvalue').set('innerHTML', tb.get('value'))
+        // hide/display textarea, textbox and plaintexts
+        taplain.removeClass('hiddenelement')
+        ta.addClass('hiddenelement')
+        if (tb) {
+            tbplain.removeClass('hiddenelement')
+            tb.addClass('hiddenelement')
+        }
     } else {
         // if we need to show the input fields, set the width/height for textarea so it fills the cell
-        var width = parseFloat(ta.get('parentNode').getComputedStyle('width')),
-            height
-        if (el.hasClass('level')) height = parseFloat(el.getComputedStyle('height')) - parseFloat(el.one('.score').getComputedStyle('height'))
-        else height = parseFloat(ta.get('parentNode').getComputedStyle('height'))
-        ta.setStyle('width', Math.max(width,50)+'px').setStyle('height', Math.max(height,20)+'px')
-    }
-    // hide/display textarea, textbox and plaintexts
-    taplain.setStyle('display', editmode ? 'none' : 'block')
-    ta.setStyle('display', editmode ? 'block' : 'none')
-    if (tb) {
-        tbplain.setStyle('display', editmode ? 'none' : 'inline-block')
-        tb.setStyle('display', editmode ? 'inline-block' : 'none')
+        try {
+            var width = parseFloat(ta.get('parentNode').getComputedStyle('width')),
+                height
+            if (el.hasClass('level')) height = parseFloat(el.getComputedStyle('height')) - parseFloat(el.one('.score').getComputedStyle('height'))
+            else height = parseFloat(ta.get('parentNode').getComputedStyle('height'))
+            ta.setStyle('width', Math.max(width,50)+'px')
+            ta.setStyle('height', Math.max(height,20)+'px')
+        }
+        catch (err) {
+            // this browser do not support 'computedStyle', leave the default size of the textbox
+        }
+        // hide/display textarea, textbox and plaintexts
+        taplain.addClass('hiddenelement')
+        ta.removeClass('hiddenelement')
+        if (tb) {
+            tbplain.addClass('hiddenelement')
+            tb.removeClass('hiddenelement')
+        }
     }
     // focus the proper input field in edit mode
     if (editmode) { if (tb && focustb) tb.focus(); else ta.focus() }

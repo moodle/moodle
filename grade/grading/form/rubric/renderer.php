@@ -164,7 +164,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
         $leveltemplate .= html_writer::start_tag('div', array('class' => 'level-wrapper'));
         if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FULL) {
             $definition = html_writer::tag('textarea', htmlspecialchars($level['definition']), array('name' => '{NAME}[criteria][{CRITERION-id}][levels][{LEVEL-id}][definition]', 'cols' => '10', 'rows' => '4'));
-            $score = html_writer::empty_tag('input', array('type' => 'text', 'name' => '{NAME}[criteria][{CRITERION-id}][levels][{LEVEL-id}][score]', 'size' => '4', 'value' => $level['score']));
+            $score = html_writer::empty_tag('input', array('type' => 'text', 'name' => '{NAME}[criteria][{CRITERION-id}][levels][{LEVEL-id}][score]', 'size' => '3', 'value' => $level['score']));
         } else {
             if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FROZEN) {
                 $leveltemplate .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => '{NAME}[criteria][{CRITERION-id}][levels][{LEVEL-id}][definition]', 'value' => $level['definition']));
@@ -181,7 +181,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
         if ($mode == gradingform_rubric_controller::DISPLAY_EVAL_FROZEN && $level['checked']) {
             $leveltemplate .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => '{NAME}[criteria][{CRITERION-id}][levelid]', 'value' => $level['id']));
         }
-        $score = html_writer::tag('span', $score, array('id' => '{NAME}-criteria-{CRITERION-id}-levels-{LEVEL-id}-score'));
+        $score = html_writer::tag('span', $score, array('id' => '{NAME}-criteria-{CRITERION-id}-levels-{LEVEL-id}-score', 'class' => 'scorevalue'));
         $definitionclass = 'definition';
         if (isset($level['error_definition'])) {
             $definitionclass .= ' error';
@@ -451,6 +451,24 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
             $html .= html_writer::empty_tag('input', array('name' => $elementname.'[regrade]', 'value' => 1, 'type' => 'hidden'));
         }
         $html .= html_writer::end_tag('div');
+        return $html;
+    }
+
+    /**
+     * Generates and returns HTML code to display information box about how rubric score is converted to the grade
+     *
+     * @param array $scores
+     * @return string
+     */
+    public function display_rubric_mapping_explained($scores) {
+        $html = '';
+        if (!$scores) {
+            return $html;
+        }
+        $html .= $this->box(
+                html_writer::tag('h4', get_string('rubricmapping', 'gradingform_rubric')).
+                html_writer::tag('div', get_string('rubricmappingexplained', 'gradingform_rubric', (object)$scores))
+                , 'generalbox rubricmappingexplained');
         return $html;
     }
 }

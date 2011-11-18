@@ -58,8 +58,8 @@ class gradingform_rubric_editrubric extends moodleform {
 
         // rubric completion status
         $choices = array();
-        $choices[gradingform_controller::DEFINITION_STATUS_DRAFT]    = get_string('statusdraft', 'grading');
-        $choices[gradingform_controller::DEFINITION_STATUS_READY]    = get_string('statusready', 'grading');
+        $choices[gradingform_controller::DEFINITION_STATUS_DRAFT]    = html_writer::tag('span', get_string('statusdraft', 'core_grading'), array('class' => 'status draft'));
+        $choices[gradingform_controller::DEFINITION_STATUS_READY]    = html_writer::tag('span', get_string('statusready', 'core_grading'), array('class' => 'status ready'));
         $form->addElement('select', 'status', get_string('rubricstatus', 'gradingform_rubric'), $choices)->freeze();
 
         // rubric editor
@@ -78,6 +78,27 @@ class gradingform_rubric_editrubric extends moodleform {
         $buttonarray[] = &$form->createElement('cancel');
         $form->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $form->closeHeaderBefore('buttonar');
+    }
+
+    /**
+     * Setup the form depending on current values. This method is called after definition(),
+     * data submission and set_data().
+     * All form setup that is dependent on form values should go in here.
+     *
+     * We remove the element status if there is no current status (i.e. rubric is only being created)
+     * so the users do not get confused
+     */
+    public function definition_after_data() {
+        $form = $this->_form;
+        $el = $form->getElement('status');
+        if (!$el->getValue()) {
+            $form->removeElement('status');
+        } else {
+            $vals = array_values($el->getValue());
+            if ($vals[0] == gradingform_controller::DEFINITION_STATUS_READY) {
+                $this->findButton('saverubric')->setValue(get_string('save', 'gradingform_rubric'));
+            }
+        }
     }
 
     /**
