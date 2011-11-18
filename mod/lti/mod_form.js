@@ -40,6 +40,7 @@
             this.settings = Y.JSON.parse(settings);
 
             this.urlCache = {};
+            this.toolTypeCache = {};
 
             this.addOptGroups();
 
@@ -81,6 +82,7 @@
 
         clearToolCache: function(){
             this.urlCache = {};
+            this.toolTypeCache = {};
         },
 
         updateAutomaticToolMatch: function(field){
@@ -110,7 +112,7 @@
                 automatchToolDisplay.setStyle('display', '');
             }
 
-            var selectedToolType = typeSelector.get('value');
+            var selectedToolType = parseInt(typeSelector.get('value'));
             var selectedOption = typeSelector.one('option[value="' + selectedToolType + '"]');
 
             //A specific tool type is selected (not "auto")
@@ -141,7 +143,7 @@
 
                 if(toolInfo.toolname){
                     automatchToolDisplay.set('innerHTML',  '<img style="vertical-align:text-bottom" src="' + self.settings.green_check_icon_url + '" />' + M.str.lti.using_tool_configuration + toolInfo.toolname);
-                } else {
+                } else if(!selectedToolType) {
                     //Inform them custom configuration is in use
                     if(key.get('value') === '' || secret.get('value') === ''){
                         automatchToolDisplay.set('innerHTML', '<img style="vertical-align:text-bottom" src="' + self.settings.warning_icon_url + '" />' + M.str.lti.tool_config_not_found);
@@ -150,13 +152,24 @@
             };
 
             //Cache urls which have already been checked to increase performance
-            if(self.urlCache[url]){
-                continuation(self.urlCache[url]);
+            //Don't use URL cache if tool type manually selected
+            if(selectedToolType && self.toolTypeCache[selectedToolType]){
+                return continuation(self.toolTypeCache[selectedToolType]);
+            } else if(self.urlCache[url] && !selectedToolType){
+                return continuation(self.urlCache[url]);
+            } else if(!selectedToolType && !url) {
+                //No tool type or url set
+                return continuation({});
             } else {
-                self.findToolByUrl(url, function(toolInfo){
+                self.findToolByUrl(url, selectedToolType, function(toolInfo){
                     if(toolInfo){
-                        self.urlCache[url] = toolInfo;
-
+                        //Cache the result based on whether the URL or tool type was used to look up the tool
+                        if(!selectedToolType){
+                            self.urlCache[url] = toolInfo;
+                        } else {
+                            self.toolTypeCache[selectedToolType] = toolInfo;
+                        }
+                        
                         continuation(toolInfo);
                     }
                 });
@@ -167,7 +180,7 @@
          * Updates display of privacy settings to show course / site tool configuration settings.
          */
         updatePrivacySettings: function(toolInfo){
-            if(!toolInfo || !toolInfo.toolname){
+            if(!toolInfo || !toolInfo.toolid){
                 toolInfo = {
                     sendname: M.mod_lti.LTI_SETTING_DELEGATE,
                     sendemailaddr: M.mod_lti.LTI_SETTING_DELEGATE,
@@ -395,17 +408,14 @@
             });
         },
 
-        findToolByUrl: function(url, callback){
+        findToolByUrl: function(url, toolId, callback){
             var self = this;
             
-            if(!url || url === ''){
-                return callback();
-            }
-
             Y.io(self.settings.ajax_url, {
                 data: {action: 'find_tool_config',
                         course: self.settings.courseId,
-                        toolurl: url
+                        toolurl: url,
+                        toolid: toolId || 0
                 },
 
                 on: {

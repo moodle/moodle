@@ -31,5 +31,9 @@
 /* Styles for admin */
 .path-admin-mod-lti .mform .fitem .fitemtitle { min-width:18em;padding-right:1em } /* Prevent setting titles from wrapping */
 
+/* Styles for instructor editing an external tool */
+
+.path-mod-lti .mform .fitem .fitemtitle { min-width:14em;padding-right:1em } /* Prevent setting titles from wrapping */
+
 /* Styles for instructor_edit_tool_type.php */
 #page-mod-lti-instructor_edit_tool_type .mform .fitem .fitemtitle { min-width:18em;padding-right:1em } /* Prevent setting titles from wrapping */
