@@ -64,7 +64,7 @@ function xmldb_lti_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if($oldversion < 2011111600){
+    if ($oldversion < 2011111600){
         // Rename showdescription to showdescriptionlaunch to not conflict with setting from core Moodle
         // Rename showtitle as well to be consistent
         $table = new xmldb_table('lti');
