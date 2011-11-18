@@ -71,8 +71,9 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
         return $vars;
     }
     public function is_complete_response(array $response) {
-        foreach ($this->choices[1] as $choice => $notused) {
-            if ('' != trim($response[$this->choice($choice)])) {
+        foreach ($this->choices[1] as $choiceno => $notused) {
+            if (isset($response[$this->choice($choiceno)])
+                                            && '' != trim($response[$this->choice($choiceno)])) {
                 return true;
             }
         }
@@ -352,7 +353,8 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
         $goodhits = array();
         foreach ($this->places as $placeno => $place) {
             if (isset($hits[$placeno])) {
-                $choice = $this->choices[$this->get_right_choice_for($placeno)];
+                $shuffledchoiceno = $this->get_right_choice_for($placeno);
+                $choice = $this->get_selected_choice(1, $shuffledchoiceno);
                 $goodhits[] = "{".$place->summarise()." -> ". $choice->summarise(). "}";
             }
         }
