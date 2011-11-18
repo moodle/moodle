@@ -299,20 +299,18 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
 
     public function classify_response(array $response) {
         $parts = array();
-        foreach ($this->places as $place => $group) {
-            if (!array_key_exists($this->field($place), $response) ||
-                    !$response[$this->field($place)]) {
-                $parts[$place] = question_classified_response::no_response();
-                continue;
+        $hits = $this->choose_hits($response);
+        foreach ($this->places as $placeno => $place) {
+            if (isset($hits[$placeno])) {
+                $shuffledchoiceno = $this->get_right_choice_for($placeno);
+                $choiceno = $this->get_selected_choice(1, $shuffledchoiceno);
+                $parts[$placeno] = new question_classified_response(
+                                                        $choiceno,
+                                                        $this->choices[$choiceno]->summarise(),
+                                                        1 / count($this->places));
+            } else {
+                $parts[$placeno] = question_classified_response::no_response();
             }
-
-            $fieldname = $this->field($place);
-            $choiceno = $this->choiceorder[$group][$response[$fieldname]];
-            $choice = $this->choices[$group][$choiceno];
-            $parts[$place] = new question_classified_response(
-                    $choiceno, html_to_text($choice->text, 0, false),
-                    ($this->get_right_choice_for($place) == $response[$fieldname])
-                            / count($this->places));
         }
         return $parts;
     }
@@ -337,6 +335,31 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
             $response[$choicekey] = join(';', $coords);
         }
         return $response;
+    }
+
+    public function get_right_answer_summary() {
+        $placesummaries = array();
+        foreach ($this->places as $placeno => $place) {
+            $shuffledchoiceno = $this->get_right_choice_for($placeno);
+            $choice = $this->get_selected_choice(1, $shuffledchoiceno);
+            $placesummaries[] = '{'.$place->summarise().' -> '.$choice->summarise().'}';
+        }
+        return join(', ', $placesummaries);
+    }
+
+    public function summarise_response(array $response) {
+        $hits = $this->choose_hits($response);
+        $goodhits = array();
+        foreach ($this->places as $placeno => $place) {
+            if (isset($hits[$placeno])) {
+                $choice = $this->choices[$this->get_right_choice_for($placeno)];
+                $goodhits[] = "{".$place->summarise()." -> ". $choice->summarise(). "}";
+            }
+        }
+        if (count($goodhits)) {
+            return null;
+        }
+        return implode(', ', $goodhits);
     }
 }
 
