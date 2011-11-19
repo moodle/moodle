@@ -1413,12 +1413,15 @@ function trusttext_active() {
 
 /**
  * Given raw text (eg typed in by a user), this function cleans it up
- * and removes any nasty tags that could mess up Moodle pages.
+ * and removes any nasty tags that could mess up Moodle pages through XSS attacks.
+ *
+ * The result must be used as a HTML text fragment, this function can not cleanup random
+ * parts of html tags such as url or src attributes.
  *
  * NOTE: the format parameter was deprecated because we can safely clean only HTML.
  *
  * @param string $text The text to be cleaned
- * @param int $format deprecated parameter, should always contain FORMAT_HTML or FORMAT_MOODLE
+ * @param int|string $format deprecated parameter, should always contain FORMAT_HTML or FORMAT_MOODLE
  * @param array $options Array of options; currently only option supported is 'allowid' (if true,
  *   does not remove id attributes when cleaning)
  * @return string The cleaned up text
@@ -1439,9 +1442,10 @@ function clean_text($text, $format = FORMAT_HTML, $options = array()) {
 
     $text = purify_html($text, $options);
 
-    // Remove potential script events - some extra protection for undiscovered bugs in our code
-    $text = preg_replace("~([^a-z])language([[:space:]]*)=~i", "$1Xlanguage=", $text);
-    $text = preg_replace("~([^a-z])on([a-z]+)([[:space:]]*)=~i", "$1Xon$2=", $text);
+    // Originally we tried to neutralise some script events here, it was a wrong approach because
+    // it was trivial to work around that (for example using style based XSS exploits).
+    // We must not give false sense of security here - all developers MUST understand how to use
+    // rawurlencode(), htmlentities(), htmlspecialchars(), p(), s(), moodle_url, html_writer and friends!!!
 
     return $text;
 }
@@ -1530,7 +1534,6 @@ function purify_html($text, $options = array()) {
  * @param boolean $newlines If true then lines newline breaks will be converted to HTML newline breaks.
  * @return string
  */
-
 function text_to_html($text, $smiley_ignored=null, $para=true, $newlines=true) {
 /// Remove any whitespace that may be between HTML tags
     $text = preg_replace("~>([[:space:]]+)<~i", "><", $text);
