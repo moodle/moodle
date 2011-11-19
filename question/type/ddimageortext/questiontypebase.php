@@ -220,6 +220,7 @@ class qtype_ddtoimage_base extends question_type {
     }
     public function delete_question($questionid, $contextid) {
         global $DB;
+        $DB->delete_records('qtype_'.$this->name(), array('questionid' => $questionid));
         $DB->delete_records('qtype_'.$this->name().'_drags', array('questionid' => $questionid));
         $DB->delete_records('qtype_'.$this->name().'_drops', array('questionid' => $questionid));
         return parent::delete_question($questionid, $contextid);
