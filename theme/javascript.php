@@ -77,6 +77,9 @@ require_once('Minify.php');
 $theme = theme_config::load($themename);
 
 if ($rev > -1) {
+    // note: cache reset might have purged our cache dir structure,
+    //       make sure we do not use stale file stat cache in the next check_dir_exists()
+    clearstatcache();
     check_dir_exists(dirname($candidate));
     $fp = fopen($candidate, 'w');
     fwrite($fp, minify($theme->javascript_files($type)));
