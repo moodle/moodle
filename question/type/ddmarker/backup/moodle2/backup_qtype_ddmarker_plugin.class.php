@@ -49,17 +49,19 @@ class backup_qtype_ddmarker_plugin extends backup_qtype_plugin {
         $dds = new backup_nested_element($qtype, array('id'), array(
             'shuffleanswers', 'correctfeedback', 'correctfeedbackformat',
             'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
-            'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect'));
+            'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect',
+            'showmisplaced')
+        );
 
         $pluginwrapper->add_child($dds);
         $drags = new backup_nested_element('drags');
 
         $drag = new backup_nested_element('drag', array('id'),
-                                                array('no', 'draggroup', 'infinite', 'label'));
+                                                array('no', 'infinite', 'label'));
         $drops = new backup_nested_element('drops');
 
         $drop = new backup_nested_element('drop', array('id'),
-                                                array('no', 'xleft', 'ytop', 'choice', 'label'));
+                                                array('no', 'shape', 'coords', 'choice'));
 
         $dds->set_source_table("qtype_{$qtype}",
                                                 array('questionid' => backup::VAR_PARENTID));
@@ -91,7 +93,6 @@ class backup_qtype_ddmarker_plugin extends backup_qtype_plugin {
             'partiallycorrectfeedback' => 'question_created',
             'incorrectfeedback' => 'question_created',
 
-            'bgimage' => 'question_created',
-            'dragimage' => "qtype_{$qtype}_drags");
+            'bgimage' => 'question_created');
     }
 }
