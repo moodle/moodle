@@ -385,3 +385,27 @@ bank window's title is prominent enough*/
 
 /** settings.php */
 #adminquizreviewoptions {margin-bottom: 0.5em;}
+
+/* RTL Mode */
+#page-mod-quiz-mod.dir-rtl #reviewoptionshdr .fitem, .dir-rtl  #adminquizreviewoptions .group { width: 23%;float: right;}
+#page-mod-quiz-mod.dir-rtl #reviewoptionshdr .fitemtitle, .dir-rtl  #adminquizreviewoptions .fitemtitle {text-align: right;}
+#page-mod-quiz-mod.dir-rtl #reviewoptionshdr fieldset.fgroup span, .dir-rtl  #adminquizreviewoptions span {clear: right;float: right;}
+#page-mod-quiz-edit.dir-rtl div.quizpage span.pagetitle {float: right;}
+#page-mod-quiz-edit.dir-rtl div.quizpage .pagecontent {float: right;}
+#page-mod-quiz-edit.dir-rtl div.question {clear: right;}
+#page-mod-quiz-edit.dir-rtl div.question div.qnum {float: right;}
+#page-mod-quiz-edit.dir-rtl div.editq div.question div.content {float: right;height: 40px;}
+#page-mod-quiz-edit.dir-rtl div.question div.content div.points {left: 50px;right:auto;}
+#page-mod-quiz-edit.dir-rtl div.question div.content div.questioncontrols {float: left;left: 0.3em; right:auto;}
+#page-mod-quiz-edit.dir-rtl .editq div.question div.content .singlequestion a .questionname,
+#page-mod-quiz-edit.dir-rtl .editq div.question div.content .singlequestion a .questiontext {float: right; padding-right: 0.3em;}
+#page-mod-quiz-edit.dir-rtl div.question div.content .questiontext,
+#page-mod-quiz-edit.dir-rtl #categoryquestions .questiontext {padding-right: 0.3em;}
+#page-mod-quiz-edit.dir-rtl .editq div.questioncontentcontainer div.singlequestion img {float: right;}
+#page-mod-quiz-edit.dir-rtl .editq div.question div.content .questionpreview {float: right;}
+#page-mod-quiz-edit.dir-rtl div.question div.content div.qorder {left: 50px;right:auto;}
+#page-mod-quiz-edit.dir-rtl .reorder div.question div.content { float: right;}
+#page-mod-quiz-edit.dir-rtl .quizpagedelete {left: 0.2em;right:auto;}
+#page-mod-quiz-edit.dir-rtl div.quizcontents {clear: right;float: right;}
+#page-mod-quiz-edit.dir-rtl .questionbankwindow.block {float: left;}
+#page-question-edit.dir-rtl td.creatorname, #page-question-edit.dir-rtl td.modifiername {text-align: center;}
