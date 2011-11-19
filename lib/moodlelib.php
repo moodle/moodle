@@ -1437,8 +1437,6 @@ function purge_all_caches() {
     // hack: this script may get called after the purifier was initialised,
     // but we do not want to verify repeatedly this exists in each call
     make_cache_directory('htmlpurifier');
-
-    clearstatcache();
 }
 
 /**
@@ -9867,9 +9865,12 @@ function remove_dir($dir, $content_only=false) {
     }
     closedir($handle);
     if ($content_only) {
+        clearstatcache(); // make sure file stat cache is properly invalidated
         return $result;
     }
-    return rmdir($dir); // if anything left the result will be false, no need for && $result
+    $result = rmdir($dir); // if anything left the result will be false, no need for && $result
+    clearstatcache(); // make sure file stat cache is properly invalidated
+    return $result;
 }
 
 /**
