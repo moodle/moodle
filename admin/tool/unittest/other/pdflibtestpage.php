@@ -19,8 +19,7 @@
  *
  * @package    tool
  * @subpackage unittest
- * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
- * @author     N.D.Freear@open.ac.uk, T.J.Hunt@open.ac.uk
+ * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
