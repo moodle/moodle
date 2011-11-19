@@ -218,5 +218,10 @@ class qtype_ddtoimage_base extends question_type {
         $question = $this->make_question($questiondata);
         return $question->get_random_guess_score();
     }
-
+    public function delete_question($questionid, $contextid) {
+        global $DB;
+        $DB->delete_records('qtype_'.$this->name().'_drags', array('questionid' => $questionid));
+        $DB->delete_records('qtype_'.$this->name().'_drops', array('questionid' => $questionid));
+        return parent::delete_question($questionid, $contextid);
+    }
 }
