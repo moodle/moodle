@@ -641,16 +641,17 @@ class qtype_numerical_answer_processor {
 
         $numberstring = $matches[0];
         if ($this->unitsbefore) {
-            $unit = substr($response, 0, -strlen($numberstring));
+            // substr returns false when it means '', so cast back to string.
+            $unit = (string) substr($response, 0, -strlen($numberstring));
         } else {
-            $unit = substr($response, strlen($numberstring));
+            $unit = (string) substr($response, strlen($numberstring));
         }
 
         if (!is_null($separateunit)) {
             $unit = $separateunit;
         }
 
-        if ($unit && $this->is_known_unit($unit)) {
+        if ($this->is_known_unit($unit)) {
             $multiplier = 1 / $this->units[$unit];
         } else {
             $multiplier = null;

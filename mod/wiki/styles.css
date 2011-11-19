@@ -171,6 +171,10 @@
     float: right;
 }
 
+.dir-rtl .wiki_diffuserleft {
+    float: left;
+}
+
 .wiki_diffuserright {
     float: left;
 }

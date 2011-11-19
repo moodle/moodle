@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,24 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MOODLE VERSION INFORMATION
+ * Renderers for outputting parts of the question bank.
  *
- * This file defines the current version of the core Moodle code being used.
- * This is compared against the values stored in the database to determine
- * whether upgrades should be performed (see lib/db/*.php)
- *
- * @package    core
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @package    moodlecore
+ * @subpackage questionbank
+ * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 
 defined('MOODLE_INTERNAL') || die();
 
 
-$version  = 2011070102.09;              // 20110701      = branching date YYYYMMDD - do not modify!
-                                        //         RR    = release increments - 00 in DEV branches
-                                        //           .XX = incremental changes
+/**
+ * This renderer outputs parts of the question bank.
+ *
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class core_question_bank_renderer extends plugin_renderer_base {
 
-$release  = '2.1.2+ (Build: 20111118)';   // Human-friendly version name
+    /**
+     * Output the icon for a question type
+     * @param string $qtype the question type.
+     * @return string HTML fragment.
+     */
+    public function qtype_icon($qtype) {
+        $qtype = question_bank::get_qtype($qtype, false);
+        $namestr = $qtype->local_name();
 
-$maturity = MATURITY_STABLE;            // this version's maturity level
+        return $this->pix_icon('icon', $namestr, $qtype->plugin_name(), array('title' => $namestr));
+    }
+}

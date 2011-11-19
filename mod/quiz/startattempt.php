@@ -102,7 +102,7 @@ $messages = $accessmanager->prevent_access() +
 if (!$quizobj->is_preview_user() && $messages) {
     $output = $PAGE->get_renderer('mod_quiz');
     print_error('attempterror', 'quiz', $quizobj->view_url(),
-            $output->print_messages($messages));
+            $output->access_messages($messages));
 }
 $accessmanager->do_password_check($quizobj->is_preview_user());
 
