@@ -108,6 +108,7 @@ if ($grade = $DB->get_record('grade_grades', array('itemid' => $grade_item->id, 
             $options->smiley  = false;
             $options->filter  = false;
             $options->noclean = false;
+            $options->para    = false;
             $grade->feedback  = format_text($grade->feedback, $grade->feedbackformat, $options);
         }
         $grade->feedbackformat = FORMAT_HTML;
