@@ -192,7 +192,7 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
             if ($withparts) {
                 $clearwrong = !empty($formdata->hintclearwrong[$i]);
                 $shownumcorrect = !empty($formdata->hintshownumcorrect[$i]);
-                $statewhichincorrect = !empty($formdata->hintstatewhichincorrect[$i]);
+                $statewhichincorrect = !empty($formdata->hintoptions[$i]);
             }
 
             if (empty($formdata->hint[$i]['text']) && empty($clearwrong) &&
@@ -269,6 +269,94 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
         parent::delete_files($questionid, $contextid);
 
         $this->delete_files_in_combined_feedback($questionid, $contextid);
+    }
+
+    public function export_to_xml($question, qformat_xml $format, $extra = null) {
+        $fs = get_file_storage();
+        $contextid = $question->contextid;
+        $output = '';
+
+        if ($question->options->shuffleanswers) {
+            $output .= "    <shuffleanswers/>\n";
+        }
+        if ($question->options->showmisplaced) {
+            $output .= "    <showmisplaced/>\n";
+        }
+        $output .= $format->write_combined_feedback($question->options,
+                                                    $question->id,
+                                                    $question->contextid);
+        $files = $fs->get_area_files($contextid, 'qtype_ddmarker', 'bgimage', $question->id);
+        $output .= "    ".$this->write_files($files, 2)."\n";;
+
+        foreach ($question->options->drags as $drag) {
+            $files =
+                    $fs->get_area_files($contextid, 'qtype_ddmarker', 'dragimage', $drag->id);
+            $output .= "    <drag>\n";
+            $output .= "      <no>{$drag->no}</no>\n";
+            $output .= $format->writetext($drag->label, 3)."\n";
+            if ($drag->infinite) {
+                $output .= "      <infinite/>\n";
+            }
+            $output .= "    </drag>\n";
+        }
+        foreach ($question->options->drops as $drop) {
+            $output .= "    <drop>\n";
+            $output .= "      <no>{$drop->no}</no>\n";
+            $output .= "      <shape>{$drop->shape}</shape>\n";
+            $output .= "      <coords>{$drop->coords}</coords>\n";
+            $output .= "      <choice>{$drop->choice}</choice>\n";
+            $output .= "    </drop>\n";
+        }
+
+        return $output;
+    }
+
+    public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
+        if (!isset($data['@']['type']) || $data['@']['type'] != 'ddmarker') {
+            return false;
+        }
+
+        $question = $format->import_headers($data);
+        $question->qtype = 'ddmarker';
+
+        $question->shuffleanswers = array_key_exists('shuffleanswers',
+                                                    $format->getpath($data, array('#'), array()));
+        $question->showmisplaced = array_key_exists('showmisplaced',
+                                                    $format->getpath($data, array('#'), array()));
+
+        $filexml = $format->getpath($data, array('#', 'file'), array());
+        $question->bgimage = $this->import_files_to_draft_file_area($format, $filexml);
+        $drags = $data['#']['drag'];
+        $question->drags = array();
+
+        foreach ($drags as $dragxml) {
+            $dragno = $format->getpath($dragxml, array('#', 'no', 0, '#'), 0);
+            $dragindex = $dragno -1;
+            $question->drags[$dragindex] = array();
+            $question->drags[$dragindex]['label'] =
+                        $format->getpath($dragxml, array('#', 'text', 0, '#'), '', true);
+            $question->drags[$dragindex]['infinite'] = array_key_exists('infinite', $dragxml['#']);
+
+        }
+
+        $drops = $data['#']['drop'];
+        $question->drops = array();
+        foreach ($drops as $dropxml) {
+            $dropno = $format->getpath($dropxml, array('#', 'no', 0, '#'), 0);
+            $dropindex = $dropno -1;
+            $question->drops[$dropindex] = array();
+            $question->drops[$dropindex]['choice'] =
+                        $format->getpath($dropxml, array('#', 'choice', 0, '#'), 0);
+            $question->drops[$dropindex]['shape'] =
+                        $format->getpath($dropxml, array('#', 'shape', 0, '#'), '');
+            $question->drops[$dropindex]['coords'] =
+                        $format->getpath($dropxml, array('#', 'coords', 0, '#'), '');
+        }
+
+        $format->import_combined_feedback($question, $data, true);
+        $format->import_hints($question, $data, true, true);
+
+        return $question;
     }
 
 }
