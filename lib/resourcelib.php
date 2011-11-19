@@ -280,7 +280,7 @@ function resourcelib_embed_flashvideo($fullurl, $title, $clicktoopen) {
     }
     $output = '<div class="resourcecontent resourceflv">';
     $output .= html_writer::tag('span', $clicktoopen, array('id'=>$id, 'class'=>'resourcemediaplugin resourcemediaplugin_flv', 'title'=>$title));
-    $output .= html_writer::script(js_writer::function_call('M.util.add_video_player', array($id, $fullurl, $width, $height, $autosize)));
+    $output .= html_writer::script(js_writer::function_call('M.util.add_video_player', array($id, rawurlencode($fullurl), $width, $height, $autosize)));
     $output .= '</div>';
 
     return $output;
