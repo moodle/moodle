@@ -253,7 +253,6 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
         $fs->move_area_files_to_new_context($oldcontextid,
                                     $newcontextid, 'qtype_ddmarker', 'bgimage', $questionid);
 
-
         $this->move_files_in_combined_feedback($questionid, $oldcontextid, $newcontextid);
     }
 
@@ -268,12 +267,6 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
         $fs = get_file_storage();
 
         parent::delete_files($questionid, $contextid);
-
-        $dragids = $DB->get_records_menu('qtype_ddimageortext_drags',
-                                                array('questionid' => $questionid), 'id', 'id,1');
-        foreach ($dragids as $dragid => $notused) {
-            $fs->delete_area_files($contextid, 'qtype_ddimageortext', 'dragimage', $dragid);
-        }
 
         $this->delete_files_in_combined_feedback($questionid, $contextid);
     }
