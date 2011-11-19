@@ -1,6 +1,7 @@
 /*$$$$$$$$$$$$$$$$$ User $$$$$$$$$$$$$$$$$$$$*/
 
 .userprofile .fullprofilelink {text-align:center; margin:10px;}
+.dir-rtl .userprofile .fullprofilelink {text-align:right; margin: 3px auto;}
 .userprofile .profilepicture {float:left; margin-right:20px;}
 .userprofile .description {margin-bottom:20px;}
 
