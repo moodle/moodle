@@ -155,17 +155,18 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                        xyfortext[0] -= Math.round(markerspan.get('offsetWidth') / 2);
                        xyfortext[1] -= Math.round(markerspan.get('offsetHeight') / 2);
                        markerspan.setXY(this.convert_to_window_xy(xyfortext));
-                       markerspan.one('a').once('click',
-                           function (e, dropzoneno) {
+                       var markerspananchor = markerspan.one('a');
+                       if (markerspananchor !== null) {
+                           markerspananchor.once('click', function (e, dropzoneno) {
                                var fill = this.shapes[dropzoneno].get('fill');
                                fill.opacity = 1;
                                this.shapes[dropzoneno].set('fill', fill);
-                           },
-                           this,
-                           dropzoneno
-                       );
-                       markerspan.one('a').set('tabIndex', 0);
-
+                               },
+                               this,
+                               dropzoneno
+                           );
+                           markerspananchor.set('tabIndex', 0);
+                       }
                    }
                }
             }
