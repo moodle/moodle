@@ -78,8 +78,8 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
         }
 
         $dragitems = html_writer::tag('div', $draghomes, array('class'=> $dragitemsclass));
-        $dropzones = html_writer::empty_tag('div', array('class'=> 'dropzones'));
-        $texts = html_writer::empty_tag('div', array('class'=> 'markertexts'));
+        $dropzones = html_writer::tag('div', '', array('class'=> 'dropzones'));
+        $texts = html_writer::tag('div', '', array('class'=> 'markertexts'));
         $output .= html_writer::tag('div',
                                     $droparea.$dragitems.$dropzones.$texts,
                                     array('class'=>'ddarea'));
@@ -143,10 +143,11 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
                 $wrongpartsstring .= html_writer::nonempty_tag('span',
                                         $wrongpart, array('class' => 'wrongpart'));
             }
-            $output .= html_writer::nonempty_tag('span',
+            $output .= html_writer::nonempty_tag('div',
                     get_string('followingarewrong', 'qtype_ddmarker', $wrongpartsstring),
                     array('class' => 'wrongparts'));
         }
-        return $output . parent::hint($qa, $hint);
+        $output .= parent::hint($qa, $hint);
+        return $output;
     }
 }
