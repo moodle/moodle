@@ -1273,7 +1273,10 @@ class dml_test extends UnitTestCase {
             $this->fail('An Exception is missing, expected due to query against non-existing table');
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
-            $this->assertEqual($e->errorcode, 'ddltablenotexist');
+            if (debugging()) {
+                // information for developers only, normal users get general error message
+                $this->assertEqual($e->errorcode, 'ddltablenotexist');
+            }
         }
         // and without params
         try {
@@ -1281,7 +1284,10 @@ class dml_test extends UnitTestCase {
             $this->fail('An Exception is missing, expected due to query against non-existing table');
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
-            $this->assertEqual($e->errorcode, 'ddltablenotexist');
+            if (debugging()) {
+                // information for developers only, normal users get general error message
+                $this->assertEqual($e->errorcode, 'ddltablenotexist');
+            }
         }
 
         // test get_records passing non-existing column
@@ -1290,7 +1296,10 @@ class dml_test extends UnitTestCase {
             $this->fail('An Exception is missing, expected due to query against non-existing column');
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
-            $this->assertEqual($e->errorcode, 'ddlfieldnotexist');
+            if (debugging()) {
+                // information for developers only, normal users get general error message
+                $this->assertEqual($e->errorcode, 'ddlfieldnotexist');
+            }
         }
 
         // note: delegate limits testing to test_get_records_sql()
