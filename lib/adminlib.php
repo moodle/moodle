@@ -245,6 +245,26 @@ function uninstall_plugin($type, $name) {
                 set_config('enrol_plugins_enabled', implode(',', $enabledenrols));
             }
         }
+
+    } else if ($type === 'block') {
+        if ($block = $DB->get_record('block', array('name'=>$name))) {
+            // Inform block it's about to be deleted
+            if (file_exists("$CFG->dirroot/blocks/$block->name/block_$block->name.php")) {
+                $blockobject = block_instance($block->name);
+                if ($blockobject) {
+                    $blockobject->before_delete();  //only if we can create instance, block might have been already removed
+                }
+            }
+
+            // First delete instances and related contexts
+            $instances = $DB->get_records('block_instances', array('blockname' => $block->name));
+            foreach($instances as $instance) {
+                blocks_delete_instance($instance);
+            }
+
+            // Delete block
+            $DB->delete_records('block', array('id'=>$block->id));
+        }
     }
 
     // perform clean-up task common for all the plugin/subplugin types
@@ -271,7 +291,11 @@ function uninstall_plugin($type, $name) {
 
     // delete the plugin tables
     $xmldbfilepath = $plugindirectory . '/db/install.xml';
-    drop_plugin_tables($pluginname, $xmldbfilepath, false);
+    drop_plugin_tables($component, $xmldbfilepath, false);
+    if ($type === 'mod' or $type === 'block') {
+        // non-frankenstyle table prefixes
+        drop_plugin_tables($name, $xmldbfilepath, false);
+    }
 
     // delete the capabilities that were defined by this module
     capabilities_cleanup($component);
