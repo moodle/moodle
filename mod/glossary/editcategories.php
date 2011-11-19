@@ -83,6 +83,15 @@ echo $OUTPUT->header();
 $fmtoptions = array(
     'context' => $context);
 
+if (right_to_left()) { // RTL table alignment support
+    $rightalignemnt = 'left';
+    $leftalignment = 'right';
+} else {
+    $rightalignemnt = 'right';
+    $leftalignment = 'left';
+
+}
+
 if ( $hook >0 ) {
 
     if ( $action == "edit" ) {
@@ -135,7 +144,7 @@ if ( $hook >0 ) {
 
                 <table border="0" width="100" class="confirmbuttons">
                     <tr>
-                        <td align="right" style="width:50%">
+                        <td align="$rightalignment" style="width:50%">
                         <form id="form" method="post" action="editcategories.php">
                         <div>
                         <input type="hidden" name="id"          value="<?php p($cm->id) ?>" />
@@ -147,7 +156,7 @@ if ( $hook >0 ) {
                         </div>
                         </form>
                         </td>
-                        <td align="left" style="width:50%">
+                        <td align="$leftalignment" style="width:50%">
 
 <?php
             unset($options);
@@ -217,7 +226,7 @@ if ( $action ) {
 ?>
 
              <tr>
-               <td style="width:80%" align="left">
+               <td style="width:80%" align="$leftalignment">
                <?php
                     echo "<span class=\"bold\">".format_string($category->name, true, $fmtoptions)."</span> <span>($num_entries " . get_string("entries","glossary") . ")</span>";
                ?>
@@ -245,9 +254,9 @@ if ( $action ) {
              $options['id'] = $cm->id;
              $options['action'] = "add";
 
-             echo "<table class=\"editbuttons\" border=\"0\"><tr><td align=\"right\">";
+             echo "<table class=\"editbuttons\" border=\"0\"><tr><td align=\"$rightalignment\">";
              echo $OUTPUT->single_button(new moodle_url("editcategories.php", $options), get_string("add") . " " . get_string("category","glossary"));
-             echo "</td><td align=\"left\">";
+             echo "</td><td align=\"$leftalignment\">";
              unset($options['action']);
              $options['mode'] = 'cat';
              $options['hook'] = $hook;
