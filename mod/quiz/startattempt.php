@@ -101,7 +101,7 @@ if ($lastattempt && !$lastattempt->timefinish) {
 $output = $PAGE->get_renderer('mod_quiz');
 if (!$quizobj->is_preview_user() && $messages) {
     print_error('attempterror', 'quiz', $quizobj->view_url(),
-            $output->print_messages($messages));
+            $output->access_messages($messages));
 }
 
 if ($accessmanager->is_preflight_check_required($currentattemptid)) {

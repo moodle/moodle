@@ -96,6 +96,13 @@ div.editq div.question div.content .singlequestion a .questiontext{text-decorati
 #page-mod-quiz-mod #reviewoptionshdr fieldset.fgroup span label,
 #adminquizreviewoptions span label {margin-left: 0.4em;}
 
+#page-mod-quiz-mod.dir-rtl #reviewoptionshdr .fitem,
+#adminquizreviewoptions .group {float: right; width: 24%;}
+#page-mod-quiz-mod.dir-rtl #reviewoptionshdr fieldset.fgroup span,
+#adminquizreviewoptions span {float: right; clear: right;}
+#page-mod-quiz-mod.dir-rtl #reviewoptionshdr .fitemtitle,
+#adminquizreviewoptions .fitemtitle {text-align: right;}
+
 /** Mod quiz view **/
 #page-mod-quiz-view .quizinfo,
 #page-mod-quiz-view #page .quizgradefeedback,

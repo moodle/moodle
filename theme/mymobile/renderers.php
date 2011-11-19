@@ -380,7 +380,7 @@ class theme_mymobile_core_renderer extends core_renderer {
             return '';
         }
 
-        $loginapge = ((string)$this->page->url === get_login_url());
+        $loginpage = ((string)$this->page->url === get_login_url());
         $course = $this->page->course;
 
         if (session_is_loggedinas()) {
@@ -407,7 +407,7 @@ class theme_mymobile_core_renderer extends core_renderer {
             }
             if (isguestuser()) {
                 $loggedinas = $realuserinfo.get_string('loggedinasguest');
-                if (!$loginapge) {
+                if (!$loginpage) {
                     $loggedinas .= " (<a href=\"$loginurl\">".get_string('login').'</a>)';
                 }
             } else if (is_role_switched($course->id)) { // Has switched roles
@@ -421,7 +421,7 @@ class theme_mymobile_core_renderer extends core_renderer {
             }
         } else {
             $loggedinas = get_string('loggedinnot', 'moodle');
-            if (!$loginapge) {
+            if (!$loginpage) {
                 $loggedinas .= " (<a href=\"$loginurl\">".get_string('login').'</a>)';
             }
         }

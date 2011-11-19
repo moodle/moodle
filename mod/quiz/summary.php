@@ -61,7 +61,7 @@ $messages = $accessmanager->prevent_access();
 $output = $PAGE->get_renderer('mod_quiz');
 if (!$attemptobj->is_preview_user() && $messages) {
     print_error('attempterror', 'quiz', $attemptobj->view_url(),
-            $output->print_messages($messages));
+            $output->access_messages($messages));
 }
 if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {
     redirect($attemptobj->start_attempt_url(null, $page));

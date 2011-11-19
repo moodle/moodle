@@ -1793,7 +1793,7 @@ function print_qtype_to_add_option($qtype) {
     echo '<span class="qtypename">';
     $fakequestion = new stdClass();
     $fakequestion->qtype = $qtype->name();
-    print_question_icon($fakequestion);
+    echo print_question_icon($fakequestion);
     echo $qtype->menu_name() . '</span><span class="qtypesummary">' . $summary;
     echo "</span></label>\n";
     echo "</div>\n";

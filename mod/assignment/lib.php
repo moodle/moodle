@@ -3540,7 +3540,7 @@ function assignment_get_coursemodule_info($coursemodule) {
         }
         if ($coursemodule->showdescription) {
             // Convert intro to html. Do not filter cached version, filters run at display time.
-            $info->content = format_module_intro('assignment', $assignment, $coursemodule->id, false);
+            $result->content = format_module_intro('assignment', $assignment, $coursemodule->id, false);
         }
         return $result;
     } else {

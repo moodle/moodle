@@ -70,11 +70,24 @@ abstract class question_behaviour {
     public function __construct(question_attempt $qa, $preferredbehaviour) {
         $this->qa = $qa;
         $this->question = $qa->get_question();
-        $requiredclass = $this->required_question_definition_type();
-        if (!$this->question instanceof $requiredclass) {
+        if (!$this->is_compatible_question($this->question)) {
             throw new coding_exception('This behaviour (' . $this->get_name() .
                     ') cannot work with this question (' . get_class($this->question) . ')');
         }
+    }
+
+    /**
+     * Some behaviours can only work with certing types of question. This method
+     * allows the behaviour to verify that a question is compatible.
+     *
+     * This implementation is only provided for backwards-compatibility. You should
+     * override this method if you are implementing a behaviour.
+     *
+     * @param question_definition $question the question.
+     */
+    public function is_compatible_question(question_definition $question) {
+        $requiredclass = $this->required_question_definition_type();
+        return $this->question instanceof $requiredclass;
     }
 
     /**
@@ -82,9 +95,14 @@ abstract class question_behaviour {
      * of a particular subtype, or that implement a particular interface.
      * This method lets the behaviour document that. The type of
      * question passed to the constructor is then checked against this type.
+     *
+     * @deprecated since 2.2. Please use/override {@link is_compatible_question()} instead.
+     *
      * @return string class/interface name.
      */
-    public abstract function required_question_definition_type();
+    protected function required_question_definition_type() {
+        return 'question_definition';
+    }
 
     /**
      * @return string the name of this behaviour. For example the name of

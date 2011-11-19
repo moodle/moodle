@@ -418,10 +418,17 @@ class quiz_attempt {
      * @param object $quiz the quiz object for this attempt and user.
      * @param object $cm the course_module object for this quiz.
      * @param object $course the row from the course table for the course we belong to.
+     * @param bool $loadquestions (optional) if true, the default, load all the details
+     *      of the state of each question. Else just set up the basic details of the attempt.
      */
-    public function __construct($attempt, $quiz, $cm, $course) {
+    public function __construct($attempt, $quiz, $cm, $course, $loadquestions = true) {
         $this->attempt = $attempt;
         $this->quizobj = new quiz($quiz, $cm, $course);
+
+        if (!$loadquestions) {
+            return;
+        }
+
         $this->quba = question_engine::load_questions_usage_by_activity($this->attempt->uniqueid);
         $this->determine_layout();
         $this->number_questions();
