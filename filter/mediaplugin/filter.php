@@ -171,10 +171,32 @@ class filter_mediaplugin extends moodle_text_filter {
 ///===========================
 /// utility functions
 
+/**
+ * Get mimetype of given url, useful for # alternative urls.
+ *
+ * @private
+ * @param string $url
+ * @return string $mimetype
+ */
+function filter_mediaplugin_get_mimetype($url) {
+    $matches = null;
+    if (preg_match("|^(.*)/[a-z]*file.php(\?file=)?(/[^&\?#]*)|", $url, $matches)) {
+        // remove the special moodle file serving hacks so that the *file.php is ignored
+        $url = $matches[1].$matches[3];
+    } else {
+        $url = preg_replace('/[#\?].*$/', '', $url);
+    }
+
+    $mimetype = mimeinfo('type', $url);
+
+    return $mimetype;
+}
 
 /**
  * Parse list of alternative URLs
  * @param string $url urls separated with '#', size specified as ?d=640x480 or #d=640x480
+ * @param int $defaultwidth
+ * @param int $defaultheight
  * @return array (urls, width, height)
  */
 function filter_mediaplugin_parse_alternatives($url, $defaultwidth = 0, $defaultheight = 0) {
@@ -252,7 +274,7 @@ function filter_mediaplugin_html5audio_callback(array $link) {
     $fallbacklink = null;
 
     foreach ($urls as $url) {
-        $mimetype = mimeinfo('type', $url);
+        $mimetype = filter_mediaplugin_get_mimetype($url);
         if (strpos($mimetype, 'audio/') !== 0) {
             continue;
         }
@@ -344,7 +366,7 @@ function filter_mediaplugin_html5video_callback(array $link) {
     $fallbacklink = null;
 
     foreach ($urls as $url) {
-        $mimetype = mimeinfo('type', $url);
+        $mimetype = filter_mediaplugin_get_mimetype($url);
         if (strpos($mimetype, 'video/') !== 0) {
             continue;
         }
@@ -546,7 +568,7 @@ function filter_mediaplugin_flv_callback($link) {
     $sources  = array();
 
     foreach ($urls as $url) {
-        $mimetype = mimeinfo('type', $url);
+        $mimetype = filter_mediaplugin_get_mimetype($url);
         if (strpos($mimetype, 'video/') !== 0) {
             continue;
         }
@@ -559,7 +581,7 @@ function filter_mediaplugin_flv_callback($link) {
         }
 
         if ($flashurl === null) {
-            $flashurl  = str_replace('&', '&amp;', $url);
+            $flashurl  = $url;
         }
     }
     if (!$sources) {
@@ -592,7 +614,7 @@ OET;
     // note: no need to print "this is flv link" because it is printed automatically if JS or Flash not available
 
     $output = html_writer::tag('span', $printlink, array('id'=>$id, 'class'=>'mediaplugin mediaplugin_flv'));
-    $output .= html_writer::script(js_writer::function_call('M.util.add_video_player', array($id, $flashurl, $width, $height, $autosize))); // we can not use standard JS init because this may be cached
+    $output .= html_writer::script(js_writer::function_call('M.util.add_video_player', array($id, rawurlencode($flashurl), $width, $height, $autosize))); // we can not use standard JS init because this may be cached
 
     return $output;
 }
@@ -799,7 +821,7 @@ function filter_mediaplugin_wmp_callback($link) {
         $mpsize = 'width="'.$link[4].'" height="'.($link[5] + 64).'"';
         $autosize = 'false';
     }
-    $mimetype = mimeinfo('type', $url);
+    $mimetype = filter_mediaplugin_get_mimetype($url);
 
 
 
@@ -861,7 +883,7 @@ function filter_mediaplugin_qt_callback($link) {
     } else {
         $size = 'width="'.$link[4].'" height="'.($link[5]+15).'"';
     }
-    $mimetype = mimeinfo('type', $url);
+    $mimetype = filter_mediaplugin_get_mimetype($url);
 
     // this is the safest fallback for incomplete or missing browser support for this format
     return <<<OET
