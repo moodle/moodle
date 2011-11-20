@@ -652,6 +652,7 @@ body.tag .managelink {padding: 5px;}
 #page-enrol-users .enrol_user_buttons .enrolusersbutton div,
 #page-enrol-users .enrol_user_buttons .enrolusersbutton form {display:inline;}
 #page-enrol-users .enrol_user_buttons .enrolusersbutton input {padding-left:6px;padding-right:6px;}
+#page-enrol-users.dir-rtl .col_userdetails .subfield_picture {float: right;}
 
 /**
 * Overide for RTL layout
@@ -664,6 +665,9 @@ body.tag .managelink {padding: 5px;}
 .dir-rtl .mform .fitem .fitemtitle {float:right;}
 .dir-rtl .loginbox .loginform .form-label {float:right;text-align:left;}
 .dir-rtl .loginbox .loginform .form-input {text-align: right;}
+.dir-rtl .yui3-menu-hidden {left: 0px;}
+#page-admin-roles-define.dir-rtl #rolesform .felement {margin-right: 180px;}
+#page-message-edit.dir-rtl table.generaltable th.c0 {text-align: right;}
 
 /**
  * Backup
