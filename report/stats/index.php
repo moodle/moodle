@@ -71,7 +71,7 @@ add_to_log($course->id, "course", "report stats", "report/stats/index.php?course
 stats_check_uptodate($course->id);
 
 if ($course->id == SITEID) {
-    admin_externalpage_setup('reportstats');
+    admin_externalpage_setup('reportstats', '', null, '', array('pagelayout'=>'report'));
     echo $OUTPUT->header();
 } else {
     $strreports = get_string("reports");

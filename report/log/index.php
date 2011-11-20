@@ -186,7 +186,7 @@ if (!empty($chooselog)) {
 
 } else {
     if ($hostid != $CFG->mnet_localhost_id || $course->id == SITEID) {
-        admin_externalpage_setup('reportlog');
+        admin_externalpage_setup('reportlog', '', null, '', array('pagelayout'=>'report'));
         echo $OUTPUT->header();
     } else {
         $PAGE->set_title($course->shortname .': '. $strlogs);
