@@ -866,26 +866,4 @@ class qformat_default {
         $text = $question->questiontext;
         return format_text(html_to_text($text, 0, false), $format, $formatoptions);
     }
-
-    /**
-     * convert files into text output in the given format.
-     * @param array
-     * @param string encoding method
-     * @return string $string
-     */
-    function writefiles($files, $encoding='base64') {
-        if (empty($files)) {
-            return '';
-        }
-        $string = '';
-        foreach ($files as $file) {
-            if ($file->is_directory()) {
-                continue;
-            }
-            $string .= '<file name="' . $file->get_filename() . '" encoding="' . $encoding . '">';
-            $string .= base64_encode($file->get_content());
-            $string .= '</file>';
-        }
-        return $string;
-    }
 }

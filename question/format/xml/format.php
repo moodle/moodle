@@ -1027,6 +1027,28 @@ class qformat_xml extends qformat_default {
         return $xml;
     }
 
+
+    /**
+     * Generte the XML to represent some files.
+     * @param array of store array of stored_file objects.
+     * @return string $string the XML.
+     */
+    public function write_files($files) {
+        if (empty($files)) {
+            return '';
+        }
+        $string = '';
+        foreach ($files as $file) {
+            if ($file->is_directory()) {
+                continue;
+            }
+            $string .= '<file name="' . $file->get_filename() . '" encoding="base64">';
+            $string .= base64_encode($file->get_content());
+            $string .= '</file>';
+        }
+        return $string;
+    }
+
     function presave_process( $content ) {
     // override method to allow us to add xml headers and footers
 
@@ -1078,10 +1100,10 @@ class qformat_xml extends qformat_default {
             $generalfeedbackformat = $this->get_format($question->generalfeedbackformat);
 
             $question_text = $this->writetext($question->questiontext);
-            $question_text_files = $this->writefiles($question->questiontextfiles);
+            $question_text_files = $this->write_files($question->questiontextfiles);
 
             $generalfeedback = $this->writetext($question->generalfeedback);
-            $generalfeedback_files = $this->writefiles($question->generalfeedbackfiles);
+            $generalfeedback_files = $this->write_files($question->generalfeedbackfiles);
 
             $expout .= "  <question type=\"$question_type\">\n";
             $expout .= "    <name>$name_text</name>\n";
@@ -1136,7 +1158,7 @@ class qformat_xml extends qformat_default {
                 $feedbackformat = $this->get_format($answer->feedbackformat);
                 $expout .= "      <feedback format=\"$feedbackformat\">\n";
                 $expout .= $this->writetext($answer->feedback,4,false);
-                $expout .= $this->writefiles($answer->feedbackfiles);
+                $expout .= $this->write_files($answer->feedbackfiles);
                 $expout .= "      </feedback>\n";
                 $expout .= "    </answer>\n";
             }
@@ -1149,21 +1171,21 @@ class qformat_xml extends qformat_default {
             $files = $fs->get_area_files($contextid, 'qtype_multichoice', 'correctfeedback', $question->id);
             $expout .= "    <correctfeedback format=\"$textformat\">\n";
             $expout .= $this->writetext($question->options->correctfeedback, 3);
-            $expout .= $this->writefiles($files);
+            $expout .= $this->write_files($files);
             $expout .= "    </correctfeedback>\n";
 
             $textformat = $this->get_format($question->options->partiallycorrectfeedbackformat);
             $files = $fs->get_area_files($contextid, 'qtype_multichoice', 'partiallycorrectfeedback', $question->id);
             $expout .= "    <partiallycorrectfeedback format=\"$textformat\">\n";
             $expout .= $this->writetext($question->options->partiallycorrectfeedback, 3);
-            $expout .= $this->writefiles($files);
+            $expout .= $this->write_files($files);
             $expout .= "    </partiallycorrectfeedback>\n";
 
             $textformat = $this->get_format($question->options->incorrectfeedbackformat);
             $files = $fs->get_area_files($contextid, 'qtype_multichoice', 'incorrectfeedback', $question->id);
             $expout .= "    <incorrectfeedback format=\"$textformat\">\n";
             $expout .= $this->writetext($question->options->incorrectfeedback, 3);
-            $expout .= $this->writefiles($files);
+            $expout .= $this->write_files($files);
             $expout .= "    </incorrectfeedback>\n";
 
             $expout .= "    <answernumbering>{$question->options->answernumbering}</answernumbering>\n";
@@ -1174,7 +1196,7 @@ class qformat_xml extends qformat_default {
                 $feedbackformat = $this->get_format($answer->feedbackformat);
                 $expout .= "      <feedback format=\"$feedbackformat\">\n";
                 $expout .= $this->writetext($answer->feedback,5,false);
-                $expout .= $this->writefiles($answer->feedbackfiles);
+                $expout .= $this->write_files($answer->feedbackfiles);
                 $expout .= "      </feedback>\n";
                 $expout .= "    </answer>\n";
                 }
@@ -1188,7 +1210,7 @@ class qformat_xml extends qformat_default {
                 $feedbackformat = $this->get_format($answer->feedbackformat);
                 $expout .= "      <feedback format=\"$feedbackformat\">\n";
                 $expout .= $this->writetext($answer->feedback);
-                $expout .= $this->writefiles($answer->feedbackfiles);
+                $expout .= $this->write_files($answer->feedbackfiles);
                 $expout .= "      </feedback>\n";
                 $expout .= "    </answer>\n";
             }
@@ -1204,7 +1226,7 @@ class qformat_xml extends qformat_default {
                 $feedbackformat = $this->get_format($answer->feedbackformat);
                 $expout .= "    <feedback format=\"$feedbackformat\">\n";
                 $expout .= $this->writetext($answer->feedback);
-                $expout .= $this->writefiles($answer->feedbackfiles);
+                $expout .= $this->write_files($answer->feedbackfiles);
                 $expout .= "    </feedback>\n";
                 // fraction tag is deprecated
                 // $expout .= "    <fraction>{$answer->fraction}</fraction>\n";
@@ -1239,7 +1261,7 @@ class qformat_xml extends qformat_default {
                 $files = $fs->get_area_files($contextid, 'qtype_numerical', 'instruction', $question->id);
                 $expout .= "    <instructions format=\"$textformat\">\n";
                 $expout .= $this->writetext($question->options->instructions, 3);
-                $expout .= $this->writefiles($files);
+                $expout .= $this->write_files($files);
                 $expout .= "    </instructions>\n";
             }
             break;
@@ -1249,7 +1271,7 @@ class qformat_xml extends qformat_default {
                 $textformat = $this->get_format($subquestion->questiontextformat);
                 $expout .= "<subquestion format=\"$textformat\">\n";
                 $expout .= $this->writetext($subquestion->questiontext);
-                $expout .= $this->writefiles($files);
+                $expout .= $this->write_files($files);
                 $expout .= "<answer>";
                 $expout .= $this->writetext($subquestion->answertext);
                 $expout .= "</answer>\n";
@@ -1276,7 +1298,7 @@ class qformat_xml extends qformat_default {
                     $feedbackformat = $this->get_format($answer->feedbackformat);
                     $expout .= "    <feedback format=\"$feedbackformat\">\n";
                     $expout .= $this->writetext($answer->feedback);
-                    $expout .= $this->writefiles($answer->feedbackfiles);
+                    $expout .= $this->write_files($answer->feedbackfiles);
                     $expout .= "    </feedback>\n";
                     // fraction tag is deprecated
                     // $expout .= "    <fraction>{$answer->fraction}</fraction>\n";
@@ -1296,19 +1318,19 @@ class qformat_xml extends qformat_default {
             $files = $fs->get_area_files($contextid, $component, 'correctfeedback', $question->id);
             $expout .= "    <correctfeedback>\n";
             $expout .= $this->writetext($question->options->correctfeedback, 3);
-            $expout .= $this->writefiles($files);
+            $expout .= $this->write_files($files);
             $expout .= "    </correctfeedback>\n";
 
             $files = $fs->get_area_files($contextid, $component, 'partiallycorrectfeedback', $question->id);
             $expout .= "    <partiallycorrectfeedback>\n";
             $expout .= $this->writetext($question->options->partiallycorrectfeedback, 3);
-            $expout .= $this->writefiles($files);
+            $expout .= $this->write_files($files);
             $expout .= "    </partiallycorrectfeedback>\n";
 
             $files = $fs->get_area_files($contextid, $component, 'incorrectfeedback', $question->id);
             $expout .= "    <incorrectfeedback>\n";
             $expout .= $this->writetext($question->options->incorrectfeedback, 3);
-            $expout .= $this->writefiles($files);
+            $expout .= $this->write_files($files);
             $expout .= "    </incorrectfeedback>\n";
 
             foreach ($question->options->answers as $answer) {
@@ -1327,7 +1349,7 @@ class qformat_xml extends qformat_default {
                 $feedbackformat = $this->get_format($answer->feedbackformat);
                 $expout .= "    <feedback format=\"$feedbackformat\">\n";
                 $expout .= $this->writetext($answer->feedback);
-                $expout .= $this->writefiles($answer->feedbackfiles);
+                $expout .= $this->write_files($answer->feedbackfiles);
                 $expout .= "    </feedback>\n";
                 $expout .= "</answer>\n";
             }
@@ -1349,7 +1371,7 @@ class qformat_xml extends qformat_default {
                 $files = $fs->get_area_files($contextid, $component, 'instruction', $question->id);
                 $expout .= "    <instructions format=\"$textformat\">\n";
                 $expout .= $this->writetext($question->options->instructions, 3);
-                $expout .= $this->writefiles($files);
+                $expout .= $this->write_files($files);
                 $expout .= "    </instructions>\n";
             }
 
