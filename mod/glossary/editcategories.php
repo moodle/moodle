@@ -84,10 +84,10 @@ $fmtoptions = array(
     'context' => $context);
 
 if (right_to_left()) { // RTL table alignment support
-    $rightalignemnt = 'left';
+    $rightalignment = 'left';
     $leftalignment = 'right';
 } else {
-    $rightalignemnt = 'right';
+    $rightalignment = 'right';
     $leftalignment = 'left';
 
 }
