@@ -9,7 +9,7 @@ $perpage = optional_param('perpage', 30, PARAM_INT);    // how many per page
 $sort    = optional_param('sort', 'timemodified', PARAM_ALPHA);
 $dir     = optional_param('dir', 'DESC', PARAM_ALPHA);
 
-admin_externalpage_setup('reportconfiglog');
+admin_externalpage_setup('reportconfiglog', '', null, '', array('pagelayout'=>'report'));
 echo $OUTPUT->header();
 
 echo $OUTPUT->heading(get_string('configlog', 'report_configlog'));
