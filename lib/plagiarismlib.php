@@ -54,6 +54,31 @@ function plagiarism_get_links($linkarray) {
 }
 
 /**
+ * returns array of plagiarism details about specified file
+ *
+ * @param int $cmid
+ * @param int $userid
+ * @param object $file moodle file object
+ * @return array - sets of details about specified file, one array of details per plagiarism plugin
+ *  - each set contains at least 'analyzed', 'score', 'reporturl'
+ */
+function plagiarism_get_file_results($cmid, $userid, $file) {
+    global $CFG;
+    $allresults = array();
+    if (empty($CFG->enableplagiarism)) {
+        return $allresults;
+    }
+    $plagiarismplugins = plagiarism_load_available_plugins();
+    foreach($plagiarismplugins as $plugin => $dir) {
+        require_once($dir.'/lib.php');
+        $plagiarismclass = "plagiarism_plugin_$plugin";
+        $plagiarismplugin = new $plagiarismclass;
+        $allresults[] = $plagiarismplugin->get_file_results($cmid, $userid, $file);
+    }
+    return $allresults;
+}
+
+/**
  * saves/updates plagiarism settings from a modules config page - called by course/modedit.php
  *
  * @param object $data - form data
