@@ -1051,6 +1051,27 @@ class qformat_xml extends qformat_default {
         return $xml;
     }
 
+    /**
+     * Generte the XML to represent some files.
+     * @param array of store array of stored_file objects.
+     * @return string $string the XML.
+     */
+    public function write_files($files) {
+        if (empty($files)) {
+            return '';
+        }
+        $string = '';
+        foreach ($files as $file) {
+            if ($file->is_directory()) {
+                continue;
+            }
+            $string .= '<file name="' . $file->get_filename() . '" encoding="base64">';
+            $string .= base64_encode($file->get_content());
+            $string .= '</file>';
+        }
+        return $string;
+    }
+
     protected function presave_process($content) {
         // Override to allow us to add xml headers and footers
         return '<?xml version="1.0" encoding="UTF-8"?>
@@ -1110,11 +1131,11 @@ class qformat_xml extends qformat_default {
         $expout .= "    </name>\n";
         $expout .= "    <questiontext {$this->format($question->questiontextformat)}>\n";
         $expout .= $this->writetext($question->questiontext, 3);
-        $expout .= $this->writefiles($question->questiontextfiles);
+        $expout .= $this->write_files($question->questiontextfiles);
         $expout .= "    </questiontext>\n";
         $expout .= "    <generalfeedback {$this->format($question->generalfeedbackformat)}>\n";
         $expout .= $this->writetext($question->generalfeedback, 3);
-        $expout .= $this->writefiles($question->generalfeedbackfiles);
+        $expout .= $this->write_files($question->generalfeedbackfiles);
         $expout .= "    </generalfeedback>\n";
         if ($question->qtype != 'multianswer') {
             $expout .= "    <defaultgrade>{$question->defaultmark}</defaultgrade>\n";
@@ -1191,7 +1212,7 @@ class qformat_xml extends qformat_default {
                     $expout .= "    <instructions " .
                             $this->format($question->options->instructionsformat) . ">\n";
                     $expout .= $this->writetext($question->options->instructions, 3);
-                    $expout .= $this->writefiles($files);
+                    $expout .= $this->write_files($files);
                     $expout .= "    </instructions>\n";
                 }
                 break;
@@ -1207,7 +1228,7 @@ class qformat_xml extends qformat_default {
                     $expout .= "    <subquestion " .
                             $this->format($subquestion->questiontextformat) . ">\n";
                     $expout .= $this->writetext($subquestion->questiontext, 3);
-                    $expout .= $this->writefiles($files);
+                    $expout .= $this->write_files($files);
                     $expout .= "      <answer>\n";
                     $expout .= $this->writetext($subquestion->answertext, 4);
                     $expout .= "      </answer>\n";
@@ -1235,7 +1256,7 @@ class qformat_xml extends qformat_default {
                 $expout .= "    <graderinfo " .
                         $this->format($question->options->graderinfoformat) . ">\n";
                 $expout .= $this->writetext($question->options->graderinfo, 3);
-                $expout .= $this->writefiles($fs->get_area_files($contextid, 'qtype_essay',
+                $expout .= $this->write_files($fs->get_area_files($contextid, 'qtype_essay',
                         'graderinfo', $question->id));
                 $expout .= "    </graderinfo>\n";
                 break;
@@ -1255,21 +1276,21 @@ class qformat_xml extends qformat_default {
                         'correctfeedback', $question->id);
                 $expout .= "    <correctfeedback>\n";
                 $expout .= $this->writetext($question->options->correctfeedback, 3);
-                $expout .= $this->writefiles($files);
+                $expout .= $this->write_files($files);
                 $expout .= "    </correctfeedback>\n";
 
                 $files = $fs->get_area_files($contextid, $component,
                         'partiallycorrectfeedback', $question->id);
                 $expout .= "    <partiallycorrectfeedback>\n";
                 $expout .= $this->writetext($question->options->partiallycorrectfeedback, 3);
-                $expout .= $this->writefiles($files);
+                $expout .= $this->write_files($files);
                 $expout .= "    </partiallycorrectfeedback>\n";
 
                 $files = $fs->get_area_files($contextid, $component,
                         'incorrectfeedback', $question->id);
                 $expout .= "    <incorrectfeedback>\n";
                 $expout .= $this->writetext($question->options->incorrectfeedback, 3);
-                $expout .= $this->writefiles($files);
+                $expout .= $this->write_files($files);
                 $expout .= "    </incorrectfeedback>\n";
 
                 foreach ($question->options->answers as $answer) {
@@ -1287,7 +1308,7 @@ class qformat_xml extends qformat_default {
                     $files = $fs->get_area_files($contextid, $component,
                             'instruction', $question->id);
                     $expout .= $this->writetext($answer->feedback);
-                    $expout .= $this->writefiles($answer->feedbackfiles);
+                    $expout .= $this->write_files($answer->feedbackfiles);
                     $expout .= "    </feedback>\n";
                     $expout .= "</answer>\n";
                 }
@@ -1312,7 +1333,7 @@ class qformat_xml extends qformat_default {
                     $expout .= "    <instructions " .
                             $this->format($question->options->instructionsformat) . ">\n";
                     $expout .= $this->writetext($question->options->instructions, 3);
-                    $expout .= $this->writefiles($files);
+                    $expout .= $this->write_files($files);
                     $expout .= "    </instructions>\n";
                 }
 
@@ -1418,10 +1439,10 @@ class qformat_xml extends qformat_default {
         $output = '';
         $output .= "    <answer fraction=\"$percent\" {$this->format($answer->answerformat)}>\n";
         $output .= $this->writetext($answer->answer, 3);
-        $output .= $this->writefiles($answer->answerfiles);
+        $output .= $this->write_files($answer->answerfiles);
         $output .= "      <feedback {$this->format($answer->feedbackformat)}>\n";
         $output .= $this->writetext($answer->feedback, 4);
-        $output .= $this->writefiles($answer->feedbackfiles);
+        $output .= $this->write_files($answer->feedbackfiles);
         $output .= "      </feedback>\n";
         $output .= $extra;
         $output .= "    </answer>\n";
@@ -1471,7 +1492,7 @@ class qformat_xml extends qformat_default {
         if (!empty($hint->options)) {
             $output .= '      <options>' . $this->xml_escape($hint->options) . "</options>\n";
         }
-        $output .= $this->writefiles($files);
+        $output .= $this->write_files($files);
         $output .= "    </hint>\n";
         return $output;
     }
@@ -1494,7 +1515,7 @@ class qformat_xml extends qformat_default {
 
             $output .= "    <{$field} {$this->format($questionoptions->$formatfield)}>\n";
             $output .= '      ' . $this->writetext($questionoptions->$field);
-            $output .= $this->writefiles($files);
+            $output .= $this->write_files($files);
             $output .= "    </{$field}>\n";
         }
 
