@@ -259,11 +259,11 @@ function lti_build_request($instance, $typeconfig, $course) {
         //Add outcome service URL
         $serviceurl = new moodle_url('/mod/lti/service.php');
         $serviceurl = $serviceurl->out();
-        
+
         if ($typeconfig['forcessl'] == '1') {
             $serviceurl = lti_ensure_url_is_https($serviceurl);
         }
-        
+
         $requestparams['lis_outcome_service_url'] = $serviceurl;
     }
 

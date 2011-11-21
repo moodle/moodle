@@ -221,4 +221,3 @@ function lti_verify_sourcedid($ltiinstance, $parsed) {
         throw new Exception('SourcedId hash not valid');
     }
 }
-
