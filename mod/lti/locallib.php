@@ -802,7 +802,7 @@ function lti_get_type_type_config($id) {
     $config = lti_get_type_config($id);
 
     $type = new stdClass();
-    
+
     $type->lti_typename = $basicltitype->name;
 
     $type->typeid = $basicltitype->id;
