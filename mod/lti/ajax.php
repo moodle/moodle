@@ -43,10 +43,10 @@ switch ($action) {
 
         if(empty($toolid) && !empty($toolurl)){
             $tool = lti_get_tool_by_url_match($toolurl, $courseid);
-            
+
             if(!empty($tool)){
                 $toolid = $tool->id;
-            
+
                 $response->toolid = $tool->id;
                 $response->toolname = htmlspecialchars($tool->name);
                 $response->tooldomain = htmlspecialchars($tool->tooldomain);
@@ -54,18 +54,17 @@ switch ($action) {
         } else {
             $response->toolid = $toolid;
         }
-        
+
         if (!empty($toolid)) {
-            //Look up privacy settings
-            $query = 
-            '
+            // Look up privacy settings
+            $query = '
                 SELECT name, value
                 FROM {lti_types_config}
                 WHERE
                     typeid = :typeid
                 AND name IN (\'sendname\', \'sendemailaddr\', \'acceptgrades\')
             ';
-                        
+
             $privacyconfigs = $DB->get_records_sql($query, array('typeid' => $toolid));
             foreach($privacyconfigs as $config){
                 $configname = $config->name;
