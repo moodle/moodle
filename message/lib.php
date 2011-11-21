@@ -2011,8 +2011,10 @@ function message_post_message($userfrom, $userto, $message, $format) {
     $eventdata->subject          = get_string_manager()->get_string('unreadnewmessage', 'message', fullname($userfrom), $userto->lang);
 
     if ($format == FORMAT_HTML) {
-        $eventdata->fullmessage      = '';
         $eventdata->fullmessagehtml  = $message;
+        //some message processors may revert to sending plain text even if html is supplied
+        //so we keep both plain and html versions if we're intending to send html
+        $eventdata->fullmessage = html_to_text($eventdata->fullmessagehtml);
     } else {
         $eventdata->fullmessage      = $message;
         $eventdata->fullmessagehtml  = '';
