@@ -51,7 +51,8 @@ table.minicalendar td,
   border-radius: 3px;
 }
 
-.noticebox {
+.noticebox,
+.gradingform_rubric_editform .status {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;

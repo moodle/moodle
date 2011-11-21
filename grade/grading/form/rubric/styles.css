@@ -45,7 +45,7 @@
 
 */
 
-.gradingform_rubric_editform .status {font-weight:normal;text-transform:uppercase;font-size:60%;padding:0.25em;border:1px solid #EEE;-moz-border-radius:5px;}
+.gradingform_rubric_editform .status {font-weight:normal;text-transform:uppercase;font-size:60%;padding:0.25em;border:1px solid #EEE;}
 .gradingform_rubric_editform .status.ready {background-color:#e7f1c3;border-color:#AAEEAA;}
 .gradingform_rubric_editform .status.draft {background-color:#f3f2aa;border-color:#EEEE22;}
 
@@ -79,7 +79,7 @@
 .gradingform_rubric .plainvalue.empty {font-style: italic; color: #AAA;}
 
 .gradingform_rubric.editor .criterion .levels .level .delete {position:absolute;right:0;bottom:0;}
-.gradingform_rubric .criterion .levels .level .score {font-style:italic;color:#575;font-weight: bold;margin-top:5px;nowrap:nowrap;}
+.gradingform_rubric .criterion .levels .level .score {font-style:italic;color:#575;font-weight: bold;margin-top:5px;white-space:nowrap;}
 .gradingform_rubric .criterion .levels .level .score .scorevalue {padding-right:5px;}
 
 /* Make invisible the buttons 'Move up' for the first criterion and 'Move down' for the last, because those buttons will make no change */
@@ -115,14 +115,10 @@
 .gradingform_rubric .criterion .levels .level .definition.error,
 .gradingform_rubric .criterion .levels .level .score.error {background:#FFDDDD;}
 
-/* special classes for elements created by rubriceditor.js */
-.gradingform_rubric.editor .hiddenelement {display:none;}
-.gradingform_rubric.editor .pseudotablink {background-color:transparent;border:0px solid;height:1px;width:1px;color:transparent;padding:0;margin:0;position:relative;float:right;}
-
-/**
- *
- */
-
 .gradingform_rubric-regrade {padding:10px;background:#FFDDDD;border:1px solid #F00;margin-bottom:10px;}
 .gradingform_rubric-restored {padding:10px;background:#FFFFDD;border:1px solid #FF0;margin-bottom:10px;}
 .gradingform_rubric-error {color:red;font-weight:bold;}
+
+/* special classes for elements created by rubriceditor.js */
+.gradingform_rubric.editor .hiddenelement {display:none;}
+.gradingform_rubric.editor .pseudotablink {background-color:transparent;border:0 solid;height:1px;width:1px;color:transparent;padding:0;margin:0;position:relative;float:right;}
