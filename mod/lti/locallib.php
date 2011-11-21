@@ -709,38 +709,6 @@ function lti_get_shared_secrets_by_key($key) {
 }
 
 /**
- * Prints the various configured tool types
- *
- */
-function lti_filter_print_types() {
-    global $CFG;
-
-    $types = lti_filter_get_types();
-    if (!empty($types)) {
-        echo '<ul>';
-        foreach ($types as $type) {
-            echo '<li>'.
-            $type->name.
-            '<span class="commands">'.
-            '<a class="editing_update" href="typessettings.php?action=update&amp;id='.$type->id.'&amp;sesskey='.sesskey().'" title="Update">'.
-            '<img class="iconsmall" alt="Update" src="'.$CFG->wwwroot.'/pix/t/edit.gif"/>'.
-            '</a>'.
-            '<a class="editing_delete" href="typessettings.php?action=delete&amp;id='.$type->id.'&amp;sesskey='.sesskey().'" title="Delete">'.
-            '<img class="iconsmall" alt="Delete" src="'.$CFG->wwwroot.'/pix/t/delete.gif"/>'.
-            '</a>'.
-            '</span>'.
-            '</li>';
-
-        }
-        echo '</ul>';
-    } else {
-        echo '<div class="message">';
-        echo get_string('notypes', 'lti');
-        echo '</div>';
-    }
-}
-
-/**
  * Delete a Basic LTI configuration
  *
  * @param int $id   Configuration id
@@ -833,6 +801,8 @@ function lti_get_type_type_config($id) {
     $basicltitype = $DB->get_record('lti_types', array('id' => $id));
     $config = lti_get_type_config($id);
 
+    $type = new stdClass();
+    
     $type->lti_typename = $basicltitype->name;
 
     $type->typeid = $basicltitype->id;
@@ -901,7 +871,7 @@ function lti_get_type_type_config($id) {
     }
 
     if (isset($config['module_class_type'])) {
-            $type->lti_module_class_type = $config['module_class_type'];
+        $type->lti_module_class_type = $config['module_class_type'];
     }
 
     return $type;
@@ -1062,8 +1032,6 @@ function lti_sign_parameters($oldparms, $endpoint, $method, $oauthconsumerkey, $
  * @param $debug        Debug (true/false)
  */
 function lti_post_launch_html($newparms, $endpoint, $debug=false) {
-    //global $lastbasestring;
-
     $r = "<form action=\"".$endpoint."\" name=\"ltiLaunchForm\" id=\"ltiLaunchForm\" method=\"post\" encType=\"application/x-www-form-urlencoded\">\n";
 
     $submittext = $newparms['ext_submit'];
