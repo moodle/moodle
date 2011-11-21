@@ -435,7 +435,7 @@ class mysqli_native_moodle_database extends moodle_database {
         $sql = "SHOW COLUMNS FROM {$this->prefix}$table";
         $this->query_start($sql, null, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
-        $this->query_end($result);
+        $this->query_end(true); // Don't want to throw anything here ever. MDL-30147
 
         if ($result === false) {
             return array();

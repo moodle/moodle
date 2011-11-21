@@ -821,6 +821,10 @@ class dml_test extends UnitTestCase {
 
             $this->assertEqual($next_column->name, $next_field->name);
         }
+
+        // Test get_columns for non-existing table returns empty array. MDL-30147
+        $columns = $DB->get_columns('xxxx');
+        $this->assertEqual(array(), $columns);
     }
 
     public function test_get_manager() {
@@ -905,7 +909,7 @@ class dml_test extends UnitTestCase {
             $DB->execute($sql);
             $this->fail("Expecting an exception, none occurred");
         } catch (Exception $e) {
-            $this->assertTrue($e instanceof dml_write_exception);
+            $this->assertTrue($e instanceof dml_exception);
         }
 
         // update records
@@ -999,7 +1003,10 @@ class dml_test extends UnitTestCase {
         $conditions = array('onetext' => '1');
         try {
             $rs = $DB->get_recordset($tablename, $conditions);
-            $this->fail('An Exception is missing, expected due to equating of text fields');
+            if (debugging()) {
+                // only in debug mode - hopefully all devs test code in debug mode...
+                $this->fail('An Exception is missing, expected due to equating of text fields');
+            }
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
             $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
@@ -1256,10 +1263,49 @@ class dml_test extends UnitTestCase {
         $conditions = array('onetext' => '1');
         try {
             $records = $DB->get_records($tablename, $conditions);
-            $this->fail('An Exception is missing, expected due to equating of text fields');
+            if (debugging()) {
+                // only in debug mode - hopefully all devs test code in debug mode...
+                $this->fail('An Exception is missing, expected due to equating of text fields');
+            }
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
             $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
+        }
+
+        // test get_records passing non-existing table
+        // with params
+        try {
+            $records = $DB->get_records('xxxx', array('id' => 0));
+            $this->fail('An Exception is missing, expected due to query against non-existing table');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+            if (debugging()) {
+                // information for developers only, normal users get general error message
+                $this->assertEqual($e->errorcode, 'ddltablenotexist');
+            }
+        }
+        // and without params
+        try {
+            $records = $DB->get_records('xxxx', array());
+            $this->fail('An Exception is missing, expected due to query against non-existing table');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+            if (debugging()) {
+                // information for developers only, normal users get general error message
+                $this->assertEqual($e->errorcode, 'ddltablenotexist');
+            }
+        }
+
+        // test get_records passing non-existing column
+        try {
+            $records = $DB->get_records($tablename, array('xxxx' => 0));
+            $this->fail('An Exception is missing, expected due to query against non-existing column');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+            if (debugging()) {
+                // information for developers only, normal users get general error message
+                $this->assertEqual($e->errorcode, 'ddlfieldnotexist');
+            }
         }
 
         // note: delegate limits testing to test_get_records_sql()
@@ -1641,7 +1687,10 @@ class dml_test extends UnitTestCase {
         $conditions = array('onetext' => '1');
         try {
             $DB->get_field($tablename, 'course', $conditions);
-            $this->fail('An Exception is missing, expected due to equating of text fields');
+            if (debugging()) {
+                // only in debug mode - hopefully all devs test code in debug mode...
+                $this->fail('An Exception is missing, expected due to equating of text fields');
+            }
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
             $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
@@ -1785,7 +1834,7 @@ class dml_test extends UnitTestCase {
         try {
             $DB->insert_record_raw($tablename, array('xxxxx' => 3, 'onechar' => 'bb'));
             $this->assertFail('Exception expected due to invalid column');
-        } catch (dml_write_exception $ex) {
+        } catch (dml_exception $ex) {
             $this->assertTrue(true);
         }
     }
@@ -2494,7 +2543,10 @@ class dml_test extends UnitTestCase {
         $conditions = array('onetext' => '1');
         try {
             $DB->set_field($tablename, 'onechar', 'frog', $conditions);
-            $this->fail('An Exception is missing, expected due to equating of text fields');
+            if (debugging()) {
+                // only in debug mode - hopefully all devs test code in debug mode...
+                $this->fail('An Exception is missing, expected due to equating of text fields');
+            }
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
             $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
@@ -2704,7 +2756,10 @@ class dml_test extends UnitTestCase {
         $conditions = array('onetext' => '1');
         try {
             $DB->count_records($tablename, $conditions);
-            $this->fail('An Exception is missing, expected due to equating of text fields');
+            if (debugging()) {
+                // only in debug mode - hopefully all devs test code in debug mode...
+                $this->fail('An Exception is missing, expected due to equating of text fields');
+            }
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
             $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
@@ -2779,7 +2834,10 @@ class dml_test extends UnitTestCase {
         $conditions = array('onetext' => '1');
         try {
             $DB->record_exists($tablename, $conditions);
-            $this->fail('An Exception is missing, expected due to equating of text fields');
+            if (debugging()) {
+                // only in debug mode - hopefully all devs test code in debug mode...
+                $this->fail('An Exception is missing, expected due to equating of text fields');
+            }
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
             $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
@@ -2927,7 +2985,10 @@ class dml_test extends UnitTestCase {
         $conditions = array('onetext'=>'1');
         try {
             $DB->delete_records($tablename, $conditions);
-            $this->fail('An Exception is missing, expected due to equating of text fields');
+            if (debugging()) {
+                // only in debug mode - hopefully all devs test code in debug mode...
+                $this->fail('An Exception is missing, expected due to equating of text fields');
+            }
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
             $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
@@ -2937,7 +2998,10 @@ class dml_test extends UnitTestCase {
         $conditions = array('onetext' => 1);
         try {
             $DB->delete_records($tablename, $conditions);
-            $this->fail('An Exception is missing, expected due to equating of text fields');
+            if (debugging()) {
+                // only in debug mode - hopefully all devs test code in debug mode...
+                $this->fail('An Exception is missing, expected due to equating of text fields');
+            }
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
             $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
