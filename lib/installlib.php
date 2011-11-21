@@ -106,7 +106,27 @@ function install_init_dataroot($dataroot, $dirpermissions) {
         return false; // we can not continue
     }
 
-    // now create the lang folder - we need it and it makes sure we can really write in dataroot
+    // create the directory for $CFG->tempdir
+    if (!is_dir("$dataroot/temp")) {
+        if (!mkdir("$dataroot/temp", $dirpermissions, true)) {
+            return false;
+        }
+    }
+    if (!is_writable("$dataroot/temp")) {
+        return false; // we can not continue
+    }
+
+    // create the directory for $CFG->cachedir
+    if (!is_dir("$dataroot/cache")) {
+        if (!mkdir("$dataroot/cache", $dirpermissions, true)) {
+            return false;
+        }
+    }
+    if (!is_writable("$dataroot/cache")) {
+        return false; // we can not continue
+    }
+
+    // create the directory for $CFG->langotherroot
     if (!is_dir("$dataroot/lang")) {
         if (!mkdir("$dataroot/lang", $dirpermissions, true)) {
             return false;
