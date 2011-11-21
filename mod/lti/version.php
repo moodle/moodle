@@ -49,7 +49,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$module->version   = 2011111600;;
+$module->version   = 2011111601;;
 $module->requires  = 2011110200;  // Requires this Moodle version
 $module->cron      = 0;
 $module->component = 'mod_lti';
