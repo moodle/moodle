@@ -243,7 +243,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
     }
 
     public function supported_formats() {
-        return array(PORTFOLIO_FORMAT_FILE); // don't support rich html, it breaks links
+        return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_RICHHTML);
     }
 
     /*
