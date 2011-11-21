@@ -55,6 +55,7 @@ class block_section_links extends block_base {
         if(isset($this->config)){
             $config = $this->config;
         } else{
+            // TODO: Move these config settings to proper ones using component name
             $config = get_config('blocks/section_links');
         }
 
@@ -155,7 +156,8 @@ class block_section_links extends block_base {
     }
     function before_delete() {
         global $DB;
-        $DB->delete_records('config_plugins', 'plugin', 'blocks/section_links');
+        // TODO: Move these config settings to proper ones using component name
+        $DB->delete_records('config_plugins', array('plugin' => 'blocks/section_links'));
     }
 
     function has_config() {
