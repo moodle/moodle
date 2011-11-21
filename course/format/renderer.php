@@ -507,8 +507,19 @@ abstract class format_renderer_base extends plugin_renderer_base {
                 print_section($course, $thissection, $mods, $modnamesused);
                 echo $this->stealth_section_footer();
             }
+
+            $straddsection = get_string('addanadditionalsection', 'moodle');
+            echo html_writer::start_tag('div', array('class' => 'mdl-align'));
+            echo $this->output->action_link(
+                new moodle_url('/course/addsection.php',
+                    array('courseid' => $course->id, 'sesskey' => sesskey())
+                ), $this->output->pix_icon('t/add', $straddsection).$straddsection, null,
+                    array('class' => 'addsectionlink')
+            );
+            echo html_writer::end_tag('div');
         }
 
         echo $this->end_section_list();
+
     }
 }

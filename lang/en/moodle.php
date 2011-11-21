@@ -43,6 +43,7 @@ $string['activityweighted'] = 'Activity per user';
 $string['add'] = 'Add';
 $string['addactivity'] = 'Add an activity...';
 $string['addadmin'] = 'Add admin';
+$string['addanadditionalsection'] = 'Add an additional section';
 $string['addblock'] = 'Add a block';
 $string['addcomment'] = 'Add a comment...';
 $string['addcountertousername'] = 'Create user by adding number to username';
