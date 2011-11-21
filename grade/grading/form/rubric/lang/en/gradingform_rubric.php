@@ -53,12 +53,18 @@ $string['regradeoption0'] = 'Do not mark for regrade';
 $string['regradeoption1'] = 'Mark for regrade';
 $string['restoredfromdraft'] = 'NOTE: The last attempt to grade this person was not saved properly so draft grades have been restored. If you want to cancel these changes use the \'Cancel\' button below.';
 $string['rubric'] = 'Rubric';
+$string['rubricmapping'] = 'Score to grade mapping rules';
+$string['rubricmappingexplained'] = 'The minimum possible score for this rubric is <b>{$a->minscore} points</b> and it will be converted to the minimum grade available in this module (which is zero unless the scale is used).
+    The maximum score <b>{$a->maxscore} points</b> will be converted to the maximum grade.<br />
+    Intermediate scores will be converted respectively and rounded to the nearest available grade.<br />
+    If a scale is used instead of a grade, the score will be converted to the scale elements as if they were consecutive integers.';
 $string['rubricnotcompleted'] = 'Please choose something for each criterion';
 $string['rubricoptions'] = 'Rubric options';
 $string['rubricstatus'] = 'Current rubric status';
+$string['save'] = 'Save';
 $string['saverubric'] = 'Save rubric and make it ready';
 $string['saverubricdraft'] = 'Save as draft';
-$string['scorepostfix'] = '{$a} points';
+$string['scorepostfix'] = '{$a}points';
 $string['showdescriptionstudent'] = 'Display rubric description to those being graded';
 $string['showdescriptionteacher'] = 'Display rubric description during evaluation';
 $string['showremarksstudent'] = 'Show remarks to those being graded';
@@ -67,5 +73,3 @@ $string['showscoreteacher'] = 'Display points for each level during evaluation';
 $string['sortlevelsasc'] = 'Sort order for levels:';
 $string['sortlevelsasc0'] = 'Descending by number of points';
 $string['sortlevelsasc1'] = 'Ascending by number of points';
-$string['statusdraft'] = 'Draft';
-$string['statusready'] = 'Ready';

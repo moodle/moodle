@@ -360,9 +360,10 @@ class gradingform_rubric_controller extends gradingform_controller {
     /**
      * Converts the current definition into an object suitable for the editor form's set_data()
      *
+     * @param boolean $addemptycriterion whether to add an empty criterion if the rubric is completely empty (just being created)
      * @return stdClass
      */
-    public function get_definition_for_editing() {
+    public function get_definition_for_editing($addemptycriterion = false) {
 
         $definition = $this->get_definition();
         $properties = new stdClass();
@@ -378,6 +379,8 @@ class gradingform_rubric_controller extends gradingform_controller {
         $properties->rubric = array('criteria' => array(), 'options' => $this->get_options());
         if (!empty($definition->rubric_criteria)) {
             $properties->rubric['criteria'] = $definition->rubric_criteria;
+        } else if (!$definition && $addemptycriterion) {
+            $properties->rubric['criteria'] = array('addcriterion' => 1);
         }
 
         return $properties;
@@ -481,7 +484,8 @@ class gradingform_rubric_controller extends gradingform_controller {
         $output = $this->get_renderer($page);
         $criteria = $this->definition->rubric_criteria;
         $options = $this->get_options();
-        $rubric = $output->display_rubric($criteria, $options, self::DISPLAY_PREVIEW, 'rubric');
+        $rubric = $output->display_rubric_mapping_explained($this->get_min_max_score());
+        $rubric .= $output->display_rubric($criteria, $options, self::DISPLAY_PREVIEW, 'rubric');
 
         return $rubric;
     }
@@ -589,6 +593,28 @@ class gradingform_rubric_controller extends gradingform_controller {
         $params[] = '%'.$DB->sql_like_escape($token).'%';
 
         return array($subsql, $params);
+    }
+
+    /**
+     * Calculates and returns the possible minimum and maximum score (in points) for this rubric
+     *
+     * @return array
+     */
+    public function get_min_max_score() {
+        if (!$this->is_form_available()) {
+            return null;
+        }
+        $returnvalue = array('minscore' => 0, 'maxscore' => 0);
+        foreach ($this->get_definition()->rubric_criteria as $id => $criterion) {
+            $scores = array();
+            foreach ($criterion['levels'] as $level) {
+                $scores[] = $level['score'];
+            }
+            sort($scores);
+            $returnvalue['minscore'] += $scores[0];
+            $returnvalue['maxscore'] += $scores[sizeof($scores)-1];
+        }
+        return $returnvalue;
     }
 }
 
@@ -717,19 +743,7 @@ class gradingform_rubric_instance extends gradingform_instance {
         global $DB, $USER;
         $grade = $this->get_rubric_filling();
 
-        $minscore = 0;
-        $maxscore = 0;
-        foreach ($this->get_controller()->get_definition()->rubric_criteria as $id => $criterion) {
-            $scores = array();
-            foreach ($criterion['levels'] as $level) {
-                $scores[] = $level['score'];
-            }
-            sort($scores);
-            $minscore += $scores[0];
-            $maxscore += $scores[sizeof($scores)-1];
-        }
-
-        if ($maxscore <= $minscore) {
+        if (!($scores = $this->get_controller()->get_min_max_score()) || $scores['maxscore'] <= $scores['minscore']) {
             return -1;
         }
 
@@ -745,7 +759,7 @@ class gradingform_rubric_instance extends gradingform_instance {
         foreach ($grade['criteria'] as $id => $record) {
             $curscore += $this->get_controller()->get_definition()->rubric_criteria[$id]['levels'][$record['levelid']]['score'];
         }
-        return round(($curscore-$minscore)/($maxscore-$minscore)*($maxgrade-$mingrade), 0) + $mingrade; // TODO mapping
+        return round(($curscore-$scores['minscore'])/($scores['maxscore']-$scores['minscore'])*($maxgrade-$mingrade), 0) + $mingrade;
     }
 
     /**

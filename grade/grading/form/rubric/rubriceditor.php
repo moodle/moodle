@@ -184,14 +184,14 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                 // when adding new criterion copy the number of levels and their scores from the last criterion
                 if (!empty($value['criteria'][$lastid]['levels'])) {
                     foreach ($value['criteria'][$lastid]['levels'] as $lastlevel) {
-                        $criterion['levels']['NEWID'+($i++)]['score'] = $lastlevel['score'];
+                        $criterion['levels']['NEWID'.($i++)]['score'] = $lastlevel['score'];
                     }
                 } else {
-                    $criterion['levels']['NEWID'+($i++)]['score'] = 0;
+                    $criterion['levels']['NEWID'.($i++)]['score'] = 0;
                 }
                 // add more levels so there are at least 3 in the new criterion. Increment by 1 the score for each next one
-                for ($i; $i<3; $i++) {
-                    $criterion['levels']['NEWID'+$i]['score'] = $criterion['levels']['NEWID'+($i-1)]['score'] + 1;
+                for ($i=$i; $i<3; $i++) {
+                    $criterion['levels']['NEWID'.$i]['score'] = $criterion['levels']['NEWID'.($i-1)]['score'] + 1;
                 }
                 // set other necessary fields (definition) for the levels in the new criterion
                 foreach (array_keys($criterion['levels']) as $i) {
