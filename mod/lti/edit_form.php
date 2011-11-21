@@ -44,6 +44,7 @@
  * @author     Jordi Piguillem
  * @author     Nikolas Galanis
  * @author     Charles Severance
+ * @author     Chris Scribner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
