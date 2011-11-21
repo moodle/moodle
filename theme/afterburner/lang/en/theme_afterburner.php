@@ -22,7 +22,7 @@
  * @copyright 2011
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+$string['configtitle'] = 'Afterburner Custom Settings';
 $string['pluginname'] = 'Afterburner';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
