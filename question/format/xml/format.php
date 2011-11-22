@@ -1441,10 +1441,10 @@ class qformat_xml extends qformat_default {
     }
 
     /**
-     * @param unknown_type $format a FORMAT_... constant.
+     * @param int $format a FORMAT_... constant.
      * @return string the attribute to add to an XML tag.
      */
-    protected function format($format) {
+    public function format($format) {
         return 'format="' . $this->get_format($format) . '"';
     }
 
