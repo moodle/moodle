@@ -7690,7 +7690,7 @@ function plugin_callback($type, $name, $feature, $action, $options = null, $defa
 
     $component = clean_param($type . '_' . $name, PARAM_COMPONENT);
     if (empty($component)) {
-        throw coding_exception('Invalid component used in plugin_callback():' . $type . '_' . $name);
+        throw new coding_exception('Invalid component used in plugin_callback():' . $type . '_' . $name);
     }
 
     list($type, $name) = normalize_component($component);
@@ -7701,7 +7701,7 @@ function plugin_callback($type, $name, $feature, $action, $options = null, $defa
 
     $dir = get_component_directory($component);
     if (empty($dir)) {
-        throw coding_exception('Invalid component used in plugin_callback():' . $type . '_' . $name);
+        throw new coding_exception('Invalid component used in plugin_callback():' . $type . '_' . $name);
     }
 
     // Load library and look for function
@@ -7748,7 +7748,7 @@ function plugin_supports($type, $name, $feature, $default = NULL) {
 
     $component = clean_param($type . '_' . $name, PARAM_COMPONENT);
     if (empty($component)) {
-        throw coding_exception('Invalid component used in plugin_supports():' . $type . '_' . $name);
+        throw new coding_exception('Invalid component used in plugin_supports():' . $type . '_' . $name);
     }
 
     $function = null;
