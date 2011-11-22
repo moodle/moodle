@@ -35,17 +35,29 @@ require_once($CFG->libdir.'/componentlib.class.php');
 
 admin_externalpage_setup('toollangimport');
 
-if (!empty($CFG->skiplangupgrade)) {
-    echo $OUTPUT->header();
-    echo $OUTPUT->box(get_string('langimportdisabled', 'tool_langimport'));
-    echo $OUTPUT->footer();
-    die;
+if (empty($CFG->langotherroot)) {
+    throw new moodle_exception('missingcfglangotherroot', 'tool_langimport');
 }
 
 $mode          = optional_param('mode', 0, PARAM_INT);              // action
 $pack          = optional_param_array('pack', array(), PARAM_SAFEDIR);    // pack to install
 $uninstalllang = optional_param('uninstalllang', '', PARAM_LANG);   // installed pack to uninstall
 $confirm       = optional_param('confirm', 0, PARAM_BOOL);          // uninstallation confirmation
+$purgecaches   = optional_param('purgecaches', false, PARAM_BOOL);  // explicit caches reset
+
+if ($purgecaches) {
+    require_sesskey();
+    get_string_manager()->reset_caches();
+    redirect($PAGE->url);
+}
+
+if (!empty($CFG->skiplangupgrade)) {
+    echo $OUTPUT->header();
+    echo $OUTPUT->box(get_string('langimportdisabled', 'tool_langimport'));
+    echo $OUTPUT->single_button(new moodle_url($PAGE->url, array('purgecaches' => 1)), get_string('purgestringcaches', 'tool_langimport'));
+    echo $OUTPUT->footer();
+    die;
+}
 
 define('INSTALLATION_OF_SELECTED_LANG', 2);
 define('DELETION_OF_SELECTED_LANG', 4);
