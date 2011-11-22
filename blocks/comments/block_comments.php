@@ -74,7 +74,7 @@ class block_comments extends block_base {
         $args->linktext  = get_string('showcomments');
         $args->notoggle  = true;
         $args->autostart = true;
-        $args->displaycancel = true;
+        $args->displaycancel = false;
         $comment = new comment($args);
         $comment->set_view_permission(true);
 
