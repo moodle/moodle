@@ -237,6 +237,11 @@ class iCalendar_component {
         $components = array(); // Initialise a stack of components
         $this->clear_errors();
         foreach ($lines as $key => $line) {
+            // ignore empty lines
+            if (trim($line) == '') {
+                continue;
+            }
+
             // Divide the line up into label, parameters and data fields.
             if (!preg_match('#^(?P<label>[-[:alnum:]]+)(?P<params>(?:;(?:(?:[-[:alnum:]]+)=(?:[^[:cntrl:]";:,]+|"[^[:cntrl:]"]+")))*):(?P<data>.*)$#', $line, $match)) {
                 $this->parser_error('Invalid line: '.$key.', ignoring');
