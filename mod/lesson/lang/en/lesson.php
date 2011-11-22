@@ -158,6 +158,7 @@ $string['endoflesson'] = 'End of lesson';
 $string['enteredthis'] = 'entered this.';
 $string['entername'] = 'Enter a nickname for the high scores list';
 $string['enterpassword'] = 'Please enter the password:';
+$string['emptypassword'] = 'Password cannot be empty';
 $string['eolstudentoutoftime'] = 'Attention:  You ran out of time for this lesson.  Your last answer may not have counted if it was answered after the time was up.';
 $string['eolstudentoutoftimenoanswers'] = 'You did not answer any questions.  You have received a 0 for this lesson.';
 $string['essay'] = 'Essay';
