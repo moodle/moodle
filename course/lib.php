@@ -1853,6 +1853,8 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
             $archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
             if ($archetype == MOD_ARCHETYPE_RESOURCE) {
                 $resources[$urlbase.$modname] = $modnamestr;
+            } else if ($archetype === MOD_ARCHETYPE_SYSTEM) {
+                // System modules cannot be added by user, do not add to dropdown
             } else {
                 // all other archetypes are considered activity
                 $activities[$urlbase.$modname] = $modnamestr;
