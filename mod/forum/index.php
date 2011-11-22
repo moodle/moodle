@@ -68,7 +68,6 @@ $strunsubscribe  = get_string('unsubscribe', 'forum');
 $stryes          = get_string('yes');
 $strno           = get_string('no');
 $strrss          = get_string('rss');
-$strsectionname  = get_string('sectionname', 'format_'.$course->format);
 
 $searchform = forum_search_form($course);
 
@@ -299,6 +298,9 @@ if ($show_rss = (($can_subscribe || $course->id == SITEID) &&
 /// Now let's process the learning forums
 
 if ($course->id != SITEID) {    // Only real courses have learning forums
+    // This is only required for use here and there needs to be a check to see if
+    // course id is the same as the site id. Moved from above. MDL-27334
+    $strsectionname  = get_string('sectionname', 'format_'.$course->format);
     // Add extra field for section number, at the front
     array_unshift($learningtable->head, $strsectionname);
     array_unshift($learningtable->align, 'center');
@@ -409,7 +411,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_button($searchform);
 echo $OUTPUT->header();
 
-if (!isguestuser()) {
+if (!isguestuser() && isloggedin()) {
     echo $OUTPUT->box_start('subscription');
     echo html_writer::tag('div',
         html_writer::link(new moodle_url('/mod/forum/index.php', array('id'=>$course->id, 'subscribe'=>1, 'sesskey'=>sesskey())),
