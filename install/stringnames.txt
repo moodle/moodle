@@ -25,6 +25,7 @@ databasehost,install
 databasename,install
 databasetypehead,install
 dataroot,install
+datarootpermission,install
 dbprefix,install
 dirroot,install
 downloadedfilecheckfailed,error

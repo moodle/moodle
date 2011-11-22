@@ -265,7 +265,7 @@ if ($interactive) {
 $chmod = octdec(clean_param($options['chmod'], PARAM_INT));
 if ($interactive) {
     cli_separator();
-    cli_heading('Data directories permission'); // todo localize
+    cli_heading(get_string('datarootpermission', 'install'));
     $prompt = get_string('clitypevaluedefault', 'admin', decoct($chmod));
     $error = '';
     do {
