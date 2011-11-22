@@ -1,0 +1,21 @@
+This files describes API changes in /admin/tool/* - plugins,
+information provided here is intended especially for developers.
+
+
+=== 2.2 ===
+
+API changes:
+* new admin tool plugin type introduced
+
+
+How to migrate existing admin reports:
+# move all files to new /admin/tool/yourplugin/ location
+# update all links to admin tools /$CFG->admin/report/ to /$CFG->admin/tool/
+# add language pack with at least 'pluginname' string
+# update all language strings (use 'tool_yourplugin' instead of 'report_yourplugin') - use AMOS hints in commit message
+# update all capability names
+# create db/install.php migration script - delete old settings and capabilities (see converted plugins for examples)
+# grep the plugin codebase and look for any remaining 'coursereport' occurrences
+# update CSS selectors
+
+See http://docs.moodle.org/dev/Admin_tools for more details and explanation.
