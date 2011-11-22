@@ -339,6 +339,9 @@ class mod_lesson_mod_form extends moodleform_mod {
         if (empty($data['maxtime']) and !empty($data['timed'])) {
             $errors['timedgrp'] = get_string('err_numeric', 'form');
         }
+        if (!empty($data['usepassword']) && empty($data['password'])) {
+            $errors['password'] = get_string('emptypassword', 'lesson');
+        }
 
         return $errors;
     }
