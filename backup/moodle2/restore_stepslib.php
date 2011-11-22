@@ -1993,7 +1993,7 @@ class restore_activity_grading_structure_step extends restore_structure_step {
         $newitemid = $this->get_mappingid(restore_gradingform_plugin::itemid_mapping($areaname), $data->itemid);
 
         $oldid = $data->id;
-        $data->formid = $newformid;
+        $data->definitionid = $newformid;
         $data->raterid = $this->get_mappingid('user', $data->raterid);
         $data->itemid = $newitemid;
 
