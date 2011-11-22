@@ -552,7 +552,7 @@ function validate_param($param, $type, $allownull=NULL_NOT_ALLOWED, $debuginfo='
  * </code>
  *
  * @param mixed $param the variable we are cleaning
- * @param int $type expected format of param after cleaning.
+ * @param string $type expected format of param after cleaning.
  * @return mixed
  */
 function clean_param($param, $type) {
