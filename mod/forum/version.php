@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version   = 2011110600;
+$module->version   = 2011110601;
 $module->requires  = 2011110200;  // Requires this Moodle version
 $module->cron      = 60;
 $module->component = 'mod_forum';
