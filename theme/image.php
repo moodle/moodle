@@ -119,6 +119,9 @@ if ($rev > -1) {
     $pathinfo = pathinfo($imagefile);
     $cacheimage = "$candidatelocation/$image.".$pathinfo['extension'];
     if (!file_exists($cacheimage)) {
+        // note: cache reset might have purged our cache dir structure,
+        //       make sure we do not use stale file stat cache in the next check_dir_exists()
+        clearstatcache();
         check_dir_exists(dirname($cacheimage));
         copy($imagefile, $cacheimage);
     }

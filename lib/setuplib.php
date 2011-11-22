@@ -1077,6 +1077,10 @@ function redirect_if_major_upgrade_required() {
  * files outside of dataroot if you supply custom paths for some settings in config.php.
  * This function does not verify that the directory is writable.
  *
+ * NOTE: this function uses current file stat cache,
+ *       please use clearstatcache() before this if you expect that the
+ *       directories may have been removed recently from a different request.
+ *
  * @param string $dir absolute directory path
  * @param boolean $create directory if does not exist
  * @param boolean $recursive create directory recursively
