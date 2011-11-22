@@ -41,6 +41,13 @@ if (is_restored_user($username)) {
 }
 $user = authenticate_user_login($username, $password);
 if (!empty($user)) {
+
+    //Non admin can not authenticate if maintenance mode
+    $hassiteconfig = has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM), $user);
+    if (!empty($CFG->maintenance_enabled) and !$hassiteconfig) {
+        throw new moodle_exception('sitemaintenance', 'admin');
+    }
+
     if (isguestuser($user)) {
         throw new moodle_exception('noguest');
     }
