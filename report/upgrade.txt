@@ -9,11 +9,27 @@ API changes:
 * new support for report settings
 
 
-How to migrate old admin reports:
-# copy all files to new /report/yourplugin/ location
+How to migrate existing admin reports:
+# move all files to new /report/yourplugin/ location
 # if settings.php exists add $settings=null;
 # if settings.php does not exist create it and link the report, index.php is not linked automatically any more
 # update require('../../config.php'); - remove one ../
+# update all others includes and requires
 # update all links to report pages by removing /admin/ or /$CFG->admin/
-# add language pack with at least pluginname string
+# add language pack with at least 'pluginname' string
+# update CSS selectors
 
+How to migrate existing course reports (optional):
+# move all files to new /report/yourplugin/ location
+# update require('../../config.php'); - remove one ../
+# update all others includes and requires
+# update all links to report pages by removing /course/ part
+# update all language strings (use 'report_yourplugin' instead of 'coursereport_yourplugin') - use AMOS hints in commit message
+# update all capability names
+# grep the plugin codebase and look for any remaining 'coursereport' occurrences
+# add new navigation hooks in lib.php - ex: report_stats_extend_navigation_course(), report_stats_extend_navigation_user()
+# add new page types in lib.php
+# create db/install.php migration script - delete old settings and capabilities (see converted plugins for examples)
+# update CSS selectors
+
+See http://docs.moodle.org/dev/General_report_plugins for more details and explanation.
