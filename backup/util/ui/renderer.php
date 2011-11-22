@@ -232,15 +232,9 @@ class core_backup_renderer extends plugin_renderer_base {
             $html .= $this->output->heading(get_string('restoretonewcourse', 'backup'), 2, array('class'=>'header'));
             $html .= $this->backup_detail_input(get_string('restoretonewcourse', 'backup'), 'radio', 'target', backup::TARGET_NEW_COURSE, array('checked'=>'checked'));
             $html .= $this->backup_detail_pair(get_string('selectacategory', 'backup'), $this->render($categories));
-            $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'), 'class'=>'newcoursecontinue')));
+            $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'))));
             $html .= html_writer::end_tag('div');
             $html .= html_writer::end_tag('form');
-            $config = new stdClass;
-            $config->title = get_string('confirmnewcoursecontinue', 'backup');
-            $config->question = get_string('confirmnewcoursecontinuequestion', 'backup');
-            $config->yesLabel = get_string('continue');
-            $config->noLabel = get_string('cancel');
-            $PAGE->requires->yui_module('moodle-backup-confirmcancel', 'M.core_backup.watch_newcoursecontinue_buttons', array($config));
         }
 
         if ($wholecourse && !empty($currentcourse)) {
