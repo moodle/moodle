@@ -304,11 +304,11 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
         foreach ($this->places as $placeno => $place) {
             if (isset($hits[$placeno])) {
                 $shuffledchoiceno = $this->get_right_choice_for($placeno);
-                $choiceno = $this->get_selected_choice(1, $shuffledchoiceno);
+                $choice = $this->get_selected_choice(1, $shuffledchoiceno);
                 $parts[$placeno] = new question_classified_response(
-                                                        $choiceno,
-                                                        $this->choices[$choiceno]->summarise(),
-                                                        1 / count($this->places));
+                                                    $choice->no,
+                                                    $choice->summarise(),
+                                                    1 / count($this->places));
             } else {
                 $parts[$placeno] = question_classified_response::no_response();
             }
