@@ -133,6 +133,11 @@ class qtype_ddtoimage_question_base extends qtype_gapselect_question_base {
         $accum = 0;
 
         foreach ($this->places as $place) {
+            foreach ($this->choices[$place->group] as $choice) {
+                if ($choice->infinite) {
+                    return null;
+                }
+            }
             $accum += 1 / count($this->choices[$place->group]);
         }
 
