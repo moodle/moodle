@@ -901,6 +901,29 @@ abstract class moodleform {
     }
 
     /**
+     * Helper used by {@link repeat_elements()}.
+     * @param int $i the index of this element.
+     * @param HTML_QuickForm_element $elementclone
+     */
+    function repeat_elements_fix_clone($i, $elementclone, &$namecloned) {
+        $name = $elementclone->getName();
+        $namecloned[] = $name;
+
+        if (!empty($name)) {
+            $elementclone->setName($name."[$i]");
+        }
+
+        if (is_a($elementclone, 'HTML_QuickForm_header')) {
+            $value = $elementclone->_text;
+            $elementclone->setValue(str_replace('{no}', ($i+1), $value));
+
+        } else {
+            $value=$elementclone->getLabel();
+            $elementclone->setLabel(str_replace('{no}', ($i+1), $value));
+        }
+    }
+
+    /**
      * Method to add a repeating group of elements to a form.
      *
      * @param array $elementobjs Array of elements or groups of elements that are to be repeated
@@ -942,19 +965,13 @@ abstract class moodleform {
         for ($i = 0; $i < $repeats; $i++) {
             foreach ($elementobjs as $elementobj){
                 $elementclone = fullclone($elementobj);
-                $name = $elementclone->getName();
-                $namecloned[] = $name;
-                if (!empty($name)) {
-                    $elementclone->setName($name."[$i]");
-                }
-                if (is_a($elementclone, 'HTML_QuickForm_header')) {
-                    $value = $elementclone->_text;
-                    $elementclone->setValue(str_replace('{no}', ($i+1), $value));
+                $this->repeat_elements_fix_clone($i, $elementclone, $namecloned);
 
-                } else {
-                    $value=$elementclone->getLabel();
-                    $elementclone->setLabel(str_replace('{no}', ($i+1), $value));
-
+                if ($elementclone instanceof HTML_QuickForm_group && !$elementclone->_appendName) {
+                    foreach ($elementclone->getElements() as $el) {
+                        $this->repeat_elements_fix_clone($i, $el, $namecloned);
+                    }
+                    $elementclone->setLabel(str_replace('{no}', $i + 1, $elementclone->getLabel()));
                 }
 
                 $mform->addElement($elementclone);
