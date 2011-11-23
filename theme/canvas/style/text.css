@@ -52,10 +52,6 @@ p {
     margin: 0 0 1em;
 }
 
-ul, ol {
-    margin: 0 1.5em 1.5em 1.5em;
-}
-
 ul {
     list-style-type: circle;
 }
