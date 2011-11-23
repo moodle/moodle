@@ -139,9 +139,17 @@ function imscp_parse_structure($imscp, $context) {
             $xmlbase = '';
         }
         if (!$href = $res->attributes->getNamedItem('href')) {
-            continue;
+            // If href not found look for <file href="help.htm"/>
+            $fileresources = $res->getElementsByTagName('file');
+            foreach ($fileresources as $file) {
+                $href = $file->getAttribute('href');
+            }
+            if (empty($href)) {
+                continue;
+            }
+        } else {
+            $href = $href->nodeValue;
         }
-        $href = $href->nodeValue;
         if (strpos($href, 'http://') !== 0) {
             $href = $xmlbase.$href;
         }
