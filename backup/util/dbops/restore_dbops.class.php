@@ -824,54 +824,58 @@ abstract class restore_dbops {
             $newuserid = $DB->insert_record('user', $user);
             self::set_backup_ids_record($restoreid, 'user', $recuser->itemid, $newuserid);
             // Let's create the user context and annotate it (we need it for sure at least for files)
-            $newuserctxid = get_context_instance(CONTEXT_USER, $newuserid)->id;
-            self::set_backup_ids_record($restoreid, 'context', $recuser->parentitemid, $newuserctxid);
+            // but for deleted users that don't have a context anymore (MDL-30192). We are done for them
+            // and nothing else (custom fields, prefs, tags, files...) will be created.
+            if (empty($user->deleted)) {
+                $newuserctxid = $user->deleted ? 0 : get_context_instance(CONTEXT_USER, $newuserid)->id;
+                self::set_backup_ids_record($restoreid, 'context', $recuser->parentitemid, $newuserctxid);
 
-            // Process custom fields
-            if (isset($user->custom_fields)) { // if present in backup
-                foreach($user->custom_fields['custom_field'] as $udata) {
-                    $udata = (object)$udata;
-                    // If the profile field has data and the profile shortname-datatype is defined in server
-                    if ($udata->field_data) {
-                        if ($field = $DB->get_record('user_info_field', array('shortname'=>$udata->field_name, 'datatype'=>$udata->field_type))) {
-                        /// Insert the user_custom_profile_field
-                            $rec = new stdClass();
-                            $rec->userid  = $newuserid;
-                            $rec->fieldid = $field->id;
-                            $rec->data    = $udata->field_data;
-                            $DB->insert_record('user_info_data', $rec);
+                // Process custom fields
+                if (isset($user->custom_fields)) { // if present in backup
+                    foreach($user->custom_fields['custom_field'] as $udata) {
+                        $udata = (object)$udata;
+                        // If the profile field has data and the profile shortname-datatype is defined in server
+                        if ($udata->field_data) {
+                            if ($field = $DB->get_record('user_info_field', array('shortname'=>$udata->field_name, 'datatype'=>$udata->field_type))) {
+                            /// Insert the user_custom_profile_field
+                                $rec = new stdClass();
+                                $rec->userid  = $newuserid;
+                                $rec->fieldid = $field->id;
+                                $rec->data    = $udata->field_data;
+                                $DB->insert_record('user_info_data', $rec);
+                            }
                         }
                     }
                 }
-            }
 
-            // Process tags
-            if (!empty($CFG->usetags) && isset($user->tags)) { // if enabled in server and present in backup
-                $tags = array();
-                foreach($user->tags['tag'] as $usertag) {
-                    $usertag = (object)$usertag;
-                    $tags[] = $usertag->rawname;
+                // Process tags
+                if (!empty($CFG->usetags) && isset($user->tags)) { // if enabled in server and present in backup
+                    $tags = array();
+                    foreach($user->tags['tag'] as $usertag) {
+                        $usertag = (object)$usertag;
+                        $tags[] = $usertag->rawname;
+                    }
+                    tag_set('user', $newuserid, $tags);
                 }
-                tag_set('user', $newuserid, $tags);
-            }
 
-            // Process preferences
-            if (isset($user->preferences)) { // if present in backup
-                foreach($user->preferences['preference'] as $preference) {
-                    $preference = (object)$preference;
-                    // Prepare the record and insert it
-                    $preference->userid = $newuserid;
-                    $status = $DB->insert_record('user_preferences', $preference);
+                // Process preferences
+                if (isset($user->preferences)) { // if present in backup
+                    foreach($user->preferences['preference'] as $preference) {
+                        $preference = (object)$preference;
+                        // Prepare the record and insert it
+                        $preference->userid = $newuserid;
+                        $status = $DB->insert_record('user_preferences', $preference);
+                    }
                 }
-            }
 
-            // Create user files in pool (profile, icon, private) by context
-            restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'icon', $recuser->parentitemid, $userid);
-            restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'profile', $recuser->parentitemid, $userid);
-            if ($userfiles) { // private files only if enabled in settings
-                restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'private', $recuser->parentitemid, $userid);
-            }
+                // Create user files in pool (profile, icon, private) by context
+                restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'icon', $recuser->parentitemid, $userid);
+                restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'profile', $recuser->parentitemid, $userid);
+                if ($userfiles) { // private files only if enabled in settings
+                    restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'private', $recuser->parentitemid, $userid);
+                }
 
+            }
         }
         $rs->close();
     }
