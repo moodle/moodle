@@ -45,7 +45,7 @@ raise_memory_limit(MEMORY_EXTRA);
 @set_time_limit(0);
 
 // Print the header.
-admin_externalpage_setup('reportsecurity');
+admin_externalpage_setup('reportsecurity', '', null, '', array('pagelayout'=>'report'));
 echo $OUTPUT->header();
 
 echo $OUTPUT->heading(get_string('pluginname', 'report_security'));

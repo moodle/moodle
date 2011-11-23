@@ -31,7 +31,7 @@ require_once($CFG->libdir.'/questionlib.php');
 $requestedqtype = optional_param('qtype', '', PARAM_PLUGIN);
 
 // Print the header & check permissions.
-admin_externalpage_setup('reportquestioninstances');
+admin_externalpage_setup('reportquestioninstances', '', null, '', array('pagelayout'=>'report'));
 echo $OUTPUT->header();
 
 // Log.

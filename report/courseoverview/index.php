@@ -39,7 +39,7 @@ if (empty($CFG->enablestats)) {
     }
 }
 
-admin_externalpage_setup('reportcourseoverview');
+admin_externalpage_setup('reportcourseoverview', '', null, '', array('pagelayout'=>'report'));
 echo $OUTPUT->header();
 
 $course = get_site();

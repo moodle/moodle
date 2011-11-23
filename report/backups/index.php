@@ -27,7 +27,7 @@ require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/backup/lib.php');
 
-admin_externalpage_setup('reportbackups');
+admin_externalpage_setup('reportbackups', '', null, '', array('pagelayout'=>'report'));
 
 $table = new html_table;
 $table->head = array(
