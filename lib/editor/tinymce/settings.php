@@ -31,6 +31,10 @@ if ($ADMIN->fulltree) {
         'PSpell'=>'PSpell',
         'GoogleSpell'=>'Google Spell',
         'PSpellShell'=>'PSpellShell');
-    $settings->add(new admin_setting_configselect('editor_tinymce/spellengine', get_string('spellengine', 'admin'), '', 'GoogleSpell', $options));
+    $settings->add(new admin_setting_configselect('editor_tinymce/spellengine',
+            get_string('spellengine', 'admin'), '', 'GoogleSpell', $options));
+    $settings->add(new admin_setting_configtext('editor_tinymce/spelllanguagelist',
+            get_string('spelllanguagelist', 'admin'), '',
+            '+English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr,German=de,Italian=it,Polish=pl,' .
+            'Portuguese=pt,Spanish=es,Swedish=sv', PARAM_RAW));
 }
-
