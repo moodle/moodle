@@ -45,7 +45,7 @@ $string['dirroot'] = 'Moodle kataloqu';
 $string['environmenthead'] = 'Mühitin yoxlanması...';
 $string['environmentsub2'] = 'Moodlun hər versiyasında PHP-nin versiyasına minimal tələblər və PHP-nin mütləq olan genişlənmələrinin dəsti var.
 Mühitin tam yoxlanılması hər quraşdırmadan və yenilənmədən əvvəl yerinə yetirilir.
-Xahiş edirik ki, əgər yeni versiyanın necə qurulmasını və PHP genişlənməsinin əlavə edilməsini bilmirsinizsə administratora müraciət edin. ';
+Xahiş edirik ki, əgər yeni versiyanın necə qurulmasını və PHP genişlənməsinin əlavə edilməsini bilmirsinizsə administratora müraciət edin.';
 $string['errorsinenvironment'] = 'Mühitin yoxlnılması yerinə yetirilmədi!';
 $string['installation'] = 'Quraşdırma';
 $string['langdownloaderror'] = 'Təəssüf ki,  "{$a}" dilini qurmaq mümkün olmadı. Quraşdırma prosesi ingilis dilində davam edəcək.';
@@ -74,7 +74,7 @@ $string['pathssubdirroot'] = 'Moodlun quraşdırılması kataloquna tam yol';
 $string['pathssubwwwroot'] = 'Moodla keçidin mümkün olduğu tam veb-ünvan.
 Moodla keçid üçün bir neçə ünvandan istifadə etmək mümkün deyil. Əgər sizin saytın bir neçə açıq ünvanı varsa, siz həmişə bu ünvanlardan göstərilən ünvana keçidi təmin etməlisiniz.
 əgəgr sizin sayta həm İnternetdən və həm də lokal şəbəkədən keçid mümkündürsə, burada ümumi ünvanı göstərin və DNS-i elə sazlayın ki, lokal istifadəçilər də bu ünvandan istifadə edə bilsin.
-Əgər göstərilən ünvan düzgün deyilsə, quraşdırmanı digər qiymətlə yenidən başlamaq üçün brauzerin ünvan sətirində URL-i dəyişin. ';
+Əgər göstərilən ünvan düzgün deyilsə, quraşdırmanı digər qiymətlə yenidən başlamaq üçün brauzerin ünvan sətirində URL-i dəyişin.';
 $string['pathsunsecuredataroot'] = 'Verilənlər kataloqunun mövqeyi təhlükəsizlik tələblərinə cavab vermir.';
 $string['pathswrongadmindir'] = 'Admin kataloqu mövcud deyil';
 $string['phpextension'] = '{$a} PHP  geniçlənməsi';
