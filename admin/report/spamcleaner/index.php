@@ -40,7 +40,7 @@ $reset = optional_param('reset', '', PARAM_RAW);
 $id = optional_param('id', '', PARAM_INT);
 
 require_login();
-admin_externalpage_setup('reportspamcleaner');
+admin_externalpage_setup('reportspamcleaner', '', null, '', array('pagelayout'=>'report'));
 
 // Delete one user
 if (!empty($del) && confirm_sesskey() && ($id != $USER->id)) {

@@ -7,7 +7,7 @@
 
     $courseid = optional_param('courseid', 0, PARAM_INT);
 
-    admin_externalpage_setup('reportbackups');
+    admin_externalpage_setup('reportbackups', '', null, '', array('pagelayout'=>'report'));
     echo $OUTPUT->header();
 
 /// Automated backups aren't active by the site admin
