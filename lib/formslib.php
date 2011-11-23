@@ -904,6 +904,7 @@ abstract class moodleform {
      * Helper used by {@link repeat_elements()}.
      * @param int $i the index of this element.
      * @param HTML_QuickForm_element $elementclone
+     * @param array $namecloned array of names
      */
     function repeat_elements_fix_clone($i, $elementclone, &$namecloned) {
         $name = $elementclone->getName();
