@@ -1963,7 +1963,11 @@ function validate_' . $this->_formName . '(frm) {
         } else if (is_a($element, 'HTML_QuickForm_hidden')) {
             return array();
 
-        } else if (method_exists($element, 'getPrivateName')) {
+        } else if (method_exists($element, 'getPrivateName') &&
+                !($element instanceof HTML_QuickForm_advcheckbox)) {
+            // The advcheckbox element implements a method called getPrivateName,
+            // but in a way that is not compatible with the generic API, so we
+            // have to explicitly exclude it.
             return array($element->getPrivateName());
 
         } else {
