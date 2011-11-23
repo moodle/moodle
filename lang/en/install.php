@@ -153,6 +153,7 @@ $string['databasetypesub'] = 'Moodle supports several types of database servers.
 $string['databaseuser'] = 'Database user';
 $string['dataroot'] = 'Data directory';
 $string['datarooterror'] = 'The \'data directory\' you specified could not be found or created.  Either correct the path or create that directory manually.';
+$string['datarootpermission'] = 'Data directories permission';
 $string['datarootpublicerror'] = 'The \'data directory\' you specified is directly accessible via web, you must use different directory.';
 $string['dbconnectionerror'] = 'We could not connect to the database you specified. Please check your database settings.';
 $string['dbcreationerror'] = 'Database creation error. Could not create the given database name with the settings provided';
