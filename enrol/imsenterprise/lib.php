@@ -302,7 +302,7 @@ function get_recstatus($tagdata, $tagname){
 * Process the group tag. This defines a Moodle course.
 * @param string $tagconents The raw contents of the XML element
 */
-function process_group_tag($tagcontents){
+function process_group_tag($tagcontents) {
     global $DB;
 
     // Get configs
@@ -312,24 +312,24 @@ function process_group_tag($tagcontents){
 
     // Process tag contents
     $group = new stdClass();
-    if(preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)){
+    if (preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)) {
         $group->coursecode = trim($matches[1]);
     }
-    if(preg_match('{<description>.*?<short>(.*?)</short>.*?</description>}is', $tagcontents, $matches)){
+    if (preg_match('{<description>.*?<short>(.*?)</short>.*?</description>}is', $tagcontents, $matches)) {
         $group->description = trim($matches[1]);
     }
-    if(preg_match('{<org>.*?<orgunit>(.*?)</orgunit>.*?</org>}is', $tagcontents, $matches)){
+    if (preg_match('{<org>.*?<orgunit>(.*?)</orgunit>.*?</org>}is', $tagcontents, $matches)) {
         $group->category = trim($matches[1]);
     }
 
     $recstatus = ($this->get_recstatus($tagcontents, 'group'));
     //echo "<p>get_recstatus for this group returned $recstatus</p>";
 
-    if(!(strlen($group->coursecode)>0)){
+    if (!(strlen($group->coursecode)>0)) {
         $this->log_line('Error at line '.$line.': Unable to find course code in \'group\' element.');
-    }else{
+    } else {
         // First, truncate the course code if desired
-        if(intval($truncatecoursecodes)>0){
+        if (intval($truncatecoursecodes)>0) {
             $group->coursecode = ($truncatecoursecodes > 0)
                      ? substr($group->coursecode, 0, intval($truncatecoursecodes))
                      : $group->coursecode;
@@ -349,66 +349,75 @@ function process_group_tag($tagcontents){
         $group->coursecode = array($group->coursecode);
 
         // Third, check if the course(s) exist
-        foreach($group->coursecode as $coursecode){
+        foreach ($group->coursecode as $coursecode) {
             $coursecode = trim($coursecode);
-            if(!$DB->get_field('course', 'id', array('idnumber'=>$coursecode))) {
-              if(!$createnewcourses) {
-                  $this->log_line("Course $coursecode not found in Moodle's course idnumbers.");
-              } else {
-                // Create the (hidden) course(s) if not found
-                $course = new stdClass();
-                $course->fullname = $group->description;
-                $course->shortname = $coursecode;
-                $course->idnumber = $coursecode;
-                $course->format = 'topics';
-                $course->visible = 0;
-                // Insert default names for teachers/students, from the current language
-                $site = get_site();
+            if (!$DB->get_field('course', 'id', array('idnumber'=>$coursecode))) {
+                if (!$createnewcourses) {
+                    $this->log_line("Course $coursecode not found in Moodle's course idnumbers.");
+                } else {
+                    // Create the (hidden) course(s) if not found
+                    $courseconfig = get_config('moodlecourse'); // Load Moodle Course shell defaults
+                    $course = new stdClass();
+                    $course->fullname = $group->description;
+                    $course->shortname = $coursecode;
+                    $course->idnumber = $coursecode;
+                    $course->format = $courseconfig->format;
+                    $course->visible = $courseconfig->visible;
+                    $course->numsections = $courseconfig->numsections;
+                    $course->hiddensections = $courseconfig->hiddensections;
+                    $course->newsitems = $courseconfig->newsitems;
+                    $course->showgrades = $courseconfig->showgrades;
+                    $course->showreports = $courseconfig->showreports;
+                    $course->maxbytes = $courseconfig->maxbytes;
+                    $course->groupmode = $courseconfig->groupmode;
+                    $course->groupmodeforce = $courseconfig->groupmodeforce;
+                    $course->enablecompletion = $courseconfig->enablecompletion;
+                    $course->completionstartonenrol = $courseconfig->completionstartonenrol;
+                    // Insert default names for teachers/students, from the current language
 
-                // Handle course categorisation (taken from the group.org.orgunit field if present)
-                if(strlen($group->category)>0){
-                    // If the category is defined and exists in Moodle, we want to store it in that one
-                    if($catid = $DB->get_field('course_categories', 'id', array('name'=>$group->category))){
-                        $course->category = $catid;
-                    } elseif($createnewcategories) {
-                        // Else if we're allowed to create new categories, let's create this one
-                        $newcat = new stdClass();
-                        $newcat->name = $group->category;
-                        $newcat->visible = 0;
-                        $catid = $DB->insert_record('course_categories', $newcat);
-                        $course->category = $catid;
-                        $this->log_line("Created new (hidden) category, #$catid: $newcat->name");
-                    }else{
-                        // If not found and not allowed to create, stick with default
-                        $this->log_line('Category '.$group->category.' not found in Moodle database, so using default category instead.');
+                    // Handle course categorisation (taken from the group.org.orgunit field if present)
+                    if (strlen($group->category)>0) {
+                        // If the category is defined and exists in Moodle, we want to store it in that one
+                        if ($catid = $DB->get_field('course_categories', 'id', array('name'=>$group->category))) {
+                            $course->category = $catid;
+                        } else if ($createnewcategories) {
+                            // Else if we're allowed to create new categories, let's create this one
+                            $newcat = new stdClass();
+                            $newcat->name = $group->category;
+                            $newcat->visible = 0;
+                            $catid = $DB->insert_record('course_categories', $newcat);
+                            $course->category = $catid;
+                            $this->log_line("Created new (hidden) category, #$catid: $newcat->name");
+                        } else {
+                            // If not found and not allowed to create, stick with default
+                            $this->log_line('Category '.$group->category.' not found in Moodle database, so using default category instead.');
+                            $course->category = 1;
+                        }
+                    } else {
                         $course->category = 1;
                     }
-                }else{
-                    $course->category = 1;
+                    $course->timecreated = time();
+                    $course->startdate = time();
+                    // Choose a sort order that puts us at the start of the list!
+                    $course->sortorder = 0;
+
+                    $courseid = $DB->insert_record('course', $course);
+
+                    // Setup the blocks
+                    $course = $DB->get_record('course', array('id' => $courseid));
+                    blocks_add_default_course_blocks($course);
+
+                    $section = new stdClass();
+                    $section->course = $course->id;   // Create a default section.
+                    $section->section = 0;
+                    $section->summaryformat = FORMAT_HTML;
+                    $section->id = $DB->insert_record("course_sections", $section);
+
+                    add_to_log(SITEID, "course", "new", "view.php?id=$course->id", "$course->fullname (ID $course->id)");
+
+                    $this->log_line("Created course $coursecode in Moodle (Moodle ID is $course->id)");
                 }
-                $course->timecreated = time();
-                $course->startdate = time();
-                $course->numsections = 1;
-                // Choose a sort order that puts us at the start of the list!
-                $course->sortorder = 0;
-
-                $courseid = $DB->insert_record('course', $course);
-
-                // Setup the blocks
-                $course = $DB->get_record('course', array('id' => $courseid));
-                blocks_add_default_course_blocks($course);
-
-                $section = new stdClass();
-                $section->course = $course->id;   // Create a default section.
-                $section->section = 0;
-                $section->summaryformat = FORMAT_HTML;
-                $section->id = $DB->insert_record("course_sections", $section);
-
-                add_to_log(SITEID, "course", "new", "view.php?id=$course->id", "$course->fullname (ID $course->id)");
-
-                $this->log_line("Created course $coursecode in Moodle (Moodle ID is $course->id)");
-              }
-            }elseif($recstatus==3 && ($courseid = $DB->get_field('course', 'id', array('idnumber'=>$coursecode)))){
+            } else if ($recstatus==3 && ($courseid = $DB->get_field('course', 'id', array('idnumber'=>$coursecode)))) {
                 // If course does exist, but recstatus==3 (delete), then set the course as hidden
                 $DB->set_field('course', 'visible', '0', array('id'=>$courseid));
             }
