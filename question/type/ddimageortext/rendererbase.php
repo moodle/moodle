@@ -102,15 +102,17 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
             $dragitemsclass .= ' readonly';
         }
         $dragitems = html_writer::tag('div', $dragimagehomes, array('class'=> $dragitemsclass));
-        $dropzones = html_writer::empty_tag('div', array('class'=>'dropzones'));
-        $output .= html_writer::tag('div', $droparea.$dragitems.$dropzones,
-                                                                        array('class'=>'ddarea'));
+        $dropzones = html_writer::tag('div', '', array('class'=>'dropzones'));
+
+        $hiddens = '';
         foreach ($question->places as $placeno => $place) {
             $varname = $question->field($placeno);
             list($fieldname, $html) = $this->hidden_field_for_qt_var($qa, $varname);
-            $output .= $html;
+            $hiddens .= $html;
             $question->places[$placeno]->fieldname = $fieldname;
         }
+        $output .= html_writer::tag('div',
+                $droparea . $dragitems . $dropzones . $hiddens, array('class'=>'ddarea'));
         $topnode = 'div#q'.$qa->get_slot().' div.ddarea';
         $params = array('drops' => $question->places,
                         'topnode' => $topnode,
