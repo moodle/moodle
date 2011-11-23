@@ -478,7 +478,7 @@ class filterobject {
  * @return string the human-readable name for this filter.
  */
 function filter_get_name($filter) {
-    // TODO: should we be using pluginname here instead?
+    // TODO: should we be using pluginname here instead? , see MDL-29998
     list($type, $filter) = explode('/', $filter);
     switch ($type) {
         case 'filter':
