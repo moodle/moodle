@@ -133,9 +133,6 @@ $CFG->dirroot              = dirname(dirname(dirname(__FILE__)));
 $CFG->libdir               = "$CFG->dirroot/lib";
 $CFG->wwwroot              = "http://localhost";
 $CFG->httpswwwroot         = $CFG->wwwroot;
-$CFG->dataroot             = str_replace('\\', '/', dirname(dirname(dirname(dirname(__FILE__)))).'/moodledata');
-$CFG->tempdir              = $CFG->dataroot.'/temp';
-$CFG->cachedir             = $CFG->dataroot.'/temp';
 $CFG->docroot              = 'http://docs.moodle.org';
 $CFG->running_installer    = true;
 $CFG->early_install_lang   = true;
@@ -186,7 +183,7 @@ list($options, $unrecognized) = cli_get_params(
         'chmod'             => '2777',
         'lang'              => $CFG->lang,
         'wwwroot'           => '',
-        'dataroot'          => $CFG->dataroot,
+        'dataroot'          => str_replace('\\', '/', dirname(dirname(dirname(dirname(__FILE__)))).'/moodledata'),
         'dbtype'            => $defaultdb,
         'dbhost'            => 'localhost',
         'dbname'            => 'moodle',
@@ -330,9 +327,12 @@ $CFG->httpswwwroot  = $CFG->wwwroot;
 
 
 //We need dataroot before lang download
-if (!empty($options['dataroot'])) {
-    $CFG->dataroot = $options['dataroot'];
+$dataroot = clean_param($options['dataroot'], PARAM_PATH);
+if ($dataroot !== $options['dataroot']) {
+    $a = (object)array('option' => 'dataroot', 'value' => $options['dataroot']);
+    cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
 }
+$CFG->dataroot = $dataroot;
 if ($interactive) {
     cli_separator();
     $i=0;
@@ -380,6 +380,8 @@ if ($interactive) {
         cli_error(get_string('pathserrcreatedataroot', 'install', $a));
     }
 }
+$CFG->tempdir  = $CFG->dataroot.'/temp';
+$CFG->cachedir = $CFG->dataroot.'/cache';
 
 // download required lang packs
 if ($CFG->lang !== 'en') {
