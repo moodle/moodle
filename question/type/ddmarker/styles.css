@@ -51,7 +51,7 @@ form.mform fieldset#previewareaheader div.draghome, form.mform fieldset#previewa
     *font:x-small; /* for IE in quirks mode */
 }
 .que.ddmarker div.dragitems span.markertext,
-.que.ddmarker div.dropzones span.markertext,
+.que.ddmarker div.markertexts span.markertext,
 form.mform fieldset#previewareaheader div.markertexts span.markertext {
     margin: 5px;
     z-index: 3;
@@ -69,7 +69,7 @@ form.mform fieldset#previewareaheader div.markertexts span.markertext {
     -khtml-border-radius: 10px;
     border-radius: 10px;
 }
-.que.ddmarker div.dropzones span.markertext {
+.que.ddmarker div.markertexts span.markertext {
     z-index: 2;
     background-color: yellow;
     border-style : solid;
