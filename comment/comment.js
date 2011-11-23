@@ -58,6 +58,7 @@ M.core_comment = {
                         return false;
                     }, this);
                 }
+                scope.toggle_textarea(false);
                 CommentHelper.confirmoverlay = new Y.Overlay({
 bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-'+this.client_id+'">'+M.str.moodle.yes+'</a> <a href="#" id="canceldelete-'+this.client_id+'">'+M.str.moodle.no+'</a></div>',
                                         visible: false
@@ -79,6 +80,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                             var cid = scope.client_id;
                             var ta = Y.one('#dlg-content-'+cid);
                             ta.set('value', '');
+                            scope.toggle_textarea(false);
                             var container = Y.one('#comment-list-'+cid);
                             var result = scope.render([obj], true);
                             var newcomment = Y.Node.create(result.html);
