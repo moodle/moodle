@@ -124,7 +124,6 @@ class qtype_shortanswer extends question_type {
 
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
-        $question->usecase = $questiondata->options->usecase;
         $this->initialise_question_answers($question, $questiondata);
     }
 
