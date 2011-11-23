@@ -1002,7 +1002,7 @@ class file_storage {
         }
 
         if (!isset($file_record['filename'])) {
-            $file_record['filename'] == $file->get_filename();
+            $file_record['filename'] = $file->get_filename();
         }
 
         if (!isset($file_record['mimetype'])) {
