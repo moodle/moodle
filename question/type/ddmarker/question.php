@@ -358,7 +358,7 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
                 $goodhits[] = "{".$place->summarise()." -> ". $choice->summarise(). "}";
             }
         }
-        if (count($goodhits)) {
+        if (count($goodhits) == 0) {
             return null;
         }
         return implode(', ', $goodhits);
