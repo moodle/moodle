@@ -57,7 +57,7 @@ class core_enrol_external extends external_api {
      * @return array of courses
      */
     public static function get_users_courses($userid) {
-        global $USER;
+        global $USER, $DB;
 
         // Do basic automatic PARAM checks on incoming data, using params description
         // If any problems are found then exceptions are thrown with helpful error messages
@@ -74,12 +74,17 @@ class core_enrol_external extends external_api {
                 // current user can not access this course, sorry we can not disclose who is enrolled in this course!
                 continue;
             }
+
             if ($userid != $USER->id and !has_capability('moodle/course:viewparticipants', $context)) {
                 // we need capability to view participants
                 continue;
             }
 
-            $result[] = array('id'=>$course->id, 'shortname'=>$course->shortname, 'fullname'=>$course->fullname, 'idnumber'=>$course->idnumber,'visible'=>$course->visible);
+            list($enrolledsqlselect, $enrolledparams) = get_enrolled_sql($context);
+            $enrolledsql = "SELECT COUNT(*) FROM ($enrolledsqlselect) AS enrolleduserids";
+            $enrolledusercount = $DB->count_records_sql($enrolledsql, $enrolledparams);
+
+            $result[] = array('id'=>$course->id, 'shortname'=>$course->shortname, 'fullname'=>$course->fullname, 'idnumber'=>$course->idnumber,'visible'=>$course->visible, 'enrolledusercount'=>$enrolledusercount);
         }
 
         return $result;
@@ -96,6 +101,7 @@ class core_enrol_external extends external_api {
                     'id'        => new external_value(PARAM_INT, 'id of course'),
                     'shortname' => new external_value(PARAM_RAW, 'short name of course'),
                     'fullname'  => new external_value(PARAM_RAW, 'long name of course'),
+                    'enrolledusercount' => new external_value(PARAM_INT, 'Number of enrolled users in this course'),
                     'idnumber'  => new external_value(PARAM_RAW, 'id number of course'),
                     'visible'   => new external_value(PARAM_INT, '1 means visible, 0 means hidden course'),
                 )
@@ -145,6 +151,7 @@ class core_enrol_external extends external_api {
         $withcapability = '';
         $groupid        = 0;
         $onlyactive     = false;
+        $userfields     = array();
         foreach ($options as $option) {
             switch ($option['name']) {
             case 'withcapability':
@@ -155,6 +162,12 @@ class core_enrol_external extends external_api {
                 break;
             case 'onlyactive':
                 $onlyactive = !empty($option['value']);
+                break;
+            case 'userfields':
+                $thefields = explode(',', $option['value']);
+                foreach ($thefields as $f) {
+                    $userfields[] = clean_param($f, PARAM_ALPHANUMEXT);
+                }
                 break;
             }
         }
@@ -208,7 +221,7 @@ class core_enrol_external extends external_api {
                 continue;
             }
             context_instance_preload($user);
-            if ($userdetails = user_get_user_details($user, $course)) {
+            if ($userdetails = user_get_user_details($user, $course, $userfields)) {
                 $users[] = $userdetails;
             }
         }
@@ -249,8 +262,8 @@ class core_enrol_external extends external_api {
                     'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
                     'url'         => new external_value(PARAM_URL, 'URL of the user', VALUE_OPTIONAL),
                     'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
-                    'profileimageurlsmall' => new external_value(PARAM_URL, 'User image profile URL - small version'),
-                    'profileimageurl' => new external_value(PARAM_URL, 'User image profile URL - big version'),
+                    'profileimageurlsmall' => new external_value(PARAM_URL, 'User image profile URL - small version', VALUE_OPTIONAL),
+                    'profileimageurl' => new external_value(PARAM_URL, 'User image profile URL - big version', VALUE_OPTIONAL),
                     'customfields' => new external_multiple_structure(
                         new external_single_structure(
                             array(
