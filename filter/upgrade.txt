@@ -1,0 +1,11 @@
+This file describes API changes in core filter API and plugins,
+information provided here is intended especially for developers.
+
+=== 2.2 ===
+
+* legacy filters and legacy locations have been deprecated, so any
+  old filter should be updated to use the new moodle_text_filter,
+  and any filter bundled under mod/xxxx directories be moved to
+  /filter/xxxx (MDL-29995). They will stop working completely in
+  Moodle 2.3 (MDL-29996). See the glossary or data filters for
+  examples of legacy module filters and locations already updated.
