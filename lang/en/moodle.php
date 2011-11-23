@@ -530,6 +530,7 @@ $string['emaildisable'] = 'This email address is disabled';
 $string['emaildisableclick'] = 'Click here to disable all email from being sent to this address';
 $string['emaildisplay'] = 'Email display';
 $string['emaildisplaycourse'] = 'Allow only other course members to see my email address';
+$string['emaildisplayhidden'] = 'Email hidden';
 $string['emaildisplayno'] = 'Hide my email address from everyone';
 $string['emaildisplayyes'] = 'Allow everyone to see my email address';
 $string['emailenable'] = 'This email address is enabled';

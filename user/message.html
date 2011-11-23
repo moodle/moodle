@@ -34,7 +34,13 @@
 <?php
     if (count($SESSION->emailto[$id])) {
         foreach ($SESSION->emailto[$id] as $user) {
-            echo '<tr><td>'.fullname($user,true).'</td><td>'.$user->email.'</td><td>';
+            echo '<tr><td>'.fullname($user,true).'</td>';
+            // Check to see if we should be showing the email address.
+            if ($user->maildisplay == 0) { // 0 = don't display my email to anyone.
+                echo '<td>'. get_string('emaildisplayhidden') .'</td><td>';
+            } else {
+                echo '<td>'.$user->email.'</td><td>';
+            }
             if (empty($user->email)) {
                 $error = get_string('emailempty');
             }
