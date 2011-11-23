@@ -1619,7 +1619,7 @@ abstract class repository {
                         $pass = true;
                     } else {
                         foreach ($extensions as $ext) {
-                            if (preg_match('#'.$ext.'$#', $value['title'])) {
+                            if (preg_match('#'.$ext.'$#i', $value['title'])) {
                                 $pass = true;
                             }
                         }
