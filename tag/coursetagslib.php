@@ -414,8 +414,8 @@ function coursetag_get_tagged_courses($tagid) {
  * Course tagging function used only during the deletion of a
  * course (called by lib/moodlelib.php) to clean up associated tags
  *
- * @param $courseid
- * @param $showfeedback
+ * @param int $courseid
+ * @param bool $showfeedback
  */
 function coursetag_delete_course_tags($courseid, $showfeedback=false) {
 
@@ -428,12 +428,15 @@ function coursetag_delete_course_tags($courseid, $showfeedback=false) {
             // delete tag if there are no other tag_instance entries now
             if (!($DB->record_exists('tag_instance', array('tagid'=>$tag->tagid)))) {
                 $DB->delete_records('tag', array('id'=>$tag->tagid));
+                // Delete files
+                $fs = get_file_storage();
+                $fs->delete_area_files(get_system_context()->id, 'tag', 'description', $tag->tagid);
             }
         }
     }
 
     if ($showfeedback) {
-        echo $OUTPUT->notification(get_string('deletedcoursetags', 'tag'));
+        echo $OUTPUT->notification(get_string('deletedcoursetags', 'tag'), 'notifysuccess');
     }
 }
 

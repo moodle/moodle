@@ -316,7 +316,7 @@ function groups_delete_group($grouporid) {
 
 /**
  * Delete grouping
- * @param int $groupingid
+ * @param int $groupingorid
  * @return bool success
  */
 function groups_delete_grouping($groupingorid) {
@@ -389,7 +389,7 @@ function groups_delete_group_members($courseid, $userid=0, $showfeedback=false) 
     events_trigger('groups_members_removed', $eventdata);
 
     if ($showfeedback) {
-        echo $OUTPUT->notification(get_string('deleted').' groups_members');
+        echo $OUTPUT->notification(get_string('deleted').' - '.get_string('groupmembers', 'group'), 'notifysuccess');
     }
 
     return true;
@@ -407,15 +407,10 @@ function groups_delete_groupings_groups($courseid, $showfeedback=false) {
     $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = ?";
     $DB->delete_records_select('groupings_groups', "groupid IN ($groupssql)", array($courseid));
 
-    // Delete all files associated with groupings for this course
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
-
     //trigger groups events
     events_trigger('groups_groupings_groups_removed', $courseid);
 
-    if ($showfeedback) {
-        echo $OUTPUT->notification(get_string('deleted').' groupings_groups');
-    }
+    // no need to show any feedback here - we delete usually first groupings and then groups
 
     return true;
 }
@@ -449,11 +444,11 @@ function groups_delete_groups($courseid, $showfeedback=false) {
 
     $DB->delete_records('groups', array('courseid'=>$courseid));
 
-    //trigger groups events
+    // trigger groups events
     events_trigger('groups_groups_deleted', $courseid);
 
     if ($showfeedback) {
-        echo $OUTPUT->notification(get_string('deleted').' groups');
+        echo $OUTPUT->notification(get_string('deleted').' - '.get_string('groups', 'group'), 'notifysuccess');
     }
 
     return true;
@@ -467,9 +462,6 @@ function groups_delete_groups($courseid, $showfeedback=false) {
  */
 function groups_delete_groupings($courseid, $showfeedback=false) {
     global $DB, $OUTPUT;
-
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    $fs = get_file_storage();
 
     // delete any uses of groupings
     $sql = "DELETE FROM {groupings_groups}
@@ -488,11 +480,11 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
 
     $DB->delete_records('groupings', array('courseid'=>$courseid));
 
-    //trigger groups events
+    // trigger groups events
     events_trigger('groups_groupings_deleted', $courseid);
 
     if ($showfeedback) {
-        echo $OUTPUT->notification(get_string('deleted').' groupings');
+        echo $OUTPUT->notification(get_string('deleted').' - '.get_string('groupings', 'group'), 'notifysuccess');
     }
 
     return true;
