@@ -43,6 +43,9 @@ class cc_resource extends entities {
     }
 
     private function create_node_course_modules_mod_resource ($sheet_mod_resource, $instance) {
+        global $CFG;
+
+        require_once($CFG->libdir.'/validateurlsyntax.php');
 
         $link = '';
         $mod_alltext = '';
@@ -77,9 +80,19 @@ class cc_resource extends entities {
 
                 if (!empty($resource)) {
                     $xpath = cc2moodle::newx_path($resource, cc2moodle::getresourcens());
-                    $resource = $xpath->query('/wl:webLink/wl:url/@href');
+                    $resource = $xpath->query('//url/@href');
                     if ($resource->length > 0) {
-                        $link = $resource->item(0)->nodeValue;
+                        $rawlink = $resource->item(0)->nodeValue;
+                        if (!validateUrlSyntax($rawlink, 's+')) {
+                            $changed = rawurldecode($rawlink);
+                            if (validateUrlSyntax($changed, 's+')) {
+                                $link = $changed;
+                            } else {
+                                $link = 'http://invalidurldetected/';
+                            }
+                        } else {
+                            $link = $rawlink;
+                        }
                     }
                 }
             }
@@ -98,7 +111,7 @@ class cc_resource extends entities {
         $mod_options   = 'objectframe';
         $mod_reference = $link;
         //detected if we are dealing with html file
-        if (!empty($link) && ($instance['common_cartriedge_type'] == cc112moodle::CC_TYPE_WEBCONTENT)) {
+        if (!empty($link) && ($instance['common_cartriedge_type'] == cc2moodle::CC_TYPE_WEBCONTENT)) {
             $ext = strtolower(pathinfo($link, PATHINFO_EXTENSION));
             if (in_array($ext, array('html', 'htm', 'xhtml'))) {
                 $mod_type = 'html';
