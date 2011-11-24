@@ -89,6 +89,9 @@ if ($hassiteconfig
                 $defaultuserid = 0;
             }
 
+            $restorersnewrole = $creatornewroles;
+            $restorersnewrole[0] = get_string('none');
+
             $temp->add(new admin_setting_configselect('notloggedinroleid', get_string('notloggedinroleid', 'admin'),
                           get_string('confignotloggedinroleid', 'admin'), $defaultguestid, ($guestroles + $otherroles)));
             $temp->add(new admin_setting_configselect('guestroleid', get_string('guestroleid', 'admin'),
@@ -97,12 +100,15 @@ if ($hassiteconfig
                           get_string('configdefaultuserroleid', 'admin'), $defaultuserid, ($userroles + $otherroles)));
             $temp->add(new admin_setting_configselect('creatornewroleid', get_string('creatornewroleid', 'admin'),
                           get_string('creatornewroleid_help', 'admin'), $defaultteacherid, $creatornewroles));
+            $temp->add(new admin_setting_configselect('restorernewroleid', get_string('restorernewroleid', 'admin'),
+                          get_string('restorernewroleid_help', 'admin'), $defaultteacherid, $restorersnewrole));
 
             // release memory
             unset($otherroles);
             unset($guestroles);
             unset($userroles);
             unset($creatornewroles);
+            unset($restorersnewrole);
         }
 
         $temp->add(new admin_setting_configcheckbox('autologinguests', get_string('autologinguests', 'admin'), get_string('configautologinguests', 'admin'), 0));

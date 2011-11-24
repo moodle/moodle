@@ -74,6 +74,9 @@ class restore_course_task extends restore_task {
             $this->add_step(new restore_enrolments_structure_step('course_enrolments', 'enrolments.xml'));
         }
 
+        // Now make sure the user that is running the restore can actually access the course
+        $this->add_step(new restore_fix_restorer_access_step('fix_restorer_access'));
+
         // Restore course filters (conditionally)
         if ($this->get_setting_value('filters')) {
             $this->add_step(new restore_filters_structure_step('course_filters', 'filters.xml'));
@@ -132,6 +135,26 @@ class restore_course_task extends restore_task {
         $startdate = new restore_course_generic_text_setting('course_startdate', base_setting::IS_INTEGER, $this->get_info()->original_course_startdate);
         $startdate->set_ui(new backup_setting_ui_dateselector($startdate, get_string('setting_course_startdate', 'backup')));
         $this->add_setting($startdate);
+
+        $keep_enrols = new restore_course_generic_setting('keep_roles_and_enrolments', base_setting::IS_BOOLEAN, false);
+        $keep_enrols->set_ui(new backup_setting_ui_select($keep_enrols, $keep_enrols->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
+        $keep_enrols->get_ui()->set_label(get_string('setting_keep_roles_and_enrolments', 'backup'));
+        if ($this->get_target() != backup::TARGET_CURRENT_DELETING and $this->get_target() != backup::TARGET_EXISTING_DELETING) {
+            $keep_enrols->set_value(false);
+            $keep_enrols->set_status(backup_setting::LOCKED_BY_CONFIG);
+            $keep_enrols->set_visibility(backup_setting::HIDDEN);
+        }
+        $this->add_setting($keep_enrols);
+
+        $keep_groups = new restore_course_generic_setting('keep_groups_and_groupings', base_setting::IS_BOOLEAN, false);
+        $keep_groups->set_ui(new backup_setting_ui_select($keep_groups, $keep_groups->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
+        $keep_groups->get_ui()->set_label(get_string('setting_keep_groups_and_groupings', 'backup'));
+        if ($this->get_target() != backup::TARGET_CURRENT_DELETING and $this->get_target() != backup::TARGET_EXISTING_DELETING) {
+            $keep_groups->set_value(false);
+            $keep_groups->set_status(backup_setting::LOCKED_BY_CONFIG);
+            $keep_groups->set_visibility(backup_setting::HIDDEN);
+        }
+        $this->add_setting($keep_groups);
 
         // Define overwrite_conf to decide if course configuration will be restored over existing one
         $overwrite = new restore_course_overwrite_conf_setting('overwrite_conf', base_setting::IS_BOOLEAN, false);

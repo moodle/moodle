@@ -1435,6 +1435,57 @@ class restore_enrolments_structure_step extends restore_structure_step {
 
 
 /**
+ * Make sure the user restoring the course can actually access it.
+ */
+class restore_fix_restorer_access_step extends restore_execution_step {
+    protected function define_execution() {
+        global $CFG, $DB;
+
+        if (!$userid = $this->task->get_userid()) {
+            return;
+        }
+
+        if (empty($CFG->restorernewroleid)) {
+            // Bad luck, no fallback role for restorers specified
+            return;
+        }
+
+        $courseid = $this->get_courseid();
+        $context = context_course::instance($courseid);
+
+        if (is_enrolled($context, $userid, 'moodle/course:update', true) or is_viewing($context, $userid, 'moodle/course:update')) {
+            // Current user may access the course (admin, category manager or restored teacher enrolment usually)
+            return;
+        }
+
+        // Try to add role only - we do not need enrolment if user has moodle/course:view or is already enrolled
+        role_assign($CFG->restorernewroleid, $userid, $context);
+
+        if (is_enrolled($context, $userid, 'moodle/course:update', true) or is_viewing($context, $userid, 'moodle/course:update')) {
+            // Extra role is enough, yay!
+            return;
+        }
+
+        // The last chance is to create manual enrol if it does not exist and and try to enrol the current user,
+        // hopefully admin selected suitable $CFG->restorernewroleid ...
+        if (!enrol_is_enabled('manual')) {
+            return;
+        }
+        if (!$enrol = enrol_get_plugin('manual')) {
+            return;
+        }
+        if (!$DB->record_exists('enrol', array('enrol'=>'manual', 'courseid'=>$courseid))) {
+            $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+            $fields = array('status'=>ENROL_INSTANCE_ENABLED, 'enrolperiod'=>$enrol->get_config('enrolperiod', 0), 'roleid'=>$enrol->get_config('roleid', 0));
+            $enrol->add_instance($course, $fields);
+        }
+
+        enrol_try_internal_enrol($courseid, $userid);
+    }
+}
+
+
+/**
  * This structure steps restores the filters and their configs
  */
 class restore_filters_structure_step extends restore_structure_step {
