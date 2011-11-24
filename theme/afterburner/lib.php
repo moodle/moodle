@@ -2,13 +2,13 @@
 
 function afterburner_process_css($css, $theme) {
 
-	// Set the background image for the logo
-	if (!empty($theme->settings->logo)) {
-		$logo = $theme->settings->logo;
-	} else {
-		$logo = null;
-	}
-	$css = afterburner_set_logo($css, $logo);
+    // Set the background image for the logo
+    if (!empty($theme->settings->logo)) {
+        $logo = $theme->settings->logo;
+    } else {
+        $logo = null;
+    }
+    $css = afterburner_set_logo($css, $logo);
 
     // Set custom CSS
     if (!empty($theme->settings->customcss)) {
@@ -22,17 +22,16 @@ function afterburner_process_css($css, $theme) {
 }
 
 function afterburner_set_logo($css, $logo) {
-	global $OUTPUT;
-	$tag = '[[setting:logo]]';
-	$replacement = $logo;
-	if (is_null($replacement)) {
- 		$replacement = $OUTPUT->pix_url('images/logo','theme');
- 	}
+    global $OUTPUT;
+    $tag = '[[setting:logo]]';
+    $replacement = $logo;
+    if (is_null($replacement)) {
+        $replacement = $OUTPUT->pix_url('images/logo','theme');
+    }
 
-	$css = str_replace($tag, $replacement, $css);
+    $css = str_replace($tag, $replacement, $css);
 
-	return $css;
-
+    return $css;
 }
 
 function afterburner_set_customcss($css, $customcss) {
@@ -42,7 +41,7 @@ function afterburner_set_customcss($css, $customcss) {
         $replacement = '';
     }
 
-	$css = str_replace($tag, $replacement, $css);
+    $css = str_replace($tag, $replacement, $css);
 
-	return $css;
+    return $css;
 }

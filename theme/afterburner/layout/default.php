@@ -111,9 +111,9 @@ echo $OUTPUT->doctype() ?>
 
         <div class="footer-left">
 
-			<?php if ($hasfootnote) { ?>
-				<div id="footnote"><?php echo $PAGE->theme->settings->footnote;?></div>
-			<?php } ?>
+            <?php if ($hasfootnote) { ?>
+                    <div id="footnote"><?php echo $PAGE->theme->settings->footnote;?></div>
+            <?php } ?>
 
             <a href="http://moodle.org" title="Moodle">
                 <img src="<?php echo $OUTPUT->pix_url('footer/moodle-logo','theme')?>" alt="Moodle logo" />
