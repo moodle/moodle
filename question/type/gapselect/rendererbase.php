@@ -104,7 +104,9 @@ abstract class qtype_elements_embedded_in_question_text_renderer
         }
 
         if (!empty($correctanswer)) {
-            return get_string('correctansweris', 'qtype_gapselect', $correctanswer);
+            return get_string('correctansweris', 'qtype_gapselect',
+                    $question->format_text($correctanswer, $question->questiontextformat,
+                            $qa, 'question', 'questiontext', $question->id));
         }
     }
 }

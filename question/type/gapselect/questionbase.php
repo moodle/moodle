@@ -119,8 +119,8 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
         foreach ($this->places as $place => $group) {
             if (array_key_exists($this->field($place), $response) &&
                     $response[$this->field($place)]) {
-                $choices[] = '{' . html_to_text($this->get_selected_choice(
-                        $group, $response[$this->field($place)])->text, 0, false) . '}';
+                $choices[] = '{' . $this->summarise_choice(
+                        $this->get_selected_choice($group, $response[$this->field($place)])) . '}';
                 $allblank = false;
             } else {
                 $choices[] = '{}';
@@ -130,6 +130,15 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
             return null;
         }
         return implode(' ', $choices);
+    }
+
+    /**
+     * Convert a choice to plain text.
+     * @param qtype_gapselect_choice $choice one of the choices for a place.
+     * @return a plain text summary of the choice.
+     */
+    public function summarise_choice($choice) {
+        return $this->html_to_text($choice->text, FORMAT_PLAIN);
     }
 
     public function get_random_guess_score() {

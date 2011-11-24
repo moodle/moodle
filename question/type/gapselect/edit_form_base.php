@@ -215,7 +215,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
     private function validate_slots($questiontext, $choices) {
         $error = 'Please check the Question text: ';
         if (!$questiontext) {
-            return $error . 'The question text is empty!';
+            return get_string('errorquestiontextblank', 'qtype_gapselect');
         }
 
         $matches = array();
@@ -223,32 +223,32 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         $slots = $matches[0];
 
         if (!$slots) {
-            return $error . 'The question text is not in the correct format!';
+            return get_string('errornoslots', 'qtype_gapselect');
         }
 
-        $output = array();
+        $cleanedslots = array();
         foreach ($slots as $slot) {
             // The 2 is for'[[' and 4 is for '[[]]'.
-            $output[] = substr($slot, 2, (strlen($slot)-4));
+            $cleanedslots[] = substr($slot, 2, (strlen($slot)-4));
         }
+        $slots = $cleanedslots;
 
-        $slots = $output;
         $found = false;
         foreach ($slots as $slot) {
             $found = false;
             foreach ($choices as $key => $choice) {
                 if ($slot == $key + 1) {
-                    if (!$choice['answer']) {
-                        return " Please check Choices: The choice <b>$slot</b> empty.";
+                    if ($choice['answer'] === '') {
+                        return get_string('errorblankchoice', 'qtype_gapselect',
+                                html_writer::tag('b', $slot));
                     }
                     $found = true;
                     break;
                 }
             }
             if (!$found) {
-                return $error . '<b>' . $slot . '</b> was not found in Choices! ' .
-                        '(only the choice numbers that exist in choices are allowed ' .
-                        'to be used a place holders!';
+                return get_string('errormissingchoice', 'qtype_gapselect',
+                        html_writer::tag('b', $slot));
             }
         }
         return false;
