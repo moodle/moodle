@@ -197,7 +197,7 @@ if (isset($USER->modattempts[$lesson->id])) {
 }
 
 // Review button back
-if (!$result->correctanswer && !$result->noanswer && !$result->isessayquestion && !$reviewmode) {
+if (!$result->correctanswer && !$result->noanswer && !$result->isessayquestion && !$reviewmode && $lesson->review) {
     $url = $CFG->wwwroot.'/mod/lesson/view.php';
     $content = html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'id', 'value'=>$cm->id));
     $content .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'pageid', 'value'=>$page->id));
