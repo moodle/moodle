@@ -75,7 +75,7 @@
    </xs:documentation>
   </xs:annotation>
   <xs:simpleType>
-   <xs:union memberTypes="xs:language">
+   <xs:union memberTypes="xs:token">
     <xs:simpleType>    
      <xs:restriction base="xs:string">
       <xs:enumeration value=""/>
