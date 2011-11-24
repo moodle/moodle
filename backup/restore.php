@@ -46,7 +46,7 @@ if (!$restore->is_independent()) {
             $restore->execute();
         } catch(Exception $e) {
             $restore->cleanup();
-            throw new moodle_exception((string)$e);
+            throw $e;
         }
     } else {
         $restore->save_controller();
