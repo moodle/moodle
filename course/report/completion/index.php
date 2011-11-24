@@ -337,7 +337,7 @@ if(!$csv) {
 
     // Print criteria group names
     print PHP_EOL.'<tr style="vertical-align: top">';
-    print '<th scope="row" class="rowheader">'.get_string('criteriagroup', 'completion').'</th>';
+    print '<th scope="row" colspan="'.($idnumbers ? 2 : 1).'" class="rowheader">'.get_string('criteriagroup', 'completion').'</th>';
 
     $current_group = false;
     $col_count = 0;
@@ -371,7 +371,7 @@ if(!$csv) {
 
     // Print aggregation methods
     print PHP_EOL.'<tr style="vertical-align: top">';
-    print '<th scope="row" class="rowheader">'.get_string('aggregationmethod', 'completion').'</th>';
+    print '<th scope="row" colspan="'.($idnumbers ? 2: 1).'" class="rowheader">'.get_string('aggregationmethod', 'completion').'</th>';
 
     $current_group = false;
     $col_count = 0;
@@ -430,7 +430,7 @@ if(!$csv) {
     if (COMPLETION_REPORT_COL_TITLES) {
 
         print PHP_EOL.'<tr>';
-        print '<th scope="row" class="rowheader">'.get_string('criteria', 'completion').'</th>';
+        print '<th scope="row" colspan="'.($idnumbers ? 2 : 1).'" class="rowheader">'.get_string('criteria', 'completion').'</th>';
 
         foreach ($criteria as $criterion) {
             // Get criteria details
