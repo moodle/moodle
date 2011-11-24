@@ -103,6 +103,15 @@ if ($id and $assess and $canassess) {
     if (!$asid) {
         $asid = $workshop->add_allocation($example, $USER->id, 0);
     }
+    if ($asid == workshop::ALLOCATION_EXISTS) {
+        // the training assessment of the example was not found but the allocation already
+        // exists. this probably means that the user is the author of the reference assessment.
+        echo $output->header();
+        echo $output->box(get_string('assessmentreferenceconflict', 'workshop'));
+        echo $output->continue_button($workshop->view_url());
+        echo $output->footer();
+        die();
+    }
     redirect($workshop->exassess_url($asid));
 }
 
