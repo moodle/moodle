@@ -803,7 +803,7 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
         } elseif ($item->is_external_item()) {
             $grademax = format_float($item->grademax, $item->get_decimals());
         } else {
-            $grademax = '<input type="text" size="4" id="grademax'.$item->id.'" name="grademax_'.$item->id.'" value="'.format_float($item->grademax, $item->get_decimals()).'" />';
+            $grademax = '<input type="text" size="6" id="grademax'.$item->id.'" name="grademax_'.$item->id.'" value="'.format_float($item->grademax, $item->get_decimals()).'" />';
         }
 
         $itemcell = clone($this->itemcell);
