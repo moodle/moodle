@@ -46,6 +46,14 @@ $workshop = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_
 $workshop = new workshop($workshop, $cm, $course);
 
 $PAGE->set_url($workshop->exsubmission_url($id), array('edit' => $edit));
+$PAGE->set_title($workshop->name);
+$PAGE->set_heading($course->fullname);
+if ($edit) {
+    $PAGE->navbar->add(get_string('exampleediting', 'workshop'));
+} else {
+    $PAGE->navbar->add(get_string('example', 'workshop'));
+}
+$output = $PAGE->get_renderer('mod_workshop');
 
 if ($id) { // example is specified
     $example = $workshop->get_example_by_id($id);
@@ -167,16 +175,7 @@ if ($edit and $canmanage) {
     }
 }
 
-$PAGE->set_title($workshop->name);
-$PAGE->set_heading($course->fullname);
-if ($edit) {
-    $PAGE->navbar->add(get_string('exampleediting', 'workshop'));
-} else {
-    $PAGE->navbar->add(get_string('example', 'workshop'));
-}
-
 // Output starts here
-$output = $PAGE->get_renderer('mod_workshop');
 echo $output->header();
 echo $output->heading(format_string($workshop->name), 2);
 
