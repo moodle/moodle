@@ -36,7 +36,10 @@ require_once($CFG->dirroot . '/question/type/gapselect/questionbase.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddwtos_question extends qtype_gapselect_question_base {
-    // Is actually exactly the same.
+
+    public function summarise_choice($choice) {
+        return $this->html_to_text($choice->text, FORMAT_HTML);
+    }
 }
 
 
@@ -56,6 +59,7 @@ class qtype_ddwtos_choice {
         $this->draggroup = $draggroup;
         $this->isinfinite = $isinfinite;
     }
+
     public function choice_group() {
         return $this->draggroup;
     }
