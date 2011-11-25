@@ -104,7 +104,7 @@ class user_picture implements renderable {
     /**
      * @var array List of mandatory fields in user record here. (do not include TEXT columns because it would break SELECT DISTINCT in MSSQL and ORACLE)
      */
-    protected static $fields = array('id', 'picture', 'firstname', 'lastname', 'imagealt', 'email');
+    protected static $fields = array('id', 'picture', 'firstname', 'lastname', 'imagealt', 'email'); //TODO: add deleted
 
     /**
      * @var object $user A user object with at least fields all columns specified in $fields array constant set.
@@ -300,9 +300,12 @@ class user_picture implements renderable {
 
         // First we need to determine whether the user has uploaded a profile
         // picture of not.
-        $fs = get_file_storage();
-        $context = get_context_instance(CONTEXT_USER, $this->user->id);
-        $hasuploadedfile = ($fs->file_exists($context->id, 'user', 'icon', 0, '/', $filename.'/.png') || $fs->file_exists($context->id, 'user', 'icon', 0, '/', $filename.'/.jpg'));
+        if (!empty($this->user->deleted) or !$context = context_user::instance($this->user->id, IGNORE_MISSING)) {
+            $hasuploadedfile = false;
+        } else {
+            $fs = get_file_storage();
+            $hasuploadedfile = ($fs->file_exists($context->id, 'user', 'icon', 0, '/', $filename.'/.png') || $fs->file_exists($context->id, 'user', 'icon', 0, '/', $filename.'/.jpg'));
+        }
 
         $imageurl = $renderer->pix_url('u/'.$filename);
         if ($hasuploadedfile && $this->user->picture == 1) {
