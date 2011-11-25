@@ -37,6 +37,10 @@ class restore_root_task extends restore_task {
         // Conditionally create the temp table (can exist from prechecks) and delete old stuff
         $this->add_step(new restore_create_and_clean_temp_stuff('create_and_clean_temp_stuff'));
 
+        // Now make sure the user that is running the restore can actually access the course
+        // before executing any other step (potentially performing permission checks)
+        $this->add_step(new restore_fix_restorer_access_step('fix_restorer_access'));
+
         // If we haven't preloaded information, load all the included inforef records to temp_ids table
         $this->add_step(new restore_load_included_inforef_records('load_inforef_records'));
 

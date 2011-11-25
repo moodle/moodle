@@ -74,9 +74,6 @@ class restore_course_task extends restore_task {
             $this->add_step(new restore_enrolments_structure_step('course_enrolments', 'enrolments.xml'));
         }
 
-        // Now make sure the user that is running the restore can actually access the course
-        $this->add_step(new restore_fix_restorer_access_step('fix_restorer_access'));
-
         // Restore course filters (conditionally)
         if ($this->get_setting_value('filters')) {
             $this->add_step(new restore_filters_structure_step('course_filters', 'filters.xml'));
