@@ -374,4 +374,54 @@ class workshop_internal_api_test extends UnitTestCase {
         // verify
         $this->assertEqual($lcm, 15);
     }
+
+    public function test_prepare_example_assessment() {
+        // fixture setup
+        $fakerawrecord = (object)array(
+            'id'                => 42,
+            'submissionid'      => 56,
+            'weight'            => 0,
+            'timecreated'       => time() - 10,
+            'timemodified'      => time() - 5,
+            'grade'             => null,
+            'gradinggrade'      => null,
+            'gradinggradeover'  => null,
+        );
+        // excersise SUT
+        $a = $this->workshop->prepare_example_assessment($fakerawrecord);
+        // verify
+        $this->assertTrue($a instanceof workshop_example_assessment);
+        $this->assertTrue($a->url instanceof moodle_url);
+
+        // modify setup
+        $fakerawrecord->weight = 1;
+        $this->expectException('coding_exception');
+        // excersise SUT
+        $a = $this->workshop->prepare_example_assessment($fakerawrecord);
+    }
+
+    public function test_prepare_example_reference_assessment() {
+        global $USER;
+        // fixture setup
+        $fakerawrecord = (object)array(
+            'id'                => 38,
+            'submissionid'      => 56,
+            'weight'            => 1,
+            'timecreated'       => time() - 100,
+            'timemodified'      => time() - 50,
+            'grade'             => 0.75000,
+            'gradinggrade'      => 1.00000,
+            'gradinggradeover'  => null,
+        );
+        // excersise SUT
+        $a = $this->workshop->prepare_example_reference_assessment($fakerawrecord);
+        // verify
+        $this->assertTrue($a instanceof workshop_example_reference_assessment);
+
+        // modify setup
+        $fakerawrecord->weight = 0;
+        $this->expectException('coding_exception');
+        // excersise SUT
+        $a = $this->workshop->prepare_example_reference_assessment($fakerawrecord);
+    }
 }
