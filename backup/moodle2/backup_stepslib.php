@@ -1114,14 +1114,12 @@ class backup_users_structure_step extends backup_structure_step {
         $user->set_source_sql('SELECT u.*, c.id AS contextid, m.wwwroot AS mnethosturl
                                  FROM {user} u
                                  JOIN {backup_ids_temp} bi ON bi.itemid = u.id
-                                 JOIN {context} c ON c.instanceid = u.id
+                            LEFT JOIN {context} c ON c.instanceid = u.id AND c.contextlevel = ' . CONTEXT_USER . '
                             LEFT JOIN {mnet_host} m ON m.id = u.mnethostid
                                 WHERE bi.backupid = ?
-                                  AND bi.itemname = ?
-                                  AND c.contextlevel = ?', array(
+                                  AND bi.itemname = ?', array(
                                       backup_helper::is_sqlparam($this->get_backupid()),
-                                      backup_helper::is_sqlparam('userfinal'),
-                                      backup_helper::is_sqlparam(CONTEXT_USER)));
+                                      backup_helper::is_sqlparam('userfinal')));
 
         // All the rest on information is only added if we arent
         // in an anonymized backup
@@ -1772,12 +1770,15 @@ class backup_annotate_all_user_files extends backup_execution_step {
             'backupid' => $this->get_backupid(), 'itemname' => 'userfinal'));
         foreach ($rs as $record) {
             $userid = $record->itemid;
-            $userctxid = get_context_instance(CONTEXT_USER, $userid)->id;
+            $userctx = get_context_instance(CONTEXT_USER, $userid);
+            if (!$userctx) {
+                continue; // User has not context, sure it's a deleted user, so cannot have files
+            }
             // Proceed with every user filearea
             foreach ($fileareas as $filearea) {
                 // We don't need to specify itemid ($userid - 5th param) as far as by
                 // context we can get all the associated files. See MDL-22092
-                backup_structure_dbops::annotate_files($this->get_backupid(), $userctxid, 'user', $filearea, null);
+                backup_structure_dbops::annotate_files($this->get_backupid(), $userctx->id, 'user', $filearea, null);
             }
         }
         $rs->close();
