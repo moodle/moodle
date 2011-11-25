@@ -57,6 +57,15 @@ if (!empty($CFG->forceloginforprofiles)) {
 
 $userid = $userid ? $userid : $USER->id;       // Owner of the page
 $user = $DB->get_record('user', array('id' => $userid));
+
+if ($user->deleted) {
+    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('userdeleted'));
+    echo $OUTPUT->footer();
+    die;
+}
+
 $currentuser = ($user->id == $USER->id);
 $context = $usercontext = get_context_instance(CONTEXT_USER, $userid, MUST_EXIST);
 
