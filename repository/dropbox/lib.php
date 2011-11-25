@@ -96,7 +96,7 @@ class repository_dropbox extends repository {
             $ret['login'] = array($popup_btn);
             return $ret;
         } else {
-            echo '<a target="_blank" href="'.$this->flickr->auth().'">'.get_string('login', 'repository').'</a>';
+            echo '<a target="_blank" href="'.$url.'">'.get_string('login', 'repository').'</a>';
         }
     }
 
