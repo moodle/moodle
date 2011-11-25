@@ -45,7 +45,7 @@ $string['dirroot'] = 'Moodle kataloqu';
 $string['environmenthead'] = 'Mühitin yoxlanması...';
 $string['environmentsub2'] = 'Moodlun hər versiyasında PHP-nin versiyasına minimal tələblər və PHP-nin mütləq olan genişlənmələrinin dəsti var.
 Mühitin tam yoxlanılması hər quraşdırmadan və yenilənmədən əvvəl yerinə yetirilir.
-Xahiş edirik ki, əgər yeni versiyanın necə qurulmasını və PHP genişlənməsinin əlavə edilməsini bilmirsinizsə administratora müraciət edin. ';
+Xahiş edirik ki, əgər yeni versiyanın necə qurulmasını və PHP genişlənməsinin əlavə edilməsini bilmirsinizsə administratora müraciət edin.';
 $string['errorsinenvironment'] = 'Mühitin yoxlnılması yerinə yetirilmədi!';
 $string['installation'] = 'Quraşdırma';
 $string['langdownloaderror'] = 'Təəssüf ki,  "{$a}" dilini qurmaq mümkün olmadı. Quraşdırma prosesi ingilis dilində davam edəcək.';

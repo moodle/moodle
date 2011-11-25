@@ -84,5 +84,7 @@ $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Sa näed seda lehte, sest oled edukalt installeerinud ja käivitanud <strong>{$a->packname} {$a->packversion}</strong> paketi Sinu arvutis. Õnnitleme!';
 $string['welcomep30'] = 'See <strong>{$a->installername}</strong> väljalase rakendusi loomaks keskkonda, millel <strong>Moodle</strong> hakkab will operate, namely:';
 $string['welcomep40'] = 'Pakett sisaldab ka <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
+$string['welcomep50'] = 'Kasutamaks kõiki selle rakendusi selles paketis on kaetud nende vastavad litsentsid. Täielik <strong>{$a->installername}</strong> pakett on <a href="http://www.opensource.org/docs/definition_plain.html">avatud lähtekoodil</a> ja jaotatud <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> litsentsi alusel.';
+$string['welcomep60'] = 'Järgnevatel lehtedel juhitakse sind läbi mõnede lihtsate sammude seadistamaks ja seadmaks üles <strong>Moodle</strong> oma arvutis. Sa võid nõustuda vaikeväärtustega või fakultatiivselt täiendada vastavalt oma vajadustele.';
 $string['welcomep70'] = 'Vajuta "Järgmine" nuppu all jätkamaks <strong>Moodle</strong> paigaldamisega.';
 $string['wwwroot'] = 'Veebiaadress';

@@ -31,4 +31,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['environmentrequireinstall'] = 'turi būti įdiegta ir įgalinta';
-$string['environmentrequireversion'] = 'reikalinga \\$a-needed, o Jūs turite \\$a-current';
+$string['environmentrequireversion'] = 'reikalinga $a-needed, o Jūs turite $a-current';
