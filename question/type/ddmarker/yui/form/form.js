@@ -16,6 +16,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                         '<div class="markertexts"></div>'+
                         '<div class="droparea"></div>'+
                         '<div class="dropzones"></div>'+
+                        '<div class="grid"></div>'+
                     '</div>');
             this.doc = this.doc_structure(this);
             this.stop_selector_events();
@@ -54,7 +55,6 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             e.target.addClass('constrained');
             e.target.detach('load', this.constrain_image_size);
         },
-        
 
 
         update_drop_zones : function () {
@@ -77,6 +77,10 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
                 this.draw_drop_zone(dropzoneno, markertext,
                                     shape, coords, colourfordropzone, false);
             }
+            Y.one('div.ddarea .grid')
+                .setXY(this.doc.bg_img().getXY())
+                .setStyle('width', this.doc.bg_img().get('width'))
+                .setStyle('height', this.doc.bg_img().get('height'));
         },
 
         get_coords : function (dropzoneno) {

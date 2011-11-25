@@ -111,3 +111,7 @@ form.mform fieldset#previewareaheader div.markertexts span.markertext {
     /* For IE 5.5 - 7 */
     filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000');
 }
+#page-question-type-ddmarker .ddarea .grid {
+    position: absolute;
+    background: url([[pix:qtype_ddmarker|grid]]) repeat scroll 0 0;
+}
