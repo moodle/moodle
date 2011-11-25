@@ -53,15 +53,6 @@ class dropbox extends oauth_helper {
     }
 
     /**
-     * Get user account info
-     */
-    public function get_account_info($token, $secret) {
-        $url = $this->dropbox_api.'/account/info';
-        $content = $this->get($url, array(), $token, $secret);
-        return $content;
-    }
-
-    /**
      * Download a file
      */
     public function get_file($filepath, $saveas) {
