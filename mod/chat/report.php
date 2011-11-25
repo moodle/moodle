@@ -239,7 +239,10 @@
                     );
                     $button = new portfolio_add_button();
                     $button->set_callback_options('chat_portfolio_caller', $buttonoptions, '/mod/chat/locallib.php');
-                    $button->render(PORTFOLIO_ADD_TEXT_LINK);
+                    $portfoliobutton = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
+                    if (!empty($portfoliobutton)) {
+                        echo '<br />' . $portfoliobutton;
+                    }
                 }
                 if (has_capability('mod/chat:deletelog', $context)) {
                     echo "<br /><a href=\"report.php?id=$cm->id&amp;start=$sessionstart&amp;end=$sessionend&amp;deletesession=1\">$strdeletesession</a>";
