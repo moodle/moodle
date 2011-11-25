@@ -30,5 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['environmentrequireinstall'] = 'ត្រូវ​តែ​បាន​ដំឡើង និង​អនុញ្ញាត';
-$string['environmentrequireversion'] = 'ត្រូវការ​កំណែ {$a->needed} ហើយ​អ្នក​កំពុង​រត់ {$a->current}';
+$string['environmentrequireinstall'] = 'ត្រូវតែបានដំឡើង និងអនុញ្ញាត';
+$string['environmentrequireversion'] = 'ត្រូវការកំណែ {$a->needed} ហើយអ្នកកំពុងរត់ {$a->current}';
