@@ -18,6 +18,7 @@
     $move        = optional_param('move', 0, PARAM_INT);
     $marker      = optional_param('marker',-1 , PARAM_INT);
     $switchrole  = optional_param('switchrole',-1, PARAM_INT);
+    $modchooser  = optional_param('modchooser', -1, PARAM_BOOL);
 
     $params = array();
     if (!empty($name)) {
@@ -128,6 +129,11 @@
             } else {
                 redirect($PAGE->url);
             }
+        }
+        if (($modchooser == 1) && confirm_sesskey()) {
+            set_user_preference('usemodchooser', $modchooser);
+        } else if (($modchooser == 0) && confirm_sesskey()) {
+            set_user_preference('usemodchooser', $modchooser);
         }
 
         if (has_capability('moodle/course:update', $context)) {
@@ -241,7 +247,11 @@
 
     echo html_writer::end_tag('div');
 
-    // Include the command toolbox YUI module
-    include_course_ajax($course, $modnamesused, $modnames);
+    // Include course AJAX
+    if (include_course_ajax($course, $modnamesused)) {
+        // Add the module chooser
+        $renderer = $PAGE->get_renderer('core', 'course');
+        echo $renderer->course_modchooser(get_module_metadata($course, $modnames), $course);
+    }
 
     echo $OUTPUT->footer();

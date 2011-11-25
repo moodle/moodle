@@ -1827,10 +1827,10 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     $straddactivity = get_string('addactivity');
     $straddresource = get_string('addresource');
 
-    $output  = '<div class="section_add_menus">';
+    $output = html_writer::start_tag('div', array('class' => 'section_add_menus', 'id' => 'add_menus-section-' . $section));
 
     if (!$vertical) {
-        $output .= '<div class="horizontal">';
+        $output .= html_writer::start_tag('div', array('class' => 'horizontal'));
     }
 
     if (!empty($resources)) {
@@ -1846,10 +1846,31 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     }
 
     if (!$vertical) {
-        $output .= '</div>';
+        $output .= html_writer::end_tag('div');
     }
 
-    $output .= '</div>';
+    $output .= html_writer::end_tag('div');
+
+    if (course_ajax_enabled($course)) {
+        $straddeither = get_string('addresourceoractivity');
+        // The module chooser link
+        $modchooser = '<div class="sectionaddmodule">';
+        $modchooser .= '<div class="section_add_menus"><a class="sectionmodchooserlink" href="#">';
+        $modchooser .= '<img alt="'.$straddeither.'" src="'.$OUTPUT->pix_url('t/add').'" class="activityicon">&nbsp;';
+        $modchooser .= '<span class="instancename">'.$straddeither.'</span>';
+        $modchooser .= '</a></div></div>';
+
+        // Wrap the normal output in a noscript div
+        $usemodchooser = get_user_preferences('usemodchooser', 1);
+        if ($usemodchooser) {
+            $output = html_writer::tag('div', $output, array('class' => 'hiddenifjs addresourcedropdown'));
+            $modchooser = html_writer::tag('div', $modchooser, array('class' => 'visibleifjs addresourcemodchooser'));
+        } else {
+            $output = html_writer::tag('div', $output, array('class' => 'visibleifjs addresourcedropdown'));
+            $modchooser = html_writer::tag('div', $modchooser, array('class' => 'hiddenifjs addresourcemodchooser'));
+        }
+        $output = $modchooser . $output;
+    }
 
     if ($return) {
         return $output;
@@ -1936,8 +1957,14 @@ function get_module_metadata($course, $modnames) {
             $module->name = $modname;
             $module->link = $urlbase . $modname;
             $module->icon = $OUTPUT->pix_icon('icon', '', $module->name, array('class' => 'icon'));
-            if (get_string_manager()->string_exists('modulename_help', $modname)) {
+            $sm = get_string_manager();
+            if ($sm->string_exists('modulename_help', $modname)) {
                 $module->help = get_string('modulename_help', $modname);
+                if ($sm->string_exists('modulename_link', $modname)) {  // Link to further info in Moodle docs
+                    $link = get_string('modulename_link', $modname);
+                    $linktext = get_string('morehelp');
+                    $module->help .= html_writer::tag('div', $OUTPUT->doc_link($link, $linktext), array('class' => 'helpdoclink'));
+                }
             }
             $module->archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
             $modlist[$course->id][$modname] = $module;
@@ -4567,6 +4594,17 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
 
     // Load drag and drop upload AJAX.
     dndupload_add_to_course($course, $enabledmodules);
+
+    // Add the module chooser
+    $PAGE->requires->yui_module('moodle-course-modchooser',
+        'M.course.init_chooser',
+        array(array('courseid' => $course->id))
+    );
+    $PAGE->requires->strings_for_js(array(
+            'addresourceoractivity',
+            'modchooserenable',
+            'modchooserdisable',
+    ), 'moodle');
 
     return true;
 }

@@ -3546,20 +3546,38 @@ class settings_navigation extends navigation_node {
 
             if ($this->page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
                 // We are on the course page, retain the current page params e.g. section.
-                $url = clone($this->page->url);
-                $url->param('sesskey', sesskey());
+                $baseurl = clone($this->page->url);
+                $baseurl->param('sesskey', sesskey());
             } else {
                 // Edit on the main course page.
-                $url = new moodle_url('/course/view.php', array('id'=>$course->id, 'sesskey'=>sesskey()));
+                $baseurl = new moodle_url('/course/view.php', array('id'=>$course->id, 'sesskey'=>sesskey()));
             }
+
+            $editurl = clone($baseurl);
             if ($this->page->user_is_editing()) {
-                $url->param('edit', 'off');
+                $editurl->param('edit', 'off');
                 $editstring = get_string('turneditingoff');
             } else {
-                $url->param('edit', 'on');
+                $editurl->param('edit', 'on');
                 $editstring = get_string('turneditingon');
             }
-            $coursenode->add($editstring, $url, self::TYPE_SETTING, null, null, new pix_icon('i/edit', ''));
+            $coursenode->add($editstring, $editurl, self::TYPE_SETTING, null, null, new pix_icon('i/edit', ''));
+
+            // Add the module chooser toggle
+            $modchoosertoggleurl = clone($baseurl);
+            if ($this->page->user_is_editing() && course_ajax_enabled($course)) {
+                if ($usemodchooser = get_user_preferences('usemodchooser', 1)) {
+                    $modchoosertogglestring = get_string('modchooserdisable', 'moodle');
+                    $modchoosertoggleurl->param('modchooser', 'off');
+                } else {
+                    $modchoosertogglestring = get_string('modchooserenable', 'moodle');
+                    $modchoosertoggleurl->param('modchooser', 'on');
+                }
+                $modchoosertoggle = $coursenode->add($modchoosertogglestring, $modchoosertoggleurl, self::TYPE_SETTING);
+                $modchoosertoggle->add_class('modchoosertoggle');
+                $modchoosertoggle->add_class('visibleifjs');
+                user_preference_allow_ajax_update('usemodchooser', PARAM_BOOL);
+            }
 
             if ($this->page->user_is_editing()) {
                 // Removed as per MDL-22732

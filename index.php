@@ -151,8 +151,12 @@
             echo $OUTPUT->box_end();
         }
     }
-    include_course_ajax($SITE, $modnamesused, $modnames);
-
+    // Include course AJAX
+    if (include_course_ajax($SITE, $modnamesused)) {
+        // Add the module chooser
+        $renderer = $PAGE->get_renderer('core', 'course');
+        echo $renderer->course_modchooser(get_module_metadata($SITE, $modnames), $SITE);
+    }
 
     if (isloggedin() and !isguestuser() and isset($CFG->frontpageloggedin)) {
         $frontpagelayout = $CFG->frontpageloggedin;

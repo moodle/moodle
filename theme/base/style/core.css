@@ -907,3 +907,98 @@ sup {vertical-align: super;}
 #page-admin-setting-enrolsettingsflatfile.dir-rtl .informationbox {direction: ltr;text-align: left;}
 
 #page-admin-grade-edit-scale-edit.dir-rtl .error input#id_name {margin-right: 170px;}
+
+/**
+ * Chooser Dialogue
+ *
+ * This CSS belong to the chooser dialogue which should work both with, and
+ * without javascript enabled
+ */
+/* Hide the dialog and it's title */
+#chooserdialogue,
+#choosertitle {
+    display:none;
+}
+
+/* Center the submit buttons within the area */
+#choosercontainer #chooseform .submitbuttons {
+    margin: 0.7em 0;
+    text-align: center;
+}
+
+/* Various settings for the options area */
+#choosercontainer #chooseform .options {
+    position: relative;
+    border-bottom: 1px solid grey;
+    padding: 0.24em 0;
+}
+
+/* Only set these options if we're showing the js container */
+.jsenabled #choosercontainer #chooseform .alloptions {
+    max-height: 530px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-width: 18.15em;
+}
+
+/* Settings for option rows and option subtypes */
+#choosercontainer #chooseform .moduletypetitle,
+#choosercontainer #chooseform .option,
+#choosercontainer #chooseform .nonoption {
+    margin-bottom: 0;
+    padding: 0 0 0 0.3em;
+}
+
+#choosercontainer #chooseform .moduletypetitle {
+    font-weight: bold;
+    text-align : center;
+}
+
+#choosercontainer #chooseform .subtype {
+    margin-bottom: 0;
+    padding: 0 0 0 1em;
+}
+
+#choosercontainer #chooseform .option .typename,
+#choosercontainer #chooseform .option span.modicon img.icon {
+    padding: 0 0 0 0.3em;
+}
+
+#choosercontainer #chooseform .option input[type=radio],
+#choosercontainer #chooseform .option span.typename,
+#choosercontainer #chooseform .option span.modicon {
+    vertical-align: middle;
+}
+
+#choosercontainer #chooseform .option label {
+    display: block;
+    padding: 0.2em 0 0.2em 0;
+}
+
+/* The instruction/help area */
+#choosercontainer #chooseform .instruction,
+.jsenabled #choosercontainer #chooseform .typesummary {
+    display: none;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 18.5em;
+    margin: 0;
+    border-left: 1px solid grey;
+    padding: 0.3em 0.5em;
+    background-color: white;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 550px;
+}
+
+/* Selected option settings */
+.jsenabled #choosercontainer #chooseform .instruction,
+#choosercontainer #chooseform .selected .typesummary {
+    display: block;
+}
+#choosercontainer #chooseform .selected {
+    background-color: #ddd;
+}
+
