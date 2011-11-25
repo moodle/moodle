@@ -74,7 +74,8 @@ class webservice_test extends UnitTestCase {
             'moodle_enrol_get_enrolled_users' => false,
             'moodle_group_get_course_groups' => false,
             'moodle_group_get_groupmembers' => false,
-            'moodle_webservice_get_siteinfo' => false
+            'moodle_webservice_get_siteinfo' => false,
+            'core_course_get_contents' => false
         );
 
         ////// WRITE DB tests ////
@@ -245,6 +246,29 @@ class webservice_test extends UnitTestCase {
         $users = $client->call($function, $params);
 
         $this->assertEqual(count($users), count($userids));
+    }
+
+    function core_course_get_contents($client) {
+        global $DB, $CFG;
+        $dbcourses = $DB->get_records('course');
+        $function = 'core_course_get_contents';
+
+        $coursecontents = array();
+
+        foreach ($dbcourses as $dbcourse) {
+            $params = array('courseid' => $dbcourse->id);
+
+            if (file_exists($CFG->dirroot . '/' . '/course/format/' . $dbcourse->format . '/lib.php')) {
+                $coursecontents = $client->call($function, $params);
+            }
+
+            //TODO: some unit tests to check that generated course content data test match what
+            // the web service function is returning.
+
+            //Realistic TODO: display the content of $coursecontents in your php log and check if you obtain
+            //what you are expecting
+            //varlog($coursecontents);
+        }
     }
 
     /**

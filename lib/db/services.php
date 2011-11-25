@@ -404,6 +404,15 @@ $functions = array(
         'capabilities'=> 'moodle/course:create,moodle/course:visibility',
     ),
 
+    'core_course_get_contents' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'get_course_contents',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Get course contents',
+        'type'        => 'read',
+        'capabilities'=> 'moodle/course:update,moodle/course:viewhiddencourses',
+    ),
+
     // === message related functions ===
 
     'moodle_message_send_instantmessages' => array(
@@ -474,7 +483,8 @@ $services = array(
             'moodle_notes_create_notes',
             'moodle_user_get_course_participants_by_id',
             'moodle_user_get_users_by_courseid',
-            'moodle_message_send_instantmessages'),
+            'moodle_message_send_instantmessages',
+            'core_course_get_contents'),
         'enabled' => 0,
         'restrictedusers' => 0,
         'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE,

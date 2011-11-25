@@ -164,6 +164,7 @@ $string['couldnotassignrole'] = 'A serious but unspecified error occurred while 
 $string['couldnotupdatenoexistinguser'] = 'Cannot update the user - user doesn\'t exist';
 $string['countriesphpempty'] = 'Error: The file countries.php in language pack {$a} is empty or missing.';
 $string['coursedoesnotbelongtocategory'] = 'The course doesn\'t belong to this category';
+$string['courseformatnotfound'] = 'The course format \'{$a}\' doesn\'t exist or is not recognized';
 $string['coursegroupunknown'] = 'Course corresponding to group {$a} not specified';
 $string['courseidnotfound'] = 'Course id doesn\'t exist';
 $string['coursemisconf'] = 'Course is misconfigured';

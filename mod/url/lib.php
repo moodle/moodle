@@ -329,3 +329,40 @@ function url_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-url-*'=>get_string('page-mod-url-x', 'url'));
     return $module_pagetype;
 }
+
+/**
+ * Export URL resource contents
+ *
+ * @return array of file content
+ */
+function url_export_contents($cm, $baseurl) {
+    global $CFG, $DB;
+    require_once("$CFG->dirroot/mod/url/locallib.php");
+    $contents = array();
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $url = $DB->get_record('url', array('id'=>$cm->instance), '*', MUST_EXIST);
+
+    $fullurl = str_replace('&amp;', '&', url_get_full_url($url, $cm, $course));
+    $isurl = clean_param($fullurl, PARAM_URL);
+    if (empty($isurl)) {
+        return null;
+    }
+
+    $url = array();
+    $url['type'] = 'url';
+    $url['filename']     = $url->name;
+    $url['filepath']     = null;
+    $url['filesize']     = 0;
+    $url['fileurl']      = $fullurl;
+    $url['timecreated']  = null;
+    $url['timemodified'] = $url->timemodified;
+    $url['sortorder']    = null;
+    $url['userid']       = null;
+    $url['author']       = null;
+    $url['license']      = null;
+    $contents[] = $url;
+
+    return $contents;
+}
