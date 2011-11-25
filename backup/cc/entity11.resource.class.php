@@ -43,6 +43,9 @@ class cc11_resource extends entities11 {
     }
 
     private function create_node_course_modules_mod_resource ($sheet_mod_resource, $instance) {
+        global $CFG;
+
+        require_once($CFG->libdir.'/validateurlsyntax.php');
 
         $link = '';
         $mod_alltext = '';
@@ -87,7 +90,17 @@ class cc11_resource extends entities11 {
                     $xpath = cc112moodle::newx_path($resource, cc112moodle::$resourcens);
                     $resource = $xpath->query('/wl:webLink/wl:url/@href');
                     if ($resource->length > 0) {
-                        $link = $resource->item(0)->nodeValue;
+                        $rawlink = $resource->item(0)->nodeValue;
+                        if (!validateUrlSyntax($rawlink, 's+')) {
+                            $changed = rawurldecode($rawlink);
+                            if (validateUrlSyntax($changed, 's+')) {
+                                $link = $changed;
+                            } else {
+                                $link = 'http://invalidurldetected/';
+                            }
+                        } else {
+                            $link = $rawlink;
+                        }
                     }
                 }
             }
