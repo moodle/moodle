@@ -565,7 +565,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         } else {
             $title = get_string('assessment', 'workshop');
         }
-        if ($this->page->url != $assessment->url) {
+        if (($assessment->url instanceof moodle_url) and ($this->page->url != $assessment->url)) {
             $o .= $this->output->container(html_writer::link($assessment->url, $title), 'title');
         } else {
             $o .= $this->output->container($title, 'title');
@@ -627,6 +627,26 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $o .= $this->output->container_end(); // main wrapper
 
         return $o;
+    }
+
+    /**
+     * Renders the assessment of an example submission
+     *
+     * @param workshop_example_assessment $assessment
+     * @return string HTML
+     */
+    protected function render_workshop_example_assessment(workshop_example_assessment $assessment) {
+        return $this->render_workshop_assessment($assessment);
+    }
+
+    /**
+     * Renders the reference assessment of an example submission
+     *
+     * @param workshop_example_reference_assessment $assessment
+     * @return string HTML
+     */
+    protected function render_workshop_example_reference_assessment(workshop_example_reference_assessment $assessment) {
+        return $this->render_workshop_assessment($assessment);
     }
 
     ////////////////////////////////////////////////////////////////////////////
