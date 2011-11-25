@@ -127,9 +127,8 @@ if ($canmanage and $assessment->weight == 1) {
         'showreviewer'  => false,
         'showauthor'    => false,
         'showform'      => true,
-        'showweight'    => false,
     );
-    $assessment = $workshop->prepare_assessment($assessment, $mform, $options);
+    $assessment = $workshop->prepare_example_reference_assessment($assessment, $mform, $options);
     $assessment->title = get_string('assessmentreference', 'workshop');
     echo $output->render($assessment);
 
@@ -138,9 +137,8 @@ if ($canmanage and $assessment->weight == 1) {
         'showreviewer'  => true,
         'showauthor'    => false,
         'showform'      => true,
-        'showweight'    => false,
     );
-    $assessment = $workshop->prepare_assessment($assessment, $mform, $options);
+    $assessment = $workshop->prepare_example_assessment($assessment, $mform, $options);
     $assessment->title = get_string('assessmentbyyourself', 'workshop');
     echo $output->render($assessment);
 
@@ -151,7 +149,7 @@ if ($canmanage and $assessment->weight == 1) {
         'showform'      => true,
         'showweight'    => false,
     );
-    $assessment = $workshop->prepare_assessment($assessment, $mform, $options);
+    $assessment = $workshop->prepare_example_assessment($assessment, $mform, $options);
     echo $output->render($assessment);
 }
 
