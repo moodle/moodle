@@ -49,6 +49,7 @@ if (!empty($id)) {
 
 require_course_login($course->id, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('mod/glossary:read', $context);
 
 // Prepare format_string/text options
 $fmtoptions = array(
