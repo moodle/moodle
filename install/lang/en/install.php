@@ -40,6 +40,7 @@ $string['databasehost'] = 'Database host';
 $string['databasename'] = 'Database name';
 $string['databasetypehead'] = 'Choose database driver';
 $string['dataroot'] = 'Data directory';
+$string['datarootpermission'] = 'Data directories permission';
 $string['dbprefix'] = 'Tables prefix';
 $string['dirroot'] = 'Moodle directory';
 $string['environmenthead'] = 'Checking your environment ...';
