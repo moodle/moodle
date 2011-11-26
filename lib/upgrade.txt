@@ -10,6 +10,7 @@ removed unused libraries:
 API changes:
 * new admin/tool plugin type
 * new context API - old API is still available
+* deleted users do not have context any more
 * removed global search
 
 
