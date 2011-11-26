@@ -30,6 +30,20 @@
 
 $capabilities = array(
 
+    'mod/glossary:read' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'guest' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),   
+
+
     'mod/glossary:write' => array(
 
         'riskbitmask' => RISK_SPAM,
