@@ -818,10 +818,10 @@ sup {vertical-align: super;}
 .path-rating .ratingtable td.time {white-space:nowrap; text-align:center;}
 
 /* Fix for ordered and unordered list in course topic summary & course weekly summary */
-ul li,
+
 .course-content ul.weeks .content .summary ul li,
 .course-content ul.topics .content .summary ul li {list-style: disc outside none;}
-ol li,
+
 .course-content ul.weeks .content .summary ol li,
 .course-content ul.topics .content .summary ol li {list-style: decimal outside none;}
 
