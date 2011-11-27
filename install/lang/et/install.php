@@ -40,6 +40,7 @@ $string['databasehost'] = 'Andmebaasi host';
 $string['databasename'] = 'Andmebaasi nimi';
 $string['databasetypehead'] = 'Vali andmebaasi draiver';
 $string['dataroot'] = 'Andmete kataloog';
+$string['datarootpermission'] = 'Andmete kataloogide õigus';
 $string['dbprefix'] = 'Tabeli eesliide';
 $string['dirroot'] = 'Moodle kataloog';
 $string['environmenthead'] = 'Keskkonna kontrollimine...';
