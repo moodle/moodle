@@ -30,13 +30,16 @@
 
 /** Fix IE8 + Opera positioning issue **/
 .ie8 #page-header .rounded-corner.top-right,
+.ie9 #page-header .rounded-corner.top-right,
 .opera #page-header .rounded-corner.top-right {
     position: relative;
     top: -11px;
 }
 
-#page-footer {position: relative;
+#page-footer {
+    position: relative;
 }
+
 #page-footer .rounded-corner {
     position: absolute;
     background-image: url([[pix:theme|corners_header]]);
@@ -109,9 +112,10 @@
  * corners.... if only IE could handle it.
  *
  * Browsers:
- * Firefox:          body.gecko
- * Chrome:           body.safari
- * Safari:           body.safari
+ * Firefox:  body.gecko  -moz
+ * Chrome:   body.safari -webkit
+ * Safari:   body.safari -webkit
+ * Opera:    body.opera  no prefix
  */
 
 .opera .rounded-corner.top-left,
@@ -144,7 +148,8 @@
 .safari #page-header,
 .gecko .block .corner-box .header,
 .gecko #page-header {
-    -moz-border-radius: 10px 10px 0px 0px;
+    -moz-border-top-left-radius: 10px;
+    -moz-border-top-right-radius: 10px;
     -webkit-border-top-left-radius: 10px;
     -webkit-border-top-right-radius: 10px;
     border-top-left-radius: 10px;
@@ -154,21 +159,44 @@
 .opera #page-footer,
 .safari #page-footer,
 .gecko #page-footer {
-    -moz-border-radius: 0px 0px 10px 10px;
+    -moz-border-bottom-left-radius: 10px;
+    -moz-border-bottom-right-radius: 10px;
     -webkit-border-bottom-left-radius: 10px;
     -webkit-border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
 }
 
-.gecko .forumpost,
-.gecko .forumpost .side {
-    -moz-border-radius-bottomleft: 20px
+
+.opera.forumpost div.row .left,
+.safari .forumpost div.row .left,
+.gecko .forumpost div.row .left {
+    -moz-border-bottom-left-radius: 20px;
+    -webkit-border-bottom-left-radius: 20px;
+    border-bottom-left-radius: 20px;
 }
 
+.opera .forumpost,
+.opera .forumpost div.row.side,
+.safari .forumpost,
+.safari .forumpost div.row.side,
 .gecko .forumpost,
-.gecko .forumpost .content {
-    -moz-border-radius-bottomright: 20px;
+.gecko .forumpost div.row.side {
+    -moz-border-bottom-right-radius: 20px;
+    -moz-border-bottom-left-radius: 20px;
+    -webkit-border-bottom-right-radius: 20px;
+    -webkit-border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+}
+
+.opera .forumpost .options,
+.safari .forumpost .options,
+.gecko .forumpost .options {
+     -moz-border-bottom-right-radius: 20px;
+     -webkit-border-bottom-right-radius: 20px;
+     border-bottom-right-radius: 20px;
+
 }
 
 /** Fix for IE 6 float background bug */

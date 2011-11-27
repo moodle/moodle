@@ -15,6 +15,9 @@ if (!$showsidepre) {
 if ($hascustommenu) {
     $bodyclasses[] = 'has_custom_menu';
 }
+if ($hasnavbar) {
+    $bodyclasses[] = 'hasnavbar';
+}
 
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes() ?>>
@@ -85,6 +88,7 @@ echo $OUTPUT->doctype() ?>
         <div class="rounded-corner bottom-right"></div>
     </div>
     <?php } ?>
+  <div class="clearfix"></div>
 </div>
 <?php echo $OUTPUT->standard_end_of_body_html() ?>
 </body>

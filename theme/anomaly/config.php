@@ -7,7 +7,7 @@
 
 $THEME->name = 'anomaly';
 
-$THEME->sheets = array('base', 'general', 'browser');
+$THEME->sheets = array('base', 'general', 'browser','dock');
 /// This variable is an array containing the names of all the
 /// stylesheet files you want included in this theme, and in what order
 ////////////////////////////////////////////////////////////////////////////////
