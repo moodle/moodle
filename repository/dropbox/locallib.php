@@ -35,9 +35,9 @@ class dropbox extends oauth_helper {
     /** dropbox access type, can be dropbox or sandbox */
     private $mode = 'dropbox';
     /** dropbox api url*/
-    private $dropbox_api = 'http://api.dropbox.com/0';
+    private $dropbox_api = 'https://api.dropbox.com/1';
     /** dropbox content api url*/
-    private $dropbox_content_api = 'http://api-content.dropbox.com/0';
+    private $dropbox_content_api = 'https://api-content.dropbox.com/1';
 
     function __construct($args) {
         parent::__construct($args);
@@ -50,15 +50,6 @@ class dropbox extends oauth_helper {
         $content = $this->get($url, array(), $token, $secret);
         $data = json_decode($content);
         return $data;
-    }
-
-    /**
-     * Get user account info
-     */
-    public function get_account_info($token, $secret) {
-        $url = $this->dropbox_api.'/account/info';
-        $content = $this->get($url, array(), $token, $secret);
-        return $content;
     }
 
     /**

@@ -66,7 +66,7 @@ class repository_dropbox extends repository {
             'oauth_consumer_key'=>$this->dropbox_key,
             'oauth_consumer_secret'=>$this->dropbox_secret,
             'oauth_callback' => $this->callback->out(false),
-            'api_root' => 'http://www.dropbox.com/0/oauth',
+            'api_root' => 'https://www.dropbox.com/1/oauth',
         );
 
         $this->dropbox = new dropbox($args);
@@ -96,7 +96,7 @@ class repository_dropbox extends repository {
             $ret['login'] = array($popup_btn);
             return $ret;
         } else {
-            echo '<a target="_blank" href="'.$this->flickr->auth().'">'.get_string('login', 'repository').'</a>';
+            echo '<a target="_blank" href="'.$url.'">'.get_string('login', 'repository').'</a>';
         }
     }
 
