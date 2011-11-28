@@ -979,6 +979,12 @@ class file_storage {
      * @return stored_file instance
      */
     public function convert_image($file_record, $fid, $newwidth = NULL, $newheight = NULL, $keepaspectratio = true, $quality = NULL) {
+        if (!function_exists('imagecreatefromstring')) {
+            //Most likely the GD php extension isn't installed
+            //image conversion cannot succeed
+            throw new file_exception('storedfileproblem', 'imagecreatefromstring() doesnt exist. The PHP extension "GD" must be installed for image conversion.');
+        }
+
         if ($fid instanceof stored_file) {
             $fid = $fid->get_id();
         }
