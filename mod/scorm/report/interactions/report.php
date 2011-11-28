@@ -153,7 +153,7 @@ class scorm_interactions_report extends scorm_default_report {
             }
 
             $params = array();
-            list($usql, $params) = $DB->get_in_or_equal($allowedlist);
+            list($usql, $params) = $DB->get_in_or_equal($allowedlist, SQL_PARAMS_NAMED);
                                     // Construct the SQL
             $select = 'SELECT DISTINCT '.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').' AS uniqueid, ';
             $select .= 'st.scormid AS scormid, st.attempt AS attempt, ' .
