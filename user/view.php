@@ -48,7 +48,7 @@ $currentuser = ($user->id == $USER->id);
 
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-$usercontext   = get_context_instance(CONTEXT_USER, $user->id, MUST_EXIST);
+$usercontext   = get_context_instance(CONTEXT_USER, $user->id, IGNORE_MISSING);
 
 // Require login first
 if (isguestuser($user)) {
@@ -68,7 +68,7 @@ $PAGE->set_other_editing_capability('moodle/course:manageactivities');
 
 $isparent = false;
 
-if (!$currentuser
+if (!$currentuser and !$user->deleted
   and $DB->record_exists('role_assignments', array('userid'=>$USER->id, 'contextid'=>$usercontext->id))
   and has_capability('moodle/user:viewdetails', $usercontext)) {
     // TODO: very ugly hack - do not force "parents" to enrol into course their child is enrolled in,
@@ -109,7 +109,7 @@ if ($currentuser) {
 
     // check course level capabilities
     if (!has_capability('moodle/user:viewdetails', $coursecontext) && // normal enrolled user or mnager
-        !has_capability('moodle/user:viewdetails', $usercontext)) {   // usually parent
+        ($user->deleted or !has_capability('moodle/user:viewdetails', $usercontext))) {   // usually parent
         print_error('cannotviewprofile');
     }
 

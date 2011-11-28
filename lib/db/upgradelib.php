@@ -192,7 +192,10 @@ function upgrade_migrate_user_icons() {
         upgrade_set_timeout(60); /// Give upgrade at least 60 more seconds
         $pbar->update($i, $count, "Migrated user icons $i/$count.");
 
-        $context = get_context_instance(CONTEXT_USER, $user->id);
+        if (!$context = get_context_instance(CONTEXT_USER, $user->id)) {
+            // deleted user
+            continue;
+        }
 
         if ($fs->file_exists($context->id, 'user', 'icon', 0, '/', 'f1.jpg')) {
             // already converted!
