@@ -632,7 +632,7 @@ class grade_report_grader extends grade_report {
             $usercell->scope = 'row';
 
             if ($showuserimage) {
-                $usercell->text = $OUTPUT->container($OUTPUT->user_picture($user), 'userpic');
+                $usercell->text = $OUTPUT->user_picture($user);
             }
 
             $usercell->text .= html_writer::link(new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $this->course->id)), fullname($user));
