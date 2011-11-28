@@ -70,7 +70,7 @@ class mod_wiki_edit_form extends moodleform {
             foreach ($tree['files'] as $file) {
                 $filename = $file->get_filename();
                 foreach ($extensions as $ext) {
-                    if (preg_match('#'.$ext.'$#', $filename)) {
+                    if (preg_match('#'.$ext.'$#i', $filename)) {
                         $files[] = $filename;
                     }
                 }
