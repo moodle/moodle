@@ -92,7 +92,6 @@ class filter_mediaplugin_test extends UnitTestCase {
                             '<a >test test</a>',
                             '<ahref="http://moodle.org/testfile/test.mp3">sample</a>',
                             '<a href="" test></a>',
-                            '<a class="_blanktarget" href="http://moodle.org/testfile/test.flv?d=100x">test flv</a>',
                             '<a href="http://www.moodle.com/path/to?#param=29">test</a>',
                             '<a href="http://moodle.org/testfile/test.mp3">test mp3',
                             '<a href="http://moodle.org/testfile/test.mp3"test</a>',
