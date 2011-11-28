@@ -83,8 +83,10 @@ function handleOAuthBodyPOST($oauth_consumer_key, $oauth_consumer_secret, $body,
     }
 
     // Must reject application/x-www-form-urlencoded
-    if ($request_headers['Content-type'] == 'application/x-www-form-urlencoded' ) {
-        throw new Exception("OAuth request body signing must not use application/x-www-form-urlencoded");
+    if (isset($request_headers['Content-type'])) {
+        if ($request_headers['Content-type'] == 'application/x-www-form-urlencoded' ) {
+            throw new Exception("OAuth request body signing must not use application/x-www-form-urlencoded");
+        }
     }
 
     if (@substr($request_headers['Authorization'], 0, 6) == "OAuth ") {
