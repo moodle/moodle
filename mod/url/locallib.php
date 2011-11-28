@@ -121,7 +121,7 @@ function url_get_full_url($url, $cm, $course, $config=null) {
             if (stripos($fullurl, 'teamspeak://') === 0) {
                 $fullurl = $fullurl.'?'.implode('?', $parameters);
             } else {
-                $join = (strpos($fullurl->externalurl, '?') === false) ? '?' : '&';
+                $join = (strpos($fullurl, '?') === false) ? '?' : '&';
                 $fullurl = $fullurl.$join.implode('&', $parameters);
             }
         }
