@@ -7430,7 +7430,16 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         }
     }
 
-    if ($enrolled && !empty($CFG->enablerssfeeds) && !empty($CFG->forum_enablerssfeeds) && $forumobject->rsstype && $forumobject->rssarticles) {
+    if (!isloggedin() && $PAGE->course->id == SITEID) {
+        $userid = guest_user()->id;
+    } else {
+        $userid = $USER->id;
+    }
+    
+    $hascourseaccess = ($PAGE->course->id == SITEID) || can_access_course($PAGE->course, $userid);
+    $enablerssfeeds = !empty($CFG->enablerssfeeds) && !empty($CFG->forum_enablerssfeeds);
+
+    if ($hascourseaccess && $enablerssfeeds && $forumobject->rsstype && $forumobject->rssarticles) {
 
         if (!function_exists('rss_get_url')) {
             require_once("$CFG->libdir/rsslib.php");
@@ -7441,11 +7450,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         } else {
             $string = get_string('rsssubscriberssposts','forum');
         }
-        if (!isloggedin()) {
-            $userid = 0;
-        } else {
-            $userid = $USER->id;
-        }
+
         $url = new moodle_url(rss_get_url($PAGE->cm->context->id, $userid, "mod_forum", $forumobject->id));
         $forumnode->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
     }

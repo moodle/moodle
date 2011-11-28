@@ -260,8 +260,14 @@ if ($generalforums) {
                 } else {
                     $tooltiptext = get_string('rsssubscriberssposts', 'forum');
                 }
+
+                if (!isloggedin() && $course->id == SITEID) {
+                    $userid = guest_user()->id;
+                } else {
+                    $userid = $USER->id;
+                }
                 //Get html code for RSS link
-                $row[] = rss_get_link($context->id, $USER->id, 'mod_forum', $forum->id, $tooltiptext);
+                $row[] = rss_get_link($context->id, $userid, 'mod_forum', $forum->id, $tooltiptext);
             } else {
                 $row[] = '&nbsp;';
             }
