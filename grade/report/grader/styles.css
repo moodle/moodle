@@ -269,16 +269,12 @@ table#user-grades td.topleft {
 background-color:#fff;
 }
 
-.path-grade-report-grader div.userpic {
-margin-right:10px;
-float:left;
-}
-
-.path-grade-report-grader div.userpic img {
+.path-grade-report-grader th.user img {
 border:3px double #cecece;
-vertical-align:middle;
+vertical-align:top;
 width:2.7em;
 height:2.7em;
+margin-right:10px;
 }
 
 .path-grade-report-grader a.quickedit {
