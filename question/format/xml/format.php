@@ -178,9 +178,10 @@ class qformat_xml extends qformat_default {
             $data = new stdclass;
             $data->content = $filedata;
             $data->encoding = 'base64';
-            $data->name = $filename;
+            // Question file areas don't support subdirs, so convert path to filename if necessary.
+            $data->name = clean_param(str_replace('/', '_', $filename), PARAM_FILE); 
             $qo->questiontextfiles[] = $data;
-            $qo->questiontext .= ' <img src="@@PLUGINFILE@@/' . $filename . '" />';
+            $qo->questiontext .= ' <img src="@@PLUGINFILE@@/' . $data->name . '" />';
         }
 
         // restore files in generalfeedback
