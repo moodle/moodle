@@ -17,6 +17,8 @@
 require_once($CFG->dirroot.'/question/type/ddimageortext/edit_ddtoimage_form_base.php');
 require_once($CFG->dirroot.'/question/type/ddmarker/shapes.php');
 
+define('QTYPE_DDMARKER_ALLOWED_TAGS_IN_MARKER', '<br><i><em><b><strong><sup><sub><u>');
+
 /**
  * Defines the editing form for the drag-and-drop images onto images question type.
  *
@@ -241,9 +243,10 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
         }
         for ($dragindex=0; $dragindex < $data['noitems']; $dragindex++) {
             $label = $data['drags'][$dragindex]['label'];
-            if ($label != strip_tags($label)) {
+            if ($label != strip_tags($label, QTYPE_DDMARKER_ALLOWED_TAGS_IN_MARKER)) {
                 $errors["drags[{$dragindex}]"]
-                                        = get_string('formerror_notagsallowed', 'qtype_ddmarker');
+                    = get_string('formerror_onlysometagsallowed', 'qtype_ddmarker',
+                                  QTYPE_DDMARKER_ALLOWED_TAGS_IN_MARKER);
             }
         }
         return $errors;

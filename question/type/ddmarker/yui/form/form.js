@@ -100,7 +100,7 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
             for (var i=0; i < this.form.get_form_value('noitems', []); i++) {
                 var label = this.get_marker_text(i);
                 if (label !== "") {
-                    dragitemsoptions[i] = label;
+                    dragitemsoptions[i] = Y.Escape.html(label);
                 }
             }
             var selectedvalues = [];
@@ -234,5 +234,5 @@ YUI.add('moodle-qtype_ddmarker-form', function(Y) {
         return new DDMARKER_FORM(config);
     }
 }, '@VERSION@', {
-    requires:['moodle-qtype_ddmarker-dd', 'form_filepicker', 'graphics']
+    requires:['moodle-qtype_ddmarker-dd', 'form_filepicker', 'graphics', 'escape']
 });
