@@ -262,12 +262,9 @@ class webservice_test extends UnitTestCase {
                 $coursecontents = $client->call($function, $params);
             }
 
-            //TODO: some unit tests to check that generated course content data test match what
-            // the web service function is returning.
-
-            //Realistic TODO: display the content of $coursecontents in your php log and check if you obtain
+            //Display the content of $coursecontents in your php log and check if you obtain
             //what you are expecting
-            //varlog($coursecontents);
+            //error_log(print_r($coursecontents, true));
         }
     }
 

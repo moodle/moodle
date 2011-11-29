@@ -162,6 +162,7 @@ $string['selectspecificuserdescription'] = 'Add the web services user as an auth
 $string['service'] = 'Service';
 $string['servicehelpexplanation'] = 'A service is a set of functions. A service can be accessed by all users or just specified users.';
 $string['servicename'] = 'Service name';
+$string['servicenotavailable'] = 'the web service is not available (it does not exist or it is disabled)';
 $string['servicesbuiltin'] = 'Built-in services';
 $string['servicescustom'] = 'Custom services';
 $string['serviceusers'] = 'Authorised users';
