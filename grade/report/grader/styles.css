@@ -539,6 +539,14 @@ table#user-grades td.ajax {
 text-align:left;
 }
 
+.dir-rtl table#user-grades td.userfield,
+.dir-rtl table#user-grades th,
+.path-grade-report-grader.dir-rtl  div.gradeparent,
+.path-grade-report-grader.dir-rtl  .ie6 form,
+.dir-rtl table#user-grades td.ajax {
+text-align:right;
+}
+
 .path-grade-report-grader .gradeparent {
     overflow:auto;
 }

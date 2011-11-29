@@ -22,6 +22,7 @@ td.grade div.overridden {background-color: #DDDDDD;}
 
 .path-grade-edit-scale .scale_options,
 #page-admin-grade-edit-scale-index .scale_options {font-size: 0.8em;}
+.path-grade-edit-scale .generaltable {margin: 10px auto;}
 
 .gradetreebox {margin:10px auto;width:90%;}
 .gradetreebox table {font-size: 0.8em;border: 1px solid #AAA;}
