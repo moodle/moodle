@@ -2298,12 +2298,6 @@ class restore_userscompletion_structure_step extends restore_structure_step {
             $DB->insert_record('course_modules_completion', $data);
         }
     }
-
-    protected function after_execute() {
-        // This gets called once per activity (according to my testing).
-        // Clearing the array isn't strictly required, but avoids using
-        // unnecessary memory.
-    }
 }
 
 /**
