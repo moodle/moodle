@@ -1,9 +1,8 @@
 /* Docking Module
 -----------------*/
 
-body.has_dock #page {
-    width: 97%;
-    right: 3%;
+body.has_dock {
+    margin:0;
 }
 
 #dock {
