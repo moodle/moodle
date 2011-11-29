@@ -185,7 +185,7 @@ class qformat_xml extends qformat_default {
             $data->content = $filedata;
             $data->encoding = 'base64';
             // Question file areas don't support subdirs, so convert path to filename if necessary.
-            $data->name = clean_param(str_replace('/', '_', $filename), PARAM_FILE); 
+            $data->name = clean_param(str_replace('/', '_', $filename), PARAM_FILE);
             $qo->questiontextfiles[] = $data;
             $qo->questiontext .= ' <img src="@@PLUGINFILE@@/' . $data->name . '" />';
         }
