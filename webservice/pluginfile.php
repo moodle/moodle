@@ -16,22 +16,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This script delegates file serving to individual plugins
+ * A script to serve files from web service client
  *
  * @package    core
  * @subpackage file
- * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @copyright  2011 Dongsheng Cai <dongsheng@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// disable moodle specific debug messages and any errors in output
-//define('NO_DEBUG_DISPLAY', true);
-//TODO: uncomment this once the file api stabilises a bit more
+define('AJAX_SCRIPT', true);
+define('NO_MOODLE_COOKIES', true);
+require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once($CFG->libdir . '/filelib.php');
+require_once($CFG->dirroot . '/webservice/lib.php');
 
-require_once('config.php');
-require_once('lib/filelib.php');
+//authenticate the user
+$token = required_param('token', PARAM_ALPHANUM);
+$webservicelib = new webservice();
+$authenticationinfo = $webservicelib->authenticate_user($token);
 
+//check the service allows file download
+$enabledfiledownload = (int) ($authenticationinfo['service']->downloadfiles);
+if (empty($enabledfiledownload)) {
+    throw new webservice_access_exception(get_string('enabledirectdownload', 'webservice'));
+}
+
+//finally we can serve the file :)
 $relativepath = get_file_argument();
-$forcedownload = optional_param('forcedownload', 0, PARAM_BOOL);
-
-file_pluginfile($relativepath, $forcedownload);
+file_pluginfile($relativepath, 0);
