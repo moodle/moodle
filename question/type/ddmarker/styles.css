@@ -34,6 +34,9 @@
 .que.ddmarker .dragitems .draghome {
     margin : 10px;
 }
+.que.ddmarker .dragitems {
+    margin-top : 20px;
+}
 .que.ddmarker .dragitems.readonly .dragitem {
     cursor: auto;
 }
