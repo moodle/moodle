@@ -214,7 +214,7 @@
 				<xs:element ref="mat_extension" minOccurs="0" maxOccurs="0" />
 			</xs:choice>
 		</xs:sequence>
-		<xs:attribute name="attribute3" type="xs:language" />
+		<xs:attribute name="attribute3" type="xs:token" />
 	</xs:complexType>
 	<!-- ********* -->
 	<!-- ** and ** -->
@@ -839,7 +839,7 @@
 				<xs:attribute name="charset" type="xs:string" default="ascii-us" />
 				<xs:attribute name="uri" type="xs:string" />
 				<xs:attribute ref="xml:space" default="default" />
-				<xs:attribute name="attribute11" type="xs:language" />
+				<xs:attribute name="attribute11" type="xs:token" />
 				<xs:attribute name="entityref" type="xs:ENTITY" use="prohibited" />
 				<xs:attribute name="width" type="xs:string" />
 				<xs:attribute name="height" type="xs:string" />
@@ -869,7 +869,7 @@
 			<xs:element name="altmaterial" type="altmaterialType" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 		<xs:attribute name="label" type="string256" />
-		<xs:attribute name="attribute5" type="xs:language" />
+		<xs:attribute name="attribute5" type="xs:token" />
 	</xs:complexType>
 	<!-- ****************** -->
 	<!-- ** material_ref ** -->
@@ -912,7 +912,7 @@
 				<xs:attribute name="charset" type="xs:string" default="ascii-us" />
 				<xs:attribute name="uri" type="xs:string" />
 				<xs:attribute ref="xml:space" default="default" />
-				<xs:attribute name="attribute11" type="xs:language" />
+				<xs:attribute name="attribute11" type="xs:token" />
 				<xs:attribute name="entityref" type="xs:ENTITY" use="prohibited" />
 				<xs:attribute name="width" type="xs:string" />
 				<xs:attribute name="height" type="xs:string" />
@@ -1220,7 +1220,7 @@
 			</xs:choice>
 		</xs:sequence>
 		<xs:attribute name="label" type="xs:string" />
-		<xs:attribute name="attribute5" type="xs:language" />
+		<xs:attribute name="attribute5" type="xs:token" />
 		<xs:attribute name="y0" type="xs:string" />
 		<xs:attribute name="x0" type="xs:string" />
 		<xs:attribute name="width" type="xs:string" />
@@ -1791,7 +1791,7 @@
 		</xs:sequence>
 		<xs:attribute name="ident" type="xs:string" use="required" />
 		<xs:attribute name="title" type="xs:string" />
-		<xs:attribute name="attribute7" type="xs:language" />
+		<xs:attribute name="attribute7" type="xs:token" />
 	</xs:complexType>
 	<!-- ******************** -->
 	<!-- ** sectioncontrol ** -->

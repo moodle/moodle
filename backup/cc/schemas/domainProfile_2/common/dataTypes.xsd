@@ -34,7 +34,7 @@
 	<!-- LanguageId -->
 	<xs:complexType name="LanguageId">
 		<xs:simpleContent>
-			<xs:extension base="xs:language">
+			<xs:extension base="xs:token">
 				<xs:attributeGroup ref="ex:customAttributes"/>
 			</xs:extension>
 		</xs:simpleContent>
