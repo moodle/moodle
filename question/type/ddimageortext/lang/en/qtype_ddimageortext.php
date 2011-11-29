@@ -23,10 +23,10 @@
  */
 
 $string['addingddimageortext'] = 'Adding drag and drop onto image';
-$string['addmoredropzones'] = 'Blanks for {no} More Drop Zones';
-$string['addmoreimages'] = 'Blanks for {no} More Draggable Items';
+$string['addmoredropzones'] = 'Blanks for {no} more drop zones';
+$string['addmoreimages'] = 'Blanks for {no} more draggable items';
 $string['answer'] = 'Answer';
-$string['bgimage'] = 'Background Image';
+$string['bgimage'] = 'Background image';
 $string['correctansweris'] = 'The correct answer is: {$a}';
 $string['ddimageortext'] = 'Drag and drop onto image';
 $string['ddimageortext_help'] = 'Select a background image file, select draggable images or enter text and define the drop zones on the background image to which they must be dragged.';
@@ -57,7 +57,7 @@ $string['previewarea'] = 'Preview area -';
 $string['previewareaheader'] = 'Preview';
 $string['previewareamessage'] = 'Select a background image file and select draggable images or just enter text that will be made draggable. Then choose a drag item for each \'drop zone\', and drag the drag item to where the student should drag it to.';
 $string['refresh'] = 'Refresh Preview';
-$string['shuffleimages'] = 'Shuffle Drag Items Each Time Question Is Attempted';
+$string['shuffleimages'] = 'Shuffle drag items each time question is attempted';
 $string['summarisechoice'] = '{$a->no}. {$a->text}';
 $string['summariseplace'] = '{$a->no}. {$a->text}';
 $string['summarisechoiceno'] = 'Item {$a}';
