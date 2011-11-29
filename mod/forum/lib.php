@@ -4828,7 +4828,7 @@ function forum_user_can_post_discussion($forum, $currentgroup=null, $unused=-1, 
     if (!has_capability($capname, $context)) {
         return false;
     }
-    
+
     if ($forum->type == 'single') {
         return false;
     }
