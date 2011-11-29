@@ -3,6 +3,10 @@
  */
 M.gradereport_grader = {
     /**
+     * @param {String} the script we send ajax requests to
+     */
+    api : M.cfg.wwwroot+'/grade/report/grader/ajax_callbacks.php',
+    /**
      * @param {Array} reports An array of instantiated report objects
      */
     reports : [],
@@ -519,58 +523,58 @@ M.gradereport_grader.classes.ajax.prototype.get_below_cell = function(cell) {
  */
 M.gradereport_grader.classes.ajax.prototype.submit = function(properties, values) {
 
-    // Stop the IO queue so we can add to it
-    this.report.Y.io.queue.stop();
-    // If the grade has changed add an IO transaction to update it to the queue
+    // If the grade has changed update it on the server
     if (values.grade !== values.oldgrade) {
-        this.pendingsubmissions.push({transaction:this.report.Y.io.queue(M.cfg.wwwroot+'/grade/report/grader/ajax_callbacks.php', {
-            method : 'POST',
+        var cfg = {
+            method: 'POST',
             data : 'id='+this.courseid+'&userid='+properties.userid+'&itemid='+properties.itemid+'&action=update&newvalue='+values.grade+'&type='+properties.itemtype+'&sesskey='+M.cfg.sesskey,
-            on : {
-                complete : this.submission_outcome
+            on: {
+                complete : this.submission_complete
             },
             context : this,
-            arguments : {
+            arguments: {
                 properties : properties,
                 values : values,
                 type : 'grade'
-            }
-        }),complete:false,outcome:null});
+            },
+            headers: {
+            },
+        };
+        this.report.Y.io(M.gradereport_grader.api, cfg);
     }
-    // If feedback is editable and has changed add to the IO queue for it
+    // If feedback is editable and has changed update it on the server
     if (values.editablefeedback && values.feedback !== values.oldfeedback) {
-        this.pendingsubmissions.push({transaction:this.report.Y.io.queue(M.cfg.wwwroot+'/grade/report/grader/ajax_callbacks.php', {
+        var cfg = {
             method : 'POST',
             data : 'id='+this.courseid+'&userid='+properties.userid+'&itemid='+properties.itemid+'&action=update&newvalue='+values.feedback+'&type=feedback&sesskey='+M.cfg.sesskey,
             on : {
-                complete : this.submission_outcome
+                complete : this.submission_complete
             },
             context : this,
             arguments : {
                 properties : properties,
                 values : values,
                 type : 'feedback'
-            }
-        }),complete:false,outcome:null});
+            },
+            headers: {
+            },
+        };
+        this.report.Y.io(M.gradereport_grader.api, cfg);
     }
-    // Process the IO queue
-    this.report.Y.io.queue.start();
 };
 /**
- * Callback function for IO transaction completions
- *
- * Uses a synchronous queue to ensure we maintain some sort of order
+ * Callback function called after grade and feedback changes
  *
  * @function
  * @this {M.gradereport_grader.classes.ajax}
- * @param {Int} tid Transaction ID
- * @param {Object} outcome
+ * @param {Int} transactionid Transaction ID
+ * @param {Object} response
  * @param {Mixed} args
  */
-M.gradereport_grader.classes.ajax.prototype.submission_outcome = function(tid, outcome, args) {
+M.gradereport_grader.classes.ajax.prototype.submission_complete = function(transactionid, response, args) {
     // Parse the response as JSON
     try {
-        outcome = this.report.Y.JSON.parse(outcome.responseText);
+        response = this.report.Y.JSON.parse(response.responseText);
     } catch(e) {
         var message = M.str.gradereport_grader.ajaxfailedupdate;
         message.replace(/\[1\]/, args.type);
@@ -581,13 +585,13 @@ M.gradereport_grader.classes.ajax.prototype.submission_outcome = function(tid, o
 
     // Quick reference for the grader report
     var i = null;
-    // Check the outcome
-    if (outcome.result == 'success') {
+    // Check the response
+    if (response.result == 'success') {
         // Iterate through each row in the result object
-        for (i in outcome.row) {
-            if (outcome.row[i] && outcome.row[i].userid && outcome.row[i].itemid) {
+        for (i in response.row) {
+            if (response.row[i] && response.row[i].userid && response.row[i].itemid) {
                 // alias it, we use it quite a bit
-                var r = outcome.row[i];
+                var r = response.row[i];
                 // Get the cell referred to by this result object
                 var info = this.report.get_cell_info([r.userid, r.itemid]);
                 if (!info) {
@@ -639,24 +643,7 @@ M.gradereport_grader.classes.ajax.prototype.submission_outcome = function(tid, o
         } else if (args.type == 'feedback') {
             this.report.update_feedback(p.userid, p.itemid, args.values.oldfeedback);
         }
-        this.display_submission_error(outcome.message, p.cell);
-    }
-    // Check if all IO transactions in the queue are complete yet
-    var allcomplete = true;
-    for (i in this.pendingsubmissions) {
-        if (this.pendingsubmissions[i]) {
-            if (this.pendingsubmissions[i].transaction.id == tid) {
-                this.pendingsubmissions[i].complete = true;
-                this.pendingsubmissions[i].outcome = outcome;
-                this.report.Y.io.queue.remove(this.pendingsubmissions[i].transaction);
-            }
-            if (!this.pendingsubmissions[i].complete) {
-                allcomplete = false;
-            }
-        }
-    }
-    if (allcomplete) {
-        this.pendingsubmissions = [];
+        this.display_submission_error(response.message, p.cell);
     }
 };
 /**
