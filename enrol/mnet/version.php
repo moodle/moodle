@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,4 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2010071701;
+$plugin->version   = 2011112900;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2011112900;        // Requires this Moodle version
+$plugin->component = 'enrol_mnet';      // Full name of the plugin (used for diagnostics)
