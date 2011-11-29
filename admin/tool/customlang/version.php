@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Version information
+ *
  * @package    tool
  * @subpackage customlang
  * @copyright  2010 David Mudrak <david@moodle.com>
