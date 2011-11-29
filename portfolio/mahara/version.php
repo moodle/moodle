@@ -14,19 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This file contains the version information for the mahara portfolio plugin
  *
- * @since 2.0
- * @package moodlecore
- * @subpackage portfolio
- * @copyright 2009 Penny Leach
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      2.0
+ * @package    portfolio
+ * @subpackage mahara
+ * @copyright  2009 Penny Leach
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version  = 2010090501;
-$plugin->requires = 2010090501;
-$plugin->cron     = 0;
+defined('MOODLE_INTERNAL') || die();
 
-
+$plugin->version   = 2011112900;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2011112900;        // Requires this Moodle version
+$plugin->component = 'portfolio_mahara'; // Full name of the plugin (used for diagnostics)
+$plugin->cron      = 0;
