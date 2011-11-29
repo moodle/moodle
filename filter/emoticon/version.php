@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Version information
+ *
  * @package    filter
  * @subpackage emoticon
  * @copyright  2010 David Mudrak <david@moodle.com>
@@ -24,4 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2010102300;
+$plugin->version   = 2011112900;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2011112900;        // Requires this Moodle version
+$plugin->component = 'filter_emoticon'; // Full name of the plugin (used for diagnostics)

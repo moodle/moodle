@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tex filter
+ * Version details
  *
  * @package    filter
- * @subpackage tex
- * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @subpackage multilang
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,4 +27,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2011112900;        // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2011112900;        // Requires this Moodle version
-$plugin->component = 'filter_tex';      // Full name of the plugin (used for diagnostics)
+$plugin->component = 'filter_multilang'; // Full name of the plugin (used for diagnostics)
