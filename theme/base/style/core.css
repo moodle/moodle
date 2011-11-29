@@ -43,7 +43,7 @@ a.dimmed_text:visited,
 .inline-list li,
 .block .list,
 .block .list li,
-.sitetopic .section li,
+.sitetopic .section li.activity,
 .course-content .section li.activity,
 .tabtree li {list-style: none;margin:0;padding:0;}
 
@@ -819,11 +819,11 @@ sup {vertical-align: super;}
 
 /* Fix for ordered and unordered list in course topic summary & course weekly summary */
 
-.course-content ul.weeks .content .summary ul li,
-.course-content ul.topics .content .summary ul li {list-style: disc outside none;}
+.course-content ul.weeks .content .summary ul,
+.course-content ul.topics .content .summary ul {list-style: disc outside none;}
 
-.course-content ul.weeks .content .summary ol li,
-.course-content ul.topics .content .summary ol li {list-style: decimal outside none;}
+.course-content ul.weeks .content .summary ol,
+.course-content ul.topics .content .summary ol {list-style: decimal outside none;}
 
 .dir-rtl #adminsettings #id_s__pathtodu,
 .dir-rtl #adminsettings #id_s__aspellpath,
