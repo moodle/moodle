@@ -1448,6 +1448,14 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     if (is_array($dataobject)) {
         debugging('Warning. Wrong call to insert_record(). $dataobject must be an object. array found instead', DEBUG_DEVELOPER);
         $dataobject = (object)$dataobject;
+    } else if (is_object($dataobject)) {
+        // make sure there are no properties or private methods because we cast to array later,
+        // at the same time this undos the object references so that PHP 5 works the same as PHP 4,
+        // the main reason for this is BC after the dirty magic hack introduction
+        if ($properties = get_object_vars($dataobject)) {
+            $dataobject = (object)$properties;
+        }
+        unset($properties);
     }
 
 /// Temporary hack as part of phasing out all access to obsolete user tables  XXX
@@ -1643,6 +1651,14 @@ function update_record($table, $dataobject) {
     if (is_array($dataobject)) {
         debugging('Warning. Wrong call to update_record(). $dataobject must be an object. array found instead', DEBUG_DEVELOPER);
         $dataobject = (object)$dataobject;
+    } else if (is_object($dataobject)) {
+        // make sure there are no properties or private methods because we cast to array later,
+        // at the same time this undos the object references so that PHP 5 works the same as PHP 4,
+        // the main reason for this is BC after the dirty magic hack introduction
+        if ($properties = get_object_vars($dataobject)) {
+            $dataobject = (object)$properties;
+        }
+        unset($properties);
     }
 
 /// Extra protection against SQL injections
