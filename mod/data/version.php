@@ -19,12 +19,13 @@
  *
  * @package    mod
  * @subpackage data
- * @copyright  2005 onwards Martin Dougiamas {@link http://moodle.com}
+ * @copyright  2005 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version  = 2011102800;
-$module->requires = 2011102700;  // Requires this Moodle version
-$module->cron     = 60;          // Period for cron to check this module (secs)
+$module->version   = 2011112900;       // The current module version (Date: YYYYMMDDXX)
+$module->requires  = 2011112900;       // Requires this Moodle version
+$module->component = 'mod_data';       // Full name of the plugin (used for diagnostics)
+$module->cron      = 60;
