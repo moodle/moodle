@@ -108,14 +108,17 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
         if ($question->showmisplaced && $qa->get_state()->is_finished()) {
             $wrongparts = $question->get_drop_zones_without_hit($response);
             if (count($wrongparts) !== 0) {
-                $wrongpartsstring = '';
+                $wrongpartsstringspans = array();
                 foreach($wrongparts as $wrongpart) {
-                    $wrongpartsstring .= html_writer::nonempty_tag('span',
+                    $wrongpartsstringspans[] = html_writer::nonempty_tag('span',
                                     $wrongpart->markertext, array('class' => 'wrongpart'));
                 }
+                $wrongpartsstring = join(', ', $wrongpartsstringspans);
                 $output .= html_writer::nonempty_tag('span',
-                    get_string('followingarewrongandhighlighted', 'qtype_ddmarker', $wrongpartsstring),
-                    array('class' => 'wrongparts'));
+                                                    get_string('followingarewrongandhighlighted',
+                                                                'qtype_ddmarker',
+                                                                $wrongpartsstring),
+                                                    array('class' => 'wrongparts'));
             }
         }
 
