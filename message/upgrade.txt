@@ -1,7 +1,7 @@
 This files describes API changes in /message/ messaging system,
 information provided here is intended especially for developers.
 
-=== 2.2 ===
+=== 2.1.2 ===
 
 required changes:
 * lib/messagelib.php message_send($eventdata)
