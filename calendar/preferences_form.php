@@ -71,7 +71,7 @@ class calendar_preferences_form extends moodleform {
         $mform->addHelpButton('maxevents', 'pref_maxevents', 'calendar');
 
         $options = array();
-        for ($i=1; $i<=20; $i++) {
+        for ($i=1; $i<=99; $i++) {
             $options[$i] = $i;
         }
         $mform->addElement('select', 'lookahead', get_string('pref_lookahead', 'calendar'), $options);
