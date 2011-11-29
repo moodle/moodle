@@ -17,8 +17,8 @@
 /**
  * Defines the version of the subplugin
  *
- * @package    workshopeval
- * @subpackage best
+ * @package    workshopallocation
+ * @subpackage random
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,4 +27,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version  = 2010090501;
 $plugin->requires = 2010090501;  // Requires this Moodle version
-$plugin->component = 'workshopeval_best';
+$plugin->component = 'workshopallocation_random';
