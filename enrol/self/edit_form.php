@@ -165,14 +165,14 @@ class enrol_self_edit_form extends moodleform {
     * @return array index is the role id, value is the role name
     */
     function extend_assignable_roles($context, $defaultrole) {
-    	global $DB;
+        global $DB;
         $roles = get_assignable_roles($context);
         $sql = "SELECT r.id, r.name
                   FROM {role} r
                  WHERE r.id = $defaultrole";
         $results = $DB->get_record_sql($sql);
         if (isset($results->name)) {
-        	$roles[$results->id] = $results->name;
+            $roles[$results->id] = $results->name;
         }
         return $roles;
     }
