@@ -7439,7 +7439,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
     $hascourseaccess = ($PAGE->course->id == SITEID) || can_access_course($PAGE->course, $userid);
     $enablerssfeeds = !empty($CFG->enablerssfeeds) && !empty($CFG->forum_enablerssfeeds);
 
-    if ($hascourseaccess && $enablerssfeeds && $forumobject->rsstype && $forumobject->rssarticles) {
+    if ($enablerssfeeds && $forumobject->rsstype && $forumobject->rssarticles && $hascourseaccess) {
 
         if (!function_exists('rss_get_url')) {
             require_once("$CFG->libdir/rsslib.php");
