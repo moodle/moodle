@@ -153,8 +153,18 @@ class grading_manager_test extends UnitTestCase {
 
         $needle = '<span>Aha</span>, then who\'s a bad guy here he?';
         $tokens = testable_grading_manager::tokenize($needle);
-        $this->assertTrue(in_array('span', $tokens));
+        $this->assertEqual(8, count($tokens));
+        $this->assertTrue(in_array('span', $tokens)); // Extracted the tag name
         $this->assertTrue(in_array('Aha', $tokens));
-        $this->assertTrue(in_array('who', $tokens));
+        $this->assertTrue(in_array('who', $tokens)); // Removed the trailing 's
+        $this->assertTrue(!in_array('a', $tokens)); //Single letter token was dropped
+        $this->assertTrue(in_array('he', $tokens)); // Removed the trailing ?
+
+        $needle = 'grammar, "english language"';
+        $tokens = testable_grading_manager::tokenize($needle);
+        $this->assertTrue(in_array('grammar', $tokens));
+        $this->assertTrue(in_array('english', $tokens));
+        $this->assertTrue(in_array('language', $tokens));
+        $this->assertTrue(!in_array('english language', $tokens)); // Quoting part of the string is not supported
     }
 }
