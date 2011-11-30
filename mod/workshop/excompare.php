@@ -84,10 +84,12 @@ if (!empty($mformreference)) {
         'showreviewer'  => false,
         'showauthor'    => false,
         'showform'      => true,
-        'showweight'    => false,
     );
-    $reference = $workshop->prepare_assessment($reference, $mformreference, $options);
+    $reference = $workshop->prepare_example_reference_assessment($reference, $mformreference, $options);
     $reference->title = get_string('assessmentreference', 'workshop');
+    if ($canmanage) {
+        $reference->url = $workshop->exassess_url($reference->id);
+    }
     echo $output->render($reference);
 }
 
@@ -96,9 +98,8 @@ if ($isreviewer) {
         'showreviewer'  => true,
         'showauthor'    => false,
         'showform'      => true,
-        'showweight'    => false,
     );
-    $assessment = $workshop->prepare_assessment($assessment, $mformassessment, $options);
+    $assessment = $workshop->prepare_example_assessment($assessment, $mformassessment, $options);
     $assessment->title = get_string('assessmentbyyourself', 'workshop');
     if ($workshop->assessing_examples_allowed()) {
         $assessment->add_action(
@@ -113,9 +114,8 @@ if ($isreviewer) {
         'showreviewer'  => true,
         'showauthor'    => false,
         'showform'      => true,
-        'showweight'    => false,
     );
-    $assessment = $workshop->prepare_assessment($assessment, $mformassessment, $options);
+    $assessment = $workshop->prepare_example_assessment($assessment, $mformassessment, $options);
     echo $output->render($assessment);
 }
 
