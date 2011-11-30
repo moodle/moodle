@@ -57,11 +57,11 @@ class enrol_self_edit_form extends moodleform {
         $mform->addElement('select', 'customint1', get_string('groupkey', 'enrol_self'), $options);
         $mform->addHelpButton('customint1', 'groupkey', 'enrol_self');
         $mform->setDefault('customint1', $plugin->get_config('groupkey'));
-
+        $roles = get_assignable_roles($context);
         if ($instance->id) {
-            $roles = get_default_enrol_roles($context, $instance->roleid);
+            $roles = $this->extend_assignable_roles($context, $instance->roleid);
         } else {
-            $roles = get_default_enrol_roles($context, $plugin->get_config('roleid'));
+            $roles = $this->extend_assignable_roles($context, $plugin->get_config('roleid'));
         }
         $mform->addElement('select', 'roleid', get_string('role', 'enrol_self'), $roles);
         $mform->setDefault('roleid', $plugin->get_config('roleid'));
@@ -155,5 +155,25 @@ class enrol_self_edit_form extends moodleform {
         }
 
         return $errors;
+    }
+
+    /**
+    * Gets a list of roles that this user can assign for the course as the default for self-enrolment
+    *
+    * @param context $context the context.
+    * @param integer $defaultrole the id of the role that is set as the default for self-enrolement
+    * @return array index is the role id, value is the role name
+    */
+    function extend_assignable_roles($context, $defaultrole) {
+    	global $DB;
+        $roles = get_assignable_roles($context);
+        $sql = "SELECT r.id, r.name
+                  FROM {role} r
+                 WHERE r.id = $defaultrole";
+        $results = $DB->get_record_sql($sql);
+        if (isset($results->name)) {
+        	$roles[$results->id] = $results->name;
+        }
+        return $roles;
     }
 }
