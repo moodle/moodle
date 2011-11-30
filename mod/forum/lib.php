@@ -7505,7 +7505,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
     } else {
         $userid = $USER->id;
     }
-    
+
     $hascourseaccess = ($PAGE->course->id == SITEID) || can_access_course($PAGE->course, $userid);
     $enablerssfeeds = !empty($CFG->enablerssfeeds) && !empty($CFG->forum_enablerssfeeds);
 
