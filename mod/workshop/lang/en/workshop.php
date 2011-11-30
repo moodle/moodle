@@ -53,6 +53,7 @@ $string['assessmentenddatetime'] = 'Assessment deadline: {$a->daydatetime} ({$a-
 $string['assessmentform'] = 'Assessment form';
 $string['assessmentofsubmission'] = '<a href="{$a->assessmenturl}">Assessment</a> of <a href="{$a->submissionurl}">{$a->submissiontitle}</a>';
 $string['assessmentreference'] = 'Reference assessment';
+$string['assessmentreferenceconflict'] = 'It is not possible to assess an example submission for which you provided a reference assessment.';
 $string['assessmentreferenceneeded'] = 'You have to assess this example submission to provide a reference assessment. Click \'Continue\' button to assess the submission.';
 $string['assessmentsettings'] = 'Assessment settings';
 $string['assessmentstart'] = 'Open for assessment from';
