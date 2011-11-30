@@ -4,7 +4,7 @@
     //This function is the main entry point to glossary
     //rss feeds generation.
     function glossary_rss_get_feed($context, $args) {
-        global $CFG, $DB;
+        global $CFG, $DB, $COURSE, $USER;
 
         $status = true;
 
@@ -20,7 +20,7 @@
 
             //context id from db should match the submitted one
             //no specific capability required to view glossary entries so just check user is enrolled
-            if ($context->id != $modcontext->id || !is_enrolled($context)) {
+            if ($context->id != $modcontext->id || !can_access_course($COURSE, $USER)) {
                 return null;
             }
         }
