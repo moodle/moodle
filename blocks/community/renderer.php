@@ -193,6 +193,8 @@ class block_community_renderer extends plugin_renderer_base {
 
 
                 //Create course content html
+                $blocks = get_plugin_list('block');
+                $activities = get_plugin_list('mod');
                 if (!empty($course->contents)) {
                     $activitieshtml = '';
                     $blockhtml = '';
@@ -202,14 +204,22 @@ class block_community_renderer extends plugin_renderer_base {
                             if (!empty($blockhtml)) {
                                 $blockhtml .= ' - ';
                             }
-                            $blockhtml .= get_string('pluginname', 'block_' . $content->modulename)
-                                    . " (" . $content->contentcount . ")";
+                            if (array_key_exists($content->modulename, $blocks)) {
+                                $blockname = get_string('pluginname', 'block_' . $content->modulename);
+                            } else {
+                                $blockname = $content->modulename;
+                            }
+                            $blockhtml .= $blockname . " (" . $content->contentcount . ")";
                         } else {
                             if (!empty($activitieshtml)) {
                                 $activitieshtml .= ' - ';
                             }
-                            $activitieshtml .= get_string('modulename', $content->modulename)
-                                    . " (" . $content->contentcount . ")";
+                            if (array_key_exists($content->modulename, $activities)) {
+                                $activityname = get_string('modulename', $content->modulename);
+                            } else {
+                                $activityname = $content->modulename;
+                            }
+                            $activitieshtml .= $activityname . " (" . $content->contentcount . ")";
                         }
                     }
 
