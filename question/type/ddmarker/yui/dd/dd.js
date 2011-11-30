@@ -66,7 +66,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                                             '.item' + itemno);
                 },
                 drag_item_being_dragged : function(choiceno) {
-                    return dragitemsarea.one('span.dragitem.yui3-dd-dragging.choice' + choiceno);
+                    return dragitemsarea.one('span.dragitem.beingdragged.choice' + choiceno);
                 },
                 drag_item_home : function (choiceno) {
                     return dragitemsarea.one('span.draghome.choice' + choiceno);
@@ -322,6 +322,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             }).plug(Y.Plugin.DDConstrained, {constrain2node: this.doc.top_node()});
             dd.after('drag:start', function(e){
                 var dragnode = e.target.get('node');
+                dragnode.addClass('beingdragged');
                 var choiceno = this.get_choiceno_for_node(dragnode);
                 var itemno = this.get_itemno_for_node(dragnode);
                 if (itemno !== null) {
@@ -332,6 +333,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             }, this);
             dd.after('drag:end', function(e) {
                 var dragnode = e.target.get('node');
+                dragnode.removeClass('beingdragged');
                 var choiceno = this.get_choiceno_for_node(dragnode);
                 this.save_all_xy_for_choice(choiceno, dragnode);
                 this.redraw_drags_and_drops();
@@ -346,7 +348,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 var dragitem = this.doc.drag_item_for_choice(choiceno, i);
                 if (dragitem) {
                     dragitem.removeClass('item'+i);
-                    if (!dragitem.hasClass('yui3-dd-dragging')) {
+                    if (!dragitem.hasClass('beingdragged')) {
                         var bgimgxy = this.convert_to_bg_img_xy(dragitem.getXY());
                         if (this.xy_in_bgimg(bgimgxy)) {
                             dragitem.removeClass('item'+i);
@@ -396,7 +398,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         },
         redraw_drags_and_drops : function() {
             this.doc.drag_items().each(function(item) {
-                //if (!item.hasClass('yui3-dd-dragging')){
+                //if (!item.hasClass('beingdragged')){
                     item.addClass('unneeded');
                 //}
             }, this);
@@ -407,7 +409,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 for (var i=0; i < coords.length; i++) {
                     var dragitem;
                     dragitem = this.doc.drag_item_for_choice(choiceno, i);
-                    if (!dragitem || dragitem.hasClass('yui3-dd-dragging')) {
+                    if (!dragitem || dragitem.hasClass('beingdragged')) {
                         dragitem = this.clone_new_drag_item(dragitemhome, i);
                     } else {
                         dragitem.removeClass('unneeded');
@@ -416,7 +418,7 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 }
             }, this);
             this.doc.drag_items().each(function(item) {
-                if (item.hasClass('unneeded') && !item.hasClass('yui3-dd-dragging')) {
+                if (item.hasClass('unneeded') && !item.hasClass('beingdragged')) {
                     item.remove(true);
                 }
             }, this);
