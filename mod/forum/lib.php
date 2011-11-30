@@ -151,30 +151,31 @@ function forum_update_instance($forum, $mform) {
     }
 
     if ($forum->type == 'single') {  // Update related discussion and post.
-        if (! $discussion = $DB->get_record('forum_discussions', array('forum'=>$forum->id))) {
-            if ($discussions = $DB->get_records('forum_discussions', array('forum'=>$forum->id), 'timemodified ASC')) {
-                echo $OUTPUT->notification('Warning! There is more than one discussion in this forum - using the most recent');
-                $discussion = array_pop($discussions);
-            } else {
-                // try to recover by creating initial discussion - MDL-16262
-                $discussion = new stdClass();
-                $discussion->course          = $forum->course;
-                $discussion->forum           = $forum->id;
-                $discussion->name            = $forum->name;
-                $discussion->assessed        = $forum->assessed;
-                $discussion->message         = $forum->intro;
-                $discussion->messageformat   = $forum->introformat;
-                $discussion->messagetrust    = true;
-                $discussion->mailnow         = false;
-                $discussion->groupid         = -1;
+        $discussions = $DB->get_records('forum_discussions', array('forum'=>$forum->id), 'timemodified ASC');
+        if (!empty($discussions)) {
+            if (count($discussions) > 1) {
+                echo $OUTPUT->notification(get_string('warnformorepost', 'forum'));
+            }
+            $discussion = array_pop($discussions);
+        } else {
+            // try to recover by creating initial discussion - MDL-16262
+            $discussion = new stdClass();
+            $discussion->course          = $forum->course;
+            $discussion->forum           = $forum->id;
+            $discussion->name            = $forum->name;
+            $discussion->assessed        = $forum->assessed;
+            $discussion->message         = $forum->intro;
+            $discussion->messageformat   = $forum->introformat;
+            $discussion->messagetrust    = true;
+            $discussion->mailnow         = false;
+            $discussion->groupid         = -1;
 
-                $message = '';
+            $message = '';
 
-                forum_add_discussion($discussion, null, $message);
+            forum_add_discussion($discussion, null, $message);
 
-                if (! $discussion = $DB->get_record('forum_discussions', array('forum'=>$forum->id))) {
-                    print_error('cannotadd', 'forum');
-                }
+            if (! $discussion = $DB->get_record('forum_discussions', array('forum'=>$forum->id))) {
+                print_error('cannotadd', 'forum');
             }
         }
         if (! $post = $DB->get_record('forum_posts', array('id'=>$discussion->firstpost))) {
