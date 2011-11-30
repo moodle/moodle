@@ -48,11 +48,7 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
             $contexts, $formeditable = true) {
         $this->question = $question;
         $this->qtypeobj = question_bank::get_qtype('calculatedmulti');
-        if (1 == optional_param('reload', '', PARAM_INT)) {
-            $this->reload = true;
-        } else {
-            $this->reload = false;
-        }
+        $this->reload = optional_param('reload', false, PARAM_BOOL);
         if (!$this->reload) {
             // use database data as this is first pass
             if (isset($this->question->id)) {
@@ -158,11 +154,11 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         $mform->setConstants(array('nounits'=>$nounits));
         for ($i = 0; $i < $nounits; $i++) {
             $mform->addElement('hidden', 'unit'."[$i]",
-                    optional_param('unit'."[$i]", '', PARAM_NOTAGS));
+                    optional_param("unit[$i]", '', PARAM_NOTAGS));
             $mform->setType('unit'."[$i]", PARAM_NOTAGS);
             $mform->addElement('hidden', 'multiplier'."[$i]",
-                    optional_param('multiplier'."[$i]", '', PARAM_NUMBER));
-            $mform->setType('multiplier'."[$i]", PARAM_NUMBER);
+                    optional_param("multiplier[$i]", '', PARAM_NUMBER));
+            $mform->setType("multiplier[$i]", PARAM_NUMBER);
         }
 
         $this->add_combined_feedback_fields(true);
