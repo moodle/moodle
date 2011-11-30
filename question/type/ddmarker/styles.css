@@ -95,6 +95,7 @@ form.mform fieldset#previewareaheader div.markertexts span.markertext {
     -khtml-opacity: 0.6;
     opacity: 0.6;
     margin: 5px;
+    display : inline-block;
 }
 .que.ddmarker div.dragitems img.target {
     position:absolute;
