@@ -17,10 +17,15 @@
         $cm = get_coursemodule_from_instance('glossary', $glossaryid, 0, false, MUST_EXIST);
         if ($cm) {
             $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-
+            if ($COURSE->id == $cm->course) {
+                $course = $COURSE;
+            } else {
+                $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+            }
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
             //context id from db should match the submitted one
             //no specific capability required to view glossary entries so just check user is enrolled
-            if ($context->id != $modcontext->id || !can_access_course($COURSE, $USER)) {
+            if ($context->id != $modcontext->id || !can_access_course($coursecontext, $USER)) {
                 return null;
             }
         }
