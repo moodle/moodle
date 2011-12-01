@@ -58,7 +58,7 @@
         // Redirect logged-in users to My Moodle overview if required
         if (optional_param('setdefaulthome', false, PARAM_BOOL)) {
             set_user_preference('user_home_page_preference', HOMEPAGE_SITE);
-        } else if ($CFG->defaulthomepage == HOMEPAGE_MY && (optional_param('redirect', true, PARAM_BOOL) || !$hassiteconfig)) {
+        } else if ($CFG->defaulthomepage == HOMEPAGE_MY && optional_param('redirect', 1, PARAM_BOOL) === 1) {
             redirect($CFG->wwwroot .'/my/');
         } else if (!empty($CFG->defaulthomepage) && $CFG->defaulthomepage == HOMEPAGE_USER) {
             $PAGE->settingsnav->get('usercurrentsettings')->add(get_string('makethismyhome'), new moodle_url('/', array('setdefaulthome'=>true)), navigation_node::TYPE_SETTING);
