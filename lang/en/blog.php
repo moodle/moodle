@@ -138,6 +138,7 @@ $string['publishtoworld'] = 'Anyone in the world';
 $string['readfirst'] = 'Read this first';
 $string['relatedblogentries'] = 'Related blog entries';
 $string['retrievedfrom'] = 'Retrieved from';
+$string['rssfeed'] = 'Blog RSS feed';
 $string['searchterm'] = 'Search: {$a}';
 $string['settingsupdatederror'] = 'An error has occurred, blog preference setting could not be updated';
 $string['siteblog'] = 'Site blog: {$a}';
