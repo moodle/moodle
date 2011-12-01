@@ -118,6 +118,10 @@ class block_glossary_random extends block_base {
     function get_content() {
         global $USER, $CFG, $DB;
 
+        if (!has_capability('mod/glossary:read', $this->context)) {
+            return "";
+        }
+
         if (empty($this->config->glossary)) {
             $this->content->text   = get_string('notyetconfigured','block_glossary_random');
             $this->content->footer = '';
