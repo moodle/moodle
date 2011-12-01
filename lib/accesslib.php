@@ -5205,7 +5205,7 @@ function get_role_users($roleid, $context, $parent = false, $fields = '',
 
     if (empty($fields)) {
         $fields = 'u.id, u.confirmed, u.username, u.firstname, u.lastname, '.
-                  'u.maildisplay, u.mailformat, u.maildigest, u.email, u.city, '.
+                  'u.maildisplay, u.mailformat, u.maildigest, u.email, u.emailstop, u.city, '.
                   'u.country, u.picture, u.idnumber, u.department, u.institution, '.
                   'u.lang, u.timezone, u.lastaccess, u.mnethostid, r.name AS rolename, r.sortorder';
     }
