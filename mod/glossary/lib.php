@@ -2747,7 +2747,7 @@ function glossary_extend_navigation($navigation, $course, $module, $cm) {
  * @param navigation_node $glossarynode The node to add module settings to
  */
 function glossary_extend_settings_navigation(settings_navigation $settings, navigation_node $glossarynode) {
-    global $PAGE, $DB, $CFG, $USER, $COURSE;
+    global $PAGE, $DB, $CFG, $USER;
 
     $mode = optional_param('mode', '', PARAM_ALPHA);
     $hook = optional_param('hook', 'ALL', PARAM_CLEAN);
@@ -2770,7 +2770,8 @@ function glossary_extend_settings_navigation(settings_navigation $settings, navi
 
     $glossary = $DB->get_record('glossary', array("id" => $PAGE->cm->instance));
 
-    if (!empty($CFG->enablerssfeeds) && !empty($CFG->glossary_enablerssfeeds) && $glossary->rsstype && $glossary->rssarticles  && can_access_course($COURSE, $USER)) {
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $PAGE->course->id, MUST_EXIST);
+    if (!empty($CFG->enablerssfeeds) && !empty($CFG->glossary_enablerssfeeds) && $glossary->rsstype && $glossary->rssarticles  && can_access_course($coursecontext, $USER)) {
         require_once("$CFG->libdir/rsslib.php");
 
         $string = get_string('rsstype','forum');
