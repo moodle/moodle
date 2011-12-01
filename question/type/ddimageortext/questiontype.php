@@ -193,7 +193,6 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
         $output .= $format->write_combined_feedback($question->options,
                                                     $question->id,
                                                     $question->contextid);
-        $output .= $format->write_hints($question);
         $files = $fs->get_area_files($contextid, 'qtype_ddimageortext', 'bgimage', $question->id);
         $output .= "    ".$this->write_files($files, 2)."\n";;
 
