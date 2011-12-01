@@ -130,10 +130,14 @@ foreach ($files as $file) {
                 $file_record->itemid, $file_record->filepath, $file_record->filename);
     if ($existingfile) {
         //if allow automatic rename (avoid)
-        throw new moodle_exception('filenameexist', 'webservice', '', $file->filename);
+        $fileerror = new stdClass();
+        $fileerror->filename = $file->filename;
+        $fileerror->errortype = 'filenameexist';
+        $fileerror->errormsg = get_string('filenameexist', 'webservice', $file->filename);
+        $results[] = $fileerror;
+    } else {
+        $stored_file = $fs->create_file_from_pathname($file_record, $file->filepath);
+        $results[] = $file_record;
     }
-
-    $stored_file = $fs->create_file_from_pathname($file_record, $file->filepath);
-    $results[] = $file_record;
 }
 echo json_encode($results);
