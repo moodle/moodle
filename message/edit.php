@@ -106,28 +106,33 @@ if (($form = data_submitted()) && confirm_sesskey()) {
 
     $preferences = array();
 
-    $possiblestates = array('loggedin', 'loggedoff');
-    foreach ( $providers as $providerid => $provider){
-        foreach ($possiblestates as $state){
-            $linepref = '';
-            $componentproviderstate = $provider->component.'_'.$provider->name.'_'.$state;
-            if (array_key_exists($componentproviderstate, $form)) {
-                foreach ($form->{$componentproviderstate} as $process=>$one){
-                    if ($linepref == ''){
-                        $linepref = $process;
-                    } else {
-                        $linepref .= ','.$process;
+    // Turning on emailstop disables the preference checkboxes in the browser.
+    // Disabled checkboxes may not be submitted with the form making them look (incorrectly) like they've been unchecked.
+    // Only alter the messaging preferences if emailstop is turned off
+    if (!$user->emailstop) {
+        $possiblestates = array('loggedin', 'loggedoff');
+        foreach ( $providers as $providerid => $provider){
+            foreach ($possiblestates as $state){
+                $linepref = '';
+                $componentproviderstate = $provider->component.'_'.$provider->name.'_'.$state;
+                if (array_key_exists($componentproviderstate, $form)) {
+                    foreach ($form->{$componentproviderstate} as $process=>$one){
+                        if ($linepref == ''){
+                            $linepref = $process;
+                        } else {
+                            $linepref .= ','.$process;
+                        }
                     }
                 }
+                $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_'.$state] = $linepref;
             }
-            $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_'.$state] = $linepref;
         }
-    }
-    foreach ( $providers as $providerid => $provider){
-        foreach ($possiblestates as $state){
-            $preferencekey = 'message_provider_'.$provider->component.'_'.$provider->name.'_'.$state;
-            if (empty($preferences[$preferencekey])) {
-                $preferences[$preferencekey] = 'none';
+        foreach ( $providers as $providerid => $provider){
+            foreach ($possiblestates as $state){
+                $preferencekey = 'message_provider_'.$provider->component.'_'.$provider->name.'_'.$state;
+                if (empty($preferences[$preferencekey])) {
+                    $preferences[$preferencekey] = 'none';
+                }
             }
         }
     }
