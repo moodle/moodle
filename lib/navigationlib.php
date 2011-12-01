@@ -1216,6 +1216,7 @@ class global_navigation extends navigation_node {
                     }
                     break;
                 case CONTEXT_USER :
+                    $course = $this->page->course;
                     if ($showcategories && !$ismycourse) {
                         $this->load_all_categories($course->category, $showcategories);
                     }
