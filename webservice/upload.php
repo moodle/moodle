@@ -82,9 +82,10 @@ foreach ($_FILES as $fieldname=>$uploaded_file) {
     $file = new stdClass();
     $file->filename = clean_param($_FILES[$fieldname]['name'], PARAM_FILE);
     // check system maxbytes setting
-    if (($_FILES[$fieldname]['size'] > $CFG->maxbytes)) {
+    if (($_FILES[$fieldname]['size'] > get_max_upload_file_size($CFG->maxbytes))) {
         // oversize file will be ignored, error added to array to notify
         // web service client
+        $file->errortype = 'fileoversized';
         $file->error = get_string('maxbytes', 'error');
     } else {
         $file->filepath = $_FILES[$fieldname]['tmp_name'];
@@ -129,12 +130,9 @@ foreach ($files as $file) {
     $existingfile = $fs->file_exists($file_record->contextid, $file_record->component, $file_record->filearea,
                 $file_record->itemid, $file_record->filepath, $file_record->filename);
     if ($existingfile) {
-        //if allow automatic rename (avoid)
-        $fileerror = new stdClass();
-        $fileerror->filename = $file->filename;
-        $fileerror->errortype = 'filenameexist';
-        $fileerror->errormsg = get_string('filenameexist', 'webservice', $file->filename);
-        $results[] = $fileerror;
+        $file->errortype = 'filenameexist';
+        $file->error = get_string('filenameexist', 'webservice', $file->filename);
+        $results[] = $file;
     } else {
         $stored_file = $fs->create_file_from_pathname($file_record, $file->filepath);
         $results[] = $file_record;
