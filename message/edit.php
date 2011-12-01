@@ -107,25 +107,29 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         $DB->set_field('user', 'emailstop', $user->emailstop, array("id"=>$user->id));
     }
 
-
-    foreach ($providers as $provider) {
-        $componentproviderbase = $provider->component.'_'.$provider->name;
-        foreach (array('loggedin', 'loggedoff') as $state) {
-            $linepref = '';
-            $componentproviderstate = $componentproviderbase.'_'.$state;
-            if (array_key_exists($componentproviderstate, $form)) {
-                foreach (array_keys($form->{$componentproviderstate}) as $process) {
-                    if ($linepref == ''){
-                        $linepref = $process;
-                    } else {
-                        $linepref .= ','.$process;
+    // Turning on emailstop disables the preference checkboxes in the browser.
+    // Disabled checkboxes may not be submitted with the form making them look (incorrectly) like they've been unchecked.
+    // Only alter the messaging preferences if emailstop is turned off
+    if (!$user->emailstop) {
+        foreach ($providers as $provider) {
+            $componentproviderbase = $provider->component.'_'.$provider->name;
+            foreach (array('loggedin', 'loggedoff') as $state) {
+                $linepref = '';
+                $componentproviderstate = $componentproviderbase.'_'.$state;
+                if (array_key_exists($componentproviderstate, $form)) {
+                    foreach (array_keys($form->{$componentproviderstate}) as $process) {
+                        if ($linepref == ''){
+                            $linepref = $process;
+                        } else {
+                            $linepref .= ','.$process;
+                        }
                     }
                 }
+                if (empty($linepref)) {
+                    $linepref = 'none';
+                }
+                $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_'.$state] = $linepref;
             }
-            if (empty($linepref)) {
-                $linepref = 'none';
-            }
-            $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_'.$state] = $linepref;
         }
     }
 
