@@ -408,6 +408,7 @@ $string['usermarksread'] = 'Manual message read marking';
 $string['viewalldiscussions'] = 'View all discussions';
 $string['warnafter'] = 'Post threshold for warning';
 $string['warnafter_help'] = 'Students can be warned as they approach the maximum number of posts allowed in a given period. This setting specifies after how many posts they are warned. Users with the capability mod/forum:postwithoutthrottling are exempt from post limits.';
+$string['warnformorepost'] = 'Warning! There is more than one discussion in this forum - using the most recent';
 $string['yournewquestion'] = 'Your new question';
 $string['yournewtopic'] = 'Your new discussion topic';
 $string['yourreply'] = 'Your reply';
