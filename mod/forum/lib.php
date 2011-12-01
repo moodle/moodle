@@ -4011,6 +4011,72 @@ function forum_get_file_areas($course, $cm, $context) {
 }
 
 /**
+ * File browsing support for forum module.
+ *
+ * @param object $browser
+ * @param object $areas
+ * @param object $course
+ * @param object $cm
+ * @param object $context
+ * @param string $filearea
+ * @param int $itemid
+ * @param string $filepath
+ * @param string $filename
+ * @return object file_info instance or null if not found
+ */
+function forum_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+    global $CFG, $DB;
+
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        return null;
+    }
+
+    $fileareas = array('attachment', 'post');
+    if (!in_array($filearea, $fileareas)) {
+        return null;
+    }
+
+    if (!$post = $DB->get_record('forum_posts', array('id' => $itemid))) {
+        return null;
+    }
+
+    if (!$discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion))) {
+        return null;
+    }
+
+    if (!$forum = $DB->get_record('forum', array('id' => $cm->instance))) {
+        return null;
+    }
+
+    $fs = get_file_storage();
+    $filepath = is_null($filepath) ? '/' : $filepath;
+    $filename = is_null($filename) ? '.' : $filename;
+    if (!($storedfile = $fs->get_file($context->id, 'mod_forum', $filearea, $itemid, $filepath, $filename))) {
+        return null;
+    }
+
+    // Make sure groups allow this user to see this file
+    if ($discussion->groupid > 0 and $groupmode = groups_get_activity_groupmode($cm, $course)) {   // Groups are being used
+        if (!groups_group_exists($discussion->groupid)) { // Can't find group
+            return null;                           // Be safe and don't send it to anyone
+        }
+
+        if (!groups_is_member($discussion->groupid) and !has_capability('moodle/site:accessallgroups', $context)) {
+            // do not send posts from other groups when in SEPARATEGROUPS or VISIBLEGROUPS
+            return null;
+        }
+    }
+
+    // Make sure we're allowed to see it...
+    if (!forum_user_can_see_post($forum, $discussion, $post, NULL, $cm)) {
+        return null;
+    }
+
+    $urlbase = $CFG->wwwroot.'/pluginfile.php';
+    return new file_info_stored($browser, $context, $storedfile, $urlbase, $filearea, $itemid, true, true, false);
+}
+
+/**
  * Serves the forum attachments. Implements needed access control ;-)
  *
  * @param object $course
