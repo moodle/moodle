@@ -40,6 +40,7 @@ $string['databasehost'] = 'Az adatbázis gazdagépe';
 $string['databasename'] = 'Az adatbázis neve';
 $string['databasetypehead'] = 'Adatbázismotor kiválasztása';
 $string['dataroot'] = 'Adatkönyvtár';
+$string['datarootpermission'] = 'Engedély adatkönyvtárakhoz';
 $string['dbprefix'] = 'Táblázat előtagja';
 $string['dirroot'] = 'Moodle-könyvtár';
 $string['environmenthead'] = 'Környezetének ellenőrzése ...';
