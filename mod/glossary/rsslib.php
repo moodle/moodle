@@ -23,7 +23,7 @@
                 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
             }
             //context id from db should match the submitted one
-            if ($context->id != $modcontext->id || !has_capability('mod/glossary:read', $modcontext)) {
+            if ($context->id != $modcontext->id || !has_capability('mod/glossary:view', $modcontext)) {
                 return null;
             }
         }
