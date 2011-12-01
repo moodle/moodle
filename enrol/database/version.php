@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,5 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2010073101;
+$plugin->version   = 2011112900;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2011112900;        // Requires this Moodle version
+$plugin->component = 'enrol_database';  // Full name of the plugin (used for diagnostics)
 //TODO: should we add cron sync?

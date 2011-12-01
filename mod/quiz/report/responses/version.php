@@ -27,3 +27,5 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version  = 2011051200;
 $plugin->requires = 2011060313;
+$plugin->component = 'quiz_responses';
+

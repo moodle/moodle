@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2011101600;
-$plugin->requires = 2011090700;
-$plugin->release  = '3.4.6';
+$plugin->version   = 2011112900;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2011112900;        // Requires this Moodle version
+$plugin->component = 'editor_tinymce';  // Full name of the plugin (used for diagnostics)
+$plugin->release   = '3.4.6';

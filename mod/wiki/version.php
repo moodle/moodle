@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -9,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Code fragment to define the version of wiki
@@ -32,6 +31,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$module->version  = 2011011001; // The current module version (Date: YYYYMMDDXX)
-$module->requires = 2010080300;
-$module->cron     = 0; // Period for cron to check this module (secs)
+defined('MOODLE_INTERNAL') || die();
+
+$module->version   = 2011112900;       // The current module version (Date: YYYYMMDDXX)
+$module->requires  = 2011112900;       // Requires this Moodle version
+$module->component = 'mod_wiki';       // Full name of the plugin (used for diagnostics)
+$module->cron      = 0;

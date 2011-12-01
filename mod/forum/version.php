@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Code fragment to define the module version etc.
- * This fragment is called by /admin/index.php
+ * Version information
  *
  * @package    mod
  * @subpackage forum
@@ -26,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version   = 2011110601;
-$module->requires  = 2011110200;  // Requires this Moodle version
+$module->version   = 2011112900;       // The current module version (Date: YYYYMMDDXX)
+$module->requires  = 2011112900;       // Requires this Moodle version
+$module->component = 'mod_forum';      // Full name of the plugin (used for diagnostics)
 $module->cron      = 60;
-$module->component = 'mod_forum';
