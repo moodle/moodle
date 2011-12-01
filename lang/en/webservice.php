@@ -91,6 +91,7 @@ $string['externalservicefunctions'] = 'External service functions';
 $string['externalservices'] = 'External services';
 $string['externalserviceusers'] = 'External service users';
 $string['failedtolog'] = 'Failed to log';
+$string['filenameexist'] = 'File name already exists: {$a}';
 $string['function'] = 'Function';
 $string['functions'] = 'Functions';
 $string['generalstructure'] = 'General structure';

@@ -15,7 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Accpet uploading files by web service token
+ * Accept uploading files by web service token
+ *
+ * POST params:
+ *  token => the web service user token (needed for authentication)
+ *  filepath => the private file aera path (where files will be stored)
+ *  [_FILES] => for example you can send the files with <input type=file>,
+ *              or with curl magic: 'file_1' => '@/path/to/file', or ...
+ *
  * @package    moodlecore
  * @subpackage files
  * @copyright  2011 Dongsheng Cai <dongsheng@moodle.com>
@@ -117,6 +124,15 @@ foreach ($files as $file) {
     $file_record->license   = $CFG->sitedefaultlicense;
     $file_record->author    = fullname($authenticationinfo['user']);;
     $file_record->source    = '';
+
+    //Check if the file already exist
+    $existingfile = $fs->file_exists($file_record->contextid, $file_record->component, $file_record->filearea,
+                $file_record->itemid, $file_record->filepath, $file_record->filename);
+    if ($existingfile) {
+        //if allow automatic rename (avoid)
+        throw new moodle_exception('filenameexist', 'webservice', '', $file->filename);
+    }
+
     $stored_file = $fs->create_file_from_pathname($file_record, $file->filepath);
     $results[] = $file_record;
 }
