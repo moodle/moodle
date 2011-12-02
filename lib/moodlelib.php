@@ -6810,7 +6810,7 @@ class emoticon_manager {
  * @return string The now encrypted data
  */
 function rc4encrypt($data) {
-    $password = 'nfgjeingjk';
+    $password = get_site_identifier();
     return endecrypt($password, $data, '');
 }
 
@@ -6823,7 +6823,7 @@ function rc4encrypt($data) {
  * @return string The now decrypted data
  */
 function rc4decrypt($data) {
-    $password = 'nfgjeingjk';
+    $password = get_site_identifier();
     return endecrypt($password, $data, 'de');
 }
 
