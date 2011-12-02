@@ -676,7 +676,6 @@ $string['scores'] = 'Scores';
 $string['select'] = 'Select';
 $string['selectall'] = 'Select all';
 $string['selectcategory'] = 'Select category';
-$string['selectcategoryabove'] = 'Select a category above';
 $string['selectedattempts'] = 'Selected attempts...';
 $string['selectnone'] = 'Deselect all';
 $string['selectquestiontype'] = '-- Select question type --';

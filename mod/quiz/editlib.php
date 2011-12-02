@@ -1165,7 +1165,7 @@ class quiz_question_bank_view extends question_bank_view {
         $this->display_category_form($this->contexts->having_one_edit_tab_cap('edit'),
                 $this->baseurl, $categoryandcontext);
         echo "<p style=\"text-align:center;\"><b>";
-        print_string('selectcategoryabove', 'quiz');
+        print_string('selectcategoryabove', 'question');
         echo "</b></p>";
         echo $OUTPUT->box_end();
     }
