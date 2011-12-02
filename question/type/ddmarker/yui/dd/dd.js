@@ -519,6 +519,10 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             '38': 'up', // Up arrow
             '39': 'right',     // Right arrow
             '40': 'down',     // Down arrow
+            '65': 'left', // a
+            '87': 'up', // w
+            '68': 'right',     // d
+            '83': 'down',     // s
             '27': 'remove'    // Escape
         },
 
