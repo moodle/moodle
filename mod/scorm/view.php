@@ -20,6 +20,7 @@ require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
 $a = optional_param('a', '', PARAM_INT);         // scorm ID
 $organization = optional_param('organization', '', PARAM_INT); // organization ID
+$action = optional_param('action', '', PARAM_ALPHA);
 
 if (!empty($id)) {
     if (! $cm = get_coursemodule_from_id('scorm', $id)) {
@@ -83,6 +84,20 @@ $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
+if (!empty($action) && confirm_sesskey() && has_capability('mod/scorm:deleteownresponses', $contextmodule)) {
+    if ($action == 'delete') {
+        $confirmurl = new moodle_url($PAGE->url, array('action'=>'deleteconfirm'));
+        echo $OUTPUT->confirm(get_string('deleteuserattemptcheck', 'scorm'), $confirmurl, $PAGE->url);
+        echo $OUTPUT->footer();
+        exit;
+    } else if ($action == 'deleteconfirm') {
+        //delete this users attempts.
+        $DB->delete_records('scorm_scoes_track', array('userid' => $USER->id, 'scormid' => $scorm->id));
+        scorm_update_grades($scorm, $USER->id, true);
+        echo $OUTPUT->notification(get_string('scormresponsedeleted', 'scorm'), 'notifysuccess');
+    }
+}
+
 $currenttab = 'info';
 require($CFG->dirroot . '/mod/scorm/tabs.php');
 
@@ -90,7 +105,7 @@ require($CFG->dirroot . '/mod/scorm/tabs.php');
 echo $OUTPUT->heading(format_string($scorm->name));
 $attemptstatus = '';
 if ($scorm->displayattemptstatus == 1) {
-    $attemptstatus = scorm_get_attempt_status($USER, $scorm);
+    $attemptstatus = scorm_get_attempt_status($USER, $scorm, $cm);
 }
 echo $OUTPUT->box(format_module_intro('scorm', $scorm, $cm->id).$attemptstatus, 'generalbox boxaligncenter boxwidthwide', 'intro');
 
