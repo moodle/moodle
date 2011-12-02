@@ -79,7 +79,7 @@ form.mform fieldset#previewareaheader div.markertexts span.markertext {
     border-width : 2px;
     border-colour : khaki;
 }
-.que.ddmarker span.wrongparts span.wrongpart {
+.que.ddmarker span.wrongpart {
     background-color: yellow;
     border-style : solid;
     border-width : 2px;

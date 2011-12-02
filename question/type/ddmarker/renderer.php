@@ -140,14 +140,14 @@ class qtype_ddmarker_renderer extends qtype_ddtoimage_renderer_base {
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
         if ($hint->statewhichincorrect) {
-            $wrongparts = $question->get_wrong_drags($response);
-            $wrongpartsstring = '';
-            foreach($wrongparts as $wrongpart) {
-                $wrongpartsstring .= html_writer::nonempty_tag('span',
-                                        $wrongpart, array('class' => 'wrongpart'));
+            $wrongdrags = $question->get_wrong_drags($response);
+            $wrongparts = array();
+            foreach($wrongdrags as $wrongdrag) {
+                $wrongparts[] = html_writer::nonempty_tag('span',
+                                                $wrongdrag, array('class' => 'wrongpart'));
             }
             $output .= html_writer::nonempty_tag('div',
-                    get_string('followingarewrong', 'qtype_ddmarker', $wrongpartsstring),
+                    get_string('followingarewrong', 'qtype_ddmarker', join(', ', $wrongparts)),
                     array('class' => 'wrongparts'));
         }
         $output .= parent::hint($qa, $hint);
