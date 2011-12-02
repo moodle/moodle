@@ -269,7 +269,15 @@ class restore_gradebook_structure_step extends restore_structure_step {
 
         $data->contextid = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
 
-        $newitemid = $DB->insert_record('grade_letters', $data);
+        // MDL-29598 - Don't insert a duplicate record if this grade letter already exists
+        $gltest = (array)$data;
+        unset($gltest['id']);
+        if (!$DB->record_exists('grade_letters', $gltest)) {
+            $newitemid = $DB->insert_record('grade_letters', $data);
+        } else {
+            $newitemid = $data->id;
+        }
+
         $this->set_mapping('grade_letter', $oldid, $newitemid);
     }
     protected function process_grade_setting($data) {
