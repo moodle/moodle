@@ -451,7 +451,6 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             var infinite = input.hasClass('infinite');
             var dragging = (null !== this.doc.drag_item_being_dragged(choiceno));
             var coords = [];
-            var dragitemhome = this.doc.drag_item_home(choiceno);
             if (fv !== '') {
                 var coordsstrings = fv.split(';');
                 for (var i=0; i<coordsstrings.length; i++) {
@@ -459,9 +458,13 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 }
             }
             if (infinite || (!dragging && fv === '')) {
-                coords[coords.length] = dragitemhome.getXY();
+                coords[coords.length] = this.drag_home_xy(choiceno);
             }
             return coords;
+        },
+        drag_home_xy : function (choiceno) {
+            var dragitemhome = this.doc.drag_item_home(choiceno);
+            return [dragitemhome.getX(), dragitemhome.get('parentNode').getY()];
         },
         get_choiceno_for_node : function(node) {
             return +this.doc.get_classname_numeric_suffix(node, 'choice');
@@ -495,9 +498,8 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
             if (xy !== null) {
                 xy = this.constrain_to_bgimg(xy);
             } else {
-                xy = this.doc.drag_item_home(choiceno).getXY();
+                xy = this.drag_home_xy(choiceno);
             }
-            console.log(e.direction, xy);
             e.preventDefault();
             dragitem.setXY(xy);
             this.save_all_xy_for_choice(choiceno, null);
