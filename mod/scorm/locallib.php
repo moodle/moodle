@@ -1110,7 +1110,9 @@ function scorm_get_attempt_status($user, $scorm, $cm='') {
     }
     if (!empty($cm)) {
         $context = context_module::instance($cm->id);
-        if (has_capability('mod/scorm:deleteownresponses', $context)) {
+        if (has_capability('mod/scorm:deleteownresponses', $context) &&
+            $DB->record_exists('scorm_scoes_track', array('userid' => $user->id, 'scormid' => $scorm->id))) {
+            //check to see if any data is stored for this user:
             $deleteurl = new moodle_url($PAGE->url, array('action'=>'delete', 'sesskey' => sesskey()));
             $result .= $OUTPUT->single_button($deleteurl, get_string('deleteallattempts', 'scorm'));
         }
