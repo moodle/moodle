@@ -36,6 +36,8 @@ class scorm_basic_report extends scorm_default_report {
         $contextmodule= get_context_instance(CONTEXT_MODULE, $cm->id);
         $action = optional_param('action', '', PARAM_ALPHA);
         $attemptids = optional_param_array('attemptid', array(), PARAM_RAW);
+        $attemptsmode = optional_param('attemptsmode', SCORM_REPORT_ATTEMPTS_ALL_STUDENTS, PARAM_INT);
+        $PAGE->set_url(new moodle_url($PAGE->url, array('attemptsmode' => $attemptsmode)));
 
         if ($action == 'delete' && has_capability('mod/scorm:deleteresponses', $contextmodule) && confirm_sesskey()) {
             if (scorm_delete_responses($attemptids, $scorm)) { //delete responses.
@@ -49,13 +51,11 @@ class scorm_basic_report extends scorm_default_report {
         if ($fromform = $mform->get_data()) {
             $detailedrep = $fromform->detailedrep;
             $pagesize = $fromform->pagesize;
-            $attemptsmode = !empty($fromform->attemptsmode) ? $fromform->attemptsmode : SCORM_REPORT_ATTEMPTS_ALL_STUDENTS;
             set_user_preference('scorm_report_detailed', $detailedrep);
             set_user_preference('scorm_report_pagesize', $pagesize);
         } else {
             $detailedrep = get_user_preferences('scorm_report_detailed', false);
             $pagesize = get_user_preferences('scorm_report_pagesize', 0);
-            $attemptsmode = optional_param('attemptsmode', SCORM_REPORT_ATTEMPTS_STUDENTS_WITH, PARAM_INT);
         }
         if ($pagesize < 1) {
             $pagesize = SCORM_REPORT_DEFAULT_PAGE_SIZE;
@@ -520,7 +520,7 @@ class scorm_basic_report extends scorm_default_report {
                     }
                 }
                 if (!$download) {
-                    $mform->set_data(compact('detailedrep', 'pagesize'));
+                    $mform->set_data(compact('detailedrep', 'pagesize', 'attemptsmode'));
                     $mform->display();
                 }
             } else {
