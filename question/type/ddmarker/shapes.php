@@ -67,7 +67,7 @@ abstract class qtype_ddmarker_shape {
     public function get_coords_interpreter_error() {
         if ($this->error) {
             $a = new stdClass();
-            $a->shape = self::human_readable_name();
+            $a->shape = self::human_readable_name(true);
             $a->coordsstring = self::human_readable_coords_format();
             return get_string('formerror_'.$this->error, 'qtype_ddmarker', $a);
         } else {
@@ -87,8 +87,12 @@ abstract class qtype_ddmarker_shape {
 
     protected static $classnameprefix = 'qtype_ddmarker_shape_';
 
-    public static function human_readable_name() {
-        return get_string('shape_'.self::name(), 'qtype_ddmarker');
+    public static function human_readable_name($lowercase = false) {
+        $stringid = 'shape_'.self::name();
+        if ($lowercase) {
+            $stringid .= '_lowercase';
+        }
+        return get_string($stringid, 'qtype_ddmarker');
     }
 
     public static function human_readable_coords_format() {
