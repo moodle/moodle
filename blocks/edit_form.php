@@ -126,23 +126,19 @@ class block_edit_form extends moodleform {
             $mform->addElement('select', 'bui_contexts', get_string('contexts', 'block'), $contextoptions);
         }
 
+        // Generate pagetype patterns by callbacks
         $displaypagetypewarning = false;
-        if ($this->page->pagetype == 'site-index') {   // No need for pagetype list on home page
-            $pagetypelist = array('*'=>get_string('page-x', 'pagetype'));
-        } else {
-            // Generate pagetype patterns by callbacks
-            $pagetypelist = generate_page_type_patterns($this->page->pagetype, $parentcontext, $this->page->context);
-            if (!array_key_exists($this->block->instance->pagetypepattern, $pagetypelist)) {
-                // Pushing block's existing page type pattern
-                $pagetypestringname = 'page-'.str_replace('*', 'x', $this->block->instance->pagetypepattern);
-                if (get_string_manager()->string_exists($pagetypestringname, 'pagetype')) {
-                    $pagetypelist[$this->block->instance->pagetypepattern] = get_string($pagetypestringname, 'pagetype');
-                } else {
-                    //as a last resort we could put the page type pattern in the select box
-                    //however this causes mod-data-view to be added if the only option available is mod-data-*
-                    // so we are just showing a warning to users about their prev setting being reset
-                    $displaypagetypewarning = true;
-                }
+        $pagetypelist = generate_page_type_patterns($this->page->pagetype, $parentcontext, $this->page->context);
+        if (!array_key_exists($this->block->instance->pagetypepattern, $pagetypelist)) {
+            // Pushing block's existing page type pattern
+            $pagetypestringname = 'page-'.str_replace('*', 'x', $this->block->instance->pagetypepattern);
+            if (get_string_manager()->string_exists($pagetypestringname, 'pagetype')) {
+                $pagetypelist[$this->block->instance->pagetypepattern] = get_string($pagetypestringname, 'pagetype');
+            } else {
+                //as a last resort we could put the page type pattern in the select box
+                //however this causes mod-data-view to be added if the only option available is mod-data-*
+                // so we are just showing a warning to users about their prev setting being reset
+                $displaypagetypewarning = true;
             }
         }
 
