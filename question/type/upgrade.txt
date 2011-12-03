@@ -38,3 +38,8 @@ $string['pluginnameediting'] = 'Editing a Description';
 $string['pluginnamesummary'] = 'This is not actually a question. Instead it is a way to add some instructions, rubric or other content to the activity. This is similar to the way that labels can be used to add content to the course page.';
 
 The old strings will continue to work, but only until Moodle 2.3 is released.
+
+* If you are using the facilities provided by overriding the extra_answer_fields
+  or questionid_column_name methods, then you must change these to be public
+  methods. (This is required so that backup and restore can be made to work
+  automatically. MDL-24408, MDL-25617, MDL-30562)
