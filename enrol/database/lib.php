@@ -183,7 +183,7 @@ class enrol_database_plugin extends enrol_plugin {
 
             $existing = array();
             foreach ($current as $r) {
-                if (in_array($r->id, $roles)) {
+                if (in_array($r->roleid, $roles)) {
                     $existing[$r->roleid] = $r->roleid;
                 } else {
                     role_unassign($r->roleid, $user->id, $context->id, 'enrol_database', $instance->id);
