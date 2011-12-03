@@ -1661,6 +1661,13 @@ function generate_page_type_patterns($pagetype, $parentcontext = null, $currentc
         $patterns = default_page_type_list($pagetype, $parentcontext, $currentcontext);
     }
 
+    // Ensure that the * pattern is always available if editing block 'at distance', so
+    // we always can 'bring back' it to the original context. MDL-30340
+    if ($currentcontext->id != $parentcontext->id && !isset($patterns['*'])) {
+        // TODO: We could change the string here, showing its 'bring back' meaning
+        $patterns['*'] = get_string('page-x', 'pagetype');
+    }
+
     return $patterns;
 }
 
