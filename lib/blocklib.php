@@ -1061,9 +1061,6 @@ class block_manager {
     /**
      * Process any block actions that were specified in the URL.
      *
-     * This can only be done given a valid $page object.
-     *
-     * @param moodle_page $page the page to add blocks to.
      * @return boolean true if anything was done. False if not.
      */
     public function process_url_actions() {
