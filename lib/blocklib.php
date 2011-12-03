@@ -1236,20 +1236,26 @@ class block_manager {
                 // Explicitly set the context
                 $bi->parentcontextid = $parentcontext->id;
 
-                // If the context type is > 0 then we'll explicitly set the block as sticky, otherwise not
-                $bi->showinsubcontexts = (int)(!empty($data->bui_contexts));
+                // Should the block be sticky
+                if ($data->bui_contexts == BUI_CONTEXTS_ENTIRE_SITE or $data->bui_contexts == BUI_CONTEXTS_FRONTPAGE_SUBS) {
+                    $bi->showinsubcontexts = true;
+                } else {
+                    $bi->showinsubcontexts = false;
+                }
 
                 // If the block wants to be system-wide, then explicitly set that
                 if ($data->bui_contexts == BUI_CONTEXTS_ENTIRE_SITE) {   // Only possible on a frontpage or system page
                     $bi->parentcontextid = $systemcontext->id;
-                    $bi->showinsubcontexts = BUI_CONTEXTS_CURRENT_SUBS; //show in current and sub contexts
-                    $bi->pagetypepattern = '*';
 
                 } else { // The block doesn't want to be system-wide, so let's ensure that
                     if ($parentcontext->id == $systemcontext->id) {  // We need to move it to the front page
                         $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
                         $bi->parentcontextid = $frontpagecontext->id;
-                        $bi->pagetypepattern = 'site-index';
+                        if ($data->bui_contexts == BUI_CONTEXTS_FRONTPAGE_ONLY) {
+                            // If the front page only is specified, the page type setting is ignored
+                            // as explicitely set to site-index
+                            $bi->pagetypepattern = 'site-index';
+                        }
                     }
                 }
             }
