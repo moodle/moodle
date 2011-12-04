@@ -208,10 +208,10 @@ function scorm_get_manifest($blocks, $scoes) {
                 case 'ADLCP:COMPLETIONTHRESHOLD':
                     $parent = array_pop($parents);
                     array_push($parents, $parent);
-                    if (!isset($block['tagData'])) {
-                        $block['tagData'] = '';
+                    if (!isset($block['attrs']['MINPROGRESSMEASURE'])) {
+                        $block['attrs']['MINPROGRESSMEASURE'] = '1.0';
                     }
-                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->threshold = $block['tagData'];
+                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->threshold = $block['attrs']['MINPROGRESSMEASURE'];
                 break;
                 case 'ADLNAV:PRESENTATION':
                     $parent = array_pop($parents);
