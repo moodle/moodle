@@ -1227,35 +1227,49 @@ class block_manager {
                 $bi->subpagepattern = $data->bui_subpagepattern;
             }
 
-            $parentcontext = get_context_instance_by_id($data->bui_parentcontextid);
             $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+            $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
+            $parentcontext = get_context_instance_by_id($data->bui_parentcontextid);
 
             // Updating stickiness and contexts.  See MDL-21375 for details.
             if (has_capability('moodle/site:manageblocks', $parentcontext)) { // Check permissions in destination
-                // Explicitly set the context
+
+                // Explicitly set the default context
                 $bi->parentcontextid = $parentcontext->id;
 
-                // Should the block be sticky
-                if ($data->bui_contexts == BUI_CONTEXTS_ENTIRE_SITE or $data->bui_contexts == BUI_CONTEXTS_FRONTPAGE_SUBS) {
-                    $bi->showinsubcontexts = true;
-                } else {
-                    $bi->showinsubcontexts = false;
-                }
-
-                // If the block wants to be system-wide, then explicitly set that
-                if ($data->bui_contexts == BUI_CONTEXTS_ENTIRE_SITE) {   // Only possible on a frontpage or system page
-                    $bi->parentcontextid = $systemcontext->id;
-
-                } else { // The block doesn't want to be system-wide, so let's ensure that
-                    if ($parentcontext->id == $systemcontext->id) {  // We need to move it to the front page
-                        $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
-                        $bi->parentcontextid = $frontpagecontext->id;
-                        if ($data->bui_contexts == BUI_CONTEXTS_FRONTPAGE_ONLY) {
-                            // If the front page only is specified, the page type setting is ignored
-                            // as explicitely set to site-index
-                            $bi->pagetypepattern = 'site-index';
+                // Perform some exceptions for system/frontpage data. MDL-30340
+                switch ($data->bui_contexts) {
+                    case BUI_CONTEXTS_ENTIRE_SITE:
+                        // it's a system-wide block. 100% guaranteed, set parentcontextid and showinsubcontexts
+                        $bi->parentcontextid = $systemcontext->id;
+                        $bi->showinsubcontexts = true;
+                        // and also, if it's one edition @ frontpage, set its pagetypepattern to '*'
+                        // it already arrives that way from the form, but just re-enforce it here
+                        if ($data->bui_editingatfrontpage) {
+                            $bi->pagetypepattern  = '*';
                         }
-                    }
+                        break;
+                    case BUI_CONTEXTS_FRONTPAGE_SUBS:
+                        // it's a frontpage-wide (with subcontexts) block. 100% guaranteed, set parentcontextid and showinsubcontexts
+                        $bi->parentcontextid = $frontpagecontext->id;
+                        $bi->showinsubcontexts = true;
+                        // and also, if it's one edition @ frontpage, set its pagetypepattern to '*'
+                        // it already arrives that way from the form, but just re-enforce it here
+                        if ($data->bui_editingatfrontpage) {
+                            $bi->pagetypepattern  = '*';
+                        }
+                        break;
+                    case BUI_CONTEXTS_FRONTPAGE_ONLY:
+                        // it's a frontpage-only (no subcontexts) block. 100% guaranteed, set parentcontextid and showinsubcontexts
+                        $bi->parentcontextid = $frontpagecontext->id;
+                        $bi->showinsubcontexts = false;
+                        // and also, if it's one edition @ frontpage, set its pagetypepattern to 'site-index'
+                        // it originally comes as '*' from the form, here we change that in proviosion of
+                        // future 'site-index' pages
+                        if ($data->bui_editingatfrontpage) {
+                            $bi->pagetypepattern  = 'site-index';
+                        }
+                        break;
                 }
             }
 
