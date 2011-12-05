@@ -72,7 +72,7 @@ class qtype_gapselect_renderer extends qtype_elements_embedded_in_question_text_
         }
 
         $selecthtml = html_writer::select($selectoptions, $qa->get_qt_field_name($fieldname),
-                $value, ' ', $attributes) . ' ' . $feedbackimage;
+                $value, get_string('choosedots'), $attributes) . ' ' . $feedbackimage;
         return html_writer::tag('span', $selecthtml, array('class' => 'control '.$groupclass));
     }
 
