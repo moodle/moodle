@@ -10553,6 +10553,10 @@ class lang_string {
      * @param string $lang The language to use when processing the string.
      */
     public function __construct($identifier, $component = '', $a = null, $lang = null) {
+        if (empty($component)) {
+            $component = 'moodle';
+        }
+
         $this->identifier = $identifier;
         $this->component = $component;
         $this->lang = $lang;
@@ -10580,6 +10584,18 @@ class lang_string {
                 }
             }
         }
+
+        if (debugging(false, DEBUG_DEVELOPER)) {
+            if (clean_param($this->identifier, PARAM_STRINGID) == '') {
+                throw new coding_exception('Invalid string identifier. Most probably some illegal character is part of the string identifier. Please check your string definition');
+            }
+            if (!empty($this->component) && clean_param($this->component, PARAM_COMPONENT) == '') {
+                throw new coding_exception('Invalid string compontent. Please check your string definition');
+            }
+            if (!get_string_manager()->string_exists($this->identifier, $this->component)) {
+                debugging('String does not exist. Please check your string definition for '.$this->identifier.'/'.$this->component, DEBUG_DEVELOPER);
+            }
+        }
     }
 
     /**
@@ -10601,7 +10617,7 @@ class lang_string {
         if ($this->string === null) {
             // Check the quality of the identifier.
             if (clean_param($this->identifier, PARAM_STRINGID) == '') {
-                throw new coding_exception('Invalid string identifier. Most probably some illegal character is part of the string identifier. Please fix your get_string() call and string definition');
+                throw new coding_exception('Invalid string identifier. Most probably some illegal character is part of the string identifier. Please check your string definition');
             }
 
             // Process the string
