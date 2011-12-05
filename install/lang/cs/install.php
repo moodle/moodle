@@ -40,6 +40,7 @@ $string['databasehost'] = 'Databázový server';
 $string['databasename'] = 'Název databáze';
 $string['databasetypehead'] = 'Vyberte databázový ovladač';
 $string['dataroot'] = 'Datový adresář';
+$string['datarootpermission'] = 'Přístupová práva k datovému adresáři';
 $string['dbprefix'] = 'Předpona tabulek';
 $string['dirroot'] = 'Adresář Moodlu';
 $string['environmenthead'] = 'Kontrola programového prostředí...';
