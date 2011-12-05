@@ -1636,10 +1636,7 @@ class question_edit_contexts {
 }
 
 /**
- * Rewrite question url, file_rewrite_pluginfile_urls always build url by
- * $file/$contextid/$component/$filearea/$itemid/$pathname_in_text, so we cannot add
- * extra questionid and attempted in url by it, so we create quiz_rewrite_question_urls
- * to build url here
+ * Helps call file_rewrite_pluginfile_urls with the right parameters.
  *
  * @param string $text text being processed
  * @param string $file the php script used to serve files
@@ -1653,32 +1650,59 @@ class question_edit_contexts {
  */
 function question_rewrite_question_urls($text, $file, $contextid, $component,
         $filearea, array $ids, $itemid, array $options=null) {
-    global $CFG;
 
-    $options = (array)$options;
-    if (!isset($options['forcehttps'])) {
-        $options['forcehttps'] = false;
-    }
-
-    if (!$CFG->slasharguments) {
-        $file = $file . '?file=';
-    }
-
-    $baseurl = "$CFG->wwwroot/$file/$contextid/$component/$filearea/";
-
+    $idsstr = '';
     if (!empty($ids)) {
-        $baseurl .= (implode('/', $ids) . '/');
+        $idsstr .= implode('/', $ids);
     }
-
     if ($itemid !== null) {
-        $baseurl .= "$itemid/";
+        $idsstr .= '/' . $itemid;
+    }
+    return file_rewrite_pluginfile_urls($text, $file, $contextid, $component,
+            $filearea, $idsstr, $options);
+}
+
+/**
+ * Rewrite the PLUGINFILE urls in the questiontext, when viewing the question
+ * text outside and attempt (for example, in the question bank listing or in the
+ * quiz statistics report).
+ *
+ * @param string $questiontext the question text.
+ * @param int $contextid the context the text is being displayed in.
+ * @param string $component component
+ * @param array $ids other IDs will be used to check file permission
+ * @param array $options
+ * @return string $questiontext with URLs rewritten.
+ */
+function question_rewrite_questiontext_preview_urls($questiontext, $contextid,
+        $component, $questionid, $options=null) {
+
+    return file_rewrite_pluginfile_urls($questiontext, 'pluginfile.php', $contextid,
+            'question', 'questiontext_preview', "$component/$questionid", $options);
+}
+
+/**
+ * Send a file from the question text of a question.
+ * @param int $questionid the question id
+ * @param array $args the remaining file arguments (file path).
+ * @param bool $forcedownload whether the user must be forced to download the file.
+ */
+function question_send_questiontext_file($questionid, $args, $forcedownload) {
+    global $DB;
+
+    $question = $DB->get_record_sql('
+            SELECT q.id, qc.contextid
+              FROM {question} q
+              JOIN {question_categories} qc ON qc.id = q.category
+             WHERE q.id = :id', array('id' => $questionid), MUST_EXIST);
+
+    $fs = get_file_storage();
+    $fullpath = "/$question->contextid/question/questiontext/$question->id/" . implode('/', $args);
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        send_file_not_found();
     }
 
-    if ($options['forcehttps']) {
-        $baseurl = str_replace('http://', 'https://', $baseurl);
-    }
-
-    return str_replace('@@PLUGINFILE@@/', $baseurl, $text);
+    send_stored_file($file, 0, 0, $forcedownload);
 }
 
 /**
@@ -1703,6 +1727,16 @@ function question_rewrite_question_urls($text, $file, $contextid, $component,
  */
 function question_pluginfile($course, $context, $component, $filearea, $args, $forcedownload) {
     global $DB, $CFG;
+
+    if ($filearea === 'questiontext_preview') {
+        $component = array_shift($args);
+        $questionid = array_shift($args);
+
+        component_callback($component, 'questiontext_preview_pluginfile', array(
+                $context, $questionid, $args, $forcedownload));
+
+        send_file_not_found();
+    }
 
     list($context, $course, $cm) = get_context_info_array($context->id);
     require_login($course, false, $cm);
