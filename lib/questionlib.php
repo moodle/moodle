@@ -1828,6 +1828,33 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
 }
 
 /**
+ * Serve questiontext files in the question text when they are displayed in this report.
+ * @param context $context the context
+ * @param int $questionid the question id
+ * @param array $args remaining file args
+ * @param bool $forcedownload
+ */
+function core_question_questiontext_preview_pluginfile($context, $questionid, $args, $forcedownload) {
+    global $DB;
+
+    // Verify that contextid matches the question.
+    $question = $DB->get_record_sql('
+            SELECT q.*, qc.contextid
+              FROM {question} q
+              JOIN {question_categories} qc ON qc.id = q.category
+             WHERE q.id = :id AND qc.contextid = :contextid',
+            array('id' => $questionid, 'contextid' => $context->id), MUST_EXIST);
+
+    // Check the capability.
+    list($context, $course, $cm) = get_context_info_array($context->id);
+    require_login($course, false, $cm);
+
+    question_require_capability_on($question, 'use');
+
+    question_send_questiontext_file($questionid, $args, $forcedownload);
+}
+
+/**
  * Create url for question export
  *
  * @param int $contextid, current context
