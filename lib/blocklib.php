@@ -1237,39 +1237,33 @@ class block_manager {
                 // Explicitly set the default context
                 $bi->parentcontextid = $parentcontext->id;
 
-                // Perform some exceptions for system/frontpage data. MDL-30340
-                switch ($data->bui_contexts) {
-                    case BUI_CONTEXTS_ENTIRE_SITE:
-                        // it's a system-wide block. 100% guaranteed, set parentcontextid and showinsubcontexts
-                        $bi->parentcontextid = $systemcontext->id;
-                        $bi->showinsubcontexts = true;
-                        // and also, if it's one edition @ frontpage, set its pagetypepattern to '*'
-                        // it already arrives that way from the form, but just re-enforce it here
-                        if ($data->bui_editingatfrontpage) {
+                if ($data->bui_editingatfrontpage) {   // The block is being edited on the front page
+
+                    // The interface here is a special case because the pagetype pattern is
+                    // totally derived from the context menu.  Here are the excpetions.   MDL-30340
+
+                    switch ($data->bui_contexts) {
+                        case BUI_CONTEXTS_ENTIRE_SITE:
+                            // The user wants to show the block across the entire site
+                            $bi->parentcontextid = $systemcontext->id;
+                            $bi->showinsubcontexts = true;
                             $bi->pagetypepattern  = '*';
-                        }
-                        break;
-                    case BUI_CONTEXTS_FRONTPAGE_SUBS:
-                        // it's a frontpage-wide (with subcontexts) block. 100% guaranteed, set parentcontextid and showinsubcontexts
-                        $bi->parentcontextid = $frontpagecontext->id;
-                        $bi->showinsubcontexts = true;
-                        // and also, if it's one edition @ frontpage, set its pagetypepattern to '*'
-                        // it already arrives that way from the form, but just re-enforce it here
-                        if ($data->bui_editingatfrontpage) {
+                            break;
+                        case BUI_CONTEXTS_FRONTPAGE_SUBS:
+                            // The user wants the block shown on the front page and all subcontexts
+                            $bi->parentcontextid = $frontpagecontext->id;
+                            $bi->showinsubcontexts = true;
                             $bi->pagetypepattern  = '*';
-                        }
-                        break;
-                    case BUI_CONTEXTS_FRONTPAGE_ONLY:
-                        // it's a frontpage-only (no subcontexts) block. 100% guaranteed, set parentcontextid and showinsubcontexts
-                        $bi->parentcontextid = $frontpagecontext->id;
-                        $bi->showinsubcontexts = false;
-                        // and also, if it's one edition @ frontpage, set its pagetypepattern to 'site-index'
-                        // it originally comes as '*' from the form, here we change that in proviosion of
-                        // future 'site-index' pages
-                        if ($data->bui_editingatfrontpage) {
+                            break;
+                        case BUI_CONTEXTS_FRONTPAGE_ONLY:
+                            // The user want to show the front page on the frontpage only
+                            $bi->parentcontextid = $frontpagecontext->id;
+                            $bi->showinsubcontexts = false;
                             $bi->pagetypepattern  = 'site-index';
-                        }
-                        break;
+                            // This is the only relevant page type anyway but we'll set it explicitly just
+                            // in case the front page grows site-index-* subpages of its own later
+                            break;
+                    }
                 }
             }
 
