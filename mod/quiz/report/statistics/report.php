@@ -312,13 +312,20 @@ class quiz_statistics_report extends quiz_default_report {
         // Display the various bits.
         echo $OUTPUT->heading(get_string('questioninformation', 'quiz_statistics'));
         echo html_writer::table($questioninfotable);
-
-        echo $OUTPUT->box(format_text($question->questiontext, $question->questiontextformat,
-                array('overflowdiv' => true)) . $actions,
-                'questiontext boxaligncenter generalbox boxwidthnormal mdl-align');
-
+        echo $this->render_question_text($question);
         echo $OUTPUT->heading(get_string('questionstatistics', 'quiz_statistics'));
         echo html_writer::table($questionstatstable);
+    }
+
+    /**
+     * @param object $question question data.
+     * @return string HTML of question text, ready for display.
+     */
+    protected function render_question_text($question){
+        global $OUTPUT;
+        return $OUTPUT->box(format_text($question->questiontext, $question->questiontextformat,
+                array('overflowdiv' => true)),
+                'questiontext boxaligncenter generalbox boxwidthnormal mdl-align');
     }
 
     /**
@@ -355,6 +362,10 @@ class quiz_statistics_report extends quiz_default_report {
 
             // Set up the table.
             $exportclass->start_table($questiontabletitle);
+
+            if ($this->table->is_downloading() == 'xhtml') {
+                echo $this->render_question_text($question);
+            }
         }
 
         $responesstats = new quiz_statistics_response_analyser($question);
