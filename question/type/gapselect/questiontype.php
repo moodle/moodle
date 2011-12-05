@@ -105,7 +105,9 @@ class qtype_gapselect extends qtype_gapselect_base {
         $output .= '    <shuffleanswers>' . $question->options->shuffleanswers .
                 "</shuffleanswers>\n";
 
-        $output .= $format->write_combined_feedback($question->options);
+        $output .= $format->write_combined_feedback($question->options,
+                                                    $question->id,
+                                                    $question->contextid);
 
         foreach ($question->options->answers as $answer) {
             $output .= "    <selectoption>\n";
