@@ -1432,14 +1432,13 @@ class core_renderer extends renderer_base {
             $aggregatelabel = $ratingmanager->get_aggregate_label($rating->settings->aggregationmethod);
             $aggregatestr   = $rating->get_aggregate_string();
 
-            $aggregatehtml  = html_writer::tag('span', $aggregatestr, array('id' => 'ratingaggregate'.$rating->itemid)).' ';
-            $aggregatehtml .= html_writer::start_tag('span', array('id'=>"ratingcount{$rating->itemid}"));
+            $aggregatehtml  = html_writer::tag('span', $aggregatestr, array('id' => 'ratingaggregate'.$rating->itemid, 'class' => 'ratingaggregate')).' ';
             if ($rating->count > 0) {
-                $aggregatehtml .= "({$rating->count})";
+                $countstr = "({$rating->count})";
             } else {
-                $aggregatehtml .= '-';
+                $countstr = '-';
             }
-            $aggregatehtml .= html_writer::end_tag('span').' ';
+            $aggregatehtml .= html_writer::tag('span', $countstr, array('id'=>"ratingcount{$rating->itemid}", 'class' => 'ratingcount')).' ';
 
             $ratinghtml .= html_writer::tag('span', $aggregatelabel, array('class'=>'rating-aggregate-label'));
             if ($rating->settings->permissions->viewall && $rating->settings->pluginpermissions->viewall) {
