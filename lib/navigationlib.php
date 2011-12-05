@@ -1058,9 +1058,6 @@ class global_navigation extends navigation_node {
 
         // Fetch all of the users courses.
         $mycourses = enrol_get_my_courses();
-        // We need to show all courses if the user has selected to show all courses in the settings
-        // OR if the user is not enrolled in any courses and we're not showing categories
-        $showallcourses = (!empty($CFG->navshowallcourses) || (count($mycourses) === 0 && !$this->show_categories()));
         // We need to show categories if we can show categories and the user isn't enrolled in any courses or we're not showing all courses
         $showcategories = ($this->show_categories() && (count($mycourses) == 0 || !empty($CFG->navshowallcourses)));
         // $issite gets set to true if the current pages course is the sites frontpage course
@@ -1146,7 +1143,7 @@ class global_navigation extends navigation_node {
                 $course->coursenode = $this->add_course($course, false, true);
             }
 
-            if ($showallcourses) {
+            if (!empty($CFG->navshowallcourses)) {
                 // Load all courses
                 $this->load_all_courses();
             }
@@ -1174,7 +1171,7 @@ class global_navigation extends navigation_node {
                     }
                 }
             }
-        } else if ($showallcourses) {
+        } else if (!empty($CFG->navshowallcourses) || !$this->show_categories()) {
             // Load all courses
             $this->load_all_courses();
         }
@@ -1191,14 +1188,12 @@ class global_navigation extends navigation_node {
         switch ($this->page->context->contextlevel) {
             case CONTEXT_SYSTEM :
                 // This has already been loaded we just need to map the variable
-                $coursenode = $frontpagecourse;
                 if ($this->show_categories()) {
                     $this->load_all_categories(self::LOAD_ROOT_CATEGORIES, $showcategories);
                 }
                 break;
             case CONTEXT_COURSECAT :
                 // This has already been loaded we just need to map the variable
-                $coursenode = $frontpagecourse;
                 if ($this->show_categories()) {
                     $this->load_all_categories($this->page->context->instanceid, $showcategories);
                 }
@@ -1729,7 +1724,7 @@ class global_navigation extends navigation_node {
             }
             $coursecount = count($this->addedcategories[$category]->children->type(self::TYPE_COURSE));
         } else if ($category instanceof navigation_node) {
-            if ($category->type != self::TYPE_CATEGORY && $category->type != self::TYPE_ROOTNODE) {
+            if ($category->type != self::TYPE_CATEGORY) {
                 return false;
             }
             $coursecount = count($category->children->type(self::TYPE_COURSE));
