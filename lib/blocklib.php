@@ -1061,9 +1061,6 @@ class block_manager {
     /**
      * Process any block actions that were specified in the URL.
      *
-     * This can only be done given a valid $page object.
-     *
-     * @param moodle_page $page the page to add blocks to.
      * @return boolean true if anything was done. False if not.
      */
     public function process_url_actions() {
@@ -1230,28 +1227,42 @@ class block_manager {
                 $bi->subpagepattern = $data->bui_subpagepattern;
             }
 
-            $parentcontext = get_context_instance_by_id($data->bui_parentcontextid);
             $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+            $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
+            $parentcontext = get_context_instance_by_id($data->bui_parentcontextid);
 
             // Updating stickiness and contexts.  See MDL-21375 for details.
             if (has_capability('moodle/site:manageblocks', $parentcontext)) { // Check permissions in destination
-                // Explicitly set the context
+
+                // Explicitly set the default context
                 $bi->parentcontextid = $parentcontext->id;
 
-                // If the context type is > 0 then we'll explicitly set the block as sticky, otherwise not
-                $bi->showinsubcontexts = (int)(!empty($data->bui_contexts));
+                if ($data->bui_editingatfrontpage) {   // The block is being edited on the front page
 
-                // If the block wants to be system-wide, then explicitly set that
-                if ($data->bui_contexts == BUI_CONTEXTS_ENTIRE_SITE) {   // Only possible on a frontpage or system page
-                    $bi->parentcontextid = $systemcontext->id;
-                    $bi->showinsubcontexts = BUI_CONTEXTS_CURRENT_SUBS; //show in current and sub contexts
-                    $bi->pagetypepattern = '*';
+                    // The interface here is a special case because the pagetype pattern is
+                    // totally derived from the context menu.  Here are the excpetions.   MDL-30340
 
-                } else { // The block doesn't want to be system-wide, so let's ensure that
-                    if ($parentcontext->id == $systemcontext->id) {  // We need to move it to the front page
-                        $frontpagecontext = get_context_instance(CONTEXT_COURSE, SITEID);
-                        $bi->parentcontextid = $frontpagecontext->id;
-                        $bi->pagetypepattern = 'site-index';
+                    switch ($data->bui_contexts) {
+                        case BUI_CONTEXTS_ENTIRE_SITE:
+                            // The user wants to show the block across the entire site
+                            $bi->parentcontextid = $systemcontext->id;
+                            $bi->showinsubcontexts = true;
+                            $bi->pagetypepattern  = '*';
+                            break;
+                        case BUI_CONTEXTS_FRONTPAGE_SUBS:
+                            // The user wants the block shown on the front page and all subcontexts
+                            $bi->parentcontextid = $frontpagecontext->id;
+                            $bi->showinsubcontexts = true;
+                            $bi->pagetypepattern  = '*';
+                            break;
+                        case BUI_CONTEXTS_FRONTPAGE_ONLY:
+                            // The user want to show the front page on the frontpage only
+                            $bi->parentcontextid = $frontpagecontext->id;
+                            $bi->showinsubcontexts = false;
+                            $bi->pagetypepattern  = 'site-index';
+                            // This is the only relevant page type anyway but we'll set it explicitly just
+                            // in case the front page grows site-index-* subpages of its own later
+                            break;
                     }
                 }
             }
@@ -1707,7 +1718,7 @@ function default_page_type_list($pagetype, $parentcontext = null, $currentcontex
  * @return array
  */
 function my_page_type_list($pagetype, $parentcontext = null, $currentcontext = null) {
-    return array('my-index' => 'my-index');
+    return array('my-index' => get_string('page-my-index', 'pagetype'));
 }
 
 /**
