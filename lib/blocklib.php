@@ -1725,7 +1725,7 @@ function default_page_type_list($pagetype, $parentcontext = null, $currentcontex
  * @return array
  */
 function my_page_type_list($pagetype, $parentcontext = null, $currentcontext = null) {
-    return array('my-index' => 'my-index');
+    return array('my-index' => get_string('page-my-index', 'pagetype'));
 }
 
 /**

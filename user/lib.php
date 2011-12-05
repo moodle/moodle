@@ -347,8 +347,5 @@ function user_get_user_details($user, $course = null) {
  * @param stdClass $currentcontext Current context of block
  */
 function user_page_type_list($pagetype, $parentcontext, $currentcontext) {
-    return array(
-        'user-profile'=>get_string('page-user-profile', 'pagetype'),
-        'my-index'=>get_string('page-my-index', 'pagetype')
-    );
+    return array('user-profile'=>get_string('page-user-profile', 'pagetype'));
 }
