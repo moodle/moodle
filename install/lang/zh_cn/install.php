@@ -40,6 +40,7 @@ $string['databasehost'] = '数据库主机';
 $string['databasename'] = '数据库名';
 $string['databasetypehead'] = '选择数据库驱动';
 $string['dataroot'] = '数据目录';
+$string['datarootpermission'] = '数据目录权限';
 $string['dbprefix'] = '表格名称前缀';
 $string['dirroot'] = 'Moodle目录';
 $string['environmenthead'] = '检测您的运行环境...';
