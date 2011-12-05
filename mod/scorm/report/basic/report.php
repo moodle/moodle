@@ -43,6 +43,8 @@ class scorm_basic_report extends scorm_default_report {
                 echo $OUTPUT->notification(get_string('scormresponsedeleted', 'scorm'), 'notifysuccess');
             }
         }
+        // find out current groups mode
+        $currentgroup = groups_get_activity_group($cm, true);
 
         // detailed report
         $mform = new mod_scorm_report_settings($PAGE->url, compact('currentgroup'));
