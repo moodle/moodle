@@ -715,7 +715,12 @@ function environment_check_moodle($version, $env_select) {
     }
 
 /// Now search the version we are using
-    $current_version = normalize_version(get_config('', 'release'));
+    $release = get_config('', 'release');
+    $current_version = normalize_version($release);
+    if (strpos($release, 'dev') !== false) {
+        // when final version is required, dev is NOT enough!
+        $current_version = $current_version - 0.1;
+    }
 
 /// And finally compare them, saving results
     if (version_compare($current_version, $needed_version, '>=')) {
@@ -724,7 +729,7 @@ function environment_check_moodle($version, $env_select) {
         $result->setStatus(false);
     }
     $result->setLevel('required');
-    $result->setCurrentVersion($current_version);
+    $result->setCurrentVersion($release);
     $result->setNeededVersion($needed_version);
 
     return $result;
