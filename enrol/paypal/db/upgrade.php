@@ -42,7 +42,10 @@
 // before any action that may take longer time to finish.
 
 function xmldb_enrol_paypal_upgrade($oldversion) {
-    global $CFG, $DB, $OUTPUT;
+    global $CFG, $DB;
+
+    $dbman = $DB->get_manager();
+
 
     return true;
 }

@@ -31,5 +31,8 @@
 function xmldb_auth_mnet_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
+    $dbman = $DB->get_manager();
+
+
     return true;
 }

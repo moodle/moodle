@@ -30,5 +30,8 @@
 function xmldb_auth_manual_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
+    $dbman = $DB->get_manager();
+
+
     return true;
 }

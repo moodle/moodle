@@ -36,19 +36,6 @@ function xmldb_message_jabber_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2008072401) {
-        $processor = new stdClass();
-        $processor->name  = 'jabber';
-        if (!$DB->record_exists('message_processors', array('name' => $processor->name))){
-            $DB->insert_record('message_processors', $processor);
-        }
-
-    /// jabber savepoint reached
-        upgrade_plugin_savepoint(true, 2008072401, 'message', 'jabber');
-    }
-
-    // Moodle v2.1.0 release upgrade line
-    // Put any upgrade step following this
 
     // Moodle v2.2.0 release upgrade line
     // Put any upgrade step following this

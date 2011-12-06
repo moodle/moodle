@@ -28,7 +28,10 @@
  * @return bool result
  */
 function xmldb_filter_mediaplugin_upgrade($oldversion) {
-    global $CFG, $DB, $OUTPUT;
+    global $CFG, $DB;
+
+    $dbman = $DB->get_manager();
+
 
     return true;
 }

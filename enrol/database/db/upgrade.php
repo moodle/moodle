@@ -25,7 +25,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 function xmldb_enrol_database_upgrade($oldversion) {
-    global $DB;
+    global $CFG, $DB;
+
+    $dbman = $DB->get_manager();
+
 
     return true;
 }
