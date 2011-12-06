@@ -36,28 +36,6 @@ function xmldb_qtype_multianswer_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2008050800) {
-        //hey - no functions here in this file !!!!!!!
-
-        $rs = $DB->get_recordset_sql("SELECT q.id, q.category, qma.sequence
-                                        FROM {question} q
-                                        JOIN {question_multianswer} qma ON q.id = qma.question");
-        foreach ($rs as $q) {
-            if (!empty($q->sequence)) {
-                $DB->execute("UPDATE {question}
-                                 SET parent = ?, category = ?
-                               WHERE id IN ($q->sequence) AND parent <> 0",
-                             array($q->id, $q->category));
-            }
-        }
-        $rs->close();
-
-        /// multianswer savepoint reached
-        upgrade_plugin_savepoint(true, 2008050800, 'qtype', 'multianswer');
-    }
-
-    // Moodle v2.1.0 release upgrade line
-    // Put any upgrade step following this
 
     // Moodle v2.2.0 release upgrade line
     // Put any upgrade step following this
