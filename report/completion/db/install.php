@@ -28,11 +28,5 @@ defined('MOODLE_INTERNAL') || die;
 function xmldb_report_completion_install() {
     global $DB;
 
-    // this is a hack which is needed for cleanup of original coursereport_completion stuff
-    unset_all_config_for_plugin('coursereport_completion');
-    capabilities_cleanup('coursereport_completion');
-
-    // update existing block page patterns
-    $DB->set_field('block_instances', 'pagetypepattern', 'report-completion-index', array('pagetypepattern'=>'course-report-completion-index'));
 }
 

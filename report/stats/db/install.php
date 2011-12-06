@@ -28,11 +28,5 @@ defined('MOODLE_INTERNAL') || die;
 function xmldb_report_stats_install() {
     global $DB;
 
-    // this is a hack which is needed for cleanup of original coursereport_stats stuff
-    unset_all_config_for_plugin('coursereport_stats');
-    capabilities_cleanup('coursereport_stats');
-
-    // update existing block page patterns
-    $DB->set_field('block_instances', 'pagetypepattern', 'report-stats-index', array('pagetypepattern'=>'course-report-stats-index'));
 }
 
