@@ -34,17 +34,4 @@ defined('MOODLE_INTERNAL') || die;
 function xmldb_page_install() {
     global $CFG;
 
-    // Upgrade from old resource module type if needed
-    require_once("$CFG->dirroot/mod/page/db/upgradelib.php");
-    page_20_migrate();
-
-}
-
-function xmldb_page_install_recovery() {
-    global $CFG;
-
-    // Upgrade from old resource module type if needed
-    require_once("$CFG->dirroot/mod/page/db/upgradelib.php");
-    page_20_migrate();
-
 }

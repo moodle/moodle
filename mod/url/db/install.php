@@ -34,21 +34,4 @@ defined('MOODLE_INTERNAL') || die;
 function xmldb_url_install() {
     global $CFG;
 
-    // migrate settings if present
-    if (!empty($CFG->resource_secretphrase)) {
-        set_config('secretphrase', $CFG->resource_secretphrase, 'url');
-    }
-    unset_config('resource_secretphrase');
-
-    // Upgrade from old resource module type if needed
-    require_once("$CFG->dirroot/mod/url/db/upgradelib.php");
-    url_20_migrate();
-}
-
-function xmldb_url_install_recovery() {
-    global $CFG;
-
-    // Upgrade from old resource module type if needed
-    require_once("$CFG->dirroot/mod/url/db/upgradelib.php");
-    url_20_migrate();
 }

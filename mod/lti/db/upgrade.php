@@ -64,19 +64,6 @@ function xmldb_lti_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2011111600){
-        // Rename showdescription to showdescriptionlaunch to not conflict with setting from core Moodle
-        // Rename showtitle as well to be consistent
-        $table = new xmldb_table('lti');
-        $field = new xmldb_field('showtitle', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'debuglaunch');
-
-        $dbman->rename_field($table, $field, 'showtitlelaunch');
-
-        $field = new xmldb_field('showdescription', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'showtitlelaunch');
-        $dbman->rename_field($table, $field, 'showdescriptionlaunch');
-
-        upgrade_mod_savepoint(true, 2011111600, 'lti');
-    }
 
     // Moodle v2.2.0 release upgrade line
     // Put any upgrade step following this

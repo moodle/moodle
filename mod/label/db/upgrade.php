@@ -51,39 +51,6 @@ function xmldb_label_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-//===== 1.9.0 upgrade line ======//
-
-    if ($oldversion < 2009042200) {
-
-    /// Rename field content on table label to intro
-        $table = new xmldb_table('label');
-        $field = new xmldb_field('content', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'name');
-
-    /// Launch rename field content
-        $dbman->rename_field($table, $field, 'intro');
-
-    /// label savepoint reached
-        upgrade_mod_savepoint(true, 2009042200, 'label');
-    }
-
-    if ($oldversion < 2009042201) {
-
-    /// Define field introformat to be added to label
-        $table = new xmldb_table('label');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, '0', 'intro');
-
-    /// Launch add field introformat
-        $dbman->add_field($table, $field);
-
-        // all existing lables in 1.9 are in HTML format
-        $DB->set_field('label', 'introformat', FORMAT_HTML, array());
-
-    /// label savepoint reached
-        upgrade_mod_savepoint(true, 2009042201, 'label');
-    }
-
-    // Moodle v2.1.0 release upgrade line
-    // Put any upgrade step following this
 
     // Moodle v2.2.0 release upgrade line
     // Put any upgrade step following this

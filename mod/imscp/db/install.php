@@ -34,15 +34,4 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_imscp_install() {
     global $CFG;
 
-    // Upgrade from old resource module type if needed
-    require_once("$CFG->dirroot/mod/imscp/db/upgradelib.php");
-    imscp_20_migrate();
-}
-
-function xmldb_imscp_install_recovery() {
-    global $CFG;
-
-    // Upgrade from old resource module type if needed
-    require_once("$CFG->dirroot/mod/imscp/db/upgradelib.php");
-    imscp_20_migrate();
 }

@@ -25,51 +25,6 @@ function xmldb_choice_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-//===== 1.9.0 upgrade line ======//
-
-    if ($oldversion < 2009042000) {
-
-    /// Rename field text on table choice to text
-        $table = new xmldb_table('choice');
-        $field = new xmldb_field('text', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'name');
-
-    /// Launch rename field text
-        $dbman->rename_field($table, $field, 'intro');
-
-    /// choice savepoint reached
-        upgrade_mod_savepoint(true, 2009042000, 'choice');
-    }
-
-    if ($oldversion < 2009042001) {
-
-    /// Rename field format on table choice to format
-        $table = new xmldb_table('choice');
-        $field = new xmldb_field('format', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
-
-    /// Launch rename field format
-        $dbman->rename_field($table, $field, 'introformat');
-
-    /// choice savepoint reached
-        upgrade_mod_savepoint(true, 2009042001, 'choice');
-    }
-
-    if ($oldversion < 2010101300) {
-
-        // Define field completionsubmit to be added to choice
-        $table = new xmldb_table('choice');
-        $field = new xmldb_field('completionsubmit', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'timemodified');
-
-        // Conditionally launch add field completionsubmit
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // choice savepoint reached
-        upgrade_mod_savepoint(true, 2010101300, 'choice');
-    }
-
-    // Moodle v2.1.0 release upgrade line
-    // Put any upgrade step following this
 
     // Moodle v2.2.0 release upgrade line
     // Put any upgrade step following this
