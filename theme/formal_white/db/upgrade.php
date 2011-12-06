@@ -48,20 +48,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 function xmldb_theme_formal_white_upgrade($oldversion) {
-    if ($oldversion < 2011061301) {
-        $currentsetting = get_config('theme_formal_white');
-
-        if (isset($currentsetting->backgroundcolor)) {
-            unset_config('backgroundcolor', 'theme_formal_white');
-        }
-        if (isset($currentsetting->blockcolumnbgc)) {
-            unset_config('blockcolumnbgc', 'theme_formal_white');
-        }
-        upgrade_plugin_savepoint(true, 2011061301, 'theme', 'formal_white');
-    }
-
-    // Moodle v2.1.0 release upgrade line
-    // Put any upgrade step following this
 
     // Moodle v2.2.0 release upgrade line
     // Put any upgrade step following this
