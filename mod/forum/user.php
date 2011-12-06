@@ -40,6 +40,50 @@
         die;
     }
 
+    switch ($mode) {
+        case 'posts' :
+            $searchterms = array('userid:'.$user->id);
+            $extrasql = '';
+            break;
+
+        default:
+            $searchterms = array('userid:'.$user->id);
+            $extrasql = 'AND p.parent = 0';
+            break;
+    }
+    if ($course->id == SITEID) {
+        if (empty($CFG->forceloginforprofiles) || isloggedin()) {
+            // Search throughout the whole site.
+            $searchcourse = 0;
+        } else {
+            $searchcourse = SITEID;
+        }
+    } else {
+        // Search only for posts the user made in this course.
+        $searchcourse = $course->id;
+    }
+
+    $posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $perpage, $totalcount, $extrasql);
+
+    $hasposts = !empty($posts);
+    $iscurrentuser = $user->id == $USER->id;
+    $specificcourseprovided = !empty($searchcourse) && $searchcourse != SITEID;
+    if (!$hasposts && !$iscurrentuser && !$specificcourseprovided) {
+        $mustlogin = (!isloggedin() && $CFG->forceloginforprofiles);
+        $canviewtheuser = (isloggedin() && has_capability('moodle/user:viewdetails', $usercontext));
+        if ($mustlogin || (!isteacherinanycourse() && !isteacherinanycourse($user->id) && !$canviewtheuser)) {
+            // Best to assume that the current user cannot view the requested user
+            // so we are careful not to give out any information.
+            print_header();
+            print_heading(get_string('noposts', 'forum'));
+            print_footer();
+            exit;
+        } else {
+            // Nothing to check here. If a course has been specified then require_course_login
+            // has been called OR the current user is a parent of the requested user.
+        }
+    }
+
     add_to_log($course->id, "forum", "user report",
             "user.php?course=$course->id&amp;id=$user->id&amp;mode=$mode", "$user->id"); 
 
@@ -65,36 +109,10 @@
     $showroles = 1;
     include($CFG->dirroot.'/user/tabs.php');   /// Prints out tabs as part of user page
 
-
-    switch ($mode) {
-        case 'posts' :
-            $searchterms = array('userid:'.$user->id);
-            $extrasql = '';
-            break;
-
-        default:
-            $searchterms = array('userid:'.$user->id);
-            $extrasql = 'AND p.parent = 0';
-            break;
-    }
-
     echo '<div class="user-content">';
 
-    if ($course->id == SITEID) {
-        if (empty($CFG->forceloginforprofiles) || isloggedin()) {
-            // Search throughout the whole site.
-            $searchcourse = 0;
-        } else {
-            $searchcourse = SITEID;
-        }
-    } else {
-        // Search only for posts the user made in this course.
-        $searchcourse = $course->id;
-    }
-
     // Get the posts.
-    if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $perpage,
-                                    $totalcount, $extrasql)) {
+    if ($posts) {
 
         print_paging_bar($totalcount, $page, $perpage,
                          "user.php?id=$user->id&amp;course=$course->id&amp;mode=$mode&amp;perpage=$perpage&amp;");
