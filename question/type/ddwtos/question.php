@@ -52,12 +52,12 @@ class qtype_ddwtos_question extends qtype_gapselect_question_base {
 class qtype_ddwtos_choice {
     public $text;
     public $draggroup;
-    public $isinfinite;
+    public $infinite;
 
-    public function __construct($text, $draggroup = 1, $isinfinite = false) {
+    public function __construct($text, $draggroup = 1, $infinite = false) {
         $this->text = $text;
         $this->draggroup = $draggroup;
-        $this->isinfinite = $isinfinite;
+        $this->infinite = $infinite;
     }
 
     public function choice_group() {

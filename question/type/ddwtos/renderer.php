@@ -141,7 +141,7 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
             $content = str_replace(' ', '&#160;', $content);
 
             $infinite = '';
-            if ($choice->isinfinite) {
+            if ($choice->infinite) {
                 $infinite = ' infinite';
             }
 

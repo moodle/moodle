@@ -105,7 +105,8 @@ class qtype_ddwtos extends qtype_gapselect_base {
         }
 
         $format->import_combined_feedback($question, $data, true);
-        $format->import_hints($question, $data, true);
+        $format->import_hints($question, $data, true, false,
+                $format->get_format($question->questiontextformat));
 
         return $question;
     }
@@ -116,7 +117,9 @@ class qtype_ddwtos extends qtype_gapselect_base {
         $output .= '    <shuffleanswers>' . $question->options->shuffleanswers .
                 "</shuffleanswers>\n";
 
-        $output .= $format->write_combined_feedback($question->options);
+        $output .= $format->write_combined_feedback($question->options,
+                                                    $question->id,
+                                                    $question->contextid);
 
         foreach ($question->options->answers as $answer) {
             $options = unserialize($answer->feedback);

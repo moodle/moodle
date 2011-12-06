@@ -237,6 +237,7 @@ class qtype_ddwtos_test extends UnitTestCase {
         $expectedq->hintclearwrong = array(false, true);
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
+        $this->assertEqual($expectedq->hint, $q->hint);
     }
 
     public function test_xml_import_legacy() {
@@ -387,34 +388,34 @@ class qtype_ddwtos_test extends UnitTestCase {
 
         $expectedq->shuffleanswers = 0;
         $expectedq->correctfeedback = array('text' => 'Your answer is correct.',
-                'format' => FORMAT_MOODLE, 'files' => array());
+                'format' => FORMAT_HTML, 'files' => array());
         $expectedq->partiallycorrectfeedback = array(
                 'text' => 'Your answer is partially correct.',
-                'format' => FORMAT_MOODLE, 'files' => array());
+                'format' => FORMAT_HTML, 'files' => array());
         $expectedq->shownumcorrect = true;
         $expectedq->incorrectfeedback = array('text' => 'Your answer is incorrect.',
-                'format' => FORMAT_MOODLE, 'files' => array());
+                'format' => FORMAT_HTML, 'files' => array());
 
         $expectedq->choices = array(
-            array('answer' => array('text' => 'hydrogen',        'format' => FORMAT_MOODLE),
+            array('answer' => array('text' => 'hydrogen',        'format' => FORMAT_PLAIN),
                     'choicegroup' => 1, 'infinite' => false),
-            array('answer' => array('text' => 'positive',        'format' => FORMAT_MOODLE),
+            array('answer' => array('text' => 'positive',        'format' => FORMAT_PLAIN),
                     'choicegroup' => 1, 'infinite' => false),
-            array('answer' => array('text' => 'hydroxide',       'format' => FORMAT_MOODLE),
+            array('answer' => array('text' => 'hydroxide',       'format' => FORMAT_PLAIN),
                     'choicegroup' => 1, 'infinite' => false),
-            array('answer' => array('text' => 'negative',        'format' => FORMAT_MOODLE),
+            array('answer' => array('text' => 'negative',        'format' => FORMAT_PLAIN),
                     'choicegroup' => 1, 'infinite' => false),
-            array('answer' => array('text' => '10<sup>7</sup>',  'format' => FORMAT_MOODLE),
+            array('answer' => array('text' => '10<sup>7</sup>',  'format' => FORMAT_PLAIN),
                     'choicegroup' => 2, 'infinite' => false),
-            array('answer' => array('text' => '7',               'format' => FORMAT_MOODLE),
+            array('answer' => array('text' => '7',               'format' => FORMAT_PLAIN),
                     'choicegroup' => 2, 'infinite' => false),
-            array('answer' => array('text' => '1',               'format' => FORMAT_MOODLE),
+            array('answer' => array('text' => '1',               'format' => FORMAT_PLAIN),
                     'choicegroup' => 2, 'infinite' => false),
-            array('answer' => array('text' => '10<sup>-7</sup>', 'format' => FORMAT_MOODLE),
+            array('answer' => array('text' => '10<sup>-7</sup>', 'format' => FORMAT_PLAIN),
                     'choicegroup' => 2, 'infinite' => false),
-            array('answer' => array('text' => 'greater',         'format' => FORMAT_MOODLE),
+            array('answer' => array('text' => 'greater',         'format' => FORMAT_PLAIN),
                     'choicegroup' => 3, 'infinite' => false),
-            array('answer' => array('text' => 'less',            'format' => FORMAT_MOODLE),
+            array('answer' => array('text' => 'less',            'format' => FORMAT_PLAIN),
                     'choicegroup' => 3, 'infinite' => false),
         );
 
