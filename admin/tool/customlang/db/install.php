@@ -28,24 +28,6 @@ defined('MOODLE_INTERNAL') || die;
 function xmldb_tool_customlang_install() {
     global $CFG, $OUTPUT, $DB;
 
-    // this is a hack - this plugin used to live in admin/report/customlang,
-    // we want to remove the orphaned version info and capability
-    // unless there is a new report type with the same name
-    // the original tables can be dropped because they are used for caching only
-
-    if (!file_exists("$CFG->dirroot/report/customlang")) {
-        unset_all_config_for_plugin('report_customlang');
-        capabilities_cleanup('report_customlang');
-        $dbman = $DB->get_manager();
-        $table = new xmldb_table('report_customlang');
-        if ($dbman->table_exists($table)) {
-            $dbman->drop_table($table);
-        }
-        $table = new xmldb_table('report_customlang_components');
-        if ($dbman->table_exists($table)) {
-            $dbman->drop_table($table);
-        }
-    }
 }
 
 

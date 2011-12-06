@@ -28,12 +28,4 @@ defined('MOODLE_INTERNAL') || die;
 function xmldb_tool_unittest_install() {
     global $CFG;
 
-    // this is a hack - this plugin used to live in admin/report/unittest,
-    // we want to remove the orphaned version info and capability
-    // unless there is a new report type with the same name
-
-    if (!file_exists("$CFG->dirroot/report/unittest")) {
-        unset_all_config_for_plugin('report_unittest');
-        capabilities_cleanup('report_unittest');
-    }
 }

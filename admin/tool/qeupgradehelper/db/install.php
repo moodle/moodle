@@ -28,11 +28,4 @@ defined('MOODLE_INTERNAL') || die;
 function xmldb_tool_qeupgradehelper_install() {
     global $CFG;
 
-    // this is a hack - this plugin used to live in local/qeupgradehelper,
-    // we want to remove the orphaned version info and capability
-    // unless there is a local plugin type with the same name
-
-    if (!file_exists("$CFG->dirroot/local/qeupgradehelper")) {
-        unset_all_config_for_plugin('local_qeupgradehelper');
-    }
 }

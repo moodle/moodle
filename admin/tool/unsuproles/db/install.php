@@ -28,11 +28,4 @@ defined('MOODLE_INTERNAL') || die;
 function xmldb_tool_unsuproles_install() {
     global $CFG;
 
-    // this is a hack - this plugin used to live in admin/report/unsuproles,
-    // we want to remove the orphaned version info unless there is a new
-    // report type with the same name
-
-    if (!file_exists("$CFG->dirroot/report/report_unsuproles")) {
-        unset_all_config_for_plugin('report_unsuproles');
-    }
 }

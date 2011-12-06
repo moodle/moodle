@@ -28,37 +28,6 @@ defined('MOODLE_INTERNAL') || die;
 function xmldb_tool_bloglevelupgrade_install() {
     global $CFG, $OUTPUT;
 
-    // this is a hack - admins were long ago instructed to upgrade blog levels,
-    // the problem is that blog is not supposed to be course level activity!!
-
-    if (!empty($CFG->bloglevel_upgrade_complete)) {
-        // somebody already upgrades, we do not need this any more
-        unset_config('bloglevel_upgrade_complete');
-        return;
-    }
-
-    if (!isset($CFG->bloglevel)) {
-        // fresh install?
-        return;
-    }
-
-    if (($CFG->bloglevel == BLOG_COURSE_LEVEL || $CFG->bloglevel == BLOG_GROUP_LEVEL)) {
-        // inform admins that some settings require attention after upgrade
-        $site = get_site();
-
-        $a = new StdClass;
-        $a->sitename = $site->fullname;
-        $a->fixurl   = "$CFG->wwwroot/$CFG->admin/tool/bloglevelupgrade/index.php";
-
-        $subject = get_string('bloglevelupgrade', 'tool_bloglevelupgrade');
-        $description = get_string('bloglevelupgradedescription', 'tool_bloglevelupgrade', $a);
-
-        // can not use messaging here because it is not configured yet!
-        upgrade_log(UPGRADE_LOG_NOTICE, null, $subject, $description);
-        set_config('tool_bloglevelupgrade_pending', 1);
-
-        echo $OUTPUT->notification($description);
-    }
 }
 
 
