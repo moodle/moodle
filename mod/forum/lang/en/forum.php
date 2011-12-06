@@ -64,6 +64,7 @@ $string['cannotmovefromsingleforum'] = 'Cannot move discussion from a simple sin
 $string['cannotmovenotvisible'] = 'Forum not visible';
 $string['cannotmovetonotexist'] = 'You can\'t move to that forum - it doesn\'t exist!';
 $string['cannotmovetonotfound'] = 'Target forum not found in this course.';
+$string['cannotmovetosingleforum'] = 'Cannot move discussion to a simple single discussion forum';
 $string['cannotpurgecachedrss'] = 'Could not purge the cached RSS feeds for the source and/or destination forum(s) - check your file permissionsforums';
 $string['cannotremovesubscriber'] = 'Could not remove subscriber with id {$a} from this forum!';
 $string['cannotreply'] = 'You cannot reply to this post';
