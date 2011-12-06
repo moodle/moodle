@@ -54,11 +54,11 @@ class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base 
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_select_expectation('p1',
-                                array('' => ' ', '1' => 'quick', '2' => 'slow'), null, true),
+                                array('' => get_string('choosedots'), '1' => 'quick', '2' => 'slow'), null, true),
                 $this->get_contains_select_expectation('p2',
-                                array('' => ' ', '1' => 'fox', '2' => 'dog'), null, true),
+                                array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), null, true),
                 $this->get_contains_select_expectation('p3',
-                                array('' => ' ', '1' => 'lazy', '2' => 'assiduous'), null, true),
+                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), null, true),
                 $this->get_contains_submit_button_expectation(true),
                 $this->get_does_not_contain_feedback_expectation(),
                 $this->get_tries_remaining_expectation(3),
@@ -72,11 +72,11 @@ class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base 
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_select_expectation('p1',
-                                array('' => ' ', '1' => 'quick', '2' => 'slow'), 2, true),
+                                array('' => get_string('choosedots'), '1' => 'quick', '2' => 'slow'), 2, true),
                 $this->get_contains_select_expectation('p2',
-                                array('' => ' ', '1' => 'fox', '2' => 'dog'), 2, true),
+                                array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 2, true),
                 $this->get_contains_select_expectation('p3',
-                                array('' => ' ', '1' => 'lazy', '2' => 'assiduous'), 2, true),
+                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, true),
                 $this->get_contains_submit_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
                 $this->get_does_not_contain_feedback_expectation(),
@@ -91,11 +91,11 @@ class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base 
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_select_expectation('p1',
-                                array('' => ' ', '1' => 'quick', '2' => 'slow'), 2, false),
+                                array('' => get_string('choosedots'), '1' => 'quick', '2' => 'slow'), 2, false),
                 $this->get_contains_select_expectation('p2',
-                                array('' => ' ', '1' => 'fox', '2' => 'dog'), 2, false),
+                                array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 2, false),
                 $this->get_contains_select_expectation('p3',
-                                array('' => ' ', '1' => 'lazy', '2' => 'assiduous'), 2, false),
+                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, false),
                         $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
@@ -111,11 +111,11 @@ class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base 
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_select_expectation('p1',
-                                array('' => ' ', '1' => 'quick', '2' => 'slow'), 2, true),
+                                array('' => get_string('choosedots'), '1' => 'quick', '2' => 'slow'), 2, true),
                 $this->get_contains_select_expectation('p2',
-                                array('' => ' ', '1' => 'fox', '2' => 'dog'), 2, true),
+                                array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 2, true),
                 $this->get_contains_select_expectation('p3',
-                                array('' => ' ', '1' => 'lazy', '2' => 'assiduous'), 2, true),
+                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, true),
                 $this->get_contains_submit_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
                 $this->get_does_not_contain_feedback_expectation(),
@@ -130,11 +130,11 @@ class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base 
         $this->check_current_mark(2);
         $this->check_current_output(
                 $this->get_contains_select_expectation('p1',
-                                array('' => ' ', '1' => 'quick', '2' => 'slow'), 1, false),
+                                array('' => get_string('choosedots'), '1' => 'quick', '2' => 'slow'), 1, false),
                 $this->get_contains_select_expectation('p2',
-                                array('' => ' ', '1' => 'fox', '2' => 'dog'), 1, false),
+                                array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 1, false),
                 $this->get_contains_select_expectation('p3',
-                                array('' => ' ', '1' => 'lazy', '2' => 'assiduous'), 1, false),
+                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 1, false),
                 $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_correct_expectation(),
                 $this->get_no_hint_visible_expectation());
