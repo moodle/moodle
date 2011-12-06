@@ -77,7 +77,7 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
                                  'draghome',
                                  "dragitemhomes{$dragimage->no}",
                                  "choice{$choiceno}");
-                if ($dragimage->isinfinite) {
+                if ($dragimage->infinite) {
                     $classes[] = 'infinite';
                 }
                 if ($dragimageurl === null) {
