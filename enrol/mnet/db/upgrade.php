@@ -29,18 +29,5 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_enrol_mnet_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
-    // when core upgraded all legacy enrol mnet plugins, it created instances of the plugin
-    // here we set customint1 to 0 which means 'open for all hosts' (legacy behaviour)
-    if ($oldversion < 2010071701) {
-        $DB->set_field('enrol', 'customint1', 0, array('enrol' => 'mnet', 'customint1' => null));
-        upgrade_plugin_savepoint(true, 2010071701, 'enrol', 'mnet');
-    }
-
-    // Moodle v2.1.0 release upgrade line
-    // Put any upgrade step following this
-
-    // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
-
     return true;
 }

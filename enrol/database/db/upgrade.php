@@ -27,20 +27,5 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_enrol_database_upgrade($oldversion) {
     global $DB;
 
-    $dbman = $DB->get_manager();
-
-    // fix leftovers after incorrect 2.x upgrade in install.php
-    if ($oldversion < 2010073101) {
-        unset_config('enrol_db_localrolefield');
-        unset_config('enrol_db_remoterolefield');
-        unset_config('enrol_db_disableunenrol');
-
-        upgrade_plugin_savepoint(true, 2010073101, 'enrol', 'database');
-    }
-
-
-    // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
-
     return true;
 }

@@ -44,26 +44,5 @@
 function xmldb_enrol_paypal_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
-    $dbman = $DB->get_manager();
-
-    //===== 1.9.0 upgrade line ======//
-
-    // Add instanceid field to enrol_paypal table
-    if ($oldversion < 2010071500) {
-        $table = new xmldb_table('enrol_paypal');
-        $field = new xmldb_field('instanceid');
-        if (!$dbman->field_exists($table, $field)) {
-            $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'userid');
-            $dbman->add_field($table, $field);
-        }
-        upgrade_plugin_savepoint(true, 2010071500, 'enrol', 'paypal');
-    }
-
-    // Moodle v2.1.0 release upgrade line
-    // Put any upgrade step following this
-
-    // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
-
     return true;
 }

@@ -29,41 +29,5 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_enrol_flatfile_upgrade($oldversion) {
     global $CFG, $DB;
 
-    $result = TRUE;
-    $dbman = $DB->get_manager();
-
-    if ($oldversion < 2010091400) {
-
-        // Define table enrol_flatfile to be created
-        $table = new xmldb_table('enrol_flatfile');
-
-        // Adding fields to table enrol_flatfile
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('action', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('roleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('timestart', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('timeend', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-
-        // Adding keys to table enrol_flatfile
-        $table->add_key('id', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('courseid-id', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
-        $table->add_key('userid-id', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
-        $table->add_key('roleid-id', XMLDB_KEY_FOREIGN, array('roleid'), 'role', array('id'));
-
-        // Conditionally launch create table for enrol_flatfile
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        // flatfile savepoint reached
-        upgrade_plugin_savepoint(true, 2010091400, 'enrol', 'flatfile');
-    }
-
-    // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
-
-    return $result;
+    return true;
 }

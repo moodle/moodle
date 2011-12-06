@@ -29,17 +29,4 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_enrol_meta_install() {
     global $CFG, $DB;
 
-    if (isset($CFG->nonmetacoursesyncroleids)) {
-        set_config('nosyncroleids', $CFG->nonmetacoursesyncroleids, 'enrol_meta');
-        unset_config('nonmetacoursesyncroleids');
-    }
-
-    if (!$DB->record_exists('enrol', array('enrol'=>'meta'))) {
-        // no need to syn roles and enrolments
-        return;
-    }
-
-    // brute force course resync, this may take a while
-    require_once("$CFG->dirroot/enrol/meta/locallib.php");
-    enrol_meta_sync();
 }
