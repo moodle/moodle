@@ -34,10 +34,13 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
      * </code>
      */
     function MoodleQuickForm_recaptcha($elementName = null, $elementLabel = null, $attributes = null) {
+        global $CFG;
         parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
         $this->_type = 'recaptcha';
-        if (!empty($attributes['https'])) {
-            $this->_https = $attributes['https'];
+        if (!empty($attributes['https']) or strpos($CFG->httpswwwroot, 'https:') === 0) {
+            $this->_https = true;
+        } else {
+            $this->_https = false;
         }
     }
 
