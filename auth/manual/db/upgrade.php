@@ -30,26 +30,5 @@
 function xmldb_auth_manual_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
-    if ($oldversion < 2011022700) {
-        // force creation of missing passwords
-        $createpassword = hash_internal_user_password('');
-        $rs = $DB->get_recordset('user', array('password'=>$createpassword, 'auth'=>'manual'));
-        foreach ($rs as $user) {
-            if (validate_email($user->email)) {
-                $DB->set_field('user', 'password', 'to be created', array('id'=>$user->id));
-                unset_user_preference('auth_forcepasswordchange', $user);
-                set_user_preference('create_password', 1, $user);
-            }
-        }
-        $rs->close();
-        upgrade_plugin_savepoint(true, 2011022700, 'auth', 'manual');
-    }
-
-    // Moodle v2.1.0 release upgrade line
-    // Put any upgrade step following this
-
-    // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
-
     return true;
 }

@@ -31,23 +31,5 @@
 function xmldb_auth_mnet_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
-    // fix the plugin type in config_plugins table
-    if ($oldversion < 2010071300) {
-        if ($configs = $DB->get_records('config_plugins', array('plugin' => 'auth/mnet'))) {
-            foreach ($configs as $config) {
-                unset_config($config->name, $config->plugin);
-                set_config($config->name, $config->value, 'auth_mnet');
-            }
-        }
-        unset($configs);
-        upgrade_plugin_savepoint(true, 2010071300, 'auth', 'mnet');
-    }
-
-    // Moodle v2.1.0 release upgrade line
-    // Put any upgrade step following this
-
-    // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
-
     return true;
 }
