@@ -28,13 +28,4 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_filter_glossary_install() {
     global $DB;
 
-    // If the legacy mod/glossary filter is installed we need to:
-    //   1- Delete new filter (filter_active and filter_config) information, in order to
-    //   2- Usurpate the identity of the legacy filter by moving all its
-    //      information to filter/glossary
-    // If the legacy mod/glossary filter was not installed, no action is needed
-    if ($DB->record_exists('filter_active', array('filter' => 'mod/glossary'))) {
-        $DB->delete_records('filter_active', array('filter' => 'filter/glossary'));
-        $DB->set_field('filter_active', 'filter', 'filter/glossary', array('filter' => 'mod/glossary'));
-    }
 }

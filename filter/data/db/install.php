@@ -28,13 +28,4 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_filter_data_install() {
     global $DB;
 
-    // If the legacy mod/data filter is installed we need to:
-    //   1- Delete new filter (filter_active and filter_config) information, in order to
-    //   2- Usurpate the identity of the legacy filter by moving all its
-    //      information to filter/data
-    // If the legacy mod/data filter was not installed, no action is needed
-    if ($DB->record_exists('filter_active', array('filter' => 'mod/data'))) {
-        $DB->delete_records('filter_active', array('filter' => 'filter/data'));
-        $DB->set_field('filter_active', 'filter', 'filter/data', array('filter' => 'mod/data'));
-    }
 }

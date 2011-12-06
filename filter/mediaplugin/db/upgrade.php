@@ -30,24 +30,5 @@
 function xmldb_filter_mediaplugin_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
-    if ($oldversion < 2011030900) {
-        unset_config('filter_mediaplugin_enable_img'); // migrated to filter_urltolink
-        unset_config('filter_mediaplugin_enable_ram'); // --> rm
-        unset_config('filter_mediaplugin_enable_rpm'); // --> rm
-        unset_config('filter_mediaplugin_enable_ogg'); // --> html5audio
-        unset_config('filter_mediaplugin_enable_ogv'); // --> html5video
-        unset_config('filter_mediaplugin_enable_avi'); // --> wmp
-        unset_config('filter_mediaplugin_enable_wmv'); // --> wmp
-        unset_config('filter_mediaplugin_enable_mov'); // --> qt
-        unset_config('filter_mediaplugin_enable_mpg'); // --> qt
-        upgrade_plugin_savepoint(true, 2011030900, 'filter', 'mediaplugin');
-    }
-
-    // Moodle v2.1.0 release upgrade line
-    // Put any upgrade step following this
-
-    // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
-
     return true;
 }
