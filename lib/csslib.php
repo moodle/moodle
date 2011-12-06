@@ -165,6 +165,15 @@ function css_send_css_not_found() {
     die('CSS was not found, sorry.');
 }
 
+/**
+ * Uses the minify library to compress CSS.
+ *
+ * This is used if $CFG->cssoptimise has been turned off. This was
+ * the original CSS optimisation library.
+ *
+ * @param array $files An array of files to minify
+ * @return string The minified CSS
+ */
 function css_minify_css($files) {
     global $CFG;
 
@@ -212,6 +221,22 @@ function css_is_colour($value) {
         return true;
     }
     return false;
+}
+
+/**
+ * A simple sorting function to sort two array values on the number of items they contain
+ *
+ * @param array $a
+ * @param array $b
+ * @return int
+ */
+function css_sort_by_count(array $a, array $b) {
+    $a = count($a);
+    $b = count($b);
+    if ($a == $b) {
+        return 0;
+    }
+    return ($a > $b) ? -1 : 1;
 }
 
 /**
@@ -681,7 +706,6 @@ class css_optimiser {
     );
 }
 
-
 /**
  * Used to prepare CSS strings
  *
@@ -1025,6 +1049,11 @@ class css_rule {
         return css_writer::rule($selectors, $styles);
     }
 
+    /**
+     * Consolidates all styles associated with this rule
+     *
+     * @return array An array of consolidated styles
+     */
     public function get_consolidated_styles() {
         $finalstyles = array();
         $consolidate = array();
@@ -1301,6 +1330,11 @@ abstract class css_style {
         }
     }
 
+    /**
+     * Returns true if the value associated with this style is valid
+     *
+     * @return bool
+     */
     public function is_valid() {
         return true;
     }
@@ -1351,6 +1385,12 @@ abstract class css_style {
         return $value;
     }
 
+    /**
+     * If this particular style can be consolidated into another style this function
+     * should return the style that it can be consolidated into.
+     *
+     * @return string|null
+     */
     public function consolidate_to() {
         return null;
     }
@@ -1437,6 +1477,12 @@ class css_style_color extends css_style {
         return parent::out(self::shrink_value($overridevalue));
     }
 
+    /**
+     * Shrinks the colour value is possible.
+     *
+     * @param string $value
+     * @return string
+     */
     public static function shrink_value($value) {
         if (preg_match('/#([a-fA-F0-9])\1([a-fA-F0-9])\2([a-fA-F0-9])\3/', $value, $matches)) {
             return '#'.$matches[1].$matches[2].$matches[3];
@@ -1444,12 +1490,35 @@ class css_style_color extends css_style {
         return $value;
     }
 
+    /**
+     * Returns true if the value is a valid colour.
+     *
+     * @return bool
+     */
     public function is_valid() {
         return css_is_colour($this->value);
     }
 }
 
+/**
+ * A margin style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_margin extends css_style {
+
+    /**
+     * Initialises a margin style.
+     *
+     * In this case we split the margin into several other margin styles so that
+     * we can properly condense overrides and then reconsolidate them later into
+     * an optimal form.
+     *
+     * @param string $value
+     * @return array An array of margin values that can later be consolidated
+     */
     public static function init($value) {
         $value = preg_replace('#\s+#', ' ', $value);
         $bits = explode(' ', $value, 4);
@@ -1474,6 +1543,13 @@ class css_style_margin extends css_style {
             new css_style_marginleft('margin-left', $left)
         );
     }
+
+    /**
+     * Consolidates individual margin styles into a single margin style
+     *
+     * @param array $styles
+     * @return array An array of consolidated styles
+     */
     public static function consolidate(array $styles) {
         if (count($styles) != 4) {
             return $styles;
@@ -1498,41 +1574,112 @@ class css_style_margin extends css_style {
         } else {
             return array(new css_style_margin('margin', "{$top} {$right} {$bottom} {$left}"));
         }
-        
     }
 }
 
+/**
+ * A margin top style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_margintop extends css_style {
+    /**
+     * A simple init, just a single style
+     *
+     * @param string $value
+     * @return css_style_margintop
+     */
     public static function init($value) {
         return new css_style_margintop('margin-top', $value);
     }
+    /**
+     * This style can be consolidated into a single margin style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'margin';
     }
 }
 
+/**
+ * A margin right style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_marginright extends css_style {
+    /**
+     * A simple init, just a single style
+     *
+     * @param string $value
+     * @return css_style_margintop
+     */
     public static function init($value) {
         return new css_style_marginright('margin-right', $value);
     }
+    /**
+     * This style can be consolidated into a single margin style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'margin';
     }
 }
 
+/**
+ * A margin bottom style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_marginbottom extends css_style {
+    /**
+     * A simple init, just a single style
+     *
+     * @param string $value
+     * @return css_style_margintop
+     */
     public static function init($value) {
         return new css_style_marginbottom('margin-bottom', $value);
     }
+    /**
+     * This style can be consolidated into a single margin style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'margin';
     }
 }
 
+/**
+ * A margin left style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_marginleft extends css_style {
+    /**
+     * A simple init, just a single style
+     *
+     * @param string $value
+     * @return css_style_margintop
+     */
     public static function init($value) {
         return new css_style_marginleft('margin-left', $value);
     }
+    /**
+     * This style can be consolidated into a single margin style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'margin';
     }
@@ -1546,6 +1693,12 @@ class css_style_marginleft extends css_style {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_border extends css_style {
+    /**
+     * Initalises the border style into an array of individual style compontents
+     *
+     * @param string $value
+     * @return css_style_bordercolor
+     */
     public static function init($value) {
         $value = preg_replace('#\s+#', ' ', $value);
         $bits = explode(' ', $value, 3);
@@ -1574,6 +1727,12 @@ class css_style_border extends css_style {
         }
         return $return;
     }
+    /**
+     * Consolidates all border styles into a single style
+     *
+     * @param array $styles
+     * @return array
+     */
     public static function consolidate(array $styles) {
 
         $borderwidths = array('top' => null, 'right' => null, 'bottom' => null, 'left' => null);
@@ -1640,19 +1799,19 @@ class css_style_border extends css_style {
         if ($allwidthsthesame + $allstylesthesame + $allcolorsthesame == 3) {
 
             $return[] = new css_style_border('border', $borderwidths['top'].' '.$borderstyles['top'].' '.$bordercolors['top']);
-            
+
         } else if ($allwidthsthesame + $allstylesthesame + $allcolorsthesame == 2) {
 
             if ($allwidthsthesame && $allstylesthesame && !$nullwidths && !$nullstyles) {
 
                 $return[] = new css_style_border('border', $borderwidths['top'].' '.$borderstyles['top']);
                 self::consolidate_styles_by_direction($return, 'css_style_bordercolor', 'border-color', $bordercolors);
-                
+
             } else if ($allwidthsthesame && $allcolorsthesame && !$nullwidths && !$nullcolors) {
 
                 $return[] = new css_style_border('border', $borderwidths['top'].' solid '.$bordercolors['top']);
                 self::consolidate_styles_by_direction($return, 'css_style_borderstyle', 'border-style', $borderstyles);
-                
+
             } else if ($allstylesthesame && $allcolorsthesame && !$nullstyles && !$nullcolors) {
 
                 $return[] = new css_style_border('border', '1px '.$borderstyles['top'].' '.$bordercolors['top']);
@@ -1720,9 +1879,25 @@ class css_style_border extends css_style {
         }
         return $return;
     }
+    /**
+     * Border styles get consolidated to a single border style.
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
+    /**
+     *
+     * @param array $array An array to add styles into during consolidation. Passed by reference.
+     * @param string $class The class type to initalise
+     * @param string $style The style to create
+     * @param string|array $top The top value
+     * @param string $right The right value
+     * @param string $bottom The bottom value
+     * @param string $left The left value
+     * @return bool
+     */
     public static function consolidate_styles_by_direction(&$array, $class, $style, $top, $right = null, $bottom = null, $left = null) {
         if (is_array($top)) {
             $right = $top['right'];
@@ -1759,6 +1934,18 @@ class css_style_border extends css_style {
         }
         return true;
     }
+
+    /**
+     * Builds a border style for a set of width, style, and colour values
+     *
+     * @param array $array An array into which the generated style is added
+     * @param string $class The class type to initialise
+     * @param string $cssstyle The style to use
+     * @param string $width The width of the border
+     * @param string $style The style of the border
+     * @param string $color The colour of the border
+     * @return bool
+     */
     public static function build_style_string(&$array, $class, $cssstyle, $width = null, $style = null, $color = null) {
         if (!is_null($width) && !is_null($style) && !is_null($color)) {
             $array[] = new $class($cssstyle, $width.' '.$style.' '.$color);
@@ -1773,15 +1960,6 @@ class css_style_border extends css_style {
         }
         return true;
     }
-}
-
-function css_sort_by_count(array $a, array $b) {
-    $a = count($a);
-    $b = count($b);
-    if ($a == $b) {
-        return 0;
-    }
-    return ($a > $b) ? -1 : 1;
 }
 
 /**
@@ -1824,14 +2002,31 @@ class css_style_bordercolor extends css_style_color {
             css_style_bordercolorleft::init($left)
         );
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
+    /**
+     * Cleans the value
+     *
+     * @param string $value
+     * @return string
+     */
     protected function clean_value($value) {
         $values = explode(' ', $value);
         $values = array_map('parent::clean_value', $values);
         return join (' ', $values);
     }
+    /**
+     * Outputs this style
+     *
+     * @param string $overridevalue
+     * @return string
+     */
     public function out($overridevalue = null) {
         if ($overridevalue === null) {
             $overridevalue = $this->value;
@@ -1842,7 +2037,20 @@ class css_style_bordercolor extends css_style_color {
     }
 }
 
+/**
+ * A border left style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_borderleft extends css_style_generic {
+    /**
+     * Initialises the border left style into individual components
+     *
+     * @param string $value
+     * @return css_style_borderwidthleft|css_style_borderstyleleft|css_style_bordercolorleft
+     */
     public static function init($value) {
         $value = preg_replace('#\s+#', ' ', $value);
         $bits = explode(' ', $value, 3);
@@ -1859,12 +2067,30 @@ class css_style_borderleft extends css_style_generic {
         }
         return $return;
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
 }
 
+/**
+ * A border right style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_borderright extends css_style_generic {
+    /**
+     * Initialises the border right style into individual components
+     *
+     * @param string $value
+     * @return css_style_borderwidthright|css_style_borderstyleright|css_style_bordercolorright
+     */
     public static function init($value) {
         $value = preg_replace('#\s+#', ' ', $value);
         $bits = explode(' ', $value, 3);
@@ -1881,12 +2107,30 @@ class css_style_borderright extends css_style_generic {
         }
         return $return;
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
 }
 
+/**
+ * A border top style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_bordertop extends css_style_generic {
+    /**
+     * Initialises the border top style into individual components
+     *
+     * @param string $value
+     * @return css_style_borderwidthtop|css_style_borderstyletop|css_style_bordercolortop
+     */
     public static function init($value) {
         $value = preg_replace('#\s+#', ' ', $value);
         $bits = explode(' ', $value, 3);
@@ -1903,12 +2147,30 @@ class css_style_bordertop extends css_style_generic {
         }
         return $return;
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
 }
 
+/**
+ * A border bottom style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_borderbottom extends css_style_generic {
+    /**
+     * Initialises the border bottom style into individual components
+     *
+     * @param string $value
+     * @return css_style_borderwidthbottom|css_style_borderstylebottom|css_style_bordercolorbottom
+     */
     public static function init($value) {
         $value = preg_replace('#\s+#', ' ', $value);
         $bits = explode(' ', $value, 3);
@@ -1925,6 +2187,11 @@ class css_style_borderbottom extends css_style_generic {
         }
         return $return;
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
@@ -1970,6 +2237,11 @@ class css_style_borderwidth extends css_style_generic {
             css_style_borderwidthleft::init($left)
         );
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
@@ -2015,112 +2287,346 @@ class css_style_borderstyle extends css_style_generic {
             css_style_borderstyleleft::init($left)
         );
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
 }
 
+/**
+ * A border top colour style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_bordercolortop extends css_style_color {
+    /**
+     * Initialises this style object
+     *
+     * @param string $value
+     * @return css_style_bordercolortop
+     */
     public static function init($value) {
         return new css_style_bordercolortop('border-color-top', $value);
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
 }
+
+/**
+ * A border left colour style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_bordercolorleft extends css_style_color {
+    /**
+     * Initialises this style object
+     *
+     * @param string $value
+     * @return css_style_bordercolorleft
+     */
     public static function init($value) {
         return new css_style_bordercolorleft('border-color-left', $value);
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
 }
+
+/**
+ * A border right colour style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_bordercolorright extends css_style_color {
+    /**
+     * Initialises this style object
+     *
+     * @param string $value
+     * @return css_style_bordercolorright
+     */
     public static function init($value) {
         return new css_style_bordercolorright('border-color-right', $value);
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
 }
+
+/**
+ * A border bottom colour style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_bordercolorbottom extends css_style_color {
+    /**
+     * Initialises this style object
+     *
+     * @param string $value
+     * @return css_style_bordercolorbottom
+     */
     public static function init($value) {
         return new css_style_bordercolorbottom('border-color-bottom', $value);
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
 }
 
+/**
+ * A border width top style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_borderwidthtop extends css_style_generic {
+    /**
+     * Initialises this style object
+     *
+     * @param string $value
+     * @return css_style_borderwidthtop
+     */
     public static function init($value) {
         return new css_style_borderwidthtop('border-width-top', $value);
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
 }
+
+/**
+ * A border width left style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_borderwidthleft extends css_style_generic {
+    /**
+     * Initialises this style object
+     *
+     * @param string $value
+     * @return css_style_borderwidthleft
+     */
     public static function init($value) {
         return new css_style_borderwidthleft('border-width-left', $value);
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
 }
+
+/**
+ * A border width right style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_borderwidthright extends css_style_generic {
+    /**
+     * Initialises this style object
+     *
+     * @param string $value
+     * @return css_style_borderwidthright
+     */
     public static function init($value) {
         return new css_style_borderwidthright('border-width-right', $value);
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
 }
+
+/**
+ * A border width bottom style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_borderwidthbottom extends css_style_generic {
+    /**
+     * Initialises this style object
+     *
+     * @param string $value
+     * @return css_style_borderwidthbottom
+     */
     public static function init($value) {
         return new css_style_borderwidthbottom('border-width-bottom', $value);
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
 }
 
-
+/**
+ * A border top style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_borderstyletop extends css_style_generic {
+    /**
+     * Initialises this style object
+     *
+     * @param string $value
+     * @return css_style_borderstyletop
+     */
     public static function init($value) {
         return new css_style_borderstyletop('border-style-top', $value);
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
 }
+
+/**
+ * A border left style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_borderstyleleft extends css_style_generic {
+    /**
+     * Initialises this style object
+     *
+     * @param string $value
+     * @return css_style_borderstyleleft
+     */
     public static function init($value) {
         return new css_style_borderstyleleft('border-style-left', $value);
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
 }
+
+/**
+ * A border right style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_borderstyleright extends css_style_generic {
+    /**
+     * Initialises this style object
+     *
+     * @param string $value
+     * @return css_style_borderstyleright
+     */
     public static function init($value) {
         return new css_style_borderstyleright('border-style-right', $value);
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
 }
+
+/**
+ * A border bottom style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_borderstylebottom extends css_style_generic {
+    /**
+     * Initialises this style object
+     *
+     * @return css_style_borderstylebottom
+     */
     public static function init($value) {
         return new css_style_borderstylebottom('border-style-bottom', $value);
     }
+    /**
+     * Consolidate this to a single border style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'border';
     }
 }
 
-
+/**
+ * A background style
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_background extends css_style {
     public static function init($value) {
         // colour - image - repeat - attachment - position
@@ -2160,6 +2666,13 @@ class css_style_background extends css_style {
         }
         return $return;
     }
+
+    /**
+     * Consolidates background styles into a single background style
+     *
+     * @param array $styles
+     * @return array
+     */
     public static function consolidate(array $styles) {
 
         if (count($styles) < 1) {
@@ -2232,6 +2745,11 @@ class css_style_backgroundimage extends css_style_generic {
     public static function init($value) {
         return new css_style_backgroundimage('background-image', $value);
     }
+    /**
+     * Consolidates this style into a single background style
+     *
+     * @return type
+     */
     public function consolidate_to() {
         return 'background';
     }
@@ -2254,6 +2772,11 @@ class css_style_backgroundrepeat extends css_style_generic {
     public static function init($value) {
         return new css_style_backgroundrepeat('background-repeat', $value);
     }
+    /**
+     * Consolidates this style into a single background style
+     *
+     * @return type
+     */
     public function consolidate_to() {
         return 'background';
     }
@@ -2276,6 +2799,11 @@ class css_style_backgroundattachment extends css_style_generic {
     public static function init($value) {
         return new css_style_backgroundattachment('background-attachment', $value);
     }
+    /**
+     * Consolidates this style into a single background style
+     *
+     * @return type
+     */
     public function consolidate_to() {
         return 'background';
     }
@@ -2298,12 +2826,30 @@ class css_style_backgroundposition extends css_style_generic {
     public static function init($value) {
         return new css_style_backgroundposition('background-position', $value);
     }
+    /**
+     * Consolidates this style into a single background style
+     *
+     * @return type
+     */
     public function consolidate_to() {
         return 'background';
     }
 }
 
+/**
+ * A padding style.
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_padding extends css_style {
+    /**
+     * Initialises this padding style into several individual padding styles
+     *
+     * @param string $value
+     * @return array
+     */
     public static function init($value) {
         $value = preg_replace('#\s+#', ' ', $value);
         $bits = explode(' ', $value, 4);
@@ -2328,6 +2874,12 @@ class css_style_padding extends css_style {
             new css_style_paddingleft('padding-left', $left)
         );
     }
+    /**
+     * Consolidates several padding styles into a single style.
+     *
+     * @param array $styles
+     * @return array 
+     */
     public static function consolidate(array $styles) {
         if (count($styles) != 4) {
             return $styles;
@@ -2356,37 +2908,109 @@ class css_style_padding extends css_style {
     }
 }
 
+/**
+ * A padding top style.
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_paddingtop extends css_style {
+    /**
+     * Initialises this style
+     *
+     * @param string $value
+     * @return css_style_paddingtop
+     */
     public static function init($value) {
         return new css_style_paddingtop('padding-top', $value);
     }
+    /**
+     * Consolidates this style into a single padding style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'padding';
     }
 }
 
+/**
+ * A padding right style.
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_paddingright extends css_style {
+    /**
+     * Initialises this style
+     *
+     * @param string $value
+     * @return css_style_paddingright
+     */
     public static function init($value) {
         return new css_style_paddingright('padding-right', $value);
     }
+    /**
+     * Consolidates this style into a single padding style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'padding';
     }
 }
 
+/**
+ * A padding bottom style.
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_paddingbottom extends css_style {
+    /**
+     * Initialises this style
+     *
+     * @param string $value
+     * @return css_style_paddingbottom
+     */
     public static function init($value) {
         return new css_style_paddingbottom('padding-bottom', $value);
     }
+    /**
+     * Consolidates this style into a single padding style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'padding';
     }
 }
 
+/**
+ * A padding left style.
+ *
+ * @package   moodlecore
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_style_paddingleft extends css_style {
+    /**
+     * Initialises this style
+     *
+     * @param string $value
+     * @return css_style_paddingleft
+     */
     public static function init($value) {
         return new css_style_paddingleft('padding-left', $value);
     }
+    /**
+     * Consolidates this style into a single padding style
+     *
+     * @return string
+     */
     public function consolidate_to() {
         return 'padding';
     }
