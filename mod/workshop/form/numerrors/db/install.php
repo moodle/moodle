@@ -30,19 +30,5 @@
  */
 function xmldb_workshopform_numerrors_install() {
     global $CFG, $DB;
-    require_once(dirname(__FILE__) . '/upgradelib.php');
 
-    // upgrade from old workshop 1.x if needed
-    workshopform_numerrors_upgrade_legacy();
-}
-
-/**
- * Post installation procedure recovery
- */
-function xmldb_workshopform_numerrors_install_recovery() {
-    global $CFG, $DB;
-    require_once(dirname(__FILE__) . '/upgradelib.php');
-
-    // continue upgrading from old workshop 1.x if needed
-    workshopform_numerrors_upgrade_legacy();
 }

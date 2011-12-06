@@ -35,33 +35,6 @@ function xmldb_workshopform_rubric_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2010091700) {
-        // clean up orphaned dimensions
-        $orphans = $DB->get_records_sql("SELECT d.id
-                                           FROM {workshopform_rubric} d
-                                      LEFT JOIN {workshop} w ON d.workshopid = w.id
-                                          WHERE w.id IS NULL");
-        if (!empty($orphans)) {
-            echo $OUTPUT->notification('Orphaned assessment form elements found - cleaning...');
-            $DB->delete_records_list('workshopform_rubric_levels', 'dimensionid', array_keys($orphans));
-            $DB->delete_records_list('workshopform_rubric', 'id', array_keys($orphans));
-        }
-
-        // clean up orphaned configurations
-        $orphans = $DB->get_records_sql("SELECT c.id
-                                           FROM {workshopform_rubric_config} c
-                                      LEFT JOIN {workshop} w ON c.workshopid = w.id
-                                          WHERE w.id IS NULL");
-        if (!empty($orphans)) {
-            echo $OUTPUT->notification('Orphaned configuration found - cleaning...');
-            $DB->delete_records_list('workshopform_rubric_config', 'id', array_keys($orphans));
-        }
-
-        upgrade_plugin_savepoint(true, 2010091700, 'workshopform', 'rubric');
-    }
-
-    // Moodle v2.1.0 release upgrade line
-    // Put any upgrade step following this
 
     // Moodle v2.2.0 release upgrade line
     // Put any upgrade step following this

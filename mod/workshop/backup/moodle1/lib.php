@@ -26,8 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/workshop/db/upgradelib.php');
-
 /**
  * Workshop conversion handler
  */
@@ -353,4 +351,61 @@ abstract class moodle1_workshopform_handler extends moodle1_submod_handler {
     public function on_elements_end() {
         // do nothing by default
     }
+}
+
+/**
+ * Given a record containing data from 1.9 workshop table, returns object containing data as should be saved in 2.0 workshop table
+ *
+ * @param stdClass $old record from 1.9 workshop table
+ * @return stdClass
+ */
+function workshop_upgrade_transform_instance(stdClass $old) {
+    global $CFG;
+    require_once(dirname(dirname(dirname(__FILE__))) . '/locallib.php');
+
+    $new                = new stdClass();
+    $new->course        = $old->course;
+    $new->name          = $old->name;
+    $new->intro         = $old->description;
+    $new->introformat   = $old->format;
+    $new->nattachments  = $old->nattachments;
+    $new->maxbytes      = $old->maxbytes;
+    $new->grade         = $old->grade;
+    $new->gradinggrade  = $old->gradinggrade;
+    $new->phase         = workshop::PHASE_CLOSED;
+    $new->timemodified  = time();
+    if ($old->ntassessments > 0) {
+        $new->useexamples = 1;
+    } else {
+        $new->useexamples = 0;
+    }
+    $new->usepeerassessment = 1;
+    $new->useselfassessment = $old->includeself;
+    switch ($old->gradingstrategy) {
+    case 0: // 'notgraded' - renamed
+        $new->strategy = 'comments';
+        break;
+    case 1: // 'accumulative'
+        $new->strategy = 'accumulative';
+        break;
+    case 2: // 'errorbanded' - renamed
+        $new->strategy = 'numerrors';
+        break;
+    case 3: // 'criterion' - will be migrated into 'rubric'
+        $new->strategy = 'rubric';
+        break;
+    case 4: // 'rubric'
+        $new->strategy = 'rubric';
+        break;
+    }
+    if ($old->submissionstart < $old->submissionend) {
+        $new->submissionstart = $old->submissionstart;
+        $new->submissionend   = $old->submissionend;
+    }
+    if ($old->assessmentstart < $old->assessmentend) {
+        $new->assessmentstart = $old->assessmentstart;
+        $new->assessmentend   = $old->assessmentend;
+    }
+
+    return $new;
 }

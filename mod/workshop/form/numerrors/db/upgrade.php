@@ -35,32 +35,6 @@ function xmldb_workshopform_numerrors_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2010091700) {
-        // clean up orphaned dimensions
-        $orphans = $DB->get_records_sql("SELECT d.id
-                                           FROM {workshopform_numerrors} d
-                                      LEFT JOIN {workshop} w ON d.workshopid = w.id
-                                          WHERE w.id IS NULL");
-        if (!empty($orphans)) {
-            echo $OUTPUT->notification('Orphaned assessment form elements found - cleaning...');
-            $DB->delete_records_list('workshopform_numerrors', 'id', array_keys($orphans));
-        }
-
-        // clean up orphaned mappings
-        $orphans = $DB->get_records_sql("SELECT m.id
-                                           FROM {workshopform_numerrors_map} m
-                                      LEFT JOIN {workshop} w ON m.workshopid = w.id
-                                          WHERE w.id IS NULL");
-        if (!empty($orphans)) {
-            echo $OUTPUT->notification('Orphaned mappings found - cleaning...');
-            $DB->delete_records_list('workshopform_numerrors_map', 'id', array_keys($orphans));
-        }
-
-        upgrade_plugin_savepoint(true, 2010091700, 'workshopform', 'numerrors');
-    }
-
-    // Moodle v2.1.0 release upgrade line
-    // Put any upgrade step following this
 
     // Moodle v2.2.0 release upgrade line
     // Put any upgrade step following this
