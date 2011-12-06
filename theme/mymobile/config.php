@@ -34,7 +34,7 @@ $THEME->parents = array(
 
 // Set the stylesheets that we want to include for this theme
 $THEME->sheets = array(
-    'jmobilerc2',
+    'jmobile1',
     'core',
     'media'
 );
@@ -157,7 +157,7 @@ if ($thisdevice == "default" || $thisdevice == "tablet" || optional_param('mymob
 $THEME->javascripts = array(
     'jquery-1.6.4.min',
     'custom',
-    'jquery.mobile-1.0rc2',
+    'jquery.mobile-1.0',
     'scrollview',
     'easing'
 );
