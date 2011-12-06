@@ -59,14 +59,15 @@ function xmldb_main_upgrade($oldversion) {
 
     $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
 
+    if ($oldversion < 2011120500) {
+        // just in case somebody hacks upgrade scripts or env, we really can not continue
+        echo("You need to upgrade to 2.2.x first!\n");
+        exit(1);
+    }
+
     ////////////////////////////////////////
     ///upgrade supported only from 2.2.x ///
     ////////////////////////////////////////
-
-
-
-    // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
 
     if ($oldversion < 2011120500.02) {
 
