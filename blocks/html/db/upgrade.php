@@ -32,42 +32,5 @@
 function xmldb_block_html_upgrade($oldversion) {
     global $CFG, $DB;
 
-    $dbman = $DB->get_manager();
-
-    if ($oldversion < 2010071900) {
-        $params = array();
-        $sql = "SELECT * FROM {block_instances} b WHERE b.blockname = :blockname";
-        $params['blockname'] = 'html';
-        $rs = $DB->get_recordset_sql($sql, $params);
-        foreach ($rs as $record) {
-            $config = unserialize(base64_decode($record->configdata));
-            if (!empty($config) && is_object($config)) {
-                if (!empty($config->text) && is_array($config->text)) {
-                    // fix bad data
-                    $data = clone($config);
-                    $config->text = $data->text['text'];
-                    $config->format = $data->text['format'];
-                    $record->configdata = base64_encode(serialize($config));
-                    $DB->update_record('block_instances', $record);
-                } else if (empty($config->format)) {
-                    // add format parameter to 1.9
-                    $config->format = FORMAT_HTML;
-                    $record->configdata = base64_encode(serialize($config));
-                    $DB->update_record('block_instances', $record);
-                }
-            }
-        }
-        $rs->close();
-
-        /// html block savepoint reached
-        upgrade_block_savepoint(true, 2010071900, 'html');
-    }
-
-    // Moodle v2.1.0 release upgrade line
-    // Put any upgrade step following this
-
-    // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
-
     return true;
 }

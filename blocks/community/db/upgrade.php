@@ -46,38 +46,5 @@
 function xmldb_block_community_upgrade($oldversion) {
     global $CFG, $DB;
 
-    $dbman = $DB->get_manager();
-
-    if ($oldversion < 2010042701) {
-
-        /// Define table block_community to be created
-        $table = new xmldb_table('block_community');
-
-        /// Adding fields to table block_community
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('coursename', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('coursedescription', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
-        $table->add_field('courseurl', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('imageurl', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-
-        /// Adding keys to table block_community
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-        /// Conditionally launch create table for block_community
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        /// community savepoint reached
-        upgrade_block_savepoint(true, 2010042701, 'community');
-    }
-
-    // Moodle v2.1.0 release upgrade line
-    // Put any upgrade step following this
-
-    // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
-
     return true;
 }
