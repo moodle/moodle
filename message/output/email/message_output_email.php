@@ -83,7 +83,7 @@ class message_output_email extends message_output {
      * @param array $preferences preferences array
      */
     function process_form($form, &$preferences){
-        if (isset($form->email_email) && !empty($form->email_email)) {
+        if (isset($form->email_email)) {
             $preferences['message_processor_email_email'] = $form->email_email;
         }
     }
