@@ -81,8 +81,9 @@ Y.extend(DIALOGUE, Y.Overlay, {
         if (hidden) {
             bb.setStyle('top', '-1000px').removeClass(DIALOGUE_PREFIX+'-hidden');
         }
-        var x = Math.round((bb.get('winWidth') - bb.get('offsetWidth'))/2);
-        var y = Math.round((bb.get('winHeight') - bb.get('offsetHeight'))/2)+Y.one(window).get('scrollTop');
+        var x = Math.max(Math.round((bb.get('winWidth') - bb.get('offsetWidth'))/2), 15);
+        var y = Math.max(Math.round((bb.get('winHeight') - bb.get('offsetHeight'))/2), 15) + Y.one(window).get('scrollTop');
+
         if (hidden) {
             bb.addClass(DIALOGUE_PREFIX+'-hidden');
         }
