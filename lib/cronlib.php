@@ -300,35 +300,6 @@ function cron_run() {
     mtrace('Finished blocks');
 
 
-    //TODO: get rid of this bloody hardcoded quiz module stuff, this must be done from quiz_cron()!
-    mtrace("Starting quiz reports");
-    if ($reports = $DB->get_records_select('quiz_reports', "cron > 0 AND ((? - lastcron) > cron)", array($timenow))) {
-        foreach ($reports as $report) {
-            $cronfile = "$CFG->dirroot/mod/quiz/report/$report->name/cron.php";
-            if (file_exists($cronfile)) {
-                include_once($cronfile);
-                $cron_function = 'quiz_report_'.$report->name."_cron";
-                if (function_exists($cron_function)) {
-                    mtrace("Processing quiz report cron function $cron_function ...", '');
-                    $pre_dbqueries = null;
-                    $pre_dbqueries = $DB->perf_get_queries();
-                    $pre_time      = microtime(1);
-                    if ($cron_function()) {
-                        $DB->set_field('quiz_reports', "lastcron", $timenow, array("id"=>$report->id));
-                    }
-                    if (isset($pre_dbqueries)) {
-                        mtrace("... used " . ($DB->perf_get_queries() - $pre_dbqueries) . " dbqueries");
-                        mtrace("... used " . (microtime(1) - $pre_time) . " seconds");
-                    }
-                    @set_time_limit(0);
-                    mtrace("done.");
-                }
-            }
-        }
-    }
-    mtrace("Finished quiz reports");
-
-
     mtrace('Starting admin reports');
     cron_execute_plugin_type('report');
     mtrace('Finished admin reports');
