@@ -61,7 +61,7 @@
         if (!$forumto = get_record('forum', 'id', $move)) {
             error('You can\'t move to that forum - it doesn\'t exist!', $return);
         }
-        
+
         if ($forumto->type == 'single') {
             error('Cannot move discussion to a simple single discussion forum.', $return);
         }
