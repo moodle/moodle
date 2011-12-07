@@ -45,6 +45,8 @@ class scorm_interactions_report extends scorm_default_report {
                 echo $OUTPUT->notification(get_string('scormresponsedeleted', 'scorm'), 'notifysuccess');
             }
         }
+        // find out current groups mode
+        $currentgroup = groups_get_activity_group($cm, true);
 
         // detailed report
         $mform = new mod_scorm_report_interactions_settings($PAGE->url, compact('currentgroup'));
@@ -107,7 +109,7 @@ class scorm_interactions_report extends scorm_default_report {
                 $nostudents = true;
                 $groupstudents = array();
             }
-            $allowedlist = ($groupstudents);
+            $allowedlist = array_keys($groupstudents);
         }
         if ( !$nostudents ) {
             // Now check if asked download of data
