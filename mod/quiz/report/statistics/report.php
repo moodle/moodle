@@ -85,12 +85,15 @@ class quiz_statistics_report extends quiz_default_report {
         }
 
         // Find out current groups mode
-        $groupmode = groups_get_activity_groupmode($cm);
-        $currentgroup = groups_get_activity_group($cm, true);
+        $currentgroup = $this->get_current_group($cm, $course, $context);
         $nostudentsingroup = false; // True if a group is selected and there is no one in it.
         if (empty($currentgroup)) {
             $currentgroup = 0;
             $groupstudents = array();
+
+        } else if ($currentgroup == self::NO_GROUPS_ALLOWED) {
+            $groupstudents = array();
+            $nostudentsingroup = true;
 
         } else {
             // All users who can attempt quizzes and who are in the currently selected group
@@ -151,7 +154,7 @@ class quiz_statistics_report extends quiz_default_report {
         if (!$this->table->is_downloading()) {
             $this->print_header_and_tabs($cm, $course, $quiz, 'statistics');
 
-            if ($groupmode) {
+            if (groups_get_activity_groupmode($cm)) {
                 groups_print_activity_menu($cm, $reporturl->out());
                 if ($currentgroup && !$groupstudents) {
                     $OUTPUT->notification(get_string('nostudentsingroup', 'quiz_statistics'));
