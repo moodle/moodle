@@ -84,7 +84,7 @@ class scorm_basic_report extends scorm_default_report {
                 $nostudents = true;
                 $allowedlist = '';
             } else {
-                $allowedlist = join(',', array_keys($students));
+                $allowedlist = array_keys($students);
             }
         } else {
             // all users who can attempt scoes and who are in the currently selected group
@@ -93,7 +93,7 @@ class scorm_basic_report extends scorm_default_report {
                 $nostudents = true;
                 $groupstudents = array();
             }
-            $allowedlist = join(',', array_keys($groupstudents));
+            $allowedlist = array_keys($groupstudents);
         }
 
         if ( !$nostudents ) {
@@ -269,7 +269,8 @@ class scorm_basic_report extends scorm_default_report {
                 header("Pragma: public");
                 echo implode("\t", $headers)." \n";
             }
-
+            $params = array();
+            list($usql, $params) = $DB->get_in_or_equal($allowedlist, SQL_PARAMS_NAMED);
                             // Construct the SQL
             $select = 'SELECT DISTINCT '.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').' AS uniqueid, ';
             $select .= 'st.scormid AS scormid, st.attempt AS attempt, ' .
@@ -282,15 +283,15 @@ class scorm_basic_report extends scorm_default_report {
             switch ($attemptsmode) {
                 case SCORM_REPORT_ATTEMPTS_STUDENTS_WITH:
                     // Show only students with attempts
-                    $where = ' WHERE u.id IN (' .$allowedlist. ') AND st.userid IS NOT NULL';
+                    $where = ' WHERE u.id ' .$usql. ' AND st.userid IS NOT NULL';
                     break;
                 case SCORM_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
                     // Show only students without attempts
-                    $where = ' WHERE u.id IN (' .$allowedlist. ') AND st.userid IS NULL';
+                    $where = ' WHERE u.id ' .$usql. ' AND st.userid IS NULL';
                     break;
                 case SCORM_REPORT_ATTEMPTS_ALL_STUDENTS:
                     // Show all students with or without attempts
-                    $where = ' WHERE u.id IN (' .$allowedlist. ') AND (st.userid IS NOT NULL OR st.userid IS NULL)';
+                    $where = ' WHERE u.id ' .$usql. ' AND (st.userid IS NOT NULL OR st.userid IS NULL)';
                     break;
             }
 
@@ -298,7 +299,6 @@ class scorm_basic_report extends scorm_default_report {
             $countsql .= 'COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'', 'st.attempt').')) AS nbattempts, ';
             $countsql .= 'COUNT(DISTINCT(u.id)) AS nbusers ';
             $countsql .= $from.$where;
-            $params = array();
 
             if (!$download) {
                 $sort = $table->get_sql_sort();
@@ -321,7 +321,7 @@ class scorm_basic_report extends scorm_default_report {
                 }
 
                 if (!empty($countsql)) {
-                    $count = $DB->get_record_sql($countsql);
+                    $count = $DB->get_record_sql($countsql, $params);
                     $totalinitials = $count->nbresults;
                     if ($twhere) {
                         $countsql .= ' AND '.$twhere;
