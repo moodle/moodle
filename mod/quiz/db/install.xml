@@ -140,10 +140,8 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="name of the report, same as the directory name" PREVIOUS="id" NEXT="displayorder"/>
-        <FIELD NAME="displayorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="display order for report tabs" PREVIOUS="name" NEXT="lastcron"/>
-        <FIELD NAME="lastcron" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="timestamp when cron was last run for this report." PREVIOUS="displayorder" NEXT="cron"/>
-        <FIELD NAME="cron" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 if there is no cron for this report (default) or the time between crons otherwise." PREVIOUS="lastcron" NEXT="capability"/>
-        <FIELD NAME="capability" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Capability required to see this report. May be blank which means use the default of mod/quiz:viewreport. This is used when deciding which tabs to render." PREVIOUS="cron"/>
+        <FIELD NAME="displayorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="display order for report tabs" PREVIOUS="name" NEXT="capability"/>
+        <FIELD NAME="capability" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Capability required to see this report. May be blank which means use the default of mod/quiz:viewreport. This is used when deciding which tabs to render." PREVIOUS="displayorder"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

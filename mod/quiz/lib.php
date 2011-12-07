@@ -435,14 +435,13 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
 }
 
 /**
- * Function to be run periodically according to the moodle cron
- * This function searches for things that need to be done, such
- * as sending out mail, toggling flags etc ...
- *
- * @return bool true
+ * Quiz periodic clean-up tasks.
  */
 function quiz_cron() {
-    return true;
+
+    // Run cron for our sub-plugin types.
+    cron_execute_plugin_type('quiz', 'quiz reports');
+    cron_execute_plugin_type('quizaccess', 'quiz access rules');
 }
 
 /**
