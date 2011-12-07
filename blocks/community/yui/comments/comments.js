@@ -31,13 +31,6 @@ YUI.add('moodle-block_community-comments', function(Y) {
                 this.overlays[commentid].render();
                 this.overlays[commentid].hide();
 
-                // position the overlay in the middle of the web browser window
-                var WidgetPositionAlign = Y.WidgetPositionAlign;
-                this.overlays[commentid].set("align", {
-                    node:"", //empty => viewport
-                    points:[WidgetPositionAlign.CC, WidgetPositionAlign.CC]
-                });
-
                 Y.one('#comments-'+commentid).on('click', this.show, this, commentid);
             }
 
