@@ -394,6 +394,10 @@ function process_group_tag($tagcontents){
 
                 $courseid = $DB->insert_record('course', $course);
 
+                // Setup default enrolment plugins
+                $course->id = $courseid;
+                enrol_course_updated(true, $course, null);
+
                 // Setup the blocks
                 $course = $DB->get_record('course', array('id' => $courseid));
                 blocks_add_default_course_blocks($course);
