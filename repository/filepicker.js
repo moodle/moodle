@@ -317,9 +317,6 @@ M.core_filepicker.init = function(Y, options) {
         build_tree: function(node, level) {
             var client_id = this.options.client_id;
             var dynload = this.active_repo.dynload;
-            if(node.children) {
-                node.title = '<i><u>'+node.title+'</u></i>';
-            }
             var info = {
                 label:node.title,
                 //title:fp_lang.date+' '+node.date+fp_lang.size+' '+node.size,
