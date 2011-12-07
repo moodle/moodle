@@ -114,11 +114,11 @@ class quiz_responses_report extends quiz_default_report {
                     // Ensure the attempt exists, and belongs to this quiz. If not skip.
                     continue;
                 }
-                if ($attemptsmode != QUIZ_REPORT_ATTEMPTS_ALL && !array_key_exists($attempt->userid, $students)) {
+                if ($attemptsmode != QUIZ_REPORT_ATTEMPTS_ALL && !in_array($attempt->userid, $students)) {
                     // Ensure the attempt belongs to a student included in the report. If not skip.
                     continue;
                 }
-                if ($groupstudents && !array_key_exists($attempt->userid, $groupstudents)) {
+                if ($groupstudents && !in_array($attempt->userid, $groupstudents)) {
                     // Additional check in groups mode.
                     continue;
                 }
