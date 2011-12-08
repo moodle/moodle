@@ -15,7 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Accpet uploading files by web service token
+ * Accept uploading files by web service token
+ *
+ * POST params:
+ *  token => the web service user token (needed for authentication)
+ *  filepath => the private file aera path (where files will be stored)
+ *  [_FILES] => for example you can send the files with <input type=file>,
+ *              or with curl magic: 'file_1' => '@/path/to/file', or ...
+ *
  * @package    moodlecore
  * @subpackage files
  * @copyright  2011 Dongsheng Cai <dongsheng@moodle.com>
@@ -25,48 +32,17 @@
 define('AJAX_SCRIPT', true);
 define('NO_MOODLE_COOKIES', true);
 require_once(dirname(dirname(__FILE__)) . '/config.php');
-$token = required_param('token', PARAM_ALPHANUM);
+require_once($CFG->dirroot . '/webservice/lib.php');
 $filepath = optional_param('filepath', '/', PARAM_PATH);
 
 echo $OUTPUT->header();
 
-// web service must be enabled to use this script
-if (!$CFG->enablewebservices) {
-    throw new moodle_exception('enablewsdescription', 'webservice');
-}
-// Obtain token record
-if (!$token = $DB->get_record('external_tokens', array('token'=>$token))) {
-    throw new webservice_access_exception(get_string('invalidtoken', 'webservice'));
-}
+//authenticate the user
+$token = required_param('token', PARAM_ALPHANUM);
+$webservicelib = new webservice();
+$authenticationinfo = $webservicelib->authenticate_user($token);
 
-// Validate token date
-if ($token->validuntil and $token->validuntil < time()) {
-    add_to_log(SITEID, 'webservice', get_string('tokenauthlog', 'webservice'), '' , get_string('invalidtimedtoken', 'webservice'), 0);
-    $DB->delete_records('external_tokens', array('token'=>$token->token));
-    throw new webservice_access_exception(get_string('invalidtimedtoken', 'webservice'));
-}
-
-//assumes that if sid is set then there must be a valid associated session no matter the token type
-if ($token->sid) {
-    $session = session_get_instance();
-    if (!$session->session_exists($token->sid)) {
-        $DB->delete_records('external_tokens', array('sid'=>$token->sid));
-        throw new webservice_access_exception(get_string('invalidtokensession', 'webservice'));
-    }
-}
-
-// Check ip
-if ($token->iprestriction and !address_in_subnet(getremoteaddr(), $token->iprestriction)) {
-    add_to_log(SITEID, 'webservice', get_string('tokenauthlog', 'webservice'), '' , get_string('failedtolog', 'webservice').": ".getremoteaddr(), 0);
-    throw new webservice_access_exception(get_string('invalidiptoken', 'webservice'));
-}
-
-$user = $DB->get_record('user', array('id'=>$token->userid, 'deleted'=>0), '*', MUST_EXIST);
-
-// log token access
-$DB->set_field('external_tokens', 'lastaccess', time(), array('id'=>$token->id));
-
-session_set_user($user);
+//check the user can manage his own files (can upload)
 $context = get_context_instance(CONTEXT_USER, $USER->id);
 require_capability('moodle/user:manageownfiles', $context);
 
@@ -106,9 +82,10 @@ foreach ($_FILES as $fieldname=>$uploaded_file) {
     $file = new stdClass();
     $file->filename = clean_param($_FILES[$fieldname]['name'], PARAM_FILE);
     // check system maxbytes setting
-    if (($_FILES[$fieldname]['size'] > $CFG->maxbytes)) {
+    if (($_FILES[$fieldname]['size'] > get_max_upload_file_size($CFG->maxbytes))) {
         // oversize file will be ignored, error added to array to notify
         // web service client
+        $file->errortype = 'fileoversized';
         $file->error = get_string('maxbytes', 'error');
     } else {
         $file->filepath = $_FILES[$fieldname]['tmp_name'];
@@ -146,9 +123,19 @@ foreach ($files as $file) {
     $file_record->filepath  = $filepath;
     $file_record->itemid    = 0;
     $file_record->license   = $CFG->sitedefaultlicense;
-    $file_record->author    = fullname($user);;
+    $file_record->author    = fullname($authenticationinfo['user']);
     $file_record->source    = '';
-    $stored_file = $fs->create_file_from_pathname($file_record, $file->filepath);
-    $results[] = $file_record;
+
+    //Check if the file already exist
+    $existingfile = $fs->file_exists($file_record->contextid, $file_record->component, $file_record->filearea,
+                $file_record->itemid, $file_record->filepath, $file_record->filename);
+    if ($existingfile) {
+        $file->errortype = 'filenameexist';
+        $file->error = get_string('filenameexist', 'webservice', $file->filename);
+        $results[] = $file;
+    } else {
+        $stored_file = $fs->create_file_from_pathname($file_record, $file->filepath);
+        $results[] = $file_record;
+    }
 }
 echo json_encode($results);

@@ -35,6 +35,122 @@ define('WEBSERVICE_AUTHMETHOD_SESSION_TOKEN', 2);
 class webservice {
 
     /**
+     * Authenticate user (used by download/upload file scripts)
+     * @param string $token
+     * @return array - contains the authenticated user, token and service objects
+     */
+    public function authenticate_user($token) {
+        global $DB, $CFG;
+
+        // web service must be enabled to use this script
+        if (!$CFG->enablewebservices) {
+            throw new webservice_access_exception(get_string('enablewsdescription', 'webservice'));
+        }
+
+        // Obtain token record
+        if (!$token = $DB->get_record('external_tokens', array('token' => $token))) {
+            throw new webservice_access_exception(get_string('invalidtoken', 'webservice'));
+        }
+
+        // Validate token date
+        if ($token->validuntil and $token->validuntil < time()) {
+            add_to_log(SITEID, 'webservice', get_string('tokenauthlog', 'webservice'), '', get_string('invalidtimedtoken', 'webservice'), 0);
+            $DB->delete_records('external_tokens', array('token' => $token->token));
+            throw new webservice_access_exception(get_string('invalidtimedtoken', 'webservice'));
+        }
+
+        // Check ip
+        if ($token->iprestriction and !address_in_subnet(getremoteaddr(), $token->iprestriction)) {
+            add_to_log(SITEID, 'webservice', get_string('tokenauthlog', 'webservice'), '', get_string('failedtolog', 'webservice') . ": " . getremoteaddr(), 0);
+            throw new webservice_access_exception(get_string('invalidiptoken', 'webservice'));
+        }
+
+        //retrieve the user info from the token
+        $user = $DB->get_record('user', array('id' => $token->userid, 'deleted' => 0), '*', MUST_EXIST);
+
+        // setup user session to check capability
+        session_set_user($user);
+
+        //assumes that if sid is set then there must be a valid associated session no matter the token type
+        if ($token->sid) {
+            $session = session_get_instance();
+            if (!$session->session_exists($token->sid)) {
+                $DB->delete_records('external_tokens', array('sid' => $token->sid));
+                throw new webservice_access_exception(get_string('invalidtokensession', 'webservice'));
+            }
+        }
+
+        //Refuse non-admin authentication in maintenance mode
+        $hassiteconfig = has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM), $user);
+        if (!empty($CFG->maintenance_enabled) and !$hassiteconfig) {
+            throw new webservice_access_exception(get_string('sitemaintenance', 'admin'));
+        }
+
+        //retrieve web service record
+        $service = $DB->get_record('external_services', array('id' => $token->externalserviceid, 'enabled' => 1));
+        if (empty($service)) {
+            // will throw exception if no token found
+            throw new webservice_access_exception(get_string('servicenotavailable', 'webservice'));
+        }
+
+        //check if there is any required system capability
+        if ($service->requiredcapability and !has_capability($service->requiredcapability, get_context_instance(CONTEXT_SYSTEM), $user)) {
+            throw new webservice_access_exception(get_string('missingrequiredcapability', 'webservice', $service->requiredcapability));
+        }
+
+        //specific checks related to user restricted service
+        if ($service->restrictedusers) {
+            $authoriseduser = $DB->get_record('external_services_users', array('externalserviceid' => $service->id, 'userid' => $user->id));
+
+            if (empty($authoriseduser)) {
+                throw new webservice_access_exception(get_string('usernotallowed', 'webservice', $service->name));
+            }
+
+            if (!empty($authoriseduser->validuntil) and $authoriseduser->validuntil < time()) {
+                throw new webservice_access_exception(get_string('invalidtimedtoken', 'webservice'));
+            }
+
+            if (!empty($authoriseduser->iprestriction) and !address_in_subnet(getremoteaddr(), $authoriseduser->iprestriction)) {
+                throw new webservice_access_exception(get_string('invalidiptoken', 'webservice'));
+            }
+        }
+
+        //only confirmed user should be able to call web service
+        if (empty($user->confirmed)) {
+            add_to_log(SITEID, 'webservice', 'user unconfirmed', '', $user->username);
+            throw new webservice_access_exception(get_string('usernotconfirmed', 'moodle', $user->username));
+        }
+
+        //check the user is suspended
+        if (!empty($user->suspended)) {
+            add_to_log(SITEID, 'webservice', 'user suspended', '', $user->username);
+            throw new webservice_access_exception(get_string('usersuspended', 'webservice'));
+        }
+
+        //check if the auth method is nologin (in this case refuse connection)
+        if ($user->auth == 'nologin') {
+            add_to_log(SITEID, 'webservice', 'nologin auth attempt with web service', '', $user->username);
+            throw new webservice_access_exception(get_string('nologinauth', 'webservice'));
+        }
+
+        //Check if the user password is expired
+        $auth = get_auth_plugin($user->auth);
+        if (!empty($auth->config->expiration) and $auth->config->expiration == 1) {
+            $days2expire = $auth->password_expire($user->username);
+            if (intval($days2expire) < 0) {
+                add_to_log(SITEID, 'webservice', 'expired password', '', $user->username);
+                throw new webservice_access_exception(get_string('passwordisexpired', 'webservice'));
+            }
+        }
+
+        // log token access
+        $DB->set_field('external_tokens', 'lastaccess', time(), array('id' => $token->id));
+
+        return array('user' => $user, 'token' => $token, 'service' => $service);
+    }
+
+
+    /**
      * Add a user to the list of authorised user of a given service
      * @param object $user
      */
