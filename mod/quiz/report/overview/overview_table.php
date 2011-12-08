@@ -35,13 +35,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 class quiz_report_overview_table extends quiz_attempt_report_table {
 
-    protected $candelete;
     protected $regradedqs = array();
 
     public function __construct($quiz, $context, $qmsubselect, $groupstudents,
-            $students, $detailedmarks, $questions, $candelete, $reporturl, $displayoptions) {
+            $students, $detailedmarks, $questions, $includecheckboxes, $reporturl, $displayoptions) {
         parent::__construct('mod-quiz-report-overview-report', $quiz , $context,
-                $qmsubselect, $groupstudents, $students, $questions, $candelete,
+                $qmsubselect, $groupstudents, $students, $questions, $includecheckboxes,
                 $reporturl, $displayoptions);
         $this->detailedmarks = $detailedmarks;
     }
@@ -147,45 +146,12 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
         }
     }
 
-    public function wrap_html_start() {
-        if ($this->is_downloading() || !$this->candelete) {
-            return;
-        }
-
-        // Start form
-        $url = new moodle_url($this->reporturl, $this->displayoptions +
-                array('sesskey' => sesskey()));
-        echo '<div id="tablecontainer" class="overview-tablecontainer">';
-        echo '<form id="attemptsform" method="post" action="' .
-                $this->reporturl->out_omit_querystring() . '">';
-        echo '<div style="display: none;">';
-        echo html_writer::input_hidden_params($url);
-        echo '</div>';
-        echo '<div>';
-    }
-
-    public function wrap_html_finish() {
-        if ($this->is_downloading() || !$this->candelete) {
-            return;
-        }
-
-        // TODO add back are you sure, and convert to html_writer.
-        echo '<div id="commands">';
-        echo '<a href="javascript:select_all_in(\'DIV\', null, \'tablecontainer\');">' .
-                get_string('selectall', 'quiz') . '</a> / ';
-        echo '<a href="javascript:deselect_all_in(\'DIV\', null, \'tablecontainer\');">' .
-                get_string('selectnone', 'quiz') . '</a> ';
-        echo '&nbsp;&nbsp;';
+    protected function submit_buttons() {
         if (has_capability('mod/quiz:regrade', $this->context)) {
             echo '<input type="submit" name="regrade" value="' .
                     get_string('regradeselected', 'quiz_overview') . '"/>';
         }
-        echo '<input type="submit" name="delete" value="' .
-                get_string('deleteselected', 'quiz_overview') . '"/>';
-        echo '</div>';
-        // Close form
-        echo '</div>';
-        echo '</form></div>';
+        parent::submit_buttons();
     }
 
     public function col_sumgrades($attempt) {
