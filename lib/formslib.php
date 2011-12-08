@@ -996,7 +996,12 @@ abstract class moodleform {
                             $params = array_merge(array($realelementname), $params);
                             call_user_func_array(array(&$mform, 'addRule'), $params);
                             break;
-
+                        case 'type' :
+                            //Type should be set only once
+                            if (!isset($mform->_types[$elementname])) {
+                                $mform->setType($elementname, $params);
+                            }
+                            break;
                     }
                 }
             }
