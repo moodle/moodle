@@ -135,11 +135,6 @@
 
     $isseparategroups = ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context));
 
-    if ($course->id===SITEID) {
-        $PAGE->navbar->ignore_active();
-    }
-
-    $PAGE->navbar->add(get_string('participants'));
     $PAGE->set_title("$course->shortname: ".get_string('participants'));
     $PAGE->set_heading($course->fullname);
     $PAGE->set_pagetype('course-view-' . $course->format);
