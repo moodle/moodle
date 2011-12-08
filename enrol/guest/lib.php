@@ -328,6 +328,22 @@ class enrol_guest_plugin extends enrol_plugin {
     }
 
     /**
+     * Add new instance of enrol plugin.
+     * @param object $course
+     * @param array instance fields
+     * @return int id of new instance, null if can not be created
+     */
+    public function add_instance($course, array $fields = NULL) {
+        $fields = (array)$fields;
+
+        if (!isset($fields['password'])) {
+            $fields['password'] = '';
+        }
+
+        return parent::add_instance($course, $fields);
+    }
+
+    /**
      * Add new instance of enrol plugin with default settings.
      * @param object $course
      * @return int id of new instance
