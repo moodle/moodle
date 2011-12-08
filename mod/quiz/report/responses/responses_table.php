@@ -36,9 +36,9 @@ defined('MOODLE_INTERNAL') || die();
 class quiz_report_responses_table extends quiz_attempt_report_table {
 
     public function __construct($quiz, $context, $qmsubselect, $groupstudents,
-            $students, $questions, $candelete, $reporturl, $displayoptions) {
+            $students, $questions, $includecheckboxes, $reporturl, $displayoptions) {
         parent::__construct('mod-quiz-report-responses-report', $quiz, $context,
-                $qmsubselect, $groupstudents, $students, $questions, $candelete,
+                $qmsubselect, $groupstudents, $students, $questions, $includecheckboxes,
                 $reporturl, $displayoptions);
     }
 
@@ -47,43 +47,6 @@ class quiz_report_responses_table extends quiz_attempt_report_table {
             $this->strtimeformat = str_replace(',', ' ', get_string('strftimedatetime'));
             parent::build_table();
         }
-    }
-
-    public function wrap_html_start() {
-        global $PAGE;
-        if ($this->is_downloading() || !$this->candelete) {
-            return;
-        }
-
-        // Start form
-        $url = new moodle_url($this->reporturl, $this->displayoptions);
-        $url->param('sesskey', sesskey());
-
-        echo '<div id="tablecontainer">';
-        echo '<form id="attemptsform" method="post" action="' . $url->out_omit_querystring() . '>';
-        echo html_writer::input_hidden_params($url);
-        echo '<div>';
-        $PAGE->requires->event_handler('#attemptsform', 'submit', 'M.util.show_confirm_dialog',
-                array('message' => get_string('deleteattemptcheck', 'quiz')));
-    }
-
-    public function wrap_html_finish() {
-        if ($this->is_downloading() || !$this->candelete) {
-            return;
-        }
-
-        // TODO add back are you sure, and convert to html_writer.
-        echo '<div id="commands">';
-        echo '<a href="javascript:select_all_in(\'DIV\', null, \'tablecontainer\');">'.
-                get_string('selectall', 'quiz').'</a> / ';
-        echo '<a href="javascript:deselect_all_in(\'DIV\', null, \'tablecontainer\');">'.
-                get_string('selectnone', 'quiz').'</a> ';
-        echo '&nbsp;&nbsp;';
-        echo '<input type="submit" value="'.get_string('deleteselected', 'quiz_overview').'"/>';
-        echo '</div>';
-        // Close form
-        echo '</div>';
-        echo '</form></div>';
     }
 
     public function col_sumgrades($attempt) {

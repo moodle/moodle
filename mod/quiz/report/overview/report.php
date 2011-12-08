@@ -106,7 +106,8 @@ class quiz_overview_report extends quiz_attempt_report {
 
         // We only want to show the checkbox to delete attempts
         // if the user has permissions and if the report mode is showing attempts.
-        $candelete = has_capability('mod/quiz:deleteattempts', $this->context)
+        $includecheckboxes = has_any_capability(
+                array('mod/quiz:regrade', 'mod/quiz:deleteattempts'), $this->context)
                 && ($attemptsmode != QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO);
 
         if ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL) {
@@ -126,7 +127,7 @@ class quiz_overview_report extends quiz_attempt_report {
         $questions = quiz_report_get_significant_questions($quiz);
 
         $table = new quiz_report_overview_table($quiz, $this->context, $qmsubselect,
-                $groupstudents, $students, $detailedmarks, $questions, $candelete,
+                $groupstudents, $students, $detailedmarks, $questions, $includecheckboxes,
                 $reporturl, $displayoptions);
         $filename = quiz_report_download_filename(get_string('overviewfilename', 'quiz_overview'),
                 $courseshortname, $quiz->name);
@@ -288,7 +289,7 @@ class quiz_overview_report extends quiz_attempt_report {
             $columns = array();
             $headers = array();
 
-            if (!$table->is_downloading() && $candelete) {
+            if (!$table->is_downloading() && $includecheckboxes) {
                 $columns[] = 'checkbox';
                 $headers[] = null;
             }
