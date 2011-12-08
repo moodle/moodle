@@ -84,8 +84,6 @@ if ($userid) {
     if (has_capability('moodle/course:viewparticipants', $coursecontext) || has_capability('moodle/site:viewparticipants', $systemcontext)) {
         $link = new moodle_url('/user/index.php',array('id'=>$course->id));
     }
-    $PAGE->navbar->add(get_string('participants'), $link);
-    $PAGE->navbar->add($strnotes);
 }
 
 $PAGE->set_pagelayout('course');
