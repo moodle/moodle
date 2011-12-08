@@ -40,7 +40,7 @@ if ($show_instructions) {
             <div class="clearer"><!-- --></div>
             <div class="form-label"><label for="password"><?php print_string("password") ?></label></div>
             <div class="form-input">
-              <input type="password" name="password" id="password" size="15" value="" />
+              <input type="password" name="password" id="password" size="15" value="" <?php if (!empty($CFG->loginpasswordautocomplete)) {echo 'autocomplete="off"';} ?> />
               <input type="submit" id="loginbtn" value="<?php print_string("login") ?>" />
               <div class="forgetpass"><a href="forgot_password.php"><?php print_string("forgotten") ?></a></div>
             </div>
