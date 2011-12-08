@@ -40,5 +40,9 @@ defined('MOODLE_INTERNAL') || die();
 function question_fix_random_question_parents() {
     global $CFG, $DB;
     $DB->execute("UPDATE {question} SET parent = id WHERE qtype = 'random' AND parent <> id");
+
+    // Moodle v2.2.0 release upgrade line
+    // Put any upgrade step following this
+
     return true;
 }
