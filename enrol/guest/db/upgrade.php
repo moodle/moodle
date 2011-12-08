@@ -15,16 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Guest access plugin version specification.
+ * This file keeps track of upgrades to the guest enrolment plugin
  *
  * @package    enrol
  * @subpackage guest
- * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @copyright  2011 Petr Skoda {@link http://skodak.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2011112901;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2011112900;        // Requires this Moodle version
-$plugin->component = 'enrol_guest';     // Full name of the plugin (used for diagnostics)
+function xmldb_enrol_guest_upgrade($oldversion) {
+    global $CFG, $DB, $OUTPUT;
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2011112901) {
+        // convert all null passwords to empty strings
+        $DB->set_field('enrol', 'password', '', array('enrol'=>'guest', 'password'=>null));
+
+        upgrade_plugin_savepoint(true, 2011112901, 'enrol', 'guest');
+    }
+
+    return true;
+}
+
+
