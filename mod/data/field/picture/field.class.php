@@ -266,6 +266,7 @@ class data_field_picture extends data_field_base {
             $fs->convert_image($file_record, $file, $this->field->param4, $this->field->param5, true);
             return true;
         } catch (Exception $e) {
+            debugging($e->getMessage());
             return false;
         }
     }
