@@ -48,7 +48,12 @@ class block_login extends block_base {
             $this->content->text .= '<input type="text" name="username" id="login_username" value="'.s($username).'" /></div>';
 
             $this->content->text .= '<div class="c1 fld password"><label for="login_password">'.get_string('password').'</label>';
-            $this->content->text .= '<input type="password" name="password" id="login_password" value="" /></div>';
+
+            if (!empty($CFG->loginpasswordautocomplete)) {
+                $this->content->text .= '<input type="password" name="password" id="login_password" value="" autocomplete="off" /></div>';
+            } else {
+                $this->content->text .= '<input type="password" name="password" id="login_password" value="" /></div>';
+            }
 
             $this->content->text .= '<div class="c1 btn"><input type="submit" value="'.get_string('login').'" /></div>';
 
