@@ -1198,7 +1198,7 @@ class question_bank_view {
 
     protected function print_choose_category_message($categoryandcontext) {
         echo "<p style=\"text-align:center;\"><b>";
-        print_string("selectcategoryabove", "question");
+        print_string('selectcategoryabove', 'question');
         echo "</b></p>";
     }
 

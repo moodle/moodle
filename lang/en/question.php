@@ -268,6 +268,7 @@ $string['reviewresponse'] = 'Review response';
 $string['saveflags'] = 'Save the state of the flags';
 $string['selectacategory'] = 'Select a category:';
 $string['selectaqtypefordescription'] = 'Select a question type to see its description.';
+$string['selectcategoryabove'] = 'Select a category above';
 $string['selectquestionsforbulk'] = 'Select questions for bulk actions';
 $string['shareincontext'] = 'Share in context for {$a}';
 $string['stoponerror'] = 'Stop on error';
