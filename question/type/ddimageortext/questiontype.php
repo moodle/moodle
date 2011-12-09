@@ -274,7 +274,8 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
         }
 
         $format->import_combined_feedback($question, $data, true);
-        $format->import_hints($question, $data, true);
+        $format->import_hints($question, $data, true, false,
+                $format->get_format($question->questiontextformat));
 
         return $question;
     }

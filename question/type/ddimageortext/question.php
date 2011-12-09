@@ -51,14 +51,14 @@ class qtype_ddimageortext_drag_item {
     public $text;
     public $no;
     public $group;
-    public $isinfinite;
+    public $infinite;
 
-    public function __construct($alttextlabel, $no, $group = 1, $isinfinite = false, $id = 0) {
+    public function __construct($alttextlabel, $no, $group = 1, $infinite = false, $id = 0) {
         $this->id = $id;
         $this->text = $alttextlabel;
         $this->no = $no;
         $this->group = $group;
-        $this->isinfinite = $isinfinite;
+        $this->infinite = $infinite;
     }
     public function choice_group() {
         return $this->group;
