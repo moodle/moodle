@@ -314,7 +314,7 @@ function blog_get_context_url($context=null) {
 
     // Change contextlevel to SYSTEM if viewing the site course
     if ($context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID) {
-        $context->contextlevel = CONTEXT_SYSTEM;
+        $context = context_system::instance();
     }
 
     $filterparam = '';
