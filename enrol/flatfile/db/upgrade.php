@@ -62,6 +62,8 @@ function xmldb_enrol_flatfile_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2010091400, 'enrol', 'flatfile');
     }
 
+    // Moodle v2.2.0 release upgrade line
+    // Put any upgrade step following this
 
     return $result;
 }
