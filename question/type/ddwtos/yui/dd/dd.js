@@ -109,8 +109,8 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                 var ie7fix = false;
                 //find max height and width
                 groupitems.each(function(item){
-                    maxwidth = Math.max(maxwidth, item.get('offsetWidth'));
-                    maxheight = Math.max(maxheight, item.get('offsetHeight'));
+                    maxwidth = Math.max(maxwidth, Math.ceil(item.get('offsetWidth')));
+                    maxheight = Math.max(maxheight, Math.ceil(item.get('offsetHeight')));
                     if (item.one('sup') && item.one('sub') && Y.UA.ie == 7){
                         ie7fix = true;
                     }
@@ -126,17 +126,8 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             }
         },
         pad_to_width_height : function (node, width, height, extrabottompadding) {
-            var totalypadding = height - node.get('offsetHeight');
-            var totalxpadding = width - node.get('offsetWidth');
-            var margintop = Math.round(totalypadding/2);
-            var marginleft = Math.round(totalxpadding/2);
-            var marginbottom = totalypadding - margintop;
-            if (extrabottompadding) {
-                marginbottom += 8;
-            }
-            var marginright = totalxpadding - marginleft;
-            node.setStyle('padding', margintop+'px '+marginleft+'px '
-                                    +marginbottom+'px '+marginright+'px');
+            node.setStyle('width', width+'px').setStyle('height', height+'px')
+                    .setStyle('lineHeight', height+'px');
         },
 
         /**
