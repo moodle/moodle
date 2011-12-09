@@ -62,6 +62,10 @@ function get_admin() {
         return clone($mainadmin);
     }
 
+    if (empty($CFG->siteadmins)) {  // Should not happen on an ordinary site
+        return false;
+    }
+
     foreach (explode(',', $CFG->siteadmins) as $id) {
         if ($user = $DB->get_record('user', array('id'=>$id, 'deleted'=>0))) {
             $mainadmin = $user;
