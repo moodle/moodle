@@ -32,13 +32,11 @@ class quiz_report_responses_table extends table_sql {
         if (!$this->is_downloading()) {
             if ($this->candelete) {
                 // Start form
-                $displayurl = new moodle_url($this->reporturl, $this->displayoptions);
-                $strreallydel  = addslashes_js(get_string('deleteattemptcheck','quiz'));
+                $url = new moodle_url($this->reporturl, $this->displayoptions);
                 echo '<div id="tablecontainer">';
-                echo '<form id="attemptsform" method="post" action="' . $displayurl->out_omit_querystring() .
-                        '" onsubmit="confirm(\''.$strreallydel.'\');">';
+                echo '<form id="attemptsform" method="post" action="' . $url->out_omit_querystring() .'">';
                 echo '<div style="display: none;">';
-                echo html_writer::input_hidden_params($displayurl);
+                echo html_writer::input_hidden_params($url);
                 echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey())) . "\n";
                 echo '</div>';
                 echo '<div>';
@@ -49,13 +47,14 @@ class quiz_report_responses_table extends table_sql {
         if (!$this->is_downloading()) {
             // Print "Select all" etc.
             if ($this->candelete) {
+                $strreallydel = addslashes_js(get_string('deleteattemptcheck','quiz'));
                 echo '<div id="commands">';
                 echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.
                         get_string('selectall', 'quiz').'</a> / ';
                 echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.
                         get_string('selectnone', 'quiz').'</a> ';
                 echo '&nbsp;&nbsp;';
-                echo '<input type="submit" value="'.get_string('deleteselected', 'quiz_overview').'"/>';
+                echo '<input type="submit" onclick="return confirm(\''.$strreallydel.'\');" name="delete" value="'.get_string('deleteselected', 'quiz_overview').'"/>';
                 echo '</div>';
                 // Close form
                 echo '</div>';
