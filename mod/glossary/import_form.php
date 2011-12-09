@@ -17,7 +17,7 @@ class mod_glossary_import_form extends moodleform {
         $options = array();
         $options['current'] = get_string('currentglossary', 'glossary');
         $options['newglossary'] = get_string('newglossary', 'glossary');
-        $mform->addElement('select', 'dest', get_string('currentglossary', 'glossary'), $options);
+        $mform->addElement('select', 'dest', get_string('destination', 'glossary'), $options);
         $mform->addHelpButton('dest', 'destination', 'glossary');
         $mform->addElement('checkbox', 'catsincl', get_string('importcategories', 'glossary'));
         $submit_string = get_string('submit');
