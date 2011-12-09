@@ -270,7 +270,7 @@ class user_picture implements renderable {
      * @return moodle_url
      */
     public function get_url(moodle_page $page, renderer_base $renderer = null) {
-        global $CFG, $FULLME;
+        global $CFG;
 
         if (is_null($renderer)) {
             $renderer = $page->get_renderer('core');
@@ -329,7 +329,7 @@ class user_picture implements renderable {
             // Build a gravatar URL with what we know.
             // If the currently requested page is https then we'll return an
             // https gravatar page.
-            if (strpos($FULLME, 'https://') === 0) {
+            if (strpos($CFG->httpswwwroot, 'https:') === 0) {
                 $imageurl = new moodle_url("https://secure.gravatar.com/avatar/{$md5}", array('s' => $size, 'd' => $imageurl->out(false)));
             } else {
                 $imageurl = new moodle_url("http://www.gravatar.com/avatar/{$md5}", array('s' => $size, 'd' => $imageurl->out(false)));
