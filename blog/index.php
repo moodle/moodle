@@ -212,9 +212,13 @@ if (empty($entryid) && empty($modid) && empty($groupid)) {
 }
 
 if ($CFG->enablerssfeeds) {
-    $rsscontext = $filtertype = $thingid = null;
+    $rsscontext = null;
+    $filtertype = null;
+    $thingid = null;
     list($thingid, $rsscontext, $filtertype) = blog_rss_get_params($blogheaders['filters']);
-
+    if (empty($rsscontext)) {
+        $rsscontext = get_system_context();
+    }
     $rsstitle = $blogheaders['heading'];
 
     //check we haven't started output by outputting an error message
