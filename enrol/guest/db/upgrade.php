@@ -30,6 +30,9 @@ function xmldb_enrol_guest_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
+    // Moodle v2.2.0 release upgrade line
+    // Put any upgrade step following this
+
     if ($oldversion < 2011112901) {
         // convert all null passwords to empty strings
         $DB->set_field('enrol', 'password', '', array('enrol'=>'guest', 'password'=>null));
