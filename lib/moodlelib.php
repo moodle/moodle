@@ -2529,7 +2529,11 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
 
         $access = false;
 
-        if (is_viewing($coursecontext, $USER)) {
+        if (is_role_switched($course->id)) {
+            // ok, user had to be inside this course before the switch
+            $access = true;
+
+        } else if (is_viewing($coursecontext, $USER)) {
             // ok, no need to mess with enrol
             $access = true;
 
