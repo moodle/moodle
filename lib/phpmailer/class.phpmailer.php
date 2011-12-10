@@ -1190,7 +1190,10 @@ class PHPMailer
      */
     function EncodeHeader ($str, $position = 'text') {
 
-    /// Start Moodle Hack - do our own multibyte-safe header encoding
+    /// Start Moodle Hack - do our own multibyte-safe header encoding and cleanup
+        $str = str_replace("\r", '', $str);
+        $str = str_replace("\n", '', $str);
+
         $textlib = textlib_get_instance();
         $encoded = $textlib->encode_mimeheader($str, $this->CharSet);
         if ($encoded !== false) {
