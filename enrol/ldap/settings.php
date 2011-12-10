@@ -56,7 +56,7 @@ if ($ADMIN->fulltree) {
         //--- role mapping settings ---
         $settings->add(new admin_setting_heading('enrol_ldap_roles', get_string('roles', 'enrol_ldap'), ''));
         if (!during_initial_install()) {
-            $settings->add(new admin_setting_ldap_rolemapping('enrol_ldap/role_mapping', get_string ('role_mapping_key', 'enrol_ldap', $role->name), get_string ('role_mapping', 'enrol_ldap'), ''));
+            $settings->add(new admin_setting_ldap_rolemapping('enrol_ldap/role_mapping', get_string ('role_mapping_key', 'enrol_ldap'), get_string ('role_mapping', 'enrol_ldap'), ''));
         }
         $options = $yesno;
         $settings->add(new admin_setting_configselect('enrol_ldap/course_search_sub', get_string('course_search_sub_key', 'enrol_ldap'), get_string('course_search_sub', 'enrol_ldap'), 0, $options));
