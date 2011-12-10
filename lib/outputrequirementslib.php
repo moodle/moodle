@@ -127,6 +127,7 @@ class page_requirements_manager {
         if (debugging('', DEBUG_DEVELOPER)) {
             $this->yui3loader->filter = YUI_RAW; // for more detailed logging info use YUI_DEBUG here
             $this->yui2loader->filter = YUI_RAW; // for more detailed logging info use YUI_DEBUG here
+            $this->yui2loader->allowRollups = false;
         } else {
             $this->yui3loader->filter = null;
             $this->yui2loader->filter = null;
