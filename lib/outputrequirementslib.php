@@ -267,7 +267,7 @@ class page_requirements_manager {
      * Initialise with the bits of JavaScript that every Moodle page should have.
      *
      * @param moodle_page $page
-     * @param core_renderer $output
+     * @param core_renderer $renderer
      */
     protected function init_requirements_data(moodle_page $page, core_renderer $renderer) {
         global $CFG;
@@ -547,7 +547,7 @@ class page_requirements_manager {
     /**
      * Returns true if the module has already been loaded.
      *
-     * @param string|array $modulename
+     * @param string|array $module
      * @return bool True if the module has already been loaded
      */
     protected function js_module_loaded($module) {
@@ -818,7 +818,7 @@ class page_requirements_manager {
      * (e.g. and array) that you pass to JavaScript with {@link data_for_js()}.
      *
      * @param string $identifier the desired string.
-     * @param string $module the language file to look in.
+     * @param string $component the language file to look in.
      * @param mixed $a any extra data to add into the string (optional).
      */
     public function string_for_js($identifier, $component, $a = NULL) {
@@ -918,7 +918,8 @@ class page_requirements_manager {
 
     /**
      * Get the inline JavaScript code that need to appear in a particular place.
-     * @return bool $ondomready
+     * @param bool $ondomready
+     * @return string
      */
     protected function get_javascript_code($ondomready) {
         $where = $ondomready ? 'ondomready' : 'normal';
@@ -1045,6 +1046,7 @@ class page_requirements_manager {
 
     /**
      * Adds extra modules specified after printing of page header
+     * @return string
      */
     protected function get_extra_modules_code() {
         if (empty($this->extramodules)) {
@@ -1059,6 +1061,8 @@ class page_requirements_manager {
      * Normally, this method is called automatically by the code that prints the
      * <head> tag. You should not normally need to call it in your own code.
      *
+     * @param moodle_page $page
+     * @param core_renderer $renderer
      * @return string the HTML code to to inside the <head> tag.
      */
     public function get_head_code(moodle_page $page, core_renderer $renderer) {
