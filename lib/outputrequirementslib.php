@@ -160,7 +160,7 @@ class page_requirements_manager {
         $this->M_yui_loader->base         = $this->yui3loader->base;
         $this->M_yui_loader->comboBase    = $this->yui3loader->comboBase;
         $this->M_yui_loader->combine      = $this->yui3loader->combine;
-        $this->M_yui_loader->filter       = ($this->yui3loader->filter == YUI_DEBUG) ? 'debug' : '';
+        $this->M_yui_loader->filter       = (string)$this->yui3loader->filter;
         $this->M_yui_loader->insertBefore = 'firstthemesheet';
         $this->M_yui_loader->modules      = array();
         $this->M_yui_loader->groups       = array(
@@ -973,10 +973,14 @@ class page_requirements_manager {
             $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.'cssbase/base-min.css" />';
         }
 
-        if (debugging('', DEBUG_DEVELOPER)) {
-            $code .= '<script type="text/javascript" src="'.$this->yui3loader->base.'yui/yui-debug.js"></script>';
-        } else {
-            $code .= '<script type="text/javascript" src="'.$this->yui3loader->base.'yui/yui-min.js"></script>';
+        $code .= '<script type="text/javascript" src="'.$this->yui3loader->base.'yui/yui-min.js"></script>';
+
+        if ($this->yui3loader->filter === YUI_RAW) {
+            $code = str_replace('-min.css', '.css', $code);
+            $code = str_replace('-min.js', '.js', $code);
+        } else if ($this->yui3loader->filter === YUI_DEBUG) {
+            $code = str_replace('-min.css', '.css', $code);
+            $code = str_replace('-min.js', '-debug.js', $code);
         }
 
         return $code;
