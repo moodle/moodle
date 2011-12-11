@@ -44,6 +44,7 @@ class backup_plan extends base_plan implements loggable {
         }
         $this->controller = $controller;
         $this->basepath   = $CFG->tempdir . '/backup/' . $controller->get_backupid();
+        $this->excludingdactivities = false;
         parent::__construct('backup_plan');
     }
 
