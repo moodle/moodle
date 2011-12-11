@@ -653,11 +653,11 @@ class PHPMailer
      */
     function AddrFormat($addr) {
         if(empty($addr[1]))
-            $formatted = $addr[0];
+            $formatted = preg_replace('/[\r\n]+/', '', $addr[0]); // Moodle modification
         else
         {
-            $formatted = $this->EncodeHeader($addr[1], 'phrase') . " <" . 
-                         $addr[0] . ">";
+            $formatted = $this->EncodeHeader($addr[1], 'phrase') . " <" .
+                         preg_replace('/[\r\n]+/', '', $addr[0]) . ">"; // Moodle modification
         }
 
         return $formatted;
@@ -780,9 +780,9 @@ class PHPMailer
 
         $result .= $this->HeaderLine("Date", $this->RFCDate());
         if($this->Sender == "")
-            $result .= $this->HeaderLine("Return-Path", trim($this->From));
+            $result .= $this->HeaderLine("Return-Path", trim(preg_replace('/[\r\n]+/', '', $this->From))); // Moodle modification
         else
-            $result .= $this->HeaderLine("Return-Path", trim($this->Sender));
+            $result .= $this->HeaderLine("Return-Path", trim(preg_replace('/[\r\n]+/', '', $this->Sender))); // Moodle modification
         
         // To be created automatically by mail()
         if($this->Mailer != "mail")
