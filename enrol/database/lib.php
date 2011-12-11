@@ -579,22 +579,44 @@ class enrol_database_plugin extends enrol_plugin {
         if ($createcourses) {
             require_once("$CFG->dirroot/course/lib.php");
 
-            $template        = $this->get_config('templatecourse');
+            $templatecourse = $this->get_config('templatecourse');
             $defaultcategory = $this->get_config('defaultcategory');
 
-            if ($template) {
-                if ($template = $DB->get_record('course', array('shortname'=>$template))) {
+            $template = false;
+            if ($templatecourse) {
+                if ($template = $DB->get_record('course', array('shortname'=>$templatecourse))) {
                     unset($template->id);
                     unset($template->fullname);
                     unset($template->shortname);
                     unset($template->idnumber);
                 } else {
-                    $template = new stdClass();
+                    if ($verbose) {
+                        mtrace("  can not find template for new course!");
+                    }
                 }
-            } else {
+            }
+            if (!$template) {
+                $courseconfig = get_config('moodlecourse');
                 $template = new stdClass();
+                $template->summary        = '';
+                $template->summaryformat  = FORMAT_HTML;
+                $template->format         = $courseconfig->format;
+                $template->numsections    = $courseconfig->numsections;
+                $template->hiddensections = $courseconfig->hiddensections;
+                $template->newsitems      = $courseconfig->newsitems;
+                $template->showgrades     = $courseconfig->showgrades;
+                $template->showreports    = $courseconfig->showreports;
+                $template->maxbytes       = $courseconfig->maxbytes;
+                $template->groupmode      = $courseconfig->groupmode;
+                $template->groupmodeforce = $courseconfig->groupmodeforce;
+                $template->visible        = $courseconfig->visible;
+                $template->lang           = $courseconfig->lang;
+                $template->groupmodeforce = $courseconfig->groupmodeforce;
             }
             if (!$DB->record_exists('course_categories', array('id'=>$defaultcategory))) {
+                if ($verbose) {
+                    mtrace("  default course category does not exist!");
+                }
                 $categories = $DB->get_records('course_categories', array(), 'sortorder', 'id', 0, 1);
                 $first = reset($categories);
                 $defaultcategory = $first->id;
