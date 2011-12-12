@@ -55,6 +55,8 @@ if ($mode === 'coursecompletions' or $mode === 'coursecompletion') {
 $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
 $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
 
+$PAGE->set_url('/course/user.php', array('id'=>$id, 'user'=>$user->id, 'mode'=>$mode));
+
 require_login();
 $PAGE->set_pagelayout('admin');
 if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext) and !is_enrolled($coursecontext)) {
