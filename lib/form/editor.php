@@ -58,7 +58,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
     }
 
     function getValue() {
-        return $this->getAttribute('value');
+        return $this->_values;
     }
 
     function getMaxbytes() {
@@ -276,4 +276,13 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         return $str;
     }
 
+    /**
+     * What to display when element is frozen.
+     *
+     * @return empty string
+     */
+    function getFrozenHtml() {
+
+        return '';
+    }
 }
