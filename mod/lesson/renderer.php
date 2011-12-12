@@ -166,6 +166,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
         $yeslink = html_writer::link(new moodle_url('/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$lastpageseenid, 'startlastseen'=>'yes')), get_string('yes'));
         $output .= html_writer::tag('span', $yeslink, array('class'=>'lessonbutton standardbutton'));
+        $output .= '&nbsp;';
 
         $nolink = html_writer::link(new moodle_url('/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no')), get_string('no'));
         $output .= html_writer::tag('span', $nolink, array('class'=>'lessonbutton standardbutton'));
