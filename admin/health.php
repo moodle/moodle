@@ -2,13 +2,7 @@
 
     ob_start(); //for whitespace test
     require_once('../config.php');
-
-    // extra whitespace test - intentionally breaks cookieless mode
-    $extraws = '';
-    while (ob_get_level()) {
-        $extraws .= ob_get_contents();
-        ob_end_clean();
-    }
+    $extraws = ob_get_clean();
 
     require_once($CFG->libdir.'/adminlib.php');
 
