@@ -178,7 +178,7 @@ abstract class local_qeupgradehelper_quiz_list {
             html_writer::link(new moodle_url('/course/view.php',
                     array('id' => $quizinfo->courseid)), format_string($quizinfo->shortname)),
             html_writer::link(new moodle_url('/mod/quiz/view.php',
-                    array('id' => $quizinfo->name)), format_string($quizinfo->name)),
+                    array('q' => $quizinfo->id)), format_string($quizinfo->name)),
             $quizinfo->attemptcount,
             $quizinfo->questionattempts ? $quizinfo->questionattempts : 0,
         );
