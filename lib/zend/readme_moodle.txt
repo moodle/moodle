@@ -7,4 +7,5 @@ Do not use outside of our /webservice/* or mnet !!
 Changes:
 * lots of files removed
 * small fix to error reporting in reflection (MDL-21460, ZF-8980)
+* synced and renamed file to version in ZF 1.10.6 (MDL-30603, ZF-11080)
 
