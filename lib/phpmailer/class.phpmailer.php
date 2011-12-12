@@ -1080,9 +1080,9 @@ class PHPMailer {
 
     $result .= $this->HeaderLine('Date', self::RFCDate());
     if($this->Sender == '') {
-      $result .= $this->HeaderLine('Return-Path', trim($this->From));
+      $result .= $this->HeaderLine('Return-Path', trim($this->SecureHeader($this->From))); // Moodle modification
     } else {
-      $result .= $this->HeaderLine('Return-Path', trim($this->Sender));
+      $result .= $this->HeaderLine('Return-Path', trim($this->SecureHeader($this->Sender))); // Moodle modification
     }
 
     // To be created automatically by mail()
