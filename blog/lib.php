@@ -479,6 +479,13 @@ function blog_get_options_for_user(stdClass $user=null) {
             );
         }
     }
+    if ($canview && $CFG->enablerssfeeds) {
+        $options['rss'] = array(
+            'string' => get_string('rssfeed', 'blog'),
+            'link' => new moodle_url(rss_get_url($sitecontext->id, $USER->id, 'blog', 'user/'.$user->id))
+       );
+    }
+
     // Cache the options
     $useroptions[$user->id] = $options;
     // Return the options
