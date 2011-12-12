@@ -47,6 +47,10 @@ function user_create_user($user) {
 /// insert the user into the database
     $newuserid = $DB->insert_record('user', $user);
 
+/// trigger user_created event on the full database user row
+    $newuser = $DB->get_record('user', array('id' => $newuserid));
+    events_trigger('user_created', $newuser);
+
 /// create USER context for this user
     get_context_instance(CONTEXT_USER, $newuserid);
 
@@ -71,6 +75,11 @@ function user_update_user($user) {
 
     $user->timemodified = time();
     $DB->update_record('user', $user);
+
+    /// trigger user_updated event on the full database user row
+    $updateduser = $DB->get_record('user', array('id' => $user->id));
+    events_trigger('user_updated', $updateduser);
+
 }
 
 
