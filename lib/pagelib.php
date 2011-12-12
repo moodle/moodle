@@ -1185,6 +1185,8 @@ class moodle_page {
         }
 
         // now the real test and redirect!
+        // NOTE: do NOT use this test for detection of https on current page because this code is not compatible with SSL proxies,
+        //       instead use strpos($CFG->httpswwwroot, 'https:') === 0
         if (strpos($FULLME, 'https:') !== 0) {
             // this may lead to infinite redirect on misconfigured sites, in that case use $CFG->loginhttps=0; in /config.php
             redirect($this->_url);
