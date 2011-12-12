@@ -1216,6 +1216,7 @@ class global_navigation extends navigation_node {
                     }
                     break;
                 case CONTEXT_USER :
+                    $course = $this->page->course;
                     if ($showcategories && !$ismycourse) {
                         $this->load_all_categories($course->category, $showcategories);
                     }
@@ -1238,6 +1239,16 @@ class global_navigation extends navigation_node {
                     $this->add_course_essentials($coursenode, $course);
                     $sections = $this->load_course_sections($course, $coursenode);
                     break;
+            }
+        } else {
+            // We need to check if the user is viewing a front page module.
+            // If so then there is potentially more content to load yet for that
+            // module.
+            if ($this->page->context->contextlevel == CONTEXT_MODULE) {
+                $activitynode = $this->rootnodes['site']->get($this->page->cm->id, navigation_node::TYPE_ACTIVITY);
+                if ($activitynode) {
+                    $this->load_activity($this->page->cm, $this->page->course, $activitynode);
+                }
             }
         }
 

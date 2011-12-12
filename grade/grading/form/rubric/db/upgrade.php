@@ -35,5 +35,8 @@ function xmldb_gradingform_rubric_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
+    // Moodle v2.2.0 release upgrade line
+    // Put any upgrade step following this
+
     return true;
 }

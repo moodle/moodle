@@ -141,6 +141,8 @@ if (scorm_external_link($sco->launch)) {
     $result = "$CFG->wwwroot/pluginfile.php/$context->id/mod_scorm/content/$scorm->revision/$launcher";
 }
 
+add_to_log($course->id, 'scorm', 'launch', 'view.php?id='.$cm->id, $result, $cm->id);
+
 // which API are we looking for
 $LMS_api = (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) ? 'API' : 'API_1484_11';
 ?>
@@ -211,9 +213,5 @@ $LMS_api = (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->vers
     </head>
     <body onload="doredirect();">
         <p><?php echo get_string('activitypleasewait', 'scorm');?></p>
-        <?php if (debugging('', DEBUG_DEVELOPER)) {
-                  add_to_log($course->id, 'scorm', 'launch', 'view.php?id='.$cm->id, $result, $cm->id);
-              }
-        ?>
     </body>
 </html>

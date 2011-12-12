@@ -49,24 +49,36 @@ define('LASTACCESS_UPDATE_SECS', 60);
 
 /**
  * Returns $user object of the main admin user
- * primary admin = admin with lowest role_assignment id among admins
  *
  * @static stdClass $mainadmin
  * @return stdClass {@link $USER} record from DB, false if not found
  */
 function get_admin() {
+    global $CFG, $DB;
+
     static $mainadmin = null;
 
-    if (!isset($mainadmin)) {
-        if (! $admins = get_admins()) {
-            return false;
-        }
-        //TODO: add some admin setting for specifying of THE main admin
-        //      for now return the first assigned admin
-        $mainadmin = reset($admins);
+    if (isset($mainadmin)) {
+        return clone($mainadmin);
     }
-    // we must clone this otherwise code outside can break the static var
-    return clone($mainadmin);
+
+    if (empty($CFG->siteadmins)) {  // Should not happen on an ordinary site
+        return false;
+    }
+
+    foreach (explode(',', $CFG->siteadmins) as $id) {
+        if ($user = $DB->get_record('user', array('id'=>$id, 'deleted'=>0))) {
+            $mainadmin = $user;
+            break;
+        }
+    }
+
+    if ($mainadmin) {
+        return clone($mainadmin);
+    } else {
+        // this should not happen
+        return false;
+    }
 }
 
 /**

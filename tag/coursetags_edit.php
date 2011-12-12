@@ -41,7 +41,7 @@ if ($courseid != SITEID) {
 }
 
 // Permissions
-$sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
+$sitecontext = get_context_instance(CONTEXT_SYSTEM);
 require_login($course->id);
 $canedit = has_capability('moodle/tag:create', $sitecontext);
 

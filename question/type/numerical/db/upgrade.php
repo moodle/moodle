@@ -237,6 +237,9 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
     // Moodle v2.1.0 release upgrade line
     // Put any upgrade step following this
 
+    // Moodle v2.2.0 release upgrade line
+    // Put any upgrade step following this
+
     return true;
 }
 
