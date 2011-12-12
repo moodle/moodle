@@ -599,6 +599,8 @@ if ($fromform = $mform_post->get_data()) {
     // WARNING: the $fromform->message array has been overwritten, do not use it anymore!
     $fromform->messagetrust  = trusttext_trusted($modcontext);
 
+    $contextcheck = isset($fromform->groupinfo) && has_capability('mod/forum:movediscussions', $modcontext);
+
     if ($fromform->edit) {           // Updating a post
         unset($fromform->groupid);
         $fromform->id = $fromform->edit;
@@ -619,6 +621,11 @@ if ($fromform = $mform_post->get_data()) {
                             || has_capability('mod/forum:startdiscussion', $modcontext))) ||
                             has_capability('mod/forum:editanypost', $modcontext)) ) {
             print_error('cannotupdatepost', 'forum');
+        }
+
+        // If the user has access to all groups and they are changing the group, then update the post.
+        if ($contextcheck) {
+            $DB->set_field('forum_discussions' ,'groupid' , $fromform->groupinfo, array('firstpost' => $fromform->id));
         }
 
         $updatepost = $fromform; //realpost
@@ -711,6 +718,10 @@ if ($fromform = $mform_post->get_data()) {
     } else {                     // Adding a new discussion
         if (!forum_user_can_post_discussion($forum, $fromform->groupid, -1, $cm, $modcontext)) {
             print_error('cannotcreatediscussion', 'forum');
+        }
+        // If the user has access all groups capability let them choose the group.
+        if ($contextcheck) {
+            $fromform->groupid = $fromform->groupinfo;
         }
         if (empty($fromform->groupid)) {
             $fromform->groupid = -1;
