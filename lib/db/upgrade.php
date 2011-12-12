@@ -6951,6 +6951,34 @@ FROM
     // Moodle v2.2.0 release upgrade line
     // Put any upgrade step following this
 
+    if ($oldversion < 2011120500.02) {
+
+        upgrade_set_timeout(60*20); // This may take a while
+        // MDL-28180. Some missing restrictions in certain backup & restore operations
+        // were causing incorrect duplicates in the course_completion_aggr_methd table.
+        // This upgrade step takes rid of them.
+        $sql = 'SELECT course, criteriatype, MIN(id) AS minid
+                  FROM {course_completion_aggr_methd}
+              GROUP BY course, criteriatype
+                HAVING COUNT(*) > 1';
+        $duprs = $DB->get_recordset_sql($sql);
+        foreach ($duprs as $duprec) {
+            // We need to handle NULLs in criteriatype diferently
+            if (is_null($duprec->criteriatype)) {
+                $where = 'course = ? AND criteriatype IS NULL AND id > ?';
+                $params = array($duprec->course, $duprec->minid);
+            } else {
+                $where = 'course = ? AND criteriatype = ? AND id > ?';
+                $params = array($duprec->course, $duprec->criteriatype, $duprec->minid);
+            }
+            $DB->delete_records_select('course_completion_aggr_methd', $where, $params);
+        }
+        $duprs->close();
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011120500.02);
+    }
+
     return true;
 }
 
