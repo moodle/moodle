@@ -1196,6 +1196,8 @@ function make_temp_directory($directory, $exceptiononerror = true) {
     if ($CFG->tempdir !== "$CFG->dataroot/temp") {
         check_dir_exists($CFG->tempdir, true, true);
         protect_directory($CFG->tempdir);
+    } else {
+        protect_directory($CFG->dataroot);
     }
     return make_writable_directory("$CFG->tempdir/$directory", $exceptiononerror);
 }
@@ -1212,6 +1214,8 @@ function make_cache_directory($directory, $exceptiononerror = true) {
     if ($CFG->cachedir !== "$CFG->dataroot/cache") {
         check_dir_exists($CFG->cachedir, true, true);
         protect_directory($CFG->cachedir);
+    } else {
+        protect_directory($CFG->dataroot);
     }
     return make_writable_directory("$CFG->cachedir/$directory", $exceptiononerror);
 }
