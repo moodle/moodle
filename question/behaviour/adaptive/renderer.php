@@ -88,7 +88,9 @@ class qbehaviour_adaptive_renderer extends qbehaviour_renderer {
      */
     protected function penalty_info(question_attempt $qa, $mark,
             question_display_options $options) {
-        if (!$qa->get_question()->penalty) {
+
+        $currentpenalty = $qa->get_question()->penalty * $qa->get_max_mark();
+        if ($currentpenalty == 0) {
             return '';
         }
         $output = '';
@@ -101,7 +103,7 @@ class qbehaviour_adaptive_renderer extends qbehaviour_renderer {
         // Print information about any new penalty, only relevant if the answer can be improved.
         if ($qa->get_behaviour()->is_state_improvable($qa->get_state())) {
             $output .= ' ' . get_string('gradingdetailspenalty', 'qbehaviour_adaptive',
-                    format_float($qa->get_question()->penalty, $options->markdp));
+                    format_float($currentpenalty, $options->markdp));
         }
 
         return $output;
