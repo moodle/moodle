@@ -752,8 +752,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
 /**
  * Enter description here...
  *
- * @global object
- * @param string $questionids list of questionids
+ * @param array $questionids of question ids
  * @param object $newcontext the context to create the saved category in.
  * @param string $oldplace a textual description of the think being deleted, e.g. from get_context_name
  * @param object $newcategory
@@ -836,8 +835,7 @@ function question_delete_activity($cm, $feedback=true) {
  * acutally moving questions and associated data. However, callers of this function also have to
  * do other work, which is why you should not call this method directly from outside the questionbank.
  *
- * @global object
- * @param string $questionids a comma-separated list of question ids.
+ * @param array $questionids of question ids.
  * @param integer $newcategoryid the id of the category to move to.
  */
 function question_move_questions_to_category($questionids, $newcategoryid) {
