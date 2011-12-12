@@ -1584,13 +1584,31 @@ class admins_existing_selector extends user_selector_base {
             return array();
         }
 
-        if ($search) {
-            $groupname = get_string('extusersmatching', 'role', $search);
-        } else {
-            $groupname = get_string('extusers', 'role');
+        $mainadmin = array();
+        $adminids = explode(',', $CFG->siteadmins);
+        foreach ($adminids as $id) {
+            if (isset($availableusers[$id])) {
+                $mainadmin = array($id=>$availableusers[$id]);
+                unset($availableusers[$id]);
+                break;
+            }
         }
 
-        return array($groupname => $availableusers);
+        $result = array();
+        if ($mainadmin) {
+            $result[get_string('mainadmin', 'role')] = $mainadmin;
+        }
+
+        if ($availableusers) {
+            if ($search) {
+                $groupname = get_string('extusersmatching', 'role', $search);
+            } else {
+                $groupname = get_string('extusers', 'role');
+            }
+            $result[$groupname] = $availableusers;
+        }
+
+        return $result;
     }
 
     protected function get_options() {

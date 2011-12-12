@@ -38,6 +38,8 @@ class scorm_interactions_report extends scorm_default_report {
         $contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
         $action = optional_param('action', '', PARAM_ALPHA);
         $attemptids = optional_param_array('attemptid', array(), PARAM_RAW);
+        $attemptsmode = optional_param('attemptsmode', SCORM_REPORT_ATTEMPTS_ALL_STUDENTS, PARAM_INT);
+        $PAGE->set_url(new moodle_url($PAGE->url, array('attemptsmode' => $attemptsmode)));
 
         if ($action == 'delete' && has_capability('mod/scorm:deleteresponses', $contextmodule) && confirm_sesskey()) {
             if (scorm_delete_responses($attemptids, $scorm)) { //delete responses.
@@ -45,6 +47,8 @@ class scorm_interactions_report extends scorm_default_report {
                 echo $OUTPUT->notification(get_string('scormresponsedeleted', 'scorm'), 'notifysuccess');
             }
         }
+        // find out current groups mode
+        $currentgroup = groups_get_activity_group($cm, true);
 
         // detailed report
         $mform = new mod_scorm_report_interactions_settings($PAGE->url, compact('currentgroup'));
@@ -53,14 +57,12 @@ class scorm_interactions_report extends scorm_default_report {
             $includeqtext = $fromform->qtext;
             $includeresp = $fromform->resp;
             $includeright = $fromform->right;
-            $attemptsmode = !empty($fromform->attemptsmode) ? $fromform->attemptsmode : SCORM_REPORT_ATTEMPTS_ALL_STUDENTS;
             set_user_preference('scorm_report_pagesize', $pagesize);
             set_user_preference('scorm_report_interactions_qtext', $includeqtext);
             set_user_preference('scorm_report_interactions_resp', $includeresp);
             set_user_preference('scorm_report_interactions_right', $includeright);
         } else {
             $pagesize = get_user_preferences('scorm_report_pagesize', 0);
-            $attemptsmode = optional_param('attemptsmode', SCORM_REPORT_ATTEMPTS_STUDENTS_WITH, PARAM_INT);
             $includeqtext = get_user_preferences('scorm_report_interactions_qtext', 0);
             $includeresp = get_user_preferences('scorm_report_interactions_resp', 1);
             $includeright = get_user_preferences('scorm_report_interactions_right', 0);
@@ -107,7 +109,7 @@ class scorm_interactions_report extends scorm_default_report {
                 $nostudents = true;
                 $groupstudents = array();
             }
-            $allowedlist = ($groupstudents);
+            $allowedlist = array_keys($groupstudents);
         }
         if ( !$nostudents ) {
             // Now check if asked download of data
@@ -582,7 +584,7 @@ class scorm_interactions_report extends scorm_default_report {
                     }
                 }
                 if (!$download) {
-                    $mform->set_data(compact('detailedrep', 'pagesize'));
+                    $mform->set_data(compact('detailedrep', 'pagesize', 'attemptsmode'));
                     $mform->display();
                 }
             } else {

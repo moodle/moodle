@@ -40,5 +40,6 @@ defined('MOODLE_INTERNAL') || die();
 function question_fix_random_question_parents() {
     global $CFG, $DB;
     $DB->execute("UPDATE {question} SET parent = id WHERE qtype = 'random' AND parent <> id");
+
     return true;
 }

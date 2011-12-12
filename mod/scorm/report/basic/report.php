@@ -36,6 +36,8 @@ class scorm_basic_report extends scorm_default_report {
         $contextmodule= get_context_instance(CONTEXT_MODULE, $cm->id);
         $action = optional_param('action', '', PARAM_ALPHA);
         $attemptids = optional_param_array('attemptid', array(), PARAM_RAW);
+        $attemptsmode = optional_param('attemptsmode', SCORM_REPORT_ATTEMPTS_ALL_STUDENTS, PARAM_INT);
+        $PAGE->set_url(new moodle_url($PAGE->url, array('attemptsmode' => $attemptsmode)));
 
         if ($action == 'delete' && has_capability('mod/scorm:deleteresponses', $contextmodule) && confirm_sesskey()) {
             if (scorm_delete_responses($attemptids, $scorm)) { //delete responses.
@@ -43,19 +45,19 @@ class scorm_basic_report extends scorm_default_report {
                 echo $OUTPUT->notification(get_string('scormresponsedeleted', 'scorm'), 'notifysuccess');
             }
         }
+        // find out current groups mode
+        $currentgroup = groups_get_activity_group($cm, true);
 
         // detailed report
         $mform = new mod_scorm_report_settings($PAGE->url, compact('currentgroup'));
         if ($fromform = $mform->get_data()) {
             $detailedrep = $fromform->detailedrep;
             $pagesize = $fromform->pagesize;
-            $attemptsmode = !empty($fromform->attemptsmode) ? $fromform->attemptsmode : SCORM_REPORT_ATTEMPTS_ALL_STUDENTS;
             set_user_preference('scorm_report_detailed', $detailedrep);
             set_user_preference('scorm_report_pagesize', $pagesize);
         } else {
             $detailedrep = get_user_preferences('scorm_report_detailed', false);
             $pagesize = get_user_preferences('scorm_report_pagesize', 0);
-            $attemptsmode = optional_param('attemptsmode', SCORM_REPORT_ATTEMPTS_STUDENTS_WITH, PARAM_INT);
         }
         if ($pagesize < 1) {
             $pagesize = SCORM_REPORT_DEFAULT_PAGE_SIZE;
@@ -84,7 +86,7 @@ class scorm_basic_report extends scorm_default_report {
                 $nostudents = true;
                 $allowedlist = '';
             } else {
-                $allowedlist = join(',', array_keys($students));
+                $allowedlist = array_keys($students);
             }
         } else {
             // all users who can attempt scoes and who are in the currently selected group
@@ -93,7 +95,7 @@ class scorm_basic_report extends scorm_default_report {
                 $nostudents = true;
                 $groupstudents = array();
             }
-            $allowedlist = join(',', array_keys($groupstudents));
+            $allowedlist = array_keys($groupstudents);
         }
 
         if ( !$nostudents ) {
@@ -269,7 +271,8 @@ class scorm_basic_report extends scorm_default_report {
                 header("Pragma: public");
                 echo implode("\t", $headers)." \n";
             }
-
+            $params = array();
+            list($usql, $params) = $DB->get_in_or_equal($allowedlist, SQL_PARAMS_NAMED);
                             // Construct the SQL
             $select = 'SELECT DISTINCT '.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').' AS uniqueid, ';
             $select .= 'st.scormid AS scormid, st.attempt AS attempt, ' .
@@ -282,15 +285,15 @@ class scorm_basic_report extends scorm_default_report {
             switch ($attemptsmode) {
                 case SCORM_REPORT_ATTEMPTS_STUDENTS_WITH:
                     // Show only students with attempts
-                    $where = ' WHERE u.id IN (' .$allowedlist. ') AND st.userid IS NOT NULL';
+                    $where = ' WHERE u.id ' .$usql. ' AND st.userid IS NOT NULL';
                     break;
                 case SCORM_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
                     // Show only students without attempts
-                    $where = ' WHERE u.id IN (' .$allowedlist. ') AND st.userid IS NULL';
+                    $where = ' WHERE u.id ' .$usql. ' AND st.userid IS NULL';
                     break;
                 case SCORM_REPORT_ATTEMPTS_ALL_STUDENTS:
                     // Show all students with or without attempts
-                    $where = ' WHERE u.id IN (' .$allowedlist. ') AND (st.userid IS NOT NULL OR st.userid IS NULL)';
+                    $where = ' WHERE u.id ' .$usql. ' AND (st.userid IS NOT NULL OR st.userid IS NULL)';
                     break;
             }
 
@@ -298,7 +301,6 @@ class scorm_basic_report extends scorm_default_report {
             $countsql .= 'COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'', 'st.attempt').')) AS nbattempts, ';
             $countsql .= 'COUNT(DISTINCT(u.id)) AS nbusers ';
             $countsql .= $from.$where;
-            $params = array();
 
             if (!$download) {
                 $sort = $table->get_sql_sort();
@@ -321,7 +323,7 @@ class scorm_basic_report extends scorm_default_report {
                 }
 
                 if (!empty($countsql)) {
-                    $count = $DB->get_record_sql($countsql);
+                    $count = $DB->get_record_sql($countsql, $params);
                     $totalinitials = $count->nbresults;
                     if ($twhere) {
                         $countsql .= ' AND '.$twhere;
@@ -520,7 +522,7 @@ class scorm_basic_report extends scorm_default_report {
                     }
                 }
                 if (!$download) {
-                    $mform->set_data(compact('detailedrep', 'pagesize'));
+                    $mform->set_data(compact('detailedrep', 'pagesize', 'attemptsmode'));
                     $mform->display();
                 }
             } else {
