@@ -360,7 +360,7 @@ class question_category_object {
         global $DB;
         $questionids = $DB->get_records_select_menu('question',
                 'category = ? AND (parent = 0 OR parent = id)', array($oldcat), '', 'id,1');
-        question_move_questions_to_category($questionids, $newcat);
+        question_move_questions_to_category(array_keys($questionids), $newcat);
     }
 
     /**
