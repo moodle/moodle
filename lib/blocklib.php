@@ -1467,8 +1467,10 @@ class block_manager {
         } else {
             $newweight = ceil($newweight);
             for ($weight = $bestgap - 1; $weight >= $newweight; $weight--) {
-                foreach ($usedweights[$weight] as $biid) {
-                    $this->reposition_block($biid, $newregion, $weight + 1);
+                if (array_key_exists($weight, $usedweights)) {
+                    foreach ($usedweights[$weight] as $biid) {
+                        $this->reposition_block($biid, $newregion, $weight + 1);
+                    }
                 }
             }
             $this->reposition_block($block->instance->id, $newregion, $newweight);
