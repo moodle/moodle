@@ -75,7 +75,7 @@ if ($usertrack = scorm_get_tracks($scoid, $USER->id, $attempt)) {
 $userdata->student_id = addslashes_js($USER->username);
 $userdata->student_name = addslashes_js($USER->lastname .', '. $USER->firstname);
 $userdata->mode = 'normal';
-if (isset($mode)) {
+if (!empty($mode)) {
     $userdata->mode = $mode;
 }
 if ($userdata->mode == 'normal') {
