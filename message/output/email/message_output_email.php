@@ -68,12 +68,19 @@ class message_output_email extends message_output {
      * @param object $mform preferences form class
      */
     function config_form($preferences){
-        global $USER;
-        $string = get_string('email','message_email').': <input size="30" name="email_email" value="'.$preferences->email_email.'" />';
+        global $USER, $OUTPUT;
+
+        $inputattributes = array('size'=>'30', 'name'=>'email_email', 'value'=>$preferences->email_email);
+        $string = get_string('email','message_email') . ': ' . html_writer::empty_tag('input', $inputattributes);
 
         if (empty($preferences->email_email) && !empty($preferences->userdefaultemail)) {
             $string .= ' ('.get_string('default').': '.$preferences->userdefaultemail.')';
         }
+
+        if (!empty($preferences->email_email) && !validate_email($preferences->email_email)) {
+            $string .= $OUTPUT->container(get_string('invalidemail'), 'error');
+        }
+
         return $string;
     }
 
