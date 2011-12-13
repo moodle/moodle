@@ -85,7 +85,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
                 $this->get_contains_mc_radio_expectation(($wrongindex + 1) % 3, true, false),
                 $this->get_contains_mc_radio_expectation(($wrongindex + 2) % 3, true, false),
                 $this->get_contains_incorrect_expectation(),
-                $this->get_contains_penalty_info_expectation(0.33));
+                $this->get_contains_penalty_info_expectation(1.00));
         $this->assertPattern('/B|C/',
                 $this->quba->get_response_summary($this->slot));
 
