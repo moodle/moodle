@@ -127,8 +127,8 @@ class quiz_overview_report extends quiz_attempt_report {
         $questions = quiz_report_get_significant_questions($quiz);
 
         $table = new quiz_report_overview_table($quiz, $this->context, $qmsubselect,
-                $groupstudents, $students, $detailedmarks, $questions, $includecheckboxes,
-                $reporturl, $displayoptions);
+                $qmfilter, $attemptsmode, $groupstudents, $students, $detailedmarks,
+                $questions, $includecheckboxes, $reporturl, $displayoptions);
         $filename = quiz_report_download_filename(get_string('overviewfilename', 'quiz_overview'),
                 $courseshortname, $quiz->name);
         $table->is_downloading($download, $filename,
@@ -217,8 +217,7 @@ class quiz_overview_report extends quiz_attempt_report {
                     "END) AS gradedattempt, ";
             }
 
-            list($fields, $from, $where, $params) =
-                    $this->base_sql($quiz, $qmsubselect, $qmfilter, $attemptsmode, $allowed);
+            list($fields, $from, $where, $params) = $table->base_sql($allowed);
 
             $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
 
