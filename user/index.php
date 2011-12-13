@@ -345,6 +345,8 @@
 
     if (!isset($hiddenfields['lastaccess'])) {
         $table->sortable(true, 'lastaccess', SORT_DESC);
+    } else {
+        $table->sortable(true, 'firstname', SORT_ASC);
     }
 
     $table->no_sorting('roles');
