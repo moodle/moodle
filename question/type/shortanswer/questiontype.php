@@ -42,7 +42,7 @@ class qtype_shortanswer extends question_type {
         return array('question_shortanswer', 'answers', 'usecase');
     }
 
-    protected function questionid_column_name() {
+    public function questionid_column_name() {
         return 'question';
     }
 
