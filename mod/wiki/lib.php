@@ -397,11 +397,13 @@ function wiki_get_default_entry(&$wiki, &$course, $userid=0, $groupid=0) {
     global $USER;
     /// If there is a groupmode, get the user's group id.
     $groupmode = groups_get_activity_groupmode($wiki);
-    // if groups mode is in use and no group supplied, use the first one found
     if ($groupmode && !$groupid) {
-        if(($mygroupids=mygroupid($course->id)) && count($mygroupids)>0) {
-            // Use first group. They ought to be able to change later
-            $groupid=$mygroupids[0];
+        // Get a group of wiki that user has access to in the course with groupingid.
+        $groups = groups_get_all_groups($course->id, $USER->id, $wiki->groupingid);
+        if ($groups && count($groups) > 0) {
+            // Select the first element in the array. Set the groupid to the id of the first element.
+            $group = current($groups);
+            $groupid = $group->id;
         } else {
             // Whatever groups are in the course, pick one
             $coursegroups = groups_get_all_groups($course->id);
