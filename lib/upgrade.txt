@@ -12,7 +12,9 @@ Note:
 debug messages and will produce fatal errors
 
 API changes:
+
 * send_stored_file() has changed its interface
+* deleted several resourcelib_embed_* functions from resourcelib.php
 
 === 2.2 ===
 

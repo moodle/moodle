@@ -5,11 +5,15 @@ information provided here is intended especially for developers.
 === 2.3 ===
 
 required changes in code:
+
 * define the capability mod/xxx:addinstance (and the corresponding lang string)
   (unless your mod is a MOD_ARCHETYPE_SYSTEM).
 * xxx_pluginfile() is now given the 7th parameter (hopefully the last one) that
   contains additional options for the file serving. The array should be re-passed
   to send_stored_file().
+
+* most resourcelib_embed_* functions are replaced with core_media_renderer;
+  for an example, see mod/resource/locallib.php, resource_display_embed()
 
 
 === 2.2 ===

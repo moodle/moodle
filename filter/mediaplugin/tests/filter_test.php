@@ -37,16 +37,16 @@ class filter_mediaplugin_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
 
         // we need to enable the plugins somehow
-        $CFG->filter_mediaplugin_enable_youtube    = 1;
-        $CFG->filter_mediaplugin_enable_vimeo      = 1;
-        $CFG->filter_mediaplugin_enable_mp3        = 1;
-        $CFG->filter_mediaplugin_enable_flv        = 1;
-        $CFG->filter_mediaplugin_enable_swf        = 1;
-        $CFG->filter_mediaplugin_enable_html5audio = 1;
-        $CFG->filter_mediaplugin_enable_html5video = 1;
-        $CFG->filter_mediaplugin_enable_qt         = 1;
-        $CFG->filter_mediaplugin_enable_wmp        = 1;
-        $CFG->filter_mediaplugin_enable_rm         = 1;
+        $CFG->core_media_enable_youtube    = 1;
+        $CFG->core_media_enable_vimeo      = 1;
+        $CFG->core_media_enable_mp3        = 1;
+        $CFG->core_media_enable_flv        = 1;
+        $CFG->core_media_enable_swf        = 1;
+        $CFG->core_media_enable_html5audio = 1;
+        $CFG->core_media_enable_html5video = 1;
+        $CFG->core_media_enable_qt         = 1;
+        $CFG->core_media_enable_wmp        = 1;
+        $CFG->core_media_enable_rm         = 1;
 
 
         $filterplugin = new filter_mediaplugin(null, array());
