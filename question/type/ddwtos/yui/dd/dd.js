@@ -104,28 +104,22 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
             if (groupitems.size() !== 0) {
                 var maxwidth = 0;
                 var maxheight = 0;
-                //ie7 does not calculate the height of span correctly when there is
-                //both a sup and sub in the span.
-                var ie7fix = false;
                 //find max height and width
                 groupitems.each(function(item){
                     maxwidth = Math.max(maxwidth, Math.ceil(item.get('offsetWidth')));
                     maxheight = Math.max(maxheight, Math.ceil(item.get('offsetHeight')));
-                    if (item.one('sup') && item.one('sub') && Y.UA.ie == 7){
-                        ie7fix = true;
-                    }
-                }, this);
+               }, this);
                 maxwidth += 8;
                 maxheight += 2;
                 groupitems.each(function(item) {
-                    this.pad_to_width_height(item, maxwidth, maxheight, ie7fix);
+                    this.pad_to_width_height(item, maxwidth, maxheight);
                 }, this);
                 Y.all(this.selectors.drops_group(groupno)).each(function(item) {
-                    this.pad_to_width_height(item, maxwidth + 2, maxheight + 2, ie7fix);
+                    this.pad_to_width_height(item, maxwidth + 2, maxheight + 2);
                 }, this);
             }
         },
-        pad_to_width_height : function (node, width, height, extrabottompadding) {
+        pad_to_width_height : function (node, width, height) {
             node.setStyle('width', width+'px').setStyle('height', height+'px')
                     .setStyle('lineHeight', height+'px');
         },
