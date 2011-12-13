@@ -359,14 +359,16 @@ function process_group_tag($tagcontents) {
                     $this->log_line("Course $coursecode not found in Moodle's course idnumbers.");
                 } else {
                     // Set shortname to description or description to shortname if one is set but not the other.
-                    if (!isset($group->description) && !isset($group->shortName)) {
+                    $nodescription = !isset($group->description);
+                    $noshortname = !isset($group->shortname);
+                    if ( $nodescription && $noshortname) {
                         // If neither short nor long description are set let if fail
                         $this->log_line("Neither long nor short name are set for $coursecode");
-                    } else if (!isset($group->description)) {
+                    } else if ($nodescription) {
                         // If short and ID exist, then give the long short's value, then give short the ID's value
                         $group->description = $group->shortName;
                         $group->shortName = $coursecode;
-                    } else if (!isset($group->shortName)) {
+                    } else if ($noshortname) {
                         // If long and ID exist, then map long to long, then give short the ID's value.
                         $group->shortName = $coursecode;
                     }
