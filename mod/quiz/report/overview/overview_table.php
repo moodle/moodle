@@ -37,86 +37,101 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
 
     protected $regradedqs = array();
 
-    public function __construct($quiz, $context, $qmsubselect, $groupstudents,
-            $students, $detailedmarks, $questions, $includecheckboxes, $reporturl, $displayoptions) {
+    public function __construct($quiz, $context, $qmsubselect, $qmfilter,
+            $attemptsmode, $groupstudents, $students, $detailedmarks,
+            $questions, $includecheckboxes, $reporturl, $displayoptions) {
         parent::__construct('mod-quiz-report-overview-report', $quiz , $context,
-                $qmsubselect, $groupstudents, $students, $questions, $includecheckboxes,
-                $reporturl, $displayoptions);
+                $qmsubselect, $qmfilter, $attemptsmode, $groupstudents, $students,
+                $questions, $includecheckboxes, $reporturl, $displayoptions);
         $this->detailedmarks = $detailedmarks;
     }
 
     public function build_table() {
         global $DB;
 
-        if ($this->rawdata) {
-            $this->strtimeformat = str_replace(',', '', get_string('strftimedatetime'));
-            parent::build_table();
+        if (!$this->rawdata) {
+            return;
+        }
 
-            //end of adding data from attempts data to table / download
-            //now add averages at bottom of table :
-            $params = array($this->quiz->id);
-            $averagesql = '
-                    SELECT AVG(qg.grade) AS grade, COUNT(qg.grade) AS numaveraged
-                    FROM {quiz_grades} qg
-                    WHERE quiz = ?';
+        $this->strtimeformat = str_replace(',', '', get_string('strftimedatetime'));
+        parent::build_table();
 
-            $this->add_separator();
-            if ($this->is_downloading()) {
-                $namekey = 'lastname';
-            } else {
-                $namekey = 'fullname';
-            }
-            if ($this->groupstudents) {
-                list($usql, $uparams) = $DB->get_in_or_equal($this->groupstudents);
-                $record = $DB->get_record_sql($averagesql . ' AND qg.userid ' . $usql,
-                        array_merge($params, $uparams));
-                $groupaveragerow = array(
-                        $namekey => get_string('groupavg', 'grades'),
-                        'sumgrades' => $this->format_average($record),
-                        'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade(
-                                            $record->grade, $this->quiz->id, $this->context)));
-                if ($this->detailedmarks && ($this->quiz->attempts == 1 || $this->qmsubselect)) {
-                    $avggradebyq = $this->load_average_question_grades($this->groupstudents);
-                    $groupaveragerow += $this->format_average_grade_for_questions($avggradebyq);
-                }
-                $this->add_data_keyed($groupaveragerow);
-            }
+        // End of adding the data from attempts. Now add averages at bottom.
+        $this->add_separator();
 
-            if ($this->students) {
-                list($usql, $uparams) = $DB->get_in_or_equal($this->students);
-                $record = $DB->get_record_sql($averagesql . ' AND qg.userid ' . $usql,
-                        array_merge($params, $uparams));
-                $overallaveragerow = array(
-                        $namekey => get_string('overallaverage', 'grades'),
-                        'sumgrades' => $this->format_average($record),
-                        'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade(
-                                            $record->grade, $this->quiz->id, $this->context)));
-                if ($this->detailedmarks && ($this->quiz->attempts == 1 || $this->qmsubselect)) {
-                    $avggradebyq = $this->load_average_question_grades($this->students);
-                    $overallaveragerow += $this->format_average_grade_for_questions($avggradebyq);
-                }
-                $this->add_data_keyed($overallaveragerow);
-            }
+        if ($this->groupstudents) {
+            $this->add_average_row(get_string('groupavg', 'grades'), $this->groupstudents);
+        }
+
+        if ($this->students) {
+            $this->add_average_row(get_string('overallaverage', 'grades'), $this->students);
         }
     }
 
+    /**
+     * Add an average grade over the attempts of a set of users.
+     * @param string $label the title ot use for this row.
+     * @param array $users the users to average over.
+     */
+    protected function add_average_row($label, $users) {
+        global $DB;
+
+        list($fields, $from, $where, $params) = $this->base_sql($users);
+        $record = $DB->get_record_sql("
+                SELECT AVG(quiza.sumgrades) AS grade, COUNT(quiza.sumgrades) AS numaveraged
+                  FROM $from
+                 WHERE $where", $params);
+
+        if ($this->is_downloading()) {
+            $namekey = 'lastname';
+        } else {
+            $namekey = 'fullname';
+        }
+        $averagerow = array(
+            $namekey    => $label,
+            'sumgrades' => $this->format_average($record),
+            'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade(
+                                        $record->grade, $this->quiz->id, $this->context))
+        );
+
+        if ($this->detailedmarks) {
+            $dm = new question_engine_data_mapper();
+            $qubaids = new qubaid_join($from, 'quiza.uniqueid', $where, $params);
+            $avggradebyq = $dm->load_average_marks($qubaids, array_keys($this->questions));
+
+            $averagerow += $this->format_average_grade_for_questions($avggradebyq);
+        }
+
+        $this->add_data_keyed($averagerow);
+    }
+
+    /**
+     * Helper userd by {@link add_average_row()}.
+     * @param array $gradeaverages the raw grades.
+     * @return array the (partial) row of data.
+     */
     protected function format_average_grade_for_questions($gradeaverages) {
         $row = array();
+
         if (!$gradeaverages) {
             $gradeaverages = array();
         }
+
         foreach ($this->questions as $question) {
             if (isset($gradeaverages[$question->slot]) && $question->maxmark > 0) {
                 $record = $gradeaverages[$question->slot];
                 $record->grade = quiz_rescale_grade(
                         $record->averagefraction * $question->maxmark, $this->quiz, false);
+
             } else {
                 $record = new stdClass();
                 $record->grade = null;
                 $record->numaveraged = null;
             }
+
             $row['qsgrade' . $question->slot] = $this->format_average($record, true);
         }
+
         return $row;
     }
 
@@ -274,30 +289,6 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
         if ($this->detailedmarks && has_capability('mod/quiz:regrade', $this->context)) {
             $this->regradedqs = $this->get_regraded_questions();
         }
-    }
-
-    /**
-     * Load the average grade for each question, averaged over particular users.
-     * @param array $userids the user ids to average over.
-     */
-    protected function load_average_question_grades($userids) {
-        global $DB;
-
-        $qmfilter = '';
-        if ($this->quiz->attempts != 1) {
-            $qmfilter = '(' . quiz_report_qm_filter_select($this->quiz, 'quiza') . ') AND ';
-        }
-
-        list($usql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'u');
-        $params['quizid'] = $this->quiz->id;
-        $qubaids = new qubaid_join(
-                '{quiz_attempts} quiza',
-                'quiza.uniqueid',
-                "quiza.userid $usql AND quiza.quiz = :quizid",
-                $params);
-
-        $dm = new question_engine_data_mapper();
-        return $dm->load_average_marks($qubaids, array_keys($this->questions));
     }
 
     /**

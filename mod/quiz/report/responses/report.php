@@ -146,7 +146,8 @@ class quiz_responses_report extends quiz_attempt_report {
                 array('context' => $displaycoursecontext));
 
         $table = new quiz_report_responses_table($quiz, $this->context, $qmsubselect,
-                $groupstudents, $students, $questions, $includecheckboxes, $reporturl, $displayoptions);
+                $qmfilter, $attemptsmode, $groupstudents, $students, $questions,
+                $includecheckboxes, $reporturl, $displayoptions);
         $filename = quiz_report_download_filename(get_string('responsesfilename', 'quiz_responses'),
                 $courseshortname, $quiz->name);
         $table->is_downloading($download, $filename,
@@ -197,8 +198,7 @@ class quiz_responses_report extends quiz_attempt_report {
                 }
             }
 
-            list($fields, $from, $where, $params) =
-                    $this->base_sql($quiz, $qmsubselect, $qmfilter, $attemptsmode, $allowed);
+            list($fields, $from, $where, $params) = $table->base_sql($allowed);
 
             $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
 
