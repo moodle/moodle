@@ -165,7 +165,7 @@ class question_type {
      * If you use extra_question_fields, overload this function to return question id field name
      *  in case you table use another name for this column
      */
-    protected function questionid_column_name() {
+    public function questionid_column_name() {
         return 'questionid';
     }
 
@@ -176,7 +176,7 @@ class question_type {
      *
      * @return mixed array as above, or null to tell the base class to do nothing.
      */
-    protected function extra_answer_fields() {
+    public function extra_answer_fields() {
         return null;
     }
 
