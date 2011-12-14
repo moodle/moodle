@@ -6979,6 +6979,19 @@ FROM
         upgrade_main_savepoint(true, 2011120500.02);
     }
 
+    if ($oldversion < 2011121400.00) {
+
+        // Changing precision of field value on table user_preferences to (1333)
+        $table = new xmldb_table('user_preferences');
+        $field = new xmldb_field('value', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'name');
+
+        // Launch change of precision for field value
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011121400.00);
+    }
+
     return true;
 }
 
