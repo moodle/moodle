@@ -55,7 +55,7 @@ class quiz_responses_report extends quiz_attempt_report {
         $download = optional_param('download', '', PARAM_ALPHA);
 
         list($currentgroup, $students, $groupstudents, $allowed) =
-                $this->load_relevant_students($cm);
+                $this->load_relevant_students($cm, $course);
 
         $pageoptions = array();
         $pageoptions['id'] = $cm->id;

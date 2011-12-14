@@ -72,6 +72,7 @@ abstract class quiz_attempt_report extends quiz_default_report {
     /**
      * Get information about which students to show in the report.
      * @param object $cm the coures module.
+     * @param object $course the course settings.
      * @return an array with four elements:
      *      0 => integer the current group id (0 for none).
      *      1 => array ids of all the students in this course.
@@ -79,8 +80,12 @@ abstract class quiz_attempt_report extends quiz_default_report {
      *      3 => array ids of all the students to show in the report. Will be the
      *              same as either element 1 or 2.
      */
-    protected function load_relevant_students($cm) {
-        $currentgroup = groups_get_activity_group($cm, true);
+    protected function load_relevant_students($cm, $course = null) {
+        $currentgroup = $this->get_current_group($cm, $course, $this->context);
+
+        if ($currentgroup == self::NO_GROUPS_ALLOWED) {
+            return array($currentgroup, array(), array(), array());
+        }
 
         if (!$students = get_users_by_capability($this->context,
                 array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),
