@@ -93,24 +93,44 @@ class block_edit_form extends moodleform {
         $mform->addElement('static', 'bui_homecontext', get_string('createdat', 'block'), print_context_name($parentcontext));
         $mform->addHelpButton('bui_homecontext', 'createdat', 'block');
 
+        // For pre-calculated (fixed) pagetype lists
+        $pagetypelist = array();
+
         // parse pagetype patterns
         $bits = explode('-', $this->page->pagetype);
 
-        $contextoptions = array();
-        if ( ($parentcontext->contextlevel == CONTEXT_COURSE && $parentcontext->instanceid == SITEID) ||
-            ($parentcontext->contextlevel == CONTEXT_SYSTEM)) {        // Home page
-            if ($bits[0] == 'tag' || $bits[0] == 'admin') {
-                // tag and admin pages always use system context
-                // the contexts options don't make differences, so we use
-                // page type patterns only
-                $mform->addElement('hidden', 'bui_contexts', BUI_CONTEXTS_ENTIRE_SITE);
-            } else {
-                $contextoptions[BUI_CONTEXTS_FRONTPAGE_ONLY] = get_string('showonfrontpageonly', 'block');
-                $contextoptions[BUI_CONTEXTS_FRONTPAGE_SUBS] = get_string('showonfrontpageandsubs', 'block');
-                $contextoptions[BUI_CONTEXTS_ENTIRE_SITE]    = get_string('showonentiresite', 'block');
-                $mform->addElement('select', 'bui_contexts', get_string('contexts', 'block'), $contextoptions);
-                $mform->addHelpButton('bui_contexts', 'contexts', 'block');
-            }
+        // First of all, check if we are editing blocks @ front-page or no and
+        // make some dark magic if so (MDL-30340) because each page context
+        // implies one (and only one) harcoded page-type that will be set later
+        // when processing the form data at {@link block_manager::process_url_edit()}
+
+        // There are some conditions to check related to contexts
+        $ctxconditions = $this->page->context->contextlevel == CONTEXT_COURSE &&
+                         $this->page->context->instanceid == get_site()->id;
+        // And also some pagetype conditions
+        $pageconditions = isset($bits[0]) && isset($bits[1]) && $bits[0] == 'site' && $bits[1] == 'index';
+        // So now we can be 100% sure if edition is happening at frontpage
+        $editingatfrontpage = $ctxconditions && $pageconditions;
+
+        // Let the form to know about that, can be useful later
+        $mform->addElement('hidden', 'bui_editingatfrontpage', (int)$editingatfrontpage);
+
+        // Front page, show the page-contexts element and set $pagetypelist to 'any page' (*)
+        // as unique option. Processign the form will do any change if needed
+        if ($editingatfrontpage) {
+            $contextoptions = array();
+            $contextoptions[BUI_CONTEXTS_FRONTPAGE_ONLY] = get_string('showonfrontpageonly', 'block');
+            $contextoptions[BUI_CONTEXTS_FRONTPAGE_SUBS] = get_string('showonfrontpageandsubs', 'block');
+            $contextoptions[BUI_CONTEXTS_ENTIRE_SITE]    = get_string('showonentiresite', 'block');
+            $mform->addElement('select', 'bui_contexts', get_string('contexts', 'block'), $contextoptions);
+            $mform->addHelpButton('bui_contexts', 'contexts', 'block');
+            $pagetypelist['*'] = '*'; // This is not going to be shown ever, it's an unique option
+
+        // Any other system context block, hide the page-contexts element,
+        // it's always system-wide BUI_CONTEXTS_ENTIRE_SITE
+        } else if ($parentcontext->contextlevel == CONTEXT_SYSTEM) {
+            $mform->addElement('hidden', 'bui_contexts', BUI_CONTEXTS_ENTIRE_SITE);
+
         } else if ($parentcontext->contextlevel == CONTEXT_COURSE) {
             // 0 means display on current context only, not child contexts
             // but if course managers select mod-* as pagetype patterns, block system will overwrite this option
@@ -126,12 +146,10 @@ class block_edit_form extends moodleform {
             $mform->addElement('select', 'bui_contexts', get_string('contexts', 'block'), $contextoptions);
         }
 
-        $displaypagetypewarning = false;
-        if ($this->page->pagetype == 'site-index') {   // No need for pagetype list on home page
-            $pagetypelist = array('*'=>get_string('page-x', 'pagetype'));
-        } else {
-            // Generate pagetype patterns by callbacks
+        // Generate pagetype patterns by callbacks if necessary (has not been set specifically)
+        if (empty($pagetypelist)) {
             $pagetypelist = generate_page_type_patterns($this->page->pagetype, $parentcontext, $this->page->context);
+            $displaypagetypewarning = false;
             if (!array_key_exists($this->block->instance->pagetypepattern, $pagetypelist)) {
                 // Pushing block's existing page type pattern
                 $pagetypestringname = 'page-'.str_replace('*', 'x', $this->block->instance->pagetypepattern);
@@ -156,6 +174,25 @@ class block_edit_form extends moodleform {
         } else {
             $value = array_pop(array_keys($pagetypelist));
             $mform->addElement('hidden', 'bui_pagetypepattern', $value);
+            // Now we are really hiding a lot (both page-contexts and page-type-patterns),
+            // specially in some systemcontext pages having only one option (my/user...)
+            // so, until it's decided if we are going to add the 'bring-back' pattern to
+            // all those pages or no (see MDL-30574), we are going to show the unique
+            // element statically
+            // TODO: Revisit this once MDL-30574 has been decided and implemented, although
+            // perhaps it's not bad to always show this statically when only one pattern is
+            // available.
+            if (!$editingatfrontpage) {
+                // Try to beautify it
+                $strvalue = $value;
+                $strkey = 'page-'.str_replace('*', 'x', $strvalue);
+                if (get_string_manager()->string_exists($strkey, 'pagetype')) {
+                    $strvalue = get_string($strkey, 'pagetype');
+                }
+                // Show as static (hidden has been set already)
+                $mform->addElement('static', 'bui_staticpagetypepattern',
+                    get_string('restrictpagetypes','block'), $strvalue);
+            }
         }
 
         if ($this->page->subpage) {
