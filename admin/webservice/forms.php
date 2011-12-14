@@ -182,16 +182,25 @@ class web_service_token_form extends moodleform {
         $mform->addElement('header', 'token', get_string('token', 'webservice'));
 
         if (empty($data->nouserselection)) {
-            //user searchable selector - get all users (admin and guest included)
-            $sql = "SELECT u.id, u.firstname, u.lastname
-            FROM {user} u
-            ORDER BY u.lastname";
-            $users = $DB->get_records_sql($sql, array());
-            $options = array();
-            foreach ($users as $userid => $user) {
-                $options[$userid] = $user->firstname . " " . $user->lastname;
+
+            //check if the number of user is reasonable to be displayed in a select box
+            $usertotal = $DB->count_records('user',
+                    array('deleted' => 0, 'suspended' => 0, 'confirmed' => 1));
+
+            if ($usertotal < 500) {
+                //user searchable selector - get all users (admin and guest included)
+                $users = $DB->get_records('user',
+                        array('deleted' => 0, 'suspended' => 0, 'confirmed' => 1), 'lastname',
+                        'id, firstname, lastname');
+                $options = array();
+                foreach ($users as $userid => $user) {
+                    $options[$userid] = $user->firstname . " " . $user->lastname;
+                }
+                $mform->addElement('searchableselector', 'user', get_string('user'), $options);
+            } else {
+                //simple text box for username or user id (if two username exists, a form error is displayed)
+                $mform->addElement('text', 'user', get_string('usernameorid', 'webservice'));
             }
-            $mform->addElement('searchableselector', 'user', get_string('user'), $options);
             $mform->addRule('user', get_string('required'), 'required', null, 'client');
         }
 
@@ -225,8 +234,44 @@ class web_service_token_form extends moodleform {
         $this->set_data($data);
     }
 
-    function validation($data, $files) {
+    function get_data() {
+        global $DB;
+        $data = parent::get_data();
+
+        if (!empty($data) && !is_numeric($data->user)) {
+            //retrieve username
+            $user = $DB->get_record('user', array('username' => $data->user), 'id');
+            $data->user = $user->id;
+        }
+        return $data;
+    }
+
+    function validation(&$data, $files) {
+        global $DB;
+
         $errors = parent::validation($data, $files);
+
+        if (is_numeric($data['user'])) {
+            $searchtype = 'id';
+        } else {
+            $searchtype = 'username';
+            //check the username is valid
+            if (clean_param($data['user'], PARAM_USERNAME) != $data['user']) {
+                $errors['user'] = get_string('invalidusername');
+            }
+        }
+
+        if (!isset($errors['user'])) {
+            $users = $DB->get_records('user', array($searchtype => $data['user']), '', 'id');
+
+            //check that the user exists in the database
+            if (count($users) == 0) {
+                $errors['user'] = get_string('usernameoridnousererror', 'webservice');
+            } else if (count($users) > 1) { //can only be a username search as id are unique
+                $errors['user'] = get_string('usernameoridoccurenceerror', 'webservice');
+            }
+        }
+
         return $errors;
     }
 
