@@ -7770,35 +7770,48 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
     return $plugins;
 }
 
+/**
+* invoke plugin's callback functions
+*
+* @param string $type Plugin type e.g. 'mod'
+* @param string $name Plugin name
+* @param string $feature Feature name
+* @param string $action Feature's action
+* @param array $params parameters of callback function, should be an array
+* @param mixed $default default value if callback function hasn't been defined, or if it retursn null.
+* @return mixed
+*/
+function plugin_callback($type, $name, $feature, $action, $params = null, $default = null) {
+    return component_callback($type . '_' . $name, $feature . '_' . $action, (array) $params, $default);
+}
 
 /**
  * invoke plugin's callback functions
  *
- * @param string $type Plugin type e.g. 'mod'
- * @param string $name Plugin name
- * @param string $feature Feature name
- * @param string $action Feature's action
- * @param string $options parameters of callback function, should be an array
- * @param mixed $default default value if callback function hasn't been defined
+ * @param string $component frankenstyle component name, e.g. 'mod_quiz'
+ * @param string $function the rest of the function name, e.g. 'cron' will end up calling 'mod_quiz_cron'
+ * @param array $params parameters of callback function
+ * @param mixed $default default value if callback function hasn't been defined, or if it retursn null.
  * @return mixed
  */
-function plugin_callback($type, $name, $feature, $action, $options = null, $default=null) {
+function component_callback($component, $function, array $params = array(), $default = null) {
     global $CFG; // this is needed for require_once() bellow
 
-    $component = clean_param($type . '_' . $name, PARAM_COMPONENT);
-    if (empty($component)) {
-        throw new coding_exception('Invalid component used in plugin_callback():' . $type . '_' . $name);
+    $cleancomponent = clean_param($component, PARAM_COMPONENT);
+    if (empty($cleancomponent)) {
+        throw new coding_exception('Invalid component used in plugin_callback():' . $component);
     }
+    $component = $cleancomponent;
 
     list($type, $name) = normalize_component($component);
     $component = $type . '_' . $name;
 
-    $function = $component.'_'.$feature.'_'.$action;
-    $oldfunction = $name.'_'.$feature.'_'.$action;
+    $oldfunction = $name.'_'.$function;
+    $function = $component.'_'.$function;
 
     $dir = get_component_directory($component);
     if (empty($dir)) {
-        throw new coding_exception('Invalid component used in plugin_callback():' . $type . '_' . $name);
+        throw new coding_exception('Invalid component used in plugin_callback():' . $component);
     }
 
     // Load library and look for function
@@ -7815,7 +7828,7 @@ function plugin_callback($type, $name, $feature, $action, $options = null, $defa
 
     if (function_exists($function)) {
         // Function exists, so just return function result
-        $ret = call_user_func_array($function, (array)$options);
+        $ret = call_user_func_array($function, $params);
         if (is_null($ret)) {
             return $default;
         } else {
