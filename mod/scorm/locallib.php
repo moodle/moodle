@@ -1031,8 +1031,8 @@ function scorm_element_cmp($a, $b) {
  * @param object $scorm a moodle scrom object - mdl_scorm
  * @return string - Attempt status string
  */
-function scorm_get_attempt_status($user, $scorm) {
-    global $DB;
+function scorm_get_attempt_status($user, $scorm, $cm='') {
+    global $DB, $PAGE, $OUTPUT;
 
     $attempts = scorm_get_attempt_count($user->id, $scorm, true);
     if (empty($attempts)) {
@@ -1108,6 +1108,17 @@ function scorm_get_attempt_status($user, $scorm) {
     if ($attemptcount >= $scorm->maxattempt and $scorm->maxattempt > 0) {
         $result .= '<p><font color="#cc0000">'.get_string('exceededmaxattempts', 'scorm').'</font></p>';
     }
+    if (!empty($cm)) {
+        $context = context_module::instance($cm->id);
+        if (has_capability('mod/scorm:deleteownresponses', $context) &&
+            $DB->record_exists('scorm_scoes_track', array('userid' => $user->id, 'scormid' => $scorm->id))) {
+            //check to see if any data is stored for this user:
+            $deleteurl = new moodle_url($PAGE->url, array('action'=>'delete', 'sesskey' => sesskey()));
+            $result .= $OUTPUT->single_button($deleteurl, get_string('deleteallattempts', 'scorm'));
+        }
+    }
+
+
     return $result;
 }
 
