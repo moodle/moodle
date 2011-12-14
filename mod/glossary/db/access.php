@@ -41,7 +41,7 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         )
-    ),
+    ),   
 
 
     'mod/glossary:write' => array(
