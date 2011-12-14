@@ -7315,22 +7315,24 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
 }
 
 /**
-* invoke plugin's callback functions
+* Invoke plugin's callback functions
 *
-* @param string $type Plugin type e.g. 'mod'
-* @param string $name Plugin name
-* @param string $feature Feature name
-* @param string $action Feature's action
+* @param string $type plugin type e.g. 'mod'
+* @param string $name plugin name
+* @param string $feature feature name
+* @param string $action feature's action
 * @param array $params parameters of callback function, should be an array
 * @param mixed $default default value if callback function hasn't been defined, or if it retursn null.
 * @return mixed
+*
+* @todo Decide about to deprecate and drop plugin_callback() - MDL-30743
 */
 function plugin_callback($type, $name, $feature, $action, $params = null, $default = null) {
     return component_callback($type . '_' . $name, $feature . '_' . $action, (array) $params, $default);
 }
 
 /**
- * invoke plugin's callback functions
+ * Invoke component's callback functions
  *
  * @param string $component frankenstyle component name, e.g. 'mod_quiz'
  * @param string $function the rest of the function name, e.g. 'cron' will end up calling 'mod_quiz_cron'
@@ -7343,7 +7345,7 @@ function component_callback($component, $function, array $params = array(), $def
 
     $cleancomponent = clean_param($component, PARAM_SAFEDIR);
     if (empty($cleancomponent)) {
-        throw new coding_exception('Invalid component used in plugin_callback():' . $component);
+        throw new coding_exception('Invalid component used in plugin/component_callback():' . $component);
     }
     $component = $cleancomponent;
 
@@ -7355,7 +7357,7 @@ function component_callback($component, $function, array $params = array(), $def
 
     $dir = get_component_directory($component);
     if (empty($dir)) {
-        throw new coding_exception('Invalid component used in plugin_callback():' . $component);
+        throw new coding_exception('Invalid component used in plugin/component_callback():' . $component);
     }
 
     // Load library and look for function
