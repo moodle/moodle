@@ -851,7 +851,11 @@ ORDER BY
      * @return string SQL code for the subquery.
      */
     public function sum_usage_marks_subquery($qubaid) {
-        return "SELECT SUM(qa.maxmark * qas.fraction)
+        // To explain the COALESCE in the following SQL: SUM(lots of NULLs) gives
+        // NULL, while SUM(one 0.0 and lots of NULLS) gives 0.0. We don't want that.
+        // We always want to return a number, so the COALESCE is there to turn the
+        // NULL total into a 0.
+        return "SELECT COALESCE(SUM(qa.maxmark * qas.fraction), 0)
             FROM {question_attempts} qa
             JOIN {question_attempt_steps} qas ON qas.id = (
                 SELECT MAX(summarks_qas.id)
