@@ -73,7 +73,11 @@ class restore_qtype_multichoice_plugin extends restore_qtype_plugin {
             // Adjust some columns
             $data->question = $newquestionid;
             // Map sequence of question_answer ids
-            $answersarr = explode(',', $data->answers);
+            if ($data->answers) {
+                $answersarr = explode(',', $data->answers);
+            } else {
+                $answersarr = array();
+            }
             foreach ($answersarr as $key => $answer) {
                 $answersarr[$key] = $this->get_mappingid('question_answer', $answer);
             }
