@@ -360,7 +360,7 @@ function process_group_tag($tagcontents) {
                 } else {
                     // Set shortname to description or description to shortname if one is set but not the other.
                     $nodescription = !isset($group->description);
-                    $noshortname = !isset($group->shortname);
+                    $noshortname = !isset($group->shortName);
                     if ( $nodescription && $noshortname) {
                         // If neither short nor long description are set let if fail
                         $this->log_line("Neither long nor short name are set for $coursecode");
