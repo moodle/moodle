@@ -645,36 +645,28 @@ function mnet_profile_field_options() {
 
 
 /**
- * Return information about all the current hosts
- * This is basically just a resultset.
+ * Returns information about MNet peers
  *
+ * @param bool $withdeleted should the deleted peers be returned too
  * @return array
  */
-function mnet_get_hosts() {
+function mnet_get_hosts($withdeleted = false) {
     global $CFG, $DB;
-    return $DB->get_records_sql('  SELECT
-                                    h.id,
-                                    h.wwwroot,
-                                    h.ip_address,
-                                    h.name,
-                                    h.public_key,
-                                    h.public_key_expires,
-                                    h.transport,
-                                    h.portno,
-                                    h.last_connect_time,
-                                    h.last_log_id,
-                                    h.applicationid,
-                                    a.name as app_name,
-                                    a.display_name as app_display_name,
-                                    a.xmlrpc_server_url
-                                FROM
-                                    {mnet_host} h,
-                                    {mnet_application} a
-                                WHERE
-                                    h.id <> ? AND
-                                    h.deleted = 0 AND
-                                    h.applicationid=a.id',
-                        array($CFG->mnet_localhost_id));
+
+    $sql = "SELECT h.id, h.deleted, h.wwwroot, h.ip_address, h.name, h.public_key, h.public_key_expires,
+                   h.transport, h.portno, h.last_connect_time, h.last_log_id, h.applicationid,
+                   a.name as app_name, a.display_name as app_display_name, a.xmlrpc_server_url
+              FROM {mnet_host} h
+              JOIN {mnet_application} a ON h.applicationid = a.id
+             WHERE h.id <> ?";
+
+    if (!$withdeleted) {
+        $sql .= "  AND h.deleted = 0";
+    }
+
+    $sql .= " ORDER BY h.deleted, h.name, h.id";
+
+    return $DB->get_records_sql($sql, array($CFG->mnet_localhost_id));
 }
 
 
