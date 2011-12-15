@@ -211,9 +211,9 @@ class scorm_interactions_report extends scorm_default_report {
                 $table->sortable(true);
                 $table->collapsible(true);
 
+                // This is done to prevent redundant data, when a user has multiple attempts
                 $table->column_suppress('picture');
                 $table->column_suppress('fullname');
-                // This is done to prevent redundant data, when a user has multiple attempts
                 foreach ($extrafields as $field) {
                     $table->column_suppress($field);
                 }
