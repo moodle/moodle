@@ -38,9 +38,10 @@ class mnet_simple_host_form extends moodleform {
 
         $mform = $this->_form;
 
-        $mform->addElement('text', 'wwwroot', get_string('hostname', 'mnet'));
+        $mform->addElement('text', 'wwwroot', get_string('hostname', 'mnet'), array('maxlength' => 255, 'size' => 50));
         $mform->setType('wwwroot', PARAM_URL);
         $mform->addRule('wwwroot', null, 'required', null, 'client');
+        $mform->addRule('wwwroot', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $mform->addElement('select', 'applicationid', get_string('applicationtype', 'mnet'),
                            $DB->get_records_menu('mnet_application', array(), 'id,display_name'));
@@ -81,11 +82,13 @@ class mnet_review_host_form extends moodleform {
         $mform->addElement('hidden', 'applicationid');
         $mform->addElement('hidden', 'oldpublickey');
 
-        $mform->addElement('text', 'name', get_string('site'));
+        $mform->addElement('text', 'name', get_string('site'), array('maxlength' => 80, 'size' => 50));
         $mform->setType('name', PARAM_NOTAGS);
+        $mform->addRule('name', get_string('maximumchars', '', 80), 'maxlength', 80, 'client');
 
-        $mform->addElement('text', 'wwwroot', get_string('hostname', 'mnet'));
+        $mform->addElement('text', 'wwwroot', get_string('hostname', 'mnet'), array('maxlength' => 255, 'size' => 50));
         $mform->setType('wwwroot', PARAM_URL);
+        $mform->addRule('wwwroot', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $themes = array('' => get_string('forceno'));
         foreach (array_keys(get_plugin_list('theme')) as $themename) {
