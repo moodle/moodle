@@ -85,7 +85,7 @@ class quiz_statistics_report extends quiz_default_report {
         }
 
         // Find out current groups mode
-        $currentgroup = $this->get_current_group($cm, $course, $context);
+        $currentgroup = $this->get_current_group($cm, $course, $this->context);
         $nostudentsingroup = false; // True if a group is selected and there is no one in it.
         if (empty($currentgroup)) {
             $currentgroup = 0;
