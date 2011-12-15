@@ -96,15 +96,6 @@ class mnet_review_host_form extends moodleform {
         $mform->addElement('textarea', 'public_key', get_string('publickey', 'mnet'), array('rows' => 17, 'cols' => 100, 'class' => 'smalltext'));
         $mform->setType('public_key', PARAM_PEM);
 
-        if ($mnet_peer && !empty($mnet_peer->deleted)) {
-            $radioarray = array();
-            $radioarray[] = MoodleQuickForm::createElement('radio', 'deleted', '', get_string('yes'), 1);
-            $radioarray[] = MoodleQuickForm::createElement('radio', 'deleted', '', get_string('no'), 0);
-            $mform->addGroup($radioarray, 'radioar', get_string('deleted'), array(' '), false);
-        } else {
-            $mform->addElement('hidden', 'deleted');
-        }
-
         // finished with form controls, now the static informational stuff
         if ($mnet_peer && !empty($mnet_peer->bootstrapped)) {
             $expires = '';
@@ -140,7 +131,19 @@ class mnet_review_host_form extends moodleform {
                 }
             }
 
-            $mform->addElement('static', 'certdetails', get_string('certdetails', 'mnet'), $OUTPUT->box('<pre>' . $credstr . '</pre>'));
+            $mform->addElement('static', 'certdetails', get_string('certdetails', 'mnet'),
+                $OUTPUT->box('<pre>' . $credstr . '</pre>', 'generalbox certdetails'));
+        }
+
+        if ($mnet_peer && !empty($mnet_peer->deleted)) {
+            $radioarray = array();
+            $radioarray[] = MoodleQuickForm::createElement('static', 'deletedinfo', '',
+                $OUTPUT->container(get_string('deletedhostinfo', 'mnet'), 'deletedhostinfo'));
+            $radioarray[] = MoodleQuickForm::createElement('radio', 'deleted', '', get_string('yes'), 1);
+            $radioarray[] = MoodleQuickForm::createElement('radio', 'deleted', '', get_string('no'), 0);
+            $mform->addGroup($radioarray, 'radioar', get_string('deleted'), array(' ', ' '), false);
+        } else {
+            $mform->addElement('hidden', 'deleted');
         }
 
         // finished with static stuff, print save button
