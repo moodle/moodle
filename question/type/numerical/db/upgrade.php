@@ -70,12 +70,14 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
 
         // Set a better default for questions without units.
         $DB->execute('
-                UPDATE {question_numerical_options} qno
+                UPDATE {question_numerical_options}
                    SET showunits = 3
                  WHERE NOT EXISTS (
-                         SELECT 1
-                           FROM {question_numerical_units} qnu
-                          WHERE qnu.question = qno.question)');
+                     SELECT 1
+                       FROM {question_numerical_units}
+                      WHERE {question_numerical_units}.question =
+                                    {question_numerical_options}.question
+                 )');
 
         upgrade_plugin_savepoint(true, 2009100100, 'qtype', 'numerical');
     }
