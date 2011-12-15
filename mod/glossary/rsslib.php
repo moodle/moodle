@@ -23,7 +23,8 @@
                 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
             }
             //context id from db should match the submitted one
-            if ($context->id != $modcontext->id || !has_capability('mod/glossary:read', $modcontext)) {
+            //no specific capability required to view glossary entries so just check user is enrolled
+            if ($context->id != $modcontext->id || !can_access_course($course, $USER)) {
                 return null;
             }
         }
