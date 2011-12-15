@@ -51,7 +51,7 @@ class entities11 extends entities {
                 if (in_array($ext, array('html', 'htm', 'xhtml'))) {
                     continue;
                 }
-                $all_files[] = $file;
+                $all_files[] = $file->nodeValue;
             }
             unset($files);
         }
@@ -62,8 +62,8 @@ class entities11 extends entities {
         if (!empty($labels) && ($labels->length > 0)) {
             $tname = 'course_files';
             $dpath = cc2moodle::$path_to_manifest_folder . DIRECTORY_SEPARATOR . $tname;
+            $rfpath = 'folder.gif';
             $fpath = $dpath . DIRECTORY_SEPARATOR . 'folder.gif';
-            $rfpath = $tname.'/folder.gif';
             if (!file_exists($dpath)) {
                 mkdir($dpath);
             }
