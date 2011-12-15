@@ -240,7 +240,8 @@ foreach($hosts as $host) {
     }
     // process all hosts first since it's the easiest
     if ($host->id == $CFG->mnet_all_hosts_id) {
-        $table->data[] = array(html_writer::tag('a', $host->name, array('href'=>$hosturl)), '', '', '');
+        $table->data[] = array(html_writer::link($hosturl, get_string('allhosts', 'core_mnet')), '*', '', '');
+        continue;
     }
 
     // populate the list of deleted hosts
@@ -252,11 +253,11 @@ foreach($hosts as $host) {
     if ($host->last_connect_time == 0) {
         $last_connect = get_string('never');
     } else {
-        $last_connect = date('H:i:s d/m/Y', $host->last_connect_time);
+        $last_connect = userdate($host->last_connect_time, get_string('strftimedatetime', 'core_langconfig'));
     }
     $table->data[] = array(
         html_writer::link($hosturl, $host->name),
-        html_writer::link($hosturl, $host->wwwroot),
+        html_writer::link($host->wwwroot, $host->wwwroot),
         $last_connect,
         $OUTPUT->single_button(new moodle_url('/admin/mnet/delete.php', array('hostid' => $host->id)), get_string('delete'))
     );
