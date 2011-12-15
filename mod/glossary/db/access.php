@@ -30,7 +30,7 @@
 
 $capabilities = array(
 
-    'mod/glossary:view' => array(
+    'mod/glossary:read' => array(
 
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
@@ -41,7 +41,7 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         )
-    ),
+    ),   
 
 
     'mod/glossary:write' => array(
