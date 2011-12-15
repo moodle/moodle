@@ -323,7 +323,7 @@ function glossary_user_complete($course, $user, $mod, $glossary) {
  * @return bool
  */
 function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
-    global $CFG, $USER, $DB, $OUTPUT, $PAGE;
+    global $CFG, $USER, $DB, $OUTPUT;
 
     //TODO: use timestamp in approved field instead of changing timemodified when approving in 2.0
     if (!defined('GLOSSARY_RECENT_ACTIVITY_LIMIT')) {
@@ -351,9 +351,6 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
     $approvals = array();
     foreach ($ids as $glinstanceid => $glcmid) {
         $context = get_context_instance(CONTEXT_MODULE, $glcmid);
-        if (!has_capability('mod/glossary:view', $context)) {
-            continue;
-        }
         // get records glossary entries that are approved if user has no capability to approve entries.
         if (has_capability('mod/glossary:approve', $context)) {
             $approvals[] = ' ge.glossaryid = :glsid'.$glinstanceid.' ';
@@ -361,7 +358,6 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
             $approvals[] = ' (ge.approved = 1 AND ge.glossaryid = :glsid'.$glinstanceid.') ';
         }
         $params['glsid'.$glinstanceid] = $glinstanceid;
-
     }
 
     $selectsql = 'SELECT ge.id, ge.concept, ge.approved, ge.timemodified, ge.glossaryid,
@@ -373,12 +369,11 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
     $fromsql = implode($joins, "\n");
 
     $params['timestart'] = $timestart;
-    $clausesql = ' WHERE ge.timemodified > :timestart ';
+    $clausesql = ' WHERE ge.timemodified > :timestart AND (';
+    $approvalsql = implode($approvals, ' OR ');
 
-    if (count($approval) > 0) {
-        $approvalsql = 'AND ('. implode($approvals, ' OR ') .') ';
-    }
-    $ordersql = 'ORDER BY ge.timemodified ASC';
+    $ordersql = ') ORDER BY ge.timemodified ASC';
+
     $entries = $DB->get_records_sql($selectsql.$fromsql.$clausesql.$approvalsql.$ordersql, $params, 0, (GLOSSARY_RECENT_ACTIVITY_LIMIT+1));
 
     if (empty($entries)) {
@@ -2776,7 +2771,7 @@ function glossary_extend_settings_navigation(settings_navigation $settings, navi
 
     $glossary = $DB->get_record('glossary', array("id" => $PAGE->cm->instance));
 
-    if (!empty($CFG->enablerssfeeds) && !empty($CFG->glossary_enablerssfeeds) && $glossary->rsstype && $glossary->rssarticles && has_capability('mod/glossary:view', $PAGE->cm->context)) {
+    if (!empty($CFG->enablerssfeeds) && !empty($CFG->glossary_enablerssfeeds) && $glossary->rsstype && $glossary->rssarticles  && can_access_course($PAGE->course, $USER)) {
         require_once("$CFG->libdir/rsslib.php");
 
         $string = get_string('rsstype','forum');
