@@ -620,7 +620,7 @@ class assignment_base {
 
         if (is_null($mailinfo)) {
             if (optional_param('sesskey', null, PARAM_BOOL)) {
-                set_user_preference('assignment_mailinfo', $mailinfo);
+                set_user_preference('assignment_mailinfo', 0);
             } else {
                 $mailinfo = get_user_preferences('assignment_mailinfo', 0);
             }
