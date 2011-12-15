@@ -1481,6 +1481,14 @@ function question_get_all_capabilities() {
     return $caps;
 }
 
+
+/**
+ * Tracks all the contexts related to the one where we are currently editing
+ * questions, and provides helper methods to check permissions.
+ *
+ * @copyright 2007 Jamie Pratt me@jamiep.org
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_edit_contexts {
 
     public static $caps = array(
@@ -1507,28 +1515,27 @@ class question_edit_contexts {
     protected $allcontexts;
 
     /**
-     * @param current context
+     * Constructor
+     * @param context the current context.
      */
-    public function __construct($thiscontext) {
-        $pcontextids = get_parent_contexts($thiscontext);
-        $contexts = array($thiscontext);
-        foreach ($pcontextids as $pcontextid) {
-            $contexts[] = get_context_instance_by_id($pcontextid);
-        }
-        $this->allcontexts = $contexts;
+    public function __construct(context $thiscontext) {
+        $this->allcontexts = array_values($thiscontext->get_parent_contexts(true));
     }
+
     /**
      * @return array all parent contexts
      */
     public function all() {
         return $this->allcontexts;
     }
+
     /**
      * @return object lowest context which must be either the module or course context
      */
     public function lowest() {
         return $this->allcontexts[0];
     }
+
     /**
      * @param string $cap capability
      * @return array parent contexts having capability, zero based index
@@ -1542,6 +1549,7 @@ class question_edit_contexts {
         }
         return $contextswithcap;
     }
+
     /**
      * @param array $caps capabilities
      * @return array parent contexts having at least one of $caps, zero based index
@@ -1558,6 +1566,7 @@ class question_edit_contexts {
         }
         return $contextswithacap;
     }
+
     /**
      * @param string $tabname edit tab name
      * @return array parent contexts having at least one of $caps, zero based index
@@ -1565,6 +1574,7 @@ class question_edit_contexts {
     public function having_one_edit_tab_cap($tabname) {
         return $this->having_one_cap(self::$caps[$tabname]);
     }
+
     /**
      * Has at least one parent context got the cap $cap?
      *
@@ -1634,6 +1644,7 @@ class question_edit_contexts {
         }
     }
 }
+
 
 /**
  * Helps call file_rewrite_pluginfile_urls with the right parameters.
