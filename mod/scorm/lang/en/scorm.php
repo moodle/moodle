@@ -261,6 +261,7 @@ $string['scormloggingoff'] = 'API logging is off';
 $string['scormloggingon'] = 'API logging is on';
 $string['scormopen'] = 'Open';
 $string['scormresponsedeleted'] = 'Deleted user attempts';
+$string['scorm:deleteownresponses'] = 'Delete own attempts';
 $string['scorm:savetrack'] = 'Save tracks';
 $string['scorm:skipview'] = 'Skip overview';
 $string['scormtype'] = 'Type';
