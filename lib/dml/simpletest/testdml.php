@@ -914,6 +914,17 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($DB->execute($sql, array('3')));
         $this->assertEqual($DB->count_records($tablename1, array('course' => 6)), 2);
 
+        // update records with subquery condition
+        // confirm that the option not using table aliases is cross-db
+        $sql = "UPDATE {{$tablename1}}
+                   SET course = 0
+                 WHERE NOT EXISTS (
+                           SELECT course
+                             FROM {{$tablename2}} tbl2
+                            WHERE tbl2.course = {{$tablename1}}.course
+                              AND 1 = 0)"; // Really we don't update anything, but verify the syntax is allowed
+        $this->assertTrue($DB->execute($sql));
+
         // insert from one into second table
         $sql = "INSERT INTO {{$tablename2}} (course)
 
