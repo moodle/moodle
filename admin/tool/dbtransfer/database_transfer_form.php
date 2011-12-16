@@ -57,6 +57,8 @@ class database_transfer_form extends moodleform {
         $mform->addElement('text', 'dbuser', get_string('user'));
         $mform->addElement('text', 'dbpass', get_string('password'));
         $mform->addElement('text', 'prefix', get_string('dbprefix', 'install'));
+        $mform->addElement('text', 'dbport', get_string('dbport', 'install'));
+        $mform->addElement('text', 'dbsocket', get_string('databasesocket', 'install'));
 
         $mform->addRule('dbhost', get_string('required'), 'required', null);
         $mform->addRule('dbname', get_string('required'), 'required', null);
