@@ -23,7 +23,7 @@
     $showlastaccess = true;
     $hiddenfields = explode(',', $CFG->hiddenuserfields);
 
-    if (array_search('lastaccess', $hiddenfields) and !has_capability('moodle/user:viewhiddendetails', $coursecontext)) {
+    if (array_search('lastaccess', $hiddenfields) and !has_capability('moodle/user:viewhiddendetails', $context)) {
         $showlastaccess = false;
     }
 
