@@ -40,6 +40,7 @@ $string['databasehost'] = 'Datenbank-Server';
 $string['databasename'] = 'Datenbank-Name';
 $string['databasetypehead'] = 'Datenbank-Treiber wählen';
 $string['dataroot'] = 'Datenverzeichnis';
+$string['datarootpermission'] = 'Zugriffsrechte zum Datenverzeichnis';
 $string['dbprefix'] = 'Tabellen-Prefix';
 $string['dirroot'] = 'Moodle-Verzeichnis';
 $string['environmenthead'] = 'Installationsvoraussetzungen werden geprüft ...';
