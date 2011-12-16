@@ -40,7 +40,14 @@ if ($data = $form->get_data()) {
     // Connect to the other database.
     list($dbtype, $dblibrary) = explode('/', $data->driver);
     $targetdb = moodle_database::get_driver_instance($dbtype, $dblibrary);
-    if (!$targetdb->connect($data->dbhost, $data->dbuser, $data->dbpass, $data->dbname, $data->prefix, null)) {
+    $dboptions = array();
+    if ($data->dbport) {
+        $dboptions['dbport'] = $data->dbport;
+    }
+    if ($data->dbsocket) {
+        $dboptions['dbsocket'] = $data->dbsocket;
+    }
+    if (!$targetdb->connect($data->dbhost, $data->dbuser, $data->dbpass, $data->dbname, $data->prefix, $dboptions)) {
         throw new dbtransfer_exception('notargetconectexception', null, "$CFG->wwwroot/$CFG->admin/tool/dbtransfer/");
     }
     if ($targetdb->get_tables()) {
