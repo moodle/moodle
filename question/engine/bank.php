@@ -42,6 +42,8 @@ require_once(dirname(__FILE__) . '/../type/questiontypebase.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class question_bank {
+    const MAX_SUMMARY_LENGTH = 65000;
+
     /** @var array question type name => question_type subclass. */
     private static $questiontypes = array();
 
