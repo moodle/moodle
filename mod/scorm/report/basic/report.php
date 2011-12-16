@@ -519,17 +519,18 @@ class scorm_basic_report extends scorm_default_report {
                         echo '</tr></table>';
                     }
                 }
-                if (!$download) {
-                    $mform->set_data(compact('detailedrep', 'pagesize', 'attemptsmode'));
-                    $mform->display();
-                }
             } else {
                 if ($candelete && !$download) {
                     echo '</div>';
                     echo '</form>';
+                    $table->finish_output();
                 }
                 echo '</div>';
-                echo $OUTPUT->notification(get_string('noactivity', 'scorm'));
+            }
+            // Show preferences form irrespective of attempts are there to report or not
+            if (!$download) {
+                $mform->set_data(compact('detailedrep', 'pagesize', 'attemptsmode'));
+                $mform->display();
             }
             if ($download == 'Excel' or $download == 'ODS') {
                 $workbook->close();
