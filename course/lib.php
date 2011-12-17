@@ -3174,7 +3174,7 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
                         ' alt="'.$str->moveright.'" /></a>'."\n";
         }
     }
-    if (has_capability('moodle/course:managegroups', $modcontext)){
+    if (has_capability('moodle/role:assign', $modcontext)){
         $context = get_context_instance(CONTEXT_MODULE, $mod->id);
         $assign = '<a class="editing_assign" title="'.$str->assign.'" href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.
             $context->id.'"><img src="'.$OUTPUT->pix_url('i/roles') . '" alt="'.$str->assign.'" class="iconsmall"/></a>';
