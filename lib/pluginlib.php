@@ -47,6 +47,8 @@ class plugin_manager {
     const PLUGIN_STATUS_NEW         = 'new';
     /** the plugin is about to be upgraded */
     const PLUGIN_STATUS_UPGRADE     = 'upgrade';
+    /** the standard plugin is about to be deleted */
+    const PLUGIN_STATUS_DELETE     = 'delete';
     /** the version at the disk is lower than the one already installed */
     const PLUGIN_STATUS_DOWNGRADE   = 'downgrade';
     /** the plugin is installed but missing from disk */
@@ -290,8 +292,31 @@ class plugin_manager {
     }
 
     /**
+     * Defines a list of all plugins that were originally shipped in the standard Moodle distribution,
+     * but are not anymore and are deleted during upgrades.
+     *
+     * The main purpose of this list is to hide missing plugins during upgrade.
+     *
+     * @param string $type plugin type
+     * @param string $name plugin name
+     * @return bool
+     */
+    public static function is_deleted_standard_plugin($type, $name) {
+        static $plugins = array(
+            'block' => array('admin', 'admin_tree', 'loancalc', 'search'),
+            'filter' => array('mod_data', 'mod_glossary'),
+        );
+
+        if (!isset($plugins[$type])) {
+            return false;
+        }
+        return in_array($name, $plugins[$type]);
+    }
+
+    /**
      * Defines a white list of all plugins shipped in the standard Moodle distribution
      *
+     * @param string $type
      * @return false|array array of standard plugins or false if the type is unknown
      */
     public static function standard_plugins_list($type) {
@@ -809,6 +834,9 @@ abstract class plugintype_base {
             $standard = array_flip($standard);
             if (isset($standard[$this->name])) {
                 $this->source = plugin_manager::PLUGIN_SOURCE_STANDARD;
+            } else if (!is_null($this->versiondb) and is_null($this->versiondisk)
+                    and plugin_manager::is_deleted_standard_plugin($this->type, $this->name)) {
+                $this->source = plugin_manager::PLUGIN_SOURCE_STANDARD; // to be deleted
             } else {
                 $this->source = plugin_manager::PLUGIN_SOURCE_EXTENSION;
             }
@@ -834,7 +862,11 @@ abstract class plugintype_base {
             return plugin_manager::PLUGIN_STATUS_NEW;
 
         } else if (!is_null($this->versiondb) and is_null($this->versiondisk)) {
-            return plugin_manager::PLUGIN_STATUS_MISSING;
+            if (plugin_manager::is_deleted_standard_plugin($this->type, $this->name)) {
+                return plugin_manager::PLUGIN_STATUS_DELETE;
+            } else {
+                return plugin_manager::PLUGIN_STATUS_MISSING;
+            }
 
         } else if ((string)$this->versiondb === (string)$this->versiondisk) {
             return plugin_manager::PLUGIN_STATUS_UPTODATE;
