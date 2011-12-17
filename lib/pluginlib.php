@@ -303,8 +303,7 @@ class plugin_manager {
      */
     public static function is_deleted_standard_plugin($type, $name) {
         static $plugins = array(
-            'block' => array('admin', 'admin_tree', 'loancalc', 'search'),
-            'filter' => array('mod_data', 'mod_glossary'),
+            // do not add 1.9-2.2 plugin removals here
         );
 
         if (!isset($plugins[$type])) {
