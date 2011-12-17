@@ -3242,7 +3242,7 @@ function make_editing_buttons(stdClass $mod, $absolute = true, $moveselect = tru
     }
 
     // Assign
-    if (has_capability('moodle/course:managegroups', $modcontext)){
+    if (has_capability('moodle/role:assign', $modcontext)){
         $actions[] = new action_link(
             new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid' => $modcontext->id)),
             new pix_icon('i/roles', $str->assign, 'moodle', array('class' => 'iconsmall')),
