@@ -667,7 +667,7 @@ class quiz_statistics_report extends quiz_default_report {
             $firstattempts = new stdClass();
             $firstattempts->countrecs = 0;
             $firstattempts->total = 0;
-            $firstattempts->average = '-';
+            $firstattempts->average = null;
         }
 
         $allattempts = new stdClass();
