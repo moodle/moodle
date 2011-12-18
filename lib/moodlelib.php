@@ -7366,9 +7366,8 @@ function component_callback($component, $function, array $params = array(), $def
     }
 
     if (!function_exists($function) and function_exists($oldfunction)) {
-        if ($type !== 'mod' and $type !== 'core') {
-            debugging("Please use new function name $function instead of legacy $oldfunction");
-        }
+        // In Moodle 2.2 and greater this will result in a debugging notice however
+        // for 2.1+ we tolerate it.
         $function = $oldfunction;
     }
 
