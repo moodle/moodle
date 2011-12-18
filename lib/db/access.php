@@ -856,7 +856,7 @@ $capabilities = array(
         'riskbitmask' => RISK_XSS,
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
@@ -866,7 +866,7 @@ $capabilities = array(
     'moodle/course:activityvisibility' => array(
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
@@ -876,7 +876,7 @@ $capabilities = array(
     'moodle/course:viewhiddenactivities' => array(
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,

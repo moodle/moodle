@@ -3062,13 +3062,13 @@ function moveto_module($mod, $section, $beforemod=NULL) {
  * @global core_renderer $OUTPUT
  * @staticvar type $str
  * @param stdClass $mod The module to produce editing buttons for
- * @param bool $absolute If true an absolute link is produced (default true)
+ * @param bool $absolute_ignored ignored - all links are absolute
  * @param bool $moveselect If true a move seleciton process is used (default true)
  * @param int $indent The current indenting
  * @param int $section The section to link back to
  * @return string XHTML for the editing buttons
  */
-function make_editing_buttons(stdClass $mod, $absolute = true, $moveselect = true, $indent=-1, $section=-1) {
+function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $moveselect = true, $indent=-1, $section=-1) {
     global $CFG, $OUTPUT;
 
     static $str;
@@ -3076,10 +3076,15 @@ function make_editing_buttons(stdClass $mod, $absolute = true, $moveselect = tru
     $coursecontext = get_context_instance(CONTEXT_COURSE, $mod->course);
     $modcontext = get_context_instance(CONTEXT_MODULE, $mod->id);
 
-    // no permission to edit
-    if (!has_capability('moodle/course:manageactivities', $modcontext)) {
+    $editcaps = array('moodle/course:manageactivities', 'moodle/course:activityvisibility', 'moodle/role:assign');
+    $dupecaps = array('moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport');
+
+    // no permission to edit anything
+    if (!has_any_capability($editcaps, $modcontext) and !has_all_capabilities($dupecaps, $coursecontext)) {
         return false;
     }
+
+    $hasmanageactivities = has_capability('moodle/course:manageactivities', $modcontext);
 
     if (!isset($str)) {
         $str = new stdClass;
@@ -3101,11 +3106,7 @@ function make_editing_buttons(stdClass $mod, $absolute = true, $moveselect = tru
         $str->groupsvisible  = get_string("groupsvisible");
     }
 
-    if ($absolute) {
-        $baseurl = new moodle_url('/course/mod.php', array('sesskey' => sesskey()));
-    } else {
-        $baseurl = new moodle_url('mod.php', array('sesskey' => sesskey()));
-    }
+    $baseurl = new moodle_url('/course/mod.php', array('sesskey' => sesskey()));
 
     if ($section >= 0) {
         $baseurl->param('sr', $section);
@@ -3113,7 +3114,7 @@ function make_editing_buttons(stdClass $mod, $absolute = true, $moveselect = tru
     $actions = array();
 
     // leftright
-    if (has_capability('moodle/course:update', $coursecontext)) {
+    if ($hasmanageactivities) {
         if (right_to_left()) {   // Exchange arrows on RTL
             $rightarrow = 't/left';
             $leftarrow  = 't/right';
@@ -3141,7 +3142,7 @@ function make_editing_buttons(stdClass $mod, $absolute = true, $moveselect = tru
     }
 
     // move
-    if (has_capability('moodle/course:update', $coursecontext)) {
+    if ($hasmanageactivities) {
         if ($moveselect) {
             $actions[] = new action_link(
                 new moodle_url($baseurl, array('copy' => $mod->id)),
@@ -3166,15 +3167,16 @@ function make_editing_buttons(stdClass $mod, $absolute = true, $moveselect = tru
     }
 
     // Update
-    $actions[] = new action_link(
-        new moodle_url($baseurl, array('update' => $mod->id)),
-        new pix_icon('t/edit', $str->update, 'moodle', array('class' => 'iconsmall')),
-        null,
-        array('class' => 'editing_update', 'title' => $str->update)
-    );
+    if ($hasmanageactivities) {
+        $actions[] = new action_link(
+            new moodle_url($baseurl, array('update' => $mod->id)),
+            new pix_icon('t/edit', $str->update, 'moodle', array('class' => 'iconsmall')),
+            null,
+            array('class' => 'editing_update', 'title' => $str->update)
+        );
+    }
 
     // Duplicate (require both target import caps to be able to duplicate, see modduplicate.php)
-    $dupecaps = array('moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport');
     if (has_all_capabilities($dupecaps, $coursecontext)) {
         $actions[] = new action_link(
             new moodle_url($baseurl, array('duplicate' => $mod->id)),
@@ -3185,12 +3187,14 @@ function make_editing_buttons(stdClass $mod, $absolute = true, $moveselect = tru
     }
 
     // Delete
-    $actions[] = new action_link(
-        new moodle_url($baseurl, array('delete' => $mod->id)),
-        new pix_icon('t/delete', $str->delete, 'moodle', array('class' => 'iconsmall')),
-        null,
-        array('class' => 'editing_delete', 'title' => $str->delete)
-    );
+    if ($hasmanageactivities) {
+        $actions[] = new action_link(
+            new moodle_url($baseurl, array('delete' => $mod->id)),
+            new pix_icon('t/delete', $str->delete, 'moodle', array('class' => 'iconsmall')),
+            null,
+            array('class' => 'editing_delete', 'title' => $str->delete)
+        );
+    }
 
     // hideshow
     if (has_capability('moodle/course:activityvisibility', $modcontext)) {
@@ -3212,7 +3216,7 @@ function make_editing_buttons(stdClass $mod, $absolute = true, $moveselect = tru
     }
 
     // groupmode
-    if ($mod->groupmode !== false) {
+    if ($hasmanageactivities and $mod->groupmode !== false) {
         if ($mod->groupmode == SEPARATEGROUPS) {
             $groupmode = 0;
             $grouptitle = $str->groupsseparate;
@@ -3242,7 +3246,7 @@ function make_editing_buttons(stdClass $mod, $absolute = true, $moveselect = tru
     }
 
     // Assign
-    if (has_capability('moodle/course:managegroups', $modcontext)){
+    if (has_capability('moodle/role:assign', $modcontext)){
         $actions[] = new action_link(
             new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid' => $modcontext->id)),
             new pix_icon('i/roles', $str->assign, 'moodle', array('class' => 'iconsmall')),
