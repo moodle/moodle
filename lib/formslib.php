@@ -2305,17 +2305,8 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
      * @param mixed $error
      */
     function renderElement(&$element, $required, $error){
-        //manipulate id of all elements before rendering
-        if (!is_null($element->getAttribute('id'))) {
-            $id = $element->getAttribute('id');
-        } else {
-            $id = $element->getName();
-        }
-        //strip qf_ prefix and replace '[' with '_' and strip ']'
-        $id = preg_replace(array('/^qf_|\]/', '/\[/'), array('', '_'), $id);
-        if (strpos($id, 'id_') !== 0){
-            $element->updateAttributes(array('id'=>'id_'.$id));
-        }
+        // Make sure the element has an id.
+        $element->_generateId();
 
         //adding stuff to place holders in template
         //check if this is a group element first

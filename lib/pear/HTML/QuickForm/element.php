@@ -415,14 +415,16 @@ class HTML_QuickForm_element extends HTML_Common
     * @access private
     * @return void 
     */
-    function _generateId()
-    {
-        static $idx = 1;
-
-        if (!$this->getAttribute('id')) {
-            $this->updateAttributes(array('id' => 'qf_' . substr(md5(microtime() . $idx++), 0, 6)));
+    function _generateId() {
+        if ($this->getAttribute('id')) {
+            return;
         }
-    } // end func _generateId
+
+        $id = $this->getName();
+        $id = 'id_' . str_replace(array('qf_', '[', ']'), array('', '_', ''), $id);
+        $id = clean_param($id, PARAM_ALPHANUMEXT);
+        $this->updateAttributes(array('id' => $id));
+    }
 
     // }}}
     // {{{ exportValue()
