@@ -1,0 +1,127 @@
+/** Report layout **/
+
+body.pagelayout-report {
+    background-image: none;
+    background-color: #fff;
+}
+
+body.pagelayout-report.has_dock {
+    margin-left: 30px;
+}
+.pagelayout-report #page {
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+}
+.pagelayout-report #page-header,
+.pagelayout-report #page-footer {
+    float: none;
+    background: #f3f3f3 none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+.pagelayout-report #page-header {
+    background:#97d3f4 url([[pix:theme|header]]) no-repeat top right;
+    margin-bottom: 0px;
+    height: 105px;
+    border-bottom: 1px solid #FFF;
+}
+
+.pagelayout-report #page-header #custommenu {
+    display: none;
+}
+.pagelayout-report .navbar {
+    background-color: #FFF;
+    height: 20px;
+    margin: 0;
+    padding: 5px 0;
+}
+
+.pagelayout-report #page-footer {
+    text-align: center;
+    height: auto;
+}
+.pagelayout-report  #page-footer .logininfo,
+.pagelayout-report  #page-footer .homelink {
+    margin: 1em 0 0;
+    padding: 0;
+    text-align: center;
+}
+
+.pagelayout-report #page-content {
+    background: #FFF url([[pix:theme|top_bg]]) repeat-x center top;
+    float: none;
+    overflow: visible;
+    width: auto;
+    padding-top: 1em;
+}
+.pagelayout-report #report-main-content {
+    float: left;
+    width: 100%;
+}
+.pagelayout-report #report-main-content .region-content {
+    margin-left: 210px;
+    overflow: visible;
+    padding-bottom: 20px;
+}
+.pagelayout-report #report-main-content .region-content table.generaltable {
+    background-color: #FFF;
+    width: 98%;
+    margin: 0 auto;
+    padding: 0;
+}
+.pagelayout-report #report-region-wrap {
+    width: 0;
+    float: right;
+    position: relative;
+    left: -100%;
+}
+.pagelayout-report #report-region-pre {
+    width: 200px;
+    margin-left: 5px;
+}
+
+/** CONTENT ONLY **/
+.pagelayout-report.content-only #report-main-content .region-content {
+    margin-left: 10px;
+}
+.pagelayout-report.content-only #report-region-pre {
+    width: 0;
+}
+
+/** Correct for right to left languages **/
+.dir-rtl.pagelayout-report #report-main-content .region-content {
+    margin-left: 0;
+    margin-right: 210px;
+}
+.dir-rtl.pagelayout-report #report-region-wrap {
+    left:0;
+}
+
+/** Stabalise IE6 behaviour on the report layout **/
+.ie6.pagelayout-report #report-main-content {
+    float: none;
+    width: auto;
+}
+.ie6.pagelayout-report #report-region-wrap {
+    float: none;
+    width: 200px;
+    left: auto;
+    position: absolute;
+    top: 0;
+}
+.ie6.pagelayout-report #report-region-pre,
+.ie6.pagelayout-report #report-region-pre .block {
+    width: 100%;
+}
+
+@media print {
+    .pagelayout-report .region-content {margin-left: 0px !important;}
+    .pagelayout-report #report-region-pre {width: 0px !important;}
+    .pagelayout-report .region-content table.generaltable {font-size:70% !important;}
+    .pagelayout-report #page-header,
+    .pagelayout-report #page-footer,
+    .pagelayout-report #dock { display: none;}
+}
