@@ -192,7 +192,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->maturity_info($maturity);
         $output .= $this->insecure_dataroot_warning($insecuredataroot);
         $output .= $this->display_errors_warning($errorsdisplayed);
-        $output .= $this->cron_overdue_warning($errorsdisplayed);
+        $output .= $this->cron_overdue_warning($cronoverdue);
         $output .= $this->db_problems($dbproblems);
         $output .= $this->maintenance_mode_warning($maintenancemode);
 
