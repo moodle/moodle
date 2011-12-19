@@ -319,7 +319,7 @@ class quiz_overview_report extends quiz_attempt_report {
                 $headers[] = get_string('regrade', 'quiz_overview');
             }
 
-            $this->add_grade_columns($quiz, $columns, $headers);
+            $this->add_grade_columns($quiz, $columns, $headers, false);
 
             $this->set_up_table_columns(
                     $table, $columns, $headers, $reporturl, $displayoptions, false);
