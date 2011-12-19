@@ -66,10 +66,24 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input
         $this->_persistantFreeze = true;
         $this->setType('radio');
         $this->_text = $text;
-        $this->_generateId();
     } //end constructor
-    
+
     // }}}
+
+    function _generateId() {
+        // Override the standard implementation, since you can have multiple
+        // check-boxes with the same name on a form. Therefore, add the
+        // (cleaned up) value to the id.
+
+        if ($this->getAttribute('id')) {
+            return;
+        }
+
+        parent::_generateId();
+        $id = $this->getAttribute('id') . '_' . clean_param($this->getValue(), PARAM_ALPHANUMEXT);
+        $this->updateAttributes(array('id' => $id));
+    }
+
     // {{{ setChecked()
 
     /**
