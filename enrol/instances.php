@@ -98,7 +98,6 @@ if ($canconfig and $action and confirm_sesskey()) {
 
             if ($confirm) {
                 $plugin->delete_instance($instance);
-                $context->mark_dirty(); // invalidate all enrol caches
                 redirect($PAGE->url);
             }
 
@@ -113,19 +112,17 @@ if ($canconfig and $action and confirm_sesskey()) {
 
         } else if ($action === 'disable') {
             $instance = $instances[$instanceid];
-            if ($instance->status == ENROL_INSTANCE_ENABLED) {
-                $instance->status = ENROL_INSTANCE_DISABLED;
-                $DB->update_record('enrol', $instance);
-                $context->mark_dirty(); // invalidate all enrol caches
+            $plugin = $plugins[$instance->enrol];
+            if ($instance->status != ENROL_INSTANCE_DISABLED) {
+                $plugin->update_status($instance, ENROL_INSTANCE_DISABLED);
                 redirect($PAGE->url);
             }
 
         } else if ($action === 'enable') {
             $instance = $instances[$instanceid];
-            if ($instance->status == ENROL_INSTANCE_DISABLED) {
-                $instance->status = ENROL_INSTANCE_ENABLED;
-                $DB->update_record('enrol', $instance);
-                $context->mark_dirty(); // invalidate all enrol caches
+            $plugin = $plugins[$instance->enrol];
+            if ($instance->status != ENROL_INSTANCE_ENABLED) {
+                $plugin->update_status($instance, ENROL_INSTANCE_ENABLED);
                 redirect($PAGE->url);
             }
         }
