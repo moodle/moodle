@@ -39,6 +39,7 @@ class block_html_edit_form extends block_edit_form {
 
         $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean'=>true, 'context'=>$this->block->context);
         $mform->addElement('editor', 'config_text', get_string('configcontent', 'block_html'), null, $editoroptions);
+        $mform->addRule('config_text', null, 'required', null, 'client');
         $mform->setType('config_text', PARAM_RAW); // XSS is prevented when printing the block contents and serving files
     }
 
