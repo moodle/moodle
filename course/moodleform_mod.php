@@ -451,6 +451,12 @@ abstract class moodleform_mod extends moodleform {
         }
 
         $mform->addElement('modvisible', 'visible', get_string('visible'));
+        if (!empty($this->_cm)) {
+            $context = get_context_instance(CONTEXT_MODULE, $this->_cm->id);
+            if (!has_capability('moodle/course:activityvisibility', $context)) {
+                $mform->hardFreeze('visible');
+            }
+        }
 
         if ($this->_features->idnumber) {
             $mform->addElement('text', 'cmidnumber', get_string('idnumbermod'));
