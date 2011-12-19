@@ -6396,10 +6396,6 @@ class context_module extends context {
 
         $extracaps = array_merge($subcaps, $extracaps);
 
-        // All modules allow viewhiddenactivities. This is so you can hide
-        // the module then override to allow specific roles to see it.
-        // The actual check is in course page so not module-specific
-        $extracaps[] = "moodle/course:viewhiddenactivities";
         list($extra, $params) = $DB->get_in_or_equal(
             $extracaps, SQL_PARAMS_NAMED, 'cap0');
         $extra = "OR name $extra";
@@ -6407,7 +6403,7 @@ class context_module extends context {
         $sql = "SELECT *
                   FROM {capabilities}
                  WHERE (contextlevel = ".CONTEXT_MODULE."
-                       AND component = :component)
+                       AND (component = :component OR component = 'moodle'))
                        $extra";
         $params['component'] = "mod_$module->name";
 
