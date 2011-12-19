@@ -1554,6 +1554,26 @@ abstract class enrol_plugin {
     }
 
     /**
+     * Update instance status
+     *
+     * Override when plugin needs to do some action when enabled or disabled.
+     *
+     * @param stdClass $instance
+     * @param int $newstatus ENROL_INSTANCE_ENABLED, ENROL_INSTANCE_DISABLED
+     * @return void
+     */
+    public function update_status($instance, $newstatus) {
+        global $DB;
+
+        $instance->status = $newstatus;
+        $DB->update_record('enrol', $instance);
+
+        // invalidate all enrol caches
+        $context = context_course::instance($instance->courseid);
+        $context->mark_dirty();
+    }
+
+    /**
      * Delete course enrol plugin instance, unenrol all users.
      * @param object $instance
      * @return void
@@ -1579,6 +1599,10 @@ abstract class enrol_plugin {
 
         // finally drop the enrol row
         $DB->delete_records('enrol', array('id'=>$instance->id));
+
+        // invalidate all enrol caches
+        $context = context_course::instance($instance->courseid);
+        $context->mark_dirty();
     }
 
     /**
