@@ -54,7 +54,8 @@ $THEME->parents = array(
 $THEME->sheets = array(
     'core',
     'pagelayout',
-    'menu'
+    'menu',
+    'report'
 );
 
 ////////////////////////////////////////////////////
@@ -166,7 +167,8 @@ $THEME->layouts = array(
         'options' => array('nofooter'=>true, 'nonavbar'=>false, 'noblocks'=>true),
     ),
     'report' => array(
-        'file' => 'general.php',
+        'theme' => 'base',
+        'file' => 'report.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     )
