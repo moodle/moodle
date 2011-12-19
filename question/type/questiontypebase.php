@@ -1009,7 +1009,7 @@ class question_type {
             $percent = 100 * $answer->fraction;
             $expout .= "    <answer fraction=\"$percent\" {$format->format($answer->answerformat)}>\n";
             $expout .= $format->writetext($answer->answer, 3, false);
-            $expout .= "      <feedback {$format->format($question->feedbackformat)}>\n";
+            $expout .= "      <feedback {$format->format($answer->feedbackformat)}>\n";
             $expout .= $format->writetext($answer->feedback, 4, false);
             $expout .= "      </feedback>\n";
             if (is_array($extraanswersfields)) {
