@@ -160,6 +160,7 @@ $string['dbconnectionerror'] = 'We could not connect to the database you specifi
 $string['dbcreationerror'] = 'Database creation error. Could not create the given database name with the settings provided';
 $string['dbhost'] = 'Host server';
 $string['dbpass'] = 'Password';
+$string['dbport'] = 'Port';
 $string['dbprefix'] = 'Tables prefix';
 $string['dbtype'] = 'Type';
 $string['dbwrongencoding'] = 'The selected database is running under one non-recommended encoding ({$a}). It would be better to use one Unicode (UTF-8) encoded database instead. Anyway, you can bypass this test by selecting the "Skip DB Encoding Test" check below, but you could experience problems in the future.';
