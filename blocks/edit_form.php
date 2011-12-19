@@ -219,7 +219,7 @@ class block_edit_form extends moodleform {
         $mform->addHelpButton('bui_defaultweight', 'defaultweight', 'block');
 
         // Where this block is positioned on this page.
-        $mform->addElement('header', 'whereheader', get_string('onthispage', 'block'));
+        $mform->addElement('header', 'onthispage', get_string('onthispage', 'block'));
 
         $mform->addElement('selectyesno', 'bui_visible', get_string('visible', 'block'));
 
