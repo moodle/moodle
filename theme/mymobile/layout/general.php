@@ -217,7 +217,7 @@ echo $OUTPUT->doctype() ?>
                 </div>
 
                 <?php } else if (!isloggedin() || isguestuser()) { ?>
-                <a data-role="button" <?php echo $datatheme;?> href="<?php p($CFG->wwwroot) ?>/login/index.php"><?php p(get_string('login')); ?></a>
+                <a data-role="button" <?php echo $datatheme;?> data-ajax="false" href="<?php p($CFG->wwwroot) ?>/login/index.php"><?php p(get_string('login')); ?></a>
                  <?php } ?>
             </div>
             <?php } ?>
