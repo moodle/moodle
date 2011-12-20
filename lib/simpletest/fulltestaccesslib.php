@@ -115,7 +115,7 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         $tablenames = array('config', 'config_plugins', 'modules', 'course', 'course_modules', 'course_sections', 'course_categories', 'mnet_host', 'mnet_application',
                 'capabilities', 'context', 'context_temp', 'role', 'role_capabilities', 'role_allow_switch', 'license', 'my_pages', 'block', 'block_instances', 'block_positions',
                 'role_allow_assign', 'role_allow_override', 'role_assignments', 'role_context_levels' ,'enrol', 'user_enrolments', 'filter_active', 'filter_config', 'comments',
-                'user', 'groups_members', 'cache_flags', 'events_handlers', 'user_lastaccess', 'rating', 'files', 'role_names', 'user_preferences');
+                'user', 'groups_members', 'cache_flags', 'events_handlers', 'user_lastaccess', 'rating', 'files', 'role_names', 'user_preferences', 'grading_areas');
         $this->create_test_tables($tablenames, 'lib');
 
         // Create all core default records and default settings
