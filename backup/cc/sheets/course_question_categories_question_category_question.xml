@@ -6,7 +6,7 @@
             <QUESTIONTEXTFORMAT>1</QUESTIONTEXTFORMAT>
             <IMAGE></IMAGE>
             <GENERALFEEDBACK>[#question_general_feedback#]</GENERALFEEDBACK>
-            <DEFAULTGRADE>1</DEFAULTGRADE>
+            <DEFAULTGRADE>[#question_defaultgrade#]</DEFAULTGRADE>
             <PENALTY>0</PENALTY>
             <QTYPE>[#question_type#]</QTYPE>
             <LENGTH>1</LENGTH>

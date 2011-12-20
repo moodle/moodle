@@ -276,6 +276,7 @@ class cc_quiz extends entities {
                            '[#question_text#]',
                            '[#question_type#]',
                            '[#question_general_feedback#]',
+                           '[#question_defaultgrade#]',
                            '[#date_now#]',
                            '[#question_type_nodes#]',
                            '[#question_stamp#]',
@@ -308,6 +309,7 @@ class cc_quiz extends entities {
                                         self::safexml($question['title']),
                                         $question_moodle_type,
                                         self::safexml($question['feedback']),
+                                        $question['defaultgrade'], //default grade
                                         time(),
                                         $question_type_node,
                                         $quiz_stamp,
@@ -368,6 +370,7 @@ class cc_quiz extends entities {
                     $questions[$question_identifier]['moodle_type'] = $question_type['moodle'];
                     $questions[$question_identifier]['cc_type'] = $question_type['cc'];
                     $questions[$question_identifier]['feedback'] = $this->get_general_feedback($assessment, $question_identifier);
+                    $questions[$question_identifier]['defaultgrade'] = $this->get_defaultgrade($assessment, $question_identifier);
                     $questions[$question_identifier]['answers'] = $this->get_answers($question_identifier, $assessment, $last_answer_id);
 
                 }
@@ -393,6 +396,21 @@ class cc_quiz extends entities {
         } else {
             return $subject;
         }
+    }
+
+    private function get_defaultgrade($assessment, $question_identifier) {
+        $result = 1;
+        $xpath = cc2moodle::newx_path($assessment, cc2moodle::getquizns());
+        $query = '//xmlns:item[@ident="' . $question_identifier . '"]';
+        $query .= '//xmlns:qtimetadatafield[xmlns:fieldlabel="cc_weighting"]/xmlns:fieldentry';
+        $defgrade = $xpath->query($query);
+        if (!empty($defgrade) && ($defgrade->length > 0)) {
+            $resp = (int)$defgrade->item(0)->nodeValue;
+            if ($resp >= 0 && $resp <= 99) {
+                $result = $resp;
+            }
+        }
+        return $result;
     }
 
     private function get_general_feedback ($assessment, $question_identifier) {

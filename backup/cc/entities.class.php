@@ -208,9 +208,8 @@ class entities {
         if (!empty($files)) {
 
             foreach ($files as $file) {
-
-                $source = cc2moodle::$path_to_manifest_folder . DIRECTORY_SEPARATOR . $file->nodeValue;
-                $destination = $destination_folder . DIRECTORY_SEPARATOR . $file->nodeValue;
+                $source = cc2moodle::$path_to_manifest_folder . DIRECTORY_SEPARATOR . $file;
+                $destination = $destination_folder . DIRECTORY_SEPARATOR . $file;
 
                 $destination_directory = dirname($destination);
 
@@ -251,10 +250,9 @@ class entities {
                     if (in_array($ext, array('html', 'htm', 'xhtml'))) {
                         continue;
                     }
-                    $all_files[] = $file;
+                    $all_files[] = $file->nodeValue;
                 }
             }
-
             unset($files);
         }
 
@@ -264,8 +262,8 @@ class entities {
         if (!empty($labels) && ($labels->length > 0)) {
             $tname = 'course_files';
             $dpath = cc2moodle::$path_to_manifest_folder . DIRECTORY_SEPARATOR . $tname;
-            $fpath = $dpath . DIRECTORY_SEPARATOR . 'folder.gif';
-            $rfpath = $tname.'/folder.gif';
+            $rfpath = 'folder.gif';
+            $fpath = $dpath . DIRECTORY_SEPARATOR . $rfpath;
 
             if (!file_exists($dpath)) {
                 mkdir($dpath);
