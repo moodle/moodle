@@ -965,7 +965,7 @@ class question_bank_view {
     }
 
     /**
-     * Deal with a sort name of the forum columnname, or colname_subsort by
+     * Deal with a sort name of the form columnname, or colname_subsort by
      * breaking it up, validating the bits that are presend, and returning them.
      * If there is no subsort, then $subsort is returned as ''.
      * @return array array($colname, $subsort).
@@ -1102,7 +1102,7 @@ class question_bank_view {
         $sorts = array();
         foreach ($this->sort as $sort => $order) {
             list($colname, $subsort) = $this->parse_subsort($sort);
-            $sorts[] = $this->knowncolumntypes[$colname]->sort_expression($order < 0, $subsort);
+            $sorts[] = $this->requiredcolumns[$colname]->sort_expression($order < 0, $subsort);
         }
 
     /// Build the where clause.
