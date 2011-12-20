@@ -107,14 +107,24 @@
     if ($PAGE->user_allowed_editing()) {
         if (($edit == 1) and confirm_sesskey()) {
             $USER->editing = 1;
-            redirect($PAGE->url);
+            // Redirect to site root if Editing is toggled on frontpage
+            if ($course->id == SITEID) {
+                redirect($CFG->wwwroot .'/?redirect=0');
+            } else {
+                redirect($PAGE->url);
+            }
         } else if (($edit == 0) and confirm_sesskey()) {
             $USER->editing = 0;
             if(!empty($USER->activitycopy) && $USER->activitycopycourse == $course->id) {
                 $USER->activitycopy       = false;
                 $USER->activitycopycourse = NULL;
             }
-            redirect($PAGE->url);
+            // Redirect to site root if Editing is toggled on frontpage
+            if ($course->id == SITEID) {
+                redirect($CFG->wwwroot .'/?redirect=0');
+            } else {
+                redirect($PAGE->url);
+            }
         }
 
         if ($hide && confirm_sesskey()) {
