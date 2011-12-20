@@ -157,21 +157,54 @@ function search_spammers($keywords) {
         $params['descpat'.$i] = "%$keyword%";
         $keywordfull2[] = $DB->sql_like('p.summary', ':sumpat'.$i, false);
         $params['sumpat'.$i] = "%$keyword%";
+        $keywordfull3[] = $DB->sql_like('p.subject', ':subpat'.$i, false);
+        $params['subpat'.$i] = "%$keyword%";
+        $keywordfull4[] = $DB->sql_like('c.content', ':contpat'.$i, false);
+        $params['contpat'.$i] = "%$keyword%";
+        $keywordfull5[] = $DB->sql_like('m.fullmessage', ':msgpat'.$i, false);
+        $params['msgpat'.$i] = "%$keyword%";
+        $keywordfull6[] = $DB->sql_like('fp.message', ':forumpostpat'.$i, false);
+        $params['forumpostpat'.$i] = "%$keyword%";
+        $keywordfull7[] = $DB->sql_like('fp.subject', ':forumpostsubpat'.$i, false);
+        $params['forumpostsubpat'.$i] = "%$keyword%";
         $i++;
     }
     $conditions = '( '.implode(' OR ', $keywordfull).' )';
     $conditions2 = '( '.implode(' OR ', $keywordfull2).' )';
+    $conditions3 = '( '.implode(' OR ', $keywordfull3).' )';
+    $conditions4 = '( '.implode(' OR ', $keywordfull4).' )';
+    $conditions5 = '( '.implode(' OR ', $keywordfull5).' )';
+    $conditions6 = '( '.implode(' OR ', $keywordfull6).' )';
+    $conditions7 = '( '.implode(' OR ', $keywordfull7).' )';
 
     $sql  = "SELECT * FROM {user} WHERE deleted = 0 AND id <> :userid AND $conditions";  // Exclude oneself
     $sql2 = "SELECT u.*, p.summary FROM {user} AS u, {post} AS p WHERE $conditions2 AND u.deleted = 0 AND u.id=p.userid AND u.id <> :userid";
+    $sql3 = "SELECT u.*, p.subject as postsubject FROM {user} AS u, {post} AS p WHERE $conditions3 AND u.deleted = 0 AND u.id=p.userid AND u.id <> :userid";
+    $sql4 = "SELECT u.*, c.content FROM {user} AS u, {comments} AS c WHERE $conditions4 AND u.deleted = 0 AND u.id=c.userid AND u.id <> :userid";
+    $sql5 = "SELECT u.*, m.fullmessage FROM {user} AS u, {message} AS m WHERE $conditions5 AND u.deleted = 0 AND u.id=m.useridfrom AND u.id <> :userid";
+    $sql6 = "SELECT u.*, fp.message FROM {user} AS u, {forum_posts} AS fp WHERE $conditions6 AND u.deleted = 0 AND u.id=fp.userid AND u.id <> :userid";
+    $sql7 = "SELECT u.*, fp.subject FROM {user} AS u, {forum_posts} AS fp WHERE $conditions7 AND u.deleted = 0 AND u.id=fp.userid AND u.id <> :userid";
+
     $spamusers_desc = $DB->get_recordset_sql($sql, $params);
     $spamusers_blog = $DB->get_recordset_sql($sql2, $params);
+    $spamusers_blogsub = $DB->get_recordset_sql($sql3, $params);
+    $spamusers_comment = $DB->get_recordset_sql($sql4, $params);
+    $spamusers_message = $DB->get_recordset_sql($sql5, $params);
+    $spamusers_forumpost = $DB->get_recordset_sql($sql6, $params);
+    $spamusers_forumpostsub = $DB->get_recordset_sql($sql7, $params);
 
     $keywordlist = implode(', ', $keywords);
     echo $OUTPUT->box(get_string('spamresult', 'report_spamcleaner').s($keywordlist)).' ...';
 
-    print_user_list(array($spamusers_desc, $spamusers_blog), $keywords);
-
+    print_user_list(array($spamusers_desc,
+                          $spamusers_blog,
+                          $spamusers_blogsub,
+                          $spamusers_comment,
+                          $spamusers_message,
+                          $spamusers_forumpost,
+                          $spamusers_forumpostsub
+                         ),
+                         $keywords);
 }
 
 
@@ -212,7 +245,23 @@ function filter_user($user, $keywords, $count) {
     if (isset($user->summary)) {
         $user->description = '<h3>'.get_string('spamfromblog', 'report_spamcleaner').'</h3>'.$user->summary;
         unset($user->summary);
+    } else if (isset($user->postsubject)) {
+        $user->description = '<h3>'.get_string('spamfromblog', 'report_spamcleaner').'</h3>'.$user->postsubject;
+        unset($user->postsubject);
+    } else if (isset($user->content)) {
+        $user->description = '<h3>'.get_string('spamfromcomments', 'report_spamcleaner').'</h3>'.$user->content;
+        unset($user->content);
+    } else if (isset($user->fullmessage)) {
+        $user->description = '<h3>'.get_string('spamfrommessages', 'report_spamcleaner').'</h3>'.$user->fullmessage;
+        unset($user->fullmessage);
+    } else if (isset($user->message)) {
+        $user->description = '<h3>'.get_string('spamfromforumpost', 'report_spamcleaner').'</h3>'.$user->message;
+        unset($user->message);
+    } else if (isset($user->subject)) {
+        $user->description = '<h3>'.get_string('spamfromforumpost', 'report_spamcleaner').'</h3>'.$user->subject;
+        unset($user->subject);
     }
+
     if (preg_match('#<img.*src=[\"\']('.$CFG->wwwroot.')#', $user->description, $matches)
         && $image_search) {
         $result = false;
