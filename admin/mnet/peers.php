@@ -190,7 +190,7 @@ if ($formdata = $reviewform->get_data()) {
 
 // normal flow - just display all hosts with links
 echo $OUTPUT->header();
-$hosts = mnet_get_hosts();
+$hosts = mnet_get_hosts(true);
 
 // print the table to display the register all hosts setting
 $table = new html_table();
@@ -231,27 +231,42 @@ $table->head = array(
 );
 $table->wrap = array('nowrap', 'nowrap', 'nowrap', 'nowrap');
 $baseurl = new moodle_url('/admin/mnet/peers.php');
+$deleted = array();
 foreach($hosts as $host) {
     $hosturl = new moodle_url($baseurl, array('hostid' => $host->id));
+    if (trim($host->name) === '') {
+        // should not happen but...
+        $host->name = '???';
+    }
     // process all hosts first since it's the easiest
     if ($host->id == $CFG->mnet_all_hosts_id) {
-        $table->data[] = array(html_writer::tag('a', $host->name, array('href'=>$hosturl)), '', '', '');
+        $table->data[] = array(html_writer::link($hosturl, get_string('allhosts', 'core_mnet')), '*', '', '');
+        continue;
+    }
+
+    // populate the list of deleted hosts
+    if ($host->deleted) {
+        $deleted[] = html_writer::link($hosturl, $host->name);
         continue;
     }
 
     if ($host->last_connect_time == 0) {
         $last_connect = get_string('never');
     } else {
-        $last_connect = date('H:i:s d/m/Y', $host->last_connect_time);
+        $last_connect = userdate($host->last_connect_time, get_string('strftimedatetime', 'core_langconfig'));
     }
     $table->data[] = array(
         html_writer::link($hosturl, $host->name),
-        html_writer::link($hosturl, $host->wwwroot),
+        html_writer::link($host->wwwroot, $host->wwwroot),
         $last_connect,
         $OUTPUT->single_button(new moodle_url('/admin/mnet/delete.php', array('hostid' => $host->id)), get_string('delete'))
     );
 }
 echo html_writer::table($table);
+
+if ($deleted) {
+    echo $OUTPUT->box(get_string('deletedhosts', 'core_mnet', join(', ', $deleted)), 'deletedhosts');
+}
 
 // finally, print the initial form to add a new host
 echo $OUTPUT->box_start();
