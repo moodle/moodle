@@ -61,9 +61,10 @@ foreach ($behaviours as $behaviour => $notused) {
 }
 foreach ($counts as $behaviour => $count) {
     if (!array_key_exists($behaviour, $behaviours)) {
-        $counts['missingtype'] += $count;
+        $counts['missing'] += $count;
     }
 }
+$needed['missing'] = true;
 
 // Work of the correct sort order.
 $config = get_config('question');
@@ -181,7 +182,7 @@ if (($delete = optional_param('delete', '', PARAM_SAFEDIR)) && confirm_sesskey()
         unset($disabledbehaviours[$key]);
         set_config('disabledbehaviours', implode(',', $disabledbehaviours), 'question');
     }
-    $behaviourorder = explode(',', $config->behavioursortorder);
+    $behaviourorder = array_keys($sortedbehaviours);
     if (($key = array_search($delete, $behaviourorder)) !== false) {
         unset($behaviourorder[$key]);
         set_config('behavioursortorder', implode(',', $behaviourorder), 'question');
@@ -249,7 +250,7 @@ foreach ($sortedbehaviours as $behaviour => $behaviourname) {
         $row[] = '';
     }
 
-    // Are people allowed to create new questions of this type?
+    // Are people allowed to select this behaviour?
     $rowclass = '';
     if ($archetypal[$behaviour]) {
         $enabled = array_search($behaviour, $disabledbehaviours) === false;
