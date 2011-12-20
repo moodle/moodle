@@ -99,7 +99,7 @@ class imscc11_converter extends base_converter {
         $manifestdir = dirname($manifest);
         $cc112moodle = new cc112moodle($manifest);
         if ($cc112moodle->is_auth()) {
-            throw new imscc11_convert_exception('Protected cartridge content - Skipping import!');
+            throw new imscc11_convert_exception('protected_cc_not_supported');
         }
         $status = $cc112moodle->generate_moodle_xml();
         //Final cleanup
