@@ -678,7 +678,7 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
         if ($return) {
             $returnval .= $OUTPUT->heading($heading);
         } else {
-            echo $OUTPUT->heading($heading);    
+            echo $OUTPUT->heading($heading);
         }
 
         if ($CFG->grade_navmethod == GRADE_NAVMETHOD_COMBO || $CFG->grade_navmethod == GRADE_NAVMETHOD_TABS) {
