@@ -177,6 +177,8 @@ class lesson_page_type_essay extends lesson_page {
         $answers = $this->get_answers();
         $formattextdefoptions = new stdClass;
         $formattextdefoptions->para = false;  //I'll use it widely in this page
+        $formattextdefoptions->context = $answerpage->context;
+
         foreach ($answers as $answer) {
             if ($useranswer != NULL) {
                 $essayinfo = unserialize($useranswer->useranswer);
@@ -216,7 +218,7 @@ class lesson_page_type_essay extends lesson_page {
                 // dont think this should ever be reached....
                 $avescore = get_string("nooneansweredthisquestion", "lesson");
             }
-            $answerdata->answers[] = array(format_text($essayinfo->answer, FORMAT_MOODLE), $avescore);
+            $answerdata->answers[] = array(format_text($essayinfo->answer, $answerdata->responseformat, $formattextdefoptions), $avescore);
             $answerpage->answerdata = $answerdata;
         }
         return $answerpage;
