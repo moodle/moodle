@@ -154,7 +154,7 @@ if ($courseitemfilter > 0) {
 
             echo '<tr>';
             echo '<td>'.$shortname.'</td>';
-            echo '<td align="right">'
+            echo '<td align="right">';
             echo number_format(($c->avgvalue), 2, $sep_dec, $sep_thous);
             echo '</td>';
             echo '</tr>';
