@@ -397,14 +397,16 @@ function wiki_get_default_entry(&$wiki, &$course, $userid=0, $groupid=0) {
     global $USER;
     /// If there is a groupmode, get the user's group id.
     $groupmode = groups_get_activity_groupmode($wiki);
-    // if groups mode is in use and no group supplied, use the first one found
     if ($groupmode && !$groupid) {
-        if(($mygroupids=mygroupid($course->id)) && count($mygroupids)>0) {
-            // Use first group. They ought to be able to change later
-            $groupid=$mygroupids[0];
+        // Get a group of wiki that user has access to in the course with groupingid.
+        $groups = groups_get_all_groups($course->id, $USER->id, $wiki->groupingid);
+        if ($groups && count($groups) > 0) {
+            // Select the first element in the array. Set the groupid to the id of the first element.
+            $group = current($groups);
+            $groupid = $group->id;
         } else {
             // Whatever groups are in the course, pick one
-            $coursegroups = groups_get_all_groups($course->id);
+            $coursegroups = groups_get_all_groups($course->id, 0, $wiki->groupingid);
             if(!$coursegroups || count($coursegroups)==0) {
                 error("Can't access wiki in group mode when no groups are configured for the course");
             }
@@ -1088,7 +1090,12 @@ function wiki_user_can_access_group_wiki(&$wiki, $groupid, &$course) {
 
     /// Get the groupmode. It's been added to the wiki object.
     $groupmode = groups_get_activity_groupmode($wiki);
-    $usersgroup = mygroupid($course->id);
+
+    if ($usersgroup = groups_get_all_groups($course->id, $USER->id, $wiki->groupingid)) {
+        $usersgroup = array_keys($usersgroup);
+    } else {
+        $usersgroup = array();
+    }
     $isteacher = wiki_is_teacher($wiki, $USER->id);
 
     /// A user can access a group wiki, if:
