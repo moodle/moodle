@@ -65,10 +65,10 @@ Hvis du ikke har direkte adgang til den kan du bede systemadministratoren om at 
 <blockquote><div>php_value memory_limit 40M</div></blockquote> 
 <p>Det kan dog på nogle servere forhindre <b>alle</b> PHP-siderne i at virke (du vil se fejl når du ser på siderne). I så fald kan du blive nødt til at fjerne \'.htaccess\' filen igen.</p></li> </ol>';
 $string['paths'] = 'Stier';
-$string['pathserrcreatedataroot'] = 'Databiblioteket ({$a->dataroot}) kan ikke oprettes af installationsprogrammet.';
+$string['pathserrcreatedataroot'] = 'Datamappen ({$a->dataroot}) kan ikke oprettes af installationsprogrammet.';
 $string['pathshead'] = 'Bekræft stier';
-$string['pathsrodataroot'] = 'Datarootbiblioteket er skrivebeskyttet.';
-$string['pathsroparentdataroot'] = 'Det overordnede bibliotek ({$a->parent}) er skrivebeskyttet. Databiblioteket ({$a->dataroot}) kan ikke oprettes af installationsprogrammet.';
+$string['pathsrodataroot'] = 'Datamappen er skrivebeskyttet.';
+$string['pathsroparentdataroot'] = 'Den overordnede mappe ({$a->parent}) er skrivebeskyttet. Datamappen ({$a->dataroot}) kan ikke oprettes af installationsprogrammet.';
 $string['pathssubadmindir'] = 'Enkelte webhoteller bruger /admin som speciel URL til kontrolpanelet el. lign. Desværre konflikter det med Moodles standardplacering af admin-sider. Du kan klare dette ved at give admin-mappen et andet navn i din installation og skrive det her. Det kan f.eks. være <em>moodleadmin</em>. Det vil fikse admin-links i Moodle.';
 $string['pathssubdataroot'] = 'Du har brug for et sted, hvor Moodle kan gemme uploadede filer. Denne mappe skal kunne læses OG SKRIVES I af webserverbrugeren (oftest \'ingen\' eller \'apache\'), men må ikke være tilgængelig direkte via internettet. Installationsprogrammet vil forsøge at oprette mappen, hvis ikke den allerede eksisterer.';
 $string['pathssubdirroot'] = 'Den fulde sti til Moodleinstallationen.';
@@ -78,7 +78,7 @@ Hvis dit websted har flere offentlige adresser skal du opsætte permanent videre
 Hvis dit websted er tilgængeligt fra både internet og intranet skal du bruge internetadressen her og opsætte din DNS sådan at intranet-brugerne kan bruge den offentlige adresse også.
 Hvis ikke adressen er korrekt må du ændre URL\'en i din browser og genstarte installationen med den rigtige adresse.
 ';
-$string['pathsunsecuredataroot'] = 'Dataroot er ikke sikret';
+$string['pathsunsecuredataroot'] = 'Datamappen er ikke sikret';
 $string['pathswrongadmindir'] = 'Adminmappe eksisterer ikke';
 $string['phpextension'] = '{$a} PHP-extension';
 $string['phpversion'] = 'PHP version';
