@@ -245,6 +245,11 @@ class question_engine_attempt_upgrader {
             $qa = $qas[$questionid];
             $qa->questionusageid = $attempt->uniqueid;
             $qa->slot = $i;
+            if (textlib::strlen($qa->questionsummary) > question_bank::MAX_SUMMARY_LENGTH) {
+                // It seems some people write very long quesions! MDL-30760
+                $qa->questionsummary = textlib::substr($qa->questionsummary,
+                        0, question_bank::MAX_SUMMARY_LENGTH - 3) . '...';
+            }
             $this->insert_record('question_attempts', $qa);
             $layout[$questionkeys[$questionid]] = $qa->slot;
 
