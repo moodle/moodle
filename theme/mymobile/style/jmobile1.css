@@ -25,10 +25,10 @@
 	background-image:      -o-linear-gradient(#3c3c3c /*{a-bar-background-start}*/, #111 /*{a-bar-background-end}*/); /* Opera 11.10+ */
 	background-image:         linear-gradient(#3c3c3c /*{a-bar-background-start}*/, #111 /*{a-bar-background-end}*/);
 }
-.ui-bar-a, 
-.ui-bar-a input, 
-.ui-bar-a select, 
-.ui-bar-a textarea, 
+.ui-bar-a,
+.ui-bar-a input,
+.ui-bar-a select,
+.ui-bar-a textarea,
 .ui-bar-a button {
 	font-family: Helvetica, Arial, sans-serif /*{global-font-family}*/;
 }
@@ -716,7 +716,7 @@
 
 /* Structure */
 
-/* links within "buttons" 
+/* links within "buttons"
 -----------------------------------------------------------------------------------------------------------*/
 
 a.ui-link-inherit {
@@ -878,7 +878,7 @@ a.ui-link-inherit {
 	.ui-icon-plus, .ui-icon-minus, .ui-icon-delete, .ui-icon-arrow-r,
 	.ui-icon-arrow-l, .ui-icon-arrow-u, .ui-icon-arrow-d, .ui-icon-check,
 	.ui-icon-gear, .ui-icon-refresh, .ui-icon-forward, .ui-icon-back,
-	.ui-icon-grid, .ui-icon-star, .ui-icon-alert, .ui-icon-info, .ui-icon-home, .ui-icon-search, .ui-icon-searchfield:after, 
+	.ui-icon-grid, .ui-icon-star, .ui-icon-alert, .ui-icon-info, .ui-icon-home, .ui-icon-search, .ui-icon-searchfield:after,
 	.ui-icon-checkbox-off, .ui-icon-checkbox-on, .ui-icon-radio-off, .ui-icon-radio-on {
 		background-image: url([[pix:theme|icons-36-white]]);
 		-moz-background-size: 776px 18px;
@@ -1058,19 +1058,19 @@ a.ui-link-inherit {
 /* radius clip workaround for cleaning up corner trapping */
 .ui-corner-tl,
 .ui-corner-tr,
-.ui-corner-bl, 
+.ui-corner-bl,
 .ui-corner-br,
 .ui-corner-top,
-.ui-corner-bottom, 
+.ui-corner-bottom,
 .ui-corner-right,
 .ui-corner-left,
 .ui-corner-all,
 .ui-btn-corner-tl,
 .ui-btn-corner-tr,
-.ui-btn-corner-bl, 
+.ui-btn-corner-bl,
 .ui-btn-corner-br,
 .ui-btn-corner-top,
-.ui-btn-corner-bottom, 
+.ui-btn-corner-bottom,
 .ui-btn-corner-right,
 .ui-btn-corner-left,
 .ui-btn-corner-all {
@@ -1671,28 +1671,28 @@ Built by David Kaneda and maintained by Jonathan Stark.
 @media all and (min-width: 450px){
 	.ui-field-contain .ui-controlgroup-label { vertical-align: top; display: inline-block;  width: 20%;  margin: 0 2% 0 0;  }
 	.ui-field-contain .ui-controlgroup-controls { width: 60%; display: inline-block; }
-	.ui-field-contain .ui-controlgroup .ui-select { width: 100%; } 
+	.ui-field-contain .ui-controlgroup .ui-select { width: 100%; }
 	.ui-field-contain .ui-controlgroup-horizontal .ui-select { width: auto; }
 }	.ui-dialog { min-height: 480px; }
-.ui-dialog .ui-header, 
-.ui-dialog .ui-content, 
-.ui-dialog .ui-footer { 
-	max-width: 500px; 
-	margin: 10% auto 15px auto; 
-	width: 85%; 
-	position: relative; 
+.ui-dialog .ui-header,
+.ui-dialog .ui-content,
+.ui-dialog .ui-footer {
+	max-width: 500px;
+	margin: 10% auto 15px auto;
+	width: 85%;
+	position: relative;
 }
-.ui-dialog .ui-header, 
-.ui-dialog .ui-footer  { 
-	padding: 0 15px; 
-	z-index: 10; 
+.ui-dialog .ui-header,
+.ui-dialog .ui-footer  {
+	padding: 0 15px;
+	z-index: 10;
 }
-.ui-dialog .ui-content { 
-	padding: 15px; 
+.ui-dialog .ui-content {
+	padding: 15px;
 }
-.ui-dialog .ui-content, 
-.ui-dialog .ui-footer { 
-	margin-top: -15px;  
+.ui-dialog .ui-content,
+.ui-dialog .ui-footer {
+	margin-top: -15px;
 }
 .ui-checkbox, .ui-radio { position:relative;  margin: .2em 0 .5em; z-index: 1;  }
 .ui-checkbox .ui-btn, .ui-radio .ui-btn { margin: 0; text-align: left; z-index: 2; }
@@ -1722,7 +1722,7 @@ Built by David Kaneda and maintained by Jonathan Stark.
 @-moz-document url-prefix() {.ui-select .ui-btn select { opacity: 0.0001; }}
 .ui-select .ui-btn select.ui-select-nativeonly { opacity: 1; text-indent: 0; }
 
-.ui-select .ui-btn-icon-right .ui-btn-inner { padding-right: 45px; } 
+.ui-select .ui-btn-icon-right .ui-btn-inner { padding-right: 45px; }
 .ui-select .ui-btn-icon-right .ui-icon { right: 15px;  }
 
 /* labels */
@@ -1761,13 +1761,13 @@ textarea.ui-input-text { height: 50px; -webkit-transition: height 200ms linear; 
 /* orientation adjustments - incomplete!*/
 @media all and (min-width: 450px){
 	.ui-field-contain label.ui-input-text  { vertical-align: top; display: inline-block;  width: 20%;  margin: 0 2% 0 0 }
-	.ui-field-contain input.ui-input-text, 
-	.ui-field-contain textarea.ui-input-text, 
-	.ui-field-contain .ui-input-search { width: 60%; display: inline-block; } 
+	.ui-field-contain input.ui-input-text,
+	.ui-field-contain textarea.ui-input-text,
+	.ui-field-contain .ui-input-search { width: 60%; display: inline-block; }
 	.ui-field-contain .ui-input-search { width: 50%; }
-	.ui-hide-label input.ui-input-text, 
-	.ui-hide-label textarea.ui-input-text, 
-	.ui-hide-label .ui-input-search { padding: .4em; width: 97%; } 
+	.ui-hide-label input.ui-input-text,
+	.ui-hide-label textarea.ui-input-text,
+	.ui-hide-label .ui-input-search { padding: .4em; width: 97%; }
 	.ui-input-search input.ui-input-text { width: 98%; /*echos rule from above*/ }
 }.ui-listview { margin: 0; counter-reset: listnumbering; }
 .ui-content .ui-listview { margin: -15px; }
@@ -1798,7 +1798,7 @@ ol.ui-listview .ui-li-jsnumbering:before { content: "" !important; } /* to avoid
 .ui-li-aside { float: right; width: 50%; text-align: right; margin: .3em 0; }
 @media all and (min-width: 480px){
 	 .ui-li-aside { width: 45%; }
-}	 
+}
 .ui-li-divider { cursor: default; }
 .ui-li-has-alt .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li-has-alt { padding-right: 95px; }
 .ui-li-has-count .ui-li-count { position: absolute; font-size: 11px; font-weight: bold; padding: .2em .5em; top: 50%; margin-top: -.9em; right: 38px; }
