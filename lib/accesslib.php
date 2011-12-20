@@ -725,7 +725,7 @@ function get_user_access_sitewide($userid) {
     if (!empty($CFG->defaultuserroleid)) {
         $syscontext = context_system::instance();
         $accessdata['ra'][$syscontext->path][(int)$CFG->defaultuserroleid] = (int)$CFG->defaultuserroleid;
-        $raparents[$CFG->defaultuserroleid][$syscontext->path] = $syscontext->path;
+        $raparents[$CFG->defaultuserroleid][$syscontext->id] = $syscontext->id;
     }
 
     // load the "default frontpage role"
@@ -733,25 +733,27 @@ function get_user_access_sitewide($userid) {
         $frontpagecontext = context_course::instance(get_site()->id);
         if ($frontpagecontext->path) {
             $accessdata['ra'][$frontpagecontext->path][(int)$CFG->defaultfrontpageroleid] = (int)$CFG->defaultfrontpageroleid;
-            $raparents[$CFG->defaultfrontpageroleid][$frontpagecontext->path] = $frontpagecontext->path;
+            $raparents[$CFG->defaultfrontpageroleid][$frontpagecontext->id] = $frontpagecontext->id;
         }
     }
 
     // preload every assigned role at and above course context
-    $sql = "SELECT ctx.path, ra.roleid
+    $sql = "SELECT ctx.path, ra.roleid, ra.contextid
               FROM {role_assignments} ra
-              JOIN {context} ctx ON ctx.id = ra.contextid
-         LEFT JOIN {context} cctx
-                   ON (cctx.contextlevel = ".CONTEXT_COURSE." AND ctx.path LIKE ".$DB->sql_concat('cctx.path',"'/%'").")
-             WHERE ra.userid = :userid AND cctx.id IS NULL";
-
-
+              JOIN {context} ctx
+                   ON ctx.id = ra.contextid
+         LEFT JOIN {block_instances} bi
+                   ON (ctx.contextlevel = ".CONTEXT_BLOCK." AND bi.id = ctx.instanceid)
+         LEFT JOIN {context} bpctx
+                   ON (bpctx.id = bi.parentcontextid)
+             WHERE ra.userid = :userid
+                   AND (ctx.contextlevel <= ".CONTEXT_COURSE." OR bpctx.contextlevel < ".CONTEXT_COURSE.")";
     $params = array('userid'=>$userid);
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach ($rs as $ra) {
         // RAs leafs are arrays to support multi-role assignments...
         $accessdata['ra'][$ra->path][(int)$ra->roleid] = (int)$ra->roleid;
-        $raparents[$ra->roleid][$ra->path] = $ra->path;
+        $raparents[$ra->roleid][$ra->contextid] = $ra->contextid;
     }
     $rs->close();
 
@@ -761,30 +763,32 @@ function get_user_access_sitewide($userid) {
 
     // now get overrides of interesting roles in all interesting child contexts
     // hopefully we will not run out of SQL limits here,
-    // users would have to have very many roles above course context...
+    // users would have to have very many roles at/above course context...
     $sqls = array();
     $params = array();
 
     static $cp = 0;
-    foreach ($raparents as $roleid=>$paths) {
+    foreach ($raparents as $roleid=>$ras) {
         $cp++;
-        list($paths, $rparams) = $DB->get_in_or_equal($paths, SQL_PARAMS_NAMED, 'p'.$cp.'_');
-        $params = array_merge($params, $rparams);
+        list($sqlcids, $cids) = $DB->get_in_or_equal($ras, SQL_PARAMS_NAMED, 'c'.$cp.'_');
+        $params = array_merge($params, $cids);
         $params['r'.$cp] = $roleid;
         $sqls[] = "(SELECT ctx.path, rc.roleid, rc.capability, rc.permission
                      FROM {role_capabilities} rc
                      JOIN {context} ctx
                           ON (ctx.id = rc.contextid)
-                LEFT JOIN {context} cctx
-                          ON (cctx.contextlevel = ".CONTEXT_COURSE."
-                              AND ctx.path LIKE ".$DB->sql_concat('cctx.path',"'/%'").")
                      JOIN {context} pctx
-                          ON (pctx.path $paths
+                          ON (pctx.id $sqlcids
                               AND (ctx.id = pctx.id
                                    OR ctx.path LIKE ".$DB->sql_concat('pctx.path',"'/%'")."
                                    OR pctx.path LIKE ".$DB->sql_concat('ctx.path',"'/%'")."))
+                LEFT JOIN {block_instances} bi
+                          ON (ctx.contextlevel = ".CONTEXT_BLOCK." AND bi.id = ctx.instanceid)
+                LEFT JOIN {context} bpctx
+                          ON (bpctx.id = bi.parentcontextid)
                     WHERE rc.roleid = :r{$cp}
-                          AND cctx.id IS NULL)";
+                          AND (ctx.contextlevel <= ".CONTEXT_COURSE." OR bpctx.contextlevel < ".CONTEXT_COURSE.")
+                   )";
     }
 
     // fixed capability order is necessary for rdef dedupe
