@@ -98,13 +98,13 @@ if (empty($SITE->fullname)) {
             $url->param('adminedit', 'on');
         }
         $buttons = $OUTPUT->single_button($url, $caption, 'get');
+        $PAGE->set_button($buttons);
     }
 
     $visiblepathtosection = array_reverse($settingspage->visiblepath);
 
     $PAGE->set_title("$SITE->shortname: " . implode(": ",$visiblepathtosection));
     $PAGE->set_heading($SITE->fullname);
-    $PAGE->set_button($buttons);
     echo $OUTPUT->header();
 
     if ($errormsg !== '') {
