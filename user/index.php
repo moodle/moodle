@@ -31,7 +31,7 @@
             'search' => $search,
             'roleid' => $roleid,
             'contextid' => $contextid,
-            'courseid' => $courseid));
+            'id' => $courseid));
 
     if ($contextid) {
         $context = get_context_instance_by_id($contextid, MUST_EXIST);
