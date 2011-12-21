@@ -282,7 +282,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
      * @return empty string
      */
     function getFrozenHtml() {
-        
+
         return '';
     }
 }
