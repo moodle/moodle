@@ -32,7 +32,7 @@ $pageid = optional_param('pageid', NULL, PARAM_INT);    // Lesson Page ID
 $action = optional_param('action', 'reportoverview', PARAM_ALPHA);  // action to take
 $nothingtodisplay = false;
 
-$cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);;
+$cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
 
@@ -455,6 +455,7 @@ if ($action === 'delete') {
 
         $answerpage->qtype = $qtypes[$page->qtype].$page->option_description_string();
         $answerpage->grayout = $page->grayout;
+        $answerpage->context = $context;
 
         if (empty($userid)) {
             // there is no userid, so set these vars and display stats.
