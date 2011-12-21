@@ -1164,6 +1164,22 @@ class moodlelib_test extends UnitTestCase {
         unset_user_preference('_test_user_preferences_pref');
         $this->assertTrue(!isset($USER->preference['_test_user_preferences_pref']));
 
+        // Test 1333 char values (no need for unicode, there are already tests for that in DB tests)
+        $longvalue = str_repeat('a', 1333);
+        set_user_preference('_test_long_user_preference', $longvalue);
+        $this->assertEqual($longvalue, get_user_preferences('_test_long_user_preference'));
+        $this->assertEqual($longvalue,
+                $DB->get_field('user_preferences', 'value', array('userid' => $USER->id, 'name' => '_test_long_user_preference')));
+
+        // Test > 1333 char values, coding_exception expected
+        $longvalue = str_repeat('a', 1334);
+        try {
+            set_user_preference('_test_long_user_preference', $longvalue);
+            $this->assertFail('Exception expected - longer than 1333 chars not allowed as preference value');
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof coding_exception);
+        }
+
         //test invalid params
         try {
             set_user_preference('_test_user_preferences_pref', array());
