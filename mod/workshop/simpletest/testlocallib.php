@@ -47,8 +47,8 @@ class testable_workshop extends workshop {
         parent::aggregate_submission_grades_process($assessments);
     }
 
-    public function aggregate_grading_grades_process(array $assessments) {
-        parent::aggregate_grading_grades_process($assessments);
+    public function aggregate_grading_grades_process(array $assessments, $timegraded = null) {
+        parent::aggregate_grading_grades_process($assessments, $timegraded);
     }
 
 }
@@ -214,14 +214,15 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch = array();
         $batch[] = (object)array('reviewerid'=>3, 'gradinggrade'=>82.87670, 'gradinggradeover'=>null, 'aggregationid'=>null, 'aggregatedgrade'=>null);
         // expectation
+        $now = time();
         $expected = new stdclass();
         $expected->workshopid = $this->workshop->id;
         $expected->userid = 3;
         $expected->gradinggrade = 82.87670;
-        $expected->timegraded = time(); // warning - this is a weak point as the time may actually change
+        $expected->timegraded = $now;
         $DB->expectOnce('insert_record', array('workshop_aggregations', $expected));
         // excersise SUT
-        $this->workshop->aggregate_grading_grades_process($batch);
+        $this->workshop->aggregate_grading_grades_process($batch, $now);
     }
 
     public function test_aggregate_grading_grades_process_single_grade_update() {
@@ -265,14 +266,15 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>87.34311, 'gradinggradeover'=>null, 'aggregationid'=>null, 'aggregatedgrade'=>null);
         $batch[] = (object)array('reviewerid'=>5, 'gradinggrade'=>51.12000, 'gradinggradeover'=>null, 'aggregationid'=>null, 'aggregatedgrade'=>null);
         // expectation
+        $now = time();
         $expected = new stdclass();
         $expected->workshopid = $this->workshop->id;
         $expected->userid = 5;
         $expected->gradinggrade = 79.3066;
-        $expected->timegraded = time(); // warning - this is a weak point as the time may actually change
+        $expected->timegraded = $now;
         $DB->expectOnce('insert_record', array('workshop_aggregations', $expected));
         // excersise SUT
-        $this->workshop->aggregate_grading_grades_process($batch);
+        $this->workshop->aggregate_grading_grades_process($batch, $now);
     }
 
     public function test_aggregate_grading_grades_process_multiple_grades_update() {

@@ -2018,9 +2018,10 @@ class workshop {
      * was overridden by a teacher, the gradinggradeover value is returned and the rest of grades are ignored.
      *
      * @param array $assessments of stdclass(->reviewerid ->gradinggrade ->gradinggradeover ->aggregationid ->aggregatedgrade)
+     * @param null|int $timegraded explicit timestamp of the aggregation, defaults to the current time
      * @return void
      */
-    protected function aggregate_grading_grades_process(array $assessments) {
+    protected function aggregate_grading_grades_process(array $assessments, $timegraded = null) {
         global $DB;
 
         $reviewerid = null; // the id of the reviewer being processed
@@ -2029,6 +2030,10 @@ class workshop {
         $agid       = null; // aggregation id
         $sumgrades  = 0;
         $count      = 0;
+
+        if (is_null($timegraded)) {
+            $timegraded = time();
+        }
 
         foreach ($assessments as $assessment) {
             if (is_null($reviewerid)) {
@@ -2066,13 +2071,13 @@ class workshop {
                 $record->workshopid = $this->id;
                 $record->userid = $reviewerid;
                 $record->gradinggrade = $finalgrade;
-                $record->timegraded = time();
+                $record->timegraded = $timegraded;
                 $DB->insert_record('workshop_aggregations', $record);
             } else {
                 $record = new stdclass();
                 $record->id = $agid;
                 $record->gradinggrade = $finalgrade;
-                $record->timegraded = time();
+                $record->timegraded = $timegraded;
                 $DB->update_record('workshop_aggregations', $record);
             }
         }
