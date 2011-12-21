@@ -112,15 +112,26 @@ class mod_forum_post_form extends moodleform {
         }
 
         if (groups_get_activity_groupmode($cm, $course)) { // hack alert
-            if (empty($post->groupid)) {
-                $groupname = get_string('allparticipants');
+            $groupdata = groups_get_activity_allowed_groups($cm);
+            $groupcount = count($groupdata);
+            $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $contextcheck = has_capability('mod/forum:movediscussions', $modulecontext) && empty($post->parent) && $groupcount > 1;
+            if ($contextcheck) {
+                $groupinfo = array('0' => get_string('allparticipants'));
+                foreach ($groupdata as $grouptemp) {
+                    $groupinfo[$grouptemp->id] = $grouptemp->name;
+                }
+                $mform->addElement('select','groupinfo', get_string('group'), $groupinfo);
+                $mform->setDefault('groupinfo', $post->groupid);
             } else {
-                $group = groups_get_group($post->groupid);
-                $groupname = format_string($group->name);
+                if (empty($post->groupid)) {
+                    $groupname = get_string('allparticipants');
+                } else {
+                    $groupname = format_string($groupdata[$post->groupid]->name);
+                }
+                $mform->addElement('static', 'groupinfo', get_string('group'), $groupname);
             }
-            $mform->addElement('static', 'groupinfo', get_string('group'), $groupname);
         }
-
         //-------------------------------------------------------------------------------
         // buttons
         if (isset($post->edit)) { // hack alert
