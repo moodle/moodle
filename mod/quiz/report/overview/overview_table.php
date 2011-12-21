@@ -81,6 +81,7 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
                 SELECT AVG(quiza.sumgrades) AS grade, COUNT(quiza.sumgrades) AS numaveraged
                   FROM $from
                  WHERE $where", $params);
+        $record->grade = quiz_rescale_grade($record->grade, $this->quiz);
 
         if ($this->is_downloading()) {
             $namekey = 'lastname';
