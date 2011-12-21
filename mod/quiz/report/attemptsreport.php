@@ -121,7 +121,7 @@ abstract class quiz_attempt_report extends quiz_default_report {
     protected function validate_common_options(&$attemptsmode, &$pagesize, $course, $currentgroup) {
         if ($currentgroup) {
             //default for when a group is selected
-            if ($attemptsmode === null  || $attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL) {
+            if ($attemptsmode === null || $attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL) {
                 $attemptsmode = QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH;
             }
         } else if (!$currentgroup && $course->id == SITEID) {
@@ -135,91 +135,6 @@ abstract class quiz_attempt_report extends quiz_default_report {
         if ($pagesize < 1) {
             $pagesize = QUIZ_REPORT_DEFAULT_PAGE_SIZE;
         }
-    }
-
-    /**
-     * Contruct all the parts of the main database query.
-     * @param object $quiz the quiz settings.
-     * @param string $qmsubselect SQL fragment from {@link quiz_report_qm_filter_select()}.
-     * @param bool $qmfilter whether to show all, or only the final grade attempt.
-     * @param int $attemptsmode which attempts to show.
-     *      One of the QUIZ_REPORT_ATTEMPTS_... constants.
-     * @param array $reportstudents list if userids of users to include in the report.
-     * @return array with 4 elements ($fields, $from, $where, $params) that can be used to
-     *      build the actual database query.
-     */
-    protected function base_sql($quiz, $qmsubselect, $qmfilter, $attemptsmode, $reportstudents) {
-        global $DB;
-
-        $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') . ' AS uniqueid,';
-
-        if ($qmsubselect) {
-            $fields .= "\n(CASE WHEN $qmsubselect THEN 1 ELSE 0 END) AS gradedattempt,";
-        }
-
-        $fields .= '
-                quiza.uniqueid AS usageid,
-                quiza.id AS attempt,
-                u.id AS userid,
-                u.idnumber,
-                u.firstname,
-                u.lastname,
-                u.picture,
-                u.imagealt,
-                u.institution,
-                u.department,
-                u.email,
-                quiza.sumgrades,
-                quiza.timefinish,
-                quiza.timestart,
-                CASE WHEN quiza.timefinish = 0 THEN null
-                     WHEN quiza.timefinish > quiza.timestart THEN quiza.timefinish - quiza.timestart
-                     ELSE 0 END AS duration';
-            // To explain that last bit, in MySQL, qa.timestart and qa.timefinish
-            // are unsigned. Since MySQL 5.5.5, when they introduced strict mode,
-            // subtracting a larger unsigned int from a smaller one gave an error.
-            // Therefore, we avoid doing that. timefinish can be non-zero and less
-            // than timestart when you have two load-balanced servers with very
-            // badly synchronised clocks, and a student does a really quick attempt.';
-
-        // This part is the same for all cases - join users and quiz_attempts tables
-        $from = "\n{user} u";
-        $from .= "\nLEFT JOIN {quiz_attempts} quiza ON
-                                    quiza.userid = u.id AND quiza.quiz = :quizid";
-        $params = array('quizid' => $quiz->id);
-
-        if ($qmsubselect && $qmfilter) {
-            $from .= " AND $qmsubselect";
-        }
-        switch ($attemptsmode) {
-            case QUIZ_REPORT_ATTEMPTS_ALL:
-                // Show all attempts, including students who are no longer in the course
-                $where = 'quiza.id IS NOT NULL AND quiza.preview = 0';
-                break;
-            case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH:
-                // Show only students with attempts
-                list($usql, $uparams) = $DB->get_in_or_equal(
-                        $reportstudents, SQL_PARAMS_NAMED, 'u');
-                $params += $uparams;
-                $where = "u.id $usql AND quiza.preview = 0 AND quiza.id IS NOT NULL";
-                break;
-            case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
-                // Show only students without attempts
-                list($usql, $uparams) = $DB->get_in_or_equal(
-                        $reportstudents, SQL_PARAMS_NAMED, 'u');
-                $params += $uparams;
-                $where = "u.id $usql AND quiza.id IS NULL";
-                break;
-            case QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS:
-                // Show all students with or without attempts
-                list($usql, $uparams) = $DB->get_in_or_equal(
-                        $reportstudents, SQL_PARAMS_NAMED, 'u');
-                $params += $uparams;
-                $where = "u.id $usql AND (quiza.preview = 0 OR quiza.preview IS NULL)";
-                break;
-        }
-
-        return array($fields, $from, $where, $params);
     }
 
     /**
@@ -394,17 +309,22 @@ abstract class quiz_attempt_report_table extends table_sql {
     protected $quiz;
     protected $context;
     protected $qmsubselect;
+    protected $qmfilter;
+    protected $attemptsmode;
     protected $groupstudents;
     protected $students;
     protected $questions;
     protected $includecheckboxes;
 
-    public function __construct($uniqueid, $quiz, $context, $qmsubselect, $groupstudents,
-            $students, $questions, $includecheckboxes, $reporturl, $displayoptions) {
+    public function __construct($uniqueid, $quiz, $context, $qmsubselect, $qmfilter,
+            $attemptsmode, $groupstudents, $students, $questions, $includecheckboxes,
+            $reporturl, $displayoptions) {
         parent::__construct($uniqueid);
         $this->quiz = $quiz;
         $this->context = $context;
         $this->qmsubselect = $qmsubselect;
+        $this->qmfilter = $qmfilter;
+        $this->attemptsmode = $attemptsmode;
         $this->groupstudents = $groupstudents;
         $this->students = $students;
         $this->questions = $questions;
@@ -600,6 +520,86 @@ abstract class quiz_attempt_report_table extends table_sql {
      */
     protected function get_required_latest_state_fields($slot, $alias) {
         return '';
+    }
+
+    /**
+     * Contruct all the parts of the main database query.
+     * @param array $reportstudents list if userids of users to include in the report.
+     * @return array with 4 elements ($fields, $from, $where, $params) that can be used to
+     *      build the actual database query.
+     */
+    public function base_sql($reportstudents) {
+        global $DB;
+
+        $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') . ' AS uniqueid,';
+
+        if ($this->qmsubselect) {
+            $fields .= "\n(CASE WHEN $this->qmsubselect THEN 1 ELSE 0 END) AS gradedattempt,";
+        }
+
+        $fields .= '
+                quiza.uniqueid AS usageid,
+                quiza.id AS attempt,
+                u.id AS userid,
+                u.idnumber,
+                u.firstname,
+                u.lastname,
+                u.picture,
+                u.imagealt,
+                u.institution,
+                u.department,
+                u.email,
+                quiza.sumgrades,
+                quiza.timefinish,
+                quiza.timestart,
+                CASE WHEN quiza.timefinish = 0 THEN null
+                     WHEN quiza.timefinish > quiza.timestart THEN quiza.timefinish - quiza.timestart
+                     ELSE 0 END AS duration';
+            // To explain that last bit, in MySQL, qa.timestart and qa.timefinish
+            // are unsigned. Since MySQL 5.5.5, when they introduced strict mode,
+            // subtracting a larger unsigned int from a smaller one gave an error.
+            // Therefore, we avoid doing that. timefinish can be non-zero and less
+            // than timestart when you have two load-balanced servers with very
+            // badly synchronised clocks, and a student does a really quick attempt.';
+
+        // This part is the same for all cases - join users and quiz_attempts tables
+        $from = "\n{user} u";
+        $from .= "\nLEFT JOIN {quiz_attempts} quiza ON
+                                    quiza.userid = u.id AND quiza.quiz = :quizid";
+        $params = array('quizid' => $this->quiz->id);
+
+        if ($this->qmsubselect && $this->qmfilter) {
+            $from .= " AND $this->qmsubselect";
+        }
+        switch ($this->attemptsmode) {
+            case QUIZ_REPORT_ATTEMPTS_ALL:
+                // Show all attempts, including students who are no longer in the course
+                $where = 'quiza.id IS NOT NULL AND quiza.preview = 0';
+                break;
+            case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH:
+                // Show only students with attempts
+                list($usql, $uparams) = $DB->get_in_or_equal(
+                        $reportstudents, SQL_PARAMS_NAMED, 'u');
+                $params += $uparams;
+                $where = "u.id $usql AND quiza.preview = 0 AND quiza.id IS NOT NULL";
+                break;
+            case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
+                // Show only students without attempts
+                list($usql, $uparams) = $DB->get_in_or_equal(
+                        $reportstudents, SQL_PARAMS_NAMED, 'u');
+                $params += $uparams;
+                $where = "u.id $usql AND quiza.id IS NULL";
+                break;
+            case QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS:
+                // Show all students with or without attempts
+                list($usql, $uparams) = $DB->get_in_or_equal(
+                        $reportstudents, SQL_PARAMS_NAMED, 'u');
+                $params += $uparams;
+                $where = "u.id $usql AND (quiza.preview = 0 OR quiza.preview IS NULL)";
+                break;
+        }
+
+        return array($fields, $from, $where, $params);
     }
 
     /**
