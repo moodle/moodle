@@ -218,7 +218,7 @@ class lesson_page_type_essay extends lesson_page {
                 // dont think this should ever be reached....
                 $avescore = get_string("nooneansweredthisquestion", "lesson");
             }
-            $answerdata->answers[] = array(format_text($essayinfo->answer, $answerdata->responseformat, $formattextdefoptions), $avescore);
+            $answerdata->answers[] = array(format_text($essayinfo->answer, FORMAT_MOODLE, $formattextdefoptions), $avescore);
             $answerpage->answerdata = $answerdata;
         }
         return $answerpage;
