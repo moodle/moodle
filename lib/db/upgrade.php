@@ -6979,7 +6979,7 @@ FROM
         upgrade_main_savepoint(true, 2011120500.02);
     }
 
-    if ($oldversion < 2011121400.00) {
+    if ($oldversion < 2011120500.03) {
 
         // Changing precision of field value on table user_preferences to (1333)
         $table = new xmldb_table('user_preferences');
@@ -6989,7 +6989,7 @@ FROM
         $dbman->change_field_precision($table, $field);
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2011121400.00);
+        upgrade_main_savepoint(true, 2011120500.03);
     }
 
     return true;
