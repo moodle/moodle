@@ -35,11 +35,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 class quiz_report_responses_table extends quiz_attempt_report_table {
 
-    public function __construct($quiz, $context, $qmsubselect, $groupstudents,
-            $students, $questions, $includecheckboxes, $reporturl, $displayoptions) {
+    public function __construct($quiz, $context, $qmsubselect, $qmfilter,
+            $attemptsmode, $groupstudents, $students,
+            $questions, $includecheckboxes, $reporturl, $displayoptions) {
         parent::__construct('mod-quiz-report-responses-report', $quiz, $context,
-                $qmsubselect, $groupstudents, $students, $questions, $includecheckboxes,
-                $reporturl, $displayoptions);
+                $qmsubselect, $qmfilter, $attemptsmode, $groupstudents, $students,
+                $questions, $includecheckboxes, $reporturl, $displayoptions);
     }
 
     public function build_table() {
