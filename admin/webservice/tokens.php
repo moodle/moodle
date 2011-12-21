@@ -71,6 +71,12 @@ switch ($action) {
                 }
             }
 
+            //check if the user is deleted. unconfirmed, suspended or guest
+            $user = $DB->get_record('user', array('id' => $data->user));
+            if ($user->id == $CFG->siteguest or $user->deleted or !$user->confirmed or $user->suspended) {
+                throw new moodle_exception('forbiddenwsuser', 'webservice');
+            }
+
             //process the creation
             if (empty($errormsg)) {
                 //TODO improvement: either move this function from externallib.php to webservice/lib.php
