@@ -1053,7 +1053,7 @@ class assignment_upload extends assignment_base {
         }
 
         // If the user has submitted something add some related links and data
-        if ($submission->data2 == 'submitted') {
+        if (isset($submission->data2) AND $submission->data2 == 'submitted') {
             // Add a view link to the settings nav
             $link = new moodle_url('/mod/assignment/view.php', array('id'=>$this->cm->id));
             $node->add(get_string('viewmysubmission', 'assignment'), $link, navigation_node::TYPE_SETTING);
