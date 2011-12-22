@@ -1597,8 +1597,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
                     // If specified, display extra content after link
                     if ($content) {
-                        $contentpart = '<div class="contentafterlink' .
-                                trim($textclasses) . '">' . $content . '</div>';
+                        $contentpart = '<div class="' . trim('contentafterlink' . $textclasses) .
+                                '">' . $content . '</div>';
                     }
                 } else {
                     // No link, so display only content
