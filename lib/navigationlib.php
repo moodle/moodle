@@ -3250,7 +3250,7 @@ class settings_navigation extends navigation_node {
         }
 
         // Questions
-        require_once($CFG->dirroot.'/question/editlib.php');
+        require_once($CFG->libdir . '/questionlib.php');
         question_extend_settings_navigation($coursenode, $coursecontext)->trim_if_empty();
 
         if (has_capability('moodle/course:update', $coursecontext)) {
@@ -3952,23 +3952,9 @@ class settings_navigation extends navigation_node {
             $frontpage->add(get_string('restore'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
         }
 
-        // Manage questions
-        $questioncaps = array('moodle/question:add',
-                              'moodle/question:editmine',
-                              'moodle/question:editall',
-                              'moodle/question:viewmine',
-                              'moodle/question:viewall',
-                              'moodle/question:movemine',
-                              'moodle/question:moveall');
-        if (has_any_capability($questioncaps, $this->context)) {
-            $questionlink = $CFG->wwwroot.'/question/edit.php';
-        } else if (has_capability('moodle/question:managecategory', $this->context)) {
-            $questionlink = $CFG->wwwroot.'/question/category.php';
-        }
-        if (isset($questionlink)) {
-            $url = new moodle_url($questionlink, array('courseid'=>$course->id));
-            $frontpage->add(get_string('questions','quiz'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/questions', ''));
-        }
+        // Questions
+        require_once($CFG->libdir . '/questionlib.php');
+        question_extend_settings_navigation($frontpage, $coursecontext)->trim_if_empty();
 
         // Manage files
         if ($course->legacyfiles == 2 and has_capability('moodle/course:managefiles', $this->context)) {
