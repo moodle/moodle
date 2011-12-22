@@ -96,6 +96,38 @@ class quiz_locallib_test extends UnitTestCase {
         $this->assertEqual(quiz_clean_layout('0,1,0,0,2,0', true), '1,0,2,0');
     }
 
+    public function test_quiz_repaginate() {
+        // Test starting with 1 question per page.
+        $this->assertEqual(quiz_repaginate('1,0,2,0,3,0', 0), '1,2,3,0');
+        $this->assertEqual(quiz_repaginate('1,0,2,0,3,0', 3), '1,2,3,0');
+        $this->assertEqual(quiz_repaginate('1,0,2,0,3,0', 2), '1,2,0,3,0');
+        $this->assertEqual(quiz_repaginate('1,0,2,0,3,0', 1), '1,0,2,0,3,0');
+
+        // Test starting with all on one page page.
+        $this->assertEqual(quiz_repaginate('1,2,3,0', 0), '1,2,3,0');
+        $this->assertEqual(quiz_repaginate('1,2,3,0', 3), '1,2,3,0');
+        $this->assertEqual(quiz_repaginate('1,2,3,0', 2), '1,2,0,3,0');
+        $this->assertEqual(quiz_repaginate('1,2,3,0', 1), '1,0,2,0,3,0');
+
+        // Test single question case.
+        $this->assertEqual(quiz_repaginate('100,0', 0), '100,0');
+        $this->assertEqual(quiz_repaginate('100,0', 1), '100,0');
+
+        // No questions case.
+        $this->assertEqual(quiz_repaginate('0', 0), '0');
+
+        // Test empty pages are removed.
+        $this->assertEqual(quiz_repaginate('1,2,3,0,0,0', 0), '1,2,3,0');
+        $this->assertEqual(quiz_repaginate('1,0,0,0,2,3,0', 0), '1,2,3,0');
+        $this->assertEqual(quiz_repaginate('0,0,0,1,2,3,0', 0), '1,2,3,0');
+
+        // Test shuffle option.
+        $this->assertTrue(in_array(quiz_repaginate('1,2,0', 0, true),
+                array('1,2,0', '2,1,0')));
+        $this->assertTrue(in_array(quiz_repaginate('1,2,0', 1, true),
+                array('1,0,2,0', '2,0,1,0')));
+    }
+
     public function test_quiz_rescale_grade() {
         $quiz = new stdClass();
         $quiz->decimalpoints = 2;
