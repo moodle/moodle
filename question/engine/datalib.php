@@ -89,9 +89,9 @@ class question_engine_data_mapper {
         $record->minfraction = $qa->get_min_fraction();
         $record->flagged = $qa->is_flagged();
         $record->questionsummary = $qa->get_question_summary();
-        if (textlib::strlen($record->questionsummary) > question_bank::MAX_SUMMARY_LENGTH) {
+        if (textlib_get_instance()->strlen($record->questionsummary) > question_bank::MAX_SUMMARY_LENGTH) {
             // It seems some people write very long quesions! MDL-30760
-            $record->questionsummary = textlib::substr($record->questionsummary,
+            $record->questionsummary = textlib_get_instance()->substr($record->questionsummary,
                     0, question_bank::MAX_SUMMARY_LENGTH - 3) . '...';
         }
         $record->rightanswer = $qa->get_right_answer_summary();
