@@ -239,6 +239,9 @@ YUI.add('moodle-qtype_ddwtos-dd', function(Y) {
                 if (this.placed[alreadytheredragno] === placeno) {
                     delete this.placed[alreadytheredragno];
                     var alreadytheredrag = Y.one(this.selectors.drag(alreadytheredragno));
+                    if (alreadytheredrag && alreadytheredrag.dd) {
+                        alreadytheredrag.dd.detach('drag:start');
+                    }
                 }
             }
             if (drag !== null) {
