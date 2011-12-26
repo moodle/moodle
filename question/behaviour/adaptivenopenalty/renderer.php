@@ -41,4 +41,7 @@ class qbehaviour_adaptivenopenalty_renderer extends qbehaviour_adaptive_renderer
     protected function penalty_info($qa, $mark) {
         return '';
     }
+    protected function disregarded_info() {
+        return '';
+    }
 }
