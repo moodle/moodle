@@ -163,8 +163,12 @@ class enrol_guest_plugin extends enrol_plugin {
     public function course_edit_form($instance, MoodleQuickForm $mform, $data, $context) {
 
         $i = isset($instance->id) ? $instance->id : 0;
-        $plugin = enrol_get_plugin('guest');
-        $header = $plugin->get_instance_name($instance);
+
+        if (!$i and !$this->get_config('defaultenrol')) {
+            return;
+        }
+
+        $header = $this->get_instance_name($instance);
         $config = has_capability('enrol/guest:config', $context);
 
         $mform->addElement('header', 'enrol_guest_header_'.$i, $header);
@@ -214,6 +218,10 @@ class enrol_guest_plugin extends enrol_plugin {
         }
 
         $i = isset($instance->id) ? $instance->id : 0;
+
+        if (!isset($data['enrol_guest_status_'.$i])) {
+            return $errors;
+        }
 
         $password = empty($data['enrol_guest_password_'.$i]) ? '' : $data['enrol_guest_password_'.$i];
         $checkpassword = false;
