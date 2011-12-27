@@ -255,6 +255,7 @@ class auth_plugin_db extends auth_plugin_base {
                         $updateuser = new stdClass();
                         $updateuser->id   = $user->id;
                         $updateuser->auth = 'nologin';
+                        $updateuser->timemodified = time();
                         $DB->update_record('user', $updateuser);
                         if ($verbose) {
                             mtrace("\t".get_string('auth_dbsuspenduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)));
@@ -352,7 +353,6 @@ class auth_plugin_db extends auth_plugin_base {
 
                 // prep a few params
                 $user->username   = $username;
-                $user->modified   = time();
                 $user->confirmed  = 1;
                 $user->auth       = $this->authtype;
                 $user->mnethostid = $CFG->mnet_localhost_id;
@@ -361,14 +361,17 @@ class auth_plugin_db extends auth_plugin_base {
                 }
 
                 // maybe the user has been deleted before
-                if ($old_user = $DB->get_record('user', array('username'=>$user->username, 'deleted'=>1, 'mnethostid'=>$user->mnethostid))) {
-                    $user->id = $old_user->id;
-                    $DB->set_field('user', 'deleted', 0, array('username'=>$user->username));
+                if ($old_user = $DB->get_record('user', array('username'=>$user->username, 'deleted'=>1, 'mnethostid'=>$user->mnethostid, 'auth'=>$user->auth))) {
+                    // note: this undeleting is deprecated and will be eliminated soon
+                    $DB->set_field('user', 'deleted', 0, array('id'=>$old_user->id));
+                    $DB->set_field('user', 'timemodified', time(), array('id'=>$old_user->id));
                     if ($verbose) {
-                        mtrace("\t".get_string('auth_dbreviveduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)));
+                        mtrace("\t".get_string('auth_dbreviveduser', 'auth_db', array('name'=>$old_user->username, 'id'=>$old_user->id)));
                     }
 
                 } else {
+                    $user->timecreated = time();
+                    $user->timemodified = $user->timecreated;
                     $id = $DB->insert_record ('user', $user); // it is truly a new user
                     if ($verbose) {
                         mtrace("\t".get_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)));
@@ -477,6 +480,7 @@ class auth_plugin_db extends auth_plugin_base {
 
         // Ensure userid is not overwritten
         $userid = $user->id;
+        $updated = false;
 
         if ($newinfo = $this->get_userinfo($username)) {
             $newinfo = truncate_userinfo($newinfo);
@@ -495,9 +499,13 @@ class auth_plugin_db extends auth_plugin_base {
                 if (!empty($this->config->{'field_updatelocal_' . $key})) {
                     if (isset($user->{$key}) and $user->{$key} != $value) { // only update if it's changed
                         $DB->set_field('user', $key, $value, array('id'=>$userid));
+                        $updated = true;
                     }
                 }
             }
+        }
+        if ($updated) {
+            $DB->set_field('user', 'timemodified', time(), array('id'=>$userid));
         }
         return $DB->get_record('user', array('id'=>$userid, 'deleted'=>0));
     }
