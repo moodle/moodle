@@ -3362,6 +3362,7 @@ function update_user_record($username) {
         }
         if ($newuser) {
             $newuser['id'] = $oldinfo->id;
+            $newuser['timemodified'] = time();
             $DB->update_record('user', $newuser);
             // fetch full user record for the event, the complete user data contains too much info
             // and we want to be consistent with other places that trigger this event
