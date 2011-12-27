@@ -4398,7 +4398,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     // We have tried to delete everything the nice way - now let's force-delete any remaining module data
     $cms = $DB->get_records('course_modules', array('course'=>$course->id));
     foreach ($cms as $cm) {
-        if ($module = $DB->get_record('module', array('id'=>$cm->module))) {
+        if ($module = $DB->get_record('modules', array('id'=>$cm->module))) {
             try {
                 $DB->delete_records($module->name, array('id'=>$cm->instance));
             } catch (Exception $e) {
