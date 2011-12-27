@@ -110,7 +110,7 @@ class PSpellShell extends SpellChecker {
 		if (preg_match("#win#i", php_uname()))
 			return "$bin -a --lang=$lang --encoding=utf-8 -H < $file 2>&1";
 
-		return "cat $file | $bin -a --lang=$lang --encoding=utf-8 -H");
+		return "cat $file | $bin -a --lang=$lang --encoding=utf-8 -H";
 	}
 }
 
