@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,17 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'enrol_cohort', language 'en', branch 'MOODLE_20_STABLE'
+ * Meta link enrolment plugin uninstallation.
  *
  * @package    enrol
  * @subpackage cohort
- * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['ajaxmore'] = 'More...';
-$string['cohortsearch'] = 'Search';
-$string['cohort:config'] = 'Configure cohort instances';
-$string['cohort:unenrol'] = 'Unenrol suspended users';
-$string['pluginname'] = 'Cohort sync';
-$string['pluginname_desc'] = 'Cohort enrolment plugin synchronises cohort members with course participants.';
+defined('MOODLE_INTERNAL') || die();
+
+function xmldb_enrol_cohort_uninstall() {
+    global $CFG, $DB;
+
+    $cohort = enrol_get_plugin('cohort');
+    $rs = $DB->get_recordset('enrol', array('enrol'=>'cohort'));
+    foreach ($rs as $instance) {
+        $cohort->delete_instance($instance);
+    }
+    $rs->close();
+
+    role_unassign_all(array('component'=>'enrol_cohort'));
+
+    return true;
+}

@@ -38,6 +38,16 @@ $capabilities = array(
         )
     ),
 
+    /* This is used only when sync suspends users instead of full unenrolment */
+    'enrol/cohort:unenrol' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
 );
 
 

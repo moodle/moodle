@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -44,15 +43,16 @@ class enrol_cohort_plugin extends enrol_plugin {
         if (empty($instance)) {
             $enrol = $this->get_name();
             return get_string('pluginname', 'enrol_'.$enrol);
+
         } else if (empty($instance->name)) {
             $enrol = $this->get_name();
             if ($role = $DB->get_record('role', array('id'=>$instance->roleid))) {
                 $role = role_get_name($role, get_context_instance(CONTEXT_COURSE, $instance->courseid));
+                return get_string('pluginname', 'enrol_'.$enrol) . ' (' . format_string($DB->get_field('cohort', 'name', array('id'=>$instance->customint1))) . ' - ' . $role .')';
             } else {
-                $role = get_string('error');
+                return get_string('pluginname', 'enrol_'.$enrol) . ' (' . format_string($DB->get_field('cohort', 'name', array('id'=>$instance->customint1))) . ')';
             }
 
-            return get_string('pluginname', 'enrol_'.$enrol) . ' (' . format_string($DB->get_field('cohort', 'name', array('id'=>$instance->customint1))) . ' - ' . $role .')';
         } else {
             return format_string($instance->name);
         }
@@ -100,18 +100,13 @@ class enrol_cohort_plugin extends enrol_plugin {
         return false;
     }
 
+
     /**
      * Called for all enabled enrol plugins that returned true from is_cron_required().
      * @return void
      */
     public function cron() {
         global $CFG;
-
-        // purge all roles if cohort sync disabled, those can be recreated later here in cron
-        if (!enrol_is_enabled('cohort')) {
-            role_unassign_all(array('component'=>'cohort_enrol'));
-            return;
-        }
 
         require_once("$CFG->dirroot/enrol/cohort/locallib.php");
         enrol_cohort_sync();
@@ -136,6 +131,59 @@ class enrol_cohort_plugin extends enrol_plugin {
             // cohorts are never inserted automatically
         }
 
+    }
+
+    /**
+     * Update instance status
+     *
+     * @param stdClass $instance
+     * @param int $newstatus ENROL_INSTANCE_ENABLED, ENROL_INSTANCE_DISABLED
+     * @return void
+     */
+    public function update_status($instance, $newstatus) {
+        global $CFG;
+
+        parent::update_status($instance, $newstatus);
+
+        require_once("$CFG->dirroot/enrol/cohort/locallib.php");
+        enrol_cohort_sync($instance->courseid);
+    }
+
+    /**
+     * Does this plugin allow manual unenrolment of a specific user?
+     * Yes, but only if user suspended...
+     *
+     * @param stdClass $instance course enrol instance
+     * @param stdClass $ue record from user_enrolments table
+     *
+     * @return bool - true means user with 'enrol/xxx:unenrol' may unenrol this user, false means nobody may touch this user enrolment
+     */
+    public function allow_unenrol_user(stdClass $instance, stdClass $ue) {
+        if ($ue->status == ENROL_USER_SUSPENDED) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets an array of the user enrolment actions
+     *
+     * @param course_enrolment_manager $manager
+     * @param stdClass $ue A user enrolment object
+     * @return array An array of user_enrolment_actions
+     */
+    public function get_user_enrolment_actions(course_enrolment_manager $manager, $ue) {
+        $actions = array();
+        $context = $manager->get_context();
+        $instance = $ue->enrolmentinstance;
+        $params = $manager->get_moodlepage()->url->params();
+        $params['ue'] = $ue->id;
+        if ($this->allow_unenrol_user($instance, $ue) && has_capability('enrol/cohort:unenrol', $context)) {
+            $url = new moodle_url('/enrol/unenroluser.php', $params);
+            $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'), $url, array('class'=>'unenrollink', 'rel'=>$ue->id));
+        }
+        return $actions;
     }
 
     /**
