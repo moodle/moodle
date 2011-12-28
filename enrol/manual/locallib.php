@@ -348,7 +348,7 @@ class enrol_manual_deleteselectedusers_operation extends enrol_bulk_enrolment_op
             foreach ($user->enrolments as $enrolment) {
                 $plugin = $enrolment->enrolmentplugin;
                 $instance = $enrolment->enrolmentinstance;
-                if ($plugin->allow_unenrol($instance)) {
+                if ($plugin->allow_unenrol_user($instance, $enrolment)) {
                     $plugin->unenrol_user($instance, $user->id);
                 }
             }
