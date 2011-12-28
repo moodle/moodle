@@ -958,7 +958,7 @@ function feedback_get_complete_users($cm,
     }
 
     $ufields = user_picture::fields('u');
-    $sql = 'SELECT DISTINCT '.$ufields.'
+    $sql = 'SELECT DISTINCT '.$ufields.', c.timemodified as completed_timemodified
             FROM {user} u, {feedback_completed} c '.$fromgroup.'
             WHERE '.$where.' anonymous_response = :anon
                 AND u.id = c.userid
