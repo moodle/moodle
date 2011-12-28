@@ -15,17 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Meta link enrolment plugin version specification.
+ * Meta link enrolment plugin uninstallation.
  *
  * @package    enrol
  * @subpackage meta
- * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2011112901;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2011112900;        // Requires this Moodle version
-$plugin->component = 'enrol_meta';      // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 60*60;             // run cron every hour by default, it is not out-of-sync often
+function xmldb_enrol_meta_uninstall() {
+    global $CFG, $DB;
+
+    $meta = enrol_get_plugin('meta');
+    $rs = $DB->get_recordset('enrol', array('enrol'=>'meta'));
+    foreach ($rs as $instance) {
+        $meta->delete_instance($instance);
+    }
+    $rs->close();
+
+    role_unassign_all(array('component'=>'enrol_meta'));
+
+    return true;
+}
