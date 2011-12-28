@@ -42,6 +42,16 @@ class qbehaviour_adaptive_renderer extends qbehaviour_renderer {
     }
 
     public function feedback(question_attempt $qa, question_display_options $options) {
+        if ($qa->get_state() == question_state::$invalid) {
+            // If the latest answer was invalid, display an informative message
+            $output = '';
+            $info = $this->disregarded_info();
+            if ($info) {
+                $output = html_writer::tag('div', $info, array('class' => 'gradingdetails'));
+            }
+            return $output;
+        }
+
         // Try to find the last graded step.
 
         $gradedstep = $qa->get_behaviour()->get_graded_step($qa);
@@ -108,4 +118,12 @@ class qbehaviour_adaptive_renderer extends qbehaviour_renderer {
 
         return $output;
     }
+
+    /**
+     * Display information about a disregarded (incomplete) response.
+     */
+    protected function disregarded_info() {
+        return get_string('disregardedwithoutpenalty', 'qbehaviour_adaptive');
+    }
+
 }
