@@ -879,8 +879,11 @@ function feedback_get_complete_users($cm, $group = false, $where = '', array $pa
     }
 
     $ufields = user_picture::fields('u');
-    $sql = 'SELECT DISTINCT '.$ufields.' FROM {user} u, {feedback_completed} c '.$fromgroup.'
-              WHERE '.$where.' anonymous_response = :anon AND u.id = c.userid AND c.feedback = :instance
+    $sql = 'SELECT DISTINCT '.$ufields.', c.timemodified as completed_timemodified
+            FROM {user} u, {feedback_completed} c '.$fromgroup.'
+            WHERE '.$where.' anonymous_response = :anon
+                AND u.id = c.userid
+                AND c.feedback = :instance
               '.$wheregroup.$sortsql;
 
     if ($startpage === false OR $pagecount === false) {
