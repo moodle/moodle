@@ -217,7 +217,7 @@ foreach ($sortedqtypes as $qtypename => $localname) {
             $strcount = $counts[$qtypename]->numquestions;
         }
         if ($canviewreports) {
-            $row[] = html_writer::link(new moodle_url('/admin/report/questioninstances/index.php',
+            $row[] = html_writer::link(new moodle_url('/report/questioninstances/index.php',
                     array('qtype' => $qtypename)), $strcount, array('title' => get_string('showdetails', 'admin')));
         } else {
             $strcount;

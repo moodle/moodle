@@ -195,7 +195,7 @@ abstract class backup_cron_automated_helper {
             //Reference
             if ($haserrors) {
                 $message .= "  ".get_string('backupfailed')."\n\n";
-                $dest_url = "$CFG->wwwroot/$CFG->admin/report/backups/index.php";
+                $dest_url = "$CFG->wwwroot/report/backups/index.php";
                 $message .= "  ".get_string('backuptakealook','',$dest_url)."\n\n";
                 //Set message priority
                 $admin->priority = 1;
