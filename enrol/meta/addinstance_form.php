@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -74,7 +73,7 @@ class enrol_meta_addinstance_form extends moodleform {
     function validation($data, $files) {
         global $DB, $CFG;
 
-        // TODO: this is duplicated here because it may be necessary one we implement ajax course selection element
+        // TODO: this is duplicated here because it may be necessary once we implement ajax course selection element
 
         $errors = parent::validation($data, $files);
         if (!$c = $DB->get_record('course', array('id'=>$data['link']))) {
