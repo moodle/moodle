@@ -79,7 +79,8 @@ class enrol_manual_plugin extends enrol_plugin {
      *
      * By defaults looks for manage.php file and tests for manage capability.
      *
-     * @param object $instance
+     * @param navigation_node $instancesnode
+     * @param stdClass $instance
      * @return moodle_url;
      */
     public function add_course_navigation($instancesnode, stdClass $instance) {
@@ -263,8 +264,8 @@ class enrol_manual_plugin extends enrol_plugin {
         $instance = $ue->enrolmentinstance;
         $params = $manager->get_moodlepage()->url->params();
         $params['ue'] = $ue->id;
-        if ($this->allow_unenrol($instance) && has_capability("enrol/manual:unenrol", $context)) {
-            $url = new moodle_url('/enrol/manual/unenroluser.php', $params);
+        if ($this->allow_unenrol_user($instance, $ue) && has_capability("enrol/manual:unenrol", $context)) {
+            $url = new moodle_url('/enrol/unenroluser.php', $params);
             $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'), $url, array('class'=>'unenrollink', 'rel'=>$ue->id));
         }
         if ($this->allow_manage($instance) && has_capability("enrol/manual:manage", $context)) {
@@ -276,6 +277,7 @@ class enrol_manual_plugin extends enrol_plugin {
 
     /**
      * The manual plugin has several bulk operations that can be performed
+     * @param course_enrolment_manager $manager
      * @return array
      */
     public function get_bulk_operations(course_enrolment_manager $manager) {

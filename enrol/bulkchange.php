@@ -31,7 +31,7 @@ require_once("$CFG->dirroot/group/lib.php");
 
 $id         = required_param('id', PARAM_INT); // course id
 $bulkuserop = required_param('bulkuserop', PARAM_ALPHANUMEXT);
-$userids    = required_param('bulkuser', PARAM_INT);
+$userids    = required_param_array('bulkuser', PARAM_INT);
 $action     = optional_param('action', '', PARAM_ACTION);
 $filter     = optional_param('ifilter', 0, PARAM_INT);
 

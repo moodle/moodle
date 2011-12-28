@@ -363,7 +363,7 @@ class enrol_self_plugin extends enrol_plugin {
         $params = $manager->get_moodlepage()->url->params();
         $params['ue'] = $ue->id;
         if ($this->allow_unenrol($instance) && has_capability("enrol/self:unenrol", $context)) {
-            $url = new moodle_url('/enrol/self/unenroluser.php', $params);
+            $url = new moodle_url('/enrol/unenroluser.php', $params);
             $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'), $url, array('class'=>'unenrollink', 'rel'=>$ue->id));
         }
         if ($this->allow_manage($instance) && has_capability("enrol/self:manage", $context)) {
