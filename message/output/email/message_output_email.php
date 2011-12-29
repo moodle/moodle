@@ -46,6 +46,11 @@ class message_output_email extends message_output {
             return true;
         }
 
+        // skip any messaging suspended and deleted users
+        if ($eventdata->userto->auth === 'nologin' or $eventdata->userto->suspended or $eventdata->userto->deleted) {
+            return true;
+        }
+
         //the user the email is going to
         $recipient = null;
 

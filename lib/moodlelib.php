@@ -4620,7 +4620,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     }
 
     // skip mail to suspended users
-    if (isset($user->auth) && $user->auth=='nologin') {
+    if ((isset($user->auth) && $user->auth=='nologin') or (isset($user->suspended) && $user->suspended)) {
         return true;
     }
 

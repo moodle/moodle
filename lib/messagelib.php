@@ -64,6 +64,9 @@ function message_send($eventdata) {
     if (is_int($eventdata->userfrom)) {
         $eventdata->userfrom = $DB->get_record('user', array('id' => $eventdata->userfrom));
     }
+    if (!isset($eventdata->userto->auth) or !isset($eventdata->userto->suspended) or !isset($eventdata->userto->deleted)) {
+        $eventdata->userto = $DB->get_record('user', array('id' => $eventdata->userto->id));
+    }
 
     //after how long inactive should the user be considered logged off?
     if (isset($CFG->block_online_users_timetosee)) {
