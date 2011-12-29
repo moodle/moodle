@@ -419,6 +419,93 @@ class core_course_external extends external_api {
     }
 
     /**
+    * Create categories
+    * @param array $options
+    * @return array
+    */
+    public static function create_categories($options) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/course/lib.php");
+
+        $params = self::validate_parameters(self::create_categories_parameters(), 
+                        array('categories' => $options));
+		
+        $createdcategories = array();
+        foreach($params['categories'] as $category) {
+            if ($category['parent']) {
+                if (!$DB->record_exists('course_categories', array('id' => $category['parent'])))
+                    throw new moodle_exception(get_string('unknowncategory'), 'webservice', null);
+                $context = context_coursecat::instance($category['parent']);
+            }
+            else {
+                $context = context_system::instance();
+            }
+            self::validate_context($context);
+
+            $newcategory = new stdClass();
+            $newcategory->name = $category['name'];
+            $newcategory->idnumber = $category['idnumber'];
+            $newcategory->description = $category['description'];
+            $newcategory->parent = $category['parent'];
+            $newcategory->sortorder = 999;
+            //not sure if this is correct, but since text editor was not used, assume defaults
+            $newcategory->descriptionformat = 1;
+
+            if (isset($category['theme']) and !empty($CFG->allowcategorythemes)) {
+                $newcategory->theme = $category['theme'];
+            }
+            $newcategory->id = $DB->insert_record('course_categories', $newcategory);       
+            $newcategory->context = context_coursecat::instance($newcategory->id);
+            mark_context_dirty($newcategory->context->path);
+
+            //populate special fields
+            fix_course_sortorder();	
+			
+            $createdcategories[] = array('id' => $newcategory->id, 'name' => $newcategory->name);
+        }
+
+        return $createdcategories;
+    }
+	
+    /**
+    * Returns description of method parameters
+    * @return external_function_parameters
+    */
+    public static function create_categories_parameters() {
+        return new external_function_parameters(
+            array(
+                'categories' => new external_multiple_structure(
+                        new external_single_structure(
+                            array(
+                                'name' => new external_value(PARAM_TEXT, 'new category name'),
+                                'parent' => new external_value(PARAM_INT, 'the parent category inside which the new category will be created'),
+                                'idnumber' => new external_value(PARAM_INT, 'the new category idnumber', VALUE_OPTIONAL),
+                                'description' => new external_value(PARAM_TEXT, 'the new category description', VALUE_OPTIONAL),
+                                'theme' => new external_value(PARAM_THEME, 
+                                            'the new category theme. This option must be enabled on moodle', VALUE_OPTIONAL),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+    * Returns description of method parameters
+    * @return external_function_parameters
+    */
+    public static function create_categories_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'new category id'),
+                    'name' => new external_value(PARAM_TEXT, 'new category name'),
+                )
+            )
+        );
+    }
+
+    /**
      * Returns description of method parameters
      *
      * @return external_function_parameters
