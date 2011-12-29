@@ -800,3 +800,81 @@ class core_course_create_categories_form extends moodleform {
         return $params;
     }
 }
+        
+/**
+ * Form class for delete_categories() web service function test.
+ */
+class core_course_delete_categories_form extends moodleform {
+    /**
+     * The form definition.
+     */
+    public function definition() {
+        global $CFG;
+
+        $mform = $this->_form;
+
+        $mform->addElement('header', 'wstestclienthdr', get_string('testclient', 'webservice'));
+
+        // Note: these values are intentionally PARAM_RAW - we want users to test any rubbish as parameters.
+        $data = $this->_customdata;
+        if ($data['authmethod'] == 'simple') {
+            $mform->addElement('text', 'wsusername', 'wsusername');
+            $mform->addElement('text', 'wspassword', 'wspassword');
+        } else if ($data['authmethod'] == 'token') {
+            $mform->addElement('text', 'token', 'token');
+        }
+
+        $mform->addElement('hidden', 'authmethod', $data['authmethod']);
+        $mform->setType('authmethod', PARAM_SAFEDIR);
+        $mform->addElement('text', 'id[0]', 'id[0]');
+        $mform->addElement('text', 'newparent[0]', 'newparent[0]');
+        $mform->addElement('text', 'recursive[0]', 'recursive[0]');
+        $mform->addElement('text', 'id[1]', 'id[1]');
+        $mform->addElement('text', 'newparent[1]', 'newparent[1]');
+        $mform->addElement('text', 'recursive[1]', 'recursive[1]');
+
+        $mform->addElement('hidden', 'function');
+        $mform->setType('function', PARAM_SAFEDIR);
+
+        $mform->addElement('hidden', 'protocol');
+        $mform->setType('protocol', PARAM_SAFEDIR);
+
+        $this->add_action_buttons(true, get_string('execute', 'webservice'));
+    }
+
+    /**
+     * Get the parameters that the user submitted using the form.
+     * @return array|null
+     */
+    public function get_params() {
+        if (!$data = $this->get_data()) {
+            return null;
+        }
+        // Remove unused from form data.
+        unset($data->submitbutton);
+        unset($data->protocol);
+        unset($data->function);
+        unset($data->wsusername);
+        unset($data->wspassword);
+        unset($data->token);
+        unset($data->authmethod);
+
+        $params = array();
+        $params['categories'] = array();
+        for ($i=0; $i<10; $i++) {
+            if (empty($data->id[$i])) {
+                continue;
+            }
+            $attrs = array();
+            $attrs['id'] = $data->id[$i];
+            if (!empty($data->newparent[$i])) {
+                $attrs['newparent'] = $data->newparent[$i];
+            }
+            if (!empty($data->recursive[$i])) {
+                $attrs['recursive'] = $data->recursive[$i];
+            }
+            $params['categories'][] = $attrs;
+        }
+        return $params;
+    }
+}

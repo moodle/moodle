@@ -763,6 +763,89 @@ class core_course_external extends external_api {
         return null;
     }
 
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     * @since Moodle 2.3
+     */
+    public static function delete_categories_parameters() {
+        return new external_function_parameters(
+            array(
+                'categories' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'category id to delete'),
+                            'newparent' => new external_value(PARAM_INT,
+                                'the parent category to move the contents to, if specified', VALUE_OPTIONAL),
+                            'recursive' => new external_value(PARAM_BOOL, '1: recursively delete all contents inside this
+                                category, 0 (default): move contents to newparent or current parent category (except if parent is root)', VALUE_DEFAULT, 0)
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Delete categories
+     * @param array $categories A list of category ids
+     * @return array
+     * @since Moodle 2.3
+     */
+    public static function delete_categories($categories) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/course/lib.php");
+
+        // Validate parameters.
+        $params = self::validate_parameters(self::delete_categories_parameters(), array('categories' => $categories));
+
+        foreach ($params['categories'] as $category) {
+            if (!$deletecat = $DB->get_record('course_categories', array('id' => $category['id']))) {
+                throw new moodle_exception('unknowcategory');
+            }
+            $context = context_coursecat::instance($deletecat->id);
+            require_capability('moodle/category:manage', $context);
+            self::validate_context($context);
+            self::validate_context(get_category_or_system_context($deletecat->parent));
+
+            if ($category['recursive']) {
+                // If recursive was specified, then we recursively delete the category's contents.
+                category_delete_full($deletecat, false);
+            } else {
+                // In this situation, we don't delete the category's contents, we either move it to newparent or parent.
+                // If the parent is the root, moving is not supported (because a course must always be inside a category).
+                // We must move to an existing category.
+                if (!empty($category['newparent'])) {
+                    if (!$DB->record_exists('course_categories', array('id' => $category['newparent']))) {
+                        throw new moodle_exception('unknowcategory');
+                    }
+                    $newparent = $category['newparent'];
+                } else {
+                    $newparent = $deletecat->parent;
+                }
+
+                // This operation is not allowed. We must move contents to an existing category.
+                if ($newparent == 0) {
+                    throw new moodle_exception('movecatcontentstoroot');
+                }
+
+                $parentcontext = get_category_or_system_context($newparent);
+                require_capability('moodle/category:manage', $parentcontext);
+                self::validate_context($parentcontext);
+                category_delete_move($deletecat, $newparent, false);
+            }
+        }
+
+    }
+
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     * @since Moodle 2.3
+     */
+    public static function delete_categories_returns() {
+        return null;
+    }
 }
 
 /**

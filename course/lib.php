@@ -3478,10 +3478,14 @@ function category_delete_move($category, $newparentid, $showfeedback=true) {
 
     if ($courses = $DB->get_records('course', array('category'=>$category->id), 'sortorder ASC', 'id')) {
         if (!move_courses(array_keys($courses), $newparentid)) {
-            echo $OUTPUT->notification("Error moving courses");
+            if ($showfeedback) {
+                echo $OUTPUT->notification("Error moving courses");
+            }
             return false;
         }
-        echo $OUTPUT->notification(get_string('coursesmovedout', '', format_string($category->name)), 'notifysuccess');
+        if ($showfeedback) {
+            echo $OUTPUT->notification(get_string('coursesmovedout', '', format_string($category->name)), 'notifysuccess');
+        }
     }
 
     // move or delete cohorts in this context
@@ -3490,7 +3494,9 @@ function category_delete_move($category, $newparentid, $showfeedback=true) {
     // now delete anything that may depend on course category context
     grade_course_category_delete($category->id, $newparentid, $showfeedback);
     if (!question_delete_course_category($category, $newparentcat, $showfeedback)) {
-        echo $OUTPUT->notification(get_string('errordeletingquestionsfromcategory', 'question', $category), 'notifysuccess');
+        if ($showfeedback) {
+            echo $OUTPUT->notification(get_string('errordeletingquestionsfromcategory', 'question', $category), 'notifysuccess');
+        }
         return false;
     }
 
@@ -3500,8 +3506,9 @@ function category_delete_move($category, $newparentid, $showfeedback=true) {
 
     events_trigger('course_category_deleted', $category);
 
-    echo $OUTPUT->notification(get_string('coursecategorydeleted', '', format_string($category->name)), 'notifysuccess');
-
+    if ($showfeedback) {
+        echo $OUTPUT->notification(get_string('coursecategorydeleted', '', format_string($category->name)), 'notifysuccess');
+    }
     return true;
 }
 
