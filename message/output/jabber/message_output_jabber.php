@@ -50,6 +50,11 @@ class message_output_jabber extends message_output {
             return true;
         }
 
+        // skip any messaging suspended and deleted users
+        if ($eventdata->userto->auth === 'nologin' or $eventdata->userto->suspended or $eventdata->userto->deleted) {
+            return true;
+        }
+
         //hold onto jabber id preference because /admin/cron.php sends a lot of messages at once
         static $jabberaddresses = array();
 
