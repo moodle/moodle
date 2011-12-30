@@ -15,6 +15,16 @@ class MoodleQuickForm_password extends HTML_QuickForm_password{
      */
     var $_helpbutton='';
     function MoodleQuickForm_password($elementName=null, $elementLabel=null, $attributes=null) {
+        global $CFG;
+        if (empty($CFG->xmlstrictheaders)) {
+            // no standard mform in moodle should allow autocomplete of passwords
+            // this is valid attribute in html5, sorry, we have to ignore validation errors in legacy xhtml 1.0
+            $attributes = (array)$attributes;
+            if (!isset($attributes['autocomplete'])) {
+                $attributes['autocomplete'] = 'off';
+            }
+        }
+
         parent::HTML_QuickForm_password($elementName, $elementLabel, $attributes);
     }
     /**
