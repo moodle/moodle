@@ -426,6 +426,30 @@ class cc2moodle {
 
     }
 
+    /**
+    *
+    * Is activity visible or not
+    * @param string $identifier
+    * @return number
+    */
+    protected function get_module_visible($identifier) {
+        //Should item be hidden or not
+        $mod_visible = 1;
+        if (!empty($identifier)) {
+            $xpath = static::newx_path(static::$manifest, static::$namespaces);
+            $query  = '/imscc:manifest/imscc:resources/imscc:resource[@identifier="' . $identifier . '"]';
+            $query .= '//lom:intendedEndUserRole/voc:vocabulary/lom:value';
+            $intendeduserrole = $xpath->query($query);
+            if (!empty($intendeduserrole) && ($intendeduserrole->length > 0)) {
+                $role = trim($intendeduserrole->item(0)->nodeValue);
+                if (strcasecmp('Instructor', $role) == 0) {
+                    $mod_visible = 0;
+                }
+            }
+        }
+        return $mod_visible;
+    }
+
     protected function create_node_course_sections_section_mods_mod ($root_parent) {
 
         $sheet_course_sections_section_mods_mod = static::loadsheet(SHEET_COURSE_SECTIONS_SECTION_MODS_MOD);
@@ -459,13 +483,15 @@ class cc2moodle {
                                        '[#mod_instance_id#]',
                                        '[#mod_type#]',
                                        '[#date_now#]',
-                                       '[#mod_indent#]');
+                                       '[#mod_indent#]',
+                                       '[#mod_visible#]');
 
                     $replace_values = array($child['index'],
                                             $child['instance'],
                                             $child['moodle_type'],
                                             time(),
-                                            $indent);
+                                            $indent,
+                                            $this->get_module_visible($child['resource_indentifier']));
 
                     $node_course_sections_section_mods_mod .= str_replace($find_tags, $replace_values, $sheet_course_sections_section_mods_mod);
                 }

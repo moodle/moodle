@@ -132,32 +132,33 @@ class cc_resource extends entities {
                     $cdir = getcwd();
                     chdir($dirpath);
                     try {
-                        $doc->loadHTML($mod_alltext);
-                        $xpath = new DOMXPath($doc);
-                        $attributes = array('href', 'src', 'background', 'archive', 'code');
-                        $qtemplate = "//*[@##][not(contains(@##,'://'))]/@##";
-                        $query = '';
-                        foreach ($attributes as $attrname) {
-                            if (!empty($query)) {
-                                $query .= " | ";
+                        if (!empty($mod_alltext) && $doc->loadHTML($mod_alltext)) {
+                            $xpath = new DOMXPath($doc);
+                            $attributes = array('href', 'src', 'background', 'archive', 'code');
+                            $qtemplate = "//*[@##][not(contains(@##,'://'))]/@##";
+                            $query = '';
+                            foreach ($attributes as $attrname) {
+                                if (!empty($query)) {
+                                    $query .= " | ";
+                                }
+                                $query .= str_replace('##', $attrname, $qtemplate);
                             }
-                            $query .= str_replace('##', $attrname, $qtemplate);
-                        }
-                        $list = $xpath->query($query);
-                        $searches = array();
-                        $replaces = array();
-                        foreach ($list as $resrc) {
-                            $rpath = $resrc->nodeValue;
-                            $rtp = realpath($rpath);
-                            if (($rtp !== false) && is_file($rtp)) {
-                                //file is there - we are in business
-                                $strip = str_replace("\\", "/", str_ireplace($rootpath, '', $rtp));
-                                $encoded_file = '$@FILEPHP@$'.str_replace('/', '$@SLASH@$', $strip);
-                                $searches[] = $resrc->nodeValue;
-                                $replaces[] = $encoded_file;
+                            $list = $xpath->query($query);
+                            $searches = array();
+                            $replaces = array();
+                            foreach ($list as $resrc) {
+                                $rpath = $resrc->nodeValue;
+                                $rtp = realpath($rpath);
+                                if (($rtp !== false) && is_file($rtp)) {
+                                    //file is there - we are in business
+                                    $strip = str_replace("\\", "/", str_ireplace($rootpath, '', $rtp));
+                                    $encoded_file = '$@FILEPHP@$'.str_replace('/', '$@SLASH@$', $strip);
+                                    $searches[] = $resrc->nodeValue;
+                                    $replaces[] = $encoded_file;
+                                }
                             }
+                            $mod_alltext = str_replace($searches, $replaces, $mod_alltext);
                         }
-                        $mod_alltext = str_replace($searches, $replaces, $mod_alltext);
                     } catch (Exception $e) {
                         //silence the complaints
                     }
