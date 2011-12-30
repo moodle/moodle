@@ -26,7 +26,7 @@
     //HTTPS is potentially required in this page
     httpsrequired();
 
-    $mform_signup = new login_signup_form();
+    $mform_signup = new login_signup_form(null, null, 'post', '', array('autocomplete'=>'on'));
 
     if ($mform_signup->is_cancelled()) {
         redirect($CFG->httpswwwroot.'/login/index.php');
