@@ -4,6 +4,12 @@ if ($show_instructions) {
 } else {
     $columns = 'onecolumn';
 }
+
+if (empty($CFG->xmlstrictheaders) and !empty($CFG->loginpasswordautocomplete)) {
+    $autocomplete = 'autocomplete="off"';
+} else {
+    $autocomplete = '';
+}
 ?>
 <div class="loginbox clearfix <?php echo $columns ?>">
   <div class="loginpanel">
@@ -31,7 +37,7 @@ if ($show_instructions) {
               echo '</div>';
           }
         ?>
-        <form action="<?php echo $CFG->httpswwwroot; ?>/login/index.php" method="post" id="login">
+        <form action="<?php echo $CFG->httpswwwroot; ?>/login/index.php" method="post" id="login" <?php echo $autocomplete; ?> >
           <div class="loginform">
             <div class="form-label"><label for="username"><?php print_string("username") ?></label></div>
             <div class="form-input">
@@ -40,7 +46,7 @@ if ($show_instructions) {
             <div class="clearer"><!-- --></div>
             <div class="form-label"><label for="password"><?php print_string("password") ?></label></div>
             <div class="form-input">
-              <input type="password" name="password" id="password" size="15" value="" <?php if (!empty($CFG->loginpasswordautocomplete)) {echo 'autocomplete="off"';} ?> />
+              <input type="password" name="password" id="password" size="15" value="" <?php echo $autocomplete; ?> />
               <input type="submit" id="loginbtn" value="<?php print_string("login") ?>" />
               <div class="forgetpass"><a href="forgot_password.php"><?php print_string("forgotten") ?></a></div>
             </div>
