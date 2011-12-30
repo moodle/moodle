@@ -35,6 +35,12 @@ class block_login extends block_base {
         // TODO: now that we have multiauth it is hard to find out if there is a way to change password
         $forgot = $wwwroot . '/login/forgot_password.php';
 
+        if (empty($CFG->xmlstrictheaders) and !empty($CFG->loginpasswordautocomplete)) {
+            $autocomplete = 'autocomplete="off"';
+        } else {
+            $autocomplete = '';
+        }
+
         $username = get_moodle_cookie();
 
         $this->content->footer = '';
@@ -42,18 +48,14 @@ class block_login extends block_base {
 
         if (!isloggedin() or isguestuser()) {   // Show the block
 
-            $this->content->text .= "\n".'<form class="loginform" id="login" method="post" action="'.get_login_url().'">';
+            $this->content->text .= "\n".'<form class="loginform" id="login" method="post" action="'.get_login_url().'" '.$autocomplete.'>';
 
             $this->content->text .= '<div class="c1 fld username"><label for="login_username">'.get_string('username').'</label>';
             $this->content->text .= '<input type="text" name="username" id="login_username" value="'.s($username).'" /></div>';
 
             $this->content->text .= '<div class="c1 fld password"><label for="login_password">'.get_string('password').'</label>';
 
-            if (!empty($CFG->loginpasswordautocomplete)) {
-                $this->content->text .= '<input type="password" name="password" id="login_password" value="" autocomplete="off" /></div>';
-            } else {
-                $this->content->text .= '<input type="password" name="password" id="login_password" value="" /></div>';
-            }
+            $this->content->text .= '<input type="password" name="password" id="login_password" value="" '.$autocomplete.' /></div>';
 
             $this->content->text .= '<div class="c1 btn"><input type="submit" value="'.get_string('login').'" /></div>';
 
