@@ -190,6 +190,15 @@ if ($version > $CFG->version) {  // upgrade
     $PAGE->set_pagelayout('maintenance');
     $PAGE->set_popup_notification_allowed(false);
 
+    if (upgrade_stale_php_files_present()) {
+        $PAGE->set_title($stradministration);
+        $PAGE->set_cacheable(false);
+
+        $output = $PAGE->get_renderer('core', 'admin');
+        echo $output->upgrade_stale_php_files_page();
+        die();
+    }
+
     if (empty($confirmupgrade)) {
         $a->oldversion = "$CFG->release ($CFG->version)";
         $a->newversion = "$release ($version)";
