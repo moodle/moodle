@@ -257,6 +257,41 @@ function upgrade_plugin_savepoint($result, $version, $type, $plugin, $allowabort
     }
 }
 
+/**
+ * Detect if there are leftovers in PHP source files.
+ *
+ * During main version upgrades administrators MUST move away
+ * old PHP source files and start from scratch (or better
+ * use git).
+ *
+ * @return bool true means borked upgrade, false means previous PHP files were properly removed
+ */
+function upgrade_stale_php_files_present() {
+    global $CFG;
+
+    $someexamplesofremovedfiles = array(
+        // removed in 2.2dev
+        '/lib/yui/3.4.1pr1/',
+        // removed in 2.2
+        '/search/cron_php5.php',
+        '/course/report/log/indexlive.php',
+        '/admin/report/backups/index.php',
+        '/admin/generator.php',
+        // removed in 2.1
+        '/lib/yui/2.8.0r4/',
+        // removed in 2.0
+        '/blocks/admin/block_admin.php',
+        '/blocks/admin_tree/block_admin_tree.php',
+    );
+
+    foreach ($someexamplesofremovedfiles as $file) {
+        if (file_exists($CFG->dirroot.$file)) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 /**
  * Upgrade plugins
