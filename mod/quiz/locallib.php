@@ -246,22 +246,29 @@ function quiz_number_of_questions_in_quiz($layout) {
  * @return string the new layout string
  */
 function quiz_repaginate($layout, $perpage, $shuffle = false) {
-    $layout = str_replace(',0', '', $layout); // remove existing page breaks
-    $questions = explode(',', $layout);
+    $questions = quiz_questions_in_quiz($layout);
+    if (!$questions) {
+        return '0';
+    }
+
+    $questions = explode(',', quiz_questions_in_quiz($layout));
     if ($shuffle) {
         shuffle($questions);
     }
-    $i = 1;
-    $layout = '';
+
+    $onthispage = 0;
+    $layout = array();
     foreach ($questions as $question) {
-        if ($perpage and $i > $perpage) {
-            $layout .= '0,';
-            $i = 1;
+        if ($perpage and $onthispage >= $perpage) {
+            $layout[] = 0;
+            $onthispage = 0;
         }
-        $layout .= $question.',';
-        $i++;
+        $layout[] = $question;
+        $onthispage += 1;
     }
-    return $layout.'0';
+
+    $layout[] = 0;
+    return implode(',', $layout);
 }
 
 /// Functions to do with quiz grades //////////////////////////////////////////
