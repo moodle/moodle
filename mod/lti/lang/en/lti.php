@@ -172,7 +172,7 @@ Three icons are available after the External tool type dropdown list:
 * **Edit** - Select a course level tool type from the dropdown, then click this icon. The details of the tool configuration may be edited.
 * **Delete** - Remove the selected course level tool type.';
 $string['external_tool_types'] = 'External Tool Types';
-$string['failedtoconnect'] = 'Moodle was unable to communicate with the \"$a\" system';
+$string['failedtoconnect'] = 'Moodle was unable to communicate with the "{$a}" system';
 $string['filter_basiclti_configlink'] = 'Configure your preferred sites and their passwords';
 $string['filter_basiclti_password'] = 'Password is mandatory';
 $string['filterconfig'] = 'LTI administration';
@@ -225,7 +225,7 @@ $string['lti:manage'] = 'Edit LTI activities';
 $string['lti:requesttooladd'] = 'Submit a tool to admins for configuration';
 $string['lti:view'] = 'View LTI activities';
 $string['lti_administration'] = 'LTI Administration';
-$string['lti_errormsg'] = 'The tool returned the following error message: \"$a\"';
+$string['lti_errormsg'] = 'The tool returned the following error message: "{$a}"';
 $string['lti_launch_error'] = 'An error occured when launching the external tool: ';
 $string['lti_launch_error_tool_request'] = '<p>
 To submit a request for an administrator to complete the tool configuration, click <a href="{$a->admin_request_url}" target="_top">here</a>.
@@ -255,7 +255,7 @@ Tool types listed on this page are separated into three categories:
         Moodle instance. Instructors may still use tools from these providers if they have a consumer key and shared secret, or if none is required.';
 $string['miscellaneous'] = 'Miscellaneous';
 $string['misconfiguredtools'] = 'Misconfigured tool instances were detected';
-$string['missingparameterserror'] = 'The page is misconfigured: \"$a\"';
+$string['missingparameterserror'] = 'The page is misconfigured: "{$a}"';
 $string['module_class_type'] = 'Moodle module type';
 $string['modulename'] = 'External Tool';
 $string['modulename_help'] = 'External tools allow Moodle users to interact with learning resources and activities on other web sites. For instance, an
