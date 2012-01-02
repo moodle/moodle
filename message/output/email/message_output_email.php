@@ -51,6 +51,7 @@ class message_output_email extends message_output {
 
         //check if the recipient has a different email address specified in their messaging preferences Vs their user profile
         $emailmessagingpreference = get_user_preferences('message_processor_email_email', null, $eventdata->userto);
+        $emailmessagingpreference = clean_param($emailmessagingpreference, PARAM_EMAIL);
         if (!empty($emailmessagingpreference)) {
             //clone to avoid altering the actual user object
             $recipient = clone($eventdata->userto);
