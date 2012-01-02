@@ -23,7 +23,7 @@ if (isset($CFG->mnet_dispatcher_mode) and $CFG->mnet_dispatcher_mode !== 'off') 
     $hosts = mnet_get_hosts();
     foreach ($hosts as $host) {
         if ($host->id == $CFG->mnet_all_hosts_id) {
-            $host->name = get_string('allhosts', 'core_mnet');
+            $host->name = new lang_string('allhosts', 'core_mnet');
         }
         $ADMIN->add('mnetpeercat',
             new admin_externalpage(
