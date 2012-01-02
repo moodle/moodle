@@ -93,7 +93,7 @@ class message_output_jabber extends message_output {
         if (!$this->is_system_configured()) {
             return get_string('notconfigured','message_jabber');
         } else {
-            return get_string('jabberid', 'message_jabber').': <input size="30" name="jabber_jabberid" value="'.$preferences->jabber_jabberid.'" />';
+            return get_string('jabberid', 'message_jabber').': <input size="30" name="jabber_jabberid" value="'.s($preferences->jabber_jabberid).'" />';
         }
     }
 
