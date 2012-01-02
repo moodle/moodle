@@ -21,7 +21,7 @@ class PSpell extends SpellChecker {
 		$outWords = array();
 		foreach ($words as $word) {
 			if (!pspell_check($plink, trim($word)))
-				$outWords[] = utf8_encode($word);
+				$outWords[] = $word;
 		}
 
 		return $outWords;
@@ -36,9 +36,6 @@ class PSpell extends SpellChecker {
 	 */
 	function &getSuggestions($lang, $word) {
 		$words = pspell_suggest($this->_getPLink($lang), $word);
-
-		for ($i=0; $i<count($words); $i++)
-			$words[$i] = utf8_encode($words[$i]);
 
 		return $words;
 	}
@@ -56,7 +53,7 @@ class PSpell extends SpellChecker {
 			$lang,
 			$this->_config['PSpell.spelling'],
 			$this->_config['PSpell.jargon'],
-			$this->_config['PSpell.encoding'],
+			empty($this->_config['PSpell.encoding']) ? 'utf-8' : $this->_config['PSpell.encoding'],
 			$this->_config['PSpell.mode']
 		);
 
