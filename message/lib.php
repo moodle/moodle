@@ -996,7 +996,7 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
                 $messagehtml = NULL;
             }
 
-            if (!empty($preference->message_emailaddress)) {
+            if (!empty($preference->message_emailaddress) and validate_email($preference->message_emailaddress)) {
                 $userto->email = $preference->message_emailaddress;   // Use custom messaging address
             }
 
