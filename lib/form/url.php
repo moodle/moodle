@@ -80,24 +80,7 @@ EOD;
 
         return $str;
     }
-   /**
-    * Automatically generates and assigns an 'id' attribute for the element.
-    *
-    * Currently used to ensure that labels work on radio buttons and
-    * checkboxes. Per idea of Alexander Radivanovich.
-    * Overriden in moodleforms to remove qf_ prefix.
-    *
-    * @access private
-    * @return void
-    */
-    function _generateId()
-    {
-        static $idx = 1;
 
-        if (!$this->getAttribute('id')) {
-            $this->updateAttributes(array('id' => 'id_'. substr(md5(microtime() . $idx++), 0, 6)));
-        }
-    } // end func _generateId
     /**
      * set html for help button
      *
