@@ -28,6 +28,9 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->libdir . '/form/radio.php');
+require_once($CFG->libdir . '/form/select.php');
+require_once($CFG->libdir . '/form/text.php');
 
 class formslib_test extends UnitTestCase {
 
@@ -116,4 +119,104 @@ class formslib_test extends UnitTestCase {
         $CFG->strictformsrequired = $strictformsrequired;
     }
 
+    public function test_generate_id_select() {
+        $el = new MoodleQuickForm_select('choose_one', 'Choose one',
+                array(1 => 'One', '2' => 'Two'));
+        $el->_generateId();
+        $this->assertEqual('id_choose_one', $el->getAttribute('id'));
+    }
+
+    public function test_generate_id_like_repeat() {
+        $el = new MoodleQuickForm_text('text[7]', 'Type something');
+        $el->_generateId();
+        $this->assertEqual('id_text_7', $el->getAttribute('id'));
+    }
+
+    public function test_can_manually_set_id() {
+        $el = new MoodleQuickForm_text('elementname', 'Type something',
+                array('id' => 'customelementid'));
+        $el->_generateId();
+        $this->assertEqual('customelementid', $el->getAttribute('id'));
+    }
+
+    public function test_generate_id_radio() {
+        $el = new MoodleQuickForm_radio('radio', 'Label', 'Choice label', 'choice_value');
+        $el->_generateId();
+        $this->assertEqual('id_radio_choice_value', $el->getAttribute('id'));
+    }
+
+    public function test_radio_can_manually_set_id() {
+        $el = new MoodleQuickForm_radio('radio2', 'Label', 'Choice label', 'choice_value',
+                array('id' => 'customelementid2'));
+        $el->_generateId();
+        $this->assertEqual('customelementid2', $el->getAttribute('id'));
+    }
+
+    public function test_generate_id_radio_like_repeat() {
+        $el = new MoodleQuickForm_radio('repeatradio[2]', 'Label', 'Choice label', 'val');
+        $el->_generateId();
+        $this->assertEqual('id_repeatradio_2_val', $el->getAttribute('id'));
+    }
+
+    public function test_rendering() {
+        $form = new formslib_test_form();
+        ob_start();
+        $form->display();
+        $html = ob_get_clean();
+
+        $this->assert(new ContainsTagWithAttributes('select', array(
+                'id' => 'id_choose_one', 'name' => 'choose_one')), $html);
+
+        $this->assert(new ContainsTagWithAttributes('input', array(
+                'type' => 'text', 'id' => 'id_text_0', 'name' => 'text[0]')), $html);
+
+        $this->assert(new ContainsTagWithAttributes('input', array(
+                'type' => 'text', 'id' => 'id_text_1', 'name' => 'text[1]')), $html);
+
+        $this->assert(new ContainsTagWithAttributes('input', array(
+                'type' => 'radio', 'id' => 'id_radio_choice_value',
+                'name' => 'radio', 'value' => 'choice_value')), $html);
+
+        $this->assert(new ContainsTagWithAttributes('input', array(
+                'type' => 'radio', 'id' => 'customelementid2', 'name' => 'radio2')), $html);
+
+        $this->assert(new ContainsTagWithAttributes('input', array(
+        'type' => 'radio', 'id' => 'id_repeatradio_0_2',
+                        'name' => 'repeatradio[0]', 'value' => '2')), $html);
+
+        $this->assert(new ContainsTagWithAttributes('input', array(
+                'type' => 'radio', 'id' => 'id_repeatradio_2_1',
+                'name' => 'repeatradio[2]', 'value' => '1')), $html);
+
+        $this->assert(new ContainsTagWithAttributes('input', array(
+                'type' => 'radio', 'id' => 'id_repeatradio_2_2',
+                'name' => 'repeatradio[2]', 'value' => '2')), $html);
+    }
+}
+
+
+/**
+ * Test form to be used by {@link formslib_test::test_rendering()}.
+ */
+class formslib_test_form extends moodleform {
+    public function definition() {
+        $this->_form->addElement('select', 'choose_one', 'Choose one',
+                array(1 => 'One', '2' => 'Two'));
+
+        $repeatels = array(
+            $this->_form->createElement('text', 'text', 'Type something')
+        );
+        $this->repeat_elements($repeatels, 2, array(), 'numtexts', 'addtexts');
+
+        $this->_form->addElement('radio', 'radio', 'Label', 'Choice label', 'choice_value');
+
+        $this->_form->addElement('radio', 'radio2', 'Label', 'Choice label', 'choice_value',
+                array('id' => 'customelementid2'));
+
+        $repeatels = array(
+            $this->_form->createElement('radio', 'repeatradio', 'Choose {no}', 'One', 1),
+            $this->_form->createElement('radio', 'repeatradio', 'Choose {no}', 'Two', 2),
+        );
+        $this->repeat_elements($repeatels, 3, array(), 'numradios', 'addradios');
+    }
 }
