@@ -63,6 +63,8 @@ function xmldb_main_upgrade($oldversion) {
         // just in case somebody hacks upgrade scripts or env, we really can not continue
         echo("You need to upgrade to 2.2.x first!\n");
         exit(1);
+        // Note this savepoint is 100% unreachable, but needed to pass the upgrade checks
+        upgrade_main_savepoint(true, 2011120500);
     }
 
     ////////////////////////////////////////
