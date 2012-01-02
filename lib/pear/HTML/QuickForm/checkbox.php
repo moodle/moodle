@@ -64,7 +64,6 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input
         $this->_text = $text;
         $this->setType('checkbox');
         $this->updateAttributes(array('value'=>1));
-        $this->_generateId();
     } //end constructor
     
     // }}}
