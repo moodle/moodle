@@ -339,7 +339,7 @@ class theme_mymobile_core_renderer extends core_renderer {
                 $loggedinas = $realuserinfo.$username.'     <a id="mypower" data-inline="true" data-role="button" data-icon="mypower" data-ajax="false" class="ui-btn-right mypower" href="'.$CFG->wwwroot.'/login/logout.php?sesskey='.sesskey().'\">'.get_string('logout').'</a>';
             }
         } else {
-            $loggedinas = '<a data-role="button" data-icon="alert" class="ui-btn-right nolog" href="'.$loginurl.'" data-prefetch>'.get_string('login').'</a>';
+            $loggedinas = '<a data-role="button" data-icon="alert" class="ui-btn-right nolog" href="'.$loginurl.'" data-ajax="false">'.get_string('login').'</a>';
         }
 
         // TODO: Enable $CFG->displayloginfailures and test as admin what happens after you succesfully
@@ -422,7 +422,7 @@ class theme_mymobile_core_renderer extends core_renderer {
         } else {
             $loggedinas = get_string('loggedinnot', 'moodle');
             if (!$loginpage) {
-                $loggedinas .= " (<a href=\"$loginurl\">".get_string('login').'</a>)';
+                $loggedinas .= " (<a href=\"$loginurl\" data-ajax=\"false\">".get_string('login').'</a>)';
             }
         }
 
