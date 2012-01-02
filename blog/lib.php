@@ -529,7 +529,10 @@ function blog_get_options_for_course(stdClass $course, stdClass $user=null) {
         return $courseoptions[$key];
     }
 
-    if (has_capability('moodle/blog:view', get_context_instance(CONTEXT_COURSE, $course->id))) {
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    $canparticipate = (is_enrolled($coursecontext) or is_viewing($coursecontext));
+
+    if (has_capability('moodle/blog:view', $coursecontext)) {
         // We can view!
         if ($CFG->bloglevel >= BLOG_SITE_LEVEL) {
             // View entries about this course
@@ -552,7 +555,7 @@ function blog_get_options_for_course(stdClass $course, stdClass $user=null) {
         }
     }
 
-    if (has_capability('moodle/blog:create', $sitecontext)) {
+    if (has_capability('moodle/blog:create', $sitecontext) and $canparticipate) {
         // We can blog about this course
         $options['courseadd'] = array(
             'string' => get_string('blogaboutthiscourse', 'blog'),
@@ -604,7 +607,10 @@ function blog_get_options_for_module($module, $user=null) {
         return $moduleoptions[$module->id];
     }
 
-    if (has_capability('moodle/blog:view', get_context_instance(CONTEXT_MODULE, $module->id))) {
+    $modcontext = get_context_instance(CONTEXT_MODULE, $module->id);
+    $canparticipate = (is_enrolled($modcontext) or is_viewing($modcontext));
+
+    if (has_capability('moodle/blog:view', $modcontext)) {
         // We can view!
         if ($CFG->bloglevel >= BLOG_SITE_LEVEL) {
             // View all entries about this module
@@ -632,7 +638,7 @@ function blog_get_options_for_module($module, $user=null) {
         }
     }
 
-    if (has_capability('moodle/blog:create', $sitecontext)) {
+    if (has_capability('moodle/blog:create', $sitecontext) and $canparticipate) {
         // The user can blog about this module
         $options['moduleadd'] = array(
             'string' => get_string('blogaboutthismodule', 'blog', $module->modname),

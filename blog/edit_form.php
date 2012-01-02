@@ -134,27 +134,25 @@ class blog_edit_form extends moodleform {
 
         // validate course association
         if (!empty($data['courseassoc']) && has_capability('moodle/blog:associatecourse', $sitecontext)) {
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $data['courseassoc']);
+            $coursecontext = context::instance_by_id($data['courseassoc'], IGNORE_MISSING);
 
-            if ($coursecontext)  {
+            if ($coursecontext and $coursecontext->contextlevel == CONTEXT_COURSE)  {
                 if (!is_enrolled($coursecontext) and !is_viewing($coursecontext)) {
                     $errors['courseassoc'] = get_string('studentnotallowed', '', fullname($USER, true));
                 }
             } else {
-                $errors['courseassoc'] = get_string('invalidcontextid', 'blog');
+                $errors['courseassoc'] = get_string('error');
             }
         }
 
         // validate mod association
         if (!empty($data['modassoc'])) {
             $modcontextid = $data['modassoc'];
+            $modcontext = context::instance_by_id($modcontextid, IGNORE_MISSING);
 
-            $modcontext = get_context_instance(CONTEXT_MODULE, $modcontextid);
-
-            if ($modcontext) {
+            if ($modcontext and $modcontext->contextlevel == CONTEXT_MODULE) {
                 // get context of the mod's course
-                $path = explode('/', $modcontext->path);
-                $coursecontext = get_context_instance_by_id($path[(count($path) - 2)]);
+                $coursecontext = $modcontext->get_course_context(true);
 
                 // ensure only one course is associated
                 if (!empty($data['courseassoc'])) {
@@ -170,7 +168,7 @@ class blog_edit_form extends moodleform {
                     $errors['modassoc'] = get_string('studentnotallowed', '', fullname($USER, true));
                 }
             } else {
-                $errors['modassoc'] = get_string('invalidcontextid', 'blog');
+                $errors['modassoc'] = get_string('error');
             }
         }
 
