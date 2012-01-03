@@ -1602,4 +1602,150 @@ class moodlelib_test extends UnitTestCase {
         date_default_timezone_set($systemdefaulttimezone);
         setlocale(LC_TIME, $oldlocale);
     }
+
+    /**
+     * Test get_string and most importantly the implementation of the lang_string
+     * object.
+     */
+    public function test_get_string() {
+        global $COURSE;
+
+        // Make sure we are using English
+        $originallang = $COURSE->lang;
+        $COURSE->lang = 'en';
+
+        $yes = get_string('yes');
+        $yesexpected = 'Yes';
+        $this->assertIsA($yes, 'string');
+        $this->assertEqual($yes, $yesexpected);
+
+        $yes = get_string('yes', 'moodle');
+        $this->assertIsA($yes, 'string');
+        $this->assertEqual($yes, $yesexpected);
+
+        $yes = get_string('yes', 'core');
+        $this->assertIsA($yes, 'string');
+        $this->assertEqual($yes, $yesexpected);
+
+        $yes = get_string('yes', '');
+        $this->assertIsA($yes, 'string');
+        $this->assertEqual($yes, $yesexpected);
+
+        $yes = get_string('yes', null);
+        $this->assertIsA($yes, 'string');
+        $this->assertEqual($yes, $yesexpected);
+
+        $yes = get_string('yes', null, 1);
+        $this->assertIsA($yes, 'string');
+        $this->assertEqual($yes, $yesexpected);
+
+        $days = 1;
+        $numdays = get_string('numdays', 'core', '1');
+        $numdaysexpected = $days.' days';
+        $this->assertIsA($numdays, 'string');
+        $this->assertEqual($numdays, $numdaysexpected);
+
+        $yes = get_string('yes', null, null, true);
+        $this->assertEqual(get_class($yes), 'lang_string');
+        $this->assertIsA($yes, 'lang_string');
+        $this->assertEqual((string)$yes, $yesexpected);
+
+        // Test using a lang_string object as the $a argument for a normal
+        // get_string call (returning string)
+        $test = new lang_string('yes', null, null, true);
+        $testexpected = get_string('numdays', 'core', get_string('yes'));
+        $testresult = get_string('numdays', null, $test);
+        $this->assertIsA($testresult, 'string');
+        $this->assertEqual($testresult, $testexpected);
+
+        // Test using a lang_string object as the $a argument for an object
+        // get_string call (returning lang_string)
+        $test = new lang_string('yes', null, null, true);
+        $testexpected = get_string('numdays', 'core', get_string('yes'));
+        $testresult = get_string('numdays', null, $test, true);
+        $this->assertEqual(get_class($testresult), 'lang_string');
+        $this->assertIsA($testresult, 'lang_string');
+        $this->assertEqual("$testresult", $testexpected);
+
+        // Make sure that object properties that can't be converted don't cause
+        // errors
+        // Level one: This is as deep as current language processing goes
+        $test = new stdClass;
+        $test->one = 'here';
+        $string = get_string('yes', null, $test, true);
+        $this->assertEqual($string, $yesexpected);
+
+        // Make sure that object properties that can't be converted don't cause
+        // errors.
+        // Level two: Language processing doesn't currently reach this deep.
+        // only immediate scalar properties are worked with.
+        $test = new stdClass;
+        $test->one = new stdClass;
+        $test->one->two = 'here';
+        $string = get_string('yes', null, $test, true);
+        $this->assertEqual($string, $yesexpected);
+
+        // Make sure that object properties that can't be converted don't cause
+        // errors.
+        // Level three: It should never ever go this deep, but we're making sure
+        // it doesn't cause any probs anyway.
+        $test = new stdClass;
+        $test->one = new stdClass;
+        $test->one->two = new stdClass;
+        $test->one->two->three = 'here';
+        $string = get_string('yes', null, $test, true);
+        $this->assertEqual($string, $yesexpected);
+
+        // Make sure that object properties that can't be converted don't cause
+        // errors and check lang_string properties.
+        // Level one: This is as deep as current language processing goes
+        $test = new stdClass;
+        $test->one = new lang_string('yes');
+        $string = get_string('yes', null, $test, true);
+        $this->assertEqual($string, $yesexpected);
+
+        // Make sure that object properties that can't be converted don't cause
+        // errors and check lang_string properties.
+        // Level two: Language processing doesn't currently reach this deep.
+        // only immediate scalar properties are worked with.
+        $test = new stdClass;
+        $test->one = new stdClass;
+        $test->one->two = new lang_string('yes');
+        $string = get_string('yes', null, $test, true);
+        $this->assertEqual($string, $yesexpected);
+
+        // Make sure that object properties that can't be converted don't cause
+        // errors and check lang_string properties.
+        // Level three: It should never ever go this deep, but we're making sure
+        // it doesn't cause any probs anyway.
+        $test = new stdClass;
+        $test->one = new stdClass;
+        $test->one->two = new stdClass;
+        $test->one->two->three = new lang_string('yes');
+        $string = get_string('yes', null, $test, true);
+        $this->assertEqual($string, $yesexpected);
+
+        // Make sure that array properties that can't be converted don't cause
+        // errors
+        $test = array();
+        $test['one'] = new stdClass;
+        $test['one']->two = 'here';
+        $string = get_string('yes', null, $test, true);
+        $this->assertEqual($string, $yesexpected);
+
+        // This is one of the limitations to the lang_string class. It can't be
+        // used as a key
+        $this->expectError('Illegal offset type', 'Array offsets now support objects we can consider making lazy loading the default!.');
+        $array = array(get_string('yes', null, null, true) => 'yes');
+
+        // Same thing but as above except using an object... this is allowed :P
+        $string = get_string('yes', null, null, true);
+        $object = new stdClass;
+        $object->$string = 'Yes';
+        $this->assertEqual($string, $yesexpected);
+        $this->assertEqual($object->$string, $yesexpected);
+
+        // Reset the language
+        $COURSE->lang = $originallang;
+    }
 }
