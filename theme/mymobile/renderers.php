@@ -31,6 +31,9 @@
  * @copyright  John Stabinger
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+include_once ($CFG->dirroot. '/mod/choice/renderer.php');
+
 class theme_mymobile_renderer extends plugin_renderer_base {
 
     /**
@@ -785,7 +788,7 @@ class theme_mymobile_core_renderer extends core_renderer {
  * @copyright  John Stabinger
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class theme_mymobile_mod_choice_renderer extends plugin_renderer_base {
+class theme_mymobile_mod_choice_renderer extends mod_choice_renderer {
 
     /**
      * Returns HTML to display choices of option
