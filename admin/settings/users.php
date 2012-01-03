@@ -127,7 +127,9 @@ if ($hassiteconfig
                              'firstaccess' => new lang_string('firstaccess'),
                              'lastaccess' => new lang_string('lastaccess'),
                              'mycourses' => new lang_string('mycourses'),
-                             'groups' => new lang_string('groups'))));
+                             'groups' => new lang_string('groups'),
+                             'suspended' => new lang_string('suspended', 'auth'),
+                       )));
 
         // Select fields to display as part of user identity (only to those
         // with moodle/site:viewuseridentity).

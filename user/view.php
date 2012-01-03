@@ -315,6 +315,12 @@ if (!isset($hiddenfields['mycourses'])) {
     }
 }
 
+if (!isset($hiddenfields['suspended'])) {
+    if ($user->suspended) {
+        print_row('', get_string('suspended', 'auth'));
+    }
+}
+
 echo "</table></div></div>";
 
 // Print messaging link if allowed
