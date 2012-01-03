@@ -25,6 +25,7 @@
 
 $string['allowdeletes'] = 'Allow deletes';
 $string['allowrenames'] = 'Allow renames';
+$string['allowsuspends'] = 'Allow suspending and activating of accounts';
 $string['csvdelimiter'] = 'CSV delimiter';
 $string['defaultvalues'] = 'Default values';
 $string['deleteerrors'] = 'Delete errors';

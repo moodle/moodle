@@ -73,6 +73,10 @@ $stremailduplicate          = get_string('useremailduplicate', 'error');
 $strinvalidpasswordpolicy   = get_string('invalidpasswordpolicy', 'error');
 $errorstr                   = get_string('error');
 
+$stryes                     = get_string('yes');
+$strno                      = get_string('no');
+$stryesnooptions = array(0=>$strno, 1=>$stryes);
+
 $returnurl = new moodle_url('/admin/tool/uploaduser/index.php');
 $bulknurl  = new moodle_url('/admin/user/user_bulk.php');
 
@@ -88,6 +92,7 @@ $STD_FIELDS = array('id', 'firstname', 'lastname', 'username', 'email',
         'url', 'description', 'descriptionformat', 'password',
         'auth',        // watch out when changing auth type or using external auth plugins!
         'oldusername', // use when renaming users - this is the original username
+        'suspended',   // 1 means suspend user account, 0 means activate user account, nothing means keep as is for existing users
         'deleted',     // 1 means delete user
     );
 
@@ -154,6 +159,7 @@ if ($formdata = $mform2->is_cancelled()) {
     $updatepasswords   = (!empty($formdata->uupasswordold)  and $optype != UU_USER_ADDNEW and $optype != UU_USER_ADDINC and ($updatetype == UU_UPDATE_FILEOVERRIDE or $updatetype == UU_UPDATE_ALLOVERRIDE));
     $allowrenames      = (!empty($formdata->uuallowrenames) and $optype != UU_USER_ADDNEW and $optype != UU_USER_ADDINC);
     $allowdeletes      = (!empty($formdata->uuallowdeletes) and $optype != UU_USER_ADDNEW and $optype != UU_USER_ADDINC);
+    $allowsuspends     = (!empty($formdata->uuallowsuspends));
     $bulk              = $formdata->uubulk;
     $noemailduplicates = $formdata->uunoemailduplicates;
     $standardusernames = $formdata->uustandardusernames;
@@ -446,6 +452,7 @@ if ($formdata = $mform2->is_cancelled()) {
             $user->id = $existinguser->id;
 
             $upt->track('username', html_writer::link(new moodle_url('/user/profile.php', array('id'=>$existinguser->id)), s($existinguser->username)), 'normal', false);
+            $upt->track('suspended', $stryesnooptions[$existinguser->suspended] , 'normal', false);
 
             if (is_siteadmin($user->id)) {
                 $upt->track('status', $strusernotupdatedadmin, 'error');
@@ -462,6 +469,7 @@ if ($formdata = $mform2->is_cancelled()) {
             $upt->track('auth', $existinguser->auth, 'normal', false);
 
             $doupdate = false;
+            $dologout = false;
 
             if ($updatetype != UU_UPDATE_NOCHANGES) {
                 if (!empty($user->auth) and $user->auth !== $existinguser->auth) {
@@ -471,10 +479,13 @@ if ($formdata = $mform2->is_cancelled()) {
                         $upt->track('auth', $struserauthunsupported, 'warning');
                     }
                     $doupdate = true;
+                    if ($existinguser->auth === 'nologin') {
+                        $dologout = true;
+                    }
                 }
                 $allcolumns = array_merge($STD_FIELDS, $PRF_FIELDS);
                 foreach ($allcolumns as $column) {
-                    if ($column === 'username' or $column === 'password' or $column === 'auth') {
+                    if ($column === 'username' or $column === 'password' or $column === 'auth' or $column === 'suspended') {
                         // these can not be changed here
                         continue;
                     }
@@ -530,6 +541,20 @@ if ($formdata = $mform2->is_cancelled()) {
                 continue;
             }
             $isinternalauth = $auth->is_internal();
+
+            // deal with suspending and activating of accounts
+            if ($allowsuspends and isset($user->suspended) and $user->suspended !== '') {
+                $user->suspended = $user->suspended ? 1 : 0;
+                if ($existinguser->suspended != $user->suspended) {
+                    $upt->track('suspended', '', 'normal', false);
+                    $upt->track('suspended', $stryesnooptions[$existinguser->suspended].'-->'.$stryesnooptions[$user->suspended], 'info', false);
+                    $existinguser->suspended = $user->suspended;
+                    $doupdate = true;
+                    if ($existinguser->suspended) {
+                        $dologout = true;
+                    }
+                }
+            }
 
             // changing of passwords is a special case
             // do not force password changes for external auth plugins!
@@ -593,12 +618,23 @@ if ($formdata = $mform2->is_cancelled()) {
                 }
             }
 
+            if ($dologout) {
+                session_kill_user($existinguser->id);
+            }
+
         } else {
             // save the new user to the database
             $user->confirmed    = 1;
             $user->timemodified = time();
             $user->timecreated  = time();
             $user->mnethostid   = $CFG->mnet_localhost_id; // we support ONLY local accounts here, sorry
+
+            if (!isset($user->suspended) or $user->suspended === '') {
+                $user->suspended = 0;
+            } else {
+                $user->suspended = $user->suspended ? 1 : 0;
+            }
+            $upt->track('suspended', $stryesnooptions[$user->suspended], 'normal', false);
 
             if (empty($user->auth)) {
                 $user->auth = 'manual';
