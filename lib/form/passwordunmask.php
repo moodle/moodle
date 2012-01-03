@@ -15,6 +15,16 @@ require_once($CFG->libdir.'/form/password.php');
 class MoodleQuickForm_passwordunmask extends MoodleQuickForm_password {
 
     function MoodleQuickForm_passwordunmask($elementName=null, $elementLabel=null, $attributes=null) {
+        global $CFG;
+        if (empty($CFG->xmlstrictheaders)) {
+            // no standard mform in moodle should allow autocomplete of passwords
+            // this is valid attribute in html5, sorry, we have to ignore validation errors in legacy xhtml 1.0
+            $attributes = (array)$attributes;
+            if (!isset($attributes['autocomplete'])) {
+                $attributes['autocomplete'] = 'off';
+            }
+        }
+
         parent::MoodleQuickForm_password($elementName, $elementLabel, $attributes);
     }
 

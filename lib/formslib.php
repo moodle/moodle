@@ -106,6 +106,16 @@ class moodleform {
      * @return moodleform
      */
     function moodleform($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true) {
+        global $CFG;
+        if (empty($CFG->xmlstrictheaders)) {
+            // no standard mform in moodle should allow autocomplete with the exception of user signup
+            // this is valid attribute in html5, sorry, we have to ignore validation errors in legacy xhtml 1.0
+            $attributes = (array)$attributes;
+            if (!isset($attributes['autocomplete'])) {
+                $attributes['autocomplete'] = 'off';
+            }
+        }
+
         if (empty($action)){
             $action = strip_querystring(qualified_me());
         }
