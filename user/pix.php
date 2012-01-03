@@ -6,8 +6,10 @@
     require_once('../config.php');
     require_once($CFG->libdir.'/filelib.php');
 
-    if (!empty($CFG->forcelogin) and !isloggedin()) {
+    if ((!empty($CFG->forcelogin) and !isloggedin()) ||
+        (!empty($CFG->forceloginforprofileimage) && (!isloggedin() || isguestuser()))) {
         // protect images if login required and not logged in;
+        // also if login is required for profile images and is not logged in or guest
         // do not use require_login() because it is expensive and not suitable here anyway
         redirect($CFG->pixpath.'/u/f1.png');
     }
