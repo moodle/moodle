@@ -45,6 +45,9 @@ class user_editadvanced_form extends moodleform {
         $mform->addElement('select', 'auth', get_string('chooseauthmethod','auth'), $auth_options);
         $mform->addHelpButton('auth', 'chooseauthmethod', 'auth');
 
+        $mform->addElement('advcheckbox', 'suspended', get_string('suspended','auth'));
+        $mform->addHelpButton('suspended', 'suspended', 'auth');
+
         if (!empty($CFG->passwordpolicy)){
             $mform->addElement('static', 'passwordpolicyinfo', '', print_password_policy());
         }
@@ -92,11 +95,27 @@ class user_editadvanced_form extends moodleform {
         // admin must choose some password and supply correct email
         if (!empty($USER->newadminuser)) {
             $mform->addRule('newpassword', get_string('required'), 'required', null, 'client');
+            if ($mform->elementExists('suspended')) {
+                $mform->removeElement('suspended');
+            }
         }
 
         // require password for new users
         if ($userid == -1) {
             $mform->addRule('newpassword', get_string('required'), 'required', null, 'client');
+        }
+
+        if ($user and is_mnet_remote_user($user)) {
+            // only local accounts can be suspended
+            if ($mform->elementExists('suspended')) {
+                $mform->removeElement('suspended');
+            }
+        }
+        if ($user and ($user->id == $USER->id or is_siteadmin($user))) {
+            // prevent self and admin mess ups
+            if ($mform->elementExists('suspended')) {
+                $mform->hardFreeze('suspended');
+            }
         }
 
         // print picture

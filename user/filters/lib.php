@@ -35,7 +35,7 @@ class user_filtering {
 
         if (empty($fieldnames)) {
             $fieldnames = array('realname'=>0, 'lastname'=>1, 'firstname'=>1, 'email'=>1, 'city'=>1, 'country'=>1,
-                                'confirmed'=>1, 'profile'=>1, 'courserole'=>1, 'systemrole'=>1, 'cohort'=>1,
+                                'confirmed'=>1, 'suspended'=>1, 'profile'=>1, 'courserole'=>1, 'systemrole'=>1, 'cohort'=>1,
                                 'firstaccess'=>1, 'lastaccess'=>1, 'neveraccessed'=>1, 'timemodified'=>1,
                                 'nevermodified'=>1, 'username'=>1, 'auth'=>1, 'mnethostid'=>1);
         }
@@ -110,6 +110,7 @@ class user_filtering {
             case 'city':        return new user_filter_text('city', get_string('city'), $advanced, 'city');
             case 'country':     return new user_filter_select('country', get_string('country'), $advanced, 'country', get_string_manager()->get_list_of_countries(), $USER->country);
             case 'confirmed':   return new user_filter_yesno('confirmed', get_string('confirmed', 'admin'), $advanced, 'confirmed');
+            case 'suspended':   return new user_filter_yesno('suspended', get_string('suspended', 'auth'), $advanced, 'suspended');
             case 'profile':     return new user_filter_profilefield('profile', get_string('profile'), $advanced);
             case 'courserole':  return new user_filter_courserole('courserole', get_string('courserole', 'filters'), $advanced);
             case 'systemrole':  return new user_filter_globalrole('systemrole', get_string('globalrole', 'role'), $advanced);

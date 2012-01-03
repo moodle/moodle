@@ -127,7 +127,9 @@ if ($hassiteconfig
                              'firstaccess' => get_string('firstaccess'),
                              'lastaccess' => get_string('lastaccess'),
                              'mycourses' => get_string('mycourses'),
-                             'groups' => get_string('groups'))));
+                             'groups' => get_string('groups'),
+                             'suspended' => get_string('suspended', 'auth'),
+                       )));
 
         // Select fields to display as part of user identity (only to those
         // with moodle/site:viewuseridentity).

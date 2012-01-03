@@ -347,6 +347,12 @@ if (!empty($CFG->usetags)) {
     }
 }
 
+if (!isset($hiddenfields['suspended'])) {
+    if ($user->suspended) {
+        print_row('', get_string('suspended', 'auth'));
+    }
+}
+
 echo "</table></div></div>";
 
 

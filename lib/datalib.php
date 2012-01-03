@@ -314,7 +314,7 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
 
     // warning: will return UNCONFIRMED USERS
     return $DB->get_records_sql("SELECT id, username, email, firstname, lastname, city, country,
-                                        lastaccess, confirmed, mnethostid$extrafields
+                                        lastaccess, confirmed, mnethostid, suspended $extrafields
                                    FROM {user}
                                   WHERE $select
                                   $sort", $params, $page, $recordsperpage);
