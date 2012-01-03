@@ -181,6 +181,12 @@ if ($usernew = $userform->get_data()) {
                 unset_user_preference('create_password', $usernew); // prevent cron from generating the password
             }
         }
+
+        // force logout if user just suspended
+        if (isset($usernew->suspended) and $usernew->suspended and !$user->suspended) {
+            session_kill_user($user->id);
+        }
+
         $usercreated = false;
     }
 
