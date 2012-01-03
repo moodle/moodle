@@ -50,6 +50,7 @@ $string['source'] = 'Source';
 $string['sourceext'] = 'Extension';
 $string['sourcestd'] = 'Standard';
 $string['status'] = 'Status';
+$string['status_delete'] = 'To be deleted';
 $string['status_downgrade'] = 'Higher version already installed!';
 $string['status_missing'] = 'Missing from disk!';
 $string['status_new'] = 'To be installed';

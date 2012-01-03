@@ -190,6 +190,7 @@
 #page-admin-index #plugins-check .status-missing .status {background-color:#ffd3d9;}
 #page-admin-index #plugins-check .status-new .status {background-color:#e7f1c3;}
 #page-admin-index #plugins-check .status-nodb .status {color:#999;}
+#page-admin-index #plugins-check .status-delete .status {background-color:#d2ebff;}
 #page-admin-index #plugins-check .status-upgrade .status {background-color:#d2ebff;}
 #page-admin-index #plugins-check .status-uptodate .status {color:#999;}
 #page-admin-index #plugins-check .requires ul {font-size:0.7em;margin:0;}
