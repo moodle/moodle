@@ -63,7 +63,7 @@ switch ($action) {
     case 'unenrol':
         $ue = $DB->get_record('user_enrolments', array('id'=>required_param('ue', PARAM_INT)), '*', MUST_EXIST);
         list ($instance, $plugin) = $manager->get_user_enrolment_components($ue);
-        if (!$instance || !$plugin || !$plugin->allow_unenrol($instance) || !has_capability("enrol/$instance->enrol:unenrol", $manager->get_context()) || !$manager->unenrol_user($ue)) {
+        if (!$instance || !$plugin || !$plugin->allow_unenrol_user($instance, $ue) || !has_capability("enrol/$instance->enrol:unenrol", $manager->get_context()) || !$manager->unenrol_user($ue)) {
             throw new enrol_ajax_exception('unenrolnotpermitted');
         }
         break;

@@ -506,7 +506,7 @@ class course_enrolment_manager {
     public function unenrol_user($ue) {
         global $DB;
         list ($instance, $plugin) = $this->get_user_enrolment_components($ue);
-        if ($instance && $plugin && $plugin->allow_unenrol($instance) && has_capability("enrol/$instance->enrol:unenrol", $this->context)) {
+        if ($instance && $plugin && $plugin->allow_unenrol_user($instance, $ue) && has_capability("enrol/$instance->enrol:unenrol", $this->context)) {
             $plugin->unenrol_user($instance, $ue->userid);
             return true;
         }
