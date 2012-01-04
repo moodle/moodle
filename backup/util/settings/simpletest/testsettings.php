@@ -145,7 +145,7 @@ class setting_test extends UnitTestCase {
             $this->assertEqual($e->errorcode, 'incorrect_object_passed');
         }
         restore_error_handler();
-        
+
         // Try to change value of locked setting by permission
         $bs = new mock_base_setting('test', base_setting::IS_BOOLEAN, null, null, base_setting::LOCKED_BY_PERMISSION);
         try {

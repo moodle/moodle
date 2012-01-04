@@ -278,8 +278,8 @@ just before the <MetadataProvider> element.
 
 --
 <Notify
-	Channel="back"
-	Location="https://#YOUR_MOODLE_HOSTNAME#/moodle/auth/shibboleth/logout.php" />
+    Channel="back"
+    Location="https://#YOUR_MOODLE_HOSTNAME#/moodle/auth/shibboleth/logout.php" />
 --
 
 Then restart the Shibboleth daemon and check the log file for errors. If there
@@ -300,9 +300,9 @@ Requirements:
 
 --
 <Directory /path/to/moodle/auth/shibboleth/logout.php>
-	AuthType shibboleth
-	ShibRequireSession Off
-	require shibboleth
+    AuthType shibboleth
+    ShibRequireSession Off
+    require shibboleth
 </Directory>
 --
   When using IIS, the same can be achieved by something like:
