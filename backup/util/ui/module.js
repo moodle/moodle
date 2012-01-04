@@ -16,7 +16,7 @@ M.core_backup_files_tree = {
             // XXX: the id in params['contextid'] is current context
             // request file list, so should be user context
             params['contextid'] = this.usercontextid;
-        } 
+        }
         var scope = this;
         params['sesskey']=M.cfg.sesskey;
         var cfg = {
@@ -38,14 +38,14 @@ M.core_backup_files_tree = {
                                 var n = new YAHOO.widget.TextNode(info, node, false);
                                 YAHOO.util.Event.addListener(n.labelElId, "click", function(e) {
                                     YAHOO.util.Event.preventDefault(e);
-                                }); 
+                                });
                                 n.isLeaf = false;
                             } else {
                                 var params = data[i].params;
                                 if (params['filearea'] == 'backup' && params['component'] == 'user') {
                                     // XXX: display the restore link, so should be context id
                                     params['contextid'] = scope.currentcontextid;
-                                } 
+                                }
                                 params.action = 'choosebackupfile';
                                 var restoreurl = M.cfg.wwwroot+'/backup/restorefile.php?'+build_querystring(params);
                                 var info = {label: data[i].filename, 'href': data[i].url, 'restoreurl': restoreurl};
@@ -89,14 +89,14 @@ M.core_backup_files_tree = {
                 // prevent link
                 YAHOO.util.Event.addListener(node.labelElId, "click", function(e) {
                     YAHOO.util.Event.preventDefault(e);
-                }); 
+                });
             } else {
                 node.isLeaf = true;
             }
         }
         tree.render();
         this.y3 = Y;
-    }, 
+    },
     dynload: function(node, oncompletecb) {
         M.core_backup_files_tree.request(node.href, node, oncompletecb);
     },
@@ -115,7 +115,7 @@ M.core_backup_files_tree = {
 
 YAHOO.widget.RestoreNode = function(oData, oParent, expanded) {
 
-    if (oData) { 
+    if (oData) {
         if (YAHOO.lang.isString(oData)) {
             oData = { label: oData };
         }
@@ -132,10 +132,10 @@ YAHOO.extend(YAHOO.widget.RestoreNode, YAHOO.widget.TextNode, {
     href: null,
     target: "_blank",
     _type: "RestoreNode",
-    setUpLabel: function(oData) { 
+    setUpLabel: function(oData) {
         if (YAHOO.lang.isString(oData)) {
-            oData = { 
-                label: oData 
+            oData = {
+                label: oData
             };
         } else {
             if (oData.style) {
@@ -147,7 +147,7 @@ YAHOO.extend(YAHOO.widget.RestoreNode, YAHOO.widget.TextNode, {
         this.restoreurl = oData.restoreurl;
         this.labelElId = "ygtvlabelel" + this.index;
     },
-    getContentHtml: function() { 
+    getContentHtml: function() {
         var sb = [];
         sb[sb.length] = '<a';
         sb[sb.length] = ' id="' + this.labelElId + '"';
@@ -155,7 +155,7 @@ YAHOO.extend(YAHOO.widget.RestoreNode, YAHOO.widget.TextNode, {
         if (this.href) {
             sb[sb.length] = ' href="' + this.href + '"';
             sb[sb.length] = ' target="' + this.target + '"';
-        } 
+        }
         if (this.title) {
             sb[sb.length] = ' title="' + this.title + '"';
         }

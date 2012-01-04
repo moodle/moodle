@@ -42,12 +42,12 @@ $PAGE->https_required();
         set_saml_cookie($selectedIdP);
 
         // Redirect to SessionInitiator with entityID as argument
-        if (isset($IdPs[$selectedIdP][1]) && !empty($IdPs[$selectedIdP][1])){
+        if (isset($IdPs[$selectedIdP][1]) && !empty($IdPs[$selectedIdP][1])) {
             // For Shibbolet 1.x Service Providers
-	    header('Location: '.$IdPs[$selectedIdP][1].'?providerId='. urlencode($selectedIdP) .'&target='. urlencode($CFG->wwwroot.'/auth/shibboleth/index.php'));
+            header('Location: '.$IdPs[$selectedIdP][1].'?providerId='. urlencode($selectedIdP) .'&target='. urlencode($CFG->wwwroot.'/auth/shibboleth/index.php'));
 
-	    // For Shibbolet 2.x Service Providers
-	    // header('Location: '.$IdPs[$selectedIdP][1].'?entityID='. urlencode($selectedIdP) .'&target='. urlencode($CFG->wwwroot.'/auth/shibboleth/index.php'));
+            // For Shibbolet 2.x Service Providers
+            // header('Location: '.$IdPs[$selectedIdP][1].'?entityID='. urlencode($selectedIdP) .'&target='. urlencode($CFG->wwwroot.'/auth/shibboleth/index.php'));
 
         } else {
             // For Shibbolet 1.x Service Providers
