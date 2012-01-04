@@ -49,7 +49,7 @@ abstract class backup_setting extends base_setting implements checksumable {
 
     /**
      * Returns the level of the setting
-     * 
+     *
      * @return {int} One of the above constants
      */
     public function get_level() {

@@ -4,7 +4,7 @@ YUI.add('moodle-backup-confirmcancel', function(Y) {
 M.core_backup = M.core_backup || {};
 /**
  * Adds confirmation dialogues to the cancel buttons on the page.
- * 
+ *
  * @param {object} config
  */
 M.core_backup.watch_cancel_buttons = function(config) {
