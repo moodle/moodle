@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/glossary/db" VERSION="20101115" COMMENT="XMLDB file for Moodle mod/glossary"
+<XMLDB PATH="mod/glossary/db" VERSION="20120104" COMMENT="XMLDB file for Moodle mod/glossary"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -20,8 +20,9 @@
         <FIELD NAME="allowcomments" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="showall" NEXT="allowprintview"/>
         <FIELD NAME="allowprintview" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="allowcomments" NEXT="usedynalink"/>
         <FIELD NAME="usedynalink" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="allowprintview" NEXT="defaultapproval"/>
-        <FIELD NAME="defaultapproval" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="usedynalink" NEXT="globalglossary"/>
-        <FIELD NAME="globalglossary" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="defaultapproval" NEXT="entbypage"/>
+        <FIELD NAME="defaultapproval" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="usedynalink" NEXT="approvaldisplayformat"/>
+        <FIELD NAME="approvaldisplayformat" TYPE="char" LENGTH="50" NOTNULL="true" DEFAULT="default" SEQUENCE="false" COMMENT="Display Format when approving entries" PREVIOUS="defaultapproval" NEXT="globalglossary"/>
+        <FIELD NAME="globalglossary" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="approvaldisplayformat" NEXT="entbypage"/>
         <FIELD NAME="entbypage" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="10" SEQUENCE="false" PREVIOUS="globalglossary" NEXT="editalways"/>
         <FIELD NAME="editalways" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="entbypage" NEXT="rsstype"/>
         <FIELD NAME="rsstype" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="editalways" NEXT="rssarticles"/>

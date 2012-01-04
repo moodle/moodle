@@ -173,6 +173,11 @@ break;
 
 case 'approval':    /// Looking for entries waiting for approval
     $tab = GLOSSARY_APPROVAL_VIEW;
+    // Override the display format with the approvaldisplayformat
+    if ($glossary->approvaldisplayformat !== 'default' && ($df = $DB->get_record("glossary_formats",
+            array("name" => $glossary->approvaldisplayformat)))) {
+        $displayformat = $df->popupformatname;
+    }
     if ( !$hook and !$sortkey and !$sortorder) {
         $hook = 'ALL';
     }
