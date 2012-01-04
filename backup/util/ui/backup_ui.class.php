@@ -137,7 +137,7 @@ class backup_ui extends base_ui {
      */
     public function get_progress_bar() {
         global $PAGE;
-        
+
         $stage = self::STAGE_COMPLETE;
         $currentstage = $this->stage->get_stage();
         $items = array();
