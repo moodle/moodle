@@ -286,9 +286,6 @@ function url_get_coursemodule_info($coursemodule) {
         $fullurl = "$CFG->wwwroot/mod/url/view.php?id=$coursemodule->id&amp;redirect=1";
         $info->onclick = "window.open('$fullurl'); return false;";
 
-    } else if ($display == RESOURCELIB_DISPLAY_OPEN) {
-        $fullurl = "$CFG->wwwroot/mod/url/view.php?id=$coursemodule->id&amp;redirect=1";
-        $info->onclick = "window.location.href ='$fullurl';return false;";
     }
 
     if ($coursemodule->showdescription) {
