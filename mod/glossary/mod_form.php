@@ -79,6 +79,12 @@ class mod_glossary_mod_form extends moodleform_mod {
         $mform->setDefault('displayformat', 'dictionary');
         $mform->addHelpButton('displayformat', 'displayformat', 'glossary');
 
+        $displayformats['default'] = get_string('displayformatdefault', 'glossary');
+        $displayformats = array_merge($displayformats, $formats);
+        $mform->addElement('select', 'approvaldisplayformat', get_string('approvaldisplayformat', 'glossary'), $displayformats);
+        $mform->setDefault('approvaldisplayformat', 'default');
+        $mform->addHelpButton('approvaldisplayformat', 'approvaldisplayformat', 'glossary');
+
         $mform->addElement('selectyesno', 'showspecial', get_string('showspecial', 'glossary'));
         $mform->setDefault('showspecial', 1);
         $mform->addHelpButton('showspecial', 'showspecial', 'glossary');
