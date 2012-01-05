@@ -1707,23 +1707,16 @@ class global_navigation extends navigation_node {
     /**
      * Loads all of the activities for a section into the navigation structure.
      *
-     * @todo 2.2 - $activities should always be an array and we should no longer check for it being a
-     *             course_modinfo object
-     *
      * @param navigation_node $sectionnode
      * @param int $sectionnumber
-     * @param course_modinfo $modinfo Object returned from {@see get_fast_modinfo()}
+     * @param array $activities An array of activites as returned by {@see global_navigation::generate_sections_and_activities()}
+     * @param stdClass $course The course object the section and activities relate to.
      * @return array Array of activity nodes
      */
-    protected function load_section_activities(navigation_node $sectionnode, $sectionnumber, $activities, $course = null) {
+    protected function load_section_activities(navigation_node $sectionnode, $sectionnumber, array $activities, $course = null) {
         global $CFG;
         // A static counter for JS function naming
         static $legacyonclickcounter = 0;
-
-        if ($activities instanceof course_modinfo) {
-            debugging('global_navigation::load_section_activities argument 3 should now recieve an array of activites. See that method for an example.', DEBUG_DEVELOPER);
-            list($sections, $activities) = $this->generate_sections_and_activities($activities->course);
-        }
 
         $activitynodes = array();
         if (empty($activities)) {
