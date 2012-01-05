@@ -17,6 +17,8 @@
 /**
  * Public API of the log report.
  *
+ * Defines the APIs used by log reports
+ * 
  * @package    report
  * @subpackage log
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
@@ -120,7 +122,7 @@ function report_log_extend_navigation_module($navigation, $cm) {
  * @param string $pagetype current page type
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
- * @return array
+ * @return array a list of page types
  */
 function report_log_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $array = array(

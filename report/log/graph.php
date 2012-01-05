@@ -17,6 +17,8 @@
 /**
  * Produces a graph of log accesses for a user
  *
+ * Generates an image representing the log data in a graphical manner for a user.
+ * 
  * @package    report
  * @subpackage log
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)

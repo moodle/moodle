@@ -16,6 +16,8 @@
 
 /**
  * Lang strings.
+ * 
+ * Language strings to be used by report/logs
  *
  * @package    report
  * @subpackage log

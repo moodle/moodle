@@ -17,6 +17,8 @@
 /**
  * Version info
  *
+ * This File contains information about the current version of report/logs
+ *  
  * @package    report
  * @subpackage log
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)

@@ -17,6 +17,8 @@
 /**
  * Links and settings
  *
+ * Contains settings used by logs report.
+ * 
  * @package    report
  * @subpackage log
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
