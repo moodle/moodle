@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,16 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Popup message processor - stores the message to be shown using the message popup
+ * Popup message processor, stores messages to be shown using the message popup
  *
- * @copyright Luis Rodrigues
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
- * @package message
+ * @package   message_popup
+ * @copyright 2008 Luis Rodrigues
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
  */
 
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php'); //included from messagelib (how to fix?)
 require_once($CFG->dirroot.'/message/output/lib.php');
 
+/**
+ * The popup message processor
+ *
+ * @package   message_popup
+ * @copyright 2008 Luis Rodrigues and Martin Dougiamas
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class message_output_popup extends message_output{
 
     /**
@@ -59,13 +65,31 @@ class message_output_popup extends message_output{
         return true;
     }
 
+    /**
+     * Creates necessary fields in the messaging config form.
+     *
+     * @param array $preferences An array of user preferences
+     */
     function config_form($preferences) {
         return null;
     }
 
+    /**
+     * Parses the submitted form data and saves it into preferences array.
+     *
+     * @param stdClass $form preferences form class
+     * @param array $preferences preferences array
+     */
     public function process_form($form, &$preferences) {
         return true;
     }
+
+    /**
+     * Loads the config data from database to put on the form during initial form display
+     *
+     * @param array $preferences preferences array
+     * @param int $userid the user id
+     */
     public function load_data(&$preferences, $userid) {
         global $USER;
         return true;

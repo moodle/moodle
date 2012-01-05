@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,9 +17,9 @@
 /**
  * A page displaying the user's contacts and messages
  *
- * @package   moodlecore
- * @copyright 2010 Andrew Davis
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_message
+ * @copyright  2010 Andrew Davis
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../config.php');
