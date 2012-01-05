@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,10 +20,10 @@
  * Please see http://docs.moodle.org/en/Developement:How_Moodle_outputs_HTML
  * for an overview.
  *
- * @package    core
- * @subpackage lib
- * @copyright  2009 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2009 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package core
+ * @subpackage output
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -37,7 +36,11 @@ require_once($CFG->libdir.'/outputrequirementslib.php');
 
 /**
  * Invalidate all server and client side caches.
- * @return void
+ *
+ * This method deletes the phsyical directory that is used to cache the theme
+ * files used for serving.
+ * Because it deletes the main theme cache directoy all theme's are reset by
+ * this function.
  */
 function theme_reset_all_caches() {
     global $CFG;
@@ -49,8 +52,8 @@ function theme_reset_all_caches() {
 
 /**
  * Enable or disable theme designer mode.
+ *
  * @param bool $state
- * @return void
  */
 function theme_set_designer_mod($state) {
     theme_reset_all_caches();
@@ -59,6 +62,7 @@ function theme_set_designer_mod($state) {
 
 /**
  * Returns current theme revision number.
+ *
  * @return int
  */
 function theme_get_revision() {
@@ -93,12 +97,16 @@ function theme_get_revision() {
  * will create one for you, accessible as $PAGE->theme.
  *
  * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class theme_config {
+
     /**
-     * @var string default theme, used when requested theme not found
+     * Default theme, used when requested theme not found.
+     * @var string
      */
     const DEFAULT_THEME = 'standard';
 
@@ -109,7 +117,6 @@ class theme_config {
      * That makes it easy to create a new theme that is similar to another one
      * but with a few changes. In this theme's CSS you only need to override
      * those rules you want to change.
-     *
      * @var array
      */
     public $parents;
@@ -117,7 +124,6 @@ class theme_config {
     /**
      * The names of all the stylesheets from this theme that you would
      * like included, in order. Give the names of the files without .css.
-     *
      * @var array
      */
     public $sheets = array();
@@ -126,7 +132,6 @@ class theme_config {
      * The names of all the stylesheets from parents that should be excluded.
      * true value may be used to specify all parents or all themes from one parent.
      * If no value specified value from parent theme used.
-     *
      * @var array or arrays, true means all, null means use value from parent
      */
     public $parents_exclude_sheets = null;
@@ -134,7 +139,6 @@ class theme_config {
     /**
      * List of plugin sheets to be excluded.
      * If no value specified value from parent theme used.
-     *
      * @var array of full plugin names, null means use value from parent
      */
     public $plugins_exclude_sheets = null;
@@ -142,7 +146,6 @@ class theme_config {
     /**
      * List of style sheets that are included in the text editor bodies.
      * Sheets from parent themes are used automatically and can not be excluded.
-     *
      * @var array
      */
     public $editor_sheets = array();
@@ -150,7 +153,6 @@ class theme_config {
     /**
      * The names of all the javascript files this theme that you would
      * like included from head, in order. Give the names of the files without .js.
-     *
      * @var array
      */
     public $javascripts = array();
@@ -158,7 +160,6 @@ class theme_config {
     /**
      * The names of all the javascript files this theme that you would
      * like included from footer, in order. Give the names of the files without .js.
-     *
      * @var array
      */
     public $javascripts_footer = array();
@@ -167,7 +168,6 @@ class theme_config {
      * The names of all the javascript files from parents that should be excluded.
      * true value may be used to specify all parents or all themes from one parent.
      * If no value specified value from parent theme used.
-     *
      * @var array or arrays, true means all, null means use value from parent
      */
     public $parents_exclude_javascripts = null;
@@ -250,7 +250,6 @@ class theme_config {
      * This is an advanced feature. If you want to do custom post-processing on the
      * CSS before it is output (for example, to replace certain variable names
      * with particular values) you can give the name of a function here.
-     *
      * @var string the name of a function.
      */
     public $csspostprocess = null;
@@ -262,7 +261,6 @@ class theme_config {
      * If the theme does not set characters, appropriate defaults
      * are set automatically. Please DO NOT
      * use &lt; &gt; &raquo; - these are confusing for blind users.
-     *
      * @var string
      */
     public $rarrow = null;
@@ -274,7 +272,6 @@ class theme_config {
      * If the theme does not set characters, appropriate defaults
      * are set automatically. Please DO NOT
      * use &lt; &gt; &raquo; - these are confusing for blind users.
-     *
      * @var string
      */
     public $larrow = null;
@@ -295,7 +292,7 @@ class theme_config {
     public $name;
 
     /**
-     * the folder where this themes files are stored. This is set
+     * The folder where this themes files are stored. This is set
      * automatically. This can not be set in theme config.php
      * @var string
      */
@@ -510,6 +507,7 @@ class theme_config {
     /**
      * Returns output renderer prefixes, these are used when looking
      * for the overridden renderers in themes.
+     *
      * @return array
      */
     public function renderer_prefixes() {
@@ -526,6 +524,7 @@ class theme_config {
 
     /**
      * Returns the stylesheet URL of this editor content
+     *
      * @param bool $encoded false means use & and true use &amp; in URLs
      * @return string
      */
@@ -545,6 +544,7 @@ class theme_config {
 
     /**
      * Returns the content of the CSS to be used in editor content
+     *
      * @return string
      */
     public function editor_css_files() {
@@ -587,7 +587,8 @@ class theme_config {
 
     /**
      * Get the stylesheet URL of this theme
-     * @param bool $encoded false means use & and true use &amp; in URLs
+     *
+     * @param moodle_page $page Not used... deprecated?
      * @return array of moodle_url
      */
     public function css_urls(moodle_page $page) {
@@ -664,6 +665,7 @@ class theme_config {
 
     /**
      * Returns an array of organised CSS files required for this output
+     *
      * @return array
      */
     public function css_files() {
@@ -732,6 +734,7 @@ class theme_config {
 
     /**
      * Returns the content of the one huge CSS merged from all style sheets.
+     *
      * @return string
      */
     public function css_content() {
@@ -764,7 +767,8 @@ class theme_config {
 
 
     /**
-     * Get the javascript URL of this theme
+     * Generate a URL to the file that serves theme JavaScript files.
+     *
      * @param bool $inhead true means head url, false means footer
      * @return moodle_url
      */
@@ -778,6 +782,14 @@ class theme_config {
         return new moodle_url($CFG->httpswwwroot.'/theme/javascript.php', $params);
     }
 
+    /**
+     * Get the URL's for the JavaScript files used by this theme.
+     * They won't be served directly, instead they'll be mediated through
+     * theme/javascript.php.
+     *
+     * @param string $type Either javascripts_footer, or javascripts
+     * @return array
+     */
     public function javascript_files($type) {
         if ($type === 'footer') {
             $type = 'javascripts_footer';
@@ -850,6 +862,7 @@ class theme_config {
 
     /**
      * Returns the content of the one huge javascript file merged from all theme javascript files.
+     *
      * @param bool $inhead
      * @return string
      */
@@ -862,6 +875,17 @@ class theme_config {
         return $js;
     }
 
+    /**
+     * Post processes CSS.
+     *
+     * This method post processes all of the CSS before it is served for this theme.
+     * This is done so that things such as image URL's can be swapped in and to
+     * run any specific CSS post process method the theme has requested.
+     * This allows theme's to use CSS settings.
+     *
+     * @param string $css The CSS to process.
+     * @return string The processed CSS.
+     */
     public function post_process($css) {
         global $CFG;
 
@@ -975,6 +999,7 @@ class theme_config {
 
     /**
      * Checks if file with any image extension exists.
+     *
      * @param string $filepath
      * @return string image name with extension
      */
@@ -994,9 +1019,10 @@ class theme_config {
 
     /**
      * Loads the theme config from config.php file.
+     *
      * @param string $themename
-     * @param object $settings from config_plugins table
-     * @return object
+     * @param stdClass $settings from config_plugins table
+     * @return stdClass The theme configuration
      */
     private static function find_theme_config($themename, $settings) {
         // We have to use the variable name $THEME (upper case) because that
@@ -1026,6 +1052,7 @@ class theme_config {
     /**
      * Finds the theme location and verifies the theme has all needed files
      * and is not obsoleted.
+     *
      * @param string $themename
      * @return string full dir path or null if not found
      */
@@ -1052,6 +1079,7 @@ class theme_config {
 
     /**
      * Get the renderer for a part of Moodle for this theme.
+     *
      * @param moodle_page $page the page we are rendering
      * @param string $module the name of part of moodle. E.g. 'core', 'quiz', 'qtype_multichoice'.
      * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
@@ -1069,6 +1097,7 @@ class theme_config {
 
     /**
      * Get the information from {@link $layouts} for this type of page.
+     *
      * @param string $pagelayout the the page layout name.
      * @return array the appropriate part of {@link $layouts}.
      */
@@ -1120,6 +1149,7 @@ class theme_config {
 
     /**
      * Returns auxiliary page layout options specified in layout configuration array.
+     *
      * @param string $pagelayout
      * @return array
      */
@@ -1134,9 +1164,9 @@ class theme_config {
     /**
      * Inform a block_manager about the block regions this theme wants on this
      * page layout.
+     *
      * @param string $pagelayout the general type of the page.
      * @param block_manager $blockmanager the block_manger to set up.
-     * @return void
      */
     public function setup_blocks($pagelayout, $blockmanager) {
         $layoutinfo = $this->layout_info_for_page($pagelayout);
@@ -1146,6 +1176,13 @@ class theme_config {
         }
     }
 
+    /**
+     * Gets the visible name for the requested block region.
+     *
+     * @param string $region The region name to get
+     * @param string $theme The theme the region belongs to (may come from the parent theme)
+     * @return string
+     */
     protected function get_region_name($region, $theme) {
         $regionstring = get_string('region-' . $region, 'theme_' . $theme);
         // A name exists in this theme, so use it
@@ -1168,6 +1205,7 @@ class theme_config {
 
     /**
      * Get the list of all block regions known to this theme in all templates.
+     *
      * @return array internal region name => human readable name.
      */
     public function get_all_block_regions() {
@@ -1190,7 +1228,6 @@ class theme_config {
     }
 }
 
-
 /**
  * This class keeps track of which HTML tags are currently open.
  *
@@ -1200,17 +1237,26 @@ class theme_config {
  * onto the stack.
  *
  * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class xhtml_container_stack {
-    /** @var array stores the list of open containers. */
-    protected $opencontainers = array();
+
     /**
-     * @var array in developer debug mode, stores a stack trace of all opens and
+     * Stores the list of open containers.
+     * @var array
+     */
+    protected $opencontainers = array();
+
+    /**
+     * In developer debug mode, stores a stack trace of all opens and
      * closes, so we can output helpful error messages when there is a mismatch.
+     * @var array
      */
     protected $log = array();
+
     /**
      * Store whether we are developer debug mode. We need this in several places
      * including in the destructor where we may not have access to $CFG.
@@ -1218,16 +1264,19 @@ class xhtml_container_stack {
      */
     protected $isdebugging;
 
+    /**
+     * Constructor
+     */
     public function __construct() {
         $this->isdebugging = debugging('', DEBUG_DEVELOPER);
     }
 
     /**
      * Push the close HTML for a recently opened container onto the stack.
+     *
      * @param string $type The type of container. This is checked when {@link pop()}
      *      is called and must match, otherwise a developer debug warning is output.
      * @param string $closehtml The HTML required to close the container.
-     * @return void
      */
     public function push($type, $closehtml) {
         $container = new stdClass;
@@ -1243,6 +1292,7 @@ class xhtml_container_stack {
      * Pop the HTML for the next closing container from the stack. The $type
      * must match the type passed when the container was opened, otherwise a
      * warning will be output.
+     *
      * @param string $type The type of container.
      * @return string the HTML required to close the container.
      */
@@ -1270,6 +1320,7 @@ class xhtml_container_stack {
      * Close all but the last open container. This is useful in places like error
      * handling, where you want to close all the open containers (apart from <body>)
      * before outputting the error message.
+     *
      * @param bool $shouldbenone assert that the stack should be empty now - causes a
      *      developer debug warning if it isn't.
      * @return string the HTML required to close any open containers inside <body>.
@@ -1292,7 +1343,6 @@ class xhtml_container_stack {
      * class without properly emptying the stack (for example, in a unit test).
      * Calling this method stops the destruct method from outputting a developer
      * debug warning. After calling this method, the instance can no longer be used.
-     * @return void
      */
     public function discard() {
         $this->opencontainers = null;
@@ -1300,9 +1350,9 @@ class xhtml_container_stack {
 
     /**
      * Adds an entry to the log.
+     *
      * @param string $action The name of the action
      * @param string $type The type of action
-     * @return void
      */
     protected function log($action, $type) {
         $this->log[] = '<li>' . $action . ' ' . $type . ' at:' .
@@ -1311,6 +1361,7 @@ class xhtml_container_stack {
 
     /**
      * Outputs the log's contents as a HTML list.
+     *
      * @return string HTML list of the log
      */
     protected function output_log() {
