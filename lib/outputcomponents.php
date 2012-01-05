@@ -21,17 +21,19 @@
  * Please see http://docs.moodle.org/en/Developement:How_Moodle_outputs_HTML
  * for an overview.
  *
- * @package    core
- * @subpackage lib
- * @copyright  2009 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package core
+ * @subpackage output
+ * @copyright 2009 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Interface marking other classes as suitable for renderer_base::render()
- * @author 2010 Petr Skoda (skodak) info@skodak.org
+ * @copyright 2010 Petr Skoda (skodak) info@skodak.org
+ * @package core
+ * @subpackage output
  */
 interface renderable {
     // intentionally empty
@@ -41,11 +43,34 @@ interface renderable {
  * Data structure representing a file picker.
  *
  * @copyright 2010 Dongsheng Cai
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class file_picker implements renderable {
+
+    /**
+     * An object containing options for the file picker
+     * @var stdClass
+     */
     public $options;
+
+    /**
+     * Constructs a file picker object.
+     *
+     * The following are possible options for the filepicker:
+     *    - accepted_types  (*)
+     *    - return_types    (FILE_INTERNAL)
+     *    - env             (filepicker)
+     *    - client_id       (uniqid)
+     *    - itemid          (0)
+     *    - maxbytes        (-1)
+     *    - maxfiles        (1)
+     *    - buttonname      (false)
+     *
+     * @param stdClass $options An object containing options for the file picker.
+     */
     public function __construct(stdClass $options) {
         global $CFG, $USER, $PAGE;
         require_once($CFG->dirroot. '/repository/lib.php');
@@ -97,51 +122,68 @@ class file_picker implements renderable {
  * Data structure representing a user picture.
  *
  * @copyright 2009 Nicolas Connault, 2010 Petr Skoda
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Modle 2.0
+ * @package core
+ * @subpackage output
  */
 class user_picture implements renderable {
     /**
-     * @var array List of mandatory fields in user record here. (do not include TEXT columns because it would break SELECT DISTINCT in MSSQL and ORACLE)
+     * List of mandatory fields in user record here. (do not include TEXT columns
+     * because it would break SELECT DISTINCT in MSSQL and ORACLE)
+     * @var array
      */
     protected static $fields = array('id', 'picture', 'firstname', 'lastname', 'imagealt', 'email'); //TODO: add deleted
 
     /**
-     * @var object $user A user object with at least fields all columns specified in $fields array constant set.
+     * A user object with at least fields all columns specified in $fields array constant set.
+     * @var object $user
      */
     public $user;
+
     /**
-     * @var int $courseid The course id. Used when constructing the link to the user's profile,
+     * The course id. Used when constructing the link to the user's profile,
      * page course id used if not specified.
+     * @var int $courseid 
      */
     public $courseid;
+
     /**
-     * @var bool $link add course profile link to image
+     * Add course profile link to image
+     * @var bool $link
      */
     public $link = true;
+
     /**
-     * @var int $size Size in pixels. Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatibility
+     * Size in pixels. Special values are (true/1 = 100px) and (false/0 = 35px)
+     * for backward compatibility.
+     * @var int $size
      */
     public $size = 35;
+
     /**
-     * @var boolean $alttext add non-blank alt-text to the image.
+     * Add non-blank alt-text to the image.
      * Default true, set to false when image alt just duplicates text in screenreaders.
+     * @var boolean $alttext
      */
     public $alttext = true;
+
     /**
-     * @var boolean $popup Whether or not to open the link in a popup window.
+     * Whether or not to open the link in a popup window.
+     * @var boolean $popup
      */
     public $popup = false;
+
     /**
-     * @var string Image class attribute
+     * Image class attribute
+     * @var string
      */
     public $class = 'userpicture';
 
     /**
      * User picture constructor.
      *
-     * @param object $user user record with at least id, picture, imagealt, firstname and lastname set.
-     * @param array $options such as link, size, link, ...
+     * @param stdClass $user user record with at least id, picture, imagealt, firstname and lastname set.
      */
     public function __construct(stdClass $user) {
         global $DB;
@@ -228,7 +270,7 @@ class user_picture implements renderable {
      * @param string $fieldprefix prefix added to all columns in their aliases, does not apply to 'id'
      * @return stdClass object with unaliased user fields
      */
-    public static function unalias(stdClass $record, array $extrafields=null, $idalias='id', $fieldprefix='') {
+    public static function unalias(stdClass $record, array $extrafields = null, $idalias = 'id', $fieldprefix = '') {
 
         if (empty($idalias)) {
             $idalias = 'id';
@@ -347,34 +389,44 @@ class user_picture implements renderable {
  * Data structure representing a help icon.
  *
  * @copyright 2009 Nicolas Connault, 2010 Petr Skoda
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class old_help_icon implements renderable {
+
     /**
-     * @var string $helpidentifier lang pack identifier
+     * Lang pack identifier
+     * @var string $helpidentifier
      */
     public $helpidentifier;
+
     /**
-     * @var string $title A descriptive text for title tooltip
+     * A descriptive text for title tooltip
+     * @var string $title
      */
     public $title = null;
+
     /**
-     * @var string $component Component name, the same as in get_string()
+     * Component name, the same as in get_string()
+     * @var string $component
      */
     public $component = 'moodle';
+
     /**
-     * @var string $linktext Extra descriptive text next to the icon
+     * Extra descriptive text next to the icon
+     * @var string $linktext
      */
     public $linktext = null;
 
     /**
      * Constructor: sets up the other components in case they are needed
+     *
      * @param string $helpidentifier  The keyword that defines a help page
      * @param string $title A descriptive text for accessibility only
      * @param string $component
      * @param bool $linktext add extra text to icon
-     * @return void
      */
     public function __construct($helpidentifier, $title, $component = 'moodle') {
         if (empty($title)) {
@@ -394,28 +446,37 @@ class old_help_icon implements renderable {
  * Data structure representing a help icon.
  *
  * @copyright 2010 Petr Skoda (info@skodak.org)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class help_icon implements renderable {
+
     /**
-     * @var string $identifier lang pack identifier (without the "_help" suffix),
-     *    both get_string($identifier, $component) and get_string($identifier.'_help', $component)
-     *    must exist.
+     * lang pack identifier (without the "_help" suffix),
+     * both get_string($identifier, $component) and get_string($identifier.'_help', $component)
+     * must exist.
+     * @var string $identifier 
      */
     public $identifier;
+
     /**
-     * @var string $component Component name, the same as in get_string()
+     * Component name, the same as in get_string()
+     * @var string $component
      */
     public $component;
+
     /**
-     * @var string $linktext Extra descriptive text next to the icon
+     * Extra descriptive text next to the icon
+     * @var string $linktext
      */
     public $linktext = null;
 
     /**
      * Constructor
-     * @param string $identifier  string for help page title,
+     *
+     * @param string $identifier string for help page title,
      *  string with _help suffix is used for the actual help text.
      *  string with _link suffix is used to create a link to further info (if it exists)
      * @param string $component
@@ -444,16 +505,34 @@ class help_icon implements renderable {
  * Data structure representing an icon.
  *
  * @copyright 2010 Petr Skoda
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class pix_icon implements renderable {
+
+    /**
+     * The icon name
+     * @var string
+     */
     var $pix;
+
+    /**
+     * The component the icon belongs to.
+     * @var string
+     */
     var $component;
+
+    /**
+     * An array of attributes to use on the icon
+     * @var array
+     */
     var $attributes = array();
 
     /**
      * Constructor
+     *
      * @param string $pix short icon name
      * @param string $alt The alt text to use for the icon
      * @param string $component component name
@@ -477,7 +556,11 @@ class pix_icon implements renderable {
 /**
  * Data structure representing an emoticon image
  *
- * @since     Moodle 2.0
+ * @copyright 2010 David Mudrak
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class pix_emoticon extends pix_icon implements renderable {
 
@@ -500,45 +583,55 @@ class pix_emoticon extends pix_icon implements renderable {
  * Data structure representing a simple form with only one button.
  *
  * @copyright 2009 Petr Skoda
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class single_button implements renderable {
+
     /**
      * Target url
      * @var moodle_url
      */
     var $url;
+
     /**
      * Button label
      * @var string
      */
     var $label;
+
     /**
      * Form submit method
      * @var string post or get
      */
     var $method = 'post';
+
     /**
      * Wrapping div class
      * @var string
-     * */
+     */
     var $class = 'singlebutton';
+
     /**
      * True if button disabled, false if normal
      * @var boolean
      */
     var $disabled = false;
+
     /**
      * Button tooltip
      * @var string
      */
     var $tooltip = null;
+
     /**
      * Form id
      * @var string
      */
     var $formid;
+
     /**
      * List of attached actions
      * @var array of component_action
@@ -547,7 +640,7 @@ class single_button implements renderable {
 
     /**
      * Constructor
-     * @param string|moodle_url $url
+     * @param moodle_url $url
      * @param string $label button text
      * @param string $method get or post submit method
      */
@@ -560,8 +653,8 @@ class single_button implements renderable {
     /**
      * Shortcut for adding a JS confirm dialog when the button is clicked.
      * The message must be a yes/no question.
+     *
      * @param string $message The yes/no confirmation question. If "Yes" is clicked, the original action will occur.
-     * @return void
      */
     public function add_confirm_action($confirmmessage) {
         $this->add_action(new confirm_action($confirmmessage));
@@ -570,7 +663,6 @@ class single_button implements renderable {
     /**
      * Add action to the button.
      * @param component_action $action
-     * @return void
      */
     public function add_action(component_action $action) {
         $this->actions[] = $action;
@@ -583,78 +675,93 @@ class single_button implements renderable {
  * If JS not enabled small go button is printed too.
  *
  * @copyright 2009 Petr Skoda
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class single_select implements renderable {
+
     /**
      * Target url - includes hidden fields
      * @var moodle_url
      */
     var $url;
+
     /**
      * Name of the select element.
      * @var string
      */
     var $name;
+
     /**
-     * @var array $options associative array value=>label ex.:
-     *              array(1=>'One, 2=>Two)
-     *              it is also possible to specify optgroup as complex label array ex.:
-     *                array(array('Odd'=>array(1=>'One', 3=>'Three)), array('Even'=>array(2=>'Two')))
-     *                array(1=>'One', '--1uniquekey'=>array('More'=>array(2=>'Two', 3=>'Three')))
+     * @var array $options associative array value=>label ex.: array(1=>'One, 2=>Two)
+     *     it is also possible to specify optgroup as complex label array ex.:
+     *         array(array('Odd'=>array(1=>'One', 3=>'Three)), array('Even'=>array(2=>'Two')))
+     *         array(1=>'One', '--1uniquekey'=>array('More'=>array(2=>'Two', 3=>'Three')))
      */
     var $options;
+
     /**
      * Selected option
      * @var string
      */
     var $selected;
+
     /**
      * Nothing selected
      * @var array
      */
     var $nothing;
+
     /**
      * Extra select field attributes
      * @var array
      */
     var $attributes = array();
+
     /**
      * Button label
      * @var string
      */
     var $label = '';
+
     /**
      * Form submit method
      * @var string post or get
      */
     var $method = 'get';
+
     /**
      * Wrapping div class
      * @var string
      * */
     var $class = 'singleselect';
+
     /**
      * True if button disabled, false if normal
      * @var boolean
      */
     var $disabled = false;
+
     /**
      * Button tooltip
      * @var string
      */
     var $tooltip = null;
+
     /**
      * Form id
      * @var string
      */
     var $formid = null;
+
     /**
      * List of attached actions
      * @var array of component_action
      */
     var $helpicon = null;
+
     /**
      * Constructor
      * @param moodle_url $url form action target, includes hidden fields
@@ -664,7 +771,7 @@ class single_select implements renderable {
      * @param array $nothing
      * @param string $formid
      */
-    public function __construct(moodle_url $url, $name, array $options, $selected='', $nothing=array(''=>'choosedots'), $formid=null) {
+    public function __construct(moodle_url $url, $name, array $options, $selected = '', $nothing = array('' => 'choosedots'), $formid = null) {
         $this->url      = $url;
         $this->name     = $name;
         $this->options  = $options;
@@ -676,8 +783,8 @@ class single_select implements renderable {
     /**
      * Shortcut for adding a JS confirm dialog when the button is clicked.
      * The message must be a yes/no question.
+     *
      * @param string $message The yes/no confirmation question. If "Yes" is clicked, the original action will occur.
-     * @return void
      */
     public function add_confirm_action($confirmmessage) {
         $this->add_action(new component_action('submit', 'M.util.show_confirm_dialog', array('message' => $confirmmessage)));
@@ -685,8 +792,8 @@ class single_select implements renderable {
 
     /**
      * Add action to the button.
+     *
      * @param component_action $action
-     * @return void
      */
     public function add_action(component_action $action) {
         $this->actions[] = $action;
@@ -694,11 +801,11 @@ class single_select implements renderable {
 
     /**
      * Adds help icon.
+     *
      * @param string $page  The keyword that defines a help page
      * @param string $title A descriptive text for accessibility only
      * @param string $component
      * @param bool $linktext add extra text to icon
-     * @return void
      */
     public function set_old_help_icon($helppage, $title, $component = 'moodle') {
         $this->helpicon = new old_help_icon($helppage, $title, $component);
@@ -706,10 +813,9 @@ class single_select implements renderable {
 
     /**
      * Adds help icon.
+     *
      * @param string $identifier The keyword that defines a help page
      * @param string $component
-     * @param bool $linktext add extra text to icon
-     * @return void
      */
     public function set_help_icon($identifier, $component = 'moodle') {
         $this->helpicon = new help_icon($identifier, $component);
@@ -717,79 +823,91 @@ class single_select implements renderable {
 
     /**
      * Sets select's label
+     *
      * @param string $label
-     * @return void
      */
     public function set_label($label) {
         $this->label = $label;
     }
 }
 
-
 /**
  * Simple URL selection widget description.
+ *
  * @copyright 2009 Petr Skoda
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class url_select implements renderable {
     /**
-     * @var array $urls associative array value=>label ex.:
-     *              array(1=>'One, 2=>Two)
-     *              it is also possible to specify optgroup as complex label array ex.:
-     *                array(array('Odd'=>array(1=>'One', 3=>'Three)), array('Even'=>array(2=>'Two')))
-     *                array(1=>'One', '--1uniquekey'=>array('More'=>array(2=>'Two', 3=>'Three')))
+     * @var array $urls associative array value=>label ex.: array(1=>'One, 2=>Two)
+     *     it is also possible to specify optgroup as complex label array ex.:
+     *         array(array('Odd'=>array(1=>'One', 3=>'Three)), array('Even'=>array(2=>'Two')))
+     *         array(1=>'One', '--1uniquekey'=>array('More'=>array(2=>'Two', 3=>'Three')))
      */
     var $urls;
+
     /**
      * Selected option
      * @var string
      */
     var $selected;
+
     /**
      * Nothing selected
      * @var array
      */
     var $nothing;
+
     /**
      * Extra select field attributes
      * @var array
      */
     var $attributes = array();
+
     /**
      * Button label
      * @var string
      */
     var $label = '';
+
     /**
      * Wrapping div class
      * @var string
      * */
     var $class = 'urlselect';
+
     /**
      * True if button disabled, false if normal
      * @var boolean
      */
     var $disabled = false;
+
     /**
      * Button tooltip
      * @var string
      */
     var $tooltip = null;
+
     /**
      * Form id
      * @var string
      */
     var $formid = null;
+
     /**
      * List of attached actions
      * @var array of component_action
      */
     var $helpicon = null;
+
     /**
      * @var string If set, makes button visible with given name for button
      */
     var $showbutton = null;
+
     /**
      * Constructor
      * @param array $urls list of options
@@ -799,8 +917,7 @@ class url_select implements renderable {
      * @param string $showbutton Set to text of button if it should be visible
      *   or null if it should be hidden (hidden version always has text 'go')
      */
-    public function __construct(array $urls, $selected='', $nothing=array(''=>'choosedots'),
-            $formid=null, $showbutton=null) {
+    public function __construct(array $urls, $selected = '', $nothing = array('' => 'choosedots'), $formid = null, $showbutton = null) {
         $this->urls       = $urls;
         $this->selected   = $selected;
         $this->nothing    = $nothing;
@@ -810,11 +927,10 @@ class url_select implements renderable {
 
     /**
      * Adds help icon.
+     *
      * @param string $page  The keyword that defines a help page
      * @param string $title A descriptive text for accessibility only
      * @param string $component
-     * @param bool $linktext add extra text to icon
-     * @return void
      */
     public function set_old_help_icon($helppage, $title, $component = 'moodle') {
         $this->helpicon = new old_help_icon($helppage, $title, $component);
@@ -822,10 +938,9 @@ class url_select implements renderable {
 
     /**
      * Adds help icon.
+     *
      * @param string $identifier The keyword that defines a help page
      * @param string $component
-     * @param bool $linktext add extra text to icon
-     * @return void
      */
     public function set_help_icon($identifier, $component = 'moodle') {
         $this->helpicon = new help_icon($identifier, $component);
@@ -833,37 +948,43 @@ class url_select implements renderable {
 
     /**
      * Sets select's label
+     *
      * @param string $label
-     * @return void
      */
     public function set_label($label) {
         $this->label = $label;
     }
 }
 
-
 /**
  * Data structure describing html link with special action attached.
+ *
  * @copyright 2010 Petr Skoda
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class action_link implements renderable {
+
     /**
      * Href url
      * @var moodle_url
      */
     var $url;
+
     /**
      * Link text
      * @var string HTML fragment
      */
     var $text;
+
     /**
      * HTML attributes
      * @var array
      */
     var $attributes;
+
     /**
      * List of actions attached to link
      * @var array of component_action
@@ -872,14 +993,14 @@ class action_link implements renderable {
 
     /**
      * Constructor
-     * @param string|moodle_url $url
+     * @param moodle_url $url
      * @param string $text HTML fragment
      * @param component_action $action
      * @param array $attributes associative array of html link attributes + disabled
      */
-    public function __construct(moodle_url $url, $text, component_action $action=null, array $attributes=null) {
-        $this->url       = clone($url);
-        $this->text      = $text;
+    public function __construct(moodle_url $url, $text, component_action $action = null, array $attributes = null) {
+        $this->url = clone($url);
+        $this->text = $text;
         $this->attributes = (array)$attributes;
         if ($action) {
             $this->add_action($action);
@@ -888,13 +1009,17 @@ class action_link implements renderable {
 
     /**
      * Add action to the link.
+     *
      * @param component_action $action
-     * @return void
      */
     public function add_action(component_action $action) {
         $this->actions[] = $action;
     }
 
+    /**
+     * Adds a CSS class to this action link object
+     * @param string $class
+     */
     public function add_class($class) {
         if (empty($this->attributes['class'])) {
             $this->attributes['class'] = $class;
@@ -904,15 +1029,20 @@ class action_link implements renderable {
     }
 }
 
-// ==== HTML writer and helper classes, will be probably moved elsewhere ======
-
 /**
  * Simple html output class
+ *
  * @copyright 2009 Tim Hunt, 2010 Petr Skoda
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class html_writer {
+
     /**
      * Outputs a tag with attributes and contents
+     *
      * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
      * @param string $contents What goes between the opening and closing tags
      * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
@@ -924,6 +1054,7 @@ class html_writer {
 
     /**
      * Outputs an opening tag with attributes
+     *
      * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
      * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
      * @return string HTML fragment
@@ -934,6 +1065,7 @@ class html_writer {
 
     /**
      * Outputs a closing tag
+     *
      * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
      * @return string HTML fragment
      */
@@ -943,6 +1075,7 @@ class html_writer {
 
     /**
      * Outputs an empty tag with attributes
+     *
      * @param string $tagname The name of tag ('input', 'img', 'br' etc.)
      * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
      * @return string HTML fragment
@@ -953,6 +1086,7 @@ class html_writer {
 
     /**
      * Outputs a tag, but only if the contents are not empty
+     *
      * @param string $tagname The name of tag ('a', 'img', 'span' etc.)
      * @param string $contents What goes between the opening and closing tags
      * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
@@ -967,6 +1101,7 @@ class html_writer {
 
     /**
      * Outputs a HTML attribute and value
+     *
      * @param string $name The name of the attribute ('src', 'href', 'class' etc.)
      * @param string $value The value of the attribute. The value will be escaped with {@link s()}
      * @return string HTML fragment
@@ -990,6 +1125,7 @@ class html_writer {
 
     /**
      * Outputs a list of HTML attributes and values
+     *
      * @param array $attributes The tag attributes (array('src' => $url, 'class' => 'class1') etc.)
      *       The values will be escaped with {@link s()}
      * @return string HTML fragment
@@ -1005,8 +1141,11 @@ class html_writer {
 
     /**
      * Generates random html element id.
-     * @param string $base
-     * @return string
+     *
+     * @staticvar int $counter
+     * @staticvar type $uniq
+     * @param type $base
+     * @return type
      */
     public static function random_id($base='random') {
         static $counter = 0;
@@ -1022,6 +1161,7 @@ class html_writer {
 
     /**
      * Generates a simple html link
+     *
      * @param string|moodle_url $url
      * @param string $text link txt
      * @param array $attributes extra html attributes
@@ -1034,7 +1174,8 @@ class html_writer {
     }
 
     /**
-     * generates a simple checkbox with optional label
+     * Generates a simple checkbox with optional label
+     *
      * @param string $name
      * @param string $value
      * @param bool $checked
@@ -1067,10 +1208,11 @@ class html_writer {
 
     /**
      * Generates a simple select yes/no form field
+     *
      * @param string $name name of select element
      * @param bool $selected
      * @param array $attributes - html select element attributes
-     * @return string HRML fragment
+     * @return string HTML fragment
      */
     public static function select_yes_no($name, $selected=true, array $attributes = null) {
         $options = array('1'=>get_string('yes'), '0'=>get_string('no'));
@@ -1079,6 +1221,7 @@ class html_writer {
 
     /**
      * Generates a simple select form field
+     *
      * @param array $options associative array value=>label ex.:
      *                array(1=>'One, 2=>Two)
      *              it is also possible to specify optgroup as complex label array ex.:
@@ -1090,7 +1233,7 @@ class html_writer {
      * @param array $attributes - html select element attributes
      * @return string HTML fragment
      */
-    public static function select(array $options, $name, $selected = '', $nothing = array(''=>'choosedots'), array $attributes = null) {
+    public static function select(array $options, $name, $selected = '', $nothing = array('' => 'choosedots'), array $attributes = null) {
         $attributes = (array)$attributes;
         if (is_array($nothing)) {
             foreach ($nothing as $k=>$v) {
@@ -1148,6 +1291,14 @@ class html_writer {
         return self::tag('select', $output, $attributes);
     }
 
+    /**
+     * Returns HTML to display a select box option.
+     *
+     * @param string $label The label to display as the option.
+     * @param string|int $value The value the option represents
+     * @param array $selected An array of selected options
+     * @return string HTML fragment
+     */
     private static function select_option($label, $value, array $selected) {
         $attributes = array();
         $value = (string)$value;
@@ -1158,6 +1309,14 @@ class html_writer {
         return self::tag('option', $label, $attributes);
     }
 
+    /**
+     * Returns HTML to display a select box option group.
+     *
+     * @param string $groupname The label to use for the group
+     * @param array $options The options in the group
+     * @param array $selected An array of selected values.
+     * @return string HTML fragment.
+     */
     private static function select_optgroup($groupname, $options, array $selected) {
         if (empty($options)) {
             return '';
@@ -1172,6 +1331,7 @@ class html_writer {
 
     /**
      * This is a shortcut for making an hour selector menu.
+     *
      * @param string $type The type of selector (years, months, days, hours, minutes)
      * @param string $name fieldname
      * @param int $currenttime A default timestamp in GMT
@@ -1179,7 +1339,7 @@ class html_writer {
      * @param array $attributes - html select element attributes
      * @return HTML fragment
      */
-    public static function select_time($type, $name, $currenttime=0, $step=5, array $attributes=null) {
+    public static function select_time($type, $name, $currenttime = 0, $step = 5, array $attributes = null) {
         if (!$currenttime) {
             $currenttime = time();
         }
@@ -1236,14 +1396,15 @@ class html_writer {
 
     /**
      * Shortcut for quick making of lists
+     *
+     * Note: 'list' is a reserved keyword ;-)
+     *
      * @param array $items
-     * @param string $tag ul or ol
      * @param array $attributes
+     * @param string $tag ul or ol
      * @return string
      */
     public static function alist(array $items, array $attributes = null, $tag = 'ul') {
-        //note: 'list' is a reserved keyword ;-)
-
         $output = '';
 
         foreach ($items as $item) {
@@ -1257,6 +1418,7 @@ class html_writer {
 
     /**
      * Returns hidden input fields created from url parameters.
+     *
      * @param moodle_url $url
      * @param array $exclude list of excluded parameters
      * @return string HTML fragment
@@ -1280,7 +1442,7 @@ class html_writer {
      * Generate a script tag containing the the specified code.
      *
      * @param string $js the JavaScript code
-	 * @param moodle_url|string optional url of the external script, $code ignored if specified
+     * @param moodle_url|string optional url of the external script, $code ignored if specified
      * @return string HTML, the code wrapped in <script> tags.
      */
     public static function script($jscode, $url=null) {
@@ -1545,43 +1707,46 @@ class html_writer {
      * @param array $attributes to be inserted in the tab, for example array('accesskey' => 'a')
      * @return string HTML of the label element
      */
-    public static function label($text, $for, $colonize=true, array $attributes=array()) {
+    public static function label($text, $for, $colonize = true, array $attributes=array()) {
         if (!is_null($for)) {
             $attributes = array_merge($attributes, array('for' => $for));
         }
         $text = trim($text);
         $label = self::tag('label', $text, $attributes);
 
-        /*
-        // TODO $colonize disabled for now yet - see MDL-12192 for details
-        if (!empty($text) and $colonize) {
-            // the $text may end with the colon already, though it is bad string definition style
-            $colon = get_string('labelsep', 'langconfig');
-            if (!empty($colon)) {
-                $trimmed = trim($colon);
-                if ((substr($text, -strlen($trimmed)) == $trimmed) or (substr($text, -1) == ':')) {
-                    //debugging('The label text should not end with colon or other label separator,
-                    //           please fix the string definition.', DEBUG_DEVELOPER);
-                } else {
-                    $label .= $colon;
-                }
-            }
-        }
-        */
+        // TODO MDL-12192 $colonize disabled for now yet
+        // if (!empty($text) and $colonize) {
+        //     // the $text may end with the colon already, though it is bad string definition style
+        //     $colon = get_string('labelsep', 'langconfig');
+        //     if (!empty($colon)) {
+        //         $trimmed = trim($colon);
+        //         if ((substr($text, -strlen($trimmed)) == $trimmed) or (substr($text, -1) == ':')) {
+        //             //debugging('The label text should not end with colon or other label separator,
+        //             //           please fix the string definition.', DEBUG_DEVELOPER);
+        //         } else {
+        //             $label .= $colon;
+        //         }
+        //     }
+        // }
 
         return $label;
     }
 }
 
-// ==== JS writer and helper classes, will be probably moved elsewhere ======
-
 /**
  * Simple javascript output class
+ *
  * @copyright 2010 Petr Skoda
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class js_writer {
+
     /**
      * Returns javascript code calling the function
+     *
      * @param string $function function name, can be complex like Y.Event.purgeElement
      * @param array $arguments parameters
      * @param int $delay execution delay in seconds
@@ -1605,6 +1770,7 @@ class js_writer {
 
     /**
      * Special function which adds Y as first argument of fucntion call.
+     *
      * @param string $function
      * @param array $extraarguments
      * @return string
@@ -1621,7 +1787,8 @@ class js_writer {
 
     /**
      * Returns JavaScript code to initialise a new object
-     * @param string|null $var If it is null then no var is assigned the new object
+     *
+     * @param string $var If it is null then no var is assigned the new object
      * @param string $class
      * @param array $arguments
      * @param array $requirements
@@ -1656,12 +1823,13 @@ class js_writer {
 
     /**
      * Returns code setting value to variable
+     *
      * @param string $name
      * @param mixed $value json serialised value
      * @param bool $usevar add var definition, ignored for nested properties
      * @return string JS code fragment
      */
-    public static function set_variable($name, $value, $usevar=true) {
+    public static function set_variable($name, $value, $usevar = true) {
         $output = '';
 
         if ($usevar) {
@@ -1679,10 +1847,11 @@ class js_writer {
 
     /**
      * Writes event handler attaching code
-     * @param mixed $selector standard YUI selector for elements, may be array or string, element id is in the form "#idvalue"
+     *
+     * @param array|string $selector standard YUI selector for elements, may be array or string, element id is in the form "#idvalue"
      * @param string $event A valid DOM event (click, mousedown, change etc.)
      * @param string $function The name of the function to call
-     * @param array  $arguments An optional array of argument parameters to pass to the function
+     * @param array $arguments An optional array of argument parameters to pass to the function
      * @return string JS code fragment
      */
     public static function event_handler($selector, $event, $function, array $arguments = null) {
@@ -1704,39 +1873,52 @@ class js_writer {
  * echo html_writer::table($t);
  *
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class html_table {
+
     /**
-     * @var string value to use for the id attribute of the table
+     * Value to use for the id attribute of the table
+     * @var string
      */
     public $id = null;
+
     /**
-     * @var array attributes of HTML attributes for the <table> element
+     * Attributes of HTML attributes for the <table> element
+     * @var array
      */
     public $attributes = array();
+
     /**
+     * An array of headings. The n-th array item is used as a heading of the n-th column.
      * For more control over the rendering of the headers, an array of html_table_cell objects
      * can be passed instead of an array of strings.
-     * @var array of headings. The n-th array item is used as a heading of the n-th column.
      *
      * Example of usage:
      * $t->head = array('Student', 'Grade');
+     *
+     * @var array
      */
     public $head;
+
     /**
-     * @var array can be used to make a heading span multiple columns
+     * An array that can be used to make a heading span multiple columns.
+     * In this example, {@see html_table:$data} is supposed to have three columns. For the first two columns,
+     * the same heading is used. Therefore, {@see html_table::$head} should consist of two items.
      *
      * Example of usage:
      * $t->headspan = array(2,1);
      *
-     * In this example, {@see html_table:$data} is supposed to have three columns. For the first two columns,
-     * the same heading is used. Therefore, {@see html_table::$head} should consist of two items.
+     * @var array
      */
     public $headspan;
+
     /**
-     * @var array of column alignments. The value is used as CSS 'text-align' property. Therefore, possible
+     * An array of column alignments.
+     * The value is used as CSS 'text-align' property. Therefore, possible
      * values are 'left', 'right', 'center' and 'justify'. Specify 'right' or 'left' from the perspective
      * of a left-to-right (LTR) language. For RTL, the values are flipped automatically.
      *
@@ -1745,27 +1927,36 @@ class html_table {
      * or
      * $t->align[1] = 'right';
      *
+     * @var array
      */
     public $align;
+
     /**
-     * @var array of column sizes. The value is used as CSS 'size' property.
+     * The value is used as CSS 'size' property.
      *
      * Examples of usage:
      * $t->size = array('50%', '50%');
      * or
      * $t->size[1] = '120px';
+     *
+     * @var array of column sizes.
      */
     public $size;
+
     /**
-     * @var array of wrapping information. The only possible value is 'nowrap' that sets the
+     * An array of wrapping information.
+     * The only possible value is 'nowrap' that sets the
      * CSS property 'white-space' to the value 'nowrap' in the given column.
      *
      * Example of usage:
      * $t->wrap = array(null, 'nowrap');
+     *
+     * @var array
      */
     public $wrap;
+
     /**
-     * @var array of arrays or html_table_row objects containing the data. Alternatively, if you have
+     * Array of arrays or html_table_row objects containing the data. Alternatively, if you have
      * $head specified, the string 'hr' (for horizontal ruler) can be used
      * instead of an array of cells data resulting in a divider rendered.
      *
@@ -1787,40 +1978,54 @@ class html_table {
      * $row2 = new html_table_row();
      * $row2->cells = array($cell2, $cell3);
      * $t->data = array($row1, $row2);
+     *
+     * @var array
      */
     public $data;
+
     /**
-     * @var string width of the table, percentage of the page preferred. Defaults to 80%
+     * Width of the table, percentage of the page preferred.
      * @deprecated since Moodle 2.0. Styling should be in the CSS.
+     * @var string
      */
     public $width = null;
+
     /**
-     * @var string alignment the whole table. Can be 'right', 'left' or 'center' (default).
+     * Alignment for the whole table. Can be 'right', 'left' or 'center' (default).
      * @deprecated since Moodle 2.0. Styling should be in the CSS.
+     * @var string
      */
     public $tablealign = null;
+
     /**
-     * @var int padding on each cell, in pixels
+     * Padding on each cell, in pixels
      * @deprecated since Moodle 2.0. Styling should be in the CSS.
+     * @var int
      */
     public $cellpadding = null;
+
     /**
-     * @var int spacing between cells, in pixels
+     * Spacing between cells, in pixels
      * @deprecated since Moodle 2.0. Styling should be in the CSS.
+     * @var int
      */
     public $cellspacing = null;
+
     /**
-     * @var array classes to add to particular rows, space-separated string.
+     * Array of classes to add to particular rows, space-separated string.
      * Classes 'r0' or 'r1' are added automatically for every odd or even row,
      * respectively. Class 'lastrow' is added automatically for the last row
      * in the table.
      *
      * Example of usage:
      * $t->rowclasses[9] = 'tenth'
+     *
+     * @var array
      */
     public $rowclasses;
+
     /**
-     * @var array classes to add to every cell in a particular column,
+     * An array of classes to add to every cell in a particular column,
      * space-separated string. Class 'cell' is added automatically by the renderer.
      * Classes 'c0' or 'c1' are added automatically for every odd or even column,
      * respectively. Class 'lastcol' is added automatically for all last cells
@@ -1828,10 +2033,14 @@ class html_table {
      *
      * Example of usage:
      * $t->colclasses = array(null, 'grade');
+     *
+     * @var array
      */
     public $colclasses;
+
     /**
-     * @var string description of the contents for screen readers.
+     * Description of the contents for screen readers.
+     * @var string
      */
     public $summary;
 
@@ -1843,29 +2052,38 @@ class html_table {
     }
 }
 
-
 /**
  * Component representing a table row.
  *
  * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class html_table_row {
+
     /**
-     * @var string value to use for the id attribute of the row
+     * Value to use for the id attribute of the row.
+     * @var string
      */
     public $id = null;
+
     /**
-     * @var array $cells Array of html_table_cell objects
+     * Array of html_table_cell objects
+     * @var array
      */
     public $cells = array();
+
     /**
-     * @var string $style value to use for the style attribute of the table row
+     * Value to use for the style attribute of the table row
+     * @var string
      */
     public $style = null;
+
     /**
-     * @var array attributes of additional HTML attributes for the <tr> element
+     * Attributes of additional HTML attributes for the <tr> element
+     * @var array
      */
     public $attributes = array();
 
@@ -1886,113 +2104,160 @@ class html_table_row {
     }
 }
 
-
 /**
  * Component representing a table cell.
  *
  * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class html_table_cell {
+
     /**
-     * @var string value to use for the id attribute of the cell
+     * Value to use for the id attribute of the cell.
+     * @var string
      */
     public $id = null;
+
     /**
-     * @var string $text The contents of the cell
+     * The contents of the cell.
+     * @var string
      */
     public $text;
+
     /**
-     * @var string $abbr Abbreviated version of the contents of the cell
+     * Abbreviated version of the contents of the cell.
+     * @var string
      */
     public $abbr = null;
+
     /**
-     * @var int $colspan Number of columns this cell should span
+     * Number of columns this cell should span.
+     * @var int
      */
     public $colspan = null;
+
     /**
-     * @var int $rowspan Number of rows this cell should span
+     * Number of rows this cell should span.
+     * @var int
      */
     public $rowspan = null;
+
     /**
-     * @var string $scope Defines a way to associate header cells and data cells in a table
+     * Defines a way to associate header cells and data cells in a table.
+     * @var string
      */
     public $scope = null;
+
     /**
-     * @var boolean $header Whether or not this cell is a header cell
+     * Whether or not this cell is a header cell.
+     * @var boolean
      */
     public $header = null;
+
     /**
-     * @var string $style value to use for the style attribute of the table cell
+     * Value to use for the style attribute of the table cell
+     * @var string
      */
     public $style = null;
+
     /**
-     * @var array attributes of additional HTML attributes for the <td> element
+     * Attributes of additional HTML attributes for the <td> element
+     * @var array
      */
     public $attributes = array();
 
+    /**
+     * Constructs a table cell
+     *
+     * @param string $text
+     */
     public function __construct($text = null) {
         $this->text = $text;
         $this->attributes['class'] = '';
     }
 }
 
-
-/// Complex components aggregating simpler components
-
-
 /**
  * Component representing a paging bar.
  *
  * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class paging_bar implements renderable {
+
     /**
-     * @var int $maxdisplay The maximum number of pagelinks to display
+     * The maximum number of pagelinks to display.
+     * @var int
      */
     public $maxdisplay = 18;
+
     /**
-     * @var int $totalcount post or get
+     * The total number of entries to be pages through..
+     * @var int
      */
     public $totalcount;
+
     /**
-     * @var int $page The page you are currently viewing
+     * The page you are currently viewing.
+     * @var int
      */
     public $page;
+
     /**
-     * @var int $perpage The number of entries that should be shown per page
+     * The number of entries that should be shown per page.
+     * @var int
      */
     public $perpage;
+
     /**
-     * @var string $baseurl If this  is a string then it is the url which will be appended with $pagevar, an equals sign and the page number.
-     *      If this is a moodle_url object then the pagevar param will be replaced by the page no, for each page.
+     * If this  is a string then it is the url which will be appended with $pagevar,
+     * an equals sign and the page number.
+     * If this is a moodle_url object then the pagevar param will be replaced by
+     * the page no, for each page.
+     * @var string|moodle_url
      */
     public $baseurl;
+
     /**
-     * @var string $pagevar This is the variable name that you use for the page number in your code (ie. 'tablepage', 'blogpage', etc)
+     * This is the variable name that you use for the pagenumber in your
+     * code (ie. 'tablepage', 'blogpage', etc)
+     * @var string
      */
     public $pagevar;
+
     /**
-     * @var string $previouslink A HTML link representing the "previous" page
+     * A HTML link representing the "previous" page.
+     * @var string
      */
     public $previouslink = null;
+
     /**
-     * @var tring $nextlink A HTML link representing the "next" page
+     * A HTML link representing the "next" page.
+     * @var string
      */
     public $nextlink = null;
+
     /**
-     * @var tring $firstlink A HTML link representing the first page
+     * A HTML link representing the first page.
+     * @var string
      */
     public $firstlink = null;
+
     /**
-     * @var tring $lastlink A HTML link representing the last page
+     * A HTML link representing the last page.
+     * @var string
      */
     public $lastlink = null;
+
     /**
-     * @var array $pagelinks An array of strings. One of them is just a string: the current page
+     * An array of strings. One of them is just a string: the current page
+     * @var array
      */
     public $pagelinks = array();
 
@@ -2014,7 +2279,10 @@ class paging_bar implements renderable {
     }
 
     /**
-     * @return void
+     * Prepares the paging bar for output.
+     *
+     * This method validates the arguments set up for the paging bar and then
+     * produces fragments of HTML to assist display later on.
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
         if (!isset($this->totalcount) || is_null($this->totalcount)) {
@@ -2082,7 +2350,6 @@ class paging_bar implements renderable {
     }
 }
 
-
 /**
  * This class represents how a block appears on a page.
  *
@@ -2095,58 +2362,76 @@ class paging_bar implements renderable {
  * add new block UI, are also represented as block_contents objects.
  *
  * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class block_contents {
-    /** @var int used to set $skipid. */
-    protected static $idcounter = 1;
 
+    /**#@+
+     * These are the collapsible states that a blocks content can be in.
+     * Default self::NOT_HIDEABLE
+     */
     const NOT_HIDEABLE = 0;
     const VISIBLE = 1;
     const HIDDEN = 2;
+    /**#@-*/
 
     /**
-     * @var integer $skipid All the blocks (or things that look like blocks)
-     * printed on a page are given a unique number that can be used to construct
-     * id="" attributes. This is set automatically be the {@link prepare()} method.
+     * Used to set $skipid.
+     * @var int
+     */
+    protected static $idcounter = 1;
+
+    /**
+     * All the blocks (or things that look like blocks) printed on a page are
+     * given a unique number that can be used to construct id="" attributes.
+     * This is set automatically be the {@link prepare()} method.
      * Do not try to set it manually.
+     * @var integer
      */
     public $skipid;
 
     /**
-     * @var integer If this is the contents of a real block, this should be set to
+     * If this is the contents of a real block, this should be set to
      * the block_instance.id. Otherwise this should be set to 0.
+     * @var integer
      */
     public $blockinstanceid = 0;
 
     /**
-     * @var integer if this is a real block instance, and there is a corresponding
+     * If this is a real block instance, and there is a corresponding
      * block_position.id for the block on this page, this should be set to that id.
      * Otherwise it should be 0.
+     * @var integer
      */
     public $blockpositionid = 0;
 
     /**
-     * @param array $attributes an array of attribute => value pairs that are put on the
-     * outer div of this block. {@link $id} and {@link $classes} attributes should be set separately.
+     * An array of attribute => value pairs that are put on the outer div of this
+     * block. {@link $id} and {@link $classes} attributes should be set separately.
+     * @var array
      */
     public $attributes;
 
     /**
-     * @param string $title The title of this block. If this came from user input,
-     * it should already have had format_string() processing done on it. This will
-     * be output inside <h2> tags. Please do not cause invalid XHTML.
+     * The title of this block. If this came from user input, it should already
+     * have had format_string() processing done on it. This will be output inside
+     * <h2> tags. Please do not cause invalid XHTML.
+     * @var string
      */
     public $title = '';
 
     /**
-     * @param string $content HTML for the content
+     * HTML for the content
+     * @var string
      */
     public $content = '';
 
     /**
-     * @param array $list an alternative to $content, it you want a list of things with optional icons.
+     * An alternative to $content, it you want a list of things with optional icons.
+     * @var array
      */
     public $footer = '';
 
@@ -2159,8 +2444,9 @@ class block_contents {
     public $annotation = '';
 
     /**
-     * @var integer one of the constants NOT_HIDEABLE, VISIBLE, HIDDEN. Whether
+     * One of the constants NOT_HIDEABLE, VISIBLE, HIDDEN. Whether
      * the user can toggle whether this block is visible.
+     * @var integer
      */
     public $collapsible = self::NOT_HIDEABLE;
 
@@ -2177,7 +2463,7 @@ class block_contents {
      * Create new instance of block content
      * @param array $attributes
      */
-    public function __construct(array $attributes=null) {
+    public function __construct(array $attributes = null) {
         $this->skipid = self::$idcounter;
         self::$idcounter += 1;
 
@@ -2192,8 +2478,8 @@ class block_contents {
 
     /**
      * Add html class to block
+     *
      * @param string $class
-     * @return void
      */
     public function add_class($class) {
         $this->attributes['class'] .= ' '.$class;
@@ -2209,15 +2495,19 @@ class block_contents {
  * $PAGE->url.
  *
  * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class block_move_target {
+
     /**
      * Move url
      * @var moodle_url
      */
     public $url;
+
     /**
      * label
      * @var string
@@ -2242,45 +2532,55 @@ class block_move_target {
  * not have children.
  *
  * @copyright 2010 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class custom_menu_item implements renderable {
+
     /**
      * The text to show for the item
      * @var string
      */
     protected $text;
+
     /**
      * The link to give the icon if it has no children
      * @var moodle_url
      */
     protected $url;
+
     /**
      * A title to apply to the item. By default the text
      * @var string
      */
     protected $title;
+
     /**
      * A sort order for the item, not necessary if you order things in the CFG var
      * @var int
      */
     protected $sort;
+
     /**
      * A reference to the parent for this item or NULL if it is a top level item
      * @var custom_menu_item
      */
     protected $parent;
+
     /**
      * A array in which to store children this item has.
      * @var array
      */
     protected $children = array();
+
     /**
      * A reference to the sort var of the last child that was added
      * @var int
      */
     protected $lastsort = 0;
+
     /**
      * Constructs the new custom menu item
      *
@@ -2291,7 +2591,7 @@ class custom_menu_item implements renderable {
      * @param custom_menu_item $parent A reference to the parent custom_menu_item this child
      *        belongs to, only if the child has a parent. [Optional]
      */
-    public function __construct($text, moodle_url $url=null, $title=null, $sort = null, custom_menu_item $parent=null) {
+    public function __construct($text, moodle_url $url=null, $title=null, $sort = null, custom_menu_item $parent = null) {
         $this->text = $text;
         $this->url = $url;
         $this->title = $title;
@@ -2308,7 +2608,7 @@ class custom_menu_item implements renderable {
      * @param int $sort
      * @return custom_menu_item
      */
-    public function add($text, moodle_url $url=null, $title=null, $sort = null) {
+    public function add($text, moodle_url $url = null, $title = null, $sort = null) {
         $key = count($this->children);
         if (empty($sort)) {
             $sort = $this->lastsort + 1;
@@ -2317,6 +2617,7 @@ class custom_menu_item implements renderable {
         $this->lastsort = (int)$sort;
         return $this->children[$key];
     }
+
     /**
      * Returns the text for this item
      * @return string
@@ -2324,6 +2625,7 @@ class custom_menu_item implements renderable {
     public function get_text() {
         return $this->text;
     }
+
     /**
      * Returns the url for this item
      * @return moodle_url
@@ -2331,6 +2633,7 @@ class custom_menu_item implements renderable {
     public function get_url() {
         return $this->url;
     }
+
     /**
      * Returns the title for this item
      * @return string
@@ -2338,6 +2641,7 @@ class custom_menu_item implements renderable {
     public function get_title() {
         return $this->title;
     }
+
     /**
      * Sorts and returns the children for this item
      * @return array
@@ -2346,6 +2650,7 @@ class custom_menu_item implements renderable {
         $this->sort();
         return $this->children;
     }
+
     /**
      * Gets the sort order for this child
      * @return int
@@ -2353,6 +2658,7 @@ class custom_menu_item implements renderable {
     public function get_sort_order() {
         return $this->sort;
     }
+
     /**
      * Gets the parent this child belong to
      * @return custom_menu_item
@@ -2360,12 +2666,14 @@ class custom_menu_item implements renderable {
     public function get_parent() {
         return $this->parent;
     }
+
     /**
      * Sorts the children this item has
      */
     public function sort() {
         usort($this->children, array('custom_menu','sort_custom_menu_items'));
     }
+
     /**
      * Returns true if this item has any children
      * @return bool
@@ -2410,12 +2718,17 @@ class custom_menu_item implements renderable {
  *     Settings: Administration > Appearance > Themes > Theme settings
  *
  * @copyright 2010 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @subpackage output
  */
 class custom_menu extends custom_menu_item {
 
-    /** @var string the language we should render for, null disables multilang support */
+    /**
+     * The language we should render for, null disables multilang support.
+     * @var string
+     */
     protected $currentlanguage = null;
 
     /**
@@ -2425,7 +2738,6 @@ class custom_menu extends custom_menu_item {
      * @param string $language the current language code, null disables multilang support
      */
     public function __construct($definition = '', $currentlanguage = null) {
-
         $this->currentlanguage = $currentlanguage;
         parent::__construct('root'); // create virtual root element of the menu
         if (!empty($definition)) {
@@ -2436,6 +2748,8 @@ class custom_menu extends custom_menu_item {
     /**
      * Overrides the children of this custom menu. Useful when getting children
      * from $CFG->custommenuitems
+     *
+     * @param array $children
      */
     public function override_children(array $children) {
         $this->children = array();
@@ -2554,6 +2868,7 @@ class custom_menu extends custom_menu_item {
      * This function is designed to be used with the usort method
      *     usort($this->children, array('custom_menu','sort_custom_menu_items'));
      *
+     * @static
      * @param custom_menu_item $itema
      * @param custom_menu_item $itemb
      * @return int
