@@ -1,12 +1,26 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
 /**
- * Create/Edit grouping form.
+ * A form for creating and editing groupings.
  *
- * @copyright &copy; 2006 The Open University
- * @author N.D.Freear AT open.ac.uk
- * @author J.White AT open.ac.uk
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package groups
+ * @copyright 2006 The Open University, N.D.Freear AT open.ac.uk, J.White AT open.ac.uk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_group
  */
 
 if (!defined('MOODLE_INTERNAL')) {
@@ -15,10 +29,18 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
-/// get url variables
+/**
+ * Grouping form class
+ *
+ * @copyright 2006 The Open University, N.D.Freear AT open.ac.uk, J.White AT open.ac.uk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_group
+ */
 class grouping_form extends moodleform {
 
-    // Define the form
+    /**
+     * Form definition
+     */
     function definition () {
         global $USER, $CFG, $COURSE;
 
@@ -41,6 +63,13 @@ class grouping_form extends moodleform {
         $this->add_action_buttons();
     }
 
+    /**
+     * Form validation
+     *
+     * @param array $data
+     * @param array $files
+     * @return array $errors An array of validataion errors for the form.
+     */
     function validation($data, $files) {
         global $COURSE, $DB;
 
