@@ -17,9 +17,10 @@
 /**
  * This file contains the unittests for the css optimiser in csslib.php
  *
- * @package   moodlecore
- * @copyright 2011 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package core
+ * @subpackage css
+ * @copyright 2012 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (!defined('MOODLE_INTERNAL')) {
@@ -27,26 +28,34 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 require_once($CFG->libdir . '/csslib.php');
 
+
+/**
+ * CSS optimiser test class
+ *
+ * @package core
+ * @subpackage css
+ * @copyright 2012 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class css_optimiser_test extends UnitTestCase {
 
+    /**
+     * Sets up the test class
+     */
     public function setUp() {
         global $CFG;
         parent::setUp();
-        $CFG->cssoptimisestats = false;
-        $CFG->cssoptimisepretty = false;
+        // We need to disable these if they are enabled to that we can predict
+        // the output.
+        $CFG->cssoptimiserstats = false;
+        $CFG->cssoptimiserpretty = false;
     }
 
+    /**
+     * Test the process method
+     */
     public function test_process() {
         $optimiser = new css_optimiser;
-
-        /*
-        $cssin = '.test {border:1px solid;border-color-top:#111; border-color-bottom: #222;border-color-left: #333;border-color-right:#444;}';
-        $cssout = '.test{border:1px solid;border-color:#111 #444 # 222 #333;}';
-        $actual = $optimiser->process($cssin);
-        debug(compact('cssin', 'cssout', 'actual'));
-        $this->assertEqual($cssout, $actual);
-        return;
-        /**/
 
         $this->check_background($optimiser);
         $this->check_borders($optimiser);
@@ -54,17 +63,16 @@ class css_optimiser_test extends UnitTestCase {
         $this->check_margins($optimiser);
         $this->check_padding($optimiser);
 
+        $this->try_broken_css_found_in_moodle($optimiser);
         $this->try_invalid_css_handling($optimiser);
         $this->try_bulk_processing($optimiser);
-
-
-        return;
-
-        $cssin = '.one {background-color:color:red}';
-        $cssout = '.one{background-color:color:red;}';
-        $this->assertEqual($cssout, $optimiser->process($cssin));
+        $this->try_break_things($optimiser);
     }
 
+    /**
+     * Background colour tests
+     * @param css_optimiser $optimiser
+     */
     protected function check_background(css_optimiser $optimiser) {
 
         $cssin = '.test {background-color: #123456;}';
@@ -102,8 +110,12 @@ class css_optimiser_test extends UnitTestCase {
         $this->assertEqual($cssout, $optimiser->process($cssin));
     }
 
+    /**
+     * Border tests
+     * @param css_optimiser $optimiser
+     */
     protected function check_borders(css_optimiser $optimiser) {
-        $cssin = '.test {border: 1px solid #654321} .test {border-color-bottom: #123456}';
+        $cssin = '.test {border: 1px solid #654321} .test {border-bottom-color: #123456}';
         $cssout = '.test{border:1px solid;border-color:#654321 #654321 #123456;}';
         $this->assertEqual($cssout, $optimiser->process($cssin));
 
@@ -121,6 +133,14 @@ class css_optimiser_test extends UnitTestCase {
 
         $cssin = '.one, .two {border:1px solid red;}';
         $cssout = ".one, .two{border:1px solid #FF0000;}";
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one, .two {border:0px;}';
+        $cssout = ".one, .two{border-width:0;}";
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one, .two {border-top: 5px solid white;}';
+        $cssout = ".one, .two{border-top:5px solid #FFFFFF;}";
         $this->assertEqual($cssout, $optimiser->process($cssin));
 
         $cssin = '.one {border:1px solid red;} .two {border:1px solid red;}';
@@ -151,19 +171,32 @@ class css_optimiser_test extends UnitTestCase {
         $cssout = '.test{border:1px solid #123456;}';
         $this->assertEqual($cssout, $optimiser->process($cssin));
 
-        $cssin = '.test {border:1px solid;border-color-top:#123456;}';
-        $cssout = '.test{border:1px solid;border-color-top:#123456;}';
+        $cssin = '.test {border:1px solid;border-top-color:#123456;}';
+        $cssout = '.test{border:1px solid;border-top-color:#123456;}';
         $this->assertEqual($cssout, $optimiser->process($cssin));
 
-        $cssin = '.test {border:1px solid;border-color-top:#111; border-color-bottom: #222;border-color-left: #333;}';
-        $cssout = '.test{border:1px solid;border-color-top:#111;border-color-bottom:#222;border-color-left:#333;}';
+        $cssin = '.test {border:1px solid;border-top-color:#111; border-bottom-color: #222;border-left-color: #333;}';
+        $cssout = '.test{border:1px solid;border-top-color:#111;border-bottom-color:#222;border-left-color:#333;}';
         $this->assertEqual($cssout, $optimiser->process($cssin));
 
-        $cssin = '.test {border:1px solid;border-color-top:#111; border-color-bottom: #222;border-color-left: #333;border-color-right:#444;}';
+        $cssin = '.test {border:1px solid;border-top-color:#111; border-bottom-color: #222;border-left-color: #333;border-right-color:#444;}';
         $cssout = '.test{border:1px solid;border-color:#111 #444 #222 #333;}';
         $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.generaltable .cell {border-color:#EEEEEE;} .generaltable .cell {border-width: 1px;border-style: solid;}';
+        $cssout = '.generaltable .cell{border:1px solid #EEEEEE;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '#page-admin-roles-override .rolecap {border:none;border-bottom:1px solid #CECECE;}';
+        $cssout = '#page-admin-roles-override .rolecap{border-top:0;border-right:0;border-bottom:1px solid #CECECE;border-left:0;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+        
     }
 
+    /**
+     * Test colour styles
+     * @param css_optimiser $optimiser
+     */
     protected function check_colors(css_optimiser $optimiser) {
         $css = '.css{}';
         $this->assertEqual($css, $optimiser->process($css));
@@ -251,6 +284,10 @@ class css_optimiser_test extends UnitTestCase {
         $this->assertEqual($cssout, $optimiser->process($cssin));
     }
 
+    /**
+     * Test margin styles
+     * @param css_optimiser $optimiser
+     */
     protected function check_margins(css_optimiser $optimiser) {
         $cssin = '.one {margin: 1px 2px 3px 4px}';
         $cssout = '.one{margin:1px 2px 3px 4px;}';
@@ -277,6 +314,11 @@ class css_optimiser_test extends UnitTestCase {
         $this->assertEqual($cssout, $optimiser->process($cssin));
     }
 
+    /**
+     * Test padding styles
+     *
+     * @param css_optimiser $optimiser
+     */
     protected function check_padding(css_optimiser $optimiser) {
         $cssin = '.one {margin: 1px 2px 3px 4px}';
         $cssout = '.one{margin:1px 2px 3px 4px;}';
@@ -298,11 +340,24 @@ class css_optimiser_test extends UnitTestCase {
         $cssout = '.one{margin:1px 1px 4px;}';
         $this->assertEqual($cssout, $optimiser->process($cssin));
 
+        $cssin = '.one {margin:0 !important;}';
+        $cssout = '.one{margin:0 !important;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin = '.one {padding:0 !important;}';
+        $cssout = '.one{padding:0 !important;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
         $cssin = '.one, .two, .one.two, .one .two {margin:0;} .one.two {margin:0 7px;}';
         $cssout = '.one, .two, .one .two{margin:0;} .one.two{margin:0 7px;}';
         $this->assertEqual($cssout, $optimiser->process($cssin));
     }
 
+    /**
+     * Test some totally invalid CSS optimisation
+     *
+     * @param css_optimiser $optimiser
+     */
     protected function try_invalid_css_handling(css_optimiser $optimiser) {
 
         $cssin = array(
@@ -365,6 +420,72 @@ class css_optimiser_test extends UnitTestCase {
         $this->assertEqual($cssout, $optimiser->process($cssin));
     }
 
+    /**
+     * Try to break some things
+     * @param css_optimiser $optimiser
+     */
+    protected function try_break_things(css_optimiser $optimiser) {
+        // Wildcard test
+        $cssin  = '* {color: black;}';
+        $cssout = '*{color:#000;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // Wildcard test
+        $cssin  = '.one * {color: black;}';
+        $cssout = '.one *{color:#000;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // Wildcard test
+        $cssin  = '* .one * {color: black;}';
+        $cssout = '* .one *{color:#000;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // Wildcard test
+        $cssin  = '*,* {color: black;}';
+        $cssout = '*{color:#000;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // Wildcard test
+        $cssin  = '*, * .one {color: black;}';
+        $cssout = "*,\n* .one{color:#000;}";
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // Wildcard test
+        $cssin  = '*, *.one {color: black;}';
+        $cssout = "*,\n*.one{color:#000;}";
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // Psedo test
+        $cssin  = '.one:before {color: black;}';
+        $cssout = '.one:before{color:#000;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // Psedo test
+        $cssin  = '.one:after {color: black;}';
+        $cssout = '.one:after{color:#000;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // Psedo test
+        $cssin  = '.one:onclick {color: black;}';
+        $cssout = '.one:onclick{color:#000;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // Test complex CSS rules that don't really exist but mimic other CSS rules
+        $cssin  = '.one {master-of-destruction: explode(\' \', "What madness";}';
+        $cssout = '.one{master-of-destruction:explode(\' \', "What madness";}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // Test some complex IE css... I couldn't even think of a more complext solution
+        // than the CSS they came up with.
+        $cssin  = 'a { opacity: 0.5; -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; filter: alpha(opacity=50); }';
+        $cssout = 'a{opacity:0.5;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";filter:alpha(opacity=50);}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+    }
+
+    /**
+     * A bulk processing test
+     * @param css_optimiser $optimiser
+     */
     protected function try_bulk_processing(css_optimiser $optimiser) {
         global $CFG;
         $cssin = <<<CSS
@@ -421,7 +542,132 @@ CSS;
   #test .one{color:#654321;}
 }
 CSS;
-        $CFG->cssoptimisepretty = 1;
+        $CFG->cssoptimiserpretty = 1;
         $this->assertEqual($optimiser->process($cssin), $cssout);
+    }
+
+    /**
+     * Test CSS colour matching
+     */
+    public function test_css_is_colour() {
+        // First lets test hex colours
+        $this->assertTrue(css_is_colour('#123456'));
+        $this->assertTrue(css_is_colour('#123'));
+        $this->assertTrue(css_is_colour('#ABCDEF'));
+        $this->assertTrue(css_is_colour('#ABC'));
+        $this->assertTrue(css_is_colour('#abcdef'));
+        $this->assertTrue(css_is_colour('#abc'));
+        $this->assertTrue(css_is_colour('#aBcDeF'));
+        $this->assertTrue(css_is_colour('#aBc'));
+        $this->assertTrue(css_is_colour('#1a2Bc3'));
+        $this->assertTrue(css_is_colour('#1Ac'));
+        // Note the following two colour's arn't really colours but browsers process
+        // them still.
+        $this->assertTrue(css_is_colour('#A'));
+        $this->assertTrue(css_is_colour('#12'));
+        
+        $this->assertFalse(css_is_colour('#BCDEFG'));
+        $this->assertFalse(css_is_colour('#'));
+        $this->assertFalse(css_is_colour('#0000000'));
+        $this->assertFalse(css_is_colour('#132-245'));
+        $this->assertFalse(css_is_colour('#13 23 43'));
+        $this->assertFalse(css_is_colour('123456'));
+
+        // Next lets test real browser mapped colours
+        $this->assertTrue(css_is_colour('black'));
+        $this->assertTrue(css_is_colour('blue'));
+        $this->assertTrue(css_is_colour('BLACK'));
+        $this->assertTrue(css_is_colour('Black'));
+        $this->assertTrue(css_is_colour('bLACK'));
+        $this->assertTrue(css_is_colour('mediumaquamarine'));
+        $this->assertTrue(css_is_colour('mediumAquamarine'));
+        $this->assertFalse(css_is_colour('monkey'));
+        $this->assertFalse(css_is_colour(''));
+        $this->assertFalse(css_is_colour('not a colour'));
+
+        // Next lets test rgb(a) colours
+        $this->assertTrue(css_is_colour('rgb(255,255,255)'));
+        $this->assertTrue(css_is_colour('rgb(0, 0, 0)'));
+        $this->assertTrue(css_is_colour('RGB (255, 255   ,    255)'));
+        $this->assertTrue(css_is_colour('rgba(0,0,0,0)'));
+        $this->assertTrue(css_is_colour('RGBA(255,255,255,1)'));
+        $this->assertTrue(css_is_colour('rgbA(255,255,255,0.5)'));
+        $this->assertFalse(css_is_colour('rgb(-255,-255,-255)'));
+        $this->assertFalse(css_is_colour('rgb(256,-256,256)'));
+
+        // Now lets test HSL colours
+        $this->assertTrue(css_is_colour('hsl(0,0%,100%)'));
+        $this->assertTrue(css_is_colour('hsl(180, 0%, 10%)'));
+        $this->assertTrue(css_is_colour('hsl (360, 100%   ,    95%)'));
+
+        // Finally test the special values
+        $this->assertTrue(css_is_colour('inherit'));
+    }
+
+    /**
+     * Test the css_is_width function
+     */
+    public function test_css_is_width() {
+
+        $this->assertTrue(css_is_width('0'));
+        $this->assertTrue(css_is_width('0px'));
+        $this->assertTrue(css_is_width('0em'));
+        $this->assertTrue(css_is_width('199px'));
+        $this->assertTrue(css_is_width('199em'));
+        $this->assertTrue(css_is_width('199%'));
+        $this->assertTrue(css_is_width('-1'));
+        $this->assertTrue(css_is_width('-1px'));
+        $this->assertTrue(css_is_width('auto'));
+        $this->assertTrue(css_is_width('inherit'));
+
+        $this->assertFalse(css_is_width('-'));
+        $this->assertFalse(css_is_width('bananas'));
+        $this->assertFalse(css_is_width(''));
+        $this->assertFalse(css_is_width('top'));
+    }
+
+    /**
+     * This function tests some of the broken crazy CSS we have in Moodle.
+     * For each of these things the value needs to be corrected if we can be 100%
+     * certain what is going wrong, Or it needs to be left as is.
+     *
+     * @param css_optimiser $optimiser
+     */
+    public function try_broken_css_found_in_moodle(css_optimiser $optimiser) {
+        // Notice how things are out of order here but that they get corrected
+        $cssin = '.test {background:url([[pix:theme|pageheaderbgred]]) top center no-repeat}';
+        $cssout = '.test{background:url([[pix:theme|pageheaderbgred]]) no-repeat top center;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // Cursor hand isn't valid
+        $cssin  = '.test {cursor: hand;}';
+        $cssout = '.test{cursor:hand;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // Zoom property isn't valid
+        $cssin  = '.test {zoom: 1;}';
+        $cssout = '.test{zoom:1;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // Left isn't a valid position property
+        $cssin  = '.test {position: left;}';
+        $cssout = '.test{position:left;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // The dark red color isn't a valid HTML color but has a standardised
+        // translation of #8B0000
+        $cssin  = '.test {color: darkred;}';
+        $cssout = '.test{color:#8B0000;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // You can't use argb colours as border colors
+        $cssin  = '.test {border-bottom: 1px solid rgba(0,0,0,0.25);}';
+        $cssout = '.test{border-bottom:1px solid rgba(0,0,0,0.25);}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // Opacity with annoying IE equivilants....
+        $cssin  = '.test {opacity: 0.5; -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; filter: alpha(opacity=50);}';
+        $cssout = '.test{opacity:0.5;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";filter:alpha(opacity=50);}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
     }
 }

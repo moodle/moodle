@@ -395,26 +395,21 @@ $CFG->admin = 'admin';
 // The following settings are used to enable and control the optimisation.
 //
 // Enable the CSS optimiser. This will only optimise the CSS if themedesignermode
-// is not enabled.
+// is not enabled. This can be set through the UI however it is noted here as well
+// because the other CSS optimiser settings can not be set through the UI.
 //
-//      $CFG->cssoptimise = true;
-//
-// If set then CSS will also be optimised when themedesignermode is enabled.
-// This is useful if you are a theme designer and want some help optimising your
-// CSS.
-//
-//      $CFG->cssoptimisedebug = true;
+//      $CFG->enablecssoptimiser = true;
 //
 // If set the CSS optimiser will add stats about the optimisation to the top of
 // the optimised CSS file. You can then inspect the CSS to see the affect the CSS
 // optimiser is having.
 //
-//      $CFG->cssoptimisestats = true;
+//      $CFG->cssoptimiserstats = true;
 //
-// If set the CSS that is optimised will still retain a minamilistic formatting
+// If set the CSS that is optimised will still retain a minimalistic formatting
 // so that anyone wanting to can still clearly read it.
 //
-//      $CFG->cssoptimisepretty = true;
+//      $CFG->cssoptimiserpretty = true;
 //
 //=========================================================================
 // 8. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
