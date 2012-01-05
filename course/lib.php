@@ -1355,10 +1355,16 @@ function course_set_marker($courseid, $marker) {
 /**
  * For a given course section, marks it visible or hidden,
  * and does the same for every activity in that section
+ *
+ * @param int $courseid course id
+ * @param int $sectionnumber The section number to adjust
+ * @param int $visibility The new visibility
+ * @return array A list of resources which were hidden in the section
  */
 function set_section_visible($courseid, $sectionnumber, $visibility) {
     global $DB;
 
+    $resourcestotoggle = array();
     if ($section = $DB->get_record("course_sections", array("course"=>$courseid, "section"=>$sectionnumber))) {
         $DB->set_field("course_sections", "visible", "$visibility", array("id"=>$section->id));
         if (!empty($section->sequence)) {
@@ -1368,7 +1374,19 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
             }
         }
         rebuild_course_cache($courseid);
+
+        // Determine which modules are visible for AJAX update
+        if (!empty($modules)) {
+            list($insql, $params) = $DB->get_in_or_equal($modules);
+            $select = 'id ' . $insql . ' AND visible = ?';
+            array_push($params, $visibility);
+            if (!$visibility) {
+                $select .= ' AND visibleold = 1';
+            }
+            $resourcestotoggle = $DB->get_fieldset_select('course_modules', 'id', $select, $params);
+        }
     }
+    return $resourcestotoggle;
 }
 
 /**
@@ -4384,5 +4402,99 @@ function course_page_type_list($pagetype, $parentcontext, $currentcontext) {
             'course-*'=>get_string('page-course-x', 'pagetype'),
             'course-view-*'=>get_string('page-course-view-x', 'pagetype')
         );
+    }
+}
+
+/**
+ * Include the relevant javascript and language strings for the resource
+ * toolbox YUI module
+ *
+ * @param integer $id The ID of the course being applied to
+ * @param array $modules An array containing the names of the modules in
+ *                       use on the page
+ * @param object $config An object containing configuration parameters for ajax modules including:
+ *          * resourceurl   The URL to post changes to for resource changes
+ *          * sectionurl    The URL to post changes to for section changes
+ *          * pageparams    Additional parameters to pass through in the post
+ * @return void
+ */
+function include_course_ajax($course, $modules = array(), $config = null) {
+    global $PAGE, $CFG, $USER;
+
+    // Ensure that ajax should be included
+    $courseformatajaxsupport = course_format_ajax_support($course->format);
+    if (!$CFG->enablecourseajax
+        || !$PAGE->theme->enablecourseajax
+        || !$CFG->enableajax
+        || empty($USER->editing)
+        || !$PAGE->user_is_editing()
+        || ($course->id != SITEID && !$courseformatajaxsupport->capable)) {
+        return;
+    }
+
+    if (!$config) {
+        $config = new stdClass();
+    }
+
+    // The URL to use for resource changes
+    if (!isset($config->resourceurl)) {
+        $config->resourceurl = '/course/rest.php';
+    }
+
+    // The URL to use for section changes
+    if (!isset($config->sectionurl)) {
+        $config->sectionurl = '/course/rest.php';
+    }
+
+    // Any additional parameters which need to be included on page submission
+    if (!isset($config->pageparams)) {
+        $config->pageparams = array();
+    }
+
+    // Include toolboxes
+    $PAGE->requires->yui_module('moodle-course-toolboxes',
+            'M.course.init_resource_toolbox',
+            array(array(
+                'courseid' => $course->id,
+                'ajaxurl' => $config->resourceurl,
+                'config' => $config,
+            ))
+    );
+    $PAGE->requires->yui_module('moodle-course-toolboxes',
+            'M.course.init_section_toolbox',
+            array(array(
+                'courseid' => $course->id,
+                'format' => $course->format,
+                'ajaxurl' => $config->sectionurl,
+                'config' => $config,
+            ))
+    );
+
+    // Require various strings for the command toolbox
+    $PAGE->requires->strings_for_js(array(
+            'moveleft',
+            'deletechecktype',
+            'deletechecktypename',
+            'show',
+            'hide',
+            'groupsnone',
+            'groupsvisible',
+            'groupsseparate',
+            'clicktochangeinbrackets',
+            'markthistopic',
+            'markedthistopic',
+        ), 'moodle');
+
+    // Include format-specific strings
+    if ($course->id != SITEID) {
+        $PAGE->requires->strings_for_js(array(
+                'showfromothers',
+                'hidefromothers',
+            ), 'format_' . $course->format);
+    }
+
+    // For confirming resource deletion we need the name of the module in question
+    foreach ($modules as $module => $modname) {
+        $PAGE->requires->string_for_js('pluginname', $module);
     }
 }
