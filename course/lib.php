@@ -4518,6 +4518,7 @@ function include_course_ajax($course, $modules = array(), $config = null) {
             'moveleft',
             'deletechecktype',
             'deletechecktypename',
+            'edittitle',
             'show',
             'hide',
             'groupsnone',
