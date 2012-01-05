@@ -17,6 +17,8 @@
 /**
  * Capabilities
  *
+ * This files lists capabilites related to report_logline
+ * 
  * @package    report
  * @subpackage loglive
  * @copyright  2011 Petr Skoda

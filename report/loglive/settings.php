@@ -17,6 +17,8 @@
 /**
  * Links and settings
  *
+ * This file contains links and settings used by report_loglive
+ * 
  * @package    report
  * @subpackage loglive
  * @copyright  2011 Petr Skoda

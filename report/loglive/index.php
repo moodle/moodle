@@ -17,6 +17,8 @@
 /**
  * Displays live view of recent logs
  *
+ * This file generates live view of recent logs.
+ * 
  * @package    report
  * @subpackage loglive
  * @copyright  2011 Petr Skoda
