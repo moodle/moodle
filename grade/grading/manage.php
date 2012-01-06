@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,7 +21,7 @@
  * area, provides access to the plugin editor and allows user to save the
  * current form as a template or re-use some existing form.
  *
- * @package    core
+ * @package    core_grades
  * @subpackage grading
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

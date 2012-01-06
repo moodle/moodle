@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,13 +13,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Definitions of grade scale class
+ * Definition of grade scale class
  *
- * @package    core
- * @subpackage grade
- * @copyright  2006 Nicolas Connault
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_grades
+ * @category  grade
+ * @copyright 2006 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -28,8 +28,14 @@ defined('MOODLE_INTERNAL') || die();
 require_once('grade_object.php');
 
 /**
- * Class representing a grade scale. It is responsible for handling its DB representation,
- * modifying and returning its metadata.
+ * Class representing a grade scale.
+ *
+ * It is responsible for handling its DB representation, modifying and returning its metadata.
+ *
+ * @package   core_grades
+ * @category  grade
+ * @copyright 2006 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class grade_scale extends grade_object {
     /**
@@ -50,6 +56,10 @@ class grade_scale extends grade_object {
      */
     public $courseid;
 
+    /**
+     * The ID of the user who created the scale
+     * @var int $userid
+     */
     public $userid;
 
     /**
@@ -78,8 +88,8 @@ class grade_scale extends grade_object {
 
     /**
      * Finds and returns a grade_scale instance based on params.
-     * @static
      *
+     * @static
      * @param array $params associative arrays varname=>value
      * @return object grade_scale instance or false if none found.
      */
@@ -89,8 +99,8 @@ class grade_scale extends grade_object {
 
     /**
      * Finds and returns all grade_scale instances based on params.
-     * @static
      *
+     * @static
      * @param array $params associative arrays varname=>value
      * @return array array of grade_scale instances or false if none found.
      */
@@ -102,6 +112,7 @@ class grade_scale extends grade_object {
      * Records this object in the Database, sets its id to the returned value, and returns that value.
      * If successful this function also fetches the new object data from database and stores it
      * in object properties.
+     *
      * @param string $source from where was the object inserted (mod/forum, manual, etc.)
      * @return int PK ID if successful, false otherwise
      */
@@ -113,8 +124,9 @@ class grade_scale extends grade_object {
 
     /**
      * In addition to update() it also updates grade_outcomes_courses if needed
+     *
      * @param string $source from where was the object inserted
-     * @return boolean success
+     * @return bool success
      */
     public function update($source=null) {
         $this->timemodified = time();
@@ -123,8 +135,9 @@ class grade_scale extends grade_object {
 
     /**
      * Deletes this outcome from the database.
+     *
      * @param string $source from where was the object deleted (mod/forum, manual, etc.)
-     * @return boolean success
+     * @return bool success
      */
     public function delete($source=null) {
         global $DB;
@@ -143,6 +156,7 @@ class grade_scale extends grade_object {
     /**
      * Returns the most descriptive field for this object. This is a standard method used
      * when we do not know the exact type of an object.
+     *
      * @return string name
      */
     public function get_name() {
@@ -206,6 +220,7 @@ class grade_scale extends grade_object {
      * the grademin and grademax, this method returns the scale item that falls closest to the
      * float given (which is usually an average of several grades on a scale). If the float falls
      * below 1 but above 0, it will be rounded up to 1.
+     *
      * @param float $grade
      * @return string
      */
@@ -226,6 +241,7 @@ class grade_scale extends grade_object {
 
     /**
      * Static function returning all global scales
+     *
      * @return object
      */
     public function fetch_all_global() {
@@ -234,7 +250,9 @@ class grade_scale extends grade_object {
 
     /**
      * Static function returning all local course scales
-     * @return object
+     *
+     * @param int $courseid The course ID
+     * @return array Returns an array of grade_scale instances
      */
     public static function fetch_all_local($courseid) {
         return grade_scale::fetch_all(array('courseid'=>$courseid));
@@ -242,7 +260,8 @@ class grade_scale extends grade_object {
 
     /**
      * Checks if scale can be deleted.
-     * @return boolean
+     *
+     * @return bool
      */
     public function can_delete() {
         return !$this->is_used();
@@ -250,6 +269,7 @@ class grade_scale extends grade_object {
 
     /**
      * Returns if scale used anywhere - activities, grade items, outcomes, etc.
+     *
      * @return bool
      */
     public function is_used() {
@@ -310,6 +330,7 @@ class grade_scale extends grade_object {
 
     /**
      * Returns the formatted grade description with URLs converted
+     *
      * @return string
      */
     public function get_description() {

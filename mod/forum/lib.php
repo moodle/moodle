@@ -1479,8 +1479,7 @@ function forum_get_user_grades($forum, $userid = 0) {
 /**
  * Update activity grades
  *
- * @global object
- * @global object
+ * @category grade
  * @param object $forum
  * @param int $userid specific user only, 0 means all
  * @param boolean $nullifnone return null if grade does not exist
@@ -1539,12 +1538,12 @@ function forum_upgrade_grades() {
 /**
  * Create/update grade item for given forum
  *
- * @global object
+ * @category grade
  * @uses GRADE_TYPE_NONE
  * @uses GRADE_TYPE_VALUE
  * @uses GRADE_TYPE_SCALE
- * @param object $forum object with extra cmidnumber
- * @param mixed $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @param stdClass $forum Forum object with extra cmidnumber
+ * @param mixed $grades Optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok
  */
 function forum_grade_item_update($forum, $grades=NULL) {
@@ -1579,9 +1578,9 @@ function forum_grade_item_update($forum, $grades=NULL) {
 /**
  * Delete grade item for given forum
  *
- * @global object
- * @param object $forum object
- * @return object grade_item
+ * @category grade
+ * @param stdClass $forum Forum object
+ * @return grade_item
  */
 function forum_grade_item_delete($forum) {
     global $CFG;

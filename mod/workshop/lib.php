@@ -1054,6 +1054,7 @@ function workshop_grade_item_update(stdclass $workshop, $submissiongrades=null, 
  *
  * Needed by grade_update_mod_grades() in lib/gradelib.php
  *
+ * @category grade
  * @param stdClass $workshop instance object with extra cmidnumber and modname property
  * @param int $userid        update grade of specific user only, 0 means all participants
  * @return void

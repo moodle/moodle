@@ -393,8 +393,7 @@ function lesson_get_user_grades($lesson, $userid=0) {
 /**
  * Update grades in central gradebook
  *
- * @global stdclass
- * @global object
+ * @category grade
  * @param object $lesson
  * @param int $userid specific user only, 0 means all
  * @param bool $nullifnone
@@ -453,7 +452,7 @@ function lesson_upgrade_grades() {
 /**
  * Create grade item for given lesson
  *
- * @global stdClass
+ * @category grade
  * @uses GRADE_TYPE_VALUE
  * @uses GRADE_TYPE_NONE
  * @param object $lesson object with extra cmidnumber
@@ -513,7 +512,7 @@ function lesson_grade_item_update($lesson, $grades=NULL) {
 /**
  * Delete grade item for given lesson
  *
- * @global stdClass
+ * @category grade
  * @param object $lesson object
  * @return object lesson
  */

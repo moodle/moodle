@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,13 +13,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Definitions of grade outcome class
+ * Definition of grade outcome class
  *
- * @package    core
- * @subpackage grade
- * @copyright  2006 Nicolas Connault
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_grades
+ * @category  grade
+ * @copyright 2006 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -28,8 +28,14 @@ defined('MOODLE_INTERNAL') || die();
 require_once('grade_object.php');
 
 /**
- * Class representing a grade outcome. It is responsible for handling its DB representation,
- * modifying and returning its metadata.
+ * Class representing a grade outcome.
+ *
+ * It is responsible for handling its DB representation, modifying and returning its metadata.
+ *
+ * @package   core_grades
+ * @category  grade
+ * @copyright 2006 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class grade_outcome extends grade_object {
     /**
@@ -83,14 +89,16 @@ class grade_outcome extends grade_object {
 
     /**
      * The userid of the person who last modified this outcome.
+     *
      * @var int $usermodified
      */
     public $usermodified;
 
     /**
      * Deletes this outcome from the database.
+     *
      * @param string $source from where was the object deleted (mod/forum, manual, etc.)
-     * @return boolean success
+     * @return bool success
      */
     public function delete($source=null) {
         global $DB;
@@ -113,6 +121,7 @@ class grade_outcome extends grade_object {
      * Records this object in the Database, sets its id to the returned value, and returns that value.
      * If successful this function also fetches the new object data from database and stores it
      * in object properties.
+     *
      * @param string $source from where was the object inserted (mod/forum, manual, etc.)
      * @return int PK ID if successful, false otherwise
      */
@@ -134,8 +143,9 @@ class grade_outcome extends grade_object {
 
     /**
      * In addition to update() it also updates grade_outcomes_courses if needed
+     *
      * @param string $source from where was the object inserted
-     * @return boolean success
+     * @return bool success
      */
     public function update($source=null) {
         $this->timemodified = time();
@@ -149,9 +159,10 @@ class grade_outcome extends grade_object {
     }
 
     /**
-     * Mark outcome as used in course
+     * Mark outcome as used in a course
+     *
      * @param int $courseid
-     * @return succes - false if incorrect courseid requested
+     * @return False if invalid courseid requested
      */
     public function use_in($courseid) {
         global $DB;
@@ -170,8 +181,8 @@ class grade_outcome extends grade_object {
 
     /**
      * Finds and returns a grade_outcome instance based on params.
-     * @static
      *
+     * @static
      * @param array $params associative arrays varname=>value
      * @return object grade_outcome instance or false if none found.
      */
@@ -181,8 +192,8 @@ class grade_outcome extends grade_object {
 
     /**
      * Finds and returns all grade_outcome instances based on params.
-     * @static
      *
+     * @static
      * @param array $params associative arrays varname=>value
      * @return array array of grade_outcome insatnces or false if none found.
      */
@@ -191,8 +202,9 @@ class grade_outcome extends grade_object {
     }
 
     /**
-     * Instantiates a grade_scale object whose data is retrieved from the
-     * @return object grade_scale
+     * Instantiates a grade_scale object whose data is retrieved from the database
+     *
+     * @return grade_scale
      */
     public function load_scale() {
         if (empty($this->scale->id) or $this->scale->id != $this->scaleid) {
@@ -204,8 +216,9 @@ class grade_outcome extends grade_object {
 
     /**
      * Static function returning all global outcomes
+     *
      * @static
-     * @return object
+     * @return array
      */
     public static function fetch_all_global() {
         if (!$outcomes = grade_outcome::fetch_all(array('courseid'=>null))) {
@@ -216,9 +229,10 @@ class grade_outcome extends grade_object {
 
     /**
      * Static function returning all local course outcomes
+     *
      * @static
      * @param int $courseid
-     * @return object
+     * @return array
      */
     public static function fetch_all_local($courseid) {
         if (!$outcomes =grade_outcome::fetch_all(array('courseid'=>$courseid))) {
@@ -228,7 +242,8 @@ class grade_outcome extends grade_object {
     }
 
     /**
-     * Static method - returns all outcomes available in course
+     * Static method that returns all outcomes available in course
+     *
      * @static
      * @param int $courseid
      * @return array
@@ -257,6 +272,7 @@ class grade_outcome extends grade_object {
     /**
      * Returns the most descriptive field for this object. This is a standard method used
      * when we do not know the exact type of an object.
+     *
      * @return string name
      */
     public function get_name() {
@@ -265,6 +281,7 @@ class grade_outcome extends grade_object {
 
     /**
      * Returns unique outcome short name.
+     *
      * @return string name
      */
     public function get_shortname() {
@@ -273,6 +290,7 @@ class grade_outcome extends grade_object {
 
     /**
      * Returns the formatted grade description with URLs converted
+     *
      * @return string
      */
     public function get_description() {
@@ -288,7 +306,8 @@ class grade_outcome extends grade_object {
 
     /**
      * Checks if outcome can be deleted.
-     * @return boolean
+     *
+     * @return bool
      */
     public function can_delete() {
         if ($this->get_item_uses_count()) {
@@ -304,6 +323,7 @@ class grade_outcome extends grade_object {
 
     /**
      * Returns the number of places where outcome is used.
+     *
      * @return int
      */
     public function get_course_uses_count() {
@@ -317,7 +337,8 @@ class grade_outcome extends grade_object {
     }
 
     /**
-     * Returns the number of places where outcome is used.
+     * Returns the number of grade items that use this grade outcome
+     *
      * @return int
      */
     public function get_item_uses_count() {
@@ -332,6 +353,7 @@ class grade_outcome extends grade_object {
      * is also requested, then a single array is returned, which contains the grade_items AND the average grade
      * if such is still requested (array('items' => array(...), 'avg' => 2.30)). This combining of two
      * methods into one is to save on DB queries, since both queries are similar and can be performed together.
+     *
      * @param int $courseid An optional courseid to narrow down the average to 1 course only
      * @param bool $average Whether or not to return the average grade for this outcome
      * @param bool $items Whether or not to return the list of items using this outcome
