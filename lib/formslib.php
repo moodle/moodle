@@ -1496,7 +1496,7 @@ function validate_' . $this->_formName . '(frm) {
         } else if (is_a($element, 'HTML_QuickForm_hidden')) {
             return array();
 
-        } else if (method_exists($element, 'getPrivateName')) {
+        } else if (method_exists($element, 'getPrivateName') && !($element instanceof HTML_QuickForm_advcheckbox)) {
             return array($element->getPrivateName());
 
         } else {
