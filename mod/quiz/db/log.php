@@ -17,8 +17,8 @@
 /**
  * Definition of log events for the quiz module.
  *
- * @package    mod
- * @subpackage quiz
+ * @package    mod_quiz
+ * @category   log
  * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

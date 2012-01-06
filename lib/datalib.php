@@ -22,7 +22,6 @@
  * - moodlelib.php - general-purpose Moodle functions
  *
  * @package    core
- * @subpackage lib
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1648,9 +1647,11 @@ function coursemodule_visible_for_user($cm, $userid=0) {
  * than web server hits, and provide a way to easily reconstruct what
  * any particular student has been doing.
  *
- * @global object $DB
- * @global object $CFG
- * @global object $USER
+ * @package core
+ * @category log
+ * @global moodle_database $DB
+ * @global stdClass $CFG
+ * @global stdClass $USER
  * @uses SITEID
  * @uses DEBUG_DEVELOPER
  * @uses DEBUG_ALL
@@ -1745,9 +1746,11 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 /**
  * Store user last access times - called when use enters a course or site
  *
- * @global object $USER
- * @global object $CFG
- * @global object $DB
+ * @package core
+ * @category log
+ * @global stdClass $USER
+ * @global stdClass $CFG
+ * @global moodle_database $DB
  * @uses LASTACCESS_UPDATE_SECS
  * @uses SITEID
  * @param int $courseid  empty courseid means site
@@ -1815,14 +1818,16 @@ function user_accesstime_log($courseid=0) {
 /**
  * Select all log records based on SQL criteria
  *
- * @global object $DB
+ * @package core
+ * @category log
+ * @global moodle_database $DB
  * @param string $select SQL select criteria
  * @param array $params named sql type params
  * @param string $order SQL order by clause to sort the records returned
  * @param string $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set)
  * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set)
  * @param int $totalcount Passed in by reference.
- * @return moodle_recordset instance
+ * @return array
  */
 function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom='', $limitnum='', &$totalcount) {
     global $DB;
@@ -1857,12 +1862,14 @@ function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom=
 /**
  * Select all log records for a given course and user
  *
- * @global object $DB
+ * @package core
+ * @category log
+ * @global moodle_database $DB
  * @uses DAYSECS
  * @param int $userid The id of the user as found in the 'user' table.
  * @param int $courseid The id of the course as found in the 'course' table.
  * @param string $coursestart unix timestamp representing course start date and time.
- * @return moodle_recordset instance
+ * @return array
  */
 function get_logs_usercourse($userid, $courseid, $coursestart) {
     global $DB;
@@ -1887,12 +1894,14 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
 /**
  * Select all log records for a given course, user, and day
  *
- * @global object $DB
+ * @package core
+ * @category log
+ * @global moodle_database $DB
  * @uses HOURSECS
  * @param int $userid The id of the user as found in the 'user' table.
  * @param int $courseid The id of the course as found in the 'course' table.
  * @param string $daystart unix timestamp of the start of the day for which the logs needs to be retrived
- * @return moodle_recordset instance
+ * @return array
  */
 function get_logs_userday($userid, $courseid, $daystart) {
     global $DB;
@@ -1921,7 +1930,7 @@ function get_logs_userday($userid, $courseid, $daystart) {
  * number of accounts.  For non-admins, only the attempts on the given user
  * are shown.
  *
- * @global object $DB
+ * @global moodle_database $DB
  * @uses CONTEXT_SYSTEM
  * @param string $mode Either 'admin' or 'everybody'
  * @param string $username The username we are searching for

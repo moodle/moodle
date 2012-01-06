@@ -19,8 +19,7 @@
  *
  * This files lists the functions that are used during the log report generation.
  *
- * @package    report
- * @subpackage log
+ * @package    report_log
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,8 +35,8 @@ require_once(dirname(__FILE__).'/lib.php');
 /**
  * This function is used to generate and display the log activity graph
  *
- * @global object $CFG
- * @param  object $course course instance
+ * @global stdClass $CFG
+ * @param  stdClass $course course instance
  * @param  int    $userid id of the user whose logs are needed
  * @param  string $type type of logs graph needed (usercourse.png/userday.png)
  * @return void
@@ -55,27 +54,27 @@ function report_log_print_graph($course, $userid, $type, $date=0) {
 /**
  * This function is used to generate and display Mnet selector form
  *
- * @global object $USER
- * @global object $CFG
- * @global object $SITE
- * @global object $DB
- * @global object $OUTPUT
- * @global object $SESSION
+ * @global stdClass $USER
+ * @global stdClass $CFG
+ * @global stdClass $SITE
+ * @global moodle_database $DB
+ * @global core_renderer $OUTPUT
+ * @global stdClass $SESSION
  * @uses CONTEXT_SYSTEM
  * @uses COURSE_MAX_COURSES_PER_DROPDOWN
  * @uses CONTEXT_COURSE
  * @uses SEPARATEGROUPS
- * @param  int    $hostid host id
- * @param  object $course course instance
- * @param  int    $selecteduser id of the selected user
- * @param  string $selecteddate Date selected
- * @param  string $modname course_module->id
- * @param  string $modid number or 'site_errors'
- * @param  string $modaction an action as recorded in the logs
- * @param  int    $selectedgroup Group to display
- * @param  int    $showcourses whether to show courses if we're over our limit.
- * @param  int    $showusers whether to show users if we're over our limit.
- * @param  string $logformat Format of the logs (downloadascsv, showashtml, downloadasods, downloadasexcel)
+ * @param  int      $hostid host id
+ * @param  stdClass $course course instance
+ * @param  int      $selecteduser id of the selected user
+ * @param  string   $selecteddate Date selected
+ * @param  string   $modname course_module->id
+ * @param  string   $modid number or 'site_errors'
+ * @param  string   $modaction an action as recorded in the logs
+ * @param  int      $selectedgroup Group to display
+ * @param  int      $showcourses whether to show courses if we're over our limit.
+ * @param  int      $showusers whether to show users if we're over our limit.
+ * @param  string   $logformat Format of the logs (downloadascsv, showashtml, downloadasods, downloadasexcel)
  * @return void
  */
 function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, $selecteddate='today',
@@ -365,25 +364,25 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
 /**
  * This function is used to generate and display selector form
  *
- * @global object $USER
- * @global object $CFG
- * @global object $DB
- * @global object $OUTPUT
- * @global object $SESSION
+ * @global stdClass $USER
+ * @global stdClass $CFG
+ * @global moodle_database $DB
+ * @global core_renderer $OUTPUT
+ * @global stdClass $SESSION
  * @uses CONTEXT_SYSTEM
  * @uses COURSE_MAX_COURSES_PER_DROPDOWN
  * @uses CONTEXT_COURSE
  * @uses SEPARATEGROUPS
- * @param  object $course course instance
- * @param  int    $selecteduser id of the selected user
- * @param  string $selecteddate Date selected
- * @param  string $modname course_module->id
- * @param  string $modid number or 'site_errors'
- * @param  string $modaction an action as recorded in the logs
- * @param  int    $selectedgroup Group to display
- * @param  int    $showcourses whether to show courses if we're over our limit.
- * @param  int    $showusers whether to show users if we're over our limit.
- * @param  string $logformat Format of the logs (downloadascsv, showashtml, downloadasods, downloadasexcel)
+ * @param  stdClass $course course instance
+ * @param  int      $selecteduser id of the selected user
+ * @param  string   $selecteddate Date selected
+ * @param  string   $modname course_module->id
+ * @param  string   $modid number or 'site_errors'
+ * @param  string   $modaction an action as recorded in the logs
+ * @param  int      $selectedgroup Group to display
+ * @param  int      $showcourses whether to show courses if we're over our limit.
+ * @param  int      $showusers whether to show users if we're over our limit.
+ * @param  string   $logformat Format of the logs (downloadascsv, showashtml, downloadasods, downloadasexcel)
  * @return void
  */
 function report_log_print_selector_form($course, $selecteduser=0, $selecteddate='today',
