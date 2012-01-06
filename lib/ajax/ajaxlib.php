@@ -149,10 +149,9 @@ class jsportal {
         $output .= "    main.portal.strings['moveleft']='".addslashes_js(get_string('moveleft'))."';\n";
         $output .= "    main.portal.strings['moveright']='".addslashes_js(get_string('moveright'))."';\n";
         $output .= "    main.portal.strings['update']='".addslashes_js(get_string('update'))."';\n";
-        $output .= "    main.portal.strings['groupsnone']='".addslashes_js(get_string('groupsnone'))."';\n";
-        $output .= "    main.portal.strings['groupsseparate']='".addslashes_js(get_string('groupsseparate'))."';\n";
-        $output .= "    main.portal.strings['groupsvisible']='".addslashes_js(get_string('groupsvisible'))."';\n";
-        $output .= "    main.portal.strings['clicktochange']='".addslashes_js(get_string('clicktochange'))."';\n";
+        $output .= "    main.portal.strings['groupsnone']='".addslashes_js(get_string('clicktochangeinbrackets', 'moodle', get_string('groupsnone')))."';\n";
+        $output .= "    main.portal.strings['groupsseparate']='".addslashes_js(get_string('clicktochangeinbrackets', 'moodle', get_string('groupsseparate')))."';\n";
+        $output .= "    main.portal.strings['groupsvisible']='".addslashes_js(get_string('clicktochangeinbrackets', 'moodle', get_string('groupsvisible')))."';\n";
         $output .= "    main.portal.strings['deletecheck']='".addslashes_js(get_string('deletecheckfull','','_var_'))."';\n";
         $output .= "    main.portal.strings['resource']='".addslashes_js(get_string('resource'))."';\n";
         $output .= "    main.portal.strings['activity']='".addslashes_js(get_string('activity'))."';\n";
