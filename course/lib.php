@@ -3099,11 +3099,12 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
         $str->duplicate      = get_string("duplicate");
         $str->hide           = get_string("hide");
         $str->show           = get_string("show");
-        $str->clicktochange  = get_string("clicktochange");
-        $str->forcedmode     = get_string("forcedmode");
-        $str->groupsnone     = get_string("groupsnone");
-        $str->groupsseparate = get_string("groupsseparate");
-        $str->groupsvisible  = get_string("groupsvisible");
+        $str->groupsnone     = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsnone"));
+        $str->groupsseparate = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsseparate"));
+        $str->groupsvisible  = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsvisible"));
+        $str->forcedgroupsnone     = get_string('forcedmodeinbrackets', 'moodle', get_string("groupsnone"));
+        $str->forcedgroupsseparate = get_string('forcedmodeinbrackets', 'moodle', get_string("groupsseparate"));
+        $str->forcedgroupsvisible  = get_string('forcedmodeinbrackets', 'moodle', get_string("groupsvisible"));
     }
 
     $baseurl = new moodle_url('/course/mod.php', array('sesskey' => sesskey()));
@@ -3220,16 +3221,19 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
         if ($mod->groupmode == SEPARATEGROUPS) {
             $groupmode = 0;
             $grouptitle = $str->groupsseparate;
+            $forcedgrouptitle = $str->forcedgroupsseparate;
             $groupclass = 'editing_groupsseparate';
             $groupimage = 't/groups';
         } else if ($mod->groupmode == VISIBLEGROUPS) {
             $groupmode = 1;
             $grouptitle = $str->groupsvisible;
+            $forcedgrouptitle = $str->forcedgroupsvisible;
             $groupclass = 'editing_groupsvisible';
             $groupimage = 't/groupv';
         } else {
             $groupmode = 2;
             $grouptitle = $str->groupsnone;
+            $forcedgrouptitle = $str->forcedgroupsnone;
             $groupclass = 'editing_groupsnone';
             $groupimage = 't/groupn';
         }
@@ -3238,10 +3242,10 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
                 new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $groupmode)),
                 new pix_icon($groupimage, $grouptitle, 'moodle', array('class' => 'iconsmall')),
                 null,
-                array('class' => $groupclass, 'title' => $grouptitle.' ('.$str->clicktochange.')')
+                array('class' => $groupclass, 'title' => $grouptitle)
             );
         } else {
-            $actions[] = new pix_icon($groupimage, $grouptitle, 'moodle', array('title' => $grouptitle.' ('.$str->forcedmode.')', 'class' => 'iconsmall'));
+            $actions[] = new pix_icon($groupimage, $forcedgrouptitle, 'moodle', array('title' => $forcedgrouptitle, 'class' => 'iconsmall'));
         }
     }
 
