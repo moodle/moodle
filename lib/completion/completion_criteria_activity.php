@@ -16,27 +16,40 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This file contains the activity completion criteria type class and any
+ * supporting functions it may require.
+ *
+ * @package core_completion
+ * @category completion
+ * @copyright 2009 Catalyst IT Ltd
+ * @author Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
  * Course completion critieria - completion on activity completion
  *
- * @package   moodlecore
+ * @package core_completion
+ * @category completion
  * @copyright 2009 Catalyst IT Ltd
- * @author    Aaron Barnes <aaronb@catalyst.net.nz>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class completion_criteria_activity extends completion_criteria {
 
     /**
      * Criteria type constant
-     * @var int
+     * @var int [COMPLETION_CRITERIA_TYPE_ACTIVITY]
      */
     public $criteriatype = COMPLETION_CRITERIA_TYPE_ACTIVITY;
 
     /**
      * Finds and returns a data_object instance based on params.
-     * @static abstract
      *
      * @param array $params associative arrays varname=>value
-     * @return object data_object instance or false if none found.
+     * @return completion_criteria_activity data_object instance or false if none found.
      */
     public static function fetch($params) {
         $params['criteriatype'] = COMPLETION_CRITERIA_TYPE_ACTIVITY;
@@ -45,10 +58,9 @@ class completion_criteria_activity extends completion_criteria {
 
     /**
      * Add appropriate form elements to the critieria form
-     * @access  public
-     * @param   object  $mform  Moodle forms object
-     * @param   mixed   $data   optional
-     * @return  void
+     * 
+     * @param moodleform $mform  Moodle forms object
+     * @param stdClass $data
      */
     public function config_form_display(&$mform, $data = null) {
         $mform->addElement('checkbox', 'criteria_activity['.$data->id.']', ucfirst(self::get_mod_name($data->module)).' - '.$data->name);
@@ -60,9 +72,8 @@ class completion_criteria_activity extends completion_criteria {
 
     /**
      * Update the criteria information stored in the database
-     * @access  public
-     * @param   array   $data   Form data
-     * @return  void
+     * 
+     * @param stdClass $data Form data
      */
     public function update_config(&$data) {
         global $DB;
@@ -84,10 +95,9 @@ class completion_criteria_activity extends completion_criteria {
 
     /**
      * Get module instance module type
-     * @static
-     * @access  public
-     * @param   int     $type   Module type id
-     * @return  string
+     * 
+     * @param int $type Module type id
+     * @return string
      */
     public static function get_mod_name($type) {
         static $types;
@@ -101,9 +111,10 @@ class completion_criteria_activity extends completion_criteria {
     }
 
     /**
-     * Get module instance
-     * @access  public
-     * @return  object|false
+     * Gets the module instance from the database and returns it.
+     * If no module instance exists this function returns false.
+     *
+     * @return stdClass|false
      */
     public function get_mod_instance() {
         global $DB;
@@ -124,10 +135,10 @@ class completion_criteria_activity extends completion_criteria {
 
     /**
      * Review this criteria and decide if the user has completed
-     * @access  public
-     * @param   object  $completion     The user's completion record
-     * @param   boolean $mark           Optionally set false to not save changes to database
-     * @return  boolean
+     *
+     * @param completion_completion $completion     The user's completion record
+     * @param boolean $mark Optionally set false to not save changes to database
+     * @return boolean
      */
     public function review($completion, $mark = true) {
         global $DB;
@@ -152,8 +163,8 @@ class completion_criteria_activity extends completion_criteria {
 
     /**
      * Return criteria title for display in reports
-     * @access  public
-     * @return  string
+     *
+     * @return string
      */
     public function get_title() {
         return get_string('activitiescompleted', 'completion');
@@ -161,7 +172,7 @@ class completion_criteria_activity extends completion_criteria {
 
     /**
      * Return a more detailed criteria title for display in reports
-     * @access  public
+     *
      * @return  string
      */
     public function get_title_detailed() {
@@ -174,7 +185,7 @@ class completion_criteria_activity extends completion_criteria {
 
     /**
      * Return criteria type title for display in reports
-     * @access  public
+     *
      * @return  string
      */
     public function get_type_title() {
@@ -182,9 +193,7 @@ class completion_criteria_activity extends completion_criteria {
     }
 
     /**
-     * Find user's who have completed this criteria
-     * @access  public
-     * @return  void
+     * Find user's who have completed this criteria and mark them accordingly
      */
     public function cron() {
         global $DB;
@@ -238,9 +247,10 @@ class completion_criteria_activity extends completion_criteria {
 
     /**
      * Return criteria progress details for display in reports
-     * @access  public
-     * @param   object  $completion     The user's completion record
-     * @return  array
+     *
+     * @param completion_completion $completion The user's completion record
+     * @return array An array with the following keys:
+     *     type, criteria, requirement, status
      */
     public function get_details($completion) {
         global $DB, $CFG;
@@ -280,4 +290,4 @@ class completion_criteria_activity extends completion_criteria {
 
         return $details;
     }
-}
+}\

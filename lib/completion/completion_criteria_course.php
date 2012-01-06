@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,15 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This file contains the course criteria type.
+ *
+ * @package core_completion
+ * @category completion
+ * @copyright 2009 Catalyst IT Ltd
+ * @author Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
  * Course completion critieria - completion on course completion
  *
  * This course completion criteria depends on another course with
  * completion enabled to be marked as complete for this user
  *
- * @package   moodlecore
+ * @package core_completion
+ * @category completion
  * @copyright 2009 Catalyst IT Ltd
- * @author    Aaron Barnes <aaronb@catalyst.net.nz>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class completion_criteria_course extends completion_criteria {
 
@@ -36,10 +48,9 @@ class completion_criteria_course extends completion_criteria {
 
     /**
      * Finds and returns a data_object instance based on params.
-     * @static abstract
      *
      * @param array $params associative arrays varname=>value
-     * @return object data_object instance or false if none found.
+     * @return data_object instance of data_object or false if none found.
      */
     public static function fetch($params) {
         $params['criteriatype'] = COMPLETION_CRITERIA_TYPE_COURSE;
@@ -48,10 +59,9 @@ class completion_criteria_course extends completion_criteria {
 
     /**
      * Add appropriate form elements to the critieria form
-     * @access  public
-     * @param   object  $mform  Moodle forms object
-     * @param   mixed   $data   optional
-     * @return  void
+     *
+     * @param moodle_form $mform Moodle forms object
+     * @param stdClass $data
      */
     public function config_form_display(&$mform, $data = null) {
         global $CFG;
@@ -66,9 +76,8 @@ class completion_criteria_course extends completion_criteria {
 
     /**
      * Update the criteria information stored in the database
-     * @access  public
-     * @param   array   $data   Form data
-     * @return  void
+     *
+     * @param array $data Form data
      */
     public function update_config(&$data) {
 
@@ -87,10 +96,10 @@ class completion_criteria_course extends completion_criteria {
 
     /**
      * Review this criteria and decide if the user has completed
-     * @access  public
-     * @param   object  $completion     The user's completion record
-     * @param   boolean $mark           Optionally set false to not save changes to database
-     * @return  boolean
+     *
+     * @param completion_completion $completion The user's completion record
+     * @param boolean $mark Optionally set false to not save changes to database
+     * @return boolean
      */
     public function review($completion, $mark = true) {
         global $DB;
@@ -113,8 +122,8 @@ class completion_criteria_course extends completion_criteria {
 
     /**
      * Return criteria title for display in reports
-     * @access  public
-     * @return  string
+     *
+     * @return string
      */
     public function get_title() {
         return get_string('prerequisitescompleted', 'completion');
@@ -122,8 +131,8 @@ class completion_criteria_course extends completion_criteria {
 
     /**
      * Return a more detailed criteria title for display in reports
-     * @access  public
-     * @return  string
+     * 
+     * @return string
      */
     public function get_title_detailed() {
         global $DB;
@@ -136,8 +145,8 @@ class completion_criteria_course extends completion_criteria {
 
     /**
      * Return criteria type title for display in reports
-     * @access  public
-     * @return  string
+     *
+     * @return string
      */
     public function get_type_title() {
         return get_string('prerequisites', 'completion');
@@ -145,8 +154,6 @@ class completion_criteria_course extends completion_criteria {
 
     /**
      * Find user's who have completed this criteria
-     * @access  public
-     * @return  void
      */
     public function cron() {
 
@@ -197,9 +204,10 @@ class completion_criteria_course extends completion_criteria {
 
     /**
      * Return criteria progress details for display in reports
-     * @access  public
-     * @param   object  $completion     The user's completion record
-     * @return  array
+     *
+     * @param completion_completion $completion The user's completion record
+     * @return array An array with the following keys:
+     *     type, criteria, requirement, status
      */
     public function get_details($completion) {
         global $CFG, $DB;

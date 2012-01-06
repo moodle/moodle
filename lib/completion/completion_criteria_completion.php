@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,101 +17,98 @@
 /**
  * Completion data for a specific user, course and critieria
  *
- * @package   moodlecore
+ * @package core_completion
+ * @category completion
  * @copyright 2009 Catalyst IT Ltd
- * @author    Aaron Barnes <aaronb@catalyst.net.nz>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once($CFG->libdir.'/completion/data_object.php');
 
+defined('MOODLE_INTERNAL') || die();
+require_once($CFG->libdir.'/completion/data_object.php');
 
 /**
  * Completion data for a specific user, course and critieria
+ *
+ * @package core_completion
+ * @category completion
+ * @copyright 2009 Catalyst IT Ltd
+ * @author Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class completion_criteria_completion extends data_object {
 
     /**
-     * DB Table
-     * @var string $table
+     * Database table that stores completion type criteria
+     * @var string
      */
     public $table = 'course_completion_crit_compl';
 
     /**
      * Array of required table fields, must start with 'id'.
-     * @var array $required_fields
+     * @var array
      */
     public $required_fields = array('id', 'userid', 'course', 'criteriaid', 'gradefinal', 'rpl', 'deleted', 'unenroled', 'timecompleted');
 
     /**
      * User ID
-     * @access  public
-     * @var     int
+     * @var int
      */
     public $userid;
 
     /**
      * Course ID
-     * @access  public
-     * @var     int
+     * @var int
      */
     public $course;
 
     /**
      * The id of the course completion criteria this completion references
-     * @access  public
-     * @var     int
+     * @var int
      */
     public $criteriaid;
 
     /**
      * The final grade for the user in the course (if completing a grade criteria)
-     * @access  public
-     * @var     float
+     * @var float
      */
     public $gradefinal;
 
     /**
      * Record of prior learning, leave blank if none
-     * @access  public
-     * @var     string
+     * @var string
      */
     public $rpl;
 
     /**
      * Course deleted flag
-     * @access  public
-     * @var     boolean
+     * @var boolean
      */
     public $deleted;
 
     /**
      * Timestamp of user unenrolment (if completing a unenrol criteria)
-     * @access  public
-     * @var     int     (timestamp)
+     * @var int
      */
     public $unenroled;
 
     /**
-     * Timestamp of course criteria completion
-     * @see     completion_criteria_completion::mark_complete()
-     * @access  public
-     * @var     int     (timestamp)
+     * Timestamp of course criteria completion {@see completion_criteria_completion::mark_complete()}
+     * @var int
      */
     public $timecompleted;
 
     /**
      * Associated criteria object
-     * @access  private
-     * @var object  completion_criteria
+     * @var completion_criteria
      */
     private $_criteria;
 
     /**
      * Finds and returns a data_object instance based on params.
-     * @static abstract
      *
      * @param array $params associative arrays varname=>value
-     * @return object data_object instance or false if none found.
+     * @return data_object instance of data_object or false if none found.
      */
     public static function fetch($params) {
         $params['deleted'] = null;
@@ -121,7 +117,6 @@ class completion_criteria_completion extends data_object {
 
     /**
      * Finds and returns all data_object instances based on params.
-     * @static abstract
      *
      * @param array $params associative arrays varname=>value
      * @return array array of data_object insatnces or false if none found.
@@ -130,8 +125,7 @@ class completion_criteria_completion extends data_object {
 
     /**
      * Return status of this criteria completion
-     * @access  public
-     * @return  boolean
+     * @return boolean
      */
     public function is_complete() {
         return (bool) $this->timecompleted;
@@ -141,8 +135,6 @@ class completion_criteria_completion extends data_object {
      * Mark this criteria complete for the associated user
      *
      * This method creates a course_completion_crit_compl record
-     * @access  public
-     * @return  void
      */
     public function mark_complete() {
         // Create record
@@ -166,9 +158,8 @@ class completion_criteria_completion extends data_object {
 
     /**
      * Attach a preloaded criteria object to this object
-     * @access  public
+     * 
      * @param   $criteria   object  completion_criteria
-     * @return  void
      */
     public function attach_criteria(completion_criteria $criteria) {
         $this->_criteria = $criteria;
@@ -177,13 +168,12 @@ class completion_criteria_completion extends data_object {
     /**
      * Return the associated criteria with this completion
      * If nothing attached, load from the db
-     * @access  public
-     * @return  object completion_criteria
+     * 
+     * @return completion_criteria
      */
     public function get_criteria() {
 
-        if (!$this->_criteria)
-        {
+        if (!$this->_criteria) {
             global $DB;
 
             $params = array(
@@ -199,10 +189,8 @@ class completion_criteria_completion extends data_object {
     }
 
     /**
-     * Return criteria status text for display in reports
-     * @see     completion_criteria::get_status()
-     * @access  public
-     * @return  string
+     * Return criteria status text for display in reports {@see completion_criteria::get_status()}
+     * @return string
      */
     public function get_status() {
         return $this->_criteria->get_status($this);
