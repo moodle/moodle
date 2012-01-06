@@ -164,22 +164,26 @@ abstract class restore_search_base implements renderable {
         $this->totalcount = 0;
         $contextlevel = $this->get_itemcontextlevel();
         list($sql, $params) = $this->get_searchsql();
-        $resultset = $DB->get_recordset_sql($sql, $params, 0, 250);
-        foreach ($resultset as $result) {
-            context_instance_preload($result);
-            $context = get_context_instance($contextlevel, $result->id);
-            if (count($this->requiredcapabilities) > 0) {
-                foreach ($this->requiredcapabilities as $cap) {
-                    if (!has_capability($cap['capability'], $context, $cap['user'])) {
-                        continue 2;
+        $blocksz = 5000;
+        $offs = 0;
+        while ($resultset = $DB->get_records_sql($sql, $params, $offs, $blocksz)){
+            foreach ($resultset as $result) {
+                context_instance_preload($result);
+                $context = get_context_instance($contextlevel, $result->id);
+                if (count($this->requiredcapabilities) > 0) {
+                    foreach ($this->requiredcapabilities as $cap) {
+                        if (!has_capability($cap['capability'], $context, $cap['user'])) {
+                            continue 2;
+                        }
                     }
                 }
+                $this->results[$result->id] = $result;
+                $this->totalcount++;
+                if ($this->totalcount >= self::$MAXRESULTS) {
+                    break 2;
+                }
             }
-            $this->results[$result->id] = $result;
-            $this->totalcount++;
-            if ($this->totalcount >= self::$MAXRESULTS) {
-                break;
-            }
+            $offs += $blocksz;
         }
 
         return $this->totalcount;
