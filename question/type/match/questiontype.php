@@ -571,9 +571,9 @@ class question_match_qtype extends default_questiontype {
             //mappings in backup_ids to use them later where restoring states (user level).
 
             //Get the match_sub from DB (by question, questiontext and answertext)
-            $db_match_sub = get_record ("question_match_sub","question",$new_question_id,
-                                                      "questiontext",$match_sub->questiontext,
-                                                      "answertext",$match_sub->answertext);
+            $db_match_sub = get_record('question_match_sub', 'question', $new_question_id,
+                    sql_compare_text('questiontext', 255), $match_sub->questiontext,
+                    'answertext', $match_sub->answertext);
             //Do some output
             if (($i+1) % 50 == 0) {
                 if (!defined('RESTORE_SILENTLY')) {
