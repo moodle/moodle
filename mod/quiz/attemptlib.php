@@ -606,6 +606,11 @@ class quiz_attempt {
     public function get_userid() {
         return $this->attempt->userid;
     }
+    
+    /** @return int the current page of the attempt. */
+    public function get_currentpage() {
+        return $this->attempt->currentpage;
+    }
 
     /**
      * @return bool whether this attempt has been finished (true) or is still

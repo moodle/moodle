@@ -96,6 +96,11 @@ if (empty($slots)) {
     throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noquestionsfound');
 }
 
+// Update attempt page    
+if ($attemptobj->get_currentpage() != $page) {
+    $DB->set_field('quiz_attempts', 'currentpage', $page);
+}
+
 // Initialise the JavaScript.
 $headtags = $attemptobj->get_html_head_contributions($page);
 $PAGE->requires->js_init_call('M.mod_quiz.init_attempt_form', null, false, quiz_get_js_module());

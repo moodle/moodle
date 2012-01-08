@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 // Get submitted parameters.
 $id = required_param('cmid', PARAM_INT); // Course module id
 $forcenew = optional_param('forcenew', false, PARAM_BOOL); // Used to force a new preview
-$page = optional_param('page', 0, PARAM_INT); // Page to jump to in the attempt.
+$page = optional_param('page', -1, PARAM_INT); // Page to jump to in the attempt.
 
 if (!$cm = get_coursemodule_from_id('quiz', $id)) {
     print_error('invalidcoursemodule');
@@ -86,6 +86,10 @@ $lastattempt = end($attempts);
 if ($lastattempt && !$lastattempt->timefinish) {
     $currentattemptid = $lastattempt->id;
     $messages = $accessmanager->prevent_access();
+    
+    if ($page == -1) {
+        $page = $lastattempt->currentpage;
+    }
 
 } else {
     // Get number for the next or unfinished attempt
@@ -99,6 +103,10 @@ if ($lastattempt && !$lastattempt->timefinish) {
 
     $messages = $accessmanager->prevent_access() +
             $accessmanager->prevent_new_attempt(count($attempts), $lastattempt);
+
+    if ($page == -1) {
+        $page = 0;    
+    }
 }
 
 // Check access.
