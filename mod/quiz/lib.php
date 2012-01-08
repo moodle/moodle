@@ -438,11 +438,40 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
  * Function to be run periodically according to the moodle cron
  * This function searches for things that need to be done, such
  * as sending out mail, toggling flags etc ...
- *
- * @return bool true
  */
 function quiz_cron() {
-    return true;
+    global $DB;
+
+    // First handle standard plugins.
+    cron_execute_plugin_type('quiz', 'quiz reports');
+
+    // The deal with any plugins that do it the legacy way.
+    mtrace("Starting legacy quiz reports");
+    if ($reports = $DB->get_records_select('quiz_reports', "cron > 0 AND ((? - lastcron) > cron)", array($timenow))) {
+        foreach ($reports as $report) {
+            $cronfile = "$CFG->dirroot/mod/quiz/report/$report->name/cron.php";
+            if (file_exists($cronfile)) {
+                include_once($cronfile);
+                $cron_function = 'quiz_report_'.$report->name."_cron";
+                if (function_exists($cron_function)) {
+                    mtrace("Processing quiz report cron function $cron_function ...", '');
+                    $pre_dbqueries = null;
+                    $pre_dbqueries = $DB->perf_get_queries();
+                    $pre_time      = microtime(1);
+                    if ($cron_function()) {
+                        $DB->set_field('quiz_reports', "lastcron", $timenow, array("id"=>$report->id));
+                    }
+                    if (isset($pre_dbqueries)) {
+                        mtrace("... used " . ($DB->perf_get_queries() - $pre_dbqueries) . " dbqueries");
+                        mtrace("... used " . (microtime(1) - $pre_time) . " seconds");
+                    }
+                    @set_time_limit(0);
+                    mtrace("done.");
+                }
+            }
+        }
+    }
+    mtrace("Finished legacy quiz reports");
 }
 
 /**

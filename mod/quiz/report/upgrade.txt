@@ -1,0 +1,17 @@
+This files describes API changes for quiz report plugins.
+
+Overview of this plugin type at http://docs.moodle.org/dev/Quiz_reports
+
+
+=== earlier versions ===
+
+* ... API changes were not documented properly. Sorry. (There weren't many!)
+
+
+=== 2.2 ===
+
+* Plugins should be converted to implement cron in the standard way. In lib.php,
+define a
+function quizaccess_mypluginname_cron() {};
+This replaces the old way of having a separate cron.php file. Also, the cron
+frequency should be defined in version.php, not in the quiz_reports table.
