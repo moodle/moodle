@@ -155,11 +155,9 @@ class scorm_basic_report extends scorm_default_report {
                 $table->sortable(true);
                 $table->collapsible(true);
 
+                // This is done to prevent redundant data, when a user has multiple attempts
                 $table->column_suppress('picture');
                 $table->column_suppress('fullname');
-                // I wonder why it is doing all this suppress malarkey?
-                // However, if it was suppressing idnumber field before, I guess
-                // it needs to suppress all the user identity fields now
                 foreach ($extrafields as $field) {
                     $table->column_suppress($field);
                 }
@@ -521,17 +519,18 @@ class scorm_basic_report extends scorm_default_report {
                         echo '</tr></table>';
                     }
                 }
-                if (!$download) {
-                    $mform->set_data(compact('detailedrep', 'pagesize', 'attemptsmode'));
-                    $mform->display();
-                }
             } else {
                 if ($candelete && !$download) {
                     echo '</div>';
                     echo '</form>';
+                    $table->finish_output();
                 }
                 echo '</div>';
-                echo $OUTPUT->notification(get_string('noactivity', 'scorm'));
+            }
+            // Show preferences form irrespective of attempts are there to report or not
+            if (!$download) {
+                $mform->set_data(compact('detailedrep', 'pagesize', 'attemptsmode'));
+                $mform->display();
             }
             if ($download == 'Excel' or $download == 'ODS') {
                 $workbook->close();
