@@ -2146,7 +2146,7 @@ function initialise_filepicker($args) {
     $return->return_types = $args->return_types;
     foreach ($repositories as $repository) {
         $meta = $repository->get_meta();
-        $return->repositories[$repository->id] = $meta;
+        $return->repositories[] = $meta;
     }
     return $return;
 }
