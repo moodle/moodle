@@ -177,6 +177,28 @@ class cc112moodle extends cc2moodle {
         return $result . $blti_mod;
     }
 
+    /**
+    * (non-PHPdoc)
+    * @see cc2moodle::get_module_visible()
+    */
+    protected function get_module_visible($identifier) {
+        //Should item be hidden or not
+        $mod_visible = 1;
+        if (!empty($identifier)) {
+            $xpath = static::newx_path(static::$manifest, static::$namespaces);
+            $query  = '/imscc:manifest/imscc:resources/imscc:resource[@identifier="' . $identifier . '"]';
+            $query .= '//lom:intendedEndUserRole/lom:value';
+            $intendeduserrole = $xpath->query($query);
+            if (!empty($intendeduserrole) && ($intendeduserrole->length > 0)) {
+                $role = trim($intendeduserrole->item(0)->nodeValue);
+                if ((strcasecmp('Instructor', $role) === 0) || (strcasecmp('Mentor', $role) === 0)) {
+                    $mod_visible = 0;
+                }
+            }
+        }
+        return $mod_visible;
+    }
+
     protected function create_node_course_modules_mod () {
         $labels = new cc_label();
         $resources = new cc11_resource();

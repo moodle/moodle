@@ -5,7 +5,7 @@
             <ADDED>[#date_now#]</ADDED>
             <SCORE>0</SCORE>
             <INDENT>[#mod_indent#]</INDENT>
-            <VISIBLE>1</VISIBLE>
+            <VISIBLE>[#mod_visible#]</VISIBLE>
             <GROUPMODE>0</GROUPMODE>
             <GROUPINGID>0</GROUPINGID>
             <GROUPMEMBERSONLY>0</GROUPMEMBERSONLY>
