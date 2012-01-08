@@ -4979,17 +4979,6 @@ abstract class context extends stdClass {
     }
 
     /**
-     * Returns human readable context level name.
-     *
-     * @static
-     * @return string the human readable context level name.
-     */
-    protected static function get_level_name() {
-        // must be implemented in all context levels
-        throw new coding_exception('can not get level name of abstract context');
-    }
-
-    /**
      * Returns human readable context identifier.
      *
      * @param boolean $withprefix whether to prefix the name of the context with the
@@ -5476,7 +5465,7 @@ class context_system extends context {
      * @static
      * @return string the human readable context level name.
      */
-    protected static function get_level_name() {
+    public static function get_level_name() {
         return get_string('coresystem');
     }
 
@@ -5714,7 +5703,7 @@ class context_user extends context {
      * @static
      * @return string the human readable context level name.
      */
-    protected static function get_level_name() {
+    public static function get_level_name() {
         return get_string('user');
     }
 
@@ -5882,7 +5871,7 @@ class context_coursecat extends context {
      * @static
      * @return string the human readable context level name.
      */
-    protected static function get_level_name() {
+    public static function get_level_name() {
         return get_string('category');
     }
 
@@ -6102,7 +6091,7 @@ class context_course extends context {
      * @static
      * @return string the human readable context level name.
      */
-    protected static function get_level_name() {
+    public static function get_level_name() {
         return get_string('course');
     }
 
@@ -6317,7 +6306,7 @@ class context_module extends context {
      * @static
      * @return string the human readable context level name.
      */
-    protected static function get_level_name() {
+    public static function get_level_name() {
         return get_string('activitymodule');
     }
 
@@ -6553,7 +6542,7 @@ class context_block extends context {
      * @static
      * @return string the human readable context level name.
      */
-    protected static function get_level_name() {
+    public static function get_level_name() {
         return get_string('block');
     }
 
