@@ -24,6 +24,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Serve questiontext files in the question text when they are displayed in this report.
  * @param context $context the context
@@ -43,4 +46,38 @@ function quiz_statistics_questiontext_preview_pluginfile($context, $questionid, 
     require_capability('quiz/statistics:view', $context);
 
     question_send_questiontext_file($questionid, $args, $forcedownload);
+}
+
+/**
+* Quiz statistics report cron code. Deletes cached data more than a certain age.
+*/
+function quiz_report_statistics_cron() {
+    global $DB;
+
+    $expiretime = time() - 5*HOURSECS;
+    $todelete = $DB->get_records_select_menu('quiz_statistics', 'timemodified < ?',
+    array($expiretime), '', 'id, 1');
+
+    if (!$todelete) {
+        return true;
+    }
+
+    list($todeletesql, $todeleteparams) = $DB->get_in_or_equal(array_keys($todelete));
+
+    if (!$DB->delete_records_select('quiz_question_statistics',
+            'quizstatisticsid ' . $todeletesql, $todeleteparams)) {
+    mtrace('Error deleting out of date quiz_question_statistics records.');
+    }
+
+    if (!$DB->delete_records_select('quiz_question_response_stats',
+            'quizstatisticsid ' . $todeletesql, $todeleteparams)) {
+    mtrace('Error deleting out of date quiz_question_response_stats records.');
+    }
+
+    if (!$DB->delete_records_select('quiz_statistics',
+            'id ' . $todeletesql, $todeleteparams)) {
+    mtrace('Error deleting out of date quiz_statistics records.');
+    }
+
+    return true;
 }

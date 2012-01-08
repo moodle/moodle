@@ -1,5 +1,20 @@
 This files describes API changes for question type plugins.
 
+=== 2.0 ===
+
+* Lots of changes due to all the API changes in Moodle 2.0.
+
+* This plugin type now supports cron in the standard way. If required, Create a
+  lib.php file containing
+function qtype_mypluginname_cron() {};
+
+
+=== 2.1 ===
+
+* Lots of API changes due to the new question engine. See
+http://docs.moodle.org/dev/Developing_a_Question_Type#Converting_a_Moodle_2.0_question_type
+
+
 === 2.2 ===
 
 * The XML import/export base class has had some minor API changes. The

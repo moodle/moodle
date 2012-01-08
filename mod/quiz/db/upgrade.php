@@ -40,6 +40,36 @@ function xmldb_quiz_upgrade($oldversion) {
     // Moodle v2.2.0 release upgrade line
     // Put any upgrade step following this
 
+    if ($oldversion < 2011120700) {
+
+        // Define field lastcron to be dropped from quiz_reports
+        $table = new xmldb_table('quiz_reports');
+        $field = new xmldb_field('lastcron');
+
+        // Conditionally launch drop field lastcron
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // quiz savepoint reached
+        upgrade_mod_savepoint(true, 2011120700, 'quiz');
+    }
+
+    if ($oldversion < 2011120701) {
+
+        // Define field cron to be dropped from quiz_reports
+        $table = new xmldb_table('quiz_reports');
+        $field = new xmldb_field('cron');
+
+        // Conditionally launch drop field cron
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // quiz savepoint reached
+        upgrade_mod_savepoint(true, 2011120701, 'quiz');
+    }
+
     return true;
 }
 
