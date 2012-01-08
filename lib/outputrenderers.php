@@ -2433,14 +2433,18 @@ EOD;
      *    Settings: Administration > Appearance > Themes > Theme settings
      * and then configuring the custommenu config setting as described.
      *
+     * @param string $custommenuitems - custom menuitems set by theme instead of global theme settings
      * @return string
      */
-    public function custom_menu() {
+    public function custom_menu($custommenuitems = '') {
         global $CFG;
-        if (empty($CFG->custommenuitems)) {
+        if (empty($custommenuitems) && !empty($CFG->custommenuitems)) {
+            $custommenuitems = $CFG->custommenuitems;
+        }
+        if (empty($custommenuitems)) {
             return '';
         }
-        $custommenu = new custom_menu($CFG->custommenuitems, current_language());
+        $custommenu = new custom_menu($custommenuitems, current_language());
         return $this->render_custom_menu($custommenu);
     }
 
