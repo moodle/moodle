@@ -462,19 +462,16 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
         $reordercheckboxlabel = '';
         $reordercheckboxlabelclose = '';
 
-        if ($qnum && empty($questions[$qnum])) {
-            continue;
-        }
-
         // If the questiontype is missing change the question type
         if ($qnum && !array_key_exists($qnum, $questions)) {
             $fakequestion = new stdClass();
-            $fakequestion->id = 0;
+            $fakequestion->id = $qnum;
+            $fakequestion->category = 0;
             $fakequestion->qtype = 'missingtype';
-            $fakequestion->name = get_string('deletedquestion', 'qtype_missingtype');
-            $fakequestion->questiontext = '<p>' .
-                    get_string('deletedquestion', 'qtype_missing') . '</p>';
-            $fakequestion->length = 0;
+            $fakequestion->name = get_string('missingquestion', 'quiz');
+            $fakequestion->questiontext = ' ';
+            $fakequestion->questiontextformat = FORMAT_HTML;
+            $fakequestion->length = 1;
             $questions[$qnum] = $fakequestion;
             $quiz->grades[$qnum] = 0;
 
@@ -581,7 +578,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                                 array('title' => $strmovedown));
                     }
                 }
-                if ($allowdelete && (empty($question->id) ||
+                if ($allowdelete && ($question->qtype == 'missingtype' ||
                         question_has_capability_on($question, 'use', $question->category))) {
                     // remove from quiz, not question delete.
                     if (!$hasattempts) {
@@ -595,7 +592,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                 }
                 ?>
             </div><?php
-                if ($question->qtype != 'description' && !$reordertool) {
+                if (!in_array($question->qtype, array('description', 'missingtype')) && !$reordertool) {
                     ?>
 <div class="points">
 <form method="post" action="edit.php" class="quizsavegradesform"><div>
@@ -777,7 +774,7 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts, $defaultc
  * @param object $quiz The quiz in the context of which the question is being displayed
  */
 function quiz_print_singlequestion($question, $returnurl, $quiz) {
-    echo '<div class="singlequestion">';
+    echo '<div class="singlequestion ' . $question->qtype . '">';
     echo quiz_question_edit_button($quiz->cmid, $question, $returnurl,
             quiz_question_tostring($question) . ' ');
     echo '<span class="questiontype">';
@@ -884,7 +881,7 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktoo
  * @param object $quiz The quiz in the context of which the question is being displayed
  */
 function quiz_print_singlequestion_reordertool($question, $returnurl, $quiz) {
-    echo '<div class="singlequestion">';
+    echo '<div class="singlequestion ' . $question->qtype . '">';
     echo '<label for="s' . $question->id . '">';
     echo print_question_icon($question);
     echo ' ' . quiz_question_tostring($question);
