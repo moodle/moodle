@@ -264,8 +264,10 @@ table#categoryquestions {width: 100%;overflow: hidden;table-layout: fixed;}
 #page-mod-quiz-edit .editq div.question div.content .questionpreview {float:left;}
 #page-mod-quiz-edit .editq div.question div.content .questionpreview a{font-weight:normal;margin-left:0em;display:inline;float:none;}
 #page-mod-quiz-edit .editq div.question div.content .randomquestioncategory .questionpreview img{padding-right:0.3em;}
-#page-mod-quiz-edit .editq div.question div.content .singlequestion a .questionname,
-#page-mod-quiz-edit .editq div.question div.content .singlequestion a .questiontext{float:left;}
+#page-mod-quiz-edit .editq div.question div.content .singlequestion .questioneditbutton .questionname,
+#page-mod-quiz-edit .editq div.question div.content .singlequestion .questioneditbutton .questiontext{float:left;}
+#page-mod-quiz-edit .reorder div.question div.content .singlequestion.missingtype .questionname,
+#page-mod-quiz-edit .editq div.question div.content .singlequestion.missingtype .questionname {font-style: italic; max-width: 75%;}
 #page-mod-quiz-edit .editq div.question div.description div.content .questiontext {max-width: 75%;}
 #page-mod-quiz-edit .editq div.question div.qnum{font-size:1.5em;}
 
@@ -397,8 +399,8 @@ bank window's title is prominent enough*/
 #page-mod-quiz-edit.dir-rtl div.editq div.question div.content {float: right;height: 40px;}
 #page-mod-quiz-edit.dir-rtl div.question div.content div.points {left: 50px;right:auto;}
 #page-mod-quiz-edit.dir-rtl div.question div.content div.questioncontrols {float: left;left: 0.3em; right:auto;}
-#page-mod-quiz-edit.dir-rtl .editq div.question div.content .singlequestion a .questionname,
-#page-mod-quiz-edit.dir-rtl .editq div.question div.content .singlequestion a .questiontext {float: right; padding-right: 0.3em;}
+#page-mod-quiz-edit.dir-rtl .editq div.question div.content .singlequestion .questioneditbutton .questionname,
+#page-mod-quiz-edit.dir-rtl .editq div.question div.content .singlequestion .questioneditbutton .questiontext {float: right; padding-right: 0.3em;}
 #page-mod-quiz-edit.dir-rtl div.question div.content .questiontext,
 #page-mod-quiz-edit.dir-rtl #categoryquestions .questiontext {padding-right: 0.3em;}
 #page-mod-quiz-edit.dir-rtl .editq div.questioncontentcontainer div.singlequestion img {float: right;}
