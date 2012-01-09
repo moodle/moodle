@@ -108,7 +108,8 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
     protected function format_choices($question) {
         $choices = array();
         foreach ($question->get_choice_order() as $key => $choiceid) {
-            $choices[$key] = htmlspecialchars($question->choices[$choiceid]);
+            $choices[$key] = format_string($question->choices[$choiceid], true,
+                    array('context' => $question->contextid));
         }
         return $choices;
     }
