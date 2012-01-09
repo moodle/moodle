@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['disregardedwithoutpenalty'] = 'The submission was invalid, and has been disregarded without penalty.';
 $string['gradingdetails'] = 'Marks for this submission: {$a->raw}/{$a->max}.';
 $string['gradingdetailsadjustment'] = 'Accounting for previous tries, this gives <strong>{$a->cur}/{$a->max}</strong>.';
 $string['gradingdetailspenalty'] = 'This submission attracted a penalty of {$a}.';
