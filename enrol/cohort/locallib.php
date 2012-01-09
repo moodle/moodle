@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -36,6 +35,11 @@ require_once($CFG->dirroot . '/enrol/locallib.php');
  * it may fail sometimes, so we always do a full sync in cron too.
  */
 class enrol_cohort_handler {
+    /**
+     * Event processor - cohort member added
+     * @param stdClass $ca
+     * @return bool
+     */
     public function member_added($ca) {
         global $DB;
 
@@ -43,153 +47,252 @@ class enrol_cohort_handler {
             return true;
         }
 
-        // does anything want to sync with this parent?
-        //TODO: add join to role table to make sure that roleid actually exists
-        if (!$enrols = $DB->get_records('enrol', array('customint1'=>$ca->cohortid, 'enrol'=>'cohort'), 'id ASC')) {
+        // does any enabled cohort instance want to sync with this cohort?
+        $sql = "SELECT e.*, r.id as roleexists
+                  FROM {enrol} e
+             LEFT JOIN {role} r ON (r.id = e.roleid)
+                 WHERE customint1 = :cohortid AND enrol = 'cohort'
+              ORDER BY id ASC";
+        if (!$instances = $DB->get_records_sql($sql, array('cohortid'=>$ca->cohortid))) {
             return true;
         }
 
         $plugin = enrol_get_plugin('cohort');
-        foreach ($enrols as $enrol) {
+        foreach ($instances as $instance) {
+            if ($instance->status != ENROL_INSTANCE_ENABLED ) {
+                // no roles for disabled instances
+                $instance->roleid = 0;
+            } else if ($instance->roleid and !$instance->roleexists) {
+                // invalid role - let's just enrol, they will have to create new sync and delete this one
+                $instance->roleid = 0;
+            }
+            unset($instance->roleexists);
             // no problem if already enrolled
-            $plugin->enrol_user($enrol, $ca->userid, $enrol->roleid);
+            $plugin->enrol_user($instance, $ca->userid, $instance->roleid, 0, 0, ENROL_USER_ACTIVE);
         }
 
         return true;
     }
 
+    /**
+     * Event processor - cohort member removed
+     * @param stdClass $ca
+     * @return bool
+     */
     public function member_removed($ca) {
         global $DB;
 
-        // does anything want to sync with this parent?
-        if (!$enrols = $DB->get_records('enrol', array('customint1'=>$ca->cohortid, 'enrol'=>'cohort'), 'id ASC')) {
+        // does anything want to sync with this cohort?
+        if (!$instances = $DB->get_records('enrol', array('customint1'=>$ca->cohortid, 'enrol'=>'cohort'), 'id ASC')) {
             return true;
         }
 
         $plugin = enrol_get_plugin('cohort');
-        foreach ($enrols as $enrol) {
-            // no problem if already enrolled
-            $plugin->unenrol_user($enrol, $ca->userid);
+        $unenrolaction = $plugin->get_config('unenrolaction', ENROL_EXT_REMOVED_UNENROL);
+
+        foreach ($instances as $instance) {
+            if (!$ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$ca->userid))) {
+                continue;
+            }
+            if ($unenrolaction == ENROL_EXT_REMOVED_UNENROL) {
+                $plugin->unenrol_user($instance, $ca->userid);
+
+            } else {
+                if ($ue->status != ENROL_USER_SUSPENDED) {
+                    $plugin->update_user_enrol($instance, $ue->userid, ENROL_USER_SUSPENDED);
+                    $context = context_course::instance($instance->courseid);
+                    role_unassign_all(array('userid'=>$ue->userid, 'contextid'=>$context->id, 'component'=>'enrol_cohort', 'itemid'=>$instance->id));
+                }
+            }
         }
 
         return true;
     }
 
+    /**
+     * Event processor - cohort deleted
+     * @param stdClass $cohort
+     * @return bool
+     */
     public function deleted($cohort) {
         global $DB;
 
-        // does anything want to sync with this parent?
-        if (!$enrols = $DB->get_records('enrol', array('customint1'=>$cohort->id, 'enrol'=>'cohort'), 'id ASC')) {
+        // does anything want to sync with this cohort?
+        if (!$instances = $DB->get_records('enrol', array('customint1'=>$cohort->id, 'enrol'=>'cohort'), 'id ASC')) {
             return true;
         }
 
         $plugin = enrol_get_plugin('cohort');
-        foreach ($enrols as $enrol) {
-            $plugin->delete_instance($enrol);
+        $unenrolaction = $plugin->get_config('unenrolaction', ENROL_EXT_REMOVED_UNENROL);
+
+        foreach ($instances as $instance) {
+            if ($unenrolaction == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
+                $context = context_course::instance($instance->courseid);
+                role_unassign_all(array('contextid'=>$context->id, 'component'=>'enrol_cohort', 'itemid'=>$instance->id));
+                $plugin->update_status($instance, ENROL_INSTANCE_DISABLED);
+            } else {
+                $plugin->delete_instance($instance);
+            }
         }
 
         return true;
     }
 }
 
+
 /**
  * Sync all cohort course links.
  * @param int $courseid one course, empty mean all
- * @return void
+ * @param bool $verbose verbose CLI output
+ * @return int 0 means ok, 1 means error, 2 means plugin disabled
  */
-function enrol_cohort_sync($courseid = NULL) {
+function enrol_cohort_sync($courseid = NULL, $verbose = false) {
     global $CFG, $DB;
 
-    // unfortunately this may take a long time
-    @set_time_limit(0); //if this fails during upgrade we can continue from cron, no big deal
-
-    $cohort = enrol_get_plugin('cohort');
-
-    $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
-
-    // iterate through all not enrolled yet users
-    if (enrol_is_enabled('cohort')) {
-        $params = array();
-        $onecourse = "";
-        if ($courseid) {
-            $params['courseid'] = $courseid;
-            $onecourse = "AND e.courseid = :courseid";
+    // purge all roles if cohort sync disabled, those can be recreated later here by cron or CLI
+    if (!enrol_is_enabled('cohort')) {
+        if ($verbose) {
+            mtrace('Cohort sync plugin is disabled, unassigning all plugin roles and stopping.');
         }
-        $sql = "SELECT cm.userid, e.id AS enrolid
-                  FROM {cohort_members} cm
-                  JOIN {enrol} e ON (e.customint1 = cm.cohortid AND e.status = :statusenabled AND e.enrol = 'cohort' $onecourse)
-             LEFT JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = cm.userid)
-                 WHERE ue.id IS NULL";
-        $params['statusenabled'] = ENROL_INSTANCE_ENABLED;
-        $params['courseid'] = $courseid;
-        $rs = $DB->get_recordset_sql($sql, $params);
-        $instances = array(); //cache
-        foreach($rs as $ue) {
-            if (!isset($instances[$ue->enrolid])) {
-                $instances[$ue->enrolid] = $DB->get_record('enrol', array('id'=>$ue->enrolid));
-            }
-            $cohort->enrol_user($instances[$ue->enrolid], $ue->userid);
-        }
-        $rs->close();
-        unset($instances);
+        role_unassign_all(array('component'=>'enrol_cohort'));
+        return 2;
     }
 
-    // unenrol as necessary - ignore enabled flag, we want to get rid of all
-    $sql = "SELECT ue.userid, e.id AS enrolid
-              FROM {user_enrolments} ue
-              JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'cohort' $onecourse)
-         LEFT JOIN {cohort_members} cm ON (cm.cohortid  = e.customint1 AND cm.userid = ue.userid)
-             WHERE cm.id IS NULL";
-    //TODO: this may use a bit of SQL optimisation
-    $rs = $DB->get_recordset_sql($sql, array('courseid'=>$courseid));
+    // unfortunately this may take a long time, this script can be interrupted without problems
+    @set_time_limit(0);
+    raise_memory_limit(MEMORY_HUGE);
+
+    if ($verbose) {
+        mtrace('Starting user enrolment synchronisation...');
+    }
+
+    $allroles = get_all_roles();
     $instances = array(); //cache
+
+    $plugin = enrol_get_plugin('cohort');
+    $unenrolaction = $plugin->get_config('unenrolaction', ENROL_EXT_REMOVED_UNENROL);
+
+
+    // iterate through all not enrolled yet users
+    $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
+    $sql = "SELECT cm.userid, e.id AS enrolid, ue.status
+              FROM {cohort_members} cm
+              JOIN {enrol} e ON (e.customint1 = cm.cohortid AND e.enrol = 'cohort' $onecourse)
+         LEFT JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = cm.userid)
+             WHERE ue.id IS NULL OR ue.status = :suspended";
+    $params = array();
+    $params['courseid'] = $courseid;
+    $params['suspended'] = ENROL_USER_SUSPENDED;
+    $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $ue) {
         if (!isset($instances[$ue->enrolid])) {
             $instances[$ue->enrolid] = $DB->get_record('enrol', array('id'=>$ue->enrolid));
         }
-        $cohort->unenrol_user($instances[$ue->enrolid], $ue->userid);
+        $instance = $instances[$ue->enrolid];
+        if ($ue->status == ENROL_USER_SUSPENDED) {
+            $plugin->update_user_enrol($instance, $ue->userid, ENROL_USER_ACTIVE);
+            if ($verbose) {
+                mtrace("  unsuspending: $ue->userid ==> $instance->courseid via cohort $instance->customint1");
+            }
+        } else {
+            $plugin->enrol_user($instance, $ue->userid);
+            if ($verbose) {
+                mtrace("  enrolling: $ue->userid ==> $instance->courseid via cohort $instance->customint1");
+            }
+        }
+    }
+    $rs->close();
+
+
+    // unenrol as necessary
+    $sql = "SELECT ue.*, e.courseid
+              FROM {user_enrolments} ue
+              JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'cohort' $onecourse)
+         LEFT JOIN {cohort_members} cm ON (cm.cohortid = e.customint1 AND cm.userid = ue.userid)
+             WHERE cm.id IS NULL";
+    $rs = $DB->get_recordset_sql($sql, array('courseid'=>$courseid));
+    foreach($rs as $ue) {
+        if (!isset($instances[$ue->enrolid])) {
+            $instances[$ue->enrolid] = $DB->get_record('enrol', array('id'=>$ue->enrolid));
+        }
+        $instance = $instances[$ue->enrolid];
+        if ($unenrolaction == ENROL_EXT_REMOVED_UNENROL) {
+            // remove enrolment together with group membership, grades, preferences, etc.
+            $plugin->unenrol_user($instance, $ue->userid);
+            if ($verbose) {
+                mtrace("  unenrolling: $ue->userid ==> $instance->courseid via cohort $instance->customint1");
+            }
+
+        } else { // ENROL_EXT_REMOVED_SUSPENDNOROLES
+            // just disable and ignore any changes
+            if ($ue->status != ENROL_USER_SUSPENDED) {
+                $plugin->update_user_enrol($instance, $ue->userid, ENROL_USER_SUSPENDED);
+                $context = context_course::instance($instance->courseid);
+                role_unassign_all(array('userid'=>$ue->userid, 'contextid'=>$context->id, 'component'=>'enrol_cohort', 'itemid'=>$instance->id));
+                if ($verbose) {
+                    mtrace("  suspending and unsassigning all roles: $ue->userid ==> $instance->courseid");
+                }
+            }
+        }
     }
     $rs->close();
     unset($instances);
 
-    // now assign all necessary roles
-    if (enrol_is_enabled('cohort')) {
-        $sql = "SELECT e.roleid, ue.userid, c.id AS contextid, e.id AS itemid
-                  FROM {user_enrolments} ue
-                  JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'cohort' AND e.status = :statusenabled $onecourse)
-                  JOIN {context} c ON (c.instanceid = e.courseid AND c.contextlevel = :coursecontext)
-             LEFT JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.userid = ue.userid AND ra.itemid = e.id AND ra.component = 'enrol_cohort' AND e.roleid = ra.roleid)
-                 WHERE ra.id IS NULL";
-        $params = array();
-        $params['statusenabled'] = ENROL_INSTANCE_ENABLED;
-        $params['coursecontext'] = CONTEXT_COURSE;
-        $params['courseid'] = $courseid;
 
-        $rs = $DB->get_recordset_sql($sql, $params);
-        foreach($rs as $ra) {
-            role_assign($ra->roleid, $ra->userid, $ra->contextid, 'enrol_cohort', $ra->itemid);
+    // now assign all necessary roles to enrolled users - skip suspended instances and users
+    $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
+    $sql = "SELECT e.roleid, ue.userid, c.id AS contextid, e.id AS itemid, e.courseid
+              FROM {user_enrolments} ue
+              JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'cohort' AND e.status = :statusenabled $onecourse)
+              JOIN {role} r ON (r.id = e.roleid)
+              JOIN {context} c ON (c.instanceid = e.courseid AND c.contextlevel = :coursecontext)
+         LEFT JOIN {role_assignments} ra ON (ra.contextid = c.id AND ra.userid = ue.userid AND ra.itemid = e.id AND ra.component = 'enrol_cohort' AND e.roleid = ra.roleid)
+             WHERE ue.status = :useractive AND ra.id IS NULL";
+    $params = array();
+    $params['statusenabled'] = ENROL_INSTANCE_ENABLED;
+    $params['useractive'] = ENROL_USER_ACTIVE;
+    $params['coursecontext'] = CONTEXT_COURSE;
+    $params['courseid'] = $courseid;
+
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach($rs as $ra) {
+        role_assign($ra->roleid, $ra->userid, $ra->contextid, 'enrol_cohort', $ra->itemid);
+        if ($verbose) {
+            mtrace("  assigning role: $ra->userid ==> $ra->courseid as ".$allroles[$ra->roleid]->shortname);
         }
-        $rs->close();
     }
+    $rs->close();
 
-    // remove unwanted roles - include ignored roles and disabled plugins too
-    $onecourse = $courseid ? "AND c.instanceid = :courseid" : "";
-    $sql = "SELECT ra.roleid, ra.userid, ra.contextid, ra.itemid
+
+    // remove unwanted roles - sync role can not be changed, we only remove role when unenrolled
+    $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
+    $sql = "SELECT ra.roleid, ra.userid, ra.contextid, ra.itemid, e.courseid
               FROM {role_assignments} ra
-              JOIN {context} c ON (c.id = ra.contextid AND c.contextlevel = :coursecontext $onecourse)
-         LEFT JOIN (SELECT e.id AS enrolid, e.roleid, ue.userid
-                      FROM {user_enrolments} ue
-                      JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'cohort')
-                   ) x ON (x.enrolid = ra.itemid AND ra.component = 'enrol_cohort' AND x.roleid = ra.roleid AND x.userid = ra.userid)
-             WHERE x.userid IS NULL AND ra.component = 'enrol_cohort'";
-    $params = array('coursecontext' => CONTEXT_COURSE, 'courseid' => $courseid);
+              JOIN {context} c ON (c.id = ra.contextid AND c.contextlevel = :coursecontext)
+              JOIN {enrol} e ON (e.id = ra.itemid AND e.enrol = 'cohort' $onecourse)
+         LEFT JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = ra.userid AND ue.status = :useractive)
+             WHERE ra.component = 'enrol_cohort' AND (ue.id IS NULL OR e.status <> :statusenabled)";
+    $params = array();
+    $params['statusenabled'] = ENROL_INSTANCE_ENABLED;
+    $params['useractive'] = ENROL_USER_ACTIVE;
+    $params['coursecontext'] = CONTEXT_COURSE;
+    $params['courseid'] = $courseid;
 
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $ra) {
         role_unassign($ra->roleid, $ra->userid, $ra->contextid, 'enrol_cohort', $ra->itemid);
+        if ($verbose) {
+            mtrace("  unassigning role: $ra->userid ==> $ra->courseid as ".$allroles[$ra->roleid]->shortname);
+        }
     }
     $rs->close();
 
+
+    if ($verbose) {
+        mtrace('...user enrolment synchronisation finished.');
+    }
+
+    return 0;
 }
 
 /**
@@ -326,7 +429,7 @@ function enrol_cohort_search_cohorts(course_enrolment_manager $manager, $offset 
     // Add some additional sensible conditions
     $tests = array('contextid ' . $sqlparents);
 
-    // Modify the quesry to perform the search if requred
+    // Modify the query to perform the search if required
     if (!empty($search)) {
         $conditions = array(
             'name',

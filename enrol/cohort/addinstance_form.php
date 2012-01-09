@@ -55,6 +55,7 @@ class enrol_cohort_addinstance_form extends moodleform {
         $rs->close();
 
         $roles = get_assignable_roles($coursecontext);
+        $roles[0] = get_string('none');
         $roles = array_reverse($roles, true); // descending default sortorder
 
         $mform->addElement('header','general', get_string('pluginname', 'enrol_cohort'));
