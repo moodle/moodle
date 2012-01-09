@@ -71,7 +71,7 @@ class filter_data extends moodle_text_filter {
                       JOIN {data_content} dc ON dc.fieldid = df.id AND dc.recordid = dr.id
                      WHERE d.course ' . $coursesql . '
                        AND df.type = \'text\'
-                       AND ' . $DB->sql_compare_text('df.param1', 1) . ' = 1';
+                       AND ' . $DB->sql_compare_text('df.param1', 1) . " = '1'";
 
             if (!$contents = $DB->get_records_sql($sql, $params)) {
                 $nothingtodo = true;
