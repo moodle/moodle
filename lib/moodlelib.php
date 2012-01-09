@@ -1987,8 +1987,10 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true) {
            $textlib = textlib_get_instance();
            $datestring = $textlib->convert($datestring, $localewincharset, 'utf-8');
        }
-   }
+    }
 
+    // When using the %l (12-hour time with no leading zero), it adds unwanted spaces
+    $datestring = trim(str_replace('  ', ' ', $datestring));
     return $datestring;
 }
 
