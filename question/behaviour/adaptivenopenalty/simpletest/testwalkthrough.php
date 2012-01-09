@@ -38,6 +38,11 @@ require_once(dirname(__FILE__) . '/../../../engine/simpletest/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrough_test_base {
+
+    protected function get_does_not_contain_gradingdetails_expectation() {
+        return new NoPatternExpectation('/class="gradingdetails"/');
+    }
+
     public function test_multichoice() {
 
         // Create a multiple choice, single response question.
@@ -191,5 +196,96 @@ class qbehaviour_adaptivenopenalty_walkthrough_test extends qbehaviour_walkthrou
                 $this->get_contains_mark_summary(2),
                 $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_correct_expectation());
+    }
+
+    public function test_numerical_invalid() {
+
+        // Create a numerical question
+        $numq = test_question_maker::make_question('numerical', 'pi');
+        $numq->penalty = 0.1;
+        $this->start_attempt_at_question($numq, 'adaptivenopenalty');
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_marked_out_of_summary(),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_does_not_contain_feedback_expectation());
+
+        // Submit a non-numerical answer.
+        $this->process_submission(array('-submit' => 1, 'answer' => 'Pi'));
+
+        // Verify.
+        $this->check_current_state(question_state::$invalid);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_marked_out_of_summary(1),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_does_not_contain_correctness_expectation(),
+                $this->get_contains_validation_error_expectation(),
+                $this->get_does_not_contain_feedback_expectation());
+
+        // Submit an incorrect answer.
+        $this->process_submission(array('-submit' => 1, 'answer' => '-5'));
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(0);
+        $this->check_current_output(
+                $this->get_contains_mark_summary(0),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_contains_incorrect_expectation(),
+                $this->get_does_not_contain_validation_error_expectation());
+
+        // Submit another non-numerical answer.
+        $this->process_submission(array('-submit' => 1, 'answer' => 'Pi*2'));
+
+        // Verify.
+        $this->check_current_state(question_state::$invalid);
+        $this->check_current_mark(0);
+        $this->check_current_output(
+                $this->get_contains_mark_summary(0),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_does_not_contain_correctness_expectation(),
+                $this->get_contains_validation_error_expectation(),
+                $this->get_does_not_contain_gradingdetails_expectation());
+
+        // Submit the correct answer.
+        $this->process_submission(array('-submit' => 1, 'answer' => '3.14'));
+
+        // Verify.
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(1.0);
+        $this->check_current_output(
+                $this->get_contains_mark_summary(1.0),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_contains_correct_expectation(),
+                $this->get_does_not_contain_validation_error_expectation());
+
+        // Submit another non-numerical answer.
+        $this->process_submission(array('-submit' => 1, 'answer' => 'Pi/3'));
+
+        // Verify.
+        $this->check_current_state(question_state::$invalid);
+        $this->check_current_mark(1.0);
+        $this->check_current_output(
+                $this->get_contains_mark_summary(1.0),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_does_not_contain_correctness_expectation(),
+                $this->get_contains_validation_error_expectation(),
+                $this->get_does_not_contain_gradingdetails_expectation());
+
+        // Finish the attempt.
+        $this->quba->finish_all_questions();
+
+        // Verify.
+        $this->check_current_state(question_state::$gradedwrong);
+        $this->check_current_mark(1.0);
+        $this->check_current_output(
+                $this->get_contains_mark_summary(1.0),
+                $this->get_contains_submit_button_expectation(false),
+                $this->get_contains_incorrect_expectation(),
+                $this->get_does_not_contain_validation_error_expectation());
     }
 }
