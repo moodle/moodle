@@ -1608,6 +1608,7 @@ class global_navigation extends navigation_node {
                         continue;
                     }
                     $activity = new stdClass;
+                    $activity->course = $course->id;
                     $activity->section = $section->section;
                     $activity->name = $cm->name;
                     $activity->icon = $cm->icon;
@@ -1714,7 +1715,8 @@ class global_navigation extends navigation_node {
      * @param course_modinfo $modinfo Object returned from {@see get_fast_modinfo()}
      * @return array Array of activity nodes
      */
-    protected function load_section_activities(navigation_node $sectionnode, $sectionnumber, $activities) {
+    protected function load_section_activities(navigation_node $sectionnode, $sectionnumber, $activities, $course = null) {
+        global $CFG;
         // A static counter for JS function naming
         static $legacyonclickcounter = 0;
 
@@ -1724,6 +1726,18 @@ class global_navigation extends navigation_node {
         }
 
         $activitynodes = array();
+        if (empty($activities)) {
+            return $activitynodes;
+        }
+
+        if (!is_object($course)) {
+            $activity = reset($activities);
+            $courseid = $activity->course;
+        } else {
+            $courseid = $course->id;
+        }
+        $showactivities = ($courseid != SITEID || !empty($CFG->navshowfrontpagemods));
+
         foreach ($activities as $activity) {
             if ($activity->section != $sectionnumber) {
                 continue;
@@ -1763,7 +1777,7 @@ class global_navigation extends navigation_node {
             $activitynode = $sectionnode->add($activityname, $action, navigation_node::TYPE_ACTIVITY, null, $activity->id, $icon);
             $activitynode->title(get_string('modulename', $activity->modname));
             $activitynode->hidden = $activity->hidden;
-            $activitynode->display = $activity->display;
+            $activitynode->display = $showactivities && $activity->display;
             $activitynode->nodetype = $activity->nodetype;
             $activitynodes[$activity->id] = $activitynode;
         }
