@@ -69,15 +69,25 @@ function user_update_user($user) {
     if (!is_object($user)) {
             $user = (object)$user;
     }
-
-    /// hash the password
-    $user->password = hash_internal_user_password($user->password);
+    
+    //MDL-30878
+    //unset password here, for updating later
+    if (isset($user->password)) {
+        $passwd = $user->password;
+        unset($user->password);
+    }
 
     $user->timemodified = time();
     $DB->update_record('user', $user);
 
     /// trigger user_updated event on the full database user row
     $updateduser = $DB->get_record('user', array('id' => $user->id));
+
+    //MDL-30878
+    //if password was set, then update its hash
+    if (isset($passwd))
+        update_internal_user_password($updateduser, $passwd);
+
     events_trigger('user_updated', $updateduser);
 
 }
