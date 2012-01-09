@@ -1,4 +1,25 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * @package    backup-convert
+ * @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 require_once 'cc_utils.php';
 require_once 'cc_general.php';
@@ -2059,6 +2080,11 @@ class cc_assesment_question_proc_base {
     public function on_generate_metadata() {
         if (empty($this->qmetadata)) {
             $this->qmetadata = new cc_question_metadata($this->qtype);
+            //Get weighting value
+            $weighting_value = (int)$this->questions->nodeValue('defaultmark', $this->question_node);
+            if ($weighting_value > 1) {
+                $this->qmetadata->set_weighting($weighting_value);
+            }
             $rts = new cc_assesment_itemmetadata();
             $rts->add_metadata($this->qmetadata);
             $this->qitem->set_itemmetadata($rts);
@@ -2142,12 +2168,21 @@ class cc_assesment_question_multichoice extends cc_assesment_question_proc_base 
         parent::__construct($quiz, $questions, $manifest, $section, $question_node, $rootpath, $contextid, $outdir);
         $this->qtype = cc_qti_profiletype::multiple_choice;
 
-        $correct_grade_value = $this->questions->nodeValue('defaultmark', $this->question_node);
-        $correct_answer_node = $this->questions->node("plugin_qtype_multichoice_question/answers/answer[fraction={$correct_grade_value}]", $this->question_node);
+        /**
+        *
+        * What is needed is a maximum grade value taken from the answer fraction
+        * It is supposed to always be between 1 and 0 in decimal representation,
+        * however that is not always the case so a change in test was needed
+        * but since we support here one correct answer type
+        * correct answer would always have to be 1
+        */
+        $correct_answer_node = $this->questions->node("plugin_qtype_multichoice_question/answers/answer[fraction!=0.0000000]", $this->question_node);
+        if (empty($correct_answer_node)) {
+            throw new RuntimeException('No correct answer!');
+        }
         $this->correct_answer_node_id = $this->questions->nodeValue('@id', $correct_answer_node);
         $maximum_quiz_grade = (int)$this->quiz->nodeValue('/activity/quiz/grade');
-        $this->total_grade_value = ($maximum_quiz_grade + (int)$correct_grade_value).'.0000000';
-
+        $this->total_grade_value = ($maximum_quiz_grade + 1).'.0000000';
     }
 
     public function on_generate_answers() {
@@ -2179,7 +2214,7 @@ class cc_assesment_question_multichoice extends cc_assesment_question_proc_base 
             pkg_resource_dependencies::instance()->add($result[1]);
             $answer_ident = $qresponse_label->get_ident();
             $feedback_ident = $answer_ident.'_fb';
-            if ($id) {
+            if (empty($this->correct_answer_ident) && $id) {
                 $this->correct_answer_ident = $answer_ident;
             }
             //add answer specific feedbacks if not empty
