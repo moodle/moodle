@@ -2119,6 +2119,8 @@ function initialise_filepicker($args) {
     $return->return_types = $args->return_types;
     foreach ($repositories as $repository) {
         $meta = $repository->get_meta();
+        // Please note that the array keys for repositories are used within
+        // JavaScript a lot, the key NEEDS to be the repository id.
         $return->repositories[$repository->id] = $meta;
     }
     return $return;
