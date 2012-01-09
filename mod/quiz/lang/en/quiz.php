@@ -401,6 +401,7 @@ $string['min'] = 'Min';
 $string['minutes'] = 'Minutes';
 $string['missingcorrectanswer'] = 'Correct answer must be specified';
 $string['missingitemtypename'] = 'Missing name';
+$string['missingquestion'] = 'This question no longer seems to exist';
 $string['modulename'] = 'Quiz';
 $string['modulename_help'] = 'The quiz module enables the teacher to design and set quizzes consisting of multiple choice, true-false, matching and other question types. Each attempt is automatically marked, and the teacher can choose whether to give feedback and/or show correct answers.';
 $string['modulenameplural'] = 'Quizzes';
