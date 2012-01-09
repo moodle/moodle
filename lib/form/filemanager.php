@@ -274,6 +274,7 @@ function form_filemanager_render($options) {
     }
 
     $maxsize = get_string('maxfilesize', 'moodle', display_size(get_max_upload_file_size($CFG->maxbytes, $course_maxbytes, $options->maxbytes)));
+    $strdndenabled = get_string('dndenabled', 'moodle').$OUTPUT->help_icon('dndenabled');
     $html .= <<<FMHTML
 <div class="filemanager-loading mdl-align" id='filemanager-loading-{$client_id}'>
 $icon_progress
@@ -285,6 +286,7 @@ $icon_progress
         <input type="button" class="fm-btn-mkdir" id="btncrt-{$client_id}" onclick="return false" value="{$strmakedir}" />
         <input type="button" class="fm-btn-download" id="btndwn-{$client_id}" onclick="return false" {$extra} value="{$strdownload}" />
         <span> $maxsize </span>
+        <span id="dndenabled-{$client_id}" style="display: none"> - $strdndenabled </span>
     </div>
     <div class="filemanager-container" id="filemanager-{$client_id}">
         <ul id="draftfiles-{$client_id}" class="fm-filelist">
@@ -304,7 +306,7 @@ FMHTML;
     $module = array(
         'name'=>'form_filemanager',
         'fullpath'=>'/lib/form/filemanager.js',
-        'requires' => array('core_filepicker', 'base', 'io-base', 'node', 'json', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview'),
+        'requires' => array('core_filepicker', 'base', 'io-base', 'node', 'json', 'yui2-button', 'yui2-container', 'yui2-layout', 'yui2-menu', 'yui2-treeview', 'core_dndupload'),
         'strings' => array(array('loading', 'repository'), array('nomorefiles', 'repository'), array('confirmdeletefile', 'repository'),
              array('add', 'repository'), array('accessiblefilepicker', 'repository'), array('move', 'moodle'),
              array('cancel', 'moodle'), array('download', 'moodle'), array('ok', 'moodle'),

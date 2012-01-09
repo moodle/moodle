@@ -464,6 +464,12 @@ class page_requirements_manager {
                                     'fullpath' => '/files/module.js',
                                     'requires' => array('node', 'event', 'overlay', 'io-base', 'json', 'yui2-treeview'));
                     break;
+                case 'core_dndupload':
+                    $module = array('name'     => 'core_dndupload',
+                                    'fullpath' => '/lib/form/dndupload.js',
+                                    'requires' => array('node', 'event', 'json'),
+                                    'strings'  => array(array('uploadformlimit', 'moodle')));
+                    break;
             }
 
         } else {

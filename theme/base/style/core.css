@@ -518,6 +518,7 @@ body.tag .managelink {padding: 5px;}
 .filemanager-toolbar {margin: 5px 0;}
 .filemanager-toolbar a {border: 1px solid #AACCEE;background: #F4FAFF;color: black;padding: 3px;}
 .filemanager-toolbar a:hover {background: #FFFFFF;}
+.filemanager-toolbar .helplink a {border: 0px; background: transparent;}
 .fm-breadcrumb {margin:0;}
 .filemanager-container {padding: 5px;margin: 6px 0;background: #E9F4FF;border: #AACCEE 1px solid}
 .filemanager-container ul{margin:0;padding:0;}
@@ -530,6 +531,9 @@ body.tag .managelink {padding: 5px;}
 #fm-move-div strong{color:red;}
 .fm-file-entry{border: 1px solid red;}
 .fm-operation {font-weight: bold;}
+
+.filemanager-container.dndupload-over,
+.filepicker-filelist.dndupload-over {background: #8EF947;}
 
 /*
  * Backup and Restore CSS
