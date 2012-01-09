@@ -833,11 +833,13 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
         }
         $questionparams = array('returnurl' => $returnurl, 'cmid' => $cmid, 'id' => $question->id);
         $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
-        return '<a title="' . $action . '" href="' . $questionurl->out() . '"><img src="' .
+        return '<a title="' . $action . '" href="' . $questionurl->out() . '" class="questioneditbutton"><img src="' .
                 $OUTPUT->pix_url($icon) . '" alt="' . $action . '" />' . $contentaftericon .
                 '</a>';
+    } else if ($contentaftericon) {
+        return '<span class="questioneditbutton">' . $contentaftericon . '</span>';
     } else {
-        return $contentaftericon;
+        return '';
     }
 }
 
