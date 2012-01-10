@@ -23,6 +23,8 @@ class web_test extends UnitTestCase {
     }
 
     function test_format_string() {
+        global $CFG;
+
         // Ampersands
         $this->assertEqual(format_string("& &&&&& &&"), "&amp; &amp;&amp;&amp;&amp;&amp; &amp;&amp;");
         $this->assertEqual(format_string("ANother & &&&&& Category"), "ANother &amp; &amp;&amp;&amp;&amp;&amp; Category");
@@ -37,6 +39,21 @@ class web_test extends UnitTestCase {
 
         // Unicode entities
         $this->assertEqual(format_string("&#4475;"), "&#4475;");
+
+        // < and > signs
+        $originalformatstringstriptags = $CFG->formatstringstriptags;
+
+        $CFG->formatstringstriptags = false;
+        $this->assertEqual(format_string('x < 1'), 'x &lt; 1');
+        $this->assertEqual(format_string('x > 1'), 'x &gt; 1');
+        $this->assertEqual(format_string('x < 1 and x > 0'), 'x &lt; 1 and x &gt; 0');
+
+        $CFG->formatstringstriptags = true;
+        $this->assertEqual(format_string('x < 1'), 'x &lt; 1');
+        $this->assertEqual(format_string('x > 1'), 'x &gt; 1');
+        $this->assertEqual(format_string('x < 1 and x > 0'), 'x &lt; 1 and x &gt; 0');
+
+        $CFG->formatstringstriptags = $originalformatstringstriptags;
     }
 
     function test_s() {
