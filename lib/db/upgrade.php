@@ -112,6 +112,29 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2011120500.03);
     }
 
+    if ($oldversion < 2012020200.03) {
+
+        // Define index rolecontext (not unique) to be added to role_assignments
+        $table = new xmldb_table('role_assignments');
+        $index = new xmldb_index('rolecontext', XMLDB_INDEX_NOTUNIQUE, array('roleid', 'contextid'));
+
+        // Conditionally launch add index rolecontext
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index usercontextrole (not unique) to be added to role_assignments
+        $index = new xmldb_index('usercontextrole', XMLDB_INDEX_NOTUNIQUE, array('userid', 'contextid', 'roleid'));
+
+        // Conditionally launch add index usercontextrole
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012020200.03);
+    }
+
     return true;
 }
 
