@@ -797,16 +797,22 @@ M.core_filepicker.init = function(Y, options) {
             Y.on('contentready', function(el) {
                 var list = Y.one(el);
                 var count = 0;
+                // Resort the repositories by sortorder
+                var sorted_repositories = new Array();
                 for (var i in r) {
-                    var id = 'repository-'+client_id+'-'+r[i].id;
+                    sorted_repositories[r[i].sortorder - 1] = r[i];
+                }
+                for (var i in sorted_repositories){
+                    repository = sorted_repositories[i];
+                    var id = 'repository-'+client_id+'-'+repository.id;
                     var link_id = id + '-link';
-                    list.append('<li id="'+id+'"><a class="fp-repo-name" id="'+link_id+'" href="###">'+r[i].name+'</a></li>');
-                    Y.one('#'+link_id).prepend('<img src="'+r[i].icon+'" width="16" height="16" />&nbsp;');
+                    list.append('<li id="'+id+'"><a class="fp-repo-name" id="'+link_id+'" href="###">'+repository.name+'</a></li>');
+                    Y.one('#'+link_id).prepend('<img src="'+repository.icon+'" width="16" height="16" />&nbsp;');
                     Y.one('#'+link_id).on('click', function(e, scope, repository_id) {
                         YAHOO.util.Cookie.set('recentrepository', repository_id);
                         scope.repository_id = repository_id;
                         this.list({'repo_id':repository_id});
-                    }, this /*handler running scope*/, this/*second argument*/, r[i].id/*third argument of handler*/);
+                    }, this /*handler running scope*/, this/*second argument*/, repository.id/*third argument of handler*/);
                     count++;
                 }
                 if (count==0) {
