@@ -19,8 +19,8 @@
  * of this class in the $PAGE global variable. This class is a central repository
  * of information about the page we are building up to send back to the user.
  *
- * @package    core
- * @subpackage page
+ * @package core_page
+ * @category page
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,8 +39,8 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core
- * @subpackage page
+ * @package core_page
+ * @category page
  *
  * The following properties are alphabetical. Please keep it that way so that its
  * easy to maintain.
@@ -52,15 +52,15 @@ defined('MOODLE_INTERNAL') || die();
  *      if this page is not within a module.
  * @property-read array $alternativeversions Mime type => object with ->url and ->title.
  * @property-read blocks_manager $blocks The blocks manager object for this page.
- * @property-read string $bodyclasses Returns a string to use within the class attribute on the body tag.
- * @property-read string $bodyid Returns a string to use as the id of the body tag.
+ * @property-read string $bodyclasses A string to use within the class attribute on the body tag.
+ * @property-read string $bodyid A string to use as the id of the body tag.
  * @property-read string $button The HTML to go where the Turn editing on button normally goes.
  * @property-read bool $cacheable Defaults to true. Set to false to stop the page being cached at all.
  * @property-read array $categories An array of all the categories the page course belongs to,
  *      starting with the immediately containing category, and working out to
  *      the top-level category. This may be the empty array if we are in the
  *      front page course.
- * @property-read mixed $category The category that the page course belongs to. If there isn't one returns null.
+ * @property-read mixed $category The category that the page course belongs to.
  * @property-read cm_info $cm The course_module that this page belongs to. Will be null
  *      if this page is not within a module. This is a full cm object, as loaded
  *      by get_coursemodule_from_id or get_coursemodule_from_instance,
@@ -72,304 +72,275 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read string $devicetypeinuse The name of the device type in use
  * @property-read string $docspath The path to the Moodle docs for this page.
  * @property-read string $focuscontrol The id of the HTML element to be focused when the page has loaded.
- * @property-read bool $headerprinted Returns true if the page header has already been printed.
+ * @property-read bool $headerprinted True if the page header has already been printed.
  * @property-read string $heading The main heading that should be displayed at the top of the <body>.
  * @property-read string $headingmenu The menu (or actions) to display in the heading
- * @property-read array $layout_options Returns arrays with options for layout file.
- * @property-read array $legacythemeinuse Returns true the legacy browser theme is in use.
- * @property-read navbar $navbar Returns the navbar object used to display the navbar
- * @property-read global_navigation $navigation Returns the global navigation structure
+ * @property-read array $layout_options An arrays with options for the layout file.
+ * @property-read array $legacythemeinuse True if the legacy browser theme is in use.
+ * @property-read navbar $navbar The navbar object used to display the navbar
+ * @property-read global_navigation $navigation The navigation structure for this page.
  * @property-read xml_container_stack $opencontainers Tracks XHTML tags on this page that have been opened but not closed.
  *      mainly for internal use by the rendering code.
  * @property-read string $pagelayout The general type of page this is. For example 'normal', 'popup', 'home'.
  *      Allows the theme to display things differently, if it wishes to.
- * @property-read string $pagetype Returns the page type string, should be used as the id for the body tag in the theme.
+ * @property-read string $pagetype The page type string, should be used as the id for the body tag in the theme.
  * @property-read int $periodicrefreshdelay The periodic refresh delay to use with meta refresh
  * @property-read page_requirements_manager $requires Tracks the JavaScript, CSS files, etc. required by this page.
  * @property-read settings_navigation $settingsnav The settings navigation
  * @property-read int $state One of the STATE_... constants
  * @property-read string $subpage The subpage identifier, if any.
- * @property-read theme_config $theme Returns the initialised theme for this page.
+ * @property-read theme_config $theme The theme for this page.
  * @property-read string $title The title that should go in the <head> section of the HTML of this page.
  * @property-read moodle_url $url The moodle url object for this page.
  */
 class moodle_page {
 
-    /**#@+ Tracks the where we are in the generation of the page. */
+    /** The state of the page before it has printed the header **/
     const STATE_BEFORE_HEADER = 0;
-    const STATE_PRINTING_HEADER = 1;
-    const STATE_IN_BODY = 2;
-    const STATE_DONE = 3;
-    /**#@-*/
 
-    // Field declarations =========================================================
+    /** The state the page is in temporarily while the header is being printed **/
+    const STATE_PRINTING_HEADER = 1;
+
+    /** The state the page is in while content is presumably being printed **/
+    const STATE_IN_BODY = 2;
 
     /**
-     * The current state of the page. The state a page is within determines what
-     * actions are possible for it.
-     * @var int
+     * The state the page is when the footer has been printed and its function is
+     * complete.
+     */
+    const STATE_DONE = 3;
+
+    /**
+     * @var int The current state of the page. The state a page is within
+     * determines what actions are possible for it.
      */
     protected $_state = self::STATE_BEFORE_HEADER;
 
     /**
-     * The course currently associated with this page. If not has been provided
-     * the front page course is used.
-     * @var stdClass
+     * @var stdClass The course currently associated with this page.
+     * If not has been provided the front page course is used.
      */
     protected $_course = null;
 
     /**
-     * If this page belongs to a module, this is the cm_info module description object.
-     * @var cm_info
+     * @var cm_info If this page belongs to a module, this is the cm_info module
+     * description object.
      */
     protected $_cm = null;
 
     /**
-     * If $_cm is not null, then this will hold the corresponding row from the
-     * modname table. For example, if $_cm->modname is 'quiz', this will be a
-     * row from the quiz table.
-     * @var stdClass
+     * @var stdClass If $_cm is not null, then this will hold the corresponding
+     * row from the modname table. For example, if $_cm->modname is 'quiz', this
+     * will be a row from the quiz table.
      */
     protected $_module = null;
 
     /**
-     * The context that this page belongs to.
-     * @var context
+     * @var context The context that this page belongs to.
      */
     protected $_context = null;
 
     /**
-     * This holds any categories that $_course belongs to, starting with the
+     * @var array This holds any categories that $_course belongs to, starting with the
      * particular category it belongs to, and working out through any parent
      * categories to the top level. These are loaded progressively, if needed.
      * There are three states. $_categories = null initially when nothing is
      * loaded; $_categories = array($id => $cat, $parentid => null) when we have
      * loaded $_course->category, but not any parents; and a complete array once
      * everything is loaded.
-     * @var array
      */
     protected $_categories = null;
 
     /**
-     * An array of CSS classes that should be added to the body tag in HTML.
-     * @var array Array of CSS classes (strings)
+     * @var array An array of CSS classes that should be added to the body tag in HTML.
      */
     protected $_bodyclasses = array();
 
     /**
-     * The title for the page. Used within the title tag in the HTML head.
-     * @var string
+     * @var string The title for the page. Used within the title tag in the HTML head.
      */
     protected $_title = '';
 
     /**
-     * The string to use as the heading of the page. Shown near the top of the
+     * @var string The string to use as the heading of the page. Shown near the top of the
      * page within most themes.
-     * @var string
      */
     protected $_heading = '';
 
     /**
-     * The pagetype is used to describe the page and defaults to a representation
+     * @var string The pagetype is used to describe the page and defaults to a representation
      * of the physical path to the page e.g. my-index, mod-quiz-attempt
-     * @var string
      */
     protected $_pagetype = null;
 
     /**
-     * The pagelayout to use when displaying this page. The pagelayout needs to
-     * have been defined by the theme in use or one of its parents. By default
-     * base is used however standard is the more common layout.
+     * @var string The pagelayout to use when displaying this page. The
+     * pagelayout needs to have been defined by the theme in use, or one of its
+     * parents. By default base is used however standard is the more common layout.
      * Note that this gets automatically set by core during operations like
      * require_login.
-     * @var type
      */
     protected $_pagelayout = 'base';
 
     /**
-     * List of theme layout options, these are ignored by core.
+     * @var array List of theme layout options, these are ignored by core.
      * To be used in individual theme layout files only.
-     * @var array
      */
     protected $_layout_options = array();
 
     /**
-     * An optional arbitrary parameter that can be set on pages where the context
+     * @var string An optional arbitrary parameter that can be set on pages where the context
      * and pagetype is not enough to identify the page.
-     * This is useful for pages
-     * @var string
      */
     protected $_subpage = '';
 
     /**
-     * Set a different path to use for the 'Moodle docs for this page' link.
+     * @var string Set a different path to use for the 'Moodle docs for this page' link.
      * By default, it uses the path of the file for instance mod/quiz/attempt.
-     * @var string
      */
     protected $_docspath = null;
 
     /**
-     * A legacy class that will be added to the body tag
-     * @var string
+     * @var string A legacy class that will be added to the body tag
      */
     protected $_legacyclass = null;
 
     /**
-     * The URL for this page. This is mandatory and must be set before output is
-     * started.
-     * @var moodle_url
+     * @var moodle_url The URL for this page. This is mandatory and must be set
+     * before output is started.
      */
     protected $_url = null;
 
     /**
-     * An array of links to alternative versions of this page. Primarily used
-     * for RSS versions of the current page.
-     * @var array
+     * @var array An array of links to alternative versions of this page.
+     * Primarily used for RSS versions of the current page.
      */
     protected $_alternateversions = array();
 
     /**
-     * The blocks manager for this page. It is reponsible for the blocks and
-     * there content on this page.
-     * @var block_manager
+     * @var block_manager The blocks manager for this page. It is reponsible for
+     * the blocks and there content on this page.
      */
     protected $_blocks = null;
 
     /**
-     * Page requirements manager. It is reponsible for all JavaScript and CSS
-     * resources required by this page.
-     * @var page_requirements_manager
+     * @var page_requirements_manager Page requirements manager. It is reponsible
+     * for all JavaScript and CSS resources required by this page.
      */
     protected $_requires = null;
 
     /**
-     * The capability required by the user in order to edit blocks and block
-     * settings on this page.
-     * @var string
+     * @var string The capability required by the user in order to edit blocks
+     * and block settings on this page.
      */
     protected $_blockseditingcap = 'moodle/site:manageblocks';
 
     /**
-     * An internal flag to record when block actions have been processed.
+     * @var bool An internal flag to record when block actions have been processed.
      * Remember block actions occur on the current URL and it is important that
      * even they are never executed more than once.
-     * @var bool
      */
     protected $_block_actions_done = false;
 
     /**
-     * An array of any other capabilities the current user must have in order to
-     * editing the page and/or its content (not just blocks).
-     * @var array
+     * @var array An array of any other capabilities the current user must have
+     * in order to editing the page and/or its content (not just blocks).
      */
     protected $_othereditingcaps = array();
 
     /**
-     * Sets whether this page should be cached by the browser or not. If it is
-     * set to true (default) the page is served with caching headers.
-     * @var bool
+     * @var bool Sets whether this page should be cached by the browser or not.
+     * If it is set to true (default) the page is served with caching headers.
      */
     protected $_cacheable = true;
 
     /**
-     * Can be set to the ID of an element on the page, if done that element
-     * receives focus when the page loads.
-     * @var string
+     * @var string Can be set to the ID of an element on the page, if done that
+     * element receives focus when the page loads.
      */
     protected $_focuscontrol = '';
 
     /**
-     * HTML to go where the turn on editing button is located. This is nearly
-     * a legacy item and not used very often any more.
-     * @var string
+     * @var string HTML to go where the turn on editing button is located. This
+     * is nearly a legacy item and not used very often any more.
      */
     protected $_button = '';
 
     /**
-     * The theme to use with this page. This has to be properly initialised via
-     * {@see moodle_page::initialise_theme_and_output()} which happens magically
-     * before any operation that requires it.
-     * @var theme_config
+     * @var theme_config The theme to use with this page. This has to be properly
+     * initialised via {@see moodle_page::initialise_theme_and_output()} which
+     * happens magically before any operation that requires it.
      */
     protected $_theme = null;
 
     /**
-     * Contains the global navigation structure
-     * @var global_navigation
+     * @var global_navigation Contains the global navigation structure.
      */
     protected $_navigation = null;
 
     /**
-     * Contains the settings navigation structure
-     * @var settings_navigation
+     * @var settings_navigation Contains the settings navigation structure.
      */
     protected $_settingsnav = null;
 
     /**
-     * Contains the navbar structure
-     * @var navbar
+     * @var navbar Contains the navbar structure.
      */
     protected $_navbar = null;
 
     /**
-     * The menu (or actions) to display in the heading
-     * @var string
+     * @var string The menu (or actions) to display in the heading.
      */
     protected $_headingmenu = null;
 
     /**
-     * Then the theme is initialised, we save the stack trace, for use in error messages.
-     * @var array stack trace.
+     * @var array stack trace. Then the theme is initialised, we save the stack
+     * trace, for use in error messages.
      */
     protected $_wherethemewasinitialised = null;
 
     /**
-     * Tracks XHTML tags on this page that have been opened but not closed.
-     * @var xhtml_container_stack
+     * @var xhtml_container_stack Tracks XHTML tags on this page that have been
+     * opened but not closed.
      */
     protected $_opencontainers;
 
     /**
-     * Sets the page to refresh after a given delay (in seconds) using meta refresh
-     * in {@link standard_head_html()} in outputlib.php
+     * @var int Sets the page to refresh after a given delay (in seconds) using
+     * meta refresh in {@link standard_head_html()} in outputlib.php
      * If set to null(default) the page is not refreshed
-     * @var int
      */
     protected $_periodicrefreshdelay = null;
 
     /**
-     * This is simply to improve backwards compatibility. If old code relies on
-     * a page class that implements print_header, or complex logic in
-     * user_allowed_editing then we stash an instance of that other class here,
+     * @var stdClass This is simply to improve backwards compatibility. If old
+     * code relies on a page class that implements print_header, or complex logic
+     * in user_allowed_editing then we stash an instance of that other class here,
      * and delegate to it in certain situations.
      */
     protected $_legacypageobject = null;
 
     /**
-     * Associative array of browser shortnames (as used by check_browser_version)
+     * @var array Associative array of browser shortnames (as used by check_browser_version)
      * and their minimum required versions
-     * @var array
      */
     protected $_legacybrowsers = array('MSIE' => 6.0);
 
     /**
-     * Is set to the name of the device type in use.
+     * @var string Is set to the name of the device type in use.
      * This will we worked out when it is first used.
-     * @var string
      */
     protected $_devicetypeinuse = null;
 
     /**
-     * Used to determine if HTTPS should be required for login.
-     * @var bool
+     * @var bool Used to determine if HTTPS should be required for login.
      */
     protected $_https_login_required = false;
 
     /**
-     * Determines if popup notifications allowed on this page.
+     * @var bool Determines if popup notifications allowed on this page.
      * Code such as the quiz module disables popup notifications in situations
      * such as upgrading or completing a quiz.
-     * @var bool
      */
     protected $_popup_notification_allowed = true;
 
@@ -1012,7 +983,7 @@ class moodle_page {
      * for example 'course-view-weeks'. This gets used as the id attribute on
      * <body> and also for determining which blocks are displayed.
      *
-     * @param string $pagetype e.g. 'my-index' or 'mod-quiz-attempt'. 
+     * @param string $pagetype e.g. 'my-index' or 'mod-quiz-attempt'.
      */
     public function set_pagetype($pagetype) {
         $this->_pagetype = $pagetype;
@@ -2124,22 +2095,20 @@ function page_map_class($type, $classname = NULL) {
  * Parent class from which all Moodle page classes derive
  *
  * @deprecated since Moodle 2.0
- * @package    core
- * @subpackage page
+ * @package core_page
+ * @category page
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_base extends moodle_page {
     /**
-     * The numeric identifier of the page being described.
-     * @var int $id
+     * @var int The numeric identifier of the page being described.
      */
     public $id = NULL;
 
     /**
-     * Returns the id of the page.
      * @deprecated since Moodle 2.0
-     * @return int
+     * @return int Returns the id of the page.
      */
     public function get_id() {
         return $this->id;
@@ -2166,8 +2135,8 @@ class page_base extends moodle_page {
  * since there may be legacy class doing class page_... extends page_course
  *
  * @deprecated since Moodle 2.0
- * @package    core
- * @subpackage page
+ * @package core_page
+ * @category page
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2177,12 +2146,13 @@ class page_course extends page_base {}
  * Class that models the common parts of all activity modules
  *
  * @deprecated since Moodle 2.0
- * @package    core
- * @subpackage page
+ * @package core_page
+ * @category page
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_generic_activity extends page_base {
+
     /**
      * Although this function is deprecated, it should be left here because
      * people upgrading legacy code need to copy it. See
