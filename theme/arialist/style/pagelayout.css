@@ -75,29 +75,19 @@ body {
     width: 100%;
 }
 
-
 .has_dock.side-post-only .page-middle #region-main {
     margin-left: 200px;
 }
 
 /** No blocks whatsoever **/
-.content-only #page-content #region-main-box {
+.content-only #page-content #region-main-box,
+.content-only #page-content #region-main-box #region-post-box,
+.content-only #page-content #region-main-box #region-main-wrap #region-main {
     margin-left: 0px;
 }
 
-.content-only #page-content #region-post-box {
-    margin-left: 0px;
-}
-
-.content-only #page-content #region-main {
-    margin-left: 0px;
-}
-
-.content-only #page-content #region-pre {
-    width: 0px;
-}
-
-.content-only #page-content #region-post {
+.content-only #page-content #region-main-box #region-post-box #region-pre,
+.content-only #page-content #region-main-box #region-post-box #region-post {
     width: 0px;
 }
 

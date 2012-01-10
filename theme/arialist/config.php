@@ -54,8 +54,8 @@ $THEME->parents = array(
 
 
 $THEME->sheets = array(
+    'pagelayout',
 	'core',
-	'pagelayout',
 	'settings',
 );
 

@@ -7,7 +7,7 @@
 **
 *********************************************************/
 
-/* Global 
+/* Global
 ------------------------*/
 html {                /* Reset html page to 0 padding/margins */
     padding: 0;
@@ -22,7 +22,7 @@ body {                /* Define margins and background colour/image */
     width: 100%;
 }
 
-body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {   /* Set fonttype for site */ 
+body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {   /* Set fonttype for site */
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -58,9 +58,14 @@ a:active {
     display: none;
 }
 
-.loginpanel {
-    background: url([[pix:theme|loginpanel]]) top center no-repeat;
+.loginbox.twocolumns .loginpanel {
+    border-right: 1px solid #ddd;
+}
+
+.loginpanel, .signuppanel {
+    background: url([[pix:theme|loginpanel]]) center top no-repeat;
     height: 480px;
+    margin-top: -5px;
 }
 
 .loginbox .loginpanel .subcontent {
@@ -68,12 +73,12 @@ a:active {
     clear: right;
     width: 300px;
 }
-/* fix issues conflicting with the floating columns */                 
+/* fix issues conflicting with the floating columns */
 .clearer {
     clear:left;
 }
 
-/* Header 
+/* Header
 -----------------------*/
 
 #page-header {            /* Set height for header */
@@ -151,7 +156,7 @@ a:active {
     height: 60px;
 }
 
-#userdetails_loggedout h1{ /* positioning of user h1 tag*/ 
+#userdetails_loggedout h1{ /* positioning of user h1 tag*/
     padding-top:40px
 }
 
@@ -462,11 +467,11 @@ div.summary {
 /* Mini Calendar
 ------------------------*/
 
-.block .minicalendar {   /* setting background colour for mini cal*/ 
+.block .minicalendar {   /* setting background colour for mini cal*/
     background: #fff;
 }
 
-.block .minicalendar td.weekend {    /* setting weekend date colour */ 
+.block .minicalendar td.weekend {    /* setting weekend date colour */
     color:#7c3041;
 }
 
