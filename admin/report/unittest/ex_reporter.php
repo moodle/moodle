@@ -273,4 +273,9 @@ class ExHtmlReporter extends HtmlReporter {
     function get_string($identifier, $a = NULL) {
         return get_string($identifier, 'simpletest', $a);
     }
+
+    function _htmlEntities($message) {
+        // Override subclass message that breaks UTF8.
+        return s($message);
+    }
 }
