@@ -1044,10 +1044,9 @@ class potential_assignees_below_course extends role_assign_user_selector_base {
         $sql   = " FROM {user} u
                   WHERE u.id IN ($enrolsql) $wherecondition
                         AND u.id NOT IN (
-                           SELECT u.id
-                             FROM {role_assignments} r, {user} u
+                           SELECT r.userid
+                             FROM {role_assignments} r
                             WHERE r.contextid = :contextid
-                                  AND u.id = r.userid
                                   AND r.roleid = :roleid)";
         $order = ' ORDER BY lastname ASC, firstname ASC';
 
@@ -1096,10 +1095,9 @@ class potential_assignees_course_and_above extends role_assign_user_selector_bas
         $sql = " FROM {user}
                 WHERE $wherecondition
                       AND id NOT IN (
-                         SELECT u.id
-                           FROM {role_assignments} r, {user} u
+                         SELECT r.userid
+                           FROM {role_assignments} r
                           WHERE r.contextid = :contextid
-                                AND u.id = r.userid
                                 AND r.roleid = :roleid)";
         $order = ' ORDER BY lastname ASC, firstname ASC';
 
