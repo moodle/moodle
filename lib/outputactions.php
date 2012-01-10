@@ -20,8 +20,8 @@
  * Please see http://docs.moodle.org/en/Developement:How_Moodle_outputs_HTML
  * for an overview.
  *
- * @package core
- * @subpackage output
+ * @package core_output
+ * @category output
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,28 +34,26 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core
- * @subpackage output
+ * @package core_output
+ * @category output
  */
 class component_action {
 
     /**
-     * The DOM event that will trigger this action when caught
-     * @var string $event DOM event
+     * @var string $event The DOM event that will trigger this action when caught
      */
     public $event;
 
     /**
+     * @var string A function name to call when the button is clicked
      * The JS function you create must have two arguments:
      *      1. The event object
      *      2. An object/array of arguments ($jsfunctionargs)
-     * @var string $jsfunction A function name to call when the button is clicked
      */
     public $jsfunction = false;
 
     /**
-     * An array of arguments to pass to the JS function
-     * @var array $jsfunctionargs
+     * @var array An array of arguments to pass to the JS function
      */
     public $jsfunctionargs = array();
 
@@ -86,8 +84,8 @@ class component_action {
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core
- * @subpackage output
+ * @package core_output
+ * @category output
  */
 class confirm_action extends component_action {
     /**
@@ -113,20 +111,18 @@ class confirm_action extends component_action {
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core
- * @subpackage output
+ * @package core_output
+ * @category output
  */
 class popup_action extends component_action {
 
     /**
-     * The JS function to call for the popup
-     * @var string
+     * @var string The JS function to call for the popup
      */
     public $jsfunction = 'openpopup';
 
     /**
-     * An array of parameters that will be passed to the openpopup JS function
-     * @var array $params
+     * @var array An array of parameters that will be passed to the openpopup JS function
      */
     public $params = array(
             'height' =>  400,

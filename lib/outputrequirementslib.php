@@ -21,8 +21,8 @@
  *
  * @copyright 2009 Tim Hunt, 2010 Petr Skoda
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package core
- * @subpackage output
+ * @package core_output
+ * @category output
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -53,111 +53,96 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2009 Tim Hunt, 2010 Petr Skoda
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core
- * @subpackage output
+ * @package core_output
+ * @category output
  */
 class page_requirements_manager {
 
     /**
-     * List of string available from JS
-     * @var array
+     * @var array List of string available from JS
      */
     protected $stringsforjs = array();
 
     /**
-     * List of JS variables to be initialised
-     * @var array
+     * @var array List of JS variables to be initialised
      */
     protected $jsinitvariables = array('head'=>array(), 'footer'=>array());
 
     /**
-     * Included JS scripts
-     * @var array
+     * @var array Included JS scripts
      */
     protected $jsincludes = array('head'=>array(), 'footer'=>array());
 
     /**
-     * List of needed function calls
-     * @var array
+     * @var array List of needed function calls
      */
     protected $jscalls = array('normal'=>array(), 'ondomready'=>array());
 
     /**
-     * List of skip links, those are needed for accessibility reasons
-     * @var array
+     * @var array List of skip links, those are needed for accessibility reasons
      */
     protected $skiplinks = array();
 
     /**
-     * Javascript code used for initialisation of page, it should be relatively small
-     * @var array
+     * @var array Javascript code used for initialisation of page, it should
+     * be relatively small
      */
     protected $jsinitcode = array();
 
     /**
-     * Theme sheets, initialised only from core_renderer
-     * @var array of moodle_url
+     * @var array of moodle_url Theme sheets, initialised only from core_renderer
      */
     protected $cssthemeurls = array();
-    
+
     /**
-     * List of custom theme sheets, these are strongly discouraged!
+     * @var array of moodle_url List of custom theme sheets, these are strongly discouraged!
      * Useful mostly only for CSS submitted by teachers that is not part of the theme.
-     * @var array of moodle_url
      */
     protected $cssurls = array();
 
     /**
-     * List of requested event handlers
-     * @var array
+     * @var array List of requested event handlers
      */
     protected $eventhandlers = array();
 
     /**
-     * Extra modules
-     * @var array
+     * @var array Extra modules
      */
     protected $extramodules = array();
 
     /**
-     * Flag indicated head stuff already printed
-     * @var bool
+     * @var bool Flag indicated head stuff already printed
      */
     protected $headdone = false;
 
     /**
-     * Flag indicating top of body already printed
-     * @var bool
+     * @var bool Flag indicating top of body already printed
      */
     protected $topofbodydone = false;
 
     /**
-     * YUI PHPLoader instance responsible for YUI2 loading from PHP only
-     * @var YAHOO_util_Loader
+     * @var YAHOO_util_Loader YUI PHPLoader instance responsible for YUI2 loading
+     * from PHP only
      */
     protected $yui2loader;
 
     /**
-     * YUI PHPLoader instance responsible for YUI3 loading from PHP only
-     * @var stdClass
+     * @var stdClass YUI PHPLoader instance responsible for YUI3 loading from PHP only
      */
     protected $yui3loader;
 
     /**
-     * YUI loader information for YUI3 loading from javascript
-     * @var stdClass
+     * @var stdClass YUI loader information for YUI3 loading from javascript
      */
     protected $M_yui_loader;
 
     /**
-     * Some config vars exposed in JS, please no secret stuff there
-     * @var array
+     * @var array Some config vars exposed in JS, please no secret stuff there
      */
     protected $M_cfg;
 
     /**
-     * Stores debug backtraces from when JS modules were included in the page
-     * @var array
+     * @var array Stores debug backtraces from when JS modules were included in the page
      */
     protected $debug_moduleloadstacktraces = array();
 

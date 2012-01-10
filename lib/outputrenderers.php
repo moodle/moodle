@@ -29,8 +29,8 @@
  *     - plugin_renderer_base:  A renderer class that should be extended by all
  *                              plugin renderers.
  *
- * @package core
- * @subpackage output
+ * @package core_output
+ * @category output
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -47,25 +47,22 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core
- * @subpackage output
+ * @package core_output
+ * @category output
  */
 class renderer_base {
     /**
-     * The xhtml_container_stack to use.
-     * @var xhtml_container_stack
+     * @var xhtml_container_stack The xhtml_container_stack to use.
      */
     protected $opencontainers;
 
     /**
-     * The Moodle page the renderer has been created to assist with.
-     * @var moodle_page
+     * @var moodle_page The Moodle page the renderer has been created to assist with.
      */
     protected $page;
 
     /**
-     * The requested rendering target.
-     * @var string
+     * @var string The requested rendering target.
      */
     protected $target;
 
@@ -184,13 +181,13 @@ class renderer_base {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
  * @package    core
- * @subpackage output
+ * @category output
  */
 class plugin_renderer_base extends renderer_base {
 
     /**
-     * A reference to the current general renderer probably {@see core_renderer}
-     * @var renderer_base
+     * @var renderer_base A reference to the current general renderer
+     * probably {@see core_renderer}
      */
     protected $output;
 
@@ -247,45 +244,42 @@ class plugin_renderer_base extends renderer_base {
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core
- * @subpackage output
+ * @package core_output
+ * @category output
  */
 class core_renderer extends renderer_base {
     /**
      * Do NOT use, please use <?php echo $OUTPUT->main_content() ?>
      * in layout files instead.
-     * @var string used in {@link header()}.
      * @deprecated
+     * @var string used in {@link header()}.
      */
     const MAIN_CONTENT_TOKEN = '[MAIN CONTENT GOES HERE]';
 
     /**
-     * Used to pass information from {@link doctype()} to {@link standard_head_html()}.
-     * @var string
+     * @var string Used to pass information from {@link doctype()} to
+     * {@link standard_head_html()}.
      */
     protected $contenttype;
 
     /**
-     * Used by {@link redirect_message()} method to communicate with {@link header()}.
-     * @var string
+     * @var string Used by {@link redirect_message()} method to communicate
+     * with {@link header()}.
      */
     protected $metarefreshtag = '';
 
     /**
-     * Unique token for the closing HTML
-     * @var string
+     * @var string Unique token for the closing HTML
      */
     protected $unique_end_html_token;
 
     /**
-     * Unique token for performance information
-     * @var string
+     * @var string Unique token for performance information
      */
     protected $unique_performance_info_token;
 
     /**
-     * Unique token for the main content.
-     * @var string
+     * @var string Unique token for the main content.
      */
     protected $unique_main_content_token;
 
@@ -2721,8 +2715,8 @@ EOD;
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core
- * @subpackage output
+ * @package core_output
+ * @category output
  */
 class core_renderer_cli extends core_renderer {
 
@@ -2807,8 +2801,8 @@ class core_renderer_cli extends core_renderer {
  * @copyright 2010 Petr Skoda
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core
- * @subpackage output
+ * @package core_output
+ * @category output
  */
 class core_renderer_ajax extends core_renderer {
 

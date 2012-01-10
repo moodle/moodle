@@ -23,8 +23,8 @@
  *
  * @copyright 2009 Tim Hunt
  * @license  http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package core
- * @subpackage output
+ * @package core_output
+ * @category output
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -60,8 +60,8 @@ define('RENDERER_TARGET_HTMLEMAIL', 'htmlemail');
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core
- * @subpackage output
+ * @package core_output
+ * @category output
  */
 interface renderer_factory {
 
@@ -106,13 +106,12 @@ interface renderer_factory {
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core
- * @subpackage output
+ * @package core_output
+ * @category output
  */
 abstract class renderer_factory_base implements renderer_factory {
     /**
-     * The theme we belong to.
-     * @var theme_config
+     * @var theme_config The theme we belong to.
      */
     protected $theme;
 
@@ -211,8 +210,8 @@ abstract class renderer_factory_base implements renderer_factory {
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core
- * @subpackage output
+ * @package core_output
+ * @category output
  */
 class standard_renderer_factory extends renderer_factory_base {
 
@@ -256,14 +255,13 @@ class standard_renderer_factory extends renderer_factory_base {
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core
- * @subpackage output
+ * @package core_output
+ * @category output
  */
 class theme_overridden_renderer_factory extends renderer_factory_base {
 
     /**
-     * An array of renderer prefixes
-     * @var type
+     * @var array An array of renderer prefixes
      */
     protected $prefixes = array();
 
