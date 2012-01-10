@@ -228,8 +228,10 @@ echo $OUTPUT->header();
 // Start the question form.
 echo '<form method="post" action="' . $actionurl .
         '" enctype="multipart/form-data" id="responseform">', "\n";
+echo '<div>';
 echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />', "\n";
 echo '<input type="hidden" name="slots" value="' . $slot . '" />', "\n";
+echo '</div>';
 
 // Output the question.
 echo $quba->render_question($slot, $options, $displaynumber);
