@@ -1351,7 +1351,7 @@ function calendar_get_default_courses() {
     $courses = array();
     if (!empty($CFG->calendar_adminseesall) && has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM))) {
         list ($select, $join) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-        $sql = "SELECT c.* $select
+        $sql = "SELECT DISTINCT c.* $select
                   FROM {course} c
                   JOIN {event} e ON e.courseid = c.id
                   $join";
