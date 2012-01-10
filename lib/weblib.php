@@ -1199,11 +1199,9 @@ function reset_text_filters_cache() {
  * need filter processing e.g. activity titles, post subjects,
  * glossary concepts.
  *
- * @global object
- * @global object
- * @global object
  * @staticvar bool $strcache
- * @param string $string The string to be filtered.
+ * @param string $string The string to be filtered. Should be plain text, expect
+ * possibly for multilang tags.
  * @param boolean $striplinks To strip any link in the result text.
                               Moodle 1.8 default changed from false to true! MDL-8713
  * @param array $options options array/object or courseid
@@ -1261,7 +1259,7 @@ function format_string($string, $striplinks = true, $options = NULL) {
 
     // If the site requires it, strip ALL tags from this string
     if (!empty($CFG->formatstringstriptags)) {
-        $string = strip_tags($string);
+        $string = str_replace(array('<', '>'), array('&lt;', '&gt;'), strip_tags($string));
 
     } else {
         // Otherwise strip just links if that is required (default)
