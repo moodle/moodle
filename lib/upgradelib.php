@@ -463,6 +463,10 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
             }
         }
 
+        if (empty($module->cron)) {
+            $module->cron = 0;
+        }
+
         // all modules must have en lang pack
         if (!is_readable("$fullmod/lang/en/$mod.php")) {
             throw new plugin_defective_exception($component, 'Missing mandatory en language pack.');
