@@ -92,7 +92,7 @@ function SCORMapi1_3() {
     var CMIDecimal = '^-?([0-9]{1,5})(\\.[0-9]{1,18})?$';
     var CMIIdentifier = '^\\S{1,250}[a-zA-Z0-9]$';
     var CMIShortIdentifier = '^[\\w\.]{1,250}$';
-    var CMILongIdentifier = '^(?:(?!urn:)\\S{1,4000}|urn:[a-z0-9][-a-z-0-9]{1,31}:\\S{1,4000})$';
+    var CMILongIdentifier = '^(?:(?!urn:)\\S{1,4000}|urn:[A-Za-z0-9-]{1,31}:\\S{1,4000})$';
     var CMIFeedback = '^.*$'; // This must be redefined
     var CMIIndex = '[._](\\d+).';
     var CMIIndexStore = '.N(\\d+).';
