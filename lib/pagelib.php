@@ -361,7 +361,7 @@ class moodle_page {
 
     /**
      * Please do not call this method directly, use the ->headerprinted syntax. {@see moodle_page::__get()}.
-     * @return boolean has the header already been printed?
+     * @return bool has the header already been printed?
      */
     protected function magic_get_headerprinted() {
         return $this->_state >= self::STATE_IN_BODY;
@@ -606,7 +606,7 @@ class moodle_page {
 
     /**
      * Please do not call this method directly, use the ->cacheable syntax. {@see moodle_page::__get()}.
-     * @return boolean can this page be cached by the user's browser.
+     * @return bool can this page be cached by the user's browser.
      */
     protected function magic_get_cacheable() {
         return $this->_cacheable;
@@ -733,7 +733,12 @@ class moodle_page {
     }
 
     /**
-     * PHP overloading magic which prevents the $PAGE->context = $context; syntax
+     * PHP overloading magic to catch obvious coding errors.
+     *
+     * This method has been created to catch obvious coding errors where the
+     * developer has tried to set a page property using $PAGE->key = $value.
+     * In the moodle_page class all properties must be set using the appropriate
+     * $PAGE->set_something($value) method.
      *
      * @param string $name property name
      * @param mixed $name Value
@@ -777,7 +782,7 @@ class moodle_page {
      * Should the current user see this page in editing mode.
      * That is, are they allowed to edit this page, and are they currently in
      * editing mode.
-     * @return boolean
+     * @return bool
      */
     public function user_is_editing() {
         global $USER;
@@ -786,7 +791,7 @@ class moodle_page {
 
     /**
      * Does the user have permission to edit blocks on this page.
-     * @return boolean
+     * @return bool
      */
     public function user_can_edit_blocks() {
         return has_capability($this->_blockseditingcap, $this->_context);
@@ -794,7 +799,7 @@ class moodle_page {
 
     /**
      * Does the user have permission to see this page in editing mode.
-     * @return boolean
+     * @return bool
      */
     public function user_allowed_editing() {
         if ($this->_legacypageobject) {
@@ -957,7 +962,7 @@ class moodle_page {
 
     /**
      * Sets the activity record. This could be a row from the main table for a
-     * module. For instance if the current cm is a forum this should be a row
+     * module. For instance if the current module (cm) is a forum this should be a row
      * from the forum table.
      *
      * @param stdClass $module A row from the main database table for the module that this
@@ -999,6 +1004,11 @@ class moodle_page {
      * This properly defaults to 'base', so you only need to call this function if
      * you want something different. The exact range of supported layouts is specified
      * in the standard theme.
+     *
+     * For an idea of the common page layouts see {@link http://docs.moodle.org/dev/Themes_2.0#The_different_layouts_as_of_August_17th.2C_2010}
+     * But please keep in mind that it may be (and normally is) out of date.
+     * The only place to find an accurate up-to-date list of the page layouts
+     * available for your version of Moodle is {@see theme/base/config.php}
      *
      * @param string $pagelayout the page layout this is. For example 'popup', 'home'.
      */
@@ -1247,7 +1257,7 @@ class moodle_page {
     /**
      * Sets whether the browser should cache this page or not.
      *
-     * @return boolean $cacheable can this page be cached by the user's browser.
+     * @return bool $cacheable can this page be cached by the user's browser.
      */
     public function set_cacheable($cacheable) {
         $this->_cacheable = $cacheable;
@@ -1655,8 +1665,8 @@ class moodle_page {
     }
 
     /**
-     * This function ensure that the category that current course is within has
-     * been loaded, and if it hasn't loads it now.
+     * This function ensures that the category of the current course has been
+     * loaded, and if not, the function loads it now.
      *
      * @return void
      * @throws coding_exception
@@ -1696,8 +1706,8 @@ class moodle_page {
     }
 
     /**
-     * Ensures that the category the current course is withing as well as all of
-     * its parent categories have been loaded.
+     * Ensures that the category the current course is within, as well as all of
+     * its parent categories, have been loaded.
      *
      * @return void
      */
@@ -1891,6 +1901,7 @@ class moodle_page {
      * Returns the legacy page object.
      *
      * @deprecated since Moodle 2.0 - just a backwards compatibility hook.
+     * @return moodle_page
      */
     function set_legacy_page_object($pageobject) {
         return $this->_legacypageobject = $pageobject;
@@ -1971,7 +1982,7 @@ class moodle_page {
      * Are popup notifications allowed on this page?
      * Popup notifications may be disallowed in situations such as while upgrading or completing a quiz
      *
-     * @return boolean true if popup notifications may be displayed
+     * @return bool true if popup notifications may be displayed
      */
     public function get_popup_notification_allowed() {
         return $this->_popup_notification_allowed;
@@ -1980,7 +1991,7 @@ class moodle_page {
     /**
      * Allow or disallow popup notifications on this page. Popups are allowed by default.
      *
-     * @param boolean true if notifications are allowed. False if not allowed. They are allowed by default.
+     * @param bool true if notifications are allowed. False if not allowed. They are allowed by default.
      */
     public function set_popup_notification_allowed($allowed) {
         $this->_popup_notification_allowed = $allowed;
