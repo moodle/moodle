@@ -90,16 +90,8 @@ function resource_add_instance($data, $mform) {
     require_once("$CFG->libdir/resourcelib.php");
     $cmid = $data->coursemodule;
     $data->timemodified = time();
-    $displayoptions = array();
-    if ($data->display == RESOURCELIB_DISPLAY_POPUP) {
-        $displayoptions['popupwidth']  = $data->popupwidth;
-        $displayoptions['popupheight'] = $data->popupheight;
-    }
-    if (in_array($data->display, array(RESOURCELIB_DISPLAY_AUTO, RESOURCELIB_DISPLAY_EMBED, RESOURCELIB_DISPLAY_FRAME))) {
-        $displayoptions['printheading'] = (int)!empty($data->printheading);
-        $displayoptions['printintro']   = (int)!empty($data->printintro);
-    }
-    $data->displayoptions = serialize($displayoptions);
+
+    resource_set_display_options($data);
 
     $data->id = $DB->insert_record('resource', $data);
 
@@ -122,6 +114,21 @@ function resource_update_instance($data, $mform) {
     $data->id           = $data->instance;
     $data->revision++;
 
+    resource_set_display_options($data);
+
+    $DB->update_record('resource', $data);
+    resource_set_mainfile($data);
+    return true;
+}
+
+/**
+ * Updates display options based on form input.
+ *
+ * Shared code used by resource_add_instance and resource_update_instance.
+ *
+ * @param object $data Data object
+ */
+function resource_set_display_options($data) {
     $displayoptions = array();
     if ($data->display == RESOURCELIB_DISPLAY_POPUP) {
         $displayoptions['popupwidth']  = $data->popupwidth;
@@ -131,11 +138,13 @@ function resource_update_instance($data, $mform) {
         $displayoptions['printheading'] = (int)!empty($data->printheading);
         $displayoptions['printintro']   = (int)!empty($data->printintro);
     }
+    if (!empty($data->showsize)) {
+        $displayoptions['showsize'] = 1;
+    }
+    if (!empty($data->showtype)) {
+        $displayoptions['showtype'] = 1;
+    }
     $data->displayoptions = serialize($displayoptions);
-
-    $DB->update_record('resource', $data);
-    resource_set_mainfile($data);
-    return true;
 }
 
 /**
@@ -302,9 +311,25 @@ function resource_get_coursemodule_info($coursemodule) {
         $info->onclick = "window.open('$fullurl'); return false;";
     }
 
+    // If any optional extra details are turned on, store in custom data
+    $info->customdata = resource_get_optional_details($resource, $coursemodule);
+
     return $info;
 }
 
+/**
+ * Called when viewing course page. Shows extra details after the link if
+ * enabled.
+ *
+ * @param cm_info $cm Course module information
+ */
+function resource_cm_info_view(cm_info $cm) {
+    $details = $cm->get_custom_data();
+    if ($details) {
+        $cm->set_after_link(' ' . html_writer::tag('span', $details,
+                array('class' => 'resourcelinkdetails')));
+    }
+}
 
 /**
  * Lists all browsable file areas

@@ -92,6 +92,15 @@ class mod_resource_mod_form extends moodleform_mod {
             $mform->addHelpButton('display', 'displayselect', 'resource');
         }
 
+        $mform->addElement('checkbox', 'showsize', get_string('showsize', 'resource'));
+        $mform->setDefault('showsize', $config->showsize);
+        $mform->setAdvanced('showsize', $config->showsize_adv);
+        $mform->addHelpButton('showsize', 'showsize', 'resource');
+        $mform->addElement('checkbox', 'showtype', get_string('showtype', 'resource'));
+        $mform->setDefault('showtype', $config->showtype);
+        $mform->setAdvanced('showtype', $config->showtype_adv);
+        $mform->addHelpButton('showtype', 'showtype', 'resource');
+
         if (array_key_exists(RESOURCELIB_DISPLAY_POPUP, $options)) {
             $mform->addElement('text', 'popupwidth', get_string('popupwidth', 'resource'), array('size'=>3));
             if (count($options) > 1) {
@@ -174,6 +183,18 @@ class mod_resource_mod_form extends moodleform_mod {
             }
             if (!empty($displayoptions['popupheight'])) {
                 $default_values['popupheight'] = $displayoptions['popupheight'];
+            }
+            if (!empty($displayoptions['showsize'])) {
+                $default_values['showsize'] = $displayoptions['showsize'];
+            } else {
+                // Must set explicitly to 0 here otherwise it will use system
+                // default which may be 1.
+                $default_values['showsize'] = 0;
+            }
+            if (!empty($displayoptions['showtype'])) {
+                $default_values['showtype'] = $displayoptions['showtype'];
+            } else {
+                $default_values['showtype'] = 0;
             }
         }
     }

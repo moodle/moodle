@@ -82,6 +82,19 @@ $string['printheadingexplain'] = 'Display resource name above content? Some disp
 $string['printintro'] = 'Display resource description';
 $string['printintroexplain'] = 'Display resource description bellow content? Some display types may not display description even if enabled.';
 $string['resourcecontent'] = 'Files and subfolders';
+$string['resourcedetails_sizetype'] = '{$a->size} {$a->type}';
 $string['resource:exportresource'] = 'Export resource';
 $string['resource:view'] = 'View resource';
 $string['selectmainfile'] = 'Please select the main file by clicking the icon next to file name.';
+$string['showsize'] = 'Show size';
+$string['showsize_help'] = 'Displays the file size, such as \'3.1 MB\', beside links to the file.
+
+If there are multiple files in this resource, the total size of all files is displayed.';
+$string['showsize_desc'] = 'Display file size on course page?';
+$string['showtype'] = 'Show type';
+$string['showtype_desc'] = 'Display file type (e.g. \'Word document\') on course page?';
+$string['showtype_help'] = 'Displays the type of the file, such as \'Word document\', beside links to the file.
+
+If there are multiple files in this resource, the start file type is displayed.
+
+If the file type is not known to the system, it will not display.';
