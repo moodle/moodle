@@ -39,7 +39,7 @@ require_once($CFG->libdir.'/outputrequirementslib.php');
  *
  * This method deletes the phsyical directory that is used to cache the theme
  * files used for serving.
- * Because it deletes the main theme cache directoy all theme's are reset by
+ * Because it deletes the main theme cache directoy all themes are reset by
  * this function.
  */
 function theme_reset_all_caches() {
@@ -85,10 +85,10 @@ function theme_get_revision() {
  * This class represents the configuration variables of a Moodle theme.
  *
  * All the variables with access: public below (with a few exceptions that are marked)
- * are the properties you can set in your theme's config.php file.
+ * are the properties you can set in your themes config.php file.
  *
  * There are also some methods and protected variables that are part of the inner
- * workings of Moodle's themes system. If you are just editing a theme's config.php
+ * workings of Moodle's themes system. If you are just editing a themes config.php
  * file, you can just ignore those, and the following information for developers.
  *
  * Normally, to create an instance of this class, you should use the
@@ -112,9 +112,9 @@ class theme_config {
     /**
      * @var array You can base your theme on other themes by linking to the other theme as
      * parents. This lets you use the CSS and layouts from the other themes
-     * (see {@link $layouts}).
+     * (see {@see theme_config::$layouts}).
      * That makes it easy to create a new theme that is similar to another one
-     * but with a few changes. In this theme's CSS you only need to override
+     * but with a few changes. In this themes CSS you only need to override
      * those rules you want to change.
      */
     public $parents;
@@ -814,7 +814,7 @@ class theme_config {
     }
 
     /**
-     * Resolves an exclude setting to the theme's setting is applicable or the
+     * Resolves an exclude setting to the themes setting is applicable or the
      * setting of its closest parent.
      *
      * @param string $variable The name of the setting the exclude setting to resolve
@@ -859,7 +859,7 @@ class theme_config {
      * This method post processes all of the CSS before it is served for this theme.
      * This is done so that things such as image URL's can be swapped in and to
      * run any specific CSS post process method the theme has requested.
-     * This allows theme's to use CSS settings.
+     * This allows themes to use CSS settings.
      *
      * @param string $css The CSS to process.
      * @return string The processed CSS.

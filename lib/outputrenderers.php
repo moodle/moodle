@@ -69,7 +69,7 @@ class renderer_base {
     /**
      * Constructor
      *
-     * The constructor takes two arguments. The first the page that the renderer
+     * The constructor takes two arguments. The first is the page that the renderer
      * has been created to assist with, and the second is the target.
      * The target is an additional identifier that can be used to load different
      * renderers for different options.
@@ -88,7 +88,7 @@ class renderer_base {
      *
      * The provided widget needs to be an object that extends the renderable
      * interface.
-     * If will then be renderer by a method based upon the classname for the widget.
+     * If will then be rendered by a method based upon the classname for the widget.
      * For instance a widget of class `crazywidget` will be rendered by a protected
      * render_crazywidget method of this renderer.
      *
@@ -186,8 +186,9 @@ class renderer_base {
 class plugin_renderer_base extends renderer_base {
 
     /**
-     * @var renderer_base A reference to the current general renderer
-     * probably {@see core_renderer}
+     * @var renderer_base|core_renderer A reference to the current renderer.
+     * The renderer provided here will be determined by the page but will in 90%
+     * of cases by the {@see core_renderer}
      */
     protected $output;
 
@@ -252,19 +253,19 @@ class core_renderer extends renderer_base {
      * Do NOT use, please use <?php echo $OUTPUT->main_content() ?>
      * in layout files instead.
      * @deprecated
-     * @var string used in {@link header()}.
+     * @var string used in {@see core_renderer::header()}.
      */
     const MAIN_CONTENT_TOKEN = '[MAIN CONTENT GOES HERE]';
 
     /**
-     * @var string Used to pass information from {@link doctype()} to
-     * {@link standard_head_html()}.
+     * @var string Used to pass information from {@see core_renderer::doctype()} to
+     * {@see core_renderer::standard_head_html()}.
      */
     protected $contenttype;
 
     /**
-     * @var string Used by {@link redirect_message()} method to communicate
-     * with {@link header()}.
+     * @var string Used by {@see core_renderer::redirect_message()} method to communicate
+     * with {@see core_renderer::header()}.
      */
     protected $metarefreshtag = '';
 
@@ -359,7 +360,7 @@ class core_renderer extends renderer_base {
             $output .= '<meta http-equiv="pragma" content="no-cache" />' . "\n";
             $output .= '<meta http-equiv="expires" content="0" />' . "\n";
         }
-        // This is only set by the {@link redirect()} method
+        // This is only set by the {@see redirect()} method
         $output .= $this->metarefreshtag;
 
         // Check if a periodic refresh delay has been set and make sure we arn't
@@ -443,9 +444,9 @@ class core_renderer extends renderer_base {
     public function standard_footer_html() {
         global $CFG, $SCRIPT;
 
-        // This function is normally called from a layout.php file in {@link header()}
+        // This function is normally called from a layout.php file in {@see core_renderer::header()}
         // but some of the content won't be known until later, so we return a placeholder
-        // for now. This will be replaced with the real content in {@link footer()}.
+        // for now. This will be replaced with the real content in {@see core_renderer::footer()}.
         $output = $this->unique_performance_info_token;
         if ($this->page->devicetypeinuse == 'legacy') {
             // The legacy theme is in use print the notification
@@ -499,9 +500,9 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment.
      */
     public function standard_end_of_body_html() {
-        // This function is normally called from a layout.php file in {@link header()}
+        // This function is normally called from a layout.php file in {@see core_renderer::header()}
         // but some of the content won't be known until later, so we return a placeholder
-        // for now. This will be replaced with the real content in {@link footer()}.
+        // for now. This will be replaced with the real content in {@see core_renderer::footer()}.
         return $this->unique_end_html_token;
     }
 
@@ -686,7 +687,7 @@ class core_renderer extends renderer_base {
      * and the start of the <body>.
      *
      * To control what is printed, you should set properties on $PAGE. If you
-     * are familiar with the old {@link print_header()} function from Moodle 1.9
+     * are familiar with the old {@see print_header()} function from Moodle 1.9
      * you will find that there are properties on $PAGE that correspond to most
      * of the old parameters to could be passed to print_header.
      *
@@ -848,7 +849,7 @@ class core_renderer extends renderer_base {
     /**
      * Output the row of editing icons for a block, as defined by the controls array.
      *
-     * @param array $controls an array like {@link block_contents::$controls}.
+     * @param array $controls an array like {@see block_contents::$controls}.
      * @return string HTML fragment.
      */
     public function block_controls($controls) {
@@ -868,7 +869,7 @@ class core_renderer extends renderer_base {
      * Prints a nice side block with an optional header.
      *
      * The content is described
-     * by a {@link block_contents} object.
+     * by a {@see core_renderer::block_contents} object.
      *
      * <div id="inst{$instanceid}" class="block_{$blockname} block">
      *      <div class="header"></div>
@@ -1695,7 +1696,7 @@ class core_renderer extends renderer_base {
     /**
      * Implementation of user image rendering.
      *
-     * @param help_icon $helpicon
+     * @param help_icon $helpicon A help icon instance
      * @return string HTML fragment
      */
     protected function render_old_help_icon(old_help_icon $helpicon) {
@@ -1758,7 +1759,7 @@ class core_renderer extends renderer_base {
     /**
      * Implementation of user image rendering.
      *
-     * @param help_icon $helpicon
+     * @param help_icon $helpicon A help icon instance
      * @return string HTML fragment
      */
     protected function render_help_icon(help_icon $helpicon) {
@@ -1826,8 +1827,9 @@ class core_renderer extends renderer_base {
     /**
      * Creates and returns a spacer image with optional line break.
      *
-     * @param array $attributes
-     * @param bool $br
+     * @param array $attributes Any HTML attributes to add to the spaced.
+     * @param bool $br Include a BR after the spacer.... DON'T USE THIS. Don't be
+     *     laxy do it with CSS which is a much better solution.
      * @return string HTML fragment
      */
     public function spacer(array $attributes = null, $br = false) {
@@ -2131,7 +2133,7 @@ EOD;
     /**
      * Do not call this function directly.
      *
-     * To terminate the current script with a fatal error, call the {@link print_error}
+     * To terminate the current script with a fatal error, call the {@see print_error}
      * function, or throw an exception. Doing either of those things will then call this
      * function to display the error, before terminating the execution.
      *
@@ -2339,7 +2341,7 @@ EOD;
     }
 
     /**
-     * Outputs the opening section of a box.\
+     * Outputs the opening section of a box.
      *
      * @param string $classes A space-separated list of CSS classes
      * @param string $id An optional ID
@@ -2850,7 +2852,7 @@ class core_renderer_ajax extends core_renderer {
 
     /**
      * Used to display a redirection message.
-     * For AJAX redirections should not occur and as such redirection messages
+     * AJAX redirections should not occur and as such redirection messages
      * are discarded.
      */
     public function redirect_message($encodedurl, $message, $delay, $debugdisableredirect) {}

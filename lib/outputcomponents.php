@@ -31,6 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Interface marking other classes as suitable for renderer_base::render()
+ *
  * @copyright 2010 Petr Skoda (skodak) info@skodak.org
  * @package core_output
  * @category output
@@ -158,13 +159,13 @@ class user_picture implements renderable {
     public $size = 35;
 
     /**
-     * @var boolean Add non-blank alt-text to the image.
+     * @var bool Add non-blank alt-text to the image.
      * Default true, set to false when image alt just duplicates text in screenreaders.
      */
     public $alttext = true;
 
     /**
-     * @var boolean Whether or not to open the link in a popup window.
+     * @var bool Whether or not to open the link in a popup window.
      */
     public $popup = false;
 
@@ -594,7 +595,7 @@ class single_button implements renderable {
     var $class = 'singlebutton';
 
     /**
-     * @var boolean True if button disabled, false if normal
+     * @var bool True if button disabled, false if normal
      */
     var $disabled = false;
 
@@ -706,7 +707,7 @@ class single_select implements renderable {
     var $class = 'singleselect';
 
     /**
-     * @var boolean True if button disabled, false if normal
+     * @var bool True if button disabled, false if normal
      */
     var $disabled = false;
 
@@ -838,7 +839,7 @@ class url_select implements renderable {
     var $class = 'urlselect';
 
     /**
-     * @var boolean True if button disabled, false if normal
+     * @var bool True if button disabled, false if normal
      */
     var $disabled = false;
 
@@ -1094,8 +1095,8 @@ class html_writer {
      *
      * @staticvar int $counter
      * @staticvar type $uniq
-     * @param type $base
-     * @return type
+     * @param string $base A string fragment that will be included in the random ID.
+     * @return string A unique ID
      */
     public static function random_id($base='random') {
         static $counter = 0;
@@ -1112,9 +1113,9 @@ class html_writer {
     /**
      * Generates a simple html link
      *
-     * @param string|moodle_url $url
-     * @param string $text link txt
-     * @param array $attributes extra html attributes
+     * @param string|moodle_url $url The URL
+     * @param string $text The text
+     * @param array $attributes HTML attributes
      * @return string HTML fragment
      */
     public static function link($url, $text, array $attributes = null) {
@@ -1126,11 +1127,11 @@ class html_writer {
     /**
      * Generates a simple checkbox with optional label
      *
-     * @param string $name
-     * @param string $value
-     * @param bool $checked
-     * @param string $label
-     * @param array $attributes
+     * @param string $name The name of the checkbox
+     * @param string $value The value of the checkbox
+     * @param bool $checked Whether the checkbox is checked
+     * @param string $label The label for the checkbox
+     * @param array $attributes Any attributes to apply to the checkbox
      * @return string html fragment
      */
     public static function checkbox($name, $value, $checked = true, $label = '', array $attributes = null) {
@@ -1719,11 +1720,11 @@ class js_writer {
     }
 
     /**
-     * Special function which adds Y as first argument of fucntion call.
+     * Special function which adds Y as first argument of function call.
      *
-     * @param string $function
-     * @param array $extraarguments
-     * @return string
+     * @param string $function The function to call
+     * @param array $extraarguments Any arguments to pass to it
+     * @return string Some JS code
      */
     public static function function_call_with_Y($function, array $extraarguments = null) {
         if ($extraarguments) {
@@ -1738,12 +1739,12 @@ class js_writer {
     /**
      * Returns JavaScript code to initialise a new object
      *
-     * @param string $var If it is null then no var is assigned the new object
-     * @param string $class
-     * @param array $arguments
-     * @param array $requirements
-     * @param int $delay
-     * @return string
+     * @param string $var If it is null then no var is assigned the new object.
+     * @param string $class The class to initialise an object for.
+     * @param array $arguments An array of args to pass to the init method.
+     * @param array $requirements Any modules required for this class.
+     * @param int $delay The delay before initialisation. 0 = no delay.
+     * @return string Some JS code
      */
     public static function object_init($var, $class, array $arguments = null, array $requirements = null, $delay=0) {
         if (is_array($arguments)) {
@@ -2069,7 +2070,7 @@ class html_table_cell {
     public $scope = null;
 
     /**
-     * @var boolean Whether or not this cell is a header cell.
+     * @var bool Whether or not this cell is a header cell.
      */
     public $header = null;
 
@@ -2287,7 +2288,7 @@ class block_contents {
     protected static $idcounter = 1;
 
     /**
-     * @var integer All the blocks (or things that look like blocks) printed on
+     * @var int All the blocks (or things that look like blocks) printed on
      * a page are given a unique number that can be used to construct id="" attributes.
      * This is set automatically be the {@link prepare()} method.
      * Do not try to set it manually.
@@ -2295,13 +2296,13 @@ class block_contents {
     public $skipid;
 
     /**
-     * @var integer If this is the contents of a real block, this should be set
+     * @var int If this is the contents of a real block, this should be set
      * to the block_instance.id. Otherwise this should be set to 0.
      */
     public $blockinstanceid = 0;
 
     /**
-     * @var integer If this is a real block instance, and there is a corresponding
+     * @var int If this is a real block instance, and there is a corresponding
      * block_position.id for the block on this page, this should be set to that id.
      * Otherwise it should be 0.
      */
@@ -2338,7 +2339,7 @@ class block_contents {
     public $annotation = '';
 
     /**
-     * @var integer One of the constants NOT_HIDEABLE, VISIBLE, HIDDEN. Whether
+     * @var int One of the constants NOT_HIDEABLE, VISIBLE, HIDDEN. Whether
      * the user can toggle whether this block is visible.
      */
     public $collapsible = self::NOT_HIDEABLE;

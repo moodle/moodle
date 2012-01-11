@@ -1241,7 +1241,7 @@ class page_requirements_manager {
     /**
      * Have we already output the code in the <head> tag?
      *
-     * @return boolean
+     * @return bool
      */
     public function is_head_done() {
         return $this->headdone;
@@ -1250,7 +1250,7 @@ class page_requirements_manager {
     /**
      * Have we already output the code at the start of the <body> tag?
      *
-     * @return boolean
+     * @return bool
      */
     public function is_top_of_body_done() {
         return $this->topofbodydone;
