@@ -21,16 +21,22 @@
 
 /**
  * Web service documentation renderer.
- * @package   rss
- * @copyright 2010 Moodle Pty Ltd (http://moodle.com)
- * @author    Andrew Davis
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_rss
+ * @category   rss
+ * @copyright  2010 Andrew Davis
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Web service documentation renderer extending the plugin_renderer_base class.
+ * @package    core_rss
+ * @category   rss
+ * @copyright  2010 Andrew Davis
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class core_rss_renderer extends plugin_renderer_base {
     /**
-     *  Returns the html for the token reset confirmation box
-     * @param object $token to reset
+     * Returns the html for the token reset confirmation box
      * @return string html
      */
     public function user_reset_rss_token_confirmation() {
@@ -45,9 +51,8 @@ class core_rss_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Display user tokens with buttons to reset them
-     * @param object $tokens
-     * @param int $userid
+     * Display a user token with buttons to reset it
+     * @param string $token The token to be displayed
      * @return string html code
      */
     public function user_rss_token_box($token) {
