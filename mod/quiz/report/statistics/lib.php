@@ -51,12 +51,12 @@ function quiz_statistics_questiontext_preview_pluginfile($context, $questionid, 
 /**
  * Quiz statistics report cron code. Deletes cached data more than a certain age.
  */
-function quiz_report_statistics_cron() {
+function quiz_statistics_cron() {
     global $DB;
 
     $expiretime = time() - 5*HOURSECS;
-    $todelete = $DB->get_records_select_menu('quiz_statistics', 'timemodified < ?',
-    array($expiretime), '', 'id, 1');
+    $todelete = $DB->get_records_select_menu('quiz_statistics',
+            'timemodified < ?', array($expiretime), '', 'id, 1');
 
     if (!$todelete) {
         return true;
@@ -64,20 +64,14 @@ function quiz_report_statistics_cron() {
 
     list($todeletesql, $todeleteparams) = $DB->get_in_or_equal(array_keys($todelete));
 
-    if (!$DB->delete_records_select('quiz_question_statistics',
-            'quizstatisticsid ' . $todeletesql, $todeleteparams)) {
-    mtrace('Error deleting out of date quiz_question_statistics records.');
-    }
+    $DB->delete_records_select('quiz_question_statistics',
+            'quizstatisticsid ' . $todeletesql, $todeleteparams);
 
-    if (!$DB->delete_records_select('quiz_question_response_stats',
-            'quizstatisticsid ' . $todeletesql, $todeleteparams)) {
-    mtrace('Error deleting out of date quiz_question_response_stats records.');
-    }
+    $DB->delete_records_select('quiz_question_response_stats',
+            'quizstatisticsid ' . $todeletesql, $todeleteparams);
 
-    if (!$DB->delete_records_select('quiz_statistics',
-            'id ' . $todeletesql, $todeleteparams)) {
-    mtrace('Error deleting out of date quiz_statistics records.');
-    }
+    $DB->delete_records_select('quiz_statistics',
+            'id ' . $todeletesql, $todeleteparams);
 
     return true;
 }
