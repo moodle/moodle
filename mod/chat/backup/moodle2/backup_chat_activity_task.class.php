@@ -16,56 +16,41 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This is the "graphical" structure of the chat mod:
+ * Defines backup_chat_activity_task class
  *
- *                        chat
- *                     (CL,pk->id)
- *                         |
- *                         |
- *                         |
- *                    chat_messages
- *                (UL,pk->id, fk->chatid)
- *
- *  Meaning: pk->primary key field of the table
- *           fk->foreign key to link with parent
- *           nt->nested field (recursive data)
- *           CL->course level info
- *           UL->user level info
- *
- * @package moodlecore
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Dongsheng Cai <dongsheng@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     mod_chat
+ * @category    backup
+ * @copyright   2010 onwards Dongsheng Cai <dongsheng@moodle.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once($CFG->dirroot . '/mod/chat/backup/moodle2/backup_chat_stepslib.php'); // Because it exists (must)
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/mod/chat/backup/moodle2/backup_chat_stepslib.php');
 
 /**
- * chat backup task that provides all the settings and steps to perform one
- * complete backup of the activity
+ * Provides the steps to perform one complete backup of the Chat instance
  */
 class backup_chat_activity_task extends backup_activity_task {
 
     /**
-     * Define (add) particular settings this activity can have
+     * No specific settings for this activity
      */
     protected function define_my_settings() {
-        // No particular settings for this activity
     }
 
     /**
-     * Define (add) particular steps this activity can have
+     * Defines a backup step to store the instance data in the chat.xml file
      */
     protected function define_my_steps() {
-        // chat only has one structure step
         $this->add_step(new backup_chat_activity_structure_step('chat_structure', 'chat.xml'));
     }
 
     /**
-     * Code the transformations to perform in the chat activity in
-     * order to get transportable (encoded) links
+     * Encodes URLs to the index.php and view.php scripts
      *
-     * @param string $content
-     * @return string
+     * @param string $content some HTML text that eventually contains URLs to the activity instance scripts
+     * @return string the content with the URLs encoded
      */
     static public function encode_content_links($content) {
         global $CFG;
