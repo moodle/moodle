@@ -1,69 +1,103 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/////////////////////////////////////////////////////////////////////////////
-//                                                                         //
-// NOTICE OF COPYRIGHT                                                     //
-//                                                                         //
-// Moodle - Calendar extension                                             //
-//                                                                         //
-// Copyright (C) 2003-2004  Greek School Network            www.sch.gr     //
-//                                                                         //
-// Designed by:                                                            //
-//     Avgoustos Tsinakos (tsinakos@teikav.edu.gr)                         //
-//     Jon Papaioannou (pj@moodle.org)                                     //
-//                                                                         //
-// Programming and development:                                            //
-//     Jon Papaioannou (pj@moodle.org)                                     //
-//                                                                         //
-// For bugs, suggestions, etc contact:                                     //
-//     Jon Papaioannou (pj@moodle.org)                                     //
-//                                                                         //
-// The current module was developed at the University of Macedonia         //
-// (www.uom.gr) under the funding of the Greek School Network (www.sch.gr) //
-// The aim of this project is to provide additional and improved           //
-// functionality to the Asynchronous Distance Education service that the   //
-// Greek School Network deploys.                                           //
-//                                                                         //
-// This program is free software; you can redistribute it and/or modify    //
-// it under the terms of the GNU General Public License as published by    //
-// the Free Software Foundation; either version 2 of the License, or       //
-// (at your option) any later version.                                     //
-//                                                                         //
-// This program is distributed in the hope that it will be useful,         //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of          //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           //
-// GNU General Public License for more details:                            //
-//                                                                         //
-//          http://www.gnu.org/copyleft/gpl.html                           //
-//                                                                         //
-/////////////////////////////////////////////////////////////////////////////
+/**
+ * Calendar extension
+ *
+ * @package    core_calendar
+ * @copyright  2004 Greek School Network (http://www.sch.gr), Jon Papaioannou,
+ *             Avgoustos Tsinakos
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-// These are read by the administration component to provide default values
+/**
+ *  These are read by the administration component to provide default values
+ */
+
+/**
+ * CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD - default value of upcoming event preference
+ */
 define('CALENDAR_DEFAULT_UPCOMING_LOOKAHEAD', 21);
+
+/**
+ * CALENDAR_DEFAULT_UPCOMING_MAXEVENTS - default value to display the maximum number of upcoming event
+ */
 define('CALENDAR_DEFAULT_UPCOMING_MAXEVENTS', 10);
-define('CALENDAR_DEFAULT_STARTING_WEEKDAY',   1);
+
+/**
+ * CALENDAR_DEFAULT_STARTING_WEEKDAY - default value to display the starting weekday
+ */
+define('CALENDAR_DEFAULT_STARTING_WEEKDAY', 1);
+
 // This is a packed bitfield: day X is "weekend" if $field & (1 << X) is true
 // Default value = 65 = 64 + 1 = 2^6 + 2^0 = Saturday & Sunday
-define('CALENDAR_DEFAULT_WEEKEND',            65);
+
+/**
+ * CALENDAR_DEFAULT_WEEKEND - default value for weekend (Saturday & Sunday)
+ */
+define('CALENDAR_DEFAULT_WEEKEND', 65);
+
+/**
+ * CALENDAR_URL - path to calendar's folder
+ */
 define('CALENDAR_URL', $CFG->wwwroot.'/calendar/');
+
+/**
+ * CALENDAR_TF_24 - Calendar time in 24 hours format
+ */
 define('CALENDAR_TF_24', '%H:%M');
+
+/**
+ * CALENDAR_TF_12 - Calendar time in 12 hours format
+ */
 define('CALENDAR_TF_12', '%I:%M %p');
 
+/**
+ * CALENDAR_EVENT_GLOBAL - Global calendar event types
+ */
 define('CALENDAR_EVENT_GLOBAL', 1);
+
+/**
+ * CALENDAR_EVENT_COURSE - Course calendar event types
+ */
 define('CALENDAR_EVENT_COURSE', 2);
+
+/**
+ * CALENDAR_EVENT_GROUP - group calendar event types
+ */
 define('CALENDAR_EVENT_GROUP', 4);
+
+/**
+ * CALENDAR_EVENT_USER - user calendar event types
+ */
 define('CALENDAR_EVENT_USER', 8);
 
 /**
- * CALENDAR_STARTING_WEEKDAY has since been deprecated please call calendar_get_starting_weekday() instead
- * @deprecated
+ * CALENDAR_STARTING_WEEKDAY - has since been deprecated please call calendar_get_starting_weekday() instead
+ *
+ * @deprecated Moodle 2.0 MDL-24284- please do not use this function any more.
+ * @todo MDL-31132 This will be deleted in Moodle 2.3.
+ * @see calendar_get_starting_weekday()
  */
 define('CALENDAR_STARTING_WEEKDAY', CALENDAR_DEFAULT_STARTING_WEEKDAY);
 
 /**
  * Return the days of the week
  *
- * @return array
+ * @return array array of days
  */
 function calendar_get_days() {
     return array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
@@ -95,13 +129,12 @@ function calendar_get_starting_weekday() {
 /**
  * Generates the HTML for a miniature calendar
  *
- * @global core_renderer $OUTPUT
- * @param array $courses
- * @param array $groups
- * @param array $users
- * @param int $cal_month
- * @param int $cal_year
- * @return string
+ * @param array $courses list of course
+ * @param array $groups list of group
+ * @param array $users user's info
+ * @param int $cal_month calendar month in numeric, default is set to false
+ * @param int $cal_year calendar month in numeric, default is set to false
+ * @return string $content return html table for mini calendar
  */
 function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_year = false) {
     global $CFG, $USER, $OUTPUT;
@@ -375,13 +408,15 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
 }
 
 /**
- * calendar_get_popup, called at multiple points in from calendar_get_mini.
- *        Copied and modified from calendar_get_mini.
- * @global moodle_page $PAGE
- * @param $is_today bool, false except when called on the current day.
- * @param $event_timestart mixed, $events[$eventid]->timestart, OR false if there are no events.
- * @param $popupcontent string.
- * @return $popup string, contains onmousover and onmouseout events.
+ * Gets the calendar popup
+ *
+ * It called at multiple points in from calendar_get_mini.
+ * Copied and modified from calendar_get_mini.
+ *
+ * @param bool $is_today false except when called on the current day.
+ * @param mixed $event_timestart $events[$eventid]->timestart, OR false if there are no events.
+ * @param string $popupcontent content for the popup window/layout
+ * @return string of eventid for the calendar_tooltip popup window/layout
  */
 function calendar_get_popup($is_today, $event_timestart, $popupcontent='') {
     global $PAGE;
@@ -407,6 +442,17 @@ function calendar_get_popup($is_today, $event_timestart, $popupcontent='') {
     return 'id="'.$id.'"';
 }
 
+/**
+ * Gets the calendar upcoming event
+ *
+ * @param array $courses array of courses
+ * @param array|int|bool $groups array of groups, group id or boolean for all/no group events
+ * @param array|int|bool $users array of users, user id or boolean for all/no user events
+ * @param int $daysinfuture number of days in the future we 'll look
+ * @param int $maxevents maximum number of events
+ * @param int $fromtime start time
+ * @return array $output array of upcoming events
+ */
 function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents, $fromtime=0) {
     global $CFG, $COURSE, $DB;
 
@@ -512,6 +558,12 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
     return $output;
 }
 
+/**
+ * Add calendar event metadata
+ *
+ * @param stdClass $event event info
+ * @return stdClass $event metadata
+ */
 function calendar_add_event_metadata($event) {
     global $CFG, $OUTPUT;
 
@@ -571,7 +623,9 @@ function calendar_add_event_metadata($event) {
 /**
  * Prints a calendar event
  *
- * @deprecated 2.0
+ * @deprecated Moodle 2.0 - MDL-22887 please do not use this function any more.
+ * @todo MDL-31133 - will be removed in Moodle 2.3
+ * @see core_calendar_renderer event function
  */
 function calendar_print_event($event, $showactions=true) {
     global $CFG, $USER, $OUTPUT, $PAGE;
@@ -585,15 +639,16 @@ function calendar_print_event($event, $showactions=true) {
 
 /**
  * Get calendar events
+ *
  * @param int $tstart Start time of time range for events
- * @param int $tend   End time of time range for events
- * @param array/int/boolean $users array of users, user id or boolean for all/no user events
- * @param array/int/boolean $groups array of groups, group id or boolean for all/no group events
- * @param array/int/boolean $courses array of courses, course id or boolean for all/no course events
+ * @param int $tend End time of time range for events
+ * @param array|int|boolean $users array of users, user id or boolean for all/no user events
+ * @param array|int|boolean $groups array of groups, group id or boolean for all/no group events
+ * @param array|int|boolean $courses array of courses, course id or boolean for all/no course events
  * @param boolean $withduration whether only events starting within time range selected
  *                              or events in progress/already started selected as well
  * @param boolean $ignorehidden whether to select only visible events or all events
- * @return array of selected events or an empty array if there aren't any (or there was an error)
+ * @return array $events of selected events or an empty array if there aren't any (or there was an error)
  */
 function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withduration=true, $ignorehidden=true) {
     global $DB;
@@ -684,6 +739,13 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
     return $events;
 }
 
+/**
+ * Get control options for Calendar
+ *
+ * @param string $type of calendar
+ * @param array $data calendar information
+ * @return string $content return available control for the calender in html
+ */
 function calendar_top_controls($type, $data) {
     global $CFG;
     $content = '';
@@ -835,6 +897,14 @@ function calendar_top_controls($type, $data) {
     return $content;
 }
 
+/**
+ * Get the controls filter for calendar.
+ *
+ * Filter is used to hide calendar info from the display page
+ *
+ * @param moodle_url $returnurl return-url for filter controls
+ * @return string $content return filter controls in html
+ */
 function calendar_filter_controls(moodle_url $returnurl) {
     global $CFG, $USER, $OUTPUT;
 
@@ -897,6 +967,14 @@ function calendar_filter_controls(moodle_url $returnurl) {
     return $content;
 }
 
+/**
+ * Return the representation day
+ *
+ * @param int $tstamp Timestamp in GMT
+ * @param int $now current Unix timestamp
+ * @param bool $usecommonwords
+ * @return string the formatted date/time
+ */
 function calendar_day_representation($tstamp, $now = false, $usecommonwords = true) {
 
     static $shortformat;
@@ -941,6 +1019,12 @@ function calendar_day_representation($tstamp, $now = false, $usecommonwords = tr
     }
 }
 
+/**
+ * return the formatted representation time
+ *
+ * @param int $time the timestamp in UTC, as obtained from the database
+ * @return string the formatted date/time
+ */
 function calendar_time_representation($time) {
     static $langtimeformat = NULL;
     if($langtimeformat === NULL) {
@@ -958,10 +1042,10 @@ function calendar_time_representation($time) {
  * Adds day, month, year arguments to a URL and returns a moodle_url object.
  *
  * @param string|moodle_url $linkbase
- * @param int $d
- * @param int $m
- * @param int $y
- * @return moodle_url
+ * @param int $d The number of the day.
+ * @param int $m The number of the month.
+ * @param int $y The number of the year.
+ * @return moodle_url|null $linkbase
  */
 function calendar_get_link_href($linkbase, $d, $m, $y) {
     if (empty($linkbase)) {
@@ -985,14 +1069,15 @@ function calendar_get_link_href($linkbase, $d, $m, $y) {
 /**
  * This function has been deprecated as of Moodle 2.0... DO NOT USE!!!!!
  *
- * @deprecated
- * @since 2.0
+ * @deprecated Moodle 2.0 - MDL-24284 please do not use this function any more.
+ * @todo MDL-31134 - will be removed in Moodle 2.3
+ * @see calendar_get_link_href()
  *
  * @param string $text
  * @param string|moodle_url $linkbase
- * @param int|null $d
- * @param int|null $m
- * @param int|null $y
+ * @param int|null $d The number of the day.
+ * @param int|null $m The number of the month.
+ * @param int|null $y The number of the year.
  * @return string HTML link
  */
 function calendar_get_link_tag($text, $linkbase, $d, $m, $y) {
@@ -1008,7 +1093,9 @@ function calendar_get_link_tag($text, $linkbase, $d, $m, $y) {
  *
  * @param string $text The text label.
  * @param string|moodle_url $linkbase The URL stub.
- * @param int $d $m $y Day of month, month and year numbers.
+ * @param int $d The number of the date.
+ * @param int $m The number of the month.
+ * @param int $y year The number of the year.
  * @param bool $accesshide Default visible, or hide from all except screenreaders.
  * @return string HTML string.
  */
@@ -1025,7 +1112,9 @@ function calendar_get_link_previous($text, $linkbase, $d, $m, $y, $accesshide=fa
  *
  * @param string $text The text label.
  * @param string|moodle_url $linkbase The URL stub.
- * @param int $d $m $y Day of month, month and year numbers.
+ * @param int $d the number of the Day
+ * @param int $m The number of the month.
+ * @param int $y The number of the year.
  * @param bool $accesshide Default visible, or hide from all except screenreaders.
  * @return string HTML string.
  */
@@ -1037,14 +1126,34 @@ function calendar_get_link_next($text, $linkbase, $d, $m, $y, $accesshide=false)
     return link_arrow_right($text, (string)$href, $accesshide, 'next');
 }
 
+/**
+ * Return the name of the weekday
+ *
+ * @param string $englishname
+ * @return string of the weekeday
+ */
 function calendar_wday_name($englishname) {
     return get_string(strtolower($englishname), 'calendar');
 }
 
+/**
+ * Return the number of days in month
+ *
+ * @param int $month the number of the month.
+ * @param int $year the number of the year
+ * @return int
+ */
 function calendar_days_in_month($month, $year) {
    return intval(date('t', mktime(0, 0, 0, $month, 1, $year)));
 }
 
+/**
+ * Get the upcoming event block
+ *
+ * @param array $events list of events
+ * @param moodle_url|string $linkhref link to event referer
+ * @return string|null $content html block content
+ */
 function calendar_get_block_upcoming($events, $linkhref = NULL) {
     $content = '';
     $lines = count($events);
@@ -1080,6 +1189,16 @@ function calendar_get_block_upcoming($events, $linkhref = NULL) {
     return $content;
 }
 
+/**
+ * Get the next following month
+ *
+ * If the current month is December, it will get the first month of the following year.
+ *
+ *
+ * @param int $month the number of the month.
+ * @param int $year the number of the year.
+ * @return array the following month
+ */
 function calendar_add_month($month, $year) {
     if($month == 12) {
         return array(1, $year + 1);
@@ -1089,6 +1208,15 @@ function calendar_add_month($month, $year) {
     }
 }
 
+/**
+ * Get the previous month
+ *
+ * If the current month is January, it will get the last month of the previous year.
+ *
+ * @param int $month the number of the month.
+ * @param int $year the number of the year.
+ * @return array previous month
+ */
 function calendar_sub_month($month, $year) {
     if($month == 1) {
         return array(12, $year - 1);
@@ -1098,6 +1226,18 @@ function calendar_sub_month($month, $year) {
     }
 }
 
+/**
+ * Get per-day basis events
+ *
+ * @param array $events list of events
+ * @param int $month the number of the month
+ * @param int $year the number of the year
+ * @param array $eventsbyday event on specific day
+ * @param array $durationbyday duration of the event in days
+ * @param array $typesbyday event type (eg: global, course, user, or group)
+ * @param array $courses list of courses
+ * @return void
+ */
 function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$durationbyday, &$typesbyday, &$courses) {
     $eventsbyday = array();
     $typesbyday = array();
@@ -1184,6 +1324,14 @@ function calendar_events_by_day($events, $month, $year, &$eventsbyday, &$duratio
     return;
 }
 
+/**
+ * Get current module cache
+ *
+ * @param array $coursecache list of course cache
+ * @param string $modulename name of the module
+ * @param int $instance module instance number
+ * @return stdClass|bool $module information
+ */
 function calendar_get_module_cached(&$coursecache, $modulename, $instance) {
     $module = get_coursemodule_from_instance($modulename, $instance);
 
@@ -1194,6 +1342,13 @@ function calendar_get_module_cached(&$coursecache, $modulename, $instance) {
     return $module;
 }
 
+/**
+ * Get current course cache
+ *
+ * @param array $coursecache list of course cache
+ * @param int $courseid id of the course
+ * @return stdClass $coursecache[$courseid] return the specific course cache
+ */
 function calendar_get_course_cached(&$coursecache, $courseid) {
     global $COURSE, $DB;
 
@@ -1210,9 +1365,8 @@ function calendar_get_course_cached(&$coursecache, $courseid) {
 /**
  * Returns the courses to load events for, the
  *
- * @global moodle_database $DB
  * @param array $courseeventsfrom An array of courses to load calendar events for
- * @param bool $ignorefilters
+ * @param bool $ignorefilters specify the use of filters, false is set as default
  * @return array An array of courses, groups, and user to load calendar events for based upon filters
  */
 function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
@@ -1292,6 +1446,12 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
     return array($courses, $group, $user);
 }
 
+/**
+ * Return the capability for editing calendar event
+ *
+ * @param calendar_event $event event object
+ * @return bool capability to edit event
+ */
 function calendar_edit_event_allowed($event) {
     global $USER, $DB;
 
@@ -1338,8 +1498,7 @@ function calendar_edit_event_allowed($event) {
  * Returns the default courses to display on the calendar when there isn't a specific
  * course to display.
  *
- * @global moodle_database $DB
- * @return array Array of courses to display
+ * @return array $courses Array of courses to display
  */
 function calendar_get_default_courses() {
     global $CFG, $DB;
@@ -1367,6 +1526,12 @@ function calendar_get_default_courses() {
     return $courses;
 }
 
+/**
+ * Display calendar preference button
+ *
+ * @param stdClass $course course object
+ * @return string return preference button in html
+ */
 function calendar_preferences_button(stdClass $course) {
     global $OUTPUT;
 
@@ -1378,6 +1543,16 @@ function calendar_preferences_button(stdClass $course) {
     return $OUTPUT->single_button(new moodle_url('/calendar/preferences.php', array('course' => $course->id)), get_string("preferences", "calendar"));
 }
 
+/**
+ * Get event format time
+ *
+ * @param calendar_event $event event object
+ * @param int $now current time in gmt
+ * @param array $linkparams list of params for event link
+ * @param bool $usecommonwords the words as formatted date/time.
+ * @param int $showtime determine the show time GMT timestamp
+ * @return string $eventtime link/string for event time
+ */
 function calendar_format_event_time($event, $now, $linkparams = null, $usecommonwords = true, $showtime=0) {
     $startdate = usergetdate($event->timestart);
     $enddate = usergetdate($event->timestart + $event->timeduration);
@@ -1467,6 +1642,12 @@ function calendar_format_event_time($event, $now, $linkparams = null, $usecommon
     return $eventtime;
 }
 
+/**
+ * Display month selector options
+ *
+ * @param string $name for the select element
+ * @param string|array $selected options for select elements
+ */
 function calendar_print_month_selector($name, $selected) {
     $months = array();
     for ($i=1; $i<=12; $i++) {
@@ -1498,13 +1679,14 @@ function calendar_show_event_type($type, $user = null) {
 
 /**
  * Sets the display of the event type given $display.
+ *
  * If $display = true the event type will be shown.
  * If $display = false the event type will NOT be shown.
  * If $display = null the current value will be toggled and saved.
  *
- * @param CALENDAR_EVENT_GLOBAL|CALENDAR_EVENT_COURSE|CALENDAR_EVENT_GROUP|CALENDAR_EVENT_USER $type
- * @param true|false|null $display
- * @param stdClass|int|null $user
+ * @param CALENDAR_EVENT_GLOBAL|CALENDAR_EVENT_COURSE|CALENDAR_EVENT_GROUP|CALENDAR_EVENT_USER $type object of CALENDAR_EVENT_XXX
+ * @param bool $display option to display event type
+ * @param stdClass|int $user moodle user object or id, null means current user
  */
 function calendar_set_event_type_display($type, $display = null, $user = null) {
     $persist = get_user_preferences('calendar_persistflt', 0, $user);
@@ -1538,6 +1720,12 @@ function calendar_set_event_type_display($type, $display = null, $user = null) {
     }
 }
 
+/**
+ * Get calendar's allowed types
+ *
+ * @param stdClass $allowed list of allowed edit for event  type
+ * @param stdClass|int $course object of a course or course id
+ */
 function calendar_get_allowed_types(&$allowed, $course = null) {
     global $USER, $CFG, $DB;
     $allowed = new stdClass();
@@ -1569,9 +1757,11 @@ function calendar_get_allowed_types(&$allowed, $course = null) {
 }
 
 /**
- * see if user can add calendar entries at all
+ * See if user can add calendar entries at all
  * used to print the "New Event" button
- * @return bool
+ *
+ * @param stdClass $course object of a course or course id
+ * @return bool has the capability to add at least one event type
  */
 function calendar_user_can_add_event($course) {
     if (!isloggedin() || isguestuser()) {
@@ -1584,8 +1774,8 @@ function calendar_user_can_add_event($course) {
 /**
  * Check wether the current user is permitted to add events
  *
- * @param object $event
- * @return bool
+ * @param stdClass $event object of event
+ * @return bool has the capability to add event
  */
 function calendar_add_event_allowed($event) {
     global $USER, $DB;
@@ -1630,12 +1820,17 @@ function calendar_add_event_allowed($event) {
 }
 
 /**
- * A class to manage calendar events
+ * Manage calendar events
  *
  * This class provides the required functionality in order to manage calendar events.
  * It was introduced as part of Moodle 2.0 and was created in order to provide a
  * better framework for dealing with calendar events in particular regard to file
  * handling through the new file API
+ *
+ * @package    core_calendar
+ * @category   calendar
+ * @copyright  2009 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  * @property int $id The id within the event table
  * @property string $name The name of the event
@@ -1658,32 +1853,22 @@ function calendar_add_event_allowed($event) {
  */
 class calendar_event {
 
-    /**
-     * An object containing the event properties can be accessed via the
-     * magic __get/set methods
-     * @var array
-     */
+    /** @var array An object containing the event properties can be accessed via the magic __get/set methods */
     protected $properties = null;
+
     /**
-     * The converted event discription with file paths resolved
-     * This gets populated when someone requests description for the first time
-     * @var string
-     */
+     * @var string The converted event discription with file paths resolved. This gets populated when someone requests description for the first time */
     protected $_description = null;
-    /**
-     * The options to use with this description editor
-     * @var array
-     */
+
+    /** @var array The options to use with this description editor */
     protected $editoroptions = array(
             'subdirs'=>false,
             'forcehttps'=>false,
             'maxfiles'=>-1,
             'maxbytes'=>null,
             'trusttext'=>false);
-    /**
-     * The context to use with the description editor
-     * @var object
-     */
+
+    /** @var object The context to use with the description editor */
     protected $editorcontext = null;
 
     /**
@@ -1746,8 +1931,8 @@ class calendar_event {
      * Attempts to call a set_$key method if one exists otherwise falls back
      * to simply set the property
      *
-     * @param string $key
-     * @param mixed $value
+     * @param string $key property name
+     * @param mixed $value value of the property
      */
     public function __set($key, $value) {
         if (method_exists($this, 'set_'.$key)) {
@@ -1762,8 +1947,8 @@ class calendar_event {
      * Attempts to call a get_$key method to return the property and ralls over
      * to return the raw property
      *
-     * @param str $key
-     * @return mixed
+     * @param string $key property name
+     * @return mixed property value
      */
     public function __get($key) {
         if (method_exists($this, 'get_'.$key)) {
@@ -1779,8 +1964,8 @@ class calendar_event {
      * Stupid PHP needs an isset magic method if you use the get magic method and
      * still want empty calls to work.... blah ~!
      *
-     * @param string $key
-     * @return bool
+     * @param string $key $key property name
+     * @return bool|mixed property value, false if property is not exist
      */
     public function __isset($key) {
         return !empty($this->properties->{$key});
@@ -1793,7 +1978,8 @@ class calendar_event {
      * the course event.
      * Default value is set to CONTEXT_USER
      *
-     * @return stdClass
+     * @param stdClass $data information about event
+     * @return stdClass The context object.
      */
     protected function calculate_context(stdClass $data) {
         global $USER, $DB;
@@ -1822,7 +2008,8 @@ class calendar_event {
     /**
      * Returns an array of editoroptions for this event: Called by __get
      * Please use $blah = $event->editoroptions;
-     * @return array
+     *
+     * @return array event editor options
      */
     protected function get_editoroptions() {
         return $this->editoroptions;
@@ -1832,7 +2019,7 @@ class calendar_event {
      * Returns an event description: Called by __get
      * Please use $blah = $event->description;
      *
-     * @return string
+     * @return string event description
      */
     protected function get_description() {
         global $CFG;
@@ -1871,7 +2058,7 @@ class calendar_event {
     /**
      * Return the number of repeat events there are in this events series
      *
-     * @return int
+     * @return int number of event repeated
      */
     public function count_repeats() {
         global $DB;
@@ -1892,8 +2079,9 @@ class calendar_event {
      * @see add_event()
      * @see update_event()
      *
-     * @param stdClass $data
-     * @param boolean $checkcapability if moodle should check calendar managing capability or not
+     * @param stdClass $data object of event
+     * @param bool $checkcapability if moodle should check calendar managing capability or not
+     * @return bool event updated
      */
     public function update($data, $checkcapability=true) {
         global $CFG, $DB, $USER;
@@ -2072,8 +2260,8 @@ class calendar_event {
      *
      * @see delete_event()
      *
-     * @param bool $deleterepeated
-     * @return bool
+     * @param bool $deleterepeated  delete event repeatedly
+     * @return bool succession of deleting event
      */
     public function delete($deleterepeated=false) {
         global $DB;
@@ -2212,6 +2400,7 @@ class calendar_event {
      * @param null|bool $force If it is left null the events visibility is flipped,
      *                   If it is false the event is made hidden, if it is true it
      *                   is made visible.
+     * @return bool if event is successfully updated, toggle will be visible
      */
     public function toggle_visibility($force=null) {
         global $CFG, $DB;
@@ -2241,11 +2430,9 @@ class calendar_event {
      * Attempts to call the hook for the specified action should a calendar type
      * by set $CFG->calendar, and the appopriate function defined
      *
-     * @static
-     * @staticvar bool $extcalendarinc Used to track the inclusion of the calendar lib
      * @param string $action One of `update_event`, `add_event`, `delete_event`, `show_event`, `hide_event`
      * @param array $args The args to pass to the hook, usually the event is the first element
-     * @return bool
+     * @return bool attempts to call event hook
      */
     public static function calendar_event_hook($action, array $args) {
         global $CFG;
@@ -2275,8 +2462,8 @@ class calendar_event {
      * This function makes use of MUST_EXIST, if the event id passed in is invalid
      * it will result in an exception being thrown
      *
-     * @param int|object $param
-     * @return calendar_event|false
+     * @param int|object $param event object or event id
+     * @return calendar_event|false status for loading calendar_event
      */
     public static function load($param) {
         global $DB;
@@ -2316,51 +2503,40 @@ class calendar_event {
  *
  * This class is used simply to organise the information pertaining to a calendar
  * and is used primarily to make information easily available.
+ *
+ * @package core_calendar
+ * @category calendar
+ * @copyright 2010 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class calendar_information {
-    /**
-     * The day
-     * @var int
-     */
+    /** @var int The day */
     public $day;
-    /**
-     * The month
-     * @var int
-     */
+
+    /** @var int The month */
     public $month;
-    /**
-     * The year
-     * @var int
-     */
+
+    /** @var int The year */
     public $year;
 
-    /**
-     * A course id
-     * @var int
-     */
+    /** @var int A course id */
     public $courseid = null;
-    /**
-     * An array of courses
-     * @var array
-     */
+
+    /** @var array An array of courses */
     public $courses = array();
-    /**
-     * An array of groups
-     * @var array
-     */
+
+    /** @var array An array of groups */
     public $groups = array();
-    /**
-     * An array of users
-     * @var array
-     */
+
+    /** @var array An array of users */
     public $users = array();
 
     /**
      * Creates a new instance
      *
-     * @param int $day
-     * @param int $month
-     * @param int $year
+     * @param int $day the number of the day
+     * @param int $month the number of the month
+     * @param int $year the number of the year
      */
     public function __construct($day=0, $month=0, $year=0) {
 
@@ -2384,10 +2560,11 @@ class calendar_information {
     }
 
     /**
+     * Initialize calendar information
      *
-     * @param stdClass $course
+     * @param stdClass $course object
      * @param array $coursestoload An array of courses [$course->id => $course]
-     * @param type $ignorefilters
+     * @param bool $ignorefilters options to use filter
      */
     public function prepare_for_view(stdClass $course, array $coursestoload, $ignorefilters = false) {
         $this->courseid = $course->id;
@@ -2402,8 +2579,9 @@ class calendar_information {
      * Ensures the date for the calendar is correct and either sets it to now
      * or throws a moodle_exception if not
      *
-     * @param bool $defaultonow
-     * @return bool
+     * @param bool $defaultonow use current time
+     * @throws moodle_exception
+     * @return bool validation of checkdate
      */
     public function checkdate($defaultonow = true) {
         if (!checkdate($this->month, $this->day, $this->year)) {
@@ -2421,14 +2599,16 @@ class calendar_information {
     }
     /**
      * Gets todays timestamp for the calendar
-     * @return int
+     *
+     * @return int today timestamp
      */
     public function timestamp_today() {
         return make_timestamp($this->year, $this->month, $this->day);
     }
     /**
      * Gets tomorrows timestamp for the calendar
-     * @return int
+     *
+     * @return int tomorrow timestamp
      */
     public function timestamp_tomorrow() {
         return make_timestamp($this->year, $this->month, $this->day+1);
@@ -2437,8 +2617,8 @@ class calendar_information {
      * Adds the pretend blocks for teh calendar
      *
      * @param core_calendar_renderer $renderer
-     * @param bool $showfilters
-     * @param string|null $view
+     * @param bool $showfilters display filters, false is set as default
+     * @param string|null $view preference view options (eg: day, month, upcoming)
      */
     public function add_sidecalendar_blocks(core_calendar_renderer $renderer, $showfilters=false, $view=null) {
         if ($showfilters) {
