@@ -447,6 +447,7 @@ function quiz_cron() {
 
     // The deal with any plugins that do it the legacy way.
     mtrace("Starting legacy quiz reports");
+    $timenow = time();
     if ($reports = $DB->get_records_select('quiz_reports', "cron > 0 AND ((? - lastcron) > cron)", array($timenow))) {
         foreach ($reports as $report) {
             $cronfile = "$CFG->dirroot/mod/quiz/report/$report->name/cron.php";
