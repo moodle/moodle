@@ -17,8 +17,8 @@
 /**
  * This file contains the unittests for the css optimiser in csslib.php
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,8 +32,8 @@ require_once($CFG->libdir . '/csslib.php');
 /**
  * CSS optimiser test class
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -190,7 +190,6 @@ class css_optimiser_test extends UnitTestCase {
         $cssin = '#page-admin-roles-override .rolecap {border:none;border-bottom:1px solid #CECECE;}';
         $cssout = '#page-admin-roles-override .rolecap{border-top:0;border-right:0;border-bottom:1px solid #CECECE;border-left:0;}';
         $this->assertEqual($cssout, $optimiser->process($cssin));
-        
     }
 
     /**
@@ -565,7 +564,7 @@ CSS;
         // them still.
         $this->assertTrue(css_is_colour('#A'));
         $this->assertTrue(css_is_colour('#12'));
-        
+
         $this->assertFalse(css_is_colour('#BCDEFG'));
         $this->assertFalse(css_is_colour('#'));
         $this->assertFalse(css_is_colour('#0000000'));

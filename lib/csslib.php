@@ -19,10 +19,10 @@
  *
  * Please see the {@see css_optimiser} class for greater detail.
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -30,15 +30,15 @@
  *
  * This function either succeeds or throws an exception.
  *
- * @param theme_config $theme
- * @param string $csspath
- * @param array $cssfiles
+ * @param theme_config $theme The theme that the CSS belongs to.
+ * @param string $csspath The path to store the CSS at.
+ * @param array $cssfiles The CSS files to store.
  */
 function css_store_css(theme_config $theme, $csspath, array $cssfiles) {
     global $CFG;
 
     if (!empty($CFG->enablecssoptimiser)) {
-        // This is an experimental feature introduced in Moodle 2.2
+        // This is an experimental feature introduced in Moodle 2.3
         // The CSS optimiser organises the CSS in order to reduce the overall number
         // of rules and styles being sent to the client. It does this by collating
         // the CSS before it is cached removing excess styles and rules and stripping
@@ -58,7 +58,7 @@ function css_store_css(theme_config $theme, $csspath, array $cssfiles) {
         }
     } else {
         // This is the default behaviour.
-        // The cssoptimise setting was introduced in Moodle 2.2 and will hopefully
+        // The cssoptimise setting was introduced in Moodle 2.3 and will hopefully
         // in the future be changed from an experimental setting to the default.
         // The css_minify_css will method will use the Minify library remove
         // comments, additional whitespace and other minor measures to reduce the
@@ -89,10 +89,10 @@ function css_store_css(theme_config $theme, $csspath, array $cssfiles) {
 function css_send_ie_css($themename, $rev) {
     $lifetime = 60*60*24*30; // 30 days
 
-    $css = "/** Unfortunately IE6/7 does not support more than 4096 selectors in one CSS file, which means we have to use some ugly hacks :-( **/";
-    $css = "@import url(styles.php?theme=$themename&rev=$rev&type=plugins);";
-    $css = "@import url(styles.php?theme=$themename&rev=$rev&type=parents);";
-    $css = "@import url(styles.php?theme=$themename&rev=$rev&type=theme);";
+    $css  = "/** Unfortunately IE6/7 does not support more than 4096 selectors in one CSS file, which means we have to use some ugly hacks :-( **/";
+    $css .= "\n@import url(styles.php?theme=$themename&rev=$rev&type=plugins);";
+    $css .= "\n@import url(styles.php?theme=$themename&rev=$rev&type=parents);";
+    $css .= "\n@import url(styles.php?theme=$themename&rev=$rev&type=theme);";
 
     header('Etag: '.md5($rev));
     header('Content-Disposition: inline; filename="styles.php"');
@@ -111,7 +111,7 @@ function css_send_ie_css($themename, $rev) {
 /**
  * Sends a cached CSS file
  *
- * This function sends the cached CSS file. Remember it is generate on the first
+ * This function sends the cached CSS file. Remember it is generated on the first
  * request, then optimised/minified, and finally cached for serving.
  *
  * @param string $csspath The path to the CSS file we want to serve.
@@ -225,16 +225,16 @@ function css_minify_css($files) {
 }
 
 /**
- * Given a value determines if it is a valid CSS colour.
+ * Determines if the given value is a valid CSS colour.
  *
  * A CSS colour can be one of the following:
  *    - Hex colour:  #AA66BB
  *    - RGB colour:  rgb(0-255, 0-255, 0-255)
- *    - RGBA colour: rgb(0-255, 0-255, 0-255, 0-1)
- *    - HSL colour:  rgb(0-360, 0-100%, 0-100%)
- *    - HSLA colour: rgb(0-360, 0-100%, 0-100%, 0-1)
+ *    - RGBA colour: rgba(0-255, 0-255, 0-255, 0-1)
+ *    - HSL colour:  hsl(0-360, 0-100%, 0-100%)
+ *    - HSLA colour: hsla(0-360, 0-100%, 0-100%, 0-1)
  *
- * Or a regocnised browser colour mapping {@see css_optimiser::$htmlcolours}
+ * Or a recognised browser colour mapping {@see css_optimiser::$htmlcolours}
  *
  * @param string $value The colour value to check
  * @return bool
@@ -247,16 +247,16 @@ function css_is_colour($value) {
         return true;
     } else if (in_array(strtolower($value), array_keys(css_optimiser::$htmlcolours))) {
         return true;
-    } else if (preg_match('#^(rgb)\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$#i', $value, $m) && $m[2] < 256 && $m[3] < 256 && $m[4] < 256) {
+    } else if (preg_match('#^rgb\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$#i', $value, $m) && $m[1] < 256 && $m[2] < 256 && $m[3] < 256) {
         // It is an RGB colour
         return true;
-    } else if (preg_match('#^(rgba)\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1}(\.\d+)?)\s*\)$#i', $value, $m) && $m[2] < 256 && $m[3] < 256 && $m[4] < 256) {
+    } else if (preg_match('#^rgba\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1}(\.\d+)?)\s*\)$#i', $value, $m) && $m[1] < 256 && $m[2] < 256 && $m[3] < 256) {
         // It is an RGBA colour
         return true;
-    } else if (preg_match('#^(hsl)\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\%\s*,\s*(\d{1,3})\%\s*\)$#i', $value, $m) && $m[2] <= 360 && $m[3] <= 100 && $m[4] <= 100) {
+    } else if (preg_match('#^hsl\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\%\s*,\s*(\d{1,3})\%\s*\)$#i', $value, $m) && $m[1] <= 360 && $m[2] <= 100 && $m[3] <= 100) {
         // It is an HSL colour
         return true;
-    } else if (preg_match('#^(hsla)\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\%\s*,\s*(\d{1,3})\%\s*,\s*(\d{1}(\.\d+)?)\s*\)$#i', $value, $m) && $m[2] <= 360 && $m[3] <= 100 && $m[4] <= 100) {
+    } else if (preg_match('#^hsla\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\%\s*,\s*(\d{1,3})\%\s*,\s*(\d{1}(\.\d+)?)\s*\)$#i', $value, $m) && $m[1] <= 360 && $m[2] <= 100 && $m[3] <= 100) {
         // It is an HSLA colour
         return true;
     }
@@ -309,37 +309,105 @@ function css_sort_by_count(array $a, array $b) {
  * ensure we collect all mappings, at the end of the processing those styles are
  * then combined into an optimised form to keep them as short as possible.
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_optimiser {
 
-    /**#@+
+    /**
+     * Used when the processor is about to start processing.
      * Processing states. Used internally.
      */
     const PROCESSING_START = 0;
-    const PROCESSING_SELECTORS = 0;
-    const PROCESSING_STYLES = 1;
-    const PROCESSING_COMMENT = 2;
-    const PROCESSING_ATRULE = 3;
-    /**#@-*/
 
-    /**#@+
+    /**
+     * Used when the processor is currently processing a selector.
+     * Processing states. Used internally.
+     */
+    const PROCESSING_SELECTORS = 0;
+
+    /**
+     * Used when the processor is currently processing a style.
+     * Processing states. Used internally.
+     */
+    const PROCESSING_STYLES = 1;
+
+    /**
+     * Used when the processor is currently processing a comment.
+     * Processing states. Used internally.
+     */
+    const PROCESSING_COMMENT = 2;
+
+    /**
+     * Used when the processor is currently processing an @ rule.
+     * Processing states. Used internally.
+     */
+    const PROCESSING_ATRULE = 3;
+
+    /**
+     * The raw string length before optimisation.
      * Stats variables set during and after processing
      * @var int
      */
     protected $rawstrlen = 0;
+
+    /**
+     * The number of comments that were removed during optimisation.
+     * Stats variables set during and after processing
+     * @var int
+     */
     protected $commentsincss = 0;
+
+    /**
+     * The number of rules in the CSS before optimisation.
+     * Stats variables set during and after processing
+     * @var int
+     */
     protected $rawrules = 0;
+
+    /**
+     * The number of selectors using in CSS rules before optimisation.
+     * Stats variables set during and after processing
+     * @var int
+     */
     protected $rawselectors = 0;
+
+    /**
+     * The string length after optimisation.
+     * Stats variables set during and after processing
+     * @var int
+     */
     protected $optimisedstrlen = 0;
+
+    /**
+     * The number of rules after optimisation.
+     * Stats variables set during and after processing
+     * @var int
+     */
     protected $optimisedrules = 0;
+
+    /**
+     * The number of selectors used in rules after optimisation.
+     * Stats variables set during and after processing
+     * @var int
+     */
     protected $optimisedselectors = 0;
+
+    /**
+     * The start time of the optimisation.
+     * Stats variables set during and after processing
+     * @var int
+     */
     protected $timestart = 0;
+
+    /**
+     * The end time of the optimisation.
+     * Stats variables set during and after processing
+     * @var int
+     */
     protected $timecomplete = 0;
-    /**#@-*/
 
     /**
      * Will be set to any errors that may have occured during processing.
@@ -392,7 +460,7 @@ class css_optimiser {
         $char = null;
 
         // Next we are going to iterate over every single character in $css.
-        // This is why re removed line breaks and comments!
+        // This is why we removed line breaks and comments!
         for ($i = 0; $i < $this->rawstrlen; $i++) {
             $lastchar = $char;
             $char = substr($css, $i, 1);
@@ -416,6 +484,9 @@ class css_optimiser {
                             }
                             $buffer = '';
                             $currentatrule = false;
+                            // continue 1: The switch processing chars
+                            // continue 2: The switch processing the state
+                            // continue 3: The for loop
                             continue 3;
                         case '{':
                             if ($currentatrule == 'media' && preg_match('#\s*@media\s*([a-zA-Z0-9]+(\s*,\s*[a-zA-Z0-9]+)*)#', $buffer, $matches)) {
@@ -427,6 +498,9 @@ class css_optimiser {
                                 $currentprocess = self::PROCESSING_SELECTORS;
                                 $buffer = '';
                             }
+                            // continue 1: The switch processing chars
+                            // continue 2: The switch processing the state
+                            // continue 3: The for loop
                             continue 3;
                     }
                     break;
@@ -437,13 +511,22 @@ class css_optimiser {
                         case '[':
                             $inbrackets ++;
                             $buffer .= $char;
+                            // continue 1: The switch processing chars
+                            // continue 2: The switch processing the state
+                            // continue 3: The for loop
                             continue 3;
                         case ']':
                             $inbrackets --;
                             $buffer .= $char;
+                            // continue 1: The switch processing chars
+                            // continue 2: The switch processing the state
+                            // continue 3: The for loop
                             continue 3;
                         case ' ':
                             if ($inbrackets) {
+                                // continue 1: The switch processing chars
+                                // continue 2: The switch processing the state
+                                // continue 3: The for loop
                                 continue 3;
                             }
                             if (!empty($buffer)) {
@@ -457,9 +540,15 @@ class css_optimiser {
                                 }
                             }
                             $suspectatrule = false;
+                            // continue 1: The switch processing chars
+                            // continue 2: The switch processing the state
+                            // continue 3: The for loop
                             continue 3;
                         case '{':
                             if ($inbrackets) {
+                                // continue 1: The switch processing chars
+                                // continue 2: The switch processing the state
+                                // continue 3: The for loop
                                 continue 3;
                             }
 
@@ -469,9 +558,15 @@ class css_optimiser {
                             $currentprocess = self::PROCESSING_STYLES;
 
                             $buffer = '';
+                            // continue 1: The switch processing chars
+                            // continue 2: The switch processing the state
+                            // continue 3: The for loop
                             continue 3;
                         case '}':
                             if ($inbrackets) {
+                                // continue 1: The switch processing chars
+                                // continue 2: The switch processing the state
+                                // continue 3: The for loop
                                 continue 3;
                             }
                             if ($currentatrule == 'media') {
@@ -479,15 +574,24 @@ class css_optimiser {
                                 $currentatrule = false;
                                 $buffer = '';
                             }
+                            // continue 1: The switch processing chars
+                            // continue 2: The switch processing the state
+                            // continue 3: The for loop
                             continue 3;
                         case ',':
                             if ($inbrackets) {
+                                // continue 1: The switch processing chars
+                                // continue 2: The switch processing the state
+                                // continue 3: The for loop
                                 continue 3;
                             }
                             $currentselector->add($buffer);
                             $currentrule->add_selector($currentselector);
                             $currentselector = css_selector::init();
                             $buffer = '';
+                            // continue 1: The switch processing chars
+                            // continue 2: The switch processing the state
+                            // continue 3: The for loop
                             continue 3;
                     }
                     break;
@@ -510,6 +614,9 @@ class css_optimiser {
                             $currentrule->add_style($buffer);
                             $buffer = '';
                             $inquotes = false;
+                            // continue 1: The switch processing chars
+                            // continue 2: The switch processing the state
+                            // continue 3: The for loop
                             continue 3;
                         case '}':
                             $currentrule->add_style($buffer);
@@ -522,6 +629,9 @@ class css_optimiser {
                             $this->rawrules++;
                             $buffer = '';
                             $inquotes = false;
+                            // continue 1: The switch processing chars
+                            // continue 2: The switch processing the state
+                            // continue 3: The for loop
                             continue 3;
                     }
                     break;
@@ -822,10 +932,10 @@ class css_optimiser {
 /**
  * Used to prepare CSS strings
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class css_writer {
     /**
@@ -973,10 +1083,10 @@ abstract class css_writer {
  * The selector is the classes, id, elements, and psuedo bits that make up a CSS
  * rule.
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_selector {
 
@@ -1039,10 +1149,10 @@ class css_selector {
 /**
  * A structure to represent a CSS rule.
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_rule {
 
@@ -1069,8 +1179,8 @@ class css_rule {
     /**
      * Constructs a new css rule.
      *
-     * @param string $selector
-     * @param array $styles
+     * @param string $selector The selector or array of selectors that make up this rule.
+     * @param array $styles An array of styles that belong to this rule.
      */
     protected function __construct($selector = null, array $styles = array()) {
         if ($selector != null) {
@@ -1086,7 +1196,9 @@ class css_rule {
     /**
      * Adds a new CSS selector to this rule
      *
-     * @param css_selector $selector
+     * e.g. $rule->add_selector('.one #two.two');
+     *
+     * @param css_selector $selector Adds a CSS selector to this rule.
      */
     public function add_selector(css_selector $selector) {
         $this->selectors[] = $selector;
@@ -1095,7 +1207,7 @@ class css_rule {
     /**
      * Adds a new CSS style to this rule.
      *
-     * @param css_style|string $style
+     * @param css_style|string $style Adds a new style to this rule
      */
     public function add_style($style) {
         if (is_string($style)) {
@@ -1111,6 +1223,9 @@ class css_rule {
                 $style = css_style::init($name, $value);
             }
         } else if ($style instanceof css_style) {
+            // Clone the style as it may be coming from another rule and we don't
+            // want references as it will likely be overwritten by proceeding
+            // rules
             $style = clone($style);
         }
         if ($style instanceof css_style) {
@@ -1121,6 +1236,8 @@ class css_rule {
                 $this->styles[$name] = $style;
             }
         } else if (is_array($style)) {
+            // We probably shouldn't worry about processing styles here but to
+            // be truthful it doesn't hurt.
             foreach ($style as $astyle) {
                 $this->add_style($astyle);
             }
@@ -1130,7 +1247,10 @@ class css_rule {
     /**
      * An easy method of adding several styles at once. Just calls add_style.
      *
-     * @param array $styles
+     * This method simply iterates over the array and calls {@see css_rule::add_style()}
+     * with each.
+     *
+     * @param array $styles Adds an array of styles
      */
     public function add_styles(array $styles) {
         foreach ($styles as $style) {
@@ -1140,6 +1260,7 @@ class css_rule {
 
     /**
      * Returns the array of selectors
+     *
      * @return array
      */
     public function get_selectors() {
@@ -1148,6 +1269,7 @@ class css_rule {
 
     /**
      * Returns the array of styles
+     *
      * @return array
      */
     public function get_styles() {
@@ -1156,6 +1278,7 @@ class css_rule {
 
     /**
      * Outputs this rule as a fragment of CSS
+     *
      * @return string
      */
     public function out() {
@@ -1212,7 +1335,7 @@ class css_rule {
      * Splits this rule into an array of rules. One for each of the styles that
      * make up this rule
      *
-     * @return array(css_rule)
+     * @return array Array of css_rule objects
      */
     public function split_by_style() {
         $return = array();
@@ -1224,6 +1347,7 @@ class css_rule {
 
     /**
      * Gets a hash for the styles of this rule
+     *
      * @return string
      */
     public function get_style_hash() {
@@ -1232,6 +1356,7 @@ class css_rule {
 
     /**
      * Gets a hash for the selectors of this rule
+     *
      * @return string
      */
     public function get_selector_hash() {
@@ -1240,6 +1365,7 @@ class css_rule {
 
     /**
      * Gets the number of selectors that make up this rule.
+     *
      * @return int
      */
     public function get_selector_count() {
@@ -1264,6 +1390,14 @@ class css_rule {
         return false;
     }
 
+    /**
+     * Returns the error strings that were recorded when processing this rule.
+     *
+     * Before calling this function you should first call {@see css_rule::has_errors()}
+     * to make sure there are errors (hopefully there arn't).
+     *
+     * @return string
+     */
     public function get_error_string() {
         $css = $this->out();
         $errors = array();
@@ -1280,10 +1414,10 @@ class css_rule {
 /**
  * A media class to organise rules by the media they apply to.
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_media {
 
@@ -1302,7 +1436,7 @@ class css_media {
     /**
      * Initalises a new media instance
      *
-     * @param string $for
+     * @param string $for The media that the contained rules are destined for.
      */
     public function __construct($for = 'all') {
         $types = explode(',', $for);
@@ -1413,7 +1547,7 @@ class css_media {
     }
 
     /**
-     * Returns  any errors that have happened within rules in this media set.
+     * Returns any errors that have happened within rules in this media set.
      *
      * @return string
      */
@@ -1431,10 +1565,10 @@ class css_media {
 /**
  * An absract class to represent CSS styles
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class css_style {
 
@@ -1452,6 +1586,10 @@ abstract class css_style {
 
     /**
      * If set to true this style was defined with the !important rule.
+     * Only trolls use !important.
+     * Don't hide under bridges.. its not good for your skin. Do the proper thing
+     * and fix the issue don't just force a fix that will undoubtedly one day
+     * lead to further frustration.
      * @var bool
      */
     protected $important = false;
@@ -1475,8 +1613,8 @@ abstract class css_style {
      * This is the only public way to create a style to ensure they that appropriate
      * style class is used if it exists.
      *
-     * @param string $name
-     * @param string $value
+     * @param string $name The name of the style.
+     * @param string $value The value of the style.
      * @return css_style_generic
      */
     public static function init($name, $value) {
@@ -1490,8 +1628,8 @@ abstract class css_style {
     /**
      * Creates a new style when given its name and value
      *
-     * @param string $name
-     * @param string $value
+     * @param string $name The name of the style.
+     * @param string $value The value of the style.
      */
     protected function __construct($name, $value) {
         $this->name = $name;
@@ -1552,7 +1690,7 @@ abstract class css_style {
     /**
      * Returns the style ready for use in CSS
      *
-     * @param string|null $value
+     * @param string|null $value A value to use to override the value for this style.
      * @return string
      */
     public function out($value = null) {
@@ -1595,6 +1733,7 @@ abstract class css_style {
 
     /**
      * Returns true if an error has occured
+     *
      * @return bool
      */
     public function has_error() {
@@ -1614,12 +1753,13 @@ abstract class css_style {
 /**
  * A generic CSS style class to use when a more specific class does not exist.
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_generic extends css_style {
+
     /**
      * Cleans incoming values for typical things that can be optimised.
      *
@@ -1639,16 +1779,17 @@ class css_style_generic extends css_style {
 /**
  * A colour CSS style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_color extends css_style {
+
     /**
      * Creates a new colour style
      *
-     * @param mixed $value
+     * @param mixed $value Initialises a new colour style
      * @return css_style_color
      */
     public static function init($value) {
@@ -1720,10 +1861,10 @@ class css_style_color extends css_style {
 /**
  * A width style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_width extends css_style {
 
@@ -1766,10 +1907,10 @@ class css_style_width extends css_style {
 /**
  * A margin style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_margin extends css_style_width {
 
@@ -1850,12 +1991,13 @@ class css_style_margin extends css_style_width {
 /**
  * A margin top style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_margintop extends css_style_margin {
+
     /**
      * A simple init, just a single style
      *
@@ -1865,6 +2007,7 @@ class css_style_margintop extends css_style_margin {
     public static function init($value) {
         return new css_style_margintop('margin-top', $value);
     }
+
     /**
      * This style can be consolidated into a single margin style
      *
@@ -1878,10 +2021,10 @@ class css_style_margintop extends css_style_margin {
 /**
  * A margin right style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_marginright extends css_style_margin {
 
@@ -1908,10 +2051,10 @@ class css_style_marginright extends css_style_margin {
 /**
  * A margin bottom style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_marginbottom extends css_style_margin {
 
@@ -1938,10 +2081,10 @@ class css_style_marginbottom extends css_style_margin {
 /**
  * A margin left style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_marginleft extends css_style_margin {
 
@@ -1968,10 +2111,10 @@ class css_style_marginleft extends css_style_margin {
 /**
  * A border style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_border extends css_style {
 
@@ -2176,6 +2319,9 @@ class css_style_border extends css_style {
     }
 
     /**
+     * Consolidates a series of border styles into an optimised array of border
+     * styles by looking at the direction of the border and prioritising that
+     * during the optimisation.
      *
      * @param array $array An array to add styles into during consolidation. Passed by reference.
      * @param string $class The class type to initalise
@@ -2253,10 +2399,10 @@ class css_style_border extends css_style {
 /**
  * A border colour style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_bordercolor extends css_style_color {
 
@@ -2333,10 +2479,10 @@ class css_style_bordercolor extends css_style_color {
 /**
  * A border left style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_borderleft extends css_style_generic {
 
@@ -2376,10 +2522,10 @@ class css_style_borderleft extends css_style_generic {
 /**
  * A border right style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_borderright extends css_style_generic {
 
@@ -2419,10 +2565,10 @@ class css_style_borderright extends css_style_generic {
 /**
  * A border top style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_bordertop extends css_style_generic {
 
@@ -2462,10 +2608,10 @@ class css_style_bordertop extends css_style_generic {
 /**
  * A border bottom style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_borderbottom extends css_style_generic {
 
@@ -2505,10 +2651,10 @@ class css_style_borderbottom extends css_style_generic {
 /**
  * A border width style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_borderwidth extends css_style_width {
 
@@ -2558,10 +2704,10 @@ class css_style_borderwidth extends css_style_width {
 /**
  * A border style style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_borderstyle extends css_style_generic {
 
@@ -2611,10 +2757,10 @@ class css_style_borderstyle extends css_style_generic {
 /**
  * A border top colour style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_bordertopcolor extends css_style_bordercolor {
 
@@ -2641,10 +2787,10 @@ class css_style_bordertopcolor extends css_style_bordercolor {
 /**
  * A border left colour style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_borderleftcolor extends css_style_bordercolor {
 
@@ -2671,10 +2817,10 @@ class css_style_borderleftcolor extends css_style_bordercolor {
 /**
  * A border right colour style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_borderrightcolor extends css_style_bordercolor {
 
@@ -2701,10 +2847,10 @@ class css_style_borderrightcolor extends css_style_bordercolor {
 /**
  * A border bottom colour style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_borderbottomcolor extends css_style_bordercolor {
 
@@ -2731,10 +2877,10 @@ class css_style_borderbottomcolor extends css_style_bordercolor {
 /**
  * A border width top style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_bordertopwidth extends css_style_borderwidth {
 
@@ -2761,10 +2907,10 @@ class css_style_bordertopwidth extends css_style_borderwidth {
 /**
  * A border width left style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_borderleftwidth extends css_style_borderwidth {
 
@@ -2791,10 +2937,10 @@ class css_style_borderleftwidth extends css_style_borderwidth {
 /**
  * A border width right style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_borderrightwidth extends css_style_borderwidth {
 
@@ -2821,10 +2967,10 @@ class css_style_borderrightwidth extends css_style_borderwidth {
 /**
  * A border width bottom style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_borderbottomwidth extends css_style_borderwidth {
 
@@ -2851,10 +2997,10 @@ class css_style_borderbottomwidth extends css_style_borderwidth {
 /**
  * A border top style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_bordertopstyle extends css_style_borderstyle {
 
@@ -2881,10 +3027,10 @@ class css_style_bordertopstyle extends css_style_borderstyle {
 /**
  * A border left style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_borderleftstyle extends css_style_borderstyle {
 
@@ -2911,10 +3057,10 @@ class css_style_borderleftstyle extends css_style_borderstyle {
 /**
  * A border right style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_borderrightstyle extends css_style_borderstyle {
 
@@ -2941,10 +3087,10 @@ class css_style_borderrightstyle extends css_style_borderstyle {
 /**
  * A border bottom style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_borderbottomstyle extends css_style_borderstyle {
 
@@ -2970,10 +3116,10 @@ class css_style_borderbottomstyle extends css_style_borderstyle {
 /**
  * A background style
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_background extends css_style {
 
@@ -3085,10 +3231,10 @@ class css_style_background extends css_style {
  *
  * Based upon the colour style.
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_backgroundcolor extends css_style_color {
 
@@ -3114,10 +3260,10 @@ class css_style_backgroundcolor extends css_style_color {
 /**
  * A background image style.
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_backgroundimage extends css_style_generic {
 
@@ -3144,10 +3290,10 @@ class css_style_backgroundimage extends css_style_generic {
 /**
  * A background repeat style.
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_backgroundrepeat extends css_style_generic {
 
@@ -3174,10 +3320,10 @@ class css_style_backgroundrepeat extends css_style_generic {
 /**
  * A background attachment style.
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_backgroundattachment extends css_style_generic {
 
@@ -3204,10 +3350,10 @@ class css_style_backgroundattachment extends css_style_generic {
 /**
  * A background position style.
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_backgroundposition extends css_style_generic {
 
@@ -3234,10 +3380,10 @@ class css_style_backgroundposition extends css_style_generic {
 /**
  * A padding style.
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_padding extends css_style_width {
 
@@ -3282,7 +3428,7 @@ class css_style_padding extends css_style_width {
      * Consolidates several padding styles into a single style.
      *
      * @param array $styles
-     * @return array 
+     * @return array
      */
     public static function consolidate(array $styles) {
         if (count($styles) != 4) {
@@ -3314,10 +3460,10 @@ class css_style_padding extends css_style_width {
 /**
  * A padding top style.
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_paddingtop extends css_style_padding {
 
@@ -3344,10 +3490,10 @@ class css_style_paddingtop extends css_style_padding {
 /**
  * A padding right style.
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_paddingright extends css_style_padding {
 
@@ -3374,10 +3520,10 @@ class css_style_paddingright extends css_style_padding {
 /**
  * A padding bottom style.
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_paddingbottom extends css_style_padding {
 
@@ -3404,10 +3550,10 @@ class css_style_paddingbottom extends css_style_padding {
 /**
  * A padding left style.
  *
- * @package core
- * @subpackage css
+ * @package core_css
+ * @category css
  * @copyright 2012 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_style_paddingleft extends css_style_padding {
 
