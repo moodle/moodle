@@ -21,7 +21,8 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
         DEFAULTSTARTDATE : 'defaultStartDate',
         DEFAULTDURATION : 'defaultDuration',
         ASSIGNABLEROLES : 'assignableRoles',
-        DISABLEGRADEHISTORY : 'disableGradeHistory'
+        DISABLEGRADEHISTORY : 'disableGradeHistory',
+        RECOVERGRADESDEFAULT : 'recoverGradesDefault'
     };
     /** CSS classes for nodes in structure **/
     var CSS = {
@@ -78,7 +79,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             if (this.get(UEP.DISABLEGRADEHISTORY) != true) {
                 recovergrades = create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.RECOVERGRADES+'"></div>')
                     .append(create('<label class="'+CSS.RECOVERGRADESTITLE+'" for="'+CSS.RECOVERGRADES+'">'+M.str.enrol.recovergrades+'</label>'))
-                    .append(create('<input type="checkbox" id="'+CSS.RECOVERGRADES+'" name="'+CSS.RECOVERGRADES+'" />'))
+                    .append(create('<input type="checkbox" id="'+CSS.RECOVERGRADES+'" name="'+CSS.RECOVERGRADES+'"'+ this.get(UEP.RECOVERGRADESDEFAULT) +' />'))
             }
 
             this.set(UEP.BASE, create('<div class="'+CSS.PANEL+' '+CSS.HIDDEN+'"></div>')
@@ -504,6 +505,9 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             },
             disableGradeHistory : {
                 value : 0
+            },
+            recoverGradesDefault : {
+                value : ''
             }
         }
     });
