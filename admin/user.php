@@ -185,7 +185,7 @@
     $users = get_users_listing($sort, $dir, $page*$perpage, $perpage, '', '', '',
             $extrasql, $params, $context);
     $usercount = get_users(false);
-    $usersearchcount = get_users(false, '', true, null, "", '', '', '', '', '*', $extrasql, $params);
+    $usersearchcount = get_users(false, '', false, null, "", '', '', '', '', '*', $extrasql, $params);
 
     if ($extrasql !== '') {
         echo $OUTPUT->heading("$usersearchcount / $usercount ".get_string('users'));
