@@ -182,7 +182,7 @@ class textlib {
     }
 
     /**
-     * Multibyte safe substr() function, uses iconv for utf-8, falls back to typo3.
+     * Multibyte safe substr() function, uses mbstring or iconv for UTF-8, falls back to typo3.
      *
      * @param string $text
      * @param int $start negative value means from end
@@ -194,18 +194,39 @@ class textlib {
         $charset = self::parse_charset($charset);
 
         if ($charset === 'utf-8') {
-            return iconv_substr($text, $start, $len, $charset);
+            if (function_exists('mb_substr')) {
+                // this is much faster than iconv - see MDL-31142
+                if ($len === null) {
+                    $oldcharset = mb_internal_encoding();
+                    mb_internal_encoding('UTF-8');
+                    $result = mb_substr($text, $start);
+                    mb_internal_encoding($oldcharset);
+                    return $result;
+                } else {
+                    return mb_substr($text, $start, $len, 'UTF-8');
+                }
+
+            } else {
+                if ($len === null) {
+                    $len = iconv_strlen($text, 'UTF-8');
+                }
+                return iconv_substr($text, $start, $len, 'UTF-8');
+            }
         }
 
         $oldlevel = error_reporting(E_PARSE);
-        $result = self::typo3()->substr($charset, $text, $start, $len);
+        if ($len === null) {
+            $result = self::typo3()->substr($charset, $text, $start);
+        } else {
+            $result = self::typo3()->substr($charset, $text, $start, $len);
+        }
         error_reporting($oldlevel);
 
         return $result;
     }
 
     /**
-     * Multibyte safe strlen() function, uses iconv for utf-8, falls back to typo3.
+     * Multibyte safe strlen() function, uses mbstring or iconv for UTF-8, falls back to typo3.
      *
      * @param string $text
      * @param string $charset encoding of the text
@@ -215,7 +236,11 @@ class textlib {
         $charset = self::parse_charset($charset);
 
         if ($charset === 'utf-8') {
-            return iconv_strlen($text, $charset);
+            if (function_exists('mb_strlen')) {
+                return mb_strlen($text, 'UTF-8');
+            } else {
+                return iconv_strlen($text, 'UTF-8');
+            }
         }
 
         $oldlevel = error_reporting(E_PARSE);
@@ -236,7 +261,7 @@ class textlib {
         $charset = self::parse_charset($charset);
 
         if ($charset === 'utf-8' and function_exists('mb_strtolower')) {
-            return mb_strtolower($text, $charset);
+            return mb_strtolower($text, 'UTF-8');
         }
 
         $oldlevel = error_reporting(E_PARSE);
@@ -257,7 +282,7 @@ class textlib {
         $charset = self::parse_charset($charset);
 
         if ($charset === 'utf-8' and function_exists('mb_strtoupper')) {
-            return mb_strtoupper($text, $charset);
+            return mb_strtoupper($text, 'UTF-8');
         }
 
         $oldlevel = error_reporting(E_PARSE);
@@ -268,7 +293,7 @@ class textlib {
     }
 
     /**
-     * UTF-8 ONLY safe strpos(), uses iconv..
+     * UTF-8 ONLY safe strpos(), uses mbstring, falls back to iconv.
      *
      * @param string $haystack
      * @param string $needle
@@ -276,18 +301,26 @@ class textlib {
      * @return string
      */
     public static function strpos($haystack, $needle, $offset=0) {
-        return iconv_strpos($haystack, $needle, $offset, 'utf-8');
+        if (function_exists('mb_strpos')) {
+            return mb_strpos($haystack, $needle, $offset, 'UTF-8');
+        } else {
+            return iconv_strpos($haystack, $needle, $offset, 'UTF-8');
+        }
     }
 
     /**
-     * UTF-8 ONLY safe strrpos(), uses iconv.
+     * UTF-8 ONLY safe strrpos(), uses mbstring, falls back to iconv.
      *
      * @param string $haystack
      * @param string $needle
      * @return string
      */
     public static function strrpos($haystack, $needle) {
-        return iconv_strrpos($haystack, $needle, 'utf-8');
+        if (function_exists('mb_strpos')) {
+            return mb_strrpos($haystack, $needle, null, 'UTF-8');
+        } else {
+            return iconv_strrpos($haystack, $needle, 'UTF-8');
+        }
     }
 
     /**
