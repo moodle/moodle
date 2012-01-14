@@ -869,7 +869,11 @@ abstract class repository {
                     }
                     if ($record->repositorytype == 'coursefiles') {
                         // coursefiles plugin needs managefiles permission
-                        $capability = $capability && has_capability('moodle/course:managefiles', $current_context);
+                        if (!empty($current_context)) {
+                            $capability = $capability && has_capability('moodle/course:managefiles', $current_context);
+                        } else {
+                            $capability = $capability && has_capability('moodle/course:managefiles', get_system_context());
+                        }
                     }
                     if ($is_supported && $capability) {
                         $repositories[$repository->id] = $repository;
