@@ -50,7 +50,7 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
         $DB->set_debug(true);
         foreach ($tables as $table) {
             $fulltable = $DB->get_prefix().$table;
-            $DB->change_database_structure("ALTER TABLE $fulltable TYPE=INNODB");
+            $DB->change_database_structure("ALTER TABLE $fulltable ENGINE=INNODB");
         }
         $DB->set_debug(false);
     }
