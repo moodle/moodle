@@ -17,12 +17,13 @@
 /**
  * Capabilities
  *
- * @package    report
- * @subpackage completion
+ * @package    report_completion
  * @copyright  2009 Catalyst IT Ltd
  * @author     Aaron Barnes <aaronb@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
 
