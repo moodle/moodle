@@ -22,6 +22,7 @@ body.has_dock {margin-left:30px;}
 #dockeditempanel .dockeditempanel_content {background-color:#fff;border:1px solid #000;z-index:12050;}
 #dockeditempanel .dockeditempanel_bd {overflow:auto;width:auto;}
 #dockeditempanel .dockeditempanel_bd .block_docked {margin:10px;}
+#dockeditempanel .dockeditempanel_bd .block_navigation .block_tree li {overflow:visible;}
 #dockeditempanel .dockeditempanel_hd {border-bottom:1px solid #000;text-align:right;}
 #dockeditempanel .dockeditempanel_hd h2 {display:inline;margin:0;padding-right:1em;}
 #dockeditempanel .dockeditempanel_hd .commands {display:inline;}
