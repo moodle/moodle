@@ -26,8 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/workshop/form/rubric/db/upgradelib.php');
-
 /**
  * Conversion handler for the rubric grading strategy data
  */
@@ -140,4 +138,22 @@ class moodle1_workshopform_rubric_handler extends moodle1_workshopform_handler {
             $this->xmlwriter->end_tag('workshopform_rubric_dimension');
         }
     }
+}
+
+/**
+ * Transforms given record into an object to be saved into workshopform_rubric_levels
+ *
+ * This is used during Rubric 1.9 -> Rubric 2.0 conversion
+ *
+ * @param stdClass $old legacy record from joined workshop_elements_old + workshop_rubrics_old
+ * @param int $newdimensionid id of the new workshopform_rubric dimension record to be linked to
+ * @return stdclass to be saved in workshopform_rubric_levels
+ */
+function workshopform_rubric_upgrade_rubric_level(stdclass $old, $newdimensionid) {
+    $new = new stdclass();
+    $new->dimensionid = $newdimensionid;
+    $new->grade = $old->rgrade * workshopform_rubric_upgrade_weight($old->eweight);
+    $new->definition = $old->rdesc;
+    $new->definitionformat = FORMAT_HTML;
+    return $new;
 }
