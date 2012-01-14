@@ -267,7 +267,6 @@ class core_group_external extends external_api {
 
         $transaction = $DB->start_delegated_transaction();
 
-// TODO: this is problematic because the DB rollback does not handle deleting of group images!
         foreach ($params['groupids'] as $groupid) {
             // validate params
             $groupid = validate_param($groupid, PARAM_INTEGER);
