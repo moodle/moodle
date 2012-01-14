@@ -339,8 +339,10 @@ class core_admin_renderer extends plugin_renderer_base {
             return '';
         }
 
-        return $this->warning(get_string('sitemaintenancewarning2', 'admin',
-                new moodle_url('/admin/settings.php', array('section' => 'maintenancemode'))));
+        $url = new moodle_url('/admin/settings.php', array('section' => 'maintenancemode'));
+        $url = $url->out(); // get_string() does not support objects in params
+
+        return $this->warning(get_string('sitemaintenancewarning2', 'admin', $url));
     }
 
     /**
