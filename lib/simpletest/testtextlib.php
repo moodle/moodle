@@ -83,6 +83,8 @@ class textlib_test extends UnitTestCase {
 
     public function test_substr() {
         $str = "Žluťoučký koníček";
+        $this->assertIdentical(textlib::substr($str, 0), $str);
+        $this->assertIdentical(textlib::substr($str, 1), 'luťoučký koníček');
         $this->assertIdentical(textlib::substr($str, 1, 3), 'luť');
         $this->assertIdentical(textlib::substr($str, 0, 100), $str);
         $this->assertIdentical(textlib::substr($str, -3, 2), 'če');
