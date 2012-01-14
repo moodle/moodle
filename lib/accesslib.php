@@ -1002,6 +1002,7 @@ function get_empty_accessdata() {
     $accessdata['rdef_lcc']   = 0;       // rdef_count during the last compression
     $accessdata['loaded']     = array(); // loaded course contexts
     $accessdata['time']       = time();
+    $accessdata['rsw']        = array();
 
     return $accessdata;
 }
@@ -1149,7 +1150,7 @@ function reload_all_capabilities() {
 
     // copy switchroles
     $sw = array();
-    if (isset($USER->access['rsw'])) {
+    if (!empty($USER->access['rsw'])) {
         $sw = $USER->access['rsw'];
     }
 
@@ -3940,16 +3941,14 @@ function role_switch($roleid, context $context) {
     //
     // Note: it is not possible to switch to roles that do not have course:view
 
-    // Add the switch RA
-    if (!isset($USER->access['rsw'])) {
-        $USER->access['rsw'] = array();
+    if (!isset($USER->access)) {
+        load_all_capabilities();
     }
 
+
+    // Add the switch RA
     if ($roleid == 0) {
         unset($USER->access['rsw'][$context->path]);
-        if (empty($USER->access['rsw'])) {
-            unset($USER->access['rsw']);
-        }
         return true;
     }
 
