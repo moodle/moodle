@@ -26,8 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/mod/workshop/form/accumulative/db/upgradelib.php');
-
 /**
  * Conversion handler for the accumulative grading strategy data
  */
@@ -170,4 +168,47 @@ class moodle1_workshopform_accumulative_handler extends moodle1_workshopform_han
 
         return $data;
     }
+}
+
+/**
+ * Transforms a given record from workshop_elements_old into an object to be saved into workshopform_accumulative
+ *
+ * @param stdClass $old legacy record from workshop_elements_old
+ * @param array $newscaleids mapping from old scale types into new standard ones
+ * @param int $newworkshopid id of the new workshop instance that replaced the previous one
+ * @return stdclass to be saved in workshopform_accumulative
+ */
+function workshopform_accumulative_upgrade_element(stdclass $old, array $newscaleids, $newworkshopid) {
+    $new = new stdclass();
+    $new->workshopid = $newworkshopid;
+    $new->sort = $old->elementno;
+    $new->description = $old->description;
+    $new->descriptionformat = FORMAT_HTML;
+    // calculate new grade/scale of the element
+    if ($old->scale >= 0 and $old->scale <= 6 and isset($newscaleids[$old->scale])) {
+        $new->grade = -$newscaleids[$old->scale];
+    } elseif ($old->scale == 7) {
+        $new->grade = 10;
+    } elseif ($old->scale == 8) {
+        $new->grade = 20;
+    } elseif ($old->scale == 9) {
+        $new->grade = 100;
+    } else {
+        $new->grade = 0;    // something is wrong
+    }
+    // calculate new weight of the element. Negative weights are not supported any more and
+    // are replaced with weight = 0. Legacy workshop did not store the raw weight but the index
+    // in the array of weights (see $WORKSHOP_EWEIGHTS in workshop 1.x)
+    // workshop 2.0 uses integer weights only (0-16) so all previous weights are multiplied by 4.
+    switch ($old->weight) {
+        case 8: $new->weight = 1; break;
+        case 9: $new->weight = 2; break;
+        case 10: $new->weight = 3; break;
+        case 11: $new->weight = 4; break;
+        case 12: $new->weight = 6; break;
+        case 13: $new->weight = 8; break;
+        case 14: $new->weight = 16; break;
+        default: $new->weight = 0;
+    }
+    return $new;
 }
