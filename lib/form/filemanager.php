@@ -315,7 +315,7 @@ FMHTML;
              array('cannotdeletefile', 'error'), array('confirmdeletefile', 'repository'),
              array('nopathselected', 'repository'), array('popupblockeddownload', 'repository'),
              array('draftareanofiles', 'repository'), array('path', 'moodle'), array('setmainfile', 'repository'),
-             array('moving', 'repository'), array('files', 'moodle')
+             array('moving', 'repository'), array('files', 'moodle'), array('serverconnection', 'error')
         )
     );
     $PAGE->requires->js_module($module);
