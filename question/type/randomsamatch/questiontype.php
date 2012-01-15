@@ -62,10 +62,12 @@ class qtype_randomsamatch extends question_type {
 
     public function save_question_options($question) {
         global $DB;
+        $options = new stdClass();
         $options->question = $question->id;
         $options->choose = $question->choose;
 
         if (2 > $question->choose) {
+            $result = new stdClass();
             $result->error = "At least two shortanswer questions need to be chosen!";
             return $result;
         }
