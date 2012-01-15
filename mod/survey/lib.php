@@ -511,6 +511,7 @@ function survey_get_template_name($templateid) {
  */
 function survey_shorten_name ($name, $numwords) {
     $words = explode(" ", $name);
+    $output = '';
     for ($i=0; $i < $numwords; $i++) {
         $output .= $words[$i]." ";
     }

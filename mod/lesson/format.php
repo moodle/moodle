@@ -158,6 +158,7 @@ function lesson_save_question_options($question, $lesson) {
         case LESSON_PAGE_TRUEFALSE:
 
             // the truth
+            $answer = new stdClass();
             $answer->lessonid   = $question->lessonid;
             $answer->pageid = $question->id;
             $answer->timecreated   = $timenow;

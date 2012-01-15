@@ -845,8 +845,9 @@ class webservice_test extends UnitTestCase {
 
             // custom fields
             if(!empty($user1->customfields)) {
+                $customuser1 = new stdClass();
+                $customuser1->id = $user1->id;
                 foreach($user1->customfields as $customfield) {
-                    $customuser1->id = $user1->id;
                     $customuser1->{"profile_field_".$customfield['type']} = $customfield['value'];
                 }
                 profile_save_data((object) $customuser1);

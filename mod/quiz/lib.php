@@ -1431,6 +1431,7 @@ function quiz_num_attempt_summary($quiz, $cm, $returnzero = false, $currentgroup
     $numattempts = $DB->count_records('quiz_attempts', array('quiz'=> $quiz->id, 'preview'=>0));
     if ($numattempts || $returnzero) {
         if (groups_get_activity_groupmode($cm)) {
+            $a = new stdClass();
             $a->total = $numattempts;
             if ($currentgroup) {
                 $a->group = $DB->count_records_sql('SELECT COUNT(DISTINCT qa.id) FROM ' .
