@@ -31,6 +31,7 @@ $enrol   = required_param('enrol', PARAM_SAFEDIR);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
 $PAGE->set_url('/admin/enrol.php');
+$PAGE->set_context(context_system::instance());
 
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
@@ -107,6 +108,7 @@ switch ($action) {
         } else {  // Delete everything!!
             uninstall_plugin('enrol', $enrol);
 
+            $a = new stdClass();
             $a->plugin = $strplugin;
             $a->directory = "$CFG->dirroot/enrol/$enrol";
             echo $OUTPUT->notification(get_string('uninstalldeletefiles', 'enrol', $a), 'notifysuccess');

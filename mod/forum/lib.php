@@ -2918,6 +2918,7 @@ function forum_get_course_forum($courseid, $type) {
     }
 
     // Doesn't exist, so create one now.
+    $forum = new stdClass();
     $forum->course = $courseid;
     $forum->type = "$type";
     switch ($forum->type) {

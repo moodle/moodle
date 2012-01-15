@@ -92,6 +92,7 @@
             }
 
             uninstall_plugin('mod', $delete);
+            $a = new stdClass();
             $a->module = $strmodulename;
             $a->directory = "$CFG->dirroot/mod/$delete";
             echo $OUTPUT->notification(get_string("moduledeletefiles", "", $a), 'notifysuccess');

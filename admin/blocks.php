@@ -126,6 +126,7 @@
             // Remove event handlers and dequeue pending events
             events_uninstall('block/'.$block->name);
 
+            $a = new stdClass();
             $a->block = $strblockname;
             $a->directory = $CFG->dirroot.'/blocks/'.$block->name;
             notice(get_string('blockdeletefiles', '', $a), 'blocks.php');

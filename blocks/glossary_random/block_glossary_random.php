@@ -119,6 +119,7 @@ class block_glossary_random extends block_base {
         global $USER, $CFG, $DB;
 
         if (empty($this->config->glossary)) {
+            $this->content = new stdClass();
             $this->content->text   = get_string('notyetconfigured','block_glossary_random');
             $this->content->footer = '';
             return $this->content;
@@ -153,7 +154,7 @@ class block_glossary_random extends block_base {
             return $this->content;
         }
 
-        $this->content = new stdClass;
+        $this->content = new stdClass();
         $this->content->text = $this->config->cache;
 
         // place link to glossary in the footer if the glossary is visible

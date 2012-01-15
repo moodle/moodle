@@ -1540,6 +1540,7 @@ function calendar_set_event_type_display($type, $display = null, $user = null) {
 
 function calendar_get_allowed_types(&$allowed, $course = null) {
     global $USER, $CFG, $DB;
+    $allowed = new stdClass();
     $allowed->user = has_capability('moodle/calendar:manageownentries', get_system_context());
     $allowed->groups = false; // This may change just below
     $allowed->courses = false; // This may change just below

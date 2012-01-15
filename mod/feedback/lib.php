@@ -654,8 +654,8 @@ function feedback_set_events($feedback) {
     }
 
     // the open-event
-    if($feedback->timeopen > 0) {
-        $event = NULL;
+    if ($feedback->timeopen > 0) {
+        $event = new stdClass();
         $event->name         = get_string('start', 'feedback').' '.$feedback->name;
         $event->description  = format_module_intro('feedback', $feedback, $feedback->coursemodule);
         $event->courseid     = $feedback->course;
@@ -676,8 +676,8 @@ function feedback_set_events($feedback) {
     }
 
     // the close-event
-    if($feedback->timeclose > 0) {
-        $event = NULL;
+    if ($feedback->timeclose > 0) {
+        $event = new stdClass();
         $event->name         = get_string('stop', 'feedback').' '.$feedback->name;
         $event->description  = format_module_intro('feedback', $feedback, $feedback->coursemodule);
         $event->courseid     = $feedback->course;

@@ -72,6 +72,9 @@ class block_html_edit_form extends block_edit_form {
         unset($this->block->config->text);
         parent::set_data($defaults);
         // restore $text
+        if (!isset($this->block->config)) {
+            $this->block->config = new stdClass();
+        }
         $this->block->config->text = $text;
         if (isset($title)) {
             // Reset the preserved title

@@ -285,6 +285,10 @@ $PAGE->verify_https_required();
 
 /// Generate the login page with forms
 
+if (!isset($frm) or !is_object($frm)) {
+    $frm = new stdClass();
+}
+
 if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 5184
     if (!empty($_GET["username"])) {
         $frm->username = $_GET["username"];

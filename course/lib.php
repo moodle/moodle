@@ -1086,6 +1086,7 @@ function get_array_of_activities($courseid) {
                    if (empty($rawmods[$seq])) {
                        continue;
                    }
+                   $mod[$seq] = new stdClass();
                    $mod[$seq]->id               = $rawmods[$seq]->instance;
                    $mod[$seq]->cm               = $rawmods[$seq]->id;
                    $mod[$seq]->mod              = $rawmods[$seq]->modname;
@@ -2111,6 +2112,7 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
         }
 
     } else {
+        $category = new stdClass();
         $category->id = "0";
     }
 
@@ -2478,7 +2480,7 @@ function print_course($course, $highlightterms = '') {
     echo html_writer::end_tag('div'); // End of info div
 
     echo html_writer::start_tag('div', array('class'=>'summary'));
-    $options = NULL;
+    $options = new stdClass();
     $options->noclean = true;
     $options->para = false;
     $options->overflowdiv = true;
@@ -2625,7 +2627,7 @@ function print_remote_course($course, $width="100%") {
         . format_string($course->cat_name) . ' : '
         . format_string($course->shortname). '</div>';
     echo '</div><div class="summary">';
-    $options = NULL;
+    $options = new stdClass();
     $options->noclean = true;
     $options->para = false;
     $options->overflowdiv = true;

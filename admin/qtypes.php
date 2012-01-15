@@ -173,6 +173,7 @@ if (($delete = optional_param('delete', '', PARAM_SAFEDIR)) && confirm_sesskey()
     // Remove event handlers and dequeue pending events
     events_uninstall('qtype_' . $delete);
 
+    $a = new stdClass();
     $a->qtype = $qtypename;
     $a->directory = $qtypes[$delete]->plugin_dir();
     echo $OUTPUT->box(get_string('qtypedeletefiles', 'question', $a), 'generalbox', 'notice');

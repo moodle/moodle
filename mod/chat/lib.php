@@ -112,7 +112,7 @@ function chat_add_instance($chat) {
 
     $returnid = $DB->insert_record("chat", $chat);
 
-    $event = NULL;
+    $event = new stdClass();
     $event->name        = $chat->name;
     $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
     $event->courseid    = $chat->course;

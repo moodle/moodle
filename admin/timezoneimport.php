@@ -89,7 +89,7 @@
 /// That's it!
 
     if ($importdone) {
-        $a = null;
+        $a = new stdClass();
         $a->count = count($timezones);
         $a->source  = $importdone;
         echo $OUTPUT->heading(get_string('importtimezonescount', 'admin', $a), 3);

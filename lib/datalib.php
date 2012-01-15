@@ -1232,7 +1232,7 @@ function get_my_remotehosts() {
 function make_default_scale() {
     global $DB;
 
-    $defaultscale = NULL;
+    $defaultscale = new stdClass();
     $defaultscale->courseid = 0;
     $defaultscale->userid = 0;
     $defaultscale->name  = get_string('separateandconnected');
