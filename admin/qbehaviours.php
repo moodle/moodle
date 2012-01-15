@@ -191,6 +191,7 @@ if (($delete = optional_param('delete', '', PARAM_PLUGIN)) && confirm_sesskey())
     // Remove event handlers and dequeue pending events
     events_uninstall('qbehaviour_' . $delete);
 
+    $a = new stdClass();
     $a->behaviour = $behaviourname;
     $a->directory = get_plugin_directory('qbehaviour', $delete);
     echo $OUTPUT->box(get_string('qbehaviourdeletefiles', 'question', $a), 'generalbox', 'notice');

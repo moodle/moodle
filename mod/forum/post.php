@@ -792,6 +792,7 @@ if ($post->discussion) {
         print_error('cannotfindparentpost', 'forum', '', $post->id);
     }
 } else {
+    $toppost = new stdClass();
     $toppost->subject = ($forum->type == "news") ? get_string("addanewtopic", "forum") :
                                                    get_string("addanewdiscussion", "forum");
 }

@@ -373,6 +373,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
         echo '</td>';
         echo '</tr>';
     } else {
+        $category = new stdClass();
         $category->id = '0';
     }
 
