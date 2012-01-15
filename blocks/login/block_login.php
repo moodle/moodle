@@ -43,6 +43,7 @@ class block_login extends block_base {
 
         $username = get_moodle_cookie();
 
+        $this->content = new stdClass();
         $this->content->footer = '';
         $this->content->text = '';
 

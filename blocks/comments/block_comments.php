@@ -48,21 +48,23 @@ class block_comments extends block_base {
 
     function get_content() {
         global $CFG, $PAGE;
+        if ($this->content !== NULL) {
+            return $this->content;
+        }
         if (!$CFG->usecomments) {
+            $this->content = new stdClass();
             $this->content->text = '';
             if ($this->page->user_is_editing()) {
                 $this->content->text = get_string('disabledcomments');
             }
             return $this->content;
         }
-        if ($this->content !== NULL) {
-            return $this->content;
-        }
-        if (empty($this->instance)) {
-            return null;
-        }
+        $this->content = new stdClass();
         $this->content->footer = '';
         $this->content->text = '';
+        if (empty($this->instance)) {
+            return $this->content;
+        }
         list($context, $course, $cm) = get_context_info_array($PAGE->context->id);
 
         $args = new stdClass;

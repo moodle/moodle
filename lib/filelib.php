@@ -128,6 +128,9 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
     if (is_null($itemid) or is_null($context)) {
         $contextid = null;
         $itemid = null;
+        if (!isset($data)) {
+            $data = new stdClass();
+        }
         if (!isset($data->{$field})) {
             $data->{$field} = '';
         }

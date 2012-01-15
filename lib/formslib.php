@@ -2466,6 +2466,10 @@ class MoodleQuickForm_Rule_Required extends HTML_QuickForm_Rule {
         if (is_array($value) && array_key_exists('text', $value)) {
             $value = $value['text'];
         }
+        if (is_array($value)) {
+            // nasty guess - there has to be something in the array, hopefully nobody invents arrays in arrays
+            $value = implode('', $value);
+        }
         $stripvalues = array(
             '#</?(?!img|canvas|hr).*?>#im', // all tags except img, canvas and hr
             '#(\xc2|\xa0|\s|&nbsp;)#', //any whitespaces actually

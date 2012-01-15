@@ -129,6 +129,7 @@ class block_settings extends block_base {
         }
 
         $renderer = $this->page->get_renderer('block_settings');
+        $this->content = new stdClass();
         $this->content->text = $renderer->settings_tree($this->page->settingsnav);
 
         // only do search if you have moodle/site:config
