@@ -141,7 +141,7 @@ defined('MOODLE_INTERNAL') || die();
             $thissection = $sections[$section];
 
         } else {
-            unset($thissection);
+            $thissection = new stdClass();
             $thissection->course = $course->id;   // Create a new week structure
             $thissection->section = $section;
             $thissection->name    = null;

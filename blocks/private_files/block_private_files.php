@@ -51,6 +51,7 @@ class block_private_files extends block_base {
             return null;
         }
 
+        $this->content = new stdClass();
         $this->content->text = '';
         $this->content->footer = '';
         if (isloggedin() && !isguestuser()) {   // Show the block

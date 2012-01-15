@@ -100,6 +100,7 @@
         } else {
             uninstall_plugin('block', $block->name);
 
+            $a = new stdClass();
             $a->block = $strblockname;
             $a->directory = $CFG->dirroot.'/blocks/'.$block->name;
             notice(get_string('blockdeletefiles', '', $a), 'blocks.php');

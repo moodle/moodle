@@ -47,6 +47,10 @@ class block_tags extends block_base {
             return $this->content;
         }
 
+        if (!isset($this->config)) {
+            $this->config = new stdClass();
+        }
+
         if (empty($this->config->numberoftags)) {
             $this->config->numberoftags = 80;
         }

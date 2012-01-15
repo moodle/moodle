@@ -829,6 +829,10 @@ function filter_get_all_local_settings($contextid) {
 function filter_get_active_in_context($context) {
     global $DB, $FILTERLIB_PRIVATE;
 
+    if (!isset($FILTERLIB_PRIVATE)) {
+        $FILTERLIB_PRIVATE = new stdClass();
+    }
+
     // Use cache (this is a within-request cache only) if available. See
     // function filter_preload_activities.
     if (isset($FILTERLIB_PRIVATE->active) &&
@@ -876,6 +880,10 @@ function filter_get_active_in_context($context) {
  */
 function filter_preload_activities(course_modinfo $modinfo) {
     global $DB, $FILTERLIB_PRIVATE;
+
+    if (!isset($FILTERLIB_PRIVATE)) {
+        $FILTERLIB_PRIVATE = new stdClass();
+    }
 
     // Don't repeat preload
     if (!isset($FILTERLIB_PRIVATE->preloaded)) {

@@ -270,6 +270,7 @@ if (!empty($instanceid) && !empty($roleid)) {
 
     $data = array();
 
+    $a = new stdClass();
     $a->count = $totalcount;
     $a->items = $role->name;
 
