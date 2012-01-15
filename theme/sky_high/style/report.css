@@ -121,6 +121,7 @@ body.pagelayout-report.has_dock {
     .pagelayout-report .region-content {margin-left: 0px !important;}
     .pagelayout-report #report-region-pre {width: 0px !important;}
     .pagelayout-report .region-content table.generaltable {font-size:70% !important;}
+    .pagelayout-report #report-region-pre,
     .pagelayout-report #page-header,
     .pagelayout-report #page-footer,
     .pagelayout-report #dock { display: none;}
