@@ -74,7 +74,7 @@ function wiki_print_editor_wiki($pageid, $content, $editor, $version = -1, $sect
     echo $OUTPUT->container_end();
 
     echo $OUTPUT->container_start('mdl-align');
-    echo '<form method="post" id="wikiform" action="' . $action . '">';
+    echo '<form method="post" id="mform1" action="' . $action . '">';
     echo $OUTPUT->container(print_textarea(false, 20, 60, 0, 0, "newcontent", $content, 0, true), false, 'wiki_editor');
     echo $OUTPUT->container_start();
     wiki_print_edit_form_default_fields($editor, $pageid, $version, $upload, $deleteuploads);
