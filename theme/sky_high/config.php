@@ -55,7 +55,8 @@ $THEME->sheets = array(
     'core',
     'pagelayout',
     'menu',
-    'report'
+    'report',
+    'admin'
 );
 
 ////////////////////////////////////////////////////
@@ -119,7 +120,8 @@ $THEME->layouts = array(
         'defaultregion' => 'side-post',
     ),
     'admin' => array(
-        'file' => 'general.php',
+        'theme' => 'base',
+        'file' => 'report.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
