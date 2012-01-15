@@ -166,6 +166,7 @@ class lesson_page_type_essay extends lesson_page {
                 $essaystats->total++;
                 $pagestats[$temp->pageid] = $essaystats;
             } else {
+                $essaystats = new stdClass();
                 $essaystats->totalscore = $essayinfo->score;
                 $essaystats->total = 1;
                 $pagestats[$temp->pageid] = $essaystats;
@@ -207,6 +208,7 @@ class lesson_page_type_essay extends lesson_page {
                     $answerdata->score = get_string("havenotgradedyet", "lesson");
                 }
             } else {
+                $essayinfo = new stdClass();
                 $essayinfo->answer = get_string("didnotanswerquestion", "lesson");
             }
 

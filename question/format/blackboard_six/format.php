@@ -507,7 +507,7 @@ function process_responses($bb_responses, &$responses) {
         //Added this line to instantiate $response.
         // Without instantiating the $response variable, the same object
         // gets added to the array
-        $response = null;
+        $response = new stdClass();
         if (isset($bb_response['@']['title'])) {
                 $response->title = $bb_response['@']['title'];
             }

@@ -461,6 +461,7 @@
                         }
 
                         //Now build the EVENT record structure
+                        $eve = new stdClass();
                         $eve->name = backup_todb($info['EVENT']['#']['NAME']['0']['#']);
                         $eve->description = backup_todb($info['EVENT']['#']['DESCRIPTION']['0']['#']);
                         $eve->format = backup_todb($info['EVENT']['#']['FORMAT']['0']['#']);

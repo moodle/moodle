@@ -291,6 +291,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         global $DB;
         $course_module = new stdClass();
         $course_module->course = $this->courseid;
+        $quiz = new stdClass();
         $quiz->module = 1;
         $quiz->instance = 2;
         $course_module->id = $DB->insert_record('course_modules', $course_module);
