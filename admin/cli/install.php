@@ -337,12 +337,7 @@ $CFG->httpswwwroot  = $CFG->wwwroot;
 
 
 //We need dataroot before lang download
-$dataroot = clean_param($options['dataroot'], PARAM_PATH);
-if ($dataroot !== $options['dataroot']) {
-    $a = (object)array('option' => 'dataroot', 'value' => $options['dataroot']);
-    cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
-}
-$CFG->dataroot = $dataroot;
+$CFG->dataroot = $options['dataroot'];
 if ($interactive) {
     cli_separator();
     $i=0;
