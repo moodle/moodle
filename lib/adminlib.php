@@ -3027,7 +3027,7 @@ class admin_setting_bloglevel extends admin_setting_configselect {
      */
     public function write_setting($data) {
         global $DB, $CFG;
-        if ($data['bloglevel'] == 0) {
+        if ($data == 0) {
             $blogblocks = $DB->get_records_select('block', "name LIKE 'blog_%' AND visible = 1");
             foreach ($blogblocks as $block) {
                 $DB->set_field('block', 'visible', 0, array('id' => $block->id));
