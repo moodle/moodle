@@ -354,7 +354,7 @@ class question_usage_by_activity {
      * @return string HTML fragment.
      */
     public function render_question_head_html($slot) {
-        $options->context = $this->context;
+        //$options->context = $this->context;
         return $this->get_question_attempt($slot)->render_head_html();
     }
 

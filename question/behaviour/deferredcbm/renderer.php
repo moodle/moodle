@@ -88,6 +88,7 @@ class qbehaviour_deferredcbm_renderer extends qbehaviour_renderer {
         }
 
         if ($options->marks >= question_display_options::MARK_AND_MAX) {
+            $a = new stdClass();
             $a->rawmark = format_float($qa->get_last_behaviour_var('_rawfraction') *
                     $qa->get_max_mark(), $options->markdp);
             $a->mark = $qa->format_mark($options->markdp);

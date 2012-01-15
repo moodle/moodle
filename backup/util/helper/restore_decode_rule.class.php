@@ -151,7 +151,7 @@ class restore_decode_rule {
         $countma = count($mappings);
         // Check mappings number matches placeholders
         if ($countph != $countma) {
-            $msg = new stdclass();
+            $a = new stdClass();
             $a->placeholders = $countph;
             $a->mappings     = $countma;
             throw new restore_decode_rule_exception('decode_rule_mappings_incorrect_count', $a);

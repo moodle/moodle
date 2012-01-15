@@ -150,6 +150,7 @@ function build_mnet_logs_array($hostid, $course, $user=0, $date=0, $order="l.tim
     $groupid = 0;
 
     $joins = array();
+    $where = '';
 
     $qry = "SELECT l.*, u.firstname, u.lastname, u.picture
               FROM {mnet_log} l
