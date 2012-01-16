@@ -3065,11 +3065,12 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
         $str->duplicate      = get_string("duplicate");
         $str->hide           = get_string("hide");
         $str->show           = get_string("show");
-        $str->clicktochange  = get_string("clicktochange");
-        $str->forcedmode     = get_string("forcedmode");
-        $str->groupsnone     = get_string("groupsnone");
-        $str->groupsseparate = get_string("groupsseparate");
-        $str->groupsvisible  = get_string("groupsvisible");
+        $str->groupsnone     = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsnone"));
+        $str->groupsseparate = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsseparate"));
+        $str->groupsvisible  = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsvisible"));
+        $str->forcedgroupsnone     = get_string('forcedmodeinbrackets', 'moodle', get_string("groupsnone"));
+        $str->forcedgroupsseparate = get_string('forcedmodeinbrackets', 'moodle', get_string("groupsseparate"));
+        $str->forcedgroupsvisible  = get_string('forcedmodeinbrackets', 'moodle', get_string("groupsvisible"));
         $sesskey = sesskey();
     }
 
@@ -3103,28 +3104,31 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
     if ($mod->groupmode !== false) {
         if ($mod->groupmode == SEPARATEGROUPS) {
             $grouptitle = $str->groupsseparate;
+            $forcedgrouptitle = $str->forcedgroupsseparate;
             $groupclass = 'editing_groupsseparate';
             $groupimage = $OUTPUT->pix_url('t/groups') . '';
             $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=0&amp;sesskey='.$sesskey;
         } else if ($mod->groupmode == VISIBLEGROUPS) {
             $grouptitle = $str->groupsvisible;
+            $forcedgrouptitle = $str->forcedgroupsvisible;
             $groupclass = 'editing_groupsvisible';
             $groupimage = $OUTPUT->pix_url('t/groupv') . '';
             $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=1&amp;sesskey='.$sesskey;
         } else {
             $grouptitle = $str->groupsnone;
+            $forcedgrouptitle = $str->forcedgroupsnone;
             $groupclass = 'editing_groupsnone';
             $groupimage = $OUTPUT->pix_url('t/groupn') . '';
             $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=2&amp;sesskey='.$sesskey;
         }
         if ($mod->groupmodelink) {
-            $groupmode = '<a class="'.$groupclass.'" title="'.$grouptitle.' ('.$str->clicktochange.')" href="'.$grouplink.'">'.
+            $groupmode = '<a class="'.$groupclass.'" title="'.$grouptitle.'" href="'.$grouplink.'">'.
                          '<img src="'.$groupimage.'" class="iconsmall" '.
                          'alt="'.$grouptitle.'" /></a>';
         } else {
-            $groupmode = '<img title="'.$grouptitle.' ('.$str->forcedmode.')" '.
+            $groupmode = '<img title="'.$forcedgrouptitle.'"'.
                          ' src="'.$groupimage.'" class="iconsmall" '.
-                         'alt="'.$grouptitle.'" />';
+                         'alt="'.$forcedgrouptitle.'" />';
         }
     } else {
         $groupmode = "";
