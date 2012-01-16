@@ -69,13 +69,13 @@ function xmldb_quiz_upgrade($oldversion) {
         // quiz savepoint reached
         upgrade_mod_savepoint(true, 2011120701, 'quiz');
     }
-    
+
     if ($oldversion < 2011120703) {
         // Track page of quiz attempts
         $table = new xmldb_table('quiz_attempts');
-        
+
         $field = new xmldb_field('currentpage', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
-        
+
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }

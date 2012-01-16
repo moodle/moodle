@@ -96,7 +96,7 @@ if (empty($slots)) {
     throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noquestionsfound');
 }
 
-// Update attempt page    
+// Update attempt page
 if ($attemptobj->get_currentpage() != $page) {
     $DB->set_field('quiz_attempts', 'currentpage', $page);
 }

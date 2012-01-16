@@ -82,7 +82,7 @@ $lastattempt = end($attempts);
 if ($lastattempt && !$lastattempt->timefinish) {
     $currentattemptid = $lastattempt->id;
     $messages = $accessmanager->prevent_access();
-    
+
     if ($page == -1) {
         $page = $lastattempt->currentpage;
     }
@@ -101,7 +101,7 @@ if ($lastattempt && !$lastattempt->timefinish) {
             $accessmanager->prevent_new_attempt(count($attempts), $lastattempt);
 
     if ($page == -1) {
-        $page = 0;    
+        $page = 0;
     }
 }
 
