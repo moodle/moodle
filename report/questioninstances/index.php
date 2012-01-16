@@ -28,7 +28,7 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/questionlib.php');
 
 // Get URL parameters.
-$requestedqtype = optional_param('qtype', '', PARAM_PLUGIN);
+$requestedqtype = optional_param('qtype', '', PARAM_SAFEDIR);
 
 // Print the header & check permissions.
 admin_externalpage_setup('reportquestioninstances', '', null, '', array('pagelayout'=>'report'));
@@ -62,21 +62,26 @@ if ($requestedqtype) {
 
     // Work out the bits needed for the SQL WHERE clauses.
     if ($requestedqtype == 'missingtype') {
+        $title = get_string('reportformissingqtypes', 'report_questioninstances');
+
         $othertypes = array_keys($qtypes);
         $key = array_search('missingtype', $othertypes);
         unset($othertypes[$key]);
         list($sqlqtypetest, $params) = $DB->get_in_or_equal($othertypes, SQL_PARAMS_QM, '', false);
         $sqlqtypetest = 'WHERE qtype ' . $sqlqtypetest;
-        $title = get_string('reportformissingqtypes', 'report_questioninstances');
+
     } else if ($requestedqtype == '_all_') {
+        $title = get_string('reportforallqtypes', 'report_questioninstances');
+
         $sqlqtypetest = '';
         $params = array();
-        $title = get_string('reportforallqtypes', 'report_questioninstances');
+
     } else {
-        $sqlqtypetest = 'WHERE qtype = ?';
-        $params = array($requestedqtype);
         $title = get_string('reportforqtype', 'report_questioninstances',
                 question_bank::get_qtype($requestedqtype)->local_name());
+
+        $sqlqtypetest = 'WHERE qtype = ?';
+        $params = array($requestedqtype);
     }
 
     // Get the question counts, and all the context information, for each
