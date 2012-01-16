@@ -275,8 +275,8 @@ if (($deleteemptypage !== false) && confirm_sesskey()) {
 $remove = optional_param('remove', false, PARAM_INT);
 if (($remove = optional_param('remove', false, PARAM_INT)) && confirm_sesskey()) {
     quiz_remove_question($quiz, $remove);
-    quiz_update_sumgrades($quiz);
     quiz_delete_previews($quiz);
+    quiz_update_sumgrades($quiz);
     redirect($afteractionurl);
 }
 
@@ -496,9 +496,7 @@ if ($quiz_reordertool) {
 quiz_print_status_bar($quiz);
 
 $tabindex = 0;
-if (!$quiz_reordertool) {
-    quiz_print_grading_form($quiz, $thispageurl, $tabindex);
-}
+quiz_print_grading_form($quiz, $thispageurl, $tabindex);
 
 $notifystrings = array();
 if ($quizhasattempts) {

@@ -50,9 +50,13 @@ $PAGE->set_url($quizobj->view_url());
 require_login($quizobj->get_courseid(), false, $quizobj->get_cm());
 require_sesskey();
 
-// if no questions have been set up yet redirect to edit.php
-if (!$quizobj->has_questions() && $quizobj->has_capability('mod/quiz:manage')) {
-    redirect($quizobj->edit_url());
+// if no questions have been set up yet redirect to edit.php or display an error.
+if (!$quizobj->has_questions()) {
+    if ($quizobj->has_capability('mod/quiz:manage')) {
+        redirect($quizobj->edit_url());
+    } else {
+        print_error('cannotstartnoquestions', 'quiz', $quizobj->view_url());
+    }
 }
 
 // Create an object to manage all the other (non-roles) access rules.

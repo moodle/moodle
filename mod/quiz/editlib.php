@@ -248,8 +248,8 @@ function quiz_add_page_break_after($layout, $questionid) {
 function quiz_save_new_layout($quiz) {
     global $DB;
     $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
-    quiz_update_sumgrades($quiz);
     quiz_delete_previews($quiz);
+    quiz_update_sumgrades($quiz);
 }
 
 /**
