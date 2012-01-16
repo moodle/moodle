@@ -971,7 +971,7 @@ $string['upgradelogs'] = 'For full functionality, your old logs need to be upgra
 $string['upgradelogsinfo'] = 'Some changes have recently been made in the way logs are stored.  To be able to view all of your old logs on a per-activity basis, your old logs need to be upgraded.  Depending on your site this can take a long time (eg several hours) and can be quite taxing on the database for large sites.  Once you start this process you should let it finish (by keeping the browser window open).  Don\'t worry - your site will work fine for other people while the logs are being upgraded.<br /><br />Do you want to upgrade your logs now?';
 $string['upgradesettings'] = 'New settings';
 $string['upgradesettingsintro'] = 'The settings shown below were added during your last Moodle upgrade. Make any changes necessary to the defaults and then click the &quot;Save changes&quot; button at the bottom of this page.';
-$string['upgradestalefiles'] = 'Invalid installation files detected, upgrade can not contine';
+$string['upgradestalefiles'] = 'Invalid installation files detected, upgrade cannot continue';
 $string['upgradestalefilesinfo'] = 'Some old PHP scripts have been detected which may indicate that you installed this version over an older one. Please fix the installation directory by removing all old scripts (except config.php) before installing the new version and then try the upgrade again. You can find more information in upgrade documentation at <a href="{$a}">{$a}</a>';
 $string['upgradesure'] = 'Your Moodle files have been changed, and you are about to automatically upgrade your server to this version: <br /><br />
 <strong>{$a}</strong> <br /><br />
