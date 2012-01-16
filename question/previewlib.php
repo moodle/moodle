@@ -89,7 +89,7 @@ class preview_options_form extends moodleform {
                 get_string('responsehistory', 'question'), $hiddenofvisible);
 
         $mform->addElement('submit', 'submit',
-                get_string('restartwiththeseoptions', 'question'), $hiddenofvisible);
+                get_string('restartwiththeseoptions', 'question'));
     }
 }
 
