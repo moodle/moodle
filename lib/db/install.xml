@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20111214" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20120110" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1131,7 +1131,9 @@
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="contextid"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="sortorder" UNIQUE="false" FIELDS="sortorder"/>
+        <INDEX NAME="sortorder" UNIQUE="false" FIELDS="sortorder" NEXT="rolecontext"/>
+        <INDEX NAME="rolecontext" UNIQUE="false" FIELDS="roleid, contextid" COMMENT="Index on roleid and contextid" PREVIOUS="sortorder" NEXT="usercontextrole"/>
+        <INDEX NAME="usercontextrole" UNIQUE="false" FIELDS="userid, contextid, roleid" COMMENT="Index on userid, contextid and roleid" PREVIOUS="rolecontext"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="role_capabilities" COMMENT="permission has to be signed, overriding a capability for a particular role in a particular context" PREVIOUS="role_assignments" NEXT="role_names">
