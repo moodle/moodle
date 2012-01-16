@@ -76,7 +76,7 @@ if (!empty($options['engine'])) {
         }
         echo str_pad($table->name, 40). " - ";
 
-        $DB->change_database_structure("ALTER TABLE {$table->name} TYPE = $engine");
+        $DB->change_database_structure("ALTER TABLE {$table->name} ENGINE = $engine");
         echo "DONE\n";
         $converted++;
     }
