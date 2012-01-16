@@ -98,8 +98,11 @@ class question_attempt_step {
      * @param array $data the submitted data that defines this step.
      * @param int $timestamp the time to record for the action. (If not given, use now.)
      * @param int $userid the user to attribute the aciton to. (If not given, use the current user.)
+     * @param int $existingstepid if this step is going to replace an existing step
+     *      (for example, during a regrade) this is the id of the previous step we are replacing.
      */
-    public function __construct($data = array(), $timecreated = null, $userid = null) {
+    public function __construct($data = array(), $timecreated = null, $userid = null,
+            $existingstepid = null) {
         global $USER;
 
         if (!is_array($data)) {
@@ -117,6 +120,18 @@ class question_attempt_step {
         } else {
             $this->userid = $userid;
         }
+
+        if (!is_null($existingstepid)) {
+            $this->id = $existingstepid;
+        }
+    }
+
+    /**
+     * @return int|null The id of this step in the database. null if this step
+     * is not stored in the database.
+     */
+    public function get_id() {
+        return $this->id;
     }
 
     /** @return question_state The state after this step. */

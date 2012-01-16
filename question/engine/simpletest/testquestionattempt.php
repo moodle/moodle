@@ -70,8 +70,8 @@ class question_attempt_test extends UnitTestCase {
         $this->assertEqual(2, $qa->get_max_mark());
     }
 
-    public function test_get_set_number_in_usage() {
-        $this->qa->set_number_in_usage(7);
+    public function test_get_set_slot() {
+        $this->qa->set_slot(7);
         $this->assertEqual(7, $this->qa->get_slot());
     }
 
@@ -97,7 +97,7 @@ class question_attempt_test extends UnitTestCase {
     }
 
     public function test_get_field_prefix() {
-        $this->qa->set_number_in_usage(7);
+        $this->qa->set_slot(7);
         $name = $this->qa->get_field_prefix();
         $this->assertPattern('/' . preg_quote($this->usageid) . '/', $name);
         $this->assertPattern('/' . preg_quote($this->qa->get_slot()) . '/', $name);
