@@ -49,6 +49,11 @@ define('MOD_CLASS_RESOURCE', 1);
 function make_log_url($module, $url) {
     switch ($module) {
         case 'course':
+            if (strpos($url, 'report/') === 0) {
+                // there is only one report type, curse reports are deprecated
+                $url = "/$url";
+                break;
+            }
         case 'file':
         case 'login':
         case 'lib':
