@@ -132,7 +132,7 @@ class page_requirements_manager {
             $this->yui3loader->filter = null;
             $this->yui2loader->filter = null;
         }
-        if (!empty($CFG->useexternalyui)) {
+        if (!empty($CFG->useexternalyui) and strpos($CFG->httpswwwroot, 'https:') !== 0) {
             $this->yui3loader->base = 'http://yui.yahooapis.com/' . $CFG->yui3version . '/build/';
             $this->yui2loader->base = 'http://yui.yahooapis.com/' . $CFG->yui2version . '/build/';
             $this->yui3loader->comboBase = 'http://yui.yahooapis.com/combo?';
