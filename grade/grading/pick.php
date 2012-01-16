@@ -144,8 +144,7 @@ if ($searchdata = $searchform->get_data()) {
 }
 
 // construct the SQL to find all matching templates
-$sql = "SELECT DISTINCT gd.id, gd.areaid, gd.name, gd.description, gd.descriptionformat, gd.timecreated,
-                        gd.usercreated, gd.timemodified, gd.usermodified
+$sql = "SELECT DISTINCT gd.id, gd.areaid, gd.name, gd.usercreated
           FROM {grading_definitions} gd
           JOIN {grading_areas} ga ON (gd.areaid = ga.id)
           JOIN {context} cx ON (ga.contextid = cx.id)";
