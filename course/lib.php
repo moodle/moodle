@@ -50,7 +50,7 @@ function make_log_url($module, $url) {
     switch ($module) {
         case 'course':
             if (strpos($url, 'report/') === 0) {
-                // there is only one report type, curse reports are deprecated
+                // there is only one report type, course reports are deprecated
                 $url = "/$url";
                 break;
             }
