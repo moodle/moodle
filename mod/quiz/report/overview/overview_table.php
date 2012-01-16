@@ -81,7 +81,7 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
                 SELECT AVG(quiza.sumgrades) AS grade, COUNT(quiza.sumgrades) AS numaveraged
                   FROM $from
                  WHERE $where", $params);
-        $record->grade = quiz_rescale_grade($record->grade, $this->quiz);
+        $record->grade = quiz_rescale_grade($record->grade, $this->quiz, false);
 
         if ($this->is_downloading()) {
             $namekey = 'lastname';
@@ -127,7 +127,7 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
             } else {
                 $record = new stdClass();
                 $record->grade = null;
-                $record->numaveraged = null;
+                $record->numaveraged = 0;
             }
 
             $row['qsgrade' . $question->slot] = $this->format_average($record, true);
@@ -151,7 +151,7 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
 
         if ($this->download) {
             return $average;
-        } else if (is_null($record->numaveraged)) {
+        } else if (is_null($record->numaveraged) || $record->numaveraged == 0) {
             return html_writer::tag('span', html_writer::tag('span',
                     $average, array('class' => 'average')), array('class' => 'avgcell'));
         } else {
