@@ -172,11 +172,10 @@ if ($editform->is_cancelled()) {
 
         // prepare grouping
         if (!empty($data->grouping)) {
-            $groupingname = trim($data->groupingname);
             if ($data->grouping < 0) {
                 $grouping = new stdClass();
                 $grouping->courseid = $COURSE->id;
-                $grouping->name     = $groupingname;
+                $grouping->name     = trim($data->groupingname);
                 $grouping->id = groups_create_grouping($grouping);
                 $createdgrouping = $grouping->id;
             } else {
