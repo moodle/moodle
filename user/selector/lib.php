@@ -369,12 +369,12 @@ abstract class user_selector_base {
         // See if we got anything.
         if ($this->multiselect) {
             $userids = optional_param_array($this->name, array(), PARAM_INTEGER);
-        } else {
-            $userid = optional_param($this->name, 0, PARAM_INTEGER);
-            if (empty($userid)) {
-                return array();
-            }
+        } else if ($userid = optional_param($this->name, 0, PARAM_INTEGER)) {
             $userids = array($userid);
+        }
+        // If there are no users there is nobody to load
+        if (empty($userids)) {
+            return array();
         }
 
         // If we did, use the find_users method to validate the ids.
