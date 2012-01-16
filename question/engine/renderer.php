@@ -278,8 +278,7 @@ class core_question_renderer extends plugin_renderer_base {
 
         $params = $options->editquestionparams;
         if ($params['returnurl'] instanceof moodle_url) {
-            $params['returnurl'] = str_replace($CFG->wwwroot, '',
-                    $params['returnurl']->out(false));
+            $params['returnurl'] = $params['returnurl']->out_as_local_url(false);
         }
         $params['id'] = $qa->get_question()->id;
         $editurl = new moodle_url('/question/question.php', $params);

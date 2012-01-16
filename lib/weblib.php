@@ -717,6 +717,28 @@ class moodle_url {
         $urlbase = "$CFG->wwwroot/file.php";
         return self::make_file_url($urlbase, '/'.$courseid.'/'.$filepath, $forcedownload);
     }
+
+    /**
+     * Returns URL a relative path from $CFG->wwwroot
+     *
+     * Can be used for passing around urls with the wwwroot stripped
+     *
+     * @param boolean $escaped Use &amp; as params separator instead of plain &
+     * @param array $overrideparams params to add to the output url, these override existing ones with the same name.
+     * @return string Resulting URL
+     * @throws coding_exception if called on a non-local url
+     */
+    public function out_as_local_url($escaped = true, array $overrideparams = null) {
+        global $CFG;
+
+        $url = $this->out($escaped, $overrideparams);
+
+        if (strpos($url, $CFG->wwwroot) !== 0) {
+            throw new coding_exception('out_as_local_url called on a non-local URL');
+        }
+
+        return str_replace($CFG->wwwroot, '', $url);
+    }
 }
 
 /**

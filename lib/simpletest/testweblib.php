@@ -127,6 +127,15 @@ class web_test extends UnitTestCase {
         $this->assertTrue($url1->compare($url2, URL_MATCH_EXACT));
     }
 
+    function test_out_as_local_url() {
+        $url1 = new moodle_url('/lib/simpletest/testweblib.php');
+        $this->assertEqual('/lib/simpletest/testweblib.php', $url1->out_as_local_url());
+
+        $url2 = new moodle_url('http://www.google.com/lib/simpletest/testweblib.php');
+        $this->expectException('coding_exception');
+        $url2->out_as_local_url();
+    }
+
     public function test_html_to_text_simple() {
         $this->assertEqual("\n\n_Hello_ WORLD!", html_to_text('<p><i>Hello</i> <b>world</b>!</p>'));
     }
