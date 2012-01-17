@@ -238,7 +238,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_adaptive_shortanswer_partially_right() {
 
         // Create a short answer question
-        $sa = test_question_maker::make_a_shortanswer_question();
+        $sa = test_question_maker::make_question('shortanswer');
         $this->start_attempt_at_question($sa, 'adaptive');
 
         // Check the initial state.
@@ -307,7 +307,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_adaptive_shortanswer_wrong_right_wrong() {
 
         // Create a short answer question
-        $sa = test_question_maker::make_a_shortanswer_question();
+        $sa = test_question_maker::make_question('shortanswer');
         $this->start_attempt_at_question($sa, 'adaptive', 6);
 
         // Check the initial state.
@@ -390,7 +390,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_adaptive_shortanswer_invalid_after_complete() {
 
         // Create a short answer question
-        $sa = test_question_maker::make_a_shortanswer_question();
+        $sa = test_question_maker::make_question('shortanswer');
         $this->start_attempt_at_question($sa, 'adaptive');
 
         // Check the initial state.
@@ -472,7 +472,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_adaptive_shortanswer_zero_penalty() {
 
         // Create a short answer question
-        $sa = test_question_maker::make_a_shortanswer_question();
+        $sa = test_question_maker::make_question('shortanswer');
         // Disable penalties for this question
         $sa->penalty = 0;
         $this->start_attempt_at_question($sa, 'adaptive');
@@ -529,7 +529,7 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
     public function test_adaptive_shortanswer_try_to_submit_blank() {
 
         // Create a short answer question with correct answer true.
-        $sa = test_question_maker::make_a_shortanswer_question();
+        $sa = test_question_maker::make_question('shortanswer');
         $this->start_attempt_at_question($sa, 'adaptive');
 
         // Check the initial state.
