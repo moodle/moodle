@@ -706,7 +706,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
                     'M.mod_quiz.secure_window.start_attempt_action', array(
                         'url' => $url->out(false),
                         'windowname' => 'quizpopup',
-                        'popupoptions' => $popupaction->get_js_options(),
+                        'options' => $popupaction->get_js_options(),
                         'fullscreen' => true,
                         'startattemptwarning' => $startattemptwarning,
                     )));
