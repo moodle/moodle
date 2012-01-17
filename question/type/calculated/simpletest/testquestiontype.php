@@ -15,74 +15,44 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for (some of) question/type/numerical/questiontype.php.
+ * Unit tests for (some of) question/type/calculated/questiontype.php.
  *
- * @package    qtype
- * @subpackage numerical
- * @copyright  2006 The Open University
+ * @package    qtype_calculated
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
+require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
 
 
 /**
- * Unit tests for question/type/numerical/questiontype.php.
+ * Unit tests for question/type/calculated/questiontype.php.
  *
- * @copyright  2006 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_numerical_test extends UnitTestCase {
+class qtype_calculated_test extends UnitTestCase {
     public static $includecoverage = array(
         'question/type/questiontypebase.php',
-        'question/type/numerical/questiontype.php'
+        'question/type/calculated/questiontype.php'
     );
 
     protected $tolerance = 0.00000001;
     protected $qtype;
 
     public function setUp() {
-        $this->qtype = new qtype_numerical();
+        $this->qtype = new qtype_calculated();
     }
 
     public function tearDown() {
         $this->qtype = null;
     }
 
-    protected function get_test_question_data() {
-        $q = new stdClass;
-        $q->id = 1;
-        $q->options->unitpenalty = 0;
-        $q->options->answers[13] = (object) array(
-            'id' => 13,
-            'answer' => 42,
-            'fraction' => 1,
-            'feedback' => 'yes',
-            'feedbackformat' => FORMAT_MOODLE,
-            'tolerance' => 0.5
-        );
-        $q->options->answers[14] = (object) array(
-            'id' => 14,
-            'answer' => '*',
-            'fraction' => 0.1,
-            'feedback' => 'no',
-            'feedbackformat' => FORMAT_MOODLE,
-            'tolerance' => ''
-        );
-
-        $q->options->units = array(
-            (object) array('unit' => 'm', 'multiplier' => 1),
-            (object) array('unit' => 'cm', 'multiplier' => 0.01)
-        );
-
-        return $q;
-    }
-
     public function test_name() {
-        $this->assertEqual($this->qtype->name(), 'numerical');
+        $this->assertEqual($this->qtype->name(), 'calculated');
     }
 
     public function test_can_analyse_responses() {
@@ -90,30 +60,45 @@ class qtype_numerical_test extends UnitTestCase {
     }
 
     public function test_get_random_guess_score() {
-        $q = $this->get_test_question_data();
+        $q = test_question_maker::get_question_data('calculated');
+        $q->options->answers[17]->fraction = 0.1;
         $this->assertEqual(0.1, $this->qtype->get_random_guess_score($q));
     }
 
+    protected function get_possible_response($ans, $tolerance, $type) {
+        $a = new stdClass();
+        $a->answer = $ans;
+        $a->tolerance = $tolerance;
+        $a->tolerancetype = get_string($type, 'qtype_numerical');
+        return get_string('answerwithtolerance', 'qtype_calculated', $a);
+    }
+
     public function test_get_possible_responses() {
-        $q = $this->get_test_question_data();
+        $q = test_question_maker::get_question_data('calculated');
 
         $this->assertEqual(array(
             $q->id => array(
-                13 => new question_possible_response('42 m (41.5..42.5)', 1),
-                14 => new question_possible_response('*', 0.1),
+                13 => new question_possible_response(
+                        $this->get_possible_response('{a} + {b}', 0.001, 'nominal'), 1.0),
+                14 => new question_possible_response(
+                        $this->get_possible_response('{a} - {b}', 0.001, 'nominal'), 0.0),
+                17 => new question_possible_response('*', 0.0),
                 null => question_possible_response::no_response()
             ),
         ), $this->qtype->get_possible_responses($q));
     }
 
     public function test_get_possible_responses_no_star() {
-        $q = $this->get_test_question_data();
-        unset($q->options->answers[14]);
+        $q = test_question_maker::get_question_data('calculated');
+        unset($q->options->answers[17]);
 
         $this->assertEqual(array(
             $q->id => array(
-                13 => new question_possible_response('42 m (41.5..42.5)', 1),
-                0 => new question_possible_response(
+                13 => new question_possible_response(
+                        $this->get_possible_response('{a} + {b}', 0.001, 'nominal'), 1),
+                14 => new question_possible_response(
+                        $this->get_possible_response('{a} - {b}', 0.001, 'nominal'), 0),
+                0  => new question_possible_response(
                         get_string('didnotmatchanyanswer', 'question'), 0),
                 null => question_possible_response::no_response()
             ),
