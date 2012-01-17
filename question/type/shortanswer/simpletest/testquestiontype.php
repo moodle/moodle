@@ -82,4 +82,16 @@ class qtype_shortanswer_test extends UnitTestCase {
             ),
         ), $this->qtype->get_possible_responses($q));
     }
+
+    public function test_get_possible_responses_no_star() {
+        $q = test_question_maker::get_question_data('shortanswer', 'frogonly');
+
+        $this->assertEqual(array(
+            $q->id => array(
+                13 => new question_possible_response('frog', 1),
+                0 => new question_possible_response(get_string('didnotmatchanyanswer', 'question'), 0),
+                null => question_possible_response::no_response()
+            ),
+        ), $this->qtype->get_possible_responses($q));
+    }
 }
