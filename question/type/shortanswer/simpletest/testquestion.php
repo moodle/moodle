@@ -26,8 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/type/shortanswer/question.php');
 require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
+require_once($CFG->dirroot . '/question/type/shortanswer/question.php');
 
 
 /**
@@ -108,7 +108,7 @@ class qtype_shortanswer_question_test extends UnitTestCase {
     }
 
     public function test_is_complete_response() {
-        $question = test_question_maker::make_a_shortanswer_question();
+        $question = test_question_maker::make_question('shortanswer');
 
         $this->assertFalse($question->is_complete_response(array()));
         $this->assertFalse($question->is_complete_response(array('answer' => '')));
@@ -118,7 +118,7 @@ class qtype_shortanswer_question_test extends UnitTestCase {
     }
 
     public function test_is_gradable_response() {
-        $question = test_question_maker::make_a_shortanswer_question();
+        $question = test_question_maker::make_question('shortanswer');
 
         $this->assertFalse($question->is_gradable_response(array()));
         $this->assertFalse($question->is_gradable_response(array('answer' => '')));
@@ -128,7 +128,7 @@ class qtype_shortanswer_question_test extends UnitTestCase {
     }
 
     public function test_grading() {
-        $question = test_question_maker::make_a_shortanswer_question();
+        $question = test_question_maker::make_question('shortanswer');
 
         $this->assertEqual(array(0, question_state::$gradedwrong),
                 $question->grade_response(array('answer' => 'x')));
@@ -139,26 +139,26 @@ class qtype_shortanswer_question_test extends UnitTestCase {
     }
 
     public function test_get_correct_response() {
-        $question = test_question_maker::make_a_shortanswer_question();
+        $question = test_question_maker::make_question('shortanswer');
 
         $this->assertEqual(array('answer' => 'frog'),
                 $question->get_correct_response());
     }
 
     public function test_get_question_summary() {
-        $sa = test_question_maker::make_a_shortanswer_question();
+        $sa = test_question_maker::make_question('shortanswer');
         $qsummary = $sa->get_question_summary();
         $this->assertEqual('Name an amphibian: __________', $qsummary);
     }
 
     public function test_summarise_response() {
-        $sa = test_question_maker::make_a_shortanswer_question();
+        $sa = test_question_maker::make_question('shortanswer');
         $summary = $sa->summarise_response(array('answer' => 'dog'));
         $this->assertEqual('dog', $summary);
     }
 
     public function test_classify_response() {
-        $sa = test_question_maker::make_a_shortanswer_question();
+        $sa = test_question_maker::make_question('shortanswer');
         $sa->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEqual(array(
