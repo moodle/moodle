@@ -7896,6 +7896,8 @@ class admin_setting_devicedetectregex extends admin_setting {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_setting_configmultiselect_modules extends admin_setting_configmultiselect {
+    private $excludesystem;
+
     /**
      * Calls parent::__construct - note array $choices is not required
      *
@@ -7903,9 +7905,12 @@ class admin_setting_configmultiselect_modules extends admin_setting_configmultis
      * @param string $visiblename localised setting name
      * @param string $description setting description
      * @param array $defaultsetting a plain array of default module ids
+     * @param bool $excludesystem If true, excludes modules with 'system' archetype
      */
-    public function __construct($name, $visiblename, $description, $defaultsetting = array()) {
+    public function __construct($name, $visiblename, $description, $defaultsetting = array(),
+            $excludesystem = true) {
         parent::__construct($name, $visiblename, $description, $defaultsetting, null);
+        $this->excludesystem = $excludesystem;
     }
 
     /**
@@ -7922,8 +7927,14 @@ class admin_setting_configmultiselect_modules extends admin_setting_configmultis
         global $CFG, $DB;
         $records = $DB->get_records('modules', array('visible'=>1), 'name');
         foreach ($records as $record) {
+            // Exclude modules if the code doesn't exist
             if (file_exists("$CFG->dirroot/mod/$record->name/lib.php")) {
-                $this->choices[$record->id] = $record->name;
+                // Also exclude system modules (if specified)
+                if (!($this->excludesystem &&
+                        plugin_supports('mod', $record->name, FEATURE_MOD_ARCHETYPE) ===
+                        MOD_ARCHETYPE_SYSTEM)) {
+                    $this->choices[$record->id] = $record->name;
+                }
             }
         }
         return true;

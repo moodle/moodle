@@ -270,7 +270,15 @@ class course_edit_form extends moodleform {
                 }
 
                 $mods = array(0=>get_string('allownone'));
-                $mods += $DB->get_records_menu('modules', array('visible'=>1), 'name', 'id, name');
+                $allmods = $DB->get_records_menu('modules', array('visible' => 1),
+                        'name', 'id, name');
+                foreach ($allmods as $key => $value) {
+                    // Add module to list unless it cannot be added by users anyway
+                    if (plugin_supports('mod', $value, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER) !==
+                            MOD_ARCHETYPE_SYSTEM) {
+                        $mods[$key] = get_string('pluginname', $value);
+                    }
+                }
                 $mform->addElement('select', 'allowedmods', get_string('to'), $mods, array('multiple'=>'multiple', 'size'=>'10'));
                 $mform->disabledIf('allowedmods', 'restrictmodules', 'eq', 0);
                 // defaults are already in $course
