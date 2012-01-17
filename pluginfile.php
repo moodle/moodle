@@ -85,6 +85,10 @@ if ($component === 'blog') {
         print_error('siteblogdisable', 'blog');
     }
 
+    $entryid = (int)array_shift($args);
+    if (!$entry = $DB->get_record('post', array('module'=>'blog', 'id'=>$entryid))) {
+        send_file_not_found();
+    }
     if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL) {
         require_login();
         if (isguestuser()) {
@@ -95,10 +99,6 @@ if ($component === 'blog') {
                 send_file_not_found();
             }
         }
-    }
-    $entryid = (int)array_shift($args);
-    if (!$entry = $DB->get_record('post', array('module'=>'blog', 'id'=>$entryid))) {
-        send_file_not_found();
     }
 
     if ('publishstate' === 'public') {
