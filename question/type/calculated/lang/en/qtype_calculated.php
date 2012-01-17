@@ -30,6 +30,7 @@ $string['addmoreunitblanks'] = 'Blanks for {$a} more units';
 $string['addsets'] = 'Add set(s)';
 $string['answerhdr'] = 'Answer';
 $string['answerstoleranceparam'] = 'Answers tolerance parameters';
+$string['answerwithtolerance'] = '{$a->answer} (±{$a->tolerance} {$a->tolerancetype})';
 $string['anyvalue'] = 'Any value';
 $string['atleastoneanswer'] = 'You need to provide at least one answer.';
 $string['atleastonerealdataset']='There should be at least one real dataset in question text';

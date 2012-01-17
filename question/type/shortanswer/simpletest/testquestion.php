@@ -174,4 +174,19 @@ class qtype_shortanswer_question_test extends UnitTestCase {
                 question_classified_response::no_response()),
                 $sa->classify_response(array('answer' => '')));
     }
+
+    public function test_classify_response_no_star() {
+        $sa = test_question_maker::make_question('shortanswer', 'frogonly');
+        $sa->start_attempt(new question_attempt_step(), 1);
+
+        $this->assertEqual(array(
+                new question_classified_response(13, 'frog', 1.0)),
+                $sa->classify_response(array('answer' => 'frog')));
+        $this->assertEqual(array(
+                new question_classified_response(0, 'toad', 0.0)),
+                $sa->classify_response(array('answer' => 'toad')));
+        $this->assertEqual(array(
+                question_classified_response::no_response()),
+                $sa->classify_response(array('answer' => '')));
+    }
 }
