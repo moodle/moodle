@@ -3860,22 +3860,21 @@ function get_user_capability_course($capability, $userid = null, $doanything = t
     // Note the result can be used directly as a context (we are going to), the course
     // fields are just appended.
 
+    $contextpreload = context_helper::get_preload_record_columns_sql('x');
+
     $courses = array();
-    $rs = $DB->get_recordset_sql("SELECT x.*, c.id AS courseid $fieldlist
+    $rs = $DB->get_recordset_sql("SELECT c.id $fieldlist, $contextpreload
                                     FROM {course} c
-                                   INNER JOIN {context} x
-                                         ON (c.id=x.instanceid AND x.contextlevel=".CONTEXT_COURSE.")
+                                    JOIN {context} x ON (c.id=x.instanceid AND x.contextlevel=".CONTEXT_COURSE.")
                                 $orderby");
     // Check capability for each course in turn
-    foreach ($rs as $coursecontext) {
-        if (has_capability($capability, $coursecontext, $userid, $doanything)) {
+    foreach ($rs as $course) {
+        context_helper::preload_from_record($course);
+        $context = context_course::instance($course->id);
+        if (has_capability($capability, $context, $userid, $doanything)) {
             // We've got the capability. Make the record look like a course record
             // and store it
-            $coursecontext->id = $coursecontext->courseid;
-            unset($coursecontext->courseid);
-            unset($coursecontext->contextlevel);
-            unset($coursecontext->instanceid);
-            $courses[] = $coursecontext;
+            $courses[] = $course;
         }
     }
     $rs->close();
