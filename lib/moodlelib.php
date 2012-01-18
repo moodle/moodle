@@ -1318,7 +1318,7 @@ function get_config($plugin, $name = NULL) {
         if ($localcfg) {
             return (object)$localcfg;
         } else {
-            return new stdClass();
+            return null;
         }
 
     } else {
