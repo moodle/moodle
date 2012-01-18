@@ -579,7 +579,7 @@ class filter_delete_config_test extends UnitTestCaseUsingDatabase {
         $expectedconfig = new stdClass;
         $expectedconfig->configname = 'Other config value';
         $this->assertEqual($expectedconfig, get_config('filter_other'));
-        $this->assertFalse(get_config('filter_name'));
+        $this->assertNull(get_config('filter_name'));
     }
 
     public function test_filter_delete_all_for_context() {
