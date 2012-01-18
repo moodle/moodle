@@ -74,8 +74,10 @@ foreach ($parts as $part) {
     $version = array_shift($bits);
     if ($version == 'moodle') {
         //TODO: this is a ugly hack because we should not load any libs here!
-        define('MOODLE_INTERNAL', true);
-        require_once($CFG->libdir.'/moodlelib.php');
+        if (!defined('MOODLE_INTERNAL')) {
+            define('MOODLE_INTERNAL', true);
+            require_once($CFG->libdir.'/moodlelib.php');
+        }
         $revision = (int)array_shift($bits);
         if ($revision === -1) {
             // Revision -1 says please don't cache the JS
