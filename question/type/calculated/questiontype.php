@@ -388,15 +388,15 @@ class qtype_calculated extends question_type {
         }
         return true;
     }
-    public function finished_edit_wizard(&$form) {
+    public function finished_edit_wizard($form) {
         return isset($form->savechanges);
     }
     public function wizardpagesnumber() {
         return 3;
     }
     // This gets called by editquestion.php after the standard question is saved
-    public function print_next_wizard_page(&$question, &$form, $course) {
-        global $CFG, $USER, $SESSION, $COURSE;
+    public function print_next_wizard_page($question, $form, $course) {
+        global $CFG, $SESSION, $COURSE;
 
         // Catch invalid navigation & reloads
         if (empty($question->id) && empty($SESSION->calculated)) {
@@ -460,19 +460,20 @@ class qtype_calculated extends question_type {
      * @param object $question
      * @param string $wizardnow is '' for first page.
      */
-    public function display_question_editing_page(&$mform, $question, $wizardnow) {
+    public function display_question_editing_page($mform, $question, $wizardnow) {
         global $OUTPUT;
         switch ($wizardnow) {
             case '':
-                //on first page default display is fine
+                // On the first page, the default display is fine.
                 parent::display_question_editing_page($mform, $question, $wizardnow);
                 return;
-                break;
+
             case 'datasetdefinitions':
                 echo $OUTPUT->heading_with_help(
                         get_string('choosedatasetproperties', 'qtype_calculated'),
                         'questiondatasets', 'qtype_calculated');
                 break;
+
             case 'datasetitems':
                 echo $OUTPUT->heading_with_help(get_string('editdatasets', 'qtype_calculated'),
                         'questiondatasets', 'qtype_calculated');
