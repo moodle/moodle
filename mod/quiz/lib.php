@@ -440,7 +440,7 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
  * as sending out mail, toggling flags etc ...
  */
 function quiz_cron() {
-    global $DB;
+    global $DB, $CFG;
 
     // First handle standard plugins.
     cron_execute_plugin_type('quiz', 'quiz reports');
