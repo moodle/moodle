@@ -265,6 +265,10 @@ function quiz_report_feedback_for_grade($grade, $quizid, $context) {
         $feedbackcache[$quizid] = $DB->get_records('quiz_feedback', array('quizid' => $quizid));
     }
 
+    // With CBM etc, it is possible to get -ve grades, which would then not match
+    // any feedback. Therefore, we replace -ve grades with 0.
+    $grade = max($grade, 0);
+
     $feedbacks = $feedbackcache[$quizid];
     $feedbackid = 0;
     $feedbacktext = '';
