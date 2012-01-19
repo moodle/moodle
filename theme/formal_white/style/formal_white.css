@@ -19,15 +19,19 @@ h2 {font-size:130%;}
 h3 {font-size:120%;}
 h4 {font-weight:bold;}
 
-h2.main, h3.main, h4.main {margin:0;padding:0;text-align: center;}
-
-#headerlogo {margin:0.3em;float:left;top:1em;}
 h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:200%;}
+h2.main, h3.main, h4.main {margin:0;padding:0;text-align:center;}
+
+/* page-header */
+#page-header{line-height:0;overflow:hidden;}
+
+/* headerlogo */
+#headerlogo {position:relative;margin:0.3em;}
+  /* if I use: position:absolute; I even need height:105px; in #page-header */
+  /* if I use: position:relative; z-index doesn't work*/
 
 /* headermenu */
-#page-header{line-height:0;overflow:hidden;}
-/*#headerlogo img {margin:7px;}*/
-.headermenu {position:relative;line-height:1.7em;font-size:90%;margin:0.3em 0.3em 0.3em 0;right:0.3em;}
+.headermenu {position:absolute;text-align:right;line-height:1.7em;font-size:90%;margin:0.3em;right:[[setting:headermenuright]];top:15px;}
 
 #dock {background-color:[[setting:blockcontentbgc]];border-right:1px #000 dashed;}
 #dock .dockeditem_container {margin-top: 10px;}
@@ -40,6 +44,13 @@ h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:200%;}
 .navbar li span {color:#E3DFD4;}
 .navbar li a:link, .navbar li a:visited {color:white;}
 
+#page-content {
+    /* min-width here is useless until min-width in frame.css/#frametop is gretaer enought to hold this #page-content min-width */
+    /* #page-content min-width is inherited by parent themes */
+    /* #page-content min-width = 0 frees me from possible related problems */
+    min-width:0;
+}
+
 /* navbutton */
 .navbutton {padding-right:0.5em;}
 .navbutton table td {padding:0;}
@@ -50,6 +61,7 @@ h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:200%;}
     background-repeat: no-repeat;
     background-position: 0 -1px;
 }
+
 .block_navigation .block_tree li.type_category.contains_branch.collapsed>p span {
     padding-left: 20px;
     background-image: url([[pix:theme|folderclose]]);
@@ -143,7 +155,7 @@ ul.topics .section span.commands {position:absolute;right:1em;}
 .mform fieldset {border:1px #DDD solid;}
 .mform .fitem .fitemtitle {width:25%;}
 .mform .fitem .fitemtitle label {padding-right:5px;}
-.mform .fitem .felement {margin-left:26%;width:73%;}
+.mform .fitem .felement {margin-left:26%;width:73%;min-height: 0.8em;}
 /*.mform .fitem fieldset.felement {padding-left:0}*/
 .mform .fitem .fitemtitle .helplink img {margin-right:-5px;}
 .mform .fsubmit {text-align:left}
@@ -206,9 +218,18 @@ pre, code, tt {
     background: none repeat scroll 0 0 [[setting:lblockcolumnbgc]];
 }
 
+.notifytiny {
+    font-size: 1em;
+}
+
 /* MDL-29403 */
 .capdefault {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;background-color:#E3DFD4;}
 table#defineroletable th {border-top:none;}
+
+form.loginform .rememberusername {
+	padding-left:0.3em;
+	width: auto;
+}
 
 /** Custom CSS **/
 [[setting:customcss]]

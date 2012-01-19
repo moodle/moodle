@@ -55,10 +55,10 @@
 #frametop,
 #footerframetop {
     background-image:url([[pix:theme|roundcorner/header]]);
-    margin:15px 15px 0;
+    margin:[[setting:framemargin]] [[setting:framemargin]] 0;
     background-position:0 0;
     background-repeat:repeat-x;
-    min-width:934px;
+    min-width:[[setting:minwidth]];
 }
 
 #frametopright,

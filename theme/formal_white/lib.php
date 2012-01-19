@@ -19,6 +19,14 @@ function formal_white_user_settings($css, $theme) {
     }
     $css = formal_white_set_fontsizereference($css, $fontsizereference);
 
+    // Set the frame margin
+    if (!isset($theme->settings->framemargin)) {
+        $framemargin = 15; // default
+    } else {
+        $framemargin = $theme->settings->framemargin;
+    }
+    $css = formal_white_set_framemargin($css, $framemargin);
+
     // Set the page header background color
     if (empty($theme->settings->headerbgc)) {
         $headerbgc = '#E3DFD4'; // default
@@ -67,7 +75,6 @@ function formal_white_user_settings($css, $theme) {
     }
     $css = formal_white_set_customcss($css, $customcss);
 
-    // Return the CSS
     return $css;
 }
 
@@ -80,6 +87,17 @@ function formal_white_user_settings($css, $theme) {
 function formal_white_set_fontsizereference($css, $fontsizereference) {
     $tag = '[[setting:fontsizereference]]';
     $css = str_replace($tag, $fontsizereference.'px', $css);
+    return $css;
+}
+
+function formal_white_set_framemargin($css, $framemargin) {
+    $tag = '[[setting:framemargin]]';
+    $css = str_replace($tag, $framemargin.'px', $css);
+
+    // Set .headermenu right
+    $tag = '[[setting:headermenuright]]';
+    $css = str_replace($tag, ($framemargin+17).'px', $css); // 17px is the width of the frame
+
     return $css;
 }
 
@@ -116,6 +134,13 @@ function formal_white_set_blockcolumnwidth($css, $blockcolumnwidth) {
 
     $tag = '[[setting:doubleblockcolumnwidth]]';
     $css = str_replace($tag, (2*$blockcolumnwidth).'px', $css);
+
+    // set the min-width of the page to provide: content region min-width = block region width
+    // I do not care $framemargin because the min-width applies to #frametop that is free from $framemargin
+    // I need to add twice the width of the frame because it is inside #frametop
+    // (this code here because it HAS TO come later than $blockcolumnwidth definition)
+    $tag = '[[setting:minwidth]]';
+    $css = str_replace($tag, (3*$blockcolumnwidth + 34).'px', $css); // 34 = 2*17 (17px is the width of the frame)
 
     return $css;
 }
