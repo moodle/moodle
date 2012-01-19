@@ -37,10 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class completion_criteria_self extends completion_criteria {
 
-    /**
-     * Criteria type constant [COMPLETION_CRITERIA_TYPE_SELF]
-     * @var int
-     */
+    /* @var int Criteria type constant [COMPLETION_CRITERIA_TYPE_SELF] */
     public $criteriatype = COMPLETION_CRITERIA_TYPE_SELF;
 
     /**
@@ -58,7 +55,7 @@ class completion_criteria_self extends completion_criteria {
      * Add appropriate form elements to the critieria form
      *
      * @param moodleform $mform  Moodle forms object
-     * @param stdClass $data
+     * @param stdClass $data Form data
      */
     public function config_form_display(&$mform, $data = null) {
         $mform->addElement('checkbox', 'criteria_self', get_string('enable'));
@@ -93,8 +90,9 @@ class completion_criteria_self extends completion_criteria {
      * Review this criteria and decide if the user has completed
      *
      * @param completion_completion $completion     The user's completion record
-     * @param boolean $mark Optionally set false to not save changes to database
-     * @return boolean
+     * @param bool $mark Optionally set false to not save changes to database
+     * @param bool $is_complete set true to mark activity complete.
+     * @return bool
      */
     public function review($completion, $mark = true, $is_complete = false) {
         // If we are marking this as complete

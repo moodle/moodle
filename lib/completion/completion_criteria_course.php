@@ -40,10 +40,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class completion_criteria_course extends completion_criteria {
 
-    /**
-     * Criteria type constant
-     * @var int
-     */
+    /* @var int Criteria type constant */
     public $criteriatype = COMPLETION_CRITERIA_TYPE_COURSE;
 
     /**
@@ -61,7 +58,7 @@ class completion_criteria_course extends completion_criteria {
      * Add appropriate form elements to the critieria form
      *
      * @param moodle_form $mform Moodle forms object
-     * @param stdClass $data
+     * @param stdClass $data data used to define default value of the form
      */
     public function config_form_display(&$mform, $data = null) {
         global $CFG;
@@ -98,8 +95,8 @@ class completion_criteria_course extends completion_criteria {
      * Review this criteria and decide if the user has completed
      *
      * @param completion_completion $completion The user's completion record
-     * @param boolean $mark Optionally set false to not save changes to database
-     * @return boolean
+     * @param bool $mark Optionally set false to not save changes to database
+     * @return bool
      */
     public function review($completion, $mark = true) {
         global $DB;
@@ -131,7 +128,7 @@ class completion_criteria_course extends completion_criteria {
 
     /**
      * Return a more detailed criteria title for display in reports
-     * 
+     *
      * @return string
      */
     public function get_title_detailed() {

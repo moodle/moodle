@@ -98,7 +98,7 @@ define('COMPLETION_UNKNOWN', -1);
 define('COMPLETION_GRADECHANGE', -2);
 
 /**
- * User must view this activit.
+ * User must view this activity.
  * Whether view is required to create an activity (course_modules/completionview)
  */
 define('COMPLETION_VIEW_REQUIRED', 1);
@@ -159,22 +159,13 @@ define('COMPLETION_AGGREGATION_ANY', 2);
  */
 class completion_info {
 
-    /**
-     * Course object passed during construction
-     * @var stdClass
-     */
+    /* @var stdClass Course object passed during construction */
     private $course;
 
-    /**
-     * Course id
-     * @var int
-     */
+    /* @var int Course id */
     public $course_id;
 
-    /**
-     * Completion criteria {@see completion_info::get_criteria()}
-     * @var array
-     */
+    /* @var array Completion criteria {@see completion_info::get_criteria()}  */
     private $criteria;
 
     /**
@@ -280,7 +271,7 @@ class completion_info {
      *
      * @param int $user_id User id
      * @param int $criteriatype Specific criteria type to return
-     * @return false|completion_criteria_completion
+     * @return bool|completion_criteria_completion returns false on fail
      */
     public function get_completion($user_id, $criteriatype) {
         $completions = $this->get_completions($user_id, $criteriatype);
@@ -537,7 +528,7 @@ class completion_info {
      * Calculates the completion state for an activity and user.
      *
      * Internal function. Not private, so we can unit-test it.
-     * 
+     *
      * @param stdClass|cm_info $cm Activity
      * @param int $userid ID of user
      * @param stdClass $current Previous completion information from database
@@ -1272,8 +1263,8 @@ class completion_info {
      *
      * Internal function. Not private, so we can unit-test it.
      *
-     * @param grade_item $item
-     * @param grade_grade $grade
+     * @param grade_item $item an instance of grade_item
+     * @param grade_grade $grade an instance of grade_grade
      * @return int Completion state e.g. COMPLETION_INCOMPLETE
      */
     public function internal_get_grade_state($item, $grade) {

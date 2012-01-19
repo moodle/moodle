@@ -37,10 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class completion_criteria_date extends completion_criteria {
 
-    /**
-     * Criteria type constant [COMPLETION_CRITERIA_TYPE_DATE]
-     * @var int
-     */
+    /* @var int Criteria type constant [COMPLETION_CRITERIA_TYPE_DATE]  */
     public $criteriatype = COMPLETION_CRITERIA_TYPE_DATE;
 
     /**
@@ -58,7 +55,7 @@ class completion_criteria_date extends completion_criteria {
      * Add appropriate form elements to the critieria form
      *
      * @param moodleform $mform Moodle forms object
-     * @param stdClass $data
+     * @param stdClass $data not used
      */
     public function config_form_display(&$mform, $data = null) {
         $mform->addElement('checkbox', 'criteria_date', get_string('enable'));
@@ -88,10 +85,10 @@ class completion_criteria_date extends completion_criteria {
 
     /**
      * Review this criteria and decide if the user has completed
-     * 
+     *
      * @param completion_completion $completion The user's completion record
-     * @param boolean $mark Optionally set false to not save changes to database
-     * @return boolean
+     * @param bool $mark Optionally set false to not save changes to database
+     * @return bool
      */
     public function review($completion, $mark = true) {
         // If current time is past timeend

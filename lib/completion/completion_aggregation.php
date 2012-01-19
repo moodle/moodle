@@ -39,10 +39,7 @@ require_once($CFG->libdir.'/completion/data_object.php');
  */
 class completion_aggregation extends data_object {
 
-    /**
-     * Database table name that stores completion aggregation information
-     * @var string
-     */
+    /* @var string Database table name that stores completion aggregation information */
     public $table = 'course_completion_aggr_methd';
 
     /**
@@ -52,28 +49,16 @@ class completion_aggregation extends data_object {
      */
     public $required_fields = array('id', 'course', 'criteriatype', 'method', 'value');
 
-    /**
-     * Course id
-     * @var int
-     */
+    /* @var int Course id */
     public $course;
 
-    /**
-     * Criteria type this aggregation method applies to, or NULL for overall course aggregation
-     * @var int
-     */
+    /* @var int Criteria type this aggregation method applies to, or NULL for overall course aggregation */
     public $criteriatype;
 
-    /**
-     * Aggregation method (COMPLETION_AGGREGATION_* constant)
-     * @var int
-     */
+    /* @var int Aggregation method (COMPLETION_AGGREGATION_* constant)*/
     public $method;
 
-    /**
-     * Method value
-     * @var mixed
-     */
+    /* @var mixed Method value */
     public $value;
 
 

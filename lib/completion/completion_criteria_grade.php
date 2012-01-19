@@ -39,16 +39,14 @@ require_once $CFG->dirroot.'/grade/querylib.php';
  */
 class completion_criteria_grade extends completion_criteria {
 
-    /**
-     * Criteria type constant [COMPLETION_CRITERIA_TYPE_GRADE]
-     * @var int
-     */
+    /* @var int Criteria type constant [COMPLETION_CRITERIA_TYPE_GRADE] */
     public $criteriatype = COMPLETION_CRITERIA_TYPE_GRADE;
 
     /**
      * Finds and returns a data_object instance based on params.
      *
-     * @param array $params associative arrays varname => value
+     * @param array $params associative array varname => value of various 
+     * parameters used to fetch data_object
      * @return data_object data_object instance or false if none found.
      */
     public static function fetch($params) {
@@ -60,7 +58,7 @@ class completion_criteria_grade extends completion_criteria {
      * Add appropriate form elements to the critieria form
      *
      * @param moodle_form $mform Moodle forms object
-     * @param stdClass $data
+     * @param stdClass $data containing default values to be set in the form
      */
     public function config_form_display(&$mform, $data = null) {
         $mform->addElement('checkbox', 'criteria_grade', get_string('enable'));
@@ -79,7 +77,10 @@ class completion_criteria_grade extends completion_criteria {
      * @param stdClass $data Form data
      */
     public function update_config(&$data) {
-        if (!empty($data->criteria_grade) && is_numeric($data->criteria_grade_value)) {
+
+        // TODO validation
+        if (!empty($data->criteria_grade) && is_numeric($data->criteria_grade_value))
+        {
             $this->course = $data->id;
             $this->gradepass = $data->criteria_grade_value;
             $this->insert();
@@ -88,8 +89,8 @@ class completion_criteria_grade extends completion_criteria {
 
     /**
      * Get user's course grade in this course
-     * 
-     * @param completion_completion $completion
+     *
+     * @param completion_completion $completion an instance of completion_completion class
      * @return float
      */
     private function get_grade($completion) {
@@ -101,8 +102,8 @@ class completion_criteria_grade extends completion_criteria {
      * Review this criteria and decide if the user has completed
      *
      * @param completion_completion $completion The user's completion record
-     * @param boolean $mark Optionally set false to not save changes to database
-     * @return boolean
+     * @param bool $mark Optionally set false to not save changes to database
+     * @return bool
      */
     public function review($completion, $mark = true) {
         // Get user's course grade

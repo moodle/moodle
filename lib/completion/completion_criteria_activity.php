@@ -39,10 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class completion_criteria_activity extends completion_criteria {
 
-    /**
-     * Criteria type constant
-     * @var int [COMPLETION_CRITERIA_TYPE_ACTIVITY]
-     */
+    /* @var int Criteria [COMPLETION_CRITERIA_TYPE_ACTIVITY] */
     public $criteriatype = COMPLETION_CRITERIA_TYPE_ACTIVITY;
 
     /**
@@ -58,9 +55,9 @@ class completion_criteria_activity extends completion_criteria {
 
     /**
      * Add appropriate form elements to the critieria form
-     * 
+     *
      * @param moodleform $mform  Moodle forms object
-     * @param stdClass $data
+     * @param stdClass $data details of various modules
      */
     public function config_form_display(&$mform, $data = null) {
         $mform->addElement('checkbox', 'criteria_activity['.$data->id.']', ucfirst(self::get_mod_name($data->module)).' - '.$data->name);
@@ -72,7 +69,7 @@ class completion_criteria_activity extends completion_criteria {
 
     /**
      * Update the criteria information stored in the database
-     * 
+     *
      * @param stdClass $data Form data
      */
     public function update_config(&$data) {
@@ -95,7 +92,7 @@ class completion_criteria_activity extends completion_criteria {
 
     /**
      * Get module instance module type
-     * 
+     *
      * @param int $type Module type id
      * @return string
      */
@@ -114,7 +111,7 @@ class completion_criteria_activity extends completion_criteria {
      * Gets the module instance from the database and returns it.
      * If no module instance exists this function returns false.
      *
-     * @return stdClass|false
+     * @return stdClass|bool
      */
     public function get_mod_instance() {
         global $DB;
@@ -137,8 +134,8 @@ class completion_criteria_activity extends completion_criteria {
      * Review this criteria and decide if the user has completed
      *
      * @param completion_completion $completion     The user's completion record
-     * @param boolean $mark Optionally set false to not save changes to database
-     * @return boolean
+     * @param bool $mark Optionally set false to not save changes to database
+     * @return bool
      */
     public function review($completion, $mark = true) {
         global $DB;
@@ -193,7 +190,7 @@ class completion_criteria_activity extends completion_criteria {
     }
 
     /**
-     * Find user's who have completed this criteria and mark them accordingly
+     * Find users who have completed this criteria and mark them accordingly
      */
     public function cron() {
         global $DB;
@@ -290,4 +287,4 @@ class completion_criteria_activity extends completion_criteria {
 
         return $details;
     }
-}\
+}

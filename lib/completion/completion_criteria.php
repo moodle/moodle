@@ -103,10 +103,7 @@ $COMPLETION_CRITERIA_TYPES = array(
  */
 abstract class completion_criteria extends data_object {
 
-    /**
-     * Database table name that stores completion criteria information
-     * @var string
-     */
+    /* @var string Database table name that stores completion criteria information  */
     public $table = 'course_completion_criteria';
 
     /**
@@ -117,10 +114,7 @@ abstract class completion_criteria extends data_object {
      */
     public $required_fields = array('id', 'course', 'criteriatype', 'module', 'moduleinstance', 'courseinstance', 'enrolperiod', 'timeend', 'gradepass', 'role');
 
-    /**
-     * Course id
-     * @var int
-     */
+    /* @var int Course id  */
     public $course;
 
     /**
@@ -130,16 +124,10 @@ abstract class completion_criteria extends data_object {
      */
     public $criteriatype;
 
-    /**
-     * Module type this criteria relates to (for activity criteria)
-     * @var string
-     */
+    /* @var string Module type this criteria relates to (for activity criteria)  */
     public $module;
 
-    /**
-     * Course module instance id this criteria relates to (for activity criteria)
-     * @var int
-     */
+    /* @var int Course module instance id this criteria relates to (for activity criteria) */
     public $moduleinstance;
 
     /**
@@ -156,16 +144,10 @@ abstract class completion_criteria extends data_object {
      */
     public $date;
 
-    /**
-     * Passing grade required to complete course (for grade completion)
-     * @var float
-     */
+    /* @var float Passing grade required to complete course (for grade completion) */
     public $gradepass;
 
-    /**
-     * Role ID that has the ability to mark a user as complete (for role completion)
-     * @var int
-     */
+    /* @var int Role ID that has the ability to mark a user as complete (for role completion) */
     public $role;
 
     /**
@@ -197,9 +179,9 @@ abstract class completion_criteria extends data_object {
 
     /**
      * Add appropriate form elements to the critieria form
-     * 
+     *
      * @param moodleform $mform Moodle forms object
-     * @param mixed $data optional
+     * @param mixed $data optional Any additional data that can be used to set default values in the form
      * @return void
      */
     abstract public function config_form_display(&$mform, $data = null);

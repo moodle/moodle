@@ -38,47 +38,26 @@ require_once($CFG->libdir.'/completion/data_object.php');
  */
 class completion_completion extends data_object {
 
-    /**
-     * Database table name that stores completion information
-     * @var string $table
-     */
+    /* @var string $table Database table name that stores completion information */
     public $table = 'course_completions';
 
-    /**
-     * Array of required table fields, must start with 'id'.
-     * @var array $required_fields
-     */
+    /* @var array $required_fields Array of required table fields, must start with 'id'. */
     public $required_fields = array('id', 'userid', 'course', 'deleted', 'timenotified',
         'timeenrolled', 'timestarted', 'timecompleted', 'reaggregate');
 
-    /**
-     * User ID
-     * @var int
-     */
+    /* @var int $userid User ID */
     public $userid;
 
-    /**
-     * Course ID
-     * @var int
-     */
+    /* @var int $course Course ID */
     public $course;
 
-    /**
-     * Set to 1 if this record has been deleted
-     * @var int
-     */
+    /* @var int $deleted set to 1 if this record has been deleted */
     public $deleted;
 
-    /**
-     * Timestamp the interested parties were notified of this user's completion.
-     * @var int
-     */
+    /* @var int Timestamp the interested parties were notified of this user's completion. */
     public $timenotified;
 
-    /**
-     * Time of course enrolment {@see completion_completion::mark_enrolled()}
-     * @var int
-     */
+    /* @var int Time of course enrolment {@see completion_completion::mark_enrolled()} */
     public $timeenrolled;
 
     /**
@@ -87,22 +66,16 @@ class completion_completion extends data_object {
      */
     public $timestarted;
 
-    /**
-     * Timestamp of course completion {@see completion_completion::mark_complete()}
-     * @var int
-     */
+    /* @var int Timestamp of course completion {@see completion_completion::mark_complete()} */
     public $timecompleted;
 
-    /**
-     * Flag to trigger cron aggregation (timestamp)
-     * @var int
-     */
+    /* @var int Flag to trigger cron aggregation (timestamp) */
     public $reaggregate;
 
 
     /**
      * Finds and returns a data_object instance based on params.
-     * 
+     *
      * @param array $params associative arrays varname = >value
      * @return data_object instance of data_object or false if none found.
      */
@@ -114,7 +87,7 @@ class completion_completion extends data_object {
     /**
      * Return status of this completion
      *
-     * @return boolean
+     * @return bool
      */
     public function is_complete() {
         return (bool) $this->timecompleted;

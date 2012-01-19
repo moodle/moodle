@@ -37,16 +37,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class data_object {
 
-    /**
-     * Table that the class maps to in the database
-     * @var string
-     */
+    /* @var string Table that the class maps to in the database */
     public $table;
 
-    /**
-     * Array of required table fields, must start with 'id'.
-     * @var array
-     */
+    /* @var array Array of required table fields, must start with 'id'. */
     public $required_fields = array('id');
 
     /**
@@ -56,10 +50,7 @@ abstract class data_object {
      */
     public $optional_fields = array();
 
-    /**
-     * The primary key
-     * @var int $id
-     */
+    /* @var int The primary key */
     public $id;
 
     /**
@@ -210,7 +201,7 @@ abstract class data_object {
     /**
      * Updates this object in the Database, based on its object variables. ID must be set.
      *
-     * @return boolean success
+     * @return bool success
      */
     public function update() {
         global $DB;
@@ -231,7 +222,7 @@ abstract class data_object {
     /**
      * Deletes this object from the database.
      *
-     * @return boolean success
+     * @return bool success
      */
     public function delete() {
         global $DB;
@@ -346,5 +337,5 @@ abstract class data_object {
      *
      * @param bool $deleted Set this to true if it has been deleted.
      */
-    function notify_changed($deleted) {}
+    public function notify_changed($deleted) {}
 }

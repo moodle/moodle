@@ -38,70 +38,37 @@ require_once($CFG->libdir.'/completion/data_object.php');
  */
 class completion_criteria_completion extends data_object {
 
-    /**
-     * Database table that stores completion type criteria
-     * @var string
-     */
+    /* @var string Database table that stores completion type criteria */
     public $table = 'course_completion_crit_compl';
 
-    /**
-     * Array of required table fields, must start with 'id'.
-     * @var array
-     */
+    /* @var array Array of required table fields, must start with 'id'. */
     public $required_fields = array('id', 'userid', 'course', 'criteriaid', 'gradefinal', 'rpl', 'deleted', 'unenroled', 'timecompleted');
 
-    /**
-     * User ID
-     * @var int
-     */
+    /* @var int User ID */
     public $userid;
 
-    /**
-     * Course ID
-     * @var int
-     */
+    /* @var int course ID */
     public $course;
 
-    /**
-     * The id of the course completion criteria this completion references
-     * @var int
-     */
+    /* @var int The id of the course completion criteria this completion references */
     public $criteriaid;
 
-    /**
-     * The final grade for the user in the course (if completing a grade criteria)
-     * @var float
-     */
+    /* @var float The final grade for the user in the course (if completing a grade criteria) */
     public $gradefinal;
 
-    /**
-     * Record of prior learning, leave blank if none
-     * @var string
-     */
+    /* @var string Record of prior learning, leave blank if none */
     public $rpl;
 
-    /**
-     * Course deleted flag
-     * @var boolean
-     */
+    /* @var bool Course deleted flag */
     public $deleted;
 
-    /**
-     * Timestamp of user unenrolment (if completing a unenrol criteria)
-     * @var int
-     */
+    /* @var int Timestamp of user unenrolment (if completing a unenrol criteria) */
     public $unenroled;
 
-    /**
-     * Timestamp of course criteria completion {@see completion_criteria_completion::mark_complete()}
-     * @var int
-     */
+    /* @var int Timestamp of course criteria completion {@see completion_criteria_completion::mark_complete()} */
     public $timecompleted;
 
-    /**
-     * Associated criteria object
-     * @var completion_criteria
-     */
+    /* @var completion_criterria Associated criteria object */
     private $_criteria;
 
     /**
@@ -125,7 +92,8 @@ class completion_criteria_completion extends data_object {
 
     /**
      * Return status of this criteria completion
-     * @return boolean
+     *
+     * @return bool
      */
     public function is_complete() {
         return (bool) $this->timecompleted;
@@ -158,7 +126,7 @@ class completion_criteria_completion extends data_object {
 
     /**
      * Attach a preloaded criteria object to this object
-     * 
+     *
      * @param   $criteria   object  completion_criteria
      */
     public function attach_criteria(completion_criteria $criteria) {
@@ -168,12 +136,13 @@ class completion_criteria_completion extends data_object {
     /**
      * Return the associated criteria with this completion
      * If nothing attached, load from the db
-     * 
+     *
      * @return completion_criteria
      */
     public function get_criteria() {
 
-        if (!$this->_criteria) {
+        if (!$this->_criteria) 
+        {
             global $DB;
 
             $params = array(
@@ -190,6 +159,7 @@ class completion_criteria_completion extends data_object {
 
     /**
      * Return criteria status text for display in reports {@see completion_criteria::get_status()}
+     *
      * @return string
      */
     public function get_status() {
