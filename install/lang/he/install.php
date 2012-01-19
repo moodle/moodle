@@ -34,6 +34,9 @@ $string['admindirname'] = 'ספריית מנהל המערכת';
 $string['availablelangs'] = 'חבילות שפה זמינות';
 $string['chooselanguagehead'] = 'בחר שפה';
 $string['chooselanguagesub'] = 'אנא בחר שפה עבור ההתקנה בלבד. תוכל לבחור בשפה שונה לאתר ולמשתמש באחד מהמסכים הבאים.';
+$string['clialreadyconfigured'] = 'קובץ config.php כבר קיים, אנא השתמש ב
+admin/cli/install_database.php
+אם ברצונך להתקין את אתר זה.';
 $string['clialreadyinstalled'] = 'קובץ ה-config.php קיים כבר, אנא השתמש ב- admin/cli/upgrade.php
 אם ברצונך לשדרג את האתר שלך.';
 $string['cliinstallheader'] = 'תוכנית התקנת Moodle {$a} בשורת הפקודה';
@@ -41,6 +44,7 @@ $string['databasehost'] = 'מסד הנתונים המארח (host)';
 $string['databasename'] = 'שם מסד הנתונים';
 $string['databasetypehead'] = 'בחר התקן מסד הנתונים';
 $string['dataroot'] = 'ספריית הנתונים';
+$string['datarootpermission'] = 'הרשאות תיקיות bתונים (data)';
 $string['dbprefix'] = 'Tables prefix';
 $string['dirroot'] = 'ספריית ה-Moodle';
 $string['environmenthead'] = 'בודק את הסביבה שלך...';
