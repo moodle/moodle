@@ -64,6 +64,7 @@ Os oes gan eich safle amryw o gyfeiriadau cyhoeddus, bydd rhaid i chi sefydlu ll
 Os gellir mynd i mewn i\'ch safle o\'r Rhyngrwyd a\'r Fewnrwyd, defnyddiwch y cyfeiriad cyhoeddus yma a sefydlu DNS er mwyn i ddefnyddwyr y Fewnrwyd allu defnyddio\'r cyfeiriad cyhoeddus hefyd.
 Os nad yw\'r cyfeiriad yn gywir, newidiwch yr URL yn eich porwr i ailddechrau\'r rhaglen osod gyda gwerth gwahanol.';
 $string['pathsunsecuredataroot'] = 'Dydy lleoliad y data gwraidd ddim yn ddiogel';
+$string['pathswrongadmindir'] = 'Cyfeiriadur y gweinyddwr';
 $string['phpextension'] = 'Estyniad PHP {$a}';
 $string['phpversion'] = 'Fersiwn PHP';
 $string['phpversionhelp'] = '<p>Mae angen o leiaf fersiwn PHP 4.3.0 neu 5.1.0 ar Moodle (mae llawer o broblemau gyda 5.0.x).</p>
