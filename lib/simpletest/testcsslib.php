@@ -62,6 +62,7 @@ class css_optimiser_test extends UnitTestCase {
         $this->check_colors($optimiser);
         $this->check_margins($optimiser);
         $this->check_padding($optimiser);
+        $this->check_widths($optimiser);
 
         $this->try_broken_css_found_in_moodle($optimiser);
         $this->try_invalid_css_handling($optimiser);
@@ -230,18 +231,6 @@ class css_optimiser_test extends UnitTestCase {
         $css = '#some .css[type=blah]{color:#123456;}';
         $this->assertEqual($css, $optimiser->process($css));
 
-        $cssin  = '.css {width:0}';
-        $cssout = '.css{width:0;}';
-        $this->assertEqual($cssout, $optimiser->process($cssin));
-
-        $cssin  = '.css {width:0px}';
-        $cssout = '.css{width:0;}';
-        $this->assertEqual($cssout, $optimiser->process($cssin));
-
-        $cssin  = '.css {width:100px}';
-        $cssout = '.css{width:100px;}';
-        $this->assertEqual($cssout, $optimiser->process($cssin));
-
         $cssin = '.one {color:red;} .two {color:#F00;}';
         $cssout = ".one, .two{color:#F00;}";
         $this->assertEqual($cssout, $optimiser->process($cssin));
@@ -280,6 +269,45 @@ class css_optimiser_test extends UnitTestCase {
 
         $cssin = '.one {color:hsla(120,65%,75%,0.5)}';
         $cssout = '.one{color:hsla(120,65%,75%,0.5);}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        // Try some invalid colours to make sure we don't mangle them.
+        $css = 'div#some{color:#1;}';
+        $this->assertEqual($css, $optimiser->process($css));
+
+        $css = 'div#some{color:#12;}';
+        $this->assertEqual($css, $optimiser->process($css));
+
+        $css = 'div#some{color:#1234;}';
+        $this->assertEqual($css, $optimiser->process($css));
+
+        $css = 'div#some{color:#12345;}';
+        $this->assertEqual($css, $optimiser->process($css));
+    }
+
+    protected function check_widths(css_optimiser $optimiser) {
+        $cssin  = '.css {width:0}';
+        $cssout = '.css{width:0;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin  = '.css {width:0px}';
+        $cssout = '.css{width:0;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin  = '.css {width:0em}';
+        $cssout = '.css{width:0;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin  = '.css {width:0pt}';
+        $cssout = '.css{width:0;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin  = '.css {width:0mm}';
+        $cssout = '.css{width:0;}';
+        $this->assertEqual($cssout, $optimiser->process($cssin));
+
+        $cssin  = '.css {width:100px}';
+        $cssout = '.css{width:100px;}';
         $this->assertEqual($cssout, $optimiser->process($cssin));
     }
 
@@ -560,10 +588,16 @@ CSS;
         $this->assertTrue(css_is_colour('#aBc'));
         $this->assertTrue(css_is_colour('#1a2Bc3'));
         $this->assertTrue(css_is_colour('#1Ac'));
+
         // Note the following two colour's arn't really colours but browsers process
         // them still.
         $this->assertTrue(css_is_colour('#A'));
         $this->assertTrue(css_is_colour('#12'));
+        // Having four or five characters however are not valid colours and
+        // browsers don't parse them. They need to fail so that broken CSS
+        // stays broken after optimisation.
+        $this->assertFalse(css_is_colour('#1234'));
+        $this->assertFalse(css_is_colour('#12345'));
 
         $this->assertFalse(css_is_colour('#BCDEFG'));
         $this->assertFalse(css_is_colour('#'));

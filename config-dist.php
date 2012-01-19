@@ -387,7 +387,7 @@ $CFG->admin = 'admin';
 //
 // The CSS files the Moodle produces can be extremely large and complex, especially
 // if you are using a custom theme that builds upon several other themes.
-// In Moodle 2.2 a CSS optimiser was added as an experimental feature for advanced
+// In Moodle 2.3 a CSS optimiser was added as an experimental feature for advanced
 // users. The CSS optimiser organises the CSS in order to reduce the overall number
 // of rules and styles being sent to the client. It does this by collating the
 // CSS before it is cached removing excess styles and rules and stripping out any

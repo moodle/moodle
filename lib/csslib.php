@@ -243,7 +243,7 @@ function css_is_colour($value) {
     $value = trim($value);
     if (in_array(strtolower($value), array('inherit'))) {
         return true;
-    } else if (preg_match('/^#([a-fA-F0-9]{1,6})$/', $value)) {
+    } else if (preg_match('/^#([a-fA-F0-9]{1,3}|[a-fA-F0-9]{6})$/', $value)) {
         return true;
     } else if (in_array(strtolower($value), array_keys(css_optimiser::$htmlcolours))) {
         return true;
@@ -413,7 +413,7 @@ class css_optimiser {
      * Will be set to any errors that may have occured during processing.
      * This is updated only at the end of processing NOT during.
      *
-     * @var array()
+     * @var array
      */
     protected $errors = array();
 
@@ -938,6 +938,7 @@ class css_optimiser {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class css_writer {
+
     /**
      * The current indent level
      * @var int
@@ -1049,9 +1050,10 @@ abstract class css_writer {
     }
 
     /**
+     * Returns a CSS string for the provided styles
      *
      * @param array $styles Array of css_style objects
-     * @return type
+     * @return string
      */
     public static function styles(array $styles) {
         $bits = array();
@@ -1724,7 +1726,7 @@ abstract class css_style {
     /**
      * Sets the last error message.
      *
-     * @param type $message
+     * @param string $message
      */
     protected function set_error($message) {
         $this->error = true;
@@ -1763,7 +1765,7 @@ class css_style_generic extends css_style {
     /**
      * Cleans incoming values for typical things that can be optimised.
      *
-     * @param mixed $value
+     * @param mixed $value Cleans the provided value optimising it if possible
      * @return string
      */
     protected function clean_value($value) {
@@ -1801,18 +1803,20 @@ class css_style_color extends css_style {
      * Doing this allows us to associate identical colours being specified in
      * different ways. e.g. Red, red, #F00, and #F00000
      *
-     * @param mixed $value
+     * @param mixed $value Cleans the provided value optimising it if possible
      * @return string
      */
     protected function clean_value($value) {
         $value = trim($value);
-        if (preg_match('/#([a-fA-F0-9]{6})/', $value, $matches)) {
-            $value = '#'.strtoupper($matches[1]);
-        } else if (preg_match('/#([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])/', $value, $matches)) {
-            $value = $matches[1] . $matches[1] . $matches[2] . $matches[2] . $matches[3] . $matches[3];
-            $value = '#'.strtoupper($value);
-        } else if (array_key_exists(strtolower($value), css_optimiser::$htmlcolours)) {
-            $value = css_optimiser::$htmlcolours[strtolower($value)];
+        if (css_is_colour($value)) {
+            if (preg_match('/#([a-fA-F0-9]{6})/', $value, $matches)) {
+                $value = '#'.strtoupper($matches[1]);
+            } else if (preg_match('/#([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])/', $value, $matches)) {
+                $value = $matches[1] . $matches[1] . $matches[2] . $matches[2] . $matches[3] . $matches[3];
+                $value = '#'.strtoupper($value);
+            } else if (array_key_exists(strtolower($value), css_optimiser::$htmlcolours)) {
+                $value = css_optimiser::$htmlcolours[strtolower($value)];
+            }
         }
         return $value;
     }
@@ -1825,7 +1829,8 @@ class css_style_color extends css_style {
      *     #123 instead of #112233
      *     #F00 instead of red
      *
-     * @param string $overridevalue
+     * @param string $overridevalue If provided then this value will be used instead
+     *     of the styles current value.
      * @return string
      */
     public function out($overridevalue = null) {
@@ -1838,7 +1843,7 @@ class css_style_color extends css_style {
     /**
      * Shrinks the colour value is possible.
      *
-     * @param string $value
+     * @param string $value Shrinks the current value to an optimial form if possible
      * @return string
      */
     public static function shrink_value($value) {
@@ -1879,7 +1884,7 @@ class css_style_width extends css_style {
     /**
      * Cleans the provided value
      *
-     * @param mixed $value
+     * @param mixed $value Cleans the provided value optimising it if possible
      * @return string
      */
     protected function clean_value($value) {
@@ -1896,7 +1901,7 @@ class css_style_width extends css_style {
     /**
      * Initialises a new width style
      *
-     * @param type $value
+     * @param mixed $value The value this style has
      * @return css_style_width
      */
     public static function init($value) {
@@ -1921,7 +1926,7 @@ class css_style_margin extends css_style_width {
      * we can properly condense overrides and then reconsolidate them later into
      * an optimal form.
      *
-     * @param string $value
+     * @param string $value The value the style has
      * @return array An array of margin values that can later be consolidated
      */
     public static function init($value) {
@@ -2001,7 +2006,7 @@ class css_style_margintop extends css_style_margin {
     /**
      * A simple init, just a single style
      *
-     * @param string $value
+     * @param string $value The value the style has
      * @return css_style_margintop
      */
     public static function init($value) {
@@ -2031,7 +2036,7 @@ class css_style_marginright extends css_style_margin {
     /**
      * A simple init, just a single style
      *
-     * @param string $value
+     * @param string $value The value the style has
      * @return css_style_margintop
      */
     public static function init($value) {
@@ -2061,7 +2066,7 @@ class css_style_marginbottom extends css_style_margin {
     /**
      * A simple init, just a single style
      *
-     * @param string $value
+     * @param string $value The value the style has
      * @return css_style_margintop
      */
     public static function init($value) {
@@ -2091,7 +2096,7 @@ class css_style_marginleft extends css_style_margin {
     /**
      * A simple init, just a single style
      *
-     * @param string $value
+     * @param string $value The value the style has
      * @return css_style_margintop
      */
     public static function init($value) {
@@ -2121,7 +2126,7 @@ class css_style_border extends css_style {
     /**
      * Initalises the border style into an array of individual style compontents
      *
-     * @param string $value
+     * @param string $value The value the style has
      * @return css_style_bordercolor
      */
     public static function init($value) {
@@ -2159,8 +2164,8 @@ class css_style_border extends css_style {
     /**
      * Consolidates all border styles into a single style
      *
-     * @param array $styles
-     * @return array
+     * @param array $styles An array of border styles
+     * @return array An optimised array of border styles
      */
     public static function consolidate(array $styles) {
 
@@ -2412,7 +2417,7 @@ class css_style_bordercolor extends css_style_color {
      * Based upon the colour style
      *
      * @param mixed $value
-     * @return css_style_bordercolor
+     * @return Array of css_style_bordercolor
      */
     public static function init($value) {
         $value = preg_replace('#\s+#', ' ', $value);
@@ -2451,7 +2456,7 @@ class css_style_bordercolor extends css_style_color {
     /**
      * Cleans the value
      *
-     * @param string $value
+     * @param string $value Cleans the provided value optimising it if possible
      * @return string
      */
     protected function clean_value($value) {
@@ -2490,7 +2495,7 @@ class css_style_borderleft extends css_style_generic {
      * Initialises the border left style into individual components
      *
      * @param string $value
-     * @return css_style_borderleftwidth|css_style_borderleftstyle|css_style_borderleftcolor
+     * @return array Array of css_style_borderleftwidth|css_style_borderleftstyle|css_style_borderleftcolor
      */
     public static function init($value) {
         $value = preg_replace('#\s+#', ' ', $value);
@@ -2532,8 +2537,8 @@ class css_style_borderright extends css_style_generic {
     /**
      * Initialises the border right style into individual components
      *
-     * @param string $value
-     * @return css_style_borderrightwidth|css_style_borderrightstyle|css_style_borderrightcolor
+     * @param string $value The value of the style
+     * @return array Array of css_style_borderrightwidth|css_style_borderrightstyle|css_style_borderrightcolor
      */
     public static function init($value) {
         $value = preg_replace('#\s+#', ' ', $value);
@@ -2575,8 +2580,8 @@ class css_style_bordertop extends css_style_generic {
     /**
      * Initialises the border top style into individual components
      *
-     * @param string $value
-     * @return css_style_bordertopwidth|css_style_bordertopstyle|css_style_bordertopcolor
+     * @param string $value The value of the style
+     * @return array Array of css_style_bordertopwidth|css_style_bordertopstyle|css_style_bordertopcolor
      */
     public static function init($value) {
         $value = preg_replace('#\s+#', ' ', $value);
@@ -2618,8 +2623,8 @@ class css_style_borderbottom extends css_style_generic {
     /**
      * Initialises the border bottom style into individual components
      *
-     * @param string $value
-     * @return css_style_borderbottomwidth|css_style_borderbottomstyle|css_style_borderbottomcolor
+     * @param string $value The value of the style
+     * @return array Array of css_style_borderbottomwidth|css_style_borderbottomstyle|css_style_borderbottomcolor
      */
     public static function init($value) {
         $value = preg_replace('#\s+#', ' ', $value);
@@ -2663,8 +2668,8 @@ class css_style_borderwidth extends css_style_width {
      *
      * Based upon the colour style
      *
-     * @param mixed $value
-     * @return css_style_borderwidth
+     * @param string $value The value of the style
+     * @return array Array of css_style_border*width
      */
     public static function init($value) {
         $value = preg_replace('#\s+#', ' ', $value);
@@ -2716,8 +2721,8 @@ class css_style_borderstyle extends css_style_generic {
      *
      * Based upon the colour style
      *
-     * @param mixed $value
-     * @return css_style_borderstyle
+     * @param string $value The value of the style
+     * @return array Array of css_style_border*style
      */
     public static function init($value) {
         $value = preg_replace('#\s+#', ' ', $value);
@@ -2767,7 +2772,7 @@ class css_style_bordertopcolor extends css_style_bordercolor {
     /**
      * Initialises this style object
      *
-     * @param string $value
+     * @param string $value The value of the style
      * @return css_style_bordertopcolor
      */
     public static function init($value) {
@@ -2797,7 +2802,7 @@ class css_style_borderleftcolor extends css_style_bordercolor {
     /**
      * Initialises this style object
      *
-     * @param string $value
+     * @param string $value The value of the style
      * @return css_style_borderleftcolor
      */
     public static function init($value) {
@@ -2827,7 +2832,7 @@ class css_style_borderrightcolor extends css_style_bordercolor {
     /**
      * Initialises this style object
      *
-     * @param string $value
+     * @param string $value The value of the style
      * @return css_style_borderrightcolor
      */
     public static function init($value) {
@@ -2857,7 +2862,7 @@ class css_style_borderbottomcolor extends css_style_bordercolor {
     /**
      * Initialises this style object
      *
-     * @param string $value
+     * @param string $value The value of the style
      * @return css_style_borderbottomcolor
      */
     public static function init($value) {
@@ -2887,7 +2892,7 @@ class css_style_bordertopwidth extends css_style_borderwidth {
     /**
      * Initialises this style object
      *
-     * @param string $value
+     * @param string $value The value of the style
      * @return css_style_bordertopwidth
      */
     public static function init($value) {
@@ -2917,7 +2922,7 @@ class css_style_borderleftwidth extends css_style_borderwidth {
     /**
      * Initialises this style object
      *
-     * @param string $value
+     * @param string $value The value of the style
      * @return css_style_borderleftwidth
      */
     public static function init($value) {
@@ -2947,7 +2952,7 @@ class css_style_borderrightwidth extends css_style_borderwidth {
     /**
      * Initialises this style object
      *
-     * @param string $value
+     * @param string $value The value of the style
      * @return css_style_borderrightwidth
      */
     public static function init($value) {
@@ -2977,7 +2982,7 @@ class css_style_borderbottomwidth extends css_style_borderwidth {
     /**
      * Initialises this style object
      *
-     * @param string $value
+     * @param string $value The value of the style
      * @return css_style_borderbottomwidth
      */
     public static function init($value) {
@@ -3007,7 +3012,7 @@ class css_style_bordertopstyle extends css_style_borderstyle {
     /**
      * Initialises this style object
      *
-     * @param string $value
+     * @param string $value The value of the style
      * @return css_style_bordertopstyle
      */
     public static function init($value) {
@@ -3037,7 +3042,7 @@ class css_style_borderleftstyle extends css_style_borderstyle {
     /**
      * Initialises this style object
      *
-     * @param string $value
+     * @param string $value The value of the style
      * @return css_style_borderleftstyle
      */
     public static function init($value) {
@@ -3067,7 +3072,7 @@ class css_style_borderrightstyle extends css_style_borderstyle {
     /**
      * Initialises this style object
      *
-     * @param string $value
+     * @param string $value The value of the style
      * @return css_style_borderrightstyle
      */
     public static function init($value) {
@@ -3126,7 +3131,7 @@ class css_style_background extends css_style {
     /**
      * Initialises a background style
      *
-     * @param type $value
+     * @param type $value The value of the style
      * @return array An array of background component.
      */
     public static function init($value) {
@@ -3192,8 +3197,8 @@ class css_style_background extends css_style {
     /**
      * Consolidates background styles into a single background style
      *
-     * @param array $styles
-     * @return array
+     * @param array $styles Consolidates the provided array of background styles
+     * @return array Consolidated optimised background styles
      */
     public static function consolidate(array $styles) {
 
@@ -3241,7 +3246,7 @@ class css_style_backgroundcolor extends css_style_color {
     /**
      * Creates a new background colour style
      *
-     * @param mixed $value
+     * @param string $value The value of the style
      * @return css_style_backgroundcolor
      */
     public static function init($value) {
@@ -3250,6 +3255,7 @@ class css_style_backgroundcolor extends css_style_color {
 
     /**
      * css_style_backgroundcolor consolidates to css_style_background
+     *
      * @return string
      */
     public function consolidate_to() {
@@ -3270,7 +3276,7 @@ class css_style_backgroundimage extends css_style_generic {
     /**
      * Creates a new background colour style
      *
-     * @param mixed $value
+     * @param string $value The value of the style
      * @return css_style_backgroundimage
      */
     public static function init($value) {
@@ -3300,7 +3306,7 @@ class css_style_backgroundrepeat extends css_style_generic {
     /**
      * Creates a new background colour style
      *
-     * @param mixed $value
+     * @param string $value The value of the style
      * @return css_style_backgroundrepeat
      */
     public static function init($value) {
@@ -3310,7 +3316,7 @@ class css_style_backgroundrepeat extends css_style_generic {
     /**
      * Consolidates this style into a single background style
      *
-     * @return type
+     * @return string
      */
     public function consolidate_to() {
         return 'background';
@@ -3330,7 +3336,7 @@ class css_style_backgroundattachment extends css_style_generic {
     /**
      * Creates a new background colour style
      *
-     * @param mixed $value
+     * @param string $value The value of the style
      * @return css_style_backgroundattachment
      */
     public static function init($value) {
@@ -3360,7 +3366,7 @@ class css_style_backgroundposition extends css_style_generic {
     /**
      * Creates a new background colour style
      *
-     * @param mixed $value
+     * @param string $value The value of the style
      * @return css_style_backgroundposition
      */
     public static function init($value) {
@@ -3390,8 +3396,8 @@ class css_style_padding extends css_style_width {
     /**
      * Initialises this padding style into several individual padding styles
      *
-     * @param string $value
-     * @return array
+     * @param string $value The value fo the style
+     * @return array An array of padding styles
      */
     public static function init($value) {
         $important = '';
@@ -3427,8 +3433,8 @@ class css_style_padding extends css_style_width {
     /**
      * Consolidates several padding styles into a single style.
      *
-     * @param array $styles
-     * @return array
+     * @param array $styles Array of padding styles
+     * @return array Optimised+consolidated array of padding styles
      */
     public static function consolidate(array $styles) {
         if (count($styles) != 4) {
@@ -3470,7 +3476,7 @@ class css_style_paddingtop extends css_style_padding {
     /**
      * Initialises this style
      *
-     * @param string $value
+     * @param string $value The value of the style
      * @return css_style_paddingtop
      */
     public static function init($value) {
@@ -3500,7 +3506,7 @@ class css_style_paddingright extends css_style_padding {
     /**
      * Initialises this style
      *
-     * @param string $value
+     * @param string $value The value of the style
      * @return css_style_paddingright
      */
     public static function init($value) {
@@ -3530,7 +3536,7 @@ class css_style_paddingbottom extends css_style_padding {
     /**
      * Initialises this style
      *
-     * @param string $value
+     * @param string $value The value of the style
      * @return css_style_paddingbottom
      */
     public static function init($value) {
@@ -3560,7 +3566,7 @@ class css_style_paddingleft extends css_style_padding {
     /**
      * Initialises this style
      *
-     * @param string $value
+     * @param string $value The value of the style
      * @return css_style_paddingleft
      */
     public static function init($value) {
