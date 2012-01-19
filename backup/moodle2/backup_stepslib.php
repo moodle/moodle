@@ -16,15 +16,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Defines various backup steps that will be used by common tasks in backup
+ *
+ * @package     core_backup
+ * @subpackage  moodle2
+ * @category    backup
+ * @copyright   2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Define all the backup steps that will be used by common tasks in backup
- */
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * create the temp dir where backup/restore will happen,

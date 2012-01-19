@@ -24,10 +24,11 @@ defined('MOODLE_INTERNAL') || die();
  * backed up, a course report should make use of the second and third
  * parameters in get_plugin_element().
  *
- * @package    moodlecore
- * @subpackage backup-moodle2
- * @copyright  2011 onwards The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     core_backup
+ * @subpackage  moodle2
+ * @category    backup
+ * @copyright   2011 onwards The Open University
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class backup_coursereport_plugin extends backup_plugin {
     // Use default parent behaviour
