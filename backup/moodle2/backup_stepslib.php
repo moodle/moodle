@@ -99,6 +99,7 @@ abstract class backup_activity_structure_step extends backup_structure_step {
      *                                       we are going to add subplugin information to
      * @param bool $multiple to define if multiple subplugins can produce information
      *                       for each instance of $element (true) or no (false)
+     * @return void
      */
     protected function add_subplugin_structure($subplugintype, $element, $multiple) {
 
@@ -136,6 +137,8 @@ abstract class backup_activity_structure_step extends backup_structure_step {
     /**
      * As far as activity backup steps are implementing backup_subplugin stuff, they need to
      * have the parent task available for wrapping purposes (get course/context....)
+     *
+     * @return backup_activity_task
      */
     public function get_task() {
         return $this->task;
@@ -144,6 +147,9 @@ abstract class backup_activity_structure_step extends backup_structure_step {
     /**
      * Wraps any activity backup structure within the common 'activity' element
      * that will include common to all activities information like id, context...
+     *
+     * @param backup_nested_element $activitystructure the element to wrap
+     * @return backup_nested_element the $activitystructure wrapped by the common 'activity' element
      */
     protected function prepare_activity_structure($activitystructure) {
 
