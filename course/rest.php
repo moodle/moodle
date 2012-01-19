@@ -159,10 +159,7 @@ switch($requestmethod) {
                         require_login($course);
                         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                         require_capability('moodle/course:update', $coursecontext);
-                        $newcourse = new stdClass();
-                        $newcourse->id = $course->id;
-                        $newcourse->marker = $value;
-                        $DB->update_record('course', $newcourse);
+                        course_set_marker($course->id, $value);
                         break;
                 }
                 break;
