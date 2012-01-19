@@ -50,10 +50,10 @@ abstract class pdo_moodle_database extends moodle_database {
     /**
      * Connect to db
      * Must be called before other methods.
-     * @param string $dbhost
-     * @param string $dbuser
-     * @param string $dbpass
-     * @param string $dbname
+     * @param string $dbhost The database host.
+     * @param string $dbuser The database username.
+     * @param string $dbpass The database username's password.
+     * @param string $dbname The name of the database being connected to.
      * @param mixed $prefix string means moodle db prefix, false used for external databases where prefix not used
      * @param array $dboptions driver specific options
      * @return bool success
@@ -138,7 +138,7 @@ abstract class pdo_moodle_database extends moodle_database {
 
     /**
      * Returns database server info array
-     * @return array
+     * @return array Array containing 'description' and 'version' info
      */
     public function get_server_info() {
         $result = array();
@@ -153,7 +153,7 @@ abstract class pdo_moodle_database extends moodle_database {
 
     /**
      * Returns supported query parameter types
-     * @return int bitmask
+     * @return int bitmask of accepted SQL_PARAMS_*
      */
     protected function allowed_param_types() {
         return SQL_PARAMS_QM | SQL_PARAMS_NAMED;

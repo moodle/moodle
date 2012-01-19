@@ -132,7 +132,8 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
     }
 
     /**
-     * Return tables in database WITHOUT current prefix
+     * Return tables in database WITHOUT current prefix.
+     * @param bool $usecache if true, returns list of cached tables.
      * @return array of table names in lowercase and without prefix
      */
     public function get_tables($usecache=true) {
@@ -156,6 +157,7 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
 
     /**
      * Return table indexes - everything lowercased
+     * @param string $table The table we want to get indexes from.
      * @return array of arrays
      */
     public function get_indexes($table) {
