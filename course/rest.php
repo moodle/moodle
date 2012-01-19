@@ -158,10 +158,7 @@ switch($requestmethod) {
             case 'course':
                 switch($field) {
                     case 'marker':
-                        $newcourse = new stdClass();
-                        $newcourse->id = $course->id;
-                        $newcourse->marker = $value;
-                        $DB->update_record('course', $newcourse);
+                        course_set_marker($course->id, $value);
                         break;
                 }
                 break;

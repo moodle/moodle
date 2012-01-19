@@ -1334,6 +1334,18 @@ function course_set_display($courseid, $display) {
 }
 
 /**
+ * Set highlighted section. Only one section can be highlighted at the time.
+ *
+ * @param int $courseid course id
+ * @param int $marker highlight section with this number, 0 means remove higlightin
+ * @return void
+ */
+function course_set_marker($courseid, $marker) {
+    global $DB;
+    $DB->set_field("course", "marker", $marker, array('id' => $courseid));
+}
+
+/**
  * For a given course section, marks it visible or hidden,
  * and does the same for every activity in that section
  */
@@ -2850,9 +2862,10 @@ function delete_mod_from_section($mod, $section) {
 /**
  * Moves a section up or down by 1. CANNOT BE USED DIRECTLY BY AJAX!
  *
- * @param object $course
- * @param int $section
+ * @param object $course course object
+ * @param int $section Section number (not id!!!)
  * @param int $move (-1 or 1)
+ * @return boolean true if section moved successfully
  */
 function move_section($course, $section, $move) {
 /// Moves a whole course section up and down within the course
@@ -2878,6 +2891,13 @@ function move_section($course, $section, $move) {
 
     $DB->set_field("course_sections", "section", $sectiondest, array("id"=>$sectionrecord->id));
     $DB->set_field("course_sections", "section", $section, array("id"=>$sectiondestrecord->id));
+
+    // Update highlighting if the move affects highlighted section
+    if ($course->marker == $section) {
+        course_set_marker($course->id, $sectiondest);
+    } elseif ($course->marker == $sectiondest) {
+        course_set_marker($course->id, $section);
+    }
 
     // if the focus is on the section that is being moved, then move the focus along
     if (course_get_display($course->id) == $section) {

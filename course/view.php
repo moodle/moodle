@@ -137,12 +137,15 @@
 
         if (!empty($section)) {
             if (!empty($move) and confirm_sesskey()) {
-                if (!move_section($course, $section, $move)) {
+                if (move_section($course, $section, $move)) {
+                    if ($course->id == SITEID) {
+                        redirect($CFG->wwwroot . '/?redirect=0');
+                    } else {
+                        redirect($PAGE->url);
+                    }
+                } else {
                     echo $OUTPUT->notification('An error occurred while moving a section');
                 }
-                // Clear the navigation cache at this point so that the affects
-                // are seen immediately on the navigation.
-                $PAGE->navigation->clear_cache();
             }
         }
     } else {
