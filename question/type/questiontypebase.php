@@ -74,11 +74,7 @@ class question_type {
      * You should not need to override this method, the default behaviour should be fine.
      */
     public function local_name() {
-        if (get_string_manager()->string_exists('pluginname', $this->plugin_name())) {
-            return get_string('pluginname', $this->plugin_name());
-        } else {
-            return get_string($this->name(), $this->plugin_name());
-        }
+        return get_string('pluginname', $this->plugin_name());
     }
 
     /**
@@ -249,11 +245,7 @@ class question_type {
         global $OUTPUT;
         $heading = $this->get_heading(empty($question->id));
 
-        if (get_string_manager()->string_exists('pluginname_help', $this->plugin_name())) {
-            echo $OUTPUT->heading_with_help($heading, 'pluginname', $this->plugin_name());
-        } else {
-            echo $OUTPUT->heading_with_help($heading, $this->name(), $this->plugin_name());
-        }
+        echo $OUTPUT->heading_with_help($heading, 'pluginname', $this->plugin_name());
 
         $permissionstrs = array();
         if (!empty($question->id)) {
@@ -288,16 +280,10 @@ class question_type {
     public function get_heading($adding = false) {
         if ($adding) {
             $string = 'pluginnameadding';
-            $fallback = 'adding' . $this->name();
         } else {
             $string = 'pluginnameediting';
-            $fallback = 'editing' . $this->name();
         }
-        if (get_string_manager()->string_exists($string, $this->plugin_name())) {
-            return get_string($string, $this->plugin_name());
-        } else {
-            return get_string($fallback, $this->plugin_name());
-        }
+        return get_string($string, $this->plugin_name());
     }
 
     /**
