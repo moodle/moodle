@@ -1182,7 +1182,7 @@ class html_writer {
                     $timeunits[$i] = userdate(gmmktime(12,0,0,$i,15,2000), "%B");
                 }
                 $userdatetype = 'month';
-                $currentdate['month'] = $currentdate['mon'];
+                $currentdate['month'] = (int)$currentdate['mon'];
                 break;
             case 'days':
                 for ($i=1; $i<=31; $i++) {
