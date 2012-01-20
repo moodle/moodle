@@ -582,6 +582,7 @@ class question_usage_by_activity {
     /**
      * Get the correct response to a particular question. Passing the results of
      * this method to {@link process_action()} will probably result in full marks.
+     * If it is not possible to compute a correct response, this method should return null.
      * @param int $slot the number used to identify this question within this usage.
      * @return array that constitutes a correct response to this question.
      */
