@@ -18,8 +18,8 @@
 /**
  * A page to display a list of ratings for a given item (forum post etc)
  *
- * @package    core
- * @subpackage rating
+ * @package    core_rating
+ * @category   rating
  * @copyright  2010 Andrew Davis
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
