@@ -20,7 +20,7 @@
  * Native mysqli class representing moodle database interface.
  *
  * @package    core
- * @subpackage dml
+ * @subpackage dml_driver
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,6 +33,11 @@ require_once($CFG->libdir.'/dml/mysqli_native_moodle_temptables.php');
 
 /**
  * Native mysqli class representing moodle database interface.
+ *
+ * @package    core
+ * @subpackage dml_driver
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mysqli_native_moodle_database extends moodle_database {
 

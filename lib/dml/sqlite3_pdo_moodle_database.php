@@ -20,7 +20,7 @@
  * Experimental pdo database class.
  *
  * @package    core
- * @subpackage dml
+ * @subpackage dml_driver
  * @copyright  2008 Andrei Bautu
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,6 +31,11 @@ require_once($CFG->libdir.'/dml/pdo_moodle_database.php');
 
 /**
  * Experimental pdo database class
+ *
+ * @package    core
+ * @subpackage dml_driver
+ * @copyright  2008 Andrei Bautu
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class sqlite3_pdo_moodle_database extends pdo_moodle_database {
     protected $database_file_extension = '.sq3.php';

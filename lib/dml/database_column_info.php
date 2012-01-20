@@ -21,6 +21,7 @@
  *
  * @package    core
  * @category   dml
+ * @subpackage dml
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * 'column' does mean 'the field' here.
  *
  * @package core
- * @category database
+ * @category dml
  * @copyright 2008 Petr Skoda (http://skodak.org)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

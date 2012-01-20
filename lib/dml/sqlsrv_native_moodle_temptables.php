@@ -21,7 +21,7 @@
  * temp table names included in the get_tables() method of the DB.
  *
  * @package    core
- * @subpackage dml
+ * @subpackage dml_driver
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
  */
@@ -31,7 +31,12 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/dml/mssql_native_moodle_temptables.php');
 
 /***
-* This class is not specific to the SQL Server Native Driver but rather
-* to the family of Microsoft SQL Servers
-*/
+ * This class is not specific to the SQL Server Native Driver but rather
+ * to the family of Microsoft SQL Servers.
+ *
+ * @package    core
+ * @subpackage dml_driver
+ * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
+ */
 class sqlsrv_native_moodle_temptables extends mssql_native_moodle_temptables {}

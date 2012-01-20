@@ -16,10 +16,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * sqlsrv specific recorset.
+ * sqlsrv specific recordset.
  *
  * @package    core
- * @subpackage dml
+ * @subpackage dml_driver
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
  */

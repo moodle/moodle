@@ -20,7 +20,7 @@
  * Native oci class representing moodle database interface.
  *
  * @package    core
- * @subpackage dml
+ * @subpackage dml_driver
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,19 +36,29 @@ require_once($CFG->libdir.'/dml/oci_native_moodle_temptables.php');
  *
  * One complete reference for PHP + OCI:
  * http://www.oracle.com/technology/tech/php/underground-php-oracle-manual.html
+ *
+ * @package    core
+ * @subpackage dml_driver
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class oci_native_moodle_database extends moodle_database {
 
     protected $oci     = null;
 
-    private $last_stmt_error = null; // To store stmt errors and enable get_last_error() to detect them
-    private $commit_status = null;   // default value initialised in connect method, we need the driver to be present
+    /** @var To store stmt errors and enable get_last_error() to detect them.*/
+    private $last_stmt_error = null;
+    /** @var Default value initialised in connect method, we need the driver to be present.*/
+    private $commit_status = null;
 
-    private $last_error_reporting; // To handle oci driver default verbosity
-    private $unique_session_id; // To store unique_session_id. Needed for temp tables unique naming
-
-    private $dblocks_supported = null; // To cache locks support along the connection life
-    private $bitwise_supported = null; // To cache bitwise operations support along the connection life
+    /** @var To handle oci driver default verbosity.*/
+    private $last_error_reporting;
+    /** @var To store unique_session_id. Needed for temp tables unique naming.*/
+    private $unique_session_id;
+    /** @var To cache locks support along the connection life.*/
+    private $dblocks_supported = null;
+    /** @var To cache bitwise operations support along the connection life.*/
+    private $bitwise_supported = null;
 
     /**
      * Detects if all needed PHP stuff installed.

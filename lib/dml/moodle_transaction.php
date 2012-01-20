@@ -21,6 +21,7 @@
  *
  * @package    core
  * @category   dml
+ * @subpackage dml
  * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,6 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package    core
  * @category   dml
+ * @subpackage dml
  * @copyright  2009 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

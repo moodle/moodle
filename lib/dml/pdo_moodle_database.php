@@ -20,7 +20,7 @@
  * Experimental pdo database class
  *
  * @package    core
- * @subpackage dml
+ * @subpackage dml_driver
  * @copyright  2008 Andrei Bautu
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,6 +32,11 @@ require_once($CFG->libdir.'/dml/pdo_moodle_recordset.php');
 
 /**
  * Experimental pdo database class
+ *
+ * @package    core
+ * @subpackage dml_driver
+ * @copyright  2008 Andrei Bautu
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class pdo_moodle_database extends moodle_database {
 

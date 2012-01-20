@@ -20,7 +20,7 @@
  * Native mssql class representing moodle database interface.
  *
  * @package    core
- * @subpackage dml
+ * @subpackage dml_driver
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,6 +33,11 @@ require_once($CFG->libdir.'/dml/mssql_native_moodle_temptables.php');
 
 /**
  * Native mssql class representing moodle database interface.
+ *
+ * @package    core
+ * @subpackage dml_driver
+ * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mssql_native_moodle_database extends moodle_database {
 

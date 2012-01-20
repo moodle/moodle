@@ -20,7 +20,7 @@
  * Native postgresql recordset.
  *
  * @package    core
- * @subpackage dml
+ * @subpackage dml_driver
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,11 +31,17 @@ require_once($CFG->libdir.'/dml/moodle_recordset.php');
 
 /**
  * pgsql specific moodle recordset class
+ *
+ * @package    core
+ * @subpackage dml_driver
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class pgsql_native_moodle_recordset extends moodle_recordset {
 
     protected $result;
-    protected $current; // current row as array
+    /** @var current row as array.*/
+    protected $current;
     protected $bytea_oid;
     protected $blobs = array();
 
