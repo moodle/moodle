@@ -61,7 +61,7 @@ class file_logger extends base_logger {
     public function __wakeup() {
         if ($this->level > backup::LOG_NONE) { // Only create the file if we are going to log something
             if (! $this->fhandle = fopen($this->fullpath, 'a')) {
-                throw new base_logger_exception('error_opening_file', $fullpath);
+                throw new base_logger_exception('error_opening_file', $this->fullpath);
             }
         }
     }
