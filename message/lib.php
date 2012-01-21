@@ -2347,11 +2347,7 @@ function get_message_processor($type) {
  * @return object $processors object containing information on message processors
  */
 function get_message_output_default_preferences() {
-    $preferences = get_config('message');
-    if (!$preferences) {
-        $preferences = new stdClass();
-    }
-    return $preferences;
+    return get_config('message');
 }
 
 /**
