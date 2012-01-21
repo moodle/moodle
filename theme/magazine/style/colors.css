@@ -15,7 +15,7 @@ html a:hover,body a:hover {
 /** header and dock, default #002f2f and #092323 **/
 
 #page-header, #dock {
-    background: [[setting:maincolor]];
+    background-color: [[setting:maincolor]];
     border-bottom: 1px solid [[setting:maincoloraccent]];
 }
 
@@ -40,8 +40,8 @@ td.category.number, .yui-module.yui-overlay.yui-panel div.hd, #navigation li a:l
 }
 
 div.dockedtitle {
-    border-bottom: 1px solid [[setting:maincoloraccent]] !important;
     border-top: 1px solid #333333 !important;
+    border-bottom: 1px solid [[setting:maincoloraccent]] !important;
 }
 
 /** main headings and forum post subject default color #4e0000 **/
@@ -59,9 +59,8 @@ div.dockedtitle {
 /** table header background color, default is #002f2f **/
 
 td.maincalendar table.calendartable th, table.rolecap .header,.generaltable .header,.forumheaderlist .header,.files .header,.editcourse .header,.logtable .header,#attempts .header,table#categoryquestions th {
-    background: [[setting:maincolor]] !important;
+    background-color: [[setting:maincolor]] !important;
 }
-
 
 /** dock item hover, default is #4e0000 **/
 
