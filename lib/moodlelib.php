@@ -1073,7 +1073,7 @@ function clean_param($param, $type) {
         case PARAM_USERNAME:
             $param = fix_utf8($param);
             $param = str_replace(" " , "", $param);
-            $param = moodle_strtolower($param);  // Convert uppercase to lowercase MDL-16919
+            $param = textlib::strtolower($param);  // Convert uppercase to lowercase MDL-16919
             if (empty($CFG->extendedusernamechars)) {
                 // regular expression, eliminate all chars EXCEPT:
                 // alphanum, dash (-), underscore (_), at sign (@) and period (.) characters.
@@ -3652,7 +3652,7 @@ function create_user_record($username, $password, $auth = 'manual') {
     global $CFG, $DB;
 
     //just in case check text case
-    $username = trim(moodle_strtolower($username));
+    $username = trim(textlib::strtolower($username));
 
     $authplugin = get_auth_plugin($auth);
 
@@ -3714,7 +3714,7 @@ function create_user_record($username, $password, $auth = 'manual') {
 function update_user_record($username) {
     global $DB, $CFG;
 
-    $username = trim(moodle_strtolower($username)); /// just in case check text case
+    $username = trim(textlib::strtolower($username)); /// just in case check text case
 
     $oldinfo = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
     $newuser = array();
@@ -8729,27 +8729,6 @@ function moodle_setlocale($locale='') {
     if ($currentlocale == 'tr_TR' or $currentlocale == 'tr_TR.UTF-8') { // To workaround a well-known PHP problem with Turkish letter Ii
         setlocale (LC_CTYPE, $ctype);
     }
-}
-
-/**
- * Converts string to lowercase using most compatible function available.
- *
- * @deprecated since Moodle 2.0 use textlib::strtolower()
- * @todo MDL-31250 Remove this function when no longer in use
- * @see textlib::strtolower($text)
- *
- * @param string $string The string to convert to all lowercase characters.
- * @param string $encoding The encoding on the string.
- * @return string
- */
-function moodle_strtolower ($string, $encoding='') {
-
-    //If not specified use utf8
-    if (empty($encoding)) {
-        $encoding = 'UTF-8';
-    }
-    //Use text services
-    return textlib::strtolower($string, $encoding);
 }
 
 /**

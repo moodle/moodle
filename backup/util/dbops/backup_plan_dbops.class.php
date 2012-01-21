@@ -204,7 +204,7 @@ abstract class backup_plan_dbops extends backup_dbops {
         global $DB;
 
         // Calculate backup word
-        $backupword = str_replace(' ', '_', moodle_strtolower(get_string('backupfilename')));
+        $backupword = str_replace(' ', '_', textlib::strtolower(get_string('backupfilename')));
         $backupword = trim(clean_filename($backupword), '_');
 
         $shortname = '';
@@ -228,7 +228,7 @@ abstract class backup_plan_dbops extends backup_dbops {
                     break;
             }
             $shortname = str_replace(' ', '_', $shortname);
-            $shortname = moodle_strtolower(trim(clean_filename($shortname), '_'));
+            $shortname = textlib::strtolower(trim(clean_filename($shortname), '_'));
         }
 
         $name = empty($shortname) ? $id : $shortname;
@@ -236,7 +236,7 @@ abstract class backup_plan_dbops extends backup_dbops {
         // Calculate date
         $backupdateformat = str_replace(' ', '_', get_string('backupnameformat', 'langconfig'));
         $date = userdate(time(), $backupdateformat, 99, false);
-        $date = moodle_strtolower(trim(clean_filename($date), '_'));
+        $date = textlib::strtolower(trim(clean_filename($date), '_'));
 
         // Calculate info
         $info = '';

@@ -35,7 +35,7 @@ echo $OUTPUT->header();
 if (!$CFG->enablewebservices) {
     throw new moodle_exception('enablewsdescription', 'webservice');
 }
-$username = trim(moodle_strtolower($username));
+$username = trim(textlib::strtolower($username));
 if (is_restored_user($username)) {
     throw new moodle_exception('restoredaccountresetpassword', 'webservice');
 }

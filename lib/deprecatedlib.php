@@ -4000,3 +4000,24 @@ function show_event($event) {
     $event = new calendar_event($event);
     return $event->toggle_visibility(true);
 }
+
+/**
+ * Converts string to lowercase using most compatible function available.
+ *
+ * @deprecated Use textlib::strtolower($text) instead.
+ *
+ * @param string $string The string to convert to all lowercase characters.
+ * @param string $encoding The encoding on the string.
+ * @return string
+ */
+function moodle_strtolower($string, $encoding='') {
+
+    debugging('moodle_strtolower() is deprecated. Please use textlib::strtolower() instead.', DEBUG_DEVELOPER);
+
+    //If not specified use utf8
+    if (empty($encoding)) {
+        $encoding = 'UTF-8';
+    }
+    //Use text services
+    return textlib::strtolower($string, $encoding);
+}

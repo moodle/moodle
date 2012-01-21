@@ -129,7 +129,7 @@ class login_signup_form extends moodleform {
             $errors['username'] = get_string('usernameexists');
         } else {
             //check allowed characters
-            if ($data['username'] !== moodle_strtolower($data['username'])) {
+            if ($data['username'] !== textlib::strtolower($data['username'])) {
                 $errors['username'] = get_string('usernamelowercase');
             } else {
                 if ($data['username'] !== clean_param($data['username'], PARAM_USERNAME)) {

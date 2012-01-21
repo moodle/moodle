@@ -1699,7 +1699,7 @@ function highlightfast($needle, $haystack) {
         return $haystack;
     }
 
-    $parts = explode(moodle_strtolower($needle), moodle_strtolower($haystack));
+    $parts = explode(textlib::strtolower($needle), textlib::strtolower($haystack));
 
     if (count($parts) === 1) {
         return $haystack;

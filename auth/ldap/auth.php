@@ -839,7 +839,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $user->mnethostid = $CFG->mnet_localhost_id;
                 // get_userinfo_asobj() might have replaced $user->username with the value
                 // from the LDAP server (which can be mixed-case). Make sure it's lowercase
-                $user->username = trim(moodle_strtolower($user->username));
+                $user->username = trim(textlib::strtolower($user->username));
                 if (empty($user->lang)) {
                     $user->lang = $CFG->lang;
                 }
@@ -883,7 +883,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         global $CFG, $DB;
 
         // Just in case check text case
-        $username = trim(moodle_strtolower($username));
+        $username = trim(textlib::strtolower($username));
 
         // Get the current user record
         $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id));
@@ -928,7 +928,7 @@ class auth_plugin_ldap extends auth_plugin_base {
     function ldap_bulk_insert($username) {
         global $DB, $CFG;
 
-        $username = moodle_strtolower($username); // usernames are __always__ lowercase.
+        $username = textlib::strtolower($username); // usernames are __always__ lowercase.
         $DB->insert_record_raw('tmp_extuser', array('username'=>$username,
                                                     'mnethostid'=>$CFG->mnet_localhost_id), false, true);
         echo '.';
@@ -1370,13 +1370,13 @@ class auth_plugin_ldap extends auth_plugin_base {
         $moodleattributes = array();
         foreach ($this->userfields as $field) {
             if (!empty($this->config->{"field_map_$field"})) {
-                $moodleattributes[$field] = moodle_strtolower(trim($this->config->{"field_map_$field"}));
+                $moodleattributes[$field] = textlib::strtolower(trim($this->config->{"field_map_$field"}));
                 if (preg_match('/,/', $moodleattributes[$field])) {
                     $moodleattributes[$field] = explode(',', $moodleattributes[$field]); // split ?
                 }
             }
         }
-        $moodleattributes['username'] = moodle_strtolower(trim($this->config->user_attribute));
+        $moodleattributes['username'] = textlib::strtolower(trim($this->config->user_attribute));
         return $moodleattributes;
     }
 
@@ -1580,7 +1580,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     return false; // Should never happen!
             }
 
-            $username = moodle_strtolower($username); // Compatibility hack
+            $username = textlib::strtolower($username); // Compatibility hack
             set_cache_flag($this->pluginconfig.'/ntlmsess', $sesskey, $username, AUTH_NTLMTIMEOUT);
             return true;
         }
@@ -1782,8 +1782,8 @@ class auth_plugin_ldap extends auth_plugin_base {
         set_config('host_url', trim($config->host_url), $this->pluginconfig);
         set_config('ldapencoding', trim($config->ldapencoding), $this->pluginconfig);
         set_config('contexts', trim($config->contexts), $this->pluginconfig);
-        set_config('user_type', moodle_strtolower(trim($config->user_type)), $this->pluginconfig);
-        set_config('user_attribute', moodle_strtolower(trim($config->user_attribute)), $this->pluginconfig);
+        set_config('user_type', textlib::strtolower(trim($config->user_type)), $this->pluginconfig);
+        set_config('user_attribute', textlib::strtolower(trim($config->user_attribute)), $this->pluginconfig);
         set_config('search_sub', $config->search_sub, $this->pluginconfig);
         set_config('opt_deref', $config->opt_deref, $this->pluginconfig);
         set_config('preventpassindb', $config->preventpassindb, $this->pluginconfig);
@@ -1791,15 +1791,15 @@ class auth_plugin_ldap extends auth_plugin_base {
         set_config('bind_pw', $config->bind_pw, $this->pluginconfig);
         set_config('ldap_version', $config->ldap_version, $this->pluginconfig);
         set_config('objectclass', trim($config->objectclass), $this->pluginconfig);
-        set_config('memberattribute', moodle_strtolower(trim($config->memberattribute)), $this->pluginconfig);
+        set_config('memberattribute', textlib::strtolower(trim($config->memberattribute)), $this->pluginconfig);
         set_config('memberattribute_isdn', $config->memberattribute_isdn, $this->pluginconfig);
         set_config('creators', trim($config->creators), $this->pluginconfig);
         set_config('create_context', trim($config->create_context), $this->pluginconfig);
         set_config('expiration', $config->expiration, $this->pluginconfig);
         set_config('expiration_warning', trim($config->expiration_warning), $this->pluginconfig);
-        set_config('expireattr', moodle_strtolower(trim($config->expireattr)), $this->pluginconfig);
+        set_config('expireattr', textlib::strtolower(trim($config->expireattr)), $this->pluginconfig);
         set_config('gracelogins', $config->gracelogins, $this->pluginconfig);
-        set_config('graceattr', moodle_strtolower(trim($config->graceattr)), $this->pluginconfig);
+        set_config('graceattr', textlib::strtolower(trim($config->graceattr)), $this->pluginconfig);
         set_config('auth_user_create', $config->auth_user_create, $this->pluginconfig);
         set_config('forcechangepassword', $config->forcechangepassword, $this->pluginconfig);
         set_config('stdchangepassword', $config->stdchangepassword, $this->pluginconfig);
