@@ -1039,10 +1039,7 @@ abstract class enrol_plugin {
     protected function load_config() {
         if (!isset($this->config)) {
             $name = $this->get_name();
-            if (!$config = get_config("enrol_$name")) {
-                $config = new stdClass();
-            }
-            $this->config = $config;
+            $this->config = get_config("enrol_$name");
         }
     }
 
