@@ -173,15 +173,13 @@ function enrol_cohort_sync($courseid = NULL) {
     }
 
     // remove unwanted roles - include ignored roles and disabled plugins too
-    $onecourse = $courseid ? "AND c.instanceid = :courseid" : "";
+    $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
     $sql = "SELECT ra.roleid, ra.userid, ra.contextid, ra.itemid
               FROM {role_assignments} ra
-              JOIN {context} c ON (c.id = ra.contextid AND c.contextlevel = :coursecontext $onecourse)
-         LEFT JOIN (SELECT e.id AS enrolid, e.roleid, ue.userid
-                      FROM {user_enrolments} ue
-                      JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'cohort')
-                   ) x ON (x.enrolid = ra.itemid AND ra.component = 'enrol_cohort' AND x.roleid = ra.roleid AND x.userid = ra.userid)
-             WHERE x.userid IS NULL AND ra.component = 'enrol_cohort'";
+              JOIN {context} c ON (c.id = ra.contextid AND c.contextlevel = :coursecontext)
+              JOIN {enrol} e ON (e.id = ra.itemid AND e.enrol = 'cohort' $onecourse)
+         LEFT JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = ra.userid)
+             WHERE ra.component = 'enrol_cohort' AND ue.id IS NULL";
     $params = array('coursecontext' => CONTEXT_COURSE, 'courseid' => $courseid);
 
     $rs = $DB->get_recordset_sql($sql, $params);
