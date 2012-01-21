@@ -17,15 +17,11 @@ div.yui3-widget-bd a, .tabtree li a, .block div.content a, .unlist a, .categoryb
 }
 
 a:active {
-    outline: 0;
-
-/* for browsers that understand */
+    outline: 0; /* for browsers that understand */
 }
 
 a:focus {
-    outline: 0;
-
-/* for browsers that understand */
+    outline: 0; /* for browsers that understand */
 }
 
 /**header divs **/
@@ -869,7 +865,7 @@ div.categorybox {
 
 td.category.name a {
     padding-left: 20px;
-    background-image: url([[pix:theme|jcourse]]) no-repeat 0 50%;
+    background: url([[pix:theme|jcourse]]) no-repeat 0 50%;
     font-weight: 400;
     font-size: 16px;
 }
@@ -1116,35 +1112,6 @@ div.course-content div.availabilityinfo {
     padding: 2px;
     border-bottom: 1px dashed #dadada;
     margin-bottom: 10px;
-}
-
-/** login form **/
-
-.twocolumns div.loginpanel {
-    border-right: 1px dashed #dadada !important;
-}
-
-div.forgetpass {
-    clear: both;
-}
-
-div.loginform {
-    width: 50% !important;
-}
-
-div.loginform div.form-input input {
-    width: 90px !important;
-}
-
-div.loginform label {
-    line-height: 20px;
-}
-
-div.signuppanel {
-    float: right !important;
-    width: 40% !important;
-    margin-left: 0px;
-    padding-left: 0px;
 }
 
 div.singlebutton.forumaddnew {
