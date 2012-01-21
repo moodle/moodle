@@ -2218,7 +2218,7 @@ function get_timezone_record($timezonename) {
     }
 
     return $cache[$timezonename] = $DB->get_record_sql('SELECT * FROM {timezone}
-                                                        WHERE name = ? ORDER BY year DESC', array($timezonename), true);
+                                                        WHERE name = ? ORDER BY year DESC', array($timezonename), IGNORE_MULTIPLE);
 }
 
 /**
