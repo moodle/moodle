@@ -781,7 +781,7 @@ class enrol_database_plugin extends enrol_plugin {
             }
             return $text;
         } else {
-            return textlib_get_instance()->convert($text, 'utf-8', $dbenc);
+            return textlib::convert($text, 'utf-8', $dbenc);
         }
     }
 
@@ -796,7 +796,7 @@ class enrol_database_plugin extends enrol_plugin {
             }
             return $text;
         } else {
-            return textlib_get_instance()->convert($text, $dbenc, 'utf-8');
+            return textlib::convert($text, $dbenc, 'utf-8');
         }
     }
 }

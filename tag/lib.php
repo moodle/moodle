@@ -673,8 +673,7 @@ function tag_display_name($tagobject, $html=TAG_RETURN_HTML) {
 
     if (empty($CFG->keeptagnamecase)) {
         //this is the normalized tag name
-        $textlib = textlib_get_instance();
-        $tagname = $textlib->strtotitle($tagobject->name);
+        $tagname = textlib::strtotitle($tagobject->name);
     } else {
         //original casing of the tag name
         $tagname = $tagobject->rawname;

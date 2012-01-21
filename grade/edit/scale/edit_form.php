@@ -140,9 +140,8 @@ class edit_scale_form extends moodleform {
             } else {
                 $thescale = implode(',',$scalearray);
 
-                $textlib = textlib_get_instance();
                 //this check strips out whitespace from the scale we're validating but not from those already in the DB
-                $count = $DB->count_records_select('scale', "courseid=:courseid AND ".$DB->sql_compare_text('scale', $textlib->strlen($thescale)).'=:scale',
+                $count = $DB->count_records_select('scale', "courseid=:courseid AND ".$DB->sql_compare_text('scale', textlib::strlen($thescale)).'=:scale',
                     array('courseid'=>$courseid, 'scale'=>$thescale));
 
                 if ($count) {

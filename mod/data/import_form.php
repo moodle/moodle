@@ -21,8 +21,7 @@ class mod_data_import_form extends moodleform {
 
         $mform->addElement('text', 'fieldenclosure', get_string('fieldenclosure', 'data'));
 
-        $textlib = textlib_get_instance();
-        $choices = $textlib->get_encodings();
+        $choices = textlib::get_encodings();
         $mform->addElement('select', 'encoding', get_string('encoding', 'admin'), $choices);
         $mform->setDefault('encoding', 'UTF-8');
 

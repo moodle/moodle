@@ -3369,8 +3369,6 @@ class settings_navigation extends navigation_node {
 
         $this->get_course_modules($course);
 
-        $textlib = textlib_get_instance();
-
         foreach ($sections as $section) {
             if ($formatidentifier !== 0 && $section->section != $formatidentifier) {
                 continue;
@@ -3388,8 +3386,8 @@ class settings_navigation extends navigation_node {
                 $url = new moodle_url('/course/mod.php', array('id'=>$course->id, 'sesskey'=>sesskey(), 'section'=>$section->section));
                 $pos = strpos($value, '&type=');
                 if ($pos!==false) {
-                    $url->param('add', $textlib->substr($value, 0,$pos));
-                    $url->param('type', $textlib->substr($value, $pos+6));
+                    $url->param('add', textlib::substr($value, 0,$pos));
+                    $url->param('type', textlib::substr($value, $pos+6));
                 } else {
                     $url->param('add', $value);
                 }
@@ -3408,8 +3406,8 @@ class settings_navigation extends navigation_node {
                 $url = new moodle_url('/course/mod.php', array('id'=>$course->id, 'sesskey'=>sesskey(), 'section'=>$section->section));
                 $pos = strpos($activityname, '&type=');
                 if ($pos!==false) {
-                    $url->param('add', $textlib->substr($activityname, 0,$pos));
-                    $url->param('type', $textlib->substr($activityname, $pos+6));
+                    $url->param('add', textlib::substr($activityname, 0,$pos));
+                    $url->param('type', textlib::substr($activityname, $pos+6));
                 } else {
                     $url->param('add', $activityname);
                 }

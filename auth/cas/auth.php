@@ -364,8 +364,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
             return false;
         }
 
-        $textlib = textlib_get_instance();
-        $extusername = $textlib->convert($username, 'utf-8', $this->config->ldapencoding);
+        $extusername = textlib::convert($username, 'utf-8', $this->config->ldapencoding);
 
         // Test for group creator
         if (!empty($this->config->groupecreators)) {

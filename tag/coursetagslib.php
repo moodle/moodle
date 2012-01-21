@@ -695,8 +695,7 @@ function coursetag_get_official_keywords($courseid, $asarray=false) {
         }
         foreach ($tags as $tag) {
             if( empty($CFG->keeptagnamecase) ) {
-                $textlib = textlib_get_instance();
-                $name = $textlib->strtotitle($tag->name);
+                $name = textlib::strtotitle($tag->name);
             } else {
                 $name = $tag->rawname;
             }

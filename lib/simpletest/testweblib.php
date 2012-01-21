@@ -68,10 +68,9 @@ class web_test extends UnitTestCase {
             format_text_email('<p class="frogs">This is a <strong class=\'fishes\'>test</strong></p>',FORMAT_HTML));
         $this->assertEqual('& so is this',
             format_text_email('&amp; so is this',FORMAT_HTML));
-        $tl = textlib_get_instance();
-        $this->assertEqual('Two bullets: '.$tl->code2utf8(8226).' *',
+        $this->assertEqual('Two bullets: '.textlib::code2utf8(8226).' *',
             format_text_email('Two bullets: &#x2022; &#8226;',FORMAT_HTML));
-        $this->assertEqual($tl->code2utf8(0x7fd2).$tl->code2utf8(0x7fd2),
+        $this->assertEqual(textlib::code2utf8(0x7fd2).textlib::code2utf8(0x7fd2),
             format_text_email('&#x7fd2;&#x7FD2;',FORMAT_HTML));
     }
 

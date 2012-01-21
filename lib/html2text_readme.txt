@@ -47,8 +47,7 @@ Index: lib/html2text.php
 -            return mb_strtoupper($str);
 -        else
 -            return strtoupper($str);
-+        $tl = textlib_get_instance();
-+        return $tl->strtoupper($str);
++        return textlib::strtoupper($str);
      }
  }
 

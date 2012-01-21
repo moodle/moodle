@@ -610,7 +610,7 @@ class define_role_table_advanced extends capability_table_with_risks {
         $shortname = optional_param('shortname', null, PARAM_RAW);
         if (!is_null($shortname)) {
             $this->role->shortname = $shortname;
-            $this->role->shortname = textlib_get_instance()->specialtoascii($this->role->shortname);
+            $this->role->shortname = textlib::specialtoascii($this->role->shortname);
             $this->role->shortname = moodle_strtolower(clean_param($this->role->shortname, PARAM_ALPHANUMEXT));
             if (empty($this->role->shortname)) {
                 $this->errors['shortname'] = get_string('errorbadroleshortname', 'role');

@@ -1400,15 +1400,13 @@ class moodlelib_test extends UnitTestCase {
         $systemdefaulttimezone = date_default_timezone_get();
         date_default_timezone_set('Australia/Perth');
 
-        //get instance of textlib for strtolower
-        $textlib = textlib_get_instance();
         foreach ($testvalues as $vals) {
             $USER->timezone = $vals['usertimezone'];
             $actualoutput = userdate($vals['time'], '%A, %d %B %Y, %I:%M %p', $vals['timezone']);
 
             //On different systems case of AM PM changes so compare case insenitive
-            $vals['expectedoutput'] = $textlib->strtolower($vals['expectedoutput']);
-            $actualoutput = $textlib->strtolower($actualoutput);
+            $vals['expectedoutput'] = textlib::strtolower($vals['expectedoutput']);
+            $actualoutput = textlib::strtolower($actualoutput);
 
             $this->assertEqual($vals['expectedoutput'], $actualoutput,
                 "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput},
@@ -1574,8 +1572,6 @@ class moodlelib_test extends UnitTestCase {
         $systemdefaulttimezone = date_default_timezone_get();
         date_default_timezone_set('Australia/Perth');
 
-        //get instance of textlib for strtolower
-        $textlib = textlib_get_instance();
         //Test make_timestamp with all testvals and assert if anything wrong.
         foreach ($testvalues as $vals) {
             $USER->timezone = $vals['usertimezone'];
@@ -1591,8 +1587,8 @@ class moodlelib_test extends UnitTestCase {
                     );
 
             //On different systems case of AM PM changes so compare case insenitive
-            $vals['expectedoutput'] = $textlib->strtolower($vals['expectedoutput']);
-            $actualoutput = $textlib->strtolower($actualoutput);
+            $vals['expectedoutput'] = textlib::strtolower($vals['expectedoutput']);
+            $actualoutput = textlib::strtolower($actualoutput);
 
             $this->assertEqual($vals['expectedoutput'], $actualoutput,
                 "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput},

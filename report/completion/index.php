@@ -68,8 +68,7 @@ $leftcols = 1 + count($extrafields);
 function csv_quote($value) {
     global $excel;
     if ($excel) {
-        $tl = textlib_get_instance();
-        return $tl->convert('"'.str_replace('"',"'",$value).'"','UTF-8','UTF-16LE');
+        return textlib::convert('"'.str_replace('"',"'",$value).'"','UTF-8','UTF-16LE');
     } else {
         return '"'.str_replace('"',"'",$value).'"';
     }
@@ -145,9 +144,8 @@ if (!$csv) {
  */
 if ($csv) {
     $shortname = format_string($course->shortname, true, array('context' => $context));
-    $textlib = textlib_get_instance();
     header('Content-Disposition: attachment; filename=progress.'.
-        preg_replace('/[^a-z0-9-]/','_',$textlib->strtolower(strip_tags($shortname))).'.csv');
+        preg_replace('/[^a-z0-9-]/','_',textlib::strtolower(strip_tags($shortname))).'.csv');
     // Unicode byte-order mark for Excel
     if ($excel) {
         header('Content-Type: text/csv; charset=UTF-16LE');

@@ -1006,8 +1006,7 @@ function clean_param($param, $type) {
             $param = preg_replace('~[[:cntrl:]]|[<>`]~u', '', $param);
             //convert many whitespace chars into one
             $param = preg_replace('/\s+/', ' ', $param);
-            $textlib = textlib_get_instance();
-            $param = $textlib->substr(trim($param), 0, TAG_MAX_LENGTH);
+            $param = textlib::substr(trim($param), 0, TAG_MAX_LENGTH);
             return $param;
 
         case PARAM_TAGLIST:
@@ -2032,8 +2031,7 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour 
 
    if ($CFG->ostype == 'WINDOWS') {
        if ($localewincharset = get_string('localewincharset', 'langconfig')) {
-           $textlib = textlib_get_instance();
-           $datestring = $textlib->convert($datestring, $localewincharset, 'utf-8');
+           $datestring = textlib::convert($datestring, $localewincharset, 'utf-8');
        }
     }
 
@@ -3791,11 +3789,10 @@ function truncate_userinfo($info) {
                     'url'         => 255,
                     );
 
-    $textlib = textlib_get_instance();
     // apply where needed
     foreach (array_keys($info) as $key) {
         if (!empty($limit[$key])) {
-            $info[$key] = trim($textlib->substr($info[$key],0, $limit[$key]));
+            $info[$key] = trim(textlib::substr($info[$key],0, $limit[$key]));
         }
     }
 
@@ -4285,9 +4282,8 @@ function check_password_policy($password, &$errmsg) {
         return true;
     }
 
-    $textlib = textlib_get_instance();
     $errmsg = '';
-    if ($textlib->strlen($password) < $CFG->minpasswordlength) {
+    if (textlib::strlen($password) < $CFG->minpasswordlength) {
         $errmsg .= '<div>'. get_string('errorminpasswordlength', 'auth', $CFG->minpasswordlength) .'</div>';
 
     }
@@ -5250,18 +5246,17 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         $charsets = get_list_of_charsets();
         unset($charsets['UTF-8']);
         if (in_array($charset, $charsets)) {
-            $textlib = textlib_get_instance();
             $mail->CharSet  = $charset;
-            $mail->FromName = $textlib->convert($mail->FromName, 'utf-8', strtolower($charset));
-            $mail->Subject  = $textlib->convert($mail->Subject, 'utf-8', strtolower($charset));
-            $mail->Body     = $textlib->convert($mail->Body, 'utf-8', strtolower($charset));
-            $mail->AltBody  = $textlib->convert($mail->AltBody, 'utf-8', strtolower($charset));
+            $mail->FromName = textlib::convert($mail->FromName, 'utf-8', strtolower($charset));
+            $mail->Subject  = textlib::convert($mail->Subject, 'utf-8', strtolower($charset));
+            $mail->Body     = textlib::convert($mail->Body, 'utf-8', strtolower($charset));
+            $mail->AltBody  = textlib::convert($mail->AltBody, 'utf-8', strtolower($charset));
 
             foreach ($temprecipients as $key => $values) {
-                $temprecipients[$key][1] = $textlib->convert($values[1], 'utf-8', strtolower($charset));
+                $temprecipients[$key][1] = textlib::convert($values[1], 'utf-8', strtolower($charset));
             }
             foreach ($tempreplyto as $key => $values) {
-                $tempreplyto[$key][1] = $textlib->convert($values[1], 'utf-8', strtolower($charset));
+                $tempreplyto[$key][1] = textlib::convert($values[1], 'utf-8', strtolower($charset));
             }
         }
     }
@@ -8754,9 +8749,7 @@ function moodle_strtolower ($string, $encoding='') {
         $encoding = 'UTF-8';
     }
     //Use text services
-    $textlib = textlib_get_instance();
-
-    return $textlib->strtolower($string, $encoding);
+    return textlib::strtolower($string, $encoding);
 }
 
 /**
@@ -8783,12 +8776,10 @@ function count_words($string) {
  */
 function count_letters($string) {
 /// Loading the textlib singleton instance. We are going to need it.
-    $textlib = textlib_get_instance();
-
     $string = strip_tags($string); // Tags are out now
     $string = preg_replace('/[[:space:]]*/','',$string); //Whitespace are out now
 
-    return $textlib->strlen($string);
+    return textlib::strlen($string);
 }
 
 /**
@@ -9897,10 +9888,9 @@ function message_popup_window() {
             $smallmessage = null;
             if (!empty($message_users->smallmessage)) {
                 //display the first 200 chars of the message in the popup
-                $textlib = textlib_get_instance();
                 $smallmessage = null;
-                if ($textlib->strlen($message_users->smallmessage) > 200) {
-                    $smallmessage = $textlib->substr($message_users->smallmessage,0,200).'...';
+                if (textlib::strlen($message_users->smallmessage) > 200) {
+                    $smallmessage = textlib::substr($message_users->smallmessage,0,200).'...';
                 } else {
                     $smallmessage = $message_users->smallmessage;
                 }

@@ -782,20 +782,17 @@ function data_submitted() {
  */
 function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
 
-/// Loading the textlib singleton instance. We are going to need it.
-    $textlib = textlib_get_instance();
-
 /// First of all, save all the tags inside the text to skip them
     $tags = array();
     filter_save_tags($string,$tags);
 
 /// Process the string adding the cut when necessary
     $output = '';
-    $length = $textlib->strlen($string);
+    $length = textlib::strlen($string);
     $wordlength = 0;
 
     for ($i=0; $i<$length; $i++) {
-        $char = $textlib->substr($string, $i, 1);
+        $char = textlib::substr($string, $i, 1);
         if ($char == ' ' or $char == "\t" or $char == "\n" or $char == "\r" or $char == "<" or $char == ">") {
             $wordlength = 0;
         } else {
