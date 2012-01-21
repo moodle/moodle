@@ -63,7 +63,7 @@ class restore_decode_processor {
 
     public function add_rule($rule) {
         if (!$rule instanceof restore_decode_rule) {
-            throw new restore_decode_processor_exception('incorrect_restore_decode_rule', get_class($content));
+            throw new restore_decode_processor_exception('incorrect_restore_decode_rule', get_class($rule));
         }
         $rule->set_restoreid($this->restoreid);
         $rule->set_wwwroots($this->sourcewwwroot, $this->targetwwwroot);
