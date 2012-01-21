@@ -154,6 +154,13 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addHelpButton('questionsperpagegrp', 'newpage', 'quiz');
         $mform->setAdvanced('questionsperpagegrp', $quizconfig->questionsperpage_adv);
 
+        // Navigation method
+        $mform->addElement('select', 'navmethod', get_string('navmethod', 'quiz'),
+                quiz_get_navigation_options());
+        $mform->addHelpButton('navmethod', 'navmethod', 'quiz');
+        $mform->setAdvanced('navmethod', $quizconfig->navmethod_adv);
+        $mform->setDefault('navmethod', $quizconfig->navmethod);
+
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'interactionhdr', get_string('questionbehaviour', 'quiz'));
 
