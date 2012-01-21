@@ -785,6 +785,7 @@ class filter_filter_set_applies_to_strings extends UnitTestCaseUsingDatabase {
     }
 
     public function tearDown() {
+        global $CFG;
         $CFG->stringfilters = $this->origcfgstringfilters;
         $CFG->filterall = $this->origcfgfilterall;
 
