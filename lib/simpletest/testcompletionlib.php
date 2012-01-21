@@ -46,11 +46,11 @@ class fake_recordset implements Iterator {
     }
 
     function close() {
-        $closed=true;
+        $this->closed=true;
     }
 
     function was_closed() {
-        return $closed;
+        return $this->closed;
     }
 }
 
