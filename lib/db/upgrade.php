@@ -196,6 +196,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012030100.01);
     }
 
+    if ($oldversion < 2012030100.02) {
+        // migrate all numbers to signed - it should be safe to interrupt this and continue later
+        upgrade_mysql_fix_unsigned_columns();
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012030100.02);
+    }
+
+
     return true;
 }
 

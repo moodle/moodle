@@ -901,20 +901,6 @@ class ddl_test extends UnitTestCase {
         //TODO: check the rest of attributes
     }
 
-    public function testChangeFieldSign() {
-        $dbman = $this->tdb->get_manager();
-// TODO: verify the signed is changed in db
-
-        $table = $this->create_deftable('test_table1');
-        $field = new xmldb_field('grade');
-        $field->set_attributes(XMLDB_TYPE_NUMBER, '10,2', XMLDB_UNSIGNED, null, null, null);
-        $dbman->change_field_unsigned($table, $field);
-
-        $field = new xmldb_field('grade');
-        $field->set_attributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null);
-        $dbman->change_field_unsigned($table, $field);
-    }
-
     public function testChangeFieldNullability() {
         $DB = $this->tdb; // do not use global $DB!
         $dbman = $this->tdb->get_manager();

@@ -65,8 +65,6 @@ abstract class sql_generator {
     /** @var string Proper type for NUMBER(x) in this DB. */
     public $number_type = 'NUMERIC';
 
-    /** @var bool To define in the generator must handle unsigned information.*/
-    public $unsigned_allowed = true;
     /** @var string To define the default to set for NOT NULLs CHARs without default (null=do nothing).*/
     public $default_for_char = null;
 
@@ -489,14 +487,7 @@ abstract class sql_generator {
         /// The type and length
             $field .= ' ' . $this->getTypeSQL($xmldb_field->getType(), $xmldb_field->getLength(), $xmldb_field->getDecimals());
         }
-    /// The unsigned if supported
-        if ($this->unsigned_allowed && ($xmldb_field->getType() == XMLDB_TYPE_INTEGER ||
-                                      $xmldb_field->getType() == XMLDB_TYPE_NUMBER ||
-                                      $xmldb_field->getType() == XMLDB_TYPE_FLOAT)) {
-            if ($xmldb_field->getUnsigned()) {
-                $field .= ' unsigned';
-            }
-        }
+    /// note: unsigned is not supported any more since moodle 2.3, all numbers are signed
     /// Calculate the not null clause
         $notnull = '';
     /// Only if we don't want to skip it
