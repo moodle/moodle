@@ -7897,7 +7897,7 @@ function forum_get_forums_user_posted_in($user, array $courseids = null, $discus
  *               ->posts: An array containing the posts to show for this request.
  */
 function forum_get_posts_by_user($user, array $courses, $musthaveaccess = false, $discussionsonly = false, $limitfrom = 0, $limitnum = 50) {
-    global $DB, $USER;
+    global $DB, $USER, $CFG;
 
     $return = new stdClass;
     $return->totalcount = 0;    // The total number of posts that the current user is able to view
