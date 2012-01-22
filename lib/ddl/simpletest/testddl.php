@@ -1287,6 +1287,7 @@ class ddl_test extends UnitTestCase {
         $this->assertTrue($dbman->table_exists('test_table1'));
 
         // Real and valid xml file
+        //TODO: drop UNSINGED completely in Moodle 2.4
         $dbman->delete_tables_from_xmldb_file($CFG->libdir . '/ddl/simpletest/fixtures/xmldb_table.xml');
 
         // Check that the table has been deleted from DB
