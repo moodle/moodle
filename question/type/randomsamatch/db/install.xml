@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/randomsamatch/db" VERSION="20060812" COMMENT="XMLDB file for Moodle question/type/randomsamatch"
+<XMLDB PATH="question/type/randomsamatch/db" VERSION="20120122" COMMENT="XMLDB file for Moodle question/type/randomsamatch"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="question_randomsamatch" COMMENT="Info about a random short-answer matching question">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="question"/>
-        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references question.id." PREVIOUS="id" NEXT="choose"/>
-        <FIELD NAME="choose" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="4" SEQUENCE="false" COMMENT="Number of subquestions to randomly generate." PREVIOUS="question"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="question"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references question.id." PREVIOUS="id" NEXT="choose"/>
+        <FIELD NAME="choose" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="4" SEQUENCE="false" COMMENT="Number of subquestions to randomly generate." PREVIOUS="question"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>

@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/match/db" VERSION="20100721" COMMENT="XMLDB file for Moodle question/type/match"
+<XMLDB PATH="question/type/match/db" VERSION="20120122" COMMENT="XMLDB file for Moodle question/type/match"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="question_match" COMMENT="Defines fixed matching questions" NEXT="question_match_sub">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="question"/>
-        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="subquestions"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="question"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="subquestions"/>
         <FIELD NAME="subquestions" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="question" NEXT="shuffleanswers"/>
-        <FIELD NAME="shuffleanswers" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="subquestions" NEXT="correctfeedback"/>
+        <FIELD NAME="shuffleanswers" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="subquestions" NEXT="correctfeedback"/>
         <FIELD NAME="correctfeedback" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="Feedback shown for any correct response." PREVIOUS="shuffleanswers" NEXT="correctfeedbackformat"/>
-        <FIELD NAME="correctfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="correctfeedback" NEXT="partiallycorrectfeedback"/>
+        <FIELD NAME="correctfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="correctfeedback" NEXT="partiallycorrectfeedback"/>
         <FIELD NAME="partiallycorrectfeedback" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="Feedback shown for any partially correct response." PREVIOUS="correctfeedbackformat" NEXT="partiallycorrectfeedbackformat"/>
-        <FIELD NAME="partiallycorrectfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="partiallycorrectfeedback" NEXT="incorrectfeedback"/>
+        <FIELD NAME="partiallycorrectfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="partiallycorrectfeedback" NEXT="incorrectfeedback"/>
         <FIELD NAME="incorrectfeedback" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="Feedback shown for any incorrect response." PREVIOUS="partiallycorrectfeedbackformat" NEXT="incorrectfeedbackformat"/>
-        <FIELD NAME="incorrectfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="incorrectfeedback" NEXT="shownumcorrect"/>
-        <FIELD NAME="shownumcorrect" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="If true, then when the user gets a multiple-response question partially correct, tell them how many choices they got correct alongside the feedback." PREVIOUS="incorrectfeedbackformat"/>
+        <FIELD NAME="incorrectfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="incorrectfeedback" NEXT="shownumcorrect"/>
+        <FIELD NAME="shownumcorrect" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true, then when the user gets a multiple-response question partially correct, tell them how many choices they got correct alongside the feedback." PREVIOUS="incorrectfeedbackformat"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>
@@ -25,11 +25,11 @@
     </TABLE>
     <TABLE NAME="question_match_sub" COMMENT="Defines the subquestions that make up a matching question" PREVIOUS="question_match">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="code"/>
-        <FIELD NAME="code" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should this point to parent question_match-&amp;gt;id ?" PREVIOUS="id" NEXT="question"/>
-        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="code" NEXT="questiontext"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="code"/>
+        <FIELD NAME="code" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should this point to parent question_match-&amp;gt;id ?" PREVIOUS="id" NEXT="question"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="code" NEXT="questiontext"/>
         <FIELD NAME="questiontext" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="question" NEXT="questiontextformat"/>
-        <FIELD NAME="questiontextformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="questiontext" NEXT="answertext"/>
+        <FIELD NAME="questiontextformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="questiontext" NEXT="answertext"/>
         <FIELD NAME="answertext" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="questiontextformat"/>
       </FIELDS>
       <KEYS>

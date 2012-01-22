@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mnet/service/enrol/db" VERSION="20100716" COMMENT="XMLDB file for MNet service plugin mnet/service/enrol"
+<XMLDB PATH="mnet/service/enrol/db" VERSION="20120122" COMMENT="XMLDB file for MNet service plugin mnet/service/enrol"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="mnetservice_enrol_courses" COMMENT="Caches the information fetched via XML-RPC about courses on remote hosts that are offered for our users" NEXT="mnetservice_enrol_enrolments">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" COMMENT="Unique remote-course ID" NEXT="hostid"/>
-        <FIELD NAME="hostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the remote MNet host" PREVIOUS="id" NEXT="remoteid"/>
-        <FIELD NAME="remoteid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="ID of course on its home server" PREVIOUS="hostid" NEXT="categoryid"/>
-        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the category on the remote server" PREVIOUS="remoteid" NEXT="categoryname"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Unique remote-course ID" NEXT="hostid"/>
+        <FIELD NAME="hostid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the remote MNet host" PREVIOUS="id" NEXT="remoteid"/>
+        <FIELD NAME="remoteid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of course on its home server" PREVIOUS="hostid" NEXT="categoryid"/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the category on the remote server" PREVIOUS="remoteid" NEXT="categoryname"/>
         <FIELD NAME="categoryname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="categoryid" NEXT="sortorder"/>
-        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="categoryname" NEXT="fullname"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="categoryname" NEXT="fullname"/>
         <FIELD NAME="fullname" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" PREVIOUS="sortorder" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="fullname" NEXT="idnumber"/>
         <FIELD NAME="idnumber" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="shortname" NEXT="summary"/>
         <FIELD NAME="summary" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" PREVIOUS="idnumber" NEXT="summaryformat"/>
-        <FIELD NAME="summaryformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Format of the summary field" PREVIOUS="summary" NEXT="startdate"/>
-        <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="summaryformat" NEXT="roleid"/>
-        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The ID of the role at the remote server that our users will get when we enrol them there" PREVIOUS="startdate" NEXT="rolename"/>
+        <FIELD NAME="summaryformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Format of the summary field" PREVIOUS="summary" NEXT="startdate"/>
+        <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="summaryformat" NEXT="roleid"/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the role at the remote server that our users will get when we enrol them there" PREVIOUS="startdate" NEXT="rolename"/>
         <FIELD NAME="rolename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the role at the remote server that our users will get when we enrol them there" PREVIOUS="roleid"/>
       </FIELDS>
       <KEYS>
@@ -30,12 +30,12 @@
     </TABLE>
     <TABLE NAME="mnetservice_enrol_enrolments" COMMENT="Caches the information about enrolments of our local users in courses on remote hosts" PREVIOUS="mnetservice_enrol_courses">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" COMMENT="Unique enrollment ID" NEXT="hostid"/>
-        <FIELD NAME="hostid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="ID of the remote MNet host" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="ID of our local user on this server" PREVIOUS="hostid" NEXT="remotecourseid"/>
-        <FIELD NAME="remotecourseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="ID of the course at  the remote server. Note that this may and may not be cached in our mnetservice_enrol_courses table, depends of whether the course is opened for remote enrolments or our student is the enrolled there via other plugin" PREVIOUS="userid" NEXT="rolename"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Unique enrollment ID" NEXT="hostid"/>
+        <FIELD NAME="hostid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the remote MNet host" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of our local user on this server" PREVIOUS="hostid" NEXT="remotecourseid"/>
+        <FIELD NAME="remotecourseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the course at  the remote server. Note that this may and may not be cached in our mnetservice_enrol_courses table, depends of whether the course is opened for remote enrolments or our student is the enrolled there via other plugin" PREVIOUS="userid" NEXT="rolename"/>
         <FIELD NAME="rolename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="remotecourseid" NEXT="enroltime"/>
-        <FIELD NAME="enroltime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="rolename" NEXT="enroltype"/>
+        <FIELD NAME="enroltime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="rolename" NEXT="enroltype"/>
         <FIELD NAME="enroltype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the enrol plugin at the remote server that was used to enrol our student into their course" PREVIOUS="enroltime"/>
       </FIELDS>
       <KEYS>

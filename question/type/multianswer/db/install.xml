@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/multianswer/db" VERSION="20060812" COMMENT="XMLDB file for Moodle question/type/multianswer">
+<XMLDB PATH="question/type/multianswer/db" VERSION="20120122" COMMENT="XMLDB file for Moodle question/type/multianswer">
   <TABLES>
     <TABLE NAME="question_multianswer" COMMENT="Options for multianswer questions">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="question"/>
-        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="sequence"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="question"/>
+        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="sequence"/>
         <FIELD NAME="sequence" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="question"/>
       </FIELDS>
       <KEYS>

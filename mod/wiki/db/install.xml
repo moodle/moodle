@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/wiki/db" VERSION="20101025" COMMENT="XMLDB file for Moodle mod/wiki"
+<XMLDB PATH="mod/wiki/db" VERSION="20120122" COMMENT="XMLDB file for Moodle mod/wiki"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="wiki" COMMENT="Stores Wiki activity configuration" NEXT="wiki_subwikis">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Course wiki activity belongs to" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Course wiki activity belongs to" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="Wiki" SEQUENCE="false" COMMENT="name field for moodle instances" PREVIOUS="course" NEXT="intro"/>
         <FIELD NAME="intro" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="General introduction of the wiki activity" PREVIOUS="name" NEXT="introformat"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Format of the intro field (MOODLE, HTML, MARKDOWN...)" PREVIOUS="intro" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="firstpagetitle"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Format of the intro field (MOODLE, HTML, MARKDOWN...)" PREVIOUS="intro" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="firstpagetitle"/>
         <FIELD NAME="firstpagetitle" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="First Page" SEQUENCE="false" COMMENT="Wiki first page's name" PREVIOUS="timemodified" NEXT="wikimode"/>
         <FIELD NAME="wikimode" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="collaborative" SEQUENCE="false" COMMENT="Wiki mode (individual, collaborative)" PREVIOUS="firstpagetitle" NEXT="defaultformat"/>
         <FIELD NAME="defaultformat" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="creole" SEQUENCE="false" COMMENT="Wiki's default editor" PREVIOUS="wikimode" NEXT="forceformat"/>
-        <FIELD NAME="forceformat" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="Forces the default editor" PREVIOUS="defaultformat" NEXT="editbegin"/>
-        <FIELD NAME="editbegin" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="editbegin" PREVIOUS="forceformat" NEXT="editend"/>
-        <FIELD NAME="editend" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="editend" PREVIOUS="editbegin"/>
+        <FIELD NAME="forceformat" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Forces the default editor" PREVIOUS="defaultformat" NEXT="editbegin"/>
+        <FIELD NAME="editbegin" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="editbegin" PREVIOUS="forceformat" NEXT="editend"/>
+        <FIELD NAME="editend" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="editend" PREVIOUS="editbegin"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -29,10 +29,10 @@
     </TABLE>
     <TABLE NAME="wiki_subwikis" COMMENT="Stores subwiki instances" PREVIOUS="wiki" NEXT="wiki_pages">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="wikiid"/>
-        <FIELD NAME="wikiid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Wiki activity" PREVIOUS="id" NEXT="groupid"/>
-        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Group that owns this wiki" PREVIOUS="wikiid" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Owner of that subwiki" PREVIOUS="groupid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="wikiid"/>
+        <FIELD NAME="wikiid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Wiki activity" PREVIOUS="id" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Group that owns this wiki" PREVIOUS="wikiid" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Owner of that subwiki" PREVIOUS="groupid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="wikifk"/>
@@ -42,16 +42,16 @@
     </TABLE>
     <TABLE NAME="wiki_pages" COMMENT="Stores wiki pages" PREVIOUS="wiki_subwikis" NEXT="wiki_versions">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="subwikiid"/>
-        <FIELD NAME="subwikiid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Subwiki instance of this page" PREVIOUS="id" NEXT="title"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="subwikiid"/>
+        <FIELD NAME="subwikiid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Subwiki instance of this page" PREVIOUS="id" NEXT="title"/>
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="title" SEQUENCE="false" COMMENT="Page name" PREVIOUS="subwikiid" NEXT="cachedcontent"/>
         <FIELD NAME="cachedcontent" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" COMMENT="Cache wiki content" PREVIOUS="title" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Wiki page creation timestamp" PREVIOUS="cachedcontent" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="page edition timestamp" PREVIOUS="timecreated" NEXT="timerendered"/>
-        <FIELD NAME="timerendered" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Last render timestamp" PREVIOUS="timemodified" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Edition author" PREVIOUS="timerendered" NEXT="pageviews"/>
-        <FIELD NAME="pageviews" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of page views" PREVIOUS="userid" NEXT="readonly"/>
-        <FIELD NAME="readonly" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Read only flag" PREVIOUS="pageviews"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Wiki page creation timestamp" PREVIOUS="cachedcontent" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="page edition timestamp" PREVIOUS="timecreated" NEXT="timerendered"/>
+        <FIELD NAME="timerendered" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Last render timestamp" PREVIOUS="timemodified" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Edition author" PREVIOUS="timerendered" NEXT="pageviews"/>
+        <FIELD NAME="pageviews" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of page views" PREVIOUS="userid" NEXT="readonly"/>
+        <FIELD NAME="readonly" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Read only flag" PREVIOUS="pageviews"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="subwikititleuser"/>
@@ -61,13 +61,13 @@
     </TABLE>
     <TABLE NAME="wiki_versions" COMMENT="Stores wiki page history" PREVIOUS="wiki_pages" NEXT="wiki_synonyms">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="pageid"/>
-        <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Page id" PREVIOUS="id" NEXT="content"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="pageid"/>
+        <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Page id" PREVIOUS="id" NEXT="content"/>
         <FIELD NAME="content" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" COMMENT="Not parsed wiki content" PREVIOUS="pageid" NEXT="contentformat"/>
         <FIELD NAME="contentformat" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="creole" SEQUENCE="false" COMMENT="Markup used to write content" PREVIOUS="content" NEXT="version"/>
-        <FIELD NAME="version" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Wiki page version" PREVIOUS="contentformat" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Page edition timestamp" PREVIOUS="version" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Edition autor" PREVIOUS="timecreated"/>
+        <FIELD NAME="version" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Wiki page version" PREVIOUS="contentformat" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Page edition timestamp" PREVIOUS="version" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Edition autor" PREVIOUS="timecreated"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="pagefk"/>
@@ -76,9 +76,9 @@
     </TABLE>
     <TABLE NAME="wiki_synonyms" COMMENT="Stores wiki pages synonyms" PREVIOUS="wiki_versions" NEXT="wiki_links">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="subwikiid"/>
-        <FIELD NAME="subwikiid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Subwiki instance" PREVIOUS="id" NEXT="pageid"/>
-        <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Original page" PREVIOUS="subwikiid" NEXT="pagesynonym"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="subwikiid"/>
+        <FIELD NAME="subwikiid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Subwiki instance" PREVIOUS="id" NEXT="pageid"/>
+        <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Original page" PREVIOUS="subwikiid" NEXT="pagesynonym"/>
         <FIELD NAME="pagesynonym" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="Pagesynonym" SEQUENCE="false" COMMENT="Page name synonym" PREVIOUS="pageid"/>
       </FIELDS>
       <KEYS>
@@ -88,10 +88,10 @@
     </TABLE>
     <TABLE NAME="wiki_links" COMMENT="Page wiki links" PREVIOUS="wiki_synonyms" NEXT="wiki_locks">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="subwikiid"/>
-        <FIELD NAME="subwikiid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Subwiki instance" PREVIOUS="id" NEXT="frompageid"/>
-        <FIELD NAME="frompageid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Page id with a link" PREVIOUS="subwikiid" NEXT="topageid"/>
-        <FIELD NAME="topageid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Page id that recives a link" PREVIOUS="frompageid" NEXT="tomissingpage"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="subwikiid"/>
+        <FIELD NAME="subwikiid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Subwiki instance" PREVIOUS="id" NEXT="frompageid"/>
+        <FIELD NAME="frompageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Page id with a link" PREVIOUS="subwikiid" NEXT="topageid"/>
+        <FIELD NAME="topageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Page id that recives a link" PREVIOUS="frompageid" NEXT="tomissingpage"/>
         <FIELD NAME="tomissingpage" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="link to a nonexistent page" PREVIOUS="topageid"/>
       </FIELDS>
       <KEYS>
@@ -102,11 +102,11 @@
     </TABLE>
     <TABLE NAME="wiki_locks" COMMENT="Manages page locks" PREVIOUS="wiki_links">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="pageid"/>
-        <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Locked page" PREVIOUS="id" NEXT="sectionname"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="pageid"/>
+        <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Locked page" PREVIOUS="id" NEXT="sectionname"/>
         <FIELD NAME="sectionname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="locked page section" PREVIOUS="pageid" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Locking user" PREVIOUS="sectionname" NEXT="lockedat"/>
-        <FIELD NAME="lockedat" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="timestamp" PREVIOUS="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Locking user" PREVIOUS="sectionname" NEXT="lockedat"/>
+        <FIELD NAME="lockedat" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="timestamp" PREVIOUS="userid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

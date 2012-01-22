@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20091009" COMMENT="XMLDB file for workshop Rubric grading strategy"
+<XMLDB PATH="mod/workshop/db" VERSION="20120122" COMMENT="XMLDB file for workshop Rubric grading strategy"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="workshopform_rubric" COMMENT="The assessment dimensions definitions of Rubric grading strategy forms" NEXT="workshopform_rubric_levels">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Workshop ID" PREVIOUS="id" NEXT="sort"/>
-        <FIELD NAME="sort" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Defines the dimension order within the assessment form" PREVIOUS="workshopid" NEXT="description"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Workshop ID" PREVIOUS="id" NEXT="sort"/>
+        <FIELD NAME="sort" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Defines the dimension order within the assessment form" PREVIOUS="workshopid" NEXT="description"/>
         <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The description of the dimension" PREVIOUS="sort" NEXT="descriptionformat"/>
-        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field" PREVIOUS="description"/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the description field" PREVIOUS="description"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
@@ -19,11 +19,11 @@
     </TABLE>
     <TABLE NAME="workshopform_rubric_levels" COMMENT="The definition of rubric rating scales" PREVIOUS="workshopform_rubric" NEXT="workshopform_rubric_config">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="dimensionid"/>
-        <FIELD NAME="dimensionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Which criterion this level is part of" PREVIOUS="id" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="Grade representing this level." PREVIOUS="dimensionid" NEXT="definition"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="dimensionid"/>
+        <FIELD NAME="dimensionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Which criterion this level is part of" PREVIOUS="id" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="5" COMMENT="Grade representing this level." PREVIOUS="dimensionid" NEXT="definition"/>
         <FIELD NAME="definition" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The definition of this level" PREVIOUS="grade" NEXT="definitionformat"/>
-        <FIELD NAME="definitionformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the definition field" PREVIOUS="definition"/>
+        <FIELD NAME="definitionformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the definition field" PREVIOUS="definition"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="dimension_fk"/>
@@ -32,8 +32,8 @@
     </TABLE>
     <TABLE NAME="workshopform_rubric_config" COMMENT="Configuration table for the Rubric grading strategy" PREVIOUS="workshopform_rubric_levels">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of workshop this configuartion applies for" PREVIOUS="id" NEXT="layout"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of workshop this configuartion applies for" PREVIOUS="id" NEXT="layout"/>
         <FIELD NAME="layout" TYPE="char" LENGTH="30" NOTNULL="false" DEFAULT="list" SEQUENCE="false" COMMENT="How should the rubric be displayed for reviewers" PREVIOUS="workshopid"/>
       </FIELDS>
       <KEYS>
