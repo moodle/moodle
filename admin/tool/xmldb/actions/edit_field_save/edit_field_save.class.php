@@ -96,7 +96,6 @@ class edit_field_save extends XMLDBAction {
         $type       = required_param('type', PARAM_INT);
         $length     = strtolower(optional_param('length', NULL, PARAM_ALPHANUM));
         $decimals   = optional_param('decimals', NULL, PARAM_INT);
-        $unsigned   = optional_param('unsigned', false, PARAM_BOOL);
         $notnull    = optional_param('notnull', false, PARAM_BOOL);
         $sequence   = optional_param('sequence', false, PARAM_BOOL);
         $default    = optional_param('default', NULL, PARAM_PATH);
@@ -112,7 +111,6 @@ class edit_field_save extends XMLDBAction {
 
         // Perform some automatic assumptions
         if ($sequence) {
-            $unsigned = true;
             $notnull  = true;
             $default  = NULL;
         }
@@ -231,7 +229,6 @@ class edit_field_save extends XMLDBAction {
             $tempfield->setType($type);
             $tempfield->setLength($length);
             $tempfield->setDecimals($decimals);
-            $tempfield->setUnsigned($unsigned);
             $tempfield->setNotNull($notnull);
             $tempfield->setSequence($sequence);
             $tempfield->setDefault($default);
@@ -268,7 +265,6 @@ class edit_field_save extends XMLDBAction {
             $field->setType($type);
             $field->setLength($length);
             $field->setDecimals($decimals);
-            $field->setUnsigned($unsigned);
             $field->setNotNull($notnull);
             $field->setSequence($sequence);
             $field->setDefault($default);

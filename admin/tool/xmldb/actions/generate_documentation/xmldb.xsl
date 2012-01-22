@@ -43,7 +43,6 @@
     <td class="cell c1" style="white-space: nowrap;">
       <xsl:value-of select="@TYPE"/>
       (<xsl:value-of select="@LENGTH"/><xsl:if test="@DECIMALS">, <xsl:value-of select="@DECIMALS"/></xsl:if>)
-      <xsl:if test="@UNSIGNED='true'">unsigned </xsl:if>
       <xsl:if test="@NOTNULL='true'">not null </xsl:if>
       <xsl:if test="@DEFAULT">
         <xsl:choose>

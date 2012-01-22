@@ -60,7 +60,7 @@
     define ('XMLDB_STATEMENT_CUSTOM',      4);  //Custom Statements
 
 /// Some other useful Constants
-    define ('XMLDB_UNSIGNED',        true);  //If the field is going to be unsigned
+    define ('XMLDB_UNSIGNED',        true);  //If the field is going to be unsigned @deprecated since 2.3
     define ('XMLDB_NOTNULL',         true);  //If the field is going to be not null
     define ('XMLDB_SEQUENCE',        true);  //If the field is going to be a sequence
     define ('XMLDB_INDEX_UNIQUE',    true);  //If the index is going to be unique

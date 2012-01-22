@@ -125,7 +125,6 @@ class view_table_php extends XMLDBAction {
                          $optionspacer . 'rename_field',
                          $optionspacer . 'change_field_type',
                          $optionspacer . 'change_field_precision',
-                         $optionspacer . 'change_field_unsigned',
                          $optionspacer . 'change_field_notnull',
                          $optionspacer . 'change_field_default',
                          $optionspacer . 'drop_enum_from_field', // TODO: Moodle 2.1 - Drop drop_enum_from_field
@@ -214,13 +213,6 @@ class view_table_php extends XMLDBAction {
                 case 'change_field_precision':
                     if ($fieldkeyindexinitial == 'f') { //Only if we have got one field
                         $o.= s($this->change_field_precision_php($structure, $tableparam, $fieldkeyindexparam));
-                    } else {
-                        $o.= $this->str['mustselectonefield'];
-                    }
-                    break;
-                case 'change_field_unsigned':
-                    if ($fieldkeyindexinitial == 'f') { //Only if we have got one field
-                        $o.= s($this->change_field_unsigned_php($structure, $tableparam, $fieldkeyindexparam));
                     } else {
                         $o.= $this->str['mustselectonefield'];
                     }
@@ -543,54 +535,6 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '        // Launch change of precision for field ' . $field->getName() . XMLDB_LINEFEED;
         $result .= '        $dbman->change_field_precision($table, $field);' . XMLDB_LINEFEED;
-
-        // Add the proper upgrade_xxxx_savepoint call
-        $result .= $this->upgrade_savepoint_php ($structure);
-
-        // Add standard PHP footer
-        $result .= XMLDB_PHP_FOOTER;
-
-        return $result;
-    }
-
-    /**
-     * This function will generate all the PHP code needed to
-     * change the unsigned/signed of one field using XMLDB objects and functions
-     *
-     * @param xmldb_structure structure object containing all the info
-     * @param string table table name
-     * @param string field field name to change unsigned/signed
-     */
-    function change_field_unsigned_php($structure, $table, $field) {
-
-        $result = '';
-        // Validate if we can do it
-        if (!$table = $structure->getTable($table)) {
-            return false;
-        }
-        if (!$field = $table->getField($field)) {
-            return false;
-        }
-        if ($table->getAllErrors()) {
-            return false;
-        }
-
-        // Calculate the unsigned tip text
-        $unsigned = $field->getUnsigned() ? 'unsigned' : 'signed';
-
-        // Add the standard PHP header
-        $result .= XMLDB_PHP_HEADER;
-
-        // Add contents
-        $result .= XMLDB_LINEFEED;
-        $result .= '        // Changing sign of field ' . $field->getName() . ' on table ' . $table->getName() . ' to ' . $unsigned . XMLDB_LINEFEED;
-        $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
-
-        // Launch the proper DDL
-        $result .= XMLDB_LINEFEED;
-        $result .= '        // Launch change of sign for field ' . $field->getName() . XMLDB_LINEFEED;
-        $result .= '        $dbman->change_field_unsigned($table, $field);' . XMLDB_LINEFEED;
 
         // Add the proper upgrade_xxxx_savepoint call
         $result .= $this->upgrade_savepoint_php ($structure);

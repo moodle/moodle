@@ -126,7 +126,6 @@ $string['missingindexes'] = 'Missing indexes found';
 $string['mustselectonefield'] = 'You must select one field to see field related actions!';
 $string['mustselectoneindex'] = 'You must select one index to see index related actions!';
 $string['mustselectonekey'] = 'You must select one key to see key related actions!';
-$string['mysqlextracheckbigints'] = 'Under MySQL it also looks for incorrectly signed bigints, generating the required SQL to be executed in order to fix all them.';
 $string['newfield'] = 'New field';
 $string['newindex'] = 'New index';
 $string['newkey'] = 'New key';

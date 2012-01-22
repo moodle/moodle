@@ -1203,6 +1203,13 @@ class mysqli_native_moodle_database extends moodle_database {
         return $positivematch ? 'REGEXP' : 'NOT REGEXP';
     }
 
+    /**
+     * Returns the SQL to be used in order to an UNSIGNED INTEGER column to SIGNED.
+     *
+     * @deprecated since 2.3
+     * @param string $fieldname The name of the field to be cast
+     * @return string The piece of SQL code to be used in your statement.
+     */
     public function sql_cast_2signed($fieldname) {
         return ' CAST(' . $fieldname . ' AS SIGNED) ';
     }

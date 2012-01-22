@@ -155,11 +155,6 @@ class edit_field extends XMLDBAction {
         // xmldb_field Decimals
         $o.= '      <tr valign="top"><td><label for="decimals" accesskey="d">Decimals:</label></td>';
         $o.= '        <td colspan="2"><input name="decimals" type="text" size="6" maxlength="6" id="decimals" value="' . s($field->getDecimals()) . '" /><span id="decimalstip"></span></td></tr>';
-        // xmldb_field Unsigned
-        $unsignedoptions = array (0 => 'signed', 1 => 'unsigned');
-        $select = html_writer::select($unsignedoptions, 'unsigned', $field->getUnsigned(), false);
-        $o.= '      <tr valign="top"><td><label for="menuunsigned" accesskey="u">Unsigned:</label></td>';
-        $o.= '        <td colspan="2">' . $select . '</td></tr>';
         // xmldb_field NotNull
         $notnulloptions = array (0 => 'null', 'not null');
         $select = html_writer::select($notnulloptions, 'notnull', $field->getNotNull(), false);
