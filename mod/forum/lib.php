@@ -4543,9 +4543,10 @@ function forum_get_subscribed_forums($course) {
     $sql = "SELECT f.id
               FROM {forum} f
                    LEFT JOIN {forum_subscriptions} fs ON (fs.forum = f.id AND fs.userid = ?)
-             WHERE f.forcesubscribe <> ".FORUM_DISALLOWSUBSCRIBE."
+             WHERE f.course = ?
+                   AND f.forcesubscribe <> ".FORUM_DISALLOWSUBSCRIBE."
                    AND (f.forcesubscribe = ".FORUM_FORCESUBSCRIBE." OR fs.id IS NOT NULL)";
-    if ($subscribed = $DB->get_records_sql($sql, array($USER->id))) {
+    if ($subscribed = $DB->get_records_sql($sql, array($USER->id, $course->id))) {
         foreach ($subscribed as $s) {
             $subscribed[$s->id] = $s->id;
         }
