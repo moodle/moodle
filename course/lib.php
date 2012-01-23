@@ -815,7 +815,7 @@ function print_log_ods($course, $user, $date, $order='l.time DESC', $modname,
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 
-        $myxls->write_string($row, 0, format_string($courses[$log->course], true, array('context' => $context)));
+        $myxls->write_string($row, 0, format_string($courses[$log->course], true, array('context' => $coursecontext)));
         $myxls->write_date($row, 1, $log->time);
         $myxls->write_string($row, 2, $log->ip);
         $fullname = fullname($log, has_capability('moodle/site:viewfullnames', $coursecontext));
