@@ -362,6 +362,10 @@ function quiz_feedback_for_grade($grade, $quiz, $context) {
         return '';
     }
 
+    // With CBM etc, it is possible to get -ve grades, which would then not match
+    // any feedback. Therefore, we replace -ve grades with 0.
+    $grade = max($grade, 0);
+
     $feedback = $DB->get_record_select('quiz_feedback',
             'quizid = ? AND mingrade <= ? AND ? < maxgrade', array($quiz->id, $grade, $grade));
 
