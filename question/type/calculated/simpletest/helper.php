@@ -77,6 +77,43 @@ class qtype_calculated_test_helper extends question_test_helper {
 
         return $q;
     }
+
+    /**
+     * Makes a calculated question about summing two numbers.
+     * @return qtype_calculated_question
+     */
+    public function get_calculated_question_data_sum() {
+        question_bank::load_question_definition_classes('calculated');
+        $qdata = new stdClass();
+        test_question_maker::initialise_question_data($qdata);
+
+        $qdata->qtype = 'calculated';
+        $qdata->name = 'Simple sum';
+        $qdata->questiontext = 'What is {a} + {b}?';
+        $qdata->generalfeedback = 'Generalfeedback: {={a} + {b}} is the right answer.';
+
+        $qdata->options = new stdClass();
+        $qdata->options->unitgradingtype = 0;
+        $qdata->options->unitpenalty = 0.0;
+        $qdata->options->showunits = qtype_numerical::UNITNONE;
+        $qdata->options->unitsleft = 0;
+        $qdata->options->synchronize = 0;
+
+        $qdata->options->answers = array(
+            13 => new qtype_numerical_answer(13, '{a} + {b}', 1.0, 'Very good.', FORMAT_HTML, 0.001),
+            14 => new qtype_numerical_answer(14, '{a} - {b}', 0.0, 'Add. not subtract!.',
+                    FORMAT_HTML, 0.001),
+            17 => new qtype_numerical_answer(17, '*', 0.0, 'Completely wrong.', FORMAT_HTML, 0),
+        );
+        foreach ($qdata->options->answers as $answer) {
+            $answer->correctanswerlength = 2;
+            $answer->correctanswerformat = 1;
+        }
+
+        $qdata->options->units = array();
+
+        return $qdata;
+    }
 }
 
 

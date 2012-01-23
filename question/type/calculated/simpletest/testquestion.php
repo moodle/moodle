@@ -109,6 +109,26 @@ class qtype_calculated_question_test extends UnitTestCase {
                 $question->classify_response(array('answer' => '')));
     }
 
+    public function test_classify_response_no_star() {
+        $question = test_question_maker::make_question('calculated');
+        unset($question->answers[17]);
+        $question->start_attempt(new question_attempt_step(), 1);
+        $values = $question->vs->get_values();
+
+        $this->assertEqual(array(
+                new question_classified_response(13, $values['a'] + $values['b'], 1.0)),
+                $question->classify_response(array('answer' => $values['a'] + $values['b'])));
+        $this->assertEqual(array(
+                new question_classified_response(14, $values['a'] - $values['b'], 0.0)),
+                $question->classify_response(array('answer' => $values['a'] - $values['b'])));
+        $this->assertEqual(array(
+                new question_classified_response(0, 7 * $values['a'], 0.0)),
+                $question->classify_response(array('answer' => 7 * $values['a'])));
+        $this->assertEqual(array(
+                question_classified_response::no_response()),
+                $question->classify_response(array('answer' => '')));
+    }
+
     public function test_get_variants_selection_seed_q_not_synchronised() {
         $question = test_question_maker::make_question('calculated');
         $this->assertEqual($question->stamp, $question->get_variants_selection_seed());

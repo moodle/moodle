@@ -213,6 +213,22 @@ class qtype_numerical_question_test extends UnitTestCase {
                 $num->classify_response(array('answer' => '')));
     }
 
+    public function test_classify_response_no_star() {
+        $num = test_question_maker::make_question('numerical');
+        unset($num->answers[17]);
+        $num->start_attempt(new question_attempt_step(), 1);
+
+        $this->assertEqual(array(
+                new question_classified_response(15, '3.1', 0.0)),
+                $num->classify_response(array('answer' => '3.1')));
+        $this->assertEqual(array(
+                new question_classified_response(0, '42', 0.0)),
+                $num->classify_response(array('answer' => '42')));
+        $this->assertEqual(array(
+                question_classified_response::no_response()),
+                $num->classify_response(array('answer' => '')));
+    }
+
     public function test_classify_response_unit() {
         $num = test_question_maker::make_question('numerical', 'unit');
         $num->start_attempt(new question_attempt_step(), 1);
@@ -238,6 +254,25 @@ class qtype_numerical_question_test extends UnitTestCase {
         $this->assertEqual(array(
                 question_classified_response::no_response()),
                 $num->classify_response(array('answer' => '')));
+    }
+
+    public function test_classify_response_unit_no_star() {
+        $num = test_question_maker::make_question('numerical', 'unit');
+        unset($num->answers[17]);
+        $num->start_attempt(new question_attempt_step(), 1);
+
+        $this->assertEqual(array(
+                new question_classified_response(0, '42 cm', 0)),
+                $num->classify_response(array('answer' => '42', 'unit' => 'cm')));
+        $this->assertEqual(array(
+                new question_classified_response(0, '3.0', 0)),
+                $num->classify_response(array('answer' => '3.0', 'unit' => '')));
+        $this->assertEqual(array(
+                new question_classified_response(0, '3.0 m', 0)),
+                $num->classify_response(array('answer' => '3.0', 'unit' => 'm')));
+        $this->assertEqual(array(
+                question_classified_response::no_response()),
+                $num->classify_response(array('answer' => '', 'unit' => '')));
     }
 
     public function test_classify_response_currency() {

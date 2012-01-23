@@ -72,8 +72,7 @@ class qtype_numerical_test_helper extends question_test_helper {
     }
 
     /**
-     * Makes a numerical question with correct ansewer 3.14, and various incorrect
-     * answers with different feedback.
+     * Makes a numerical question with a choice (select menu) of units.
      * @return qtype_numerical_question
      */
     public function make_numerical_question_unit() {
