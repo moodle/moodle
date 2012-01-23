@@ -2531,8 +2531,8 @@ function glossary_reset_userdata($data) {
         $status[] = array('component'=>$componentstr, 'item'=>get_string('resetglossariesall', 'glossary'), 'error'=>false);
 
     } else if (!empty($data->reset_glossary_types)) {
-        $mainentriessql         = "$allentries AND g.mainglossary=1";
-        $secondaryentriessql    = "$allentries AND g.mainglossary=0";
+        $mainentriessql         = "$allentriessql AND g.mainglossary=1";
+        $secondaryentriessql    = "$allentriessql AND g.mainglossary=0";
 
         $mainglossariessql      = "$allglossariessql AND g.mainglossary=1";
         $secondaryglossariessql = "$allglossariessql AND g.mainglossary=0";
@@ -2561,14 +2561,14 @@ function glossary_reset_userdata($data) {
                 glossary_reset_gradebook($data->courseid, 'main');
             }
 
-            $status[] = array('component'=>$componentstr, 'item'=>get_string('resetglossaries', 'glossary'), 'error'=>false);
+            $status[] = array('component'=>$componentstr, 'item'=>get_string('resetglossaries', 'glossary').': '.get_string('mainglossary', 'glossary'), 'error'=>false);
 
         } else if (in_array('secondary', $data->reset_glossary_types)) {
             $params[] = 'glossary_entry';
             $DB->delete_records_select('comments', "itemid IN ($secondaryentriessql) AND commentarea=?", $params);
             $DB->delete_records_select('glossary_entries', "glossaryid IN ($secondaryglossariessql)", $params);
             // remove exported source flag from entries in main glossary
-            $DB->execute("UPDATE {glossary_entries
+            $DB->execute("UPDATE {glossary_entries}
                              SET sourceglossaryid=0
                            WHERE glossaryid IN ($mainglossariessql)", $params);
 
