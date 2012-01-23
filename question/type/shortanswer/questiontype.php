@@ -139,10 +139,20 @@ class qtype_shortanswer extends question_type {
     public function get_possible_responses($questiondata) {
         $responses = array();
 
+        $starfound = false;
         foreach ($questiondata->options->answers as $aid => $answer) {
             $responses[$aid] = new question_possible_response($answer->answer,
                     $answer->fraction);
+            if ($answer->answer === '*') {
+                $starfound = true;
+            }
         }
+
+        if (!$starfound) {
+            $responses[0] = new question_possible_response(
+                    get_string('didnotmatchanyanswer', 'question'), 0);
+        }
+
         $responses[null] = question_possible_response::no_response();
 
         return array($questiondata->id => $responses);

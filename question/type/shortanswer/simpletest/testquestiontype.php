@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/type/shortanswer/questiontype.php');
+require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 
 
 /**
@@ -52,12 +53,7 @@ class qtype_shortanswer_test extends UnitTestCase {
     }
 
     protected function get_test_question_data() {
-        $q = new stdClass();
-        $q->id = 1;
-        $q->options->answers[1] = (object) array('answer' => 'frog', 'fraction' => 1);
-        $q->options->answers[2] = (object) array('answer' => '*', 'fraction' => 0.1);
-
-        return $q;
+        return test_question_maker::get_question_data('shortanswer');
     }
 
     public function test_name() {
@@ -69,18 +65,33 @@ class qtype_shortanswer_test extends UnitTestCase {
     }
 
     public function test_get_random_guess_score() {
-        $q = $this->get_test_question_data();
+        $q = test_question_maker::get_question_data('shortanswer');
+        $q->options->answers[15]->fraction = 0.1;
         $this->assertEqual(0.1, $this->qtype->get_random_guess_score($q));
     }
 
     public function test_get_possible_responses() {
-        $q = $this->get_test_question_data();
+        $q = test_question_maker::get_question_data('shortanswer');
 
         $this->assertEqual(array(
             $q->id => array(
-                1 => new question_possible_response('frog', 1),
-                2 => new question_possible_response('*', 0.1),
-                null => question_possible_response::no_response()),
+                13 => new question_possible_response('frog', 1),
+                14 => new question_possible_response('toad', 0.8),
+                15 => new question_possible_response('*', 0),
+                null => question_possible_response::no_response()
+            ),
+        ), $this->qtype->get_possible_responses($q));
+    }
+
+    public function test_get_possible_responses_no_star() {
+        $q = test_question_maker::get_question_data('shortanswer', 'frogonly');
+
+        $this->assertEqual(array(
+            $q->id => array(
+                13 => new question_possible_response('frog', 1),
+                0 => new question_possible_response(get_string('didnotmatchanyanswer', 'question'), 0),
+                null => question_possible_response::no_response()
+            ),
         ), $this->qtype->get_possible_responses($q));
     }
 }
