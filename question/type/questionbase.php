@@ -709,8 +709,10 @@ abstract class question_graded_by_strategy extends question_graded_automatically
 
         $ans = $this->get_matching_answer($response);
         if (!$ans) {
-            return array($this->id => question_classified_response::no_response());
+            return array($this->id => new question_classified_response(
+                    0, $response['answer'], 0));
         }
+
         return array($this->id => new question_classified_response(
                 $ans->id, $response['answer'], $ans->fraction));
     }

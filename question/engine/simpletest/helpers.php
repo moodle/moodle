@@ -341,29 +341,6 @@ class test_question_maker {
     }
 
     /**
-     * Makes a shortanswer question with correct ansewer 'frog', partially
-     * correct answer 'toad' and defaultmark 1.
-     * @return qtype_shortanswer_question
-     */
-    public static function make_a_shortanswer_question() {
-        question_bank::load_question_definition_classes('shortanswer');
-        $sa = new qtype_shortanswer_question();
-        self::initialise_a_question($sa);
-        $sa->name = 'Short answer question';
-        $sa->questiontext = 'Name an amphibian: __________';
-        $sa->generalfeedback = 'Generalfeedback: frog or toad would have been OK.';
-        $sa->usecase = false;
-        $sa->answers = array(
-            13 => new question_answer(13, 'frog', 1.0, 'Frog is a very good answer.', FORMAT_HTML),
-            14 => new question_answer(14, 'toad', 0.8, 'Toad is an OK good answer.', FORMAT_HTML),
-            15 => new question_answer(15, '*', 0.0, 'That is a bad answer.', FORMAT_HTML),
-        );
-        $sa->qtype = question_bank::get_qtype('shortanswer');
-
-        return $sa;
-    }
-
-    /**
      * Makes a truefalse question with correct ansewer true, defaultmark 1.
      * @return qtype_essay_question
      */

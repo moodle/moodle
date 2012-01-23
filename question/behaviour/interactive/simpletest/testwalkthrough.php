@@ -244,7 +244,7 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
     public function test_interactive_shortanswer_try_to_submit_blank() {
 
         // Create a short answer question.
-        $sa = test_question_maker::make_a_shortanswer_question();
+        $sa = test_question_maker::make_question('shortanswer');
         $sa->hints = array(
             new question_hint(0, 'This is the first hint.', FORMAT_HTML),
             new question_hint(0, 'This is the second hint.', FORMAT_HTML),
@@ -420,7 +420,7 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
 
     public function test_interactive_regrade_changing_num_tries_leaving_open() {
         // Create a multichoice multiple question.
-        $q = test_question_maker::make_a_shortanswer_question();
+        $q = test_question_maker::make_question('shortanswer');
         $q->hints = array(
             new question_hint_with_parts(0, 'This is the first hint.', FORMAT_HTML, true, true),
             new question_hint_with_parts(0, 'This is the second hint.', FORMAT_HTML, true, true),
@@ -453,7 +453,7 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
 
     public function test_interactive_regrade_changing_num_tries_finished() {
         // Create a multichoice multiple question.
-        $q = test_question_maker::make_a_shortanswer_question();
+        $q = test_question_maker::make_question('shortanswer');
         $q->hints = array(
             new question_hint_with_parts(0, 'This is the first hint.', FORMAT_HTML, true, true),
             new question_hint_with_parts(0, 'This is the second hint.', FORMAT_HTML, true, true),

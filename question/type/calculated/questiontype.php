@@ -690,6 +690,15 @@ class qtype_calculated extends question_type {
         parent::delete_question($questionid, $contextid);
     }
 
+    public function get_random_guess_score($questiondata) {
+        foreach ($questiondata->options->answers as $aid => $answer) {
+            if ('*' == trim($answer->answer)) {
+                return max($answer->fraction - $questiondata->options->unitpenalty, 0);
+            }
+        }
+        return 0;
+    }
+
     public function supports_dataset_item_generation() {
         // Calcualted support generation of randomly distributed number data
         return true;
@@ -1204,7 +1213,7 @@ class qtype_calculated extends question_type {
 
     public function substitute_variables($str, $dataset) {
         global $OUTPUT;
-        //  testing for wrong numerical values
+        // testing for wrong numerical values
         // all calculations used this function so testing here should be OK
 
         foreach ($dataset as $name => $value) {
@@ -1224,6 +1233,7 @@ class qtype_calculated extends question_type {
         }
         return $str;
     }
+
     public function evaluate_equations($str, $dataset) {
         $formula = $this->substitute_variables($str, $dataset);
         if ($error = qtype_calculated_find_formula_errors($formula)) {
@@ -1231,7 +1241,6 @@ class qtype_calculated extends question_type {
         }
         return $str;
     }
-
 
     public function substitute_variables_and_eval($str, $dataset) {
         $formula = $this->substitute_variables($str, $dataset);
@@ -1797,21 +1806,32 @@ class qtype_calculated extends question_type {
         $virtualqtype = $this->get_virtual_qtype();
         $unit = $virtualqtype->get_default_numerical_unit($questiondata);
 
+        $tolerancetypes = $this->tolerance_types();
+
+        $starfound = false;
         foreach ($questiondata->options->answers as $aid => $answer) {
             $responseclass = $answer->answer;
 
-            if ($responseclass != '*') {
-                $responseclass = $virtualqtype->add_unit($questiondata, $responseclass, $unit);
+            if ($responseclass === '*') {
+                $starfound = true;
+            } else {
+                $a = new stdClass();
+                $a->answer = $virtualqtype->add_unit($questiondata, $responseclass, $unit);
+                $a->tolerance = $answer->tolerance;
+                $a->tolerancetype = $tolerancetypes[$answer->tolerancetype];
 
-                $ans = new qtype_numerical_answer($answer->id, $answer->answer, $answer->fraction,
-                        $answer->feedback, $answer->feedbackformat, $answer->tolerance);
-                list($min, $max) = $ans->get_tolerance_interval();
-                $responseclass .= " ($min..$max)";
+                $responseclass = get_string('answerwithtolerance', 'qtype_calculated', $a);
             }
 
             $responses[$aid] = new question_possible_response($responseclass,
                     $answer->fraction);
         }
+
+        if (!$starfound) {
+            $responses[0] = new question_possible_response(
+            get_string('didnotmatchanyanswer', 'question'), 0);
+        }
+
         $responses[null] = question_possible_response::no_response();
 
         return array($questiondata->id => $responses);

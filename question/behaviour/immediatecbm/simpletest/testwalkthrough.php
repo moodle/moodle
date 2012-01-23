@@ -188,7 +188,7 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
     public function test_immediatecbm_feedback_shortanswer_try_to_submit_no_certainty() {
 
         // Create a short answer question with correct answer true.
-        $sa = test_question_maker::make_a_shortanswer_question();
+        $sa = test_question_maker::make_question('shortanswer');
         $this->start_attempt_at_question($sa, 'immediatecbm');
 
         // Check the initial state.

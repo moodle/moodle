@@ -97,6 +97,7 @@ $string['deletequestioncheck'] = 'Are you absolutely sure you want to delete \'{
 $string['deletequestionscheck'] = 'Are you absolutely sure you want to delete the following questions?<br /><br />{$a}';
 $string['deletingbehaviour'] = 'Deleting question behaviour \'{$a}\'';
 $string['deletingqtype'] = 'Deleting question type \'{$a}\'';
+$string['didnotmatchanyanswer'] = '[Did not match any answer]';
 $string['disabled'] = 'Disabled';
 $string['disterror'] = 'The distribution {$a} caused problems';
 $string['donothing'] = 'Don\'t copy or move files or change links.';
