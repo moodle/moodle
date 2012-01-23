@@ -32,6 +32,7 @@ $string['configsmtphosts'] = 'Give the full name of one or more local SMTP serve
 $string['configsmtpmaxbulk'] = 'Maximum number of messages sent per SMTP session. Grouping messages may speed up the sending of emails. Values lower than 2 force creation of new SMTP session for each email.';
 $string['configsmtpuser'] = 'If you have specified an SMTP server above, and the server requires authentication, then enter the username and password here.';
 $string['email'] = 'Send email notifications to';
+$string['ifemailleftempty'] = 'Leave empty to send notifications to {$a}';
 $string['mailnewline'] = 'Newline characters in mail';
 $string['noreplyaddress'] = 'No-reply address';
 $string['pluginname'] = 'Email';
