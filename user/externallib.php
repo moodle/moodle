@@ -505,7 +505,7 @@ class moodle_user_external extends external_api {
         $courses = array();
         list($cselect, $cjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
         list($sqlcourseids, $params) = $DB->get_in_or_equal(array_unique($courseids));
-        $coursesql = "SELECT c.* $uselect
+        $coursesql = "SELECT c.* $cselect
                         FROM {course} c $cjoin
                        WHERE c.id $sqlcourseids";
         $rs = $DB->get_recordset_sql($coursesql, $params);
