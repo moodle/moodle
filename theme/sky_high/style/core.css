@@ -91,7 +91,7 @@ a:hover, a:active, a:focus {
     padding-right: 0px;
 }
 
-.headermain { 
+.headermain {
     font-weight:normal;
     margin:.8em 0.5em 0.75em;
 }
@@ -162,11 +162,11 @@ p.helplink {
 
 /* @group Blocks */
 
-.block_action { 
+.block_action {
     padding:0px;
 }
 
-.block .content { 
+.block .content {
     background:#c7eafd;
     border:1px solid #867f6a;
 }
@@ -207,7 +207,7 @@ p.helplink {
 
 /* @group Course */
 
-.headingblock { 
+.headingblock {
     border: 0px none;
     border-bottom: 1px solid #98bcd6;
     padding-bottom: 0px;
@@ -297,17 +297,25 @@ body.has_dock {
 /* @end */
 
 /* @group Footer */
-#page-footer{
+
+#page-footer {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+#page-footer-inner{
     padding: 20px 0 30px;
     clear: both;
     background: url([[pix:theme|footer]]) no-repeat top right #dfdfdf;
-    margin-top: 0px;
+    margin: 0px 5%;
     border: 1px solid #98bcd6;
     border-top: 5px solid #98bcd6;
     height: 75px;
+    text-align: left;
 }
 
-.footnote {
+#page-footer .footnote {
     float: left;
     padding-top: 80px;
     padding-left: 20px;
@@ -317,6 +325,26 @@ body.has_dock {
     padding-top: 80px;
     text-align: right;
 }
+
+.purgecaches a {
+    text-decoration: none;
+    padding: 0 1em;
+}
+
+.purgecaches a:link,
+.purgecaches a:hover {
+    border-style: solid;
+}
+
+.purgecaches a:link {
+    border-width: 1px 2px 2px 1px;
+    border-color: #CECECE #8A8A8A #8A8A8A #CECECE;
+}
+.purgecaches a:hover {
+    border-width: 2px 1px 1px 2px;
+    border-color: #8A8A8A #CECECE #CECECE #8A8A8A;
+}
+
 /* @end */
 
 /* @group Forums */
@@ -341,12 +369,5 @@ body.has_dock {
     background: #FFF;
     padding:4px;
 }
-
-
-/* @end */
-
-/* @group Custom CSS */
-
-[[setting:customcss]]
 
 /* @end */

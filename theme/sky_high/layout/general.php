@@ -3,6 +3,7 @@
 $hassidepre = (empty($PAGE->layout_options['noblocks']) && $PAGE->blocks->region_has_content('side-pre', $OUTPUT));
 $hassidepost = (empty($PAGE->layout_options['noblocks']) && $PAGE->blocks->region_has_content('side-post', $OUTPUT));
 $hasnavbar = (empty($PAGE->layout_options['nonavbar']) && $PAGE->has_navbar());
+$hasfooter = (empty($PAGE->layout_options['nofooter']));
 $showsidepre = ($hassidepre && !$PAGE->blocks->region_completely_docked('side-pre', $OUTPUT));
 $showsidepost = ($hassidepost && !$PAGE->blocks->region_completely_docked('side-post', $OUTPUT));
 
@@ -124,27 +125,38 @@ echo $OUTPUT->doctype() ?>
 
 <!-- END OF CONTENT -->
 
+</div>
 
+<!-- END OF WRAPPER -->
 
 <!-- START OF FOOTER -->
+	<?php if ($hasfooter) { ?>
+	<div id="page-footer">
 
-    <div id="page-footer">
-		<div class="footnote"><?php echo $footnote; ?></div>
-        <?php
-        echo $OUTPUT->login_info();
-        echo $OUTPUT->standard_footer_html();
-        ?>
-    </div>
+<!-- START OF FOOTER-INNER -->
+
+		<div id="page-footer-inner">
+			<div class="footnote"><?php echo $footnote; ?></div>
+			<?php
+			echo $OUTPUT->login_info();
+			?>
+		</div>
+
+<!-- END OF FOOTER-INNER -->
+
+		<p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')); ?></p>
+		<?php echo $OUTPUT->home_link(); ?>
+		<?php echo $OUTPUT->standard_footer_html(); ?>
+
+
+	</div>
+	<?php } ?>
 
 <!-- END OF FOOTER -->
+
 </div>
-</div>
-	<p class="helplink">
-        <?php echo page_doc_link(get_string('moodledocslink')) ?>
-    </p><center>
-        <?php
-	echo $OUTPUT->home_link();
-	echo $OUTPUT->standard_end_of_body_html() ?>
-</center>
+
+<!-- END OF PAGE -->
+<?php echo $OUTPUT->standard_end_of_body_html() ?>
 </body>
 </html>
