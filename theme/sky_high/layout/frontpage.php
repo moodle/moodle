@@ -18,7 +18,7 @@ if ($showsidepre && !$showsidepost) {
     $bodyclasses[] = 'content-only';
 }
 if ($hassidepre || $hassidepost) {
-	$bodyclasses[] = 'background';
+    $bodyclasses[] = 'background';
 }
 
 if (!empty($PAGE->theme->settings->logo)) {
@@ -45,29 +45,28 @@ echo $OUTPUT->doctype() ?>
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <div id="page">
-	<div id="wrapper" class="clearfix">
+    <div id="wrapper" class="clearfix">
 
 <!-- START OF HEADER -->
 
     <div id="page-header" class="clearfix">
-		<div id="page-header-wrapper">
-			<?php if($logourl == NULL) { ?>
-			 <h1 class="headermain">
-	        	<?php echo $PAGE->heading ?>
-	        </h1>
-	        <?php } else { ?>
-	        <img class="logo" src="<?php echo $logourl;?>" alt="Custom logo here" />
-	        <?php } ?>
+        <div id="page-header-wrapper">
+            <?php if($logourl == NULL) { ?>
+            <h1 class="headermain">
+                <?php echo $PAGE->heading ?>
+            </h1>
+            <?php } else { ?>
+            <img class="logo" src="<?php echo $logourl;?>" alt="Custom logo here" />
+            <?php } ?>
 
-
-    	    <div class="headermenu">
-        		<?php
-	        	    echo $OUTPUT->login_info();
-            			echo $OUTPUT->lang_menu();
-          			echo $PAGE->headingmenu;
-		        ?>
-	    	</div>
-	    </div>
+            <div class="headermenu">
+                <?php
+                    echo $OUTPUT->login_info();
+                    echo $OUTPUT->lang_menu();
+                    echo $PAGE->headingmenu;
+                ?>
+            </div>
+        </div>
     </div>
 
 <!-- END OF HEADER -->
@@ -119,26 +118,25 @@ echo $OUTPUT->doctype() ?>
 
 <!-- START OF FOOTER -->
 
-	<div id="page-footer">
+    <div id="page-footer">
 
 
-	<!-- START OF FOOTER-INNER -->
+    <!-- START OF FOOTER-INNER -->
 
-		<div id="page-footer-inner">
-			<div class="footnote"><?php echo $footnote; ?></div>
-			<?php
-			echo $OUTPUT->login_info();
-			?>
-		</div>
+        <div id="page-footer-inner">
+            <div class="footnote"><?php echo $footnote; ?></div>
+            <?php
+            echo $OUTPUT->login_info();
+            ?>
+        </div>
 
-	<!-- END OF FOOTER-INNER -->
+    <!-- END OF FOOTER-INNER -->
 
-		<p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')); ?></p>
-		<?php echo $OUTPUT->home_link(); ?>
-		<?php echo $OUTPUT->standard_footer_html(); ?>
+        <p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')); ?></p>
+        <?php echo $OUTPUT->home_link(); ?>
+        <?php echo $OUTPUT->standard_footer_html(); ?>
 
-
-	</div>
+</div>
 
 <!-- END OF FOOTER -->
 
