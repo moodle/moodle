@@ -274,7 +274,7 @@ function form_filemanager_render($options) {
     }
 
     $maxsize = get_string('maxfilesize', 'moodle', display_size(get_max_upload_file_size($CFG->maxbytes, $course_maxbytes, $options->maxbytes)));
-    $strdndenabled = get_string('dndenabled', 'moodle').$OUTPUT->help_icon('dndenabled');
+    $strdndenabled = get_string('dndenabled_insentence', 'moodle').$OUTPUT->help_icon('dndenabled');
     $html .= <<<FMHTML
 <div class="filemanager-loading mdl-align" id='filemanager-loading-{$client_id}'>
 $icon_progress
