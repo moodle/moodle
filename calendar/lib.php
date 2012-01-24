@@ -1796,7 +1796,7 @@ class calendar_event {
      * @return stdClass
      */
     protected function calculate_context(stdClass $data) {
-        global $USER;
+        global $USER, $DB;
 
         $context = null;
         if (isset($data->courseid) && $data->courseid > 0) {
