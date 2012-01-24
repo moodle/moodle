@@ -113,27 +113,38 @@ echo $OUTPUT->doctype() ?>
 
 <!-- END OF CONTENT -->
 
+</div>
 
+<!-- END OF WRAPPER -->
 
 <!-- START OF FOOTER -->
 
-    <div id="page-footer">
-		<div class="footnote"><?php echo $footnote; ?></div>
-        <?php
-        echo $OUTPUT->login_info();
-        echo $OUTPUT->standard_footer_html();
-        ?>
-    </div>
+	<div id="page-footer">
+
+
+	<!-- START OF FOOTER-INNER -->
+
+		<div id="page-footer-inner">
+			<div class="footnote"><?php echo $footnote; ?></div>
+			<?php
+			echo $OUTPUT->login_info();
+			?>
+		</div>
+
+	<!-- END OF FOOTER-INNER -->
+
+		<p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')); ?></p>
+		<?php echo $OUTPUT->home_link(); ?>
+		<?php echo $OUTPUT->standard_footer_html(); ?>
+
+
+	</div>
 
 <!-- END OF FOOTER -->
+
 </div>
-</div>
-	<p class="helplink">
-        <?php echo page_doc_link(get_string('moodledocslink')) ?>
-    </p><center>
-        <?php
-	echo $OUTPUT->home_link();
-	echo $OUTPUT->standard_end_of_body_html() ?>
-</center>
+
+<!-- END OF PAGE -->
+<?php echo $OUTPUT->standard_end_of_body_html() ?>
 </body>
 </html>

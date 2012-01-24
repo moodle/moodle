@@ -52,10 +52,12 @@ $THEME->parents = array(
 
 
 $THEME->sheets = array(
-    'core',
     'pagelayout',
+    'core',
     'menu',
-    'report'
+    'report',
+    'admin',
+    'settings'
 );
 
 ////////////////////////////////////////////////////
@@ -218,24 +220,11 @@ $THEME->csspostprocess = 'sky_high_process_css';
 // Overrides the right arrow image used throughout Moodle
 ////////////////////////////////////////////////////
 
-// $THEME->layouts
-
-////////////////////////////////////////////////////
-// An array setting the layouts for the theme
-////////////////////////////////////////////////////
-
 // $THEME->parents_exclude_javascripts
 
 ////////////////////////////////////////////////////
 // An array of JavaScript files NOT to inherit from
 // the themes parents
-////////////////////////////////////////////////////
-
-// $THEME->parents_exclude_sheets
-
-////////////////////////////////////////////////////
-// An array of stylesheets not to inherit from the
-// themes parents
 ////////////////////////////////////////////////////
 
 // $THEME->plugins_exclude_sheets
@@ -251,4 +240,3 @@ $THEME->csspostprocess = 'sky_high_process_css';
 // Sets a custom render factory to use with the
 // theme, used when working with custom renderers.
 ////////////////////////////////////////////////////
-
