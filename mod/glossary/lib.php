@@ -2231,24 +2231,24 @@ function glossary_count_unrated_entries($glossaryid, $userid) {
         // Now we need to count the ratings that this user has made
         $sql = "SELECT COUNT('x') AS num
                   FROM {glossary_entries} e
-                  JOIN {ratings} r ON r.itemid = e.id
+                  JOIN {rating} r ON r.itemid = e.id
                  WHERE e.glossaryid = :glossaryid AND
                        r.userid = :userid AND
                        r.component = 'mod_glossary' AND
                        r.ratingarea = 'entry' AND
                        r.contextid = :contextid";
-        $params = array('glossaryid' => $glossaryid, 'userid' => $userid, 'contextid' => $context->id);
+        $params = array('glossaryid' => $glossaryid, 'userid' => $userid, 'contextid' => $contextid);
         $rated = $DB->count_records_sql($sql, $params);
         if ($rated) {
             // The number or enties minus the number or rated entries equals the number of unrated
             // entries
-            if ($entries->num > $rated->num) {
-                return $entries->num - $rated->num;
+            if ($entries > $rated) {
+                return $entries - $rated;
             } else {
                 return 0;    // Just in case there was a counting error
             }
         } else {
-            return $entries->num;
+            return (int)$entries;
         }
     } else {
         return 0;
