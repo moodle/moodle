@@ -58,3 +58,7 @@ The old strings will continue to work, but only until Moodle 2.3 is released.
   or questionid_column_name methods, then you must change these to be public
   methods. (This is required so that backup and restore can be made to work
   automatically. MDL-24408, MDL-25617, MDL-30562)
+
+=== 2.3 ===
+
+* Support for backwards-compatible string names dropped. MDL-30120. (See under 2.2 above.)
