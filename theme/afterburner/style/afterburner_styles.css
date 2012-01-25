@@ -45,7 +45,7 @@ Header and Logo
     width: 100%;
     background: #fff;
 }
-#logo {
+a.logo {
     background: url([[setting:logo]]) no-repeat 0 0;
     width: 320px;
     height: 75px;
