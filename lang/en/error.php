@@ -435,6 +435,7 @@ $string['rpcerror'] = 'Ooops! Your MNET communication has failed! Here\'s that e
 $string['secretalreadyused'] = 'Change password confirmation link was already used, password was not changed';
 $string['sectionnotexist'] = 'This section does not exist';
 $string['sendmessage'] = 'Send message';
+$string['serverconnection'] = 'Error connecting to the server';
 $string['servicedonotexist'] = 'The service does not exist';
 $string['sessionwaiterr'] = 'Timed out while waiting for session lock.<br />Wait for your current requests to finish and try again later.';
 $string['sessioncookiesdisable'] = 'Incorrect use of require_key_login() - session cookies must be disabled!';
