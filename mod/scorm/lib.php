@@ -185,7 +185,8 @@ function scorm_update_instance($scorm, $mform=null) {
 
     } else if ($scorm->scormtype === SCORM_TYPE_IMSREPOSITORY) {
         $scorm->reference = $scorm->packageurl;
-
+    } else if ($scorm->scormtype === SCORM_TYPE_AICCURL) {
+        $scorm->reference = $scorm->packageurl;
     } else {
         return false;
     }
