@@ -345,6 +345,8 @@ class moodle1_root_handler extends moodle1_xml_handler {
         // {@see backup_general_helper::backup_is_samesite()}
         if (isset($backupinfo['original_site_identifier_hash'])) {
             $this->xmlwriter->full_tag('original_site_identifier_hash', $backupinfo['original_site_identifier_hash']);
+        } else {
+            $this->xmlwriter->full_tag('original_site_identifier_hash', null);
         }
         $this->xmlwriter->full_tag('original_course_id', $originalcourseinfo['original_course_id']);
         $this->xmlwriter->full_tag('original_course_fullname', $originalcourseinfo['original_course_fullname']);
