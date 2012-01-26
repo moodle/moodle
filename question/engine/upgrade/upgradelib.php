@@ -88,8 +88,9 @@ class question_engine_attempt_upgrader {
         global $CFG, $DB;
 
         // Look to see if the admin has set things up to only upgrade certain attempts.
-        $partialupgradefile = $CFG->dirroot . '/local/qeupgradehelper/partialupgrade.php';
-        $partialupgradefunction = 'local_qeupgradehelper_get_quizzes_to_upgrade';
+        $partialupgradefile = $CFG->dirroot . '/' . $CFG->admin .
+                '/tool/qeupgradehelper/partialupgrade.php';
+        $partialupgradefunction = 'tool_qeupgradehelper_get_quizzes_to_upgrade';
         if (is_readable($partialupgradefile)) {
             include_once($partialupgradefile);
             if (function_exists($partialupgradefunction)) {
