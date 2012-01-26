@@ -263,7 +263,7 @@ class qtype_ddmarker_shape_polygon extends qtype_ddmarker_shape {
         return array($this->minxy, $this->maxxy);
     }
     public function is_point_in_shape($xy) {
-        $pointatinfinity = new qtype_ddmarker_point(-10000, $xy[1]);
+        $pointatinfinity = new qtype_ddmarker_point(-1000000, $xy[1]+1);
         $pointtotest = new qtype_ddmarker_point($xy[0], $xy[1]);
         $testsegment = new qtype_ddmarker_segment($pointatinfinity, $pointtotest);
         $windingnumber = 0;
@@ -414,7 +414,7 @@ class qtype_ddmarker_segment {
     public function intersection_point(qtype_ddmarker_segment $v) {
         $d = (($v->b->y - $v->a->y) * ($this->b->x - $this->a->x))
                 -(($v->b->x - $v->a->x) * ($this->b->y - $this->a->y));
-        if ($d !== 0) { // The lines intersect at a point somewhere
+        if ($d != 0) { // The lines intersect at a point somewhere
             $ua = (($v->b->x-$v->a->x)*($this->a->y-$v->a->y)
                                         -($v->b->y-$v->a->y)*($this->a->x-$v->a->x))/$d;
             $ub = (($this->b->x-$this->a->x)*($this->a->y-$v->a->y)
