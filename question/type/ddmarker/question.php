@@ -363,6 +363,10 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
         }
         return implode(', ', $goodhits);
     }
+
+    public function get_random_guess_score() {
+        return null;
+    }
 }
 
 /**

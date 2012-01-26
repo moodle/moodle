@@ -359,4 +359,8 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
         return $question;
     }
 
+    public function get_random_guess_score($questiondata) {
+        return null;
+    }
+
 }
