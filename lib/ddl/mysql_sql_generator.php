@@ -20,7 +20,7 @@
  * Mysql specific SQL code generator.
  *
  * @package    core
- * @subpackage ddl
+ * @subpackage ddl_generator
  * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
  *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
