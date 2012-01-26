@@ -83,7 +83,7 @@ if ($quizobj->is_preview_user() && $forcenew) {
 }
 
 // Look for an existing attempt.
-$attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'all');
+$attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'all', true);
 $lastattempt = end($attempts);
 
 // If an in-progress attempt exists, check password then redirect to it.
