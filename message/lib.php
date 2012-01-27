@@ -2347,11 +2347,7 @@ function get_message_processor($type) {
  * @return object $processors object containing information on message processors
  */
 function get_message_output_default_preferences() {
-    $preferences = get_config('message');
-    if (!$preferences) {
-        $preferences = new stdClass();
-    }
-    return $preferences;
+    return get_config('message');
 }
 
 /**
@@ -2383,7 +2379,7 @@ function translate_message_default_setting($plugindefault, $processorname) {
 
     // Validate the value. It should not exceed the maximum size
     if (!is_int($plugindefault) || ($plugindefault > 0x0f)) {
-        $OUTPUT->notification(get_string('errortranslatingdefault', 'message'), 'notifyproblem');
+        debugging(get_string('errortranslatingdefault', 'message'));
         $plugindefault = $default;
     }
     // Use plugin default setting of 'permitted' is 0

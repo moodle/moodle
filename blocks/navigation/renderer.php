@@ -30,12 +30,14 @@ class block_navigation_renderer extends plugin_renderer_base {
             $isexpandable = (empty($expansionlimit) || ($item->type > navigation_node::TYPE_ACTIVITY || $item->type < $expansionlimit) || ($item->contains_active_node() && $item->children->count() > 0));
             $isbranch = $isexpandable && ($item->children->count() > 0 || ($item->has_children() && (isloggedin() || $item->type <= navigation_node::TYPE_CATEGORY)));
 
-            $hasicon = ((!$isbranch || $item->type == navigation_node::TYPE_ACTIVITY )&& $item->icon instanceof renderable);
+            $hasicon = ((!$isbranch || $item->type == navigation_node::TYPE_ACTIVITY || $item->type == navigation_node::TYPE_RESOURCE) && $item->icon instanceof renderable);
 
             if ($hasicon) {
                 $icon = $this->output->render($item->icon);
-                $content = $icon.$content; // use CSS for spacing of icons
+            } else {
+                $icon = '';
             }
+            $content = $icon.$content; // use CSS for spacing of icons
             if ($item->helpbutton !== null) {
                 $content = trim($item->helpbutton).html_writer::tag('span', $content, array('class'=>'clearhelpbutton'));
             }
@@ -57,6 +59,7 @@ class block_navigation_renderer extends plugin_renderer_base {
             } else if ($item->action instanceof action_link) {
                 //TODO: to be replaced with something else
                 $link = $item->action;
+                $link->text = $icon.$link->text;
                 $link->attributes = array_merge($link->attributes, $attributes);
                 $content = $this->output->render($link);
                 $linkrendered = true;

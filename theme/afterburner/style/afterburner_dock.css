@@ -123,3 +123,4 @@ Docked Item Panel
     overflow:auto;
     width:auto; /* adds scroll to dock panel */
 }
+#dockeditempanel .dockeditempanel_bd .block_navigation .block_tree li {overflow:visible;}

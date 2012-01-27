@@ -211,7 +211,9 @@ $filldisabled = '';
 if ($quba->get_question_state($slot)->is_finished()) {
     $finishdisabled = ' disabled="disabled"';
     $filldisabled = ' disabled="disabled"';
-} else if (is_null($quba->get_correct_response($slot))) {
+}
+// If question type cannot give us a correct response, disable this button.
+if (is_null($quba->get_correct_response($slot))) {
     $filldisabled = ' disabled="disabled"';
 }
 if (!$previewid) {

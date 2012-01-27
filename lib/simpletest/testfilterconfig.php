@@ -747,7 +747,7 @@ class filter_delete_config_test extends UnitTestCaseUsingDatabase {
         $expectedconfig = new stdClass;
         $expectedconfig->configname = 'Other config value';
         $this->assertEqual($expectedconfig, get_config('filter_other'));
-        $this->assertNull(get_config('filter_name'));
+        $this->assertIdentical(get_config('filter_name'), new stdClass());
     }
 
     public function test_filter_delete_all_for_context() {
@@ -785,6 +785,7 @@ class filter_filter_set_applies_to_strings extends UnitTestCaseUsingDatabase {
     }
 
     public function tearDown() {
+        global $CFG;
         $CFG->stringfilters = $this->origcfgstringfilters;
         $CFG->filterall = $this->origcfgfilterall;
 

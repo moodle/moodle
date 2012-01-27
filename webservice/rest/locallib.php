@@ -85,7 +85,11 @@ class webservice_rest_server extends webservice_base_server {
 
         //Check that the returned values are valid
         try {
-            $validatedvalues = external_api::clean_returnvalue($this->function->returns_desc, $this->returns);
+            if ($this->function->returns_desc != null) {
+                $validatedvalues = external_api::clean_returnvalue($this->function->returns_desc, $this->returns);
+            } else {
+                $validatedvalues = null;
+            }
         } catch (Exception $ex) {
             $exception = $ex;
         }

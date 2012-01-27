@@ -157,3 +157,29 @@ function workshopform_rubric_upgrade_rubric_level(stdclass $old, $newdimensionid
     $new->definitionformat = FORMAT_HTML;
     return $new;
 }
+
+/**
+ * Given old workshop element weight, returns the weight multiplier
+ *
+ * Negative weights are not supported any more and are replaced with weight = 0.
+ * Legacy workshop did not store the raw weight but the index in the array
+ * of weights (see $WORKSHOP_EWEIGHTS in workshop 1.x). workshop 2.0 uses
+ * integer weights only (0-16) so all previous weights are multiplied by 4.
+ *
+ * @param $oldweight index in legacy $WORKSHOP_EWEIGHTS
+ * @return int new weight
+ */
+function workshopform_rubric_upgrade_weight($oldweight) {
+
+    switch ($oldweight) {
+        case 8: $weight = 1; break;
+        case 9: $weight = 2; break;
+        case 10: $weight = 3; break;
+        case 11: $weight = 4; break;
+        case 12: $weight = 6; break;
+        case 13: $weight = 8; break;
+        case 14: $weight = 16; break;
+        default: $weight = 0;
+    }
+    return $weight;
+}

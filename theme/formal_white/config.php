@@ -175,7 +175,7 @@ $THEME->layouts = array(
         'options' => array('nofooter'=>true, 'nonavbar'=>false, 'noblocks'=>true),
     ),
     'report' => array(
-        'file' => 'general.php',
+        'file' => 'report.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),

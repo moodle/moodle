@@ -11,20 +11,22 @@ echo $OUTPUT->doctype() ?>
 <body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html(); ?>
 
-    <div id="page-content">
-        <div id="region-main-box">
-            <div id="region-post-box">
+    <div id="page">
+        <div id="page-content">
+            <div id="region-main-box">
+                <div id="region-post-box">
 
-                <!-- main mandatory content of the moodle page  -->
-                <div id="region-main-wrap">
-                    <div id="region-main">
-                        <div class="region-content">
-                            <?php echo $OUTPUT->main_content() ?>
+                    <!-- main mandatory content of the moodle page  -->
+                    <div id="region-main-wrap">
+                        <div id="region-main">
+                            <div class="region-content">
+                                <?php echo $OUTPUT->main_content() ?>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!-- end of main mandatory content of the moodle page -->
+                    <!-- end of main mandatory content of the moodle page -->
 
+                </div>
             </div>
         </div>
     </div>

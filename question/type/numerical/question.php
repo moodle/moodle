@@ -258,13 +258,14 @@ class qtype_numerical_question extends question_graded_automatically {
         }
         list($value, $unit, $multiplier) = $this->ap->apply_units($response['answer'], $selectedunit);
         $ans = $this->get_matching_answer($value, $multiplier);
-        if (!$ans) {
-            return array($this->id => question_classified_response::no_response());
-        }
 
         $resp = $response['answer'];
         if ($this->has_separate_unit_field()) {
             $resp = $this->ap->add_unit($resp, $unit);
+        }
+
+        if (!$ans) {
+            return array($this->id => new question_classified_response(0, $resp, 0));
         }
 
         return array($this->id => new question_classified_response($ans->id,

@@ -461,7 +461,7 @@ class grading_manager {
      * @return grading_controller
      */
     public function get_controller($method) {
-        global $CFG;
+        global $CFG, $DB;
 
         $this->ensure_isset(array('context', 'component', 'area'));
 

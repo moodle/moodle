@@ -292,6 +292,61 @@ function resource_print_heading($resource, $cm, $course, $ignoresettings=false) 
 }
 
 /**
+ * Gets optional details for a resource, depending on resource settings.
+ *
+ * Result may include the file size and type if those settings are chosen,
+ * or blank if none.
+ *
+ * @param object $resource Resource table row
+ * @param object $cm Course-module table row
+ * @return string Size and type or empty string if show options are not enabled
+ */
+function resource_get_optional_details($resource, $cm) {
+    global $DB;
+
+    $details = '';
+
+    $options = empty($resource->displayoptions) ? array() : unserialize($resource->displayoptions);
+    if (!empty($options['showsize']) || !empty($options['showtype'])) {
+        $context = context_module::instance($cm->id);
+        $size = '';
+        $type = '';
+        if (!empty($options['showsize'])) {
+            $size = display_size($DB->get_field_sql(
+                    'SELECT SUM(filesize) FROM {files} WHERE contextid=?', array($context->id)));
+        }
+        if (!empty($options['showtype'])) {
+            // For a typical file resource, the sortorder is 1 for the main file
+            // and 0 for all other files. This sort approach is used just in case
+            // there are situations where the file has a different sort order
+            $mimetype = $DB->get_field_sql(
+                    'SELECT mimetype FROM {files} WHERE contextid=? ORDER BY sortorder DESC',
+                    array($context->id), IGNORE_MULTIPLE);
+            // Only show type if it is not unknown
+            if ($mimetype && $mimetype !== 'document/unknown') {
+                $type = get_mimetype_description($mimetype);
+                // There are some known mimetypes which don't have descriptions
+                if ($type === get_string('document/unknown','mimetypes')) {
+                    $type = '';
+                }
+            }
+        }
+
+        if ($size && $type) {
+            // Depending on language it may be necessary to show both options in
+            // different order, so use a lang string
+            $details = get_string('resourcedetails_sizetype', 'resource',
+                    (object)array('size'=>$size, 'type'=>$type));
+        } else {
+            // Either size or type is set, but not both, so just append
+            $details = $size . $type;
+        }
+    }
+
+    return $details;
+}
+
+/**
  * Print resource introduction.
  * @param object $resource
  * @param object $cm
@@ -303,10 +358,21 @@ function resource_print_intro($resource, $cm, $course, $ignoresettings=false) {
     global $OUTPUT;
 
     $options = empty($resource->displayoptions) ? array() : unserialize($resource->displayoptions);
-    if ($ignoresettings or !empty($options['printintro'])) {
-        if (trim(strip_tags($resource->intro))) {
+
+    $extraintro = resource_get_optional_details($resource, $cm);
+    if ($extraintro) {
+        // Put a paragaph tag around the details
+        $extraintro = html_writer::tag('p', $extraintro, array('class' => 'resourcedetails'));
+    }
+
+    if ($ignoresettings || !empty($options['printintro']) || $extraintro) {
+        $gotintro = trim(strip_tags($resource->intro));
+        if ($gotintro || $extraintro) {
             echo $OUTPUT->box_start('mod_introbox', 'resourceintro');
-            echo format_module_intro('resource', $resource, $cm->id);
+            if ($gotintro) {
+                echo format_module_intro('resource', $resource, $cm->id);
+            }
+            echo $extraintro;
             echo $OUTPUT->box_end();
         }
     }

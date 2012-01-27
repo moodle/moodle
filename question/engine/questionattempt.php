@@ -987,11 +987,15 @@ class question_attempt {
 
     /**
      * Get a set of response data for this question attempt that would get the
-     * best possible mark.
-     * @return array name => value pairs that could be passed to {@link process_action()}.
+     * best possible mark. If it is not possible to compute a correct
+     * response, this method should return null.
+     * @return array|null name => value pairs that could be passed to {@link process_action()}.
      */
     public function get_correct_response() {
         $response = $this->question->get_correct_response();
+        if (is_null($response)) {
+            return null;
+        }
         $imvars = $this->behaviour->get_correct_response();
         foreach ($imvars as $name => $value) {
             $response['-' . $name] = $value;

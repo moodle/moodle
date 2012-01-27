@@ -1318,7 +1318,7 @@ function get_config($plugin, $name = NULL) {
         if ($localcfg) {
             return (object)$localcfg;
         } else {
-            return null;
+            return new stdClass();
         }
 
     } else {
@@ -1815,17 +1815,19 @@ function get_user_preferences($name = null, $default = null, $user = null) {
 /**
  * Given date parts in user time produce a GMT timestamp.
  *
- * @todo Finish documenting this function
+ * @package core
+ * @category time
  * @param int $year The year part to create timestamp of
  * @param int $month The month part to create timestamp of
  * @param int $day The day part to create timestamp of
  * @param int $hour The hour part to create timestamp of
  * @param int $minute The minute part to create timestamp of
  * @param int $second The second part to create timestamp of
- * @param mixed $timezone Timezone modifier, if 99 then use default user's timezone
+ * @param int|float|string $timezone Timezone modifier, used to calculate GMT time offset.
+ *             if 99 then default user's timezone is used {@link http://docs.moodle.org/dev/Time_API#Timezone}
  * @param bool $applydst Toggle Daylight Saving Time, default true, will be
  *             applied only if timezone is 99 or string.
- * @return int timestamp
+ * @return int GMT timestamp
  */
 function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99, $applydst=true) {
 
@@ -1856,6 +1858,8 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * Given an amount of time in seconds, returns string
  * formatted nicely as weeks, days, hours etc as needed
  *
+ * @package core
+ * @category time
  * @uses MINSECS
  * @uses HOURSECS
  * @uses DAYSECS
@@ -1931,13 +1935,16 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * If parameter fixday = true (default), then take off leading
  * zero from %d, else maintain it.
  *
+ * @package core
+ * @category time
  * @param int $date the timestamp in UTC, as obtained from the database.
  * @param string $format strftime format. You should probably get this using
- *      get_string('strftime...', 'langconfig');
- * @param mixed $timezone by default, uses the user's time zone. if numeric and
- *      not 99 then daylight saving will not be added.
+ *        get_string('strftime...', 'langconfig');
+ * @param int|float|string  $timezone by default, uses the user's time zone. if numeric and
+ *        not 99 then daylight saving will not be added.
+ *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
  * @param bool $fixday If true (default) then the leading zero from %d is removed.
- *      If false then the leading zero is maintained.
+ *        If false then the leading zero is maintained.
  * @return string the formatted date/time.
  */
 function userdate($date, $format = '', $timezone = 99, $fixday = true) {
@@ -2001,11 +2008,12 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true) {
  * Given a $time timestamp in GMT (seconds since epoch),
  * returns an array that represents the date in user time
  *
- * @todo Finish documenting this function
+ * @package core
+ * @category time
  * @uses HOURSECS
  * @param int $time Timestamp in GMT
- * @param mixed $timezone offset time with timezone, if float and not 99, then no
- *        dst offset is applyed
+ * @param float|int|string $timezone offset's time with timezone, if float and not 99, then no
+ *        dst offset is applyed {@link http://docs.moodle.org/dev/Time_API#Timezone}
  * @return array An array that represents the date in user time
  */
 function usergetdate($time, $timezone=99) {
@@ -2050,9 +2058,13 @@ function usergetdate($time, $timezone=99) {
  * Given a GMT timestamp (seconds since epoch), offsets it by
  * the timezone.  eg 3pm in India is 3pm GMT - 7 * 3600 seconds
  *
+ * @package core
+ * @category time
  * @uses HOURSECS
- * @param  int $date Timestamp in GMT
- * @param float $timezone
+ * @param int $date Timestamp in GMT
+ * @param float|int|string $timezone timezone to calculate GMT time offset before
+ *        calculating user time, 99 is default user timezone
+ *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
  * @return int
  */
 function usertime($date, $timezone=99) {
@@ -2069,8 +2081,12 @@ function usertime($date, $timezone=99) {
  * Given a time, return the GMT timestamp of the most recent midnight
  * for the current user.
  *
+ * @package core
+ * @category time
  * @param int $date Timestamp in GMT
- * @param float $timezone Defaults to user's timezone
+ * @param float|int|string $timezone timezone to calculate GMT time offset before
+ *        calculating user midnight time, 99 is default user timezone
+ *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
  * @return int Returns a GMT timestamp
  */
 function usergetmidnight($date, $timezone=99) {
@@ -2085,7 +2101,11 @@ function usergetmidnight($date, $timezone=99) {
 /**
  * Returns a string that prints the user's timezone
  *
- * @param float $timezone The user's timezone
+ * @package core
+ * @category time
+ * @param float|int|string $timezone timezone to calculate GMT time offset before
+ *        calculating user timezone, 99 is default user timezone
+ *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
  * @return string
  */
 function usertimezone($timezone=99) {
@@ -2121,9 +2141,11 @@ function usertimezone($timezone=99) {
  * Returns a float which represents the user's timezone difference from GMT in hours
  * Checks various settings and picks the most dominant of those which have a value
  *
- * @global object
- * @global object
- * @param float $tz If this value is provided and not equal to 99, it will be returned as is and no other settings will be checked
+ * @package core
+ * @category time
+ * @param float|int|string $tz timezone to calculate GMT time offset for user,
+ *        99 is default user timezone
+ *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
  * @return float
  */
 function get_user_timezone_offset($tz = 99) {
@@ -2146,9 +2168,11 @@ function get_user_timezone_offset($tz = 99) {
 /**
  * Returns an int which represents the systems's timezone difference from GMT in seconds
  *
- * @global object
- * @param mixed $tz timezone
- * @return int if found, false is timezone 99 or error
+ * @package core
+ * @category time
+ * @param float|int|string $tz timezone for which offset is required.
+ *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
+ * @return int|bool if found, false is timezone 99 or error
  */
 function get_timezone_offset($tz) {
     global $CFG;
@@ -2173,10 +2197,12 @@ function get_timezone_offset($tz) {
  * means that for this timezone there are also DST rules to be taken into account
  * Checks various settings and picks the most dominant of those which have a value
  *
- * @global object
- * @global object
- * @param mixed $tz If this value is provided and not equal to 99, it will be returned as is and no other settings will be checked
- * @return mixed
+ * @package core
+ * @category time
+ * @param float|int|string $tz timezone to calculate GMT time offset before
+ *        calculating user timezone, 99 is default user timezone
+ *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
+ * @return float|string
  */
 function get_user_timezone($tz = 99) {
     global $USER, $CFG;
@@ -2200,10 +2226,9 @@ function get_user_timezone($tz = 99) {
 /**
  * Returns cached timezone record for given $timezonename
  *
- * @global object
- * @global object
- * @param string $timezonename
- * @return mixed timezonerecord object or false
+ * @package core
+ * @param string $timezonename name of the timezone
+ * @return stdClass|bool timezonerecord or false
  */
 function get_timezone_record($timezonename) {
     global $CFG, $DB;
@@ -2218,18 +2243,16 @@ function get_timezone_record($timezonename) {
     }
 
     return $cache[$timezonename] = $DB->get_record_sql('SELECT * FROM {timezone}
-                                                        WHERE name = ? ORDER BY year DESC', array($timezonename), true);
+                                                        WHERE name = ? ORDER BY year DESC', array($timezonename), IGNORE_MULTIPLE);
 }
 
 /**
  * Build and store the users Daylight Saving Time (DST) table
  *
- * @global object
- * @global object
- * @global object
- * @param mixed $from_year Start year for the table, defaults to 1971
- * @param mixed $to_year End year for the table, defaults to 2035
- * @param mixed $strtimezone, if null or 99 then user's default timezone is used
+ * @package core
+ * @param int $from_year Start year for the table, defaults to 1971
+ * @param int $to_year End year for the table, defaults to 2035
+ * @param int|float|string $strtimezone, timezone to check if dst should be applyed.
  * @return bool
  */
 function calculate_user_dst_table($from_year = NULL, $to_year = NULL, $strtimezone = NULL) {
@@ -2357,11 +2380,13 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL, $strtimezo
 /**
  * Calculates the required DST change and returns a Timestamp Array
  *
+ * @package core
+ * @category time
  * @uses HOURSECS
  * @uses MINSECS
- * @param mixed $year Int or String Year to focus on
+ * @param int|string $year Int or String Year to focus on
  * @param object $timezone Instatiated Timezone object
- * @return mixed Null, or Array dst=>xx, 0=>xx, std=>yy, 1=>yy
+ * @return array|null Array dst=>xx, 0=>xx, std=>yy, 1=>yy or NULL
  */
 function dst_changes_for_year($year, $timezone) {
 
@@ -2392,10 +2417,11 @@ function dst_changes_for_year($year, $timezone) {
  * Calculates the Daylight Saving Offset for a given date/time (timestamp)
  * - Note: Daylight saving only works for string timezones and not for float.
  *
- * @global object
+ * @package core
+ * @category time
  * @param int $time must NOT be compensated at all, it has to be a pure timestamp
- * @param mixed $strtimezone timezone for which offset is expected, if 99 or null
- *        then user's default timezone is used.
+ * @param int|float|string $strtimezone timezone for which offset is expected, if 99 or null
+ *        then user's default timezone is used. {@link http://docs.moodle.org/dev/Time_API#Timezone}
  * @return int
  */
 function dst_offset_on($time, $strtimezone = NULL) {
@@ -2440,13 +2466,14 @@ function dst_offset_on($time, $strtimezone = NULL) {
 }
 
 /**
- * ?
+ * Calculates when the day appears in specific month
  *
- * @todo Document what this function does
- * @param int $startday
- * @param int $weekday
- * @param int $month
- * @param int $year
+ * @package core
+ * @category time
+ * @param int $startday starting day of the month
+ * @param int $weekday The day when week starts (normally taken from user preferences)
+ * @param int $month The month whose day is sought
+ * @param int $year The year of the month whose day is sought
  * @return int
  */
 function find_day_in_month($startday, $weekday, $month, $year) {
@@ -2508,6 +2535,8 @@ function find_day_in_month($startday, $weekday, $month, $year) {
 /**
  * Calculate the number of days in a given month
  *
+ * @package core
+ * @category time
  * @param int $month The month whose day count is sought
  * @param int $year The year of the month whose day count is sought
  * @return int
@@ -2519,6 +2548,8 @@ function days_in_month($month, $year) {
 /**
  * Calculate the position in the week of a specific calendar day
  *
+ * @package core
+ * @category time
  * @param int $day The day of the date whose position in the week is sought
  * @param int $month The month of the date whose position in the week is sought
  * @param int $year The year of the date whose position in the week is sought
@@ -5026,6 +5057,17 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     // skip mail to suspended users
     if ((isset($user->auth) && $user->auth=='nologin') or (isset($user->suspended) && $user->suspended)) {
         return true;
+    }
+
+    if (!validate_email($user->email)) {
+        // we can not send emails to invalid addresses - it might create security issue or confuse the mailer
+        $invalidemail = "User $user->id (".fullname($user).") email ($user->email) is invalid! Not sending.";
+        error_log($invalidemail);
+        if (CLI_SCRIPT) {
+            // do not print this in standard web pages
+            mtrace($invalidemail);
+        }
+        return false;
     }
 
     if (over_bounce_threshold($user)) {

@@ -262,9 +262,10 @@ abstract class question_definition {
     /**
      * What data would need to be submitted to get this question correct.
      * If there is more than one correct answer, this method should just
-     * return one possibility.
+     * return one possibility. If it is not possible to compute a correct
+     * response, this method should return null.
      *
-     * @return array parameter name => value.
+     * @return array|null parameter name => value.
      */
     public abstract function get_correct_response();
 
@@ -709,8 +710,10 @@ abstract class question_graded_by_strategy extends question_graded_automatically
 
         $ans = $this->get_matching_answer($response);
         if (!$ans) {
-            return array($this->id => question_classified_response::no_response());
+            return array($this->id => new question_classified_response(
+                    0, $response['answer'], 0));
         }
+
         return array($this->id => new question_classified_response(
                 $ans->id, $response['answer'], $ans->fraction));
     }

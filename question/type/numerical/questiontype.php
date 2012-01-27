@@ -418,10 +418,13 @@ class qtype_numerical extends question_type {
 
         $unit = $this->get_default_numerical_unit($questiondata);
 
+        $starfound = false;
         foreach ($questiondata->options->answers as $aid => $answer) {
             $responseclass = $answer->answer;
 
-            if ($responseclass != '*') {
+            if ($responseclass === '*') {
+                $starfound = true;
+            } else {
                 $responseclass = $this->add_unit($questiondata, $responseclass, $unit);
 
                 $ans = new qtype_numerical_answer($answer->id, $answer->answer, $answer->fraction,
@@ -433,6 +436,12 @@ class qtype_numerical extends question_type {
             $responses[$aid] = new question_possible_response($responseclass,
                     $answer->fraction);
         }
+
+        if (!$starfound) {
+            $responses[0] = new question_possible_response(
+                    get_string('didnotmatchanyanswer', 'question'), 0);
+        }
+
         $responses[null] = question_possible_response::no_response();
 
         return array($questiondata->id => $responses);

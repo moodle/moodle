@@ -127,6 +127,8 @@ class navigation_node implements renderable {
     protected static $fullmeurl = null;
     /** @var bool toogles auto matching of active node */
     public static $autofindactive = true;
+    /** @var mixed If set to an int, that section will be included even if it has no activities */
+    public $includesectionnum = false;
 
     /**
      * Constructs a new navigation_node
@@ -1172,13 +1174,29 @@ class global_navigation extends navigation_node {
                     }
 
                     $this->add_course_essentials($coursenode, $course);
+
+                    // Get section number from $cm (if provided) - we need this
+                    // before loading sections in order to tell it to load this section
+                    // even if it would not normally display (=> it contains only
+                    // a label, which we are now editing)
+                    $sectionnum = isset($cm->sectionnum) ? $cm->sectionnum : 0;
+                    if ($sectionnum) {
+                        // This value has to be stored in a member variable because
+                        // otherwise we would have to pass it through a public API
+                        // to course formats and they would need to change their
+                        // functions to pass it along again...
+                        $this->includesectionnum = $sectionnum;
+                    } else {
+                        $this->includesectionnum = false;
+                    }
+
                     // Load the course sections into the page
                     $sections = $this->load_course_sections($course, $coursenode);
                     if ($course->id != SITEID) {
                         // Find the section for the $CM associated with the page and collect
                         // its section number.
-                        if (isset($cm->sectionnum)) {
-                            $cm->sectionnumber = $cm->sectionnum;
+                        if ($sectionnum) {
+                            $cm->sectionnumber = $sectionnum;
                         } else {
                             foreach ($sections as $section) {
                                 if ($section->id == $cm->section) {
@@ -1630,7 +1648,9 @@ class global_navigation extends navigation_node {
                         }
                     }
                     $activities[$cmid] = $activity;
-                    $sections[$key]->hasactivites = true;
+                    if ($activity->display) {
+                        $sections[$key]->hasactivites = true;
+                    }
                 }
             }
             $this->cache->set('course_sections_'.$course->id, $sections);
@@ -1678,7 +1698,8 @@ class global_navigation extends navigation_node {
             if ($course->id == SITEID) {
                 $this->load_section_activities($coursenode, $section->section, $activities);
             } else {
-                if ((!$viewhiddensections && !$section->visible) || (!$this->showemptysections && !$section->hasactivites)) {
+                if ((!$viewhiddensections && !$section->visible) || (!$this->showemptysections &&
+                        !$section->hasactivites && $this->includesectionnum !== $section->section)) {
                     continue;
                 }
                 if ($namingfunctionexists) {
@@ -4047,6 +4068,8 @@ class navigation_json {
             $attributes['link'] = $child->action;
         } else if ($child->action instanceof moodle_url) {
             $attributes['link'] = $child->action->out();
+        } else if ($child->action instanceof action_link) {
+            $attributes['link'] = $child->action->url->out();
         }
         $attributes['hidden'] = ($child->hidden);
         $attributes['haschildren'] = ($child->children->count()>0 || $child->type == navigation_node::TYPE_CATEGORY);

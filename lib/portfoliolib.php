@@ -353,7 +353,7 @@ class portfolio_add_button {
                 $formoutput .= "\n" . '</form>';
             break;
             case PORTFOLIO_ADD_ICON_LINK:
-                $linkoutput .= '"><img class="portfolio-add-icon" src="' . $OUTPUT->pix_url('t/portfolioadd') . '" alt="' . $addstr .'" /></a>';
+                $linkoutput .= '"><img class="portfolio-add-icon iconsmall" src="' . $OUTPUT->pix_url('t/portfolioadd') . '" alt="' . $addstr .'" /></a>';
             break;
             case PORTFOLIO_ADD_TEXT_LINK:
                 $linkoutput .= '">' . $addstr .'</a>';
