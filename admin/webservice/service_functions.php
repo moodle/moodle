@@ -67,7 +67,7 @@ switch ($action) {
             //add the function to the service then redirect to function list page
             if ($data = $mform->get_data()) {
                 ignore_user_abort(true); // no interruption here!
-                foreach ($data->fid as $fid) {
+                foreach ($data->fids as $fid) {
                     $function = $webservicemanager->get_external_function_by_id(
                             $fid, MUST_EXIST);
                     // make sure the function is not there yet
