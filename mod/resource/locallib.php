@@ -155,6 +155,7 @@ function resource_display_frame($resource, $cm, $course, $file) {
         $navurl = "$CFG->wwwroot/mod/resource/view.php?id=$cm->id&amp;frameset=top";
         $title = strip_tags(format_string($course->shortname.': '.$resource->name));
         $framesize = $config->framesize;
+        $contentframetitle = format_string($resource->name);
         $modulename = s(get_string('modulename','resource'));
         $dir = get_string('thisdirection', 'langconfig');
 
@@ -167,7 +168,7 @@ function resource_display_frame($resource, $cm, $course, $file) {
   </head>
   <frameset rows="$framesize,*">
     <frame src="$navurl" title="$modulename" />
-    <frame src="$fileurl" title="$modulename" />
+    <frame src="$fileurl" title="$contentframetitle" />
   </frameset>
 </html>
 EOF;
