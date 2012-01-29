@@ -57,20 +57,18 @@ class qtype_ddmarker_test_helper extends question_test_helper {
         test_question_maker::set_standard_combined_feedback_fields($dd);
 
         $dd->choices = $this->make_choice_structure(array(
-                    new qtype_ddmarker_drag_item('quick', 1, 1),
-                    new qtype_ddmarker_drag_item('fox', 2, 1),
-                    new qtype_ddmarker_drag_item('lazy', 1, 2),
-                    new qtype_ddmarker_drag_item('dog', 2, 2)
+                    new qtype_ddmarker_drag_item('quick', 1, 0),
+                    new qtype_ddmarker_drag_item('fox', 2, 0),
+                    new qtype_ddmarker_drag_item('lazy', 3, 0)
 
         ));
 
         $dd->places = $this->make_place_structure(array(
-                            new qtype_ddmarker_drop_zone('', 1, 1),
-                            new qtype_ddmarker_drop_zone('', 2, 1),
-                            new qtype_ddmarker_drop_zone('', 3, 2),
-                            new qtype_ddmarker_drop_zone('', 4, 2)
+                            new qtype_ddmarker_drop_zone(1, 'circle', '50,50;50'),
+                            new qtype_ddmarker_drop_zone(2, 'rectangle', '100,0;100,100'),
+                            new qtype_ddmarker_drop_zone(3, 'polygon', '0,100;200,100;200,200;0,200')
         ));
-        $dd->rightchoices = array(1 => 1, 2 => 2, 3 => 1, 4 => 2);
+        $dd->rightchoices = array(1 => 1, 2 => 2, 3 => 3);
 
         return $dd;
     }
@@ -78,10 +76,11 @@ class qtype_ddmarker_test_helper extends question_test_helper {
     protected function make_choice_structure($choices) {
         $choicestructure = array();
         foreach ($choices as $choice) {
-            if (!isset($choicestructure[$choice->group])) {
-                $choicestructure[$choice->group] = array();
+            $group = $choice->choice_group();
+            if (!isset($choicestructure[$group])) {
+                $choicestructure[$group] = array();
             }
-            $choicestructure[$choice->group][$choice->no] = $choice;
+            $choicestructure[$group][$choice->no] = $choice;
         }
         return $choicestructure;
     }
@@ -104,9 +103,8 @@ class qtype_ddmarker_test_helper extends question_test_helper {
         test_question_maker::initialise_a_question($dd);
 
         $dd->name = 'Drag-and-drop words into sentences question';
-        $dd->questiontext = 'Fill in the operators to make this equation work: ' .
-                '7 [[1]] 11 [[2]] 13 [[1]] 17 [[2]] 19 = 3';
-        $dd->generalfeedback = 'This sentence uses each letter of the alphabet.';
+        $dd->questiontext = 'Fill in the operators to make this equation work: ';
+        $dd->generalfeedback = 'Hmmmm...';
         $dd->qtype = question_bank::get_qtype('ddmarker');
 
         $dd->shufflechoices = true;
@@ -114,17 +112,19 @@ class qtype_ddmarker_test_helper extends question_test_helper {
         test_question_maker::set_standard_combined_feedback_fields($dd);
 
         $dd->choices = $this->make_choice_structure(array(
-                new qtype_ddmarker_drag_item('+', 1, 1),
-                new qtype_ddmarker_drag_item('-', 2, 1)
+                    new qtype_ddmarker_drag_item('+', 1, 1),
+                    new qtype_ddmarker_drag_item('-', 2, 1),
+                    new qtype_ddmarker_drag_item('*', 3, 1),
+                    new qtype_ddmarker_drag_item('/', 4, 1)
+
         ));
 
         $dd->places = $this->make_place_structure(array(
-                            new qtype_ddmarker_drop_zone('', 1, 1),
-                            new qtype_ddmarker_drop_zone('', 2, 1),
-                            new qtype_ddmarker_drop_zone('', 3, 1),
-                            new qtype_ddmarker_drop_zone('', 4, 1)
+                    new qtype_ddmarker_drop_zone(1, 'circle', '50,50;50'),
+                    new qtype_ddmarker_drop_zone(2, 'rectangle', '100,0;100,100'),
+                    new qtype_ddmarker_drop_zone(3, 'polygon', '0,100;100,100;100,200;0,200')
         ));
-        $dd->rightchoices = array(1 => 1, 2 => 2, 3 => 1, 4 => 2);
+        $dd->rightchoices = array(1 => 1, 2 => 1, 3 => 1);
 
         return $dd;
     }
