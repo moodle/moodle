@@ -115,14 +115,13 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
         }
         $coords1 = explode(';', $value1);
         $coords2 = explode(';', $value2);
-        if (count($coords1) !== count($coords1)) {
+        if (count($coords1) !== count($coords2)) {
             return false;
         } else if (count($coords1) === 0) {
             return true;
         } else {
             $valuesinbotharrays = array_intersect($coords1, $coords2);
-            return (count($valuesinbotharrays) == count($coords1) &&
-                                                count($valuesinbotharrays) == count($coords2));
+            return (count($valuesinbotharrays) == count($coords1));
         }
     }
     public function get_validation_error(array $response) {
