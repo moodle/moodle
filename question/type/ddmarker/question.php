@@ -120,10 +120,32 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
         } else if (count($coords1) === 0) {
             return true;
         } else {
-            $valuesinbotharrays = array_intersect($coords1, $coords2);
+            $valuesinbotharrays = $this->array_intersect_fixed($coords1, $coords2);
             return (count($valuesinbotharrays) == count($coords1));
         }
     }
+
+    /**
+     *
+     * This function is a variation of array_intersect that checks for the existence of duplicate
+     * array values too.
+     * @author dml at nm dot ru (taken from comments on php manual)
+     * @param array $array1
+     * @param array $array2
+     * @return bool whether array1 and array2 contain the same values including duplicate values
+     */
+    protected function array_intersect_fixed($array1, $array2) {
+        $result = array();
+        foreach ($array1 as $val) {
+          if (($key = array_search($val, $array2, TRUE))!==false) {
+             $result[] = $val;
+             unset($array2[$key]);
+          }
+        }
+        return $result;
+    }
+
+
     public function get_validation_error(array $response) {
         if ($this->is_complete_response($response)) {
             return '';
