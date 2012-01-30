@@ -1675,7 +1675,7 @@ function quiz_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
  */
 function mod_quiz_question_pluginfile($course, $context, $component,
         $filearea, $qubaid, $slot, $args, $forcedownload) {
-    global $USER, $CFG;
+    global $CFG;
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
     $attemptobj = quiz_attempt::create_from_usage_id($qubaid);

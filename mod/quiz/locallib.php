@@ -530,8 +530,7 @@ function quiz_set_grade($newgrade, $quiz) {
  * @return bool Indicates success or failure.
  */
 function quiz_save_best_grade($quiz, $userid = null, $attempts = array()) {
-    global $DB;
-    global $USER, $OUTPUT;
+    global $DB, $OUTPUT, $USER;
 
     if (empty($userid)) {
         $userid = $USER->id;
@@ -1170,8 +1169,6 @@ function quiz_send_confirmation($recipient, $a) {
  * @return int|false as for {@link message_send()}.
  */
 function quiz_send_notification($recipient, $submitter, $a) {
-
-    global $USER;
 
     // Recipient info for template
     $a->useridnumber = $recipient->idnumber;

@@ -79,11 +79,6 @@ $completion->set_module_viewed($cm);
 // Initialize $PAGE, compute blocks
 $PAGE->set_url('/mod/quiz/view.php', array('id' => $cm->id));
 
-$edit = optional_param('edit', -1, PARAM_BOOL);
-if ($edit != -1 && $PAGE->user_allowed_editing()) {
-    $USER->editing = $edit;
-}
-
 // Update the quiz with overrides for the current user
 $quiz = quiz_update_effective_access($quiz, $USER->id);
 
