@@ -78,11 +78,6 @@ $completion->set_module_viewed($cm);
 // Initialize $PAGE, compute blocks
 $PAGE->set_url('/mod/quiz/view.php', array('id' => $cm->id));
 
-$edit = optional_param('edit', -1, PARAM_BOOL);
-if ($edit != -1 && $PAGE->user_allowed_editing()) {
-    $USER->editing = $edit;
-}
-
 // Get this user's attempts.
 $attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'finished', true);
 $lastfinishedattempt = end($attempts);
