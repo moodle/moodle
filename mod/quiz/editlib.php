@@ -346,7 +346,7 @@ function quiz_move_question_down($layout, $questionid) {
  */
 function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
         $quiz_qbanktool, $hasattempts, $defaultcategoryobj) {
-    global $USER, $CFG, $DB, $OUTPUT;
+    global $CFG, $DB, $OUTPUT;
     $strorder = get_string('order');
     $strquestionname = get_string('questionname', 'quiz');
     $strgrade = get_string('grade');
@@ -1212,7 +1212,7 @@ class quiz_question_bank_view extends question_bank_view {
  *      the last value used +1.
  */
 function quiz_print_grading_form($quiz, $pageurl, $tabindex) {
-    global $USER, $OUTPUT;
+    global $OUTPUT;
     $strsave = get_string('save', 'quiz');
     echo '<form method="post" action="edit.php" class="quizsavegradesform"><div>';
     echo '<fieldset class="invisiblefieldset" style="display: block;">';
