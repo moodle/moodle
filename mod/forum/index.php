@@ -149,8 +149,13 @@ foreach ($modinfo->instances['forum'] as $forumid=>$cm) {
     }
 }
 
-/// Do course wide subscribe/unsubscribe
-if (!is_null($subscribe) and !isguestuser()) {
+// Do course wide subscribe/unsubscribe if requested
+if (!is_null($subscribe)) {
+    if (isguestuser() or !$can_subscribe) {
+        // there should not be any links leading to this place, just redirect
+        redirect(new moodle_url('/mod/forum/index.php', array('id' => $id)), get_string('subscribeenrolledonly', 'forum'));
+    }
+    // Can proceed now, the user is not guest and is enrolled
     foreach ($modinfo->instances['forum'] as $forumid=>$cm) {
         $forum = $forums[$forumid];
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -411,7 +416,8 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_button($searchform);
 echo $OUTPUT->header();
 
-if (!isguestuser() && isloggedin()) {
+// Show the subscribe all options only to non-guest, enrolled users
+if (!isguestuser() && isloggedin() && $can_subscribe) {
     echo $OUTPUT->box_start('subscription');
     echo html_writer::tag('div',
         html_writer::link(new moodle_url('/mod/forum/index.php', array('id'=>$course->id, 'subscribe'=>1, 'sesskey'=>sesskey())),
