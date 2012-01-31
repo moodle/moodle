@@ -75,7 +75,7 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
 
         //initialise file picker for dragimages
         list(, $imagerepeats) = $this->get_drag_item_repeats();
-        $draftitemids = optional_param_array('dragitem', array(), PARAM_INT);
+        $draftitemids = optional_param('dragitem', array(), PARAM_INT);
         for ($imageindex = 0; $imageindex < $imagerepeats; $imageindex++) {
             $draftitemid = isset($draftitemids[$imageindex]) ? $draftitemids[$imageindex] :0;
             //numbers not allowed in filearea name
