@@ -42,6 +42,10 @@ class qtype_ddtoimage_base extends question_type {
         return 'draggroup';
     }
 
+    public function requires_qtypes() {
+        return array('gapselect');
+    }
+
     public function get_question_options($question) {
         global $DB;
         $dbprefix = 'qtype_'.$this->name();
