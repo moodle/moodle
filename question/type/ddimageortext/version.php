@@ -27,3 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version  = 2011051200;
 $plugin->requires = 2011051212;
+$plugin->dependencies = array(
+    'qtype_gapselect' => 2011020100,
+);
