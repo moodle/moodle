@@ -27,6 +27,36 @@
 defined('MOODLE_INTERNAL') || die();
 
 
+abstract class question_wizard_form extends moodleform {
+    /**
+     * Add all the hidden form fields used by question/question.php.
+     */
+    protected function add_hidden_fields() {
+        $mform = $this->_form;
+
+        $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
+
+        $mform->addElement('hidden', 'inpopup');
+        $mform->setType('inpopup', PARAM_INT);
+
+        $mform->addElement('hidden', 'cmid');
+        $mform->setType('cmid', PARAM_INT);
+
+        $mform->addElement('hidden', 'courseid');
+        $mform->setType('courseid', PARAM_INT);
+
+        $mform->addElement('hidden', 'returnurl');
+        $mform->setType('returnurl', PARAM_LOCALURL);
+
+        $mform->addElement('hidden', 'scrollpos');
+        $mform->setType('scrollpos', PARAM_INT);
+
+        $mform->addElement('hidden', 'appendqnumstring');
+        $mform->setType('appendqnumstring', PARAM_ALPHA);
+    }
+}
+
 /**
  * Form definition base class. This defines the common fields that
  * all question types need. Question types should define their own
@@ -36,7 +66,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2006 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-abstract class question_edit_form extends moodleform {
+abstract class question_edit_form extends question_wizard_form {
     const DEFAULT_NUM_HINTS = 2;
 
     /**
@@ -193,45 +223,17 @@ abstract class question_edit_form extends moodleform {
             }
         }
 
-        // Standard fields at the end of the form.
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-
-        $mform->addElement('hidden', 'qtype');
-        $mform->setType('qtype', PARAM_ALPHA);
-
-        $mform->addElement('hidden', 'inpopup');
-        $mform->setType('inpopup', PARAM_INT);
-
-        $mform->addElement('hidden', 'versioning');
-        $mform->setType('versioning', PARAM_BOOL);
+        $this->add_hidden_fields();
 
         $mform->addElement('hidden', 'movecontext');
         $mform->setType('movecontext', PARAM_BOOL);
 
-        $mform->addElement('hidden', 'cmid');
-        $mform->setType('cmid', PARAM_INT);
-        $mform->setDefault('cmid', 0);
-
-        $mform->addElement('hidden', 'courseid');
-        $mform->setType('courseid', PARAM_INT);
-        $mform->setDefault('courseid', 0);
-
-        $mform->addElement('hidden', 'returnurl');
-        $mform->setType('returnurl', PARAM_LOCALURL);
-        $mform->setDefault('returnurl', 0);
-
-        $mform->addElement('hidden', 'scrollpos');
-        $mform->setType('scrollpos', PARAM_INT);
-        $mform->setDefault('scrollpos', 0);
-
-        $mform->addElement('hidden', 'appendqnumstring');
-        $mform->setType('appendqnumstring', PARAM_ALPHA);
-        $mform->setDefault('appendqnumstring', 0);
+        $mform->addElement('hidden', 'qtype');
+        $mform->setType('qtype', PARAM_ALPHA);
 
         $buttonarray = array();
         if (!empty($this->question->id)) {
-            //editing / moving question
+            // Editing / moving question
             if ($this->question->formoptions->movecontext) {
                 $buttonarray[] = $mform->createElement('submit', 'submitbutton',
                         get_string('moveq', 'question'));
@@ -247,7 +249,7 @@ abstract class question_edit_form extends moodleform {
             }
             $buttonarray[] = $mform->createElement('cancel');
         } else {
-            // adding new question
+            // Adding new question
             $buttonarray[] = $mform->createElement('submit', 'submitbutton',
                     get_string('savechanges'));
             $buttonarray[] = $mform->createElement('cancel');
