@@ -2204,9 +2204,9 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         // switch next two lines for ol li containers for form items.
         //        $this->_elementTemplates=array('default'=>"\n\t\t".'<li class="fitem"><label>{label}{help}<!-- BEGIN required -->{req}<!-- END required --></label><div class="qfelement<!-- BEGIN error --> error<!-- END error --> {type}"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</div></li>');
         $this->_elementTemplates = array(
-        'default'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><label>{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg} {help}</label></div><div class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</div></div>',
+        'default'=>"\n\t\t".'<div id="{id}" class="fitem {advanced}<!-- BEGIN required --> required<!-- END required --> fitem_{type}"><div class="fitemtitle"><label>{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg} {help}</label></div><div class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</div></div>',
 
-        'fieldset'=>"\n\t\t".'<div class="fitem {advanced}<!-- BEGIN required --> required<!-- END required -->"><div class="fitemtitle"><div class="fgrouplabel"><label>{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg} {help}</label></div></div><fieldset class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</fieldset></div>',
+        'fieldset'=>"\n\t\t".'<div id="{id}" class="fitem {advanced}<!-- BEGIN required --> required<!-- END required --> fitem_{type}"><div class="fitemtitle"><div class="fgrouplabel"><label>{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg} {help}</label></div></div><fieldset class="felement {type}<!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}</fieldset></div>',
 
         'static'=>"\n\t\t".'<div class="fitem {advanced}"><div class="fitemtitle"><div class="fstaticlabel"><label>{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg} {help}</label></div></div><div class="felement fstatic <!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}&nbsp;</div></div>',
 
@@ -2251,6 +2251,9 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
      * @param mixed $error
      */
     function startGroup(&$group, $required, $error){
+        // Make sure the element has an id.
+        $group->_generateId();
+
         if (method_exists($group, 'getElementTemplateType')){
             $html = $this->_elementTemplates[$group->getElementTemplateType()];
         }else{
@@ -2274,6 +2277,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }else{
             $html =str_replace('{help}', '', $html);
         }
+        $html =str_replace('{id}', 'fgroup_' . $group->getAttribute('id'), $html);
         $html =str_replace('{name}', $group->getName(), $html);
         $html =str_replace('{type}', 'fgroup', $html);
 
@@ -2324,6 +2328,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         } else {
             $html =str_replace('{advancedimg}', '', $html);
         }
+        $html =str_replace('{id}', 'fitem_' . $element->getAttribute('id'), $html);
         $html =str_replace('{type}', 'f'.$element->getType(), $html);
         $html =str_replace('{name}', $element->getName(), $html);
         if (method_exists($element, 'getHelpButton')){
