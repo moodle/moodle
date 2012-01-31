@@ -159,3 +159,65 @@ class question_usage_by_activity_test extends UnitTestCase {
         $quba->process_all_actions($slot, $postdata);
     }
 }
+
+/**
+ * Unit tests for loading data into the {@link question_usage_by_activity} class.
+ *
+ * @copyright  2012 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_usage_db_test extends data_loading_method_test_base {
+    public function test_load() {
+        $records = new test_recordset(array(
+        array('qubaid', 'contextid', 'component', 'preferredbehaviour',
+                                               'questionattemptid', 'contextid', 'questionusageid', 'slot',
+                                                              'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'flagged',
+                                                                                                             'questionsummary', 'rightanswer', 'responsesummary', 'timemodified',
+                                                                                                                                     'attemptstepid', 'sequencenumber', 'state', 'fraction',
+                                                                                                                                                                     'timecreated', 'userid', 'name', 'value'),
+        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 1, 0, 'todo',             null, 1256233700, 1,       null, null),
+        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 2, 1, 'todo',             null, 1256233705, 1,   'answer',  '1'),
+        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 5, 2, 'gradedright', 1.0000000, 1256233720, 1,  '-finish',  '1'),
+        ));
+
+        $question = test_question_maker::make_question('truefalse', 'true');
+        $question->id = -1;
+
+        question_bank::start_unit_test();
+        question_bank::load_test_question_data($question);
+        $quba = question_usage_by_activity::load_from_records($records, 1);
+        question_bank::end_unit_test();
+
+        $this->assertEqual('unit_test', $quba->get_owning_component());
+        $this->assertEqual(1, $quba->get_id());
+        $this->assertIsA($quba->get_observer(), 'question_engine_unit_of_work');
+        $this->assertEqual('interactive', $quba->get_preferred_behaviour());
+
+        $qa = $quba->get_question_attempt(1);
+
+        $this->assertEqual($question->questiontext, $qa->get_question()->questiontext);
+
+        $this->assertEqual(3, $qa->get_num_steps());
+
+        $step = $qa->get_step(0);
+        $this->assertEqual(question_state::$todo, $step->get_state());
+        $this->assertNull($step->get_fraction());
+        $this->assertEqual(1256233700, $step->get_timecreated());
+        $this->assertEqual(1, $step->get_user_id());
+        $this->assertEqual(array(), $step->get_all_data());
+
+        $step = $qa->get_step(1);
+        $this->assertEqual(question_state::$todo, $step->get_state());
+        $this->assertNull($step->get_fraction());
+        $this->assertEqual(1256233705, $step->get_timecreated());
+        $this->assertEqual(1, $step->get_user_id());
+        $this->assertEqual(array('answer' => '1'), $step->get_all_data());
+
+        $step = $qa->get_step(2);
+        $this->assertEqual(question_state::$gradedright, $step->get_state());
+        $this->assertEqual(1, $step->get_fraction());
+        $this->assertEqual(1256233720, $step->get_timecreated());
+        $this->assertEqual(1, $step->get_user_id());
+        $this->assertEqual(array('-finish' => '1'), $step->get_all_data());
+    }
+}
