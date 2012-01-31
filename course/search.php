@@ -73,7 +73,8 @@
         }
     }
 
-    if (has_capability('moodle/course:create', get_context_instance(CONTEXT_SYSTEM)) && $perpage != 99999) {
+    $capabilities = array('moodle/course:create', 'moodle/category:manage');
+    if (has_any_capability($capabilities, get_context_instance(CONTEXT_SYSTEM)) && ($perpage != 99999)) {
         $perpage = 30;
     }
 
@@ -137,10 +138,15 @@
                     JOIN {block_instances} bi ON bi.parentcontextid = ctx.id
                     WHERE ctx.contextlevel = " . CONTEXT_COURSE . " AND bi.blockname = ?)",
                 array($blockname));
+        $totalcount = count($courses);
+        //Keep only chunk of array which you want to display
+        if ($totalcount > $perpage) {
+            $courses = array_chunk($courses, $perpage, true);
+            $courses = $courses[$page];
+        }
         foreach ($courses as $course) {
             $courses[$course->id] = $course;
         }
-        $totalcount = count($courses);
     }
     // get list of courses containing modules if required
     elseif (!empty($modulelist) and confirm_sesskey()) {
@@ -180,7 +186,6 @@
             if ($PAGE->user_is_editing()) {
                 $string = get_string("turneditingoff");
                 $edit = "off";
-                $perpage = 30;
             } else {
                 $string = get_string("turneditingon");
                 $edit = "on";
@@ -212,10 +217,12 @@
         echo $OUTPUT->heading("$strsearchresults: $totalcount");
         $encodedsearch = urlencode($search);
 
-     ///add the module parameter to the paging bar if they exists
+        // add the module/block parameter to the paging bar if they exists
         $modulelink = "";
         if (!empty($modulelist) and confirm_sesskey()) {
             $modulelink = "&amp;modulelist=".$modulelist."&amp;sesskey=".sesskey();
+        } else if (!empty($blocklist) and confirm_sesskey()) {
+            $modulelink = "&amp;blocklist=".$blocklist."&amp;sesskey=".sesskey();
         }
 
         print_navigation_bar($totalcount, $page, $perpage, $encodedsearch, $modulelink);
@@ -369,6 +376,17 @@
         if ($perpage != 99999 && $totalcount > $perpage) {
             echo "<center><p>";
             echo "<a href=\"search.php?search=$encodedsearch".$modulelink."&amp;perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
+            echo "</p></center>";
+        } else if ($perpage === 99999) {
+            $defultprepage = 10;
+            //If user has course:create or category:manage capability the show 30 records.
+            $capabilities = array('moodle/course:create', 'moodle/category:manage');
+            if (has_any_capability($capabilities, get_context_instance(CONTEXT_SYSTEM))) {
+                $defultprepage = 30;
+            }
+
+            echo "<center><p>";
+            echo "<a href=\"search.php?search=$encodedsearch".$modulelink."&amp;perpage=".$defultprepage."\">".get_string("showperpage", "", $defultprepage)."</a>";
             echo "</p></center>";
         }
     }
