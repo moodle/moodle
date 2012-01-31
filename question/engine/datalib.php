@@ -17,6 +17,25 @@
 /**
  * Code for loading and saving question attempts to and from the database.
  *
+ * A note for future reference. This code is pretty efficient but there are two
+ * potential optimisations that could be contemplated, at the cost of making the
+ * code more complex:
+ *
+ * 1. (This is the easier one, but probably not worth doing.) In the unit-of-work
+ *    save method, we could get all the ids for steps due to be deleted or modified,
+ *    and delete all the question_attempt_step_data for all of those steps in one
+ *    query. That would save one DB query for each ->stepsupdated. However that number
+ *    is 0 except when re-grading, and when regrading, there are many more inserts
+ *    into question_attempt_step_data than deletes, so it is really hardly worth it.
+ *
+ * 2. A more significant optimisation would be to write an efficient
+ *    $DB->insert_records($arrayofrecords) method (for example using functions
+ *    like pg_copy_from) and then whenever we save stuff (unit_of_work->save and
+ *    insert_questions_usage_by_activity) collect together all the records that
+ *    need to be inserted into question_attempt_step_data, and insert them with
+ *    a single call to $DB->insert_records. This is likely to be the biggest win.
+ *    We do a lot of separate inserts into question_attempt_step_data.
+ *
  * @package    moodlecore
  * @subpackage questionengine
  * @copyright  2009 The Open University
@@ -76,7 +95,7 @@ class question_engine_data_mapper {
      * Store an entire {@link question_attempt} in the database,
      * including all the question_attempt_steps that comprise it.
      * @param question_attempt $qa the question attempt to store.
-     * @param object $context the context of the owning question_usage_by_activity.
+     * @param context $context the context of the owning question_usage_by_activity.
      */
     public function insert_question_attempt(question_attempt $qa, $context) {
         $record = new stdClass();
@@ -105,14 +124,13 @@ class question_engine_data_mapper {
     }
 
     /**
-     * Store a {@link question_attempt_step} in the database.
-     * @param question_attempt_step $qa the step to store.
+     * Helper method used by insert_question_attempt_step and update_question_attempt_step
+     * @param question_attempt_step $step the step to store.
      * @param int $questionattemptid the question attept id this step belongs to.
      * @param int $seq the sequence number of this stop.
-     * @param object $context the context of the owning question_usage_by_activity.
+     * @return stdClass data to insert into the database.
      */
-    public function insert_question_attempt_step(question_attempt_step $step,
-            $questionattemptid, $seq, $context) {
+    protected function make_step_record(question_attempt_step $step, $questionattemptid, $seq) {
         $record = new stdClass();
         $record->questionattemptid = $questionattemptid;
         $record->sequencenumber = $seq;
@@ -120,20 +138,62 @@ class question_engine_data_mapper {
         $record->fraction = $step->get_fraction();
         $record->timecreated = $step->get_timecreated();
         $record->userid = $step->get_user_id();
+        return $record;
+    }
 
-        $record->id = $this->db->insert_record('question_attempt_steps', $record);
-
+    /**
+     * Helper method used by insert_question_attempt_step and update_question_attempt_step
+     * @param question_attempt_step $step the step to store.
+     * @param int $stepid the id of the step.
+     * @param context $context the context of the owning question_usage_by_activity.
+     */
+    protected function insert_step_data(question_attempt_step $step, $stepid, $context) {
         foreach ($step->get_all_data() as $name => $value) {
             if ($value instanceof question_file_saver) {
-                $value->save_files($record->id, $context);
+                $value->save_files($stepid, $context);
             }
 
             $data = new stdClass();
-            $data->attemptstepid = $record->id;
+            $data->attemptstepid = $stepid;
             $data->name = $name;
             $data->value = $value;
             $this->db->insert_record('question_attempt_step_data', $data, false);
         }
+    }
+
+    /**
+     * Store a {@link question_attempt_step} in the database.
+     * @param question_attempt_step $step the step to store.
+     * @param int $questionattemptid the question attept id this step belongs to.
+     * @param int $seq the sequence number of this stop.
+     * @param context $context the context of the owning question_usage_by_activity.
+     */
+    public function insert_question_attempt_step(question_attempt_step $step,
+            $questionattemptid, $seq, $context) {
+
+        $record = $this->make_step_record($step, $questionattemptid, $seq);
+        $record->id = $this->db->insert_record('question_attempt_steps', $record);
+
+        $this->insert_step_data($step, $record->id, $context);
+    }
+
+    /**
+     * Update a {@link question_attempt_step} in the database.
+     * @param question_attempt_step $qa the step to store.
+     * @param int $questionattemptid the question attept id this step belongs to.
+     * @param int $seq the sequence number of this stop.
+     * @param context $context the context of the owning question_usage_by_activity.
+     */
+    public function update_question_attempt_step(question_attempt_step $step,
+            $questionattemptid, $seq, $context) {
+
+        $record = $this->make_step_record($step, $questionattemptid, $seq);
+        $record->id = $step->get_id();
+        $this->db->update_record('question_attempt_steps', $record);
+
+        $this->db->delete_records('question_attempt_step_data',
+                array('attemptstepid' => $record->id));
+        $this->insert_step_data($step, $record->id, $context);
     }
 
     /**
@@ -727,29 +787,27 @@ ORDER BY
     /**
      * Delete all the steps for a question attempt.
      * @param int $qaids question_attempt id.
+     * @param context $context the context that the $quba belongs to.
      */
-    public function delete_steps_for_question_attempts($qaids, $context) {
-        if (empty($qaids)) {
+    public function delete_steps($stepids, $context) {
+        if (empty($stepids)) {
             return;
         }
-        list($test, $params) = $this->db->get_in_or_equal($qaids, SQL_PARAMS_NAMED);
+        list($test, $params) = $this->db->get_in_or_equal($stepids, SQL_PARAMS_NAMED);
 
-        $this->delete_response_files($context->id, "IN (
-                SELECT id
-                FROM {question_attempt_steps}
-                WHERE questionattemptid $test)", $params);
+        if ($deletefiles) {
+            $this->delete_response_files($context->id, $test, $params);
+        }
 
         if ($this->db->get_dbfamily() == 'mysql') {
             $this->delete_attempt_steps_for_mysql($test, $params);
             return;
         }
 
-        $this->db->delete_records_select('question_attempt_step_data', "attemptstepid IN (
-                SELECT qas.id
-                FROM {question_attempt_steps} qas
-                WHERE questionattemptid $test)", $params);
+        $this->db->delete_records_select('question_attempt_step_data',
+                "attemptstepid $test", $params);
         $this->db->delete_records_select('question_attempt_steps',
-                'questionattemptid ' . $test, $params);
+                "attemptstepid $test", $params);
     }
 
     /**
@@ -953,28 +1011,34 @@ class question_engine_unit_of_work implements question_usage_observer {
     protected $modified = false;
 
     /**
-     * @var array list of number in usage => {@link question_attempt}s that
+     * @var array list of slot => {@link question_attempt}s that
      * were already in the usage, and which have been modified.
      */
     protected $attemptsmodified = array();
 
     /**
-     * @var array list of number in usage => {@link question_attempt}s that
+     * @var array list of slot => {@link question_attempt}s that
      * have been added to the usage.
      */
     protected $attemptsadded = array();
 
     /**
-     * @var array list of question attempt ids to delete the steps for, before
-     * inserting new steps.
-     */
-    protected $attemptstodeletestepsfor = array();
-
-    /**
-     * @var array list of array(question_attempt_step, question_attempt id, seq number)
+     * @var array of array(question_attempt_step, question_attempt id, seq number)
      * of steps that have been added to question attempts in this usage.
      */
     protected $stepsadded = array();
+
+    /**
+     * @var array of array(question_attempt_step, question_attempt id, seq number)
+     * of steps that have been modified in their attempt.
+     */
+    protected $stepsmodified = array();
+
+    /**
+     * @var array list of question_attempt_step.id => question_attempt_step of steps
+     * that were previously stored in the database, but which are no longer required.
+     */
+    protected $stepsdeleted = array();
 
     /**
      * Constructor.
@@ -989,9 +1053,9 @@ class question_engine_unit_of_work implements question_usage_observer {
     }
 
     public function notify_attempt_modified(question_attempt $qa) {
-        $no = $qa->get_slot();
-        if (!array_key_exists($no, $this->attemptsadded)) {
-            $this->attemptsmodified[$no] = $qa;
+        $slot = $qa->get_slot();
+        if (!array_key_exists($slot, $this->attemptsadded)) {
+            $this->attemptsmodified[$slot] = $qa;
         }
     }
 
@@ -999,27 +1063,121 @@ class question_engine_unit_of_work implements question_usage_observer {
         $this->attemptsadded[$qa->get_slot()] = $qa;
     }
 
-    public function notify_delete_attempt_steps(question_attempt $qa) {
-
-        if (array_key_exists($qa->get_slot(), $this->attemptsadded)) {
-            return;
-        }
-
-        $qaid = $qa->get_database_id();
-        foreach ($this->stepsadded as $key => $stepinfo) {
-            if ($stepinfo[1] == $qaid) {
-                unset($this->stepsadded[$key]);
-            }
-        }
-
-        $this->attemptstodeletestepsfor[$qaid] = 1;
-    }
-
     public function notify_step_added(question_attempt_step $step, question_attempt $qa, $seq) {
         if (array_key_exists($qa->get_slot(), $this->attemptsadded)) {
             return;
         }
-        $this->stepsadded[] = array($step, $qa->get_database_id(), $seq);
+
+        if (($key = $this->is_step_added($step)) !== false) {
+            return;
+        }
+
+        if (($key = $this->is_step_modified($step)) !== false) {
+            throw new coding_exception('Cannot add a step that has already been modified.');
+        }
+
+        if (($key = $this->is_step_deleted($step)) !== false) {
+            unset($this->stepsdeleted[$step->get_id()]);
+            $this->stepsmodified[] = array($step, $qa->get_database_id(), $seq);
+            return;
+        }
+
+        $stepid = $step->get_id();
+        if ($stepid) {
+            if (array_key_exists($stepid, $this->stepsdeleted)) {
+                unset($this->stepsdeleted[$stepid]);
+            }
+            $this->stepsmodified[] = array($step, $qa->get_database_id(), $seq);
+
+        } else {
+            $this->stepsadded[] = array($step, $qa->get_database_id(), $seq);
+        }
+    }
+
+    public function notify_step_modified(question_attempt_step $step, question_attempt $qa, $seq) {
+        if (array_key_exists($qa->get_slot(), $this->attemptsadded)) {
+            return;
+        }
+
+        if (($key = $this->is_step_added($step)) !== false) {
+            return;
+        }
+
+        if (($key = $this->is_step_deleted($step)) !== false) {
+            throw new coding_exception('Cannot modify a step after it has been deleted.');
+        }
+
+        $stepid = $step->get_id();
+        if (empty($stepid)) {
+            throw new coding_exception('Cannot modify a step that has never been stored in the database.');
+        }
+
+        $this->stepsmodified[] = array($step, $qa->get_database_id(), $seq);
+    }
+
+    public function notify_step_deleted(question_attempt_step $step, question_attempt $qa) {
+        if (array_key_exists($qa->get_slot(), $this->attemptsadded)) {
+            return;
+        }
+
+        if (($key = $this->is_step_added($step)) !== false) {
+            unset($this->stepsadded[$key]);
+            return;
+        }
+
+        if (($key = $this->is_step_modified($step)) !== false) {
+            unset($this->stepsmodified[$key]);
+        }
+
+        $stepid = $step->get_id();
+        if (empty($stepid)) {
+            return; // Was never in the database.
+        }
+
+        $this->stepsdeleted[$stepid] = $step;
+    }
+
+    /**
+     * @param question_attempt_step $step a step
+     * @return int|false if the step is in the list of steps to be added, return
+     *      the key, otherwise return false.
+     */
+    protected function is_step_added(question_attempt_step $step) {
+        foreach ($this->stepsadded as $key => $data) {
+            list($addedstep, $qaid, $seq) = $data;
+            if ($addedstep === $step) {
+                return $key;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param question_attempt_step $step a step
+     * @return int|false if the step is in the list of steps to be modified, return
+     *      the key, otherwise return false.
+     */
+    protected function is_step_modified(question_attempt_step $step) {
+        foreach ($this->stepsmodified as $key => $data) {
+            list($modifiedstep, $qaid, $seq) = $data;
+            if ($modifiedstep === $step) {
+                return $key;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param question_attempt_step $step a step
+     * @return bool whether the step is in the list of steps to be deleted.
+     */
+    protected function is_step_deleted(question_attempt_step $step) {
+        foreach ($this->stepsdeleted as $deletedstep) {
+            if ($deletedstep === $step) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -1027,8 +1185,13 @@ class question_engine_unit_of_work implements question_usage_observer {
      * @param question_engine_data_mapper $dm the mapper to use to update the database.
      */
     public function save(question_engine_data_mapper $dm) {
-        $dm->delete_steps_for_question_attempts(array_keys($this->attemptstodeletestepsfor),
-                $this->quba->get_owning_context());
+        $dm->delete_steps(array_keys($this->stepsdeleted), $this->quba->get_owning_context());
+
+        foreach ($this->stepsmodified as $stepinfo) {
+            list($step, $questionattemptid, $seq) = $stepinfo;
+            $dm->update_question_attempt_step($step, $questionattemptid, $seq,
+                    $this->quba->get_owning_context());
+        }
 
         foreach ($this->stepsadded as $stepinfo) {
             list($step, $questionattemptid, $seq) = $stepinfo;

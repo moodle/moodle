@@ -187,7 +187,7 @@ class question_attempt {
      * For internal use only.
      * @param int $slot
      */
-    public function set_number_in_usage($slot) {
+    public function set_slot($slot) {
         $this->slot = $slot;
     }
 
@@ -211,6 +211,15 @@ class question_attempt {
      */
     public function set_database_id($id) {
         $this->id = $id;
+    }
+
+    /**
+     * You should almost certainly not call this method from your code. It is for
+     * internal use only.
+     * @param question_usage_observer that should be used to tracking changes made to this qa.
+     */
+    public function set_observer($observer) {
+        $this->observer = $observer;
     }
 
     /** @return int|string the id of the {@link question_usage_by_activity} we belong to. */
@@ -802,9 +811,11 @@ class question_attempt {
      * @param array $submitteddata optional, used when re-starting to keep the same initial state.
      * @param int $timestamp optional, the timstamp to record for this action. Defaults to now.
      * @param int $userid optional, the user to attribute this action to. Defaults to the current user.
+     * @param int $existingstepid optional, if this step is going to replace an existing step
+     *      (for example, during a regrade) this is the id of the previous step we are replacing.
      */
     public function start($preferredbehaviour, $variant, $submitteddata = array(),
-            $timestamp = null, $userid = null) {
+            $timestamp = null, $userid = null, $existingstepid = null) {
 
         // Initialise the behaviour.
         $this->variant = $variant;
@@ -820,7 +831,7 @@ class question_attempt {
         $this->minfraction = $this->behaviour->get_min_fraction();
 
         // Initialise the first step.
-        $firststep = new question_attempt_step($submitteddata, $timestamp, $userid);
+        $firststep = new question_attempt_step($submitteddata, $timestamp, $userid, $existingstepid);
         $firststep->set_state(question_state::$todo);
         if ($submitteddata) {
             $this->question->apply_attempt_state($firststep);
@@ -1041,8 +1052,8 @@ class question_attempt {
      * @param int $timestamp the time to record for the action. (If not given, use now.)
      * @param int $userid the user to attribute the aciton to. (If not given, use the current user.)
      */
-    public function process_action($submitteddata, $timestamp = null, $userid = null) {
-        $pendingstep = new question_attempt_pending_step($submitteddata, $timestamp, $userid);
+    public function process_action($submitteddata, $timestamp = null, $userid = null, $existingstepid = null) {
+        $pendingstep = new question_attempt_pending_step($submitteddata, $timestamp, $userid, $existingstepid);
         if ($this->behaviour->process_action($pendingstep) == self::KEEP) {
             $this->add_step($pendingstep);
             if ($pendingstep->response_summary_changed()) {
@@ -1074,13 +1085,14 @@ class question_attempt {
     public function regrade(question_attempt $oldqa, $finished) {
         $first = true;
         foreach ($oldqa->get_step_iterator() as $step) {
+            $this->observer->notify_step_deleted($step, $this);
             if ($first) {
                 $first = false;
                 $this->start($oldqa->behaviour, $oldqa->get_variant(), $step->get_all_data(),
-                        $step->get_timecreated(), $step->get_user_id());
+                        $step->get_timecreated(), $step->get_user_id(), $step->get_id());
             } else {
                 $this->process_action($step->get_submitted_data(),
-                        $step->get_timecreated(), $step->get_user_id());
+                        $step->get_timecreated(), $step->get_user_id(), $step->get_id());
             }
         }
         if ($finished) {
@@ -1147,7 +1159,7 @@ class question_attempt {
      *
      * @param Iterator $records Raw records loaded from the database.
      * @param int $questionattemptid The id of the question_attempt to extract.
-     * @return question_attempt The newly constructed question_attempt_step.
+     * @return question_attempt The newly constructed question_attempt.
      */
     public static function load_from_records($records, $questionattemptid,
             question_usage_observer $observer, $preferredbehaviour) {
@@ -1172,7 +1184,7 @@ class question_attempt {
         $qa = new question_attempt($question, $record->questionusageid,
                 null, $record->maxmark + 0);
         $qa->set_database_id($record->questionattemptid);
-        $qa->set_number_in_usage($record->slot);
+        $qa->set_slot($record->slot);
         $qa->variant = $record->variant + 0;
         $qa->minfraction = $record->minfraction + 0;
         $qa->set_flagged($record->flagged);
@@ -1278,7 +1290,7 @@ class question_attempt_with_restricted_history extends question_attempt {
     public function set_flagged($flagged) {
         coding_exception('Cannot modify a question_attempt_with_restricted_history.');
     }
-    public function set_number_in_usage($slot) {
+    public function set_slot($slot) {
         coding_exception('Cannot modify a question_attempt_with_restricted_history.');
     }
     public function set_question_summary($questionsummary) {
