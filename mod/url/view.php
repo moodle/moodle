@@ -67,6 +67,15 @@ if (empty($exturl) or $exturl === 'http://') {
 }
 unset($exturl);
 
+$displaytype = url_get_final_display_type($url);
+if ($displaytype == RESOURCELIB_DISPLAY_OPEN) {
+    // For 'open' links, we always redirect to the content - except if the user
+    // just chose 'save and display' from the form then that would be confusing
+    if (!isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], 'modedit.php') === false) {
+        $redirect = true;
+    }
+}
+
 if ($redirect) {
     // coming from course page or url index page,
     // the redirection is needed for completion tracking and logging
@@ -74,7 +83,7 @@ if ($redirect) {
     redirect(str_replace('&amp;', '&', $fullurl));
 }
 
-switch (url_get_final_display_type($url)) {
+switch ($displaytype) {
     case RESOURCELIB_DISPLAY_EMBED:
         url_display_embed($url, $cm, $course);
         break;

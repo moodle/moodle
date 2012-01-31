@@ -76,16 +76,26 @@ if (count($files) < 1) {
     unset($files);
 }
 
+$resource->mainfile = $file->get_filename();
+$displaytype = resource_get_final_display_type($resource);
+if ($displaytype == RESOURCELIB_DISPLAY_OPEN || $displaytype == RESOURCELIB_DISPLAY_DOWNLOAD) {
+    // For 'open' and 'download' links, we always redirect to the content - except
+    // if the user just chose 'save and display' from the form then that would be
+    // confusing
+    if (!isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], 'modedit.php') === false) {
+        $redirect = true;
+    }
+}
+
 if ($redirect) {
     // coming from course page or url index page
     // this redirect trick solves caching problems when tracking views ;-)
     $path = '/'.$context->id.'/mod_resource/content/'.$resource->revision.$file->get_filepath().$file->get_filename();
-    $fullurl = file_encode_url($CFG->wwwroot.'/pluginfile.php', $path, false);
+    $fullurl = moodle_url::make_file_url('/pluginfile.php', $path, $displaytype == RESOURCELIB_DISPLAY_DOWNLOAD);
     redirect($fullurl);
 }
 
-$resource->mainfile = $file->get_filename();
-switch (resource_get_final_display_type($resource)) {
+switch ($displaytype) {
     case RESOURCELIB_DISPLAY_EMBED:
         resource_display_embed($resource, $cm, $course, $file);
         break;
