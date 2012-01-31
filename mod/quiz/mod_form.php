@@ -251,7 +251,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'security', get_string('extraattemptrestrictions', 'quiz'));
 
-        // Enforced time delay between quiz attempts.
+        // Require password to begin quiz attempt.
         $mform->addElement('passwordunmask', 'quizpassword', get_string('requirepassword', 'quiz'));
         $mform->setType('quizpassword', PARAM_TEXT);
         $mform->addHelpButton('quizpassword', 'requirepassword', 'quiz');
