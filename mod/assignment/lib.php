@@ -269,6 +269,7 @@ class assignment_base {
      * @global object
      * @global object
      * @param object $submission The submission object or NULL in which case it will be loaded
+     * @return boolean
      */
     function view_feedback($submission=NULL) {
         global $USER, $CFG, $DB, $OUTPUT, $PAGE;
@@ -290,31 +291,47 @@ class assignment_base {
 
         if (!$canviewfeedback) {
             // can not view or submit assignments -> no feedback
-            return;
+            return false;
         }
 
         $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $userid);
         $item = $grading_info->items[0];
         $grade = $item->grades[$userid];
 
-        if ($grade->hidden or $grade->grade === false) { // hidden or error
-            return;
+        $fs = get_file_storage();
+        $noresponsefiles = $fs->is_area_empty($this->context->id, 'mod_assignment', 'response', $submission->id);
+
+        if ($grade->grade === null ) { // No grade to show yet
+            if (empty($submission->submissioncomment) && $noresponsefiles) { // Nothing to show yet
+                return false;
+            }
+ 
+            // We need the teacher info
+            if (!$teacher = $DB->get_record('user', array('id'=>$submission->teacher))) {
+                print_error('cannotfindteacher');
+            }
+
+            $feedback_date = $submission->timemarked;
+            $feedback = $submission->submissioncomment;
+            $str_long_grade = '-';
+        }
+        else {
+            if ($grade->hidden or $grade->grade === false) { // hidden or error
+                return false;
+            }
+
+            // We need the teacher info
+            if (!$teacher = $DB->get_record('user', array('id'=>$grade->usermodified))) {
+                print_error('cannotfindteacher');
+            }
+
+            $feedback_date = $grade->dategraded;
+            $feedback = $grade->str_feedback;
+            $str_long_grade = $grade->str_long_grade;
         }
 
-        if ($grade->grade === null and empty($grade->str_feedback)) {   /// Nothing to show yet
-            return;
-        }
-
-        $graded_date = $grade->dategraded;
-        $graded_by   = $grade->usermodified;
-
-    /// We need the teacher info
-        if (!$teacher = $DB->get_record('user', array('id'=>$graded_by))) {
-            print_error('cannotfindteacher');
-        }
-
-    /// Print the feedback
-        echo $OUTPUT->heading(get_string('feedbackfromteacher', 'assignment', fullname($teacher)));
+        // Print the feedback
+        echo $OUTPUT->heading(get_string('submissionfeedback', 'assignment'), 3);
 
         echo '<table cellspacing="0" class="feedback">';
 
@@ -329,7 +346,7 @@ class assignment_base {
         if ($teacher) {
             echo '<div class="fullname">'.fullname($teacher).'</div>';
         }
-        echo '<div class="time">'.userdate($graded_date).'</div>';
+        echo '<div class="time">'.userdate($feedback_date).'</div>';
         echo '</div>';
         echo '</td>';
         echo '</tr>';
@@ -337,32 +354,26 @@ class assignment_base {
         echo '<tr>';
         echo '<td class="left side">&nbsp;</td>';
         echo '<td class="content">';
-        $gradestr = '<div class="grade">'. get_string("grade").': '.$grade->str_long_grade. '</div>';
-        if (!empty($submission) && $controller = get_grading_manager($this->context, 'mod_assignment', 'submission')->get_active_controller()) {
-            $controller->set_grade_range(make_grades_menu($this->assignment->grade));
-            echo $controller->render_grade($PAGE, $submission->id, $item, $gradestr, has_capability('mod/assignment:grade', $this->context));
-        } else {
-            echo $gradestr;
+
+        if ($this->assignment->grade) {
+            $gradestr = '<div class="grade">'. get_string("grade").': '.$str_long_grade. '</div>';
+            if (!empty($submission) && $controller = get_grading_manager($this->context, 'mod_assignment', 'submission')->get_active_controller()) {
+                $controller->set_grade_range(make_grades_menu($this->assignment->grade));
+                echo $controller->render_grade($PAGE, $submission->id, $item, $gradestr, has_capability('mod/assignment:grade', $this->context));
+            } else {
+                echo $gradestr;
+            }
+            echo '<div class="clearer"></div>';
         }
-        echo '<div class="clearer"></div>';
 
         echo '<div class="comment">';
-        echo $grade->str_feedback;
+        echo $feedback;
         echo '</div>';
         echo '</tr>';
 
-         if ($this->type == 'uploadsingle') { //@TODO: move to overload view_feedback method in the class or is uploadsingle merging into upload?
-            $responsefiles = $this->print_responsefiles($submission->userid, true);
-            if (!empty($responsefiles)) {
-                echo '<tr>';
-                echo '<td class="left side">&nbsp;</td>';
-                echo '<td class="content">';
-                echo $responsefiles;
-                echo '</tr>';
-            }
-         }
-
         echo '</table>';
+
+        return true;
     }
 
     /**

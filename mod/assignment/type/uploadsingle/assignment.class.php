@@ -78,7 +78,9 @@ class assignment_uploadsingle extends assignment_base {
         if ($submission = $this->get_submission($USER->id)) {
             $filecount = $this->count_user_files($submission->id);
             if ($submission->timemarked) {
-                $this->view_feedback();
+                if($this->view_feedback($submission)) {
+                    $this->view_responsefile($submission);
+                }
             }
             if ($filecount) {
                 echo $OUTPUT->box($this->print_user_files($USER->id, true), 'generalbox boxaligncenter');
@@ -90,6 +92,26 @@ class assignment_uploadsingle extends assignment_base {
         }
 
         $this->view_footer();
+    }
+
+    /**
+     * Display the response file to the student
+     *
+     * This default method prints the response file
+     *
+     * @param object $submission The submission object
+     */
+    function view_responsefile($submission) {
+        $responsefiles = $this->print_responsefiles($submission->userid, true);
+        if (!empty($responsefiles)) {
+            echo '<table cellspacing="0" class="feedback">';
+            echo '<tr>';
+            echo '<td class="left side">&nbsp;</td>';
+            echo '<td class="content">';
+            echo $responsefiles;
+            echo '</tr>';
+            echo '</table>';
+        }
     }
 
     function process_feedback($formdata=null) {
