@@ -104,7 +104,7 @@ if($do_show == 'showentries'){
         $baseurl = new moodle_url('/mod/feedback/show_entries.php');
         $baseurl->params(array('id'=>$id, 'do_show'=>$do_show, 'showall'=>$showall));
 
-        $tablecolumns = array('userpic', 'fullname', 'c.timemodified');
+        $tablecolumns = array('userpic', 'fullname', 'completed_timemodified');
         $tableheaders = array(get_string('userpic'), get_string('fullnameuser'), get_string('date'));
 
         if(has_capability('mod/feedback:deletesubmissions', $context)) {
