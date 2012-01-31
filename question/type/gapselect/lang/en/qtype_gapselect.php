@@ -23,16 +23,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addinggapselect'] = 'Adding a select missing words question';
 $string['addmorechoiceblanks'] = 'Blanks for {no} more choices';
 $string['answer'] = 'Answer';
 $string['choices'] = 'Choices';
 $string['choicex'] = 'Choice {no}';
 $string['correctansweris'] = 'The correct answer is: {$a}';
-$string['editinggapselect'] = 'Editing a select missing words question';
-$string['gapselect'] = 'Select missing words';
-$string['gapselect_help'] = 'Type in some question text like "The [[1]] jumped over the [[2]]", then enter the possible words to go in gaps 1 and 2 underneath.';
-$string['gapselectsummary'] = 'Missing words in some text are filled in using dropdown menus.';
 $string['group'] = 'Group';
 $string['pleaseputananswerineachbox'] = 'Please put an answer in each box.';
+$string['pluginname'] = 'Select missing words';
+$string['pluginname_help'] = 'Type in some question text like "The [[1]] jumped over the [[2]]", then enter the possible words to go in gaps 1 and 2 underneath.';
+$string['pluginname_link'] = 'question/type/gapselect';
+$string['pluginnameadding'] = 'Adding a select missing words question';
+$string['pluginnameediting'] = 'Editing a select missing words question';
+$string['pluginnamesummary'] = 'Missing words in some text are filled in using dropdown menus.';
 $string['shuffle'] = 'Shuffle';
