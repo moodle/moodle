@@ -22,16 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addingddmarker'] = 'Adding drag and drop markers';
 $string['addmoreitems'] = 'Blanks for {no} more markers';
 $string['alttext'] = 'Alt text';
 $string['answer'] = 'Answer';
 $string['bgimage'] = 'Background image';
 $string['coords'] = 'Coords';
 $string['correctansweris'] = 'The correct answer is: {$a}';
-$string['ddmarker'] = 'Drag and drop markers';
-$string['ddmarker_help'] = 'select a background image file, enter text labels for markers and define the drop zones on the background image to which they must be dragged.';
-$string['ddmarkersummary'] = 'Markers are dragged and dropped onto a background image.';
 $string['draggableimage'] = 'Draggable image';
 $string['draggableitem'] = 'Draggable item';
 $string['draggableitemheader'] = 'Draggable item {$a}';
@@ -39,7 +35,6 @@ $string['draggableitemtype'] = 'Type';
 $string['draggableword'] = 'Draggable text';
 $string['dropzone'] = 'Drop zone {$a}';
 $string['dropzoneheader'] = 'Drop zones';
-$string['editingddmarker'] = 'Editing drag and drop markers';
 $string['followingarewrong'] = 'The following markers have been placed in the wrong area : {$a}.';
 $string['followingarewrongandhighlighted'] = 'The following markers were incorrectly placed :  {$a}. Highlighted marker(s) are now shown with the correct placement(s).<br /> Click on the marker to highlight the allowed area.';
 $string['formerror_nobgimage'] = 'You need to select an image to use as the background for the drag and drop area.';
@@ -58,6 +53,12 @@ $string['marker_n'] = 'Marker {no}';
 $string['markers'] = 'Markers';
 $string['nolabel'] = 'No label text';
 $string['pleasedragatleastonemarker'] = 'Your answer is not complete, you must place at least one marker on the image.';
+$string['pluginname'] = 'Drag and drop markers';
+$string['pluginname_help'] = 'select a background image file, enter text labels for markers and define the drop zones on the background image to which they must be dragged.';
+$string['pluginname_link'] = 'question/type/ddmarker';
+$string['pluginnameadding'] = 'Adding drag and drop markers';
+$string['pluginnameediting'] = 'Editing drag and drop markers';
+$string['pluginnamesummary'] = 'Markers are dragged and dropped onto a background image.';
 $string['previewarea'] = 'Preview area -';
 $string['previewareaheader'] = 'Preview';
 $string['previewareamessage'] = 'Select a background image file, enter text labels for markers and define the drop zones on the background image to which they must be dragged.';
