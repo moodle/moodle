@@ -42,6 +42,7 @@
     }
     $PAGE->set_url('/course/search.php', $urlparams);
     $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+    $PAGE->set_pagelayout('standard');
 
     if ($CFG->forcelogin) {
         require_login();
