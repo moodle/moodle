@@ -42,7 +42,7 @@ echo $OUTPUT->doctype() ?>
    <?php if ($hasheading || $hasnavbar) { ?>
     <div id="page-header">
         <?php if ($hasheading) { ?>
-         <a class="logo" href="<?php $CFG->wwwroot; ?>" title="<?php get_string('home'); ?>"></a>
+         <a class="logo" href="<?php echo $CFG->wwwroot; ?>" title="<?php print_string('home'); ?>"></a>
          <div class="headermenu"><?php
             if ($haslogininfo) {
                 echo $OUTPUT->login_info();
