@@ -124,11 +124,6 @@ class question_usage_by_activity {
         return $this->id;
     }
 
-    /** @return question_usage_observer that is tracking changes made to this usage. */
-    public function get_observer() {
-        return $this->observer;
-    }
-
     /**
      * For internal use only. Used by {@link question_engine_data_mapper} to set
      * the id when a usage is saved to the database.
@@ -138,6 +133,23 @@ class question_usage_by_activity {
         $this->id = $id;
         foreach ($this->questionattempts as $qa) {
             $qa->set_usage_id($id);
+        }
+    }
+
+    /** @return question_usage_observer that is tracking changes made to this usage. */
+    public function get_observer() {
+        return $this->observer;
+    }
+
+    /**
+     * You should almost certainly not call this method from your code. It is for
+     * internal use only.
+     * @param question_usage_observer that should be used to tracking changes made to this usage.
+     */
+    public function set_observer($observer) {
+        $this->observer = $observer;
+        foreach ($this->questionattempts as $qa) {
+            $qa->set_observer($observer);
         }
     }
 
@@ -159,7 +171,7 @@ class question_usage_by_activity {
         } else {
             $this->questionattempts[] = $qa;
         }
-        $qa->set_number_in_usage(end(array_keys($this->questionattempts)));
+        $qa->set_slot(end(array_keys($this->questionattempts)));
         $this->observer->notify_attempt_added($qa);
         return $qa->get_slot();
     }
@@ -647,11 +659,10 @@ class question_usage_by_activity {
             $newmaxmark = $oldqa->get_max_mark();
         }
 
-        $this->observer->notify_delete_attempt_steps($oldqa);
-
         $newqa = new question_attempt($oldqa->get_question(), $oldqa->get_usage_id(),
                 $this->observer, $newmaxmark);
         $newqa->set_database_id($oldqa->get_database_id());
+        $newqa->set_slot($oldqa->get_slot());
         $newqa->regrade($oldqa, $finished);
 
         $this->questionattempts[$slot] = $newqa;
@@ -676,7 +687,7 @@ class question_usage_by_activity {
      *
      * @param Iterator $records Raw records loaded from the database.
      * @param int $questionattemptid The id of the question_attempt to extract.
-     * @return question_attempt The newly constructed question_attempt_step.
+     * @return question_usage_by_activity The newly constructed usage.
      */
     public static function load_from_records($records, $qubaid) {
         $record = $records->current();
@@ -808,19 +819,28 @@ interface question_usage_observer {
     public function notify_attempt_added(question_attempt $qa);
 
     /**
-     * Called we want to delete the old step records for an attempt, prior to
-     * inserting newones. This is used by regrading.
-     * @param question_attempt $qa the question attempt to delete the steps for.
-     */
-    public function notify_delete_attempt_steps(question_attempt $qa);
-
-    /**
      * Called when a new step is added to a question attempt in this usage.
-     * @param $step the new step.
-     * @param $qa the usage it is being added to.
-     * @param $seq the sequence number of the new step.
+     * @param question_attempt_step $step the new step.
+     * @param question_attempt $qa the usage it is being added to.
+     * @param int $seq the sequence number of the new step.
      */
     public function notify_step_added(question_attempt_step $step, question_attempt $qa, $seq);
+
+    /**
+     * Called when a new step is updated in a question attempt in this usage.
+     * @param question_attempt_step $step the step that was updated.
+     * @param question_attempt $qa the usage it is being added to.
+     * @param int $seq the sequence number of the new step.
+     */
+    public function notify_step_modified(question_attempt_step $step, question_attempt $qa, $seq);
+
+    /**
+     * Called when a new step is updated in a question attempt in this usage.
+     * @param question_attempt_step $step the step to delete.
+     * @param question_attempt $qa the usage it is being added to.
+     */
+    public function notify_step_deleted(question_attempt_step $step, question_attempt $qa);
+
 }
 
 
@@ -838,8 +858,10 @@ class question_usage_null_observer implements question_usage_observer {
     }
     public function notify_attempt_added(question_attempt $qa) {
     }
-    public function notify_delete_attempt_steps(question_attempt $qa) {
-    }
     public function notify_step_added(question_attempt_step $step, question_attempt $qa, $seq) {
+    }
+    public function notify_step_modified(question_attempt_step $step, question_attempt $qa, $seq) {
+    }
+    public function notify_step_deleted(question_attempt_step $step, question_attempt $qa) {
     }
 }
