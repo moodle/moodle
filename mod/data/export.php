@@ -60,6 +60,7 @@ if($mform->is_cancelled()) {
     print_header_simple($data->name, '', $nav,
         '', '', true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
         navmenu($course, $cm), '', '');
+    groups_print_activity_menu($cm, "$CFG->wwwroot/mod/data/export.php?d=$d");
     print_heading(format_string($data->name));
 
     // these are for the tab display
@@ -83,13 +84,25 @@ foreach($fields as $key => $field) {
         $exportdata[0][] = $field->field->name;
     }
 }
+$groupid = groups_get_activity_group($cm);
 
 $datarecords = get_records('data_records', 'dataid', $data->id);
 ksort($datarecords);
 $line = 1;
 foreach($datarecords as $record) {
     // get content indexed by fieldid
-    if( $content = get_records('data_content', 'recordid', $record->id, 'fieldid', 'fieldid, content, content1, content2, content3, content4') ) {
+    if($groupid) {
+        $select = "SELECT c.fieldid, c.content, c.content1, c.content2, c.content3, c.content4 
+            FROM {$CFG->prefix}data_content c, {$CFG->prefix}data_records r 
+            WHERE c.recordid = $record->id  
+            AND r.id = c.recordid 
+            AND r.groupid = $groupid";
+    } else {
+        $select = "SELECT fieldid, content, content1, content2, content3, content4 
+            FROM {$CFG->prefix}data_content 
+            WHERE recordid = $record->id";
+    }
+    if( $content = get_records_sql($select) ) {
         foreach($fields as $field) {
             $contents = '';
             if(isset($content[$field->field->id])) {
