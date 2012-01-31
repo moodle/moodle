@@ -397,6 +397,7 @@ class mod_scorm_mod_form extends moodleform_mod {
                 case SCORM_TYPE_LOCALSYNC :
                 case SCORM_TYPE_EXTERNAL:
                 case SCORM_TYPE_IMSREPOSITORY:
+                case SCORM_TYPE_AICCURL:
                     $default_values['packageurl'] = $default_values['reference'];
             }
         }
