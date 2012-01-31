@@ -83,10 +83,6 @@ class question_hint_ddmarker extends question_hint_with_parts {
  */
 class qtype_ddmarker extends qtype_ddtoimage_base {
 
-    public function requires_qtypes() {
-        return array_merge(parent::requires_qtypes(), array('ddimageortext'));
-    }
-
     public function save_question_options($formdata) {
         global $DB, $USER;
         $context = $formdata->context;
