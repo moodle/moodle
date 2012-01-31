@@ -232,7 +232,7 @@ class qtype_calculatedsimple extends qtype_calculated {
         return true;
     }
 
-    public function finished_edit_wizard(&$form) {
+    public function finished_edit_wizard($form) {
         return true;
     }
 

@@ -42,11 +42,6 @@ class qtype_random_edit_form extends question_edit_form {
      * override this method and remove the ones you don't want with $mform->removeElement().
      */
     protected function definition() {
-        global $COURSE, $CFG;
-
-        $qtype = $this->qtype();
-        $langfile = "qtype_$qtype";
-
         $mform = $this->_form;
 
         // Standard fields at the start of the form.
@@ -58,41 +53,10 @@ class qtype_random_edit_form extends question_edit_form {
         $mform->addElement('advcheckbox', 'questiontext[text]',
                 get_string('includingsubcategories', 'qtype_random'), null, null, array(0, 1));
 
-        $mform->addElement('hidden', 'name');
-        $mform->setType('name', PARAM_ALPHA);
-        $mform->setDefault('name', '');
-
-        $mform->addElement('hidden', 'tags[]');
-        $mform->setType('tags[]', PARAM_ALPHA);
-        $mform->setDefault('tags[]', '');
-
-        // Standard fields at the end of the form.
-        $mform->addElement('hidden', 'questiontextformat', 0);
-        $mform->setType('questiontextformat', PARAM_INT);
-
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-
         $mform->addElement('hidden', 'qtype');
         $mform->setType('qtype', PARAM_ALPHA);
 
-        $mform->addElement('hidden', 'inpopup');
-        $mform->setType('inpopup', PARAM_INT);
-
-        $mform->addElement('hidden', 'versioning');
-        $mform->setType('versioning', PARAM_BOOL);
-
-        $mform->addElement('hidden', 'cmid');
-        $mform->setType('cmid', PARAM_INT);
-        $mform->setDefault('cmid', 0);
-
-        $mform->addElement('hidden', 'courseid');
-        $mform->setType('courseid', PARAM_INT);
-        $mform->setDefault('courseid', 0);
-
-        $mform->addElement('hidden', 'returnurl');
-        $mform->setType('returnurl', PARAM_LOCALURL);
-        $mform->setDefault('returnurl', 0);
+        $this->add_hidden_fields();
 
         $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
