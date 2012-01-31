@@ -43,10 +43,6 @@ class qtype_ddwtos extends qtype_gapselect_base {
         return 'draggroup';
     }
 
-    public function requires_qtypes() {
-        return array('gapselect');
-    }
-
     protected function choice_options_to_feedback($choice) {
         $output = new stdClass();
         $output->draggroup = $choice['choicegroup'];
