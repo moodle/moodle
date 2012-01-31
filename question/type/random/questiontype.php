@@ -115,10 +115,10 @@ class qtype_random extends question_type {
         $this->manualqtypes = implode(',', $manualqtypes);
     }
 
-    public function display_question_editing_page(&$mform, $question, $wizardnow) {
+    public function display_question_editing_page($mform, $question, $wizardnow) {
         global $OUTPUT;
         $heading = $this->get_heading(empty($question->id));
-        echo $OUTPUT->heading_with_help($heading, $this->name(), $this->plugin_name());
+        echo $OUTPUT->heading_with_help($heading, 'pluginname', $this->plugin_name());
         $mform->display();
     }
 
@@ -151,6 +151,9 @@ class qtype_random extends question_type {
 
     public function save_question($question, $form) {
         $form->name = '';
+        $form->questiontextformat = FORMAT_MOODLE;
+        $form->tags = array();
+
         // Name is not a required field for random questions, but
         // parent::save_question Assumes that it is.
         return parent::save_question($question, $form);

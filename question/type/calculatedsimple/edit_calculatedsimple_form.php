@@ -320,13 +320,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                 get_string('findwildcards', 'qtype_calculatedsimple'));
         $mform->registerNoSubmitButton('analyzequestion');
         $mform->closeHeaderBefore('analyzequestion');
-        if ("" != optional_param('analyzequestion', '', PARAM_RAW)) {
-
-            $this->wizarddisplay = true;
-
-        } else {
-            $this->wizwarddisplay = false;
-        }
+        $this->wizarddisplay = optional_param('analyzequestion', false, PARAM_BOOL);
         if ($this->maxnumber != -1) {
             $this->noofitems = $this->maxnumber;
         } else {
