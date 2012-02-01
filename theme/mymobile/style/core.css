@@ -483,6 +483,22 @@ input[name="mailnow"] {
 .loginbox #loginbtn {
     width: 100% !important;
 }
+.loginbox .loginform {
+    width: auto;
+}
+.loginbox .loginform .form-label {
+    float: none;
+    text-align: center;
+    width: auto;
+}
+.loginbox .loginform .form-input {
+    float: none;
+    width: auto;
+}
+.loginbox h2 {
+    margin: 0 0;
+    padding: 0 0;
+}
 .mform fieldset div {
 margin:0;
 }
@@ -1577,25 +1593,6 @@ body .ui-loader.ui-body-e h1 {
 .ui-header .ui-navbar li .ui-btn .ui-btn-inner {
     padding-bottom: 0.6em;
     padding-top: 0.5em;
-}
-/*header bar gradient corrections */
-.mymobileheader.ui-bar-b {
-    background-image: -moz-linear-gradient(top,
-                            #81a8ce 10%,
-                            #5e87b0 75%);
-    background-image: -webkit-gradient(linear,left top,left bottom,
-        color-stop(0.05,        #81a8ce),
-        color-stop(0.55,        #5e87b0));
-    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#81a8ce', EndColorStr='#5e87b0')";
-}
-.mymobileheader.ui-bar-a {
-    background-image: -moz-linear-gradient(top,
-                            #3c3c3c,
-                            #111111);
-    background-image: -webkit-gradient(linear,left top,left bottom,
-        color-stop(0.05,    #3c3c3c),
-        color-stop(.55,         #111111));
-    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#3c3c3c', EndColorStr='#111111')";
 }
 /*split page stuff for tablets */
     div.tablets, #sliderdiv, .has-myblocks .jsetsbar {
