@@ -6391,10 +6391,9 @@ class context_module extends context {
 
         $extracaps = array_merge($subcaps, $extracaps);
         $extra = '';
-        $params = array();
-        if (!empty($extracaps)) {
-            list($extra, $params) = $DB->get_in_or_equal(
-                $extracaps, SQL_PARAMS_NAMED, 'cap0');
+        list($extra, $params) = $DB->get_in_or_equal(
+            $extracaps, SQL_PARAMS_NAMED, 'cap0', true, '');
+        if (!empty($extra)) {
             $extra = "OR name $extra";
         }
         $sql = "SELECT *
