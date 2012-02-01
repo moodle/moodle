@@ -135,6 +135,16 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012020200.03);
     }
 
+    if ($oldversion < 2012020200.06) {
+        // Previously we always allowed users to override their email address via the messaging system
+        // We have now added a setting to allow admins to turn this this ability on and off
+        // While this setting defaults to 0 (off) we're setting it to 1 (on) to maintain the behaviour for upgrading sites
+        set_config('messagingallowemailoverride', 1);
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012020200.06);
+    }
+
     return true;
 }
 
