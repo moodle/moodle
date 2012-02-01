@@ -211,7 +211,7 @@ class assignment_base {
         echo $OUTPUT->box_start('generalbox boxaligncenter', 'intro');
         echo format_module_intro('assignment', $this->assignment, $this->cm->id);
         echo $OUTPUT->box_end();
-        plagiarism_print_disclosure($this->cm->id);
+        echo plagiarism_print_disclosure($this->cm->id);
     }
 
     /**
@@ -1221,7 +1221,7 @@ class assignment_base {
         echo '<div class="usersubmissions">';
 
         //hook to allow plagiarism plugins to update status/print links.
-        plagiarism_update_status($this->course, $this->cm);
+        echo plagiarism_update_status($this->course, $this->cm);
 
         $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
         if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {

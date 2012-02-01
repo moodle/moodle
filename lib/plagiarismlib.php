@@ -121,6 +121,7 @@ function plagiarism_get_form_elements_module($mform, $context) {
  *
  * @param object $course - full Course object
  * @param object $cm - full cm object
+ * @return string
  */
 function plagiarism_update_status($course, $cm) {
     global $CFG;
@@ -128,17 +129,20 @@ function plagiarism_update_status($course, $cm) {
         return '';
     }
     $plagiarismplugins = plagiarism_load_available_plugins();
+    $output = '';
     foreach($plagiarismplugins as $plugin => $dir) {
         require_once($dir.'/lib.php');
         $plagiarismclass = "plagiarism_plugin_$plugin";
         $plagiarismplugin = new $plagiarismclass;
-        $plagiarismplugin->update_status($course, $cm);
+        $output .= $plagiarismplugin->update_status($course, $cm);
     }
+    return $output;
 }
 
 /**
 * Function that prints the student disclosure notifying that the files will be checked for plagiarism
 * @param integer $cmid - the cmid of this module
+* @return string
 */
 function plagiarism_print_disclosure($cmid) {
     global $CFG;
@@ -146,12 +150,14 @@ function plagiarism_print_disclosure($cmid) {
         return '';
     }
     $plagiarismplugins = plagiarism_load_available_plugins();
+    $output = '';
     foreach($plagiarismplugins as $plugin => $dir) {
         require_once($dir.'/lib.php');
         $plagiarismclass = "plagiarism_plugin_$plugin";
         $plagiarismplugin = new $plagiarismclass;
-        $plagiarismplugin->print_disclosure($cmid);
+        $output .= $plagiarismplugin->print_disclosure($cmid);
     }
+    return $output;
 }
 /**
  * used by admin/cron.php to get similarity scores from submitted files.
