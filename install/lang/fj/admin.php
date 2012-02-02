@@ -30,6 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'Vosa';
-$string['next'] = 'Tabana tarava';
-$string['previous'] = 'eliu';
+$string['cliincorrectvalueretry'] = 'E cala, tovolea tale';
+$string['clitypevalue'] = 'Tabaka na lewena';
+$string['cliyesnoprompt'] = 'tabaka \'y\'';
