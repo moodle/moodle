@@ -3144,7 +3144,7 @@ function data_presets_export($course, $cm, $data, $tostorage=false) {
     $presetname = clean_filename($data->name) . '-preset-' . gmdate("Ymd_Hi");
     $exportsubdir = "mod_data/presetexport/$presetname";
     make_temp_directory($exportsubdir);
-    $exportdir = "$CFG->dataroot/$exportsubdir";
+    $exportdir = "$CFG->tempdir/$exportsubdir";
 
     // Assemble "preset.xml":
     $presetxmldata = data_presets_generate_xml($course, $cm, $data);
