@@ -48,7 +48,7 @@ if ($tagname) {
 } else if ($tagid) {
     $tag = tag_get('id', $tagid, '*');
 }
-
+unset($tagid);
 if (empty($tag)) {
     redirect($CFG->wwwroot.'/tag/search.php');
 }
@@ -68,7 +68,7 @@ $title = get_string('tag', 'tag') .' - '. $tagname;
 
 $button = '';
 if ($PAGE->user_allowed_editing() ) {
-    $button = $OUTPUT->edit_button(new moodle_url("$CFG->wwwroot/tag/index.php", array('id' => $tagid)));
+    $button = $OUTPUT->edit_button(new moodle_url("$CFG->wwwroot/tag/index.php", array('id' => $tag->id)));
 }
 
 $PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url('/tag/search.php'));
