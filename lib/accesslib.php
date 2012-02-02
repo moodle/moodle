@@ -6380,6 +6380,7 @@ class context_module extends context {
         }
 
         $modfile = "$CFG->dirroot/mod/$module->name/lib.php";
+        $extracaps = array();
         if (file_exists($modfile)) {
             include_once($modfile);
             $modfunction = $module->name.'_get_extra_capabilities';
@@ -6387,16 +6388,14 @@ class context_module extends context {
                 $extracaps = $modfunction();
             }
         }
-        if (empty($extracaps)) {
-            $extracaps = array();
-        }
 
         $extracaps = array_merge($subcaps, $extracaps);
-
+        $extra = '';
         list($extra, $params) = $DB->get_in_or_equal(
-            $extracaps, SQL_PARAMS_NAMED, 'cap0');
-        $extra = "OR name $extra";
-
+            $extracaps, SQL_PARAMS_NAMED, 'cap0', true, '');
+        if (!empty($extra)) {
+            $extra = "OR name $extra";
+        }
         $sql = "SELECT *
                   FROM {capabilities}
                  WHERE (contextlevel = ".CONTEXT_MODULE."
