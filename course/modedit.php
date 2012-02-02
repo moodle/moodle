@@ -305,10 +305,9 @@ if ($mform->is_cancelled()) {
             $cm->availablefrom             = $fromform->availablefrom;
             $cm->availableuntil            = $fromform->availableuntil;
             // The form time is midnight, but because we want it to be
-            // inclusive, set it to 23:59:59 on that day.
+            // inclusive, add 23:59:59 to the time (86,399 seconds).
             if ($cm->availableuntil) {
-                $cm->availableuntil = strtotime('23:59:59',
-                    $cm->availableuntil);
+                $cm->availableuntil += 86399;
             }
             $cm->showavailability          = $fromform->showavailability;
             condition_info::update_cm_from_form($cm,$fromform,true);
@@ -384,10 +383,9 @@ if ($mform->is_cancelled()) {
             $newcm->availablefrom             = $fromform->availablefrom;
             $newcm->availableuntil            = $fromform->availableuntil;
             // The form time is midnight, but because we want it to be
-            // inclusive, set it to 23:59:59 on that day.
+            // inclusive, add 23:59:59 to the time (86,399 seconds).
             if ($newcm->availableuntil) {
-                $newcm->availableuntil = strtotime('23:59:59',
-                    $newcm->availableuntil);
+                $newcm->availableuntil += 86399;
             }
             $newcm->showavailability          = $fromform->showavailability;
         }
