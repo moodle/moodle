@@ -3466,6 +3466,12 @@ function delete_user($user) {
     // last course access not necessary either
     $DB->delete_records('user_lastaccess', array('userid'=>$user->id));
 
+    // remove all user tokens
+    $DB->delete_records('external_tokens', array('userid'=>$user->id));
+
+    // unauthorise the user for all services
+    $DB->delete_records('external_services_users', array('userid'=>$user->id));
+
     // now do a final accesslib cleanup - removes all role assignments in user context and context itself
     delete_context(CONTEXT_USER, $user->id);
 
