@@ -180,11 +180,11 @@ class qtype_gapselect_test extends UnitTestCase {
       <text>Gamma</text>
       <group>1</group>
     </selectoption>
-    <hint>
+    <hint format="moodle_auto_format">
       <text>Try again.</text>
       <shownumcorrect />
     </hint>
-    <hint>
+    <hint format="moodle_auto_format">
       <text>These are the first three letters of the Greek alphabet.</text>
       <shownumcorrect />
       <clearwrong />
@@ -228,7 +228,6 @@ class qtype_gapselect_test extends UnitTestCase {
                         'format' => FORMAT_MOODLE, 'files' => array()));
         $expectedq->hintshownumcorrect = array(true, true);
         $expectedq->hintclearwrong = array(false, true);
-
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
         $this->assertEqual($expectedq->hint, $q->hint);
     }
