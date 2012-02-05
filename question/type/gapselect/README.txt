@@ -12,11 +12,11 @@ the Open University (http://www.open.ac.uk/).
 This question type is compatible with Moodle 2.1+.
 
 To install using git, type this command in the root of your Moodle install
-    git clone git://github.com/timhunt/moodle-qtype_gapselect.git question/type/gapselect
+    git clone git://github.com/moodleou/moodle-qtype_gapselect.git question/type/gapselect
 Then add question/type/gapselect to your git ignore.
 
 Alternatively, download the zip from
-    https://github.com/timhunt/moodle-qtype_gapselect/zipball/master
+    https://github.com/moodleou/moodle-qtype_gapselect/zipball/master
 unzip it into the question/type folder, and then rename the new folder to
 gapselect.
 
