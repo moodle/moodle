@@ -32,6 +32,7 @@ $string['draggableitem'] = 'Draggable item';
 $string['draggableitemheader'] = 'Draggable item {$a}';
 $string['draggableitemtype'] = 'Type';
 $string['draggableword'] = 'Draggable text';
+$string['dropbackground'] = 'Background image for dragging markers onto';
 $string['dropzone'] = 'Drop zone {$a}';
 $string['dropzoneheader'] = 'Drop zones';
 $string['formerror_disallowedtags'] = 'You have used html tags here that are not allowed in a draggable text drag item type.';
