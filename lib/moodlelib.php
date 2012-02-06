@@ -1945,9 +1945,10 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
  * @param bool $fixday If true (default) then the leading zero from %d is removed.
  *        If false then the leading zero is maintained.
+ * @param bool $fixhour If true (default) then the leading zero from %I is removed.
  * @return string the formatted date/time.
  */
-function userdate($date, $format = '', $timezone = 99, $fixday = true) {
+function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour = true) {
 
     global $CFG;
 
@@ -1960,6 +1961,19 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true) {
     } else if ($fixday) {
         $formatnoday = str_replace('%d', 'DD', $format);
         $fixday = ($formatnoday != $format);
+        $format = $formatnoday;
+    }
+
+    // Note: This logic about fixing 12-hour time to remove unnecessary leading
+    // zero is required because on Windows, PHP strftime function does not
+    // support the correct 'hour without leading zero' parameter (%l).
+    if (!empty($CFG->nofixhour)) {
+        // Config.php can force %I not to be fixed.
+        $fixhour = false;
+    } else if ($fixhour) {
+        $formatnohour = str_replace('%I', 'HH', $format);
+        $fixhour = ($formatnohour != $format);
+        $format = $formatnohour;
     }
 
     //add daylight saving offset for string timezones only, as we can't get dst for
@@ -1971,21 +1985,25 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true) {
     $timezone = get_user_timezone_offset($timezone);
 
     if (abs($timezone) > 13) {   /// Server time
+        $datestring = strftime($format, $date);
         if ($fixday) {
-            $datestring = strftime($formatnoday, $date);
             $daystring  = ltrim(str_replace(array(' 0', ' '), '', strftime(' %d', $date)));
             $datestring = str_replace('DD', $daystring, $datestring);
-        } else {
-            $datestring = strftime($format, $date);
+        }
+        if ($fixhour) {
+            $hourstring = ltrim(str_replace(array(' 0', ' '), '', strftime(' %I', $date)));
+            $datestring = str_replace('HH', $hourstring, $datestring);
         }
     } else {
         $date += (int)($timezone * 3600);
+        $datestring = gmstrftime($format, $date);
         if ($fixday) {
-            $datestring = gmstrftime($formatnoday, $date);
             $daystring  = ltrim(str_replace(array(' 0', ' '), '', gmstrftime(' %d', $date)));
             $datestring = str_replace('DD', $daystring, $datestring);
-        } else {
-            $datestring = gmstrftime($format, $date);
+        }
+        if ($fixhour) {
+            $hourstring = ltrim(str_replace(array(' 0', ' '), '', gmstrftime(' %I', $date)));
+            $datestring = str_replace('HH', $hourstring, $datestring);
         }
     }
 
@@ -1999,8 +2017,6 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true) {
        }
     }
 
-    // When using the %l (12-hour time with no leading zero), it adds unwanted spaces
-    $datestring = trim(str_replace('  ', ' ', $datestring));
     return $datestring;
 }
 
