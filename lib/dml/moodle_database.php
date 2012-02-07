@@ -125,9 +125,15 @@ abstract class moodle_database {
     /** @var bool Flag used to force rollback of all current transactions. */
     private $force_rollback = false;
 
-    /** @var int internal temporary variable used to fix params. {@see _fix_sql_params_dollar_callback()} */
+    /**
+     * @var int internal temporary variable used to fix params.
+     * @see _fix_sql_params_dollar_callback()
+     */
     private $fix_sql_params_i;
-    /** @var int internal temporary variable used to guarantee unique parameters in each request. {@see get_in_or_equal()} */
+    /**
+     * @var int internal temporary variable used to guarantee unique parameters in each request.
+     * @see get_in_or_equal()
+     */
     private $inorequaluniqueindex = 1;
 
     /**
@@ -297,6 +303,7 @@ abstract class moodle_database {
      * @param string $dbuser The database user to connect as.
      * @param string $dbpass The password to use when connecting to the database.
      * @param string $dbname The name of the database being connected to.
+     * @param array $dboptions An array of optional database options (eg: dbport)
      *
      * @return bool success True for successful connection. False otherwise.
      */
@@ -374,7 +381,7 @@ abstract class moodle_database {
     /**
      * This should be called immediately after each db query. It does a clean up of resources.
      * It also throws exceptions if the sql that ran produced errors.
-     * @param mixed The db specific result obtained from running a query.
+     * @param mixed $result The db specific result obtained from running a query.
      * @throws dml_read_exception | dml_write_exception | ddl_change_structure_exception
      * @return void
      */
@@ -678,7 +685,8 @@ abstract class moodle_database {
     /**
      * Internal private utitlity function used to fix parameters.
      * Used with preg_replace_callback()
-     * @param $match
+     * @param array $match Refer to preg_replace_callback usage for description.
+     * @see preg_replace_callback()
      */
     private function _fix_sql_params_dollar_callback($match) {
         $this->fix_sql_params_i++;
@@ -1866,9 +1874,8 @@ abstract class moodle_database {
      * This function accepts variable number of string parameters.
      * All strings/fieldnames will used in the SQL concatenate statement generated.
      *
-     * @return string The SQL to concatenate strings.
-     * @param mixed $fieldnames,... unlimited OPTIONAL number of additional field names.
-     * @uses func_get_args()
+     * @return string The SQL to concatenate strings passed in.
+     * @uses func_get_args()  and thus parameters are unlimited OPTIONAL number of additional field names.
      */
     public abstract function sql_concat();
 

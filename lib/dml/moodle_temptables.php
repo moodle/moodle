@@ -55,7 +55,7 @@ class moodle_temptables {
 
     /**
      * Creates new moodle_temptables instance
-     * @param moodle_database An instance of moodle_database.
+     * @param moodle_database $mdb An instance of moodle_database.
      */
     public function __construct($mdb) {
         $this->mdb        = $mdb;

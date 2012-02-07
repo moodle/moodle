@@ -83,7 +83,7 @@ class dml_exception extends moodle_exception {
 class dml_connection_exception extends dml_exception {
     /**
      * Constructor
-     * @param string $errorinfo Optional debugging information.
+     * @param string $error Optional debugging information.
      */
     function __construct($error) {
         $errorinfo = $error;
@@ -186,7 +186,7 @@ class dml_missing_record_exception extends dml_exception {
 
     /**
      * Constructor
-     * @param string $table The table name if known, '' if unknown.
+     * @param string $tablename The table name if known, '' if unknown.
      * @param string $sql Optional SQL query.
      * @param array $params Optional SQL query's parameters.
      */
