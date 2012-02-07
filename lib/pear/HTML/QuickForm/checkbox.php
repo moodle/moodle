@@ -113,6 +113,7 @@ class HTML_QuickForm_checkbox extends HTML_QuickForm_input
      */
     function toHtml()
     {
+        $this->_generateId(); // Seems to be necessary when this is used in a group.
         if (0 == strlen($this->_text)) {
             $label = '';
         } elseif ($this->_flagFrozen) {
