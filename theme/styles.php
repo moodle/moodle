@@ -83,7 +83,7 @@ require("$CFG->dirroot/lib/setup.php");
 $theme = theme_config::load($themename);
 
 if ($type === 'editor') {
-    $files = $theme->editor_css_files();
+    $cssfiles = $theme->editor_css_files();
     css_store_css($theme, $candidatesheet, $cssfiles);
 } else {
     $css = $theme->css_files();
