@@ -818,6 +818,9 @@ abstract class repository {
         } else {
             $accepted_types = '*';
         }
+        // Sortorder should be unique, which is not true if we use $record->sortorder
+        // and there are multiple instances of any repository type
+        $sortorder = 1;
         foreach ($records as $record) {
             if (!file_exists($CFG->dirroot . '/repository/'. $record->repositorytype.'/lib.php')) {
                 continue;
@@ -826,7 +829,7 @@ abstract class repository {
             $options['visible'] = $record->visible;
             $options['type']    = $record->repositorytype;
             $options['typeid']  = $record->typeid;
-            $options['sortorder'] = $record->sortorder;
+            $options['sortorder'] = $sortorder++;
             // tell instance what file types will be accepted by file picker
             $classname = 'repository_' . $record->repositorytype;
 
