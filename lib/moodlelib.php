@@ -5901,6 +5901,7 @@ function clean_filename($string) {
 /**
  * Returns the code for the current language
  *
+ * @category string
  * @return string
  */
 function current_language() {
@@ -5930,6 +5931,7 @@ function current_language() {
 /**
  * Returns parent language of current active language if defined
  *
+ * @category string
  * @uses COURSE
  * @uses SESSION
  * @param string $lang null means current language
@@ -5966,6 +5968,7 @@ function get_parent_language($lang=null) {
  * The param $forcereload is needed for CLI installer only where the string_manager instance
  * must be replaced during the install.php script life time.
  *
+ * @category string
  * @param bool $forcereload shall the singleton be released and new instance created instead?
  * @return string_manager
  */
@@ -6011,10 +6014,12 @@ function get_string_manager($forcereload=false) {
 
 
 /**
+ * Interface for string manager
+ *
  * Interface describing class which is responsible for getting
  * of localised strings from language packs.
  *
- * @package    moodlecore
+ * @package    core
  * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -6064,11 +6069,11 @@ interface string_manager {
     public function get_list_of_languages($lang = NULL, $standard = 'iso6392');
 
     /**
-     * Does the translation exist?
+     * Checks if the translation exists for the language
      *
      * @param string $lang moodle translation language code
-     * @param bool include also disabled translations?
-     * @return boot true if exists
+     * @param bool $includeall include also disabled translations
+     * @return bool true if exists
      */
     public function translation_exists($lang, $includeall = true);
 
@@ -6107,7 +6112,10 @@ interface string_manager {
 /**
  * Standard string_manager implementation
  *
- * @package    moodlecore
+ * Implements string_manager with getting and printing localised strings
+ *
+ * @package    core
+ * @category   string
  * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -6128,7 +6136,7 @@ class core_string_manager implements string_manager {
     protected $countdiskcache = 0;
     /** @var bool use disk cache */
     protected $usediskcache;
-    /* @var array limit list of translations */
+    /** @var array limit list of translations */
     protected $translist;
     /** @var string location of a file that caches the list of available translations */
     protected $menucache;
@@ -6154,6 +6162,7 @@ class core_string_manager implements string_manager {
 
     /**
      * Returns dependencies of current language, en is not included.
+     *
      * @param string $lang
      * @return array all parents, the lang itself is last
      */
@@ -6178,6 +6187,7 @@ class core_string_manager implements string_manager {
 
     /**
      * Load all strings for one component
+     *
      * @param string $component The module the string is associated with
      * @param string $lang
      * @param bool $disablecache Do not use caches, force fetching the strings from sources
@@ -6300,8 +6310,7 @@ class core_string_manager implements string_manager {
      *
      * get_string() is throwing debug warnings, sometimes we do not want them
      * or we want to display better explanation of the problem.
-     *
-     * Use with care!
+     * Note: Use with care!
      *
      * @param string $identifier The identifier of the string to search for
      * @param string $component The module the string is associated with
@@ -6424,6 +6433,7 @@ class core_string_manager implements string_manager {
 
     /**
      * Returns information about the string_manager performance
+     *
      * @return array
      */
     public function get_performance_summary() {
@@ -6521,11 +6531,11 @@ class core_string_manager implements string_manager {
     }
 
     /**
-     * Does the translation exist?
+     * Checks if the translation exists for the language
      *
      * @param string $lang moodle translation language code
-     * @param bool include also disabled translations?
-     * @return boot true if exists
+     * @param bool $includeall include also disabled translations
+     * @return bool true if exists
      */
     public function translation_exists($lang, $includeall = true) {
 
@@ -6547,6 +6557,7 @@ class core_string_manager implements string_manager {
 
     /**
      * Returns localised list of installed translations
+     *
      * @param bool $returnall return all or just enabled
      * @return array moodle translation code => localised translation name
      */
@@ -6675,11 +6686,13 @@ class core_string_manager implements string_manager {
 
 
 /**
+ * Fetches minimum strings for installation
+ *
  * Minimalistic string fetching implementation
  * that is used in installer before we fetch the wanted
  * language pack from moodle.org lang download site.
  *
- * @package    moodlecore
+ * @package    core
  * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -6835,11 +6848,11 @@ class install_string_manager implements string_manager {
     }
 
     /**
-     * Does the translation exist?
+     * Checks if the translation exists for the language
      *
      * @param string $lang moodle translation language code
-     * @param bool include also disabled translations?
-     * @return boot true if exists
+     * @param bool $includeall include also disabled translations
+     * @return bool true if exists
      */
     public function translation_exists($lang, $includeall = true) {
         return file_exists($this->installroot.'/'.$lang.'/langconfig.php');
@@ -6947,6 +6960,7 @@ class install_string_manager implements string_manager {
  * But you should never do that anyway!
  * For more information {@see lang_string}
  *
+ * @category string
  * @param string $identifier The key identifier for the localized string
  * @param string $component The module where the key identifier is stored,
  *      usually expressed as the filename in the language pack without the
@@ -7018,8 +7032,8 @@ function get_string($identifier, $component = '', $a = NULL, $lazyload = false) 
  * Converts an array of strings to their localized value.
  *
  * @param array $array An array of strings
- * @param string $module The language module that these strings can be found in.
- * @return array and array of translated strings.
+ * @param string $component The language module that these strings can be found in.
+ * @return stdClass translated strings.
  */
 function get_strings($array, $component = '') {
    $string = new stdClass;
@@ -7048,9 +7062,10 @@ function get_strings($array, $component = '') {
  * echo '</h1>';
  * </code>
  *
+ * @category string
  * @param string $identifier The key identifier for the localized string
  * @param string $component The module where the key identifier is stored. If none is specified then moodle.php is used.
- * @param mixed $a An object, string or number that can be used within translation strings
+ * @param string|object|array $a An object, string or number that can be used within translation strings
  */
 function print_string($identifier, $component = '', $a = NULL) {
     echo get_string($identifier, $component, $a);
@@ -8611,9 +8626,7 @@ function upgrade_set_timeout($max_execution_time=300) {
 /**
  * Sets the system locale
  *
- * @todo Finish documenting this function
- *
- * @global object
+ * @category string
  * @param string $locale Can be used to force a locale
  */
 function moodle_setlocale($locale='') {
@@ -8671,8 +8684,9 @@ function moodle_setlocale($locale='') {
 /**
  * Converts string to lowercase using most compatible function available.
  *
- * @todo Remove this function when no longer in use
- * @deprecated Use textlib->strtolower($text) instead.
+ * @deprecated since Moodle 2.0 use textlib::strtolower()
+ * @todo MDL-31250 Remove this function when no longer in use
+ * @see textlib::strtolower($text)
  *
  * @param string $string The string to convert to all lowercase characters.
  * @param string $encoding The encoding on the string.
@@ -8695,6 +8709,7 @@ function moodle_strtolower ($string, $encoding='') {
  *
  * Words are defined as things between whitespace.
  *
+ * @category string
  * @param string $string The text to be searched for words.
  * @return int The count of words in the specified string
  */
@@ -8707,6 +8722,7 @@ function count_words($string) {
  *
  * Letters are defined as chars not in tags and different from whitespace.
  *
+ * @category string
  * @param string $string The text to be searched for letters.
  * @return int The count of letters in the specified text.
  */
@@ -8767,12 +8783,13 @@ function complex_random_string($length=null) {
  * Given some text (which may contain HTML) and an ideal length,
  * this function truncates the text neatly on a word boundary if possible
  *
- * @global object
- * @param string $text - text to be shortened
- * @param int $ideal - ideal string length
+ * @category string
+ * @global stdClass $CFG
+ * @param string $text text to be shortened
+ * @param int $ideal ideal string length
  * @param boolean $exact if false, $text will not be cut mid-word
  * @param string $ending The string to append if the passed string is truncated
- * @return string $truncate - shortened string
+ * @return string $truncate shortened string
  */
 function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
 
@@ -8926,7 +8943,7 @@ function getweek ($startdate, $thedate) {
  * {@link http://www.phpbuilder.com/columns/jesus19990502.php3} and
  * {@link http://es2.php.net/manual/en/function.str-shuffle.php#73254}
  *
- * @global object
+ * @global stdClass $CFG
  * @param int $maxlen  The maximum size of the password being generated.
  * @return string
  */
@@ -8991,7 +9008,7 @@ function generate_password($maxlen=10) {
  * Localized floats must not be used in calculations!
  *
  * @param float $float The float to print
- * @param int $places The number of decimal places to print.
+ * @param int $decimalpoints The number of decimal places to print.
  * @param bool $localized use localized decimal separator
  * @return string locale float
  */
@@ -9010,7 +9027,7 @@ function format_float($float, $decimalpoints=1, $localized=true) {
  * Converts locale specific floating point/comma number back to standard PHP float value
  * Do NOT try to do any math operations before this conversion on any user submitted floats!
  *
- * @param  string $locale_float locale aware float representation
+ * @param string $locale_float locale aware float representation
  * @return float
  */
 function unformat_float($locale_float) {
@@ -10569,8 +10586,8 @@ function get_home_page() {
  * 1. You cannot use a lang_string object as an array offset. Doing so will
  *     result in PHP throwing an error. (You can use it as an object property!)
  *
- * @package    moodlecore
- *
+ * @package    core
+ * @category   string
  * @copyright  2011 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
