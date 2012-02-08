@@ -27,8 +27,10 @@ require_once("lib.php");
 $confirm = optional_param('confirm', false, PARAM_BOOL);
 
 $PAGE->set_url('/mod/forum/unsubscribeall.php');
+$PAGE->set_context(get_context_instance(CONTEXT_USER, $USER->id));
 
-require_login();
+// Do not autologin guest. Only proper users can have forum subscriptions.
+require_login(null, false);
 
 $return = $CFG->wwwroot.'/';
 
