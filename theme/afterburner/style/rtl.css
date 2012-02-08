@@ -1,7 +1,15 @@
-/** Overide for RTL layout **/
+/*
+OVERRIDE FOR RTL LAYOUT
+-------------------------*/
 .dir-rtl .block .header .block_action {
     float:left;
 }
 .dir-rtl .block .header .commands {
     text-align: right;
+}
+/*
+PAGELAYOUT-REPORT
+-------------------------*/
+.dir-rtl .pagelayout-report #page-content #region-main-box #region-post-box #region-main-wrap #region-main-pad #region-main .region-content .no-overflow {
+    overflow: auto;
 }
