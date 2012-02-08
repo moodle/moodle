@@ -35,11 +35,11 @@ class page11_resurce_file extends general_cc_file {
     }
 
     public function set_title($value) {
-        $this->title = $value;
+        $this->title = self::safexml($value);
     }
 
     public function set_intro($value) {
-        $this->intro = htmlspecialchars(strip_tags($value), ENT_COMPAT, 'UTF-8', false);
+        $this->intro = self::safexml(strip_tags($value));
     }
 
     protected function on_create() {
