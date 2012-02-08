@@ -296,6 +296,15 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual(array('gecko', 'gecko19'), get_browser_version_classes());
     }
 
+    function test_get_device_type() {
+        // IE8 (common pattern ~1.5% of IE7/8 users have embedded IE6 agent))
+        $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; BT Openworld BB; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1) ; Hotbar 10.2.197.0; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET CLR 2.0.50727)';
+        $this->assertEqual('default', get_device_type());
+        // Genuine IE6
+        $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/4.0 (compatible; MSIE 6.0; AOL 9.0; Windows NT 5.1; SV1; FunWebProducts; .NET CLR 1.0.3705; Media Center PC 2.8)';
+        $this->assertEqual('legacy', get_device_type());
+    }
+
     function test_optional_param() {
         $_POST['username'] = 'post_user';
         $_GET['username'] = 'get_user';
