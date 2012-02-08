@@ -42,7 +42,11 @@
 
     $hassiteconfig = has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
-    $PAGE->set_url('/');
+    $urlparams = array();
+    if ($CFG->defaulthomepage == HOMEPAGE_MY && optional_param('redirect', 1, PARAM_BOOL) === 0) {
+        $urlparams['redirect'] = 0;
+    }
+    $PAGE->set_url('/', $urlparams);
     $PAGE->set_course($SITE);
 
 /// If the site is currently under maintenance, then print a message
