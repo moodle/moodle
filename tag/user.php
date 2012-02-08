@@ -45,7 +45,11 @@ switch ($action) {
 
     case 'flaginappropriate':
 
-        tag_set_flag(tag_get_id($tag));
+        $tagid = tag_get_id($tag);
+        // Add flaging action to logs
+        add_to_log(SITEID, 'tag', 'flag', 'index.php?id='. $tagid, $tagid, '', $USER->id);
+
+        tag_set_flag($tagid);
 
         redirect($CFG->wwwroot.'/tag/index.php?tag='. rawurlencode($tag), get_string('responsiblewillbenotified', 'tag'));
         break;
