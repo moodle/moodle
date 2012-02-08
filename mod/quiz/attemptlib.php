@@ -1089,7 +1089,7 @@ class quiz_attempt {
         $DB->update_record('quiz_attempts', $this->attempt);
 
         if (!$this->is_preview()) {
-            quiz_save_best_grade($this->get_quiz());
+            quiz_save_best_grade($this->get_quiz(), $this->attempt->userid);
 
             // Trigger event
             $eventdata = new stdClass();
