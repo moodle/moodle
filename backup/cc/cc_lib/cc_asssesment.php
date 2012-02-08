@@ -1821,7 +1821,7 @@ class assesment1_resurce_file extends general_cc_file {
     }
 
     public function set_title($value) {
-        $this->assessment_title = $value;
+        $this->assessment_title = self::safexml($value);
     }
 
     protected function on_save() {

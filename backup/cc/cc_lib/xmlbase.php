@@ -41,6 +41,18 @@ class XMLGenericDocument {
     private   $is_html          = false;
 
 
+    /**
+    * @param string $value
+    * @return string
+    */
+    public static function safexml($value) {
+        $result = htmlspecialchars(html_entity_decode($value, ENT_QUOTES, 'UTF-8'),
+                                   ENT_NOQUOTES,
+                                   'UTF-8',
+                                   false);
+        return $result;
+    }
+
     function __construct($ch = 'UTF-8',$validatenow=true){
         $this->charset = $ch;
         $this->documentInit();
