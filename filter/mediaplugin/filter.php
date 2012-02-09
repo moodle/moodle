@@ -74,7 +74,7 @@ class filter_mediaplugin extends moodle_text_filter {
             return $text;
         }
         if (stripos($text, '</a>') === false) {
-            // performance shortcut - all regexes bellow end with the </a> tag,
+            // performance shortcut - all regexes below end with the </a> tag,
             // if not present nothing can match
             return $text;
         }
@@ -281,7 +281,7 @@ function filter_mediaplugin_html5audio_callback(array $link) {
         $sources[] = html_writer::tag('source', '', array('src' => $url, 'type' => $mimetype));
 
         if ($fallbacklink === null) {
-            $fallbacklink = html_writer::link($url.'#', $info); // the extra '#' prevents linking in mp3 filter bellow
+            $fallbacklink = html_writer::link($url.'#', $info); // the extra '#' prevents linking in mp3 filter below
         }
         if ($fallbackurl === null) {
             if ($mimetype === 'audio/mp3' or $mimetype === 'audio/aac') {
@@ -379,7 +379,7 @@ function filter_mediaplugin_html5video_callback(array $link) {
         }
 
         if ($fallbacklink === null) {
-            $fallbacklink = html_writer::link($url.'#', $info); // the extra '#' prevents linking in mp3 filter bellow
+            $fallbacklink = html_writer::link($url.'#', $info); // the extra '#' prevents linking in mp3 filter below
         }
         if ($fallbackurl === null) {
             if ($mimetype === 'video/mp4') {
