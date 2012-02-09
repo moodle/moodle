@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
     // marks roles that have category role assignments synchronised to course enrolments
-    // overrides bellow system context are ignored (for performance reasons).
+    // overrides below system context are ignored (for performance reasons).
     // by default his is not allowed in new installs, admins have to explicitly allow category enrolments
     'enrol/category:synchronised' => array(
         'captype' => 'write',

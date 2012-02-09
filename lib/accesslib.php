@@ -7208,7 +7208,7 @@ function get_role_context_caps($roleid, context $context) {
         }
     }
 
-    // now go through the contexts bellow given context
+    // now go through the contexts below given context
     $searchcontexts = array_keys($context->get_child_contexts());
     foreach ($searchcontexts as $cid) {
         if ($capabilities = $DB->get_records('role_capabilities', array('roleid'=>$roleid, 'contextid'=>$cid))) {

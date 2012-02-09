@@ -57,7 +57,7 @@ if (isguestuser($user)) {
 }
 
 if (!empty($CFG->forceloginforprofiles)) {
-    require_login(); // we can not log in to course due to the parent hack bellow
+    require_login(); // we can not log in to course due to the parent hack below
 }
 
 $PAGE->set_context($coursecontext);
