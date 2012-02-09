@@ -97,7 +97,7 @@ class repository_recent extends repository {
      * @return mixed
      */
     public function get_listing($encodedpath = '', $page = '') {
-        global $CFG, $USER, $OUTPUT;
+        global $OUTPUT;
         $ret = array();
         $ret['dynload'] = true;
         $ret['nosearch'] = true;
@@ -108,14 +108,18 @@ class repository_recent extends repository {
         try {
             foreach ($files as $file) {
                 $params = base64_encode(serialize($file));
-                $node = array(
-                    'title' => $file['filename'],
-                    'size' => 0,
-                    'date' => '',
-                    'source'=> $params,
-                    'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file['filename'], 32))->out(false),
-                );
-                $list[] = $node;
+                // Check that file exists and accessible
+                $filesize = $this->get_file_size($params);
+                if (!empty($filesize)) {
+                    $node = array(
+                        'title' => $file['filename'],
+                        'size' => $filesize,
+                        'date' => '',
+                        'source'=> $params,
+                        'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file['filename'], 32))->out(false),
+                    );
+                    $list[] = $node;
+                }
             }
         } catch (Exception $e) {
             throw new repository_exception('emptyfilelist', 'repository_recent');
