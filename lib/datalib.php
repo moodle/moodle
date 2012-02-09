@@ -1723,7 +1723,8 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     try {
         $DB->insert_record_raw('log', $log, false);
     } catch (dml_exception $e) {
-        debugging('Error: Could not insert a new entry to the Moodle log', DEBUG_ALL);
+        debugging('Error: Could not insert a new entry to the Moodle log. '. $e->error, DEBUG_ALL);
+
         // MDL-11893, alert $CFG->supportemail if insert into log failed
         if ($CFG->supportemail and empty($CFG->noemailever)) {
             // email_to_user is not usable because email_to_user tries to write to the logs table,
