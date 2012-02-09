@@ -7359,7 +7359,7 @@ function plugin_callback($type, $name, $feature, $action, $params = null, $defau
  * @return mixed
  */
 function component_callback($component, $function, array $params = array(), $default = null) {
-    global $CFG; // this is needed for require_once() bellow
+    global $CFG; // this is needed for require_once() below
 
     $cleancomponent = clean_param($component, PARAM_SAFEDIR);
     if (empty($cleancomponent)) {

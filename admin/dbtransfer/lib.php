@@ -13,7 +13,7 @@ TODO:
     (user would need file access to dataroot which might prevent various "accidents")
   - implement "Export/import running" notification in lib/setup.php (similar to new upgrade flag in config table)
   - gzip compression when storing xml file - the xml is very verbose and full of repeated tags (zip is not suitable here at all)
-    this could help us keep the files bellow 2G (expected ratio is > 10:1)
+    this could help us keep the files below 2G (expected ratio is > 10:1)
 
 */
 

@@ -153,7 +153,7 @@ if (empty($param->crosstab)) {
     }
 
     $roleid = 0;
-    krsort($roles); // the same sorting as in table bellow graph
+    krsort($roles); // the same sorting as in table below graph
 
     $colors = array('green', 'blue', 'red', 'purple', 'yellow', 'olive', 'navy', 'maroon', 'gray', 'ltred', 'ltltred', 'ltgreen', 'ltltgreen', 'orange', 'ltorange', 'ltltorange', 'lime', 'ltblue', 'ltltblue', 'fuchsia', 'aqua', 'grayF0', 'grayEE', 'grayDD', 'grayCC', 'gray33', 'gray66', 'gray99');
     $colorindex = 0;

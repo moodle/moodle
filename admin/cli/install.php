@@ -106,7 +106,7 @@ if (file_exists($configfile)) {
 
 $olddir = getcwd();
 
-// change directory so that includes bellow work properly
+// change directory so that includes below work properly
 chdir(dirname($_SERVER['argv'][0]));
 
 // Servers should define a default timezone in php.ini, but if they don't then make sure something is defined.

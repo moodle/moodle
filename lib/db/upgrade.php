@@ -2914,7 +2914,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $DB->delete_records('role_capabilities', array('capability'=>'moodle/site:config', 'roleid'=>$manager->id)); // only site admins may configure servers
             // note: doanything and legacy caps are deleted automatically, they get moodle/course:view later at the end of the upgrade
 
-            // remove manager role assignments bellow the course context level - admin role was never intended for activities and blocks,
+            // remove manager role assignments below the course context level - admin role was never intended for activities and blocks,
             // the problem is that those assignments would not be visible after upgrade and old style admins in activities make no sense anyway
             $DB->delete_records_select('role_assignments', "roleid = :manager AND contextid IN (SELECT id FROM {context} WHERE contextlevel > 50)", array('manager'=>$manager->id));
 
