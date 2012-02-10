@@ -36,6 +36,7 @@ $string['group'] = 'Group';
 $string['pleaseputananswerineachbox'] = 'Please put an answer in each box.';
 $string['pluginname'] = 'Select missing words';
 $string['pluginname_help'] = 'Type in some question text like "The [[1]] jumped over the [[2]]", then enter the possible words to go in gaps 1 and 2 underneath.';
+$string['pluginname_link'] = 'question/type/gapselect';
 $string['pluginnameadding'] = 'Adding a select missing words question';
 $string['pluginnameediting'] = 'Editing a select missing words question';
 $string['pluginnamesummary'] = 'Missing words in some text are filled in using dropdown menus.';
