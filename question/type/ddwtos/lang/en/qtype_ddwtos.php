@@ -16,8 +16,7 @@
 
 /**
  *
- * @package    qtype
- * @subpackage ddwtos
+ * @package    qtype_ddwtos
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,3 +31,4 @@ $string['ddwtossummary'] = 'Missing words in some text are filled in using drag-
 $string['editingddwtos'] = 'Editing a drag and drop into text';
 $string['infinite'] = 'Infinite';
 $string['pleaseputananswerineachbox'] = 'Please put an answer in each box.';
+$string['pluginname'] = 'Drag and drop into text';
