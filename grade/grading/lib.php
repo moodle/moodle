@@ -455,6 +455,27 @@ class grading_manager {
     }
 
     /**
+     * Extends the module navigation with the advanced grading information
+     *
+     * This function is called when the context for the page is an activity module with the
+     * FEATURE_ADVANCED_GRADING.
+     *
+     * @param global_navigation $navigation
+     * @param navigation_node $modulenode
+     */
+    public function extend_navigation(global_navigation $navigation, navigation_node $modulenode=null) {
+        $this->ensure_isset(array('context', 'component'));
+
+        $areas = $this->get_available_areas();
+        foreach ($areas as $areaname => $areatitle) {
+            $this->set_area($areaname);
+            if ($controller = $this->get_active_controller()) {
+                $controller->extend_navigation($navigation, $modulenode);
+            }
+        }
+    }
+
+    /**
      * Returns the given method's controller in the gradable area
      *
      * @param string $method the method name, eg 'rubric' (must be available)
