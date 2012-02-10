@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Drag-and-drop words into sentences question definition class.
+ * Drag-and-drop markers question definition class.
  *
- * @package    qtype
- * @subpackage ddmarker
+ * @package    qtype_ddmarker
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,7 +30,7 @@ require_once($CFG->dirroot . '/question/type/ddmarker/shapes.php');
 
 
 /**
- * Represents a drag-and-drop images to image question.
+ * Represents a drag-and-drop markers question.
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

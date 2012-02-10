@@ -76,7 +76,7 @@ class question_hint_ddmarker extends question_hint_with_parts {
 
 
 /**
- * The drag-and-drop words into sentences question type class.
+ * The drag-and-drop markers question type class.
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
