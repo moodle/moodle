@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Question type class for the drag-and-drop images onto images question type.
+ * Question type class for the drag-and-drop onto image question type.
  *
- * @package    qtype
- * @subpackage ddimageortext
+ * @package    qtype_ddimageortext
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,7 +33,7 @@ define('QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXWIDTH', 150);
 define('QTYPE_DDIMAGEORTEXT_DRAGIMAGE_MAXHEIGHT', 100);
 
 /**
- * The drag-and-drop words into sentences question type class.
+ * The drag-and-drop onto image question type class.
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

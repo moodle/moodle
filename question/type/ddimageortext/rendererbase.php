@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Drag-and-drop words into sentences question renderer class.
+ * Drag-and-drop onto image question renderer class.
  *
- * @package    qtype
- * @subpackage ddimageortext
+ * @package    qtype_ddimageortext
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Generates the output for drag-and-drop words into sentences questions.
+ * Generates the output for drag-and-drop onto image questions.
  *
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

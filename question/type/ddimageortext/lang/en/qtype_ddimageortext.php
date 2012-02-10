@@ -54,6 +54,7 @@ $string['infinite'] = 'Infinite';
 $string['label'] = 'Text';
 $string['nolabel'] = 'No label text';
 $string['pleasedraganimagetoeachdropregion'] = 'Your answer is not complete, please drag an item to each drop region.';
+$string['pluginname'] = 'Drag and drop onto image';
 $string['previewarea'] = 'Preview area -';
 $string['previewareaheader'] = 'Preview';
 $string['previewareamessage'] = 'Select a background image file and select draggable images or just enter text that will be made draggable. Then choose a drag item for each \'drop zone\', and drag the drag item to where the student should drag it to.';
