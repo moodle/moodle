@@ -59,6 +59,7 @@ $string['marker_n'] = 'Marker {no}';
 $string['markers'] = 'Markers';
 $string['nolabel'] = 'No label text';
 $string['pleasedragatleastonemarker'] = 'Your answer is not complete, you must place at least one marker on the image.';
+$string['pluginname'] = 'Drag and drop markers';
 $string['previewarea'] = 'Preview area -';
 $string['previewareaheader'] = 'Preview';
 $string['previewareamessage'] = 'Select a background image file, enter text labels for markers and define the drop zones on the background image to which they must be dragged.';
