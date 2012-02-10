@@ -64,7 +64,11 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
 
         $bgimage = self::get_url_for_image($qa, 'bgimage');
 
-        $img = html_writer::empty_tag('img', array('src'=>$bgimage, 'class'=>'dropbackground'));
+        $img = html_writer::empty_tag('img',
+                                array('src'=>$bgimage,
+                                    'class'=>'dropbackground',
+                                    'alt' => get_string('dropbackground', 'qtype_ddimageortext')));
+
         $droparea = html_writer::tag('div', $img, array('class'=>'droparea'));
 
         $dragimagehomes = '';
