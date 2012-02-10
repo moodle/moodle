@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Language strings for the sdrag-and-drop words into sentences question type.
+ * Language strings for the gap-select question type.
  *
- * @package    qtype
- * @subpackage gapselect
+ * @package    qtype_gapselect
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,4 +38,5 @@ $string['gapselect_help'] = 'Type in some question text like "The [[1]] jumped o
 $string['gapselectsummary'] = 'Missing words in some text are filled in using dropdown menus.';
 $string['group'] = 'Group';
 $string['pleaseputananswerineachbox'] = 'Please put an answer in each box.';
+$string['pluginname'] = 'Select missing words';
 $string['shuffle'] = 'Shuffle';
