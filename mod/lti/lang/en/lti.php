@@ -121,7 +121,7 @@ real estate to the tool, and others provide a more integrated feel with the Mood
 * **New window** - The tool opens in a new window, occupying all the available space.
         Depending on the browser, it will open in a new tab or a popup window.
         It is possible that browsers will prevent the new window from opening.';
-$string['delegate'] = 'Delegate to Instructor';
+$string['delegate'] = 'Delegate to Teacher';
 $string['delete'] = 'Delete';
 $string['delete_confirmation'] = 'Are you sure you want to delete this external tool configuration?';
 $string['deletetype'] = 'Delete external tool configuration';
@@ -194,8 +194,8 @@ $string['icon_url'] = 'Icon URL';
 $string['icon_url_help'] = 'The icon URL allows the icon that shows up in the course listing for this activity to be modified. Instead of using the default
 LTI icon, an icon which conveys the type of activity may be specified.';
 $string['id'] = 'id';
-$string['imsroleadmin'] = 'Instructor,Administrator';
-$string['imsroleinstructor'] = 'Instructor';
+$string['imsroleadmin'] = 'Teacher,Administrator';
+$string['imsroleinstructor'] = 'Teacher';
 $string['imsrolelearner'] = 'Learner';
 $string['invalidid'] = 'LTI ID was incorrect';
 $string['launch_in_moodle'] = 'Launch tool in moodle';
@@ -250,9 +250,9 @@ Tool types listed on this page are separated into three categories:
         course on this Moodle instance. If a consumer key and shared secret are entered, a trust relationship is established
         between this Moodle instance and the remote tool, providing a secure communication channel.
 * **Pending** - These tool providers came in through a package import, but have not been configured by an administrator.
-        Instructors may still use tools from these providers if they have a consumer key and shared secret, or if none is required.
+        Teachers may still use tools from these providers if they have a consumer key and shared secret, or if none is required.
 * **Rejected** - These tools providers are flagged as ones which an administrator has no intention of making available to the entire
-        Moodle instance. Instructors may still use tools from these providers if they have a consumer key and shared secret, or if none is required.';
+        Moodle instance. Teachers may still use tools from these providers if they have a consumer key and shared secret, or if none is required.';
 $string['miscellaneous'] = 'Miscellaneous';
 $string['misconfiguredtools'] = 'Misconfigured tool instances were detected';
 $string['missingparameterserror'] = 'The page is misconfigured: "{$a}"';
@@ -396,7 +396,7 @@ $string['show_in_course'] = 'Show tool type when creating tool instances';
 $string['show_in_course_help'] = 'If selected, this tool configuration will appear in the "External tool type" dropdown when instructors
 configure external tools within courses.
 
-In most cases, this option does not need to be selected. Instructors can use this tool configuration
+In most cases, this option does not need to be selected. Teachers can use this tool configuration
 based on the Launch URL matching the Tool base URL, which is the preferred method.
 
 The only case in which this option should be selected is if the tool configuration is just intended for single sign on.
