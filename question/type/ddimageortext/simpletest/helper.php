@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Test helpers for the drag-and-drop words into sentences question type.
+ * Test helpers for the drag-and-drop onto image question type.
  *
- * @package    qtype
- * @subpackage ddimageortext
+ * @package    qtype_ddimageortext
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Test helper class for the drag-and-drop words into sentences question type.
+ * Test helper class for the drag-and-drop onto image question type.
  *
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -47,7 +46,7 @@ class qtype_ddimageortext_test_helper extends question_test_helper {
 
         test_question_maker::initialise_a_question($dd);
 
-        $dd->name = 'Drag-and-drop words into sentences question';
+        $dd->name = 'Drag-and-drop onto image question';
         $dd->questiontext = 'The quick brown fox jumped over the lazy dog.';
         $dd->generalfeedback = 'This sentence uses each letter of the alphabet.';
         $dd->qtype = question_bank::get_qtype('ddimageortext');
@@ -103,7 +102,7 @@ class qtype_ddimageortext_test_helper extends question_test_helper {
 
         test_question_maker::initialise_a_question($dd);
 
-        $dd->name = 'Drag-and-drop words into sentences question';
+        $dd->name = 'Drag-and-drop onto image question';
         $dd->questiontext = 'Fill in the operators to make this equation work: ' .
                 '7 [[1]] 11 [[2]] 13 [[1]] 17 [[2]] 19 = 3';
         $dd->generalfeedback = 'This sentence uses each letter of the alphabet.';
