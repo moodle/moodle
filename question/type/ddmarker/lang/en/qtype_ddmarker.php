@@ -33,6 +33,7 @@ $string['draggableitem'] = 'Draggable item';
 $string['draggableitemheader'] = 'Draggable item {$a}';
 $string['draggableitemtype'] = 'Type';
 $string['draggableword'] = 'Draggable text';
+$string['dropbackground'] = 'Background image for dragging markers onto';
 $string['dropzone'] = 'Drop zone {$a}';
 $string['dropzoneheader'] = 'Drop zones';
 $string['followingarewrong'] = 'The following markers have been placed in the wrong area : {$a}.';
