@@ -17,7 +17,4 @@ Then add question/type/gapselect to your git ignore.
 
 Alternatively, download the zip from
     https://github.com/moodleou/moodle-qtype_gapselect/zipball/master
-unzip it into the question/type folder, and then rename the new folder to
-gapselect.
-
-
+unzip it into the question/type folder, and then rename the new folder to gapselect.

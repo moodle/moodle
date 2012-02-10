@@ -17,8 +17,7 @@
 /**
  * Version information for the select missing words question type.
  *
- * @package    qtype
- * @subpackage gapselect
+ * @package    qtype_gapselect
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,4 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version  = 2011020100;
-$plugin->requires = 2011051212;
+$plugin->requires = 2011120500;
+$plugin->cron      = 0;
+$plugin->component = 'qtype_gapselect';
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->release   = '1.0';
