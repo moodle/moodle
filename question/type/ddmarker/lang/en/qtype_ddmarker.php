@@ -37,6 +37,7 @@ $string['draggableitem'] = 'Draggable item';
 $string['draggableitemheader'] = 'Draggable item {$a}';
 $string['draggableitemtype'] = 'Type';
 $string['draggableword'] = 'Draggable text';
+$string['dropbackground'] = 'Background image for dragging markers onto';
 $string['dropzone'] = 'Drop zone {$a}';
 $string['dropzoneheader'] = 'Drop zones';
 $string['editingddmarker'] = 'Editing drag and drop markers';
