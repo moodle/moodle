@@ -15,15 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the drag-and-drop words into sentences question type.
+ * Version information for the drag-and-drop markers question type.
  *
- * @package    qtype
- * @subpackage ddmarker
+ * @package    qtype_ddmarker
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2011051200;
-$plugin->requires = 2011051212;
+$plugin->version   = 2011051200;
+$plugin->requires  = 2011070100;
+$plugin->cron      = 0;
+$plugin->component = 'qtype_ddmarker';
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->release   = '1.0';
