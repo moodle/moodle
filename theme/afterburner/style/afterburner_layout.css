@@ -154,9 +154,3 @@ CONTENT ONLY - NO SIDE BLOCKS WHATSOEVER (Middle Column Only)
 .content-only #region-main {width: 100%}
 .content-only #region-pre { width:0;left:0;}
 .content-only #region-post { width: 0;left:0;}
-/*
-PAGELAYOUT-REPORT
--------------------------*/
-.pagelayout-report #page-content {float:none; width:auto;}
-.pagelayout-report #page-content,
-.pagelayout-report #page-content #region-main .region-content {overflow:visible;}
