@@ -7551,7 +7551,7 @@ class admin_setting_managewebservicetokens extends admin_setting {
 
                 if (!is_siteadmin($token->userid) and
                         key_exists($token->userid, $usermissingcaps)) {
-                    $missingcapabilities = implode(',',
+                    $missingcapabilities = implode(', ',
                             $usermissingcaps[$token->userid]);
                     if (!empty($missingcapabilities)) {
                         $useratag .= html_writer::tag('div',
