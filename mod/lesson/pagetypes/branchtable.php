@@ -110,7 +110,8 @@ class lesson_page_type_branchtable extends lesson_page {
         if ($this->lesson->slideshow) {
             $output .= $renderer->slideshow_start($this->lesson);
         }
-        $output .= $renderer->heading(format_string($this->properties->title));
+        // We are using level 3 header because the page title is a sub-heading of lesson title (MDL-30911).
+        $output .= $renderer->heading(format_string($this->properties->title), 3);
         $output .= $renderer->box($this->get_contents(), 'contents');
 
         $buttons = array();
