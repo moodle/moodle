@@ -216,13 +216,13 @@ if (!$viewobj->quizhasquestions) {
 
 echo $OUTPUT->header();
 
-// Guests can't do a quiz, so offer them a choice of logging in or going back.
 if (isguestuser()) {
-    echo $output->view_page_guest($course, $quiz, $cm, $context, $infomessages, $viewobj);
+    // Guests can't do a quiz, so offer them a choice of logging in or going back.
+    echo $output->view_page_guest($course, $quiz, $cm, $context, $viewobj->infomessages);
 } else if (!isguestuser() && !($canattempt || $canpreview
           || $viewobj->canreviewmine)) {
     // If they are not enrolled in this course in a good enough role, tell them to enrol.
-    echo $output->view_page_notenrolled($course, $quiz, $cm, $context, $infomessages, $viewobj);
+    echo $output->view_page_notenrolled($course, $quiz, $cm, $context, $viewobj->infomessages);
 } else {
     echo $output->view_page($course, $quiz, $cm, $context, $viewobj);
 }
