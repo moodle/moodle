@@ -92,14 +92,14 @@ $line = 1;
 foreach($datarecords as $record) {
     // get content indexed by fieldid
     if($groupid) {
-        $select = "SELECT c.fieldid, c.content, c.content1, c.content2, c.content3, c.content4 
-            FROM {$CFG->prefix}data_content c, {$CFG->prefix}data_records r 
-            WHERE c.recordid = $record->id  
-            AND r.id = c.recordid 
+        $select = "SELECT c.fieldid, c.content, c.content1, c.content2, c.content3, c.content4
+            FROM {$CFG->prefix}data_content c, {$CFG->prefix}data_records r
+            WHERE c.recordid = $record->id
+            AND r.id = c.recordid
             AND r.groupid = $groupid";
     } else {
-        $select = "SELECT fieldid, content, content1, content2, content3, content4 
-            FROM {$CFG->prefix}data_content 
+        $select = "SELECT fieldid, content, content1, content2, content3, content4
+            FROM {$CFG->prefix}data_content
             WHERE recordid = $record->id";
     }
     if( $content = get_records_sql($select) ) {
