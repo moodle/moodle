@@ -17,8 +17,7 @@
 /**
  * Display user activity reports for a course (totals)
  *
- * @package    report
- * @subpackage log
+ * @package    report_log
  * @copyright  1999 onwards Martin Dougiamas  http://dougiamas.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
