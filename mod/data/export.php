@@ -84,6 +84,8 @@ if($mform->is_cancelled()) {
     $PAGE->set_title($data->name);
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
+    $url = new moodle_url('/mod/data/export.php', array('d' => $d));
+    groups_print_activity_menu($cm, $url);
     echo $OUTPUT->heading(format_string($data->name));
 
     // these are for the tab display
@@ -104,7 +106,9 @@ foreach ($formdata as $key => $value) {
     }
 }
 
-$exportdata = data_get_exportdata($data->id, $fields, $selectedfields);
+$currentgroup = groups_get_activity_group($cm);
+
+$exportdata = data_get_exportdata($data->id, $fields, $selectedfields, $currentgroup);
 $count = count($exportdata);
 switch ($formdata['exporttype']) {
     case 'csv':

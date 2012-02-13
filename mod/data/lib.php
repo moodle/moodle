@@ -2803,9 +2803,11 @@ function data_export_ods($export, $dataname, $count) {
  * @param int $dataid
  * @param array $fields
  * @param array $selectedfields
+ * @param int $currentgroup group ID of the current group. This is used for
+ * exporting data while maintaining group divisions.
  * @return array
  */
-function data_get_exportdata($dataid, $fields, $selectedfields) {
+function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0) {
     global $DB;
 
     $exportdata = array();
@@ -2825,7 +2827,15 @@ function data_get_exportdata($dataid, $fields, $selectedfields) {
     $line = 1;
     foreach($datarecords as $record) {
         // get content indexed by fieldid
-        if( $content = $DB->get_records('data_content', array('recordid'=>$record->id), 'fieldid', 'fieldid, content, content1, content2, content3, content4') ) {
+        if ($currentgroup) {
+            $select = 'SELECT c.fieldid, c.content, c.content1, c.content2, c.content3, c.content4 FROM {data_content} c, {data_records} r WHERE c.recordid = ? AND r.id = c.recordid AND r.groupid = ?';
+            $where = array($record->id, $currentgroup);
+        } else {
+            $select = 'SELECT fieldid, content, content1, content2, content3, content4 FROM {data_content} WHERE recordid = ?';
+            $where = array($record->id);
+        }
+
+        if( $content = $DB->get_records_sql($select, $where) ) {
             foreach($fields as $field) {
                 $contents = '';
                 if(isset($content[$field->field->id])) {
