@@ -39,6 +39,7 @@ require_once(dirname(__FILE__).'/lib.php');
  * @param  stdClass $course course instance
  * @param  int    $userid id of the user whose logs are needed
  * @param  string $type type of logs graph needed (usercourse.png/userday.png)
+ * @param  int    $date timestamp in GMT (seconds since epoch)
  * @return void
  */
 function report_log_print_graph($course, $userid, $type, $date=0) {
