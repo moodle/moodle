@@ -118,7 +118,7 @@ abstract class sql_generator {
     /** @var string|bool Different name for small (4byte) sequences or false if same.*/
     public $sequence_name_small = false;
     /**
-     * @var bool To avoid outputting the rest of the field specs, leaving only the name and the sequence_name returned. 
+     * @var bool To avoid outputting the rest of the field specs, leaving only the name and the sequence_name returned.
      * @see getFieldSQL()
      */
     public $sequence_only = false;
@@ -205,7 +205,7 @@ abstract class sql_generator {
 
     /**
      * Given one string (or one array), ends it with $statement_end .
-     * 
+     *
      * @see $statement_end
      *
      * @param array|string $input SQL statement(s).
@@ -248,7 +248,7 @@ abstract class sql_generator {
      * This function will return the SQL code needed to create db tables and statements.
      *
      * @param xmldb_structure $xmldb_structure An xmldb_structure instance.
-     * 
+     *
      * @see xmldb_structure
      */
     public function getCreateStructureSQL($xmldb_structure) {
@@ -266,7 +266,7 @@ abstract class sql_generator {
     /**
      * Given one xmldb_table, this returns it's correct name, depending of all the parameterization.
      * eg: This appends $prefix to the table name.
-     * 
+     *
      * @see $prefix
      *
      * @param xmldb_table $xmldb_table The table whose name we want.
