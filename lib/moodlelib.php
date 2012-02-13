@@ -7083,7 +7083,6 @@ function get_core_subsystems() {
             'license'     => NULL,
             'mathslib'    => NULL,
             'message'     => 'message',
-            'message'     => 'message',
             'mimetypes'   => NULL,
             'mnet'        => 'mnet',
             'moodle.org'  => NULL, // the dot is nasty, watch out! should be renamed to moodleorg
