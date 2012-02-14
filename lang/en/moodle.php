@@ -219,6 +219,7 @@ $string['categoryname'] = 'Category name';
 $string['idnumbercoursecategory'] = 'Category ID number';
 $string['idnumbercoursecategory_help'] = 'The ID number of a course category  is only used when matching the category against external systems and is not displayed anywhere on the site. If the category has an official code name it may be entered, otherwise the field can be left blank.';
 $string['categoryupdated'] = 'The category \'{$a}\' was updated';
+$string['changesmadereallygoaway'] = 'You have made changes. Are you sure you want to navigate away and lose your changes?';
 $string['city'] = 'City/town';
 $string['clambroken'] = 'Your administrator has enabled virus checking for file uploads but has misconfigured something.<br />Your file upload was NOT successful. Your administrator has been emailed to notify them so they can fix it.<br />Maybe try uploading this file later.';
 $string['clamdeletedfile'] = 'The file has been deleted';

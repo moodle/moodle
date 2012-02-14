@@ -2255,6 +2255,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
      * @param object $form MoodleQuickForm
      */
     function startForm(&$form){
+        global $PAGE;
         $this->_reqHTML = $form->getReqHTML();
         $this->_elementTemplates = str_replace('{req}', $this->_reqHTML, $this->_elementTemplates);
         $this->_advancedHTML = $form->getAdvancedHTML();
@@ -2267,7 +2268,13 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $this->_hiddenHtml .= $form->_pageparams;
         }
 
-
+        $PAGE->requires->yui_module('moodle-core-formslib',
+                'M.core.init_formslib',
+                array(array(
+                    'formid' => $form->getAttribute('id')
+                ))
+        );
+        $PAGE->requires->string_for_js('changesmadereallygoaway', 'moodle');
     }
 
     /**
