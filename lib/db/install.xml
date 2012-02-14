@@ -985,7 +985,7 @@
         <FIELD NAME="subject" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false" PREVIOUS="coursemoduleid" NEXT="summary"/>
         <FIELD NAME="summary" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="subject" NEXT="content"/>
         <FIELD NAME="content" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="summary" NEXT="uniquehash"/>
-        <FIELD NAME="uniquehash" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false" PREVIOUS="content" NEXT="rating"/>
+        <FIELD NAME="uniquehash" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="content" NEXT="rating"/>
         <FIELD NAME="rating" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="uniquehash" NEXT="format"/>
         <FIELD NAME="format" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="rating" NEXT="summaryformat"/>
         <FIELD NAME="summaryformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="format" NEXT="attachment"/>
