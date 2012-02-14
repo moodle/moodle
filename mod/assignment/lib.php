@@ -3941,6 +3941,45 @@ function assignment_get_file_areas($course, $cm, $context) {
 }
 
 /**
+ * File browsing support for assignment module.
+ *
+ * @param object $browser
+ * @param object $areas
+ * @param object $course
+ * @param object $cm
+ * @param object $context
+ * @param string $filearea
+ * @param int $itemid
+ * @param string $filepath
+ * @param string $filename
+ * @return object file_info instance or null if not found
+ */
+function assignment_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+    global $CFG, $DB, $USER;
+
+    if ($context->contextlevel != CONTEXT_MODULE || $filearea != 'submission') {
+        return null;
+    }
+    if (!$submission = $DB->get_record('assignment_submissions', array('id' => $itemid))) {
+        return null;
+    }
+    if (!(($submission->userid == $USER->id && has_capability('mod/assignment:view', $context))
+            || has_capability('mod/assignment:grade', $context))) {
+        // no permission to view this submission
+        return null;
+    }
+
+    $fs = get_file_storage();
+    $filepath = is_null($filepath) ? '/' : $filepath;
+    $filename = is_null($filename) ? '.' : $filename;
+    if (!($storedfile = $fs->get_file($context->id, 'mod_assignment', $filearea, $itemid, $filepath, $filename))) {
+        return null;
+    }
+    $urlbase = $CFG->wwwroot.'/pluginfile.php';
+    return new file_info_stored($browser, $context, $storedfile, $urlbase, $filearea, $itemid, true, true, false);
+}
+
+/**
  * Return a list of page types
  * @param string $pagetype current page type
  * @param stdClass $parentcontext Block's parent context
