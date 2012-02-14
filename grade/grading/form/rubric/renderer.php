@@ -191,7 +191,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
         if (!$options['showscoreteacher'] && in_array($mode, array(gradingform_rubric_controller::DISPLAY_EVAL, gradingform_rubric_controller::DISPLAY_EVAL_FROZEN, gradingform_rubric_controller::DISPLAY_REVIEW))) {
             $displayscore = false;
         }
-        if (!$options['showscorestudent'] && $mode == gradingform_rubric_controller::DISPLAY_VIEW) {
+        if (!$options['showscorestudent'] && in_array($mode, array(gradingform_rubric_controller::DISPLAY_VIEW, gradingform_rubric_controller::DISPLAY_PREVIEW_GRADED))) {
             $displayscore = false;
         }
         if ($displayscore) {
@@ -241,6 +241,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
             case gradingform_rubric_controller::DISPLAY_EDIT_FROZEN:
                 $classsuffix = ' editor frozen';  break;
             case gradingform_rubric_controller::DISPLAY_PREVIEW:
+            case gradingform_rubric_controller::DISPLAY_PREVIEW_GRADED:
                 $classsuffix = ' editor preview';  break;
             case gradingform_rubric_controller::DISPLAY_EVAL:
                 $classsuffix = ' evaluate editable'; break;
@@ -277,7 +278,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
         if ($mode != gradingform_rubric_controller::DISPLAY_EDIT_FULL
                 && $mode != gradingform_rubric_controller::DISPLAY_EDIT_FROZEN
                 && $mode != gradingform_rubric_controller::DISPLAY_PREVIEW) {
-            // Options are displayed only in edit mode
+            // Options are displayed only for people who can manage
             return;
         }
         $html = html_writer::start_tag('div', array('class' => 'options'));
@@ -431,10 +432,17 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
         $values = $instance->get_rubric_filling();
         if ($cangrade) {
             $mode = gradingform_rubric_controller::DISPLAY_REVIEW;
+            $showdescription = $options['showdescriptionteacher'];
         } else {
             $mode = gradingform_rubric_controller::DISPLAY_VIEW;
+            $showdescription = $options['showdescriptionstudent'];
         }
-        return $this->display_rubric($criteria, $options, $mode, 'rubric'.$idx, $values);
+        $output = '';
+        if ($showdescription) {
+            $output .= $this->box($instance->get_controller()->get_formatted_description(), 'gradingform_rubric-description');
+        }
+        $output .= $this->display_rubric($criteria, $options, $mode, 'rubric'.$idx, $values);
+        return $output;
     }
 
     public function display_regrade_confirmation($elementname, $changelevel, $value) {

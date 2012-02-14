@@ -37,8 +37,10 @@ class gradingform_rubric_controller extends gradingform_controller {
     const DISPLAY_EDIT_FULL     = 1;
     /** Rubric display mode: Preview the rubric design with hidden fields */
     const DISPLAY_EDIT_FROZEN   = 2;
-    /** Rubric display mode: Preview the rubric design */
+    /** Rubric display mode: Preview the rubric design (for person with manage permission) */
     const DISPLAY_PREVIEW       = 3;
+    /** Rubric display mode: Preview the rubric (for people being graded) */
+    const DISPLAY_PREVIEW_GRADED= 8;
     /** Rubric display mode: For evaluation, enabled (teacher grades a student) */
     const DISPLAY_EVAL          = 4;
     /** Rubric display mode: For evaluation, with hidden fields */
@@ -62,6 +64,27 @@ class gradingform_rubric_controller extends gradingform_controller {
         $node->add(get_string('definerubric', 'gradingform_rubric'),
             $this->get_editor_url(), settings_navigation::TYPE_CUSTOM,
             null, null, new pix_icon('icon', '', 'gradingform_rubric'));
+    }
+
+    /**
+     * Extends the module navigation
+     *
+     * This function is called when the context for the page is an activity module with the
+     * FEATURE_ADVANCED_GRADING and there is an area with the active grading method set to the given plugin.
+     *
+     * @param global_navigation $navigation {@link global_navigation}
+     * @param navigation_node $node {@link navigation_node}
+     */
+    public function extend_navigation(global_navigation $navigation, navigation_node $node=null) {
+        if (has_capability('moodle/grade:managegradingforms', $this->get_context())) {
+            // no need for preview if user can manage forms, he will have link to manage.php in settings instead
+            return;
+        }
+        if ($this->is_form_defined() && ($options = $this->get_options()) && !empty($options['alwaysshowdefinition'])) {
+            $node->add(get_string('gradingof', 'gradingform_rubric', get_grading_manager($this->get_areaid())->get_area_title()),
+                    new moodle_url('/grade/grading/form/'.$this->get_method_name().'/preview.php', array('areaid' => $this->get_areaid())),
+                    settings_navigation::TYPE_CUSTOM);
+        }
     }
 
     /**
@@ -330,14 +353,14 @@ class gradingform_rubric_controller extends gradingform_controller {
     public static function get_default_options() {
         $options = array(
             'sortlevelsasc' => 1,
-            //'showdescriptionteacher' => 1,
-            //'showdescriptionstudent' => 1,
+            'alwaysshowdefinition' => 1,
+            'showdescriptionteacher' => 1,
+            'showdescriptionstudent' => 1,
             'showscoreteacher' => 1,
             'showscorestudent' => 1,
             'enableremarks' => 1,
             'showremarksstudent' => 1
         );
-        // TODO description options
         return $options;
     }
 
@@ -484,8 +507,13 @@ class gradingform_rubric_controller extends gradingform_controller {
         $output = $this->get_renderer($page);
         $criteria = $this->definition->rubric_criteria;
         $options = $this->get_options();
-        $rubric = $output->display_rubric_mapping_explained($this->get_min_max_score());
-        $rubric .= $output->display_rubric($criteria, $options, self::DISPLAY_PREVIEW, 'rubric');
+        $rubric = '';
+        if (has_capability('moodle/grade:managegradingforms', $page->context)) {
+            $rubric .= $output->display_rubric_mapping_explained($this->get_min_max_score());
+            $rubric .= $output->display_rubric($criteria, $options, self::DISPLAY_PREVIEW, 'rubric');
+        } else {
+            $rubric .= $output->display_rubric($criteria, $options, self::DISPLAY_PREVIEW_GRADED, 'rubric');
+        }
 
         return $rubric;
     }
@@ -811,6 +839,9 @@ class gradingform_rubric_instance extends gradingform_instance {
         }
         if ($this->get_data('isrestored') && $haschanges) {
             $html .= html_writer::tag('div', get_string('restoredfromdraft', 'gradingform_rubric'), array('class' => 'gradingform_rubric-restored'));
+        }
+        if (!empty($options['showdescriptionteacher'])) {
+            $html .= html_writer::tag('div', $this->get_controller()->get_formatted_description(), array('class' => 'gradingform_rubric-description'));
         }
         $html .= $this->get_controller()->get_renderer($page)->display_rubric($criteria, $options, $mode, $gradingformelement->getName(), $value);
         return $html;
