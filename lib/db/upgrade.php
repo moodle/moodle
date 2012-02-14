@@ -5402,7 +5402,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     if ($oldversion < 2010102700) {
 
         $table = new xmldb_table('post');
-        $field = new xmldb_field('uniquehash', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null, 'content');
+        $field = new xmldb_field('uniquehash', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'content');
         // Launch change of precision for field name
         $dbman->change_field_precision($table, $field);
 
@@ -5746,24 +5746,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         upgrade_main_savepoint(true, 2011011406);
-    }
-
-    if ($oldversion < 2011011407) {
-        // Check if we need to fix post.uniquehash
-        $columns = $DB->get_columns('my_pages');
-        if (array_key_exists('uniquehash', $columns) && $columns['uniquehash']->max_length != 128) {
-            // Fix discrepancies in the post table after upgrade from 1.9
-            $table = new xmldb_table('post');
-
-            // Uniquehash should be 128 chars
-            // Fixed in earlier upgrade code
-            $field = new xmldb_field('uniquehash', XMLDB_TYPE_CHAR, 128, null, XMLDB_NOTNULL, null, null, 'content');
-            if ($dbman->field_exists($table, $field)) {
-                $dbman->change_field_precision($table, $field);
-            }
-        }
-
-        upgrade_main_savepoint(true, 2011011407);
     }
 
     if ($oldversion < 2011011408) {
@@ -6992,6 +6974,22 @@ FROM
         upgrade_main_savepoint(true, 2011120500.03);
     }
 
+    if ($oldversion < 2011120501.07) {
+        // Check if we need to fix post.uniquehash
+        $columns = $DB->get_columns('post');
+        if (array_key_exists('uniquehash', $columns) && $columns['uniquehash']->max_length != 255) {
+            // Fix discrepancies in the post table after upgrade from 1.9
+            $table = new xmldb_table('post');
+
+            // Uniquehash should be 255 chars, fixed in earlier upgrade code
+            $field = new xmldb_field('uniquehash', XMLDB_TYPE_CHAR, 255, null, XMLDB_NOTNULL, null, null, 'content');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_precision($table, $field);
+            }
+        }
+
+        upgrade_main_savepoint(true, 2011120501.07);
+    }
     return true;
 }
 
