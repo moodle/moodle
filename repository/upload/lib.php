@@ -187,7 +187,7 @@ class repository_upload extends repository {
     /**
      * Checks the contents of the given file is not completely NULL - this can happen if a
      * user drags & drops a folder onto a filemanager / filepicker element
-     * @param filepath full path (including filename) to file to check
+     * @param string $filepath full path (including filename) to file to check
      * @return true if file has at least one non-null byte within it
      */
     protected function check_valid_contents($filepath) {
