@@ -16,7 +16,7 @@
 
 /**
  * Capabilities
- * 
+ *
  * Defines capablities related to logs
  *
  * @package    report_log

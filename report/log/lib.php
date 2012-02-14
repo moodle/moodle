@@ -18,7 +18,7 @@
  * Public API of the log report.
  *
  * Defines the APIs used by log reports
- * 
+ *
  * @package    report_log
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
