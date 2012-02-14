@@ -288,7 +288,7 @@ $icon_progress
         <span> $maxsize </span>
         <span id="dndenabled-{$client_id}" style="display: none"> - $strdndenabled </span>
     </div>
-    <div class="filemanager-container" id="filemanager-{$client_id}">
+    <div class="filemanager-container" id="filemanager-{$client_id}" style="position: relative" >
         <ul id="draftfiles-{$client_id}" class="fm-filelist">
             <li>Loading...</li>
         </ul>
