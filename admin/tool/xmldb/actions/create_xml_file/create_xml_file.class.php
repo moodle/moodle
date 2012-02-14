@@ -68,6 +68,7 @@ class create_xml_file extends XMLDBAction {
 
         // Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
+        $plugintype = $this->get_plugin_type($dirpath);
         $dirpath = $CFG->dirroot . $dirpath;
         $file = $dirpath . '/install.xml';
 
@@ -77,6 +78,9 @@ class create_xml_file extends XMLDBAction {
         $xmlcomment = 'XMLDB file for Moodle ' . dirname($xmlpath);
 
         $xmltable = strtolower(basename(dirname($xmlpath)));
+        if ($plugintype && $plugintype != 'mod') {
+            $xmltable = $plugintype.'_'.$xmltable;
+        }
 
         // Initial contents
         $c = '<?xml version="1.0" encoding="UTF-8" ?>' . "\n";
@@ -105,6 +109,24 @@ class create_xml_file extends XMLDBAction {
 
         // Return ok if arrived here
         return $result;
+    }
+
+    /**
+     * From a given path, work out what type of plugin
+     * this belongs to
+     * @param string $dirpath Path to the db file for this plugin
+     * @return string the type of the plugin or null if not found
+     */
+    function get_plugin_type($dirpath) {
+        global $CFG;
+        $dirpath = $CFG->dirroot.$dirpath;
+        $plugintypes = get_plugin_types();
+        foreach ($plugintypes as $plugintype => $pluginbasedir) {
+            if (substr($dirpath, 0, strlen($pluginbasedir)) == $pluginbasedir) {
+                return $plugintype;
+            }
+        }
+        return null;
     }
 }
 
