@@ -1,7 +1,26 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
 /**
  * coursetagslib.php
- * @author j.beedell@open.ac.uk July07
+ *
+ * @package    core_tag
+ * @copyright  2007 j.beedell@open.ac.uk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once $CFG->dirroot.'/tag/lib.php';
@@ -10,13 +29,15 @@ require_once $CFG->dirroot.'/tag/lib.php';
  * Returns an ordered array of tags associated with visible courses
  * (boosted replacement of get_all_tags() allowing association with user and tagtype).
  *
- * @uses $CFG
- * @param int $courseid, a 0 will return all distinct tags for visible courses
- * @param int $userid optional the user id, a default of 0 will return all users tags for the course
- * @param string $tagtype optional 'official' or 'default', empty returns both tag types
- * @param int $numtags optional number of tags to display, default of 80 is set in the block, 0 returns all
- * @param string $sort optional selected sorting, default is alpha sort (name) also timemodified or popularity
- * @return array
+ * @package  core_tag
+ * @category tag
+ * @param    int      $courseid A course id. Passing 0 will return all distinct tags for all visible courses
+ * @param    int      $userid   (optional) the user id, a default of 0 will return all users tags for the course
+ * @param    string   $tagtype  (optional) The type of tag, empty string returns all types. Currently (Moodle 2.2) there are two
+ *                              types of tags which are used within Moodle, they are 'official' and 'default'.
+ * @param    int      $numtags  (optional) number of tags to display, default of 80 is set in the block, 0 returns all
+ * @param    string   $sort     (optional) selected sorting, default is alpha sort (name) also timemodified or popularity
+ * @return   array
  */
 function coursetag_get_tags($courseid, $userid=0, $tagtype='', $numtags=0, $sort='name') {
 
@@ -93,10 +114,11 @@ function coursetag_get_tags($courseid, $userid=0, $tagtype='', $numtags=0, $sort
  * Returns an ordered array of tags
  * (replaces popular_tags_count() allowing sorting).
  *
- * @uses $CFG
- * @param string $sort optional selected sorting, default is alpha sort (name) also timemodified or popularity
- * @param int $numtags optional number of tags to display, default of 20 is set in the block, 0 returns all
- * @return array
+ * @package  core_tag
+ * @category tag
+ * @param    string $sort    (optional) selected sorting, default is alpha sort (name) also timemodified or popularity
+ * @param    int    $numtags (optional) number of tags to display, default of 20 is set in the block, 0 returns all
+ * @return   array
  */
 function coursetag_get_all_tags($sort='name', $numtags=0) {
 
@@ -135,8 +157,21 @@ function coursetag_get_all_tags($sort='name', $numtags=0) {
 }
 
 /**
- * Callback function for coursetag_get_tags() and coursetag_get_all_tags() only
- * @uses $CFG
+ * Sorting callback function for coursetag_get_tags() and coursetag_get_all_tags() only
+ *
+ * This function does a comparision on a field withing two variables, $a and $b. The field used is specified by
+ * $CFG->tagsort or we just use the 'name' field if $CFG->tagsort is empty. The comparison works as follows:
+ * If $a->$tagsort is greater than $b->$tagsort, 1 is returned.
+ * If $a->$tagsort is equal to $b->$tagsort, 0 is returned.
+ * If $a->$tagsort is less than $b->$tagsort, -1 is returned.
+ *
+ * Also if $a->$tagsort is not numeric or a string, 0 is returned.
+ *
+ * @package core_tag
+ * @access  private
+ * @param   int|string|mixed $a Variable to compare against $b
+ * @param   int|string|mixed $b Variable to compare against $a
+ * @return  int                 The result of the comparison/validation 1, 0 or -1
  */
 function coursetag_sort($a, $b) {
     // originally from block_blog_tags
@@ -161,10 +196,12 @@ function coursetag_sort($a, $b) {
 /**
  * Prints a tag cloud
  *
- * @param array $tagcloud array of tag objects (fields: id, name, rawname, count and flag)
- * @param int $max_size maximum text size, in percentage
- * @param int $min_size minimum text size, in percentage
- * @param $return if true return html string
+ * @package  core_tag
+ * @category tag
+ * @param    array $tagcloud array of tag objects (fields: id, name, rawname, count and flag)
+ * @param    mixed $return   if true return html string
+ * @param    int   $max_size maximum text size, in percentage
+ * @param    int   $min_size minimum text size, in percentage
  */
 function coursetag_print_cloud($tagcloud, $return=false, $max_size=180, $min_size=80) {
 
@@ -237,8 +274,11 @@ function coursetag_print_cloud($tagcloud, $return=false, $max_size=180, $min_siz
 
 /**
  * Returns javascript for use in tags block and supporting pages
- * @param string $coursetagdivs comma separated divs ids
- * @uses $CFG
+ *
+ * @package  core_tag
+ * @category tag
+ * @param    string   $coursetagdivs comma separated divs ids
+ * @return   null
  */
 function coursetag_get_jscript($coursetagdivs = '') {
     global $CFG, $DB, $PAGE;
@@ -263,6 +303,12 @@ function coursetag_get_jscript($coursetagdivs = '') {
 
 /**
  * Returns javascript to create the links in the tag block footer.
+ *
+ * @package  core_tag
+ * @category tag
+ * @param    string   $elementid       the element to attach the footer to
+ * @param    array    $coursetagslinks links arrays each consisting of 'title', 'onclick' and 'text' elements
+ * @return   string   always returns a blank string
  */
 function coursetag_get_jscript_links($elementid, $coursetagslinks) {
     global $PAGE;
@@ -279,12 +325,12 @@ function coursetag_get_jscript_links($elementid, $coursetagslinks) {
 /**
  * Returns all tags created by a user for a course
  *
- * @uses $CFG
- * @param int $courseid
- * @param int $userid
+ * @package  core_tag
+ * @category tag
+ * @param    int      $courseid tags are returned for the course that has this courseid
+ * @param    int      $userid   return tags which were created by this user
  */
 function coursetag_get_records($courseid, $userid) {
-
     global $CFG, $DB;
 
     $sql = "SELECT t.id, name, rawname
@@ -300,12 +346,13 @@ function coursetag_get_records($courseid, $userid) {
 /**
  * Stores a tag for a course for a user
  *
- * @uses $CFG
- * @param array $tags simple array of keywords to be stored
- * @param integer $courseid
- * @param integer $userid
- * @param string $tagtype official or default only
- * @param string $myurl optional for logging creation of course tags
+ * @package  core_tag
+ * @category tag
+ * @param    array  $tags     simple array of keywords to be stored
+ * @param    int    $courseid the id of the course we wish to store a tag for
+ * @param    int    $userid   the id of the user we wish to store a tag for
+ * @param    string $tagtype  official or default only
+ * @param    string $myurl    (optional) for logging creation of course tags
  */
 function coursetag_store_keywords($tags, $courseid, $userid=0, $tagtype='official', $myurl='') {
 
@@ -348,11 +395,12 @@ function coursetag_store_keywords($tags, $courseid, $userid=0, $tagtype='officia
 /**
  * Deletes a personal tag for a user for a course.
  *
- * @uses $CFG
- * @param int $tagid
- * @param int $userid
- * @param int $courseid
-  */
+ * @package  core_tag
+ * @category tag
+ * @param    int      $tagid    the tag we wish to delete
+ * @param    int      $userid   the user that the tag is associated with
+ * @param    int      $courseid the course that the tag is associated with
+ */
 function coursetag_delete_keyword($tagid, $userid, $courseid) {
 
     global $CFG, $DB;
@@ -385,11 +433,12 @@ function coursetag_delete_keyword($tagid, $userid, $courseid) {
 /**
  * Get courses tagged with a tag
  *
+ * @package  core_tag
+ * @category tag
  * @param int $tagid
  * @return array of course objects
  */
 function coursetag_get_tagged_courses($tagid) {
-
     global $DB;
 
     $courses = array();
@@ -411,14 +460,13 @@ function coursetag_get_tagged_courses($tagid) {
 }
 
 /**
- * Course tagging function used only during the deletion of a
- * course (called by lib/moodlelib.php) to clean up associated tags
+ * Course tagging function used only during the deletion of a course (called by lib/moodlelib.php) to clean up associated tags
  *
- * @param int $courseid
- * @param bool $showfeedback
+ * @package core_tag
+ * @param   int      $courseid     the course we wish to delete tag instances from
+ * @param   bool     $showfeedback if we should output a notification of the delete to the end user
  */
 function coursetag_delete_course_tags($courseid, $showfeedback=false) {
-
     global $DB, $OUTPUT;
 
     if ($tags = $DB->get_records_select('tag_instance', "itemtype='course' AND itemid=:courseid", array('courseid'=>$courseid))) {
@@ -440,10 +488,9 @@ function coursetag_delete_course_tags($courseid, $showfeedback=false) {
     }
 }
 
-/**
+/*
  * Function called by cron to create/update users rss feeds
  *
- * @uses $CFG
  * @return true
  *
  * Function removed.
@@ -618,10 +665,10 @@ function coursetag_rss_feeds() {
 }
  */
 
-/**
+/*
  * Get official keywords for the <meta name="keywords"> in header.html
  * use: echo '<meta name="keywords" content="'.coursetag_get_official_keywords($COURSE->id).'"/>';
- * @uses $CFG
+ *
  * @param int $courseid
  * @return string
  *
