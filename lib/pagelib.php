@@ -19,7 +19,7 @@
  * of this class in the $PAGE global variable. This class is a central repository
  * of information about the page we are building up to send back to the user.
  *
- * @package core_page
+ * @package core
  * @category page
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -39,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_page
+ * @package core
  * @category page
  *
  * The following properties are alphabetical. Please keep it that way so that its
@@ -268,7 +268,7 @@ class moodle_page {
 
     /**
      * @var theme_config The theme to use with this page. This has to be properly
-     * initialised via {@see moodle_page::initialise_theme_and_output()} which
+     * initialised via {@link moodle_page::initialise_theme_and_output()} which
      * happens magically before any operation that requires it.
      */
     protected $_theme = null;
@@ -349,7 +349,7 @@ class moodle_page {
     // methods, but instead use the $PAGE->x syntax.
 
     /**
-     * Please do not call this method directly, use the ->state syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->state syntax. {@link moodle_page::__get()}.
      * @return integer one of the STATE_XXX constants. You should not normally need
      * to use this in your code. It is intended for internal use by this class
      * and its friends like print_header, to check that everything is working as
@@ -360,7 +360,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->headerprinted syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->headerprinted syntax. {@link moodle_page::__get()}.
      * @return bool has the header already been printed?
      */
     protected function magic_get_headerprinted() {
@@ -368,7 +368,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->course syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->course syntax. {@link moodle_page::__get()}.
      * @return stdClass the current course that we are inside - a row from the
      * course table. (Also available as $COURSE global.) If we are not inside
      * an actual course, this will be the site course.
@@ -382,7 +382,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->cm syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->cm syntax. {@link moodle_page::__get()}.
      * @return cm_info the course_module that this page belongs to. Will be null
      * if this page is not within a module. This is a full cm object, as loaded
      * by get_coursemodule_from_id or get_coursemodule_from_instance,
@@ -393,7 +393,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->activityrecord syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->activityrecord syntax. {@link moodle_page::__get()}.
      * @return stdClass the row from the activities own database table (for example
      * the forum or quiz table) that this page belongs to. Will be null
      * if this page is not within a module.
@@ -406,7 +406,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->activityname syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->activityname syntax. {@link moodle_page::__get()}.
      * @return string the The type of activity we are in, for example 'forum' or 'quiz'.
      * Will be null if this page is not within a module.
      */
@@ -418,7 +418,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->category syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->category syntax. {@link moodle_page::__get()}.
      * @return stdClass the category that the page course belongs to. If there isn't one
      * (that is, if this is the front page course) returns null.
      */
@@ -432,7 +432,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->categories syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->categories syntax. {@link moodle_page::__get()}.
      * @return array an array of all the categories the page course belongs to,
      * starting with the immediately containing category, and working out to
      * the top-level category. This may be the empty array if we are in the
@@ -444,7 +444,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->context syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->context syntax. {@link moodle_page::__get()}.
      * @return context the main context to which this page belongs.
      */
     protected function magic_get_context() {
@@ -463,7 +463,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->pagetype syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->pagetype syntax. {@link moodle_page::__get()}.
      * @return string e.g. 'my-index' or 'mod-quiz-attempt'.
      */
     protected function magic_get_pagetype() {
@@ -475,7 +475,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->pagetype syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->pagetype syntax. {@link moodle_page::__get()}.
      * @return string The id to use on the body tag, uses {@link magic_get_pagetype()}.
      */
     protected function magic_get_bodyid() {
@@ -483,7 +483,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->pagelayout syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->pagelayout syntax. {@link moodle_page::__get()}.
      * @return string the general type of page this is. For example 'standard', 'popup', 'home'.
      *      Allows the theme to display things differently, if it wishes to.
      */
@@ -492,7 +492,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->layout_tions syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->layout_tions syntax. {@link moodle_page::__get()}.
      * @return array returns arrys with options for layout file
      */
     protected function magic_get_layout_options() {
@@ -500,7 +500,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->subpage syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->subpage syntax. {@link moodle_page::__get()}.
      * @return string The subpage identifier, if any.
      */
     protected function magic_get_subpage() {
@@ -508,7 +508,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->bodyclasses syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->bodyclasses syntax. {@link moodle_page::__get()}.
      * @return string the class names to put on the body element in the HTML.
      */
     protected function magic_get_bodyclasses() {
@@ -516,7 +516,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->title syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->title syntax. {@link moodle_page::__get()}.
      * @return string the title that should go in the <head> section of the HTML of this page.
      */
     protected function magic_get_title() {
@@ -524,7 +524,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->heading syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->heading syntax. {@link moodle_page::__get()}.
      * @return string the main heading that should be displayed at the top of the <body>.
      */
     protected function magic_get_heading() {
@@ -532,7 +532,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->heading syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->heading syntax. {@link moodle_page::__get()}.
      * @return string The menu (or actions) to display in the heading
      */
     protected function magic_get_headingmenu() {
@@ -540,7 +540,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->docspath syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->docspath syntax. {@link moodle_page::__get()}.
      * @return string the path to the Moodle docs for this page.
      */
     protected function magic_get_docspath() {
@@ -552,7 +552,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->url syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->url syntax. {@link moodle_page::__get()}.
      * @return moodle_url the clean URL required to load the current page. (You
      * should normally use this in preference to $ME or $FULLME.)
      */
@@ -576,7 +576,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->blocks syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->blocks syntax. {@link moodle_page::__get()}.
      * @return blocks_manager the blocks manager object for this page.
      */
     protected function magic_get_blocks() {
@@ -593,7 +593,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->requires syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->requires syntax. {@link moodle_page::__get()}.
      * @return page_requirements_manager tracks the JavaScript, CSS files, etc. required by this page.
      */
     protected function magic_get_requires() {
@@ -605,7 +605,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->cacheable syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->cacheable syntax. {@link moodle_page::__get()}.
      * @return bool can this page be cached by the user's browser.
      */
     protected function magic_get_cacheable() {
@@ -613,7 +613,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->focuscontrol syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->focuscontrol syntax. {@link moodle_page::__get()}.
      * @return string the id of the HTML element to be focused when the page has loaded.
      */
     protected function magic_get_focuscontrol() {
@@ -621,7 +621,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->button syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->button syntax. {@link moodle_page::__get()}.
      * @return string the HTML to go where the Turn editing on button normally goes.
      */
     protected function magic_get_button() {
@@ -629,7 +629,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->theme syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->theme syntax. {@link moodle_page::__get()}.
      * @return theme_config the initialised theme for this page.
      */
     protected function magic_get_theme() {
@@ -640,7 +640,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->devicetypeinuse syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->devicetypeinuse syntax. {@link moodle_page::__get()}.
      * @return string The device type being used.
      */
     protected function magic_get_devicetypeinuse() {
@@ -651,7 +651,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->legacythemeinuse syntax. {@see moodle_page::__get()}.
+     * Please do not call this method directly, use the ->legacythemeinuse syntax. {@link moodle_page::__get()}.
      * @deprecated since 2.1
      * @return bool
      */
@@ -662,7 +662,7 @@ class moodle_page {
 
     /**
      * Please do not call this method directly use the ->periodicrefreshdelay syntax
-     * {@see moodle_page::__get()}
+     * {@link moodle_page::__get()}
      * @return int The periodic refresh delay to use with meta refresh
      */
     protected function magic_get_periodicrefreshdelay() {
@@ -670,7 +670,7 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly use the ->opencontainers syntax. {@see moodle_page::__get()}
+     * Please do not call this method directly use the ->opencontainers syntax. {@link moodle_page::__get()}
      * @return xhtml_container_stack tracks XHTML tags on this page that have been opened but not closed.
      *      mainly for internal use by the rendering code.
      */
@@ -741,7 +741,7 @@ class moodle_page {
      * $PAGE->set_something($value) method.
      *
      * @param string $name property name
-     * @param mixed $name Value
+     * @param mixed $value Value
      * @return void Throws exception if field not defined in page class
      */
     public function __set($name, $value) {
@@ -832,7 +832,7 @@ class moodle_page {
      * Set the state. The state must be one of that STATE_... constants, and
      * the state is only allowed to advance one step at a time.
      *
-     * @param integer The new state.
+     * @param integer $state The new state.
      */
     public function set_state($state) {
         if ($state != $this->_state + 1 || $state > self::STATE_DONE) {
@@ -857,7 +857,7 @@ class moodle_page {
      *
      * Sets $PAGE->context to the course context, if it is not already set.
      *
-     * @param stdClass the course to set as the global course.
+     * @param stdClass $course the course to set as the global course.
      */
     public function set_course($course) {
         global $COURSE, $PAGE;
@@ -1005,10 +1005,11 @@ class moodle_page {
      * you want something different. The exact range of supported layouts is specified
      * in the standard theme.
      *
-     * For an idea of the common page layouts see {@link http://docs.moodle.org/dev/Themes_2.0#The_different_layouts_as_of_August_17th.2C_2010}
+     * For an idea of the common page layouts see
+     * {@link http://docs.moodle.org/dev/Themes_2.0#The_different_layouts_as_of_August_17th.2C_2010}
      * But please keep in mind that it may be (and normally is) out of date.
      * The only place to find an accurate up-to-date list of the page layouts
-     * available for your version of Moodle is {@see theme/base/config.php}
+     * available for your version of Moodle is {@link theme/base/config.php}
      *
      * @param string $pagelayout the page layout this is. For example 'popup', 'home'.
      */
@@ -1084,7 +1085,7 @@ class moodle_page {
     }
 
     /**
-     * Sets some HTML to use next to the heading {@see moodle_page::set_heading()}
+     * Sets some HTML to use next to the heading {@link moodle_page::set_heading()}
      *
      * @param string $menu The menu/content to show in the heading
      */
@@ -1651,9 +1652,9 @@ class moodle_page {
      * Loads the activity record for the current CM object associated with this
      * page.
      *
-     * This will load {@see moodle_page::$_module} with a row from the related
+     * This will load {@link moodle_page::$_module} with a row from the related
      * module table in the database.
-     * For instance if {@see moodle_page::$_cm} is a forum then a row from the
+     * For instance if {@link moodle_page::$_cm} is a forum then a row from the
      * forum table will be loaded.
      */
     protected function load_activity_record() {
@@ -2106,7 +2107,7 @@ function page_map_class($type, $classname = NULL) {
  * Parent class from which all Moodle page classes derive
  *
  * @deprecated since Moodle 2.0
- * @package core_page
+ * @package core
  * @category page
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -2115,9 +2116,10 @@ class page_base extends moodle_page {
     /**
      * @var int The numeric identifier of the page being described.
      */
-    public $id = NULL;
+    public $id = null;
 
     /**
+     * Returns the page id
      * @deprecated since Moodle 2.0
      * @return int Returns the id of the page.
      */
@@ -2146,7 +2148,7 @@ class page_base extends moodle_page {
  * since there may be legacy class doing class page_... extends page_course
  *
  * @deprecated since Moodle 2.0
- * @package core_page
+ * @package core
  * @category page
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -2157,7 +2159,7 @@ class page_course extends page_base {}
  * Class that models the common parts of all activity modules
  *
  * @deprecated since Moodle 2.0
- * @package core_page
+ * @package core
  * @category page
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
