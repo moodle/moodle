@@ -22,7 +22,7 @@
  *
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package core_output
+ * @package core
  * @category output
  */
 
@@ -99,7 +99,7 @@ function theme_get_revision() {
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class theme_config {
@@ -112,7 +112,7 @@ class theme_config {
     /**
      * @var array You can base your theme on other themes by linking to the other theme as
      * parents. This lets you use the CSS and layouts from the other themes
-     * (see {@see theme_config::$layouts}).
+     * (see {@link theme_config::$layouts}).
      * That makes it easy to create a new theme that is similar to another one
      * but with a few changes. In this themes CSS you only need to override
      * those rules you want to change.
@@ -435,7 +435,7 @@ class theme_config {
         $this->check_theme_arrows();
     }
 
-    /*
+    /**
      * Checks if arrows $THEME->rarrow, $THEME->larrow have been set (theme/-/config.php).
      * If not it applies sensible defaults.
      *
@@ -473,7 +473,7 @@ class theme_config {
                 $this->larrow = '&lt;';
             }
 
-        /// RTL support - in RTL languages, swap r and l arrows
+            // RTL support - in RTL languages, swap r and l arrows
             if (right_to_left()) {
                 $t = $this->rarrow;
                 $this->rarrow = $this->larrow;
@@ -725,7 +725,7 @@ class theme_config {
      * Given an array of file paths or a single file path loads the contents of
      * the CSS file, processes it then returns it in the same structure it was given.
      *
-     * Can be used recursively on the results of {@see css_files}
+     * Can be used recursively on the results of {@link css_files}
      *
      * @param array|string $file An array of file paths or a single file path
      * @param array $keys An array of previous array keys [recursive addition]
@@ -818,9 +818,10 @@ class theme_config {
      * setting of its closest parent.
      *
      * @param string $variable The name of the setting the exclude setting to resolve
+     * @param string $default
      * @return mixed
      */
-    protected function resolve_excludes($variable, $default=null) {
+    protected function resolve_excludes($variable, $default = null) {
         $setting = $default;
         if (is_array($this->{$variable}) or $this->{$variable} === true) {
             $setting = $this->{$variable};
@@ -841,7 +842,7 @@ class theme_config {
     /**
      * Returns the content of the one huge javascript file merged from all theme javascript files.
      *
-     * @param bool $inhead
+     * @param bool $type
      * @return string
      */
     public function javascript_content($type) {
@@ -897,7 +898,7 @@ class theme_config {
      * Return the URL for an image
      *
      * @param string $imagename the name of the icon.
-     * @param string $component, specification of one plugin like in get_string()
+     * @param string $component specification of one plugin like in get_string()
      * @return moodle_url
      */
     public function pix_url($imagename, $component) {
@@ -1059,7 +1060,7 @@ class theme_config {
      * Get the renderer for a part of Moodle for this theme.
      *
      * @param moodle_page $page the page we are rendering
-     * @param string $module the name of part of moodle. E.g. 'core', 'quiz', 'qtype_multichoice'.
+     * @param string $component the name of part of moodle. E.g. 'core', 'quiz', 'qtype_multichoice'.
      * @param string $subtype optional subtype such as 'news' resulting to 'mod_forum_news'
      * @param string $target one of rendering target constants
      * @return renderer_base the requested renderer.
@@ -1217,7 +1218,7 @@ class theme_config {
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class xhtml_container_stack {

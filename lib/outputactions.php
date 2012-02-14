@@ -20,7 +20,7 @@
  * Please see http://docs.moodle.org/en/Developement:How_Moodle_outputs_HTML
  * for an overview.
  *
- * @package core_output
+ * @package core
  * @category output
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class component_action {
@@ -84,7 +84,7 @@ class component_action {
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class confirm_action extends component_action {
@@ -111,7 +111,7 @@ class confirm_action extends component_action {
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class popup_action extends component_action {

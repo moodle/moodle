@@ -21,7 +21,7 @@
  *
  * @copyright 2009 Tim Hunt, 2010 Petr Skoda
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package core_output
+ * @package core
  * @category output
  */
 
@@ -53,7 +53,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2009 Tim Hunt, 2010 Petr Skoda
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class page_requirements_manager {
@@ -845,7 +845,7 @@ class page_requirements_manager {
      *     alert(M.str.moodle.fullnamedisplay);
      *
      * To substitute the placeholder at client side, use M.util.get_string()
-     * function. It implements the same logic as {@see get_string()}:
+     * function. It implements the same logic as {@link get_string()}:
      *
      *     // require the string in PHP but keep {$a} as it is
      *     $PAGE->requires->string_for_js('fullnamedisplay', 'moodle');

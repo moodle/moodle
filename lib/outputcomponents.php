@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,7 +20,7 @@
  * Please see http://docs.moodle.org/en/Developement:How_Moodle_outputs_HTML
  * for an overview.
  *
- * @package core_output
+ * @package core
  * @category output
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -33,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * Interface marking other classes as suitable for renderer_base::render()
  *
  * @copyright 2010 Petr Skoda (skodak) info@skodak.org
- * @package core_output
+ * @package core
  * @category output
  */
 interface renderable {
@@ -46,7 +45,7 @@ interface renderable {
  * @copyright 2010 Dongsheng Cai
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class file_picker implements renderable {
@@ -124,7 +123,7 @@ class file_picker implements renderable {
  * @copyright 2009 Nicolas Connault, 2010 Petr Skoda
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Modle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class user_picture implements renderable {
@@ -302,6 +301,7 @@ class user_picture implements renderable {
      * This method is recommended as it avoids costly redirects of user pictures
      * if requests are made for non-existent files etc.
      *
+     * @param moodle_page $page
      * @param renderer_base $renderer
      * @return moodle_url
      */
@@ -385,7 +385,7 @@ class user_picture implements renderable {
  * @copyright 2009 Nicolas Connault, 2010 Petr Skoda
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class old_help_icon implements renderable {
@@ -416,7 +416,6 @@ class old_help_icon implements renderable {
      * @param string $helpidentifier  The keyword that defines a help page
      * @param string $title A descriptive text for accessibility only
      * @param string $component
-     * @param bool $linktext add extra text to icon
      */
     public function __construct($helpidentifier, $title, $component = 'moodle') {
         if (empty($title)) {
@@ -438,7 +437,7 @@ class old_help_icon implements renderable {
  * @copyright 2010 Petr Skoda (info@skodak.org)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class help_icon implements renderable {
@@ -494,7 +493,7 @@ class help_icon implements renderable {
  * @copyright 2010 Petr Skoda
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class pix_icon implements renderable {
@@ -543,7 +542,7 @@ class pix_icon implements renderable {
  * @copyright 2010 David Mudrak
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class pix_emoticon extends pix_icon implements renderable {
@@ -569,7 +568,7 @@ class pix_emoticon extends pix_icon implements renderable {
  * @copyright 2009 Petr Skoda
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class single_button implements renderable {
@@ -630,7 +629,7 @@ class single_button implements renderable {
      * Shortcut for adding a JS confirm dialog when the button is clicked.
      * The message must be a yes/no question.
      *
-     * @param string $message The yes/no confirmation question. If "Yes" is clicked, the original action will occur.
+     * @param string $confirmmessage The yes/no confirmation question. If "Yes" is clicked, the original action will occur.
      */
     public function add_confirm_action($confirmmessage) {
         $this->add_action(new confirm_action($confirmmessage));
@@ -648,12 +647,13 @@ class single_button implements renderable {
 
 /**
  * Simple form with just one select field that gets submitted automatically.
+ *
  * If JS not enabled small go button is printed too.
  *
  * @copyright 2009 Petr Skoda
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class single_select implements renderable {
@@ -748,7 +748,7 @@ class single_select implements renderable {
      * Shortcut for adding a JS confirm dialog when the button is clicked.
      * The message must be a yes/no question.
      *
-     * @param string $message The yes/no confirmation question. If "Yes" is clicked, the original action will occur.
+     * @param string $confirmmessage The yes/no confirmation question. If "Yes" is clicked, the original action will occur.
      */
     public function add_confirm_action($confirmmessage) {
         $this->add_action(new component_action('submit', 'M.util.show_confirm_dialog', array('message' => $confirmmessage)));
@@ -766,10 +766,9 @@ class single_select implements renderable {
     /**
      * Adds help icon.
      *
-     * @param string $page  The keyword that defines a help page
+     * @param string $helppage  The keyword that defines a help page
      * @param string $title A descriptive text for accessibility only
      * @param string $component
-     * @param bool $linktext add extra text to icon
      */
     public function set_old_help_icon($helppage, $title, $component = 'moodle') {
         $this->helpicon = new old_help_icon($helppage, $title, $component);
@@ -801,7 +800,7 @@ class single_select implements renderable {
  * @copyright 2009 Petr Skoda
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class url_select implements renderable {
@@ -883,7 +882,7 @@ class url_select implements renderable {
     /**
      * Adds help icon.
      *
-     * @param string $page  The keyword that defines a help page
+     * @param string $helppage  The keyword that defines a help page
      * @param string $title A descriptive text for accessibility only
      * @param string $component
      */
@@ -917,7 +916,7 @@ class url_select implements renderable {
  * @copyright 2010 Petr Skoda
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class action_link implements renderable {
@@ -986,7 +985,7 @@ class action_link implements renderable {
  * @copyright 2009 Tim Hunt, 2010 Petr Skoda
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class html_writer {
@@ -1180,8 +1179,8 @@ class html_writer {
      *                array(1=>'One', '--1uniquekey'=>array('More'=>array(2=>'Two', 3=>'Three')))
      * @param string $name name of select element
      * @param string|array $selected value or array of values depending on multiple attribute
-     * @param array|bool $nothing, add nothing selected option, or false of not added
-     * @param array $attributes - html select element attributes
+     * @param array|bool $nothing add nothing selected option, or false of not added
+     * @param array $attributes html select element attributes
      * @return string HTML fragment
      */
     public static function select(array $options, $name, $selected = '', $nothing = array('' => 'choosedots'), array $attributes = null) {
@@ -1220,7 +1219,7 @@ class html_writer {
             $class = str_replace(']', '', $class);
             $attributes['class'] = $class;
         }
-        $attributes['class'] = 'select ' . $attributes['class']; /// Add 'select' selector always
+        $attributes['class'] = 'select ' . $attributes['class']; // Add 'select' selector always
 
         $attributes['name'] = $name;
 
@@ -1392,8 +1391,8 @@ class html_writer {
     /**
      * Generate a script tag containing the the specified code.
      *
-     * @param string $js the JavaScript code
-     * @param moodle_url|string optional url of the external script, $code ignored if specified
+     * @param string $jscode the JavaScript code
+     * @param moodle_url|string $url optional url of the external script, $code ignored if specified
      * @return string HTML, the code wrapped in <script> tags.
      */
     public static function script($jscode, $url=null) {
@@ -1690,7 +1689,7 @@ class html_writer {
  * @copyright 2010 Petr Skoda
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class js_writer {
@@ -1799,7 +1798,8 @@ class js_writer {
     /**
      * Writes event handler attaching code
      *
-     * @param array|string $selector standard YUI selector for elements, may be array or string, element id is in the form "#idvalue"
+     * @param array|string $selector standard YUI selector for elements, may be
+     *     array or string, element id is in the form "#idvalue"
      * @param string $event A valid DOM event (click, mousedown, change etc.)
      * @param string $function The name of the function to call
      * @param array $arguments An optional array of argument parameters to pass to the function
@@ -1816,7 +1816,7 @@ class js_writer {
 }
 
 /**
- * Holds all the information required to render a <table> by {@see core_renderer::table()}
+ * Holds all the information required to render a <table> by {@link core_renderer::table()}
  *
  * Example of usage:
  * $t = new html_table();
@@ -1826,7 +1826,7 @@ class js_writer {
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class html_table {
@@ -1853,8 +1853,8 @@ class html_table {
 
     /**
      * @var array An array that can be used to make a heading span multiple columns.
-     * In this example, {@see html_table:$data} is supposed to have three columns. For the first two columns,
-     * the same heading is used. Therefore, {@see html_table::$head} should consist of two items.
+     * In this example, {@link html_table:$data} is supposed to have three columns. For the first two columns,
+     * the same heading is used. Therefore, {@link html_table::$head} should consist of two items.
      *
      * Example of usage:
      * $t->headspan = array(2,1);
@@ -1986,7 +1986,7 @@ class html_table {
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class html_table_row {
@@ -2034,7 +2034,7 @@ class html_table_row {
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class html_table_cell {
@@ -2101,7 +2101,7 @@ class html_table_cell {
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class paging_bar implements renderable {
@@ -2187,6 +2187,11 @@ class paging_bar implements renderable {
      *
      * This method validates the arguments set up for the paging bar and then
      * produces fragments of HTML to assist display later on.
+     *
+     * @param renderer_base $output
+     * @param moodle_page $page
+     * @param string $target
+     * @throws coding_exception
      */
     public function prepare(renderer_base $output, moodle_page $page, $target) {
         if (!isset($this->totalcount) || is_null($this->totalcount)) {
@@ -2260,7 +2265,7 @@ class paging_bar implements renderable {
  * During output, each block instance is asked to return a block_contents object,
  * those are then passed to the $OUTPUT->block function for display.
  *
- * {@link $contents} should probably be generated using a moodle_block_..._renderer.
+ * contents should probably be generated using a moodle_block_..._renderer.
  *
  * Other block-like things that need to appear on the page, for example the
  * add new block UI, are also represented as block_contents objects.
@@ -2268,7 +2273,7 @@ class paging_bar implements renderable {
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class block_contents {
@@ -2390,7 +2395,7 @@ class block_contents {
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class block_move_target {
@@ -2425,7 +2430,7 @@ class block_move_target {
  * @copyright 2010 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class custom_menu_item implements renderable {
@@ -2606,7 +2611,7 @@ class custom_menu_item implements renderable {
  * @copyright 2010 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class custom_menu extends custom_menu_item {
@@ -2620,7 +2625,7 @@ class custom_menu extends custom_menu_item {
      * Creates the custom menu
      *
      * @param string $definition the menu items definition in syntax required by {@link convert_text_to_menu_nodes()}
-     * @param string $language the current language code, null disables multilang support
+     * @param string $currentlanguage the current language code, null disables multilang support
      */
     public function __construct($definition = '', $currentlanguage = null) {
         $this->currentlanguage = $currentlanguage;

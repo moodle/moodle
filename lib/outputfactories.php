@@ -15,15 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Interface and classes for creating appropriate renderers for various
- * parts of Moodle.
+ * Interface and classes for creating appropriate renderers for various parts of Moodle.
  *
  * Please see http://docs.moodle.org/en/Developement:How_Moodle_outputs_HTML
  * for an overview.
  *
  * @copyright 2009 Tim Hunt
  * @license  http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package core_output
+ * @package core
  * @category output
  */
 
@@ -60,7 +59,7 @@ define('RENDERER_TARGET_HTMLEMAIL', 'htmlemail');
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 interface renderer_factory {
@@ -106,7 +105,7 @@ interface renderer_factory {
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 abstract class renderer_factory_base implements renderer_factory {
@@ -204,13 +203,14 @@ abstract class renderer_factory_base implements renderer_factory {
 }
 
 /**
- * This is the default renderer factory for Moodle. It simply returns an instance
- * of the appropriate standard renderer class.
+ * This is the default renderer factory for Moodle.
+ *
+ * It simply returns an instance of the appropriate standard renderer class.
  *
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class standard_renderer_factory extends renderer_factory_base {
@@ -243,8 +243,7 @@ class standard_renderer_factory extends renderer_factory_base {
 
 
 /**
- * This is renderer factory allows themes to override the standard renderers using
- * php code.
+ * This is renderer factory allows themes to override the standard renderers using php code.
  *
  * It will load any code from theme/mytheme/renderers.php and
  * theme/parenttheme/renderers.php, if then exist. Then whenever you ask for
@@ -255,7 +254,7 @@ class standard_renderer_factory extends renderer_factory_base {
  * @copyright 2009 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
- * @package core_output
+ * @package core
  * @category output
  */
 class theme_overridden_renderer_factory extends renderer_factory_base {
