@@ -21,17 +21,21 @@
  */
 class webservice_rest_client {
 
+    /** @var moodle_url the REST server url */
     private $serverurl;
+
     private $token;
+    private $format;
 
     /**
      * Constructor
      * @param string $serverurl a Moodle URL
      * @param string $token
      */
-    public function __construct($serverurl, $token) {
-        $this->serverurl = $serverurl;
+    public function __construct($serverurl, $token, $format = 'xml') {
+        $this->serverurl = new moodle_url($serverurl);
         $this->token = $token;
+        $this->format = $format;
     }
 
     /**
@@ -51,11 +55,22 @@ class webservice_rest_client {
     public function call($functionname, $params) {
         global $DB, $CFG;
 
-        $result = download_file_content($this->serverurl
-                        . '?wstoken='.$this->token.'&wsfunction='
-                        . $functionname, null, $params);
+         if ($this->format == 'json') {
+             $formatparam = '&moodlewsrestformat=json';
+             $this->serverurl->param('moodlewsrestformat','json');
+         } else {
+             $formatparam = ''; //to keep retro compability with old server that only support xml (they don't expect this param)
+         }
+
+        $this->serverurl->param('wstoken',$this->token);
+        $this->serverurl->param('wsfunction',$functionname); //you could also use params().
+
+        $result = download_file_content($this->serverurl->out(false), null, $params);
 
         //TODO : transform the XML result into PHP values - MDL-22965
+        if ($this->format == 'json') {
+            $result = json_decode($result);
+        }
 
         return $result;
     }
