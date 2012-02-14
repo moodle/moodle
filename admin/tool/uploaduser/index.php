@@ -239,7 +239,7 @@ if ($formdata = $mform2->is_cancelled()) {
             }
         }
         if (!isset($user->username)) {
-            // prevent warnings bellow
+            // prevent warnings below
             $user->username = '';
         }
 
