@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['addcriterion'] = 'Add criterion';
+$string['alwaysshowdefinition'] = 'Allow users to preview rubric used in the module (otherwise rubric will only become visible after grading)';
 $string['backtoediting'] = 'Back to editing';
 $string['confirmdeletecriterion'] = 'Are you sure you want to delete this criterion?';
 $string['confirmdeletelevel'] = 'Are you sure you want to delete this level?';
@@ -42,11 +43,13 @@ $string['err_nodefinition'] = 'Level definition can not be empty';
 $string['err_nodescription'] = 'Criterion description can not be empty';
 $string['err_scoreformat'] = 'Number of points for each level must be a valid non-negative number';
 $string['err_totalscore'] = 'Maximum number of points possible when graded by the rubric must be more than zero';
+$string['gradingof'] = '{$a} grading';
 $string['leveldelete'] = 'Delete level';
 $string['levelempty'] = 'Click to edit level';
 $string['name'] = 'Name';
 $string['needregrademessage'] = 'The rubric definition was changed after this student had been graded. The student can not see this rubric until you check the rubric and update the grade.';
 $string['pluginname'] = 'Rubric';
+$string['previewrubric'] = 'Preview rubric';
 $string['regrademessage1'] = 'You are about to save changes to a rubric that has already been used for grading. Please indicate if existing grades need to be reviewed. If you set this then the rubric will be hidden from students until their item is regraded.';
 $string['regrademessage5'] = 'You are about to save significant changes to a rubric that has already been used for grading. The gradebook value will be unchanged, but the rubric will be hidden from students until their item is regraded.';
 $string['regradeoption0'] = 'Do not mark for regrade';

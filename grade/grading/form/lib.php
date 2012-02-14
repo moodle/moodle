@@ -203,6 +203,19 @@ abstract class gradingform_controller {
     }
 
     /**
+     * Extends the module navigation
+     *
+     * This function is called when the context for the page is an activity module with the
+     * FEATURE_ADVANCED_GRADING and there is an area with the active grading method set to the given plugin.
+     *
+     * @param global_navigation $navigation {@link global_navigation}
+     * @param navigation_node $node {@link navigation_node}
+     */
+    public function extend_navigation(global_navigation $navigation, navigation_node $node=null) {
+        // do not extend by default
+    }
+
+    /**
      * Returns the grading form definition structure
      *
      * @param boolean $force whether to force loading from DB even if it was already loaded
