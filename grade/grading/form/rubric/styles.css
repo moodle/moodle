@@ -49,6 +49,8 @@
 .gradingform_rubric_editform .status.ready {background-color:#e7f1c3;border-color:#AAEEAA;}
 .gradingform_rubric_editform .status.draft {background-color:#f3f2aa;border-color:#EEEE22;}
 
+.gradingform_rubric {overflow:auto;padding-bottom:1.5em;max-width:720px;position:relative;}
+
 .gradingform_rubric.editor .criterion .controls,
 .gradingform_rubric .criterion .description,
 .gradingform_rubric .criterion .levels,
