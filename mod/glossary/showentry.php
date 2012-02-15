@@ -7,7 +7,6 @@ $concept  = optional_param('concept', '', PARAM_CLEAN);
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $eid      = optional_param('eid', 0, PARAM_INT); // glossary entry id
 $displayformat = optional_param('displayformat',-1, PARAM_SAFEDIR);
-$popup = optional_param('popup',0, PARAM_INT);
 
 $url = new moodle_url('/mod/glossary/showentry.php');
 $url->param('concept', $concept);
@@ -40,11 +39,7 @@ if ($eid) {
     print_error('invalidelementid');
 }
 
-if ($popup) {
-    $PAGE->set_pagelayout('popup');
-} else {
-    $PAGE->set_pagelayout('course');
-}
+$PAGE->set_pagelayout('course');
 
 if ($entries) {
     foreach ($entries as $key => $entry) {
@@ -65,9 +60,7 @@ if ($entries) {
                 continue;
             }
         }
-        if (!$popup) {
-            $entries[$key]->footer = "<p style=\"text-align:right\">&raquo;&nbsp;<a href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid\">".format_string($entry->glossaryname,true)."</a></p>";
-        }
+        $entries[$key]->footer = "<p style=\"text-align:right\">&raquo;&nbsp;<a href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid\">".format_string($entry->glossaryname,true)."</a></p>";
         add_to_log($entry->courseid, 'glossary', 'view entry', "showentry.php?eid=$entry->id", $entry->id, $entry->cmid);
     }
 }
@@ -89,10 +82,6 @@ if (!empty($courseid)) {
 
 if ($entries) {
     glossary_print_dynaentry($courseid, $entries, $displayformat);
-}
-
-if ($popup) {
-    echo $OUTPUT->close_window_button();
 }
 
 /// Show one reduced footer
