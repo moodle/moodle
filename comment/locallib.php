@@ -16,18 +16,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Functions and classes for comments management
+ *
+ * @package   core
+ * @copyright 2010 Dongsheng Cai {@link http://dongsheng.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+defined('MOODLE_INTERNAL') || die();
+
+/**
  * comment_manager is helper class to manage moodle comments in admin page (Reports->Comments)
  *
- * @package   comment
- * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
+ * @package   core
+ * @copyright 2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class comment_manager {
 
-    /**
-     * The number of comments to display per page
-     * @var int
-     */
+    /** @var int The number of comments to display per page */
     private $perpage;
 
     /**
@@ -85,7 +91,6 @@ class comment_manager {
      * @global moodle_page $PAGE
      * @global moodle_database $DB
      * @param int $courseid
-     * @return void
      */
     private function setup_course($courseid) {
         global $PAGE, $DB;
@@ -136,7 +141,7 @@ class comment_manager {
     /**
      * Print comments
      * @param int $page
-     * @return boolean return false if no comments available
+     * @return bool return false if no comments available
      */
     public function print_comments($page = 0) {
         global $OUTPUT, $CFG, $OUTPUT, $DB;

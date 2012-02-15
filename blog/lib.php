@@ -1002,6 +1002,9 @@ function blog_get_associated_count($courseid, $cmid=null) {
  * Capability check has been done in comment->check_permissions(), we
  * don't need to do it again here.
  *
+ * @package  core_blog
+ * @category comment
+ *
  * @param stdClass $comment_param {
  *              context  => context the context object
  *              courseid => int course id
@@ -1017,6 +1020,9 @@ function blog_comment_permissions($comment_param) {
 
 /**
  * Validate comment parameter before perform other comments actions
+ *
+ * @package  core_blog
+ * @category comment
  *
  * @param stdClass $comment {
  *              context  => context the context object

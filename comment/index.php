@@ -17,6 +17,10 @@
 
 /*
  * Comments management interface
+ *
+ * @package   core
+ * @copyright 2010 Dongsheng Cai {@link http://dongsheng.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
