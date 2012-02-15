@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Object to encapsulate the writing of leap2a.
+ *
  * Should be used like:
  * $writer = portfolio_format_leap2a::leap2a_writer($USER);
  * $entry = new portfolio_format_leap2a_entry('forumpost6', $title, 'leap2', 'somecontent')
@@ -205,6 +206,7 @@ class portfolio_format_leap2a_writer {
 
 /**
  * This class represents a single leap2a entry.
+ *
  * You can create these directly and then add them to the main leap feed object
  *
  * @package core_portfolio

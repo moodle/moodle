@@ -26,7 +26,9 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Top level portfolio exception.
- * Sometimes caught and re-thrown as {@see portfolio_export_exception}
+ *
+ * Sometimes caught and re-thrown as portfolio_export_exception
+ * @see portfolio_export_exception
  *
  * @package core_portfolio
  * @category portfolio
@@ -90,7 +92,9 @@ class portfolio_export_exception extends portfolio_exception {
 
 /**
  * Exception for callers to throw when they have a problem.
- * Usually caught and rethrown as {@see portfolio_export_exception}
+ *
+ * Usually caught and rethrown as portfolio_export_exception
+ * @see portfolio_export_exception
  *
  * @package core_portfolio
  * @category portfolio
@@ -101,7 +105,9 @@ class portfolio_caller_exception extends portfolio_exception {}
 
 /**
  * Exception for portfolio plugins to throw when they have a problem.
- * Usually caught and rethrown as {@see portfolio_export_exception}
+ *
+ * Usually caught and rethrown as portfolio_export_exception
+ * @see portfolio_export_exception
  *
  * @package core_portfolio
  * @category portfolio

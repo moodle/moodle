@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -54,6 +53,7 @@ require_once($CFG->libdir . '/portfolio/caller.php');
 
 /**
  * Use this to add a portfolio button or icon or form to a page.
+ *
  * These class methods do not check permissions. the caller must check permissions first.
  * Later, during the export process, the caller class is instantiated and the check_permissions method is called
  * If you are exporting a single file, you should always call set_format_by_file($file)
@@ -178,12 +178,13 @@ class portfolio_add_button {
      * This function will also poll the static function in the caller class
      * and make sure we're not overriding a format that has nothing to do with mimetypes.
      * Eg: if you pass IMAGE here but the caller can export LEAP2A it will keep LEAP2A as well.
-     * {@see portfolio_most_specific_formats for more information}
+     * @see portfolio_most_specific_formats for more information
+     * @see portfolio_format_from_mimetype
      *
      * @param array $formats if the calling code knows better than the static method on the calling class (base_supported_formats).
      *                       Eg: if it's going to be a single file, or if you know it's HTML, you can pass it here instead.
      *                       This is almost always the case so it should be use all the times
-     *                       {@see portfolio_format_from_mimetype} for how to get the appropriate formats to pass here for uploaded files.
+     *                       portfolio_format_from_mimetype for how to get the appropriate formats to pass here for uploaded files.
      *                       or just call set_format_by_file instead
      */
     public function set_formats($formats=null) {
@@ -648,7 +649,7 @@ function portfolio_supported_formats_intersect($callerformats, $pluginformats) {
  * Tiny helper to figure out whether a portfolio format is abstract
  *
  * @param string $format the format to test
- * @retun bool
+ * @return bool
  */
 function portfolio_format_is_abstract($format) {
     if (class_exists($format)) {
@@ -1186,8 +1187,9 @@ function portfolio_existing_exports($userid, $type=null) {
 
 /**
  * Return an array of existing exports by type for a given user.
- * This is much more lightweight than {@see existing_exports} because it only returns the types, rather than the whole serialised data
+ * This is much more lightweight than existing_exports because it only returns the types, rather than the whole serialised data
  * so can be used for checking availability of multiple plugins at the same time.
+ * @see existing_exports
  *
  * @param int $userid the user to check for
  * @return array

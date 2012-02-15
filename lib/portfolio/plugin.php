@@ -31,8 +31,11 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * The base class for portfolio plugins.
+ *
  * All plugins must subclass this
- * either via {@see portfolio_plugin_pull_base} or {@see portfolio_plugin_push_base}
+ * either via portfolio_plugin_pull_base or portfolio_plugin_push_base
+ * @see portfolio_plugin_pull_base
+ * @see portfolio_plugin_push_base
  *
  * @package core_portfolio
  * @category portfolio
@@ -147,7 +150,8 @@ abstract class portfolio_plugin_base {
     /**
      * Does this plugin need any configuration by the administrator?
      * If you override this to return true,
-     * you <b>must</b> implement {@see admin_config_form}
+     * you <b>must</b> implement admin_config_form.
+     * @see admin_config_form
      *
      * @return bool
      */
@@ -158,7 +162,8 @@ abstract class portfolio_plugin_base {
     /**
      * Can this plugin be configured by the user in their profile?
      * If you override this to return true,
-     * you <b>must</b> implement {@see user_config_form}
+     * you <b>must</b> implement user_config_form
+     * @see user_config_form
      *
      * @return bool
      */
@@ -169,7 +174,8 @@ abstract class portfolio_plugin_base {
     /**
      * Does this plugin need configuration during export time?
      * If you override this to return true,
-     * you <b>must</b> implement {@see export_config_form}
+     * you <b>must</b> implement export_config_form.
+     * @see export_config_form
      *
      * @return bool
      */
@@ -201,8 +207,9 @@ abstract class portfolio_plugin_base {
      * isn't actually controlled by the user.
      * Eg: things that your subclasses want to keep in state
      * across the export.
-     * Keys must be in {@see get_allowed_export_config}
+     * Keys must be in get_allowed_export_config
      * This is deliberately not final (see boxnet plugin)
+     * @see get_allowed_export_config
      *
      * @param array $config named array of config items to set.
      */
@@ -261,7 +268,8 @@ abstract class portfolio_plugin_base {
      * of its prepare_package function.
      * This function should read all the files from the portfolio
      * working file area and zip them and send them or whatever it wants.
-     * {@see get_tempfiles} to get the list of files.
+     * get_tempfiles to get the list of files.
+     * @see get_tempfiles
      *
      */
     public abstract function prepare_package();
@@ -321,7 +329,7 @@ abstract class portfolio_plugin_base {
     /**
      * mform to display to the user in their profile
      * if your plugin can't be configured by the user,
-     * (see {@see has_user_config}).
+     * @see has_user_config.
      * Don't bother overriding this function
      *
      * @param moodleform $mform passed by reference, add elements to it
@@ -331,7 +339,7 @@ abstract class portfolio_plugin_base {
     /**
      * mform to display to the admin configuring the plugin.
      * If your plugin can't be configured by the admin,
-     * (@see has_admin_config).
+     * @see has_admin_config
      * Don't bother overriding this function.
      * This function can be called statically or non statically,
      * depending on whether it's creating a new instance (statically),
@@ -353,7 +361,7 @@ abstract class portfolio_plugin_base {
     /**
      * mform to display to the user exporting data using this plugin.
      * If your plugin doesn't need user input at this time,
-     * (see {@see has_export_config}.
+     * @see has_export_config.
      * Don't bother overrideing this function
      *
      * @param moodleform $mform passed by reference, add elements to it.
@@ -376,8 +384,9 @@ abstract class portfolio_plugin_base {
      * The controller will redirect to whatever url
      * this function returns.
      * Afterwards, you can redirect back to portfolio/add.php?postcontrol=1
-     * and {@see post_control} is called before the rest of the processing
+     * and post_control is called before the rest of the processing
      * for the stage is done,
+     * @see post_control
      *
      * @param int $stage to steal control *before* (see constants PARAM_STAGE_*}
      * @return bool
@@ -733,6 +742,7 @@ abstract class portfolio_plugin_base {
 
 /**
  * Class to inherit from for 'push' type plugins
+ *
  * Eg: those that send the file via a HTTP post or whatever
  *
  * @package core_portfolio
@@ -754,6 +764,7 @@ abstract class portfolio_plugin_push_base extends portfolio_plugin_base {
 
 /**
  * Class to inherit from for 'pull' type plugins.
+ *
  * Eg: those that write a file and wait for the remote system to request it
  * from portfolio/file.php.
  * If you're using this you must do $this->set('file', $file) so that it can be served.
@@ -780,7 +791,7 @@ abstract class portfolio_plugin_pull_base extends portfolio_plugin_base {
     /**
      * The base part of the download file url to pull files from
      * your plugin might need to add &foo=bar on the end
-     * {@see verify_file_request_params}
+     * @see verify_file_request_params
      *
      * @return string the url
      */

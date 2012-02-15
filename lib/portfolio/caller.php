@@ -30,8 +30,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Base class for callers
  *
- * {@link See http://docs.moodle.org/dev/Adding_a_Portfolio_Button_to_a_page}
- * {@see also portfolio_module_caller_base}
+ * @link See http://docs.moodle.org/dev/Adding_a_Portfolio_Button_to_a_page
+ * @see also portfolio_module_caller_base
  *
  * @package core_portfolio
  * @category portfolio
@@ -43,7 +43,7 @@ abstract class portfolio_caller_base {
     /** @var stdClass course active during the call */
     protected $course;
 
-    /** @var array configuration used for export. Use {@see  set_export_config} and {@see get_export_config} to access */
+    /** @var array configuration used for export. Use set_export_config and get_export_config to access */
     protected $exportconfig = array();
 
     /** @var stdclass user currently exporting content */
@@ -207,7 +207,7 @@ abstract class portfolio_caller_base {
     /**
      * Stores the config generated at export time.
      * Subclasses can retrieve values using
-     * {@see get_export_config}
+     * @see get_export_config
      *
      * @param array $config formdata
      */
@@ -278,8 +278,11 @@ abstract class portfolio_caller_base {
     /**
      * Called before the portfolio plugin gets control.
      * This function should copy all the files it wants to
-     * the temporary directory, using {@see copy_existing_file}
-     * or {@see write_new_file}
+     * the temporary directory, using copy_existing_file
+     * or write_new_file
+     *
+     * @see copy_existing_file()
+     * @see write_new_file()
      */
     public abstract function prepare_package();
 
@@ -484,11 +487,12 @@ abstract class portfolio_caller_base {
 
 /**
  * Base class for module callers.
+ *
  * This just implements a few of the abstract functions
  * from portfolio_caller_base so that caller authors
  * don't need to.
  * {@link http://docs.moodle.org/dev/Adding_a_Portfolio_Button_to_a_page}
- * {@see also portfolio_caller_base}
+ * @see also portfolio_caller_base
  *
  * @package core_portfolio
  * @category portfolio

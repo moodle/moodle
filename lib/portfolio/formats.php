@@ -16,6 +16,7 @@
 
 /**
  * This file contains all the class definitions of the export formats.
+ *
  * They are implemented in php classes rather than just a simpler hash
  * Because it provides an easy way to do subtyping using php inheritance.
  *
@@ -29,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Base class to inherit from.
+ *
  * Do not use this anywhere in supported_formats
  *
  * @package core_portfolio
@@ -63,9 +65,10 @@ abstract class portfolio_format {
     /**
      * Given a file, return a snippet of markup in whatever format
      * to link to that file.
-     * Usually involves the path given by {@see get_file_directory}.
+     * Usually involves the path given by get_file_directory.
      * This is not supported in subclasses of portfolio_format_file
      * since they're all just single files.
+     * @see get_file_directory
      *
      * @param stored_file $file file information object
      * @param array $options array of options to pass. can contain:
@@ -166,9 +169,10 @@ class portfolio_format_file extends portfolio_format {
     /**
      * Given a file, return a snippet of markup in whatever format
      * to link to that file.
-     * Usually involves the path given by {@see get_file_directory}.
+     * Usually involves the path given by get_file_directory.
      * This is not supported in subclasses of portfolio_format_file
      * since they're all just single files.
+     * @see get_file_directory
      *
      * @param stored_file $file informations object
      * @param array $options array of options to pass. can contain:
@@ -222,6 +226,7 @@ class portfolio_format_image extends portfolio_format_file {
 
 /**
  * HTML format
+ *
  * Could be used for an external cms or something in case we want to be really specific.
  *
  * @package core_portfolio
@@ -265,6 +270,7 @@ class portfolio_format_plainhtml extends portfolio_format_file {
 
 /**
  * Video format
+ *
  * For portfolio plugins that support videos specifically
  *
  * @package core_portfolio
@@ -289,6 +295,7 @@ class portfolio_format_video extends portfolio_format_file {
 
 /**
  * Class for plain text format.
+ *
  * Not sure why we would need this yet,
  * but since resource module wants to export it... we can
  *
@@ -333,6 +340,7 @@ class portfolio_format_text extends portfolio_format_file {
 
 /**
  * Base class for rich formats.
+ *
  * These are multipart - eg things with attachments
  *
  * @package core_portfolio
@@ -355,6 +363,7 @@ abstract class portfolio_format_rich extends portfolio_format {
 
 /**
  * Richhtml - html with attachments.
+ *
  * The most commonly used rich format
  * eg inline images
  *
@@ -379,9 +388,10 @@ class portfolio_format_richhtml extends portfolio_format_rich {
     /**
      * Given a file, return a snippet of markup in whatever format
      * to link to that file.
-     * Usually involves the path given by {@see get_file_directory}.
+     * Usually involves the path given by get_file_directory.
      * This is not supported in subclasses of portfolio_format_file
      * since they're all just single files.
+     * @see get_file_directory
      *
      * @param stored_file $file information for existing file
      * @param array $options array of options to pass. can contain:
@@ -513,6 +523,7 @@ class portfolio_format_leap2a extends portfolio_format_rich {
 
 /**
  * 'PDF format', subtype of file.
+ *
  * For portfolio plugins that support PDFs specifically.
  *
  * @package core_portfolio
@@ -534,6 +545,7 @@ class portfolio_format_pdf extends portfolio_format_file {
 
 /**
  * 'Document format', subtype of file.
+ *
  * For portfolio plugins that support documents specifically.
  *
  * @package core_portfolio
@@ -560,6 +572,7 @@ class portfolio_format_document extends portfolio_format_file {
 
 /**
  * 'Spreadsheet format', subtype of file.
+ *
  * For portfolio plugins that support spreadsheets specifically.
  *
  * @package core_portfolio
@@ -585,6 +598,7 @@ class portfolio_format_spreadsheet extends portfolio_format_file {
 
 /**
  * 'Presentation format', subtype of file.
+ *
  * For portfolio plugins that support presentation specifically.
  *
  * @package core_portfolio
