@@ -379,15 +379,15 @@
             echo "<a href=\"search.php?search=$encodedsearch".$modulelink."&amp;perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
             echo "</p></center>";
         } else if ($perpage === 99999) {
-            $defultprepage = 10;
+            $defaultperpage = 10;
             //If user has course:create or category:manage capability the show 30 records.
             $capabilities = array('moodle/course:create', 'moodle/category:manage');
             if (has_any_capability($capabilities, get_context_instance(CONTEXT_SYSTEM))) {
-                $defultprepage = 30;
+                $defaultperpage = 30;
             }
 
             echo "<center><p>";
-            echo "<a href=\"search.php?search=$encodedsearch".$modulelink."&amp;perpage=".$defultprepage."\">".get_string("showperpage", "", $defultprepage)."</a>";
+            echo "<a href=\"search.php?search=$encodedsearch".$modulelink."&amp;perpage=".$defaultperpage."\">".get_string("showperpage", "", $defaultperpage)."</a>";
             echo "</p></center>";
         }
     }
