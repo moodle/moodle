@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,10 +18,9 @@
 /**
  * Implementation of zip packer.
  *
- * @package    core
- * @subpackage filestorage
- * @copyright  2008 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_files
+ * @copyright 2008 Petr Skoda (http://skodak.org)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -33,24 +31,26 @@ require_once("$CFG->libdir/filestorage/zip_archive.php");
 /**
  * Utility class - handles all zipping and unzipping operations.
  *
- * @package    core
- * @subpackage filestorage
- * @copyright  2008 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_files
+ * @category  files
+ * @copyright 2008 Petr Skoda (http://skodak.org)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class zip_packer extends file_packer {
 
     /**
      * Zip files and store the result in file storage
+     *
      * @param array $files array with full zip paths (including directory information)
      *              as keys (archivepath=>ospathname or archivepath/subdir=>stored_file or archivepath=>array('content_as_string'))
-     * @param int $contextid
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
-     * @return mixed false if error stored file instance if ok
+     * @param int $contextid context ID
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @param int $userid user ID
+     * @return stored_file|bool false if error stored file instance if ok
      */
     public function archive_to_storage($files, $contextid, $component, $filearea, $itemid, $filepath, $filename, $userid = NULL) {
         global $CFG;
@@ -85,6 +85,7 @@ class zip_packer extends file_packer {
 
     /**
      * Zip files and store the result in os file
+     *
      * @param array $files array with zip paths as keys (archivepath=>ospathname or archivepath=>stored_file or archivepath=>array('content_as_string'))
      * @param string $archivefile path to target zip file
      * @return bool success
@@ -121,6 +122,13 @@ class zip_packer extends file_packer {
         return $ziparch->close();
     }
 
+    /**
+     * Perform archiving file from stored file
+     *
+     * @param zip_archive $ziparch zip archive instance
+     * @param string $archivepath file path to archive
+     * @param stored_file $file stored_file object
+     */
     private function archive_stored($ziparch, $archivepath, $file) {
         $file->archive_file($ziparch, $archivepath);
 
@@ -143,6 +151,13 @@ class zip_packer extends file_packer {
         }
     }
 
+    /**
+     * Perform archiving file from file path
+     *
+     * @param zip_archive $ziparch zip archive instance
+     * @param string $archivepath file path to archive
+     * @param string $file path name of the file
+     */
     private function archive_pathname($ziparch, $archivepath, $file) {
         if (!file_exists($file)) {
             return;
@@ -174,9 +189,11 @@ class zip_packer extends file_packer {
 
     /**
      * Unzip file to given file path (real OS filesystem), existing files are overwrited
-     * @param mixed $archivefile full pathname of zip file or stored_file instance
+     *
+     * @todo MDL-31048 localise messages
+     * @param string|stored_file $archivefile full pathname of zip file or stored_file instance
      * @param string $pathname target directory
-     * @return mixed list of processed files; false if error
+     * @return bool|array list of processed files; false if error
      */
     public function extract_to_pathname($archivefile, $pathname) {
         global $CFG;
@@ -267,13 +284,16 @@ class zip_packer extends file_packer {
 
     /**
      * Unzip file to given file path (real OS filesystem), existing files are overwrited
-     * @param mixed $archivefile full pathname of zip file or stored_file instance
-     * @param int $contextid
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $filepath
-     * @return mixed list of processed files; false if error
+     *
+     * @todo MDL-31048 localise messages
+     * @param string|stored_file $archivefile full pathname of zip file or stored_file instance
+     * @param int $contextid context ID
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $pathbase file path
+     * @param int $userid user ID
+     * @return array|bool list of processed files; false if error
      */
     public function extract_to_storage($archivefile, $contextid, $component, $filearea, $itemid, $pathbase, $userid = NULL) {
         global $CFG;
@@ -414,6 +434,8 @@ class zip_packer extends file_packer {
 
     /**
      * Returns array of info about all files in archive
+     *
+     * @param file_archive $archivefile
      * @return array of file infos
      */
     public function list_files($archivefile) {

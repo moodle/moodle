@@ -1451,9 +1451,11 @@ function glossary_print_attachments($entry, $cm, $type=NULL, $align="left") {
 /**
  * Lists all browsable file areas
  *
- * @param object $course
- * @param object $cm
- * @param object $context
+ * @package  mod_glossary
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
  * @return array
  */
 function glossary_get_file_areas($course, $cm, $context) {
@@ -1464,12 +1466,14 @@ function glossary_get_file_areas($course, $cm, $context) {
 /**
  * Serves the glossary attachments. Implements needed access control ;-)
  *
- * @param object $course
- * @param object $cm
- * @param object $context
- * @param string $filearea
- * @param array $args
- * @param bool $forcedownload
+ * @package  mod_glossary
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClsss $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
  * @return bool false if file not found, does not return if found - justsend the file
  */
 function glossary_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {

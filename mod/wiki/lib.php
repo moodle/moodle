@@ -434,9 +434,17 @@ function wiki_scale_used_anywhere($scaleid) {
 }
 
 /**
- * Pluginfile hook
+ * file serving callback
  *
- * @author Josep Arus
+ * @copyright Josep Arus
+ * @package  mod_wiki
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
  */
 function wiki_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG;

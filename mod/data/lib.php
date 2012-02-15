@@ -2844,9 +2844,11 @@ function data_get_exportdata($dataid, $fields, $selectedfields) {
 /**
  * Lists all browsable file areas
  *
- * @param object $course
- * @param object $cm
- * @param object $context
+ * @package  mod_data
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
  * @return array
  */
 function data_get_file_areas($course, $cm, $context) {
@@ -2857,12 +2859,14 @@ function data_get_file_areas($course, $cm, $context) {
 /**
  * Serves the data attachments. Implements needed access control ;-)
  *
- * @param object $course
- * @param object $cm
- * @param object $context
- * @param string $filearea
- * @param array $args
- * @param bool $forcedownload
+ * @package  mod_data
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
  * @return bool false if file not found, does not return if found - justsend the file
  */
 function data_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {

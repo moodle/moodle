@@ -29,6 +29,19 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(dirname(__FILE__)) . '/lib.php');  // interface definition
 require_once($CFG->libdir . '/gradelib.php');           // to handle float vs decimal issues
 
+/**
+ * Server workshop files
+ *
+ * @package  mod_workshop
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
+ * @return bool
+ */
 function workshopform_accumulative_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload) {
     global $DB;
 

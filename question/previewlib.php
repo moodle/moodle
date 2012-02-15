@@ -214,8 +214,10 @@ class question_preview_options extends question_display_options {
  * Called via pluginfile.php -> question_pluginfile to serve files belonging to
  * a question in a question_attempt when that attempt is a preview.
  *
- * @param object $course course settings object
- * @param object $context context object
+ * @package  core_question
+ * @category files
+ * @param stdClass $course course settings object
+ * @param stdClass $context context object
  * @param string $component the name of the component we are serving files for.
  * @param string $filearea the name of the file area.
  * @param int $qubaid the question_usage this image belongs to.

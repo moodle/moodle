@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,38 +18,42 @@
 /**
  * Utility class for browsing of stored files.
  *
- * @package    core
- * @subpackage filebrowser
- * @copyright  2008 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_files
+ * @copyright 2008 Petr Skoda (http://skodak.org)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Represents an actual file or folder - a row in the file table -
- * in the tree navigated by @see{file_browser}.
+ * Represents an actual file or folder - a row in the file table in the tree navigated by {@link file_browser}.
  *
- * @package    core
- * @subpackage filebrowser
- * @copyright  2008 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_files
+ * @copyright 2008 Petr Skoda (http://skodak.org)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file_info_stored extends file_info {
+    /** @var stored_file|virtual_root_file stored_file or virtual_root_file instance */
     protected $lf;
+    /** @var string the serving script */
     protected $urlbase;
+    /** @var string the human readable name of this area */
     protected $topvisiblename;
+    /** @var int|bool it's false if itemid is 0 and not included in URL */
     protected $itemidused;
+    /** @var bool allow file reading */
     protected $readaccess;
+    /** @var bool allow file write, delee */
     protected $writeaccess;
+    /** @var string do not show links to parent context/area */
     protected $areaonly;
 
     /**
      * Constructor
      *
-     * @param file_browser $browser
-     * @param stdClass $context
-     * @param stored_file|virtual_root_file $storedfile
+     * @param file_browser $browser file browser instance
+     * @param stdClass $context context object
+     * @param stored_file|virtual_root_file $storedfile stored_file instance
      * @param string $urlbase the serving script - usually the $CFG->wwwroot/.'pluginfile.php'
      * @param string $topvisiblename the human readable name of this area
      * @param int|bool $itemidused false if itemid  always 0 and not included in URL
@@ -74,6 +77,7 @@ class file_info_stored extends file_info {
      * Returns list of standard virtual file/directory identification.
      * The difference from stored_file parameters is that null values
      * are allowed in all fields
+     *
      * @return array with keys contextid, component, filearea, itemid, filepath and filename
      */
     public function get_params() {
@@ -87,6 +91,7 @@ class file_info_stored extends file_info {
 
     /**
      * Returns localised visible name.
+     *
      * @return string
      */
     public function get_visible_name() {
@@ -110,8 +115,9 @@ class file_info_stored extends file_info {
 
     /**
      * Returns file download url
-     * @param bool $forcedownload
-     * @param bool $htts force https
+     *
+     * @param bool $forcedownload Whether or not force download
+     * @param bool $https whether or not force https
      * @return string url
      */
     public function get_url($forcedownload=false, $https=false) {
@@ -140,7 +146,8 @@ class file_info_stored extends file_info {
     }
 
     /**
-     * Can I read content of this file or enter directory?
+     * Whether or not I can read content of this file or enter directory
+     *
      * @return bool
      */
     public function is_readable() {
@@ -148,7 +155,8 @@ class file_info_stored extends file_info {
     }
 
     /**
-     * Can I add new files or directories?
+     * Whether or not new files or directories can be added
+     *
      * @return bool
      */
     public function is_writable() {
@@ -156,7 +164,7 @@ class file_info_stored extends file_info {
     }
 
     /**
-     * Is this top of empty area?
+     * Whether or not this is an empty area
      *
      * @return bool
      */
@@ -172,6 +180,7 @@ class file_info_stored extends file_info {
 
     /**
      * Returns file size in bytes, null for directories
+     *
      * @return int bytes or null if not known
      */
     public function get_filesize() {
@@ -180,6 +189,7 @@ class file_info_stored extends file_info {
 
     /**
      * Returns mimetype
+     *
      * @return string mimetype or null if not known
      */
     public function get_mimetype() {
@@ -188,6 +198,7 @@ class file_info_stored extends file_info {
 
     /**
      * Returns time created unix timestamp if known
+     *
      * @return int timestamp or null
      */
     public function get_timecreated() {
@@ -196,6 +207,7 @@ class file_info_stored extends file_info {
 
     /**
      * Returns time modified unix timestamp if known
+     *
      * @return int timestamp or null
      */
     public function get_timemodified() {
@@ -203,7 +215,8 @@ class file_info_stored extends file_info {
     }
 
     /**
-     * Is directory?
+     * Whether or not this is a directory
+     *
      * @return bool
      */
     public function is_directory() {
@@ -212,6 +225,7 @@ class file_info_stored extends file_info {
 
     /**
      * Returns the license type of the file
+     *
      * @return string license short name or null
      */
     public function get_license() {
@@ -220,6 +234,7 @@ class file_info_stored extends file_info {
 
     /**
      * Returns the author name of the file
+     *
      * @return string author name or null
      */
     public function get_author() {
@@ -228,6 +243,7 @@ class file_info_stored extends file_info {
 
     /**
      * Returns the source of the file
+     *
      * @return string a source url or null
      */
     public function get_source() {
@@ -236,6 +252,7 @@ class file_info_stored extends file_info {
 
     /**
      * Returns the sort order of the file
+     *
      * @return int
      */
     public function get_sortorder() {
@@ -244,6 +261,7 @@ class file_info_stored extends file_info {
 
     /**
      * Returns list of children.
+     *
      * @return array of file_info instances
      */
     public function get_children() {
@@ -266,7 +284,8 @@ class file_info_stored extends file_info {
 
     /**
      * Returns parent file_info instance
-     * @return file_info or null for root
+     *
+     * @return file_info|null file_info instance or null for root
      */
     public function get_parent() {
         if ($this->lf->get_filepath() === '/' and $this->lf->is_directory()) {
@@ -296,9 +315,10 @@ class file_info_stored extends file_info {
     /**
      * Create new directory, may throw exception - make sure
      * params are valid.
+     *
      * @param string $newdirname name of new directory
-     * @param int id of author, default $USER->id
-     * @return file_info new directory
+     * @param int $userid id of author, default $USER->id
+     * @return file_info|null new directory's file_info instance or null if failed
      */
     public function create_directory($newdirname, $userid = NULL) {
         if (!$this->is_writable() or !$this->lf->is_directory()) {
@@ -324,10 +344,11 @@ class file_info_stored extends file_info {
     /**
      * Create new file from string - make sure
      * params are valid.
+     *
      * @param string $newfilename name of new file
      * @param string $content of file
-     * @param int id of author, default $USER->id
-     * @return file_info new file
+     * @param int $userid id of author, default $USER->id
+     * @return file_info|null new file's file_info instance or null if failed
      */
     public function create_file_from_string($newfilename, $content, $userid = NULL) {
         if (!$this->is_writable() or !$this->lf->is_directory()) {
@@ -370,10 +391,11 @@ class file_info_stored extends file_info {
     /**
      * Create new file from pathname - make sure
      * params are valid.
+     *
      * @param string $newfilename name of new file
      * @param string $pathname location of file
-     * @param int id of author, default $USER->id
-     * @return file_info new file
+     * @param int $userid id of author, default $USER->id
+     * @return file_info|null new file's file_info instance or null if failed
      */
     public function create_file_from_pathname($newfilename, $pathname, $userid = NULL) {
         if (!$this->is_writable() or !$this->lf->is_directory()) {
@@ -416,10 +438,11 @@ class file_info_stored extends file_info {
     /**
      * Create new file from stored file - make sure
      * params are valid.
+     *
      * @param string $newfilename name of new file
-     * @param mixed file id or stored_file of file
-     * @param int id of author, default $USER->id
-     * @return file_info new file
+     * @param int|stored_file $fid file id or stored_file of file
+     * @param int $userid id of author, default $USER->id
+     * @return file_info|null new file's file_info instance or null if failed
      */
     public function create_file_from_storedfile($newfilename, $fid, $userid = NULL) {
         if (!$this->is_writable() or $this->lf->get_filename() !== '.') {
@@ -461,6 +484,7 @@ class file_info_stored extends file_info {
 
     /**
      * Delete file, make sure file is deletable first.
+     *
      * @return bool success
      */
     public function delete() {
@@ -484,12 +508,14 @@ class file_info_stored extends file_info {
 
     /**
      * Copy content of this file to local storage, overriding current file if needed.
-     * @param int $contextid
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
-     * @return boolean success
+     *
+     * @param int $contextid context ID
+     * @param string $component file component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return bool success
      */
     public function copy_to_storage($contextid, $component, $filearea, $itemid, $filepath, $filename) {
         if (!$this->is_readable() or $this->is_directory()) {
@@ -508,8 +534,9 @@ class file_info_stored extends file_info {
 
     /**
      * Copy content of this file to local storage, overriding current file if needed.
+     *
      * @param string $pathname real local full file name
-     * @return boolean success
+     * @return bool success
      */
     public function copy_to_pathname($pathname) {
         if (!$this->is_readable() or $this->is_directory()) {

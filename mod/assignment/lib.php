@@ -3025,12 +3025,14 @@ function assignment_get_participants($assignmentid) {
 /**
  * Serves assignment submissions and other files.
  *
- * @param object $course
- * @param object $cm
- * @param object $context
- * @param string $filearea
- * @param array $args
- * @param bool $forcedownload
+ * @package  mod_assignment
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
  * @return bool false if file not found, does not return if found - just send the file
  */
 function assignment_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
@@ -3927,10 +3929,12 @@ function assignment_pack_files($filesforzipping) {
 /**
  * Lists all file areas current user may browse
  *
- * @param object $course
- * @param object $cm
- * @param object $context
- * @return array
+ * @package  mod_assignment
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @return array available file areas
  */
 function assignment_get_file_areas($course, $cm, $context) {
     $areas = array();
