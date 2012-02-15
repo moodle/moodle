@@ -4,10 +4,9 @@ require_once("$CFG->dirroot/mod/scorm/lib.php");
 require_once("$CFG->libdir/filelib.php");
 
 /// Constants and settings for module scorm
-define('UPDATE_NEVER', '0');
-define('UPDATE_ONCHANGE', '1');
-define('UPDATE_EVERYDAY', '2');
-define('UPDATE_EVERYTIME', '3');
+define('SCORM_UPDATE_NEVER', '0');
+define('SCORM_UPDATE_EVERYDAY', '2');
+define('SCORM_UPDATE_EVERYTIME', '3');
 
 define('SCO_ALL', 0);
 define('SCO_DATA', 1);
@@ -118,11 +117,10 @@ function scorm_get_hidetoc_array() {
  *
  * @return array an array of update frequency options
  */
-function scorm_get_updatefreq_array(){
-    return array(0 => get_string('never'),
-                 1 => get_string('onchanges','scorm'),
-                 2 => get_string('everyday','scorm'),
-                 3 => get_string('everytime','scorm'));
+function scorm_get_updatefreq_array() {
+    return array(SCORM_UPDATE_NEVER => get_string('never'),
+                 SCORM_UPDATE_EVERYDAY => get_string('everyday', 'scorm'),
+                 SCORM_UPDATE_EVERYTIME => get_string('everytime', 'scorm'));
 }
 
 /**
@@ -709,7 +707,7 @@ function scorm_course_format_display($user,$course) {
 function scorm_view_display ($user, $scorm, $action, $cm) {
     global $CFG, $DB, $PAGE, $OUTPUT;
 
-    if ($scorm->updatefreq == UPDATE_EVERYTIME) {
+    if ($scorm->scormtype != SCORM_TYPE_LOCAL && $scorm->updatefreq == SCORM_UPDATE_EVERYTIME) {
         scorm_parse($scorm, false);
     }
 
@@ -803,7 +801,7 @@ function scorm_simple_play($scorm,$user, $context, $cmid) {
 
     $result = false;
 
-    if ($scorm->updatefreq == UPDATE_EVERYTIME) {
+    if ($scorm->scormtype != SCORM_TYPE_LOCAL && $scorm->updatefreq == SCORM_UPDATE_EVERYTIME) {
         scorm_parse($scorm, false);
     }
     if (has_capability('mod/scorm:viewreport', $context)) { //if this user can view reports, don't skipview so they can see links to reports.
