@@ -48,27 +48,27 @@ class mod_scorm_mod_form extends moodleform_mod {
         $this->add_intro_editor(true);
 
         // Scorm types
-        $options = array(SCORM_TYPE_LOCAL => get_string('typelocal', 'scorm'));
+        $scormtypes = array(SCORM_TYPE_LOCAL => get_string('typelocal', 'scorm'));
 
         if ($cfg_scorm->allowtypeexternal) {
-            $options[SCORM_TYPE_EXTERNAL] = get_string('typeexternal', 'scorm');
+            $scormtypes[SCORM_TYPE_EXTERNAL] = get_string('typeexternal', 'scorm');
         }
 
         if ($cfg_scorm->allowtypelocalsync) {
-            $options[SCORM_TYPE_LOCALSYNC] = get_string('typelocalsync', 'scorm');
+            $scormtypes[SCORM_TYPE_LOCALSYNC] = get_string('typelocalsync', 'scorm');
         }
 
         if (!empty($CFG->repositoryactivate) and $cfg_scorm->allowtypeimsrepository) {
-            $options[SCORM_TYPE_IMSREPOSITORY] = get_string('typeimsrepository', 'scorm');
+            $scormtypes[SCORM_TYPE_IMSREPOSITORY] = get_string('typeimsrepository', 'scorm');
         }
 
         if ($cfg_scorm->allowtypeexternalaicc) {
-            $options[SCORM_TYPE_AICCURL] = get_string('typeaiccurl', 'scorm');
+            $scormtypes[SCORM_TYPE_AICCURL] = get_string('typeaiccurl', 'scorm');
         }
 
         // Reference
-        if (count($options) > 1) {
-            $mform->addElement('select', 'scormtype', get_string('scormtype', 'scorm'), $options);
+        if (count($scormtypes) > 1) {
+            $mform->addElement('select', 'scormtype', get_string('scormtype', 'scorm'), $scormtypes);
             $mform->addHelpButton('scormtype', 'scormtype', 'scorm');
             $mform->addElement('text', 'packageurl', get_string('packageurl', 'scorm'), array('size'=>60));
             $mform->setType('packageurl', PARAM_RAW);
@@ -237,11 +237,16 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setDefault('auto', $cfg_scorm->auto);
         $mform->setAdvanced('auto', $cfg_scorm->auto_adv);
 
-        // Update packages timing
-        $mform->addElement('select', 'updatefreq', get_string('updatefreq', 'scorm'), scorm_get_updatefreq_array());
-        $mform->setDefault('updatefreq', $cfg_scorm->updatefreq);
-        $mform->setAdvanced('updatefreq', $cfg_scorm->updatefreq_adv);
-
+        if (count($scormtypes) > 1) {
+            // Update packages timing
+            $mform->addElement('select', 'updatefreq', get_string('updatefreq', 'scorm'), scorm_get_updatefreq_array());
+            $mform->setDefault('updatefreq', $cfg_scorm->updatefreq);
+            $mform->setAdvanced('updatefreq', $cfg_scorm->updatefreq_adv);
+            $mform->addHelpButton('updatefreq', 'updatefreq', 'scorm');
+            $mform->disabledIf('updatefreq', 'scormtype', 'eq', SCORM_TYPE_LOCAL);
+        } else {
+            $mform->addElement('hidden', 'updatefreq', 0);
+        }
         //-------------------------------------------------------------------------------
         // Hidden Settings
         $mform->addElement('hidden', 'datadir', null);
