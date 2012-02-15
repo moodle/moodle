@@ -39,7 +39,7 @@ class webservice_rest_server extends webservice_base_server {
     }
 
     /**
-     * This method parses the $_REQUEST superglobal and looks for
+     * This method parses the $_POST and $_GET superglobals and looks for
      * the following information:
      *  1/ user authentication - username+password or token (wsusername, wspassword and wstoken parameters)
      *  2/ function name (wsfunction parameter)
@@ -48,26 +48,30 @@ class webservice_rest_server extends webservice_base_server {
      * @return void
      */
     protected function parse_request() {
+
+        //Get GET and POST paramters
+        $methodvariables = array_merge($_GET,$_POST);
+
         if ($this->authmethod == WEBSERVICE_AUTHMETHOD_USERNAME) {
-            $this->username = isset($_REQUEST['wsusername']) ? $_REQUEST['wsusername'] : null;
-            unset($_REQUEST['wsusername']);
+            $this->username = isset($methodvariables['wsusername']) ? $methodvariables['wsusername'] : null;
+            unset($methodvariables['wsusername']);
 
-            $this->password = isset($_REQUEST['wspassword']) ? $_REQUEST['wspassword'] : null;
-            unset($_REQUEST['wspassword']);
+            $this->password = isset($methodvariables['wspassword']) ? $methodvariables['wspassword'] : null;
+            unset($methodvariables['wspassword']);
 
-            $this->functionname = isset($_REQUEST['wsfunction']) ? $_REQUEST['wsfunction'] : null;
-            unset($_REQUEST['wsfunction']);
+            $this->functionname = isset($methodvariables['wsfunction']) ? $methodvariables['wsfunction'] : null;
+            unset($methodvariables['wsfunction']);
 
-            $this->parameters = $_REQUEST;
+            $this->parameters = $methodvariables;
 
         } else {
-            $this->token = isset($_REQUEST['wstoken']) ? $_REQUEST['wstoken'] : null;
-            unset($_REQUEST['wstoken']);
+            $this->token = isset($methodvariables['wstoken']) ? $methodvariables['wstoken'] : null;
+            unset($methodvariables['wstoken']);
 
-            $this->functionname = isset($_REQUEST['wsfunction']) ? $_REQUEST['wsfunction'] : null;
-            unset($_REQUEST['wsfunction']);
+            $this->functionname = isset($methodvariables['wsfunction']) ? $methodvariables['wsfunction'] : null;
+            unset($methodvariables['wsfunction']);
 
-            $this->parameters = $_REQUEST;
+            $this->parameters = $methodvariables;
         }
     }
 
