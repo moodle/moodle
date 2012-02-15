@@ -532,8 +532,12 @@ body.tag .managelink {padding: 5px;}
 .fm-file-entry{border: 1px solid red;}
 .fm-operation {font-weight: bold;}
 
-.filemanager-container.dndupload-over,
-.filepicker-filelist.dndupload-over {background: #8EF947;}
+.filemanager-container,
+.filepicker-filelist {overflow:hidden;}
+.filemanager-container .dndupload-target,
+.filepicker-filelist .dndupload-target {background:#f7f998;position:absolute;height:100%;width:100%;top:0;left:0;text-align:center;padding:5px;z-index:1000}
+.filemanager-container.dndupload-over .dndupload-target,
+.filepicker-filelist.dndupload-over .dndupload-target {background:#8EF947;font-weight:bold}
 
 /*
  * Backup and Restore CSS

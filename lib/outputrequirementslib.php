@@ -468,7 +468,7 @@ class page_requirements_manager {
                     $module = array('name'     => 'core_dndupload',
                                     'fullpath' => '/lib/form/dndupload.js',
                                     'requires' => array('node', 'event', 'json'),
-                                    'strings'  => array(array('uploadformlimit', 'moodle')));
+                                    'strings'  => array(array('uploadformlimit', 'moodle'), array('droptoupload', 'moodle'), array('maxfilesreached', 'moodle')));
                     break;
             }
 
