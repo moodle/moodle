@@ -268,6 +268,118 @@ class core_course_external extends external_api {
     }
 
     /**
+    * Get categories
+    * @param $categoryid the category id to get
+    * @param $nosubcategories obtain only the category or its subcategories
+    * @return array
+    */
+    public static function get_categories($options) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/course/lib.php");
+        //validate parameters
+        $params = self::validate_parameters(self::get_categories_parameters(), array('options' => $options));
+
+        $categoryid = $params['options']['categoryid'];
+        $nosubcats = $params['options']['nosubcategories'];
+
+        if (!empty($categoryid)) {
+            $categories = $DB->get_records('course_categories', array('id' => $categoryid));
+            if (!$nosubcats) {
+                $subcats = $DB->get_records('course_categories', array('parent' => $categoryid));
+                $categories = array_merge($categories, $subcats);
+            }
+        }
+        else {
+            $categories = $DB->get_records('course_categories');
+        }
+
+        $categoriesinfo = array();
+        foreach ($categories as $category) {
+		
+            //security checks
+            $context = context_coursecat::instance($category->id);
+            try {
+                self::validate_context($context);
+            } catch (Exception $e) {
+                $exceptionparam = new stdClass();
+                $exceptionparam->message = $e->getMessage();
+                $exceptionparam->catid = $category->id;
+                    throw new moodle_exception('errorcatcontextnotvalid', 'webservice', '', $exceptionparam);
+            }
+
+            $categoryinfo = array();
+            $categoryinfo['id'] = $category->id;
+            $categoryinfo['name'] = $category->name;
+            $categoryinfo['description'] = $category->description;
+            $categoryinfo['descriptionformat'] = $category->descriptionformat;
+            $categoryinfo['parent'] = $category->parent;
+            $categoryinfo['sortorder'] = $category->sortorder;
+            $categoryinfo['coursecount'] = $category->coursecount;
+            $categoryinfo['depth'] = $category->depth;
+            $categoryinfo['path'] = $category->path;
+
+            if (has_capability('moodle/category:manage', $context)) {
+                $categoryinfo['idnumber'] = $category->idnumber;
+                $categoryinfo['visible'] = $category->visible;
+                $categoryinfo['visibleold'] = $category->visibleold;
+                $categoryinfo['timemodified'] = $category->timemodified;
+                $categoryinfo['theme'] = $category->theme;
+            }
+
+            if ($category->visible or has_capability('moodle/category:viewhiddencategories', context_system::instance())) {
+                $categoriesinfo[] = $categoryinfo;
+            }
+        }
+
+        return $categoriesinfo;
+    }
+
+    /**
+    * Returns description of method result value
+    * @return external_description
+    */
+    public static function get_categories_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'category id'),
+                    'name' => new external_value(PARAM_TEXT, 'category name'),
+                    'idnumber' => new external_value(PARAM_RAW, 'category id number', VALUE_OPTIONAL),
+                    'description' => new external_value(PARAM_TEXT, 'category description'),
+                    'descriptionformat' => new external_value(PARAM_INT, 'description format'),
+                    'parent' => new external_value(PARAM_INT, 'parent category id'),
+                    'sortorder' => new external_value(PARAM_INT, 'category sorting order'),
+                    'coursecount' => new external_value(PARAM_INT, 'number of courses in this category'),
+                    'visible' => new external_value(PARAM_INT, '1: available, 0:not available', VALUE_OPTIONAL),
+                    'visibleold' => new external_value(PARAM_INT, '1: available, 0:not available', VALUE_OPTIONAL),
+                    'timemodified' => new external_value(PARAM_INT, 'timestamp', VALUE_OPTIONAL),
+                    'depth' => new external_value(PARAM_INT, 'category depth'),
+                    'path' => new external_value(PARAM_TEXT, 'category path'),
+                    'theme' => new external_value(PARAM_THEME, 'category theme', VALUE_OPTIONAL),
+                ), 'categories'
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    function get_categories_parameters() {
+        return new external_function_parameters(
+            array(
+                options => new external_single_structure(
+                    array(
+                        'categoryid' => new external_value(PARAM_INT, 'category id to be returned', VALUE_OPTIONAL),
+                        'nosubcategories' => new external_value(PARAM_BOOL, 'return just the requested category
+                                                        (true) or also its subcategories (false)', VALUE_DEFAULT, false)
+                    ), 'options', VALUE_DEFAULT, array()
+                )
+            )
+        );
+    }
+
+    /**
      * Get courses
      *
      * @param array $options It contains an array (list of ids)
