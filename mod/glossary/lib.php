@@ -2789,6 +2789,9 @@ function glossary_extend_settings_navigation(settings_navigation $settings, navi
  * Capability check has been done in comment->check_permissions(), we
  * don't need to do it again here.
  *
+ * @package  mod_glossary
+ * @category comment
+ *
  * @param stdClass $comment_param {
  *              context  => context the context object
  *              courseid => int course id
@@ -2804,6 +2807,9 @@ function glossary_comment_permissions($comment_param) {
 
 /**
  * Validate comment parameter before perform other comments actions
+ *
+ * @package  mod_glossary
+ * @category comment
  *
  * @param stdClass $comment_param {
  *              context  => context the context object

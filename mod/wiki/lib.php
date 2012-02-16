@@ -583,6 +583,9 @@ function wiki_get_extra_capabilities() {
  * Capability check has been done in comment->check_permissions(), we
  * don't need to do it again here.
  *
+ * @package  mod_wiki
+ * @category comment
+ *
  * @param stdClass $comment_param {
  *              context  => context the context object
  *              courseid => int course id
@@ -606,6 +609,10 @@ function wiki_comment_permissions($comment_param) {
  *              commentarea => string comment area
  *              itemid      => int itemid
  * }
+ *
+ * @package  mod_wiki
+ * @category comment
+ *
  * @return boolean
  */
 function wiki_comment_validate($comment_param) {

@@ -15,134 +15,80 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Comment is helper class to add/delete comments anywhere in moodle
+ * Functions and classes for commenting
  *
- * @package   comment
- * @copyright 2010 Dongsheng Cai <dongsheng@moodle.com>
+ * @package   core
+ * @copyright 2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Comment is helper class to add/delete comments anywhere in moodle
+ *
+ * @package   core
+ * @category  comment
+ * @copyright 2010 Dongsheng Cai {@link http://dongsheng.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class comment {
-    /**
-     * there may be several comment box in one page
-     * so we need a client_id to recognize them
-     * @var integer
-     */
+    /** @var int there may be several comment box in one page so we need a client_id to recognize them */
     private $cid;
-    /**
-     * commentarea is used to specify different
-     * parts shared the same itemid
-     * @var string
-     */
+    /** @var string commentarea is used to specify different parts shared the same itemid */
     private $commentarea;
-    /**
-     * itemid is used to associate with commenting content
-     * @var integer
-     */
+    /** @var int itemid is used to associate with commenting content */
     private $itemid;
-    /**
-     * this html snippet will be used as a template
-     * to build comment content
-     * @var string
-     */
+    /** @var string this html snippet will be used as a template to build comment content */
     private $template;
-    /**
-     * The context id for comments
-     * @var int
-     */
+    /** @var int The context id for comments */
     private $contextid;
-    /**
-     * The context itself
-     * @var stdClass
-     */
+    /** @var stdClass The context itself */
     private $context;
-    /**
-     * The course id for comments
-     * @var int
-     */
+    /** @var int The course id for comments */
     private $courseid;
-    /**
-     * course module object, only be used to help find pluginname automatically
-     * if pluginname is specified, it won't be used at all
-     * @var stdClass
-     */
+    /** @var stdClass course module object, only be used to help find pluginname automatically */
     private $cm;
-    /**
-     * The component that this comment is for. It is STRONGLY recommended to set this.
-     * @var string
-     */
+    /** @var string The component that this comment is for. It is STRONGLY recommended to set this. */
     private $component;
-    /**
-     * This is calculated by normalising the component
-     * @var string
-     */
+    /** @var string This is calculated by normalising the component */
     private $pluginname;
-    /**
-     * This is calculated by normalising the component
-     * @var string
-     */
+    /** @var string This is calculated by normalising the component */
     private $plugintype;
-    /**
-     * Whether the user has the required capabilities/permissions to view comments.
-     * @var bool
-     */
+    /** @var bool Whether the user has the required capabilities/permissions to view comments. */
     private $viewcap = false;
-    /**
-     * Whether the user has the required capabilities/permissions to post comments.
-     * @var bool
-     */
+    /** @var bool Whether the user has the required capabilities/permissions to post comments. */
     private $postcap = false;
-    /**
-     * to costomize link text
-     * @var string
-     */
+    /** @var string to customize link text */
     private $linktext;
-    /**
-     * If set to true then comment sections won't be able to be opened and closed
-     * instead they will always be visible.
-     * @var bool
-     */
+    /** @var bool If set to true then comment sections won't be able to be opened and closed instead they will always be visible. */
     protected $notoggle = false;
-    /**
-     * If set to true comments are automatically loaded as soon as the page loads.
-     * Normally this happens when the user expands the comment section.
-     * @var bool
-     */
+    /** @var bool If set to true comments are automatically loaded as soon as the page loads. */
     protected $autostart = false;
-    /**
-     * If set to true the total count of comments is displayed when displaying comments.
-     * @var bool
-     */
+    /** @var bool If set to true the total count of comments is displayed when displaying comments. */
     protected $displaytotalcount = false;
-    /**
-     * If set to true a cancel button will be shown on the form used to submit comments.
-     * @var bool
-     */
+    /** @var bool If set to true a cancel button will be shown on the form used to submit comments. */
     protected $displaycancel = false;
-    /**
-     * The number of comments associated with this comments params
-     * @var int
-     */
+    /** @var int The number of comments associated with this comments params */
     protected $totalcommentcount = null;
 
-    /**#@+
-     * static variable will be used by non-js comments UI
-     */
+    /** @var bool Use non-javascript UI */
     private static $nonjs = false;
+    /** @var int comment itemid used in non-javascript UI */
     private static $comment_itemid = null;
+    /** @var int comment context used in non-javascript UI */
     private static $comment_context = null;
+    /** @var string comment area used in non-javascript UI */
     private static $comment_area = null;
+    /** @var string comment page used in non-javascript UI */
     private static $comment_page = null;
+    /** @var string comment itemid component in non-javascript UI */
     private static $comment_component = null;
-    /**#@-*/
 
     /**
      * Construct function of comment class, initialise
      * class members
-     * @param stdClass $options
-     * @param object $options {
+     *
+     * @param stdClass $options {
      *            context => context context to use for the comment [required]
      *            component => string which plugin will comment being added to [required]
      *            itemid  => int the id of the associated item (forum post, glossary item etc) [required]
@@ -301,7 +247,6 @@ class comment {
      * A coding_error is now thrown if code attempts to change the component.
      *
      * @param string $component
-     * @return void
      */
     public function set_component($component) {
         if (!empty($this->component) && $this->component !== $component) {
@@ -443,7 +388,7 @@ class comment {
     /**
      * Prepare comment code in html
      * @param  boolean $return
-     * @return mixed
+     * @return string|void
      */
     public function output($return = true) {
         global $PAGE, $OUTPUT;
@@ -536,7 +481,7 @@ class comment {
      * Return matched comments
      *
      * @param  int $page
-     * @return mixed
+     * @return array
      */
     public function get_comments($page = '') {
         global $DB, $CFG, $USER, $OUTPUT;
@@ -646,7 +591,8 @@ class comment {
      *
      * @global moodle_database $DB
      * @param string $content
-     * @return mixed
+     * @param int $format
+     * @return stdClass
      */
     public function add($content, $format = FORMAT_MOODLE) {
         global $CFG, $DB, $USER, $OUTPUT;
@@ -721,7 +667,7 @@ class comment {
      * Delete a comment
      *
      * @param  int $commentid
-     * @return mixed
+     * @return bool
      */
     public function delete($commentid) {
         global $DB, $USER;
@@ -740,9 +686,9 @@ class comment {
      * Print comments
      *
      * @param int $page
-     * @param boolean $return return comments list string or print it out
-     * @param boolean $nonjs print nonjs comments list or not?
-     * @return mixed
+     * @param bool $return return comments list string or print it out
+     * @param bool $nonjs print nonjs comments list or not?
+     * @return string|void
      */
     public function print_comments($page = 0, $return = true, $nonjs = true) {
         global $DB, $CFG, $PAGE;
@@ -935,5 +881,12 @@ class comment {
     }
 }
 
+/**
+ * Comment exception class
+ *
+ * @package   core
+ * @copyright 2010 Dongsheng Cai {@link http://dongsheng.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class comment_exception extends moodle_exception {
 }
