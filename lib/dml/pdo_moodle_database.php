@@ -255,7 +255,8 @@ abstract class pdo_moodle_database extends moodle_database {
      * code where it's possible there might be large datasets being returned.  For known
      * small datasets use get_records_sql - it leads to simpler code.
      *
-     * The return type is as for @see function get_recordset.
+     * The return type is like:
+     * @see function get_recordset.
      *
      * @param string $sql the SQL select query to execute.
      * @param array $params array of sql parameters
@@ -308,7 +309,8 @@ abstract class pdo_moodle_database extends moodle_database {
     /**
      * Get a number of records as an array of objects.
      *
-     * Return value as for @see function get_records.
+     * Return value is like:
+     * @see function get_records.
      *
      * @param string $sql the SQL select query to execute. The first column of this SELECT statement
      *   must be a unique value (usually the 'id' field), as it will be used as the key of the

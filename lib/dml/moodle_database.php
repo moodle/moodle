@@ -60,7 +60,7 @@ define('SQL_QUERY_AUX', 5);
 
 /**
  * Abstract class representing moodle database interface.
- * @See http://docs.moodle.org/dev/DML_functions
+ * @link http://docs.moodle.org/dev/DML_functions
  *
  * @package    core
  * @category   dml
@@ -126,13 +126,11 @@ abstract class moodle_database {
     private $force_rollback = false;
 
     /**
-     * @var int internal temporary variable used to fix params.
-     * @see _fix_sql_params_dollar_callback()
+     * @var int internal temporary variable used to fix params. Its used by {@link _fix_sql_params_dollar_callback()}.
      */
     private $fix_sql_params_i;
     /**
-     * @var int internal temporary variable used to guarantee unique parameters in each request.
-     * @see get_in_or_equal()
+     * @var int internal temporary variable used to guarantee unique parameters in each request. Its used by {@link get_in_or_equal()}.
      */
     private $inorequaluniqueindex = 1;
 
@@ -176,7 +174,7 @@ abstract class moodle_database {
      * @param string $type Database driver's type. (eg: mysqli, pgsql, mssql, sqldrv, oci, etc.)
      * @param string $library Database driver's library (native, pdo, etc.)
      * @param bool $external True if this is an external database.
-     * @return moodle_database driver object or null if error. for example @see mysqli_native_moodle_databases
+     * @return moodle_database driver object or null if error, for example of driver object see {@link mysqli_native_moodle_database}
      */
     public static function get_driver_instance($type, $library, $external = false) {
         global $CFG;
@@ -684,9 +682,8 @@ abstract class moodle_database {
 
     /**
      * Internal private utitlity function used to fix parameters.
-     * Used with preg_replace_callback()
+     * Used with {@link preg_replace_callback()}
      * @param array $match Refer to preg_replace_callback usage for description.
-     * @see preg_replace_callback()
      */
     private function _fix_sql_params_dollar_callback($match) {
         $this->fix_sql_params_i++;
@@ -889,7 +886,8 @@ abstract class moodle_database {
     /**
      * Returns the sql generator used for db manipulation.
      * Used mostly in upgrade.php scripts.
-     * @return database_manager The instance used to perform ddl operations. @see lib/ddl/database_manager.php
+     * @return database_manager The instance used to perform ddl operations.
+     * @see lib/ddl/database_manager.php
      */
     public function get_manager() {
         global $CFG;
@@ -1011,7 +1009,7 @@ abstract class moodle_database {
      * Only records where $field takes one of the values $values are returned.
      * $values must be an array of values.
      *
-     * Other arguments and the return type as for @see function get_recordset.
+     * Other arguments and the return type are like {@link function get_recordset}.
      *
      * @param string $table the table to query.
      * @param string $field a field to check (optional).
@@ -1038,7 +1036,7 @@ abstract class moodle_database {
      * If given, $select is used as the SELECT parameter in the SQL query,
      * otherwise all records from the table are returned.
      *
-     * Other arguments and the return type as for @see function get_recordset.
+     * Other arguments and the return type are like {@link function get_recordset}.
      *
      * @param string $table the table to query.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
@@ -1068,7 +1066,7 @@ abstract class moodle_database {
      * code where it's possible there might be large datasets being returned.  For known
      * small datasets use get_records_sql - it leads to simpler code.
      *
-     * The return type is as for @see function get_recordset.
+     * The return type is like {@link function get_recordset}.
      *
      * @param string $sql the SQL select query to execute.
      * @param array $params array of sql parameters
@@ -1107,7 +1105,7 @@ abstract class moodle_database {
     /**
      * Get a number of records as an array of objects where one field match one list of values.
      *
-     * Return value as for @see function get_records.
+     * Return value is like {@link function get_records}.
      *
      * @param string $table The database table to be checked against.
      * @param string $field The field to search
@@ -1131,7 +1129,7 @@ abstract class moodle_database {
     /**
      * Get a number of records as an array of objects which match a particular WHERE clause.
      *
-     * Return value as for @see function get_records.
+     * Return value is like {@link function get_records}.
      *
      * @param string $table The table to query.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
@@ -1158,7 +1156,7 @@ abstract class moodle_database {
     /**
      * Get a number of records as an array of objects using a SQL statement.
      *
-     * Return value as for @see function get_records.
+     * Return value is like {@link function get_records}.
      *
      * @param string $sql the SQL select query to execute. The first column of this SELECT statement
      *   must be a unique value (usually the 'id' field), as it will be used as the key of the
@@ -1174,7 +1172,7 @@ abstract class moodle_database {
     /**
      * Get the first two columns from a number of records as an associative array where all the given conditions met.
      *
-     * Arguments as for @see function get_recordset.
+     * Arguments are like {@link function get_recordset}.
      *
      * If no errors occur the return value
      * is an associative whose keys come from the first field of each record,
@@ -1206,8 +1204,8 @@ abstract class moodle_database {
     /**
      * Get the first two columns from a number of records as an associative array which match a particular WHERE clause.
      *
-     * Arguments as for @see function get_recordset_select.
-     * Return value as for @see function get_records_menu.
+     * Arguments are like {@link function get_recordset_select}.
+     * Return value is like {@link function get_records_menu}.
      *
      * @param string $table The database table to be checked against.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
@@ -1235,8 +1233,8 @@ abstract class moodle_database {
     /**
      * Get the first two columns from a number of records as an associative array using a SQL statement.
      *
-     * Arguments as for @see function get_recordset_sql.
-     * Return value as for @see function get_records_menu.
+     * Arguments are like {@link function get_recordset_sql}.
+     * Return value is like {@link function get_records_menu}.
      *
      * @param string $sql The SQL string you wish to be executed.
      * @param array $params array of sql parameters
@@ -1861,7 +1859,8 @@ abstract class moodle_database {
      *
      * @deprecated since Moodle 2.0 MDL-23925 - please do not use this function any more.
      * @todo MDL-31280 to remove deprecated functions prior to 2.3 release.
-     * @return string Do not use this function! @see sql_like()
+     * @return string Do not use this function!
+     * @see sql_like()
      */
     public function sql_ilike() {
         debugging('sql_ilike() is deprecated, please use sql_like() instead');
