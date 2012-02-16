@@ -2268,8 +2268,8 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $this->_hiddenHtml .= $form->_pageparams;
         }
 
-        $PAGE->requires->yui_module('moodle-core-formslib',
-                'M.core.init_formslib',
+        $PAGE->requires->yui_module('moodle-core-formchangechecker',
+                'M.core_formchangechecker.init',
                 array(array(
                     'formid' => $form->getAttribute('id')
                 ))
