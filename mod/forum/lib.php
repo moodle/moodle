@@ -366,7 +366,7 @@ WHERE
 }
 
 function forum_get_email_message_id($postid, $usertoid, $hostname) {
-    return '<moodlepost'.$postid.'to'.$usertoid.'@'.$hostname.'>';
+    return '<'.hash('sha256',$postid.'to'.$usertoid.'@'.$hostname).'>';
 }
 
 /**
