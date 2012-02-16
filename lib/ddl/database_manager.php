@@ -660,7 +660,7 @@ class database_manager {
      * This function will change the unsigned/signed of the field in the table passed as arguments
      *
      * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
-     * @param xmldb_field $xmldb_field Index object (full specs are required).
+     * @param xmldb_field $xmldb_field Field object (full specs are required).
      * @return void
      */
     public function change_field_unsigned(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
