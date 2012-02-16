@@ -69,7 +69,7 @@ $string['addnewapp'] = 'Enable External Application';
 $string['addserver'] = 'Add new trusted server';
 $string['addtype'] = 'Add external tool configuration';
 $string['allow'] = 'Allow';
-$string['allowinstructorcustom'] = 'Allow instructors to add custom parameters';
+$string['allowinstructorcustom'] = 'Allow teachers to add custom parameters';
 $string['allowsetting'] = 'Allow tool to store 8K of settings in Moodle';
 $string['always'] = 'Always';
 $string['automatic'] = 'Automatic, based on Launch URL';
@@ -121,7 +121,7 @@ real estate to the tool, and others provide a more integrated feel with the Mood
 * **New window** - The tool opens in a new window, occupying all the available space.
         Depending on the browser, it will open in a new tab or a popup window.
         It is possible that browsers will prevent the new window from opening.';
-$string['delegate'] = 'Delegate to Instructor';
+$string['delegate'] = 'Delegate to Teacher';
 $string['delete'] = 'Delete';
 $string['delete_confirmation'] = 'Are you sure you want to delete this external tool configuration?';
 $string['deletetype'] = 'Delete external tool configuration';
@@ -250,9 +250,9 @@ Tool types listed on this page are separated into three categories:
         course on this Moodle instance. If a consumer key and shared secret are entered, a trust relationship is established
         between this Moodle instance and the remote tool, providing a secure communication channel.
 * **Pending** - These tool providers came in through a package import, but have not been configured by an administrator.
-        Instructors may still use tools from these providers if they have a consumer key and shared secret, or if none is required.
+        Teachers may still use tools from these providers if they have a consumer key and shared secret, or if none is required.
 * **Rejected** - These tools providers are flagged as ones which an administrator has no intention of making available to the entire
-        Moodle instance. Instructors may still use tools from these providers if they have a consumer key and shared secret, or if none is required.';
+        Moodle instance. Teachers may still use tools from these providers if they have a consumer key and shared secret, or if none is required.';
 $string['miscellaneous'] = 'Miscellaneous';
 $string['misconfiguredtools'] = 'Misconfigured tool instances were detected';
 $string['missingparameterserror'] = 'The page is misconfigured: "{$a}"';
@@ -393,10 +393,10 @@ $string['share_roster_help'] = 'Specify whether the tool can access the list of 
 
 Note that this setting may be overriden in the tool configuration.';
 $string['show_in_course'] = 'Show tool type when creating tool instances';
-$string['show_in_course_help'] = 'If selected, this tool configuration will appear in the "External tool type" dropdown when instructors
+$string['show_in_course_help'] = 'If selected, this tool configuration will appear in the "External tool type" dropdown when teachers
 configure external tools within courses.
 
-In most cases, this option does not need to be selected. Instructors can use this tool configuration
+In most cases, this option does not need to be selected. Teachers can use this tool configuration
 based on the Launch URL matching the Tool base URL, which is the preferred method.
 
 The only case in which this option should be selected is if the tool configuration is just intended for single sign on.
@@ -454,7 +454,7 @@ Additionally, the base URL is used as the launch URL if a launch URL is not spec
 If two different tool configurations are for the same domain, the most specific match will be used.';
 $string['typename'] = 'Tool Name';
 $string['typename_help'] = 'The tool name is used to identify the tool provider within Moodle. The name entered will be visible
-to instructors when adding external tools within courses.';
+to teachers when adding external tools within courses.';
 $string['types'] = 'Types';
 $string['update'] = 'Update';
 $string['using_tool_configuration'] = 'Using tool configuration: ';
