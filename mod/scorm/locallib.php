@@ -1507,15 +1507,6 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
         $result->toc .= '<div id="scorm_navpanel"></div>';
     }
 
-
-    if ($scorm->hidetoc == 0) {
-        $PAGE->requires->data_for_js('scormdata', array(
-                'plusicon' => $OUTPUT->pix_url('plus', 'scorm'),
-                'minusicon' => $OUTPUT->pix_url('minus', 'scorm')));
-        $PAGE->requires->js('/lib/cookies.js');
-        $PAGE->requires->js('/mod/scorm/datamodels/scorm_datamodels.js');
-    }
-
     $url = new moodle_url('/mod/scorm/player.php?a='.$scorm->id.'&currentorg='.$currentorg.$modestr);
     $result->tocmenu = $OUTPUT->single_select($url, 'scoid', $tocmenus, $sco->id, null, "tocmenu");
 
