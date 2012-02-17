@@ -166,7 +166,6 @@ if ( !$nostudents ) {
             if ($sco->launch!='') {
                 $columns[]= 'scograde'.$sco->id;
                 $headers[]= format_string($sco->title);
-                $table->head[]= format_string($sco->title);
             }
         }
     } else {
