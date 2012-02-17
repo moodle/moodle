@@ -30,9 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['clianswerno'] = 'n';
-$string['cliansweryes'] = 'y';
-$string['cliincorrectvalueerror'] = 'Lỗi, giá trị không đúng "{$a->value}" for "{$a->option}"';
-$string['cliincorrectvalueretry'] = 'Giá trị không đúng, vui lòng thử lại';
-$string['environmentrequireinstall'] = 'cần phải được cài hay kích hoạt.';
-$string['environmentrequireversion'] = 'Cần phiên bản {$a->needed} trong khi bạn đang dùng {$a->current}';
+$string['language'] = 'Lungatg';
+$string['next'] = 'Proxim';
+$string['previous'] = 'Precedent';
+$string['reload'] = 'Cargar aunc ina gada';
