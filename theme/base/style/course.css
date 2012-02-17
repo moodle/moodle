@@ -142,3 +142,6 @@
 
 #page-course-index.dir-rtl .category .image {padding-left: 5px; padding-right: 0px;}
 #page-course-index.dir-rtl .indentation {padding-left: 0px;padding-right: 30px;}
+
+table.category_subcategories {margin-bottom:1em;}
+table.category_subcategories td {white-space: nowrap;}
