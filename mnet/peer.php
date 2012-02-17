@@ -155,7 +155,7 @@ class mnet_peer {
     function check_credentials($key) {
         $credentials = openssl_x509_parse($key);
         if ($credentials == false) {
-            $this->error[] = array('code' => 3, 'text' => get_string("nonmatchingcert", 'mnet', array('','')));
+            $this->error[] = array('code' => 3, 'text' => get_string("nonmatchingcert", 'mnet', array('subject' => '','host' => '')));
             return false;
         } elseif (array_key_exists('subjectAltName', $credentials['subject']) && $credentials['subject']['subjectAltName'] != $this->wwwroot) {
             $a['subject'] = $credentials['subject']['subjectAltName'];
