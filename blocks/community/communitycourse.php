@@ -110,6 +110,9 @@ if ($usercandownload and $download != -1 and !empty($downloadcourseid) and confi
     $sizeinfo->total = number_format($backupsize / 1000000, 2);
     echo html_writer::tag('div', get_string('downloadingsize', 'block_community', $sizeinfo),
             array('class' => 'textinfo'));
+    if (ob_get_level()) {
+        ob_flush();
+    }
     flush();
     $filenames = $communitymanager->block_community_download_course_backup($course);
     echo html_writer::tag('div', get_string('downloaded', 'block_community'),
