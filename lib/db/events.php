@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Definition of core event handler
- * and description of all events throws from core.
+ * Definition of core event handler and description of all events throws from core.
  *
- * @package core_event
+ * @package core
  * @category event
  * @copyright 2007 onwards Martin Dougiamas  http://dougiamas.com
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
