@@ -150,7 +150,6 @@ class scorm_interactions_report extends scorm_default_report {
                 if ($sco->launch != '') {
                     $columns[] = 'scograde'.$sco->id;
                     $headers[] = format_string($sco->title,'',$formattextoptions);
-                    $table->head[]= format_string($sco->title,'',$formattextoptions);
                 }
             }
 
