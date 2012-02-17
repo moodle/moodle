@@ -484,3 +484,54 @@ function page_export_contents($cm, $baseurl) {
 
     return $contents;
 }
+
+/**
+ * Register the ability to handle drag and drop file uploads
+ * @return array containing details of the files / types the mod can handle
+ */
+function page_dndupload_register() {
+    return array('types' => array(
+                     array('identifier' => 'text/html', 'message' => get_string('createpage', 'page')),
+                     array('identifier' => 'text', 'message' => get_string('createpage', 'page'))
+                 ));
+}
+
+/**
+ * Handle a file that has been uploaded
+ * @param object $uploadinfo details of the file / content that has been uploaded
+ * @return int instance id of the newly created mod
+ */
+function page_dndupload_handle($uploadinfo) {
+    global $DB, $CFG;
+    require_once("$CFG->libdir/resourcelib.php");
+
+    $config = get_config('page');
+    $display = $config->display;
+    if ($display == RESOURCELIB_DISPLAY_POPUP) {
+        $displayoptions['popupwidth'] = $config->popupwidth;
+        $displayoptions['popupheight'] = $config->popupheight;
+    }
+    $displayoptions['printheading'] = $config->printheading;
+    $displayoptions['printintro'] = $config->printintro;
+    $displayoptions = serialize($displayoptions);
+
+    $page = new stdClass();
+    $page->course = $uploadinfo->course->id;
+    $page->name = $uploadinfo->displayname;
+    $page->intro = '<p>'.$uploadinfo->displayname.'</p>';
+    $page->introformat = FORMAT_HTML;
+    if ($uploadinfo->type == 'text/html') {
+        $page->contentformat = FORMAT_HTML;
+        $page->content = clean_param($uploadinfo->content, PARAM_CLEANHTML);
+    } else {
+        $page->contentformat = FORMAT_PLAIN;
+        $page->content = clean_param($uploadinfo->content, PARAM_TEXT);
+    }
+    $page->display = $display;
+    $page->displayoptions = $displayoptions;
+    $page->timemodified = time();
+
+    $page->id = $DB->insert_record('page', $page);
+
+    return $page->id;
+}

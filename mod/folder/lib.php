@@ -370,3 +370,49 @@ function folder_export_contents($cm, $baseurl) {
 
     return $contents;
 }
+
+/**
+ * Register the ability to handle drag and drop file uploads
+ * @return array containing details of the files / types the mod can handle
+ */
+function folder_dndupload_register() {
+    return array('files' => array(
+                     array('extension' => 'zip', 'message' => get_string('dnduploadmakefolder', 'mod_folder'))
+                 ));
+}
+
+/**
+ * Handle a file that has been uploaded
+ * @param object $uploadinfo details of the file / content that has been uploaded
+ * @return int instance id of the newly created mod
+ */
+function folder_dndupload_handle($uploadinfo) {
+    global $DB, $USER;
+
+    $folder = new stdClass();
+    $folder->course = $uploadinfo->course->id;
+    $folder->name = $uploadinfo->displayname;
+    $folder->intro = '<p>'.$uploadinfo->displayname.'</p>';
+    $folder->introformat = FORMAT_HTML;
+    $folder->timemodified = time();
+
+    $folder->id = $DB->insert_record('folder', $folder);
+
+    // Retrieve the file from the draft file area.
+    $context = context_module::instance($uploadinfo->coursemodule);
+    file_save_draft_area_files($uploadinfo->draftitemid, $context->id, 'mod_folder', 'temp', 0, array('subdirs'=>true));
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'mod_folder', 'temp', 0, 'sortorder', false);
+    // Only ever one file - extract the contents.
+    $file = reset($files);
+
+    $success = $file->extract_to_storage(new zip_packer(), $context->id, 'mod_folder', 'content', 0, '/', $USER->id);
+    $fs->delete_area_files($context->id, 'mod_folder', 'temp', 0);
+
+    if ($success) {
+        return $folder->id;
+    }
+
+    $DB->delete_records('folder', array('id' => $folder->id));
+    return false;
+}
