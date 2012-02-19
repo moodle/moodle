@@ -6706,7 +6706,7 @@ FROM
         upgrade_main_savepoint(true, 2011070103.04);
     }
 
-    if ($oldversion < 2011070104.07) {
+    if ($oldversion < 2011070104.08) {
         // Check if we need to fix post.uniquehash
         $columns = $DB->get_columns('post');
         if (array_key_exists('uniquehash', $columns) && $columns['uniquehash']->max_length != 255) {
@@ -6720,7 +6720,7 @@ FROM
             }
         }
 
-        upgrade_main_savepoint(true, 2011070104.07);
+        upgrade_main_savepoint(true, 2011070104.08);
     }
     return true;
 }
