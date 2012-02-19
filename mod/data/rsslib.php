@@ -1,8 +1,37 @@
 <?php
-    // This file adds support to rss feeds generation
 
-    // This function is the main entry point to database module
-    // rss feeds generation.
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
+/**
+ * This file contains all the common stuff to be used for RSS in the Database Module
+ *
+ * @package    mod_data
+ * @category   rss
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+ * Generates the Database modules RSS Feed
+ *
+ * @param strClass $context the context the feed should be created under
+ * @param array $args array of arguments to be used in the creation of the RSS Feed
+ * @return NULL|string NULL if there is nothing to return, or the file path of the cached file if there is
+ */
     function data_rss_get_feed($context, $args) {
         global $CFG, $DB;
 
@@ -52,7 +81,7 @@
             if (!$records = $DB->get_records_sql($sql, array(), 0, $data->rssarticles)) {
                 return null;
             }
-            
+
             $firstrecord = array_shift($records);  // Get the first and put it back
             array_unshift($records, $firstrecord);
 
@@ -105,7 +134,13 @@
 
         return $cachedfilepath;
     }
-
+/**
+ * Creates and returns a SQL query for the items that would be included in the RSS Feed
+ *
+ * @param stdClass $data database instance object
+ * @param int      $time epoch timestamp to compare time-modified to, 0 for all or a proper value
+ * @return string SQL query string to get the items for the databse RSS Feed
+ */
     function data_rss_get_sql($data, $time=0) {
         //do we only want new posts?
         if ($time) {
@@ -129,9 +164,9 @@
      * If there is new stuff in since $time this returns true
      * Otherwise it returns false.
      *
-     * @param object $data the data activity object
-     * @param int $time timestamp
-     * @return bool
+     * @param stdClass $data the data activity object
+     * @param int      $time timestamp
+     * @return bool true if there is new stuff for the RSS Feed
      */
     function data_rss_newstuff($data, $time) {
         global $DB;
