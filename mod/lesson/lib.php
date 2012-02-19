@@ -659,7 +659,9 @@ function lesson_process_post_save(&$lesson) {
         if ($lesson->available) {
             $event->name = $lesson->name.' ('.get_string('lessonopens', 'lesson').')';
             calendar_event::create(clone($event));
-        } else if ($lesson->deadline) {
+        }
+
+        if ($lesson->deadline) {
             $event->name      = $lesson->name.' ('.get_string('lessoncloses', 'lesson').')';
             $event->timestart = $lesson->deadline;
             $event->eventtype = 'close';
