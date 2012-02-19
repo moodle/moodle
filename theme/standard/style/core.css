@@ -401,6 +401,8 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
 #custommenu .yui3-menu .yui3-menuitem-active {background-color:#e1e1df;}
 #custommenu .yui3-menu-horizontal.javascript-disabled a {color:inherit;}
 #custommenu .yui3-menu-horizontal.javascript-disabled a:hover {color:blue;text-decoration:none;}
+#custommenu .yui3-menu-content,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-content { padding: 0; line-height: 2;}
 
 .smartselect .smartselect_menuitem:hover,
 .smartselect .smartselect_submenuitem:hover {background-color:#C2EAFF;}
