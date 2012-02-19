@@ -53,6 +53,11 @@ if (!defined('AUTH_NTLM_DEFAULT_FORMAT')) {
     define('AUTH_NTLM_DEFAULT_FORMAT', '%domain%\\%username%');
 }
 
+// Allows us to retrieve a diagnostic message in case of LDAP operation error
+if (!defined('LDAP_OPT_DIAGNOSTIC_MESSAGE')) {
+    define('LDAP_OPT_DIAGNOSTIC_MESSAGE', 0x0032);
+}
+
 require_once($CFG->libdir.'/authlib.php');
 require_once($CFG->libdir.'/ldaplib.php');
 
@@ -192,11 +197,28 @@ class auth_plugin_ldap extends auth_plugin_base {
 
         // Try to bind with current username and password
         $ldap_login = @ldap_bind($ldapconnection, $ldap_user_dn, $extpassword);
-        $this->ldap_close();
-        if ($ldap_login) {
-            return true;
+
+        // If login fails and we are using MS Active Directory, retrieve the diagnostic
+        // message to see if this is due to an expired password, or that the user is forced to
+        // change the password on first login. If it is, only proceed if we can change
+        // password from Moodle (otherwise we'll get stuck later in the login process).
+        if (!$ldap_login && ($this->config->user_type == 'ad')
+            && $this->can_change_password()
+            && (!empty($this->config->expiration) and ($this->config->expiration == 1))) {
+
+            // We need to get the diagnostic message right after the call to ldap_bind(),
+            // before any other LDAP operation.
+            ldap_get_option($ldapconnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $diagmsg);
+
+            if ($this->ldap_ad_pwdexpired_from_diagmsg($diagmsg)) {
+                // If login failed because user must change the password now or the
+                // password has expired, let the user in. We'll catch this later in the
+                // login process when we explicitly check for expired passwords.
+                $ldap_login = true;
+            }
         }
-        return false;
+        $this->ldap_close();
+        return $ldap_login;
     }
 
     /**
@@ -593,7 +615,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             $info = ldap_get_entries_moodle($ldapconnection, $sr);
             if (!empty ($info)) {
                 $info = array_change_key_case($info[0], CASE_LOWER);
-                if (!empty($info[$this->config->expireattr][0])) {
+                if (isset($info[$this->config->expireattr][0])) {
                     $expiretime = $this->ldap_expirationtime2unix($info[$this->config->expireattr][0], $ldapconnection, $user_dn);
                     if ($expiretime != 0) {
                         $now = time();
@@ -2121,6 +2143,31 @@ class auth_plugin_ldap extends auth_plugin_base {
          */
         error_log($this->errorlogtag.get_string ('auth_ntlmsso_maybeinvalidformat', 'auth_ldap'));
         return '';
+    }
+
+    /**
+     * Check if the diagnostic message for the LDAP login error tells us that the
+     * login is denied because the user password has expired or the password needs
+     * to be changed on first login (using interactive SMB/Windows logins, not
+     * LDAP logins).
+     *
+     * @param string the diagnostic message for the LDAP login error
+     * @return bool true if the password has expired or the password must be changed on first login
+     */
+    protected function ldap_ad_pwdexpired_from_diagmsg($diagmsg) {
+        // The format of the diagnostic message is (actual examples from W2003 and W2008):
+        // "80090308: LdapErr: DSID-0C090334, comment: AcceptSecurityContext error, data 52e, vece"  (W2003)
+        // "80090308: LdapErr: DSID-0C090334, comment: AcceptSecurityContext error, data 773, vece"  (W2003)
+        // "80090308: LdapErr: DSID-0C0903AA, comment: AcceptSecurityContext error, data 52e, v1771" (W2008)
+        // "80090308: LdapErr: DSID-0C0903AA, comment: AcceptSecurityContext error, data 773, v1771" (W2008)
+        // We are interested in the 'data nnn' part.
+        //   if nnn == 773 then user must change password on first login
+        //   if nnn == 532 then user password has expired
+        $diagmsg = explode(',', $diagmsg);
+        if (preg_match('/data (773|532)/i', trim($diagmsg[2]))) {
+            return true;
+        }
+        return false;
     }
 
 } // End of the class
