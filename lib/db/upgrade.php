@@ -145,6 +145,18 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012020200.06);
     }
 
+    if ($oldversion < 2012021700.01) {
+        // Changing precision of field uniquehash on table post to 255
+        $table = new xmldb_table('post');
+        $field = new xmldb_field('uniquehash', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'content');
+
+        // Launch change of precision for field uniquehash
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012021700.01);
+    }
+
     return true;
 }
 
