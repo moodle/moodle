@@ -28,7 +28,7 @@
 require_once('HTML/QuickForm/file.php');
 
 /**
- * file element 
+ * file element
  *
  * HTML class for a form element to upload a file
  *

@@ -26,7 +26,7 @@
  */
 
 if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+    die('Direct access to this script is forbidden.');    //  It must be included from a Moodle page
 }
 
 global $CFG;
@@ -35,7 +35,7 @@ require_once($CFG->libdir.'/form/submit.php');
 /**
  * HTML class for a submit cancel type element
  *
- * Overloaded {@see MoodleQuickForm_submit} with default behavior modified to cancel a form.
+ * Overloaded {@link MoodleQuickForm_submit} with default behavior modified to cancel a form.
  *
  * @package   core_form
  * @category  form

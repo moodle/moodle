@@ -30,7 +30,7 @@ require_once("HTML/QuickForm/group.php");
 /**
  * HTML class for a form element group
  *
- * Overloaded {@see HTML_QuickForm_group} with default behavior modified for Moodle.
+ * Overloaded {@link HTML_QuickForm_group} with default behavior modified for Moodle.
  *
  * @package   core_form
  * @category  form

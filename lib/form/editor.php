@@ -34,7 +34,7 @@ require_once($CFG->dirroot.'/repository/lib.php');
 /**
  * Editor element
  *
- * It creates preffered editor (textbox/TinyMce) form element for the format (Text/HTML) selected. 
+ * It creates preffered editor (textbox/TinyMce) form element for the format (Text/HTML) selected.
  *
  * @package   core_form
  * @category  form
@@ -107,7 +107,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
     /**
      * Updates editor values, if part of $_values
-     * 
+     *
      * @param array $values associative array of values to set
      */
     function setValue($values) {
@@ -122,7 +122,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
     /**
      * Returns editor values
      *
-     * @return array 
+     * @return array
      */
     function getValue() {
         return $this->_values;
@@ -203,7 +203,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
     /**
      * Sets help button for editor
-     * 
+     *
      * @param mixed $_helpbuttonargs arguments to create help button
      * @param string $function name of the callback function
      * @deprecated since Moodle 2.0. Please do not call this function any more.
@@ -342,7 +342,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $this->_options['required'] = true;
         }
 
-    /// print text area - TODO: add on-the-fly switching, size configuration, etc.
+        // print text area - TODO: add on-the-fly switching, size configuration, etc.
         $editor->use_editor($id, $this->_options, $fpoptions);
 
         $rows = empty($this->_attributes['rows']) ? 15 : $this->_attributes['rows'];

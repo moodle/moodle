@@ -29,7 +29,7 @@ require_once("HTML/QuickForm/static.php");
 /**
  * static warning
  *
- * overrides {@see HTML_QuickForm_static} to display staic warning.
+ * overrides {@link HTML_QuickForm_static} to display staic warning.
  *
  * @package   core_form
  * @category  form

@@ -101,7 +101,7 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
     }
 
     /**
-     * Converts seconds to the best possible time unit. for example 
+     * Converts seconds to the best possible time unit. for example
      * 1800 -> array(30, 60) = 30 minutes.
      *
      * @param int $seconds an amout of time in seconds.

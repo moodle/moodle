@@ -449,7 +449,7 @@ abstract class moodleform {
 
     /**
      * Check that form data is valid.
-     * You should almost always use this, rather than {@see validate_defined_fields}
+     * You should almost always use this, rather than {@link validate_defined_fields}
      *
      * @return bool true if form data valid
      */
@@ -466,8 +466,8 @@ abstract class moodleform {
     /**
      * Validate the form.
      *
-     * You almost always want to call {@see is_validated} instead of this
-     * because it calls {@see definition_after_data} first, before validating the form,
+     * You almost always want to call {@link is_validated} instead of this
+     * because it calls {@link definition_after_data} first, before validating the form,
      * which is what you want in 99% of cases.
      *
      * This is provided as a separate function for those special cases where
@@ -917,7 +917,7 @@ abstract class moodleform {
     }
 
     /**
-     * Helper used by {@see repeat_elements()}.
+     * Helper used by {@link repeat_elements()}.
      *
      * @param int $i the index of this element.
      * @param HTML_QuickForm_element $elementclone
@@ -1426,7 +1426,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      *
      * @param string $elementname
      * @param int $paramtype defines type of data contained in element. Use the constants PARAM_*.
-     *        {@see lib/moodlelib.php} for defined parameter types
+     *        {@link lib/moodlelib.php} for defined parameter types
      */
     function setType($elementname, $paramtype) {
         $this->_types[$elementname] = $paramtype;

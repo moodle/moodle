@@ -30,8 +30,8 @@ require_once("HTML/QuickForm/button.php");
 /**
  * HTML class for a button type element
  *
- * Overloaded {@see HTML_QuickForm_button} to add help button
- * 
+ * Overloaded {@link HTML_QuickForm_button} to add help button
+ *
  * @package   core_form
  * @category  form
  * @copyright 2007 Jamie Pratt <me@jamiep.org>

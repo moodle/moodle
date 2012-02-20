@@ -119,7 +119,7 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
 
     /**
      * Called by HTML_QuickForm whenever form event is made on this element
-     * 
+     *
      * @param string $event Name of event
      * @param mixed $arg event arguments
      * @param object $caller calling object

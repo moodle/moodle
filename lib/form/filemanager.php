@@ -38,7 +38,7 @@ require_once($CFG->dirroot.'/repository/lib.php');
  * @package   core_form
  * @category  form
  * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later 
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     /** @var string html for help button, if empty then no help will icon will be dispalyed. */
@@ -92,7 +92,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
 
     /**
      * Updates filemanager attribute value
-     * 
+     *
      * @param string $value value to set
      */
     function setValue($value) {
@@ -165,7 +165,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
 
     /**
      * Sets help button for filemanager
-     * 
+     *
      * @param mixed $helpbuttonargs arguments to create help button
      * @param string $function name of the callback function
      * @deprecated since Moodle 2.0. Please do not call this function any more.

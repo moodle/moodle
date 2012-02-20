@@ -32,7 +32,7 @@ require_once "$CFG->libdir/form/select.php";
  * editor format form element
  *
  * HTML class for a editor format drop down element
- * 
+ *
  * @package    core_form
  * @copyright  2007 Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -30,7 +30,7 @@ require_once('HTML/QuickForm/checkbox.php');
 /**
  * HTML class for a checkbox type element
  *
- * Overloaded {@see HTML_QuickForm_checkbox} to add help button. Also, fixes bug in quickforms
+ * Overloaded {@link HTML_QuickForm_checkbox} to add help button. Also, fixes bug in quickforms
  * checkbox, which lets previous set value override submitted value if checkbox is not checked
  * and no value is submitted
  *
@@ -116,7 +116,7 @@ class MoodleQuickForm_checkbox extends HTML_QuickForm_checkbox{
 
     /**
      * Returns HTML for checbox form element.
-     * 
+     *
      * @return string
      */
     function toHtml()

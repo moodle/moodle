@@ -435,7 +435,7 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
             return $this->_prepareValue($cleaned[0], $assoc);
         }
     }
-    
+
     /**
      * Called by HTML_QuickForm whenever form event is made on this element
      *

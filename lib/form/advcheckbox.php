@@ -30,7 +30,7 @@ require_once('HTML/QuickForm/advcheckbox.php');
 /**
  * HTML class for an advcheckbox type element
  *
- * Overloaded {@see HTML_QuickForm_advcheckbox} with default behavior modified for Moodle.
+ * Overloaded {@link HTML_QuickForm_advcheckbox} with default behavior modified for Moodle.
  * This will return '0' if not checked and '1' if checked.
  *
  * @package   core_form

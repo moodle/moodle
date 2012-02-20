@@ -28,7 +28,7 @@ require_once('select.php');
 
 /**
  * searchable select type element
- * 
+ *
  * Display a select input with a search textfield input on the top
  * The search textfield is created by the javascript file searchselector.js
  * (so when javascript is not activated into the browser, the search field is not displayed)
@@ -46,7 +46,7 @@ class MoodleQuickForm_searchableselector extends MoodleQuickForm_select{
      *
      * @param string $elementName Select name attribute
      * @param mixed $elementLabel Label(s) for the select
-     * @param array $options additional options. 
+     * @param array $options additional options.
      * @param mixed $attributes Either a typical HTML attribute string or an associative array
      */
     function MoodleQuickForm_searchableselector($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
