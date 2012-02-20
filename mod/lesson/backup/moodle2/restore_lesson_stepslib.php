@@ -30,6 +30,9 @@
  * Structure step to restore one lesson activity
  */
 class restore_lesson_activity_structure_step extends restore_activity_structure_step {
+    // Store the answers as they're received but only process them at the
+    // end of the lesson
+    protected $answers = array();
 
     protected function define_structure() {
 
@@ -94,15 +97,15 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         global $DB;
 
         $data = (object)$data;
-        $oldid = $data->id;
         $data->lessonid = $this->get_new_parentid('lesson');
         $data->pageid = $this->get_new_parentid('lesson_page');
         $data->answer = $data->answer_text;
         $data->timemodified = $this->apply_date_offset($data->timemodified);
         $data->timecreated = $this->apply_date_offset($data->timecreated);
 
-        $newitemid = $DB->insert_record('lesson_answers', $data);
-        $this->set_mapping('lesson_answer', $oldid, $newitemid);
+        // Answers need to be processed in order, so we store them in an
+        // instance variable and insert them in the after_execute stage
+        $this->answers[$data->id] = $data;
     }
 
     protected function process_lesson_attempt($data) {
@@ -172,6 +175,13 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
 
     protected function after_execute() {
         global $DB;
+
+        // Answers must be sorted by id to ensure that they're shown correctly
+        ksort($this->answers);
+        foreach ($this->answers as $answer) {
+            $newitemid = $DB->insert_record('lesson_answers', $answer);
+            $this->set_mapping('lesson_answer', $answer->id, $newitemid);
+        }
 
         // Add lesson mediafile, no need to match by itemname (just internally handled context)
         $this->add_related_files('mod_lesson', 'mediafile', null);
