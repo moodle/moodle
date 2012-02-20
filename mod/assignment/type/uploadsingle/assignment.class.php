@@ -393,6 +393,18 @@ class assignment_uploadsingle extends assignment_base {
             send_temp_file($zipfile, $filename); //send file and delete after sending.
         }
     }
+
+    /**
+     * Check the given submission is complete. Preliminary rows are often created in the assignment_submissions
+     * table before a submission actually takes place. This function checks to see if the given submission has actually
+     * been submitted.
+     *
+     * @param  stdClass $submission The submission we want to check for completion
+     * @return bool                 Indicates if the submission was found to be complete
+     */
+    public function is_submitted_with_required_data($submission) {
+        return ($submission->timemodified AND $submission->numfiles > 0);
+    }
 }
 
 class mod_assignment_uploadsingle_response_form extends moodleform {
