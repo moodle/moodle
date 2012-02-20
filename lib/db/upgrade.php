@@ -6722,6 +6722,37 @@ FROM
 
         upgrade_main_savepoint(true, 2011070104.08);
     }
+
+    if ($oldversion < 2011070104.09) {
+        // Somewhere before 1.9 summary and content column in post table were not null. In 1.9+
+        // not null became false.
+        $columns = $DB->get_columns('post');
+
+        // Fix discrepancies in summary field after upgrade from 1.9
+        if (array_key_exists('summary', $columns) && $columns['summary']->not_null != false) {
+            $table = new xmldb_table('post');
+            $summaryfield = new xmldb_field('summary', XMLDB_TYPE_TEXT, 'big', null, null, null, null, 'subject');
+
+            if ($dbman->field_exists($table, $summaryfield)) {
+                $dbman->change_field_notnull($table, $summaryfield);
+            }
+
+        }
+
+        // Fix discrepancies in content field after upgrade from 1.9
+        if (array_key_exists('content', $columns) && $columns['content']->not_null != false) {
+            $table = new xmldb_table('post');
+            $contentfield = new xmldb_field('content', XMLDB_TYPE_TEXT, 'big', null, null, null, null, 'summary');
+
+            if ($dbman->field_exists($table, $contentfield)) {
+                $dbman->change_field_notnull($table, $contentfield);
+            }
+
+        }
+
+        upgrade_main_savepoint(true, 2011070104.09);
+    }
+
     return true;
 }
 
