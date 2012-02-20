@@ -1912,7 +1912,7 @@ class moodle_page {
      * Prints a header... DO NOT USE!
      *
      * @deprecated since Moodle 2.0 - page objects should no longer be doing print_header.
-     * @param mixed $_,...
+     * @param mixed $_ ...
      */
     function print_header($_) {
         if (is_null($this->_legacypageobject)) {
@@ -1992,7 +1992,7 @@ class moodle_page {
     /**
      * Allow or disallow popup notifications on this page. Popups are allowed by default.
      *
-     * @param bool true if notifications are allowed. False if not allowed. They are allowed by default.
+     * @param bool $allowed true if notifications are allowed. False if not allowed. They are allowed by default.
      */
     public function set_popup_notification_allowed($allowed) {
         $this->_popup_notification_allowed = $allowed;
