@@ -1529,10 +1529,10 @@ function unassign_capability($capability, $roleid, $contextid = null) {
  * It just checks for permissions and overrides.
  * Use get_roles_with_cap_in_context() if resolution is required.
  *
- * @param string $capability - capability name (string)
- * @param string $permission - optional, the permission defined for this capability
+ * @param string $capability capability name (string)
+ * @param string $permission optional, the permission defined for this capability
  *                      either CAP_ALLOW, CAP_PREVENT or CAP_PROHIBIT. Defaults to null which means any.
- * @param stdClass $context, null means any
+ * @param stdClass $context null means any
  * @return array of role records
  */
 function get_roles_with_capability($capability, $permission = null, $context = null) {
@@ -1745,7 +1745,7 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
         if ($context = context::instance_by_id($ra->contextid, IGNORE_MISSING)) {
             // this is a bit expensive but necessary
             $context->mark_dirty();
-            /// If the user is the current user, then do full reload of capabilities too.
+            // If the user is the current user, then do full reload of capabilities too.
             if (!empty($USER->id) && $USER->id == $ra->userid) {
                 reload_all_capabilities();
             }
@@ -1772,7 +1772,7 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
                     $DB->delete_records('role_assignments', array('id'=>$ra->id));
                     // this is a bit expensive but necessary
                     $context->mark_dirty();
-                    /// If the user is the current user, then do full reload of capabilities too.
+                    // If the user is the current user, then do full reload of capabilities too.
                     if (!empty($USER->id) && $USER->id == $ra->userid) {
                         reload_all_capabilities();
                     }
@@ -1891,7 +1891,7 @@ function is_guest(context $context, $user = null) {
  * @category   access
  *
  * @param context $context
- * @param int|stdClass $user, if null $USER is used
+ * @param int|stdClass $user if null $USER is used
  * @param string $withcapability extra capability name
  * @return bool
  */
@@ -1927,7 +1927,7 @@ function is_viewing(context $context, $user = null, $withcapability = '') {
  * @category  access
  *
  * @param context $context
- * @param int|stdClass $user, if null $USER is used, otherwise user object or id expected
+ * @param int|stdClass $user if null $USER is used, otherwise user object or id expected
  * @param string $withcapability extra capability name
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
  * @return bool
@@ -2632,10 +2632,10 @@ function get_capability_docs_link($capability) {
  * defaults) of a role used in capability overrides in contexts at a given
  * context.
  *
- * @param context $context
  * @param int $roleid
+ * @param context $context
  * @param string $cap capability, optional, defaults to ''
- * @return array of capabilities
+ * @return array Array of capabilities
  */
 function role_context_capabilities($roleid, context $context, $cap = '') {
     global $DB;
@@ -3521,7 +3521,7 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         unset($n);
     }
 
-    /// ***** Set up default fields ******
+    // ***** Set up default fields ******
     if (empty($fields)) {
         if ($iscoursepage) {
             $fields = 'u.*, ul.timeaccess AS lastaccess';
@@ -3534,7 +3534,7 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         }
     }
 
-    /// Set up default sort
+    // Set up default sort
     if (empty($sort)) { // default to course lastaccess or just lastaccess
         if ($iscoursepage) {
             $sort = 'ul.timeaccess';
@@ -3559,11 +3559,11 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         }
     }
 
-    /// We never return deleted users or guest account.
+    // We never return deleted users or guest account.
     $wherecond[] = "u.deleted = 0 AND u.id <> :guestid";
     $params['guestid'] = $CFG->siteguest;
 
-    /// Groups
+    // Groups
     if ($groups) {
         $groups = (array)$groups;
         list($grouptest, $grpparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED, 'grp');
@@ -3582,7 +3582,7 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         }
     }
 
-    /// User exceptions
+    // User exceptions
     if (!empty($exceptions)) {
         $exceptions = (array)$exceptions;
         list($exsql, $exparams) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'exc', false);
@@ -3656,7 +3656,7 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
     }
     $joins = implode("\n", $joins);
 
-    /// Ok, let's get the users!
+    // Ok, let's get the users!
     $sql = "SELECT $fields
               FROM {user} u
             $joins
@@ -4522,6 +4522,13 @@ function role_change_permission($roleid, $context, $capname, $permission) {
 /**
  * Basic moodle context abstraction class.
  *
+ * Google confirms that no other important framework is using "context" class,
+ * we could use something else like mcontext or moodle_context, but we need to type
+ * this very often which would be annoying and it would take too much space...
+ *
+ * This class is derived from stdClass for backwards compatibility with
+ * odl $context record that was returned from DML $DB->get_record()
+ *
  * @package   core_access
  * @category  access
  * @copyright Petr Skoda {@link http://skodak.org}
@@ -4532,32 +4539,70 @@ function role_change_permission($roleid, $context, $capname, $permission) {
  * @property-read int $contextlevel CONTEXT_SYSTEM, CONTEXT_COURSE, etc.
  * @property-read int $instanceid id of related instance in each context
  * @property-read string $path path to context, starts with system context
- * @property-read dept $depth
+ * @property-read int $depth
  */
 abstract class context extends stdClass {
 
-    /*
-     * Google confirms that no other important framework is using "context" class,
-     * we could use something else like mcontext or moodle_context, but we need to type
-     * this very often which would be annoying and it would take too much space...
-     *
-     * This class is derived from stdClass for backwards compatibility with
-     * odl $context record that was returned from DML $DB->get_record()
+    /**
+     * The context id
+     * Can be accessed publicly through $context->id
+     * @var int
      */
-
     protected $_id;
+
+    /**
+     * The context level
+     * Can be accessed publicly through $context->contextlevel
+     * @var int One of CONTEXT_* e.g. CONTEXT_COURSE, CONTEXT_MODULE
+     */
     protected $_contextlevel;
+
+    /**
+     * Id of the item this context is related to e.g. COURSE_CONTEXT => course.id
+     * Can be accessed publicly through $context->instanceid
+     * @var int
+     */
     protected $_instanceid;
+
+    /**
+     * The path to the context always starting from the system context
+     * Can be accessed publicly through $context->path
+     * @var string
+     */
     protected $_path;
+
+    /**
+     * The depth of the context in relation to parent contexts
+     * Can be accessed publicly through $context->depth
+     * @var int
+     */
     protected $_depth;
 
-    /* context caching info */
-
+    /**
+     * @var array Context caching info
+     */
     private static $cache_contextsbyid = array();
-    private static $cache_contexts     = array();
-    protected static $cache_count      = 0; // why do we do count contexts? Because count($array) is horribly slow for large arrays
 
+    /**
+     * @var array Context caching info
+     */
+    private static $cache_contexts     = array();
+
+    /**
+     * Context count
+     * Why do we do count contexts? Because count($array) is horribly slow for large arrays
+     * @var int
+     */
+    protected static $cache_count      = 0;
+
+    /**
+     * @var array Context caching info
+     */
     protected static $cache_preloaded  = array();
+
+    /**
+     * @var context_system The system context once initialised
+     */
     protected static $systemcontext    = null;
 
     /**
@@ -4691,7 +4736,7 @@ abstract class context extends stdClass {
     /**
      * Magic setter method, we do not want anybody to modify properties from the outside
      * @param string $name
-     * @param mixed @value
+     * @param mixed $value
      */
     public function __set($name, $value) {
         debugging('Can not change context instance properties!');
@@ -4718,7 +4763,7 @@ abstract class context extends stdClass {
 
     /**
      * Full support for isset on our magic read only properties.
-     * @param $name
+     * @param string $name
      * @return bool
      */
     public function __isset($name) {
@@ -5171,7 +5216,7 @@ abstract class context extends stdClass {
      * Rebuild context paths and depths at context level.
      *
      * @static
-     * @param $force
+     * @param bool $force
      * @return void
      */
     protected static function build_paths($force) {
@@ -5271,6 +5316,9 @@ abstract class context extends stdClass {
  */
 class context_helper extends context {
 
+    /**
+     * @var array An array mapping context levels to classes
+     */
     private static $alllevels = array(
             CONTEXT_SYSTEM    => 'context_system',
             CONTEXT_USER      => 'context_user',
@@ -5430,7 +5478,7 @@ class context_helper extends context {
      * To be used if you expect multiple queries for course activities...
      *
      * @static
-     * @param $courseid
+     * @param int $courseid
      */
     public static function preload_course($courseid) {
         // Users can call this multiple times without doing any harm
@@ -5702,7 +5750,7 @@ class context_system extends context {
      * Rebuild context paths and depths at system context level.
      *
      * @static
-     * @param $force
+     * @param bool $force
      */
     protected static function build_paths($force) {
         global $DB;
@@ -5887,7 +5935,7 @@ class context_user extends context {
      * Rebuild context paths and depths at user context level.
      *
      * @static
-     * @param $force
+     * @param bool $force
      */
     protected static function build_paths($force) {
         global $DB;
@@ -6077,7 +6125,7 @@ class context_coursecat extends context {
      * Rebuild context paths and depths at course category context level.
      *
      * @static
-     * @param $force
+     * @param bool $force
      */
     protected static function build_paths($force) {
         global $DB;
@@ -6300,7 +6348,7 @@ class context_course extends context {
      * Rebuild context paths and depths at course context level.
      *
      * @static
-     * @param $force
+     * @param bool $force
      */
     protected static function build_paths($force) {
         global $DB;
@@ -6554,7 +6602,7 @@ class context_module extends context {
      * Rebuild context paths and depths at module context level.
      *
      * @static
-     * @param $force
+     * @param bool $force
      */
     protected static function build_paths($force) {
         global $DB;
@@ -6771,7 +6819,7 @@ class context_block extends context {
      * Rebuild context paths and depths at block context level.
      *
      * @static
-     * @param $force
+     * @param bool $force
      */
     protected static function build_paths($force) {
         global $DB;
@@ -6937,7 +6985,7 @@ function get_parent_contextid(context $context) {
  * contexts ;-)
  *
  * @deprecated since 2.2, use $context->get_child_contexts() instead
- * @param context $context.
+ * @param context $context
  * @return array Array of child records
  */
 function get_child_contexts(context $context) {
