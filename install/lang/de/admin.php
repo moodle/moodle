@@ -31,14 +31,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'n';
-$string['cliansweryes'] = 'j';
+$string['cliansweryes'] = 'y';
 $string['cliincorrectvalueerror'] = 'Fehler: Falscher Wert "{$a->value}" für "{$a->option}"';
-$string['cliincorrectvalueretry'] = 'Falscher Wert - versuchen Sie es nochmal';
+$string['cliincorrectvalueretry'] = 'Falscher Wert - bitte nochmal';
 $string['clitypevalue'] = 'Wert eingeben';
-$string['clitypevaluedefault'] = 'Wert eingeben. Drücken Sie Enter, um den Standardwert zu benutzen ({$a})';
+$string['clitypevaluedefault'] = 'Wert eingeben oder Standardwert benutzen ({$a})';
 $string['cliunknowoption'] = 'Nicht erkannte Optionen: 
   {$a}
-Für Hilfe nutzen Sie bitte die Hilfefunktion.';
-$string['cliyesnoprompt'] = 'tippen Sie y (für yes=ja) oder n (für no=nein)';
+Hilfe wird über die Option -help angezeigt.';
+$string['cliyesnoprompt'] = 'y (yes=ja) oder n (no=nein) eingeben';
 $string['environmentrequireinstall'] = 'muss installiert und aktiviert sein';
 $string['environmentrequireversion'] = 'Version {$a->needed} ist erforderlich - aktuell ist {$a->current} installiert.';
