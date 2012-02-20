@@ -166,7 +166,7 @@ function xmldb_main_upgrade($oldversion) {
         if (array_key_exists('summary', $columns) && $columns['summary']->not_null != false) {
             $table = new xmldb_table('post');
             $summaryfield = new xmldb_field('summary', XMLDB_TYPE_TEXT, 'big', null, null, null, null, 'subject');
-            
+
             if ($dbman->field_exists($table, $summaryfield)) {
                 $dbman->change_field_notnull($table, $summaryfield);
             }
