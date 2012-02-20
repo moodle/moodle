@@ -138,7 +138,6 @@ class scorm_basic_report extends scorm_default_report {
                     if ($sco->launch!='') {
                         $columns[]= 'scograde'.$sco->id;
                         $headers[]= format_string($sco->title);
-                        $table->head[]= format_string($sco->title);
                     }
                 }
             } else {
