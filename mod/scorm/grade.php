@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Redirect the user based on their capabilities to either a scorm activity or to scorm reports
+ *
+ * @package   mod_scorm
+ * @category  grade
+ * @copyright 2010 onwards Dan Marsden
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once("../../config.php");
 
 $id   = required_param('id', PARAM_INT);          // Course module ID

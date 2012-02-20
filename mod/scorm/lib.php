@@ -560,8 +560,7 @@ function scorm_get_user_grades($scorm, $userid=0) {
 /**
  * Update grades in central gradebook
  *
- * @global stdClass
- * @global object
+ * @category grade
  * @param object $scorm
  * @param int $userid specific user only, 0 mean all
  * @param bool $nullifnone
@@ -617,8 +616,7 @@ function scorm_upgrade_grades() {
 /**
  * Update/create grade item for given scorm
  *
- * @global stdClass
- * @global object
+ * @category grade
  * @uses GRADE_TYPE_VALUE
  * @uses GRADE_TYPE_NONE
  * @param object $scorm object with extra cmidnumber
@@ -662,7 +660,7 @@ function scorm_grade_item_update($scorm, $grades=null) {
 /**
  * Delete grade item for given scorm
  *
- * @global stdClass
+ * @category grade
  * @param object $scorm object
  * @return object grade_item
  */

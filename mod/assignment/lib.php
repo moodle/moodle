@@ -594,6 +594,8 @@ class assignment_base {
 
     /**
      * Update grade item for this submission.
+     *
+     * @param stdClass $submission The submission instance
      */
     function update_grade($submission) {
         assignment_update_grades($this->assignment, $submission->userid);
@@ -2446,6 +2448,9 @@ class mod_assignment_grading_form extends moodleform {
         return $this->advancegradinginstance;
     }
 
+    /**
+     * Add the grades configuration section to the assignment configuration form
+     */
     function add_grades_section() {
         global $CFG;
         $mform =& $this->_form;
@@ -2866,9 +2871,9 @@ function assignment_cron () {
 /**
  * Return grade for given user or all users.
  *
- * @param int $assignmentid id of assignment
- * @param int $userid optional user id, 0 means all users
- * @return array array of grades, false if none
+ * @param stdClass $assignment An assignment instance
+ * @param int $userid Optional user id, 0 means all users
+ * @return array An array of grades, false if none
  */
 function assignment_get_user_grades($assignment, $userid=0) {
     global $CFG, $DB;
@@ -2893,8 +2898,10 @@ function assignment_get_user_grades($assignment, $userid=0) {
 /**
  * Update activity grades
  *
- * @param object $assignment
+ * @category grade
+ * @param stdClass $assignment Assignment instance
  * @param int $userid specific user only, 0 means all
+ * @param bool $nullifnone Not used
  */
 function assignment_update_grades($assignment, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
@@ -2949,8 +2956,9 @@ function assignment_upgrade_grades() {
 /**
  * Create grade item for given assignment
  *
- * @param object $assignment object with extra cmidnumber
- * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @category grade
+ * @param stdClass $assignment An assignment instance with extra cmidnumber property
+ * @param mixed $grades Optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok, error code otherwise
  */
 function assignment_grade_item_update($assignment, $grades=NULL) {
@@ -2987,6 +2995,7 @@ function assignment_grade_item_update($assignment, $grades=NULL) {
 /**
  * Delete grade item for given assignment
  *
+ * @category grade
  * @param object $assignment object
  * @return object assignment
  */
@@ -3790,8 +3799,9 @@ function assignment_get_types() {
 
 /**
  * Removes all grades from gradebook
- * @param int $courseid
- * @param string optional type
+ *
+ * @param int $courseid The ID of the course to reset
+ * @param string $type Optional type of assignment to limit the reset to a particular assignment type
  */
 function assignment_reset_gradebook($courseid, $type='') {
     global $CFG, $DB;

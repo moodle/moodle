@@ -361,6 +361,7 @@ function lti_get_lti_types() {
 /**
  * Create grade item for given basiclti
  *
+ * @category grade
  * @param object $basiclti object with extra cmidnumber
  * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok, error code otherwise
@@ -395,6 +396,7 @@ function lti_grade_item_update($basiclti, $grades=null) {
 /**
  * Delete grade item for given basiclti
  *
+ * @category grade
  * @param object $basiclti object
  * @return object basiclti
  */
