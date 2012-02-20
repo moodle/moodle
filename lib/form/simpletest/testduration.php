@@ -1,27 +1,29 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+
+/**
+ * Unit tests for forms lib.
+ *
+ * This file contains all unit test related to forms library.
+ *
+ * @package    core_form
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
@@ -31,29 +33,49 @@ global $CFG;
 require_once($CFG->libdir . '/form/duration.php');
 
 /**
- * Unit tests for (some of) ../duration.php.
+ * Unit tests for MoodleQuickForm_duration
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package formslib
+ * Contains test cases for testing MoodleQuickForm_duration
+ * 
+ * @package    core_form
+ * @category   unittest
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class duration_form_element_test extends UnitTestCase {
+    /** @var MoodleQuickForm_duration Keeps reference of MoodleQuickForm_duration object */
     private $element;
-    public  static $includecoverage = array('lib/form/duration.php');
 
+    /** @var array Path of MoodleQuickForm_duration, to be analysed by the coverage report */
+    public static $includecoverage = array('lib/form/duration.php');
+
+    /**
+     * Initalize test wide variable, it is called in start of the testcase
+     */
     function setUp() {
         $this->element = new MoodleQuickForm_duration();
     }
 
+    /**
+     * Clears the data set in the setUp() method call.
+     * @see duration_form_element_test::setUp()
+     */
     function tearDown() {
         $this->element = null;
     }
 
+    /**
+     * Testcase for testing contructor.
+     */
     function test_constructor() {
         // Test trying to create with an invalid unit.
         $this->expectException();
         $this->element = new MoodleQuickForm_duration('testel', null, array('defaultunit' => 123));
     }
 
+    /**
+     * Testcase for testing units (seconds, minutes, hours and days)
+     */
     function test_get_units() {
         $units = $this->element->get_units();
         ksort($units);
@@ -61,6 +83,9 @@ class duration_form_element_test extends UnitTestCase {
                 3600 => get_string('hours'), 86400 => get_string('days')));
     }
 
+    /**
+     * Testcase for testing conversion of seconds to the best possible unit
+     */
     function test_seconds_to_unit() {
         $this->assertEqual($this->element->seconds_to_unit(0), array(0, 60)); // Zero minutes, for a nice default unit.
         $this->assertEqual($this->element->seconds_to_unit(1), array(1, 1));
@@ -76,6 +101,9 @@ class duration_form_element_test extends UnitTestCase {
         $this->assertEqual($this->element->seconds_to_unit(0), array(0, 86400)); // Zero minutes, for a nice default unit.
     }
 
+    /**
+     * Testcase to check generated timestamp
+     */
     function test_exportValue() {
         $el = new MoodleQuickForm_duration('testel');
         $el->_createElements();

@@ -1,56 +1,67 @@
 <?php
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option)  later version.                                      //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 
 /**
- * Formslib field type for editing tags, both official and peronal.
+ * Drop down for question categories.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package formslib
- *//* **/
+ * Contains HTML class for editing tags, both official and peronal.
+ *
+ * @package   core_form
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 global $CFG;
 require_once($CFG->libdir . '/form/group.php');
 
 /**
- * Formslib field type for editing tags.
+ * Form field type for editing tags.
+ *
+ * HTML class for editing tags, both official and peronal.
+ *
+ * @package   core_form
+ * @category  form
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class MoodleQuickForm_tags extends MoodleQuickForm_group {
-    /** Inidcates that the user should be the usual interface, with the official
+    /**
+     * Inidcates that the user should be the usual interface, with the official
      * tags listed seprately, and a text box where they can type anything.
-     * @var integer */
+     * @var int
+     */
     const DEFAULTUI = 'defaultui';
-    /** Indicates that the user should only be allowed to select official tags.
-     * @var integer */
+
+    /**
+     * Indicates that the user should only be allowed to select official tags.
+     * @var int
+     */
     const ONLYOFFICIAL = 'onlyofficial';
-    /** Indicates that the user should just be given a text box to type in (they
+
+    /**
+     * Indicates that the user should just be given a text box to type in (they
      * can still type official tags though.
-     * @var integer */
+     * @var int
+     */
     const NOOFFICIAL = 'noofficial';
 
     /**
-     * Control the fieldnames for form elements
-     *
-     * display => integer, one of the constants above.
+     * Control the fieldnames for form elements display => int, one of the constants above.
+     * @var array
      */
     protected $_options = array('display' => MoodleQuickForm_tags::DEFAULTUI);
 
@@ -91,6 +102,11 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
         }
     }
 
+    /**
+     * Internal function to load official tags
+     *
+     * @access protected
+     */
     protected function _load_official_tags() {
         global $CFG, $DB;
         if (!is_null($this->_officialtags)) {
@@ -100,6 +116,9 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
         $this->_officialtags = $DB->get_records_menu('tag', array('tagtype' => 'official'), $namefield, 'id,' . $namefield);
     }
 
+    /**
+     * Creates the group's elements.
+     */
     function _createElements() {
         global $CFG, $OUTPUT;
         $this->_elements = array();
@@ -159,6 +178,13 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
         }
     }
 
+    /**
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * @param string $event Name of event
+     * @param mixed $arg event arguments
+     * @param object $caller calling object
+     */
     function onQuickFormEvent($event, $arg, &$caller) {
         switch ($event) {
             case 'updateValue':
@@ -207,6 +233,11 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
         }
     }
 
+    /**
+     * Returns HTML for submitlink form element.
+     *
+     * @return string
+     */
     function toHtml() {
         require_once('HTML/QuickForm/Renderer/Default.php');
         $renderer = new HTML_QuickForm_Renderer_Default();
@@ -215,11 +246,25 @@ class MoodleQuickForm_tags extends MoodleQuickForm_group {
         return $renderer->toHtml();
     }
 
+    /**
+     * Accepts a renderer
+     *
+     * @param HTML_QuickForm_Renderer $renderer An HTML_QuickForm_Renderer object
+     * @param bool $required Whether a group is required
+     * @param string $error An error message associated with a group
+     */
     function accept(&$renderer, $required = false, $error = null)
     {
         $renderer->renderElement($this, $required, $error);
     }
 
+    /**
+     * Output both official and peronal.
+     *
+     * @param array $submitValues values submitted.
+     * @param bool $assoc specifies if returned array is associative
+     * @return array
+     */
     function exportValue(&$submitValues, $assoc = false) {
         $valuearray = array();
 
