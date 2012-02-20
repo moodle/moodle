@@ -1220,7 +1220,7 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Uses {@see get_grade_item()} to load or create a grade_item, then saves it as $this->grade_item.
+     * Uses {@link get_grade_item()} to load or create a grade_item, then saves it as $this->grade_item.
      *
      * @return grade_item
      */

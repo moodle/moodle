@@ -307,7 +307,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
  * @param string $itemmodule More specific then $itemtype. For example, 'forum' or 'quiz'. May be NULL for some item types
  * @param int    $iteminstance Instance ID of graded item. For example the forum ID.
  * @param int    $userid ID of the graded user
- * @param array  $data Array consisting of grade item itemnumber ({@see grade_update()}) => outcomegrade
+ * @param array  $data Array consisting of grade item itemnumber ({@link grade_update()}) => outcomegrade
  * @return bool returns true if grade items were found and updated successfully
  */
 function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $iteminstance, $userid, $data) {
@@ -751,7 +751,7 @@ function grade_format_gradevalue_percentage($value, $grade_item, $decimals, $loc
 
 /**
  * Returns a letter grade representation of a grade value
- * The array of grade letters used is produced by {@see grade_get_letters()} using the course context
+ * The array of grade letters used is produced by {@link grade_get_letters()} using the course context
  *
  * @param float $value The grade value
  * @param object $grade_item Grade item object
@@ -1419,7 +1419,7 @@ function grade_floatval($number) {
 }
 
 /**
- * Compare two float numbers safely. Uses 5 decimals php precision using {@see grade_floatval()}. Nulls accepted too.
+ * Compare two float numbers safely. Uses 5 decimals php precision using {@link grade_floatval()}. Nulls accepted too.
  * Used for determining if a database update is required
  *
  * @param float $f1 Float one to compare
@@ -1432,7 +1432,7 @@ function grade_floats_different($f1, $f2) {
 }
 
 /**
- * Compare two float numbers safely. Uses 5 decimals php precision using {@see grade_floatval()}
+ * Compare two float numbers safely. Uses 5 decimals php precision using {@link grade_floatval()}
  *
  * Do not use rounding for 10,5 at the database level as the results may be
  * different from php round() function.
