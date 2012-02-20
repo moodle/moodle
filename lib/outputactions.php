@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,10 +20,10 @@
  * Please see http://docs.moodle.org/en/Developement:How_Moodle_outputs_HTML
  * for an overview.
  *
- * @package    core
- * @subpackage lib
- * @copyright  2009 Nicolas Connault
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package core
+ * @category output
+ * @copyright 2009 Nicolas Connault
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -33,38 +32,36 @@ defined('MOODLE_INTERNAL') || die();
  * Helper class used by other components that involve an action on the page (URL or JS).
  *
  * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @category output
  */
 class component_action {
 
     /**
-     * The DOM event that will trigger this action when caught
-     * @var string $event DOM event
+     * @var string $event The DOM event that will trigger this action when caught
      */
     public $event;
 
     /**
+     * @var string A function name to call when the button is clicked
      * The JS function you create must have two arguments:
      *      1. The event object
      *      2. An object/array of arguments ($jsfunctionargs)
-     * @var string $jsfunction A function name to call when the button is clicked
      */
     public $jsfunction = false;
 
     /**
-     * @var array $jsfunctionargs An array of arguments to pass to the JS function
+     * @var array An array of arguments to pass to the JS function
      */
     public $jsfunctionargs = array();
 
     /**
      * Constructor
      * @param string $event DOM event
-     * @param moodle_url $url A moodle_url object, required if no jsfunction is given
-     * @param string $method 'post' or 'get'
      * @param string $jsfunction An optional JS function. Required if jsfunctionargs is given
-     * @param array  $jsfunctionargs An array of arguments to pass to the jsfunction
-     * @return void
+     * @param array $jsfunctionargs An array of arguments to pass to the jsfunction
      */
     public function __construct($event, $jsfunction, $jsfunctionargs=array()) {
         $this->event = $event;
@@ -83,8 +80,23 @@ class component_action {
 
 /**
  * Confirm action
+ *
+ * @copyright 2009 Nicolas Connault
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @category output
  */
 class confirm_action extends component_action {
+    /**
+     * Constructs the confirm action object
+     *
+     * @param string $message The message to display to the user when they are shown
+     *    the confirm dialogue.
+     * @param string $callback The method to call when the user confirms the action.
+     * @param string $continuelabel The string to use for he continue button
+     * @param string $cancellabel The string to use for the cancel button
+     */
     public function __construct($message, $callback = null, $continuelabel = null, $cancellabel = null) {
         parent::__construct('click', 'M.util.show_confirm_dialog', array(
                 'message' => $message, 'callback' => $callback,
@@ -97,15 +109,20 @@ class confirm_action extends component_action {
  * Component action for a popup window.
  *
  * @copyright 2009 Nicolas Connault
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.0
+ * @package core
+ * @category output
  */
 class popup_action extends component_action {
 
+    /**
+     * @var string The JS function to call for the popup
+     */
     public $jsfunction = 'openpopup';
 
     /**
-     * @var array $params An array of parameters that will be passed to the openpopup JS function
+     * @var array An array of parameters that will be passed to the openpopup JS function
      */
     public $params = array(
             'height' =>  400,
@@ -124,11 +141,11 @@ class popup_action extends component_action {
 
     /**
      * Constructor
+     *
      * @param string $event DOM event
      * @param moodle_url|string $url A moodle_url object, required if no jsfunction is given
-     * @param string $method 'post' or 'get'
+     * @param string $name The JS function to call for the popup (default 'popup')
      * @param array  $params An array of popup parameters
-     * @return void
      */
     public function __construct($event, $url, $name='popup', $params=array()) {
         global $CFG;
