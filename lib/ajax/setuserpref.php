@@ -13,18 +13,17 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
- 
+
 /**
  * Code to update a user preference in response to an ajax call.
  *
  * You should not send requests to this script directly. Instead use the set_user_preference
  * function in javascript_static.js.
  *
- * @package    core_preference
+ * @package    core
  * @category   preference
- * @copyright  Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
- * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @copyright  2008 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
