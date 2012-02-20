@@ -179,6 +179,7 @@ $string['profileimportfields'] = 'Fields to import';
 $string['promiscuous'] = 'Promiscuous';
 $string['publickey'] = 'Public key';
 $string['publickey_help'] = 'The public key is automatically obtained from the remote server.';
+$string['publickeyrequired'] = 'You must provide a public key.';
 $string['publish'] = 'Publish';
 $string['reallydeleteserver'] = 'Are you sure you want to delete the server';
 $string['receivedwarnings'] = 'The following warnings were received';
