@@ -19,7 +19,7 @@
  * Native sqlsrv class representing moodle database interface.
  *
  * @package    core
- * @subpackage dml
+ * @subpackage dml_driver
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
  */
@@ -32,6 +32,11 @@ require_once($CFG->libdir.'/dml/sqlsrv_native_moodle_temptables.php');
 
 /**
  * Native sqlsrv class representing moodle database interface.
+ *
+ * @package    core
+ * @subpackage dml_driver
+ * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v2 or later
  */
 class sqlsrv_native_moodle_database extends moodle_database {
 
@@ -126,12 +131,12 @@ class sqlsrv_native_moodle_database extends moodle_database {
 
     /**
      * Connect to db
-     * Must be called before other methods.
-     * @param string $dbhost
-     * @param string $dbuser
-     * @param string $dbpass
-     * @param string $dbname
-     * @param mixed $prefix string means moodle db prefix, false used for external databases where prefix not used
+     * Must be called before most other methods. (you can call methods that return connection configuration parameters)
+     * @param string $dbhost The database host.
+     * @param string $dbuser The database username.
+     * @param string $dbpass The database username's password.
+     * @param string $dbname The name of the database being connected to.
+     * @param mixed $prefix string|bool The moodle db table name's prefix. false is used for external databases where prefix not used
      * @param array $dboptions driver specific options
      * @return bool true
      * @throws dml_connection_exception if error
@@ -234,7 +239,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
     /**
      * Called before each db query.
      * @param string $sql
-     * @param array array of parameters
+     * @param array $params array of parameters
      * @param int $type type of query
      * @param mixed $extrainfo driver specific extra information
      * @return void
@@ -254,7 +259,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
 
     /**
      * Returns database server info array
-     * @return array
+     * @return array Array containing 'description', 'version' and 'database' (current db) info
      */
     public function get_server_info() {
         static $info;
@@ -375,7 +380,8 @@ class sqlsrv_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Return tables in database WITHOUT current prefix
+     * Return tables in database WITHOUT current prefix.
+     * @param bool $usecache if true, returns list of cached tables.
      * @return array of table names in lowercase and without prefix
      */
     public function get_tables($usecache = true) {
@@ -410,7 +416,8 @@ class sqlsrv_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Return table indexes - everything lowercased
+     * Return table indexes - everything lowercased.
+     * @param string $table The table we want to get indexes from.
      * @return array of arrays
      */
     public function get_indexes($table) {
@@ -665,7 +672,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * Do NOT use in code, to be used by database_manager only!
      * @param string $sql query
      * @return bool true
-     * @throws dml_exception if error
+     * @throws dml_exception A DML specific exception is thrown for any errors.
      */
     public function change_database_structure($sql) {
         $this->reset_caches();
@@ -728,7 +735,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @param string $sql query
      * @param array $params query parameters
      * @return bool true
-     * @throws dml_exception if error
+     * @throws dml_exception A DML specific exception is thrown for any errors.
      */
     public function execute($sql, array $params = null) {
         if (strpos($sql, ';') !== false) {
@@ -745,14 +752,15 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * code where it's possible there might be large datasets being returned.  For known
      * small datasets use get_records_sql - it leads to simpler code.
      *
-     * The return type is as for @see function get_recordset.
+     * The return type is like:
+     * @see function get_recordset.
      *
      * @param string $sql the SQL select query to execute.
      * @param array $params array of sql parameters
      * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
      * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
      * @return moodle_recordset instance
-     * @throws dml_exception if error
+     * @throws dml_exception A DML specific exception is thrown for any errors.
      */
     public function get_recordset_sql($sql, array $params = null, $limitfrom = 0, $limitnum = 0) {
         $limitfrom = (int)$limitfrom;
@@ -791,7 +799,8 @@ class sqlsrv_native_moodle_database extends moodle_database {
     /**
      * Get a number of records as an array of objects using a SQL statement.
      *
-     * Return value as for @see function get_records.
+     * Return value is like:
+     * @see function get_records.
      *
      * @param string $sql the SQL select query to execute. The first column of this SELECT statement
      *   must be a unique value (usually the 'id' field), as it will be used as the key of the
@@ -800,7 +809,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
      * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
      * @return array of objects, or empty array if no records were found
-     * @throws dml_exception if error
+     * @throws dml_exception A DML specific exception is thrown for any errors.
      */
     public function get_records_sql($sql, array $params = null, $limitfrom = 0, $limitnum = 0) {
 
@@ -828,7 +837,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @param string $sql The SQL query
      * @param array $params array of sql parameters
      * @return array of values
-     * @throws dml_exception if error
+     * @throws dml_exception A DML specific exception is thrown for any errors.
      */
     public function get_fieldset_sql($sql, array $params = null) {
 
@@ -852,7 +861,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @param bool $bulk true means repeated inserts expected
      * @param bool $customsequence true if 'id' included in $params, disables $returnid
      * @return bool|int true or new id
-     * @throws dml_exception if error
+     * @throws dml_exception A DML specific exception is thrown for any errors.
      */
     public function insert_record_raw($table, $params, $returnid=true, $bulk=false, $customsequence=false) {
         if (!is_array($params)) {
@@ -937,7 +946,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @param object $data A data object with values for one or more fields in the record
      * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
      * @return bool|int true or new id
-     * @throws dml_exception if error
+     * @throws dml_exception A DML specific exception is thrown for any errors.
      */
     public function insert_record($table, $dataobject, $returnid = true, $bulk = false) {
         $dataobject = (array)$dataobject;
@@ -966,7 +975,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @param string $table name of database table to be inserted into
      * @param object $dataobject A data object with values for one or more fields in the record
      * @return bool true
-     * @throws dml_exception if error
+     * @throws dml_exception A DML specific exception is thrown for any errors.
      */
     public function import_record($table, $dataobject) {
         if (!is_object($dataobject)) {
@@ -995,7 +1004,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @param mixed $params data record as object or array
      * @param bool true means repeated updates expected
      * @return bool true
-     * @throws dml_exception if error
+     * @throws dml_exception A DML specific exception is thrown for any errors.
      */
     public function update_record_raw($table, $params, $bulk = false) {
         $params = (array)$params;
@@ -1037,7 +1046,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @param object $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
      * @param bool true means repeated updates expected
      * @return bool true
-     * @throws dml_exception if error
+     * @throws dml_exception A DML specific exception is thrown for any errors.
      */
     public function update_record($table, $dataobject, $bulk = false) {
         $dataobject = (array)$dataobject;
@@ -1065,7 +1074,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
      * @param array $params array of sql parameters
      * @return bool true
-     * @throws dml_exception if error
+     * @throws dml_exception A DML specific exception is thrown for any errors.
      */
     public function set_field_select($table, $newfield, $newvalue, $select, array $params = null) {
         if ($select) {
@@ -1105,7 +1114,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call (used to define the selection criteria).
      * @param array $params array of sql parameters
      * @return bool true
-     * @throws dml_exception if error
+     * @throws dml_exception A DML specific exception is thrown for any errors.
      */
     public function delete_records_select($table, $select, array $params = null) {
         if ($select) {

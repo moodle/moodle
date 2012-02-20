@@ -20,6 +20,7 @@
  * Abstract recordset.
  *
  * @package    core
+ * @category   dml
  * @subpackage dml
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

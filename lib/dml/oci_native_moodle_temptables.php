@@ -23,7 +23,7 @@
  * method of the DB.
  *
  * @package    core
- * @subpackage dml
+ * @subpackage dml_driver
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

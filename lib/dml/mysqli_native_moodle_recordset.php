@@ -20,7 +20,7 @@
  * Mysqli specific recordset.
  *
  * @package    core
- * @subpackage dml
+ * @subpackage dml_driver
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,6 +31,11 @@ require_once($CFG->libdir.'/dml/moodle_recordset.php');
 
 /**
  * Mysqli specific moodle recordset class
+ *
+ * @package    core
+ * @subpackage dml_driver
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mysqli_native_moodle_recordset extends moodle_recordset {
 
