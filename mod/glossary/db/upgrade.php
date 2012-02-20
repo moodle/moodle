@@ -29,7 +29,7 @@ function xmldb_glossary_upgrade($oldversion) {
     // Moodle v2.2.0 release upgrade line
     // Put any upgrade step following this
 
-    if ($oldversion < 2012010400) {
+    if ($oldversion < 2012022000) {
 
         // Define field approvaldisplayformat to be added to glossary
         $table = new xmldb_table('glossary');
@@ -40,15 +40,8 @@ function xmldb_glossary_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Set the default approvaldisplayformat for existing entries to be
-        // the existing displayformat so as not to change existing
-        // functionality
-        $sql = "UPDATE {glossary}
-                SET approvaldisplayformat = 'default'";
-        $DB->execute($sql);
-
         // glossary savepoint reached
-        upgrade_mod_savepoint(true, 2012010400, 'glossary');
+        upgrade_mod_savepoint(true, 2012022000, 'glossary');
     }
 
     return true;
