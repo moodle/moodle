@@ -413,7 +413,7 @@ abstract class grade_object {
     /**
      * Check grade object hidden status
      *
-     * @return bool True if a "hidden until" timestamp is set, false if grade object is set to always visible or always hidden. 
+     * @return bool True if a "hidden until" timestamp is set, false if grade object is set to always visible or always hidden.
      */
     function is_hiddenuntil() {
         return $this->hidden > 1;
