@@ -1,29 +1,26 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Moodle - Modular Object-Oriented Dynamic Learning Environment
- *          http://moodle.org
- * Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @package    core
- * @subpackage portfolio
- * @author     Penny Leach <penny@catalyst.net.nz>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
- *
  * This file contains all the form definitions used by the portfolio code.
+ *
+ * @package core_portfolio
+ * @copyright 2008 Penny Leach <penny@catalyst.net.nz>,
+ *            Martin Dougiamas (http://dougiamas.com)
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -32,17 +29,25 @@ defined('MOODLE_INTERNAL') || die();
 require_once ($CFG->libdir.'/formslib.php');
 
 /**
-* During-export config form.
-*
-* This is the form that is actually used while exporting.
-* Plugins and callers don't get to define their own class
-* as we have to handle form elements from both places
-* See the docs here for more information:
-* http://docs.moodle.org/dev/Writing_a_Portfolio_Plugin#has_export_config
-* http://docs.moodle.org/dev/Adding_a_Portfolio_Button_to_a_page#has_export_config
-*/
+ * During-export config form.
+ *
+ * This is the form that is actually used while exporting.
+ * Plugins and callers don't get to define their own class
+ * as we have to handle form elements from both places
+ * See the docs here for more information:
+ * http://docs.moodle.org/dev/Writing_a_Portfolio_Plugin#has_export_config
+ * http://docs.moodle.org/dev/Adding_a_Portfolio_Button_to_a_page#has_export_config
+ *
+ * @package core_portfolio
+ * @category portfolio
+ * @copyright 2008 Penny Leach <penny@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 final class portfolio_export_form extends moodleform {
 
+    /**
+     * prepare form
+     */
     public function definition() {
 
         $mform =& $this->_form;
@@ -96,6 +101,12 @@ final class portfolio_export_form extends moodleform {
         $this->add_action_buttons(true, get_string('next'));
     }
 
+    /**
+     * Validate portfolio export form
+     *
+     * @param stdClass $data portfolio information from form data
+     * @return array
+     */
     public function validation($data) {
 
         $errors = array();
@@ -117,20 +128,37 @@ final class portfolio_export_form extends moodleform {
 }
 
 /**
-* Admin config form
-*
-* This form is extendable by plugins who want the admin to be able to configure more than just the name of the instance.
-* This is NOT done by subclassing this class, see the docs for portfolio_plugin_base for more information:
-* http://docs.moodle.org/dev/Writing_a_Portfolio_Plugin#has_admin_config
-*/
+ * Admin config form.
+ *
+ * This form is extendable by plugins who want the admin to be able to configure more than just the name of the instance.
+ * This is NOT done by subclassing this class, see the docs for portfolio_plugin_base for more information:
+ * {@link http://docs.moodle.org/dev/Writing_a_Portfolio_Plugin#has_admin_config}
+ *
+ * @package core_portfolio
+ * @category portfolio
+ * @copyright 2008 Penny Leach <penny@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 final class portfolio_admin_form extends moodleform {
 
+    /** @var object to hold porfolio instance configuration */
     protected $instance;
+
+    /** @var string plugin name*/
     protected $plugin;
+
+    /** @var string portfolio plugin name*/
     protected $portfolio;
+
+    /** @var string plugin availability*/
     protected $action;
+
+    /** @var int portfolio plugin visibility*/
     protected $visible;
 
+    /**
+     * prepare form
+     */
     public function definition() {
         global $CFG;
         $this->plugin = $this->_customdata['plugin'];
@@ -194,6 +222,12 @@ final class portfolio_admin_form extends moodleform {
         $this->add_action_buttons(true, get_string('save', 'portfolio'));
     }
 
+    /**
+     * Validate admin config form
+     *
+     * @param stdObject $data form data
+     * @return array
+     */
     public function validation($data) {
         global $DB;
 
@@ -217,18 +251,29 @@ final class portfolio_admin_form extends moodleform {
 }
 
 /**
-* User config form.
-*
-* This is the form for letting the user configure an instance of a plugin.
-* In order to extend this, you don't subclass this in the plugin..
-* see the docs in portfolio_plugin_base for more information:
-* http://docs.moodle.org/dev/Writing_a_Portfolio_Plugin#has_user_config
-*/
+ * User config form.
+ *
+ * This is the form for letting the user configure an instance of a plugin.
+ * In order to extend this, you don't subclass this in the plugin..
+ * see the docs in portfolio_plugin_base for more information:
+ * {@link http://docs.moodle.org/dev/Writing_a_Portfolio_Plugin#has_user_config}
+ *
+ * @package core_portfolio
+ * @category portfolio
+ * @copyright 2008 Penny Leach <penny@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 final class portfolio_user_form extends moodleform {
 
+    /** @var object  user porfolio instance */
     protected $instance;
+
+    /** @var int hold user id */
     protected $userid;
 
+    /**
+     * prepare form
+     */
     public function definition() {
         $this->instance = $this->_customdata['instance'];
         $this->userid = $this->_customdata['userid'];
@@ -246,6 +291,11 @@ final class portfolio_user_form extends moodleform {
         $this->add_action_buttons(true, get_string('save', 'portfolio'));
     }
 
+    /**
+     * User user config form.
+     *
+     * @param stdClass $data form data
+     */
     public function validation($data) {
 
         $errors = $this->instance->user_config_validation($data);
@@ -255,15 +305,24 @@ final class portfolio_user_form extends moodleform {
 
 
 /**
-* Form that just contains the dropdown menu of available instances
-*
-* This is not used by portfolio_add_button, but on the first step of the export
-* if the plugin instance has not yet been selected.
-*/
+ * Form that just contains the dropdown menu of available instances.
+ *
+ * This is not used by portfolio_add_button, but on the first step of the export,
+ * if the plugin instance has not yet been selected.
+ *
+ * @package core_portfolio
+ * @category portfolio
+ * @copyright 2008 Penny Leach <penny@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class portfolio_instance_select extends moodleform {
 
+    /** @var portfolio_caller_base plugin instance */
     private $caller;
 
+    /**
+     * The required basic elements to the form.
+     */
     function definition() {
         $this->caller = $this->_customdata['caller'];
         $options = $this->_customdata['options'];

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,7 +22,6 @@
  * - moodlelib.php - general-purpose Moodle functions
  *
  * @package    core
- * @subpackage lib
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1649,14 +1647,16 @@ function coursemodule_visible_for_user($cm, $userid=0) {
  * than web server hits, and provide a way to easily reconstruct what
  * any particular student has been doing.
  *
- * @global object
- * @global object
- * @global object
+ * @package core
+ * @category log
+ * @global moodle_database $DB
+ * @global stdClass $CFG
+ * @global stdClass $USER
  * @uses SITEID
  * @uses DEBUG_DEVELOPER
  * @uses DEBUG_ALL
  * @param    int     $courseid  The course id
- * @param    string  $module  The module name - e.g. forum, journal, resource, course, user etc
+ * @param    string  $module  The module name  e.g. forum, journal, resource, course, user etc
  * @param    string  $action  'view', 'update', 'add' or 'delete', possibly followed by another word to clarify.
  * @param    string  $url     The file and parameters used to see the results of the action
  * @param    string  $info    Additional description information
@@ -1723,7 +1723,8 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     try {
         $DB->insert_record_raw('log', $log, false);
     } catch (dml_exception $e) {
-        debugging('Error: Could not insert a new entry to the Moodle log', DEBUG_ALL);
+        debugging('Error: Could not insert a new entry to the Moodle log. '. $e->error, DEBUG_ALL);
+
         // MDL-11893, alert $CFG->supportemail if insert into log failed
         if ($CFG->supportemail and empty($CFG->noemailever)) {
             // email_to_user is not usable because email_to_user tries to write to the logs table,
@@ -1746,12 +1747,14 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 /**
  * Store user last access times - called when use enters a course or site
  *
- * @global object
- * @global object
- * @global object
+ * @package core
+ * @category log
+ * @global stdClass $USER
+ * @global stdClass $CFG
+ * @global moodle_database $DB
  * @uses LASTACCESS_UPDATE_SECS
  * @uses SITEID
- * @param int $courseid, empty means site
+ * @param int $courseid  empty courseid means site
  * @return void
  */
 function user_accesstime_log($courseid=0) {
@@ -1816,16 +1819,16 @@ function user_accesstime_log($courseid=0) {
 /**
  * Select all log records based on SQL criteria
  *
- * @todo Finish documenting this function
- *
- * @global object
+ * @package core
+ * @category log
+ * @global moodle_database $DB
  * @param string $select SQL select criteria
  * @param array $params named sql type params
  * @param string $order SQL order by clause to sort the records returned
- * @param string $limitfrom ?
- * @param int $limitnum ?
+ * @param string $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set)
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set)
  * @param int $totalcount Passed in by reference.
- * @return object
+ * @return array
  */
 function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom='', $limitnum='', &$totalcount) {
     global $DB;
@@ -1860,13 +1863,14 @@ function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom=
 /**
  * Select all log records for a given course and user
  *
- * @todo Finish documenting this function
- *
- * @global object
+ * @package core
+ * @category log
+ * @global moodle_database $DB
  * @uses DAYSECS
  * @param int $userid The id of the user as found in the 'user' table.
  * @param int $courseid The id of the course as found in the 'course' table.
- * @param string $coursestart ?
+ * @param string $coursestart unix timestamp representing course start date and time.
+ * @return array
  */
 function get_logs_usercourse($userid, $courseid, $coursestart) {
     global $DB;
@@ -1891,12 +1895,14 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
 /**
  * Select all log records for a given course, user, and day
  *
- * @global object
+ * @package core
+ * @category log
+ * @global moodle_database $DB
  * @uses HOURSECS
  * @param int $userid The id of the user as found in the 'user' table.
  * @param int $courseid The id of the course as found in the 'course' table.
- * @param string $daystart ?
- * @return object
+ * @param string $daystart unix timestamp of the start of the day for which the logs needs to be retrived
+ * @return array
  */
 function get_logs_userday($userid, $courseid, $daystart) {
     global $DB;
@@ -1925,7 +1931,7 @@ function get_logs_userday($userid, $courseid, $daystart) {
  * number of accounts.  For non-admins, only the attempts on the given user
  * are shown.
  *
- * @global object
+ * @global moodle_database $DB
  * @uses CONTEXT_SYSTEM
  * @param string $mode Either 'admin' or 'everybody'
  * @param string $username The username we are searching for

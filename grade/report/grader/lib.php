@@ -163,7 +163,7 @@ class grade_report_grader extends grade_report {
             $separategroups = true;
             $mygroups = groups_get_user_groups($this->course->id);
             $mygroups = $mygroups[0]; // ignore groupings
-            // reorder the groups fro better perf bellow
+            // reorder the groups fro better perf below
             $current = array_search($this->currentgroup, $mygroups);
             if ($current !== false) {
                 unset($mygroups[$current]);

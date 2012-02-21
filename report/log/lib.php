@@ -17,8 +17,9 @@
 /**
  * Public API of the log report.
  *
- * @package    report
- * @subpackage log
+ * Defines the APIs used by log reports
+ *
+ * @package    report_log
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -62,8 +63,8 @@ function report_log_extend_navigation_user($navigation, $user, $course) {
 /**
  * Is current user allowed to access this report
  *
- * @private defined in lib.php for performance reasons
- *
+ * @access private defined in lib.php for performance reasons
+ * @global stdClass $USER
  * @param stdClass $user
  * @param stdClass $course
  * @return array with two elements $all, $today
@@ -117,10 +118,11 @@ function report_log_extend_navigation_module($navigation, $cm) {
 
 /**
  * Return a list of page types
+ *
  * @param string $pagetype current page type
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
- * @return array
+ * @return array a list of page types
  */
 function report_log_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $array = array(

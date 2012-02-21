@@ -1,8 +1,11 @@
 <?php
 
-$hasheading = ($PAGE->heading);
+defined('MOODLE_INTERNAL') || die();
+
+$hasheading = $PAGE->heading;
 $hasnavbar = (empty($PAGE->layout_options['nonavbar']) && $PAGE->has_navbar());
 $hasfooter = (empty($PAGE->layout_options['nofooter']));
+
 $hassidepre = (empty($PAGE->layout_options['noblocks']) && $PAGE->blocks->region_has_content('side-pre', $OUTPUT));
 $haslogininfo = (empty($PAGE->layout_options['nologininfo']));
 
@@ -15,6 +18,7 @@ $bodyclasses = array();
 if (!$showsidepre) {
     $bodyclasses[] = 'content-only';
 }
+
 if ($hascustommenu) {
     $bodyclasses[] = 'has_custom_menu';
 }
@@ -94,11 +98,16 @@ echo $OUTPUT->doctype() ?>
 
 <!-- start of moodle content -->
                             <div id="page-content" class="clearfix">
+
+                                <!-- main mandatory content of the moodle page  -->
                                 <div id="report-main-content">
                                     <div class="region-content">
                                         <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
                                     </div>
                                 </div>
+                                <!-- end of main mandatory content of the moodle page -->
+
+                                <!-- left column block - diplayed only if... -->
                                 <?php if ($hassidepre) { ?>
                                 <div id="report-region-wrap">
                                     <div id="report-region-pre" class="block-region">
@@ -108,13 +117,15 @@ echo $OUTPUT->doctype() ?>
                                     </div>
                                 </div>
                                 <?php } ?>
+                                <!-- end of left column block - diplayed only if... -->
+
                             </div>
 <!-- end of moodle content -->
 
                             <div class="clearfix"></div>
 
 <?php if ($hasframe) { ?>
-                        </div> <!-- end of wrapper -->
+                        </div> <!-- </wrapper> -->
                     </div> <!-- </frameright> -->
                 </div> <!-- </frameleft> -->
                 <div id="framebottomright">
@@ -171,7 +182,6 @@ if ($hasfooter) {
             //one more div is waiting to be closed
 
     } ?>
-
             <div class="moodledocsleft">
                 <?php
                 //echo $OUTPUT->login_info();

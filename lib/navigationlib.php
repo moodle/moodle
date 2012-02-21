@@ -1854,6 +1854,7 @@ class global_navigation extends navigation_node {
             $cm = $modinfo->get_cm($cm->id);
         }
 
+        $activity->nodetype = navigation_node::NODETYPE_LEAF;
         $activity->make_active();
         $file = $CFG->dirroot.'/mod/'.$cm->modname.'/lib.php';
         $function = $cm->modname.'_extend_navigation';
@@ -1863,11 +1864,18 @@ class global_navigation extends navigation_node {
             if (function_exists($function)) {
                 $activtyrecord = $DB->get_record($cm->modname, array('id' => $cm->instance), '*', MUST_EXIST);
                 $function($activity, $course, $activtyrecord, $cm);
-                return true;
             }
         }
-        $activity->nodetype = navigation_node::NODETYPE_LEAF;
-        return false;
+
+        // Allow the active advanced grading method plugin to append module navigation
+        $featuresfunc = $cm->modname.'_supports';
+        if (function_exists($featuresfunc) && $featuresfunc(FEATURE_ADVANCED_GRADING)) {
+            require_once($CFG->dirroot.'/grade/grading/lib.php');
+            $gradingman = get_grading_manager($cm->context, $cm->modname);
+            $gradingman->extend_navigation($this, $activity);
+        }
+
+        return $activity->has_children();
     }
     /**
      * Loads user specific information into the navigation in the appropriate place.
@@ -1943,7 +1951,8 @@ class global_navigation extends navigation_node {
                 return false;
             }
             // Add a branch for the current user
-            $usernode = $usersnode->add(fullname($user, true), $userviewurl, self::TYPE_USER, null, $user->id);
+            $canseefullname = has_capability('moodle/site:viewfullnames', $coursecontext);
+            $usernode = $usersnode->add(fullname($user, $canseefullname), $userviewurl, self::TYPE_USER, null, $user->id);
 
             if ($this->page->context->contextlevel == CONTEXT_USER && $user->id == $this->page->context->instanceid) {
                 $usernode->make_active();

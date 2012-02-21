@@ -119,7 +119,14 @@ class grade_report_overview extends grade_report {
                 if (!$course->showgrades) {
                     continue;
                 }
+
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+
+                if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+                    // The course is hidden and the user isn't allowed to see it
+                    continue;
+                }
+
                 $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
                 $courselink = html_writer::link(new moodle_url('/grade/report/user/index.php', array('id' => $course->id, 'userid' => $this->user->id)), $courseshortname);
                 $canviewhidden = has_capability('moodle/grade:viewhidden', $coursecontext);

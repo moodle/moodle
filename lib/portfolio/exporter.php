@@ -1,137 +1,122 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Moodle - Modular Object-Oriented Dynamic Learning Environment
- *          http://moodle.org
- * Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @package    core
- * @subpackage portfolio
- * @author     Penny Leach <penny@catalyst.net.nz>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
- *
  * This file contains the class definition for the exporter object.
+ *
+ * @package core_portfolio
+ * @copyright 2008 Penny Leach <penny@catalyst.net.nz>
+ *            Martin Dougiamas  <http://dougiamas.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
-* The class that handles the various stages of the actual export
-* and the communication between the caller and the portfolio plugin.
-* this is stored in the database between page requests in serialized base64 encoded form
-* also contains helper methods for the plugin and caller to use (at the end of the file)
-* {@see get_base_filearea} - where to write files to
-* {@see write_new_file} - write some content to a file in the export filearea
-* {@see copy_existing_file} - copy an existing file into the export filearea
-* {@see get_tempfiles} - return list of all files in the export filearea
-*/
+ * The class that handles the various stages of the actual export
+ * and the communication between the caller and the portfolio plugin.
+ *
+ * This is stored in the database between page requests in serialized base64 encoded form
+ * also contains helper methods for the plugin and caller to use (at the end of the file)
+ * @see get_base_filearea - where to write files to
+ * @see write_new_file - write some content to a file in the export filearea
+ * @see copy_existing_file - copy an existing file into the export filearea
+ * @see get_tempfiles - return list of all files in the export filearea
+ *
+ * @package core_portfolio
+ * @category portfolio
+ * @copyright 2008 Penny Leach <penny@catalyst.net.nz>
+ *            Martin Dougiamas  <http://dougiamas.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class portfolio_exporter {
 
-    /**
-    * the caller object used during the export
-    */
+    /** @var portfolio_caller_base the caller object used during the export */
     private $caller;
 
-    /** the portfolio plugin instanced used during the export
-    */
+    /** @var portfolio_plugin_base the portfolio plugin instanced used during the export */
     private $instance;
 
-    /**
-    * if there has been no config form displayed to the user
-    */
+    /** @var bool if there has been no config form displayed to the user */
     private $noexportconfig;
 
     /**
-    * the user currently exporting content
-    * always $USER, but more conveniently placed here
-    */
+     * @var stdClass the user currently exporting content always $USER,
+     *               but more conveniently placed here
+     */
     private $user;
 
-    /** the file to include that contains the class defintion
-    * of the portfolio instance plugin
-    * used to re-waken the object after sleep
-    */
+    /**
+     * @var string the file to include that contains the class defintion of
+     *             the portfolio instance plugin used to re-waken the object after sleep
+     */
     public $instancefile;
 
     /**
-    * the file to include that contains the class definition
-    * of the caller object
-    * used to re-waken the object after sleep
-    */
+     * @var string the file to include that contains the class definition of
+     *             the caller object used to re-waken the object after sleep
+     */
     public $callerfile;
 
-    /**
-    * the current stage of the export
-    */
+    /** @var int the current stage of the export */
     private $stage;
 
-    /**
-    * whether something (usually the portfolio plugin)
-    * has forced queuing
-    */
+    /** @var bool whether something (usually the portfolio plugin) has forced queuing */
     private $forcequeue;
 
     /**
-    * id of this export
-    * matches record in portfolio_tempdata table
-    * and used for itemid for file storage.
-    */
+     * @var int id of this export matches record in portfolio_tempdata table
+     *          and used for itemid for file storage.
+     */
     private $id;
 
-    /**
-    * array of stages that have had the portfolio plugin already steal control from them
-    */
+    /** @var array of stages that have had the portfolio plugin already steal control from them */
     private $alreadystolen;
 
     /**
-    * files that the exporter has written to this temp area
-    * keep track of this in case of duplicates within one export
-    * see MDL-16390
-    */
+     * @var stored_file files that the exporter has written to this temp area keep track of
+     *                  this in case of duplicates within one export see MDL-16390
+     */
     private $newfilehashes;
 
     /**
-    * selected exportformat
-    * this is also set in export_config in the portfolio and caller classes
-    */
+     * @var string selected exportformat this is also set in
+     *             export_config in the portfolio and caller classes
+     */
     private $format;
 
-    /**
-     * queued - this is set after the event is triggered
-     */
+    /** @var bool queued - this is set after the event is triggered */
     private $queued = false;
 
-    /**
-     * expiry time - set the first time the object is saved out
-     */
+    /** @var int expiry time - set the first time the object is saved out */
     private $expirytime;
 
     /**
-     * deleted - this is set during the cleanup routine
-     * so that subsequent save() calls can detect it
+     * @var bool deleted - this is set during the cleanup routine so
+     *           that subsequent save() calls can detect it
      */
     private $deleted = false;
 
     /**
-    * construct a new exporter for use
-    *
-    * @param portfolio_plugin_base subclass $instance portfolio instance (passed by reference)
-    * @param portfolio_caller_base subclass $caller portfolio caller (passed by reference)
-    * @param string $callerfile path to callerfile (relative to dataroot)
-    */
+     * Construct a new exporter for use
+     *
+     * @param portfolio_plugin_base $instance portfolio instance (passed by reference)
+     * @param portfolio_caller_base $caller portfolio caller (passed by reference)
+     * @param string $callerfile path to callerfile (relative to dataroot)
+     */
     public function __construct(&$instance, &$caller, $callerfile) {
         $this->instance =& $instance;
         $this->caller =& $caller;
@@ -146,11 +131,13 @@ class portfolio_exporter {
         $this->newfilehashes = array();
     }
 
-    /*
-    * generic getter for properties belonging to this instance
-    * <b>outside</b> the subclasses
-    * like name, visible etc.
-    */
+    /**
+     * Generic getter for properties belonging to this instance
+     * <b>outside</b> the subclasses like name, visible etc.
+     *
+     * @param string $field property's name
+     * @return portfolio_format|mixed
+     */
     public function get($field) {
         if ($field == 'format') {
             return portfolio_format_object($this->format);
@@ -165,10 +152,14 @@ class portfolio_exporter {
     }
 
     /**
-    * generic setter for properties belonging to this instance
-    * <b>outside</b> the subclass
-    * like name, visible, etc.
-    */
+     * Generic setter for properties belonging to this instance
+     * <b>outside</b> the subclass like name, visible, etc.
+     *
+     * @param string $field property's name
+     * @param mixed $value property's value
+     * @return bool
+     * @throws portfolio_export_exception
+     */
     public function set($field, &$value) {
         if (property_exists($this, $field)) {
             $this->{$field} =& $value;
@@ -185,23 +176,22 @@ class portfolio_exporter {
     }
 
     /**
-    * sets this export to force queued
-    * sometimes plugins need to set this randomly
-    * if an external system changes its mind
-    * about what's supported
-    */
+     * Sets this export to force queued.
+     * Sometimes plugins need to set this randomly
+     * if an external system changes its mind
+     * about what's supported
+     */
     public function set_forcequeue() {
         $this->forcequeue = true;
     }
 
     /**
-    * process the given stage calling whatever functions are necessary
-    *
-    * @param int $stage (see PORTFOLIO_STAGE_* constants)
-    * @param boolean $alreadystolen used to avoid letting plugins steal control twice.
-    *
-    * @return boolean whether or not to process the next stage. this is important as the function is called recursively.
-    */
+     * Process the given stage calling whatever functions are necessary
+     *
+     * @param int $stage (see PORTFOLIO_STAGE_* constants)
+     * @param bool $alreadystolen used to avoid letting plugins steal control twice.
+     * @return bool whether or not to process the next stage. this is important as the function is called recursively.
+     */
     public function process_stage($stage, $alreadystolen=false) {
         $this->set('stage', $stage);
         if ($alreadystolen) {
@@ -259,28 +249,28 @@ class portfolio_exporter {
     }
 
     /**
-    * helper function to return the portfolio instance
-    *
-    * @return  portfolio_plugin_base subclass
-    */
+     * Helper function to return the portfolio instance
+     *
+     * @return portfolio_plugin_base subclass
+     */
     public function instance() {
         return $this->instance;
     }
 
     /**
-    * helper function to return the caller object
-    *
-    * @return portfolio_caller_base subclass
-    */
+     * Helper function to return the caller object
+     *
+     * @return portfolio_caller_base subclass
+     */
     public function caller() {
         return $this->caller;
     }
 
     /**
-    * processes the 'config' stage of the export
-    *
-    * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
-    */
+     * Processes the 'config' stage of the export
+     *
+     * @return bool whether or not to process the next stage. this is important as the control function is called recursively.
+     */
     public function process_stage_config() {
         global $OUTPUT, $CFG;
         $pluginobj = $callerobj = null;
@@ -368,10 +358,10 @@ class portfolio_exporter {
     }
 
     /**
-    * processes the 'confirm' stage of the export
-    *
-    * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
-    */
+     * Processes the 'confirm' stage of the export
+     *
+     * @return bool whether or not to process the next stage. this is important as the control function is called recursively.
+     */
     public function process_stage_confirm() {
         global $CFG, $DB, $OUTPUT;
 
@@ -433,10 +423,10 @@ class portfolio_exporter {
     }
 
     /**
-    * processes the 'queueornext' stage of the export
-    *
-    * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
-    */
+     * Processes the 'queueornext' stage of the export
+     *
+     * @return bool whether or not to process the next stage. this is important as the control function is called recursively.
+     */
     public function process_stage_queueorwait() {
         $wait = $this->instance->get_export_config('wait');
         if (empty($wait)) {
@@ -448,10 +438,11 @@ class portfolio_exporter {
     }
 
     /**
-    * processes the 'package' stage of the export
-    *
-    * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
-    */
+     * Processes the 'package' stage of the export
+     *
+     * @return bool whether or not to process the next stage. this is important as the control function is called recursively.
+     * @throws portfolio_export_exception
+     */
     public function process_stage_package() {
         // now we've agreed on a format,
         // the caller is given control to package it up however it wants
@@ -477,12 +468,12 @@ class portfolio_exporter {
     }
 
     /**
-    * processes the 'cleanup' stage of the export
-    *
-    * @param boolean $pullok normally cleanup is deferred for pull plugins until after the file is requested from portfolio/file.php
-    *                        if you want to clean up earlier, pass true here (defaults to false)
-    * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
-    */
+     * Processes the 'cleanup' stage of the export
+     *
+     * @param bool $pullok normally cleanup is deferred for pull plugins until after the file is requested from portfolio/file.php
+     *                        if you want to clean up earlier, pass true here (defaults to false)
+     * @return bool whether or not to process the next stage. this is important as the control function is called recursively.
+     */
     public function process_stage_cleanup($pullok=false) {
         global $CFG, $DB;
 
@@ -501,10 +492,10 @@ class portfolio_exporter {
     }
 
     /**
-    * processes the 'send' stage of the export
-    *
-    * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
-    */
+     * Processes the 'send' stage of the export
+     *
+     * @return bool whether or not to process the next stage. this is important as the control function is called recursively.
+     */
     public function process_stage_send() {
         // send the file
         try {
@@ -523,10 +514,11 @@ class portfolio_exporter {
     }
 
     /**
-    * log the transfer
-    * this should only be called after the file has been sent
-    * either via push, or sent from a pull request.
-    */
+     * Log the transfer
+     *
+     * this should only be called after the file has been sent
+     * either via push, or sent from a pull request.
+     */
     public function log_transfer() {
         global $DB;
         $l = array(
@@ -544,8 +536,10 @@ class portfolio_exporter {
     }
 
     /**
-     * in some cases (mahara) we need to update this after the log has been done
+     * In some cases (mahara) we need to update this after the log has been done
      * because of MDL-20872
+     *
+     * @param string $url link to be recorded to portfolio log
      */
     public function update_log_url($url) {
         global $DB;
@@ -553,10 +547,11 @@ class portfolio_exporter {
     }
 
     /**
-    * processes the 'finish' stage of the export
-    *
-    * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
-    */
+     * Processes the 'finish' stage of the export
+     *
+     * @param bool $queued let the process to be queued
+     * @return bool whether or not to process the next stage. this is important as the control function is called recursively.
+     */
     public function process_stage_finished($queued=false) {
         global $OUTPUT;
         $returnurl = $this->caller->get_return_url();
@@ -578,10 +573,12 @@ class portfolio_exporter {
 
 
     /**
-    * local print header function to be reused across the export
-    *
-    * @param string $headerstring full language string
-    */
+     * Local print header function to be reused across the export
+     *
+     * @param string $headingstr full language string
+     * @param bool $summary (optional) to print summary, default is set to true
+     * @return void
+     */
     public function print_header($headingstr, $summary=true) {
         global $OUTPUT, $PAGE;
         $titlestr = get_string('exporting', 'portfolio');
@@ -609,9 +606,13 @@ class portfolio_exporter {
     }
 
     /**
-    * cancels a potfolio request and cleans up the tempdata
-    * and redirects the user back to where they started
-    */
+     * Cancels a potfolio request and cleans up the tempdata
+     * and redirects the user back to where they started
+     *
+     * @param bool $logreturn options to return to porfolio log or caller return page
+     * @return void
+     * @uses exit
+     */
     public function cancel_request($logreturn=false) {
         global $CFG;
         if (!isset($this)) {
@@ -626,8 +627,10 @@ class portfolio_exporter {
     }
 
     /**
-    * writes out the contents of this object and all its data to the portfolio_tempdata table and sets the 'id' field.
-    */
+     * Writes out the contents of this object and all its data to the portfolio_tempdata table and sets the 'id' field.
+     *
+     * @return void
+     */
     public function save() {
         global $DB;
         if (empty($this->id)) {
@@ -654,13 +657,12 @@ class portfolio_exporter {
     }
 
     /**
-    * rewakens the data from the database given the id
-    * makes sure to load the required files with the class definitions
-    *
-    * @param int $id id of data
-    *
-    * @return portfolio_exporter
-    */
+     * Rewakens the data from the database given the id.
+     * Makes sure to load the required files with the class definitions
+     *
+     * @param int $id id of data
+     * @return portfolio_exporter
+     */
     public static function rewaken_object($id) {
         global $DB, $CFG;
         require_once($CFG->libdir . '/filelib.php');
@@ -692,12 +694,15 @@ class portfolio_exporter {
     }
 
     /**
-    * helper function to create the beginnings of a file_record object
-    * to create a new file in the portfolio_temporary working directory
-    * use {@see write_new_file} or {@see copy_existing_file} externally
-    *
-    * @param string $name filename of new record
-    */
+     * Helper function to create the beginnings of a file_record object
+     * to create a new file in the portfolio_temporary working directory.
+     * Use write_new_file or copy_existing_file externally
+     * @see write_new_file
+     * @see copy_existing_file
+     *
+     * @param string $name filename of new record
+     * @return object
+     */
     private function new_file_record_base($name) {
         return (object)array_merge($this->get_base_filearea(), array(
             'filepath' => '/',
@@ -706,15 +711,12 @@ class portfolio_exporter {
     }
 
     /**
-    * verifies a rewoken object
-    *
-    * checks to make sure it belongs to the same user and session as is currently in use.
-    *
-    * @param boolean $readonly if we're reawakening this for a user to just display in the log view, don't verify the sessionkey
-    *                          when continuing transfers, you must pass false here.
-    *
-    * @throws portfolio_exception
-    */
+     * Verifies a rewoken object.
+     * Checks to make sure it belongs to the same user and session as is currently in use.
+     *
+     * @param bool $readonly if we're reawakening this for a user to just display in the log view, don't verify the sessionkey
+     * @throws portfolio_exception
+     */
     public function verify_rewaken($readonly=false) {
         global $USER, $CFG;
         if ($this->get('user')->id != $USER->id) { // make sure it belongs to the right user
@@ -735,13 +737,13 @@ class portfolio_exporter {
         }
     }
     /**
-    * copies a file from somewhere else in moodle
-    * to the portfolio temporary working directory
-    * associated with this export
-    *
-    * @param $oldfile stored_file object
-    * @return stored_file new file object
-    */
+     * Copies a file from somewhere else in moodle
+     * to the portfolio temporary working directory
+     * associated with this export
+     *
+     * @param stored_file $oldfile existing stored file object
+     * @return stored_file|bool new file object
+     */
     public function copy_existing_file($oldfile) {
         if (array_key_exists($oldfile->get_contenthash(), $this->newfilehashes)) {
             return $this->newfilehashes[$oldfile->get_contenthash()];
@@ -761,15 +763,15 @@ class portfolio_exporter {
     }
 
     /**
-    * writes out some content to a file in the
-    * portfolio temporary working directory
-    * associated with this export
-    *
-    * @param string $content content to write
-    * @param string $name filename to use
-    * @param bool $maifest whether this is the main file or an secondary file (eg attachment)
-    * @return stored_file new file object
-    */
+     * Writes out some content to a file
+     * in the portfolio temporary working directory
+     * associated with this export.
+     *
+     * @param string $content content to write
+     * @param string $name filename to use
+     * @param bool $manifest whether this is the main file or an secondary file (eg attachment)
+     * @return stored_file
+     */
     public function write_new_file($content, $name, $manifest=true) {
         $fs = get_file_storage();
         $file_record = $this->new_file_record_base($name);
@@ -780,13 +782,12 @@ class portfolio_exporter {
     }
 
     /**
-    * zips all files in the temporary directory
-    *
-    * @param string $filename name of resulting zipfile (optional, defaults to portfolio-export.zip
-    * @param string $filepath subpath in the filearea (optional, defaults to final)
-    *
-    * @return stored_file resulting stored_file object
-    */
+     * Zips all files in the temporary directory
+     *
+     * @param string $filename name of resulting zipfile (optional, defaults to portfolio-export.zip)
+     * @param string $filepath subpath in the filearea (optional, defaults to final)
+     * @return stored_file|bool resulting stored_file object, or false
+     */
     public function zip_tempfiles($filename='portfolio-export.zip', $filepath='/final/') {
         $zipper = new zip_packer();
 
@@ -799,12 +800,13 @@ class portfolio_exporter {
     }
 
     /**
-    * returns an arary of files in the temporary working directory
-    * for this export
-    * always use this instead of the files api directly
-    *
-    * @return array of stored_file objects keyed by name
-    */
+     * Returns an arary of files in the temporary working directory
+     * for this export.
+     * Always use this instead of the files api directly
+     *
+     * @param string $skipfile name of the file to be skipped
+     * @return array of stored_file objects keyed by name
+     */
     public function get_tempfiles($skipfile='portfolio-export.zip') {
         $fs = get_file_storage();
         $files = $fs->get_area_files(SYSCONTEXTID, 'portfolio', 'exporter', $this->id, '', false);
@@ -822,14 +824,14 @@ class portfolio_exporter {
     }
 
     /**
-    * returns the context, filearea, and itemid
-    * parts of a filearea (not filepath) to be used by
-    * plugins if they want to do things like zip up the contents of
-    * the temp area to here, or something that can't be done just using
-    * write_new_file,  copy_existing_file or get_tempfiles
-    *
-    * @return array contextid, filearea, itemid are the keys.
-    */
+     * Returns the context, filearea, and itemid.
+     * Parts of a filearea (not filepath) to be used by
+     * plugins if they want to do things like zip up the contents of
+     * the temp area to here, or something that can't be done just using
+     * write_new_file, copy_existing_file or get_tempfiles
+     *
+     * @return array contextid, filearea, itemid are the keys.
+     */
     public function get_base_filearea() {
         return array(
             'contextid' => SYSCONTEXTID,
@@ -839,11 +841,13 @@ class portfolio_exporter {
         );
     }
 
-    /** wrapper function to print a friendly error to users
-    *
-    * this is generally caused by them hitting an expired transfer
-    * through the usage of the backbutton
-    */
+    /**
+     * Wrapper function to print a friendly error to users
+     * This is generally caused by them hitting an expired transfer
+     * through the usage of the backbutton
+     *
+     * @uses exit
+     */
     public static function print_expired_export() {
         global $CFG, $OUTPUT, $PAGE;
         $title = get_string('exportexpired', 'portfolio');
@@ -857,6 +861,13 @@ class portfolio_exporter {
         exit;
     }
 
+    /**
+     * Wrapper function to print a friendly error to users
+     *
+     * @param stdClass $log portfolio_log object
+     * @param portfolio_plugin_base $instance portfolio instance
+     * @uses exit
+     */
     public static function print_cleaned_export($log, $instance=null) {
         global $CFG, $OUTPUT, $PAGE;
         if (empty($instance) || !$instance instanceof portfolio_plugin_base) {
@@ -874,6 +885,13 @@ class portfolio_exporter {
         exit;
     }
 
+    /**
+     * Wrapper function to print continue and/or return link
+     *
+     * @param string $returnurl link to previos page
+     * @param string $continueurl continue to next page
+     * @param array $extras (optional) other links to be display.
+     */
     public static function print_finish_info($returnurl, $continueurl, $extras=null) {
         if ($returnurl) {
             echo '<a href="' . $returnurl . '">' . get_string('returntowhereyouwere', 'portfolio') . '</a><br />';

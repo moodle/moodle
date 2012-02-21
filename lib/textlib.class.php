@@ -15,8 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Defines string apis
+ *
  * @package    core
- * @subpackage lib
  * @copyright  (C) 2001-3001 Eloy Lafuente (stronk7) {@link http://contiento.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +28,9 @@ defined('MOODLE_INTERNAL') || die();
  * Original singleton helper function, please use static methods instead,
  * ex: textlib::convert()
  *
- * @deprecated
+ * @deprecated since Moodle 2.1 MDL-29027 textlib contains static functions
+ * @todo MDL-31301 calling of textlib functions should be static.
+ * @see textlib
  * @return textlib instance
  */
 function textlib_get_instance() {
@@ -36,6 +39,8 @@ function textlib_get_instance() {
 
 
 /**
+ * defines string api's for manipulating strings
+ *
  * This class is used to manipulate strings under Moodle 1.6 an later. As
  * utf-8 text become mandatory a pool of safe functions under this encoding
  * become necessary. The name of the methods is exactly the
@@ -50,15 +55,16 @@ function textlib_get_instance() {
  * its capabilities so, don't forget to make the conversion
  * from every wrapper function!
  *
- * @package    core
- * @subpackage lib
+ * @package   core
+ * @category  string
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class textlib {
 
     /**
-     * Return t3lib helper class
+     * Return t3lib helper class, which is used for conversion between charsets
+     *
      * @return t3lib_cs
      */
     protected static function typo3() {
@@ -184,11 +190,11 @@ class textlib {
     /**
      * Multibyte safe substr() function, uses mbstring or iconv for UTF-8, falls back to typo3.
      *
-     * @param string $text
+     * @param string $text string to truncate
      * @param int $start negative value means from end
-     * @param int $len
+     * @param int $len maximum length of characters beginning from start
      * @param string $charset encoding of the text
-     * @return string
+     * @return string portion of string specified by the $start and $len
      */
     public static function substr($text, $start, $len=null, $charset='utf-8') {
         $charset = self::parse_charset($charset);
@@ -228,7 +234,7 @@ class textlib {
     /**
      * Multibyte safe strlen() function, uses mbstring or iconv for UTF-8, falls back to typo3.
      *
-     * @param string $text
+     * @param string $text input string
      * @param string $charset encoding of the text
      * @return int number of characters
      */
@@ -253,7 +259,7 @@ class textlib {
     /**
      * Multibyte safe strtolower() function, uses mbstring, falls back to typo3.
      *
-     * @param string $text
+     * @param string $text input string
      * @param string $charset encoding of the text (may not work for all encodings)
      * @return string lower case text
      */
@@ -274,7 +280,7 @@ class textlib {
     /**
      * Multibyte safe strtoupper() function, uses mbstring, falls back to typo3.
      *
-     * @param string $text
+     * @param string $text input string
      * @param string $charset encoding of the text (may not work for all encodings)
      * @return string upper case text
      */
@@ -293,12 +299,13 @@ class textlib {
     }
 
     /**
+     * Find the position of the first occurrence of a substring in a string.
      * UTF-8 ONLY safe strpos(), uses mbstring, falls back to iconv.
      *
-     * @param string $haystack
-     * @param string $needle
-     * @param int $offset
-     * @return string
+     * @param string $haystack the string to search in
+     * @param string $needle one or more charachters to search for
+     * @param int $offset offset from begining of string
+     * @return int the numeric position of the first occurrence of needle in haystack.
      */
     public static function strpos($haystack, $needle, $offset=0) {
         if (function_exists('mb_strpos')) {
@@ -309,11 +316,12 @@ class textlib {
     }
 
     /**
+     * Find the position of the last occurrence of a substring in a string
      * UTF-8 ONLY safe strrpos(), uses mbstring, falls back to iconv.
      *
-     * @param string $haystack
-     * @param string $needle
-     * @return string
+     * @param string $haystack the string to search in
+     * @param string $needle one or more charachters to search for
+     * @return int the numeric position of the last occurrence of needle in haystack
      */
     public static function strrpos($haystack, $needle) {
         if (function_exists('mb_strpos')) {
@@ -327,9 +335,9 @@ class textlib {
      * Try to convert upper unicode characters to plain ascii,
      * the returned string may contain unconverted unicode characters.
      *
-     * @param string $text
+     * @param string $text input string
      * @param string $charset encoding of the text
-     * @return string
+     * @return string converted ascii string
      */
     public static function specialtoascii($text, $charset='utf-8') {
         $charset = self::parse_charset($charset);
@@ -344,9 +352,9 @@ class textlib {
      * This function seems to be 100% compliant with RFC1342. Credits go to:
      * paravoid (http://www.php.net/manual/en/function.mb-encode-mimeheader.php#60283).
      *
-     * @param string $text
+     * @param string $text input string
      * @param string $charset encoding of the text
-     * @return string
+     * @return string base64 encoded header
      */
     public static function encode_mimeheader($text, $charset='utf-8') {
         if (empty($text)) {
@@ -432,9 +440,9 @@ class textlib {
      * http://php.net/manual/en/function.html-entity-decode.php#75153
      * with some custom mods to provide more functionality
      *
-     * @param    string    $str      input string
-     * @param    boolean   $htmlent  convert also html entities (defaults to true)
-     * @return   string
+     * @param string $str input string
+     * @param boolean $htmlent convert also html entities (defaults to true)
+     * @return string encoded UTF-8 string
      *
      * NOTE: we could have used typo3 entities_to_utf8() here
      *       but the direct alternative used runs 400% quicker
@@ -466,10 +474,10 @@ class textlib {
     /**
      * Converts all Unicode chars > 127 to numeric entities &#nnnn; or &#xnnn;.
      *
-     * @param    string   $str      input string
-     * @param    boolean  $dec      output decadic only number entities
-     * @param    boolean  $nonnum   remove all non-numeric entities
-     * @return   string converted string
+     * @param string $str input string
+     * @param boolean $dec output decadic only number entities
+     * @param boolean $nonnum remove all non-numeric entities
+     * @return string converted string
      */
     public static function utf8_to_entities($str, $dec=false, $nonnum=false) {
         // Avoid some notices from Typo3 code
@@ -487,9 +495,9 @@ class textlib {
     }
 
     /**
-     * Removes the BOM from unicode string - see http://unicode.org/faq/utf_bom.html
+     * Removes the BOM from unicode string {@link http://unicode.org/faq/utf_bom.html}
      *
-     * @param string $str
+     * @param string $str input string
      * @return string
      */
     public static function trim_utf8_bom($str) {
@@ -502,6 +510,7 @@ class textlib {
 
     /**
      * Returns encoding options for select boxes, utf-8 and platform encoding first
+     *
      * @return array encodings
      */
     public static function get_encodings() {
@@ -548,7 +557,7 @@ class textlib {
      * Makes first letter of each word capital - words must be separated by spaces.
      * Use with care, this function does not work properly in many locales!!!
      *
-     * @param string $text
+     * @param string $text input string
      * @return string
      */
     public static function strtotitle($text) {
@@ -596,8 +605,7 @@ class textlib {
 /**
  * A collator class with static methods that can be used for sorting.
  *
- * @package    core
- * @subpackage lib
+ * @package   core
  * @copyright 2011 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -697,6 +705,8 @@ abstract class collatorlib {
      *   0 if str1 is equal to str2
      *  -1 if str1 is less than str2
      *
+     * @param string $str1 first string to compare
+     * @param string $str2 second string to compare
      * @return int
      */
     public static function compare($str1, $str2) {
@@ -732,11 +742,12 @@ abstract class collatorlib {
 }
 
 /**
+ * Object comparison using collator
+ *
  * Abstract class to aid the sorting of objects with respect to proper language
  * comparison using collator
  *
- * @package    core
- * @subpackage lib
+ * @package   core
  * @copyright 2011 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -758,10 +769,12 @@ abstract class collatorlib_comparison {
 }
 
 /**
+ * Compare properties of two objects
+ *
  * A comparison helper for comparing properties of two objects
  *
- * @package    core
- * @subpackage lib
+ * @package   core
+ * @category  string
  * @copyright 2011 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -771,6 +784,8 @@ class collatorlib_property_comparison extends collatorlib_comparison {
     protected $property;
 
     /**
+     * Constructor
+     *
      * @param string $property
      */
     public function __construct($property) {
@@ -795,10 +810,11 @@ class collatorlib_property_comparison extends collatorlib_comparison {
 }
 
 /**
+ * Compare method of two objects
+ *
  * A comparison helper for comparing the result of a method on two objects
  *
- * @package    core
- * @subpackage lib
+ * @package   core
  * @copyright 2011 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -808,6 +824,8 @@ class collatorlib_method_comparison extends collatorlib_comparison {
     protected $method;
 
     /**
+     * Constructor
+     *
      * @param string $method The method to call against each object
      */
     public function __construct($method) {

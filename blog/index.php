@@ -197,19 +197,17 @@ if (!empty($userid)) {
 
 $courseid = (empty($courseid)) ? SITEID : $courseid;
 
-if (!empty($courseid)) {
-    $PAGE->set_context(get_context_instance(CONTEXT_COURSE, $courseid));
-}
-
-if (!empty($modid)) {
-    $PAGE->set_context(get_context_instance(CONTEXT_MODULE, $modid));
+if (empty($entryid) && empty($modid) && empty($groupid)) {
+    $PAGE->set_context(context_user::instance($USER->id));
+} else if (!empty($modid)) {
+    $PAGE->set_context(context_module::instance($modid));
+} else if (!empty($courseid)) {
+    $PAGE->set_context(context_course::instance($courseid));
+} else {
+    $PAGE->set_context(context_system::instance());
 }
 
 $blogheaders = blog_get_headers();
-
-if (empty($entryid) && empty($modid) && empty($groupid)) {
-    $PAGE->set_context(get_context_instance(CONTEXT_USER, $USER->id));
-}
 
 if ($CFG->enablerssfeeds) {
     $rsscontext = null;

@@ -18,8 +18,8 @@
 /**
  * Definition of log events
  *
- * @package    mod
- * @subpackage lesson
+ * @package    mod_lesson
+ * @category   log
  * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

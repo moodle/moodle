@@ -129,6 +129,12 @@ class repository_upload extends repository {
             }
         }
 
+        // Check the file has some non-null contents - usually an indication that a user has
+        // tried to upload a folder by mistake
+        if (!$this->check_valid_contents($_FILES[$elname]['tmp_name'])) {
+            throw new moodle_exception('upload_error_invalid_file', 'repository_upload', '', $record->filename);
+        }
+
         if ($this->mimetypes != '*') {
             // check filetype
             $filemimetype = mimeinfo('type', $_FILES[$elname]['name']);
@@ -176,6 +182,32 @@ class repository_upload extends repository {
                 'id'=>$record->itemid,
                 'file'=>$record->filename);
         }
+    }
+
+    /**
+     * Checks the contents of the given file is not completely NULL - this can happen if a
+     * user drags & drops a folder onto a filemanager / filepicker element
+     * @param string $filepath full path (including filename) to file to check
+     * @return true if file has at least one non-null byte within it
+     */
+    protected function check_valid_contents($filepath) {
+        $buffersize = 4096;
+
+        $fp = fopen($filepath, 'r');
+        if (!$fp) {
+            return false; // Cannot read the file - something has gone wrong
+        }
+        while (!feof($fp)) {
+            // Read the file 4k at a time
+            $data = fread($fp, $buffersize);
+            if (preg_match('/[^\0]+/', $data)) {
+                fclose($fp);
+                return true; // Return as soon as a non-null byte is found
+            }
+        }
+        // Entire file is NULL
+        fclose($fp);
+        return false;
     }
 
     /**

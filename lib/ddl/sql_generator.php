@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -17,13 +16,13 @@
 
 
 /**
- * This class represent the base generator class where all the
- * needed functions to generate proper SQL are defined.
+ * This class represent the base generator class where all the needed functions to generate proper SQL are defined.
  *
  * The rest of classes will inherit, by default, the same logic.
  * Functions will be overridden as needed to generate correct SQL.
  *
  * @package    core
+ * @category   ddl
  * @subpackage ddl
  * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
  *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
@@ -34,6 +33,13 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Abstract sql generator class, base for all db specific implementations.
+ *
+ * @package    core
+ * @category   ddl
+ * @subpackage ddl
+ * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
+ *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class sql_generator {
 
@@ -42,96 +48,146 @@ abstract class sql_generator {
 /// that, by default, inherit this configuration.
 /// To change any of them, do it in extended classes instead.
 
-    public $quote_string = '"';   // String used to quote names
+    /** @var string Used to quote names. */
+    public $quote_string = '"';
 
-    public $statement_end = ';'; // String to be automatically added at the end of each statement
+    /** @var string To be automatically added at the end of each statement. */
+    public $statement_end = ';';
 
-    public $quote_all    = false; // To decide if we want to quote all the names or only the reserved ones
+    /** @var bool To decide if we want to quote all the names or only the reserved ones. */
+    public $quote_all    = false;
 
-    public $integer_to_number = false;  // To create all the integers as NUMBER(x) (also called DECIMAL, NUMERIC...)
-    public $float_to_number   = false;  // To create all the floats as NUMBER(x) (also called DECIMAL, NUMERIC...)
+    /** @var bool To create all the integers as NUMBER(x) (also called DECIMAL, NUMERIC...). */
+    public $integer_to_number = false;
+    /** @var bool To create all the floats as NUMBER(x) (also called DECIMAL, NUMERIC...). */
+    public $float_to_number   = false;
 
-    public $number_type = 'NUMERIC';    // Proper type for NUMBER(x) in this DB
+    /** @var string Proper type for NUMBER(x) in this DB. */
+    public $number_type = 'NUMERIC';
 
-    public $unsigned_allowed = true;    // To define in the generator must handle unsigned information
-    public $default_for_char = null;      // To define the default to set for NOT NULLs CHARs without default (null=do nothing)
+    /** @var bool To define in the generator must handle unsigned information.*/
+    public $unsigned_allowed = true;
+    /** @var string To define the default to set for NOT NULLs CHARs without default (null=do nothing).*/
+    public $default_for_char = null;
 
-    public $drop_default_value_required = false; //To specify if the generator must use some DEFAULT clause to drop defaults
-    public $drop_default_value = ''; //The DEFAULT clause required to drop defaults
+    /** @var bool To specify if the generator must use some DEFAULT clause to drop defaults.*/
+    public $drop_default_value_required = false;
+    /** @var string The DEFAULT clause required to drop defaults.*/
+    public $drop_default_value = '';
 
-    public $default_after_null = true;  //To decide if the default clause of each field must go after the null clause
-
-    public $specify_nulls = false;  //To force the generator if NULL clauses must be specified. It shouldn't be necessary
-                                 //but some mssql drivers require them or everything is created as NOT NULL :-(
-
-    public $primary_key_name = null; //To force primary key names to one string (null=no force)
-
-    public $primary_keys = true;  // Does the generator build primary keys
-    public $unique_keys = false;  // Does the generator build unique keys
-    public $foreign_keys = false; // Does the generator build foreign keys
-
-    public $drop_primary_key = 'ALTER TABLE TABLENAME DROP CONSTRAINT KEYNAME'; // Template to drop PKs
-                               // with automatic replace for TABLENAME and KEYNAME
-
-    public $drop_unique_key = 'ALTER TABLE TABLENAME DROP CONSTRAINT KEYNAME'; // Template to drop UKs
-                               // with automatic replace for TABLENAME and KEYNAME
-
-    public $drop_foreign_key = 'ALTER TABLE TABLENAME DROP CONSTRAINT KEYNAME'; // Template to drop FKs
-                               // with automatic replace for TABLENAME and KEYNAME
-
-    public $sequence_extra_code = true; //Does the generator need to add extra code to generate the sequence fields
-    public $sequence_name = 'auto_increment'; //Particular name for inline sequences in this generator
-    public $sequence_name_small = false; //Different name for small (4byte) sequences or false if same
-    public $sequence_only = false; //To avoid to output the rest of the field specs, leaving only the name and the sequence_name publiciable
-
-    public $add_table_comments  = true;  // Does the generator need to add code for table comments
-
-    public $add_after_clause = false; // Does the generator need to add the after clause for fields
-
-    public $prefix_on_names = true; //Does the generator need to prepend the prefix to all the key/index/sequence/trigger/check names
-
-    public $names_max_length = 30; //Max length for key/index/sequence/trigger/check names (keep 30 for all!)
-
-    public $concat_character = '||'; //Characters to be used as concatenation operator. If not defined
-                                  //MySQL CONCAT function will be used
-
-    public $rename_table_sql = 'ALTER TABLE OLDNAME RENAME TO NEWNAME'; //SQL sentence to rename one table, both
-                                  //OLDNAME and NEWNAME are dynamically replaced
-
-    public $drop_table_sql = 'DROP TABLE TABLENAME'; //SQL sentence to drop one table
-                                  //TABLENAME is dynamically replaced
-
-    public $alter_column_sql = 'ALTER TABLE TABLENAME ALTER COLUMN COLUMNSPECS'; //The SQL template to alter columns
-
-    public $alter_column_skip_default = false; //The generator will skip the default clause on alter columns
-
-    public $alter_column_skip_type = false; //The generator will skip the type clause on alter columns
-
-    public $alter_column_skip_notnull = false; //The generator will skip the null/notnull clause on alter columns
-
-    public $rename_column_sql = 'ALTER TABLE TABLENAME RENAME COLUMN OLDFIELDNAME TO NEWFIELDNAME';
-                                  ///TABLENAME, OLDFIELDNAME and NEWFIELDNAME are dyanmically replaced
-
-    public $drop_index_sql = 'DROP INDEX INDEXNAME'; //SQL sentence to drop one index
-                                  //TABLENAME, INDEXNAME are dynamically replaced
-
-    public $rename_index_sql = 'ALTER INDEX OLDINDEXNAME RENAME TO NEWINDEXNAME'; //SQL sentence to rename one index
-                                  //TABLENAME, OLDINDEXNAME, NEWINDEXNAME are dynamically replaced
-
-    public $rename_key_sql = 'ALTER TABLE TABLENAME CONSTRAINT OLDKEYNAME RENAME TO NEWKEYNAME'; //SQL sentence to rename one key
-                                  //TABLENAME, OLDKEYNAME, NEWKEYNAME are dynamically replaced
-
-    public $prefix;         // Prefix to be used for all the DB objects
-
-    public $reserved_words; // List of reserved words (in order to quote them properly)
-
-    public $mdb;
-
-    protected $temptables; // Control existing temptables
+    /** @var bool To decide if the default clause of each field must go after the null clause.*/
+    public $default_after_null = true;
 
     /**
-     * Creates new sql_generator
-     * @param object moodle_database instance
+     * @var bool To force the generator if NULL clauses must be specified. It shouldn't be necessary.
+     * note: some mssql drivers require them or everything is created as NOT NULL :-(
+     */
+    public $specify_nulls = false;
+
+    /** @var string To force primary key names to one string (null=no force).*/
+    public $primary_key_name = null;
+
+    /** @var bool True if the generator builds primary keys.*/
+    public $primary_keys = true;
+    /** @var bool True if the generator builds unique keys.*/
+    public $unique_keys = false;
+    /** @var bool True if the generator builds foreign keys.*/
+    public $foreign_keys = false;
+
+    /**
+     * @var string Template to drop PKs.
+     * 'TABLENAME' and 'KEYNAME' will be replaced from this template.
+     */
+    public $drop_primary_key = 'ALTER TABLE TABLENAME DROP CONSTRAINT KEYNAME';
+
+    /**
+     * @var string Template to drop UKs.
+     * 'TABLENAME' and 'KEYNAME' will be replaced from this template.
+     */
+    public $drop_unique_key = 'ALTER TABLE TABLENAME DROP CONSTRAINT KEYNAME';
+
+    /** @var string Template to drop FKs.
+     * 'TABLENAME' and 'KEYNAME' will be replaced from this template.
+     */
+    public $drop_foreign_key = 'ALTER TABLE TABLENAME DROP CONSTRAINT KEYNAME';
+
+    /** @var bool True if the generator needs to add extra code to generate the sequence fields.*/
+    public $sequence_extra_code = true;
+    /** @var string The particular name for inline sequences in this generator.*/
+    public $sequence_name = 'auto_increment';
+    /** @var string|bool Different name for small (4byte) sequences or false if same.*/
+    public $sequence_name_small = false;
+    /**
+     * @var bool To avoid outputting the rest of the field specs, leaving only the name and the sequence_name returned.
+     * @see getFieldSQL()
+     */
+    public $sequence_only = false;
+
+    /** @var bool True if the generator needs to add code for table comments.*/
+    public $add_table_comments  = true;
+
+    /** @var bool True if the generator needs to add the after clause for fields.*/
+    public $add_after_clause = false;
+
+    /**
+     * @var bool True if the generator needs to prepend the prefix to all the key/index/sequence/trigger/check names.
+     * @see $prefix
+     */
+    public $prefix_on_names = true;
+
+    /** @var int Maximum length for key/index/sequence/trigger/check names (keep 30 for all!).*/
+    public $names_max_length = 30;
+
+    /** @var string Characters to be used as concatenation operator.
+     * If not defined, MySQL CONCAT function will be used.
+     */
+    public $concat_character = '||';
+
+    /** @var string SQL sentence to rename one table, both 'OLDNAME' and 'NEWNAME' keywords are dynamically replaced.*/
+    public $rename_table_sql = 'ALTER TABLE OLDNAME RENAME TO NEWNAME';
+
+    /** @var string SQL sentence to drop one table where the 'TABLENAME' keyword is dynamically replaced.*/
+    public $drop_table_sql = 'DROP TABLE TABLENAME';
+
+    /** @var string The SQL template to alter columns where the 'TABLENAME' and 'COLUMNSPECS' keywords are dynamically replaced.*/
+    public $alter_column_sql = 'ALTER TABLE TABLENAME ALTER COLUMN COLUMNSPECS';
+
+    /** @var bool The generator will skip the default clause on alter columns.*/
+    public $alter_column_skip_default = false;
+
+    /** @var bool The generator will skip the type clause on alter columns.*/
+    public $alter_column_skip_type = false;
+
+    /** @var bool The generator will skip the null/notnull clause on alter columns.*/
+    public $alter_column_skip_notnull = false;
+
+    /** @var string SQL sentence to rename one column where 'TABLENAME', 'OLDFIELDNAME' and 'NEWFIELDNAME' keywords are dynamically replaced.*/
+    public $rename_column_sql = 'ALTER TABLE TABLENAME RENAME COLUMN OLDFIELDNAME TO NEWFIELDNAME';
+
+    /** @var string SQL sentence to drop one index where 'TABLENAME', 'INDEXNAME' keywords are dynamically replaced.*/
+    public $drop_index_sql = 'DROP INDEX INDEXNAME';
+
+    /** @var string SQL sentence to rename one index where 'TABLENAME', 'OLDINDEXNAME' and 'NEWINDEXNAME' are dynamically replaced.*/
+    public $rename_index_sql = 'ALTER INDEX OLDINDEXNAME RENAME TO NEWINDEXNAME';
+
+    /** @var string SQL sentence to rename one key 'TABLENAME', 'OLDKEYNAME' and 'NEWKEYNAME' are dynamically replaced.*/
+    public $rename_key_sql = 'ALTER TABLE TABLENAME CONSTRAINT OLDKEYNAME RENAME TO NEWKEYNAME';
+
+    /** @var string The prefix to be used for all the DB objects.*/
+    public $prefix;
+
+    /** @var string List of reserved words (in order to quote them properly).*/
+    public $reserved_words;
+
+    /** @var moodle_database The moodle_database instance.*/
+    public $mdb;
+    /** @var Control existing temptables.*/
+    protected $temptables;
+
+    /**
+     * Creates a new sql_generator.
+     * @param moodle_database $mdb The moodle_database object instance.
+     * @param moodle_temptables $temptables The optional moodle_temptables instance, null by default.
      */
     public function __construct($mdb, $temptables = null) {
         $this->prefix         = $mdb->get_prefix();
@@ -141,14 +197,18 @@ abstract class sql_generator {
     }
 
     /**
-     * Release all resources
+     * Releases all resources.
      */
     public function dispose() {
         $this->mdb = null;
     }
 
     /**
-     * Given one string (or one array), ends it with statement_end
+     * Given one string (or one array), ends it with $statement_end .
+     *
+     * @see $statement_end
+     *
+     * @param array|string $input SQL statement(s).
      */
     public function getEndedStatements($input) {
 
@@ -164,9 +224,9 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table, check if it exists in DB (true/false)
+     * Given one xmldb_table, checks if it exists in DB (true/false).
      *
-     * @param mixed the table to be searched (string name or xmldb_table instance)
+     * @param mixed $table The table to be searched (string name or xmldb_table instance).
      * @return boolean true/false
      */
     public function table_exists($table) {
@@ -185,7 +245,11 @@ abstract class sql_generator {
     }
 
     /**
-     * This function will return the SQL code needed to create db tables and statements
+     * This function will return the SQL code needed to create db tables and statements.
+     *
+     * @param xmldb_structure $xmldb_structure An xmldb_structure instance.
+     *
+     * @see xmldb_structure
      */
     public function getCreateStructureSQL($xmldb_structure) {
         $results = array();
@@ -200,11 +264,14 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table, returns it's correct name, depending of all the parametrization
+     * Given one xmldb_table, this returns it's correct name, depending of all the parameterization.
+     * eg: This appends $prefix to the table name.
      *
-     * @param xmldb_table table whose name we want
-     * @param boolean to specify if the name must be quoted (if reserved word, only!)
-     * @return string the correct name of the table
+     * @see $prefix
+     *
+     * @param xmldb_table $xmldb_table The table whose name we want.
+     * @param boolean $quoted To specify if the name must be quoted (if reserved word, only!).
+     * @return string The correct name of the table.
      */
     public function getTableName(xmldb_table $xmldb_table, $quoted=true) {
     /// Get the name
@@ -220,7 +287,11 @@ abstract class sql_generator {
 
     /**
      * Given one correct xmldb_table, returns the SQL statements
-     * to create it (inside one array)
+     * to create it (inside one array).
+     *
+     * @param xmldb_table $xmldb_table An xmldb_table instance.
+     * @return array An array of SQL statements, starting with the table creation SQL followed
+     * by any of its comments, indexes and sequence creation SQL statements.
      */
     public function getCreateTableSQL($xmldb_table) {
 
@@ -345,7 +416,12 @@ abstract class sql_generator {
 
     /**
      * Given one correct xmldb_index, returns the SQL statements
-     * needed to create it (in array)
+     * needed to create it (in array).
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table instance to create the index on.
+     * @param xmldb_index $xmldb_index The xmldb_index to create.
+     * @return array An array of SQL statements to create the index.
+     * @throws coding_exception Thrown if the xmldb_index does not validate with the xmldb_table.
      */
     public function getCreateIndexSQL($xmldb_table, $xmldb_index) {
         if ($error = $xmldb_index->validateDefinition($xmldb_table)) {
@@ -368,7 +444,17 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one correct xmldb_field, returns the complete SQL line to create it
+     * Given one correct xmldb_field, returns the complete SQL line to create it.
+     *
+     * @param xmldb_table $xmldb_table The table related to $xmldb_field.
+     * @param xmldb_field $xmldb_field The instance of xmldb_field to create the SQL from.
+     * @param string $skip_type_clause The type clause on alter columns, NULL by default.
+     * @param string $skip_default_clause The default clause on alter columns, NULL by default.
+     * @param string $skip_notnull_clause The null/notnull clause on alter columns, NULL by default.
+     * @param string $specify_nulls_clause To force a specific null clause, NULL by default.
+     * @param bool $specify_field_name Flag to specify fieldname in return.
+     * @return string The field generating SQL statement.
+     * @throws coding_exception Thrown when xmldb_field doesn't validate with the xmldb_table.
      */
     public function getFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL, $specify_nulls_clause = NULL, $specify_field_name = true)  {
         if ($error = $xmldb_field->validateDefinition($xmldb_table)) {
@@ -453,7 +539,11 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one correct xmldb_key, returns its specs
+     * Given one correct xmldb_key, returns its specs.
+     *
+     * @param xmldb_table $xmldb_table The table related to $xmldb_key.
+     * @param xmldb_key $xmldb_key The xmldb_key's specifications requested.
+     * @return string SQL statement about the xmldb_key.
      */
     public function getKeySQL($xmldb_table, $xmldb_key) {
 
@@ -492,6 +582,9 @@ abstract class sql_generator {
 
     /**
      * Give one xmldb_field, returns the correct "default value" for the current configuration
+     *
+     * @param xmldb_field $xmldb_field The field.
+     * @return The default value of the field.
      */
     public function getDefaultValue($xmldb_field) {
 
@@ -529,7 +622,10 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_field, returns the correct "default clause" for the current configuration
+     * Given one xmldb_field, returns the correct "default clause" for the current configuration.
+     *
+     * @param xmldb_field $xmldb_field The xmldb_field.
+     * @return The SQL clause for generating the default value as in $xmldb_field.
      */
     public function getDefaultClause($xmldb_field) {
 
@@ -544,7 +640,11 @@ abstract class sql_generator {
 
     /**
      * Given one correct xmldb_table and the new name, returns the SQL statements
-     * to rename it (inside one array)
+     * to rename it (inside one array).
+     *
+     * @param xmldb_table $xmldb_table The table to rename.
+     * @param string $newname The new name to rename the table to.
+     * @return array SQL statement(s) to rename the table.
      */
     public function getRenameTableSQL($xmldb_table, $newname) {
 
@@ -566,7 +666,10 @@ abstract class sql_generator {
 
     /**
      * Given one correct xmldb_table and the new name, returns the SQL statements
-     * to drop it (inside one array)
+     * to drop it (inside one array).
+     *
+     * @param xmldb_table $xmldb_table The table to drop.
+     * @return array SQL statement(s) for dropping the specified table.
      */
     public function getDropTableSQL($xmldb_table) {
 
@@ -584,7 +687,14 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to add the field to the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to add the field to the table.
+     *
+     * @param xmldb_table $xmldb_table The table related to $xmldb_field.
+     * @param xmldb_field $xmldb_field The instance of xmldb_field to create the SQL from.
+     * @param string $skip_type_clause The type clause on alter columns, NULL by default.
+     * @param string $skip_default_clause The default clause on alter columns, NULL by default.
+     * @param string $skip_notnull_clause The null/notnull clause on alter columns, NULL by default.
+     * @return array The SQL statement for adding a field to the table.
      */
     public function getAddFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
 
@@ -612,7 +722,11 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop the field from the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop the field from the table.
+     *
+     * @param xmldb_table $xmldb_table The table related to $xmldb_field.
+     * @param xmldb_field $xmldb_field The instance of xmldb_field to create the SQL from.
+     * @return array The SQL statement for dropping a field from the table.
      */
     public function getDropFieldSQL($xmldb_table, $xmldb_field) {
 
@@ -629,7 +743,14 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to alter the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to alter the field in the table.
+     *
+     * @param xmldb_table $xmldb_table The table related to $xmldb_field.
+     * @param xmldb_field $xmldb_field The instance of xmldb_field to create the SQL from.
+     * @param string $skip_type_clause The type clause on alter columns, NULL by default.
+     * @param string $skip_default_clause The default clause on alter columns, NULL by default.
+     * @param string $skip_notnull_clause The null/notnull clause on alter columns, NULL by default.
+     * @return string The field altering SQL statement.
      */
     public function getAlterFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
 
@@ -663,7 +784,11 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to modify the default of the field in the table
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to modify the default of the field in the table.
+     *
+     * @param xmldb_table $xmldb_table The table related to $xmldb_field.
+     * @param xmldb_field $xmldb_field The instance of xmldb_field to get the modified default value from.
+     * @return array The SQL statement for modifying the default value.
      */
     public function getModifyDefaultSQL($xmldb_table, $xmldb_field) {
 
@@ -685,7 +810,12 @@ abstract class sql_generator {
 
     /**
      * Given one correct xmldb_field and the new name, returns the SQL statements
-     * to rename it (inside one array)
+     * to rename it (inside one array).
+     *
+     * @param xmldb_table $xmldb_table The table related to $xmldb_field.
+     * @param xmldb_field $xmldb_field The instance of xmldb_field to get the renamed field from.
+     * @param string $newname The new name to rename the field to.
+     * @return array The SQL statements for renaming the field.
      */
     public function getRenameFieldSQL($xmldb_table, $xmldb_field, $newname) {
 
@@ -717,7 +847,11 @@ abstract class sql_generator {
 
     /**
      * Given one xmldb_table and one xmldb_key, return the SQL statements needed to add the key to the table
-     * note that undelying indexes will be added as parametrised by $xxxx_keys and $xxxx_index parameters
+     * note that undelying indexes will be added as parametrised by $xxxx_keys and $xxxx_index parameters.
+     *
+     * @param xmldb_table $xmldb_table The table related to $xmldb_key.
+     * @param xmldb_key $xmldb_key The xmldb_key to add.
+     * @return array SQL statement to add the xmldb_key.
      */
     public function getAddKeySQL($xmldb_table, $xmldb_key) {
 
@@ -757,7 +891,11 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_index, return the SQL statements needed to drop the index from the table
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needed to drop the index from the table.
+     *
+     * @param xmldb_table $xmldb_table The table related to $xmldb_key.
+     * @param xmldb_key $xmldb_key The xmldb_key to drop.
+     * @return array SQL statement to drop the xmldb_key.
      */
     public function getDropKeySQL($xmldb_table, $xmldb_key) {
 
@@ -826,8 +964,12 @@ abstract class sql_generator {
     /**
      * Given one xmldb_table and one xmldb_key, return the SQL statements needed to rename the key in the table
      * Experimental! Shouldn't be used at all!
+     *
+     * @param xmldb_table $xmldb_table The table related to $xmldb_key.
+     * @param xmldb_key $xmldb_key The xmldb_key to rename.
+     * @param string $newname The xmldb_key's new name.
+     * @return array SQL statement to rename the xmldb_key.
      */
-
     public function getRenameKeySQL($xmldb_table, $xmldb_key, $newname) {
 
         $results = array();
@@ -861,7 +1003,11 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_index, return the SQL statements needed to add the index to the table
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needed to add the index to the table.
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table instance to add the index on.
+     * @param xmldb_index $xmldb_index The xmldb_index to add.
+     * @return array An array of SQL statements to add the index.
      */
     public function getAddIndexSQL($xmldb_table, $xmldb_index) {
 
@@ -870,7 +1016,11 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_index, return the SQL statements needed to drop the index from the table
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needed to drop the index from the table.
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table instance to drop the index on.
+     * @param xmldb_index $xmldb_index The xmldb_index to drop.
+     * @return array An array of SQL statements to drop the index.
      */
     public function getDropIndexSQL($xmldb_table, $xmldb_index) {
 
@@ -891,6 +1041,11 @@ abstract class sql_generator {
     /**
      * Given one xmldb_table and one xmldb_index, return the SQL statements needed to rename the index in the table
      * Experimental! Shouldn't be used at all!
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table instance to rename the index on.
+     * @param xmldb_index $xmldb_index The xmldb_index to rename.
+     * @param string $newname The xmldb_index's new name.
+     * @return array An array of SQL statements to rename the index.
      */
     function getRenameIndexSQL($xmldb_table, $xmldb_index, $newname) {
     /// Some DB doesn't support index renaming (MySQL) so this can be empty
@@ -914,6 +1069,11 @@ abstract class sql_generator {
      *
      * IMPORTANT: This function must be used to CALCULATE NAMES of objects TO BE CREATED,
      *            NEVER TO GUESS NAMES of EXISTING objects!!!
+     *
+     * @param string $tablename The table name.
+     * @param string $fields A list of comma separated fields.
+     * @param string $suffix A suffix for the object name.
+     * @return string Object's name.
      */
     public function getNameForObject($tablename, $fields, $suffix='') {
 
@@ -985,6 +1145,9 @@ abstract class sql_generator {
     /**
      * Given any string (or one array), enclose it by the proper quotes
      * if it's a reserved word
+     *
+     * @param string|array $input String to quote.
+     * @return Quoted string.
      */
     public function getEncQuoted($input) {
 
@@ -1005,7 +1168,10 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one XMLDB Statement, build the needed SQL insert sentences to execute it
+     * Given one XMLDB Statement, build the needed SQL insert sentences to execute it.
+     *
+     * @param string $statement SQL statement.
+     * @return array Array of sentences in the SQL statement.
      */
     function getExecuteInsertSQL($statement) {
 
@@ -1057,9 +1223,14 @@ abstract class sql_generator {
     }
 
     /**
-     * Given one array of elements, build de proper CONCAT expression, based
+     * Given one array of elements, build the proper CONCAT expression, based
      * in the $concat_character setting. If such setting is empty, then
-     * MySQL's CONCAT function will be used instead
+     * MySQL's CONCAT function will be used instead.
+     *
+     * @param array $elements An array of elements to concatenate.
+     * @return mixed Returns the result of moodle_database::sql_concat() or false.
+     * @uses moodle_database::sql_concat()
+     * @uses call_user_func_array()
      */
     public function getConcatSQL($elements) {
 
@@ -1078,18 +1249,27 @@ abstract class sql_generator {
 
     /**
      * Returns the name (string) of the sequence used in the table for the autonumeric pk
-     * Only some DB have this implemented
+     * Only some DB have this implemented.
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table instance.
+     * @return bool Returns the sequence from the DB or false.
      */
     public function getSequenceFromDB($xmldb_table) {
         return false;
     }
 
     /**
-     * Given one object name and it's type (pk, uk, fk, ck, ix, uix, seq, trg)
-     * return if such name is currently in use (true) or no (false)
+     * Given one object name and it's type (pk, uk, fk, ck, ix, uix, seq, trg).
+     *
      * (MySQL requires the whole xmldb_table object to be specified, so we add it always)
-     * (invoked from getNameForObject()
-     * Only some DB have this implemented
+     *
+     * This is invoked from getNameForObject().
+     * Only some DB have this implemented.
+     *
+     * @param string $object_name The object's name to check for.
+     * @param string $type The object's type (pk, uk, fk, ck, ix, uix, seq, trg).
+     * @param string $table_name The table's name to check in
+     * @return bool If such name is currently in use (true) or no (false)
      */
     public function isNameInUse($object_name, $type, $table_name) {
         return false; //For generators not implementing introspection,
@@ -1101,30 +1281,46 @@ abstract class sql_generator {
 
     /**
      * Reset a sequence to the id field of a table.
-     * @param string $table name of table
+     *
+     * @param string $tablename name of table.
      * @return success
      */
     public abstract function getResetSequenceSQL($tablename);
 
     /**
      * Given one correct xmldb_table, returns the SQL statements
-     * to create temporary table (inside one array)
+     * to create temporary table (inside one array).
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @return array SQL statements.
      */
     abstract public function getCreateTempTableSQL($xmldb_table);
 
     /**
-     * Given one correct xmldb_table and the new name, returns the SQL statements
-     * to drop it (inside one array)
+     * Given one correct xmldb_table and the new name, returns the SQL statements.
+     * to drop it (inside one array).
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @return array SQL statements.
      */
     abstract public function getDropTempTableSQL($xmldb_table);
 
     /**
-     * Given one XMLDB Type, length and decimals, returns the DB proper SQL type
+     * Given one XMLDB Type, length and decimals, returns the DB proper SQL type.
+     *
+     * @param int $xmldb_type The xmldb_type defined constant. XMLDB_TYPE_INTEGER and other XMLDB_TYPE_* constants.
+     * @param int $xmldb_length The length of that data type.
+     * @param int $xmldb_decimals The decimal places of precision of the data type.
+     * @return string The DB defined data type.
      */
     public abstract function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null);
 
     /**
-     * Returns the code (array of statements) needed to execute extra statements on field rename
+     * Returns the code (array of statements) needed to execute extra statements on field rename.
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @param xmldb_field $xmldb_field The xmldb_field object instance.
+     * @return array Array of extra SQL statements to run with a field being renamed.
      */
     public function getRenameFieldExtraSQL($xmldb_table, $xmldb_field) {
         return array();
@@ -1132,19 +1328,30 @@ abstract class sql_generator {
 
     /**
      * Returns the code (array of statements) needed
-     * to create one sequence for the xmldb_table and xmldb_field passes
+     * to create one sequence for the xmldb_table and xmldb_field passed in.
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @param xmldb_field $xmldb_field The xmldb_field object instance.
+     * @return array Array of SQL statements to create the sequence.
      */
     public function getCreateSequenceSQL($xmldb_table, $xmldb_field) {
         return array();
     }
 
     /**
-     * Returns the code (array of statements) needed to add one comment to the table
+     * Returns the code (array of statements) needed to add one comment to the table.
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @return array Array of SQL statements to add one comment to the table.
      */
     public abstract function getCommentSQL($xmldb_table);
 
     /**
-     * Returns the code (array of statements) needed to execute extra statements on table rename
+     * Returns the code (array of statements) needed to execute extra statements on table rename.
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @param string $newname The new name for the table.
+     * @return array Array of extra SQL statements to rename a table.
      */
     public function getRenameTableExtraSQL($xmldb_table, $newname) {
         return array();
@@ -1152,6 +1359,9 @@ abstract class sql_generator {
 
     /**
      * Returns the code (array of statements) needed to execute extra statements on table drop
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @return array Array of extra SQL statements to drop a table.
      */
     public function getDropTableExtraSQL($xmldb_table) {
         return array();
@@ -1161,7 +1371,12 @@ abstract class sql_generator {
      * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its enum
      * (usually invoked from getModifyEnumSQL()
      *
-     * TODO: Moodle 2.1 - Drop getDropEnumSQL()
+     * Note that this method may be dropped in future.
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @param xmldb_field $xmldb_field The xmldb_field object instance.
+     *
+     * @todo MDL-31147 Moodle 2.1 - Drop getDropEnumSQL()
      */
     public abstract function getDropEnumSQL($xmldb_table, $xmldb_field);
 
@@ -1169,7 +1384,12 @@ abstract class sql_generator {
      * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its default
      * (usually invoked from getModifyDefaultSQL()
      *
-     * TODO: Moodle 2.1 - Drop getDropDefaultSQL()
+     * Note that this method may be dropped in future.
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @param xmldb_field $xmldb_field The xmldb_field object instance.
+     *
+     * @todo MDL-31147 Moodle 2.1 - Drop getDropDefaultSQL()
      */
     public abstract function getDropDefaultSQL($xmldb_table, $xmldb_field);
 
@@ -1178,27 +1398,37 @@ abstract class sql_generator {
      * constrainst found for that table (or field). Must exist for each DB supported.
      * (usually invoked from find_check_constraint_name)
      *
-     * TODO: Moodle 2.1 - Drop getCheckConstraintsFromDB
+     * Note that this method may be dropped in future.
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @param xmldb_field $xmldb_field The xmldb_field object instance.
+     *
+     * @todo MDL-31147 Moodle 2.1 - Drop getCheckConstraintsFromDB
      */
     public abstract function getCheckConstraintsFromDB($xmldb_table, $xmldb_field=null);
 
     /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needed to add its default
      * (usually invoked from getModifyDefaultSQL()
+     *
+     * @param xmldb_table $xmldb_table The xmldb_table object instance.
+     * @param xmldb_field $xmldb_field The xmldb_field object instance.
+     * @return array Array of SQL statements to create a field's default.
      */
     public abstract function getCreateDefaultSQL($xmldb_table, $xmldb_field);
 
     /**
      * Returns an array of reserved words (lowercase) for this DB
-     * You MUST provide the real list for each DB inside every XMLDB class
-     * @return array of reserved words
+     * You MUST provide the real list for each DB inside every XMLDB class.
+     * @return array An array of database specific reserved words.
+     * @throws coding_exception Thrown if not implemented for the specific DB.
      */
     public static function getReservedWords() {
         throw new coding_exception('getReservedWords() method needs to be overridden in each subclass of sql_generator');
     }
 
     /**
-     * Returns all reserved works in supported databases.
+     * Returns all reserved words in supported databases.
      * Reserved words should be lowercase.
      * @return array ('word'=>array(databases))
      */
@@ -1219,6 +1449,11 @@ abstract class sql_generator {
         return $reserved_words;
     }
 
+    /**
+     * Adds slashes to string.
+     * @param string $s
+     * @return string The escaped string.
+     */
     public function addslashes($s) {
         // do not use php addslashes() because it depends on PHP quote settings!
         $s = str_replace('\\','\\\\',$s);

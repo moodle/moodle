@@ -115,7 +115,14 @@ class grade_export_form extends moodleform {
 
         if ($grade_items = $gseq->items) {
             $needs_multiselect = false;
+            $canviewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $COURSE->id));
+
             foreach ($grade_items as $grade_item) {
+                // Is the grade_item hidden? If so, can the user see hidden grade_items?
+                if ($grade_item->is_hidden() && !$canviewhidden) {
+                    continue;
+                }
+
                 if (!empty($features['idnumberrequired']) and empty($grade_item->idnumber)) {
                     $mform->addElement('advcheckbox', 'itemids['.$grade_item->id.']', $grade_item->get_name(), get_string('noidnumber', 'grades'));
                     $mform->hardFreeze('itemids['.$grade_item->id.']');
@@ -124,7 +131,7 @@ class grade_export_form extends moodleform {
                     $mform->setDefault('itemids['.$grade_item->id.']', 1);
                     $needs_multiselect = true;
                 }
-                }
+            }
 
             if ($needs_multiselect) {
                 $this->add_checkbox_controller(1, null, null, 1); // 1st argument is group name, 2nd is link text, 3rd is attributes and 4th is original value

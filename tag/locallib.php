@@ -1,21 +1,40 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
+/**
+ * Moodle tag local library - output functions
+ *
+ * @package    core_tag
+ * @copyright  2007 Luiz Cruz <luiz.laydner@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
+ */
 
 require_once($CFG->dirroot.'/tag/lib.php');
 require_once($CFG->libdir.'/filelib.php');
 
 /**
- * locallib.php - moodle tag local library - output functions
+ * Prints or returns a HTML tag cloud with varying classes styles depending on the popularity and type of each tag.
  *
- * @licence http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodlecore
- *
- */
-
-/**
- * Prints a tag cloud
- *
- * @param array $tagcloud array of tag objects (fields: id, name, rawname, count and flag)
- * @param $return if true return html string
+ * @package  core_tag
+ * @access   public
+ * @category tag
+ * @param    int       $nr_of_tags Limit for the number of tags to return/display
+ * @param    bool      $return     if true the function will return the generated tag cloud instead of displaying it.
+ * @return string|null a HTML string or null if this function does the output
  */
 function tag_print_cloud($nr_of_tags=150, $return=false) {
     global $CFG, $DB;
@@ -69,9 +88,14 @@ function tag_print_cloud($nr_of_tags=150, $return=false) {
 }
 
 /**
- * This function is used by print_tag_cloud, to usort() the tags in the cloud.
- * See php.net/usort for the parameters documentation. This was originally in
- * blocks/blog_tags/block_blog_tags.php, named blog_tags_sort().
+ * This function is used by print_tag_cloud, to usort() the tags in the cloud. See php.net/usort for the parameters documentation.
+ * This was originally in blocks/blog_tags/block_blog_tags.php, named blog_tags_sort().
+ *
+ * @package core_tag
+ * @access  private
+ * @param   string $a Tag name to compare against $b
+ * @param   string $b Tag name to compare against $a
+ * @return  int    The result of the comparison/validation 1, 0 or -1
  */
 function tag_cloud_sort($a, $b) {
     global $CFG;
@@ -94,14 +118,19 @@ function tag_cloud_sort($a, $b) {
 /**
  * Prints a box with the description of a tag and its related tags
  *
- * @param stdClass $tag_object
- * @param $return if true return html string
+ * @package core_tag
+ * @access  public
+ * @todo    MDL-31149 create a system setting for $max_tags_displayed, instead of using an in code literal
+ * @param   stdClass    $tag_object
+ * @param   bool        $return     if true the function will return the generated tag cloud instead of displaying it.
+ * @return  string/null a HTML box showing a description of the tag object and it's relationsips or null if output is done directly
+ *                      in the function.
  */
 function tag_print_description_box($tag_object, $return=false) {
 
     global $USER, $CFG, $OUTPUT;
 
-    $max_tags_displayed = 10; // todo: turn this into a system setting
+    $max_tags_displayed = 10;
 
     $tagname  = tag_display_name($tag_object);
     $related_tags = tag_get_related_tags($tag_object->id, TAG_RELATED_ALL, $max_tags_displayed+1); // this gets one more than we want
@@ -147,8 +176,10 @@ function tag_print_description_box($tag_object, $return=false) {
 /**
  * Prints a box that contains the management links of a tag
  *
- * @param $tagid
- * @param $return if true return html string
+ * @access public
+ * @param  stdClass    $tag_object
+ * @param  bool        $return     if true the function will return the generated tag cloud instead of displaying it.
+ * @return string|null a HTML string or null if this function does the output
  */
 function tag_print_management_box($tag_object, $return=false) {
 
@@ -192,7 +223,9 @@ function tag_print_management_box($tag_object, $return=false) {
 /**
  * Prints the tag search box
  *
- * @param bool $return if true return html string
+ * @access public
+ * @param  bool        $return if true return html string
+ * @return string|null a HTML string or null if this function does the output
  */
 function tag_print_search_box($return=false) {
     global $CFG, $OUTPUT;
@@ -217,10 +250,12 @@ function tag_print_search_box($return=false) {
 /**
  * Prints the tag search results
  *
- * @param string $query text that tag names will be matched against
- * @param int $page current page
- * @param int $perpage nr of users displayed per page
- * @param $return if true return html string
+ * @access public
+ * @param string       $query text that tag names will be matched against
+ * @param int          $page current page
+ * @param int          $perpage nr of users displayed per page
+ * @param bool         $return if true return html string
+ * @return string|null a HTML string or null if this function does the output
  */
 function tag_print_search_results($query,  $page, $perpage, $return=false) {
 
@@ -290,13 +325,13 @@ function tag_print_search_results($query,  $page, $perpage, $return=false) {
 /**
  * Prints a table of the users tagged with the tag passed as argument
  *
- * @param $tag_object
- * @param int $users_per_row number of users per row to display
- * @param int $limitfrom prints users starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum prints this many users (optional, required if $limitfrom is set).
- * @param $return if true return html string
+ * @param  int         $tag_object the tag we wish to return data for
+ * @param  int         $limitfrom (optional, required if $limitnum is set) prints users starting at this point.
+ * @param  int         $limitnum (optional, required if $limitfrom is set) prints this many users.
+ * @param  bool        $return if true return html string
+ * @return string|null a HTML string or null if this function does the output
  */
-function tag_print_tagged_users_table($tag_object, $limitfrom='' , $limitnum='', $return=false) {
+function tag_print_tagged_users_table($tag_object, $limitfrom='', $limitnum='', $return=false) {
 
     //List of users with this tag
     $userlist = tag_find_records($tag_object->name, 'user', $limitfrom, $limitnum);
@@ -314,8 +349,9 @@ function tag_print_tagged_users_table($tag_object, $limitfrom='' , $limitnum='',
 /**
  * Prints an individual user box
  *
- * @param $user user object (contains the following fields: id, firstname, lastname and picture)
- * @param $return if true return html string
+ * @param user_object  $user  (contains the following fields: id, firstname, lastname and picture)
+ * @param bool         $return if true return html string
+ * @return string|null a HTML string or null if this function does the output
  */
 function tag_print_user_box($user, $return=false) {
     global $CFG, $OUTPUT;
@@ -359,11 +395,13 @@ function tag_print_user_box($user, $return=false) {
         echo $output;
     }
 }
+
 /**
  * Prints a list of users
  *
- * @param array $userlist an array of user objects
- * @param $return if true return html string
+ * @param  array       $userlist an array of user objects
+ * @param  bool        $return if true return html string, otherwise output the result
+ * @return string|null a HTML string or null if this function does the output
  */
 function tag_print_user_list($userlist, $return=false) {
 

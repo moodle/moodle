@@ -92,8 +92,8 @@ class core_course_renderer extends plugin_renderer_base {
      */
     protected function course_category_tree_category(stdClass $category, $depth=1) {
         $content = '';
-        $hassubcategories = (count($category->categories)>0);
-        $hascourses = (count($category->courses)>0);
+        $hassubcategories = (isset($category->categories) && count($category->categories)>0);
+        $hascourses = (isset($category->courses) && count($category->courses)>0);
         $classes = array('category');
         if ($category->parent != 0) {
             $classes[] = 'subcategory';

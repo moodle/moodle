@@ -1,52 +1,61 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Moodle - Modular Object-Oriented Dynamic Learning Environment
- *          http://moodle.org
- * Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @package    core
- * @subpackage portfolio
- * @author     Penny Leach <penny@catalyst.net.nz>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
- * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
- *
  * This file contains all the portfolio exception classes.
+ *
+ * @package core_portfolio
+ * @copyright 2008 Penny Leach <penny@catalyst.net.nz>,  Martin Dougiamas
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
-* top level portfolio exception.
-* sometimes caught and rethrown as {@see portfolio_export_exception}
-*/
+ * Top level portfolio exception.
+ *
+ * Sometimes caught and re-thrown as portfolio_export_exception
+ * @see portfolio_export_exception
+ *
+ * @package core_portfolio
+ * @category portfolio
+ * @copyright 2008 Penny Leach <penny@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class portfolio_exception extends moodle_exception {}
 
 /**
-* exception to throw during an export - will clean up session and tempdata
-*/
+ * Exception to throw during an export - will clean up session and tempdata
+ *
+ * @package core_portfolio
+ * @category portfolio
+ * @copyright 2008 Penny Leach <penny@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class portfolio_export_exception extends portfolio_exception {
 
     /**
-    * constructor.
-    * @param object $exporter instance of portfolio_exporter (will handle null case)
-    * @param string $errorcode language string key
-    * @param string $module language string module (optional, defaults to moodle)
-    * @param string $continue url to continue to (optional, defaults to wwwroot)
-    * @param mixed $a language string data (optional, defaults to  null)
-    */
+     * Constructor.
+     *
+     * @param portfolio_exporter $exporter instance of portfolio_exporter (will handle null case)
+     * @param string $errorcode language string key
+     * @param string $module language string module (optional, defaults to moodle)
+     * @param string $continue url to continue to (optional, defaults to wwwroot)
+     * @param object $a language string data (optional, defaults to  null)
+     */
     public function __construct($exporter, $errorcode, $module=null, $continue=null, $a=null) {
         global $CFG;
         // This static variable is necessary because sometimes the code below
@@ -82,23 +91,47 @@ class portfolio_export_exception extends portfolio_exception {
 }
 
 /**
-* exception for callers to throw when they have a problem.
-* usually caught and rethrown as {@see portfolio_export_exception}
-*/
+ * Exception for callers to throw when they have a problem.
+ *
+ * Usually caught and rethrown as portfolio_export_exception
+ * @see portfolio_export_exception
+ *
+ * @package core_portfolio
+ * @category portfolio
+ * @copyright 2008 Penny Leach <penny@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class portfolio_caller_exception extends portfolio_exception {}
 
 /**
-* exception for portfolio plugins to throw when they have a problem.
-* usually caught and rethrown as {@see portfolio_export_exception}
-*/
+ * Exception for portfolio plugins to throw when they have a problem.
+ *
+ * Usually caught and rethrown as portfolio_export_exception
+ * @see portfolio_export_exception
+ *
+ * @package core_portfolio
+ * @category portfolio
+ * @copyright 2008 Penny Leach <penny@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class portfolio_plugin_exception extends portfolio_exception {}
 
 /**
-* exception for interacting with the button class
-*/
+ * Exception for interacting with the button class
+ *
+ * @package core_portfolio
+ * @category portfolio
+ * @copyright 2008 Penny Leach <penny@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class portfolio_button_exception extends portfolio_exception {}
 
 /**
- * leap2a exception - for invalid api calls
+ * Leap2a exception - for invalid api calls
+ *
+ * @package core_portfolio
+ * @category portfolio
+ * @copyright 2008 Penny Leach <penny@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class portfolio_format_leap2a_exception extends portfolio_exception {}

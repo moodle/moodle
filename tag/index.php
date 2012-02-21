@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,9 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
- * @package    core
- * @subpackage tag
+ * @package    core_tag
+ * @category   tag
  * @copyright  2007 Luiz Cruz <luiz.laydner@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -48,7 +48,7 @@ if ($tagname) {
 } else if ($tagid) {
     $tag = tag_get('id', $tagid, '*');
 }
-
+unset($tagid);
 if (empty($tag)) {
     redirect($CFG->wwwroot.'/tag/search.php');
 }
@@ -68,7 +68,7 @@ $title = get_string('tag', 'tag') .' - '. $tagname;
 
 $button = '';
 if ($PAGE->user_allowed_editing() ) {
-    $button = $OUTPUT->edit_button(new moodle_url("$CFG->wwwroot/tag/index.php", array('id' => $tagid)));
+    $button = $OUTPUT->edit_button(new moodle_url("$CFG->wwwroot/tag/index.php", array('id' => $tag->id)));
 }
 
 $PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url('/tag/search.php'));

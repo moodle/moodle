@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -17,10 +16,10 @@
 
 
 /**
- * Database manager instance is responsible for all database structure
- * modifications.
+ * Database manager instance is responsible for all database structure modifications.
  *
  * @package    core
+ * @category   ddl
  * @subpackage ddl
  * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
  *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
@@ -31,18 +30,29 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Database manager instance is responsible for all database structure
- * modifications. It is using db specific generators to find out
- * the correct SQL syntax to do that.
+ * Database manager instance is responsible for all database structure modifications.
+ *
+ * It is using db specific generators to find out the correct SQL syntax to do that.
+ *
+ * @package    core
+ * @category   ddl
+ * @subpackage ddl
+ * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
+ *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com
+ *             2008 Petr Skoda                   http://skodak.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class database_manager {
 
+    /** @var moodle_database A moodle_database driver speific instance.*/
     protected $mdb;
-    public $generator; // public because XMLDB editor needs to access it
+    /** @var sql_generator A driver specific SQL generator instance. Public because XMLDB editor needs to access it.*/
+    public $generator;
 
     /**
-     * Creates new database manager
-     * @param object moodle_database instance
+     * Creates a new database manager instance.
+     * @param moodle_database $mdb A moodle_database driver specific instance.
+     * @param sql_generator $generator A driver specific SQL generator instance.
      */
     public function __construct($mdb, $generator) {
         global $CFG;
@@ -52,7 +62,7 @@ class database_manager {
     }
 
     /**
-     * Release all resources
+     * Releases all resources
      */
     public function dispose() {
         if ($this->generator) {
@@ -65,10 +75,8 @@ class database_manager {
     /**
      * This function will execute an array of SQL commands.
      *
-     * @exception ddl_exception if error found
-     *
-     * @param array $sqlarr array of sql statements to execute
-     * @return void
+     * @param array $sqlarr Array of sql statements to execute.
+     * @throws ddl_exception This exception is thrown if any error is found.
      */
     protected function execute_sql_arr(array $sqlarr) {
         foreach ($sqlarr as $sql) {
@@ -77,12 +85,10 @@ class database_manager {
     }
 
     /**
-     * Execute a given sql command string
+     * Execute a given sql command string.
      *
-     * @exception ddl_exception if error found
-     *
-     * @param string $command The sql string you wish to be executed.
-     * @return void
+     * @param string $sql The sql string you wish to be executed.
+     * @throws ddl_exception This exception is thrown if any error is found.
      */
     protected function execute_sql($sql) {
         if (!$this->mdb->change_database_structure($sql)) {
@@ -92,10 +98,10 @@ class database_manager {
     }
 
     /**
-     * Given one xmldb_table, check if it exists in DB (true/false)
+     * Given one xmldb_table, check if it exists in DB (true/false).
      *
-     * @param mixed the table to be searched (string name or xmldb_table instance)
-     * @return boolean true/false
+     * @param mixed $table The table to be searched (string name or xmldb_table instance).
+     * @return bool true/false True is a table exists, false otherwise.
      */
     public function table_exists($table) {
         if (!is_string($table) and !($table instanceof xmldb_table)) {
@@ -106,8 +112,8 @@ class database_manager {
 
     /**
      * Reset a sequence to the id field of a table.
-     * @param string $table name of table
-     * @return success
+     * @param string $table Name of table.
+     * @throws ddl_exception|ddl_table_missing_exception Exception thrown upon reset errors.
      */
     public function reset_sequence($table) {
         if (!is_string($table) and !($table instanceof xmldb_table)) {
@@ -127,11 +133,12 @@ class database_manager {
     }
 
     /**
-     * Given one xmldb_field, check if it exists in DB (true/false)
+     * Given one xmldb_field, check if it exists in DB (true/false).
      *
-     * @param mixed the table to be searched (string name or xmldb_table instance)
-     * @param mixed the field to be searched for (string name or xmldb_field instance)
-     * @return boolean true/false
+     * @param mixed $table The table to be searched (string name or xmldb_table instance).
+     * @param mixed $field The field to be searched for (string name or xmldb_field instance).
+     * @return boolean true is exists false otherwise.
+     * @throws ddl_table_missing_exception
      */
     public function field_exists($table, $field) {
     /// Calculate the name of the table
@@ -165,9 +172,10 @@ class database_manager {
      * Given one xmldb_index, the function returns the name of the index in DB
      * of false if it doesn't exist
      *
-     * @param object $xmldb_table table to be searched
-     * @param object $xmldb_index the index to be searched
-     * @return string index name of false
+     * @param xmldb_table $xmldb_table table to be searched
+     * @param xmldb_index $xmldb_index the index to be searched
+     * @return string|bool Index name or false if no indexes are found.
+     * @throws ddl_table_missing_exception Thrown when table is not found.
      */
     public function find_index_name(xmldb_table $xmldb_table, xmldb_index $xmldb_index) {
     /// Calculate the name of the table
@@ -200,11 +208,11 @@ class database_manager {
     }
 
     /**
-     * Given one xmldb_index, check if it exists in DB (true/false)
+     * Given one xmldb_index, check if it exists in DB (true/false).
      *
-     * @param object $xmldb_table the table to be searched
-     * @param object $xmldb_index the index to be searched for
-     * @return boolean true/false
+     * @param xmldb_table $xmldb_table The table to be searched.
+     * @param xmldb_index $xmldb_index The index to be searched for.
+     * @return boolean true id index exists, false otherwise.
      */
     public function index_exists(xmldb_table $xmldb_table, xmldb_index $xmldb_index) {
         if (!$this->table_exists($xmldb_table)) {
@@ -219,11 +227,11 @@ class database_manager {
      * to 1 "enum-like" constraint. So, if more than one is returned, only the first one will be
      * retrieved by this function.
      *
-     * TODO: Moodle 2.1 - Drop find_check_constraint_name()
+     * @todo MDL-31147 Moodle 2.1 - Drop find_check_constraint_name()
      *
-     * @param xmldb_table the table to be searched
-     * @param xmldb_field the field to be searched
-     * @return string check constraint name or false
+     * @param xmldb_table $xmldb_table The table to be searched.
+     * @param xmldb_field $xmldb_field The field to be searched.
+     * @return string|bool check constraint name or false
      */
     public function find_check_constraint_name(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
 
@@ -256,8 +264,8 @@ class database_manager {
      *
      * TODO: Moodle 2.1 - Drop check_constraint_exists()
      *
-     * @param xmldb_table the table
-     * @param xmldb_field the field to be searched for any existing constraint
+     * @param xmldb_table $xmldb_table The table.
+     * @param xmldb_field $xmldb_field The field to be searched for any existing constraint.
      * @return boolean true/false
      */
     public function check_constraint_exists(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
@@ -271,9 +279,9 @@ class database_manager {
      * Given one xmldb_key, the function returns the name of the key in DB (if exists)
      * of false if it doesn't exist
      *
-     * @param xmldb_table the table to be searched
-     * @param xmldb_key the key to be searched
-     * @return string key name of false
+     * @param xmldb_table $xmldb_table The table to be searched.
+     * @param xmldb_key $xmldb_key The key to be searched.
+     * @return string key name if found
      */
     public function find_key_name(xmldb_table $xmldb_table, xmldb_key $xmldb_key) {
 
@@ -316,7 +324,7 @@ class database_manager {
     /**
      * This function will delete all tables found in XMLDB file from db
      *
-     * @param $file full path to the XML file to be used
+     * @param string $file Full path to the XML file to be used.
      * @return void
      */
     public function delete_tables_from_xmldb_file($file) {
@@ -354,7 +362,7 @@ class database_manager {
      * and all the associated objects (keys, indexes, constraints, sequences, triggers)
      * will be dropped too.
      *
-     * @param xmldb_table table object (just the name is mandatory)
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
      * @return void
      */
     public function drop_table(xmldb_table $xmldb_table) {
@@ -399,7 +407,7 @@ class database_manager {
     /**
      * This function will load one entire XMLDB file and call install_from_xmldb_structure.
      *
-     * @param $file full path to the XML file to be used
+     * @param string $file full path to the XML file to be used
      * @return void
      */
     public function install_from_xmldb_file($file) {
@@ -411,8 +419,8 @@ class database_manager {
     /**
      * This function will load one entire XMLDB file and call install_from_xmldb_structure.
      *
-     * @param $file full path to the XML file to be used
-     * @param $tablename the name of the table.
+     * @param string $file full path to the XML file to be used
+     * @param string $tablename the name of the table.
      * @param bool $cachestructures boolean to decide if loaded xmldb structures can be safely cached
      *             useful for testunits loading the enormous main xml file hundred of times (100x)
      */
@@ -445,7 +453,7 @@ class database_manager {
      * This function will generate all the needed SQL statements, specific for each
      * RDBMS type and, finally, it will execute all those statements against the DB.
      *
-     * @param object $structure xmldb_structure object
+     * @param stdClass $xmldb_structure xmldb_structure object.
      * @return void
      */
     public function install_from_xmldb_structure($xmldb_structure) {
@@ -460,7 +468,7 @@ class database_manager {
      * This function will create the table passed as argument with all its
      * fields/keys/indexes/sequences, everything based in the XMLDB object
      *
-     * @param xmldb_table table object (full specs are required)
+     * @param xmldb_table $xmldb_table Table object (full specs are required).
      * @return void
      */
     public function create_table(xmldb_table $xmldb_table) {
@@ -482,7 +490,7 @@ class database_manager {
      * If table already exists ddl_exception will be thrown, please make sure
      * the table name does not collide with existing normal table!
      *
-     * @param xmldb_table table object (full specs are required)
+     * @param xmldb_table $xmldb_table Table object (full specs are required).
      * @return void
      */
     public function create_temp_table(xmldb_table $xmldb_table) {
@@ -505,7 +513,7 @@ class database_manager {
      *
      * It is recommended to drop temp table when not used anymore.
      *
-     * @param xmldb_table table object
+     * @param xmldb_table $xmldb_table Table object.
      * @return void
      */
     public function drop_temp_table(xmldb_table $xmldb_table) {
@@ -526,8 +534,8 @@ class database_manager {
      * This function will rename the table passed as argument
      * Before renaming the index, the function will check it exists
      *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param string new name of the index
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param string $newname New name of the index.
      * @return void
      */
     public function rename_table(xmldb_table $xmldb_table, $newname) {
@@ -563,8 +571,8 @@ class database_manager {
     /**
      * This function will add the field to the table passed as arguments
      *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param xmldb_field field object (full specs are required)
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param xmldb_field $xmldb_field Index object (full specs are required).
      * @return void
      */
     public function add_field(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
@@ -589,8 +597,8 @@ class database_manager {
     /**
      * This function will drop the field from the table passed as arguments
      *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param xmldb_field field object (just the name is mandatory)
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param xmldb_field $xmldb_field Index object (full specs are required).
      * @return void
      */
     public function drop_field(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
@@ -614,8 +622,8 @@ class database_manager {
     /**
      * This function will change the type of the field in the table passed as arguments
      *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param xmldb_field field object (full specs are required)
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param xmldb_field $xmldb_field Index object (full specs are required).
      * @return void
      */
     public function change_field_type(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
@@ -639,8 +647,8 @@ class database_manager {
     /**
      * This function will change the precision of the field in the table passed as arguments
      *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param xmldb_field field object (full specs are required)
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param xmldb_field $xmldb_field Index object (full specs are required).
      * @return void
      */
     public function change_field_precision(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
@@ -651,8 +659,8 @@ class database_manager {
     /**
      * This function will change the unsigned/signed of the field in the table passed as arguments
      *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param xmldb_field field object (full specs are required)
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param xmldb_field $xmldb_field Field object (full specs are required).
      * @return void
      */
     public function change_field_unsigned(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
@@ -663,8 +671,8 @@ class database_manager {
     /**
      * This function will change the nullability of the field in the table passed as arguments
      *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param xmldb_field field object (full specs are required)
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param xmldb_field $xmldb_field Index object (full specs are required).
      * @return void
      */
     public function change_field_notnull(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
@@ -676,8 +684,8 @@ class database_manager {
      * This function will change the default of the field in the table passed as arguments
      * One null value in the default field means delete the default
      *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param xmldb_field field object (full specs are required)
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param xmldb_field $xmldb_field Index object (full specs are required).
      * @return void
      */
     public function change_field_default(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
@@ -703,8 +711,8 @@ class database_manager {
      *
      * TODO: Moodle 2.1 - Drop drop_enum_from_field()
      *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param xmldb_field field object (full specs are required)
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param xmldb_field $xmldb_field Index object (full specs are required).
      * @return void
      */
     public function drop_enum_from_field(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
@@ -733,9 +741,9 @@ class database_manager {
      * This function will rename the field in the table passed as arguments
      * Before renaming the field, the function will check it exists
      *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param xmldb_field index object (full specs are required)
-     * @param string new name of the field
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param xmldb_field $xmldb_field Index object (full specs are required).
+     * @param string $newname New name of the field.
      * @return void
      */
     public function rename_field(xmldb_table $xmldb_table, xmldb_field $xmldb_field, $newname) {
@@ -776,7 +784,12 @@ class database_manager {
     /**
      * This function will check, for the given table and field, if there there is any dependency
      * preventing the field to be modified. It's used by all the public methods that perform any
-     * DDL change on fields, throwing one ddl_dependency_exception if dependencies are found
+     * DDL change on fields, throwing one ddl_dependency_exception if dependencies are found.
+     *
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param xmldb_field $xmldb_field Index object (full specs are required).
+     * @return void
+     * @throws ddl_dependency_exception|ddl_field_missing_exception|ddl_table_missing_exception if dependency not met.
      */
     private function check_field_dependencies(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
 
@@ -805,8 +818,8 @@ class database_manager {
     /**
      * This function will create the key in the table passed as arguments
      *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param xmldb_key index object (full specs are required)
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param xmldb_key $xmldb_key Index object (full specs are required).
      * @return void
      */
     public function add_key(xmldb_table $xmldb_table, xmldb_key $xmldb_key) {
@@ -825,8 +838,8 @@ class database_manager {
     /**
      * This function will drop the key in the table passed as arguments
      *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param xmldb_key key object (full specs are required)
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param xmldb_key $xmldb_key Key object (full specs are required).
      * @return void
      */
     public function drop_key(xmldb_table $xmldb_table, xmldb_key $xmldb_key) {
@@ -845,9 +858,9 @@ class database_manager {
      * This function will rename the key in the table passed as arguments
      * Experimental. Shouldn't be used at all in normal installation/upgrade!
      *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param xmldb_key key object (full specs are required)
-     * @param string new name of the key
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param xmldb_key $xmldb_key key object (full specs are required).
+     * @param string $newname New name of the key.
      * @return void
      */
     public function rename_key(xmldb_table $xmldb_table, xmldb_key $xmldb_key, $newname) {
@@ -869,8 +882,8 @@ class database_manager {
      * This function will create the index in the table passed as arguments
      * Before creating the index, the function will check it doesn't exists
      *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param xmldb_index index object (full specs are required)
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param xmldb_index $xmldb_intex Index object (full specs are required).
      * @return void
      */
     public function add_index($xmldb_table, $xmldb_intex) {
@@ -896,8 +909,8 @@ class database_manager {
      * This function will drop the index in the table passed as arguments
      * Before dropping the index, the function will check it exists
      *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param xmldb_index index object (full specs are required)
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param xmldb_index $xmldb_intex Index object (full specs are required).
      * @return void
      */
     public function drop_index($xmldb_table, $xmldb_intex) {
@@ -924,9 +937,9 @@ class database_manager {
      * Before renaming the index, the function will check it exists
      * Experimental. Shouldn't be used at all!
      *
-     * @param xmldb_table table object (just the name is mandatory)
-     * @param xmldb_index index object (full specs are required)
-     * @param string new name of the index
+     * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
+     * @param xmldb_index $xmldb_intex Index object (full specs are required).
+     * @param string $newname New name of the index.
      * @return void
      */
     public function rename_index($xmldb_table, $xmldb_intex, $newname) {

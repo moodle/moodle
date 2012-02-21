@@ -20,7 +20,7 @@
  * Experimental SQLite specific SQL code generator.
  *
  * @package    core
- * @subpackage ddl
+ * @subpackage ddl_generator
  * @copyright  2008 Andrei Bautu
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

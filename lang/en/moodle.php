@@ -219,6 +219,7 @@ $string['categoryname'] = 'Category name';
 $string['idnumbercoursecategory'] = 'Category ID number';
 $string['idnumbercoursecategory_help'] = 'The ID number of a course category  is only used when matching the category against external systems and is not displayed anywhere on the site. If the category has an official code name it may be entered, otherwise the field can be left blank.';
 $string['categoryupdated'] = 'The category \'{$a}\' was updated';
+$string['changesmadereallygoaway'] = 'You have made changes. Are you sure you want to navigate away and lose your changes?';
 $string['city'] = 'City/town';
 $string['clambroken'] = 'Your administrator has enabled virus checking for file uploads but has misconfigured something.<br />Your file upload was NOT successful. Your administrator has been emailed to notify them so they can fix it.<br />Maybe try uploading this file later.';
 $string['clamdeletedfile'] = 'The file has been deleted';
@@ -463,6 +464,7 @@ $string['downloadfile'] = 'Download file';
 $string['downloadods'] = 'Download in ODS format';
 $string['downloadtext'] = 'Download in text format';
 $string['doyouagree'] = 'Have you read these conditions and understood them?';
+$string['droptoupload'] = 'Drop files here to upload';
 $string['duplicate'] = 'Duplicate';
 $string['duplicateconfirm'] = 'Are you sure you want to duplicate {$a->modtype} \'{$a->modname}\' ?';
 $string['duplicatecontcourse'] = 'Return to the course';
@@ -968,6 +970,7 @@ $string['manageroles'] = 'Roles and permissions';
 $string['markedthistopic'] = 'This topic is highlighted as the current topic';
 $string['markthistopic'] = 'Highlight this topic as the current topic';
 $string['matchingsearchandrole'] = 'Matching \'{$a->search}\' and {$a->role}';
+$string['maxfilesreached'] = 'You are allowed to attach a maximum of {$a} file(s) to this item';
 $string['maximumgrade'] = 'Maximum grade';
 $string['maximumgradex'] = 'Maximum grade: {$a}';
 $string['maximumchars'] = 'Maximum of {$a} characters';
@@ -1772,9 +1775,7 @@ $string['withoutuserdata'] = 'without user data';
 $string['withselectedusers'] = 'With selected users...';
 $string['withselectedusers_help'] = '* Send message - For sending a message to one or more participants
 * Add a new note - For adding a note to a selected participant
-* Add a common note - For adding the same note to more than one participant
-* Extend enrolment (individual) - For extending a selected student\'s access to the course, even when an enrolment period is set
-* Extend enrolment (common) - For extending more than one student\'s access to the course by the same amount';
+* Add a common note - For adding the same note to more than one participant';
 $string['withuserdata'] = 'with user data';
 $string['wordforstudent'] = 'Your word for Student';
 $string['wordforstudenteg'] = 'eg Student, Participant etc';

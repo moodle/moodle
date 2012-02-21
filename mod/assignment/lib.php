@@ -211,7 +211,7 @@ class assignment_base {
         echo $OUTPUT->box_start('generalbox boxaligncenter', 'intro');
         echo format_module_intro('assignment', $this->assignment, $this->cm->id);
         echo $OUTPUT->box_end();
-        plagiarism_print_disclosure($this->cm->id);
+        echo plagiarism_print_disclosure($this->cm->id);
     }
 
     /**
@@ -1221,7 +1221,7 @@ class assignment_base {
         echo '<div class="usersubmissions">';
 
         //hook to allow plagiarism plugins to update status/print links.
-        plagiarism_update_status($this->course, $this->cm);
+        echo plagiarism_update_status($this->course, $this->cm);
 
         $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
         if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
@@ -3938,6 +3938,45 @@ function assignment_get_file_areas($course, $cm, $context) {
         $areas['submission'] = get_string('assignmentsubmission', 'assignment');
     }
     return $areas;
+}
+
+/**
+ * File browsing support for assignment module.
+ *
+ * @param file_browser $browser
+ * @param array $areas
+ * @param stdClass $course
+ * @param cm_info $cm
+ * @param context $context
+ * @param string $filearea
+ * @param int $itemid
+ * @param string $filepath
+ * @param string $filename
+ * @return file_info_stored file_info_stored instance or null if not found
+ */
+function mod_assignment_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+    global $CFG, $DB, $USER;
+
+    if ($context->contextlevel != CONTEXT_MODULE || $filearea != 'submission') {
+        return null;
+    }
+    if (!$submission = $DB->get_record('assignment_submissions', array('id' => $itemid))) {
+        return null;
+    }
+    if (!(($submission->userid == $USER->id && has_capability('mod/assignment:view', $context))
+            || has_capability('mod/assignment:grade', $context))) {
+        // no permission to view this submission
+        return null;
+    }
+
+    $fs = get_file_storage();
+    $filepath = is_null($filepath) ? '/' : $filepath;
+    $filename = is_null($filename) ? '.' : $filename;
+    if (!($storedfile = $fs->get_file($context->id, 'mod_assignment', $filearea, $itemid, $filepath, $filename))) {
+        return null;
+    }
+    $urlbase = $CFG->wwwroot.'/pluginfile.php';
+    return new file_info_stored($browser, $context, $storedfile, $urlbase, $filearea, $itemid, true, true, false);
 }
 
 /**
