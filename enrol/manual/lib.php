@@ -227,11 +227,11 @@ class enrol_manual_plugin extends enrol_plugin {
             'disableGradeHistory' => $CFG->disablegradehistory,
             'recoverGradesDefault'=> ''
         );
-        
+
         if ($CFG->recovergradesdefault) {
             $arguments['recoverGradesDefault'] = ' checked="checked"';
         }
-        
+
         $function = 'M.enrol_manual.quickenrolment.init';
         $button->require_yui_module($modules, $function, array($arguments));
         $button->strings_for_js(array(
