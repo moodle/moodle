@@ -30,7 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'Kalba';
-$string['next'] = 'Pirmyn';
-$string['previous'] = 'Ankstesnis';
-$string['reload'] = 'Įkelti iš naujo';
+$string['parentlanguage'] = 'lt';
+$string['thislanguage'] = 'Lithuanian (university)';
