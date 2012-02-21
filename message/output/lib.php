@@ -21,7 +21,7 @@
  * @copyright Luis Rodrigues
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
 /**
  * Base message processor class for extension by message processors
  *
@@ -60,7 +60,7 @@ abstract class message_output {
      * @param array $preferences preferences array
      */
     public abstract function process_form($form, &$preferences);
-    
+
     /**
      * Are the message processor's system settings configured?
      *

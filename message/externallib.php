@@ -28,7 +28,7 @@ require_once("$CFG->libdir/externallib.php");
  *
  * @package    core_message
  * @copyright  2011 Moodle Pty Ltd (http://moodle.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later  (6)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_message_external extends external_api {
 

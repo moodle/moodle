@@ -28,7 +28,7 @@ require_once(dirname(dirname(__FILE__)) . '/message/lib.php');
 
 /**
  * Called when a message provider wants to send a message.
- * This functions checks the message recipient's message processor configuration then 
+ * This functions checks the message recipient's message processor configuration then
  * sends the message to the configured processors
  *
  * Required parameter $eventdata structure:
@@ -361,11 +361,11 @@ function message_set_default_message_preference($component, $messagename, $filep
 }
 
 /**
- * This function has been deprecated please use message_get_providers_for_user() instead.
+ * This function has been deprecated please use {@link message_get_providers_for_user()} instead.
  *
  * Returns the active providers for the current user, based on capability
  *
- * @see message_get_providers_for_user()}
+ * @see message_get_providers_for_user()
  * @deprecated since 2.1
  * @todo Remove in 2.2 (MDL-31031)
  * @return array An array of message providers
@@ -409,7 +409,7 @@ function message_get_providers_for_user($userid) {
  *
  * This is an internal function used within messagelib.php
  *
- * @see message_update_providers()}
+ * @see message_update_providers()
  * @param string $component A moodle component like 'moodle', 'mod_forum', 'block_quiz_results'
  * @return array An array of message providers
  */
