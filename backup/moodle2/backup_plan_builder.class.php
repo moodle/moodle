@@ -121,12 +121,23 @@ abstract class backup_plan_builder {
 
         // Add the activity task, responsible for outputting
         // all the module related information
-        $plan->add_task(backup_factory::get_backup_activity_task($controller->get_format(), $id));
+        try {
+            $plan->add_task(backup_factory::get_backup_activity_task($controller->get_format(), $id));
 
-        // For the given activity, add as many block tasks as necessary
-        $blockids = backup_plan_dbops::get_blockids_from_moduleid($id);
-        foreach ($blockids as $blockid) {
-            $plan->add_task(backup_factory::get_backup_block_task($controller->get_format(), $blockid, $id));
+            // For the given activity, add as many block tasks as necessary
+            $blockids = backup_plan_dbops::get_blockids_from_moduleid($id);
+            foreach ($blockids as $blockid) {
+                try {
+                    $plan->add_task(backup_factory::get_backup_block_task($controller->get_format(), $blockid, $id));
+                } catch (backup_task_exception $e) {
+                    $a = stdClass();
+                    $a->mid = $id;
+                    $a->bid = $blockid;
+                    $controller->log(get_string('error_block_for_module_not_found', 'backup', $a), backup::LOG_WARNING);
+                }
+            }
+        } catch (backup_task_exception $e) {
+            $controller->log(get_string('error_course_module_not_found', 'backup', $id), backup::LOG_WARNING);
         }
     }
 
