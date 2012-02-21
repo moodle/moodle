@@ -240,11 +240,13 @@ class qtype_multichoice extends question_type {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
         $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid, true);
         $this->move_files_in_combined_feedback($questionid, $oldcontextid, $newcontextid);
+        $this->move_files_in_hints($questionid, $oldcontextid, $newcontextid);
     }
 
     protected function delete_files($questionid, $contextid) {
         parent::delete_files($questionid, $contextid);
         $this->delete_files_in_answers($questionid, $contextid, true);
         $this->delete_files_in_combined_feedback($questionid, $contextid);
+        $this->delete_files_in_hints($questionid, $contextid);
     }
 }
