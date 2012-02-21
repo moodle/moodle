@@ -22,6 +22,7 @@
 .path-mod-lesson .progress_bar_todo {padding: 0;margin: 0;}
 .path-mod-lesson .progress_bar_token {height: 20px;width: 5px;padding: 0;margin: 0;}
 .path-mod-lesson .edit_pages_box .addlinks {margin:0;margin-bottom:1em;}
+.path-mod-lesson .progress_bar_completed {background-color:green; text-align:right; vertical-align:middle; color:#FFF;}
 
 .path-mod-lesson .resourcecontent {text-align: center;}
 
