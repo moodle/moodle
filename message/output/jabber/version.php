@@ -15,11 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Jabber processor version information
+ * Jabber message processor version information
  *
- * @package    message
- * @subpackage jabber
- * @author     Luis Rodrigues
+ * @package    message_jabber
+ * @copyright  2008 Luis Rodrigues
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
