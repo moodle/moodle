@@ -44,7 +44,7 @@ class url1_resurce_file extends general_cc_file {
      * @param string $title
      */
     public function set_title($title) {
-        $this->title = htmlentities($title);
+        $this->title = self::safexml($title);
     }
 
     /**
