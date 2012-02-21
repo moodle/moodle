@@ -134,13 +134,10 @@ class core_user_external extends external_api {
                 throw new invalid_parameter_exception('Invalid theme: '.$user['theme']);
             }
 
-            // make sure there is no data loss during truncation
-            $truncated = truncate_userinfo($user);
-            foreach ($truncated as $key=>$value) {
-                    if ($truncated[$key] !== $user[$key]) {
-                        throw new invalid_parameter_exception('Property: '.$key.' is too long: '.$user[$key]);
-                    }
-            }
+            // Start of User info validation.
+            // Lets make sure we validate current user info as handled by current GUI. see user/editadvanced_form.php function validation()
+            // ok, there is no validation currently.
+            // End of user info validation.
 
             $user['confirmed'] = true;
             $user['mnethostid'] = $CFG->mnet_localhost_id;
