@@ -183,20 +183,14 @@ class cc_resource implements cc_i_resource {
             throw new Exception('The file doesnt exist!');
         }
 
-        //TODO: ver el tema de fpatch con el tema de unix y windows
-        //$fpathtocheck = $this->adjust_path($manifestroot,$fname);
-        //!empty($fpathtocheck) &&
-        if (GetDepFiles($manifestroot, $fname, $this->folder, $this->files)) {
-            array_unshift($this->files,$folder.$fname);
-            $this->init_empty_new();
-            $this->href             = $folder.$fname;
-            $this->identifierref    = $folder.$fname;
-            $this->filename         = $fname;
-            $this->isempty          = false;
-            $this->folder           = $folder;
-        } else {
-            $this->init_clean();
-        }
+        GetDepFiles($manifestroot, $fname, $this->folder, $this->files);
+        array_unshift($this->files,$folder.$fname);
+        $this->init_empty_new();
+        $this->href             = $folder.$fname;
+        $this->identifierref    = $folder.$fname;
+        $this->filename         = $fname;
+        $this->isempty          = false;
+        $this->folder           = $folder;
     }
 
     public function adjust_path($mroot, $fname) {
