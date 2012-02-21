@@ -539,6 +539,7 @@ M.core_dock.fixTitleOrientation = function(item, title, text) {
     svg.appendChild(txt);
 
     title.append(svg);
+    title.append(Y.Node.create('<span class="accesshide">'+text+'</span>'));
 
     item.on('dockeditem:drawcomplete', function(txt, title){
         txt.setAttribute('fill', Y.one(title).getStyle('color'));
