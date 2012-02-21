@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,58 +14,88 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
  * Test the different web service protocols.
  *
- * @author jerome@moodle.com
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package web service
+ * @package    core_webservice
+ * @copyright  2010 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 if (!defined('MOODLE_INTERNAL')) {
-    ///  It must be included from a Moodle page
+    // It must be included from a Moodle page
     die('Direct access to this script is forbidden.');
 }
 
 /**
- * How to configure this unit tests:
- * 0- Enable the web service you wish to test in the Moodle administration
- * 1- Create a service with all functions in the Moodle administration
- * 2- Create a token associate this service and to an admin (or a user with all required capabilities)
+ * Web service unit test class
+ *
+ * How to configure these unit tests:
+ * 0- Enable the web service you wish to test using Moodle site administration
+ * 1- Create a service with all functions using Moodle site administration
+ * 2- Create a token for this service. The token should be linked to an admin (or a user with all required capabilities)
  * 3- Configure setUp() function:
  *      a- write the token
  *      b- activate the protocols you wish to test
  *      c- activate the functions you wish to test (readonlytests and writetests arrays)
- *      d- set the number of time the web services are run
- * Do not run WRITE test function on a production site as they impact the DB (even though every
+ *      d- set the number of times the web services are run
+ * Do not run the WRITE test function on a production site as they impact the DB (even though every
  * test should clean the modified data)
  *
  * How to write a new function:
  * 1- Add the function name to the array readonlytests/writetests
  * 2- Set it as false when you commit!
- * 3- write the function  - Do not prefix the function name by 'test'
+ * 3- write the function  - Do not prefix the function name with 'test'
+ *
+ * @package    core_webservice
+ * @copyright  2010 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class webservice_test extends UnitTestCase {
 
+    /** @var string the token used to call the web service functions during tests */
     public $testtoken;
+
+    /** @var bool Set it to true if you want to test the functions with the REST protocol */
     public $testrest;
+
+    /** @var bool Set it to true if you want to test the functions with the XML-RPC protocol */
     public $testxmlrpc;
+
+    /** @var bool Set it to true if you want to test the functions with the SOAP protocol */
     public $testsoap;
+
+    /** @var bool Set it to true if you want to time profile the REST protocol */
     public $timerrest;
+
+    /** @var bool Set it to true if you want to time profile the XML-RPC protocol */
     public $timerxmlrpc;
+
+    /** @var bool Set it to true if you want to time profile the SOAP protocol */
     public $timersoap;
+
+    /** @var bool DB READ-ONLY functions. Only "set to true" functions are run.*/
     public $readonlytests;
+
+    /** @var bool DB WRITE functions. Only "set to true" functions are run. */
     public $writetests;
 
+    /**
+     * Test set up
+     */
     function setUp() {
         //token to test
         $this->testtoken = 'acabec9d20933913f14309785324f579';
 
         //protocols to test
-        $this->testrest = false; //Does not work till XML => PHP is implemented (MDL-22965)
+        $this->testrest = false; //TODO MDL-30210/MDL-22965 call REST in JSON mode
+                                 //DO NOT CHANGE
+                                 //The REST server cannot be tested till the issue ares fixed
         $this->testxmlrpc = false;
         $this->testsoap = false;
 
-        ////// READ-ONLY DB tests ////
+        // READ-ONLY DB tests
         $this->readonlytests = array(
             'moodle_group_get_groups' => false,
             'moodle_course_get_courses' => false,
@@ -78,7 +107,7 @@ class webservice_test extends UnitTestCase {
             'core_course_get_contents' => false
         );
 
-        ////// WRITE DB tests ////
+        // WRITE DB tests
         $this->writetests = array(
             'moodle_user_create_users' => false,
             'moodle_course_create_courses' => false,
@@ -105,6 +134,9 @@ class webservice_test extends UnitTestCase {
         $this->timersoap = 0;
     }
 
+    /**
+     * Run the tests
+     */
     function testRun() {
         global $CFG;
 
@@ -115,7 +147,8 @@ class webservice_test extends UnitTestCase {
 
         if (!empty($this->testtoken)) {
 
-            //Does not work till XML => PHP is implemented (MDL-22965)
+            //TODO MDL-30210/MDL-22965 call REST in JSON mode
+            //The REST cannot be tested till the issue ares fixed
             if ($this->testrest) {
 
                 $this->timerrest = time();
@@ -205,8 +238,11 @@ class webservice_test extends UnitTestCase {
         }
     }
 
-    ///// WEB SERVICE TEST FUNCTIONS
-
+    /**
+     * Test moodle_group_get_groups web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
     function moodle_group_get_groups($client) {
         global $DB;
         $dbgroups = $DB->get_records('groups');
@@ -221,6 +257,11 @@ class webservice_test extends UnitTestCase {
         $this->assertEqual(count($groups), count($groupids));
     }
 
+    /**
+     * Test moodle_webservice_get_siteinfo web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
     function moodle_webservice_get_siteinfo($client) {
         global $SITE, $CFG;
 
@@ -233,6 +274,11 @@ class webservice_test extends UnitTestCase {
         $this->assertEqual($info['siteurl'],  $CFG->wwwroot);
     }
 
+    /**
+     * Test moodle_user_get_users_by_id web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
     function moodle_user_get_users_by_id($client) {
         global $DB;
         $dbusers = $DB->get_records('user', array('deleted' => 0));
@@ -248,6 +294,11 @@ class webservice_test extends UnitTestCase {
         $this->assertEqual(count($users), count($userids));
     }
 
+    /**
+     * Test moodle_group_get_groups web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
     function core_course_get_contents($client) {
         global $DB, $CFG;
         $dbcourses = $DB->get_records('course');
@@ -269,10 +320,13 @@ class webservice_test extends UnitTestCase {
     }
 
     /**
+     * Test moodle_enrol_manual_enrol_users web service function
      * This test will:
      * 1- create a user (core call)
      * 2- enrol this user in the courses supporting enrolment
      * 3- unenrol this user (core call)
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
      */
     function moodle_enrol_manual_enrol_users($client) {
         global $DB, $CFG;
@@ -349,7 +403,11 @@ class webservice_test extends UnitTestCase {
         delete_role($roleid);
     }
 
-
+    /**
+     * Test moodle_enrol_get_enrolled_users web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
     function moodle_enrol_get_enrolled_users($client) {
         global $DB;
 
@@ -385,6 +443,11 @@ class webservice_test extends UnitTestCase {
         }
     }
 
+    /**
+     * Test moodle_course_get_courses web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
     function moodle_course_get_courses($client) {
         global $DB;
 
@@ -465,10 +528,15 @@ class webservice_test extends UnitTestCase {
         }
     }
 
+    /**
+     * Test moodle_course_create_courses web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
     function moodle_course_create_courses($client) {
         global $DB, $CFG;
 
-        ///Test data
+        // Test data
         $courseconfig = get_config('moodlecourse');
 
         $themeobjects = get_list_of_themes();
@@ -577,6 +645,11 @@ class webservice_test extends UnitTestCase {
                 array($dbcourse1->id, $dbcourse2->id));
     }
 
+    /**
+     * Test moodle_user_create_users web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
     function moodle_user_create_users($client) {
         global $DB, $CFG;
 
@@ -707,6 +780,11 @@ class webservice_test extends UnitTestCase {
                 array($dbuser1->id, $dbuser2->id));
     }
 
+    /**
+     * Test moodle_user_delete_users web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
     function moodle_user_delete_users($client) {
         global $DB, $CFG;
 
@@ -813,6 +891,11 @@ class webservice_test extends UnitTestCase {
         }
     }
 
+    /**
+     * Test moodle_user_update_users web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
     function moodle_user_update_users($client) {
         global $DB, $CFG;
 
@@ -994,6 +1077,11 @@ class webservice_test extends UnitTestCase {
         }
     }
 
+    /**
+     * Test moodle_role_assign web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
     function moodle_role_assign($client) {
         global $DB, $CFG;
 
@@ -1048,6 +1136,11 @@ class webservice_test extends UnitTestCase {
         }
     }
 
+    /**
+     * Test moodle_role_unassign web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
     function moodle_role_unassign($client) {
         global $DB, $CFG;
 
@@ -1107,11 +1200,9 @@ class webservice_test extends UnitTestCase {
     }
 
     /**
-     * READ ONLY test
-     * TODO: find a better solution that running web service for each course
-     * in the system
-     * For each courses, test the number of groups
-     * @param object $client
+     * Test moodle_group_get_course_groups web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
      */
     function moodle_group_get_course_groups($client) {
         global $DB;
@@ -1126,12 +1217,12 @@ class webservice_test extends UnitTestCase {
         }
     }
 
-
     /**
-     * READ ONLY test
+     * Test moodle_group_get_groupmembers web service function
      * Test that the same number of members are returned
      * for each existing group in the system
-     * @param object $client
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
      */
     function moodle_group_get_groupmembers($client) {
         global $DB;
@@ -1157,6 +1248,11 @@ class webservice_test extends UnitTestCase {
         
     }
 
+    /**
+     * Test moodle_group_add_groupmembers web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
     function moodle_group_add_groupmembers($client) {
         global $DB, $CFG;
 
@@ -1247,6 +1343,11 @@ class webservice_test extends UnitTestCase {
         
     }
 
+    /**
+     * Test moodle_group_delete_groupmembers web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
     function moodle_group_delete_groupmembers($client) {
         global $DB, $CFG;
 
@@ -1337,6 +1438,11 @@ class webservice_test extends UnitTestCase {
 
     }
 
+    /**
+     * Test moodle_group_create_groups web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
     function moodle_group_create_groups($client) {
         global $DB, $CFG;
 
@@ -1431,6 +1537,11 @@ class webservice_test extends UnitTestCase {
 
     }
 
+    /**
+     * Test moodle_group_delete_groups web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     */
     function moodle_group_delete_groups($client) {
         global $DB, $CFG;
 
@@ -1523,6 +1634,12 @@ class webservice_test extends UnitTestCase {
         $DB->delete_records('course_categories', array('id' => $category->id));
     }
 
+    /**
+     * Test moodle_message_send_messages web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     * @since Moodle 2.1
+     */
     function moodle_message_send_messages($client) {
         global $DB;
         $function = 'moodle_message_send_messages';
@@ -1540,7 +1657,13 @@ class webservice_test extends UnitTestCase {
         $this->assertEqual(count($success), 2);
     }
 
-     function moodle_notes_create_notes($client) {
+    /**
+     * Test moodle_notes_create_notes web service function
+     *
+     * @param webservice_rest_client|webservice_soap_client|webservice_xmlrpc_client $client the protocol test client
+     * @since Moodle 2.1
+     */
+    function moodle_notes_create_notes($client) {
         global $DB, $CFG;
 
         $note1 = array();

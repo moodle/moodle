@@ -1,37 +1,34 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// This file is part of Moodle - http://moodle.org/                      //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//                                                                       //
-// Moodle is free software: you can redistribute it and/or modify        //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation, either version 3 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// Moodle is distributed in the hope that it will be useful,             //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details.                          //
-//                                                                       //
-// You should have received a copy of the GNU General Public License     //
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.       //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
 
 /**
  * Web service documentation renderer.
- * @package   webservice
- * @copyright 2009 Moodle Pty Ltd (http://moodle.com)
- * @author    Jerome Mouneyrac
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @package    core_webservice
+ * @category   output
+ * @copyright  2009 Jerome Mouneyrac <jerome@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_webservice_renderer extends plugin_renderer_base {
 
     /**
      * Display the authorised user selector
-     * @param object $options
+     *
+     * @param stdClass $options It contains alloweduserselector, potentialuserselector and serviceid
      * @return string html
      */
     public function admin_authorised_user_selector(&$options) {
@@ -99,8 +96,10 @@ class core_webservice_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Display list of authorised user
-     * @param array $users
+     * Display list of authorised users
+     *
+     * @param array $users authorised users
+     * @param int $serviceid service id
      * @return string $html
      */
     public function admin_authorised_user_list($users, $serviceid) {
@@ -129,8 +128,9 @@ class core_webservice_renderer extends plugin_renderer_base {
 
     /**
      * Display a confirmation page to remove a function from a service
-     * @param object $function
-     * @param object $service
+     *
+     * @param stdClass $function It needs function id + function name properties.
+     * @param stdClass $service It needs service id + service name properties.
      * @return string html
      */
     public function admin_remove_service_function_confirmation($function, $service) {
@@ -148,7 +148,8 @@ class core_webservice_renderer extends plugin_renderer_base {
 
     /**
      * Display a confirmation page to remove a service
-     * @param object $service
+     *
+     * @param stdClass $service It needs service id + service name properties.
      * @return string html
      */
     public function admin_remove_service_confirmation($service) {
@@ -167,7 +168,8 @@ class core_webservice_renderer extends plugin_renderer_base {
 
     /**
      * Display a confirmation page to delete a token
-     * @param object $token
+     *
+     * @param stdClass $token Required properties: id (token id), firstname (user firstname), lastname (user lastname), name (service name)
      * @return string html
      */
     public function admin_delete_token_confirmation($token) {
@@ -188,10 +190,11 @@ class core_webservice_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Display list of function for a given service
-     * If the service is build-in do not display remove/add operation (read-only)
-     * @param array $functions
-     * @param object $service
+     * Display a list of functions for a given service
+     * If the service is built-in, do not display remove/add operation (read-only)
+     *
+     * @param array $functions list of functions
+     * @param stdClass $service the given service
      * @return string the table html + add operation html
      */
     public function admin_service_function_list($functions, $service) {
@@ -251,7 +254,8 @@ class core_webservice_renderer extends plugin_renderer_base {
 
     /**
      * Display Reset token confirmation box
-     * @param object $token to reset
+     *
+     * @param stdClass $token token to reset
      * @return string html
      */
     public function user_reset_token_confirmation($token) {
@@ -273,8 +277,10 @@ class core_webservice_renderer extends plugin_renderer_base {
 
     /**
      * Display user tokens with buttons to reset them
-     * @param object $tokens
-     * @param int $userid
+     *
+     * @param stdClass $tokens user tokens
+     * @param int $userid user id
+     * @param bool $documentation if true display a link to the API documentation
      * @return string html code
      */
     public function user_webservice_tokens_box($tokens, $userid, $documentation = false) {
@@ -326,7 +332,7 @@ class core_webservice_renderer extends plugin_renderer_base {
 
                 $validuntil = '';
                 if (!empty($token->validuntil)) {
-                    $validuntil = date("F j, Y"); //TODO: language support (look for moodle function)
+                    $validuntil = date("F j, Y"); //TODO MDL-31193 language support (look for moodle function)
                 }
 
                 $tokenname = $token->name;
@@ -357,20 +363,22 @@ class core_webservice_renderer extends plugin_renderer_base {
      * Return documentation for a ws description object
      * ws description object can be 'external_multiple_structure', 'external_single_structure'
      * or 'external_value'
+     *
      * Example of documentation for moodle_group_create_groups function:
-      list of (
-      object {
-      courseid int //id of course
-      name string //multilang compatible name, course unique
-      description string //group description text
-      enrolmentkey string //group enrol secret phrase
-      }
-      )
-     * @param object $params a part of parameter/return description
+     * list of (
+     *     object {
+     *         courseid int //id of course
+     *         name string //multilang compatible name, course unique
+     *         description string //group description text
+     *         enrolmentkey string //group enrol secret phrase
+     *     }
+     * )
+     *
+     * @param stdClass $params a part of parameter/return description
      * @return string the html to display
      */
     public function detailed_description_html($params) {
-        /// retrieve the description of the description object
+        // retrieve the description of the description object
         $paramdesc = "";
         if (!empty($params->desc)) {
             $paramdesc .= html_writer::start_tag('span', array('style' => "color:#2A33A6"));
@@ -401,12 +409,12 @@ class core_webservice_renderer extends plugin_renderer_base {
             $paramdesc .= html_writer::empty_tag('br', array());
         }
 
-        /// description object is a list
+        // description object is a list
         if ($params instanceof external_multiple_structure) {
             return $paramdesc . "list of ( " . html_writer::empty_tag('br', array())
             . $this->detailed_description_html($params->content) . ")";
         } else if ($params instanceof external_single_structure) {
-            /// description object is an object
+            // description object is an object
             $singlestructuredesc = $paramdesc . "object {" . html_writer::empty_tag('br', array());
             foreach ($params->keys as $attributname => $attribut) {
                 $singlestructuredesc .= html_writer::start_tag('b', array());
@@ -419,7 +427,7 @@ class core_webservice_renderer extends plugin_renderer_base {
             $singlestructuredesc .= html_writer::empty_tag('br', array());
             return $singlestructuredesc;
         } else {
-            /// description object is a primary type (string, integer)
+            // description object is a primary type (string, integer)
             switch ($params->type) {
                 case PARAM_BOOL: // 0 or 1 only for now
                 case PARAM_INT:
@@ -437,9 +445,10 @@ class core_webservice_renderer extends plugin_renderer_base {
 
     /**
      * Return a description object in indented xml format (for REST response)
-     * It is indented in order to be displayed into <pre> tag
-     * @param object $returndescription
-     * @param string $indentation composed by space only
+     * It is indented to be output within <pre> tags
+     *
+     * @param external_description $returndescription the description structure of the web service function returned value
+     * @param string $indentation Indentation in the generated HTML code; should contain only spaces.
      * @return string the html to diplay
      */
     public function description_in_indented_xml_format($returndescription, $indentation = "") {
@@ -448,7 +457,7 @@ class core_webservice_renderer extends plugin_renderer_base {
 
 
 EOF;
-        /// description object is a list
+        // description object is a list
         if ($returndescription instanceof external_multiple_structure) {
             $return = $indentation . "<MULTIPLE>" . $brakeline;
             $return .= $this->description_in_indented_xml_format($returndescription->content,
@@ -456,7 +465,7 @@ EOF;
             $return .= $indentation . "</MULTIPLE>" . $brakeline;
             return $return;
         } else if ($returndescription instanceof external_single_structure) {
-            /// description object is an object
+            // description object is an object
             $singlestructuredesc = $indentation . "<SINGLE>" . $brakeline;
             $keyindentation = $indentation . "    ";
             foreach ($returndescription->keys as $attributname => $attribut) {
@@ -469,7 +478,7 @@ EOF;
             $singlestructuredesc .= $indentation . "</SINGLE>" . $brakeline;
             return $singlestructuredesc;
         } else {
-            /// description object is a primary type (string, integer)
+            // description object is a primary type (string, integer)
             switch ($returndescription->type) {
                 case PARAM_BOOL: // 0 or 1 only for now
                 case PARAM_INT:
@@ -487,8 +496,9 @@ EOF;
 
     /**
      * Create indented XML-RPC  param description
-     * @param object $paramdescription
-     * @param string $indentation composed by space only
+     *
+     * @param external_description $paramdescription the description structure of the web service function parameters
+     * @param string $indentation Indentation in the generated HTML code; should contain only spaces.
      * @return string the html to diplay
      */
     public function xmlrpc_param_description_html($paramdescription, $indentation = "") {
@@ -497,7 +507,7 @@ EOF;
 
 
 EOF;
-        /// description object is a list
+        // description object is a list
         if ($paramdescription instanceof external_multiple_structure) {
             $return = $brakeline . $indentation . "Array ";
             $indentation = $indentation . "    ";
@@ -507,7 +517,7 @@ EOF;
             $return .= $brakeline . $indentation . ")";
             return $return;
         } else if ($paramdescription instanceof external_single_structure) {
-            /// description object is an object
+            // description object is an object
             $singlestructuredesc = $brakeline . $indentation . "Array ";
             $keyindentation = $indentation . "    ";
             $singlestructuredesc .= $brakeline . $keyindentation . "(";
@@ -520,7 +530,7 @@ EOF;
             $singlestructuredesc .= $brakeline . $keyindentation . ")";
             return $singlestructuredesc;
         } else {
-            /// description object is a primary type (string, integer)
+            // description object is a primary type (string, integer)
             switch ($paramdescription->type) {
                 case PARAM_BOOL: // 0 or 1 only for now
                 case PARAM_INT:
@@ -537,14 +547,15 @@ EOF;
     }
 
     /**
-     * Return the html of a colored box with content
+     * Return the html of a coloured box with content
+     *
      * @param string $title - the title of the box
      * @param string $content - the content to displayed
      * @param string $rgb - the background color of the box
-     * @return <type>
+     * @return string HTML code
      */
     public function colored_box_with_pre_tag($title, $content, $rgb = 'FEEBE5') {
-        //TODO: this tag removes xhtml strict error but cause warning
+        //TODO MDL-31192 this tag removes xhtml strict error but cause warning
         $coloredbox = html_writer::start_tag('div', array());
         $coloredbox .= html_writer::start_tag('div',
                         array('style' => "border:solid 1px #DEDEDE;background:#" . $rgb
@@ -563,8 +574,9 @@ EOF;
 
     /**
      * Return indented REST param description
-     * @param object $paramdescription
-     * @param string $indentation composed by space only
+     *
+     * @param external_description $paramdescription the description structure of the web service function parameters
+     * @param string $paramstring parameter
      * @return string the html to diplay
      */
     public function rest_param_description_html($paramdescription, $paramstring) {
@@ -572,13 +584,13 @@ EOF;
 
 
 EOF;
-        /// description object is a list
+        // description object is a list
         if ($paramdescription instanceof external_multiple_structure) {
             $paramstring = $paramstring . '[0]';
             $return = $this->rest_param_description_html($paramdescription->content, $paramstring);
             return $return;
         } else if ($paramdescription instanceof external_single_structure) {
-            /// description object is an object
+            // description object is an object
             $singlestructuredesc = "";
             $initialparamstring = $paramstring;
             foreach ($paramdescription->keys as $attributname => $attribut) {
@@ -588,7 +600,7 @@ EOF;
             }
             return $singlestructuredesc;
         } else {
-            /// description object is a primary type (string, integer)
+            // description object is a primary type (string, integer)
             $paramstring = $paramstring . '=';
             switch ($paramdescription->type) {
                 case PARAM_BOOL: // 0 or 1 only for now
@@ -606,11 +618,12 @@ EOF;
     }
 
     /**
-     * This display all the documentation
-     * @param array $functions contains all decription objects
-     * @param array $authparam keys contains 'tokenid'
+     * Displays all the documentation
+     *
+     * @param array $functions external_description of all the web service functions
      * @param boolean $printableformat true if we want to display the documentation in a printable format
-     * @param array $activatedprotocol
+     * @param array $activatedprotocol the currently enabled protocol
+     * @param array $authparams url parameters (it contains 'tokenid' and sometimes 'print')
      * @param string $parenturl url of the calling page - needed for the print button url:
      *               '/admin/documentation.php' or '/webservice/wsdoc.php' (default)
      * @return string the html to diplay
@@ -625,7 +638,7 @@ EOF;
 
 
 EOF;
-        /// Some general information
+        // Some general information
         $docinfo = new stdClass();
         $docurl = new moodle_url('http://docs.moodle.org/dev/Creating_a_web_service_client');
         $docinfo->doclink = html_writer::tag('a',
@@ -638,15 +651,14 @@ EOF;
         $documentationhtml .= $br . $br;
 
 
-        /// Print button
+        // Print button
         $authparams['print'] = true;
-        //$parameters = array ('token' => $token, 'wsusername' => $username, 'wspassword' => $password, 'print' => true);
         $url = new moodle_url($parenturl, $authparams); // Required
         $documentationhtml .= $this->output->single_button($url, get_string('print', 'webservice'));
         $documentationhtml .= $br;
 
 
-        /// each functions will be displayed into a collapsible region
+        // each functions will be displayed into a collapsible region
         //(opened if printableformat = true)
         foreach ($functions as $functionname => $description) {
 
@@ -663,7 +675,7 @@ EOF;
                 $documentationhtml .= $br;
             }
 
-            /// function global description
+            // function global description
             $documentationhtml .= $br;
             $documentationhtml .= html_writer::start_tag('div',
                             array('style' => 'border:solid 1px #DEDEDE;background:#E2E0E0;
@@ -672,13 +684,13 @@ EOF;
             $documentationhtml .= html_writer::end_tag('div');
             $documentationhtml .= $br . $br;
 
-            /// function arguments documentation
+            // function arguments documentation
             $documentationhtml .= html_writer::start_tag('span', array('style' => 'color:#EA33A6'));
             $documentationhtml .= get_string('arguments', 'webservice');
             $documentationhtml .= html_writer::end_tag('span');
             $documentationhtml .= $br;
             foreach ($description->parameters_desc->keys as $paramname => $paramdesc) {
-                /// a argument documentation
+                // a argument documentation
                 $documentationhtml .= html_writer::start_tag('span', array('style' => 'font-size:80%'));
 
                 if ($paramdesc->required == VALUE_REQUIRED) {
@@ -704,12 +716,12 @@ EOF;
                 $documentationhtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
                         . $paramdesc->desc; // argument description
                 $documentationhtml .= $br . $br;
-                ///general structure of the argument
+                // general structure of the argument
                 $documentationhtml .= $this->colored_box_with_pre_tag(
                                 get_string('generalstructure', 'webservice'),
                                 $this->detailed_description_html($paramdesc),
                                 'FFF1BC');
-                ///xml-rpc structure of the argument in PHP format
+                // xml-rpc structure of the argument in PHP format
                 if (!empty($activatedprotocol['xmlrpc'])) {
                     $documentationhtml .= $this->colored_box_with_pre_tag(
                                     get_string('phpparam', 'webservice'),
@@ -717,7 +729,7 @@ EOF;
                                             . $this->xmlrpc_param_description_html($paramdesc)),
                                     'DFEEE7');
                 }
-                ///POST format for the REST protocol for the argument
+                // POST format for the REST protocol for the argument
                 if (!empty($activatedprotocol['rest'])) {
                     $documentationhtml .= $this->colored_box_with_pre_tag(
                                     get_string('restparam', 'webservice'),
@@ -730,24 +742,24 @@ EOF;
             $documentationhtml .= $br . $br;
 
 
-            /// function response documentation
+            // function response documentation
             $documentationhtml .= html_writer::start_tag('span', array('style' => 'color:#EA33A6'));
             $documentationhtml .= get_string('response', 'webservice');
             $documentationhtml .= html_writer::end_tag('span');
             $documentationhtml .= $br;
-            /// function response description
+            // function response description
             $documentationhtml .= html_writer::start_tag('span', array('style' => 'font-size:80%'));
             if (!empty($description->returns_desc->desc)) {
                 $documentationhtml .= $description->returns_desc->desc;
                 $documentationhtml .= $br . $br;
             }
             if (!empty($description->returns_desc)) {
-                ///general structure of the response
+                // general structure of the response
                 $documentationhtml .= $this->colored_box_with_pre_tag(
                                 get_string('generalstructure', 'webservice'),
                                 $this->detailed_description_html($description->returns_desc),
                                 'FFF1BC');
-                ///xml-rpc structure of the response in PHP format
+                // xml-rpc structure of the response in PHP format
                 if (!empty($activatedprotocol['xmlrpc'])) {
                     $documentationhtml .= $this->colored_box_with_pre_tag(
                                     get_string('phpresponse', 'webservice'),
@@ -755,7 +767,7 @@ EOF;
                                                     $description->returns_desc)),
                                     'DFEEE7');
                 }
-                ///XML response for the REST protocol
+                // XML response for the REST protocol
                 if (!empty($activatedprotocol['rest'])) {
                     $restresponse = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
                             . $brakeline . "<RESPONSE>" . $brakeline;
@@ -771,7 +783,7 @@ EOF;
             $documentationhtml .= html_writer::end_tag('span');
             $documentationhtml .= $br . $br;
 
-            /// function errors documentation for REST protocol
+            // function errors documentation for REST protocol
             if (!empty($activatedprotocol['rest'])) {
                 $documentationhtml .= html_writer::start_tag('span', array('style' => 'color:#EA33A6'));
                 $documentationhtml .= get_string('errorcodes', 'webservice');
@@ -799,7 +811,7 @@ EOF;
             }
         }
 
-        /// close the table and return the documentation
+        // close the table and return the documentation
         $documentationhtml .= html_writer::end_tag('td');
         $documentationhtml .= html_writer::end_tag('tr');
         $documentationhtml .= html_writer::end_tag('table');
