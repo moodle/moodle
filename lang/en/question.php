@@ -386,6 +386,7 @@ $string['showmaxmarkonly'] = 'Show max mark only';
 $string['showquestiontext'] = 'Show question text in the question list';
 $string['shown'] = 'Shown';
 $string['shownumpartscorrect'] = 'Show the number of correct responses';
+$string['shownumpartscorrectwhenfinished'] = 'Show the number of correct responses once the question has finished';
 $string['specificfeedback'] = 'Specific feedback';
 $string['started'] = 'Started';
 $string['state'] = 'State';
