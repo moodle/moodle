@@ -40,7 +40,7 @@ $string['cannotsavezipfile'] = 'No s\'ha pogut desar el fitxer zip';
 $string['cannotunzipfile'] = 'No s\'ha pogut descomprimir el fitxer';
 $string['componentisuptodate'] = 'El component està al dia';
 $string['downloadedfilecheckfailed'] = 'Ha fallat la comprovació del fitxer baixat.';
-$string['invalidmd5'] = 'El md5 no és vàlid';
+$string['invalidmd5'] = 'L\'md5 no és vàlid. Torneu-ho a provar';
 $string['missingrequiredfield'] = 'Falta algun camp necessari';
 $string['remotedownloaderror'] = 'No s\'ha pogut baixar el component al vostre servidor. Verifiqueu els paràmetres de servidor intermediari. Es recomana l\'extensió cURL.<br /><br />Haureu de baixar manualment el fitxer <a href="{$a->url}">{$a->url}</a>, copiar-lo a la ubicació "{$a->dest}" del vostre servidor i descomprimir-lo allí.';
 $string['wrongdestpath'] = 'El camí de destinació és erroni';
