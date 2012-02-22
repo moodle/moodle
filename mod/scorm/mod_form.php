@@ -216,7 +216,7 @@ class mod_scorm_mod_form extends moodleform_mod {
             // Update packages timing
             $mform->addElement('select', 'updatefreq', get_string('updatefreq', 'scorm'), scorm_get_updatefreq_array());
             $mform->setDefault('updatefreq', $cfg_scorm->updatefreq);
-            $mform->setAdvanced('updatefreq', $cfg_scorm->updatefreq_adv);
+            $mform->setAdvanced('updatefreq');
             $mform->addHelpButton('updatefreq', 'updatefreq', 'scorm');
             $mform->disabledIf('updatefreq', 'scormtype', 'eq', SCORM_TYPE_LOCAL);
         } else {
