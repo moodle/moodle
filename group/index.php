@@ -1,12 +1,26 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
 /**
  * The main group management user interface.
  *
- * @copyright &copy; 2006 The Open University
- * @author N.D.Freear AT open.ac.uk
- * @author J.White AT open.ac.uk
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package groups
+ * @copyright 2006 The Open University, N.D.Freear AT open.ac.uk, J.White AT open.ac.uk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_group
  */
 require_once('../config.php');
 require_once('lib.php');
@@ -269,8 +283,8 @@ echo $OUTPUT->footer();
 /**
  * Returns the first button action with the given prefix, taken from
  * POST or GET, otherwise returns false.
- * See /lib/moodlelib.php function optional_param.
- * @param $prefix 'act_' as in 'action'.
+ * @see /lib/moodlelib.php function optional_param().
+ * @param string $prefix 'act_' as in 'action'.
  * @return string The action without the prefix, or false if no action found.
  */
 function groups_param_action($prefix = 'act_') {

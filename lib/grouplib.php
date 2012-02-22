@@ -18,8 +18,7 @@
 /**
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package    core
- * @subpackage group
+ * @package    core_group
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -43,9 +42,9 @@ define('VISIBLEGROUPS', 2);
 /**
  * Determines if a group with a given groupid exists.
  *
- * @global object
+ * @category group
  * @param int $groupid The groupid to check for
- * @return boolean True if the group exists, false otherwise or if an error
+ * @return bool True if the group exists, false otherwise or if an error
  * occurred.
  */
 function groups_group_exists($groupid) {
@@ -56,7 +55,7 @@ function groups_group_exists($groupid) {
 /**
  * Gets the name of a group with a specified id
  *
- * @global object
+ * @category group
  * @param int $groupid The id of the group
  * @return string The name of the group
  */
@@ -68,7 +67,7 @@ function groups_get_group_name($groupid) {
 /**
  * Gets the name of a grouping with a specified id
  *
- * @global object
+ * @category group
  * @param int $groupingid The id of the grouping
  * @return string The name of the grouping
  */
@@ -81,7 +80,7 @@ function groups_get_grouping_name($groupingid) {
  * Returns the groupid of a group with the name specified for the course.
  * Group names should be unique in course
  *
- * @global object
+ * @category group
  * @param int $courseid The id of the course
  * @param string $name name of group (without magic quotes)
  * @return int $groupid
@@ -98,7 +97,7 @@ function groups_get_group_by_name($courseid, $name) {
  * Returns the groupingid of a grouping with the name specified for the course.
  * Grouping names should be unique in course
  *
- * @global object
+ * @category group
  * @param int $courseid The id of the course
  * @param string $name name of group (without magic quotes)
  * @return int $groupid
@@ -114,8 +113,11 @@ function groups_get_grouping_by_name($courseid, $name) {
 /**
  * Get the group object
  *
+ * @category group
  * @param int $groupid ID of the group.
- * @return object group object
+ * @param string $fields (default is all fields)
+ * @param int $strictness (IGNORE_MISSING - default)
+ * @return stdGlass group object
  */
 function groups_get_group($groupid, $fields='*', $strictness=IGNORE_MISSING) {
     global $DB;
@@ -125,9 +127,11 @@ function groups_get_group($groupid, $fields='*', $strictness=IGNORE_MISSING) {
 /**
  * Get the grouping object
  *
+ * @category group
  * @param int $groupingid ID of the group.
  * @param string $fields
- * @return object group object
+ * @param int $strictness (IGNORE_MISSING - default)
+ * @return stdClass group object
  */
 function groups_get_grouping($groupingid, $fields='*', $strictness=IGNORE_MISSING) {
     global $DB;
@@ -137,6 +141,7 @@ function groups_get_grouping($groupingid, $fields='*', $strictness=IGNORE_MISSIN
 /**
  * Gets array of all groups in a specified course.
  *
+ * @category group
  * @param int $courseid The id of the course.
  * @param mixed $userid optional user id or array of ids, returns only groups of the user.
  * @param int $groupingid optional returns only groups in the specified grouping.
@@ -177,6 +182,7 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*
 /**
  * Returns info about user's groups in course.
  *
+ * @category group
  * @param int $courseid
  * @param int $userid $USER if not specified
  * @return array Array[groupingid][groupid] including grouping id 0 which means all groups
@@ -223,10 +229,9 @@ function groups_get_user_groups($courseid, $userid=0) {
 }
 
 /**
- * Gets array of all groupings in a specified course.
+ * Gets an array of all groupings in a specified course.
  *
- * @global object
- * @global object
+ * @category group
  * @param int $courseid return only groupings in this with this courseid
  * @return array|bool Returns an array of the grouping objects or false if no records
  * or an error occurred.
@@ -247,11 +252,10 @@ function groups_get_all_groupings($courseid) {
  *
  * If $userid is null, use the global object.
  *
- * @global object
- * @global object
+ * @category group
  * @param int $groupid The group to check for membership.
  * @param int $userid The user to check against the group.
- * @return boolean True if the user is a member, false otherwise.
+ * @return bool True if the user is a member, false otherwise.
  */
 function groups_is_member($groupid, $userid=null) {
     global $USER, $DB;
@@ -266,13 +270,11 @@ function groups_is_member($groupid, $userid=null) {
 /**
  * Determines if current or specified is member of any active group in activity
  *
- * @global object
- * @global object
- * @global object
+ * @category group
  * @staticvar array $cache
- * @param object $cm coruse module object
- * @param int $userid id of user, null menas $USER->id
- * @return booelan true if user member of at least one group used in activity
+ * @param cm_info $cm course module object
+ * @param int $userid id of user, null means $USER->id
+ * @return bool true if user member of at least one group used in activity
  */
 function groups_has_membership($cm, $userid=null) {
     global $CFG, $USER, $DB;
@@ -311,7 +313,7 @@ function groups_has_membership($cm, $userid=null) {
 /**
  * Returns the users in the specified group.
  *
- * @global object
+ * @category group
  * @param int $groupid The groupid to get the users for
  * @param int $fields The fields to return
  * @param int $sort optional sorting of returned users
@@ -331,10 +333,10 @@ function groups_get_members($groupid, $fields='u.*', $sort='lastname ASC') {
 /**
  * Returns the users in the specified grouping.
  *
- * @global object
+ * @category group
  * @param int $groupingid The groupingid to get the users for
- * @param int $fields The fields to return
- * @param int $sort optional sorting of returned users
+ * @param string $fields The fields to return
+ * @param string $sort optional sorting of returned users
  * @return array|bool Returns an array of the users for the specified
  * group or false if no users or an error returned.
  */
@@ -352,7 +354,9 @@ function groups_get_grouping_members($groupingid, $fields='u.*', $sort='lastname
 /**
  * Returns effective groupmode used in course
  *
- * @return integer group mode
+ * @category group
+ * @param stdClass $course course object.
+ * @return int group mode
  */
 function groups_get_course_groupmode($course) {
     return $course->groupmode;
@@ -362,11 +366,10 @@ function groups_get_course_groupmode($course) {
  * Returns effective groupmode used in activity, course setting
  * overrides activity setting if groupmodeforce enabled.
  *
- * @global object
- * @global object
- * @param object $cm the course module object. Only the ->course and ->groupmode need to be set.
- * @param object $course object optional course object to improve perf
- * @return integer group mode
+ * @category group
+ * @param cm_info $cm the course module object. Only the ->course and ->groupmode need to be set.
+ * @param stdClass $course object optional course object to improve perf
+ * @return int group mode
  */
 function groups_get_activity_groupmode($cm, $course=null) {
     global $COURSE, $DB;
@@ -388,9 +391,10 @@ function groups_get_activity_groupmode($cm, $course=null) {
 /**
  * Print group menu selector for course level.
  *
+ * @category group
  * @param stdClass $course course object
- * @param string|moodle_url $urlroot return address
- * @param boolean $return return as string instead of printing
+ * @param mixed $urlroot return address. Accepts either a string or a moodle_url
+ * @param bool $return return as string instead of printing
  * @return mixed void or string depending on $return param
  */
 function groups_print_course_menu($course, $urlroot, $return=false) {
@@ -459,11 +463,12 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
 /**
  * Print group menu selector for activity.
  *
+ * @category group
  * @param stdClass $cm course module object
  * @param string|moodle_url $urlroot return address that users get to if they choose an option;
  *   should include any parameters needed, e.g. "$CFG->wwwroot/mod/forum/view.php?id=34"
- * @param boolean $return return as string instead of printing
- * @param boolean $hideallparticipants If true, this prevents the 'All participants'
+ * @param bool $return return as string instead of printing
+ * @param bool $hideallparticipants If true, this prevents the 'All participants'
  *   option from appearing in cases where it normally would. This is intended for
  *   use only by activities that cannot display all groups together. (Note that
  *   selecting this option does not prevent groups_get_activity_group from
@@ -551,8 +556,9 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
 /**
  * Returns group active in course, changes the group by default if 'group' page param present
  *
+ * @category group
  * @param stdClass $course course bject
- * @param boolean $update change active group if group param submitted
+ * @param bool $update change active group if group param submitted
  * @param array $allowedgroups list of groups user may access (INTERNAL, to be used only from groups_print_course_menu())
  * @return mixed false if groups not used, int if groups used, 0 means all groups (access must be verified in SEPARATE mode)
  */
@@ -602,8 +608,9 @@ function groups_get_course_group($course, $update=false, $allowedgroups=null) {
 /**
  * Returns group active in activity, changes the group by default if 'group' page param present
  *
+ * @category group
  * @param stdClass $cm course module object
- * @param boolean $update change active group if group param submitted
+ * @param bool $update change active group if group param submitted
  * @param array $allowedgroups list of groups user may access (INTERNAL, to be used only from groups_print_activity_menu())
  * @return mixed false if groups not used, int if groups used, 0 means all groups (access must be verified in SEPARATE mode)
  */
@@ -654,7 +661,8 @@ function groups_get_activity_group($cm, $update=false, $allowedgroups=null) {
  * Gets a list of groups that the user is allowed to access within the
  * specified activity.
  *
- * @param object $cm Course-module
+ * @category group
+ * @param stdClass $cm Course-module
  * @param int $userid User ID (defaults to current user)
  * @return array An array of group objects, or false if none
  */
@@ -684,9 +692,10 @@ function groups_get_activity_allowed_groups($cm,$userid=0) {
  *
  * $USER If $userid is null, use the global object.
  *
- * @param int $cm The course module
+ * @category group
+ * @param stdClass $cm The course module
  * @param int $userid The user to check against the group.
- * @return boolean True if the user can view the course module, false otherwise.
+ * @return bool True if the user can view the course module, false otherwise.
  */
 function groups_course_module_visible($cm, $userid=null) {
     global $CFG, $USER;
@@ -709,12 +718,10 @@ function groups_course_module_visible($cm, $userid=null) {
 /**
  * Internal method, sets up $SESSION->activegroup and verifies previous value
  *
- * @private
  * @param int $courseid
  * @param int|string $groupmode SEPARATEGROUPS, VISIBLEGROUPS or 'aag' (access all groups)
  * @param int $groupingid 0 means all groups
- * @param all $allowedgroups list of groups user can see
- * @return void
+ * @param array $allowedgroups list of groups user can see
  */
 function _group_verify_activegroup($courseid, $groupmode, $groupingid, array $allowedgroups) {
     global $SESSION, $USER;
