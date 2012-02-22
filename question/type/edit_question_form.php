@@ -348,9 +348,12 @@ abstract class question_edit_form extends question_wizard_form {
 
         $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
         foreach ($fields as $feedbackname) {
-            $mform->addElement('editor', $feedbackname, get_string($feedbackname, 'question'),
+            $element = $mform->addElement('editor', $feedbackname,
+                                get_string($feedbackname, 'question'),
                                 array('rows' => 5), $this->editoroptions);
             $mform->setType($feedbackname, PARAM_RAW);
+            // Using setValue() as setDefault() does not work for the editor class.
+            $element->setValue(array('text'=>get_string($feedbackname.'default', 'question')));
 
             if ($withshownumpartscorrect && $feedbackname == 'partiallycorrectfeedback') {
                 $mform->addElement('advcheckbox', 'shownumcorrect',
