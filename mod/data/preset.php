@@ -183,8 +183,7 @@ if (optional_param('sesskey', false, PARAM_BOOL) && confirm_sesskey()) {
                print_error('invalidrequest');
             }
 
-            $presetpath = data_preset_path($course, $userid, $shortname);
-            fulldelete($presetpath);
+            data_delete_site_preset($shortname);
 
             $strdeleted = get_string('deleted', 'data');
             echo $OUTPUT->notification("$shortname $strdeleted", 'notifysuccess');
