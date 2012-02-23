@@ -18,7 +18,7 @@
 /**
  * Library functions to facilitate the use of ajax JavaScript in Moodle.
  *
- * @package   moodlecore
+ * @package   core
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
