@@ -18,17 +18,21 @@ M.core_completion.init = function(Y) {
 
         } else {
             var current = args.state.get('value');
-
+            var modulename = args.modulename.get('value');
             if (current == 1) {
+                var altstr = M.str.completion['completion-alt-manual-y'].replace('{$a}', modulename);
+                var titlestr = M.str.completion['completion-title-manual-y'].replace('{$a}', modulename);
                 args.state.set('value', 0);
                 args.image.set('src', M.util.image_url('i/completion-manual-y', 'moodle'));
-                args.image.set('alt', M.str.completion['completion-alt-manual-y']);
-                args.image.set('title', M.str.completion['completion-title-manual-y']);
+                args.image.set('alt', altstr);
+                args.image.set('title', titlestr);
             } else {
+                var altstr = M.str.completion['completion-alt-manual-n'].replace('{$a}', modulename);
+                var titlestr = M.str.completion['completion-title-manual-n'].replace('{$a}', modulename);
                 args.state.set('value', 1);
                 args.image.set('src', M.util.image_url('i/completion-manual-n', 'moodle'));
-                args.image.set('alt', M.str.completion['completion-alt-manual-n']);
-                args.image.set('title', M.str.completion['completion-title-manual-n']);
+                args.image.set('alt', altstr);
+                args.image.set('title', titlestr);
             }
         }
 
@@ -48,6 +52,7 @@ M.core_completion.init = function(Y) {
         var completionstate = 0;
         var state = null;
         var image = null;
+        var modulename = null;
 
         var inputs = Y.Node.getDOMNode(form).getElementsByTagName('input');
         for (var i=0; i<inputs.length; i++) {
@@ -58,6 +63,9 @@ M.core_completion.init = function(Y) {
                   case 'completionstate':
                      completionstate = inputs[i].value;
                      state = Y.one(inputs[i]);
+                     break;
+                  case 'modulename':
+                     modulename = Y.one(inputs[i]);
                      break;
             }
             if (inputs[i].type == 'image') {
@@ -76,7 +84,7 @@ M.core_completion.init = function(Y) {
                 success: handle_success,
                 failure: handle_failure
             },
-            arguments: {state: state, image: image, ajax: ajax}
+            arguments: {state: state, image: image, ajax: ajax, modulename: modulename}
         };
 
         Y.use('io', function(Y) {
