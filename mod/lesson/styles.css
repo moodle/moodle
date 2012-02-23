@@ -13,7 +13,7 @@
 .path-mod-lesson .menu .menuwrapper {max-height: 400px;overflow: auto;vertical-align: top;margin-bottom: 10px;}
 .path-mod-lesson .menu ul {list-style: none;padding: 5px 0px 0px 5px;margin: 0px;}
 .path-mod-lesson .menu ul li {padding-bottom: 5px;}
-.path-mod-lesson .skip {position: absolute;left: -1000em;width: 20em;}
+.path-mod-lesson .skip {position: absolute;top: -1000em;width: 20em;}
 .path-mod-lesson .branchbuttoncontainer.horizontal div,
 .path-mod-lesson .branchbuttoncontainer.horizontal form {display: inline;}
 .path-mod-lesson .firstpageoptions {width:30%;margin-left:35%;margin-top:1em;}
