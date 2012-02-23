@@ -397,7 +397,7 @@ function coursetag_get_tagged_courses($tagid) {
         foreach ($crs as $c) {
             $course = $DB->get_record('course', array('id'=>$c->itemid));
             // check if the course is hidden
-            if ($course->visible == 1 || has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
+            if ($course->visible == 1 || has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course->id))) {
                 $courses[$c->itemid] = $course;
             }
         }
