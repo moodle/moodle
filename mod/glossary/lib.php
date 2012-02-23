@@ -1462,6 +1462,65 @@ function glossary_get_file_areas($course, $cm, $context) {
 }
 
 /**
+ * File browsing support for glossary module.
+ *
+ * @param file_browser $browser
+ * @param array $areas
+ * @param stdClass $course
+ * @param cm_info $cm
+ * @param context $context
+ * @param string $filearea
+ * @param int $itemid
+ * @param string $filepath
+ * @param string $filename
+ * @return file_info_stored file_info_stored instance or null if not found
+ */
+function mod_glossary_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+    global $CFG, $DB;
+
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        return null;
+    }
+
+    if ($filearea === 'attachment' or $filearea === 'entry') {
+        if (!$entry = $DB->get_record('glossary_entries', array('id' => $itemid))) {
+            return null;
+        }
+
+        if (!$glossary = $DB->get_record('glossary', array('id' => $cm->instance))) {
+            return null;
+        }
+
+        if ($glossary->defaultapproval and !$entry->approved and !has_capability('mod/glossary:approve', $context)) {
+            return null;
+        }
+
+        // this trickery here is because we need to support source glossary access
+        if ($entry->glossaryid == $cm->instance) {
+            $filecontext = $context;
+        } else if ($entry->sourceglossaryid == $cm->instance) {
+            if (!$maincm = get_coursemodule_from_instance('glossary', $entry->glossaryid)) {
+                return null;
+            }
+            $filecontext = get_context_instance(CONTEXT_MODULE, $maincm->id);
+        } else {
+            return null;
+        }
+
+        $fs = get_file_storage();
+        $filepath = is_null($filepath) ? '/' : $filepath;
+        $filename = is_null($filename) ? '.' : $filename;
+        if (!($storedfile = $fs->get_file($filecontext->id, 'mod_glossary', $filearea, $itemid, $filepath, $filename))) {
+            return null;
+        }
+        $urlbase = $CFG->wwwroot.'/pluginfile.php';
+        return new file_info_stored($browser, $filecontext, $storedfile, $urlbase, $filearea, $itemid, true, true, false);
+    }
+
+    return null;
+}
+
+/**
  * Serves the glossary attachments. Implements needed access control ;-)
  *
  * @param object $course
