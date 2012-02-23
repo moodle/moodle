@@ -376,7 +376,13 @@ function form_filemanager_render($options) {
         $extra = '';
     }
 
-    $maxsize = get_string('maxfilesize', 'moodle', display_size(get_max_upload_file_size($CFG->maxbytes, $course_maxbytes, $options->maxbytes)));
+    $maxbytes = display_size(get_max_upload_file_size($CFG->maxbytes, $course_maxbytes, $options->maxbytes));
+    if (empty($options->maxfiles) || $options->maxfiles == -1) {
+        $maxsize = get_string('maxfilesize', 'moodle', $maxbytes);
+    } else {
+        $strparam = (object)array('size' => $maxbytes, 'attachments' => $options->maxfiles);
+        $maxsize = get_string('maxsizeandattachments', 'moodle', $strparam);
+    }
     $strdndenabled = get_string('dndenabled_insentence', 'moodle').$OUTPUT->help_icon('dndenabled');
     $loading = get_string('loading', 'repository');
     $html .= <<<FMHTML
