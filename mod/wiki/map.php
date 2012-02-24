@@ -62,6 +62,7 @@ add_to_log($course->id, "wiki", "map", "map.php?id=$cm->id", "$wiki->id");
 
 /// Finish the page
 $wikipage = new page_wiki_map($wiki, $subwiki, $cm);
+add_to_log($course->id, "wiki", "view map", "map.php?pageid=$pageid", "$page->title", $cm->id);
 
 $wikipage->set_view($option);
 $wikipage->set_page($page);

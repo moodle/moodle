@@ -221,6 +221,14 @@ abstract class page_wiki {
     }
 
     /**
+     * returns title of the wiki page
+     * @return string
+     */
+    function get_title() {
+        return $this->title;
+    }
+
+    /**
      * Method to set current group id
      * @param int $gid Current group id
      */
@@ -935,11 +943,14 @@ class page_wiki_create extends page_wiki {
             $this->subwiki = wiki_get_subwiki($swid);
         }
         if ($data) {
+            $this->set_title($data->pagetitle);
             $id = wiki_create_page($this->subwiki->id, $data->pagetitle, $data->pageformat, $USER->id);
         } else {
+            $this->set_title($pagetitle);
             $id = wiki_create_page($this->subwiki->id, $pagetitle, $PAGE->activityrecord->defaultformat, $USER->id);
         }
-        redirect($CFG->wwwroot . '/mod/wiki/edit.php?pageid=' . $id);
+        $this->page = $id;
+        return $id;
     }
 }
 

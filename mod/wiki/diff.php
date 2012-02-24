@@ -74,6 +74,8 @@ $wikipage = new page_wiki_diff($wiki, $subwiki, $cm);
 $wikipage->set_page($page);
 $wikipage->set_comparison($compare, $comparewith);
 
+add_to_log($course->id, "wiki", "view diff", "diff.php?pageid=$pageid&comparewith=$comparewith&compare=$compare", "$page->title", $cm->id);
+
 $wikipage->print_header();
 
 $wikipage->print_content();
