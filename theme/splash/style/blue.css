@@ -2,118 +2,86 @@
 **
 ** Theme name: Splash
 ** Creation Date: 30/06/09
-** Author: Synergy Learning
+** Author: Caroline Kennedy - Synergy Learning
 ** Author URI: http://synergylearning.com
 **
 *********************************************************/
 
-/* Global 
-------------------------*/
-
-body.splash-blue {                /* Define margins and background colour/image */
+body.splash-blue {
     background: url([[pix:theme|bgblue]]) top left repeat-x #fff;
-    margin: 0 auto;
-    padding: 0;
-    width: 100%;
 }
-
-.splash-blue a:link {        /* Defining all link styles*/
+.splash-blue a:link,
+.splash-blue a:visited,
+.splash-blue a:active {
     color: #3d6276;
 }
-
-.splash-blue a:visited {        /* Setting all visited link styles */
-    color: #3d6276;
-}
-
-.splash-blue a:hover {        /* Setting all rollover link styles */
+.splash-blue a:hover {
     color: #294b5d;
 }
-
-.splash-blue a:active {        /* Setting all active link styles */
-    color: #3d6276;
-}
-
-
-/* Header 
------------------------*/
-.splash-blue #page-header {            /* Set height for header */
-    float: none;
-    padding: 0;
-    margin:0;
-    color: #fff;
-    height: 308px;
-    background: url([[pix:theme|pageheaderbgblue]]) top center no-repeat;
-
-}
-
-.splash-blue #logobox{  /* holder background for logo*/
-    height: 185px;
-    width: 252px;
-    margin: auto;
-    text-align: center;
-    background: url([[pix:theme|lbgv2blue]]) no-repeat;
-    float: left;
-}
-
-
-.splash-blue #colourswitcher p{
-    color:#3d6276
-}
-
-
-/* Custom Menu
------------------------*/
-.splash-blue #custommenu .yui3-menu-content ul.first-of-type li{
-    border-right: 1px solid #bfced7;
-}
-
-.splash-blue #custommenu div.yui3-menu.custom_menu_submenu .yui3-menu-content{
-    background:#3d6276;
-    border:1px solid #fff;
-    color: #fff;
-}
-
-/* Content
------------------------*/
-
-.splash-blue .coursebox{
-    padding-left:5px;
-    border-bottom: 1px dashed #cbd3d6;
-}
-
-.splash-blue ul.topics li#section-0, ul.weeks li#section-0 {
-    background: #386377;
-    border: 1px solid #ccc;
-}
-
-/* Sideblocks
------------------------*/
-
-.splash-blue #region-pre .block .header,
-.splash-blue #region-post .block .header {  /*-- right block header   --*/
-    background: url([[pix:theme|sbheaderbg2blue]]) center no-repeat;
-    padding: 12px 5px 5px;
-    color: #fff;
-}
-
-/* Mini Calendar
-------------------------*/
-
-.splash-blue .block .minicalendar td.weekend {    /* setting weekend date colour */
+.splash-blue #region-main h1,
+.splash-blue #region-main h3,
+.splash-blue #region-main h6 {
     color:#3d6276;
 }
-
-
-/* Forum
-------------------------*/
-
-.splash-blue .forumpost .topic .subject,
-.path-blog.splash-blue .forumpost .subject a,
-.path-blog.splash-blue .forumpost .subject a:link,
-.path-blog.splash-blue .forumpost .subject a:visited {    /* forum subject section inside topic header */
-    font-weight: bold;
-    font-size: 1.1em;
-    padding-left: 5px;
-    background: #3d6276;
-    color: #fff;
+.splash-blue #page-header {
+    background: url([[pix:theme|pageheaderbgblue]]) top center no-repeat;
+}
+.splash-blue #logobox{
+    background: url([[pix:theme|lbgv2blue]]) no-repeat;
+}
+.splash-blue #colourswitcher p{
+    color:#3d6276;
+}
+.splash-blue .navbar .breadcrumb a {
+    color:#3d6276;
+}
+.splash-blue .navbar .arrow {
+    color:#3d6276;
+}
+.splash-blue .course-content ul.topics li.section .left {
+    color:#3d6276;
+}
+.splash-blue .mform fieldset legend {
+    color:#3d6276;
+}
+.splash-blue .tabtree .tabrow0 a:hover{
+    color:#294b5d;
+}
+.splash-blue .tabtree .tabrow0 .here a {
+    color:#3d6276;
+}
+.splash-blue .tabtree .tabrow0 .here a:hover{
+    background:#fff;color: #294b5d;
+}
+.splash-blue .tabtree .here ul .here a.nolink:hover {
+    color:#3d6276;
+}
+.splash-blue .coursebox{
+    border-bottom: 1px dashed #cbd3d6;
+}
+.splash-blue #categoryquestions tr th{
+    background:#3d6276;
+}
+.splash-blue .path-mod-quiz .qnbutton {
+    background:#3d6276; color:#fff;
+}
+.splash-blue .path-mod-quiz .qnbutton.open {
+    background:#3d6276;
+}
+.splash-blue .block-region .block .header {
+    background: url([[pix:theme|sbheaderbg2blue]]) top center no-repeat
+}
+.splash-blue .block .minicalendar td.weekend {
+    color:#3d6276;
+}
+.splash-blue .pagelayout-redirect {
+    border-top: 1px solid #294b5d;
+}
+.splash-blue #dock {
+    background-color:#3d6276;
+    border-right:1px solid #3d6276;
+}
+.splash-blue #dock .dockedtitle {
+    border-top:1px solid #627680;
+    border-bottom:1px solid #294b5d;
 }
