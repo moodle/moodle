@@ -4,15 +4,15 @@
 
 .forumpost {border: 1px solid #CACACA;}
 .forumpost .row {background-color:#FFF;}
-.forumpost .row.header {background-color:[[setting:blockcontentbgc]];background-image:none;}
-.forumpost.firstpost .row.header {background-color:[[setting:lblockcolumnbgc]];}
+.forumpost .row.header {background-color:#E3DFD4;background-image:none;}
+.forumpost.firstpost .row.header {background-color:#E3DFD4;}
 .forumpost .topic .author {font-size: 0.8em;padding:4px;}
 .forumpost .topic .subject {font-weight: bold;padding:4px 4px 0;}
 .forumpost .options div {border-top: 1px dotted #DBDBDB;}
 .forumpost .content div,
 .forumpost .options div {padding:4px;}
-.forumpost.unread {background: #9EBEFF;}
-.forumpost.unread .content {border:2px solid #DBDBDB;} /** inside border of unread posts in nested format in */
+.forumpost.unread .content {background-color: [[setting:lblockcolumnbgc]];} /** inside of unread posts in nested format in */
+.forumpost .row .topic {background-color: #E3DFD4;}
 
 #page-mod-forum-view .forummode,
 .path-mod-forum .forumheaderlist .replies {text-align: center;}
@@ -31,3 +31,4 @@
 #email .unsubscribelink {border-width: 0px 1px 0px 0px;border-style: solid;text-align:center;}
 #page-mod-forum-view .highlight2 {color:#AA0000;}
 #page-mod-forum-view.dir-rtl .forumheaderlist .discussion .starter {text-align:right;}
+#page-mod-forum-view .unread {background: #E3DFD4;}
