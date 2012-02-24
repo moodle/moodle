@@ -1005,6 +1005,7 @@ $string['unicodeupgradenotice'] = 'In Moodle 1.6 we have migrated all languages 
 $string['uninstall'] = 'Uninstall selected language pack';
 $string['uninstallconfirm'] = 'You are about to completely uninstall language pack {$a}, are you sure?';
 $string['uninstallplugin'] = 'Uninstall';
+$string['unsettheme'] = 'Unset theme';
 $string['unsupported'] = 'Unsupported';
 $string['updateaccounts'] = 'Update existing accounts';
 $string['updatecomponent'] = 'Update component';
