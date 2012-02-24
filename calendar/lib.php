@@ -1622,13 +1622,13 @@ function calendar_format_event_time($event, $now, $linkparams = null, $usecommon
             }
         }
     } else {
-        $time = ' ';
+        $time = calendar_time_representation($event->timestart);
 
         // Set printable representation
         if (!$showtime) {
             $day = calendar_day_representation($event->timestart, $now, $usecommonwords);
             $url = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', $linkparams), $startdate['mday'], $startdate['mon'], $startdate['year']);
-            $eventtime = html_writer::link($url, $day).trim($time);
+            $eventtime = html_writer::link($url, $day).', '.trim($time);
         } else {
             $eventtime = $time;
         }
