@@ -210,5 +210,31 @@ pre, code, tt {
 .capdefault {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;background-color:#E3DFD4;}
 table#defineroletable th {border-top:none;}
 
+form.loginform .rememberusername {
+    padding-left:0.3em;
+    width: auto;
+}
+
+/* RSS - MDL-29367 */
+.block_rss_client .list li:first-child {
+    border-top-width: 0;
+}
+
+.block_rss_client .list li {
+    border-top: 1px solid #DDDDDD;
+    padding: 5px;
+}
+
+/* Upcoming events - MDL-29367 */
+/* to have the same separator as in .block_rss_client .list li */
+.block_calendar_upcoming .content > hr {
+    display:none;
+}
+
+.block_calendar_upcoming .event {
+    border-bottom: 1px solid #DDDDDD;
+    padding: 5px;
+}
+
 /** Custom CSS **/
 [[setting:customcss]]
