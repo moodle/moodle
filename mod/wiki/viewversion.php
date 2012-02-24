@@ -67,6 +67,8 @@ $wikipage = new page_wiki_viewversion($wiki, $subwiki, $cm);
 $wikipage->set_page($page);
 $wikipage->set_versionid($versionid);
 
+add_to_log($course->id, "wiki", "view version", "viewversion.php?pageid=$pageid&versionid=$versionid", "$page->title", $cm->id);
+
 $wikipage->print_header();
 $wikipage->print_content();
 
