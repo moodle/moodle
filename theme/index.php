@@ -76,14 +76,11 @@ if ($reset and confirm_sesskey()) {
 // Otherwise, show either a list of devices, or is enabledevicedetection set to no or a
 // device is specified show a list of themes.
 
-echo $OUTPUT->header('themeselector');
-echo $OUTPUT->heading(get_string('themes'));
-
-echo $OUTPUT->single_button(new moodle_url('index.php', array('sesskey' => sesskey(), 'reset' => 1)), get_string('themeresetcaches', 'admin'));
-
 $table = new html_table();
 $table->data = array();
+$heading = '';
 if (!empty($CFG->enabledevicedetection) && empty($device)) {
+    $heading = get_string('selectdevice', 'admin');
     // Display a list of devices that a user can select a theme for.
 
     $strthemenotselected = get_string('themenoselected', 'admin');
@@ -91,7 +88,7 @@ if (!empty($CFG->enabledevicedetection) && empty($device)) {
 
     // Display the device selection screen
     $table->id = 'admindeviceselector';
-    $table->head = array(get_string('devicetype', 'admin'), get_string('theme'), get_string('info'));
+    $table->head = array(get_string('devicetype', 'admin'), get_string('currenttheme', 'admin'), get_string('info'));
 
     $devices = get_device_type_list();
     foreach ($devices as $device) {
@@ -132,7 +129,7 @@ if (!empty($CFG->enabledevicedetection) && empty($device)) {
 } else {
     // Either a device has been selected of $CFG->enabledevicedetection is off so display a list
     // of themes to select.
-
+    $heading = get_string('selecttheme', 'admin', $device);
     if (empty($device)) {
         // if $CFG->enabledevicedetection is off this will return 'default'
         $device = get_device_type();
@@ -194,6 +191,10 @@ if (!empty($CFG->enabledevicedetection) && empty($device)) {
         $table->rowclasses[$themename] = join(' ', $rowclasses);
     }
 }
+echo $OUTPUT->header('themeselector');
+echo $OUTPUT->heading($heading);
+
+echo $OUTPUT->single_button(new moodle_url('index.php', array('sesskey' => sesskey(), 'reset' => 1)), get_string('themeresetcaches', 'admin'));
 
 echo html_writer::table($table);
 
