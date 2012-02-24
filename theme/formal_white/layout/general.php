@@ -116,7 +116,6 @@ echo $OUTPUT->doctype() ?>
                                         </div>
                                         <!-- end of main mandatory content of the moodle page -->
 
-
                                         <!-- left column block - diplayed only if... -->
                                         <?php if ($hassidepre) { ?>
                                         <div id="region-pre" class="block-region">
