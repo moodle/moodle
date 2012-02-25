@@ -1,30 +1,21 @@
 /* @group Core */
 
-.pagelayout-frontpage,
-.pagelayout-incourse,
-.pagelayout-general,
-.pagelayout-course,
-.pagelayout-coursecategory,
-.pagelayout-admin,
-.pagelayout-mydashboard,
-.pagelayout-mypublic,
-.pagelayout-login,
-.pagelayout-report {
-    background:url([[pix:theme|body]]) top left repeat-x #dcecf9;
+html, body {
+    background: #dcecf9 url([[pix:theme|body]]) left top repeat-x fixed;
 }
-
-body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {
-    font-family:Arial, Helvetica, sans-serif;
-    color:#333;
+body.pagelayout-popup.background {
+    background: #dcecf9 url([[pix:theme|body]]) left top repeat-x fixed !important;
 }
-
+#page, h1, h2, h3, h4, h5, h6, p, ul, ol, dl, input, textarea {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #333;
+}
 #wrapper {
-    background:#fff;
-    margin:20px 5% 0px 5%;
-    padding:0px;
-    border:1px solid #c1bc9d;
+    background: #fff;
+    margin: 20px 5% 0;
+    padding: 0px;
+    border: 1px solid #c1bc9d;
 }
-
 #page-content-wrapper {
     padding: 0px;
     padding-top: 0px;
@@ -32,23 +23,19 @@ body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {
     border-top: 1px solid #ccc;
 }
 .pagelayout-frontpage #page-content #region-main-box #region-post-box {
-  padding-top: 0;
+    padding-top: 0;
 }
-
 a:link, a:visited {
     color: #003466;
     text-decoration: none;
 }
-
-a:hover, a:active, a:focus {
+a:active, a:hover, a:focus {
     color: #4785ac;
     text-decoration: none;
 }
-
 #region-main-box {
     border: 0px none;
 }
-
 #newmessageoverlay {
     background: #f9f9d4;
     margin-left: 55px;
@@ -60,9 +47,7 @@ a:hover, a:active, a:focus {
     -moz-opacity:0.9;
     -khtml-opacity: 0.9;
     opacity: 0.9;
-
 }
-
 #newmessageoverlay #newmessagelinks {
     border-top: 1px dashed #ccc;
     padding-top: 5px;
@@ -82,7 +67,6 @@ a:hover, a:active, a:focus {
     height: 80px;
     border-bottom: 1px solid #fff;
 }
-
 .logo {
     height: 50px;
     float: left;
@@ -90,12 +74,10 @@ a:hover, a:active, a:focus {
     padding-top: 18px;
     padding-right: 0px;
 }
-
 .headermain {
     font-weight:normal;
     margin:.8em 0.5em 0.75em;
 }
-
 h1.headermain {
     color: #006699;
     font-weight: normal;
@@ -110,23 +92,23 @@ h1.headerwlogo {
     display: block;
     float: left;
     margin-top: 35px;
-
 }
-
 .tagline {
     color: #006699 !important;
     padding-top: 7px;
     font-size: .45em;
     text-transform: uppercase;
 }
-
 .headermenu {
     font-size: .9em;
 }
-
-p.helplink {
-    text-align: center;
+p.helplink a {
+    display: block;
+    width: 25%;
+    margin: 0 auto;
+    padding: 10px;
 }
+
 /* @end */
 
 /* @group Navbar */
@@ -139,25 +121,21 @@ p.helplink {
     margin-left: 4px;
     margin-right: 4px;
 }
-
 .breadcrumb {
     text-transform: uppercase;
     font-weight: bold;
     font-size: .9em;
     margin-left: 7px;
 }
-
 .breadcrumb a {
     color: #336699 !important;
 }
-
 .breadcrumb ul {
     color: #666;
 }
 .arrow, .arrow_button input {
     color: #aaa;
 }
-
 /* @end */
 
 /* @group Blocks */
@@ -165,41 +143,34 @@ p.helplink {
 .block_action {
     padding:0px;
 }
-
 .block .content {
     background:#c7eafd;
     border:1px solid #867f6a;
 }
-
 .block .minicalendar td,
 .block .minicalendar th {
     border: none;
 }
-
 .block {
     border: 0px none;
 }
-
 .block .header {
     border: 1px solid #ccc;
     background: #fff;
     padding-left:5px;
 }
-
 .block .title h2 {
     text-transform: uppercase;
     padding-bottom: 0px;
     color: #336699;
     font-size: .95em;
 }
-
 .block .content {
     background: #fff;
     border: 1px solid #ccc;
     padding: 10px;
     margin-top: -2px;
 }
-
 .block_calendar_month table.minicalendar.calendartable td,.block_calendar_month table.minicalendar.calendartable th {
     border: none !important;
 }
@@ -216,7 +187,6 @@ p.helplink {
     font-size: 1.8em;
     font-weight: normal;
 }
-
 .completionprogress {
     color: #336699;
     text-transform: uppercase;
@@ -227,22 +197,18 @@ p.helplink {
     border: 1px solid #ccc;
     margin-right: 20px;
 }
-
 .path-course-view li.activity {
     border-bottom: 1px dashed #c3daf9;
     padding-top: 10px;
     padding-bottom: 5px;
 }
-
 /* @end */
 
 /* @group Dock */
 
 body.has_dock {
-    margin:0;
+    margin: 0;
 }
-
-
 #dock {
     border-right: 0px none;
     background: url([[pix:theme|dock]]) repeat-y top right #fff;
@@ -251,47 +217,41 @@ body.has_dock {
     bottom:auto;
     background-color:#5ea4dc;
 }
-
-
 #dock .dockeditem {
     background: url([[pix:theme|dock]]) repeat-y top right #fff;
     padding:2px;
     padding-right:0px;
 }
-
 #dock .dockedtitle {
     border-width:0;
 }
-
 #dock .dockedtitle h2 {
     margin:0;
     padding:10px 3px;
 }
-
 #dock .dockedtitle.activeitem {
     background-color:#407ea8;
     border-top: 1px solid #6f6856;
 }
-
 #dockeditempanel {
     background-color:#5ea4dc;
     margin-left:0px;
     border-left: none;
 }
-
 #dockeditempanel .dockeditempanel_content {
     border-color:#6f6856;
     border-left: none;
 }
-
 #dockeditempanel .dockeditempanel_hd {
     background: #407ea8;
     border-width:0;
 }
-
 #dockeditempanel .dockeditempanel_hd h2 {
     font-size:1em;
     color:#fff;
+}
+#dockeditempanel .dockeditempanel_bd .block_navigation .block_tree li {
+    overflow:visible;
 }
 
 /* @end */
@@ -303,7 +263,6 @@ body.has_dock {
     margin: 0;
     padding: 0;
 }
-
 #page-footer-inner{
     padding: 20px 0 30px;
     clear: both;
@@ -314,28 +273,26 @@ body.has_dock {
     height: 75px;
     text-align: left;
 }
-
 #page-footer .footnote {
     float: left;
     padding-top: 80px;
     padding-left: 20px;
 }
-
 #page-footer .logininfo {
     padding-top: 80px;
     text-align: right;
 }
-
+.purgecaches {
+    padding-bottom: 10px;
+}
 .purgecaches a {
     text-decoration: none;
     padding: 0 1em;
 }
-
 .purgecaches a:link,
 .purgecaches a:hover {
     border-style: solid;
 }
-
 .purgecaches a:link {
     border-width: 1px 2px 2px 1px;
     border-color: #CECECE #8A8A8A #8A8A8A #CECECE;
@@ -344,7 +301,6 @@ body.has_dock {
     border-width: 2px 1px 1px 2px;
     border-color: #8A8A8A #CECECE #CECECE #8A8A8A;
 }
-
 /* @end */
 
 /* @group Forums */
@@ -369,5 +325,4 @@ body.has_dock {
     background: #FFF;
     padding:4px;
 }
-
 /* @end */
