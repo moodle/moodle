@@ -133,6 +133,7 @@ class backup_feedback_activity_structure_step extends backup_activity_structure_
         // Define file annotations
 
         $feedback->annotate_files('mod_feedback', 'intro', null); // This file area hasn't itemid
+        $feedback->annotate_files('mod_feedback', 'page_after_submit', null); // This file area hasn't itemid
 
         $item->annotate_files('mod_feedback', 'item', 'id');
 

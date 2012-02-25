@@ -98,6 +98,22 @@ function feedback_add_instance($feedback) {
 
     feedback_set_events($feedback);
 
+    if (!isset($feedback->coursemodule)) {
+        $cm = get_coursemodule_from_id('feedback', $feedback->id);
+        $feedback->coursemodule = $cm->id;
+    }
+    $context = get_context_instance(CONTEXT_MODULE, $feedback->coursemodule);
+
+    $editoroptions = feedback_get_editor_options();
+
+    // process the custom wysiwyg editor in page_after_submit
+    if ($draftitemid = $feedback->page_after_submit_editor['itemid']) {
+        $feedback->page_after_submit = file_save_draft_area_files($draftitemid, $context->id, 'mod_feedback', 'page_after_submit',
+                0, $editoroptions, $feedback->page_after_submit_editor['text']);
+        $feedback->page_after_submitformat = $feedback->page_after_submit_editor['format'];
+    }
+    $DB->update_record('feedback', $feedback);
+
     return $feedbackid;
 }
 
@@ -131,6 +147,18 @@ function feedback_update_instance($feedback) {
     //create or update the new events
     feedback_set_events($feedback);
 
+    $context = get_context_instance(CONTEXT_MODULE, $feedback->coursemodule);
+
+    $editoroptions = feedback_get_editor_options();
+
+    // process the custom wysiwyg editor in page_after_submit
+    if ($draftitemid = $feedback->page_after_submit_editor['itemid']) {
+        $feedback->page_after_submit = file_save_draft_area_files($draftitemid, $context->id, 'mod_feedback', 'page_after_submit',
+                0, $editoroptions, $feedback->page_after_submit_editor['text']);
+        $feedback->page_after_submitformat = $feedback->page_after_submit_editor['format'];
+    }
+    $DB->update_record('feedback', $feedback);
+
     return true;
 }
 
@@ -148,42 +176,87 @@ function feedback_update_instance($feedback) {
 function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
 
-    require_login($course, false, $cm);
-
-    $itemid = (int)array_shift($args);
-
-    require_course_login($course, true, $cm);
-
-    if (!$item = $DB->get_record('feedback_item', array('id'=>$itemid))) {
-        return false;
+    if ($filearea === 'item' or $filearea === 'template') {
+        $itemid = (int)array_shift($args);
+        //get the item what includes the file
+        if (!$item = $DB->get_record('feedback_item', array('id'=>$itemid))) {
+            return false;
+        }
+        $feedbackid = $item->feedback;
+        $templateid = $item->template;
     }
 
-    if (!has_capability('mod/feedback:view', $context)) {
+    if ($filearea === 'page_after_submit' or $filearea === 'item') {
+        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
+            return false;
+        }
+
+        $feedbackid = $feedback->id;
+
+        //if the filearea is "item" so we check the permissions like view/complete the feedback
+        $canload = false;
+        //first check whether the user has the complete capability
+        if (has_capability('mod/feedback:complete', $context)) {
+            $canload = true;
+        }
+
+        //now we check whether the user has the view capability
+        if (has_capability('mod/feedback:view', $context)) {
+            $canload = true;
+        }
+
+        //if the feedback is on frontpage and anonymous and the fullanonymous is allowed
+        //so the file can be loaded too.
+        if (isset($CFG->feedback_allowfullanonymous)
+                    AND $CFG->feedback_allowfullanonymous
+                    AND $course->id == SITEID
+                    AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES ) {
+            $canload = true;
+        }
+
+        if (!$canload) {
+            return false;
+        }
+    } else if ($filearea === 'template') { //now we check files in templates
+        if (!$template = $DB->get_record('feedback_template', array('id'=>$templateid))) {
+            return false;
+        }
+
+        //if the file is not public so the capability edititems has to be there
+        if (!$template->ispublic) {
+            if (!has_capability('mod/feedback:edititems', $context)) {
+                return false;
+            }
+        } else { //on public templates, at least the user has to be logged in
+            if (!isloggedin()) {
+                return false;
+            }
+        }
+    } else {
         return false;
     }
 
     if ($context->contextlevel == CONTEXT_MODULE) {
-        if ($filearea !== 'item') {
-            return false;
-        }
-
-        if ($item->feedback == $cm->instance) {
-            $filecontext = $context;
-        } else {
+        if ($filearea !== 'item' and $filearea !== 'page_after_submit') {
             return false;
         }
     }
 
-    if ($context->contextlevel == CONTEXT_COURSE) {
+    if ($context->contextlevel == CONTEXT_COURSE || $context->contextlevel == CONTEXT_SYSTEM) {
         if ($filearea !== 'template') {
             return false;
         }
     }
 
     $relativepath = implode('/', $args);
-    $fullpath = "/$context->id/mod_feedback/$filearea/$itemid/$relativepath";
+    if ($filearea === 'page_after_submit') {
+        $fullpath = "/{$context->id}/mod_feedback/$filearea/$relativepath";
+    } else {
+        $fullpath = "/{$context->id}/mod_feedback/$filearea/{$item->id}/$relativepath";
+    }
 
     $fs = get_file_storage();
+
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
         return false;
     }
@@ -193,7 +266,6 @@ function feedback_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
 
     return false;
 }
-
 
 /**
  * this will delete a given instance.
@@ -633,6 +705,16 @@ function feedback_reset_course_form($course) {
         echo html_writer::checkbox(FEEDBACK_RESETFORM_DROP.$feedback->id, 1, false, get_string('drop_feedback','feedback'));
         echo '</p>';
     }
+}
+
+/**
+ * This gets an array with default options for the editor
+ *
+ * @return array the options
+ */
+function feedback_get_editor_options() {
+    return array('maxfiles' => EDITOR_UNLIMITED_FILES,
+                'trusttext'=>true);
 }
 
 /**

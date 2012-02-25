@@ -318,8 +318,20 @@
 
         if(isset($savereturn) && $savereturn == 'saved') {
             if($feedback->page_after_submit) {
+
+                require_once($CFG->libdir . '/filelib.php');
+
+                $page_after_submit_output = file_rewrite_pluginfile_urls($feedback->page_after_submit,
+                                                                        'pluginfile.php',
+                                                                        $context->id,
+                                                                        'mod_feedback',
+                                                                        'page_after_submit',
+                                                                        0);
+
                 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-                echo format_text($feedback->page_after_submit, $feedback->page_after_submitformat, array('overflowdiv'=>true));
+                echo format_text($page_after_submit_output,
+                                 $feedback->page_after_submitformat,
+                                 array('overflowdiv' => true));
                 echo $OUTPUT->box_end();
             } else {
                 echo '<p align="center"><b><font color="green">'.get_string('entries_saved','feedback').'</font></b></p>';

@@ -166,9 +166,21 @@ echo format_module_intro('feedback', $feedback, $cm->id);
 echo $OUTPUT->box_end();
 
 if(has_capability('mod/feedback:edititems', $context)) {
+    require_once($CFG->libdir . '/filelib.php');
+
+    $page_after_submit_output = file_rewrite_pluginfile_urls($feedback->page_after_submit,
+                                                            'pluginfile.php',
+                                                            $context->id,
+                                                            'mod_feedback',
+                                                            'page_after_submit',
+                                                            0);
+
     echo $OUTPUT->heading(get_string("page_after_submit", "feedback"), 4);
     echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-    echo format_text($feedback->page_after_submit, $feedback->page_after_submitformat, array('overflowdiv'=>true));
+    echo format_text($page_after_submit_output,
+                     $feedback->page_after_submitformat,
+                     array('overflowdiv'=>true));
+
     echo $OUTPUT->box_end();
 }
 

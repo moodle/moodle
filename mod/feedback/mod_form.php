@@ -18,6 +18,8 @@ class mod_feedback_mod_form extends moodleform_mod {
     function definition() {
         global $CFG, $DB;
 
+        $editoroptions = feedback_get_editor_options();
+
         $mform    =& $this->_form;
 
         //-------------------------------------------------------------------------------
@@ -81,8 +83,13 @@ class mod_feedback_mod_form extends moodleform_mod {
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'aftersubmithdr', get_string('after_submit', 'feedback'));
 
-        $mform->addElement('editor', 'page_after_submit', get_string("page_after_submit", "feedback"), null, null);
-        $mform->setType('page_after_submit', PARAM_RAW);
+        $mform->addElement('editor',
+                           'page_after_submit_editor',
+                           get_string("page_after_submit", "feedback"),
+                           null,
+                           $editoroptions);
+
+        $mform->setType('page_after_submit_editor', PARAM_RAW);
 
         $mform->addElement('text', 'site_after_submit', get_string('url_for_continue_button', 'feedback'), array('size'=>'64','maxlength'=>'255'));
         $mform->setType('site_after_submit', PARAM_TEXT);
@@ -105,20 +112,35 @@ class mod_feedback_mod_form extends moodleform_mod {
         } else {
             $default_values['closeenable'] = 1;
         }
-        if (!isset($default_values['page_after_submitformat'])) {
-            $default_values['page_after_submitformat'] = FORMAT_HTML;
+
+        $editoroptions = feedback_get_editor_options();
+
+        if ($this->current->instance) {
+            // editing an existing feedback - let us prepare the added editor elements (intro done automatically)
+            $draftitemid = file_get_submitted_draft_itemid('page_after_submit');
+            $default_values['page_after_submit_editor']['text'] =
+                                    file_prepare_draft_area($draftitemid, $this->context->id,
+                                    'mod_feedback', 'page_after_submit', false,
+                                    $editoroptions,
+                                    $default_values['page_after_submit']);
+
+            $default_values['page_after_submit_editor']['format'] = $default_values['page_after_submitformat'];
+            $default_values['page_after_submit_editor']['itemid'] = $draftitemid;
+        } else {
+            // adding a new feedback instance
+            $draftitemid = file_get_submitted_draft_itemid('page_after_submit_editor');
+            file_prepare_draft_area($draftitemid, null, 'mod_feedback', 'page_after_submit', false);    // no context yet, itemid not used
+            $default_values['page_after_submit_editor']['text'] = '';
+            $default_values['page_after_submit_editor']['format'] = editors_get_preferred_format();
+            $default_values['page_after_submit_editor']['itemid'] = $draftitemid;
         }
-        if (!isset($default_values['page_after_submit'])) {
-            $default_values['page_after_submit'] = '';
-        }
-        $default_values['page_after_submit'] = array('text'=>$default_values['page_after_submit'],'format'=>$default_values['page_after_submitformat']);
     }
 
     function get_data() {
         $data = parent::get_data();
         if ($data) {
-            $data->page_after_submitformat = $data->page_after_submit['format'];
-            $data->page_after_submit = $data->page_after_submit['text'];
+            $data->page_after_submitformat = $data->page_after_submit_editor['format'];
+            $data->page_after_submit = $data->page_after_submit_editor['text'];
         
             // Turn off completion settings if the checkboxes aren't ticked
             $autocompletion = !empty($data->completion) && $data->completion==COMPLETION_TRACKING_AUTOMATIC;
