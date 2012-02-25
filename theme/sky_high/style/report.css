@@ -1,127 +1,138 @@
 /** Report layout **/
 
-body.pagelayout-report {
-    background-image: none;
-    background-color: #fff;
+#report-wrapper {
+    background: #fff;
+    margin: 20px 2% 0;
+    padding: 0px;
+    border: 1px solid #c1bc9d;
 }
-
-body.pagelayout-report.has_dock {
-    margin-left: 30px;
-}
-.pagelayout-report #page {
-    width: 100%;
-    margin: 0 auto;
-    position: relative;
-}
-.pagelayout-report #page-header,
-.pagelayout-report #page-footer {
-    float: none;
-    background: #f3f3f3 none;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    text-align: left;
-}
-.pagelayout-report #page-header {
-    background:#97d3f4 url([[pix:theme|header]]) no-repeat top right;
-    margin-bottom: 0px;
-    height: 105px;
-    border-bottom: 1px solid #FFF;
-}
-
-.pagelayout-report #page-header #custommenu {
-    display: none;
-}
-.pagelayout-report .navbar {
-    background-color: #FFF;
-    height: 20px;
-    margin: 0;
-    padding: 5px 0;
-}
-
-.pagelayout-report #page-footer {
-    text-align: center;
-    height: auto;
-}
-.pagelayout-report  #page-footer .logininfo,
-.pagelayout-report  #page-footer .homelink {
-    margin: 1em 0 0;
-    padding: 0;
-    text-align: center;
-}
-
-.pagelayout-report #page-content {
-    background: #FFF url([[pix:theme|top_bg]]) repeat-x center top;
-    float: none;
-    overflow: visible;
-    width: auto;
-    padding-top: 1em;
-}
-.pagelayout-report #report-main-content {
+#report-page-content {
+    clear: both;
     float: left;
-    width: 100%;
-}
-.pagelayout-report #report-main-content .region-content {
-    margin-left: 210px;
-    overflow: visible;
-    padding-bottom: 20px;
-}
-.pagelayout-report #report-main-content .region-content table.generaltable {
-    background-color: #FFF;
-    width: 98%;
-    margin: 0 auto;
-    padding: 0;
-}
-.pagelayout-report #report-region-wrap {
-    width: 0;
-    float: right;
+    overflow: hidden;
     position: relative;
-    left: -100%;
-}
-.pagelayout-report #report-region-pre {
-    width: 200px;
-    margin-left: 5px;
-}
-
-/** CONTENT ONLY **/
-.pagelayout-report.content-only #report-main-content .region-content {
-    margin-left: 10px;
-}
-.pagelayout-report.content-only #report-region-pre {
-    width: 0;
-}
-
-/** Correct for right to left languages **/
-.dir-rtl.pagelayout-report #report-main-content .region-content {
-    margin-left: 0;
-    margin-right: 210px;
-}
-.dir-rtl.pagelayout-report #report-region-wrap {
-    left:0;
-}
-
-/** Stabalise IE6 behaviour on the report layout **/
-.ie6.pagelayout-report #report-main-content {
-    float: none;
-    width: auto;
-}
-.ie6.pagelayout-report #report-region-wrap {
-    float: none;
-    width: 200px;
-    left: auto;
-    position: absolute;
-    top: 0;
-}
-.ie6.pagelayout-report #report-region-pre,
-.ie6.pagelayout-report #report-region-pre .block {
     width: 100%;
 }
+#report-page-content #report-region-main-box {
+    float: left;
+    right: 0%;
+    position: relative;
+    width: 100%;
+}
+#report-page-content #report-region-main-box #report-region-post-box {
+    float: left;
+    right: 82%;
+    position: relative;
+    width: 100%;
+}
+#report-page-content #report-region-main-box
+ #report-region-post-box #report-region-main {
+    float: left;
+    overflow: hidden;
+    position: relative;
+    margin-right: 0px;
+    left: 101%;
+    width: 80%;
+}
+#report-page-content #report-region-main-box
+ #report-region-post-box #report-region-pre {
+    float: left;
+    overflow: hidden;
+    position: relative;
+    left: 3%;
+    width: 16%;
+}
+#report-page-content #report-region-main-box
+ #report-region-post-box #report-region-main .region-content {
+    overflow: hidden;
+    padding: 20px 0px;
+}
+#report-page-content #report-region-main-box
+ #report-region-post-box #report-region-pre .region-content {
+    overflow: hidden;
+    padding: 20px 0 0;
+}
+#report-page-content-wrapper .generaltable {
+    width: 100%;
+}
+
+/* REPORT FOOTER
+-------------------------*/
+
+.pagelayout-admin #page-footer-inner,
+.pagelayout-report #page-footer-inner {
+    margin: 0 2%;
+}
+
+/* REPORT DOCK
+-------------------------*/
+body.pagelayout-report.has_dock {
+    margin-left: 3%
+}
+.pagelayout-report #dock {
+    width: 3%;
+}
+
+
+/* CONTENT-ONLY
+-------------------------*/
+ .pagelayout-admin.content-only #report-page-content-wrapper
+  #report-page-content #report-region-main-box #report-region-post-box,
+ .pagelayout-report.content-only #report-page-content-wrapper
+  #report-page-content #report-region-main-box #report-region-post-box {
+     right:  1%;
+     width:  100%;
+}
+ .pagelayout-admin.content-only #report-page-content-wrapper
+  #report-page-content #report-region-main-box #report-region-post-box #report-region-main,
+ .pagelayout-report.content-only #report-page-content-wrapper
+  #report-page-content #report-region-main-box #report-region-post-box #report-region-main {
+     left:  1%;
+     width:  100%;
+}
+ .pagelayout-admin.content-only #report-page-content-wrapper #report-page-content
+  #report-region-main-box #report-region-post-box #report-region-pre,
+ .pagelayout-report.content-only #report-page-content-wrapper #report-page-content
+  #report-region-main-box #report-region-post-box #report-region-pre {
+     left:  0;
+     width: 0;
+}
+ .pagelayout-admin.content-only #report-page-content-wrapper
+  #report-page-content #report-region-main-box #report-region-post-box
+  #report-region-main  .region-content,
+ .pagelayout-report.content-only #report-page-content-wrapper
+  #report-page-content #report-region-main-box #report-region-post-box
+  #report-region-main  .region-content {
+     padding:  0 1%;
+}
+
+/* @pagelayout-report - overflow */
+.pagelayout-admin #report-page-content #report-region-main,
+.pagelayout-report #report-page-content #report-region-main {
+    overflow:  auto;
+}
+.pagelayout-admin #report-page-content #report-region-main .region-content,
+.pagelayout-report #report-page-content #report-region-main .region-content {
+    overflow:  visible;
+}
+
+/* @pagelayout-report - horizontal overflow */
+.pagelayout-admin #report-page-content-wrapper #report-page-content #report-region-main-box
+ #report-region-post-box #report-region-main .region-content .no-overflow,
+.pagelayout-report #report-page-content-wrapper #report-page-content #report-region-main-box
+ #report-region-post-box #report-region-main .region-content .no-overflow {
+     overflow: auto;
+ }
 
 @media print {
-    .pagelayout-report .region-content {margin-left: 0px !important;}
-    .pagelayout-report #report-region-pre {width: 0px !important;}
-    .pagelayout-report .region-content table.generaltable {font-size:70% !important;}
-    .pagelayout-report #page-header,
-    .pagelayout-report #page-footer,
-    .pagelayout-report #dock { display: none;}
+    #report-page-content #report-region-main-box {right: 0%;}
+    #report-page-content #report-region-main-box #report-region-post-box {right: 100%;}
+    #report-page-content #report-region-main-box #report-region-post-box #report-region-main {left: 101%; width: 98%;}
+    #report-page-content #report-region-main-box #report-region-post-box #report-region-pre {width: 0%; left: 0%}
+
+    #report-page-content-wrapper table.generaltable { font-size: 70% !important;}
+
+    #page-header,
+    #page-footer,
+    #dock { display:  none;}
 }

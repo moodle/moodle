@@ -121,7 +121,7 @@ $THEME->layouts = array(
         'defaultregion' => 'side-post',
     ),
     'admin' => array(
-        'file' => 'general.php',
+        'file' => 'report.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
@@ -162,6 +162,13 @@ $THEME->layouts = array(
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
     ),
+    // The pagelayout used when a redirection is occuring.
+    'redirect' => array(
+        'theme' => 'canvas',
+        'file' => 'embedded.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
+    ),
     // Should display the content and basic headers only.
     'print' => array(
         'file' => 'general.php',
@@ -169,7 +176,6 @@ $THEME->layouts = array(
         'options' => array('nofooter'=>true, 'nonavbar'=>false, 'noblocks'=>true),
     ),
     'report' => array(
-        'theme' => 'base',
         'file' => 'report.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
