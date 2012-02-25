@@ -13,6 +13,7 @@ body {
 }
 #page-wrapper {
     width:90%;
+    min-width: 775px;
     margin: 0 auto;
     background: transparent;
     border: 1px solid #eee;
