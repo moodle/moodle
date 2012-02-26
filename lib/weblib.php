@@ -2721,7 +2721,7 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
     global $CFG, $USER, $UNITTEST;
 
     $forcedebug = false;
-    if (!empty($CFG->debugusers)) {
+    if (!empty($CFG->debugusers) && $USER) {
         $debugusers = explode(',', $CFG->debugusers);
         $forcedebug = in_array($USER->id, $debugusers);
     }
