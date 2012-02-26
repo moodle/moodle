@@ -2,15 +2,15 @@ a {
 	color:[[setting:linkcolor]];
 }
 
-#page-content #region-main-box #region-post-box {
+.side-post-only #page-content #region-main-box #region-post-box {
 	margin-left: -[[setting:regionwidth]];
 }
 
-#page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+.side-post-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
 	margin-left: [[setting:regionwidth]];
 }
 
-#page-content #region-main-box #region-post-box #region-post {
+.side-post-only #page-content #region-main-box #region-post-box #region-post {
 	left: [[setting:regionwidth]];
 	width: [[setting:regionwidth]];
 }

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * External message API
  *
- * @package    moodlecore
- * @subpackage message
+ * @package    core_message
  * @copyright  2011 Moodle Pty Ltd (http://moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,6 +25,10 @@ require_once("$CFG->libdir/externallib.php");
 
 /**
  * Message functions
+ *
+ * @package    core_message
+ * @copyright  2011 Moodle Pty Ltd (http://moodle.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_message_external extends external_api {
 
@@ -53,7 +55,7 @@ class core_message_external extends external_api {
     /**
      * Send private messages from the current USER to other users
      *
-     * @param $messages  An array of message to send.
+     * @param array $messages An array of message to send
      * @return boolean
      */
     public static function send_instant_messages($messages = array()) {
@@ -173,12 +175,16 @@ class core_message_external extends external_api {
 
 /**
  * Deprecated message functions
+ *
  * @deprecated since Moodle 2.2 please use core_message_external instead
+ * @copyright 2011 Moodle Pty Ltd (http://moodle.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_message_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @deprecated since Moodle 2.2 please use core_message_external::send_instant_messages_parameters instead
      * @return external_function_parameters
      */
@@ -188,8 +194,9 @@ class moodle_message_external extends external_api {
 
     /**
      * Send private messages from the current USER to other users
+     *
      * @deprecated since Moodle 2.2 please use core_message_external::send_instant_messages instead
-     * @param $messages  An array of message to send.
+     * @param array $messages  An array of message to send.
      * @return boolean
      */
     public static function send_instantmessages($messages = array()) {
@@ -198,6 +205,7 @@ class moodle_message_external extends external_api {
 
     /**
      * Returns description of method result value
+     *
      * @deprecated since Moodle 2.2 please use core_message_external::send_instant_messages_returns instead
      * @return external_description
      */

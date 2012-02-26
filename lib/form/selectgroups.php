@@ -1,79 +1,67 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4: */
-// +----------------------------------------------------------------------+
-// | PHP version 4.0                                                      |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2003 The PHP Group                                |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the PHP license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available at through the world-wide-web at                           |
-// | http://www.php.net/license/2_02.txt.                                 |
-// | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Authors: Adam Daniel <adaniel1@eesus.jnj.com>                        |
-// |          Bertrand Mansion <bmansion@mamasam.com>                     |
-// +----------------------------------------------------------------------+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
+/**
+ * select type form element
+ *
+ * Class to dynamically create an HTML SELECT with all options grouped in optgroups
+ *
+ * @package   core_form
+ * @copyright 2007 Jamie Pratt <me@jamiep.org>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once('HTML/QuickForm/element.php');
 
 /**
+ * select type form element
+ *
  * Class to dynamically create an HTML SELECT with all options grouped in optgroups
  *
- * @author       Adam Daniel <adaniel1@eesus.jnj.com>
- * @author       Bertrand Mansion <bmansion@mamasam.com>
- * @version      1.0
- * @since        PHP4.04pl1
- * @access       public
+ * @package   core_form
+ * @category  form
+ * @copyright 2007 Jamie Pratt <me@jamiep.org>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
 
-    // {{{ properties
-
-    /** add choose option */
+    /** @var bool add choose option */
     var $showchoose = false;
 
-    /**
-     * Contains the select optgroups
-     *
-     * @var       array
-     * @since     1.0
-     * @access    private
-     */
+    /** @var array Contains the select optgroups */
     var $_optGroups = array();
 
-    /**
-     * Default values of the SELECT
-     *
-     * @var       string
-     * @since     1.0
-     * @access    private
-     */
+    /** @var string Default values of the SELECT */
     var $_values = null;
 
-    /**
-     * html for help button, if empty then no help
-     *
-     * @var string
-     */
+    /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
+
+    /** @var bool if true label will be hidden */
     var $_hiddenLabel=false;
 
     /**
      * Class constructor
      *
-     * @param     string    Select name attribute
-     * @param     mixed     Label(s) for the select
-     * @param     mixed     Data to be used to populate options
-     * @param     mixed     An array whose keys are labels for optgroups and whose values are arrays similar to those passed
-     *                          to the select element with keys that are values for options and values are strings for display.
-     * @param     mixed     Either a typical HTML attribute string or an associative array
-     * @param     bool      add standard moodle "Choose..." option as first item
-     * @since     1.0
-     * @access    public
-     * @return    void
+     * @param string $elementName Select name attribute
+     * @param mixed $elementLabel Label(s) for the select
+     * @param array $optgrps Data to be used to populate options
+     * @param mixed $attributes Either a typical HTML attribute string or an associative array
+     * @param bool $showchoose add standard moodle "Choose..." option as first item
      */
     function MoodleQuickForm_selectgroups($elementName=null, $elementLabel=null, $optgrps=null, $attributes=null, $showchoose=false)
     {
@@ -84,19 +72,12 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
         if (isset($optgrps)) {
             $this->loadArrayOptGroups($optgrps);
         }
-    } //end constructor
-
-    // }}}
-    // {{{ apiVersion()
-
+    }
 
     /**
      * Sets the default values of the select box
      *
-     * @param     mixed    $values  Array or comma delimited string of selected values
-     * @since     1.0
-     * @access    public
-     * @return    void
+     * @param mixed $values Array or comma delimited string of selected values
      */
     function setSelected($values)
     {
@@ -108,63 +89,42 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
         } else {
             $this->_values = array($values);
         }
-    } //end func setSelected
-
-    // }}}
-    // {{{ getSelected()
+    }
 
     /**
      * Returns an array of the selected values
      *
-     * @since     1.0
-     * @access    public
-     * @return    array of selected values
+     * @return array of selected values
      */
     function getSelected()
     {
         return $this->_values;
-    } // end func getSelected
-
-    // }}}
-    // {{{ setName()
+    }
 
     /**
      * Sets the input field name
      *
-     * @param     string    $name   Input field name attribute
-     * @since     1.0
-     * @access    public
-     * @return    void
+     * @param string $name Input field name attribute
      */
     function setName($name)
     {
         $this->updateAttributes(array('name' => $name));
-    } //end func setName
-
-    // }}}
-    // {{{ getName()
+    }
 
     /**
      * Returns the element name
      *
-     * @since     1.0
-     * @access    public
-     * @return    string
+     * @return string
      */
     function getName()
     {
         return $this->getAttribute('name');
-    } //end func getName
-
-    // }}}
-    // {{{ getPrivateName()
+    }
 
     /**
      * Returns the element name (possibly with brackets appended)
      *
-     * @since     1.0
-     * @access    public
-     * @return    string
+     * @return string
      */
     function getPrivateName()
     {
@@ -173,80 +133,52 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
         } else {
             return $this->getName();
         }
-    } //end func getPrivateName
-
-    // }}}
-    // {{{ setValue()
+    }
 
     /**
      * Sets the value of the form element
      *
-     * @param     mixed    $values  Array or comma delimited string of selected values
-     * @since     1.0
-     * @access    public
-     * @return    void
+     * @param mixed $value Array or comma delimited string of selected values
      */
     function setValue($value)
     {
         $this->setSelected($value);
-    } // end func setValue
-
-    // }}}
-    // {{{ getValue()
+    }
 
     /**
      * Returns an array of the selected values
      *
-     * @since     1.0
-     * @access    public
-     * @return    array of selected values
+     * @return array of selected values
      */
     function getValue()
     {
         return $this->_values;
-    } // end func getValue
-
-    // }}}
-    // {{{ setSize()
+    }
 
     /**
      * Sets the select field size, only applies to 'multiple' selects
      *
-     * @param     int    $size  Size of select  field
-     * @since     1.0
-     * @access    public
-     * @return    void
+     * @param int $size Size of select  field
      */
     function setSize($size)
     {
         $this->updateAttributes(array('size' => $size));
-    } //end func setSize
-
-    // }}}
-    // {{{ getSize()
+    }
 
     /**
      * Returns the select field size
      *
-     * @since     1.0
-     * @access    public
-     * @return    int
+     * @return int
      */
     function getSize()
     {
         return $this->getAttribute('size');
-    } //end func getSize
-
-    // }}}
-    // {{{ setMultiple()
+    }
 
     /**
      * Sets the select mutiple attribute
      *
-     * @param     bool    $multiple  Whether the select supports multi-selections
-     * @since     1.2
-     * @access    public
-     * @return    void
+     * @param bool $multiple Whether the select supports multi-selections
      */
     function setMultiple($multiple)
     {
@@ -255,32 +187,25 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
         } else {
             $this->removeAttribute('multiple');
         }
-    } //end func setMultiple
-
-    // }}}
-    // {{{ getMultiple()
+    }
 
     /**
      * Returns the select mutiple attribute
      *
-     * @since     1.2
-     * @access    public
-     * @return    bool    true if multiple select, false otherwise
+     * @return bool true if multiple select, false otherwise
      */
     function getMultiple()
     {
         return (bool)$this->getAttribute('multiple');
-    } //end func getMultiple
+    }
 
     /**
      * Loads the options from an associative array
      *
-     * @param     array    $arr     Associative array of options
-     * @param     mixed    $values  (optional) Array or comma delimited string of selected values
-     * @since     1.0
-     * @access    public
-     * @return    PEAR_Error on error or true
-     * @throws    PEAR_Error
+     * @param array $arr Associative array of options
+     * @param mixed $values (optional) Array or comma delimited string of selected values
+     * @return PEAR_Error|bool on error or true
+     * @throws PEAR_Error
      */
     function loadArrayOptGroups($arr, $values=null)
     {
@@ -296,16 +221,14 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
         }
         return true;
     }
+
     /**
      * Adds a new OPTION to the SELECT
      *
-     * @param     string    $text       Display text for the OPTION
-     * @param     string    $value      Value for the OPTION
-     * @param     mixed     $attributes Either a typical HTML attribute string
-     *                                  or an associative array
-     * @since     1.0
-     * @access    public
-     * @return    void
+     * @param string $text Display text for the OPTION
+     * @param string $value Value for the OPTION
+     * @param mixed $attributes Either a typical HTML attribute string
+     *              or an associative array
      */
     function addOptGroup($text, $value, $attributes=null)
     {
@@ -323,12 +246,11 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
     /**
      * Loads the options from an associative array
      *
-     * @param     array    $arr     Associative array of options
-     * @param     mixed    $values  (optional) Array or comma delimited string of selected values
-     * @since     1.0
-     * @access    public
-     * @return    PEAR_Error on error or true
-     * @throws    PEAR_Error
+     * @param string $optgroup name of the options group
+     * @param array $arr Associative array of options
+     * @param mixed $values (optional) Array or comma delimited string of selected values
+     * @return PEAR_Error|bool on error or true
+     * @throws PEAR_Error
      */
     function loadArrayOptions($optgroup, $arr, $values=null)
     {
@@ -348,13 +270,11 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
     /**
      * Adds a new OPTION to an optgroup
      *
-     * @param     string    $text       Display text for the OPTION
-     * @param     string    $value      Value for the OPTION
-     * @param     mixed     $attributes Either a typical HTML attribute string
-     *                                  or an associative array
-     * @since     1.0
-     * @access    public
-     * @return    void
+     * @param string $optgroup name of the option group
+     * @param string $text Display text for the OPTION
+     * @param string $value Value for the OPTION
+     * @param mixed $attributes Either a typical HTML attribute string
+     *              or an associative array
      */
     function addOption($optgroup, $text, $value, $attributes=null)
     {
@@ -379,9 +299,7 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
     /**
      * Returns the SELECT in HTML
      *
-     * @since     1.0
-     * @access    public
-     * @return    string
+     * @return string
      */
     function toHtml()
     {
@@ -430,17 +348,12 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
             }
             return $strHtml . $tabs . '</select>';
         }
-    } //end func toHtml
-
-    // }}}
-    // {{{ getFrozenHtml()
+    }
 
     /**
      * Returns the value of field without HTML tags
      *
-     * @since     1.0
-     * @access    public
-     * @return    string
+     * @return string
      */
     function getFrozenHtml()
     {
@@ -476,14 +389,15 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
             }
         }
         return $html;
-    } //end func getFrozenHtml
-
-    // }}}
-    // {{{ exportValue()
+    }
 
    /**
     * We check the options and return only the values that _could_ have been
     * selected. We also return a scalar value if select is not "multiple"
+    *
+    * @param array $submitValues submitted values
+    * @param bool $assoc if true the retured value is associated array
+    * @return mixed
     */
     function exportValue(&$submitValues, $assoc = false)
     {
@@ -521,10 +435,15 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
             return $this->_prepareValue($cleaned[0], $assoc);
         }
     }
-    
-    // }}}
-    // {{{ onQuickFormEvent()
 
+    /**
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * @param string $event Name of event
+     * @param mixed $arg event arguments
+     * @param object $caller calling object
+     * @return bool
+     */
     function onQuickFormEvent($event, $arg, &$caller)
     {
         if ('updateValue' == $event) {
@@ -545,24 +464,33 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
             return parent::onQuickFormEvent($event, $arg, $caller);
         }
     }
+
+    /**
+     * Sets label to be hidden
+     *
+     * @param bool $hiddenLabel sets if label should be hidden
+     */
     function setHiddenLabel($hiddenLabel){
         $this->_hiddenLabel = $hiddenLabel;
     }
+
     /**
      * set html for help button
      *
-     * @access   public
-     * @param array $help array of arguments to make a help button
+     * @param array $helpbuttonargs array of arguments to make a help button
      * @param string $function function name to call to get html
+     * @deprecated since Moodle 2.0. Please do not call this function any more.
+     * @todo MDL-31047 this api will be removed.
+     * @see MoodleQuickForm::setHelpButton()
      */
     function setHelpButton($helpbuttonargs, $function='helpbutton'){
         debugging('component setHelpButton() is not used any more, please use $mform->setHelpButton() instead');
     }
+
     /**
      * get html for help button
      *
-     * @access   public
-     * @return  string html for help button
+     * @return string html for help button
      */
     function getHelpButton(){
         return $this->_helpbutton;

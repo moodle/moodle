@@ -17,8 +17,7 @@
 /**
  * Jabber configuration page
  *
- * @package    message
- * @subpackage jabber
+ * @package    message_jabber
  * @copyright  2011 Lancaster University Network Services Limited
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

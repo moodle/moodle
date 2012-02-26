@@ -15,12 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Popup processor version information
+ * Popup message processor version information
  *
- * @package    message
- * @subpackage popup
- * @author     Luis Rodrigues
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   message_popup
+ * @copyright 2008 Luis Rodrigues
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();

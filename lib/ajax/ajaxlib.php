@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,22 +18,20 @@
 /**
  * Library functions to facilitate the use of ajax JavaScript in Moodle.
  *
- * @package   moodlecore
+ * @package   core
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * You need to call this function if you wish to use the set_user_preference
- * method in javascript_static.php, to white-list the preference you want to update
- * from JavaScript, and to specify the type of cleaning you expect to be done on
- * values.
+ * You need to call this function if you wish to use the set_user_preference method in javascript_static.php, to white-list the
+ * preference you want to update from JavaScript, and to specify the type of cleaning you expect to be done on values.
  *
- * @param string $name the name of the user_perference we should allow to be
- *      updated by remote calls.
- * @param integer $paramtype one of the PARAM_{TYPE} constants, user to clean
- *      submitted values before set_user_preference is called.
- * @return void
+ * @package  core
+ * @category preference
+ * @param    string          $name      the name of the user_perference we should allow to be updated by remote calls.
+ * @param    integer         $paramtype one of the PARAM_{TYPE} constants, user to clean submitted values before set_user_preference is called.
+ * @return   null
  */
 function user_preference_allow_ajax_update($name, $paramtype) {
     global $USER, $PAGE;

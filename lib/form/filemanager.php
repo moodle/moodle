@@ -14,13 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
- * File manager
+ * FileManager form element
  *
- * @package    moodlecore
- * @subpackage file
- * @copyright  1999 onwards Dongsheng Cai <dongsheng@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Contains HTML class for a filemanager form element
+ *
+ * @package   core_form
+ * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 global $CFG;
@@ -29,10 +31,31 @@ require_once('HTML/QuickForm/element.php');
 require_once($CFG->dirroot.'/lib/filelib.php');
 require_once($CFG->dirroot.'/repository/lib.php');
 
+/**
+ * Filemanager form element
+ *
+ * FilemaneManager lets user to upload/manage multiple files
+ * @package   core_form
+ * @category  form
+ * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
+    /** @var string html for help button, if empty then no help will icon will be dispalyed. */
     public $_helpbutton = '';
+
+    /** @var array options provided to initalize filemanager */
     protected $_options    = array('mainfile'=>'', 'subdirs'=>1, 'maxbytes'=>-1, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
 
+    /**
+     * Constructor
+     *
+     * @param string $elementName (optional) name of the filemanager
+     * @param string $elementLabel (optional) filemanager label
+     * @param array $attributes (optional) Either a typical HTML attribute string
+     *              or an associative array
+     * @param array $options set of options to initalize filemanager
+     */
     function MoodleQuickForm_filemanager($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG, $PAGE;
 
@@ -49,55 +72,124 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
     }
 
+    /**
+     * Sets name of filemanager
+     *
+     * @param string $name name of the filemanager
+     */
     function setName($name) {
         $this->updateAttributes(array('name'=>$name));
     }
 
+    /**
+     * Returns name of filemanager
+     *
+     * @return string
+     */
     function getName() {
         return $this->getAttribute('name');
     }
 
+    /**
+     * Updates filemanager attribute value
+     *
+     * @param string $value value to set
+     */
     function setValue($value) {
         $this->updateAttributes(array('value'=>$value));
     }
 
+    /**
+     * Returns filemanager attribute value
+     *
+     * @return string
+     */
     function getValue() {
         return $this->getAttribute('value');
     }
 
+    /**
+     * Returns maximum file size which can be uploaded
+     *
+     * @return int
+     */
     function getMaxbytes() {
         return $this->_options['maxbytes'];
     }
 
+    /**
+     * Sets maximum file size which can be uploaded
+     *
+     * @param int $maxbytes file size
+     */
     function setMaxbytes($maxbytes) {
         global $CFG;
         $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $maxbytes);
     }
 
+    /**
+     * Returns true if subdirectoy can be created, else false
+     *
+     * @return bool
+     */
     function getSubdirs() {
         return $this->_options['subdirs'];
     }
 
+    /**
+     * Set option to create sub directory, while uploading  file
+     *
+     * @param bool $allow true if sub directory can be created.
+     */
     function setSubdirs($allow) {
         $this->_options['subdirs'] = $allow;
     }
 
+    /**
+     * Returns maximum number of files which can be uploaded
+     *
+     * @return int
+     */
     function getMaxfiles() {
         return $this->_options['maxfiles'];
     }
 
+    /**
+     * Sets maximum number of files which can be uploaded.
+     *
+     * @param int $num number of files
+     */
     function setMaxfiles($num) {
         $this->_options['maxfiles'] = $num;
     }
 
+    /**
+     * Sets help button for filemanager
+     *
+     * @param mixed $helpbuttonargs arguments to create help button
+     * @param string $function name of the callback function
+     * @deprecated since Moodle 2.0. Please do not call this function any more.
+     * @todo MDL-31047 this api will be removed.
+     * @see MoodleQuickForm::setHelpButton()
+     */
     function setHelpButton($helpbuttonargs, $function='helpbutton'){
         debugging('component setHelpButton() is not used any more, please use $mform->setHelpButton() instead');
     }
 
+    /**
+     * Returns html for help button.
+     *
+     * @return string html for help button
+     */
     function getHelpButton() {
         return $this->_helpbutton;
     }
 
+    /**
+     * Returns type of filemanager element
+     *
+     * @return string
+     */
     function getElementTemplateType() {
         if ($this->_flagFrozen){
             return 'nodisplay';
@@ -106,6 +198,11 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         }
     }
 
+    /**
+     * Returns HTML for filemanager form element.
+     *
+     * @return string
+     */
     function toHtml() {
         global $CFG, $USER, $COURSE, $PAGE, $OUTPUT;
         require_once("$CFG->dirroot/repository/lib.php");
@@ -159,19 +256,25 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
     }
 }
 
-
-
 /**
  * Data structure representing a file manager.
  *
+ * This class defines the data structure for file mnager
+ *
+ * @package   core_form
  * @copyright 2010 Dongsheng Cai
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 2.0
+ * @todo      do not use this abstraction (skodak)
  */
 class form_filemanaer_x {
-    //TODO: do not use this abstraction (skodak)
-
+    /** @var stdClass $options options for filemanager */
     public $options;
+
+    /**
+     * Constructor
+     *
+     * @param stdClass $options options for filemanager
+     */
     public function __construct(stdClass $options) {
         global $CFG, $USER, $PAGE;
         require_once($CFG->dirroot. '/repository/lib.php');

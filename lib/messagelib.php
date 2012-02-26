@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,12 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * messagelib.php - Contains generic messaging functions for the message system
+ * Functions for interacting with the message system
  *
- * @package    core
- * @subpackage message
- * @copyright  Luis Rodrigues and Martin Dougiamas
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_message
+ * @copyright 2008 Luis Rodrigues and Martin Dougiamas
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -30,8 +28,8 @@ require_once(dirname(dirname(__FILE__)) . '/message/lib.php');
 
 /**
  * Called when a message provider wants to send a message.
- * This functions checks the user's processor configuration to send the given type of message,
- * then tries to send it.
+ * This functions checks the message recipient's message processor configuration then
+ * sends the message to the configured processors
  *
  * Required parameter $eventdata structure:
  *  component string component name. must exist in message_providers
@@ -46,8 +44,9 @@ require_once(dirname(dirname(__FILE__)) . '/message/lib.php');
  *  contexturl - if this is a notification then you can specify a url to view the event. For example the forum post the user is being notified of.
  *  contexturlname - the display text for contexturl
  *
+ * @category message
  * @param object $eventdata information about the message (component, userfrom, userto, ...)
- * @return int|false the ID of the new message or false if there was a problem with a processor
+ * @return mixed the integer ID of the new message or false if there was a problem with a processor
  */
 function message_send($eventdata) {
     global $CFG, $DB;
@@ -205,10 +204,10 @@ function message_send($eventdata) {
 
 
 /**
- * This code updates the message_providers table with the current set of providers
+ * Updates the message_providers table with the current set of message providers
  *
- * @param $component - examples: 'moodle', 'mod_forum', 'block_quiz_results'
- * @return boolean
+ * @param string $component For example 'moodle', 'mod_forum' or 'block_quiz_results'
+ * @return boolean True on success
  */
 function message_update_providers($component='moodle') {
     global $DB;
@@ -265,8 +264,7 @@ function message_update_providers($component='moodle') {
  * when the new message processor is added.
  *
  * @param string $processorname The name of message processor plugin (e.g. 'email', 'jabber')
- * @return void
- * @throws invalid_parameter_exception if $processorname does not exist
+ * @throws invalid_parameter_exception if $processorname does not exist in the database
  */
 function message_update_processors($processorname) {
     global $DB;
@@ -291,13 +289,12 @@ function message_update_processors($processorname) {
 }
 
 /**
- * Setting default messaging preference for particular message provider
+ * Setting default messaging preferences for particular message provider
  *
  * @param  string $component   The name of component (e.g. moodle, mod_forum, etc.)
  * @param  string $messagename The name of message provider
  * @param  array  $fileprovider The value of $messagename key in the array defined in plugin messages.php
- * @param  string $processorname The optinal name of message processor
- * @return void
+ * @param  string $processorname The optional name of message processor
  */
 function message_set_default_message_preference($component, $messagename, $fileprovider, $processorname='') {
     global $DB;
@@ -364,13 +361,14 @@ function message_set_default_message_preference($component, $messagename, $filep
 }
 
 /**
+ * This function has been deprecated please use {@link message_get_providers_for_user()} instead.
+ *
  * Returns the active providers for the current user, based on capability
  *
- * This function has been deprecated please use {@see message_get_providers_for_user()} instead.
- *
+ * @see message_get_providers_for_user()
  * @deprecated since 2.1
- * @todo Remove in 2.2
- * @return array of message providers
+ * @todo Remove in 2.2 (MDL-31031)
+ * @return array An array of message providers
  */
 function message_get_my_providers() {
     global $USER;
@@ -381,7 +379,7 @@ function message_get_my_providers() {
  * Returns the active providers for the user specified, based on capability
  *
  * @param int $userid id of user
- * @return array of message providers
+ * @return array An array of message providers
  */
 function message_get_providers_for_user($userid) {
     global $DB, $CFG;
@@ -409,10 +407,11 @@ function message_get_providers_for_user($userid) {
 /**
  * Gets the message providers that are in the database for this component.
  *
- * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
- * @return array of message providers
+ * This is an internal function used within messagelib.php
  *
- * INTERNAL - to be used from messagelib only
+ * @see message_update_providers()
+ * @param string $component A moodle component like 'moodle', 'mod_forum', 'block_quiz_results'
+ * @return array An array of message providers
  */
 function message_get_providers_from_db($component) {
     global $DB;
@@ -421,13 +420,15 @@ function message_get_providers_from_db($component) {
 }
 
 /**
- * Loads the messages definitions for the component (from file). If no
- * messages are defined for the component, we simply return an empty array.
+ * Loads the messages definitions for a component from file
  *
- * @param $component - examples: 'moodle', 'mod_forum', 'block_quiz_results'
- * @return array of message providerss or empty array if not exists
+ * If no messages are defined for the component, return an empty array.
+ * This is an internal function used within messagelib.php
  *
- * INTERNAL - to be used from messagelib only
+ * @see message_update_providers()
+ * @see message_update_processors()
+ * @param string $component A moodle component like 'moodle', 'mod_forum', 'block_quiz_results'
+ * @return array An array of message providers or empty array if not exists
  */
 function message_get_providers_from_file($component) {
     $defpath = get_component_directory($component).'/db/messages.php';
@@ -451,9 +452,9 @@ function message_get_providers_from_file($component) {
 }
 
 /**
- * Remove all message providers for particular plugin and corresponding settings
+ * Remove all message providers for particular component and corresponding settings
  *
- * @param string $component - examples: 'moodle', 'mod_forum', 'block_quiz_results'
+ * @param string $component A moodle component like 'moodle', 'mod_forum', 'block_quiz_results'
  * @return void
  */
 function message_provider_uninstall($component) {
@@ -467,10 +468,9 @@ function message_provider_uninstall($component) {
 }
 
 /**
- * Remove message processor
+ * Uninstall a message processor
  *
- * @param string $name - examples: 'email', 'jabber'
- * @return void
+ * @param string $name A message processor name like 'email', 'jabber'
  */
 function message_processor_uninstall($name) {
     global $DB;

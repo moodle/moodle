@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,11 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Returns the aggregated or calculated course grade(s) in given course.
- * @public
- * @param int $courseid id of course
- * @param int $userid_or_ids optional id of the graded user or array of ids; if userid not used, returns only information about grade_item
- * @return information about course grade item scaleid, name, grade and locked status, etc. + user grades
+ * Functions used to retrieve grades objects
+ *
+ * @package   core_grades
+ * @category  grade
+ * @copyright 2008 Petr Skoda and Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+ * Returns the aggregated or calculated course grade(s) for a single course for one or more users
+ *
+ * @param int $courseid The ID of course
+ * @param int|array $userid_or_ids Optional ID of the graded user or array of user IDs; if userid not used, returns only information about grade_item
+ * @return stdClass Returns an object containing information about course grade item. scaleid, name, grade
+ *         and locked status etc and user course grades: $item->grades[$userid] => $usercoursegrade
  */
 function grade_get_course_grades($courseid, $userid_or_ids=null) {
 
@@ -118,10 +127,10 @@ function grade_get_course_grades($courseid, $userid_or_ids=null) {
 }
 
 /**
- * Returns the aggregated or calculated course grade for the given user(s).
- * @public
- * @param int $userid
- * @param int $courseid optional id of course or array of ids, empty means all uses courses (returns array if not present)
+ * Returns the aggregated or calculated course grade for a single user for one or more courses
+ *
+ * @param int $userid The ID of the single user
+ * @param int|array $courseid_or_ids Optional ID of course or array of IDs, empty means all of the user's courses
  * @return mixed grade info or grades array including item info, false if error
  */
 function grade_get_course_grade($userid, $courseid_or_ids=null) {
@@ -233,8 +242,9 @@ function grade_get_course_grade($userid, $courseid_or_ids=null) {
 /**
  * Returns all grade items (including outcomes) or main item for a given activity identified by $cm object.
  *
- * @param object $cm A course module object (preferably with modname property)
- * @return mixed - array of grade item instances (one if $only_main_item true), false if error or not found
+ * @param cm_info $cm A course module object (preferably with modname property)
+ * @param bool $only_main_item Limit the search to the primary grade item for the activity, 'itemnumber'==0
+ * @return mixed An array of grade item instances, one grade item if $only_main_item == true, false if error or not found
  */
 function grade_get_grade_items_for_activity($cm, $only_main_item=false) {
     global $CFG, $DB;
@@ -261,11 +271,11 @@ function grade_get_grade_items_for_activity($cm, $only_main_item=false) {
 }
 
 /**
- * Returns whether or not user received grades in main grade item for given activity.
+ * Returns whether or not a user received grades in main grade item for given activity
  *
- * @param object $cm
- * @param int $userid
- * @return bool True if graded false if user not graded yet
+ * @param cm_info $cm The activity context module
+ * @param int $userid The user ID
+ * @return bool True if graded, false if user not graded yet
  */
 function grade_is_user_graded_in_activity($cm, $userid) {
 

@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Messaging libraries
+ * Contains renderer objects for messaging
  *
- * @package    message
+ * @package    core_message
  * @copyright  2011 Lancaster University Network Services Limited
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +29,8 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Class for rendering various message objects
  *
- * @package    message
+ * @package    core_message
+ * @subpackage message
  * @copyright  2011 Lancaster University Network Services Limited
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -38,8 +39,8 @@ class core_message_renderer extends plugin_renderer_base {
     /**
      * Display the interface to manage message outputs
      *
-     * @param   mixed   $processors array of objects containing message processors
-     * @return  string              The text to render
+     * @param  array  $processors array of objects containing message processors
+     * @return string The text to render
      */
     public function manage_messageoutputs($processors) {
         global $CFG;
@@ -106,10 +107,10 @@ class core_message_renderer extends plugin_renderer_base {
     /**
      * Display the interface to manage default message outputs
      *
-     * @param   mixed   $processors  array of objects containing message processors
-     * @param   mixed   $providers   array of objects containing message providers
-     * @param   mixed   $preferences array of objects containing current preferences
-     * @return  string               The text to render
+     * @param  array $processors  array of objects containing message processors
+     * @param  array $providers   array of objects containing message providers
+     * @param  array $preferences array of objects containing current preferences
+     * @return string The text to render
      */
     public function manage_defaultmessageoutputs($processors, $providers, $preferences) {
         global $CFG;
@@ -206,13 +207,12 @@ class core_message_renderer extends plugin_renderer_base {
     /**
      * Display the interface for messaging options
      *
-     * @param   mixed   $processors         array of objects containing message processors
-     * @param   mixed   $providers          array of objects containing message providers
-     * @param   mixed   $preferences        array of objects containing current preferences
-     * @param   mixed   $defaultpreferences array of objects containing site default preferences
-     * $param   boolean $notificationsdisabled indicates whether the user's "emailstop" flag is
-     *                                      set so shouldn't receive any non-forced notifications
-     * @return  string                      The text to render
+     * @param array $processors Array of objects containing message processors
+     * @param array $providers Array of objects containing message providers
+     * @param array $preferences Array of objects containing current preferences
+     * @param array $defaultpreferences Array of objects containing site default preferences
+     * @param bool $notificationsdisabled Indicate if the user's "emailstop" flag is set (shouldn't receive any non-forced notifications)
+     * @return string The text to render
      */
     public function manage_messagingoptions($processors, $providers, $preferences, $defaultpreferences, $notificationsdisabled = false) {
         // Filter out enabled, available system_configured and user_configured processors only.

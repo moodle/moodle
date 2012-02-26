@@ -80,9 +80,17 @@ abstract class cc_convert_moodle2 {
             if ($docp->load($moodle_backup)) {
                 //sections
                 $sections = array();
+                $coursef = new XMLGenericDocument();
+                $course_file = $dir . DIRECTORY_SEPARATOR .'course' . DIRECTORY_SEPARATOR . 'course.xml';
+                $coursef->load($course_file);
+                $numsections = (int)$coursef->nodeValue('/course/numsections');
                 $section_list = $docp->nodeList('/moodle_backup/information/contents/sections/section');
                 if (!empty($section_list)) {
+                    $count = 0;
                     foreach ($section_list as $node) {
+                        if ($count > $numsections) {
+                            break;
+                        }
                         $sectionid    = $docp->nodeValue('sectionid', $node);
                         $sectiontitle = $docp->nodeValue('title'    , $node);
                         $sectionpath  = $docp->nodeValue('directory', $node);
@@ -92,7 +100,7 @@ abstract class cc_convert_moodle2 {
                         DIRECTORY_SEPARATOR .
                         $sectionpath .
                         DIRECTORY_SEPARATOR .
-                                            'section.xml';
+                        'section.xml';
                         if ($secp->load($section_file)) {
                             $rawvalue = $secp->nodeValue('/section/sequence');
                             if ($rawvalue != '$@NULL@$') {
@@ -100,6 +108,7 @@ abstract class cc_convert_moodle2 {
                             }
                         }
                         $sections[$sectionid] = array($sectiontitle, $sequence);
+                        $count++;
                     }
                 }
                 //organization title

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,8 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * File in which the overview_report class is defined.
- * @package gradebook
+ * Definition of the grade_overview_report class
+ *
+ * @package gradereport_overview
+ * @copyright 2007 Nicolas Connault
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once($CFG->dirroot . '/grade/report/lib.php');
@@ -26,7 +28,7 @@ require_once($CFG->libdir.'/tablelib.php');
 /**
  * Class providing an API for the overview report building and displaying.
  * @uses grade_report
- * @package gradebook
+ * @package gradereport_overview
  */
 class grade_report_overview extends grade_report {
 

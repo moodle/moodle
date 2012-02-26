@@ -435,10 +435,9 @@ function glossary_cron () {
 /**
  * Return grade for given user or all users.
  *
- * @global object
- * @param int $glossaryid id of glossary
- * @param int $userid optional user id, 0 means all users
- * @return array array of grades, false if none
+ * @param stdClass $glossary A glossary instance
+ * @param int $userid Optional user id, 0 means all users
+ * @return array An array of grades, false if none
  */
 function glossary_get_user_grades($glossary, $userid=0) {
     global $CFG;
@@ -583,10 +582,10 @@ function glossary_rating_validate($params) {
 /**
  * Update activity grades
  *
- * @global object
- * @global object
- * @param object $glossary null means all glossaries (with extra cmidnumber property)
+ * @category grade
+ * @param stdClass $glossary Null means all glossaries (with extra cmidnumber property)
  * @param int $userid specific user only, 0 means all
+ * @param bool $nullifnone If true and the user has no grade then a grade item with rawgrade == null will be inserted
  */
 function glossary_update_grades($glossary=null, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
@@ -642,9 +641,9 @@ function glossary_upgrade_grades() {
 /**
  * Create/update grade item for given glossary
  *
- * @global object
- * @param object $glossary object with extra cmidnumber
- * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @category grade
+ * @param stdClass $glossary object with extra cmidnumber
+ * @param mixed $grades Optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int, 0 if ok, error code otherwise
  */
 function glossary_grade_item_update($glossary, $grades=NULL) {
@@ -677,7 +676,7 @@ function glossary_grade_item_update($glossary, $grades=NULL) {
 /**
  * Delete grade item for given glossary
  *
- * @global object
+ * @category grade
  * @param object $glossary object
  */
 function glossary_grade_item_delete($glossary) {
@@ -2443,9 +2442,8 @@ function glossary_reset_course_form_defaults($course) {
 /**
  * Removes all grades from gradebook
  *
- * @global object
- * @param int $courseid
- * @param string optional type
+ * @param int $courseid The ID of the course to reset
+ * @param string $type The optional type of glossary. 'main', 'secondary' or ''
  */
 function glossary_reset_gradebook($courseid, $type='') {
     global $DB;

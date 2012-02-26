@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,25 +15,40 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * HTML class for a searchable select type element
+ * searchable select type element
  *
- * @package   formlib
- * @copyright 2009 Jerome Mouneyrac
+ * Contains HTML class for a searchable select type element
+ *
+ * @package   core_form
+ * @copyright 2009 Jerome Mouneyrac <jerome@mouneyrac.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('select.php');
 
 /**
+ * searchable select type element
+ *
  * Display a select input with a search textfield input on the top
  * The search textfield is created by the javascript file searchselector.js
  * (so when javascript is not activated into the browser, the search field is not displayed)
  * If ever the select can be reset/unselect/blank/nooption, you will have to add an option "noselected"
  * and manage this special case when you get/set the form data (i.e. $mform->get_data()/$this->set_data($yourobject)).
+ *
+ * @package   core_form
+ * @category  form
+ * @copyright 2009 Jerome Mouneyrac
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class MoodleQuickForm_searchableselector extends MoodleQuickForm_select{
-
-
+    /**
+     * Constructor
+     *
+     * @param string $elementName Select name attribute
+     * @param mixed $elementLabel Label(s) for the select
+     * @param array $options additional options.
+     * @param mixed $attributes Either a typical HTML attribute string or an associative array
+     */
     function MoodleQuickForm_searchableselector($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
         //set size default to 12
         if (empty($attributes) || empty($attributes['size'])) {
@@ -43,6 +57,11 @@ class MoodleQuickForm_searchableselector extends MoodleQuickForm_select{
         parent::MoodleQuickForm_select($elementName, $elementLabel, $options, $attributes);
     }
 
+    /**
+     * Returns the select element in HTML
+     *
+     * @return string
+     */
     function toHtml(){
         global $OUTPUT;
         if ($this->_hiddenLabel){

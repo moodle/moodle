@@ -55,10 +55,10 @@ class basicltil1_resurce_file extends general_cc_file {
     protected $cartridge_icon = null;
 
     public function set_title($title) {
-        $this->title = $title;
+        $this->title = self::safexml($title);
     }
     public function set_description($description) {
-        $this->description = $description;
+        $this->description = self::safexml($description);
     }
     public function set_launch_url ($url) {
         $this->launch_url = $url;
@@ -77,11 +77,11 @@ class basicltil1_resurce_file extends general_cc_file {
         $this->vendor = true;
     }
     public function set_vendor_name ($name) {
-        $this->vendor_name = $name;
+        $this->vendor_name = self::safexml($name);
         $this->vendor = true;
     }
     public function set_vendor_description ($desc) {
-        $this->vendor_description = $desc;
+        $this->vendor_description = self::safexml($desc);
         $this->vendor = true;
     }
     public function set_vendor_url ($url) {

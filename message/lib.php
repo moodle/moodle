@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,9 +17,9 @@
 /**
  * Library functions for messaging
  *
- * @copyright Luis Rodrigues
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package message
+ * @package   core_message
+ * @copyright 2008 Luis Rodrigues
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once($CFG->libdir.'/eventslib.php');
@@ -799,9 +798,8 @@ function message_get_recent_notifications($user, $limitfrom=0, $limitto=100) {
 /**
  * Print the user's recent conversations
  *
- * @param object $user1 the current user
+ * @param stdClass $user the current user
  * @param bool $showicontext flag indicating whether or not to show text next to the action icons
- * @return void
  */
 function message_print_recent_conversations($user=null, $showicontext=false) {
     global $USER;
@@ -823,8 +821,7 @@ function message_print_recent_conversations($user=null, $showicontext=false) {
 /**
  * Print the user's recent notifications
  *
- * @param object $user1 the current user
- * @return void
+ * @param stdClass $user the current user
  */
 function message_print_recent_notifications($user=null) {
     global $USER;
@@ -847,7 +844,6 @@ function message_print_recent_notifications($user=null) {
 /**
  * Print a list of recent messages
  *
- * @staticvar type $dateformat
  * @param array $messages the messages to display
  * @param object $user the current user
  * @param bool $showotheruser display information on the other user?
@@ -959,7 +955,7 @@ function message_add_contact($contactid, $blocked=0) {
 /**
  * remove a contact
  *
- * @param type $contactid the user ID of the contact to remove
+ * @param int $contactid the user ID of the contact to remove
  * @return bool returns the result of delete_records()
  */
 function message_remove_contact($contactid) {
@@ -1323,7 +1319,6 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false, $i
 /**
  * Print a message contact link
  *
- * @staticvar type $str
  * @param int $userid the ID of the user to apply to action to
  * @param string $linktype can be add, remove, block or unblock
  * @param bool $return if true return the link as a string. If false echo the link.
@@ -1399,7 +1394,6 @@ function message_contact_link($userid, $linktype='add', $return=false, $script=n
 /**
  * echo or return a link to take the user to the full message history between themselves and another user
  *
- * @staticvar type $strmessagehistory
  * @param int $userid1 the ID of the user displayed on the left (usually the current user)
  * @param int $userid2 the ID of the other user
  * @param bool $return true to return the link as a string. False to echo the link.
@@ -2048,7 +2042,7 @@ function message_post_message($userfrom, $userto, $message, $format) {
  * This was the simple way to code the SQL ... is it going to blow up
  * on large datasets?
  *
- * @todo: deprecated - to be deleted in 2.2
+ * @deprecated To be deleted in 2.2 MDL-31709
  * @return array
  */
 function message_get_participants() {
@@ -2135,7 +2129,7 @@ function message_print_contactlist_user($contact, $incontactlist = true, $isbloc
  *
  * @param bool $incontactlist is the user a contact
  * @param bool $isblocked is the user blocked
- * @param type $contact contact object
+ * @param stdClass $contact contact object
  * @param string $script the URL to send the user to when the link is clicked. If null, the current page.
  * @param bool $text include text next to the icons?
  * @param bool $icon include a graphical icon?
@@ -2158,9 +2152,9 @@ function message_get_contact_add_remove_link($incontactlist, $isblocked, $contac
 /**
  * Constructs the block contact link to display next to other users
  *
- * @param bool $incontactlist is the user a contact
- * @param bool $isblocked is the user blocked
- * @param type $contact contact object
+ * @param bool $incontactlist is the user a contact?
+ * @param bool $isblocked is the user blocked?
+ * @param stdClass $contact contact object
  * @param string $script the URL to send the user to when the link is clicked. If null, the current page.
  * @param bool $text include text next to the icons?
  * @param bool $icon include a graphical icon?
@@ -2224,7 +2218,7 @@ function message_mark_messages_read($touserid, $fromuserid){
 /**
  * Mark a single message as read
  *
- * @param message an object with an object property ie $message->id which is an id in the message table
+ * @param stdClass $message An object with an object property ie $message->id which is an id in the message table
  * @param int $timeread the timestamp for when the message should be marked read. Usually time().
  * @param bool $messageworkingempty Is the message_working table already confirmed empty for this message?
  * @return int the ID of the message in the message_read table

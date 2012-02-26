@@ -20,7 +20,7 @@
  * Experimental pdo recordset
  *
  * @package    core
- * @subpackage dml
+ * @subpackage dml_driver
  * @copyright  2008 Andrei Bautu
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,6 +31,11 @@ require_once($CFG->libdir.'/dml/moodle_recordset.php');
 
 /**
  * Experimental pdo recordset
+ *
+ * @package    core
+ * @subpackage dml_driver
+ * @copyright  2008 Andrei Bautu
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class pdo_moodle_recordset extends moodle_recordset {
 
