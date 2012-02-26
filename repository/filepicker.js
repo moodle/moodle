@@ -311,7 +311,7 @@ M.core_filepicker.init = function(Y, options) {
             if (type=='error') {
                 header = M.str.moodle.error;
             }
-            this.msg_dlg.setHeader(type);
+            this.msg_dlg.setHeader(header);
             this.msg_dlg.show();
         },
         build_tree: function(node, level) {

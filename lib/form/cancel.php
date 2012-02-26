@@ -1,27 +1,56 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
+/**
+ * Button form element
+ *
+ * Contains HTML class for a button type element
+ *
+ * @package   core_form
+ * @copyright 2007 Jamie Pratt <me@jamiep.org>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+    die('Direct access to this script is forbidden.');    //  It must be included from a Moodle page
 }
 
 global $CFG;
 require_once($CFG->libdir.'/form/submit.php');
 
 /**
- * HTML class for a submit type element
+ * HTML class for a submit cancel type element
  *
- * @author       Jamie Pratt
- * @access       public
+ * Overloaded {@link MoodleQuickForm_submit} with default behavior modified to cancel a form.
+ *
+ * @package   core_form
+ * @category  form
+ * @copyright 2007 Jamie Pratt <me@jamiep.org>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class MoodleQuickForm_cancel extends MoodleQuickForm_submit
 {
-    // {{{ constructor
-
     /**
-     * Class constructor
+     * constructor
      *
-     * @since     1.0
-     * @access    public
-     * @return    void
+     * @param string $elementName (optional) name of the checkbox
+     * @param string $value (optional) value for the button
+     * @param mixed $attributes (optional) Either a typical HTML attribute string
+     *              or an associative array
      */
     function MoodleQuickForm_cancel($elementName=null, $value=null, $attributes=null)
     {
@@ -33,7 +62,16 @@ class MoodleQuickForm_cancel extends MoodleQuickForm_submit
         }
         MoodleQuickForm_submit::MoodleQuickForm_submit($elementName, $value, $attributes);
         $this->updateAttributes(array('onclick'=>'skipClientValidation = true; return true;'));
-    } //end constructor
+    }
+
+    /**
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * @param string $event Name of event
+     * @param mixed $arg event arguments
+     * @param object $caller calling object
+     * @return bool
+     */
     function onQuickFormEvent($event, $arg, &$caller)
     {
         switch ($event) {
@@ -45,14 +83,23 @@ class MoodleQuickForm_cancel extends MoodleQuickForm_submit
                 break;
         }
         return parent::onQuickFormEvent($event, $arg, $caller);
-    } // end func onQuickFormEvent
+    }
 
+    /**
+     * Returns the value of field without HTML tags
+     *
+     * @return string
+     */
     function getFrozenHtml(){
         return HTML_QuickForm_submit::getFrozenHtml();
     }
 
+    /**
+     * Freeze the element so that only its value is returned
+     *
+     * @return bool
+     */
     function freeze(){
         return HTML_QuickForm_submit::freeze();
     }
-    // }}}
-} //end class MoodleQuickForm_cancel
+}

@@ -14,10 +14,9 @@ function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode=''
 
         $anchortagcontents = glossary_print_entry_concept($entry, true);
 
-        $link = "/mod/glossary/showentry.php?courseid={$course->id}&eid={$entry->id}&displayformat=dictionary";
-        $action = new popup_action('click', $link.'&popup=1', 'entry',array('title'=>'entry','width'=>600,'height'=>450));
-
-        $anchor = $OUTPUT->action_link($link, $anchortagcontents, $action);
+        $link = new moodle_url('/mod/glossary/showentry.php', array('courseid' => $course->id,
+                'eid' => $entry->id, 'displayformat' => 'dictionary'));
+        $anchor = html_writer::link($link, $anchortagcontents);
 
         echo "<div class=\"concept\">$anchor</div> ";
         echo '</td><td align="right" class="entrylowersection">';

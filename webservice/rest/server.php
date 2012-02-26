@@ -36,9 +36,6 @@ if (!webservice_protocol_is_enabled('rest')) {
 
 $restformat = optional_param('moodlewsrestformat', 'xml', PARAM_ALPHA);
 //remove the alt from the request
-if(isset($_REQUEST['moodlewsrestformat'])) {
-    unset($_REQUEST['moodlewsrestformat']);
-}
 if(isset($_GET['moodlewsrestformat'])) {
     unset($_GET['moodlewsrestformat']);
 }

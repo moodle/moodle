@@ -1317,13 +1317,13 @@ class moodlelib_test extends UnitTestCase {
                 'time' => '1309514400',
                 'usertimezone' => 'America/Moncton',
                 'timezone' => '99', //dst offset and timezone offset.
-                'expectedoutput' => 'Friday, 1 July 2011, 07:00 AM'
+                'expectedoutput' => 'Friday, 1 July 2011, 7:00 AM'
             ),
             array(
                 'time' => '1309514400',
                 'usertimezone' => 'America/Moncton',
                 'timezone' => 'America/Moncton', //dst offset and timezone offset.
-                'expectedoutput' => 'Friday, 1 July 2011, 07:00 AM'
+                'expectedoutput' => 'Friday, 1 July 2011, 7:00 AM'
             ),
             array(
                 'time' => '1293876000 ',
@@ -1335,13 +1335,13 @@ class moodlelib_test extends UnitTestCase {
                 'time' => '1293876000 ',
                 'usertimezone' => 'America/Moncton',
                 'timezone' => '99', //no dst offset in jan, so just timezone offset.
-                'expectedoutput' => 'Saturday, 1 January 2011, 06:00 AM'
+                'expectedoutput' => 'Saturday, 1 January 2011, 6:00 AM'
             ),
             array(
                 'time' => '1293876000 ',
                 'usertimezone' => 'America/Moncton',
                 'timezone' => 'America/Moncton', //no dst offset in jan
-                'expectedoutput' => 'Saturday, 1 January 2011, 06:00 AM'
+                'expectedoutput' => 'Saturday, 1 January 2011, 6:00 AM'
             ),
             array(
                 'time' => '1293876000 ',
@@ -1353,7 +1353,7 @@ class moodlelib_test extends UnitTestCase {
                 'time' => '1293876000 ',
                 'usertimezone' => '-2',
                 'timezone' => '99', //take user timezone
-                'expectedoutput' => 'Saturday, 1 January 2011, 08:00 AM'
+                'expectedoutput' => 'Saturday, 1 January 2011, 8:00 AM'
             ),
             array(
                 'time' => '1293876000 ',
@@ -1365,19 +1365,19 @@ class moodlelib_test extends UnitTestCase {
                 'time' => '1293876000 ',
                 'usertimezone' => '-10',
                 'timezone' => '-2', //take this timezone
-                'expectedoutput' => 'Saturday, 1 January 2011, 08:00 AM'
+                'expectedoutput' => 'Saturday, 1 January 2011, 8:00 AM'
             ),
             array(
                 'time' => '1293876000 ',
                 'usertimezone' => '-10',
                 'timezone' => 'random/time', //this should show server time
-                'expectedoutput' => 'Saturday, 1 January 2011, 06:00 PM'
+                'expectedoutput' => 'Saturday, 1 January 2011, 6:00 PM'
             ),
             array(
                 'time' => '1293876000 ',
                 'usertimezone' => '14', //server time zone
                 'timezone' => '99', //this should show user time
-                'expectedoutput' => 'Saturday, 1 January 2011, 06:00 PM'
+                'expectedoutput' => 'Saturday, 1 January 2011, 6:00 PM'
             ),
         );
 

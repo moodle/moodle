@@ -1,27 +1,29 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+
+/**
+ * Group of date input element
+ *
+ * Contains class for a group of elements used to input a date.
+ *
+ * @package   core_form
+ * @copyright 2007 Jamie Pratt <me@jamiep.org>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 global $CFG;
 require_once($CFG->libdir . '/form/group.php');
@@ -32,38 +34,36 @@ require_once($CFG->libdir . '/formslib.php');
  *
  * Emulates moodle print_date_selector function
  *
- * @package formslib
+ * @package   core_form
+ * @category  form
+ * @copyright 2007 Jamie Pratt <me@jamiep.org>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class MoodleQuickForm_date_selector extends MoodleQuickForm_group
 {
     /**
-    * Control the fieldnames for form elements
-    *
-    * startyear => integer start of range of years that can be selected
-    * stopyear => integer last year that can be selected
-    * timezone => float/string timezone
-    * applydst => apply users daylight savings adjustment?
-    * optional => if true, show a checkbox beside the date to turn it on (or off)
-    */
+     * Control the fieldnames for form elements
+     * startyear => int start of range of years that can be selected
+     * stopyear => int last year that can be selected
+     * timezone => float/string timezone
+     * applydst => apply users daylight savings adjustment?
+     * optional => if true, show a checkbox beside the date to turn it on (or off)
+     * @var array
+     */
     protected $_options = array('startyear' => 1970, 'stopyear' => 2020,
             'timezone' => 99, 'applydst' => true, 'optional' => false);
 
-   /**
-    * These complement separators, they are appended to the resultant HTML
-    * @access   private
-    * @var      array
-    */
+   /** @var array These complement separators, they are appended to the resultant HTML */
     protected $_wrap = array('', '');
 
-   /**
-    * Class constructor
-    *
-    * @access   public
-    * @param    string  Element's name
-    * @param    mixed   Label(s) for an element
-    * @param    array   Options to control the element's display
-    * @param    mixed   Either a typical HTML attribute string or an associative array
-    */
+    /**
+     * constructor
+     *
+     * @param string $elementName Element's name
+     * @param mixed $elementLabel Label(s) for an element
+     * @param array $options Options to control the element's display
+     * @param mixed $attributes Either a typical HTML attribute string or an associative array
+     */
     function MoodleQuickForm_date_selector($elementName = null, $elementLabel = null, $options = array(), $attributes = null)
     {
         $this->HTML_QuickForm_element($elementName, $elementLabel, $attributes);
@@ -85,9 +85,11 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
         form_init_date_js();
     }
 
-    // }}}
-    // {{{ _createElements()
-
+    /**
+     * This will create date group element constisting of day, month and year.
+     *
+     * @access private
+     */
     function _createElements()
     {
         $this->_elements = array();
@@ -115,18 +117,13 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
 
     }
 
-    // }}}
-    // {{{ onQuickFormEvent()
-
     /**
      * Called by HTML_QuickForm whenever form event is made on this element
      *
-     * @param     string    $event  Name of event
-     * @param     mixed     $arg    event arguments
-     * @param     object    $caller calling object
-     * @since     1.0
-     * @access    public
-     * @return    void
+     * @param string $event Name of event
+     * @param mixed $arg event arguments
+     * @param object $caller calling object
+     * @return bool
      */
     function onQuickFormEvent($event, $arg, &$caller)
     {
@@ -176,10 +173,13 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
             default:
                 return parent::onQuickFormEvent($event, $arg, $caller);
         }
-    } // end func onQuickFormEvent
+    }
 
-    // {{{ toHtml()
-
+    /**
+     * Returns HTML for advchecbox form element.
+     *
+     * @return string
+     */
     function toHtml()
     {
         include_once('HTML/QuickForm/Renderer/Default.php');
@@ -189,21 +189,23 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
         return $this->_wrap[0] . $renderer->toHtml() . $this->_wrap[1];
     }
 
-    // }}}
-    // {{{ accept()
-
+    /**
+     * Accepts a renderer
+     *
+     * @param HTML_QuickForm_Renderer $renderer An HTML_QuickForm_Renderer object
+     * @param bool $required Whether a group is required
+     * @param string $error An error message associated with a group
+     */
     function accept(&$renderer, $required = false, $error = null)
     {
         $renderer->renderElement($this, $required, $error);
     }
 
-    // }}}
-
     /**
      * Output a timestamp. Give it the name of the group.
      *
-     * @param array $submitValues
-     * @param bool $assoc
+     * @param array $submitValues values submitted.
+     * @param bool $assoc specifies if returned array is associative
      * @return array
      */
     function exportValue(&$submitValues, $assoc = false)
@@ -237,6 +239,4 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
             return null;
         }
     }
-
-    // }}}
 }

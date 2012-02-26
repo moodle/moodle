@@ -1,4 +1,29 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
+/**
+ * Filepicker form element
+ *
+ * Contains HTML class for a single filepicker form element
+ *
+ * @package   core_form
+ * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 global $CFG;
 
@@ -6,17 +31,31 @@ require_once("HTML/QuickForm/button.php");
 require_once($CFG->dirroot.'/repository/lib.php');
 
 /**
+ * Filepicker form element
+ *
  * HTML class for a single filepicker element (based on button)
  *
- * @author       Moodle.com
- * @version      1.0
- * @since        Moodle 2.0
- * @access       public
+ * @package   core_form
+ * @category  form
+ * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
+    /** @var string html for help button, if empty then no help will icon will be dispalyed. */
     public $_helpbutton = '';
+
+    /** @var array options provided to initalize filemanager */
     protected $_options    = array('maxbytes'=>0, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
 
+    /**
+     * Constructor
+     *
+     * @param string $elementName (optional) name of the filepicker
+     * @param string $elementLabel (optional) filepicker label
+     * @param array $attributes (optional) Either a typical HTML attribute string
+     *              or an associative array
+     * @param array $options set of options to initalize filepicker
+     */
     function MoodleQuickForm_filepicker($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG;
 
@@ -33,14 +72,33 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
     }
 
+    /**
+     * Sets help button for filepicker
+     *
+     * @param mixed $helpbuttonargs arguments to create help button
+     * @param string $function name of the callback function
+     * @deprecated since Moodle 2.0. Please do not call this function any more.
+     * @todo MDL-31047 this api will be removed.
+     * @see MoodleQuickForm::setHelpButton()
+     */
     function setHelpButton($helpbuttonargs, $function='helpbutton') {
         debugging('component setHelpButton() is not used any more, please use $mform->setHelpButton() instead');
     }
 
+    /**
+     * Returns html for help button.
+     *
+     * @return string html for help button
+     */
     function getHelpButton() {
         return $this->_helpbutton;
     }
 
+    /**
+     * Returns type of filepicker element
+     *
+     * @return string
+     */
     function getElementTemplateType() {
         if ($this->_flagFrozen){
             return 'nodisplay';
@@ -49,6 +107,11 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         }
     }
 
+    /**
+     * Returns HTML for filepicker form element.
+     *
+     * @return string
+     */
     function toHtml() {
         global $CFG, $COURSE, $USER, $PAGE, $OUTPUT;
         $id     = $this->_attributes['id'];
@@ -111,6 +174,13 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         return $html;
     }
 
+    /**
+     * export uploaded file
+     *
+     * @param array $submitValues values submitted.
+     * @param bool $assoc specifies if returned array is associative
+     * @return array
+     */
     function exportValue(&$submitValues, $assoc = false) {
         global $USER;
 

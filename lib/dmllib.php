@@ -33,6 +33,7 @@
  * (feel free to modify, improve and document such page, thanks!)
  *
  * @package    core
+ * @category   dml
  * @subpackage dml
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -52,12 +53,18 @@ define('MUST_EXIST', 2);
 
 /**
  * DML exception class, use instead of error() in dml code.
+ *
+ * @package    core
+ * @category   dml
+ * @subpackage dml
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dml_exception extends moodle_exception {
     /**
-     * @param string $errorcode
-     * @param string $a
-     * @param string $debuginfo
+     * @param string $errorcode The name of the string from error.php to print.
+     * @param string $a Extra words and phrases that might be required in the error string.
+     * @param string $debuginfo Optional debugging information.
      */
     function __construct($errorcode, $a=NULL, $debuginfo=null) {
         parent::__construct($errorcode, '', '', $a, $debuginfo);
@@ -66,11 +73,17 @@ class dml_exception extends moodle_exception {
 
 /**
  * DML db connection exception - triggered if database not accessible.
+ *
+ * @package    core
+ * @category   dml
+ * @subpackage dml
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dml_connection_exception extends dml_exception {
     /**
      * Constructor
-     * @param string $error
+     * @param string $error Optional debugging information.
      */
     function __construct($error) {
         $errorinfo = $error;
@@ -80,6 +93,12 @@ class dml_connection_exception extends dml_exception {
 
 /**
  * DML db session wait exception - triggered when session lock request times out.
+ *
+ * @package    core
+ * @category   dml
+ * @subpackage dml
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dml_sessionwait_exception extends dml_exception {
     /**
@@ -92,20 +111,26 @@ class dml_sessionwait_exception extends dml_exception {
 
 /**
  * DML read exception - triggered by some SQL syntax errors, etc.
+ *
+ * @package    core
+ * @category   dml
+ * @subpackage dml
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dml_read_exception extends dml_exception {
-    /** @var string */
+    /** @var string The name of the string from error.php to print.*/
     public $error;
-    /** @var string */
+    /** @var string The SQL that ran just before this read error.*/
     public $sql;
-    /** @var array */
+    /** @var array The SQL's related parameters.*/
     public $params;
 
     /**
      * Constructor
-     * @param string $error
-     * @param string $sql
-     * @param array $params
+     * @param string $error The name of the string from error.php to print.
+     * @param string $sql The SQL that ran just before this read error.
+     * @param array $params The SQL's related parameters.(optional)
      */
     function __construct($error, $sql=null, array $params=null) {
         $this->error  = $error;
@@ -118,18 +143,23 @@ class dml_read_exception extends dml_exception {
 
 /**
  * Caused by multiple records found in get_record() call.
+ *
+ * @package    core
+ * @category   dml
+ * @subpackage dml
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dml_multiple_records_exception extends dml_exception {
-    /** @var string */
+    /** @var string The SQL that ran just before this read error.*/
     public $sql;
-    /** @var array */
+    /** @var array The SQL's related parameters.*/
     public $params;
 
     /**
      * Constructor
-     * @param string $table table name if known, '' if unknown
-     * @param string $sql
-     * @param array $params
+     * @param string $sql The SQL that ran just before this read error.
+     * @param array $params The SQL's related parameters.(optional)
      */
     function __construct($sql='', array $params=null) {
         $errorinfo = $sql."\n[".var_export($params, true).']';
@@ -139,20 +169,26 @@ class dml_multiple_records_exception extends dml_exception {
 
 /**
  * Caused by missing record that is required for normal operation.
+ *
+ * @package    core
+ * @category   dml
+ * @subpackage dml
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dml_missing_record_exception extends dml_exception {
-    /** @var string */
+    /** @var string A table's name.*/
     public $table;
-    /** @var string */
+    /** @var string An SQL query.*/
     public $sql;
-    /** @var array */
+    /** @var array The SQL's parameters.*/
     public $params;
 
     /**
      * Constructor
-     * @param string $table table name if known, '' if unknown
-     * @param string $sql
-     * @param array $params
+     * @param string $tablename The table name if known, '' if unknown.
+     * @param string $sql Optional SQL query.
+     * @param array $params Optional SQL query's parameters.
      */
     function __construct($tablename, $sql='', array $params=null) {
         if (empty($tablename)) {
@@ -186,20 +222,26 @@ class dml_missing_record_exception extends dml_exception {
 
 /**
  * DML write exception - triggered by some SQL syntax errors, etc.
+ *
+ * @package    core
+ * @category   dml
+ * @subpackage dml
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dml_write_exception extends dml_exception {
-    /** @var string */
+    /** @var string The name of the string from error.php to print.*/
     public $error;
-    /** @var string */
+    /** @var string The SQL that ran just before this write error.*/
     public $sql;
-    /** @var array */
+    /** @var array The SQL's related parameters.*/
     public $params;
 
     /**
      * Constructor
-     * @param string $error
-     * @param string $sql
-     * @param array $params
+     * @param string $error The name of the string from error.php to print.
+     * @param string $sql The SQL that ran just before this write error.
+     * @param array $params The SQL's related parameters.(optional)
      */
     function __construct($error, $sql=null, array $params=null) {
         $this->error  = $error;
@@ -211,15 +253,24 @@ class dml_write_exception extends dml_exception {
 }
 
 /**
- * DML transaction exception - triggered by problems related to DB transactions
+ * DML transaction exception - triggered by problems related to DB transactions.
+ *
+ * @todo MDL-20625 Use the info from $transaction for debugging purposes.
+ *
+ * @package    core
+ * @category   dml
+ * @subpackage dml
+ * @copyright  2008 Petr Skoda (http://skodak.org)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dml_transaction_exception extends dml_exception {
-    /** @var moodle_transaction */
+    /** @var moodle_transaction An instance of a transaction.*/
     public $transaction;
 
     /**
      * Constructor
-     * @param array $start_backtrace
+     * @param array $debuginfo Optional debugging information.
+     * @param moodle_transaction $transaction The instance of the transaction.(Optional)
      */
     function __construct($debuginfo=null, $transaction=null) {
         $this->transaction = $transaction; // TODO: MDL-20625 use the info from $transaction for debugging purposes
@@ -230,9 +281,11 @@ class dml_transaction_exception extends dml_exception {
 /**
  * Sets up global $DB moodle_database instance
  *
- * @global object
- * @global object
- * @return void
+ * @global stdClass $CFG The global configuration instance.
+ * @see config.php
+ * @see config-dist.php
+ * @global stdClass $DB The global moodle_database instance.
+ * @return void|bool Returns true when finished setting up $DB. Returns void when $DB has already been set.
  */
 function setup_DB() {
     global $CFG, $DB;

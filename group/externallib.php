@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,7 @@
 /**
  * External groups API
  *
- * @package    moodlecore
- * @subpackage webservice
+ * @package    core_group
  * @copyright  2009 Moodle Pty Ltd (http://moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,6 +26,10 @@ require_once("$CFG->libdir/externallib.php");
 
 /**
  * Group functions
+ *
+ * @package    core_group
+ * @copyright  2009 Moodle Pty Ltd (http://moodle.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_group_external extends external_api {
 
@@ -100,9 +102,9 @@ class core_group_external extends external_api {
         return $groups;
     }
 
-   /**
+    /**
      * Returns description of method result value
-     * @return external_description
+     * @return external_multiple_structure
      */
     public static function create_groups_returns() {
         return new external_multiple_structure(
@@ -163,9 +165,9 @@ class core_group_external extends external_api {
         return $groups;
     }
 
-   /**
+    /**
      * Returns description of method result value
-     * @return external_description
+     * @return external_multiple_structure
      */
     public static function get_groups_returns() {
         return new external_multiple_structure(
@@ -224,9 +226,9 @@ class core_group_external extends external_api {
         return $groups;
     }
 
-   /**
+    /**
      * Returns description of method result value
-     * @return external_description
+     * @return external_multiple_structure
      */
     public static function get_course_groups_returns() {
         return new external_multiple_structure(
@@ -294,7 +296,7 @@ class core_group_external extends external_api {
         $transaction->allow_commit();
     }
 
-   /**
+    /**
      * Returns description of method result value
      * @return external_description
      */
@@ -349,7 +351,7 @@ class core_group_external extends external_api {
         return $members;
     }
 
-   /**
+    /**
      * Returns description of method result value
      * @return external_description
      */
@@ -387,7 +389,6 @@ class core_group_external extends external_api {
     /**
      * Add group members
      * @param array $members of arrays with keys userid, groupid
-     * @return void
      */
     public static function add_group_members($members) {
         global $CFG, $DB;
@@ -429,7 +430,7 @@ class core_group_external extends external_api {
         $transaction->allow_commit();
     }
 
-   /**
+    /**
      * Returns description of method result value
      * @return null
      */
@@ -460,7 +461,6 @@ class core_group_external extends external_api {
     /**
      * Delete group members
      * @param array $members of arrays with keys userid, groupid
-     * @return void
      */
     public static function delete_group_members($members) {
         global $CFG, $DB;
@@ -497,7 +497,7 @@ class core_group_external extends external_api {
         $transaction->allow_commit();
     }
 
-   /**
+    /**
      * Returns description of method result value
      * @return null
      */
@@ -509,13 +509,15 @@ class core_group_external extends external_api {
 
 /**
  * Deprecated group functions
- * @deprecated since Moodle 2.2 please use core_group_external instead
+ * @deprecated since Moodle 2.2 please do not call this class any more.
+ * @see core_group_external()
  */
 class moodle_group_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_group_external::create_groups_parameters instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::create_groups_parameters()
      * @return external_function_parameters
      */
     public static function create_groups_parameters() {
@@ -524,7 +526,8 @@ class moodle_group_external extends external_api {
 
     /**
      * Create groups
-     * @deprecated since Moodle 2.2 please use core_group_external::create_groups instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::create_groups()
      * @param array $groups array of group description arrays (with keys groupname and courseid)
      * @return array of newly created groups
      */
@@ -532,9 +535,10 @@ class moodle_group_external extends external_api {
         return core_group_external::create_groups($groups);
     }
 
-   /**
+    /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_group_external::create_groups_returns instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::create_groups_returns()
      * @return external_description
      */
     public static function create_groups_returns() {
@@ -543,7 +547,8 @@ class moodle_group_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_group_external::get_groups_parameters instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::get_groups_parameters()
      * @return external_function_parameters
      */
     public static function get_groups_parameters() {
@@ -552,7 +557,8 @@ class moodle_group_external extends external_api {
 
     /**
      * Get groups definition specified by ids
-     * @deprecated since Moodle 2.2 please use core_group_external::get_groups instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::get_groups()
      * @param array $groupids arrays of group ids
      * @return array of group objects (id, courseid, name, enrolmentkey)
      */
@@ -560,9 +566,10 @@ class moodle_group_external extends external_api {
         return core_group_external::get_groups($groupids);
     }
 
-   /**
+    /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_group_external::get_groups_returns instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::get_groups_returns()
      * @return external_description
      */
     public static function get_groups_returns() {
@@ -571,7 +578,8 @@ class moodle_group_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_group_external::get_course_groups_parameters instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::get_course_groups_parameters()
      * @return external_function_parameters
      */
     public static function get_course_groups_parameters() {
@@ -580,7 +588,8 @@ class moodle_group_external extends external_api {
 
     /**
      * Get all groups in the specified course
-     * @deprecated since Moodle 2.2 please use core_group_external::get_course_groups instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::get_course_groups()
      * @param int $courseid id of course
      * @return array of group objects (id, courseid, name, enrolmentkey)
      */
@@ -588,9 +597,10 @@ class moodle_group_external extends external_api {
         return core_group_external::get_course_groups($courseid);
     }
 
-   /**
+    /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_group_external::get_course_groups_returns instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::get_course_groups_returns()
      * @return external_description
      */
     public static function get_course_groups_returns() {
@@ -599,7 +609,8 @@ class moodle_group_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_group_external::delete_group_members_parameters instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::delete_group_members_parameters()
      * @return external_function_parameters
      */
     public static function delete_groups_parameters() {
@@ -608,7 +619,8 @@ class moodle_group_external extends external_api {
 
     /**
      * Delete groups
-     * @deprecated since Moodle 2.2 please use core_group_external::delete_groups instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::delete_groups()
      * @param array $groupids array of group ids
      * @return void
      */
@@ -616,9 +628,10 @@ class moodle_group_external extends external_api {
         return core_group_external::delete_groups($groupids);
     }
 
-   /**
+    /**
      * Returns description of method result value
-    * @deprecated since Moodle 2.2 please use core_group_external::delete_group_members_returns instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::delete_group_members_returns()
      * @return external_description
      */
     public static function delete_groups_returns() {
@@ -628,7 +641,8 @@ class moodle_group_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_group_external::get_group_members_parameters instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::get_group_members_parameters()
      * @return external_function_parameters
      */
     public static function get_groupmembers_parameters() {
@@ -637,7 +651,8 @@ class moodle_group_external extends external_api {
 
     /**
      * Return all members for a group
-     * @deprecated since Moodle 2.2 please use core_group_external::get_group_members instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::get_group_members()
      * @param array $groupids array of group ids
      * @return array with  group id keys containing arrays of user ids
      */
@@ -645,9 +660,10 @@ class moodle_group_external extends external_api {
         return core_group_external::get_group_members($groupids);
     }
 
-   /**
+    /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_group_external::get_group_members_returns instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::get_group_members_returns()
      * @return external_description
      */
     public static function get_groupmembers_returns() {
@@ -657,7 +673,8 @@ class moodle_group_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_group_external::add_group_members_parameters instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::add_group_members_parameters()
      * @return external_function_parameters
      */
     public static function add_groupmembers_parameters() {
@@ -666,7 +683,8 @@ class moodle_group_external extends external_api {
 
     /**
      * Add group members
-     * @deprecated since Moodle 2.2 please use core_group_external::add_group_members instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::add_group_members()
      * @param array $members of arrays with keys userid, groupid
      * @return void
      */
@@ -674,9 +692,10 @@ class moodle_group_external extends external_api {
         return core_group_external::add_group_members($members);
     }
 
-   /**
+    /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_group_external::add_group_members_returns instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::add_group_members_returns()
      * @return external_description
      */
     public static function add_groupmembers_returns() {
@@ -686,7 +705,8 @@ class moodle_group_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_group_external::delete_group_members_parameters instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::delete_group_members_parameters()
      * @return external_function_parameters
      */
     public static function delete_groupmembers_parameters() {
@@ -695,7 +715,8 @@ class moodle_group_external extends external_api {
 
     /**
      * Delete group members
-     * @deprecated since Moodle 2.2 please use core_group_external::delete_group_members instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::delete_group_members()
      * @param array $members of arrays with keys userid, groupid
      * @return void
      */
@@ -703,9 +724,10 @@ class moodle_group_external extends external_api {
         return core_group_external::delete_group_members($members);
     }
 
-   /**
+    /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_group_external::delete_group_members_returns instead
+     * @deprecated since Moodle 2.2 please do not call this function any more.
+     * @see core_group_external::delete_group_members_returns()
      * @return external_description
      */
     public static function delete_groupmembers_returns() {

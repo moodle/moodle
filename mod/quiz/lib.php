@@ -537,8 +537,10 @@ function quiz_format_question_grade($quiz, $grade) {
 /**
  * Update grades in central gradebook
  *
+ * @category grade
  * @param object $quiz the quiz settings.
  * @param int $userid specific user only, 0 means all users.
+ * @param bool $nullifnone If a single user is specified and $nullifnone is true a grade item with a null rawgrade will be inserted
  */
 function quiz_update_grades($quiz, $userid = 0, $nullifnone = true) {
     global $CFG, $DB;
@@ -590,8 +592,9 @@ function quiz_upgrade_grades() {
 }
 
 /**
- * Create grade item for given quiz
+ * Create or update the grade item for given quiz
  *
+ * @category grade
  * @param object $quiz object with extra cmidnumber
  * @param mixed $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok, error code otherwise
@@ -680,6 +683,7 @@ function quiz_grade_item_update($quiz, $grades = null) {
 /**
  * Delete grade item for given quiz
  *
+ * @category grade
  * @param object $quiz object
  * @return object quiz
  */

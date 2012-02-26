@@ -37,11 +37,11 @@ class forum1_resurce_file extends general_cc_file {
     protected $attachments = array();
 
     public function set_title($title) {
-        $this->title = $title;
+        $this->title = self::safexml($title);
     }
 
     public function set_text($text, $type='text/plain') {
-        $this->text = $text;
+        $this->text = self::safexml($text);
         $this->text_type = $type;
     }
 

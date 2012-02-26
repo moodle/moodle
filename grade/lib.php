@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Functions used by gradebook plugins and reports.
  *
- * @package   moodlecore
+ * @package   core_grades
  * @copyright 2009 Petr Skoda and Nicolas Connault
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -563,7 +562,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
  * A simple class containing info about grade plugins.
  * Can be subclassed for special rules
  *
- * @package moodlecore
+ * @package core_grades
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -694,7 +693,7 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
 /**
  * Utility class used for return tracking when using edit and other forms in grade plugins
  *
- * @package moodlecore
+ * @package core_grades
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1000,7 +999,7 @@ function grade_build_nav($path, $pagename=null, $id=null) {
 /**
  * General structure representing grade items in course
  *
- * @package moodlecore
+ * @package core_grades
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1557,7 +1556,7 @@ class grade_structure {
  * Flat structure similar to grade tree.
  *
  * @uses grade_structure
- * @package moodlecore
+ * @package core_grades
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1694,7 +1693,7 @@ class grade_seq extends grade_structure {
  * deletion and moving of items and categories within the tree.
  *
  * @uses grade_structure
- * @package moodlecore
+ * @package core_grades
  * @copyright 2009 Nicolas Connault
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

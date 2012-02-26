@@ -17,10 +17,9 @@
 /**
  * Email configuration page
  *
- * @package    message
- * @subpackage email
- * @copyright  2011 Lancaster University Network Services Limited
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   message_email
+ * @copyright 2011 Lancaster University Network Services Limited
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;

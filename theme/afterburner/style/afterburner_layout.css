@@ -144,7 +144,7 @@ SIDE-POST-ONLY WHEN MOVING BLOCKS (Left Column + Middle Column + Right Column)
 .blocks-moving.side-post-only #region-pre {width: 220px;left: 220px;}
 .blocks-moving.side-post-only #region-post {width: 220px;left: 0px;}
 /*
-CONTENT ONLY - NO SIDE BLOCKS WHATSOEVER (Middle Column Only)
+CONTENT-ONLY - NO SIDE BLOCKS WHATSOEVER (Middle Column Only)
 ----------------------------------------------------------*/
 .content-only #page-content { background-color: #fff;}
 .content-only #region-main-box {width: 200%; left: 0px;}
@@ -154,3 +154,7 @@ CONTENT ONLY - NO SIDE BLOCKS WHATSOEVER (Middle Column Only)
 .content-only #region-main {width: 100%}
 .content-only #region-pre { width:0;left:0;}
 .content-only #region-post { width: 0;left:0;}
+/*
+PAGELAYOUT-REPORT
+-------------------------*/
+.pagelayout-report #page-content #region-main-box #region-post-box #region-main-wrap #region-main-pad #region-main .region-content .no-overflow {overflow: auto;}

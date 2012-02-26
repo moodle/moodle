@@ -42,6 +42,8 @@ $string['allowprintview_help'] = 'If enabled, students are provided with a link 
 $string['andmorenewentries'] = 'and {$a} more new entries.';
 $string['answer'] = 'Answer';
 $string['approve'] = 'Approve';
+$string['approvaldisplayformat'] = 'Approval display format';
+$string['approvaldisplayformat_help'] = 'When approving glossary items you may wish to use a different display format';
 $string['areyousuredelete'] = 'Are you sure you want to delete this entry?';
 $string['areyousuredeletecomment'] = 'Are you sure you want to delete this comment?';
 $string['areyousureexport'] = 'Are you sure you want to export this entry to';
@@ -115,6 +117,7 @@ $string['displayformat_help'] = 'There are 7 display formats:
 * Entry list - Concepts are listed as links
 * FAQ - The words QUESTION and ANSWER are appended to the concept and definition respectively';
 $string['displayformatcontinuous'] = 'Continuous without author';
+$string['displayformatdefault'] = 'Default to same as display format';
 $string['displayformatdictionary'] = 'Simple, dictionary style';
 $string['displayformatencyclopedia'] = 'Encyclopedia';
 $string['displayformatentrylist'] = 'Entry list';

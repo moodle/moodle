@@ -1,11 +1,26 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
 /**
  * Extra library for groups and groupings.
  *
- * @copyright &copy; 2006 The Open University
- * @author J.White AT open.ac.uk, Petr Skoda (skodak)
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package groups
+ * @copyright 2006 The Open University, J.White AT open.ac.uk, Petr Skoda (skodak)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_group
  */
 
 /*
@@ -15,9 +30,10 @@
 
 /**
  * Adds a specified user to a group
- * @param mixed $groupid  The group id or group object
- * @param mixed $userid   The user id or user object
- * @return boolean True if user added successfully or the user is already a
+ *
+ * @param mixed $grouporid  The group id or group object
+ * @param mixed $userorid   The user id or user object
+ * @return bool True if user added successfully or the user is already a
  * member of the group, false otherwise.
  */
 function groups_add_member($grouporid, $userorid) {
@@ -69,9 +85,10 @@ function groups_add_member($grouporid, $userorid) {
 
 /**
  * Deletes the link between the specified user and group.
- * @param mixed $groupid  The group id or group object
- * @param mixed $userid   The user id or user object
- * @return boolean True if deletion was successful, false otherwise
+ *
+ * @param mixed $grouporid  The group id or group object
+ * @param mixed $userorid   The user id or user object
+ * @return bool True if deletion was successful, false otherwise
  */
 function groups_remove_member($grouporid, $userorid) {
     global $DB;
@@ -112,8 +129,10 @@ function groups_remove_member($grouporid, $userorid) {
 
 /**
  * Add a new group
- * @param object $data group properties
- * @param object $um upload manager with group picture
+ *
+ * @param stdClass $data group properties
+ * @param stdClass $editform
+ * @param array $editoroptions
  * @return id of group or false if error
  */
 function groups_create_group($data, $editform = false, $editoroptions = false) {
@@ -158,7 +177,9 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
 
 /**
  * Add a new grouping
- * @param object $data grouping properties
+ *
+ * @param stdClass $data grouping properties
+ * @param array $editoroptions
  * @return id of grouping or false if error
  */
 function groups_create_grouping($data, $editoroptions=null) {
@@ -193,9 +214,10 @@ function groups_create_grouping($data, $editoroptions=null) {
 
 /**
  * Update the group icon from form data
- * @param $group
- * @param $data
- * @param $editform
+ *
+ * @param stdClass $group group information
+ * @param stdClass $data
+ * @param stdClass $editform
  */
 function groups_update_group_icon($group, $data, $editform) {
     global $CFG, $DB;
@@ -221,10 +243,11 @@ function groups_update_group_icon($group, $data, $editform) {
 
 /**
  * Update group
- * @param object $data group properties (with magic quotes)
- * @param object $editform
+ *
+ * @param stdClass $data group properties (with magic quotes)
+ * @param stdClass $editform
  * @param array $editoroptions
- * @return boolean true or exception
+ * @return bool true or exception
  */
 function groups_update_group($data, $editform = false, $editoroptions = false) {
     global $CFG, $DB;
@@ -255,8 +278,10 @@ function groups_update_group($data, $editform = false, $editoroptions = false) {
 
 /**
  * Update grouping
- * @param object $data grouping properties (with magic quotes)
- * @return boolean true or exception
+ *
+ * @param stdClass $data grouping properties (with magic quotes)
+ * @param array $editoroptions
+ * @return bool true or exception
  */
 function groups_update_grouping($data, $editoroptions=null) {
     global $DB;
@@ -275,8 +300,9 @@ function groups_update_grouping($data, $editoroptions=null) {
 /**
  * Delete a group best effort, first removing members and links with courses and groupings.
  * Removes group avatar too.
+ *
  * @param mixed $grouporid The id of group to delete or full group object
- * @return boolean True if deletion was successful, false otherwise
+ * @return bool True if deletion was successful, false otherwise
  */
 function groups_delete_group($grouporid) {
     global $CFG, $DB;
@@ -316,6 +342,7 @@ function groups_delete_group($grouporid) {
 
 /**
  * Delete grouping
+ *
  * @param int $groupingorid
  * @return bool success
  */
@@ -357,6 +384,7 @@ function groups_delete_grouping($groupingorid) {
 
 /**
  * Remove all users (or one user) from all groups in course
+ *
  * @param int $courseid
  * @param int $userid 0 means all users
  * @param bool $showfeedback
@@ -397,6 +425,7 @@ function groups_delete_group_members($courseid, $userid=0, $showfeedback=false) 
 
 /**
  * Remove all groups from all groupings in course
+ *
  * @param int $courseid
  * @param bool $showfeedback
  * @return bool success
@@ -417,6 +446,7 @@ function groups_delete_groupings_groups($courseid, $showfeedback=false) {
 
 /**
  * Delete all groups from course
+ *
  * @param int $courseid
  * @param bool $showfeedback
  * @return bool success
@@ -456,6 +486,7 @@ function groups_delete_groups($courseid, $showfeedback=false) {
 
 /**
  * Delete all groupings from course
+ *
  * @param int $courseid
  * @param bool $showfeedback
  * @return bool success
@@ -497,7 +528,8 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
 /**
  * Obtains a list of the possible roles that group members might come from,
  * on a course. Generally this includes only profile roles.
- * @param object $context Context of course
+ *
+ * @param context $context Context of course
  * @return Array of role ID integers, or false if error/none.
  */
 function groups_get_possible_roles($context) {
@@ -508,6 +540,7 @@ function groups_get_possible_roles($context) {
 
 /**
  * Gets potential group members for grouping
+ *
  * @param int $courseid The id of the course
  * @param int $roleid The role to select users from
  * @param int $cohortid restrict to cohort id
@@ -553,6 +586,7 @@ function groups_get_potential_members($courseid, $roleid = null, $cohortid = nul
 
 /**
  * Parse a group name for characters to replace
+ *
  * @param string $format The format a group name will follow
  * @param int $groupnumber The number of the group to be used in the parsed format string
  * @return string the parsed format string
@@ -572,6 +606,7 @@ function groups_parse_name($format, $groupnumber) {
 
 /**
  * Assigns group into grouping
+ *
  * @param int groupingid
  * @param int groupid
  * @return bool true or exception
@@ -593,6 +628,7 @@ function groups_assign_grouping($groupingid, $groupid) {
 
 /**
  * Unassigns group grom grouping
+ *
  * @param int groupingid
  * @param int groupid
  * @return bool success
@@ -614,6 +650,7 @@ function groups_unassign_grouping($groupingid, $groupid) {
  * and pseudo-role details (including a name, 'No role'). Users with multiple
  * roles, same deal with key '*' and name 'Multiple roles'. You can find out
  * which roles each has by looking in the $roles array of the user object.
+ *
  * @param int $groupid
  * @param int $courseid Course ID (should match the group's course)
  * @param string $fields List of fields from user table prefixed with u, default 'u.*'
@@ -654,8 +691,8 @@ function groups_get_members_by_role($groupid, $courseid, $fields='u.*',
  * results of a database query that includes a list of users and possible
  * roles on a course.
  *
- * @param object $rs The record set (may be false)
- * @param int $contextid ID of course context
+ * @param moodle_recordset $rs The record set (may be false)
+ * @param int $context ID of course context
  * @return array As described in groups_get_members_by_role
  */
 function groups_calculate_role_people($rs, $context) {

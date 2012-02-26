@@ -338,6 +338,7 @@ $string['previouspage'] = 'Previous page';
 $string['processerror'] = 'Error occurred during processing!';
 $string['progressbar'] = 'Progress bar';
 $string['progressbar_help'] = 'If enabled, a bar is displayed at the bottom of lesson pages showing approximate percentage of completion.';
+$string['progresscompleted'] = 'You have completed {$a}% of the lesson';
 $string['progressbarteacherwarning'] = 'Progress bar does not display for {$a}';
 $string['progressbarteacherwarning2'] = 'You will not see the progress bar because you can edit this lesson';
 $string['qtype'] = 'Page type';

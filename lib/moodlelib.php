@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -1558,7 +1557,7 @@ function gc_cache_flags() {
     return true;
 }
 
-/// FUNCTIONS FOR HANDLING USER PREFERENCES ////////////////////////////////////
+// USER PREFERENCE API
 
 /**
  * Refresh user preference cache. This is used most often for $USER
@@ -1566,9 +1565,13 @@ function gc_cache_flags() {
  *
  * Preferences for each user are loaded on first use on every page, then again after the timeout expires.
  *
- * @param stdClass $user user object, preferences are preloaded into ->preference property
- * @param int $cachelifetime cache life time on the current page (ins seconds)
- * @return void
+ * @package  core
+ * @category preference
+ * @access   public
+ * @param    stdClass         $user          User object. Preferences are preloaded into 'preference' property
+ * @param    int              $cachelifetime Cache life time on the current page (in seconds)
+ * @throws   coding_exception
+ * @return   null
  */
 function check_user_preferences_loaded(stdClass $user, $cachelifetime = 120) {
     global $DB;
@@ -1608,13 +1611,14 @@ function check_user_preferences_loaded(stdClass $user, $cachelifetime = 120) {
 }
 
 /**
- * Called from set/delete_user_preferences, so that the prefs can
+ * Called from set/unset_user_preferences, so that the prefs can
  * be correctly reloaded in different sessions.
  *
  * NOTE: internal function, do not call from other code.
  *
- * @param integer $userid the user whose prefs were changed.
- * @return void
+ * @package core
+ * @access  private
+ * @param   integer         $userid the user whose prefs were changed.
  */
 function mark_user_preferences_changed($userid) {
     global $CFG;
@@ -1630,13 +1634,17 @@ function mark_user_preferences_changed($userid) {
 /**
  * Sets a preference for the specified user.
  *
- * If user object submitted, 'preference' property contains the preferences cache.
+ * If a $user object is submitted it's 'preference' property is used for the preferences cache.
  *
- * @param string $name The key to set as preference for the specified user
- * @param string $value The value to set for the $name key in the specified user's record,
- *                      null means delete current value
- * @param stdClass|int $user A moodle user object or id, null means current user
- * @return bool always true or exception
+ * @package  core
+ * @category preference
+ * @access   public
+ * @param    string            $name  The key to set as preference for the specified user
+ * @param    string            $value The value to set for the $name key in the specified user's
+ *                                    record, null means delete current value.
+ * @param    stdClass|int|null $user  A moodle user object or id, null means current user
+ * @throws   coding_exception
+ * @return   bool                     Always true or exception
  */
 function set_user_preference($name, $value, $user = null) {
     global $USER, $DB;
@@ -1703,11 +1711,14 @@ function set_user_preference($name, $value, $user = null) {
 /**
  * Sets a whole array of preferences for the current user
  *
- * If user object submitted, 'preference' property contains the preferences cache.
+ * If a $user object is submitted it's 'preference' property is used for the preferences cache.
  *
- * @param array $prefarray An array of key/value pairs to be set
- * @param stdClass|int $user A moodle user object or id, null means current user
- * @return bool always true or exception
+ * @package  core
+ * @category preference
+ * @access   public
+ * @param    array             $prefarray An array of key/value pairs to be set
+ * @param    stdClass|int|null $user      A moodle user object or id, null means current user
+ * @return   bool                         Always true or exception
  */
 function set_user_preferences(array $prefarray, $user = null) {
     foreach ($prefarray as $name => $value) {
@@ -1719,11 +1730,15 @@ function set_user_preferences(array $prefarray, $user = null) {
 /**
  * Unsets a preference completely by deleting it from the database
  *
- * If user object submitted, 'preference' property contains the preferences cache.
+ * If a $user object is submitted it's 'preference' property is used for the preferences cache.
  *
- * @param string  $name The key to unset as preference for the specified user
- * @param stdClass|int $user A moodle user object or id, null means current user
- * @return bool always true or exception
+ * @package  core
+ * @category preference
+ * @access   public
+ * @param    string            $name The key to unset as preference for the specified user
+ * @param    stdClass|int|null $user A moodle user object or id, null means current user
+ * @throws   coding_exception
+ * @return   bool                    Always true or exception
  */
 function unset_user_preference($name, $user = null) {
     global $USER, $DB;
@@ -1773,12 +1788,17 @@ function unset_user_preference($name, $user = null) {
  * none is found, then the optional value $default is returned,
  * otherwise NULL.
  *
- * If user object submitted, 'preference' property contains the preferences cache.
+ * If a $user object is submitted it's 'preference' property is used for the preferences cache.
  *
- * @param string $name Name of the key to use in finding a preference value
- * @param mixed $default Value to be returned if the $name key is not set in the user preferences
- * @param stdClass|int $user A moodle user object or id, null means current user
- * @return mixed string value or default
+ * @package  core
+ * @category preference
+ * @access   public
+ * @param    string            $name    Name of the key to use in finding a preference value
+ * @param    mixed|null        $default Value to be returned if the $name key is not set in the user preferences
+ * @param    stdClass|int|null $user    A moodle user object or id, null means current user
+ * @throws   coding_exception
+ * @return   string|mixed|null          A string containing the value of a single preference. An
+ *                                      array with all of the preferences or null
  */
 function get_user_preferences($name = null, $default = null, $user = null) {
     global $USER;
@@ -1945,9 +1965,10 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
  * @param bool $fixday If true (default) then the leading zero from %d is removed.
  *        If false then the leading zero is maintained.
+ * @param bool $fixhour If true (default) then the leading zero from %I is removed.
  * @return string the formatted date/time.
  */
-function userdate($date, $format = '', $timezone = 99, $fixday = true) {
+function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour = true) {
 
     global $CFG;
 
@@ -1960,6 +1981,19 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true) {
     } else if ($fixday) {
         $formatnoday = str_replace('%d', 'DD', $format);
         $fixday = ($formatnoday != $format);
+        $format = $formatnoday;
+    }
+
+    // Note: This logic about fixing 12-hour time to remove unnecessary leading
+    // zero is required because on Windows, PHP strftime function does not
+    // support the correct 'hour without leading zero' parameter (%l).
+    if (!empty($CFG->nofixhour)) {
+        // Config.php can force %I not to be fixed.
+        $fixhour = false;
+    } else if ($fixhour) {
+        $formatnohour = str_replace('%I', 'HH', $format);
+        $fixhour = ($formatnohour != $format);
+        $format = $formatnohour;
     }
 
     //add daylight saving offset for string timezones only, as we can't get dst for
@@ -1971,21 +2005,25 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true) {
     $timezone = get_user_timezone_offset($timezone);
 
     if (abs($timezone) > 13) {   /// Server time
+        $datestring = strftime($format, $date);
         if ($fixday) {
-            $datestring = strftime($formatnoday, $date);
             $daystring  = ltrim(str_replace(array(' 0', ' '), '', strftime(' %d', $date)));
             $datestring = str_replace('DD', $daystring, $datestring);
-        } else {
-            $datestring = strftime($format, $date);
+        }
+        if ($fixhour) {
+            $hourstring = ltrim(str_replace(array(' 0', ' '), '', strftime(' %I', $date)));
+            $datestring = str_replace('HH', $hourstring, $datestring);
         }
     } else {
         $date += (int)($timezone * 3600);
+        $datestring = gmstrftime($format, $date);
         if ($fixday) {
-            $datestring = gmstrftime($formatnoday, $date);
             $daystring  = ltrim(str_replace(array(' 0', ' '), '', gmstrftime(' %d', $date)));
             $datestring = str_replace('DD', $daystring, $datestring);
-        } else {
-            $datestring = gmstrftime($format, $date);
+        }
+        if ($fixhour) {
+            $hourstring = ltrim(str_replace(array(' 0', ' '), '', gmstrftime(' %I', $date)));
+            $datestring = str_replace('HH', $hourstring, $datestring);
         }
     }
 
@@ -1999,8 +2037,6 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true) {
        }
     }
 
-    // When using the %l (12-hour time with no leading zero), it adds unwanted spaces
-    $datestring = trim(str_replace('  ', ' ', $datestring));
     return $datestring;
 }
 

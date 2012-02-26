@@ -36,6 +36,7 @@
  * databases like postgres need this, because they don't lack any temp functionality.
  *
  * @package    core
+ * @category   dml
  * @subpackage dml
  * @copyright  2009 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -45,13 +46,16 @@ defined('MOODLE_INTERNAL') || die();
 
 class moodle_temptables {
 
-    protected $mdb;        // circular reference, to be able to use DB facilities here if needed
-    protected $prefix;     // prefix to be used for all the DB objects
-    protected $temptables; // simple array of moodle, not prefixed 'tablename' => DB, final (prefixed) 'tablename'
+    /** @var circular reference, to be able to use DB facilities here if needed */
+    protected $mdb;
+    /** @var prefix to be used for all the DB objects */
+    protected $prefix;
+    /** @var simple array of moodle, not prefixed 'tablename' => DB, final (prefixed) 'tablename' */
+    protected $temptables;
 
     /**
      * Creates new moodle_temptables instance
-     * @param object moodle_database instance
+     * @param moodle_database $mdb An instance of moodle_database.
      */
     public function __construct($mdb) {
         $this->mdb        = $mdb;
