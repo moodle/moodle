@@ -39,6 +39,14 @@ class qformat_blackboard_six extends qformat_default {
     function provide_import() {
         return true;
     }
+    
+    public function can_import_file($file) {
+        $mimetypes = array(
+            mimeinfo('type', '.dat'),
+            mimeinfo('type', '.zip')
+        );
+        return in_array($file->get_mimetype(), $mimetypes);
+    }
 
 
     //Function to check and create the needed dir to unzip file to

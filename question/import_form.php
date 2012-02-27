@@ -129,7 +129,7 @@ class question_import_form extends moodleform {
         $qformat = new $classname();
 
         $file = reset($files);
-        if ($file->get_mimetype() != $qformat->mime_type()) {
+        if (!$qformat->can_import_file($file)) {
             $a = new stdClass();
             $a->actualtype = $file->get_mimetype();
             $a->expectedtype = $qformat->mime_type();
