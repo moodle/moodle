@@ -470,6 +470,7 @@ class qtype_numerical extends question_type {
 
         parent::move_files($questionid, $oldcontextid, $newcontextid);
         $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid);
+        $this->move_files_in_hints($questionid, $oldcontextid, $newcontextid);
     }
 
     protected function delete_files($questionid, $contextid) {
@@ -477,6 +478,7 @@ class qtype_numerical extends question_type {
 
         parent::delete_files($questionid, $contextid);
         $this->delete_files_in_answers($questionid, $contextid);
+        $this->delete_files_in_hints($questionid, $contextid);
     }
 }
 
