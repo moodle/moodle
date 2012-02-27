@@ -316,7 +316,7 @@ abstract class backup_activity_task extends backup_task {
      * Encodes URLs to the activity instance's scripts into a site-independent form
      *
      * The current instance of the activity may be referenced from other places in
-     * the course by URLs like {@example http://my.moodle.site/mod/workshop/view.php?id=42}
+     * the course by URLs like http://my.moodle.site/mod/workshop/view.php?id=42
      * Obvisouly, such URLs are not valid any more once the course is restored elsewhere.
      * For this reason the backup file does not store the original URLs but encodes them
      * into a transportable form. During the restore, the reverse process is applied and
