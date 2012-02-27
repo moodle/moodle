@@ -441,7 +441,6 @@ class moodle1_root_handler extends moodle1_xml_handler {
             'users'            => 0, // @todo how to detect this from moodle.xml?
             'anonymize'        => 0,
             'role_assignments' => 0,
-            'user_files'       => 0,
             'activities'       => 1,
             'blocks'           => 1,
             'filters'          => 0,
