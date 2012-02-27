@@ -198,7 +198,6 @@ $string['rootsettings'] = 'Backup settings';
 $string['rootsettingusers'] = 'Include enrolled users';
 $string['rootsettinganonymize'] = 'Anonymize user information';
 $string['rootsettingroleassignments'] = 'Include user role assignments';
-$string['rootsettinguserfiles'] = 'Include user files';
 $string['rootsettingactivities'] = 'Include activities';
 $string['rootsettingblocks'] = 'Include blocks';
 $string['rootsettingfilters'] = 'Include filters';
