@@ -117,6 +117,11 @@ class web_test extends UnitTestCase {
 
         $url = new moodle_url('http://example.com/?a[1]=1&a[2]=2');
         $this->assertEqual($strurl, $url->out(false));
+
+        // For un-keyed array params, we expect 0..n keys to be returned
+        $strurl = 'http://example.com/?a%5B0%5D=0&a%5B1%5D=1';
+        $url = new moodle_url('http://example.com/?a[]=0&a[]=1');
+        $this->assertEqual($strurl, $url->out(false));
     }
 
     function test_compare_url() {
