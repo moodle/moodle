@@ -4021,3 +4021,19 @@ function moodle_strtolower($string, $encoding='') {
     //Use text services
     return textlib::strtolower($string, $encoding);
 }
+
+/**
+ * Original singleton helper function, please use static methods instead,
+ * ex: textlib::convert()
+ *
+ * @deprecated since Moodle 2.1 use textlib::xxxx() instead
+ * @see textlib
+ * @return textlib instance
+ */
+function textlib_get_instance() {
+
+    debugging('textlib_get_instance() is deprecated. Please use static calling textlib::functioname() instead.', DEBUG_DEVELOPER);
+
+    return new textlib();
+}
+

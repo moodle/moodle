@@ -25,20 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Original singleton helper function, please use static methods instead,
- * ex: textlib::convert()
- *
- * @deprecated since Moodle 2.1 MDL-29027 textlib contains static functions
- * @todo MDL-31301 calling of textlib functions should be static.
- * @see textlib
- * @return textlib instance
- */
-function textlib_get_instance() {
-    return new textlib();
-}
-
-
-/**
  * defines string api's for manipulating strings
  *
  * This class is used to manipulate strings under Moodle 1.6 an later. As
