@@ -221,14 +221,6 @@ abstract class page_wiki {
     }
 
     /**
-     * returns title of the wiki page
-     * @return string
-     */
-    function get_title() {
-        return $this->title;
-    }
-
-    /**
      * Method to set current group id
      * @param int $gid Current group id
      */

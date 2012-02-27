@@ -293,11 +293,11 @@ $wikipage->set_gid($currentgroup);
 $wikipage->set_page($page);
 
 if($pageid) {
-    add_to_log($course->id, 'wiki', 'view', "view.php?pageid=$pageid", "$page->title", $cm->id);
+    add_to_log($course->id, 'wiki', 'view', "view.php?pageid=".$pageid, $pageid, $cm->id);
 } else if($id) {
-    add_to_log($course->id, 'wiki', 'view', "view.php?id=$id", "$page->title", $cm->id);
+    add_to_log($course->id, 'wiki', 'view', "view.php?id=".$id, $id, $cm->id);
 } else if($wid && $title) {
-    add_to_log($course->id, 'wiki', 'view', "view.php?wid=$wid&title=$title", "$page->title", $cm->id);
+    add_to_log($course->id, 'wiki', 'view', "view.php?wid=".$wid."&title=".$title, $wid, $cm->id);
 }
 
 $wikipage->print_header();
