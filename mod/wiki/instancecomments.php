@@ -82,7 +82,6 @@ if ($action == 'add' || $action == 'edit') {
 }
 
 if ($action == 'delete') {
-    add_to_log($course->id, 'wiki', 'delete comment', "comments.php?pageid=$pageid", "$page->title", $cm->id);
     $comm->set_action($action, $commentid, 0);
 } else {
     if (empty($newcontent)) {
@@ -94,14 +93,13 @@ if ($action == 'delete') {
     }
 
     if ($action == 'edit') {
-        add_to_log($course->id, 'wiki', 'update comment', "comments.php?pageid=$pageid", "$page->title", $cm->id);
         $comm->set_action($action, $id, $content);
     } else {
-        add_to_log($course->id, 'wiki', 'add comment', "comments.php?pageid=$pageid", "$page->title", $cm->id);
         $action = 'add';
         $comm->set_action($action, 0, $content);
     }
 }
+add_to_log($course->id, 'wiki', 'comment', "comments.php?pageid=".$pageid, $pageid, $cm->id);
 
 $comm->print_header();
 $comm->print_content();

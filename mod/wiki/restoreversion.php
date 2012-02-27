@@ -75,7 +75,7 @@ if ($confirm) {
     $wikipage->set_versionid($versionid);
 
 }
-add_to_log($course->id, "wiki", "restore", "view.php?pageid=$pageid", "$page->title : $versionid", $cm->id);
+add_to_log($course->id, "wiki", "restore", "view.php?pageid=".$pageid, $pageid, $cm->id);
 
 $wikipage->print_header();
 $wikipage->print_content();

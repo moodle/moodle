@@ -89,16 +89,14 @@ $wikipage->set_action($action);
 switch ($action) {
 case 'create':
     $newpageid = $wikipage->create_page($title);
-    $newtitle = $wikipage->get_title();
-    add_to_log($course->id, 'wiki', 'add page', "view.php?pageid=$newpageid", "$newtitle", $cm->id);
-    redirect($CFG->wwwroot . '/mod/wiki/edit.php?pageid=' . $newpageid);
+    add_to_log($course->id, 'wiki', 'add page', "view.php?pageid=".$newpageid, $newpageid, $cm->id);
+    redirect($CFG->wwwroot . '/mod/wiki/edit.php?pageid='.$newpageid);
     break;
 case 'new':
     if ((int)$wiki->forceformat == 1 && !empty($title)) {
         $newpageid = $wikipage->create_page($title);
-        $newtitle = $wikipage->get_title();
-        add_to_log($course->id, 'wiki', 'add page', "view.php?pageid=$newpageid", "$newtitle", $cm->id);
-        redirect($CFG->wwwroot . '/mod/wiki/edit.php?pageid=' . $newpageid);
+        add_to_log($course->id, 'wiki', 'add page', "view.php?pageid=".$newpageid, $newpageid, $cm->id);
+        redirect($CFG->wwwroot . '/mod/wiki/edit.php?pageid='.$newpageid);
     } else {
         // create link from moodle navigation block without pagetitle
         $wikipage->print_header();
