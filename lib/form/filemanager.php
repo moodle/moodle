@@ -274,6 +274,7 @@ function form_filemanager_render($options) {
     }
 
     $maxsize = get_string('maxfilesize', 'moodle', display_size(get_max_upload_file_size($CFG->maxbytes, $course_maxbytes, $options->maxbytes)));
+    $loading = get_string('loading', 'repository');
     $html .= <<<FMHTML
 <div class="filemanager-loading mdl-align" id='filemanager-loading-{$client_id}'>
 $icon_progress
@@ -288,7 +289,7 @@ $icon_progress
     </div>
     <div class="filemanager-container" id="filemanager-{$client_id}">
         <ul id="draftfiles-{$client_id}" class="fm-filelist">
-            <li>Loading...</li>
+            <li>{$loading}</li>
         </ul>
     </div>
 </div>
