@@ -440,7 +440,6 @@ abstract class backup_controller_dbops extends backup_dbops {
             'backup_general_users'              => 'users',
             'backup_general_anonymize'          => 'anonymize',
             'backup_general_role_assignments'   => 'role_assignments',
-            'backup_general_user_files'         => 'user_files',
             'backup_general_activities'         => 'activities',
             'backup_general_blocks'             => 'blocks',
             'backup_general_filters'            => 'filters',
