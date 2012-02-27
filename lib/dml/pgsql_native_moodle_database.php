@@ -578,7 +578,7 @@ class pgsql_native_moodle_database extends moodle_database {
 
     /**
      * Execute general sql query. Should be used only when no other method suitable.
-     * Do NOT use this to make changes in db structure, use database_manager::execute_sql() instead!
+     * Do NOT use this to make changes in db structure, use database_manager methods instead!
      * @param string $sql query
      * @param array $params query parameters
      * @return bool true
