@@ -132,7 +132,7 @@ input[type="radio"] {
 
 .loginbox .loginform .form-input #username,
 .loginbox .loginform .form-input #password {
-    width: 50%;
+    width: 100%;
     color: #000;
 }
 
