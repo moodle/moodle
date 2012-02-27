@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['database:unenrol'] = 'Unenrol suspended users';
 $string['dbencoding'] = 'Database encoding';
 $string['dbhost'] = 'Database host';
 $string['dbhost_desc'] = 'Type database server IP address or host name';
