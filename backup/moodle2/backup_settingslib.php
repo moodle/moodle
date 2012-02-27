@@ -70,13 +70,6 @@ class backup_anonymize_setting extends root_backup_setting {}
 
 /**
  * root setting to control if backup will include
- * user files or no (images, local storage), depends of @backup_users_setting
- * exactly in the same way than @backup_anonymize_setting so we extend from it
- */
-class backup_user_files_setting extends backup_anonymize_setting {}
-
-/**
- * root setting to control if backup will include
  * role assignments or no (any level), depends of @backup_users_setting
  * exactly in the same way than @backup_anonymize_setting so we extend from it
  */
