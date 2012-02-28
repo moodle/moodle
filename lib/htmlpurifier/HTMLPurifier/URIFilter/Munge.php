@@ -20,13 +20,8 @@ class HTMLPurifier_URIFilter_Munge extends HTMLPurifier_URIFilter
 
         $scheme_obj = $uri->getSchemeObj($config, $context);
         if (!$scheme_obj) return true; // ignore unknown schemes, maybe another postfilter did it
-        if (is_null($uri->host) || empty($scheme_obj->browsable)) {
-            return true;
-        }
-        // don't redirect if target host is our host
-        if ($uri->host === $config->getDefinition('URI')->host) {
-            return true;
-        }
+        if (!$scheme_obj->browsable) return true; // ignore non-browseable schemes, since we can't munge those in a reasonable way
+        if ($uri->isBenign($config, $context)) return true; // don't redirect if a benign URL
 
         $this->makeReplace($uri, $config, $context);
         $this->replace = array_map('rawurlencode', $this->replace);
