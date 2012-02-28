@@ -470,7 +470,7 @@ class html2text
         $text = html_entity_decode($text, ENT_COMPAT, 'UTF-8');
 
         // Remove unknown/unhandled entities (this cannot be done in search-and-replace block)
-        $text = preg_replace('/&[^&;]+;/i', '', $text);
+        $text = preg_replace('/&([a-zA-Z0-9]{2,6}|#[0-9]{2,4});/', '', $text);
 
         // Strip any other HTML tags
         $text = strip_tags($text, $this->allowed_tags);
