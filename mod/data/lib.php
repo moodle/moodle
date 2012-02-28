@@ -1250,6 +1250,9 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
         return;
     }
 
+    // Check whether this activity is read-only at present
+    $readonly = data_in_readonly_period($data);
+
     foreach ($records as $record) {   // Might be just one for the single template
 
     // Replacing tags
@@ -1265,7 +1268,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
     // Replacing special tags (##Edit##, ##Delete##, ##More##)
         $patterns[]='##edit##';
         $patterns[]='##delete##';
-        if (has_capability('mod/data:manageentries', $context) or data_isowner($record->id)) {
+        if (has_capability('mod/data:manageentries', $context) || (!$readonly && data_isowner($record->id))) {
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/edit.php?d='
                              .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('t/edit') . '" class="iconsmall" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
@@ -2079,11 +2082,8 @@ function data_user_can_add_entry($data, $currentgroup, $groupmode, $context = nu
 
     } else if (data_atmaxentries($data)) {
         return false;
-    }
-
-    //if in the view only time window
-    $now = time();
-    if ($now>$data->timeviewfrom && $now<$data->timeviewto) {
+    } else if (data_in_readonly_period($data)) {
+        // Check whether we're in a read-only period
         return false;
     }
 
@@ -2103,6 +2103,21 @@ function data_user_can_add_entry($data, $currentgroup, $groupmode, $context = nu
     }
 }
 
+/**
+ * Check whether the specified database activity is currently in a read-only period
+ *
+ * @param object $data
+ * @return bool returns true if the time fields in $data indicate a read-only period; false otherwise
+ */
+function data_in_readonly_period($data) {
+    $now = time();
+    if (!$data->timeviewfrom && !$data->timeviewto) {
+        return false;
+    } else if (($data->timeviewfrom && $now < $data->timeviewfrom) || ($data->timeviewto && $now > $data->timeviewto)) {
+        return false;
+    }
+    return true;
+}
 
 /**
  * @return bool
