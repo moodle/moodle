@@ -33,17 +33,16 @@
 // Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu
 
 /**
- * This file contains the lti module backup class
+ * Defines backup_lti_activity_task class
  *
- * @package    mod
- * @subpackage lti
- * @copyright  2009 Marc Alier, Jordi Piguillem, Nikolas Galanis
- *  marc.alier@upc.edu
- * @copyright  2009 Universitat Politecnica de Catalunya http://www.upc.edu
- * @author     Marc Alier
- * @author     Jordi Piguillem
- * @author     Nikolas Galanis
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     mod_lti
+ * @category    backup
+ * @copyright   2009 Marc Alier <marc.alier@upc.edu>, Jordi Piguillem, Nikolas Galanis
+ * @copyright   2009 Universitat Politecnica de Catalunya http://www.upc.edu
+ * @author      Marc Alier
+ * @author      Jordi Piguillem
+ * @author      Nikolas Galanis
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -51,29 +50,28 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/mod/lti/backup/moodle2/backup_lti_stepslib.php');
 
 /**
- * lti backup task that provides all the settings and steps to perform one
- * complete backup of the module
+ * Provides the steps to perform one complete backup of the LTI instance
  */
 class backup_lti_activity_task extends backup_activity_task {
 
     /**
-     * Define (add) particular settings this activity can have
+     * No specific settings for this activity
      */
     protected function define_my_settings() {
-        // No particular settings for this activity
     }
 
     /**
-     * Define (add) particular steps this activity can have
+     * Defines a backup step to store the instance data in the lti.xml file
      */
     protected function define_my_steps() {
-        // Choice only has one structure step
         $this->add_step(new backup_lti_activity_structure_step('lti_structure', 'lti.xml'));
     }
 
     /**
-     * Code the transformations to perform in the activity in
-     * order to get transportable (encoded) links
+     * Encodes URLs to the index.php and view.php scripts
+     *
+     * @param string $content some HTML text that eventually contains URLs to the activity instance scripts
+     * @return string the content with the URLs encoded
      */
     static public function encode_content_links($content) {
         global $CFG;
