@@ -1924,6 +1924,8 @@ class global_navigation extends navigation_node {
         $activities = array();
 
         foreach ($sections as $key => $section) {
+            $sections[$key] = clone($section);
+            unset($sections[$key]->summary);
             $sections[$key]->hasactivites = false;
             if (!array_key_exists($section->section, $modinfo->sections)) {
                 continue;
