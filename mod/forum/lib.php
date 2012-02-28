@@ -365,6 +365,16 @@ WHERE
     return $result;
 }
 
+/**
+ * Create a message-id string to use in the custom headers of forum notification emails
+ *
+ * message-id is used by email clients to identify emails and to nest conversations
+ *
+ * @param int $postid The ID of the forum post we are notifying the user about
+ * @param int $usertoid The ID of the user being notified
+ * @param string $hostname The server's hostname
+ * @return string A unique message-id
+ */
 function forum_get_email_message_id($postid, $usertoid, $hostname) {
     return '<'.hash('sha256',$postid.'to'.$usertoid.'@'.$hostname).'>';
 }
