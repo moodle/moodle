@@ -109,9 +109,6 @@ class assignment_upload extends assignment_base {
             $submission = $this->get_submission($USER->id);
         }
 
-        if (empty($submission->timemarked)) {   /// Nothing to show, so print nothing
-            return;
-        }
 
         $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $USER->id);
         $item = $grading_info->items[0];
