@@ -105,6 +105,12 @@ input[type="radio"] {
 }
 .dir-rtl .loginbox .loginform .form-label {
     text-align: right;
+    direction: rtl;
+}
+
+.loginbox .loginform .form-label {
+    text-align: left;
+    direction: ltr;
 }
 .loginbox .loginform .form-input {
     float: none;

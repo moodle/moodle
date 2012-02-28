@@ -247,6 +247,11 @@ Course Section Topic & Weekly
     display: none; /* hides topic items title or weekly itens title */
     margin-bottom: 9px;
 }
+/*Login (Login page)*/
+.loginbox .loginform .form-label {width:46%;}
+.dir-rtl .loginbox .loginform .form-label {width:46%;}
+.loginbox .loginform .form-input {width:53%;}
+
 /*
 Login (Front Page)
 -----------------------*/
