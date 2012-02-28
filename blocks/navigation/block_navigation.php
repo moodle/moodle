@@ -218,8 +218,8 @@ class block_navigation extends block_base {
      * Returns the attributes to set for this block
      *
      * This function returns an array of HTML attributes for this block including
-     * the defaults
-     * {@see block_tree::html_attributes()} is used to get the default arguments
+     * the defaults.
+     * {@link block_tree::html_attributes()} is used to get the default arguments
      * and then we check whether the user has enabled hover expansion and add the
      * appropriate hover class if it has.
      *

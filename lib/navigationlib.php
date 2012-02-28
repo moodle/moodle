@@ -388,7 +388,7 @@ class navigation_node implements renderable {
      * Marks this node as active and forces it open.
      *
      * Important: If you are here because you need to mark a node active to get
-     * the navigation to do what you want have you looked at {@see navigation_node::override_active_url()}?
+     * the navigation to do what you want have you looked at {@link navigation_node::override_active_url()}?
      * You can use it to specify a different URL to match the active navigation node on
      * rather than having to locate and manually mark a node active.
      */
@@ -916,7 +916,7 @@ class navigation_node_collection implements IteratorAggregate {
  * and is then used by the settings nav and navbar to save on processing and DB calls
  *
  * See
- * {@link lib/pagelib.php} {@see moodle_page::initialise_theme_and_output()}
+ * {@link lib/pagelib.php} {@link moodle_page::initialise_theme_and_output()}
  * {@link lib/ajax/getnavbranch.php} Called by ajax
  *
  * @package   core
@@ -1567,7 +1567,7 @@ class global_navigation extends navigation_node {
      * formats lib.php file to customise the navigation that is generated at this
      * point for the course.
      *
-     * By default (if not defined) the method {@see global_navigation::load_generic_course_sections()} is
+     * By default (if not defined) the method {@link global_navigation::load_generic_course_sections()} is
      * called instead.
      *
      * @param stdClass $course Database record for the course
@@ -1725,7 +1725,7 @@ class global_navigation extends navigation_node {
      *
      * @param navigation_node $sectionnode
      * @param int $sectionnumber
-     * @param array $activities An array of activites as returned by {@see global_navigation::generate_sections_and_activities()}
+     * @param array $activities An array of activites as returned by {@link global_navigation::generate_sections_and_activities()}
      * @param stdClass $course The course object the section and activities relate to.
      * @return array Array of activity nodes
      */
@@ -1832,8 +1832,8 @@ class global_navigation extends navigation_node {
      *
      * The callback is a method: {modulename}_extend_navigation()
      * Examples:
-     *  * {@see forum_extend_navigation()}
-     *  * {@see workshop_extend_navigation()}
+     *  * {@link forum_extend_navigation()}
+     *  * {@link workshop_extend_navigation()}
      *
      * @param cm_info|stdClass $cm
      * @param stdClass $course
@@ -2429,9 +2429,9 @@ class global_navigation extends navigation_node {
      * This function only looks at this nodes children, it does NOT look recursivily.
      * If the node can't be found then false is returned.
      *
-     * If you need to search recursivily then use the {@see global_navigation::find()} method.
+     * If you need to search recursivily then use the {@link global_navigation::find()} method.
      *
-     * Note: If you are trying to set the active node {@see navigation_node::override_active_url()}
+     * Note: If you are trying to set the active node {@link navigation_node::override_active_url()}
      * may be of more use to you.
      *
      * @param string|int $key The key of the node you wish to receive.
@@ -2453,9 +2453,9 @@ class global_navigation extends navigation_node {
      * found or there are no more nodes to search.
      *
      * If you know that the node being searched for is a child of this node
-     * then use the {@see global_navigation::get()} method instead.
+     * then use the {@link global_navigation::get()} method instead.
      *
-     * Note: If you are trying to set the active node {@see navigation_node::override_active_url()}
+     * Note: If you are trying to set the active node {@link navigation_node::override_active_url()}
      * may be of more use to you.
      *
      * @param string|int $key The key of the node you wish to receive.
@@ -3429,7 +3429,7 @@ class settings_navigation extends navigation_node {
      * This only gets called if there is a corrosponding function in the modules
      * lib file.
      *
-     * For examples mod/forum/lib.php {@see forum_extend_settings_navigation()}
+     * For examples mod/forum/lib.php {@link forum_extend_settings_navigation()}
      *
      * @return navigation_node|false
      */
@@ -3594,7 +3594,7 @@ class settings_navigation extends navigation_node {
     }
 
     /**
-     * This function gets called by {@see settings_navigation::load_user_settings()} and actually works out
+     * This function gets called by {@link settings_navigation::load_user_settings()} and actually works out
      * what can be shown/done
      *
      * @param int $courseid The current course' id
@@ -4290,7 +4290,7 @@ class navigation_cache {
      * Marks the cache as being volatile (likely to change)
      *
      * Any caches marked as volatile will be destroyed at the on shutdown by
-     * {@see navigation_node::destroy_volatile_caches()} which is registered
+     * {@link navigation_node::destroy_volatile_caches()} which is registered
      * as a shutdown function if any caches are marked as volatile.
      *
      * @param bool $setting True to destroy the cache false not too
