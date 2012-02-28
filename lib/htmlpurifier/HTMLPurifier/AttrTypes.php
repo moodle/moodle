@@ -15,6 +15,13 @@ class HTMLPurifier_AttrTypes
      * types.
      */
     public function __construct() {
+        // XXX This is kind of poor, since we don't actually /clone/
+        // instances; instead, we use the supplied make() attribute. So,
+        // the underlying class must know how to deal with arguments.
+        // With the old implementation of Enum, that ignored its
+        // arguments when handling a make dispatch, the IAlign
+        // definition wouldn't work.
+
         // pseudo-types, must be instantiated via shorthand
         $this->info['Enum']    = new HTMLPurifier_AttrDef_Enum();
         $this->info['Bool']    = new HTMLPurifier_AttrDef_HTML_Bool();
@@ -29,6 +36,9 @@ class HTMLPurifier_AttrTypes
         $this->info['URI']      = new HTMLPurifier_AttrDef_URI();
         $this->info['LanguageCode'] = new HTMLPurifier_AttrDef_Lang();
         $this->info['Color']    = new HTMLPurifier_AttrDef_HTML_Color();
+        $this->info['IAlign']   = self::makeEnum('top,middle,bottom,left,right');
+        $this->info['LAlign']   = self::makeEnum('top,bottom,left,right');
+        $this->info['FrameTarget'] = new HTMLPurifier_AttrDef_HTML_FrameTarget();
 
         // unimplemented aliases
         $this->info['ContentType'] = new HTMLPurifier_AttrDef_Text();
@@ -42,6 +52,10 @@ class HTMLPurifier_AttrTypes
         // number is really a positive integer (one or more digits)
         // FIXME: ^^ not always, see start and value of list items
         $this->info['Number']   = new HTMLPurifier_AttrDef_Integer(false, false, true);
+    }
+
+    private static function makeEnum($in) {
+        return new HTMLPurifier_AttrDef_Clone(new HTMLPurifier_AttrDef_Enum(explode(',', $in)));
     }
 
     /**
