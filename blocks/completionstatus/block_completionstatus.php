@@ -36,7 +36,7 @@ require_once($CFG->libdir.'/completionlib.php');
 class block_completionstatus extends block_base {
 
     public function init() {
-        $this->title   = get_string('completionstatus', 'block_completionstatus');
+        $this->title   = get_string('pluginname', 'block_completionstatus');
     }
 
     public function get_content() {

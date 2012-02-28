@@ -29,4 +29,4 @@ $string['configadminview'] = 'What should the admin see in the course list block
 $string['confighideallcourseslink'] = 'Hide "All courses" link at the bottom of the block. Link hiding does not affects Admin\'s view';
 $string['hideallcourseslink'] = 'Hide All courses link';
 $string['owncourses'] = 'Admin user sees own courses';
-$string['pluginname'] = 'Course list';
+$string['pluginname'] = 'Courses';
