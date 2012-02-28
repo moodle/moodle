@@ -132,8 +132,7 @@ class moodle_exception extends Exception {
  *
  * This exception is thrown from require_login()
  *
- * @package    core
- * @subpackage lib
+ * @package    core_access
  * @copyright  2010 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -164,8 +163,7 @@ class webservice_parameter_exception extends moodle_exception {
  * Exceptions indicating user does not have permissions to do something
  * and the execution can not continue.
  *
- * @package    core
- * @subpackage lib
+ * @package    core_access
  * @copyright  2009 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

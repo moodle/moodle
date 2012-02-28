@@ -2634,6 +2634,9 @@ function get_login_url() {
  * When $cm parameter specified, this function sets page layout to 'module'.
  * You need to change it manually later if some other layout needed.
  *
+ * @package    core_access
+ * @category   access
+ *
  * @param mixed $courseorid id of the course or course object
  * @param bool $autologinguest default true
  * @param object $cm course module object
@@ -2948,7 +2951,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
 /**
  * This function just makes sure a user is logged out.
  *
- * @global object
+ * @package    core_access
  */
 function require_logout() {
     global $USER;
@@ -2978,7 +2981,9 @@ function require_logout() {
  * the forcelogin option is turned on.
  * @see require_login()
  *
- * @global object
+ * @package    core_access
+ * @category   access
+ *
  * @param mixed $courseorid The course object or id in question
  * @param bool $autologinguest Allow autologin guests if that is wanted
  * @param object $cm Course activity module if known
