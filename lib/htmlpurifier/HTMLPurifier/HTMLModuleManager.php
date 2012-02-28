@@ -65,11 +65,11 @@ class HTMLPurifier_HTMLModuleManager
             'Presentation', 'Edit', 'Bdo', 'Tables', 'Image',
             'StyleAttribute',
             // Unsafe:
-            'Scripting', 'Object',  'Forms',
+            'Scripting', 'Object', 'Forms',
             // Sorta legacy, but present in strict:
             'Name',
         );
-        $transitional = array('Legacy', 'Target');
+        $transitional = array('Legacy', 'Target', 'Iframe');
         $xml = array('XMLCommonAttributes');
         $non_xml = array('NonXMLCommonAttributes');
 
@@ -112,7 +112,9 @@ class HTMLPurifier_HTMLModuleManager
 
         $this->doctypes->register(
             'XHTML 1.1', true,
-            array_merge($common, $xml, array('Ruby')),
+            // Iframe is a real XHTML 1.1 module, despite being
+            // "transitional"!
+            array_merge($common, $xml, array('Ruby', 'Iframe')),
             array('Tidy_Strict', 'Tidy_XHTML', 'Tidy_Proprietary', 'Tidy_Strict', 'Tidy_Name'), // Tidy_XHTML1_1
             array(),
             '-//W3C//DTD XHTML 1.1//EN',
@@ -228,6 +230,9 @@ class HTMLPurifier_HTMLModuleManager
         }
         if ($config->get('HTML.Nofollow')) {
             $modules[] = 'Nofollow';
+        }
+        if ($config->get('HTML.TargetBlank')) {
+            $modules[] = 'TargetBlank';
         }
 
         // merge in custom modules
@@ -364,6 +369,13 @@ class HTMLPurifier_HTMLModuleManager
                 // :TODO:
                 // non-standalone definitions that don't have a standalone
                 // to merge into could be deferred to the end
+                // HOWEVER, it is perfectly valid for a non-standalone
+                // definition to lack a standalone definition, even
+                // after all processing: this allows us to safely
+                // specify extra attributes for elements that may not be
+                // enabled all in one place.  In particular, this might
+                // be the case for trusted elements.  WARNING: care must
+                // be taken that the /extra/ definitions are all safe.
                 continue;
             }
 
