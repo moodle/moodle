@@ -125,7 +125,7 @@ function coursetag_get_all_tags($sort='name', $numtags=0) {
     global $CFG, $DB;
 
     // note that this selects all tags except for courses that are not visible
-    $sql = "SELECT id, name, id, tagtype, rawname, f.timemodified, flag, count
+    $sql = "SELECT id, name, tagtype, rawname, f.timemodified, flag, count
         FROM {tag} t,
         (SELECT tagid, MAX(timemodified) as timemodified, COUNT(id) as count
             FROM {tag_instance} WHERE tagid NOT IN
