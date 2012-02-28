@@ -78,7 +78,7 @@ $PAGE->navbar->add($userinfo);
 $PAGE->set_title("$course->shortname: $strrecentactivity");
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($course->fullname) . ": $userinfo", 3);
+echo $OUTPUT->heading(format_string($course->fullname) . ": $userinfo", 2);
 
 $mform->display();
 
@@ -238,8 +238,8 @@ if (!empty($activities)) {
                 $modfullname = $modnames[$cm->modname];
 
                 $image = "<img src=\"" . $OUTPUT->pix_url('icon', $cm->modname) . "\" class=\"icon\" alt=\"$modfullname\" />";
-                echo "<h4>$image $modfullname".
-                     " <a href=\"$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id\" $linkformat>$name</a></h4>";
+                echo "<h3>$image $modfullname".
+                     " <a href=\"$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id\" $linkformat>$name</a></h3>";
            }
 
         } else {
@@ -269,7 +269,7 @@ if (!empty($activities)) {
 
 } else {
 
-    echo '<h4><center>' . get_string('norecentactivity') . '</center></h2>';
+    echo '<h3><center>' . get_string('norecentactivity') . '</center></h3>';
 
 }
 
