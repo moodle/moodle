@@ -139,7 +139,6 @@ $userform = new user_editadvanced_form(null, array('editoroptions'=>$editoroptio
 $userform->set_data($user);
 
 if ($usernew = $userform->get_data()) {
-    add_to_log($course->id, 'user', 'update', "view.php?id=$user->id&course=$course->id", '');
 
     if (empty($usernew->auth)) {
         //user editing self
@@ -161,6 +160,7 @@ if ($usernew = $userform->get_data()) {
         $usernew->password = hash_internal_user_password($usernew->newpassword);
         $usernew->id = $DB->insert_record('user', $usernew);
         $usercreated = true;
+        add_to_log($course->id, 'user', 'add', "view.php?id=$usernew->id&course=$course->id", '');
 
     } else {
         $usernew = file_postupdate_standard_editor($usernew, 'description', $editoroptions, $usercontext, 'user', 'profile', 0);
@@ -171,6 +171,7 @@ if ($usernew = $userform->get_data()) {
             $DB->update_record('user', $user);
             print_error('cannotupdateuseronexauth', '', '', $user->auth);
         }
+        add_to_log($course->id, 'user', 'update', "view.php?id=$user->id&course=$course->id", '');
 
         //set new password if specified
         if (!empty($usernew->newpassword)) {
