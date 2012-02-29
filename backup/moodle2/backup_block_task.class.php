@@ -23,7 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * abstract block task that provides all the properties and common steps to be performed
