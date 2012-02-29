@@ -261,9 +261,12 @@ function imscp_get_participants($imscpid) {
 
 /**
  * Lists all browsable file areas
- * @param object $course
- * @param object $cm
- * @param object $context
+ *
+ * @package  mod_imscp
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
  * @return array
  */
 function imscp_get_file_areas($course, $cm, $context) {
@@ -277,16 +280,19 @@ function imscp_get_file_areas($course, $cm, $context) {
 
 /**
  * File browsing support for imscp module ontent area.
- * @param object $browser
- * @param object $areas
- * @param object $course
- * @param object $cm
- * @param object $context
- * @param string $filearea
- * @param int $itemid
- * @param string $filepath
- * @param string $filename
- * @return object file_info instance or null if not found
+ *
+ * @package  mod_imscp
+ * @category files
+ * @param stdClass $browser file browser
+ * @param stdClass $areas file areas
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param int $itemid item ID
+ * @param string $filepath file path
+ * @param string $filename file name
+ * @return file_info instance or null if not found
  */
 function imscp_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG, $DB;
@@ -323,12 +329,14 @@ function imscp_get_file_info($browser, $areas, $course, $cm, $context, $filearea
 /**
  * Serves the imscp files.
  *
- * @param object $course
- * @param object $cm
- * @param object $context
- * @param string $filearea
- * @param array $args
- * @param bool $forcedownload
+ * @package  mod_imscp
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
  * @return bool false if file not found, does not return if found - justsend the file
  */
 function imscp_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {

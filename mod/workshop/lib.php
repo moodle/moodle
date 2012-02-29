@@ -1145,6 +1145,9 @@ function workshop_grade_item_category_update($workshop) {
  * The file area workshop_intro for the activity introduction field is added automatically
  * by {@link file_browser::get_file_info_context_module()}
  *
+ * @package  mod_workshop
+ * @category files
+ *
  * @param stdClass $course
  * @param stdClass $cm
  * @param stdClass $context
@@ -1170,6 +1173,9 @@ function workshop_get_file_areas($course, $cm, $context) {
  * of the submission or have capability ... (todo) to access the submission files.
  * Besides that, areas workshop_instructauthors and mod_workshop instructreviewers contain the media
  * embedded using the mod_form.php.
+ *
+ * @package  mod_workshop
+ * @category files
  *
  * @param stdClass $course
  * @param stdClass $cm
@@ -1255,8 +1261,11 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
 /**
  * File browsing support for workshop file areas
  *
- * @param stdClass $browser
- * @param stdClass $areas
+ * @package  mod_workshop
+ * @category files
+ *
+ * @param file_browser $browser
+ * @param array $areas
  * @param stdClass $course
  * @param stdClass $cm
  * @param stdClass $context
@@ -1264,7 +1273,7 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
  * @param int $itemid
  * @param string $filepath
  * @param string $filename
- * @return stdclass file_info instance or null if not found
+ * @return file_info instance or null if not found
  */
 function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG, $DB;

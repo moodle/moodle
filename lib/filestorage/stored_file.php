@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,10 +18,9 @@
 /**
  * Definition of a class stored_file.
  *
- * @package    core
- * @subpackage filestorage
- * @copyright  2008 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_files
+ * @copyright 2008 Petr Skoda {@link http://skodak.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -35,6 +33,8 @@ require_once("$CFG->libdir/filestorage/stored_file.php");
  * Since Moodle 2.0 file contents are stored in sha1 pool and
  * all other file information is stored in new "files" database table.
  *
+ * @package   core_files
+ * @category  files
  * @copyright 2008 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
@@ -42,7 +42,7 @@ require_once("$CFG->libdir/filestorage/stored_file.php");
 class stored_file {
     /** @var file_storage file storage pool instance */
     private $fs;
-    /** @var object record from the files table */
+    /** @var stdClass record from the files table */
     private $file_record;
     /** @var string location of content files */
     private $filedir;
@@ -51,8 +51,8 @@ class stored_file {
      * Constructor, this constructor should be called ONLY from the file_storage class!
      *
      * @param file_storage $fs file  storage instance
-     * @param object $file_record description of file
-     * @param string $filepool location of file directory with sh1 named content files
+     * @param stdClass $file_record description of file
+     * @param string $filedir location of file directory with sh1 named content files
      */
     public function __construct(file_storage $fs, stdClass $file_record, $filedir) {
         $this->fs          = $fs;
@@ -133,8 +133,6 @@ class stored_file {
 
     /**
      * Dumps file content to page.
-     *
-     * @return void
      */
     public function readfile() {
         $path = $this->get_content_file_location();
@@ -180,7 +178,7 @@ class stored_file {
     /**
      * List contents of archive.
      *
-     * @param file_packer $file_packer
+     * @param file_packer $packer file packer instance
      * @return array of file infos
      */
     public function list_files(file_packer $packer) {
@@ -191,7 +189,7 @@ class stored_file {
     /**
      * Extract file to given file path (real OS filesystem), existing files are overwritten.
      *
-     * @param file_packer $file_packer
+     * @param file_packer $packer file packer instance
      * @param string $pathname target directory
      * @return array|bool list of processed files; false if error
      */
@@ -203,13 +201,13 @@ class stored_file {
     /**
      * Extract file to given file path (real OS filesystem), existing files are overwritten.
      *
-     * @param file_packer $file_packer
-     * @param int $contextid
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $pathbase
-     * @param int $userid
+     * @param file_packer $packer file packer instance
+     * @param int $contextid context ID
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $pathbase path base
+     * @param int $userid user ID
      * @return array|bool list of processed files; false if error
      */
     public function extract_to_storage(file_packer $packer, $contextid, $component, $filearea, $itemid, $pathbase, $userid = NULL) {
@@ -220,7 +218,7 @@ class stored_file {
     /**
      * Add file/directory into archive.
      *
-     * @param file_archive $filearch
+     * @param file_archive $filearch file archive instance
      * @param string $archivepath pathname in archive
      * @return bool success
      */
@@ -239,6 +237,7 @@ class stored_file {
     /**
      * Returns information about image,
      * information is determined from the file content
+     *
      * @return mixed array with width, height and mimetype; false if not an image
      */
     public function get_imageinfo() {
