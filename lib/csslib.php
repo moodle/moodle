@@ -198,6 +198,10 @@ function css_send_css_not_found() {
 function css_minify_css($files) {
     global $CFG;
 
+    if (empty($files)) {
+        return '';
+    }
+
     set_include_path($CFG->libdir . '/minify/lib' . PATH_SEPARATOR . get_include_path());
     require_once('Minify.php');
 
@@ -220,8 +224,31 @@ function css_minify_css($files) {
         // This returns the CSS rather than echoing it for display
         'quiet' => true
     );
-    $result = Minify::serve('Files', $options);
-    return $result['content'];
+
+    $error = 'unknown';
+    try {
+        $result = Minify::serve('Files', $options);
+        if ($result['success']) {
+            return $result['content'];
+        }
+    } catch (Exception $e) {
+        $error = $e->getMessage();
+        $error = str_replace("\r", ' ', $error);
+        $error = str_replace("\n", ' ', $error);
+    }
+
+    // minification failed - try to inform the theme developer and include the non-minified version
+    $css = <<<EOD
+/* Error: $error */
+/* Problem detected during theme CSS minimisation, please review the following code */
+/* ================================================================================ */
+
+
+EOD;
+    foreach ($files as $cssfile) {
+        $css .= file_get_contents($cssfile)."\n";
+    }
+    return $css;
 }
 
 /**
