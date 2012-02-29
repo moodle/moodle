@@ -18,8 +18,7 @@
 /**
  * Unit tests for Rubric grading strategy logic
  *
- * @package    workshopform
- * @subpackage rubric
+ * @package    workshopform_rubric
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

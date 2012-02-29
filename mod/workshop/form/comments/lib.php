@@ -18,8 +18,7 @@
 /**
  * This file defines a class with comments grading strategy logic
  *
- * @package    workshopform
- * @subpackage comments
+ * @package    workshopform_comments
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,7 +31,6 @@ require_once($CFG->libdir . '/gradelib.php');           // to handle float vs de
 /**
  * Server workshop files
  *
- * @package  mod_workshop
  * @category files
  * @param stdClass $course course object
  * @param stdClass $cm course module object
