@@ -315,6 +315,7 @@ class enrolment_plugin_mnet {
             $userrecord->firstname  = addslashes($user['firstname']);
             $userrecord->lastname   = addslashes($user['lastname']);
             $userrecord->mnethostid = $MNET_REMOTE_CLIENT->id;
+            $userrecord->confirmed  = 1;
 
             if ($userrecord->id = insert_record('user', $userrecord)) {
                 $userrecord = get_record('user','id', $userrecord->id);
