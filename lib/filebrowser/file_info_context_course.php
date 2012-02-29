@@ -92,7 +92,7 @@ class file_info_context_course extends file_info {
      * @param int $itemid item ID
      * @param string $filepath file path
      * @param string $filename file name
-     * @return file_info|null file_info instance or null if not found or access not allowed 
+     * @return file_info|null file_info instance or null if not found or access not allowed
      */
     protected function get_area_course_summary($itemid, $filepath, $filename) {
         global $CFG;
@@ -126,7 +126,7 @@ class file_info_context_course extends file_info {
      * @param int $itemid item ID
      * @param string $filepath file path
      * @param string $filename file name
-     * @return file_info|null file_info instance or null if not found or access not allowed 
+     * @return file_info|null file_info instance or null if not found or access not allowed
      */
     protected function get_area_course_section($itemid, $filepath, $filename) {
         global $CFG, $DB;
@@ -166,7 +166,7 @@ class file_info_context_course extends file_info {
      * @param int $itemid item ID
      * @param string $filepath file path
      * @param string $filename file name
-     * @return file_info|null file_info instance or null if not found or access not allowed 
+     * @return file_info|null file_info instance or null if not found or access not allowed
      */
     protected function get_area_course_legacy($itemid, $filepath, $filename) {
         if (!has_capability('moodle/course:managefiles', $this->context)) {
@@ -203,7 +203,7 @@ class file_info_context_course extends file_info {
      * @param int $itemid item ID
      * @param string $filepath file path
      * @param string $filename file name
-     * @return file_info|null file_info instance or null if not found or access not allowed 
+     * @return file_info|null file_info instance or null if not found or access not allowed
      */
     protected function get_area_backup_course($itemid, $filepath, $filename) {
         global $CFG;
@@ -279,7 +279,7 @@ class file_info_context_course extends file_info {
      * @param int $itemid item ID
      * @param string $filepath file path
      * @param string $filename file name
-     * @return file_info|null file_info instance or null if not found or access not allowed 
+     * @return file_info|null file_info instance or null if not found or access not allowed
      */
     protected function get_area_backup_section($itemid, $filepath, $filename) {
         global $CFG, $DB;

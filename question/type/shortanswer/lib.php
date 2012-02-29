@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @category files
  * @param stdClass $course course object
  * @param stdClass $cm course module object
- * @param stdClass $context context object                    
+ * @param stdClass $context context object
  * @param string $filearea file area
  * @param array $args extra arguments
  * @param bool $forcedownload whether or not force download

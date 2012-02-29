@@ -163,7 +163,7 @@ class file_info_context_user extends file_info {
             }
         }
         $urlbase = $CFG->wwwroot.'/pluginfile.php';
-        return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase, 
+        return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase,
                 get_string('areauserprofile', 'repository'), false, $readaccess, $writeaccess, false);
     }
 

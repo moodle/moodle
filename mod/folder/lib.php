@@ -288,7 +288,7 @@ function folder_get_file_info($browser, $areas, $course, $cm, $context, $fileare
  * @package  mod_folder
  * @category files
  * @param stdClass $course course object
- * @param stdClass $cm course module 
+ * @param stdClass $cm course module
  * @param stdClass $context context object
  * @param string $filearea file area
  * @param array $args extra arguments

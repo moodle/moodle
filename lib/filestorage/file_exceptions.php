@@ -56,7 +56,7 @@ class file_exception extends moodle_exception {
 class stored_file_creation_exception extends file_exception {
     /**
      * Constructor
-     * 
+     *
      * @param int $contextid context ID
      * @param string $component component
      * @param string $filearea file area
