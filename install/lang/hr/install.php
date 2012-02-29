@@ -40,6 +40,7 @@ $string['databasehost'] = 'Poslužitelj baze podataka (HOST)';
 $string['databasename'] = 'Naziv baze podataka';
 $string['databasetypehead'] = 'Odaberite vrstu baze podataka';
 $string['dataroot'] = 'Mapa s podacima';
+$string['datarootpermission'] = 'Ovlasti nad mapom s podacima';
 $string['dbprefix'] = 'Prefiks tablice';
 $string['dirroot'] = 'Moodle mapa';
 $string['environmenthead'] = 'Provjera okruženja vašeg poslužitelja ...';
