@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,35 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library functions for the Splash theme
+ * Library functions for theme_splash
  *
  * @package   theme_splash
- * @copyright 2010 Caroline Kennedy of Synergy Learning
+ * @copyright 2011 Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * Splash theme post process function for CSS
+ * theme_splash post process function for CSS
  * @param string $css Incoming CSS to process
  * @param stdClass $theme The theme object
  * @return string The processed CSS
  */
 function splash_process_css($css, $theme) {
- 
+
     if (!empty($theme->settings->regionwidth)) {
         $regionwidth = $theme->settings->regionwidth;
     } else {
         $regionwidth = null;
     }
     $css = splash_set_regionwidth($css, $regionwidth);
- 
+
     if (!empty($theme->settings->customcss)) {
         $customcss = $theme->settings->customcss;
     } else {
         $customcss = null;
     }
     $css = splash_set_customcss($css, $customcss);
- 
+
     return $css;
 }
 
@@ -91,14 +90,12 @@ function splash_set_customcss($css, $customcss) {
 /**
  * Adds the JavaScript for the colour switcher to the page.
  *
- * The colour switcher is a YUI moodle module that is located in
- *     theme/splash/yui/splash/splash.js
- *
- * @param moodle_page $page 
+ * @param moodle_page $page
  */
 function splash_initialise_colourswitcher(moodle_page $page) {
     user_preference_allow_ajax_update('theme_splash_chosen_colour', PARAM_ALPHA);
-    $page->requires->yui_module('moodle-theme_splash-colourswitcher', 'M.theme_splash.initColourSwitcher', array(array('div'=>'#colourswitcher')));
+    $page->requires->yui_module('moodle-theme_splash-colourswitcher',
+     'M.theme_splash.initColourSwitcher', array(array('div'=>'#colourswitcher')));
 }
 
 /**
@@ -120,7 +117,7 @@ function splash_get_colour($default='red') {
  */
 function splash_check_colourswitch() {
     $changecolour = optional_param('splashcolour', null, PARAM_ALPHA);
-    if (in_array($changecolour, array('red','green','blue','orange'))) {
+    if (in_array($changecolour, array('red', 'green', 'blue', 'orange'))) {
         return set_user_preference('theme_splash_chosen_colour', $changecolour);
     }
     return false;

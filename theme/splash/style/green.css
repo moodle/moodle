@@ -2,110 +2,84 @@
 **
 ** Theme name: Splash
 ** Creation Date: 30/06/09
-** Author: Synergy Learning
+** Author: Caroline Kennedy - Synergy Learning
 ** Author URI: http://synergylearning.com
 **
 *********************************************************/
 
-/* Global 
-------------------------*/
-body.splash-green {                /* Define margins and background colour/image */
-    background: url([[pix:theme|bggreen]]) top left repeat-x #f4f4f4;
-    margin: 0 auto;
-    padding: 0;
-    width: 100%;
+body.splash-green { background:url([[pix:theme|bggreen]]) top left repeat-x;
 }
-
-.splash-green a:link {        /* Defining all link styles*/
-    color: #446e4c;
+.splash-green a:link,
+.splash-green a:visited,
+.splash-green a:active{color:#446e4c;
 }
-
-.splash-green a:visited {        /* Setting all visited link styles */
-    color: #446e4c;
+.splash-green a:hover{
+    color:#335a3a;
 }
-
-.splash-green a:hover {        /* Setting all rollover link styles */
-    color: #335a3a;
+.splash-green #region-main h1,
+.splash-green #region-main h3,
+.splash-green #region-main h6{
+    color:#446e4c;
 }
-
-.splash-green a:active {        /* Setting all active link styles */
-    color: #446e4c;
+.splash-green #page-header{
+    background:url([[pix:theme|pageheaderbggreen]]) top center no-repeat;
 }
-
-/* Header 
------------------------*/
-.splash-green #page-header {            /* Set height for header */
-    float: none;
-    padding: 0;
-    margin:0;
-    color: #fff;
-    height: 308px;
-    background: url([[pix:theme|pageheaderbggreen]]) top center no-repeat;
+.splash-green #logobox{
+    background:url([[pix:theme|lbgv2green]]) no-repeat;
 }
-
-.splash-green #logobox{  /* holder background for logo*/
-    height: 185px;
-    width: 252px;
-    margin: auto;
-    text-align: center;
-    background: url([[pix:theme|lbgv2green]]) no-repeat;
-    float: left;
-}
-
 .splash-green #colourswitcher p{
     color:#446e4c;
 }
-
-
-/* Custom Menu
------------------------*/
-.splash-green #custommenu .yui3-menu-content ul.first-of-type li{
-    border-right: 1px solid #d5e1d7;
-}
-
-.splash-green #custommenu div.yui3-menu.custom_menu_submenu .yui3-menu-content{
-    background:#446e4c;
-    border:1px solid #fff;
-    color: #fff;
-}
-
-/* Content
------------------------*/
-.splash-green ul.topics li#section-0, ul.weeks li#section-0 {
-    background: #386c4c;
-    border: 1px solid #ccc;
-
-}
-
-.splash-green .coursebox{
-    padding-left:5px;
-    border-bottom: 1px dashed #dae0dc;
-}
-
-/* Sideblocks
------------------------*/
-.splash-green #region-pre .block .header,  /*-- right block header   --*/
-.splash-green #region-post .block .header {  /*-- right block header   --*/
-    background: url([[pix:theme|sbheaderbg2green]]) center no-repeat;
-    padding: 12px 5px 5px;
-    color: #fff;
-}
-
-/* Mini Calendar
-------------------------*/
-.splash-green .block .minicalendar td.weekend {    /* setting weekend date colour */
+.splash-green .navbar .breadcrumb a {
     color:#446e4c;
 }
-
-/* Forum
-------------------------*/
-.splash-green .forumpost .topic .subject,
-.path-blog.splash-green .forumpost .subject a,
-.path-blog.splash-green .forumpost .subject a:link,
-.path-blog.splash-green .forumpost .subject a:visited {    /* forum subject section inside topic header */
-    font-weight: bold;
-    font-size: 1.1em;
-    padding-left: 5px;
-    background:  #446e4c;
-    color: #fff;
+.splash-green .navbar .arrow{
+    color:#446e4c;
+}
+.splash-green .course-content ul.topics li.section .left{
+    color:#446e4c;
+}
+.splash-green .mform fieldset legend{
+    color:#446e4c;
+}
+.splash-green .tabtree .tabrow0 a:hover{
+    color:#335a3a;
+}
+.splash-green .tabtree .tabrow0 .here a {
+    color:#446e4c;
+}
+.splash-green .tabtree .tabrow0 .here a:hover{
+    background:#fff;color:#335a3a;
+}
+.splash-green .tabtree .here ul .here a.nolink:hover {
+    color:#446e4c;
+}
+.splash-green .coursebox{
+    border-bottom: 1px dashed #dae0dc;
+}
+.splash-green #categoryquestions tr th{
+    background:#446e4c;color:#fff;
+}
+.splash-green .path-mod-quiz .qnbutton{
+    background:#446e4c;color:#fff;
+}
+.splash-green .path-mod-quiz .qnbutton.open{
+    background:#446e4c;
+}
+.splash-green .block-region .block .header{
+    background:url([[pix:theme|sbheaderbg2green]]) top center no-repeat;
+}
+.splash-green .block .minicalendar td.weekend{
+    color:#446e4c;
+}
+.pagelayout-redirect {
+    border-top: 1px solid #335a3a;
+}
+.splash-green #dock {
+    background-color:#446e4c;
+    border-right:1px solid #335a3a;
+}
+.splash-green #dock .dockedtitle {
+    border-top:1px solid #5C6E5F;
+    border-bottom:1px solid #335a3a;
 }

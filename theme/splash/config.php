@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,46 +18,31 @@
  * Config for the splash theme
  *
  * @package   theme_splash
- * @copyright 2010 Caroline Kennedy of Synergy Learning
+ * @copyright 2010 Caroline Kennedy - Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $THEME->name = 'splash';
-
-////////////////////////////////////////////////////
-// Name of the theme.
-////////////////////////////////////////////////////
-
 
 $THEME->parents = array(
     'canvas',
     'base',
 );
 
-/////////////////////////////////////////////////////
-// List exsisting theme(s) to use as parents.
-////////////////////////////////////////////////////
-
-
 $THEME->sheets = array(
-    'sl',
+    'pagelayout',
+    'core',
+    'menus',
+    'red',
     'green',
     'blue',
     'orange',
-    'ie',
+    'settings',
 );
 
-////////////////////////////////////////////////////
-// Name of the stylesheet(s) you are including in
-// this new theme's /styles/ directory.
-////////////////////////////////////////////////////
+$THEME->editor_sheets = array('editor');
 
 $THEME->enable_dock = true;
-
-////////////////////////////////////////////////////
-// Do you want to use the new navigation dock?
-////////////////////////////////////////////////////
-
 
 $THEME->layouts = array(
     // Most pages - if we encounter an unknown or a missing page type, this one is used.
@@ -126,7 +110,6 @@ $THEME->layouts = array(
     ),
     // Embeded pages, like iframe embeded in moodleform
     'embedded' => array(
-        'theme' => 'canvas',
         'file' => 'embedded.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
@@ -145,6 +128,12 @@ $THEME->layouts = array(
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>false, 'noblocks'=>true),
     ),
+    // The pagelayout used when a redirection is occuring.
+    'redirect' => array(
+        'file' => 'embedded.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
+    ),
     'report' => array(
         'file' => 'report.php',
         'regions' => array('side-pre'),
@@ -152,19 +141,4 @@ $THEME->layouts = array(
     ),
 );
 
-
-///////////////////////////////////////////////////////////////
-// These are all of the possible layouts in Moodle.
-///////////////////////////////////////////////////////////////
-
-
 $THEME->csspostprocess = 'splash_process_css';
-
-
-
-///////////////////////////////////////////////////////////////
-// Splash Theme Specific settings for Administrators to customise
-// css.
-///////////////////////////////////////////////////////////////
-
-$THEME->editor_sheets = array('editor');
