@@ -253,7 +253,7 @@ class lesson_page_type_multichoice extends lesson_page {
             }
         } else {
             // only one answer allowed
-            if (empty($data->answerid) && !is_int($data->answerid)) {
+            if (!isset($data->answerid) || (empty($data->answerid) && !is_int($data->answerid))) {
                 $result->noanswer = true;
                 return $result;
             }
