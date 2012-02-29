@@ -134,7 +134,6 @@ class moodle_user_external extends external_api {
 
             $user['confirmed'] = true;
             $user['mnethostid'] = $CFG->mnet_localhost_id;
-            $user['id'] = user_create_user($user);
 
             // Start of user info validation.
             // Lets make sure we validate current user info as handled by current GUI. see user/editadvanced_form.php function validation()
@@ -145,6 +144,8 @@ class moodle_user_external extends external_api {
             }
             // End of user info validation.
 
+            // create the user data now!
+            $user['id'] = user_create_user($user);
 
             // custom fields
             if(!empty($user['customfields'])) {
