@@ -31,3 +31,55 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+
+/**
+ * Remove all signed numbers from current database - mysql only.
+ */
+function upgrade_mysql_fix_unsigned_columns() {
+    // we are not using standard API for changes of column
+    // because everything 'signed'-related will be removed soon
+
+    // if anybody already has numbers higher than signed limit the execution stops
+    // and tables must be fixed manually before continuing upgrade
+
+    global $DB;
+
+    if ($DB->get_dbfamily() !== 'mysql') {
+        return;
+    }
+
+    $pbar = new progress_bar('mysqlconvertunsigned', 500, true);
+
+    $prefix = $DB->get_prefix();
+    $tables = $DB->get_tables();
+
+    $tablecount = count($tables);
+    $i = 0;
+    foreach ($tables as $table) {
+        $i++;
+        // set appropriate timeout - 5 minutes per milion of records should be enough, min 60 minutes just in case
+        $count = $DB->count_records($table, array());
+        $timeout = ($count/1000000)*5*60;
+        $timeout = ($timeout < 60*60) ? 60*60 : (int)$timeout;
+
+        $sql = "SHOW COLUMNS FROM `{{$table}}`";
+        $rs = $DB->get_recordset_sql($sql);
+        foreach ($rs as $column) {
+            upgrade_set_timeout($timeout);
+
+            $column = (object)array_change_key_case((array)$column, CASE_LOWER);
+            if (stripos($column->type, 'unsigned') !== false) {
+                $type = preg_replace('/unsigned/i', 'signed', $column->type);
+                $notnull = ($column->null === 'NO') ? 'NOT NULL' : 'NULL';
+                $default = !is_null($column->default) ? "DEFAULT '$column->default'" : '';
+                $autoinc = (stripos($column->extra, 'auto_increment') !== false) ? 'AUTO_INCREMENT' : '';
+                // primary and unique not necessary here, change_database_structure does not add prefix
+                $sql = "ALTER TABLE `{$prefix}$table` MODIFY COLUMN `$column->field` $type $notnull $default $autoinc";
+                $DB->change_database_structure($sql);
+            }
+        }
+        $rs->close();
+
+        $pbar->update($i, $tablecount, "Converted unsigned columns in MySQL database - $i/$tablecount.");
+    }
+}
