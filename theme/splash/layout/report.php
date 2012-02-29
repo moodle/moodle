@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * General layout for the mymobile theme
+ * General layout for the splash theme
  *
- * @package    theme
- * @subpackage splash
+ * @package    theme_splash
  * @copyright  2012 Caroline Kennedy - Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
