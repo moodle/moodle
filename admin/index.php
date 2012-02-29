@@ -345,8 +345,8 @@ if (during_initial_install()) {
         }
     }
 
-    // at this stage there can be only one admin - users may change username, so do not rely on that
-    $adminuser = get_complete_user_data('id', $CFG->siteadmins);
+    // at this stage there can be only one admin unless more were added by install - users may change username, so do not rely on that
+    $adminuser = get_complete_user_data('id', reset(explode(',', $CFG->siteadmins)));
 
     if ($adminuser->password === 'adminsetuppending') {
         // prevent installation hijacking
