@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -96,7 +97,7 @@ class plugin_manager {
      * @param bool $disablecache force reload, cache can be used otherwise
      * @return array 2D array. The first keys are plugin type names (e.g. qtype);
      *      the second keys are the plugin local name (e.g. multichoice); and
-     *      the values are the corresponding {@link plugin_information} objects.
+     *      the values are the corresponding objects extending {@link plugininfo_base}
      */
     public function get_plugins($disablecache=false) {
 
@@ -107,13 +108,13 @@ class plugin_manager {
                 if (in_array($plugintype, array('base', 'general'))) {
                     throw new coding_exception('Illegal usage of reserved word for plugin type');
                 }
-                if (class_exists('plugintype_' . $plugintype)) {
-                    $plugintypeclass = 'plugintype_' . $plugintype;
+                if (class_exists('plugininfo_' . $plugintype)) {
+                    $plugintypeclass = 'plugininfo_' . $plugintype;
                 } else {
-                    $plugintypeclass = 'plugintype_general';
+                    $plugintypeclass = 'plugininfo_general';
                 }
-                if (!in_array('plugin_information', class_implements($plugintypeclass))) {
-                    throw new coding_exception('Class ' . $plugintypeclass . ' must implement plugin_information');
+                if (!in_array('plugininfo_base', class_parents($plugintypeclass))) {
+                    throw new coding_exception('Class ' . $plugintypeclass . ' must extend plugininfo_base');
                 }
                 $plugins = call_user_func(array($plugintypeclass, 'get_plugins'), $plugintype, $plugintyperootdir, $plugintypeclass);
                 $this->pluginsinfo[$plugintype] = $plugins;
@@ -219,7 +220,7 @@ class plugin_manager {
 
     /**
      * @param string $component frankenstyle component name.
-     * @return plugin_information|null the corresponding plugin information.
+     * @return plugininfo_base|null the corresponding plugin information.
      */
     public function get_plugin_info($component) {
         list($type, $name) = normalize_component($component);
@@ -232,7 +233,7 @@ class plugin_manager {
     }
 
     /**
-     * Get a list of any other pluings that require this one.
+     * Get a list of any other plugins that require this one.
      * @param string $component frankenstyle component name.
      * @return array of frankensyle component names that require this one.
      */
@@ -510,163 +511,13 @@ class plugin_manager {
     }
 }
 
+
 /**
- * Interface for making information about a plugin available.
- *
- * Note that most of the useful information is made available in pubic fields,
- * which cannot be documented in this interface. See the field definitions on
- * {@link plugintype_base} to find out what information is available.
+ * Base class providing access to the information about a plugin
  *
  * @property-read string component the component name, type_name
  */
-interface plugin_information {
-
-    /**
-     * Gathers and returns the information about all plugins of the given type
-     *
-     * Passing the parameter $typeclass allows us to reach the same effect as with the
-     * late binding in PHP 5.3. Once PHP 5.3 is required, we can refactor this to use
-     * {@example $plugin = new static();} instead of {@example $plugin = new $typeclass()}
-     *
-     * @param string $type the name of the plugintype, eg. mod, auth or workshopform
-     * @param string $typerootdir full path to the location of the plugin dir
-     * @param string $typeclass the name of the actually called class
-     * @return array of plugintype classes, indexed by the plugin name
-     */
-    public static function get_plugins($type, $typerootdir, $typeclass);
-
-    /**
-     * Sets $displayname property to a localized name of the plugin
-     *
-     * @return void
-     */
-    public function init_display_name();
-
-    /**
-     * Sets $versiondisk property to a numerical value representing the
-     * version of the plugin's source code.
-     *
-     * If the value is null after calling this method, either the plugin
-     * does not use versioning (typically does not have any database
-     * data) or is missing from disk.
-     *
-     * @return void
-     */
-    public function load_disk_version();
-
-    /**
-     * Sets $versiondb property to a numerical value representing the
-     * currently installed version of the plugin.
-     *
-     * If the value is null after calling this method, either the plugin
-     * does not use versioning (typically does not have any database
-     * data) or has not been installed yet.
-     *
-     * @return void
-     */
-    public function load_db_version();
-
-    /**
-     * Sets $versionrequires property to a numerical value representing
-     * the version of Moodle core that this plugin requires.
-     *
-     * @return void
-     */
-    public function load_required_main_version();
-
-    /**
-     * Sets $source property to one of plugin_manager::PLUGIN_SOURCE_xxx
-     * constants.
-     *
-     * If the property's value is null after calling this method, then
-     * the type of the plugin has not been recognized and you should throw
-     * an exception.
-     *
-     * @return void
-     */
-    public function init_is_standard();
-
-    /**
-     * Returns true if the plugin is shipped with the official distribution
-     * of the current Moodle version, false otherwise.
-     *
-     * @return bool
-     */
-    public function is_standard();
-
-    /**
-     * Returns the status of the plugin
-     *
-     * @return string one of plugin_manager::PLUGIN_STATUS_xxx constants
-     */
-    public function get_status();
-
-    /**
-     * Get the list of other plugins that this plugin requires ot be installed.
-     * @return array with keys the frankenstyle plugin name, and values either
-     *      a version string (like '2011101700') or the constant ANY_VERSION.
-     */
-    public function get_other_required_plugins();
-
-    /**
-     * Returns the information about plugin availability
-     *
-     * True means that the plugin is enabled. False means that the plugin is
-     * disabled. Null means that the information is not available, or the
-     * plugin does not support configurable availability or the availability
-     * can not be changed.
-     *
-     * @return null|bool
-     */
-    public function is_enabled();
-
-    /**
-     * Returns the URL of the plugin settings screen
-     *
-     * Null value means that the plugin either does not have the settings screen
-     * or its location is not available via this library.
-     *
-     * @return null|moodle_url
-     */
-    public function get_settings_url();
-
-    /**
-     * Returns the URL of the screen where this plugin can be uninstalled
-     *
-     * Visiting that URL must be safe, that is a manual confirmation is needed
-     * for actual uninstallation of the plugin. Null value means that the
-     * plugin either does not support uninstallation, or does not require any
-     * database cleanup or the location of the screen is not available via this
-     * library.
-     *
-     * @return null|moodle_url
-     */
-    public function get_uninstall_url();
-
-    /**
-     * Returns relative directory of the plugin with heading '/'
-     *
-     * @example /mod/workshop
-     * @return string
-     */
-    public function get_dir();
-
-    /**
-     * Return the full path name of a file within the plugin.
-     * No check is made to see if the file exists.
-     * @param string $relativepath e.g. 'version.php'.
-     * @return string e.g. $CFG->dirroot . '/mod/quiz/version.php'.
-     */
-    public function full_path($relativepath);
-}
-
-/**
- * Defines public properties that all plugintype classes must have
- * and provides default implementation of required methods.
- *
- * @property-read string component the component name, type_name
- */
-abstract class plugintype_base {
+abstract class plugininfo_base {
 
     /** @var string the plugintype name, eg. mod, auth or workshopform */
     public $type;
@@ -686,16 +537,24 @@ abstract class plugintype_base {
     public $versiondb;
     /** @var int|float|string required version of Moodle core  */
     public $versionrequires;
-    /** @var array other plugins that this one depends on.
-     *  Lazy-loaded by {@link get_other_required_plugins()} */
-    public $dependencies = null;
+    /** @var array other plugins that this one depends on, lazy-loaded by {@link get_other_required_plugins()} */
+    public $dependencies;
     /** @var int number of instances of the plugin - not supported yet */
     public $instances;
     /** @var int order of the plugin among other plugins of the same type - not supported yet */
     public $sortorder;
 
     /**
-     * @see plugin_information::get_plugins()
+     * Gathers and returns the information about all plugins of the given type
+     *
+     * Passing the parameter $typeclass allows us to reach the same effect as with the
+     * late binding in PHP 5.3. Once PHP 5.3 is required, we can refactor this to use
+     * {@example $plugin = new static();} instead of {@example $plugin = new $typeclass()}
+     *
+     * @param string $type the name of the plugintype, eg. mod, auth or workshopform
+     * @param string $typerootdir full path to the location of the plugin dir
+     * @param string $typeclass the name of the actually called class
+     * @return array of plugintype classes, indexed by the plugin name
      */
     public static function get_plugins($type, $typerootdir, $typeclass) {
 
@@ -721,7 +580,7 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugin_information::init_display_name()
+     * Sets {@link $displayname} property to a localized name of the plugin
      */
     public function init_display_name() {
         if (!get_string_manager()->string_exists('pluginname', $this->component)) {
@@ -733,6 +592,7 @@ abstract class plugintype_base {
 
     /**
      * Magic method getter, redirects to read only values.
+     *
      * @param string $name
      * @return mixed
      */
@@ -747,7 +607,12 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugin_information::full_path()
+     * Return the full path name of a file within the plugin.
+     *
+     * No check is made to see if the file exists.
+     *
+     * @param string $relativepath e.g. 'version.php'.
+     * @return string e.g. $CFG->dirroot . '/mod/quiz/version.php'.
      */
     public function full_path($relativepath) {
         if (empty($this->rootdir)) {
@@ -758,7 +623,8 @@ abstract class plugintype_base {
 
     /**
      * Load the data from version.php.
-     * @return object the data object defined in version.php.
+     *
+     * @return stdClass the object called $plugin defined in version.php
      */
     protected function load_version_php() {
         $versionfile = $this->full_path('version.php');
@@ -771,7 +637,12 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugin_information::load_disk_version()
+     * Sets {@link $versiondisk} property to a numerical value representing the
+     * version of the plugin's source code.
+     *
+     * If the value is null after calling this method, either the plugin
+     * does not use versioning (typically does not have any database
+     * data) or is missing from disk.
      */
     public function load_disk_version() {
         $plugin = $this->load_version_php();
@@ -781,7 +652,8 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugin_information::load_required_main_version()
+     * Sets {@link $versionrequires} property to a numerical value representing
+     * the version of Moodle core that this plugin requires.
      */
     public function load_required_main_version() {
         $plugin = $this->load_version_php();
@@ -804,7 +676,10 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugin_information::get_other_required_plugins()
+     * Get the list of other plugins that this plugin requires to be installed.
+     *
+     * @return array with keys the frankenstyle plugin name, and values either
+     *      a version string (like '2011101700') or the constant ANY_VERSION.
      */
     public function get_other_required_plugins() {
         if (is_null($this->dependencies)) {
@@ -814,17 +689,26 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugin_information::load_db_version()
+     * Sets {@link $versiondb} property to a numerical value representing the
+     * currently installed version of the plugin.
+     *
+     * If the value is null after calling this method, either the plugin
+     * does not use versioning (typically does not have any database
+     * data) or has not been installed yet.
      */
     public function load_db_version() {
-
         if ($ver = self::get_version_from_config_plugins($this->component)) {
             $this->versiondb = $ver;
         }
     }
 
     /**
-     * @see plugin_information::init_is_standard()
+     * Sets {@link $source} property to one of plugin_manager::PLUGIN_SOURCE_xxx
+     * constants.
+     *
+     * If the property's value is null after calling this method, then
+     * the type of the plugin has not been recognized and you should throw
+     * an exception.
      */
     public function init_is_standard() {
 
@@ -844,14 +728,19 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugin_information::is_standard()
+     * Returns true if the plugin is shipped with the official distribution
+     * of the current Moodle version, false otherwise.
+     *
+     * @return bool
      */
     public function is_standard() {
         return $this->source === plugin_manager::PLUGIN_SOURCE_STANDARD;
     }
 
     /**
-     * @see plugin_information::get_status()
+     * Returns the status of the plugin
+     *
+     * @return string one of plugin_manager::PLUGIN_STATUS_xxx constants
      */
     public function get_status() {
 
@@ -884,28 +773,50 @@ abstract class plugintype_base {
     }
 
     /**
-     * @see plugin_information::is_enabled()
+     * Returns the information about plugin availability
+     *
+     * True means that the plugin is enabled. False means that the plugin is
+     * disabled. Null means that the information is not available, or the
+     * plugin does not support configurable availability or the availability
+     * can not be changed.
+     *
+     * @return null|bool
      */
     public function is_enabled() {
         return null;
     }
 
     /**
-     * @see plugin_information::get_settings_url()
+     * Returns the URL of the plugin settings screen
+     *
+     * Null value means that the plugin either does not have the settings screen
+     * or its location is not available via this library.
+     *
+     * @return null|moodle_url
      */
     public function get_settings_url() {
         return null;
     }
 
     /**
-     * @see plugin_information::get_uninstall_url()
+     * Returns the URL of the screen where this plugin can be uninstalled
+     *
+     * Visiting that URL must be safe, that is a manual confirmation is needed
+     * for actual uninstallation of the plugin. Null value means that the
+     * plugin either does not support uninstallation, or does not require any
+     * database cleanup or the location of the screen is not available via this
+     * library.
+     *
+     * @return null|moodle_url
      */
     public function get_uninstall_url() {
         return null;
     }
 
     /**
-     * @see plugin_information::get_dir()
+     * Returns relative directory of the plugin with heading '/'
+     *
+     * @return string
      */
     public function get_dir() {
         global $CFG;
@@ -941,21 +852,19 @@ abstract class plugintype_base {
     }
 }
 
+
 /**
  * General class for all plugin types that do not have their own class
  */
-class plugintype_general extends plugintype_base implements plugin_information {
-
+class plugininfo_general extends plugininfo_base {
 }
+
 
 /**
  * Class for page side blocks
  */
-class plugintype_block extends plugintype_base implements plugin_information {
+class plugininfo_block extends plugininfo_base {
 
-    /**
-     * @see plugin_information::get_plugins()
-     */
     public static function get_plugins($type, $typerootdir, $typeclass) {
 
         // get the information about blocks at the disk
@@ -982,9 +891,6 @@ class plugintype_block extends plugintype_base implements plugin_information {
         return $blocks;
     }
 
-    /**
-     * @see plugin_information::init_display_name()
-     */
     public function init_display_name() {
 
         if (get_string_manager()->string_exists('pluginname', 'block_' . $this->name)) {
@@ -998,9 +904,6 @@ class plugintype_block extends plugintype_base implements plugin_information {
         }
     }
 
-    /**
-     * @see plugin_information::load_db_version()
-     */
     public function load_db_version() {
         global $DB;
 
@@ -1010,9 +913,6 @@ class plugintype_block extends plugintype_base implements plugin_information {
         }
     }
 
-    /**
-     * @see plugin_information::is_enabled()
-     */
     public function is_enabled() {
 
         $blocksinfo = self::get_blocks_info();
@@ -1027,9 +927,6 @@ class plugintype_block extends plugintype_base implements plugin_information {
         }
     }
 
-    /**
-     * @see plugin_information::get_settings_url()
-     */
     public function get_settings_url() {
 
         if (($block = block_instance($this->name)) === false) {
@@ -1048,9 +945,6 @@ class plugintype_block extends plugintype_base implements plugin_information {
         }
     }
 
-    /**
-     * @see plugin_information::get_uninstall_url()
-     */
     public function get_uninstall_url() {
 
         $blocksinfo = self::get_blocks_info();
@@ -1080,14 +974,12 @@ class plugintype_block extends plugintype_base implements plugin_information {
     }
 }
 
+
 /**
  * Class for text filters
  */
-class plugintype_filter extends plugintype_base implements plugin_information {
+class plugininfo_filter extends plugininfo_base {
 
-    /**
-     * @see plugin_information::get_plugins()
-     */
     public static function get_plugins($type, $typerootdir, $typeclass) {
         global $CFG, $DB;
 
@@ -1155,15 +1047,12 @@ class plugintype_filter extends plugintype_base implements plugin_information {
         return $filters;
     }
 
-    /**
-     * @see plugin_information::init_display_name()
-     */
     public function init_display_name() {
         // do nothing, the name is set in self::get_plugins()
     }
 
     /**
-     * @see plugintype_base::load_version_php().
+     * @see load_version_php()
      */
     protected function load_version_php() {
         if (strpos($this->name, 'mod_') === 0) {
@@ -1174,9 +1063,6 @@ class plugintype_filter extends plugintype_base implements plugin_information {
         return parent::load_version_php();
     }
 
-    /**
-     * @see plugin_information::is_enabled()
-     */
     public function is_enabled() {
 
         $globalstates = self::get_global_states();
@@ -1196,9 +1082,6 @@ class plugintype_filter extends plugintype_base implements plugin_information {
         return null;
     }
 
-    /**
-     * @see plugin_information::get_settings_url()
-     */
     public function get_settings_url() {
 
         $globalstates = self::get_global_states();
@@ -1210,9 +1093,6 @@ class plugintype_filter extends plugintype_base implements plugin_information {
         }
     }
 
-    /**
-     * @see plugin_information::get_uninstall_url()
-     */
     public function get_uninstall_url() {
 
         if (strpos($this->name, 'mod_') === 0) {
@@ -1279,14 +1159,12 @@ class plugintype_filter extends plugintype_base implements plugin_information {
     }
 }
 
+
 /**
  * Class for activity modules
  */
-class plugintype_mod extends plugintype_base implements plugin_information {
+class plugininfo_mod extends plugininfo_base {
 
-    /**
-     * @see plugin_information::get_plugins()
-     */
     public static function get_plugins($type, $typerootdir, $typeclass) {
 
         // get the information about plugins at the disk
@@ -1313,9 +1191,6 @@ class plugintype_mod extends plugintype_base implements plugin_information {
         return $modules;
     }
 
-    /**
-     * @see plugin_information::init_display_name()
-     */
     public function init_display_name() {
         if (get_string_manager()->string_exists('pluginname', $this->component)) {
             $this->displayname = get_string('pluginname', $this->component);
@@ -1338,9 +1213,6 @@ class plugintype_mod extends plugintype_base implements plugin_information {
         return $module;
     }
 
-    /**
-     * @see plugin_information::load_db_version()
-     */
     public function load_db_version() {
         global $DB;
 
@@ -1350,9 +1222,6 @@ class plugintype_mod extends plugintype_base implements plugin_information {
         }
     }
 
-    /**
-     * @see plugin_information::is_enabled()
-     */
     public function is_enabled() {
 
         $modulesinfo = self::get_modules_info();
@@ -1367,9 +1236,6 @@ class plugintype_mod extends plugintype_base implements plugin_information {
         }
     }
 
-    /**
-     * @see plugin_information::get_settings_url()
-     */
     public function get_settings_url() {
 
         if (file_exists($this->full_path('settings.php')) or file_exists($this->full_path('settingstree.php'))) {
@@ -1379,9 +1245,6 @@ class plugintype_mod extends plugintype_base implements plugin_information {
         }
     }
 
-    /**
-     * @see plugin_information::get_uninstall_url()
-     */
     public function get_uninstall_url() {
 
         if ($this->name !== 'forum') {
@@ -1418,10 +1281,8 @@ class plugintype_mod extends plugintype_base implements plugin_information {
 /**
  * Class for question behaviours.
  */
-class plugintype_qbehaviour extends plugintype_base implements plugin_information {
-    /**
-     * @see plugin_information::get_uninstall_url()
-     */
+class plugininfo_qbehaviour extends plugininfo_base {
+
     public function get_uninstall_url() {
         return new moodle_url('/admin/qbehaviours.php',
                 array('delete' => $this->name, 'sesskey' => sesskey()));
@@ -1432,10 +1293,8 @@ class plugintype_qbehaviour extends plugintype_base implements plugin_informatio
 /**
  * Class for question types
  */
-class plugintype_qtype extends plugintype_base implements plugin_information {
-    /**
-    * @see plugin_information::get_uninstall_url()
-    */
+class plugininfo_qtype extends plugininfo_base {
+
     public function get_uninstall_url() {
         return new moodle_url('/admin/qtypes.php',
                 array('delete' => $this->name, 'sesskey' => sesskey()));
@@ -1446,11 +1305,8 @@ class plugintype_qtype extends plugintype_base implements plugin_information {
 /**
  * Class for authentication plugins
  */
-class plugintype_auth extends plugintype_base implements plugin_information {
+class plugininfo_auth extends plugininfo_base {
 
-    /**
-     * @see plugin_information::is_enabled()
-     */
     public function is_enabled() {
         global $CFG;
         /** @var null|array list of enabled authentication plugins */
@@ -1468,9 +1324,6 @@ class plugintype_auth extends plugintype_base implements plugin_information {
         return isset($enabled[$this->name]);
     }
 
-    /**
-     * @see plugin_information::get_settings_url()
-     */
     public function get_settings_url() {
         if (file_exists($this->full_path('settings.php'))) {
             return new moodle_url('/admin/settings.php', array('section' => 'authsetting' . $this->name));
@@ -1480,23 +1333,21 @@ class plugintype_auth extends plugintype_base implements plugin_information {
     }
 }
 
+
 /**
  * Class for enrolment plugins
  */
-class plugintype_enrol extends plugintype_base implements plugin_information {
+class plugininfo_enrol extends plugininfo_base {
 
-    /**
-     * We do not actually need whole enrolment classes here so we do not call
-     * {@link enrol_get_plugins()}. Note that this may produce slightly different
-     * results, for example if the enrolment plugin does not contain lib.php
-     * but it is listed in $CFG->enrol_plugins_enabled
-     *
-     * @see plugin_information::is_enabled()
-     */
     public function is_enabled() {
         global $CFG;
         /** @var null|array list of enabled enrolment plugins */
         static $enabled = null;
+
+        // We do not actually need whole enrolment classes here so we do not call
+        // {@link enrol_get_plugins()}. Note that this may produce slightly different
+        // results, for example if the enrolment plugin does not contain lib.php
+        // but it is listed in $CFG->enrol_plugins_enabled
 
         if (is_null($enabled)) {
             $enabled = array_flip(explode(',', $CFG->enrol_plugins_enabled));
@@ -1505,9 +1356,6 @@ class plugintype_enrol extends plugintype_base implements plugin_information {
         return isset($enabled[$this->name]);
     }
 
-    /**
-     * @see plugin_information::get_settings_url()
-     */
     public function get_settings_url() {
 
         if ($this->is_enabled() or file_exists($this->full_path('settings.php'))) {
@@ -1517,22 +1365,17 @@ class plugintype_enrol extends plugintype_base implements plugin_information {
         }
     }
 
-    /**
-     * @see plugin_information::get_uninstall_url()
-     */
     public function get_uninstall_url() {
         return new moodle_url('/admin/enrol.php', array('action' => 'uninstall', 'enrol' => $this->name, 'sesskey' => sesskey()));
     }
 }
 
+
 /**
  * Class for messaging processors
  */
-class plugintype_message extends plugintype_base implements plugin_information {
+class plugininfo_message extends plugininfo_base {
 
-    /**
-     * @see plugin_information::get_settings_url()
-     */
     public function get_settings_url() {
 
         if (file_exists($this->full_path('settings.php')) or file_exists($this->full_path('settingstree.php'))) {
@@ -1543,14 +1386,12 @@ class plugintype_message extends plugintype_base implements plugin_information {
     }
 }
 
+
 /**
  * Class for repositories
  */
-class plugintype_repository extends plugintype_base implements plugin_information {
+class plugininfo_repository extends plugininfo_base {
 
-    /**
-     * @see plugin_information::is_enabled()
-     */
     public function is_enabled() {
 
         $enabled = self::get_enabled_repositories();
@@ -1558,9 +1399,6 @@ class plugintype_repository extends plugintype_base implements plugin_informatio
         return isset($enabled[$this->name]);
     }
 
-    /**
-     * @see plugin_information::get_settings_url()
-     */
     public function get_settings_url() {
 
         if ($this->is_enabled()) {
@@ -1588,14 +1426,12 @@ class plugintype_repository extends plugintype_base implements plugin_informatio
     }
 }
 
+
 /**
  * Class for portfolios
  */
-class plugintype_portfolio extends plugintype_base implements plugin_information {
+class plugininfo_portfolio extends plugininfo_base {
 
-    /**
-     * @see plugin_information::is_enabled()
-     */
     public function is_enabled() {
 
         $enabled = self::get_enabled_portfolios();
@@ -1631,14 +1467,12 @@ class plugintype_portfolio extends plugintype_base implements plugin_information
     }
 }
 
+
 /**
  * Class for themes
  */
-class plugintype_theme extends plugintype_base implements plugin_information {
+class plugininfo_theme extends plugininfo_base {
 
-    /**
-     * @see plugin_information::is_enabled()
-     */
     public function is_enabled() {
         global $CFG;
 
@@ -1651,14 +1485,12 @@ class plugintype_theme extends plugintype_base implements plugin_information {
     }
 }
 
+
 /**
  * Class representing an MNet service
  */
-class plugintype_mnetservice extends plugintype_base implements plugin_information {
+class plugininfo_mnetservice extends plugininfo_base {
 
-    /**
-     * @see plugin_information::is_enabled()
-     */
     public function is_enabled() {
         global $CFG;
 
@@ -1670,20 +1502,22 @@ class plugintype_mnetservice extends plugintype_base implements plugin_informati
     }
 }
 
+
 /**
  * Class for admin tool plugins
  */
-class plugintype_tool extends plugintype_base implements plugin_information {
+class plugininfo_tool extends plugininfo_base {
 
     public function get_uninstall_url() {
         return new moodle_url('/admin/tools.php', array('delete' => $this->name, 'sesskey' => sesskey()));
     }
 }
 
+
 /**
  * Class for admin tool plugins
  */
-class plugintype_report extends plugintype_base implements plugin_information {
+class plugininfo_report extends plugininfo_base {
 
     public function get_uninstall_url() {
         return new moodle_url('/admin/reports.php', array('delete' => $this->name, 'sesskey' => sesskey()));

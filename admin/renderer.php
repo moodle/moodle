@@ -594,12 +594,12 @@ class core_admin_renderer extends plugin_renderer_base {
 
     /**
      * Formats the information that needs to go in the 'Requires' column.
-     * @param plugin_information $plugin the plugin we are rendering the row for.
+     * @param plugininfo_base $plugin the plugin we are rendering the row for.
      * @param plugin_manager $pluginman provides data on all the plugins.
      * @param string $version
      * @return string HTML code
      */
-    protected function required_column(plugin_information $plugin, plugin_manager $pluginman, $version) {
+    protected function required_column(plugininfo_base $plugin, plugin_manager $pluginman, $version) {
         $requires = array();
 
         if (!empty($plugin->versionrequires)) {
