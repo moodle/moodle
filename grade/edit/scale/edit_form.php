@@ -131,23 +131,23 @@ class edit_scale_form extends moodleform {
             if (count($scalearray) < 2) {
                 $errors['scale'] = get_string('badlyformattedscale', 'grades');
             } else {
-	            $thescale = implode(',',$scalearray);
+                $thescale = implode(',',$scalearray);
 
-	            $textlib = textlib_get_instance();
+                $textlib = textlib_get_instance();
                 //this check strips out whitespace from the scale we're validating but not from those already in the DB
-	            $count = $DB->count_records_select('scale', "courseid=:courseid AND ".$DB->sql_compare_text('scale', $textlib->strlen($thescale)).'=:scale',
-	                array('courseid'=>$courseid, 'scale'=>$thescale));
+                $count = $DB->count_records_select('scale', "courseid=:courseid AND ".$DB->sql_compare_text('scale', $textlib->strlen($thescale)).'=:scale',
+                    array('courseid'=>$courseid, 'scale'=>$thescale));
 
                 if ($count) {
                     //if this is a new scale but we found a duplice in the DB
                     //or we found a duplicate in another course report the error
                     if (empty($old->id) or $old->courseid != $courseid) {
-	                    $errors['scale'] = get_string('duplicatescale', 'grades');
+                        $errors['scale'] = get_string('duplicatescale', 'grades');
                     } else if ($old->scale !== $thescale and $old->scale !== $data['scale']) {
                         //if the old scale from DB is different but we found a duplicate then we're trying to modify a scale to be a duplicate
-	                    $errors['scale'] = get_string('duplicatescale', 'grades');
-	                }
-	            }
+                        $errors['scale'] = get_string('duplicatescale', 'grades');
+                    }
+                }
             }
         }
 

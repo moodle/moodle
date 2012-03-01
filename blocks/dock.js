@@ -478,7 +478,7 @@ M.core_dock.delayEvent = function(event, options, target) {
  */
 M.core_dock.fixTitleOrientation = function(item, title, text) {
     var Y = this.Y;
-    
+
     var title = Y.one(title);
 
     if(M.core_dock.cfg.orientation != 'vertical') {
@@ -809,7 +809,7 @@ M.core_dock.genericblock.prototype = {
      */
     initialise_block : function(Y, node) {
         M.core_dock.init(Y);
-        
+
         this.Y = Y;
         if (!node) {
             return false;
@@ -919,7 +919,7 @@ M.core_dock.genericblock.prototype = {
         // Register an event so that when it is removed we can put it back as a block
         dockitem.on('dockeditem:itemremoved', this.return_to_block, this, dockitem);
         dock.add(dockitem);
-        
+
         if (!this.skipsetposition) {
             // save the users preference
             M.util.set_user_preference('docked_block_instance_'+this.id, 1);

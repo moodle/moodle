@@ -125,7 +125,7 @@ if ($usercandownload and $download != -1 and !empty($downloadcourseid) and confi
 $remove = optional_param('remove', '', PARAM_INTEGER);
 $communityid = optional_param('communityid', '', PARAM_INTEGER);
 if ($remove != -1 and !empty($communityid) and confirm_sesskey()) {
-    $communitymanager->block_community_remove_course($communityid, $USER->id); 
+    $communitymanager->block_community_remove_course($communityid, $USER->id);
     echo $OUTPUT->header();
     echo $renderer->remove_success(new moodle_url(get_referer(false)));
     echo $OUTPUT->footer();

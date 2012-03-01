@@ -1,7 +1,7 @@
 <?php
 
 class block_navigation_renderer extends plugin_renderer_base {
-    
+
     public function navigation_tree(global_navigation $navigation, $expansionlimit, array $options = array()) {
         $navigation->add_class('navigation_node');
         $content = $this->navigation_node(array($navigation), array('class'=>'block_tree list'), $expansionlimit, $options);
