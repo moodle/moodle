@@ -98,6 +98,31 @@ $STD_FIELDS = array('id', 'firstname', 'lastname', 'username', 'email',
 
 $PRF_FIELDS = array();
 
+function pre_process_profile_data($data) {
+    global $CFG, $DB;
+
+    foreach ($data as $key => $value) {
+        if (preg_match('/^profile_field_/', $key)) {
+            $shortname = str_replace('profile_field_', '', $key);
+            if ($fields = $DB->get_records('user_info_field', array('shortname' => $shortname))) {
+                foreach ($fields as $field) {
+                    if (is_file($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php'))
+                    {
+                        require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+                        $newfield = 'profile_field_'.$field->datatype;
+                        if ($field->datatype == 'menu') {
+                            $formfield = new $newfield($field->id, $data->id);
+                            $data->$key = $formfield->convert_csv_data($value);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return $data;
+}
+
 if ($prof_fields = $DB->get_records('user_info_field')) {
     foreach ($prof_fields as $prof_field) {
         $PRF_FIELDS[] = 'profile_field_'.$prof_field->shortname;
@@ -595,6 +620,8 @@ if ($formdata = $mform2->is_cancelled()) {
 
                 $upt->track('status', $struserupdated);
                 $usersupdated++;
+                // pre-process custom profile menu fields data from csv file
+                pre_process_profile_data($existinguser);
                 // save custom profile fields data from csv file
                 profile_save_data($existinguser);
 
@@ -712,6 +739,8 @@ if ($formdata = $mform2->is_cancelled()) {
             $user->id = $DB->insert_record('user', $user);
             $upt->track('username', html_writer::link(new moodle_url('/user/profile.php', array('id'=>$user->id)), s($user->username)), 'normal', false);
 
+            // pre-process custom profile menu fields data from csv file
+            pre_process_profile_data($user);
             // save custom profile fields data
             profile_save_data($user);
 
