@@ -192,7 +192,7 @@ class block_navigation extends block_base {
 
         $options = array();
         $options['linkcategories'] = (!empty($this->config->linkcategories) && $this->config->linkcategories == 'yes');
-        
+
         // Grab the items to display
         $renderer = $this->page->get_renderer('block_navigation');
         $this->content = new stdClass();
