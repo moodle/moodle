@@ -119,7 +119,7 @@ class course_enrolment_manager {
 
     /**
      * Returns the current moodle page
-     * @return moodle_page 
+     * @return moodle_page
      */
     public function get_moodlepage() {
         return $this->moodlepage;

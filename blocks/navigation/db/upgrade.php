@@ -58,7 +58,7 @@ function xmldb_block_navigation_upgrade($oldversion, $block) {
 
     if ($oldversion < 2010091400) {
 
-        $sql = "SELECT bp.id FROM {block_instances} bi 
+        $sql = "SELECT bp.id FROM {block_instances} bi
                 LEFT JOIN {block_positions} bp ON bp.blockinstanceid=bi.id
                 WHERE bi.blockname='navigation' AND bp.visible=0";
         $blockpositions = $DB->get_records_sql($sql);
