@@ -279,7 +279,7 @@ class course_publish_manager {
                 $subsublevel[substr($key, 0, 8)][substr($key, 0, 10)][$key] = $option;
             }
         }
-        
+
         //recreate the initial structure returned by get_string_manager()
         $subjects = array();
         foreach ($toplevel as $key => $name) {

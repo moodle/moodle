@@ -82,7 +82,7 @@ class block_community_manager {
         global $CFG, $USER;
         require_once($CFG->libdir . "/filelib.php");
         require_once($CFG->dirroot. "/course/publish/lib.php");
-             
+
         $params['courseid'] = $course->id;
         $params['filetype'] = HUB_BACKUP_FILE_TYPE;
 
@@ -104,7 +104,7 @@ class block_community_manager {
             $token = $registeredhub->token;
             $curlurl .= '&token='.$token;
         }
-        
+
         $ch = curl_init($curlurl);
         curl_setopt($ch, CURLOPT_FILE, $fp);
         $data = curl_exec($ch);
