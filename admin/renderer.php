@@ -236,6 +236,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
         $output .= $this->header();
         $output .= $this->heading(get_string('pluginsoverview', 'core_admin'));
+        $output .= $this->plugins_overview_panel($pluginman);
         $output .= $this->box_start('generalbox');
         $output .= $this->plugins_control_panel($pluginman);
         $output .= $this->box_end();
@@ -644,6 +645,46 @@ class core_admin_renderer extends plugin_renderer_base {
             return '';
         }
         return html_writer::tag('ul', implode("\n", $requires));
+    }
+
+    /**
+     * Prints an overview about the plugins - number of installed, number of extensions etc.
+     *
+     * @param plugin_manager $pluginman provides information about the plugins
+     * @return string as usually
+     */
+    public function plugins_overview_panel(plugin_manager $pluginman) {
+        $plugininfo = $pluginman->get_plugins();
+
+        $numtotal = $numdisabled = $numextension = $numupdatable = 0;
+
+        foreach ($plugininfo as $type => $plugins) {
+            foreach ($plugins as $name => $plugin) {
+                if ($plugin->get_status() === plugin_manager::PLUGIN_STATUS_MISSING) {
+                    continue;
+                }
+                $numtotal++;
+                if ($plugin->is_enabled() === false) {
+                    $numdisabled++;
+                }
+                if (!$plugin->is_standard()) {
+                    $numextension++;
+                }
+                if ($plugin->available_update()) {
+                    $numupdatable++;
+                }
+            }
+        }
+
+        $info = array();
+        $info[] = html_writer::tag('span', get_string('numtotal', 'core_plugin', $numtotal), array('class' => 'info total'));
+        $info[] = html_writer::tag('span', get_string('numdisabled', 'core_plugin', $numdisabled), array('class' => 'info disabled'));
+        $info[] = html_writer::tag('span', get_string('numextension', 'core_plugin', $numextension), array('class' => 'info extension'));
+        if ($numupdatable > 0) {
+            $info[] = html_writer::tag('span', get_string('numupdatable', 'core_plugin', $numupdatable), array('class' => 'info updatable'));
+        }
+
+        return $this->output->box(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $info), '', 'plugins-overview-panel');
     }
 
     /**

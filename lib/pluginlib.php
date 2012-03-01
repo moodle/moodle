@@ -787,6 +787,19 @@ abstract class plugininfo_base {
     }
 
     /**
+     * If there is an update of this plugin available, returns the data about it.
+     *
+     * Returns object with various properties about the available update, if such
+     * an update is available. Returns false if there is no update available for
+     * this plugin. Returns null if the update availabitlity is unknown.
+     *
+     * @return stdClass|false|null
+     */
+    public function available_update() {
+        return null;
+    }
+
+    /**
      * Returns the URL of the plugin settings screen
      *
      * Null value means that the plugin either does not have the settings screen
