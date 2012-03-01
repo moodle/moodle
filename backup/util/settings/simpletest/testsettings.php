@@ -32,10 +32,12 @@ require_once($CFG->dirroot . '/backup/util/interfaces/checksumable.class.php');
 require_once($CFG->dirroot . '/backup/backup.class.php');
 require_once($CFG->dirroot . '/backup/util/settings/base_setting.class.php');
 require_once($CFG->dirroot . '/backup/util/settings/backup_setting.class.php');
+require_once($CFG->dirroot . '/backup/util/settings/setting_dependency.class.php');
 require_once($CFG->dirroot . '/backup/util/settings/root/root_backup_setting.class.php');
 require_once($CFG->dirroot . '/backup/util/settings/activity/activity_backup_setting.class.php');
 require_once($CFG->dirroot . '/backup/util/settings/section/section_backup_setting.class.php');
 require_once($CFG->dirroot . '/backup/util/settings/course/course_backup_setting.class.php');
+require_once($CFG->dirroot . '/backup/util/ui/backup_ui_setting.class.php');
 
 /*
  * setting tests (all)
@@ -207,6 +209,21 @@ class setting_test extends UnitTestCase {
             $this->assertTrue($e->a instanceof stdclass);
             $this->assertEqual($e->a->main, 'test1');
             $this->assertEqual($e->a->alreadydependent, 'test4');
+        }
+
+        $bs1 = new mock_base_setting('test1', base_setting::IS_INTEGER, null);
+        $bs2 = new mock_base_setting('test2', base_setting::IS_INTEGER, null);
+        $bs1->register_dependency(new setting_dependency_disabledif_empty($bs1, $bs2));
+        try {
+            // $bs1 is already dependent on $bs2 so this should fail.
+            $bs2->register_dependency(new setting_dependency_disabledif_empty($bs2, $bs1));
+            $this->assertTrue(false, 'base_setting_exception expected');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof base_setting_exception);
+            $this->assertEqual($e->errorcode, 'setting_circular_reference');
+            $this->assertTrue($e->a instanceof stdclass);
+            $this->assertEqual($e->a->main, 'test1');
+            $this->assertEqual($e->a->alreadydependent, 'test2');
         }
 
         // Create 3 settings and observe between them, last one must
