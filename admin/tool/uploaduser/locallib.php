@@ -363,3 +363,30 @@ function uu_allowed_roles_cache() {
     }
     return $rolecache;
 }
+
+/**
+ * Pre process custom profile data, and update it with corrected value
+ *
+ * @param stdClass $data user profile data
+ * @return stdClass pre-processed custom profile data
+ */
+function uu_pre_process_custom_profile_data($data) {
+    global $CFG, $DB;
+    // find custom profile fields and check if data needs to converted.
+    foreach ($data as $key => $value) {
+        if (preg_match('/^profile_field_/', $key)) {
+            $shortname = str_replace('profile_field_', '', $key);
+            if ($fields = $DB->get_records('user_info_field', array('shortname' => $shortname))) {
+                foreach ($fields as $field) {
+                    require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+                    $newfield = 'profile_field_'.$field->datatype;
+                    $formfield = new $newfield($field->id, $data->id);
+                    if (method_exists($formfield, 'convert_external_data')) {
+                        $data->$key = $formfield->convert_external_data($value);
+                    }
+                }
+            }
+        }
+    }
+    return $data;
+}
