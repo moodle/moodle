@@ -603,6 +603,7 @@ $string['statslink'] = 'Stats';
 $string['student'] = 'Student';
 $string['studentsperpage'] = 'Students per page';
 $string['studentsperpage_help'] = 'This setting determines the number of students displayed per page in the grader report.';
+$string['studentsperpagereduced'] = 'Students per page has been reduced to prevent possible data loss when bulk updating grades';
 $string['subcategory'] = 'Normal category';
 $string['submissions'] = 'Submissions';
 $string['submittedon'] = 'Submitted: {$a}';
