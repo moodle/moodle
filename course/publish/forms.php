@@ -333,7 +333,7 @@ class course_publication_form extends moodleform {
 
         $editoroptions = array('maxfiles' => 0, 'maxbytes' => 0, 'trusttext' => false, 'forcehttps' => false);
         $mform->addElement('editor', 'creatornotes', get_string('creatornotes', 'hub'), '', $editoroptions);
-        $mform->addRule('creatornotes', $strrequired, 'required', null, 'client');  
+        $mform->addRule('creatornotes', $strrequired, 'required', null, 'client');
         $mform->setType('creatornotes', PARAM_CLEANHTML);
         $mform->addHelpButton('creatornotes', 'creatornotes', 'hub');
 

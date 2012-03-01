@@ -110,11 +110,11 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
     }
 
     $renderer = $PAGE->get_renderer('core', 'publish');
-  
+
     /// UNPUBLISH
     $cancel = optional_param('cancel', 0, PARAM_BOOL);
     if (!empty($cancel) and confirm_sesskey()) {
-        $confirm = optional_param('confirm', 0, PARAM_BOOL);      
+        $confirm = optional_param('confirm', 0, PARAM_BOOL);
         $hubcourseid = optional_param('hubcourseid', 0, PARAM_INT);
         $publicationid = optional_param('publicationid', 0, PARAM_INT);
         $timepublished = optional_param('timepublished', 0, PARAM_INT);
@@ -161,7 +161,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
                 empty($hubname)?$huburl:$hubname), 'notifysuccess');
     }
 
- 
+
     /// OUTPUT
     echo $OUTPUT->header();
     echo $confirmmessage;

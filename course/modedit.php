@@ -338,7 +338,7 @@ if ($mform->is_cancelled()) {
             set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
         }
 
-        // Now that module is fully updated, also update completion data if 
+        // Now that module is fully updated, also update completion data if
         // required (this will wipe all user completion data and recalculate it)
         if ($completion->is_enabled() && !empty($fromform->completionunlocked)) {
             $completion->reset_all_state($cm);

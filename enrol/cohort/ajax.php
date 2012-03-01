@@ -77,7 +77,7 @@ switch ($action) {
         require_capability('enrol/cohort:config', $context);
         $roleid = required_param('roleid', PARAM_INT);
         $cohortid = required_param('cohortid', PARAM_INT);
-        
+
         $roles = $manager->get_assignable_roles();
         $cohorts = enrol_cohort_get_cohorts($manager);
         if (!array_key_exists($cohortid, $cohorts) || !array_key_exists($roleid, $roles)) {

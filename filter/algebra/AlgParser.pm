@@ -553,10 +553,10 @@ sub tolatex {
         if ($args[2]->[0] =~ /binop[12]|numberE|unop1/)
       {($p3,$p4)=qw{ \left( \right) };}
     if ($args[0] eq '/'){
-#	return('\frac{' . $p1 . $args[1]->tolatex() . $p2 . '}'.
+#   return('\frac{' . $p1 . $args[1]->tolatex() . $p2 . '}'.
 #               '{' . $p3 . $args[2]->tolatex() . $p4 . '}' );
         return('\frac{' . $args[1]->tolatex() . '}'.
-               '{' . $args[2]->tolatex() . '}' ); 
+               '{' . $args[2]->tolatex() . '}' );
     }
     else{
     return ($p1 . $args[1]->tolatex() . $p2 . $args[0] . $p3 .
