@@ -1533,6 +1533,11 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
 ///
     global $CFG, $USER, $DB;
 
+    // If user is searching all messages check they are allowed to before doing anything else
+    if ($courseid == SITEID && !has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) {
+        print_error('accessdenied','admin');
+    }
+
     /// If no userid sent then assume current user
     if ($userid == 0) $userid = $USER->id;
 
