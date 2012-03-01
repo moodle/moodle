@@ -151,6 +151,7 @@ class question_engine_data_mapper {
         foreach ($step->get_all_data() as $name => $value) {
             if ($value instanceof question_file_saver) {
                 $value->save_files($stepid, $context);
+                $value = (string) $value;
             }
 
             $data = new stdClass();
