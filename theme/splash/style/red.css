@@ -1,0 +1,94 @@
+/********************************************************
+**
+** Theme name: Splash
+** Creation Date: 30/06/09
+** Author: Caroline Kennedy - Synergy Learning
+** Author URI: http://synergylearning.com
+**
+*********************************************************/
+
+body {
+    background: url([[pix:theme|bg]]) top left repeat-x;
+}
+a, a:link, a:active {
+    color:#853650;
+    text-decoration:none;
+}
+a.autolink {
+    color:#853650;
+    background:#fff;
+}
+a:hover {
+    text-decoration:underline;
+    color:#6d1523;
+}
+.homelink a {
+    color:#853650;
+}
+#region-main h1,
+#region-main h3,
+#region-main h6 {
+    color:#853650;
+}
+#page-header {
+    background: url([[pix:theme|pageheaderbgred]]) top center no-repeat;
+    width:100%;
+}
+.pagelayout-report #page-header {
+    background: url([[pix:theme|pageheaderbgred]]) top center no-repeat;
+}
+#colourswitcher {
+    background: url([[pix:theme|selectbg]]) top left repeat-x;}
+#colourswitcher p {
+    color:#7c3041;
+}
+#logobox {
+    background: url([[pix:theme|lbgv2]]) no-repeat;
+}
+.navbar .breadcrumb a {
+    color:#853650;
+}
+.navbar .arrow {
+    color:#853650;
+}
+.block-region .block .header {
+    background: url([[pix:theme|sbheaderbg2]]) top center no-repeat;
+}
+.mform fieldset legend {
+    color:#853650;
+}
+.tabtree .tabrow0 a:hover{
+    color:#6d1523;
+}
+.tabtree .tabrow0 .here a {
+    color:#853650;
+}
+.tabtree .tabrow0 .here a:hover{
+    background:#fff;
+    color: #6d1523;
+}
+.tabtree .here ul .here a.nolink:hover {
+    color:#853650;
+}
+.path-mod-quiz .qnbutton {
+    background:#853650;color:#fff;
+}
+.path-mod-quiz .qnbutton.open {
+    background:#853650;}
+#categoryquestions tr th{background:#853650;
+}
+.pagelayout-redirect {
+    border-top: 1px solid #6d1523;
+}
+#dock {
+    background-color:#853650;
+    border-right:1px solid #853650;
+}
+#dock .dockedtitle {
+    border-top:1px solid #7B4F5F;
+    border-bottom:1px solid #6d1523;
+}
+#dock .dockedtitle h2 {
+    color: #fff;
+    padding: 10px 0;
+}

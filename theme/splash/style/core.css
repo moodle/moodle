@@ -1,0 +1,525 @@
+/********************************************************
+**
+** Theme name: Splash
+** Creation Date: 27/1/2012
+** Author: Caroline Kennedy - Synergy Learning
+** Author URI: http://synergylearning.com
+**
+*********************************************************/
+
+/* Reset
+-------------------------*/
+html{
+    color:#000;
+}
+body,div,dl,dt,dd,h1,h2,h3,h4,h5,h6,pre,code{
+    margin:0;
+    padding:0;
+}
+table{
+    border-collapse:collapse;
+    border-spacing:0;
+}
+del,ins{
+    text-decoration:none;
+}
+caption,th{
+    text-align:left;
+}
+h1,h2,h3,h4,h5,h6{
+    font-size:100%;
+    font-weight:normal;
+}
+q:before,q:after{
+    content:'';
+}
+abbr,acronym{
+    border:0;
+    font-variant:normal
+}
+sup{
+    vertical-align:baseline;
+}
+sub{
+    vertical-align:baseline;
+}
+legend{
+    color:#000;
+}
+input,button,textarea,select,optgroup,option{
+    font-family:inherit;
+    font-size:inherit;
+    font-style:inherit;
+    font-weight:inherit;
+}
+input,button,textarea,select{
+    *font-size:100%;
+}
+
+/* Structure
+-------------------------*/
+html, body#tinymce {
+    margin:0;
+    padding:0;
+}
+body {
+    margin:0;
+    padding:0;
+}
+body.lang-vi {
+    font:0.75em  Arial, Helvetica, sans-serif;
+}
+.clearfix {
+    margin:0;
+    padding:0;
+    clear:both;
+}
+#page {
+    font-family: Arial, Helvetica, sans-serif;
+    margin:0 auto;
+    padding:0;
+    width:960px;
+    font-size:0.75em;
+}
+#page-content {
+    margin:0 auto;
+    padding:0;
+    width:960px;
+    float:none;
+}
+#page-content #region-main  {
+    padding:0 10px;
+}
+/* Report pages
+-------------------------*/
+.pagelayout-report #page {
+    width:960px;
+}
+.pagelayout-report #page-content {
+    width:960px;
+    margin:0 auto;
+    padding:0;
+}
+.pagelayout-report #page-footer {
+    width:960px;
+    margin:0 auto;
+    padding:0;
+}
+.pagelayout-report #report-main-content .region-content {
+    margin-left:230px;
+}
+.pagelayout-report #page-content .region-content {
+    padding:10px 0;
+}
+.pagelayout-report #page-content .region-content .generaltable {
+    font-size: 0.9em;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+/* Headers
+-------------------------*/
+#page-header {
+    display:block;
+    margin:0 auto;
+    padding:0;
+}
+/* Login Page
+-------------------------*/
+#page-login-index #content {
+    font-size: 0.85em;
+}
+.loginbox {
+    margin:15px 25%;
+    width:50%;border:none;
+}
+.loginbox.twocolumns {
+    width:90%;
+    margin:15px 5%;
+}
+.loginbox,
+.loginbox.twocolumns .loginpanel,
+.loginbox .subcontent {
+    border-color:#ddd;
+}
+.loginbox .guestsub,
+.loginbox .forgotsub,
+.loginbox .potentialidps {
+    border-top:1px solid #ddd;
+}
+.loginbox .loginform .form-input #username,
+.loginbox .loginform .form-input #password {
+    border:1px solid #ddd;
+}
+/* Tiny MCE
+-------------------------*/
+.mceContentBody  {
+    background-color:#fff;
+    color:#000;
+}
+/* Moodle Forms
+-------------------------*/
+.mform .fitem fieldset.felement {
+    margin:0;padding:0;
+}
+.mform .fpassword .unmask input {
+    margin:0;padding:0;
+}
+.mform .fitem .fitemtitle {
+    font-weight:bold;
+    width:25%;
+    text-align:left;
+}
+.mform .fitem .felement {
+    margin-left:25%;
+    width:70%;
+}
+.mform .fitem {
+    margin:0;
+    padding:5px 0;
+}
+.mform fieldset{
+    overflow: visible;
+ }
+#page-admin-register .mform .fsubmit {
+    padding:20px;
+    text-align:center;
+}
+/* html editor fixed width
+-------------------------*/
+textarea#id_summary_editor {width:420px;}
+textarea#id_description {width:420px;}
+textarea#id_message {width:420px;}
+
+.felement .feditorselect select {
+    margin-top:10px !important;
+}
+/* Admin forms
+-------------------------*/
+#adminsettings .form-item .form-label .form-shortname {
+    word-wrap:break-word; /*CSS3*/
+}
+#adminsettings .form-item .form-label {
+    margin-right:10px;
+}
+#page-question-type-multianswer fieldset {
+    text-align: right;
+}
+/* Filters
+-------------------------*/
+.mediaplugin {
+    display:block;
+    clear:both;
+    margin-top:5px;
+    margin-bottom:5px;
+}
+.mediaplugin_mp3,
+.mediaplugin_swf,
+.mediaplugin_flv {
+    display:inline;
+    clear:none;
+    margin:0px;
+    margin-left:0.5em;
+ }
+.texrender {
+    border:0px;
+    vertical-align:middle;
+}
+/* Groups
+------------------------*/
+#page-group-groupings .buttons {
+    margin: 20px;
+    text-align:center;
+}
+#page-group-groupings .buttons .singlebutton {
+    display: inline;
+    padding: 5px;
+}
+.groupmanagementtable {
+    width: 90%;
+}
+.groupmanagementtable p {
+    text-align: left;
+    margin-bottom: 0.2em;
+}
+.groupmanagementtable #existingcell label,
+.groupmanagementtable #potentialcell label {
+    font-weight: bold;
+}
+.groupmanagementtable #buttonscell p {
+    text-align: center;
+}
+.groupmanagementtable #buttonscell input {
+    padding:3px 0;
+}
+.groupmanagementtable #buttonscell #remove {
+    margin: 7em 0;
+}
+.groupmanagementtable #backcell {
+    padding-top: 2em;
+    text-align: center;
+}
+/* Custom styling login block
+------------------------------*/
+.block-region .block_login .content {
+    padding:10px;
+}
+.block-region .block_login label{
+    margin: 5px 0px 10px 5px;
+}
+.block-region .block_login input[type=text] {
+    margin: 5px 0;
+    padding: 5px;
+}
+.block-region .block_login input[type=password] {
+    margin: 5px 0;
+    padding: 5px;
+}
+/* Messages
+-------------------------*/
+.block_messages .info,
+.block_online_users .info {
+    font-size:1em;
+}
+/* Help link/box
+-------------------------*/
+.helplink img {
+    margin-left:5px;
+}
+#helppopupbox {
+    padding:10px 0;
+}
+#helppopupbox p {
+    padding:0 0 5px;
+    margin:0;
+    line-height:1.3em;
+}
+#helppopupbox .helpheading {
+    font-size:1.2em;
+    padding-bottom:10px;
+}
+/* Icons
+-------------------------*/
+img.icon {
+    margin-right:5px;
+}
+.action-icon {
+    margin-right:5px;
+}
+/* Reports
+-------------------------*/
+.path-grade-report-grader div.userpic {
+    float:none;
+}
+.path-admin-report-customlang #translator textarea {
+    width:90%;
+}
+.path-admin-report-customlang .mform.filterform {
+    width:90%;
+}
+/* My Moodle
+-------------------------*/
+#page-my-index .block {
+    width:auto !important;
+}
+/* Course topics format
+-------------------------*/
+.course-content ul.topics li.section .content h1,
+.course-content ul.topics li.section .content h2,
+.course-content ul.topics li.section .content h3,
+.course-content ul.topics li.section .content h4,
+.course-content ul.topics li.section .content h5,
+.course-content ul.topics li.section .content h6 {
+    padding:0;
+    margin:0;
+}
+/* Course weeks format
+-------------------------*/
+.course-content ul.weeks li.section .content h1,
+.course-content ul.weeks li.section .content h2,
+.course-content ul.weeks li.section .content h3,
+.course-content ul.weeks li.section .content h4,
+.course-content ul.weeks li.section .content h5,
+.course-content ul.weeks li.section .content h6 {
+    padding:0;
+    margin:0;
+}
+.categorybox .category {
+    font-size: 100%;
+    font-weight: normal;
+    padding: 0px 0px 0px 10px;
+}
+li.activity {
+    padding-bottom:5px;
+}
+.categorylist {
+    padding-bottom:10px;
+}
+.course {
+    padding-bottom:25px;
+}
+.course_category_tree .category .courses .course_link {
+    padding:10px 18px;
+    background-position: 0 5px;
+}
+.coursebox .summary{
+    padding: 10px 0;
+}
+.que .info{
+    width: 10em;
+}
+.que .content{
+    margin: 0 0 0 11.5em;
+}
+/* Quiz
+-------------------------*/
+#page-mod-quiz-edit h2.main{
+    display: block;
+}
+#page-mod-quiz-edit div.question div.content div.questioncontrols{
+    padding: 0;
+}
+#page-mod-quiz-edit .reorder div.question div.content {
+    line-height: 2em;
+}
+#page-mod-quiz-edit div.question div.content div.qorder {
+    line-height: 2em;
+}
+#page-mod-quiz-edit div.reorder .reordercontrols .addnewpagesafterselected,
+#page-mod-quiz-edit .repaginatecommand{
+    padding-right: 3px;
+}
+
+/* Tabs
+-------------------------*/
+.tabtree .tabrow0 li.here .empty {
+    display: none;
+}
+.tabtree .tabrow0 .tabrow1 {
+    margin-top: -1px;
+    line-height: 1.3em;
+}
+/* Misc Fixes
+-------------------------*/
+.editing #big-tag-cloud-box{
+    width: 480px;
+}
+.generalbox{
+    padding: 5px;
+}
+.graph{
+    overflow: auto;
+}
+.path-mod-forum .forumheaderlist .discussion .starter{
+    vertical-align: top;
+}
+.boxwidthwide{
+    width: 96%;
+}
+.path-backup .mform .fitem fieldset.felement{
+    width: 100%;
+}
+.moveselectedonpage input[type=submit]{
+    margin-top: 2px;
+}
+.userselector div {
+    margin-top: 0;
+}
+#reportuser_wrapper{
+    margin-bottom: 20px;
+}
+#page-course-user .graph img{
+    width: 99%;
+}
+#page-mod-survey-view #surveyform textarea {
+    float: right;
+}
+.path-admin table.rolecap tr.rolecap th,
+.path-admin table.rolecap tr.rolecap td {
+    border: 1px solid #dedede;
+}
+#page-admin-roles-explain #chooseuser h3,
+#page-admin-roles-usersroles .contextname {
+    margin-top: 0;
+    padding: 5px;
+}
+.section_add_menus {
+    text-align:left;
+}
+#page-admin-course-category .generalbox td,
+#attempts td,
+.editcourse td,
+.generaltable td,
+.plugincompattable td,
+.environmenttable td,
+.forumheaderlist td {
+    border: 0 none;
+}
+.groupmanagementtable #buttonscell input {
+    padding: 3px 40px;
+}
+/* Jump to menu block
+-------------------------*/
+.jumpto_menu ul li form fieldset,
+.jumpto_menu ul li form div select {
+    width:190px;
+}
+.block-region .block_jumpto_menu .content {
+    padding-left:0;
+    padding-right:0;
+}
+/* reduce font size in table overflow
+-------------------------------------*/
+#page-course-report .logselectform,
+#page-course-report .participationselectform,
+#page-course-report-log-index .logselectform,
+#page-course-report-participation-index .participationselectform {
+    font-size: 0.9em;
+}
+#page-admin-plugins #plugins-control-panel {
+    font-size:0.9em;
+}
+/* php table
+-------------------------*/
+.phpinfo{
+    overflow-x: scroll;
+}
+
+/* table paging
+-------------------------*/
+.paging {
+    padding:10px 0;
+}
+/* user profiles
+-------------------------*/
+.profileeditor {
+    text-align:center;
+}
+hr {
+    background:none;
+    border-top:1px solid #ddd;
+}
+/* fix table overflow
+-------------------------*/
+#page-admin-setting-htmlsettings .generaltable{
+    font-size:0.9em
+}
+#adminsettings #admin-emoticons.form-item .form-setting {
+    clear:both;
+    margin:0 0 0 50px;
+}
+/* icons
+-------------------------*/
+img.icon {
+    width:auto;
+    height:auto;
+}
+/* italic text
+-------------------------*/
+strong em, em strong{
+    font-weight: bold;
+    font-style: italic;
+}
+.initialbar a {
+    padding:0 2px;
+}

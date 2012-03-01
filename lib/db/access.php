@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -43,8 +42,8 @@
  *
  * The variable name for the capability definitions array is $capabilities
  *
- * @package    core
- * @subpackage role
+ * @package    core_access
+ * @category   access
  * @copyright  2006 onwards Martin Dougiamas  http://dougiamas.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

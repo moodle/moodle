@@ -18,10 +18,10 @@
 /**
  * Defines all the backup steps that will be used by {@link backup_workshop_activity_task}
  *
- * @package    mod
- * @subpackage workshop
- * @copyright  2010 David Mudrak <david.mudrak@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     mod_workshop
+ * @category    backup
+ * @copyright   2010 David Mudrak <david.mudrak@gmail.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -29,10 +29,15 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Defines the complete workshop structure for backup, with file and id annotations
  *
- * @see http://docs.moodle.org/dev/Workshop for XML structure diagram
+ * @link http://docs.moodle.org/dev/Workshop for XML structure diagram
  */
 class backup_workshop_activity_structure_step extends backup_activity_structure_step {
 
+    /**
+     * Defines the structure of the 'workshop' element inside the workshop.xml file
+     *
+     * @return backup_nested_element
+     */
     protected function define_structure() {
 
         // are we including userinfo?

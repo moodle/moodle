@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,8 +18,8 @@
  * This file contains classes used to manage the navigation structures in Moodle
  * and was introduced as part of the changes occuring in Moodle 2.0
  *
- * @since 2.0
- * @package blocks
+ * @since     2.0
+ * @package   block_navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,19 +29,20 @@
  *
  * Used to produce the global navigation block new to Moodle 2.0
  *
- * @package blocks
+ * @package   block_navigation
+ * @category  navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class block_navigation extends block_base {
 
-    /** @var int */
+    /** @var int This allows for multiple navigation trees */
     public static $navcount;
-    /** @var string */
+    /** @var string The name of the block */
     public $blockname = null;
-    /** @var bool */
+    /** @var bool A switch to indicate whether content has been generated or not. */
     protected $contentgenerated = false;
-    /** @var bool|null */
+    /** @var bool|null variable for checking if the block is docked*/
     protected $docked = null;
 
     /** @var int Trim characters from the right */
@@ -63,7 +63,7 @@ class block_navigation extends block_base {
 
     /**
      * All multiple instances of this block
-     * @return bool Returns true
+     * @return bool Returns false
      */
     function instance_allow_multiple() {
         return false;
@@ -95,10 +95,18 @@ class block_navigation extends block_base {
         return false;
     }
 
+    /**
+     * Find out if an instance can be docked.
+     *
+     * @return bool true or false depending on whether the instance can be docked or not.
+     */
     function instance_can_be_docked() {
         return (parent::instance_can_be_docked() && (empty($this->config->enabledock) || $this->config->enabledock=='yes'));
     }
 
+    /**
+     * Gets Javascript that may be required for navigation
+     */
     function get_required_javascript() {
         global $CFG;
         user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
@@ -124,6 +132,8 @@ class block_navigation extends block_base {
 
     /**
      * Gets the content for this block by grabbing it from $this->page
+     *
+     * @return object $this->content
      */
     function get_content() {
         global $CFG, $OUTPUT;
@@ -134,7 +144,7 @@ class block_navigation extends block_base {
         // JS for navigation moved to the standard theme, the code will probably have to depend on the actual page structure
         // $this->page->requires->js('/lib/javascript-navigation.js');
         // Navcount is used to allow us to have multiple trees although I dont' know why
-        // you would want to trees the same
+        // you would want two trees the same
 
         block_navigation::$navcount++;
 
@@ -192,7 +202,7 @@ class block_navigation extends block_base {
 
         $options = array();
         $options['linkcategories'] = (!empty($this->config->linkcategories) && $this->config->linkcategories == 'yes');
-        
+
         // Grab the items to display
         $renderer = $this->page->get_renderer('block_navigation');
         $this->content = new stdClass();
@@ -208,10 +218,10 @@ class block_navigation extends block_base {
      * Returns the attributes to set for this block
      *
      * This function returns an array of HTML attributes for this block including
-     * the defaults
-     * {@link block_tree->html_attributes()} is used to get the default arguments
+     * the defaults.
+     * {@link block_tree::html_attributes()} is used to get the default arguments
      * and then we check whether the user has enabled hover expansion and add the
-     * appropriate hover class if it has
+     * appropriate hover class if it has.
      *
      * @return array An array of HTML attributes
      */
@@ -227,6 +237,7 @@ class block_navigation extends block_base {
      * Trims the text and shorttext properties of this node and optionally
      * all of its children.
      *
+     * @param navigation_node $node
      * @param int $mode One of navigation_node::TRIM_*
      * @param int $long The length to trim text to
      * @param int $short The length to trim shorttext to

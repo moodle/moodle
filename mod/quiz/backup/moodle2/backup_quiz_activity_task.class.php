@@ -15,21 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    moodlecore
- * @subpackage backup-moodle2
- * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Defines backup_quiz_activity_task class
+ *
+ * @package     mod_quiz
+ * @category    backup
+ * @copyright   2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/backup/moodle2/backup_quiz_stepslib.php');
 
-
 /**
- * quiz backup task that provides all the settings and steps to perform one
- * complete backup of the activity
+ * Provides the steps to perform one complete backup of the Quiz instance
  *
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -37,14 +36,13 @@ require_once($CFG->dirroot . '/mod/quiz/backup/moodle2/backup_quiz_stepslib.php'
 class backup_quiz_activity_task extends backup_activity_task {
 
     /**
-     * Define (add) particular settings this activity can have
+     * No specific settings for this activity
      */
     protected function define_my_settings() {
-        // No particular settings for this activity
     }
 
     /**
-     * Define (add) particular steps this activity can have
+     * Defines backup steps to store the instance data and required questions
      */
     protected function define_my_steps() {
         // Generate the quiz.xml file containing all the quiz information
@@ -67,8 +65,10 @@ class backup_quiz_activity_task extends backup_activity_task {
     }
 
     /**
-     * Code the transformations to perform in the activity in
-     * order to get transportable (encoded) links
+     * Encodes URLs to the index.php and view.php scripts
+     *
+     * @param string $content some HTML text that eventually contains URLs to the activity instance scripts
+     * @return string the content with the URLs encoded
      */
     public static function encode_content_links($content) {
         global $CFG;

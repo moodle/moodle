@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,8 +18,7 @@
 /**
  * Base for all file browsing classes.
  *
- * @package    core
- * @subpackage filebrowser
+ * @package    core_files
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,19 +26,26 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Base class for things in the tree navigated by @see{file_browser}.
+ * Base class for things in the tree navigated by {@link file_browser}.
  *
- * @package    core
- * @subpackage filebrowser
+ * @package    core_files
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class file_info {
 
+    /** @var stdClass File context */
     protected $context;
 
+    /** @var file_browser File browser instance */
     protected $browser;
 
+    /**
+     * Constructor
+     *
+     * @param file_browser $browser file_browser instance
+     * @param stdClass $context
+     */
     public function __construct($browser, $context) {
         $this->browser = $browser;
         $this->context = $context;
@@ -50,6 +55,7 @@ abstract class file_info {
      * Returns list of standard virtual file/directory identification.
      * The difference from stored_file parameters is that null values
      * are allowed in all fields
+     *
      * @return array with keys contextid, component, filearea, itemid, filepath and filename
      */
     public function get_params() {
@@ -63,30 +69,35 @@ abstract class file_info {
 
     /**
      * Returns localised visible name.
+     *
      * @return string
      */
     public abstract function get_visible_name();
 
     /**
-     * Is directory?
+     * Whether or not this is a directory
+     *
      * @return bool
      */
     public abstract function is_directory();
 
     /**
      * Returns list of children.
+     *
      * @return array of file_info instances
      */
     public abstract function get_children();
 
     /**
      * Returns parent file_info instance
+     *
      * @return file_info or null for root
      */
     public abstract function get_parent();
 
     /**
      * Returns array of url encoded params.
+     *
      * @return array with numeric keys
      */
     public function get_params_rawencoded() {
@@ -104,8 +115,9 @@ abstract class file_info {
 
     /**
      * Returns file download url
-     * @param bool $forcedownload
-     * @param bool $htts force https
+     *
+     * @param bool $forcedownload whether or not force download
+     * @param bool $https whether or not force https
      * @return string url
      */
     public function get_url($forcedownload=false, $https=false) {
@@ -113,7 +125,8 @@ abstract class file_info {
     }
 
     /**
-     * Can I read content of this file or enter directory?
+     * Whether or not I can read content of this file or enter directory
+     *
      * @return bool
      */
     public function is_readable() {
@@ -121,7 +134,8 @@ abstract class file_info {
     }
 
     /**
-     * Can I add new files or directories?
+     * Whether or not new files or directories can be added
+     *
      * @return bool
      */
     public function is_writable() {
@@ -143,6 +157,7 @@ abstract class file_info {
 
     /**
      * Returns file size in bytes, null for directories
+     *
      * @return int bytes or null if not known
      */
     public function get_filesize() {
@@ -151,6 +166,7 @@ abstract class file_info {
 
     /**
      * Returns mimetype
+     *
      * @return string mimetype or null if not known
      */
     public function get_mimetype() {
@@ -159,6 +175,7 @@ abstract class file_info {
 
     /**
      * Returns time created unix timestamp if known
+     *
      * @return int timestamp or null
      */
     public function get_timecreated() {
@@ -167,6 +184,7 @@ abstract class file_info {
 
     /**
      * Returns time modified unix timestamp if known
+     *
      * @return int timestamp or null
      */
     public function get_timemodified() {
@@ -183,6 +201,7 @@ abstract class file_info {
 
     /**
      * Returns the author name of the file
+     *
      * @return string author name or null
      */
     public function get_author() {
@@ -191,6 +210,7 @@ abstract class file_info {
 
     /**
      * Returns the source of the file
+     *
      * @return string a source url or null
      */
     public function get_source() {
@@ -199,6 +219,7 @@ abstract class file_info {
 
     /**
      * Returns the sort order of the file
+     *
      * @return int
      */
     public function get_sortorder() {
@@ -208,8 +229,9 @@ abstract class file_info {
     /**
      * Create new directory, may throw exception - make sure
      * params are valid.
+     *
      * @param string $newdirname name of new directory
-     * @param int id of author, default $USER->id
+     * @param int $userid id of author, default $USER->id
      * @return file_info new directory
      */
     public function create_directory($newdirname, $userid = NULL) {
@@ -219,9 +241,10 @@ abstract class file_info {
     /**
      * Create new file from string - make sure
      * params are valid.
+     *
      * @param string $newfilename name of new file
      * @param string $content of file
-     * @param int id of author, default $USER->id
+     * @param int $userid id of author, default $USER->id
      * @return file_info new file
      */
     public function create_file_from_string($newfilename, $content, $userid = NULL) {
@@ -231,9 +254,10 @@ abstract class file_info {
     /**
      * Create new file from pathname - make sure
      * params are valid.
+     *
      * @param string $newfilename name of new file
      * @param string $pathname location of file
-     * @param int id of author, default $USER->id
+     * @param int $userid id of author, default $USER->id
      * @return file_info new file
      */
     public function create_file_from_pathname($newfilename, $pathname, $userid = NULL) {
@@ -243,9 +267,10 @@ abstract class file_info {
     /**
      * Create new file from stored file - make sure
      * params are valid.
+     *
      * @param string $newfilename name of new file
-     * @param mixed dile id or stored_file of file
-     * @param int id of author, default $USER->id
+     * @param int|stored_file $fid id or stored_file of file
+     * @param int $userid id of author, default $USER->id
      * @return file_info new file
      */
     public function create_file_from_storedfile($newfilename, $fid, $userid = NULL) {
@@ -254,6 +279,7 @@ abstract class file_info {
 
     /**
      * Delete file, make sure file is deletable first.
+     *
      * @return bool success
      */
     public function delete() {
@@ -262,12 +288,13 @@ abstract class file_info {
 
     /**
      * Copy content of this file to local storage, overriding current file if needed.
-     * @param int $contextid
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
+     *
+     * @param int $contextid context ID
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
      * @return boolean success
      */
     public function copy_to_storage($contextid, $component, $filearea, $itemid, $filepath, $filename) {
@@ -276,6 +303,8 @@ abstract class file_info {
 
     /**
      * Copy content of this file to local storage, overriding current file if needed.
+     *
+     * @todo MDL-31068 implement move() rename() unzip() zip()
      * @param string $pathname real local full file name
      * @return boolean success
      */

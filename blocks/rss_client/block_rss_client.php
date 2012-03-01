@@ -26,7 +26,7 @@
  class block_rss_client extends block_base {
 
     function init() {
-        $this->title = get_string('feedstitle', 'block_rss_client');
+        $this->title = get_string('pluginname', 'block_rss_client');
     }
 
     function preferred_width() {

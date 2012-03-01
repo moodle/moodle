@@ -18,8 +18,7 @@
 /**
  * Keeps track of upgrades to the workshop numerrors grading strategy
  *
- * @package    workshopform
- * @subpackage numerrors
+ * @package    workshopform_numerrors
  * @copyright  2010 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

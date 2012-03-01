@@ -18,8 +18,7 @@
 /**
  * Strings for component 'workshopform_rubric', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package    workshopform
- * @subpackage rubric
+ * @package    workshopform_rubric
  * @copyright  2009 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

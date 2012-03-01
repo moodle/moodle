@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,15 +17,16 @@
 /**
  * Functions for file handling.
  *
- * @package    core
- * @subpackage file
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_files
+ * @copyright 1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-/** @var string unique string constant. */
+/**
+ * BYTESERVING_BOUNDARY - string unique string constant.
+ */
 define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7');
 
 require_once("$CFG->libdir/filestorage/file_exceptions.php");
@@ -39,7 +39,8 @@ require_once("$CFG->libdir/filebrowser/file_browser.php");
  *
  * @deprecated use moodle_url factory methods instead
  *
- * @global object
+ * @todo MDL-31071 deprecate this function
+ * @global stdClass $CFG
  * @param string $urlbase
  * @param string $path /filearea/itemid/dir/dir/file.exe
  * @param bool $forcedownload
@@ -84,14 +85,15 @@ function file_encode_url($urlbase, $path, $forcedownload=false, $https=false) {
  * In your mform definition, you must have an 'editor' element called foobar_editor. Then you call
  * your mform's set_data() supplying the object returned by this function.
  *
- * @param object $data database field that holds the html text with embedded media
+ * @category files
+ * @param stdClass $data database field that holds the html text with embedded media
  * @param string $field the name of the database field that holds the html text with embedded media
  * @param array $options editor options (like maxifiles, maxbytes etc.)
- * @param object $context context of the editor
+ * @param stdClass $context context of the editor
  * @param string $component
  * @param string $filearea file area name
  * @param int $itemid item id, required if item exists
- * @return object modified data object
+ * @return stdClass modified data object
  */
 function file_prepare_standard_editor($data, $field, array $options, $context=null, $component=null, $filearea=null, $itemid=null) {
     $options = (array)$options;
@@ -178,14 +180,15 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
  * function automatically adds $data properties foobar, foobarformat and
  * foobartrust, where foobar has URL to embedded files encoded.
  *
- * @param object $data raw data submitted by the form
+ * @category files
+ * @param stdClass $data raw data submitted by the form
  * @param string $field name of the database field containing the html with embedded media files
  * @param array $options editor options (trusttext, subdirs, maxfiles, maxbytes etc.)
- * @param object $context context, required for existing data
- * @param string component
+ * @param stdClass $context context, required for existing data
+ * @param string $component file component
  * @param string $filearea file area name
  * @param int $itemid item id, required if item exists
- * @return object modified data object
+ * @return stdClass modified data object
  */
 function file_postupdate_standard_editor($data, $field, array $options, $context, $component=null, $filearea=null, $itemid=null) {
     $options = (array)$options;
@@ -226,14 +229,15 @@ function file_postupdate_standard_editor($data, $field, array $options, $context
 /**
  * Saves text and files modified by Editor formslib element
  *
- * @param object $data $database entry field
+ * @category files
+ * @param stdClass $data $database entry field
  * @param string $field name of data field
  * @param array $options various options
- * @param object $context context - must already exist
+ * @param stdClass $context context - must already exist
  * @param string $component
  * @param string $filearea file area name
  * @param int $itemid must already exist, usually means data is in db
- * @return object modified data obejct
+ * @return stdClass modified data obejct
  */
 function file_prepare_standard_filemanager($data, $field, array $options, $context=null, $component=null, $filearea=null, $itemid=null) {
     $options = (array)$options;
@@ -257,14 +261,16 @@ function file_prepare_standard_filemanager($data, $field, array $options, $conte
 /**
  * Saves files modified by File manager formslib element
  *
- * @param object $data $database entry field
+ * @todo MDL-31073 review this function
+ * @category files
+ * @param stdClass $data $database entry field
  * @param string $field name of data field
  * @param array $options various options
- * @param object $context context - must already exist
+ * @param stdClass $context context - must already exist
  * @param string $component
  * @param string $filearea file area name
  * @param int $itemid must already exist, usually means data is in db
- * @return object modified data obejct
+ * @return stdClass modified data obejct
  */
 function file_postupdate_standard_filemanager($data, $field, array $options, $context, $component, $filearea, $itemid) {
     $options = (array)$options;
@@ -296,9 +302,11 @@ function file_postupdate_standard_filemanager($data, $field, array $options, $co
 }
 
 /**
+ * Generate a draft itemid
  *
- * @global object
- * @global object
+ * @category files
+ * @global moodle_database $DB
+ * @global stdClass $USER
  * @return int a random but available draft itemid that can be used to create a new draft
  * file area.
  */
@@ -326,16 +334,17 @@ function file_get_unused_draft_itemid() {
  * area will be created if one does not already exist. Normally you should
  * get $draftitemid by calling file_get_submitted_draft_itemid('elementname');
  *
- * @global object
- * @global object
- * @param int &$draftitemid the id of the draft area to use, or 0 to create a new one, in which case this parameter is updated.
- * @param integer $contextid This parameter and the next two identify the file area to copy files from.
+ * @category files
+ * @global stdClass $CFG
+ * @global stdClass $USER
+ * @param int $draftitemid the id of the draft area to use, or 0 to create a new one, in which case this parameter is updated.
+ * @param int $contextid This parameter and the next two identify the file area to copy files from.
  * @param string $component
  * @param string $filearea helps indentify the file area.
- * @param integer $itemid helps identify the file area. Can be null if there are no files yet.
+ * @param int $itemid helps identify the file area. Can be null if there are no files yet.
  * @param array $options text and file options ('subdirs'=>false, 'forcehttps'=>false)
  * @param string $text some html content that needs to have embedded links rewritten to point to the draft area.
- * @return string if $text was passed in, the rewritten $text is returned. Otherwise NULL.
+ * @return string|null returns string if $text was passed in, the rewritten $text is returned. Otherwise NULL.
  */
 function file_prepare_draft_area(&$draftitemid, $contextid, $component, $filearea, $itemid, array $options=null, $text=null) {
     global $CFG, $USER, $CFG;
@@ -389,13 +398,14 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $component, $fileare
 /**
  * Convert encoded URLs in $text from the @@PLUGINFILE@@/... form to an actual URL.
  *
- * @global object
+ * @category files
+ * @global stdClass $CFG
  * @param string $text The content that may contain ULRs in need of rewriting.
  * @param string $file The script that should be used to serve these files. pluginfile.php, draftfile.php, etc.
- * @param integer $contextid This parameter and the next two identify the file area to use.
+ * @param int $contextid This parameter and the next two identify the file area to use.
  * @param string $component
  * @param string $filearea helps identify the file area.
- * @param integer $itemid helps identify the file area.
+ * @param int $itemid helps identify the file area.
  * @param array $options text and file options ('forcehttps'=>false)
  * @return string the processed text.
  */
@@ -427,9 +437,9 @@ function file_rewrite_pluginfile_urls($text, $file, $contextid, $component, $fil
 /**
  * Returns information about files in a draft area.
  *
- * @global object
- * @global object
- * @param integer $draftitemid the draft area item id.
+ * @global stdClass $CFG
+ * @global stdClass $USER
+ * @param int $draftitemid the draft area item id.
  * @return array with the following entries:
  *      'filecount' => number of files in the draft area.
  * (more information will be added as needed).
@@ -455,6 +465,8 @@ function file_get_draft_area_info($draftitemid) {
 
 /**
  * Get used space of files
+ * @global moodle_database $DB
+ * @global stdClass $USER
  * @return int total bytes
  */
 function file_get_user_used_space() {
@@ -473,6 +485,7 @@ function file_get_user_used_space() {
 
 /**
  * Convert any string to a valid filepath
+ * @todo review this function
  * @param string $str
  * @return string path
  */
@@ -486,9 +499,11 @@ function file_correct_filepath($str) { //TODO: what is this? (skodak)
 
 /**
  * Generate a folder tree of draft area of current USER recursively
- * @param int $itemid
+ *
+ * @todo MDL-31073 use normal return value instead, this does not fit the rest of api here (skodak)
+ * @param int $draftitemid
  * @param string $filepath
- * @param mixed $data //TODO: use normal return value instead, this does not fit the rest of api here (skodak)
+ * @param mixed $data
  */
 function file_get_drafarea_folders($draftitemid, $filepath, &$data) {
     global $USER, $OUTPUT, $CFG;
@@ -520,7 +535,7 @@ function file_get_drafarea_folders($draftitemid, $filepath, &$data) {
  * used by file manager
  * @param int $draftitemid
  * @param string $filepath
- * @return mixed
+ * @return stdClass
  */
 function file_get_drafarea_files($draftitemid, $filepath = '/') {
     global $USER, $OUTPUT, $CFG;
@@ -587,8 +602,9 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
 /**
  * Returns draft area itemid for a given element.
  *
+ * @category files
  * @param string $elname name of formlib editor element, or a hidden form field that stores the draft area item id, etc.
- * @return integer the itemid, or 0 if there is not one yet.
+ * @return int the itemid, or 0 if there is not one yet.
  */
 function file_get_submitted_draft_itemid($elname) {
     // this is a nasty hack, ideally all new elements should use arrays here or there should be a new parameter
@@ -619,19 +635,19 @@ function file_get_submitted_draft_itemid($elname) {
  * Saves files from a draft file area to a real one (merging the list of files).
  * Can rewrite URLs in some content at the same time if desired.
  *
- * @global object
- * @global object
- * @param integer $draftitemid the id of the draft area to use. Normally obtained
+ * @category files
+ * @global stdClass $USER
+ * @param int $draftitemid the id of the draft area to use. Normally obtained
  *      from file_get_submitted_draft_itemid('elementname') or similar.
- * @param integer $contextid This parameter and the next two identify the file area to save to.
+ * @param int $contextid This parameter and the next two identify the file area to save to.
  * @param string $component
  * @param string $filearea indentifies the file area.
- * @param integer $itemid helps identifies the file area.
+ * @param int $itemid helps identifies the file area.
  * @param array $options area options (subdirs=>false, maxfiles=-1, maxbytes=0)
  * @param string $text some html content that needs to have embedded links rewritten
  *      to the @@PLUGINFILE@@ form for saving in the database.
- * @param boolean $forcehttps force https urls.
- * @return string if $text was passed in, the rewritten $text is returned. Otherwise NULL.
+ * @param bool $forcehttps force https urls.
+ * @return string|null if $text was passed in, the rewritten $text is returned. Otherwise NULL.
  */
 function file_save_draft_area_files($draftitemid, $contextid, $component, $filearea, $itemid, array $options=null, $text=null, $forcehttps=false) {
     global $USER;
@@ -752,6 +768,8 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
  * Convert the draft file area URLs in some content to @@PLUGINFILE@@ tokens
  * ready to be saved in the database. Normally, this is done automatically by
  * {@link file_save_draft_area_files()}.
+ *
+ * @category files
  * @param string $text the content to process.
  * @param int $draftitemid the draft file area the content was using.
  * @param bool $forcehttps whether the content contains https URLs. Default false.
@@ -787,15 +805,16 @@ function file_rewrite_urls_to_pluginfile($text, $draftitemid, $forcehttps = fals
 
 /**
  * Set file sort order
- * @global object $DB
- * @param integer $contextid the context id
- * @param string $component
+ *
+ * @global moodle_database $DB
+ * @param int $contextid the context id
+ * @param string $component file component
  * @param string $filearea file area.
- * @param integer $itemid itemid.
+ * @param int $itemid itemid.
  * @param string $filepath file path.
  * @param string $filename file name.
- * @param integer $sortorer the sort order of file.
- * @return boolean
+ * @param int $sortorder the sort order of file.
+ * @return bool
  */
 function file_set_sortorder($contextid, $component, $filearea, $itemid, $filepath, $filename, $sortorder) {
     global $DB;
@@ -811,12 +830,12 @@ function file_set_sortorder($contextid, $component, $filearea, $itemid, $filepat
 
 /**
  * reset file sort order number to 0
- * @global object $DB
- * @param integer $contextid the context id
+ * @global moodle_database $DB
+ * @param int $contextid the context id
  * @param string $component
  * @param string $filearea file area.
- * @param integer $itemid itemid.
- * @return boolean
+ * @param int|bool $itemid itemid.
+ * @return bool
  */
 function file_reset_sortorder($contextid, $component, $filearea, $itemid=false) {
     global $DB;
@@ -923,13 +942,12 @@ function format_postdata_for_curlcall($postdata) {
         return $convertedpostdata;
 }
 
-
-
-
 /**
  * Fetches content of file from Internet (using proxy if defined). Uses cURL extension if present.
  * Due to security concerns only downloads from http(s) sources are supported.
  *
+ * @todo MDL-31073 add version test for '7.10.5'
+ * @category files
  * @param string $url file url starting with http(s)://
  * @param array $headers http headers, null if none. If set, should be an
  *   associative array of header name => value pairs.
@@ -1160,6 +1178,10 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
 
 /**
  * internal implementation
+ * @param stdClass $received
+ * @param resource $ch
+ * @param mixed $header
+ * @return int header length
  */
 function download_file_content_header_handler($received, $ch, $header) {
     $received->headers[] = $header;
@@ -1168,6 +1190,9 @@ function download_file_content_header_handler($received, $ch, $header) {
 
 /**
  * internal implementation
+ * @param stdClass $received
+ * @param resource $ch
+ * @param mixed $data
  */
 function download_file_content_write_handler($received, $ch, $data) {
     if (!$received->fh) {
@@ -1185,6 +1210,9 @@ function download_file_content_write_handler($received, $ch, $data) {
 }
 
 /**
+ * Returns a list of information about file t ypes based on extensions
+ *
+ * @category files
  * @return array List of information about file types based on extensions.
  *   Associative array of extension (lower-case) to associative array
  *   from 'element name' to data. Current element names are 'type' and 'icon'.
@@ -1372,6 +1400,7 @@ function get_mimetypes_array() {
  * use a default if no information is present about that particular
  * extension.
  *
+ * @category files
  * @param string $element Desired information (usually 'icon'
  *   for icon filename or 'type' for MIME type)
  * @param string $filename Filename we're looking up
@@ -1413,6 +1442,7 @@ function mimeinfo($element, $filename) {
  * Obtains information about a filetype based on the MIME type rather than
  * the other way around.
  *
+ * @category files
  * @param string $element Desired information (usually 'icon')
  * @param string $mimetype MIME type we're looking up
  * @return string Requested piece of information from array
@@ -1434,9 +1464,10 @@ function mimeinfo_from_type($element, $mimetype) {
 /**
  * Get information about a filetype based on the icon file.
  *
+ * @category files
  * @param string $element Desired information (usually 'icon')
  * @param string $icon Icon file name without extension
- * @param boolean $all return all matching entries (defaults to false - best (by ext)/last match)
+ * @param bool $all return all matching entries (defaults to false - best (by ext)/last match)
  * @return string Requested piece of information from array
  */
 function mimeinfo_from_icon($element, $icon, $all=false) {
@@ -1486,9 +1517,9 @@ function mimeinfo_from_icon($element, $icon, $all=false) {
  * echo '<img src="'.$icon.'" alt="'.$mimetype.'" />';
  * </code>
  *
- * @todo When an $OUTPUT->icon method is available this function should be altered
+ * @category files
+ * @todo MDL-31074 When an $OUTPUT->icon method is available this function should be altered
  * to conform with that.
- *
  * @param string $mimetype The mimetype to fetch an icon for
  * @param int $size The size of the icon. Not yet implemented
  * @return string The relative path to the icon
@@ -1517,11 +1548,11 @@ function file_mimetype_icon($mimetype, $size = NULL) {
  * echo '<img src="'.$icon.'" alt="blah" />';
  * </code>
  *
- * @todo When an $OUTPUT->icon method is available this function should be altered
+ * @todo MDL-31074 When an $OUTPUT->icon method is available this function should be altered
  * to conform with that.
- * @todo Implement $size
- *
- * @param string filename The filename to get the icon for
+ * @todo MDL-31074 Implement $size
+ * @category files
+ * @param string $filename The filename to get the icon for
  * @param int $size The size of the icon. Defaults to null can also be 32
  * @return string
  */
@@ -1558,9 +1589,10 @@ function get_mimetype_description($mimetype, $capitalise=false) {
 }
 
 /**
- * Requested file is not found or not accessible
+ * Requested file is not found or not accessible, does not return, terminates script
  *
- * @return does not return, terminates script
+ * @global stdClass $CFG
+ * @global stdClass $COURSE
  */
 function send_file_not_found() {
     global $CFG, $COURSE;
@@ -1572,8 +1604,7 @@ function send_file_not_found() {
  * Check output buffering settings before sending file.
  * Please note you should not send any other headers after calling this function.
  *
- * @private to be called only from lib/filelib.php !
- * @return void
+ * To be called only from lib/filelib.php !
  */
 function prepare_file_content_sending() {
     // We needed to be able to send headers up until now
@@ -1606,12 +1637,11 @@ function prepare_file_content_sending() {
 
 /**
  * Handles the sending of temporary file to user, download is forced.
- * File is deleted after abort or successful sending.
+ * File is deleted after abort or successful sending, does not return, script terminated
  *
  * @param string $path path to file, preferably from moodledata/temp/something; or content of file itself
  * @param string $filename proposed file name when saving file
- * @param bool $path is content of file
- * @return does not return, script terminated
+ * @param bool $pathisstring If the path is string
  */
 function send_temp_file($path, $filename, $pathisstring=false) {
     global $CFG;
@@ -1664,6 +1694,8 @@ function send_temp_file($path, $filename, $pathisstring=false) {
 
 /**
  * Internal callback function used by send_temp_file()
+ *
+ * @param string $path
  */
 function send_temp_file_finished($path) {
     if (file_exists($path)) {
@@ -1675,9 +1707,10 @@ function send_temp_file_finished($path) {
  * Handles the sending of file data to the user's browser, including support for
  * byteranges etc.
  *
- * @global object
- * @global object
- * @global object
+ * @category files
+ * @global stdClass $CFG
+ * @global stdClass $COURSE
+ * @global moodle_session $SESSION
  * @param string $path Path of file on disk (including real filename), or actual content of file as string
  * @param string $filename Filename to send
  * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
@@ -1689,7 +1722,7 @@ function send_temp_file_finished($path) {
  *                        if this is passed as true, ignore_user_abort is called.  if you don't want your processing to continue on cancel,
  *                        you must detect this case when control is returned using connection_aborted. Please not that session is closed
  *                        and should not be reopened.
- * @return no return or void, script execution stopped unless $dontdie is true
+ * @return null script execution stopped unless $dontdie is true
  */
 function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='', $dontdie=false) {
     global $CFG, $COURSE, $SESSION;
@@ -1907,10 +1940,11 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
  * Handles the sending of file data to the user's browser, including support for
  * byteranges etc.
  *
- * @global object
- * @global object
- * @global object
- * @param object $stored_file local file object
+ * @category files
+ * @global stdClass $CFG
+ * @global stdClass $COURSE
+ * @global moodle_session $SESSION
+ * @param stored_file $stored_file local file object
  * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
  * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
  * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
@@ -1919,7 +1953,7 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
  *                        if this is passed as true, ignore_user_abort is called.  if you don't want your processing to continue on cancel,
  *                        you must detect this case when control is returned using connection_aborted. Please not that session is closed
  *                        and should not be reopened.
- * @return void no return or void, script execution stopped unless $dontdie is true
+ * @return null script execution stopped unless $dontdie is true
  */
 function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownload=false, $filename=null, $dontdie=false) {
     global $CFG, $COURSE, $SESSION;
@@ -2110,8 +2144,8 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
  * Retrieves an array of records from a CSV file and places
  * them into a given table structure
  *
- * @global object
- * @global object
+ * @global stdClass $CFG
+ * @global moodle_database $DB
  * @param string $file The path to a CSV file
  * @param string $table The table to retrieve columns from
  * @return bool|array Returns an array of CSV records or false
@@ -2157,9 +2191,10 @@ function get_records_csv($file, $table) {
 }
 
 /**
+ * Create a file with CSV contents
  *
- * @global object
- * @global object
+ * @global stdClass $CFG
+ * @global moodle_database $DB
  * @param string $file The file to put the CSV content into
  * @param array $records An array of records to write to a CSV file
  * @param string $table The table to get columns from
@@ -2271,10 +2306,11 @@ function fulldelete($location) {
 /**
  * Send requested byterange of file.
  *
- * @param object $handle A file handle
+ * @param resource $handle A file handle
  * @param string $mimetype The mimetype for the output
  * @param array $ranges An array of ranges to send
  * @param string $filesize The size of the content if only one range is used
+ * @todo MDL-31088 check if "multipart/x-byteranges" is more compatible with current readers/browsers/servers
  */
 function byteserving_send_file($handle, $mimetype, $ranges, $filesize) {
     $chunksize = 1*(1024*1024); // 1MB chunks - must be less than 2MB!
@@ -2341,9 +2377,10 @@ function byteserving_send_file($handle, $mimetype, $ranges, $filesize) {
  * add includes (js and css) into uploaded files
  * before returning them, useful for themes and utf.js includes
  *
- * @global object
+ * @global stdClass $CFG
  * @param string $text text to search and replace
  * @return string text with added head includes
+ * @todo MDL-21120
  */
 function file_modify_html_header($text) {
     // first look for <head> tag
@@ -2412,37 +2449,44 @@ function file_modify_html_header($text) {
  * $html = $c->put('http://example.com/', array('file'=>'/var/www/test.txt');
  * </code>
  *
- * @package    core
- * @subpackage file
- * @author     Dongsheng Cai <dongsheng@cvs.moodle.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package   core_files
+ * @category files
+ * @copyright Dongsheng Cai <dongsheng@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-
 class curl {
-    /** @var bool */
+    /** @var bool Caches http request contents */
     public  $cache    = false;
+    /** @var bool Uses proxy */
     public  $proxy    = false;
-    /** @var string */
+    /** @var string library version */
     public  $version  = '0.4 dev';
-    /** @var array */
+    /** @var array http's response */
     public  $response = array();
+    /** @var array http header */
     public  $header   = array();
-    /** @var string */
+    /** @var string cURL information */
     public  $info;
+    /** @var string error */
     public  $error;
 
-    /** @var array */
+    /** @var array cURL options */
     private $options;
-    /** @var string */
+    /** @var string Proxy host */
     private $proxy_host = '';
+    /** @var string Proxy auth */
     private $proxy_auth = '';
+    /** @var string Proxy type */
     private $proxy_type = '';
-    /** @var bool */
+    /** @var bool Debug mode on */
     private $debug    = false;
+    /** @var bool|string Path to cookie file */
     private $cookie   = false;
 
     /**
-     * @global object
+     * Constructor
+     *
+     * @global stdClass $CFG
      * @param array $options
      */
     public function __construct($options = array()){
@@ -2545,7 +2589,6 @@ class curl {
      *
      * @param array $options If array is null, this function will
      * reset the options to default value.
-     *
      */
     public function setopt($options = array()) {
         if (is_array($options)) {
@@ -2557,9 +2600,9 @@ class curl {
             }
         }
     }
+
     /**
      * Reset http method
-     *
      */
     public function cleanopt(){
         unset($this->options['CURLOPT_HTTPGET']);
@@ -2574,8 +2617,7 @@ class curl {
     /**
      * Set HTTP Request Header
      *
-     * @param array $headers
-     *
+     * @param array $header
      */
     public function setHeader($header) {
         if (is_array($header)){
@@ -2586,6 +2628,7 @@ class curl {
             $this->header[] = $header;
         }
     }
+
     /**
      * Set HTTP Response Header
      *
@@ -2593,11 +2636,12 @@ class curl {
     public function getResponse(){
         return $this->response;
     }
+
     /**
      * private callback function
      * Formatting HTTP Response Header
      *
-     * @param mixed $ch Apparently not used
+     * @param resource $ch Apparently not used
      * @param string $header
      * @return int The strlen of the header
      */
@@ -2627,9 +2671,9 @@ class curl {
     /**
      * Set options for individual curl instance
      *
-     * @param object $curl A curl handle
+     * @param resource $curl A curl handle
      * @param array $options
-     * @return object The curl handle
+     * @return resource The curl handle
      */
     private function apply_opt($curl, $options) {
         // Clean up
@@ -2674,6 +2718,7 @@ class curl {
         }
         return $curl;
     }
+
     /**
      * Download multiple files in parallel
      *
@@ -2696,7 +2741,8 @@ class curl {
         $options['RETURNTRANSFER'] = false;
         return $this->multi($requests, $options);
     }
-    /*
+
+    /**
      * Mulit HTTP Requests
      * This function could run multi-requests in parallel.
      *
@@ -2733,6 +2779,7 @@ class curl {
         curl_multi_close($main);
         return $results;
     }
+
     /**
      * Single HTTP Request
      *
@@ -2869,7 +2916,7 @@ class curl {
      * HTTP DELETE method
      *
      * @param string $url
-     * @param array $params
+     * @param array $param
      * @param array $options
      * @return bool
      */
@@ -2881,6 +2928,7 @@ class curl {
         $ret = $this->request($url, $options);
         return $ret;
     }
+
     /**
      * HTTP TRACE method
      *
@@ -2893,6 +2941,7 @@ class curl {
         $ret = $this->request($url, $options);
         return $ret;
     }
+
     /**
      * HTTP OPTIONS method
      *
@@ -2905,6 +2954,12 @@ class curl {
         $ret = $this->request($url, $options);
         return $ret;
     }
+
+    /**
+     * Get curl information
+     *
+     * @return string
+     */
     public function get_info() {
         return $this->info;
     }
@@ -2921,19 +2976,19 @@ class curl {
  * $ret = $c->get('http://www.google.com');
  * </code>
  *
- * @package    core
- * @subpackage file
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_files
+ * @copyright Dongsheng Cai <dongsheng@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class curl_cache {
-    /** @var string */
+    /** @var string Path to cache directory */
     public $dir = '';
+
     /**
+     * Constructor
      *
-     * @global object
-     * @param string @module which module is using curl_cache
-     *
+     * @global stdClass $CFG
+     * @param string $module which module is using curl_cache
      */
     function __construct($module = 'repository'){
         global $CFG;
@@ -2961,8 +3016,8 @@ class curl_cache {
     /**
      * Get cached value
      *
-     * @global object
-     * @global object
+     * @global stdClass $CFG
+     * @global stdClass $USER
      * @param mixed $param
      * @return bool|string
      */
@@ -3039,20 +3094,20 @@ class curl_cache {
 }
 
 /**
- * This class is used to parse lib/file/file_types.mm which help get file
- * extensions by file types.
+ * This class is used to parse lib/file/file_types.mm which help get file extensions by file types.
+ *
  * The file_types.mm file can be edited by freemind in graphic environment.
  *
- * @package    core
- * @subpackage file
- * @copyright  2009 Dongsheng Cai <dongsheng@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_files
+ * @category  files
+ * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class filetype_parser {
     /**
      * Check file_types.mm file, setup variables
      *
-     * @global object $CFG
+     * @global stdClass $CFG
      * @param string $file
      */
     public function __construct($file = '') {
@@ -3146,11 +3201,7 @@ class filetype_parser {
  *
  * @param string $relativepath
  * @param bool $forcedownload
- *
- * @package    core
- * @subpackage file
- * @copyright  2008 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @todo MDL-31088 file serving improments
  */
 function file_pluginfile($relativepath, $forcedownload) {
     global $DB, $CFG, $USER;

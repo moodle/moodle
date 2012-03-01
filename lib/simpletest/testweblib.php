@@ -100,6 +100,30 @@ class web_test extends UnitTestCase {
         $this->assertEqual(wikify_links('this is a <a href="http://someaddress.com/query">link</a>'), 'this is a link [ http://someaddress.com/query ]');
     }
 
+    function test_moodle_url_round_trip() {
+        $strurl = 'http://moodle.org/course/view.php?id=5';
+        $url = new moodle_url($strurl);
+        $this->assertEqual($strurl, $url->out(false));
+
+        $strurl = 'http://moodle.org/user/index.php?contextid=53&sifirst=M&silast=D';
+        $url = new moodle_url($strurl);
+        $this->assertEqual($strurl, $url->out(false));
+    }
+
+    function test_moodle_url_round_trip_array_params() {
+        $strurl = 'http://example.com/?a%5B1%5D=1&a%5B2%5D=2';
+        $url = new moodle_url($strurl);
+        $this->assertEqual($strurl, $url->out(false));
+
+        $url = new moodle_url('http://example.com/?a[1]=1&a[2]=2');
+        $this->assertEqual($strurl, $url->out(false));
+
+        // For un-keyed array params, we expect 0..n keys to be returned
+        $strurl = 'http://example.com/?a%5B0%5D=0&a%5B1%5D=1';
+        $url = new moodle_url('http://example.com/?a[]=0&a[]=1');
+        $this->assertEqual($strurl, $url->out(false));
+    }
+
     function test_compare_url() {
         $url1 = new moodle_url('index.php', array('var1' => 1, 'var2' => 2));
         $url2 = new moodle_url('index2.php', array('var1' => 1, 'var2' => 2, 'var3' => 3));

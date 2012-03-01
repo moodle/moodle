@@ -18,11 +18,18 @@
 /**
  * Form for editing HTML block instances.
  *
- * @package   block_html
  * @copyright 2010 Petr Skoda (http://skodak.org)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   block_html
+ * @category  files
+ * @param stdClass $course course object
+ * @param stdClass $birecord_or_cm block instance record
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
+ * @return bool
  */
-
 function block_html_pluginfile($course, $birecord_or_cm, $context, $filearea, $args, $forcedownload) {
     global $SCRIPT;
 

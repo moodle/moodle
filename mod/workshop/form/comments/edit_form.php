@@ -18,8 +18,7 @@
 /**
  * This file defines an mform to edit comments grading strategy forms.
  *
- * @package    workshopform
- * @subpackage comments
+ * @package    workshopform_comments
  * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
