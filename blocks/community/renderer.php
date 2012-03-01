@@ -124,7 +124,7 @@ class block_community_renderer extends plugin_renderer_base {
                 //create title html
                 $coursename = html_writer::tag('h3', $course->fullname,
                                 array('class' => 'hubcoursetitle'));
-                $coursenamehtml = html_writer::tag('div', $coursename, 
+                $coursenamehtml = html_writer::tag('div', $coursename,
                         array('class' => 'hubcoursetitlepanel'));
 
                 // create screenshots html

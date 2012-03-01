@@ -79,7 +79,7 @@ switch ($action) {
         require_capability('enrol/cohort:config', $context);
         $roleid = required_param('roleid', PARAM_INT);
         $cohortid = required_param('cohortid', PARAM_INT);
-        
+
         $roles = $manager->get_assignable_roles();
         if (!enrol_cohort_can_view_cohort($cohortid) || !array_key_exists($roleid, $roles)) {
             throw new enrol_ajax_exception('errorenrolcohort');

@@ -184,10 +184,10 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         }
 
         // PUBLISH ACTION
-        
+
         //publish the course information
         $function = 'hub_register_courses';
-        $params = array('courses' => array($courseinfo));     
+        $params = array('courses' => array($courseinfo));
         try {
             $courseids = $xmlrpcclient->call($function, $params);
         } catch (Exception $e) {
