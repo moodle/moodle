@@ -1037,7 +1037,7 @@ class grade_report_grader extends grade_report {
         $module = array(
             'name'      => 'gradereport_grader',
             'fullpath'  => '/grade/report/grader/module.js',
-            'requires'  => array('base', 'dom', 'event', 'event-mouseenter', 'event-key', 'io-base', 'json-parse', 'overlay')
+            'requires'  => array('base', 'dom', 'event', 'event-mouseenter', 'event-key', 'io-queue', 'json-parse', 'overlay')
         );
         $PAGE->requires->js_init_call('M.gradereport_grader.init_report', $jsarguments, false, $module);
         $PAGE->requires->strings_for_js(array('addfeedback','feedback', 'grade'), 'grades');
