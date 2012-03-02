@@ -104,6 +104,7 @@ class plugin_manager {
         if ($disablecache or is_null($this->pluginsinfo)) {
             $this->pluginsinfo = array();
             $plugintypes = get_plugin_types();
+            $plugintypes = $this->reorder_plugin_types($plugintypes);
             foreach ($plugintypes as $plugintype => $plugintyperootdir) {
                 if (in_array($plugintype, array('base', 'general'))) {
                     throw new coding_exception('Illegal usage of reserved word for plugin type');
@@ -508,6 +509,37 @@ class plugin_manager {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Reordes plugin types into a sequence to be displayed
+     *
+     * For technical reasons, plugin types returned by {@link get_plugin_types()} are
+     * in a certain order that does not need to fit the expected order for the display.
+     * Particularly, activity modules should be displayed first as they represent the
+     * real heart of Moodle. They should be followed by other plugin types that are
+     * used to build the courses (as that is what one expects from LMS). After that,
+     * other supportive plugin types follow.
+     *
+     * @param array $types associative array
+     * @return array same array with altered order of items
+     */
+    protected function reorder_plugin_types(array $types) {
+        $fix = array(
+            'mod'        => $types['mod'],
+            'block'      => $types['block'],
+            'qtype'      => $types['qtype'],
+            'qbehaviour' => $types['qbehaviour'],
+            'qformat'    => $types['qformat'],
+            'filter'     => $types['filter'],
+            'enrol'      => $types['enrol'],
+        );
+        foreach ($types as $type => $path) {
+            if (!isset($fix[$type])) {
+                $fix[$type] = $path;
+            }
+        }
+        return $fix;
     }
 }
 
