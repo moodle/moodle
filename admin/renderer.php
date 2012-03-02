@@ -706,15 +706,14 @@ class core_admin_renderer extends plugin_renderer_base {
         $table->id = 'plugins-control-panel';
         $table->head = array(
             get_string('displayname', 'core_plugin'),
-            get_string('systemname', 'core_plugin'),
             get_string('source', 'core_plugin'),
             get_string('version', 'core_plugin'),
             get_string('availability', 'core_plugin'),
-            get_string('settings', 'core_plugin'),
-            get_string('uninstall','core_plugin'),
+            get_string('actions', 'core_plugin'),
+            get_string('notes','core_plugin'),
         );
         $table->colclasses = array(
-            'displayname', 'systemname', 'source', 'version', 'availability', 'settings', 'uninstall',
+            'pluginname', 'source', 'version', 'availability', 'actions', 'notes'
         );
 
         foreach ($plugininfo as $type => $plugins) {
@@ -750,10 +749,9 @@ class core_admin_renderer extends plugin_renderer_base {
                 } else {
                     $msg = '';
                 }
-                $displayname  = $icon . ' ' . $plugin->displayname . ' ' . $msg;
-                $displayname = new html_table_cell($displayname);
-
-                $systemname = new html_table_cell($plugin->type . '_' . $plugin->name);
+                $pluginname  = html_writer::tag('div', $icon . ' ' . $plugin->displayname . ' ' . $msg, array('class' => 'displayname')).
+                               html_writer::tag('div', $plugin->component, array('class' => 'componentname'));
+                $pluginname  = new html_table_cell($pluginname);
 
                 if ($plugin->is_standard()) {
                     $row->attributes['class'] .= ' standard';
@@ -778,28 +776,32 @@ class core_admin_renderer extends plugin_renderer_base {
                     $availability = new html_table_cell($icon . ' ' . get_string('plugindisabled', 'core_plugin'));
                 }
 
+                $actions = array();
+
                 $settingsurl = $plugin->get_settings_url();
-                if (is_null($settingsurl)) {
-                    $settings = new html_table_cell('');
-                } else {
-                    $settings = html_writer::link($settingsurl, get_string('settings', 'core_plugin'));
-                    $settings = new html_table_cell($settings);
+                if (!is_null($settingsurl)) {
+                    $actions[] = html_writer::link($settingsurl, get_string('settings', 'core_plugin'), array('class' => 'settings'));
                 }
 
                 $uninstallurl = $plugin->get_uninstall_url();
-                $requriedby = $pluginman->other_plugins_that_require($plugin->component);
-                if (is_null($uninstallurl)) {
-                    $uninstall = new html_table_cell('');
-                } else if ($requriedby) {
-                    $uninstall = new html_table_cell(get_string('requiredby', 'core_plugin', implode(', ', $requriedby)));
-                    $uninstall->attributes['class'] = 'requiredby';
-                } else {
-                    $uninstall = html_writer::link($uninstallurl, get_string('uninstall', 'core_plugin'));
-                    $uninstall = new html_table_cell($uninstall);
+                if (!is_null($uninstallurl)) {
+                    $actions[] = html_writer::link($uninstallurl, get_string('uninstall', 'core_plugin'), array('class' => 'uninstall'));
                 }
 
+                $actions = new html_table_cell(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $actions));
+
+                $requriedby = $pluginman->other_plugins_that_require($plugin->component);
+                if ($requriedby) {
+                    $requiredby = html_writer::tag('div', get_string('requiredby', 'core_plugin', implode(', ', $requriedby)),
+                        array('class' => 'requiredby'));
+                } else {
+                    $requiredby = '';
+                }
+
+                $notes = new html_table_cell($requiredby);
+
                 $row->cells = array(
-                    $displayname, $systemname, $source, $version, $availability, $settings, $uninstall
+                    $pluginname, $source, $version, $availability, $actions, $notes
                 );
                 $table->data[] = $row;
             }

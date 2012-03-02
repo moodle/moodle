@@ -25,12 +25,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['actions'] = 'Actions';
 $string['availability'] = 'Availability';
 $string['displayname'] = 'Plugin name';
 $string['moodleversion'] = 'Moodle {$a}';
 $string['nonehighlighted'] = 'No plugins require your attention during this upgrade';
 $string['nonehighlightedinfo'] = 'Display the list of all installed plugins anyway';
 $string['noneinstalled'] = 'No plugins of this type are installed';
+$string['notes'] = 'Notes';
 $string['numtotal'] = '{$a} installed';
 $string['numdisabled'] = '{$a} disabled';
 $string['numextension'] = '{$a} extensions';
