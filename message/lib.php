@@ -2036,26 +2036,6 @@ function message_post_message($userfrom, $userto, $message, $format) {
     return message_send($eventdata);
 }
 
-
-/**
- * Returns a list of all user ids who have used messaging in the site
- * This was the simple way to code the SQL ... is it going to blow up
- * on large datasets?
- *
- * @deprecated To be deleted in 2.2 MDL-31709
- * @return array
- */
-function message_get_participants() {
-    global $CFG, $DB;
-
-        return $DB->get_records_sql("SELECT useridfrom as id,1 FROM {message}
-                               UNION SELECT useridto as id,1 FROM {message}
-                               UNION SELECT useridfrom as id,1 FROM {message_read}
-                               UNION SELECT useridto as id,1 FROM {message_read}
-                               UNION SELECT userid as id,1 FROM {message_contacts}
-                               UNION SELECT contactid as id,1 from {message_contacts}");
-}
-
 /**
  * Print a row of contactlist displaying user picture, messages waiting and
  * block links etc
