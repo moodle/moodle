@@ -5787,6 +5787,15 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
     $site = get_site();
     require_login();
 
+    if (!empty($options['pagelayout'])) {
+        // A specific page layout has been requested.
+        $PAGE->set_pagelayout($options['pagelayout']);
+    } else if ($section === 'upgradesettings') {
+        $PAGE->set_pagelayout('maintenance');
+    } else {
+        $PAGE->set_pagelayout('admin');
+    }
+
     $adminroot = admin_get_root(false, false); // settings not required for external pages
     $extpage = $adminroot->locate($section, true);
 
@@ -5799,15 +5808,6 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
     if (!$extpage->check_access()) {
         print_error('accessdenied', 'admin');
         die;
-    }
-
-    if (!empty($options['pagelayout'])) {
-        // A specific page layout has been requested.
-        $PAGE->set_pagelayout($options['pagelayout']);
-    } else if ($section === 'upgradesettings') {
-        $PAGE->set_pagelayout('maintenance');
-    } else {
-        $PAGE->set_pagelayout('admin');
     }
 
     // $PAGE->set_extra_button($extrabutton); TODO
