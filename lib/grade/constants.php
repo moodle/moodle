@@ -113,11 +113,6 @@ define('GRADE_UPDATE_FAILED', 1);
 define('GRADE_UPDATE_MULTIPLE', 2);
 
 /**
- * GRADE_UPDATE_DELETED - Grade item deleted (MDL-31362)
- */
-define('GRADE_UPDATE_ITEM_DELETED', 3);
-
-/**
  * GRADE_UPDATE_DELETED - Grade item cannot be updated as it is locked
  */
 define('GRADE_UPDATE_ITEM_LOCKED', 4);
