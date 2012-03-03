@@ -1,4 +1,4 @@
-Description of TinyMCE v3.4.6 library integration in Moodle
+Description of TinyMCE v3.4.9 library integration in Moodle
 =========================================================================================
 
 Copyright: (c) 2004-2011, Moxiecode Systems AB, All rights reserved.
@@ -11,7 +11,7 @@ Upgrade procedure (by maintainer):
 
  1/ clone https://github.com/moodle/custom-tinymce
  2/ clone https://github.com/moodle/custom-tinymce_spellchecker_php
- 3/ merge new changes in latest STABLE branches into these two repos
+ 3/ cherry pick Moodle changes into new branches based on stable upstream
  4/ tweak paths in build script in moodle_build.sh and execute
  5/ fix line endings
  6/ download all TinyMCE lang files (extra/tools/download_langs.sh)
