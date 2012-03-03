@@ -128,6 +128,7 @@ $string['settings'] = 'Settings';
 $string['settingssaved'] = 'Your settings have been saved';
 $string['showmessagewindow'] = 'Popup window on new message';
 $string['strftimedaydatetime'] = '%A, %d %B %Y, %I:%M %p';
+$string['thisconversation'] = 'this conversation';
 $string['timenosee'] = 'Minutes since I was last seen online';
 $string['timesent'] = 'Time sent';
 $string['touserdoesntexist'] = 'You can not send a message to a user id ({$a}) that doesn\'t exist';
