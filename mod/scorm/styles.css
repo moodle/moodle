@@ -27,6 +27,7 @@
 #page-mod-scorm-player #altpopuplink  {position: left; padding: 5px; border: 0px; }
 #page-mod-scorm-player #scormmode  {float: left; border: 0px; }
 #page-mod-scorm-player.pagelayout-popup #page-content .region-content {padding: 0px; }
+#page-mod-scorm-player.pagelayout-popup #page-wrapper {width:100%;}
 
 .path-mod-scorm.forcejavascript .scorm-center { display:none;}
 .path-mod-scorm.forcejavascript .toc { display:none;}
