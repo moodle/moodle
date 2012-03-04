@@ -390,6 +390,9 @@ class mod_wiki_renderer extends plugin_renderer_base {
                     }
                 } else {
                     $group = groups_get_group($subwiki->groupid);
+                    if (!$group) {
+                        return;
+                    }
                     $users = groups_get_members($subwiki->groupid);
                     foreach ($users as $user) {
                         $options[$group->id][$group->name][$group->id . '-' . $user->id] = fullname($user);
