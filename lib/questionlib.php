@@ -1323,7 +1323,7 @@ function question_has_capability_on($question, $cap, $cachecat = -1) {
     static $categories = array();
     static $cachedcat = array();
     if ($cachecat != -1 && array_search($cachecat, $cachedcat) === false) {
-        $questions += $DB->get_records('question', array('category' => $cachecat));
+        $questions += $DB->get_records('question', array('category' => $cachecat), '', 'id,category,createdby');
         $cachedcat[] = $cachecat;
     }
     if (!is_object($question)) {
