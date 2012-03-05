@@ -62,6 +62,7 @@ html, body{
     line-height:1;
     margin-bottom:.5em;
     text-align:left;
+    color:#fff;
 }
 #userdetails_loggedout{
     float:left;
@@ -72,10 +73,15 @@ html, body{
     font-size:1.5em;
     padding-top:40px;
     text-align:left;
+    color:#fff;
 }
-.prolog{
+p.prolog{
     margin-bottom:0;
     margin-top:25px;
+}
+p.prolog a:link {
+    color: #fff;
+    text-decoration: none;
 }
 #userimg{
     float:right;
