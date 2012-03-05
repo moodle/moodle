@@ -1009,7 +1009,7 @@ abstract class moodleform {
 
                     switch ($option){
                         case 'default' :
-                            $mform->setDefault($realelementname, $params);
+                            $mform->setDefault($realelementname, str_replace('{no}', $i + 1, $params));
                             break;
                         case 'helpbutton' :
                             $params = array_merge(array($realelementname), $params);
