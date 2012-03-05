@@ -111,7 +111,6 @@ class assignment_uploadsingle extends assignment_base {
      * @return int          The number of submissions
      */
     function count_real_submissions($groupid=0) {
-        global $CFG;
         global $DB;
 
         // Grab the context assocated with our course module

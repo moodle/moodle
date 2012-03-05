@@ -1880,7 +1880,7 @@ class assignment_base {
     function get_submissions($sort='', $dir='DESC') {
         return assignment_get_all_submissions($this->assignment, $sort, $dir);
     }
-    
+
     /**
      * Counts all complete (real) assignment submissions by enrolled students
      *
@@ -3491,7 +3491,7 @@ function assignment_get_unmailed_submissions($starttime, $endtime) {
 
 /**
  * Counts all complete (real) assignment submissions by enrolled students for the given course modeule.
- * 
+ *
  * @deprecated                         Since Moodle 2.2 MDL-abc - Please do not use this function any more.
  * @param  cm_info $cm                 The course module that we wish to perform the count on.
  * @param  int     $groupid (optional) If nonzero then count is restricted to this group
@@ -3501,18 +3501,18 @@ function assignment_count_real_submissions($cm, $groupid=0) {
     global $CFG, $DB;
 
     // Grab the assignment type for the given course module
-    $assignmenttype = $DB->get_field($cm->modname, 'assignmenttype', array('id' => $cm->instance));
+    $assignmenttype = $DB->get_field($cm->modname, 'assignmenttype', array('id' => $cm->instance), MUST_EXIST);
 
     // Create the expected class file path and class name for the returned assignemnt type
     $filename = "{$CFG->dirroot}/mod/assignment/type/{$assignmenttype}/assignment.class.php";
     $classname = "assignment_{$assignmenttype}";
 
     // If the file exists and the class is not already loaded we require the class file
-    if (file_exists($file) && !class_exists($class)) {
-        require_once($file);
+    if (file_exists($filename) && !class_exists($classname)) {
+        require_once($filename);
     }
     // If the required class is still not loaded then we revert to assignment base
-    if (!class_exists($class)) {
+    if (!class_exists($classname)) {
         $classname = 'assignment_base';
     }
     $instance = new $classname;
