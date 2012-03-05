@@ -545,6 +545,39 @@ class plugin_manager {
 
 
 /**
+ * Factory class producing required subclasses of {@link plugininfo_base}
+ */
+class plugininfo_default_factory {
+
+    /**
+     * Makes a new instance of the plugininfo class
+     *
+     * @param string $type the plugin type, eg. 'mod'
+     * @param string $typerootdir full path to the location of all the plugins of this type
+     * @param string $name the plugin name, eg. 'workshop'
+     * @param string $namerootdir full path to the location of the plugin
+     * @param string $typeclass the name of class that holds the info about the plugin
+     * @return plugininfo_base the instance of $typeclass
+     */
+    public static function make($type, $typerootdir, $name, $namerootdir, $typeclass) {
+        $plugin              = new $typeclass();
+        $plugin->type        = $type;
+        $plugin->typerootdir = $typerootdir;
+        $plugin->name        = $name;
+        $plugin->rootdir     = $namerootdir;
+
+        $plugin->init_display_name();
+        $plugin->load_disk_version();
+        $plugin->load_db_version();
+        $plugin->load_required_main_version();
+        $plugin->init_is_standard();
+
+        return $plugin;
+    }
+}
+
+
+/**
  * Base class providing access to the information about a plugin
  *
  * @property-read string component the component name, type_name
@@ -579,10 +612,6 @@ abstract class plugininfo_base {
     /**
      * Gathers and returns the information about all plugins of the given type
      *
-     * Passing the parameter $typeclass allows us to reach the same effect as with the
-     * late binding in PHP 5.3. Once PHP 5.3 is required, we can refactor this to use
-     * {@example $plugin = new static();} instead of {@example $plugin = new $typeclass()}
-     *
      * @param string $type the name of the plugintype, eg. mod, auth or workshopform
      * @param string $typerootdir full path to the location of the plugin dir
      * @param string $typeclass the name of the actually called class
@@ -594,19 +623,8 @@ abstract class plugininfo_base {
         $plugins = get_plugin_list($type);
         $ondisk = array();
         foreach ($plugins as $pluginname => $pluginrootdir) {
-            $plugin                 = new $typeclass();
-            $plugin->type           = $type;
-            $plugin->typerootdir    = $typerootdir;
-            $plugin->name           = $pluginname;
-            $plugin->rootdir        = $pluginrootdir;
-
-            $plugin->init_display_name();
-            $plugin->load_disk_version();
-            $plugin->load_db_version();
-            $plugin->load_required_main_version();
-            $plugin->init_is_standard();
-
-            $ondisk[$pluginname] = $plugin;
+            $ondisk[$pluginname] = plugininfo_default_factory::make($type, $typerootdir,
+                $pluginname, $pluginrootdir, $typeclass);
         }
         return $ondisk;
     }
