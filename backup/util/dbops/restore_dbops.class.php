@@ -730,7 +730,7 @@ abstract class restore_dbops {
      * ready to be created. Also, annotate their newids
      * once created for later reference
      */
-    public static function create_included_users($basepath, $restoreid, $userfiles, $userid) {
+    public static function create_included_users($basepath, $restoreid, $userid) {
         global $CFG, $DB;
 
         $authcache = array(); // Cache to get some bits from authentication plugins
@@ -871,10 +871,6 @@ abstract class restore_dbops {
                 // Create user files in pool (profile, icon, private) by context
                 restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'icon', $recuser->parentitemid, $userid);
                 restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'profile', $recuser->parentitemid, $userid);
-                if ($userfiles) { // private files only if enabled in settings
-                    restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'private', $recuser->parentitemid, $userid);
-                }
-
             }
         }
         $rs->close();
