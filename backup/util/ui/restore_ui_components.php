@@ -164,22 +164,37 @@ abstract class restore_search_base implements renderable {
         $this->totalcount = 0;
         $contextlevel = $this->get_itemcontextlevel();
         list($sql, $params) = $this->get_searchsql();
-        $resultset = $DB->get_recordset_sql($sql, $params, 0, 250);
-        foreach ($resultset as $result) {
-            context_instance_preload($result);
-            $context = get_context_instance($contextlevel, $result->id);
-            if (count($this->requiredcapabilities) > 0) {
-                foreach ($this->requiredcapabilities as $cap) {
-                    if (!has_capability($cap['capability'], $context, $cap['user'])) {
-                        continue 2;
+        $blocksz = 5000;
+        $offs = 0;
+        // Get total number, to avoid some incorrect iterations
+        $countsql = preg_replace('/ORDER BY.*/', '', $sql);
+        $totalcourses = $DB->count_records_sql("SELECT COUNT(*) FROM ($countsql) sel", $params);
+        // User to be checked is always the same (usually null, get it form first element)
+        $firstcap = reset($this->requiredcapabilities);
+        $userid = isset($firstcap['user']) ? $firstcap['user'] : null;
+        // Extract caps to check, this saves us a bunch of iterations
+        $requiredcaps = array();
+        foreach ($this->requiredcapabilities as $cap) {
+            $requiredcaps[] = $cap['capability'];
+        }
+        // Iterate while we have records and haven't reached MAXRESULTS
+        while ($totalcourses > $offs and $this->totalcount < self::$MAXRESULTS) {
+            $resultset = $DB->get_records_sql($sql, $params, $offs, $blocksz);
+            foreach ($resultset as $result) {
+                context_instance_preload($result);
+                $context = get_context_instance($contextlevel, $result->id);
+                if (count($requiredcaps) > 0) {
+                    if (!has_all_capabilities($requiredcaps, $context, $userid)) {
+                        continue;
                     }
                 }
+                $this->results[$result->id] = $result;
+                $this->totalcount++;
+                if ($this->totalcount >= self::$MAXRESULTS) {
+                    break;
+                }
             }
-            $this->results[$result->id] = $result;
-            $this->totalcount++;
-            if ($this->totalcount >= self::$MAXRESULTS) {
-                break;
-            }
+            $offs += $blocksz;
         }
 
         return $this->totalcount;
