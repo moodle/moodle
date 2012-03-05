@@ -6205,6 +6205,15 @@ FROM
         upgrade_main_savepoint(true, 2011033006.04);
     }
 
+    // The ability to backup user (private) files is out completely - MDL-29248
+    if ($oldversion < 2011033007.09) {
+        unset_config('backup_general_user_files', 'backup');
+        unset_config('backup_general_user_files_locked', 'backup');
+        unset_config('backup_auto_user_files', 'backup');
+
+        upgrade_main_savepoint(true, 2011033007.09);
+    }
+
     return true;
 }
 
