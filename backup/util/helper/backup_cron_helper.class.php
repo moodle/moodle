@@ -323,7 +323,6 @@ abstract class backup_cron_automated_helper {
             $settings = array(
                 'users' => 'backup_auto_users',
                 'role_assignments' => 'backup_auto_role_assignments',
-                'user_files' => 'backup_auto_user_files',
                 'activities' => 'backup_auto_activities',
                 'blocks' => 'backup_auto_blocks',
                 'filters' => 'backup_auto_filters',
