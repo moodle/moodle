@@ -1759,10 +1759,6 @@ class backup_annotate_all_user_files extends backup_execution_step {
         // List of fileareas we are going to annotate
         $fileareas = array('profile', 'icon');
 
-        if ($this->get_setting_value('user_files')) { // private files only if enabled in settings
-            $fileareas[] = 'private';
-        }
-
         // Fetch all annotated (final) users
         $rs = $DB->get_recordset('backup_ids_temp', array(
             'backupid' => $this->get_backupid(), 'itemname' => 'userfinal'));

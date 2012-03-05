@@ -58,7 +58,7 @@ class backup_final_task extends backup_task {
         // done in a single pass
         $this->add_step(new backup_annotate_all_question_files('question_files'));
 
-        // Annotate all the user files (conditionally) (private, profile and icon files)
+        // Annotate all the user files (conditionally) (profile and icon files)
         // Because each user has its own context, we need a separate/specialised step here
         // This step also ensures that the contexts for all the users exist, so next
         // step can be safely executed (join between users and contexts)

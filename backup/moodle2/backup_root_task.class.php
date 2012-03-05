@@ -69,13 +69,6 @@ class backup_root_task extends backup_task {
         $this->add_setting($roleassignments);
         $users->add_dependency($roleassignments);
 
-        // Define user_files (dependent of users and anonymize)
-        $userfiles = new backup_user_files_setting('user_files', base_setting::IS_BOOLEAN, true);
-        $userfiles->set_ui(new backup_setting_ui_checkbox($userfiles, get_string('rootsettinguserfiles', 'backup')));
-        $this->add_setting($userfiles);
-        $users->add_dependency($userfiles);
-        $anonymize->add_dependency($userfiles, setting_dependency::DISABLED_TRUE);
-
         // Define activities
         $activities = new backup_activities_setting('activities', base_setting::IS_BOOLEAN, true);
         $activities->set_ui(new backup_setting_ui_checkbox($activities, get_string('rootsettingactivities', 'backup')));

@@ -45,13 +45,6 @@ class restore_users_setting extends restore_generic_setting {}
 class restore_role_assignments_setting extends root_backup_setting {}
 
 /**
- * root setting to control if restore will create
- * user files or no (images, local storage), depends of @restore_users_setting
- * exactly in the same way than @restore_role_assignments_setting so we extend from it
- */
-class restore_user_files_setting extends restore_role_assignments_setting {}
-
-/**
  * root setting to control if restore will create activities
  * A lot of other settings (_included at activity levels)
  * are dependent of this setting
