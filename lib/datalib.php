@@ -212,7 +212,7 @@ function get_users($get=true, $search='', $confirmed=false, array $exceptions=nu
     if ($exceptions) {
         list($exceptions, $eparams) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'ex', false);
         $params = $params + $eparams;
-        $except = " AND id $exceptions";
+        $select .= " AND id $exceptions";
     }
 
     if ($firstinitial) {
