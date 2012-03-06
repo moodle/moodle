@@ -161,6 +161,7 @@ class jsportal {
         }
         $output .= "    main.portal.icons['spacerimg']='".$OUTPUT->pix_url('spacer')."';\n";
         $output .= "    main.portal.icons['marker']='".$OUTPUT->pix_url('i/marker')."';\n";
+        $output .= "    main.portal.icons['marked']='".$OUTPUT->pix_url('i/marked')."';\n";
         $output .= "    main.portal.icons['ihide']='".$OUTPUT->pix_url('i/hide')."';\n";
         $output .= "    main.portal.icons['move_2d']='".$OUTPUT->pix_url('i/move_2d')."';\n";
         $output .= "    main.portal.icons['show']='".$OUTPUT->pix_url('t/show')."';\n";
