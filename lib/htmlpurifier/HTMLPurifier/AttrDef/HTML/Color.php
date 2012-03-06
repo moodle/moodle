@@ -14,7 +14,7 @@ class HTMLPurifier_AttrDef_HTML_Color extends HTMLPurifier_AttrDef
         $string = trim($string);
 
         if (empty($string)) return false;
-        if (isset($colors[$string])) return $colors[$string];
+        if (isset($colors[strtolower($string)])) return $colors[$string];
         if ($string[0] === '#') $hex = substr($string, 1);
         else $hex = $string;
 
