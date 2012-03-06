@@ -1058,7 +1058,7 @@ abstract class moodleform {
      * @param int $originalValue The original general state of the checkboxes before the user first clicks this element
      */
     function add_checkbox_controller($groupid, $text = null, $attributes = null, $originalValue = 0) {
-        global $CFG;
+        global $CFG, $PAGE;
 
         // Set the default text if none was specified
         if (empty($text)) {
@@ -1068,50 +1068,30 @@ abstract class moodleform {
         $mform = $this->_form;
         $select_value = optional_param('checkbox_controller'. $groupid, null, PARAM_INT);
 
-        if ($select_value == 0 || is_null($select_value)) {
-            $new_select_value = 1;
-        } else {
+        if (is_null($select_value)) {
             $new_select_value = 0;
+        } else {
+            $new_select_value = (int) !$select_value;
         }
 
-        $mform->addElement('hidden', "checkbox_controller$groupid");
+        $mform->addElement('hidden', "checkbox_controller".$groupid, null, array('id' => "id_checkbox_controller".$groupid));
         $mform->setType("checkbox_controller$groupid", PARAM_INT);
         $mform->setConstants(array("checkbox_controller$groupid" => $new_select_value));
 
         $checkbox_controller_name = 'nosubmit_checkbox_controller' . $groupid;
         $mform->registerNoSubmitButton($checkbox_controller_name);
 
-        // Prepare Javascript for submit element
-        $js = "\n//<![CDATA[\n";
-        if (!defined('HTML_QUICKFORM_CHECKBOXCONTROLLER_EXISTS')) {
-            $js .= <<<EOS
-function html_quickform_toggle_checkboxes(group) {
-    var checkboxes = document.getElementsByClassName('checkboxgroup' + group);
-    var newvalue = false;
-    var global = eval('html_quickform_checkboxgroup' + group + ';');
-    if (global == 1) {
-        eval('html_quickform_checkboxgroup' + group + ' = 0;');
-        newvalue = '';
-    } else {
-        eval('html_quickform_checkboxgroup' + group + ' = 1;');
-        newvalue = 'checked';
-    }
+        $PAGE->requires->yui_module('moodle-form-checkboxcontroller', 'M.form.checkboxcontroller',
+                array(
+                    array('groupid' => $groupid,
+                        'checkboxclass' => 'checkboxgroup'.$groupid,
+                        'checkboxcontroller' => "checkbox_controller".$groupid,
+                        'controllerbutton' => $checkbox_controller_name)
+                    )
+                );
 
-    for (i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].checked = newvalue;
-    }
-}
-EOS;
-            define('HTML_QUICKFORM_CHECKBOXCONTROLLER_EXISTS', true);
-        }
-        $js .= "\nvar html_quickform_checkboxgroup$groupid=$originalValue;\n";
-
-        $js .= "//]]>\n";
-
-        require_once("$CFG->libdir/form/submitlink.php");
-        $submitlink = new MoodleQuickForm_submitlink($checkbox_controller_name, $attributes);
-        $submitlink->_js = $js;
-        $submitlink->_onclick = "html_quickform_toggle_checkboxes($groupid); return false;";
+        require_once("$CFG->libdir/form/submit.php");
+        $submitlink = new MoodleQuickForm_submit($checkbox_controller_name, $attributes);
         $mform->addElement($submitlink);
         $mform->setDefault($checkbox_controller_name, $text);
     }
