@@ -764,20 +764,14 @@ class course_enrolment_manager {
         $userroles = $this->get_other_users($sort, $direction, $page, $perpage);
         $roles = $this->get_all_roles();
 
-        $courseid   = $this->get_course()->id;
         $context    = $this->get_context();
+        $now = time();
+        $extrafields = get_extra_user_fields($context);
 
         $users = array();
         foreach ($userroles as $userrole) {
             if (!array_key_exists($userrole->id, $users)) {
-                $users[$userrole->id] = array(
-                    'userid'     => $userrole->id,
-                    'courseid'   => $courseid,
-                    'picture'    => new user_picture($userrole),
-                    'firstname'  => fullname($userrole, true),
-                    'email'      => $userrole->email,
-                    'roles'      => array()
-                );
+                $users[$userrole->id] = $this->prepare_user_for_display($userrole, $extrafields, $now);
             }
             $a = new stdClass;
             $a->role = $roles[$userrole->roleid]->localname;
@@ -800,6 +794,7 @@ class course_enrolment_manager {
                         break;
                 }
             }
+            $users[$userrole->id]['roles'] = array();
             $users[$userrole->id]['roles'][$userrole->roleid] = array(
                 'text' => $roletext,
                 'unchangeable' => !$changeable
@@ -825,7 +820,6 @@ class course_enrolment_manager {
         $users = $this->get_users($sort, $direction, $page, $perpage);
 
         $now = time();
-        $strnever = get_string('never');
         $straddgroup = get_string('addgroup', 'group');
         $strunenrol = get_string('unenrol', 'enrol');
         $stredit = get_string('edit');
@@ -833,7 +827,6 @@ class course_enrolment_manager {
         $allroles   = $this->get_all_roles();
         $assignable = $this->get_assignable_roles();
         $allgroups  = $this->get_all_groups();
-        $courseid   = $this->get_course()->id;
         $context    = $this->get_context();
         $canmanagegroups = has_capability('moodle/course:managegroups', $context);
 
@@ -842,36 +835,23 @@ class course_enrolment_manager {
 
         $userdetails = array();
         foreach ($users as $user) {
-            $details = array(
-                'userid'     => $user->id,
-                'courseid'   => $courseid,
-                'picture'    => new user_picture($user),
-                'firstname'  => fullname($user, true),
-                'lastseen'   => $strnever,
-                'roles'      => array(),
-                'groups'     => array(),
-                'enrolments' => array()
-            );
-            foreach ($extrafields as $field) {
-                $details[$field] = $user->{$field};
-            }
-
-            if ($user->lastaccess) {
-                $details['lastseen'] = format_time($now - $user->lastaccess);
-            }
+            $details = $this->prepare_user_for_display($user, $extrafields, $now);
 
             // Roles
+            $details['roles'] = array();
             foreach ($this->get_user_roles($user->id) as $rid=>$rassignable) {
                 $details['roles'][$rid] = array('text'=>$allroles[$rid]->localname, 'unchangeable'=>(!$rassignable || !isset($assignable[$rid])));
             }
 
             // Users
             $usergroups = $this->get_user_groups($user->id);
+            $details['groups'] = array();
             foreach($usergroups as $gid=>$unused) {
                 $details['groups'][$gid] = $allgroups[$gid]->name;
             }
 
             // Enrolments
+            $details['enrolments'] = array();
             foreach ($this->get_user_enrolments($user->id) as $ue) {
                 if ($ue->timestart and $ue->timeend) {
                     $period = get_string('periodstartend', 'enrol', array('start'=>userdate($ue->timestart), 'end'=>userdate($ue->timeend)));
@@ -896,6 +876,39 @@ class course_enrolment_manager {
             $userdetails[$user->id] = $details;
         }
         return $userdetails;
+    }
+
+    /**
+     * Prepare a user record for display
+     *
+     * This function is called by both {@link get_users_for_display} and {@link get_other_users_for_display} to correctly
+     * prepare user fields for display
+     *
+     * Please note that this function does not check capability for moodle/coures:viewhiddenuserfields
+     *
+     * @param object $user The user record
+     * @param array $extrafields The list of fields as returned from get_extra_user_fields used to determine which
+     * additional fields may be displayed
+     * @param int $now The time used for lastaccess calculation
+     * @return array The fields to be displayed including userid, courseid, picture, firstname, lastseen and any
+     * additional fields from $extrafields
+     */
+    private function prepare_user_for_display($user, $extrafields, $now) {
+        $details = array(
+            'userid'    => $user->id,
+            'courseid'  => $this->get_course()->id,
+            'picture'   => new user_picture($user),
+            'firstname' => fullname($user, has_capability('moodle/site:viewfullnames', $this->get_context())),
+            'lastseen'  => get_string('never'),
+        );
+        foreach ($extrafields as $field) {
+            $details[$field] = $user->{$field};
+        }
+
+        if ($user->lastaccess) {
+            $details['lastseen'] = format_time($now - $user->lastaccess);
+        }
+        return $details;
     }
 
     public function get_manual_enrol_buttons() {
