@@ -126,7 +126,7 @@ if ($mform->is_cancelled()) {
 
     // first try the username
     if (!empty($data->username)) {
-        $username = textlib_get_instance()->strtolower($data->username); // mimic the login page process, if they forget username they need to use email for reset
+        $username = textlib::strtolower($data->username); // mimic the login page process, if they forget username they need to use email for reset
         $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0, 'suspended'=>0));
 
     } else {

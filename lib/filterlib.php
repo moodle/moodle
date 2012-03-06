@@ -1348,13 +1348,13 @@ function filter_remove_duplicates($linkarray) {
         if ($filterobject->casesensitive) {
             $exists = in_array($filterobject->phrase, $concepts);
         } else {
-            $exists = in_array(moodle_strtolower($filterobject->phrase), $lconcepts);
+            $exists = in_array(textlib::strtolower($filterobject->phrase), $lconcepts);
         }
 
         if (!$exists) {
             $cleanlinks[] = $filterobject;
             $concepts[] = $filterobject->phrase;
-            $lconcepts[] = moodle_strtolower($filterobject->phrase);
+            $lconcepts[] = textlib::strtolower($filterobject->phrase);
         }
     }
 

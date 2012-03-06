@@ -648,8 +648,7 @@ class enrol_ldap_plugin extends enrol_plugin {
             return array();
         }
 
-        $textlib = textlib_get_instance();
-        $extmemberuid = $textlib->convert($memberuid, 'utf-8', $this->get_config('ldapencoding'));
+        $extmemberuid = textlib::convert($memberuid, 'utf-8', $this->get_config('ldapencoding'));
 
         if($this->get_config('memberattribute_isdn')) {
             if (!($extmemberuid = $this->ldap_find_userdn ($ldapconnection, $extmemberuid))) {

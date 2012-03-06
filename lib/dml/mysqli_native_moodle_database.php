@@ -559,10 +559,9 @@ class mysqli_native_moodle_database extends moodle_database {
                 $info->max_length    = 0;
                 $values = $matches[1];
                 $values = explode(',', $values);
-                $textlib = textlib_get_instance();
                 foreach ($values as $val) {
                     $val = trim($val, "'");
-                    $length = $textlib->strlen($val);
+                    $length = textlib::strlen($val);
                     $info->enums[] = $val;
                     $info->max_length = ($info->max_length < $length) ? $length : $info->max_length;
                 }

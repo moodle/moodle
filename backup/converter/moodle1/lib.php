@@ -1161,9 +1161,6 @@ class moodle1_file_manager implements loggable {
     /** @var string the root of the converter temp directory */
     protected $basepath;
 
-    /** @var textlib instance used during the migration */
-    protected $textlib;
-
     /** @var array of file ids that were migrated by this instance */
     protected $fileids = array();
 
@@ -1187,7 +1184,6 @@ class moodle1_file_manager implements loggable {
         $this->userid    = $userid;
         // set other useful bits
         $this->basepath  = $converter->get_tempdir_path();
-        $this->textlib   = textlib_get_instance();
     }
 
     /**
@@ -1218,7 +1214,7 @@ class moodle1_file_manager implements loggable {
         }
         $filepath = clean_param($filepath, PARAM_PATH);
 
-        if ($this->textlib->strlen($filepath) > 255) {
+        if (textlib::strlen($filepath) > 255) {
             throw new moodle1_convert_exception('file_path_longer_than_255_chars');
         }
 

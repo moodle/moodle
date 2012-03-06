@@ -1331,7 +1331,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             } else { //if setShowAdvanced is called without any preference
                      //make the default to not show advanced elements.
                 $showadvancedNow = get_user_preferences(
-                                moodle_strtolower($this->_formName.'_showadvanced', 0));
+                                textlib::strtolower($this->_formName.'_showadvanced', 0));
             }
         }
         //value of hidden element

@@ -267,13 +267,10 @@
      */
     function format_title($title,$max=64) {
 
-        // Loading the textlib singleton instance. We are going to need it.
-        $textlib = textlib_get_instance();
-
-        if ($textlib->strlen($title) <= $max) {
+        if (textlib::strlen($title) <= $max) {
             return s($title);
         } else {
-            return s($textlib->substr($title,0,$max-3).'...');
+            return s(textlib::substr($title,0,$max-3).'...');
         }
     }
 

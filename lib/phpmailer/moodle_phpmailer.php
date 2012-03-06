@@ -74,8 +74,7 @@ class moodle_phpmailer extends PHPMailer {
      * Fall back to phpmailers inbuilt functions if not 
      */
     public function EncodeHeader ($str, $position = 'text') {
-        $textlib = textlib_get_instance();
-        $encoded = $textlib->encode_mimeheader($str, $this->CharSet);
+        $encoded = textlib::encode_mimeheader($str, $this->CharSet);
         if ($encoded !== false) {
             $encoded = str_replace("\n", $this->LE, $encoded);
             if ($position == 'phrase') {

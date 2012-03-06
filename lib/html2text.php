@@ -599,7 +599,6 @@ class html2text
      */
     function _strtoupper($str)
     {
-        $tl = textlib_get_instance();
-        return $tl->strtoupper($str);
+        return textlib::strtoupper($str);
     }
 }

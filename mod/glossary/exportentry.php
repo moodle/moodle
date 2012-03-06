@@ -72,7 +72,7 @@ if (!$mainglossary->allowduplicatedentries) {
     if ($DB->record_exists_select('glossary_entries',
             'glossaryid = :glossaryid AND LOWER(concept) = :concept', array(
                 'glossaryid' => $mainglossary->id,
-                'concept'    => moodle_strtolower($entry->concept)))) {
+                'concept'    => textlib::strtolower($entry->concept)))) {
         $PAGE->set_title(format_string($glossary->name));
         $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();

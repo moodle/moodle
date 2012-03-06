@@ -275,6 +275,11 @@ class textlib_test extends UnitTestCase {
     }
 
     public function test_deprecated_textlib_get_instance() {
+        global $CFG;
+
+        $debugging = $CFG->debug;
+        $CFG->debug = DEBUG_NORMAL;
+
         $textlib = textlib_get_instance();
         $this->assertIdentical($textlib->substr('abc', 1, 1), 'b');
         $this->assertIdentical($textlib->strlen('abc'), 3);
@@ -285,6 +290,8 @@ class textlib_test extends UnitTestCase {
         $this->assertIdentical($textlib->strrpos('abcabc', 'a'), 3);
         $this->assertIdentical($textlib->specialtoascii('ábc'), 'abc');
         $this->assertIdentical($textlib->strtotitle('abc ABC'), 'Abc Abc');
+
+        $CFG->debug = $debugging;
     }
 }
 

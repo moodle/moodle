@@ -84,11 +84,9 @@ class csv_import_reader {
         $this->close();
         $this->_error = null;
 
-        $textlib = textlib_get_instance();
-
-        $content = $textlib->convert($content, $encoding, 'utf-8');
+        $content = textlib::convert($content, $encoding, 'utf-8');
         // remove Unicode BOM from first line
-        $content = $textlib->trim_utf8_bom($content);
+        $content = textlib::trim_utf8_bom($content);
         // Fix mac/dos newlines
         $content = preg_replace('!\r\n?!', "\n", $content);
         // is there anyting in file?

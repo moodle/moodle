@@ -63,9 +63,6 @@ $PAGE->set_title(get_string("modulenameplural", "glossary"));
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-/// Loading the textlib singleton instance. We are going to need it.
-$textlib = textlib_get_instance();
-
 if (!has_capability('mod/glossary:manageentries', $context) and !$glossary->allowprintview) {
     notice(get_string('printviewnotallowed', 'glossary'));
 }
@@ -181,12 +178,12 @@ if ( $allentries ) {
 
         // Setting the pivot for the current entry
         $pivot = $entry->glossarypivot;
-        $upperpivot = $textlib->strtoupper($pivot);
-        $pivottoshow = $textlib->strtoupper(format_string($pivot, true, $fmtoptions));
+        $upperpivot = textlib::strtoupper($pivot);
+        $pivottoshow = textlib::strtoupper(format_string($pivot, true, $fmtoptions));
         // Reduce pivot to 1cc if necessary
         if ( !$fullpivot ) {
-            $upperpivot = $textlib->substr($upperpivot, 0, 1);
-            $pivottoshow = $textlib->substr($pivottoshow, 0, 1);
+            $upperpivot = textlib::substr($upperpivot, 0, 1);
+            $pivottoshow = textlib::substr($pivottoshow, 0, 1);
         }
 
         // If there's  group break

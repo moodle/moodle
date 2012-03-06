@@ -367,7 +367,7 @@ function coursetag_store_keywords($tags, $courseid, $userid=0, $tagtype='officia
                 //add tag if does not exist
                 if (!$tagid = tag_get_id($tag)) {
                     $tag_id_array = tag_add(array($tag), $tagtype);
-                    $tagid = $tag_id_array[moodle_strtolower($tag)];
+                    $tagid = $tag_id_array[textlib::strtolower($tag)];
                 }
                 //ordering
                 $ordering = 0;
@@ -691,8 +691,7 @@ function coursetag_get_official_keywords($courseid, $asarray=false) {
         }
         foreach ($tags as $tag) {
             if( empty($CFG->keeptagnamecase) ) {
-                $textlib = textlib_get_instance();
-                $name = $textlib->strtotitle($tag->name);
+                $name = textlib::strtotitle($tag->name);
             } else {
                 $name = $tag->rawname;
             }

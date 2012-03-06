@@ -348,7 +348,7 @@ class file_storage {
         if ($recursive) {
 
             $dirs = $includedirs ? "" : "AND filename <> '.'";
-            $length = textlib_get_instance()->strlen($filepath);
+            $length = textlib::strlen($filepath);
 
             $sql = "SELECT *
                       FROM {files}
@@ -375,7 +375,7 @@ class file_storage {
             $result = array();
             $params = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'dirid'=>$directory->get_id());
 
-            $length = textlib_get_instance()->strlen($filepath);
+            $length = textlib::strlen($filepath);
 
             if ($includedirs) {
                 $sql = "SELECT *
