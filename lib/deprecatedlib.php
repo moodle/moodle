@@ -4026,7 +4026,7 @@ function moodle_strtolower($string, $encoding='') {
  * Original singleton helper function, please use static methods instead,
  * ex: textlib::convert()
  *
- * @deprecated since Moodle 2.1 use textlib::xxxx() instead
+ * @deprecated since Moodle 2.2 use textlib::xxxx() instead
  * @see textlib
  * @return textlib instance
  */
