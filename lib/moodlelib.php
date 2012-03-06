@@ -3495,6 +3495,9 @@ function delete_user($user) {
     $updateuser->timemodified = time();
 
     $DB->update_record('user', $updateuser);
+    // Add this action to log
+    add_to_log(SITEID, 'user', 'delete', "view.php?id=$user->id", $user->firstname.' '.$user->lastname);
+
 
     // notify auth plugin - do not block the delete even when plugin fails
     $authplugin = get_auth_plugin($user->auth);
