@@ -3880,6 +3880,9 @@ function delete_user($user) {
     $updateuser->timemodified = time();
 
     $DB->update_record('user', $updateuser);
+    // Add this action to log
+    add_to_log(SITEID, 'user', 'delete', "view.php?id=$user->id", $user->firstname.' '.$user->lastname);
+
 
     // We will update the user's timemodified, as it will be passed to the user_deleted event, which
     // should know about this updated property persisted to the user's table.
