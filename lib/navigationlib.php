@@ -1484,13 +1484,16 @@ class global_navigation extends navigation_node {
             $categoryselect = '';
         }
 
-        list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+        $ccselect = context_helper::get_preload_record_columns_sql('ctx');
+        $params['contextlevel'] = CONTEXT_COURSE;
         list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses) + array(SITEID), SQL_PARAMS_NAMED, 'lcourse', false);
-        $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category, cat.path AS categorypath $ccselect
+        $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category, cat.path AS categorypath, $ccselect
                   FROM {course} c
-                       $ccjoin
+                  JOIN {context} ctx ON c.id = ctx.instanceid
              LEFT JOIN {course_categories} cat ON cat.id=c.category
-                 WHERE c.id {$courseids} {$categoryselect}
+                 WHERE c.id {$courseids} AND
+                       ctx.contextlevel = :contextlevel
+                       {$categoryselect}
               ORDER BY c.sortorder ASC";
         $limit = 20;
         if (!empty($CFG->navcourselimit)) {
@@ -1500,7 +1503,7 @@ class global_navigation extends navigation_node {
 
         $coursenodes = array();
         foreach ($courses as $course) {
-            context_instance_preload($course);
+            context_helper::preload_from_record($course);
             $coursenodes[$course->id] = $this->add_course($course);
         }
         return $coursenodes;
@@ -1980,10 +1983,14 @@ class global_navigation extends navigation_node {
             $user = $USER;
         } else if (!is_object($user)) {
             // If the user is not an object then get them from the database
-            list($select, $join) = context_instance_preload_sql('u.id', CONTEXT_USER, 'ctx');
-            $sql = "SELECT u.* $select FROM {user} u $join WHERE u.id = :userid";
-            $user = $DB->get_record_sql($sql, array('userid' => (int)$user), MUST_EXIST);
-            context_instance_preload($user);
+            $select = context_helper::get_preload_record_columns_sql('ctx');
+            $sql = "SELECT u.*, $select
+                      FROM {user} u
+                      JOIN {context} ctx ON u.id = ctx.instanceid
+                     WHERE u.id = :userid AND
+                           ctx.contextlevel = :contextlevel";
+            $user = $DB->get_record_sql($sql, array('userid' => (int)$user, 'contextlevel' => CONTEXT_USER), MUST_EXIST);
+            context_helper::preload_from_record($user);
         }
 
         $iscurrentuser = ($user->id == $USER->id);
@@ -3699,10 +3706,14 @@ class settings_navigation extends navigation_node {
             if (!empty($this->page->course->id) && $this->page->course->id == $courseid) {
                 $course = $this->page->course;
             } else {
-                list($select, $join) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-                $sql = "SELECT c.* $select FROM {course} c $join WHERE c.id = :courseid";
-                $course = $DB->get_record_sql($sql, array('courseid' => $courseid), MUST_EXIST);
-                context_instance_preload($course);
+                $select = context_helper::get_preload_record_columns_sql('ctx');
+                $sql = "SELECT c.*, $select
+                          FROM {course} c
+                          JOIN {context} ctx ON c.id = ctx.instanceid
+                         WHERE c.id = :courseid AND ctx.contextlevel = :contextlevel";
+                $params = array('courseid' => $courseid, 'contextlevel' => CONTEXT_COURSE);
+                $course = $DB->get_record_sql($sql, $params, MUST_EXIST);
+                context_helper::preload_from_record($course);
             }
         } else {
             $course = $SITE;
@@ -3716,14 +3727,17 @@ class settings_navigation extends navigation_node {
             $user = $USER;
             $usercontext = get_context_instance(CONTEXT_USER, $user->id);       // User context
         } else {
-
-            list($select, $join) = context_instance_preload_sql('u.id', CONTEXT_USER, 'ctx');
-            $sql = "SELECT u.* $select FROM {user} u $join WHERE u.id = :userid";
-            $user = $DB->get_record_sql($sql, array('userid' => $userid), IGNORE_MISSING);
+            $select = context_helper::get_preload_record_columns_sql('ctx');
+            $sql = "SELECT u.*, $select
+                      FROM {user} u
+                      JOIN {context} ctx ON u.id = ctx.instanceid
+                     WHERE u.id = :userid AND ctx.contextlevel = :contextlevel";
+            $params = array('userid' => $userid, 'contextlevel' => CONTEXT_USER);
+            $user = $DB->get_record_sql($sql, $params, IGNORE_MISSING);
             if (!$user) {
                 return false;
             }
-            context_instance_preload($user);
+            context_helper::preload_from_record($user);
 
             // Check that the user can view the profile
             $usercontext = get_context_instance(CONTEXT_USER, $user->id); // User context
