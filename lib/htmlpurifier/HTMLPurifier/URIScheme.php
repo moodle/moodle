@@ -20,6 +20,12 @@ abstract class HTMLPurifier_URIScheme
     public $browsable = false;
 
     /**
+     * Whether or not data transmitted over this scheme is encrypted.
+     * https is secure, http is not.
+     */
+    public $secure = false;
+
+    /**
      * Whether or not the URI always uses <hier_part>, resolves edge cases
      * with making relative URIs absolute
      */
