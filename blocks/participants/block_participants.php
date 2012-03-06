@@ -20,7 +20,14 @@ class block_participants extends block_list {
         $this->content->footer = '';
 
         // user/index.php expect course context, so get one if page has module context.
-        $currentcontext = $this->page->context->get_course_context(false);
+        // Do explicit check on context as we don't want to throw any exception on context
+        // above course level.
+        $currentcontext = NULL;
+        if (($this->page->context->contextlevel == CONTEXT_COURSE) ||
+            ($this->page->context->contextlevel == CONTEXT_MODULE) ||
+            ($this->page->context->contextlevel == CONTEXT_BLOCK)) {
+            $currentcontext = get_course_context($this->page->context);
+        }
 
         if (empty($currentcontext)) {
             $this->content = '';
