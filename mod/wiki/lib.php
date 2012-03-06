@@ -543,7 +543,7 @@ function wiki_extend_navigation(navigation_node $navref, $course, $module, $cm) 
             $node = $navref->add(get_string('view', 'wiki'), $link, navigation_node::TYPE_SETTING);
         }
 
-		if (wiki_user_can_edit($subwiki)) {
+        if (wiki_user_can_edit($subwiki)) {
             $link = new moodle_url('/mod/wiki/edit.php', array('pageid' => $pageid));
             $node = $navref->add(get_string('edit', 'wiki'), $link, navigation_node::TYPE_SETTING);
         }
