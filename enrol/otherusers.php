@@ -48,33 +48,32 @@ $manager = new course_enrolment_manager($PAGE, $course, $filter);
 $table = new course_enrolment_other_users_table($manager, $PAGE);
 $PAGE->set_url('/enrol/otherusers.php', $manager->get_url_params()+$table->get_url_params());
 
-/***
- * Actions will go here
- */
+$userdetails = array (
+    'picture' => false,
+    'firstname' => get_string('firstname'),
+    'lastname' => get_string('lastname'),
+);
+if (!empty($CFG->extrauserselectorfields)) {
+    $extrafields = explode(',', $CFG->extrauserselectorfields);
+    foreach ($extrafields as $field) {
+        $userdetails[$field] = get_string($field);
+    }
+}
 
-/*$fields = array(
-    'userdetails' => array (
-        'picture' => false,
-        'firstname' => get_string('firstname'),
-        'lastname' => get_string('lastname'),
-        'email' => get_string('email')
-    ),
-    'lastseen' => get_string('lastaccess'),
-    'role' => array(
-        'roles' => get_string('roles', 'role'),
-        'context' => get_string('context')
-    )
-);*/
 $fields = array(
-    'userdetails' => array (
-        'picture' => false,
-        'firstname' => get_string('firstname'),
-        'lastname' => get_string('lastname'),
-        'email' => get_string('email')
-    ),
+    'userdetails' => $userdetails,
     'lastseen' => get_string('lastaccess'),
     'role' => get_string('roles', 'role')
 );
+
+// Remove hidden fields if the user has no access
+if (!has_capability('moodle/course:viewhiddenuserfields', $context)) {
+    $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+    if (isset($hiddenfields['lastaccess'])) {
+        unset($fields['lastseen']);
+    }
+}
+
 $table->set_fields($fields, $OUTPUT);
 
 //$users = $manager->get_other_users($table->sort, $table->sortdirection, $table->page, $table->perpage);
