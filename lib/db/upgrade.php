@@ -402,5 +402,25 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012042300.00);
     }
 
+    if ($oldversion < 2012042300.02) {
+        require_once($CFG->libdir . '/completion/completion_criteria.php');
+        // Delete orphaned criteria which were left when modules were removed
+        if ($DB->get_dbfamily() === 'mysql') {
+            $sql = "DELETE cc FROM {course_completion_criteria} cc
+                    LEFT JOIN {course_modules} cm ON cm.id = cc.moduleinstance
+                    WHERE cm.id IS NULL AND cc.criteriatype = ".COMPLETION_CRITERIA_TYPE_ACTIVITY;
+        } else {
+            $sql = "DELETE FROM {course_completion_criteria}
+                    WHERE NOT EXISTS (
+                        SELECT 'x' FROM {course_modules}
+                        WHERE {course_modules}.id = {course_completion_criteria}.moduleinstance)
+                    AND cc.criteriatype = ".COMPLETION_CRITERIA_TYPE_ACTIVITY;
+        }
+        $DB->execute($sql);
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2012042300.02);
+    }
+
     return true;
 }
