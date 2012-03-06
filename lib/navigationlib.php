@@ -1087,7 +1087,10 @@ class global_navigation extends navigation_node {
 
                 if (count($categoryids)) {
                     // Fetch any other categories we need.
-                    $categories = array_merge($DB->get_records_list('course_categories', 'id', $categoryids, 'depth ASC, sortorder ASC'), $categories);
+                    $allcategories = $DB->get_records_list('course_categories', 'id', $categoryids, 'depth ASC, sortorder ASC');
+                    if (is_array($allcategories) && count($allcategories) > 0) {
+                        $categories = array_merge($categories);
+                    }
                 }
 
                 // We ONLY want the categories, we need to get rid of the keys
