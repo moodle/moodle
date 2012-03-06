@@ -67,7 +67,7 @@
     <location>htmlpurifier</location>
     <name>HTML Purifier</name>
     <license>LGPL</license>
-    <version>4.3.0</version>
+    <version>4.4.0</version>
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>

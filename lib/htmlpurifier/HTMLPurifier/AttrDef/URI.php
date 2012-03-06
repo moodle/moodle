@@ -19,7 +19,7 @@ class HTMLPurifier_AttrDef_URI extends HTMLPurifier_AttrDef
     }
 
     public function make($string) {
-        $embeds = (bool) $string;
+        $embeds = ($string === 'embedded');
         return new HTMLPurifier_AttrDef_URI($embeds);
     }
 

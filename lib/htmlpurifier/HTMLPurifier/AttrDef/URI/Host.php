@@ -44,9 +44,8 @@ class HTMLPurifier_AttrDef_URI_Host extends HTMLPurifier_AttrDef
 
         // A regular domain name.
 
-        // This breaks I18N domain names, but we don't have proper IRI support,
-        // so force users to insert Punycode. If there's complaining we'll
-        // try to fix things into an international friendly form.
+        // This doesn't match I18N domain names, but we don't have proper IRI support,
+        // so force users to insert Punycode.
 
         // The productions describing this are:
         $a   = '[a-z]';     // alpha
@@ -57,10 +56,44 @@ class HTMLPurifier_AttrDef_URI_Host extends HTMLPurifier_AttrDef
         // toplabel    = alpha | alpha *( alphanum | "-" ) alphanum
         $toplabel      = "$a($and*$an)?";
         // hostname    = *( domainlabel "." ) toplabel [ "." ]
-        $match = preg_match("/^($domainlabel\.)*$toplabel\.?$/i", $string);
-        if (!$match) return false;
+        if (preg_match("/^($domainlabel\.)*$toplabel\.?$/i", $string)) {
+            return $string;
+        }
 
-        return $string;
+        // If we have Net_IDNA2 support, we can support IRIs by
+        // punycoding them. (This is the most portable thing to do,
+        // since otherwise we have to assume browsers support
+
+        if ($config->get('Core.EnableIDNA')) {
+            $idna = new Net_IDNA2(array('encoding' => 'utf8', 'overlong' => false, 'strict' => true));
+            // we need to encode each period separately
+            $parts = explode('.', $string);
+            try {
+                $new_parts = array();
+                foreach ($parts as $part) {
+                    $encodable = false;
+                    for ($i = 0, $c = strlen($part); $i < $c; $i++) {
+                        if (ord($part[$i]) > 0x7a) {
+                            $encodable = true;
+                            break;
+                        }
+                    }
+                    if (!$encodable) {
+                        $new_parts[] = $part;
+                    } else {
+                        $new_parts[] = $idna->encode($part);
+                    }
+                }
+                $string = implode('.', $new_parts);
+                if (preg_match("/^($domainlabel\.)*$toplabel\.?$/i", $string)) {
+                    return $string;
+                }
+            } catch (Exception $e) {
+                // XXX error reporting
+            }
+        }
+
+        return false;
     }
 
 }
