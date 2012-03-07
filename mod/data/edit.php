@@ -295,6 +295,8 @@ if (!$rid){
  ******************************************/
 if ($data->addtemplate){
     $possiblefields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id');
+    $patterns = array();
+    $replacements = array();
 
     ///then we generate strings to replace
     foreach ($possiblefields as $eachfield){
