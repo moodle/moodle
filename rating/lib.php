@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * A class representing a single rating and containing some static methods for manipulating ratings
  *
- * @package    core
+ * @package    core_rating
  * @subpackage rating
  * @copyright  2010 Andrew Davis
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -38,6 +37,8 @@ define ('RATING_DEFAULT_SCALE', 5);
 /**
  * The rating class represents a single rating by a single user
  *
+ * @package   core_rating
+ * @category  rating
  * @copyright 2010 Andrew Davis
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
@@ -45,96 +46,75 @@ define ('RATING_DEFAULT_SCALE', 5);
 class rating implements renderable {
 
     /**
-     * The context in which this rating exists
-     * @var stdClass
+     * @var stdClass The context in which this rating exists
      */
     public $context;
 
     /**
-     * The component using ratings. For example "mod_forum"
-     * @var string
+     * @var string The component using ratings. For example "mod_forum"
      */
     public $component;
 
     /**
-     * The rating area to associate this rating with.
-     * This allows a plugin to rate more than one thing by specifying different rating areas.
-     * @var string
+     * @var string The rating area to associate this rating with
+     *             This allows a plugin to rate more than one thing by specifying different rating areas
      */
     public $ratingarea = null;
 
     /**
-     * The id of the item (forum post, glossary item etc) being rated
-     * @var int
+     * @var int The id of the item (forum post, glossary item etc) being rated
      */
     public $itemid;
 
     /**
-     * The id scale (1-5, 0-100) that was in use when the rating was submitted
-     * @var int
+     * @var int The id scale (1-5, 0-100) that was in use when the rating was submitted
      */
     public $scaleid;
 
     /**
-     * The id of the user who submitted the rating
-     * @var int
+     * @var int The id of the user who submitted the rating
      */
     public $userid;
 
     /**
-     * settings for this rating. Necessary to render the rating.
-     * @var stdclass
+     * @var stdclass settings for this rating. Necessary to render the rating.
      */
     public $settings;
 
     /**
-     * The Id of this rating within the rating table.
-     * This is only set if the rating already exists
-     * @var int
+     * @var int The Id of this rating within the rating table. This is only set if the rating already exists
      */
     public $id = null;
 
     /**
-     * The aggregate of the combined ratings for the associated item.
-     * This is only set if the rating already exists
-     *
-     * @var int
+     * @var int The aggregate of the combined ratings for the associated item. This is only set if the rating already exists
      */
     public $aggregate = null;
 
     /**
-     * The total number of ratings for the associated item.
-     * This is only set if the rating already exists
-     *
-     * @var int
+     * @var int The total number of ratings for the associated item. This is only set if the rating already exists
      */
     public $count = 0;
 
     /**
-     * The rating the associated user gave the associated item
-     * This is only set if the rating already exists
-     *
-     * @var int
+     * @var int The rating the associated user gave the associated item. This is only set if the rating already exists
      */
     public $rating = null;
 
     /**
-     * The time the associated item was created
-     *
-     * @var int
+     * @var int The time the associated item was created
      */
     public $itemtimecreated = null;
 
     /**
-     * The id of the user who submitted the rating
-     *
-     * @var int
+     * @var int The id of the user who submitted the rating
      */
     public $itemuserid = null;
 
     /**
      * Constructor.
-     * @param object $options {
+     *
+     * @param stdClass $options {
      *            context => context context to use for the rating [required]
      *            component => component using ratings ie mod_forum [required]
      *            ratingarea => ratingarea to associate this rating with [required]
@@ -175,8 +155,8 @@ class rating implements renderable {
 
     /**
      * Update this rating in the database
+     *
      * @param int $rating the integer value of this rating
-     * @return void
      */
     public function update_rating($rating) {
         global $DB;
@@ -225,6 +205,7 @@ class rating implements renderable {
 
     /**
      * Retreive the integer value of this rating
+     *
      * @return int the integer value of this rating object
      */
     public function get_rating() {
@@ -234,7 +215,7 @@ class rating implements renderable {
     /**
      * Returns this ratings aggregate value as a string.
      *
-     * @return string
+     * @return string ratings aggregate value
      */
     public function get_aggregate_string() {
 
@@ -258,7 +239,7 @@ class rating implements renderable {
      * Returns true if the user is able to rate this rating object
      *
      * @param int $userid Current user assumed if left empty
-     * @return bool
+     * @return bool true if the user is able to rate this rating object
      */
     public function user_can_rate($userid = null) {
         if (empty($userid)) {
@@ -292,7 +273,7 @@ class rating implements renderable {
      * Returns true if the user is able to view the aggregate for this rating object.
      *
      * @param int|null $userid If left empty the current user is assumed.
-     * @return bool
+     * @return bool true if the user is able to view the aggregate for this rating object
      */
     public function user_can_view_aggregate($userid = null) {
         if (empty($userid)) {
@@ -317,11 +298,11 @@ class rating implements renderable {
     /**
      * Returns a URL to view all of the ratings for the item this rating is for.
      *
-     * If this is a rating of a post then this URL will take the user to a page that shows all
-     * of the ratings for the post (this one included).
+     * If this is a rating of a post then this URL will take the user to a page that shows all of the ratings for the post
+     * (this one included).
      *
-     * @param bool $popup
-     * @return moodle_url
+     * @param bool $popup whether of not the URL should be loaded in a popup
+     * @return moodle_url URL to view all of the ratings for the item this rating is for.
      */
     public function get_view_ratings_url($popup = false) {
         $attributes = array(
@@ -340,10 +321,9 @@ class rating implements renderable {
     /**
      * Returns a URL that can be used to rate the associated item.
      *
-     * @param int|null $rating The rating to give the item, if null then no rating
-     *                         param is added.
+     * @param int|null          $rating    The rating to give the item, if null then no rating param is added.
      * @param moodle_url|string $returnurl The URL to return to.
-     * @return moodle_url
+     * @return moodle_url can be used to rate the associated item.
      */
     public function get_rate_url($rating = null, $returnurl = null) {
         if (empty($returnurl)) {
@@ -384,6 +364,8 @@ class rating implements renderable {
 /**
  * The rating_manager class provides the ability to retrieve sets of ratings from the database
  *
+ * @package   core_rating
+ * @category  rating
  * @copyright 2010 Andrew Davis
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
@@ -391,8 +373,7 @@ class rating implements renderable {
 class rating_manager {
 
     /**
-     * An array of calculated scale options to save us generating them for each request.
-     * @var array
+     * @var array An array of calculated scale options to save us generating them for each request.
      */
     protected $scales = array();
 
@@ -408,7 +389,6 @@ class rating_manager {
      *            component => string The component to delete ratings from [optional]
      *            ratingarea => string The ratingarea to delete ratings from [optional]
      * }
-     * @return void
      */
     public function delete_ratings($options) {
         global $DB;
@@ -434,8 +414,8 @@ class rating_manager {
     }
 
     /**
-     * Returns an array of ratings for a given item (forum post, glossary entry etc)
-     * This returns all users ratings for a single item
+     * Returns an array of ratings for a given item (forum post, glossary entry etc). This returns all users ratings for a single item
+     *
      * @param stdClass $options {
      *            context => context the context in which the ratings exists [required]
      *            component => component using ratings ie mod_forum [required]
@@ -486,8 +466,8 @@ class rating_manager {
     }
 
     /**
-     * Adds rating objects to an array of items (forum posts, glossary entries etc)
-     * Rating objects are available at $item->rating
+     * Adds rating objects to an array of items (forum posts, glossary entries etc). Rating objects are available at $item->rating
+     *
      * @param stdClass $options {
      *            context          => context the context in which the ratings exists [required]
      *            component        => the component name ie mod_forum [required]
@@ -645,7 +625,7 @@ class rating_manager {
      *      plugintype        => string plugin type ie 'mod' Used to find the permissions callback [optional]
      *      pluginname        => string plugin name ie 'forum' Used to find the permissions callback [optional]
      * }
-     * @return stdClass
+     * @return stdClass rating settings object
      */
     protected function generate_rating_settings_object($options) {
 
@@ -704,9 +684,9 @@ class rating_manager {
     /**
      * Generates a scale object that can be returned
      *
-     * @global moodle_database $DB
-     * @param type $scaleid
-     * @return stdClass
+     * @global moodle_database $DB moodle database object
+     * @param int $scaleid scale-type identifier
+     * @return stdClass scale for ratings
      */
     protected function generate_rating_scale_object($scaleid) {
         global $DB;
@@ -750,12 +730,12 @@ class rating_manager {
     /**
      * Gets the time the given item was created
      *
-     * TODO: Find a better solution for this, its not ideal to test for fields really we should be
+     * TODO: MDL-31511 - Find a better solution for this, its not ideal to test for fields really we should be
      * asking the component the item belongs to what field to look for or even the value we
      * are looking for.
      *
      * @param stdClass $item
-     * @return mixed
+     * @return int|null return null if the created time is unavailable, otherwise return a timestamp
      */
     protected function get_item_time_created($item) {
         if( !empty($item->created) ) {
@@ -771,7 +751,8 @@ class rating_manager {
 
     /**
      * Returns an array of grades calculated by aggregating item ratings.
-     * @param object $options {
+     *
+     * @param stdClass $options {
      *            userid => int the id of the user whose items have been rated. NOT the user who submitted the ratings. 0 to update all. [required]
      *            aggregationmethod => int the aggregation method to apply when calculating grades ie RATING_AGGREGATE_AVERAGE [required]
      *            scaleid => int the scale from which the user can select a rating. Used for bounds checking. [required]
@@ -779,12 +760,10 @@ class rating_manager {
      *            itemtableusercolum => int the column of the user table containing the item owner's user id [required]
      *            component => The component for the ratings [required]
      *            ratingarea => The ratingarea for the ratings [required]
-     *
      *            contextid => int the context in which the rated items exist [optional]
-     *
      *            modulename => string the name of the module [optional]
      *            moduleid => int the id of the module instance [optional]
-     *
+     * }
      * @return array the array of the user's grades
      */
     public function get_user_grades($options) {
@@ -895,7 +874,7 @@ class rating_manager {
     /**
      * Returns array of aggregate types. Used by ratings.
      *
-     * @return array
+     * @return array aggregate types
      */
     public function get_aggregate_types() {
         return array (RATING_AGGREGATE_NONE     => get_string('aggregatenone', 'rating'),
@@ -908,6 +887,7 @@ class rating_manager {
 
     /**
      * Converts an aggregation method constant into something that can be included in SQL
+     *
      * @param int $aggregate An aggregation constant. For example, RATING_AGGREGATE_AVERAGE.
      * @return string an SQL aggregation method
      */
@@ -938,9 +918,10 @@ class rating_manager {
 
     /**
      * Looks for a callback like forum_rating_permissions() to retrieve permissions from the plugin whose items are being rated
+     *
      * @param int $contextid The current context id
-     * @param string component the name of the component that is using ratings ie 'mod_forum'
-     * @param string ratingarea The area the rating is associated with
+     * @param string $component the name of the component that is using ratings ie 'mod_forum'
+     * @param string $ratingarea The area the rating is associated with
      * @return array rating related permissions
      */
     public function get_plugin_permissions_array($contextid, $component, $ratingarea) {
@@ -957,6 +938,7 @@ class rating_manager {
 
     /**
      * Validates a submitted rating
+     *
      * @param array $params submitted data
      *            context => object the context in which the rated items exists [required]
      *            component => The component the rating belongs to [required]
@@ -1007,7 +989,7 @@ class rating_manager {
      * Initialises JavaScript to enable AJAX ratings on the provided page
      *
      * @param moodle_page $page
-     * @return true
+     * @return true always returns true
      */
     public function initialise_rating_javascript(moodle_page $page) {
         global $CFG;
@@ -1030,7 +1012,7 @@ class rating_manager {
      * Returns a string that describes the aggregation method that was provided.
      *
      * @param string $aggregationmethod
-     * @return string
+     * @return string describes the aggregation method that was provided
      */
     public function get_aggregate_label($aggregationmethod) {
         $aggregatelabel = '';
@@ -1057,8 +1039,25 @@ class rating_manager {
 
 }//end rating_manager class definition
 
+/**
+ * The rating_exception class provides the ability to generate exceptions that can be easily identified as coming from the ratings system
+ *
+ * @package   core_rating
+ * @category  rating
+ * @copyright 2010 Andrew Davis
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     Moodle 2.0
+ */
 class rating_exception extends moodle_exception {
+    /**
+     * @var string The message to accompany the thrown exception
+     */
     public $message;
+    /**
+     * Generate exceptions that can be easily identified as coming from the ratings system
+     *
+     * @param string $errorcode the error code to generate
+     */
     function __construct($errorcode) {
         $this->errorcode = $errorcode;
         $this->message = get_string($errorcode, 'error');
