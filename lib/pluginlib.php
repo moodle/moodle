@@ -83,8 +83,6 @@ class plugin_manager {
      * @return plugin_manager the singleton instance
      */
     public static function instance() {
-        global $CFG;
-
         if (is_null(self::$singletoninstance)) {
             self::$singletoninstance = new self();
         }
@@ -119,6 +117,14 @@ class plugin_manager {
                 }
                 $plugins = call_user_func(array($plugintypeclass, 'get_plugins'), $plugintype, $plugintyperootdir, $plugintypeclass);
                 $this->pluginsinfo[$plugintype] = $plugins;
+            }
+
+            // append the information about available updates provided by {@link available_update_checker()}
+            $provider = available_update_checker::instance();
+            foreach ($this->pluginsinfo as $plugintype => $plugins) {
+                foreach ($plugins as $plugininfoholder) {
+                    $plugininfoholder->check_available_update($provider);
+                }
             }
         }
 
@@ -899,6 +905,8 @@ abstract class plugininfo_base {
     public $instances;
     /** @var int order of the plugin among other plugins of the same type - not supported yet */
     public $sortorder;
+    /** @var null|stdClass holds the information about the remote available update for this plugin */
+    public $availableupdate;
 
     /**
      * Gathers and returns the information about all plugins of the given type
@@ -1128,6 +1136,16 @@ abstract class plugininfo_base {
     }
 
     /**
+     * Populates the property {@link $availableupdate} with the information provided by
+     * available update checker
+     *
+     * @param available_update_checker $provider the class providing the available update info
+     */
+    public function check_available_update(available_update_checker $provider) {
+        $this->availableupdate = $provider->get_update_info($this->component);
+    }
+
+    /**
      * If there is an update of this plugin available, returns the data about it.
      *
      * Returns object with various properties about the available update, if such
@@ -1137,7 +1155,16 @@ abstract class plugininfo_base {
      * @return stdClass|false|null
      */
     public function available_update() {
-        return null;
+
+        if (empty($this->availableupdate)) {
+            return null;
+        }
+
+        if ($this->availableupdate->version > $this->versiondisk) {
+            return $this->availableupdate;
+        }
+
+        return false;
     }
 
     /**
