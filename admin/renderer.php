@@ -227,25 +227,6 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Display the plugin management page (admin/plugins.php).
-     * @param plugin_manager $pluginman
-     * @return string HTML to output.
-     */
-    public function plugin_management_page(plugin_manager $pluginman) {
-        $output = '';
-
-        $output .= $this->header();
-        $output .= $this->heading(get_string('pluginsoverview', 'core_admin'));
-        $output .= $this->plugins_overview_panel($pluginman);
-        $output .= $this->box_start('generalbox');
-        $output .= $this->plugins_control_panel($pluginman);
-        $output .= $this->box_end();
-        $output .= $this->footer();
-
-        return $output;
-    }
-
-    /**
      * Display the plugin management page (admin/environment.php).
      * @param array $versions
      * @param string $version
@@ -798,7 +779,13 @@ class core_admin_renderer extends plugin_renderer_base {
                     $requiredby = '';
                 }
 
-                $notes = new html_table_cell($requiredby);
+                if ($updateinfo = $plugin->available_update()) {
+                    $updateinfo = $this->plugin_available_update_info($updateinfo);
+                } else {
+                    $updateinfo = '';
+                }
+
+                $notes = new html_table_cell($requiredby.$updateinfo);
 
                 $row->cells = array(
                     $pluginname, $source, $version, $availability, $actions, $notes
@@ -808,6 +795,47 @@ class core_admin_renderer extends plugin_renderer_base {
         }
 
         return html_writer::table($table);
+    }
+
+    /**
+     * Helper method to render the information about the available update
+     *
+     * The passed objects always provides at least the 'version' property containing
+     * the (higher) version of the plugin available. Other properties may be provided, see
+     * the specification of the protocol used by {@link available_update_checker}.
+     *
+     * @param stdClass $updateinfo information about the available update for the plugin
+     */
+    protected function plugin_available_update_info(stdClass $updateinfo) {
+
+        $box  = $this->output->box_start('pluginupdateinfo');
+        $box .= html_writer::tag('div', get_string('updateavailable', 'core_plugin', $updateinfo->version), array('class' => 'version'));
+
+        $info = array();
+
+        if (isset($updateinfo->release)) {
+            $info[] = html_writer::tag('span', get_string('updateavailable_release', 'core_plugin', $updateinfo->release),
+                array('class' => 'info release'));
+        }
+
+        if (isset($updateinfo->maturity)) {
+            $info[] = html_writer::tag('span', get_string('maturity'.$updateinfo->maturity, 'core_admin'),
+                array('class' => 'info maturity'));
+        }
+
+        if (isset($updateinfo->download)) {
+            $info[] = html_writer::link($updateinfo->download, get_string('download'), array('class' => 'info download'));
+        }
+
+        if (isset($updateinfo->url)) {
+            $info[] = html_writer::link($updateinfo->url, get_string('updateavailable_moreinfo', 'core_plugin'),
+                array('class' => 'info more'));
+        }
+
+        $box .= $this->output->box(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $info), '', 'infobox');
+        $box .= $this->output->box_end();
+
+        return $box;
     }
 
     /**

@@ -30,5 +30,30 @@ require_once($CFG->libdir . '/pluginlib.php');
 
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 admin_externalpage_setup('pluginsoverview');
+
+$fetchremote = optional_param('fetchremote', false, PARAM_BOOL);
+
+$pluginman = plugin_manager::instance();
+$checker = available_update_checker::instance();
+
+if ($fetchremote) {
+    $checker->fetch(true);
+    redirect($PAGE->url);
+}
+
 $output = $PAGE->get_renderer('core', 'admin');
-echo $output->plugin_management_page(plugin_manager::instance());
+
+echo $output->header();
+echo $output->heading(get_string('pluginsoverview', 'core_admin'));
+echo $output->plugins_overview_panel($pluginman);
+
+echo $output->container_start('checkforupdates');
+echo $output->single_button(new moodle_url($PAGE->url, array('fetchremote' => 1)), get_string('checkforupdates', 'core_plugin'));
+if ($timefetched = $checker->get_last_timefetched()) {
+    echo $output->container(get_string('checkforupdateslast', 'core_plugin',
+        userdate($timefetched, get_string('strftimedatetime', 'core_langconfig'))));
+}
+echo $output->container_end();
+
+echo $output->box($output->plugins_control_panel($pluginman), 'generalbox');
+echo $output->footer();
