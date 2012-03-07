@@ -234,6 +234,7 @@ $string['scaletimes5'] = 'Almost never,Seldom,Sometimes,Often,Almost always';
 $string['seemoredetail'] = 'Click here to see more detail';
 $string['selectedquestions'] = 'Selected questions from a scale, all students';
 $string['summary'] = 'Summary';
+$string['survey:addinstance'] = 'Add a new survey';
 $string['surveycompleted'] = 'You\'ve completed this survey.  The graph below shows a summary of your results compared to the class averages.';
 $string['survey:download'] = 'Download responses';
 $string['surveygraph'] = 'Survey graph';

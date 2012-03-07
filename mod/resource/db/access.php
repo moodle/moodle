@@ -34,6 +34,18 @@ $capabilities = array(
         )
     ),
 
+    'mod/resource:addinstance' => array(
+        'riskbitmask' => RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:manageactivities'
+    ),
+
 /* TODO: review public portfolio API first!
     'mod/resource:portfolioexport' => array(
 

@@ -253,6 +253,7 @@ $string['review'] = 'Review';
 $string['reviewmode'] = 'Review mode';
 $string['scoes'] = 'Learning objects';
 $string['score'] = 'Score';
+$string['scorm:addinstance'] = 'Add a new SCORM package';
 $string['scormclose'] = 'Until';
 $string['scormcourse'] = 'Learning course';
 $string['scorm:deleteresponses'] = 'Delete SCORM attempts';

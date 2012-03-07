@@ -170,6 +170,7 @@ $string['fillfields'] = 'Concept and definition are mandatory fields.';
 $string['filtername'] = 'Glossary auto-linking';
 $string['fullmatch'] = 'Match whole words only';
 $string['fullmatch_help'] = 'This setting specifies whether only whole words will be linked, for example, a glossary entry named "construct" will not create a link inside the word "constructivism".';
+$string['glossary:addinstance'] = 'Add a new glossary';
 $string['glossary:approve'] = 'Approve unapproved entries';
 $string['glossary:comment'] = 'Create comments';
 $string['glossary:export'] = 'Export entries';

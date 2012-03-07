@@ -38,6 +38,7 @@ $string['modulenameplural'] = 'Pages';
 $string['neverseen'] = 'Never seen';
 $string['optionsheader'] = 'Options';
 $string['page-mod-page-x'] = 'Any page module page';
+$string['page:addinstance'] = 'Add a new page resource';
 $string['page:view'] = 'View page content';
 $string['pluginadministration'] = 'Page module administration';
 $string['pluginname'] = 'Page';
