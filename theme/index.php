@@ -215,7 +215,7 @@ if (!empty($CFG->enabledevicedetection) && empty($device)) {
 echo $OUTPUT->header('themeselector');
 echo $OUTPUT->heading($heading);
 
-echo $OUTPUT->single_button(new moodle_url('index.php', array('sesskey' => sesskey(), 'reset' => 1)), get_string('themeresetcaches', 'admin'));
+echo $OUTPUT->single_button(new moodle_url('index.php', array('sesskey' => sesskey(), 'reset' => 1, 'device' => $device)), get_string('themeresetcaches', 'admin'));
 
 echo html_writer::table($table);
 
