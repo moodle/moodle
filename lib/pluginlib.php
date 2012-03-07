@@ -545,6 +545,297 @@ class plugin_manager {
 
 
 /**
+ * General exception thrown by the {@link available_update_checker} class
+ */
+class available_update_checker_exception extends moodle_exception {
+
+    /**
+     * @param string $errorcode exception description identifier
+     * @param mixed $debuginfo debugging data to display
+     */
+    public function __construct($errorcode, $debuginfo=null) {
+        parent::__construct($errorcode, 'core_plugin', '', null, print_r($debuginfo, true));
+    }
+}
+
+
+/**
+ * Singleton class that handles checking for available updates
+ */
+class available_update_checker {
+
+    /** @var available_update_checker holds the singleton instance */
+    protected static $singletoninstance;
+    /** @var null|string numerical version of the local Moodle site */
+    protected $localversion = null;
+    /** @var null|string release signature of the local Moodle site */
+    protected $localrelease = null;
+    /** @var array of (string)frankestyle => (string)version list of plugins installed at the local Moodle site */
+    protected $localplugins = array();
+    /** @var null|stdClass */
+    protected $config = null;
+
+    /**
+     * Direct initiation not allowed, use the factory method {@link self::instance()}
+     */
+    protected function __construct() {
+        $this->load_config();
+    }
+
+    /**
+     * Sorry, this is singleton
+     */
+    protected function __clone() {
+    }
+
+    /**
+     * Factory method for this class
+     *
+     * @return available_update_checker the singleton instance
+     */
+    public static function instance() {
+        if (is_null(self::$singletoninstance)) {
+            self::$singletoninstance = new self();
+        }
+        return self::$singletoninstance;
+    }
+
+    /**
+     * Sets the local version
+     *
+     * If the version is set before the request is done, the version info will
+     * be sent to the remote site as a part of the request. The returned data can
+     * be filtered so that they contain just information relevant to the sent
+     * version.
+     *
+     * @param string $version our local Moodle version, usually $CFG->version
+     */
+    public function set_local_version($version) {
+        $this->localversion = $version;
+    }
+
+    /**
+     * Sets the local release info
+     *
+     * If the release is set before the request is done, the release info will
+     * be sent to the remote site as a part of the request. The returned data can
+     * be filtered so that they contain just information relevant to the sent
+     * release/build.
+     *
+     * @param string $version our local Moodle version, usually $CFG->release
+     */
+    public function set_local_release($release) {
+        $this->localrelease = $release;
+    }
+
+    /**
+     * Sets the list of plugins and their version at the local Moodle site
+     *
+     * The keys of the passed array are frankenstyle component names of plugins. The
+     * values are the on-disk versions of these plugins (allowing the null value where
+     * the version can't be obtained for any reason).
+     * If the plugins are set before the request is done, their list will be sent
+     * to the remote site as a part of the request. The returned data can
+     * be filtered so that they contain just information about the installed plugins.
+     * To obtain a list of all available plugins, do not set this list prior to calling
+     * {@link self::fetch()}
+     *
+     * @param array $plugins of (string)component => (string)version
+     */
+    public function set_local_plugins(array $plugins) {
+        $this->localplugins = $plugins;
+    }
+
+    /**
+     * Returns the timestamp of the last execution of {@link fetch()}
+     *
+     * @return int|null null if it has never been executed or we don't known
+     */
+    public function get_last_timefetched() {
+        if (isset($this->config->timelastfetched)) {
+            return $this->config->timelastfetched;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Fetches the available update status from the remote site
+     *
+     * @throws available_update_checker_exception
+     */
+    public function fetch() {
+        $response = $this->make_request();
+        $this->validate_response($response);
+        $this->process_response($response);
+    }
+
+    /**
+     * Returns the available update information for the given component
+     *
+     * This method returns null if the most recent response does not contain any information
+     * about it. Note that this does not mean that the information is not provided by the
+     * remote site. The recent request might be specific
+     *
+     * @param string $component frankenstyle
+     * @return null|stdClass null if the most recent response does not provide any info
+     */
+    public function get_update_info($component) {
+
+        $branch = moodle_major_version();
+
+        if (!empty($this->config->components->$branch->$component)) {
+            return $this->config->components->$branch->$component;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Executes cURL request to get data from the remote site
+     *
+     * @return stdClass request result
+     * @throws available_update_checker_exception
+     */
+    protected function make_request() {
+        $curl = new curl(array('proxy' => true));
+        $response = $curl->post($this->prepare_request_url(), $this->prepare_request_params());
+        $curlinfo = $curl->get_info();
+        if ($curlinfo['http_code'] != 200) {
+            throw new available_update_checker_exception('err_response_http_code', $curlinfo['http_code']);
+        }
+        $response = json_decode($response);
+        return $response;
+    }
+
+    /**
+     * Makes sure the response is valid, has correct API format etc.
+     *
+     * @param stdClass $response
+     * @throws available_update_checker_exception
+     */
+    protected function validate_response(stdClass $response) {
+
+        if (empty($response)) {
+            throw new available_update_checker_exception('err_response_empty');
+        }
+
+        if (empty($response->status) or $response->status !== 'OK') {
+            throw new available_update_checker_exception('err_response_status', $response->status);
+        }
+
+        if (empty($response->apiver) or $response->apiver != '1.0') {
+            throw new available_update_checker_exception('err_response_format_version', $response->apiver);
+        }
+    }
+
+    /**
+     * Stores the fetched response for later usage
+     *
+     * This implementation uses the config_plugins table as the permanent storage.
+     *
+     * @param stdClass $response the data returned by the updates info provider
+     */
+    protected function process_response(stdClass $response) {
+
+        $components = $this->merge_components_info($this->config->components, $response->components, $response->timegenerated);
+
+        set_config('timelastfetched', time(), 'core_plugin');
+        set_config('ticket', $response->ticket, 'core_plugin');
+        set_config('components', json_encode($components), 'core_plugin');
+
+        $this->load_config(true);
+    }
+
+    /**
+     * Merges the current and the new info about the available updates
+     *
+     * @param stdClass $old
+     * @param stdClass $new
+     * @param int $timegenerated the timestamp of when the $new was generated
+     * @return stdClass merged
+     */
+    protected function merge_components_info(stdClass $old, stdClass $new, $timegenerated=null) {
+        $merged = clone($old);
+        if (is_null($timegenerated)) {
+            $timegenerated = time();
+        }
+        foreach ($new as $branch => $components) {
+            foreach ($components as $component => $info) {
+                $info->timegenerated = $timegenerated;
+                if (isset($info->version)) {
+                    $merged->$branch->$component = $info;
+                }
+            }
+        }
+        return $merged;
+    }
+
+    /**
+     * Loads the core_plugin subsystem config
+     *
+     * @param bool $forcereload reload the config even if it was already loaded
+     */
+    protected function load_config($forcereload = false) {
+        if ($forcereload or is_null($this->config)) {
+            $this->config = get_config('core_plugin');
+        }
+
+        if (empty($this->config->components)) {
+            $this->config->components = new stdClass();
+        } else {
+            $this->config->components = json_decode($this->config->components);
+        }
+    }
+
+    /**
+     * Returns the URL to send update requests to
+     *
+     * During the development or testing, you can set $CFG->alternativeupdateproviderurl
+     * to a custom URL that will be used. Otherwise the standard URL will be returned.
+     *
+     * @return string URL
+     */
+    protected function prepare_request_url() {
+        global $CFG;
+
+        if (!empty($CFG->alternativeupdateproviderurl)) {
+            return $CFG->alternativeupdateproviderurl;
+        } else {
+            return 'http://download.moodle.org/api/1.0/updates.php';
+        }
+    }
+
+    /**
+     * Returns the list of HTTP params to be sent to the updates provider URL
+     *
+     * @return array of (string)param => (string)value
+     */
+    protected function prepare_request_params() {
+        global $CFG;
+
+        $params = array();
+        $params['format'] = 'json';
+
+        if (isset($this->config->ticket)) {
+            $params['ticket'] = $this->config->ticket;
+        }
+
+        if (isset($this->localversion)) {
+            $params['version'] = $this->localversion;
+        }
+
+        if (isset($this->localrelease)) {
+            $params['release'] = $this->localrelease;
+        }
+
+        // todo localplugins
+        return $params;
+    }
+}
+
+
+/**
  * Factory class producing required subclasses of {@link plugininfo_base}
  */
 class plugininfo_default_factory {
