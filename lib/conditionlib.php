@@ -26,27 +26,27 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/** 
- * CONDITION_STUDENTVIEW_HIDE - The activity is not displayed to students at all when conditions aren't met. 
+/**
+ * CONDITION_STUDENTVIEW_HIDE - The activity is not displayed to students at all when conditions aren't met.
  */
 define('CONDITION_STUDENTVIEW_HIDE',0);
-/** 
- * CONDITION_STUDENTVIEW_SHOW - The activity is displayed to students as a greyed-out name, with 
- * informational text that explains the conditions under which it will be available. 
+/**
+ * CONDITION_STUDENTVIEW_SHOW - The activity is displayed to students as a greyed-out name, with
+ * informational text that explains the conditions under which it will be available.
  */
 define('CONDITION_STUDENTVIEW_SHOW',1);
 
-/** 
- * CONDITION_MISSING_NOTHING - The $cm variable is expected to contain all completion-related data 
+/**
+ * CONDITION_MISSING_NOTHING - The $cm variable is expected to contain all completion-related data
  */
 define('CONDITION_MISSING_NOTHING',0);
-/** 
+/**
  * CONDITION_MISSING_EXTRATABLE - The $cm variable is expected to contain the fields from course_modules
- * but not the course_modules_availability data 
+ * but not the course_modules_availability data
  */
 define('CONDITION_MISSING_EXTRATABLE',1);
-/** 
- * CONDITION_MISSING_EVERYTHING - The $cm variable is expected to contain nothing except the ID 
+/**
+ * CONDITION_MISSING_EVERYTHING - The $cm variable is expected to contain nothing except the ID
  */
 define('CONDITION_MISSING_EVERYTHING',2);
 
@@ -64,7 +64,7 @@ $CONDITIONLIB_PRIVATE->usedincondition = array();
 
 /**
  * Core class to handle conditional activites
- * 
+ *
  * @package   core_condition
  * @category  condition
  * @copyright 2008 Sam Marshall
@@ -207,7 +207,7 @@ WHERE
 
     /**
      * Just a wrapper to call require_data()
-     * 
+     *
      * @see require_data()
      * @return object A course-module object with all the information required to
      *   determine availability.
