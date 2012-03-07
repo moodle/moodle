@@ -38,5 +38,13 @@
             ?> /> <?php echo get_string('rows', 'data'); ?>
         </td>
     </tr>
+    <tr>
+        <td class="c0"><label for="param5"><?php echo get_string('maxbytes', 'datafield_textarea'); ?></label></td>
+        <td class="c1">
+            <input class="c1" type="text" name="param5" id="param5"
+                   value="<?php if (isset($this->field->param5)) { p($this->field->param5); } else { echo '0'; } ?>" />
+            <?php echo get_string('maxbytes_desc', 'datafield_textarea'); ?>
+        </td>
+    </tr>
 </table>
 <input type="hidden" name="param4" id="param4" value="<?php echo FORMAT_HTML; ?>" />
