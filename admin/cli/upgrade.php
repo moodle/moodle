@@ -93,7 +93,7 @@ $oldversion = "$CFG->release ($CFG->version)";
 $newversion = "$release ($version)";
 
 if (!moodle_needs_upgrading()) {
-    cli_error(get_string('cliupgradenoneed', 'core_admin', $newversion), 63);
+    cli_error(get_string('cliupgradenoneed', 'core_admin', $newversion), 0);
 }
 
 // Test environment first.
