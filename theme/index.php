@@ -192,10 +192,19 @@ if (!empty($CFG->enabledevicedetection) && empty($device)) {
         // Contents of the second cell.
         $infocell = $OUTPUT->heading($strthemename, 3);
 
-        // Button to choose this as the main theme
-        $maintheme = new single_button(new moodle_url('/theme/index.php', array('device' => $device, 'choose' => $themename, 'sesskey' => sesskey())), get_string('usetheme'), 'get');
-        $maintheme->disabled = $ischosentheme;
-        $infocell .= $OUTPUT->render($maintheme);
+        // Button to choose this as the main theme or unset this theme for
+        // devices other then default
+        if (($ischosentheme) && ($device != 'default')) {
+            $unsetthemestr = get_string('unsettheme', 'admin');
+            $unsetthemeurl = new moodle_url('/theme/index.php', array('device' => $device, 'unsettheme' => true, 'sesskey' => sesskey()));
+            $unsetbutton = new single_button($unsetthemeurl, $unsetthemestr, 'get');
+            $infocell .= $OUTPUT->render($unsetbutton);
+        } else if ((!$ischosentheme)) {
+            $setthemestr = get_string('usetheme');
+            $setthemeurl = new moodle_url('/theme/index.php', array('device' => $device, 'choose' => $themename, 'sesskey' => sesskey()));
+            $setthemebutton = new single_button($setthemeurl, $setthemestr, 'get');
+            $infocell .= $OUTPUT->render($setthemebutton);
+        }
 
         $row[] = $infocell;
 
