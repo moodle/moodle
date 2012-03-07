@@ -39,7 +39,7 @@ class qformat_blackboard_six extends qformat_default {
     function provide_import() {
         return true;
     }
-    
+
     public function can_import_file($file) {
         $mimetypes = array(
             mimeinfo('type', '.dat'),

@@ -102,7 +102,7 @@ class qformat_default {
     public function export_file_extension() {
         return '.txt';
     }
-    
+
     /**
      * Check if the given file is capable of being imported by this plugin.
      *
@@ -110,7 +110,7 @@ class qformat_default {
      * not be performed by this method. Simple file type or magic-number tests
      * would be suitable.
      *
-     * @param stored_file $file the file to check 
+     * @param stored_file $file the file to check
      * @return bool whether this plugin can import the file
      */
     public function can_import_file($file) {
