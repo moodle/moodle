@@ -91,8 +91,17 @@ class testable_plugin_manager extends plugin_manager {
             'mod' => array(
                 'foo' => plugininfo_default_factory::make('mod', $CFG->dirroot.'/mod', 'foo',
                     $CFG->dirroot.'/mod/foo', 'testable_plugininfo_mod'),
+                'bar' => plugininfo_default_factory::make('mod', $CFG->dirroot.'/bar', 'bar',
+                    $CFG->dirroot.'/mod/bar', 'testable_plugininfo_mod'),
+                'buz' => plugininfo_default_factory::make('mod', $CFG->dirroot.'/buz', 'buz',
+                    $CFG->dirroot.'/mod/buz', 'testable_plugininfo_mod'),
             )
         );
+
+        $checker = testable_available_update_checker::instance();
+        $this->pluginsinfo['mod']['foo']->check_available_update($checker);
+        $this->pluginsinfo['mod']['bar']->check_available_update($checker);
+        $this->pluginsinfo['mod']['buz']->check_available_update($checker);
 
         return $this->pluginsinfo;
     }
@@ -100,9 +109,69 @@ class testable_plugin_manager extends plugin_manager {
 
 
 /**
- * Test cases for the pluginlib API
- *
- * These are basic tests to document the basic API of the plugin manager.
+ * Modified version of {@link available_update_checker} suitable for testing
+ */
+class testable_available_update_checker extends available_update_checker {
+
+    /**
+     * Factory method for this class
+     *
+     * @return testable_available_update_checker the singleton instance
+     */
+    public static function instance() {
+        global $CFG;
+
+        if (is_null(self::$singletoninstance)) {
+            self::$singletoninstance = new self();
+        }
+        return self::$singletoninstance;
+    }
+
+    /**
+     * Do not load config in this testable subclass
+     */
+    protected function load_config() {
+    }
+
+    /**
+     * Do not fetch anything in this testable subclass
+     */
+    public function fetch() {
+    }
+
+    /**
+     * Here we simulate read access to the fetched remote statuses
+     */
+    public function get_update_info($component) {
+        if ($component === 'mod_foo') {
+            // no update available
+            return (object)array(
+                'version' => 2012030500,
+            );
+
+        } else if ($component === 'mod_bar') {
+            // there is an update available
+            return (object)array(
+                'version' => 2012030501,
+            );
+
+        } else {
+            // nothing known to us
+            return null;
+        }
+    }
+
+    /**
+     * Makes the method public so we can test it
+     */
+    public function merge_components_info(stdClass $old, stdClass $new, $timegenerated=null) {
+        return parent::merge_components_info($old, $new, $timegenerated);
+    }
+}
+
+
+/**
+ * Tests of the basic API of the plugin manager
  */
 class plugin_manager_test extends UnitTestCase {
 
@@ -123,5 +192,74 @@ class plugin_manager_test extends UnitTestCase {
         $plugins = $pluginman->get_plugins();
         $modfoo = $plugins['mod']['foo'];
         $this->assertEqual($modfoo->get_status(), plugin_manager::PLUGIN_STATUS_UPGRADE);
+    }
+
+    public function test_available_update() {
+        $pluginman = testable_plugin_manager::instance();
+        $plugins = $pluginman->get_plugins();
+        $this->assertFalse($plugins['mod']['foo']->available_update());
+        $this->assertNull($plugins['mod']['buz']->available_update());
+        $this->assertIsA($plugins['mod']['bar']->available_update(), 'stdClass');
+        $this->assertEqual($plugins['mod']['bar']->available_update()->version, 2012030501);
+    }
+}
+
+
+/**
+ * Tests of the basic API of the available update checker
+ */
+class available_update_checker_test extends UnitTestCase {
+
+    public function test_core_available_update() {
+        $provider = testable_available_update_checker::instance();
+        $this->assertTrue($provider instanceof available_update_checker);
+    }
+
+    public function test_merge_components_info() {
+        $old = (object)array(
+            '2.2' => (object)array(
+                'core' => (object)array(
+                    'version' => 2011120501.11,
+                    'release' => '2.2.1+ (Build: 20120301)',
+                    'maturity' => MATURITY_STABLE,
+                ),
+                'mod_foo' => (object)array(
+                    'version' => 2011010100,
+                ),
+                'mod_bar' => (object)array(
+                    'version' => 2011020200,
+                )
+            )
+        );
+        $new = (object)array(
+            '2.2' => (object)array(
+                'core' => (object)array(
+                    'version' => 2011120501.12,
+                    'release' => '2.2.1+ (Build: 20120302)',
+                    'maturity' => MATURITY_STABLE,
+                ),
+                'mod_bar' => (object)array(
+                    'version' => 2011020201,
+                ),
+            ),
+            '2.3' => (object)array(
+                'core' => (object)array(
+                    'version' => 2012030100.00,
+                    'release' => '2.3dev (Build: 20120301)',
+                    'maturity' => MATURITY_ALPHA,
+                ),
+                'mod_foo' => (object)array(
+                    'version' => 2012010200,
+                )
+            )
+        );
+        $checker = testable_available_update_checker::instance();
+        $now = time();
+        $merged = $checker->merge_components_info($old, $new, $now);
+        $this->assertEqual($merged->{2.2}->core->version, 2011120501.12); // from $new
+        $this->assertEqual($merged->{2.2}->mod_bar->version, 2011020201); // from $new
+        $this->assertEqual($merged->{2.2}->mod_foo->version, 2011010100); // from $old
+        $this->assertEqual($merged->{2.3}->core->version, 2012030100.00); // from $new
+        $this->assertFalse(isset($merged->{2.3}->mod_bar));
     }
 }
