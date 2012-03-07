@@ -72,6 +72,7 @@ M.core_filepicker.init = function(Y, options) {
 
     Y.extend(FilePickerHelper, Y.Base, {
         api: M.cfg.wwwroot+'/repository/repository_ajax.php',
+        cached_responses: {},
 
         initializer: function(options) {
             this.options = options;
@@ -163,6 +164,11 @@ M.core_filepicker.init = function(Y, options) {
                             if (data.msg) {
                                 scope.print_msg(data.msg, 'info');
                             }
+                            // cache result if applicable
+                            if (args.action != 'upload' && data.allowcaching) {
+                                scope.cached_responses[params] = data;
+                            }
+                            // invoke callback
                             args.callback(id,data,p);
                         }
                     }
@@ -179,9 +185,15 @@ M.core_filepicker.init = function(Y, options) {
             if (args.form) {
                 cfg.form = args.form;
             }
-            Y.io(api, cfg);
-            if (redraw) {
-                this.wait('load');
+            // check if result of the same request has been already cached. If not, request it
+            // (never applicable in case of form submission and/or upload action):
+            if (!args.form && args.action != 'upload' && scope.cached_responses[params]) {
+                args.callback(null, scope.cached_responses[params], {scope: scope})
+            } else {
+                Y.io(api, cfg);
+                if (redraw) {
+                    this.wait('load');
+                }
             }
         },
         process_existing_file: function(data) {

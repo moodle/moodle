@@ -223,6 +223,7 @@ class repository_upload extends repository {
         $ret['list'] = array();
         $ret['dynload'] = false;
         $ret['upload'] = array('label'=>get_string('attachment', 'repository'), 'id'=>'repo-form');
+        $ret['allowcaching'] = true; // indicates that result of get_listing() can be cached in filepicker.js
         return $ret;
     }
 
