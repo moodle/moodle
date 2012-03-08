@@ -2,6 +2,13 @@ This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
 
+=== 2.3 ===
+
+required changes in code:
+* define the capability mod/xxx:addinstance (and the corresponding lang string)
+  (unless your mod is a MOD_ARCHETYPE_SYSTEM).
+
+
 === 2.2 ===
 
 required changes in code:
