@@ -1049,9 +1049,17 @@ function get_moodle_cookie() {
         return '';
     } else {
         $username = rc4decrypt($_COOKIE[$cookiename]);
+        if ($username != clean_param($username, PARAM_USERNAME)) {
+            $username = rc4decrypt($_COOKIE[$cookiename], false);
+            if ($username == clean_param($username, PARAM_USERNAME)) {
+                set_moodle_cookie($username);
+            } else {
+                $username = '';
+            }
+        }
         if ($username === 'guest' or $username === 'nobody') {
             // backwards compatibility - we do not set these cookies any more
-            return '';
+            $username = '';
         }
         return $username;
     }

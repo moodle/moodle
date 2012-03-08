@@ -7383,27 +7383,51 @@ class emoticon_manager {
 /**
  * rc4encrypt
  *
- * @todo Finish documenting this function
+ * Please note that in this version of moodle that the default for rc4encryption is
+ * using the slightly more secure password key. There may be an issue when upgrading
+ * from an older version of moodle.
  *
- * @param string $data Data to encrypt
- * @return string The now encrypted data
+ * @todo MDL-31836 Remove the old password key in version 2.4
+ * Code also needs to be changed in sessionlib.php
+ * @see get_moodle_cookie()
+ * @see set_moodle_cookie()
+ *
+ * @param string $data        Data to encrypt.
+ * @param bool $usesecurekey  Lets us know if we are using the old or new secure password key.
+ * @return string             The now encrypted data.
  */
-function rc4encrypt($data) {
-    $password = get_site_identifier();
-    return endecrypt($password, $data, '');
+function rc4encrypt($data, $usesecurekey = true) {
+    if (!$usesecurekey) {
+        $passwordkey = 'nfgjeingjk';
+    } else {
+        $passwordkey = get_site_identifier();
+    }
+    return endecrypt($passwordkey, $data, '');
 }
 
 /**
  * rc4decrypt
  *
- * @todo Finish documenting this function
+ * Please note that in this version of moodle that the default for rc4encryption is
+ * using the slightly more secure password key. There may be an issue when upgrading
+ * from an older version of moodle.
  *
- * @param string $data Data to decrypt
- * @return string The now decrypted data
+ * @todo MDL-31836 Remove the old password key in version 2.4
+ * Code also needs to be changed in sessionlib.php
+ * @see get_moodle_cookie()
+ * @see set_moodle_cookie()
+ *
+ * @param string $data        Data to decrypt.
+ * @param bool $usesecurekey  Lets us know if we are using the old or new secure password key.
+ * @return string             The now decrypted data.
  */
-function rc4decrypt($data) {
-    $password = get_site_identifier();
-    return endecrypt($password, $data, 'de');
+function rc4decrypt($data, $usesecurekey = true) {
+    if (!$usesecurekey) {
+        $passwordkey = 'nfgjeingjk';
+    } else {
+        $passwordkey = get_site_identifier();
+    }
+    return endecrypt($passwordkey, $data, 'de');
 }
 
 /**
