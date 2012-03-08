@@ -35,8 +35,14 @@ a.dimmed_text:visited,
 .dimmed_text a:link,
 .dimmed_text a:visited,
 .dimmed_category,
-.dimmed_category a { height: 1%; opacity: 0.5; -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; filter: alpha(opacity=50); }
-
+.dimmed_category a {
+    color: #AAA;
+}
+.activity.label .dimmed_text {
+    opacity: 0.5;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter: alpha(opacity=50);
+}
 .unlist,
 .unlist li,
 .inline-list,
