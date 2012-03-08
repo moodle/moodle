@@ -3117,6 +3117,7 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
  * @return bool
  */
 function data_presets_save($course, $cm, $data, $path) {
+    global $USER;
     $fs = get_file_storage();
     $filerecord = new stdClass;
     $filerecord->contextid = DATA_PRESET_CONTEXT;
@@ -3124,6 +3125,7 @@ function data_presets_save($course, $cm, $data, $path) {
     $filerecord->filearea = DATA_PRESET_FILEAREA;
     $filerecord->itemid = 0;
     $filerecord->filepath = '/'.$path.'/';
+    $filerecord->userid = $USER->id;
 
     $filerecord->filename = 'preset.xml';
     $fs->create_file_from_string($filerecord, data_presets_generate_xml($course, $cm, $data));
