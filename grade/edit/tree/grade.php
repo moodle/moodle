@@ -193,20 +193,18 @@ if ($mform->is_cancelled()) {
         $data->feedbackformat = $old_grade_grade->feedbackformat;
     }
     // update final grade or feedback
+    // when we set override grade the first time, it happens here
     $grade_item->update_final_grade($data->userid, $data->finalgrade, 'editgrade', $data->feedback, $data->feedbackformat);
 
     $grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true);
     $grade_grade->grade_item =& $grade_item; // no db fetching
 
     if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:edit', $context)) {
-        if (!grade_floats_different($data->finalgrade, $old_grade_grade->finalgrade)
-          and $data->feedback === $old_grade_grade->feedback) {
-            // change overridden flag only if grade or feedback not changed
-            if (!isset($data->overridden)) {
-                $data->overridden = 0; // checkbox
-            }
-            $grade_grade->set_overridden($data->overridden);
+        // change overridden flag
+        if (!isset($data->overridden)) {
+            $data->overridden = 0; // checkbox unticked
         }
+        $grade_grade->set_overridden($data->overridden);
     }
 
     if (has_capability('moodle/grade:manage', $context) or has_capability('moodle/grade:hide', $context)) {
