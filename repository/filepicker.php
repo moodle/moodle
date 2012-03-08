@@ -139,7 +139,15 @@ case 'search':
         echo '<table>';
         foreach ($search_result['list'] as $item) {
             echo '<tr>';
-            echo '<td><img src="'.$item['thumbnail'].'" />';
+            echo '<td>';
+            $style = '';
+            if (isset($item['thumbnail_height'])) {
+                $style .= 'max-height:'.$item['thumbnail_height'].'px;';
+            }
+            if (isset($item['thumbnail_width'])) {
+                $style .= 'max-width:'.$item['thumbnail_width'].'px;';
+            }
+            echo html_writer::empty_tag('img', array('src' => $item['thumbnail'], 'style' => $style));
             echo '</td><td>';
             if (!empty($item['url'])) {
                 echo html_writer::link($item['url'], $item['title'], array('target'=>'_blank'));
@@ -227,7 +235,15 @@ case 'sign':
             echo '<table>';
             foreach ($list['list'] as $item) {
                 echo '<tr>';
-                echo '<td><img src="'.$item['thumbnail'].'" />';
+                echo '<td>';
+                $style = '';
+                if (isset($item['thumbnail_height'])) {
+                    $style .= 'max-height:'.$item['thumbnail_height'].'px;';
+                }
+                if (isset($item['thumbnail_width'])) {
+                    $style .= 'max-width:'.$item['thumbnail_width'].'px;';
+                }
+                echo html_writer::empty_tag('img', array('src' => $item['thumbnail'], 'style' => $style));
                 echo '</td><td>';
                 if (!empty($item['url'])) {
                     echo html_writer::link($item['url'], $item['title'], array('target'=>'_blank'));
