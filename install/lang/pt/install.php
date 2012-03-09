@@ -30,7 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['admindirname'] = 'Directório de administração';
+$string['admindirname'] = 'Diretório de administração';
 $string['availablelangs'] = 'Lista de línguas disponíveis';
 $string['chooselanguagehead'] = 'Escolha uma língua';
 $string['chooselanguagesub'] = 'Escolha por favor a língua a usar na instalação. Esta língua será usada por omissão no site, mas pode ser alterada posteriormente.';
@@ -39,17 +39,17 @@ $string['cliinstallheader'] = 'Programa de instalação do Moodle {$a} por linha
 $string['databasehost'] = 'Servidor da base de dados';
 $string['databasename'] = 'Nome da base de dados';
 $string['databasetypehead'] = 'Escolha driver da base de dados';
-$string['dataroot'] = 'Directório de dados';
+$string['dataroot'] = 'Diretório de dados';
 $string['dbprefix'] = 'Prefixo das tabelas';
-$string['dirroot'] = 'Directório do Moodle';
+$string['dirroot'] = 'Diretório do Moodle';
 $string['environmenthead'] = 'A verificar o seu ambiente ...';
-$string['environmentsub2'] = 'Cada versão do Moodle tem requisitos mínimos relativamente à versão do PHP e às extensões PHP obrigatórias. É feita uma análise total ao ambiente existente antes de cada instalação ou actualização. Por favor contacte o seu administrador de sistemas se não souber como instalar uma nova versão do PHP ou activar as suas extensões.';
+$string['environmentsub2'] = 'Cada versão do Moodle tem requisitos mínimos relativamente à versão do PHP e às extensões PHP obrigatórias. É feita uma análise total ao ambiente existente antes de cada instalação ou atualização. Por favor contate o seu administrador de sistemas se não souber como instalar uma nova versão do PHP ou ativar as suas extensões.';
 $string['errorsinenvironment'] = 'Erros no ambiente!';
 $string['installation'] = 'Instalação';
 $string['langdownloaderror'] = 'Não foi possível descarregar a língua "{$a}". O processo de instalação continuará em Inglês.';
-$string['memorylimithelp'] = '<p>Actualmente o seu servidor impõe ao PHP um limite de memória de {$a}.</p>
+$string['memorylimithelp'] = '<p>Atualmente o seu servidor impõe ao PHP um limite de memória de {$a}.</p>
 
-<p>Isso poderá causar mais tarde problemas, especialmente se tiver um grande número de módulos activos e/ou um número elevado de utilizadores.</p>
+<p>Isso poderá causar mais tarde problemas, especialmente se tiver um grande número de módulos ativos e/ou um número elevado de utilizadores.</p>
 
 <p>Recomendamos que configure o PHP com um limite maior, por exemplo, 40M.
 Existem várias formas de fazer essa alteração:</p>
@@ -57,39 +57,39 @@ Existem várias formas de fazer essa alteração:</p>
 <li>Recompilar o PHP com <i>--enable-memory-limit</i>.
 Isso permitirá que o próprio Moodle modifique o limite de memória.</li>
 <li>Se tiver acesso ao ficheiro php.ini, poderá modificar o valor de <b>memory_limit</b> para algo como 40M. Se não tiver acesso, poderá pedir ao adiminstrador do seu sistema que o faça.</li>
-<li>Em alguns servidores PHP poderá criar um ficheiro .htaccess no directório do Moodle, com a linha:
+<li>Em alguns servidores PHP poderá criar um ficheiro .htaccess no diretório do Moodle, com a linha:
 <p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>No entanto, em alguns servidores, isso faz com que nenhuma página PHP funcione (verá erros quando tentar ver as páginas) e terá que apagar o ficheiro .htaccess.</p></li>
 </ol>';
 $string['paths'] = 'Caminhos';
-$string['pathserrcreatedataroot'] = 'O programa de instalação não conseguiu criar o directório de dados ({$a->dataroot})';
+$string['pathserrcreatedataroot'] = 'O programa de instalação não conseguiu criar o diretório de dados ({$a->dataroot})';
 $string['pathshead'] = 'Confirmar caminhos';
-$string['pathsrodataroot'] = 'A directoria dataroot não tem permissões de escrita.';
-$string['pathsroparentdataroot'] = 'O directório pai ({$a->parent}) não tem permissões de escrita. O programa de instalação não conseguiu criar o directório de dados ({$a->dataroot})';
+$string['pathsrodataroot'] = 'A diretoria dataroot não tem permissões de escrita.';
+$string['pathsroparentdataroot'] = 'O diretório pai ({$a->parent}) não tem permissões de escrita. O programa de instalação não conseguiu criar o diretório de dados ({$a->dataroot})';
 $string['pathssubadmindir'] = 'Alguns (poucos) alojamentos web usam /admin como um URL especial para permitir o acesso ao control panel ou a outras funcionalidades.
 Infelizmente esta designação entra em conflito com a localização que o Moodle atribui às páginas de administração. 
-A solução passa por renomear o directório admin da sua instalação do Moodle e colocando o nome escolhido aqui. Por exemplo:
+A solução passa por renomear o diretório admin da sua instalação do Moodle e colocando o nome escolhido aqui. Por exemplo:
 <em>moodleadmin</em>. Isto corrige os links de administração no Moodle.';
-$string['pathssubdataroot'] = 'É necessário um local onde o Moodle possa gravar os ficheiros submetidos. Este directório tem que ter permissões de leitura e ESCRITA pelo servidor web (normalmente \'nobody\' ou \'apache\'), mas não pode estar acessível através da web. O programa de instalação tentará criar este directório se ele ainda não existir.';
-$string['pathssubdirroot'] = 'Caminho completo para a directoria de instalação do Moodle.';
+$string['pathssubdataroot'] = 'É necessário um local onde o Moodle possa gravar os ficheiros submetidos. Este diretório tem que ter permissões de leitura e ESCRITA pelo servidor web (normalmente \'nobody\' ou \'apache\'), mas não pode estar acessível através da web. O programa de instalação tentará criar este diretório se ele ainda não existir.';
+$string['pathssubdirroot'] = 'Caminho completo para a diretoria de instalação do Moodle.';
 $string['pathssubwwwroot'] = 'Endereço web completo para acesso ao Moodle.
 Não é possível aceder ao Moodle usando vários endereços.
-Se o seu site tem vários endereços públicos é necessário definir redireccionamentos permanentes em todos eles excepto neste.
+Se o seu site tem vários endereços públicos é necessário definir redirecionamentos permanentes em todos eles exceto neste.
 Se o seu site pode ser acedido via intranet e Internet use este endereço público e configure o DNS para que a intranet permita a utilização deste endereço.
-Se o endereço não estiver correcto mude o URL no seu browser para reiniciar a instalação com um valor diferente.';
-$string['pathsunsecuredataroot'] = 'O directório dataroot não é seguro';
-$string['pathswrongadmindir'] = 'A directoria admin não existe';
+Se o endereço não estiver correto mude o URL no seu browser para reiniciar a instalação com um valor diferente.';
+$string['pathsunsecuredataroot'] = 'O diretório dataroot não é seguro';
+$string['pathswrongadmindir'] = 'A diretoria admin não existe';
 $string['phpextension'] = 'Extensão PHP {$a}';
 $string['phpversion'] = 'Versão do PHP';
 $string['phpversionhelp'] = '<p>O Moodle precisa da versão 4.3.0 ou 5.1.0 do PHP (5.0.x produz vários problemas) ou superior.</p>
-<p>Actualmente está a utilizar a versão {$a}</p>
-<p>Deverá actualizar o PHP ou migrar para outro servidor com uma versão do PHP mais recente!</p>
+<p>Atualmente está a utilizar a versão {$a}</p>
+<p>Deverá atualizar o PHP ou migrar para outro servidor com uma versão do PHP mais recente!</p>
 (No caso da versão 5.0.x, poderá regredir para uma versão 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Está a ver esta página porque o pacote <strong>{$a->packname} {$a->packversion}</strong> foi instalado e posto a funcionar com sucesso no seu computador. Parabens!';
 $string['welcomep30'] = 'Esta versão do <strong>{$a->installername}</strong> inclui aplicações para criar um ambiente onde o <strong>Moodle</strong> possa funcionar, nomeadamente:';
 $string['welcomep40'] = 'Este pacote também inclui <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'A utilização de todas as aplicações neste pacote está regida pelas respectivas licenças. O pacote <strong>{$a->installername}</strong> completo é <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> distribuido nos termos da licença <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
-$string['welcomep60'] = 'As páginas seguintes vão conduzí-lo por alguns passos simples de seguir para configurar o <strong>Moodle</strong> no seu computador. Poderá aceitar as definições seleccionadas por omissão, ou, opcionalmente, usar outras definições mais apropriadas às suas necessidades.';
+$string['welcomep50'] = 'A utilização de todas as aplicações neste pacote está regida pelas respetivas licenças. O pacote <strong>{$a->installername}</strong> completo é <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> distribuido nos termos da licença <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
+$string['welcomep60'] = 'As páginas seguintes vão conduzí-lo por alguns passos simples de seguir para configurar o <strong>Moodle</strong> no seu computador. Poderá aceitar as definições selecionadas por omissão, ou, opcionalmente, usar outras definições mais apropriadas às suas necessidades.';
 $string['welcomep70'] = 'Clique no botão "Seguinte" em baixo, para continuar com a configuração do <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Endereço Web';
