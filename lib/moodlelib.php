@@ -6852,17 +6852,12 @@ class emoticon_manager {
  *
  * @todo Finish documenting this function
  *
- * @param string $data        Data to encrypt.
- * @param bool $usesecurekey  Lets us know if we are using the old or new password.
- * @return string             The now encrypted data.
+ * @param string $data Data to encrypt
+ * @return string The now encrypted data
  */
-function rc4encrypt($data, $usesecurekey = false) {
-    if (!$usesecurekey) {
-        $passwordkey = 'nfgjeingjk';
-    } else {
-        $passwordkey = get_site_identifier();
-    }
-    return endecrypt($passwordkey, $data, '');
+function rc4encrypt($data) {
+    $password = get_site_identifier();
+    return endecrypt($password, $data, '');
 }
 
 /**
@@ -6870,17 +6865,12 @@ function rc4encrypt($data, $usesecurekey = false) {
  *
  * @todo Finish documenting this function
  *
- * @param string $data        Data to decrypt.
- * @param bool $usesecurekey  Lets us know if we are using the old or new password.
- * @return string             The now decrypted data.
+ * @param string $data Data to decrypt
+ * @return string The now decrypted data
  */
-function rc4decrypt($data, $usesecurekey = false) {
-    if (!$usesecurekey) {
-        $passwordkey = 'nfgjeingjk';
-    } else {
-        $passwordkey = get_site_identifier();
-    }
-    return endecrypt($passwordkey, $data, 'de');
+function rc4decrypt($data) {
+    $password = get_site_identifier();
+    return endecrypt($password, $data, 'de');
 }
 
 /**
