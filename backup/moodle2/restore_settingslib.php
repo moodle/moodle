@@ -60,6 +60,13 @@ class restore_comments_setting extends restore_role_assignments_setting {}
 
 /**
  * root setting to control if restore will create
+ * events or no, depends of @restore_users_setting
+ * exactly in the same way than @restore_role_assignments_setting so we extend from it
+ */
+class restore_calendarevents_setting extends restore_role_assignments_setting {}
+
+/**
+ * root setting to control if restore will create
  * completion info or no, depends of @restore_users_setting
  * exactly in the same way than @restore_role_assignments_setting so we extend from it
  */
