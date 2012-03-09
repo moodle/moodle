@@ -2765,12 +2765,12 @@ function get_moodle_cookie() {
         return '';
     } else {
         $username = rc4decrypt($_COOKIE[$cookiename], true);
-        $userdata = moodle_strtolower($username);
-        $userdata = preg_replace('/[^-\.@_a-z0-9]/', '', $userdata);
+        $username = moodle_strtolower($username);
+        $userdata = preg_replace('/[^-\.@_a-z0-9]/', '', $username);
         if ($username != $userdata) {
             $username = rc4decrypt($_COOKIE[$cookiename]);
-            $userdata = moodle_strtolower($username);
-            $userdata = preg_replace('/[^-\.@_a-z0-9]/', '', $userdata);
+            $username = moodle_strtolower($username);
+            $userdata = preg_replace('/[^-\.@_a-z0-9]/', '', $username);
             if ($userdata == $userdata) {
                 set_moodle_cookie($username);
             } else {
