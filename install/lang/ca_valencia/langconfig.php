@@ -31,4 +31,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['parentlanguage'] = 'ca';
-$string['thislanguage'] = 'valencià';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Valencià (Català meridional)';

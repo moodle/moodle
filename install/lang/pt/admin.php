@@ -32,11 +32,11 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 's';
-$string['cliincorrectvalueretry'] = 'Valor incorrecto, por favor tente novamente';
+$string['cliincorrectvalueretry'] = 'Valor incorreto, por favor tente novamente';
 $string['clitypevalue'] = 'valor do tipo';
 $string['cliunknowoption'] = 'Opções desconhecidas: 
 {$a} 
 Por favor use a opção --help';
 $string['cliyesnoprompt'] = 'digite s (para sim) ou n (para não)';
-$string['environmentrequireinstall'] = 'é necessário estar instalada/activa';
+$string['environmentrequireinstall'] = 'é necessário estar instalada/ativa';
 $string['environmentrequireversion'] = 'É requerida a versão {$a->needed} e está a correr a versão {$a->current}';
