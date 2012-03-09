@@ -172,6 +172,10 @@ abstract class page_wiki {
             if (!$manage and !($edit and groups_is_member($currentgroup))) {
                 unset($this->tabs['edit']);
             }
+        } else {
+            if (!has_capability('mod/wiki:editpage', $PAGE->context)) {
+                unset($this->tabs['edit']);
+            }
         }
 
 
@@ -320,7 +324,8 @@ class page_wiki_view extends page_wiki {
                 }
             }
         } else {
-            echo get_string('cannotviewpage', 'wiki');
+            // @TODO: Tranlate it
+            echo "You can not view this page";
         }
     }
 
@@ -413,7 +418,8 @@ class page_wiki_edit extends page_wiki {
         if (wiki_user_can_edit($this->subwiki)) {
             $this->print_edit();
         } else {
-            echo get_string('cannoteditpage', 'wiki');
+            // @TODO: Translate it
+            echo "You can not edit this page";
         }
     }
 
