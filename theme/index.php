@@ -133,7 +133,7 @@ if (!empty($CFG->enabledevicedetection) && empty($device)) {
         $select = new single_button($deviceurl, $strthemeselect, 'get');
 
         $table->data[] = array(
-            $device,
+            $OUTPUT->heading(ucfirst($device), 3),
             $screenshotcell,
             $headingthemename . $OUTPUT->render($select) . $unsetthemebutton
         );
