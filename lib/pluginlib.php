@@ -2288,12 +2288,14 @@ class plugininfo_enrol extends plugininfo_base {
 class plugininfo_message extends plugininfo_base {
 
     public function get_settings_url() {
-
-        if (file_exists($this->full_path('settings.php')) or file_exists($this->full_path('settingstree.php'))) {
-            return new moodle_url('/admin/settings.php', array('section' => 'messagesetting' . $this->name));
-        } else {
-            return parent::get_settings_url();
+        $processors = get_message_processors();
+        if (isset($processors[$this->name])) {
+            $processor = $processors[$this->name];
+            if ($processor->available && $processor->hassettings) {
+                return new moodle_url('settings.php', array('section' => 'messagesetting'.$processor->name));
+            }
         }
+        return parent::get_settings_url();
     }
 }
 
