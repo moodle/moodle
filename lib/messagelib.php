@@ -129,7 +129,7 @@ function message_send($eventdata) {
         } else {
             //MDL-25114 They supplied an $eventdata->component $eventdata->name combination which doesn't
             //exist in the message_provider table (thus there is no default settings for them)
-            $preferrormsg = get_string('couldnotfindpreference', 'message', $preferencename);
+            $preferrormsg = get_string('couldnotfindpreference', 'message', $defaultpreference);
             throw new coding_exception($preferrormsg,'blah');
         }
 
