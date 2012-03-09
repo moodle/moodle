@@ -1060,40 +1060,54 @@ abstract class moodleform {
     function add_checkbox_controller($groupid, $text = null, $attributes = null, $originalValue = 0) {
         global $CFG, $PAGE;
 
+        // Name of the controller button
+        $checkboxcontrollername = 'nosubmit_checkbox_controller' . $groupid;
+        $checkboxcontrollerparam = 'checkbox_controller'. $groupid;
+        $checkboxgroupclass = 'checkboxgroup'.$groupid;
+
         // Set the default text if none was specified
         if (empty($text)) {
             $text = get_string('selectallornone', 'form');
         }
 
         $mform = $this->_form;
-        $select_value = optional_param('checkbox_controller'. $groupid, null, PARAM_INT);
+        $select_value = optional_param($checkboxcontrollerparam, null, PARAM_INT);
+        $contollerbutton = optional_param($checkboxcontrollername, null, PARAM_ALPHAEXT);
 
+        $new_select_value = $select_value;
         if (is_null($select_value)) {
-            $new_select_value = 0;
-        } else {
+            $new_select_value = $originalValue;
+        } else if (!is_null($contollerbutton)) {
             $new_select_value = (int) !$select_value;
         }
+        // set checkbox state depending on orignal/submitted value by controoler button
+        if (!is_null($contollerbutton) || is_null($select_value)) {
+            foreach ($mform->_elements as $element) {
+                if (($element instanceof MoodleQuickForm_advcheckbox) &&
+                    $element->getAttribute('class') == $checkboxgroupclass) {
+                    $mform->setConstants(array($element->getName() => $new_select_value));
+                }
+            }
+        }
 
-        $mform->addElement('hidden', "checkbox_controller".$groupid, null, array('id' => "id_checkbox_controller".$groupid));
-        $mform->setType("checkbox_controller$groupid", PARAM_INT);
-        $mform->setConstants(array("checkbox_controller$groupid" => $new_select_value));
-
-        $checkbox_controller_name = 'nosubmit_checkbox_controller' . $groupid;
-        $mform->registerNoSubmitButton($checkbox_controller_name);
+        $mform->addElement('hidden', $checkboxcontrollerparam, $new_select_value, array('id' => "id_".$checkboxcontrollerparam));
+        $mform->setType($checkboxcontrollerparam, PARAM_INT);
+        $mform->setConstants(array($checkboxcontrollerparam => $new_select_value));
 
         $PAGE->requires->yui_module('moodle-form-checkboxcontroller', 'M.form.checkboxcontroller',
                 array(
                     array('groupid' => $groupid,
-                        'checkboxclass' => 'checkboxgroup'.$groupid,
-                        'checkboxcontroller' => "checkbox_controller".$groupid,
-                        'controllerbutton' => $checkbox_controller_name)
+                        'checkboxclass' => $checkboxgroupclass,
+                        'checkboxcontroller' => $checkboxcontrollerparam,
+                        'controllerbutton' => $checkboxcontrollername)
                     )
                 );
 
         require_once("$CFG->libdir/form/submit.php");
-        $submitlink = new MoodleQuickForm_submit($checkbox_controller_name, $attributes);
+        $submitlink = new MoodleQuickForm_submit($checkboxcontrollername, $attributes);
         $mform->addElement($submitlink);
-        $mform->setDefault($checkbox_controller_name, $text);
+        $mform->registerNoSubmitButton($checkboxcontrollername);
+        $mform->setDefault($checkboxcontrollername, $text);
     }
 
     /**
