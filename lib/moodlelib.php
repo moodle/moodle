@@ -2771,7 +2771,7 @@ function get_moodle_cookie() {
             $username = rc4decrypt($_COOKIE[$cookiename]);
             $userdata = moodle_strtolower($username);
             $userdata = preg_replace('/[^-\.@_a-z0-9]/', '', $userdata);
-            if ($username == $userdata) {
+            if ($userdata == $userdata) {
                 set_moodle_cookie($username);
             } else {
                 $username = '';
