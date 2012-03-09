@@ -2747,7 +2747,7 @@ function set_moodle_cookie($thing) {
     $seconds = DAYSECS*$days;
 
     setCookie($cookiename, '', time() - HOURSECS, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure);
-    setCookie($cookiename, rc4encrypt($thing, true), time()+$seconds, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure);
+    setCookie($cookiename, rc4encrypt($thing), time()+$seconds, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure);
 }
 
 /**
@@ -2764,23 +2764,8 @@ function get_moodle_cookie() {
     if (empty($_COOKIE[$cookiename])) {
         return '';
     } else {
-        $username = rc4decrypt($_COOKIE[$cookiename], true);
-        $username = moodle_strtolower($username);
-        $userdata = preg_replace('/[^-\.@_a-z0-9]/', '', $username);
-        if ($username != $userdata) {
-            $username = rc4decrypt($_COOKIE[$cookiename]);
-            $username = moodle_strtolower($username);
-            $userdata = preg_replace('/[^-\.@_a-z0-9]/', '', $username);
-            if ($userdata == $userdata) {
-                set_moodle_cookie($username);
-            } else {
-                $username = '';
-            }
-        }
-        if ($username == 'guest') {   // Ignore guest account
-                $username = '';
-        }
-        return $username;
+        $thing = rc4decrypt($_COOKIE[$cookiename]);
+        return ($thing == 'guest') ? '': $thing;  // Ignore guest account
     }
 }
 
@@ -6039,33 +6024,25 @@ function get_list_of_currencies() {
 /**
  * rc4encrypt
  *
- * @param string $data        Data to encrypt.
- * @param bool $usesecurekey  Lets us know if we are using the old or new password.
- * @return string             The now encrypted data.
+ * @param string $data ?
+ * @return string
+ * @todo Finish documenting this function
  */
-function rc4encrypt($data, $usesecurekey = false) {
-    if (!$usesecurekey) {
-        $passwordkey = 'nfgjeingjk';
-    } else {
-        $passwordkey = get_site_identifier();
-    }
-    return endecrypt($passwordkey, $data, '');
+function rc4encrypt($data) {
+    $password = get_site_identifier();
+    return endecrypt($password, $data, '');
 }
 
 /**
  * rc4decrypt
  *
- * @param string $data        Data to decrypt.
- * @param bool $usesecurekey  Lets us know if we are using the old or new password.
- * @return string             The now decrypted data.
+ * @param string $data ?
+ * @return string
+ * @todo Finish documenting this function
  */
-function rc4decrypt($data, $usesecurekey = false) {
-    if (!$usesecurekey) {
-        $passwordkey = 'nfgjeingjk';
-    } else {
-        $passwordkey = get_site_identifier();
-    }
-    return endecrypt($passwordkey, $data, 'de');
+function rc4decrypt($data) {
+    $password = get_site_identifier();
+    return endecrypt($password, $data, 'de');
 }
 
 /**
