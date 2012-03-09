@@ -30,15 +30,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['cannotcreatelangdir'] = 'Não é possível criar o directório para pacotes linguísticos';
-$string['cannotcreatetempdir'] = 'Não é possível criar o directório temporário';
+$string['cannotcreatelangdir'] = 'Não é possível criar o diretório para pacotes linguísticos';
+$string['cannotcreatetempdir'] = 'Não é possível criar o diretório temporário';
 $string['cannotdownloadcomponents'] = 'Não é possível descarregar  componentes';
 $string['cannotdownloadzipfile'] = 'Não é possível descarregar o ficheiro ZIP';
 $string['cannotfindcomponent'] = 'O componente não foi encontrado';
 $string['cannotsavemd5file'] = 'Não é possível gravar ficheiro md5';
 $string['cannotsavezipfile'] = 'Não  é possível gravar ficheiro ZIP';
-$string['cannotunzipfile'] = 'Não é possível descompactar ficheiro ZIP';
-$string['componentisuptodate'] = 'O componente está actualizado';
+$string['cannotunzipfile'] = 'Não é possível descompatar ficheiro ZIP';
+$string['componentisuptodate'] = 'O componente está atualizado';
 $string['downloadedfilecheckfailed'] = 'Falhou a verificação do ficheiro descarregado.';
 $string['invalidmd5'] = 'md5 inválido';
 $string['missingrequiredfield'] = 'Falta algum campo necessário';
