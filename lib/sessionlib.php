@@ -1023,7 +1023,7 @@ function set_moodle_cookie($username) {
 
     if ($username !== '') {
         // set username cookie for 60 days
-        setcookie($cookiename, rc4encrypt($username, true), time()+(DAYSECS*60), $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure, $CFG->cookiehttponly);
+        setcookie($cookiename, rc4encrypt($username), time()+(DAYSECS*60), $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure, $CFG->cookiehttponly);
     }
 }
 
@@ -1048,18 +1048,10 @@ function get_moodle_cookie() {
     if (empty($_COOKIE[$cookiename])) {
         return '';
     } else {
-        $username = rc4decrypt($_COOKIE[$cookiename], true);
-        if ($username != clean_param($username, PARAM_USERNAME)) {
-            $username = rc4decrypt($_COOKIE[$cookiename]);
-            if ($username == clean_param($username, PARAM_USERNAME)) {
-                set_moodle_cookie($username);
-            } else {
-                $username = '';
-            }
-        }
+        $username = rc4decrypt($_COOKIE[$cookiename]);
         if ($username === 'guest' or $username === 'nobody') {
             // backwards compatibility - we do not set these cookies any more
-            $username = '';
+            return '';
         }
         return $username;
     }
