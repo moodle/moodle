@@ -57,7 +57,7 @@ $string['auth_dbsybasequoting'] = 'Use sybase quotes';
 $string['auth_dbsybasequotinghelp'] = 'Sybase style single quote escaping - needed for Oracle, MS SQL and some other databases. Do not use for MySQL!';
 $string['auth_dbtable'] = 'Name of the table in the database';
 $string['auth_dbtable_key'] = 'Table';
-$string['auth_dbtype'] = 'The database type (See the <a href="../lib/adodb/readme.htm#drivers">ADOdb documentation</a> for details)';
+$string['auth_dbtype'] = 'The database type (See the <a href="http://phplens.com/adodb/supported.databases.html" target="_blank">ADOdb documentation</a> for details)';
 $string['auth_dbtype_key'] = 'Database';
 $string['auth_dbupdatinguser'] = 'Updating user {$a->name} id {$a->id}';
 $string['auth_dbuser'] = 'Username with read access to the database';
