@@ -544,14 +544,14 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($columns['onechar']->meta_type    ,'C');
         $this->assertEqual($DB->get_field('test_table1', 'onechar', array(), IGNORE_MULTIPLE), 'Nice dflt!'); //check default has been applied
 
-        /// add one text field and check it
+        /// add one big text field and check it
         $field = new xmldb_field('onetext');
-        $field->set_attributes(XMLDB_TYPE_TEXT);
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'big');
         $dbman->add_field($table, $field);
         $this->assertTrue($dbman->field_exists($table, 'onetext'));
         $columns = $DB->get_columns('test_table1');
         $this->assertEqual($columns['onetext']->name         ,'onetext');
-        $this->assertEqual($columns['onetext']->max_length   , -1);
+        $this->assertEqual($columns['onetext']->max_length   , -1); // -1 means unknown or big
         $this->assertEqual($columns['onetext']->scale        , null);
         $this->assertEqual($columns['onetext']->not_null     , false);
         $this->assertEqual($columns['onetext']->primary_key  , false);
@@ -559,6 +559,20 @@ class ddl_test extends UnitTestCase {
         $this->assertEqual($columns['onetext']->has_default  , false);
         $this->assertEqual($columns['onetext']->default_value, null);
         $this->assertEqual($columns['onetext']->meta_type    ,'X');
+
+        /// add one medium text field and check it
+        $field = new xmldb_field('mediumtext');
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'medium');
+        $dbman->add_field($table, $field);
+        $columns = $DB->get_columns('test_table1');
+        $this->assertTrue(($columns['mediumtext']->max_length == -1) or ($columns['mediumtext']->max_length >= 16777215)); // -1 means unknown or big
+
+        /// add one small text field and check it
+        $field = new xmldb_field('smalltext');
+        $field->set_attributes(XMLDB_TYPE_TEXT, 'small');
+        $dbman->add_field($table, $field);
+        $columns = $DB->get_columns('test_table1');
+        $this->assertTrue(($columns['smalltext']->max_length == -1) or ($columns['smalltext']->max_length >= 65535)); // -1 means unknown or big
 
         /// add one binary field and check it
         $field = new xmldb_field('onebinary');
