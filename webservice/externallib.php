@@ -14,23 +14,32 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
  * external API for mobile web services
  *
- * @package    core
- * @subpackage webservice
- * @copyright  2011 Moodle Pty Ltd (http://moodle.com)
+ * @package    core_webservice
+ * @category   external
+ * @copyright  2011 Jerome Mouneyrac <jerome@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * Web service related functions
+ *
+ * @package    core_webservice
+ * @category   external
+ * @copyright  2011 Jerome Mouneyrac <jerome@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.2
  */
 class core_webservice_external extends external_api {
 
     /**
      * Returns description of method parameters
+     *
      * @return external_function_parameters
+     * @since Moodle 2.2
      */
     public static function get_site_info_parameters() {
         return new external_function_parameters(
@@ -49,9 +58,11 @@ class core_webservice_external extends external_api {
     /**
      * Return user information including profile picture + basic site information
      * Note:
-     * - no capability checking because we return just known information by logged user
+     * - no capability checking because we return only known information about logged user
+     *
      * @param array $serviceshortnames - DEPRECATED PARAMETER - values will be ignored - it was an original design error, we keep for backward compatibility.
-     * @return array
+     * @return array site info
+     * @since Moodle 2.2
      */
     public function get_site_info($serviceshortnames = array()) {
         global $USER, $SITE, $CFG, $DB;
@@ -139,7 +150,9 @@ class core_webservice_external extends external_api {
 
     /**
      * Returns description of method result value
+     *
      * @return external_single_structure
+     * @since Moodle 2.2
      */
     public static function get_site_info_returns() {
         return new external_single_structure(
@@ -167,14 +180,26 @@ class core_webservice_external extends external_api {
 
 /**
  * Deprecated web service related functions
- * @deprecated since Moodle 2.2 please use core_webservice_external instead
+ *
+ * @package    core_webservice
+ * @category   external
+ * @copyright  2011 Jerome Mouneyrac <jerome@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated Moodle 2.2 MDL-29106 - please do not use this class any more.
+ * @todo MDL-31194 This will be deleted in Moodle 2.5.
+ * @see core_webservice_external
+ * @since Moodle 2.1
  */
 class moodle_webservice_external extends external_api {
 
     /**
      * Returns description of method parameters
-     * @deprecated since Moodle 2.2 please use core_webservice_external::get_site_info_parameters instead
+     *
      * @return external_function_parameters
+     * @deprecated Moodle 2.2 - please do not use this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_webservice_external::get_site_info_parameters
+     * @since Moodle 2.1
      */
     public static function get_siteinfo_parameters() {
         return core_webservice_external::get_site_info_parameters();
@@ -184,9 +209,13 @@ class moodle_webservice_external extends external_api {
      * Return user information including profile picture + basic site information
      * Note:
      * - no capability checking because we return just known information by logged user
-     * @deprecated since Moodle 2.2 please use core_webservice_external::get_site_info instead
+     *
      * @param array $serviceshortnames of service shortnames - the functions of these services will be returned
      * @return array
+     * @deprecated Moodle 2.2 - please do not use this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_webservice_external::get_site_info
+     * @since Moodle 2.1
      */
     public function get_siteinfo($serviceshortnames = array()) {
         return core_webservice_external::get_site_info($serviceshortnames);
@@ -194,8 +223,12 @@ class moodle_webservice_external extends external_api {
 
     /**
      * Returns description of method result value
-     * @deprecated since Moodle 2.2 please use core_webservice_external::get_site_info_returns instead
+     *
      * @return external_single_structure
+     * @deprecated Moodle 2.2 - please do not use this function any more.
+     * @todo MDL-31194 This will be deleted in Moodle 2.5.
+     * @see core_webservice_external::get_site_info_returns
+     * @since Moodle 2.1
      */
     public static function get_siteinfo_returns() {
         return core_webservice_external::get_site_info_returns();

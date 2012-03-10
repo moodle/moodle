@@ -27,7 +27,7 @@
 class block_private_files extends block_base {
 
     function init() {
-        $this->title = get_string('myfiles');
+        $this->title = get_string('pluginname', 'block_private_files');
     }
 
     function specialization() {

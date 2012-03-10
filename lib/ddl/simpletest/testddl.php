@@ -901,20 +901,6 @@ class ddl_test extends UnitTestCase {
         //TODO: check the rest of attributes
     }
 
-    public function testChangeFieldSign() {
-        $dbman = $this->tdb->get_manager();
-// TODO: verify the signed is changed in db
-
-        $table = $this->create_deftable('test_table1');
-        $field = new xmldb_field('grade');
-        $field->set_attributes(XMLDB_TYPE_NUMBER, '10,2', XMLDB_UNSIGNED, null, null, null);
-        $dbman->change_field_unsigned($table, $field);
-
-        $field = new xmldb_field('grade');
-        $field->set_attributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null);
-        $dbman->change_field_unsigned($table, $field);
-    }
-
     public function testChangeFieldNullability() {
         $DB = $this->tdb; // do not use global $DB!
         $dbman = $this->tdb->get_manager();
@@ -1287,6 +1273,7 @@ class ddl_test extends UnitTestCase {
         $this->assertTrue($dbman->table_exists('test_table1'));
 
         // Real and valid xml file
+        //TODO: drop UNSINGED completely in Moodle 2.4
         $dbman->delete_tables_from_xmldb_file($CFG->libdir . '/ddl/simpletest/fixtures/xmldb_table.xml');
 
         // Check that the table has been deleted from DB

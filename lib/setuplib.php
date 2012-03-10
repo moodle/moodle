@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * These functions are required very early in the Moodle
  * setup process, before any of the main libraries are
@@ -29,7 +27,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/// Debug levels ///
+// Debug levels //
 /** no warnings at all */
 define('DEBUG_NONE', 0);
 /** E_ERROR | E_PARSE */
@@ -92,10 +90,30 @@ class object extends stdClass {};
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_exception extends Exception {
+
+    /**
+     * @var string The name of the string from error.php to print
+     */
     public $errorcode;
+
+    /**
+     * @var string The name of module
+     */
     public $module;
+
+    /**
+     * @var mixed Extra words and phrases that might be required in the error string
+     */
     public $a;
+
+    /**
+     * @var string The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
+     */
     public $link;
+
+    /**
+     * @var string Optional information to aid the debugging process
+     */
     public $debuginfo;
 
     /**
@@ -103,7 +121,7 @@ class moodle_exception extends Exception {
      * @param string $errorcode The name of the string from error.php to print
      * @param string $module name of module
      * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
-     * @param object $a Extra words and phrases that might be required in the error string
+     * @param mixed $a Extra words and phrases that might be required in the error string
      * @param string $debuginfo optional debugging information
      */
     function __construct($errorcode, $module='', $link='', $a=NULL, $debuginfo=null) {
@@ -132,12 +150,15 @@ class moodle_exception extends Exception {
  *
  * This exception is thrown from require_login()
  *
- * @package    core
- * @subpackage lib
+ * @package    core_access
  * @copyright  2010 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class require_login_exception extends moodle_exception {
+    /**
+     * Constructor
+     * @param string $debuginfo Information to aid the debugging process
+     */
     function __construct($debuginfo) {
         parent::__construct('requireloginerror', 'error', '', NULL, $debuginfo);
     }
@@ -154,6 +175,7 @@ class webservice_parameter_exception extends moodle_exception {
      * Constructor
      * @param string $errorcode The name of the string from webservice.php to print
      * @param string $a The name of the parameter
+     * @param string $debuginfo Optional information to aid debugging
      */
     function __construct($errorcode=null, $a = '', $debuginfo = null) {
         parent::__construct($errorcode, 'webservice', '', $a, $debuginfo);
@@ -164,12 +186,18 @@ class webservice_parameter_exception extends moodle_exception {
  * Exceptions indicating user does not have permissions to do something
  * and the execution can not continue.
  *
- * @package    core
- * @subpackage lib
+ * @package    core_access
  * @copyright  2009 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class required_capability_exception extends moodle_exception {
+    /**
+     * Constructor
+     * @param context $context The context used for the capability check
+     * @param string $capability The required capability
+     * @param string $errormessage The error message to show the user
+     * @param string $stringfile
+     */
     function __construct($context, $capability, $errormessage, $stringfile) {
         $capabilityname = get_capability_string($capability);
         if ($context->contextlevel == CONTEXT_MODULE and preg_match('/:view$/', $capability)) {
@@ -1020,7 +1048,7 @@ function get_real_size($size = 0) {
  * Try to disable all output buffering and purge
  * all headers.
  *
- * @private to be called only from lib/setup.php !
+ * @access private to be called only from lib/setup.php !
  * @return void
  */
 function disable_output_buffering() {
@@ -1221,6 +1249,11 @@ function make_cache_directory($directory, $exceptiononerror = true) {
 }
 
 
+/**
+ * Initialises an Memcached instance
+ * @global memcached $MCACHE
+ * @return boolean Returns true if an mcached instance could be successfully initialised
+ */
 function init_memcached() {
     global $CFG, $MCACHE;
 
@@ -1233,6 +1266,11 @@ function init_memcached() {
     return false;
 }
 
+/**
+ * Initialises an eAccelerator instance
+ * @global eaccelerator $MCACHE
+ * @return boolean Returns true if an eAccelerator instance could be successfully initialised
+ */
 function init_eaccelerator() {
     global $CFG, $MCACHE;
 
@@ -1332,8 +1370,8 @@ class bootstrap_renderer {
 
     /**
      * Constructor - to be used by core code only.
-     * @param $method
-     * @param $arguments
+     * @param string $method The method to call
+     * @param array $arguments Arguments to pass to the method being called
      * @return string
      */
     public function __call($method, $arguments) {
@@ -1478,7 +1516,7 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
     /**
      * Early notification message
      * @static
-     * @param $message
+     * @param string $message
      * @param string $classes usually notifyproblem or notifysuccess
      * @return string
      */
@@ -1489,7 +1527,7 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
     /**
      * Page should redirect message.
      * @static
-     * @param $encodedurl redirect url
+     * @param string $encodedurl redirect url
      * @return string
      */
     public static function plain_redirect_message($encodedurl) {
@@ -1501,9 +1539,9 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
     /**
      * Early redirection page, used before full init of $PAGE global
      * @static
-     * @param $encodedurl redirect url
-     * @param $message redirect message
-     * @param $delay time in seconds
+     * @param string $encodedurl redirect url
+     * @param string $message redirect message
+     * @param int $delay time in seconds
      * @return string redirect page
      */
     public static function early_redirect_message($encodedurl, $message, $delay) {
@@ -1517,8 +1555,8 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
     /**
      * Output basic html page.
      * @static
-     * @param $title page title
-     * @param $content page content
+     * @param string $title page title
+     * @param string $content page content
      * @param string $meta meta tag
      * @return string html page
      */

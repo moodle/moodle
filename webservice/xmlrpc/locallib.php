@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,12 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
  * XML-RPC web service implementation classes and methods.
  *
- * @package   webservice
- * @copyright 2009 Moodle Pty Ltd (http://moodle.com)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    webservice_xmlrpc
+ * @copyright  2009 Petr Skodak
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once("$CFG->dirroot/webservice/lib.php");
@@ -28,6 +28,11 @@ require_once 'Zend/XmlRpc/Server.php';
 
 /**
  * The Zend XMLRPC server but with a fault that return debuginfo
+ *
+ * @package    webservice_xmlrpc
+ * @copyright  2011 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since 2.2
  */
 class moodle_zend_xmlrpc_server extends Zend_XmlRpc_Server {
 
@@ -57,12 +62,18 @@ class moodle_zend_xmlrpc_server extends Zend_XmlRpc_Server {
 
 /**
  * XML-RPC service server implementation.
- * @author Petr Skoda (skodak)
+ *
+ * @package    webservice_xmlrpc
+ * @copyright  2009 Petr Skodak
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since 2.0
  */
 class webservice_xmlrpc_server extends webservice_zend_server {
+
     /**
      * Contructor
-     * @param integer $authmethod authentication method one of WEBSERVICE_AUTHMETHOD_*
+     *
+     * @param string $authmethod authentication method of the web service (WEBSERVICE_AUTHMETHOD_PERMANENT_TOKEN, ...)
      */
     public function __construct($authmethod) {
         require_once 'Zend/XmlRpc/Server.php';
@@ -72,7 +83,6 @@ class webservice_xmlrpc_server extends webservice_zend_server {
 
     /**
      * Set up zend service class
-     * @return void
      */
     protected function init_zend_server() {
         parent::init_zend_server();
@@ -89,13 +99,18 @@ class webservice_xmlrpc_server extends webservice_zend_server {
 
 /**
  * XML-RPC test client class
+ *
+ * @package    webservice_xmlrpc
+ * @copyright  2009 Petr Skodak
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since 2.0
  */
 class webservice_xmlrpc_test_client implements webservice_test_client_interface {
     /**
      * Execute test client WS request
-     * @param string $serverurl
-     * @param string $function
-     * @param array $params
+     * @param string $serverurl server url (including token parameter or username/password parameters)
+     * @param string $function function name
+     * @param array $params parameters of the called function
      * @return mixed
      */
     public function simpletest($serverurl, $function, $params) {

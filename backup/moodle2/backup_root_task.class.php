@@ -16,11 +16,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Defines backup_root_task class
+ *
+ * @package     core_backup
+ * @subpackage  moodle2
+ * @category    backup
+ * @copyright   2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Start task that provides all the settings common to all backups and some initialization steps
@@ -90,13 +95,6 @@ class backup_root_task extends backup_task {
         $roleassignments->set_ui(new backup_setting_ui_checkbox($roleassignments, get_string('rootsettingroleassignments', 'backup')));
         $this->add_setting($roleassignments);
         $users->add_dependency($roleassignments);
-
-        // Define user_files (dependent of users and anonymize)
-        $userfiles = new backup_user_files_setting('user_files', base_setting::IS_BOOLEAN, true);
-        $userfiles->set_ui(new backup_setting_ui_checkbox($userfiles, get_string('rootsettinguserfiles', 'backup')));
-        $this->add_setting($userfiles);
-        $users->add_dependency($userfiles);
-        $anonymize->add_dependency($userfiles, setting_dependency::DISABLED_TRUE);
 
         // Define activities
         $activities = new backup_activities_setting('activities', base_setting::IS_BOOLEAN, true);

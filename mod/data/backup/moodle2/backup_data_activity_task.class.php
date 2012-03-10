@@ -16,38 +16,41 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Defines backup_data_activity_task
+ *
+ * @package     mod_data
+ * @category    backup
+ * @copyright   2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->dirroot . '/mod/data/backup/moodle2/backup_data_stepslib.php'); // Because it exists (must)
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/mod/data/backup/moodle2/backup_data_stepslib.php');
 
 /**
- * data backup task that provides all the settings and steps to perform one
- * complete backup of the activity
+ * Provides the steps to perform one complete backup of the Database instance
  */
 class backup_data_activity_task extends backup_activity_task {
 
     /**
-     * Define (add) particular settings this activity can have
+     * No specific settings for this activity
      */
     protected function define_my_settings() {
-        // No particular settings for this activity
     }
 
     /**
-     * Define (add) particular steps this activity can have
+     * Defines a backup step to store the instance data in the data.xml file
      */
     protected function define_my_steps() {
-        // Data only has one structure step
         $this->add_step(new backup_data_activity_structure_step('data_structure', 'data.xml'));
     }
 
     /**
-     * Code the transformations to perform in the activity in
-     * order to get transportable (encoded) links
+     * Encodes URLs to the index.php and view.php scripts
+     *
+     * @param string $content some HTML text that eventually contains URLs to the activity instance scripts
+     * @return string the content with the URLs encoded
      */
     static public function encode_content_links($content) {
         global $CFG;

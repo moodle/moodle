@@ -113,6 +113,7 @@ class database_column_info {
      * True if integer unsigned, false if signed.
      * Null for other types
      * @var integer
+     * @deprecated since 2.3
      */
     public $unsigned;
 

@@ -18,8 +18,7 @@
  * Serve question type files
  *
  * @since      2.0
- * @package    qtype
- * @subpackage truefalse
+ * @package    qtype_truefalse
  * @copyright  2010 The Open Unviersity
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,6 +29,15 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Checks file access for true-false questions.
+ * @package  qtype_truefalse
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
+ * @return bool
  */
 function qtype_truefalse_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG;

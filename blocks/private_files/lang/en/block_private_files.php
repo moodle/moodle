@@ -24,5 +24,5 @@
  */
 
 $string['managemyfiles'] = 'Manage my files';
-$string['pluginname'] = 'User private files';
+$string['pluginname'] = 'My private files';
 $string['privatefiles'] = 'Private files';

@@ -18,8 +18,7 @@
 /**
  * Strings for component 'workshopform_comments', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package    workshopform
- * @subpackage comments
+ * @package    workshopform_comments
  * @copyright  2009 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

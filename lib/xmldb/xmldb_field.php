@@ -30,7 +30,6 @@ class xmldb_field extends xmldb_object {
 
     var $type;
     var $length;
-    var $unsigned;
     var $notnull;
     var $default;
     var $sequence;
@@ -53,7 +52,6 @@ class xmldb_field extends xmldb_object {
     function __construct($name, $type=null, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $default=null, $previous=null) {
         $this->type = NULL;
         $this->length = NULL;
-        $this->unsigned = true;
         $this->notnull = false;
         $this->default = NULL;
         $this->sequence = false;
@@ -98,7 +96,6 @@ class xmldb_field extends xmldb_object {
             $this->decimals = trim($precisionarr[1]);
         }
         $this->precision = $type;
-        $this->unsigned = !empty($unsigned) ? true : false;
         $this->notnull = !empty($notnull) ? true : false;
         $this->sequence = !empty($sequence) ? true : false;
         $this->setDefault($default);
@@ -136,9 +133,10 @@ class xmldb_field extends xmldb_object {
 
     /**
      * Get the unsigned
+     * @deprecated since moodle 2.3
      */
     function getUnsigned() {
-        return $this->unsigned;
+        return false;
     }
 
     /**
@@ -178,9 +176,9 @@ class xmldb_field extends xmldb_object {
 
     /**
      * Set the field unsigned
+     * @deprecated since moodle 2.3
      */
     function setUnsigned($unsigned=true) {
-        $this->unsigned = $unsigned;
     }
 
     /**
@@ -229,7 +227,7 @@ class xmldb_field extends xmldb_object {
     /// print_object ($GLOBALS['traverse_array']);  //Debug
     /// $GLOBALS['traverse_array']="";              //Debug
 
-    /// Process table attributes (name, type, length, unsigned,
+    /// Process table attributes (name, type, length
     /// notnull, sequence, decimals, comment, previous, next)
         if (isset($xmlarr['@']['NAME'])) {
             $this->name = trim($xmlarr['@']['NAME']);
@@ -287,19 +285,6 @@ class xmldb_field extends xmldb_object {
             }
         /// Finally, set the length
             $this->length = $length;
-        }
-
-        if (isset($xmlarr['@']['UNSIGNED'])) {
-            $unsigned = strtolower(trim($xmlarr['@']['UNSIGNED']));
-            if ($unsigned == 'true') {
-                $this->unsigned = true;
-            } else if ($unsigned == 'false') {
-                $this->unsigned = false;
-            } else {
-                $this->errormsg = 'Incorrect UNSIGNED attribute (true/false allowed)';
-                $this->debug($this->errormsg);
-                $result = false;
-            }
         }
 
         if (isset($xmlarr['@']['NOTNULL'])) {
@@ -470,7 +455,7 @@ class xmldb_field extends xmldb_object {
             $this->hash = NULL;
         } else {
             $key = $this->name . $this->type . $this->length .
-                   $this->unsigned . $this->notnull . $this->sequence .
+                   $this->notnull . $this->sequence .
                    $this->decimals . $this->comment;
             $this->hash = md5($key);
         }
@@ -492,16 +477,6 @@ class xmldb_field extends xmldb_object {
             $notnull = 'false';
         }
         $o.= ' NOTNULL="' . $notnull . '"';
-        if ($this->type == XMLDB_TYPE_INTEGER ||
-            $this->type == XMLDB_TYPE_NUMBER ||
-            $this->type == XMLDB_TYPE_FLOAT) {
-            if ($this->unsigned) {
-                $unsigned = 'true';
-            } else {
-                $unsigned = 'false';
-            }
-            $o.= ' UNSIGNED="' . $unsigned . '"';
-        }
         if (!$this->sequence && $this->default !== NULL) {
             $o.= ' DEFAULT="' . $this->default . '"';
         }
@@ -624,13 +599,6 @@ class xmldb_field extends xmldb_object {
                 $this->type == XMLDB_TYPE_FLOAT)) {
             $this->decimals = $adofield->scale;
         }
-    /// Calculate the unsigned field
-        if ($adofield->unsigned &&
-               ($this->type == XMLDB_TYPE_INTEGER ||
-                $this->type == XMLDB_TYPE_NUMBER  ||
-                $this->type == XMLDB_TYPE_FLOAT)) {
-            $this->unsigned = true;
-        }
     /// Calculate the notnull field
         if ($adofield->not_null) {
             $this->notnull = true;
@@ -642,8 +610,6 @@ class xmldb_field extends xmldb_object {
     /// Calculate the sequence field
         if ($adofield->auto_increment) {
             $this->sequence = true;
-        /// Sequence fields are always unsigned
-            $this->unsigned = true;
         }
     /// Some more fields
         $this->loaded = true;
@@ -696,14 +662,8 @@ class xmldb_field extends xmldb_object {
         } else {
             $result .= 'null, ';
         }
-    /// Unsigned (only applicable to numbers)
-        $unsigned = $this->getUnsigned();
-        if (!empty($unsigned) &&
-           ($this->getType() == XMLDB_TYPE_INTEGER || $this->getType() == XMLDB_TYPE_NUMBER || $this->getType() == XMLDB_TYPE_FLOAT)) {
-            $result .= 'XMLDB_UNSIGNED' . ', ';
-        } else {
-            $result .= 'null, ';
-        }
+    /// Unsigned is not used any more since Moodle 2.3
+        $result .= 'null, ';
     /// Not Null
         $notnull = $this->getNotnull();
         if (!empty($notnull)) {
@@ -764,16 +724,6 @@ class xmldb_field extends xmldb_object {
         if ($this->type == XMLDB_TYPE_TEXT ||
             $this->type == XMLDB_TYPE_BINARY) {
                 $o .= ' (' . $this->length . ')';
-        }
-    /// unsigned
-        if ($this->type == XMLDB_TYPE_INTEGER ||
-            $this->type == XMLDB_TYPE_NUMBER ||
-            $this->type == XMLDB_TYPE_FLOAT) {
-            if ($this->unsigned) {
-                $o .= ' unsigned';
-            } else {
-                $o .= ' signed';
-            }
         }
     /// not null
         if ($this->notnull) {

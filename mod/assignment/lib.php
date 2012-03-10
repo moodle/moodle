@@ -1882,13 +1882,29 @@ class assignment_base {
     }
 
     /**
-     * Counts all real assignment submissions by ENROLLED students (not empty ones)
+     * Counts all complete (real) assignment submissions by enrolled students
      *
-     * @param int $groupid optional If nonzero then count is restricted to this group
-     * @return int The number of submissions
+     * @param  int $groupid (optional) If nonzero then count is restricted to this group
+     * @return int          The number of submissions
      */
     function count_real_submissions($groupid=0) {
-        return assignment_count_real_submissions($this->cm, $groupid);
+        global $CFG;
+        global $DB;
+
+        // Grab the context assocated with our course module
+        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+
+        // Get ids of users enrolled in the given course.
+        list($enroledsql, $params) = get_enrolled_sql($context, 'mod/assignment:view', $groupid);
+        $params['assignmentid'] = $this->cm->instance;
+
+        // Get ids of users enrolled in the given course.
+        return $DB->count_records_sql("SELECT COUNT('x')
+                                         FROM {assignment_submissions} s
+                                    LEFT JOIN {assignment} a ON a.id = s.assignment
+                                   INNER JOIN ($enroledsql) u ON u.id = s.userid
+                                        WHERE s.assignment = :assignmentid AND
+                                              s.timemodified > 0", $params);
     }
 
     /**
@@ -3047,12 +3063,14 @@ function assignment_get_participants($assignmentid) {
 /**
  * Serves assignment submissions and other files.
  *
- * @param object $course
- * @param object $cm
- * @param object $context
- * @param string $filearea
- * @param array $args
- * @param bool $forcedownload
+ * @package  mod_assignment
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
  * @return bool false if file not found, does not return if found - just send the file
  */
 function assignment_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
@@ -3472,43 +3490,37 @@ function assignment_get_unmailed_submissions($starttime, $endtime) {
 }
 
 /**
- * Counts all real assignment submissions by ENROLLED students (not empty ones)
+ * Counts all complete (real) assignment submissions by enrolled students for the given course modeule.
  *
- * There are also assignment type methods count_real_submissions() which in the default
- * implementation simply call this function.
- * @param $groupid int optional If nonzero then count is restricted to this group
- * @return int The number of submissions
+ * @deprecated                         Since Moodle 2.2 MDL-abc - Please do not use this function any more.
+ * @param  cm_info $cm                 The course module that we wish to perform the count on.
+ * @param  int     $groupid (optional) If nonzero then count is restricted to this group
+ * @return int                         The number of submissions
  */
 function assignment_count_real_submissions($cm, $groupid=0) {
     global $CFG, $DB;
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    // Grab the assignment type for the given course module
+    $assignmenttype = $DB->get_field($cm->modname, 'assignmenttype', array('id' => $cm->instance), MUST_EXIST);
 
-    // this is all the users with this capability set, in this context or higher
-    if ($users = get_enrolled_users($context, 'mod/assignment:view', $groupid, 'u.id')) {
-        $users = array_keys($users);
+    // Create the expected class file path and class name for the returned assignemnt type
+    $filename = "{$CFG->dirroot}/mod/assignment/type/{$assignmenttype}/assignment.class.php";
+    $classname = "assignment_{$assignmenttype}";
+
+    // If the file exists and the class is not already loaded we require the class file
+    if (file_exists($filename) && !class_exists($classname)) {
+        require_once($filename);
     }
-
-    // if groupmembersonly used, remove users who are not in any group
-    if ($users and !empty($CFG->enablegroupmembersonly) and $cm->groupmembersonly) {
-        if ($groupingusers = groups_get_grouping_members($cm->groupingid, 'u.id', 'u.id')) {
-            $users = array_intersect($users, array_keys($groupingusers));
-        }
+    // If the required class is still not loaded then we revert to assignment base
+    if (!class_exists($classname)) {
+        $classname = 'assignment_base';
     }
+    $instance = new $classname;
 
-    if (empty($users)) {
-        return 0;
-    }
-
-    $userlists = implode(',', $users);
-
-    return $DB->count_records_sql("SELECT COUNT('x')
-                                     FROM {assignment_submissions}
-                                    WHERE assignment = ? AND
-                                          timemodified > 0 AND
-                                          userid IN ($userlists)", array($cm->instance));
+    // Attach the course module to the assignment type instance and then call the method for counting submissions
+    $instance->cm = $cm;
+    return $instance->count_real_submissions($groupid);
 }
-
 
 /**
  * Return all assignment submissions by ENROLLED students (even empty)
@@ -3950,10 +3962,12 @@ function assignment_pack_files($filesforzipping) {
 /**
  * Lists all file areas current user may browse
  *
- * @param object $course
- * @param object $cm
- * @param object $context
- * @return array
+ * @package  mod_assignment
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @return array available file areas
  */
 function assignment_get_file_areas($course, $cm, $context) {
     $areas = array();

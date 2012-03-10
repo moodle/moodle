@@ -1331,7 +1331,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             } else { //if setShowAdvanced is called without any preference
                      //make the default to not show advanced elements.
                 $showadvancedNow = get_user_preferences(
-                                moodle_strtolower($this->_formName.'_showadvanced', 0));
+                                textlib::strtolower($this->_formName.'_showadvanced', 0));
             }
         }
         //value of hidden element
@@ -2265,8 +2265,8 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $this->_hiddenHtml .= $form->_pageparams;
         }
 
-        $PAGE->requires->yui_module('moodle-core-formslib',
-                'M.core.init_formslib',
+        $PAGE->requires->yui_module('moodle-core-formchangechecker',
+                'M.core_formchangechecker.init',
                 array(array(
                     'formid' => $form->getAttribute('id')
                 ))

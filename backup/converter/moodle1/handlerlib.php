@@ -441,7 +441,6 @@ class moodle1_root_handler extends moodle1_xml_handler {
             'users'            => 0, // @todo how to detect this from moodle.xml?
             'anonymize'        => 0,
             'role_assignments' => 0,
-            'user_files'       => 0,
             'activities'       => 1,
             'blocks'           => 1,
             'filters'          => 0,
@@ -1190,8 +1189,7 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
 
         // replay the upgrade step 2010080901 - updating question image
         if (!empty($data['image'])) {
-            $textlib = textlib_get_instance();
-            if ($textlib->substr($textlib->strtolower($data['image']), 0, 7) == 'http://') {
+            if (textlib::substr(textlib::strtolower($data['image']), 0, 7) == 'http://') {
                 // it is a link, appending to existing question text
                 $data['questiontext'] .= ' <img src="' . $data['image'] . '" />';
 

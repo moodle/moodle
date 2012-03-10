@@ -313,7 +313,7 @@ class oci_native_moodle_database extends moodle_database {
         if (preg_match_all('/\{([a-z][a-z0-9_]*)\}/', $sql, $matches)) {
             foreach($matches[0] as $key=>$match) {
                 $name = $matches[1][$key];
-                if ($this->temptables->is_temptable($name)) {
+                if ($this->temptables && $this->temptables->is_temptable($name)) {
                     $sql = str_replace($match, $this->temptables->get_correct_name($name), $sql);
                 } else {
                     $sql = str_replace($match, $this->prefix.$name, $sql);
@@ -990,7 +990,7 @@ class oci_native_moodle_database extends moodle_database {
 
     /**
      * Execute general sql query. Should be used only when no other method suitable.
-     * Do NOT use this to make changes in db structure, use database_manager::execute_sql() instead!
+     * Do NOT use this to make changes in db structure, use database_manager methods instead!
      * @param string $sql query
      * @param array $params query parameters
      * @return bool true

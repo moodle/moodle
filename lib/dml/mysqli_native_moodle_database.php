@@ -559,10 +559,9 @@ class mysqli_native_moodle_database extends moodle_database {
                 $info->max_length    = 0;
                 $values = $matches[1];
                 $values = explode(',', $values);
-                $textlib = textlib_get_instance();
                 foreach ($values as $val) {
                     $val = trim($val, "'");
-                    $length = $textlib->strlen($val);
+                    $length = textlib::strlen($val);
                     $info->enums[] = $val;
                     $info->max_length = ($info->max_length < $length) ? $length : $info->max_length;
                 }
@@ -709,7 +708,7 @@ class mysqli_native_moodle_database extends moodle_database {
 
     /**
      * Execute general sql query. Should be used only when no other method suitable.
-     * Do NOT use this to make changes in db structure, use database_manager::execute_sql() instead!
+     * Do NOT use this to make changes in db structure, use database_manager methods instead!
      * @param string $sql query
      * @param array $params query parameters
      * @return bool true
@@ -1203,6 +1202,13 @@ class mysqli_native_moodle_database extends moodle_database {
         return $positivematch ? 'REGEXP' : 'NOT REGEXP';
     }
 
+    /**
+     * Returns the SQL to be used in order to an UNSIGNED INTEGER column to SIGNED.
+     *
+     * @deprecated since 2.3
+     * @param string $fieldname The name of the field to be cast
+     * @return string The piece of SQL code to be used in your statement.
+     */
     public function sql_cast_2signed($fieldname) {
         return ' CAST(' . $fieldname . ' AS SIGNED) ';
     }

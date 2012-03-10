@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,8 +18,7 @@
 /**
  * Utility class for browsing of course files.
  *
- * @package    core
- * @subpackage filebrowser
+ * @package    core_files
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,16 +26,23 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Represents a course context in the tree navigated by @see{file_browser}.
+ * Represents a course context in the tree navigated by {@link file_browser}.
  *
- * @package    core
- * @subpackage filebrowser
+ * @package    core_files
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file_info_context_course extends file_info {
+    /** @var stdClass course object */
     protected $course;
 
+    /**
+     * Constructor
+     *
+     * @param file_browser $browser file browser instance
+     * @param stdClass $context context object
+     * @param stdClass $course course object
+     */
     public function __construct($browser, $context, $course) {
         parent::__construct($browser, $context);
         $this->course   = $course;
@@ -46,11 +51,12 @@ class file_info_context_course extends file_info {
     /**
      * Return information about this specific context level
      *
-     * @param $component
-     * @param $filearea
-     * @param $itemid
-     * @param $filepath
-     * @param $filename
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null file_info instance or null if not found or access not allowed
      */
     public function get_file_info($component, $filearea, $itemid, $filepath, $filename) {
         // try to emulate require_login() tests here
@@ -80,6 +86,14 @@ class file_info_context_course extends file_info {
         return null;
     }
 
+    /**
+     * Gets a stored file for the course summary filearea directory
+     *
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null file_info instance or null if not found or access not allowed
+     */
     protected function get_area_course_summary($itemid, $filepath, $filename) {
         global $CFG;
 
@@ -106,7 +120,14 @@ class file_info_context_course extends file_info {
         return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase, get_string('areacourseintro', 'repository'), false, true, true, false);
     }
 
-
+    /**
+     * Gets a stored file for the course section filearea directory
+     *
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null file_info instance or null if not found or access not allowed
+     */
     protected function get_area_course_section($itemid, $filepath, $filename) {
         global $CFG, $DB;
 
@@ -139,7 +160,14 @@ class file_info_context_course extends file_info {
         return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase, $section->section, true, true, true, false);
     }
 
-
+    /**
+     * Gets a stored file for the course legacy filearea directory
+     *
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null file_info instance or null if not found or access not allowed
+     */
     protected function get_area_course_legacy($itemid, $filepath, $filename) {
         if (!has_capability('moodle/course:managefiles', $this->context)) {
             return null;
@@ -169,6 +197,14 @@ class file_info_context_course extends file_info {
         return new file_info_area_course_legacy($this->browser, $this->context, $storedfile);
     }
 
+    /**
+     * Gets a stored file for the backup course filearea directory
+     *
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null file_info instance or null if not found or access not allowed
+     */
     protected function get_area_backup_course($itemid, $filepath, $filename) {
         global $CFG;
 
@@ -202,10 +238,10 @@ class file_info_context_course extends file_info {
     /**
      * Gets a stored file for the automated backup filearea directory
      *
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
-     * @return file_info_context_course 
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null
      */
     protected function get_area_backup_automated($itemid, $filepath, $filename) {
         global $CFG;
@@ -237,6 +273,14 @@ class file_info_context_course extends file_info {
         return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase, get_string('automatedbackup', 'repository'), true, $downloadable, $uploadable, false);
     }
 
+    /**
+     * Gets a stored file for the backup section filearea directory
+     *
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null file_info instance or null if not found or access not allowed
+     */
     protected function get_area_backup_section($itemid, $filepath, $filename) {
         global $CFG, $DB;
 
@@ -273,12 +317,18 @@ class file_info_context_course extends file_info {
         return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase, $section->id, true, $downloadable, $uploadable, false);
     }
 
+    /**
+     * Returns localised visible name.
+     *
+     * @return string
+     */
     public function get_visible_name() {
         return ($this->course->id == SITEID) ? get_string('frontpage', 'admin') : format_string($this->course->fullname, true, array('context'=>$this->context));
     }
 
     /**
-     * Can I add new files or directories?
+     * Whether or not new files or directories can be added
+     *
      * @return bool
      */
     public function is_writable() {
@@ -286,7 +336,8 @@ class file_info_context_course extends file_info {
     }
 
     /**
-     * Is directory?
+     * Whether or not this is a directory
+     *
      * @return bool
      */
     public function is_directory() {
@@ -295,6 +346,7 @@ class file_info_context_course extends file_info {
 
     /**
      * Returns list of children.
+     *
      * @return array of file_info instances
      */
     public function get_children() {
@@ -336,6 +388,8 @@ class file_info_context_course extends file_info {
 
     /**
      * Returns parent file_info instance
+     *
+     * @todo error checking if get_parent_contextid() returns false
      * @return file_info or null for root
      */
     public function get_parent() {
@@ -350,12 +404,18 @@ class file_info_context_course extends file_info {
 /**
  * Subclass of file_info_stored for files in the course files area.
  *
- * @package    core
- * @subpackage filebrowser
- * @copyright  2008 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_files
+ * @copyright 2008 Petr Skoda (http://skodak.org)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file_info_area_course_legacy extends file_info_stored {
+    /**
+     * Constructor
+     *
+     * @param file_browser $browser file browser instance
+     * @param stdClass $context context object
+     * @param stored_file $storedfile stored_file instance
+     */
     public function __construct($browser, $context, $storedfile) {
         global $CFG;
         $urlbase = $CFG->wwwroot.'/file.php';
@@ -364,8 +424,9 @@ class file_info_area_course_legacy extends file_info_stored {
 
     /**
      * Returns file download url
-     * @param bool $forcedownload
-     * @param bool $htts force https
+     *
+     * @param bool $forcedownload whether or not force download
+     * @param bool $https whether or not force https
      * @return string url
      */
     public function get_url($forcedownload=false, $https=false) {
@@ -388,6 +449,7 @@ class file_info_area_course_legacy extends file_info_stored {
 
     /**
      * Returns list of children.
+     *
      * @return array of file_info instances
      */
     public function get_children() {
@@ -408,17 +470,26 @@ class file_info_area_course_legacy extends file_info_stored {
 }
 
 /**
- * Represents a course category context in the tree navigated by @see{file_browser}.
+ * Represents a course category context in the tree navigated by {@link file_browser}.
  *
- * @package    core
- * @subpackage filebrowser
+ * @package    core_files
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file_info_area_course_section extends file_info {
+    /** @var stdClass course object */
     protected $course;
+    /** @var file_info_context_course course file info object */
     protected $courseinfo;
 
+    /**
+     * Constructor
+     *
+     * @param file_browser $browser file browser instance
+     * @param stdClass $context context object
+     * @param stdClass $course course object
+     * @param file_info_context_course $courseinfo file info instance
+     */
     public function __construct($browser, $context, $course, file_info_context_course $courseinfo) {
         parent::__construct($browser, $context);
         $this->course     = $course;
@@ -429,6 +500,7 @@ class file_info_area_course_section extends file_info {
      * Returns list of standard virtual file/directory identification.
      * The difference from stored_file parameters is that null values
      * are allowed in all fields
+     *
      * @return array with keys contextid, filearea, itemid, filepath and filename
      */
     public function get_params() {
@@ -442,6 +514,7 @@ class file_info_area_course_section extends file_info {
 
     /**
      * Returns localised visible name.
+     *
      * @return string
      */
     public function get_visible_name() {
@@ -452,7 +525,8 @@ class file_info_area_course_section extends file_info {
     }
 
     /**
-     * Can I add new files or directories?
+     * Return whether or not new files or directories can be added
+     *
      * @return bool
      */
     public function is_writable() {
@@ -460,7 +534,7 @@ class file_info_area_course_section extends file_info {
     }
 
     /**
-     * Is this empty area?
+     * Return whether or not this is a empty area
      *
      * @return bool
      */
@@ -470,7 +544,8 @@ class file_info_area_course_section extends file_info {
     }
 
     /**
-     * Is directory?
+     * Return whether or not this is a empty area
+     *
      * @return bool
      */
     public function is_directory() {
@@ -479,6 +554,7 @@ class file_info_area_course_section extends file_info {
 
     /**
      * Returns list of children.
+     *
      * @return array of file_info instances
      */
     public function get_children() {
@@ -498,7 +574,8 @@ class file_info_area_course_section extends file_info {
 
     /**
      * Returns parent file_info instance
-     * @return file_info or null for root
+     *
+     * @return file_info|null file_info or null for root
      */
     public function get_parent() {
         return $this->courseinfo;
@@ -509,15 +586,24 @@ class file_info_area_course_section extends file_info {
 /**
  * Implementation of course section backup area
  *
- * @package    core
- * @subpackage filebrowser
+ * @package    core_files
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file_info_area_backup_section extends file_info {
+    /** @var stdClass course object */
     protected $course;
+    /** @var file_info_context_course course file info object */
     protected $courseinfo;
 
+    /**
+     * Constructor
+     *
+     * @param file_browser $browser file browser instance
+     * @param stdClass $context context object
+     * @param stdClass $course course object
+     * @param file_info_context_course $courseinfo file info instance
+     */
     public function __construct($browser, $context, $course, file_info_context_course $courseinfo) {
         parent::__construct($browser, $context);
         $this->course     = $course;
@@ -528,6 +614,7 @@ class file_info_area_backup_section extends file_info {
      * Returns list of standard virtual file/directory identification.
      * The difference from stored_file parameters is that null values
      * are allowed in all fields
+     *
      * @return array with keys contextid, component, filearea, itemid, filepath and filename
      */
     public function get_params() {
@@ -541,6 +628,7 @@ class file_info_area_backup_section extends file_info {
 
     /**
      * Returns localised visible name.
+     *
      * @return string
      */
     public function get_visible_name() {
@@ -548,7 +636,8 @@ class file_info_area_backup_section extends file_info {
     }
 
     /**
-     * Can I add new files or directories?
+     * Return whether or not new files and directories can be added
+     *
      * @return bool
      */
     public function is_writable() {
@@ -556,7 +645,7 @@ class file_info_area_backup_section extends file_info {
     }
 
     /**
-     * Is this empty area?
+     * Whether or not this is an empty area
      *
      * @return bool
      */
@@ -566,7 +655,8 @@ class file_info_area_backup_section extends file_info {
     }
 
     /**
-     * Is directory?
+     * Return whether or not this is a directory
+     *
      * @return bool
      */
     public function is_directory() {
@@ -575,6 +665,7 @@ class file_info_area_backup_section extends file_info {
 
     /**
      * Returns list of children.
+     *
      * @return array of file_info instances
      */
     public function get_children() {
@@ -594,11 +685,10 @@ class file_info_area_backup_section extends file_info {
 
     /**
      * Returns parent file_info instance
+     *
      * @return file_info or null for root
      */
     public function get_parent() {
         return $this->browser->get_file_info($this->context);
     }
 }
-
-

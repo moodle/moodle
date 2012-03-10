@@ -17,8 +17,7 @@
 /**
  * Capability definitions for the quiz manual grading report.
  *
- * @package    quiz
- * @subpackage grading
+ * @package    quiz_grading
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -956,7 +956,7 @@ abstract class moodle_database {
 
     /**
      * Executes a general sql query. Should be used only when no other method suitable.
-     * Do NOT use this to make changes in db structure, use database_manager::execute_sql() instead!
+     * Do NOT use this to make changes in db structure, use database_manager methods instead!
      * @param string $sql query
      * @param array $params query parameters
      * @return bool true
@@ -1798,6 +1798,7 @@ abstract class moodle_database {
      * (Only MySQL needs this. MySQL things that 1 * -1 = 18446744073709551615
      * if the 1 comes from an unsigned column).
      *
+     * @deprecated since 2.3
      * @param string $fieldname The name of the field to be cast
      * @return string The piece of SQL code to be used in your statement.
      */

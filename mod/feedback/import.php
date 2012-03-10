@@ -286,7 +286,6 @@ function feedback_check_xml_utf8($text) {
     //encoding is given in $match[2]
     if (isset($match[0]) AND isset($match[1]) AND isset($match[2])) {
         $enc = $match[2];
-        $textlib = textlib_get_instance();
-        return $textlib->convert($text, $enc);
+        return textlib::convert($text, $enc);
     }
 }

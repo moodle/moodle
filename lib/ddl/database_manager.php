@@ -659,12 +659,13 @@ class database_manager {
     /**
      * This function will change the unsigned/signed of the field in the table passed as arguments
      *
+     * @deprecated since 2.3, only singed numbers are allowed now, migration is automatic
      * @param xmldb_table $xmldb_table Table object (just the name is mandatory).
      * @param xmldb_field $xmldb_field Field object (full specs are required).
      * @return void
      */
     public function change_field_unsigned(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
-    /// Just a wrapper over change_field_type. Does exactly the same processing
+        debugging('All unsigned numbers are converted to signed automatically during Moodle upgrade.');
         $this->change_field_type($xmldb_table, $xmldb_field);
     }
 

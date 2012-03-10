@@ -33,19 +33,24 @@
  * - has_all_capabilities()
  * - require_capability()
  * - require_login() (from moodlelib)
+ * - is_enrolled()
+ * - is_viewing()
+ * - is_guest()
  * - is_siteadmin()
+ * - isguestuser()
+ * - isloggedin()
  *
  * What courses has this user access to?
  * - get_enrolled_users()
  *
  * What users can do X in this context?
- * - get_users_by_capability()
+ * - get_enrolled_users() - at and bellow course context
+ * - get_users_by_capability() - above course context
  *
  * Modify roles
  * - role_assign()
  * - role_unassign()
  * - role_unassign_all()
- *
  *
  * Advanced - for internal use only
  * - load_all_capabilities()
@@ -117,8 +122,7 @@
  * DB need to ensure that the default role caps
  * are dealt with appropriately.
  *
- * @package    core
- * @subpackage role
+ * @package    core_access
  * @copyright  1999 onwards Martin Dougiamas  http://dougiamas.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -155,11 +159,11 @@ define('CONTEXT_BLOCK', 80);
 define('RISK_MANAGETRUST', 0x0001);
 /** Capability allows changes in system configuration - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
 define('RISK_CONFIG',      0x0002);
-/** Capability allows user to add scritped content - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
+/** Capability allows user to add scripted content - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
 define('RISK_XSS',         0x0004);
 /** Capability allows access to personal user information - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
 define('RISK_PERSONAL',    0x0008);
-/** Capability allows users to add content otehrs may see - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
+/** Capability allows users to add content others may see - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
 define('RISK_SPAM',        0x0010);
 /** capability allows mass delete of data belonging to other users - see {@link http://docs.moodle.org/dev/Hardening_new_Roles_system} */
 define('RISK_DATALOSS',    0x0020);
@@ -177,8 +181,8 @@ define('ROLENAME_ALIAS_RAW', 4);
 /** rolename displays - the name is simply short role name */
 define('ROLENAME_SHORT', 5);
 
-/** maximum size of context cache - it is possible to tweak this config.php or in any script before inclusion of context.php */
 if (!defined('CONTEXT_CACHE_MAX_SIZE')) {
+    /** maximum size of context cache - it is possible to tweak this config.php or in any script before inclusion of context.php */
     define('CONTEXT_CACHE_MAX_SIZE', 2500);
 }
 
@@ -190,7 +194,7 @@ if (!defined('CONTEXT_CACHE_MAX_SIZE')) {
  * Sadly, a PHP global variable is the only way to implement this, without rewriting everything
  * as methods of a class, instead of functions.
  *
- * @private
+ * @access private
  * @global stdClass $ACCESSLIB_PRIVATE
  * @name $ACCESSLIB_PRIVATE
  */
@@ -208,6 +212,7 @@ $ACCESSLIB_PRIVATE->capabilities     = null;    // detailed information about th
  * accesslib's private caches. You need to do this before setting up test data,
  * and also at the end of the tests.
  *
+ * @access private
  * @return void
  */
 function accesslib_clear_all_caches_for_unit_testing() {
@@ -226,7 +231,7 @@ function accesslib_clear_all_caches_for_unit_testing() {
  *
  * This reset does not touch global $USER.
  *
- * @private
+ * @access private
  * @param bool $resetcontexts
  * @return void
  */
@@ -246,7 +251,7 @@ function accesslib_clear_all_caches($resetcontexts) {
 /**
  * Gets the accessdata for role "sitewide" (system down to course)
  *
- * @private
+ * @access private
  * @param int $roleid
  * @return array
  */
@@ -330,8 +335,8 @@ function get_guest_role() {
  * Check whether a user has a particular capability in a given context.
  *
  * For example:
- *      $context = get_context_instance(CONTEXT_MODULE, $cm->id);
- *      has_capability('mod/forum:replypost',$context)
+ *      $context = context_module::instance($cm->id);
+ *      has_capability('mod/forum:replypost', $context)
  *
  * By default checks the capabilities of the current user, but you can pass a
  * different userid. By default will return true for admin users, but you can override that with the fourth argument.
@@ -339,9 +344,11 @@ function get_guest_role() {
  * Guest and not-logged-in users can never get any dangerous capability - that is any write capability
  * or capabilities with XSS, config or data loss risks.
  *
+ * @category access
+ *
  * @param string $capability the name of the capability to check. For example mod/forum:view
- * @param context $context the context to check the capability in. You normally get this with {@link get_context_instance}.
- * @param integer|object $user A user id or object. By default (null) checks the permissions of the current user.
+ * @param context $context the context to check the capability in. You normally get this with instance method of a context class.
+ * @param integer|stdClass $user A user id or object. By default (null) checks the permissions of the current user.
  * @param boolean $doanything If false, ignores effect of admin role assignment
  * @return boolean true if the user has this capability. Otherwise false.
  */
@@ -482,16 +489,18 @@ function has_capability($capability, context $context, $user = null, $doanything
  * the capabilities that most users are likely to have first in the list for best
  * performance.
  *
+ * @category access
  * @see has_capability()
+ *
  * @param array $capabilities an array of capability names.
- * @param context $context the context to check the capability in. You normally get this with {@link get_context_instance}.
- * @param integer $userid A user id. By default (null) checks the permissions of the current user.
+ * @param context $context the context to check the capability in. You normally get this with instance method of a context class.
+ * @param integer|stdClass $user A user id or object. By default (null) checks the permissions of the current user.
  * @param boolean $doanything If false, ignore effect of admin role assignment
  * @return boolean true if the user has any of these capabilities. Otherwise false.
  */
-function has_any_capability(array $capabilities, context $context, $userid = null, $doanything = true) {
+function has_any_capability(array $capabilities, context $context, $user = null, $doanything = true) {
     foreach ($capabilities as $capability) {
-        if (has_capability($capability, $context, $userid, $doanything)) {
+        if (has_capability($capability, $context, $user, $doanything)) {
             return true;
         }
     }
@@ -505,16 +514,18 @@ function has_any_capability(array $capabilities, context $context, $userid = nul
  * the capabilities that fewest users are likely to have first in the list for best
  * performance.
  *
+ * @category access
  * @see has_capability()
+ *
  * @param array $capabilities an array of capability names.
- * @param context $context the context to check the capability in. You normally get this with {@link get_context_instance}.
- * @param integer $userid A user id. By default (null) checks the permissions of the current user.
+ * @param context $context the context to check the capability in. You normally get this with instance method of a context class.
+ * @param integer|stdClass $user A user id or object. By default (null) checks the permissions of the current user.
  * @param boolean $doanything If false, ignore effect of admin role assignment
  * @return boolean true if the user has all of these capabilities. Otherwise false.
  */
-function has_all_capabilities(array $capabilities, context $context, $userid = null, $doanything = true) {
+function has_all_capabilities(array $capabilities, context $context, $user = null, $doanything = true) {
     foreach ($capabilities as $capability) {
-        if (!has_capability($capability, $context, $userid, $doanything)) {
+        if (!has_capability($capability, $context, $user, $doanything)) {
             return false;
         }
     }
@@ -526,6 +537,8 @@ function has_all_capabilities(array $capabilities, context $context, $userid = n
  *
  * Please note that use of proper capabilities is always encouraged,
  * this function is supposed to be used from core or for temporary hacks.
+ *
+ * @category access
  *
  * @param  int|stdClass  $user_or_id user id or user object
  * @return bool true if user is one of the administrators, false otherwise
@@ -597,7 +610,7 @@ function has_coursecontact_role($userid) {
  * and then verify if user has at least one role with allow
  * and at the same time no role with prohibit.
  *
- * @private
+ * @access private
  * @param string $capability
  * @param context $context
  * @param array $accessdata
@@ -703,7 +716,7 @@ function require_capability($capability, context $context, $userid = null, $doan
  * [ra]   => [/path][roleid]=roleid
  * [rdef] => [/path:roleid][capability]=permission
  *
- * @private
+ * @access private
  * @param int $userid - the id of the user
  * @return array access info array
  */
@@ -817,7 +830,7 @@ function get_user_access_sitewide($userid) {
  *
  * This function injects all course related access info into the accessdata array.
  *
- * @private
+ * @access private
  * @param int $userid the id of the user
  * @param context_course $coursecontext course context
  * @param array $accessdata accessdata array (modified)
@@ -937,7 +950,7 @@ function load_course_context($userid, context_course $coursecontext, &$accessdat
  * This role-centric function is useful for role_switching
  * and temporary course roles.
  *
- * @private
+ * @access private
  * @param int $roleid the id of the user
  * @param context $context needs path!
  * @param array $accessdata accessdata array (is modified)
@@ -991,7 +1004,7 @@ function load_role_access_by_context($roleid, context $context, &$accessdata) {
 /**
  * Returns empty accessdata structure.
  *
- * @private
+ * @access private
  * @return array empt accessdata
  */
 function get_empty_accessdata() {
@@ -1010,7 +1023,7 @@ function get_empty_accessdata() {
 /**
  * Get accessdata for a given user.
  *
- * @private
+ * @access private
  * @param int $userid
  * @param bool $preloadonly true means do not return access array
  * @return array accessdata
@@ -1061,7 +1074,7 @@ function get_user_accessdata($userid, $preloadonly=false) {
  * Try to minimise the size of $USER->access by eliminating duplicate override storage,
  * this function looks for contexts with the same overrides and shares them.
  *
- * @private
+ * @access private
  * @return void
  */
 function dedupe_user_access() {
@@ -1103,7 +1116,7 @@ function dedupe_user_access() {
  * Call it only _after_ you've setup $USER and called check_enrolment_plugins();
  * @see check_enrolment_plugins()
  *
- * @private
+ * @access private
  * @return void
  */
 function load_all_capabilities() {
@@ -1142,7 +1155,7 @@ function load_all_capabilities() {
  *
  * Note: reloads $USER->access completely.
  *
- * @private
+ * @access private
  * @return void
  */
 function reload_all_capabilities() {
@@ -1172,8 +1185,9 @@ function reload_all_capabilities() {
  * Adds a temp role to current USER->access array.
  *
  * Useful for the "temporary guest" access we grant to logged-in users.
- * @since 2.2
+ * This is useful for enrol plugins only.
  *
+ * @since 2.2
  * @param context_course $coursecontext
  * @param int $roleid
  * @return void
@@ -1211,8 +1225,9 @@ function load_temp_course_role(context_course $coursecontext, $roleid) {
 
 /**
  * Removes any extra guest roles from current USER->access array.
- * @since 2.2
+ * This is useful for enrol plugins only.
  *
+ * @since 2.2
  * @param context_course $coursecontext
  * @return void
  */
@@ -1303,7 +1318,7 @@ function assign_legacy_capabilities($capability, $legacyperms) {
 /**
  * Verify capability risks.
  *
- * @param object $capability a capability - a row from the capabilities table.
+ * @param stdClass $capability a capability - a row from the capabilities table.
  * @return boolean whether this capability is safe - that is, whether people with the
  *      safeoverrides capability should be allowed to change it.
  */
@@ -1514,10 +1529,10 @@ function unassign_capability($capability, $roleid, $contextid = null) {
  * It just checks for permissions and overrides.
  * Use get_roles_with_cap_in_context() if resolution is required.
  *
- * @param string $capability - capability name (string)
- * @param string $permission - optional, the permission defined for this capability
+ * @param string $capability capability name (string)
+ * @param string $permission optional, the permission defined for this capability
  *                      either CAP_ALLOW, CAP_PREVENT or CAP_PROHIBIT. Defaults to null which means any.
- * @param stdClass $context, null means any
+ * @param stdClass $context null means any
  * @return array of role records
  */
 function get_roles_with_capability($capability, $permission = null, $context = null) {
@@ -1730,7 +1745,7 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
         if ($context = context::instance_by_id($ra->contextid, IGNORE_MISSING)) {
             // this is a bit expensive but necessary
             $context->mark_dirty();
-            /// If the user is the current user, then do full reload of capabilities too.
+            // If the user is the current user, then do full reload of capabilities too.
             if (!empty($USER->id) && $USER->id == $ra->userid) {
                 reload_all_capabilities();
             }
@@ -1757,7 +1772,7 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
                     $DB->delete_records('role_assignments', array('id'=>$ra->id));
                     // this is a bit expensive but necessary
                     $context->mark_dirty();
-                    /// If the user is the current user, then do full reload of capabilities too.
+                    // If the user is the current user, then do full reload of capabilities too.
                     if (!empty($USER->id) && $USER->id == $ra->userid) {
                         reload_all_capabilities();
                     }
@@ -1777,6 +1792,8 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
 /**
  * Determines if a user is currently logged in
  *
+ * @category   access
+ *
  * @return bool
  */
 function isloggedin() {
@@ -1787,6 +1804,8 @@ function isloggedin() {
 
 /**
  * Determines if a user is logged in as real guest user with username 'guest'.
+ *
+ * @category   access
  *
  * @param int|object $user mixed user object or id, $USER if not specified
  * @return bool true if user is the real guest user, false if not logged in or other user
@@ -1828,6 +1847,8 @@ function isguestuser($user = null) {
 /**
  * Does user have a (temporary or real) guest access to course?
  *
+ * @category   access
+ *
  * @param context $context
  * @param stdClass|int $user
  * @return bool
@@ -1867,8 +1888,10 @@ function is_guest(context $context, $user = null) {
  * Returns true if the user has moodle/course:view capability in the course,
  * this is intended for admins, managers (aka small admins), inspectors, etc.
  *
+ * @category   access
+ *
  * @param context $context
- * @param int|stdClass $user, if null $USER is used
+ * @param int|stdClass $user if null $USER is used
  * @param string $withcapability extra capability name
  * @return bool
  */
@@ -1900,8 +1923,11 @@ function is_viewing(context $context, $user = null, $withcapability = '') {
  *
  * Since 2.2 the result for active enrolments and current user are cached.
  *
+ * @package   core_enrol
+ * @category  access
+ *
  * @param context $context
- * @param int|stdClass $user, if null $USER is used, otherwise user object or id expected
+ * @param int|stdClass $user if null $USER is used, otherwise user object or id expected
  * @param string $withcapability extra capability name
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
  * @return bool
@@ -2102,6 +2128,9 @@ function can_access_course(stdClass $course, $user = null, $withcapability = '',
  *
  * This function is using 'eu[0-9]+_' prefix for table names and parameters.
  *
+ * @package   core_enrol
+ * @category  access
+ *
  * @param context $context
  * @param string $withcapability
  * @param int $groupid 0 means ignore groups, any other value limits the result by group id
@@ -2265,6 +2294,9 @@ function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, 
 /**
  * Returns list of users enrolled into course.
  *
+ * @package   core_enrol
+ * @category  access
+ *
  * @param context $context
  * @param string $withcapability
  * @param int $groupid 0 means ignore groups, any other value limits the result by group id
@@ -2295,6 +2327,9 @@ function get_enrolled_users(context $context, $withcapability = '', $groupid = 0
 /**
  * Counts list of users enrolled into course (as per above function)
  *
+ * @package   core_enrol
+ * @category  access
+ *
  * @param context $context
  * @param string $withcapability
  * @param int $groupid 0 means ignore groups, any other value limits the result by group id
@@ -2318,6 +2353,7 @@ function count_enrolled_users(context $context, $withcapability = '', $groupid =
  * Loads the capability definitions for the component (from file). If no
  * capabilities are defined for the component, we simply return an empty array.
  *
+ * @access private
  * @param string $component full plugin name, examples: 'moodle', 'mod_forum'
  * @return array array of capabilities
  */
@@ -2341,6 +2377,7 @@ function load_capability_def($component) {
 /**
  * Gets the capabilities that have been cached in the database for this component.
  *
+ * @access private
  * @param string $component - examples: 'moodle', 'mod_forum'
  * @return array array of capabilities
  */
@@ -2421,6 +2458,7 @@ function reset_role_capabilities($roleid) {
  * will cause any stored capabilities for the component to be removed from
  * the database.
  *
+ * @access private
  * @param string $component examples: 'moodle', 'mod/forum', 'block/quiz_results'
  * @return boolean true if success, exception in case of any problems
  */
@@ -2527,6 +2565,7 @@ function update_capabilities($component = 'moodle') {
  * Deletes cached capabilities that are no longer needed by the component.
  * Also unassigns these capabilities from any roles that have them.
  *
+ * @access private
  * @param string $component examples: 'moodle', 'mod_forum', 'block_quiz_results'
  * @param array $newcapdef array of the new capability definitions that will be
  *                     compared with the cached capabilities
@@ -2580,7 +2619,7 @@ function get_all_risks() {
 /**
  * Return a link to moodle docs for a given capability name
  *
- * @param object $capability a capability - a row from the mdl_capabilities table.
+ * @param stdClass $capability a capability - a row from the mdl_capabilities table.
  * @return string the human-readable capability name as a link to Moodle Docs.
  */
 function get_capability_docs_link($capability) {
@@ -2593,10 +2632,10 @@ function get_capability_docs_link($capability) {
  * defaults) of a role used in capability overrides in contexts at a given
  * context.
  *
- * @param context $context
  * @param int $roleid
+ * @param context $context
  * @param string $cap capability, optional, defaults to ''
- * @return array of capabilities
+ * @return array Array of capabilities
  */
 function role_context_capabilities($roleid, context $context, $cap = '') {
     global $DB;
@@ -2638,7 +2677,7 @@ function role_context_capabilities($roleid, context $context, $cap = '') {
  * Constructs array with contextids as first parameter and context paths,
  * in both cases bottom top including self.
  *
- * @private
+ * @access private
  * @param context $context
  * @return array
  */
@@ -2671,7 +2710,7 @@ function is_inside_frontpage(context $context) {
  * Returns capability information (cached)
  *
  * @param string $capabilityname
- * @return object or null if capability not found
+ * @return stdClass or null if capability not found
  */
 function get_capability_info($capabilityname) {
     global $ACCESSLIB_PRIVATE, $DB; // one request per page only
@@ -3246,6 +3285,9 @@ function get_overridable_roles(context $context, $rolenamedisplay = ROLENAME_ALI
 
 /**
  * Create a role menu suitable for default role selection in enrol plugins.
+ *
+ * @package    core_enrol
+ *
  * @param context $context
  * @param int $addroleid current or default role - always added to list
  * @return array roleid=>localised role name
@@ -3274,6 +3316,7 @@ function get_default_enrol_roles(context $context, $addroleid = null) {
 
 /**
  * Return context levels where this role is assignable.
+ *
  * @param integer $roleid the id of a role.
  * @return array list of the context levels at which this role may be assigned.
  */
@@ -3368,7 +3411,7 @@ function set_role_contextlevels($roleid, array $contextlevels) {
  *               have capability both $capability and moodle/site:accessallgroups
  *               in this context, as well as users who have $capability and who are
  *               in $groups.
- * @return mixed
+ * @return array of user records
  */
 function get_users_by_capability(context $context, $capability, $fields = '', $sort = '', $limitfrom = '', $limitnum = '',
                                  $groups = '', $exceptions = '', $doanything_ignored = null, $view_ignored = null, $useviewallgroups = false) {
@@ -3452,7 +3495,7 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
             unset($needed[$cap]);
             unset($prohibited[$cap]);
         } else if ($isfrontpage and !empty($prohibited[$cap][$defaultfrontpageroleid])) {
-            // everybody is disqualified on the frontapge
+            // everybody is disqualified on the frontpage
             unset($needed[$cap]);
             unset($prohibited[$cap]);
         }
@@ -3478,7 +3521,7 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         unset($n);
     }
 
-    /// ***** Set up default fields ******
+    // ***** Set up default fields ******
     if (empty($fields)) {
         if ($iscoursepage) {
             $fields = 'u.*, ul.timeaccess AS lastaccess';
@@ -3491,7 +3534,7 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         }
     }
 
-    /// Set up default sort
+    // Set up default sort
     if (empty($sort)) { // default to course lastaccess or just lastaccess
         if ($iscoursepage) {
             $sort = 'ul.timeaccess';
@@ -3516,11 +3559,11 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         }
     }
 
-    /// We never return deleted users or guest account.
+    // We never return deleted users or guest account.
     $wherecond[] = "u.deleted = 0 AND u.id <> :guestid";
     $params['guestid'] = $CFG->siteguest;
 
-    /// Groups
+    // Groups
     if ($groups) {
         $groups = (array)$groups;
         list($grouptest, $grpparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED, 'grp');
@@ -3539,7 +3582,7 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
         }
     }
 
-    /// User exceptions
+    // User exceptions
     if (!empty($exceptions)) {
         $exceptions = (array)$exceptions;
         list($exsql, $exparams) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'exc', false);
@@ -3613,7 +3656,7 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
     }
     $joins = implode("\n", $joins);
 
-    /// Ok, let's get the users!
+    // Ok, let's get the users!
     $sql = "SELECT $fields
               FROM {user} u
             $joins
@@ -3963,7 +4006,7 @@ function role_switch($roleid, context $context) {
 /**
  * Checks if the user has switched roles within the given course.
  *
- * Note: You can only switch roles within the course, hence it takes a courseid
+ * Note: You can only switch roles within the course, hence it takes a course id
  * rather than a context. On that note Petr volunteered to implement this across
  * all other contexts, all requests for this should be forwarded to him ;)
  *
@@ -4095,7 +4138,7 @@ function role_get_name($role, context_course $coursecontext) {
  * @param array $roleoptions array roleid => rolename or roleid => roleobject
  * @param context $context a context
  * @param int $rolenamedisplay
- * @return array Array of context-specific role names, or role objexts with a ->localname field added.
+ * @return array Array of context-specific role names, or role objects with a ->localname field added.
  */
 function role_fix_names($roleoptions, context $context, $rolenamedisplay = ROLENAME_ALIAS) {
     global $DB;
@@ -4214,8 +4257,8 @@ function fix_role_sortorder($allroles) {
 /**
  * Switch the sort order of two roles (used in admin/roles/manage.php).
  *
- * @param object $first The first role. Actually, only ->sortorder is used.
- * @param object $second The second role. Actually, only ->sortorder is used.
+ * @param stdClass $first The first role. Actually, only ->sortorder is used.
+ * @param stdClass $second The second role. Actually, only ->sortorder is used.
  * @return boolean success or failure
  */
 function switch_roles($first, $second) {
@@ -4230,7 +4273,7 @@ function switch_roles($first, $second) {
 /**
  * Duplicates all the base definitions of a role
  *
- * @param object $sourcerole role to copy from
+ * @param stdClass $sourcerole role to copy from
  * @param int $targetrole id of role to copy to
  */
 function role_cap_duplicate($sourcerole, $targetrole) {
@@ -4255,7 +4298,7 @@ function role_cap_duplicate($sourcerole, $targetrole) {
  * user has this capability in this context.
  * Use get_role_names_with_cap_in_context() if you need role names to display in the UI
  *
- * @param object $context
+ * @param stdClass $context
  * @param string $capability
  * @return array($neededroles, $forbiddenroles)
  */
@@ -4314,7 +4357,7 @@ function get_roles_with_cap_in_context($context, $capability) {
  * Returns an array of role IDs that have ALL of the the supplied capabilities
  * Uses get_roles_with_cap_in_context(). Returns $allowed minus $forbidden
  *
- * @param object $context
+ * @param stdClass $context
  * @param array $capabilities An array of capabilities
  * @return array of roles with all of the required capabilities
  */
@@ -4349,7 +4392,7 @@ function get_roles_with_caps_in_context($context, $capabilities) {
  * Returns an array of role names that have ALL of the the supplied capabilities
  * Uses get_roles_with_caps_in_context(). Returns $allowed minus $forbidden
  *
- * @param object $context
+ * @param stdClass $context
  * @param array $capabilities An array of capabilities
  * @return array of roles with all of the required capabilities
  */
@@ -4401,7 +4444,7 @@ function prohibit_is_removable($roleid, context $context, $capability) {
     }
 
     if (count($prohibits) > 1) {
-        // more prohibints can not be removed
+        // more prohibits can not be removed
         return false;
     }
 
@@ -4411,8 +4454,9 @@ function prohibit_is_removable($roleid, context $context, $capability) {
 /**
  * More user friendly role permission changing,
  * it should produce as few overrides as possible.
+ *
  * @param int $roleid
- * @param object $context
+ * @param stdClass $context
  * @param string $capname capability name
  * @param int $permission
  * @return void
@@ -4478,39 +4522,87 @@ function role_change_permission($roleid, $context, $capname, $permission) {
 /**
  * Basic moodle context abstraction class.
  *
- * @author Petr Skoda
- * @since 2.2
+ * Google confirms that no other important framework is using "context" class,
+ * we could use something else like mcontext or moodle_context, but we need to type
+ * this very often which would be annoying and it would take too much space...
+ *
+ * This class is derived from stdClass for backwards compatibility with
+ * odl $context record that was returned from DML $DB->get_record()
+ *
+ * @package   core_access
+ * @category  access
+ * @copyright Petr Skoda {@link http://skodak.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     2.2
  *
  * @property-read int $id context id
  * @property-read int $contextlevel CONTEXT_SYSTEM, CONTEXT_COURSE, etc.
  * @property-read int $instanceid id of related instance in each context
  * @property-read string $path path to context, starts with system context
- * @property-read dept $depth
+ * @property-read int $depth
  */
 abstract class context extends stdClass {
 
-    /*
-     * Google confirms that no other important framework is using "context" class,
-     * we could use something else like mcontext or moodle_context, but we need to type
-     * this very often which would be annoying and it would take too much space...
-     *
-     * This class is derived from stdClass for backwards compatibility with
-     * odl $context record that was returned from DML $DB->get_record()
+    /**
+     * The context id
+     * Can be accessed publicly through $context->id
+     * @var int
      */
-
     protected $_id;
+
+    /**
+     * The context level
+     * Can be accessed publicly through $context->contextlevel
+     * @var int One of CONTEXT_* e.g. CONTEXT_COURSE, CONTEXT_MODULE
+     */
     protected $_contextlevel;
+
+    /**
+     * Id of the item this context is related to e.g. COURSE_CONTEXT => course.id
+     * Can be accessed publicly through $context->instanceid
+     * @var int
+     */
     protected $_instanceid;
+
+    /**
+     * The path to the context always starting from the system context
+     * Can be accessed publicly through $context->path
+     * @var string
+     */
     protected $_path;
+
+    /**
+     * The depth of the context in relation to parent contexts
+     * Can be accessed publicly through $context->depth
+     * @var int
+     */
     protected $_depth;
 
-    /* context caching info */
-
+    /**
+     * @var array Context caching info
+     */
     private static $cache_contextsbyid = array();
-    private static $cache_contexts     = array();
-    protected static $cache_count      = 0; // why do we do count contexts? Because count($array) is horribly slow for large arrays
 
+    /**
+     * @var array Context caching info
+     */
+    private static $cache_contexts     = array();
+
+    /**
+     * Context count
+     * Why do we do count contexts? Because count($array) is horribly slow for large arrays
+     * @var int
+     */
+    protected static $cache_count      = 0;
+
+    /**
+     * @var array Context caching info
+     */
     protected static $cache_preloaded  = array();
+
+    /**
+     * @var context_system The system context once initialised
+     */
     protected static $systemcontext    = null;
 
     /**
@@ -4644,7 +4736,7 @@ abstract class context extends stdClass {
     /**
      * Magic setter method, we do not want anybody to modify properties from the outside
      * @param string $name
-     * @param mixed @value
+     * @param mixed $value
      */
     public function __set($name, $value) {
         debugging('Can not change context instance properties!');
@@ -4671,7 +4763,7 @@ abstract class context extends stdClass {
 
     /**
      * Full support for isset on our magic read only properties.
-     * @param $name
+     * @param string $name
      * @return bool
      */
     public function __isset($name) {
@@ -5124,7 +5216,7 @@ abstract class context extends stdClass {
      * Rebuild context paths and depths at context level.
      *
      * @static
-     * @param $force
+     * @param bool $force
      * @return void
      */
     protected static function build_paths($force) {
@@ -5216,11 +5308,17 @@ abstract class context extends stdClass {
  *
  * Thank you Tim Hunt for helping me with this nasty trick.
  *
- * @author Petr Skoda
- * @since 2.2
+ * @package   core_access
+ * @category  access
+ * @copyright Petr Skoda {@link http://skodak.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     2.2
  */
 class context_helper extends context {
 
+    /**
+     * @var array An array mapping context levels to classes
+     */
     private static $alllevels = array(
             CONTEXT_SYSTEM    => 'context_system',
             CONTEXT_USER      => 'context_user',
@@ -5380,7 +5478,7 @@ class context_helper extends context {
      * To be used if you expect multiple queries for course activities...
      *
      * @static
-     * @param $courseid
+     * @param int $courseid
      */
     public static function preload_course($courseid) {
         // Users can call this multiple times without doing any harm
@@ -5440,9 +5538,13 @@ class context_helper extends context {
 
 
 /**
- * Basic context class
- * @author Petr Skoda (http://skodak.org)
- * @since 2.2
+ * System context class
+ *
+ * @package   core_access
+ * @category  access
+ * @copyright Petr Skoda {@link http://skodak.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     2.2
  */
 class context_system extends context {
     /**
@@ -5648,7 +5750,7 @@ class context_system extends context {
      * Rebuild context paths and depths at system context level.
      *
      * @static
-     * @param $force
+     * @param bool $force
      */
     protected static function build_paths($force) {
         global $DB;
@@ -5678,8 +5780,12 @@ class context_system extends context {
 
 /**
  * User context class
- * @author Petr Skoda (http://skodak.org)
- * @since 2.2
+ *
+ * @package   core_access
+ * @category  access
+ * @copyright Petr Skoda {@link http://skodak.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     2.2
  */
 class context_user extends context {
     /**
@@ -5829,7 +5935,7 @@ class context_user extends context {
      * Rebuild context paths and depths at user context level.
      *
      * @static
-     * @param $force
+     * @param bool $force
      */
     protected static function build_paths($force) {
         global $DB;
@@ -5846,8 +5952,12 @@ class context_user extends context {
 
 /**
  * Course category context class
- * @author Petr Skoda (http://skodak.org)
- * @since 2.2
+ *
+ * @package   core_access
+ * @category  access
+ * @copyright Petr Skoda {@link http://skodak.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     2.2
  */
 class context_coursecat extends context {
     /**
@@ -6015,7 +6125,7 @@ class context_coursecat extends context {
      * Rebuild context paths and depths at course category context level.
      *
      * @static
-     * @param $force
+     * @param bool $force
      */
     protected static function build_paths($force) {
         global $DB;
@@ -6066,8 +6176,12 @@ class context_coursecat extends context {
 
 /**
  * Course context class
- * @author Petr Skoda (http://skodak.org)
- * @since 2.2
+ *
+ * @package   core_access
+ * @category  access
+ * @copyright Petr Skoda {@link http://skodak.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     2.2
  */
 class context_course extends context {
     /**
@@ -6234,7 +6348,7 @@ class context_course extends context {
      * Rebuild context paths and depths at course context level.
      *
      * @static
-     * @param $force
+     * @param bool $force
      */
     protected static function build_paths($force) {
         global $DB;
@@ -6281,8 +6395,12 @@ class context_course extends context {
 
 /**
  * Course module context class
- * @author Petr Skoda (http://skodak.org)
- * @since 2.2
+ *
+ * @package   core_access
+ * @category  access
+ * @copyright Petr Skoda {@link http://skodak.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     2.2
  */
 class context_module extends context {
     /**
@@ -6484,7 +6602,7 @@ class context_module extends context {
      * Rebuild context paths and depths at module context level.
      *
      * @static
-     * @param $force
+     * @param bool $force
      */
     protected static function build_paths($force) {
         global $DB;
@@ -6516,8 +6634,12 @@ class context_module extends context {
 
 /**
  * Block context class
- * @author Petr Skoda (http://skodak.org)
- * @since 2.2
+ *
+ * @package   core_access
+ * @category  access
+ * @copyright Petr Skoda {@link http://skodak.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since     2.2
  */
 class context_block extends context {
     /**
@@ -6697,7 +6819,7 @@ class context_block extends context {
      * Rebuild context paths and depths at block context level.
      *
      * @static
-     * @param $force
+     * @param bool $force
      */
     protected static function build_paths($force) {
         global $DB;
@@ -6756,7 +6878,7 @@ function load_temp_role($context, $roleid, array $accessdata) {
  * Not available any more, use remove_temp_course_roles() instead.
  *
  * @deprecated since 2.2
- * @param object $context
+ * @param stdClass $context
  * @param array $accessdata
  * @return array access data
  */
@@ -6863,7 +6985,7 @@ function get_parent_contextid(context $context) {
  * contexts ;-)
  *
  * @deprecated since 2.2, use $context->get_child_contexts() instead
- * @param context $context.
+ * @param context $context
  * @return array Array of child records
  */
 function get_child_contexts(context $context) {
@@ -6907,7 +7029,7 @@ function build_context_path($force = false) {
 /**
  * Rebuild all related context depth and path caches
  *
- * @deprecated
+ * @deprecated since 2.2
  * @param array $fixcontexts array of contexts, strongtyped
  * @return void
  */
@@ -6935,7 +7057,7 @@ function preload_course_contexts($courseid) {
  * Preloads context information together with instances.
  * Use context_instance_preload() to strip the context info from the record and cache the context instance.
  *
- * @deprecated
+ * @deprecated since 2.2
  * @param string $joinon for example 'u.id'
  * @param string $contextlevel context level of instance in $joinon
  * @param string $tablealias context table alias
@@ -7037,6 +7159,7 @@ function delete_context($contextlevel, $instanceid, $deleterecord = true) {
 
 /**
  * Returns context level name
+ *
  * @deprecated since 2.2
  * @param integer $contextlevel $context->context level. One of the CONTEXT_... constants.
  * @return string the name for this type of context.

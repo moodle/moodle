@@ -5,22 +5,27 @@
     position:relative;
     margin-bottom:3.5em;
 }
+
 .tabtree .tabrow0 {
     text-align:center;
     width:100%;
     margin:1em 0px;
 }
+
 /* serve a qualcosa? */
 .tabtree ul li.here .empty {
     display: none;
 }
+
 .tabtree .tabrow0 li {
     display:inline;
     margin-right:-4px;
 }
+
 .tabtree .tabrow0 li.here {
-    font-weight: normal;
+    font-weight: bold;
 }
+
 .tabtree .tabrow0 li.here .empty {
     display: block;
     height: 1px;
@@ -30,15 +35,18 @@
     width: 100%;
     bottom: -4px;
 }
+
 .tabtree .tabrow0 li a:link,
 .tabtree .tabrow0 li a:visited,
 .tabtree .tabrow0 li a:active {
     color:#000;
 }
+
 .tabtree .tabrow0 li.here a {
     position:relative;
     z-index:102;
 }
+
 .tabtree .tabrow0 li a {
     background-image:url([[pix:theme|tab/left]]);
     padding-left:14px;
@@ -50,9 +58,11 @@
     background-color:transparent;
     border:none;
 }
+
 .tabtree .tabrow0 li a:hover {
     background-image:url([[pix:theme|tab/left_hover]]);
 }
+
 .tabtree .tabrow0 li a span {
     background-image:url([[pix:theme|tab/right]]);
     background-repeat:no-repeat;
@@ -61,9 +71,11 @@
     padding-top:10px;
     padding-bottom:4px; /*to remove the border-bottom*/
 }
+
 .tabtree .tabrow0 li a:hover span {
     background-image:url([[pix:theme|tab/right_hover]]);
 }
+
 .tabtree .tabrow0 ul,
 .tabtree .tabrow0 div {
     background-image:url([[pix:theme|tab/tabrow1]]);
@@ -75,12 +87,14 @@
     top:100%;
     margin:0px;
 }
+
 .tabtree .tabrow0 .empty {
     height:1px;
     overflow:hidden;
     padding:0px;
     position:absolute;
 }
+
 .tabtree .tabrow1 li a,
 .tabtree .tabrow1 li a:hover,
 .tabtree .tabrow1 li a span,
@@ -92,15 +106,26 @@
 
 .tabtree .tabrow1 li a:hover {
     font-weight:bold;
+    text-decoration: underline;
+}
+
+.tabtree .tabrow1 li {
+    font-weight: normal;
+}
+
+.tabtree .tabrow1 li.here {
+    font-weight: bold;
 }
 
 .groupmanagementtable {
     width:90%;
 }
+
 .groupmanagementtable td {
     vertical-align:top;
     border-width:0px;
 }
+
 .groupmanagementtable td p {
     margin:0px;
 }

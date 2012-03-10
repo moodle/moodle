@@ -2853,9 +2853,11 @@ function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0)
 /**
  * Lists all browsable file areas
  *
- * @param object $course
- * @param object $cm
- * @param object $context
+ * @package  mod_data
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
  * @return array
  */
 function data_get_file_areas($course, $cm, $context) {
@@ -2864,14 +2866,88 @@ function data_get_file_areas($course, $cm, $context) {
 }
 
 /**
+ * File browsing support for data module.
+ *
+ * @param file_browser $browser
+ * @param array $areas
+ * @param stdClass $course
+ * @param cm_info $cm
+ * @param context $context
+ * @param string $filearea
+ * @param int $itemid
+ * @param string $filepath
+ * @param string $filename
+ * @return file_info_stored file_info_stored instance or null if not found
+ */
+function mod_data_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+    global $CFG, $DB;
+
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        return null;
+    }
+
+    if ($filearea === 'content') {
+        if (!$content = $DB->get_record('data_content', array('id'=>$itemid))) {
+            return null;
+        }
+
+        if (!$field = $DB->get_record('data_fields', array('id'=>$content->fieldid))) {
+            return null;
+        }
+
+        if (!$record = $DB->get_record('data_records', array('id'=>$content->recordid))) {
+            return null;
+        }
+
+        if (!$data = $DB->get_record('data', array('id'=>$field->dataid))) {
+            return null;
+        }
+
+        //check if approved
+        if ($data->approval and !$record->approved and !data_isowner($record) and !has_capability('mod/data:approve', $context)) {
+            return null;
+        }
+
+        // group access
+        if ($record->groupid) {
+            $groupmode = groups_get_activity_groupmode($cm, $course);
+            if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+                if (!groups_is_member($record->groupid)) {
+                    return null;
+                }
+            }
+        }
+
+        $fieldobj = data_get_field($field, $data, $cm);
+
+        $filepath = is_null($filepath) ? '/' : $filepath;
+        $filename = is_null($filename) ? '.' : $filename;
+        if (!$fieldobj->file_ok($filepath.$filename)) {
+            return null;
+        }
+
+        $fs = get_file_storage();
+        if (!($storedfile = $fs->get_file($context->id, 'mod_data', $filearea, $itemid, $filepath, $filename))) {
+            return null;
+        }
+        $urlbase = $CFG->wwwroot.'/pluginfile.php';
+        return new file_info_stored($browser, $context, $storedfile, $urlbase, $filearea, $itemid, true, true, false);
+    }
+
+    return null;
+}
+
+/**
  * Serves the data attachments. Implements needed access control ;-)
  *
- * @param object $course
- * @param object $cm
- * @param object $context
- * @param string $filearea
- * @param array $args
- * @param bool $forcedownload
+ * @package  mod_data
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
  * @return bool false if file not found, does not return if found - justsend the file
  */
 function data_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
@@ -3045,6 +3121,7 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
  * @return bool
  */
 function data_presets_save($course, $cm, $data, $path) {
+    global $USER;
     $fs = get_file_storage();
     $filerecord = new stdClass;
     $filerecord->contextid = DATA_PRESET_CONTEXT;
@@ -3052,6 +3129,7 @@ function data_presets_save($course, $cm, $data, $path) {
     $filerecord->filearea = DATA_PRESET_FILEAREA;
     $filerecord->itemid = 0;
     $filerecord->filepath = '/'.$path.'/';
+    $filerecord->userid = $USER->id;
 
     $filerecord->filename = 'preset.xml';
     $fs->create_file_from_string($filerecord, data_presets_generate_xml($course, $cm, $data));

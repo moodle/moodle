@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20101112" COMMENT="XMLDB file for Moodle mod/workshop"
+<XMLDB PATH="mod/workshop/db" VERSION="20120122" COMMENT="XMLDB file for Moodle mod/workshop"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="workshop" COMMENT="This table keeps information about the module instances and their settings" NEXT="workshop_submissions">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="ID of the parent course" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the parent course" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Name of the activity" PREVIOUS="course" NEXT="intro"/>
         <FIELD NAME="intro" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The introduction or description of the activity" PREVIOUS="name" NEXT="introformat"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the intro field" PREVIOUS="intro" NEXT="instructauthors"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the intro field" PREVIOUS="intro" NEXT="instructauthors"/>
         <FIELD NAME="instructauthors" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Instructions for the submission phase" PREVIOUS="introformat" NEXT="instructauthorsformat"/>
-        <FIELD NAME="instructauthorsformat" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="instructauthors" NEXT="instructreviewers"/>
+        <FIELD NAME="instructauthorsformat" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="instructauthors" NEXT="instructreviewers"/>
         <FIELD NAME="instructreviewers" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Instructions for the assessment phase" PREVIOUS="instructauthorsformat" NEXT="instructreviewersformat"/>
-        <FIELD NAME="instructreviewersformat" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="instructreviewers" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The timestamp when the module was modified" PREVIOUS="instructreviewersformat" NEXT="phase"/>
-        <FIELD NAME="phase" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The current phase of workshop (0 = not available, 1 = submission, 2 = assessment, 3 = closed)" PREVIOUS="timemodified" NEXT="useexamples"/>
-        <FIELD NAME="useexamples" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="optional feature: students practise evaluating on example submissions from teacher" PREVIOUS="phase" NEXT="usepeerassessment"/>
-        <FIELD NAME="usepeerassessment" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="optional feature: students perform peer assessment of others' work" PREVIOUS="useexamples" NEXT="useselfassessment"/>
-        <FIELD NAME="useselfassessment" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="optional feature: students perform self assessment of their own work" PREVIOUS="usepeerassessment" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="80" SEQUENCE="false" DECIMALS="5" COMMENT="The maximum grade for submission" PREVIOUS="useselfassessment" NEXT="gradinggrade"/>
-        <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="20" SEQUENCE="false" DECIMALS="5" COMMENT="The maximum grade for assessment" PREVIOUS="grade" NEXT="strategy"/>
+        <FIELD NAME="instructreviewersformat" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="instructreviewers" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp when the module was modified" PREVIOUS="instructreviewersformat" NEXT="phase"/>
+        <FIELD NAME="phase" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The current phase of workshop (0 = not available, 1 = submission, 2 = assessment, 3 = closed)" PREVIOUS="timemodified" NEXT="useexamples"/>
+        <FIELD NAME="useexamples" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="optional feature: students practise evaluating on example submissions from teacher" PREVIOUS="phase" NEXT="usepeerassessment"/>
+        <FIELD NAME="usepeerassessment" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="optional feature: students perform peer assessment of others' work" PREVIOUS="useexamples" NEXT="useselfassessment"/>
+        <FIELD NAME="useselfassessment" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="optional feature: students perform self assessment of their own work" PREVIOUS="usepeerassessment" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" DEFAULT="80" SEQUENCE="false" DECIMALS="5" COMMENT="The maximum grade for submission" PREVIOUS="useselfassessment" NEXT="gradinggrade"/>
+        <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" DEFAULT="20" SEQUENCE="false" DECIMALS="5" COMMENT="The maximum grade for assessment" PREVIOUS="grade" NEXT="strategy"/>
         <FIELD NAME="strategy" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The type of the current grading strategy used in this workshop" PREVIOUS="gradinggrade" NEXT="evaluation"/>
         <FIELD NAME="evaluation" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The recently used grading evaluation method" PREVIOUS="strategy" NEXT="gradedecimals"/>
-        <FIELD NAME="gradedecimals" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of digits that should be shown after the decimal point when displaying grades" PREVIOUS="evaluation" NEXT="nattachments"/>
-        <FIELD NAME="nattachments" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of required submission attachments" PREVIOUS="gradedecimals" NEXT="latesubmissions"/>
-        <FIELD NAME="latesubmissions" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allow submitting the work after the deadline" PREVIOUS="nattachments" NEXT="maxbytes"/>
-        <FIELD NAME="maxbytes" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="100000" SEQUENCE="false" COMMENT="Maximum size of the one attached file" PREVIOUS="latesubmissions" NEXT="examplesmode"/>
-        <FIELD NAME="examplesmode" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = example assessments are voluntary, 1 = examples must be assessed before submission, 2 = examples are available after own submission and must be assessed before peer/self assessment phase" PREVIOUS="maxbytes" NEXT="submissionstart"/>
-        <FIELD NAME="submissionstart" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be started manually, greater than 0 the timestamp of the start of the submission phase" PREVIOUS="examplesmode" NEXT="submissionend"/>
-        <FIELD NAME="submissionend" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be closed manually, greater than 0 the timestamp of the end of the submission phase" PREVIOUS="submissionstart" NEXT="assessmentstart"/>
-        <FIELD NAME="assessmentstart" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be started manually, greater than 0 the timestamp of the start of the assessment phase" PREVIOUS="submissionend" NEXT="assessmentend"/>
-        <FIELD NAME="assessmentend" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be closed manually, greater than 0 the timestamp of the end of the assessment phase" PREVIOUS="assessmentstart"/>
+        <FIELD NAME="gradedecimals" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Number of digits that should be shown after the decimal point when displaying grades" PREVIOUS="evaluation" NEXT="nattachments"/>
+        <FIELD NAME="nattachments" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Number of required submission attachments" PREVIOUS="gradedecimals" NEXT="latesubmissions"/>
+        <FIELD NAME="latesubmissions" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Allow submitting the work after the deadline" PREVIOUS="nattachments" NEXT="maxbytes"/>
+        <FIELD NAME="maxbytes" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="100000" SEQUENCE="false" COMMENT="Maximum size of the one attached file" PREVIOUS="latesubmissions" NEXT="examplesmode"/>
+        <FIELD NAME="examplesmode" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0 = example assessments are voluntary, 1 = examples must be assessed before submission, 2 = examples are available after own submission and must be assessed before peer/self assessment phase" PREVIOUS="maxbytes" NEXT="submissionstart"/>
+        <FIELD NAME="submissionstart" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be started manually, greater than 0 the timestamp of the start of the submission phase" PREVIOUS="examplesmode" NEXT="submissionend"/>
+        <FIELD NAME="submissionend" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be closed manually, greater than 0 the timestamp of the end of the submission phase" PREVIOUS="submissionstart" NEXT="assessmentstart"/>
+        <FIELD NAME="assessmentstart" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be started manually, greater than 0 the timestamp of the start of the assessment phase" PREVIOUS="submissionend" NEXT="assessmentend"/>
+        <FIELD NAME="assessmentend" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="0 = will be closed manually, greater than 0 the timestamp of the end of the assessment phase" PREVIOUS="assessmentstart"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="course_fk"/>
@@ -41,25 +41,25 @@
     </TABLE>
     <TABLE NAME="workshop_submissions" COMMENT="Info about the submission and the aggregation of the grade for submission, grade for assessment and final grade. Both grade for submission and grade for assessment can be overridden by teacher. Final grade is always the sum of them. All grades are stored as of 0-100." PREVIOUS="workshop" NEXT="workshop_assessments">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the id of the workshop instance" PREVIOUS="id" NEXT="example"/>
-        <FIELD NAME="example" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Is this submission an example from teacher" PREVIOUS="workshopid" NEXT="authorid"/>
-        <FIELD NAME="authorid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The author of the submission" PREVIOUS="example" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Timestamp when the work was submitted for the first time" PREVIOUS="authorid" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Timestamp when the submission has been updated" PREVIOUS="timecreated" NEXT="title"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="the id of the workshop instance" PREVIOUS="id" NEXT="example"/>
+        <FIELD NAME="example" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Is this submission an example from teacher" PREVIOUS="workshopid" NEXT="authorid"/>
+        <FIELD NAME="authorid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The author of the submission" PREVIOUS="example" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp when the work was submitted for the first time" PREVIOUS="authorid" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp when the submission has been updated" PREVIOUS="timecreated" NEXT="title"/>
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The submission title" PREVIOUS="timemodified" NEXT="content"/>
         <FIELD NAME="content" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Submission text" PREVIOUS="title" NEXT="contentformat"/>
-        <FIELD NAME="contentformat" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of submission text" PREVIOUS="content" NEXT="contenttrust"/>
-        <FIELD NAME="contenttrust" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="The trust mode of the data" PREVIOUS="contentformat" NEXT="attachment"/>
-        <FIELD NAME="attachment" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Used by File API file_postupdate_standard_filemanager" PREVIOUS="contenttrust" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="Aggregated grade for the submission. The grade is a decimal number from interval 0..100. If NULL then the grade for submission has not been aggregated yet." PREVIOUS="attachment" NEXT="gradeover"/>
-        <FIELD NAME="gradeover" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the submission manually overridden by a teacher. Grade is always from interval 0..100. If NULL then the grade is not overriden." PREVIOUS="grade" NEXT="gradeoverby"/>
-        <FIELD NAME="gradeoverby" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the user who has overridden the grade for submission." PREVIOUS="gradeover" NEXT="feedbackauthor"/>
+        <FIELD NAME="contentformat" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of submission text" PREVIOUS="content" NEXT="contenttrust"/>
+        <FIELD NAME="contenttrust" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The trust mode of the data" PREVIOUS="contentformat" NEXT="attachment"/>
+        <FIELD NAME="attachment" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Used by File API file_postupdate_standard_filemanager" PREVIOUS="contenttrust" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="Aggregated grade for the submission. The grade is a decimal number from interval 0..100. If NULL then the grade for submission has not been aggregated yet." PREVIOUS="attachment" NEXT="gradeover"/>
+        <FIELD NAME="gradeover" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the submission manually overridden by a teacher. Grade is always from interval 0..100. If NULL then the grade is not overriden." PREVIOUS="grade" NEXT="gradeoverby"/>
+        <FIELD NAME="gradeoverby" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the user who has overridden the grade for submission." PREVIOUS="gradeover" NEXT="feedbackauthor"/>
         <FIELD NAME="feedbackauthor" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Teacher comment/feedback for the author of the submission, for example describing the reasons for the grade overriding" PREVIOUS="gradeoverby" NEXT="feedbackauthorformat"/>
-        <FIELD NAME="feedbackauthorformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedbackauthor" NEXT="timegraded"/>
-        <FIELD NAME="timegraded" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The timestamp when grade or gradeover was recently modified" PREVIOUS="feedbackauthorformat" NEXT="published"/>
-        <FIELD NAME="published" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Shall the submission be available to other when the workshop is closed" PREVIOUS="timegraded" NEXT="late"/>
-        <FIELD NAME="late" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Has this submission been submitted after the deadline or during the assessment phase?" PREVIOUS="published"/>
+        <FIELD NAME="feedbackauthorformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedbackauthor" NEXT="timegraded"/>
+        <FIELD NAME="timegraded" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp when grade or gradeover was recently modified" PREVIOUS="feedbackauthorformat" NEXT="published"/>
+        <FIELD NAME="published" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Shall the submission be available to other when the workshop is closed" PREVIOUS="timegraded" NEXT="late"/>
+        <FIELD NAME="late" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Has this submission been submitted after the deadline or during the assessment phase?" PREVIOUS="published"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
@@ -70,20 +70,20 @@
     </TABLE>
     <TABLE NAME="workshop_assessments" COMMENT="Info about the made assessment and automatically calculated grade for it. The proposed grade can be overridden by teacher." PREVIOUS="workshop_submissions" NEXT="workshop_grades">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="submissionid"/>
-        <FIELD NAME="submissionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the assessed submission" PREVIOUS="id" NEXT="reviewerid"/>
-        <FIELD NAME="reviewerid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the reviewer who makes this assessment" PREVIOUS="submissionid" NEXT="weight"/>
-        <FIELD NAME="weight" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="The weight of the assessment for the purposes of aggregation" PREVIOUS="reviewerid" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="If 0 then the assessment was allocated but the reviewer has not assessed yet. If greater than 0 then the timestamp of when the reviewer assessed for the first time" PREVIOUS="weight" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="If 0 then the assessment was allocated but the reviewer has not assessed yet. If greater than 0 then the timestamp of when the reviewer assessed for the last time" PREVIOUS="timecreated" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The aggregated grade for submission suggested by the reviewer. The grade 0..100 is computed from the values assigned to the assessment dimensions fields. If NULL then it has not been aggregated yet." PREVIOUS="timemodified" NEXT="gradinggrade"/>
-        <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The computed grade 0..100 for this assessment. If NULL then it has not been computed yet." PREVIOUS="grade" NEXT="gradinggradeover"/>
-        <FIELD NAME="gradinggradeover" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the assessment manually overridden by a teacher. Grade is always from interval 0..100. If NULL then the grade is not overriden." PREVIOUS="gradinggrade" NEXT="gradinggradeoverby"/>
-        <FIELD NAME="gradinggradeoverby" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the user who has overridden the grade for submission." PREVIOUS="gradinggradeover" NEXT="feedbackauthor"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="submissionid"/>
+        <FIELD NAME="submissionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the assessed submission" PREVIOUS="id" NEXT="reviewerid"/>
+        <FIELD NAME="reviewerid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the reviewer who makes this assessment" PREVIOUS="submissionid" NEXT="weight"/>
+        <FIELD NAME="weight" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="The weight of the assessment for the purposes of aggregation" PREVIOUS="reviewerid" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="If 0 then the assessment was allocated but the reviewer has not assessed yet. If greater than 0 then the timestamp of when the reviewer assessed for the first time" PREVIOUS="weight" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="If 0 then the assessment was allocated but the reviewer has not assessed yet. If greater than 0 then the timestamp of when the reviewer assessed for the last time" PREVIOUS="timecreated" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="The aggregated grade for submission suggested by the reviewer. The grade 0..100 is computed from the values assigned to the assessment dimensions fields. If NULL then it has not been aggregated yet." PREVIOUS="timemodified" NEXT="gradinggrade"/>
+        <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="The computed grade 0..100 for this assessment. If NULL then it has not been computed yet." PREVIOUS="grade" NEXT="gradinggradeover"/>
+        <FIELD NAME="gradinggradeover" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="Grade for the assessment manually overridden by a teacher. Grade is always from interval 0..100. If NULL then the grade is not overriden." PREVIOUS="gradinggrade" NEXT="gradinggradeoverby"/>
+        <FIELD NAME="gradinggradeoverby" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the user who has overridden the grade for submission." PREVIOUS="gradinggradeover" NEXT="feedbackauthor"/>
         <FIELD NAME="feedbackauthor" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The comment/feedback from the reviewer for the author." PREVIOUS="gradinggradeoverby" NEXT="feedbackauthorformat"/>
-        <FIELD NAME="feedbackauthorformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedbackauthor" NEXT="feedbackreviewer"/>
+        <FIELD NAME="feedbackauthorformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedbackauthor" NEXT="feedbackreviewer"/>
         <FIELD NAME="feedbackreviewer" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The comment/feedback from the teacher for the reviewer. For example the reason why the grade for assessment was overridden" PREVIOUS="feedbackauthorformat" NEXT="feedbackreviewerformat"/>
-        <FIELD NAME="feedbackreviewerformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedbackreviewer"/>
+        <FIELD NAME="feedbackreviewerformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedbackreviewer"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="submission_fk"/>
@@ -94,13 +94,13 @@
     </TABLE>
     <TABLE NAME="workshop_grades" COMMENT="How the reviewers filled-up the grading forms, given grades and comments" PREVIOUS="workshop_assessments" NEXT="workshop_aggregations">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="assessmentid"/>
-        <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Part of which assessment this grade is of" PREVIOUS="id" NEXT="strategy"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="assessmentid"/>
+        <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Part of which assessment this grade is of" PREVIOUS="id" NEXT="strategy"/>
         <FIELD NAME="strategy" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" PREVIOUS="assessmentid" NEXT="dimensionid"/>
-        <FIELD NAME="dimensionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key. References dimension id in one of the grading strategy tables." PREVIOUS="strategy" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="Given grade in the referenced assessment dimension." PREVIOUS="dimensionid" NEXT="peercomment"/>
+        <FIELD NAME="dimensionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key. References dimension id in one of the grading strategy tables." PREVIOUS="strategy" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="5" COMMENT="Given grade in the referenced assessment dimension." PREVIOUS="dimensionid" NEXT="peercomment"/>
         <FIELD NAME="peercomment" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Reviewer's comment to the grade value." PREVIOUS="grade" NEXT="peercommentformat"/>
-        <FIELD NAME="peercommentformat" TYPE="int" LENGTH="3" NOTNULL="false" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="The format of peercomment field" PREVIOUS="peercomment"/>
+        <FIELD NAME="peercommentformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="The format of peercomment field" PREVIOUS="peercomment"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="assessment_fk"/>
@@ -110,11 +110,11 @@
     </TABLE>
     <TABLE NAME="workshop_aggregations" COMMENT="Aggregated grades for assessment are stored here. The aggregated grade for submission is stored in workshop_submissions" PREVIOUS="workshop_grades" NEXT="workshop_old">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the id of the workshop instance" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the user which aggregated grades are calculated for" PREVIOUS="workshopid" NEXT="gradinggrade"/>
-        <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The aggregated grade for all assessments made by this reviewer. The grade is a number from interval 0..100. If NULL then the grade for assessments has not been aggregated yet." PREVIOUS="userid" NEXT="timegraded"/>
-        <FIELD NAME="timegraded" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The timestamp of when the participant's gradinggrade was recently aggregated." PREVIOUS="gradinggrade"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="the id of the workshop instance" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the user which aggregated grades are calculated for" PREVIOUS="workshopid" NEXT="gradinggrade"/>
+        <FIELD NAME="gradinggrade" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="The aggregated grade for all assessments made by this reviewer. The grade is a number from interval 0..100. If NULL then the grade for assessments has not been aggregated yet." PREVIOUS="userid" NEXT="timegraded"/>
+        <FIELD NAME="timegraded" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp of when the participant's gradinggrade was recently aggregated." PREVIOUS="gradinggrade"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshop_fk"/>
@@ -125,40 +125,40 @@
     </TABLE>
     <TABLE NAME="workshop_old" COMMENT="Legacy workshop table to be dropped later in Moodle 2.x" PREVIOUS="workshop_aggregations" NEXT="workshop_elements_old">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="course"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="description"/>
         <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="wtype"/>
-        <FIELD NAME="wtype" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="nelements"/>
-        <FIELD NAME="nelements" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="wtype" NEXT="nattachments"/>
-        <FIELD NAME="nattachments" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="nelements" NEXT="phase"/>
-        <FIELD NAME="phase" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="nattachments" NEXT="format"/>
-        <FIELD NAME="format" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="phase" NEXT="gradingstrategy"/>
-        <FIELD NAME="gradingstrategy" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="format" NEXT="resubmit"/>
-        <FIELD NAME="resubmit" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="gradingstrategy" NEXT="agreeassessments"/>
-        <FIELD NAME="agreeassessments" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="resubmit" NEXT="hidegrades"/>
-        <FIELD NAME="hidegrades" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="agreeassessments" NEXT="anonymous"/>
-        <FIELD NAME="anonymous" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="hidegrades" NEXT="includeself"/>
-        <FIELD NAME="includeself" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="anonymous" NEXT="maxbytes"/>
-        <FIELD NAME="maxbytes" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="100000" SEQUENCE="false" PREVIOUS="includeself" NEXT="submissionstart"/>
-        <FIELD NAME="submissionstart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="maxbytes" NEXT="assessmentstart"/>
-        <FIELD NAME="assessmentstart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="submissionstart" NEXT="submissionend"/>
-        <FIELD NAME="submissionend" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentstart" NEXT="assessmentend"/>
-        <FIELD NAME="assessmentend" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="submissionend" NEXT="releasegrades"/>
-        <FIELD NAME="releasegrades" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentend" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="releasegrades" NEXT="gradinggrade"/>
-        <FIELD NAME="gradinggrade" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="grade" NEXT="ntassessments"/>
-        <FIELD NAME="ntassessments" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="gradinggrade" NEXT="assessmentcomps"/>
-        <FIELD NAME="assessmentcomps" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="2" SEQUENCE="false" PREVIOUS="ntassessments" NEXT="nsassessments"/>
-        <FIELD NAME="nsassessments" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentcomps" NEXT="overallocation"/>
-        <FIELD NAME="overallocation" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="nsassessments" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="overallocation" NEXT="teacherweight"/>
-        <FIELD NAME="teacherweight" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="timemodified" NEXT="showleaguetable"/>
-        <FIELD NAME="showleaguetable" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="teacherweight" NEXT="usepassword"/>
-        <FIELD NAME="usepassword" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="showleaguetable" NEXT="password"/>
+        <FIELD NAME="wtype" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="nelements"/>
+        <FIELD NAME="nelements" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="wtype" NEXT="nattachments"/>
+        <FIELD NAME="nattachments" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="nelements" NEXT="phase"/>
+        <FIELD NAME="phase" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="nattachments" NEXT="format"/>
+        <FIELD NAME="format" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="phase" NEXT="gradingstrategy"/>
+        <FIELD NAME="gradingstrategy" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="format" NEXT="resubmit"/>
+        <FIELD NAME="resubmit" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="gradingstrategy" NEXT="agreeassessments"/>
+        <FIELD NAME="agreeassessments" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="resubmit" NEXT="hidegrades"/>
+        <FIELD NAME="hidegrades" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="agreeassessments" NEXT="anonymous"/>
+        <FIELD NAME="anonymous" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="hidegrades" NEXT="includeself"/>
+        <FIELD NAME="includeself" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="anonymous" NEXT="maxbytes"/>
+        <FIELD NAME="maxbytes" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="100000" SEQUENCE="false" PREVIOUS="includeself" NEXT="submissionstart"/>
+        <FIELD NAME="submissionstart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="maxbytes" NEXT="assessmentstart"/>
+        <FIELD NAME="assessmentstart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="submissionstart" NEXT="submissionend"/>
+        <FIELD NAME="submissionend" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentstart" NEXT="assessmentend"/>
+        <FIELD NAME="assessmentend" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="submissionend" NEXT="releasegrades"/>
+        <FIELD NAME="releasegrades" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentend" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="releasegrades" NEXT="gradinggrade"/>
+        <FIELD NAME="gradinggrade" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="grade" NEXT="ntassessments"/>
+        <FIELD NAME="ntassessments" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="gradinggrade" NEXT="assessmentcomps"/>
+        <FIELD NAME="assessmentcomps" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="2" SEQUENCE="false" PREVIOUS="ntassessments" NEXT="nsassessments"/>
+        <FIELD NAME="nsassessments" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentcomps" NEXT="overallocation"/>
+        <FIELD NAME="overallocation" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="nsassessments" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="overallocation" NEXT="teacherweight"/>
+        <FIELD NAME="teacherweight" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="timemodified" NEXT="showleaguetable"/>
+        <FIELD NAME="showleaguetable" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="teacherweight" NEXT="usepassword"/>
+        <FIELD NAME="usepassword" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="showleaguetable" NEXT="password"/>
         <FIELD NAME="password" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="usepassword" NEXT="newplugin"/>
         <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="password" NEXT="newid"/>
-        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="newplugin"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="newplugin"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -169,17 +169,17 @@
     </TABLE>
     <TABLE NAME="workshop_elements_old" COMMENT="Legacy workshop_elements table to be dropped later in Moodle 2.x" PREVIOUS="workshop_old" NEXT="workshop_rubrics_old">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="elementno"/>
-        <FIELD NAME="elementno" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="description"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="elementno"/>
+        <FIELD NAME="elementno" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="description"/>
         <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="elementno" NEXT="scale"/>
-        <FIELD NAME="scale" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="maxscore"/>
-        <FIELD NAME="maxscore" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="scale" NEXT="weight"/>
-        <FIELD NAME="weight" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="11" SEQUENCE="false" PREVIOUS="maxscore" NEXT="stddev"/>
-        <FIELD NAME="stddev" TYPE="float" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="weight" NEXT="totalassessments"/>
-        <FIELD NAME="totalassessments" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="stddev" NEXT="newplugin"/>
+        <FIELD NAME="scale" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="maxscore"/>
+        <FIELD NAME="maxscore" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="scale" NEXT="weight"/>
+        <FIELD NAME="weight" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="11" SEQUENCE="false" PREVIOUS="maxscore" NEXT="stddev"/>
+        <FIELD NAME="stddev" TYPE="float" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="weight" NEXT="totalassessments"/>
+        <FIELD NAME="totalassessments" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="stddev" NEXT="newplugin"/>
         <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="totalassessments" NEXT="newid"/>
-        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="newplugin"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="newplugin"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshopid"/>
@@ -188,13 +188,13 @@
     </TABLE>
     <TABLE NAME="workshop_rubrics_old" COMMENT="Legacy workshop_rubrics table to be dropped later in Moodle 2.x" PREVIOUS="workshop_elements_old" NEXT="workshop_submissions_old">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="elementno"/>
-        <FIELD NAME="elementno" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="rubricno"/>
-        <FIELD NAME="rubricno" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="elementno" NEXT="description"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="elementno"/>
+        <FIELD NAME="elementno" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="rubricno"/>
+        <FIELD NAME="rubricno" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="elementno" NEXT="description"/>
         <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="rubricno" NEXT="newplugin"/>
         <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="description" NEXT="newid"/>
-        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="newplugin"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="newplugin"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshopid"/>
@@ -203,19 +203,19 @@
     </TABLE>
     <TABLE NAME="workshop_submissions_old" COMMENT="Legacy workshop_submissions table to be dropped later in Moodle 2.x" PREVIOUS="workshop_rubrics_old" NEXT="workshop_assessments_old">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="title"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="title"/>
         <FIELD NAME="title" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="title" NEXT="mailed"/>
-        <FIELD NAME="mailed" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="description"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="title" NEXT="mailed"/>
+        <FIELD NAME="mailed" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="description"/>
         <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="mailed" NEXT="gradinggrade"/>
-        <FIELD NAME="gradinggrade" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="finalgrade"/>
-        <FIELD NAME="finalgrade" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="gradinggrade" NEXT="late"/>
-        <FIELD NAME="late" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="finalgrade" NEXT="nassessments"/>
-        <FIELD NAME="nassessments" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="late" NEXT="newplugin"/>
+        <FIELD NAME="gradinggrade" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="finalgrade"/>
+        <FIELD NAME="finalgrade" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="gradinggrade" NEXT="late"/>
+        <FIELD NAME="late" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="finalgrade" NEXT="nassessments"/>
+        <FIELD NAME="nassessments" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="late" NEXT="newplugin"/>
         <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="nassessments" NEXT="newid"/>
-        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="newplugin"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="newplugin"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshopid"/>
@@ -228,23 +228,23 @@
     </TABLE>
     <TABLE NAME="workshop_assessments_old" COMMENT="Legacy workshop_assessments table to be dropped later in Moodle 2.x" PREVIOUS="workshop_submissions_old" NEXT="workshop_grades_old">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="submissionid"/>
-        <FIELD NAME="submissionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="submissionid" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="timegraded"/>
-        <FIELD NAME="timegraded" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="timeagreed"/>
-        <FIELD NAME="timeagreed" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timegraded" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="float" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeagreed" NEXT="gradinggrade"/>
-        <FIELD NAME="gradinggrade" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="grade" NEXT="teachergraded"/>
-        <FIELD NAME="teachergraded" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="gradinggrade" NEXT="mailed"/>
-        <FIELD NAME="mailed" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="teachergraded" NEXT="resubmission"/>
-        <FIELD NAME="resubmission" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="mailed" NEXT="donotuse"/>
-        <FIELD NAME="donotuse" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="resubmission" NEXT="generalcomment"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="submissionid"/>
+        <FIELD NAME="submissionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="submissionid" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="timegraded"/>
+        <FIELD NAME="timegraded" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="timeagreed"/>
+        <FIELD NAME="timeagreed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timegraded" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="float" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeagreed" NEXT="gradinggrade"/>
+        <FIELD NAME="gradinggrade" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="grade" NEXT="teachergraded"/>
+        <FIELD NAME="teachergraded" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="gradinggrade" NEXT="mailed"/>
+        <FIELD NAME="mailed" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="teachergraded" NEXT="resubmission"/>
+        <FIELD NAME="resubmission" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="mailed" NEXT="donotuse"/>
+        <FIELD NAME="donotuse" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="resubmission" NEXT="generalcomment"/>
         <FIELD NAME="generalcomment" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="donotuse" NEXT="teachercomment"/>
         <FIELD NAME="teachercomment" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="generalcomment" NEXT="newplugin"/>
         <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="teachercomment" NEXT="newid"/>
-        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="newplugin"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="newplugin"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshopid"/>
@@ -258,14 +258,14 @@
     </TABLE>
     <TABLE NAME="workshop_grades_old" COMMENT="Legacy workshop_grades table to be dropped later in Moodle 2.x" PREVIOUS="workshop_assessments_old" NEXT="workshop_stockcomments_old">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="assessmentid"/>
-        <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="elementno"/>
-        <FIELD NAME="elementno" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentid" NEXT="feedback"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="assessmentid"/>
+        <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="elementno"/>
+        <FIELD NAME="elementno" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentid" NEXT="feedback"/>
         <FIELD NAME="feedback" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="elementno" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedback" NEXT="newplugin"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedback" NEXT="newplugin"/>
         <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="grade" NEXT="newid"/>
-        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="newplugin"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="newplugin"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshopid"/>
@@ -275,12 +275,12 @@
     </TABLE>
     <TABLE NAME="workshop_stockcomments_old" COMMENT="Legacy workshop_stockcomments table to be dropped later in Moodle 2.x" PREVIOUS="workshop_grades_old" NEXT="workshop_comments_old">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="elementno"/>
-        <FIELD NAME="elementno" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="comments"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="elementno"/>
+        <FIELD NAME="elementno" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="comments"/>
         <FIELD NAME="comments" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="elementno" NEXT="newplugin"/>
         <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="comments" NEXT="newid"/>
-        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="newplugin"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="newplugin"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshopid"/>
@@ -289,15 +289,15 @@
     </TABLE>
     <TABLE NAME="workshop_comments_old" COMMENT="Legacy workshop_comments table to be dropped later in Moodle 2.x" PREVIOUS="workshop_stockcomments_old">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
-        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="assessmentid"/>
-        <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentid" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="mailed"/>
-        <FIELD NAME="mailed" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="comments"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="assessmentid"/>
+        <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentid" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="mailed"/>
+        <FIELD NAME="mailed" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="comments"/>
         <FIELD NAME="comments" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="mailed" NEXT="newplugin"/>
         <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="comments" NEXT="newid"/>
-        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="newplugin"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="newplugin"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshopid"/>

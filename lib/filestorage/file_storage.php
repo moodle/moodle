@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,10 +18,9 @@
 /**
  * Core file storage class definition.
  *
- * @package    core
- * @subpackage filestorage
- * @copyright  2008 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_files
+ * @copyright 2008 Petr Skoda {@link http://skodak.org}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -38,6 +36,8 @@ require_once("$CFG->libdir/filestorage/stored_file.php");
  * files of modules it has to use file_browser class instead or there
  * has to be some callback API.
  *
+ * @package   core_files
+ * @category  files
  * @copyright 2008 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 2.0
@@ -55,7 +55,7 @@ class file_storage {
     private $filepermissions;
 
     /**
-     * Constructor - do not use directly use @see get_file_storage() call instead.
+     * Constructor - do not use directly use {@link get_file_storage()} call instead.
      *
      * @param string $filedir full path to pool directory
      * @param string $trashdir temporary storage of deleted area
@@ -95,12 +95,12 @@ class file_storage {
      * This hash is a unique file identifier - it is used to improve
      * performance and overcome db index size limits.
      *
-     * @param int $contextid
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
+     * @param int $contextid context ID
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
      * @return string sha1 hash
      */
     public static function get_pathname_hash($contextid, $component, $filearea, $itemid, $filepath, $filename) {
@@ -110,12 +110,12 @@ class file_storage {
     /**
      * Does this file exist?
      *
-     * @param int $contextid
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
+     * @param int $contextid context ID
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
      * @return bool
      */
     public function file_exists($contextid, $component, $filearea, $itemid, $filepath, $filename) {
@@ -131,9 +131,9 @@ class file_storage {
     }
 
     /**
-     * Does this file exist?
+     * Whether or not the file exist
      *
-     * @param string $pathnamehash
+     * @param string $pathnamehash path name hash
      * @return bool
      */
     public function file_exists_by_hash($pathnamehash) {
@@ -158,8 +158,8 @@ class file_storage {
      * Please do not rely on file ids, it is usually easier to use
      * pathname hashes instead.
      *
-     * @param int $fileid
-     * @return stored_file instance if exists, false if not
+     * @param int $fileid file ID
+     * @return stored_file|bool stored_file instance if exists, false if not
      */
     public function get_file_by_id($fileid) {
         global $DB;
@@ -174,8 +174,8 @@ class file_storage {
     /**
      * Fetch file using local file full pathname hash
      *
-     * @param string $pathnamehash
-     * @return stored_file instance if exists, false if not
+     * @param string $pathnamehash path name hash
+     * @return stored_file|bool stored_file instance if exists, false if not
      */
     public function get_file_by_hash($pathnamehash) {
         global $DB;
@@ -190,13 +190,13 @@ class file_storage {
     /**
      * Fetch locally stored file.
      *
-     * @param int $contextid
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
-     * @return stored_file instance if exists, false if not
+     * @param int $contextid context ID
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return stored_file|bool stored_file instance if exists, false if not
      */
     public function get_file($contextid, $component, $filearea, $itemid, $filepath, $filename) {
         $filepath = clean_param($filepath, PARAM_PATH);
@@ -212,11 +212,12 @@ class file_storage {
 
     /**
      * Are there any files (or directories)
-     * @param int $contextid
-     * @param string $component
-     * @param string $filearea
-     * @param bool|int $itemid tem id or false if all items
-     * @param bool $ignoredirs
+     *
+     * @param int $contextid context ID
+     * @param string $component component
+     * @param string $filearea file area
+     * @param bool|int $itemid item id or false if all items
+     * @param bool $ignoredirs whether or not ignore directories
      * @return bool empty
      */
     public function is_area_empty($contextid, $component, $filearea, $itemid = false, $ignoredirs = true) {
@@ -246,12 +247,12 @@ class file_storage {
     /**
      * Returns all area files (optionally limited by itemid)
      *
-     * @param int $contextid
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid (all files if not specified)
-     * @param string $sort
-     * @param bool $includedirs
+     * @param int $contextid context ID
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID or all files if not specified
+     * @param string $sort sort fields
+     * @param bool $includedirs whether or not include directories
      * @return array of stored_files indexed by pathanmehash
      */
     public function get_area_files($contextid, $component, $filearea, $itemid = false, $sort="sortorder, itemid, filepath, filename", $includedirs = true) {
@@ -276,10 +277,10 @@ class file_storage {
     /**
      * Returns array based tree structure of area files
      *
-     * @param int $contextid
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
+     * @param int $contextid context ID
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
      * @return array each dir represented by dirname, subdirs, files and dirfile array elements
      */
     public function get_area_tree($contextid, $component, $filearea, $itemid) {
@@ -327,14 +328,14 @@ class file_storage {
     /**
      * Returns all files and optionally directories
      *
-     * @param int $contextid
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
+     * @param int $contextid context ID
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
      * @param int $filepath directory path
      * @param bool $recursive include all subdirectories
      * @param bool $includedirs include files and directories
-     * @param string $sort
+     * @param string $sort sort fields
      * @return array of stored_files indexed by pathanmehash
      */
     public function get_directory_files($contextid, $component, $filearea, $itemid, $filepath, $recursive = false, $includedirs = true, $sort = "filepath, filename") {
@@ -347,7 +348,7 @@ class file_storage {
         if ($recursive) {
 
             $dirs = $includedirs ? "" : "AND filename <> '.'";
-            $length = textlib_get_instance()->strlen($filepath);
+            $length = textlib::strlen($filepath);
 
             $sql = "SELECT *
                       FROM {files}
@@ -374,7 +375,7 @@ class file_storage {
             $result = array();
             $params = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'dirid'=>$directory->get_id());
 
-            $length = textlib_get_instance()->strlen($filepath);
+            $length = textlib::strlen($filepath);
 
             if ($includedirs) {
                 $sql = "SELECT *
@@ -412,10 +413,10 @@ class file_storage {
     /**
      * Delete all area files (optionally limited by itemid).
      *
-     * @param int $contextid
-     * @param string $component
-     * @param string $filearea (all areas in context if not specified)
-     * @param int $itemid (all files if not specified)
+     * @param int $contextid context ID
+     * @param string $component component
+     * @param string $filearea file area or all areas in context if not specified
+     * @param int $itemid item ID or all files if not specified
      * @return bool success
      */
     public function delete_area_files($contextid, $component = false, $filearea = false, $itemid = false) {
@@ -473,11 +474,13 @@ class file_storage {
 
     /**
      * Move all the files in a file area from one context to another.
-     * @param integer $oldcontextid the context the files are being moved from.
-     * @param integer $newcontextid the context the files are being moved to.
+     *
+     * @param int $oldcontextid the context the files are being moved from.
+     * @param int $newcontextid the context the files are being moved to.
      * @param string $component the plugin that these files belong to.
      * @param string $filearea the name of the file area.
-     * @return integer the number of files moved, for information.
+     * @param int $itemid file item ID
+     * @return int the number of files moved, for information.
      */
     public function move_area_files_to_new_context($oldcontextid, $newcontextid, $component, $filearea, $itemid = false) {
         // Note, this code is based on some code that Petr wrote in
@@ -503,12 +506,12 @@ class file_storage {
     /**
      * Recursively creates directory.
      *
-     * @param int $contextid
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
+     * @param int $contextid context ID
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param int $userid the user ID
      * @return bool success
      */
     public function create_directory($contextid, $component, $filearea, $itemid, $filepath, $userid = null) {
@@ -589,8 +592,8 @@ class file_storage {
     /**
      * Add new local file based on existing local file.
      *
-     * @param mixed $file_record object or array describing changes
-     * @param mixed $fileorid id or stored_file instance of the existing local file
+     * @param stdClass|array $file_record object or array describing changes
+     * @param stored_file|int $fileorid id or stored_file instance of the existing local file
      * @return stored_file instance of newly created file
      */
     public function create_file_from_storedfile($file_record, $fileorid) {
@@ -695,11 +698,11 @@ class file_storage {
     /**
      * Add new local file.
      *
-     * @param mixed $file_record object or array describing file
-     * @param string $path path to file or content of file
-     * @param array $options @see download_file_content() options
+     * @param stdClass|array $file_record object or array describing file
+     * @param string $url the URL to the file
+     * @param array $options {@link download_file_content()} options
      * @param bool $usetempfile use temporary file for download, may prevent out of memory problems
-     * @return stored_file instance
+     * @return stored_file
      */
     public function create_file_from_url($file_record, $url, array $options = NULL, $usetempfile = false) {
 
@@ -750,9 +753,9 @@ class file_storage {
     /**
      * Add new local file.
      *
-     * @param mixed $file_record object or array describing file
-     * @param string $path path to file or content of file
-     * @return stored_file instance
+     * @param stdClass|array $file_record object or array describing file
+     * @param string $pathname path to file or content of file
+     * @return stored_file
      */
     public function create_file_from_pathname($file_record, $pathname) {
         global $DB;
@@ -864,9 +867,9 @@ class file_storage {
     /**
      * Add new local file.
      *
-     * @param mixed $file_record object or array describing file
+     * @param stdClass|array $file_record object or array describing file
      * @param string $content content of file
-     * @return stored_file instance
+     * @return stored_file
      */
     public function create_file_from_string($file_record, $content) {
         global $DB;
@@ -978,13 +981,13 @@ class file_storage {
     /**
      * Creates new image file from existing.
      *
-     * @param mixed $file_record object or array describing new file
-     * @param mixed file id or stored file object
+     * @param stdClass|array $file_record object or array describing new file
+     * @param int|stored_file $fid file id or stored file object
      * @param int $newwidth in pixels
      * @param int $newheight in pixels
-     * @param bool $keepaspectratio
+     * @param bool $keepaspectratio whether or not keep aspect ratio
      * @param int $quality depending on image type 0-100 for jpeg, 0-9 (0 means no compression) for png
-     * @return stored_file instance
+     * @return stored_file
      */
     public function convert_image($file_record, $fid, $newwidth = NULL, $newheight = NULL, $keepaspectratio = true, $quality = NULL) {
         if (!function_exists('imagecreatefromstring')) {
@@ -1189,7 +1192,7 @@ class file_storage {
      *
      * NOTE: must not be public, files in pool must not be modified
      *
-     * @param string $contenthash
+     * @param string $contenthash content hash
      * @return string expected file location
      */
     protected function path_from_hash($contenthash) {
@@ -1203,7 +1206,7 @@ class file_storage {
      *
      * NOTE: must not be public, files in pool must not be modified
      *
-     * @param string $contenthash
+     * @param string $contenthash content hash
      * @return string expected file location
      */
     protected function trash_path_from_hash($contenthash) {
@@ -1215,7 +1218,7 @@ class file_storage {
     /**
      * Tries to recover missing content of file from trash.
      *
-     * @param object $file_record
+     * @param stored_file $file stored_file instance
      * @return bool success
      */
     public function try_content_recovery($file) {
@@ -1252,7 +1255,6 @@ class file_storage {
      * DO NOT call directly - reserved for core!!
      *
      * @param string $contenthash
-     * @return void
      */
     public function deleted_file_cleanup($contenthash) {
         global $DB;
@@ -1285,8 +1287,6 @@ class file_storage {
 
     /**
      * Cron cleanup job.
-     *
-     * @return void
      */
     public function cron() {
         global $CFG, $DB;

@@ -323,7 +323,6 @@ abstract class backup_cron_automated_helper {
             $settings = array(
                 'users' => 'backup_auto_users',
                 'role_assignments' => 'backup_auto_role_assignments',
-                'user_files' => 'backup_auto_user_files',
                 'activities' => 'backup_auto_activities',
                 'blocks' => 'backup_auto_blocks',
                 'filters' => 'backup_auto_filters',
@@ -460,7 +459,7 @@ abstract class backup_cron_automated_helper {
         $storage =  $config->backup_auto_storage;
         $dir =      $config->backup_auto_destination;
 
-        $backupword = str_replace(' ', '_', moodle_strtolower(get_string('backupfilename')));
+        $backupword = str_replace(' ', '_', textlib::strtolower(get_string('backupfilename')));
         $backupword = trim(clean_filename($backupword), '_');
 
         if (!file_exists($dir) || !is_dir($dir) || !is_writable($dir)) {

@@ -68,10 +68,9 @@ class web_test extends UnitTestCase {
             format_text_email('<p class="frogs">This is a <strong class=\'fishes\'>test</strong></p>',FORMAT_HTML));
         $this->assertEqual('& so is this',
             format_text_email('&amp; so is this',FORMAT_HTML));
-        $tl = textlib_get_instance();
-        $this->assertEqual('Two bullets: '.$tl->code2utf8(8226).' *',
+        $this->assertEqual('Two bullets: '.textlib::code2utf8(8226).' *',
             format_text_email('Two bullets: &#x2022; &#8226;',FORMAT_HTML));
-        $this->assertEqual($tl->code2utf8(0x7fd2).$tl->code2utf8(0x7fd2),
+        $this->assertEqual(textlib::code2utf8(0x7fd2).textlib::code2utf8(0x7fd2),
             format_text_email('&#x7fd2;&#x7FD2;',FORMAT_HTML));
     }
 
@@ -98,6 +97,30 @@ class web_test extends UnitTestCase {
 
     function test_wikify_links() {
         $this->assertEqual(wikify_links('this is a <a href="http://someaddress.com/query">link</a>'), 'this is a link [ http://someaddress.com/query ]');
+    }
+
+    function test_moodle_url_round_trip() {
+        $strurl = 'http://moodle.org/course/view.php?id=5';
+        $url = new moodle_url($strurl);
+        $this->assertEqual($strurl, $url->out(false));
+
+        $strurl = 'http://moodle.org/user/index.php?contextid=53&sifirst=M&silast=D';
+        $url = new moodle_url($strurl);
+        $this->assertEqual($strurl, $url->out(false));
+    }
+
+    function test_moodle_url_round_trip_array_params() {
+        $strurl = 'http://example.com/?a%5B1%5D=1&a%5B2%5D=2';
+        $url = new moodle_url($strurl);
+        $this->assertEqual($strurl, $url->out(false));
+
+        $url = new moodle_url('http://example.com/?a[1]=1&a[2]=2');
+        $this->assertEqual($strurl, $url->out(false));
+
+        // For un-keyed array params, we expect 0..n keys to be returned
+        $strurl = 'http://example.com/?a%5B0%5D=0&a%5B1%5D=1';
+        $url = new moodle_url('http://example.com/?a[]=0&a[]=1');
+        $this->assertEqual($strurl, $url->out(false));
     }
 
     function test_compare_url() {

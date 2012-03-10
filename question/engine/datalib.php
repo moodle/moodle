@@ -151,6 +151,7 @@ class question_engine_data_mapper {
         foreach ($step->get_all_data() as $name => $value) {
             if ($value instanceof question_file_saver) {
                 $value->save_files($stepid, $context);
+                $value = (string) $value;
             }
 
             $data = new stdClass();
@@ -769,22 +770,6 @@ ORDER BY
     }
 
     /**
-     * This function is a work-around for poor MySQL performance with
-     * DELETE FROM x WHERE id IN (SELECT ...). We have to use a non-standard
-     * syntax to get good performance. See MDL-29520.
-     * @param string $test sql fragment.
-     * @param array $params used by $test.
-     */
-    protected function delete_attempt_steps_for_mysql($test, $params) {
-        // TODO once MDL-29589 is fixed, eliminate this method, and instead use the new $DB API.
-        $this->db->execute('
-                DELETE qas, qasd
-                  FROM {question_attempt_steps}     qas
-             LEFT JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid = qas.id
-                 WHERE qas.questionattemptid ' . $test, $params);
-    }
-
-    /**
      * Delete all the steps for a question attempt.
      * @param int $qaids question_attempt id.
      * @param context $context the context that the $quba belongs to.
@@ -795,19 +780,12 @@ ORDER BY
         }
         list($test, $params) = $this->db->get_in_or_equal($stepids, SQL_PARAMS_NAMED);
 
-        if ($deletefiles) {
-            $this->delete_response_files($context->id, $test, $params);
-        }
-
-        if ($this->db->get_dbfamily() == 'mysql') {
-            $this->delete_attempt_steps_for_mysql($test, $params);
-            return;
-        }
+        $this->delete_response_files($context->id, $test, $params);
 
         $this->db->delete_records_select('question_attempt_step_data',
                 "attemptstepid $test", $params);
         $this->db->delete_records_select('question_attempt_steps',
-                "attemptstepid $test", $params);
+                "id $test", $params);
     }
 
     /**

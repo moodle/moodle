@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,10 +18,9 @@
 /**
  * Utility class for browsing of files.
  *
- * @package    core
- * @subpackage filebrowser
- * @copyright  2008 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_files
+ * @copyright 2008 Petr Skoda (http://skodak.org)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -41,8 +39,7 @@ require_once("$CFG->libdir/filebrowser/file_info_context_course.php");
 require_once("$CFG->libdir/filebrowser/file_info_context_module.php");
 
 /**
- * This class provides the main entry point for other code wishing to get
- * information about files.
+ * This class provides the main entry point for other code wishing to get information about files.
  *
  * The whole file storage for a Moodle site can be seen as a huge virtual tree.
  * The spine of the tree is the tree of contexts (system, course-categories,
@@ -56,22 +53,23 @@ require_once("$CFG->libdir/filebrowser/file_info_context_module.php");
  *
  * Always use this abstraction when you need to access module files from core code.
   *
- * @package    core
- * @subpackage filebrowser
- * @copyright  2008 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_files
+ * @category  files
+ * @copyright 2008 Petr Skoda (http://skodak.org)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 class file_browser {
 
     /**
      * Looks up file_info instance
-     * @param object $context
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
-     * @return file_info instance or null if not found or access not allowed
+     *
+     * @param stdClass $context context object
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null file_info instance or null if not found or access not allowed
      */
     public function get_file_info($context = NULL, $component = NULL, $filearea = NULL, $itemid = NULL, $filepath = NULL, $filename = NULL) {
         if (!$context) {
@@ -95,12 +93,13 @@ class file_browser {
 
     /**
      * Returns info about the files at System context
-     * @param object $context
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
+     *
+     * @param object $context context object
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
      * @return file_info instance or null if not found or access not allowed
      */
     private function get_file_info_context_system($context, $component, $filearea, $itemid, $filepath, $filename) {
@@ -111,13 +110,14 @@ class file_browser {
 
     /**
      * Returns info about the files at User context
-     * @param object $context
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
-     * @return file_info instance or null if not found or access not allowed
+     *
+     * @param stdClass $context context object
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null file_info instance or null if not found or access not allowed
      */
     private function get_file_info_context_user($context, $component, $filearea, $itemid, $filepath, $filename) {
         global $DB, $USER;
@@ -142,13 +142,14 @@ class file_browser {
 
     /**
      * Returns info about the files at Course category context
-     * @param object $context
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
-     * @return file_info instance or null if not found or access not allowed
+     *
+     * @param stdClass $context context object
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null file_info instance or null if not found or access not allowed
      */
     private function get_file_info_context_coursecat($context, $component, $filearea, $itemid, $filepath, $filename) {
         global $DB;
@@ -163,13 +164,14 @@ class file_browser {
 
     /**
      * Returns info about the files at Course category context
-     * @param object $context
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
-     * @return file_info instance or null if not found or access not allowed
+     *
+     * @param stdClass $context context object
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null file_info instance or null if not found or access not allowed
      */
     private function get_file_info_context_course($context, $component, $filearea, $itemid, $filepath, $filename) {
         global $DB, $COURSE;
@@ -186,13 +188,14 @@ class file_browser {
 
     /**
      * Returns info about the files at Course category context
-     * @param object $context
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $filepath
-     * @param string $filename
-     * @return file_info instance or null if not found or access not allowed
+     *
+     * @param stdClass $context context object
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null file_info instance or null if not found or access not allowed
      */
     private function get_file_info_context_module($context, $component, $filearea, $itemid, $filepath, $filename) {
         global $COURSE, $DB, $CFG;

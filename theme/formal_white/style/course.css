@@ -64,7 +64,7 @@
 #page-report .plugin,
 #page-course-import .plugin {margin-bottom:20px;margin-left:10%;margin-right:10%;border:1px solid #cecece;background-color:[[setting:blockcontentbgc]];}
 
-.path-course-view .unread {background:#9EBEFF;}
+.path-course-view .unread {background:#E3DFD4;}
 .path-course-view .completionprogress {font-size:80%; padding:8px 26px 5px 5px;}
 
 #page-course-category .courseboxes,
@@ -86,6 +86,14 @@
 .categorypicker {text-align:center;margin-bottom:10px;}
 .path-report-outline .loginfo {text-align:center;margin:1em;}
 .categorylist {width:90%;margin:0 auto;text-align:left;}
+.categorylist .category .info,
+.categorylist .category .indentation,
+.categorylist .category .name,
+.categorylist .category .image,
+.categorylist .course .name,
+.categorylist .course .info {
+    margin: 0.1em;
+}
 
 /* Course and category combo list on front page */
 .course_category_tree .controls {margin-bottom:5px;text-align:right;float:right;}

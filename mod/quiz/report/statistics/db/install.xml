@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/quiz/report/statistics/db" VERSION="20081118" COMMENT="XMLDB file for Moodle mod/quiz/report/statistics"
+<XMLDB PATH="mod/quiz/report/statistics/db" VERSION="20120122" COMMENT="XMLDB file for Moodle mod/quiz/report/statistics"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="quiz_statistics" COMMENT="table to cache results from analysis done in statistics report for quizzes." NEXT="quiz_question_statistics">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="quizid"/>
-        <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="groupid"/>
-        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="quizid" NEXT="allattempts"/>
-        <FIELD NAME="allattempts" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="bool used to indicate whether these stats are for all attempts or just for the first." PREVIOUS="groupid" NEXT="timemodified"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="allattempts" NEXT="firstattemptscount"/>
-        <FIELD NAME="firstattemptscount" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="timemodified" NEXT="allattemptscount"/>
-        <FIELD NAME="allattemptscount" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="firstattemptscount" NEXT="firstattemptsavg"/>
-        <FIELD NAME="firstattemptsavg" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="allattemptscount" NEXT="allattemptsavg"/>
-        <FIELD NAME="allattemptsavg" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="firstattemptsavg" NEXT="median"/>
-        <FIELD NAME="median" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="allattemptsavg" NEXT="standarddeviation"/>
-        <FIELD NAME="standarddeviation" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="median" NEXT="skewness"/>
-        <FIELD NAME="skewness" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="10" PREVIOUS="standarddeviation" NEXT="kurtosis"/>
-        <FIELD NAME="kurtosis" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="skewness" NEXT="cic"/>
-        <FIELD NAME="cic" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="10" PREVIOUS="kurtosis" NEXT="errorratio"/>
-        <FIELD NAME="errorratio" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="10" PREVIOUS="cic" NEXT="standarderror"/>
-        <FIELD NAME="standarderror" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="10" PREVIOUS="errorratio"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="quizid"/>
+        <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="quizid" NEXT="allattempts"/>
+        <FIELD NAME="allattempts" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="bool used to indicate whether these stats are for all attempts or just for the first." PREVIOUS="groupid" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="allattempts" NEXT="firstattemptscount"/>
+        <FIELD NAME="firstattemptscount" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="timemodified" NEXT="allattemptscount"/>
+        <FIELD NAME="allattemptscount" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="firstattemptscount" NEXT="firstattemptsavg"/>
+        <FIELD NAME="firstattemptsavg" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="allattemptscount" NEXT="allattemptsavg"/>
+        <FIELD NAME="allattemptsavg" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="firstattemptsavg" NEXT="median"/>
+        <FIELD NAME="median" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="allattemptsavg" NEXT="standarddeviation"/>
+        <FIELD NAME="standarddeviation" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="median" NEXT="skewness"/>
+        <FIELD NAME="skewness" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10" PREVIOUS="standarddeviation" NEXT="kurtosis"/>
+        <FIELD NAME="kurtosis" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="skewness" NEXT="cic"/>
+        <FIELD NAME="cic" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10" PREVIOUS="kurtosis" NEXT="errorratio"/>
+        <FIELD NAME="errorratio" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10" PREVIOUS="cic" NEXT="standarderror"/>
+        <FIELD NAME="standarderror" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10" PREVIOUS="errorratio"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -29,22 +29,22 @@
     </TABLE>
     <TABLE NAME="quiz_question_statistics" COMMENT="Default comment for the table, please edit me" PREVIOUS="quiz_statistics" NEXT="quiz_question_response_stats">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="quizstatisticsid"/>
-        <FIELD NAME="quizstatisticsid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="questionid"/>
-        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="quizstatisticsid" NEXT="slot"/>
-        <FIELD NAME="slot" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The position in the quiz where this question appears" PREVIOUS="questionid" NEXT="subquestion"/>
-        <FIELD NAME="subquestion" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="slot" NEXT="s"/>
-        <FIELD NAME="s" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="subquestion" NEXT="effectiveweight"/>
-        <FIELD NAME="effectiveweight" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="s" NEXT="negcovar"/>
-        <FIELD NAME="negcovar" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="effectiveweight" NEXT="discriminationindex"/>
-        <FIELD NAME="discriminationindex" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="negcovar" NEXT="discriminativeefficiency"/>
-        <FIELD NAME="discriminativeefficiency" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="discriminationindex" NEXT="sd"/>
-        <FIELD NAME="sd" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="10" PREVIOUS="discriminativeefficiency" NEXT="facility"/>
-        <FIELD NAME="facility" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="10" PREVIOUS="sd" NEXT="subquestions"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="quizstatisticsid"/>
+        <FIELD NAME="quizstatisticsid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="questionid"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="quizstatisticsid" NEXT="slot"/>
+        <FIELD NAME="slot" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The position in the quiz where this question appears" PREVIOUS="questionid" NEXT="subquestion"/>
+        <FIELD NAME="subquestion" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" PREVIOUS="slot" NEXT="s"/>
+        <FIELD NAME="s" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="subquestion" NEXT="effectiveweight"/>
+        <FIELD NAME="effectiveweight" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="s" NEXT="negcovar"/>
+        <FIELD NAME="negcovar" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="effectiveweight" NEXT="discriminationindex"/>
+        <FIELD NAME="discriminationindex" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="negcovar" NEXT="discriminativeefficiency"/>
+        <FIELD NAME="discriminativeefficiency" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="discriminationindex" NEXT="sd"/>
+        <FIELD NAME="sd" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10" PREVIOUS="discriminativeefficiency" NEXT="facility"/>
+        <FIELD NAME="facility" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10" PREVIOUS="sd" NEXT="subquestions"/>
         <FIELD NAME="subquestions" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" PREVIOUS="facility" NEXT="maxmark"/>
-        <FIELD NAME="maxmark" TYPE="number" LENGTH="12" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="7" PREVIOUS="subquestions" NEXT="positions"/>
+        <FIELD NAME="maxmark" TYPE="number" LENGTH="12" NOTNULL="false" SEQUENCE="false" DECIMALS="7" PREVIOUS="subquestions" NEXT="positions"/>
         <FIELD NAME="positions" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="positions in which this item appears. Only used for random questions." PREVIOUS="maxmark" NEXT="randomguessscore"/>
-        <FIELD NAME="randomguessscore" TYPE="number" LENGTH="12" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="7" COMMENT="An estimate of the score a student would get by guessing randomly." PREVIOUS="positions"/>
+        <FIELD NAME="randomguessscore" TYPE="number" LENGTH="12" NOTNULL="false" SEQUENCE="false" DECIMALS="7" COMMENT="An estimate of the score a student would get by guessing randomly." PREVIOUS="positions"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -52,14 +52,14 @@
     </TABLE>
     <TABLE NAME="quiz_question_response_stats" COMMENT="Quiz question responses." PREVIOUS="quiz_question_statistics">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="quizstatisticsid"/>
-        <FIELD NAME="quizstatisticsid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="questionid"/>
-        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="quizstatisticsid" NEXT="subqid"/>
-        <FIELD NAME="subqid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="questionid" NEXT="aid"/>
-        <FIELD NAME="aid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="subqid" NEXT="response"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="quizstatisticsid"/>
+        <FIELD NAME="quizstatisticsid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="questionid"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="quizstatisticsid" NEXT="subqid"/>
+        <FIELD NAME="subqid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="questionid" NEXT="aid"/>
+        <FIELD NAME="aid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="subqid" NEXT="response"/>
         <FIELD NAME="response" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="aid" NEXT="rcount"/>
-        <FIELD NAME="rcount" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="response" NEXT="credit"/>
-        <FIELD NAME="credit" TYPE="number" LENGTH="15" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="rcount"/>
+        <FIELD NAME="rcount" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="response" NEXT="credit"/>
+        <FIELD NAME="credit" TYPE="number" LENGTH="15" NOTNULL="true" SEQUENCE="false" DECIMALS="5" PREVIOUS="rcount"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

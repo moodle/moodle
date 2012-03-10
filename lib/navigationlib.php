@@ -21,7 +21,6 @@
  *
  * @since      2.0
  * @package    core
- * @subpackage navigation
  * @copyright  2009 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -42,8 +41,8 @@ define('NAVIGATION_CACHE_NAME', 'navigation');
  * When a node is first created it is created as a leaf, when/if children are added
  * the node then becomes a branch.
  *
- * @package moodlecore
- * @subpackage navigation
+ * @package   core
+ * @category  navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -297,8 +296,7 @@ class navigation_node implements renderable {
      * Adds a navigation node as a child of this one, given a $node object
      * created using the create function.
      * @param navigation_node $childnode Node to add
-     * @param int|string $key The key of a node to add this before. If not
-     *   specified, adds at end of list
+     * @param string $beforekey
      * @return navigation_node The added node
      */
     public function add_node(navigation_node $childnode, $beforekey=null) {
@@ -355,7 +353,7 @@ class navigation_node implements renderable {
     }
 
     /**
-     * Get ths child of this node that has the given key + (optional) type.
+     * Get the child of this node that has the given key + (optional) type.
      *
      * If you are looking for a node and want to search all children + thier children
      * then please use the find method instead.
@@ -390,7 +388,7 @@ class navigation_node implements renderable {
      * Marks this node as active and forces it open.
      *
      * Important: If you are here because you need to mark a node active to get
-     * the navigation to do what you want have you looked at {@see navigation_node::override_active_url()}?
+     * the navigation to do what you want have you looked at {@link navigation_node::override_active_url()}?
      * You can use it to specify a different URL to match the active navigation node on
      * rather than having to locate and manually mark a node active.
      */
@@ -596,7 +594,7 @@ class navigation_node implements renderable {
     /**
      * Finds all nodes of a given type (recursive)
      *
-     * @param int $type On of navigation_node::TYPE_*
+     * @param int $type One of navigation_node::TYPE_*
      * @return array
      */
     public function find_all_of_type($type) {
@@ -681,8 +679,8 @@ class navigation_node implements renderable {
  * however it was decided that a better solution would be to use a class that
  * implements the standard IteratorAggregate interface.
  *
- * @package moodlecore
- * @subpackage navigation
+ * @package   core
+ * @category  navigation
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -854,6 +852,9 @@ class navigation_node_collection implements IteratorAggregate {
 
     /**
      * Fetches all nodes of a given type from this collection
+     *
+     * @param string|int $type  node type being searched for.
+     * @return array ordered collection
      */
     public function type($type) {
         if (!array_key_exists($type, $this->orderedcollection)) {
@@ -864,7 +865,7 @@ class navigation_node_collection implements IteratorAggregate {
     /**
      * Removes the node with the given key and type from the collection
      *
-     * @param string|int $key
+     * @param string|int $key The key of the node we want to find.
      * @param int $type
      * @return bool
      */
@@ -915,43 +916,38 @@ class navigation_node_collection implements IteratorAggregate {
  * and is then used by the settings nav and navbar to save on processing and DB calls
  *
  * See
- * <ul>
- * <li><b>{@link lib/pagelib.php}</b> {@link moodle_page::initialise_theme_and_output()}<li>
- * <li><b>{@link lib/ajax/getnavbranch.php}</b> Called by ajax<li>
- * </ul>
+ * {@link lib/pagelib.php} {@link moodle_page::initialise_theme_and_output()}
+ * {@link lib/ajax/getnavbranch.php} Called by ajax
  *
- * @package moodlecore
- * @subpackage navigation
+ * @package   core
+ * @category  navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class global_navigation extends navigation_node {
-    /**
-     * The Moodle page this navigation object belongs to.
-     * @var moodle_page
-     */
+    /** @var moodle_page The Moodle page this navigation object belongs to. */
     protected $page;
-    /** @var bool */
+    /** @var bool switch to let us know if the navigation object is initialised*/
     protected $initialised = false;
-    /** @var array */
+    /** @var array An array of course information */
     protected $mycourses = array();
-    /** @var array */
+    /** @var array An array for containing  root navigation nodes */
     protected $rootnodes = array();
-    /** @var bool */
+    /** @var bool A switch for whether to show empty sections in the navigation */
     protected $showemptysections = false;
-    /** @var bool */
+    /** @var bool A switch for whether courses should be shown within categories on the navigation. */
     protected $showcategories = null;
-    /** @var array */
+    /** @var array An array of stdClasses for users that the navigation is extended for */
     protected $extendforuser = array();
     /** @var navigation_cache */
     protected $cache;
-    /** @var array */
+    /** @var array An array of course ids that are present in the navigation */
     protected $addedcourses = array();
-    /** @var array */
+    /** @var array An array of category ids that are included in the navigation */
     protected $addedcategories = array();
-    /** @var int */
+    /** @var int expansion limit */
     protected $expansionlimit = 0;
-    /** @var int */
+    /** @var int userid to allow parent to see child's profile page navigation */
     protected $useridtouseforparentchecks = 0;
 
     /**
@@ -984,7 +980,7 @@ class global_navigation extends navigation_node {
             );
         }
 
-        // Use the parents consturctor.... good good reuse
+        // Use the parents constructor.... good good reuse
         parent::__construct($properties);
 
         // Initalise and set defaults
@@ -1340,7 +1336,7 @@ class global_navigation extends navigation_node {
     }
 
     /**
-     * Returns true is courses should be shown within categories on the navigation.
+     * Returns true if courses should be shown within categories on the navigation.
      *
      * @return bool
      */
@@ -1379,10 +1375,9 @@ class global_navigation extends navigation_node {
     }
 
     /**
-     * Loads of the the courses in Moodle into the navigation.
+     * Loads the courses in Moodle into the navigation.
      *
-     * @global moodle_database $DB
-     * @param string|array $categoryids Either a string or array of category ids to load courses for
+     * @param mixed $categoryids Either a string or array of category ids to load courses for
      * @return array An array of navigation_node
      */
     protected function load_all_courses($categoryids=null) {
@@ -1430,7 +1425,7 @@ class global_navigation extends navigation_node {
      * @param int $categoryid The category id to load or null/0 to load all base level categories
      * @param bool $showbasecategories If set to true all base level categories will be loaded as well
      *        as the requested category and any parent categories.
-     * @return void
+     * @return navigation_node|void returns a navigation node if a category has been loaded.
      */
     protected function load_all_categories($categoryid = null, $showbasecategories = false) {
         global $DB;
@@ -1572,7 +1567,7 @@ class global_navigation extends navigation_node {
      * formats lib.php file to customise the navigation that is generated at this
      * point for the course.
      *
-     * By default (if not defined) the method {@see load_generic_course_sections} is
+     * By default (if not defined) the method {@link global_navigation::load_generic_course_sections()} is
      * called instead.
      *
      * @param stdClass $course Database record for the course
@@ -1730,7 +1725,7 @@ class global_navigation extends navigation_node {
      *
      * @param navigation_node $sectionnode
      * @param int $sectionnumber
-     * @param array $activities An array of activites as returned by {@see global_navigation::generate_sections_and_activities()}
+     * @param array $activities An array of activites as returned by {@link global_navigation::generate_sections_and_activities()}
      * @param stdClass $course The course object the section and activities relate to.
      * @return array Array of activity nodes
      */
@@ -1837,8 +1832,8 @@ class global_navigation extends navigation_node {
      *
      * The callback is a method: {modulename}_extend_navigation()
      * Examples:
-     *  * {@see forum_extend_navigation()}
-     *  * {@see workshop_extend_navigation()}
+     *  * {@link forum_extend_navigation()}
+     *  * {@link workshop_extend_navigation()}
      *
      * @param cm_info|stdClass $cm
      * @param stdClass $course
@@ -2128,7 +2123,7 @@ class global_navigation extends navigation_node {
     /**
      * This method simply checks to see if a given module can extend the navigation.
      *
-     * TODO: A shared caching solution should be used to save details on what extends navigation
+     * @todo (MDL-25290) A shared caching solution should be used to save details on what extends navigation.
      *
      * @param string $modname
      * @return bool
@@ -2159,7 +2154,7 @@ class global_navigation extends navigation_node {
     /**
      * Returns all of the users the navigation is being extended for
      *
-     * @return array
+     * @return array An array of extending users.
      */
     public function get_extending_users() {
         return $this->extendforuser;
@@ -2168,6 +2163,8 @@ class global_navigation extends navigation_node {
      * Adds the given course to the navigation structure.
      *
      * @param stdClass $course
+     * @param bool $forcegeneric (optional)
+     * @param bool $ismycourse (optional)
      * @return navigation_node
      */
     public function add_course(stdClass $course, $forcegeneric = false, $ismycourse = false) {
@@ -2253,7 +2250,7 @@ class global_navigation extends navigation_node {
      *
      * @param navigation_node $coursenode
      * @param stdClass $course
-     * @return bool
+     * @return bool returns true on successful addition of a node.
      */
     public function add_course_essentials($coursenode, stdClass $course) {
         global $CFG;
@@ -2313,7 +2310,7 @@ class global_navigation extends navigation_node {
         return true;
     }
     /**
-     * This generates the the structure of the course that won't be generated when
+     * This generates the structure of the course that won't be generated when
      * the modules and sections are added.
      *
      * Things such as the reports branch, the participants branch, blogs... get
@@ -2406,7 +2403,7 @@ class global_navigation extends navigation_node {
      * They are still generated in order to ensure the navbar still makes sense.
      *
      * @param int $type One of navigation_node::TYPE_*
-     * @return <type>
+     * @return bool true when complete.
      */
     public function set_expansion_limit($type) {
         $nodes = $this->find_all_of_type($type);
@@ -2432,9 +2429,9 @@ class global_navigation extends navigation_node {
      * This function only looks at this nodes children, it does NOT look recursivily.
      * If the node can't be found then false is returned.
      *
-     * If you need to search recursivily then use the {@see find()} method.
+     * If you need to search recursivily then use the {@link global_navigation::find()} method.
      *
-     * Note: If you are trying to set the active node {@see navigation_node::override_active_url()}
+     * Note: If you are trying to set the active node {@link navigation_node::override_active_url()}
      * may be of more use to you.
      *
      * @param string|int $key The key of the node you wish to receive.
@@ -2449,16 +2446,16 @@ class global_navigation extends navigation_node {
     }
 
     /**
-     * Searches this nodes children and thier children to find a navigation node
+     * Searches this nodes children and their children to find a navigation node
      * with the matching key and type.
      *
      * This method is recursive and searches children so until either a node is
-     * found of there are no more nodes to search.
+     * found or there are no more nodes to search.
      *
      * If you know that the node being searched for is a child of this node
-     * then use the {@see get()} method instead.
+     * then use the {@link global_navigation::get()} method instead.
      *
-     * Note: If you are trying to set the active node {@see navigation_node::override_active_url()}
+     * Note: If you are trying to set the active node {@link navigation_node::override_active_url()}
      * may be of more use to you.
      *
      * @param string|int $key The key of the node you wish to receive.
@@ -2484,21 +2481,28 @@ class global_navigation extends navigation_node {
  * This has been done only because it shortens the amounts of information that is generated
  * which of course will speed up the response time.. because no one likes laggy AJAX.
  *
- * @package moodlecore
- * @subpackage navigation
+ * @package   core
+ * @category  navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class global_navigation_for_ajax extends global_navigation {
 
+    /** @var int used for determining what type of navigation_node::TYPE_* is being used */
     protected $branchtype;
+
+    /** @var int the instance id */
     protected $instanceid;
 
-    /** @var array */
+    /** @var array Holds an array of expandable nodes */
     protected $expandable = array();
 
     /**
-     * Constructs the navigation for use in AJAX request
+     * Constructs the navigation for use in an AJAX request
+     *
+     * @param moodle_page $page moodle_page object
+     * @param int $branchtype
+     * @param int $id
      */
     public function __construct($page, $branchtype, $id) {
         $this->page = $page;
@@ -2511,7 +2515,7 @@ class global_navigation_for_ajax extends global_navigation {
     /**
      * Initialise the navigation given the type and id for the branch to expand.
      *
-     * @return array The expandable nodes
+     * @return array An array of the expandable nodes
      */
     public function initialise() {
         global $CFG, $DB, $SITE;
@@ -2611,31 +2615,31 @@ class global_navigation_for_ajax extends global_navigation {
  * This class is used to manage the navbar, which is initialised from the navigation
  * object held by PAGE
  *
- * @package moodlecore
- * @subpackage navigation
+ * @package   core
+ * @category  navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class navbar extends navigation_node {
-    /** @var bool */
+    /** @var bool A switch for whether the navbar is initialised or not */
     protected $initialised = false;
-    /** @var mixed */
+    /** @var mixed keys used to reference the nodes on the navbar */
     protected $keys = array();
-    /** @var null|string */
+    /** @var null|string content of the navbar */
     protected $content = null;
-    /** @var moodle_page object */
+    /** @var moodle_page object the moodle page that this navbar belongs to */
     protected $page;
-    /** @var bool */
+    /** @var bool A switch for whether to ignore the active navigation information */
     protected $ignoreactive = false;
-    /** @var bool */
+    /** @var bool A switch to let us know if we are in the middle of an install */
     protected $duringinstall = false;
-    /** @var bool */
+    /** @var bool A switch for whether the navbar has items */
     protected $hasitems = false;
-    /** @var array */
+    /** @var array An array of navigation nodes for the navbar */
     protected $items;
-    /** @var array */
+    /** @var array An array of child node objects */
     public $children = array();
-    /** @var bool */
+    /** @var bool A switch for whether we want to include the root node in the navbar */
     public $includesettingsbase = false;
     /**
      * The almighty constructor
@@ -2685,6 +2689,14 @@ class navbar extends navigation_node {
     public function ignore_active($setting=true) {
         $this->ignoreactive = ($setting);
     }
+
+    /**
+     * Gets a navigation node
+     *
+     * @param string|int $key for referencing the navbar nodes
+     * @param int $type navigation_node::TYPE_*
+     * @return navigation_node|bool
+     */
     public function get($key, $type = null) {
         foreach ($this->children as &$child) {
             if ($child->key === $key && ($type == null || $type == $child->type)) {
@@ -2824,21 +2836,21 @@ class navbar extends navigation_node {
  * This class is used to manage the settings options in a tree format (recursively)
  * and was created initially for use with the settings blocks.
  *
- * @package moodlecore
- * @subpackage navigation
+ * @package   core
+ * @category  navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class settings_navigation extends navigation_node {
-    /** @var stdClass */
+    /** @var stdClass the current context */
     protected $context;
-    /** @var moodle_page */
+    /** @var moodle_page the moodle page that the navigation belongs to */
     protected $page;
-    /** @var string */
+    /** @var string contains administration section navigation_nodes */
     protected $adminsection;
-    /** @var bool */
+    /** @var bool A switch to see if the navigation node is initialised */
     protected $initialised = false;
-    /** @var array */
+    /** @var array An array of users that the nodes can extend for. */
     protected $userstoextendfor = array();
     /** @var navigation_cache **/
     protected $cache;
@@ -2949,13 +2961,13 @@ class settings_navigation extends navigation_node {
      * It does this by first calling the parent's add method {@link navigation_node::add()}
      * and then proceeds to use the key to set class and hr
      *
-     * @param string $text
-     * @param sting|moodle_url $url
+     * @param string $text text to be used for the link.
+     * @param string|moodle_url $url url for the new node
+     * @param int $type the type of node navigation_node::TYPE_*
      * @param string $shorttext
-     * @param string|int $key
-     * @param int $type
-     * @param string $icon
-     * @return navigation_node
+     * @param string|int $key a key to access the node by.
+     * @param pix_icon $icon An icon that appears next to the node.
+     * @return navigation_node with the new node added to it.
      */
     public function add($text, $url=null, $type=null, $shorttext=null, $key=null, pix_icon $icon=null) {
         $node = parent::add($text, $url, $type, $shorttext, $key, $icon);
@@ -2967,13 +2979,13 @@ class settings_navigation extends navigation_node {
      * This function allows the user to add something to the start of the settings
      * navigation, which means it will be at the top of the settings navigation block
      *
-     * @param string $text
-     * @param sting|moodle_url $url
+     * @param string $text text to be used for the link.
+     * @param string|moodle_url $url url for the new node
+     * @param int $type the type of node navigation_node::TYPE_*
      * @param string $shorttext
-     * @param string|int $key
-     * @param int $type
-     * @param string $icon
-     * @return navigation_node
+     * @param string|int $key a key to access the node by.
+     * @param pix_icon $icon An icon that appears next to the node.
+     * @return navigation_node $node with the new node added to it.
      */
     public function prepend($text, $url=null, $type=null, $shorttext=null, $key=null, pix_icon $icon=null) {
         $children = $this->children;
@@ -3357,8 +3369,6 @@ class settings_navigation extends navigation_node {
 
         $this->get_course_modules($course);
 
-        $textlib = textlib_get_instance();
-
         foreach ($sections as $section) {
             if ($formatidentifier !== 0 && $section->section != $formatidentifier) {
                 continue;
@@ -3376,8 +3386,8 @@ class settings_navigation extends navigation_node {
                 $url = new moodle_url('/course/mod.php', array('id'=>$course->id, 'sesskey'=>sesskey(), 'section'=>$section->section));
                 $pos = strpos($value, '&type=');
                 if ($pos!==false) {
-                    $url->param('add', $textlib->substr($value, 0,$pos));
-                    $url->param('type', $textlib->substr($value, $pos+6));
+                    $url->param('add', textlib::substr($value, 0,$pos));
+                    $url->param('type', textlib::substr($value, $pos+6));
                 } else {
                     $url->param('add', $value);
                 }
@@ -3396,8 +3406,8 @@ class settings_navigation extends navigation_node {
                 $url = new moodle_url('/course/mod.php', array('id'=>$course->id, 'sesskey'=>sesskey(), 'section'=>$section->section));
                 $pos = strpos($activityname, '&type=');
                 if ($pos!==false) {
-                    $url->param('add', $textlib->substr($activityname, 0,$pos));
-                    $url->param('type', $textlib->substr($activityname, $pos+6));
+                    $url->param('add', textlib::substr($activityname, 0,$pos));
+                    $url->param('type', textlib::substr($activityname, $pos+6));
                 } else {
                     $url->param('add', $activityname);
                 }
@@ -3417,7 +3427,7 @@ class settings_navigation extends navigation_node {
      * This only gets called if there is a corrosponding function in the modules
      * lib file.
      *
-     * For examples mod/forum/lib.php ::: forum_extend_settings_navigation()
+     * For examples mod/forum/lib.php {@link forum_extend_settings_navigation()}
      *
      * @return navigation_node|false
      */
@@ -3582,10 +3592,9 @@ class settings_navigation extends navigation_node {
     }
 
     /**
-     * This function gets called by {@link load_user_settings()} and actually works out
+     * This function gets called by {@link settings_navigation::load_user_settings()} and actually works out
      * what can be shown/done
      *
-     * @global moodle_database $DB
      * @param int $courseid The current course' id
      * @param int $userid The user id to load for
      * @param string $gstitle The string to pass to get_string for the branch title
@@ -3920,6 +3929,7 @@ class settings_navigation extends navigation_node {
     /**
      * This function loads all of the front page settings into the settings navigation.
      * This function is called when the user is on the front page, or $COURSE==$SITE
+     * @param bool $forceopen (optional)
      * @return navigation_node
      */
     protected function load_front_page_settings($forceopen = false) {
@@ -3997,15 +4007,15 @@ class settings_navigation extends navigation_node {
 /**
  * Simple class used to output a navigation branch in XML
  *
- * @package moodlecore
- * @subpackage navigation
+ * @package   core
+ * @category  navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class navigation_json {
-    /** @var array */
+    /** @var array An array of different node types */
     protected $nodetype = array('node','branch');
-    /** @var array */
+    /** @var array An array of node keys and types */
     protected $expandable = array();
     /**
      * Turns a branch and all of its children into XML
@@ -4114,27 +4124,32 @@ class navigation_json {
  * $content = $cache->viewdiscussion;
  * </code>
  *
- * @package moodlecore
- * @subpackage navigation
+ * @package   core
+ * @category  navigation
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class navigation_cache {
-    /** @var int */
+    /** @var int represents the time created */
     protected $creation;
-    /** @var array */
+    /** @var array An array of session keys */
     protected $session;
-    /** @var string */
+    /**
+     * The string to use to segregate this particular cache. It can either be
+     * unique to start a fresh cache or if you want to share a cache then make
+     * it the string used in the original cache.
+     * @var string
+     */
     protected $area;
-    /** @var int */
+    /** @var int a time that the information will time out */
     protected $timeout;
-    /** @var stdClass */
+    /** @var stdClass The current context */
     protected $currentcontext;
-    /** @var int */
+    /** @var int cache time information */
     const CACHETIME = 0;
-    /** @var int */
+    /** @var int cache user id */
     const CACHEUSERID = 1;
-    /** @var int */
+    /** @var int cache value */
     const CACHEVALUE = 2;
     /** @var null|array An array of navigation cache areas to expire on shutdown */
     public static $volatilecaches;

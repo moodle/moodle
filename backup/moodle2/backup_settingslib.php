@@ -16,10 +16,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Defines classes used to handle backup settings
+ *
+ * @package     core_backup
+ * @subpackage  moodle2
+ * @category    backup
+ * @copyright   2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // TODO: Reduce these to the minimum because ui/dependencies are 100% separated
@@ -36,6 +39,15 @@ class backup_generic_setting extends root_backup_setting {}
  */
 class backup_filename_setting extends backup_generic_setting {
 
+    /**
+     * Instantiates a setting object
+     *
+     * @param string $name Name of the setting
+     * @param string $vtype Type of the setting, eg {@link base_setting::IS_TEXT}
+     * @param mixed $value Value of the setting
+     * @param bool $visibility Is the setting visible in the UI, eg {@link base_setting::VISIBLE}
+     * @param int $status Status of the setting with regards to the locking, eg {@link base_setting::NOT_LOCKED}
+     */
     public function __construct($name, $vtype, $value = null, $visibility = self::VISIBLE, $status = self::NOT_LOCKED) {
         parent::__construct($name, $vtype, $value, $visibility, $status);
     }
@@ -67,13 +79,6 @@ class backup_activities_setting extends backup_generic_setting {}
  * that can change it
  */
 class backup_anonymize_setting extends root_backup_setting {}
-
-/**
- * root setting to control if backup will include
- * user files or no (images, local storage), depends of @backup_users_setting
- * exactly in the same way than @backup_anonymize_setting so we extend from it
- */
-class backup_user_files_setting extends backup_anonymize_setting {}
 
 /**
  * root setting to control if backup will include

@@ -19,12 +19,12 @@
  *
  * @package    theme
  * @subpackage splash
- * @copyright  2010 Caroline Kennedy of Synergy Learning
+ * @copyright  2012 Caroline Kennedy - Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2011082400; // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2011081700; // Requires this Moodle version
+$plugin->version   = 2012013000; // The current module version (Date: YYYYMMDDXX)
+$plugin->requires  = 2012020200.05; // Requires this Moodle version
 $plugin->component = 'theme_splash'; // Full name of the plugin (used for diagnostics)

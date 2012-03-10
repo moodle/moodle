@@ -16,40 +16,41 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    mod
- * @subpackage page
- * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Defines backup_page_activity_task class
+ *
+ * @package     mod_page
+ * @category    backup
+ * @copyright   2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot . '/mod/page/backup/moodle2/backup_page_stepslib.php'); // Because it exists (must)
+require_once($CFG->dirroot . '/mod/page/backup/moodle2/backup_page_stepslib.php');
 
 /**
- * page backup task that provides all the settings and steps to perform one
- * complete backup of the activity
+ * Provides the steps to perform one complete backup of the Page instance
  */
 class backup_page_activity_task extends backup_activity_task {
 
     /**
-     * Define (add) particular settings this activity can have
+     * No specific settings for this activity
      */
     protected function define_my_settings() {
-        // No particular settings for this activity
     }
 
     /**
-     * Define (add) particular steps this activity can have
+     * Defines a backup step to store the instance data in the page.xml file
      */
     protected function define_my_steps() {
-        // Choice only has one structure step
         $this->add_step(new backup_page_activity_structure_step('page_structure', 'page.xml'));
     }
 
     /**
-     * Code the transformations to perform in the activity in
-     * order to get transportable (encoded) links
+     * Encodes URLs to the index.php and view.php scripts
+     *
+     * @param string $content some HTML text that eventually contains URLs to the activity instance scripts
+     * @return string the content with the URLs encoded
      */
     static public function encode_content_links($content) {
         global $CFG;

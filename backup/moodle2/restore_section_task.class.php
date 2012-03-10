@@ -16,11 +16,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Defines restore_section_task class
+ *
+ * @package     core_backup
+ * @subpackage  moodle2
+ * @category    backup
+ * @copyright   2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * section task that provides all the properties and common steps to be performed
@@ -71,11 +76,9 @@ class restore_section_task extends restore_task {
         // Define the task contextid (the course one)
         $this->contextid = get_context_instance(CONTEXT_COURSE, $this->get_courseid())->id;
 
-        // Executed conditionally if restoring to new course or deleting or if overwrite_conf setting is enabled
-        if ($this->get_target() == backup::TARGET_NEW_COURSE || $this->get_target() == backup::TARGET_CURRENT_DELETING ||
-            $this->get_target() == backup::TARGET_EXISTING_DELETING || $this->get_setting_value('overwrite_conf') == true) {
-            $this->add_step(new restore_section_structure_step('course_info', 'section.xml'));
-        }
+        // We always try to restore as much info from sections as possible, no matter of the type
+        // of restore (new, existing, deleting, import...). MDL-27764
+        $this->add_step(new restore_section_structure_step('course_info', 'section.xml'));
 
         // At the end, mark it as built
         $this->built = true;

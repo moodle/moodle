@@ -356,7 +356,6 @@ function tag_print_tagged_users_table($tag_object, $limitfrom='', $limitnum='', 
 function tag_print_user_box($user, $return=false) {
     global $CFG, $OUTPUT;
 
-    $textlib = textlib_get_instance();
     $usercontext = get_context_instance(CONTEXT_USER, $user->id);
     $profilelink = '';
 
@@ -381,8 +380,8 @@ function tag_print_user_box($user, $return=false) {
     }
 
     //truncate name if it's too big
-    if ($textlib->strlen($fullname) > 26) {
-        $fullname = $textlib->substr($fullname, 0, 26) .'...';
+    if (textlib::strlen($fullname) > 26) {
+        $fullname = textlib::substr($fullname, 0, 26) .'...';
     }
 
     $output .= '<strong>'. $fullname .'</strong>';

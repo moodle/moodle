@@ -39,8 +39,6 @@ function iplookup_find_location($ip) {
     if (!empty($CFG->geoipfile) and file_exists($CFG->geoipfile)) {
         require_once('Net/GeoIP.php');
 
-        $textlib = textlib_get_instance();
-
         $geoip = Net_GeoIP::getInstance($CFG->geoipfile, Net_GeoIP::STANDARD);
         $location = $geoip->lookupLocation($ip);
         $geoip->close();
@@ -50,7 +48,7 @@ function iplookup_find_location($ip) {
             return $info;
         }
         if (!empty($location->city)) {
-            $info['city'] = $textlib->convert($location->city, 'iso-8859-1', 'utf-8');
+            $info['city'] = textlib::convert($location->city, 'iso-8859-1', 'utf-8');
             $info['title'][] = $info['city'];
         }
 

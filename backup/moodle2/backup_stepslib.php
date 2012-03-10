@@ -16,15 +16,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Defines various backup steps that will be used by common tasks in backup
+ *
+ * @package     core_backup
+ * @subpackage  moodle2
+ * @category    backup
+ * @copyright   2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Define all the backup steps that will be used by common tasks in backup
- */
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * create the temp dir where backup/restore will happen,
@@ -98,6 +99,7 @@ abstract class backup_activity_structure_step extends backup_structure_step {
      *                                       we are going to add subplugin information to
      * @param bool $multiple to define if multiple subplugins can produce information
      *                       for each instance of $element (true) or no (false)
+     * @return void
      */
     protected function add_subplugin_structure($subplugintype, $element, $multiple) {
 
@@ -135,6 +137,8 @@ abstract class backup_activity_structure_step extends backup_structure_step {
     /**
      * As far as activity backup steps are implementing backup_subplugin stuff, they need to
      * have the parent task available for wrapping purposes (get course/context....)
+     *
+     * @return backup_activity_task
      */
     public function get_task() {
         return $this->task;
@@ -143,6 +147,9 @@ abstract class backup_activity_structure_step extends backup_structure_step {
     /**
      * Wraps any activity backup structure within the common 'activity' element
      * that will include common to all activities information like id, context...
+     *
+     * @param backup_nested_element $activitystructure the element to wrap
+     * @return backup_nested_element the $activitystructure wrapped by the common 'activity' element
      */
     protected function prepare_activity_structure($activitystructure) {
 
@@ -1760,10 +1767,6 @@ class backup_annotate_all_user_files extends backup_execution_step {
 
         // List of fileareas we are going to annotate
         $fileareas = array('profile', 'icon');
-
-        if ($this->get_setting_value('user_files')) { // private files only if enabled in settings
-            $fileareas[] = 'private';
-        }
 
         // Fetch all annotated (final) users
         $rs = $DB->get_recordset('backup_ids_temp', array(

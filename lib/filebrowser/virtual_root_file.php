@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,8 +18,7 @@
 /**
  * Class simulating empty directories.
  *
- * @package    core
- * @subpackage filebrowser
+ * @package    core_files
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,22 +26,29 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Represents the root directory of an empty file area in the tree navigated by
- * @see{file_browser}.
+ * Represents the root directory of an empty file area in the tree navigated by {@link file_browser}.
  *
- * @package    core
- * @subpackage filebrowser
+ * @package    core_files
  * @copyright  2008 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class virtual_root_file {
+    /** @var int context id */
     protected $contextid;
+    /** @var string file component */
     protected $component;
+    /** @var string file area */
     protected $filearea;
+    /** @var int file itemid */
     protected $itemid;
 
     /**
      * Constructor
+     *
+     * @param int $contextid context ID
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
      */
     public function __construct($contextid, $component, $filearea, $itemid) {
         $this->contextid = $contextid;
@@ -53,7 +58,8 @@ class virtual_root_file {
     }
 
     /**
-     * Is this a directory?
+     * Whether or not this is a directory
+     *
      * @return bool
      */
     public function is_directory() {
@@ -62,6 +68,7 @@ class virtual_root_file {
 
     /**
      * Delete file
+     *
      * @return success
      */
     public function delete() {
@@ -80,7 +87,8 @@ class virtual_root_file {
 
     /**
      * Returns file handle - read only mode, no writing allowed into pool files!
-     * @return file handle
+     *
+     * @return resource file handle
      */
     public function get_content_file_handle() {
         return null;
@@ -88,7 +96,8 @@ class virtual_root_file {
 
     /**
      * Dumps file content to page
-     * @return file handle
+     *
+     * @return resource file handle
      */
     public function readfile() {
         return;
@@ -96,6 +105,7 @@ class virtual_root_file {
 
     /**
      * Returns file content as string
+     *
      * @return string content
      */
     public function get_content() {
@@ -104,6 +114,7 @@ class virtual_root_file {
 
     /**
      * Copy content of file to given pathname
+     *
      * @param string $pathname real path to new file
      * @return bool success
      */
@@ -113,7 +124,8 @@ class virtual_root_file {
 
     /**
      * List contents of archive
-     * @param object $file_packer
+     *
+     * @param file_packer $packer file packer instance
      * @return array of file infos
      */
     public function list_files(file_packer $packer) {
@@ -122,7 +134,8 @@ class virtual_root_file {
 
     /**
      * Extract file to given file path (real OS filesystem), existing files are overwrited
-     * @param object $file_packer
+     *
+     * @param file_packer $packer file packer instance
      * @param string $pathname target directory
      * @return mixed list of processed files; false if error
      */
@@ -132,13 +145,14 @@ class virtual_root_file {
 
     /**
      * Extract file to given file path (real OS filesystem), existing files are overwrited
-     * @param object $file_packer
-     * @param int $contextid
-     * @param string $component
-     * @param string $filearea
-     * @param int $itemid
-     * @param string $pathbase
-     * @param int $userid
+     *
+     * @param file_packer $packer file packer instance
+     * @param int $contextid context ID
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID
+     * @param string $pathbase path base
+     * @param int $userid user ID
      * @return mixed list of processed files; false if error
      */
     public function extract_to_storage(file_packer $packer, $contextid, $component, $filearea, $itemid, $pathbase, $userid = NULL) {
@@ -147,7 +161,8 @@ class virtual_root_file {
 
     /**
      * Add file/directory into archive
-     * @param object $filearch
+     *
+     * @param file_archive $filearch file archive instance
      * @param string $archivepath pathname in archive
      * @return bool success
      */
@@ -157,84 +172,180 @@ class virtual_root_file {
 
     /**
      * Returns parent directory
-     * @return object stored_file
+     *
+     * @return stored_file
      */
     public function get_parent_directory() {
         return null;
     }
 
+    /**
+     * Returns context ID
+     *
+     * @return int context ID
+     */
     public function get_contextid() {
         return $this->contextid;
     }
 
+    /**
+     * Returns file component
+     *
+     * @return string component
+     */
     public function get_component() {
         return $this->component;
     }
 
+    /**
+     * Returns file area
+     *
+     * @return string filearea
+     */
     public function get_filearea() {
         return $this->filearea;
     }
 
+    /**
+     * Returns file itemid
+     *
+     * @return int itemid
+     */
     public function get_itemid() {
         return $this->itemid;
     }
 
+    /**
+     * Returns file path
+     *
+     * @return string filepath
+     */
     public function get_filepath() {
         return '/';
     }
 
+    /**
+     * Returns file name
+     *
+     * @return string filename
+     */
     public function get_filename() {
         return '.';
     }
 
+    /**
+     * Returns user ID
+     *
+     * @return int userid
+     */
     public function get_userid() {
         return null;
     }
 
+    /**
+     * Returns file size
+     *
+     * @return int filesize
+     */
     public function get_filesize() {
         return 0;
     }
 
+    /**
+     * Returns mimetype
+     *
+     * @return string mimetype
+     */
     public function get_mimetype() {
         return null;
     }
 
+    /**
+     * Returns time created
+     *
+     * @return int
+     */
     public function get_timecreated() {
         return 0;
     }
 
+    /**
+     * Returns time modified
+     *
+     * @return int
+     */
     public function get_timemodified() {
         return 0;
     }
 
+    /**
+     * Returns status
+     *
+     * @return int
+     */
     public function get_status() {
         return 0;
     }
 
+    /**
+     * Returns ID
+     *
+     * @return int
+     */
     public function get_id() {
         return 0;
     }
 
+    /**
+     * Returns sha1 hash code
+     *
+     * @return string
+     */
     public function get_contenthash() {
         return sha1('');
     }
 
+    /**
+     * Returns path name hash
+     *
+     * @return string
+     */
     public function get_pathnamehash() {
         return sha1('/'.$this->get_contextid().'/'.$this->get_component().'/'.$this->get_filearea().'/'.$this->get_itemid().$this->get_filepath().$this->get_filename());
     }
 
+    /**
+     * Returns license
+     *
+     * @return string
+     */
     public function get_license() {
         return null;
     }
 
+    /**
+     * Returns file's author
+     *
+     * @return string
+     */
     public function get_author() {
         return null;
     }
 
+    /**
+     * Returns file source
+     *
+     * @return string
+     */
     public function get_source() {
         return null;
     }
 
+    /**
+     * Returns file sort order
+     *
+     * @return int
+     */
     public function get_sortorder() {
         return null;
     }

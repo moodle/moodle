@@ -164,8 +164,6 @@ define('PREG_CLASS_CJK', '\x{3041}-\x{30ff}\x{31f0}-\x{31ff}\x{3400}-\x{4db5}'.
  */
 function tokenise_text($text, $stop_words = array(), $overlap_cjk = false, $join_numbers = false) {
 
-    $textlib = textlib_get_instance();
-
     // Multipliers for scores of words inside certain HTML tags.
     // Note: 'a' must be included for link ranking to work.
     $tags = array('h1' => 25,
@@ -204,7 +202,7 @@ function tokenise_text($text, $stop_words = array(), $overlap_cjk = false, $join
         if ($tag) {
             // Increase or decrease score per word based on tag
             list($tagname) = explode(' ', $value, 2);
-            $tagname = $textlib->strtolower($tagname);
+            $tagname = textlib::strtolower($tagname);
             // Closing or opening tag?
             if ($tagname[0] == '/') {
                 $tagname = substr($tagname, 1);
@@ -243,7 +241,7 @@ function tokenise_text($text, $stop_words = array(), $overlap_cjk = false, $join
                     $accum .= $word .' ';
                     $num = is_numeric($word);
                     // Check word length
-                    if ($num || $textlib->strlen($word) >= MINIMUM_WORD_SIZE) {
+                    if ($num || textlib::strlen($word) >= MINIMUM_WORD_SIZE) {
                         // Normalize numbers
                         if ($num && $join_numbers) {
                             $word = (int)ltrim($word, '-0');
@@ -319,13 +317,11 @@ function tokenise_split($text, $stop_words, $overlap_cjk, $join_numbers) {
  */
 function tokenise_simplify($text, $overlap_cjk, $join_numbers) {
 
-    $textlib = textlib_get_instance();
-
     // Decode entities to UTF-8
-    $text = $textlib->entities_to_utf8($text, true);
+    $text = textlib::entities_to_utf8($text, true);
 
     // Lowercase
-    $text = $textlib->strtolower($text);
+    $text = textlib::strtolower($text);
 
     // Simple CJK handling
     if ($overlap_cjk) {
@@ -377,10 +373,8 @@ function tokenise_simplify($text, $overlap_cjk, $join_numbers) {
  */
 function tokenise_expand_cjk($matches) {
 
-    $textlib = textlib_get_instance();
-
     $str = $matches[0];
-    $l = $textlib->strlen($str);
+    $l = textlib::strlen($str);
     // Passthrough short words
     if ($l <= MINIMUM_WORD_SIZE) {
         return ' '. $str .' ';
@@ -391,7 +385,7 @@ function tokenise_expand_cjk($matches) {
     // Begin loop
     for ($i = 0; $i < $l; ++$i) {
         // Grab next character
-        $current = $textlib->substr($str, 0, 1);
+        $current = textlib::substr($str, 0, 1);
         $str = substr($str, strlen($current));
         $chars[] = $current;
         if ($i >= MINIMUM_WORD_SIZE - 1) {
@@ -408,6 +402,5 @@ function tokenise_expand_cjk($matches) {
  */
 function tokenise_truncate_word(&$text) {
 
-    $textlib = textlib_get_instance();
-    $text = $textlib->substr($text, 0, MAXIMUM_WORD_SIZE);
+    $text = textlib::substr($text, 0, MAXIMUM_WORD_SIZE);
 }

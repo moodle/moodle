@@ -62,6 +62,7 @@
       <xs:attribute name="LENGTH"     type="fieldLength" use="optional" />
       <xs:attribute name="NOTNULL"    type="trueFalse"   use="required" />
       <xs:attribute name="DECIMALS"   type="xs:positiveInteger" use="optional" />
+      <!-- TODO: Moodle 2.4 - Drop ignored UNSIGNED attribute -->
       <xs:attribute name="UNSIGNED"   type="trueFalse"   use="optional" />
       <!-- TODO: Moodle 2.1 - Drop ENUM and ENUMVALUES attributes -->
       <xs:attribute name="ENUM"       type="trueFalse"   use="optional" />

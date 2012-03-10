@@ -85,6 +85,27 @@ function minify($files) {
         'files' => $files
     );
 
-    Minify::serve('Files', $options);
-    die();
+    try {
+        Minify::serve('Files', $options);
+        die();
+    } catch (Exception $e) {
+        $error = $e->getMessage();
+        $error = str_replace("\r", ' ', $error);
+        $error = str_replace("\n", ' ', $error);
+    }
+
+    // minification failed - try to inform the developer and include the non-minified version
+    $js = <<<EOD
+try {console.log('Error: Minimisation of javascript failed!');} catch (e) {}
+
+// Error: $error
+// Problem detected during javascript minimisation, please review the following code
+// =================================================================================
+
+
+EOD;
+    echo $js;
+    foreach ($files as $jsfile) {
+        echo file_get_contents($jsfile)."\n";
+    }
 }

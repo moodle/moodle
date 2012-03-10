@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,16 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
  * XML-RPC web service entry point. The authentication is done via tokens.
  *
- * @package   webservice
- * @copyright 2009 Moodle Pty Ltd (http://moodle.com)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    webservice_xmlrpc
+ * @copyright  2009 Jerome Mouneyrac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// disable moodle specific debug messages and any errors in output
+/**
+ * NO_DEBUG_DISPLAY - disable moodle specific debug messages and any errors in output
+ */
 define('NO_DEBUG_DISPLAY', true);
+
+/**
+ * NO_MOODLE_COOKIES - no cookies with web service
+ */
 define('NO_MOODLE_COOKIES', true);
 
 require('../../config.php');

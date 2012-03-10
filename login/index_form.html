@@ -47,12 +47,14 @@ if (empty($CFG->xmlstrictheaders) and !empty($CFG->loginpasswordautocomplete)) {
               <input type="password" name="password" id="password" size="15" value="" <?php echo $autocomplete; ?> />
               <input type="submit" id="loginbtn" value="<?php print_string("login") ?>" />
             </div>
+          </div>
             <div class="clearer"><!-- --></div>
               <?php if (isset($CFG->rememberusername) and $CFG->rememberusername == 2) { ?>
-              <div class="form-label"><input type="checkbox" name="rememberusername" id="rememberusername" value="1" <?php if ($frm->username) {echo 'checked="checked"';} ?> /></div>
-              <div class="form-input"><label for="rememberusername"><?php print_string('rememberusername', 'admin') ?></label></div>
+              <div class="rememberpass">
+                  <input type="checkbox" name="rememberusername" id="rememberusername" value="1" <?php if ($frm->username) {echo 'checked="checked"';} ?> />
+                  <label for="rememberusername"><?php print_string('rememberusername', 'admin') ?></label>
+              </div>
               <?php } ?>
-          </div>
           <div class="clearer"><!-- --></div>
           <div class="forgetpass"><a href="forgot_password.php"><?php print_string("forgotten") ?></a></div>
         </form>

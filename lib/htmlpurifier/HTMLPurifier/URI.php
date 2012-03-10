@@ -40,7 +40,7 @@ class HTMLPurifier_URI
         } else {
             // no scheme: retrieve the default one
             $def = $config->getDefinition('URI');
-            $scheme_obj = $registry->getScheme($def->defaultScheme, $config, $context);
+            $scheme_obj = $def->getDefaultScheme($config, $context);
             if (!$scheme_obj) {
                 // something funky happened to the default scheme object
                 trigger_error(
@@ -197,6 +197,44 @@ class HTMLPurifier_URI
         if (!is_null($this->fragment))  $result .= '#' . $this->fragment;
 
         return $result;
+    }
+
+    /**
+     * Returns true if this URL might be considered a 'local' URL given
+     * the current context.  This is true when the host is null, or
+     * when it matches the host supplied to the configuration.
+     *
+     * Note that this does not do any scheme checking, so it is mostly
+     * only appropriate for metadata that doesn't care about protocol
+     * security.  isBenign is probably what you actually want.
+     */
+    public function isLocal($config, $context) {
+        if ($this->host === null) return true;
+        $uri_def = $config->getDefinition('URI');
+        if ($uri_def->host === $this->host) return true;
+        return false;
+    }
+
+    /**
+     * Returns true if this URL should be considered a 'benign' URL,
+     * that is:
+     *
+     *      - It is a local URL (isLocal), and
+     *      - It has a equal or better level of security
+     */
+    public function isBenign($config, $context) {
+        if (!$this->isLocal($config, $context)) return false;
+
+        $scheme_obj = $this->getSchemeObj($config, $context);
+        if (!$scheme_obj) return false; // conservative approach
+
+        $current_scheme_obj = $config->getDefinition('URI')->getDefaultScheme($config, $context);
+        if ($current_scheme_obj->secure) {
+            if (!$scheme_obj->secure) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
