@@ -664,7 +664,7 @@ class enrol_database_plugin extends enrol_plugin {
                     $course = new stdClass();
                     $course->fullname  = $fields[$fullname];
                     $course->shortname = $fields[$shortname];
-                    $course->idnumber  = $idnumber ? $fields[$idnumber] : NULL;
+                    $course->idnumber  = $idnumber ? $fields[$idnumber] : '';
                     $course->category  = $category ? $coursecategory->id : NULL;
                     $createcourses[] = $course;
                 }
