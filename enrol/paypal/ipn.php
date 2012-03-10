@@ -243,7 +243,7 @@ while (!feof($fp)) {
             $eventdata->name              = 'paypal_enrolment';
             $eventdata->userfrom          = $teacher;
             $eventdata->userto            = $user;
-            $eventdata->subject           = get_string("enrolmentnew", '', $shortname);
+            $eventdata->subject           = get_string("enrolmentnew", 'enrol', $shortname);
             $eventdata->fullmessage       = get_string('welcometocoursetext', '', $a);
             $eventdata->fullmessageformat = FORMAT_PLAIN;
             $eventdata->fullmessagehtml   = '';
@@ -262,8 +262,8 @@ while (!feof($fp)) {
             $eventdata->name              = 'paypal_enrolment';
             $eventdata->userfrom          = $user;
             $eventdata->userto            = $teacher;
-            $eventdata->subject           = get_string("enrolmentnew", '', $shortname);
-            $eventdata->fullmessage       = get_string('enrolmentnewuser', '', $a);
+            $eventdata->subject           = get_string("enrolmentnew", 'enrol', $shortname);
+            $eventdata->fullmessage       = get_string('enrolmentnewuser', 'enrol', $a);
             $eventdata->fullmessageformat = FORMAT_PLAIN;
             $eventdata->fullmessagehtml   = '';
             $eventdata->smallmessage      = '';
@@ -281,8 +281,8 @@ while (!feof($fp)) {
                 $eventdata->name              = 'paypal_enrolment';
                 $eventdata->userfrom          = $user;
                 $eventdata->userto            = $admin;
-                $eventdata->subject           = get_string("enrolmentnew", '', $shortname);
-                $eventdata->fullmessage       = get_string('enrolmentnewuser', '', $a);
+                $eventdata->subject           = get_string("enrolmentnew", 'enrol', $shortname);
+                $eventdata->fullmessage       = get_string('enrolmentnewuser', 'enrol', $a);
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml   = '';
                 $eventdata->smallmessage      = '';
