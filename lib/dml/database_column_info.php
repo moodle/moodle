@@ -60,7 +60,6 @@ class database_column_info {
      *  integer - number of digits
      *  float - digits left from floating point
      *  boolean - 1
-     *  enums - null
      * @var int
      */
     public $max_length;
@@ -72,16 +71,6 @@ class database_column_info {
      * @var int
      */
     public $scale;
-
-    /**
-     * Enumerated field options,
-     * null if not enum type
-     *
-     * For performance reasons this field is optional!
-     * You can use DDL sql_generator::getCheckConstraintsFromDB() if needed.
-     * @var string
-     */
-    public $enums;
 
     /**
      * True if not null, false otherwise

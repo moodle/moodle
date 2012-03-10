@@ -54,9 +54,6 @@ class sqlite_sql_generator extends sql_generator {
     public $sequence_extra_code = false; //Does the generator need to add extra code to generate the sequence fields
     public $sequence_name = 'INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL'; //Particular name for inline sequences in this generator
 
-    public $enum_inline_code = true; //Does the generator need to add inline code in the column definition
-    public $enum_extra_code = false; //Does the generator need to add extra code to generate code for the enums in the table
-
     public $drop_index_sql = 'ALTER TABLE TABLENAME DROP INDEX INDEXNAME'; //SQL sentence to drop one index
                                                                //TABLENAME, INDEXNAME are dynamically replaced
 
@@ -282,22 +279,6 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to create its enum
-     * (usually invoked from getModifyEnumSQL()
-     */
-    public function getCreateEnumSQL($xmldb_table, $xmldb_field) {
-        return $this->getAlterTableSchema($xmldb_table, $xmldb_field, $xmldb_field);
-    }
-
-    /**
-     * Given one xmldb_table and one xmldb_field, return the SQL statements needed to drop its enum
-     * (usually invoked from getModifyEnumSQL()
-     */
-    public function getDropEnumSQL($xmldb_table, $xmldb_field) {
-        return $this->getAlterTableSchema($xmldb_table, $xmldb_field, $xmldb_field);
-    }
-
-    /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needed to create its default
      * (usually invoked from getModifyDefaultSQL()
      */
@@ -375,37 +356,6 @@ class sqlite_sql_generator extends sql_generator {
      */
     function getCommentSQL ($xmldb_table) {
         return array();
-    }
-
-    /**
-     * Given one xmldb_table returns one array with all the check constraints
-     * in the table (fetched from DB)
-     * Optionally the function allows one xmldb_field to be specified in
-     * order to return only the check constraints belonging to one field.
-     * Each element contains the name of the constraint and its description
-     * If no check constraints are found, returns an empty array.
-     *
-     * TODO: Moodle 2.1 - drop in Moodle 2.1
-     */
-    public function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
-        $tablename = $xmldb_table->getName($xmldb_table);
-        // Fetch all the columns in the table
-        if (!$columns = $this->mdb->get_columns($tablename, false)) {
-            return array();
-        }
-        $results = array();
-        $filter = $xmldb_field ? $xmldb_field->getName() : NULL;
-        // Iterate over columns searching for enums
-        foreach ($columns as $key => $column) {
-            // Enum found, let's add it to the constraints list
-            if (!empty($column->enums) && (!$filter || $column->name == $filter)) {
-                    $result = new stdClass();
-                    $result->name = $key;
-                    $result->description = implode(', ', $column->enums);
-                    $results[$key] = $result;
-            }
-        }
-        return $results;
     }
 
     /**

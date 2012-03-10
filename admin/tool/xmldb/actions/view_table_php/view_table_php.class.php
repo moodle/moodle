@@ -127,7 +127,6 @@ class view_table_php extends XMLDBAction {
                          $optionspacer . 'change_field_precision',
                          $optionspacer . 'change_field_notnull',
                          $optionspacer . 'change_field_default',
-                         $optionspacer . 'drop_enum_from_field', // TODO: Moodle 2.1 - Drop drop_enum_from_field
                          'Keys',
                          $optionspacer . 'add_key',
                          $optionspacer . 'drop_key',
@@ -220,13 +219,6 @@ class view_table_php extends XMLDBAction {
                 case 'change_field_notnull':
                     if ($fieldkeyindexinitial == 'f') { // Only if we have got one field
                         $o.= s($this->change_field_notnull_php($structure, $tableparam, $fieldkeyindexparam));
-                    } else {
-                        $o.= $this->str['mustselectonefield'];
-                    }
-                    break;
-                case 'drop_enum_from_field': // TODO: Moodle 2.1 - Drop drop_enum_from_field
-                    if ($fieldkeyindexinitial == 'f') { // Only if we have got one field
-                        $o.= s($this->drop_enum_from_field_php($structure, $tableparam, $fieldkeyindexparam));
                     } else {
                         $o.= $this->str['mustselectonefield'];
                     }
@@ -583,57 +575,6 @@ class view_table_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '        // Launch change of nullability for field ' . $field->getName() . XMLDB_LINEFEED;
         $result .= '        $dbman->change_field_notnull($table, $field);' . XMLDB_LINEFEED;
-
-        // Add the proper upgrade_xxxx_savepoint call
-        $result .= $this->upgrade_savepoint_php ($structure);
-
-        // Add standard PHP footer
-        $result .= XMLDB_PHP_FOOTER;
-
-        return $result;
-    }
-
-    /**
-     * This function will generate all the PHP code needed to
-     * drop the enum values (check constraint) of one field
-     * using XMLDB objects and functions
-     *
-     * Note this function is here as part of the process of
-     * dropping enums completely from Moodle 2.0: MDL-18577
-     * and will be out in Moodle 2.1
-     * TODO: Moodle 2.1 - Drop drop_enum_from_field_php
-     *
-     * @param xmldb_structure structure object containing all the info
-     * @param string table table name
-     * @param string field field name to change its enum
-     */
-    function drop_enum_from_field_php($structure, $table, $field) {
-
-        $result = '';
-        // Validate if we can do it
-        if (!$table = $structure->getTable($table)) {
-            return false;
-        }
-        if (!$field = $table->getField($field)) {
-            return false;
-        }
-        if ($table->getAllErrors()) {
-            return false;
-        }
-
-        // Add the standard PHP header
-        $result .= XMLDB_PHP_HEADER;
-
-        // Add contents
-        $result .= XMLDB_LINEFEED;
-        $result .= '        // Drop list of values (enum) from field ' . $field->getName() . ' on table ' . $table->getName() . XMLDB_LINEFEED;
-        $result .= '        $table = new xmldb_table(' . "'" . $table->getName() . "'" . ');' . XMLDB_LINEFEED;
-        $result .= '        $field = new xmldb_field(' . "'" . $field->getName() . "', " . $field->getPHP(true) . ');' . XMLDB_LINEFEED;
-
-        // Launch the proper DDL
-        $result .= XMLDB_LINEFEED;
-        $result .= '        // Launch drop of list of values from field ' . $field->getName() . XMLDB_LINEFEED;
-        $result .= '        $dbman->drop_enum_from_field($table, $field);' . XMLDB_LINEFEED;
 
         // Add the proper upgrade_xxxx_savepoint call
         $result .= $this->upgrade_savepoint_php ($structure);
