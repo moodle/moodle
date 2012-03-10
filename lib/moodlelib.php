@@ -4772,14 +4772,10 @@ function reset_course_userdata($data) {
                 unset($instances[$key]);
                 continue;
             }
-            if (!$plugins[$instance->enrol]->allow_unenrol($instance)) {
-                unset($instances[$key]);
-            }
         }
 
-        $sqlempty = $DB->sql_empty();
         foreach($data->unenrol_users as $withroleid) {
-            $sql = "SELECT DISTINCT ue.userid, ue.enrolid
+            $sql = "SELECT ue.*
                       FROM {user_enrolments} ue
                       JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid)
                       JOIN {context} c ON (c.contextlevel = :courselevel AND c.instanceid = e.courseid)
@@ -4791,9 +4787,16 @@ function reset_course_userdata($data) {
                 if (!isset($instances[$ue->enrolid])) {
                     continue;
                 }
-                $plugins[$instances[$ue->enrolid]->enrol]->unenrol_user($instances[$ue->enrolid], $ue->userid);
+                $instance = $instances[$ue->enrolid];
+                $plugin = $plugins[$instance->enrol];
+                if (!$plugin->allow_unenrol($instance) and !$plugin->allow_unenrol_user($instance, $ue)) {
+                    continue;
+                }
+
+                $plugin->unenrol_user($instance, $ue->userid);
                 $data->unenrolled[$ue->userid] = $ue->userid;
             }
+            $rs->close();
         }
     }
     if (!empty($data->unenrolled)) {
