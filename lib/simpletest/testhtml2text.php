@@ -70,5 +70,21 @@ class html2text_test extends UnitTestCase {
         $this->assertIdentical($result, $text);
     }
 
+    /**
+     * Various invalid HTML typed by users that ignore html strict
+     **/
+    public function test_invalid_html() {
+        $text = 'Gin & Tonic';
+        $result = html_to_text($text, null, false, false);
+        $this->assertIdentical($result, $text);
+
+        $text = 'Gin > Tonic';
+        $result = html_to_text($text, null, false, false);
+        $this->assertIdentical($result, $text);
+
+        $text = 'Gin < Tonic';
+        $result = html_to_text($text, null, false, false);
+        $this->assertIdentical($result, $text);
+    }
 }
 
