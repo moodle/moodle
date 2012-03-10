@@ -477,7 +477,9 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
 
     if ($course->id != SITEID) {
         // Unenrol link
-        if (is_enrolled($coursecontext)) {
+        if (isguestuser() or !isloggedin()) {
+            // guest account can not be enrolled
+        } else if (is_enrolled($coursecontext)) {
             foreach ($instances as $instance) {
                 if (!isset($plugins[$instance->enrol])) {
                     continue;
