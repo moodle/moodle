@@ -128,7 +128,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="wtype"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="wtype"/>
         <FIELD NAME="wtype" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="nelements"/>
         <FIELD NAME="nelements" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="wtype" NEXT="nattachments"/>
         <FIELD NAME="nattachments" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="nelements" NEXT="phase"/>
@@ -172,7 +172,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="workshopid"/>
         <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="elementno"/>
         <FIELD NAME="elementno" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="elementno" NEXT="scale"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="elementno" NEXT="scale"/>
         <FIELD NAME="scale" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="maxscore"/>
         <FIELD NAME="maxscore" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="scale" NEXT="weight"/>
         <FIELD NAME="weight" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="11" SEQUENCE="false" PREVIOUS="maxscore" NEXT="stddev"/>
@@ -192,7 +192,7 @@
         <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="elementno"/>
         <FIELD NAME="elementno" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="rubricno"/>
         <FIELD NAME="rubricno" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="elementno" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="rubricno" NEXT="newplugin"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="rubricno" NEXT="newplugin"/>
         <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="description" NEXT="newid"/>
         <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="newplugin"/>
       </FIELDS>
@@ -209,7 +209,7 @@
         <FIELD NAME="title" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="title" NEXT="mailed"/>
         <FIELD NAME="mailed" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="mailed" NEXT="gradinggrade"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="mailed" NEXT="gradinggrade"/>
         <FIELD NAME="gradinggrade" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="finalgrade"/>
         <FIELD NAME="finalgrade" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="gradinggrade" NEXT="late"/>
         <FIELD NAME="late" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="finalgrade" NEXT="nassessments"/>
@@ -241,8 +241,8 @@
         <FIELD NAME="mailed" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="teachergraded" NEXT="resubmission"/>
         <FIELD NAME="resubmission" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="mailed" NEXT="donotuse"/>
         <FIELD NAME="donotuse" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="resubmission" NEXT="generalcomment"/>
-        <FIELD NAME="generalcomment" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="donotuse" NEXT="teachercomment"/>
-        <FIELD NAME="teachercomment" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="generalcomment" NEXT="newplugin"/>
+        <FIELD NAME="generalcomment" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="donotuse" NEXT="teachercomment"/>
+        <FIELD NAME="teachercomment" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="generalcomment" NEXT="newplugin"/>
         <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="teachercomment" NEXT="newid"/>
         <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="newplugin"/>
       </FIELDS>
@@ -262,7 +262,7 @@
         <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="assessmentid"/>
         <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="elementno"/>
         <FIELD NAME="elementno" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentid" NEXT="feedback"/>
-        <FIELD NAME="feedback" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="elementno" NEXT="grade"/>
+        <FIELD NAME="feedback" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="elementno" NEXT="grade"/>
         <FIELD NAME="grade" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedback" NEXT="newplugin"/>
         <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="grade" NEXT="newid"/>
         <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="newplugin"/>
@@ -278,7 +278,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="workshopid"/>
         <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="elementno"/>
         <FIELD NAME="elementno" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="comments"/>
-        <FIELD NAME="comments" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="elementno" NEXT="newplugin"/>
+        <FIELD NAME="comments" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="elementno" NEXT="newplugin"/>
         <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="comments" NEXT="newid"/>
         <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="newplugin"/>
       </FIELDS>
@@ -295,7 +295,7 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentid" NEXT="timecreated"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="mailed"/>
         <FIELD NAME="mailed" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="comments"/>
-        <FIELD NAME="comments" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="mailed" NEXT="newplugin"/>
+        <FIELD NAME="comments" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="mailed" NEXT="newplugin"/>
         <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="comments" NEXT="newid"/>
         <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="newplugin"/>
       </FIELDS>

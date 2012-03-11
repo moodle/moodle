@@ -8,9 +8,9 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="title"/>
-        <FIELD NAME="title" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="preferredtitle"/>
+        <FIELD NAME="title" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="preferredtitle"/>
         <FIELD NAME="preferredtitle" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" PREVIOUS="title" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="preferredtitle" NEXT="shared"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="preferredtitle" NEXT="shared"/>
         <FIELD NAME="shared" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="url"/>
         <FIELD NAME="url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="shared"/>
       </FIELDS>

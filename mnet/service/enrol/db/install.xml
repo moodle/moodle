@@ -15,7 +15,7 @@
         <FIELD NAME="fullname" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" PREVIOUS="sortorder" NEXT="shortname"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="fullname" NEXT="idnumber"/>
         <FIELD NAME="idnumber" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="shortname" NEXT="summary"/>
-        <FIELD NAME="summary" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" PREVIOUS="idnumber" NEXT="summaryformat"/>
+        <FIELD NAME="summary" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="idnumber" NEXT="summaryformat"/>
         <FIELD NAME="summaryformat" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Format of the summary field" PREVIOUS="summary" NEXT="startdate"/>
         <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="summaryformat" NEXT="roleid"/>
         <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the role at the remote server that our users will get when we enrol them there" PREVIOUS="startdate" NEXT="rolename"/>

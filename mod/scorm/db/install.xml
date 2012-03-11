@@ -11,7 +11,7 @@
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="scormtype"/>
         <FIELD NAME="scormtype" TYPE="char" LENGTH="50" NOTNULL="true" DEFAULT="local" SEQUENCE="false" COMMENT="local, external or repository" PREVIOUS="name" NEXT="reference"/>
         <FIELD NAME="reference" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="scormtype" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="reference" NEXT="introformat"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="reference" NEXT="introformat"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="version"/>
         <FIELD NAME="version" TYPE="char" LENGTH="9" NOTNULL="true" SEQUENCE="false" PREVIOUS="introformat" NEXT="maxgrade"/>
         <FIELD NAME="maxgrade" TYPE="float" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="version" NEXT="grademethod"/>
@@ -56,7 +56,7 @@
         <FIELD NAME="organization" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="manifest" NEXT="parent"/>
         <FIELD NAME="parent" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="organization" NEXT="identifier"/>
         <FIELD NAME="identifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="parent" NEXT="launch"/>
-        <FIELD NAME="launch" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="identifier" NEXT="scormtype"/>
+        <FIELD NAME="launch" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="identifier" NEXT="scormtype"/>
         <FIELD NAME="scormtype" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false" PREVIOUS="launch" NEXT="title"/>
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="scormtype"/>
       </FIELDS>
@@ -70,7 +70,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="scoid"/>
         <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="scoid" NEXT="value"/>
-        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="scorm_scoes_data_scoid"/>

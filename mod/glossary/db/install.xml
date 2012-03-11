@@ -9,7 +9,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="allowduplicatedentries"/>
         <FIELD NAME="allowduplicatedentries" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="displayformat"/>
         <FIELD NAME="displayformat" TYPE="char" LENGTH="50" NOTNULL="true" DEFAULT="dictionary" SEQUENCE="false" PREVIOUS="allowduplicatedentries" NEXT="mainglossary"/>
@@ -48,7 +48,7 @@
         <FIELD NAME="glossaryid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="glossaryid" NEXT="concept"/>
         <FIELD NAME="concept" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="definition"/>
-        <FIELD NAME="definition" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="concept" NEXT="definitionformat"/>
+        <FIELD NAME="definition" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="concept" NEXT="definitionformat"/>
         <FIELD NAME="definitionformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="definition" NEXT="definitiontrust"/>
         <FIELD NAME="definitiontrust" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="definitionformat" NEXT="attachment"/>
         <FIELD NAME="attachment" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="definitiontrust" NEXT="timecreated"/>
