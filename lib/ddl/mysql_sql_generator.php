@@ -202,28 +202,10 @@ class mysql_sql_generator extends sql_generator {
                 $dbtype .= '(' . $xmldb_length . ')';
                 break;
             case XMLDB_TYPE_TEXT:
-                if (empty($xmldb_length)) {
-                    $xmldb_length = 'small';
-                }
-                if ($xmldb_length == 'small') {
-                    $dbtype = 'TEXT';
-                } else if ($xmldb_length == 'medium') {
-                    $dbtype = 'MEDIUMTEXT';
-                } else {
-                    $dbtype = 'LONGTEXT';
-                }
+                $dbtype = 'LONGTEXT';
                 break;
             case XMLDB_TYPE_BINARY:
-                if (empty($xmldb_length)) {
-                    $xmldb_length = 'small';
-                }
-                if ($xmldb_length == 'small') {
-                    $dbtype = 'BLOB';
-                } else if ($xmldb_length == 'medium') {
-                    $dbtype = 'MEDIUMBLOB';
-                } else {
-                    $dbtype = 'LONGBLOB';
-                }
+                $dbtype = 'LONGBLOB';
                 break;
             case XMLDB_TYPE_DATETIME:
                 $dbtype = 'DATETIME';

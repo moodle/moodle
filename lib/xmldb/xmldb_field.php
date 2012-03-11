@@ -75,7 +75,7 @@ class xmldb_field extends xmldb_object {
      * Set all the attributes of one xmldb_field
      *
      * @param string type XMLDB_TYPE_INTEGER, XMLDB_TYPE_NUMBER, XMLDB_TYPE_CHAR, XMLDB_TYPE_TEXT, XMLDB_TYPE_BINARY
-     * @param string precision length for integers and chars, two-comma separated numbers for numbers and 'small', 'medium', 'big' for texts and binaries
+     * @param string precision length for integers and chars, two-comma separated numbers for numbers
      * @param string unsigned XMLDB_UNSIGNED or null (or false)
      * @param string notnull XMLDB_NOTNULL or null (or false)
      * @param string sequence XMLDB_SEQUENCE or null (or false)
@@ -96,6 +96,11 @@ class xmldb_field extends xmldb_object {
         $this->notnull = !empty($notnull) ? true : false;
         $this->sequence = !empty($sequence) ? true : false;
         $this->setDefault($default);
+
+        if ($this->type == XMLDB_TYPE_BINARY || $this->type == XMLDB_TYPE_TEXT) {
+            $this->length = null;
+            $this->decimals = null;
+        }
 
         $this->previous = $previous;
     }
@@ -266,19 +271,10 @@ class xmldb_field extends xmldb_object {
                     $result = false;
                 }
             }
-        /// Check for big, medium, small to be applied to text and binary
+        /// Remove length from text and binary
             if ($this->type == XMLDB_TYPE_TEXT ||
                 $this->type == XMLDB_TYPE_BINARY) {
-                if (!$length) {
-                    $length == 'big';
-                }
-                if ($length != 'big' &&
-                    $length != 'medium' &&
-                    $length != 'small') {
-                    $this->errormsg = 'Incorrect LENGTH attribute for text and binary fields (only big, medium and small allowed)';
-                    $this->debug($this->errormsg);
-                    $result = false;
-                }
+                $length = null;
             }
         /// Finally, set the length
             $this->length = $length;
@@ -549,36 +545,10 @@ class xmldb_field extends xmldb_object {
             $this->length = $adofield->max_length;
         }
         if ($this->type == XMLDB_TYPE_TEXT) {
-            switch (strtolower($adofield->type)) {
-                case 'tinytext':
-                case 'text':
-                    $this->length = 'small';
-                    break;
-                case 'mediumtext':
-                    $this->length = 'medium';
-                    break;
-                case 'longtext':
-                    $this->length = 'big';
-                    break;
-                default:
-                    $this->length = 'small';
-            }
+            $this->length = null;
         }
         if ($this->type == XMLDB_TYPE_BINARY) {
-            switch (strtolower($adofield->type)) {
-                case 'tinyblob':
-                case 'blob':
-                    $this->length = 'small';
-                    break;
-                case 'mediumblob':
-                    $this->length = 'medium';
-                    break;
-                case 'longblob':
-                    $this->length = 'big';
-                    break;
-                default:
-                    $this->length = 'small';
-            }
+            $this->length = null;
         }
     /// Calculate the decimals of the field
         if ($adofield->max_length > 0 &&
@@ -708,10 +678,6 @@ class xmldb_field extends xmldb_object {
                 }
                 $o .= ')';
             }
-        }
-        if ($this->type == XMLDB_TYPE_TEXT ||
-            $this->type == XMLDB_TYPE_BINARY) {
-                $o .= ' (' . $this->length . ')';
         }
     /// not null
         if ($this->notnull) {

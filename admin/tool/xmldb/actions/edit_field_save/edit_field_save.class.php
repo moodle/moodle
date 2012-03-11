@@ -49,8 +49,6 @@ class edit_field_save extends XMLDBAction {
             'numberincorrectlength' => 'tool_xmldb',
             'floatincorrectlength' => 'tool_xmldb',
             'charincorrectlength' => 'tool_xmldb',
-            'textincorrectlength' => 'tool_xmldb',
-            'binaryincorrectlength' => 'tool_xmldb',
             'numberincorrectdecimals' => 'tool_xmldb',
             'floatincorrectdecimals' => 'tool_xmldb',
             'defaultincorrect' => 'tool_xmldb',
@@ -201,28 +199,8 @@ class edit_field_save extends XMLDBAction {
                 }
             }
         }
-        // Text checks
-        if ($type == XMLDB_TYPE_TEXT) {
-            if ($length != 'small' &&
-                $length != 'medium' &&
-                $length != 'big') {
-                $errors[] = $this->str['textincorrectlength'];
-            }
-            if ($default !== NULL && $default !== '') {
-                if (substr($default, 0, 1) == "'" ||
-                    substr($default, -1, 1) == "'") {
-                    $errors[] = $this->str['defaultincorrect'];
-                }
-            }
-        }
-        // Binary checks
-        if ($type == XMLDB_TYPE_BINARY) {
-            if ($length != 'small' &&
-                $length != 'medium' &&
-                $length != 'big') {
-                $errors[] = $this->str['binaryincorrectlength'];
-            }
-        }
+        // No text checks
+        // No binary checks
 
         if (!empty($errors)) {
             $tempfield = new xmldb_field($name);
