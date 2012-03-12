@@ -166,18 +166,37 @@ if ($action) {
 
 
 $renderer = $PAGE->get_renderer('core_enrol');
+
+$userdetails = array (
+    'picture' => false,
+    'firstname' => get_string('firstname'),
+    'lastname' => get_string('lastname'),
+);
+if (!empty($CFG->extrauserselectorfields)) {
+    $extrafields = explode(',', $CFG->extrauserselectorfields);
+    foreach ($extrafields as $field) {
+        $userdetails[$field] = get_string($field);
+    }
+}
 $fields = array(
-    'userdetails' => array (
-        'picture' => false,
-        'firstname' => get_string('firstname'),
-        'lastname' => get_string('lastname'),
-        'email' => get_string('email')
-    ),
+    'userdetails' => $userdetails,
     'lastseen' => get_string('lastaccess'),
     'role' => get_string('roles', 'role'),
     'group' => get_string('groups', 'group'),
     'enrol' => get_string('enrolmentinstances', 'enrol')
 );
+
+// Remove hidden fields if the user has no access
+if (!has_capability('moodle/course:viewhiddenuserfields', $context)) {
+    $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+    if (isset($hiddenfields['lastaccess'])) {
+        unset($fields['lastseen']);
+    }
+    if (isset($hiddenfields['groups'])) {
+        unset($fields['group']);
+    }
+}
+
 $table->set_fields($fields, $renderer);
 
 $canassign = has_capability('moodle/role:assign', $manager->get_context());
