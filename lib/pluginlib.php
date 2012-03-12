@@ -1552,6 +1552,17 @@ class plugintype_message extends plugintype_base implements plugin_information {
             return new moodle_url('settings.php', array('section' => 'messagesetting'.$processor->name));
         }
     }
+
+    /**
+     * @see plugintype_interface::is_enabled()
+     */
+    public function is_enabled() {
+        if (isset($this->processors[$this->name])) {
+            return $this->processors[$this->name]->configured && $this->processors[$this->name]->enabled;
+        } else {
+            return parent::is_enabled();
+        }
+    }
 }
 
 /**
