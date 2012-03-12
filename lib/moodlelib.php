@@ -4968,7 +4968,9 @@ function reset_password_and_mail($user) {
 
     $subject = get_string('emailconfirmationsubject', '', format_string($site->fullname));
 
-    $data->link  = $CFG->wwwroot .'/login/confirm.php?data='. $user->secret .'/'. urlencode($user->username);
+    $username = urlencode($user->username);
+    $username = str_replace('.', '%2E', $username); // prevent problems with trailing dots
+    $data->link  = $CFG->wwwroot .'/login/confirm.php?data='. $user->secret .'/'. $username;
     $message     = get_string('emailconfirmation', '', $data);
     $messagehtml = text_to_html(get_string('emailconfirmation', '', $data), false, false, true);
 
