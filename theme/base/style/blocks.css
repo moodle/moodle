@@ -3,6 +3,7 @@
 .block .header .block_action {float:right;margin:0 4px;vertical-align:top;}
 .block .header .block_action input {margin-right:2px;}
 .block .content {padding:4px;}
+.block .header .commands .icon img {height:11px;margin-right:1px;width:11px;}
 .block.hidden .content {display: none;}
 .block .content .userpicture {width:16px;height:16px;margin-right:4px;}
 .block .content .list li.listentry {clear:both;}
