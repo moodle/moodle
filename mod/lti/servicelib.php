@@ -192,7 +192,7 @@ function lti_delete_grade($ltiinstance, $userid) {
 
     $status = grade_update(LTI_SOURCE, $ltiinstance->course, LTI_ITEM_TYPE, LTI_ITEM_MODULE, $ltiinstance->id, 0, $grade, array('deleted'=>1));
 
-    return $status == GRADE_UPDATE_OK || $status == GRADE_UPDATE_ITEM_DELETED; //grade_update seems to return ok now, but could reasonably return deleted in the future
+    return $status == GRADE_UPDATE_OK;
 }
 
 function lti_verify_message($key, $sharedsecrets, $body, $headers = null) {
