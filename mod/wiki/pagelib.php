@@ -2531,8 +2531,8 @@ class page_wiki_admin extends page_wiki {
     /**
      * Prints lists of versions which can be deleted
      *
-     * @global object $OUTPUT
-     * @global object $PAGE
+     * @global core_renderer $OUTPUT
+     * @global moodle_page $PAGE
      */
     private function print_delete_version() {
         global $OUTPUT, $PAGE;
