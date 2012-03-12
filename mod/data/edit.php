@@ -93,8 +93,23 @@ if (has_capability('mod/data:managetemplates', $context)) {
     }
 }
 
-if ($rid) {    // So do you have access?
-    if (!(has_capability('mod/data:manageentries', $context) or data_isowner($rid)) or !confirm_sesskey() ) {
+if ($rid) {
+    // When editing an existing record, we require the session key
+    require_sesskey();
+}
+
+// Get Group information for permission testing and record creation
+$currentgroup = groups_get_activity_group($cm);
+$groupmode = groups_get_activity_groupmode($cm);
+
+if (!has_capability('mod/data:manageentries', $context)) {
+    if ($rid) {
+        // User is editing an existing record
+        if (!data_isowner($rid) || data_in_readonly_period($data)) {
+            print_error('noaccess','data');
+        }
+    } else if (!data_user_can_add_entry($data, $currentgroup, $groupmode, $context)) {
+        // User is trying to create a new record
         print_error('noaccess','data');
     }
 }
@@ -136,20 +151,6 @@ if ($rid) {
 $PAGE->set_title($data->name);
 $PAGE->set_heading($course->fullname);
 
-/// Check to see if groups are being used here
-$currentgroup = groups_get_activity_group($cm);
-$groupmode = groups_get_activity_groupmode($cm);
-
-if ($currentgroup) {
-    $groupselect = " AND groupid = '$currentgroup'";
-    $groupparam = "&amp;groupid=$currentgroup";
-} else {
-    $groupselect = "";
-    $groupparam = "";
-    $currentgroup = 0;
-}
-
-
 /// Process incoming data for adding/updating records
 
 if ($datarecord = data_submitted() and confirm_sesskey()) {
@@ -189,21 +190,6 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
         redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&rid='.$rid);
 
     } else { /// Add some new records
-
-        if (!data_user_can_add_entry($data, $currentgroup, $groupmode, $context)) {
-            print_error('cannotadd', 'data');
-        }
-
-    /// Check if maximum number of entry as specified by this database is reached
-    /// Of course, you can't be stopped if you are an editting teacher! =)
-
-        if (data_atmaxentries($data) and !has_capability('mod/data:manageentries',$context)){
-            echo $OUTPUT->header();
-            echo $OUTPUT->notification(get_string('atmaxentry','data'));
-            echo $OUTPUT->footer();
-            exit;
-        }
-
         ///Empty form checking - you can't submit an empty form!
 
         $emptyform = true;      // assume the worst
