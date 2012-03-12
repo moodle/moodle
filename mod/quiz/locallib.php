@@ -80,7 +80,8 @@ function quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $isp
 
     if ($quiz->sumgrades < 0.000005 && $quiz->grade > 0.000005) {
         throw new moodle_exception('cannotstartgradesmismatch', 'quiz',
-                new moodle_url('/mod/quiz/view.php', array('q' => $quiz->id)));
+                new moodle_url('/mod/quiz/view.php', array('q' => $quiz->id)),
+                    array('grade' => quiz_format_grade($quiz, $quiz->grade)));
     }
 
     if ($attemptnumber == 1 || !$quiz->attemptonlast) {
