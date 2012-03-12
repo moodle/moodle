@@ -182,6 +182,9 @@ class login_signup_form extends moodleform {
                 $errors['recaptcha'] = get_string('missingrecaptchachallengefield');
             }
         }
+        // Validate customisable profile fields. (profile_validation expects an object as the parameter)
+        $dataobject = (object)$data;
+        $errors += profile_validation($dataobject, $files);
 
         return $errors;
 
