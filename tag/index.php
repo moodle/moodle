@@ -155,35 +155,35 @@ if (!empty($courses)) {
 // Print up to 10 previous blogs entries
 
 if (!empty($blogs)) {
-	echo $OUTPUT->box_start('generalbox', 'tag-blogs');
-	$heading = get_string('relatedblogs', 'tag', $tagname). ' ' . get_string('taggedwith', 'tag', $tagname);
-	echo "<a name='blog'></a>";
-	echo $OUTPUT->heading($heading, 3);
-	
-	echo '<ul id="tagblogentries">';
-	foreach ($blogs as $blog) {
-	    if ($blog->publishstate == 'draft') {
-	        $class = 'class="dimmed"';
-	    } else {
-	        $class = '';
-	    }
-	    echo '<li '.$class.'>';
-	    echo '<a '.$class.' href="'.$CFG->wwwroot.'/blog/index.php?entryid='.$blog->id.'">';
-	    echo format_string($blog->subject);
-	    echo '</a>';
-	    echo ' - ';
-	    echo '<a '.$class.' href="'.$CFG->wwwroot.'/user/view.php?id='.$blog->userid.'">';
-	    echo fullname($blog);
-	    echo '</a>';
-	    echo ', '. userdate($blog->lastmodified);
-	    echo '</li>';
-	}
-	echo '</ul>';
-	
-	$allblogsurl = new moodle_url('/blog/index.php', array('tagid' => $tag->id));
-	echo '<p class="moreblogs"><a href="'.$allblogsurl->out().'">'.get_string('seeallblogs', 'tag', $tagname).'</a></p>';
-	
-	echo $OUTPUT->box_end();
+    echo $OUTPUT->box_start('generalbox', 'tag-blogs');
+    $heading = get_string('relatedblogs', 'tag', $tagname). ' ' . get_string('taggedwith', 'tag', $tagname);
+    echo "<a name='blog'></a>";
+    echo $OUTPUT->heading($heading, 3);
+
+    echo '<ul id="tagblogentries">';
+    foreach ($blogs as $blog) {
+        if ($blog->publishstate == 'draft') {
+            $class = 'class="dimmed"';
+        } else {
+            $class = '';
+        }
+        echo '<li '.$class.'>';
+        echo '<a '.$class.' href="'.$CFG->wwwroot.'/blog/index.php?entryid='.$blog->id.'">';
+        echo format_string($blog->subject);
+        echo '</a>';
+        echo ' - ';
+        echo '<a '.$class.' href="'.$CFG->wwwroot.'/user/view.php?id='.$blog->userid.'">';
+        echo fullname($blog);
+        echo '</a>';
+        echo ', '. userdate($blog->lastmodified);
+        echo '</li>';
+    }
+    echo '</ul>';
+
+    $allblogsurl = new moodle_url('/blog/index.php', array('tagid' => $tag->id));
+    echo '<p class="moreblogs"><a href="'.$allblogsurl->out().'">'.get_string('seeallblogs', 'tag', $tagname).'</a></p>';
+
+    echo $OUTPUT->box_end();
 }
 
 if ($usercount > 0) {
