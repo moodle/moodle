@@ -383,7 +383,7 @@ $CFG->admin = 'admin';
 // memory limit to something higher.
 // The value for the settings should be a valid PHP memory value. e.g. 512M, 1G
 //
-//     $CFG->extramemorylimit = 1G;
+//     $CFG->extramemorylimit = '1G';
 //
 // The CSS files the Moodle produces can be extremely large and complex, especially
 // if you are using a custom theme that builds upon several other themes.
