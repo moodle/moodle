@@ -9,7 +9,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="assignmenttype"/>
         <FIELD NAME="assignmenttype" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="introformat" NEXT="resubmit"/>
         <FIELD NAME="resubmit" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assignmenttype" NEXT="preventlate"/>
@@ -41,10 +41,10 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="numfiles"/>
         <FIELD NAME="numfiles" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timemodified" NEXT="data1"/>
-        <FIELD NAME="data1" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="numfiles" NEXT="data2"/>
-        <FIELD NAME="data2" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="data1" NEXT="grade"/>
+        <FIELD NAME="data1" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="numfiles" NEXT="data2"/>
+        <FIELD NAME="data2" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="data1" NEXT="grade"/>
         <FIELD NAME="grade" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="data2" NEXT="submissioncomment"/>
-        <FIELD NAME="submissioncomment" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="grade" NEXT="format"/>
+        <FIELD NAME="submissioncomment" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="grade" NEXT="format"/>
         <FIELD NAME="format" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="submissioncomment" NEXT="teacher"/>
         <FIELD NAME="teacher" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="format" NEXT="timemarked"/>
         <FIELD NAME="timemarked" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="teacher" NEXT="mailed"/>

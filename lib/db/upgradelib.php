@@ -83,3 +83,57 @@ function upgrade_mysql_fix_unsigned_columns() {
         $pbar->update($i, $tablecount, "Converted unsigned columns in MySQL database - $i/$tablecount.");
     }
 }
+
+/**
+ * Migrate all text and binary columns to big size - mysql only.
+ */
+function upgrade_mysql_fix_lob_columns() {
+    // we are not using standard API for changes of column intentionally
+
+    global $DB;
+
+    if ($DB->get_dbfamily() !== 'mysql') {
+        return;
+    }
+
+    $pbar = new progress_bar('mysqlconvertlobs', 500, true);
+
+    $prefix = $DB->get_prefix();
+    $tables = $DB->get_tables();
+    asort($tables);
+
+    $tablecount = count($tables);
+    $i = 0;
+    foreach ($tables as $table) {
+        $i++;
+        // set appropriate timeout - 1 minute per thousand of records should be enough, min 60 minutes just in case
+        $count = $DB->count_records($table, array());
+        $timeout = ($count/1000)*60;
+        $timeout = ($timeout < 60*60) ? 60*60 : (int)$timeout;
+
+        $sql = "SHOW COLUMNS FROM `{{$table}}`";
+        $rs = $DB->get_recordset_sql($sql);
+        foreach ($rs as $column) {
+            upgrade_set_timeout($timeout);
+
+            $column = (object)array_change_key_case((array)$column, CASE_LOWER);
+            if ($column->type === 'tinytext' or $column->type === 'mediumtext' or $column->type === 'text') {
+                $notnull = ($column->null === 'NO') ? 'NOT NULL' : 'NULL';
+                $default = !is_null($column->default) ? "DEFAULT '$column->default'" : '';
+                // primary, unique and inc are not supported for texts
+                $sql = "ALTER TABLE `{$prefix}$table` MODIFY COLUMN `$column->field` LONGTEXT $notnull $default";
+                $DB->change_database_structure($sql);
+            }
+            if ($column->type === 'tinyblob' or $column->type === 'mediumblob' or $column->type === 'blob') {
+                $notnull = ($column->null === 'NO') ? 'NOT NULL' : 'NULL';
+                $default = !is_null($column->default) ? "DEFAULT '$column->default'" : '';
+                // primary, unique and inc are not supported for blobs
+                $sql = "ALTER TABLE `{$prefix}$table` MODIFY COLUMN `$column->field` LONGBLOB $notnull $default";
+                $DB->change_database_structure($sql);
+            }
+        }
+        $rs->close();
+
+        $pbar->update($i, $tablecount, "Converted LOB columns in MySQL database - $i/$tablecount.");
+    }
+}

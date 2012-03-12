@@ -41,9 +41,9 @@
         <FIELD NAME="discriminativeefficiency" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="discriminationindex" NEXT="sd"/>
         <FIELD NAME="sd" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10" PREVIOUS="discriminativeefficiency" NEXT="facility"/>
         <FIELD NAME="facility" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="10" PREVIOUS="sd" NEXT="subquestions"/>
-        <FIELD NAME="subquestions" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" PREVIOUS="facility" NEXT="maxmark"/>
+        <FIELD NAME="subquestions" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="facility" NEXT="maxmark"/>
         <FIELD NAME="maxmark" TYPE="number" LENGTH="12" NOTNULL="false" SEQUENCE="false" DECIMALS="7" PREVIOUS="subquestions" NEXT="positions"/>
-        <FIELD NAME="positions" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="positions in which this item appears. Only used for random questions." PREVIOUS="maxmark" NEXT="randomguessscore"/>
+        <FIELD NAME="positions" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="positions in which this item appears. Only used for random questions." PREVIOUS="maxmark" NEXT="randomguessscore"/>
         <FIELD NAME="randomguessscore" TYPE="number" LENGTH="12" NOTNULL="false" SEQUENCE="false" DECIMALS="7" COMMENT="An estimate of the score a student would get by guessing randomly." PREVIOUS="positions"/>
       </FIELDS>
       <KEYS>

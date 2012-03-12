@@ -5,7 +5,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="question"/>
         <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="sequence"/>
-        <FIELD NAME="sequence" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="question"/>
+        <FIELD NAME="sequence" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="question"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="question"/>

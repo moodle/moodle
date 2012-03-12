@@ -13,7 +13,7 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="days" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="timemodified" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="intro text field format" PREVIOUS="intro" NEXT="questions"/>
         <FIELD NAME="questions" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="introformat"/>
       </FIELDS>
@@ -32,7 +32,7 @@
         <FIELD NAME="multi" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="shorttext" NEXT="intro"/>
         <FIELD NAME="intro" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="multi" NEXT="type"/>
         <FIELD NAME="type" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="options"/>
-        <FIELD NAME="options" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="type"/>
+        <FIELD NAME="options" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="type"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -45,8 +45,8 @@
         <FIELD NAME="survey" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="question"/>
         <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="survey" NEXT="time"/>
         <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="question" NEXT="answer1"/>
-        <FIELD NAME="answer1" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="time" NEXT="answer2"/>
-        <FIELD NAME="answer2" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="answer1"/>
+        <FIELD NAME="answer1" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="time" NEXT="answer2"/>
+        <FIELD NAME="answer2" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="answer1"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="survey"/>
@@ -62,7 +62,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="survey"/>
         <FIELD NAME="survey" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="survey" NEXT="notes"/>
-        <FIELD NAME="notes" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid"/>
+        <FIELD NAME="notes" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="survey"/>

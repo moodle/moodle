@@ -34,6 +34,7 @@
 
   <xs:simpleType name="fieldLength" >
     <xs:restriction base="xs:string" >
+    <!-- TODO: Moodle 2.5 - Drop LOB sizes, keep only numbers -->
      <xs:pattern value='(\d+)|(small|medium|big)'/>
     </xs:restriction >
   </xs:simpleType >

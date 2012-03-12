@@ -9,7 +9,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="comments"/>
         <FIELD NAME="comments" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="timeavailablefrom"/>
         <FIELD NAME="timeavailablefrom" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="comments" NEXT="timeavailableto"/>
@@ -20,16 +20,16 @@
         <FIELD NAME="requiredentriestoview" TYPE="int" LENGTH="8" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="requiredentries" NEXT="maxentries"/>
         <FIELD NAME="maxentries" TYPE="int" LENGTH="8" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="requiredentriestoview" NEXT="rssarticles"/>
         <FIELD NAME="rssarticles" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="maxentries" NEXT="singletemplate"/>
-        <FIELD NAME="singletemplate" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="rssarticles" NEXT="listtemplate"/>
-        <FIELD NAME="listtemplate" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="singletemplate" NEXT="listtemplateheader"/>
-        <FIELD NAME="listtemplateheader" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="listtemplate" NEXT="listtemplatefooter"/>
-        <FIELD NAME="listtemplatefooter" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="listtemplateheader" NEXT="addtemplate"/>
-        <FIELD NAME="addtemplate" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="listtemplatefooter" NEXT="rsstemplate"/>
-        <FIELD NAME="rsstemplate" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="addtemplate" NEXT="rsstitletemplate"/>
-        <FIELD NAME="rsstitletemplate" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="rsstemplate" NEXT="csstemplate"/>
-        <FIELD NAME="csstemplate" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="rsstitletemplate" NEXT="jstemplate"/>
-        <FIELD NAME="jstemplate" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="csstemplate" NEXT="asearchtemplate"/>
-        <FIELD NAME="asearchtemplate" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="jstemplate" NEXT="approval"/>
+        <FIELD NAME="singletemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="rssarticles" NEXT="listtemplate"/>
+        <FIELD NAME="listtemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="singletemplate" NEXT="listtemplateheader"/>
+        <FIELD NAME="listtemplateheader" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="listtemplate" NEXT="listtemplatefooter"/>
+        <FIELD NAME="listtemplatefooter" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="listtemplateheader" NEXT="addtemplate"/>
+        <FIELD NAME="addtemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="listtemplatefooter" NEXT="rsstemplate"/>
+        <FIELD NAME="rsstemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="addtemplate" NEXT="rsstitletemplate"/>
+        <FIELD NAME="rsstitletemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="rsstemplate" NEXT="csstemplate"/>
+        <FIELD NAME="csstemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="rsstitletemplate" NEXT="jstemplate"/>
+        <FIELD NAME="jstemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="csstemplate" NEXT="asearchtemplate"/>
+        <FIELD NAME="asearchtemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="jstemplate" NEXT="approval"/>
         <FIELD NAME="approval" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="asearchtemplate" NEXT="scale"/>
         <FIELD NAME="scale" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="approval" NEXT="assessed"/>
         <FIELD NAME="assessed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="scale" NEXT="assesstimestart"/>
@@ -53,17 +53,17 @@
         <FIELD NAME="dataid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="type"/>
         <FIELD NAME="type" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="dataid" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="type" NEXT="description"/>
-        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="param1"/>
-        <FIELD NAME="param1" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="description" NEXT="param2"/>
-        <FIELD NAME="param2" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="param1" NEXT="param3"/>
-        <FIELD NAME="param3" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="param2" NEXT="param4"/>
-        <FIELD NAME="param4" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="param3" NEXT="param5"/>
-        <FIELD NAME="param5" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="param4" NEXT="param6"/>
-        <FIELD NAME="param6" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="param5" NEXT="param7"/>
-        <FIELD NAME="param7" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="param6" NEXT="param8"/>
-        <FIELD NAME="param8" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="param7" NEXT="param9"/>
-        <FIELD NAME="param9" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="param8" NEXT="param10"/>
-        <FIELD NAME="param10" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="param9"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="param1"/>
+        <FIELD NAME="param1" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="description" NEXT="param2"/>
+        <FIELD NAME="param2" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param1" NEXT="param3"/>
+        <FIELD NAME="param3" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param2" NEXT="param4"/>
+        <FIELD NAME="param4" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param3" NEXT="param5"/>
+        <FIELD NAME="param5" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param4" NEXT="param6"/>
+        <FIELD NAME="param6" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param5" NEXT="param7"/>
+        <FIELD NAME="param7" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param6" NEXT="param8"/>
+        <FIELD NAME="param8" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param7" NEXT="param9"/>
+        <FIELD NAME="param9" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param8" NEXT="param10"/>
+        <FIELD NAME="param10" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="param9"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="dataid"/>

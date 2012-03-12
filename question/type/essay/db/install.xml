@@ -11,7 +11,7 @@
         <FIELD NAME="responseformat" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="editor" SEQUENCE="false" COMMENT="The type of input area students should be given for their response." PREVIOUS="questionid" NEXT="responsefieldlines"/>
         <FIELD NAME="responsefieldlines" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="15" SEQUENCE="false" COMMENT="Approximate height, in lines, of the input box the students should be given for their response." PREVIOUS="responseformat" NEXT="attachments"/>
         <FIELD NAME="attachments" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether, and how many, attachments a student is allowed to include with their response. -1 means unlimited." PREVIOUS="responsefieldlines" NEXT="graderinfo"/>
-        <FIELD NAME="graderinfo" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Information shown to people with permission to manually grade the question, when they are grading." PREVIOUS="attachments" NEXT="graderinfoformat"/>
+        <FIELD NAME="graderinfo" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Information shown to people with permission to manually grade the question, when they are grading." PREVIOUS="attachments" NEXT="graderinfoformat"/>
         <FIELD NAME="graderinfoformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The text format for graderinfo." PREVIOUS="graderinfo"/>
       </FIELDS>
       <KEYS>

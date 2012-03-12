@@ -9,13 +9,13 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="name" NEXT="introformat"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="tobemigrated"/>
         <FIELD NAME="tobemigrated" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="legacyfiles"/>
         <FIELD NAME="legacyfiles" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="tobemigrated" NEXT="legacyfileslast"/>
         <FIELD NAME="legacyfileslast" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="legacyfiles" NEXT="display"/>
         <FIELD NAME="display" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="legacyfileslast" NEXT="displayoptions"/>
-        <FIELD NAME="displayoptions" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="display" NEXT="filterfiles"/>
+        <FIELD NAME="displayoptions" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="display" NEXT="filterfiles"/>
         <FIELD NAME="filterfiles" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="displayoptions" NEXT="revision"/>
         <FIELD NAME="revision" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="incremented when after each file changes, solves browser caching issues" PREVIOUS="filterfiles" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="revision"/>
@@ -34,10 +34,10 @@
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="type"/>
         <FIELD NAME="type" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="reference"/>
         <FIELD NAME="reference" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="type" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="reference" NEXT="introformat"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="reference" NEXT="introformat"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="alltext"/>
-        <FIELD NAME="alltext" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" PREVIOUS="introformat" NEXT="popup"/>
-        <FIELD NAME="popup" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="alltext" NEXT="options"/>
+        <FIELD NAME="alltext" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="introformat" NEXT="popup"/>
+        <FIELD NAME="popup" TYPE="text" NOTNULL="true" SEQUENCE="false" PREVIOUS="alltext" NEXT="options"/>
         <FIELD NAME="options" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="popup" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="options" NEXT="oldid"/>
         <FIELD NAME="oldid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="timemodified" NEXT="cmid"/>
