@@ -2297,6 +2297,18 @@ class plugininfo_message extends plugininfo_base {
         }
         return parent::get_settings_url();
     }
+
+    /**
+     * @see plugintype_interface::is_enabled()
+     */
+    public function is_enabled() {
+        $processors = get_message_processors();
+        if (isset($processors[$this->name])) {
+            return $processors[$this->name]->configured && $processors[$this->name]->enabled;
+        } else {
+            return parent::is_enabled();
+        }
+    }
 }
 
 
