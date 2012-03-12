@@ -469,8 +469,10 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
     $usersnode->trim_if_empty();
 
     if ($course->id != SITEID) {
-        // Unenrol link
-        if (is_enrolled($coursecontext)) {
+        if (isguestuser() or !isloggedin()) {
+            // guest account can not be enrolled - no links for them
+        } else if (is_enrolled($coursecontext)) {
+            // unenrol link if possible
             foreach ($instances as $instance) {
                 if (!isset($plugins[$instance->enrol])) {
                     continue;
@@ -484,6 +486,7 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
                 }
             }
         } else {
+            // enrol link if possible
             if (is_viewing($coursecontext)) {
                 // better not show any enrol link, this is intended for managers and inspectors
             } else {
