@@ -62,9 +62,9 @@ class web_test extends UnitTestCase {
     }
 
     function test_format_text_email() {
-        $this->assertEqual("\n\nThis is a TEST",
+        $this->assertEqual("This is a TEST",
             format_text_email('<p>This is a <strong>test</strong></p>',FORMAT_HTML));
-        $this->assertEqual("\n\nThis is a TEST",
+        $this->assertEqual("This is a TEST",
             format_text_email('<p class="frogs">This is a <strong class=\'fishes\'>test</strong></p>',FORMAT_HTML));
         $this->assertEqual('& so is this',
             format_text_email('&amp; so is this',FORMAT_HTML));
