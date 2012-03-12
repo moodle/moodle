@@ -183,6 +183,18 @@ $fields = array(
     'group' => get_string('groups', 'group'),
     'enrol' => get_string('enrolmentinstances', 'enrol')
 );
+
+// Remove hidden fields if the user has no access
+if (!has_capability('moodle/course:viewhiddenuserfields', $context)) {
+    $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
+    if (isset($hiddenfields['lastaccess'])) {
+        unset($fields['lastseen']);
+    }
+    if (isset($hiddenfields['groups'])) {
+        unset($fields['group']);
+    }
+}
+
 $table->set_fields($fields, $renderer);
 
 $canassign = has_capability('moodle/role:assign', $manager->get_context());
