@@ -888,29 +888,6 @@ function index_exists($table, $index) {
  * @deprecated
  * @global object
  * @param string $table
- * @param string $field
- * @return bool
- */
-function find_check_constraint_name($table, $field) {
-    global $DB;
-    debugging('Deprecated ddllib function used!');
-    return $DB->get_manager()->find_check_constraint_name($table, $field);
-}
-
-/**
- * @deprecated
- * @global object
- */
-function check_constraint_exists($table, $field) {
-    global $DB;
-    debugging('Deprecated ddllib function used!');
-    return $DB->get_manager()->check_constraint_exists($table, $field);
-}
-
-/**
- * @deprecated
- * @global object
- * @param string $table
  * @param string $xmldb_key
  * @return bool
  */
@@ -1067,20 +1044,6 @@ function change_field_notnull($table, $field) {
     global $DB;
     debugging('Deprecated ddllib function used!');
     $DB->get_manager()->change_field_notnull($table, $field);
-    return true;
-}
-
-/**
- * @deprecated
- * @global object
- * @param string $table
- * @param string $field
- * @return bool
- */
-function change_field_enum($table, $field) {
-    global $DB;
-    debugging('Deprecated ddllib function used! Only dropping of enums is allowed.');
-    $DB->get_manager()->drop_enum_from_field($table, $field);
     return true;
 }
 

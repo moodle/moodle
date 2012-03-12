@@ -523,7 +523,6 @@ class oci_native_moodle_database extends moodle_database {
              or $rawcolumn->COLTYPE === 'NVARCHAR'
              or $rawcolumn->COLTYPE === 'CHAR'
              or $rawcolumn->COLTYPE === 'NCHAR') {
-                //TODO add some basic enum support here
                 $info->type          = $rawcolumn->COLTYPE;
                 $info->meta_type     = 'C';
                 $info->max_length    = $rawcolumn->WIDTH;

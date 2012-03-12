@@ -66,9 +66,6 @@ class xmldb_field extends xmldb_object {
     function setAttributes($type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {
 
         debugging('XMLDBField->setAttributes() has been deprecated in Moodle 2.0. Will be out in Moodle 2.1. Please use xmldb_field->set_attributes() instead.', DEBUG_DEVELOPER);
-        if ($enum) {
-            debugging('Also, ENUMs support has been dropped in Moodle 2.0. Your fields specs are incorrect because you are trying to introduce one new ENUM. Created DB estructures will ignore that.');
-        }
 
         return $this->set_attributes($type, $precision, $unsigned, $notnull, $sequence, $default, $previous);
     }
@@ -358,15 +355,6 @@ class xmldb_field extends xmldb_object {
 
         if (isset($xmlarr['@']['NEXT'])) {
             $this->next = trim($xmlarr['@']['NEXT']);
-        }
-
-    /// TODO: Drop this check in Moodle 2.1
-    /// Detect if there is old enum information in the XML file
-        if (isset($xmlarr['@']['ENUM']) && isset($xmlarr['@']['ENUMVALUES'])) {
-            $this->hasenums = true;
-            if ($xmlarr['@']['ENUM'] == 'true') {
-                $this->hasenumsenabled = true;
-            }
         }
 
     /// Set some attributes

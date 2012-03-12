@@ -455,10 +455,10 @@ class mysqli_native_moodle_database extends moodle_database {
             $info->name = $rawcolumn->field;
             $matches = null;
 
-            if (preg_match('/varchar\((\d+)\)/i', $rawcolumn->type, $matches)) {
+            if (preg_match('/(enum|varchar)\((\d+)\)/i', $rawcolumn->type, $matches)) {
                 $info->type          = 'varchar';
                 $info->meta_type     = 'C';
-                $info->max_length    = $matches[1];
+                $info->max_length    = $matches[2];
                 $info->scale         = null;
                 $info->not_null      = ($rawcolumn->null === 'NO');
                 $info->default_value = $rawcolumn->default;
@@ -552,28 +552,6 @@ class mysqli_native_moodle_database extends moodle_database {
                 $info->auto_increment= false;
                 $info->unique        = null;
 
-            } else if (preg_match('/enum\((.*)\)/i', $rawcolumn->type, $matches)) {
-                $info->type          = 'enum';
-                $info->meta_type     = 'C';
-                $info->enums         = array();
-                $info->max_length    = 0;
-                $values = $matches[1];
-                $values = explode(',', $values);
-                foreach ($values as $val) {
-                    $val = trim($val, "'");
-                    $length = textlib::strlen($val);
-                    $info->enums[] = $val;
-                    $info->max_length = ($info->max_length < $length) ? $length : $info->max_length;
-                }
-                $info->scale         = null;
-                $info->not_null      = ($rawcolumn->null === 'NO');
-                $info->default_value = $rawcolumn->default;
-                $info->has_default   = is_null($info->default_value) ? false : true;
-                $info->primary_key   = ($rawcolumn->key === 'PRI');
-                $info->binary        = false;
-                $info->unsigned      = null;
-                $info->auto_increment= false;
-                $info->unique        = null;
             }
 
             $this->columns[$table][$info->name] = new database_column_info($info);
@@ -603,16 +581,6 @@ class mysqli_native_moodle_database extends moodle_database {
         // any implicit conversion by MySQL
         } else if (is_float($value) and ($column->meta_type == 'C' or $column->meta_type == 'X')) {
             $value = "$value";
-        }
-        // workaround for problem with wrong enums in mysql - TODO: Out in Moodle 2.1
-        if (!empty($column->enums)) {
-            if (is_null($value) and !$column->not_null) {
-                // ok - nulls allowed
-            } else {
-                if (!in_array((string)$value, $column->enums)) {
-                    throw new dml_write_exception('Enum value '.s($value).' not allowed in field '.$field.' table '.$table.'.');
-                }
-            }
         }
         return $value;
     }
