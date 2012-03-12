@@ -233,7 +233,7 @@ function send_welcome_messages($orderdata) {
                 $a->profileurl = "$CFG->wwwroot/user/view.php?id=$lastuserid";
                 $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$lastuserid";
                 $emailmessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
-                $subject = get_string("enrolmentnew", '', format_string($SITE->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, SITEID))));
+                $subject = get_string("enrolmentnew", 'enrol', format_string($SITE->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, SITEID))));
 
                 $eventdata = new stdClass();
                 $eventdata->modulename        = 'moodle';
