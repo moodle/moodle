@@ -34,6 +34,13 @@
 
     redirect_if_major_upgrade_required();
 
+    $urlparams = array();
+    if ($CFG->defaulthomepage == HOMEPAGE_MY && optional_param('redirect', 1, PARAM_BOOL) === 0) {
+        $urlparams['redirect'] = 0;
+    }
+    $PAGE->set_url('/', $urlparams);
+    $PAGE->set_course($SITE);
+
     if ($CFG->forcelogin) {
         require_login();
     } else {
@@ -41,13 +48,6 @@
     }
 
     $hassiteconfig = has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
-
-    $urlparams = array();
-    if ($CFG->defaulthomepage == HOMEPAGE_MY && optional_param('redirect', 1, PARAM_BOOL) === 0) {
-        $urlparams['redirect'] = 0;
-    }
-    $PAGE->set_url('/', $urlparams);
-    $PAGE->set_course($SITE);
 
 /// If the site is currently under maintenance, then print a message
     if (!empty($CFG->maintenance_enabled) and !$hassiteconfig) {
