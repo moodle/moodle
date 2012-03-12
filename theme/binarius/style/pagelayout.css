@@ -114,7 +114,6 @@ body {
     width: 0px;
 }
 
-
 /** Report layout **/
 .pagelayout-report {border-top:1px solid #555555;}
 .pagelayout-report #page {width:auto;position:relative;overflow:visible;}
@@ -128,6 +127,8 @@ body {
 .pagelayout-report #page-footer {float:none;}
 .pagelayout-report #page-content .region-content {overflow:visible;}
 .pagelayout-report.content-only #report-main-content .region-content {margin-left:0;}
+.pagelayout-report #page-content-wrapper #page-content #report-main-content .region-content
+ .no-overflow {overflow: auto;}
 
 /** Correct for right to left languages **/
 .dir-rtl.pagelayout-report #report-main-content .region-content {margin-left:0;margin-right:200px;}
