@@ -259,6 +259,7 @@ if(!$csv) {
         exit;
     }
 
+    print '<div id="completion-progress-wrapper" class="no-overflow">';
     print '<table id="completion-progress" class="generaltable flexible boxaligncenter" style="text-align:left"><tr style="vertical-align:top">';
 
     // User heading / sort option
@@ -392,6 +393,7 @@ if($csv) {
     exit;
 }
 print '</table>';
+print '</div>';
 print $pagingbar;
 
 print '<ul class="progress-actions"><li><a href="index.php?course='.$course->id.
