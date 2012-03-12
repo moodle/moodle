@@ -145,6 +145,12 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
     $data->timecreated  = time();
     $data->timemodified = $data->timecreated;
     $data->name         = trim($data->name);
+    if (isset($data->idnumber)) {
+        $data->idnumber = trim($data->idnumber);
+        if (groups_get_group_by_idnumber($course->id, $data->idnumber)) {
+            throw new moodle_exception('idnumbertaken');
+        }
+    }
 
     if ($editform and $editoroptions) {
         $data->description = $data->description_editor['text'];
@@ -188,6 +194,12 @@ function groups_create_grouping($data, $editoroptions=null) {
     $data->timecreated  = time();
     $data->timemodified = $data->timecreated;
     $data->name         = trim($data->name);
+    if (isset($data->idnumber)) {
+        $data->idnumber = trim($data->idnumber);
+        if (groups_get_grouping_by_idnumber($data->courseid, $data->idnumber)) {
+            throw new moodle_exception('idnumbertaken');
+        }
+    }
 
     if ($editoroptions !== null) {
         $data->description = $data->description_editor['text'];
@@ -256,6 +268,12 @@ function groups_update_group($data, $editform = false, $editoroptions = false) {
 
     $data->timemodified = time();
     $data->name         = trim($data->name);
+    if (isset($data->idnumber)) {
+        $data->idnumber = trim($data->idnumber);
+        if (($existing = groups_get_group_by_idnumber($data->courseid, $data->idnumber)) && $existing->id != $data->id) {
+            throw new moodle_exception('idnumbertaken');
+        }
+    }
 
     if ($editform and $editoroptions) {
         $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $context, 'group', 'description', $data->id);
@@ -287,6 +305,12 @@ function groups_update_grouping($data, $editoroptions=null) {
     global $DB;
     $data->timemodified = time();
     $data->name         = trim($data->name);
+    if (isset($data->idnumber)) {
+        $data->idnumber = trim($data->idnumber);
+        if (($existing = groups_get_grouping_by_idnumber($data->courseid, $data->idnumber)) && $existing->id != $data->id) {
+            throw new moodle_exception('idnumbertaken');
+        }
+    }
     if ($editoroptions !== null) {
         $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $editoroptions['context'], 'grouping', 'description', $data->id);
     }

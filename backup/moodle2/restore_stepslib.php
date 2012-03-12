@@ -716,6 +716,17 @@ class restore_groups_structure_step extends restore_structure_step {
         $data = (object)$data; // handy
         $data->courseid = $this->get_courseid();
 
+        // Only allow the idnumber to be set if the user has permission and the idnumber is not already in use by
+        // another a group in the same course
+        $context = context_course::instance($data->courseid);
+        if (has_capability('moodle/course:changeidnumber', $context, $this->task->get_userid())) {
+            if (groups_get_group_by_idnumber($data->courseid, $data->idnumber)) {
+                unset($data->idnumber);
+            }
+        } else {
+            unset($data->idnumber);
+        }
+
         $oldid = $data->id;    // need this saved for later
 
         $restorefiles = false; // Only if we end creating the group
@@ -764,6 +775,17 @@ class restore_groups_structure_step extends restore_structure_step {
 
         $data = (object)$data; // handy
         $data->courseid = $this->get_courseid();
+
+        // Only allow the idnumber to be set if the user has permission and the idnumber is not already in use by
+        // another a grouping in the same course
+        $context = context_course::instance($data->courseid);
+        if (has_capability('moodle/course:changeidnumber', $context, $this->task->get_userid())) {
+            if (groups_get_grouping_by_idnumber($data->courseid, $data->idnumber)) {
+                unset($data->idnumber);
+            }
+        } else {
+            unset($data->idnumber);
+        }
 
         $oldid = $data->id;    // need this saved for later
         $restorefiles = false; // Only if we end creating the grouping

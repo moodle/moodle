@@ -70,6 +70,9 @@ $returnurl = $CFG->wwwroot.'/group/groupings.php?id='.$course->id;
 
 
 if ($id and $delete) {
+    if (!empty($grouping->idnumber) && !has_capability('moodle/course:changeidnumber', $context)) {
+        print_error('groupinghasidnumber', '', '', $grouping->name);
+    }
     if (!$confirm) {
         $PAGE->set_title(get_string('deletegrouping', 'group'));
         $PAGE->set_heading($course->fullname. ': '. get_string('deletegrouping', 'group'));
@@ -108,6 +111,10 @@ if ($editform->is_cancelled()) {
 
 } elseif ($data = $editform->get_data()) {
     $success = true;
+    if (!has_capability('moodle/course:changeidnumber', $context)) {
+        // Remove the idnumber if the user doesn't have permission to modify it
+        unset($data->idnumber);
+    }
 
     if ($data->id) {
         groups_update_grouping($data, $editoroptions);

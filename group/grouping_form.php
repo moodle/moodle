@@ -43,13 +43,24 @@ class grouping_form extends moodleform {
      */
     function definition () {
         global $USER, $CFG, $COURSE;
+        $coursecontext = context_course::instance($COURSE->id);
 
         $mform =& $this->_form;
         $editoroptions = $this->_customdata['editoroptions'];
 
+        $mform->addElement('header', 'general', get_string('general', 'form'));
+
         $mform->addElement('text','name', get_string('groupingname', 'group'),'maxlength="254" size="50"');
         $mform->addRule('name', get_string('required'), 'required', null, 'server');
         $mform->setType('name', PARAM_MULTILANG);
+
+        $mform->addElement('text','idnumber', get_string('idnumbergrouping'), 'maxlength="100" size="10"');
+        $mform->addHelpButton('idnumber', 'idnumbergrouping');
+        $mform->setType('idnumber', PARAM_RAW);
+        $mform->setAdvanced('idnumber');
+        if (!has_capability('moodle/course:changeidnumber', $coursecontext)) {
+            $mform->hardFreeze('idnumber');
+        }
 
         $mform->addElement('editor', 'description_editor', get_string('groupingdescription', 'group'), null, $editoroptions);
         $mform->setType('description_editor', PARAM_RAW);
@@ -76,15 +87,27 @@ class grouping_form extends moodleform {
         $errors = parent::validation($data, $files);
 
         $name = trim($data['name']);
+        if (isset($data['idnumber'])) {
+            $idnumber = trim($data['idnumber']);
+        } else {
+            $idnumber = '';
+        }
         if ($data['id'] and $grouping = $DB->get_record('groupings', array('id'=>$data['id']))) {
             if (textlib::strtolower($grouping->name) != textlib::strtolower($name)) {
                 if (groups_get_grouping_by_name($COURSE->id,  $name)) {
                     $errors['name'] = get_string('groupingnameexists', 'group', $name);
                 }
             }
+            if (!empty($idnumber) && $grouping->idnumber != $idnumber) {
+                if (groups_get_grouping_by_idnumber($COURSE->id, $idnumber)) {
+                    $errors['idnumber']= get_string('idnumbertaken');
+                }
+            }
 
         } else if (groups_get_grouping_by_name($COURSE->id, $name)) {
             $errors['name'] = get_string('groupingnameexists', 'group', $name);
+        } else if (!empty($idnumber) && groups_get_grouping_by_idnumber($COURSE->id, $idnumber)) {
+            $errors['idnumber']= get_string('idnumbertaken');
         }
 
         return $errors;

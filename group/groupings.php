@@ -67,6 +67,7 @@ echo $OUTPUT->heading($strgroupings);
 
 $data = array();
 if ($groupings = $DB->get_records('groupings', array('courseid'=>$course->id), 'name')) {
+    $canchangeidnumber = has_capability('moodle/course:changeidnumber', $context);
     foreach($groupings as $grouping) {
         $line = array();
         $line[0] = format_string($grouping->name);
@@ -84,8 +85,13 @@ if ($groupings = $DB->get_records('groupings', array('courseid'=>$course->id), '
 
         $buttons  = "<a title=\"$stredit\" href=\"grouping.php?id=$grouping->id\"><img".
                     " src=\"" . $OUTPUT->pix_url('t/edit') . "\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";
-        $buttons .= "<a title=\"$strdelete\" href=\"grouping.php?id=$grouping->id&amp;delete=1\"><img".
-                    " src=\"" . $OUTPUT->pix_url('t/delete') . "\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
+        if (empty($grouping->idnumber) || $canchangeidnumber) {
+            // It's only possible to delete groups without an idnumber unless the user has the changeidnumber capability
+            $buttons .= "<a title=\"$strdelete\" href=\"grouping.php?id=$grouping->id&amp;delete=1\"><img".
+                        " src=\"" . $OUTPUT->pix_url('t/delete') . "\" class=\"iconsmall\" alt=\"$strdelete\" /></a> ";
+        } else {
+            $buttons .= $OUTPUT->spacer();
+        }
         $buttons .= "<a title=\"$strmanagegrping\" href=\"assign.php?id=$grouping->id\"><img".
                     " src=\"" . $OUTPUT->pix_url('i/group') . "\" class=\"icon\" alt=\"$strmanagegrping\" /></a> ";
 

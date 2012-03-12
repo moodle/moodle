@@ -94,6 +94,25 @@ function groups_get_group_by_name($courseid, $name) {
 }
 
 /**
+ * Returns the groupid of a group with the idnumber specified for the course.
+ * Group idnumbers should be unique within course
+ *
+ * @category group
+ * @param int $courseid The id of the course
+ * @param string $idnumber idnumber of group
+ * @return group object
+ */
+function groups_get_group_by_idnumber($courseid, $idnumber) {
+    global $DB;
+    if (empty($idnumber)) {
+        return false;
+    } else if ($group = $DB->get_record('groups', array('courseid' => $courseid, 'idnumber' => $idnumber))) {
+        return $group;
+    }
+    return false;
+}
+
+/**
  * Returns the groupingid of a grouping with the name specified for the course.
  * Grouping names should be unique in course
  *
@@ -106,6 +125,25 @@ function groups_get_grouping_by_name($courseid, $name) {
     global $DB;
     if ($groupings = $DB->get_records('groupings', array('courseid'=>$courseid, 'name'=>$name))) {
         return key($groupings);
+    }
+    return false;
+}
+
+/**
+ * Returns the groupingid of a grouping with the idnumber specified for the course.
+ * Grouping names should be unique within course
+ *
+ * @category group
+ * @param int $courseid The id of the course
+ * @param string $idnumber idnumber of the group
+ * @return grouping object
+ */
+function groups_get_grouping_by_idnumber($courseid, $idnumber) {
+    global $DB;
+    if (empty($idnumber)) {
+        return false;
+    } else if ($grouping = $DB->get_record('groupings', array('courseid' => $courseid, 'idnumber' => $idnumber))) {
+        return $grouping;
     }
     return false;
 }
