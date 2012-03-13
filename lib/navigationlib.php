@@ -1089,7 +1089,7 @@ class global_navigation extends navigation_node {
                     // Fetch any other categories we need.
                     $allcategories = $DB->get_records_list('course_categories', 'id', $categoryids, 'depth ASC, sortorder ASC');
                     if (is_array($allcategories) && count($allcategories) > 0) {
-                        $categories = array_merge($categories);
+                        $categories = array_merge($categories, $allcategories);
                     }
                 }
 
