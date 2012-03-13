@@ -95,7 +95,7 @@ if(!$nostudents) {
     $from = 'FROM {scorm_scoes_track} st ';
     $where = ' WHERE st.userid ' .$usql. ' and st.scoid = ?';
     $attempts = $DB->get_records_sql($select.$from.$where, $params);
-    
+
     foreach ($attempts as $attempt) {
         if ($trackdata = scorm_get_tracks($scoid, $attempt->userid, $attempt->attempt)) {
             if (isset($trackdata->$scorekey)) {
