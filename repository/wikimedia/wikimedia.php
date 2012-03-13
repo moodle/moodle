@@ -141,13 +141,14 @@ class wikimedia {
      * @param string $keyword
      * @return array
      */
-    public function search_images($keyword) {
+    public function search_images($keyword, $page = 0) {
         $files_array = array();
         $this->_param['action'] = 'query';
         $this->_param['generator'] = 'search';
         $this->_param['gsrsearch'] = $keyword;
         $this->_param['gsrnamespace'] = WIKIMEDIA_FILE_NS;
         $this->_param['gsrlimit'] = WIKIMEDIA_THUMBS_PER_PAGE;
+        $this->_param['gsroffset'] = $page * WIKIMEDIA_THUMBS_PER_PAGE;
         $this->_param['prop']   = 'imageinfo';
         $this->_param['iiprop'] = 'url|dimensions|mime';
         $this->_param['iiurlwidth'] = WIKIMEDIA_IMAGE_SIDE_LENGTH;

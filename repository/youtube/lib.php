@@ -27,6 +27,8 @@
  */
 
 class repository_youtube extends repository {
+    /** @var int maximum number of thumbs per page */
+    const YOUTUBE_THUMBS_PER_PAGE = 27;
 
     /**
      * Youtube plugin constructor
@@ -35,9 +37,6 @@ class repository_youtube extends repository {
      * @param array $options
      */
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
-        $this->start =1;
-        $this->max = 27;
-        $this->sort = optional_param('youtube_sort', 'relevance', PARAM_TEXT);
         parent::__construct($repositoryid, $context, $options);
     }
 
@@ -50,11 +49,40 @@ class repository_youtube extends repository {
      * @param string $search_text
      * @return array
      */
-    public function search($search_text) {
+    public function search($search_text, $page) {
+        global $SESSION;
+        $sort = optional_param('youtube_sort', '', PARAM_TEXT);
+        $sess_keyword = 'youtube_'.$this->id.'_keyword';
+        $sess_sort = 'youtube_'.$this->id.'_sort';
+
+        // This is the request of another page for the last search, retrieve the cached keyword and sort
+        if ($page && !$search_text && isset($SESSION->{$sess_keyword})) {
+            $search_text = $SESSION->{$sess_keyword};
+        }
+        if ($page && !$sort && isset($SESSION->{$sess_sort})) {
+            $sort = $SESSION->{$sess_sort};
+        }
+        if (!$sort) {
+            $sort = 'relevance'; // default
+        }
+
+        // Save this search in session
+        $SESSION->{$sess_keyword} = $search_text;
+        $SESSION->{$sess_sort} = $sort;
+
         $this->keyword = $search_text;
         $ret  = array();
         $ret['nologin'] = true;
-        $ret['list'] = $this->_get_collection($search_text, $this->start, $this->max, $this->sort);
+        $ret['page'] = (int)$page;
+        if ($ret['page'] < 1) {
+            $ret['page'] = 1;
+        }
+        $start = ($ret['page'] - 1) * self::YOUTUBE_THUMBS_PER_PAGE + 1;
+        $max = self::YOUTUBE_THUMBS_PER_PAGE;
+        $ret['list'] = $this->_get_collection($search_text, $start, $max, $sort);
+        $ret['norefresh'] = true;
+        $ret['nosearch'] = true;
+        $ret['pages'] = -1;
         return $ret;
     }
 
@@ -142,6 +170,7 @@ class repository_youtube extends repository {
         $ret['login'] = array($search, $sort);
         $ret['login_btn_label'] = get_string('search');
         $ret['login_btn_action'] = 'search';
+        $ret['allowcaching'] = true; // indicates that login form can be cached in filepicker.js
         return $ret;
     }
 
