@@ -4546,7 +4546,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     // Remove all roles and enrolments by default
     if (empty($options['keep_roles_and_enrolments'])) {
         // this hack is used in restore when deleting contents of existing course
-        role_unassign_all(array('contextid'=>$coursecontext->id), true);
+        role_unassign_all(array('contextid'=>$coursecontext->id, 'component'=>''), true);
         enrol_course_delete($course);
         if ($showfeedback) {
             echo $OUTPUT->notification($strdeleted.get_string('type_enrol_plural', 'plugin'), 'notifysuccess');
