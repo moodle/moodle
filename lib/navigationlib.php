@@ -1055,7 +1055,7 @@ class global_navigation extends navigation_node {
             $limit = $CFG->navcourselimit;
         }
 
-        $mycourses = enrol_get_my_courses(NULL, 'visible DESC,sortorder ASC', $limit);
+        $mycourses = enrol_get_my_courses(NULL, 'visible DESC,sortorder ASC');
         $showallcourses = (count($mycourses) == 0 || !empty($CFG->navshowallcourses));
         $showcategories = ($showallcourses && $this->show_categories());
         $issite = ($this->page->course->id == SITEID);
@@ -1063,7 +1063,77 @@ class global_navigation extends navigation_node {
 
         // Check if any courses were returned.
         if (count($mycourses) > 0) {
-            // Add all of the users courses to the navigation
+
+            // Check if categories should be displayed within the my courses branch
+            if (!empty($CFG->navshowmycoursecategories)) {
+
+                // Find the category of each mycourse
+                $categories = array();
+                foreach ($mycourses as $course) {
+                    $categories[] = $course->category;
+                }
+
+                // Do a single DB query to get the categories immediately associated with
+                // courses the user is enrolled in.
+                $categories = $DB->get_records_list('course_categories', 'id', array_unique($categories), 'depth ASC, sortorder ASC');
+                // Work out the parent categories that we need to load that we havn't
+                // already got.
+                $categoryids = array();
+                foreach ($categories as $category) {
+                    $categoryids = array_merge($categoryids, explode('/', trim($category->path, '/')));
+                }
+                $categoryids = array_unique($categoryids);
+                $categoryids = array_diff($categoryids, array_keys($categories));
+
+                if (count($categoryids)) {
+                    // Fetch any other categories we need.
+                    $allcategories = $DB->get_records_list('course_categories', 'id', $categoryids, 'depth ASC, sortorder ASC');
+                    if (is_array($allcategories) && count($allcategories) > 0) {
+                        $categories = array_merge($categories, $allcategories);
+                    }
+                }
+
+                // We ONLY want the categories, we need to get rid of the keys
+                $categories = array_values($categories);
+                $addedcategories = array();
+                while (($category = array_shift($categories)) !== null) {
+                    if ($category->parent == '0') {
+                        $categoryparent = $this->rootnodes['mycourses'];
+                    } else if (array_key_exists($category->parent, $addedcategories)) {
+                        $categoryparent = $addedcategories[$category->parent];
+                    } else {
+                        // Prepare to count iterations. We don't want to loop forever
+                        // accidentally if for some reason a category can't be placed.
+                        if (!isset($category->loopcount)) {
+                            $category->loopcount = 0;
+                        }
+                        $category->loopcount++;
+                        if ($category->loopcount > 5) {
+                            // This is a pretty serious problem and this should never happen.
+                            // If it does then for some reason a category has been loaded but
+                            // its parents have now. It could be data corruption.
+                            debugging('Category '.$category->id.' could not be placed within the navigation', DEBUG_DEVELOPER);
+                        } else {
+                            // Add it back to the end of the categories array
+                            array_push($categories, $category);
+                        }
+                        continue;
+                    }
+
+                    $url = new moodle_url('/course/category.php', array('id' => $category->id));
+                    $addedcategories[$category->id] = $categoryparent->add($category->name, $url, self::TYPE_CATEGORY, $category->name, $category->id);
+
+                    if (!$category->visible) {
+                        if (!has_capability('moodle/category:viewhiddencategories', get_context_instance(CONTEXT_COURSECAT, $category->parent))) {
+                            $addedcategories[$category->id]->display = false;
+                        } else {
+                            $addedcategories[$category->id]->hidden = true;
+                        }
+                    }
+                }
+            }
+
+            // Add all of the users courses to the navigation.
             foreach ($mycourses as $course) {
                 $course->coursenode = $this->add_course($course, false, true);
             }
@@ -2196,7 +2266,11 @@ class global_navigation extends navigation_node {
                 $shortname = get_string('sitepages');
             }
         } else if ($ismycourse) {
-            $parent = $this->rootnodes['mycourses'];
+            if (!empty($CFG->navshowmycoursecategories) && ($parent = $this->rootnodes['mycourses']->find($course->category, self::TYPE_CATEGORY))) {
+                // Nothing to do here the above statement set $parent to the category within mycourses.
+            } else {
+                $parent = $this->rootnodes['mycourses'];
+            }
             $url = new moodle_url('/course/view.php', array('id'=>$course->id));
         } else {
             $parent = $this->rootnodes['courses'];
@@ -3301,6 +3375,7 @@ class settings_navigation extends navigation_node {
             // hidden in new courses and courses where legacy files were turned off
             $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id));
             $coursenode->add(get_string('courselegacyfiles'), $url, self::TYPE_SETTING, null, 'coursefiles', new pix_icon('i/files', ''));
+
         }
 
         // Switch roles
