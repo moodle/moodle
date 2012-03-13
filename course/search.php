@@ -50,7 +50,7 @@
         $urlparams['perpage'] = $perpage;
     }
     $PAGE->set_url('/course/search.php', $urlparams);
-    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+    $PAGE->set_context(context_system::instance());
     $PAGE->set_pagelayout('standard');
 
     if ($CFG->forcelogin) {
@@ -63,12 +63,17 @@
             $USER->editing = $edit;
         }
         $adminediting = $PAGE->user_is_editing();
+
+        // Set perpage if user can edit in category
+        if ($perpage != 99999) {
+            $perpage = 30;
+        }
     } else {
         $adminediting = false;
     }
 
 /// Editing functions
-    if (has_capability('moodle/course:visibility', get_context_instance(CONTEXT_SYSTEM))) {
+    if (has_capability('moodle/course:visibility', context_system::instance())) {
     /// Hide or show a course
         if ($hide or $show and confirm_sesskey()) {
             if ($hide) {
@@ -82,10 +87,6 @@
                 $DB->set_field("course", "visible", $visible, array("id"=>$course->id));
             }
         }
-    }
-
-    if (has_any_capability($capabilities, get_context_instance(CONTEXT_SYSTEM)) && ($perpage != 99999)) {
-        $perpage = 30;
     }
 
     $displaylist = array();
@@ -130,17 +131,17 @@
         }
 
         //User should have manage and create capablity on destination category.
-        require_capability('moodle/category:manage', get_context_instance(CONTEXT_COURSECAT, $moveto));
-        require_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $moveto));
+        require_capability('moodle/category:manage', context_coursecat::instance($moveto));
+        require_capability('moodle/course:create', context_coursecat::instance($moveto));
 
         foreach ( $data as $key => $value ) {
             if (preg_match('/^c\d+$/', $key)) {
                 $courseid = substr($key, 1);
                 // user must have category:manage and course:create capability for the course to be moved.
-                if (has_all_capabilities($capabilities, get_context_instance(CONTEXT_COURSE, $courseid))) {
+                $coursecontext = context_course::instance($courseid);
+                foreach ($capabilities as $capability) {
+                    require_capability($capability, $coursecontext);
                     array_push($courses, $courseid);
-                } else {
-                    print_error('cannotmovecoursetocategory');
                 }
             }
         }
@@ -251,11 +252,16 @@
                 echo $OUTPUT->spacer(array('height'=>5, 'width'=>5, 'br'=>true)); // should be done with CSS instead
             }
         } else { //editing mode
-            echo "<form id=\"movecourses\" action=\"search.php?".$modulelink."\" method=\"post\">\n";
+            echo "<form id=\"movecourses\" action=\"search.php\" method=\"post\">\n";
             echo "<div><input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n";
             echo "<input type=\"hidden\" name=\"search\" value=\"".s($search)."\" />\n";
             echo "<input type=\"hidden\" name=\"page\" value=\"$page\" />\n";
             echo "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\" /></div>\n";
+            if (!empty($modulelist) and confirm_sesskey()) {
+                echo "<input type=\"hidden\" name=\"modulelist\" value=\"$modulelist\" /></div>\n";
+            } else if (!empty($blocklist) and confirm_sesskey()) {
+                echo "<input type=\"hidden\" name=\"blocklist\" value=\"$blocklist\" /></div>\n";
+            }
             echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"4\" class=\"generalbox boxaligncenter\">\n<tr>\n";
             echo "<th scope=\"col\">$strcourses</th>\n";
             echo "<th scope=\"col\">$strcategory</th>\n";
@@ -264,7 +270,7 @@
 
             foreach ($courses as $course) {
 
-                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                $coursecontext = context_course::instance($course->id);
 
                 $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
 
@@ -393,7 +399,7 @@
             $defaultperpage = 10;
             //If user has course:create or category:manage capability the show 30 records.
             $capabilities = array('moodle/course:create', 'moodle/category:manage');
-            if (has_any_capability($capabilities, get_context_instance(CONTEXT_SYSTEM))) {
+            if (has_any_capability($capabilities, context_system::instance())) {
                 $defaultperpage = 30;
             }
 
