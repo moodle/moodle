@@ -145,6 +145,12 @@ class qtype_shortanswer_question_test extends UnitTestCase {
                 $question->get_correct_response());
     }
 
+    public function test_get_correct_response_escapedwildcards() {
+        $question = test_question_maker::make_question('shortanswer', 'escapedwildcards');
+
+        $this->assertEqual(array('answer' => 'x*y'), $question->get_correct_response());
+    }
+
     public function test_get_question_summary() {
         $sa = test_question_maker::make_question('shortanswer');
         $qsummary = $sa->get_question_summary();
