@@ -1411,6 +1411,7 @@ class assignment_base {
             $offset = $page * $perpage;
             $strupdate = get_string('update');
             $strgrade  = get_string('grade');
+            $strview  = get_string('view');
             $grademenu = make_grades_menu($this->assignment->grade);
 
             if ($ausers !== false) {
@@ -1527,6 +1528,9 @@ class assignment_base {
                         }
 
                         $buttontext = ($auser->status == 1) ? $strupdate : $strgrade;
+                        if ($final_grade->locked or $final_grade->overridden) {
+                            $buttontext = $strview;
+                        }
 
                         ///No more buttons, we use popups ;-).
                         $popup_url = '/mod/assignment/submissions.php?id='.$this->cm->id
