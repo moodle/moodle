@@ -1382,13 +1382,13 @@ M.core_filepicker.init = function(Y, options) {
             var r = this.active_repo;
             var str = '';
             var action = '';
-            var lastpage = r.pages
-            var lastpagetext = r.pages
+            var lastpage = r.pages;
+            var lastpagetext = r.pages;
             if (r.pages == -1) {
-                lastpage = r.page + 1
-                lastpagetext = M.str.moodle.next
+                lastpage = r.page + 1;
+                lastpagetext = M.str.moodle.next;
             }
-            if(lastpage > 1) {
+            if (lastpage > 1) {
                 str += '<div class="fp-paging" id="paging-'+html_id+'-'+client_id+'">';
                 str += this.get_page_button(1)+'1</a> ';
 
