@@ -59,6 +59,7 @@ $string['editfiles'] = 'Edit wiki files';
 $string['editing'] = 'Editing wiki page';
 $string['editingcomment'] = 'Editing comment';
 $string['editingpage'] = 'Editing this page \'{$a}\'';
+$string['editsection'] = 'edit';
 $string['files'] = 'Files';
 $string['filenotuploadederror'] = 'File \'{$a}\' could not be uploaded correctly.';
 $string['filtername'] = 'Wiki auto-linking';
