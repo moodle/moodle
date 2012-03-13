@@ -63,6 +63,11 @@
             $USER->editing = $edit;
         }
         $adminediting = $PAGE->user_is_editing();
+
+        // Set perpage if user can edit in category
+        if ($perpage != 99999) {
+            $perpage = 30;
+        }
     } else {
         $adminediting = false;
     }
@@ -82,10 +87,6 @@
                 $DB->set_field("course", "visible", $visible, array("id"=>$course->id));
             }
         }
-    }
-
-    if (has_any_capability($capabilities, get_context_instance(CONTEXT_SYSTEM)) && ($perpage != 99999)) {
-        $perpage = 30;
     }
 
     $displaylist = array();
@@ -137,10 +138,10 @@
             if (preg_match('/^c\d+$/', $key)) {
                 $courseid = substr($key, 1);
                 // user must have category:manage and course:create capability for the course to be moved.
-                if (has_all_capabilities($capabilities, get_context_instance(CONTEXT_COURSE, $courseid))) {
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+                foreach ($capabilities as $capability) {
+                    require_capability($capability, $coursecontext);
                     array_push($courses, $courseid);
-                } else {
-                    print_error('cannotmovecoursetocategory');
                 }
             }
         }
@@ -251,11 +252,16 @@
                 echo $OUTPUT->spacer(array('height'=>5, 'width'=>5, 'br'=>true)); // should be done with CSS instead
             }
         } else { //editing mode
-            echo "<form id=\"movecourses\" action=\"search.php?".$modulelink."\" method=\"post\">\n";
+            echo "<form id=\"movecourses\" action=\"search.php\" method=\"post\">\n";
             echo "<div><input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n";
             echo "<input type=\"hidden\" name=\"search\" value=\"".s($search)."\" />\n";
             echo "<input type=\"hidden\" name=\"page\" value=\"$page\" />\n";
             echo "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\" /></div>\n";
+            if (!empty($modulelist) and confirm_sesskey()) {
+                echo "<input type=\"hidden\" name=\"modulelist\" value=\"$modulelist\" /></div>\n";
+            } else if (!empty($blocklist) and confirm_sesskey()) {
+                echo "<input type=\"hidden\" name=\"blocklist\" value=\"$blocklist\" /></div>\n";
+            }
             echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"4\" class=\"generalbox boxaligncenter\">\n<tr>\n";
             echo "<th scope=\"col\">$strcourses</th>\n";
             echo "<th scope=\"col\">$strcategory</th>\n";
