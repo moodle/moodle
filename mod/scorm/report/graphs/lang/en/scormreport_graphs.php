@@ -22,10 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['participants'] = 'Number of Participants';
-$string['pluginname'] = 'Graph Report';
-$string['percent'] = 'Percent(%) Secured';
-$string['invaliddata'] = 'Not Enough Data';
+$string['participants'] = 'Number of participants';
+$string['pluginname'] = 'Graph report';
+$string['percent'] = 'Percent(%) secured';
+$string['invaliddata'] = 'Not enough data';
 
 
 

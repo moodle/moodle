@@ -21,6 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('NO_DEBUG_DISPLAY', true);
 
 require_once(dirname(__FILE__) . '/../../../../config.php');
 require_once($CFG->libdir . '/graphlib.php');
@@ -47,7 +48,6 @@ $currentgroup = groups_get_activity_group($cm, true);
 if (empty($currentgroup)) {
     // all users who can attempt scoes
     if (!$students = get_users_by_capability($contextmodule, 'mod/scorm:savetrack', '', '', '', '', '', '', false)) {
-        echo $OUTPUT->notification(get_string('nostudentsyet'));
         $nostudents = true;
         $allowedlist = '';
     } else {
@@ -56,7 +56,6 @@ if (empty($currentgroup)) {
 } else {
     // all users who can attempt scoes and who are in the currently selected group
     if (!$groupstudents = get_users_by_capability($contextmodule, 'mod/scorm:savetrack', '', '', '', '', $currentgroup, '', false)) {
-        echo $OUTPUT->notification(get_string('nostudentsingroup'));
         $nostudents = true;
         $groupstudents = array();
     }
@@ -67,12 +66,6 @@ $params = array();
 list($usql, $params) = $DB->get_in_or_equal($allowedlist);
 $params[] = $scoid;
 
-// Construct the SQL
-$select = 'SELECT DISTINCT '.$DB->sql_concat('st.userid', '\'#\'', 'COALESCE(st.attempt, 0)').' AS uniqueid, ';
-$select .= 'st.userid AS userid, st.scormid AS scormid, st.attempt AS attempt, st.scoid AS scoid ';
-$from = 'FROM {scorm_scoes_track} st ';
-$where = ' WHERE st.userid ' .$usql. ' and st.scoid = ?';
-$attempts = $DB->get_records_sql($select.$from.$where, $params);
 // Determine Sco keys to be used
 if (scorm_version_check($scorm->version, SCORM_13)) {
     $maxkey = 'cmi.score.max';
@@ -90,35 +83,47 @@ $bandwidth = 10;
 $usergrades = array();
 $graphdata = array();
 for ($i = 0; $i < $bands; $i++) {
-        $graphdata[$i] = 0;
+    $graphdata[$i] = 0;
 }
-foreach ($attempts as $attempt) {
-    if ($trackdata = scorm_get_tracks($scoid, $attempt->userid, $attempt->attempt)) {
-        if (isset($trackdata->$scorekey)) {
-            $score = $trackdata->$scorekey;
-            if (!isset($trackdata->$minkey) || empty($trackdata->$minkey)) {
-                $minmark = 0;
+
+
+// Do this only if we have students to report
+if(!$nostudents) {
+    // Construct the SQL
+    $select = 'SELECT DISTINCT '.$DB->sql_concat('st.userid', '\'#\'', 'COALESCE(st.attempt, 0)').' AS uniqueid, ';
+    $select .= 'st.userid AS userid, st.scormid AS scormid, st.attempt AS attempt, st.scoid AS scoid ';
+    $from = 'FROM {scorm_scoes_track} st ';
+    $where = ' WHERE st.userid ' .$usql. ' and st.scoid = ?';
+    $attempts = $DB->get_records_sql($select.$from.$where, $params);
+    
+    foreach ($attempts as $attempt) {
+        if ($trackdata = scorm_get_tracks($scoid, $attempt->userid, $attempt->attempt)) {
+            if (isset($trackdata->$scorekey)) {
+                $score = $trackdata->$scorekey;
+                if (!isset($trackdata->$minkey) || empty($trackdata->$minkey)) {
+                    $minmark = 0;
+                } else {
+                    $minmark = $trackdata->$minkey;
+                }
+                if (!isset($trackdata->$maxkey) || empty($trackdata->$maxkey)) {
+                    $maxmark = 100;
+                } else {
+                    $maxmark = $trackdata->$maxkey;
+                }
+                $range = ($maxmark - $minmark);
+                if (empty($range)) {
+                    continue;
+                }
+                $percent = round((($score*100)/$range), 2);
+                if (empty($usergrades[$attempt->userid]) || !isset($usergrades[$attempt->userid]) || ($percent > $usergrades[$attempt->userid]) || ($usergrades[$attempt->userid] === '*')) {
+                    $usergrades[$attempt->userid] = $percent;
+                }
+                unset($percent);
             } else {
-                $minmark = $trackdata->$minkey;
-            }
-            if (!isset($trackdata->$maxkey) || empty($trackdata->$maxkey)) {
-                $maxmark = 100;
-            } else {
-                $maxmark = $trackdata->$maxkey;
-            }
-            $range = ($maxmark - $minmark);
-            if (empty($range)) {
-                continue;
-            }
-            $percent = round((($score*100)/$range), 2);
-            if (empty($usergrades[$attempt->userid]) || !isset($usergrades[$attempt->userid]) || ($percent > $usergrades[$attempt->userid]) || ($usergrades[$attempt->userid] === '*')) {
-                $usergrades[$attempt->userid] = $percent;
-            }
-            unset($percent);
-        } else {
-            // User has made an attempt but either SCO was not able to record the score or something else is broken in SCO
-            if (!isset($usergrades[$attempt->userid])) {
-                $usergrades[$attempt->userid] = '*';
+                // User has made an attempt but either SCO was not able to record the score or something else is broken in SCO
+                if (!isset($usergrades[$attempt->userid])) {
+                    $usergrades[$attempt->userid] = '*';
+                }
             }
         }
     }
