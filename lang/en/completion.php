@@ -36,12 +36,12 @@ A tick next to the activity name on the course page indicates when the activity 
 $string['completion_link'] = 'activity/completion';
 $string['completion-alt-auto-enabled'] = 'The system marks this item complete according to conditions';
 $string['completion-alt-auto-fail'] = 'Completed (did not achieve pass grade)';
-$string['completion-alt-auto-n'] = 'Not completed';
+$string['completion-alt-auto-n'] = 'Not completed: {$a}';
 $string['completion-alt-auto-pass'] = 'Completed (achieved pass grade)';
-$string['completion-alt-auto-y'] = 'Completed';
+$string['completion-alt-auto-y'] = 'Completed: {$a}';
 $string['completion-alt-manual-enabled'] = 'Students can manually mark this item complete';
-$string['completion-alt-manual-n'] = 'Not completed; select to mark as complete';
-$string['completion-alt-manual-y'] = 'Completed; select to mark as not complete';
+$string['completion-alt-manual-n'] = 'Not completed: {$a}. Select to mark as complete.';
+$string['completion-alt-manual-y'] = 'Completed: {$a}. Select to mark as not complete.';
 $string['completion_automatic'] = 'Show activity as complete when conditions are met';
 $string['completiondisabled'] = 'Disabled, not shown in activity settings';
 $string['completionexpected'] = 'Expect completed on';
@@ -54,8 +54,8 @@ If a dotted tick is shown, you can click it to tick the box when you think you h
 If a blank tick box is shown, a tick will appear automatically when you have completed the activity according to conditions set by the teacher.';
 $string['completion_manual'] = 'Students can manually mark the activity as completed';
 $string['completion_none'] = 'Do not indicate activity completion';
-$string['completion-title-manual-n'] = 'Mark as complete';
-$string['completion-title-manual-y'] = 'Mark as not complete';
+$string['completion-title-manual-n'] = 'Mark as complete: {$a}';
+$string['completion-title-manual-y'] = 'Mark as not complete: {$a}';
 $string['completionnotenabled'] = 'Completion is not enabled';
 $string['completionnotenabledforcourse'] = 'Completion is not enabled for this course';
 $string['completionnotenabledforsite'] = 'Completion is not enabled for this site';
