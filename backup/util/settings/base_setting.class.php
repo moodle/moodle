@@ -294,7 +294,7 @@ abstract class base_setting {
         if ($this->is_circular_reference($dependency->get_dependent_setting())) {
             $a = new stdclass();
             $a->alreadydependent = $this->name;
-            $a->main = $dependentsetting->get_name();
+            $a->main = $dependency->get_dependent_setting()->get_name();
             throw new base_setting_exception('setting_circular_reference', $a);
         }
         $this->dependencies[$dependency->get_dependent_setting()->get_name()] = $dependency;
