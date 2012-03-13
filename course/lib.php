@@ -1719,9 +1719,9 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
                 if ($completionicon) {
                     $imgsrc = $OUTPUT->pix_url('i/completion-'.$completionicon);
-                    $imgalt = s(get_string('completion-alt-'.$completionicon, 'completion'));
+                    $imgalt = s(get_string('completion-alt-'.$completionicon, 'completion', $mod->name));
                     if ($completion == COMPLETION_TRACKING_MANUAL && !$isediting) {
-                        $imgtitle = s(get_string('completion-title-'.$completionicon, 'completion'));
+                        $imgtitle = s(get_string('completion-title-'.$completionicon, 'completion', $mod->name));
                         $newstate =
                             $completiondata->completionstate==COMPLETION_COMPLETE
                             ? COMPLETION_INCOMPLETE
@@ -1740,6 +1740,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                         echo "
 <form class='togglecompletion$extraclass' method='post' action='".$CFG->wwwroot."/course/togglecompletion.php'><div>
 <input type='hidden' name='id' value='{$mod->id}' />
+<input type='hidden' name='modulename' value='".s($mod->name)."' />
 <input type='hidden' name='sesskey' value='".sesskey()."' />
 <input type='hidden' name='completionstate' value='$newstate' />
 <input type='image' src='$imgsrc' alt='$imgalt' title='$imgtitle' />
