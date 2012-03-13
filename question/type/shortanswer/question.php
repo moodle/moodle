@@ -101,6 +101,28 @@ class qtype_shortanswer_question extends question_graded_by_strategy
         return preg_match($regexp, trim($string));
     }
 
+    public function get_correct_response() {
+        $response = parent::get_correct_response();
+        if ($response) {
+            $response['answer'] = $this->clean_response($response['answer']);
+        }
+        return $response;
+    }
+
+    public function clean_response($answer) {
+        // Break the string on non-escaped asterisks.
+        $bits = preg_split('/(?<!\\\\)\*/', $answer);
+
+        // Unescape *s in the bits.
+        $cleanbits = array();
+        foreach ($bits as $bit) {
+            $cleanbits[] = str_replace('\*', '*', $bit);
+        }
+
+        // Put it back together with spaces to look nice.
+        return trim(implode(' ', $cleanbits));
+    }
+
     public function check_file_access($qa, $options, $component, $filearea,
             $args, $forcedownload) {
         if ($component == 'question' && $filearea == 'answerfeedback') {
