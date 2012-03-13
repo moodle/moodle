@@ -142,7 +142,7 @@ class quiz_grading_report extends quiz_default_report {
                 redirect($this->list_questions_url(), get_string('alldoneredirecting', 'quiz_grading'));
             }
         }
-        
+
         // Start output.
         $this->print_header_and_tabs($cm, $course, $quiz, 'grading');
 
