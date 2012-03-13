@@ -25,6 +25,7 @@ require_once($CFG->libdir . '/adminlib.php');
 $choose = optional_param('choose', '', PARAM_SAFEDIR);
 $reset  = optional_param('reset', 0, PARAM_BOOL);
 $device = optional_param('device', '', PARAM_TEXT);
+$unsettheme = optional_param('unsettheme', 0, PARAM_BOOL);
 
 admin_externalpage_setup('themeselector');
 
@@ -42,8 +43,7 @@ unset($SESSION->theme);
 if ($reset and confirm_sesskey()) {
     theme_reset_all_caches();
 
-} else if ($choose && $device && confirm_sesskey()) {
- 
+} else if ($choose && $device && !$unsettheme && confirm_sesskey()) {
     // Load the theme to make sure it is valid.
     $theme = theme_config::load($choose);
     // Get the config argument for the chosen device.
@@ -71,19 +71,20 @@ if ($reset and confirm_sesskey()) {
     echo $output->continue_button($CFG->wwwroot . '/theme/index.php');
     echo $output->footer();
     exit;
+} else if ($device && $unsettheme && confirm_sesskey() && ($device != 'default')) {
+    //Unset the theme and continue.
+    unset_config(get_device_cfg_var_name($device));
+    $device = '';
 }
 
 // Otherwise, show either a list of devices, or is enabledevicedetection set to no or a
 // device is specified show a list of themes.
 
-echo $OUTPUT->header('themeselector');
-echo $OUTPUT->heading(get_string('themes'));
-
-echo $OUTPUT->single_button(new moodle_url('index.php', array('sesskey' => sesskey(), 'reset' => 1)), get_string('themeresetcaches', 'admin'));
-
 $table = new html_table();
 $table->data = array();
+$heading = '';
 if (!empty($CFG->enabledevicedetection) && empty($device)) {
+    $heading = get_string('selectdevice', 'admin');
     // Display a list of devices that a user can select a theme for.
 
     $strthemenotselected = get_string('themenoselected', 'admin');
@@ -91,7 +92,7 @@ if (!empty($CFG->enabledevicedetection) && empty($device)) {
 
     // Display the device selection screen
     $table->id = 'admindeviceselector';
-    $table->head = array(get_string('devicetype', 'admin'), get_string('theme'), get_string('info'));
+    $table->head = array(get_string('devicetype', 'admin'), get_string('currenttheme', 'admin'), get_string('info'));
 
     $devices = get_device_type_list();
     foreach ($devices as $device) {
@@ -103,6 +104,7 @@ if (!empty($CFG->enabledevicedetection) && empty($device)) {
         }
 
         $screenshotcell = $strthemenotselected;
+        $unsetthemebutton = '';
         if ($themename) {
             // Check the theme exists
             $themename = clean_param($themename, PARAM_THEME);
@@ -118,21 +120,28 @@ if (!empty($CFG->enabledevicedetection) && empty($device)) {
                 // Show the name of the picked theme
                 $headingthemename = $OUTPUT->heading($strthemename, 3);
             }
+            // If not default device then show option to unset theme.
+            if ($device != 'default') {
+                $unsetthemestr = get_string('unsettheme', 'admin');
+                $unsetthemeurl = new moodle_url('/theme/index.php', array('device' => $device, 'sesskey' => sesskey(), 'unsettheme' => true));
+                $unsetthemebutton = new single_button($unsetthemeurl, $unsetthemestr, 'get');
+                $unsetthemebutton = $OUTPUT->render($unsetthemebutton);
+            }
         }
 
         $deviceurl = new moodle_url('/theme/index.php', array('device' => $device, 'sesskey' => sesskey()));
         $select = new single_button($deviceurl, $strthemeselect, 'get');
 
         $table->data[] = array(
-            $device,
+            $OUTPUT->heading(ucfirst($device), 3),
             $screenshotcell,
-            $headingthemename . $OUTPUT->render($select)
+            $headingthemename . $OUTPUT->render($select) . $unsetthemebutton
         );
     }
 } else {
     // Either a device has been selected of $CFG->enabledevicedetection is off so display a list
     // of themes to select.
-
+    $heading = get_string('selecttheme', 'admin', $device);
     if (empty($device)) {
         // if $CFG->enabledevicedetection is off this will return 'default'
         $device = get_device_type();
@@ -183,10 +192,19 @@ if (!empty($CFG->enabledevicedetection) && empty($device)) {
         // Contents of the second cell.
         $infocell = $OUTPUT->heading($strthemename, 3);
 
-        // Button to choose this as the main theme
-        $maintheme = new single_button(new moodle_url('/theme/index.php', array('device' => $device, 'choose' => $themename, 'sesskey' => sesskey())), get_string('usetheme'), 'get');
-        $maintheme->disabled = $ischosentheme;
-        $infocell .= $OUTPUT->render($maintheme);
+        // Button to choose this as the main theme or unset this theme for
+        // devices other then default
+        if (($ischosentheme) && ($device != 'default')) {
+            $unsetthemestr = get_string('unsettheme', 'admin');
+            $unsetthemeurl = new moodle_url('/theme/index.php', array('device' => $device, 'unsettheme' => true, 'sesskey' => sesskey()));
+            $unsetbutton = new single_button($unsetthemeurl, $unsetthemestr, 'get');
+            $infocell .= $OUTPUT->render($unsetbutton);
+        } else if ((!$ischosentheme)) {
+            $setthemestr = get_string('usetheme');
+            $setthemeurl = new moodle_url('/theme/index.php', array('device' => $device, 'choose' => $themename, 'sesskey' => sesskey()));
+            $setthemebutton = new single_button($setthemeurl, $setthemestr, 'get');
+            $infocell .= $OUTPUT->render($setthemebutton);
+        }
 
         $row[] = $infocell;
 
@@ -194,6 +212,10 @@ if (!empty($CFG->enabledevicedetection) && empty($device)) {
         $table->rowclasses[$themename] = join(' ', $rowclasses);
     }
 }
+echo $OUTPUT->header('themeselector');
+echo $OUTPUT->heading($heading);
+
+echo $OUTPUT->single_button(new moodle_url('index.php', array('sesskey' => sesskey(), 'reset' => 1, 'device' => $device)), get_string('themeresetcaches', 'admin'));
 
 echo html_writer::table($table);
 
