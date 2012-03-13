@@ -41,7 +41,7 @@ a.dimmed_text:visited,
 .dimmed_category,
 .dimmed_category a {
     color: #AAA;
-]
+}
 .activity.label .dimmed_text {
     opacity: 0.5;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
