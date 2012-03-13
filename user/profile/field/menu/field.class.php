@@ -94,10 +94,10 @@ class profile_field_menu extends profile_field_base {
     function convert_external_data($value) {
         $retval = array_search($value, $this->options);
 
-        // If value is not found in options then return -1, so that it can be handled
+        // If value is not found in options then return null, so that it can be handled
         // later by edit_save_data_preprocess
         if ($retval === false) {
-            $retval = -1;
+            $retval = null;
         }
         return $retval;
     }

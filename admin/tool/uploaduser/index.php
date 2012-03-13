@@ -971,6 +971,7 @@ echo $OUTPUT->heading(get_string('uploaduserspreview', 'tool_uploaduser'));
 $data = array();
 $cir->init();
 $linenum = 1; //column header is first line
+$noerror = true; // Keep status of any error.
 while ($linenum <= $previewrows and $fields = $cir->next()) {
     $linenum++;
     $rowcols = array();
@@ -1007,7 +1008,8 @@ while ($linenum <= $previewrows and $fields = $cir->next()) {
             $rowcols['status'][] = get_string('fieldrequired', 'error', 'city');
         }
     }
-
+    // Check if rowcols have custom profile field with correct data and update error state.
+    $noerror = uu_check_custom_profile_data($rowcols) && $noerror;
     $rowcols['status'] = implode('<br />', $rowcols['status']);
     $data[] = $rowcols;
 }
@@ -1032,9 +1034,10 @@ $table->head[] = get_string('status');
 
 echo html_writer::tag('div', html_writer::table($table), array('class'=>'flexible-wrap'));
 
-/// Print the form
-
-$mform2->display();
+// Print the form if valid values are available
+if ($noerror) {
+    $mform2->display();
+}
 echo $OUTPUT->footer();
 die;
 
