@@ -622,6 +622,8 @@ class enrol_database_plugin extends enrol_plugin {
         $idnumber  = strtolower($this->get_config('newcourseidnumber'));
         $category  = strtolower($this->get_config('newcoursecategory'));
 
+        $localcategoryfield = $this->get_config('localcategoryfield', 'id');
+
         $sqlfields = array($fullname, $shortname);
         if ($category) {
             $sqlfields[] = $category;
@@ -653,17 +655,17 @@ class enrol_database_plugin extends enrol_plugin {
                         }
                         continue;
                     }
-                    if ($category and !$DB->record_exists('course_categories', array('id'=>$fields[$category]))) {
+                    if ($category and !$coursecategory = $DB->get_record('course_categories', array($localcategoryfield=>$fields[$category]), 'id')) {
                         if ($verbose) {
-                            mtrace('  error: invalid category id, can not create course: '.$fields[$shortname]);
+                            mtrace('  error: invalid category '.$localcategoryfield.', can not create course: '.$fields[$shortname]);
                         }
                         continue;
                     }
                     $course = new stdClass();
                     $course->fullname  = $fields[$fullname];
                     $course->shortname = $fields[$shortname];
-                    $course->idnumber  = $idnumber ? $fields[$idnumber] : NULL;
-                    $course->category  = $category ? $fields[$category] : NULL;
+                    $course->idnumber  = $idnumber ? $fields[$idnumber] : '';
+                    $course->category  = $category ? $coursecategory->id : NULL;
                     $createcourses[] = $course;
                 }
             }
