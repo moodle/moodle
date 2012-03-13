@@ -117,6 +117,7 @@ class qtype_shortanswer_renderer extends qtype_renderer {
             return '';
         }
 
-        return get_string('correctansweris', 'qtype_shortanswer', s($answer->answer));
+        return get_string('correctansweris', 'qtype_shortanswer',
+                s($question->clean_response($answer->answer)));
     }
 }
