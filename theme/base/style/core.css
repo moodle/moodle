@@ -42,7 +42,8 @@ a.dimmed_text:visited,
     opacity: 0.5;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
     filter: alpha(opacity=50);
-}.unlist,
+}
+.unlist,
 .unlist li,
 .inline-list,
 .inline-list li,
