@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,26 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Cron job for reviewing and aggregating course completion criteria
  *
- * @package   moodlecore
+ * @package core_completion
+ * @category completion
  * @copyright 2009 Catalyst IT Ltd
- * @author    Aaron Barnes <aaronb@catalyst.net.nz>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author Aaron Barnes <aaronb@catalyst.net.nz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once $CFG->libdir.'/completionlib.php';
 
+defined('MOODLE_INTERNAL') || die();
+require_once($CFG->libdir.'/completionlib.php');
 
 /**
  * Update user's course completion statuses
  *
- * First update all criteria completions, then
- * aggregate all criteria completions and update
- * overall course completions
- *
- * @return  void
+ * First update all criteria completions, then aggregate all criteria completions
+ * and update overall course completions
  */
 function completion_cron() {
 
@@ -48,7 +45,7 @@ function completion_cron() {
 /**
  * Mark users as started if the config option is set
  *
- * @return  void
+ * @return void
  */
 function completion_cron_mark_started() {
     global $CFG, $DB;
@@ -200,7 +197,7 @@ function completion_cron_mark_started() {
  * Loop through each installed criteria and run the
  * cron() method if it exists
  *
- * @return  void
+ * @return void
  */
 function completion_cron_criteria() {
 
@@ -227,8 +224,6 @@ function completion_cron_criteria() {
 
 /**
  * Aggregate each user's criteria completions
- *
- * @return  void
  */
 function completion_cron_completions() {
     global $DB;
@@ -394,7 +389,6 @@ function completion_cron_completions() {
  * @param int $method COMPLETION_AGGREGATION_* constant
  * @param bool $data Criteria completion status
  * @param bool|null $state Aggregation state
- * @return void
  */
 function completion_cron_aggregate($method, $data, &$state) {
     if ($method == COMPLETION_AGGREGATION_ALL) {
