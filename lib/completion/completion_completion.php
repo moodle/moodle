@@ -57,16 +57,16 @@ class completion_completion extends data_object {
     /* @var int Timestamp the interested parties were notified of this user's completion. */
     public $timenotified;
 
-    /* @var int Time of course enrolment {@see completion_completion::mark_enrolled()} */
+    /* @var int Time of course enrolment {@link completion_completion::mark_enrolled()} */
     public $timeenrolled;
 
     /**
-     * Time the user started their course completion {@see completion_completion::mark_inprogress()}
+     * Time the user started their course completion {@link completion_completion::mark_inprogress()}
      * @var int
      */
     public $timestarted;
 
-    /* @var int Timestamp of course completion {@see completion_completion::mark_complete()} */
+    /* @var int Timestamp of course completion {@link completion_completion::mark_complete()} */
     public $timecompleted;
 
     /* @var int Flag to trigger cron aggregation (timestamp) */

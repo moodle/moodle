@@ -105,8 +105,7 @@ class completion_criteria_role extends completion_criteria {
      */
     public function review($completion, $mark = true, $is_complete = false)  {
         // If we are marking this as complete
-        if ($is_complete && $mark) 
-        {
+        if ($is_complete && $mark) {
             $completion->completedself = 1;
             $completion->mark_complete();
 

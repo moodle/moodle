@@ -65,7 +65,7 @@ class completion_criteria_completion extends data_object {
     /* @var int Timestamp of user unenrolment (if completing a unenrol criteria) */
     public $unenroled;
 
-    /* @var int Timestamp of course criteria completion {@see completion_criteria_completion::mark_complete()} */
+    /* @var int Timestamp of course criteria completion {@link completion_criteria_completion::mark_complete()} */
     public $timecompleted;
 
     /* @var completion_criterria Associated criteria object */
@@ -141,8 +141,7 @@ class completion_criteria_completion extends data_object {
      */
     public function get_criteria() {
 
-        if (!$this->_criteria) 
-        {
+        if (!$this->_criteria) {
             global $DB;
 
             $params = array(
@@ -158,7 +157,7 @@ class completion_criteria_completion extends data_object {
     }
 
     /**
-     * Return criteria status text for display in reports {@see completion_criteria::get_status()}
+     * Return criteria status text for display in reports {@link completion_criteria::get_status()}
      *
      * @return string
      */

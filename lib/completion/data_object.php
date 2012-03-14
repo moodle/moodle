@@ -60,7 +60,7 @@ abstract class data_object {
      * @param bool $fetch Whether to fetch corresponding row from DB or not,
      *        optional fields might not be defined if false used
      */
-    public function __construct($params = NULL, $fetch = true) {
+    public function __construct($params = null, $fetch = true) {
         if (!empty($params) and (is_array($params) or is_object($params))) {
             if ($fetch) {
                 if ($data = $this->fetch($params)) {
@@ -337,5 +337,6 @@ abstract class data_object {
      *
      * @param bool $deleted Set this to true if it has been deleted.
      */
-    public function notify_changed($deleted) {}
+    public function notify_changed($deleted) {
+    }
 }

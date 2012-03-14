@@ -165,7 +165,7 @@ class completion_info {
     /* @var int Course id */
     public $course_id;
 
-    /* @var array Completion criteria {@see completion_info::get_criteria()}  */
+    /* @var array Completion criteria {@link completion_info::get_criteria()}  */
     private $criteria;
 
     /**

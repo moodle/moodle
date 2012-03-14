@@ -25,7 +25,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-require_once $CFG->libdir.'/completionlib.php';
+require_once($CFG->libdir.'/completionlib.php');
 
 /**
  * Update user's course completion statuses
