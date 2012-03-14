@@ -133,14 +133,16 @@ class event_form extends moodleform {
             $mform->setDefault('repeats', 1);
             $mform->disabledIf('repeats','repeat','notchecked');
 
-        } else if ($repeatedevents > 0) {
+        } else if ($repeatedevents) {
 
             $mform->addElement('hidden', 'repeatid');
             $mform->setType('repeatid', PARAM_INT);
 
             $mform->addElement('header', 'repeatedevents', get_string('repeatedevents', 'calendar'));
-            $mform->addElement('checkbox', 'repeateditall', null, get_string('repeateditall', 'calendar', $repeatedevents), 'repeat');
-            $mform->setDefault('repeateditall', 'checked');
+            $mform->addElement('radio', 'repeateditall', null, get_string('repeateditall', 'calendar', $this->_customdata->event->eventrepeats), 1);
+            $mform->addElement('radio', 'repeateditall', null, get_string('repeateditthis', 'calendar'), 0);
+
+            $mform->setDefault('repeateditall', 1);
 
         }
 
