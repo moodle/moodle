@@ -1071,28 +1071,28 @@ abstract class moodleform {
         }
 
         $mform = $this->_form;
-        $select_value = optional_param($checkboxcontrollerparam, null, PARAM_INT);
+        $selectvalue = optional_param($checkboxcontrollerparam, null, PARAM_INT);
         $contollerbutton = optional_param($checkboxcontrollername, null, PARAM_ALPHAEXT);
 
-        $new_select_value = $select_value;
-        if (is_null($select_value)) {
-            $new_select_value = $originalValue;
+        $newselectvalue = $selectvalue;
+        if (is_null($selectvalue)) {
+            $newselectvalue = $originalValue;
         } else if (!is_null($contollerbutton)) {
-            $new_select_value = (int) !$select_value;
+            $newselectvalue = (int) !$selectvalue;
         }
         // set checkbox state depending on orignal/submitted value by controoler button
-        if (!is_null($contollerbutton) || is_null($select_value)) {
+        if (!is_null($contollerbutton) || is_null($selectvalue)) {
             foreach ($mform->_elements as $element) {
                 if (($element instanceof MoodleQuickForm_advcheckbox) &&
                     $element->getAttribute('class') == $checkboxgroupclass) {
-                    $mform->setConstants(array($element->getName() => $new_select_value));
+                    $mform->setConstants(array($element->getName() => $newselectvalue));
                 }
             }
         }
 
-        $mform->addElement('hidden', $checkboxcontrollerparam, $new_select_value, array('id' => "id_".$checkboxcontrollerparam));
+        $mform->addElement('hidden', $checkboxcontrollerparam, $newselectvalue, array('id' => "id_".$checkboxcontrollerparam));
         $mform->setType($checkboxcontrollerparam, PARAM_INT);
-        $mform->setConstants(array($checkboxcontrollerparam => $new_select_value));
+        $mform->setConstants(array($checkboxcontrollerparam => $newselectvalue));
 
         $PAGE->requires->yui_module('moodle-form-checkboxcontroller', 'M.form.checkboxcontroller',
                 array(
