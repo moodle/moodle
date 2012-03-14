@@ -1964,7 +1964,7 @@ function get_module_metadata($course, $modnames) {
                     if (get_string_manager()->string_exists('help' . $subtype->name, $modname)) {
                         $subtype->help = get_string('help' . $subtype->name, $modname);
                     }
-                    $subtype->link = $urlbase . $type->type;
+                    $subtype->link = $urlbase . $subtype->type;
                     $group->types[] = $subtype;
                 }
                 $modlist[$course->id][$modname] = $group;
