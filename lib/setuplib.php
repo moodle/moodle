@@ -853,7 +853,11 @@ function setup_get_remote_url() {
         //obscure name found on some servers - this is definitely not supported
         $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
 
-     } else {
+    } else if (strpos($_SERVER['SERVER_SOFTWARE'], 'PHP') === 0) {
+        // built-in PHP Development Server
+        $rurl['fullpath'] = $_SERVER['REQUEST_URI'];
+
+    } else {
         throw new moodle_exception('unsupportedwebserver', 'error', '', $_SERVER['SERVER_SOFTWARE']);
     }
 
