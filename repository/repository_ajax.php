@@ -66,7 +66,7 @@ if (empty($_POST) && !empty($action)) {
 }
 
 if (!confirm_sesskey()) {
-    $err->error = get_string('invalidsesskey');
+    $err->error = get_string('invalidsesskey', 'error');
     die(json_encode($err));
 }
 
